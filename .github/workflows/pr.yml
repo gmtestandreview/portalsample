@@ -1,0 +1,44 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality-gate:
+    name: Quality gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VITE_APP_ENVIRONMENT: local
+      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
+      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
+      VITE_API_BASE_URL: http://localhost:5085
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run type-check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Build app
+        run: npm run build
+
+      - name: Build Storybook
+        run: npm run build-storybook
