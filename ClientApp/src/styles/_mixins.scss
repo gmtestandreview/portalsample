@@ -1,0 +1,127 @@
+//////////////////////////////////////////////
+// National Measurement Institute (NMI) Mixins
+//////////////////////////////////////////////
+
+// Solid circle background
+@mixin solidCircle {
+    border-radius: 50%;
+    padding: 6px;
+    width: 2rem;
+    height: 2rem;
+    background: tint-color($disr-light-blue, 30%); // Set default circle background colour //tint-color($nmi-coastline-bay-primary, 30%) 
+    text-align: center;
+    text-decoration: none;
+  }
+  
+  // Use for Button outline borders to prevent screen shifting on focus
+  @mixin hoverGlow {
+    outline: 3px solid $nmi-primary;
+    outline-offset: -3px;
+  }
+  
+  // Use for glow on focused elements
+  @mixin focusGlow($suffix: '') {
+    outline: 3px solid $primary #{$suffix};
+    outline-offset: -3px #{$suffix};
+  }
+  
+  // Use for glow on focused elements
+  @mixin focusDangerGlow($suffix: '!important') {
+    outline-offset: -3px !important;
+    outline-color: $danger-lighter !important;
+    outline-style: solid !important;
+    outline-width: 6px !important;
+  }
+  
+  // Button Tertiary common
+  @mixin btnTertiaryDefault {
+    border: 2px solid transparent;
+    outline: 0;
+    padding: $btn-padding-y;
+    color: $nmi-primary;
+    background-color: transparent;
+  
+    [class^='icon-'],
+    [class*=' icon-'] {
+      @include solidCircle;
+      background-color: transparent;
+      vertical-align: text-bottom;
+    }
+  
+    &.disabled,
+    &:disabled {
+      outline-color: transparent;
+      color: $btn-disable-color;
+    }
+  }
+  
+  // Dropdown menu dark common
+  @mixin dropdownMenuDark {
+    margin: 0;
+    padding: 0;
+    width: 100%; // Full width on mobile
+    background-color: $nmi-interactive;
+    border-top-color: $nmi-interactive; 
+    @include media-breakpoint-up(md) {
+      width: unset;
+      border-top-color: $nmi-header-primary; 
+    }
+    .dropdown-item-text,
+    .dropdown-item {
+      color: $white;
+      padding: 0.5rem 1rem;
+      border-bottom: 2px solid $nmi-header-primary;
+    }
+    .dropdown-item {
+      font-weight: $headings-font-weight;
+      &:focus,
+      &:hover {
+        text-decoration: underline;
+        background-color: $nmi-header-primary;
+      }
+      &:active {
+        background-color: $nmi-header-primary;
+      }
+    }
+  }
+
+  //Dropdown menu blue
+  @mixin dropdownMenuBlue {
+    margin: 0;
+    padding: 0;
+    width: 100%; // Full width on mobile
+    background-color: $nmi-blue;
+    border-top-color: $nmi-blue; 
+    @include media-breakpoint-up(md) {
+      width: unset;
+      border-top-color: $interactive; //$nmi-header-primary; 
+    }
+    .dropdown-item-text,
+    .dropdown-item {
+      color: $white;
+      padding: 0.5rem 1rem;
+      border-bottom: 2px solid $interactive; //$nmi-header-primary;
+    }
+    .dropdown-item {
+      font-weight: $headings-font-weight;
+      &:focus,
+      &:hover {
+        text-decoration: underline;
+        background-color: $interactive; //$nmi-header-primary;
+      }
+      &:active {
+        background-color: $interactive; //$nmi-header-primary;
+      }
+    }
+  }
+
+  // Text truncate base
+  @mixin textTruncateBase {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    line-clamp: 1;
+    -webkit-line-clamp: 1; // About 1 text lines on mobile
+  }
+  
+  

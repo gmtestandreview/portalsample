@@ -1,0 +1,350 @@
+// Extend BS5 buttons
+.btn {
+    &:focus,
+    &:focus-within {
+        outline:3px solid $link-focus;   
+        outline-offset: 2px;
+    }
+}
+
+.btn-primary,
+.btn-nmi-primary {
+    color: $white;
+    border: 2px solid $nmi-primary;
+    background: $nmi-primary;
+    @include hoverGlow;
+    &:hover {
+        color: $white;
+        border-color: $nmi-secondary;
+        background: $nmi-secondary;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
+    }
+    &:focus,
+    &:focus-visible {
+        color: $white;
+        border-color: $nmi-secondary;
+        background: $nmi-primary;
+        box-shadow: 0 0 0 4px $nmi-active;
+        outline: 3px solid $white;
+        outline-offset: 2px;
+    }
+    &:active {
+        border-color: $nmi-active;
+        background: $nmi-active;
+        box-sizing: border-box;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
+    }
+    &.disabled,
+    &:disabled {
+        outline-color: $btn-disable-color;
+        border-color: $btn-disable-color;
+        color: $btn-disable-color;
+        background: $white;
+    }
+    // Sub variants
+    &-dark {
+        background: $white;
+        border: 2px solid $white;
+        box-sizing: border-box;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.102);
+        color: $nmi-blue;
+        font-weight: bold;
+
+        &:hover {
+            background: $nmi-primary;
+            border: 2px solid $white;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
+            color: $white;
+        }
+        &:focus {
+            background: $nmi-primary;
+            border-color: $white;
+            box-sizing: border-box;
+            color: $white;
+        }
+        &:active {
+            background: $nmi-active;
+            border: 2px solid $nmi-secondary;
+            box-sizing: border-box;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
+            color: $white;
+            outline: none !important;
+        }
+        &.disabled,
+        &:disabled {
+            border:2px solid $btn-disable-color;
+            color: $btn-disable-color;
+            background: $interactive;
+        }
+    }
+  }
+
+.btn-secondary,
+.btn-nmi-secondary {
+    border: 2px solid $interactive;
+    background: $white;
+    color: $interactive;
+    @include hoverGlow;
+    &:hover {
+        color: $white;
+        border-color: $nmi-secondary;
+        background: $nmi-primary;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
+    }
+    &:focus {
+        color: $white;
+        border-color: $nmi-secondary;
+        background: $nmi-primary;
+        box-shadow: none;
+    }
+    &:active {
+        border-color: $nmi-secondary;
+        background: $nmi-active;
+        box-sizing: border-box;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.302);
+    }
+    &.disabled,
+    &:disabled {
+        outline-color: $btn-disable-color;
+        border-color: $btn-disable-color;
+        color: $btn-disable-color;
+        background: $white;
+        &:focus {
+            outline: 2px dotted $nmi-primary !important;
+        }
+    }
+}
+.btn-link {
+    font-style: normal;
+    color: $nmi-primary;
+    background-color: transparent;
+    box-shadow: none;
+    cursor: pointer;
+    display: inline;
+    font-family: $font-family-sans-serif;
+    font-size: $font-size-base;
+    font-weight: 500;
+    height: auto;
+    letter-spacing: 0.2px;
+    line-height: 1.75;
+    transition-delay: 0s, 0s;
+    transition-duration: 0.25s, 0.25s;
+    transition-property: box-shadow, -webkit-box-shadow;
+    transition-timing-function: ease, ease;
+    text-decoration: underline;
+    box-sizing: border-box;
+    padding: 0;
+
+    svg {
+      padding-left: 4px;
+    }
+    &:active {text-decoration:none;}
+  }
+
+// New BS5 buttons
+.btn-tertiary,
+.btn-nmi-icon {
+    @include btnTertiaryDefault;
+    &:hover,
+    &:focus {
+        border-color: transparent;
+        color: $nmi-blue; // $primary;
+        background: transparent;
+        [class^="icon-"], [class*=" icon-"] {
+            @include solidCircle;
+            background: $disr-light-blue; //tint-color($disr-light-blue, 30%); // $nmi-coastline-bay-primary
+        }
+    }
+    &:active {
+        color: $nmi-blue; // $nmi-secondary
+        [class^="icon-"], [class*=" icon-"] {
+            background: $disr-light-blue; // $nmi-coastline-bay-primary
+        }
+    }
+
+    &.btn-sm {
+        padding: $btn-padding-y-sm $btn-padding-x-sm;
+    }
+    // Sub variants
+    &-dark {
+        @include btnTertiaryDefault;
+        color: $white;
+        &:hover,
+        &:focus {
+            color: $white;
+            [class^="icon-"], [class*=" icon-"] {
+                color: $interactive;
+                background: $disr-light-blue; // $nmi-coastline-bay-primary
+            }
+        }
+        &:active {
+            color: $white;
+            [class^="icon-"], [class*=" icon-"] {
+                color: $interactive;
+                background: rgba($disr-light-blue, 0.7); // $nmi-coastline-bay-primary
+            }
+        }
+    }
+    &-colorbg {
+        @include btnTertiaryDefault;
+        color: $nmi-primary;
+        &:hover,
+        &:focus {
+            color: $nmi-primary;
+            [class^="icon-"], [class*=" icon-"] {
+                background: rgba($white,0.7);
+            }
+        }
+    }
+    &-danger {
+        @include btnTertiaryDefault;
+        color: $danger;
+        background: transparent;
+        &:hover,
+        &:focus {
+            border-color: transparent;
+            color: $danger;
+            background: transparent;
+            [class^="icon-"], [class*=" icon-"] {
+                background: $danger-light;
+            }
+        }
+        &:active {
+            color: $danger;
+        }
+    }
+}
+.btn-flat {
+    @extend .btn-tertiary;//.btn-outline-primary;
+    border: 0;
+    outline: 0;
+    font-weight: normal;
+    [class^="icon-"], [class*=" icon-"] {
+        padding: 0;
+        vertical-align: middle;
+    }
+    &:hover,
+    &:focus {
+        font-weight: $font-weight-bold;
+        [class^="icon-"], [class*=" icon-"] {
+            padding: 0;
+            background: transparent;
+        }
+    }
+}
+
+[class^="btn-outline-secondary"], [class*=" btn-outline-secondary"] {
+    // Extend BS5 btn-outline-*
+    background: $white;
+    outline-color: $secondary
+}
+
+.btn-skiplinks,
+.btn-backtotop {
+    padding: $btn-padding-y;
+    background-color: rgba($white, 0.65) !important;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    &:focus,
+    &:hover {
+      color: $white;
+      background-color: rgba($secondary, 1) !important;
+    }
+    &:active {
+      color: $white !important;
+        span {
+            text-decoration: underline;
+        }
+    }
+ }
+ .btn-skiplinks {
+    z-index: 1050; // $zindex-offcanvas
+ }
+
+.btn-digitalidentity {
+    display: flex;
+    text-align: left;
+    width: 100%;
+    padding: 12px 24px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    outline: none;
+    img {
+      margin-bottom: 2px;
+      width: 42px;
+      height: auto;
+    }
+    &:hover,
+    &:focus {
+        img {
+            transition-duration: 0;
+            -webkit-filter: invert(100%);
+            filter: invert(100%);
+        }
+    }
+    &:focus,
+    &:active {
+        outline: 3px solid $link-focus;
+    }
+
+    @include media-breakpoint-up(sm) {  
+        width: 327px;
+    }
+}
+
+// Hyperlinks
+.nmi-in-text-link {
+    color: $link-color;
+    font-weight: bold;
+    border: 3px solid transparent;
+    &:visited {
+        color: $nmi-visited;
+    }
+
+    &:hover {
+        background-color: $link-hover-background;
+        color: $nmi-primary;
+        text-decoration: none;
+    }
+
+    &:focus {
+        border: 3px solid $link-focus;
+        color: $body-color;
+        text-decoration: none;
+        outline: none;
+    }
+
+    &:active {
+        background-color: $disr-light-blue; //$nmi-coastline-bay-primary
+        color: $link-color; //$nmi-active;
+        text-decoration: none;
+    }
+    &:disabled {
+        color: $nmi-dark-gray;
+    }
+    & .bodyTextExternalLinkIcon {
+        margin-left: 4px;
+        height: 14px;
+        width: 14px;
+    }
+}
+.alert {
+  .nmi-in-text-link {
+    &:visited {
+      color: inherit !important
+    }
+  }
+}
+
+// Dashboard Pattern/type approval page > new create button + filter dropdown
+@include media-breakpoint-up(md) {  
+  .dashboard-ta {
+    #filter-dropdown {
+      // Match width of Filter button - varies by Service type title
+      box-sizing: border-box; /* Padding is now INSIDE */
+      min-width: 214px;
+      max-width: 214px;
+      width: 100%;
+      }
+  }
+}

@@ -1,0 +1,14 @@
+import type { NextPage } from 'next';
+import { DocumentTitle } from '../components/DocumentTitle';
+import { {{PageName}} } from '../components/{{PageName}}';
+
+const {{PageName}}Page: NextPage = () => {
+	return (
+		<>
+			<DocumentTitle title="{{pageLabel}}" />
+			<{{PageName}} />
+		</>
+	);
+};
+
+export default {{PageName}}Page;

@@ -1,0 +1,85 @@
+// Custom layout styles 
+
+// Dashboard
+.gs-wrapper {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+
+    @include media-breakpoint-up(md) {
+        padding-top: 3.5rem;
+        padding-bottom: 3.5rem;
+    }
+
+    &-sm {
+      padding-top: 1.5rem;
+      padding-bottom: 1.5rem;
+
+      @include media-breakpoint-up(md) {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+      }
+    }
+    &-lg {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+
+      @include media-breakpoint-up(md) {
+        padding-top: 4.5rem;
+        padding-bottom: 4.5rem;
+      }
+    }
+}
+
+.default-banner-background { 
+  background: linear-gradient(70deg, $nmi-gray-100 80%, $nmi-gray-200 20%);
+  @include media-breakpoint-up(sm) {
+    background: linear-gradient(70deg, $nmi-gray-100 70%, $nmi-gray-200 30%);
+  }
+}
+.banner-title,
+.page-title {
+    color: $nmi-blue;
+}
+
+.welcome-banner-background {
+    background: $disr-light-blue-tint;
+    background: linear-gradient(70deg, $disr-light-blue 80%, $disr-light-blue-tint 20%);
+    min-height: 170px;
+
+    @include media-breakpoint-up(md) {
+        min-height: 200px;
+        background: $disr-light-blue-tint;
+        background: linear-gradient(70deg, $disr-light-blue 60%, $disr-light-blue-tint 40%);
+    }
+}
+
+.page-header {
+    background-color: $dashboard-background;
+    display: flex;
+    min-height: auto;
+    h1 {
+        margin-bottom: 0;
+        color: $primary;
+    }
+    .banner-image {
+      width: auto;
+      max-width: 64px;
+      height: auto;
+      @include media-breakpoint-up(md) {
+        max-width: 205px;
+      }
+    }
+}
+
+.reporting-index,
+.manage {
+    .page-header {
+        background-color: $alert-info-bg;
+    }
+}
+
+// Main
+#main {
+    flex: 1;
+    min-height: 100vh; // prevents vertical screen shift on loading
+}

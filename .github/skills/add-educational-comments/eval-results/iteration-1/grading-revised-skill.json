@@ -1,0 +1,70 @@
+{
+  "skill_path": "/mnt/data/add-educational-comments-v2-pack/add-educational-comments/SKILL.md",
+  "sha256_16": "6722fe5b51e0e872",
+  "line_count": 216,
+  "checks": [
+    {
+      "check": "frontmatter_valid",
+      "passed": true,
+      "evidence": "frontmatter fields: ['name', 'description', 'compatibility']"
+    },
+    {
+      "check": "skill_md_under_500_lines",
+      "passed": true,
+      "evidence": "line_count=216"
+    },
+    {
+      "check": "examples_moved_to_references",
+      "passed": true,
+      "evidence": "reference_exists=True"
+    },
+    {
+      "check": "validation_matrix_moved_to_references",
+      "passed": true,
+      "evidence": "reference_exists=True"
+    },
+    {
+      "check": "regression_details_moved_to_references",
+      "passed": true,
+      "evidence": "reference_exists=True"
+    },
+    {
+      "check": "language_gotchas_moved_to_references",
+      "passed": true,
+      "evidence": "reference_exists=True"
+    },
+    {
+      "check": "explicit_reference_load_triggers",
+      "passed": true,
+      "evidence": "missing_triggers=[]"
+    },
+    {
+      "check": "static_first_validation_hierarchy",
+      "passed": true,
+      "evidence": "static-first hierarchy phrases present"
+    },
+    {
+      "check": "trigger_evals_present",
+      "passed": true,
+      "evidence": "exists=True"
+    },
+    {
+      "check": "near_miss_negative_prompts_present",
+      "passed": true,
+      "evidence": "queries=12"
+    },
+    {
+      "check": "compatibility_frontmatter",
+      "passed": true,
+      "evidence": "compatibility=Requires file read/write capability. Validation commands require the relevant local toolchain; network access is used only for permitted Fetch List references."
+    },
+    {
+      "check": "final_report_template_asset",
+      "passed": true,
+      "evidence": "exists=True"
+    }
+  ],
+  "passed": 12,
+  "total": 12,
+  "pass_rate": 1.0
+}

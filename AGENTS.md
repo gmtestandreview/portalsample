@@ -1,0 +1,209 @@
+# AGENTS
+
+## Purpose
+
+This workspace is a **source-map capture snapshot** of portal.measurement.gov.au — the Australian Government National Measurement Institute (NMI) customer portal. The repository **does** include a root `package.json` with validation and test scripts. You may run `npm`, `pnpm`, or `yarn` commands from the workspace root for validation, type-checking, linting, and tests.
+
+**Validation scripts:**
+
+The following scripts are available in the root `package.json`:
+
+- `npm run type-check` — TypeScript type checking (tsc --noEmit)
+- `npm run lint` — Lint all JS/TS files
+- `npm run lint:fix` — Lint with automatic safe fixes
+- `npm run test:unit` — Run unit tests (Vitest)
+- `npm run test:unit:coverage` — Unit test coverage
+- `npm run test:unit:watch` — Unit tests in watch mode
+- `npm run test:storybook` — Run Storybook interaction tests (Vitest)
+- `npm run test:all` — Run all Vitest suites
+- `npm run test:quality:regression` — Run regression quality tests
+- `npm run test:ci` — Full CI gate: type-check + tests with coverage + regression
+- `npm run test:e2e` — Run Playwright E2E tests (app + storybook BDD)
+- `npm run test:e2e:app` — App BDD tests only
+- `npm run test:e2e:storybook` — Storybook BDD tests only
+- `npm run storybook` — Run Storybook dev server (port 6006)
+- `npm run build-storybook` — Build static Storybook
+- `npm run migration-check` — Full pre-migration gate (type-check + tests + storybook build)
+
+See `package.json` for the full list.
+
+## Technology Stack
+
+| Layer | Technology |
+| --- | --- |
+| UI framework | React 18 (functional components, hooks) |
+| Language | TypeScript |
+| Routing | React Router v7 (`createBrowserRouter`) |
+| Auth | Azure AD B2C via `@azure/msal-browser` / `@azure/msal-react` |
+| Forms | Formik + Yup with custom string extensions |
+| CSS | Bootstrap 5 (custom NMI theme) + SCSS partials |
+| API client | Auto-generated `web-api-client.ts` (NSwag/OpenAPI) |
+| Analytics | Azure Application Insights + Google Analytics |
+| Bundler | Webpack (bundled artifacts only; config not present in snapshot) |
+| CSP | Trusted Types policy via `trustedtypes.ts` + DOMPurify |
+
+## Repository Shape
+
+```text
+ClientApp/src/                       ← primary editable app source (TypeScript/TSX)
+ClientApp/src/styles/                ← editable SCSS partials
+ClientApp/src/api/web-api-client.ts  ← generated NSwag/OpenAPI API client, do not edit
+ClientApp/source-map-http-downloads/ ← third-party source mirrors, do not edit
+ClientApp/src/external/              ← vendor copies, do not edit
+ClientApp/webpack/                   ← webpack runtime bootstrap, do not edit
+ClientApp/media/                     ← captured media assets
+```
+
+## Architecture Pointers
+
+| Concern | Path |
+| --- | --- |
+| App bootstrap | `ClientApp/src/index.tsx` |
+| Router | `ClientApp/src/App.tsx` |
+| Route modules | `ClientApp/src/routes/**` |
+| Reusable UI | `ClientApp/src/components/**` |
+| Auth config (MSAL) | `ClientApp/src/authentication/authConfig.ts` |
+| Auth context / hooks | `ClientApp/src/authentication/accountContext.tsx`, `ClientApp/src/authentication/hooks.tsx` |
+| Auth guard | `ClientApp/src/authentication/AuthenticatedElement.tsx` |
+| Runtime env vars | `ClientApp/src/env.ts` (reads from `window.*` at runtime, not `process.env`) |
+| API client | `ClientApp/src/api/web-api-client.ts` |
+| Shared types | `ClientApp/src/types.ts` |
+| Validation schemas | `ClientApp/src/validationSchemas/**` |
+| Yup custom methods | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` |
+| App Insights | `ClientApp/src/instrumentation/AppInsightsService.ts` |
+| Session storage | `ClientApp/src/storage/**` |
+| Styles | `ClientApp/src/styles/**` |
+| Utilities | `ClientApp/src/utils/index.ts` |
+
+## Critical Patterns
+
+### Environment Variables
+
+Config is injected at runtime into `window.*` — **not** `process.env`. Always use the `env` object from `ClientApp/src/env.ts`:
+
+```ts
+import { env } from '../env';
+env.REACT_APP_B2C_CLIENTID  // correct
+process.env.REACT_APP_B2C_CLIENTID  // wrong — will be undefined at runtime
+```
+
+### Global Object Usage
+
+Prefer `globalThis` over `window` in handwritten app code, tests, and mocks. This avoids SonarLint `typescript:S7764` findings and keeps shared runtime access working across browser-like test environments.
+
+Use `window` only where browser-specific typing or the runtime config contract requires it, such as the `window.*` injection consumed by `ClientApp/src/env.ts`.
+
+### Authentication Guard
+
+Wrap protected routes with `<AuthenticatedElement>`. Routes with multi-step forms pass `displayHeaderAndFooter={false}` to suppress the main chrome:
+
+```tsx
+<AuthenticatedElement displayHeaderAndFooter={false}>
+  <CreateAccount />
+</AuthenticatedElement>
+```
+
+### Yup Validation — Custom String Methods
+
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` augments `Yup.StringSchema` with 19 project-specific methods: `.allowedFormat()`, `.nameAllowedFormat()`, `.businessName()`, `.maxLength()`, `.isRequired()`, `.minEntered()`, `.fixedDigits()`, `.phone()`, `.email()`, `.postcode()`, `.numbersOnly()`, `.decimalNumbersOnly()`, `.addressFormat()`, `.minValue()`, `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`, `.noConsecutivePuncuation()`, `.numberWithinRange()`.
+
+**Always import the side-effect module** in any file that uses these methods:
+
+```ts
+import '../../validationSchemas/yupExtensions';
+```
+
+Failing to import it causes silent runtime errors where custom validators are undefined.
+
+### Account Context
+
+`AccountContext` (`ClientApp/src/authentication/accountContext.tsx`) holds the full authenticated user state. Access it via the hooks in `ClientApp/src/authentication/hooks.tsx`, not by importing the context directly.
+
+### Forms
+
+Forms use Formik. For unsaved-change detection use `<UnsavedFormPrompt>` (wraps `RouteLeavingGuard` using `useFormikContext`). Do not re-implement navigation guards.
+
+### SCSS Module System
+
+All new SCSS files must use `@use` / `@forward`, not `@import`. The `@import` rule is deprecated in Dart Sass and will be removed in Sass 3.
+
+**Bootstrap shim**: `ClientApp/src/styles/_bootstrap-import.scss` isolates the Bootstrap `@import` to a single file. `index.scss` imports the shim (`@import './bootstrap-import'`) rather than Bootstrap directly. Do not add `@import 'bootstrap/scss/bootstrap'` anywhere else.
+
+**Division**: All Sass division must use `math.div()`. Any file using `math.div()` must declare `@use 'sass:math';` as its first `@use` statement:
+
+```scss
+@use 'sass:math';
+// ...
+font-size: math.div($h1-font-size, 1.375);
+```
+
+**Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a Bootstrap 5 internal available only via the global `@import` cascade. Full `@use`-based migration is deferred until Bootstrap 6. Until then, `silenceDeprecations: ['import']` in `webpack.config.js` and `.storybook/main.ts` suppresses deprecation warnings from our own partials; `quietDeps: true` suppresses Bootstrap's internal deprecations.
+
+## Storybook
+
+When working on UI components, always use the `my-mcp-server` MCP tools to access Storybook's component and documentation knowledge before answering or taking any action.
+
+- **CRITICAL: Never hallucinate component properties!** Before using ANY property on a component from a design system (including common-sounding ones like `shadow`, etc.), you MUST use the MCP tools to check if the property is actually documented for that component.
+- Query `list-all-documentation` to get a list of all components
+- Query `get-documentation` for that component to see all available properties and examples
+- Only use properties that are explicitly documented or shown in example stories
+- If a property isn't documented, do not assume properties based on naming conventions or common patterns from other libraries. Check back with the user in these cases.
+- Use the `get-storybook-story-instructions` tool to fetch the latest instructions for creating or updating stories. This will ensure you follow current conventions and recommendations.
+- Check your work by running `run-story-tests`.
+
+Remember: A story name might not reflect the property name correctly, so always verify properties through documentation or example stories before using them.
+
+## Edit Boundaries
+
+**Edit freely:**
+
+- `ClientApp/src/**/*.ts`
+- `ClientApp/src/**/*.tsx`
+- `ClientApp/src/styles/**/*.scss`
+
+**Never edit (generated / vendor):**
+
+- `ClientApp/src/api/web-api-client.ts`
+- `ClientApp/src/main.*.js`
+- `ClientApp/css/main.*.css`
+- `ClientApp/source-map-http-downloads/**`
+- `ClientApp/src/external/**`
+- `ClientApp/webpack/**`
+
+## Validation Guidance
+
+Validation is performed using the root `package.json` scripts. Use `npm`, `pnpm`, or `yarn` as appropriate. Validate changes by:
+
+1. Static TypeScript type consistency (read related files, confirm types align).
+2. Checking that Yup extension imports are present in any schema file that uses custom methods.
+3. Verifying auth-guard usage is consistent with existing route patterns in `ClientApp/src/App.tsx`.
+4. Reporting any limitation clearly if a command cannot be run.
+
+### ESLint
+
+Run ESLint from the repository root:
+
+```bash
+npm run lint
+```
+
+Apply safe automatic fixes:
+
+```bash
+npm run lint:fix
+```
+
+The lint gate covers handwritten React/TypeScript app source, Storybook/test files, and root config files. Generated NSwag API output, vendor mirrors, build output, and source-map capture directories are excluded.
+
+## Instruction Files
+
+| Topic | File |
+| --- | --- |
+| Markdown rules | [.github/instructions/markdown.instructions.md](.github/instructions/markdown.instructions.md) |
+| Policy-sensitive files | [.github/instructions/config-policy.instructions.md](.github/instructions/config-policy.instructions.md) |
+| App code conventions | [.github/instructions/app-code.instructions.md](.github/instructions/app-code.instructions.md) |
+| JS/TS change discipline | [.github/instructions/code-change-discipline.instructions.md](.github/instructions/code-change-discipline.instructions.md) |
+| Generated/tracked boundaries | [.github/instructions/generated-and-tracked-boundaries.instructions.md](.github/instructions/generated-and-tracked-boundaries.instructions.md) |
+| Route security review | [.github/instructions/Route-security-review.instructions.md](.github/instructions/Route-security-review.instructions.md) |
+| Snapshot edit boundaries | [.github/instructions/snapshot-boundaries.instructions.md](.github/instructions/snapshot-boundaries.instructions.md) |
+| Yup extension import guard | [.github/instructions/yup-extension-guard.instructions.md](.github/instructions/yup-extension-guard.instructions.md) |

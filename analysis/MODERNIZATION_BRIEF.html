@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modernization Brief - NMI Customer Portal</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --surface: #ffffff;
+      --text: #1b2733;
+      --muted: #4c6174;
+      --border: #d5dee8;
+      --accent: #0f4c81;
+      --accent-2: #1d5f98;
+      --ok: #196c2e;
+      --warn: #8d5c00;
+      --risk-high: #9f1239;
+      --risk-med: #9a6700;
+      --risk-low: #1e5d8f;
+      --chip-bg: #edf2f8;
+      --shadow: 0 6px 20px rgba(16, 38, 57, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Calibri, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #eef3f9 0%, var(--bg) 100%);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1220px, 94vw);
+      margin: 1.5rem auto 2.5rem;
+    }
+
+    .hero {
+      background: linear-gradient(130deg, var(--accent) 0%, var(--accent-2) 55%, #3a78aa 100%);
+      color: #fff;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2.7vw, 2rem);
+      line-height: 1.2;
+    }
+
+    .meta {
+      margin-top: 0.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      border-radius: 999px;
+      padding: 0.3rem 0.65rem;
+      font-size: 0.9rem;
+      white-space: nowrap;
+    }
+
+    .notice {
+      margin-top: 0.9rem;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 10px;
+      padding: 0.7rem 0.8rem;
+      font-size: 0.95rem;
+    }
+
+    .section {
+      margin-top: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 2px 12px rgba(16, 38, 57, 0.05);
+    }
+
+    h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.25rem;
+      color: #123f65;
+    }
+
+    h3 {
+      margin: 1rem 0 0.45rem;
+      font-size: 1.05rem;
+      color: #154569;
+    }
+
+    p { margin: 0.45rem 0 0.8rem; }
+    ul { margin: 0.35rem 0 0.9rem 1rem; padding: 0; }
+    li { margin: 0.25rem 0; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 1rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 0.7rem;
+      margin-top: 0.7rem;
+    }
+
+    .stat {
+      background: #f3f7fc;
+      border: 1px solid #d9e6f4;
+      border-radius: 12px;
+      padding: 0.75rem;
+    }
+
+    .stat-label {
+      margin: 0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      margin: 0.35rem 0 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #123f65;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.6rem 0 0.9rem;
+      font-size: 0.93rem;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.55rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #edf4fb;
+      color: #123f65;
+      font-weight: 700;
+    }
+
+    .risk {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 0.1rem 0.5rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .risk-high { background: #ffe7ef; color: var(--risk-high); }
+    .risk-medium { background: #fff2d4; color: var(--risk-med); }
+    .risk-low { background: #e7f2ff; color: var(--risk-low); }
+
+    .chip {
+      display: inline-block;
+      padding: 0.18rem 0.45rem;
+      border-radius: 999px;
+      background: var(--chip-bg);
+      border: 1px solid #c9d7e5;
+      font-size: 0.8rem;
+      margin-right: 0.25rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .codeblock {
+      margin: 0.5rem 0 0.9rem;
+      background: #0f1720;
+      color: #e7edf3;
+      border: 1px solid #2b3b4b;
+      border-radius: 10px;
+      padding: 0.8rem;
+      overflow-x: auto;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      white-space: pre;
+    }
+
+    .checklist li {
+      list-style: none;
+      margin-left: -1rem;
+      padding-left: 1rem;
+      position: relative;
+    }
+
+    .checklist li::before {
+      content: "\2610";
+      position: absolute;
+      left: 0;
+      color: #36566f;
+    }
+
+    .approval {
+      border: 1px dashed #7f9cb7;
+      background: #f7fbff;
+      border-radius: 10px;
+      padding: 0.8rem;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1100px) {
+      .summary-grid { grid-template-columns: repeat(2, minmax(180px, 1fr)); }
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .container { width: min(97vw, 1220px); }
+      .hero { padding: 1rem; border-radius: 12px; }
+      table { font-size: 0.86rem; }
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+
+    @media print {
+      body { background: #fff; }
+      .section, .hero { box-shadow: none; }
+      .container { width: 100%; margin: 0; }
+      .section, .hero { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Modernization Brief - NMI Customer Portal</h1>
+      <div class="meta">
+        <span class="pill">Version 1.3</span>
+        <span class="pill">Date: 2026-06-04</span>
+        <span class="pill">Status: Draft</span>
+        <span class="pill">Pattern: Refactor (incremental)</span>
+      </div>
+      <div class="notice">
+        Updated 2026-06-04 (v1.4). SEC-001, SEC-009, SEC-011 closed in source snapshot as BRIEF-SEC-001/009/011 (CRD-029, CRD-031). SEC-010 closed 2026-06-04 (pentest-confirmed; CRD-035). Open security set is now SEC-008 (by-design), SEC-012 (architectural). Bootstrap grid dropped per CRD-034; design tokens + CSS Grid replace it. Phase 1 source fixes are pre-completed — migration task is verification only.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Executive Snapshot</h2>
+      <div class="summary-grid">
+        <div class="stat"><p class="stat-label">System Size</p><p class="stat-value">~23,800 SLOC</p></div>
+        <div class="stat"><p class="stat-label">Architecture Direction</p><p class="stat-value">Refactor, not rebuild</p></div>
+        <div class="stat"><p class="stat-label">COCOMO (full system)</p><p class="stat-value">77-115 person-months</p></div>
+        <div class="stat"><p class="stat-label">Targeted Program</p><p class="stat-value">21-30 person-weeks</p></div>
+      </div>
+      <p>
+        The portal is structurally sound with a modern stack, but targeted debt creates migration risk: broad any-typed wizard contracts, repeated token acquisition logic across 26 files, one high-priority backend IDOR confirmation blocker, and no unit tests inside the core source tree.
+      </p>
+    </section>
+
+    <section class="section">
+      <h2>1. Objective</h2>
+      <p>
+        Modernize the existing React 18 and TypeScript SPA incrementally, preserving current architecture while eliminating concentrated security and maintainability risks. Deliver a type-safe, test-backed, single-build-system codebase that a new engineering team can operate without relying on undocumented institutional knowledge.
+      </p>
+      <div class="two-col">
+        <div>
+          <h3>Primary Debt Concentrations</h3>
+          <ul>
+            <li>Wizard engine contract uses broad index signatures that remove compile-time guarantees.</li>
+            <li>Token acquisition and client wiring duplicated across 26 call sites.</li>
+            <li>Open security items remain, including backend IDOR verification (P0 gate).</li>
+            <li>No unit-test safety net in ClientApp/src despite high business-rule density.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Already Closed in Live Codebase</h3>
+          <ul>
+            <li>Auth bypass variables and dev bypass path removed.</li>
+            <li>Trusted Types hardening completed (createHTML and createScript).</li>
+            <li>noopener and open-redirect protections added.</li>
+            <li>PII telemetry scrubbing completed.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2. Target Architecture</h2>
+      <p>No stack replacement is required. The target state keeps current core technology and consolidates build and quality controls.</p>
+      <table>
+        <thead>
+          <tr><th>Layer</th><th>Current</th><th>Target</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Language</td><td>TypeScript 5.9</td><td>TypeScript 5.9 (no change)</td></tr>
+          <tr><td>UI Framework</td><td>React 18</td><td>React 18 (no change)</td></tr>
+          <tr><td>Routing</td><td>React Router v6</td><td>React Router v6 (no change)</td></tr>
+          <tr><td>Auth</td><td>MSAL v3 (B2C)</td><td>MSAL v3 (no change)</td></tr>
+          <tr><td>Forms</td><td>Formik + Yup</td><td>Formik + Yup (no change)</td></tr>
+          <tr><td>API Client</td><td>NSwag-generated</td><td>NSwag-generated (regenerated from live spec)</td></tr>
+          <tr><td>Production Build</td><td>Webpack 5</td><td>Vite 8 (consolidated)</td></tr>
+          <tr><td>Tests</td><td>Playwright BDD + Storybook tests</td><td>Add Vitest unit suite with 80%+ targeted coverage</td></tr>
+          <tr><td>CSP</td><td>Trusted Types + DOMPurify</td><td>Retain and verify after build consolidation</td></tr>
+        </tbody>
+      </table>
+
+      <h3>C4 Container Diagram (End State)</h3>
+      <div class="codeblock">C4Container
+  title NMI Customer Portal - Target Architecture (End State)
+
+  Person(customer, "NMI Customer", "Calibration / measurement service customer")
+
+  System_Boundary(portal, "NMI Customer Portal (target repo)") {
+    Container(spa, "React SPA", "React 18 + TypeScript + Vite", "Single-page application")
+    Container(auth_mod, "Auth Module", "MSAL v3 + AccountProvider", "Azure AD B2C PKCE flow")
+    Container(wizard_fw, "Wizard Framework", "WizardForm + WizardRoutedStep (typed)", "Multi-step form engine")
+    Container(api_layer, "API Layer", "useAuthenticatedClient hook + NSwag client", "Shared token acquisition")
+    Container(val_lib, "Validation Library", "Yup + custom extensions", "Portable and unit-tested")
+    Container(config_svc, "Config Service", "env.ts + external constants", "Runtime env and policy values")
+    Container(test_suite, "Test Suite", "Vitest + Playwright", "Business rule coverage + E2E")
+  }
+
+  System_Ext(b2c, "Azure AD B2C", "OIDC/PKCE provider")
+  System_Ext(nmi_api, "NMI Backend REST API", "CRM-backed")
+  System_Ext(appinsights, "Azure Application Insights", "Telemetry")
+  System_Ext(ga, "Google Analytics GA4", "Usage analytics")
+</div>
+
+      <h3>Legacy to Target Mapping (Selected)</h3>
+      <table>
+        <thead>
+          <tr><th>Legacy Component</th><th>Target Action</th><th>Change Type</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>components/forms/WizardForm/types.ts</td><td>Type WizardStepProps and remove broad any index signatures</td><td>Type safety</td></tr>
+          <tr><td>routes/**/...Props.ts (26 sites)</td><td>Use shared useAuthenticatedClient hook</td><td>Deduplication</td></tr>
+          <tr><td>api/web-api-client.ts</td><td>Move org context read into per-request transformOptions</td><td>Security + correctness</td></tr>
+          <tr><td>routes/common/helperFunctions.ts</td><td>Replace pending default branch with Promise.reject</td><td>Bug fix</td></tr>
+          <tr><td>env.ts constants</td><td>Remove orphaned vars and externalize legal constants</td><td>Config hygiene</td></tr>
+          <tr><td>webpack.config.js</td><td>Replace with vite.config.ts production build</td><td>Build consolidation</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <h2>3. Phased Sequence</h2>
+      <h3>Phase Gantt (as authored)</h3>
+      <div class="codeblock">gantt
+  title NMI Portal Modernization - Phased Plan
+  dateFormat YYYY-MM-DD
+  section Phase 1
+    Security verification (3 items)      :p1, 2026-06-08, 1w
+    P0 characterization tests             :p1t, after p1, 2w
+  section Phase 2
+    Dead code & config externalisation    :p2, after p1t, 2w
+    Type safety - WizardStepProps         :p2t, after p1t, 2w
+  section Phase 3
+    useAuthenticatedClient hook           :p3, after p2, 2w
+    Pending-promise & dashboard bugs      :p3b, after p2, 1w
+  section Phase 4
+    Build consolidation (Webpack -> Vite) :p4, after p3, 3w
+  section Phase 5
+    Business rule unit test suite         :p5, after p4, 4w
+  section Phase 6
+    Target repository migration & CI/CD   :p6, after p5, 3w
+</div>
+
+      <h3>Phase Summary</h3>
+      <table>
+        <thead>
+          <tr><th>Phase</th><th>Scope</th><th>Effort (person-weeks)</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Security verification — SEC-001, SEC-009, SEC-011 <strong>pre-completed in source snapshot</strong> (CRD-029, CRD-031); migration task is post-migration verification. SEC-010 IDOR — <strong>CLOSED 2026-06-04</strong> (pentest-confirmed; CRD-035). Phase 1 entry criterion met.</td><td>1-2</td><td><span class="risk risk-low">Low</span></td></tr>
+          <tr><td>2</td><td>Type safety, dead code removal, config externalization</td><td>4-5</td><td><span class="risk risk-medium">Medium</span></td></tr>
+          <tr><td>3</td><td>Auth token centralization + targeted bug fixes</td><td>4-5</td><td><span class="risk risk-medium">Medium</span></td></tr>
+          <tr><td>4</td><td>Build consolidation (Webpack to Vite)</td><td>4-6</td><td><span class="risk risk-high">High</span></td></tr>
+          <tr><td>5</td><td>Business-rule unit test suite and coverage gates</td><td>5-7</td><td><span class="risk risk-low">Low</span></td></tr>
+          <tr><td>6</td><td>Target repo migration, CI/CD hardening, UAT sign-off</td><td>3-5</td><td><span class="risk risk-medium">Medium</span></td></tr>
+          <tr><th>Total</th><th></th><th>21-30</th><th></th></tr>
+        </tbody>
+      </table>
+
+      <h3>Phase 1 Scope Detail (Pre-completed in Source Snapshot — Verify After Migration)</h3>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Issue</th><th>Planned Fix</th><th>Severity</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>SEC-001</td><td>Mutable session-based organization context read at client construction time</td><td><strong>DONE IN SOURCE</strong> — Read inside transformOptions per request (CRD-031). Verify in target.</td><td><span class="chip">Medium</span></td></tr>
+          <tr><td>SEC-009</td><td>MSAL loadFrameTimeout set to 0</td><td><strong>DONE IN SOURCE</strong> — Set to 6000ms (CRD-029). Verify in target.</td><td><span class="chip">Low</span></td></tr>
+          <tr><td>SEC-011</td><td>Weak URL id validation before API calls</td><td><strong>DONE IN SOURCE</strong> — Validate format and redirect invalid values to not-found (CRD-029). Verify in target.</td><td><span class="chip">Medium</span></td></tr>
+          <tr><td>SEC-010</td><td>Backend IDOR verification — <strong>CLOSED 2026-06-04</strong> (pentest-confirmed; CRD-035)</td><td>Entry criterion met — Phase 1 unblocked</td><td><span class="chip">High</span></td></tr>
+        </tbody>
+      </table>
+      <p><strong>Tracked outside immediate Phase 1 code fixes:</strong> SEC-008 (client-side UX gate by design; backend concern) and SEC-012 (session-storage hardening item addressed with API-base refactor scope).</p>
+    </section>
+
+    <section class="section">
+      <h2>4. Behavior Contract (P0 Rules)</h2>
+      <p>The following P0 rules must be proven equivalent before phase sign-off.</p>
+      <table>
+        <thead>
+          <tr><th>Rule ID</th><th>Rule</th><th>Phase Gate</th><th>SME Blocker</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>RULE-001</td><td>Account creation redirect gate</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-002</td><td>Contact creation redirect gate</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-004</td><td>Terms of Use version gate</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-005</td><td>Branch selection gate</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-006</td><td>Quote status lifecycle</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-007</td><td>Status to document mapping</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-010</td><td>Dashboard action menu by status</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-012</td><td>Decline irreversibility</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-013</td><td>RFQ submission irreversibility</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-014</td><td>Quote acceptance irreversibility</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-017</td><td>Payment terms</td><td>Phase 1</td><td>No</td></tr>
+          <tr><td>RULE-022</td><td>ABN checksum algorithm</td><td>Phase 2</td><td>No</td></tr>
+          <tr><td>RULE-035</td><td>Business name charset</td><td>Phase 2</td><td>Yes</td></tr>
+          <tr><td>RULE-040</td><td>Acceptance checkbox mandatory</td><td>Phase 2</td><td>No</td></tr>
+          <tr><td>RULE-050</td><td>NMI ABN display</td><td>Phase 2</td><td>Yes</td></tr>
+          <tr><td>RULE-052</td><td>Terms version configuration</td><td>Phase 2</td><td>No</td></tr>
+        </tbody>
+      </table>
+
+      <h3>P0 Confidence Blockers</h3>
+      <ul>
+        <li>RULE-035: confirm whether ampersand is valid in business names.</li>
+        <li>RULE-050: confirm NMI ABN and registered address are current legal values.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>5. Validation Strategy</h2>
+      <ul>
+        <li><strong>Phase 1:</strong> targeted code review + Playwright BDD regression + verification of previously closed controls.</li>
+        <li><strong>Phase 2:</strong> compiler-driven validation (noImplicitAny) + Storybook visual regression.</li>
+        <li><strong>Phase 3:</strong> hook contract tests + end-to-end wizard flow regression.</li>
+        <li><strong>Phase 4:</strong> artifact diff, bundle comparison, and LCP/TTI benchmark checks between old and new build.</li>
+        <li><strong>Phase 5:</strong> Given/When/Then characterization tests and property-based ABN tests.</li>
+        <li><strong>Phase 6:</strong> parallel-run staging validation + formal business UAT for all P0 rules.</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>6. Open Questions (Approval Gates)</h2>
+      <ul class="checklist">
+        <li><s>Has backend team confirmed SEC-010 org-scoping enforcement, or provided written risk acceptance?</s> <strong>CONFIRMED 2026-06-04 — CLOSED (CRD-035).</strong></li>
+        <li>Does RULE-035 business-name charset correctly handle ampersand and current ASIC guidance?</li>
+        <li>Are RULE-050 ABN and legal address values current and approved?</li>
+        <li>Has business analyst sign-off been completed for P0 rules before Phase 2 starts?</li>
+        <li>Is Terms version configuration still correct, and does migration require user re-acceptance communications?</li>
+        <li>Will PDF template pagination change during modernization, requiring earlier config externalization?</li>
+        <li>Is recalibration policy during ReportInProgress status intentional?</li>
+        <li>Is the target repository provisioned with required team access before Phase 6?</li>
+      </ul>
+    </section>
+
+    <section class="section">
+      <h2>7. Approval Block</h2>
+      <div class="approval">
+        <p>Approved by: ____________________   Title: ____________________   Date: __________</p>
+        <p>Approval covers:</p>
+        <p>
+          <span class="chip">Phase 1 only (1-2 person-weeks)</span>
+          <span class="chip">Full plan (Phases 1-6, 21-30 person-weeks)</span>
+        </p>
+        <p>Conditions / exceptions: _____________________________________________</p>
+        <p>Reviewed by (engineering lead): ____________________   Date: __________</p>
+        <p>Reviewed by (security lead): ____________________     Date: __________</p>
+        <p>Reviewed by (NMI business analyst): ________________ Date: __________</p>
+      </div>
+      <p class="small">
+        Produced from modernization workflow artifacts including analysis/ASSESSMENT.md, analysis/TOPOLOGY.html, analysis/BUSINESS_RULES.md, and analysis/DATA_OBJECTS.md.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

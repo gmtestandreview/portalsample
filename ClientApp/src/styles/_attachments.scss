@@ -1,0 +1,66 @@
+.drag-and-drop-target {
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: $dashboard-background;
+    text-decoration: none;
+    cursor: grab; // new for NMI
+  }
+}
+
+.attachment {
+  font-size: $font-size-base;
+  font-weight: bold;
+  background-color: $dashboard-background;
+  border-radius: 2px;
+  padding: 0.5rem;
+  min-width: 150px;
+
+  .icon-save {
+    height: 1rem;
+    width: 1rem;
+  }
+
+  .attachment-description {
+    display: flex;
+    flex-direction: column; // new for NMI
+    flex-wrap: wrap;
+    flex-grow: 1;
+    line-height: $line-height-sm;
+    min-height: 1.25rem;
+
+    .attachment-name {
+      word-break: break-word;
+    }
+
+    .attachment-size {
+      padding-top: 0.25rem;
+      padding-bottom: 2px;
+    }
+  }
+
+  // Category selector
+  .form-field-container {
+    margin-bottom: 0;
+    .form-label {
+      // Mimic .visually-hidden;
+      @include visually-hidden();
+    }
+  }
+
+  button {
+    height: 1rem;
+    width: 1rem;
+  }
+}
+
+.attachments-summary {
+  .attachment {
+    font-weight: normal;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-bottom: 0.5rem;
+  }
+}

@@ -1,0 +1,6 @@
+// Bootstrap 5 does not support the Sass module system (@use/@forward).
+// This shim isolates the Bootstrap @import to a single file so the migration
+// boundary is explicit and searchable.
+// Remove this file when upgrading to Bootstrap 6 and replace with:
+//   @use 'bootstrap/scss/bootstrap' as bs;
+@import 'bootstrap/scss/bootstrap';

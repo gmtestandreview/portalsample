@@ -1,0 +1,21 @@
+# Global fallback
+* @nmi/portal-maintainers
+
+# Design system ownership
+/packages/design-tokens/ @nmi/design-system
+/packages/react-components/ @nmi/design-system
+/packages/portal-patterns/ @nmi/design-system
+/.storybook/ @nmi/design-system
+
+# Frontend app
+/apps/portal-spa/ @nmi/frontend
+
+# Backend and integrations
+/src/Nmi.Portal.Api/ @nmi/backend
+/src/Nmi.Portal.Infrastructure/ @nmi/backend @nmi/integrations
+/src/Nmi.Portal.Functions/ @nmi/backend @nmi/integrations
+
+# Security-sensitive config
+/.github/workflows/ @nmi/platform @nmi/security
+/docs/operations/ @nmi/platform
+/docs/assurance/ @nmi/security @nmi/platform

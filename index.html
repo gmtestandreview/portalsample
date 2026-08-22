@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NMI Services Portal</title>
+
+  <!--
+    PWA / OS chrome colour. Canonical app identity is NMI Blue (#285576);
+    NMI Brand Red (#7B0B15) is an in-app accent only, not the chrome colour.
+    Keep these in sync with $nmi-primary in ClientApp/src/styles/_variables.scss.
+  -->
+  <meta name="theme-color" content="#285576" />
+  <meta name="msapplication-TileColor" content="#285576" />
+
+  <!--
+    Runtime configuration — injected by the server before the bundle loads.
+    In development (webpack-dev-server), set these in webpack.config.js via
+    HtmlWebpackPlugin templateParameters or use a .env.local file with the
+    dotenv-webpack plugin.
+
+    NEVER use process.env in source code — these window.* globals are the
+    only runtime config mechanism. See ClientApp/src/env.ts.
+  -->
+  <script>
+    globalThis.REACT_APP_B2C_CLIENTID                = '<%= REACT_APP_B2C_CLIENTID %>';
+    globalThis.REACT_APP_B2C_AUTHORITY               = '<%= REACT_APP_B2C_AUTHORITY %>';
+    globalThis.REACT_APP_B2C_KNOWN_AUTHORITIES       = '<%= REACT_APP_B2C_KNOWN_AUTHORITIES %>';
+    globalThis.REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL= '<%= REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL %>';
+    globalThis.REACT_APP_B2C_READ_SCOPE              = '<%= REACT_APP_B2C_READ_SCOPE %>';
+    globalThis.REACT_APP_B2C_USER_IMPERSONATION_SCOPE= '<%= REACT_APP_B2C_USER_IMPERSONATION_SCOPE %>';
+    globalThis.REACT_APP_B2C_REDIRECT_URL            = '<%= REACT_APP_B2C_REDIRECT_URL %>';
+    globalThis.EXTERNAL_REDIRECT_URL                 = '<%= EXTERNAL_REDIRECT_URL %>';
+    globalThis.REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY = '<%= REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY %>';
+    globalThis.REACT_APP_APPINSIGHTS_CONN_STRING     = '<%= REACT_APP_APPINSIGHTS_CONN_STRING %>';
+    globalThis.REACT_APP_GA_TRACKINGID               = '<%= REACT_APP_GA_TRACKINGID %>';
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

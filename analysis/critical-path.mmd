@@ -1,0 +1,41 @@
+flowchart TD
+    %% Go-live governance: SEC-010 backend ownership verification gates migration release.
+    A(["User navigates to portal"]):::entry
+    B["sign-in route\nMsalAuthenticationTemplate\ntriggers B2C PKCE redirect"]
+    C["Azure AD B2C\nexternal identity provider"]:::external
+    D["AccountProvider.tsx\nAccountLoginClient.signIn\nload org context + ABN\nwrite targetOrganisation → sessionStorage"]
+    E["PreConditions.tsx\ncheck: T&C accepted?\naccount created?\ncontact created?"]
+    F["Dashboard\nDashboardClient.getDashboardDraftsByPortalID\nDashboardClient.getDashboardQuotesByPortalID\nDashboardClient.getDashboardArtefactsByPortalID"]
+    G[/"User clicks 'Create RFQ'"/]
+    H["requestForQuote/create\nWizardForm initialises\n3 routed steps"]
+    I["Step 1 — Organisation & Contact\nAccountsClient.getAccountDetails\nApplicationClient.getApplicationOptions\nFormik + Yup validation\nWizardRoutedStep.validateHard"]
+    J["Step 2 — Instrument & Request\nApplicationClient.getInstrumentTypes\nApplicationClient.getServiceTypes\nRequestForQuoteClient.saveDraft on exit\nWizardRoutedStep.validateHard + validateSoft"]
+    K["Step 3 — Summary\nReview all entered data\nRequestForQuoteClient.submitApplication"]
+    L["Success page\n/request-for-quote-success/:id\nnotification written → sessionStorage"]
+    M["Dashboard reload\nread + clear notification\nshow success banner"]
+
+    A --> B
+    B --> C
+    C -->|"id_token + access_token\nPKCE code exchange"| D
+    D --> E
+    E -->|"all conditions met"| F
+    F --> G
+    G --> H
+    H --> I
+    I -->|"hard validation passes"| J
+    J -->|"hard validation passes"| K
+    K -->|"submit succeeds\n202 Accepted"| L
+    L -->|"redirect"| M
+    M --> GATE["Migration go-live gate\nSEC-010 backend ownership verification"]:::gate
+
+    E -->|"T&C not accepted"| TC["TermsAndCondition modal\nQuoteClient.getTermsAndConditions\nAccountLoginClient.acceptTerms"]
+    TC -->|"accepted"| F
+    E -->|"account not created"| AC["create-account wizard\n6 steps"]:::wizard
+    E -->|"contact not created"| CC["create-contact wizard\n3 steps"]:::wizard
+    AC --> E
+    CC --> E
+
+    classDef entry fill:#2d6a4f,color:#fff,stroke:#2d6a4f
+    classDef external fill:#4a4a6a,color:#d4d4d4,stroke:#7a7aaa
+    classDef wizard fill:#5a3e2b,color:#d4d4d4,stroke:#cc785c
+    classDef gate fill:#8c2f39,color:#fff,stroke:#8c2f39

@@ -1,0 +1,93 @@
+%% Alignment baseline (2026-06-04): open migration security set is SEC-008 (by-design), SEC-012 (architectural debt).
+%% P1 items closed: SEC-010 closed 2026-06-04 (pentest-confirmed; CRD-035); SEC-001, SEC-009, SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
+%% All P1 security gates cleared. Dashboard route migration unblocked.
+graph TD
+    subgraph Infrastructure
+        ENV[env.ts / types.ts]
+        STORE[Storage<br/>notification / targetOrg / cache]
+        AI[Instrumentation<br/>AppInsights + AppLogger]
+        API[API Client<br/>web-api-client.ts]
+        VAL[Validation<br/>Yup schemas + extensions]
+        COMMON[Shared Route Helpers<br/>helperFunctions / enums / quoteStatus]
+    end
+
+    subgraph Auth
+        AUTH[Auth<br/>MSAL / AccountProvider<br/>AuthenticatedElement / hooks]
+        PREC[PreConditions & Modals<br/>T&C / Branch / RFQ-Delete]
+    end
+
+    subgraph Shell
+        SHELL[UI Shell<br/>Layout / Header / Footer / GA]
+        BOOT[Bootstrap & Shell<br/>index.tsx / App.tsx / trustedtypes]
+    end
+
+    subgraph Forms
+        WIZ[Wizard / Forms Framework<br/>WizardForm / WizardRoutedStep]
+    end
+
+    subgraph Routes
+        DASH[Dashboard]
+        ACCT[Account Management<br/>create / update / addBranch<br/>contact create / update]
+        RFQ[Request for Quote<br/>create / edit / copy / view]
+        QUOT[Quotation & Quote Acceptance<br/>view / decline / accept wizard]
+        RPT[Measurement Reports<br/>list / detail / PDF]
+        HELP[Help & Services<br/>help-guide / services-we-offer]
+        SIGNIN[Auth Routes<br/>sign-in / sign-out]
+    end
+
+    BOOT --> AUTH
+    BOOT --> SHELL
+    BOOT --> AI
+
+    AUTH --> API
+    AUTH --> STORE
+    AUTH --> AI
+
+    PREC --> AUTH
+    PREC --> STORE
+    PREC --> API
+
+    SHELL --> ENV
+    SHELL --> AI
+
+    DASH --> AUTH
+    DASH --> API
+    DASH --> STORE
+    DASH --> PREC
+    DASH --> AI
+    DASH --> COMMON
+
+    ACCT --> AUTH
+    ACCT --> API
+    ACCT --> WIZ
+    ACCT --> VAL
+
+    RFQ --> AUTH
+    RFQ --> API
+    RFQ --> WIZ
+    RFQ --> VAL
+    RFQ --> STORE
+    RFQ --> COMMON
+
+    QUOT --> AUTH
+    QUOT --> API
+    QUOT --> WIZ
+    QUOT --> VAL
+    QUOT --> STORE
+    QUOT --> AI
+    QUOT --> COMMON
+
+    RPT --> COMMON
+
+    RPT --> AUTH
+    RPT --> API
+    RPT --> STORE
+
+    WIZ --> VAL
+    WIZ --> STORE
+    WIZ --> AI
+
+    SIGNIN --> AUTH
+
+    ENV --> STORE
+    API --> STORE

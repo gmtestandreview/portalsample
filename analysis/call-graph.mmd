@@ -1,0 +1,110 @@
+%% Governance note (2026-06-04): All P1 security gates cleared. SEC-010 closed — pentest-confirmed; CRD-035.
+%% Open items: SEC-008 (by-design), SEC-012 (architectural debt).
+graph TD
+    subgraph Bootstrap["Bootstrap & App Shell"]
+        IDX["index.tsx<br/>(entry)"]:::entry
+        APP["App.tsx<br/>(router)"]:::entry
+        TT["trustedtypes.ts"]
+    end
+
+    subgraph Auth["Auth Layer"]
+        MSAL["authConfig.ts"]
+        AP["AccountProvider.tsx"]
+        AE["AuthenticatedElement.tsx"]
+        HOOKS["hooks.tsx"]
+    end
+
+    subgraph PreCond["PreConditions & Modals"]
+        PC["PreConditions.tsx"]
+        MC["ModalContext.tsx"]
+        BNCH["BranchSelectorModal"]
+        TAC["TermsAndCondition"]
+        RFQ_DEL["RFQDeleteModal"]
+    end
+
+    subgraph WizFW["Wizard Framework"]
+        WF["WizardForm"]
+        WRS["WizardRoutedStep"]
+        ES["ErrorSummary"]
+        USP["UnsavedFormPrompt"]
+    end
+
+    subgraph VAL["Validation"]
+        YUP["yupExtensions"]
+        ADDR["addressValidation"]
+        CONT_V["contactValidation"]
+    end
+
+    subgraph Infra["Infrastructure"]
+        ENV["env.ts"]
+        API_C["web-api-client.ts"]
+        STORE["storage/*"]
+        AI["AppInsightsService"]
+    end
+
+    subgraph Routes["Route Modules"]
+        DASH["dashboard/index.tsx"]
+        ACCT["account/create & update"]
+        CONT["contact/create & update"]
+        RFQ_R["requestForQuote/*"]
+        QUOT_R["quotation/*"]
+        AQ_R["acceptQuote/*"]
+        RPT_R["measurementReport/*"]
+        HELP["help-guide"]
+        SIGNIN["sign-in / sign-out"]
+    end
+
+    IDX --> APP
+    IDX --> AP
+    IDX --> TT
+    APP --> AE
+    APP --> DASH
+    APP --> ACCT
+    APP --> CONT
+    APP --> RFQ_R
+    APP --> QUOT_R
+    APP --> AQ_R
+    APP --> RPT_R
+    APP --> HELP
+    APP --> SIGNIN
+
+    AE --> MSAL
+    AE --> PC
+    AP --> HOOKS
+    AP --> API_C
+    AP --> STORE
+
+    PC --> MC
+    MC --> BNCH
+    MC --> TAC
+    MC --> RFQ_DEL
+
+    DASH --> API_C
+    DASH --> STORE
+    DASH --> MC
+    ACCT --> WF
+    ACCT --> API_C
+    CONT --> WF
+    CONT --> API_C
+    RFQ_R --> WF
+    RFQ_R --> API_C
+    RFQ_R --> STORE
+    QUOT_R --> API_C
+    AQ_R --> WF
+    AQ_R --> API_C
+    RPT_R --> API_C
+
+    WF --> WRS
+    WRS --> ES
+    WRS --> USP
+    WRS --> STORE
+    WRS --> AI
+
+    ACCT --> VAL
+    CONT --> CONT_V
+    RFQ_R --> VAL
+    AQ_R --> VAL
+
+    API_C --> STORE
+
+    classDef entry fill:#cc785c,color:#fff,stroke:#cc785c

@@ -1,0 +1,44 @@
+{
+  "created_at_utc": "2026-05-16T06:10:45.354555+00:00",
+  "eval_type": "offline package-level static and trigger-proxy evals",
+  "limitation": "These evals inspect package structure, frontmatter, trigger boundaries, and reference organization. They do not spawn a live autonomous agent or measure model behavior.",
+  "baseline": {
+    "label": "previous_full_skill",
+    "skill_sha256_16": "553c141395b082e8",
+    "line_count": 657,
+    "static_checks": {
+      "passed": 1,
+      "total": 12,
+      "pass_rate": 0.08333333333333333
+    },
+    "trigger_proxy": {
+      "passed": 6,
+      "total": 12,
+      "pass_rate": 0.5
+    }
+  },
+  "revised": {
+    "label": "revised_slim_skill",
+    "skill_sha256_16": "6722fe5b51e0e872",
+    "line_count": 216,
+    "static_checks": {
+      "passed": 12,
+      "total": 12,
+      "pass_rate": 1.0
+    },
+    "trigger_proxy": {
+      "passed": 12,
+      "total": 12,
+      "pass_rate": 1.0
+    }
+  },
+  "combined": {
+    "baseline_passed": 7,
+    "baseline_total": 24,
+    "baseline_pass_rate": 0.2916666666666667,
+    "revised_passed": 24,
+    "revised_total": 24,
+    "revised_pass_rate": 1.0
+  },
+  "duration_ms": 5
+}

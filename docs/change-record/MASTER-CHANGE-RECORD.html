@@ -1,0 +1,1207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NMI Portal - Master Change Record</title>
+  <style>
+    body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; background: #f5f7fb; color: #1f2937; line-height: 1.55; }
+    main { max-width: 1200px; margin: 1.5rem auto 2rem; padding: 1rem 1.25rem; background: #ffffff; border: 1px solid #d8e0ea; border-radius: 12px; box-shadow: 0 4px 14px rgba(17,24,39,0.06); }
+    h1, h2, h3, h4 { color: #123f65; }
+    h1 { border-bottom: 2px solid #e6eef7; padding-bottom: 0.4rem; }
+    table { width: 100%; border-collapse: collapse; margin: 0.8rem 0 1rem; font-size: 0.93rem; }
+    th, td { border: 1px solid #d8e0ea; padding: 0.5rem 0.55rem; text-align: left; vertical-align: top; }
+    th { background: #edf4fb; }
+    code { background: #eef3f8; padding: 0.1rem 0.3rem; border-radius: 4px; }
+    pre { background: #0f1720; color: #e7edf3; padding: 0.8rem; border-radius: 8px; overflow-x: auto; }
+    hr { border: 0; border-top: 1px solid #d8e0ea; margin: 1.2rem 0; }
+    ul, ol { padding-left: 1.3rem; }
+    @media (max-width: 700px) { main { margin: 0.5rem; padding: 0.8rem; } table { font-size: 0.84rem; } }
+  </style>
+</head>
+<body>
+  <main>
+<h1 id="nmi-portal-master-change-record">NMI Portal — Master Change Record</h1>
+<p><strong>Purpose:</strong> Single authoritative chronological log of every change made to the NMI Portal codebase during migration preparation. Every migration batch decision is traceable to an entry here.
+<strong>Reference:</strong> Migration preparation Phases A–N (2026-05-29 to 2026-05-31), Sprint 1 Storybook Quality Remediation, and the 2026-06-28 current-tree reconciliation.
+<strong>Last updated:</strong> 2026-06-28 (CRD-041)</p>
+<p><strong>Latest delta (CRD-041):</strong> Current-tree migration reconciliation records React Router v7, 41 registered paths, the six pattern/type approval routes and supporting components, expanded Storybook inventories, 114 unit-test files / 1,169 passing tests, and zero-diagnostic type-check/lint results. It opens <code>TYPE-APPROVAL-E2E-001</code> for the six reviewed app-BDD exclusions and <code>COVERAGE-GATE-001</code> because the configured 100% unit-coverage thresholds currently fail.</p>
+<hr />
+<h2 id="migration-preparation-control-procedure">Migration Preparation Control Procedure</h2>
+<p>This record is the foundation document for live migration planning. Before any migration batch begins, the migration lead must use this file to perform a full historical reconciliation:</p>
+<ol>
+<li>Review every entry in this file against its source artefacts, including all plans, sprint documents, issue backlogs, QA notes, architecture diagrams, assessment reports, and concern registers that predate the 2026-05-29 readiness assessment.</li>
+<li>Confirm each recorded action is either <code>COMPLETE</code>, <code>FALSE FINDING</code>, <code>DEFERRED WITH OWNER</code>, or present in <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code>.</li>
+<li>For each migration batch in <code>docs/migration/MIGRATION-RUNBOOK.md</code>, cite the relevant <code>CRD-*</code> entries before files are moved into the live environment.</li>
+<li>If any undocumented change, unresolved decision, or incomplete task is discovered, add a new <code>CRD-*</code> entry here and add a corresponding backlog item unless the item is closed immediately with evidence.</li>
+</ol>
+<h3 id="source-to-target-merge-matrix">Source-to-Target Merge Matrix</h3>
+<p>The following source artefacts must be merged into the seven migration-preparation targets. This matrix is intentionally operational: it defines where each source of truth must land before migration execution.</p>
+<table>
+<thead>
+<tr>
+<th>Source document</th>
+<th>Extract and reconcile</th>
+<th>Target document(s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>analysis/ARCHITECTURE.mmd</code></td>
+<td>Runtime domain map, dependency boundaries, auth/storage/validation/instrumentation relationships</td>
+<td><code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code>, <code>docs/migration/MIGRATION-RUNBOOK.md</code>, <code>docs/superpowers/plans/2026-05-31-migration-preparation.md</code>, both assessment HTML files</td>
+</tr>
+<tr>
+<td><code>analysis/ASSESSMENT.html</code> and <code>analysis/ASSESSMENT.md</code></td>
+<td>Security findings, technical debt, documentation gaps, sprint sequencing, refactor-not-rebuild decision</td>
+<td><code>docs/change-record/MASTER-CHANGE-RECORD.md</code>, <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code>, runbook, plan, both assessment HTML files</td>
+</tr>
+<tr>
+<td><code>analysis/MODERNIZATION_BRIEF.md</code></td>
+<td>Phased modernization plan, remaining security fixes, SME questions, target repository and approval gates</td>
+<td><code>docs/change-record/MASTER-CHANGE-RECORD.md</code>, <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code>, runbook, plan, backlog HTML report</td>
+</tr>
+<tr>
+<td><code>docs/CONCERNS.md</code></td>
+<td>Resolved concerns, remaining fragile areas, open questions, performance and security caveats</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code>, pre-flight checklist, runbook, plan, both assessment HTML files</td>
+</tr>
+</tbody>
+</table>
+<h3 id="closure-rule">Closure Rule</h3>
+<p>No historical item may remain implicit. If the review identifies an item that is not demonstrably closed, it must be logged in <code>OPEN-ITEMS-BACKLOG.md</code> with owner, priority, gate, evidence source, and target resolution window. The live migration may proceed only when all Priority 1 items are closed or formally approved as migration-window remediation items.</p>
+<h3 id="source-revalidation-summary">2026-06-02 Source Revalidation Summary</h3>
+<table>
+<thead>
+<tr>
+<th>Source item</th>
+<th>Revalidated status</th>
+<th>Evidence / destination</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ARCHITECTURE.mmd</code> auth-bypass reference</td>
+<td>CLOSED — <code>devAuth.ts</code> removed from architecture diagram after Phase A deletion</td>
+<td><code>analysis/ARCHITECTURE.mmd</code>; CRD-001</td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-001 / SEC-007 auth bypass findings</td>
+<td>CLOSED</td>
+<td>CRD-001</td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-002 Trusted Types finding</td>
+<td>CLOSED</td>
+<td>CRD-006</td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-004 mailto encoding finding</td>
+<td>CLOSED</td>
+<td>CRD-005</td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-005 PII logging finding</td>
+<td>CLOSED</td>
+<td>CRD-003</td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-006 IDOR finding</td>
+<td>OPEN — tracked under later readiness ID <code>SEC-010 IDOR</code></td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code>; <code>docs/sec/SEC-010-idor-backend-verification.md</code></td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-008 open redirect finding</td>
+<td>CLOSED</td>
+<td>CRD-004</td>
+</tr>
+<tr>
+<td><code>ASSESSMENT.md</code> SEC-010 validation regex finding</td>
+<td>OPEN, non-blocking validation semantics decision</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> item <code>VAL-REGEX-001</code></td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> provider-level ErrorBoundary gap</td>
+<td>CLOSED</td>
+<td>CRD-007</td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> Trusted Types gap</td>
+<td>CLOSED</td>
+<td>CRD-006</td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> dashboard debounce concern</td>
+<td>CLOSED</td>
+<td>CRD-012 / CRD-013 dashboard tests and cleanup</td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> remaining operational questions</td>
+<td>OPEN or deferred</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> Priority 3 items</td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> backend API versioning question</td>
+<td>OPEN migration-platform decision</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> Priority 2 item 15; CRD-025</td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> App Insights instrumentation-key question</td>
+<td>OPEN pre-flight evidence item</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> item <code>AUTH-OPS-003</code>; CRD-025</td>
+</tr>
+<tr>
+<td><code>CONCERNS.md</code> dashboard deferred-engineering comments and AccountContext interface-test hardening</td>
+<td>OPEN or deferred</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> items <code>DASHBOARD-DEBT-001</code> and <code>AUTH-CONTEXT-001</code>; CRD-025</td>
+</tr>
+<tr>
+<td>Modernisation HTML security findings SEC-003 / SEC-009</td>
+<td>Was OPEN as of CRD-024; CLOSED by CRD-029 with source/test/search evidence and validation caveats</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> items <code>SEC-MOD-003</code> and <code>SEC-MOD-009</code>; CRD-024; CRD-029</td>
+</tr>
+<tr>
+<td>Modernisation HTML runtime-env finding for <code>process.env.NODE_ENV</code></td>
+<td>Was OPEN as of CRD-024; CLOSED by CRD-029 with source/test/search evidence and validation caveats</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> item <code>RUNTIME-ENV-001</code>; CRD-024; CRD-029</td>
+</tr>
+<tr>
+<td>2026-06-02 type-check revalidation</td>
+<td>CLOSED — direct TypeScript is clean; prior combined validation-gate failure was resolved and closed in CRD-032</td>
+<td><code>reports/type-check/2026-06-02-classification.md</code>; <code>OPEN-ITEMS-BACKLOG.md</code>; CRD-030; CRD-032</td>
+</tr>
+<tr>
+<td>Rebuild-readiness top-level <code>await</code> target-platform caveat</td>
+<td>OPEN migration-platform decision</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> Priority 2 item 14; CRD-024</td>
+</tr>
+<tr>
+<td>Modernisation HTML remaining technical-debt and documentation findings</td>
+<td>OPEN or deferred</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> Priority 3 items; CRD-024</td>
+</tr>
+<tr>
+<td>Storybook source-quality assessment findings</td>
+<td>CLOSED for Sprint 1 remediation baseline; residual polish deferred</td>
+<td>CRD-015 through CRD-020; <code>OPEN-ITEMS-BACKLOG.md</code> Storybook P3 items; CRD-026</td>
+</tr>
+<tr>
+<td>Storybook autodocs implementation</td>
+<td>CLOSED for initial implementation; optional expansion deferred</td>
+<td>CRD-026; <code>OPEN-ITEMS-BACKLOG.md</code> item <code>STORYBOOK-AUTODOCS-001</code></td>
+</tr>
+<tr>
+<td>Storybook coverage matrix and migration readiness</td>
+<td>CLOSED_SUCCESS for narrowed migration goal; Phase 4 drift/exclusion work deferred</td>
+<td>CRD-026; <code>OPEN-ITEMS-BACKLOG.md</code> items <code>STORYBOOK-DRIFT-001</code> and <code>STORYBOOK-EXCLUSIONS-001</code></td>
+</tr>
+<tr>
+<td>Playwright Storybook BDD workflow trace and improvement plan</td>
+<td>CLOSED_SUCCESS for 129/129 run; next-cycle process guardrails deferred</td>
+<td>CRD-026; <code>OPEN-ITEMS-BACKLOG.md</code> item <code>STORYBOOK-BDD-PROCESS-001</code></td>
+</tr>
+<tr>
+<td><code>analysis/ASSESSMENT.html</code> stakeholder modernization scorecard and 90-day plan</td>
+<td>OPEN items reconciled; refactor-not-rebuild decision retained</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> items <code>ASSESSMENT-SEC-CAVEATS-001</code>, <code>HELPER-PROMISE-001</code>, and <code>CRITICAL-UNIT-COVERAGE-001</code>; CRD-027</td>
+</tr>
+<tr>
+<td><code>analysis/ARCHITECTURE.mmd</code> runtime dependency diagram</td>
+<td>CLOSED as documentation evidence; no separate open change identified</td>
+<td>CRD-027; existing architecture/backlog items for auth, storage, API, validation, instrumentation, and wizard boundaries</td>
+</tr>
+<tr>
+<td><code>analysis/MODERNIZATION_BRIEF.md</code> phased modernization plan and open questions</td>
+<td>Brief security fixes were OPEN as of CRD-028; <code>BRIEF-SEC-001</code>, <code>BRIEF-SEC-009</code>, and <code>BRIEF-SEC-011</code> CLOSED by CRD-029 with source/test/search evidence and validation caveats; approval and phase-gate questions remain explicit</td>
+<td><code>OPEN-ITEMS-BACKLOG.md</code> items <code>BRIEF-SEC-001</code>, <code>BRIEF-SEC-009</code>, <code>BRIEF-SEC-011</code>, and Priority 2 items 16-22; CRD-028; CRD-029</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="change-log">Change Log</h2>
+<hr />
+<h3 id="phase-a-2026-05-29-auth-bypass-retired">[Phase A] — 2026-05-29 — Auth Bypass Retired</h3>
+<p><strong>Change ID:</strong> CRD-001
+<strong>Source:</strong> Readiness assessment Section 12; SEC-001/SEC-002 findings
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> SEC-001 (devAuth bypass path in production bundle), SEC-002 (mock account injection via env vars)
+<strong>Tests added:</strong> 0 (type-check verification only; auth flow covered by MSAL integration)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/authentication/devAuth.ts</code> — DELETED; bypass module no longer exists in source</p>
+</li>
+<li><p><code>ClientApp/src/authentication/AuthenticatedElement.tsx</code> — removed <code>isAuthBypassEnabled</code> import; replaced bypass ternary with direct <code>MsalAuthenticationTemplate</code></p>
+</li>
+<li><p><code>ClientApp/src/authentication/AccountProvider.tsx</code> — removed <code>devAuth</code> import; removed <code>authBypassEnabled</code> variable; removed mock-account <code>useEffect</code>; removed bypass early-returns; removed <code>authBypassEnabled</code> from all <code>useEffect</code> dependency arrays</p>
+</li>
+<li><p><code>ClientApp/src/env.ts</code> — removed 6 auth-bypass/mock variables (<code>REACT_APP_AUTH_BYPASS</code> and 5 mock-account vars); env object now declares exactly 11 vars</p>
+</li>
+<li><p><code>index.html</code> — removed 6 bypass/mock <code>window.*</code> injection lines</p>
+</li>
+<li><p><code>webpack.config.js</code> — removed 6 entries from <code>devEnvVars</code> object</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> Auth bypass code path is entirely absent from the codebase; type-check passes clean; SEC-001 and SEC-002 security blockers resolved.</p>
+<hr />
+<h3 id="phase-b-2026-05-29-accountcontext-re-renders-resolved">[Phase B] — 2026-05-29 — AccountContext Re-renders Resolved</h3>
+<p><strong>Change ID:</strong> CRD-002
+<strong>Source:</strong> Readiness assessment Section 12; performance/stability gap
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (type-check verification; render-stability covered by downstream integration tests)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/authentication/AccountProvider.tsx</code> — all 7 dispatch callbacks converted to functional updater form (<code>setAccountDetails(prev =&gt; ...)</code>) with <code>[]</code> dependency arrays; <code>dispatchValue</code> is permanently stable after mount; 5 direct state mutations eliminated</li>
+</ul>
+<p><strong>Outcome:</strong> AccountContext <code>dispatchValue</code> is referentially stable; downstream components no longer experience spurious re-renders caused by provider identity churn.</p>
+<hr />
+<h3 id="phase-c-2026-05-29-pii-logging-scrubbed">[Phase C] — 2026-05-29 — PII Logging Scrubbed</h3>
+<p><strong>Change ID:</strong> CRD-003
+<strong>Source:</strong> Readiness assessment Section 12; SEC-003/SEC-004/SEC-005/SEC-008 findings; 13 call sites
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> SEC-003 (account object logged to AppInsights), SEC-004 (quote request object logged), SEC-005 (address/contact PII in console), SEC-008 (GA event properties containing PII)
+<strong>Tests added:</strong> 0 (scrubbing is a deletion-only change; verified by absence of raw object references)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/authentication/AccountProvider.tsx</code> — 3 verbose <code>AppLogger</code> calls scrubbed; replaced with <code>{ homeAccountId }</code> projection</p>
+</li>
+<li><p><code>ClientApp/src/routes/dashboard/index.tsx</code> — 1 call scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx</code> — raw object log scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/routes/acceptQuote/reportRecipient.tsx</code> — raw object log scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx</code> — 4 calls scrubbed; replaced with <code>{ crmQuoteRequestId }</code> projection</p>
+</li>
+<li><p><code>ClientApp/src/components/Utilities/ViewPdfQuote.tsx</code> — 2 calls scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/components/Utilities/ViewMeasurementReport.tsx</code> — 2 calls scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/components/Utilities/ViewPdfQuoteTerms.tsx</code> — 1 call scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx</code> — 1 call scrubbed</p>
+</li>
+<li><p><code>ClientApp/src/analytics/GoogleAnalytics.tsx</code> — localhost <code>console.log</code> block removed</p>
+</li>
+<li><p><code>ClientApp/src/routes/common/helperFunctions.ts</code> — pre-redaction <code>console.log</code> block removed</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> No raw PII (account, address, contact, or quote objects) is emitted to any telemetry or console sink; all 13 call sites use safe scalar projections.</p>
+<hr />
+<h3 id="phase-d-2026-05-29-external-redirect-url-allowlist">[Phase D] — 2026-05-29 — External Redirect URL Allowlist</h3>
+<p><strong>Change ID:</strong> CRD-004
+<strong>Source:</strong> Readiness assessment Section 12; SEC-006 finding
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> SEC-006 (open redirect via unvalidated <code>EXTERNAL_REDIRECT_URL</code>)
+<strong>Tests added:</strong> 0 (validator throws at module load; verified by type-check and manual review)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/env.ts</code> — <code>isAllowedRedirectHost()</code> validator added; function throws at module load if <code>REACT_APP_EXTERNAL_REDIRECT_URL</code> hostname is not within the <code>measurement.gov.au</code> or <code>localhost</code> allowlist</li>
+</ul>
+<p><strong>Outcome:</strong> Any deployment misconfiguration that sets an off-allowlist redirect URL will cause an immediate, visible module-load failure rather than silently permitting an open redirect.</p>
+<hr />
+<h3 id="phase-e-2026-05-29-mailto-subject-encoding">[Phase E] — 2026-05-29 — mailto Subject Encoding</h3>
+<p><strong>Change ID:</strong> CRD-005
+<strong>Source:</strong> Readiness assessment Section 12; SEC-007 finding
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> SEC-007 (unencoded user-controlled content in <code>mailto:</code> subject line)
+<strong>Tests added:</strong> 0 (single-line fix; verified by code review)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/routes/quotation/nMIContactDetails.tsx</code> — <code>encodeURIComponent()</code> applied to subject interpolation in <code>mailto:</code> href</p>
+</li>
+<li><p><code>ClientApp/src/routes/measurementReport/nMIContactDetails.tsx</code> — identical fix applied</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> User-supplied content in <code>mailto:</code> subject lines is URI-encoded, preventing header injection and malformed link generation.</p>
+<hr />
+<h3 id="phase-f-2026-05-29-trustedtypes-createhtml-and-createscript">[Phase F] — 2026-05-29 — TrustedTypes createHTML and createScript</h3>
+<p><strong>Change ID:</strong> CRD-006
+<strong>Source:</strong> Readiness assessment Section 12; SEC-009 finding
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> SEC-009 (TrustedTypes policy had stub <code>createHTML</code> that returned raw string; <code>createScript</code> was absent)
+<strong>Tests added:</strong> 0 (policy correctness verified by review; runtime enforcement by browser CSP)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/trustedtypes.ts</code> — <code>createHTML</code> implemented with <code>DOMPurify.sanitize()</code> returning a <code>TrustedHTML</code> value; <code>createScript</code> throws unconditionally (no dynamic script creation is permitted)</li>
+</ul>
+<p><strong>Outcome:</strong> The TrustedTypes policy now actively sanitizes HTML via DOMPurify and rejects all script creation, satisfying the Content Security Policy enforcement requirement.</p>
+<hr />
+<h3 id="phase-g-2026-05-29-provider-level-errorboundary">[Phase G] — 2026-05-29 — Provider-Level ErrorBoundary</h3>
+<p><strong>Change ID:</strong> CRD-007
+<strong>Source:</strong> Readiness assessment Section 12; stability gap
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (ErrorBoundary behaviour covered by React's own test utilities in integration layer)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/index.tsx</code> — <code>&lt;ErrorBoundary&gt;</code> added as the outermost wrapper around <code>&lt;MsalProvider&gt;</code> in <code>root.render()</code>; unhandled render errors are now caught at the provider level rather than crashing the entire React tree</li>
+</ul>
+<p><strong>Outcome:</strong> Unhandled errors thrown during provider initialisation or child rendering are caught by the boundary and surfaced as a recoverable error UI rather than a blank page.</p>
+<hr />
+<h3 id="phase-h-2026-05-29-callingpath-relative-path-guard">[Phase H] — 2026-05-29 — callingPath Relative-Path Guard</h3>
+<p><strong>Change ID:</strong> CRD-008
+<strong>Source:</strong> Readiness assessment Section 12; SEC-011 finding
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> SEC-011 (open navigation via unvalidated <code>callingPath</code> in BranchSelectorModal)
+<strong>Tests added:</strong> 0 (guard is a single conditional; verified by code review)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/components/modals/BranchSelectorModal/index.tsx</code> — <code>callingPath.startsWith('/')</code> guard added before use in <code>navigate()</code>; paths that do not begin with <code>/</code> fall back to <code>'/'</code></li>
+</ul>
+<p><strong>Outcome:</strong> <code>callingPath</code> is validated as a relative path before navigation; external or protocol-relative values cannot be used to redirect the user off-domain.</p>
+<hr />
+<h3 id="phase-i-2026-05-29-documentation-corrections">[Phase I] — 2026-05-29 — Documentation Corrections</h3>
+<p><strong>Change ID:</strong> CRD-009
+<strong>Source:</strong> Readiness assessment Section 12; documentation accuracy gap
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (documentation-only change)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>docs/ARCHITECTURE.md</code> — Yup validator count corrected from 17 to 19; AccountContext re-render issue marked RESOLVED</p>
+</li>
+<li><p><code>docs/CONVENTIONS.md</code> — PII logging bullet extended with AppLogger caveat noting projection requirement</p>
+</li>
+<li><p><code>CLAUDE.md</code> — Yup method list expanded to enumerate all 19 custom methods</p>
+</li>
+<li><p><code>docs/STORYBOOK-MIGRATION-READINESS.md</code> — scope caveat added noting that API-heavy flows require MSW harness wiring and are excluded from static Storybook coverage</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> Internal documentation accurately reflects the post-Phase A–H codebase state; no stale counts or resolved issues remain listed as open.</p>
+<hr />
+<h3 id="phase-j-2026-05-30-wizardroutedstep-refactor">[Phase J] — 2026-05-30 — WizardRoutedStep Refactor</h3>
+<p><strong>Change ID:</strong> CRD-010
+<strong>Source:</strong> Readiness assessment Section 12; SonarLint complexity finding; error-state correctness gap
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 19 (14 unit + 5 integration)</p>
+<ul>
+<li><p><code>tests/unit/components/forms/wizardRoutedStep/errorState.test.ts</code> — 14 unit tests for <code>resolveErrorState()</code> and <code>resolveForbiddenState()</code></p>
+</li>
+<li><p><code>tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx</code> — 5 integration tests covering step transitions and error rendering
+<strong>Files changed:</strong></p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/errorState.ts</code> — CREATED; pure <code>resolveErrorState()</code> and <code>resolveForbiddenState()</code> helper functions extracted from component</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/types.ts</code> — <code>WizardStepError</code> discriminated union added with 9 variants; full JSDoc added to all 3 prop types</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx</code> — 8 separate error boolean <code>useState</code> calls replaced with single <code>useState&lt;WizardStepError&gt;</code>; all catch blocks delegate to <code>resolveErrorState()</code>; silent load failure path restored; prop mutation fixed</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> WizardRoutedStep error handling is modelled as a typed discriminated union; SonarLint cognitive complexity finding is resolved; 19 new tests confirm correctness.</p>
+<hr />
+<h3 id="phase-k-2026-05-30-sonarlint-cleanup-phase-1">[Phase K] — 2026-05-30 — SonarLint Cleanup Phase 1</h3>
+<p><strong>Change ID:</strong> CRD-011
+<strong>Source:</strong> Readiness assessment Section 12; SonarLint static analysis — 20 findings
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (linting/style fixes only)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/components/forms/WizardForm/types.ts</code> — S1128 (unused import), S4782×5 (non-null assertions on optional props), S1874×2 (deprecated type usage)</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/errorState.ts</code> — S3776 (cognitive complexity reduction)</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx</code> — S4624 (type assertion), S125×2 (commented-out code), S7764 (duplicate condition), S7735 (dead branch)</p>
+</li>
+<li><p><code>ClientApp/src/components/Forms/ErrorSummary/index.tsx</code> — S4325 (unused generic param), S6551 (boolean expression simplification), S7735 (dead branch), S6653 (prefer <code>Array.flat</code>), S7781×2 (redundant type casts)</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> 20 SonarLint findings across 4 files resolved; no logic changes — purely diagnostic compliance improvements.</p>
+<hr />
+<h3 id="phase-l-2026-05-30-quality-gaps-12-tasks">[Phase L] — 2026-05-30 — Quality Gaps (12 Tasks)</h3>
+<p><strong>Change ID:</strong> CRD-012
+<strong>Source:</strong> Readiness assessment Section 12; quality gap list (12 items)
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None (SEC-010 IDOR comment added to dashboard; backend review deferred — see Open Items)
+<strong>Tests added:</strong> 17 (across 4 new test files)</p>
+<ul>
+<li><p><code>tests/unit/validationSchemas/stringExtensions.businessName.test.ts</code> — 5 tests</p>
+</li>
+<li><p><code>tests/unit/validationSchemas/emailSchema.consolidation.test.ts</code> — 5 tests</p>
+</li>
+<li><p><code>tests/unit/authentication/AccountProvider.errored.test.tsx</code> — 2 tests</p>
+</li>
+<li><p><code>tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx</code> — 5 tests
+<strong>Files changed:</strong></p>
+</li>
+<li><p><code>tests/unit/validationSchemas/stringExtensions.businessName.test.ts</code> — CREATED; 5 businessName validator tests</p>
+</li>
+<li><p><code>tests/unit/validationSchemas/emailSchema.consolidation.test.ts</code> — CREATED; 5 emailSchema consolidation tests</p>
+</li>
+<li><p><code>tests/unit/authentication/AccountProvider.errored.test.tsx</code> — CREATED; 2 errored-state tests</p>
+</li>
+<li><p><code>tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx</code> — CREATED; 5 navigation tests</p>
+</li>
+<li><p><code>docs/adr/2026-05-30-acquire-token-silent-interceptor.md</code> — CREATED; ADR documenting deferred centralisation of <code>acquireTokenSilent</code> call sites</p>
+</li>
+<li><p><code>ClientApp/src/validationSchemas/contactValidation.ts</code> — local <code>emailSchema</code> duplicate removed; now imports from <code>common.ts</code></p>
+</li>
+<li><p><code>ClientApp/src/authentication/AccountProvider.tsx</code> — errored state now surfaces <code>&lt;BlockUISpinner&gt;</code>; children rendered only when <code>!errored</code></p>
+</li>
+<li><p><code>ClientApp/src/routes/dashboard/index.tsx</code> — SEC-010 IDOR comment added; <code>FetchRequestsParams</code> options-bag introduced; helper functions extracted; non-null assertions removed</p>
+</li>
+<li><p><code>ClientApp/src/routes/requestForQuote/create/index.tsx</code> — <code>!</code> non-null assertion removed; optional chain used</p>
+</li>
+<li><p><code>ClientApp/src/routes/requestForQuote/index.tsx</code> — <code>!</code> non-null assertions removed; optional chaining used throughout</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/NextStepButton.tsx</code> — commented-out code blocks removed</p>
+</li>
+<li><p><code>ClientApp/src/validationSchemas/common.ts</code> — cleanup; <code>numberToText</code> lookup function added</p>
+</li>
+<li><p><code>ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts</code> — <code>buildErrMsg</code> helper extracted; <code>String.raw</code> applied to regex literals; duplicate regex patterns deduplicated</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> 12 quality gaps closed; 17 new tests added; emailSchema consolidated to a single source of truth; AccountProvider now surfaces a visible error state to the user rather than silently failing.</p>
+<hr />
+<h3 id="phase-m-2026-05-31-sprint-2-hardening-and-sonarlint-phase-2">[Phase M] — 2026-05-31 — Sprint 2 Hardening and SonarLint Phase 2</h3>
+<p><strong>Change ID:</strong> CRD-013
+<strong>Source:</strong> Readiness assessment Sprint 2 hardening items; SonarLint phase 2 findings; Gaps 3–7
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None (SEC-010 backend verification checklist created — see Open Items)
+<strong>Tests added:</strong> 173 (across 5 new test files)</p>
+<ul>
+<li><p><code>tests/unit/routes/preConditions.test.tsx</code> — 16 tests (Gap 3 resolved)</p>
+</li>
+<li><p><code>tests/unit/routes/dashboard.test.tsx</code> — 7 tests (Gap 7 resolved)</p>
+</li>
+<li><p><code>tests/unit/validationSchemas/stringExtensions.test.ts</code> — 132 tests (Gap 4 resolved)</p>
+</li>
+<li><p><code>tests/unit/storage/sessionStorageCache.test.ts</code> — 9 tests (Gap 5 resolved)</p>
+</li>
+<li><p><code>tests/unit/routes/errorRoutes.test.ts</code> — 9 tests (Gap 6 resolved)
+<strong>Files changed:</strong></p>
+</li>
+<li><p><code>tests/unit/routes/preConditions.test.tsx</code> — CREATED; 16 route pre-condition tests</p>
+</li>
+<li><p><code>tests/unit/routes/dashboard.test.tsx</code> — CREATED; 7 dashboard route tests</p>
+</li>
+<li><p><code>tests/unit/validationSchemas/stringExtensions.test.ts</code> — CREATED; 132 string extension validator tests</p>
+</li>
+<li><p><code>tests/unit/storage/sessionStorageCache.test.ts</code> — CREATED; 9 session storage cache tests</p>
+</li>
+<li><p><code>tests/unit/routes/errorRoutes.test.ts</code> — CREATED; 9 error route tests</p>
+</li>
+<li><p><code>docs/sec/SEC-010-idor-backend-verification.md</code> — CREATED; backend IDOR verification checklist</p>
+</li>
+<li><p><code>ClientApp/src/routes/dashboard/dashboardNotifications.ts</code> — SonarLint fixes</p>
+</li>
+<li><p><code>ClientApp/src/storage/sessionStorageCache.ts</code> — SonarLint fixes</p>
+</li>
+<li><p><code>ClientApp/src/analytics/GoogleAnalytics.tsx</code> — SonarLint fixes</p>
+</li>
+<li><p><code>ClientApp/src/instrumentation/AppLogger.ts</code> — SonarLint fixes</p>
+</li>
+<li><p><code>ClientApp/src/routes/preConditions/PreConditions.tsx</code> — SonarLint fixes</p>
+</li>
+<li><p><code>ClientApp/src/routes/dashboard/index.tsx</code> — SonarLint fixes; cognitive complexity further reduced</p>
+</li>
+<li><p><code>tsconfig.json</code> — IDE configuration corrected</p>
+</li>
+<li><p><code>.storybook/preview.ts</code> — font import paths corrected; eliminates 56 asset 404 failures in Storybook</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> 173 new tests close Gaps 3–7; SonarLint phase 2 findings resolved across 6 source files; Storybook font 404 failures eliminated; SEC-010 backend verification checklist created for handover.</p>
+<hr />
+<h3 id="phase-n-2026-05-31-remaining-migration-readiness-gaps">[Phase N] — 2026-05-31 — Remaining Migration-Readiness Gaps</h3>
+<p><strong>Change ID:</strong> CRD-014
+<strong>Source:</strong> Readiness assessment Section 12; migration-readiness gap list (final batch)
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 6 (across 2 new test files)</p>
+<ul>
+<li><p><code>tests/unit/components/modals/TermsAndConditionModal.test.tsx</code> — 4 tests (includes regression for <code>setIsLoading</code> bug)</p>
+</li>
+<li><p><code>tests/unit/validationSchemas/transitiveYupImports.test.ts</code> — 2 tests (verifies explicit Yup side-effect imports)
+<strong>Files changed:</strong></p>
+</li>
+<li><p><code>tests/unit/components/modals/TermsAndConditionModal.test.tsx</code> — CREATED; 4 modal tests including <code>setIsLoading</code> bug regression</p>
+</li>
+<li><p><code>tests/unit/validationSchemas/transitiveYupImports.test.ts</code> — CREATED; 2 tests verifying transitive Yup import correctness</p>
+</li>
+<li><p><code>docs/architecture/org-switching-lifecycle.md</code> — CREATED; documents organisation-switching state machine</p>
+</li>
+<li><p><code>docs/architecture/nswag-regeneration.md</code> — CREATED; documents NSwag/OpenAPI client regeneration procedure</p>
+</li>
+<li><p><code>docs/architecture/storybook-vs-webpack-runtime.md</code> — CREATED; documents runtime differences between Storybook and Webpack environments</p>
+</li>
+<li><p><code>docs/architecture/bdd-e2e-step-coverage.md</code> — CREATED; documents BDD/Playwright step coverage boundaries</p>
+</li>
+<li><p><code>docs/architecture/target-repo-storybook-placement.md</code> — CREATED; documents Storybook placement decision for target repository</p>
+</li>
+<li><p><code>docs/migration/msw-init-checklist.md</code> — CREATED; MSW initialisation checklist for migration</p>
+</li>
+<li><p><code>ClientApp/src/components/modals/TermsAndCondition/index.tsx</code> — <code>setIsLoading(false)</code> bug fixed; loading state is now correctly cleared after async operations</p>
+</li>
+<li><p><code>ClientApp/src/account/update/validation.ts</code> — explicit Yup side-effect import added (<code>import '../../validationSchemas/yupExtensions'</code>)</p>
+</li>
+<li><p><code>ClientApp/src/account/addBranch/validation.ts</code> — explicit Yup side-effect import added (<code>import '../../validationSchemas/yupExtensions'</code>)</p>
+</li>
+<li><p>Readiness assessment HTML — Section 7 and Section 8 gap entries updated to reflect resolved status</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> All migration-readiness gaps closed; <code>setIsLoading</code> bug in TermsAndConditionModal fixed; explicit Yup imports added to prevent silent runtime failures; 5 architecture decision documents and 1 migration checklist created.</p>
+<hr />
+<h3 id="sprint-1-phase-1-implementation-2026-05-31-p0-fixes-p1-story-coverage-applied">[Sprint 1 — Phase 1 Implementation] — 2026-05-31 — P0 fixes + P1 story coverage applied</h3>
+<p><strong>Change ID:</strong> CRD-016
+<strong>Source:</strong> docs/sprint-1/plan.md, docs/sprint-1/github-issues.md
+<strong>Status:</strong> COMPLETE — source fixes applied; subsequently verified by CRD-019
+<strong>Security findings resolved:</strong> None (no security scope in Sprint 1)
+<strong>Tests added:</strong> 20 (StatusPill unit tests in tests/unit/components/Pill/StatusPill.test.tsx)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/components/InTextLink/index.tsx</code> — target prop bug fixed (SB-003)</p>
+</li>
+<li><p><code>ClientApp/src/components/InTextLink/InTextLink.stories.tsx</code> — SameTab story + play functions</p>
+</li>
+<li><p><code>ClientApp/src/storybook/storybookHarness.tsx</code> — Taylor Nguyen canonical identity (SB-005)</p>
+</li>
+<li><p><code>.storybook/preview.ts</code> — Taylor Nguyen canonical identity (SB-005)</p>
+</li>
+<li><p><code>tests/unit/components/Pill/StatusPill.test.tsx</code> — 20 unit tests (SB-001)</p>
+</li>
+<li><p><code>ClientApp/src/components/Pill/Pill.stories.tsx</code> — play function added (SB-001)</p>
+</li>
+<li><p><code>ClientApp/src/components/Alert/NotificationMessage.stories.tsx</code> — created (SB-006)</p>
+</li>
+<li><p><code>ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx</code> — 3 step stories added (SB-013/014/015)</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx</code> — created (SB-011)</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/FormBanner/FormBanner.stories.tsx</code> — created (SB-012)</p>
+</li>
+<li><p><code>ClientApp/src/components/Buttons/BackToDashboardButton/BackToDashboardButton.stories.tsx</code> — created (SB-008)</p>
+</li>
+<li><p><code>ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx</code> — refactored to withPortalProviders (SB-017)</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> P0 source fixes applied, 7 new story files created or updated. Subsequent Sprint 1 closure and QA sign-off are recorded in CRD-019.</p>
+<hr />
+<h3 id="sprint-1-phase-2-implementation-2026-06-01-remaining-p1-story-coverage-applied">[Sprint 1 — Phase 2 Implementation] — 2026-06-01 — Remaining P1 story coverage applied</h3>
+<p><strong>Change ID:</strong> CRD-017
+<strong>Source:</strong> docs/superpowers/plans/2026-06-01-sprint1-remaining-stories.md
+<strong>Status:</strong> COMPLETE — story files applied; subsequently verified by CRD-019
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (story play functions serve as acceptance tests; no new Vitest unit tests)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/components/Footer/Footer.stories.tsx</code> — replaced; added TermsModalOpen, PrivacyModalOpen, AccessibilityModalOpen play functions (SB-009/010)</p>
+</li>
+<li><p><code>ClientApp/src/components/modals/ContentModal/ContentModal.stories.tsx</code> — created; OpenWithContent + Closed stories (SB-010)</p>
+</li>
+<li><p><code>ClientApp/src/components/Pagination/Pagination.stories.tsx</code> — added FirstPage, LastPage, CustomStyleVariant stories with play functions (SB-019)</p>
+</li>
+<li><p><code>ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx</code> — created; Loading, WithSuggestions, EmptyState stories (Issue #14)</p>
+</li>
+<li><p><code>ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx</code> — created; Default + ManualEntry stories (Issue #14)</p>
+</li>
+<li><p><code>ClientApp/src/components/RequestList/InstrumentItem.stories.tsx</code> — created; ReportsTab + DetailsTab stories (SB-007)</p>
+</li>
+<li><p><code>ClientApp/src/routes/dashboard/Dashboard.stories.tsx</code> — play functions added to Populated + EmptyState (SB-002)</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> All remaining Sprint 1 story files were created or updated. Sprint closure gate was subsequently cleared by CRD-019.</p>
+<hr />
+<h3 id="storybook-build-2026-06-01-vite-code-splitting-config-eliminate-large-chunk-warning">[Storybook Build] — 2026-06-01 — Vite code-splitting config: eliminate large-chunk warning</h3>
+<p><strong>Change ID:</strong> CRD-021
+<strong>Source:</strong> <code>npm run build-storybook</code> warning — chunks exceeding 900 KB after minification
+<strong>Status:</strong> COMPLETE
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (build config only; 165 Storybook tests continue to pass)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>.storybook/main.ts</code> — three new <code>rolldownOptions.output.codeSplitting.groups</code> entries added: <code>msw-vendor</code> (priority 15) isolates the <code>msw</code> package (~400–600 KB); <code>testing-vendor</code> (priority 10) isolates <code>@testing-library/*</code>, <code>vitest</code>, and <code>@vitest/*</code>; <code>chromatic-vendor</code> (priority 5) isolates <code>@chromatic-com/*</code>; <code>chunkSizeWarningLimit</code> raised from 900 to 1500 to correctly scope the warning threshold to Storybook infrastructure chunks (renderer, addon manager) that cannot be further split without modifying Storybook internals</li>
+</ul>
+<p><strong>Outcome:</strong> Packages <code>msw</code>, <code>@testing-library/*</code>, <code>vitest</code>, and <code>@chromatic-com/*</code> are now isolated into named chunks, reducing the size of the default catch-all chunk. The <code>chunkSizeWarningLimit</code> is set to 1500 KB to suppress warnings from irreducible Storybook-owned infrastructure chunks while preserving signal for genuine regressions. No test or runtime behaviour changed.</p>
+<hr />
+<h3 id="storybook-test-infrastructure-2026-06-01-jsdom-noise-suppressed-without-hiding-failures">[Storybook Test Infrastructure] — 2026-06-01 — jsdom noise suppressed without hiding failures</h3>
+<p><strong>Change ID:</strong> CRD-022
+<strong>Source:</strong> <code>npm run test:storybook</code> output hygiene follow-up after CRD-020/CRD-021
+<strong>Status:</strong> COMPLETE
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (test-environment setup only; verification command rerun)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>vitest.storybook.setup.ts</code> — added Storybook-test-only jsdom shims for <code>window.scrollTo</code>, <code>HTMLCanvasElement.getContext()</code>, and pseudo-element <code>getComputedStyle()</code> calls; added a narrow expected-error filter for the deliberate <code>ErrorBoundary</code> demonstration stories while preserving unexpected <code>console.error</code> output</li>
+</ul>
+<p><strong>Outcome:</strong> <code>npm run test:storybook</code> now passes cleanly with 55 test files / 165 tests / 0 failures and no repeated jsdom &quot;Not implemented&quot; messages or intentional ErrorBoundary stack traces in command output.</p>
+<hr />
+<h3 id="sprint-1-confidence-gaps-2026-06-01-sb-016-through-sb-023-implemented-and-verified">[Sprint 1 — Confidence Gaps] — 2026-06-01 — SB-016 through SB-023 implemented and verified</h3>
+<p><strong>Change ID:</strong> CRD-020
+<strong>Source:</strong> <code>docs/sprint-1/remediation-backlog.md</code> — deferred confidence-gap items
+<strong>Status:</strong> COMPLETE — 165 tests pass (up from 158 at CRD-019 closure)
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 7 (net new play functions and stories across 7 files)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/routes/dashboard/Dashboard.stories.tsx</code> — <code>RequestsTabWithNotification</code> play function added (SB-016: notification text asserted visible, dismiss button clicked, <code>waitFor</code> close assertion); <code>TabNavigation</code> story added (SB-016: <code>aria-selected</code> state asserts on tab click); <code>userEvent</code> and <code>waitFor</code> imported</p>
+</li>
+<li><p><code>ClientApp/src/components/modals/Modals.stories.tsx</code> — <code>ConfirmationOpen</code> play function extended with No-button dismiss and <code>waitFor</code> close assertion (SB-018); <code>BranchSelectorSelectAndEdit</code> and <code>BranchSelectorRFQMode</code> play functions added asserting <code>dialog</code> role visible (SB-018); <code>waitFor</code> imported</p>
+</li>
+<li><p><code>ClientApp/src/components/SearchFilter/SearchFilter.stories.tsx</code> — <code>DashboardFilters</code> play function added asserting <code>textbox</code> role, typing, and search text output (SB-020); <code>WithSearchTerm</code> story added with pre-populated value assertion (SB-020); <code>expect</code>, <code>userEvent</code>, <code>within</code> imported</p>
+</li>
+<li><p><code>ClientApp/src/components/SummaryDisplay/SummaryDisplay.stories.tsx</code> — <code>TextValue</code>, <code>PhoneValue</code>, <code>FormattedNumber</code> play functions added; <code>EmptyValue</code> story (dash fallback + visually-hidden &quot;No details added&quot;), <code>WithDescriptor</code> story, and <code>CustomBody</code> story added (SB-021); <code>expect</code>, <code>within</code> imported</p>
+</li>
+<li><p><code>ClientApp/src/components/Welcome/Welcome.stories.tsx</code> — <code>Default</code> play function added asserting heading contains given name; <code>NoGivenName</code> story added (via <code>portal.accountDetails: { givenName: undefined }</code>); <code>Loading</code> story added via <code>AccountStateCtx</code> decorator with <code>details: undefined</code> (SB-022); <code>expect</code>, <code>within</code>, <code>AccountStateCtx</code> imported</p>
+</li>
+<li><p><code>ClientApp/src/components/Footer/Footer.stories.tsx</code> — <code>Default</code> play function added asserting contentinfo landmark present and all footer buttons have accessible names (SB-023); <code>within</code> imported</p>
+</li>
+<li><p><code>ClientApp/src/components/Header/Header.stories.tsx</code> — <code>Authenticated</code> play function added asserting banner landmark, navigation landmark, and link presence (SB-023); <code>expect</code>, <code>within</code> imported</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> All 23 SB items (SB-001–SB-023) and QA-001/QA-002 are now <code>done</code>. QA-003 (manual browser audit) is formally deferred to migration pre-flight. QA sign-off document updated to 165 tests. Remediation backlog fully closed.</p>
+<hr />
+<h3 id="sprint-1-closed_success-2026-06-01-100-pass-gate-cleared-qa-sign-off-issued">[Sprint 1 — CLOSED_SUCCESS] — 2026-06-01 — 100% pass gate cleared; QA sign-off issued</h3>
+<p><strong>Change ID:</strong> CRD-019
+<strong>Source:</strong> <code>npm run test:storybook</code> live run; <code>docs/qa/sprint-1-signoff.md</code>
+<strong>Status:</strong> COMPLETE
+<strong>Security findings resolved:</strong> None
+<strong>Tests:</strong> 55 test files, 158 tests, 0 failures
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>docs/sprint-1/done.md</code> — Status updated to CLOSED_SUCCESS</p>
+</li>
+<li><p><code>docs/qa/sprint-1-signoff.md</code> — Verdict updated to PASS; all 15 issues listed as CLOSED_SUCCESS</p>
+</li>
+<li><p><code>docs/sprint-1/progress.md</code> — Closure status recorded</p>
+</li>
+<li><p><code>docs/sprint-1/workflow-state-log.md</code> — All 15 issues advanced to CLOSED_SUCCESS; sprint overall state CLOSED_SUCCESS</p>
+</li>
+<li><p><code>docs/sprint-1/remediation-backlog.md</code> — SB-001–SB-015 and SB-017/SB-019 marked done</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> Sprint 1 Storybook Quality Remediation is formally closed. The Phase 5 Storybook baseline gate is cleared. OI-001 resolved.</p>
+<hr />
+<h3 id="sprint-1-assertion-fixes-2026-06-01-story-play-function-robustness-fixes">[Sprint 1 — Assertion Fixes] — 2026-06-01 — Story play function robustness fixes</h3>
+<p><strong>Change ID:</strong> CRD-018
+<strong>Source:</strong> Root-cause analysis of three story failures prior to live <code>npm run test:storybook</code> run
+<strong>Status:</strong> COMPLETE — fixes applied in source; subsequently verified by CRD-019
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (play function assertion corrections; no new Vitest unit tests)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/components/Footer/Footer.stories.tsx</code> — <code>TermsModalOpen</code>: Bootstrap modal close animation is asynchronous; changed <code>expect(queryByRole(...)).not.toBeInTheDocument()</code> to <code>waitFor(() =&gt; expect(...).not.toBeInTheDocument())</code>; <code>waitFor</code> imported from <code>storybook/test</code> (SB-009/010, Issue #10)</p>
+</li>
+<li><p><code>ClientApp/src/components/RequestList/InstrumentItem.stories.tsx</code> — <code>DetailsTab</code>: &quot;Mettler Toledo&quot; text appears in both card heading and manufacturer row; changed <code>findByText(/mettler toledo/i)</code> to <code>findAllByText(/mettler toledo/i)[0]</code> (SB-007, Issue #15)</p>
+</li>
+<li><p><code>ClientApp/src/routes/dashboard/Dashboard.stories.tsx</code> — <code>EmptyState</code>: &quot;no requests&quot; text rendered once per tab panel; changed <code>findByText(/you currently have no requests/i)</code> to <code>findAllByText(/you currently have no requests/i)[0]</code> (SB-002, Issue #2)</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> Three play function assertions corrected. Root causes were (a) Bootstrap CSS animation timing, (b) duplicate text nodes from heading + data row, and (c) per-tab panel text duplication. All use <code>findAllByText(...)[0]</code> or <code>waitFor()</code> to be resilient to DOM structure. Verified by the CRD-019 live Storybook run.</p>
+<hr />
+<h3 id="sprint-1-2026-05-20-storybook-quality-remediation-governance">[Sprint 1] — 2026-05-20 — Storybook Quality Remediation (Governance)</h3>
+<p><strong>Change ID:</strong> CRD-015
+<strong>Source:</strong> Sprint 1 governance intake; Storybook Quality Remediation plan; 15 issues at INTAKE
+<strong>Status:</strong> COMPLETE — governance intake superseded by CRD-019 closure
+<strong>Security findings resolved:</strong> None
+<strong>Tests added:</strong> 0 (no story files created; no unit tests added in this sprint)
+<strong>Files changed:</strong></p>
+<ul>
+<li><p>Source-code fixes for B1 category issues (#1, #2, #3, #9) are present at their <code>ClientApp/src/</code> paths (progress tracking documents incorrectly cited <code>static/js/</code> paths — documentation error, not a source error)</p>
+</li>
+<li><p>MSAL identity unification completed: both Storybook harness files agree on a single mock identity</p>
+</li>
+<li><p><code>docs/qa/sprint-1-signoff.md</code> — CREATED as PENDING placeholder during intake; later updated to PASS in CRD-019</p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> Governance intake complete; B1 source-code fixes verified present; MSAL identity unified. Sprint 1 Phase 1 implementation (CRD-016) subsequently applied canonical identity rename and P0/P1 story coverage. Sprint closure was later achieved in CRD-019.</p>
+<hr />
+<h3 id="typescript-compilation-cleanup-2026-06-01-tsc-noemit-clean">[TypeScript Compilation Cleanup] — 2026-06-01 — <code>tsc --noEmit</code> clean</h3>
+<p><strong>Change ID:</strong> CRD-023
+<strong>Source:</strong> <code>docs/superpowers/plans/2026-06-01-typescript-compilation-cleanup.md</code>; <code>npx tsc --noEmit</code>
+<strong>Status:</strong> COMPLETE
+<strong>Security findings resolved:</strong> None
+<strong>Tests:</strong> <code>npm run type-check</code> passed; <code>npm run test:unit -- --run tests/unit/config/webpackConfig.test.ts</code> passed; <code>npm run test:unit</code> passed (27 files / 280 tests); <code>npm run lint</code> was not available at this historical point and was later superseded by CRD-040
+<strong>Files changed:</strong></p>
+<ul>
+<li><p><code>ClientApp/src/**/*.ts</code>, <code>ClientApp/src/**/*.tsx</code>, <code>.storybook/main.ts</code>, <code>tests/**/*.ts</code>, <code>tests/**/*.tsx</code> — Type-only imports converted for <code>verbatimModuleSyntax</code>; runtime imports preserved; vendored <code>ClientApp/src/parent/packages/**</code> excluded from type checking instead of editing mirrored vendor source</p>
+</li>
+<li><p><code>ClientApp/src/components/SearchFilter/filterMenuProps.ts</code> — Type re-export changed to <code>export type</code></p>
+</li>
+<li><p><code>ClientApp/src/components/forms/**</code>, <code>ClientApp/src/components/Inputs/**</code>, <code>ClientApp/src/authentication/AccountProvider.tsx</code>, <code>ClientApp/src/routes/dashboard/index.tsx</code>, <code>ClientApp/src/routes/requestForQuote/**</code> — Strict null and callback typing fixes applied with guards/defaults instead of broad assertions</p>
+</li>
+<li><p><code>ClientApp/src/validationSchemas/common.ts</code> — Yup date validation now accepts broad input and narrows at runtime before parsing</p>
+</li>
+<li><p><code>tests/unit/config/webpackConfig.test.ts</code> — CommonJS webpack config import typed through <code>createRequire</code> and local structural types</p>
+</li>
+<li><p><code>ClientApp/src/components/Welcome/Welcome.stories.tsx</code> — Loading story account context uses <code>details: null</code></p>
+</li>
+</ul>
+<p><strong>Outcome:</strong> The original 484 TypeScript errors were reduced to zero. Common fixes: <code>TS1484</code> requires <code>import type</code>; <code>TS1205</code> requires <code>export type</code>; <code>TS7006</code> requires concrete DTO/event parameter types; <code>TS2345</code>/<code>TS2322</code> require narrowing, route-param guards, or safe UI defaults; <code>TS18048</code> requires checking optional values before method calls; <code>TS7016</code> for local CommonJS config imports is handled with <code>createRequire</code> and explicit local types.</p>
+<hr />
+<h3 id="html-assessment-reconciliation-2026-06-01-modernisation-and-readiness-open-items-backfilled">[HTML Assessment Reconciliation] — 2026-06-01 — Modernisation and Readiness Open Items Backfilled</h3>
+<p><strong>Change ID:</strong> CRD-024
+<strong>Source:</strong> <code>docs/nmi-portal-rebuild-readiness-assessment-2026-05-29.html</code>; <code>docs/nmi-portal-modernisation-assessment-colour-revised.html</code>; source spot-check of referenced files
+<strong>Status:</strong> COMPLETE — documentation reconciliation
+<strong>Security findings resolved:</strong> None (tracking-only reconciliation)
+<strong>Tests added:</strong> 0 (documentation-only change)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> — added still-open modernisation/rebuild-readiness findings that were not previously explicit in the backlog:
+<ul>
+<li>Priority 1: <code>SEC-MOD-003</code>, <code>SEC-MOD-009</code>, and <code>RUNTIME-ENV-001</code></li>
+<li>Priority 2: top-level <code>await</code> target-platform confirmation</li>
+<li>Priority 3: remaining deferred technical-debt and documentation findings from the modernisation HTML</li>
+</ul>
+</li>
+</ul>
+<p><strong>Outcome:</strong> The two HTML assessment files are now reconciled against the gate-control documents. Resolved changes remain represented by CRD-001 through CRD-023; still-open or deferred findings are explicitly represented in <code>OPEN-ITEMS-BACKLOG.md</code>.</p>
+<hr />
+<h3 id="concerns-register-reconciliation-2026-06-01-remaining-open-questions-backfilled">[Concerns Register Reconciliation] — 2026-06-01 — Remaining Open Questions Backfilled</h3>
+<p><strong>Change ID:</strong> CRD-025
+<strong>Source:</strong> <code>docs/CONCERNS.md</code>; <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code>; source spot-check of referenced files
+<strong>Status:</strong> COMPLETE — documentation reconciliation
+<strong>Security findings resolved:</strong> None (tracking-only reconciliation)
+<strong>Tests added:</strong> 0 (documentation-only change)
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> — added concerns-register items that were not previously explicit:
+<ul>
+<li>Priority 2: backend API versioning strategy for target <code>web-api-client.ts</code> regeneration</li>
+<li>Priority 3: <code>AUTH-OPS-003</code>, <code>DASHBOARD-DEBT-001</code>, and <code>AUTH-CONTEXT-001</code></li>
+</ul>
+</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code> — updated scorecard, migration-gate summary, and deferred-items table to match the expanded backlog</li>
+</ul>
+<p><strong>Outcome:</strong> <code>docs/CONCERNS.md</code> is now reconciled against both gate-control documents. Resolved concerns remain represented by CRD-002, CRD-006, CRD-007, CRD-012, and CRD-013; still-open or deferred concerns are explicitly represented in <code>OPEN-ITEMS-BACKLOG.md</code> and the HTML backlog report.</p>
+<hr />
+<h3 id="storybook-assessment-reconciliation-2026-06-01-storybook-quality-autodocs-coverage-and-bdd-records-reconciled">[Storybook Assessment Reconciliation] — 2026-06-01 — Storybook Quality, Autodocs, Coverage, and BDD Records Reconciled</h3>
+<p><strong>Change ID:</strong> CRD-026
+<strong>Source:</strong> <code>docs/Storybook vs Source Quality Assessment Report.md</code>; <code>docs/STORYBOOK-AUTODOCS-IMPLEMENTATION.md</code>; <code>docs/STORYBOOK-COVERAGE-MATRIX.md</code>; <code>docs/STORYBOOK-COVERAGE-WORKFLOW-TRACE.md</code>; <code>docs/STORYBOOK-MIGRATION-READINESS.md</code>; <code>docs/PLAYWRIGHT-STORYBOOK-BDD-IMPROVEMENT-PLAN.md</code>
+<strong>Status:</strong> COMPLETE — documentation reconciliation
+<strong>Security findings resolved:</strong> None (tracking-only reconciliation)
+<strong>Tests added:</strong> 0 (documentation-only change)
+<strong>Evidence reconciled:</strong></p>
+<ul>
+<li>Original Storybook quality assessment issues are represented by CRD-015 through CRD-020 and Sprint 1 closure records. This includes the StatusPill switch-case bug, InTextLink target bug, malformed MSW handler/harness issues, missing high-priority stories, dashboard assertion/data robustness, footer/modal stories, WizardForm harnessing, pagination, auto-suggest/address lookup, InstrumentItem, and confidence-gap closure.</li>
+<li>Storybook autodocs implementation is recorded as complete for the initial component set: addon-docs configuration, MDX docs pages, initial <code>docs</code> story tags, and JSDoc rollout to selected components.</li>
+<li>Storybook coverage matrix and migration readiness are recorded as <code>CLOSED_SUCCESS</code> for the narrowed migration baseline, with 55 Storybook Vitest files / 165 tests / 0 failures and a later Playwright <code>@storybook</code> suite result of 129/129 passing.</li>
+<li>Storybook BDD workflow trace is recorded as complete: <code>npx bddgen</code> was run, <code>npx playwright test --grep &quot;@storybook&quot; --reporter=list</code> finished at 129 passed, and workflow guardrails were documented.</li>
+</ul>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> — added still-open/non-blocking Storybook follow-up items:
+<ul>
+<li><code>STORYBOOK-DRIFT-001</code></li>
+<li><code>STORYBOOK-EXCLUSIONS-001</code></li>
+<li><code>STORYBOOK-BDD-PROCESS-001</code></li>
+<li><code>STORYBOOK-AUTODOCS-001</code></li>
+</ul>
+</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code> — updated scorecard, migration-gate summary, and deferred-items table to match the expanded backlog.</li>
+</ul>
+<p><strong>Outcome:</strong> The listed Storybook assessment and process documents are now reconciled against the gate-control documents. Closed Storybook remediation is represented in the Master Change Record; remaining drift, exclusion, process, and autodocs expansion work is explicitly represented in <code>OPEN-ITEMS-BACKLOG.md</code> and the HTML backlog report.</p>
+<hr />
+<h3 id="analysis-assessment-reconciliation-2026-06-01-stakeholder-assessment-and-architecture-diagram-reconciled">[Analysis Assessment Reconciliation] — 2026-06-01 — Stakeholder Assessment and Architecture Diagram Reconciled</h3>
+<p><strong>Change ID:</strong> CRD-027
+<strong>Source:</strong> <code>analysis/ASSESSMENT.html</code>; <code>analysis/ARCHITECTURE.mmd</code>
+<strong>Status:</strong> COMPLETE — documentation reconciliation only
+<strong>Security findings resolved:</strong> None (tracking-only reconciliation)
+<strong>Tests added:</strong> 0 (documentation-only change)</p>
+<p><strong>Evidence reconciled:</strong></p>
+<ul>
+<li><code>analysis/ASSESSMENT.html</code> keeps the refactor-not-rebuild recommendation and identifies one high-priority go-live blocker: SEC-010 backend ownership/IDOR verification. That blocker remains tracked as <code>SEC-010</code> in <code>OPEN-ITEMS-BACKLOG.md</code>.</li>
+<li>The stakeholder HTML's medium/low &quot;current open security items&quot; use overlapping labels with older <code>SEC-*</code> findings. They are now tracked under a non-conflicting backlog item, <code>ASSESSMENT-SEC-CAVEATS-001</code>, covering mutable session organisation context, client-side pre-condition gates, weak URL ID format validation, auth timeout, and session-storage hardening.</li>
+<li>The 90-day priority plan's auth-token centralisation and wizard type hardening are already represented by existing backlog items for <code>acquireTokenSilent</code> centralisation and <code>WIZARD-TYPES-001</code>.</li>
+<li>The 90-day plan's helper promise-branch risk and focused auth/wizard/API-wrapper unit-test tranche are now explicit backlog items: <code>HELPER-PROMISE-001</code> and <code>CRITICAL-UNIT-COVERAGE-001</code>.</li>
+<li><code>analysis/ARCHITECTURE.mmd</code> is a runtime dependency map. It does not introduce a separate open change beyond the already tracked auth, storage, API-client, validation, instrumentation, shell, route, and wizard boundaries.</li>
+</ul>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code> — added source revalidation rows, this CRD entry, and open-item closure row.</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> — added three P3 assessment follow-up items and updated the migration gate count.</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code> — updated scorecard, deferred-items table, and migration gate count.</li>
+</ul>
+<p><strong>Outcome:</strong> <code>analysis/ASSESSMENT.html</code> and <code>analysis/ARCHITECTURE.mmd</code> are now reconciled against the Master Change Record. Still-open stakeholder-assessment caveats are explicitly represented in the backlog and HTML report.</p>
+<hr />
+<h3 id="modernization-brief-reconciliation-2026-06-01-phased-plan-security-fixes-and-sme-gates-reconciled">[Modernization Brief Reconciliation] — 2026-06-01 — Phased Plan, Security Fixes, and SME Gates Reconciled</h3>
+<p><strong>Change ID:</strong> CRD-028
+<strong>Source:</strong> <code>analysis/MODERNIZATION_BRIEF.md</code>
+<strong>Status:</strong> COMPLETE — documentation reconciliation only
+<strong>Security findings resolved:</strong> None (tracking-only reconciliation)
+<strong>Tests added:</strong> 0 (documentation-only change)</p>
+<p><strong>Evidence reconciled:</strong></p>
+<ul>
+<li>The brief's refactor-not-rebuild strategy is already consistent with the assessment and migration records.</li>
+<li>The three remaining security code fixes named by the brief are now explicit Priority 1 backlog entries using non-conflicting IDs: <code>BRIEF-SEC-001</code>, <code>BRIEF-SEC-009</code>, and <code>BRIEF-SEC-011</code>.</li>
+<li>The brief's Phase 1 P0 entry criterion for backend IDOR remains tracked as <code>SEC-010</code>.</li>
+<li>The brief's Phase 2 and later SME/approval questions are now explicit Priority 2 items 16-22: ASIC business-name charset, NMI ABN/address, P0 rule SME review, terms-version/re-acceptance plan, PDF page-number/template confirmation, recalibration policy, and target repository provisioning.</li>
+<li>Existing modernization themes remain covered by prior backlog entries: <code>WIZARD-TYPES-001</code>, <code>HELPER-PROMISE-001</code>, <code>CRITICAL-UNIT-COVERAGE-001</code>, design/platform inputs, API versioning, CI configuration, and target build decisions.</li>
+</ul>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code> — added source revalidation row, this CRD entry, and open-item closure row.</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> — added three Priority 1 security-code-fix items, seven Priority 2 brief approval gates, and updated gate counts.</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code> — updated scorecard, Priority 1 and Priority 2 sections, and migration gate counts.</li>
+</ul>
+<p><strong>Outcome:</strong> <code>analysis/MODERNIZATION_BRIEF.md</code> is now reconciled against the Master Change Record. Still-open security fixes and approval/SME gates are explicitly represented in the backlog and HTML report.</p>
+<hr />
+<h3 id="phase-p1-2026-06-01-migration-blockers-remediated">[Phase P1] — 2026-06-01 — Migration Blockers Remediated</h3>
+<p><strong>Change ID:</strong> CRD-029
+<strong>Source:</strong> <code>OPEN-ITEMS-BACKLOG.md</code> Priority 1 blockers; <code>analysis/MODERNIZATION_BRIEF.md</code> Phase 1
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> <code>SEC-MOD-003</code>, <code>SEC-MOD-009</code>, <code>BRIEF-SEC-001</code>, <code>BRIEF-SEC-009</code>, <code>BRIEF-SEC-011</code>
+<strong>Technical debt resolved:</strong> <code>RUNTIME-ENV-001</code>
+<strong>Tests added:</strong> <code>openWindow.test.ts</code>, <code>routeParams.test.ts</code>, <code>authorizedApiBase.test.ts</code>, <code>authConfig.test.ts</code>, <code>standardPathway.test.ts</code>; <code>appInsightsService.test.ts</code> extended</p>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/routes/common/openWindow.ts</code></li>
+<li><code>ClientApp/src/routes/quotation/quoteDetails.tsx</code></li>
+<li><code>ClientApp/src/routes/measurementReport/reportDetails.tsx</code></li>
+<li><code>ClientApp/src/routes/common/helperFunctions.ts</code></li>
+<li><code>ClientApp/src/components/Header/NavbarMessage.tsx</code></li>
+<li><code>ClientApp/src/routes/requestForQuote/created/index.tsx</code></li>
+<li><code>ClientApp/src/components/tiles/StandardPathway/index.tsx</code></li>
+<li><code>ClientApp/src/routes/dashboard/index.tsx</code></li>
+<li><code>ClientApp/src/instrumentation/AppInsightsService.ts</code></li>
+<li><code>ClientApp/src/api/web-api-client.ts</code></li>
+<li><code>ClientApp/src/authentication/authConfig.ts</code></li>
+<li><code>ClientApp/src/routes/common/routeParams.ts</code></li>
+<li><code>ClientApp/src/routes/requestForQuote/index.tsx</code></li>
+<li><code>ClientApp/src/routes/account/update/index.tsx</code></li>
+<li><code>tests/unit/routes/common/openWindow.test.ts</code></li>
+<li><code>tests/unit/routes/common/routeParams.test.ts</code></li>
+<li><code>tests/unit/api/authorizedApiBase.test.ts</code></li>
+<li><code>tests/unit/authentication/authConfig.test.ts</code></li>
+<li><code>tests/unit/components/standardPathway.test.tsx</code></li>
+<li><code>tests/unit/instrumentation/appInsightsService.test.ts</code></li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code></li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code></li>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></li>
+</ul>
+<p><strong>Verification:</strong> <code>npm run type-check</code> passed; <code>npm run test:unit</code> passed with 32 files / 313 tests / 0 failures; blocker-specific <code>rg</code> searches confirmed the six scoped fixes. <code>npm run lint</code> was not available at this historical point and was later superseded by CRD-040. <code>npm run migration-check</code> failed in the combined Vitest/Storybook phase with 9 failed files, 1 failed test, and 2 unhandled errors: unresolved <code>@/...</code> imports in several unit tests, <code>Dashboard.stories.tsx &gt; Empty State</code> unable to find the expected empty-state text, and <code>ErrorSummary</code> story <code>scrollIntoView</code> unhandled exceptions.</p>
+<p><strong>Outcome:</strong> The Priority 1 frontend blockers for migration are closed. Remaining migration entry criteria are backend/security sign-off items outside these six frontend code fixes.</p>
+<hr />
+<h3 id="validation-recheck-2026-06-02-direct-typescript-clean-combined-gate-classified">[Validation Recheck] — 2026-06-02 — Direct TypeScript Clean; Combined Gate Classified</h3>
+<p><strong>Change ID:</strong> CRD-030
+<strong>Source:</strong> <code>docs/superpowers/plans/2026-06-02-type-check-revalidation.md</code>; direct compiler revalidation; <code>npm run migration-check</code> capture
+<strong>Status:</strong> COMPLETE — classification recorded; no source code changes required
+<strong>Security findings resolved:</strong> None
+<strong>Technical debt resolved:</strong> None
+<strong>Tests added:</strong> 0</p>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>reports/type-check/2026-06-02-baseline.txt</code></li>
+<li><code>reports/type-check/2026-06-02-failing-command.txt</code></li>
+<li><code>reports/type-check/2026-06-02-ts-errors-only.txt</code></li>
+<li><code>reports/type-check/2026-06-02-errors-grouped.txt</code></li>
+<li><code>reports/type-check/2026-06-02-classification.md</code></li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code></li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code></li>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></li>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.html</code></li>
+<li><code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code></li>
+<li><code>docs/migration/msw-init-checklist.md</code></li>
+<li><code>docs/migration/MIGRATION-RUNBOOK.md</code></li>
+<li><code>docs/migration/2026-05-30-auth-token-acquisition-migration-checklist.md</code></li>
+</ul>
+<p><strong>Verification:</strong> <code>npx tsc --noEmit --pretty false</code> exited <code>0</code>; <code>npm run type-check</code> exits <code>0</code>; <code>reports/type-check/2026-06-02-ts-errors-only.txt</code> is empty. At the time of CRD-030 capture, <code>npm run migration-check</code> still failed after its <code>tsc --noEmit</code> step in the combined Vitest/Storybook phase.</p>
+<p><strong>Outcome:</strong> Direct TypeScript was confirmed clean. The combined validation-gate failure was subsequently remediated and closed in CRD-032.</p>
+<hr />
+<h3 id="phase-p-2026-06-02-api-retry-stabilization-todos-completed">[Phase P] — 2026-06-02 — API Retry Stabilization TODOs Completed</h3>
+<p><strong>Change ID:</strong> CRD-031
+<strong>Source:</strong> Remaining migration TODO closure for transport retry hardening and behavior-lock tests
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Technical debt resolved:</strong> Targeted reliability and regression-lock coverage for API transport and account/dashboard coupling
+<strong>Tests added:</strong> 0 new files; focused assertions added to existing suites</p>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/api/web-api-client.ts</code></li>
+<li><code>tests/unit/api/authorizedApiBase.test.ts</code></li>
+<li><code>tests/unit/authentication/AccountProvider.errored.test.tsx</code></li>
+<li><code>tests/unit/routes/dashboard.test.tsx</code></li>
+</ul>
+<p><strong>Verification:</strong> Focused validation passed (<code>28</code> tests, <code>0</code> failures) across <code>tests/unit/api/authorizedApiBase.test.ts</code>, <code>tests/unit/authentication/AccountProvider.errored.test.tsx</code>, and <code>tests/unit/routes/dashboard.test.tsx</code>. <code>npm run type-check</code> also passed on 2026-06-02 after these updates.</p>
+<p><strong>Outcome:</strong> The four remaining implementation TODOs are complete: transport retry policy is active in <code>AuthorizedApiBase</code>; sign-in session-init handshake behavior is locked by test; dashboard filter/paging persistence coupling is locked by test; focused post-change validation is green.</p>
+<hr />
+<h3 id="validation-gate-closure-2026-06-02-migration-check-remediation-completed">[Validation Gate Closure] — 2026-06-02 — migration-check Remediation Completed</h3>
+<p><strong>Change ID:</strong> CRD-032
+<strong>Source:</strong> Validation-gate remediation execution for <code>VALIDATION-GATE-001</code>
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Technical debt resolved:</strong> Default Vitest project parity and Storybook/jsdom runtime hardening in the combined migration-check gate
+<strong>Tests added:</strong> 0 new files; targeted updates to existing tests and test infrastructure</p>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>vitest.config.ts</code></li>
+<li><code>vitest.unit.config.ts</code></li>
+<li><code>vitest.storybook.config.ts</code></li>
+<li><code>vitest.setup.ts</code></li>
+<li><code>vitest.storybook.setup.ts</code></li>
+<li><code>ClientApp/src/components/forms/ErrorSummary/index.tsx</code></li>
+<li><code>tests/unit/routes/dashboard.test.tsx</code></li>
+<li><code>package.json</code></li>
+</ul>
+<p><strong>Verification:</strong> <code>npm run test:unit -- tests/unit/routes/dashboard.test.tsx</code> passed (<code>8</code> tests, <code>0</code> failures); <code>npm run test:all</code> passed (<code>87</code> files, <code>482</code> tests, <code>0</code> failures); <code>npm run migration-check</code> passed end-to-end (TypeScript, Vitest default run, Storybook build).</p>
+<p><strong>Outcome:</strong> The combined validation gate is no longer a migration blocker. <code>VALIDATION-GATE-001</code> is closed with evidence.</p>
+<hr />
+<h3 id="storybook-output-cleanup-hardening-2026-06-02-windows-eexist-build-failure-guard">[Storybook Output Cleanup Hardening] — 2026-06-02 — Windows EEXIST Build Failure Guard</h3>
+<p><strong>Change ID:</strong> CRD-033
+<strong>Source:</strong> User-reported <code>npm run migration-check</code> failure during Storybook manager build
+<strong>Status:</strong> COMPLETE — source-verified
+<strong>Security findings resolved:</strong> None
+<strong>Technical debt resolved:</strong> Windows Storybook output cleanup race / stale directory handling
+<strong>Tests added:</strong> 0
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>scripts/clean-storybook-output.mjs</code></li>
+<li><code>package.json</code></li>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></li>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.html</code></li>
+</ul>
+<p><strong>Root cause:</strong> Storybook removes <code>storybook-static</code> before static build, but its internal cleanup swallows removal errors. On Windows, a locked or stale <code>storybook-static\sb-manager</code> directory can survive until the manager asset copy step, where Storybook's <code>fs.cp()</code> call fails with <code>EEXIST</code>.</p>
+<p><strong>Change:</strong> Added <code>npm run clean:storybook-output</code>, backed by a path-safe Node cleanup script with retries. <code>build-storybook</code> and <code>migration-check</code> now run this cleanup before invoking <code>storybook build -o storybook-static</code>.</p>
+<p><strong>Verification:</strong> <code>npm run migration-check</code> passed end-to-end after the change (<code>87</code> Vitest files, <code>482</code> tests, <code>0</code> failures; Storybook static build completed successfully).</p>
+<p><strong>Outcome:</strong> The user-reported <code>storybook-static\sb-manager</code> <code>EEXIST</code> failure is guarded by an explicit pre-build cleanup step. If Windows cannot remove the generated output directory, the script now fails before Storybook's manager copy phase.</p>
+<hr />
+<h3 id="design-platform-decisions-phase-5-gate-closure-2026-06-04">[Design Platform Decisions — Phase 5 Gate Closure] — 2026-06-04</h3>
+<p><strong>Change ID:</strong> CRD-034<br>
+<strong>Source:</strong> Open Items Backlog Priority 2 items 1–22; <code>docs/design-platform/DESIGN-PLATFORM-INPUTS.md</code><br>
+<strong>Authority:</strong> Expert Design Lead (items 1–10, 13) · Backend Architect (items 11–12, 14–15) · Architecture structural recommendation (items 16–22)<br>
+<strong>Status:</strong> COMPLETE — decisions received and recorded<br>
+<strong>Tests added:</strong> 0 (decision record only; implementation work tracks in Batch E and prerequisites)<br>
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/design-platform/DESIGN-PLATFORM-INPUTS.md</code> — Status updated to RESOLVED; all 13 Answer fields filled with decisions</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> — P2 items 1–15 updated to RESOLVED; items 16–22 updated to STRUCTURAL; three Batch E prerequisites added (BATCH-E-PREREQ-001–003); Migration Gate Summary updated</li>
+<li><code>docs/migration/MIGRATION-RUNBOOK.md</code> — Batch E blockers table updated; critical items updated for new Bootstrap-free, design-token, SVG-icon approach</li>
+<li><code>docs/change-record/OPEN-ITEMS-BACKLOG-REPORT.html</code> — P2 badges updated; scorecard updated</li>
+<li><code>docs/nmi-portal-rebuild-readiness-assessment-2026-05-29.html</code> — Route count corrected; design inputs table updated</li>
+<li><code>docs/nmi-portal-modernisation-assessment-colour-revised.html</code> — Status and migration table updated</li>
+</ul>
+<p><strong>Key decisions:</strong></p>
+<table>
+<thead><tr><th>Item</th><th>Decision</th></tr></thead>
+<tbody>
+<tr><td>1 — Colour tokens</td><td>Replace <code>_variables.scss</code> with <code>var(--nmi-*)</code> CSS custom properties. Values identical — zero visual regressions.</td></tr>
+<tr><td>2 — Typography</td><td>Retain Public Sans. Already declared in design system. Remove source <code>@font-face</code> declarations.</td></tr>
+<tr><td>3 — Spacing/grid</td><td>Drop Bootstrap 5 grid. CSS Grid/Flexbox + design token spacing. Breakpoints identical.</td></tr>
+<tr><td>4 — Form components</td><td>Direct substitution with <code>packages/react-components</code> (TextInput, Textarea, Select, Checkbox, Radio, FormField).</td></tr>
+<tr><td>5 — Validation/errors</td><td>Target ErrorSummary + FormField error prop. ARIA pattern matches source.</td></tr>
+<tr><td>6 — Wizard pattern</td><td>Adapt into <code>ApplicationWizard</code>. Pre-req: WAF-TYPE-001 before WAF logic port.</td></tr>
+<tr><td>7 — Modals</td><td>Replace react-bootstrap Modal with target Modal (native <code>&lt;dialog&gt;</code>, WCAG SC 4.1.2).</td></tr>
+<tr><td>8 — Icon system</td><td>Retire NMI icon font. Replace with SVG React components from <code>packages/icons</code>. Pre-req: icon audit.</td></tr>
+<tr><td>9 — Accessibility</td><td>AppShell covers skipLinks. Gap: add <code>useRouteAccessibility</code> hook (WCAG 2.4.2/2.4.3) before Batch E.</td></tr>
+<tr><td>10 — Print styles</td><td>Port <code>media-print.scss</code> verbatim as <code>print.css</code> global import.</td></tr>
+<tr><td>11 — OpenAPI spec</td><td>Generate + commit <code>docs/api/openapi.json</code>. Backend to confirm changed endpoints.</td></tr>
+<tr><td>12 — CI configuration</td><td>GitHub Actions: pnpm typecheck → lint → test → test:storybook → test:e2e → dotnet test.</td></tr>
+<tr><td>13 — Storybook</td><td>Vite. Migrate <code>.storybook/</code> as-is.</td></tr>
+<tr><td>14 — Top-level await</td><td>Retain. Verify <code>vite.config.ts</code> <code>build.target: 'es2022'</code>.</td></tr>
+<tr><td>15 — API versioning</td><td>URL-path versioning on changed endpoints only. Stable contracts unchanged.</td></tr>
+<tr><td>16–22 — Structural</td><td>Architectural recommendations provided; BA, Legal, Product, DevOps sign-offs required.</td></tr>
+</tbody>
+</table>
+<p><strong>Batch E prerequisites identified:</strong></p>
+<table>
+<thead><tr><th>ID</th><th>Prerequisite</th><th>Owner</th></tr></thead>
+<tbody>
+<tr><td>BATCH-E-PREREQ-001</td><td>Add <code>useRouteAccessibility</code> hook to AppShell (WCAG 2.4.2/2.4.3)</td><td>Frontend Lead / Target System</td></tr>
+<tr><td>BATCH-E-PREREQ-002</td><td>Icon audit: confirm all <code>nmi-icon-*</code> usages have SVG equivalents in <code>packages/icons</code></td><td>Design Lead / Frontend Lead</td></tr>
+<tr><td>BATCH-E-PREREQ-003</td><td>Resolve WAF-TYPE-001 typed guard before wizard port</td><td>Frontend Lead</td></tr>
+</tbody>
+</table>
+<p><strong>Outcome:</strong> Batch E design decisions complete. Original three Batch E blockers (Bootstrap 6 upgrade, <code>rfs-value()</code>/<code>negativify-map()</code> compatibility, icon font vendor) are closed — Bootstrap grid eliminated, icon font retired. Three new hard prerequisites (BATCH-E-PREREQ-001–003) were identified by this decision record and later completed by CRD-037, CRD-038, and CRD-039.</p>
+<hr />
+<h3 id="sec-010-idor-closed-2026-06-04-pentest-confirmed-backend-remediation">[SEC-010 IDOR Closed] — 2026-06-04 — Pentest-Confirmed Backend Remediation</h3>
+<p><strong>Change ID:</strong> CRD-035<br>
+<strong>Source:</strong> Backend team verbal confirmation 2026-06-04; <code>docs/sec/SEC-010-idor-backend-verification.md</code><br>
+<strong>Status:</strong> COMPLETE — security finding closed<br>
+<strong>Security findings resolved:</strong> SEC-010 (CWE-639 IDOR — dashboard API org-scoping)<br>
+<strong>Tests added:</strong> 0 (backend-side fix)<br>
+<strong>Files changed:</strong></p>
+<ul>
+<li><code>docs/sec/SEC-010-idor-backend-verification.md</code> — Status: Closed — PASS; checklist ticked; verdict recorded</li>
+<li><code>ClientApp/src/routes/dashboard/index.tsx</code> — Inline comment updated: "Verified by backend team 2026-06-04. SEC-010 CLOSED."</li>
+<li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code> — OI-003 marked COMPLETE</li>
+</ul>
+<p><strong>Evidence:</strong> Backend team confirmed the finding was identified during a pentest conducted prior to go-live and remediated before production deployment. Server-side org-scoping of the three dashboard API endpoints is confirmed. Full pentest report reference to be added by backend team.</p>
+<p><strong>Outcome:</strong> All Priority 1 migration blockers cleared. Dashboard route unblocked for Batch A migration. Pre-flight STOP CONDITION for SEC-010 satisfied.</p>
+<hr />
+<h3 id="wcag-22-aa-component-remediation-and-e2e-baseline-2026-06-05">[WCAG 2.2 AA Component Remediation and E2E Baseline] — 2026-06-05</h3>
+<p><strong>Change ID:</strong> CRD-036<br>
+<strong>Source:</strong> <code>docs/accessibility/wcag-2.2-aa-98-plan.md</code>; component accessibility remediation; authenticated E2E validation repair<br>
+<strong>Status:</strong> COMPLETE — automated accessibility and validation evidence updated<br>
+<strong>Security findings resolved:</strong> None<br>
+<strong>Tests added:</strong> Focused component accessibility tests and authenticated E2E/story validation coverage</p>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>ClientApp/src/components/Actions/index.tsx</code> — icon-only trigger has a stable accessible name; route actions stay native links; command actions render as native buttons rather than <code>href="#"</code> fake buttons.</li>
+<li><code>tests/unit/components/actions.accessibility.test.tsx</code> — added Actions menu accessibility coverage for trigger name, <code>aria-expanded</code>, Escape close, native route links, and native command buttons.</li>
+<li><code>ClientApp/src/routes/preConditions/PreConditions.tsx</code> and <code>tests/unit/routes/preConditions.test.tsx</code> — completed authenticated users are redirected away from account setup routes only, preserving dashboard/RFQ/quotation route access.</li>
+<li><code>tests/e2e/steps/common.steps.ts</code> — authenticated dashboard/RFQ/quote mocks and stale first-time-account wizard assumptions hardened for the current app routes.</li>
+<li><code>ClientApp/src/routes/dashboard/Dashboard.stories.tsx</code> and <code>ClientApp/src/components/get-started/GetStarted.stories.tsx</code> — notification stories now seed storage deterministically for browser Storybook BDD and Storybook Vitest.</li>
+<li><code>docs/accessibility/wcag-2.2-aa-98-plan.md</code> — updated with RequestList, combobox, modal/footer/date-picker, Actions, and E2E validation evidence.</li>
+</ul>
+<p><strong>Verification:</strong> <code>npm run type-check</code> passed; <code>npm run test:unit</code> passed (38 files / 326 tests / 0 failures); <code>npm run test:storybook</code> passed (55 files / 165 tests / 0 failures); <code>npm run test:e2e</code> passed (145 tests / 0 failures); <code>npm run lint</code> was not available at CRD-036 capture time and is superseded by CRD-040, which now passes with <code>0</code> errors and <code>131</code> accepted warnings.</p>
+<p><strong>Outcome:</strong> The previous authenticated account/RFQ/quote E2E failures and the two route Storybook story failures are resolved. Automated WCAG evidence now covers the highest score-cap risks addressed so far. Manual keyboard, screen-reader, 400% zoom, target-size, and focus-not-obscured evidence remains required before any final 98+ WCAG score claim.</p>
+<hr />
+<h3 id="eslint-gate-established-2026-06-05-typescript-59-compatible-lint-baseline">[ESLint Gate Established] — 2026-06-05 — TypeScript 5.9-Compatible Lint Baseline</h3>
+<p><strong>Change ID:</strong> CRD-040<br>
+<strong>Source:</strong> <code>docs/superpowers/plans/2026-06-05-eslint-linting-solution.md</code>; ESLint implementation and TypeScript 5.9.3 compatibility remediation<br>
+<strong>Status:</strong> COMPLETE — lint gate configured and source-snapshot baseline documented<br>
+<strong>Security findings resolved:</strong> None<br>
+<strong>Tests added:</strong> 0 (lint infrastructure and documentation baseline)</p>
+<p><strong>Files changed:</strong></p>
+<ul>
+<li><code>.eslintrc.cjs</code> — CREATED/UPDATED; ESLint 8 legacy configuration for TypeScript, React, React Hooks, Storybook, tests, and config files</li>
+<li><code>package.json</code> / <code>package-lock.json</code> — <code>lint</code> and <code>lint:fix</code> scripts added; <code>@typescript-eslint/eslint-plugin</code> and <code>@typescript-eslint/parser</code> upgraded to <code>^8.60.1</code> for TypeScript 5.9.3 support</li>
+<li><code>ClientApp/src/components/Pagination/index.tsx</code> — stale <code>ban-types</code> suppression removed after the TypeScript ESLint rule rename</li>
+<li><code>docs/eslint-baseline.md</code> — CREATED/UPDATED; accepted warning baseline captured</li>
+<li><code>AGENTS.md</code> and migration/change-record documentation — validation guidance updated so lint is treated as an active gate</li>
+</ul>
+<p><strong>Verification:</strong> <code>npm run lint</code> passed (<code>0</code> errors, <code>131</code> accepted warnings); <code>npm run type-check</code> passed; <code>npm run test:unit</code> passed on rerun (38 files, 326 tests) after the known transient <code>buildRegressionSmoke.test.tsx</code> timeout.</p>
+<p><strong>Outcome:</strong> The previous ESLint configuration gap is closed for this source snapshot. The unsupported TypeScript warning from <code>@typescript-eslint/typescript-estree</code> is resolved by the v8.60.1 parser/plugin upgrade, and migration pre-flight/target CI can now include <code>npm run lint</code> as an active quality gate while tracking the existing warning debt separately.</p>
+<hr />
+<h3 id="current-tree-migration-reconciliation-2026-06-28">[Current-Tree Migration Reconciliation] — 2026-06-28 — Type Approval, Storybook, and Test Baseline</h3>
+<p><strong>Change ID:</strong> CRD-041<br>
+<strong>Source:</strong> Current <code>ClientApp/src</code>, <code>tests</code>, <code>.storybook</code>, <code>storybook-static/index.json</code>, <code>package.json</code>, and dated implementation plans. The snapshot's <code>.git</code> directory is empty, so this entry records verified current state rather than claiming a commit-by-commit diff.<br>
+<strong>Status:</strong> COMPLETE — migration documentation baseline refreshed<br>
+<strong>Security findings resolved:</strong> None<br>
+<strong>New migration gates:</strong> <code>TYPE-APPROVAL-E2E-001</code>; <code>COVERAGE-GATE-001</code></p>
+<p><strong>Current application surface:</strong></p>
+<ul>
+<li><code>ClientApp/src/App.tsx</code> registers 41 paths: 6 public/direct routes, 3 <code>PreConditions</code>-only error paths, and 32 routes behind <code>AuthenticatedElement</code>.</li>
+<li>Six pattern/type approval paths are present: <code>/dashboard-ta</code>, <code>/ta/type-approval-create-pre</code>, <code>/ta/:id/*</code>, <code>/ta/type-approval-create</code>, <code>/ta/type-approval-success/:id/*</code>, and <code>/ta/:id/manage</code>.</li>
+<li>The Type Approval surface includes the dashboard, pre-application, four-step wizard, long-running document upload/progress and cancellation, success screen, and management tabs for application details, documents, and messages.</li>
+<li>React Router is <code>7.18.0</code>; React remains <code>18.3.1</code>.</li>
+</ul>
+<p><strong>Current reusable/UI surface:</strong></p>
+<ul>
+<li>Type Approval support includes attachment/upload controls, <code>CertificateNumberLookup</code>, <code>CheckboxGroup</code>, <code>ProgressBar</code> / <code>ProgressFileList</code>, <code>PaRequestItem</code>, Type Approval filter/search controls, and <code>SlateEditor</code>.</li>
+<li>The source has 31 top-level component families and 87 story files.</li>
+<li>The latest static Storybook index contains 315 entries: 218 stories and 97 docs entries across 97 titles.</li>
+<li>Type Approval isolated stories cover its dashboard shell, pre-application, wizard steps, instrument panel, and application details/documents/messages tabs.</li>
+</ul>
+<p><strong>Current validation and traceability surface:</strong></p>
+<ul>
+<li><code>npm run type-check</code> — PASS, zero TypeScript diagnostics.</li>
+<li><code>npm run lint</code> — PASS, zero ESLint diagnostics.</li>
+<li><code>npm run test:unit</code> — PASS, 114 files / 1,169 tests.</li>
+<li><code>npm run test:unit:coverage</code> — FAILS the configured 100% thresholds: 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines.</li>
+<li><code>npm run test:storybook</code> — PASS, 87 files / 218 tests.</li>
+<li>The BDD source contains 29 feature files: 9 application features with 28 scenarios and 20 Storybook features with 129 scenarios.</li>
+<li><code>tests/unit/storybook/coverageDrift.test.ts</code> enforces route/component inventory updates.</li>
+<li><code>tests/unit/e2e/routeCoverage.test.ts</code> compares all 41 paths with <code>tests/e2e/route-coverage.ts</code>.</li>
+<li><code>vitest.unit.config.ts</code> measures the declared handwritten runtime surface and enforces 100% statement, branch, function, and line thresholds.</li>
+</ul>
+<p><strong>Residual risk:</strong> The six pattern/type approval paths are explicit exclusions in <code>tests/e2e/route-coverage.ts</code> because this offline snapshot has no deterministic authenticated backend fixture contract. Storybook coverage is rendering evidence, not proof of the full workflow. <code>TYPE-APPROVAL-E2E-001</code> gates Type Approval migration/cutover unless deterministic app-BDD fixtures are implemented or the migration lead explicitly accepts the gap. <code>COVERAGE-GATE-001</code> is a Priority 1 pre-flight blocker and requires behavior-focused tests or an explicit, approved coverage-scope/threshold decision.</p>
+<p><strong>Outcome:</strong> The migration baseline now matches the current route, component, Storybook, and test surfaces. The Type Approval E2E gap and unit-coverage failure are explicit, owned gates instead of being hidden by the older 35-route baseline or passing test counts alone.</p>
+<hr />
+<h2 id="open-items">Open Items</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Description</th>
+<th>Owner</th>
+<th>Phase gate</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OI-001</td>
+<td>Sprint 1 closure — <strong>COMPLETE</strong> — <code>npm run test:storybook</code> passed 2026-06-01 (55 files / 165 tests / 0 failures); QA sign-off issued; <code>done.md</code> set to CLOSED_SUCCESS; CRD-022 confirms clean Storybook Vitest output with jsdom noise suppressed</td>
+<td>Sprint 1 lead</td>
+<td>Sprint 1 close</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-002</td>
+<td>Sprint 1 canonical identity rename — <strong>COMPLETE</strong> — Taylor Nguyen identity applied to all 5 fields in <code>storybookHarness.tsx</code> and <code>.storybook/preview.ts</code> on 2026-05-31 (CRD-016); gate: QA sign-off after live build</td>
+<td>Sprint 1 lead</td>
+<td>Sprint 1 close</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-003</td>
+<td>SEC-010 IDOR backend verification — <strong>COMPLETE</strong> — pentest-confirmed remediation prior to go-live; backend team confirmed 2026-06-04; checklist ticked; inline comment updated in <code>dashboard/index.tsx</code>; CRD-035</td>
+<td>Backend team</td>
+<td>Pre-production deploy</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-004</td>
+<td>HTML assessment reconciliation — <strong>COMPLETE</strong> — CRD-024 backfilled still-open modernisation and rebuild-readiness findings into <code>OPEN-ITEMS-BACKLOG.md</code> with non-conflicting IDs, owners, gates, and target phases</td>
+<td>Migration lead</td>
+<td>Historical review gate</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-005</td>
+<td>Concerns register reconciliation — <strong>COMPLETE</strong> — CRD-025 backfilled remaining <code>docs/CONCERNS.md</code> open questions and deferred hardening items into <code>OPEN-ITEMS-BACKLOG.md</code> and the HTML backlog report</td>
+<td>Migration lead</td>
+<td>Historical review gate</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-006</td>
+<td>Storybook assessment reconciliation — <strong>COMPLETE</strong> — CRD-026 reconciled Storybook quality, autodocs, coverage matrix, BDD workflow trace, migration readiness, and Playwright-BDD improvement plan documents into the Master Change Record, backlog, and HTML report</td>
+<td>Migration lead / QA Agent</td>
+<td>Historical review gate; Storybook readiness gate</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-007</td>
+<td>Analysis assessment reconciliation — <strong>COMPLETE</strong> — CRD-027 reconciled <code>analysis/ASSESSMENT.html</code> and <code>analysis/ARCHITECTURE.mmd</code>; remaining stakeholder-assessment security caveats, helper promise handling, and focused unit-test tranche are now tracked in the backlog and HTML report</td>
+<td>Migration lead</td>
+<td>Historical review gate; modernization readiness gate</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-008</td>
+<td>Modernization brief reconciliation — <strong>COMPLETE</strong> — CRD-028 reconciled <code>analysis/MODERNIZATION_BRIEF.md</code>; remaining brief security fixes and SME/approval phase gates are now tracked in the backlog and HTML report</td>
+<td>Migration lead</td>
+<td>Modernization plan approval gate</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-009</td>
+<td>Type-check + combined validation revalidation — <strong>COMPLETE</strong> — CRD-030 confirmed direct TypeScript is clean; CRD-032 closed the remaining combined <code>migration-check</code> Vitest/Storybook gate</td>
+<td>Frontend Lead / QA Agent</td>
+<td>Migration pre-flight and target CI verification</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-010</td>
+<td>Transport retry and behavior-lock TODO closure — <strong>COMPLETE</strong> — CRD-031 confirms retry hardening and focused regression locks are implemented and validated (<code>28</code> tests / <code>0</code> failures + clean type-check)</td>
+<td>Frontend Lead / QA Agent</td>
+<td>Migration implementation integrity</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-011</td>
+<td>Design platform decisions — <strong>COMPLETE</strong> — CRD-034 received Expert Design Lead, Backend Architect, and Architecture structural recommendations for all 22 Priority 2 open items on 2026-06-04. Items 1–15 resolved; items 16–22 structural recommendations. Three Batch E prerequisites (BATCH-E-PREREQ-001–003) are complete as of CRD-039.</td>
+<td>Design Lead / Backend Architect / Architecture</td>
+<td>Batch E and P2 gate closure</td>
+<td>COMPLETE (decisions received; prerequisites complete)</td>
+</tr>
+<tr>
+<td>OI-012</td>
+<td>WCAG component/E2E validation baseline — <strong>COMPLETE</strong> — CRD-036 confirms Actions and prior component accessibility remediations plus full authenticated E2E and Storybook route validation are passing (<code>type-check</code>, <code>test:unit</code>, <code>test:storybook</code>, <code>test:e2e</code>)</td>
+<td>Frontend Lead / QA Agent</td>
+<td>WCAG 2.2 AA component remediation and migration pre-flight validation</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-013</td>
+<td>ESLint source lint gate — <strong>COMPLETE</strong> — CRD-040 established the gate; CRD-041 reconfirms <code>npm run lint</code> passes with zero diagnostics</td>
+<td>Frontend Lead / QA Agent</td>
+<td>Migration pre-flight and target CI verification</td>
+<td>COMPLETE</td>
+</tr>
+<tr>
+<td>OI-014</td>
+<td>Current-tree migration reconciliation — <strong>COMPLETE</strong> — CRD-041 records 41 routes, Type Approval surfaces, Storybook inventory, 114 unit files / 1,169 passing tests, and the new <code>TYPE-APPROVAL-E2E-001</code> and <code>COVERAGE-GATE-001</code> gates</td>
+<td>Migration Lead / Frontend Lead / QA Agent</td>
+<td>Historical review and migration readiness</td>
+<td>COMPLETE</td>
+</tr>
+</tbody>
+</table>
+
+  </main>
+</body>
+</html>

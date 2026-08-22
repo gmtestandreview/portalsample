@@ -1,0 +1,132 @@
+.alert {
+  padding: $alert-padding-y $alert-padding-x;
+  border: 1px solid transparent;
+  border-top: 4px solid transparent !important;
+  flex-direction: column;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+
+  @include media-breakpoint-up(sm) {  
+    flex-direction: row;
+  }
+
+  &:last-child {
+    margin-bottom: 3rem;
+  }
+
+  .bgCircle,
+  [class^="bgCircle-"],
+  [class*=" bgCircle-"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    @include media-breakpoint-up(sm) {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+  }
+
+  &.alert-dismissible .btn-close {
+    padding: 1rem;
+    &:hover, &:focus, &:active {
+      background-color: transparent;
+    }
+  }
+
+  &.alert-success {
+    border-top-color: $alert-success-border !important;
+    background-color: $alert-success-bg !important;
+    color: $body-color;
+
+    .bgCircle,
+    [class^="bgCircle-"],
+    [class*=" bgCircle-"] {
+      background-color: $success;
+      color: $white;
+    }
+
+    .icon-tick {
+      @include media-breakpoint-up(sm) {
+        font-size: 1.5rem;
+      }
+    }
+
+  }
+
+  &.alert-danger {
+    border-top-color: $danger-lighter !important;
+    background-color: $danger-light !important;
+    color: $body-color;
+
+    .bgCircle,
+    [class^="bgCircle-"],
+    [class*=" bgCircle-"] {
+      color: $white;
+      background-color: $alert-danger-interior;
+    }
+
+    .icon-warning {
+      font-size: 1.250rem;
+      padding-left: 1px;
+      padding-bottom: 3px;
+
+      @include media-breakpoint-up(sm) {
+        font-size: 2rem;
+        padding-left: 2px;
+        padding-bottom: 4px;
+      }
+    }
+  }
+
+  &.alert-warning {
+    border-top-color: $alert-warning-border !important;
+    background-color: $alert-warning-bg !important;
+    color: $body-color;
+
+    .bgCircle,
+    [class^="bgCircle-"],
+    [class*=" bgCircle-"] {
+      color: $white;
+      background-color: $alert-warning-interior;
+    }
+
+    .icon-warning {
+      font-size: 1.250rem;
+      padding-left: 1px;
+      padding-bottom: 3px;
+
+      @include media-breakpoint-up(sm) {
+        font-size: 2rem;
+        padding-left: 2px;
+        padding-bottom: 4px;
+      }
+    }
+  }
+
+  &.alert-info {
+    border-top-color: $disr-light-blue !important; //#88BEBE
+    background-color: $alert-info-bg !important; //#DDECEC
+    color: $body-color;
+
+    .bgCircle,
+    [class^="bgCircle-"],
+    [class*=" bgCircle-"] {
+      background-color: rgba( $nmi-primary, 0.85); //$nmi-site-coastline-bay-primary;
+      color: $white;
+    }
+
+    .icon-info {
+      @include media-breakpoint-up(sm) {
+        font-size: 1.750rem;
+      }
+    }
+
+  }
+  &.alert-basic {
+    border-top-color: $disr-light-blue !important; //#88BEBE
+    background-color: $light !important; //#DDECEC
+    color: $body-color;
+  }
+}
+

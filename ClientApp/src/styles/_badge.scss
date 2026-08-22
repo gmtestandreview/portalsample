@@ -1,0 +1,12 @@
+// Badges and statuses
+.badge {
+  min-width: 70px;
+  font-weight: normal;
+  &-sm {
+    min-width: 1rem;
+    font-size: $font-size-xs; //12px
+    font-weight: bold;
+    padding: 0.2rem 0.4rem;
+  }
+}
+

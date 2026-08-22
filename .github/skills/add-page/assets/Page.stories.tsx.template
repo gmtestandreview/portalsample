@@ -1,0 +1,10 @@
+import { {{PageName}} } from '.';
+
+export default {
+	title: 'Pages/{{PageName}}',
+	component: {{PageName}},
+};
+
+export const Default = () => {
+	return <{{PageName}} />;
+};

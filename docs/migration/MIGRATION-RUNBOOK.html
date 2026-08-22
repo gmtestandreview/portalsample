@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NMI Portal — Migration Runbook</title>
+  <style>
+    body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; background: #f5f7fb; color: #1f2937; line-height: 1.55; }
+    main { max-width: 1200px; margin: 1.5rem auto 2rem; padding: 1rem 1.25rem; background: #ffffff; border: 1px solid #d8e0ea; border-radius: 12px; box-shadow: 0 4px 14px rgba(17,24,39,0.06); }
+    h1, h2, h3, h4 { color: #123f65; }
+    h1 { border-bottom: 2px solid #e6eef7; padding-bottom: 0.4rem; }
+    h2 { border-bottom: 1px solid #e6eef7; padding-bottom: 0.25rem; margin-top: 2rem; }
+    table { width: 100%; border-collapse: collapse; margin: 0.8rem 0 1rem; font-size: 0.93rem; }
+    th, td { border: 1px solid #d8e0ea; padding: 0.5rem 0.55rem; text-align: left; vertical-align: top; }
+    th { background: #edf4fb; }
+    code { background: #eef3f8; padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.9em; }
+    pre { background: #0f1720; color: #e7edf3; padding: 0.8rem 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.88rem; line-height: 1.5; }
+    pre code { background: none; padding: 0; font-size: inherit; }
+    hr { border: 0; border-top: 1px solid #d8e0ea; margin: 1.4rem 0; }
+    ul, ol { padding-left: 1.4rem; }
+    li { margin-bottom: 0.25rem; }
+    .callout { border-left: 4px solid #e07b00; background: #fff8ee; padding: 0.75rem 1rem; border-radius: 0 6px 6px 0; margin: 1rem 0; }
+    .callout.danger { border-left-color: #c0392b; background: #fff3f2; }
+    .callout.info { border-left-color: #2980b9; background: #edf6ff; }
+    .callout.success { border-left-color: #27ae60; background: #f0fff5; }
+    .callout strong { color: #7a3800; }
+    .callout.danger strong { color: #7a1a12; }
+    .callout.info strong { color: #1a4a7a; }
+    .callout.success strong { color: #145a32; }
+    .meta { font-size: 0.9rem; color: #4b5563; margin-bottom: 1.2rem; }
+    .meta strong { color: #1f2937; }
+    .batch-header { background: #edf4fb; padding: 0.35rem 0.6rem; border-radius: 4px; font-weight: 600; }
+    .status-complete { color: #145a32; font-weight: 600; }
+    .status-pending { color: #7a3800; font-weight: 600; }
+    .status-cleared { color: #145a32; }
+    .toc { background: #f5f7fb; border: 1px solid #d8e0ea; border-radius: 8px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; }
+    .toc h3 { margin-top: 0; font-size: 1rem; color: #123f65; }
+    .toc ol { margin: 0; }
+    .toc li { font-size: 0.92rem; }
+    @media (max-width: 700px) { main { margin: 0.5rem; padding: 0.8rem; } table { font-size: 0.84rem; } }
+  </style>
+</head>
+<body>
+<main>
+
+<h1>NMI Portal — Migration Runbook</h1>
+
+<div class="meta">
+  <strong>Document:</strong> MIGRATION-RUNBOOK.md / MIGRATION-RUNBOOK.html<br>
+  <strong>Phase:</strong> 4.2 — Operational Artefacts<br>
+  <strong>Last updated:</strong> 2026-06-28 (CRD-041) — Current-tree reconciliation adds the six pattern/type approval routes and their dashboard, wizard, upload, and management surfaces; updates the route total to 41; records React Router v7; and refreshes the validation baseline. Type-check, lint, unit tests (114 files / 1,169 tests), Storybook tests (87 files / 218 tests), and 8 quality regression tests pass. <code>COVERAGE-GATE-001</code> is open because unit coverage is 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines against configured 100% thresholds. <code>TYPE-APPROVAL-E2E-001</code> remains the affected-route cutover gate.<br>
+  <strong>Related documents:</strong>
+  <ul style="margin:0.3rem 0 0;">
+    <li><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></li>
+    <li><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code></li>
+    <li><code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code></li>
+    <li><code>docs/migration/msw-init-checklist.md</code></li>
+    <li><code>docs/migration/2026-05-30-auth-token-acquisition-migration-checklist.md</code></li>
+    <li><code>docs/architecture/nswag-regeneration.md</code></li>
+  </ul>
+</div>
+
+<div class="toc">
+  <h3>Contents</h3>
+  <ol>
+    <li><a href="#s1">Overview and Prerequisites</a></li>
+    <li><a href="#s2">Batch Execution Order</a></li>
+    <li><a href="#s3">Batch A — Core Bootstrap and Authentication</a></li>
+    <li><a href="#s4">Batch B — UI Components</a></li>
+    <li><a href="#s5">Batch C — Storage, Analytics, and Instrumentation</a></li>
+    <li><a href="#s6">Batch D — Validation Schemas and Test Suites</a></li>
+    <li><a href="#s7">Batch E — Styles and Assets</a></li>
+    <li><a href="#s8">NSwag Client Regeneration</a></li>
+    <li><a href="#s9">Post-Migration Verification</a></li>
+    <li><a href="#s10">Rollback Procedure</a></li>
+    <li><a href="#s11">Change Record Update</a></li>
+    <li><a href="#appendix">Appendix — Verification Command Reference</a></li>
+  </ol>
+</div>
+
+<div class="callout danger">
+  <strong>⚠ STOP CONDITIONS</strong><br>
+  Do not proceed past pre-flight if:
+  <ul style="margin: 0.4rem 0 0;">
+    <li>PF-13 FAILS (<code>devAuth.ts</code> is present in target)</li>
+    <li>Any open P1 item in <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> is unresolved</li>
+    <li><code>COVERAGE-GATE-001</code> is unresolved</li>
+    <li>Type Approval is in migration scope and <code>TYPE-APPROVAL-E2E-001</code> is unresolved or unaccepted</li>
+    <li><del>SEC-010 backend verdict has not been returned</del> <span class="status-complete">CLEARED 2026-06-04</span> — pentest-confirmed remediation; CRD-035</li>
+    <li>Sprint 1 QA sign-off (<code>docs/qa/sprint-1-signoff.md</code>) is not PASS</li>
+  </ul>
+</div>
+
+<hr>
+
+<h2 id="s1">1. Overview and Prerequisites</h2>
+
+<p>This runbook is the step-by-step execution guide for migrating the NMI Portal source from this source-map snapshot workspace into the target buildable repository. It is executed by the migration engineer after all prerequisite phases are complete and all pre-flight checks pass.</p>
+
+<h3>Phase Prerequisites</h3>
+<p>The following phases must be complete before executing this runbook:</p>
+<table>
+  <thead><tr><th>Phase</th><th>Description</th><th>Artefact</th></tr></thead>
+  <tbody>
+    <tr><td>Phase 0</td><td>Source assessment and gap closure</td><td><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></td></tr>
+    <tr><td>Phase 1</td><td>Auth bypass removal</td><td><code>docs/change-record/MASTER-CHANGE-RECORD.md</code> — AUTH-* entries</td></tr>
+    <tr><td>Phase 2</td><td>Quality regression suite</td><td><code>quality/</code> directory; 8 regression tests passing</td></tr>
+    <tr><td>Phase 3</td><td>Architecture documentation</td><td><code>docs/architecture/</code></td></tr>
+    <tr><td>Phase 4.1</td><td>Open items backlog</td><td><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code></td></tr>
+    <tr><td>Phase 4.2</td><td>Operational artefacts (this doc)</td><td><code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code>, <code>docs/migration/MIGRATION-RUNBOOK.md</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Pre-Flight Requirement</h3>
+<p>Complete every item in <code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code> and obtain the migration engineer sign-off before running any batch in this runbook.</p>
+
+<h3>Recording Changes</h3>
+<p>After each batch completes, add an entry to <code>docs/change-record/MASTER-CHANGE-RECORD.md</code> recording:</p>
+<ul>
+  <li>Batch letter and name</li>
+  <li>Files migrated</li>
+  <li>Verification result (pass count, fail count)</li>
+  <li>Migration engineer initials and date</li>
+</ul>
+
+<h3>Mandatory Historical Review Before Batch A</h3>
+<p>Before Batch A starts, the migration lead must complete the Historical Review Gate in <code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code>. The objective is to make the reconstructed <code>MASTER-CHANGE-RECORD.md</code> the single operational source of truth for the live migration.</p>
+<p>The review must confirm:</p>
+<ul>
+  <li>All previous actions, decisions, and supporting documentation predating <code>docs/nmi-portal-rebuild-readiness-assessment-2026-05-29.html</code> have been reviewed.</li>
+  <li><code>analysis/portal.measurement.gov.au/ARCHITECTURE.mmd</code>, <code>analysis/portal.measurement.gov.au/ASSESSMENT.md</code>, and <code>docs/CONCERNS.md</code> have been reconciled into the Master Change Record, Open Items Backlog, this runbook, the pre-flight checklist, the migration preparation plan, and both assessment HTML files.</li>
+  <li>Every unresolved finding has a backlog item with owner, priority, migration gate, and target closure timing.</li>
+  <li>Every resolved finding is represented in the Master Change Record and no longer appears as open in readiness documentation.</li>
+  <li>The historical <code>ASSESSMENT.md</code> security numbering mismatch is resolved for the team: <code>SEC-010 IDOR</code> in migration docs is the backend ownership-verification blocker; the older validation regex issue is tracked separately as <code>VAL-REGEX-001</code>.</li>
+</ul>
+
+<div class="callout">
+  <strong>Note:</strong> If the review discovers a missing or contradictory item, do not begin Batch A. Update <code>MASTER-CHANGE-RECORD.md</code> and <code>OPEN-ITEMS-BACKLOG.md</code>, then rerun the pre-flight review.
+</div>
+
+<hr>
+
+<h2 id="s2">2. Batch Execution Order</h2>
+
+<p>Batches must execute in the following order. Do not begin a batch until the previous batch's verification command passes.</p>
+
+<pre><code>Batch A → Batch B → Batch C → Batch D → Batch E</code></pre>
+
+<div class="callout success">
+  <strong>Batch E prerequisites are COMPLETE</strong> — the original design-platform blockers were resolved by decisions received 2026-06-04 (CRD-034), and BATCH-E-PREREQ-001–003 closed on 2026-06-05 (CRD-037, CRD-038, CRD-039). Batch E may begin after Item 22 repository provisioning and pre-flight sign-off.
+</div>
+
+<table>
+  <thead><tr><th>Batch</th><th>Name</th><th>Files</th><th>Key risk</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><span class="batch-header">A</span></td>
+      <td>Core bootstrap and auth</td>
+      <td><code>index.tsx</code>, <code>App.tsx</code>, <code>env.ts</code>, <code>authentication/**</code> (excl. devAuth.ts), <code>routes/**</code>, <code>utils/**</code>, <code>types.ts</code></td>
+      <td>MSAL bootstrap order; React Router v7; 41-path parity; distributed <code>acquireTokenSilent</code> sites</td>
+    </tr>
+    <tr>
+      <td><span class="batch-header">B</span></td>
+      <td>UI components</td>
+      <td><code>components/**</code></td>
+      <td>Bootstrap coupling; Type Approval attachment/progress/filter/editor surfaces</td>
+    </tr>
+    <tr>
+      <td><span class="batch-header">C</span></td>
+      <td>Storage, analytics, instrumentation</td>
+      <td><code>storage/**</code>, <code>analytics/**</code>, <code>instrumentation/**</code></td>
+      <td>AppInsights singleton pattern</td>
+    </tr>
+    <tr>
+      <td><span class="batch-header">D</span></td>
+      <td>Validation, tests</td>
+      <td><code>validationSchemas/**</code>, <code>tests/unit/**</code>, <code>tests/e2e/**</code>, <code>quality/**</code></td>
+      <td>Yup side-effect import chain; import path aliases</td>
+    </tr>
+    <tr>
+      <td><span class="batch-header">E</span></td>
+      <td>Styles and assets (prerequisites complete)</td>
+      <td><code>styles/**</code>, <code>ClientApp/media/**</code>, <code>ClientApp/public/fonts/**</code>, <code>.storybook/**</code></td>
+      <td>Preserve the current live-theme baseline while translating Bootstrap/SCSS to target tokens and primitives</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Source-Reconciliation Items Carried Into Migration</h3>
+<p>The following items were revalidated from <code>ASSESSMENT.md</code> and <code>CONCERNS.md</code> and are intentionally handled as migration gates or accepted debt:</p>
+<table>
+  <thead><tr><th>Item</th><th>Disposition</th><th>Runbook handling</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>SEC-010 IDOR</code> backend ownership verification</td>
+      <td><span class="status-complete">CLEARED 2026-06-04</span></td>
+      <td>Pentest-confirmed remediation prior to go-live; dashboard route migration unblocked (CRD-035)</td>
+    </tr>
+    <tr>
+      <td><code>VALIDATION-GATE-001</code> combined validation gate</td>
+      <td>Closed P1 blocker</td>
+      <td>CRD-030 classified the failure as combined Vitest/Storybook debt rather than TypeScript debt; CRD-032 resolved it and <code>npm run migration-check</code> now passes</td>
+    </tr>
+    <tr>
+      <td>WCAG component/E2E validation baseline</td>
+      <td>Updated automated evidence</td>
+      <td>CRD-036 resolved the previously failing authenticated account/RFQ/quote E2E flows and two route Storybook stories; Actions, RequestList, combobox, modal/footer/date-picker accessibility evidence added; manual AT/zoom evidence remains outside automated gates</td>
+    </tr>
+    <tr>
+      <td><code>VAL-REGEX-001</code> validation regex semantics</td>
+      <td>P3 decision</td>
+      <td>Do not change validation behaviour during migration unless promoted and explicitly approved</td>
+    </tr>
+    <tr>
+      <td><code>API-WORKAROUND-001</code> dashboard accepted-quote workaround</td>
+      <td>P3 accepted debt</td>
+      <td>Preserve existing behaviour during migration; remove only after backend/API fix is verified</td>
+    </tr>
+    <tr>
+      <td><code>AUTH-OPS-002</code> production MSAL version confirmation</td>
+      <td>Pre-flight evidence</td>
+      <td>Confirm in PF-16 / environment review before cutover</td>
+    </tr>
+    <tr>
+      <td>Design-platform inputs 1–10</td>
+      <td>P2 — <span class="status-complete">RESOLVED 2026-06-04</span></td>
+      <td>Original blockers closed; three hard prerequisites (BATCH-E-PREREQ-001–003) are complete as of CRD-039 — see <a href="#s7">Section 7</a></td>
+    </tr>
+    <tr>
+      <td>OpenAPI spec availability / CI / Storybook target</td>
+      <td>P2 — <span class="status-complete">RESOLVED 2026-06-04</span></td>
+      <td>Actions outstanding: backend commits <code>openapi.json</code>; DevOps provisions CI; see CRD-034</td>
+    </tr>
+    <tr>
+      <td>Batch E prerequisites BATCH-E-PREREQ-001–003</td>
+      <td>P2 — <span class="status-complete">COMPLETE 2026-06-05</span></td>
+      <td><code>useRouteAccessibility</code> hook (CRD-037), icon audit (CRD-038), and WAF-TYPE-001 typed guard (CRD-039) are complete; Item 22 repository provisioning remains the remaining Batch E gate</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<h2 id="s3">3. Batch A — Core Bootstrap and Authentication</h2>
+
+<h3>Files to Migrate</h3>
+<pre><code>ClientApp/src/index.tsx
+ClientApp/src/App.tsx
+ClientApp/src/env.ts
+ClientApp/src/types.ts
+ClientApp/src/authentication/authConfig.ts
+ClientApp/src/authentication/accountContext.tsx
+ClientApp/src/authentication/hooks.tsx
+ClientApp/src/authentication/AuthenticatedElement.tsx
+ClientApp/src/routes/**   (all route modules)
+ClientApp/src/utils/index.ts</code></pre>
+
+<div class="callout danger">
+  <strong>Do NOT migrate:</strong> <code>ClientApp/src/authentication/devAuth.ts</code> — this file was permanently deleted on 2026-05-29 and must not exist in any form.
+</div>
+
+<h3>Critical Items</h3>
+<ol>
+  <li><strong>MSAL bootstrap order</strong> — <code>await PublicClientApplication.createPublicClientApplication()</code> must complete before <code>root.render()</code>. Verify the target bundler supports top-level <code>await</code>.</li>
+  <li><strong><code>acquireTokenSilent</code> sites</strong> — The current production surface contains 81 matches across 52 files. Each must use the pattern confirmed in <code>docs/migration/2026-05-30-auth-token-acquisition-migration-checklist.md</code>. Review each after migration.</li>
+  <li><strong>env.ts var count</strong> — confirm the 11 required runtime vars plus optional <code>REACT_APP_ENVIRONMENT</code>, no bypass vars (see PF-14).</li>
+  <li><strong>devAuth.ts</strong> — grep for <code>devAuth</code> after migration. Zero results required. If any result appears, stop and investigate before continuing.</li>
+  <li><strong>Route count</strong> — confirm 41 registered paths in <code>App.tsx</code>: 6 public/direct routes, 3 <code>PreConditions</code>-only error paths, and 32 routes behind <code>AuthenticatedElement</code>. The six Type Approval paths are <code>/dashboard-ta</code>, <code>/ta/type-approval-create-pre</code>, <code>/ta/:id/*</code>, <code>/ta/type-approval-create</code>, <code>/ta/type-approval-success/:id/*</code>, and <code>/ta/:id/manage</code>.</li>
+  <li><strong>TrustedTypes policy</strong> — <code>trustedtypes.ts</code> must be imported and registered in <code>index.tsx</code> before <code>root.render()</code>.</li>
+  <li><strong>React Router v7 contract</strong> — retain <code>createBrowserRouter</code>, <code>createRoutesFromElements</code>, wildcard semantics, current future options, and each route's <code>displayHeaderAndFooter</code> setting.</li>
+  <li><strong>Type Approval workflow boundary</strong> — migrate <code>routes/ta/**</code>, <code>routes/dashboard/dashboard-ta.tsx</code>, and their generated-client contracts together. The flow depends on long-running upload progress, cancellation, certificate lookup, rich-text messages, and management-tab state.</li>
+</ol>
+
+<h3>Verification</h3>
+<pre><code>npm run type-check &amp;&amp; npm run test:unit</code></pre>
+<p><strong>Expected result:</strong> Pass count same or better than pre-migration baseline recorded in <code>PRE-FLIGHT-CHECKLIST.md</code>.</p>
+
+<h3>Post-Batch Record</h3>
+<p>Log batch completion in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>.</p>
+
+<hr>
+
+<h2 id="s4">4. Batch B — UI Components</h2>
+
+<h3>Files to Migrate</h3>
+<pre><code>ClientApp/src/components/**   (all component files)</code></pre>
+<p>This includes all reusable UI components:</p>
+<ul>
+  <li>Form components (Formik-integrated, <code>UnsavedFormPrompt</code>, <code>RouteLeavingGuard</code>)</li>
+  <li>Layout components (header, footer, navigation)</li>
+  <li><code>WizardRoutedStep</code> and multi-step form scaffolding</li>
+  <li>Table, card, modal, and alert components</li>
+  <li>Type Approval attachment/upload controls, certificate lookup, checkbox groups, progress display, request items, filter/search controls, and <code>SlateEditor</code></li>
+  <li>Any component test files co-located with components</li>
+</ul>
+
+<h3>Critical Items</h3>
+<ol>
+  <li><strong>Bootstrap coupling</strong> — Components reference Bootstrap 5 CSS classes and SCSS variables. The Bootstrap shim (<code>_bootstrap-import.scss</code>) must be in place before components are tested visually. Until Batch E completes, visual appearance is not the acceptance criterion — type-check and unit tests are.</li>
+  <li><strong><code>UnsavedFormPrompt</code></strong> — Must use <code>useFormikContext</code>; must wrap <code>RouteLeavingGuard</code>. Do not re-implement navigation guard logic.</li>
+  <li><strong><code>WizardRoutedStep</code> refactor</strong> — The refactor is complete in source. Confirm the migrated version matches; do not revert to the pre-refactor pattern.</li>
+  <li><strong>SonarLint phase 2</strong> — Phase 2 cleanup is complete in source. Do not reintroduce suppressed patterns.</li>
+  <li><strong>Storybook parity evidence</strong> — preserve Type Approval stories for the dashboard, pre-application, four wizard steps, instrument information, and application details/documents/messages. These are isolated rendering evidence, not an authenticated app-BDD workflow.</li>
+</ol>
+
+<h3>Verification</h3>
+<pre><code>npm run type-check &amp;&amp; npm run test:unit</code></pre>
+<p><strong>Expected result:</strong> Pass count same or better than pre-migration baseline.</p>
+
+<h3>Post-Batch Record</h3>
+<p>Log batch completion in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>.</p>
+
+<hr>
+
+<h2 id="s5">5. Batch C — Storage, Analytics, and Instrumentation</h2>
+
+<h3>Files to Migrate</h3>
+<pre><code>ClientApp/src/storage/**
+ClientApp/src/analytics/**
+ClientApp/src/instrumentation/AppInsightsService.ts
+ClientApp/src/instrumentation/**   (all instrumentation files)</code></pre>
+
+<h3>Critical Items</h3>
+<ol>
+  <li><strong>AppInsights singleton</strong> — <code>AppInsightsService</code> must be imported and initialised in <code>index.tsx</code> before <code>root.render()</code>. The singleton pattern must be preserved; do not convert to a React context or lazy-initialise.</li>
+  <li><strong>Connection string source</strong> — must be <code>env.REACT_APP_APPINSIGHTS_CONN_STRING</code>, not <code>process.env</code>.</li>
+  <li><strong>GA measurement ID source</strong> — must be <code>env.REACT_APP_GA_TRACKINGID</code>, not <code>process.env</code>.</li>
+  <li><strong>PII logging</strong> — PII scrubbing applied during Phase 0 is complete. Do not reintroduce any logging that emits user PII (names, email addresses, ABNs) to App Insights or GA telemetry.</li>
+  <li><strong>Session storage</strong> — review <code>storage/**</code> for any references to auth-bypass state; none should remain.</li>
+</ol>
+
+<h3>Verification</h3>
+<pre><code>npm run type-check &amp;&amp; npm run test:unit</code></pre>
+<p><strong>Expected result:</strong> Pass count same or better than pre-migration baseline.</p>
+
+<h3>Post-Batch Record</h3>
+<p>Log batch completion in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>.</p>
+
+<hr>
+
+<h2 id="s6">6. Batch D — Validation Schemas and Test Suites</h2>
+
+<h3>Files to Migrate Selectively</h3>
+<p><strong>Migrate:</strong></p>
+<pre><code>ClientApp/src/validationSchemas/**
+tests/unit/**
+tests/e2e/**
+quality/**</code></pre>
+<p><strong>Selective notes:</strong></p>
+<ul>
+  <li><code>validationSchemas/yupExtensions/stringExtensions.ts</code> — migrate; verify all 19 custom methods are present</li>
+  <li><code>tests/e2e/</code> — migrate feature files and step files; re-run <code>bddgen</code> after migration (see PF-15)</li>
+  <li><code>quality/</code> — migrate all 8 regression test files; verify import path aliases resolve</li>
+</ul>
+
+<h3>Critical Items</h3>
+<ol>
+  <li><strong>Yup side-effect import chain</strong> — After migration, search all <code>validationSchemas/**/*.ts</code> files for custom method calls. Every such file must have <code>import '../../validationSchemas/yupExtensions'</code> (or a transitive import). Explicit imports were added to <code>account/update/validation.ts</code> and <code>account/addBranch/validation.ts</code> during Phase 0 — confirm these are present.</li>
+  <li><strong>Import path aliases</strong> — The target <code>tsconfig.json</code> may define path aliases (<code>@/</code>, <code>~/</code>, etc.) differently from the source. Update all alias-relative imports in test files to match the target configuration before running tests. CRD-032 confirms this snapshot's root Vitest config mirrors the <code>@</code> alias used by unit tests so the combined migration gate resolves those imports.</li>
+  <li><strong><code>bddgen</code> regeneration</strong> — Run <code>npx bddgen</code> after migrating <code>tests/e2e/</code>. Do not commit <code>.features-gen/</code> from the source snapshot; regenerate in target.</li>
+  <li><strong>1,169 unit tests across 114 files</strong> — all must pass after alias updates. This is the verified 2026-06-28 source baseline.</li>
+  <li><strong><code>quality/</code> regression suite</strong> — 8 regression tests must all pass. Failures here indicate a regression in core portal logic and must be treated as blocking.</li>
+  <li><strong>BDD inventory</strong> — migrate all 29 feature files: 28 application scenarios and 129 Storybook scenarios. Retain the reviewed Type Approval exclusions until deterministic authenticated fixtures exist.</li>
+  <li><strong>Coverage enforcement</strong> — retain the measured handwritten source surface and 100% thresholds from <code>vitest.unit.config.ts</code>.</li>
+</ol>
+
+<h3>Verification</h3>
+<pre><code>npm run type-check &amp;&amp; npm run test:unit</code></pre>
+<p>Followed by:</p>
+<pre><code>npm run test:quality:regression
+npm run test:storybook
+npm run test:e2e</code></pre>
+<p><strong>Expected result:</strong> All current unit tests pass under the configured unit-test command; all 8 regression tests pass; <code>npm run migration-check</code> has no unresolved <code>@/...</code> import failures.</p>
+
+<h3>Post-Batch Record</h3>
+<p>Log batch completion in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>.</p>
+
+<hr>
+
+<h2 id="s7">7. Batch E — Styles and Assets <span style="font-weight:400;font-size:0.85em;">(Prerequisites Complete — Pending Repository Provisioning)</span></h2>
+
+<div class="callout">
+  <strong>⚠ BATCH E IS PENDING</strong> Item 22 target repository provisioning (DevOps sign-off required). All three hard prerequisites are complete as of 2026-06-05 (CRD-037, CRD-038, CRD-039). The original design-platform blockers were closed by design decisions received 2026-06-04 (CRD-034). Design Lead SVG source sign-off for BATCH-E-PREREQ-002 is also required before the SCSS icon migration step.
+</div>
+
+<h3>Original Blockers — Resolved 2026-06-04 (CRD-034)</h3>
+<table>
+  <thead><tr><th>Blocker</th><th>Resolution</th></tr></thead>
+  <tbody>
+    <tr><td>Bootstrap 6 upgrade decision</td><td><span class="status-complete">RESOLVED</span> — Bootstrap grid dropped entirely; CSS Grid/Flexbox replaces it. No Bootstrap 6 dependency.</td></tr>
+    <tr><td><code>rfs-value()</code> / <code>negativify-map()</code> compatibility</td><td><span class="status-complete">RESOLVED</span> — Bootstrap SCSS not imported in target; these internal functions are not needed.</td></tr>
+    <tr><td>Icon font vendor resolution</td><td><span class="status-complete">RESOLVED</span> — NMI icon font retired; SVG React components from <code>packages/icons</code> replace all usages.</td></tr>
+  </tbody>
+</table>
+
+<h3>Prerequisites Status</h3>
+<table>
+  <thead><tr><th>Prerequisite</th><th>Owner</th><th>Status</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>BATCH-E-PREREQ-001: Add <code>useRouteAccessibility</code> hook to AppShell in target system (WCAG 2.4.2/2.4.3)</td>
+      <td>Frontend Lead / Target System Owner</td>
+      <td><span class="status-complete">COMPLETE 2026-06-05</span> — CRD-037</td>
+    </tr>
+    <tr>
+      <td>BATCH-E-PREREQ-002: Icon audit — confirm all <code>nmi-icon-*</code> usages have SVG equivalents in <code>packages/icons</code></td>
+      <td>Design Lead / Frontend Lead</td>
+      <td><span class="status-complete">COMPLETE 2026-06-05</span> — CRD-038; Design Lead SVG source sign-off still required before SCSS migration</td>
+    </tr>
+    <tr>
+      <td>BATCH-E-PREREQ-003: Resolve <code>WAF-TYPE-001</code> — typed guard for WAF 412 error shape before wizard port</td>
+      <td>Frontend Lead</td>
+      <td><span class="status-complete">COMPLETE 2026-06-05</span> — CRD-039</td>
+    </tr>
+    <tr>
+      <td>Item 22: Target repository — confirm branch protection, team write access, and CI secrets for React19DesignSystem <code>dependencymangement</code> branch</td>
+      <td>DevOps</td>
+      <td><span class="status-pending">STRUCTURAL — awaiting confirmation</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Files to Migrate (when unblocked)</h3>
+<pre><code>ClientApp/src/styles/**
+ClientApp/media/**
+ClientApp/public/fonts/**
+.storybook/**</code></pre>
+
+<h3>Critical Items (when prerequisites are complete)</h3>
+<p>The design-platform decisions received 2026-06-04 (CRD-034) significantly change the approach for several items. The Bootstrap grid is dropped, the icon font is retired, and several components are replaced with target-platform equivalents.</p>
+<ol>
+  <li><strong>No Bootstrap SCSS import in target</strong> — Do not import Bootstrap SCSS in the target platform. Bootstrap grid classes (<code>.container</code>, <code>.row</code>, <code>.col-*</code>) must be replaced with CSS Grid/Flexbox in component-scoped SCSS modules. The <code>_bootstrap-import.scss</code> shim and <code>silenceDeprecations: ['import']</code> are not carried forward.</li>
+  <li><strong>Design token CSS import</strong> — Import <code>@nmi/design-tokens/dist/css/variables.css</code> once in <code>apps/portal-spa/src/main.tsx</code>. This replaces <code>_variables.scss</code> as the source of colour, typography, and spacing values. Use the current variables, typography, shell, forms, navigation, attachment, and step-navigation partials as the visual parity baseline.</li>
+  <li><strong><code>math.div()</code> still required</strong> — Any remaining SCSS that performs Sass division must use <code>math.div()</code> and declare <code>@use 'sass:math'</code> as its first <code>@use</code> statement.</li>
+  <li><strong><code>@use</code> / <code>@forward</code></strong> — All new SCSS files must use <code>@use</code> / <code>@forward</code>, not <code>@import</code>. Bootstrap 6 migration is no longer deferred — it is irrelevant since Bootstrap SCSS is not carried forward.</li>
+  <li><strong>Icon migration</strong> — Replace all <code>&lt;i className="nmi-icon-*"&gt;</code> usages with SVG React components from <code>packages/icons</code>. Delete <code>_replace-svgicons-csp.scss</code> and icon font files only after all usages are confirmed migrated. Carry out BATCH-E-PREREQ-002 icon audit before starting.</li>
+  <li><strong><code>print.css</code></strong> — Port <code>media-print.scss</code> verbatim to <code>apps/portal-spa/src/styles/print.css</code>. Import in <code>main.tsx</code> after the design token CSS. Replace Bootstrap print selectors (<code>.d-print-none</code>, <code>.d-print-block</code>) with direct element selectors.</li>
+  <li><strong>Storybook decorator</strong> — global decorator must use <code>createMemoryRouter</code>; <code>withPortalProviders</code> must not wrap with <code>MemoryRouter</code>. Verify after migration to Vite Storybook.</li>
+  <li><strong>Storybook chunk splitting</strong> — <code>.storybook/main.ts</code> includes <code>rolldownOptions.output.codeSplitting</code> groups for <code>msw-vendor</code>, <code>testing-vendor</code>, and <code>chromatic-vendor</code> (CRD-021). Confirm these groups are present; <code>pnpm build-storybook</code> must complete with no chunks exceeding 1500 KB.</li>
+  <li><strong>Storybook Vitest jsdom shims</strong> — <code>vitest.storybook.setup.ts</code> includes browser API shims for <code>scrollTo</code>, canvas <code>getContext</code>, and pseudo-element <code>getComputedStyle</code>, plus a narrow filter for deliberate ErrorBoundary story errors (CRD-022). Confirm these remain present after migration so <code>pnpm test:storybook</code> output stays clean.</li>
+  <li><strong><code>useRouteAccessibility</code> hook</strong> — Confirm BATCH-E-PREREQ-001 is complete: the hook must be in AppShell updating <code>document.title</code>, moving focus to <code>&lt;main&gt;</code>, and posting a polite live-region announcement on every route change before Batch E sign-off.</li>
+</ol>
+
+<h3>Verification (when unblocked)</h3>
+<pre><code>npm run type-check &amp;&amp; npm run lint &amp;&amp; npm run test:unit &amp;&amp; npm run build-storybook &amp;&amp; npm run build</code></pre>
+<p><strong>Expected result:</strong> No SCSS deprecation errors; no 404 font errors; Storybook builds successfully.</p>
+
+<h3>Post-Batch Record</h3>
+<p>Log batch completion in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>.</p>
+
+<hr>
+
+<h2 id="s8">8. NSwag Client Regeneration</h2>
+
+<div class="callout danger">
+  <strong>⚠ DO NOT COPY <code>web-api-client.ts</code> FROM THIS SNAPSHOT.</strong> The file must be regenerated from the backend OpenAPI spec in the target environment.
+</div>
+
+<p>Follow the procedure in <code>docs/architecture/nswag-regeneration.md</code> exactly. Summary:</p>
+<ol>
+  <li>Obtain the backend OpenAPI spec URL from the backend team (or from the running backend in the target environment).</li>
+  <li>Run the NSwag generation command against that URL.</li>
+  <li>Confirm the generated file header shows the spec source URL, not a local file path.</li>
+  <li>Verify <code>AuthorizedApiBase</code> is present in the generated output. If it is absent or incomplete, apply the manual patch documented in <code>docs/architecture/nswag-regeneration.md</code>.</li>
+  <li>Run <code>npm run type-check</code> to confirm the generated client is type-compatible with the rest of the migrated codebase.</li>
+</ol>
+
+<div class="callout info">
+  <strong>Recommended timing:</strong> Between Batch A and Batch B. NSwag regeneration should be performed after Batch A is complete (so that <code>AuthorizedApiBase</code> dependencies are in place) and before Batches B–D rely on API calls in their tests.
+</div>
+
+<hr>
+
+<h2 id="s9">9. Post-Migration Verification</h2>
+
+<p>After all batches complete (Batches A–D, and E when unblocked), run the full verification suite:</p>
+
+<h3>Full Verification Suite</h3>
+<pre><code>npm run type-check
+npm run lint
+npm run test:unit
+npm run test:unit:coverage
+npm run migration-check
+npm run test:storybook
+npm run test:quality:regression
+npm run test:e2e
+npm run build
+npm run build-storybook</code></pre>
+<p>All commands must pass with zero failures.</p>
+
+<h3>Manual Smoke Test — 41 Routes</h3>
+<p>Perform a manual smoke test covering all 41 registered paths. For each route, confirm:</p>
+<ul>
+  <li>Route loads without JavaScript console errors</li>
+  <li>Authenticated routes correctly redirect unauthenticated users to the sign-in page</li>
+  <li>Page title and heading match expected values</li>
+  <li>No TrustedTypes CSP violations in browser console</li>
+</ul>
+<table>
+  <thead><tr><th>Route category</th><th>Count</th><th>Smoke test status</th></tr></thead>
+  <tbody>
+    <tr><td>Public routes</td><td>6</td><td>[ ]</td></tr>
+    <tr><td><code>PreConditions</code>-only error paths</td><td>3</td><td>[ ]</td></tr>
+    <tr><td><code>AuthenticatedElement</code> routes</td><td>32</td><td>[ ]</td></tr>
+    <tr><td><strong>Total</strong></td><td><strong>41</strong></td><td></td></tr>
+  </tbody>
+</table>
+
+<h3>App Insights Verification</h3>
+<p>After sign-in, confirm App Insights events appear in the Azure Application Insights portal within 2–5 minutes. Confirm no PII is present in event properties.</p>
+
+<h3>CSP Header Verification</h3>
+<p>Confirm the Content-Security-Policy header returned by the target server includes <code>require-trusted-types-for 'script'</code> and the DOMPurify policy name.</p>
+
+<hr>
+
+<h2 id="s10">10. Rollback Procedure</h2>
+
+<p>If any batch produces failures that cannot be resolved within the migration window, roll back that batch using the following procedure:</p>
+
+<h3>Per-Batch Rollback Steps</h3>
+<ol>
+  <li>Identify the batch that introduced the failure (use git history in the target repo).</li>
+  <li>Revert all files introduced in that batch:
+    <pre><code>git revert --no-commit &lt;commit-range&gt;</code></pre>
+    Or restore individual files from the previous commit:
+    <pre><code>git checkout HEAD~1 -- &lt;file-path&gt;</code></pre>
+  </li>
+  <li>Run the verification command to confirm a clean revert:
+    <pre><code>npm run type-check &amp;&amp; npm run test:unit</code></pre>
+  </li>
+  <li>Confirm the pass count returns to the pre-batch baseline.</li>
+  <li>Log the regression in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>:
+    <ul>
+      <li>Batch reverted</li>
+      <li>Root cause (if known)</li>
+      <li>Files affected</li>
+      <li>Date and engineer</li>
+    </ul>
+  </li>
+  <li>Add a blocking item to <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> with priority P1 if the root cause is not known.</li>
+  <li>Do not re-attempt the batch until the root cause is identified and resolved.</li>
+</ol>
+
+<h3>Full Rollback</h3>
+<p>If multiple batches must be rolled back, work in reverse order: D → C → B → A. Do not skip batches when rolling back.</p>
+
+<hr>
+
+<h2 id="s11">11. Change Record Update</h2>
+
+<p>After full migration is complete and all verification steps pass, update <code>docs/change-record/MASTER-CHANGE-RECORD.md</code> with final migration entries:</p>
+
+<table>
+  <thead><tr><th>Date</th><th>Ref</th><th>Change</th><th>Files</th><th>Outcome</th><th>Engineer</th></tr></thead>
+  <tbody>
+    <tr><td></td><td>MIG-A</td><td>Batch A migration complete</td><td><code>index.tsx</code>, <code>App.tsx</code>, <code>env.ts</code>, <code>authentication/**</code>, <code>routes/**</code>, <code>utils/**</code>, <code>types.ts</code></td><td>All tests pass</td><td></td></tr>
+    <tr><td></td><td>MIG-B</td><td>Batch B migration complete</td><td><code>components/**</code></td><td>All tests pass</td><td></td></tr>
+    <tr><td></td><td>MIG-C</td><td>Batch C migration complete</td><td><code>storage/**</code>, <code>analytics/**</code>, <code>instrumentation/**</code></td><td>All tests pass</td><td></td></tr>
+    <tr><td></td><td>MIG-D</td><td>Batch D migration complete</td><td><code>validationSchemas/**</code>, <code>tests/**</code>, <code>quality/**</code></td><td>1,169 unit tests, 157 BDD scenarios, Storybook interaction tests, and 8 regression tests pass; all reviewed route exclusions are retained or replaced with fixtures</td><td></td></tr>
+    <tr><td></td><td>MIG-E</td><td>Batch E migration complete</td><td><code>styles/**</code>, <code>media/**</code>, <code>fonts/**</code>, <code>.storybook/**</code></td><td>Build clean; 0 SCSS deprecations</td><td></td></tr>
+    <tr><td></td><td>MIG-NSWAG</td><td>NSwag client regenerated</td><td><code>api/web-api-client.ts</code></td><td>Regenerated from spec; type-check passes</td><td></td></tr>
+  </tbody>
+</table>
+
+<p>Also update the <code>Status</code> column of any <code>OPEN-ITEMS-BACKLOG.md</code> items that were resolved during migration.</p>
+
+<hr>
+
+<h2 id="appendix">Appendix — Verification Command Reference</h2>
+
+<table>
+  <thead><tr><th>Command</th><th>Purpose</th><th>Batch(es)</th></tr></thead>
+  <tbody>
+    <tr><td><code>npm run type-check</code></td><td>TypeScript compilation check</td><td>All</td></tr>
+    <tr><td><code>npm run test:unit</code></td><td>Vitest unit tests (1,169 tests, 114 files verified 2026-06-28)</td><td>All</td></tr>
+    <tr><td><code>npm run test:unit:coverage</code></td><td>Unit suite plus V8 coverage thresholds</td><td>D, post-migration</td></tr>
+    <tr><td><code>npm run migration-check</code></td><td>Combined TypeScript + Vitest + Storybook build gate; CRD-032 confirms this passes in the source snapshot</td><td>Pre-flight, post-migration</td></tr>
+    <tr><td><code>npm run test:quality:regression</code></td><td>8 quality regression tests</td><td>D, post-migration</td></tr>
+    <tr><td><code>npm run build-storybook</code></td><td>Storybook build (SCSS + component stories)</td><td>E, post-migration</td></tr>
+    <tr><td><code>npm run test:storybook</code></td><td>Storybook interaction tests; output must be clean of known jsdom API noise</td><td>Post-migration</td></tr>
+    <tr><td><code>npm run test:e2e</code></td><td>28 application BDD scenarios plus 129 Storybook BDD scenarios</td><td>D, post-migration</td></tr>
+    <tr><td><code>npm run lint</code></td><td>ESLint source linting; 2026-06-28 baseline passes with zero diagnostics</td><td>Pre-flight, target CI, post-migration</td></tr>
+    <tr><td><code>npm run build</code></td><td>Production webpack build</td><td>E, post-migration</td></tr>
+    <tr><td><code>npx bddgen -c playwright.config.ts</code></td><td>Regenerate application <code>.features-gen/</code> specs</td><td>D</td></tr>
+    <tr><td><code>npx bddgen -c playwright.storybook.config.ts</code></td><td>Regenerate Storybook <code>.features-gen/</code> specs</td><td>D</td></tr>
+    <tr><td><code>npx msw init public/</code></td><td>Initialise MSW service worker</td><td>Pre-flight (PF-12)</td></tr>
+  </tbody>
+</table>
+
+</main>
+</body>
+</html>

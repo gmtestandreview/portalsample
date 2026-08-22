@@ -1,0 +1,44 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Migration/Authentication" />
+
+# Authentication
+
+**MSAL, account context, and route-guard structure under `static/js/authentication`.**
+
+## Authentication Files
+
+| File | Responsibility |
+| --- | --- |
+| `authConfig.ts` | MSAL configuration, scopes, and token request setup |
+| `accountContext.tsx` | Account state and dispatch contracts |
+| `AccountProvider.tsx` | Provider that loads and mutates authenticated user state |
+| `AuthenticatedElement.tsx` | Route guard wrapping `PreConditions`, MSAL auth template, and `ErrorBoundary` |
+| `hooks.tsx` | Required accessors for account state and dispatch |
+| `types.ts` | Shared auth prop typing |
+
+## Runtime Stack
+
+The application bootstrap composes authentication in this order:
+
+1. `PublicClientApplication.createPublicClientApplication(configuration)`
+2. `TrustedTypes.createTrustedTypePolicy()`
+3. `MsalProvider`
+4. `AccountProvider`
+5. `StrictMode`
+6. `RouterProvider`
+
+## Guard Rules
+
+- Protected routes should use `AuthenticatedElement`.
+- Multi-step form routes suppress the main chrome with `displayHeaderAndFooter={false}`.
+- `AuthenticatedElement` wraps `PreConditions`, so auth and terms/completion gates
+  are coupled in the current architecture.
+
+## Migration Notes
+
+- `hooks.tsx` is the only supported entry point into account context state.
+- `AccountProvider` mixes auth state, organisation targeting, completion flags,
+  and user profile concerns; this is a likely seam for future decomposition.
+- Redirect-based login is documented rather than fully simulated because Storybook
+  is best used here as a structural contract reference, not an identity provider.

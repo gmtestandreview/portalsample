@@ -1,0 +1,58 @@
+.nmi-footer {
+    background-color: $black;
+    color: $white;
+    margin-top: 5rem;
+    .btn-link {
+      color: $white;
+    }
+  }
+
+  /* Link text */
+  .link-text:visited {
+    color: $white;
+  }
+
+  .link-text:hover {
+    color: $white;
+    background-color: rgba($white, 0.15);
+    box-shadow: none;
+    text-decoration: underline;
+  }
+
+  .link-text:focus {
+    color: $nmi-active;
+    background-color: $white;
+    outline: 3px solid $white;
+  }
+
+  .link-text:active {
+    color: $white;
+    background-color: rgba($nmi-primary, 0.5);
+    box-shadow: none;
+  }
+  .link-text:disabled {
+    color: $nmi-dark-gray;
+  }
+  
+  .footer .links-block .links-block-row li {
+    list-style: none;
+    display: flex;
+  }
+  
+  .footer .links-block .links-block-row ul li {
+    display: inline-block;
+    padding: 0 2rem 0 0;
+  
+    @include media-breakpoint-down(md) {  
+      display: block;
+      padding: 0 0 1rem;
+    }
+  }
+  
+  .footer .links-block .links-block-row ul {
+    padding: 0;
+    margin-bottom: 0;
+    margin: 0;
+    display: block;
+    list-style-type: none;
+  }

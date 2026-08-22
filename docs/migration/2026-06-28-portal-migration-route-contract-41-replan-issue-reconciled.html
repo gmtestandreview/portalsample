@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NMI Portal Migration — B0 Route-Contract Correction (35 → 41) + Type Approval Replan</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --page: #ffffff;
+      --ink: #142033;
+      --muted: #5d6b82;
+      --border: #d9e1ec;
+      --brand: #7b0b15;
+      --brand-dark: #4f0810;
+      --blue: #123f65;
+      --link: #005ea8;
+      --code-bg: #111827;
+      --code-ink: #e5e7eb;
+      --soft-red: #fff1f2;
+      --soft-blue: #eef6ff;
+      --soft-yellow: #fff8dc;
+      --soft-green: #eefaf2;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.58;
+      font-size: 16px;
+    }
+    a { color: var(--link); }
+    a:hover { text-decoration-thickness: 2px; }
+    .hero {
+      background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+      color: #fff;
+      padding: 40px 24px;
+      border-bottom: 5px solid #ffcc00;
+    }
+    .hero-inner { max-width: 1180px; margin: 0 auto; }
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .78rem;
+      opacity: .92;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      line-height: 1.12;
+      color: #fff;
+      border: 0;
+      padding: 0;
+    }
+    .hero .meta { margin: 0; opacity: .92; font-size: .94rem; }
+    .layout {
+      max-width: 1180px;
+      margin: 28px auto 44px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr);
+      gap: 22px;
+    }
+    aside { align-self: start; position: sticky; top: 16px; }
+    main { min-width: 0; }
+    .card {
+      background: var(--page);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .toc { padding: 18px; max-height: calc(100vh - 32px); overflow: auto; }
+    .toc h2 {
+      font-size: 1rem;
+      margin: 0 0 10px;
+      color: var(--blue);
+      border: 0;
+      padding: 0;
+    }
+    .toc ol { list-style: none; margin: 0; padding: 0; }
+    .toc li { margin: 6px 0; }
+    .toc li.toc-h3 { margin-left: 14px; font-size: .92rem; }
+    .toc a { color: var(--ink); text-decoration: none; }
+    .toc a:hover { color: var(--brand); text-decoration: underline; }
+    .content { padding: 26px; }
+    .content > h1:first-child { display: none; }
+    h1, h2, h3, h4, h5, h6 { color: var(--blue); line-height: 1.25; }
+    h2 {
+      font-size: 1.55rem;
+      margin: 32px 0 12px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+    }
+    h3 { font-size: 1.15rem; margin: 26px 0 10px; }
+    h4 { font-size: 1.04rem; margin: 18px 0 8px; }
+    p { margin: 0 0 14px; }
+    ul, ol { padding-left: 1.45rem; margin-top: 0; }
+    li { margin-bottom: .28rem; }
+    blockquote {
+      margin: 16px 0;
+      padding: 14px 18px;
+      border-left: 5px solid var(--brand);
+      background: var(--soft-red);
+      border-radius: 10px;
+      color: #3b2530;
+    }
+    blockquote p:last-child { margin-bottom: 0; }
+    code {
+      background: #eef2f7;
+      padding: .15rem .35rem;
+      border-radius: 6px;
+      font-family: Consolas, Monaco, 'Courier New', monospace;
+      font-size: .92em;
+    }
+    pre {
+      overflow: auto;
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      border: 1px solid #1e293b;
+      line-height: 1.5;
+    }
+    pre code {
+      background: transparent;
+      color: inherit;
+      padding: 0;
+      border-radius: 0;
+      font-size: .9rem;
+    }
+    .table-wrap { overflow-x: auto; margin: 16px 0 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .94rem;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f0f4f8; font-weight: 700; }
+    tr:nth-child(even) td { background: #fafcff; }
+    .task-checkbox { margin-right: .45rem; transform: translateY(.1rem); }
+    .heading-anchor {
+      margin-left: .35rem;
+      opacity: 0;
+      text-decoration: none;
+      font-size: .85em;
+    }
+    h2:hover .heading-anchor,
+    h3:hover .heading-anchor,
+    h4:hover .heading-anchor { opacity: .65; }
+    .footer {
+      max-width: 1180px;
+      margin: -24px auto 40px;
+      padding: 0 20px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; }
+      .toc { max-height: none; }
+      .content { padding: 20px; }
+    }
+    @media print {
+      body { background: #fff; color: #000; font-size: 12pt; }
+      .hero { background: #fff; color: #000; border-bottom: 2px solid #000; }
+      .hero h1 { color: #000; }
+      aside { display: none; }
+      .layout { display: block; max-width: 100%; margin: 0; padding: 0; }
+      .content, .card { box-shadow: none; border: 0; border-radius: 0; }
+      a { color: #000; }
+      pre { white-space: pre-wrap; border: 1px solid #aaa; }
+      h2 { break-after: avoid; }
+      table, pre, blockquote { break-inside: avoid; }
+    }
+  </style>
+<script type="text/javascript" nonce="04c4e71cc2f245999f2e2f5d3f0" src="//local.adguard.org?ts=1782620974589&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000bb4871f8ae1b89aaae7ce635%26ts%3D495172%26p%3Dfs%26cid%3D1%26sig%3D90c232b1b49e2953c90847b15b5f25f0ae562b657e6d436a9ac0132015b2dd72%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="04c4e71cc2f245999f2e2f5d3f0" src="//local.adguard.org?ts=1782620974589&amp;name=AdGuard%20Assistant&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;name=Web%20of%20Trust&amp;type=user-script"></script></head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">NMI Portal Migration Plan</div>
+      <h1>NMI Portal Migration — B0 Route-Contract Correction (35 → 41) + Type Approval Replan</h1>
+      <p class="meta">Converted from <code>2026-06-28-portal-migration-route-contract-41-replan-issue-reconciled.md</code> · Generated 2026-06-28 04:40:26</p>
+    </div>
+  </header>
+  <div class="layout">
+    <aside>
+    <nav class="toc card" aria-label="Table of contents">
+      <h2>Contents</h2>
+      <ol>
+        <li class="toc-h2"><a href="#global-constraints">Global Constraints</a></li><li class="toc-h3"><a href="#verification-command-mapping">Verification command mapping</a></li><li class="toc-h2"><a href="#operational-insertion-point">Operational insertion point</a></li><li class="toc-h2"><a href="#source-snapshot-issue-report-reconciliation">Source-snapshot issue report reconciliation</a></li><li class="toc-h2"><a href="#file-structure">File Structure</a></li><li class="toc-h3"><a href="#task-1-re-lock-the-route-contract-at-41-register-the-six-type-approval-stub-routes">Task 1: Re-lock the route contract at 41 (register the six Type Approval stub routes)</a></li><li class="toc-h2"><a href="#definition-of-done-this-plan">Definition of Done (this plan)</a></li><li class="toc-h2"><a href="#revised-migration-roadmap-the-replan">Revised Migration Roadmap (the replan)</a></li><li class="toc-h3"><a href="#1-batch-a-core-bootstrap-and-auth">-1. Batch A — core bootstrap and auth ✅</a></li><li class="toc-h3"><a href="#0-b0-mig-a-ta-route-contract-correction-this-plan">0. B0 / MIG-A-TA — route-contract correction (this plan) ▶</a></li><li class="toc-h3"><a href="#1-batch-b-b1-home-page-setup-state">1. Batch B B1 — Home page setup state ⏸→▶</a></li><li class="toc-h3"><a href="#2-batch-b-slice-1-public-pages-contact-form">2. Batch B (slice 1) — public pages + contact form ▶</a></li><li class="toc-h3"><a href="#3-api-client-reconciliation-after-public-slice-before-authenticated-datata-work">3. API-client reconciliation (after public slice; before authenticated data/TA work) ⏳→▶</a></li><li class="toc-h3"><a href="#4-batch-b-slice-2-shared-ui-components-incl-type-approval-primitives">4. Batch B (slice 2) — shared UI components incl. Type Approval primitives ⏳</a></li><li class="toc-h3"><a href="#5-batch-c-storage-analytics-instrumentation-accountprovider-effects">5. Batch C — storage, analytics, instrumentation + AccountProvider effects ⏳</a></li><li class="toc-h3"><a href="#6-batch-d-validation-tests-resolve-coverage-gate-001-and-e2e-environment-setup">6. Batch D — validation + tests (+ resolve COVERAGE-GATE-001 and E2E environment setup) ⏳</a></li><li class="toc-h3"><a href="#7-batch-e-styles-assets-prereqs-complete-awaiting-repo-provisioning-p2-item-22">7. Batch E — styles + assets ⏳ (prereqs complete; awaiting repo provisioning, P2 item 22)</a></li><li class="toc-h3"><a href="#8-batch-f-type-approval-feature-port-new">8. Batch F — Type Approval feature port (NEW) ⏳</a></li><li class="toc-h3"><a href="#cross-cutting-notes-for-downstream-plans">Cross-cutting notes for downstream plans</a></li><li class="toc-h2"><a href="#self-review">Self-Review</a></li><li class="toc-h2"><a href="#execution-handoff">Execution Handoff</a></li>
+      </ol>
+    </nav>
+    </aside>
+    <main class="card content">
+      <h1 id="nmi-portal-migration-b0-route-contract-correction-35-41-type-approval-replan">NMI Portal Migration — B0 Route-Contract Correction (35 → 41) + Type Approval Replan<a aria-label="Link to NMI Portal Migration — B0 Route-Contract Correction (35 → 41) + Type Approval Replan" class="heading-anchor" href="#nmi-portal-migration-b0-route-contract-correction-35-41-type-approval-replan">¶</a></h1>
+<blockquote>
+<p><strong>For agentic workers:</strong> REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (<code>- [ ]</code>) syntax for tracking.</p>
+</blockquote>
+<blockquote>
+<p><strong>Live status update (2026-06-28):</strong> Batch A is already implemented and open as PR #31. Batch B B1 was marked/commenced administratively during setup, but no B1 implementation writes or commits were made. Therefore this plan is now inserted as <strong>B0 / MIG-A-TA</strong> and must execute <strong>before B1 resumes</strong>. Treat any B1 todo state as paused/reset until <code>router.test.tsx</code> proves <strong>41 routes / 32 authenticated / 9 open</strong>.</p>
+</blockquote>
+<blockquote>
+<p><strong>Issue-report reconciliation (2026-06-28 14:31):</strong> the uploaded HTML report confirms the source-snapshot run has clean <code>type-check</code>, <code>lint</code>, <code>test:unit</code>, <code>test:storybook</code>, <code>test:quality:regression</code>, <code>build</code>, <code>build-storybook</code>, and <code>migration-check</code> statuses, but fails <code>test:unit:coverage</code> on the known 100% coverage thresholds and fails <code>test:e2e</code> because the Playwright Chromium executable is missing from the local machine. These are classified below as downstream/pre-flight gates, not blockers for this B0 router-only correction.</p>
+</blockquote>
+<p><strong>Goal:</strong> Reconcile the target <code>apps/portal-spa</code> router to the source's updated route inventory — register the <strong>six new Type Approval paths as auth-gated <code>StubPage</code>s</strong> so the contract is <strong>41 routes (6 public + 3 error + 32 auth)</strong>, matching source <code>CRD-041</code> — and re-sequence the remaining migration batches so Batch B continues from the current 41-route baseline rather than the completed Batch A 35-route baseline.</p>
+<p><strong>Architecture:</strong> This is a <strong>scaffold-parity correction</strong>, not a feature build. Batch A has already registered the original not-yet-ported paths as <code>&lt;StubPage /&gt;</code> behind the real layout/auth wrappers, and locked the count with a contract test that keys on <code>route.path</code> (not the rendered element). The website update (source <code>CRD-041</code>, 2026-06-28) added six Type Approval routes; this plan adds those six as stubs (4 under <code>PortalLayout</code>/shell, 2 under <code>BareLayout</code>/bare, all under <code>&lt;RequireAuth&gt;</code>), updates the contract test from 35→41, and records the change. The actual Type Approval <strong>feature</strong> (dashboard, 4-step wizard, long-running upload, certificate lookup, rich-text messages, management tabs) is a downstream batch outlined in the Roadmap because it depends on the API client and validators that do not exist in the target yet.</p>
+<p><strong>Tech Stack:</strong> React 19.2, <code>react-router-dom</code> 7.17 (object-route <code>createBrowserRouter</code> with global specificity ranking), Vitest 4 + Testing Library, <code>@nmi/react-components</code> (<code>StubPage</code> reuses <code>Heading</code>/<code>Text</code>). No new dependencies.</p>
+<h2 id="global-constraints">Global Constraints<a aria-label="Link to Global Constraints" class="heading-anchor" href="#global-constraints">¶</a></h2>
+<p>Every task implicitly includes these. Values copied verbatim from <code>MIGRATION-RUNBOOK</code> (2026-06-28, CRD-041), <code>PRE-FLIGHT-CHECKLIST</code> (PF-03), and the source <code>ClientApp/src/App.tsx</code>.</p>
+<ul>
+<li><strong>41 routes exactly, paths preserved character-for-character (PF-03 / CRD-041):</strong> 6 public/direct, 3 <code>PreConditions</code>-only error paths, <strong>32</strong> behind auth. The six Type Approval paths are <strong>exactly</strong>: <code>/dashboard-ta</code>, <code>/ta/type-approval-create-pre</code>, <code>/ta/:id/*</code>, <code>/ta/type-approval-create</code>, <code>/ta/type-approval-success/:id/*</code>, <code>/ta/:id/manage</code>.</li>
+<li><strong>Type Approval layout flags (from source <code>App.tsx</code>):</strong> <code>/dashboard-ta</code>, <code>/ta/type-approval-create-pre</code>, <code>/ta/type-approval-create</code>, <code>/ta/:id/manage</code> render <strong>with</strong> header/footer (target <strong>shell</strong> / <code>PortalLayout</code>); <code>/ta/:id/*</code> and <code>/ta/type-approval-success/:id/*</code> use <code>displayHeaderAndFooter={false}</code> (target <strong>bare</strong> / <code>BareLayout</code>). All six are authenticated (<code>AuthenticatedElement</code> → <code>&lt;RequireAuth&gt;</code>).</li>
+<li><strong>No feature logic in this plan.</strong> The six new routes render <code>StubPage</code> only. No API calls, no wizard, no upload, no <code>SlateEditor</code>. Those land in the Type Approval feature batch (see Roadmap).</li>
+<li><strong>Do not modify the contract-test helpers or layout-lazy assertions.</strong> <code>collectPaths</code> and the two <code>loadLazyRoute</code> tests stay as-is; only the expected counts and <code>EXPECTED_PATHS</code> change.</li>
+<li><strong>No auth bypass (PF-13, STOP CONDITION):</strong> unchanged — <code>devAuth</code>/<code>REACT_APP_AUTH_BYPASS</code> must never appear. This plan adds none.</li>
+<li><strong>Coverage policy (COVERAGE-GATE-001):</strong> keep the target's current SPA thresholds (80/75/80/80, accepted under change-record <code>COV-1</code>). The source's 100%-of-handwritten-surface gate is <strong>tracked for Batch D</strong>, not adopted here. Adding six stub routes does not lower coverage (stubs are excluded the same way Batch A's are).</li>
+<li><strong>E2E environment policy:</strong> the uploaded issue report's <code>test:e2e</code> failure is an environment failure (<code>browserType.launch: Executable doesn't exist ... chromium_headless_shell-1228</code>), not evidence of app-BDD regressions. Do not use <code>test:e2e</code> as a B0 acceptance blocker until Playwright browsers are installed in the environment and the command has been rerun.</li>
+<li><strong>Warning classification:</strong> issue-like output from passing commands (<code>test:unit</code>, <code>build-storybook</code>, <code>migration-check</code>) is review debt, not a stop condition for this route-only correction. Keep it visible for Batch D/E hardening, but do not block MIG-A-TA on warnings from commands with exit code 0.</li>
+<li><strong>Commit format:</strong> <code>type(scope): short description</code> — types <code>feat|fix|chore|docs|test|refactor|a11y|perf</code>. Scope for this work: <code>router</code>.</li>
+<li><strong>Indentation/format:</strong> match the surrounding file — 2-space, single quotes. Run the repo formatter (<code>pnpm exec oxfmt &lt;files&gt;</code>) before committing and keep <code>pnpm --filter @nmi/portal-spa lint</code> green. <strong>Stage only the files named in the task</strong> (never <code>.tmp-*</code> budget files or <code>.claude/settings.local.json</code>).</li>
+</ul>
+<h3 id="verification-command-mapping">Verification command mapping<a aria-label="Link to Verification command mapping" class="heading-anchor" href="#verification-command-mapping">¶</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Type-check</td>
+<td><code>pnpm --filter @nmi/portal-spa check-types</code></td>
+</tr>
+<tr>
+<td>All unit tests</td>
+<td><code>pnpm --filter @nmi/portal-spa test</code></td>
+</tr>
+<tr>
+<td>Single test file</td>
+<td><code>pnpm --filter @nmi/portal-spa exec vitest run src/app/router.test.tsx</code></td>
+</tr>
+<tr>
+<td>Lint</td>
+<td><code>pnpm --filter @nmi/portal-spa lint</code></td>
+</tr>
+<tr>
+<td>Playwright install (before any E2E gate)</td>
+<td><code>pnpm --filter @nmi/portal-spa exec playwright install chromium</code> or the repo's equivalent browser-install command</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Acceptance</strong> = <code>check-types &amp;&amp; test &amp;&amp; lint</code> all green, with <code>router.test.tsx</code> proving exactly 41 routes / 32 gated / 9 open. <code>test:e2e</code> is <strong>not</strong> part of B0 acceptance unless Playwright browsers are already installed; if it fails with a missing executable, install Chromium and rerun before classifying the failure as an application regression.</p>
+<hr/>
+<h2 id="operational-insertion-point">Operational insertion point<a aria-label="Link to Operational insertion point" class="heading-anchor" href="#operational-insertion-point">¶</a></h2>
+<p>Use this section to avoid drifting into Batch B with the stale 35-route contract.</p>
+<ul>
+<li><strong>Current branch:</strong> continue on the existing isolated migration workspace branch (<code>ds/audit-fixes-p0-p2</code> at the recorded Batch B setup baseline), not <code>main</code> and not a new worktree.</li>
+<li><strong>Batch A status:</strong> complete/open PR; do not re-run Batch A unless verification fails.</li>
+<li><strong>Batch B status:</strong> B1 was only marked in progress during setup. Because no B1 implementation files were written, pause/reset B1 and insert this plan as <strong>B0 / MIG-A-TA</strong>.</li>
+<li><strong>Durable ledger update:</strong> append a Batch B status adjustment before dispatching this task: B1 administrative start only; no implementation writes; B0 route-contract correction must run first; resume B1 only after 41 / 32 / 9 is proven.</li>
+<li><strong>Todo order:</strong> B0 / MIG-A-TA → B1 Home page → B2 Help guide → B3 Setup access → B4 FAQs → B5 Contact schema → B6 Contact form → B7 Create contact page.</li>
+<li><strong>Batch B brief patch:</strong> before resuming B1, replace stale <code>35 routes / 26 gated / 9 open</code> assumptions with <code>41 routes / 32 gated / 9 open</code> in the B1–B7 dispatch briefs. Keep the pre-flight corrections: update/stage <code>HomePage.stories.tsx</code> in B1, and use literal <code>70ch</code> in B3 because <code>--nmi-measure-prose</code> is not available.</li>
+</ul>
+<hr/>
+<h2 id="source-snapshot-issue-report-reconciliation">Source-snapshot issue report reconciliation<a aria-label="Link to Source-snapshot issue report reconciliation" class="heading-anchor" href="#source-snapshot-issue-report-reconciliation">¶</a></h2>
+<p>The uploaded <code>issues-report.html</code> is useful evidence, but it was generated against the source-map capture workspace (<code>C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au</code>), not the target <code>React19DesignSystem</code> workspace. Treat it as source-baseline/pre-flight evidence, not as proof that the target branch is broken.</p>
+<p><strong>Observed pass/fail position:</strong></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Status in report</th>
+<th>Interpretation for B0 / MIG-A-TA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm run type-check</code></td>
+<td>PASS</td>
+<td>Supports current source baseline; target equivalent remains <code>check-types</code>.</td>
+</tr>
+<tr>
+<td><code>npm run lint</code></td>
+<td>PASS</td>
+<td>Supports current source baseline; target equivalent remains <code>lint</code>.</td>
+</tr>
+<tr>
+<td><code>npm run test:unit</code></td>
+<td>PASS with warning-like output</td>
+<td>Not a B0 blocker; review act/stderr noise in Batch D hardening if it persists in target.</td>
+</tr>
+<tr>
+<td><code>npm run test:unit:coverage</code></td>
+<td>FAIL</td>
+<td>Known <code>COVERAGE-GATE-001</code>: thresholds are 100% and current coverage is 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines. Keep this in Batch D/final pre-flight, not B0.</td>
+</tr>
+<tr>
+<td><code>npm run test:storybook</code></td>
+<td>PASS</td>
+<td>No B0 action.</td>
+</tr>
+<tr>
+<td><code>npm run test:quality:regression</code></td>
+<td>PASS</td>
+<td>No B0 action.</td>
+</tr>
+<tr>
+<td><code>npm run test:e2e</code></td>
+<td>FAIL</td>
+<td>Environment failure: Playwright Chromium executable is missing. Install browsers and rerun before assessing app-BDD correctness.</td>
+</tr>
+<tr>
+<td><code>npm run build</code></td>
+<td>PASS</td>
+<td>No B0 action.</td>
+</tr>
+<tr>
+<td><code>npm run build-storybook</code></td>
+<td>PASS with Rolldown annotation warnings</td>
+<td>Not a B0 blocker; track under Batch E/Storybook hardening if it persists.</td>
+</tr>
+<tr>
+<td><code>npm run migration-check</code></td>
+<td>PASS with warning-like output</td>
+<td>Passing status is authoritative for this report; warnings remain hardening debt.</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Plan impact:</strong></p>
+<ul>
+<li>B0 remains router-only and keeps the acceptance gate at <code>router.test.tsx</code>, <code>check-types</code>, <code>test</code>, and <code>lint</code>.</li>
+<li>Do not add <code>test:unit:coverage</code> or <code>test:e2e</code> to B0 acceptance. They are already tracked gates with different owners and failure modes.</li>
+<li>Before any downstream plan claims E2E validation, add a setup step to install Playwright Chromium and rerun the app-BDD suite. A missing browser executable is a tooling prerequisite failure, not a product failure.</li>
+<li>Keep <code>COVERAGE-GATE-001</code> in Batch D/final pre-flight. The route-contract correction neither improves nor worsens the source coverage threshold failure because it only adds excluded stubs in the target.</li>
+</ul>
+<hr/>
+<h2 id="file-structure">File Structure<a aria-label="Link to File Structure" class="heading-anchor" href="#file-structure">¶</a></h2>
+<p><strong>Source (read-only reference):</strong> <code>C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\ClientApp\src\App.tsx</code> (lines 53–60, 117–156 define the six Type Approval routes).
+<strong>Target (all writes):</strong> <code>C:\Users\gregm\source\React19DesignSystem\</code></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Target file</th>
+<th>Action</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apps/portal-spa/src/app/router.test.tsx</code></td>
+<td>Modify</td>
+<td>Contract test: <code>EXPECTED_PATHS</code> +6, counts 41 / 32 / 9</td>
+</tr>
+<tr>
+<td><code>apps/portal-spa/src/app/router.tsx</code></td>
+<td>Modify</td>
+<td>Register 6 Type Approval <code>StubPage</code> routes (4 shell, 2 bare, all gated)</td>
+</tr>
+<tr>
+<td><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></td>
+<td>Modify</td>
+<td>Add <code>MIG-A-TA</code> row recording the 35→41 reconciliation</td>
+</tr>
+</tbody>
+</table></div>
+<blockquote>
+<p><strong>Why these three and no others for the code change:</strong> a repo sweep confirmed only <code>router.tsx</code> / <code>router.test.tsx</code> encode the route set. The Lighthouse smoke list (<code>apps/portal-spa/e2e/lighthouse.lh.ts</code>) enumerates <strong>public</strong> routes only and the six new paths are auth-gated, so it needs no change. The e2e specs (<code>home</code>, <code>catalogue</code>, …) test specific demo pages, not the route inventory. If a tracked durable ledger/todo file records B1 as in progress, update that ledger separately as operational bookkeeping; do not include it in the MIG-A-TA commit unless the repository convention requires ledger commits.</p>
+</blockquote>
+<hr/>
+<h3 id="task-1-re-lock-the-route-contract-at-41-register-the-six-type-approval-stub-routes">Task 1: Re-lock the route contract at 41 (register the six Type Approval stub routes)<a aria-label="Link to Task 1: Re-lock the route contract at 41 (register the six Type Approval stub routes)" class="heading-anchor" href="#task-1-re-lock-the-route-contract-at-41-register-the-six-type-approval-stub-routes">¶</a></h3>
+<p><strong>Files:</strong></p>
+<ul>
+<li>Modify: <code>apps/portal-spa/src/app/router.test.tsx</code> (counts + <code>EXPECTED_PATHS</code>)</li>
+<li>Modify: <code>apps/portal-spa/src/app/router.tsx</code> (+6 routes; update header comment)</li>
+<li>Modify: <code>docs/change-record/MASTER-CHANGE-RECORD.md</code> (change-record row)</li>
+</ul>
+<p><strong>Interfaces:</strong></p>
+<ul>
+<li>Consumes: <code>StubPage</code> (<code>apps/portal-spa/src/routes/StubPage.tsx</code>, <code>{ title: string }</code>), <code>RequireAuth</code>, <code>PortalLayout</code>, <code>BareLayout</code>, <code>RouteError</code>, <code>PageLoader</code> — all already wired in <code>router.tsx</code>. No new imports.</li>
+<li>Produces: <code>router</code> registering exactly <strong>41</strong> paths (32 under <code>&lt;RequireAuth&gt;</code>, 9 open).</li>
+</ul>
+<blockquote>
+<p><strong>Execution note:</strong> if B1 is currently marked in progress, do not continue or dispatch B1 until this task is committed. This task is the new first executable item after completed Batch A.</p>
+</blockquote>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-001" type="checkbox"/> <label for="task-checkbox-001"><strong>Step 0: Pause/reset B1 and record B0 insertion in the ledger</strong></label></li>
+</ul>
+<p>Before editing router files, update the durable progress ledger/todo state:</p>
+<pre><code class="language-text">Batch B status adjustment:
+- Batch A is complete/open as PR #31.
+- B1 was marked in progress during setup only.
+- No B1 implementation writes or commits exist.
+- Insert B0 / MIG-A-TA before B1.
+- Resume B1 only after router.test proves 41 routes / 32 authenticated / 9 open.
+</code></pre>
+<p>Do not stage <code>.tmp-*</code> budget files or <code>.claude/settings.local.json</code>. If the ledger file is tracked and the project convention requires ledger updates in commits, commit it separately or explicitly include it in a documentation-only commit; keep the router parity commit focused on the three files listed above.</p>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-002" type="checkbox"/> <label for="task-checkbox-002"><strong>Step 1: Update the contract test to expect 41 routes (write the failing assertion first)</strong></label></li>
+</ul>
+<p>In <code>apps/portal-spa/src/app/router.test.tsx</code>, add the six Type Approval paths to the <strong>end</strong> of the <code>EXPECTED_PATHS</code> array (after <code>'/accept-quote/:id/*'</code>, before the closing <code>]</code>):</p>
+<pre><code class="language-ts">  '/accept-quote/:id/*',
+  // Type Approval (CRD-041 website update) — 4 shell + 2 bare, all authenticated
+  '/dashboard-ta',
+  '/ta/type-approval-create-pre',
+  '/ta/type-approval-create',
+  '/ta/:id/manage',
+  '/ta/type-approval-success/:id/*',
+  '/ta/:id/*',
+];
+</code></pre>
+<p>Then change the two count assertions:</p>
+<pre><code class="language-ts">it("registers exactly 41 routes", () =&gt; {
+  expect(all).toHaveLength(41);
+});
+</code></pre>
+<pre><code class="language-ts">it("gates the 32 authenticated routes and leaves the 9 public/error routes open", () =&gt; {
+  const authed = all.filter((r) =&gt; r.auth).map((r) =&gt; r.path);
+  const open = all.filter((r) =&gt; !r.auth).map((r) =&gt; r.path);
+  expect(authed).toHaveLength(32);
+  expect(open).toHaveLength(9);
+  for (const p of open) expect(PUBLIC_OR_ERROR.has(p)).toBe(true);
+});
+</code></pre>
+<p>Leave <code>PUBLIC_OR_ERROR</code>, <code>collectPaths</code>, <code>loadLazyRoute</code>, <code>expectComponentModule</code>, and the two "loads the … layout lazily" tests <strong>unchanged</strong>.</p>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-003" type="checkbox"/> <label for="task-checkbox-003"><strong>Step 2: Run the contract test to verify it fails</strong></label></li>
+</ul>
+<p>Run: <code>pnpm --filter @nmi/portal-spa exec vitest run src/app/router.test.tsx</code>
+Expected: FAIL — <code>registers exactly 41 routes</code> gets <code>35</code>; <code>registers every expected path</code> reports the six TA paths missing; <code>gates the 32 authenticated routes</code> gets <code>26</code>.</p>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-004" type="checkbox"/> <label for="task-checkbox-004"><strong>Step 3: Register the four Type Approval shell routes</strong></label></li>
+</ul>
+<p>In <code>apps/portal-spa/src/app/router.tsx</code>, first update the header comment:</p>
+<pre><code class="language-tsx">// Batch A registered all 35 original source paths. CRD-041 (2026-06-28 website
+// update) adds the six Type Approval paths, taking the contract to 41. Routes
+// whose real content depends on later batches render &lt;StubPage /&gt;; flip each to a
+// lazy import as its module is ported. Auth-gated routes nest under &lt;RequireAuth /&gt;.
+</code></pre>
+<p>Then, inside the <strong>shell</strong> tree (first <code>createBrowserRouter</code> group → its <code>{ element: &lt;RequireAuth /&gt;, children: [...] }</code>), insert the Type Approval shell block immediately after the <code>/dashboard</code> entry:</p>
+<pre><code class="language-tsx">          { path: '/dashboard', element: &lt;StubPage title="Dashboard" /&gt; },
+          // Type Approval (shell) — registered for 41-route parity (CRD-041).
+          // Stubs until the Type Approval feature batch (needs API client + validators).
+          { path: '/dashboard-ta', element: &lt;StubPage title="Type Approval dashboard" /&gt; },
+          {
+            path: '/ta/type-approval-create-pre',
+            element: &lt;StubPage title="Type Approval pre-application" /&gt;,
+          },
+          {
+            path: '/ta/type-approval-create',
+            element: &lt;StubPage title="Create Type Approval application" /&gt;,
+          },
+          {
+            path: '/ta/:id/manage',
+            element: &lt;StubPage title="Manage Type Approval application" /&gt;,
+          },
+</code></pre>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-005" type="checkbox"/> <label for="task-checkbox-005"><strong>Step 4: Register the two Type Approval bare routes</strong></label></li>
+</ul>
+<p>In the <strong>bare</strong> tree (second <code>createBrowserRouter</code> group → its <code>{ element: &lt;RequireAuth /&gt;, children: [...] }</code>), insert the Type Approval bare block immediately after the <code>/accept-quote/:id/*</code> entry (the last bare auth route):</p>
+<pre><code class="language-tsx">          {
+            path: '/accept-quote/:id/*',
+            element: &lt;StubPage title="Accept quote" /&gt;,
+          },
+          // Type Approval (bare) — registered for 41-route parity (CRD-041).
+          // The more-specific success path is declared before the splat for
+          // readability; React Router v7 ranks routes by specificity globally
+          // (across both layout trees), so /ta/type-approval-create (shell) and
+          // /ta/:id/manage (shell) always outrank the bare /ta/:id/* regardless of
+          // array order or branch.
+          {
+            path: '/ta/type-approval-success/:id/*',
+            element: &lt;StubPage title="Type Approval submitted" /&gt;,
+          },
+          { path: '/ta/:id/*', element: &lt;StubPage title="Type Approval application" /&gt; },
+</code></pre>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-006" type="checkbox"/> <label for="task-checkbox-006"><strong>Step 5: Run the contract test to verify it passes</strong></label></li>
+</ul>
+<p>Run: <code>pnpm --filter @nmi/portal-spa exec vitest run src/app/router.test.tsx</code>
+Expected: PASS — 41 routes; every expected path present; 32 gated / 9 open; both lazy-layout tests still pass.</p>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-007" type="checkbox"/> <label for="task-checkbox-007"><strong>Step 6: Run the full SPA gate</strong></label></li>
+</ul>
+<p>Run: <code>pnpm --filter @nmi/portal-spa check-types &amp;&amp; pnpm --filter @nmi/portal-spa test &amp;&amp; pnpm --filter @nmi/portal-spa lint</code>
+Expected: all green; total unit-test count ≥ the pre-change baseline (no other suite references the route count).</p>
+<p>Do <strong>not</strong> extend this B0 gate to coverage or E2E based on the uploaded issue report. Coverage is the existing Batch D/final pre-flight gate; E2E must first have Playwright Chromium installed in the executing environment.</p>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-008" type="checkbox"/> <label for="task-checkbox-008"><strong>Step 7: Record the change</strong></label></li>
+</ul>
+<p>In <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>, add this row to the table (after the most recent row):</p>
+<pre><code class="language-markdown">| 2026-06-28 | MIG-A-TA | Type Approval route-contract parity (35→41) | apps/portal-spa/src/app/router.tsx (+6 stub routes: /dashboard-ta, /ta/type-approval-create-pre, /ta/type-approval-create, /ta/:id/manage, /ta/type-approval-success/:id/_, /ta/:id/_); apps/portal-spa/src/app/router.test.tsx (41 / 32 / 9) | Reconciles target to source CRD-041 (41 registered paths: 6 public + 3 error + 32 auth). Six Type Approval paths registered as auth-gated StubPages pending the Type Approval feature batch (needs API client + validators). check-types + test + lint green; router.test proves 41 routes / 32 gated / 9 open. Coverage policy unchanged (80/75/80/80 per COV-1); COVERAGE-GATE-001 and TYPE-APPROVAL-E2E-001 tracked for later batches; uploaded source issue report classified coverage as known threshold gate and E2E as missing Playwright browser prerequisite, not B0 regressions. | Codex |
+</code></pre>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-009" type="checkbox"/> <label for="task-checkbox-009"><strong>Step 8: Format, stage only the three files, and commit</strong></label></li>
+</ul>
+<pre><code class="language-bash">pnpm exec oxfmt apps/portal-spa/src/app/router.tsx apps/portal-spa/src/app/router.test.tsx
+git add apps/portal-spa/src/app/router.tsx apps/portal-spa/src/app/router.test.tsx docs/change-record/MASTER-CHANGE-RECORD.md
+git commit -m "feat(router): register six Type Approval routes (35→41 contract parity, CRD-041)"
+</code></pre>
+<hr/>
+<h2 id="definition-of-done-this-plan">Definition of Done (this plan)<a aria-label="Link to Definition of Done (this plan)" class="heading-anchor" href="#definition-of-done-this-plan">¶</a></h2>
+<ul>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-010" type="checkbox"/> <label for="task-checkbox-010"><code>apps/portal-spa/src/app/router.tsx</code> registers exactly 41 paths: the original 35 plus <code>/dashboard-ta</code>, <code>/ta/type-approval-create-pre</code>, <code>/ta/type-approval-create</code>, <code>/ta/:id/manage</code>, <code>/ta/type-approval-success/:id/*</code>, <code>/ta/:id/*</code>.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-011" type="checkbox"/> <label for="task-checkbox-011">The four shell TA routes sit under <code>PortalLayout</code>; the two bare TA routes under <code>BareLayout</code>; all six under <code>&lt;RequireAuth&gt;</code>.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-012" type="checkbox"/> <label for="task-checkbox-012"><code>router.test.tsx</code> proves 41 routes, every expected path, 32 gated / 9 open, and both layout-lazy tests still pass.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-013" type="checkbox"/> <label for="task-checkbox-013"><code>check-types</code> · <code>test</code> · <code>lint</code> all green.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-014" type="checkbox"/> <label for="task-checkbox-014"><code>MASTER-CHANGE-RECORD.md</code> has the <code>MIG-A-TA</code> row.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-015" type="checkbox"/> <label for="task-checkbox-015">Durable ledger/todo state records that B1 was paused/reset and B0 executed first, or the execution notes explicitly state that no tracked ledger update was required.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-016" type="checkbox"/> <label for="task-checkbox-016">Batch B dispatch briefs are patched from 35 / 26 / 9 to 41 / 32 / 9 before B1 resumes.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-017" type="checkbox"/> <label for="task-checkbox-017">Uploaded issue-report failures are classified correctly: coverage remains Batch D/final pre-flight, and E2E is rerun only after Playwright browser installation.</label></li>
+<li><input class="task-checkbox" disabled="" id="task-checkbox-018" type="checkbox"/> <label for="task-checkbox-018">No feature code, no new dependency, no auth-bypass token introduced.</label></li>
+</ul>
+<hr/>
+<h2 id="revised-migration-roadmap-the-replan">Revised Migration Roadmap (the replan)<a aria-label="Link to Revised Migration Roadmap (the replan)" class="heading-anchor" href="#revised-migration-roadmap-the-replan">¶</a></h2>
+<p>This section re-sequences the original Batch A follow-on outline to absorb the Type Approval <strong>feature</strong> and the two new Priority-1 gates. Each item below becomes its own <code>docs/superpowers/plans/2026-*-portal-migration-*.md</code> and must produce working, testable software on its own. <strong>Outline only</strong> — full bite-sized tasks are written when each plan is started (same convention Batch A used for its follow-ons).</p>
+<p><strong>Status legend:</strong> ✅ done · ▶ ready to execute · ⏳ blocked on a dependency · ⏸ paused/reset</p>
+<h3 id="1-batch-a-core-bootstrap-and-auth">-1. Batch A — core bootstrap and auth ✅<a aria-label="Link to -1. Batch A — core bootstrap and auth ✅" class="heading-anchor" href="#1-batch-a-core-bootstrap-and-auth">¶</a></h3>
+<p>Complete/open as PR #31. The completed Batch A baseline is the older 35-route contract, so do not use it as the current route parity baseline.</p>
+<h3 id="0-b0-mig-a-ta-route-contract-correction-this-plan">0. B0 / MIG-A-TA — route-contract correction (this plan) ▶<a aria-label="Link to 0. B0 / MIG-A-TA — route-contract correction (this plan) ▶" class="heading-anchor" href="#0-b0-mig-a-ta-route-contract-correction-this-plan">¶</a></h3>
+<p>Execute now, before Batch B B1 resumes. The 41-route parity above unblocks every downstream batch from drifting against a stale 35-route baseline. <strong>No dependency.</strong></p>
+<h3 id="1-batch-b-b1-home-page-setup-state">1. Batch B B1 — Home page setup state ⏸→▶<a aria-label="Link to 1. Batch B B1 — Home page setup state ⏸→▶" class="heading-anchor" href="#1-batch-b-b1-home-page-setup-state">¶</a></h3>
+<p>B1 was marked in progress during setup only; no implementation writes exist. Resume B1 after B0 is committed, and patch the B1 dispatch to include <code>HomePage.stories.tsx</code> update/staging plus the 41 / 32 / 9 route baseline.</p>
+<h3 id="2-batch-b-slice-1-public-pages-contact-form">2. Batch B (slice 1) — public pages + contact form ▶<a aria-label="Link to 2. Batch B (slice 1) — public pages + contact form ▶" class="heading-anchor" href="#2-batch-b-slice-1-public-pages-contact-form">¶</a></h3>
+<p>The existing <code>2026-06-27-portal-migration-batch-b.md</code> plan is ready after B0 with these required patches: every stale <code>35 routes / 26 gated / 9 open</code> assertion becomes <code>41 routes / 32 gated / 9 open</code>; B1 updates/stages <code>HomePage.stories.tsx</code>; B3 uses literal <code>70ch</code> instead of <code>--nmi-measure-prose</code>. This slice flips <code>/</code>, <code>/help-guide</code>, <code>/help-guide/how-to-setup-access</code>, <code>/help-guide/faqs</code> to real token pages and builds <code>/create-contact</code> as the RHF+zod form reference. <strong>No API-client dependency.</strong> Does <strong>not</strong> touch the TA stubs.</p>
+<h3 id="3-api-client-reconciliation-after-public-slice-before-authenticated-datata-work">3. API-client reconciliation (after public slice; before authenticated data/TA work) ⏳→▶<a aria-label="Link to 3. API-client reconciliation (after public slice; before authenticated data/TA work) ⏳→▶" class="heading-anchor" href="#3-api-client-reconciliation-after-public-slice-before-authenticated-datata-work">¶</a></h3>
+<p>Wire <code>apps/portal-spa/src/integrations/apiClient</code> (openapi-typescript) — replaces the source's NSwag <code>web-api-client.ts</code> (PF-05: never copy it). <strong>Now also define the Type Approval client surface</strong> the feature batch needs: pattern/type-approval application CRUD, document upload (multipart + progress), application messages, and certificate-number lookup — the target equivalents of the source <code>PatternApprovalClient</code>, upload, messages, and <code>CertificateNumberLookup</code> calls. Produces the <code>loadAccount</code> injection point Batch C consumes and the TA hooks Batch F consumes. <strong>Dependency:</strong> backend commits <code>docs/api/openapi.json</code> (P2 item 11, resolved 2026-06-04). This does not block static public-page work, but it blocks authenticated data pages, AccountProvider effects, and Type Approval feature wiring.</p>
+<h3 id="4-batch-b-slice-2-shared-ui-components-incl-type-approval-primitives">4. Batch B (slice 2) — shared UI components incl. Type Approval primitives ⏳<a aria-label="Link to 4. Batch B (slice 2) — shared UI components incl. Type Approval primitives ⏳" class="heading-anchor" href="#4-batch-b-slice-2-shared-ui-components-incl-type-approval-primitives">¶</a></h3>
+<p>Port the reusable component library (runbook Batch B). <strong>Replan addition:</strong> include the new Type Approval <em>support</em> components surfaced by CRD-041 that are generic enough to live in the component tier:</p>
+<ul>
+<li><code>CheckboxGroup</code>, <code>ProgressBar</code> / <code>ProgressFileList</code>, attachment/upload controls, <code>PaRequestItem</code>, Type Approval filter/search controls.</li>
+<li><code>CertificateNumberLookup</code> (autosuggest-style; build on <code>react-aria-components</code> per CLAUDE.md — no Radix).</li>
+<li><strong><code>SlateEditor</code> decision (flag for the plan author):</strong> the source ships a Slate-based rich-text editor for TA messages. Decide <strong>port Slate</strong> vs <strong>rebuild on a design-system/react-aria primitive</strong>. This is the single largest reinterpretation in the TA surface — resolve it in this plan's brainstorming, not at execution time.</li>
+</ul>
+<p>Key reinterpretations (carried from Batch A/B): Formik+Yup → react-hook-form + zod; Bootstrap classes → design-token SCSS modules / <code>@nmi/react-components</code>; upload progress on <code>fetch</code>/<code>XHR</code> with <code>AbortController</code> cancellation. <strong>Dependency:</strong> none to build the components; wiring them to data is Batch F.</p>
+<h3 id="5-batch-c-storage-analytics-instrumentation-accountprovider-effects">5. Batch C — storage, analytics, instrumentation + AccountProvider effects ⏳<a aria-label="Link to 5. Batch C — storage, analytics, instrumentation + AccountProvider effects ⏳" class="heading-anchor" href="#5-batch-c-storage-analytics-instrumentation-accountprovider-effects">¶</a></h3>
+<p>Unchanged scope (AppInsights singleton before render per PF-06; GA from <code>config</code>; complete the two deferred <code>AccountProvider</code> effects via the API-client seam; audit session storage for bypass state). <strong>Replan addition:</strong> register any Type Approval session-storage keys (wizard draft / upload state) through the typed <code>SessionStorageCache</code> facade — no raw <code>sessionStorage</code>. <strong>Dependency:</strong> API-client reconciliation (#3).</p>
+<h3 id="6-batch-d-validation-tests-resolve-coverage-gate-001-and-e2e-environment-setup">6. Batch D — validation + tests (+ resolve COVERAGE-GATE-001 and E2E environment setup) ⏳<a aria-label="Link to 6. Batch D — validation + tests (+ resolve COVERAGE-GATE-001 and E2E environment setup) ⏳" class="heading-anchor" href="#6-batch-d-validation-tests-resolve-coverage-gate-001-and-e2e-environment-setup">¶</a></h3>
+<p>Port the 19 custom validators (as zod refinements per the form decision) <strong>plus the Type Approval schemas</strong>; the Yup side-effect import chain equivalent (PF-04); Playwright-BDD features + <code>bddgen</code> (PF-15); the 8 quality regression tests (PF-11); align import aliases. <strong>Replan additions:</strong></p>
+<ul>
+<li><strong>COVERAGE-GATE-001 (P1):</strong> per the accepted scope decision, either add behavior-focused tests to meet 100% on the declared handwritten surface, <strong>or</strong> formally record the 80/75/80/80 scope decision (extending <code>COV-1</code>) as the target's policy. Resolve here, before final pre-flight. The uploaded issue report shows the current 100% threshold failure at 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines.</li>
+<li><strong>E2E tooling prerequisite:</strong> before app-BDD evidence is accepted, install Playwright Chromium in the executing environment and rerun <code>test:e2e</code>. The uploaded failure is a missing executable (<code>chromium_headless_shell-1228</code>), so do not treat the 28 failed app-BDD scenarios as workflow regressions until the browser prerequisite is fixed.</li>
+<li><strong>Drift guard:</strong> port the source's <code>coverageDrift.test.ts</code> / <code>routeCoverage.test.ts</code> concept — a lightweight inventory test that compares the 41 registered paths against a manifest — so the route contract cannot silently drift again (it just did, between 35 and 41). <strong>Dependency:</strong> components (#4) for component-level tests.</li>
+</ul>
+<h3 id="7-batch-e-styles-assets-prereqs-complete-awaiting-repo-provisioning-p2-item-22">7. Batch E — styles + assets ⏳ (prereqs complete; awaiting repo provisioning, P2 item 22)<a aria-label="Link to 7. Batch E — styles + assets ⏳ (prereqs complete; awaiting repo provisioning, P2 item 22)" class="heading-anchor" href="#7-batch-e-styles-assets-prereqs-complete-awaiting-repo-provisioning-p2-item-22">¶</a></h3>
+<p>Unchanged scope (drop Bootstrap; CSS Grid/Flexbox + tokens; retire icon font for <code>packages/icons</code> SVGs; <code>print.css</code>; finalise Storybook decorator/chunking/jsdom shims — PF-08/09/10). <strong>Replan addition:</strong> port the Type Approval-specific SCSS partials (attachment, step-navigation, progress) to token-based modules. <strong>Dependency:</strong> BATCH-E-PREREQ-001–003 (complete) + Item 22 (DevOps).</p>
+<h3 id="8-batch-f-type-approval-feature-port-new">8. Batch F — Type Approval feature port (NEW) ⏳<a aria-label="Link to 8. Batch F — Type Approval feature port (NEW) ⏳" class="heading-anchor" href="#8-batch-f-type-approval-feature-port-new">¶</a></h3>
+<p>Flip the six TA stubs from this plan into real pages. <strong>Depends on #3 (API client), #4 (TA components), #5 (storage/effects), #6 (validation).</strong> Sub-slices:</p>
+<ul>
+<li><strong>F1 <code>/dashboard-ta</code></strong> (source <code>DashboardTA</code>): pattern/type-approval dashboard — TA client, <code>PaSearchFilter</code>/<code>PaFilterMenu</code>, <code>PaRequestItem</code>, pagination, pathway cards.</li>
+<li><strong>F2 <code>/ta/type-approval-create-pre</code> + <code>/ta/type-approval-create</code></strong> (source <code>PreApplication</code>, <code>CreateRequestForTypeApproval</code>): pre-application gate + creation entry.</li>
+<li><strong>F3 <code>/ta/:id/*</code></strong> (source <code>ApplicationForTypeApproval</code>): the four-step wizard (organisation &amp; contact → application &amp; instrument → supporting documents with <strong>long-running upload, progress, and cancellation</strong> → summary &amp; submit) on the target <code>ApplicationWizard</code>/<code>WizardStep</code> + RHF+zod.</li>
+<li><strong>F4 <code>/ta/type-approval-success/:id/*</code></strong> (source <code>RequestForPatternApprovalCreated</code>): success screen.</li>
+<li><strong>F5 <code>/ta/:id/manage</code></strong> (source <code>TAApplicationManage</code> / <code>AppDetails</code>): management tabs — details, documents, messages (the <code>SlateEditor</code> rich-text surface).</li>
+<li><strong>F-gate TYPE-APPROVAL-E2E-001 (P1, cutover blocker):</strong> implement deterministic authenticated app-BDD fixtures (MSW-mocked TA client) for the six routes, <strong>or</strong> obtain explicit migration-lead acceptance of the Storybook-only exclusion. Required before TA cutover.</li>
+</ul>
+<h3 id="cross-cutting-notes-for-downstream-plans">Cross-cutting notes for downstream plans<a aria-label="Link to Cross-cutting notes for downstream plans" class="heading-anchor" href="#cross-cutting-notes-for-downstream-plans">¶</a></h3>
+<ul>
+<li><strong>Version delta:</strong> source is React 18.3.1 + <code>react-router</code> 7.18.0; target is React 19.2 + <code>react-router-dom</code> 7.17. The target is intentionally ahead on React (the port targets React 19). The source <code>App.tsx</code> <code>future</code> flags (<code>v7_relativeSplatPath</code>, etc.) are defaults in RR v7 and need not be ported. Watch the 7.17 vs 7.18 minor when wiring the wizard splat routes (<code>/ta/:id/*</code>).</li>
+<li><strong>Pre-existing discrepancy (out of scope here):</strong> the target registers <code>/update-organisation/:id</code> while source <code>App.tsx</code> has <code>/update-organisation/:id/*</code>. This predates the website update and is <strong>not</strong> corrected by this plan; flag it for a separate parity fix so the contract test's <code>EXPECTED_PATHS</code> and the router are changed together.</li>
+<li><strong>Gate ownership:</strong> <code>COVERAGE-GATE-001</code> → Batch D; Playwright browser/tooling prerequisite → Batch D before app-BDD evidence; <code>TYPE-APPROVAL-E2E-001</code> → Batch F. Coverage and TA E2E are P1 gates; the missing Playwright executable is a tooling prerequisite that must be cleared before interpreting E2E results.</li>
+</ul>
+<hr/>
+<h2 id="self-review">Self-Review<a aria-label="Link to Self-Review" class="heading-anchor" href="#self-review">¶</a></h2>
+<p><strong>Spec coverage (the CRD-041 website update + live execution status):</strong></p>
+<ul>
+<li><em>Batch A already complete, B1 administratively started only</em> → Operational insertion point makes this plan B0 / MIG-A-TA, pauses/resets B1, and requires the 41-route contract before any Batch B implementation resumes.</li>
+<li><em>+6 Type Approval routes</em> → Task 1 registers all six with the exact source paths and source layout flags (4 shell, 2 bare, all auth), asserted by the updated contract test (41 / 32 / 9).</li>
+<li><em>New Type Approval component surface</em> (upload/progress, <code>CertificateNumberLookup</code>, <code>CheckboxGroup</code>, <code>ProgressBar</code>/<code>ProgressFileList</code>, <code>PaRequestItem</code>, TA filters, <code>SlateEditor</code>) → Roadmap #4 (components) + #8 (feature wiring); nothing silently dropped.</li>
+<li><em>Uploaded issue report</em> → Source-snapshot validation is reconciled into this plan: coverage failure stays in Batch D/final pre-flight, E2E failure is classified as missing Playwright browser setup, and passing commands with warning-like output are not B0 stop conditions.</li>
+<li><em>Two new P1 gates</em> → <code>COVERAGE-GATE-001</code> Roadmap #6; <code>TYPE-APPROVAL-E2E-001</code> Roadmap #8 (F-gate). Coverage policy explicitly held at 80% per the user decision and <code>COV-1</code> precedent.</li>
+</ul>
+<p><strong>Placeholder scan:</strong> Task 1 contains full, exact code for every edit (test deltas, router blocks, change-record row, commands). The Roadmap is intentionally outline-level (each item becomes its own plan) — the same convention Batch A used for its follow-ons; it is not an execution placeholder.</p>
+<p><strong>Type/contract consistency:</strong> the six paths are transcribed verbatim from source <code>App.tsx</code> (lines 53–60, 117–156). Layout assignment matches the source <code>displayHeaderAndFooter</code> values. Counts are internally consistent: 35 + 6 = 41; 26 + 6 = 32 auth; open stays 9; <code>PUBLIC_OR_ERROR</code> (9) unchanged. <code>StubPage</code>'s <code>{ title: string }</code> API matches every new <code>element</code>. No test-helper or layout-lazy assertion changes, so those tests remain valid.</p>
+<p><strong>Known risk to watch during execution:</strong> route <strong>matching</strong> relies on RR v7 global specificity ranking, not array order — verified that <code>/ta/type-approval-create</code> / <code>/ta/:id/manage</code> (static-tailed) outrank the bare <code>/ta/:id/*</code> (splat) even across layout trees. The contract test uses a <code>Set</code> comparison, so it is order-independent; if a future change adds an <em>overlapping</em> dynamic TA path, add a <code>matchRoutes</code>-based assertion in the Batch D drift guard rather than relying on declaration order.</p>
+<hr/>
+<h2 id="execution-handoff">Execution Handoff<a aria-label="Link to Execution Handoff" class="heading-anchor" href="#execution-handoff">¶</a></h2>
+<p>Plan complete and saved to <code>docs/superpowers/plans/2026-06-28-portal-migration-route-contract-41-replan.md</code>.</p>
+<p>Execute this next as <strong>B0 / MIG-A-TA</strong> on the existing migration branch. Do not resume B1 until this is committed and <code>router.test.tsx</code> proves 41 / 32 / 9.</p>
+<p>Recommended execution:</p>
+<ol>
+<li>Update the durable ledger/todo state with the B1 pause/reset and B0 insertion note.</li>
+<li>Dispatch a fresh subagent for Task 1, or execute it inline with executing-plans.</li>
+<li>Run router test, then full <code>check-types &amp;&amp; test &amp;&amp; lint</code> gate. Do not block B0 on coverage or E2E based on the uploaded issue report.</li>
+<li>Commit only the three router/change-record files for MIG-A-TA unless a tracked ledger update is intentionally committed separately.</li>
+<li>Patch Batch B dispatch briefs from 35 / 26 / 9 to 41 / 32 / 9, then resume B1.</li>
+<li>Before any later plan claims E2E evidence, install Playwright Chromium in the executing environment and rerun the app-BDD suite.</li>
+</ol>
+
+    </main>
+  </div>
+  <footer class="footer">Standalone HTML conversion generated from the issue-reconciled Markdown plan.</footer>
+</body>
+</html>

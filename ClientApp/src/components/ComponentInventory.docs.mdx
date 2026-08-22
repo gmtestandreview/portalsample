@@ -1,0 +1,81 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Migration/Components" />
+
+# Components
+
+**Component taxonomy and Storybook coverage surface under `ClientApp/src/components`.**
+
+## Component Families
+
+| Family | Purpose |
+| --- | --- |
+| `Accordion` | Expand/collapse content blocks |
+| `Actions` | Shared action renderers |
+| `Alert` | Notification and dismissible alert surfaces |
+| `BlockUISpinner` | Full-screen and local busy overlays |
+| `BodyText` | Typography helper |
+| `Breadcrumb` | Route breadcrumb navigation |
+| `Buttons` | Primary, secondary, link, edit, grouped actions |
+| `ErrorBoundary` | Render isolation and telemetry reporting |
+| `Footer` | Public policy and footer content |
+| `forms` | Formik wrappers, wizard engine, summaries, prompts, banners |
+| `get-started` | Auth-aware entry CTA content |
+| `Header` | Brand, nav, environment badge, auth-aware links |
+| `HeaderIntroText` | Section introduction content |
+| `Icons` | Shared icon components |
+| `Inputs` | Text, textarea, select, radio, checkbox, number, date, lookup inputs |
+| `InTextLink` | Text-link primitive |
+| `Layout` | Global public shell wrapper |
+| `modals` | Branch, confirmation, content, delete, and terms modals |
+| `Pagination` | Paging controls and visible-range logic |
+| `PaginationHeader` | Range summary display |
+| `Pill` | Status and quote pill treatments |
+| `Progress` | Upload progress bars and file-transfer status |
+| `RequestList` | Dashboard request/instrument list items |
+| `RouteLeavingGuard` | Navigation blocking guard |
+| `SearchFilter` | Dashboard filtering and search controls |
+| `SlateEditor` | Rich-text editing surface |
+| `SteppedNavigation` | Step-status navigation |
+| `SummaryDisplay` | Read-only field/value review surface |
+| `tiles` | Dashboard pathway cards |
+| `Utilities` | Hash links, skip links, PDF actions, hooks, contact helpers |
+| `Welcome` | Authenticated welcome banner |
+
+## Existing Interactive Story Coverage
+
+All 31 top-level component families are represented in the migration inventory,
+and the latest static Storybook index contains 218 stories. Notable interactive
+coverage includes:
+
+- `Accordion`
+- `Alert`
+- `BodyText`
+- `Breadcrumb`
+- `Buttons/PrimaryButton`
+- `Buttons/SecondaryButton`
+- `ErrorBoundary`
+- `forms/Forms`
+- `forms/WizardForm`
+- `HeaderIntroText`
+- `InTextLink`
+- `modals`
+- `RequestList/Dashboard`
+- `Inputs`, including attachment and autosuggest variants
+- `Progress/ProgressBar` and `Progress/ProgressFileList`
+- `SearchFilter`, including Type Approval filters
+- `SlateEditor`
+- `RouteLeavingGuard`
+- `Header`, `Footer`, `Layout`, `Pagination`, `Pill`, and `Utilities`
+
+## Migration Notes
+
+- `forms`, `Inputs`, `modals`, `Header`, `Footer`, and `Layout` are the highest
+  value component families because they define most route-level composition.
+- `Utilities` and `RouteLeavingGuard` should remain documented even when they are
+  not visually rich, because they affect behaviour during migration.
+- `RequestList`, `SearchFilter`, `Pagination`, and `Pill` encode dashboard state
+  semantics that should not be re-invented during a design-system rewrite.
+- Type Approval migration also depends on `Inputs/Attachment`,
+  `Inputs/CertificateNumberLookup`, `Inputs/CheckboxGroup`, `Progress`,
+  `RequestList/paRequestItem`, `SearchFilter/TypeApproval`, and `SlateEditor`.

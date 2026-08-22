@@ -1,0 +1,92 @@
+{
+  "label": "revised_slim_skill",
+  "results": [
+    {
+      "id": "trigger-educational-python",
+      "query": "Add beginner-friendly educational comments to this Python file so I can learn it.",
+      "should_trigger": true,
+      "passed": true,
+      "evidence": "activation terms found: ['educational', 'inline comments', 'source code', 'comment-capable', 'learning']"
+    },
+    {
+      "id": "trigger-annotate-source",
+      "query": "Please annotate this source code with inline learning notes.",
+      "should_trigger": true,
+      "passed": true,
+      "evidence": "activation terms found: ['educational', 'inline comments', 'source code', 'comment-capable', 'learning']"
+    },
+    {
+      "id": "trigger-script-comments",
+      "query": "Add educational inline comments to my shell script without changing behavior.",
+      "should_trigger": true,
+      "passed": true,
+      "evidence": "activation terms found: ['educational', 'inline comments', 'source code', 'comment-capable', 'learning']"
+    },
+    {
+      "id": "trigger-config-comments",
+      "query": "Explain this YAML config by adding safe comments where YAML allows them.",
+      "should_trigger": true,
+      "passed": true,
+      "evidence": "activation terms found: ['educational', 'inline comments', 'source code', 'comment-capable', 'learning']"
+    },
+    {
+      "id": "trigger-advanced-ts",
+      "query": "Add advanced educational comments to this TypeScript function for a senior developer.",
+      "should_trigger": true,
+      "passed": true,
+      "evidence": "activation terms found: ['educational', 'inline comments', 'source code', 'comment-capable', 'learning']"
+    },
+    {
+      "id": "near-review-comments",
+      "query": "Review comments already in this file and tell me if they are accurate.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=review comments; matched=True"
+    },
+    {
+      "id": "near-write-documentation",
+      "query": "Write documentation for this module in a README.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=write documentation; matched=True"
+    },
+    {
+      "id": "near-explain-code-in-chat",
+      "query": "Explain code in chat without editing the file.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=explain code in chat; matched=True"
+    },
+    {
+      "id": "near-add-todo-comments",
+      "query": "Add TODO comments for missing features.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=add TODO comments; matched=True"
+    },
+    {
+      "id": "near-format-code",
+      "query": "Format code and fix indentation.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=format code; matched=True"
+    },
+    {
+      "id": "near-code-review",
+      "query": "Do a code review and suggest improvements.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=code review; matched=True"
+    },
+    {
+      "id": "near-generate-code",
+      "query": "Write a new function with comments.",
+      "should_trigger": false,
+      "passed": true,
+      "evidence": "near-miss boundary term=generate code; matched=True"
+    }
+  ],
+  "passed": 12,
+  "total": 12,
+  "pass_rate": 1.0
+}

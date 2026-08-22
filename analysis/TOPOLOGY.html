@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMI Portal — Dependency &amp; Topology Map</title>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #1e1e1e; color: #d4d4d4; font-family: system-ui, -apple-system, sans-serif; line-height: 1.6; padding: 2rem; }
+  h1 { color: #cc785c; font-size: 1.75rem; margin-bottom: 0.25rem; }
+  .subtitle { color: #888; font-size: 0.9rem; margin-bottom: 2.5rem; }
+  h2 { color: #cc785c; font-size: 1.25rem; margin: 2.5rem 0 0.75rem; border-bottom: 1px solid #333; padding-bottom: 0.4rem; }
+  h3 { color: #b0b0b0; font-size: 1rem; margin: 1.25rem 0 0.5rem; }
+  p { margin-bottom: 0.75rem; color: #c0c0c0; }
+  ul { margin: 0.5rem 0 1rem 1.25rem; color: #c0c0c0; }
+  ul li { margin-bottom: 0.4rem; }
+  .diagram-wrap { background: #252526; border: 1px solid #3c3c3c; border-radius: 6px; padding: 1.5rem; margin: 1rem 0 0.5rem; overflow-x: auto; }
+  .observations { background: #1a2a1a; border-left: 3px solid #cc785c; padding: 1rem 1.25rem; margin-top: 1rem; border-radius: 0 4px 4px 0; }
+  .observations ul { margin-top: 0.5rem; }
+  .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 3px; font-size: 0.78rem; font-weight: 600; margin-left: 0.5rem; }
+  .badge-high { background: #5a1a1a; color: #ff9999; }
+  .badge-med { background: #3a3a1a; color: #ffcc66; }
+  .badge-low { background: #1a3a1a; color: #88cc88; }
+  .meta-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.75rem; margin: 1rem 0 2rem; }
+  .meta-card { background: #252526; border: 1px solid #3c3c3c; border-radius: 4px; padding: 0.75rem 1rem; }
+  .meta-card .val { font-size: 1.5rem; font-weight: 700; color: #cc785c; display: block; }
+  .meta-card .lbl { font-size: 0.8rem; color: #888; }
+  code { background: #2d2d2d; padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.85rem; color: #9cdcfe; font-family: 'Cascadia Code', 'Fira Code', monospace; }
+</style>
+</head>
+<body>
+
+<h1>NMI Portal — Dependency &amp; Topology Map</h1>
+<p class="subtitle">ClientApp/src · 2026-06-02 · Tool: extract_topology.py</p>
+
+<div class="meta-grid">
+  <div class="meta-card"><span class="val">289</span><span class="lbl">Source files</span></div>
+  <div class="meta-card"><span class="val">267</span><span class="lbl">Resolved import edges</span></div>
+  <div class="meta-card"><span class="val">59</span><span class="lbl">API client usages</span></div>
+  <div class="meta-card"><span class="val">12</span><span class="lbl">Functional domains</span></div>
+  <div class="meta-card"><span class="val">34</span><span class="lbl">Registered routes</span></div>
+  <div class="meta-card"><span class="val">11</span><span class="lbl">API client classes</span></div>
+</div>
+
+<div class="observations">
+  <h3>Interpretation caveat</h3>
+  <ul>
+    <li><strong>The missing-relative-import and dead-candidate metrics are topology signals, not direct defect counts.</strong></li>
+    <li>Earlier extraction runs include expected non-code imports (for example SCSS and JSON) in the unresolved import count.</li>
+    <li>Use these metrics for triage and follow-up investigation, not as release-blocking pass/fail criteria by themselves.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>1 — Module Call Graph</h2>
+<p>Domain-level dependency map. Nodes in <strong style="color:#cc785c">amber</strong> are entry points
+   (routes registered in <code>App.tsx</code> or bootstrapped in <code>index.tsx</code>).
+   Arrows show import dependency direction.</p>
+
+<div class="diagram-wrap">
+<pre class="mermaid">
+graph TD
+    subgraph Bootstrap["Bootstrap & App Shell"]
+        IDX["index.tsx (entry)"]:::entry
+        APP["App.tsx (router)"]:::entry
+        TT["trustedtypes.ts"]
+    end
+
+    subgraph AuthLayer["Auth Layer"]
+        MSAL["authConfig.ts"]
+        AP["AccountProvider.tsx"]
+        AE["AuthenticatedElement.tsx"]
+        HOOKS["hooks.tsx"]
+    end
+
+    subgraph PreCond["PreConditions & Modals"]
+        PC["PreConditions.tsx"]
+        MC["ModalContext.tsx"]
+        BNCH["BranchSelectorModal"]
+        TAC["TermsAndCondition"]
+    end
+
+    subgraph WizFW["Wizard Framework"]
+        WF["WizardForm"]
+        WRS["WizardRoutedStep"]
+        ES["ErrorSummary"]
+    end
+
+    subgraph VAL["Validation"]
+        YUP["yupExtensions (19 methods)"]
+        ADDR["addressValidation"]
+    end
+
+    subgraph Infra["Infrastructure"]
+        ENV["env.ts"]
+        API_C["web-api-client.ts"]
+        STORE["storage/*"]
+        AI["AppInsightsService"]
+    end
+
+    subgraph RouteModules["Route Modules"]
+        DASH["dashboard/index.tsx"]
+        ACCT["account/* (create/update/branch)"]
+        CONT["contact/* (create/update)"]
+        RFQ_R["requestForQuote/*"]
+        QUOT_R["quotation/*"]
+        AQ_R["acceptQuote/*"]
+        RPT_R["measurementReport/*"]
+    end
+
+    IDX --> APP
+    IDX --> AP
+    IDX --> TT
+    APP --> AE
+    APP --> DASH
+    APP --> ACCT
+    APP --> CONT
+    APP --> RFQ_R
+    APP --> QUOT_R
+    APP --> AQ_R
+    APP --> RPT_R
+
+    AE --> MSAL
+    AE --> PC
+    AP --> HOOKS
+    AP --> API_C
+    AP --> STORE
+
+    PC --> MC
+    MC --> BNCH
+    MC --> TAC
+
+    DASH --> API_C
+    DASH --> STORE
+    DASH --> MC
+    ACCT --> WF
+    ACCT --> API_C
+    CONT --> WF
+    CONT --> API_C
+    RFQ_R --> WF
+    RFQ_R --> API_C
+    RFQ_R --> STORE
+    QUOT_R --> API_C
+    AQ_R --> WF
+    AQ_R --> API_C
+    RPT_R --> API_C
+
+    WF --> WRS
+    WRS --> ES
+    WRS --> STORE
+    WRS --> AI
+
+    ACCT --> VAL
+    RFQ_R --> VAL
+    AQ_R --> VAL
+
+    API_C -.->|reads| STORE
+
+    classDef entry fill:#cc785c,color:#fff,stroke:#cc785c
+</pre>
+</div>
+
+<div class="observations">
+  <h3>Architect observations</h3>
+  <ul>
+    <li><strong>Bootstrap is a fan-out hub.</strong> <code>App.tsx</code> and <code>index.tsx</code> import every route module directly. There is no lazy-loading or code-splitting at the route level, meaning the initial bundle includes all wizard route code even for unauthenticated users.</li>
+    <li><strong>WizardRoutedStep is a chokepoint.</strong> Every multi-step form (Account, Contact, RFQ, Accept Quote) flows through <code>WizardRoutedStep</code>. Its current <code>[key: string]: any</code> prop interface means a bug there affects all four workflows simultaneously with no compile-time warning.</li>
+    <li><strong>API Client is a hidden dependency of Storage.</strong> <code>web-api-client.ts</code> reads <code>sessionStorage</code> directly (dotted edge) rather than via the typed <code>storage/*</code> layer, creating a bypass of the application's abstraction boundary.</li>
+    <li><strong>PreConditions wraps all auth-gated routes</strong> but is also coupled to <code>ModalContext</code>. Extracting modals into a sibling context rather than a child of PreConditions would reduce the coupling between navigation guards and modal state.</li>
+    <li><strong>Validation is a clean leaf node</strong> — no inbound dependencies from UI or API layers. This is the correct shape and makes schema migration safe.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>2 — Data Lineage</h2>
+<p>Which domain consumers read/write which API client classes and sessionStorage keys.
+   Solid arrows are API calls; dashed arrows are sessionStorage access.
+   <code>read</code> = GET / fetch operations; <code>write</code> = POST / PUT / PATCH / DELETE operations.</p>
+
+<div class="diagram-wrap">
+<pre class="mermaid">
+graph LR
+    subgraph Consumers
+        DASH["Dashboard"]
+        ACCT["Account Management"]
+        RFQ["Request for Quote"]
+        AQ["Accept Quote"]
+        QUOT["Quotation"]
+        RPT["Measurement Reports"]
+        MODAL["Modals (Branch/T&C)"]
+        AUTH_D["Auth / AccountProvider"]
+        SHARED["Shared Route Helpers"]
+    end
+
+    subgraph APIClients["API Client Classes"]
+        DC["DashboardClient"]
+        AC["AccountsClient"]
+        CC["ContactClient"]
+        RFQC["RequestForQuoteClient"]
+        APPC["ApplicationClient"]
+        QC["QuoteClient"]
+        AQC["AcceptQuoteClient"]
+        ALC["AccountLoginClient"]
+    end
+
+    subgraph SessionStorage["Session Storage"]
+        SS_ORG["targetOrganisation"]
+        SS_NOTIF["notifications"]
+        SS_CACHE["sessionStorageCache"]
+    end
+
+    DASH -->|read| DC
+    ACCT -->|read/write| AC
+    ACCT -->|read/write| CC
+    RFQ -->|read/write| RFQC
+    RFQ -->|read| APPC
+    RFQ -->|read| QC
+    AQ -->|read/write| AQC
+    AQ -->|read| QC
+    AQ -->|read| AC
+    AQ -->|read| APPC
+    AQ -->|read| DC
+    QUOT -->|read| QC
+    RPT -->|read| QC
+    RPT -->|read| DC
+    MODAL -->|read| APPC
+    SHARED -->|read| DC
+    AUTH_D -->|read/write| ALC
+
+    AUTH_D -->|write| SS_ORG
+    DC -.->|read| SS_ORG
+    RFQC -.->|read| SS_ORG
+    AQC -.->|read| SS_ORG
+    AC -.->|read| SS_ORG
+
+    DASH -->|write| SS_NOTIF
+    RFQ -->|write| SS_NOTIF
+    AQ -->|write| SS_NOTIF
+    ACCT -->|read/write| SS_CACHE
+</pre>
+</div>
+
+<div class="observations">
+  <h3>Architect observations</h3>
+  <ul>
+    <li><strong>Accept Quote touches 5 API clients</strong> — the widest API footprint of any domain. It reads quote details (QuoteClient), loads org data for the report recipient step (AccountsClient), fetches delivery options (ApplicationClient), polls instrument status (DashboardClient), and submits acceptance (AcceptQuoteClient). A failure in any one of those five during the wizard flow has no offline/partial-save fallback.</li>
+    <li><strong><code>targetOrganisation</code> in sessionStorage is a shared-write, multi-read pattern.</strong> Only <code>AccountProvider</code> writes it, but 4 API client classes read it directly at instantiation time (dotted edges). This creates a hidden time-of-check/time-of-use window: a branch switch between wizard steps would leave in-flight API calls using the old ABN.</li>
+    <li><strong><code>DashboardClient</code> is the most heavily shared API client</strong> — consumed by Dashboard, Accept Quote, Measurement Reports, and Shared Route Helpers. Its contract stability is a migration dependency for three separate domains.</li>
+    <li><strong>No domain writes to <code>QuoteClient</code></strong> — it is read-only from the portal's perspective. Quote creation is a server-side process; the portal only reads the result. This means QuoteClient could be extracted to a lightweight read-only SDK without breaking any write flows.</li>
+    <li><strong><code>sessionStorageCache</code> is only used by Account Management</strong> — specifically for caching ABN lookup results. This is an under-leveraged mechanism; other lookup-heavy steps (RFQ instrument type dropdowns) repeat API calls on every re-render rather than using the cache.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>3 — Critical Path: Create &amp; Submit a Request for Quote</h2>
+<p>End-to-end execution order for the primary business flow. Covers authentication,
+   pre-condition gates, the three-step RFQ wizard, and post-submission confirmation.
+   No production telemetry is available for this snapshot — p50/p99 annotations are omitted.</p>
+
+<div class="diagram-wrap">
+<pre class="mermaid">
+flowchart TD
+    A(["User navigates to portal\nNo active session"]):::entry
+    B["sign-in route\nMsalAuthenticationTemplate\ntriggers Azure AD B2C\nPKCE redirect"]
+    C[/"Azure AD B2C\n(external IdP)\nreturns id_token + access_token"/]:::external
+    D["AccountProvider.tsx\nAccountLoginClient.signIn\nloads org context + ABN\nwrites targetOrganisation to sessionStorage"]
+    E{"PreConditions.tsx\nGate checks"}
+    F["Dashboard\nDashboardClient × 3\n(drafts / quotes / instruments)\nTabbed list renders"]
+    G[/"User clicks\nCreate New Request"/]
+    H["requestForQuote/create/index.tsx\nWizardForm initialises\nacquireTokenSilent + setAuthToken"]
+
+    I["Step 1 of 3\nOrganisation & Contact\norganisationAndContactProps.ts\nAccountsClient.getAccountDetails\nApplicationClient.getApplicationOptions\nFormik + hard validation"]
+
+    J["Step 2 of 3\nInstrument & Request\ninstrumentAndRequestProps.ts\nApplicationClient.getInstrumentTypes\nApplicationClient.getServiceTypes\nRequestForQuoteClient.saveDraft on step-exit\nFormik + hard + soft validation"]
+
+    K["Step 3 of 3\nSummary\nrequestForQuoteSummaryProps.ts\nDisplay all collected data\nRequestForQuoteClient.submitApplication"]
+
+    L["/request-for-quote-success/:id\nWrite success notification → sessionStorage"]
+    M["Dashboard reload\nRead + clear notification\nShow success banner"]
+
+    A --> B
+    B --> C
+    C -->|"PKCE code exchange\ntoken stored in sessionStorage"| D
+    D --> E
+
+    E -->|"T&C not accepted"| TC["TermsAndCondition modal\nQuoteClient.getTermsAndConditions\nAccountLoginClient.acceptTerms"]
+    TC -->|"Accepted"| E
+    E -->|"Account not created"| AC_WIZ["create-account wizard\n(6 steps, AccountsClient)"]:::wizard
+    AC_WIZ --> E
+    E -->|"Contact not created"| CC_WIZ["create-contact wizard\n(3 steps, ContactClient)"]:::wizard
+    CC_WIZ --> E
+    E -->|"All gates pass"| F
+
+    F --> G
+    G --> H
+    H --> I
+    I -->|"Hard validation passes\nnext step"| J
+    J -->|"Hard validation passes\ndraft saved\nnext step"| K
+    K -->|"Submit succeeds\n202 Accepted"| L
+    L -->|"Redirect"| M
+
+    I -->|"Save & Exit"| DRAFT["Draft saved\nRequestForQuoteClient.saveDraft\nReturn to Dashboard"]
+    J -->|"Save & Exit"| DRAFT
+
+    classDef entry fill:#2d6a4f,color:#fff,stroke:#2d6a4f
+    classDef external fill:#4a4a6a,color:#d4d4d4,stroke:#7a7aaa
+    classDef wizard fill:#5a3e2b,color:#d4d4d4,stroke:#cc785c
+</pre>
+</div>
+
+<div class="observations">
+  <h3>Architect observations</h3>
+  <ul>
+    <li><strong>The happy path passes through 7 sequential network calls before the user can start entering RFQ data</strong> (signIn → getDashboard ×3 → getAccountDetails → getApplicationOptions → then step 2 adds more). None of these calls are parallelised within the wizard steps — each <code>loadStep</code> closure fires sequentially. This is the most likely source of perceived slowness on first use.</li>
+    <li><strong>PreConditions is a synchronous redirect gate with no loading state.</strong> If <code>AccountLoginClient.signIn</code> is slow, the gate check runs before account data is fully loaded, potentially redirecting a legitimate user to <code>/create-account</code> on a slow connection. There is no pending/loading guard between the signIn response and the PreConditions check.</li>
+    <li><strong>Draft save happens only on step-exit (Save &amp; Exit), not on navigation between steps.</strong> A browser crash between Step 2 and Step 3 loses all unsaved progress. The <code>UnsavedFormPrompt</code> blocks React Router navigation but cannot block browser close or refresh.</li>
+    <li><strong>The token acquisition pattern repeats at every step transition.</strong> <code>acquireTokenSilent</code> is called in both <code>loadStep</code> and <code>saveStep</code> of each <code>*Props.ts</code> file. If the MSAL cache is warm, this is fast; if it requires an iframe round-trip, it adds latency to every step. A single token interceptor would eliminate this repeated cost.</li>
+    <li><strong>No production telemetry is available to ground-truth these observations.</strong> The Azure Application Insights workspace for this environment should be queried for <code>customEvents</code> and <code>requests</code> telemetry to validate which steps have the highest p99 variance before prioritising performance work.</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>Dead-End Analysis</h2>
+<p>102 files have no inbound static imports. After filtering Storybook stories
+   (loaded by the Storybook runtime, not by static imports) and test harness files,
+   the genuinely suspicious candidates are:</p>
+<ul>
+  <li><code>ClientApp/src/components/Utilities/ViewPdfQuote.tsx</code> — used dynamically via quotation route, not statically imported. Confirm via runtime trace.</li>
+  <li><code>ClientApp/src/components/Utilities/ViewMeasurementReport.tsx</code> — same pattern as above.</li>
+  <li><code>ClientApp/src/routes/account/organisationDetails.tsx</code> — candidate for dead code; verify it is not rendered as a wizard sub-step.</li>
+  <li><code>ClientApp/src/components/Inputs/DatePicker/index.tsx</code> — no static import found. May be used inside a props config file via string reference or lazy import.</li>
+  <li><code>ClientApp/src/env.ts</code> and <code>ClientApp/src/storage/notification.ts</code> — flagged due to side-effect-only import pattern (<code>import '../env'</code>). These are correctly used; the tool cannot detect side-effect imports.</li>
+</ul>
+
+<hr style="border-color:#333; margin: 2.5rem 0 1rem;">
+<p style="color:#555; font-size:0.8rem;">
+  Generated by <code>analysis/extract_topology.py</code> ·
+  Diagrams: <code>call-graph.mmd</code>, <code>data-lineage.mmd</code>, <code>critical-path.mmd</code> ·
+  Raw data: <code>topology.json</code>
+</p>
+
+</body>
+</html>

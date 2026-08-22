@@ -1,0 +1,167 @@
+/* Steps */
+.stepped-navigation {
+	margin: 0 0 3rem 0;
+	padding: 0;
+	width: 100%;
+	display: flex;
+	align-content: center;
+	justify-content: space-evenly;
+	line-height: 1.78;
+	*, *::before, *::after {
+    box-sizing: unset;
+	}
+}
+
+.stepped-navigation li {
+	padding: 40px 8px 0 8px;
+	display: block;
+	position: relative;
+	width: 100%;
+}
+
+.stepped-navigation li .step-container,
+.stepped-navigation li .step-container .step-name {
+	text-decoration: none;
+	font-size: $font-size-sm; //14px;
+	color: $nmi-gray-700;//#666666;
+	text-align: center;
+	display: inline-block;
+	width: 100%;
+	border: 1px dotted transparent;
+}
+
+.stepped-navigation li .step-container .step-name {
+
+}
+
+.stepped-navigation li .step-container .step-icon {
+	height: 32px;
+	width: 32px;
+	text-decoration: none;
+	border: solid 2.5px $nmi-gray-400;
+	opacity: 1;
+	border-radius: 50%;
+	background: $white;
+	line-height: 30px;
+	position: absolute;
+	top: 0;
+	left: calc(50% - 18px);
+	z-index: 10;
+}
+
+.stepped-navigation li .step-container .step-icon:hover,
+.stepped-navigation li .step-container .step-name:hover {
+	cursor: default;
+}
+
+.stepped-navigation li .step-container .step-icon svg {
+	display: none;
+}
+
+.stepped-navigation li .step-container .step-icon .step-number {
+	font-weight: 600;
+	font-style: normal;
+	color: $nmi-gray-700;//#666666;
+	font-size: $font-size-base; //16px
+	line-height: 32px;
+	padding: 0;
+	margin: 0;
+}
+
+.stepped-navigation li .step-container:after {
+	content: "";
+	position: absolute;
+	top: 18px;
+	left: calc(50% + 16px);
+	width: 100%;
+	height: 2.5px;
+	background: $nmi-gray-400;
+	z-index: 0;
+}
+
+.stepped-navigation li:last-of-type .step-container:after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	background: transparent;
+	z-index: 0;
+}
+
+/* Completed steps */
+.stepped-navigation li.completed-step .step-container .step-name {
+	font-weight: 400;
+	color: $nmi-gray-700; //$nmi-primary;//#254f90;
+	opacity: 1;
+}
+
+.stepped-navigation li.completed-step .step-container .step-icon {
+	border: solid 2.5px $nmi-primary;//#254f90;
+	border-radius: 50%;
+	color: $white;
+	background: $nmi-primary;//#254f90;
+	white-space: nowrap;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 1;
+}
+
+.stepped-navigation li.completed-step .step-container .step-icon .step-number {
+  
+  // Fix WCAG contrast issue when displaying step number with Tick icon
+  color: $white;
+  @include visually-hidden; 
+}
+
+.stepped-navigation li.completed-step .step-container .step-icon svg {
+	display: block;
+}
+
+.stepped-navigation li.completed-step .step-container:after {
+	background: $nmi-primary;//#254f90;
+}
+
+/* Current step */
+.stepped-navigation li.current-step .step-name,
+.stepped-navigation li.current-step .step-container .step-number {
+	font-weight: 600;
+	font-style: normal;
+	color: $nmi-primary;//#254f90;
+	opacity: 1;
+}
+
+.stepped-navigation li.current-step .step-container .step-icon {
+	border: solid 2.5px $nmi-primary;//#254f90;
+	opacity: 1;
+	border-radius: 50%;
+}
+
+/* Current AND Completed step */
+.stepped-navigation li.current-step.completed-step .step-name,
+.stepped-navigation li.current-step.completed-step .step-container { 
+	font-weight: 600;
+	color: $nmi-primary;
+	.step-icon {
+		background: $white;
+		svg path {
+			fill: $nmi-primary;//#254f90;
+		}
+	}
+   .step-number {
+    // Fix WCAG contrast issue when displaying step number with Tick icon
+    color: $nmi-primary; 
+    @include visually-hidden; 
+  }
+}
+
+/* Media Query */
+@include media-breakpoint-down(sm) {
+	.stepped-navigation li .step-container .step-name {
+		color: transparent;
+		font-size: 0;
+	}
+}

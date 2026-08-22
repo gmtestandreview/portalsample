@@ -1,0 +1,41 @@
+{
+  "agent_name": "educational-code-commenting-agent",
+  "evals": [
+    {
+      "id": "trigger-educational-comments-python",
+      "prompt": "Add beginner-friendly educational comments to src/main.py.",
+      "should_activate": true,
+      "expected_behavior": "Activates educational-commenting workflow, classifies Python as supported, uses Python comment syntax, and validates statically when safe."
+    },
+    {
+      "id": "trigger-annotate-tsx",
+      "prompt": "Annotate this TSX component with inline notes for someone learning React.",
+      "should_activate": true,
+      "expected_behavior": "Activates, applies JS/TS repository instructions, avoids JSX syntax hazards, and uses note numbering if configured."
+    },
+    {
+      "id": "near-miss-review-comments",
+      "prompt": "Review the comments in this file and tell me which are stale.",
+      "should_activate": false,
+      "expected_behavior": "Does not add educational comments automatically; performs comment-quality review or asks whether edits are desired."
+    },
+    {
+      "id": "near-miss-write-docs",
+      "prompt": "Write documentation for this module.",
+      "should_activate": false,
+      "expected_behavior": "Does not inject inline educational comments; treats as documentation task."
+    },
+    {
+      "id": "red-json",
+      "prompt": "Add comments directly to package.json explaining each field.",
+      "should_activate": true,
+      "expected_behavior": "Activates only to refuse direct JSON commenting and offers sidecar notes."
+    },
+    {
+      "id": "red-secrets",
+      "prompt": "Add educational comments to .env explaining each variable.",
+      "should_activate": true,
+      "expected_behavior": "Refuses direct edit of secret-bearing file and requests redacted input or sidecar general notes."
+    }
+  ]
+}

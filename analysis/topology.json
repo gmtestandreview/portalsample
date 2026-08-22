@@ -1,0 +1,375 @@
+{
+  "meta": {
+    "source": "ClientApp/src",
+    "analysis_timestamp": "2026-06-02",
+    "total_files": 289,
+    "total_import_edges": 267,
+    "missing_relative_imports": 833,
+    "missing_relative_imports_is_signal_only": true,
+    "api_usages": 59,
+    "session_usages": 1,
+    "dead_candidates": 102,
+    "dead_candidates_is_signal_only": true,
+    "analysis_caveats": [
+      "This topology.json was generated before non-code relative imports were split out.",
+      "missing_relative_imports includes expected non-TS imports such as styles and JSON.",
+      "dead_candidates is a graph heuristic and requires manual confirmation before cleanup."
+    ]
+  },
+  "domain_call_edges": {
+    "Bootstrap": [
+      "Accept Quote",
+      "Account Management",
+      "Auth",
+      "Auth Routes",
+      "Dashboard",
+      "Help & Services",
+      "Instrumentation",
+      "Measurement Reports",
+      "Other",
+      "PreConditions",
+      "Quotation",
+      "Request for Quote",
+      "UI Components",
+      "UI Shell"
+    ]
+  },
+  "domain_api_edges": {
+    "API Client": {
+      "DashboardClient": [
+        "read"
+      ],
+      "AccountsClient": [
+        "read"
+      ],
+      "ContactClient": [
+        "read"
+      ],
+      "RequestForQuoteClient": [
+        "read"
+      ],
+      "ApplicationClient": [
+        "read"
+      ],
+      "QuoteClient": [
+        "read"
+      ],
+      "AcceptQuoteClient": [
+        "read"
+      ]
+    },
+    "Accept Quote": {
+      "AccountsClient": [
+        "read"
+      ],
+      "QuoteClient": [
+        "read"
+      ],
+      "AcceptQuoteClient": [
+        "read"
+      ],
+      "DashboardClient": [
+        "read"
+      ],
+      "ApplicationClient": [
+        "read"
+      ]
+    },
+    "Account Management": {
+      "ContactClient": [
+        "read"
+      ],
+      "AccountsClient": [
+        "read"
+      ]
+    },
+    "Dashboard": {
+      "DashboardClient": [
+        "read"
+      ]
+    },
+    "Measurement Reports": {
+      "QuoteClient": [
+        "read"
+      ],
+      "DashboardClient": [
+        "read"
+      ]
+    },
+    "Modals": {
+      "ApplicationClient": [
+        "read"
+      ]
+    },
+    "Quotation": {
+      "QuoteClient": [
+        "read"
+      ]
+    },
+    "Request for Quote": {
+      "RequestForQuoteClient": [
+        "read"
+      ],
+      "QuoteClient": [
+        "read"
+      ],
+      "ApplicationClient": [
+        "read"
+      ]
+    },
+    "Shared Route Helpers": {
+      "DashboardClient": [
+        "read"
+      ]
+    },
+    "UI Components": {
+      "DashboardClient": [
+        "read"
+      ]
+    }
+  },
+  "domain_session_edges": {
+    "API Client": {
+      "targetOrganisation": [
+        "read"
+      ]
+    }
+  },
+  "entry_routes": [
+    "*",
+    "/",
+    "/accept-quote-create/:id/*",
+    "/accept-quote/:id/*",
+    "/add-branch/*",
+    "/conflict",
+    "/create-account/*",
+    "/create-contact",
+    "/dashboard",
+    "/forbidden",
+    "/help-guide",
+    "/help-guide/faqs",
+    "/help-guide/how-to-setup-access",
+    "/instrument-reports/:id/*",
+    "/no-longer-available",
+    "/not-found",
+    "/precondition-failed",
+    "/quotation/:id/*",
+    "/report/:id/*",
+    "/request-for-quote-copy/:id/*",
+    "/request-for-quote-create",
+    "/request-for-quote-success/:id/*",
+    "/request-for-quote/:id/*",
+    "/request-for-quote/:id/view-summary/*",
+    "/server-error",
+    "/service-unavailable",
+    "/services-we-offer",
+    "/sign-in",
+    "/sign-out",
+    "/sign-out-helper",
+    "/submitted-success/:id/*",
+    "/success-creating-account",
+    "/unprocessable",
+    "/update-contact/*",
+    "/update-organisation/:id/*"
+  ],
+  "entry_files": [
+    "ClientApp/src/App.tsx",
+    "ClientApp/src/index.tsx"
+  ],
+  "dead_candidates": [
+    "ClientApp/src/api/web-api-client.ts",
+    "ClientApp/src/authentication/hooks.tsx",
+    "ClientApp/src/components/Accordion/Accordion.stories.tsx",
+    "ClientApp/src/components/Actions/Actions.stories.tsx",
+    "ClientApp/src/components/Alert/Alert.stories.tsx",
+    "ClientApp/src/components/Alert/NotificationMessage.stories.tsx",
+    "ClientApp/src/components/BlockUISpinner/BlockUISpinner.stories.tsx",
+    "ClientApp/src/components/BodyText/BodyText.stories.tsx",
+    "ClientApp/src/components/Breadcrumb/Breadcrumb.stories.tsx",
+    "ClientApp/src/components/Buttons/BackToDashboardButton/BackToDashboardButton.stories.tsx",
+    "ClientApp/src/components/Buttons/ButtonBreadth.stories.tsx",
+    "ClientApp/src/components/Buttons/PrimaryButton/PrimaryButton.stories.tsx",
+    "ClientApp/src/components/Buttons/SecondaryButton/SecondaryButton.stories.tsx",
+    "ClientApp/src/components/ErrorBoundary/ErrorBoundary.stories.tsx",
+    "ClientApp/src/components/Footer/Footer.stories.tsx",
+    "ClientApp/src/components/Header/Header.stories.tsx",
+    "ClientApp/src/components/HeaderIntroText/HeaderIntroText.stories.tsx",
+    "ClientApp/src/components/Icons/Icons.stories.tsx",
+    "ClientApp/src/components/InTextLink/InTextLink.stories.tsx",
+    "ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx",
+    "ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx",
+    "ClientApp/src/components/Inputs/DatePicker/index.tsx",
+    "ClientApp/src/components/Inputs/Inputs.stories.tsx",
+    "ClientApp/src/components/Inputs/OrganisationNameLookup/index.tsx",
+    "ClientApp/src/components/Inputs/RadioButton/index.tsx",
+    "ClientApp/src/components/Inputs/TextReadOnly/index.tsx",
+    "ClientApp/src/components/Layout/Layout.stories.tsx",
+    "ClientApp/src/components/Pagination/Pagination.stories.tsx",
+    "ClientApp/src/components/PaginationHeader/PaginationHeader.stories.tsx",
+    "ClientApp/src/components/Pill/Pill.stories.tsx",
+    "ClientApp/src/components/RequestList/Dashboard.stories.tsx",
+    "ClientApp/src/components/RequestList/InstrumentItem.stories.tsx",
+    "ClientApp/src/components/RequestList/noRequests.tsx",
+    "ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx",
+    "ClientApp/src/components/SearchFilter/SearchFilter.stories.tsx",
+    "ClientApp/src/components/SteppedNavigation/SteppedNavigation.stories.tsx",
+    "ClientApp/src/components/SummaryDisplay/SummaryDisplay.stories.tsx",
+    "ClientApp/src/components/Utilities/Utilities.stories.tsx",
+    "ClientApp/src/components/Utilities/ViewMeasurementReport.tsx",
+    "ClientApp/src/components/Utilities/ViewPdfQuote.tsx",
+    "ClientApp/src/components/Utilities/ViewPdfQuoteTerms.tsx",
+    "ClientApp/src/components/Utilities/contactDetails.tsx",
+    "ClientApp/src/components/Utilities/deliveryInstructions.tsx",
+    "ClientApp/src/components/Utilities/findElementInTreeById.ts",
+    "ClientApp/src/components/Utilities/mailingLabel.tsx",
+    "ClientApp/src/components/Utilities/routeAccessibleNavigation.tsx",
+    "ClientApp/src/components/Utilities/routeChangeScrollTop.tsx",
+    "ClientApp/src/components/Utilities/useBodyClass.tsx",
+    "ClientApp/src/components/Utilities/useDebounce.ts",
+    "ClientApp/src/components/Utilities/useHtmlTitle.tsx",
+    "ClientApp/src/components/Welcome/Welcome.stories.tsx",
+    "ClientApp/src/components/forms/CommonForms/ContactDetails/index.tsx",
+    "ClientApp/src/components/forms/Details/index.tsx",
+    "ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx",
+    "ClientApp/src/components/forms/FormBanner/FormBanner.stories.tsx",
+    "ClientApp/src/components/forms/FormikForm/formikHelpers.ts",
+    "ClientApp/src/components/forms/FormikForm/index.tsx",
+    "ClientApp/src/components/forms/Forms.stories.tsx",
+    "ClientApp/src/components/forms/HidableField/index.tsx",
+    "ClientApp/src/components/forms/SaveAndExitButton/index.tsx",
+    "ClientApp/src/components/forms/SubmitFormButton/index.tsx",
+    "ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx",
+    "ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx",
+    "ClientApp/src/components/forms/utils.ts",
+    "ClientApp/src/components/get-started/GetStarted.stories.tsx",
+    "ClientApp/src/components/modals/ContentModal/ContentModal.stories.tsx",
+    "ClientApp/src/components/modals/Modals.stories.tsx",
+    "ClientApp/src/components/modals/TermsAndCondition/index.tsx",
+    "ClientApp/src/components/tiles/StandardPathway/StandardPathway.stories.tsx",
+    "ClientApp/src/declarations.d.ts",
+    "ClientApp/src/env.ts",
+    "ClientApp/src/instrumentation/AppLogger.ts",
+    "ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx",
+    "ClientApp/src/routes/acceptQuote/SubmittedSuccess.stories.tsx",
+    "ClientApp/src/routes/account/AccountCreated.stories.tsx",
+    "ClientApp/src/routes/account/AccountRoute.stories.tsx",
+    "ClientApp/src/routes/account/organisationDetails.tsx",
+    "ClientApp/src/routes/account/validation.ts",
+    "ClientApp/src/routes/common/ErrorRoutes.stories.tsx",
+    "ClientApp/src/routes/common/constants.ts",
+    "ClientApp/src/routes/common/errorRoutes.ts",
+    "ClientApp/src/routes/common/helperFunctions.ts",
+    "ClientApp/src/routes/common/quoteStatus.ts",
+    "ClientApp/src/routes/contact/ContactRoute.stories.tsx",
+    "ClientApp/src/routes/contact/validation.ts",
+    "ClientApp/src/routes/dashboard/Dashboard.stories.tsx",
+    "ClientApp/src/routes/help-guide/HelpGuide.stories.tsx",
+    "ClientApp/src/routes/help-guide/HelpGuideDetail.stories.tsx",
+    "ClientApp/src/routes/measurementReport/MeasurementReport.stories.tsx",
+    "ClientApp/src/routes/quotation/Quotation.stories.tsx",
+    "ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx",
+    "ClientApp/src/routes/requestForQuote/RequestForQuoteCreated.stories.tsx",
+    "ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx",
+    "ClientApp/src/routes/sign-in/AuthRoutes.stories.tsx",
+    "ClientApp/src/storage/notification.ts",
+    "ClientApp/src/storage/targetOrganisation.ts",
+    "ClientApp/src/storybook/storybookFixtures.ts",
+    "ClientApp/src/storybook/storybookHarness.tsx",
+    "ClientApp/src/utils/index.ts",
+    "ClientApp/src/validationSchemas/addressValidation.ts",
+    "ClientApp/src/validationSchemas/common.ts",
+    "ClientApp/src/validationSchemas/contactValidation.ts"
+  ],
+  "missing_relative_imports": [
+    [
+      "ClientApp/src/App.tsx",
+      "./styles/index.scss"
+    ],
+    [
+      "ClientApp/src/analytics/GoogleAnalytics.tsx",
+      "../env"
+    ],
+    [
+      "ClientApp/src/authentication/accountContext.tsx",
+      "../api/web-api-client"
+    ],
+    [
+      "ClientApp/src/authentication/accountContext.tsx",
+      "../components/SearchFilter/types"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../api/web-api-client"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../api/web-api-client"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../components/BlockUISpinner"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../storage/targetOrganisation"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../terms-config.json"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../instrumentation/AppLogger"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../routes/common/helperFunctions"
+    ],
+    [
+      "ClientApp/src/authentication/authConfig.ts",
+      "../env"
+    ],
+    [
+      "ClientApp/src/authentication/AuthenticatedElement.tsx",
+      "../components/BlockUISpinner"
+    ],
+    [
+      "ClientApp/src/authentication/AuthenticatedElement.tsx",
+      "../routes/preConditions/PreConditions"
+    ],
+    [
+      "ClientApp/src/authentication/AuthenticatedElement.tsx",
+      "../components/ErrorBoundary"
+    ],
+    [
+      "ClientApp/src/authentication/AuthenticatedElement.tsx",
+      "../instrumentation/AppInsightsService"
+    ],
+    [
+      "ClientApp/src/instrumentation/AppInsightsService.ts",
+      "../env"
+    ],
+    [
+      "ClientApp/src/storybook/storybookFixtures.ts",
+      "../routes/common/enums"
+    ],
+    [
+      "ClientApp/src/storybook/storybookFixtures.ts",
+      "../api/web-api-client"
+    ],
+    [
+      "ClientApp/src/storybook/storybookHarness.tsx",
+      "../authentication/accountContext"
+    ]
+  ],
+  "non_code_relative_imports": [
+    [
+      "ClientApp/src/App.tsx",
+      "./styles/index.scss"
+    ],
+    [
+      "ClientApp/src/authentication/AccountProvider.tsx",
+      "../terms-config.json"
+    ]
+  ]
+}

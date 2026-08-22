@@ -1,0 +1,93 @@
+// Tables
+.sort-arrow {font-size: small}
+
+// Responsive table - Change row direction for Mobile
+.table-responsive-stack {
+    @include media-breakpoint-down(lg) {
+      background: $nmi-gray-100;
+      tr {
+        border-top: 4px solid $nmi-light-grey;
+      }
+      th {
+          display: none;
+      }
+      td {
+          display: flex;
+          width: 100%;
+          padding: 0.5rem 1rem;
+          border: none;
+          &:before {
+            content: attr(data-header);
+            display: block;
+            font-weight: bold;
+            margin-right: 10px;
+            max-width: 110px;
+            min-width: 110px;
+            word-break: break-word;
+          }
+          &.mobile-th {
+            padding-top: 1.25rem;
+            font-weight: bold;
+            &:before {
+              content: '';
+              margin-right: 0;
+              max-width: unset;
+              min-width: unset;
+            }
+          }
+          .form-field-container {
+            margin-left: -0.75rem;
+          }
+      }
+    }
+  
+    // Desktop
+    @include media-breakpoint-up(lg) {
+      background-color: $white;
+      thead {
+        tr {
+          border-top: 4px solid $nmi-light-grey;
+          background-color: $nmi-gray-100;
+          th {padding: 1rem;}
+        }
+      }
+      tbody {
+        td {
+          padding: 1.25rem 1rem;
+          .form-field-container {
+            margin: -0.5rem 0 0 -0.75rem;
+          }
+        }
+      }
+    }
+  }
+
+// Branch/division modal table
+#select-org-table {
+  &.table-responsive-stack {
+    td:first-child {
+      &:before {
+        // Fix for responsive radio button in table cell
+        padding-top: 0.75rem;
+      }
+    }
+    // Same line-height for table cells with radio buttons
+    td > span {
+      display: inline-block;
+      border: 3px solid transparent;
+      line-height: $line-height-sm;
+    }
+  }
+  // Desktop
+  @include media-breakpoint-up(lg) {
+    td:first-child {
+      // Fix for radio button in table cell
+      width: 2rem;
+    }
+    td > span {
+      border: none;
+      padding: 0.25rem 0;
+    }
+  }
+}
+    

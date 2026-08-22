@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import GovCrest from './GovCrest.svg';
+import DiCoatOfArms from './DI_CoatOfArms.svg';
+import Stepper from './Stepper.svg';
+
+<Meta title="Migration/Assets and Media" />
+
+# Assets and Media
+
+**Brand assets, fonts, CSS media surfaces, and worker assets used by the portal.**
+
+## SVG Assets
+
+| File | Purpose |
+| --- | --- |
+| `GovCrest.svg` | Government crest asset |
+| `DI_CoatOfArms.svg` | Departmental coat of arms asset |
+| `Stepper.svg` | Step navigation visual asset |
+
+<div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', alignItems: 'center' }}>
+  <div>
+    <img alt="Government crest asset" src={GovCrest} style={{ maxWidth: '100%', maxHeight: 120 }} />
+  </div>
+  <div>
+    <img alt="Departmental coat of arms asset" src={DiCoatOfArms} style={{ maxWidth: '100%', maxHeight: 120 }} />
+  </div>
+  <div>
+    <img alt="Stepper asset" src={Stepper} style={{ maxWidth: '100%', maxHeight: 120 }} />
+  </div>
+</div>
+
+## Font and CSS Assets
+
+| File | Purpose |
+| --- | --- |
+| `fonts/PublicSans-Regular.ttf` | Primary regular text face |
+| `fonts/PublicSans-Bold.ttf` | Primary bold text face |
+| `fonts/nmi-iconfonts.woff` | Icon font payload |
+| `fonts/fonts.css` | Public Sans font-face declarations |
+| `fonts/nmi-iconfonts.css` | Icon font class declarations |
+| `static/css/styles/index.scss` | SCSS entry point |
+| `static/css/styles/media-print.scss` | Print media styling |
+
+<div style={{ fontFamily: 'Public Sans, sans-serif', fontSize: 20 }}>
+  Public Sans sample for migration verification
+</div>
+
+## Storybook and Worker Assets
+
+| File | Purpose |
+| --- | --- |
+| `public/mockServiceWorker.js` | MSW worker served by Storybook for API interception |
+| `.storybook/msw-handlers.ts` | Default Storybook request handlers |
+
+## Migration Notes
+
+- Asset fidelity is part of migration acceptance, especially fonts and icon classes.
+- `media-print.scss` must stay visible in planning even if the new stack handles print differently.
+- MSW assets matter because route and component stories depend on a stable offline API layer.

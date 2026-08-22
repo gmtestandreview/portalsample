@@ -1,0 +1,73 @@
+.tab-content {
+  > .tab-pane {
+    padding: $tabpane-padding-y $tabpane-padding-x;
+
+    &.show {
+      &:focus, &:focus-visible {
+      // displays similar to Tabs focus
+      outline: 0;
+      box-shadow: $nav-link-focus-box-shadow;
+      }
+    }
+  }
+}
+
+// Dashboard type view tabs (also as default tabs)
+// #dashboard-type {
+  .nav-underline {
+    padding: 4px 0 0 4px; // fix focus outline offset
+    .nav-link {
+      border-bottom-color: $nav-underline-link-color;
+      &.active {
+        border-bottom-color: $nav-underline-link-active-color;
+      }
+      &:focus, 
+      &:focus-visible,
+      &:active {
+        outline: 0;
+        box-shadow: $nav-link-focus-box-shadow;
+        border-bottom-color: $nav-underline-link-active-color;
+      }
+    }
+    &+ .tab-content {
+      margin-top: -3px;
+      border-top: 3px solid transparent; // rgba($nav-underline-link-color, 0.15)
+    }
+    &+ .tab-content-border-top {
+      margin-top: -3px;
+      border-top: 4px solid $nav-underline-link-color; //rgba($nav-underline-link-color, 0.15)
+    }
+  }
+// }
+
+// Dashboard item - tab - inner tile content
+.dashboard-items {
+  .nav-underline {
+    &+ .tab-content {
+      margin-top: -3px;
+      border-top: 3px solid $nav-underline-link-color;
+      line-height: 1.6; // tighten up innner tab content
+    }
+  }
+}
+
+// On this page nav
+#navigate-page {
+  .menu-wrapper {
+    ul, ol {
+      margin: 0; padding: 0
+    }
+    li {
+      border-left: 3px solid $nmi-gray-500;
+      list-style-type: none;
+      &:hover, &:focus {
+        border-left-color: $nmi-primary;
+      }
+      a {
+        display:block;
+        padding: 0.5rem 1.75rem;
+        font-weight: bold;
+      }
+    }
+  }
+}

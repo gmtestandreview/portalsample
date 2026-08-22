@@ -1,0 +1,81 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Migration/Overview" />
+
+# Overview
+
+**Research, plan, implementation and validation baseline for Storybook-driven migration work.**
+
+This Storybook section documents the full migration surface that exists in the
+portal snapshot today. It is intended to be the reference point before any UI,
+routing, auth, validation, or design-system migration starts.
+
+## Scope
+
+The Storybook migration baseline covers these artifact classes:
+
+- Routes and route wrappers
+- Reusable components and component families
+- Authentication providers, guards, and account context contracts
+- Validation schemas and custom Yup extensions
+- Assets and media, including SVGs, fonts, and the MSW worker
+
+## Approach
+
+The work is organised in five passes:
+
+1. Research the live filesystem and route tree.
+2. Plan the migration surface in Storybook-friendly categories.
+3. Create Storybook documentation pages for each functional artifact class.
+4. Add regression tests that compare Storybook docs against the real source tree.
+5. Validate with unit tests, type-checking, and a full Storybook build.
+
+## Storybook Deliverables
+
+| Page | Purpose |
+| --- | --- |
+| `Migration/Overview` | Program-level readiness checklist and validation criteria |
+| `Migration/Coverage Matrix` | What exists in code, what exists in Storybook today, and what still blocks Storybook completeness |
+| `Migration/Routes` | Exact 41-path application route inventory from `ClientApp/src/App.tsx` |
+| `Migration/Components` | Component-family taxonomy and existing interactive coverage |
+| `Migration/Authentication` | MSAL, auth guard, account context, and provider stack |
+| `Migration/Validation` | Schema files, Yup extension methods, and migration notes |
+| `Migration/Assets and Media` | SVG, font, stylesheet, and worker inventory |
+
+## Acceptance Criteria
+
+- Every route path in `ClientApp/src/App.tsx` is represented in Storybook documentation.
+- A coverage matrix exists that distinguishes interactive coverage, docs-only coverage, and missing coverage.
+- Every top-level component family under `ClientApp/src/components` is represented.
+- Authentication files under `ClientApp/src/authentication` are represented.
+- Validation schemas and custom Yup methods are represented.
+- Brand assets, fonts, CSS media surfaces, and the MSW worker are represented.
+- Drift is prevented by a unit test that checks Storybook docs against the real files.
+
+## Current Implementation Status
+
+- Shared Storybook harnessing now exists for router, auth/MSAL, account context, modal context, and Formik-backed route steps.
+- Shared UI coverage now includes both the high-priority migration families and the optional breadth pass, including `Header`, `Footer`, `Layout`, `Inputs`, `SearchFilter`, `Pagination`, `PaginationHeader`, `Pill`, `SteppedNavigation`, `SummaryDisplay`, `tiles`, `Welcome`, `Actions`, `BlockUISpinner`, visible `Utilities`, `Buttons`, and `Icons`.
+- Major route families now have route stories for dashboard, home/get-started, help, auth entry/exit, account, contact, request-for-quote, accept-quote, quotation, measurement-report, success, and error flows.
+- Pattern/type approval now has isolated stories for the dashboard shell, pre-application screen, four wizard steps, instrument information panel, and application details/documents/messages management tabs. Its six registered paths remain reviewed app-BDD exclusions until deterministic authenticated backend fixtures exist.
+- The current source contains 87 story files. The latest static Storybook index contains 315 entries: 218 stories and 97 docs entries across 97 titles.
+- The narrowed Storybook-complete goal from the coverage matrix is now satisfied, and the remaining work is polish depth rather than missing family-level breadth.
+
+## Validation
+
+Use these repository checks after changing the migration docs or Storybook setup:
+
+```bash
+npm run type-check
+npm run test:unit -- tests/unit/storybook/coverageDrift.test.ts tests/unit/e2e/routeCoverage.test.ts
+npm run test:storybook
+npm run build-storybook
+```
+
+## Limits
+
+- This baseline now includes shared route harnessing and the narrowed Storybook-complete route/state set.
+- API-heavy flows still benefit from broader MSW state coverage for success, empty, validation, and service-error permutations.
+- Pattern/type approval Storybook stories are isolated-render evidence, not a substitute for browser workflow coverage.
+- Storybook readiness does not clear the repository-wide unit-coverage gate. The 2026-06-28 coverage run fails the configured 100% thresholds and is tracked as Priority 1 `COVERAGE-GATE-001`.
+- Redirect-driven MSAL entry/exit remains best represented through harness and documentation rather than full browser-auth simulation in this offline snapshot.

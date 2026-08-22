@@ -1,0 +1,65 @@
+//////////////////////////////////////////////
+// National Measurement Institute (NMI) Utilities/Global
+//////////////////////////////////////////////
+
+.pre-wrap {white-space: pre-wrap !important;}
+.no-scrollbars {scrollbar-width: none}
+
+// Circle backgrounds
+.bgCircle {
+  @include solidCircle;
+}
+.bgCircle-xs {
+  @include solidCircle;
+  width: 0.5rem;
+  height: 0.5rem;
+}
+.bgCircle-sm {
+  @include solidCircle;
+  width: 1rem;
+  height: 1rem;
+}
+.bgCircle-lg {
+  @include solidCircle;
+  width: 3rem;
+  height: 3rem;
+  line-height: 2;
+}
+.bgCircle-xl {
+  @include solidCircle;
+  width: 4rem;
+  height: 4rem;
+}
+
+// Additional background colours not part of the standard BS 5 theme map
+.bg-success-dark {background-color: $success-dark}
+.bg-danger-light {background-color: $danger-light}
+.bg-info-dark {background-color: $info-dark}
+.bg-dark-gray {background-color: $text-muted}
+.bg-dark-red {background-color: $nmi-header-primary}
+.bg-light-blue {background-color: $disr-light-blue} // $nmi-blue-20 $nmi-coastline-bay-tint-3
+.bg-light-blue-tint {background-color: $disr-light-blue-tint}
+.bg-light {background-color: $light} // BS 5 override
+
+// Responsive widths
+.w-md-50 {
+  @include media-breakpoint-up(md) {
+    width: 50% !important;
+  }
+}
+
+// WCAG helpers
+[role='region'][aria-labelledby][tabindex] {
+  overflow: inherit; //auto;
+}
+
+.visually-hidden {
+  // Prevent users copy and pasting hidden helper text
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+

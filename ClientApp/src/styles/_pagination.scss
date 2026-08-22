@@ -1,0 +1,16 @@
+.pagination {
+  .page-item {
+    margin: 0 $pagination-item-gap-x;
+    .page-link {
+      font-weight: $font-weight-bold;
+    }
+    &.disabled,
+    &:disabled {
+      .page-link {
+        background-color: transparent;
+        outline-color: transparent;
+        color: rgba($btn-disable-color, 0.3);
+      }
+    }
+  }
+}

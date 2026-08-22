@@ -1,0 +1,29 @@
+
+@media print {
+  // Global print styles
+  body {min-width: 992px !important;font-family: Arial,Helvetica,Sans-serif; font-size: 11pt; line-height: 135%; color: black;}
+  .container {min-width: 992px !important;}
+  .block-ui, .spinner {display: none !important;}
+
+  // Print delivery label only
+  body.print-label-page {font-family:Arial,Helvetica,Sans-serif;font-size:14pt;line-height:165%;color:black;}
+  body.print-label-page * {visibility:hidden;margin:0 0;width:100%;height:0;}
+  
+  body.print-label-page .printable-card,
+  body.print-label-page #printable-label {
+    border:none;
+    visibility:visible;
+    top:0;
+    left:0;
+    margin:5rem 0rem; 
+    padding:0.5rem;
+    width:100%;
+    font-family:Arial,Helvetica,Sans-serif;
+    font-size:36pt;
+    line-height:165%;
+    color:black;
+  }
+  body.print-label-page .printable-card * {visibility:visible;width:100%;height:100%;}
+  body.print-label-page #printable-label * {font-size:36pt;line-height:165%;}
+  body.print-label-page #printable-label p {margin-bottom:60pt;}
+}

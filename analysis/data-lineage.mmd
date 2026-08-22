@@ -1,0 +1,66 @@
+%% Alignment note (2026-06-04): open migration security set is SEC-008 (by-design), SEC-012 (architectural debt).
+%% P1 items closed: SEC-010 closed 2026-06-04 (CRD-035); SEC-001, SEC-009, SEC-011 closed 2026-06-01 (CRD-029, CRD-031).
+graph LR
+    subgraph Consumers["Domain Consumers"]
+        DASH["Dashboard"]
+        ACCT["Account Management"]
+        RFQ["Request for Quote"]
+        AQ["Accept Quote"]
+        QUOT["Quotation"]
+        RPT["Measurement Reports"]
+        MODAL["Modals"]
+        AUTH_D["Auth / AccountProvider"]
+        SHARED["Shared Route Helpers"]
+    end
+
+    subgraph APIs["API Client Classes"]
+        DC["DashboardClient"]
+        AC["AccountsClient"]
+        CC["ContactClient"]
+        RFQC["RequestForQuoteClient"]
+        APPC["ApplicationClient"]
+        QC["QuoteClient"]
+        AQC["AcceptQuoteClient"]
+        ALC["AccountLoginClient"]
+    end
+
+    subgraph Storage["Session Storage Keys"]
+        SS_ORG["targetOrganisation"]
+        SS_NOTIF["notifications"]
+        SS_CACHE["sessionStorageCache"]
+    end
+
+    DASH -->|read| DC
+    ACCT -->|read| AC
+    ACCT -->|write| AC
+    ACCT -->|read| CC
+    ACCT -->|write| CC
+    RFQ -->|read| RFQC
+    RFQ -->|write| RFQC
+    RFQ -->|read| APPC
+    RFQ -->|read| QC
+    AQ -->|read| AQC
+    AQ -->|write| AQC
+    AQ -->|read| QC
+    AQ -->|read| AC
+    AQ -->|read| APPC
+    AQ -->|read| DC
+    QUOT -->|read| QC
+    RPT -->|read| QC
+    RPT -->|read| DC
+    MODAL -->|read| APPC
+    SHARED -->|read| DC
+    AUTH_D -->|read| ALC
+    AUTH_D -->|write| ALC
+
+    AUTH_D -->|write| SS_ORG
+    DC -.->|read| SS_ORG
+    RFQC -.->|read| SS_ORG
+    AQC -.->|read| SS_ORG
+    AC -.->|read| SS_ORG
+
+    DASH -->|write| SS_NOTIF
+    RFQ -->|write| SS_NOTIF
+    AQ -->|write| SS_NOTIF
+    ACCT -->|read| SS_CACHE
+    ACCT -->|write| SS_CACHE

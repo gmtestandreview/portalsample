@@ -1,0 +1,181 @@
+import { Meta, Title, Subtitle, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as AlertStories from './Alert.stories';
+import DocsTable from '../../storybook/DocsTable';
+
+<Meta of={AlertStories} />
+
+<Title />
+
+<Subtitle>Displays contextual messages with multiple severity levels</Subtitle>
+
+## Alert Components
+
+The Alert component system provides visual feedback and important information to users through four distinct variants: Success, Info, Warning, and Error. Each variant uses appropriate colors, icons, and ARIA announcements for accessibility.
+
+### Use Cases
+
+- **Success alerts** — Confirmation of completed actions
+- **Info alerts** — General information and tips
+- **Warning alerts** — Cautionary messages requiring attention
+- **Error alerts** — Critical errors blocking user action
+
+### Accessibility Features
+
+- **ARIA Live Regions** — Automatically announce alerts to screen readers
+- **Semantic HTML** — Proper heading and paragraph structure  
+- **Color + Icons** — Not reliant on color alone to convey meaning
+- **Dismissible Options** — Close button with proper focus management
+
+<Primary />
+
+## All Alert Variants
+
+<Stories />
+
+## Props
+
+<Controls />
+
+## Implementation Examples
+
+### Basic Success Alert
+
+```tsx
+import { AlertSuccess } from '@/components/Alert';
+
+export function SuccessExample() {
+  return (
+    <AlertSuccess>
+      Your changes have been saved successfully!
+    </AlertSuccess>
+  );
+}
+```
+
+### Info Alert
+
+```tsx
+import { AlertInfo } from '@/components/Alert';
+
+export function InfoExample() {
+  return (
+    <AlertInfo>
+      Please note: The system will be under maintenance on Sunday.
+    </AlertInfo>
+  );
+}
+```
+
+### Warning Alert
+
+```tsx
+import { AlertWarning } from '@/components/Alert';
+
+export function WarningExample() {
+  return (
+    <AlertWarning>
+      <strong>Notice:</strong> Your session will expire in 5 minutes due to inactivity. 
+      Please save your work to avoid losing data.
+    </AlertWarning>
+  );
+}
+```
+
+### Dismissible Error Alert
+
+```tsx
+import { AlertError } from '@/components/Alert';
+import { useState } from 'react';
+
+export function DismissibleErrorExample() {
+  const [show, setShow] = useState(true);
+
+  if (!show) return null;
+
+  return (
+    <AlertError onClose={() => setShow(false)}>
+      An error occurred while processing your request. Please try again.
+    </AlertError>
+  );
+}
+```
+
+## Component Variants
+
+<DocsTable
+  headers={['Type', 'Color', 'ARIA Live', 'Use For']}
+  rows={[
+    ['Success', 'Green', 'polite', 'Successful actions'],
+    ['Info', 'Blue', 'polite', 'Information messages'],
+    ['Warning', 'Orange', 'polite', 'Cautions & tips'],
+    ['Error', 'Red', 'assertive', 'Errors & failures'],
+  ]}
+/>
+
+## Dismissible Alerts
+
+All alert variants support a dismissible mode by providing the `onClose` callback:
+
+```tsx
+<AlertSuccess onClose={handleClose}>
+  Success message with close button
+</AlertSuccess>
+```
+
+When `onClose` is provided, a close button automatically appears in the top-right corner.
+
+## ARIA Announcements
+
+- **Success/Info/Warning** use `aria-live="polite"` for non-urgent announcements
+- **Error** uses `aria-live="assertive"` for immediate, urgent announcements
+- All alerts include proper `role="alert"` attributes
+- Automatically announced to screen readers when content changes
+
+## Styling with NMI Design System
+
+Each alert variant uses the NMI design system colors:
+
+```scss
+$nmi-success: #2E7D32;      // Green
+$nmi-info: #1976D2;         // Blue
+$nmi-warning: #F57C00;      // Orange
+$nmi-error: #D32F2F;        // Red
+```
+
+Background colors are lighter tints with high contrast text.
+
+## Best Practices
+
+✅ Use appropriate severity level for the message  
+✅ Keep messages concise and actionable  
+✅ Use multiple lines for complex information  
+✅ Provide a close button for longer-lived alerts  
+✅ Test with screen readers to verify announcements  
+✅ Use in forms to show validation results
+
+❌ Don't rely solely on color to convey meaning  
+❌ Don't include too much text (keep under 2-3 sentences)  
+❌ Don't auto-close error alerts without user confirmation  
+❌ Don't nest alerts within other alerts  
+❌ Don't use as primary content area
+
+## Alert Props
+
+All variants accept the same props:
+
+<DocsTable
+  headers={['Prop', 'Type', 'Default', 'Description']}
+  rows={[
+    ['children', 'React.ReactNode', 'required', 'Alert message content'],
+    ['onClose', '() => void', '-', 'Callback when close button clicked'],
+    ['id', 'string', '-', 'Optional HTML id attribute'],
+    ['testId', 'string', '-', 'Optional data-testid attribute'],
+    ['className', 'string', '-', 'Additional CSS classes'],
+  ]}
+/>
+
+## Related Documentation
+
+- [Form Validation](/docs/components-forms--docs) — Using alerts in forms
+- [Accessibility Guidelines](/docs/documentation-getting-started--page) — WCAG 2.1 AA compliance
+- [Design Tokens](/docs/documentation-getting-started--page) — Colors and spacing

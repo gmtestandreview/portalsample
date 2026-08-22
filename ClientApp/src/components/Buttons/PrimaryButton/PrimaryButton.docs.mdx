@@ -1,0 +1,125 @@
+import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
+import * as PrimaryButtonStories from './PrimaryButton.stories';
+import DocsTable from '../../../storybook/DocsTable';
+
+<Meta of={PrimaryButtonStories} />
+
+<Title />
+
+<Subtitle>A prominent call-to-action button following the NMI design system</Subtitle>
+
+## Primary Button
+
+The primary button is used for the main action on a page or dialog. It draws attention and encourages user interaction.
+
+### Use Cases
+
+- **Main form submissions** — "Submit", "Save", "Continue"
+- **Primary actions** — "Create", "Download", "Publish"  
+- **Call-to-action buttons** — Desktop and mobile CTAs
+
+### Accessibility
+
+- Full keyboard support (Tab, Enter, Space)
+- Proper ARIA attributes for disabled state
+- High contrast ratio (WCAG AA compliant)
+- Screen reader announcements for disabled state
+
+<Primary />
+
+## Variations
+
+<Stories />
+
+## Props
+
+<Controls />
+
+## Static API Reference
+
+<ArgTypes of={PrimaryButtonStories} />
+
+## Code Examples
+
+### Light Mode (Default)
+
+```tsx
+import PrimaryButton from '@/components/Buttons/PrimaryButton';
+
+export function LightModeExample() {
+  return (
+    <PrimaryButton onClick={() => alert('Clicked!')}>
+      Submit
+    </PrimaryButton>
+  );
+}
+```
+
+### Dark Mode
+
+```tsx
+import PrimaryButton from '@/components/Buttons/PrimaryButton';
+
+export function DarkModeExample() {
+  return (
+    <PrimaryButton mode="dark" onClick={() => alert('Clicked!')}>
+      Save Changes
+    </PrimaryButton>
+  );
+}
+```
+
+### Disabled State
+
+```tsx
+import PrimaryButton from '@/components/Buttons/PrimaryButton';
+
+export function DisabledExample() {
+  return (
+    <PrimaryButton disabled>
+      Processing...
+    </PrimaryButton>
+  );
+}
+```
+
+## Props API
+
+<DocsTable
+  headers={['Prop', 'Type', 'Default', 'Description']}
+  rows={[
+    ['children', 'React.ReactNode', 'required', 'Button label or content'],
+    ['mode', "'light' | 'dark'", "'light'", 'Button color variant'],
+    ['disabled', 'boolean', 'false', 'Disables the button'],
+    ['onClick', '(e: React.MouseEvent) => void', '-', 'Click event handler'],
+  ]}
+/>
+
+## Design System Integration
+
+The Primary Button follows the NMI design system specifications:
+
+- **Light Mode**: Blue background (#0066CC) with white text
+- **Dark Mode**: Dark blue background (#003D99) with white text
+- **Disabled**: Gray background (#E0E0E0) with gray text
+- **Hover**: Darkened background color on hover
+- **Focus**: Visible focus ring for keyboard navigation
+
+## Best Practices
+
+✅ Use for primary/main actions only  
+✅ Use clear, action-oriented labels  
+✅ Ensure sufficient contrast ratio  
+✅ Provide visual feedback on hover/focus  
+✅ Test with keyboard navigation  
+
+❌ Don't use multiple primary buttons in one section  
+❌ Don't use for secondary or tertiary actions  
+❌ Don't disable without explanation  
+❌ Don't use overly long button text  
+
+## Related Components
+
+- [SecondaryButton](/docs/components-buttons-secondarybutton--docs) — For secondary actions
+- [Alert Component](/docs/components-alert--docs) — For success/error messages
+- [Design Tokens](/docs/documentation-getting-started--page) — Color and spacing system

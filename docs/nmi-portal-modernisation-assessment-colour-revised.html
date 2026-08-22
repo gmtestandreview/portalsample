@@ -1,0 +1,1551 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NMI Portal — Modernisation Assessment</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --page: #ffffff;
+      --ink: #142033;
+      --muted: #5d6b82;
+      --border: #d9e1ec;
+      --brand: #b32123;
+      --brand-dark: #7f1417;
+      --blue: #1f6feb;
+      --code-bg: #0f172a;
+      --code-ink: #e5e7eb;
+      --soft-red: #fff1f2;
+      --soft-blue: #eef6ff;
+      --soft-yellow: #fff8dc;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+    .hero {
+      background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+      color: white;
+      padding: 42px 24px;
+      border-bottom: 5px solid #ffcc00;
+    }
+    .hero-inner { max-width: 1180px; margin: 0 auto; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .78rem; opacity: .9; font-weight: 700; }
+    h1 { margin: 8px 0 10px; font-size: clamp(2rem, 4vw, 3.3rem); line-height: 1.1; }
+    .subtitle { max-width: 900px; font-size: 1.08rem; opacity: .96; margin: 0; }
+    .meta { margin-top: 14px; font-size: .92rem; opacity: .92; }
+    .layout { max-width: 1180px; margin: 28px auto; padding: 0 20px; display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 22px; }
+    aside { align-self: start; position: sticky; top: 16px; }
+    .card { background: var(--page); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow); }
+    .toc { padding: 18px; }
+    .toc h2 { font-size: 1rem; margin: 0 0 8px; border: 0; padding: 0; }
+    .toc ul { list-style: none; padding: 0; margin: 0; }
+    .toc li { margin: 5px 0; }
+    .toc li.toc-sub { margin-left: 14px; font-size: .92rem; }
+    .toc a { color: var(--ink); text-decoration: none; }
+    .toc a:hover { color: var(--brand); text-decoration: underline; }
+    main { min-width: 0; }
+    section { margin-bottom: 24px; }
+    .panel { padding: 24px; }
+    .diagram-panel { overflow: hidden; }
+    .diagram-head { display:flex; justify-content: space-between; gap: 16px; align-items:flex-start; padding: 22px 24px; border-bottom: 1px solid var(--border); background: var(--soft-blue); }
+    .diagram-head h2 { margin: 0; border: 0; padding: 0; }
+    .badge { display:inline-block; border:1px solid var(--border); border-radius:999px; padding:4px 10px; background:#fff; color:var(--muted); font-size:.82rem; white-space:nowrap; }
+    .diagram-wrap { padding: 18px; overflow: auto; background: #fff; }
+    .mermaid { min-width: 1100px; text-align: center; }
+    details { border-top: 1px solid var(--border); }
+    summary { cursor: pointer; padding: 14px 18px; font-weight: 700; color: var(--brand-dark); }
+    h2 { font-size: 1.65rem; margin: 28px 0 12px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+    h3 { font-size: 1.24rem; margin: 24px 0 8px; }
+    h4 { font-size: 1.06rem; margin: 18px 0 8px; }
+    p { margin: 0 0 14px; }
+    a { color: var(--blue); }
+    blockquote { margin: 16px 0; padding: 12px 16px; border-left: 4px solid var(--brand); background: var(--soft-red); color: #3b2530; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: .94rem; background: #fff; }
+    th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; vertical-align: top; }
+    th { background: #f0f4f8; font-weight: 700; }
+    tr:nth-child(even) td { background: #fafcff; }
+    code { background: #eef2f7; padding: .15rem .35rem; border-radius: 6px; font-family: Consolas, Monaco, 'Courier New', monospace; font-size: .92em; }
+    pre { overflow: auto; border-radius: 12px; padding: 16px; background: var(--code-bg); color: var(--code-ink); border: 1px solid #1e293b; }
+    pre code { background: transparent; color: inherit; padding: 0; }
+    .assessment { padding: 24px; }
+    .assessment > h2:first-child { margin-top: 0; }
+    .callout { border-left: 5px solid var(--brand); background: #fff7f7; padding: 14px 16px; border-radius: 10px; margin: 0 0 18px; }
+    .footer { max-width: 1180px; margin: 10px auto 40px; padding: 0 20px; color: var(--muted); font-size: .9rem; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; }
+      .diagram-head { flex-direction: column; }
+    }
+    @media print {
+      body { background: #fff; }
+      .hero { background: #fff; color: #000; border-bottom: 2px solid #000; }
+      aside, details { display: none; }
+      .layout { display: block; max-width: 100%; }
+      .card { box-shadow: none; border: 1px solid #aaa; }
+      a { color: #000; }
+    }
+  </style></head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Runtime architecture and modernisation assessment</div>
+      <h1>NMI Portal — Modernisation Assessment</h1>
+      <p class="subtitle">Combined HTML report containing the updated Mermaid runtime architecture diagram and the assessment content.</p>
+      <div class="meta">Original assessment 29 May 2026 · Current-state refresh 28 June 2026 (CRD-041) · 41 registered paths · React Router v7 · Type Approval surface reconciled</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <nav class="card toc" aria-label="Report table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#current-state-refresh">Current-state refresh — 2026-06-28</a></li>
+          <li><a href="#architecture-diagram">Updated runtime architecture diagram</a></li>
+        </ul>
+        <ul><li><a href="#system-inventory">System Inventory</a></li>
+<li class="toc-sub"><a href="#loc-table-first-party-source-only">LOC Table (first-party source only)</a></li>
+<li class="toc-sub"><a href="#cocomo-ii-effort-estimate">COCOMO-II Effort Estimate</a></li>
+<li class="toc-sub"><a href="#technology-fingerprint">Technology Fingerprint</a></li>
+<li class="toc-sub"><a href="#highest-complexity-files-decision-keyword-count">Highest-Complexity Files (decision-keyword count)</a></li>
+<li><a href="#architecture-at-a-glance">Architecture-at-a-Glance</a></li>
+<li class="toc-sub"><a href="#functional-domains">Functional Domains</a></li>
+<li class="toc-sub"><a href="#dangling-references-amp-dead-exports">Dangling References &amp; Dead Exports</a></li>
+<li><a href="#production-runtime-profile">Production Runtime Profile</a></li>
+<li><a href="#technical-debt">Technical Debt</a></li>
+<li><a href="#security-findings">Security Findings</a></li>
+<li><a href="#documentation-gaps">Documentation Gaps</a></li>
+<li><a href="#effort-estimation">Effort Estimation</a></li>
+<li><a href="#recommended-modernization-pattern">Recommended Modernization Pattern</a></li>
+<li><a href="#migration-preparation-plan">Migration Preparation Plan</a></li></ul>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="current-state-refresh" class="card panel">
+        <h2>Current-State Refresh — 2026-06-28</h2>
+        <p>This section supersedes stale inventory and migration-readiness counts in the original 2026-05-29 assessment. Historical findings remain below for traceability.</p>
+        <table>
+          <thead><tr><th>Area</th><th>Current verified state</th><th>Migration consequence</th></tr></thead>
+          <tbody>
+            <tr><td>Routing</td><td>React Router 7.18.0; 41 registered paths: 6 public/direct, 3 <code>PreConditions</code>-only error paths, and 32 behind <code>AuthenticatedElement</code></td><td>Use <code>ClientApp/src/App.tsx</code> and the 41-entry route manifest as the parity baseline, not the older 35-route count</td></tr>
+            <tr><td>Pattern/type approval</td><td>Six paths cover dashboard, pre-application, wizard, success, and management. The wizard includes organisation/contact, application/instrument, supporting documents, and summary/submit steps.</td><td>Migrate <code>routes/ta/**</code>, <code>dashboard-ta.tsx</code>, generated-client contracts, upload progress/cancellation, and management tabs as one coherent slice</td></tr>
+            <tr><td>Reusable UI</td><td>31 top-level component families, including attachment/upload, certificate lookup, checkbox groups, progress display, Type Approval request/filter controls, and <code>SlateEditor</code></td><td>Batch B and Batch E must include the Type Approval-specific component and style dependencies</td></tr>
+            <tr><td>Storybook</td><td>87 story files; latest static index has 315 entries: 218 stories and 97 docs entries</td><td>Use the Type Approval stories for isolated parity review, but do not treat them as full workflow evidence</td></tr>
+            <tr><td>Automated validation</td><td>Type-check and lint pass with zero diagnostics; unit suite passes 114 files / 1,169 tests; Storybook interaction suite passes 87 files / 218 tests; 29 BDD feature files define 28 application and 129 Storybook scenarios</td><td>Replace the historical test counts in migration gates with the current baseline</td></tr>
+            <tr><td>Unit coverage gate</td><td><code>npm run test:unit:coverage</code> fails the configured 100% thresholds: 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines</td><td><code>COVERAGE-GATE-001</code> is a Priority 1 pre-flight blocker; passing test counts alone do not clear the gate</td></tr>
+            <tr><td>Residual gap</td><td>All six Type Approval paths are reviewed app-BDD exclusions because this snapshot has no deterministic authenticated backend fixture contract</td><td><code>TYPE-APPROVAL-E2E-001</code> gates affected-route cutover unless fixtures are implemented or the migration lead explicitly accepts the gap</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="architecture-diagram" class="card diagram-panel">
+        <div class="diagram-head">
+          <div>
+            <h2>Updated Runtime Architecture Diagram</h2>
+            <p style="margin:8px 0 0;color:var(--muted)">This diagram is rendered from the updated Mermaid code supplied in the latest upload.</p>
+          </div>
+          <span class="badge">Mermaid flowchart LR</span>
+        </div>
+        <div class="diagram-wrap">
+          <pre class="mermaid">flowchart LR
+
+%% =========================================================
+%% Frontend Runtime Architecture — React Portal
+%% =========================================================
+
+%% ---------- Browser Entry ----------
+subgraph Browser[&quot;Browser Runtime&quot;]
+  direction TB
+  IDX[&quot;index.tsx&lt;br/&gt;Application entry&quot;]
+  TT[&quot;trustedtypes.ts&lt;br/&gt;Trusted Types policy&quot;]
+  ENV[&quot;env.ts&lt;br/&gt;Runtime configuration&quot;]
+  APP[&quot;App.tsx&lt;br/&gt;Root application&quot;]
+end
+
+%% ---------- Application Runtime Composition ----------
+subgraph Composition[&quot;Application Composition&quot;]
+  direction TB
+  PROVIDERS[&quot;«runtime» Provider Layer&quot;]
+  ROUTER[&quot;«runtime» App Router / Route Config&quot;]
+  PROTECTED[&quot;«runtime» Protected Route Guard&quot;]
+  SHELL[&quot;«runtime» Authenticated Application Shell&quot;]
+  ROUTE_OUTLET[&quot;«runtime» Routed Feature Outlet&quot;]
+end
+
+%% ---------- Runtime Providers ----------
+subgraph RuntimeProviders[&quot;Runtime Providers&quot;]
+  direction TB
+  AUTH_PROVIDER[&quot;AccountProvider.tsx&lt;br/&gt;Authentication/session provider&quot;]
+  ACCOUNT_CTX[&quot;accountContext.tsx&lt;br/&gt;Account context&quot;]
+  MODAL_PROVIDER[&quot;ModalContext.tsx&lt;br/&gt;Modal provider&quot;]
+  OBS_PROVIDER[&quot;«runtime» Observability initialisation&quot;]
+  STATE_PROVIDER[&quot;«runtime» Client state initialisation&quot;]
+end
+
+%% ---------- Authentication &amp; Identity ----------
+subgraph Identity[&quot;Authentication &amp; Identity&quot;]
+  direction TB
+  AUTHCFG[&quot;authConfig.ts&lt;br/&gt;Auth configuration&quot;]
+  AUTH_EL[&quot;AuthenticatedElement.tsx&lt;br/&gt;Auth gate&quot;]
+  AUTH_HOOKS[&quot;hooks.tsx&lt;br/&gt;Auth/account hooks&quot;]
+end
+%% devAuth.ts DELETED 2026-05-29 — SEC-001/002 remediation
+
+%% ---------- Shell ----------
+subgraph ShellRuntime[&quot;Pre-conditions &amp; Shell&quot;]
+  direction TB
+  PRECOND[&quot;PreConditions.tsx&lt;br/&gt;Runtime pre-condition checks&quot;]
+  LAYOUT[&quot;Layout/index.tsx&lt;br/&gt;Page layout&quot;]
+  HEADER[&quot;Header/index.tsx&lt;br/&gt;Header&quot;]
+  FOOTER[&quot;Footer/index.tsx&lt;br/&gt;Footer&quot;]
+end
+
+%% ---------- Feature Flows ----------
+subgraph FeatureFlows[&quot;Runtime Feature Flows&quot;]
+  direction TB
+  DASHBOARD[&quot;Dashboard&lt;br/&gt;View requests and user context&quot;]
+  RFQ_FLOW[&quot;Request for Quote Flow&lt;br/&gt;Create/copy/view RFQ&quot;]
+  QUOTATION_FLOW[&quot;Quotation Flow&lt;br/&gt;View quote and quote PDF&quot;]
+  ACCEPT_FLOW[&quot;Accept Quote Flow&lt;br/&gt;Accept quotation&quot;]
+  REPORTS_FLOW[&quot;Measurement Reports Flow&lt;br/&gt;View/download reports&quot;]
+  ACCOUNT_FLOW[&quot;Account Management Flow&lt;br/&gt;Create/update/add branch&quot;]
+  CONTACT_FLOW[&quot;Contact Management Flow&lt;br/&gt;Create/update contacts&quot;]
+  TA_FLOW[&quot;Pattern/Type Approval Flow&lt;br/&gt;Dashboard, wizard, uploads, management&quot;]
+end
+
+%% ---------- Shared UI ----------
+subgraph SharedUI[&quot;Shared UI Runtime&quot;]
+  direction TB
+  WIZARD[&quot;WizardForm/**&lt;br/&gt;Wizard orchestration&quot;]
+  INPUTS[&quot;Inputs/**&lt;br/&gt;Controlled inputs&quot;]
+  PAGINATION[&quot;Pagination&lt;br/&gt;Paged results&quot;]
+  SEARCH_FILTER[&quot;SearchFilter&lt;br/&gt;Search/filter UI&quot;]
+  REQUEST_LIST[&quot;RequestList&lt;br/&gt;Request summary list&quot;]
+  UPLOAD_PROGRESS[&quot;Attachment + Progress&lt;br/&gt;Upload and cancellation state&quot;]
+  SLATE_EDITOR[&quot;SlateEditor&lt;br/&gt;Application messages&quot;]
+end
+
+%% ---------- Modal Runtime ----------
+subgraph ModalRuntime[&quot;Modal Runtime&quot;]
+  direction TB
+  TERMS_MODAL[&quot;TermsAndCondition&lt;br/&gt;Terms modal&quot;]
+  BRANCH_MODAL[&quot;BranchSelectorModal&lt;br/&gt;Branch selector&quot;]
+  RFQ_DELETE_MODAL[&quot;RFQDeleteModal&lt;br/&gt;RFQ delete confirmation&quot;]
+end
+
+%% ---------- Validation Runtime ----------
+subgraph ValidationRuntime[&quot;Validation Runtime&quot;]
+  direction TB
+  VALIDATION[&quot;«runtime» Validation service&quot;]
+  YUP_EXT[&quot;yupExtensions/stringExtensions.ts&quot;]
+  CONTACT_SCHEMA[&quot;contactValidation&quot;]
+  ADDRESS_SCHEMA[&quot;addressValidation&quot;]
+end
+
+%% ---------- Domain Services ----------
+subgraph DomainServices[&quot;Frontend Domain Services&quot;]
+  direction TB
+  API_CLIENT[&quot;«runtime» Portal API client&quot;]
+  RFQ_SERVICE[&quot;«runtime» RFQ service&quot;]
+  QUOTE_SERVICE[&quot;«runtime» Quote service&quot;]
+  REPORT_SERVICE[&quot;«runtime» Measurement report service&quot;]
+  ACCOUNT_SERVICE[&quot;«runtime» Account/contact service&quot;]
+  TA_SERVICE[&quot;«runtime» Pattern/type approval service&quot;]
+  PDF_SERVICE[&quot;ViewPdfQuote / ViewPdfQuoteTerms&lt;br/&gt;PDF view/download service&quot;]
+end
+
+%% ---------- Observability ----------
+subgraph Observability[&quot;Instrumentation &amp; Analytics&quot;]
+  direction TB
+  LOGGER[&quot;AppLogger.ts&lt;br/&gt;Application logging&quot;]
+  APPINS[&quot;AppInsightsService.ts&lt;br/&gt;Application Insights client&quot;]
+  GA[&quot;GoogleAnalytics.tsx&lt;br/&gt;Google Analytics client&quot;]
+end
+
+%% ---------- Client State &amp; Storage ----------
+subgraph ClientState[&quot;Client State &amp; Browser Storage&quot;]
+  direction TB
+  SESSION_CACHE[&quot;sessionStorageCache.ts&lt;br/&gt;Session cache&quot;]
+  NOTIFICATION_STATE[&quot;notification.ts&lt;br/&gt;Notification state&quot;]
+  TARGET_ORG_STATE[&quot;targetOrganisation.ts&lt;br/&gt;Target organisation state&quot;]
+end
+
+%% ---------- Utilities ----------
+subgraph Utilities[&quot;Pure Utilities &amp; Hooks&quot;]
+  direction TB
+  UTILS[&quot;utils/index.ts&lt;br/&gt;Pure utility helpers&quot;]
+  USE_DEBOUNCE[&quot;useDebounce.ts&lt;br/&gt;Debounce hook&quot;]
+end
+
+%% ---------- External Runtime Systems ----------
+subgraph External[&quot;External Runtime Systems&quot;]
+  direction TB
+  ENTRA[&quot;Microsoft Entra ID&lt;br/&gt;Identity provider&quot;]
+  PORTAL_API[&quot;Portal Backend API&quot;]
+  D365[&quot;Dynamics 365 CRM&quot;]
+  AZURE_APPINSIGHTS[&quot;Azure Application Insights&quot;]
+  GOOGLE_ANALYTICS[&quot;Google Analytics&quot;]
+end
+
+%% =========================================================
+%% Bootstrap Flow
+%% =========================================================
+
+IDX --&gt; TT
+IDX --&gt; ENV
+IDX --&gt; APP
+
+APP --&gt; PROVIDERS
+PROVIDERS --&gt; AUTH_PROVIDER
+PROVIDERS --&gt; MODAL_PROVIDER
+PROVIDERS --&gt; OBS_PROVIDER
+PROVIDERS --&gt; STATE_PROVIDER
+
+PROVIDERS --&gt; ROUTER
+ROUTER --&gt; PROTECTED
+PROTECTED --&gt; AUTH_EL
+AUTH_EL --&gt; PRECOND
+PRECOND --&gt; SHELL
+SHELL --&gt; LAYOUT
+LAYOUT --&gt; HEADER
+LAYOUT --&gt; ROUTE_OUTLET
+LAYOUT --&gt; FOOTER
+
+%% =========================================================
+%% Provider Runtime Wiring
+%% =========================================================
+
+AUTH_PROVIDER --&gt; AUTHCFG
+AUTH_PROVIDER --&gt; ACCOUNT_CTX
+AUTH_PROVIDER --&gt; AUTH_HOOKS
+AUTHCFG --&gt; ENTRA
+
+%% DEV_AUTH deleted 2026-05-29 (SEC-001/002)
+
+STATE_PROVIDER --&gt; SESSION_CACHE
+STATE_PROVIDER --&gt; NOTIFICATION_STATE
+STATE_PROVIDER --&gt; TARGET_ORG_STATE
+
+OBS_PROVIDER --&gt; LOGGER
+OBS_PROVIDER --&gt; APPINS
+OBS_PROVIDER --&gt; GA
+
+MODAL_PROVIDER --&gt; TERMS_MODAL
+MODAL_PROVIDER --&gt; BRANCH_MODAL
+MODAL_PROVIDER --&gt; RFQ_DELETE_MODAL
+
+%% =========================================================
+%% Authenticated Route Flow
+%% =========================================================
+
+ROUTE_OUTLET --&gt; DASHBOARD
+ROUTE_OUTLET --&gt; RFQ_FLOW
+ROUTE_OUTLET --&gt; QUOTATION_FLOW
+ROUTE_OUTLET --&gt; ACCEPT_FLOW
+ROUTE_OUTLET --&gt; REPORTS_FLOW
+ROUTE_OUTLET --&gt; ACCOUNT_FLOW
+ROUTE_OUTLET --&gt; CONTACT_FLOW
+ROUTE_OUTLET --&gt; TA_FLOW
+
+%% =========================================================
+%% Runtime Pre-condition Dependencies
+%% =========================================================
+
+PRECOND --&gt; ACCOUNT_CTX
+PRECOND --&gt; TARGET_ORG_STATE
+PRECOND --&gt; TERMS_MODAL
+PRECOND --&gt; NOTIFICATION_STATE
+
+%% =========================================================
+%% Feature Flow Dependencies
+%% =========================================================
+
+DASHBOARD --&gt; REQUEST_LIST
+DASHBOARD --&gt; SEARCH_FILTER
+DASHBOARD --&gt; ACCOUNT_CTX
+DASHBOARD --&gt; NOTIFICATION_STATE
+DASHBOARD --&gt; LOGGER
+
+RFQ_FLOW --&gt; WIZARD
+RFQ_FLOW --&gt; INPUTS
+RFQ_FLOW --&gt; VALIDATION
+RFQ_FLOW --&gt; RFQ_SERVICE
+RFQ_FLOW --&gt; RFQ_DELETE_MODAL
+RFQ_FLOW --&gt; LOGGER
+
+QUOTATION_FLOW --&gt; QUOTE_SERVICE
+QUOTATION_FLOW --&gt; PDF_SERVICE
+QUOTATION_FLOW --&gt; TERMS_MODAL
+QUOTATION_FLOW --&gt; LOGGER
+
+ACCEPT_FLOW --&gt; QUOTE_SERVICE
+ACCEPT_FLOW --&gt; VALIDATION
+ACCEPT_FLOW --&gt; LOGGER
+
+REPORTS_FLOW --&gt; REPORT_SERVICE
+REPORTS_FLOW --&gt; PDF_SERVICE
+REPORTS_FLOW --&gt; LOGGER
+
+ACCOUNT_FLOW --&gt; ACCOUNT_SERVICE
+ACCOUNT_FLOW --&gt; VALIDATION
+ACCOUNT_FLOW --&gt; BRANCH_MODAL
+ACCOUNT_FLOW --&gt; TARGET_ORG_STATE
+ACCOUNT_FLOW --&gt; LOGGER
+
+CONTACT_FLOW --&gt; ACCOUNT_SERVICE
+CONTACT_FLOW --&gt; VALIDATION
+CONTACT_FLOW --&gt; LOGGER
+
+TA_FLOW --&gt; WIZARD
+TA_FLOW --&gt; INPUTS
+TA_FLOW --&gt; VALIDATION
+TA_FLOW --&gt; TA_SERVICE
+TA_FLOW --&gt; UPLOAD_PROGRESS
+TA_FLOW --&gt; SLATE_EDITOR
+TA_FLOW --&gt; LOGGER
+
+%% =========================================================
+%% Shared UI Runtime Dependencies
+%% =========================================================
+
+WIZARD --&gt; INPUTS
+WIZARD --&gt; VALIDATION
+INPUTS --&gt; VALIDATION
+
+SEARCH_FILTER --&gt; USE_DEBOUNCE
+
+REQUEST_LIST --&gt; PAGINATION
+REQUEST_LIST --&gt; UTILS
+
+BRANCH_MODAL --&gt; ACCOUNT_CTX
+BRANCH_MODAL --&gt; TARGET_ORG_STATE
+
+TERMS_MODAL --&gt; ACCOUNT_CTX
+RFQ_DELETE_MODAL --&gt; RFQ_SERVICE
+
+%% =========================================================
+%% Validation Runtime
+%% =========================================================
+
+VALIDATION --&gt; YUP_EXT
+VALIDATION --&gt; CONTACT_SCHEMA
+VALIDATION --&gt; ADDRESS_SCHEMA
+
+%% =========================================================
+%% Domain Service Runtime
+%% =========================================================
+
+RFQ_SERVICE --&gt; API_CLIENT
+QUOTE_SERVICE --&gt; API_CLIENT
+REPORT_SERVICE --&gt; API_CLIENT
+ACCOUNT_SERVICE --&gt; API_CLIENT
+TA_SERVICE --&gt; API_CLIENT
+PDF_SERVICE --&gt; API_CLIENT
+
+API_CLIENT --&gt; PORTAL_API
+PORTAL_API --&gt; D365
+
+%% =========================================================
+%% Observability Runtime
+%% =========================================================
+
+LOGGER --&gt; APPINS
+APPINS --&gt; ENV
+APPINS --&gt; AZURE_APPINSIGHTS
+
+GA --&gt; ENV
+GA --&gt; GOOGLE_ANALYTICS
+
+RFQ_SERVICE --&gt; LOGGER
+QUOTE_SERVICE --&gt; LOGGER
+REPORT_SERVICE --&gt; LOGGER
+ACCOUNT_SERVICE --&gt; LOGGER
+TA_SERVICE --&gt; LOGGER
+API_CLIENT --&gt; LOGGER
+
+%% =========================================================
+%% Client State Runtime
+%% =========================================================
+
+ACCOUNT_CTX --&gt; SESSION_CACHE
+NOTIFICATION_STATE --&gt; SESSION_CACHE
+TARGET_ORG_STATE --&gt; SESSION_CACHE
+
+%% =========================================================
+%% Styling
+%% =========================================================
+
+classDef entry fill:#E8F1FF,stroke:#1D4ED8,stroke-width:1.5px,color:#0F172A;
+classDef runtime fill:#FFF1DB,stroke:#B45309,stroke-width:1.5px,color:#0F172A;
+classDef provider fill:#FEF3C7,stroke:#A16207,stroke-width:1.5px,color:#0F172A;
+classDef feature fill:#F0E7FF,stroke:#6D28D9,stroke-width:1.5px,color:#0F172A;
+classDef shared fill:#DCFCE7,stroke:#15803D,stroke-width:1.5px,color:#0F172A;
+classDef service fill:#FEE2E2,stroke:#B91C1C,stroke-width:1.5px,color:#0F172A;
+classDef state fill:#D9F2F2,stroke:#0F766E,stroke-width:1.5px,color:#0F172A;
+classDef external fill:#F3F4F6,stroke:#4B5563,stroke-width:1.5px,color:#0F172A;
+classDef dev fill:#F5E8FF,stroke:#7C3AED,stroke-width:1.5px,stroke-dasharray: 5 3,color:#0F172A;
+
+class IDX,TT,ENV,APP entry;
+
+class PROVIDERS,ROUTER,PROTECTED,SHELL,ROUTE_OUTLET runtime;
+
+class AUTH_PROVIDER,ACCOUNT_CTX,MODAL_PROVIDER,OBS_PROVIDER,STATE_PROVIDER provider;
+class AUTHCFG,AUTH_EL,AUTH_HOOKS provider;
+%% class DEV_AUTH dev — node removed (deleted 2026-05-29)
+
+class PRECOND,LAYOUT,HEADER,FOOTER runtime;
+
+class DASHBOARD,RFQ_FLOW,QUOTATION_FLOW,ACCEPT_FLOW,REPORTS_FLOW,ACCOUNT_FLOW,CONTACT_FLOW,TA_FLOW feature;
+
+class WIZARD,INPUTS,PAGINATION,SEARCH_FILTER,REQUEST_LIST,UPLOAD_PROGRESS,SLATE_EDITOR,TERMS_MODAL,BRANCH_MODAL,RFQ_DELETE_MODAL shared;
+
+class VALIDATION,YUP_EXT,CONTACT_SCHEMA,ADDRESS_SCHEMA shared;
+
+class API_CLIENT,RFQ_SERVICE,QUOTE_SERVICE,REPORT_SERVICE,ACCOUNT_SERVICE,TA_SERVICE,PDF_SERVICE,LOGGER,APPINS,GA service;
+
+class SESSION_CACHE,NOTIFICATION_STATE,TARGET_ORG_STATE state;
+
+class UTILS,USE_DEBOUNCE shared;
+
+class ENTRA,PORTAL_API,D365,AZURE_APPINSIGHTS,GOOGLE_ANALYTICS external;</pre>
+        </div>
+        <details>
+          <summary>Show Mermaid source</summary>
+          <pre><code>flowchart LR
+
+%% =========================================================
+%% Frontend Runtime Architecture — React Portal
+%% =========================================================
+
+%% ---------- Browser Entry ----------
+subgraph Browser[&quot;Browser Runtime&quot;]
+  direction TB
+  IDX[&quot;index.tsx&lt;br/&gt;Application entry&quot;]
+  TT[&quot;trustedtypes.ts&lt;br/&gt;Trusted Types policy&quot;]
+  ENV[&quot;env.ts&lt;br/&gt;Runtime configuration&quot;]
+  APP[&quot;App.tsx&lt;br/&gt;Root application&quot;]
+end
+
+%% ---------- Application Runtime Composition ----------
+subgraph Composition[&quot;Application Composition&quot;]
+  direction TB
+  PROVIDERS[&quot;«runtime» Provider Layer&quot;]
+  ROUTER[&quot;«runtime» App Router / Route Config&quot;]
+  PROTECTED[&quot;«runtime» Protected Route Guard&quot;]
+  SHELL[&quot;«runtime» Authenticated Application Shell&quot;]
+  ROUTE_OUTLET[&quot;«runtime» Routed Feature Outlet&quot;]
+end
+
+%% ---------- Runtime Providers ----------
+subgraph RuntimeProviders[&quot;Runtime Providers&quot;]
+  direction TB
+  AUTH_PROVIDER[&quot;AccountProvider.tsx&lt;br/&gt;Authentication/session provider&quot;]
+  ACCOUNT_CTX[&quot;accountContext.tsx&lt;br/&gt;Account context&quot;]
+  MODAL_PROVIDER[&quot;ModalContext.tsx&lt;br/&gt;Modal provider&quot;]
+  OBS_PROVIDER[&quot;«runtime» Observability initialisation&quot;]
+  STATE_PROVIDER[&quot;«runtime» Client state initialisation&quot;]
+end
+
+%% ---------- Authentication &amp; Identity ----------
+subgraph Identity[&quot;Authentication &amp; Identity&quot;]
+  direction TB
+  AUTHCFG[&quot;authConfig.ts&lt;br/&gt;Auth configuration&quot;]
+  AUTH_EL[&quot;AuthenticatedElement.tsx&lt;br/&gt;Auth gate&quot;]
+  AUTH_HOOKS[&quot;hooks.tsx&lt;br/&gt;Auth/account hooks&quot;]
+end
+%% devAuth.ts DELETED 2026-05-29 — SEC-001/002 remediation
+
+%% ---------- Shell ----------
+subgraph ShellRuntime[&quot;Pre-conditions &amp; Shell&quot;]
+  direction TB
+  PRECOND[&quot;PreConditions.tsx&lt;br/&gt;Runtime pre-condition checks&quot;]
+  LAYOUT[&quot;Layout/index.tsx&lt;br/&gt;Page layout&quot;]
+  HEADER[&quot;Header/index.tsx&lt;br/&gt;Header&quot;]
+  FOOTER[&quot;Footer/index.tsx&lt;br/&gt;Footer&quot;]
+end
+
+%% ---------- Feature Flows ----------
+subgraph FeatureFlows[&quot;Runtime Feature Flows&quot;]
+  direction TB
+  DASHBOARD[&quot;Dashboard&lt;br/&gt;View requests and user context&quot;]
+  RFQ_FLOW[&quot;Request for Quote Flow&lt;br/&gt;Create/copy/view RFQ&quot;]
+  QUOTATION_FLOW[&quot;Quotation Flow&lt;br/&gt;View quote and quote PDF&quot;]
+  ACCEPT_FLOW[&quot;Accept Quote Flow&lt;br/&gt;Accept quotation&quot;]
+  REPORTS_FLOW[&quot;Measurement Reports Flow&lt;br/&gt;View/download reports&quot;]
+  ACCOUNT_FLOW[&quot;Account Management Flow&lt;br/&gt;Create/update/add branch&quot;]
+  CONTACT_FLOW[&quot;Contact Management Flow&lt;br/&gt;Create/update contacts&quot;]
+  TA_FLOW[&quot;Pattern/Type Approval Flow&lt;br/&gt;Dashboard, wizard, uploads, management&quot;]
+end
+
+%% ---------- Shared UI ----------
+subgraph SharedUI[&quot;Shared UI Runtime&quot;]
+  direction TB
+  WIZARD[&quot;WizardForm/**&lt;br/&gt;Wizard orchestration&quot;]
+  INPUTS[&quot;Inputs/**&lt;br/&gt;Controlled inputs&quot;]
+  PAGINATION[&quot;Pagination&lt;br/&gt;Paged results&quot;]
+  SEARCH_FILTER[&quot;SearchFilter&lt;br/&gt;Search/filter UI&quot;]
+  REQUEST_LIST[&quot;RequestList&lt;br/&gt;Request summary list&quot;]
+  UPLOAD_PROGRESS[&quot;Attachment + Progress&lt;br/&gt;Upload and cancellation state&quot;]
+  SLATE_EDITOR[&quot;SlateEditor&lt;br/&gt;Application messages&quot;]
+end
+
+%% ---------- Modal Runtime ----------
+subgraph ModalRuntime[&quot;Modal Runtime&quot;]
+  direction TB
+  TERMS_MODAL[&quot;TermsAndCondition&lt;br/&gt;Terms modal&quot;]
+  BRANCH_MODAL[&quot;BranchSelectorModal&lt;br/&gt;Branch selector&quot;]
+  RFQ_DELETE_MODAL[&quot;RFQDeleteModal&lt;br/&gt;RFQ delete confirmation&quot;]
+end
+
+%% ---------- Validation Runtime ----------
+subgraph ValidationRuntime[&quot;Validation Runtime&quot;]
+  direction TB
+  VALIDATION[&quot;«runtime» Validation service&quot;]
+  YUP_EXT[&quot;yupExtensions/stringExtensions.ts&quot;]
+  CONTACT_SCHEMA[&quot;contactValidation&quot;]
+  ADDRESS_SCHEMA[&quot;addressValidation&quot;]
+end
+
+%% ---------- Domain Services ----------
+subgraph DomainServices[&quot;Frontend Domain Services&quot;]
+  direction TB
+  API_CLIENT[&quot;«runtime» Portal API client&quot;]
+  RFQ_SERVICE[&quot;«runtime» RFQ service&quot;]
+  QUOTE_SERVICE[&quot;«runtime» Quote service&quot;]
+  REPORT_SERVICE[&quot;«runtime» Measurement report service&quot;]
+  ACCOUNT_SERVICE[&quot;«runtime» Account/contact service&quot;]
+  TA_SERVICE[&quot;«runtime» Pattern/type approval service&quot;]
+  PDF_SERVICE[&quot;ViewPdfQuote / ViewPdfQuoteTerms&lt;br/&gt;PDF view/download service&quot;]
+end
+
+%% ---------- Observability ----------
+subgraph Observability[&quot;Instrumentation &amp; Analytics&quot;]
+  direction TB
+  LOGGER[&quot;AppLogger.ts&lt;br/&gt;Application logging&quot;]
+  APPINS[&quot;AppInsightsService.ts&lt;br/&gt;Application Insights client&quot;]
+  GA[&quot;GoogleAnalytics.tsx&lt;br/&gt;Google Analytics client&quot;]
+end
+
+%% ---------- Client State &amp; Storage ----------
+subgraph ClientState[&quot;Client State &amp; Browser Storage&quot;]
+  direction TB
+  SESSION_CACHE[&quot;sessionStorageCache.ts&lt;br/&gt;Session cache&quot;]
+  NOTIFICATION_STATE[&quot;notification.ts&lt;br/&gt;Notification state&quot;]
+  TARGET_ORG_STATE[&quot;targetOrganisation.ts&lt;br/&gt;Target organisation state&quot;]
+end
+
+%% ---------- Utilities ----------
+subgraph Utilities[&quot;Pure Utilities &amp; Hooks&quot;]
+  direction TB
+  UTILS[&quot;utils/index.ts&lt;br/&gt;Pure utility helpers&quot;]
+  USE_DEBOUNCE[&quot;useDebounce.ts&lt;br/&gt;Debounce hook&quot;]
+end
+
+%% ---------- External Runtime Systems ----------
+subgraph External[&quot;External Runtime Systems&quot;]
+  direction TB
+  ENTRA[&quot;Microsoft Entra ID&lt;br/&gt;Identity provider&quot;]
+  PORTAL_API[&quot;Portal Backend API&quot;]
+  D365[&quot;Dynamics 365 CRM&quot;]
+  AZURE_APPINSIGHTS[&quot;Azure Application Insights&quot;]
+  GOOGLE_ANALYTICS[&quot;Google Analytics&quot;]
+end
+
+%% =========================================================
+%% Bootstrap Flow
+%% =========================================================
+
+IDX --&gt; TT
+IDX --&gt; ENV
+IDX --&gt; APP
+
+APP --&gt; PROVIDERS
+PROVIDERS --&gt; AUTH_PROVIDER
+PROVIDERS --&gt; MODAL_PROVIDER
+PROVIDERS --&gt; OBS_PROVIDER
+PROVIDERS --&gt; STATE_PROVIDER
+
+PROVIDERS --&gt; ROUTER
+ROUTER --&gt; PROTECTED
+PROTECTED --&gt; AUTH_EL
+AUTH_EL --&gt; PRECOND
+PRECOND --&gt; SHELL
+SHELL --&gt; LAYOUT
+LAYOUT --&gt; HEADER
+LAYOUT --&gt; ROUTE_OUTLET
+LAYOUT --&gt; FOOTER
+
+%% =========================================================
+%% Provider Runtime Wiring
+%% =========================================================
+
+AUTH_PROVIDER --&gt; AUTHCFG
+AUTH_PROVIDER --&gt; ACCOUNT_CTX
+AUTH_PROVIDER --&gt; AUTH_HOOKS
+AUTHCFG --&gt; ENTRA
+
+%% DEV_AUTH deleted 2026-05-29 (SEC-001/002)
+
+STATE_PROVIDER --&gt; SESSION_CACHE
+STATE_PROVIDER --&gt; NOTIFICATION_STATE
+STATE_PROVIDER --&gt; TARGET_ORG_STATE
+
+OBS_PROVIDER --&gt; LOGGER
+OBS_PROVIDER --&gt; APPINS
+OBS_PROVIDER --&gt; GA
+
+MODAL_PROVIDER --&gt; TERMS_MODAL
+MODAL_PROVIDER --&gt; BRANCH_MODAL
+MODAL_PROVIDER --&gt; RFQ_DELETE_MODAL
+
+%% =========================================================
+%% Authenticated Route Flow
+%% =========================================================
+
+ROUTE_OUTLET --&gt; DASHBOARD
+ROUTE_OUTLET --&gt; RFQ_FLOW
+ROUTE_OUTLET --&gt; QUOTATION_FLOW
+ROUTE_OUTLET --&gt; ACCEPT_FLOW
+ROUTE_OUTLET --&gt; REPORTS_FLOW
+ROUTE_OUTLET --&gt; ACCOUNT_FLOW
+ROUTE_OUTLET --&gt; CONTACT_FLOW
+ROUTE_OUTLET --&gt; TA_FLOW
+
+%% =========================================================
+%% Runtime Pre-condition Dependencies
+%% =========================================================
+
+PRECOND --&gt; ACCOUNT_CTX
+PRECOND --&gt; TARGET_ORG_STATE
+PRECOND --&gt; TERMS_MODAL
+PRECOND --&gt; NOTIFICATION_STATE
+
+%% =========================================================
+%% Feature Flow Dependencies
+%% =========================================================
+
+DASHBOARD --&gt; REQUEST_LIST
+DASHBOARD --&gt; SEARCH_FILTER
+DASHBOARD --&gt; ACCOUNT_CTX
+DASHBOARD --&gt; NOTIFICATION_STATE
+DASHBOARD --&gt; LOGGER
+
+RFQ_FLOW --&gt; WIZARD
+RFQ_FLOW --&gt; INPUTS
+RFQ_FLOW --&gt; VALIDATION
+RFQ_FLOW --&gt; RFQ_SERVICE
+RFQ_FLOW --&gt; RFQ_DELETE_MODAL
+RFQ_FLOW --&gt; LOGGER
+
+QUOTATION_FLOW --&gt; QUOTE_SERVICE
+QUOTATION_FLOW --&gt; PDF_SERVICE
+QUOTATION_FLOW --&gt; TERMS_MODAL
+QUOTATION_FLOW --&gt; LOGGER
+
+ACCEPT_FLOW --&gt; QUOTE_SERVICE
+ACCEPT_FLOW --&gt; VALIDATION
+ACCEPT_FLOW --&gt; LOGGER
+
+REPORTS_FLOW --&gt; REPORT_SERVICE
+REPORTS_FLOW --&gt; PDF_SERVICE
+REPORTS_FLOW --&gt; LOGGER
+
+ACCOUNT_FLOW --&gt; ACCOUNT_SERVICE
+ACCOUNT_FLOW --&gt; VALIDATION
+ACCOUNT_FLOW --&gt; BRANCH_MODAL
+ACCOUNT_FLOW --&gt; TARGET_ORG_STATE
+ACCOUNT_FLOW --&gt; LOGGER
+
+CONTACT_FLOW --&gt; ACCOUNT_SERVICE
+CONTACT_FLOW --&gt; VALIDATION
+CONTACT_FLOW --&gt; LOGGER
+
+TA_FLOW --&gt; WIZARD
+TA_FLOW --&gt; INPUTS
+TA_FLOW --&gt; VALIDATION
+TA_FLOW --&gt; TA_SERVICE
+TA_FLOW --&gt; UPLOAD_PROGRESS
+TA_FLOW --&gt; SLATE_EDITOR
+TA_FLOW --&gt; LOGGER
+
+%% =========================================================
+%% Shared UI Runtime Dependencies
+%% =========================================================
+
+WIZARD --&gt; INPUTS
+WIZARD --&gt; VALIDATION
+INPUTS --&gt; VALIDATION
+
+SEARCH_FILTER --&gt; USE_DEBOUNCE
+
+REQUEST_LIST --&gt; PAGINATION
+REQUEST_LIST --&gt; UTILS
+
+BRANCH_MODAL --&gt; ACCOUNT_CTX
+BRANCH_MODAL --&gt; TARGET_ORG_STATE
+
+TERMS_MODAL --&gt; ACCOUNT_CTX
+RFQ_DELETE_MODAL --&gt; RFQ_SERVICE
+
+%% =========================================================
+%% Validation Runtime
+%% =========================================================
+
+VALIDATION --&gt; YUP_EXT
+VALIDATION --&gt; CONTACT_SCHEMA
+VALIDATION --&gt; ADDRESS_SCHEMA
+
+%% =========================================================
+%% Domain Service Runtime
+%% =========================================================
+
+RFQ_SERVICE --&gt; API_CLIENT
+QUOTE_SERVICE --&gt; API_CLIENT
+REPORT_SERVICE --&gt; API_CLIENT
+ACCOUNT_SERVICE --&gt; API_CLIENT
+TA_SERVICE --&gt; API_CLIENT
+PDF_SERVICE --&gt; API_CLIENT
+
+API_CLIENT --&gt; PORTAL_API
+PORTAL_API --&gt; D365
+
+%% =========================================================
+%% Observability Runtime
+%% =========================================================
+
+LOGGER --&gt; APPINS
+APPINS --&gt; ENV
+APPINS --&gt; AZURE_APPINSIGHTS
+
+GA --&gt; ENV
+GA --&gt; GOOGLE_ANALYTICS
+
+RFQ_SERVICE --&gt; LOGGER
+QUOTE_SERVICE --&gt; LOGGER
+REPORT_SERVICE --&gt; LOGGER
+ACCOUNT_SERVICE --&gt; LOGGER
+TA_SERVICE --&gt; LOGGER
+API_CLIENT --&gt; LOGGER
+
+%% =========================================================
+%% Client State Runtime
+%% =========================================================
+
+ACCOUNT_CTX --&gt; SESSION_CACHE
+NOTIFICATION_STATE --&gt; SESSION_CACHE
+TARGET_ORG_STATE --&gt; SESSION_CACHE
+
+%% =========================================================
+%% Styling
+%% =========================================================
+
+classDef entry fill:#E8F1FF,stroke:#1D4ED8,stroke-width:1.5px,color:#0F172A;
+classDef runtime fill:#FFF1DB,stroke:#B45309,stroke-width:1.5px,color:#0F172A;
+classDef provider fill:#FEF3C7,stroke:#A16207,stroke-width:1.5px,color:#0F172A;
+classDef feature fill:#F0E7FF,stroke:#6D28D9,stroke-width:1.5px,color:#0F172A;
+classDef shared fill:#DCFCE7,stroke:#15803D,stroke-width:1.5px,color:#0F172A;
+classDef service fill:#FEE2E2,stroke:#B91C1C,stroke-width:1.5px,color:#0F172A;
+classDef state fill:#D9F2F2,stroke:#0F766E,stroke-width:1.5px,color:#0F172A;
+classDef external fill:#F3F4F6,stroke:#4B5563,stroke-width:1.5px,color:#0F172A;
+classDef dev fill:#F5E8FF,stroke:#7C3AED,stroke-width:1.5px,stroke-dasharray: 5 3,color:#0F172A;
+
+class IDX,TT,ENV,APP entry;
+
+class PROVIDERS,ROUTER,PROTECTED,SHELL,ROUTE_OUTLET runtime;
+
+class AUTH_PROVIDER,ACCOUNT_CTX,MODAL_PROVIDER,OBS_PROVIDER,STATE_PROVIDER provider;
+class AUTHCFG,AUTH_EL,AUTH_HOOKS provider;
+%% class DEV_AUTH dev — node removed (deleted 2026-05-29)
+
+class PRECOND,LAYOUT,HEADER,FOOTER runtime;
+
+class DASHBOARD,RFQ_FLOW,QUOTATION_FLOW,ACCEPT_FLOW,REPORTS_FLOW,ACCOUNT_FLOW,CONTACT_FLOW,TA_FLOW feature;
+
+class WIZARD,INPUTS,PAGINATION,SEARCH_FILTER,REQUEST_LIST,UPLOAD_PROGRESS,SLATE_EDITOR,TERMS_MODAL,BRANCH_MODAL,RFQ_DELETE_MODAL shared;
+
+class VALIDATION,YUP_EXT,CONTACT_SCHEMA,ADDRESS_SCHEMA shared;
+
+class API_CLIENT,RFQ_SERVICE,QUOTE_SERVICE,REPORT_SERVICE,ACCOUNT_SERVICE,TA_SERVICE,PDF_SERVICE,LOGGER,APPINS,GA service;
+
+class SESSION_CACHE,NOTIFICATION_STATE,TARGET_ORG_STATE state;
+
+class UTILS,USE_DEBOUNCE shared;
+
+class ENTRA,PORTAL_API,D365,AZURE_APPINSIGHTS,GOOGLE_ANALYTICS external;</code></pre>
+        </details>
+      </section>
+
+      <section class="card assessment">
+        <div class="callout"><strong>Note:</strong> The assessment body preserves historical evidence, with current-state corrections applied for routes, framework versions, Type Approval, Storybook, and validation. The refresh section is authoritative where counts differ.</div>
+        <h1>NMI Portal — Modernization Assessment</h1>
+<blockquote>
+<p><strong>Tool used for LOC:</strong> <code>find</code> + <code>wc -l</code> (neither <code>scc</code> nor <code>cloc</code> installed in this environment).
+<strong>Complexity metric:</strong> decision-keyword count (<code>if</code>, <code>for</code>, <code>while</code>, <code>case</code>, <code>catch</code>, <code>?</code>) per file.
+Figures are reproducible by re-running the commands cited in each section.</p>
+</blockquote>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>The NMI Portal is a React 18 / TypeScript single-page application serving the Australian Government National Measurement Institute's calibration service customers. It now includes account onboarding, request-for-quote submission, quote acceptance, measurement reports, and pattern/type approval workflows. The original assessment recommended <strong>Refactor</strong>, not rebuild. Its auth-bypass and Trusted Types blockers were subsequently remediated; current migration decisions and residual risks are governed by CRD-041 and the Open Items Backlog.</p>
+<hr />
+<h2 id="system-inventory">System Inventory</h2>
+<h3 id="loc-table-first-party-source-only">LOC Table (first-party source only)</h3>
+<table>
+<thead>
+<tr>
+  <th>Metric</th>
+  <th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>First-party TS/TSX files</td>
+  <td>281</td>
+</tr>
+<tr>
+  <td>First-party TS/TSX SLOC</td>
+  <td>~2,400</td>
+</tr>
+<tr>
+  <td>SCSS files</td>
+  <td>97</td>
+</tr>
+<tr>
+  <td>SCSS SLOC</td>
+  <td>~12,500 (incl. generated Bootstrap theme)</td>
+</tr>
+<tr>
+  <td>E2E feature files</td>
+  <td>20+ (.feature)</td>
+</tr>
+<tr>
+  <td>Unit test files</td>
+  <td>14</td>
+</tr>
+<tr>
+  <td>Total editable source files</td>
+  <td>~378</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Excluded from first-party counts:</strong> <code>ClientApp/src/parent/</code> (vendor source embedded via webpack source maps), <code>ClientApp/src/external/</code>, and generated artifacts <code>main.*.js</code>.</p>
+</blockquote>
+<h3 id="cocomo-ii-effort-estimate">COCOMO-II Effort Estimate</h3>
+<pre><code>PM = 2.94 × (KSLOC)^1.10
+PM = 2.94 × (2.4)^1.10
+PM = 2.94 × 2.65
+PM ≈ 7.8 person-months  (±30% → 5.5–10.1 PM range)
+</code></pre>
+<p>Key cost drivers: small SLOC base but high component count (280+) inflates integration/test effort; wizard-form complexity adds cognitive overhead disproportionate to line count.</p>
+<h3 id="technology-fingerprint">Technology Fingerprint</h3>
+<table>
+<thead>
+<tr>
+  <th>Concern</th>
+  <th>Technology</th>
+  <th>Version</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>UI Framework</td>
+  <td>React</td>
+  <td>18.3.1</td>
+  <td>Functional components, hooks throughout</td>
+</tr>
+<tr>
+  <td>Language</td>
+  <td>TypeScript</td>
+  <td>5.9.3</td>
+  <td><code>any</code> suppressions present at auth boundary</td>
+</tr>
+<tr>
+  <td>Routing</td>
+  <td>React Router v7.18.0</td>
+  <td>6.30.3</td>
+  <td><code>createBrowserRouter</code>; all routes eager-loaded</td>
+</tr>
+<tr>
+  <td>Auth</td>
+  <td>Azure AD B2C (MSAL)</td>
+  <td>browser 3.30 / react 2.2</td>
+  <td>Runtime config via <code>window.*</code></td>
+</tr>
+<tr>
+  <td>Forms</td>
+  <td>Formik + Yup</td>
+  <td>2.4.9 / 1.7.1</td>
+  <td>Custom Yup string extensions</td>
+</tr>
+<tr>
+  <td>CSS</td>
+  <td>Bootstrap 5 + SCSS</td>
+  <td>5.3.8 / Sass 1.99</td>
+  <td>Custom NMI theme; <code>@import</code> deprecation suppressed</td>
+</tr>
+<tr>
+  <td>API Client</td>
+  <td>NSwag/OpenAPI generated</td>
+  <td>—</td>
+  <td><code>web-api-client.ts</code>; 337 decision branches</td>
+</tr>
+<tr>
+  <td>Analytics</td>
+  <td>App Insights + GA4</td>
+  <td>SDK 3.4.1</td>
+  <td>Connection string via runtime env</td>
+</tr>
+<tr>
+  <td>CSP</td>
+  <td>Trusted Types + DOMPurify</td>
+  <td>3.4.4</td>
+  <td><code>createHTML</code>/<code>createScript</code> policies not implemented</td>
+</tr>
+<tr>
+  <td>Build</td>
+  <td>Webpack 5</td>
+  <td>5.107.0</td>
+  <td><code>ts-loader</code> + <code>fork-ts-checker</code></td>
+</tr>
+<tr>
+  <td>Testing</td>
+  <td>Vitest 4 + Playwright + Storybook 10</td>
+  <td>—</td>
+  <td>BDD via <code>playwright-bdd</code></td>
+</tr>
+<tr>
+  <td>Node requirement</td>
+  <td>Node</td>
+  <td>≥20.0.0</td>
+  <td>Package manager npm 11.15</td>
+</tr>
+</tbody>
+</table>
+<h3 id="highest-complexity-files-decision-keyword-count">Highest-Complexity Files (decision-keyword count)</h3>
+<table>
+<thead>
+<tr>
+  <th>Rank</th>
+  <th>File</th>
+  <th>Decisions</th>
+  <th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><code>validationSchemas/yupExtensions/stringExtensions.ts</code></td>
+  <td>64</td>
+  <td>Med — validation hub</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>routes/common/helperFunctions.ts</code></td>
+  <td>58</td>
+  <td>High — business logic god-module</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>components/forms/WizardForm/WizardRoutedStep.tsx</code></td>
+  <td>45</td>
+  <td>High — stateful wizard engine</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>routes/dashboard/index.tsx</code></td>
+  <td>28</td>
+  <td>Med — main entry point</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>utils/index.ts</code></td>
+  <td>25</td>
+  <td>Med — utility hub</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>components/modals/BranchSelectorModal/index.tsx</code></td>
+  <td>22</td>
+  <td>Med</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>components/Pill/StatusPill.tsx</code></td>
+  <td>22</td>
+  <td>Med — status enum mapping</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="architecture-at-a-glance">Architecture-at-a-Glance</h2>
+<blockquote>
+<p>See <code>ARCHITECTURE.mmd</code> for the full Mermaid dependency diagram.</p>
+</blockquote>
+<h3 id="functional-domains">Functional Domains</h3>
+<table>
+<thead>
+<tr>
+  <th>Domain</th>
+  <th>Key Files</th>
+  <th>Depends On</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td><strong>App Bootstrap</strong></td>
+  <td><code>index.tsx</code>, <code>App.tsx</code>, <code>env.ts</code>, <code>trustedtypes.ts</code></td>
+  <td>Auth, Layout/Shell, all Route modules</td>
+</tr>
+<tr>
+  <td><strong>Authentication &amp; Identity</strong></td>
+  <td><code>authentication/authConfig.ts</code>, <code>accountContext.tsx</code>, <code>AccountProvider.tsx</code>, <code>AuthenticatedElement.tsx</code>, <code>hooks.tsx</code> <em>(devAuth.ts deleted 2026-05-29 — SEC-001/002)</em></td>
+  <td>API Client, Storage, Instrumentation</td>
+</tr>
+<tr>
+  <td><strong>Pre-conditions &amp; Shell</strong></td>
+  <td><code>routes/preConditions/PreConditions.tsx</code>, <code>components/Layout/</code>, <code>components/Header/</code>, <code>components/Footer/</code></td>
+  <td>Auth, Modals, Analytics</td>
+</tr>
+<tr>
+  <td><strong>Dashboard</strong></td>
+  <td><code>routes/dashboard/index.tsx</code>, <code>routes/common/helperFunctions.ts</code>, <code>routes/common/enums.ts</code></td>
+  <td>API Client, Auth, Storage, Components</td>
+</tr>
+<tr>
+  <td><strong>Pattern/Type Approval</strong></td>
+  <td><code>routes/dashboard/dashboard-ta.tsx</code>, <code>routes/ta/**</code>, Type Approval request/filter/upload/message components</td>
+  <td>API Client, Auth, WizardForm, Validation, Attachments, Progress, SlateEditor</td>
+</tr>
+<tr>
+  <td><strong>RFQ Wizard</strong></td>
+  <td><code>routes/requestForQuote/**</code> (index, create, copy, view, validation.ts)</td>
+  <td>API Client, Auth, WizardForm, Validation</td>
+</tr>
+<tr>
+  <td><strong>Quotation &amp; Accept-Quote</strong></td>
+  <td><code>routes/quotation/**</code>, <code>routes/acceptQuote/**</code></td>
+  <td>API Client, Auth, WizardForm, Storage</td>
+</tr>
+<tr>
+  <td><strong>Measurement Reports</strong></td>
+  <td><code>routes/measurementReport/**</code></td>
+  <td>API Client, Auth, Storage</td>
+</tr>
+<tr>
+  <td><strong>Account &amp; Contact Management</strong></td>
+  <td><code>routes/account/**</code>, <code>routes/contact/**</code></td>
+  <td>API Client, Auth, WizardForm, Validation</td>
+</tr>
+<tr>
+  <td><strong>Reusable UI Components</strong></td>
+  <td><code>components/forms/WizardForm/**</code>, <code>components/Inputs/**</code>, <code>components/Buttons/**</code>, <code>components/SearchFilter/**</code></td>
+  <td>Validation (side-effect import), Auth hooks</td>
+</tr>
+<tr>
+  <td><strong>Modals</strong></td>
+  <td><code>components/modals/ModalContext.tsx</code>, <code>TermsAndCondition/</code>, <code>BranchSelectorModal/</code>, <code>RFQDeleteModal/</code></td>
+  <td>API Client, Auth, Storage</td>
+</tr>
+<tr>
+  <td><strong>Validation Schemas</strong></td>
+  <td><code>validationSchemas/yupExtensions/stringExtensions.ts</code>, <code>contactValidation.ts</code>, <code>addressValidation.ts</code>, <code>common.ts</code></td>
+  <td>(no first-party deps)</td>
+</tr>
+<tr>
+  <td><strong>Instrumentation &amp; Analytics</strong></td>
+  <td><code>instrumentation/AppInsightsService.ts</code>, <code>AppLogger.ts</code>, <code>analytics/GoogleAnalytics.tsx</code></td>
+  <td><code>env.ts</code></td>
+</tr>
+<tr>
+  <td><strong>Storage</strong></td>
+  <td><code>storage/sessionStorageCache.ts</code>, <code>notification.ts</code>, <code>targetOrganisation.ts</code></td>
+  <td>(no first-party deps)</td>
+</tr>
+<tr>
+  <td><strong>Utilities</strong></td>
+  <td><code>utils/index.ts</code>, <code>components/Utilities/useHtmlTitle.tsx</code>, <code>useBodyClass.tsx</code>, <code>ViewPdfQuote.tsx</code></td>
+  <td>API Client (ViewPdf*), <code>types.ts</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="dangling-references-amp-dead-exports">Dangling References &amp; Dead Exports</h3>
+<table>
+<thead>
+<tr>
+  <th>Category</th>
+  <th>File</th>
+  <th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Dead exports</td>
+  <td><code>storage/notification.ts</code></td>
+  <td>6 functions (<code>getManageAccessNotification</code>, <code>setManageAccessNotification</code>, <code>clearManageAccessNotification</code>, <code>setReportingNotification</code>, <code>clearReportingNotification</code>, <code>getReportingNotification</code>) exported but never imported</td>
+</tr>
+<tr>
+  <td>Dead function</td>
+  <td><code>routes/common/helperFunctions.ts:316</code></td>
+  <td><code>contentLoaded()</code> exported, no import found in first-party code</td>
+</tr>
+<tr>
+  <td>Dead stub</td>
+  <td><code>routes/common/helperFunctions.ts:114</code></td>
+  <td><code>getFileIdFromBase64()</code> — body identical to <code>getFileUrlFromBase64</code>, no callers</td>
+</tr>
+<tr>
+  <td>Commented-out dead code</td>
+  <td><code>instrumentation/AppLogger.ts:91–178</code></td>
+  <td>Alternate class body never removed</td>
+</tr>
+<tr>
+  <td>Orphaned route file</td>
+  <td><code>routes/measurementReport/reportList.tsx</code></td>
+  <td>Not referenced in <code>index.tsx</code> or <code>App.tsx</code></td>
+</tr>
+<tr>
+  <td>Commented-out analytics</td>
+  <td><code>analytics/GoogleAnalytics.tsx:35</code></td>
+  <td><code>trackGAPii()</code> exported; only call site is commented out in <code>dashboard/index.tsx:392</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="production-runtime-profile">Production Runtime Profile</h2>
+<p><strong>No telemetry available.</strong> This is a source-map capture snapshot; no APM exports or server logs were supplied. The assessment cannot include p50/p95/p99 figures.</p>
+<p><strong>Gap impact:</strong> Based on static analysis, <code>helperFunctions.ts</code> (file download routing via CRM switch on quote status) and <code>WizardRoutedStep.tsx</code> (multi-step form state machine orchestrating sequential API calls) are the two candidates most likely to exhibit p99 variance. Recommend connecting Azure Application Insights to export latency for the wizard-step API calls (<code>/api/quote-request/**</code>) before committing to any refactor sequencing.</p>
+<hr />
+<h2 id="technical-debt">Technical Debt</h2>
+<table>
+<thead>
+<tr>
+  <th>Rank</th>
+  <th>Finding</th>
+  <th>File:Line Evidence</th>
+  <th>Severity</th>
+  <th>Est. Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>1</td>
+  <td><strong>Token acquisition distributed across 81 matches in 52 production files</strong> — <code>acquireTokenSilent</code> + <code>client.setAuthToken(...)</code> remains repeated across routes, utilities, modals, and Type Approval components. A shared authenticated-client boundary would centralise MSAL strategy changes.</td>
+  <td>CRD-041 current-tree <code>rg</code> inventory; see the auth-token migration checklist</td>
+  <td><strong>High</strong></td>
+  <td>8h</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><strong>Organisation validation schemas triplicated</strong> — <code>routes/account/validation.ts</code>, <code>update/validation.ts</code>, and <code>addBranch/validation.ts</code> are structurally identical Yup schemas; only label strings differ.</td>
+  <td><code>routes/account/validation.ts:9-29</code>, <code>update/validation.ts:8-29</code>, <code>addBranch/validation.ts:8-29</code></td>
+  <td><strong>High</strong></td>
+  <td>3h</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><strong><code>createContactProps.ts</code> and <code>updateContactProps.ts</code> near-identical</strong> — All load/save logic, error handling, and a stale comment (<code>// interim fix for address lookup update</code>) duplicated; only <code>bannerTitle</code> and <code>locationOnDiscard</code> differ.</td>
+  <td><code>routes/contact/create/createContactProps.ts:1-146</code>, <code>update/updateContactProps.ts:1-147</code></td>
+  <td><strong>High</strong></td>
+  <td>2h</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><strong><code>WizardRoutedStep.tsx</code> raw <code>any</code> cast for WAF detection</strong> — <strong>CLOSED 2026-06-05 (CRD-039 / BATCH-E-PREREQ-003):</strong> <code>isWafError(error: unknown): error is WafErrorShape</code> type predicate created in <code>ClientApp/src/types/wafError.ts</code>; unsafe inline cast removed from <code>errorState.ts</code>; 8 unit tests added; existing WAF integration tests now reference <code>AZURE_WAF_SERVER_PREFIX</code> constant. Item 6 wizard port can import predicate directly.</td>
+  <td><code>ClientApp/src/types/wafError.ts</code> (new), <code>components/forms/WizardForm/errorState.ts</code> (updated)</td>
+  <td><strong>CLOSED</strong></td>
+  <td>2h — done</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><strong>Broad component unit-test gap</strong> — <strong>OPEN P1 COVERAGE GATE 2026-06-28 (CRD-041):</strong> the unit suite passes 1,169 tests across 114 files, but current coverage is 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines against configured 100% thresholds. Authenticated Type Approval browser integration is a separate P2 evidence gap.</td>
+  <td><code>tests/unit/**</code>; <code>vitest.unit.config.ts</code>; <code>tests/e2e/route-coverage.ts</code></td>
+  <td><strong>Medium</strong></td>
+  <td>Reassess from coverage report</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><strong><code>PreConditions.tsx</code> god component</strong> — 174 lines owning auth redirects, terms modal, branch-selector modal, RFQ delete modal, WCAG inert-div workaround, modal state provisioning, and route-change utilities. Mounted on every authenticated route. <code>children</code> typed <code>any</code>.</td>
+  <td><code>routes/preConditions/PreConditions.tsx:17</code></td>
+  <td><strong>Med</strong></td>
+  <td>6h</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><strong><code>ErrorDisplay.tsx</code> — 8 structurally-identical sub-components</strong> — <code>ServerError</code>, <code>ForbiddenError</code>, <code>ConflictError</code>, etc. are all identical JSX patterns. Copy-paste drift: <code>ForbiddenError</code> and <code>ConflictError</code> show <code>visually-hidden</code> text <code>404</code> for non-404 status codes.</td>
+  <td><code>components/ErrorBoundary/ErrorDisplay.tsx:33,43</code></td>
+  <td><strong>Med</strong></td>
+  <td>4h</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><strong><code>AppInsightsService.ts</code> uses <code>process.env.NODE_ENV</code></strong> — violates the documented runtime-env pattern; <code>process.env</code> is undefined at runtime so this guard is dead code.</td>
+  <td><code>instrumentation/AppInsightsService.ts:35</code></td>
+  <td><strong>Med</strong></td>
+  <td>1h</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><strong><code>WizardFormProps</code> index signature <code>[key: string]: any</code></strong> — Escape-hatch index signature means misspelled props silently resolve to <code>undefined</code>. <code>validateHard</code>, <code>validateSoft</code>, <code>hidingFields</code> typed <code>any</code>.</td>
+  <td><code>components/forms/WizardForm/types.ts:43-45,53,73</code></td>
+  <td><strong>Med</strong></td>
+  <td>4h</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><strong>Magic number <code>412</code> in 5 route prop files</strong> — <code>HttpStatusCode.PreconditionFailed</code> exists in <code>types.ts</code> but literal <code>412</code> used in all redirect-on-error handlers.</td>
+  <td><code>routes/account/create/createAccountProps.ts:88</code> + 4 parallel files</td>
+  <td><strong>Low</strong></td>
+  <td>1h</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Additional architectural debt:</strong></p>
+<ul>
+<li>SCSS <code>@import</code> deprecation suppressed — blocked by Bootstrap 5 internal <code>negativify-map()</code>, will break on Bootstrap 6/Sass 3. (<code>webpack.config.js</code>) — Med, 8h</li>
+<li><code>targetOrganisation</code> in sessionStorage without integrity check — silent org context switch risk. (<code>storage/targetOrganisation.ts</code>) — Med, 3h</li>
+<li>Hardcoded <code>http://</code> links in Footer accessibility page. (<code>Footer/accessibility.tsx</code>) — Med, 1h</li>
+<li>No route-level code splitting — all 20+ routes are eager imports in <code>App.tsx</code>. — Low, 4h</li>
+</ul>
+<hr />
+<h2 id="security-findings">Security Findings</h2>
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>CWE</th>
+  <th>Title</th>
+  <th>File:Line</th>
+  <th>Severity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>SEC-001</td>
+  <td>CWE-287</td>
+  <td><strong>Auth bypass via writable browser global</strong> — <code>isAuthBypassEnabled()</code> reads <code>window.REACT_APP_AUTH_BYPASS</code>; any code in the page (XSS gadget, browser console) can set this before React mounts and cause <code>AuthenticatedElement</code> to render all protected routes without Azure AD B2C. <code>buildMockAccountDetails()</code> injects fully-trusted <code>AccountDetails</code> with admin-level flags and fixed CRM GUIDs.</td>
+  <td><code>authentication/devAuth.ts:4</code>, <code>AuthenticatedElement.tsx:29</code> — <strong>REMEDIATED 2026-05-29:</strong> devAuth.ts deleted; bypass removed from AuthenticatedElement and AccountProvider</td>
+  <td><strong>Critical — Resolved</strong></td>
+</tr>
+<tr>
+  <td>SEC-002</td>
+  <td>CWE-116</td>
+  <td><strong>Incomplete Trusted Types policy</strong> — <code>createHTML</code> and <code>createScript</code> handlers commented out with a <code>// TODO</code>. When Trusted Types is enforced any <code>innerHTML</code> path is unprotected. Also: <code>createScriptURL</code> handler passes URL through <code>DOMPurify.sanitize()</code> which is wrong (DOMPurify operates on HTML, not URLs; may return empty string for clean URLs).</td>
+  <td><code>trustedtypes.ts:11-18</code></td>
+  <td><strong>High</strong></td>
+</tr>
+<tr>
+  <td>SEC-003</td>
+  <td>CWE-116</td>
+  <td><strong><code>window.open()</code> without <code>noopener</code> in 4 places</strong> — Opened tabs retain <code>window.opener</code> access to the portal. In <code>quoteDetails.tsx</code> and <code>reportDetails.tsx</code>, a blank window handle is created then <code>quoteRequestWindow.location.href</code> is set from server-supplied <code>quoteRequestIdNum</code> without <code>encodeURIComponent()</code>.</td>
+  <td><code>routes/quotation/quoteDetails.tsx:48-52</code>, <code>measurementReport/reportDetails.tsx:35-39</code>, <code>routes/common/helperFunctions.ts:156,165</code></td>
+  <td><strong>High</strong></td>
+</tr>
+<tr>
+  <td>SEC-004</td>
+  <td>CWE-79</td>
+  <td><strong>Unencoded API values in <code>mailto:</code>/<code>tel:</code> hrefs</strong> — Server-returned email addresses and IDs interpolated directly into template-literal <code>href</code> attributes (e.g., <code>`mailto:${email}?subject=&quot;Reviewing Quotation ID: ${quotationIdNum}&quot;`</code>). A crafted <code>quotationIdNum</code> like <code>x&quot;; onclick=&quot;alert(1)</code> passes through.</td>
+  <td><code>routes/quotation/nMIContactDetails.tsx:40</code>, <code>measurementReport/nMIContactDetails.tsx:40</code>, <code>measurementReport/reportDetails.tsx:242,331</code></td>
+  <td><strong>High</strong></td>
+</tr>
+<tr>
+  <td>SEC-005</td>
+  <td>CWE-319</td>
+  <td><strong>PII logged to App Insights and console</strong> — Full MSAL <code>AccountInfo</code> objects (including email, <code>homeAccountId</code>, tenant) passed verbatim to <code>AppLogger.verbose()</code> → App Insights <code>trackTrace</code>. Also <code>console.log</code> of PII fields in <code>GoogleAnalytics.tsx</code> and <code>helperFunctions.ts</code> guarded only by <code>hostname === 'localhost'</code>.</td>
+  <td><code>authentication/AccountProvider.tsx:184,188,195</code>, <code>analytics/GoogleAnalytics.tsx:53-54</code>, <code>routes/common/helperFunctions.ts:329-331</code></td>
+  <td><strong>Medium</strong></td>
+</tr>
+<tr>
+  <td>SEC-006</td>
+  <td>CWE-863</td>
+  <td><strong>IDOR — URL params used directly in API calls without client-side ownership check</strong> — <code>useParams()</code> <code>id</code> passed straight to API client with no assertion that the resource belongs to the authenticated user's organisation. Defence-in-depth only; authoritative fix is server-side.</td>
+  <td><code>routes/requestForQuote/index.tsx:59</code>, <code>routes/acceptQuote/index.tsx:66</code>, <code>routes/measurementReport/index.tsx:112</code>, <code>routes/requestForQuote/copy/index.tsx:25</code></td>
+  <td><strong>Medium</strong></td>
+</tr>
+<tr>
+  <td>SEC-007</td>
+  <td>CWE-732</td>
+  <td><strong>Auth bypass vars declared as <code>requiredVars</code> in all environments</strong> — <code>REACT_APP_AUTH_BYPASS</code> and all <code>REACT_APP_MOCK_*</code> vars in <code>requiredVars</code> array; operational pressure to define them in production, making them visible in page source to any visitor.</td>
+  <td><code>env.ts:59-77</code></td>
+  <td><strong>Medium</strong></td>
+</tr>
+<tr>
+  <td>SEC-008</td>
+  <td>CWE-601</td>
+  <td><strong>Open redirect via unchecked <code>EXTERNAL_REDIRECT_URL</code></strong> — <code>window.location.replace(env.EXTERNAL_REDIRECT_URL)</code> called whenever <code>locationOnDiscard.startsWith('https://')</code> is true; no domain allowlist validation.</td>
+  <td><code>components/forms/WizardForm/WizardRoutedStep.tsx:295</code></td>
+  <td><strong>Low</strong></td>
+</tr>
+<tr>
+  <td>SEC-009</td>
+  <td>CWE-1021</td>
+  <td><strong>External links missing <code>noopener noreferrer</code></strong> — Qualtrics survey links open with <code>rel='external'</code> only; opened tabs can access <code>window.opener</code>.</td>
+  <td><code>routes/requestForQuote/created/index.tsx:50-52</code>, <code>components/Header/NavbarMessage.tsx:14</code></td>
+  <td><strong>Low</strong></td>
+</tr>
+<tr>
+  <td>SEC-010</td>
+  <td>CWE-20</td>
+  <td><strong>Validation regex suffix-only match</strong> — <code>yupNameAllowedFormat(extended)</code> regex <code>/[...]$/</code> anchored only at end; any string whose last character is in the allowed set passes regardless of what precedes it.</td>
+  <td><code>validationSchemas/yupExtensions/stringExtensions.ts:688</code></td>
+  <td><strong>Low</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical attack chain:</strong> SEC-001 + SEC-002. If a stored XSS gadget exists anywhere in API-sourced content (e.g., a crafted organisation name), the incomplete <code>createHTML</code> Trusted Types handler does not catch it, and the resulting script can set <code>window.REACT_APP_AUTH_BYPASS = 'true'</code> before the next page load — bypassing Azure AD B2C entirely, impersonating any user, and accessing all calibration records.</p>
+<hr />
+<h2 id="documentation-gaps">Documentation Gaps</h2>
+<ol>
+<li><p><strong>Multi-organisation switching mechanism</strong> — The <code>targetOrganisation</code> sessionStorage key drives which CRM org context all API calls use. Not explained in any doc. A new engineer would not know why routes behave differently after <code>BranchSelectorModal</code> interaction, or that clearing sessionStorage silently resets org context.</p>
+</li>
+<li><p><strong>Terms-of-use version check flow</strong> — <code>AccountProvider.tsx</code> compares <code>user.termsVersion</code> against a JSON file string. The redirect-to-terms consequence of mismatch is undocumented. No doc explains how to update the version or what backend sync is required.</p>
+</li>
+<li><p><strong>WizardRoutedStep state machine contract</strong> — <code>validateHard</code>/<code>validateSoft</code>/<code>loadStepValues</code>/<code>onSaveAndNext</code>/<code>onSaveAndExit</code> callbacks have implicit ordering contracts. <code>types.ts</code> provides signatures but no usage notes; no doc covers the expected call sequence.</p>
+</li>
+<li><p><strong>Auth bypass mechanism and production gate</strong> — <code>devAuth.ts</code> was DELETED 2026-05-29 (SEC-001/002 remediation). This documentation gap is now resolved; the bypass no longer exists in the codebase.</p>
+</li>
+<li><p><strong>API client regeneration procedure</strong> — <code>web-api-client.ts</code> is NSwag-generated. No doc explains how to trigger regeneration, which OpenAPI spec URL to use, or what manual patches (if any) would be lost on regeneration.</p>
+</li>
+</ol>
+<hr />
+<h2 id="effort-estimation">Effort Estimation</h2>
+<table>
+<thead>
+<tr>
+  <th>Scenario</th>
+  <th>KSLOC</th>
+  <th>COCOMO-II PM</th>
+  <th>Range</th>
+  <th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>First-party TS/TSX only</td>
+  <td>2.4</td>
+  <td>7.8 PM</td>
+  <td>5.5–10.1</td>
+  <td>Baseline</td>
+</tr>
+<tr>
+  <td>+ SCSS (editable)</td>
+  <td>3.0</td>
+  <td>10.0 PM</td>
+  <td>7.0–13.0</td>
+  <td>If major style refactor</td>
+</tr>
+<tr>
+  <td>Full refactor (security + tests + debt)</td>
+  <td>—</td>
+  <td>+8–12 PM</td>
+  <td>—</td>
+  <td>Security hardening + test coverage + wizard split</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key cost drivers:</strong></p>
+<ul>
+<li>The original 13% component-test estimate is obsolete, but the replacement evidence is not green: the current suite passes 1,169 tests across 114 files while coverage remains 72.56%–75.51% against configured 100% thresholds. Resolve <code>COVERAGE-GATE-001</code> with behavior-focused tests or an approved scope/threshold decision.</li>
+<li>Wizard form decomposition (<code>WizardRoutedStep.tsx</code>) is highest-risk — deeply stateful, zero tests</li>
+<li>Security fixes SEC-001 and SEC-002 are low-effort but highest business priority</li>
+<li>Bootstrap 6 migration (SCSS <code>@use</code> unblock) is medium effort, low disruption</li>
+</ul>
+<hr />
+<h2 id="recommended-modernization-pattern">Recommended Modernization Pattern</h2>
+<p><strong>Refactor</strong> — not Rebuild, not Replatform.</p>
+<p>The codebase uses React 18, React Router v7, TypeScript 5.9, and Bootstrap 5.3. Its architecture remains suitable for incremental migration. The original security blockers are closed, and the unit suite now passes 1,169 tests across 114 files. Current risks are concentrated in the failing 100% unit-coverage gate, distributed token acquisition, target-platform style/component translation, retained wizard/type escape hatches, and the absence of deterministic authenticated browser fixtures for the six Type Approval paths.</p>
+<p><strong>Recommended sprint sequence:</strong></p>
+<p><strong>Migration reconciliation note:</strong> the sequence below is the original modernization recommendation. Security hardening items from Sprint 0 have since been closed and are recorded in the Master Change Record. Remaining work is governed by the Migration Preparation Plan section.</p>
+<p><strong>Sprint 0 — Immediate (1 week, security only):</strong></p>
+<ul>
+<li>Remove <code>REACT_APP_AUTH_BYPASS</code> from <code>requiredVars</code> and add a build-time assertion that fails the webpack build if the variable is truthy in <code>NODE_ENV=production</code>.</li>
+<li>Implement <code>createHTML</code> and <code>createScript</code> Trusted Types handlers using <code>DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: true })</code>. Fix <code>createScriptURL</code> to use a URL allowlist, not DOMPurify.</li>
+<li>Add <code>noopener noreferrer</code> to all <code>window.open()</code> calls and <code>target='_blank'</code> links.</li>
+<li>Fix <code>mailto:</code>/<code>tel:</code> href values with <code>encodeURIComponent()</code>.</li>
+</ul>
+<p><strong>Sprint 1 — Short-term (2–3 weeks):</strong></p>
+<ul>
+<li>Centralise token acquisition into a <code>createAuthenticatedClient&lt;T&gt;()</code> factory, eliminating 36 copy-paste sites.</li>
+<li>Merge the three organisation validation schema duplicates into a parameterised factory.</li>
+<li>Replace magic number <code>412</code> with <code>HttpStatusCode.PreconditionFailed</code>.</li>
+</ul>
+<p><strong>Sprint 2 — Medium-term (4–6 weeks):</strong></p>
+<ul>
+<li>Decompose <code>WizardRoutedStep.tsx</code> into a <code>useWizardStep()</code> hook + thin render component.</li>
+<li>Decompose <code>ErrorDisplay.tsx</code> into a single <code>&lt;HttpErrorPage&gt;</code> component.</li>
+<li>Resolve <code>COVERAGE-GATE-001</code>: add behavior-focused tests for the largest uncovered handwritten runtime surfaces, starting with Type Approval routes/components, attachment/progress controls, request filtering, and the Slate editor. If 100% is not the intended policy, obtain an explicit scope/threshold decision rather than silently lowering it.</li>
+</ul>
+<p><strong>Sprint 3 — Ongoing:</strong></p>
+<ul>
+<li>Track Bootstrap 6 release for SCSS <code>@use</code> migration.</li>
+<li>Connect App Insights to export wizard-step API p99 latency for data-driven refactor sequencing.</li>
+<li>Add route-level code-splitting (React lazy + Suspense) to improve initial load.</li>
+</ul>
+
+<hr />
+<h2 id="migration-preparation-plan">Migration Preparation Plan</h2>
+<div class="callout">
+  <strong>Current status as of 2026-06-28:</strong> the refactor recommendation remains valid. CRD-041 records 41 routes, React Router v7, the Type Approval surface, 114 unit files / 1,169 passing tests, 87 Storybook files / 218 passing tests, and zero-diagnostic type-check/lint results. <code>COVERAGE-GATE-001</code> is the open P1 blocker because measured coverage is below the configured 100% thresholds. Batch E prerequisites remain cleared; repository provisioning, domain sign-offs, pre-flight, and <code>TYPE-APPROVAL-E2E-001</code> remain additional migration controls.
+</div>
+<p>The migration preparation process must start with a complete historical review, not with file movement. The team must reconcile all previous actions, decisions, and related documentation, including materials predating the 2026-05-29 readiness assessment. The required source inputs are <code>analysis/portal.measurement.gov.au/ARCHITECTURE.mmd</code>, <code>analysis/portal.measurement.gov.au/ASSESSMENT.md</code>, and <code>docs/CONCERNS.md</code>.</p>
+<ol>
+<li><strong>Reconstruct the historical record.</strong> Confirm every completed remediation, refactor, test addition, documentation correction, sprint action, and decision is represented in <code>docs/change-record/MASTER-CHANGE-RECORD.md</code>.</li>
+<li><strong>Create or update the open-items backlog.</strong> Any issue that cannot be confirmed closed must be captured in <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> with owner, priority, migration gate, and closure evidence.</li>
+<li><strong>Use the change record as the migration baseline.</strong> Each runbook batch must cite the relevant <code>CRD-*</code> entries before execution and must append a new entry after verification.</li>
+<li><strong>Complete pre-flight before migration.</strong> The target environment must pass the historical review gate and all technical checks in <code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code>.</li>
+<li><strong>Execute migration by controlled batches.</strong> Follow <code>docs/migration/MIGRATION-RUNBOOK.md</code>. Priority 1 backlog items block migration. Priority 2 items block only the named batches they affect.</li>
+</ol>
+<table>
+<thead><tr><th>Revalidated source item</th><th>Current status</th><th>Migration handling</th></tr></thead>
+<tbody>
+<tr><td><code>ARCHITECTURE.mmd</code> auth-bypass reference</td><td>Closed after diagram update</td><td>Verify via pre-flight <code>devAuth.ts</code> absence checks</td></tr>
+<tr><td>Auth bypass, mock env, PII logging, Trusted Types, redirect, mailto findings</td><td>Closed in Master Change Record</td><td>Preserve remediated state during Batch A and Batch C</td></tr>
+<tr><td>IDOR / backend ownership enforcement</td><td>Closed — PASS (pentest-confirmed 2026-06-04, CRD-035)</td><td>Dashboard route migration unblocked</td></tr>
+<tr><td>Validation regex suffix-only behaviour</td><td>Open Priority 3</td><td>Tracked as <code>VAL-REGEX-001</code>; do not change during migration without approval</td></tr>
+<tr><td>Configured 100% unit-coverage thresholds</td><td>Open Priority 1 — current coverage is 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines</td><td>Resolve <code>COVERAGE-GATE-001</code> before final migration pre-flight</td></tr>
+<tr><td>Concerns-register operational questions</td><td>Deferred / decision required</td><td>Tracked as Priority 3 backlog items for auth ops, validation, form guards, dashboard workaround, and performance polish</td></tr>
+<tr><td>Design-system replacement decision</td><td>Resolved — decisions received 2026-06-04 (CRD-034); Batch E prerequisites complete (CRD-037, CRD-038, CRD-039)</td><td>Repository provisioning and domain sign-offs (items 16–22) remain required for structural items</td></tr>
+<tr><td>WCAG component and authenticated E2E baseline</td><td>Updated — automated baseline passes as of 2026-06-05 (CRD-036)</td><td>Preserve Actions/RequestList/combobox/modal/footer/date-picker evidence and 145-test E2E pass; manual AT, zoom, target-size, and focus-not-obscured checks still required before a 98+ WCAG claim</td></tr>
+</tbody>
+</table>
+<p>The seven target documents for the merge are <code>MASTER-CHANGE-RECORD.md</code>, <code>OPEN-ITEMS-BACKLOG.md</code>, <code>PRE-FLIGHT-CHECKLIST.md</code>, <code>MIGRATION-RUNBOOK.md</code>, <code>2026-05-31-migration-preparation.md</code>, this modernisation assessment, and the rebuild-readiness assessment.</p>
+
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    Generated as a static HTML file. The rendered diagram uses Mermaid in the browser; the raw diagram source is also embedded for offline review.
+  </footer>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: 'loose',
+      theme: 'base',
+      themeVariables: {
+        background: '#FFFFFF',
+        primaryTextColor: '#0F172A',
+        secondaryTextColor: '#0F172A',
+        tertiaryTextColor: '#0F172A',
+        lineColor: '#475569',
+        primaryBorderColor: '#334155',
+        clusterBkg: '#FFFFFF',
+        clusterBorder: '#94A3B8',
+        fontFamily: 'Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif'
+      },
+      flowchart: { htmlLabels: true, curve: 'basis' }
+    });
+  </script>
+</body>
+</html>

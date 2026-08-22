@@ -1,0 +1,41 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["ClientApp/src/*"]
+    },
+    "types": ["vitest/globals", "trusted-types"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleDetection": "force", // auto-detects modules without imports
+    "verbatimModuleSyntax": true, // preserves exact import/export syntax
+    "noUncheckedSideEffectImports": true
+  },
+  "include": [
+    "*.ts",
+    "ClientApp/src/**/*",
+    ".storybook/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "ClientApp/src/main.*.js",
+    "ClientApp/src/parent/node_modules",
+    "ClientApp/src/parent/packages",
+    "ClientApp/src/external",
+    "ClientApp/source-map-http-downloads",
+    "ClientApp/webpack",
+    "node_modules",
+    "dist",
+    "storybook-static"
+  ]
+}

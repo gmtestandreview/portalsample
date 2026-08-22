@@ -1,0 +1,187 @@
+{
+	"version": "1.1.0",
+	"generatedAt": "2026-05-13",
+	"scope": ".github/agents",
+	"notes": [
+		"This registry is the canonical map for organizing agents and preserving workflow integrity.",
+		"Workflow agent families are grouped under .github/agents/workflows by orchestrator workflow.",
+		"Categories are logical groupings and may reference root-level or workflow-path agent files."
+	],
+	"workflows": {
+		"react18-migration": {
+			"orchestrator": "react18-commander",
+			"orchestratorFile": "workflows/react18/react18-commander.agent.md",
+			"subagents": [
+				"react18-auditor",
+				"react18-dep-surgeon",
+				"react18-class-surgeon",
+				"react18-batching-fixer",
+				"react18-test-guardian"
+			],
+			"subagentFiles": [
+				"workflows/react18/react18-auditor.agent.md",
+				"workflows/react18/react18-dep-surgeon.agent.md",
+				"workflows/react18/react18-class-surgeon.agent.md",
+				"workflows/react18/react18-batching-fixer.agent.md",
+				"workflows/react18/react18-test-guardian.agent.md"
+			]
+		},
+		"react19-migration": {
+			"orchestrator": "react19-commander",
+			"orchestratorFile": "workflows/react19/react19-commander.agent.md",
+			"subagents": [
+				"react19-auditor",
+				"react19-dep-surgeon",
+				"react19-migrator",
+				"react19-test-guardian"
+			],
+			"subagentFiles": [
+				"workflows/react19/react19-auditor.agent.md",
+				"workflows/react19/react19-dep-surgeon.agent.md",
+				"workflows/react19/react19-migrator.agent.md",
+				"workflows/react19/react19-test-guardian.agent.md"
+			]
+		},
+		"polyglot-test-generation": {
+			"orchestrator": "polyglot-test-generator",
+			"orchestratorFile": "workflows/polyglot-test/polyglot-test-generator.agent.md",
+			"subagents": [
+				"polyglot-test-researcher",
+				"polyglot-test-planner",
+				"polyglot-test-implementer",
+				"polyglot-test-builder",
+				"polyglot-test-tester",
+				"polyglot-test-linter",
+				"polyglot-test-fixer"
+			],
+			"subagentFiles": [
+				"workflows/polyglot-test/polyglot-test-researcher.agent.md",
+				"workflows/polyglot-test/polyglot-test-planner.agent.md",
+				"workflows/polyglot-test/polyglot-test-implementer.agent.md",
+				"workflows/polyglot-test/polyglot-test-builder.agent.md",
+				"workflows/polyglot-test/polyglot-test-tester.agent.md",
+				"workflows/polyglot-test/polyglot-test-linter.agent.md",
+				"workflows/polyglot-test/polyglot-test-fixer.agent.md"
+			]
+		},
+		"quality-playbook": {
+			"orchestrator": "quality-playbook",
+			"subagents": [],
+			"notes": [
+				"Runs phased workflow internally (explore, generate, review, audit, reconcile, verify)."
+			]
+		},
+		"rug-orchestration": {
+			"orchestrator": "RUG",
+			"orchestratorFile": "workflows/rug/rug-orchestrator.agent.md",
+			"subagents": ["SWE", "QA"],
+			"subagentFiles": [
+				"workflows/rug/swe-subagent.agent.md",
+				"workflows/rug/qa-subagent.agent.md"
+			]
+		},
+		"ai-team": {
+			"orchestrator": "ai-team-producer",
+			"orchestratorFile": "workflows/ai-team/ai-team-producer.agent.md",
+			"subagents": ["ai-team-dev", "ai-team-qa"],
+			"subagentFiles": [
+				"workflows/ai-team/ai-team-dev.agent.md",
+				"workflows/ai-team/ai-team-qa.agent.md"
+			]
+		},
+		"tdd-loop": {
+			"orchestrator": "tdd-red",
+			"orchestratorFile": "workflows/tdd/tdd-red.agent.md",
+			"subagents": ["tdd-green", "tdd-refactor"],
+			"subagentFiles": [
+				"workflows/tdd/tdd-green.agent.md",
+				"workflows/tdd/tdd-refactor.agent.md"
+			],
+			"notes": [
+				"Sequential workflow loop rather than strict parent-child invocation."
+			]
+		}
+	},
+	"categories": {
+		"orchestrators": [
+			"react18-commander",
+			"react19-commander",
+			"polyglot-test-generator",
+			"quality-playbook",
+			"RUG",
+			"ai-team-producer",
+			"tdd-red"
+		],
+		"specialists": {
+			"education": [
+				"educational-code-commenting-agent"
+			]
+		},
+		"frameworks": {
+			"react": [
+				"expert-react-frontend-engineer",
+				"expert-react-18-frontend-engineer",
+				"react18-commander",
+				"react19-commander"
+			],
+			"nextjs": ["expert-nextjs-developer"],
+			"dotnet": [
+				"expert-dotnet-software-engineer",
+				"csharp-expert",
+				"csharp-dotnet-janitor",
+				"dotnet-fullstack-mentor",
+				"dotnet-self-learning-architect",
+				"dotnet-upgrade"
+			]
+		},
+		"domains": {
+			"testing": [
+				"polyglot-test-generator",
+				"playwright-test-planner",
+				"playwright-test-generator",
+				"playwright-test-healer",
+				"playwright-tester",
+				"qa-subagent"
+			],
+			"quality": ["quality-playbook", "quality-playbook-claude", "code-tour"],
+			"security": [
+				"sast-sca-security-analyzer",
+				"se-security-reviewer",
+				"wg-code-sentinel"
+			],
+			"devops": [
+				"devops-expert",
+				"se-gitops-ci-specialist",
+				"github-actions-expert",
+				"github-actions-node-upgrade"
+			],
+			"architecture": [
+				"api-architect",
+				"project-architecture-planner",
+				"se-system-architecture-reviewer",
+				"principal-software-engineer"
+			],
+			"documentation": [
+				"project-documenter",
+				"se-technical-writer",
+				"markdown-accessibility-assistant",
+				"educational-code-commenting-agent"
+			]
+		}
+	},
+	"supportingDocs": [
+		"docs/react-best-practices/AGENTS.md",
+		"docs/react-composition-patterns/AGENTS.md"
+	],
+	"dedupPolicy": {
+		"deleteIf": "<name>.md exists and matching <name>.agent.md exists",
+		"exclude": [
+			"*.instructions.md",
+			"*.prompt.md",
+			"README.md",
+			"index.md",
+			"code-blocks.md",
+			"documentation-template.md"
+		]
+	}
+}

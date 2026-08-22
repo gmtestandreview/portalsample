@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMI Customer Portal — Modernization Report</title>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ startOnLoad: true, theme: 'dark', securityLevel: 'loose' });
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1e1e1e;--bg2:#252526;--bg3:#2d2d2d;--border:#3c3c3c;
+  --text:#d4d4d4;--text2:#b0b0b0;--text3:#888;
+  --accent:#cc785c;--accent2:#e8956e;
+  --open:#ff6b6b;--closed:#6bcb77;--likely:#ffd93d;--deferred:#74b9ff;
+  --high:#ff6b6b;--med:#ffd93d;--low:#74b9ff;
+  --p0:#ff6b6b;--p1:#ffd93d;--p2:#74b9ff;
+  --sidebar:260px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.65;display:flex;min-height:100vh}
+
+/* ── sidebar ── */
+#sidebar{
+  position:fixed;top:0;left:0;width:var(--sidebar);height:100vh;
+  background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;padding:1rem 0;z-index:100;
+}
+#sidebar h2{color:var(--accent);font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;padding:.5rem 1rem;margin-top:.75rem}
+#sidebar a{display:block;padding:.3rem 1rem;color:var(--text2);text-decoration:none;font-size:.8rem;border-left:2px solid transparent;transition:all .15s}
+#sidebar a:hover,#sidebar a.active{color:var(--accent);border-left-color:var(--accent);background:rgba(204,120,92,.08)}
+#sidebar .brand{padding:.75rem 1rem 1rem;border-bottom:1px solid var(--border);margin-bottom:.5rem}
+#sidebar .brand .title{color:var(--accent);font-weight:700;font-size:.9rem}
+#sidebar .brand .sub{color:var(--text3);font-size:.75rem;margin-top:.2rem}
+
+/* ── main ── */
+#main{margin-left:var(--sidebar);padding:2rem 2.5rem;max-width:1100px;width:100%}
+
+/* ── section headings ── */
+h1{color:var(--accent);font-size:1.9rem;margin:0 0 .4rem}
+h2{color:var(--accent);font-size:1.35rem;margin:2.5rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+h3{color:var(--accent2);font-size:1.05rem;margin:1.5rem 0 .5rem}
+h4{color:var(--text2);font-size:.95rem;margin:1rem 0 .4rem}
+p{margin-bottom:.75rem;color:var(--text2)}
+strong{color:var(--text)}
+code{background:var(--bg3);padding:.1rem .4rem;border-radius:3px;font-size:.82rem;color:#9cdcfe;font-family:'Cascadia Code','Fira Code',monospace}
+pre code{background:none;padding:0}
+pre.code-block{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:1rem;overflow-x:auto;font-size:.82rem;color:#9cdcfe;font-family:'Cascadia Code','Fira Code',monospace;margin:1rem 0}
+hr{border:none;border-top:1px solid var(--border);margin:2rem 0}
+ul,ol{margin:.5rem 0 .75rem 1.5rem;color:var(--text2)}
+li{margin-bottom:.35rem}
+
+/* ── cover ── */
+.cover{background:linear-gradient(135deg,#1e1e1e 0%,#2a1f1a 100%);border:1px solid var(--border);border-radius:8px;padding:2.5rem;margin-bottom:2.5rem}
+.cover h1{font-size:2.2rem;line-height:1.2}
+.cover .tagline{color:var(--text3);font-size:1rem;margin:.4rem 0 1.5rem}
+.cover-meta{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.5rem;margin-top:1.5rem}
+.cover-meta .item{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:4px;padding:.6rem .8rem}
+.cover-meta .label{color:var(--text3);font-size:.75rem;text-transform:uppercase;letter-spacing:.05em}
+.cover-meta .val{color:var(--text);font-size:.9rem;font-weight:600;margin-top:.15rem}
+
+/* ── tables ── */
+.table-wrap{overflow-x:auto;margin:1rem 0}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{background:var(--bg3);color:var(--accent);text-align:left;padding:.55rem .75rem;border:1px solid var(--border);white-space:nowrap}
+td{padding:.5rem .75rem;border:1px solid var(--border);color:var(--text2);vertical-align:top}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+tr:hover td{background:rgba(204,120,92,.05)}
+
+/* ── badges ── */
+.badge{display:inline-block;padding:.15rem .5rem;border-radius:3px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.badge-open{background:rgba(255,107,107,.18);color:var(--open)}
+.badge-closed{background:rgba(107,203,119,.18);color:var(--closed)}
+.badge-likely{background:rgba(255,217,61,.18);color:var(--likely)}
+.badge-deferred{background:rgba(116,185,255,.18);color:var(--deferred)}
+.badge-high{background:rgba(255,107,107,.18);color:var(--high)}
+.badge-med{background:rgba(255,217,61,.18);color:var(--med)}
+.badge-low{background:rgba(116,185,255,.18);color:var(--low)}
+.badge-p0{background:rgba(255,107,107,.22);color:var(--p0)}
+.badge-p1{background:rgba(255,217,61,.22);color:var(--p1)}
+.badge-p2{background:rgba(116,185,255,.22);color:var(--p2)}
+
+/* ── callout boxes ── */
+.callout{border-left:3px solid var(--accent);background:var(--bg2);padding:1rem 1.25rem;border-radius:0 5px 5px 0;margin:1rem 0}
+.callout.warn{border-left-color:var(--high)}
+.callout.info{border-left-color:var(--deferred)}
+.callout.success{border-left-color:var(--closed)}
+
+/* ── diagram containers ── */
+.diagram-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:1.5rem;margin:1rem 0;overflow-x:auto}
+.diagram-label{color:var(--text3);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+
+/* ── rule cards ── */
+.rule-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:.75rem;margin:1rem 0}
+.rule-card{background:var(--bg2);border:1px solid var(--border);border-radius:5px;padding:.85rem 1rem;border-top:3px solid var(--border)}
+.rule-card.p0{border-top-color:var(--p0)}
+.rule-card.p1{border-top-color:var(--p1)}
+.rule-card.p2{border-top-color:var(--p2)}
+.rule-card .rule-id{font-size:.75rem;font-weight:700;color:var(--text3);font-family:'Cascadia Code',monospace}
+.rule-card .rule-name{font-size:.88rem;font-weight:600;color:var(--text);margin:.25rem 0}
+.rule-card .rule-source{font-size:.75rem;color:var(--text3);margin-bottom:.4rem}
+.rule-card .rule-body{font-size:.8rem;color:var(--text2)}
+.rule-card details summary{cursor:pointer;color:var(--accent);font-size:.78rem;margin-top:.4rem}
+
+/* ── section wrap ── */
+.section{padding-top:1.5rem}
+
+/* ── phase cards ── */
+.phase-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin:1rem 0}
+.phase-card{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:1rem 1.1rem}
+.phase-card .ph-num{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
+.phase-card .ph-title{font-size:.95rem;font-weight:700;color:var(--accent);margin:.2rem 0 .5rem}
+.phase-card .ph-effort{display:inline-block;background:var(--bg3);border:1px solid var(--border);border-radius:3px;font-size:.78rem;color:var(--text);padding:.15rem .45rem;margin-bottom:.5rem}
+.phase-card .ph-risk-Low{color:var(--closed)}
+.phase-card .ph-risk-Medium{color:var(--likely)}
+.phase-card .ph-risk-High{color:var(--high)}
+
+/* ── approval block ── */
+.approval-block{background:var(--bg2);border:2px solid var(--accent);border-radius:6px;padding:1.5rem;margin-top:2rem}
+.approval-block h3{color:var(--accent);margin-bottom:1rem}
+.sig-line{border-bottom:1px solid var(--border);margin:.75rem 0;display:flex;gap:2rem}
+.sig-line .sig-field{flex:1;padding-bottom:.4rem}
+.sig-field .sig-label{font-size:.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+
+/* ── checkbox list ── */
+.check-list{list-style:none;margin-left:0}
+.check-list li{padding:.4rem 0;border-bottom:1px solid var(--border);display:flex;gap:.75rem;align-items:flex-start}
+.check-list li:last-child{border-bottom:none}
+.check-list .chk{width:18px;height:18px;border:2px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:.1rem}
+
+/* ── meta strip ── */
+.meta-strip{display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:1.5rem}
+.meta-chip{background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:.4rem .75rem;font-size:.8rem}
+.meta-chip span{color:var(--text3);margin-right:.35rem}
+
+/* ── footer ── */
+footer{color:var(--text3);font-size:.75rem;text-align:center;padding:2rem 0;border-top:1px solid var(--border);margin-top:3rem}
+
+@media print{
+  #sidebar{display:none}
+  #main{margin-left:0;max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<nav id="sidebar">
+  <div class="brand">
+    <div class="title">NMI Portal</div>
+    <div class="sub">Modernization Report · 2026-06-02</div>
+  </div>
+  <h2>Assessment</h2>
+  <a href="#executive-summary">Executive Summary</a>
+  <a href="#reconciliation">Security Reconciliation</a>
+  <a href="#inventory">System Inventory</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#topology">Domain Topology</a>
+  <a href="#debt">Technical Debt</a>
+  <a href="#security">Security Findings</a>
+  <a href="#doc-gaps">Documentation Gaps</a>
+  <a href="#effort">Effort Estimation</a>
+  <h2>Business Rules</h2>
+  <a href="#rules-summary">Rules Summary</a>
+  <a href="#rules-lifecycle">Lifecycle &amp; State</a>
+  <a href="#rules-calc">Calculations</a>
+  <a href="#rules-validation">Validations</a>
+  <a href="#rules-policy">Policy &amp; Config</a>
+  <a href="#data-objects">Data Objects</a>
+  <h2>Modernization Brief</h2>
+  <a href="#objective">Objective</a>
+  <a href="#target-arch">Target Architecture</a>
+  <a href="#phases">Phased Sequence</a>
+  <a href="#behavior-contract">Behavior Contract</a>
+  <a href="#validation-strategy">Validation Strategy</a>
+  <a href="#open-questions">Open Questions</a>
+  <a href="#approval">Approval Block</a>
+  <h2>Source Artifacts</h2>
+  <a href="#artifacts">Artifact Index</a>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main id="main">
+
+<!-- ── COVER ── -->
+<div class="cover">
+  <h1>NMI Customer Portal</h1>
+  <p class="tagline">End-to-End Modernization Report</p>
+  <p style="color:var(--text2);max-width:700px">Comprehensive assessment, topology analysis, business rules extraction, and phased modernization brief for the Australian Government National Measurement Institute customer portal — synthesized from six parallel analysis workstreams.</p>
+  <div class="cover-meta">
+    <div class="item"><div class="label">Date</div><div class="val">2026-06-02</div></div>
+    <div class="item"><div class="label">Target</div><div class="val">ClientApp/src</div></div>
+    <div class="item"><div class="label">SLOC</div><div class="val">~23,800</div></div>
+    <div class="item"><div class="label">Source files</div><div class="val">289</div></div>
+    <div class="item"><div class="label">Pattern</div><div class="val">Refactor</div></div>
+    <div class="item"><div class="label">COCOMO</div><div class="val">~96 person-months</div></div>
+    <div class="item"><div class="label">Refactor scope</div><div class="val">21–30 person-weeks</div></div>
+    <div class="item"><div class="label">Business rules</div><div class="val">53 documented</div></div>
+    <div class="item"><div class="label">P0 rules</div><div class="val">16 (regulatory/financial)</div></div>
+    <div class="item"><div class="label">Open security</div><div class="val">2 items (0 P0) — SEC-010 closed 2026-06-04</div></div>
+    <div class="item"><div class="label">Brief version</div><div class="val">v1.2</div></div>
+    <div class="item"><div class="label">Status</div><div class="val" style="color:var(--likely)">DRAFT — Pending approval</div></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECTION 1: EXECUTIVE SUMMARY
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="executive-summary">
+<h2>Executive Summary</h2>
+<p>The NMI Customer Portal is a React 18 + TypeScript single-page application of ~23,800 SLOC across 289 source files, built on Azure AD B2C authentication, Formik multi-step wizard forms, and an NSwag-generated OpenAPI client. Structurally it is well-organized into 12 identifiable functional domains with clear separation between routing, UI primitives, validation, and infrastructure.</p>
+<p>The primary modernization risk is not architectural rot but <strong>accumulated type-safety erosion at the wizard engine layer</strong> — every multi-step workflow in the portal passes through a <code>WizardStepProps</code> interface typed with <code>[key: string]: any</code>, erasing compile-time guarantees at the most critical abstraction. The secondary risk is a <strong>26-location token-acquisition duplication</strong> that will compound the cost of any MSAL upgrade or auth flow change.</p>
+<p>Prior security hardening work has already closed seven findings (auth bypass removal, Trusted Types policy, <code>noopener</code> hardening, PII telemetry scrub, open-redirect allowlist). Three additional items (SEC-001, SEC-009, SEC-011) were closed 2026-06-01 (CRD-029, CRD-031). SEC-010 IDOR closed 2026-06-04 — pentest-confirmed remediation prior to go-live (CRD-035). Two items remain as accepted boundary items: SEC-008 (by-design client-side gate) and SEC-012 (architectural debt).</p>
+<p>Topology warning metrics (for example unresolved relative imports and dead candidates) are used as triage signals and require manual confirmation before being treated as release-blocking defects.</p>
+<div class="callout success">
+  <strong>Recommendation: Refactor</strong> — the foundation is sound. Targeted, incremental remediation of the debt items will reduce long-term maintenance cost without the risk of a full rebuild. Estimated scope: 21–30 person-weeks across 6 phases.
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     RECONCILIATION
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="reconciliation">
+<h2>Security Reconciliation with Prior Assessment</h2>
+<div class="callout warn"><strong>Important:</strong> This report analyses the source-map capture snapshot. Several security findings were present in the snapshot but have since been remediated in the live codebase. Do not re-open CLOSED items.</div>
+<div class="table-wrap"><table>
+<tr><th>Prior ID</th><th>Finding</th><th>Live Status</th><th>Evidence</th></tr>
+<tr><td>old-SEC-001</td><td>Auth bypass via <code>devAuth.ts</code> writable browser global</td><td><span class="badge badge-closed">CLOSED</span></td><td><code>MASTER-CHANGE-RECORD.md</code> CRD-001</td></tr>
+<tr><td>old-SEC-002</td><td>Incomplete Trusted Types policy (<code>createHTML</code>/<code>createScript</code> handlers missing)</td><td><span class="badge badge-closed">CLOSED</span></td><td>CRD-006</td></tr>
+<tr><td>old-SEC-003</td><td><code>window.open()</code> without <code>noopener</code> / blank-window + <code>location.href</code> pattern</td><td><span class="badge badge-closed">CLOSED</span></td><td><code>MASTER-CHANGE-RECORD.md</code></td></tr>
+<tr><td>old-SEC-004</td><td>Unencoded API values in <code>mailto:</code>/<code>tel:</code> hrefs</td><td><span class="badge badge-closed">CLOSED</span></td><td>CRD-005</td></tr>
+<tr><td>old-SEC-005</td><td>PII (MSAL AccountInfo, email, tenant) logged to App Insights</td><td><span class="badge badge-closed">CLOSED</span></td><td>CRD-003</td></tr>
+<tr><td>old-SEC-006</td><td>IDOR — URL params used directly in API calls</td><td><span class="badge badge-closed">CLOSED 2026-06-04</span></td><td>Tracked as SEC-010 — pentest-confirmed remediation (CRD-035)</td></tr>
+<tr><td>old-SEC-007</td><td>Auth bypass vars in <code>requiredVars</code> for all environments</td><td><span class="badge badge-closed">CLOSED</span></td><td>CRD-001</td></tr>
+<tr><td>old-SEC-008</td><td>Open redirect via unchecked <code>EXTERNAL_REDIRECT_URL</code></td><td><span class="badge badge-closed">CLOSED</span></td><td>CRD-004</td></tr>
+<tr><td>old-SEC-009</td><td>External links missing <code>noopener noreferrer</code></td><td><span class="badge badge-closed">CLOSED</span></td><td><code>MASTER-CHANGE-RECORD.md</code></td></tr>
+<tr><td>old-SEC-010</td><td>Validation regex suffix-only match (<code>nameAllowedFormat extended</code>)</td><td><span class="badge badge-open">OPEN, non-blocking</span></td><td><code>OPEN-ITEMS-BACKLOG.md</code></td></tr>
+<tr><td>old-DEBT-1</td><td>Token acquisition copy-pasted across 36+ call sites</td><td><span class="badge badge-deferred">DEFERRED</span></td><td>ADR <code>2026-05-30-acquire-token-silent-interceptor.md</code></td></tr>
+</table></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SYSTEM INVENTORY
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="inventory">
+<h2>System Inventory</h2>
+
+<h3>LOC Table</h3>
+<div class="table-wrap"><table>
+<tr><th>Extension</th><th>Files</th><th>Raw Lines</th><th>Est. SLOC (~72%)</th></tr>
+<tr><td><code>.tsx</code></td><td>208</td><td>~24,500</td><td>~17,640</td></tr>
+<tr><td><code>.ts</code></td><td>81</td><td>~8,500</td><td>~6,120</td></tr>
+<tr><td><code>.scss</code></td><td>27</td><td>~2,300</td><td>~1,650</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>316</strong></td><td><strong>~33,027</strong></td><td><strong>~23,780</strong></td></tr>
+</table></div>
+
+<h3>Technology Fingerprint</h3>
+<div class="table-wrap"><table>
+<tr><th>Layer</th><th>Technology</th><th>Version</th></tr>
+<tr><td>Language</td><td>TypeScript</td><td>^5.9.3</td></tr>
+<tr><td>UI framework</td><td>React (functional components + hooks)</td><td>^18.3.1</td></tr>
+<tr><td>Routing</td><td>React Router v6 (<code>createBrowserRouter</code>)</td><td>^6.30.3</td></tr>
+<tr><td>Auth</td><td>Azure AD B2C via MSAL browser / react</td><td>^3.30.0 / ^2.2.0</td></tr>
+<tr><td>Forms</td><td>Formik + Yup + 19 custom string validators</td><td>^2.4.9 / ^1.7.1</td></tr>
+<tr><td>CSS</td><td>Bootstrap 5 (custom NMI theme) + SCSS</td><td>^5.3.8</td></tr>
+<tr><td>API client</td><td>NSwag/OpenAPI-generated (<code>web-api-client.ts</code>)</td><td>—</td></tr>
+<tr><td>Analytics</td><td>Azure Application Insights + Google Analytics GA4</td><td>^3.4.1 / ^2.1.0</td></tr>
+<tr><td>CSP</td><td>Trusted Types policy + DOMPurify</td><td>^3.4.4</td></tr>
+<tr><td>Build (production)</td><td>Webpack 5 → <em>target: Vite 8</em></td><td>^5.107.0</td></tr>
+<tr><td>Testing</td><td>Storybook 10 (55 stories) + Playwright BDD e2e</td><td>^10.4.0 / ^1.60.0</td></tr>
+<tr><td>Coverage</td><td>Vitest v8</td><td>^4.1.7</td></tr>
+</table></div>
+
+<p><strong>Test coverage signal:</strong> 55 Storybook component stories + Playwright BDD feature files for 5 e2e flows. Zero unit test files inside <code>ClientApp/src</code> — all coverage is integration/visual.</p>
+<p><strong>Integration points:</strong> Azure AD B2C (OIDC/PKCE), NMI backend REST API (11 generated client classes), Azure Application Insights, Google Analytics GA4.</p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     ARCHITECTURE
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="architecture">
+<h2>Architecture Overview</h2>
+
+<h3>Functional Domains</h3>
+<div class="table-wrap"><table>
+<tr><th>Domain</th><th>Purpose</th><th>Auth-gated</th><th>Depends On</th></tr>
+<tr><td>Bootstrap &amp; Shell</td><td>App entry, MSAL init, Trusted Types CSP, root render tree</td><td>No</td><td>Auth, Instrumentation, UI Shell</td></tr>
+<tr><td>Auth</td><td>Azure AD B2C identity; account context; auth guard</td><td>No (is the guard)</td><td>API Client, Storage, Instrumentation</td></tr>
+<tr><td>PreConditions &amp; Modals</td><td>Cross-cutting redirect guard (T&amp;C, account setup); modal context</td><td>Partial</td><td>Auth, Storage, API Client</td></tr>
+<tr><td>UI Shell</td><td>Page chrome (header, footer, layout), scroll helpers, GA wrapper</td><td>No</td><td>Instrumentation</td></tr>
+<tr><td>Dashboard</td><td>Authenticated landing; tabbed drafts/requests/instruments; server-side filter, pagination, search</td><td>Yes</td><td>Auth, API, Storage, PreConditions, Analytics</td></tr>
+<tr><td>Account Management</td><td>Multi-step wizard: create/update org account, add branch, create/update contact</td><td>Yes</td><td>Auth, API, Wizard Framework, Validation</td></tr>
+<tr><td>Request for Quote</td><td>Three-step wizard: create, edit, copy, view; submit/draft</td><td>Yes</td><td>Auth, API, Wizard Framework, Validation, Storage</td></tr>
+<tr><td>Quotation &amp; Accept Quote</td><td>Read-only quote display, PDF download, decline flow; four-step accept wizard</td><td>Yes</td><td>Auth, API, Wizard Framework, Validation, Storage, Analytics</td></tr>
+<tr><td>Measurement Reports</td><td>Instrument report list, detail view, PDF download</td><td>Yes</td><td>Auth, API, Storage</td></tr>
+<tr><td>Wizard / Forms Framework</td><td>Multi-step form engine: WizardForm + WizardRoutedStep; Formik context, validation, draft-save, nav guard</td><td>No</td><td>Validation, Storage, Analytics</td></tr>
+<tr><td>Validation</td><td>Yup schemas + 19 custom string extension methods</td><td>No</td><td>None</td></tr>
+<tr><td>API Client</td><td>NSwag-generated typed client; 11 named client classes; bearer token + org ABN header injection</td><td>No</td><td>sessionStorage directly</td></tr>
+</table></div>
+
+<h3>Domain Dependency Diagram</h3>
+<div class="diagram-wrap">
+<div class="diagram-label">Source: analysis/ARCHITECTURE.mmd</div>
+<pre class="mermaid">
+graph TD
+    subgraph Infrastructure
+        ENV[env.ts / types.ts]
+        STORE[Storage<br/>notification / targetOrg / cache]
+        AI[Instrumentation<br/>AppInsights + AppLogger]
+        API[API Client<br/>web-api-client.ts]
+        VAL[Validation<br/>Yup schemas + extensions]
+        COMMON[Shared Route Helpers<br/>helperFunctions / enums / quoteStatus]
+    end
+    subgraph Auth
+        AUTH[Auth<br/>MSAL / AccountProvider<br/>AuthenticatedElement / hooks]
+        PREC[PreConditions & Modals<br/>T&C / Branch / RFQ-Delete]
+    end
+    subgraph Shell
+        SHELL[UI Shell<br/>Layout / Header / Footer / GA]
+        BOOT[Bootstrap & Shell<br/>index.tsx / App.tsx / trustedtypes]
+    end
+    subgraph Forms
+        WIZ[Wizard / Forms Framework<br/>WizardForm / WizardRoutedStep]
+    end
+    subgraph Routes
+        DASH[Dashboard]
+        ACCT[Account Management]
+        RFQ[Request for Quote]
+        QUOT[Quotation & Accept Quote]
+        RPT[Measurement Reports]
+        HELP[Help & Services]
+        SIGNIN[Auth Routes]
+    end
+    BOOT --> AUTH
+    BOOT --> SHELL
+    BOOT --> AI
+    AUTH --> API
+    AUTH --> STORE
+    AUTH --> AI
+    PREC --> AUTH
+    PREC --> STORE
+    PREC --> API
+    SHELL --> ENV
+    SHELL --> AI
+    DASH --> AUTH
+    DASH --> API
+    DASH --> STORE
+    DASH --> PREC
+    DASH --> AI
+    DASH --> COMMON
+    ACCT --> AUTH
+    ACCT --> API
+    ACCT --> WIZ
+    ACCT --> VAL
+    RFQ --> AUTH
+    RFQ --> API
+    RFQ --> WIZ
+    RFQ --> VAL
+    RFQ --> STORE
+    RFQ --> COMMON
+    QUOT --> AUTH
+    QUOT --> API
+    QUOT --> WIZ
+    QUOT --> VAL
+    QUOT --> STORE
+    QUOT --> AI
+    QUOT --> COMMON
+    RPT --> AUTH
+    RPT --> API
+    RPT --> STORE
+    RPT --> COMMON
+    WIZ --> VAL
+    WIZ --> STORE
+    WIZ --> AI
+    SIGNIN --> AUTH
+    ENV --> STORE
+    API --> STORE
+</pre>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     TOPOLOGY
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="topology">
+<h2>Domain Topology</h2>
+<div class="meta-strip">
+  <div class="meta-chip"><span>Files:</span>289</div>
+  <div class="meta-chip"><span>Import edges:</span>267</div>
+  <div class="meta-chip"><span>API usages:</span>59</div>
+  <div class="meta-chip"><span>Entry routes:</span>34</div>
+</div>
+
+<h3>Module Call Graph</h3>
+<div class="diagram-wrap">
+<div class="diagram-label">Source: analysis/call-graph.mmd — amber nodes are entry points</div>
+<pre class="mermaid">
+graph TD
+    subgraph Bootstrap["Bootstrap & App Shell"]
+        IDX["index.tsx (entry)"]:::entry
+        APP["App.tsx (router)"]:::entry
+        TT["trustedtypes.ts"]
+    end
+    subgraph AuthLayer["Auth Layer"]
+        MSAL["authConfig.ts"]
+        AP["AccountProvider.tsx"]
+        AE["AuthenticatedElement.tsx"]
+        HOOKS["hooks.tsx"]
+    end
+    subgraph PreCond["PreConditions & Modals"]
+        PC["PreConditions.tsx"]
+        MC["ModalContext.tsx"]
+        BNCH["BranchSelectorModal"]
+        TAC["TermsAndCondition"]
+    end
+    subgraph WizFW["Wizard Framework"]
+        WF["WizardForm"]
+        WRS["WizardRoutedStep"]
+        ES["ErrorSummary"]
+    end
+    subgraph VAL["Validation"]
+        YUP["yupExtensions (19 methods)"]
+        ADDR["addressValidation"]
+    end
+    subgraph Infra["Infrastructure"]
+        ENV["env.ts"]
+        API_C["web-api-client.ts"]
+        STORE["storage/*"]
+        AI["AppInsightsService"]
+    end
+    subgraph RouteModules["Route Modules"]
+        DASH["dashboard/index.tsx"]
+        ACCT["account/* (create/update/branch)"]
+        CONT["contact/* (create/update)"]
+        RFQ_R["requestForQuote/*"]
+        QUOT_R["quotation/*"]
+        AQ_R["acceptQuote/*"]
+        RPT_R["measurementReport/*"]
+    end
+    IDX --> APP
+    IDX --> AP
+    IDX --> TT
+    APP --> AE
+    APP --> DASH
+    APP --> ACCT
+    APP --> CONT
+    APP --> RFQ_R
+    APP --> QUOT_R
+    APP --> AQ_R
+    APP --> RPT_R
+    AE --> MSAL
+    AE --> PC
+    AP --> HOOKS
+    AP --> API_C
+    AP --> STORE
+    PC --> MC
+    MC --> BNCH
+    MC --> TAC
+    DASH --> API_C
+    DASH --> STORE
+    DASH --> MC
+    ACCT --> WF
+    ACCT --> API_C
+    CONT --> WF
+    CONT --> API_C
+    RFQ_R --> WF
+    RFQ_R --> API_C
+    RFQ_R --> STORE
+    QUOT_R --> API_C
+    AQ_R --> WF
+    AQ_R --> API_C
+    RPT_R --> API_C
+    WF --> WRS
+    WRS --> ES
+    WRS --> STORE
+    WRS --> AI
+    ACCT --> VAL
+    RFQ_R --> VAL
+    AQ_R --> VAL
+    API_C -.->|reads| STORE
+    classDef entry fill:#cc785c,color:#fff,stroke:#cc785c
+</pre>
+</div>
+<ul>
+  <li><strong>Bootstrap is a fan-out hub.</strong> <code>App.tsx</code> imports every route module directly — no lazy loading. Initial bundle includes all wizard code for unauthenticated users.</li>
+  <li><strong>WizardRoutedStep is a chokepoint.</strong> Every multi-step form flows through it; its <code>[key: string]: any</code> prop interface means a bug there affects all four workflows with no compile-time warning.</li>
+  <li><strong>API Client bypasses the Storage abstraction</strong> (dotted edge) by reading <code>sessionStorage</code> directly at construction time.</li>
+</ul>
+
+<h3>Data Lineage</h3>
+<div class="diagram-wrap">
+<div class="diagram-label">Source: analysis/data-lineage.mmd — solid = API calls, dashed = sessionStorage access</div>
+<pre class="mermaid">
+graph LR
+    subgraph Consumers
+        DASH["Dashboard"]
+        ACCT["Account Management"]
+        RFQ["Request for Quote"]
+        AQ["Accept Quote"]
+        QUOT["Quotation"]
+        RPT["Measurement Reports"]
+        MODAL["Modals"]
+        AUTH_D["Auth / AccountProvider"]
+    end
+    subgraph APIClients["API Client Classes"]
+        DC["DashboardClient"]
+        AC["AccountsClient"]
+        CC["ContactClient"]
+        RFQC["RequestForQuoteClient"]
+        APPC["ApplicationClient"]
+        QC["QuoteClient"]
+        AQC["AcceptQuoteClient"]
+        ALC["AccountLoginClient"]
+    end
+    subgraph SessionStorage["Session Storage"]
+        SS_ORG["targetOrganisation"]
+        SS_NOTIF["notifications"]
+        SS_CACHE["sessionStorageCache"]
+    end
+    DASH -->|read| DC
+    ACCT -->|read/write| AC
+    ACCT -->|read/write| CC
+    RFQ -->|read/write| RFQC
+    RFQ -->|read| APPC
+    AQ -->|read/write| AQC
+    AQ -->|read| QC
+    AQ -->|read| AC
+    AQ -->|read| APPC
+    AQ -->|read| DC
+    QUOT -->|read| QC
+    RPT -->|read| QC
+    RPT -->|read| DC
+    MODAL -->|read| APPC
+    AUTH_D -->|read/write| ALC
+    AUTH_D -->|write| SS_ORG
+    DC -.->|read| SS_ORG
+    RFQC -.->|read| SS_ORG
+    AQC -.->|read| SS_ORG
+    DASH -->|write| SS_NOTIF
+    RFQ -->|write| SS_NOTIF
+    ACCT -->|read/write| SS_CACHE
+</pre>
+</div>
+<ul>
+  <li><strong>Accept Quote has the widest API footprint</strong> — 5 client classes. A failure in any one during the wizard flow has no partial-save fallback.</li>
+  <li><strong><code>targetOrganisation</code> is a shared-write, multi-read pattern</strong> — written only by <code>AccountProvider</code>, read by 4 API client classes at construction time, creating a time-of-check/time-of-use window on branch switch.</li>
+  <li><strong>DashboardClient is consumed by 4 domains</strong> — its contract stability is a migration dependency for Dashboard, Accept Quote, Measurement Reports, and Shared Helpers.</li>
+</ul>
+
+<h3>Critical Path — Create &amp; Submit an RFQ</h3>
+<div class="diagram-wrap">
+<div class="diagram-label">Source: analysis/critical-path.mmd — end-to-end execution order for the primary business flow</div>
+<pre class="mermaid">
+flowchart TD
+    A(["User navigates to portal"]):::entry
+    B["sign-in route\nMsalAuthenticationTemplate\ntriggers B2C PKCE redirect"]
+    C[/"Azure AD B2C\n(external IdP)\nreturns id_token + access_token"/]:::external
+    D["AccountProvider.tsx\nAccountLoginClient.signIn\nloads org context + ABN\nwrites targetOrganisation → sessionStorage"]
+    E{"PreConditions.tsx\nGate checks"}
+    F["Dashboard\nDashboardClient × 3\n(drafts / quotes / instruments)"]
+    G[/"User clicks 'Create RFQ'"/]
+    H["requestForQuote/create\nWizardForm initialises\nacquireTokenSilent + setAuthToken"]
+    I["Step 1 of 3 — Organisation & Contact\nAccountsClient + ApplicationClient\nFormik + hard validation"]
+    J["Step 2 of 3 — Instrument & Request\nApplicationClient + saveDraft on exit\nFormik + hard + soft validation"]
+    K["Step 3 of 3 — Summary\nRequestForQuoteClient.submitApplication"]
+    L["/request-for-quote-success/:id\nWrite success notification → sessionStorage"]
+    M["Dashboard reload — show success banner"]
+    A --> B
+    B --> C
+    C -->|"PKCE token exchange"| D
+    D --> E
+    E -->|"T&C not accepted"| TC["TermsAndCondition modal\nAccountLoginClient.acceptTerms"]
+    TC -->|"Accepted"| E
+    E -->|"Account not created"| AC_WIZ["create-account wizard"]:::wizard
+    AC_WIZ --> E
+    E -->|"Contact not created"| CC_WIZ["create-contact wizard"]:::wizard
+    CC_WIZ --> E
+    E -->|"All gates pass"| F
+    F --> G
+    G --> H
+    H --> I
+    I -->|"Passes"| J
+    J -->|"Draft saved\nPasses"| K
+    K -->|"202 Accepted"| L
+    L -->|"Redirect"| M
+    I -->|"Save & Exit"| DRAFT["Draft saved → Dashboard"]
+    J -->|"Save & Exit"| DRAFT
+    classDef entry fill:#2d6a4f,color:#fff,stroke:#2d6a4f
+    classDef external fill:#4a4a6a,color:#d4d4d4,stroke:#7a7aaa
+    classDef wizard fill:#5a3e2b,color:#d4d4d4,stroke:#cc785c
+</pre>
+</div>
+<ul>
+  <li><strong>7 sequential network calls before a user can start entering RFQ data</strong> (signIn → getDashboard ×3 → getAccountDetails → getApplicationOptions).</li>
+  <li><strong>No loading guard between signIn response and PreConditions</strong> — slow connection may redirect a legitimate user to <code>/create-account</code> before account data loads.</li>
+  <li><strong>Draft save only on step-exit</strong> — browser crash between steps loses all progress; <code>UnsavedFormPrompt</code> cannot block browser close.</li>
+  <li><strong><code>acquireTokenSilent</code> called at every step transition</strong> — 26 separate call sites; centralising into a hook removes this repeated overhead.</li>
+</ul>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     TECHNICAL DEBT
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="debt">
+<h2>Technical Debt</h2>
+<p>Top 10 findings ranked by remediation value. <strong>S</strong> = small (&lt;1 day), <strong>M</strong> = medium (1–3 days).</p>
+<div class="table-wrap"><table>
+<tr><th>#</th><th>Title</th><th>Category</th><th>Severity</th><th>File:Line</th><th>Effort</th></tr>
+<tr><td>1</td><td>Repeated token acquisition — no shared API factory</td><td>Duplication</td><td><span class="badge badge-high">High</span></td><td><code>routes/**/…Props.ts</code>, <code>dashboard/index.tsx:422</code></td><td>M</td></tr>
+<tr><td>2</td><td><code>WizardStepProps</code> / <code>WizardFormProps</code> <code>[key: string]: any</code> index signatures erase type safety</td><td>Type safety</td><td><span class="badge badge-high">High</span></td><td><code>WizardForm/types.ts:122,164</code></td><td>M</td></tr>
+<tr><td>3</td><td><code>AuthorizedApiBase.targetOrganisation</code> captured at construction time; <code>JSON.parse</code> with no type guard</td><td>Architecture smell</td><td><span class="badge badge-high">High</span></td><td><code>web-api-client.ts:13,26</code></td><td>S</td></tr>
+<tr><td>4</td><td><code>TargetOrganisation</code> interface defined in three independent places</td><td>Duplication</td><td><span class="badge badge-med">Medium</span></td><td><code>accountContext.tsx:27</code>, <code>storage/types.ts:13</code></td><td>S</td></tr>
+<tr><td>5</td><td>Dead <code>isLoading</code> / <code>scrollToTop</code> state — spinner and scroll-to-notification never fire</td><td>Dead code</td><td><span class="badge badge-med">Medium</span></td><td><code>dashboard/index.tsx:253,258</code></td><td>S</td></tr>
+<tr><td>6</td><td><code>getFileIdFromBase64</code> is an exact duplicate of <code>getFileUrlFromBase64</code> with zero call sites</td><td>Dead code</td><td><span class="badge badge-med">Medium</span></td><td><code>helperFunctions.ts:101–116</code></td><td>S</td></tr>
+<tr><td>7</td><td><code>REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY</code> required in <code>env.ts</code> but never read</td><td>Dead code</td><td><span class="badge badge-med">Medium</span></td><td><code>env.ts:20,36,50,92</code></td><td>S</td></tr>
+<tr><td>8</td><td><code>getFileDetails</code> / <code>getQuotationFileDetails</code> <code>default</code> branch returns a permanently pending promise</td><td>Missing error handling</td><td><span class="badge badge-med">Medium</span></td><td><code>helperFunctions.ts:43–44,71–72</code></td><td>S</td></tr>
+<tr><td>9</td><td><code>PreConditions children: any</code> — widest structural wrapper typed as any</td><td>Type safety</td><td><span class="badge badge-low">Low</span></td><td><code>PreConditions.tsx:18</code></td><td>S</td></tr>
+<tr><td>10</td><td>Redirect guards use <code>path.includes(...)</code> string matching instead of route constants</td><td>Architecture smell</td><td><span class="badge badge-low">Low</span></td><td><code>PreConditions.tsx:64–88</code></td><td>S</td></tr>
+</table></div>
+<div class="callout warn">43 <code>eslint-disable @typescript-eslint/no-explicit-any</code> suppressions exist in the routes directory alone — the <code>any</code> escape at the wizard layer propagated outward into every consumer.</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SECURITY FINDINGS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="security">
+<h2>Security Findings</h2>
+<div class="table-wrap"><table>
+<tr><th>ID</th><th>CWE</th><th>Title</th><th>Severity</th><th>File:Line</th><th>Live Status</th></tr>
+<tr><td>SEC-010</td><td>CWE-639</td><td>IDOR — <code>organisationCRMGuid</code> and <code>TargetOrganisationAbn</code> header not validated server-side</td><td><span class="badge badge-high">High</span></td><td><code>dashboard/index.tsx:439</code>, <code>web-api-client.ts:26</code></td><td><span class="badge badge-closed">CLOSED 2026-06-04</span> — pentest-confirmed remediation prior to go-live (CRD-035)</td></tr>
+<tr><td>SEC-001</td><td>CWE-352</td><td><code>TargetOrganisationAbn</code> header read from mutable sessionStorage at construction time</td><td><span class="badge badge-med">Medium</span></td><td><code>web-api-client.ts:13–29</code></td><td><span class="badge badge-closed">CLOSED 2026-06-01</span> — read inside <code>transformOptions</code> per request (CRD-031)</td></tr>
+<tr><td>SEC-004</td><td>CWE-116</td><td>Trusted Types <code>createScriptURL</code> used DOMPurify (HTML sanitiser, not URL sanitiser)</td><td><span class="badge badge-high">High</span></td><td><code>trustedtypes.ts:7</code></td><td><span class="badge badge-closed">CLOSED</span></td></tr>
+<tr><td>SEC-002</td><td>CWE-601</td><td>Open redirect + tabnapping — <code>window.open()</code> then <code>location.href</code> assignment; no <code>noopener</code></td><td><span class="badge badge-med">Medium</span></td><td><code>reportDetails.tsx:35</code>, <code>quoteDetails.tsx:49</code></td><td><span class="badge badge-likely">LIKELY CLOSED</span></td></tr>
+<tr><td>SEC-003</td><td>CWE-79</td><td>XSS via unsanitised <code>tel:</code>/<code>mailto:</code> hrefs from API-sourced contact data</td><td><span class="badge badge-med">Medium</span></td><td><code>nMIContactDetails.tsx:29,41</code></td><td><span class="badge badge-closed">CLOSED</span></td></tr>
+<tr><td>SEC-005</td><td>CWE-200</td><td>Organisation ABN + name sent to App Insights verbose telemetry</td><td><span class="badge badge-med">Medium</span></td><td><code>AccountProvider.tsx:177</code></td><td><span class="badge badge-closed">CLOSED</span></td></tr>
+<tr><td>SEC-008</td><td>CWE-284</td><td>Account-completeness pre-conditions enforced client-side only — bypassable via DevTools</td><td><span class="badge badge-med">Medium</span></td><td><code>PreConditions.tsx:64–79</code></td><td><span class="badge badge-open">OPEN — by-design</span></td></tr>
+<tr><td>SEC-009</td><td>CWE-613</td><td><code>loadFrameTimeout: 0</code> removes MSAL silent-renewal iframe timeout bound</td><td><span class="badge badge-low">Low</span></td><td><code>authConfig.ts:42</code></td><td><span class="badge badge-closed">CLOSED 2026-06-01</span> — set to 6000ms (CRD-029)</td></tr>
+<tr><td>SEC-011</td><td>CWE-20</td><td>URL <code>id</code> params passed to API calls without format validation; <code>Number()</code> cast produces <code>0</code> for NaN</td><td><span class="badge badge-med">Medium</span></td><td><code>requestForQuote/index.tsx:47</code></td><td><span class="badge badge-closed">CLOSED 2026-06-01</span> — URL ID param validation added; invalid params redirect to /not-found (CRD-029)</td></tr>
+<tr><td>SEC-012</td><td>CWE-311</td><td>Organisation ABN stored unencrypted in sessionStorage; bypasses typed cache abstraction</td><td><span class="badge badge-low">Low</span></td><td><code>targetOrganisation.ts:4</code></td><td><span class="badge badge-open">OPEN</span></td></tr>
+<tr><td>SEC-006</td><td>CWE-200</td><td>Full <code>ProblemDetails</code> payload logged to App Insights on dashboard errors</td><td><span class="badge badge-low">Low</span></td><td><code>dashboard/index.tsx:224</code></td><td><span class="badge badge-closed">CLOSED</span></td></tr>
+<tr><td>SEC-007</td><td>CWE-1022</td><td><code>window.open</code> in <code>openInNewTab</code> missing <code>noopener,noreferrer</code></td><td><span class="badge badge-low">Low</span></td><td><code>helperFunctions.ts:154</code></td><td><span class="badge badge-likely">LIKELY CLOSED</span></td></tr>
+</table></div>
+<div class="callout"><strong>Net open items for migration go-live:</strong> SEC-008 (by-design client-side gate), SEC-012 (architectural debt). All P1 blockers closed: SEC-010 closed 2026-06-04 (pentest-confirmed; CRD-035); SEC-001, SEC-009, SEC-011 closed 2026-06-01 (CRD-029, CRD-031).</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     DOCUMENTATION GAPS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="doc-gaps">
+<h2>Documentation Gaps</h2>
+<ol>
+  <li><strong>WizardRoutedStep hard/soft validation contract</strong> — The distinction between <code>validateHard</code> (blocks navigation) and <code>validateSoft</code> (advisory) is undocumented. A new engineer implementing a wizard step will miss soft validation entirely.</li>
+  <li><strong>Yup custom extension side-effect import</strong> — Schema files must <code>import '../../validationSchemas/yupExtensions'</code> as a side effect or face silent runtime failure (<code>schema.method is not a function</code>). Documented only in <code>CLAUDE.md</code>, not in developer docs.</li>
+  <li><strong>acquireTokenSilent call pattern</strong> — The <code>tokenRequest</code> shape, scopes (<code>READ_SCOPE</code>, <code>USER_IMPERSONATION_SCOPE</code>), and <code>accounts[0]</code> convention are unexplained. The ADR covers a proposed interceptor but not the current pattern's rationale.</li>
+  <li><strong>PreConditions redirect state machine</strong> — The <code>TermsAndCondition → create-account → create-contact → dashboard</code> sequence is string-matching path guards with no flowchart or state diagram.</li>
+  <li><strong>Dual build system rationale</strong> — Production uses Webpack 5; Storybook and Vitest use Vite 8. The behavioral divergences (chunk splitting, module resolution, CSS handling) are undocumented beyond MSW init differences.</li>
+</ol>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     EFFORT ESTIMATION
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="effort">
+<h2>Effort Estimation</h2>
+<p><strong>Method:</strong> COCOMO-II Basic — <code>PM = 2.94 × (KSLOC)^1.10</code></p>
+<div class="table-wrap"><table>
+<tr><th>Input</th><th>Value</th></tr>
+<tr><td>Raw lines (TS + TSX)</td><td>~33,027</td></tr>
+<tr><td>Estimated SLOC (72% of raw)</td><td>~23,780</td></tr>
+<tr><td>KSLOC</td><td>23.8</td></tr>
+<tr><td>(23.8)^1.10</td><td>32.67</td></tr>
+<tr><td><strong>Person-months (nominal)</strong></td><td><strong>~96 PM</strong></td></tr>
+<tr><td>Range (±20%)</td><td>77–115 PM</td></tr>
+</table></div>
+<p><strong>Key cost drivers:</strong> the <code>[key: string]: any</code> wizard interface requires careful end-to-end retesting (~+10%); absence of unit tests in <code>ClientApp/src</code> means refactoring carries higher risk than SLOC suggests; consolidating the dual Webpack/Vite build system is a one-time ~5 PM spike.</p>
+<p><strong>First-party only (for authorship effort):</strong> ~2,400 SLOC → ~7.8 PM (±30% → 5.5–10.1 PM). This is more relevant for estimating new code authorship in the target repository.</p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     BUSINESS RULES — SUMMARY
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="rules-summary">
+<h2>Business Rules — Summary</h2>
+<div class="meta-strip">
+  <div class="meta-chip"><span>Total rules:</span>53</div>
+  <div class="meta-chip"><span>P0 (regulatory/financial):</span>16</div>
+  <div class="meta-chip"><span>P1 (core business):</span>28</div>
+  <div class="meta-chip"><span>P2 (display/formatting):</span>9</div>
+  <div class="meta-chip"><span>SME review needed:</span>14</div>
+</div>
+<div class="table-wrap"><table>
+<tr><th>ID</th><th>Name</th><th>Category</th><th>Priority</th><th>Source</th><th>Confidence</th></tr>
+<tr><td>RULE-001</td><td>Account creation gate</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>PreConditions.tsx:64</code></td><td>High</td></tr>
+<tr><td>RULE-002</td><td>Contact creation gate</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>PreConditions.tsx:69</code></td><td>High</td></tr>
+<tr><td>RULE-003</td><td>Post-onboarding redirect</td><td>Lifecycle</td><td><span class="badge badge-p1">P1</span></td><td><code>PreConditions.tsx:75</code></td><td>High</td></tr>
+<tr><td>RULE-004</td><td>Terms of Use version gate</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>AccountProvider.tsx:25</code>, <code>terms-config.json</code></td><td>High</td></tr>
+<tr><td>RULE-005</td><td>Branch selection gate</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>PreConditions.tsx:84</code></td><td>High</td></tr>
+<tr><td>RULE-006</td><td>Quote status lifecycle (12 states)</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>enums.ts:1</code>, <code>quoteStatus.ts</code></td><td>High</td></tr>
+<tr><td>RULE-007</td><td>Status → document mapping</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>helperFunctions.ts:26</code></td><td>High</td></tr>
+<tr><td>RULE-008</td><td>PDF page number by status</td><td>Lifecycle</td><td><span class="badge badge-p1">P1</span></td><td><code>helperFunctions.ts:123</code></td><td>Medium</td></tr>
+<tr><td>RULE-009</td><td>Proceed/decline button eligibility</td><td>Lifecycle</td><td><span class="badge badge-p1">P1</span></td><td><code>quoteStatus.ts:14</code></td><td>High</td></tr>
+<tr><td>RULE-010</td><td>Dashboard action menu by status</td><td>Lifecycle</td><td><span class="badge badge-p0">P0</span></td><td><code>requestItem.tsx:394</code></td><td>High</td></tr>
+<tr><td>RULE-011</td><td>Optimistic UI status override post-acceptance</td><td>Lifecycle</td><td><span class="badge badge-p1">P1</span></td><td><code>dashboard/index.tsx:176</code></td><td>High</td></tr>
+<tr><td>RULE-012</td><td>Decline is irreversible</td><td>Policy</td><td><span class="badge badge-p0">P0</span></td><td><code>quotation/index.tsx:398</code></td><td>High</td></tr>
+<tr><td>RULE-013</td><td>RFQ submission is irreversible</td><td>Policy</td><td><span class="badge badge-p0">P0</span></td><td><code>requestForQuote/index.tsx:83</code></td><td>High</td></tr>
+<tr><td>RULE-014</td><td>Quote acceptance is irreversible</td><td>Policy</td><td><span class="badge badge-p0">P0</span></td><td><code>acceptQuote/index.tsx:42</code></td><td>High</td></tr>
+<tr><td>RULE-015</td><td>Recalibration eligibility by status</td><td>Lifecycle</td><td><span class="badge badge-p1">P1</span></td><td><code>requestItem.tsx:454</code></td><td>High</td></tr>
+<tr><td>RULE-016</td><td>Dashboard item suppression (<code>hideFromDashboard</code>)</td><td>Lifecycle</td><td><span class="badge badge-p1">P1</span></td><td><code>requestItem.tsx:492</code></td><td>High</td></tr>
+<tr><td>RULE-017</td><td>Payment terms: Prepaid vs 30-day invoice</td><td>Policy</td><td><span class="badge badge-p0">P0</span></td><td><code>paymentDetails.tsx:86</code></td><td>High</td></tr>
+<tr><td>RULE-018</td><td>Draft-save capability per wizard</td><td>Policy</td><td><span class="badge badge-p1">P1</span></td><td><code>requestForQuote/index.tsx:79</code></td><td>High</td></tr>
+<tr><td>RULE-022</td><td>ABN checksum algorithm (ATO weighted mod-89)</td><td>Calculation</td><td><span class="badge badge-p0">P0</span></td><td><code>common.ts:133</code></td><td>High</td></tr>
+<tr><td>RULE-031</td><td>Australian postcode range (200–299, 800–9999)</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td><code>stringExtensions.ts:349</code></td><td>High</td></tr>
+<tr><td>RULE-032</td><td>Phone number format (AU landline/mobile/1800/1300/13)</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td><code>stringExtensions.ts:426</code></td><td>High</td></tr>
+<tr><td>RULE-033</td><td>Email address format (custom RFC 5321-aligned regex)</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td><code>stringExtensions.ts:467</code></td><td>High</td></tr>
+<tr><td>RULE-034</td><td>Name charset — no accented characters</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td><code>stringExtensions.ts:644</code></td><td>High</td></tr>
+<tr><td>RULE-035</td><td>Business name charset (ASIC-aligned)</td><td>Validation</td><td><span class="badge badge-p0">P0</span></td><td><code>stringExtensions.ts:678</code></td><td>Medium ⚠️</td></tr>
+<tr><td>RULE-040</td><td>Quote acceptance T&amp;C checkbox mandatory</td><td>Validation</td><td><span class="badge badge-p0">P0</span></td><td><code>acceptQuote/validation.ts:136</code></td><td>High</td></tr>
+<tr><td>RULE-041</td><td>Preferred availability date must not be in the past</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td><code>requestForQuote/validation.ts:123</code></td><td>High</td></tr>
+<tr><td>RULE-042</td><td>Number of items range (1–100)</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td><code>requestForQuote/validation.ts:88</code></td><td>High</td></tr>
+<tr><td>RULE-047</td><td>Field character limits catalogue (all fields)</td><td>Validation</td><td><span class="badge badge-p1">P1</span></td><td>Multiple validation files</td><td>High</td></tr>
+<tr><td>RULE-050</td><td>NMI ABN hardcoded in contract display</td><td>Policy</td><td><span class="badge badge-p0">P0</span></td><td><code>summaryAndAccept.tsx:382</code></td><td>High ⚠️ verify</td></tr>
+<tr><td>RULE-052</td><td>Terms of Use version configuration</td><td>Policy</td><td><span class="badge badge-p0">P0</span></td><td><code>terms-config.json:1</code></td><td>High</td></tr>
+</table></div>
+<p style="color:var(--text3);font-size:.8rem">Full rule cards (all 53) are in <code>analysis/BUSINESS_RULES.md</code>. P0 rules are expanded below.</p>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     P0 RULES EXPANDED
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="rules-lifecycle">
+<h2>P0 Rules — Lifecycle &amp; State</h2>
+<div class="rule-grid">
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-004 · P0 · Lifecycle</div>
+<div class="rule-name">Terms of Use Version Gate</div>
+<div class="rule-source"><code>AccountProvider.tsx:25-27</code> · <code>terms-config.json:1</code></div>
+<div class="rule-body">
+<strong>Plain English:</strong> A user must have accepted the current version of T&amp;C before accessing any dashboard content. Accepting an older version counts as not accepted.
+<details><summary>Specification</summary>
+<pre>Given  authenticated user
+When   user.acceptedTerms !== true
+  OR   user.termsVersion.toString() !== "1"   ← current version
+Then   show TermsAndConditionModal (blocking)
+</pre>
+<strong>Param:</strong> Current version <code>"1"</code> in <code>terms-config.json</code>. Increment to force re-acceptance for all users.
+</details>
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-006 · P0 · Lifecycle</div>
+<div class="rule-name">Quote Status Lifecycle (12 States)</div>
+<div class="rule-source"><code>enums.ts:1-28</code> · <code>quoteStatus.ts</code></div>
+<div class="rule-body">
+<strong>Plain English:</strong> Every RFQ moves through a defined set of CRM-controlled statuses. The portal can only trigger two transitions: Accept and Decline.
+<details><summary>All states &amp; customer-triggered transitions</summary>
+<table style="font-size:.75rem">
+<tr><th>Status value</th><th>CRM string</th></tr>
+<tr><td>QuoteSubmitted</td><td>'Submitted'</td></tr>
+<tr><td>QuoteInProgress</td><td>'Quote - In Progress'</td></tr>
+<tr><td>QuoteAvailable</td><td>'Quote - Available'</td></tr>
+<tr><td>QuoteAccepted</td><td>'Quote - Accepted'</td></tr>
+<tr><td>QuoteDeclined</td><td>'Quote - Declined'</td></tr>
+<tr><td>QuoteExpired</td><td>'Quote - Expired'</td></tr>
+<tr><td>QuoteClosed</td><td>'Quote - Closed'</td></tr>
+<tr><td>ReportIssued</td><td>'Report - Issued'</td></tr>
+<tr><td>ReportInProgress</td><td>'Report - In progress'</td></tr>
+<tr><td>ReportWithdrawn</td><td>'Report - Withdrawn'</td></tr>
+<tr><td>ArtifactReceived</td><td>'Artefact - Received'</td></tr>
+</table>
+Customer-triggered: <code>QuoteAvailable → Declined</code> or <code>QuoteAvailable → Accepted</code>
+</details>
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-007 · P0 · Lifecycle</div>
+<div class="rule-name">Status → Downloadable Document Mapping</div>
+<div class="rule-source"><code>helperFunctions.ts:22-74</code></div>
+<div class="rule-body">
+<strong>Plain English:</strong> The PDF served to a customer is determined entirely by current status. Different statuses fetch fundamentally different documents.
+<details><summary>Status → API endpoint mapping</summary>
+<table style="font-size:.75rem">
+<tr><th>Status</th><th>Document fetched</th></tr>
+<tr><td>QuoteAccepted, ArtifactReceived</td><td>getQuoteRequestAcceptedPDFByID</td></tr>
+<tr><td>QuoteDeclined</td><td>getQuoteRequestRejectedPDFByID</td></tr>
+<tr><td>QuoteAvailable, QuoteClosed</td><td>getQuoteOfferPDFByQuoteID</td></tr>
+<tr><td>ReportIssued (quotation tab)</td><td>getQuoteRequestAcceptedPDFByID</td></tr>
+<tr><td>ReportIssued (other)</td><td>getQuoteReportPDFByID</td></tr>
+<tr><td>ReportInProgress</td><td>getQuoteRequestAcceptedPDFByID</td></tr>
+<tr><td>Any other</td><td>⚠️ permanently-pending Promise (Debt #8)</td></tr>
+</table>
+</details>
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-010 · P0 · Lifecycle</div>
+<div class="rule-name">Dashboard Action Menu by Status</div>
+<div class="rule-source"><code>requestItem.tsx:394-478</code> · <code>instrumentItem.tsx:448-510</code></div>
+<div class="rule-body">
+<strong>Plain English:</strong> Each dashboard card exposes a specific subset of actions. This is the master gating table for all customer-initiated workflow actions.
+<details><summary>Status → available actions</summary>
+<table style="font-size:.75rem">
+<tr><th>Status</th><th>Actions</th></tr>
+<tr><td>QuoteDrafted</td><td>Edit, Delete</td></tr>
+<tr><td>QuoteAvailable</td><td>View/accept quotation, View request</td></tr>
+<tr><td>ReportIssued</td><td>View report, View request, Request recalibration</td></tr>
+<tr><td>ReportWithdrawn</td><td>Request recalibration, View quotation, View request</td></tr>
+<tr><td>QuoteAccepted, ArtifactReceived, ReportInProgress</td><td>View quotation, View request</td></tr>
+<tr><td>All others</td><td>View request only</td></tr>
+</table>
+</details>
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-012/013/014 · P0 · Policy</div>
+<div class="rule-name">Irreversible Actions</div>
+<div class="rule-source"><code>quotation/index.tsx:398</code> · <code>requestForQuote/index.tsx:83</code> · <code>acceptQuote/index.tsx:42</code></div>
+<div class="rule-body">
+Three independently enforced irreversibility rules:<br>
+• <strong>RULE-012 Decline:</strong> "Declining this quote cannot be undone"<br>
+• <strong>RULE-013 RFQ Submit:</strong> "Once submitted, you cannot make further changes"<br>
+• <strong>RULE-014 Accept:</strong> "Once accepted, you cannot make further changes"<br><br>
+All three are displayed as confirmation modal text before the irreversible API call fires.
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-017 · P0 · Policy</div>
+<div class="rule-name">Payment Terms — Prepaid vs 30-Day</div>
+<div class="rule-source"><code>paymentDetails.tsx:86</code> · <code>submittedSuccess.tsx:50</code></div>
+<div class="rule-body">
+<strong>Plain English:</strong> Customers on "Prepaid" terms must pay before calibration commences. All others receive 30-day invoice terms.
+<details><summary>Specification</summary>
+<pre>When paymentTerms === 'Prepaid'  (exact case-sensitive)
+Then "Payment required before calibration commences"
+
+Otherwise
+Then "Invoices must be paid within 30 days of NMI invoice date"
+</pre>
+<strong>Hardcoded values:</strong> trigger string <code>'Prepaid'</code>, payment period <code>30 days</code>.
+</details>
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     P0 CALCULATION RULES
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="rules-calc">
+<h2>P0 Rules — Calculations</h2>
+<div class="rule-grid">
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-022 · P0 · Calculation</div>
+<div class="rule-name">ABN Checksum Algorithm (ATO Weighted Mod-89)</div>
+<div class="rule-source"><code>common.ts:133-149</code></div>
+<div class="rule-body">
+<strong>Plain English:</strong> Australian Business Numbers are validated using the official ATO weighted checksum.
+<pre style="font-size:.75rem;margin-top:.5rem">weights = [10,1,3,5,7,9,11,13,15,17,19]
+d[0] = first_digit - 1
+sum  = Σ (weights[i] × d[i])
+valid if sum % 89 === 0
+
+"51824753556" → sum=534 → 534%89=0 → VALID
+</pre>
+<strong>Must be reproduced exactly in target system.</strong>
+</div>
+</div>
+
+<div class="rule-card p1">
+<div class="rule-id">RULE-026 · P1 · Calculation</div>
+<div class="rule-name">AUD Currency Formatting</div>
+<div class="rule-source"><code>utils/index.ts:248</code></div>
+<div class="rule-body">All monetary amounts formatted as: <code>amount.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })</code><br>e.g. 12500.5 → "$12,500.50"</div>
+</div>
+
+<div class="rule-card p1">
+<div class="rule-id">RULE-027 · P1 · Calculation</div>
+<div class="rule-name">Date Parsing Dispatch</div>
+<div class="rule-source"><code>utils/index.ts:77</code></div>
+<div class="rule-body">
+<code>value.length === 10</code> → parse as <code>dd/MM/yyyy</code> (Australian convention)<br>
+otherwise → parse as <code>yyyy-MM-dd'T'HH:mm:ssxxx</code> (ISO 8601)<br>
+Time components always zeroed after parse.
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     P0 VALIDATION RULES
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="rules-validation">
+<h2>P0 Rules — Validations</h2>
+<div class="rule-grid">
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-035 · P0 · Validation <span class="badge badge-med">SME REQUIRED</span></div>
+<div class="rule-name">Business Name Charset (ASIC-Aligned)</div>
+<div class="rule-source"><code>stringExtensions.ts:678</code></div>
+<div class="rule-body">
+Regex: <code>/^[A-Za-z0-9!@#$%^&amp;*()?;:=_\-/\.,'{}| "]+$/</code><br>
+Referenced to ASIC CompanyName BRS implementation guide v1.7.<br>
+<strong>⚠️ SME question:</strong> Can business names contain <code>&amp;</code> (e.g., "Smith &amp; Jones")? Current charset excludes it. If wrong, account creation silently rejects valid businesses.
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-040 · P0 · Validation</div>
+<div class="rule-name">Quote Acceptance T&amp;C Checkbox Mandatory</div>
+<div class="rule-source"><code>acceptQuote/validation.ts:136</code></div>
+<div class="rule-body">
+<code>acceptanceOfQuote: yup.boolean().oneOf([true], 'You must accept our terms before accepting this quotation')</code><br>
+Legal acknowledgement — must be reproduced exactly.
+</div>
+</div>
+
+<div class="rule-card p1">
+<div class="rule-id">RULE-031 · P1 · Validation</div>
+<div class="rule-name">Australian Postcode Range</div>
+<div class="rule-source"><code>stringExtensions.ts:349</code></div>
+<div class="rule-body">
+Must be exactly 4 chars, parsed as integer:<br>
+• 200–299 (ACT block)<br>
+• 800–9999 (all other AU postcodes)<br>
+<code>"0200" → VALID · "2000" → VALID · "0100" → INVALID</code>
+</div>
+</div>
+
+<div class="rule-card p1">
+<div class="rule-id">RULE-041 · P1 · Validation</div>
+<div class="rule-name">Preferred Date Must Not Be in the Past</div>
+<div class="rule-source"><code>requestForQuote/validation.ts:123</code></div>
+<div class="rule-body">
+Field is optional; if provided: <code>formatDateStringToUTC(value) &gt;= formatDateStringToUTC(new Date())</code><br>
+Today is valid (<code>&gt;=</code> not <code>&gt;</code>). Contrast with <code>isFutureDate()</code> in <code>common.ts</code> which rejects today.
+</div>
+</div>
+
+<div class="rule-card p1">
+<div class="rule-id">RULE-042 · P1 · Validation</div>
+<div class="rule-name">Number of Items Range (1–100)</div>
+<div class="rule-source"><code>requestForQuote/validation.ts:88</code></div>
+<div class="rule-body"><code>yup.number().min(1).max(100).required()</code><br>⚠️ SME question: Is 100 a hard operational limit or an informal cap?</div>
+</div>
+
+</div>
+
+<h3>Field Character Limits (RULE-047)</h3>
+<div class="table-wrap"><table>
+<tr><th>Field</th><th>Min</th><th>Max</th><th>Charset</th></tr>
+<tr><td>Contact first name</td><td>2</td><td>50</td><td>nameAllowedFormat</td></tr>
+<tr><td>Contact last name</td><td>2</td><td>99</td><td>nameAllowedFormat</td></tr>
+<tr><td>Email</td><td>—</td><td>100</td><td>custom email regex</td></tr>
+<tr><td>Phone</td><td>6</td><td>12</td><td>AU phone</td></tr>
+<tr><td>Mobile</td><td>10</td><td>12</td><td>AU mobile only</td></tr>
+<tr><td>Business/trading name</td><td>2</td><td>160</td><td>allowedFormat(true)</td></tr>
+<tr><td>Address line 1/2/3</td><td>—</td><td>250</td><td>addressFormat()</td></tr>
+<tr><td>Suburb</td><td>—</td><td>80</td><td>allowedFormat(true)</td></tr>
+<tr><td>Instrument serial number</td><td>1</td><td>100</td><td>serialNumMatchRegEx</td></tr>
+<tr><td>Testing/calibration requirements</td><td>2</td><td>2000</td><td>extAlphaNumMultiLine</td></tr>
+<tr><td>PO number</td><td>—</td><td>20</td><td>default</td></tr>
+<tr><td>Dispute detail</td><td>—</td><td>300</td><td>default</td></tr>
+</table></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     POLICY RULES
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="rules-policy">
+<h2>P0 Rules — Policy &amp; Configuration</h2>
+<div class="rule-grid">
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-050 · P0 · Policy <span class="badge badge-med">VERIFY</span></div>
+<div class="rule-name">NMI ABN Hardcoded in Contract Display</div>
+<div class="rule-source"><code>summaryAndAccept.tsx:382-388</code></div>
+<div class="rule-body">
+NMI ABN: <code>74 599 608 295</code><br>
+NMI address: <code>36 Bradfield Road, West Lindfield NSW 2070</code><br>
+Both appear in the Accept Quote summary page (legal-contract-equivalent display). Any change requires a code deployment.<br>
+<strong>⚠️ Must be verified correct before go-live.</strong>
+</div>
+</div>
+
+<div class="rule-card p0">
+<div class="rule-id">RULE-052 · P0 · Policy</div>
+<div class="rule-name">Terms of Use Version Configuration</div>
+<div class="rule-source"><code>terms-config.json:1</code></div>
+<div class="rule-body">
+Current value: <code>{ "TermsVersion": "1" }</code><br>
+Increment to force all users to re-accept. Must be coordinated with a communications plan before go-live if a version bump is required.
+</div>
+</div>
+
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     DATA OBJECTS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="data-objects">
+<h2>Data Objects</h2>
+<p>Core DTOs and entities from <code>analysis/DATA_OBJECTS.md</code>.</p>
+
+<h3>UserDto → AccountDetails (in-memory context)</h3>
+<div class="table-wrap"><table>
+<tr><th>Field</th><th>Type</th><th>Rules</th></tr>
+<tr><td><code>acceptedTerms</code></td><td>boolean</td><td>RULE-004</td></tr>
+<tr><td><code>termsVersion</code></td><td>number</td><td>RULE-004, RULE-052</td></tr>
+<tr><td><code>accountCreationCompleted</code></td><td>boolean</td><td>RULE-001</td></tr>
+<tr><td><code>accountContactCompleted</code></td><td>boolean</td><td>RULE-002</td></tr>
+<tr><td><code>defaultOrganisationId</code></td><td>string | null</td><td>RULE-005</td></tr>
+<tr><td><code>organisationName</code></td><td>string</td><td>RULE-005</td></tr>
+<tr><td><code>homeAccountId</code></td><td>string</td><td>App Insights correlation</td></tr>
+</table></div>
+
+<h3>QuoteStatus Enum</h3>
+<div class="table-wrap"><table>
+<tr><th>Enum member</th><th>CRM string value</th></tr>
+<tr><td>QuoteSubmitted</td><td>'Submitted'</td></tr>
+<tr><td>QuoteInProgress</td><td>'Quote - In Progress'</td></tr>
+<tr><td>QuoteAvailable</td><td>'Quote - Available' ← sole actionable state</td></tr>
+<tr><td>QuoteAccepted</td><td>'Quote - Accepted'</td></tr>
+<tr><td>QuoteDeclined</td><td>'Quote - Declined' ← terminal</td></tr>
+<tr><td>QuoteExpired</td><td>'Quote - Expired' ← terminal</td></tr>
+<tr><td>QuoteClosed</td><td>'Quote - Closed' ← terminal</td></tr>
+<tr><td>ReportIssued</td><td>'Report - Issued'</td></tr>
+<tr><td>ReportInProgress</td><td>'Report - In progress'</td></tr>
+<tr><td>ReportWithdrawn</td><td>'Report - Withdrawn' ← terminal</td></tr>
+<tr><td>ArtifactReceived</td><td>'Artefact - Received'</td></tr>
+</table></div>
+
+<h3>Hardcoded Configuration Values (Candidate for Externalisation)</h3>
+<div class="table-wrap"><table>
+<tr><th>Value</th><th>Current Setting</th><th>Source File:Line</th></tr>
+<tr><td>NMI ABN</td><td><code>74 599 608 295</code></td><td><code>summaryAndAccept.tsx:382</code></td></tr>
+<tr><td>NMI address</td><td>36 Bradfield Road, West Lindfield NSW 2070</td><td><code>summaryAndAccept.tsx:383</code></td></tr>
+<tr><td>Terms of Use version</td><td><code>"1"</code></td><td><code>terms-config.json:1</code></td></tr>
+<tr><td>Dashboard page size</td><td>10</td><td><code>dashboard/index.tsx:51</code></td></tr>
+<tr><td>Payment term trigger</td><td><code>'Prepaid'</code></td><td><code>paymentDetails.tsx:86</code></td></tr>
+<tr><td>Standard payment period</td><td>30 days</td><td><code>paymentDetails.tsx:88</code></td></tr>
+<tr><td>PDF page (Available/other)</td><td>2</td><td><code>helperFunctions.ts:134</code></td></tr>
+<tr><td>PDF page (Declined)</td><td>3</td><td><code>helperFunctions.ts:126</code></td></tr>
+<tr><td>PDF page (Accepted/Issued)</td><td>5</td><td><code>helperFunctions.ts:128</code></td></tr>
+<tr><td>ABN checksum modulus</td><td>89</td><td><code>common.ts:149</code></td></tr>
+<tr><td>Postcode range 1</td><td>200–299</td><td><code>stringExtensions.ts:352</code></td></tr>
+<tr><td>Postcode range 2</td><td>800–9999</td><td><code>stringExtensions.ts:353</code></td></tr>
+</table></div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODERNIZATION BRIEF
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="objective">
+<h2>Modernization Brief — Objective</h2>
+<div class="meta-strip">
+  <div class="meta-chip"><span>Version:</span>1.1</div>
+  <div class="meta-chip"><span>Status:</span><span style="color:var(--likely)">DRAFT — Pending approval</span></div>
+  <div class="meta-chip"><span>Pattern:</span>Refactor</div>
+  <div class="meta-chip"><span>Scope:</span>21–30 person-weeks</div>
+</div>
+<p>The NMI Customer Portal is architecturally sound — the domain model is clear, all dependencies are on current major versions, and the business workflows are well-defined. Prior security hardening work has already closed seven findings. The remaining principal risks are: the wizard engine's <code>[key: string]: any</code> interface erasing type-safety for all primary workflows; 26-location token-acquisition duplication; one High-severity IDOR awaiting backend confirmation; and zero unit tests for 53 documented business rules.</p>
+<p>The modernization program will refactor the existing codebase into the target repository in six phased increments, delivering a type-safe, single-build-system, well-tested application that can be confidently maintained by a new engineering team without institutional knowledge currently locked in source code.</p>
+</section>
+
+<!-- ── TARGET ARCHITECTURE ── -->
+<section class="section" id="target-arch">
+<h2>Target Architecture</h2>
+<div class="table-wrap"><table>
+<tr><th>Layer</th><th>Current</th><th>Target</th></tr>
+<tr><td>Language</td><td>TypeScript 5.9</td><td>TypeScript 5.9 (no change)</td></tr>
+<tr><td>UI framework</td><td>React 18</td><td>React 18 (no change)</td></tr>
+<tr><td>Auth</td><td>MSAL v3 (Azure AD B2C)</td><td>MSAL v3 (no change)</td></tr>
+<tr><td>Forms</td><td>Formik + Yup</td><td>Formik + Yup (no change)</td></tr>
+<tr><td>Production build</td><td><strong>Webpack 5</strong></td><td><strong>Vite 8</strong> — consolidate dual build system</td></tr>
+<tr><td>Unit tests</td><td><em>None in ClientApp/src</em></td><td><strong>Vitest ≥80% coverage on business rules</strong></td></tr>
+<tr><td>Token acquisition</td><td>26 duplicated call sites</td><td><code>useAuthenticatedClient</code> shared hook</td></tr>
+<tr><td>Wizard types</td><td><code>[key: string]: any</code></td><td>Fully typed <code>WizardStepProps&lt;T&gt;</code></td></tr>
+<tr><td>CSP</td><td>Trusted Types (closed issues)</td><td>Trusted Types — verify policy survives Vite build</td></tr>
+</table></div>
+
+<h3>C4 Container Diagram — End State</h3>
+<div class="diagram-wrap">
+<pre class="mermaid">
+C4Container
+  title NMI Customer Portal — Target Architecture (End State)
+  Person(customer, "NMI Customer", "Calibration / measurement service customer")
+  System_Boundary(portal, "NMI Customer Portal (target repo)") {
+    Container(spa, "React SPA", "React 18 + TypeScript + Vite", "Single-page application; client-side rendering")
+    Container(auth_mod, "Auth Module", "MSAL v3 + AccountProvider", "Azure AD B2C PKCE flow; org context; T&C gate")
+    Container(wizard_fw, "Wizard Framework", "WizardForm + WizardRoutedStep (typed)", "Multi-step form engine; draft-save; nav guard")
+    Container(api_layer, "API Layer", "useAuthenticatedClient hook + NSwag client", "Shared token acquisition; 11 typed API clients")
+    Container(val_lib, "Validation Library", "Yup + 19 custom extensions", "Portable; unit-tested; no React dependency")
+    Container(config_svc, "Config Service", "env.ts + externalised constants", "Runtime env vars + NMI ABN/address/page-numbers")
+    Container(test_suite, "Test Suite", "Vitest unit + Playwright BDD", "Business rule unit tests + E2E feature tests")
+  }
+  System_Ext(b2c, "Azure AD B2C", "OIDC/PKCE identity provider")
+  System_Ext(nmi_api, "NMI Backend REST API", "CRM-backed; 11 OpenAPI client classes")
+  System_Ext(appinsights, "Azure Application Insights", "Telemetry; error tracking")
+  System_Ext(ga, "Google Analytics GA4", "Usage analytics")
+  Rel(customer, spa, "Uses", "HTTPS / browser")
+  Rel(spa, auth_mod, "Bootstraps")
+  Rel(auth_mod, b2c, "PKCE auth redirect", "HTTPS")
+  Rel(api_layer, nmi_api, "REST calls", "HTTPS + Bearer token")
+  Rel(api_layer, auth_mod, "Token via useAuthenticatedClient")
+  Rel(spa, appinsights, "Telemetry", "HTTPS")
+  Rel(spa, ga, "Page views", "HTTPS")
+</pre>
+</div>
+</section>
+
+<!-- ── PHASES ── -->
+<section class="section" id="phases">
+<h2>Phased Sequence</h2>
+<div class="diagram-wrap">
+<pre class="mermaid">
+gantt
+  title NMI Portal Modernization — Phased Plan
+  dateFormat YYYY-MM-DD
+  section Phase 1
+    Security verification (3 items)      :p1, 2026-06-08, 1w
+    P0 characterization tests             :p1t, after p1, 2w
+  section Phase 2
+    Dead code & config externalisation    :p2, after p1t, 2w
+    Type safety — WizardStepProps         :p2t, after p1t, 2w
+  section Phase 3
+    useAuthenticatedClient hook           :p3, after p2, 2w
+    Pending-promise & dashboard bugs      :p3b, after p2, 1w
+  section Phase 4
+    Build consolidation (Webpack to Vite) :p4, after p3, 3w
+  section Phase 5
+    Business rule unit test suite         :p5, after p4, 4w
+  section Phase 6
+    Target repository migration & CI/CD   :p6, after p5, 3w
+</pre>
+</div>
+
+<div class="phase-grid">
+
+<div class="phase-card">
+  <div class="ph-num">Phase 1</div>
+  <div class="ph-title">Security Verification &amp; Remaining Fixes</div>
+  <div class="ph-effort">1–2 person-weeks</div>
+  <div class="ph-risk-Low">● Low risk</div>
+  <p>SEC-001 (sessionStorage timing), SEC-009 (MSAL timeout), SEC-011 (URL param validation) pre-completed in source snapshot — verify after migration. SEC-010 IDOR entry criterion <strong>MET</strong> — closed 2026-06-04 (CRD-035).</p>
+</div>
+
+<div class="phase-card">
+  <div class="ph-num">Phase 2</div>
+  <div class="ph-title">Type Safety &amp; Dead Code</div>
+  <div class="ph-effort">4–5 person-weeks</div>
+  <div class="ph-risk-Medium">● Medium risk</div>
+  <p>Type <code>WizardStepProps</code>; fix dead state (Debt #5); remove dead exports (Debt #6, #7); externalise NMI ABN/address and PDF page numbers to config.</p>
+</div>
+
+<div class="phase-card">
+  <div class="ph-num">Phase 3</div>
+  <div class="ph-title">Auth Token Centralisation &amp; Bug Fixes</div>
+  <div class="ph-effort">4–5 person-weeks</div>
+  <div class="ph-risk-Medium">● Medium risk</div>
+  <p>Extract <code>useAuthenticatedClient</code> hook eliminating 26 duplicates; fix permanently-pending promise (Debt #8); replace string path guards with <code>useMatch</code>.</p>
+</div>
+
+<div class="phase-card">
+  <div class="ph-num">Phase 4</div>
+  <div class="ph-title">Build Consolidation (Webpack → Vite)</div>
+  <div class="ph-effort">4–6 person-weeks</div>
+  <div class="ph-risk-High">● High risk</div>
+  <p>Replace Webpack 5 production build with Vite 8. Validate SCSS/Bootstrap shim, <code>window.*</code> env injection, CSP policy compatibility. Verify with Playwright BDD on Vite artifact.</p>
+</div>
+
+<div class="phase-card">
+  <div class="ph-num">Phase 5</div>
+  <div class="ph-title">Business Rule Unit Test Suite</div>
+  <div class="ph-effort">5–7 person-weeks</div>
+  <div class="ph-risk-Low">● Low risk</div>
+  <p>Write Vitest unit tests for all 53 business rules. Target: ≥80% line coverage on <code>validationSchemas/</code>, <code>routes/common/</code>, <code>authentication/</code>. All P0 rules at 100%.</p>
+</div>
+
+<div class="phase-card">
+  <div class="ph-num">Phase 6</div>
+  <div class="ph-title">Target Repository Migration &amp; CI/CD</div>
+  <div class="ph-effort">3–5 person-weeks</div>
+  <div class="ph-risk-Medium">● Medium risk</div>
+  <p>Move to target repo; configure GitHub Actions CI; add route-level lazy loading; security re-scan; UAT sign-off on all P0 rules with NMI business stakeholders.</p>
+</div>
+
+</div>
+
+<div class="table-wrap"><table>
+<tr><th>Phase</th><th>Scope</th><th>Effort (person-weeks)</th><th>Risk</th></tr>
+<tr><td>1 — Security verification</td><td>3 remaining open items (SEC-001, SEC-009, SEC-011)</td><td>1–2</td><td><span style="color:var(--closed)">Low</span></td></tr>
+<tr><td>2 — Type safety &amp; dead code</td><td>WizardStepProps, dead exports, config externalisation</td><td>4–5</td><td><span style="color:var(--likely)">Medium</span></td></tr>
+<tr><td>3 — Auth token centralisation</td><td><code>useAuthenticatedClient</code> hook, bug fixes</td><td>4–5</td><td><span style="color:var(--likely)">Medium</span></td></tr>
+<tr><td>4 — Build consolidation</td><td>Webpack → Vite</td><td>4–6</td><td><span style="color:var(--high)">High</span></td></tr>
+<tr><td>5 — Business rule test suite</td><td>53 rules, ≥80% coverage</td><td>5–7</td><td><span style="color:var(--closed)">Low</span></td></tr>
+<tr><td>6 — Target repo &amp; CI/CD</td><td>Migration, CI pipeline, go-live</td><td>3–5</td><td><span style="color:var(--likely)">Medium</span></td></tr>
+<tr><td><strong>Total</strong></td><td></td><td><strong>21–30 person-weeks</strong></td><td></td></tr>
+</table></div>
+</section>
+
+<!-- ── BEHAVIOR CONTRACT ── -->
+<section class="section" id="behavior-contract">
+<h2>Behavior Contract — P0 Rules</h2>
+<p>These rules must be proven equivalent before any phase ships. They form the mandatory regression suite. Rules marked ⚠️ require SME confirmation before Phase 2 starts.</p>
+<div class="table-wrap"><table>
+<tr><th>ID</th><th>Rule</th><th>Phase gate</th><th>SME blocker?</th></tr>
+<tr><td>RULE-001</td><td>Account creation redirect gate</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-002</td><td>Contact creation redirect gate</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-004</td><td>Terms of Use version gate</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-005</td><td>Branch selection gate</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-006</td><td>Quote status lifecycle (12 states)</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-007</td><td>Status → document mapping</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-010</td><td>Dashboard action menu by status</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-012</td><td>Decline is irreversible</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-013</td><td>RFQ submission is irreversible</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-014</td><td>Quote acceptance is irreversible</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-017</td><td>Payment terms: Prepaid vs 30-day</td><td>Phase 1</td><td>No</td></tr>
+<tr><td>RULE-022</td><td>ABN checksum algorithm</td><td>Phase 2</td><td>No</td></tr>
+<tr><td>RULE-035</td><td>Business name charset (ASIC-aligned)</td><td>Phase 2</td><td><strong>⚠️ YES — confirm &amp; handling</strong></td></tr>
+<tr><td>RULE-040</td><td>Quote acceptance T&amp;C checkbox mandatory</td><td>Phase 2</td><td>No</td></tr>
+<tr><td>RULE-050</td><td>NMI ABN hardcoded in contract display</td><td>Phase 2</td><td><strong>⚠️ YES — verify ABN is current</strong></td></tr>
+<tr><td>RULE-052</td><td>Terms of Use version configuration</td><td>Phase 2</td><td>No</td></tr>
+</table></div>
+</section>
+
+<!-- ── VALIDATION STRATEGY ── -->
+<section class="section" id="validation-strategy">
+<h2>Validation Strategy</h2>
+<div class="table-wrap"><table>
+<tr><th>Phase</th><th>Strategy</th><th>Rationale</th></tr>
+<tr><td>1 — Security verification</td><td>Manual code review + Playwright BDD regression</td><td>Fixes are small, targeted, no user-visible behavior change. Also verify previously closed items are intact in target repo environment.</td></tr>
+<tr><td>2 — Type safety &amp; dead code</td><td>Compiler-driven + Storybook visual regression</td><td>TypeScript with <code>noImplicitAny: true</code> rejects any wrong-typed prop. Dead code removal verified by grep for zero remaining references.</td></tr>
+<tr><td>3 — Auth token centralisation</td><td>Contract tests + Playwright BDD wizard flows</td><td>All four wizard flows exercised E2E. <code>useAuthenticatedClient</code> hook unit-tested with Vitest mock of <code>acquireTokenSilent</code>.</td></tr>
+<tr><td>4 — Build consolidation</td><td>Artifact diff + performance benchmarks</td><td>Run Playwright BDD against Vite-built artifact. Compare bundle size and LCP/TTI vs prior Webpack build.</td></tr>
+<tr><td>5 — Business rule tests</td><td>Characterization tests (Given/When/Then) + property-based tests for ABN algorithm</td><td>All P0 rules use Given/When/Then from BUSINESS_RULES.md. ABN uses fast-check against corpus of known-valid/invalid ABNs.</td></tr>
+<tr><td>6 — Target repo migration</td><td>Parallel-run + manual UAT</td><td>Playwright BDD on new environment. Manual UAT of all P0 rule flows with NMI business stakeholders before production go-live.</td></tr>
+</table></div>
+</section>
+
+<!-- ── OPEN QUESTIONS ── -->
+<section class="section" id="open-questions">
+<h2>Open Questions</h2>
+<ul class="check-list">
+  <li><div class="chk" style="background:#22c55e"></div><div><strong>SEC-010 IDOR (backend):</strong> <strong>CONFIRMED 2026-06-04 — CLOSED (CRD-035).</strong> Backend team confirmed server-side org-scoping enforcement. Pentest-confirmed remediation prior to go-live. Phase 1 entry criterion met.</div></li>
+  <li><div class="chk"></div><div><strong>RULE-035 ASIC charset:</strong> Can business names contain <code>&amp;</code> (e.g., "Smith &amp; Jones Calibration")? Current regex excludes it. If wrong, account creation silently rejects valid businesses.</div></li>
+  <li><div class="chk"></div><div><strong>RULE-050 NMI ABN:</strong> Is <code>74 599 608 295</code> the current NMI registered ABN? Is <code>36 Bradfield Road, West Lindfield NSW 2070</code> the current registered address? Both appear in the legal-contract-equivalent Accept Quote summary page.</div></li>
+  <li><div class="chk"></div><div><strong>P0 rules BA sign-off:</strong> Have NMI business analysts reviewed and approved the full P0 rule list in the Behavior Contract? Required before Phase 2 starts.</div></li>
+  <li><div class="chk"></div><div><strong>Terms of Use version:</strong> Is version <code>"1"</code> correct? Will the migration trigger a re-acceptance requirement for all users? If yes, a communications plan is needed before Phase 6 go-live.</div></li>
+  <li><div class="chk"></div><div><strong>RULE-008 PDF page numbers:</strong> Are page numbers 2, 3, and 5 tied to the current PDF template version? Will templates change during the program? If yes, config externalisation moves from Phase 2 to Phase 1.</div></li>
+  <li><div class="chk"></div><div><strong>RULE-015 recalibration for ReportInProgress:</strong> Is allowing recalibration while a current calibration is still in progress intentional policy?</div></li>
+  <li><div class="chk"></div><div><strong>Target repository:</strong> Has the target repository been created and team access provisioned? Phase 6 requires this. If not, becomes a Phase 5 prerequisite.</div></li>
+</ul>
+</section>
+
+<!-- ── APPROVAL BLOCK ── -->
+<section class="section" id="approval">
+<h2>Approval Block</h2>
+<p>Approval of this brief authorises the engineering team to proceed with Phase 1 only. Subsequent phases require the exit criteria of the preceding phase to be met. All open questions must be resolved before the relevant phase starts. P0 SME blockers (RULE-035, RULE-050) must be resolved before Phase 2 starts.</p>
+<div class="approval-block">
+  <h3>Approval Sign-Off</h3>
+  <div style="margin-bottom:1.5rem">
+    <label style="display:flex;gap:.75rem;margin-bottom:.75rem;cursor:pointer">
+      <input type="checkbox" style="width:16px;height:16px;accent-color:var(--accent)">
+      <span>Phase 1 only (Security verification — 1–2 person-weeks)</span>
+    </label>
+    <label style="display:flex;gap:.75rem;cursor:pointer">
+      <input type="checkbox" style="width:16px;height:16px;accent-color:var(--accent)">
+      <span>Full plan (Phases 1–6 — 21–30 person-weeks)</span>
+    </label>
+  </div>
+  <div class="sig-line">
+    <div class="sig-field"><div class="sig-label">Approved by</div></div>
+    <div class="sig-field"><div class="sig-label">Title</div></div>
+    <div class="sig-field" style="max-width:140px"><div class="sig-label">Date</div></div>
+  </div>
+  <div class="sig-line">
+    <div class="sig-field"><div class="sig-label">Conditions / exceptions</div></div>
+  </div>
+  <div class="sig-line">
+    <div class="sig-field"><div class="sig-label">Engineering lead</div></div>
+    <div class="sig-field" style="max-width:140px"><div class="sig-label">Date</div></div>
+  </div>
+  <div class="sig-line">
+    <div class="sig-field"><div class="sig-label">Security lead</div></div>
+    <div class="sig-field" style="max-width:140px"><div class="sig-label">Date</div></div>
+  </div>
+  <div class="sig-line">
+    <div class="sig-field"><div class="sig-label">NMI business analyst</div></div>
+    <div class="sig-field" style="max-width:140px"><div class="sig-label">Date</div></div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     SOURCE ARTIFACTS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="artifacts">
+<h2>Source Artifacts</h2>
+<div class="table-wrap"><table>
+<tr><th>File</th><th>Purpose</th><th>How generated</th></tr>
+<tr><td><code>analysis/ASSESSMENT.md</code></td><td>Full assessment with reconciliation table, debt, security, effort</td><td><code>/modernize-assess</code> + 3 parallel subagents</td></tr>
+<tr><td><code>analysis/ARCHITECTURE.mmd</code></td><td>Domain dependency diagram (Mermaid)</td><td><code>/modernize-assess</code></td></tr>
+<tr><td><code>analysis/TOPOLOGY.html</code></td><td>Interactive topology maps (3 diagrams with architect observations)</td><td><code>/modernize-map</code></td></tr>
+<tr><td><code>analysis/topology.json</code></td><td>Machine-readable graph data: domain edges, API lineage, entry routes, dead candidates</td><td><code>extract_topology.py</code></td></tr>
+<tr><td><code>analysis/extract_topology.py</code></td><td>Re-runnable topology extraction script</td><td><code>/modernize-map</code></td></tr>
+<tr><td><code>analysis/call-graph.mmd</code></td><td>Module call graph (standalone Mermaid)</td><td><code>/modernize-map</code></td></tr>
+<tr><td><code>analysis/data-lineage.mmd</code></td><td>API data lineage diagram (standalone Mermaid)</td><td><code>/modernize-map</code></td></tr>
+<tr><td><code>analysis/critical-path.mmd</code></td><td>RFQ end-to-end critical path (standalone Mermaid)</td><td><code>/modernize-map</code></td></tr>
+<tr><td><code>analysis/BUSINESS_RULES.md</code></td><td>All 53 business rule cards (full Given/When/Then specs)</td><td><code>/modernize-extract-rules</code> + 3 parallel subagents</td></tr>
+<tr><td><code>analysis/DATA_OBJECTS.md</code></td><td>Core DTOs, enums, hardcoded config catalog</td><td><code>/modernize-extract-rules</code></td></tr>
+<tr><td><code>analysis/MODERNIZATION_BRIEF.md</code></td><td>Full steering committee brief with approval block</td><td><code>/modernize-brief</code></td></tr>
+<tr><td><code>analysis/portal.measurement.gov.au/ASSESSMENT_old.md</code></td><td>Prior snapshot-era assessment (superseded)</td><td>Earlier session</td></tr>
+<tr><td><code>analysis/portal.measurement.gov.au/ARCHITECTURE_old.mmd</code></td><td>Prior file-level architecture diagram (superseded)</td><td>Earlier session</td></tr>
+</table></div>
+</section>
+
+<footer>
+  NMI Customer Portal — Modernization Report · v1.1 · 2026-06-01 ·
+  Produced by <code>/modernize-assess</code> → <code>/modernize-map</code> → <code>/modernize-extract-rules</code> → <code>/modernize-brief</code>
+</footer>
+
+</main>
+
+<script>
+// Active sidebar link on scroll
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('#sidebar a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`#sidebar a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { rootMargin: '-10% 0px -80% 0px' });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

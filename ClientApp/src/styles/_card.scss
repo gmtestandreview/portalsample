@@ -1,0 +1,118 @@
+// To be reviewed and updated
+.standard-pathway {
+    box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.2);
+    transition-property: transform, -webkit-transform;
+    transition-duration: 0.4s, 0.4s;
+    transition-timing-function: ease, ease;
+    transition-delay: 0s, 0s;
+    border-top: solid 4px $standard-pathway-border-color-top;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: $white;
+    background-clip: border-box;
+    border-radius: 0;
+    text-decoration: none;
+    min-width: 10.5rem;
+    min-height: 10.25rem;
+    margin-bottom: 1rem;
+    color: $body-color;
+    padding: 1.5rem;
+  
+    @include media-breakpoint-up(md) {  
+        height: 100%;
+    }
+  
+    .standard-pathway-body {
+        flex: 1 1 auto;
+        font-weight: bold;
+    }
+  
+    .standard-pathway-footer {
+        font-weight: bold;
+        font-size: 1rem;
+        line-height: 1.25rem;
+        height: 2rem;
+        align-items: center;
+        display: flex;
+        color: $standard-pathway-footer-color;
+  
+        .digital-identity {
+          height: 2rem;
+        }
+
+        .icon {
+          color: $nmi-blue;
+          &:after {
+            // Display as internal link icon
+            font-family: 'nmi-iconfont';
+            font-style: normal;
+            content: $icon-arrow-right;
+          }
+        }
+      }
+  
+    &[target='_blank'] {
+      .standard-pathway-footer {
+        .icon {
+          &:after {
+            // Display as external link icon
+            content: $icon-external;
+          }
+        }
+      }
+    }
+    &:focus {
+      transform: none;
+    }
+  
+    &:hover,
+    &:active {
+        color: $body-color;
+        transform: translateY(-0.1875rem);
+        & .standard-pathway-footer {
+          span {
+            text-decoration: underline;
+          }
+        }
+    }
+  
+    .card-title {
+        min-height: 70px;
+    }
+}
+
+.printable-card {
+  border: dashed 2px $nmi-dark-gray;
+}
+
+.dashboard-items {
+  .card {
+    border-color: transparent;
+    border-bottom: 4px solid transparent;
+    &:focus, &:hover,
+    &:focus-within {
+      border-bottom-color: $disr-light-blue;
+      .actions-menu {
+        .actions-icon {
+          background: $disr-light-blue; //$dashboard-background;
+        }
+      }
+    }
+  }
+}
+
+.message-items {
+   .card {
+    &.selectedMessage {}
+    .card-body {
+      border-color: transparent;
+      border-left: 3px solid transparent;
+      &.unread {
+        border-left-color: $nmi-blue;
+      }
+    }
+  }
+}

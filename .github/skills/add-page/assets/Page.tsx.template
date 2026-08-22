@@ -1,0 +1,16 @@
+import { PageContent } from '@ag.ds-next/react/content';
+import { Prose } from '@ag.ds-next/react/prose';
+import { AppLayout } from '../AppLayout';
+
+export const {{PageName}} = () => {
+	return (
+		<AppLayout>
+			<PageContent>
+				<Prose>
+					<h1>{{PageName}}</h1>
+					<p>Add your content here.</p>
+				</Prose>
+			</PageContent>
+		</AppLayout>
+	);
+};

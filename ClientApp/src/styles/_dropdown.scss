@@ -1,0 +1,90 @@
+.actions-menu {
+    .dropdown-toggle {
+      font-weight: bold;
+      padding: 0;
+      &.dropdown-toggle-none {
+        &:after {
+          content: '';
+        }
+      }
+      &.actions-icon {
+        padding: 0 14px;
+        border-radius: 12px;
+        color: $primary;
+        [class^="icon-"], [class*=" icon-"] {
+          font-size: 2.5rem;
+          vertical-align: text-bottom;
+        }
+        &:focus,
+        &:hover {
+          background: $disr-light-blue; //tint-color($nmi-coastline-bay-primary, 30%);
+        }
+        &:after {
+          display:none;
+        }
+      }
+    }
+    .dropdown-menu-dark {
+      @include dropdownMenuDark;
+    }
+    &.dash-item-actions {
+      .dropdown-menu-dark {
+        @include dropdownMenuBlue;
+      }
+    }
+}
+
+#search-filter-dropdown {
+  &.show.dropdown {
+      &:after {
+        // Render triangle pointing up for search filter dropdown
+        content: "";
+        position: absolute;
+        top: 3.2rem;
+        right: 4vw;
+        border-style: solid;
+        border-color: transparent;
+        border-width: 0px 24px;
+        border-bottom: 24px solid $dropdown-bg;
+        z-index: 10001; // +1 index higher than the dropdown
+      }
+  }
+  #filter-dropdown {
+    // Custom Filter button style based on btn-primary and btn-secondary
+    outline-color: transparent;
+    background: transparent;
+    border-color: transparent;
+    padding-right: 1rem; // Hide dropdown caret padding on mobile view
+    &:focus {
+      color: $primary;
+      outline-color: inherit;
+      background: transparent;
+    }
+    &:hover, &:active, &.show {
+      color: $white;
+      outline-color: transparent;
+      background: $primary;
+      @extend .shadow;
+    }
+    &:after {
+      // Hide dropdown caret on mobile view
+      display: none;
+    }
+    @include media-breakpoint-down(md) {
+      border: none;
+    }
+    @include media-breakpoint-up(md) {
+      // Show dropdown caret on tablet/desktop views
+      padding-right: 1.75rem; //$btn-padding-x; //restore padding
+      &:after {
+        display: inline-block;
+      }
+    }
+  }  
+  .filter-menu {
+    margin: 10px auto;
+    padding: 1rem;
+    min-width: 98.75vw;//100vw;
+    border-color:$dropdown-bg;
+  }
+}

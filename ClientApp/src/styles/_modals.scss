@@ -1,0 +1,25 @@
+
+.modal-title {
+    color: $nmi-primary;
+    line-height: 32px;
+    @include media-breakpoint-up(lg) {
+        line-height: $modal-title-line-height;
+    }
+}
+
+.modal-content {
+    border-top: 4px solid $nmi-header-primary; //$cla-primary;
+    padding: 0.25rem;
+
+    @include media-breakpoint-up(lg) {
+        padding: 1.5rem 2rem;
+    }
+}
+
+.modal-footer {
+    justify-content: space-between;
+}
+
+.modal-backdrop.show {
+    opacity: 0.5;
+}

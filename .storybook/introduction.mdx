@@ -1,0 +1,51 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Documentation/Getting Started" />
+
+# NMI Portal Storybook
+
+**Component and route documentation for the NMI customer portal**
+
+Welcome to Storybook for the NMI Services Portal. This workspace documents reusable components and route-level stories used by the React frontend in `ClientApp/src/**`.
+
+## What This Storybook Covers
+
+- Reusable UI components under `ClientApp/src/components/**`
+- Route stories under `ClientApp/src/routes/**`
+- Migration readiness docs under `Migration/**`
+- Story-level accessibility and behavior examples
+
+## Run Storybook
+
+```bash
+npm run storybook
+```
+
+## Storybook BDD Workflow
+
+When feature files or step definitions change, regenerate first and then execute Playwright:
+
+```bash
+npx bddgen
+npx playwright test --grep "@storybook" --reporter=list
+```
+
+Current Storybook-tagged baseline in this snapshot: **129 passed**.
+
+## Contributing Guidelines
+
+When adding or updating stories:
+
+1. Add or update `.stories.tsx` content.
+2. Keep story IDs stable when possible to avoid BDD drift.
+3. Use the shared Storybook providers and avoid adding nested routers.
+4. Add or update BDD feature coverage where behavior is user-facing.
+5. Run `npx bddgen` before Playwright.
+
+## Related Docs
+
+- `docs/STORYBOOK-MIGRATION-READINESS.md`
+- `docs/TESTING.md`
+- `docs/CONVENTIONS.md`
+
+Use the sidebar to browse component stories, route stories, and migration docs. Keep this documentation aligned with real story behavior and the Storybook BDD suite.

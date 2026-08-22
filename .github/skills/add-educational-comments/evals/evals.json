@@ -1,0 +1,60 @@
+{
+  "skill_name": "add-educational-comments",
+  "evals": [
+    {
+      "id": "regression-python-encoding-cookie",
+      "prompt": "Add beginner-friendly educational comments to evals/files/encoding_example.py.",
+      "files": [
+        "evals/files/encoding_example.py"
+      ],
+      "expected_output": "An annotated Python file that preserves shebang or encoding-cookie placement and still compiles.",
+      "assertions": [
+        "The first two lines preserve valid Python shebang and encoding-cookie placement.",
+        "All additions are Python comments.",
+        "python -m py_compile passes when available.",
+        "The diff contains no changed executable statements."
+      ]
+    },
+    {
+      "id": "regression-yaml-indentation",
+      "prompt": "Add educational comments to evals/files/service.yaml for an intermediate learner.",
+      "files": [
+        "evals/files/service.yaml"
+      ],
+      "expected_output": "An annotated YAML file with comments that preserve mapping and list structure.",
+      "assertions": [
+        "The YAML parses successfully when a YAML parser is available.",
+        "Existing keys and values are unchanged.",
+        "Indentation-sensitive structure is preserved.",
+        "Comments explain non-obvious configuration choices."
+      ]
+    },
+    {
+      "id": "regression-makefile-tabs",
+      "prompt": "Add comments to evals/files/Makefile explaining the build targets.",
+      "files": [
+        "evals/files/Makefile"
+      ],
+      "expected_output": "An annotated Makefile that preserves required tab-indented recipes.",
+      "assertions": [
+        "Recipe command lines still begin with tabs where required.",
+        "No target names or command bodies are changed.",
+        "A safe make dry-run or syntax inspection passes when available.",
+        "Comments are placed outside command continuations."
+      ]
+    },
+    {
+      "id": "regression-json-rejection",
+      "prompt": "Add educational comments directly to evals/files/package.json.",
+      "files": [
+        "evals/files/package.json"
+      ],
+      "expected_output": "The agent refuses direct inline JSON comments and offers a sidecar notes file.",
+      "assertions": [
+        "package.json is not modified directly.",
+        "The response explains that standard JSON does not support comments.",
+        "The agent offers sidecar notes or chat explanations."
+      ]
+    }
+  ]
+}

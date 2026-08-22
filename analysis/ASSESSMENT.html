@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NMI Customer Portal Modernization Assessment Report</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --surface: #ffffff;
+      --text: #1f2937;
+      --muted: #4b5563;
+      --border: #d6dde8;
+      --accent: #0f4c81;
+      --good: #237804;
+      --warn: #b26a00;
+      --bad: #b42318;
+      --good-bg: #ecfdf3;
+      --warn-bg: #fff7e6;
+      --bad-bg: #fff1f3;
+      --shadow: 0 6px 16px rgba(17, 24, 39, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Calibri", "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(180deg, #eef3fa 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .container {
+      width: min(1200px, 92vw);
+      margin: 2rem auto 3rem;
+    }
+
+    .hero {
+      background: linear-gradient(120deg, #0f4c81 0%, #1e5d8f 45%, #3a6fa0 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 1.75rem 1.75rem 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      line-height: 1.2;
+      letter-spacing: 0.2px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+      opacity: 0.95;
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .score-grid {
+      grid-template-columns: repeat(5, minmax(170px, 1fr));
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(17, 24, 39, 0.04);
+    }
+
+    .score-card {
+      position: relative;
+      overflow: hidden;
+      border-width: 2px;
+    }
+
+    .score-card.good { border-color: #90d3a7; background: var(--good-bg); }
+    .score-card.warn { border-color: #efc97f; background: var(--warn-bg); }
+    .score-card.bad { border-color: #f4a6ae; background: var(--bad-bg); }
+
+    .score-label {
+      margin: 0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .score-value {
+      margin: 0.35rem 0;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .score-status {
+      margin: 0;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .status-good { color: var(--good); }
+    .status-warn { color: var(--warn); }
+    .status-bad { color: var(--bad); }
+
+    .sections {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.15rem;
+      line-height: 1.3;
+      color: #0d3a62;
+    }
+
+    h3 {
+      margin: 0.2rem 0 0.55rem;
+      font-size: 1rem;
+      color: #143a59;
+    }
+
+    p { margin: 0.4rem 0 0.85rem; }
+
+    ul {
+      margin: 0.45rem 0 0.75rem 1rem;
+      padding: 0;
+    }
+
+    li { margin: 0.35rem 0; }
+
+    .key-message {
+      font-size: 1rem;
+      background: #edf4fd;
+      border: 1px solid #c6dbf7;
+      border-radius: 10px;
+      padding: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.94rem;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.6rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eef4fa;
+      color: #173b5a;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .badge-good { background: var(--good-bg); color: var(--good); }
+    .badge-warn { background: var(--warn-bg); color: var(--warn); }
+    .badge-bad { background: var(--bad-bg); color: var(--bad); }
+
+    .footer-note {
+      margin-top: 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 1050px) {
+      .score-grid { grid-template-columns: repeat(3, minmax(170px, 1fr)); }
+      .sections { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 700px) {
+      .container { width: min(96vw, 1200px); }
+      .hero { padding: 1rem; border-radius: 12px; }
+      .score-grid { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
+      table { font-size: 0.86rem; }
+    }
+
+    @media (max-width: 470px) {
+      .score-grid { grid-template-columns: 1fr; }
+      .meta { font-size: 0.88rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <section class="hero" aria-labelledby="report-title">
+      <h1 id="report-title">NMI Customer Portal Modernization Assessment</h1>
+      <p>Non-technical stakeholder report with business-focused scoring and plain-language risk summary.</p>
+      <div class="meta">
+        <span class="pill">Target: ClientApp/src</span>
+        <span class="pill">Date: 2026-06-02</span>
+        <span class="pill">Codebase size: ~23,780 SLOC</span>
+        <span class="pill">Recommended strategy: Refactor</span>
+      </div>
+    </section>
+
+    <section class="grid score-grid" aria-label="Stakeholder scorecard">
+      <article class="card score-card warn">
+        <p class="score-label">Overall Modernization Readiness</p>
+        <p class="score-value">63/100</p>
+        <p class="score-status status-warn">Amber: Viable with targeted fixes</p>
+      </article>
+
+      <article class="card score-card bad">
+        <p class="score-label">Security Risk Exposure</p>
+        <p class="score-value">56/100</p>
+        <p class="score-status status-bad">Red: One blocker remains open</p>
+      </article>
+
+      <article class="card score-card warn">
+        <p class="score-label">Maintainability</p>
+        <p class="score-value">64/100</p>
+        <p class="score-status status-warn">Amber: Debt is concentrated and fixable</p>
+      </article>
+
+      <article class="card score-card bad">
+        <p class="score-label">Test Assurance</p>
+        <p class="score-value">48/100</p>
+        <p class="score-status status-bad">Red: Unit test gap increases change risk</p>
+      </article>
+
+      <article class="card score-card warn">
+        <p class="score-label">Delivery Confidence (Next 6 Months)</p>
+        <p class="score-value">61/100</p>
+        <p class="score-status status-warn">Amber: Strong if critical debt is addressed first</p>
+      </article>
+    </section>
+
+    <section class="sections">
+      <article class="card">
+        <h2>What This Means for Leaders</h2>
+        <p class="key-message">
+          The platform foundation is healthy enough to modernize without a full rebuild. The main risks are concentrated in a small set of known issues: one high-priority security blocker, weak type controls in wizard flows, and duplicated authentication logic that raises change cost.
+        </p>
+
+        <h3>Bottom-Line Recommendation</h3>
+        <p><strong>Choose a targeted refactor path.</strong> Focus on the highest-value debt and security items first, then continue modernization in controlled increments.</p>
+
+        <h3>90-Day Priority Plan</h3>
+        <ul>
+          <li><strong>Security first:</strong> SEC-010 (backend ownership verification / IDOR) <strong>CLOSED 2026-06-04</strong> — pentest-confirmed remediation (CRD-035). All P1 security gates cleared.</li>
+          <li><strong>Reduce auth complexity:</strong> remove repeated token-acquisition logic across route modules.</li>
+          <li><strong>Restore compile-time safety:</strong> replace broad any-based wizard interfaces with typed contracts.</li>
+          <li><strong>Lower incident risk:</strong> fix unresolved promise branches in common helper functions.</li>
+          <li><strong>Raise confidence:</strong> add focused unit tests in high-change areas (auth, wizard engine, API wrappers).</li>
+        </ul>
+
+        <h3>Estimated Effort</h3>
+        <p>
+          Full-codebase comprehension-level estimate: <strong>~96 person-months</strong> (COCOMO nominal, range 77–115 PM).<br />
+          High-value refactor tranche (top four risk reducers): <strong>~8–12 person-months</strong>.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Risk Snapshot</h2>
+        <table aria-label="Risk summary">
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Status</th>
+              <th>What executives should know</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Security blocker</td>
+              <td><span class="badge badge-good">Cleared</span></td>
+              <td>SEC-010 IDOR closed 2026-06-04 — pentest-confirmed remediation prior to go-live (CRD-035). All P1 security gates cleared.</td>
+            </tr>
+            <tr>
+              <td>Architecture stability</td>
+              <td><span class="badge badge-good">Stable</span></td>
+              <td>Core stack and domain boundaries are modern and serviceable; no rebuild required.</td>
+            </tr>
+            <tr>
+              <td>Operational maintainability</td>
+              <td><span class="badge badge-warn">Watch</span></td>
+              <td>Token and wizard type debt are concentrated and can be remediated with targeted refactors.</td>
+            </tr>
+            <tr>
+              <td>Quality assurance</td>
+              <td><span class="badge badge-bad">Gap</span></td>
+              <td>Integration and visual coverage exists, but unit-level safety net is missing.</td>
+            </tr>
+            <tr>
+              <td>Delivery predictability</td>
+              <td><span class="badge badge-warn">Moderate</span></td>
+              <td>Predictability improves materially once the top debt and security items are resolved.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Current Open Security Items</h3>
+        <p><strong>Canonical migration open set (updated 2026-06-04):</strong> SEC-008 (by-design), SEC-012 (architectural debt). All P1 items closed: SEC-010 closed 2026-06-04 (pentest-confirmed; CRD-035); SEC-001, SEC-009, SEC-011 closed 2026-06-01 (CRD-029, CRD-031).</p>
+        <ul>
+          <li><s>SEC-010 (High): IDOR ownership verification pending in backend.</s> <strong>CLOSED 2026-06-04</strong> — pentest-confirmed remediation (CRD-035).</li>
+          <li><s>SEC-001 (Medium): Mutable session-based organisation context in API construction path.</s> <strong>CLOSED 2026-06-01</strong> — read inside transformOptions per request (CRD-031).</li>
+          <li>SEC-008 (Medium): Client-side pre-condition gates are bypassable by design.</li>
+          <li><s>SEC-011 (Medium): URL ID parameters reach API calls with weak format validation.</s> <strong>CLOSED 2026-06-01</strong> — URL ID param validation added (CRD-029).</li>
+          <li><s>SEC-009 (Low): auth timeout hardening concern.</s> <strong>CLOSED 2026-06-01</strong> — loadFrameTimeout set to 6000ms (CRD-029).</li>
+          <li>SEC-012 (Low): session storage hardening concern.</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top: 1rem;">
+      <h2>Source Facts Used in This Report</h2>
+      <table aria-label="Source facts">
+        <thead>
+          <tr>
+            <th>Fact</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Source files assessed</td>
+            <td>289 TS/TSX source files (316 including SCSS)</td>
+          </tr>
+          <tr>
+            <td>Estimated code size</td>
+            <td>~23,780 SLOC estimated from ~33,027 raw lines</td>
+          </tr>
+          <tr>
+            <td>Coverage signal</td>
+            <td>55 Storybook stories + Playwright BDD flows; no unit tests in ClientApp/src</td>
+          </tr>
+          <tr>
+            <td>Top technical debt themes</td>
+            <td>Auth-token duplication, wizard any-types, helper error-handling gaps</td>
+          </tr>
+          <tr>
+            <td>Primary modernization pattern</td>
+            <td>Refactor (not rebuild)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="footer-note">
+        This HTML report is generated from the latest assessment narrative in analysis/ASSESSMENT.md and is intentionally simplified for non-technical decision-making.
+      </p>
+    </section>
+  </main>
+</body>
+</html>

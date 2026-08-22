@@ -1,0 +1,48 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      react-family:
+        patterns:
+          - 'react'
+          - 'react-dom'
+          - '@types/react*'
+      vite-family:
+        patterns:
+          - 'vite'
+          - '@vitejs/*'
+      tanstack-family:
+        patterns:
+          - '@tanstack/*'
+      msal-family:
+        patterns:
+          - '@azure/msal*'
+      testing-family:
+        patterns:
+          - 'vitest'
+          - '@testing-library/*'
+          - '@playwright/*'
+          - 'playwright'
+      storybook-family:
+        patterns:
+          - 'storybook'
+          - '@storybook/*'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
+
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday

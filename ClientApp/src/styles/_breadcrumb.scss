@@ -1,0 +1,21 @@
+.breadcrumb {
+  margin-bottom: 0;
+    .breadcrumb-item {
+        + .breadcrumb-item::before {
+          align-self: baseline;
+        }
+    }      
+    @include media-breakpoint-down(sm) {
+      // Show only the last clickable link in breadcrumb on mobile
+      .with-link {
+        display: none;
+      }
+      .with-link:nth-last-child(2) {
+        display: inline-block;
+        a {
+          padding:4px 0;
+        }
+      }
+    }
+  }
+  

@@ -1,0 +1,70 @@
+{
+  "skill_path": "/mnt/data/current_pack_inspect/add-educational-comments-download-pack/add-educational-comments/SKILL.md",
+  "sha256_16": "553c141395b082e8",
+  "line_count": 657,
+  "checks": [
+    {
+      "check": "frontmatter_valid",
+      "passed": true,
+      "evidence": "frontmatter fields: ['name', 'description']"
+    },
+    {
+      "check": "skill_md_under_500_lines",
+      "passed": false,
+      "evidence": "line_count=657"
+    },
+    {
+      "check": "examples_moved_to_references",
+      "passed": false,
+      "evidence": "reference_exists=False"
+    },
+    {
+      "check": "validation_matrix_moved_to_references",
+      "passed": false,
+      "evidence": "reference_exists=False"
+    },
+    {
+      "check": "regression_details_moved_to_references",
+      "passed": false,
+      "evidence": "reference_exists=False"
+    },
+    {
+      "check": "language_gotchas_moved_to_references",
+      "passed": false,
+      "evidence": "reference_exists=False"
+    },
+    {
+      "check": "explicit_reference_load_triggers",
+      "passed": false,
+      "evidence": "missing_triggers=['references/supported-unsupported-files.md', 'references/comment-syntax-gotchas.md', 'references/regression-checks.md', 'references/fetch-list-handling.md', 'references/examples.md', 'assets/final-report-template.md']"
+    },
+    {
+      "check": "static_first_validation_hierarchy",
+      "passed": false,
+      "evidence": "missing static-first hierarchy"
+    },
+    {
+      "check": "trigger_evals_present",
+      "passed": false,
+      "evidence": "exists=False"
+    },
+    {
+      "check": "near_miss_negative_prompts_present",
+      "passed": false,
+      "evidence": "trigger-evals.json missing"
+    },
+    {
+      "check": "compatibility_frontmatter",
+      "passed": false,
+      "evidence": "compatibility=None"
+    },
+    {
+      "check": "final_report_template_asset",
+      "passed": false,
+      "evidence": "exists=False"
+    }
+  ],
+  "passed": 1,
+  "total": 12,
+  "pass_rate": 0.08333333333333333
+}

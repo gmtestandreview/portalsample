@@ -1,0 +1,254 @@
+import { Meta, Title, Subtitle, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import * as AccordionStories from './Accordion.stories';
+import DocsTable from '../../storybook/DocsTable';
+
+<Meta of={AccordionStories} />
+
+<Title />
+
+<Subtitle>Collapsible content sections for organizing information hierarchically</Subtitle>
+
+## Accordion Components
+
+The Accordion system provides expandable/collapsible sections for organizing complex information. It consists of two key components: `CustomAccordion` (the container) and `CustomAccordionBody` (individual items).
+
+### Use Cases
+
+- **Multi-step wizards** — Accordion-based form workflows
+- **FAQ sections** — Frequently asked questions
+- **Settings panels** — Grouped configuration options
+- **Product specifications** — Detailed information organization
+- **Disclosure hierarchies** — Progressive information revelation
+
+### Key Features
+
+- **Keyboard Navigation** — Arrow keys, Tab, and Enter support
+- **ARIA Semantics** — Proper roles and attributes for screen readers
+- **Multi-line Headers** — Support for complex header layouts
+- **Bootstrap Integration** — NMI design system styling
+- **Controlled & Uncontrolled** — Flexible expand/collapse management
+
+<Primary />
+
+## Accordion Variations
+
+<Stories />
+
+## Props
+
+<Controls />
+
+## Implementation Guide
+
+### Basic Accordion Setup
+
+```tsx
+import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
+
+export function BasicAccordion() {
+  return (
+    <CustomAccordion>
+      <CustomAccordionBody 
+        eventKey="0"
+        name="Section One"
+      >
+        Content for section one
+      </CustomAccordionBody>
+      <CustomAccordionBody 
+        eventKey="1"
+        name="Section Two"
+      >
+        Content for section two
+      </CustomAccordionBody>
+    </CustomAccordion>
+  );
+}
+```
+
+### Multi-Line Header Example
+
+```tsx
+import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
+
+export function MultiLineAccordion() {
+  return (
+    <CustomAccordion>
+      <CustomAccordionBody 
+        eventKey="0"
+        name="Organization Name"
+        namePartTwo="ABN: 12 345 678 901"
+        namePartThree="Type: Educational Institution"
+      >
+        Detailed organization information goes here...
+      </CustomAccordionBody>
+    </CustomAccordion>
+  );
+}
+```
+
+### Initially Expanded
+
+```tsx
+import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
+
+export function ExpandedAccordion() {
+  return (
+    <CustomAccordion activeKey="0" defaultActiveKey="0">
+      <CustomAccordionBody 
+        eventKey="0"
+        name="Initially Open"
+      >
+        This section starts open
+      </CustomAccordionBody>
+    </CustomAccordion>
+  );
+}
+```
+
+## CustomAccordion Props
+
+<DocsTable
+  headers={['Prop', 'Type', 'Default', 'Description']}
+  rows={[
+    ['children', 'React.ReactNode', 'required', 'Accordion body items'],
+    ['activeKey', 'string | number', '-', 'Currently expanded key (controlled)'],
+    ['defaultActiveKey', 'string | number', '-', 'Initially expanded key (uncontrolled)'],
+    ['onSelect', '(key) => void', '-', 'Callback when section toggles'],
+  ]}
+/>
+
+## CustomAccordionBody Props
+
+<DocsTable
+  headers={['Prop', 'Type', 'Default', 'Description']}
+  rows={[
+    ['eventKey', 'string | number', 'required', 'Unique identifier for section'],
+    ['name', 'string', 'required', 'Primary header text'],
+    ['namePartTwo', 'string', '-', 'Secondary header line'],
+    ['namePartThree', 'string', '-', 'Tertiary header line'],
+    ['children', 'React.ReactNode', 'required', 'Expandable content'],
+  ]}
+/>
+
+## Multi-Line Header Structure
+
+The header supports three levels of information:
+
+```tsx
+<CustomAccordionBody
+  eventKey="0"
+  name="Main Title"
+  namePartTwo="Secondary Information"
+  namePartThree="Tertiary Information"
+>
+  Content here
+</CustomAccordionBody>
+```
+
+CSS classes for styling:
+- `accordion-body-name` — Primary header (bold/large)
+- `accordion-body-name-part-two` — Secondary info (smaller text)
+- `accordion-body-name-part-three` — Tertiary info (smallest)
+
+## Accessibility Features
+
+### Keyboard Navigation
+
+- `Tab` — Navigate between accordion headers
+- `Enter` / `Space` — Toggle section expand/collapse
+- `Arrow Up` / `Arrow Down` — Navigate between sections
+
+### Screen Reader Support
+
+- Proper `role="button"` attributes on headers
+- `aria-expanded` indicates open/closed state
+- `aria-controls` links header to content panel
+- Descriptive labels for each section
+
+### Focus Management
+
+- Visible focus indicators on all interactive elements
+- Logical tab order through accordion items
+- Focus remains on clicked header after toggle
+
+## Controlled vs. Uncontrolled
+
+### Uncontrolled (Local State)
+```tsx
+<CustomAccordion defaultActiveKey="0">
+  {/* State managed internally */}
+</CustomAccordion>
+```
+
+### Controlled (External State)
+```tsx
+const [expanded, setExpanded] = useState('0');
+
+<CustomAccordion activeKey={expanded} onSelect={setExpanded}>
+  {/* State managed by parent */}
+</CustomAccordion>
+```
+
+## Common Patterns
+
+### FAQ Section
+```tsx
+<CustomAccordion>
+  <CustomAccordionBody eventKey="0" name="What is this service?">
+    Service description...
+  </CustomAccordionBody>
+  <CustomAccordionBody eventKey="1" name="How do I sign up?">
+    Sign-up instructions...
+  </CustomAccordionBody>
+  <CustomAccordionBody eventKey="2" name="What are the fees?">
+    Pricing information...
+  </CustomAccordionBody>
+</CustomAccordion>
+```
+
+### Multi-Step Wizard
+```tsx
+<CustomAccordion activeKey={currentStep} onSelect={setCurrentStep}>
+  <CustomAccordionBody eventKey="0" name="Step 1: Personal Details">
+    {/* Step 1 form fields */}
+  </CustomAccordionBody>
+  <CustomAccordionBody eventKey="1" name="Step 2: Organization">
+    {/* Step 2 form fields */}
+  </CustomAccordionBody>
+  <CustomAccordionBody eventKey="2" name="Step 3: Review & Submit">
+    {/* Step 3 summary and submit */}
+  </CustomAccordionBody>
+</CustomAccordion>
+```
+
+## Styling with NMI Design System
+
+The accordion uses Bootstrap classes with NMI customizations:
+- `wizard-accordion` — NMI-specific accordion styling
+- SCSS variables for colors and spacing
+- Responsive design for mobile and desktop
+
+## Best Practices
+
+✅ Use meaningful, descriptive headers  
+✅ Keep content organized and scannable  
+✅ Use multi-line headers for complex information  
+✅ Ensure keyboard navigation works smoothly  
+✅ Test with screen readers  
+✅ Provide clear visual indication of expanded state
+
+❌ Don't hide critical information in collapsed sections  
+❌ Don't use for simple on/off toggles (use Switch instead)  
+❌ Don't nest accordions too deeply (2-3 levels maximum)  
+❌ Don't make all items expanded by default  
+❌ Don't use ambiguous headers
+
+## Bootstrap Reference
+
+Built on [React Bootstrap Accordion](https://react-bootstrap.github.io/components/accordion/) with NMI-specific customizations applied via CSS classes and SCSS variables.
+
+## Related Documentation
+
+- [Forms & Validation](/docs/components-forms--docs) — Using accordions in forms
+- [Accessibility Guidelines](/docs/documentation-getting-started--page) — WCAG 2.1 AA compliance
+- [Design Tokens](/docs/documentation-getting-started--page) — Colors and spacing

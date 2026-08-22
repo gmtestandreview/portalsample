@@ -1,0 +1,253 @@
+@use 'sass:math';
+
+// Typography - see figma style guide for more information.
+::selection {
+  color: $white;
+  background-color: $nmi-selection-bg;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  color: $body-color;
+  font-weight: $headings-font-weight;
+  letter-spacing: 0;
+}
+.fw-medium {
+  font-weight: $font-weight-medium;
+}
+
+// extend BS5 font-sizes .fs-1 to .fs-6 and beyond
+.fs-7 {
+  font-size: $font-size-sm;
+} // 14px;
+.fs-75 {
+  font-size: 0.813rem;
+} // 13px;
+.fs-8 {
+  font-size: $font-size-xs;
+} // 12px;
+.fs-9 {
+  font-size: 0.625rem;
+} // 10px
+.fs-10 {
+  font-size: $font-size-xxs;
+} // 8px
+
+// Mobile (smaller than 768px wide)
+
+h1,
+.h1 {
+  font-size: math.div($h1-font-size, 1.375); //32px;
+  line-height: rfs-value(36px);
+  margin-bottom: 2rem;
+  color: $nmi-primary;
+}
+
+h2,
+.h2 {
+  font-size: math.div($h2-font-size, 1.333); //24px;
+  line-height: rfs-value(30px);
+  margin-bottom: 2rem; //1.5rem 0 2rem;
+}
+
+h3,
+.h3 {
+  font-size: $h3-font-size; //21px;
+  line-height: rfs-value(32px);
+  margin-bottom: 2rem; //1rem 0 2rem;
+}
+
+h4,
+.h4 {
+  font-size: $h4-font-size; //18px;
+  line-height: rfs-value(28px);
+  margin-bottom: 0.5rem; //1rem 0 1rem;
+}
+
+h5,
+.h5 {
+  font-size: $h5-font-size; //16px;
+  line-height: rfs-value(24px);
+  margin-bottom: 0.5rem;
+}
+
+h6,
+.h6 {
+  font-size: $h6-font-size; //14px;
+  line-height: rfs-value(24px);
+  margin-bottom: 0.5rem;
+}
+
+.page-title {
+  color: $nmi-blue;
+}
+
+.header-intro-text {
+  font-size: $font-size-base; //16px;
+  color: $body-color;
+  letter-spacing: 0.2px;
+  line-height: rfs-value(28px);
+  font-weight: $font-weight-base;
+  margin-bottom: 2rem;
+}
+
+.header-update-text {
+  font-size: $font-size-xs; //12px;
+  font-style: italic;
+  font-weight: $headings-font-weight;
+  letter-spacing: 0.2px;
+  line-height: rfs-value(16px);
+  color: $body-color;
+}
+
+.text-body, .text-dark {
+  color: $body-color !important; // set default BS5 text body style
+}
+.text-muted {
+  color: $text-muted !important;
+}
+.text-placeholder {
+  color: $text-placeholder !important;
+}
+.text-success {
+  color: $success-dark !important;
+}
+.text-info {
+  color: $info-dark !important;
+}
+.text-primary {
+  color: $primary !important;
+}
+.text-danger {
+  color: $danger !important;
+}
+.text-transparent {
+  color: transparent !important;
+}
+
+p,
+.body-text {
+  font-size: $font-size-base; //16px;
+  color: $body-color;
+  letter-spacing: 0.2px;
+  line-height: rfs-value(28px);
+  font-weight: $font-weight-base;
+}
+
+.body-mini-text {
+  font-size: $font-size-sm; //14px
+  color: $body-color;
+  letter-spacing: 0;
+  line-height: rfs-value(24px);
+  font-weight: $font-weight-base;
+}
+
+ul,
+ol,
+.body-list-text {
+  font-size: $font-size-base; // 16px;
+  color: $body-color;
+  letter-spacing: 0.2px;
+  line-height: rfs-value(24px);
+  font-weight: $font-weight-base;
+}
+
+// Typographic margins for main content - WIP
+p,
+ul,
+ol {
+  + h2,
+  + h3,
+  + h4,
+  + h5,
+  + h6,
+  + .h2,
+  + .h3,
+  + .h4,
+  + .h5,
+  + .h6 {
+    margin-top: 2rem;
+  }
+}
+
+// Truncate text with ellipsis
+.text-truncate-1 {
+  @include textTruncateBase;
+  line-clamp: 1;
+  -webkit-line-clamp: 1; // About 1 text lines on mobile
+}
+
+.text-truncate-2 {
+ @include textTruncateBase;
+  line-clamp: 2;
+  -webkit-line-clamp: 2; // About 2 text lines on mobile
+}
+.text-truncate-3 {
+  @include textTruncateBase;
+  line-clamp: 3;
+  -webkit-line-clamp: 3; // About 3 text lines on mobile
+}
+
+// Desktop (larger than 768px wide)
+
+@include media-breakpoint-up(md) {
+  h1,
+  .h1 {
+    font-size: $h1-font-size;
+    line-height: rfs-value(56px);
+  }
+
+  h2,
+  .h2 {
+    font-size: $h2-font-size;
+    line-height: rfs-value(40px);
+  }
+
+  h3,
+  .h3 {
+    font-size: $h3-font-size;
+    line-height: rfs-value(28px);
+  }
+
+  h4,
+  .h4 {
+    font-size: $h4-font-size;
+    line-height: rfs-value(28px);
+  }
+
+  h5,
+  .h5 {
+    font-size: $h5-font-size;
+    line-height: rfs-value(28px);
+  }
+
+  h6,
+  .h6 {
+    font-size: $h6-font-size;
+    line-height: rfs-value(28px);
+  }
+
+  .header-intro-text {
+    font-size: 1.125rem; //18px
+    line-height: rfs-value(30px);
+  }
+
+  .header-update-text {
+    line-height: rfs-value(18px);
+  }
+
+  ul,
+  ol,
+  .body-list-text {
+    letter-spacing: 0;
+    line-height: rfs-value(28px);
+  }
+}

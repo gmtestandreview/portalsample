@@ -1,0 +1,2042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NMI Portal — Rebuild-Readiness Assessment | 2026-05-29</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    font-family: system-ui, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+
+  /* ---- Header ---- */
+  header {
+    border-bottom: 2px solid #4ec9b0;
+    padding-bottom: 24px;
+    margin-bottom: 40px;
+  }
+
+  header h1 {
+    font-size: 1.9rem;
+    color: #4ec9b0;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  header .subtitle {
+    color: #9cdcfe;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  header .evidence-note {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    background: #252526;
+    border-left: 3px solid #4ec9b0;
+    padding: 8px 12px;
+    border-radius: 0 3px 3px 0;
+    display: inline-block;
+  }
+
+  /* ---- Sections ---- */
+  section {
+    margin-bottom: 48px;
+  }
+
+  h2 {
+    color: #4ec9b0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-left: 3px solid #4ec9b0;
+    padding-left: 12px;
+    margin-bottom: 18px;
+    margin-top: 0;
+    line-height: 1.4;
+  }
+
+  h3 {
+    color: #ce9178;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    margin-top: 24px;
+  }
+
+  h4 {
+    color: #9cdcfe;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  p {
+    margin-bottom: 12px;
+  }
+
+  ul, ol {
+    margin-left: 22px;
+    margin-bottom: 12px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  /* ---- Inline code / paths ---- */
+  code {
+    font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    font-size: 0.82em;
+    background: #252526;
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: #ce9178;
+  }
+
+  /* ---- Tables ---- */
+  .table-wrap {
+    overflow-x: auto;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  thead tr {
+    background: #2d2d2d;
+    color: #9cdcfe;
+    font-weight: 600;
+  }
+
+  thead th {
+    padding: 9px 11px;
+    text-align: left;
+    border-bottom: 2px solid #3e3e3e;
+    white-space: nowrap;
+  }
+
+  tbody tr:nth-child(odd) {
+    background: #252526;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #1e1e1e;
+  }
+
+  tbody td {
+    padding: 8px 11px;
+    vertical-align: top;
+    border-bottom: 1px solid #2d2d2d;
+    line-height: 1.5;
+  }
+
+  tbody tr:hover {
+    background: #2a2d2e;
+  }
+
+  td code, th code {
+    font-size: 0.78em;
+  }
+
+  /* ---- Badges: confidence ---- */
+  .badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 3px;
+    white-space: nowrap;
+    color: #fff;
+    line-height: 1.5;
+  }
+
+  .conf-high   { background: #6a9955; }
+  .conf-medium { background: #ce9178; color: #1e1e1e; }
+  .conf-low    { background: #f14c4c; }
+
+  /* ---- Badges: decision ---- */
+  .dec-keep       { background: #0e639c; }
+  .dec-refactor   { background: #ce9178; color: #1e1e1e; }
+  .dec-replace    { background: #c586c0; }
+  .dec-retire     { background: #f14c4c; }
+  .dec-regenerate { background: #4ec9b0; color: #1e1e1e; }
+  .dec-exclude    { background: #6a9955; }
+  .dec-unknown    { background: #6e6e6e; }
+  .dec-migrate    { background: #0e639c; }
+  .dec-migrate-sel { background: #264f78; }
+  .dec-partial    { background: #5f4e8a; }
+
+  /* ---- Badges: security severity ---- */
+  .sev-critical { background: #f14c4c; }
+  .sev-high     { background: #ce9178; color: #1e1e1e; }
+  .sev-medium   { background: #dcdcaa; color: #1e1e1e; }
+  .sev-low      { background: #4ec9b0; color: #1e1e1e; }
+
+  /* ---- Status / misc ---- */
+  .status-resolved { background: #6a9955; }
+  .status-open     { background: #ce9178; color: #1e1e1e; }
+  .status-partial  { background: #264f78; }
+  .status-confirm  { background: #5f4e8a; }
+  .status-contra   { background: #f14c4c; }
+  .status-server   { background: #6e6e6e; }
+
+  /* ---- Callout blocks ---- */
+  .callout {
+    border-left: 3px solid #4ec9b0;
+    background: #252526;
+    padding: 14px 18px;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 18px;
+  }
+
+  .callout.warn {
+    border-left-color: #ce9178;
+  }
+
+  .callout.danger {
+    border-left-color: #f14c4c;
+  }
+
+  .callout.success {
+    border-left-color: #6a9955;
+  }
+
+  .callout p:last-child {
+    margin-bottom: 0;
+  }
+
+  .callout strong {
+    color: #4ec9b0;
+  }
+
+  .callout.warn strong {
+    color: #ce9178;
+  }
+
+  .callout.danger strong {
+    color: #f14c4c;
+  }
+
+  .callout.success strong {
+    color: #6a9955;
+  }
+
+  /* ---- Verdict banner ---- */
+  .verdict-banner {
+    background: #1f3a2a;
+    border: 2px solid #6a9955;
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin-bottom: 22px;
+  }
+
+  .verdict-banner .verdict-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6a9955;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .verdict-banner .verdict-text {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #6a9955;
+  }
+
+  /* ---- Section numbering ---- */
+  .section-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6e6e6e;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  /* ---- File list ---- */
+  .file-list {
+    list-style: none;
+    margin-left: 0;
+  }
+
+  .file-list li {
+    padding: 3px 0;
+    border-bottom: 1px solid #2d2d2d;
+  }
+
+  .file-list li:last-child {
+    border-bottom: none;
+  }
+
+  /* ---- Two-col definition layout ---- */
+  .def-table {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 16px;
+    margin-bottom: 16px;
+  }
+
+  .def-key {
+    font-weight: 600;
+    color: #9cdcfe;
+    white-space: nowrap;
+  }
+
+  /* ---- Print ---- */
+  @media print {
+    body { background: white; color: black; }
+    h2 { color: #006060; border-left-color: #006060; }
+    h3 { color: #8b4513; }
+    code { background: #f0f0f0; color: #8b4513; }
+    .callout { background: #f5f5f5; border-left-color: #006060; }
+    table { border: 1px solid #ccc; }
+    thead tr { background: #e0e0e0; color: #000; }
+    tbody tr:nth-child(odd) { background: #f8f8f8; }
+    .badge, .verdict-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 700px) {
+    body { font-size: 13px; }
+    header h1 { font-size: 1.4rem; }
+    .page-wrap { padding: 16px 12px 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+<header>
+  <h1>NMI Portal &mdash; Rebuild-Readiness Assessment</h1>
+  <p class="subtitle">portal.measurement.gov.au &middot; Source-map capture snapshot &middot; Original assessment: 2026-05-29 &middot; Current-state refresh: 2026-06-28 (CRD-041)</p>
+  <span class="evidence-note">Evidence base: 35+ direct source reads + 4 specialist subagents (security, architecture, test coverage, SCSS/assets). All findings cite source files.</span>
+</header>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- SECTION 1 -->
+<!-- ============================================================ -->
+<section id="s1">
+  <span class="section-label">Section 1</span>
+  <h2>Executive Decision Summary</h2>
+
+  <div class="verdict-banner">
+    <div class="verdict-label">Primary verdict</div>
+    <div class="verdict-text">Refactor, not Rebuild.</div>
+  </div>
+
+  <div class="callout info">
+    <strong>2026-06-28 current-state refresh:</strong> The verdict remains unchanged, but the migration surface has grown. The app now uses React Router 7.18.0 and registers 41 paths, including six pattern/type approval routes. The current source has 31 top-level component families, 87 Storybook story files, 114 unit-test files, and 29 BDD feature files. Type-check, lint, 1,169 unit tests, and 218 Storybook interaction tests pass. The coverage command fails the configured 100% thresholds at 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines, tracked as <code>COVERAGE-GATE-001</code>. The six Type Approval paths have isolated Storybook coverage but remain reviewed app-BDD exclusions, tracked as <code>TYPE-APPROVAL-E2E-001</code>.
+  </div>
+
+  <p>The modernisation assessment HTML confirms "Refactor" at line 1411. The codebase has a sound layered SPA architecture, well-separated concerns, a working test stack, and no fundamental structural flaws that would necessitate a rebuild. Two conditions must be resolved before migration work can safely begin:</p>
+
+  <ol>
+    <li><strong>The auth bypass mechanism was a critical security issue.</strong> <code>REACT_APP_AUTH_BYPASS</code> was a runtime-injectable env var with no <code>NODE_ENV</code> guard and hardcoded fallback mock credentials. <strong>Remediated 2026-05-29</strong> &mdash; <code>devAuth.ts</code> deleted, all references removed from <code>AuthenticatedElement.tsx</code>, <code>AccountProvider.tsx</code>, <code>env.ts</code>, <code>index.html</code>, and <code>webpack.config.js</code>. Type-check passes clean post-change.</li>
+    <li><strong>PII was being logged to Azure App Insights.</strong> Full <code>AccountDetails</code> and <code>AccountInfo</code> objects (email, name, ABN, CRM GUID) were passed to telemetry in multiple route and utility components. <strong>Remediated 2026-05-29</strong> &mdash; all 13 call sites scrubbed to pseudonymous projections (<code>{ homeAccountId }</code> / <code>{ crmQuoteRequestId }</code>).</li>
+  </ol>
+
+  <h3>Challenge to rebuild assumptions</h3>
+  <p>Nothing warrants a rebuild. The WizardForm engine is complex but has a defined contract. The Bootstrap/SCSS theme is a thick override layer but is self-contained. The auth layer is correctly architected.</p>
+
+  <h3>Changed baseline &mdash; risks resolved</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>ErrorBoundary class component</td><td><span class="badge status-resolved">Resolved</span> &mdash; functional via <code>react-error-boundary</code></td></tr>
+        <tr><td><code>React.Children.toArray</code></td><td><span class="badge status-resolved">Resolved</span> &mdash; replaced with <code>forEach</code> + accumulator</td></tr>
+        <tr><td><code>AccountContext</code> re-renders</td><td><span class="badge status-resolved">Resolved</span> &mdash; all 7 dispatch callbacks converted to functional updater form (<code>setAccountDetails(prev =&gt; ...)</code>) with <code>[]</code> dep arrays; <code>dispatchValue</code> is permanently stable after mount</td></tr>
+        <tr><td>No error boundary at provider level</td><td><span class="badge status-resolved">Resolved</span> &mdash; <code>ErrorBoundary</code> now wraps <code>MsalProvider</code> in <code>index.tsx</code></td></tr>
+        <tr><td><code>any</code> casts in <code>env.ts</code></td><td><span class="badge status-resolved">Resolved</span> &mdash; typed declarations with <code>globalThis.*</code> + startup guard</td></tr>
+        <tr><td>Dashboard <code>useEffect</code> cleanup</td><td><span class="badge status-resolved">Resolved</span> &mdash; <code>AbortController</code> + <code>useDebounce</code></td></tr>
+        <tr><td><strong>Auth bypass mechanism (SEC-001/002)</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; retired 2026-05-29</td></tr>
+        <tr><td><strong>WizardRoutedStep refactor</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; discriminated union error state, silent failure restored, prop mutation fixed, 29-prop JSDoc contract, 19 tests added (2026-05-30)</td></tr>
+        <tr><td><strong>SonarLint cleanup phase 1 (20 findings)</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; types.ts, errorState.ts, WizardRoutedStep.tsx, ErrorSummary/index.tsx all clean (2026-05-30)</td></tr>
+        <tr><td><strong>WizardForm navigation integration tests</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; 5 tests: forward nav, back nav, linear guard redirect, <code>locationOnCompletion</code>, step save count verification (2026-05-30)</td></tr>
+        <tr><td><strong>AccountProvider errored state not surfaced</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; <code>BlockUISpinner</code> with redirect message shown when errored; children suppressed; 2 tests (2026-05-30)</td></tr>
+        <tr><td><strong><code>emailSchema</code> duplicate</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; duplicate removed from <code>contactValidation.ts</code>; import + re-export pattern preserves all callers; 5 consolidation tests (2026-05-30)</td></tr>
+        <tr><td><strong>businessName Yup TS declaration gap</strong></td><td><span class="badge status-resolved">False finding &mdash; confirmed present</span> &mdash; method is correctly declared at <code>stringExtensions.ts:66-70</code>; regression test confirms runtime behaviour (2026-05-30)</td></tr>
+        <tr><td><strong>SonarLint cleanup phase 2 (Tasks 7–12)</strong></td><td><span class="badge status-resolved">Resolved</span> &mdash; NextStepButton.tsx, common.ts, AccountProvider.tsx, dashboard/index.tsx, requestForQuote/create/index.tsx, requestForQuote/index.tsx, stringExtensions.ts all clean (2026-05-30)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Newly confirmed risks not in roadmap</h3>
+  <ul>
+    <li><strong>WizardRoutedStep refactor &mdash; <span class="badge status-resolved">Resolved 2026-05-30</span></strong> &mdash; discriminated union <code>WizardStepError</code> replaces 8 error booleans; silent <code>setLoadingError</code> failure restored; prop mutation fixed (immutable copy); stale <code>redirectionLocationOnError</code> timing fixed; 29-prop contract documented with JSDoc; 14 unit tests + 5 integration tests added.</li>
+    <li><strong>WizardForm navigation integration tests &mdash; <span class="badge status-resolved">Resolved 2026-05-30</span></strong> &mdash; 5 tests covering forward nav (save-and-next), back nav, linear guard redirect, <code>locationOnCompletion</code> after final step, and step save count assertion.</li>
+    <li><strong><code>AccountProvider.errored</code> state &mdash; <span class="badge status-resolved">Resolved 2026-05-30</span></strong> &mdash; errored state now surfaces to UI with <code>BlockUISpinner</code> and redirect message; children suppressed when errored; 2 tests.</li>
+    <li><strong><code>emailSchema</code> duplicate &mdash; <span class="badge status-resolved">Resolved 2026-05-30</span></strong> &mdash; consolidated to canonical definition in <code>common.ts</code>; <code>contactValidation.ts</code> imports and re-exports; 5 tests confirm behavior preserved.</li>
+    <li><strong>businessName Yup TS declaration &mdash; <span class="badge status-resolved">False finding 2026-05-30</span></strong> &mdash; method correctly declared at <code>stringExtensions.ts:66-70</code>; 5 regression tests confirm runtime behaviour.</li>
+    <li><code>targetOrganisation</code> read at NSwag client construction time (stale after org switch)</li>
+    <li>SEC-010 (IDOR): dashboard filtered by client-side <code>organisationCRMGuid</code> &mdash; server enforcement unverified; inline comment added 2026-05-30</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2 -->
+<!-- ============================================================ -->
+<section id="s2">
+  <span class="section-label">Section 2</span>
+  <h2>Baseline Document Alignment</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Baseline source</th>
+          <th>Key claim</th>
+          <th>Confirmed by code?</th>
+          <th>Status</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>modernisation-assessment.html</code></td>
+          <td>Recommend Refactor, not Rebuild</td>
+          <td>Yes</td>
+          <td><span class="badge status-resolved">Confirmed</span></td>
+          <td>Code structure is sound; no architectural mismatches found</td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td>ErrorBoundary is functional (Phase 4.1)</td>
+          <td>Yes &mdash; <code>react-error-boundary</code> v4</td>
+          <td><span class="badge status-resolved">Confirmed</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td><code>React.Children.forEach</code> replaces <code>toArray</code> (Phase 4.2)</td>
+          <td>Yes &mdash; <code>WizardForm/index.tsx:28</code></td>
+          <td><span class="badge status-resolved">Confirmed</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td>Context split into read/write (Phase 5.1)</td>
+          <td>Yes &mdash; <code>AccountStateCtx</code> + <code>AccountDispatchCtx</code>; functional updater form applied to all 7 dispatch callbacks</td>
+          <td><span class="badge status-resolved">Confirmed — fully resolved</span></td>
+          <td>Dispatch context now permanently stable after mount</td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td><code>AbortController</code> + <code>useDebounce</code> on dashboard (Phase 4.4)</td>
+          <td>Yes</td>
+          <td><span class="badge status-resolved">Confirmed</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td><code>env.ts</code> all config vars fully typed (Phase 4.3)</td>
+          <td>Was 17 vars (incl. auth bypass + 5 mock vars); now 11 after retirement</td>
+          <td><span class="badge status-resolved">Confirmed</span></td>
+          <td>Code and docs now agree: 11 vars. Domain allowlist validation added for <code>EXTERNAL_REDIRECT_URL</code>.</td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td>Top-level await in <code>index.tsx</code> is a risk</td>
+          <td>Yes &mdash; line 13</td>
+          <td><span class="badge status-open">Confirmed open</span></td>
+          <td>Requires bundler/browser top-level-await support</td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td>No error boundary at provider level</td>
+          <td>Fixed 2026-05-29 &mdash; <code>ErrorBoundary</code> now wraps <code>MsalProvider</code> in <code>index.tsx</code></td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>Uses same <code>ai.reactPlugin</code> pattern as <code>AuthenticatedElement</code></td>
+        </tr>
+        <tr>
+          <td><code>ARCHITECTURE.md</code></td>
+          <td>17 custom Yup validators</td>
+          <td>19 implemented; all 19 now documented in <code>ARCHITECTURE.md</code>, <code>CLAUDE.md</code>, and <code>CONVENTIONS.md</code></td>
+          <td><span class="badge status-resolved">Corrected</span></td>
+          <td>Docs updated 2026-05-29; <code>businessName</code> TS declaration gap remains</td>
+        </tr>
+        <tr>
+          <td><code>INTEGRATIONS.md</code></td>
+          <td>TrustedTypes gap: <code>createHTML</code>/<code>createScript</code> commented out</td>
+          <td>Fixed 2026-05-29 &mdash; <code>createHTML</code> uses DOMPurify; <code>createScript</code> throws</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>SEC-009 remediated</td>
+        </tr>
+        <tr>
+          <td><code>MIGRATION_ROADMAP.md</code></td>
+          <td>Duplicated token acquisition is a risk</td>
+          <td>Yes &mdash; CRD-041 finds 81 matches across 52 production files</td>
+          <td><span class="badge status-resolved">Confirmed</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>CONVENTIONS.md</code></td>
+          <td>PII logging disabled (<code>piiLoggingEnabled: false</code> in MSAL)</td>
+          <td>MSAL flag only governs MSAL's own internal logging. All custom <code>AppLogger</code> call sites scrubbed 2026-05-29.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>13 call sites scrubbed; <code>CONVENTIONS.md</code> updated with explicit caveat about <code>AppLogger</code> routing properties directly to App Insights</td>
+        </tr>
+        <tr>
+          <td><code>STACK.md</code></td>
+          <td><code>luxon</code> is a dependency</td>
+          <td>Not in <code>package.json</code> production deps; may be transitive</td>
+          <td><span class="badge status-contra">Contradicted</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><code>STORYBOOK-MIGRATION-READINESS.md</code></td>
+          <td><code>CLOSED_SUCCESS</code> for Storybook migration readiness</td>
+          <td>Storybook coverage is broad but does not cover API-heavy flows</td>
+          <td><span class="badge status-partial">Partially confirmed</span></td>
+          <td>Scope caveat added to doc 2026-05-29: dashboard, acceptQuote wizard, branch selector not covered</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3 -->
+<!-- ============================================================ -->
+<section id="s3">
+  <span class="section-label">Section 3</span>
+  <h2>Current Codebase Inventory</h2>
+
+  <h3>Routes and major flows</h3>
+  <p><strong>41 registered paths.</strong> Six are public/direct, three are <code>PreConditions</code>-only error paths, and 32 are behind <code>AuthenticatedElement</code>. CRD-041 supersedes the older 35-route count.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Route</th><th>Type</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>/</code></td><td>Public home</td></tr>
+        <tr><td><code>/dashboard</code></td><td>Main authenticated landing (tabs, pagination, search, API)</td></tr>
+        <tr><td><code>/dashboard-ta</code>, <code>/ta/type-approval-create-pre</code>, <code>/ta/type-approval-create</code>, <code>/ta/:id/*</code>, <code>/ta/type-approval-success/:id/*</code>, <code>/ta/:id/manage</code></td><td>Pattern/type approval dashboard, pre-application, wizard, success, and management surfaces</td></tr>
+        <tr><td><code>/create-account/*</code>, <code>/update-organisation/:id/*</code>, <code>/add-branch/*</code>, <code>/create-contact</code>, <code>/update-contact/*</code></td><td>Account/contact wizard flows</td></tr>
+        <tr><td><code>/request-for-quote-create</code>, <code>/request-for-quote-copy/:id/*</code>, <code>/request-for-quote/:id/*</code></td><td>RFQ wizard flows</td></tr>
+        <tr><td><code>/accept-quote-create/:id/*</code>, <code>/accept-quote/:id/*</code></td><td>Quote acceptance wizard</td></tr>
+        <tr><td><code>/quotation/:id/*</code>, <code>/instrument-reports/:id/*</code>, <code>/report/:id/*</code></td><td>View flows</td></tr>
+        <tr><td><code>/sign-out</code>, <code>/sign-out-helper</code>, <code>/help-guide/*</code></td><td>Public/unauthenticated flows</td></tr>
+        <tr><td><code>/server-error</code>, <code>/not-found</code>, <code>*</code></td><td>Error pages (PreConditions, no MSAL)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Tech stack (confirmed from package.json)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Package</th><th>Version</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>React</td><td>18.3.1</td></tr>
+        <tr><td>React Router</td><td>v7.18.0</td></tr>
+        <tr><td><code>@azure/msal-browser</code></td><td>3.30.0</td></tr>
+        <tr><td><code>@azure/msal-react</code></td><td>2.2.0</td></tr>
+        <tr><td>Formik</td><td>2.4.9</td></tr>
+        <tr><td>Yup</td><td>1.7.1</td></tr>
+        <tr><td>Bootstrap</td><td>5.3.8</td></tr>
+        <tr><td>react-bootstrap</td><td>2.10.10</td></tr>
+        <tr><td><code>@microsoft/applicationinsights-web</code></td><td>3.4.1</td></tr>
+        <tr><td>dompurify</td><td>3.4.4</td></tr>
+        <tr><td>react-datepicker</td><td>7.6.0</td></tr>
+        <tr><td>react-ga4</td><td>2.1.0</td></tr>
+        <tr><td>Storybook (Vite adapter)</td><td>10.4.0</td></tr>
+        <tr><td>Vitest</td><td>&mdash;</td></tr>
+        <tr><td>Playwright</td><td>&mdash;</td></tr>
+        <tr><td>Node</td><td>&ge;20</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Wizard/form architecture</h3>
+  <p>Compound component: <code>WizardForm</code> &gt; <code>WizardStep</code> &gt; <code>WizardRoutedStep</code> (29 props). Each step is a Route in a nested Routes subtree. Step progression is linear and enforced by a render-time guard. Validation split: <code>validateHard</code> (submit) vs <code>validateSoft</code> (save-draft). 6 wizard flows.</p>
+
+  <h3>Auth/session/API</h3>
+  <p>MSAL v3 PKCE redirect flow. <code>AccountProvider</code> &gt; <code>AccountStateCtx</code> + <code>AccountDispatchCtx</code> &gt; hooks. <code>AuthenticatedElement</code> = <code>PreConditions</code> + <code>MsalAuthenticationTemplate</code> + <code>ErrorBoundary</code>. 11 NSwag-generated API client classes. <code>acquireTokenSilent</code> at 35+ call sites (no centralized interceptor).</p>
+
+  <h3>Runtime config</h3>
+  <p><code>env.ts</code> reads 11 <code>window.*</code> globals (after auth bypass retirement). Startup guard <code>console.error</code>s (does not throw) for missing vars.</p>
+
+  <h3>Styling</h3>
+  <p>26 SCSS files: <code>_variables.scss</code> (NMI color tokens + Bootstrap 5 overrides), <code>_bootstrap-import.scss</code> (single <code>@import</code> shim), 22 component-level partials, <code>media-print.scss</code>, <code>_replace-svgicons-csp.scss</code>. Custom font: "Public Sans" (TTF only). NMI icon font: <code>nmi-iconfonts.css</code> (woff only, 55 icons).</p>
+
+  <h3>Tests</h3>
+  <p>The current unit suite passes <strong>114 files / 1,169 tests</strong>. It covers auth, wizard behavior, generated-client boundaries, validation, storage, utilities, components, routes, configuration, route traceability, and Storybook drift. <code>vitest.unit.config.ts</code> enforces 100% thresholds over its declared handwritten runtime surface, but <code>npm run test:unit:coverage</code> currently fails at 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines. The BDD source contains 29 feature files: 9 application features with 28 scenarios and 20 Storybook features with 129 scenarios.</p>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4 -->
+<!-- ============================================================ -->
+<section id="s4">
+  <span class="section-label">Section 4</span>
+  <h2>Rebuild/Refactor Decision Table</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Area</th>
+          <th>Current evidence</th>
+          <th>Decision</th>
+          <th>Migration impact</th>
+          <th>Confidence</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>React 18 + React Router v7 core</td>
+          <td>Functional components; <code>createBrowserRouter</code>; fully migrated</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>MSAL / Azure AD B2C auth layer</td>
+          <td><code>msal-browser</code> v3.30 + PKCE; context split correctly</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Medium &mdash; target must preserve MSAL bootstrap order</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Auth bypass mechanism (<code>devAuth.ts</code>)</td>
+          <td>RETIRED 2026-05-29 &mdash; deleted</td>
+          <td><span class="badge dec-retire">Retired</span></td>
+          <td>None &mdash; removed cleanly</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>SEC-001/002 resolved</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Mock user vars in <code>env.ts</code></td>
+          <td>RETIRED 2026-05-29 &mdash; removed from all 3 files + <code>index.html</code> + <code>webpack.config.js</code></td>
+          <td><span class="badge dec-retire">Retired</span></td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>WizardForm compound component</td>
+          <td>Clean pattern; 129 Storybook tests</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>WizardRoutedStep</td>
+          <td><strong>Refactored 2026-05-30.</strong> <code>WizardStepError</code> discriminated union replaces 8 error booleans. Silent load failure restored. Prop mutation fixed (immutable spread). Stale redirect timing fixed. 29-prop contract documented with JSDoc. <code>errorState.ts</code> pure helper extracted.</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low &mdash; refactor complete; stable for migration</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>14 unit tests + 5 integration tests; type-check clean; SonarLint clean</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>FormikForm</td>
+          <td>Meaningful structural orchestrator</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>UnsavedFormPrompt</td>
+          <td>Uses <code>useBlocker</code> (RRv6.8+); handles dirty/server-rejected</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>Browser tab close not covered (documented)</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>AccountProvider / context</td>
+          <td>Correctly architected; functional updater form applied to all 7 callbacks (2026-05-29); errored state now surfaces BlockUISpinner with redirect message; children suppressed when errored (2026-05-30)</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>Dispatch callbacks stable; errored state surfaced to UI (2026-05-30)</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>PreConditions state machine</td>
+          <td>5 condition checks; inert ToU workaround; stale-state risk across tabs</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Medium &mdash; must preserve precondition semantics</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Yup extensions (19 methods)</td>
+          <td>All 19 imported correctly; <code>businessName</code> TS declaration confirmed present (false gap); <code>emailSchema</code> duplicate removed from <code>contactValidation.ts</code> (2026-05-30); <code>buildErrMsg</code> helper eliminates 19 nested-ternary error-message patterns; regex deduplication and <code>String.raw</code> applied</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>All known quality gaps resolved 2026-05-30</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Route-level validation schemas</td>
+          <td>Co-located with routes; import side-effect correctly</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>NSwag-generated <code>web-api-client.ts</code></td>
+          <td>11 classes; reads <code>targetOrganisation</code> from sessionStorage at construction</td>
+          <td><span class="badge dec-regenerate">Regenerate</span></td>
+          <td>Must regenerate from OpenAPI spec in target</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>Never copy</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>Distributed <code>acquireTokenSilent</code> (35+ sites)</td>
+          <td>Works; no centralized interceptor</td>
+          <td><span class="badge dec-refactor">Refactor</span> (migration opportunity)</td>
+          <td>Medium</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+          <td>Can migrate as-is; refactor reduces long-term risk</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>AppLogger.ts</td>
+          <td>Full telemetry coverage; all 13 PII-bearing call sites scrubbed 2026-05-29</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>SEC-003&ndash;005, SEC-008 resolved; all sites use <code>{ homeAccountId }</code> or <code>{ crmQuoteRequestId }</code> projections</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td><code>env.ts</code> runtime config</td>
+          <td>11 vars; startup guard; domain allowlist added for <code>EXTERNAL_REDIRECT_URL</code> 2026-05-29</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Critical &mdash; target must use <code>window.*</code> not <code>process.env</code></td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>SEC-006 resolved: throws at startup if <code>EXTERNAL_REDIRECT_URL</code> not in <code>measurement.gov.au</code> / <code>localhost</code> allowlist</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>TrustedTypes policy</td>
+          <td><code>createHTML</code> (DOMPurify) + <code>createScript</code> (throw) implemented 2026-05-29</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>SEC-009 resolved</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td><code>targetOrganisation</code> session handling</td>
+          <td><code>clearTargetOrganisation()</code> was already present in <code>sign-out/index.tsx:22</code> before this session (false open finding); raw <code>sessionStorage.getItem</code> in NSwag client remains</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>SEC-012 was a false finding &mdash; already resolved in codebase</td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td>Bootstrap 5 SCSS theme</td>
+          <td>26 files; deep Bootstrap coupling; 3 internal Sass functions used</td>
+          <td><span class="badge dec-replace">Replace</span> — Bootstrap grid dropped; CSS Grid/Flexbox + design tokens (CRD-034)</td>
+          <td>High</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td><code>rfs-value()</code> 14 sites; <code>tint-color()</code> 2 sites; <code>negativify-map()</code> 1 site — no longer needed after Bootstrap SCSS removal</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>NMI icon font</td>
+          <td>Custom woff files; 13 icon codepoints; CSP workaround layer</td>
+          <td><span class="badge dec-replace">Replace</span> — Retire icon font; SVG React components from <code>packages/icons</code> (CRD-034)</td>
+          <td>Medium — <strong>BATCH-E-PREREQ-002 COMPLETE 2026-06-05 (CRD-038)</strong>: all 10 active icons are SCSS pseudo-element only; <code>packages/icons</code> absent (not required as prereq); 3 dead-code vars identified; Design Lead SVG source sign-off still required before Batch E SCSS migration</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td>Audit complete — see <code>docs/change-record/ICON-AUDIT-PREREQ-002.md</code>. Migration: CSS data: URIs in Batch E SCSS partials (no new React SVG components needed as prereq)</td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td>Print styles (<code>media-print.scss</code>)</td>
+          <td>25 lines; NOT imported by <code>index.scss</code>; physical label print feature</td>
+          <td><span class="badge dec-keep">Keep</span> + confirm import chain</td>
+          <td>Low if confirmed in build</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+          <td>May be orphaned from webpack entry</td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td>App Insights + GA</td>
+          <td>Singleton; fails closed; react-ga4</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td>SessionStorageCache</td>
+          <td>Typed wrapper; defensive JSON parse</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>24</td>
+          <td><code>errorRoutes.ts</code></td>
+          <td>7 HTTP status &rarr; route mappings; tested</td>
+          <td><span class="badge dec-keep">Keep</span></td>
+          <td>Low</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>25</td>
+          <td>Quality regression + functional suites</td>
+          <td>8+8 tests; largely portable</td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>Medium &mdash; update import paths</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>26</td>
+          <td>Storybook (Vite adapter)</td>
+          <td>129/129 BDD tests</td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>Medium &mdash; Vite &ne; webpack build</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>27</td>
+          <td><code>ClientApp/src/parent/node_modules/</code></td>
+          <td>Vendor source mirrors</td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>28</td>
+          <td><code>ClientApp/src/external/</code></td>
+          <td>Vendor code</td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>29</td>
+          <td><code>ClientApp/src/main.*.js</code>, <code>ClientApp/css/main.*.css</code></td>
+          <td>Build artifacts</td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>Regenerate via build</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>30</td>
+          <td><code>ClientApp/source-map-http-downloads/</code></td>
+          <td>Source map mirrors</td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>31</td>
+          <td><code>dist/**</code>, <code>storybook-static/**</code>, <code>reports/**</code></td>
+          <td>Generated outputs</td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>32</td>
+          <td><code>.features-gen/</code></td>
+          <td>Generated BDD specs</td>
+          <td><span class="badge dec-regenerate">Regenerate</span> (run <code>bddgen</code> in target)</td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>33</td>
+          <td>Pattern/type approval route and component slice</td>
+          <td>Six routes plus dashboard, wizard, uploads/progress, certificate lookup, filters, rich-text messages, and management tabs</td>
+          <td><span class="badge dec-migrate">Migrate as a coherent slice</span></td>
+          <td>High &mdash; isolated stories exist, but authenticated app-BDD fixtures are still absent</td>
+          <td><span class="badge conf-high">High</span></td>
+          <td><code>TYPE-APPROVAL-E2E-001</code> must be closed or explicitly accepted before cutover</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5 -->
+<!-- ============================================================ -->
+<section id="s5">
+  <span class="section-label">Section 5</span>
+  <h2>Design-Platform Migration Map</h2>
+
+  <div class="callout warn">
+    <strong>Note:</strong> Design platform tokens/components not yet inspected. Checklist below covers required inputs.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Existing UI / component / pattern</th>
+          <th>Current implementation</th>
+          <th>Target design-platform equivalent needed</th>
+          <th>Migration risk</th>
+          <th>Decision</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Color tokens</td>
+          <td><code>_variables.scss</code>: <code>$nmi-primary #285576</code>, <code>$nmi-header-primary #a6192e</code>, 25 custom NMI vars</td>
+          <td>Design platform color tokens</td>
+          <td>High</td>
+          <td><span class="badge dec-replace">Replace</span> if platform has own tokens</td>
+        </tr>
+        <tr>
+          <td>Typography</td>
+          <td>"Public Sans" font; 8 heading sizes; Bootstrap font-size vars; 14 <code>rfs-value()</code> call sites</td>
+          <td>Design platform typography tokens</td>
+          <td>Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span> &mdash; replace <code>rfs-value()</code> with <code>clamp()</code></td>
+        </tr>
+        <tr>
+          <td>Spacing</td>
+          <td>Bootstrap <code>$spacers</code> extended with custom 6: <code>$spacer*2</code></td>
+          <td>Design platform spacing scale</td>
+          <td>Low&ndash;Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span></td>
+        </tr>
+        <tr>
+          <td>Button styles</td>
+          <td>8 variants; <code>border-radius: 0</code>; custom padding; bold weight</td>
+          <td>Design platform button components</td>
+          <td>Medium</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Form controls</td>
+          <td>Bootstrap input overrides; custom padding; focus glow; PNG icon fallbacks for CSP</td>
+          <td>Design platform form components</td>
+          <td>High</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Validation states</td>
+          <td>Bootstrap <code>is-invalid</code>/<code>is-valid</code>; danger/success colors; icon PNGs (temp fix)</td>
+          <td>Design platform validation state components</td>
+          <td>High</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Wizard/stepper</td>
+          <td>Custom <code>SteppedNavigation</code> + <code>WizardForm</code> compound component</td>
+          <td>Design platform stepper/wizard pattern</td>
+          <td>High</td>
+          <td><span class="badge dec-refactor">Refactor</span> (keep logic, replace visual)</td>
+        </tr>
+        <tr>
+          <td>Modal/dialog</td>
+          <td>Bootstrap Modal via react-bootstrap; 5 modal variants</td>
+          <td>Design platform modal component</td>
+          <td>Medium</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Pagination</td>
+          <td>Custom Bootstrap override; <code>CustomPagination</code> + <code>PaginationHeader</code></td>
+          <td>Design platform pagination</td>
+          <td>Medium</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Alert/notification</td>
+          <td><code>NotificationMessage</code> + dismissable alerts</td>
+          <td>Design platform notification component</td>
+          <td>Low</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Tables/lists</td>
+          <td>Bootstrap table; <code>RequestItem</code>/<code>InstrumentItem</code> list cards</td>
+          <td>Design platform list/table</td>
+          <td>Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span></td>
+        </tr>
+        <tr>
+          <td>Cards/pathways</td>
+          <td><code>StandardPathway</code> tile cards</td>
+          <td>Design platform card</td>
+          <td>Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span></td>
+        </tr>
+        <tr>
+          <td>Icon set</td>
+          <td>Custom NMI icon font (55 icons, 13 used in SCSS codepoints); <code>_replace-svgicons-csp.scss</code></td>
+          <td>Design platform icon system</td>
+          <td>High</td>
+          <td><span class="badge dec-unknown">Unknown</span></td>
+        </tr>
+        <tr>
+          <td>Navigation/header</td>
+          <td>Header with auth state + env badge</td>
+          <td>Design platform header</td>
+          <td>Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span></td>
+        </tr>
+        <tr>
+          <td>Footer</td>
+          <td>Footer with Terms/Privacy/Accessibility pages</td>
+          <td>Design platform footer</td>
+          <td>Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span></td>
+        </tr>
+        <tr>
+          <td>Breadcrumb</td>
+          <td>Bootstrap Breadcrumb + custom divider (icon font)</td>
+          <td>Design platform breadcrumb</td>
+          <td>Low</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+        <tr>
+          <td>Accessibility utilities</td>
+          <td><code>skipLinks.tsx</code>, <code>useRouteAccessibility</code> hook (CRD-037 — replaces deleted <code>routeAccessibleNavigation.tsx</code>), <code>useHtmlTitle</code>, <code>useBodyClass</code></td>
+          <td>Design platform a11y primitives</td>
+          <td>Medium</td>
+          <td><span class="badge dec-keep">Keep</span> behavior, adapt to platform — <strong>BATCH-E-PREREQ-001 COMPLETE 2026-06-05</strong>: <code>useRouteAccessibility</code> hook ships WCAG 2.4.2/2.4.3 announcement + focus management</td>
+        </tr>
+        <tr>
+          <td>Print styles</td>
+          <td><code>media-print.scss</code> &mdash; 25 lines, physical label print</td>
+          <td>Design platform print support</td>
+          <td>Unknown</td>
+          <td><span class="badge dec-unknown">Unknown</span></td>
+        </tr>
+        <tr>
+          <td>Address lookup</td>
+          <td><code>AddressLookup</code> component with autocomplete API</td>
+          <td>Design platform input + external API</td>
+          <td>Medium</td>
+          <td><span class="badge dec-refactor">Refactor</span></td>
+        </tr>
+        <tr>
+          <td>Date picker</td>
+          <td><code>react-datepicker</code> v7 with custom SCSS</td>
+          <td>Design platform date picker</td>
+          <td>Medium</td>
+          <td><span class="badge dec-replace">Replace</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6 -->
+<!-- ============================================================ -->
+<section id="s6">
+  <span class="section-label">Section 6</span>
+  <h2>Security Findings</h2>
+
+  <div class="callout success">
+    <strong>Note:</strong> SEC-001, SEC-002 (auth bypass), SEC-003&ndash;008 (PII logging), SEC-006 (open redirect), SEC-007 (mailto encoding), SEC-009 (TrustedTypes), and SEC-011 (callingPath) have all been remediated as of 2026-05-29. SEC-012 was a false finding &mdash; already fixed in the codebase. SEC-010 (IDOR) is in progress &mdash; backend verification checklist created at <code>docs/sec/SEC-010-idor-backend-verification.md</code>; backend review pending.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>CWE</th>
+          <th>Severity</th>
+          <th>Finding</th>
+          <th>File(s)</th>
+          <th>Status</th>
+          <th>Must-fix before migration?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SEC-001</strong></td>
+          <td>CWE-287</td>
+          <td><span class="badge sev-critical">Critical</span></td>
+          <td>Auth bypass (<code>REACT_APP_AUTH_BYPASS</code>) &mdash; runtime-injectable, no <code>NODE_ENV</code> guard, bypassed MSAL entirely</td>
+          <td><code>devAuth.ts:4</code>, <code>AuthenticatedElement.tsx:29</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-002</strong></td>
+          <td>CWE-287</td>
+          <td><span class="badge sev-critical">Critical</span></td>
+          <td>Mock account hardcoded credentials; all precondition flags set to true; bypassed all route protection</td>
+          <td><code>devAuth.ts:6-28</code>, <code>AccountProvider.tsx:67-70</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-003</strong></td>
+          <td>CWE-319</td>
+          <td><span class="badge sev-high">High</span></td>
+          <td>Full <code>AccountInfo</code> object (email, name, homeAccountId) passed to App Insights via <code>AppLogger.verbose</code>. Also found in <code>ViewPdfQuote.tsx</code>, <code>ViewMeasurementReport.tsx</code>, <code>ViewPdfQuoteTerms.tsx</code>, <code>summaryAndAccept.tsx</code> (discovered during quality review).</td>
+          <td><code>AccountProvider.tsx</code>, <code>Utilities/View*.tsx</code>, <code>summaryAndAccept.tsx</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A &mdash; 13 call sites scrubbed to <code>{ homeAccountId }</code> / <code>{ crmQuoteRequestId }</code> projections</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-004</strong></td>
+          <td>CWE-319</td>
+          <td><span class="badge sev-high">High</span></td>
+          <td>Full <code>AccountDetails</code> object (email, name, ABN, CRM GUID) passed to App Insights</td>
+          <td><code>routes/dashboard/index.tsx</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-005</strong></td>
+          <td>CWE-319</td>
+          <td><span class="badge sev-high">High</span></td>
+          <td><code>AccountDetails</code> passed to App Insights in <code>acceptQuote</code> routes; form values passed in <code>WizardRoutedStep</code> error handlers</td>
+          <td><code>acceptQuote/deliveryAndReturn.tsx</code>, <code>reportRecipient.tsx</code>, <code>WizardRoutedStep.tsx</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-006</strong></td>
+          <td>CWE-601</td>
+          <td><span class="badge sev-high">High</span></td>
+          <td><code>EXTERNAL_REDIRECT_URL</code> (server-injected) used as redirect destination without domain validation</td>
+          <td><code>env.ts</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A &mdash; throws at module load if hostname not in <code>measurement.gov.au</code> / <code>localhost</code> allowlist</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-007</strong></td>
+          <td>CWE-116</td>
+          <td><span class="badge sev-medium">Medium</span></td>
+          <td>Unencoded server data in <code>mailto:</code> href (email + quotation ID)</td>
+          <td><code>measurementReport/nMIContactDetails.tsx</code>, <code>quotation/nMIContactDetails.tsx</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A &mdash; <code>encodeURIComponent</code> applied to subject value</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-008</strong></td>
+          <td>CWE-359</td>
+          <td><span class="badge sev-medium">Medium</span></td>
+          <td>PII in <code>console.log</code> when hostname is localhost; <code>helperFunctions.ts</code> also logged pre-redaction data</td>
+          <td><code>GoogleAnalytics.tsx</code>, <code>helperFunctions.ts</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A &mdash; both localhost debug blocks removed; dead <code>originalData</code> variable also cleaned up</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-009</strong></td>
+          <td>CWE-79</td>
+          <td><span class="badge sev-medium">Medium</span></td>
+          <td>TrustedTypes <code>createHTML</code>/<code>createScript</code> not implemented; TODO passthrough comment</td>
+          <td><code>trustedtypes.ts</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A &mdash; <code>createHTML</code> uses DOMPurify; <code>createScript</code> throws unconditionally</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-010</strong></td>
+          <td>CWE-639</td>
+          <td><span class="badge sev-medium">Medium</span></td>
+          <td>IDOR risk: dashboard filtered by client-side <code>organisationCRMGuid</code>; server enforcement unknown</td>
+          <td><code>dashboard/index.tsx:379</code></td>
+          <td><span class="badge status-partial">In progress</span> &mdash; backend verification checklist at <code>docs/sec/SEC-010-idor-backend-verification.md</code>; backend review pending</td>
+          <td>Backend review pending</td>
+        </tr>
+        <tr>
+          <td><strong>SEC-011</strong></td>
+          <td>CWE-346</td>
+          <td><span class="badge sev-low">Low</span></td>
+          <td><code>callingPath</code> passed to <code>navigate()</code> without validation in <code>BranchSelectorModal</code></td>
+          <td><code>BranchSelectorModal/index.tsx</code></td>
+          <td><span class="badge status-resolved">RESOLVED 2026-05-29</span></td>
+          <td>N/A &mdash; <code>.startsWith('/')</code> guard added; non-relative paths fall back to <code>'/'</code></td>
+        </tr>
+        <tr>
+          <td><strong>SEC-012</strong></td>
+          <td>CWE-613</td>
+          <td><span class="badge sev-low">Low</span></td>
+          <td><code>targetOrganisation</code> not cleared on sign-out</td>
+          <td><code>sign-out/index.tsx</code></td>
+          <td><span class="badge status-resolved">False finding &mdash; already resolved</span></td>
+          <td><code>clearTargetOrganisation()</code> was already present in <code>sign-out/index.tsx:22</code> before this assessment session</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7 -->
+<!-- ============================================================ -->
+<section id="s7">
+  <span class="section-label">Section 7</span>
+  <h2>Testing Gaps Creating Migration Risk</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Gap</th>
+          <th>Migration risk</th>
+          <th>Effort to add</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>WizardForm navigation flow (step advance, back, guard enforcement) &mdash; <strong>resolved 2026-05-30</strong>: 5 integration tests added covering forward nav (save-and-next + step save count), back nav, linear guard redirect (step 2 with step 1 NotStarted &rarr; redirects to step 1), and <code>locationOnCompletion</code> after final submit.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>WizardRoutedStep</code> error handling &mdash; <strong>resolved 2026-05-30</strong>: discriminated union state, silent failure restored, stale redirect fixed. 14 unit + 5 integration tests added.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Auth/precondition state machine (all 5 conditions in <code>PreConditions.tsx:63-92</code>) &mdash; <strong>resolved 2026-05-31</strong>: 16 unit tests added in <code>tests/unit/routes/preConditions.test.tsx</code> covering all 5 condition checks and redirect contracts.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Custom Yup validators (19 methods in <code>stringExtensions.ts</code>) &mdash; <strong>resolved 2026-05-31</strong>: 132 unit tests added in <code>tests/unit/validationSchemas/stringExtensions.test.ts</code> covering all 18 methods. (5-test <code>stringExtensions.businessName.test.ts</code> regression suite previously added 2026-05-30.)</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>sessionStorageCache.ts</code> defensive JSON parsing — <strong>resolved 2026-05-31</strong>: 9 unit tests added in <code>tests/unit/storage/sessionStorageCache.test.ts</code> covering fail-soft JSON parsing, setItem/getItem round-trip, removeItem, and clear.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><code>errorRoutes.ts</code> full mapping — <strong>resolved 2026-05-31</strong>: 9 unit tests added in <code>tests/unit/routes/errorRoutes.test.ts</code> covering all 7 HttpStatusCode mappings and the default/undefined cases.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Dashboard filtering/pagination with MSW-backed tests &mdash; <strong>resolved 2026-05-31</strong>: 7 unit tests added in <code>tests/unit/routes/dashboard.test.tsx</code> covering filter params, pagination, and error notification paths.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Token acquisition pattern (35+ call sites)</td>
+          <td>Medium &mdash; MSAL handles renewal; but error handling varies per site</td>
+          <td>Hard</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><code>AccountProvider</code> error path &mdash; <strong>resolved 2026-05-30</strong>: errored state now surfaces <code>BlockUISpinner</code> with redirect message; children suppressed; 2 tests (error path + success path).</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><code>TermsAndConditionModal</code> interaction (ToU acceptance flow) &mdash; <strong>resolved 2026-05-31</strong>: <code>setIsLoading(false)</code> bug fixed; 4 unit tests added in <code>tests/unit/components/modals/TermsAndConditionModal.test.tsx</code></td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Storybook vs real runtime gap &mdash; <strong>documented 2026-05-31</strong>: Vite/webpack divergence, known production-only behaviours, and rebuild recommendation in <code>docs/architecture/storybook-vs-webpack-runtime.md</code></td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+        </tr>
+        <tr>
+          <td>11a</td>
+          <td>Storybook 56 static asset failures (font import paths) &mdash; <strong>resolved 2026-05-31</strong>: font import paths fixed in <code>.storybook/preview.ts</code>; all 56 asset 404 failures eliminated.</td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+          <td>N/A</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><code>mockServiceWorker.js</code> absent from snapshot</td>
+          <td>Medium &mdash; required for migration; must run <code>npx msw init public/</code> in target &mdash; <strong>documented 2026-05-31</strong>: migration checklist at <code>docs/migration/msw-init-checklist.md</code></td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>BDD E2E step implementation status</td>
+          <td>Unknown &mdash; 5 real-flow feature files exist but step implementations unconfirmed &mdash; <strong>confirmed 2026-05-31</strong>: all 16 scenarios implemented in <code>tests/e2e/steps/common.steps.ts</code>; see <code>docs/architecture/bdd-e2e-step-coverage.md</code></td>
+          <td><span class="badge status-resolved">Resolved</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 8 -->
+<!-- ============================================================ -->
+<section id="s8">
+  <span class="section-label">Section 8</span>
+  <h2>Documentation Gaps Blocking Handover</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Gap</th>
+          <th>Severity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Yup method count: docs said 17, code has 19 &mdash; <strong>doc gap resolved 2026-05-29</strong>: <code>ARCHITECTURE.md</code>, <code>CLAUDE.md</code>, <code>CONVENTIONS.md</code> all updated to list all 19 methods. <code>businessName</code> TS declaration gap was a <strong>false finding &mdash; confirmed 2026-05-30</strong>: method is correctly present at <code>stringExtensions.ts:66-70</code> in the <code>declare module 'yup'</code> augmentation block. 5-test regression suite confirms runtime behaviour.</td>
+          <td><span class="badge sev-low">Low</span> (fully resolved)</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>env.ts</code> var count: was 17 (with bypass vars), now 11 after retirement &mdash; docs need update</td>
+          <td><span class="badge sev-low">Low</span> (now resolved)</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>WizardRoutedStep</code> prop contract (29 props) &mdash; <strong>resolved 2026-05-30</strong>: full JSDoc <code>@property</code> block on <code>WizardStepProps</code>, <code>WizardFormProps</code>, <code>WizardRoutedStepProps</code></td>
+          <td><span class="badge sev-low">Low</span> (resolved)</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Silent failure path in <code>WizardRoutedStep.loadData</code> &mdash; <strong>resolved 2026-05-30</strong>: <code>resolveErrorState</code> now called in catch block; unrecognised load errors surface as <code>{ kind: 'loading' }</code> &rarr; <code>/server-error</code></td>
+          <td><span class="badge sev-low">Low</span> (resolved)</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>PII logging via <code>AppLogger.verbose</code>: no documented policy or scrubbing approach &mdash; <strong>resolved 2026-05-29</strong>: all 13 call sites scrubbed; <code>CONVENTIONS.md</code> updated with explicit caveat that <code>AppLogger</code> routes <code>properties</code> directly to App Insights bypassing the MSAL <code>piiLoggingEnabled</code> flag</td>
+          <td><span class="badge sev-low">Low</span> (resolved)</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Transitive Yup side-effect import chain (<code>update/validation.ts</code>, <code>addBranch/validation.ts</code> rely on transitive imports) &mdash; <strong>resolved 2026-05-31</strong>: explicit <code>import '../../../validationSchemas/yupExtensions'</code> added to both files; 2 regression tests in <code>tests/unit/validationSchemas/transitiveYupImports.test.ts</code></td>
+          <td><span class="badge sev-low">Low</span> (resolved)</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Organisation switching / <code>setTargetOrganisation</code> lifecycle across tabs — <strong>resolved 2026-05-31</strong>: lifecycle documented in <code>docs/architecture/org-switching-lifecycle.md</code>.</td>
+          <td><span class="badge sev-low">Low (resolved)</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><code>AuthorizedApiBase.targetOrganisation</code> read at construction (not reactive): undocumented contract &mdash; <strong>resolved 2026-05-31</strong>: fully documented in <code>docs/architecture/org-switching-lifecycle.md</code> including safety analysis and rebuild recommendation</td>
+          <td><span class="badge sev-low">Low</span> (resolved)</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>NSwag client regeneration process: noted in <code>CONCERNS.md</code> but no documented procedure — <strong>resolved 2026-05-31</strong>: procedure documented in <code>docs/architecture/nswag-regeneration.md</code>.</td>
+          <td><span class="badge sev-low">Low (resolved)</span></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Target-repo placement assumptions: roadmap does not account for Storybook Vite vs webpack build split &mdash; <strong>resolved 2026-05-31</strong>: options analysed in <code>docs/architecture/target-repo-storybook-placement.md</code> with recommendation to align on Vite</td>
+          <td><span class="badge sev-low">Low</span> (resolved)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 9 -->
+<!-- ============================================================ -->
+<section id="s9">
+  <span class="section-label">Section 9</span>
+  <h2>Migration Unit and Merge-Readiness Classification</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Area / path</th>
+          <th>Classification</th>
+          <th>Reason</th>
+          <th>Key risk if mishandled</th>
+          <th>Confidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>ClientApp/src/index.tsx</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Bootstrap entry</td>
+          <td>Top-level await requires bundler support</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>ClientApp/src/App.tsx</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Route tree &mdash; all 41 registered paths (6 public/direct, 3 <code>PreConditions</code>-only, 32 authenticated; CRD-041)</td>
+          <td>Route path strings must not drift</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>ClientApp/src/env.ts</code></td>
+          <td><span class="badge dec-migrate">Migrate</span> (clean &mdash; 11 vars)</td>
+          <td>Runtime config contract</td>
+          <td>Target must use <code>window.*</code> not <code>process.env</code></td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>ClientApp/src/authentication/**</code> (excl. <code>devAuth.ts</code>)</td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Auth layer</td>
+          <td>MSAL version must match; context split preserved</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td><code>ClientApp/src/authentication/devAuth.ts</code></td>
+          <td><span class="badge dec-retire">Retired &mdash; deleted</span></td>
+          <td>Auth bypass security blocker</td>
+          <td>N/A</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><code>ClientApp/src/routes/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Feature pages</td>
+          <td>81 <code>acquireTokenSilent</code> matches across 52 production files; PII logging <strong>fixed 2026-05-29</strong></td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><code>ClientApp/src/components/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Shared UI</td>
+          <td>WizardRoutedStep refactor complete (2026-05-30); SonarLint phase 2 complete; Bootstrap coupling remains</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>7a</td>
+          <td><code>ClientApp/src/routes/ta/**</code>, <code>routes/dashboard/dashboard-ta.tsx</code>, and Type Approval-specific components</td>
+          <td><span class="badge dec-migrate">Migrate together</span></td>
+          <td>Pattern/type approval feature slice</td>
+          <td>Generated-client DTOs, upload progress/cancellation, step status, and management tabs must remain compatible; browser fixtures are still missing</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td><code>ClientApp/src/validationSchemas/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Yup schemas</td>
+          <td>Side-effect import chain must be preserved</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td><code>ClientApp/src/storage/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Session state</td>
+          <td><code>clearTargetOrganisation</code> already called in sign-out flow (SEC-012 was a false finding)</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td><code>ClientApp/src/instrumentation/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Telemetry</td>
+          <td>PII logging fixed 2026-05-29; ready to migrate</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td><code>ClientApp/src/analytics/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>GA</td>
+          <td>PII <code>console.log</code> <strong>removed 2026-05-29</strong></td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td><code>ClientApp/src/utils/**</code>, <code>types.ts</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Pure utilities</td>
+          <td>None</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td><code>ClientApp/src/styles/**</code></td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>Bootstrap theme</td>
+          <td>Path rebasing; <code>negativify-map()</code> blocker; icon font deps</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td><code>ClientApp/media/**</code>, <code>ClientApp/public/fonts/**</code></td>
+          <td><span class="badge dec-migrate">Migrate</span></td>
+          <td>Static assets</td>
+          <td>Asset path assumptions in SCSS; webpack emits to <code>dist/images/</code>, <code>dist/fonts/</code></td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td><code>tests/unit/**</code></td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>Unit tests</td>
+          <td>Preserve the current 114-file / 1,169-test baseline and update aliases only where the target layout requires it</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td><code>tests/e2e/**</code></td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>BDD feature specs</td>
+          <td>29 feature files are present; regenerate both application and Storybook <code>.features-gen/</code> projects in target. Preserve reviewed Type Approval exclusions until fixtures exist.</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td><code>docs/**</code></td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>Governance</td>
+          <td>Update stale path/var refs; add auth bypass security doc</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td><code>quality/**</code></td>
+          <td><span class="badge dec-migrate-sel">Migrate selectively</span></td>
+          <td>Regression traceability</td>
+          <td>Fix vitest config import paths; carry regression IDs to target CI</td>
+          <td><span class="badge conf-medium">Medium</span></td>
+        </tr>
+        <tr>
+          <td>19</td>
+          <td><code>ClientApp/src/api/web-api-client.ts</code></td>
+          <td><span class="badge dec-regenerate">Regenerate</span></td>
+          <td>NSwag-generated client</td>
+          <td>Copy carries <code>targetOrganisation</code> raw sessionStorage read; regenerate from spec</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td><code>ClientApp/src/parent/node_modules/**</code>, <code>ClientApp/src/external/**</code></td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>Vendor source mirrors</td>
+          <td>Will inflate repo and hide source ownership</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>21</td>
+          <td><code>ClientApp/src/main.*.js</code>, <code>ClientApp/css/main.*.css</code>, <code>ClientApp/webpack/**</code></td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>Build artifacts</td>
+          <td>Regenerate via build</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>22</td>
+          <td><code>ClientApp/source-map-http-downloads/**</code></td>
+          <td><span class="badge dec-exclude">Exclude</span></td>
+          <td>Source map mirrors</td>
+          <td>Same</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+        <tr>
+          <td>23</td>
+          <td><code>dist/**</code>, <code>storybook-static/**</code>, <code>reports/**</code>, <code>.features-gen/</code></td>
+          <td><span class="badge dec-exclude">Exclude</span> / <span class="badge dec-regenerate">Regenerate</span></td>
+          <td>Generated outputs</td>
+          <td>Same</td>
+          <td><span class="badge conf-high">High</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 10 -->
+<!-- ============================================================ -->
+<section id="s10">
+  <span class="section-label">Section 10</span>
+  <h2>Runtime Contracts to Preserve</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Contract</th>
+          <th>Location</th>
+          <th>What must be preserved</th>
+          <th>Risk if broken</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td><code>window.*</code> runtime config injection</td>
+          <td><code>env.ts</code>, <code>index.html</code></td>
+          <td>Server-side HTML template must inject all 11 vars before bundle loads; target must not switch to <code>process.env</code></td>
+          <td>Entire config reads as empty strings; auth fails silently</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>MSAL bootstrap order</td>
+          <td><code>index.tsx:13-14</code></td>
+          <td><code>await PublicClientApplication.createPublicClientApplication()</code> must complete before <code>root.render()</code></td>
+          <td>MSAL instance undefined; all auth calls throw</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>React Router route semantics</td>
+          <td><code>App.tsx</code></td>
+          <td><code>createBrowserRouter</code> + <code>createRoutesFromElements</code>; all 41 registered paths, wrappers, and <code>displayHeaderAndFooter</code> settings must be preserved</td>
+          <td>Deep-linked URLs return 404 or wrong content</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Yup extension side-effect imports</td>
+          <td><code>validationSchemas/yupExtensions/index.ts</code></td>
+          <td>Every schema file using custom methods must import the side-effect (directly or transitively)</td>
+          <td>Silent runtime error: <code>schema.method is not a function</code></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>NSwag client regeneration boundary</td>
+          <td><code>api/web-api-client.ts</code></td>
+          <td>Never hand-edit; regenerate from backend OpenAPI spec; <code>AuthorizedApiBase</code> extension may need manual patching</td>
+          <td>Token injection breaks; API calls fail with 401</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>App Insights and GA wiring</td>
+          <td><code>AppInsightsService.ts</code>, <code>GoogleAnalytics.tsx</code></td>
+          <td>Singleton must initialise before error boundaries mount</td>
+          <td>Telemetry lost; errors not reported</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>TrustedTypes/DOMPurify CSP contract</td>
+          <td><code>trustedtypes.ts</code></td>
+          <td><code>window.trustedTypes?.createPolicy('default',...)</code> must run before React renders</td>
+          <td>XSS risk if policy not established before dynamic content renders</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>SCSS / Bootstrap theme assumptions</td>
+          <td><code>styles/_variables.scss</code>, <code>_bootstrap-import.scss</code></td>
+          <td>Bootstrap 5 must be imported via shim; <code>_variables.scss</code> must precede it; <code>silenceDeprecations: ['import']</code> must be configured</td>
+          <td>Build warnings become errors; styles break</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Font and asset path assumptions</td>
+          <td><code>ClientApp/public/fonts/</code>, <code>ClientApp/media/</code></td>
+          <td>Webpack emits fonts to <code>dist/fonts/</code>, images to <code>dist/images/</code>; SCSS references via relative paths</td>
+          <td>Icons/fonts missing at runtime</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Storybook/test harness</td>
+          <td><code>.storybook/preview.ts</code>, <code>storybookHarness.tsx</code></td>
+          <td>Global router decorator (<code>createMemoryRouter</code>) must be preserved; <code>withPortalProviders</code> must not wrap with <code>MemoryRouter</code></td>
+          <td>Storybook stories crash with nested-router error</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Quality regression suite</td>
+          <td><code>quality/vitest.regression.config.ts</code></td>
+          <td>All 8 regression tests must run in target CI; import paths must be updated</td>
+          <td>Previously-fixed bugs regress silently</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 11 -->
+<!-- ============================================================ -->
+<section id="s11">
+  <span class="section-label">Section 11</span>
+  <h2>Unknowns and Design Inputs Needed</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Input needed</th>
+          <th>Decision it affects</th>
+          <th>Status (2026-06-04)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>Design platform color tokens</td>
+          <td>Whether <code>_variables.scss</code> can be adapted or must be replaced entirely</td>
+          <td><span class="badge status-resolved">Resolved</span> — Replace with <code>var(--nmi-*)</code> tokens</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Design platform typography tokens and font stack</td>
+          <td>Whether "Public Sans" is reused or replaced</td>
+          <td><span class="badge status-resolved">Resolved</span> — Retain Public Sans</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Design platform spacing/grid/breakpoint rules</td>
+          <td>Whether Bootstrap 5 grid is kept or replaced</td>
+          <td><span class="badge status-resolved">Resolved</span> — Drop Bootstrap grid; CSS Grid/Flexbox</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Design platform form control components</td>
+          <td>Whether all <code>Inputs/</code> components and form SCSS must be replaced</td>
+          <td><span class="badge status-resolved">Resolved</span> — Direct substitution with react-components</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Design platform validation state/error patterns</td>
+          <td><code>ErrorSummary</code> and field-level error display approach</td>
+          <td><span class="badge status-resolved">Resolved</span> — Target ErrorSummary + FormField error prop</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Design platform wizard/stepper pattern</td>
+          <td>Whether WizardForm engine is adapted or rebuilt for visual layer only</td>
+          <td><span class="badge status-resolved">Resolved</span> — Adapt into ApplicationWizard</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Design platform modal/dialog components</td>
+          <td>Whether react-bootstrap Modal usages are replaced</td>
+          <td><span class="badge status-resolved">Resolved</span> — Replace with target Modal (<code>&lt;dialog&gt;</code>)</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Design platform icon system</td>
+          <td>Whether NMI icon font and <code>_replace-svgicons-csp.scss</code> can be retired</td>
+          <td><span class="badge status-resolved">Resolved</span> — Retire; SVG from packages/icons</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Design platform accessibility requirements</td>
+          <td>Whether <code>skipLinks</code>, <code>useRouteAccessibility</code> hook (replaces deleted <code>routeAccessibleNavigation.tsx</code>), <code>useHtmlTitle</code>, <code>useBodyClass</code> are kept</td>
+          <td><span class="badge status-resolved">Resolved</span> — <strong>BATCH-E-PREREQ-001 COMPLETE 2026-06-05 (CRD-037)</strong>: <code>useRouteAccessibility</code> hook added to Layout and PreConditions; WCAG 2.4.2/2.4.3 met</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Print requirements on design platform</td>
+          <td><code>media-print.scss</code> migration approach</td>
+          <td><span class="badge status-resolved">Resolved</span> — Port as print.css global import</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Backend OpenAPI spec availability</td>
+          <td>Required to regenerate <code>web-api-client.ts</code> in target repo</td>
+          <td><span class="badge status-resolved">Resolved</span> — Generate + commit docs/api/openapi.json</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Target CI configuration</td>
+          <td>Whether Playwright + Vitest + <code>bddgen</code> pipeline can be reproduced</td>
+          <td><span class="badge status-resolved">Resolved</span> — GitHub Actions pipeline confirmed</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Storybook in target: keep Vite or switch to webpack?</td>
+          <td>Whether Storybook harness and BDD tests migrate as-is</td>
+          <td><span class="badge status-resolved">Resolved</span> — Vite; migrate .storybook/ as-is</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 12 -->
+<!-- ============================================================ -->
+<section id="s12">
+  <span class="section-label">Section 12</span>
+  <h2>What Has Been Done (as of 2026-05-29)</h2>
+
+  <p>This section documents all changes made to the source-map snapshot during this assessment session.</p>
+
+  <h3>Phase A &mdash; SEC-001/002: Auth bypass retired</h3>
+  <div class="callout success">
+    <strong>Outcome:</strong> <code>npm run type-check</code> passed cleanly. No new test failures introduced.
+  </div>
+  <ul class="file-list">
+    <li><code>ClientApp/src/authentication/devAuth.ts</code> &mdash; <span class="badge dec-retire">DELETED</span></li>
+    <li><code>ClientApp/src/authentication/AuthenticatedElement.tsx</code> &mdash; removed <code>isAuthBypassEnabled</code> import; replaced bypass ternary with direct <code>MsalAuthenticationTemplate</code></li>
+    <li><code>ClientApp/src/authentication/AccountProvider.tsx</code> &mdash; removed <code>devAuth</code> import; removed <code>authBypassEnabled</code> var; removed mock-account <code>useEffect</code>; removed two bypass early-returns; removed <code>authBypassEnabled</code> from both <code>useEffect</code> dependency arrays</li>
+    <li><code>ClientApp/src/env.ts</code> &mdash; removed <code>REACT_APP_AUTH_BYPASS</code>, <code>REACT_APP_MOCK_GIVEN_NAME</code>, <code>REACT_APP_MOCK_FAMILY_NAME</code>, <code>REACT_APP_MOCK_EMAIL</code>, <code>REACT_APP_MOCK_ORGANISATION</code>, <code>REACT_APP_MOCK_ABN</code> from <code>declare global</code>, <code>EnvType</code>, <code>requiredVars</code>, and <code>env</code> export. Now 11 vars.</li>
+    <li><code>index.html</code> &mdash; removed 6 bypass/mock <code>window.*</code> injection lines; fixed stale comment path <code>static/js/env.ts</code> &rarr; <code>ClientApp/src/env.ts</code></li>
+    <li><code>webpack.config.js</code> &mdash; removed 6 entries from <code>devEnvVars</code> (including <code>REACT_APP_AUTH_BYPASS: 'false'</code> dangerous default)</li>
+  </ul>
+
+  <h3>Phase B &mdash; AccountContext re-renders: fully resolved</h3>
+  <div class="callout success">
+    <strong>Root cause:</strong> All 7 dispatch callbacks used <code>useCallback([accountDetails])</code>, making <code>dispatchValue</code> a new object on every state change. <code>npm run type-check</code> passed cleanly post-fix.
+  </div>
+  <ul class="file-list">
+    <li><code>ClientApp/src/authentication/AccountProvider.tsx</code> &mdash; all 7 callbacks converted to functional updater form (<code>setAccountDetails(prev =&gt; ...)</code>) with <code>[]</code> dep arrays. <code>dispatchValue</code> is now permanently stable after mount. 5 direct state mutations also eliminated as a side effect.</li>
+  </ul>
+
+  <h3>Phase C &mdash; SEC-003/004/005/008: PII logging scrubbed (13 call sites)</h3>
+  <div class="callout success">
+    <strong>Outcome:</strong> No <code>AppLogger</code> call passes raw <code>AccountInfo</code>, <code>AccountDetails</code>, <code>FormikValues</code>, or PII-bearing DTOs as properties. <code>npm run type-check</code> passed cleanly.
+  </div>
+  <p>5 additional call sites in <code>ViewPdfQuote.tsx</code>, <code>ViewMeasurementReport.tsx</code>, <code>ViewPdfQuoteTerms.tsx</code>, and <code>summaryAndAccept.tsx</code> were discovered during code quality review and scrubbed in the same pass.</p>
+  <ul class="file-list">
+    <li><code>ClientApp/src/authentication/AccountProvider.tsx</code> &mdash; 3 verbose calls: <code>account</code> &rarr; <code>{ homeAccountId: account.homeAccountId }</code></li>
+    <li><code>ClientApp/src/routes/dashboard/index.tsx</code> &mdash; <code>accountState?.details</code> &rarr; <code>{ homeAccountId: accountState?.details?.homeAccountId }</code></li>
+    <li><code>ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx</code> &mdash; same pattern; stale log label corrected</li>
+    <li><code>ClientApp/src/routes/acceptQuote/reportRecipient.tsx</code> &mdash; same pattern; stale label <code>'DeliveryAndReturn...'</code> &rarr; <code>'ReportRecipient.getAcceptQuotePreInfo'</code></li>
+    <li><code>ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx</code> &mdash; 4 error/trace calls: <code>values</code> &rarr; <code>{ stepIndex: currentStepIndex }</code>; <code>problemDetails</code> projected to <code>{ status, title }</code></li>
+    <li><code>ClientApp/src/components/Utilities/ViewPdfQuote.tsx</code> &mdash; 2 calls: <code>quotationData</code> &rarr; <code>{ crmQuoteRequestId }</code></li>
+    <li><code>ClientApp/src/components/Utilities/ViewMeasurementReport.tsx</code> &mdash; 2 calls: same pattern</li>
+    <li><code>ClientApp/src/components/Utilities/ViewPdfQuoteTerms.tsx</code> &mdash; 1 call: same pattern</li>
+    <li><code>ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx</code> &mdash; 1 call: <code>acceptQuotePreInfo</code> &rarr; <code>{ crmQuoteId }</code></li>
+    <li><code>ClientApp/src/analytics/GoogleAnalytics.tsx</code> &mdash; removed <code>console.log</code> PII debug block and dead <code>val</code> variable</li>
+    <li><code>ClientApp/src/routes/common/helperFunctions.ts</code> &mdash; removed <code>console.log</code>/<code>console.table</code> pre-redaction block and dead <code>originalData</code> variable</li>
+  </ul>
+
+  <h3>Phase D &mdash; SEC-006: EXTERNAL_REDIRECT_URL domain allowlist</h3>
+  <ul class="file-list">
+    <li><code>ClientApp/src/env.ts</code> &mdash; added <code>isAllowedRedirectHost()</code> validator; throws at module load if <code>EXTERNAL_REDIRECT_URL</code> hostname is not <code>measurement.gov.au</code> (or subdomain) or <code>localhost</code></li>
+  </ul>
+
+  <h3>Phase E &mdash; SEC-007: mailto encoding</h3>
+  <ul class="file-list">
+    <li><code>ClientApp/src/routes/quotation/nMIContactDetails.tsx</code> &mdash; subject extracted to <code>const mailtoSubject = encodeURIComponent(...)</code></li>
+    <li><code>ClientApp/src/routes/measurementReport/nMIContactDetails.tsx</code> &mdash; identical fix</li>
+  </ul>
+
+  <h3>Phase F &mdash; SEC-009: TrustedTypes createHTML and createScript</h3>
+  <ul class="file-list">
+    <li><code>ClientApp/src/trustedtypes.ts</code> &mdash; <code>createHTML</code> implemented with <code>DOMPurify.sanitize</code>; <code>createScript</code> throws unconditionally; commented-out passthrough handlers removed</li>
+  </ul>
+
+  <h3>Phase G &mdash; Architecture: provider-level ErrorBoundary</h3>
+  <ul class="file-list">
+    <li><code>ClientApp/src/index.tsx</code> &mdash; <code>&lt;ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}&gt;</code> added as outermost wrapper in <code>root.render</code>, above <code>MsalProvider</code></li>
+  </ul>
+
+  <h3>Phase H &mdash; SEC-011: callingPath guard</h3>
+  <ul class="file-list">
+    <li><code>ClientApp/src/components/modals/BranchSelectorModal/index.tsx</code> &mdash; <code>callingPath.startsWith('/')</code> guard added; non-relative paths fall back to <code>'/'</code></li>
+  </ul>
+
+  <h3>Phase J &mdash; WizardRoutedStep refactor (2026-05-30)</h3>
+  <div class="callout success">
+    <strong>Outcome:</strong> All 5 confirmed bugs fixed. <code>npm run type-check</code> clean. 19 new tests pass (14 unit + 5 integration). SonarLint complexity findings resolved.
+  </div>
+  <ul class="file-list">
+    <li><code>ClientApp/src/components/forms/WizardForm/errorState.ts</code> &mdash; <span class="badge status-resolved">CREATED</span> — pure <code>resolveErrorState()</code> function + <code>resolveForbiddenState()</code> helper; maps caught errors to <code>WizardStepError</code> discriminant; eliminates stale-read class of bug</li>
+    <li><code>ClientApp/src/components/forms/WizardForm/types.ts</code> &mdash; added <code>WizardStepError</code> discriminated union (9 variants); added full JSDoc <code>@property</code> contract on <code>WizardStepProps</code>, <code>WizardFormProps</code>, <code>WizardRoutedStepProps</code></li>
+    <li><code>ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx</code> &mdash; 8 error booleans replaced by <code>useState&lt;WizardStepError&gt;({ kind: 'none' })</code>; all catch blocks call <code>resolveErrorState()</code>; silent load failure restored; prop mutation at line 190 replaced with immutable spread; <code>setDashboardNotification</code>/<code>setGetStartedNotification</code> moved into <code>useEffect</code> (not render phase)</li>
+    <li><code>tests/unit/components/forms/wizardRoutedStep/errorState.test.ts</code> &mdash; <span class="badge status-resolved">CREATED</span> — 14 unit tests covering all <code>resolveErrorState</code> branches</li>
+    <li><code>tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx</code> &mdash; <span class="badge status-resolved">CREATED</span> — 5 integration tests: 404&rarr;/not-found, 500&rarr;/server-error (restored silent failure), custom redirect, prop mutation fix, 409 concurrency retry</li>
+  </ul>
+
+  <h3>Phase K &mdash; SonarLint cleanup &mdash; 20 findings resolved (2026-05-30)</h3>
+  <div class="callout success">
+    <strong>Outcome:</strong> All 20 confirmed-present SonarLint findings resolved across 4 files. <code>npm run type-check</code> clean. 27 tests pass. <code>tsconfig.json</code> <code>baseUrl</code> deprecation warning deferred — requires TypeScript 6.x (currently 5.9.3).
+  </div>
+  <ul class="file-list">
+    <li><code>ClientApp/src/components/forms/WizardForm/types.ts</code> &mdash; S1128 (removed unused <code>FormikFormProps</code> import); S4782 &times;5 (removed redundant <code>| undefined</code> from <code>discard</code>, <code>canSaveDraft</code>, <code>showBanner</code>, <code>confirmationOnSubmission</code>, <code>finalStepConfirmation</code>); S1874 &times;2 (<code>ReactChild | ReactFragment | ReactPortal</code> &rarr; <code>React.ReactElement&lt;any&gt;[]</code> in <code>PreviousStepButtonProps</code>)</li>
+    <li><code>ClientApp/src/components/forms/WizardForm/errorState.ts</code> &mdash; S3776 (cognitive complexity 18&rarr;&sim;11 via extracted <code>resolveForbiddenState()</code> private helper)</li>
+    <li><code>ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx</code> &mdash; S4624 (<code>stepPrefix</code> variable extracts nested template); S125 &times;2 (dead comments deleted); S7764 (<code>window</code>&rarr;<code>globalThis</code>); S7735 (negated condition inverted)</li>
+    <li><code>ClientApp/src/components/forms/ErrorSummary/index.tsx</code> &mdash; S4325 (<code>in</code> operator replaces unsafe cast in type guard); S6551 (explicit <code>String()</code> conversion); S7735 (negated condition inverted); S6653 (<code>Object.hasOwn()</code>); S7781 &times;2 (<code>replaceAll()</code>)</li>
+  </ul>
+
+  <h3>Phase L &mdash; Quality gaps plan: 12 tasks (2026-05-30)</h3>
+  <div class="callout success">
+    <strong>Outcome:</strong> All 12 tasks complete. 17 new tests added across 4 new test files. 44 tests total pass. All SonarLint findings in scope resolved. ADR for acquireTokenSilent centralisation recorded.
+  </div>
+  <ul class="file-list">
+    <li><code>tests/unit/validationSchemas/stringExtensions.businessName.test.ts</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 5 regression tests confirming <code>businessName</code> Yup method is declared and works correctly</li>
+    <li><code>tests/unit/validationSchemas/emailSchema.consolidation.test.ts</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 5 tests verifying behavior preserved after de-duplication</li>
+    <li><code>ClientApp/src/validationSchemas/contactValidation.ts</code> &mdash; local duplicate <code>emailSchema</code> removed; imports from <code>common.ts</code> and re-exports for backward compatibility</li>
+    <li><code>tests/unit/authentication/AccountProvider.errored.test.tsx</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 2 tests: error path (signIn rejects &rarr; error message shown, children suppressed) + success path (signIn resolves &rarr; children render)</li>
+    <li><code>ClientApp/src/authentication/AccountProvider.tsx</code> &mdash; errored state surfaces to UI: <code>BlockUISpinner</code> with redirect message when errored; children rendered only when <code>!errored</code>; <code>toAccountDetails()</code> optional chain replaces <code>!</code> assertions</li>
+    <li><code>tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 5 integration tests using <code>createMemoryRouter</code>: renders step 1, forward nav (save-and-next + step save count), back nav, linear guard redirect, <code>locationOnCompletion</code> after final step</li>
+    <li><code>ClientApp/src/routes/dashboard/index.tsx</code> &mdash; SEC-010 IDOR comment added; <code>FetchRequestsParams</code> options-bag interface replaces 10-parameter function; <code>checkAcceptedQuoteStatus</code> and <code>handleDashboardLoadError</code> extracted to module scope; 14 <code>!</code>/<code>as Type</code> assertions removed; <code>role='presentation'</code> removed; <code>Number.parseInt</code>; optional chain throughout</li>
+    <li><code>ClientApp/src/routes/requestForQuote/create/index.tsx</code> &mdash; <code>setApplicationId(application.referenceId ?? '')</code> removes <code>!</code> assertion</li>
+    <li><code>ClientApp/src/routes/requestForQuote/index.tsx</code> &mdash; <code>client.getStepStatuses(id)</code> removes <code>!</code>; optional chain for <code>account?.details</code>; ternary inverted to positive condition; unused <code>AccountDetails</code> import removed</li>
+    <li><code>ClientApp/src/components/forms/WizardForm/NextStepButton.tsx</code> &mdash; 2 commented-out code blocks removed (S125)</li>
+    <li><code>ClientApp/src/validationSchemas/common.ts</code> &mdash; 9 commented blocks deleted; <code>String(value).trim()</code>; both <code>as any</code> casts removed; <code>Number.parseInt</code>; <code>DIGIT_WORDS</code> lookup + <code>numberToText</code> function replaces nested ternaries; <code>urlMatchRegex</code> character class simplified; <code>eslint-disable max-len</code> de-duplicated</li>
+    <li><code>ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts</code> &mdash; <code>buildErrMsg</code> helper replaces 19 nested-ternary error-message patterns; <code>String.raw</code> for <code>fixedDigits</code> and <code>noConsecutiveChars</code>; <code>Number.parseInt</code> &times;3; regex class deduplication in <code>businessName</code>, <code>allowedFormat</code>, <code>nameAllowedFormat</code>; <code>String.raw</code> tagged template literals for backslash-heavy patterns; <code>\${path}</code> escaping preserved in Yup fallback messages while dynamic values still interpolated</li>
+    <li><code>docs/adr/2026-05-30-acquire-token-silent-interceptor.md</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; ADR documenting deferral of <code>acquireTokenSilent</code> centralisation to migration sprint</li>
+  </ul>
+
+  <h3>Phase M &mdash; Sprint 2 Hardening (2026-05-31)</h3>
+  <div class="callout success">
+    <strong>Outcome:</strong> Gaps 3, 4, and 7 closed. SonarLint diagnostics resolved across 6 additional files. TypeScript IDE config corrected. Dashboard cognitive complexity reduced. Total unit tests now 199+.
+  </div>
+  <ul class="file-list">
+    <li><code>tests/unit/routes/preConditions.test.tsx</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 16 unit tests covering all 5 precondition checks and redirect contracts (Gap 3 resolved)</li>
+    <li><code>tests/unit/routes/dashboard.test.tsx</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 7 unit tests for dashboard filter/pagination behavior; Tests 2 and 5 quality improvements applied (Gap 7 resolved)</li>
+    <li><code>tests/unit/validationSchemas/stringExtensions.test.ts</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; 132 unit tests covering all 18 Yup custom string methods (Gap 4 resolved)</li>
+    <li><code>ClientApp/src/routes/dashboard/dashboardNotifications.ts</code> &mdash; SonarLint diagnostics resolved</li>
+    <li><code>ClientApp/src/storage/sessionStorageCache.ts</code> &mdash; SonarLint diagnostics resolved</li>
+    <li><code>ClientApp/src/analytics/GoogleAnalytics.tsx</code> &mdash; SonarLint diagnostics resolved</li>
+    <li><code>ClientApp/src/instrumentation/AppLogger.ts</code> &mdash; SonarLint diagnostics resolved</li>
+    <li><code>ClientApp/src/routes/preConditions/PreConditions.tsx</code> &mdash; SonarLint diagnostics resolved</li>
+    <li><code>ClientApp/src/routes/dashboard/index.tsx</code> &mdash; SonarLint diagnostics resolved; cognitive complexity reduced via extracted <code>resolveFilterParams</code> and <code>applyErrorNotifications</code> helpers</li>
+    <li><code>tsconfig.json</code> &mdash; TypeScript IDE config fixed (<code>baseUrl</code> / path alias deprecation resolved)</li>
+    <li><code>.storybook/preview.ts</code> &mdash; font import paths fixed; 56 Storybook static asset failures eliminated</li>
+    <li><code>docs/sec/SEC-010-idor-backend-verification.md</code> &mdash; <span class="badge status-resolved">CREATED</span> &mdash; backend verification checklist for SEC-010 IDOR finding</li>
+  </ul>
+
+  <h3>Phase I &mdash; Documentation corrections</h3>
+  <ul class="file-list">
+    <li><code>docs/ARCHITECTURE.md</code> &mdash; Yup validator count 17 &rarr; 19 (two occurrences); AccountContext re-renders marked RESOLVED with functional updater detail</li>
+    <li><code>docs/CONVENTIONS.md</code> &mdash; PII bullet extended with explicit caveat that <code>AppLogger</code> routes <code>properties</code> directly to App Insights</li>
+    <li><code>CLAUDE.md</code> &mdash; Yup method list expanded from 11 to all 19 methods (adding <code>.nameAllowedFormat()</code>, <code>.businessName()</code>, <code>.isRequired()</code>, <code>.email()</code>, <code>.noConsecutiveChars()</code>, <code>.atLeastOneChar()</code>, <code>.noConsecutivePuncuation()</code>, <code>.numberWithinRange()</code>)</li>
+    <li><code>docs/STORYBOOK-MIGRATION-READINESS.md</code> &mdash; scope caveat added to <code>CLOSED_SUCCESS</code> gate line noting API-heavy flows not covered</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 13 -->
+<!-- ============================================================ -->
+<section id="s13">
+  <span class="section-label">Section 13</span>
+  <h2>Migration Preparation Plan</h2>
+
+  <div class="callout danger">
+    <strong>Status as of 2026-06-28:</strong> CRD-041 records 41 routes, React Router v7, the Type Approval surface, 114 unit files / 1,169 passing tests, 87 Storybook files / 218 passing tests, and zero-diagnostic type-check/lint results. <code>COVERAGE-GATE-001</code> is the open P1 blocker because measured coverage is below the configured 100% thresholds. Batch E prerequisites remain cleared; repository provisioning, domain sign-offs, pre-flight, and <code>TYPE-APPROVAL-E2E-001</code> remain additional migration controls.
+  </div>
+
+  <p>The live migration must be planned from a reconstructed, evidence-backed historical record. The migration team must not rely on the readiness assessment alone; it must review all prior actions, plans, decisions, sprint records, architecture notes, and concern registers, including material predating this assessment.</p>
+
+  <h3>Preparation sequence</h3>
+  <ol>
+    <li><strong>Historical reconciliation:</strong> Review <code>analysis/portal.measurement.gov.au/ARCHITECTURE.mmd</code>, <code>analysis/portal.measurement.gov.au/ASSESSMENT.md</code>, <code>docs/CONCERNS.md</code>, all sprint artefacts, ADRs, security notes, architecture docs, and QA records. Confirm every item is either closed or captured in the open backlog.</li>
+    <li><strong>Master Change Record reconstruction:</strong> Maintain <code>docs/change-record/MASTER-CHANGE-RECORD.md</code> as the authoritative chronological log of every rebuild and migration preparation change. Each entry must include source evidence, affected files, verification, status, and migration relevance.</li>
+    <li><strong>Open item triage:</strong> Add every unresolved issue to <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code> with owner, priority, migration gate, closure evidence, and target resolution window.</li>
+    <li><strong>Pre-flight verification:</strong> Complete the Historical Review Gate and technical checks in <code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code>. Any failed check must be added to the backlog before migration proceeds.</li>
+    <li><strong>Runbook execution:</strong> Execute <code>docs/migration/MIGRATION-RUNBOOK.md</code> batch-by-batch. Each batch must cite the relevant Master Change Record entries and update the record after verification.</li>
+  </ol>
+
+  <h3>Required document merge</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Target document</th><th>Purpose for migration preparation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>docs/change-record/MASTER-CHANGE-RECORD.md</code></td><td>Canonical record of resolved changes, verified actions, and decisions.</td></tr>
+        <tr><td><code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code></td><td>Prioritised list of unresolved findings and remediation tasks.</td></tr>
+        <tr><td><code>docs/migration/PRE-FLIGHT-CHECKLIST.md</code></td><td>Historical and technical readiness gate before live migration.</td></tr>
+        <tr><td><code>docs/migration/MIGRATION-RUNBOOK.md</code></td><td>Batch-by-batch execution guide tied to the change record.</td></tr>
+        <tr><td><code>docs/superpowers/plans/2026-05-31-migration-preparation.md</code></td><td>Operational plan and current-state task map.</td></tr>
+        <tr><td><code>docs/nmi-portal-rebuild-readiness-assessment-2026-05-29.html</code></td><td>Readiness assessment with current preparation controls and open-item status.</td></tr>
+        <tr><td><code>docs/nmi-portal-modernisation-assessment-colour-revised.html</code></td><td>Modernisation assessment linked to migration governance and historical traceability.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Revalidated outstanding items</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Source finding</th><th>Disposition</th><th>Migration control</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>ARCHITECTURE.mmd</code> referenced <code>devAuth.ts</code></td><td><span class="badge status-resolved">Closed</span> — diagram updated; auth-bypass module remains deleted</td><td><code>PF-13</code> and Historical Review Gate</td></tr>
+        <tr><td>Historical assessment auth bypass / mock env findings</td><td><span class="badge status-resolved">Closed</span> — Phase A</td><td><code>MASTER-CHANGE-RECORD.md</code> CRD-001</td></tr>
+        <tr><td>Historical assessment Trusted Types, PII logging, redirect, mailto findings</td><td><span class="badge status-resolved">Closed</span></td><td>CRD-003 through CRD-006</td></tr>
+        <tr><td>Historical assessment IDOR / ownership enforcement</td><td><span class="badge status-resolved">Closed</span> — pentest-confirmed remediation prior to go-live; CRD-035 (2026-06-04)</td><td><code>docs/sec/SEC-010-idor-backend-verification.md</code>; CRD-035</td></tr>
+        <tr><td>Historical assessment validation regex suffix-only issue</td><td><span class="badge status-open">Open, non-blocking</span> — tracked separately to avoid SEC-ID confusion</td><td><code>OPEN-ITEMS-BACKLOG.md</code> VAL-REGEX-001</td></tr>
+        <tr><td>Configured 100% unit-coverage thresholds</td><td><span class="badge status-open">Open, blocking</span> — current coverage is 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines</td><td><code>OPEN-ITEMS-BACKLOG.md</code> COVERAGE-GATE-001; final pre-flight stop condition</td></tr>
+        <tr><td><code>CONCERNS.md</code> operational and validation questions</td><td><span class="badge status-confirm">Deferred / decision required</span></td><td><code>OPEN-ITEMS-BACKLOG.md</code> Priority 3</td></tr>
+        <tr><td>Design-system replacement question</td><td><span class="badge status-resolved">Resolved</span> — decisions received 2026-06-04 (CRD-034); Batch E prerequisites complete (CRD-037, CRD-038, CRD-039)</td><td><code>OPEN-ITEMS-BACKLOG.md</code> CRD-034; CRD-037; CRD-038; CRD-039</td></tr>
+        <tr><td>WCAG component and authenticated E2E baseline</td><td><span class="badge status-resolved">Updated</span> — CRD-041 reconfirms zero-diagnostic type-check/lint and 114 unit files / 1,169 tests</td><td>Preserve existing accessibility evidence and Type Approval isolated stories; manual AT, zoom, target-size, focus-not-obscured, and Type Approval workflow evidence remain separate gates</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout success">
+    <strong>SEC-010 CLOSED 2026-06-04:</strong> backend team confirmed the finding was identified in a pentest prior to go-live and remediated before production deployment. Dashboard/API migration gate is cleared. See CRD-035 and <code>docs/sec/SEC-010-idor-backend-verification.md</code>.
+  </div>
+
+  <h3>Outstanding items</h3>
+  <ul>
+    <li><strong>SEC-010</strong> (IDOR): <span style="text-decoration:line-through">backend verification pending</span> — <strong>CLOSED 2026-06-04</strong> — pentest-confirmed remediation; CRD-035.</li>
+    <li><strong>Design-platform inputs (CRD-034 2026-06-04):</strong> All 22 decisions resolved or structurally recommended. Batch E prerequisites are complete: BATCH-E-PREREQ-001 (<code>useRouteAccessibility</code> hook, CRD-037), BATCH-E-PREREQ-002 (icon audit, CRD-038), BATCH-E-PREREQ-003 (WAF-TYPE-001 typed guard, CRD-039).</li>
+    <li><strong>COVERAGE-GATE-001:</strong> <code>npm run test:unit:coverage</code> exits non-zero against the configured 100% thresholds. Add behavior-focused tests or record an explicit, approved scope/threshold decision before final pre-flight.</li>
+    <li><strong>TYPE-APPROVAL-E2E-001:</strong> six Type Approval paths have isolated Storybook states but no deterministic authenticated application-BDD fixtures. Close or explicitly accept this gap before affected-route cutover.</li>
+    <li><strong>Distributed <code>acquireTokenSilent</code></strong> (81 matches across 52 production files): ADR at <code>docs/adr/2026-05-30-acquire-token-silent-interceptor.md</code>; centralisation remains deferred to the migration sprint.</li>
+    <li><strong><code>targetOrganisation</code> at construction time</strong>: <span class="badge status-resolved">Done</span> &mdash; documented in <code>docs/architecture/org-switching-lifecycle.md</code>; rebuild guidance provided.</li>
+  </ul>
+</section>
+
+</main>
+</div>
+</body>
+</html>

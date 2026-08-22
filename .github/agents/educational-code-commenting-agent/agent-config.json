@@ -1,0 +1,69 @@
+{
+  "name": "educational-code-commenting-agent",
+  "version": "1.0.0",
+  "description": "Adds, refines, and validates educational inline comments in source code while preserving runnable behavior and repository commenting conventions.",
+  "agent_file": ".github/agents/educational-code-commenting-agent/educational-code-commenting.agent.md",
+  "prompt_files": [
+    ".github/prompts/educational-code-commenting.prompt.md"
+  ],
+  "primary_skill": "add-educational-comments",
+  "skill_files": [
+    ".github/skills/add-educational-comments/SKILL.md"
+  ],
+  "instruction_files": [
+    ".github/instructions/educational-code-commenting-agent.instructions.md",
+    ".github/instructions/self-explanatory-code-commenting.instructions.md"
+  ],
+  "default_configuration": {
+    "Comment Detail": 2,
+    "Repetitiveness": 2,
+    "Educational Nature": "Computer Science",
+    "User Knowledge": 2,
+    "Educational Level": 1,
+    "Line Number Referencing": "yes",
+    "Nest Comments": "yes"
+  },
+  "activation": {
+    "should_trigger": [
+      "add educational comments to this code",
+      "annotate this file for a beginner",
+      "add inline explanations to this TypeScript component",
+      "make this script easier to learn from",
+      "refine the existing Note comments"
+    ],
+    "should_not_trigger_without_clarification": [
+      "review comments",
+      "write documentation",
+      "explain this code in chat",
+      "add TODO comments",
+      "format code",
+      "refactor for clarity"
+    ]
+  },
+  "output_modes": [
+    "annotated_copy",
+    "sidecar_notes",
+    "authorized_in_place_edit"
+  ],
+  "safety": {
+    "static_first_validation": true,
+    "backup_before_in_place_edit": true,
+    "reject_direct_commenting_for": [
+      "standard_json",
+      "lockfiles",
+      "binary_files",
+      "generated_files",
+      "minified_files",
+      "vendored_dependencies",
+      "secret_bearing_files"
+    ],
+    "requires_authorization_for": [
+      "in_place_edits",
+      "broad_tests",
+      "network_access",
+      "dependency_installation",
+      "state_mutating_commands"
+    ]
+  },
+  "final_report_template": "assets/final-report-template.md"
+}

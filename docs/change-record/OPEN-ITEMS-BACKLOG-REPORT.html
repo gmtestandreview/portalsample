@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NMI Portal - Open Items Backlog Report</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --page: #ffffff;
+      --ink: #142033;
+      --muted: #5d6b82;
+      --border: #d9e1ec;
+      --brand: #b32123;
+      --brand-dark: #7f1417;
+      --gold: #ffcc00;
+      --blue: #1f6feb;
+      --green: #0f7b3f;
+      --amber: #9a5b00;
+      --red: #b32123;
+      --soft-green: #eefaf2;
+      --soft-amber: #fff8dc;
+      --soft-red: #fff1f2;
+      --soft-blue: #eef6ff;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+    a { color: var(--blue); }
+    code {
+      background: #eef2f7;
+      border-radius: 6px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: .92em;
+      padding: .15rem .35rem;
+    }
+    .hero {
+      background: linear-gradient(135deg, var(--brand-dark), var(--brand));
+      border-bottom: 5px solid var(--gold);
+      color: white;
+      padding: 42px 24px;
+    }
+    .hero-inner { margin: 0 auto; max-width: 1180px; }
+    .eyebrow {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      opacity: .9;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      line-height: 1.1;
+      margin: 8px 0 10px;
+    }
+    .subtitle {
+      font-size: 1.08rem;
+      margin: 0;
+      max-width: 900px;
+      opacity: .96;
+    }
+    .meta {
+      font-size: .92rem;
+      margin-top: 14px;
+      opacity: .92;
+    }
+    .layout {
+      display: grid;
+      gap: 22px;
+      grid-template-columns: 280px minmax(0, 1fr);
+      margin: 28px auto;
+      max-width: 1180px;
+      padding: 0 20px;
+    }
+    aside {
+      align-self: start;
+      position: sticky;
+      top: 16px;
+    }
+    main { min-width: 0; }
+    section { margin-bottom: 24px; }
+    .card {
+      background: var(--page);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+    }
+    .panel { padding: 24px; }
+    .toc { padding: 18px; }
+    .toc h2 {
+      border: 0;
+      font-size: 1rem;
+      margin: 0 0 8px;
+      padding: 0;
+    }
+    .toc ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .toc li { margin: 5px 0; }
+    .toc a {
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .toc a:hover {
+      color: var(--brand);
+      text-decoration: underline;
+    }
+    h2 {
+      border-bottom: 2px solid var(--border);
+      font-size: 1.65rem;
+      margin: 0 0 14px;
+      padding-bottom: 8px;
+    }
+    h3 {
+      font-size: 1.18rem;
+      margin: 22px 0 8px;
+    }
+    p { margin: 0 0 14px; }
+    ul, ol { margin: 0 0 16px 22px; padding: 0; }
+    li { margin-bottom: 4px; }
+    table {
+      background: #fff;
+      border-collapse: collapse;
+      font-size: .94rem;
+      margin: 16px 0 24px;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f0f4f8;
+      font-weight: 700;
+    }
+    tr:nth-child(even) td { background: #fafcff; }
+    .table-wrap {
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+    .scorecard {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin: 18px 0 22px;
+    }
+    .score {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .score strong {
+      display: block;
+      font-size: 2rem;
+      line-height: 1.05;
+      margin-bottom: 4px;
+    }
+    .score span {
+      color: var(--muted);
+      display: block;
+      font-size: .9rem;
+    }
+    .score.good { background: var(--soft-green); border-color: #b9e4c6; }
+    .score.warn { background: var(--soft-amber); border-color: #f3d37a; }
+    .score.danger { background: var(--soft-red); border-color: #efb5bd; }
+    .score.info { background: var(--soft-blue); border-color: #bfd8ff; }
+    .badge {
+      border-radius: 999px;
+      display: inline-block;
+      font-size: .78rem;
+      font-weight: 700;
+      line-height: 1.4;
+      padding: 3px 9px;
+      white-space: nowrap;
+    }
+    .badge-cleared { background: var(--soft-green); color: var(--green); }
+    .badge-open { background: var(--soft-red); color: var(--red); }
+    .badge-unresolved { background: var(--soft-amber); color: var(--amber); }
+    .badge-deferred { background: var(--soft-blue); color: #174ea6; }
+    .callout {
+      border-left: 5px solid var(--brand);
+      border-radius: 10px;
+      margin: 0 0 18px;
+      padding: 14px 16px;
+    }
+    .callout.danger { background: var(--soft-red); border-left-color: var(--red); }
+    .callout.warn { background: var(--soft-amber); border-left-color: var(--amber); }
+    .callout.success { background: var(--soft-green); border-left-color: var(--green); }
+    .footer {
+      color: var(--muted);
+      font-size: .9rem;
+      margin: 10px auto 40px;
+      max-width: 1180px;
+      padding: 0 20px;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { position: static; }
+      .scorecard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 560px) {
+      .scorecard { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff; }
+      .hero { background: #fff; border-bottom: 2px solid #000; color: #000; }
+      aside { display: none; }
+      .layout { display: block; max-width: 100%; }
+      .card { border: 1px solid #aaa; box-shadow: none; }
+      a { color: #000; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Migration gate-control companion</div>
+      <h1>NMI Portal - Open Items Backlog Report</h1>
+      <p class="subtitle">HTML report converted from <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code>, with a scorecard summarising closure state, blockers, unresolved decisions, and deferred debt.</p>
+      <div class="meta">Report date: 28 June 2026 — CRD-041 reconciles the current tree: 41 registered paths, six pattern/type approval routes, 31 component families, 87 Storybook story files, 114 unit-test files, and 29 BDD feature files. Type-check, lint, 1,169 unit tests, and 218 Storybook interaction tests pass; the 100% unit-coverage gate remains open.</div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside>
+      <nav class="card toc" aria-label="Report table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#executive-scorecard">Executive Scorecard</a></li>
+          <li><a href="#governance">Backlog Governance</a></li>
+          <li><a href="#priority-1">Priority 1 Blockers</a></li>
+          <li><a href="#priority-2">Priority 2 Decisions</a></li>
+          <li><a href="#priority-3">Priority 3 Deferred Items</a></li>
+          <li><a href="#resolved-items">Resolved Items</a></li>
+          <li><a href="#migration-gates">Migration Gate Summary</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="executive-scorecard" class="card panel">
+        <h2>Executive Scorecard</h2>
+        <p>One Priority 1 blocker is open. CRD-041 refreshes the operational baseline from the current tree: <code>npm run type-check</code> and <code>npm run lint</code> pass with zero diagnostics, <code>npm run test:unit</code> passes <code>114</code> files / <code>1,169</code> tests, and <code>npm run test:storybook</code> passes <code>87</code> files / <code>218</code> tests. However, <code>npm run test:unit:coverage</code> fails the configured 100% thresholds at 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines; this is tracked as <code>COVERAGE-GATE-001</code>. The app now registers <code>41</code> paths, including six pattern/type approval routes. Those six paths have isolated Storybook coverage but remain reviewed app-BDD exclusions, so <code>TYPE-APPROVAL-E2E-001</code> is the affected-route migration gate. Batch E prerequisites are complete; repository provisioning and domain sign-offs remain open.</p>
+        <div class="scorecard" aria-label="Backlog scorecard">
+          <div class="score good">
+            <strong>27</strong>
+            <span>Closed or cleared tracked items</span>
+          </div>
+          <div class="score good">
+            <strong>1</strong>
+            <span>Priority 1 item open — unit coverage gate</span>
+          </div>
+          <div class="score good">
+            <strong>15</strong>
+            <span>P2 decisions resolved 2026-06-04</span>
+          </div>
+          <div class="score warn">
+            <strong>7</strong>
+            <span>P2 structural sign-offs still requiring action</span>
+          </div>
+          <div class="score info">
+            <strong>33</strong>
+            <span>Priority 3 deferred debt items</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Status</th>
+                <th>Scorecard reading</th>
+                <th>Next required action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Phase 5 Storybook baseline</td>
+                <td><span class="badge badge-cleared">CLEARED</span></td>
+                <td>15 of 15 remediation issues closed. The current static index contains 315 entries: 218 stories and 97 docs entries.</td>
+                <td>No further action unless regression appears during migration.</td>
+              </tr>
+              <tr>
+                <td>Dashboard route migration</td>
+                <td><span class="badge badge-cleared">CLEARED</span></td>
+                <td>SEC-010 IDOR — pentest-confirmed remediation prior to go-live. Backend team confirmed 2026-06-04. CRD-035.</td>
+                <td>Dashboard route migration unblocked. Backend team to add pentest report reference to <code>docs/sec/SEC-010-idor-backend-verification.md</code>.</td>
+              </tr>
+              <tr>
+                <td>Combined validation gate</td>
+                <td><span class="badge badge-cleared">CLEARED</span></td>
+                <td><code>VALIDATION-GATE-001</code> is closed in CRD-032; <code>npm run migration-check</code> now passes end-to-end.</td>
+                <td>No further action unless regression appears during migration; retain CRD-032 evidence in pre-flight packet.</td>
+              </tr>
+              <tr>
+                <td>Unit coverage gate</td>
+                <td><span class="badge badge-open">OPEN</span></td>
+                <td><code>COVERAGE-GATE-001</code>: <code>npm run test:unit:coverage</code> passes all 1,169 tests but fails the configured 100% thresholds.</td>
+                <td>Add tests for uncovered handwritten runtime behavior or record an approved coverage-scope/threshold decision, then rerun the gate.</td>
+              </tr>
+              <tr>
+                <td>Additional security/runtime findings</td>
+                <td><span class="badge badge-cleared">CLEARED</span></td>
+                <td>SEC-MOD-003, SEC-MOD-009, RUNTIME-ENV-001, BRIEF-SEC-001, BRIEF-SEC-009, and BRIEF-SEC-011 are closed from source/test/search evidence, with BRIEF-SEC-001 revalidated by CRD-031 transport/auth/dashboard behavior-lock tests.</td>
+                <td>No further frontend code action for these six blockers. CRD-041 reconfirms type-check, lint, and 1,169 unit tests pass.</td>
+              </tr>
+              <tr>
+                <td>SCSS/UI migration, Batch E</td>
+                <td><span class="badge badge-deferred">PROVISIONING OPEN</span></td>
+                <td>Design decisions resolved 2026-06-04 (CRD-034). Three hard prerequisites are complete: BATCH-E-PREREQ-001 (CRD-037), BATCH-E-PREREQ-002 (CRD-038), BATCH-E-PREREQ-003 (CRD-039).</td>
+                <td>Confirm repository provisioning (Item 22) and remaining SVG source sign-off before beginning Batch E.</td>
+              </tr>
+              <tr>
+                <td>Pattern/type approval route migration</td>
+                <td><span class="badge badge-deferred">E2E EVIDENCE OPEN</span></td>
+                <td>Six registered paths and their isolated Storybook stories are present, but no deterministic authenticated app-BDD fixture contract exists.</td>
+                <td>Implement dashboard, wizard/upload, success, and management workflow fixtures, or obtain explicit migration-lead acceptance under <code>TYPE-APPROVAL-E2E-001</code>.</td>
+              </tr>
+              <tr>
+                <td>Test, API client, and Storybook migration</td>
+                <td><span class="badge badge-cleared">RESOLVED</span></td>
+                <td>Infrastructure decisions resolved 2026-06-04 (CRD-034): GitHub Actions CI confirmed, Vite Storybook confirmed, OpenAPI spec generation approach confirmed, top-level await retained, URL-path versioning strategy confirmed. Items 16–22 have structural recommendations; domain sign-offs pending but do not block Batches A–D.</td>
+                <td>Actions outstanding: backend team commits <code>docs/api/openapi.json</code>; DevOps provisions CI pipeline and repository secrets.</td>
+              </tr>
+              <tr>
+                <td>Post-migration debt</td>
+                <td><span class="badge badge-deferred">TRACKED</span></td>
+                <td>33 accepted debt items remain scheduled for migration sprint, pre-flight evidence, observability review, documentation, assessment follow-up, or post-migration hardening.</td>
+                <td>Keep each item assigned to a migration-sprint or post-migration owner before cutover.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="callout danger">
+          <strong>Current gate position:</strong> <code>COVERAGE-GATE-001</code> is the open P1 blocker. Batches A–D must not pass final pre-flight until coverage thresholds are met or an approved threshold/scope decision is recorded; Type Approval cutover must also address <code>TYPE-APPROVAL-E2E-001</code>. All three Batch E prerequisites are complete; Item 22 repository provisioning and Design Lead SVG source sign-off remain.
+        </div>
+      </section>
+
+      <section id="governance" class="card panel">
+        <h2>Backlog Governance</h2>
+        <p>This backlog is the authoritative gate-control companion to the Master Change Record. Items move off this list only when they reach <code>CLOSED_SUCCESS</code> with appropriate sign-off.</p>
+        <ol>
+          <li>Create a backlog item immediately when historical review, source merge, pre-flight checks, or migration execution identifies incomplete work.</li>
+          <li>Assign <code>Priority 1</code> for blockers affecting production security, auth, data isolation, runtime config, CI verification, or rollback.</li>
+          <li>Assign <code>Priority 2</code> for decisions that block a specific migration batch.</li>
+          <li>Assign <code>Priority 3</code> for accepted post-migration debt.</li>
+          <li>Link each item to a relevant <code>CRD-*</code> entry in <code>MASTER-CHANGE-RECORD.md</code>, or create one if no record exists.</li>
+          <li>Record owner, gate, evidence source, required decision or fix, and closure evidence.</li>
+          <li>Move an item to resolved only after closure evidence is recorded here and reflected in the readiness assessment HTML where applicable.</li>
+        </ol>
+        <div class="callout warn">
+          <strong>Required source reconciliation:</strong> Before migration execution, reconcile unresolved risks and open questions from <code>analysis/ARCHITECTURE.mmd</code>, <code>analysis/ASSESSMENT.html</code>, <code>analysis/ASSESSMENT.md</code>, <code>analysis/MODERNIZATION_BRIEF.md</code>, and <code>docs/CONCERNS.md</code> into this backlog or close them in the Master Change Record.
+        </div>
+      </section>
+
+      <section id="priority-1" class="card panel">
+        <h2>Priority 1 - Must Close Before Migration Can Proceed</h2>
+        <p>All items in this section are hard blockers unless explicitly marked <code>CLEARED</code>. Sprint 1 Storybook quality remediation, the six frontend security/runtime findings, <code>VALIDATION-GATE-001</code>, and SEC-010 IDOR remain closed. <strong><code>COVERAGE-GATE-001</code> is open as of the 2026-06-28 CRD-041 revalidation.</strong></p>
+
+        <h3>Sprint 1 Storybook Quality Remediation</h3>
+        <div class="callout success">
+          <strong>Status:</strong> All 15 issues are <code>CLOSED_SUCCESS</code>. CRD-018 assertion robustness fixes were applied, Taylor Nguyen canonical identity is complete, and the 2026-06-01 Storybook baseline passed cleanly.
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Severity</th>
+                <th>Phase</th>
+                <th>State</th>
+                <th>Owner</th>
+                <th>Migration gate</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>#1</td><td>StatusPill Switch-Case Bug (SB-001)</td><td>Critical</td><td>1</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#2</td><td>Dashboard Tab Filter Strings (SB-002)</td><td>Critical</td><td>1</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#3</td><td>MSW Global Handlers Malformed (SB-004)</td><td>Critical</td><td>1</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#4</td><td>AcceptQuote Missing Steps</td><td>Critical</td><td>2</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#5</td><td>NotificationMessage Component Zero Coverage (SB-006)</td><td>High</td><td>2</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#6</td><td>ErrorSummary Story (SB-011)</td><td>High</td><td>2</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#7</td><td>InTextLink target Bug (SB-003)</td><td>High</td><td>3</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#8</td><td>BackToDashboardButton Missing Story</td><td>High</td><td>3</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#9</td><td>MSAL Account Canonical Rename (SB-005)</td><td>High</td><td>1</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#10</td><td>Footer Modal Stories (SB-009/010)</td><td>High</td><td>3</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#11</td><td>WizardForm Context Pattern (SB-017)</td><td>High</td><td>3</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#12</td><td>Pagination Edge Cases (SB-019)</td><td>High</td><td>3</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#13</td><td>FormBanner Story (SB-012)</td><td>Medium</td><td>4</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#14</td><td>AutoSuggest + AddressLookup Stories</td><td>Medium</td><td>4</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+              <tr><td>#15</td><td>InstrumentItem Story (SB-007)</td><td>Medium</td><td>4</td><td><span class="badge badge-cleared">CLOSED_SUCCESS</span></td><td>Frontend Lead</td><td>Phase 5 Storybook baseline - CLEARED</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Security and Governance Blockers</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Severity</th>
+                <th>State</th>
+                <th>Owner</th>
+                <th>Migration gate</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SEC-010</td>
+                <td>IDOR Backend Verification (CWE-639)</td>
+                <td>Medium</td>
+                <td><span class="badge badge-cleared">CLOSED — PASS 2026-06-04</span></td>
+                <td>Backend Team</td>
+                <td>Dashboard route migration — <strong>CLEARED</strong></td>
+                <td><code>docs/sec/SEC-010-idor-backend-verification.md</code>; CRD-035</td>
+              </tr>
+              <tr>
+                <td>QA-SIGNOFF-1</td>
+                <td>Sprint 1 QA Sign-Off</td>
+                <td>Governance</td>
+                <td><span class="badge badge-cleared">COMPLETE - PASS issued 2026-06-01</span></td>
+                <td>QA Agent</td>
+                <td>Sprint 1 closure; Phase 5 migration gate</td>
+                <td><code>docs/qa/sprint-1-signoff.md</code></td>
+              </tr>
+              <tr>
+                <td>VALIDATION-GATE-001</td>
+                <td><code>migration-check</code> combined Vitest/Storybook gate remediation</td>
+                <td>High</td>
+                <td><span class="badge badge-cleared">CLOSED_SUCCESS - combined gate passing</span></td>
+                <td>Frontend Lead / QA Agent</td>
+                <td>Migration pre-flight and target CI verification - CLEARED</td>
+                <td>CRD-032.</td>
+              </tr>
+              <tr>
+                <td>COVERAGE-GATE-001</td>
+                <td>Configured 100% unit-coverage threshold is not met</td>
+                <td>High</td>
+                <td><span class="badge badge-open">OPEN - coverage command exits non-zero</span></td>
+                <td>Frontend Lead / QA Agent</td>
+                <td>Migration pre-flight and target CI verification - BLOCKED</td>
+                <td>CRD-041; 74.43% statements, 75.51% branches, 72.56% functions, 74.92% lines.</td>
+              </tr>
+              <tr>
+                <td>SEC-MOD-003</td>
+                <td><code>window.open()</code> without explicit <code>noopener</code> / URL encoding review</td>
+                <td>High</td>
+                <td><span class="badge badge-cleared">CLOSED - verified 2026-06-01</span></td>
+                <td>Frontend Lead</td>
+                <td>Migration of quote, report, and PDF-opening routes - CLEARED</td>
+                <td><code>openWindow.ts</code>; quote/report/helper call sites; <code>openWindow.test.ts</code>; <code>npm run test:unit</code>; <code>rg "window\.open\("</code></td>
+              </tr>
+              <tr>
+                <td>SEC-MOD-009</td>
+                <td>External Qualtrics links missing explicit <code>noopener noreferrer</code></td>
+                <td>Low</td>
+                <td><span class="badge badge-cleared">CLOSED - verified 2026-06-01</span></td>
+                <td>Frontend Lead</td>
+                <td>Migration of feedback/survey links - CLEARED</td>
+                <td><code>NavbarMessage.tsx</code>; <code>requestForQuote/created/index.tsx</code>; <code>StandardPathway</code>; <code>standardPathway.test.tsx</code>; no named feedback target remains.</td>
+              </tr>
+              <tr>
+                <td>RUNTIME-ENV-001</td>
+                <td><code>process.env.NODE_ENV</code> usage in first-party runtime code</td>
+                <td>Medium</td>
+                <td><span class="badge badge-cleared">CLOSED - verified 2026-06-01</span></td>
+                <td>Frontend Lead</td>
+                <td>Runtime configuration migration; telemetry initialisation - CLEARED</td>
+                <td><code>AppInsightsService.ts</code>; <code>appInsightsService.test.ts</code>; no first-party <code>process.env.NODE_ENV</code> match outside vendored <code>parent/**</code>.</td>
+              </tr>
+              <tr>
+                <td>BRIEF-SEC-001</td>
+                <td>Fresh <code>TargetOrganisationAbn</code> read per API request</td>
+                <td>Medium</td>
+                <td><span class="badge badge-cleared">CLOSED - verified 2026-06-01</span></td>
+                <td>Frontend Lead / Backend Team</td>
+                <td>API client migration and Phase 1 security verification - CLEARED</td>
+                <td><code>web-api-client.ts</code>; <code>authorizedApiBase.test.ts</code>; session value read inside <code>transformOptions</code> per request.</td>
+              </tr>
+              <tr>
+                <td>BRIEF-SEC-009</td>
+                <td>MSAL silent-renewal iframe timeout bound</td>
+                <td>Low</td>
+                <td><span class="badge badge-cleared">CLOSED - verified 2026-06-01</span></td>
+                <td>Frontend Lead</td>
+                <td>Auth configuration migration and Phase 1 security verification - CLEARED</td>
+                <td><code>authConfig.ts</code>; <code>authConfig.test.ts</code>; no first-party <code>loadFrameTimeout: 0</code> match.</td>
+              </tr>
+              <tr>
+                <td>BRIEF-SEC-011</td>
+                <td>URL ID parameter validation before API calls</td>
+                <td>Medium</td>
+                <td><span class="badge badge-cleared">CLOSED - verified 2026-06-01</span></td>
+                <td>Frontend Lead</td>
+                <td>RFQ/account route migration and Phase 1 security verification - CLEARED</td>
+                <td><code>routeParams.ts</code>; <code>requestForQuote/index.tsx</code>; <code>account/update/index.tsx</code>; <code>routeParams.test.ts</code>; scoped blocker routes validated.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="priority-2" class="card panel">
+        <h2>Priority 2 - Must Resolve Before Affected Migration Batches</h2>
+        <p>All 22 design-platform, infrastructure, runtime-platform, and modernization-brief decisions received 2026-06-04 (CRD-034). Items 1–15 are fully RESOLVED. Items 16–22 have architectural recommendations with domain sign-offs (BA, Legal, Product, DevOps) required. The three Batch E hard prerequisites (BATCH-E-PREREQ-001–003) identified by the design decisions are complete as of CRD-039.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Input</th>
+                <th>Decision blocked</th>
+                <th>Owner</th>
+                <th>Gate</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td>Design platform colour tokens</td><td>Whether <code>_variables.scss</code> can be adapted or must be replaced.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>2</td><td>Typography tokens and font stack</td><td>Whether Public Sans is reused or replaced.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>3</td><td>Spacing, grid, and breakpoint rules</td><td>Whether Bootstrap 5 grid is retained or replaced.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>4</td><td>Form control components</td><td>Whether <code>Inputs/</code> components and form SCSS are replaced.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>5</td><td>Validation state and error patterns</td><td><code>ErrorSummary</code> and field-level error display approach.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>6</td><td>Wizard/stepper pattern</td><td>Whether WizardForm is adapted or rebuilt.</td><td>Design Lead</td><td>Batch E — pre-req: BATCH-E-PREREQ-003</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>7</td><td>Modal/dialog components</td><td>Whether react-bootstrap Modal usages move to target primitives.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>8</td><td>Icon system</td><td>Whether NMI icon font and CSP icon replacement SCSS can be retired.</td><td>Design Lead</td><td>Batch E — pre-req: BATCH-E-PREREQ-002</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>9</td><td>Accessibility requirements</td><td>Whether skip links, accessible navigation, and related components are preserved.</td><td>Design Lead</td><td>Batch E — pre-req: BATCH-E-PREREQ-001</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>10</td><td>Print requirements</td><td>Migration approach for <code>media-print.scss</code>.</td><td>Design Lead</td><td>Batch E</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>11</td><td>Backend OpenAPI spec availability</td><td>Required to regenerate <code>web-api-client.ts</code> for the target environment.</td><td>Backend Team</td><td>Test and API client migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>12</td><td>Target CI configuration</td><td>Whether Playwright, Vitest, and bddgen can be reproduced in target CI.</td><td>DevOps</td><td>Test infrastructure migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>13</td><td>Storybook in target: Vite or webpack?</td><td>Whether Storybook harness and BDD story tests migrate as-is or require rebuild.</td><td>Architect</td><td>Storybook migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>14</td><td>Top-level <code>await</code> support</td><td>Whether app bootstrap can retain top-level <code>await</code> or needs restructuring.</td><td>Architect / DevOps</td><td>App bootstrap and target bundler migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>15</td><td>Backend API versioning strategy</td><td>Whether regenerated target DTOs preserve current route contracts or need migration shims.</td><td>Backend Team / Architect</td><td>API client and route migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span></td></tr>
+              <tr><td>16</td><td>RULE-035 ASIC business-name charset</td><td>Whether business names may contain <code>&amp;</code> and whether the current validator is correct.</td><td>NMI Business Analyst / Product Owner</td><td>Phase 2 validation externalisation</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting BA</span></td></tr>
+              <tr><td>17</td><td>RULE-050 NMI ABN and registered address</td><td>Whether the ABN and registered address are current for legal contract display.</td><td>NMI Business Analyst / Legal</td><td>Phase 2 config externalisation</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting Legal</span></td></tr>
+              <tr><td>18</td><td>RULE-035/042 P0 rule SME review</td><td>Business analyst sign-off that documented P0 rules match intended behaviour.</td><td>NMI Business Analyst</td><td>Phase 2 and business-rule test suite</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting BA</span></td></tr>
+              <tr><td>19</td><td>Terms of Use version and re-acceptance plan</td><td>Whether terms version <code>1</code> is current and whether migration triggers re-acceptance.</td><td>Product Owner / Legal / Comms</td><td>Phase 6 go-live planning</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting Legal/Comms</span></td></tr>
+              <tr><td>20</td><td>RULE-008 PDF page-number and template policy</td><td>Whether hardcoded PDF page numbers still match current quote/report templates.</td><td>Product Owner / Backend Team</td><td>Phase 2 config externalisation</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting Product/Backend</span></td></tr>
+              <tr><td>21</td><td>RULE-015 recalibration policy for <code>ReportInProgress</code></td><td>Whether recalibration while a current calibration is still in progress is intentional.</td><td>NMI Business Analyst</td><td>Phase 5 business-rule tests / route review</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting BA</span></td></tr>
+              <tr><td>22</td><td>Target repository provisioning</td><td>Whether the target repository exists and team access has been provisioned. Also gates Batch E.</td><td>DevOps / Repository Owner</td><td>Phase 6 and Batch E</td><td><span class="badge badge-deferred">STRUCTURAL — awaiting DevOps</span></td></tr>
+              <tr><td>BATCH-E-PREREQ-001</td><td>Add <code>useRouteAccessibility</code> hook to AppShell</td><td>WCAG 2.4.2/2.4.3 compliance — route announcement and focus management on navigation.</td><td>Frontend Lead / Target System Owner</td><td><strong>Batch E hard prerequisite</strong></td><td><span class="badge badge-cleared">COMPLETE 2026-06-05 — CRD-037</span></td></tr>
+              <tr><td>BATCH-E-PREREQ-002</td><td>Icon audit: confirm all <code>nmi-icon-*</code> usages have SVG equivalents in <code>packages/icons</code></td><td>Whether any missing icons require addition before icon font retirement. Audit: all 10 active icons SCSS-only; no new React SVG components required; <code>packages/icons</code> absent.</td><td>Design Lead / Frontend Lead</td><td><strong>Batch E hard prerequisite</strong></td><td><span class="badge badge-cleared">COMPLETE 2026-06-05 — CRD-038. Awaiting Design Lead SVG source sign-off.</span></td></tr>
+              <tr><td>BATCH-E-PREREQ-003</td><td>Resolve <code>WAF-TYPE-001</code> — typed guard for WAF 412 error shape</td><td><code>isWafError</code> predicate replaces unsafe inline cast in <code>errorState.ts</code>; Item 6 wizard port can import directly.</td><td>Frontend Lead</td><td><strong>Batch E prerequisite (gates Item 6 wizard port)</strong></td><td><span class="badge badge-cleared">COMPLETE 2026-06-05 — CRD-039</span></td></tr>
+              <tr><td>TYPE-APPROVAL-E2E-001</td><td>Deterministic authenticated Type Approval fixtures</td><td>Whether the six Type Approval paths can be verified as browser workflows rather than isolated Storybook states.</td><td>Frontend Lead / QA / Backend Team</td><td><strong>Type Approval route migration and cutover</strong></td><td><span class="badge badge-deferred">OPEN — implement app-BDD fixtures or obtain explicit migration-lead acceptance</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="priority-3" class="card panel">
+        <h2>Priority 3 - Deferred to Post-Migration or Migration Sprint</h2>
+        <p>These items are acknowledged technical debt or planned improvements. They are not hard blockers, but each item must remain scheduled before or during migration sprint planning.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Reason for deferral</th>
+                <th>Reference</th>
+                <th>Target phase</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Centralise <code>acquireTokenSilent</code> calls</td><td>Current inventory is 81 matches across 52 production files; deferred to migration sprint by approved ADR.</td><td><code>docs/adr/2026-05-30-acquire-token-silent-interceptor.md</code>; CRD-041</td><td>Migration sprint</td></tr>
+              <tr><td>Bootstrap 6 / <code>@use</code> full SCSS migration</td><td>Blocked on Bootstrap 6; current Bootstrap 5 internals require <code>@import</code> cascade.</td><td><code>CLAUDE.md</code></td><td>Post-Bootstrap 6 release</td></tr>
+              <tr><td><code>targetOrganisation</code> stale read at NSwag construction time</td><td>Documented behaviour with rebuild guidance; no current user-facing defect.</td><td><code>docs/architecture/org-switching-lifecycle.md</code></td><td>Post-migration</td></tr>
+              <tr><td><code>VAL-REGEX-001</code> suffix-only regex</td><td>Changing semantics may reject previously accepted data.</td><td><code>analysis/portal.measurement.gov.au/ASSESSMENT.md</code>; unit tests</td><td>Migration sprint decision</td></tr>
+              <tr><td><code>API-WORKAROUND-001</code> accepted quote status mutation</td><td>Known eventual-consistency workaround; remove only after backend confirmation and regression coverage.</td><td><code>docs/CONCERNS.md</code></td><td>Post-migration/API fix</td></tr>
+              <tr><td><code>FORM-GUARD-001</code> browser refresh protection</td><td>Navigation guard exists; tab close and refresh protection requires reinvestigation.</td><td><code>docs/CONCERNS.md</code></td><td>Post-migration UX hardening</td></tr>
+              <tr><td><code>SESSION-KEYS-001</code> magic strings</td><td>Accepted debt; centralise dashboard workaround keys before more dashboard state changes.</td><td><code>docs/CONCERNS.md</code></td><td>Migration sprint or post-migration</td></tr>
+              <tr><td><code>AUTH-OPS-001</code> MSAL non-error event logging</td><td>Operational decision required to avoid noisy telemetry.</td><td><code>docs/CONCERNS.md</code>; <code>authentication/authConfig.ts</code></td><td>Pre-production observability review</td></tr>
+              <tr><td><code>AUTH-OPS-002</code> MSAL version confirmation</td><td>Confirm deployed MSAL browser version before cutover.</td><td><code>docs/CONCERNS.md</code></td><td>Pre-flight evidence item</td></tr>
+              <tr><td><code>AUTH-OPS-003</code> App Insights instrumentation key decision</td><td>Confirm whether the legacy instrumentation key is still required alongside the connection string.</td><td><code>docs/CONCERNS.md</code></td><td>Pre-flight evidence item</td></tr>
+              <tr><td><code>VALIDATION-001</code> phone spacing normalization</td><td>Product decision required before changing user-visible validation.</td><td><code>docs/CONCERNS.md</code></td><td>Post-migration validation review</td></tr>
+              <tr><td><code>VALIDATION-002</code> postcode numeric range question</td><td>Business decision required for 300-799 and leading-zero behaviour.</td><td><code>docs/CONCERNS.md</code></td><td>Post-migration validation review</td></tr>
+              <tr><td><code>PERF-001</code> dashboard polish</td><td>Memoize dashboard client construction, review pagination cache, and replace timeout/querySelector alert scroll.</td><td><code>docs/CONCERNS.md</code></td><td>Post-migration performance polish</td></tr>
+              <tr><td><code>DASHBOARD-DEBT-001</code> deferred dashboard comments</td><td>Review each dashboard deferred-engineering comment and close or move it into the issue tracker.</td><td><code>docs/CONCERNS.md</code></td><td>Migration sprint or post-migration dashboard refactor</td></tr>
+              <tr><td><code>AUTH-CONTEXT-001</code> AccountContext interface tests</td><td>Add interface tests before future auth-state expansion.</td><td><code>docs/CONCERNS.md</code>; CRD-002</td><td>Post-migration auth hardening</td></tr>
+              <tr><td><code>ORG-SCHEMA-001</code> organisation schema duplication</td><td>Consolidate duplicated organisation validation schemas with regression coverage.</td><td>Modernisation assessment technical debt item 2</td><td>Post-migration validation refactor</td></tr>
+              <tr><td><code>CONTACT-PROPS-001</code> contact prop duplication</td><td>Refactor create/update contact prop duplication after contact flow coverage exists.</td><td>Modernisation assessment technical debt item 3</td><td>Post-migration form refactor</td></tr>
+              <tr><td><code>COMPONENT-TEST-001</code> component unit-test gap</td><td>The suite now has 114 files / 1,169 passing tests, but current coverage is 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines against 100% thresholds. <code>COVERAGE-GATE-001</code> owns the pre-flight blocker; keep this P3 item for longer-term behavior-depth and Type Approval browser-integration improvements.</td><td>Modernisation assessment technical debt item 5; CRD-041</td><td>Post-migration test-depth review after the P1 coverage gate is resolved</td></tr>
+              <tr><td><code>PRECONDITIONS-001</code> PreConditions decomposition</td><td>Accepted route-shell refactor debt after tests and SonarLint fixes.</td><td>Modernisation assessment technical debt item 6; CRD-013</td><td>Post-migration route-shell refactor</td></tr>
+              <tr><td><code>ERROR-DISPLAY-001</code> duplicate error display components</td><td>Consolidate repeated HTTP error components and correct stale status text.</td><td>Modernisation assessment technical debt item 7</td><td>Post-migration accessibility/UI cleanup</td></tr>
+              <tr><td><code>WIZARD-TYPES-001</code> WizardForm escape-hatch typing</td><td>Narrow retained index signatures and broad callback/schema types.</td><td>Modernisation assessment technical debt item 9; CRD-010</td><td>Post-migration type hardening</td></tr>
+              <tr><td><code>HTTP-412-001</code> literal 412 checks</td><td>Replace remaining literal <code>412</code> route checks with <code>HttpStatusCode.PreconditionFailed</code>.</td><td>Modernisation assessment technical debt item 10</td><td>Post-migration route cleanup</td></tr>
+              <tr><td><code>TARGET-ORG-INTEGRITY-001</code> targetOrganisation integrity</td><td>Review integrity checks for session-storage organisation context.</td><td>Modernisation assessment architectural debt</td><td>Post-migration state hardening</td></tr>
+              <tr><td><code>FOOTER-HTTP-001</code> footer HTTP links</td><td>Confirm canonical HTTPS targets before changing public footer links.</td><td>Modernisation assessment architectural debt; <code>Footer/accessibility.tsx</code></td><td>Post-migration content cleanup</td></tr>
+              <tr><td><code>ROUTE-SPLIT-001</code> route code splitting</td><td>Eager route imports remain accepted performance debt.</td><td>Modernisation assessment architectural debt</td><td>Post-migration performance polish</td></tr>
+              <tr><td><code>ANALYTICS-DEAD-EXPORT-001</code> dormant <code>trackGAPii()</code></td><td>Remove or wire into an approved analytics path.</td><td>Modernisation assessment dangling references section</td><td>Post-migration analytics cleanup</td></tr>
+              <tr><td><code>DOC-TERMS-001</code> terms version procedure</td><td>Document terms version updates and backend sync requirements.</td><td>Modernisation assessment documentation gaps</td><td>Post-migration documentation</td></tr>
+              <tr><td><code>DOC-WIZARD-001</code> WizardRoutedStep usage notes</td><td>Document callback ordering and state-machine usage notes.</td><td>Modernisation assessment documentation gaps; CRD-010</td><td>Post-migration documentation</td></tr>
+              <tr><td><code>STORYBOOK-EXCLUSIONS-001</code> residual exclusions</td><td>The dominant residual gap is explicit: six Type Approval paths have isolated stories but no deterministic app-BDD fixture contract. Track closure under <code>TYPE-APPROVAL-E2E-001</code>.</td><td><code>tests/e2e/route-coverage.ts</code>; CRD-041</td><td>Migration pre-flight documentation</td></tr>
+              <tr><td><code>STORYBOOK-AUTODOCS-001</code> autodocs expansion</td><td>Optional expansion for broader JSDoc rollout, design-token MDX pages, accessibility docs, migration guides, and richer story interactions.</td><td><code>docs/STORYBOOK-AUTODOCS-IMPLEMENTATION.md</code>; CRD-026</td><td>Post-migration documentation polish</td></tr>
+              <tr><td><code>ASSESSMENT-SEC-CAVEATS-001</code> residual security caveats</td><td>Track residual stakeholder assessment caveats not covered by explicit brief security rows: client-side pre-condition gates and session-storage hardening.</td><td><code>analysis/ASSESSMENT.html</code>; <code>analysis/ARCHITECTURE.mmd</code>; CRD-027; CRD-028</td><td>Pre-production security review or post-migration hardening</td></tr>
+              <tr><td><code>HELPER-PROMISE-001</code> helper promise branches</td><td>Review unresolved promise branches in common helper functions and add regression coverage before refactoring.</td><td><code>analysis/ASSESSMENT.html</code>; <code>ClientApp/src/routes/common/helperFunctions.ts</code>; CRD-027</td><td>Migration sprint hardening</td></tr>
+              <tr><td><code>CRITICAL-UNIT-COVERAGE-001</code> focused unit tests</td><td>The suite now passes 1,169 tests across 114 files and includes auth, wizard, API-base, coverage-config, route-traceability, and Type Approval support coverage. Reassess against the coverage report.</td><td><code>analysis/ASSESSMENT.html</code>; CRD-041</td><td>Migration sprint scope review</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="resolved-items" class="card panel">
+        <h2>Resolved Items</h2>
+        <ul>
+          <li>Security findings SEC-001 through SEC-009 and SEC-011 were remediated and source-verified on 2026-05-29.</li>
+          <li>SEC-012 is a false finding. The requested <code>clearTargetOrganisation()</code> remediation already existed before assessment.</li>
+          <li>All Phase A through N pre-migration remediation changes are complete and source-verified.</li>
+          <li>SB-001 through SB-005 source-code fixes are verified at their correct <code>ClientApp/src/</code> paths; earlier <code>static/js/</code> references were documentation errors.</li>
+          <li><code>WAF-TYPE-001</code> is closed; the typed <code>isWafError</code> predicate and tests are present.</li>
+          <li><code>STORYBOOK-DRIFT-001</code> is closed by <code>coverageDrift.test.ts</code> and the 41-path route-manifest comparison.</li>
+          <li><code>STORYBOOK-BDD-PROCESS-001</code> is closed by manifest-verified story IDs, split BDD projects, and Playwright step-quality enforcement.</li>
+        </ul>
+      </section>
+
+      <section id="migration-gates" class="card panel">
+        <h2>Migration Gate Summary</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Priority</th>
+                <th>Items</th>
+                <th>Migration phase / batch gated</th>
+                <th>Cannot proceed until</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>P1 - Sprint 1 Issues (#1-#15)</td><td>15 issues</td><td>Phase 5 - Storybook baseline established</td><td><span class="badge badge-cleared">CLEARED</span> - all 15 <code>CLOSED_SUCCESS</code>; 165 tests pass with clean Storybook output.</td></tr>
+              <tr><td>P1 — SEC-010 IDOR</td><td>1 finding</td><td>Migration of dashboard route</td><td><span class="badge badge-cleared">CLEARED 2026-06-04</span> — pentest-confirmed remediation prior to go-live; CRD-035.</td></tr>
+              <tr><td>P1 - Combined validation gate</td><td>1 finding</td><td>Migration pre-flight and target CI verification</td><td><strong>CLEARED</strong> - <code>VALIDATION-GATE-001</code> is CLOSED_SUCCESS in CRD-032; <code>npm run migration-check</code> passes.</td></tr>
+              <tr><td>P1 - Unit coverage gate</td><td>1 finding</td><td>Migration pre-flight and target CI verification</td><td><span class="badge badge-open">OPEN</span> — <code>COVERAGE-GATE-001</code>; all 1,169 tests pass, but the configured 100% coverage thresholds fail.</td></tr>
+              <tr><td>P1 - Additional security/runtime findings</td><td>6 findings</td><td>Quote/report/PDF links, survey links, telemetry runtime config, API target-organisation header, auth timeout, URL ID validation</td><td><span class="badge badge-cleared">CLEARED</span> — CRD-041 reconfirms type-check, lint, and 1,169 unit tests pass.</td></tr>
+              <tr><td>WCAG component/E2E validation baseline</td><td>Component accessibility and authenticated E2E/story routes</td><td>WCAG 2.2 AA remediation and migration pre-flight validation</td><td><span class="badge badge-cleared">UPDATED 2026-06-28</span> — 114 unit files / 1,169 tests pass; Type Approval isolated stories are present; manual AT/zoom/target-size evidence remains required before 98+ claim.</td></tr>
+              <tr><td>P1 - Sprint 1 QA Sign-Off</td><td>1 governance doc</td><td>Sprint 1 closure; Phase 5 gate</td><td><span class="badge badge-cleared">CLEARED</span> - PASS verdict issued 2026-06-01.</td></tr>
+              <tr><td>P2 — Design platform inputs (#1–#10)</td><td>10 decisions</td><td>Batch E — SCSS/UI migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span> — Hard prerequisites BATCH-E-PREREQ-001–003 are complete as of CRD-039.</td></tr>
+              <tr><td>P2 — Infrastructure inputs (#11–#13)</td><td>3 decisions</td><td>Test, API client, and Storybook migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span> — Actions: backend commits openapi.json; DevOps provisions CI.</td></tr>
+              <tr><td>P2 — Runtime/API platform inputs (#14–#15)</td><td>2 decisions</td><td>App bootstrap, target bundler, and API client migration</td><td><span class="badge badge-cleared">RESOLVED 2026-06-04</span> — Verify <code>vite.config.ts</code> build.target ≥ es2022; backend confirms changed endpoints.</td></tr>
+              <tr><td>P2 — Modernization brief approval gates (#16–#22)</td><td>7 decisions</td><td>Phase approval, SME sign-off, target repository readiness</td><td><span class="badge badge-deferred">STRUCTURAL</span> — Architectural recommendations provided 2026-06-04; domain sign-offs (BA, Legal, Product, DevOps) required.</td></tr>
+              <tr><td>P2 — Batch E prerequisites (PREREQ-001–003)</td><td>3 items</td><td>Batch E hard prerequisites</td><td><span class="badge badge-cleared">ALL COMPLETE 2026-06-05</span> — PREREQ-001 (CRD-037) · PREREQ-002 (CRD-038) · PREREQ-003 (CRD-039). Batch E may begin pending Item 22 repository provisioning.</td></tr>
+              <tr><td>P2 — Type Approval workflow evidence</td><td>1 item</td><td>Type Approval route migration and cutover</td><td><span class="badge badge-deferred">OPEN</span> — implement deterministic authenticated app-BDD fixtures or obtain explicit acceptance of the six reviewed exclusions.</td></tr>
+              <tr><td>P3 - Deferred items</td><td>33 items</td><td>Migration sprint / post-migration</td><td>No hard gate; schedule before or during migration sprint.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    Source: <code>docs/change-record/OPEN-ITEMS-BACKLOG.md</code>. This report is static HTML and does not modify backlog state.
+  </footer>
+</body>
+</html>

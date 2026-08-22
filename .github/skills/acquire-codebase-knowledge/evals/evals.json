@@ -1,0 +1,254 @@
+{
+  "skill_name": "acquire-codebase-knowledge",
+  "metadata": {
+    "version": "1.0",
+    "purpose": "Evaluate activation accuracy and output quality for the acquire-codebase-knowledge skill.",
+    "runs_per_trigger_query": 3,
+    "trigger_pass_threshold": {
+      "should_trigger": "trigger_rate >= 0.67",
+      "should_not_trigger": "trigger_rate <= 0.33"
+    },
+    "baseline": "Compare with no skill for first release; compare with previous skill snapshot for later releases."
+  },
+  "trigger_evals": [
+    {
+      "id": "trigger-001",
+      "split": "train",
+      "query": "Map this codebase and create onboarding docs for the repo.",
+      "should_trigger": true,
+      "expected_reason": "Explicitly asks for repository-level mapping and documentation."
+    },
+    {
+      "id": "trigger-002",
+      "split": "train",
+      "query": "Can you document the architecture, stack, integrations, tests, and main risks in this project?",
+      "should_trigger": true,
+      "expected_reason": "Requests the skill's core documentation areas."
+    },
+    {
+      "id": "trigger-003",
+      "split": "train",
+      "query": "I just cloned an unfamiliar repo. Please onboard me: tell me how it is structured, how to run it, and what to watch out for.",
+      "should_trigger": true,
+      "expected_reason": "Asks for codebase onboarding and risk discovery even without naming the skill."
+    },
+    {
+      "id": "trigger-004",
+      "split": "train",
+      "query": "Create codebase docs under docs/codebase for this repository.",
+      "should_trigger": true,
+      "expected_reason": "Directly requests the output location and deliverable."
+    },
+    {
+      "id": "trigger-005",
+      "split": "validation",
+      "query": "Before I start changing this app, give me a repo-level knowledge pack with stack, entrypoints, architecture, conventions, integrations, testing, and concerns.",
+      "should_trigger": true,
+      "expected_reason": "Repo-level discovery with the exact seven documentation domains."
+    },
+    {
+      "id": "trigger-006",
+      "split": "validation",
+      "query": "Please audit this project enough that a new engineer could understand where the main modules live and how data flows through it.",
+      "should_trigger": true,
+      "expected_reason": "Repository-level onboarding and architecture discovery."
+    },
+    {
+      "id": "trigger-007",
+      "split": "train",
+      "query": "Fix the failing login test in this repo.",
+      "should_trigger": false,
+      "expected_reason": "Narrow bug-fix task, not repository-level discovery."
+    },
+    {
+      "id": "trigger-008",
+      "split": "train",
+      "query": "Add a new React component for the dashboard filters.",
+      "should_trigger": false,
+      "expected_reason": "Routine feature implementation."
+    },
+    {
+      "id": "trigger-009",
+      "split": "train",
+      "query": "Review this one file for naming and formatting issues.",
+      "should_trigger": false,
+      "expected_reason": "Narrow file-level code review, not codebase documentation."
+    },
+    {
+      "id": "trigger-010",
+      "split": "validation",
+      "query": "Update README.md with installation instructions only.",
+      "should_trigger": false,
+      "expected_reason": "Documentation task, but not the seven-document codebase knowledge workflow."
+    },
+    {
+      "id": "trigger-011",
+      "split": "validation",
+      "query": "Can you explain what this function does?",
+      "should_trigger": false,
+      "expected_reason": "Local explanation task."
+    },
+    {
+      "id": "trigger-012",
+      "split": "validation",
+      "query": "Run the unit tests and summarize failures.",
+      "should_trigger": false,
+      "expected_reason": "Testing task without repository-level discovery or documentation."
+    }
+  ],
+  "evals": [
+    {
+      "id": "quality-001",
+      "category": "happy-path-output-contract",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/minimal-node-api. Create the complete docs/codebase output.",
+      "expected_output": "Seven populated public Markdown files in docs/codebase plus a hidden .codebase-scan.txt working artefact. Claims are backed by source paths or scan output. Unknowns use [TODO].",
+      "files": [
+        "evals/files/minimal-node-api"
+      ],
+      "assertions": [
+        "docs/codebase contains STACK.md, STRUCTURE.md, ARCHITECTURE.md, CONVENTIONS.md, INTEGRATIONS.md, TESTING.md, and CONCERNS.md.",
+        "docs/codebase/.codebase-scan.txt may exist but is not presented as final documentation.",
+        "No unexpected public files are created in docs/codebase.",
+        "Every generated document contains an Evidence section with concrete file paths or scan-output references.",
+        "STACK.md lists only high-impact production dependencies in its production dependency section.",
+        "Final response includes any [ASK USER] questions or explicitly states that none remain."
+      ]
+    },
+    {
+      "id": "quality-002",
+      "category": "focus-area-mode",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/minimal-node-api, architecture only.",
+      "expected_output": "Phase 1 still runs fully. ARCHITECTURE.md is fully populated first. Other six docs exist with required sections and [TODO] where not yet analyzed. Validation still runs across all seven docs.",
+      "files": [
+        "evals/files/minimal-node-api"
+      ],
+      "assertions": [
+        "All seven required docs exist even though the prompt requested a focus area.",
+        "ARCHITECTURE.md contains system flow, layer/module responsibilities, reused patterns, known architectural risks, and evidence.",
+        "Non-focus documents retain required headings and mark unanalyzed values as [TODO], not fabricated claims.",
+        "The final response identifies that focus-area mode was used.",
+        "The validation step is mentioned with pass/fail result."
+      ]
+    },
+    {
+      "id": "quality-003",
+      "category": "ambiguous-stack",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/polyglot-ambiguous-repo. Document the stack and structure.",
+      "expected_output": "The agent detects ambiguity from multiple manifests, uses stack-detection guidance, records evidence, and marks unresolved stack choices as [ASK USER] or [TODO] rather than guessing.",
+      "files": [
+        "evals/files/polyglot-ambiguous-repo"
+      ],
+      "assertions": [
+        "STACK.md references each relevant manifest that contributed to stack detection.",
+        "Ambiguous runtime ownership is not guessed; unresolved choices are marked [ASK USER] or [TODO].",
+        "STRUCTURE.md distinguishes source directories, config, scripts, and generated/build artefacts.",
+        "The final response includes numbered [ASK USER] questions for unresolved intent-dependent decisions."
+      ]
+    },
+    {
+      "id": "quality-004",
+      "category": "redaction",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/repo-with-env-secret. Produce docs/codebase.",
+      "expected_output": "The docs identify required environment variables and credential handling patterns without copying secret-like values.",
+      "files": [
+        "evals/files/repo-with-env-secret"
+      ],
+      "assertions": [
+        "No generated doc or final response contains raw values matching secret-like assignments such as API keys, tokens, passwords, private keys, cookies, or credential-bearing URLs.",
+        "Secret-like values are replaced with [REDACTED] or described structurally without value exposure.",
+        "INTEGRATIONS.md or STACK.md identifies config sources and required env vars when supported by evidence.",
+        "CONCERNS.md records any hardcoded-secret risk with evidence path and mitigation gap."
+      ]
+    },
+    {
+      "id": "quality-005",
+      "category": "validation-failure-repair",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/minimal-node-api. Intentionally run the validator before final response and repair any failures.",
+      "expected_output": "The agent runs the lightweight validator, reports validation failures if any, fixes repairable issues, reruns validation, and only then finalizes.",
+      "files": [
+        "evals/files/minimal-node-api"
+      ],
+      "assertions": [
+        "The validator command is run or its equivalent validation checks are explicitly performed.",
+        "Initial validation failures, if present, are described with evidence.",
+        "Repairable validation failures are corrected before final response.",
+        "Final validation status is included.",
+        "Unrepairable failures are reported with recommended human action rather than hidden."
+      ]
+    },
+    {
+      "id": "quality-006",
+      "category": "scan-script-behavior",
+      "prompt": "Use the acquire-codebase-knowledge scan script against evals/files/go-cmd-layout and then produce STRUCTURE.md and STACK.md.",
+      "expected_output": "The scan detects Go-style cmd/*/main.go entrypoints and does not falsely claim git history when run outside a git repository.",
+      "files": [
+        "evals/files/go-cmd-layout"
+      ],
+      "assertions": [
+        "STRUCTURE.md identifies cmd/<app>/main.go-style entry points when present.",
+        "STACK.md identifies Go from go.mod when present.",
+        "If the eval fixture is not a git repository, git-history sections state that it is not a git repository or that git history is unavailable.",
+        "No misleading recent-commit or churn data is fabricated."
+      ]
+    },
+    {
+      "id": "quality-007",
+      "category": "container-glob-detection",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/repo-with-dockerfile-variants. Document stack, integrations, and concerns.",
+      "expected_output": "The scan and docs detect Dockerfile variants such as Dockerfile.dev or Dockerfile.prod and include container/runtime constraints where relevant.",
+      "files": [
+        "evals/files/repo-with-dockerfile-variants"
+      ],
+      "assertions": [
+        "STACK.md or STRUCTURE.md references Dockerfile variants found via glob matching.",
+        "Deployment/runtime constraints mention container files when supported by evidence.",
+        "CONCERNS.md does not overstate production deployment if only dev/test Dockerfiles are present.",
+        "Evidence paths include the exact Dockerfile variant names."
+      ]
+    },
+    {
+      "id": "quality-008",
+      "category": "stale-readme-vs-source",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/stale-readme-repo. Produce all docs.",
+      "expected_output": "The docs prefer source/config evidence over stale README claims, note divergence, and do not treat README intent as implementation fact.",
+      "files": [
+        "evals/files/stale-readme-repo"
+      ],
+      "assertions": [
+        "STACK.md uses manifest/config evidence for runtime and dependencies rather than stale README claims.",
+        "Final response includes intent-vs-reality divergences when README conflicts with source/config evidence.",
+        "Unknown or contradicted claims are marked [TODO] or explained as divergence.",
+        "Evidence sections distinguish README intent from source/config reality."
+      ]
+    },
+    {
+      "id": "quality-009",
+      "category": "monorepo",
+      "prompt": "Use the acquire-codebase-knowledge skill on evals/files/simple-monorepo. Produce docs/codebase.",
+      "expected_output": "The docs recognize monorepo structure, workspace manifests, multiple entrypoints, and package-specific boundaries without collapsing everything into one app.",
+      "files": [
+        "evals/files/simple-monorepo"
+      ],
+      "assertions": [
+        "STRUCTURE.md identifies workspace/package boundaries when manifest evidence supports them.",
+        "STACK.md distinguishes root tooling from package-level production dependencies.",
+        "ARCHITECTURE.md avoids inventing a single data flow when multiple apps/packages exist; unresolved flow is [TODO] or scoped by package.",
+        "CONCERNS.md identifies monorepo-specific risks only when evidence supports them."
+      ]
+    },
+    {
+      "id": "quality-010",
+      "category": "negative-narrow-task",
+      "prompt": "Fix the failing login unit test in evals/files/minimal-node-api.",
+      "expected_output": "The acquire-codebase-knowledge skill should not be used. No docs/codebase output should be created solely because this skill exists.",
+      "files": [
+        "evals/files/minimal-node-api"
+      ],
+      "assertions": [
+        "The skill is not activated for this narrow bug-fix task.",
+        "No docs/codebase directory is created by the skill.",
+        "The agent works on the requested test issue or asks for appropriate task-specific context."
+      ]
+    }
+  ]
+}

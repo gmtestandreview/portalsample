@@ -1,0 +1,11 @@
+var REACT_APP_B2C_CLIENTID = '4695db85-19b2-4d99-83dc-9e7ddf288f7b';
+var REACT_APP_B2C_AUTHORITY = 'https://externalauth.industry.gov.au/ausgovcustomers.onmicrosoft.com/B2C_1A_IP2_Business_SignUpSignin_2';
+var REACT_APP_B2C_KNOWN_AUTHORITIES='externalauth.industry.gov.au';
+var REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL='/sign-out-helper';
+var REACT_APP_B2C_READ_SCOPE='https://ausgovcustomers.onmicrosoft.com/nmi-prod-api/read';
+var REACT_APP_B2C_USER_IMPERSONATION_SCOPE='https://ausgovcustomers.onmicrosoft.com/nmi-prod-api/read';
+var REACT_APP_B2C_REDIRECT_URL='https://portal.measurement.gov.au/sign-in/';
+var REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY='5438eca3-9fb5-489b-a07c-97bc2b2e94ee';
+var REACT_APP_GA_TRACKINGID='G-XP0VJG6G2X';
+var REACT_APP_APPINSIGHTS_CONN_STRING='InstrumentationKey=5438eca3-9fb5-489b-a07c-97bc2b2e94ee;IngestionEndpoint=https://australiaeast-0.in.applicationinsights.azure.com/;LiveEndpoint=https://australiaeast.livediagnostics.monitor.azure.com/;ApplicationId=f6af5862-36bb-4baf-aee6-d99072687d56';
+var IMAGE_INLINE_SIZE_LIMIT='0';

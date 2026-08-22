@@ -1,0 +1,19 @@
+{
+  "name": "migration-verifier-scaffold",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "verify:static": "vitest run -c .github/migration-verifier/vitest.config.ts",
+    "verify:runtime": "playwright test -c .github/migration-verifier/playwright.config.ts",
+    "verify:jest": "jest -c .github/migration-verifier/jest.config.ts",
+    "verify:host": "powershell -ExecutionPolicy Bypass -File .github/migration-verifier/scripts/verify-dotnet10.ps1",
+    "verify:migration": "pnpm verify:static && pnpm verify:runtime && pnpm verify:host"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.0",
+    "@types/node": "^24.0.0",
+    "jest": "^30.0.0",
+    "typescript": "^6.0.0-dev.0",
+    "vitest": "^3.2.0"
+  }
+}

@@ -1,0 +1,254 @@
+# Prompt for migration
+
+Review the NMI Portal codebase and prepare a rebuild-readiness assessment for migration into the new design platform.
+
+Important: this is a read-only assessment. Do not edit files, commit changes, install packages, run migrations, generate new files, or perform implementation. Prefer static inspection. Do not run tests, builds, formatters, Storybook, Playwright, package scripts, or code generators unless they are clearly read-only, already available without installation, and explicitly needed for validation. If uncertain, do not run them.
+
+Primary source documents:
+Read these first and use them as the working baseline:
+
+- nmi-portal-modernisation-assessment-colour-revised.html
+- ARCHITECTURE.md
+- STRUCTURE.md
+- STACK.md
+- INTEGRATIONS.md
+- TESTING.md
+- STORYBOOK-MIGRATION-READINESS.md
+- MIGRATION_ROADMAP.md
+
+Treat these documents as baseline evidence, not as unquestioned truth. Verify important claims against the current codebase where possible. If the documents and code disagree, identify the disagreement and prefer current code evidence.
+
+Context:
+
+- The modernisation assessment says the app is a small React 18 / TypeScript SPA with fundamentally sound architecture and recommends Refactor — not Rebuild/Replatform.
+- The architecture docs describe a feature-based layered SPA using React Router v6, MSAL/Azure AD B2C, AccountProvider, AuthenticatedElement, NSwag-generated API clients, Formik/Yup wizard flows, runtime window.* config injection, Bootstrap/SCSS styling, App Insights, Google Analytics, and Trusted Types/DOMPurify.
+- The migration roadmap says this workspace is a source-map capture containing both canonical source and generated/vendor artifacts.
+- Treat ClientApp/src/**and ClientApp/src/styles/** as source-of-truth app code.
+- Treat tests/**, docs/**, and quality/** as validation/governance assets to assess for selective migration.
+- Exclude generated/vendor/build artifacts such as dist/**, storybook-static/**, reports/**, node_modules/**, ClientApp/src/main.*.js, ClientApp/css/main.*.css, ClientApp/webpack/**, ClientApp/source-map-http-downloads/**, ClientApp/src/external/**, and ClientApp/src/parent/node_modules/**.
+- Use the roadmap’s migration units, placement map, runtime contracts, risk register, and definition of done as migration-readiness inputs, not as implementation instructions.
+- Some earlier risks may now be resolved or partially resolved. Confirm current status before repeating them as blockers.
+- Known or previously identified risks include:
+  - auth bypass / route protection and precondition enforcement
+  - incomplete Trusted Types coverage
+  - WizardForm / WizardRoutedStep complexity
+  - duplicated token acquisition
+  - duplicated validation schemas
+  - Bootstrap/SCSS migration concerns
+  - low or uneven component/unit coverage outside Storybook
+  - top-level await compatibility risk
+  - missing provider-level error boundary
+  - design-platform dependency on tokens/components not yet inspected
+  - env contract mismatch if the target platform assumes process.env instead of runtime window.* globals
+  - generated/vendor contamination during merge
+  - CSS, font, icon, and asset path drift after target repo placement changes
+
+Goal:
+Prepare a concise, decision-oriented rebuild-readiness assessment showing what should be reused, refactored, redesigned, replaced, retired, regenerated, excluded, or left unknown before migration to the new design platform.
+
+Do not assume rebuild is necessary just because a design-platform migration is planned. Challenge rebuild assumptions, but support the migration goal.
+
+Analysis scope:
+
+1. Current architecture and runtime composition.
+2. Route structure and major user flows.
+3. Major components and shared UI patterns.
+4. WizardForm, WizardStep, WizardRoutedStep, FormikForm, validation, and navigation guard behavior.
+5. Auth, route protection, account/session context, preconditions, and security-sensitive flows.
+6. API client boundaries, NSwag-generated client usage, token acquisition, and bearer-token injection.
+7. Runtime config via env.ts and window.* globals.
+8. Styling system, Bootstrap/SCSS usage, design tokens, theme overrides, print styles, assets, fonts, and migration friction.
+9. Storybook migration baseline, including whether current stories are sufficient for design-platform handover.
+10. Unit, component, quality, Storybook BDD, and E2E coverage gaps that create migration risk.
+11. Documentation gaps that would block handover or safe refactor planning.
+12. Dead code, duplicated patterns, generated/vendor code, or high-risk coupling relevant to migration.
+13. Migration and merge readiness:
+    - classify source, tests, docs, quality assets, generated outputs, and vendor/cache mirrors
+    - identify what should migrate first, migrate selectively, regenerate, or be excluded
+    - check target-repo placement assumptions
+    - identify runtime contracts that must be preserved during migration
+    - assess whether the roadmap’s migration phases are still valid based on current code evidence
+
+Design-platform handling:
+
+- If Figma/design MCP or design-platform assets are available, inspect tokens, components, variants, layout primitives, accessibility guidance, interaction patterns, form patterns, and migration constraints.
+- If unavailable, do not block the assessment. Produce a “Design inputs needed” checklist covering:
+  - colour tokens
+  - typography tokens
+  - spacing/layout tokens
+  - grid/breakpoint rules
+  - form controls
+  - validation states
+  - wizard/stepper patterns
+  - modal/dialog patterns
+  - tables/lists/cards
+  - accessibility rules
+  - content and error-message guidance
+  - responsive requirements
+  - print requirements
+
+Subagents:
+Use relevant subagents where helpful and available:
+
+- code-reviewer
+- security-reviewer
+- test-coverage
+- architecture-reviewer
+
+If subagents are unavailable, perform the review directly. Do not invent subagent findings. Summarise any subagent input separately from your own conclusions.
+
+Source-handling rules:
+
+- Use the supplied docs as navigation aids and baseline evidence.
+- Verify high-impact claims against source files where possible.
+- Cite file paths for every important finding.
+- Mark items as Unknown when there is insufficient evidence.
+- Do not report a risk as current if the docs or code show it has been resolved.
+- Do not hand-edit or recommend hand-editing generated files such as web-api-client.ts, generated bundles, webpack runtime output, reports, vendor mirrors, or node_modules.
+- Recommend regenerating generated artifacts in the target platform rather than copying them as source.
+- Distinguish editable source, tests/docs/config, generated output, and vendor code.
+- Do not treat the migration roadmap as permission to implement phases.
+- Distinguish:
+  - assessment findings
+  - migration units
+  - merge-order suggestions
+  - actual implementation work
+
+Decision rules:
+Use these categories:
+
+- Keep: sound, low-risk, reusable with little or no design-platform impact.
+- Refactor: functionally valid but needs simplification, consolidation, security hardening, stronger typing, test coverage, or design-system adaptation.
+- Replace: not suitable for the new design platform, too coupled to old UI/styling assumptions, or safer to rebuild than adapt.
+- Retire: unused, duplicated, obsolete, or superseded.
+- Regenerate: generated output or derived artifact that should be recreated from source/spec/config in the target repo.
+- Exclude: generated, vendor, cache, report, or build artifact that should not be migrated as source.
+- Unknown: not enough evidence from available files or design inputs.
+
+For every important recommendation:
+
+- cite supporting file paths or observed evidence
+- state confidence: High / Medium / Low
+- explain migration impact in one sentence
+- identify whether the evidence comes from docs, code, tests, or design assets
+- avoid making unsupported claims
+
+Required output:
+
+1. Executive decision summary
+   - State whether the evidence supports rebuild, refactor, or hybrid migration.
+   - Explicitly challenge rebuild assumptions while still supporting the migration goal.
+   - Call out any changed baseline findings, especially risks that are now resolved, partially resolved, or still open.
+
+2. Baseline document alignment
+   Use a table with these columns:
+   - Baseline source
+   - Key claim
+   - Confirmed by code?
+   - Current status: Confirmed / Contradicted / Partially confirmed / Unknown
+   - Notes
+
+3. Current codebase inventory
+   Include:
+   - routes and major flows
+   - major components
+   - Wizard/form architecture
+   - shared utilities
+   - auth/session/API boundaries
+   - runtime config
+   - styling system
+   - assets and fonts
+   - tests
+   - Storybook coverage
+   - documentation
+
+4. Rebuild/refactor decision table
+   Use a table with these columns:
+   - Area
+   - Current evidence
+   - Decision: Keep / Refactor / Replace / Retire / Regenerate / Exclude / Unknown
+   - Migration impact
+   - Confidence
+   - Notes
+
+5. Design-platform migration map
+   Use a table with these columns:
+   - Existing UI/component/pattern
+   - Current implementation
+   - Target design-platform equivalent or needed input
+   - Migration risk
+   - Decision
+
+6. Security blockers before migration
+   Prioritise blockers that could invalidate migration work or expose users/data.
+   Include auth bypass, route/precondition gaps, Trusted Types/CSP gaps, unsafe redirects/links, PII logging, IDOR/client-side ownership assumptions, token handling, and validation risks if present.
+
+7. Testing gaps creating migration risk
+   Include:
+   - component/unit gaps
+   - WizardForm and route-flow gaps
+   - auth/precondition gaps
+   - validation schema gaps
+   - storage/error-route helper gaps
+   - dashboard filtering/pagination gaps
+   - Storybook vs real runtime gaps
+   - quality regression suite relevance
+   - target-CI parity risks
+
+8. Documentation gaps blocking handover
+   Include undocumented or stale information about:
+   - route tree
+   - auth/precondition flow
+   - token acquisition
+   - API client regeneration
+   - runtime config
+   - organisation switching
+   - WizardForm state machine
+   - validation extensions
+   - design-system assumptions
+   - Storybook migration coverage
+   - target-repo placement assumptions
+   - generated/vendor exclusion rules
+
+9. Migration unit and merge-readiness classification
+   Use a table with these columns:
+   - Area / path
+   - Classification: migrate / migrate selectively / regenerate / exclude / unknown
+   - Reason
+   - Target placement assumption
+   - Key risk if mishandled
+   - Confidence
+
+10. Runtime contracts to preserve
+   Include:
+
+- window.* runtime config contract
+- MSAL bootstrap order
+- React Router route semantics
+- Yup extension side-effect imports
+- NSwag client regeneration boundary
+- App Insights and GA wiring
+- Trusted Types / DOMPurify CSP contract
+- SCSS and Bootstrap theme assumptions
+- font and asset path assumptions
+- Storybook/test harness assumptions
+- quality regression suite expectations
+
+1. Unknowns and design inputs needed
+   List only items that materially affect migration decisions.
+
+2. Smallest next task
+   End with exactly one next minimal task.
+   Do not provide a large roadmap.
+   The next task must be small, actionable, and non-implementation unless a current security blocker clearly requires immediate remediation.
+
+Output style:
+
+- Practical, concise, and decision-oriented.
+- Use tables where they improve clarity.
+- No implementation code.
+- No large roadmap.
+- No speculative rebuild justification.
+- Do not assume Storybook readiness means production migration readiness.
+- Do not assume design-platform compatibility without token/component evidence.
+- Do not copy migration phases from the roadmap as the answer; assess readiness and identify only the smallest next task.

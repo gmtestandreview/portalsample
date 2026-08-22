@@ -1,0 +1,35 @@
+/*
+ * Restore MDX table appearance inside Storybook docs pages.
+ *
+ * Bootstrap 5 reboot sets border-width:0 on all table elements and adds no
+ * padding to td/th without the .table class. Storybook's MDX renderer emits
+ * plain <table> elements, so they inherit broken Bootstrap resets.
+ *
+ * Scope to Storybook docs roots only, and only to classless tables emitted by
+ * Markdown/MDX. Storybook's generated prop tables ship with their own classes
+ * and styles, so excluding classed tables prevents double-styling.
+ */
+
+:where(#storybook-docs, .sbdocs) table:not([class]) {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+}
+
+:where(#storybook-docs, .sbdocs) table:not([class]) th,
+:where(#storybook-docs, .sbdocs) table:not([class]) td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dee2e6;
+  vertical-align: top;
+  text-align: left;
+}
+
+:where(#storybook-docs, .sbdocs) table:not([class]) thead th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+}
+
+:where(#storybook-docs, .sbdocs) table:not([class]) tbody tr:nth-child(even) td {
+  background-color: #f8f9fa;
+}

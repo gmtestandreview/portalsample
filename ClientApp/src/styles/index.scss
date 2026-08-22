@@ -1,0 +1,94 @@
+////////////////////////////////////////////////////////////
+// National Measurement Institute (NMI) Main Style Index
+////////////////////////////////////////////////////////////
+
+// NMI Configuration
+@import './variables';
+@import './bootstrap-import';
+@import './mixins';
+@import './utilities';
+@import './replace-svgicons-csp';
+
+// NMI Layout & components
+
+@import './buttons';
+@import './dropdown';
+@import './nav';
+@import './navbar';
+@import './forms';
+@import './typography';
+@import './tables';
+@import './modals';
+@import './step-nav';
+@import './layout';
+@import './badge';
+@import './alert';
+@import './card';
+@import './accordion';
+@import './footer';
+@import './tooltips';
+@import './breadcrumb';
+@import './pagination';
+@import './date-picker';
+
+// NMI Global
+html {
+  scroll-behavior: smooth;
+  font-size: 100%;
+  font-family: $font-family-sans-serif;
+}
+
+:focus, :focus-visible {
+  outline: 3px solid $link-focus;
+  outline-offset: 2px;
+  &#header,
+  &#main,
+  &#footer,
+  &[tabindex='-1'],
+  &[role='region'] {
+    outline: none;
+  }
+}
+
+a:link {word-wrap: break-word;}
+
+body {
+  min-width: 320px;
+  background-color: inherit;
+  // Custom sections
+  &.home, &.login, &.dashboard {
+    background-color: $dashboard-background;
+  }
+  &.reporting-checklist, &.reporting-index,
+  &.wizard, &.wizrd-index, &.wizard-list, &.summary {
+    background-color: $white;
+  }
+  // Custom pages
+  &.wizard-index {
+    .btn-secondary[aria-label*='Start'],
+    .btn-secondary[aria-label*='Already'] {
+      @include media-breakpoint-up(md) {
+        width: 210px;
+      }
+    }
+  }
+
+  &.reporting-index {
+    .btn-secondary[aria-label*='Start'],
+    .btn-secondary[aria-label*='Edit'],
+    .btn-secondary[aria-label*='Continue'],
+    .btn-secondary[aria-label*='Already'] {
+      @include media-breakpoint-up(md) {
+        width: 140px;
+      }
+    }
+  }
+}
+
+.accordion-info {
+  color: $text-muted;
+}
+
+.sortable-column:hover {
+  cursor: pointer;
+}

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+storybook-static/
+
+# Compiled artifacts (webpack outputs to dist/, not ClientApp/)
+ClientApp/css/main.*.css
+ClientApp/css/main.*.css.map
+ClientApp/src/main.*.js
+ClientApp/src/main.*.js.map
+
+# TypeScript
+*.tsbuildinfo
+
+# Test output (all artifacts consolidated under reports/)
+reports/coverage/
+reports/playwright/
+reports/test-results/
+reports/vitest/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*

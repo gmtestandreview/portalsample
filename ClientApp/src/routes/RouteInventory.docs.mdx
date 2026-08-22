@@ -1,0 +1,89 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import DocsTable from '../storybook/DocsTable';
+
+<Meta title="Migration/Routes" />
+
+# Routes
+
+**Canonical route inventory, wrappers, and migration impact from `ClientApp/src/App.tsx`.**
+
+## Route Matrix
+
+<DocsTable
+  headers={['Path', 'Wrapper', 'Header/Footer']}
+  rows={[
+    ['`/`', '`Layout`', 'Yes'],
+    ['`/dashboard`', '`AuthenticatedElement`', 'Yes'],
+    ['`/dashboard-ta`', '`AuthenticatedElement`', 'Yes'],
+    ['`/create-account/*`', '`AuthenticatedElement`', 'No'],
+    ['`/update-organisation/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/create-contact`', '`AuthenticatedElement`', 'No'],
+    ['`/update-contact/*`', '`AuthenticatedElement`', 'No'],
+    ['`/success-creating-account`', '`AuthenticatedElement`', 'No'],
+    ['`/add-branch/*`', '`AuthenticatedElement`', 'No'],
+    ['`/request-for-quote-create`', '`AuthenticatedElement`', 'Yes'],
+    ['`/ta/type-approval-create-pre`', '`AuthenticatedElement`', 'Yes'],
+    ['`/ta/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/ta/type-approval-create`', '`AuthenticatedElement`', 'Yes'],
+    ['`/ta/type-approval-success/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/ta/:id/manage`', '`AuthenticatedElement`', 'Yes'],
+    ['`/request-for-quote-copy/:id/*`', '`AuthenticatedElement`', 'Yes'],
+    ['`/request-for-quote/:id/view-summary/*`', '`AuthenticatedElement`', 'No'],
+    ['`/request-for-quote/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/request-for-quote-success/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/submitted-success/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/accept-quote-create/:id/*`', '`AuthenticatedElement`', 'Yes'],
+    ['`/accept-quote/:id/*`', '`AuthenticatedElement`', 'No'],
+    ['`/quotation/:id/*`', '`AuthenticatedElement`', 'Yes'],
+    ['`/instrument-reports/:id/*`', '`AuthenticatedElement`', 'Yes'],
+    ['`/report/:id/*`', '`AuthenticatedElement`', 'Yes'],
+    ['`/services-we-offer`', '`AuthenticatedElement`', 'Yes'],
+    ['`/sign-in`', '`AuthenticatedElement`', 'Yes'],
+    ['`/sign-out`', 'direct route', 'No'],
+    ['`/sign-out-helper`', '`Layout`', 'Yes'],
+    ['`/help-guide`', '`Layout`', 'Yes'],
+    ['`/help-guide/how-to-setup-access`', '`Layout`', 'Yes'],
+    ['`/help-guide/faqs`', '`Layout`', 'Yes'],
+    ['`/server-error`', '`PreConditions`', 'Yes'],
+    ['`/conflict`', '`AuthenticatedElement`', 'Yes'],
+    ['`/forbidden`', '`AuthenticatedElement`', 'Yes'],
+    ['`/no-longer-available`', '`AuthenticatedElement`', 'Yes'],
+    ['`/unprocessable`', '`AuthenticatedElement`', 'Yes'],
+    ['`/precondition-failed`', '`AuthenticatedElement`', 'Yes'],
+    ['`/service-unavailable`', '`AuthenticatedElement`', 'Yes'],
+    ['`/not-found`', '`PreConditions`', 'Yes'],
+    ['`*`', '`PreConditions`', 'Yes'],
+  ]}
+/>
+
+## Route Families
+
+<DocsTable
+  headers={['Folder', 'Notes']}
+  rows={[
+    ['`acceptQuote`', 'Multi-step authenticated wizard with save and submit flows'],
+    ['`account`', 'Account creation, update, branch creation, and confirmation'],
+    ['`common`', 'Shared route literals, status helpers, and error mapping'],
+    ['`contact`', 'Contact create and update flows'],
+    ['`dashboard`', 'Authenticated landing route with list and paging behaviour'],
+    ['`help-guide`', 'Public help hub and support content'],
+    ['`measurementReport`', 'Report listing and detail views'],
+    ['`preConditions`', 'Terms-of-use, auth, and completion gating'],
+    ['`quotation`', 'Quote detail and related contact information'],
+    ['`requestForQuote`', 'Request-for-quote wizard, copy flow, summary, success'],
+    ['`services-we-offer`', 'Authenticated service catalogue'],
+    ['`sign-in`', 'Redirect entry point'],
+    ['`sign-out`', 'Explicit sign-out flow'],
+    ['`sign-out-helper`', 'Public completion page after sign-out'],
+    ['`ta`', 'Pattern/type approval pre-application, wizard, success, dashboard, and management surfaces'],
+  ]}
+/>
+
+## Migration Notes
+
+- Routes with `displayHeaderAndFooter={false}` are multi-step form surfaces and
+  should migrate with wizard-shell parity first.
+- `AuthenticatedElement` is the dominant route wrapper and remains a migration
+  dependency even when route components are moved incrementally.
+- Error routes are not decorative pages; they encode real HTTP status behaviour
+  and must stay visible in Storybook during migration.

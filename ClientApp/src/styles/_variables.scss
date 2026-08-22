@@ -1,0 +1,335 @@
+//////////////////////////////////////////////
+// National Measurement Institute (NMI) Theme
+//////////////////////////////////////////////
+
+// NMI custom colours
+$nmi-primary: #285576; //#000;
+$nmi-secondary: #58595b;
+$nmi-active: #007079; // TO DO - This is not in the style guide
+$nmi-dark-gray: #6D6E70;// #8e8e8e; 767676;
+$nmi-visited: #A44D8E; //#5b7a70;
+$nmi-blue: #285576;
+$nmi-blue-20: #d4dde4;
+$nmi-secondary-green: #71cc98;
+$nmi-light-grey: #d8d8d8;
+$nmi-header-primary: #7B0B15;
+$dashboard-background: #f5f5f5;
+$nmi-environment-background: $dashboard-background;
+
+// Neutral gray scale — single home for the recurring UI greys that were
+// previously hardcoded across partials (_accordion, _forms, _step-nav, _nav…).
+// Endpoints already have names: 50 = $dashboard-background (#f5f5f5),
+// 300 = $nmi-light-grey (#d8d8d8).
+$nmi-gray-100: #ebebeb; // stripe / accordion divider / table header fill
+$nmi-gray-200: #e2e2e2; // layout gradient stop
+$nmi-gray-400: #c7c7c7; // disabled control fill / step-nav track
+$nmi-gray-500: #bdbdbd; // nav divider
+$nmi-gray-600: #8e8e8e; // muted glyph
+$nmi-gray-700: #747474; // secondary text on light
+$nmi-gray-800: #606060; // dense helper text
+$nmi-selection-bg: #036b90; // ::selection highlight
+
+// Semantic alert surface tints — success/danger/warning/info status backgrounds & borders
+$alert-success-border: #A6D5A6;
+$alert-success-bg: #E8F4E8;
+$alert-danger-interior: #E75755; // darker accent inside danger alert
+$alert-warning-border: #B14F1B;
+$alert-warning-bg: #FFF0E5;
+$alert-warning-interior: #B14F1B; // darker accent inside warning alert
+$alert-info-bg: #DDECEC;
+
+// DISR shared colours
+$disr-light-blue: #9CD9E0;
+$disr-light-blue-tint: #6ac5cf;
+
+$body-color: #3f3b3b;
+$interactive: rgba( $nmi-primary, 0.85); //#295244;
+$nmi-interactive: #B33C4D; //#a5283b;
+
+// Bootstrap (BS) 5 colours - Map NMI to BS5
+$primary: $nmi-primary;
+$secondary: $nmi-secondary;
+$white: #fff;
+$black: #000;
+$light: $dashboard-background;
+$text-dark: $body-color;
+$text-muted: $nmi-dark-gray;
+$text-placeholder: $nmi-dark-gray; // #767676; #8e8e8e; #747474;
+$info: rgba($nmi-blue, 0.85); //$nmi-site-coastline-bay-primary;
+$info-dark: #1f8383;
+$success: #1a7a1a; // was #219520 (3.90:1 on white ✗ AA) → 5.47:1 ✅ normal text
+$success-dark: #297e28;
+$danger: #D10000; //#d50501
+$danger-lighter: #f5b5b5; //#f5b5b5
+$danger-light: #FCE9E9;
+$warning: #FFECB5;
+
+// Color mapping NMI to BS5
+$theme-colors: (
+  'primary': $primary,
+  'secondary': $secondary,
+  'info': $info,
+  'danger': $danger,
+  'success': $success,
+  'warning': $warning,
+  'brand-red': $nmi-header-primary, // NMI corporate red #7B0B15 (~11:1 on white, white label only)
+);
+
+
+//////////////////////////////////////////////
+// Bootstrap 5 Updated utlity maps
+// Spacer map
+$enable-negative-margins: false !default;
+$spacer: 1rem !default;
+$spacers: (
+  0: 0,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
+  3: $spacer,
+  4: $spacer * 1.5,
+  5: $spacer * 3,
+  6: $spacer * 2, // This is new NMI
+) !default;
+
+$negative-spacers: if($enable-negative-margins, negativify-map($spacers), null) !default;
+
+//////////////////////////////////////////////
+// Global var
+$border-radius: 0;
+$border-radius-lg: $border-radius;
+$border-radius-sm: $border-radius;
+$border-color: $nmi-light-grey;
+
+$link-color: $nmi-blue;
+$link-hover-background: $disr-light-blue; //#dceeee;
+$link-focus: $nmi-blue;
+
+$standard-pathway-border-color-top: $nmi-header-primary; //$nmi-coastline-bay-primary;
+$standard-pathway-footer-color: $link-color;
+
+$navbar-light-color: $white;
+$navbar-light-brand-color: $white;
+
+// Card var
+$card-border-color: $nmi-dark-gray;
+
+// Navbar var
+$navbar-padding-y: 0;
+$navbar-padding-x: 0;
+
+$navbar-brand-padding-y: $navbar-padding-y;
+$navbar-brand-padding-x: $navbar-padding-x;
+
+// Tabs var
+$nav-link-font-weight:              bold;
+$nav-link-color:                    $text-muted;
+$nav-link-hover-color:              $nmi-blue;
+
+$nav-underline-gap:                 0; //0.25rem;
+$nav-underline-border-width:        3px;
+$nav-underline-link-active-color:   $nmi-blue;
+$nav-underline-link-color:          $nmi-light-grey;
+
+// Typography var
+$font-family-sans-serif: "Public Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-family-base: $font-family-sans-serif !default;
+$font-weight-base: 400 !default;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+$font-size-base: 1rem !default; // Assumes the browser default, typically `16px`
+$font-size-xxs: $font-size-base * 0.5 !default;
+$font-size-xs: $font-size-base * 0.75 !default;
+$font-size-sm: $font-size-base * 0.875 !default;
+$font-size-lg: $font-size-base * 1.25;
+$small-font-size: $font-size-sm;
+
+// Breadcrumbs
+$breadcrumb-font-size: $font-size-sm;
+$breadcrumb-padding-y: 0;
+$breadcrumb-padding-x: 0;
+$breadcrumb-item-padding-x: 0.5rem;
+$breadcrumb-margin-bottom: 1rem;
+$breadcrumb-bg: null;
+$breadcrumb-divider-color: $nmi-dark-gray;
+$breadcrumb-active-color: $body-color;
+$breadcrumb-divider: none; // Replacement icon in _replace-svgicons-csp.scss
+
+// Headings
+$headings-font-family: $font-family-sans-serif !default;
+$headings-font-weight: 700 !default;
+$headings-color: $body-color;
+
+$h1-font-size: 2.75rem; // 44px;
+$h2-font-size: 2rem; // 32px;
+$h3-font-size: 1.3125rem; // 21px;
+$h4-font-size: 1.1875rem; // 19px;
+$h5-font-size: 1rem; // 16px
+$h6-font-size: 0.875rem; // 14px
+
+$line-height-base: 1.75;
+$line-height-lg: 2;
+$line-height-sm: 1.2;
+
+// Tables
+$table-color: $body-color;
+$table-group-separator-color: $nmi-light-grey;
+$table-hover-bg: $link-hover-background;
+$table-striped-order:         even;
+
+// Tooltips var
+$tooltip-font-size: $font-size-base;
+$tooltip-color: $white;
+$tooltip-bg: $interactive;
+$tooltip-border-radius: 0;
+$tooltip-opacity: 1;
+
+// Badge pills
+$badge-font-size: $font-size-sm;
+$badge-font-weight: $font-weight-medium;
+$badge-color: $white;
+$badge-padding-y: 0.35rem;
+$badge-padding-x: 0.75rem;
+$badge-border-radius: $border-radius;
+
+// Forms var
+$input-border-color: $black; //$nmi-primary;
+$input-border-width: 1px;
+$input-focus-box-shadow: none;
+$input-focus-border-color: $nmi-primary;
+$input-focus-width: 3px;
+$input-btn-line-height-lg: 2;
+
+$input-btn-padding-y: 0.75rem; //.375rem ;
+$input-btn-padding-x: 1.25rem;
+
+$input-btn-padding-y-sm: 0.25rem;
+$input-btn-padding-x-sm: 0.85rem;
+
+$input-btn-padding-y-lg: 0.75rem;
+$input-btn-padding-x-lg: 2rem;
+
+$input-btn-focus-color-opacity: 0.25 !default;
+$input-btn-focus-color: transparent; //rgba($link-focus, $input-btn-focus-color-opacity) !default;
+
+$input-placeholder-color: $text-placeholder;
+$input-padding-y: $input-btn-padding-y; // 12px
+$input-padding-x: $input-btn-padding-x; // 15px;
+$input-height: 3.25rem; //52px;
+
+$form-label-font-weight: bold;
+
+$form-select-padding-y: $input-padding-y;
+$form-select-padding-x: $input-padding-x;
+$form-select-indicator: url('../assets/icon-dropdown.png'); // Temp fix for CSP issues
+
+$form-feedback-icon-valid: url('../assets/icon-valid.png'); // Temp fix for CSP issues
+$form-feedback-icon-invalid: url('../assets/icon-invalid.png'); // Temp fix for CSP issues
+
+$input-group-addon-color:               $body-color;
+$input-group-addon-bg:                  $dashboard-background;
+$input-group-addon-border-color:        $input-border-color;
+
+// Buttons var
+$btn-font-size: $font-size-base;
+$btn-font-size-lg: $btn-font-size;
+$btn-font-weight: 700;
+
+$btn-border-width: 0;
+$btn-border-width-sm: 0;
+$btn-border-width-lg: 2px;
+
+$btn-padding-y: 0.75rem; //0.875rem ;
+$btn-padding-x: 2rem;
+
+$btn-padding-y-sm: 0.25rem;
+$btn-padding-x-sm: 0.25rem;
+
+$btn-padding-y-lg: $btn-padding-y;
+$btn-padding-x-lg: $btn-padding-x;
+
+$btn-line-height: 1.25;
+
+$btn-disable-color: $nmi-dark-gray;
+$btn-close-height: auto;
+
+$btn-focus-width: 0;
+$btn-box-shadow: inset 0 1px 0 rgba($white, 0.15), 0 1px 1px rgba($black, 0.075);
+$btn-focus-box-shadow: none;
+$btn-active-box-shadow: none;
+
+// Dropdowns
+$dropdown-padding-x: 0;
+$dropdown-padding-y: 0;
+$dropdown-dark-color: $white;
+$dropdown-dark-bg: $interactive;
+$dropdown-dark-link-color: $white;
+$dropdown-dark-link-hover-color: $white;
+$dropdown-dark-link-hover-bg: $nmi-active;
+
+$caret-spacing: 0.4rem;
+
+// Pagination
+$pagination-padding-y:              .15rem; //!default;
+$pagination-padding-x:              .75rem; //.75rem; //!default;
+$pagination-padding-y-sm:           .25rem !default;
+$pagination-padding-x-sm:           .5rem !default;
+$pagination-padding-y-lg:           .75rem !default;
+$pagination-padding-x-lg:           1.5rem !default;
+
+$pagination-item-gap-x:             0.75rem; // new custom var
+
+$pagination-color:                  $nmi-primary; //var(--#{$prefix}link-color) !default;
+$pagination-bg:                     transparent; //var(--#{$prefix}body-bg) !default;
+$pagination-border-width:           0; //var(--#{$prefix}border-width) !default;
+$pagination-border-color:           transparent; // var(--#{$prefix}border-color) !default;
+
+$pagination-hover-color:            $white; //var(--#{$prefix}link-hover-color) !default;
+$pagination-hover-bg:               $nmi-primary; //$disr-light-blue; //var(--#{$prefix}tertiary-bg) !default;
+$pagination-hover-border-color:     transparent; //var(--#{$prefix}border-color) !default; // Todo in v6: remove this?
+
+$pagination-active-color:           $nmi-primary;//$component-active-color !default;
+$pagination-active-bg:              $disr-light-blue; //$component-active-bg !default;
+$pagination-active-border-color:    transparent; //$component-active-bg !default;
+
+// Modals var
+$modal-backdrop-opacity: 0.25;
+
+$modal-header-border-width: 0;
+$modal-content-border-color: transparent;
+$modal-content-border-radius: 0;
+$modal-footer-border-width: 0;
+
+$modal-title-line-height: 28px;
+
+//  Accordions Var
+$accordion-padding-y: 1rem; //1rem;
+$accordion-padding-x: 1.25rem; //1.25rem;
+
+$accordion-padding-y-lg: 2.25rem;
+$accordion-padding-x-lg: 2rem;
+
+$accordion-body-padding-y: $accordion-padding-y;
+$accordion-body-padding-x: $accordion-padding-x;
+
+$accordion-body-padding-y-lg: $accordion-padding-y-lg;
+$accordion-body-padding-x-lg: $accordion-padding-x-lg;
+
+$accordion-border-width: 0;
+$accordion-border-radius: $border-radius;
+
+$accordion-button-color: $nmi-primary;
+$accordion-button-active-color: rgba($nmi-primary, 0.8); //shade-color($accordion-icon-color, 10%);
+
+$accordion-icon-color: $nmi-primary;
+$accordion-icon-active-color: $accordion-button-active-color;
+
+$accordion-button-icon: none; // Replacement icon in _replace-svgicons-csp.scss
+$accordion-button-active-icon: none; // Replacement icon in _replace-svgicons-csp.scss
+
+// Tab panes var
+$tabpane-padding-y: 1rem; //1.5rem; 
+$tabpane-padding-x: 0;
+
+// Alerts var
+$alert-padding-y: 2rem;
+$alert-padding-x: 2rem;

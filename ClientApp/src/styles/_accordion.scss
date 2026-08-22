@@ -1,0 +1,395 @@
+// Interim changes - before SASS rewrite.accordion-button
+.wizard-accordion {
+    .accordion-header {
+      .accordion-button {
+        color: $primary;
+        padding: $accordion-padding-y-lg $accordion-padding-x-lg;
+        font-family: $headings-font-family;
+        font-weight: $headings-font-weight;
+        font-size: $h4-font-size;
+        border-bottom: 4px solid $nmi-gray-100;
+        line-height: inherit;
+        > span {
+          // For multi line accordion headers
+          line-height: rfs-value(21px); //1.3;
+          .text-truncate {
+            display: -webkit-box !important;
+            -webkit-line-clamp: 1; // About 1 text lines on mobile
+            -webkit-box-orient: vertical;
+            white-space: normal;
+            max-width: 90vw;
+          }
+        }
+        &:after {
+          background: tint-color($disr-light-blue, 30%); //$nmi-coastline-bay-primary
+        }
+        &:focus,
+        &:hover {
+          border-bottom: 4px solid $disr-light-blue; //$nmi-secondary-green; //$link-focus;
+          .acd-title {
+            text-decoration: underline;
+          }
+        }
+      }
+      .accordion-button:not(.collapsed) {
+        color: $body-color;
+        background-color: $nmi-gray-100;
+        border-bottom: 4px solid transparent;//$nmi-gray-100;
+      }
+    }
+  
+    .accordion-item {
+      &.open {
+        background-color: transparent; //$nmi-gray-100;
+        [aria-expanded='true'] {
+          .acd-title {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+    .accordion-collapse {
+      &.show {
+        background-color: $nmi-gray-100;
+        border-bottom: 4px solid $disr-light-blue; //$nmi-secondary-green; //$link-focus;
+      }
+      .accordion-body {
+        padding: $accordion-body-padding-y-lg $accordion-body-padding-x-lg;
+      }
+    }
+    .acd-title {
+      font-size: $h4-font-size; // 19px;
+      line-height: rfs-value(28px); //1.3;
+    }
+    .summary .accordion-header {
+      .acd-title {
+        // Summary page have larger accordion titles
+        font-size: $h3-font-size;
+        line-height: rfs-value(32px);
+      }
+    }
+  
+    // Desktop (larger than 768px wide)
+    @include media-breakpoint-up(md) {
+      .acd-title {
+        font-size: $h3-font-size; //1.313rem;
+        line-height: rfs-value(28px); //1.3;
+      }
+      .summary .accordion-header {
+        .acd-title {
+          // Summary page have larger accordion titles
+          font-size: $h2-font-size;
+          line-height: rfs-value(40px);
+        }
+      }
+    }
+  }
+  
+  // Dashboard accordion
+  .dashboard-accordion {
+    .accordion-item {
+      background-color: $white;
+      border-bottom: 4px solid transparent;
+      &:focus-within,
+      &:focus,
+      &:hover {
+        border-bottom: 4px solid $disr-light-blue; //$link-focus;
+      }
+    }
+    .card-accheader {
+      padding: 1.5rem 1.5rem 0 1.5rem;
+    }
+    .accordion-header {
+      .accordion-button {
+        justify-content: space-between;
+        padding: 0;
+        background-color: transparent;
+        border-bottom: 4px solid transparent;
+        &:after {
+          display: none;
+        }
+        &:not(.collapsed) {
+          color: $body-color;
+          background-color: transparent;
+          border-bottom: 4px solid transparent;
+        }
+        .h3 {
+          &.text-truncate {
+            display: -webkit-box !important;
+            -webkit-line-clamp: 3; // About 3 text lines on mobile
+            -webkit-box-orient: vertical;
+            white-space: normal;
+            max-width: 90vw;
+            @include media-breakpoint-up(lg) {
+              display: inherit !important;
+              -webkit-line-clamp: 1; // About 1 text line on desktop
+              -webkit-box-orient: horizontal;
+              white-space: nowrap;
+            }
+          }
+        } 
+      }
+    }
+    .accordion-collapse {
+      &.show {
+        border-bottom: none;
+      }
+      .accordion-body {
+        padding: 1rem 1.5rem;
+      }
+    }
+    .acd-reports-button {
+      line-height: $line-height-sm;
+      vertical-align: middle;
+      .text-state-1 {display: inline}
+      .text-state-2 {display: none;} 
+      &:after {
+        margin-left: 2px;
+        padding: 4px;
+        vertical-align: 0;
+        height: inherit;
+        transform-origin: center;
+      }
+      &:not(.collapsed) {
+        background-color: transparent;
+        .text-state-1 {display: none}
+        .text-state-2 {display: inline;} 
+      }
+      &.dropdown-toggle {
+        // For the Show reports accordion button
+        &[aria-expanded='true'] {
+          &:after {
+            -webkit-transform: rotate(180deg);
+            -moz-transform: rotate(180deg);
+            -o-transform: rotate(180deg);
+            transform: rotate(180deg);
+          }
+        }
+        &:focus-visible {
+          outline: 3px solid $disr-light-blue; //$link-focus;
+        }
+      }
+    }
+  }
+  
+  // CheckList accordion
+  .checklist-accordion {
+    position: relative;
+    /* Checklist vert line */
+    .checklist-line {
+      height: calc(100% - 115px);
+      width: 3px;
+      background: $nmi-gray-100; 
+      position: absolute;
+      margin: 4rem 0 0 1rem; 
+    }
+    /* Checklist item */
+    .checklist-item {
+      &:focus-visible,
+      &:hover {
+        .checklist-item-divider {
+          border-top-color: $link-focus;
+          background-color: $link-focus;
+        }
+      }
+      &:last-of-type {
+        .checklist-sub-item:last-of-type:after {
+          content: ' ';
+          height: calc(100% - 2rem);
+          width: 5px;
+          position: absolute;
+          z-index: 10;
+          top: 2.5rem;
+          left: -3.5rem;
+        }
+      } 
+      /* Checklist item title */
+      .checklist-item-title {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        padding: 0;
+        margin-left: 3rem;
+        cursor: pointer;
+        .h3 {
+          margin: 0;
+          padding: 0;
+          font-size: $h4-font-size; // Smaller for mobile
+          line-height: rfs-value(28px);
+          width: 100%;
+          color: $primary;
+          > span {
+            position: absolute;
+            margin-top: -0.25rem;
+            left: -3rem; 
+            border-radius: 50%;
+            border: 3px solid $nmi-light-grey; //$nmi-gray-400;
+            width: 36px;
+            height: 36px;
+            text-align: center;
+            line-height: 2;
+            z-index: 100;
+            background: $nmi-light-grey; //$white;          
+            i {
+              color: $white;
+              line-height: 1;
+            }
+          }
+        }
+      }
+      .accordion-button {
+        background-color: $white;
+        padding: $accordion-padding-y-lg 0.5rem;
+        &.collapsed,
+        &:after {
+          background-color: transparent;
+        }
+        &.collapsed .h3 {
+          text-decoration: none;
+        }
+        &:after {
+          line-height: 2.3;
+        }
+        &:not(.collapsed),
+        &:focus-visible,
+        &:hover {
+          &:after {
+            @extend .bgCircle-lg;
+            line-height: 2.3;
+          }
+          .h3 {
+            text-decoration: underline;
+          }
+        }
+        .checklist-item-number {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: $white; //$nmi-gray-700; 
+        }
+        &[aria-expanded='true'] {
+            .checklist-item-number {
+              color: $white;
+            }
+        }
+        [aria-expanded='false'] {
+          .checklist-item-number {          
+            color: $nmi-gray-700;
+          }
+        }
+        /* Not expandable Action button header  */
+        &.not-expandable {
+          &:after {
+            display: none;
+          }
+          &:focus-visible,
+          &:hover {
+            .h3 {
+              text-decoration: none;
+            }
+          }
+        }
+      }
+      &.item-done {
+        .checklist-item-number {
+          display: none;
+        }
+        .checklist-item-title {
+          .h3 {
+            > span { 
+              background: $success-dark; //$primary;  
+              border: 3px solid $success-dark; //$primary;  
+              i {
+                display: inline-block;
+                height: 100%;
+                color: $white;
+                line-height: 1;
+              }
+            }
+          }
+        } 
+      }
+    }
+    /* Checklist item accordion panel */
+    .accordion-collapse {
+        &.show {
+          & ~ .checklist-item-divider {
+            border-top-color: $link-focus;
+            background-color: $link-focus;
+          }
+        }
+        .accordion-body {
+          padding: $accordion-body-padding-y 0;
+        }
+        /* Checklist sub-items */
+        .checklist-sub-items-wrapper {
+          margin-left: 3.5rem; 
+        }
+    }
+    /* Checklist HR line divider */
+    .checklist-item-divider {
+      border-top: 4px solid $nmi-gray-100; 
+      background-color: $nmi-gray-100;
+      width: calc(100% - 5rem);
+      margin: 0 0 0 3.5rem;
+      padding: 0;
+      text-align: left;
+      border: 0;
+      height: 4px;
+      opacity: 1;
+    }
+  
+    // Desktop (larger than 576px wide)
+    @include media-breakpoint-up(sm) {
+      /* Checklist vert line */
+      .checklist-line {
+        margin: 4rem 0 0 1.4rem;
+      }
+      /* Checklist item title */
+      .checklist-item {
+        .checklist-item-title {
+          .h3 {
+            font-size: $h3-font-size;
+            line-height: rfs-value(28px);
+            > span {
+              margin-top: -0.65rem;
+              width: 48px;
+              height: 48px;
+              i {
+                line-height: 2;
+              }
+            } 
+          }
+        }
+        .accordion-button {
+          padding: $accordion-padding-y-lg $accordion-padding-x-lg;
+        }
+        &.item-done {
+          .checklist-item-title { 
+            .h3 {
+              > span { 
+                  i {
+                    line-height: 2;
+                  }
+                }
+            } 
+          }
+        }
+      }
+      .accordion-collapse {
+        .accordion-body {
+          padding: $accordion-body-padding-y-lg 0;
+        }
+        /* Checklist sub-items */
+        .checklist-sub-items-wrapper {
+          margin-left: 5rem; 
+        }
+      }
+      /* Checklist HR line divider */
+      .checklist-item-divider {
+        margin: 0 0 0 5rem;
+      }
+    }
+  }
+  

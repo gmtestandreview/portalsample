@@ -1,0 +1,279 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import DocsTable from '../ClientApp/src/storybook/DocsTable';
+
+<Meta title="Documentation/Component Documentation Guide" />
+
+# Writing Component Documentation
+
+This guide shows best practices for documenting components in this Storybook using JSDoc comments and story descriptions.
+
+## JSDoc Best Practices
+
+### 1. Component Description
+
+Always include a clear description of what the component does and when to use it:
+
+```typescript
+/**
+ * PrimaryButton Component
+ *
+ * A prominent call-to-action button following the NMI design system.
+ * Built on Bootstrap Button with NMI-specific color variants.
+ *
+ * Use PrimaryButton for main actions like "Submit", "Continue", or "Save".
+ */
+```
+
+### 2. Props Documentation
+
+Document each prop with its type, description, and usage:
+
+```typescript
+/**
+ * @param {PrimaryButtonProps} props - Component props
+ * @param {React.ReactNode} props.children - Button label text
+ * @param {'light' | 'dark'} [props.mode='light'] - Button color theme
+ * @param {boolean} [props.disabled] - Disable the button
+ * @param {Function} [props.onClick] - Click event handler
+ */
+```
+
+### 3. Examples in JSDoc
+
+Include practical usage examples:
+
+```typescript
+/**
+ * @example
+ * // Standard primary button
+ * <PrimaryButton onClick={handleSubmit}>
+ *   Submit Form
+ * </PrimaryButton>
+ *
+ * @example
+ * // Dark mode button
+ * <PrimaryButton mode="dark" disabled={isLoading}>
+ *   {isLoading ? 'Processing...' : 'Continue'}
+ * </PrimaryButton>
+ */
+```
+
+### 4. Return Type
+
+Always document the return type:
+
+```typescript
+/**
+ * @returns {JSX.Element} Rendered button element
+ */
+```
+
+## Story Metadata
+
+### Adding the 'docs' Tag
+
+Enable autodocs for a component by adding the 'docs' tag:
+
+```typescript
+const meta = {
+  component: MyComponent,
+  tags: ['ai-generated', 'needs-work', 'docs'], // 👈 Add 'docs' tag
+};
+```
+
+### Story Descriptions
+
+Add descriptions to individual stories to explain specific use cases:
+
+```typescript
+export const Primary: Story = {
+  args: { children: 'Click me' },
+  parameters: {
+    docs: {
+      description: {
+        story: 'The default primary button with standard styling.',
+      },
+    },
+  },
+};
+```
+
+## Autodocs Page Structure
+
+When you add the `'docs'` tag, Storybook generates a documentation page that includes:
+
+<DocsTable
+  headers={['Section', 'Content', 'Source']}
+  rows={[
+    ['Title', 'Component name', 'From meta.component'],
+    ['Description', 'What the component does', 'From JSDoc comment'],
+    ['Props Table', 'All available props with types', 'From TypeScript types + JSDoc'],
+    ['Stories', 'All component variants', 'From Story definitions'],
+    ['Canvas', 'Live interactive preview', 'From selected story'],
+    ['Source Code', 'Component code snippet', 'From canvas selection'],
+  ]}
+/>
+
+## Example: Alert Component
+
+Here's how the Alert components use JSDoc for comprehensive autodocs:
+
+```typescript
+/**
+ * AlertSuccess Component
+ *
+ * Displays a success message with green styling and polite ARIA live announcement.
+ * Use for confirming successful operations (form submission, save completed, etc.).
+ *
+ * @param {AlertProps} props - Component props
+ * @param {React.ReactNode} props.children - Alert message content
+ * @param {string} [props.id] - Unique identifier for the alert
+ * @param {boolean} [props.canClose] - Show close button (default: false)
+ * @param {Function} [props.onClose] - Callback when alert is dismissed
+ *
+ * @example
+ * <AlertSuccess>
+ *   Form submitted successfully!
+ * </AlertSuccess>
+ *
+ * @returns {JSX.Element} Green success alert
+ */
+export const AlertSuccess = (props: AlertProps) => 
+  <AlertMessage variant='success' {...props} />;
+```
+
+This generates an autodocs page showing:
+- ✅ Description of when to use AlertSuccess
+- ✅ Props table with all available options
+- ✅ Example code snippet from JSDoc
+- ✅ Live story variants (Success, Info, Warning, Error)
+- ✅ Source code for the selected story
+
+## Markdown Content
+
+You can also create standalone MDX files for broader documentation topics:
+
+```mdx
+import { Meta, Title } from '@storybook/addon-docs/blocks';
+
+<Meta title="Documentation/Design Tokens" />
+
+# Design Tokens
+
+Our component library uses standardized design tokens for colors, spacing, and typography.
+
+## Colors
+
+- Primary Blue: #285576
+- Success Green: #28a745
+- Warning Yellow: #ffc107
+- Error Red: #dc3545
+```
+
+## Tips & Tricks
+
+### Storybook BDD Alignment
+
+If a story represents user-visible behavior, add or update corresponding BDD coverage in `tests/e2e/features/storybook/**`.
+
+After editing any Storybook feature file or step definition:
+
+```bash
+npx bddgen
+npx playwright test --grep "@storybook" --reporter=list
+```
+
+Use stable story IDs from the Storybook manifest to avoid drift between docs and executable coverage.
+
+### 1. Use `@internal` for Private APIs
+
+Mark internal components that shouldn't be documented:
+
+```typescript
+/**
+ * Internal helper component
+ * @internal Use AlertSuccess, AlertInfo, etc. instead
+ */
+const AlertMessage = (props: BaseAlertProps) => {
+  // ...
+};
+```
+
+### 2. Link Between Components
+
+Reference related components in descriptions:
+
+```typescript
+/**
+ * SecondaryButton Component
+ *
+ * Secondary action button. For primary actions, use PrimaryButton instead.
+ * @see {@link PrimaryButton}
+ */
+```
+
+### 3. Add Deprecated Warnings
+
+Mark old components:
+
+```typescript
+/**
+ * OldButton Component
+ *
+ * @deprecated Use PrimaryButton or SecondaryButton instead
+ */
+```
+
+### 4. Document Complex Props
+
+Use TypeScript interfaces for better documentation:
+
+```typescript
+interface ButtonProps {
+  /** Button label text */
+  children: React.ReactNode;
+  /** Visual style variant ('primary' | 'secondary' | 'danger') */
+  variant?: 'primary' | 'secondary' | 'danger';
+  /** Button size */
+  size?: 'small' | 'medium' | 'large';
+  /** Loading state with spinner */
+  isLoading?: boolean;
+}
+```
+
+### 5. Prefer `DocsTable` Over Markdown Tables In MDX
+
+Use the shared `DocsTable` component instead of GFM pipe tables in MDX docs pages. This avoids Storybook/MDX parser inconsistencies and keeps docs tables rendering predictably.
+
+```mdx
+import DocsTable from '../ClientApp/src/storybook/DocsTable';
+
+<DocsTable
+  headers={['Prop', 'Type', 'Description']}
+  rows={[
+    ['children', 'React.ReactNode', 'Rendered content'],
+    ['disabled', 'boolean', 'Disables interaction'],
+  ]}
+/>
+```
+
+## Generate Docs
+
+To ensure your component documentation is comprehensive:
+
+1. ✅ **Add JSDoc comments** to component files
+2. ✅ **Add the 'docs' tag** to story metadata
+3. ✅ **Write story examples** showing common use cases
+4. ✅ **Test in Storybook** to verify autodocs page looks good
+5. ✅ **Review generated props table** to ensure types are clear
+
+## Next Steps
+
+- Browse the component library sidebar to see autodocs in action
+- Look for the **"📚 Docs"** tab on each component page
+- Review the Alert, PrimaryButton, and Accordion autodocs pages as examples
+- Add JSDoc comments to new components before submitting PRs
+
+---
+
+**Questions?** Check the [Storybook autodocs documentation](https://storybook.js.org/docs/writing-docs/autodocs) for more details.

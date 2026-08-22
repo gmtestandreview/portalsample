@@ -1,0 +1,181 @@
+.bg-nmi-navbar,
+.navbar-dark {
+  background-color: $nmi-header-primary;
+  color: $white;
+  margin-bottom: 0px;
+  .nmi-nav-brand {
+    img {
+      content: url('../assets/logo_nmi_white_mobile.svg');
+      display: inline-block;
+      width: 169px;
+      height: auto;
+      padding: 0.5rem 1rem;
+      @include media-breakpoint-up(md) {
+        content: url('../assets/logo_nmi_white.svg');
+        min-height: 96px; // 60px;
+        width: 330px;
+      }
+    }
+  }
+  .navbar-nav {
+    .nav-link {
+      color: $white;
+      &:focus,
+      &:hover,
+      &:active {
+        color: $white;
+        opacity: 1;
+      }
+    }
+    .dropdown {
+      position: inherit; // Full width on mobile
+      .org-name {
+        font-size: $font-size-xs;
+        font-weight: normal;
+        line-height: rfs-value(20px);
+      }
+      @include media-breakpoint-up(md) {
+        position: relative;
+      }
+    }
+    .dropdown-toggle {
+      display: flex;
+      align-items: center;
+      min-height: 65px;
+      padding: 0.5rem 0.75rem;
+      color: $white;
+      line-height: rfs-value(28px);
+      white-space: unset;
+      &[aria-expanded='true'],
+      &:focus,
+      &:hover {
+        background-color: $nmi-interactive;
+        .fw-bold {
+          text-decoration: underline;
+        }
+      }
+      &:focus,
+      &:focus-visible {
+        outline: 3px solid $link-focus;
+        outline-offset: 2px;
+      }
+      &:after {
+        position: relative;
+        top: 0;
+        right: 1px;
+      }
+      @include media-breakpoint-up(md) {
+        min-height: 96px;
+        &:after {
+          top: -0.7rem;
+        }
+      }
+    }
+    .dropdown-menu-dark {
+      @include dropdownMenuDark;
+        min-width: 300px;
+    }
+  }
+}
+
+.bg-nmi-form-navbar,
+.navbar-light {
+  background-color: $disr-light-blue;
+  color: $primary;
+  .nmi-form-brand {
+    padding: 0 0 0 0.75rem;
+    min-height: 56px;
+    max-width: 80%;
+    color: $nmi-primary;
+    font-size: $h4-font-size;
+    font-weight: $headings-font-weight;
+    line-height: 26px;
+    .form-banner-title {
+      margin: 1.5rem 0;
+      color: $nmi-primary;
+      .ref-title,
+      .org-title {
+        font-weight: normal;
+        font-size: $font-size-sm; //14px
+        color: $body-color;
+      }
+    }
+    @include media-breakpoint-up(md) {
+      padding: 0 0 0 1rem;
+      min-height: 96px;
+      font-size: $h3-font-size; //21px;
+      line-height: 28px;
+      .form-banner-title {
+        .ref-title,
+        .org-title {
+          font-size: $font-size-base; //16px;
+        }
+      }
+    }
+  }
+  .navbar-toggler {
+    background: $nmi-blue-20;
+    min-height: 96px;
+    &.collapsed {
+      background: transparent;
+    }
+    &:focus,
+    &:hover {
+      background: $nmi-blue-20;
+      outline: 0;
+      box-shadow: none;
+    }
+  }
+  .navbar-collapse {
+    &.show {
+      @include media-breakpoint-down(lg) {
+        background: $nmi-blue-20;
+      }
+    }
+  }
+}
+
+.discard-changes-button {
+  color: $nmi-primary;
+  font-size: $font-size-base; //16px;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    text-decoration: none;
+    color: $nmi-primary;
+    background-color: $white;
+    border: none;
+  }
+
+  &:focus {
+    text-decoration: none;
+    color: $nmi-primary;
+    background-color: transparent;
+    border: solid 4px $nmi-primary;
+  }
+
+  &:active {
+    text-decoration: none;
+    color: $nmi-primary;
+    background-color: $white;
+    border: solid 4px $nmi-primary;
+  }
+}
+
+.envBox {
+  padding-left: 10px;
+  padding-right: 10px;
+  position: absolute;
+  top: 5px;
+  left: 44%;
+  font-size: smaller;
+}
+
+.envInfo {
+  background-color: $nmi-environment-background;
+  color: $nmi-primary;
+}
+

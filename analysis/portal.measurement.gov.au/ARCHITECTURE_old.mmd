@@ -1,0 +1,164 @@
+graph TD
+    subgraph Bootstrap
+        IDX[index.tsx]
+        APP[App.tsx]
+        ENV[env.ts]
+        TT[trustedtypes.ts]
+    end
+
+    subgraph Auth["Authentication & Identity"]
+        AUTHCFG[authConfig.ts]
+        ACCTCTX[accountContext.tsx]
+        ACCTPROV[AccountProvider.tsx]
+        AUTHELM[AuthenticatedElement.tsx]
+        HOOKS[hooks.tsx]
+    end
+
+    subgraph Shell["Pre-conditions & Shell"]
+        PRECOND[PreConditions.tsx]
+        LAYOUT[Layout/index.tsx]
+        HEADER[Header/index.tsx]
+        FOOTER[Footer/index.tsx]
+    end
+
+    subgraph Dashboard
+        DASH[routes/dashboard/index.tsx]
+        COMMON[routes/common/helperFunctions + enums]
+    end
+
+    subgraph RFQ["Request For Quote Wizard"]
+        RFQMAIN[requestForQuote/index.tsx]
+        RFQCREATE[requestForQuote/create]
+        RFQCOPY[requestForQuote/copy]
+        RFQVIEW[viewRequestForQuoteSummary]
+    end
+
+    subgraph QuoteAccept["Quotation & Accept-Quote Wizard"]
+        QUOT[routes/quotation/index.tsx]
+        ACCEPT[routes/acceptQuote/index.tsx]
+        ACCEPTCREATE[acceptQuote/create]
+    end
+
+    subgraph Reports["Measurement Reports"]
+        REPORT[measurementReport/index.tsx]
+        REPLIST[measurementReport/indexList]
+    end
+
+    subgraph AccountMgmt["Account & Contact Management"]
+        ACCTCREATE[routes/account/create]
+        ACCTUPDATE[routes/account/update]
+        BRANCH[routes/account/addBranch]
+        CONTACT[routes/contact/*]
+    end
+
+    subgraph Components["Reusable UI Components"]
+        WIZARD[WizardForm/**]
+        INPUTS[Inputs/**]
+        PAGINATE[Pagination]
+        SEARCH[SearchFilter]
+        REQLIST[RequestList]
+    end
+
+    subgraph Modals
+        MODALCTX[ModalContext.tsx]
+        TERMS[TermsAndCondition]
+        BRNSEL[BranchSelectorModal]
+        RFQDEL[RFQDeleteModal]
+    end
+
+    subgraph Validation
+        YUPEXT[yupExtensions/stringExtensions.ts]
+        SCHEMAS[contactValidation / addressValidation]
+    end
+
+    subgraph Observability["Instrumentation & Analytics"]
+        APPINS[AppInsightsService.ts]
+        LOGGER[AppLogger.ts]
+        GA[GoogleAnalytics.tsx]
+    end
+
+    subgraph Storage
+        SESS[sessionStorageCache.ts]
+        NOTIF[notification.ts]
+        TARGETORG[targetOrganisation.ts]
+    end
+
+    subgraph Utils
+        UTILS[utils/index.ts]
+        VIEWPDF[ViewPdfQuote / ViewPdfQuoteTerms]
+        USEDEBOUNCE[useDebounce.ts]
+    end
+
+    IDX --> Auth
+    IDX --> TT
+    IDX --> APP
+    ENV --> AUTHCFG
+    ENV --> APPINS
+    ENV --> GA
+    APP --> Shell
+    APP --> Auth
+    APP --> Dashboard
+    APP --> RFQ
+    APP --> QuoteAccept
+    APP --> Reports
+    APP --> AccountMgmt
+
+    ACCTPROV --> Storage
+    ACCTPROV --> Observability
+    AUTHELM --> Observability
+    AUTHELM --> Shell
+
+    PRECOND --> Auth
+    PRECOND --> Modals
+    PRECOND --> Storage
+    LAYOUT --> Observability
+
+    DASH --> Auth
+    DASH --> Components
+    DASH --> Storage
+    DASH --> Observability
+    DASH --> COMMON
+    DASH --> Modals
+
+    RFQMAIN --> Auth
+    RFQMAIN --> Components
+    RFQMAIN --> Validation
+    RFQMAIN --> Observability
+    RFQCREATE --> Auth
+    RFQCOPY --> Auth
+
+    QUOT --> Auth
+    QUOT --> Storage
+    QUOT --> Observability
+    QUOT --> Modals
+    QUOT --> VIEWPDF
+    ACCEPT --> Auth
+    ACCEPT --> Observability
+
+    REPORT --> Auth
+    REPORT --> Storage
+    REPORT --> Observability
+
+    ACCTCREATE --> Auth
+    ACCTCREATE --> Components
+    ACCTCREATE --> Validation
+    CONTACT --> Auth
+    CONTACT --> Components
+
+    WIZARD --> Components
+    INPUTS --> Validation
+    SEARCH --> Auth
+    VIEWPDF --> Observability
+    VIEWPDF --> Utils
+
+    BRNSEL --> Auth
+    BRNSEL --> Storage
+    RFQDEL --> Auth
+    TERMS --> Auth
+
+    LOGGER --> APPINS
+    GA --> ENV
+    APPINS --> ENV
+    NOTIF --> SESS
+    TARGETORG --> SESS
+    UTILS --> Storage

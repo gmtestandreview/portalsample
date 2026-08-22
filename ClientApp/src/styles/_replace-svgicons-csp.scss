@@ -1,0 +1,178 @@
+// These overides are to fix the Content Security Policy (CSP) issues for Bootstrap 5/React Bootstrap SVG icons
+// REF: https://getbootstrap.com/docs/5.0/customize/overview/#csps-and-embedded-svgs
+
+// Custom icon font lib path
+// ../../public/fonts/nmi-iconfonts.css
+
+// Icon variables
+$icon-arrow-right: "\e903";
+$icon-back: "\e906";
+$icon-calendar: "\e907";
+$icon-chevron-down: "\e908";
+$icon-chevron-right: "\e910";
+$icon-close: "\e913";
+$icon-external: "\e925";
+$icon-menu: "\e931";
+$icon-radio-checked: "\e938";
+$icon-radio-unchecked: "\e939";
+$icon-radio-whitebg-checked: "\e940";
+$icon-radio-whitebg-unchecked: "\e943";
+$icon-settings: "\e947";
+
+// Icon replacement usage
+.btn-close {
+    // Reset BS SVGs
+    background: none;
+    color: $nmi-primary;
+    opacity: 0.52;    
+    border-radius: 28px;
+    height: 16px;
+    width: 16px;
+    line-height: 16px;
+    &:hover, &:focus {
+        color: $nmi-primary;
+        opacity: 1;
+        border-radius: 28px;
+        height: 16px;
+        width: 16px;
+        line-height: 16px;
+        background-color: $link-hover-background;
+        box-shadow: none; // TBC for keyboard focus state
+    }
+    &:after {
+        font-family: 'nmi-iconfont';
+        content: $icon-close;
+    }
+}
+
+// Accordion
+.accordion-header {
+    .accordion-button {
+        &:after {
+            // Reset BS SVGs
+            background-image: none;
+            // Replace BS SVGs
+            display:inline-block;
+            font-family: 'nmi-iconfont';
+            font-weight: $font-weight-bold;
+            content: $icon-chevron-down;
+            transform-origin: center;
+            transition: all 0.35s ease-out;
+            @extend .bgCircle-lg;
+        }
+        &:not(.collapsed) {
+          &:after {
+            -webkit-transform: rotate(-180deg);
+            -moz-transform: rotate(-180deg);
+            -o-transform: rotate(-180deg);
+            transform: rotate(-180deg);
+          }
+        }
+    }
+}
+
+// Navbar Menu toggler
+.bg-nmi-form-navbar,
+.navbar-light {
+    .navbar-toggler {
+        border: none;
+        color: $body-color;
+        line-height: 1.5; // Temp fix
+        .navbar-toggler-icon {
+            // Reset BS SVGs
+            background-image: none;
+            &:after {
+                // Replace BS SVGs
+                display:inline-block;
+                font-family: 'nmi-iconfont';
+                content: $icon-close;
+            }
+        }
+        &.collapsed {
+            .navbar-toggler-icon {
+                // Reset BS SVGs
+                background-image: none;
+                &:after {
+                    // Replace BS SVGs
+                    display:inline-block;
+                    font-family: 'nmi-iconfont';
+                    content: $icon-menu;
+                }
+            }
+        }
+    }
+}
+.bg-nmi-navbar,
+.navbar-dark {
+    .navbar-toggler {
+        border: none;
+        color: $white;
+        line-height: 1.5; // Temp fix
+        .navbar-toggler-icon {
+            // Reset BS SVGs
+            background-image: none;
+            &:after {
+                // Replace BS SVGs
+                display:inline-block;
+                font-family: 'nmi-iconfont';
+                content: $icon-menu;
+            }
+        }
+    }
+}
+
+// Masthead user dropdown menu
+#user-menu {
+  &.dropdown-toggle {
+    &:after {
+        font-family: 'nmi-iconfont';
+        content: $icon-settings !important;
+        font-size: $font-size-base;
+        border: 0;
+    }
+  }
+}
+
+// Dropdown menu
+.dropdown-toggle {
+    &:after {
+        font-family: 'nmi-iconfont';
+        content: $icon-chevron-down;
+        font-size: $font-size-xs;
+        border: 0;
+        vertical-align: 0;
+    }
+}
+
+// Form validation - icon set in _variables.scss
+// $form-feedback-icon-valid 
+// $form-feedback-icon-invalid
+
+
+// Breadcrumb separator
+.breadcrumb {
+  > .breadcrumb-item {
+    + .breadcrumb-item {
+      &:before {
+        font-family: 'nmi-iconfont';
+        content: '';
+        @include media-breakpoint-up(sm) {
+          font-size: $font-size-xxs;
+          content: $icon-chevron-right;
+          color: $nmi-gray-600;
+        }
+      }
+    }
+  }
+}
+
+// Date picker icon
+.date-picker {
+    color: $nmi-primary;
+    &:before {
+        background: none;
+        display: block;
+        font-family: 'nmi-iconfont';
+        content: $icon-calendar;
+    }
+}
