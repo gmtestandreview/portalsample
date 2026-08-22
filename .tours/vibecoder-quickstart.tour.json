@@ -1,0 +1,48 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "Vibecoder Quickstart",
+  "description": "For experienced developers who want the lay of the land in under 5 minutes. 7 steps, fast path only.",
+  "nextTour": "New Joiner Onboarding",
+  "steps": [
+    {
+      "title": "The full source tree",
+      "file": "ClientApp/src/index.tsx",
+      "line": 1,
+      "description": "Welcome. Everything editable is under `ClientApp/src/` (TS/TSX) and `ClientApp/src/styles/` (SCSS). Everything else is generated or vendor — don't touch it.\n\nThis file is the entry point. Three things happen before React renders:\n1. MSAL async init (Azure AD B2C)\n2. TrustedTypes/DOMPurify CSP policy\n3. React 18 `createRoot` render inside `MsalProvider → AccountProvider → StrictMode → RouterProvider`\n\nNote the top-level `await` on line 13 — requires bundler support."
+    },
+    {
+      "title": "All 25+ routes",
+      "file": "ClientApp/src/App.tsx",
+      "line": 35,
+      "description": "Every route is here. Three patterns:\n- `<Layout>` — public pages (help, sign-out-helper)\n- `<AuthenticatedElement>` — protected pages (dashboard, services)\n- `<AuthenticatedElement displayHeaderAndFooter={false}>` — wizard flows that manage their own chrome (create-account, RFQ, accept-quote)\n\nThe wildcard `path='*'` at line 302 catches everything else → 404."
+    },
+    {
+      "title": "Auth guard",
+      "file": "ClientApp/src/authentication/AuthenticatedElement.tsx",
+      "line": 26,
+      "description": "`AuthenticatedElement` = PreConditions gate + MSAL redirect + ErrorBoundary, all in one.\n\nFor every protected route: if not authed → B2C redirect. If route errors → `RedirectToHome` (404 vs server-error). If uncaught exception → `ErrorBoundary` reports to App Insights and shows `<ErrorDisplay>`.\n\nPass `displayHeaderAndFooter={false}` for wizard flows."
+    },
+    {
+      "title": "Dashboard — the main event",
+      "file": "ClientApp/src/routes/dashboard/index.tsx",
+      "line": 162,
+      "description": "The Dashboard is the primary authenticated view — 776 lines. It manages:\n- Three tabs: Drafts / Requests / Instruments (each calls a different API endpoint)\n- Search + filter + sort (via `SearchFilter` + `initialFilters` state)\n- Pagination (10 items per page)\n- Branch selector modal + RFQ delete modal\n- Session storage workaround for accepted-quote status (line 212 — known API lag bug)\n- Google Analytics event tracking on every interaction\n\nModifying this file? Read the whole thing first — there are inter-dependent `useEffect` chains."
+    },
+    {
+      "title": "Multi-step forms — WizardForm",
+      "file": "ClientApp/src/components/forms/WizardForm/index.tsx",
+      "line": 10,
+      "description": "All multi-step data-entry flows (create account, RFQ, accept quote) run through `WizardForm`.\n\nIt's a compound component: `<WizardForm>` reads its `<WizardStep>` children and converts each to a `<Route>`. Navigation is done by React Router — going to the next step is just a route push.\n\nLine 27: validates children are `WizardStep` using `React.Children.forEach` — throws if not. Line 95: wildcard route redirects any unknown path to the last step."
+    },
+    {
+      "title": "Runtime config — the one rule",
+      "file": "ClientApp/src/env.ts",
+      "line": 22,
+      "description": "Config is injected by the server into `window.*` before the bundle loads.\n\n**The rule**: Always use `env.*` from this file. Never use `process.env.*` — it's `undefined` in the browser.\n\n```ts\nimport { env } from '../env';\nenv.REACT_APP_B2C_CLIENTID  // ✓\nprocess.env.REACT_APP_B2C_CLIENTID  // ✗ undefined\n```\n\nAll 11 config vars are defined here: B2C client ID, authority, scopes, redirect URIs, App Insights connection string, GA tracking ID.\n\n**Gotcha**: The `(<any>window)` cast has been replaced with typed `globalThis` access via `declare global`. A startup guard now calls `console.error` for missing vars. The fundamental rule remains: use `env.*`, never `process.env.*`."
+    },
+    {
+      "title": "You've got the vibe",
+      "description": "In 6 steps you've seen:\n- Bootstrap sequence + provider hierarchy\n- Full route tree + auth guard pattern\n- Dashboard architecture (tabs, pagination, session workarounds)\n- WizardForm compound component\n- The env config rule\n\n**Two things to know before you write code:**\n1. Any Yup schema file that uses custom validators (`.phone()`, `.postcode()`, `.allowedFormat()`, etc.) **must** have: `import '../../validationSchemas/yupExtensions';` — or you get a silent runtime failure.\n2. Access user state via `useAccountState()` (read) and `useAccountDispatch()` (mutations) from `authentication/hooks.tsx`. For modal visibility, use `useModalState()` / `useModalDispatch()` from `components/modals/ModalContext`. Never import contexts directly.\n\n**Deeper dives:**\n- **New Joiner Onboarding** — full 14-step walkthrough\n- **WizardForm Deep Dive** — if you're touching a multi-step flow\n- **React 19 Migration Prep** — if you're scoping the upgrade"
+    }
+  ]
+}

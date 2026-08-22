@@ -1,0 +1,20 @@
+{
+  "name": "[TODO: marketplace-name]",
+  "interface": {
+    "displayName": "[TODO: Marketplace Display Name]"
+  },
+  "plugins": [
+    {
+      "name": "react18-commander",
+      "source": {
+        "source": "local",
+        "path": "./plugins/react18-commander"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

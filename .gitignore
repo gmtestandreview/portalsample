@@ -1,5 +1,6 @@
 # Dependencies
 node_modules/
+.npm-cache/
 
 # Build output
 dist/
@@ -15,10 +16,13 @@ ClientApp/src/main.*.js.map
 *.tsbuildinfo
 
 # Test output (all artifacts consolidated under reports/)
-reports/coverage/
-reports/playwright/
-reports/test-results/
-reports/vitest/
+reports/
+coverage/
+quality/
+tmp/
+.features-gen/
+.playwright-mcp/
+.testagent/
 
 # OS
 .DS_Store
@@ -26,3 +30,7 @@ Thumbs.db
 
 # Logs
 npm-debug.log*
+*.log
+full-test-output.txt
+test-output.txt
+test_output.txt
