@@ -104,3 +104,51 @@ describe("direct security dependency floors", () => {
     }
   });
 });
+
+describe("transitive security dependency floors", () => {
+  const minimumVersions = new Map([
+    ["nanoid", "3.3.18"],
+    ["postcss", "8.5.23"],
+    ["fast-uri", "3.1.5"],
+    ["js-yaml", "4.3.1"],
+    ["valibot", "1.4.2"],
+    ["undici", "7.29.0"],
+    ["body-parser", "1.20.6"],
+  ]);
+
+  it.each([...minimumVersions])(
+    "%s resolves only patched versions",
+    (packageName, minimumVersion) => {
+      const versions = installedVersions(packageName);
+
+      expect(versions).not.toHaveLength(0);
+      for (const version of versions) {
+        expectStableAtLeast(packageName, version, minimumVersion);
+      }
+    },
+  );
+
+  it("keeps every brace-expansion major on its maintained patched release", () => {
+    const isPatched = (version: string): boolean => {
+      const major = Number(version.split(".")[0]);
+
+      if (valid(version) !== version || prerelease(version) !== null)
+        return false;
+      if (major === 1) return gte(version, "1.1.18");
+      if (major === 2) return gte(version, "2.1.4");
+      if (major === 3) return gte(version, "3.0.6");
+      if (major === 4) return false;
+      return major > 5 || gte(version, "5.0.9");
+    };
+
+    const versions = installedVersions("brace-expansion");
+
+    expect(versions).not.toHaveLength(0);
+    for (const version of versions) {
+      expect(
+        isPatched(version),
+        `brace-expansion@${version} is vulnerable`,
+      ).toBe(true);
+    }
+  });
+});
