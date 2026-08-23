@@ -49,7 +49,7 @@ jobs:
         run: npm run build-storybook
 
   dependency-security-node20:
-    name: Dependency security (Node 20.18.1 floor)
+    name: Dependency security (Node 20.19.0 floor)
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -57,7 +57,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.18.1'
+          node-version: '20.19.0'
           cache: 'npm'
 
       - name: Install dependencies with declared npm
