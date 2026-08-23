@@ -17,22 +17,17 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
  * executes their play() functions in Chromium through Vitest Browser Mode.
  */
 export default defineConfig({
+    plugins: [storybookTest({ configDir: path.join(dirname, '.storybook') })],
     test: {
-        projects: [{
-            extends: true,
-            plugins: [storybookTest({ configDir: path.join(dirname, '.storybook') })],
-            test: {
-                name: 'storybook',
-                globals: true,
-                setupFiles: ['./vitest.storybook.setup.ts'],
-                testTimeout: 15000,
-                browser: {
-                    enabled: true,
-                    headless: true,
-                    provider: playwright({}),
-                    instances: [{ browser: 'chromium' }],
-                },
-            },
-        }],
+        name: 'storybook',
+        globals: true,
+        setupFiles: ['./vitest.storybook.setup.ts'],
+        testTimeout: 15000,
+        browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [{ browser: 'chromium' }],
+        },
     },
 });

@@ -8,7 +8,6 @@ export default defineConfig({
         },
     },
     test: {
-        maxWorkers: 1,
         projects: [
             './vitest.unit.config.ts',
             './vitest.storybook.config.ts',
