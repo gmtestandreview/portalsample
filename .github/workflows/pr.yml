@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
 
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" || npx --yes npm@11.17.0 install --no-save
+
       - name: Lint
         run: npm run lint
 
@@ -54,6 +57,9 @@ jobs:
 
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
+
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" || npx --yes npm@11.17.0 install --no-save
 
       - name: Run lower-bound dependency security tests
         run: >-
