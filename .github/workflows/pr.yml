@@ -36,6 +36,9 @@ jobs:
           npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
           node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
 
+      - name: Install Playwright Chromium (required by Storybook Browser Mode tests)
+        run: npx playwright install --with-deps chromium
+
       - name: Lint
         run: npm run lint
 
