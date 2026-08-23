@@ -25,20 +25,39 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Typecheck
-        run: npm run type-check
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci
 
       - name: Lint
         run: npm run lint
 
-      - name: Unit tests
-        run: npm run test:unit
+      - name: Typecheck, Vitest, coverage, and quality regression
+        run: npm run test:ci
 
       - name: Build app
         run: npm run build
 
       - name: Build Storybook
         run: npm run build-storybook
+
+  dependency-security-node20:
+    name: Dependency security (Node 20.18.1 floor)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.18.1'
+          cache: 'npm'
+
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci
+
+      - name: Run lower-bound dependency security tests
+        run: >-
+          npm run test:unit --
+          tests/unit/config/dependencySecurity.test.ts
+          tests/unit/security/dompurify.regression.test.ts
+          tests/unit/runtime/trustedtypes.test.ts
