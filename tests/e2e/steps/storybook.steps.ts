@@ -11,12 +11,37 @@
  * project's baseURL setting.
  */
 
-import { expect, type Page } from '@playwright/test';
+import { expect, type APIResponse, type Page } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 
 const { Given, When, Then } = createBdd();
 
 const STORYBOOK_BASE = 'http://localhost:6006';
+
+const MCP_HEADERS = {
+    accept: 'application/json, text/event-stream',
+    'content-type': 'application/json',
+};
+
+type McpEnvelope = {
+    result?: {
+        serverInfo?: { name?: string };
+        tools?: Array<{ name: string }>;
+    };
+};
+
+async function readMcpEvent(response: APIResponse): Promise<McpEnvelope> {
+    const body = await response.text();
+    const dataLine = body
+        .split(/\r?\n/)
+        .find((line) => line.startsWith('data: '));
+
+    if (dataLine === undefined) {
+        throw new Error(`MCP response did not contain an SSE data event: ${body}`);
+    }
+
+    return JSON.parse(dataLine.slice('data: '.length)) as McpEnvelope;
+}
 
 /** Navigate to a Storybook story iframe and wait for it to be ready. */
 async function loadStoryIframe(page: Page, storyId: string) {
@@ -28,6 +53,77 @@ async function loadStoryIframe(page: Page, storyId: string) {
         // networkidle can be flaky with MSW; continue after domcontentloaded
     });
 }
+
+// ---------------------------------------------------------------------------
+// MCP protocol compatibility
+// ---------------------------------------------------------------------------
+
+Given('the Storybook MCP server is running', async ({ request }) => {
+    const response = await request.get(`${STORYBOOK_BASE}/mcp`, {
+        headers: { accept: 'text/html' },
+    });
+
+    expect(response.status()).toBe(200);
+    expect(await response.text()).toContain(
+        'Storybook MCP server successfully running',
+    );
+});
+
+Then(
+    'the Storybook MCP endpoint should initialize and list configured tools',
+    async ({ request }) => {
+        const initialize = await request.post(`${STORYBOOK_BASE}/mcp`, {
+            headers: MCP_HEADERS,
+            data: {
+                jsonrpc: '2.0',
+                id: 1,
+                method: 'initialize',
+                params: {
+                    protocolVersion: '2025-03-26',
+                    capabilities: {},
+                    clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
+                },
+            },
+        });
+
+        expect(initialize.status()).toBe(200);
+        const sessionId = initialize.headers()['mcp-session-id'];
+        if (sessionId === undefined) {
+            throw new Error('MCP initialize response did not provide a session ID');
+        }
+        const initializeEnvelope = await readMcpEvent(initialize);
+        expect(initializeEnvelope.result?.serverInfo?.name).toBe(
+            '@storybook/addon-mcp',
+        );
+
+        const sessionHeaders = {
+            ...MCP_HEADERS,
+            'mcp-session-id': sessionId,
+        };
+        const initialized = await request.post(`${STORYBOOK_BASE}/mcp`, {
+            headers: sessionHeaders,
+            data: { jsonrpc: '2.0', method: 'notifications/initialized' },
+        });
+        expect(initialized.status()).toBe(202);
+
+        const toolsList = await request.post(`${STORYBOOK_BASE}/mcp`, {
+            headers: sessionHeaders,
+            data: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
+        });
+        expect(toolsList.status()).toBe(200);
+        const toolsEnvelope = await readMcpEvent(toolsList);
+        const toolNames =
+            toolsEnvelope.result?.tools?.map(({ name }) => name) ?? [];
+
+        expect(toolNames).toEqual(
+            expect.arrayContaining([
+                'list-all-documentation',
+                'preview-stories',
+                'run-story-tests',
+            ]),
+        );
+    },
+);
 
 // ---------------------------------------------------------------------------
 // Background steps
