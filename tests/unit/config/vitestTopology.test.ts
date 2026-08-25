@@ -1,4 +1,4 @@
-import type { UserConfig } from "vitest/config";
+import type { ViteUserConfig } from "vitest/config";
 import { describe, expect, it } from "vitest";
 
 import rootConfig from "../../../vitest.config";
@@ -17,9 +17,9 @@ import unitConfig from "../../../vitest.unit.config";
  * editing any Vitest configuration.
  */
 
-type TestOptions = NonNullable<UserConfig["test"]>;
+type TestOptions = NonNullable<ViteUserConfig["test"]>;
 
-const testOptions = (config: UserConfig, label: string): TestOptions => {
+const testOptions = (config: ViteUserConfig, label: string): TestOptions => {
   const options = config.test;
 
   if (options === undefined) {
@@ -50,7 +50,6 @@ describe("root Vitest config is composition only", () => {
 
   it("does not own a worker cap that would starve the browser pool", () => {
     expect(root.maxWorkers).toBeUndefined();
-    expect(root.minWorkers).toBeUndefined();
   });
 
   it("does not own leaf-specific environment, coverage or browser settings", () => {

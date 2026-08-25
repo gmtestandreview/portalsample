@@ -18,9 +18,10 @@ describe('unit coverage configuration', () => {
 
     it('measures editable handwritten source and excludes generated/vendor artifacts', async () => {
         const testConfig = await resolveConfig();
-        const coverageWithAll = testConfig?.coverage as { all?: boolean } | undefined;
 
-        expect(coverageWithAll?.all).toBe(true);
+        // Vitest 4 removed `coverage.all`; the explicit include below is what
+        // brings uncovered files into the report. See
+        // tests/unit/config/coverageRemapPolicy.test.ts for the remap policy.
         expect(testConfig?.coverage?.include).toEqual([
             'ClientApp/src/**/*.{ts,tsx}',
             'webpack.config.js',

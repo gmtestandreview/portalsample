@@ -1,14 +1,19 @@
 import path from 'node:path';
-import type { UserConfig } from 'vite';
+import type { ViteUserConfig } from 'vitest/config';
 import { defineConfig } from 'vitest/config';
 
-type CoverageOptionsWithAll = NonNullable<NonNullable<UserConfig['test']>['coverage']> & {
-    all: true;
-};
+type CoverageOptions = NonNullable<
+    NonNullable<ViteUserConfig['test']>['coverage']
+>;
 
-const coverageConfig = {
+/**
+ * Vitest 4 removed `coverage.all`. The explicit `include` below already brings
+ * matching covered and uncovered files into the report, so no all-files sweep is
+ * needed — and without it, Vite-transformed non-source assets such as
+ * `terms-config.json?import` never reach the V8-to-istanbul remapper.
+ */
+const coverageConfig: CoverageOptions = {
     provider: 'v8',
-    all: true,
     reporter: ['text', 'html', 'json-summary'],
     reportsDirectory: './reports/coverage/unit',
     include: [
@@ -61,7 +66,7 @@ const coverageConfig = {
         functions: 100,
         lines: 100,
     },
-} as CoverageOptionsWithAll;
+};
 
 /**
  * Vitest config for running unit tests only (no Storybook stories).
