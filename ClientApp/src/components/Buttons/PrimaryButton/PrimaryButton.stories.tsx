@@ -17,7 +17,7 @@ import PrimaryButton from './index';
 
 const meta = {
     component: PrimaryButton,
-    tags: ['ai-generated', 'needs-work', 'docs', '!autodocs'],
+    tags: ['ai-generated', 'needs-work', '!autodocs'],
 } satisfies Meta<typeof PrimaryButton>;
 
 export default meta;

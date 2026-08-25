@@ -32,7 +32,6 @@ const meta = {
         id: 'request-actions',
         dropDownActions: actions,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof Actions>;
 
 export default meta;

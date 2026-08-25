@@ -30,7 +30,6 @@ const meta = {
         dateOnBlur: fn(),
         dateOnChange: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof CustomDatePicker>;
 
 export default meta;

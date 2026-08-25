@@ -54,7 +54,6 @@ class ResetableErrorBoundaryWrapper extends Component<
 
 const meta = {
     title: 'Components/ErrorBoundary',
-    tags: ['autodocs'],
     parameters: { layout: 'padded' },
 } satisfies Meta;
 

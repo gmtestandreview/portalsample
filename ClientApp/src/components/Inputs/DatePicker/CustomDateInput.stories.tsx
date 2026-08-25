@@ -30,7 +30,6 @@ const meta = {
         handleOpenCalendar: fn(),
         wrapperUUID: 'story-date-input',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof CustomDateInput>;
 
 export default meta;

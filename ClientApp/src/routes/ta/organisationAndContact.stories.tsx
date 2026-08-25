@@ -33,7 +33,6 @@ const meta = {
         name: 'organisationAndContact',
         isSummary: false,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof OrganisationAndContact>;
 
 export default meta;

@@ -47,7 +47,6 @@ const meta = {
         onUploadFiles: fn(async () => uploadResult),
         onDeleteFile: fn(async () => {}),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof AttachmentNew>;
 
 export default meta;

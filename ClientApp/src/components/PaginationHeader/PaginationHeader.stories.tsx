@@ -13,7 +13,6 @@ const meta = {
         pageSize: 10,
         currentPage: 3,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof CustomPaginationHeader>;
 
 export default meta;

@@ -24,7 +24,6 @@ const meta = {
     args: {
         isSubmitted: true,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ViewRequestForQuoteSummary>;
 
 export default meta;

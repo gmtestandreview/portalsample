@@ -16,7 +16,7 @@ import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from './index';
 
 const meta = {
     component: AlertInfo,
-    tags: ['ai-generated', 'needs-work', 'docs', '!autodocs'],
+    tags: ['ai-generated', 'needs-work', '!autodocs'],
 } satisfies Meta<typeof AlertInfo>;
 
 export default meta;

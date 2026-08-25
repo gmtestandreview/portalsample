@@ -49,7 +49,6 @@ const GuardHarness = ({
 const meta = {
     title: 'Components/RouteLeavingGuard',
     component: RouteLeavingGuard,
-    tags: ['autodocs', 'docs'],
     parameters: {
         portal: { initialEntries: ['/form'] },
         docs: {

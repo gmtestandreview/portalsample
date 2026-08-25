@@ -51,7 +51,6 @@ const meta = {
         tab: DashboardTab.Drafts,
         setDeleteSuccess: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof PaRequestItem>;
 
 export default meta;

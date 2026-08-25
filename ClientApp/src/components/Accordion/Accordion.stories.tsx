@@ -4,7 +4,7 @@ import { CustomAccordion, CustomAccordionBody } from './index';
 
 const meta = {
     component: CustomAccordion,
-    tags: ['ai-generated', 'needs-work', 'docs', '!autodocs'],
+    tags: ['ai-generated', 'needs-work', '!autodocs'],
 } satisfies Meta<typeof CustomAccordion>;
 
 export default meta;

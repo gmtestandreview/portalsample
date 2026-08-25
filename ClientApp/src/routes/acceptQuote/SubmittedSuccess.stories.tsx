@@ -13,7 +13,6 @@ const meta = {
             initialEntries: ['/submitted-success/Q-2024-000456'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SubmittedSuccess>;
 
 export default meta;

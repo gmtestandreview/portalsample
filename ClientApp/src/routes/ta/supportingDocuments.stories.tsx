@@ -31,7 +31,6 @@ const meta = {
         attachment: { onUploadFiles: fn(async () => []) },
         onUploadAttachment: fn(async () => []),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SupportingDocuments>;
 
 export default meta;

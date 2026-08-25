@@ -7,7 +7,6 @@ const meta = {
     title: 'Components/Forms/FormBanner',
     component: FormBanner,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
     parameters: {
         layout: 'fullscreen',
     },

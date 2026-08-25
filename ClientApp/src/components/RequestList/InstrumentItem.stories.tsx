@@ -76,7 +76,6 @@ const meta = {
     parameters: {
         layout: 'padded',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof InstrumentItem>;
 
 export default meta;

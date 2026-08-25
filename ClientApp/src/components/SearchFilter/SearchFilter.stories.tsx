@@ -71,7 +71,6 @@ const meta = {
     parameters: {
         layout: 'centered',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SearchFilter>;
 
 export default meta;

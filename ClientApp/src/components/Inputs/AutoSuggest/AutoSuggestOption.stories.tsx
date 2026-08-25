@@ -27,7 +27,6 @@ const meta = {
         ariaLabel: 'National Measurement Institute',
         value: 'nmi',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof AutoSuggestOption>;
 
 export default meta;

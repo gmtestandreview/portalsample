@@ -32,7 +32,6 @@ const meta = {
         displayHeaderAndFooter: true,
         children: <div data-testid='protected-content'>Protected dashboard content</div>,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof PreConditions>;
 
 export default meta;

@@ -24,7 +24,6 @@ const meta = {
     args: {
         children: <p>Loading data...</p>,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof BlockUISpinner>;
 
 export default meta;

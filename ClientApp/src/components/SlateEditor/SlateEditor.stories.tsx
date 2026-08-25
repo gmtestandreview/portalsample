@@ -40,7 +40,6 @@ const meta = {
             />
         );
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SlateEditor>;
 
 export default meta;

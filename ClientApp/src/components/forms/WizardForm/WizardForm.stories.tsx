@@ -32,7 +32,6 @@ const stateOptions = [
 
 const meta = {
     title: 'Forms/WizardForm',
-    tags: ['autodocs'],
     parameters: { layout: 'fullscreen' },
     decorators: [withPortalProviders],
 } satisfies Meta;

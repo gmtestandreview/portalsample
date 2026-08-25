@@ -18,7 +18,6 @@ const meta = {
         onSearchSubmit: fn(),
         placeholder: 'Search manufacturer, model, serial',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SearchBox>;
 
 export default meta;

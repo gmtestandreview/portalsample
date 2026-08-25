@@ -73,7 +73,6 @@ const meta = {
             ],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof Dashboard>;
 
 export default meta;

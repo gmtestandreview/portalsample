@@ -24,7 +24,6 @@ const meta = {
         name: 'instrument',
         isNewCustomer: true,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof InstrumentInfoPanel>;
 
 export default meta;

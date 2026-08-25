@@ -12,7 +12,6 @@ const meta = {
             initialEntries: ['/services-we-offer'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ServicesWeOffer>;
 
 export default meta;

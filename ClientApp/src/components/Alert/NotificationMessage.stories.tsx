@@ -21,7 +21,6 @@ import { NotificationSeverity } from '../../storage/types';
 const meta = {
     title: 'Components/Alert/NotificationMessage',
     component: NotificationMessage,
-    tags: ['autodocs'],
 } satisfies Meta<typeof NotificationMessage>;
 
 export default meta;

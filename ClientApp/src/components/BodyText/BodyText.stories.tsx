@@ -14,7 +14,7 @@ import BodyText from './index';
 
 const meta = {
     component: BodyText,
-    tags: ['ai-generated', 'needs-work', 'docs'],
+    tags: ['ai-generated', 'needs-work'],
 } satisfies Meta<typeof BodyText>;
 
 export default meta;

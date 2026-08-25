@@ -24,7 +24,6 @@ const meta = {
     title: 'Components/Inputs/AddressLookup',
     component: AddressLookup,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
 } satisfies Meta<typeof AddressLookup>;
 
 export default meta;

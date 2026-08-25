@@ -20,7 +20,6 @@ const meta = {
             initialEntries: ['/ta/type-approval-create-pre'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof PreApplication>;
 
 export default meta;

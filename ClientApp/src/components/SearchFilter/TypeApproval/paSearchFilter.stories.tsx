@@ -34,7 +34,6 @@ const meta = {
         setInitialFilters: fn(),
         setCurrentPage: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof PaSearchFilter>;
 
 export default meta;

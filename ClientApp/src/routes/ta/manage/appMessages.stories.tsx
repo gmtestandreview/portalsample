@@ -20,7 +20,6 @@ const meta = {
             initialEntries: ['/ta/PA-1/manage?tab=messages'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ApplicationMessages>;
 
 export default meta;

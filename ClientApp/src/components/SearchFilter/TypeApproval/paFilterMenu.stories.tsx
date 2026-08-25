@@ -35,7 +35,6 @@ const meta = {
         setInitialFilters: fn(),
         setCurrentPage: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof PaFilterMenu>;
 
 export default meta;

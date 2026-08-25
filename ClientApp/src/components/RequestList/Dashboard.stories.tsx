@@ -173,7 +173,6 @@ const DashboardDecorator = (Story: ComponentType) => (
 const meta = {
     title: 'Dashboard/RequestItem',
     component: RequestItem,
-    tags: ['autodocs'],
     parameters: {
         layout: 'padded',
         msw: {

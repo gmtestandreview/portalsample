@@ -9,7 +9,6 @@ import '../ClientApp/src/styles/index.scss';
 import './docs-table-styles.css';
 import { mswHandlers } from './msw-handlers';
 import './preview-setup';
-import { autoDocsTemplate, expectedAddonDocsConfig } from './preview-docs';
 export { mockMsalContext, mockAppInsights } from './storybookMocks';
 
 export default {
@@ -63,22 +62,17 @@ export default {
             test: 'todo',
         },
         docs: {
-            enabled: true,
-            autodocs: expectedAddonDocsConfig.options.autodocs,
             toc: true,
+            codePanel: true,
             controls: {
                 exclude: ['as', 'bsPrefix', 'ref', 'key'],
+                sort: 'requiredFirst',
             },
-            canvas: { sourceState: 'shown' },
+            canvas: { sourceState: 'hidden' },
             source: {
                 excludeDecorators: true,
-                type: 'dynamic',
+                type: 'auto',
             },
-            description: {
-                component:
-                    'Component documentation generated from JSDoc comments and Storybook autodocs.',
-            },
-            page: autoDocsTemplate,
         },
     },
 } satisfies Preview;

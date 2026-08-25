@@ -55,7 +55,6 @@ const meta = {
             fetch: stubFetch,
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ApplicationDetails>;
 
 export default meta;

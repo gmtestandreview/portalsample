@@ -9,7 +9,6 @@ const meta = {
     title: 'Components/Modals/ContentModal',
     component: ContentModal,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
 } satisfies Meta<typeof ContentModal>;
 
 export default meta;

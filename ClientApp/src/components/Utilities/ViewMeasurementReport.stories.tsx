@@ -27,7 +27,6 @@ const meta = {
         setFileError: fn(),
         setIsLoading: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ViewMeasurementReport>;
 
 export default meta;

@@ -17,7 +17,6 @@ const meta = {
         percent: 42,
         status: 'Uploading',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ProgressBar>;
 
 export default meta;

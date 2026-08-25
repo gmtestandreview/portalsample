@@ -18,7 +18,6 @@ const meta = {
     title: 'Components/Inputs/AutoSuggest',
     component: AutoSuggest,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
 } satisfies Meta<typeof AutoSuggest>;
 
 export default meta;

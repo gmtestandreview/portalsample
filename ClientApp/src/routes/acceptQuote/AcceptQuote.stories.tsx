@@ -96,7 +96,6 @@ const meta = {
             handlers: [reportRecipientHandler, paymentDetailsHandler],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ReportRecipient>;
 
 export default meta;

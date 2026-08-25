@@ -24,7 +24,6 @@ const meta = {
         setInitialFilters: fn(),
         setCurrentPage: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof FilterMenu>;
 
 export default meta;

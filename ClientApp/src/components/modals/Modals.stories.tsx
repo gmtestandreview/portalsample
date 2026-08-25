@@ -34,7 +34,6 @@ const mockBranches = [
 const meta = {
     title: 'Modals',
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
     parameters: {
         layout: 'centered',
     },

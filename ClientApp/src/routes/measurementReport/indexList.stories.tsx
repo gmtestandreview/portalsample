@@ -20,7 +20,6 @@ const meta = {
             initialEntries: ['/instrument-reports/INS-1'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof InstrMeasurementReport>;
 
 export default meta;

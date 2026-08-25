@@ -26,7 +26,6 @@ const meta = {
             },
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof AccountDetails>;
 
 export default meta;

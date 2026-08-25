@@ -12,7 +12,6 @@ const meta = {
     parameters: {
         layout: 'fullscreen',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SignIn>;
 
 export default meta;

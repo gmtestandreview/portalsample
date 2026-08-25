@@ -40,7 +40,6 @@ const meta = {
         files,
         onCancelFile: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ProgressFileList>;
 
 export default meta;

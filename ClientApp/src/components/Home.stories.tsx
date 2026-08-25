@@ -19,7 +19,6 @@ const meta = {
             initialEntries: ['/'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof Home>;
 
 export default meta;

@@ -20,7 +20,6 @@ const meta = {
     title: 'Components/Buttons/BackToDashboardButton',
     component: BackToDashboardButton,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
 } satisfies Meta<typeof BackToDashboardButton>;
 
 export default meta;

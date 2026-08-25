@@ -3,7 +3,7 @@ import HeaderIntroText from './index';
 
 const meta = {
     component: HeaderIntroText,
-    tags: ['ai-generated', 'needs-work', 'docs'],
+    tags: ['ai-generated', 'needs-work'],
 } satisfies Meta<typeof HeaderIntroText>;
 
 export default meta;

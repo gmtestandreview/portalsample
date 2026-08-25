@@ -19,7 +19,6 @@ const meta = {
             initialEntries: ['/dashboard'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof RouteAccessibleNavigation>;
 
 export default meta;

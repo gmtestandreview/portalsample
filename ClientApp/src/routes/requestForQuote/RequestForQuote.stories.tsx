@@ -67,7 +67,6 @@ const meta = {
             handlers: lookupHandlers,
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof OrganisationAndContact>;
 
 export default meta;

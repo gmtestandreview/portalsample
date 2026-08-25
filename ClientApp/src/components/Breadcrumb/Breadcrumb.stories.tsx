@@ -17,7 +17,7 @@ import CustomBreadcrumb from './index';
 
 const meta = {
     component: CustomBreadcrumb,
-    tags: ['ai-generated', 'needs-work', 'docs'],
+    tags: ['ai-generated', 'needs-work'],
 } satisfies Meta<typeof CustomBreadcrumb>;
 
 export default meta;

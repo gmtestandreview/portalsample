@@ -14,7 +14,7 @@ import SecondaryButton from './index';
 
 const meta = {
     component: SecondaryButton,
-    tags: ['ai-generated', 'needs-work', 'docs'],
+    tags: ['ai-generated', 'needs-work'],
 } satisfies Meta<typeof SecondaryButton>;
 
 export default meta;

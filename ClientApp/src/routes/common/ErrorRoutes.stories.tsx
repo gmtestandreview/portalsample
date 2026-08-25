@@ -13,7 +13,6 @@ const meta = {
             initialEntries: ['/not-found'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ErrorDisplay>;
 
 export default meta;
