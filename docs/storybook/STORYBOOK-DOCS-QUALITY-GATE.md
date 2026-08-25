@@ -4,8 +4,8 @@
 
 - Storybook version: `10.5.10`
 - Branch: `refactor/storybook-autodocs`
-- Final implementation commit verified: `01b3625`
-- Verification date: 2026-08-25
+- Final implementation commit verified: `f25b5a3`
+- Verification date: 2026-08-26
 
 ## Automated verification
 
@@ -18,6 +18,7 @@
 | Lint                       | `npm run lint` and `npm run lint:mdx`                             | PASS                                                                   |
 | Unit                       | `npm run test:unit`                                               | PASS; 121 files and 1,333 tests                                        |
 | Storybook interaction      | `npm run test:storybook`                                          | PASS; 87 files and 218 tests                                           |
+| Chromatic-reported stories | Storybook MCP `run-story-tests`                                   | PASS; all 16 reported stories, including 11 modal scenarios            |
 | BDD generation and runtime | `npm run test:e2e:storybook`                                      | PASS; 135 scenarios                                                    |
 | Docs build                 | `npm run storybook:verify:docs`                                   | PASS; 315 entries, including 97 docs and 218 stories                   |
 
@@ -44,6 +45,7 @@ documentation behaviour.
 - [x] Style Guide story references render through the `Stories` Doc Block.
 - [x] `storybook build --docs` succeeds.
 - [x] `storybook-static` contains both docs and stories.
+- [x] Chromatic-hosted timing differences are handled with semantic condition waits.
 
 ## Rubric
 

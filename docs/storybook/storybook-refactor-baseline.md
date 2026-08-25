@@ -230,7 +230,7 @@ input rather than switching parsers pre-emptively.
 
 ## Final verification
 
-Verification on 2026-08-25 from implementation commit `01b3625`:
+Verification on 2026-08-26 from implementation commit `f25b5a3`:
 
 - prohibited-architecture search: PASS; matches were limited to negative
   governance assertions;
@@ -240,6 +240,10 @@ Verification on 2026-08-25 from implementation commit `01b3625`:
 - ESLint and MDX lint: PASS;
 - unit suite: PASS, 121 files and 1,333 tests;
 - Storybook interaction suite: PASS, 87 files and 218 tests;
+- Chromatic-reported interaction set: PASS locally through the Storybook MCP,
+  all 16 stories. Eleven modal assertions wait for Bootstrap transitions to
+  reach visible state; the five router, Formik, and React Aria assertions use
+  semantic asynchronous queries;
 - Storybook BDD: PASS, 135 scenarios, including all five documentation
   architecture scenarios;
 - documentation build: PASS, 315 index entries (97 docs and 218 stories).
