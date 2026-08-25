@@ -17,6 +17,9 @@ import { createBdd } from 'playwright-bdd';
 const { Given, When, Then } = createBdd();
 
 const STORYBOOK_BASE = 'http://localhost:6006';
+const REPRESENTATIVE_DOCS_ID = 'components-pill--documentation';
+const REPRESENTATIVE_STORY_ID = 'components-pill--dashboard-statuses';
+const STYLE_GUIDE_DOCS_ID = 'documentation-style-guide--documentation';
 
 const MCP_HEADERS = {
     accept: 'application/json, text/event-stream',
@@ -52,6 +55,16 @@ async function loadStoryIframe(page: Page, storyId: string) {
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {
         // networkidle can be flaky with MSW; continue after domcontentloaded
     });
+}
+
+/** Navigate directly to a Storybook docs iframe and wait for Docs to render. */
+async function loadDocsIframe(page: Page, docsId: string) {
+    await page.goto(`${STORYBOOK_BASE}/iframe.html?id=${docsId}&viewMode=docs`);
+    await expect(page.locator('#storybook-docs')).toBeVisible({ timeout: 15_000 });
+}
+
+function visibleSource(page: Page) {
+    return page.locator('pre:visible');
 }
 
 // ---------------------------------------------------------------------------
@@ -129,6 +142,15 @@ Then(
 // Background steps
 // ---------------------------------------------------------------------------
 
+Given('Storybook is running', async ({ page }) => {
+    const response = await page.goto(STORYBOOK_BASE);
+
+    expect(response?.ok()).toBe(true);
+    await expect(page.getByRole('heading', { name: 'Storybook' })).toBeVisible({
+        timeout: 15_000,
+    });
+});
+
 Given('I am viewing Storybook stories for alerts', async () => {
     // Intentionally empty — navigation happens in the When step
 });
@@ -155,6 +177,24 @@ Given('I am viewing Storybook stories for modals', async () => {});
 // ---------------------------------------------------------------------------
 
 When(
+    'I open a representative component documentation page',
+    async ({ page }) => {
+        await loadDocsIframe(page, REPRESENTATIVE_DOCS_ID);
+    },
+);
+
+When('I open a representative component story', async ({ page }) => {
+    await page.goto(`${STORYBOOK_BASE}/?path=/story/${REPRESENTATIVE_STORY_ID}`);
+    await expect(page.getByRole('heading', { name: 'Addon panel' })).toBeVisible({
+        timeout: 15_000,
+    });
+});
+
+When('I open the Documentation Style Guide', async ({ page }) => {
+    await loadDocsIframe(page, STYLE_GUIDE_DOCS_ID);
+});
+
+When(
     'I load the Storybook story {string}',
     async ({ page }, storyId: string) => {
         await loadStoryIframe(page, storyId);
@@ -170,6 +210,97 @@ Then(
     async ({ page }, text: string) => {
         const root = page.locator('#storybook-root');
         await expect(root).toContainText(text, { timeout: 10_000 });
+    },
+);
+
+// ---------------------------------------------------------------------------
+// Assertions — Storybook documentation architecture
+// ---------------------------------------------------------------------------
+
+Then('the component documentation page is visible', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Pill', exact: true })).toBeVisible();
+    await expect(page.getByText(
+        'Presents a compact, colour-coded label',
+        { exact: false },
+    )).toBeVisible();
+});
+
+Then('the component API documentation is visible', async ({ page }) => {
+    const apiTable = page.getByRole('table').filter({ hasText: 'Workflow status' });
+
+    await expect(apiTable).toBeVisible();
+    await expect(apiTable).toContainText('status');
+    await expect(apiTable).toContainText('className');
+});
+
+Then('the component stories are visible', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Stories' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Dashboard Statuses' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Quote Statuses' })).toBeVisible();
+});
+
+Then('a Storybook source example is available', async ({ page }) => {
+    // Storybook renders the button label inside a portal-backed tooltip tree;
+    // selecting the semantic button by its visible label avoids an expensive
+    // accessible-name walk when the BDD suite runs fully parallel.
+    await page.locator('button').filter({ hasText: 'Show code' }).first().click();
+
+    await expect(visibleSource(page)).toContainText('StatusPill');
+});
+
+Then(
+    'Storybook decorators are not included in the displayed source',
+    async ({ page }) => {
+        const source = visibleSource(page);
+
+        await expect(source).not.toContainText('RouterProvider');
+        await expect(source).not.toContainText('createMemoryRouter');
+    },
+);
+
+Then('the Storybook Code Panel is available', async ({ page }) => {
+    const codeTab = page.getByRole('tab', { name: 'Code' });
+
+    await expect(codeTab).toBeVisible();
+    await codeTab.click();
+    await expect(codeTab).toHaveAttribute('aria-selected', 'true');
+});
+
+Then('the Code Panel contains source for the current story', async ({ page }) => {
+    const source = visibleSource(page);
+
+    await expect(source).toContainText('StatusPill');
+    await expect(source).toContainText('DashboardItemStatus.QuoteAvailable');
+});
+
+Then('the Style Guide is visible', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Style Guide' })).toBeVisible();
+});
+
+Then('its typography documentation is visible', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Typography' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Type Scale' })).toBeVisible();
+});
+
+Then('its colour documentation is visible', async ({ page }) => {
+    await expect(page.getByRole('heading', { name: 'Color System' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Color Usage Rules' })).toBeVisible();
+});
+
+Then('its Markdown table is rendered', async ({ page }) => {
+    const typeScaleTable = page.getByRole('table').filter({ hasText: '$h1-font-size' });
+
+    await expect(typeScaleTable).toBeVisible();
+    await expect(typeScaleTable.getByRole('columnheader', { name: 'Token' })).toBeVisible();
+});
+
+Then(
+    /^Documentation (Getting Started|Component Documentation Guide|Style Guide) is available$/,
+    async ({ page }, guideName: string) => {
+        const guide = page.getByRole('link', { name: guideName, exact: true });
+
+        await expect(guide).toBeVisible();
+        await expect(guide).toHaveAttribute('href', /documentation-.*--documentation/);
     },
 );
 
