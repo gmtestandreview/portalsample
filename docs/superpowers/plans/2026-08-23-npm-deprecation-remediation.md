@@ -87,7 +87,8 @@ Every child plan must finish with:
 
 ## Global Constraints
 
-- Treat the dependency-security implementation and CI hardening through `55e31d9` as completed predecessor work: `a70086f` (incomplete Rolldown attempt), `fc29795` (working exact binding reinstall), `895f6d7` (Node 20.19.0 floor), `0d16927` (flattened Storybook leaf and removed root worker cap), `110d5cb` (incident documentation), `cb5fdaa` (CI Chromium installation), and `55e31d9` (final CI classification). Preserve the working fixes; do not repeat the incomplete fallback. At final review, the only unrelated working-tree item is untracked generated `public/mockServiceWorker.js`; do not discard or commit it.
+- Treat the dependency-security implementation and CI hardening through `55e31d9` as completed predecessor work: `a70086f` (incomplete Rolldown attempt), `fc29795` (working exact binding reinstall), `895f6d7` (Node 20.19.0 floor), `0d16927` (flattened Storybook leaf and removed root worker cap), `110d5cb` (incident documentation), `cb5fdaa` (CI Chromium installation), and `55e31d9` (final CI classification). Preserve the working fixes; do not repeat the incomplete fallback. At final review, the only untracked working-tree items are generated `public/mockServiceWorker.js` and local `.claude/settings.json`; do not discard or commit either.
+- **Updated 2026-08-25.** The working tree also carried two in-flight bodies of work by the repository owner, which they have since taken ownership of and which are now committed rather than preserved as unstaged: a component JSDoc pass (`f3036bc`) and the Storybook MCP canonicalisation plus plan tracking (`99795e9`). See "Concurrent Work Taken Into Scope". No unstaged tracked change remains.
 - Never edit `ClientApp/src/api/web-api-client.ts`, captured bundles, vendor mirrors, Storybook output, Playwright output, coverage output, or `public/mockServiceWorker.js`.
 - Use npm 11.17.0 for manifest changes, lockfile regeneration, and clean-install evidence. The downloaded plan's reference to pnpm does not match this repository.
 - Do not introduce `--force`, `--legacy-peer-deps`, warning filters, arbitrary retries, longer timeouts, reduced worker counts, blanket `console` mocks, or lower coverage thresholds to manufacture a green result. Preserve the predecessor's separately justified Rolldown optional-native-binding workaround until its own upstream removal test passes; do not reuse it for this plan's dependency migration.
@@ -155,6 +156,28 @@ The predecessor plan remains the detailed incident record. This table is the del
 | Ten modal visibility assertions in four files | PR `32643895854` and `32644658694`                              | Open feature-level transition/assertion defect                                                        | Child Plan C    |
 
 PR #1's dependency-security scope is closed, but its overall quality check is red. This umbrella must not relabel that PR green; it closes the two residual owners and restructures CI so each surface reports independently.
+
+## Concurrent Work Taken Into Scope
+
+During execution on 2026-08-25 a second agent edited the working tree in parallel, walking
+`ClientApp/src/components` alphabetically and adding JSDoc. Execution was halted when it produced an unterminated
+comment block in `Alert.stories.tsx` (`46:0 Parsing error: '*/' expected`), because lint and Storybook Browser Mode
+could no longer be trusted as verification surfaces. That agent was stopped, and the repository owner then took
+ownership of the work rather than leaving it unstaged.
+
+| Body of work | Commit | Verification |
+| --- | --- | --- |
+| Component JSDoc across Accordion, Actions, Alert, BlockUISpinner, BodyText, Breadcrumb and Buttons (23 files) | `f3036bc` | Comment-only: an audit of every hunk found **zero** non-comment additions or removals. Type-check clean, lint clean at zero errors and zero warnings, and the 9 touched story files pass Browser Mode (9 files, 26 tests). |
+| Storybook MCP canonicalisation to `my-storybook-mcp-server`, agent-guide preflight, plan tracking | `99795e9` | Endpoint verified healthy and all four required MCP tools available before any UI/story task. Resolves a three-way name mismatch: `.mcp.json` declared `my-storybookmcp-server` while `CLAUDE.md` and `AGENTS.md` both referenced `my-mcp-server`. |
+
+`ClientApp/src/components/Alert/index.tsx` was committed earlier, inside `7d30a0b`, because its stale
+`eslint-disable` directive removal was required for a clean lint run and could not be separated from the JSDoc hunk in
+the same file. That mixing is recorded in the D1 commit body; with the JSDoc work now owned, it is no longer a
+cross-authorship concern.
+
+**Lesson for the remaining lanes.** Task A3's queue is concentrated in `ClientApp/src/components` — the same tree the
+concurrent agent was traversing. Confirm no other agent is active before resuming A3, or its coverage runs will be
+invalidated mid-flight the same way.
 
 ## Target Test Topology
 
