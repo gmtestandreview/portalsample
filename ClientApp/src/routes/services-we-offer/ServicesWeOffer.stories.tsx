@@ -10,6 +10,9 @@ const meta = {
         layout: 'fullscreen',
         portal: {
             initialEntries: ['/services-we-offer'],
+            accountDetails: {
+                userProfile: { services: [] },
+            },
         },
     },
 } satisfies Meta<typeof ServicesWeOffer>;
