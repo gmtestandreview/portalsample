@@ -13,9 +13,18 @@ import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(".github/workflows/pr.yml", "utf8");
 const releaseWorkflow = readFileSync(".github/workflows/release.yml", "utf8");
+const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
+  engines: { node: string };
+  devEngines: { runtime: { version: string } };
+};
 
 const occurrences = (needle: string): number =>
   workflow.split(needle).length - 1;
+
+const nodeVersions = (contents: string): string[] =>
+  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].map(
+    (match) => match[1],
+  );
 
 /** Immutable pin for actions/upload-artifact v6.0.0 (Node 24 action runtime). */
 const UPLOAD_ARTIFACT_PIN =
@@ -113,5 +122,29 @@ describe("Storybook documentation is a CI quality gate", () => {
     ["release", releaseWorkflow],
   ])("runs Storybook BDD in the %s workflow", (_name, contents) => {
     expect(contents).toContain("npm run test:e2e:storybook");
+  });
+});
+
+describe("CI uses the repository's enforced Node runtime", () => {
+  it("keeps engines and devEngines on the same Node 24 floor", () => {
+    expect(packageJson.engines.node).toBe(">=24.0.0");
+    expect(packageJson.devEngines.runtime.version).toBe(">=24.0.0");
+  });
+
+  it.each([
+    ["pull request", workflow],
+    ["release", releaseWorkflow],
+  ])("runs every %s job on Node 24", (_name, contents) => {
+    const configuredVersions = nodeVersions(contents);
+
+    expect(configuredVersions.length).toBeGreaterThan(0);
+    expect(configuredVersions.every((version) => /^24(?:\.|$)/.test(version))).toBe(
+      true,
+    );
+  });
+
+  it("names the dependency security job for the enforced Node floor", () => {
+    expect(workflow).toContain("dependency-security-node24:");
+    expect(workflow).not.toContain("dependency-security-node20:");
   });
 });
