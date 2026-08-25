@@ -149,3 +149,22 @@ The implementation scope was explicitly expanded after baseline discovery:
 - run Storybook upgrade/doctor diagnostics;
 - inspect and update Storybook configuration, stories, tests, and documentation
   where the current architecture requires migration.
+
+## RED governance test
+
+Command:
+
+```bash
+npm run test:unit -- tests/unit/storybook/storybookDocsConfig.test.ts
+```
+
+Result: expected failure, exit code 1. All 13 governance tests failed against
+the baseline for the intended reasons, including outdated package versions,
+obsolete addons, overlapping globs, misplaced Docs configuration,
+Webpack-specific TypeScript checking, absent GFM support, repeated story tags,
+duplicate Autodocs state, missing Code Panel configuration, the cloned default
+template, the global generic description, and outdated developer guidance.
+
+The obsolete `tests/unit/storybook-autodocs.test.ts` was removed because it
+asserted hard-coded local constants rather than repository behaviour and
+encoded the architecture this executable governance contract replaces.
