@@ -8,22 +8,17 @@ permissions:
   contents: read
 
 jobs:
-  quality-gate:
-    name: Quality gate
+  static-quality:
+    name: Static quality
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    env:
-      VITE_APP_ENVIRONMENT: local
-      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
-      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
-      VITE_API_BASE_URL: http://localhost:5085
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
@@ -36,14 +31,110 @@ jobs:
           npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
           node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
 
-      - name: Install Playwright Chromium (required by Storybook Browser Mode tests)
-        run: npx playwright install --with-deps chromium
+      - name: Type-check
+        run: npm run type-check
 
       - name: Lint
         run: npm run lint
 
-      - name: Typecheck, Vitest, coverage, and quality regression
-        run: npm run test:ci
+      - name: Lint MDX
+        run: npm run lint:mdx
+
+  # Each test environment is its own required status. `fail-fast: false` keeps a
+  # failing partition from cancelling the others, so every surface reports.
+  test-partition:
+    name: Vitest ${{ matrix.partition.name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        partition:
+          - name: unit
+            command: npm run test:ci:unit
+            report: reports/vitest/unit-junit.xml
+            install-browser: false
+          - name: storybook
+            command: npm run test:ci:storybook
+            report: reports/vitest/storybook-junit.xml
+            install-browser: true
+          - name: quality
+            command: npm run test:ci:quality
+            report: reports/vitest/quality-junit.xml
+            install-browser: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci
+
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: |
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+
+      # A fresh runner has no browser binaries; dependency install does not
+      # provision them (proved by commit cb5fdaa).
+      - name: Install Playwright Chromium
+        if: matrix.partition.install-browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run ${{ matrix.partition.name }} tests
+        run: ${{ matrix.partition.command }}
+
+      - name: Upload ${{ matrix.partition.name }} JUnit report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: vitest-${{ matrix.partition.name }}-${{ github.run_attempt }}
+          path: ${{ matrix.partition.report }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload unit coverage
+        if: always() && matrix.partition.name == 'unit'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: vitest-unit-coverage-${{ github.run_attempt }}
+          path: reports/coverage/unit/**
+          if-no-files-found: error
+          retention-days: 14
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_APP_ENVIRONMENT: local
+      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
+      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
+      VITE_API_BASE_URL: http://localhost:5085
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci
+
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: |
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
 
       - name: Build app
         run: npm run build
@@ -60,8 +151,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.19.0'
-          cache: 'npm'
+          node-version: "20.19.0"
+          cache: "npm"
 
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
