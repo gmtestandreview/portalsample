@@ -31,6 +31,77 @@ const storyFiles = readdirSync(resolve(repoRoot, "ClientApp/src"), {
   )
   .map((entry) => resolve(entry.parentPath, entry.name));
 
+const toRepoPath = (absolutePath: string) =>
+  absolutePath.slice(repoRoot.length + 1).replace(/\\/g, "/");
+
+/**
+ * Directories that record what the documentation architecture *was* — baselines,
+ * change records, plans, and review notes. They legitimately quote the removed
+ * configuration as evidence, so they are history rather than standing guidance.
+ */
+const historicalRecordPaths = [
+  "docs/change-record/",
+  "docs/migration/",
+  "docs/qa/",
+  "docs/sprint-1/",
+  "docs/superpowers/",
+  "docs/storybook/storybook-refactor-baseline.md",
+];
+
+/**
+ * Every document a developer could reasonably read as current instruction on how
+ * to write Storybook documentation in this repository.
+ */
+const standingGuidanceDocuments = [
+  ...readdirSync(resolve(repoRoot, "docs"), {
+    recursive: true,
+    withFileTypes: true,
+  })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+    .map((entry) => toRepoPath(resolve(entry.parentPath, entry.name))),
+  ...readdirSync(resolve(repoRoot, ".storybook"), { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".mdx"))
+    .map((entry) => toRepoPath(resolve(entry.parentPath, entry.name))),
+].filter(
+  (path) => !historicalRecordPaths.some((prefix) => path.startsWith(prefix)),
+);
+
+/**
+ * Architecture this refactor removed. Any standing guidance still teaching one of
+ * these sends developers to a configuration the repository no longer has.
+ */
+const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
+  {
+    label: "'docs' tag taught as the Autodocs trigger",
+    pattern: /add(?:ed|ing)?\s+(?:the\s+)?['"`]docs['"`]\s+tag/i,
+  },
+  {
+    label: "'docs' listed in a story tags array",
+    pattern: /tags:\s*\[[^\]]*['"]docs['"]/,
+  },
+  {
+    label: "addon-level autodocs option",
+    pattern: /autodocs:\s*['"]tag['"]/,
+  },
+  {
+    label: "removed canvas sourceState",
+    pattern: /sourceState:\s*['"]shown['"]/,
+  },
+  {
+    label: "removed generic global component description",
+    pattern:
+      /Component documentation generated from JSDoc comments and Storybook autodocs/,
+  },
+  {
+    label: "removed cloned Autodocs template",
+    pattern: /autoDocsTemplate/,
+  },
+  {
+    label: "removed Webpack-only styling addon",
+    pattern: /@storybook\/addon-styling-webpack/,
+  },
+];
+
 describe("Storybook documentation architecture", () => {
   it("uses the audited latest stable Storybook package set", () => {
     const storybookPackages = [
@@ -140,6 +211,18 @@ describe("Storybook documentation architecture", () => {
 
     expect(componentDocsGuide).toContain("autodocs");
     expect(componentDocsGuide).toContain("!autodocs");
+  });
+
+  it("keeps every standing guidance document free of removed architecture", () => {
+    const offences = standingGuidanceDocuments.flatMap((path) => {
+      const contents = read(path);
+
+      return removedArchitecturePatterns
+        .filter(({ pattern }) => pattern.test(contents))
+        .map(({ label }) => `${path}: ${label}`);
+    });
+
+    expect(offences).toEqual([]);
   });
 
   it("documents the Storybook metadata responsibilities", () => {
