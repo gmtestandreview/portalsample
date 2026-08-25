@@ -1,6 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import { vite as csfPlugin } from '@storybook/csf-plugin';
-
+import remarkGfm from 'remark-gfm';
 
 const getNodeModulesPackageName = (moduleId: string) => {
     const normalizedId = moduleId.replace(/\\/g, '/');
@@ -10,7 +10,9 @@ const getNodeModulesPackageName = (moduleId: string) => {
         return null;
     }
 
-    const packagePath = normalizedId.slice(nodeModulesIndex + '/node_modules/'.length);
+    const packagePath = normalizedId.slice(
+        nodeModulesIndex + '/node_modules/'.length,
+    );
     const segments = packagePath.split('/');
     const [firstSegment, secondSegment] = segments;
 
@@ -50,17 +52,13 @@ const config: StorybookConfig = {
     framework: '@storybook/react-vite',
 
     stories: [
-        '../.storybook/introduction.mdx',
-        '../.storybook/component-docs-guide.mdx',
-        '../.storybook/style-guide.mdx',
-        '../ClientApp/src/**/*.stories.@(ts|tsx)',
-        // Doc Block documentation pages (using Meta + Doc Blocks for rich customization)
-        '../ClientApp/src/**/*.{docs,Docs}.mdx',
-        '../ClientApp/src/**/*.mdx', '../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+        '../.storybook/*.mdx',
+        '../ClientApp/src/**/*.mdx',
+        '../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
     ],
 
     features: {
-    changeDetection: true,
+        changeDetection: true,
     },
 
     addons: [
@@ -72,33 +70,33 @@ const config: StorybookConfig = {
         {
             name: '@storybook/addon-docs',
             options: {
-                // Enable autodocs: automatically generate documentation pages from stories
-                autodocs: 'tag',
-                defaultName: 'Documentation',
-                docsMode: true,
-                mdxPluginOptions: {},
+                mdxPluginOptions: {
+                    mdxCompileOptions: {
+                        remarkPlugins: [remarkGfm],
+                    },
+                },
             },
         },
         {
             name: '@storybook/addon-mcp',
             options: {
-            toolsets: {
-                dev: true,
-                docs: true,
-                test: true,
+                toolsets: {
+                    dev: true,
+                    docs: true,
+                    test: true,
                 },
             },
         },
-        '@storybook/addon-styling-webpack'
     ],
+
+    docs: {
+        defaultName: 'Documentation',
+        docsMode: false,
+    },
 
     // Expose the public/ directory so the MSW service worker (mockServiceWorker.js)
     // is served at the root. Run `npx msw init public/` once after install.
     staticDirs: ['../ClientApp/public'],
-    
-    typescript: {
-        check: true,
-    },
 
     async viteFinal(config, { configType }) {
         const { mergeConfig } = await import('vite');
@@ -119,7 +117,10 @@ const config: StorybookConfig = {
                     scss: {
                         quietDeps: true,
                         silenceDeprecations: [
-                            'import', 'global-builtin', 'color-functions', 'if-function',
+                            'import',
+                            'global-builtin',
+                            'color-functions',
+                            'if-function',
                         ] as string[],
                     },
                 },
@@ -146,23 +147,33 @@ const config: StorybookConfig = {
                             groups: [
                                 {
                                     name: (moduleId: string) => {
-                                        const packageName = getNodeModulesPackageName(moduleId);
+                                        const packageName =
+                                            getNodeModulesPackageName(moduleId);
 
                                         if (!packageName) {
                                             return null;
                                         }
 
                                         if (
-                                            packageName.startsWith('@storybook/') ||
+                                            packageName.startsWith(
+                                                '@storybook/',
+                                            ) ||
                                             packageName === 'storybook' ||
-                                            packageName.startsWith('@mdx-js/') ||
+                                            packageName.startsWith(
+                                                '@mdx-js/',
+                                            ) ||
                                             packageName === 'markdown-to-jsx'
                                         ) {
                                             if (
                                                 packageName === 'storybook' ||
-                                                packageName === '@storybook/addon-docs'
+                                                packageName ===
+                                                    '@storybook/addon-docs'
                                             ) {
-                                                const subArea = getPackageSubArea(moduleId, packageName);
+                                                const subArea =
+                                                    getPackageSubArea(
+                                                        moduleId,
+                                                        packageName,
+                                                    );
                                                 return `storybook-${packageName.replace(/[@/]/g, '-')}-${subArea}`;
                                             }
 

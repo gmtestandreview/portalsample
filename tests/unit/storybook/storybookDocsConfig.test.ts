@@ -53,7 +53,7 @@ describe("Storybook documentation architecture", () => {
   });
 
   it("uses React Vite without obsolete or unused Storybook addons", () => {
-    expect(main).toContain("framework: '@storybook/react-vite'");
+    expect(main).toMatch(/framework:\s*["']@storybook\/react-vite["']/);
     expect(main).not.toContain("@storybook/addon-styling-webpack");
     expect(allDependencies).not.toHaveProperty(
       "@storybook/addon-styling-webpack",
@@ -63,10 +63,10 @@ describe("Storybook documentation architecture", () => {
   });
 
   it("uses non-overlapping canonical story and MDX globs", () => {
-    expect(main).toContain("'../.storybook/*.mdx'");
-    expect(main).toContain("'../ClientApp/src/**/*.mdx'");
-    expect(main).toContain(
-      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'",
+    expect(main).toMatch(/["']\.\.\/\.storybook\/\*\.mdx["']/);
+    expect(main).toMatch(/["']\.\.\/ClientApp\/src\/\*\*\/\*\.mdx["']/);
+    expect(main).toMatch(
+      /["']\.\.\/ClientApp\/src\/\*\*\/\*\.stories\.@\(js\|jsx\|mjs\|ts\|tsx\)["']/,
     );
 
     expect(main).not.toContain("'../ClientApp/src/**/*.stories.@(ts|tsx)'");

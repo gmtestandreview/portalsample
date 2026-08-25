@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/react-vite';
 import MockDate from 'mockdate';
 import { createElement } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
-import { mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon/csf3';
 import '../ClientApp/public/fonts/fonts.css';
 import '../ClientApp/public/fonts/nmi-iconfonts.css';
 import '../ClientApp/src/styles/index.scss';
@@ -17,7 +17,8 @@ export default {
 
     decorators: [
         (Story, { parameters }) => {
-            const initialEntries = (parameters?.portal?.initialEntries as string[]) ?? ['/'];
+            const initialEntries = (parameters?.portal
+                ?.initialEntries as string[]) ?? ['/'];
             const router = createMemoryRouter(
                 [{ path: '*', element: createElement(Story) }],
                 { initialEntries },
@@ -26,15 +27,16 @@ export default {
         },
     ],
 
-    loaders: [
-        ...(navigator?.serviceWorker === undefined ? [] : [mswLoader]),
-    ],
+    loaders: [...(navigator?.serviceWorker === undefined ? [] : [mswLoader()])],
 
     async beforeEach() {
-        globalThis.sessionStorage.setItem('targetOrganisation', JSON.stringify({
-            targetOrganisationAbn: '00000000000',
-            targetOrganisationName: 'Storybook Organisation',
-        }));
+        globalThis.sessionStorage.setItem(
+            'targetOrganisation',
+            JSON.stringify({
+                targetOrganisationAbn: '00000000000',
+                targetOrganisationName: 'Storybook Organisation',
+            }),
+        );
         MockDate.set('2024-04-01T12:00:00Z');
     },
 
@@ -52,15 +54,13 @@ export default {
         layout: 'centered',
         a11y: {
             config: {
-                rules: [
-                    { id: 'color-contrast', enabled: true },
-                ],
+                rules: [{ id: 'color-contrast', enabled: true }],
             },
 
             // 'todo' - show a11y violations in the test UI only
             // 'error' - fail CI on a11y violations
             // 'off' - skip a11y checks entirely
-            test: 'todo'
+            test: 'todo',
         },
         docs: {
             enabled: true,
@@ -75,7 +75,8 @@ export default {
                 type: 'dynamic',
             },
             description: {
-                component: 'Component documentation generated from JSDoc comments and Storybook autodocs.',
+                component:
+                    'Component documentation generated from JSDoc comments and Storybook autodocs.',
             },
             page: autoDocsTemplate,
         },
