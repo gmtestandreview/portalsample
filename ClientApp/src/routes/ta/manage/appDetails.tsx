@@ -92,7 +92,7 @@ const ApplicationDetails = () => {
     }) : '');
 
     const [activeTab, setActiveTab] = useState(getTabFromQuery);
-    const [loadMessagesTab, setLoadMessagesTab] = useState(getTabFromQuery() === 'messages');
+    const [loadMessagesTab, setLoadMessagesTab] = useState(() => getTabFromQuery() === 'messages');
     const [messagesRefreshKey, setMessagesRefreshKey] = useState(0);
 
     useEffect(() => {
@@ -109,6 +109,10 @@ const ApplicationDetails = () => {
         const poll = async () => {
             await fetchMessageCountData();
             if (!disposedRef.current) {
+                // The rule cannot trace the clear through clearPollTimeout(),
+                // which this effect's cleanup calls and which does invoke
+                // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
+                // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
                 pollTimeoutRef.current = setTimeout(poll, POLL_MS);
             }
         };
@@ -161,7 +165,7 @@ const ApplicationDetails = () => {
         handleTabSelect('messages');
     }
 
-    // eslint-disable-next-line arrow-body-style
+     
     const detailsTabContent = (details: RequestForPatternApprovalAppDetails) => {
         const {
             referenceId, lastUpdated, assessedAs, status, statusDetail, title, submittedDate,
@@ -242,7 +246,7 @@ const ApplicationDetails = () => {
                                                                     <>
                                                                         <span className='-me-md-2'>
                                                                             <span
-                                                                                // eslint-disable-next-line max-len
+                                                                                 
                                                                                 className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
                                                                                 style={{ fontFamily: 'monospace', top: '-10px' }}
                                                                                 role='status'

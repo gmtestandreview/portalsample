@@ -328,6 +328,7 @@ const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
                     containerClassName='col-md-12'
                     id='q-preferredInstrumentOrArtefactAvailabilityDate'
                     isSummary={isSummary}
+                    // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
                     minDate={new Date()}
                     inlineHelp={(
                         <>

@@ -164,7 +164,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                         </Alert.Heading>
                         <ul>
                             {errors.map((error, idx) => (
-                            // eslint-disable-next-line react/no-array-index-key
                                 <li className='text-danger' key={idx}>{error}</li>
                             ))}
                         </ul>

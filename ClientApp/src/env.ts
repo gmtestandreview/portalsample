@@ -1,28 +1,28 @@
 declare global {
     // Runtime config injected into the global scope by the HTML template.
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_CLIENTID: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_AUTHORITY: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_KNOWN_AUTHORITIES: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_READ_SCOPE: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_USER_IMPERSONATION_SCOPE: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_REDIRECT_URL: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var EXTERNAL_REDIRECT_URL: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_APPINSIGHTS_CONN_STRING: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_GA_TRACKINGID: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_ENVIRONMENT: string | undefined;
 }
 
@@ -57,7 +57,7 @@ const requiredVars: (keyof EnvType)[] = [
 
 requiredVars.forEach((key) => {
     if (!globalThis[key]) {
-        // eslint-disable-next-line no-console
+         
         console.error(`[env] Missing required runtime variable: ${key}`);
     }
 });

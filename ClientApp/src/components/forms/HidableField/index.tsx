@@ -15,11 +15,11 @@ const HidableField = <T extends FormikValues>(props: PropsWithChildren<HidableFi
         children,
     } = props;
 
-    const [isVisible, setVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        setVisible(false);
-        setVisible(!isHidden(name, hidden, values));
+        setIsVisible(false);
+        setIsVisible(!isHidden(name, hidden, values));
     }, [name, hidden, values]);
 
     return isVisible

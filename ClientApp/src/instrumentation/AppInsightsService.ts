@@ -15,7 +15,7 @@ const createTelemetryService = () => {
      * Initialize the Application Insights class
      * @return {void}
      */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const initialise = (connectionString: string): void => {
         reactPlugin = new ReactPlugin();
         appInsights = new ApplicationInsights({
@@ -33,7 +33,7 @@ const createTelemetryService = () => {
     if (!connString || connString === 'dummy-key') {
         // Explicitly disable/fail telemetry if config is missing or dummy
         if (env.REACT_APP_ENVIRONMENT === 'development') {
-            // eslint-disable-next-line no-console
+             
             console.warn('[AppInsights] Telemetry is DISABLED: missing or dummy connection string.');
         }
         return { reactPlugin: null, appInsights: null };

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import type { FormikHelpers } from 'formik';
 import type { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import { RequestForQuoteClient, YesNo } from '../../api/web-api-client';

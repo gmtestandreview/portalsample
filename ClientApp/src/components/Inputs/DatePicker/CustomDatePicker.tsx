@@ -32,6 +32,11 @@ const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
     const [isInvalid, setIsInvalid] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | null>(currentDate || startDate || null);
 
+    // Impure during render: the argument is re-evaluated every render even though
+    // only the first value is kept. Replacing it (useId) changes the generated id,
+    // which Child Plan B's DatePicker characterization asserts against, so it is
+    // deferred to that plan rather than changed in a lint migration.
+    // eslint-disable-next-line @eslint-react/purity
     const wrapperUUID = useRef(crypto.randomUUID());
 
     const customInputControlRef = useRef<HTMLInputElement>(null);
@@ -160,6 +165,7 @@ const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
                 customInput={CustomInput}
                 dateFormat={DATE_INPUT_FORMAT}
                 disabled={disabled}
+                // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
                 highlightDates={[new Date()]}
                 locale={enAU}
                 name={name}
@@ -170,6 +176,7 @@ const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
                 onClickOutside={handleCloseCalendar}
                 onKeyDown={handleKeyDown}
                 open={showCalendar}
+                // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
                 openToDate={selectedDate || new Date()}
                 placeholderText={placeholder ?? ''}
                 popperModifiers={[offSetModifier as never]}

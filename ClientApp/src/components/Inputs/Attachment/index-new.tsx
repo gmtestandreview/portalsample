@@ -1,6 +1,6 @@
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-plusplus */
+ 
+ 
+ 
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
 import { isArray, map } from 'lodash';
@@ -52,7 +52,7 @@ const AttachmentNew = (
     const { value } = meta;
     const [isUploading, setIsUploading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+     
     const inputRef = useRef<any>(null);
     // console.log('SD: ', value);
     const maxSizeInKb = maxSizeInMB * 1024 * 1024;
@@ -86,7 +86,7 @@ const AttachmentNew = (
             }
 
             if (currentFileCount > maxFiles) {
-                // eslint-disable-next-line max-len
+                 
                 setErrors((newErrors) => [...newErrors, `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`]);
                 hasError = true;
             }
@@ -299,7 +299,7 @@ const AttachmentNew = (
                                 aria-describedby={
                                     meta.touched && meta.error
                                         ? `${id ?? name}-validation-msg`
-                                        : (`help-${id ?? name}` || undefined)
+                                        : `help-${id ?? name}`
                                 }
                                 onClick={() => { inputRef.current.click(); }}
                             />

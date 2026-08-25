@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-wrap-multilines */
 import { useState } from 'react';
 import { useFormikContext } from 'formik';
 import type { FormikValues } from 'formik';

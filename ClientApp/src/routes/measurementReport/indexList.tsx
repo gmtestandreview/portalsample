@@ -49,7 +49,7 @@ const InstrMeasurementReport = () => {
                     account: accounts[0],
                 });
                 client.setAuthToken(tokenResult.accessToken);
-                // eslint-disable-next-line max-len
+                 
                 const details = await client.getDashboardInstrumentArtefactReportsByPortalIDAndArtefactName(portalId, id, pageSize, currentPage);
                 setMeasurementReportData(details);
             } catch (e) {

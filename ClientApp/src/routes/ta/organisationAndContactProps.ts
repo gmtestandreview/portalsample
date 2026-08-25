@@ -33,7 +33,7 @@ const loadOrganisationAndContact = (id: string, accounts: AccountInfo[], instanc
             return wizardStepValues;
         } catch (error) {
             AppLogger.error('Failed to load PA org and contact details', error as Error, { Id: id });
-            throw Error(`Failed to load PA org and contact details. Id: ${id}`);
+            throw new Error(`Failed to load PA org and contact details. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to load PA organisation and contact details', { Id: id, Accounts: accounts });
@@ -71,7 +71,7 @@ const saveStep = (
             );
         } catch (error) {
             AppLogger.error('Failed to save PA org and contact details', error as Error, { Id: id });
-            throw Error(`Failed to save PA org and contact details. Id: ${id}`);
+            throw new Error(`Failed to save PA org and contact details. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to save PA organisation and contact details', { Id: id, Accounts: accounts });

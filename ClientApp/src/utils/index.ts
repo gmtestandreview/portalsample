@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import { format, isValid, parse } from 'date-fns';
 import { enAU } from 'date-fns/locale';
 import {
@@ -75,7 +75,7 @@ export const nullOrUndefinedToEmpty = <T extends Record<string, unknown>>(obj: T
 ) as T;
 
 export const parseDate = (value: Date | string): Date | undefined => {
-    let parsedDate = null;
+    let parsedDate: Date;
 
     if (isString(value)) {
         let dateFormat;
@@ -103,7 +103,7 @@ export const parseDate = (value: Date | string): Date | undefined => {
 };
 
 export const parseDateWithTime = (value: Date | string): Date | undefined => {
-    let parsedDate = null;
+    let parsedDate: Date;
 
     if (isString(value)) {
         const dateFormat = value.length === 10 ? DATE_DDMMYYY_FORMAT : DATE_TIME_LOCALE_FORMAT;
@@ -116,7 +116,7 @@ export const parseDateWithTime = (value: Date | string): Date | undefined => {
 };
 
 export const parseDateUTC = (value: Date | string): Date | undefined => {
-    let parsedDate = null;
+    let parsedDate: Date;
 
     if (isString(value)) {
         parsedDate = parse(value, DATE_TIME_LOCALE_FORMAT, new Date(), { locale: enAU });

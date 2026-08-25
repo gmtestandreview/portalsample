@@ -98,7 +98,7 @@ const ServicesWeOffer = () => {
     }, [accounts, instance, accountDetails, accountDetails?.userProfile]);
 
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+         
         if (shouldRedirect) {
             switch (serviceSelected.service) {
                 case ServiceType.TestingCalibration:

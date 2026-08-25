@@ -33,11 +33,11 @@ const PreConditions = (props: PreConditionsProps) => {
     const { announcement } = useRouteAccessibility();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const [modalState, setModalState] = useState<ModalState>({
+    const [modalState, setModalState] = useState<ModalState>(() => ({
         showBranchSelector: !!getBranchModalNotification(),
         showRFQDeleteModal: false,
         branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
-    });
+    }));
 
     const setShowBranchSelector = useCallback((show: boolean) => {
         setModalState((prev) => ({

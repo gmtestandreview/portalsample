@@ -560,7 +560,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
                                 <Tab.Container
                                     id={`tabs-${referenceId}`}
                                     defaultActiveKey={
-                                    // eslint-disable-next-line no-nested-ternary
+                                     
                                         report ? 'report'
                                             : (quote ? 'quotation' : 'request')
                                     }

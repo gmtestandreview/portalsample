@@ -1,4 +1,4 @@
-/* eslint-disable class-methods-use-this */
+ 
 
 import { NotificationSeverity } from '../../storage/types';
 import type { Notification } from '../../storage/types';

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import Row from 'react-bootstrap/Row';
 import TextInput from '../../components/Inputs/TextInput';
 import Checkbox from '../../components/Inputs/Checkbox';

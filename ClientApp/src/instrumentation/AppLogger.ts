@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+ 
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
 import { getAppInsights } from './AppInsightsService';
 
@@ -46,7 +46,7 @@ class AppLogger {
         }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     static trackEvent(name: string, properties?: any) {
         const obj = {
             name,

@@ -51,7 +51,7 @@ const loadApplicationAndInstrument = (id: string, accounts: AccountInfo[], insta
             return wizardStepValues;
         } catch (error) {
             AppLogger.error('Failed to load PA application and instrument details', error as Error, { Id: id });
-            throw Error(`Failed to load PA application and instrument details. Id: ${id}`);
+            throw new Error(`Failed to load PA application and instrument details. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to load PA application and instrument details', { Id: id, Accounts: accounts });
@@ -97,7 +97,7 @@ const saveStep = (
             );
         } catch (error) {
             AppLogger.error('Failed to save PA application and instrument details', error as Error, { Id: id });
-            throw Error(`Failed to save PA application and instrument details. Id: ${id}`);
+            throw new Error(`Failed to save PA application and instrument details. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to save PA application and instrument details', { Id: id, Accounts: accounts });

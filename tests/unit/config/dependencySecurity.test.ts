@@ -8,7 +8,7 @@ type LockPackage = {
 
 type PackageLock = {
   lockfileVersion: number;
-  packages: Record<string, LockPackage>;
+  packages: Record<string, LockPackage & { deprecated?: string }>;
 };
 
 type RootPackage = {
@@ -128,6 +128,16 @@ describe("transitive security dependency floors", () => {
     },
   );
 
+  it("keeps every glob major on a maintained release", () => {
+    // Glob 7 arrives only through the deprecated ESLint 8 / rimraf 3 chain.
+    for (const version of installedVersions("glob")) {
+      expect(
+        gte(version, "10.0.0"),
+        `glob@${version} is a deprecated pre-10 release`,
+      ).toBe(true);
+    }
+  });
+
   it("keeps every brace-expansion major on its maintained patched release", () => {
     const isPatched = (version: string): boolean => {
       const major = Number(version.split(".")[0]);
@@ -150,5 +160,74 @@ describe("transitive security dependency floors", () => {
         `brace-expansion@${version} is vulnerable`,
       ).toBe(true);
     }
+  });
+});
+
+describe("lint cohort", () => {
+  const cohort = new Map([
+    ["eslint", "10.9.0"],
+    ["@eslint/js", "10.0.1"],
+    ["typescript-eslint", "8.67.0"],
+    ["@eslint-react/eslint-plugin", "5.18.6"],
+    ["eslint-plugin-react-hooks", "7.1.1"],
+    ["@stylistic/eslint-plugin", "5.10.0"],
+    ["globals", "17.11.0"],
+  ]);
+
+  it.each([...cohort])(
+    "declares %s as an exact supported version",
+    (packageName, expectedVersion) => {
+      expect(exactDevDependency(packageName)).toBe(expectedVersion);
+      expect(installedVersions(packageName)).toContain(expectedVersion);
+    },
+  );
+
+  it("resolves ESLint only on the maintained 10 line", () => {
+    const versions = installedVersions("eslint");
+
+    expect(versions).not.toHaveLength(0);
+    for (const version of versions) {
+      expect(
+        gte(version, "10.0.0"),
+        `eslint@${version} is an unsupported pre-10 release`,
+      ).toBe(true);
+    }
+  });
+
+  it.each([
+    "eslint-plugin-react",
+    "@humanwhocodes/config-array",
+    "@humanwhocodes/object-schema",
+    "inflight",
+    "rimraf",
+  ])("no longer installs the deprecated package %s", (packageName) => {
+    expect(installedVersions(packageName)).toHaveLength(0);
+  });
+
+  it("retains the Storybook lint plugin alongside the new cohort", () => {
+    expect(installedVersions("eslint-plugin-storybook")).not.toHaveLength(0);
+  });
+});
+
+describe("publisher deprecations", () => {
+  const deprecatedEntries = Object.entries(lock.packages)
+    .filter(([, metadata]) => Boolean(metadata.deprecated))
+    .map(([packagePath]) => packagePath);
+
+  /**
+   * Task D1 removes the ESLint 8 chain. Three glob@10 copies owned by
+   * remark-cli/unified-engine survive until Task D2 adds the scoped overrides,
+   * so they are the only tolerated remainder and are named exactly.
+   */
+  const allowedRemainingDeprecations = [
+    "node_modules/@npmcli/map-workspaces/node_modules/glob",
+    "node_modules/@npmcli/package-json/node_modules/glob",
+    "node_modules/unified-engine/node_modules/glob",
+  ];
+
+  it("leaves no deprecated package outside the recorded transitional set", () => {
+    expect([...deprecatedEntries].sort()).toEqual(
+      [...allowedRemainingDeprecations].sort(),
+    );
   });
 });

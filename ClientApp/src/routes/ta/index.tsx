@@ -102,7 +102,7 @@ const ApplicationForTypeApproval = () => {
             while (!controller.signal.aborted) {
                 try {
                     client.setAuthToken(tokenResult.accessToken);
-                    // eslint-disable-next-line no-await-in-loop
+                     
                     const data = await client.getProgress(
                         uploadId,
                         lastPercent,

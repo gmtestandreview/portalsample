@@ -48,7 +48,7 @@ const AcceptQuote = () => {
 
     const isLoading = useRef(false);
     const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
-    const [cRMQuoteRequestId, setCRMQuoteRequestId] = useState<string>('');
+    const [crmQuoteRequestId, setCrmQuoteRequestId] = useState<string>('');
     const [referenceId, setReferenceId] = useState<string>('');
 
     useEffect(() => {
@@ -68,7 +68,7 @@ const AcceptQuote = () => {
                     const quoteData = await quoteClient.getQuoteRequestDetails(result[0].crmQuoteRequestId!);
                     setReferenceId(quoteData.quoteRequestIdNum!);
                     setStatuses(result);
-                    setCRMQuoteRequestId(result[0].crmQuoteRequestId!);
+                    setCrmQuoteRequestId(result[0].crmQuoteRequestId!);
                 } catch (error) {
                     AppLogger.error('Failed to load quote request details', error as Error, { Id: id });
                     navigate('/not-found');
@@ -96,7 +96,7 @@ const AcceptQuote = () => {
                         <PaymentDetails name='' id={id} />
                     </WizardStep>
                     <WizardStep {...summaryAndAcceptProps(id!, accounts, instance, accountDetails, statuses, bannerTitle)}>
-                        <SummaryAndAccept name='' cRMQuoteRequestId={cRMQuoteRequestId} />
+                        <SummaryAndAccept name='' cRMQuoteRequestId={crmQuoteRequestId} />
                     </WizardStep>
                 </WizardForm>
             )
