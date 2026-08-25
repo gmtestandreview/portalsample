@@ -174,11 +174,11 @@ encoded the architecture this executable governance contract replaces.
 Storybook MCP documentation and a successful `storybook build --docs` on
 Storybook 10.5.10 produced the following default `react-docgen` evidence:
 
-| Component | Public props | Required state | Descriptions | Union/enum | Result |
-| --- | --- | --- | --- | --- | --- |
-| PrimaryButton | Custom props `className`, `mode`, and `size` appear; inherited native button props are omitted by the default parser | All three custom props are correctly optional | Component and custom-prop JSDoc appear | `mode` is shown as `'dark' \| 'light'` and receives an intentional inline-radio ArgType | Acceptable with a documented inherited-native-prop limitation |
-| StatusPill | `status` and `className` appear | `status` is required and `className` is optional | Component and prop JSDoc appear | The workflow enum union and string fallback are visible | Pass |
-| CustomDateInput | All 22 public integration props appear | Required calendar, Formik, handler, and wrapper props are distinguished from optional props | Meaningful descriptions appear for every public prop | No public union/enum prop requires manual augmentation | Pass |
+| Component       | Public props                                                                                                         | Required state                                                                              | Descriptions                                         | Union/enum                                                                              | Result                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| PrimaryButton   | Custom props `className`, `mode`, and `size` appear; inherited native button props are omitted by the default parser | All three custom props are correctly optional                                               | Component and custom-prop JSDoc appear               | `mode` is shown as `'dark' \| 'light'` and receives an intentional inline-radio ArgType | Acceptable with a documented inherited-native-prop limitation |
+| StatusPill      | `status` and `className` appear                                                                                      | `status` is required and `className` is optional                                            | Component and prop JSDoc appear                      | The workflow enum union and string fallback are visible                                 | Pass                                                          |
+| CustomDateInput | All 22 public integration props appear                                                                               | Required calendar, Formik, handler, and wrapper props are distinguished from optional props | Meaningful descriptions appear for every public prop | No public union/enum prop requires manual augmentation                                  | Pass                                                          |
 
 The representative Default stories use args, and all three focused component
 and accessibility checks passed through the Storybook MCP. The default parser
@@ -212,3 +212,18 @@ input rather than switching parsers pre-emptively.
   static docs structure were identical. The plugin timing report still listed
   `plugin-csf` after removal, confirming Storybook 10.5.10 supplies its own CSF
   transform for React/Vite.
+
+## React docgen decision
+
+- Decision: retain Storybook's default `react-docgen` parser; do not add a
+  `typescript.reactDocgen` override.
+- Evidence: StatusPill exposed its required workflow union and optional class
+  prop, CustomDateInput exposed all 22 public integration props with correct
+  required state and descriptions, and PrimaryButton exposed all three custom
+  props with the expected optional state and mode union.
+- Limitation accepted: PrimaryButton's inherited native button attributes are
+  omitted by the default parser. No component-specific public prop is missing,
+  and the native attributes do not require project-authored ArgTypes, so this
+  does not meet the plan's threshold for the slower TypeScript parser.
+- Build evidence: the final default-parser docs build completed in 10.97 seconds
+  and retained 97 docs entries and 218 story entries.
