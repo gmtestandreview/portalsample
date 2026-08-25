@@ -228,6 +228,54 @@ input rather than switching parsers pre-emptively.
 - Build evidence: the final default-parser docs build completed in 10.97 seconds
   and retained 97 docs entries and 218 story entries.
 
+### Correction — the three-component sample was not representative
+
+The evidence above sampled three components. A full survey of the generated
+components manifest (`storybook-static/manifests/components.json`, also served at
+`/manifests/components.json` in dev) shows **22 of 87 components produce no
+docgen output at all**:
+
+| Cause | Count | Components |
+| --- | ---: | --- |
+| `No component definition found` — `"." is not exported under no conditions from package node_modules/@azure/msal-react` | 20 | AddressLookup, ApplicationAndInstrument, ApplicationDetails, ApplicationDocuments, ApplicationMessages, Dashboard, DashboardTa, GetStarted, HelpGuide, InstrMeasurementReport, InstrumentInfoPanel, PaRequestItem, PreApplication, PreConditions, ReportRecipient, ServicesWeOffer, SubmittedSuccess, SupportingDocuments, ViewMeasurementReport, ViewRequestForQuoteSummary |
+| `Component file in node_modules` | 1 | Inputs |
+| `No component found` — `meta.component` not specified | 1 | Modals |
+
+None of PrimaryButton, StatusPill or CustomDateInput imports `@azure/msal-react`,
+so the original sample could not have detected the dominant failure.
+
+**Root cause of the 20:** `@azure/msal-react@2.2.0` exposes `"."` only under the
+`import` and `require` export conditions. react-docgen's resolver requests it
+under no condition and the resolution fails, so the component definition is never
+found. This is a **module-resolution** failure, not a limitation of the parser's
+type inference.
+
+### A/B evidence — `react-docgen-typescript` is worse here
+
+Tested by adding `typescript: { reactDocgen: 'react-docgen-typescript' }` to
+`.storybook/main.ts` and rebuilding, with no other change:
+
+| Parser | Build | Components with errors | Components with at least one prop |
+| --- | --- | ---: | ---: |
+| `react-docgen` (default, current) | PASS | 22 | 65 |
+| `react-docgen-typescript` | PASS, 17s | 25 | **0** |
+
+Under `react-docgen-typescript` every component lost its props, because the
+workspace source falls outside the parser's default TypeScript program — the case
+Task 10 Step 4 anticipates. Adopting it would require explicit `include`
+configuration and would still not address the msal-react resolution failure.
+
+**Decision stands: retain `react-docgen`.** The recorded justification is now the
+measured one — the default parser documents 65 components, the TypeScript parser
+documents none without further configuration, and the 22 failures are a
+resolution defect to be fixed at the resolver rather than by swapping parsers.
+
+**Open item:** the 20 msal-react failures are unresolved. Fixing them means making
+`@azure/msal-react` resolvable to react-docgen (for example a Storybook-scoped
+Vite `resolve.alias` to the package's ESM entry); `Modals` needs `meta.component`;
+`Inputs` points at a node_modules component and may be acceptable as-is. The
+generated manifest gives this a deterministic regression check.
+
 ## Final verification
 
 Verification on 2026-08-26 from implementation commit `f25b5a3`:
