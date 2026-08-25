@@ -227,3 +227,23 @@ input rather than switching parsers pre-emptively.
   does not meet the plan's threshold for the slower TypeScript parser.
 - Build evidence: the final default-parser docs build completed in 10.97 seconds
   and retained 97 docs entries and 218 story entries.
+
+## Final verification
+
+Verification on 2026-08-25 from implementation commit `e608ffc`:
+
+- prohibited-architecture search: PASS; matches were limited to negative
+  governance assertions;
+- Storybook governance: PASS, 13 assertions;
+- workflow policy: PASS, 21 assertions;
+- TypeScript: PASS;
+- ESLint and MDX lint: PASS;
+- unit suite: PASS, 121 files and 1,333 tests;
+- Storybook BDD: PASS, 135 scenarios, including all five documentation
+  architecture scenarios;
+- documentation build: PASS, 315 index entries (97 docs and 218 stories).
+
+The docs build continues to report the baseline Public Sans light/medium
+resolution warnings and third-party Application Insights pure-annotation
+warnings. They are non-fatal, unchanged by this refactor, and do not affect the
+verified Storybook index or runtime documentation scenarios.
