@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 /**
@@ -13,6 +13,10 @@ import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(".github/workflows/pr.yml", "utf8");
 const releaseWorkflow = readFileSync(".github/workflows/release.yml", "utf8");
+const chromaticWorkflowPath = ".github/workflows/chromatic.yml";
+const chromaticWorkflow = existsSync(chromaticWorkflowPath)
+  ? readFileSync(chromaticWorkflowPath, "utf8")
+  : "";
 const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
   engines: { node: string };
   devEngines: { runtime: { version: string } };
@@ -29,6 +33,8 @@ const nodeVersions = (contents: string): string[] =>
 /** Immutable pin for actions/upload-artifact v6.0.0 (Node 24 action runtime). */
 const UPLOAD_ARTIFACT_PIN =
   "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f";
+const CHROMATIC_ACTION_PIN =
+  "chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7";
 
 const partitions = [
   { name: "unit", command: "npm run test:ci:unit" },
@@ -146,5 +152,28 @@ describe("CI uses the repository's enforced Node runtime", () => {
   it("names the dependency security job for the enforced Node floor", () => {
     expect(workflow).toContain("dependency-security-node24:");
     expect(workflow).not.toContain("dependency-security-node20:");
+  });
+});
+
+describe("Chromatic publishing reports asynchronously through GitHub", () => {
+  it("publishes every pushed branch with complete Git history", () => {
+    expect(chromaticWorkflow).toContain("push:");
+    expect(chromaticWorkflow).toContain("fetch-depth: 0");
+  });
+
+  it("uses the repository's enforced Node 24 runtime", () => {
+    expect(nodeVersions(chromaticWorkflow)).toEqual(["24.19.0"]);
+  });
+
+  it("pins the Chromatic action and reads its protected repository secret", () => {
+    expect(chromaticWorkflow).toContain(`uses: ${CHROMATIC_ACTION_PIN}`);
+    expect(chromaticWorkflow).toContain(
+      "projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}",
+    );
+    expect(chromaticWorkflow).not.toMatch(/chpt_[a-zA-Z0-9]+/);
+  });
+
+  it("exits after upload instead of waiting for cloud test results", () => {
+    expect(chromaticWorkflow).toContain("exitOnceUploaded: true");
   });
 });
