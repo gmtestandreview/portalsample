@@ -4,7 +4,7 @@
 
 - Storybook version: `10.5.10`
 - Branch: `refactor/storybook-autodocs`
-- Final implementation commit verified: `0e368fe`
+- Final implementation commit verified: `01b3625`
 - Verification date: 2026-08-25
 
 ## Automated verification
@@ -13,7 +13,7 @@
 | -------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | Static policy              | prohibited-architecture `rg` searches                             | PASS; production and configuration files contain no prohibited pattern |
 | Governance                 | `npx vitest run tests/unit/storybook/storybookDocsConfig.test.ts` | PASS; 13 assertions                                                    |
-| Workflow policy            | `npx vitest run tests/unit/config/workflowPolicy.test.ts`         | PASS; 21 assertions                                                    |
+| Workflow policy            | `npx vitest run tests/unit/config/workflowPolicy.test.ts`         | PASS; 25 assertions                                                    |
 | TypeScript                 | `npm run type-check`                                              | PASS                                                                   |
 | Lint                       | `npm run lint` and `npm run lint:mdx`                             | PASS                                                                   |
 | Unit                       | `npm run test:unit`                                               | PASS; 121 files and 1,333 tests                                        |

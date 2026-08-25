@@ -230,12 +230,12 @@ input rather than switching parsers pre-emptively.
 
 ## Final verification
 
-Verification on 2026-08-25 from implementation commit `0e368fe`:
+Verification on 2026-08-25 from implementation commit `01b3625`:
 
 - prohibited-architecture search: PASS; matches were limited to negative
   governance assertions;
 - Storybook governance: PASS, 13 assertions;
-- workflow policy: PASS, 21 assertions;
+- workflow policy: PASS, 25 assertions;
 - TypeScript: PASS;
 - ESLint and MDX lint: PASS;
 - unit suite: PASS, 121 files and 1,333 tests;
