@@ -12,6 +12,7 @@ import { describe, expect, it } from "vitest";
  */
 
 const workflow = readFileSync(".github/workflows/pr.yml", "utf8");
+const releaseWorkflow = readFileSync(".github/workflows/release.yml", "utf8");
 
 const occurrences = (needle: string): number =>
   workflow.split(needle).length - 1;
@@ -96,5 +97,21 @@ describe("no partition may mask a failure", () => {
 
   it("preserves the Rolldown optional-binding workaround", () => {
     expect(workflow).toContain("@rolldown/binding-linux-x64-gnu");
+  });
+});
+
+describe("Storybook documentation is a CI quality gate", () => {
+  it.each([
+    ["pull request", workflow],
+    ["release", releaseWorkflow],
+  ])("verifies docs structure in the %s workflow", (_name, contents) => {
+    expect(contents).toContain("npm run storybook:verify:docs");
+  });
+
+  it.each([
+    ["pull request", workflow],
+    ["release", releaseWorkflow],
+  ])("runs Storybook BDD in the %s workflow", (_name, contents) => {
+    expect(contents).toContain("npm run test:e2e:storybook");
   });
 });

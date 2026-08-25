@@ -22,8 +22,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
@@ -45,8 +45,11 @@ jobs:
       - name: Typecheck, Vitest, coverage, and quality regression
         run: npm run test:ci
 
+      - name: Run Storybook BDD
+        run: npm run test:e2e:storybook
+
       - name: Build app
         run: npm run build
 
-      - name: Build Storybook
-        run: npm run build-storybook
+      - name: Verify Storybook documentation
+        run: npm run storybook:verify:docs
