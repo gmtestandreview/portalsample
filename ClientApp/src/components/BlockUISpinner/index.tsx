@@ -7,6 +7,18 @@ interface BlockUISpinnerProps {
     partial?: boolean;
 }
 
+/**
+ * A spinner component that blocks the UI and displays a loading indicator. 
+ * Blocks the entire viewport or a specific section of the UI based on the `partial` prop.
+ * 
+ * @param {BlockUISpinnerProps} param0 - Component props
+ * @param {ReactNode} param0.children - The content to display alongside the spinner.
+ * @param {boolean} [param0.partial=false] - If true, blocks only a specific section of the UI; otherwise, blocks the entire viewport.
+ * @param param0 
+ * @returns {JSX.Element} Rendered spinner element
+ * 
+ */
+
 const BlockUISpinner = ({ children, partial } : BlockUISpinnerProps) => {
     const renderSpinner = () => (
         <>

@@ -5,9 +5,21 @@ import type { ButtonHTMLAttributes, ComponentProps } from 'react';
 import { getButtonClassName } from '../buttonClassName';
 
 /**
- * Represents the mode/theme for the PrimaryButton component.
- * @typedef {'light' | 'dark'} ButtonMode
+ * PrimaryButtonProps
+ *
+ * Type definitions for the PrimaryButton component. 
+ * Represents the mode/theme for the PrimaryButton component. 
+ * Provides a consistent structure for button props, including optional class names, mode, and size.
+ * 
+ * @typedef {Object} PrimaryButtonProps
+ * @property {string} [className] - Additional CSS classes for the button element
+ * @property {'dark' | 'light'} [mode] - Button theme mode. 'light' applies standard blue styling; 'dark' applies darker blue. Defaults to 'light'.
+ * @property {string} [size] - Optional size for the button (e.g., 'small', 'large')
+ * @property {boolean} [disabled] - Whether the button is disabled  
+ * @typedef {'light' | 'dark'} ButtonMode 
+ * 
  */
+
 type PrimaryButtonProps =
   Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,

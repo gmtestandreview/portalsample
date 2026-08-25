@@ -3,6 +3,21 @@ import { expect, fn } from 'storybook/test';
 import NotificationMessage from './NotificationMessage';
 import { NotificationSeverity } from '../../storage/types';
 
+/**
+ * NotificationMessage Component Storybook Configuration
+ *
+ * This file defines the Storybook stories for the NotificationMessage component, which displays notification messages with different severity levels.
+ * The stories demonstrate various notification types, including success, information, warning, and error messages, as well as a dismissible error message.
+ * 
+ * @module NotificationMessage.stories
+ * @prop {Meta} meta - Storybook metadata for the NotificationMessage component.
+ * @prop {StoryObj} Success - Story demonstrating a success notification message.
+ * @prop {StoryObj} Information - Story demonstrating an information notification message.
+ * @prop {StoryObj} Warning - Story demonstrating a warning notification message.
+ * @prop {StoryObj} ErrorMessage - Story demonstrating an error notification message.
+ * @prop {StoryObj} DismissibleError - Story demonstrating a dismissible error notification message with a close button.
+ */
+
 const meta = {
     title: 'Components/Alert/NotificationMessage',
     component: NotificationMessage,

@@ -1,6 +1,20 @@
 import type { ReactNode } from 'react';
 import type { NotificationSeverity } from '../../storage/types';
 
+/**
+ * types.ts
+ *
+ * Type definitions for the Alert component and its variants.
+ * Includes props for base alert functionality, as well as specific props for notification messages with severity levels.
+ * 
+ * @module AlertTypes
+ * @author Greg M
+ * @version 1.0.0
+ * @since 2024-06-15
+ * 
+ */
+
+
 export interface BaseAlertProps {
     id?: string;
     testId?: string;

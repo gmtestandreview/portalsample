@@ -2,6 +2,19 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 import CustomBreadcrumb from './index';
 
+/**
+ * CustomBreadcrumb Component Storybook Configuration
+ *
+ * This file defines the Storybook stories for the CustomBreadcrumb component, which provides a breadcrumb navigation UI element.
+ * The stories demonstrate different levels of breadcrumb navigation, allowing developers to visualize its behavior in various contexts.
+ * 
+ * @module Breadcrumb.stories
+ * @prop {Meta} meta - Storybook metadata for the CustomBreadcrumb component.
+ * @prop {StoryObj} ThreeLevels - Story demonstrating a three-level breadcrumb navigation.
+ * @prop {StoryObj} TwoLevels - Story demonstrating a two-level breadcrumb navigation.
+ *
+ */
+
 const meta = {
     component: CustomBreadcrumb,
     tags: ['ai-generated', 'needs-work', 'docs'],

@@ -4,6 +4,19 @@ import LinkButton from './LinkButton';
 import EditButton from './EditButton';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 
+/**
+ * ButtonBreadth Component Storybook Configuration
+ *
+ * This file defines the Storybook stories for the ButtonBreadth component, which displays a group of buttons arranged in a breadth layout.
+ * The stories demonstrate different configurations of the ButtonBreadth component, including grouped actions and an edit section.
+ * 
+ * @module ButtonBreadth.stories
+ * @prop {Meta} meta - Storybook metadata for the ButtonBreadth component.
+ * @prop {StoryObj} GroupedActions - Story demonstrating a group of buttons with different actions.
+ * @prop {StoryObj} EditSection - Story demonstrating an edit button that navigates to a specific link.
+ *
+ */
+
 const meta = {
     title: 'Components/Buttons/Breadth',
     component: ButtonGroup,
