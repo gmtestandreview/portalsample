@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
+import { expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import OrganisationAndContact from './organisationAndContact';
 
@@ -39,9 +39,11 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EditStep: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        await expect(canvas.getByText('Organisation type')).toBeInTheDocument();
-        await expect(canvas.getByLabelText(/organisation name/i)).toBeInTheDocument();
+    play: async ({ canvas }) => {
+        const organisationType = await canvas.findByText('Organisation type');
+        const organisationName = await canvas.findByLabelText(/organisation name/i);
+
+        await expect(organisationType).toBeInTheDocument();
+        await expect(organisationName).toBeInTheDocument();
     },
 };

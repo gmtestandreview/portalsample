@@ -32,8 +32,8 @@ export const ThreeLevels: Story = {
     ],
   },
   play: async ({ canvas }) => {
-    const navigation = canvas.getByRole('navigation', { name: /breadcrumb/i });
-    const lastBreadcrumb = canvas.getByText(/request for quote/i);
+    const navigation = await canvas.findByRole('navigation', { name: /breadcrumb/i });
+    const lastBreadcrumb = await canvas.findByText(/request for quote/i);
 
     await expect(navigation).toBeInTheDocument();
     await expect(lastBreadcrumb).toHaveAttribute('aria-current', 'page');
@@ -48,9 +48,9 @@ export const TwoLevels: Story = {
     ],
   },
   play: async ({ canvas }) => {
-    const navigation = canvas.getByRole('navigation', { name: /breadcrumb/i });
-    const homeLink = canvas.getByRole('link', { name: 'Home' });
-    const lastBreadcrumb = canvas.getByText(/help guide/i);
+    const navigation = await canvas.findByRole('navigation', { name: /breadcrumb/i });
+    const homeLink = await canvas.findByRole('link', { name: 'Home' });
+    const lastBreadcrumb = await canvas.findByText(/help guide/i);
 
     await expect(navigation).toBeInTheDocument();
     await expect(homeLink).toHaveAttribute('href', '/');
