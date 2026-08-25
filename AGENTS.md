@@ -141,7 +141,9 @@ font-size: math.div($h1-font-size, 1.375);
 
 ## Storybook
 
-When working on UI components, always use the `my-mcp-server` MCP tools to access Storybook's component and documentation knowledge before answering or taking any action.
+When working on UI components, always use the `my-storybook-mcp-server` MCP tools to access Storybook's component and documentation knowledge before answering or taking any action.
+
+Before the first Storybook MCP call, ensure `npm run storybook` is running and `http://localhost:6006/mcp` responds successfully. Confirm `codex mcp list` shows `my-storybook-mcp-server` enabled and `codex mcp get my-storybook-mcp-server` reports the expected URL. If Codex started before Storybook was ready and the tools are absent, restart the Codex client or extension after the endpoint is healthy; do not bypass the MCP requirement.
 
 - **CRITICAL: Never hallucinate component properties!** Before using ANY property on a component from a design system (including common-sounding ones like `shadow`, etc.), you MUST use the MCP tools to check if the property is actually documented for that component.
 - Query `list-all-documentation` to get a list of all components
