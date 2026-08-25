@@ -49,7 +49,7 @@ export const OpenWithContent: Story = {
     render: (args) => <DismissibleContentModalDemo {...args} />,
     play: async ({ args }) => {
         const dialog = await screen.findByRole('dialog', { name: /example modal title/i });
-        await expect(dialog).toBeVisible();
+        await waitFor(() => expect(dialog).toBeVisible());
         await expect(within(dialog).getByText('Modal body content for Storybook preview.')).toBeVisible();
         await userEvent.click(screen.getByTestId('close-button'));
         await expect(args.onCancelModal).toHaveBeenCalled();
