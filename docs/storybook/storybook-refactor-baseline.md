@@ -230,7 +230,7 @@ input rather than switching parsers pre-emptively.
 
 ## Final verification
 
-Verification on 2026-08-25 from implementation commit `e608ffc`:
+Verification on 2026-08-25 from implementation commit `0e368fe`:
 
 - prohibited-architecture search: PASS; matches were limited to negative
   governance assertions;
@@ -239,6 +239,7 @@ Verification on 2026-08-25 from implementation commit `e608ffc`:
 - TypeScript: PASS;
 - ESLint and MDX lint: PASS;
 - unit suite: PASS, 121 files and 1,333 tests;
+- Storybook interaction suite: PASS, 87 files and 218 tests;
 - Storybook BDD: PASS, 135 scenarios, including all five documentation
   architecture scenarios;
 - documentation build: PASS, 315 index entries (97 docs and 218 stories).
