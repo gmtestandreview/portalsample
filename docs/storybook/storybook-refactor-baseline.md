@@ -185,3 +185,30 @@ and accessibility checks passed through the Storybook MCP. The default parser
 is sufficient for the complex Formik wrapper and enum-union sample. Task 10
 will use the PrimaryButton inherited-prop limitation as the explicit decision
 input rather than switching parsers pre-emptively.
+
+## Explicit CSF plugin A/B test
+
+### A — explicit plugin present
+
+- Governance tests: PASS, 13 assertions.
+- Storybook BDD: PASS, 135 scenarios, including all five documentation scenarios.
+- Code Panel: PASS; the representative story source was visible.
+- Source: PASS; generated docs exposed source without preview decorators.
+- Docs build: PASS, 315 entries (97 docs and 218 stories) in 10.80 seconds.
+
+### B — explicit plugin removed
+
+- Governance tests: PASS, 13 assertions.
+- Storybook BDD: PASS, 135 scenarios, including all five documentation scenarios.
+- Code Panel: PASS; the representative story source remained visible.
+- Source: PASS; generated docs retained decorator-free source.
+- Docs build: PASS, 315 entries (97 docs and 218 stories) in 10.97 seconds.
+
+### Decision
+
+- Removed: the repository-level `@storybook/csf-plugin` import and Vite plugin
+  injection.
+- Evidence: configuration governance, runtime source/Code Panel coverage, and
+  static docs structure were identical. The plugin timing report still listed
+  `plugin-csf` after removal, confirming Storybook 10.5.10 supplies its own CSF
+  transform for React/Vite.

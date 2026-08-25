@@ -1,5 +1,4 @@
 import type { StorybookConfig } from '@storybook/react-vite';
-import { vite as csfPlugin } from '@storybook/csf-plugin';
 import remarkGfm from 'remark-gfm';
 
 const getNodeModulesPackageName = (moduleId: string) => {
@@ -101,17 +100,11 @@ const config: StorybookConfig = {
     async viteFinal(config, { configType }) {
         const { mergeConfig } = await import('vite');
 
-        // Storybook's addon-docs preset wires the CSF plugin automatically for
-        // Webpack, but not for react-vite. Add it explicitly so docs pages can
-        // read static story source snippets from CSF files.
-        const additionalPlugins = [csfPlugin({})];
-
         // Suppress Dart Sass deprecations from Bootstrap (quietDeps) and from our
         // own @import-based partials (silenceDeprecations) in both dev and build.
         // Remove quietDeps and the import/global-builtin/color-functions entries
         // when upgrading to Bootstrap 6 with @use support.
         const sassConfig = {
-            plugins: additionalPlugins,
             css: {
                 preprocessorOptions: {
                     scss: {
