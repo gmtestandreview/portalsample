@@ -5,6 +5,11 @@ import { Form, InputGroup } from 'react-bootstrap';
 import findElementInTreeById from '../../Utilities/findElementInTreeById';
 import type { CustomInputControlRef, CustomInputForwardRefProps } from './types';
 
+/**
+ * Formik-connected text input and calendar trigger used by `CustomDatePicker`.
+ * The input and button behave as one focusable field so validation and calendar
+ * state remain consistent while focus moves between them.
+ */
 const CustomDateInput = React.forwardRef<CustomInputControlRef, CustomInputForwardRefProps>((customInputProps, _ref) => {
     const {
         calendarButtonTitle,

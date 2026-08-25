@@ -4,59 +4,24 @@ import {
 import type { ButtonHTMLAttributes, ComponentProps } from 'react';
 import { getButtonClassName } from '../buttonClassName';
 
-/**
- * PrimaryButtonProps
- *
- * Type definitions for the PrimaryButton component. 
- * Represents the mode/theme for the PrimaryButton component. 
- * Provides a consistent structure for button props, including optional class names, mode, and size.
- * 
- * @typedef {Object} PrimaryButtonProps
- * @property {string} [className] - Additional CSS classes for the button element
- * @property {'dark' | 'light'} [mode] - Button theme mode. 'light' applies standard blue styling; 'dark' applies darker blue. Defaults to 'light'.
- * @property {string} [size] - Optional size for the button (e.g., 'small', 'large')
- * @property {boolean} [disabled] - Whether the button is disabled  
- * @typedef {'light' | 'dark'} ButtonMode 
- * 
- */
-
-type PrimaryButtonProps =
+export type PrimaryButtonProps =
   Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
   'className'> & {
+      /** Additional CSS classes appended to the NMI primary-button styles. */
       className?: string;
-      /** Button theme mode. 'light' applies standard blue styling; 'dark' applies darker blue. Defaults to 'light'. */
+      /** Uses the standard treatment on light surfaces or the alternate treatment on dark surfaces. */
       mode?: 'dark' | 'light';
+      /** Optional sizing value forwarded to the rendered button. */
       size?: string;
   };
 
 /**
  * PrimaryButton Component
  *
- * A prominent call-to-action button following the NMI design system.
- * Built on Bootstrap Button with NMI-specific color variants.
- *
- * Use PrimaryButton for main actions like "Submit", "Continue", or "Save".
- *
- * @param {PrimaryButtonProps} props - Component props
- * @param {React.ReactNode} props.children - Button label text
- * @param {'light' | 'dark'} [props.mode='light'] - Button color theme
- * @param {boolean} [props.disabled] - Disable the button
- * @param {Function} [props.onClick] - Click event handler
- *
- * @example
- * // Standard primary button
- * <PrimaryButton onClick={handleSubmit}>
- *   Submit Form
- * </PrimaryButton>
- *
- * @example
- * // Dark mode button
- * <PrimaryButton mode="dark" disabled={isLoading}>
- *   {isLoading ? 'Processing...' : 'Continue'}
- * </PrimaryButton>
- *
- * @returns {JSX.Element} Rendered button element
+ * The prominent call-to-action used for the main action on a page or dialog,
+ * such as Submit, Continue, or Save. It preserves native button attributes and
+ * React Aria keyboard behaviour while applying the NMI primary-button style.
  */
 const PrimaryButton = ({
     mode,

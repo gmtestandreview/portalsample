@@ -168,3 +168,20 @@ template, the global generic description, and outdated developer guidance.
 The obsolete `tests/unit/storybook-autodocs.test.ts` was removed because it
 asserted hard-coded local constants rather than repository behaviour and
 encoded the architecture this executable governance contract replaces.
+
+## Metadata inference verification
+
+Storybook MCP documentation and a successful `storybook build --docs` on
+Storybook 10.5.10 produced the following default `react-docgen` evidence:
+
+| Component | Public props | Required state | Descriptions | Union/enum | Result |
+| --- | --- | --- | --- | --- | --- |
+| PrimaryButton | Custom props `className`, `mode`, and `size` appear; inherited native button props are omitted by the default parser | All three custom props are correctly optional | Component and custom-prop JSDoc appear | `mode` is shown as `'dark' \| 'light'` and receives an intentional inline-radio ArgType | Acceptable with a documented inherited-native-prop limitation |
+| StatusPill | `status` and `className` appear | `status` is required and `className` is optional | Component and prop JSDoc appear | The workflow enum union and string fallback are visible | Pass |
+| CustomDateInput | All 22 public integration props appear | Required calendar, Formik, handler, and wrapper props are distinguished from optional props | Meaningful descriptions appear for every public prop | No public union/enum prop requires manual augmentation | Pass |
+
+The representative Default stories use args, and all three focused component
+and accessibility checks passed through the Storybook MCP. The default parser
+is sufficient for the complex Formik wrapper and enum-union sample. Task 10
+will use the PrimaryButton inherited-prop limitation as the explicit decision
+input rather than switching parsers pre-emptively.

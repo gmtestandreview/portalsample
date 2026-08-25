@@ -3,21 +3,18 @@ import { linkTo } from '@storybook/addon-links';
 import { expect } from 'storybook/test';
 import PrimaryButton from './index';
 
-/**
- * PrimaryButton Component Storybook Configuration
- * This file defines the Storybook stories for the PrimaryButton component, which is a button styled as a primary action in the UI.
- * The stories demonstrate the default, dark mode, and disabled states of the PrimaryButton, allowing developers to visualize its behavior in different contexts.
- * @module PrimaryButton.stories
- * @prop {Meta} meta - Storybook metadata for the PrimaryButton component.
- * @prop {StoryObj} Default - Story demonstrating the default state of the PrimaryButton.
- * @prop {StoryObj} DarkMode - Story demonstrating the dark mode state of the PrimaryButton.
- * @prop {StoryObj} Disabled - Story demonstrating the disabled state of the PrimaryButton.
- *
- */
-
 const meta = {
     component: PrimaryButton,
     tags: ['ai-generated', 'needs-work', '!autodocs'],
+    argTypes: {
+        mode: {
+            options: ['light', 'dark'],
+            control: 'inline-radio',
+            table: {
+                category: 'Appearance',
+            },
+        },
+    },
 } satisfies Meta<typeof PrimaryButton>;
 
 export default meta;
