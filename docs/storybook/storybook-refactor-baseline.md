@@ -270,11 +270,39 @@ measured one — the default parser documents 65 components, the TypeScript pars
 documents none without further configuration, and the 22 failures are a
 resolution defect to be fixed at the resolver rather than by swapping parsers.
 
-**Open item:** the 20 msal-react failures are unresolved. Fixing them means making
-`@azure/msal-react` resolvable to react-docgen (for example a Storybook-scoped
-Vite `resolve.alias` to the package's ESM entry); `Modals` needs `meta.component`;
-`Inputs` points at a node_modules component and may be acceptable as-is. The
-generated manifest gives this a deterministic regression check.
+### Resolution
+
+A Storybook-scoped Vite `resolve.alias` was tried first and **did not work**:
+Storybook's react-docgen plugin runs react-docgen over the source file, and
+react-docgen resolves imports with its own resolver, which never sees Vite's
+aliases. The alias was removed rather than left in place doing nothing.
+
+The fix is applied at the package that omits the condition. Two dependencies
+declare `exports["."]` with only `import` and `require` and no `default`, so a
+resolver that requests no condition fails:
+
+| Package | Added condition |
+| --- | --- |
+| `@azure/msal-react@2.2.0` | `"default": "./dist/index.js"` |
+| `html-react-parser@6.1.4` | `"default": "./esm/index.mjs"` |
+
+Both are `patch-package` patches in `patches/`, applied by the existing
+`postinstall` hook, and each points at the same ESM file the `import` condition
+already selects — so bundling is unchanged. Upgrading is not an alternative:
+`@azure/msal-react@5.6.0` still ships the same exports shape.
+
+Result: components without prop metadata fell from **22 to 2**. Verified by
+`npm run test:unit` (1,342), `npm run test:storybook` (218), `npm run build`
+(webpack production), and `npm run test:e2e:storybook` (135), all passing.
+
+`scripts/verify-storybook-docs.mjs` now fails the build if any component loses its
+prop metadata, so this cannot silently regress. Two components remain accepted
+exceptions, listed there with reasons:
+
+- `forms-inputs` — `meta.component` resolves into `node_modules` (formik).
+- `modals` — a multi-component gallery. Every story renders a local wrapper or a
+  different modal, so no single `meta.component` describes the page; setting one
+  makes all five stories fail type-check because they supply no args for it.
 
 ## Final verification
 
