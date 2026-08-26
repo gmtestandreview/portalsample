@@ -133,4 +133,10 @@
 - For Storybook BDD assertions:
   - Use root-scoped checks (`#storybook-root`) for normal in-canvas rendering.
   - Use page-scoped checks (`body`) when content is rendered through portals outside `#storybook-root` (for example, modal bodies).
+
+## 10) Dependency Override Ownership
+
+- `package.json` `overrides.unified-engine.glob`, `overrides["@npmcli/map-workspaces"].glob`, and `overrides["@npmcli/package-json"].glob` pin those three `remark-cli` / `unified-engine` transitive owners to `glob@13.0.6`, replacing the deprecated `glob@10.5.0` copies each previously resolved (Task D2; see `reports/deprecations/glob-override.md` for the full blast-radius record).
+- The Dependency DRI reviews this override quarterly and whenever Dependabot proposes an update to `remark-cli`, `unified-engine`, `@npmcli/map-workspaces`, `@npmcli/package-json`, or `glob`.
+- **Removal trigger**: once all three owning packages resolve a maintained, non-deprecated `glob` release on their own (without the override), remove the corresponding `overrides` entries. `tests/unit/config/dependencySecurity.test.ts`'s `"publisher deprecations"` test rejects any lockfile package with a non-empty `deprecated` field, so a now-unnecessary override left in place will not itself fail CI — but the override should still be removed at that point to keep `package.json` minimal.
 - After any Storybook feature-step updates, always regenerate specs with `npx bddgen` before running Playwright.

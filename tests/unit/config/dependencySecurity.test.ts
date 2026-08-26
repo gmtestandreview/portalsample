@@ -13,6 +13,7 @@ type PackageLock = {
 
 type RootPackage = {
   devDependencies?: Record<string, string>;
+  overrides?: Record<string, string | Record<string, string>>;
 };
 
 const lock = JSON.parse(
@@ -128,13 +129,36 @@ describe("transitive security dependency floors", () => {
     },
   );
 
-  it("keeps every glob major on a maintained release", () => {
+  it("keeps every glob major off deprecated releases and pins the three scoped owners to glob 13.0.6", () => {
     // Glob 7 arrives only through the deprecated ESLint 8 / rimraf 3 chain.
-    for (const version of installedVersions("glob")) {
+    // Glob 10 was a transitional allowance under Task D1; Task D2 replaces the
+    // remaining remark-cli / unified-engine copies with the owner-scoped
+    // glob@13.0.6 override below, so no glob 10 copy may remain installed.
+    const versions = installedVersions("glob");
+
+    expect(versions).not.toHaveLength(0);
+    for (const version of versions) {
       expect(
         gte(version, "10.0.0"),
         `glob@${version} is a deprecated pre-10 release`,
       ).toBe(true);
+      expect(
+        version.startsWith("10."),
+        `glob@${version} is the deprecated glob 10 release`,
+      ).toBe(false);
+    }
+
+    const globOverrideOwners = [
+      "unified-engine",
+      "@npmcli/map-workspaces",
+      "@npmcli/package-json",
+    ];
+
+    for (const owner of globOverrideOwners) {
+      expect(
+        rootPackage.overrides?.[owner],
+        `package.json overrides must pin ${owner}'s glob dependency to 13.0.6`,
+      ).toEqual({ glob: "13.0.6" });
     }
   });
 
@@ -210,24 +234,17 @@ describe("lint cohort", () => {
 });
 
 describe("publisher deprecations", () => {
-  const deprecatedEntries = Object.entries(lock.packages)
-    .filter(([, metadata]) => Boolean(metadata.deprecated))
-    .map(([packagePath]) => packagePath);
-
   /**
-   * Task D1 removes the ESLint 8 chain. Three glob@10 copies owned by
-   * remark-cli/unified-engine survive until Task D2 adds the scoped overrides,
-   * so they are the only tolerated remainder and are named exactly.
+   * Task D1 removed the ESLint 8 chain but left a transitional allowance for
+   * three glob@10 copies owned by remark-cli/unified-engine. Task D2 removes
+   * that allowance: the lockfile must carry zero packages with a non-empty
+   * `deprecated` field.
    */
-  const allowedRemainingDeprecations = [
-    "node_modules/@npmcli/map-workspaces/node_modules/glob",
-    "node_modules/@npmcli/package-json/node_modules/glob",
-    "node_modules/unified-engine/node_modules/glob",
-  ];
+  it("installs no package that npm publishers have marked deprecated", () => {
+    const deprecatedEntries = Object.entries(lock.packages)
+      .filter(([, metadata]) => Boolean(metadata.deprecated))
+      .map(([packagePath]) => packagePath);
 
-  it("leaves no deprecated package outside the recorded transitional set", () => {
-    expect([...deprecatedEntries].sort()).toEqual(
-      [...allowedRemainingDeprecations].sort(),
-    );
+    expect(deprecatedEntries).toEqual([]);
   });
 });
