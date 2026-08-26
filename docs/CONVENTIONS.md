@@ -140,3 +140,37 @@
 - The Dependency DRI reviews this override quarterly and whenever Dependabot proposes an update to `remark-cli`, `unified-engine`, `@npmcli/map-workspaces`, `@npmcli/package-json`, or `glob`.
 - **Removal trigger**: once all three owning packages resolve a maintained, non-deprecated `glob` release on their own (without the override), remove the corresponding `overrides` entries. `tests/unit/config/dependencySecurity.test.ts`'s `"publisher deprecations"` test rejects any lockfile package with a non-empty `deprecated` field, so a now-unnecessary override left in place will not itself fail CI — but the override should still be removed at that point to keep `package.json` minimal.
 - After any Storybook feature-step updates, always regenerate specs with `npx bddgen` before running Playwright.
+
+## 11) Node and GitHub Actions Runtime Contracts
+
+Two runtimes are versioned independently and must not be inferred from each other: the **application** Node that `setup-node` installs, and the **action** Node that GitHub uses to execute an action's own JavaScript.
+
+- **Application/tooling floor** — `engines.node` and `devEngines.runtime.version` are both `>=24.0.0`, with `devEngines.runtime.onFail: error`. The floor deliberately excludes EOL Node 20, Node 22, and odd-numbered Node 23. `packageManager` stays on `npm@11.17.0` (Task D3; the floor itself landed early in Task D1 because `@eslint-react/eslint-plugin@5.18.6` requires Node >= 22).
+- **Action runtime** — supplied by the reviewed `checkout`/`setup-node` v7 and `upload-artifact` v6 majors, independent of the application version above.
+
+### Immutable action pins
+
+Every `uses:` in `.github/workflows/**` is pinned to a full commit SHA with the reviewed major in a trailing comment. A floating `@v7` tag is mutable and is rejected by `tests/unit/config/workflowPolicy.test.ts`.
+
+| Action                    | Pin                                        | Major    |
+| ------------------------- | ------------------------------------------ | -------- |
+| `actions/checkout`        | `3d3c42e5aac5ba805825da76410c181273ba90b1` | `v7.0.1` |
+| `actions/setup-node`      | `820762786026740c76f36085b0efc47a31fe5020` | `v7.0.0` |
+| `actions/upload-artifact` | `b7c566a772e6b6bfb58ed0dc250532a479d7789f` | `v6.0.0` |
+
+`setup-node` v7 auto-detects a package manager, so the explicit `cache: 'npm'` input is retained on every invocation to keep cache ownership where it was.
+
+### PR statuses
+
+`.github/workflows/pr.yml` declares six job identifiers exposing eight independently named statuses — `vitest` fans out through the retained Task A1 matrix into `vitest-unit`, `vitest-storybook`, and `vitest-quality`. The others are `static-quality-node24`, `build-node24`, `date-timezone`, `e2e-node24`, and `lower-bound-node24`.
+
+- `lower-bound-node24` installs on the **exact** floor (`node-version: '24.0.0'`) with `npm ci --strict-peer-deps`, proving the declared floor resolves rather than merely "some Node 24".
+- `date-timezone` runs the focused date suite under `TZ` of UTC, Australia/Sydney, and America/Los_Angeles with `fail-fast: false`. **Its UTC leg is expected to fail** while Child Plan B is externally deferred: `datePickerWrapper.test.tsx` has three characterized timezone failures under UTC and passes in the other two zones. That visibility is the point — do not mark this job a required status in branch protection, and never add `continue-on-error` to hide it. Child Plan B's B1 makes it green and adds `tests/unit/utils/dateOnly.test.ts` to the file list.
+- Every job carries an explicit `timeout-minutes` and uploads evidence with `if: always()`, `if-no-files-found: error`, and `retention-days: 14`.
+- Workflow-level `defaults.run.shell: bash` is load-bearing: GitHub's implicit runner shell is `bash -e`, which has no `pipefail`, so a step piping into `tee` would otherwise report `tee`'s exit code instead of the command's.
+
+### Update ownership
+
+- Dependabot's `github-actions` ecosystem entry proposes weekly pin updates. The Dependency DRI reviews them, and a pin is only advanced after the full Node 24 job graph — `lower-bound-node24` included — passes on the proposed SHA.
+- The `eslint-family` npm group keeps `eslint`, `@eslint/js`, `typescript-eslint`, `@eslint-react/*`, `eslint-plugin-react-hooks`, `@stylistic/*`, and `globals` in one pull request; that cohort shares peer ranges and only resolves as a set. npm majors stay review-only.
+- **Known gap**: `@types/node` is still declared `^20.19.43` while the runtime floor is Node 24, so TypeScript checks against Node 20 type definitions. Correcting it regenerates `package-lock.json` and is therefore tracked as a dependency-cohort change, not a runtime-contract one.

@@ -7,21 +7,31 @@ on:
 permissions:
   contents: read
 
+# GitHub's implicit runner shell is `bash -e`, which has no pipefail: a step
+# that pipes into `tee` would report the exit code of `tee`, not of the command
+# being recorded. Naming bash explicitly restores `-o pipefail`.
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  static-quality:
-    name: Static quality
+  static-quality-node24:
+    name: static-quality-node24
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "npm"
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Prepare evidence directory
+        run: mkdir -p reports/ci/static-quality
 
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/static-quality/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         run: |
@@ -32,18 +42,27 @@ jobs:
           node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
 
       - name: Type-check
-        run: npm run type-check
+        run: npm run type-check 2>&1 | tee reports/ci/static-quality/type-check.log
 
       - name: Lint
-        run: npm run lint
+        run: npm run lint 2>&1 | tee reports/ci/static-quality/lint.log
 
       - name: Lint MDX
-        run: npm run lint:mdx
+        run: npm run lint:mdx 2>&1 | tee reports/ci/static-quality/lint-mdx.log
+
+      - name: Upload static quality logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: static-quality-node24-${{ github.run_attempt }}
+          path: reports/ci/static-quality/**
+          if-no-files-found: error
+          retention-days: 14
 
   # Each test environment is its own required status. `fail-fast: false` keeps a
   # failing partition from cancelling the others, so every surface reports.
-  test-partition:
-    name: Vitest ${{ matrix.partition.name }}
+  vitest:
+    name: vitest-${{ matrix.partition.name }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
@@ -63,12 +82,12 @@ jobs:
             report: reports/vitest/quality-junit.xml
             install-browser: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "npm"
+          node-version: '24'
+          cache: 'npm'
 
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
@@ -108,8 +127,8 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  build:
-    name: Build
+  build-node24:
+    name: build-node24
     runs-on: ubuntu-latest
     timeout-minutes: 25
     env:
@@ -118,15 +137,18 @@ jobs:
       VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
       VITE_API_BASE_URL: http://localhost:5085
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "npm"
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Prepare evidence directory
+        run: mkdir -p reports/ci/build
 
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/build/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         run: |
@@ -135,30 +157,50 @@ jobs:
           VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
           npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
           node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
-
-      - name: Install Playwright Chromium for Storybook BDD
-        run: npx playwright install --with-deps chromium
 
       - name: Build app
-        run: npm run build
-
-      - name: Run Storybook BDD
-        run: npm run test:e2e:storybook
+        run: npm run build 2>&1 | tee reports/ci/build/app-build.log
 
       - name: Verify Storybook documentation
-        run: npm run storybook:verify:docs
+        run: npm run storybook:verify:docs 2>&1 | tee reports/ci/build/storybook-build.log
 
-  dependency-security-node24:
-    name: Dependency security (Node 24 floor)
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: build-node24-${{ github.run_attempt }}
+          path: reports/ci/build/**
+          if-no-files-found: error
+          retention-days: 14
+
+  # The focused date suite is timezone-sensitive by construction. Each zone is
+  # its own leg so a failure in one stays attributable; `fail-fast: false` keeps
+  # the passing zones reporting. The UTC leg carries Child Plan B's characterized
+  # DatePicker failures and stays red until B1 lands - that visibility is the
+  # point, so this job must never be allowed to mask its own result.
+  date-timezone:
+    name: date-timezone
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        zone:
+          - name: UTC
+            slug: utc
+          - name: Australia/Sydney
+            slug: sydney
+          - name: America/Los_Angeles
+            slug: los-angeles
+    env:
+      TZ: ${{ matrix.zone.name }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: "24"
-          cache: "npm"
+          node-version: '24'
+          cache: 'npm'
 
       - name: Install dependencies with declared npm
         run: npx --yes npm@11.17.0 ci
@@ -171,9 +213,129 @@ jobs:
           npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
           node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
 
-      - name: Run lower-bound dependency security tests
+      # Child Plan B adds tests/unit/utils/dateOnly.test.ts to this list; it does
+      # not exist while B is externally deferred, and naming it now would fail
+      # every zone for a missing file rather than for a timezone defect.
+      - name: Run focused date suite in ${{ matrix.zone.name }}
+        run: >-
+          npm run test:unit --
+          tests/unit/components/inputs/datePickerWrapper.test.tsx
+          tests/unit/routes/requestForQuote/props.test.ts
+          tests/unit/routes/requestForQuote/validation.test.ts
+          --reporter=default --reporter=junit
+          --outputFile.junit=reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
+
+      - name: Upload ${{ matrix.zone.name }} JUnit report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: date-${{ matrix.zone.slug }}-${{ github.run_attempt }}
+          path: reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+  e2e-node24:
+    name: e2e-node24
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      VITE_APP_ENVIRONMENT: local
+      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
+      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
+      VITE_API_BASE_URL: http://localhost:5085
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci
+
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: |
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+
+      # Both Playwright projects start their own web server (app on :3000,
+      # Storybook on :6006) and mock the API and MSAL, so no backend is needed -
+      # but neither provisions a browser binary.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run app and Storybook BDD suites
+        run: npm run test:e2e
+
+      - name: Upload Playwright report, traces, and screenshots
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: e2e-node24-${{ github.run_attempt }}
+          path: |
+            reports/playwright/**
+            reports/test-results/**
+          if-no-files-found: error
+          retention-days: 14
+
+  # Proves the declared floor itself installs, not merely "some Node 24".
+  lower-bound-node24:
+    name: lower-bound-node24
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VITE_APP_ENVIRONMENT: local
+      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
+      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
+      VITE_API_BASE_URL: http://localhost:5085
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24.0.0'
+          cache: 'npm'
+
+      - name: Prepare evidence directory
+        run: mkdir -p reports/ci/lower-bound
+
+      - name: Install on the exact floor with strict peers
+        run: npx --yes npm@11.17.0 ci --strict-peer-deps 2>&1 | tee reports/ci/lower-bound/install.log
+
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: |
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+
+      - name: Run dependency security policy tests
         run: >-
           npm run test:unit --
           tests/unit/config/dependencySecurity.test.ts
           tests/unit/security/dompurify.regression.test.ts
           tests/unit/runtime/trustedtypes.test.ts
+          2>&1 | tee reports/ci/lower-bound/policy.log
+
+      - name: Lint
+        run: npm run lint 2>&1 | tee reports/ci/lower-bound/lint.log
+
+      - name: Type-check
+        run: npm run type-check 2>&1 | tee reports/ci/lower-bound/type-check.log
+
+      - name: Build app
+        run: npm run build 2>&1 | tee reports/ci/lower-bound/build.log
+
+      - name: Upload lower-bound logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: lower-bound-node24-${{ github.run_attempt }}
+          path: reports/ci/lower-bound/**
+          if-no-files-found: error
+          retention-days: 14
