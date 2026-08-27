@@ -88,7 +88,8 @@ Every child plan must finish with:
 ## Global Constraints
 
 - Treat the dependency-security implementation and CI hardening through `55e31d9` as completed predecessor work: `a70086f` (incomplete Rolldown attempt), `fc29795` (working exact binding reinstall), `895f6d7` (Node 20.19.0 floor), `0d16927` (flattened Storybook leaf and removed root worker cap), `110d5cb` (incident documentation), `cb5fdaa` (CI Chromium installation), and `55e31d9` (final CI classification). Preserve the working fixes; do not repeat the incomplete fallback. At final review, the only untracked working-tree items are generated `public/mockServiceWorker.js` and local `.claude/settings.json`; do not discard or commit either.
-- **Updated 2026-08-25.** The working tree also carried two in-flight bodies of work by the repository owner, which they have since taken ownership of and which are now committed rather than preserved as unstaged: a component JSDoc pass (`f3036bc`) and the Storybook MCP canonicalisation plus plan tracking (`99795e9`). See "Concurrent Work Taken Into Scope". No unstaged tracked change remains.
+- **Updated 2026-08-25.** The working tree also carried two in-flight bodies of work by the repository owner, which they have since taken ownership of and which are now committed rather than preserved as unstaged: a component JSDoc pass (`f3036bc`) and the Storybook MCP canonicalisation plus plan tracking (`99795e9`). See "Concurrent Work Taken Into Scope".
+- **Superseded 2026-08-27.** The claim "No unstaged tracked change remains" was true on 2026-08-25 and is false now. Nine tracked files are modified in the working tree, including production code (`ClientApp/src/index.tsx`), a unit test (`tests/unit/runtime/indexBootstrap.test.tsx`), and the lint config (`eslint.config.mjs`). See "Devil's Advocate Audit — 2026-08-27", findings **B3** and **B4**; that drift must be resolved before Child Plan C's warning census begins.
 - Never edit `ClientApp/src/api/web-api-client.ts`, captured bundles, vendor mirrors, Storybook output, Playwright output, coverage output, or `public/mockServiceWorker.js`.
 - Use npm 11.17.0 for manifest changes, lockfile regeneration, and clean-install evidence. The downloaded plan's reference to pnpm does not match this repository.
 - Do not introduce `--force`, `--legacy-peer-deps`, warning filters, arbitrary retries, longer timeouts, reduced worker counts, blanket `console` mocks, or lower coverage thresholds to manufacture a green result. Preserve the predecessor's separately justified Rolldown optional-native-binding workaround until its own upstream removal test passes; do not reuse it for this plan's dependency migration.
@@ -178,6 +179,183 @@ cross-authorship concern.
 **Lesson for the remaining lanes.** Task A3's queue is concentrated in `ClientApp/src/components` — the same tree the
 concurrent agent was traversing. Confirm no other agent is active before resuming A3, or its coverage runs will be
 invalidated mid-flight the same way.
+
+## Devil's Advocate Audit — 2026-08-27
+
+Conducted at `def0d54`, after D1/D2/D3 landed. The brief was adversarial: assume the plan
+is wrong and look for it. Findings are split into top-down (does the delivery logic hold?)
+and bottom-up (does the repository match what the plan asserts?). Every finding below was
+reproduced by command, not inferred.
+
+### Top-down findings
+
+**T1 — The plan's success path ends in "technically ready but unmerged."**
+G1A Step 8 already concedes this: "if that path cannot accept the visible B failure, the
+tranche remains technically ready but unmerged." That is not a footnote — it is the
+terminal state of the entire A/C/D tranche, including the completed security and
+deprecation remediation, and it is gated on Child Plan B, which is externally deferred
+with no named approver and no contract evidence. The plan documents the risk and then
+offers no mitigation. **This is the single highest-consequence gap.** It needs an explicit
+decision, recorded in the ledger, between:
+
+1. merging A/C/D on a recorded branch-protection exemption, with the two expected-red
+   statuses named in the exemption; or
+2. a narrow, B0-linked quarantine of the three DatePicker assertions — which the plan's
+   own no-suppression rule currently forbids, so it would need an explicit exception.
+
+Doing nothing is the current default, and the current default is "never merges."
+
+**T2 — Two required statuses are red by design at G1A, not one.**
+GitHub-hosted runners run in UTC, so `vitest-unit` carries the same three DatePicker
+failures as `date-timezone`'s UTC leg — the plan's own evidence for PR run `32644658694`
+records exactly that. The eight-status graph therefore produces two independent red
+checks from one deferred defect. The plan should name which statuses are *expected* red
+and why, so a reviewer can tell designed-red from regression-red at a glance.
+
+**T3 — The dependency graph was violated: D3 shipped before C4.**
+The graph states "D3 Node/Actions runtime waits for A1 workflow partition + C4 telemetry
+policy." C4 has not started, yet D3 (`983314e`) rewrote `.github/workflows/pr.yml`
+wholesale. The ordering now has to be re-declared as *C4 amends the D3 workflow*, and C4
+must be warned that `tests/unit/config/workflowPolicy.test.ts` asserts counting invariants
+— `if: always()` occurrences must equal the upload-artifact count, likewise
+`if-no-files-found: error` and `retention-days: 14`. Any telemetry step C4 adds that
+carries `if: always()` breaks those assertions for a legitimate reason. That brittleness
+was introduced by D3 and is D3's to flag, not C4's to discover.
+
+**T4 — The Atomic Readiness Rubric is self-scored and no longer supportable.**
+It reports 98/100 with 10/10 on "Task executability" and a `2` for "lint fixtures." Finding
+**B1** shows a file the plan names five times was never created, in a task marked
+`accepted`. A rubric that scores full marks while that is true is a comfort artifact, not
+a control. Either re-score it against evidence or remove it.
+
+**T5 — Child Plan A's effort budget is not survivable as written.**
+A is budgeted at 1-3 agent-days. The measured remaining gap is **1,049 branches, 442
+functions, and 1,649 statements across 47 files**, with one of six families closed. The
+plan's own re-estimate trigger ("re-estimate a child plan if its first red test reveals a
+new production defect or external dependency") is the wrong trigger here — nothing was
+revealed, the original estimate was simply wrong by an order of magnitude. A3 should be
+re-estimated or promoted to its own child plan with per-family acceptance.
+
+### Bottom-up findings
+
+**B1 — `tests/unit/config/eslintPolicy.test.ts` does not exist and never did.**
+`git log --all` for that path is empty. The plan names it five times: the Implementation
+File Map, D1's "Create" list, D1 Step 5's verification command, D1 Step 6's `git add`, and
+G1A Step 2's acceptance command. D1 is marked `accepted` in the delivery ledger. Reproduce:
+
+```powershell
+npm run test:unit -- tests/unit/config/eslintPolicy.test.ts
+# No test files found, exiting with code 1
+```
+
+G1A Step 2 therefore cannot pass today. D1's acceptance is not evidence-backed, and the
+ESLint policy characterization that D1 Step 2 describes in detail — the rule-ownership
+decisions, the 16-rule react-hooks cohort, the `@eslint-react` duplicate disabling — exists
+only as prose in this plan, with no executable guard.
+
+**B2 — Uncommitted Lane D work sits outside the plan.**
+`tests/unit/config/eslintConfig.test.ts` is untracked and `eslint.config.mjs` has an
+uncommitted change adding a `storybook/no-uninstalled-addons` rule scoped to
+`.storybook/main.*`. They are a matched pair. Three problems: the test spawns a real ESLint
+process via `spawnSync`, which made it **fail under parallel load and pass in isolation**
+during the 2026-08-27 regression run; it is written in 4-space/single-quote style matching
+the untracked `.prettierrc.json` rather than the tracked test style; and neither half is
+committed, so CI has never seen it. Adopt it into Lane D with a stability fix, or delete it.
+
+**B3 — `ClientApp/src/index.tsx` has an uncommitted production change that invalidates
+Child Plan C's baseline.** `StrictMode` has been hoisted from inside `AccountProvider` to
+outermost, above `ErrorBoundary`, `MsalProvider`, and `AccountProvider`. StrictMode's
+development double-render now covers the MSAL and account providers. Double-rendering is a
+first-order source of React `act(...)` warnings and async-settlement noise — precisely what
+C1 inventories and C3 repairs. **A warning census taken before this change measures a
+different application than one taken after.** Land it or revert it before C1 starts; do not
+start C1 with it unstaged.
+
+**B4 — The working tree carries nine modified tracked files**, not zero. Beyond B2 and B3:
+`.gitignore`, `.vscode/settings.json`, `.tours/security-auth-boundaries.tour.json`,
+`.agents/plugins/marketplace.json`, `plugins/react18-commander/.codex-plugin/plugin.json`,
+and a modal-accessibility plan document.
+
+**B5 — `.gitignore` now asserts a policy that contradicts this plan.** Its new comment reads
+"Team-wide config lives in `.claude/settings.json`, which stays tracked." That file is
+currently **untracked**, and this plan's Global Constraints list it as a local item that must
+be neither discarded nor committed. Two of the three positions must give way.
+
+**B6 — An undeclared parallel worktree is active.** `git worktree list` shows
+`portal.measurement.gov.au-storybook-autodocs` on branch `refactor/storybook-autodocs` at
+`f71c9c9`, and this tree holds two untracked storybook-autodocs planning documents. The
+umbrella never mentions it, yet its own "Lesson for the remaining lanes" warns that a
+concurrent agent traversing `ClientApp/src/components` invalidates A3's coverage runs —
+which is exactly what a Storybook autodocs refactor does. Record it as a known concurrent
+lane with a no-overlap rule, or A3 will be invalidated mid-flight a second time.
+
+**B7 — There is no current coverage measurement.** `reports/coverage/unit/coverage-summary.json`
+is absent. The ledger's 74.43/75.51/72.56/74.92 figures are the G0A baseline at `55e31d9`,
+taken *before* family 1 closed at `c8c15bd`. A3 Step 2 makes the queue authoritative, so the
+queue must be regenerated before the next family is opened; the 48-row queue on disk is
+likewise pre-`c8c15bd`.
+
+### Hypotheses tested and rejected
+
+Recorded so they are not re-investigated:
+
+- **`ClientApp/src/components/Inputs/Attachment/index-new.tsx` is dead duplicate code.**
+  Rejected. There is no sibling `index.tsx`; the `-new` suffix is a misnomer. It is imported
+  by `ClientApp/src/routes/ta/supportingDocuments.tsx` and by its own stories. Its 108
+  uncovered branches are real A3 work, not deletable weight.
+- **`coverage-gap-queue.json` is truncated relative to the ledger's 48-file claim.**
+  Rejected. The queue holds `{generatedFrom, totals, rows}` with `rows.length === 48`,
+  matching the ledger exactly.
+- **D2 was still outstanding.** Rejected. D2 landed at `b854969` before the 2026-08-27
+  session and was verified at HEAD: zero deprecated lockfile entries, one hoisted
+  `glob@13.0.6`, `lint:mdx` clean.
+
+### Revised next steps, in order
+
+The ordering below is chosen so that no step invalidates the evidence of a later one.
+
+1. **Resolve the working-tree drift (B2, B3, B4, B5).** Owner decision per file: commit or
+   revert. `ClientApp/src/index.tsx` is the blocking one — Child Plan C cannot start an
+   honest census while it is unstaged. Reconcile the `.gitignore` claim against the Global
+   Constraints at the same time.
+2. **Close B1 by writing `tests/unit/config/eslintPolicy.test.ts`**, or amend the plan to
+   delete all five references and record why D1 shipped without it. Do not leave D1 marked
+   `accepted` against a command that exits 1. This is small and unblocks G1A Step 2.
+3. **Take the T1 merge decision and record it in the ledger** before any further
+   implementation. Everything downstream is hostage to it, and it is a governance choice,
+   not an engineering one.
+4. **Declare the concurrent lane (B6)** and confirm no other agent is active in
+   `ClientApp/src/components`.
+5. **Regenerate the coverage queue (B7)**, then resume A3 at family 2.
+6. **Start Child Plan C at C1**, with the census taken after step 1 has settled.
+7. **Amend the graph for T3** so C4 is documented as amending D3's workflow, including the
+   `workflowPolicy.test.ts` counting-invariant warning.
+8. **Re-estimate A (T5)** and re-score or remove the rubric (T4).
+
+### Remaining work at 2026-08-27
+
+| Lane | Task | State | Blocking issue |
+| --- | --- | --- | --- |
+| A | A1 topology + CI partition | landed `65dfd3f` | acceptance pending A3 + C7 |
+| A | A2 coverage remap | landed `71fa4a0` | acceptance pending A3 |
+| A | A3 coverage closure | **1 of 6 families closed** (`c8c15bd`) | 1,049 branches / 442 functions / 1,649 statements over 47 files; queue stale (B7); budget wrong (T5) |
+| B | B0 contract approval | `EXTERNALLY DEFERRED` | no authoritative schema, no named approver |
+| B | B1 date-only adapter | blocked on B0 | — |
+| C | C1 warning census | not started | blocked by B3 working-tree drift |
+| C | C2 shared inputs | not started | C1 |
+| C | C3 async owners | not started | C2; inherits D1's 56 `set-state-in-effect` sites |
+| C | C4 runtime/telemetry policy | not started | C3; must amend D3's workflow (T3) |
+| C | C5 MSW contracts | not started | C4 |
+| C | C6 modal lifecycle | not started | C5; 10 assertions unverified at HEAD since 2026-08-24 |
+| C | C7 console ratchet | not started | every C owner clean |
+| C | C8 E2E re-baseline | not started | C7; `e2e-node24` now runs it in CI for the first time |
+| D | D1 ESLint flat config | landed `7d30a0b` | **acceptance not evidence-backed (B1)** |
+| D | D2 glob overrides | landed `b854969`, verified at HEAD | none |
+| D | D3 Node/Actions runtime | landed `983314e` | 8 statuses never executed on a real runner |
+
+**Critical path:** working-tree drift → C1 → C2 → C3 → C4 → C5 → C6 → C7 → C8, with A3
+running in parallel once the concurrent lane is declared. D is complete apart from B1 and
+first-run CI proof. B remains outside the path and outside the tranche.
 
 ## Target Test Topology
 
@@ -1342,7 +1520,7 @@ Do not use random retries as evidence. If the runner exposes a repeat or seed op
 - Delete: `.eslintignore`
 - Create: `eslint.config.mjs`
 - Modify: `tests/unit/config/dependencySecurity.test.ts`
-- Create: `tests/unit/config/eslintPolicy.test.ts`
+- Create: `tests/unit/config/eslintPolicy.test.ts` — **NOT DONE.** D1 shipped at `7d30a0b` without this file and `git log --all` for the path is empty. See audit finding **B1**; the rule-ownership decisions recorded in Step 2 below currently have no executable guard, and G1A Step 2's acceptance command exits 1 because of it.
 - Modify: `ClientApp/src/routes/ta/supportingDocuments.tsx`
 - Modify: `ClientApp/src/components/forms/WizardForm/NextStepButton.tsx`
 - Modify: `ClientApp/src/components/SlateEditor/SlateEditor.tsx`
@@ -1527,6 +1705,24 @@ The PR workflow must expose these independently named required statuses:
 | `lower-bound-node24`    | 24.0.0  | `npm ci --strict-peer-deps`, dependency-security tests, lint, type-check, and app build without browser suites | Install and policy logs                                                |
 
 Task A1's Vitest matrix implements the three `vitest-*` statuses; D3 must retain it rather than collapsing back to `npm run test:ci`. Every artifact step uses `if: always()` and `if-no-files-found: error`; every job has a timeout matching the budgets in this umbrella. If E2E cannot provision its declared web servers and fixtures on `ubuntu-latest`, D3 is `blocked` until that contract is repaired; “as permitted by workflow architecture” is not an acceptance state.
+
+**Landed 2026-08-27 in `983314e`, ahead of its declared C4 predecessor.** The dependency graph
+says D3 waits for A1 *and* C4; C4 has not started, so C4 now **amends** the D3 workflow rather
+than the other way round. Two consequences C4 must plan for:
+
+- `tests/unit/config/workflowPolicy.test.ts` asserts **counting invariants**: the number of
+  `if: always()` occurrences must equal the `upload-artifact` count, and likewise for
+  `if-no-files-found: error` and `retention-days: 14`. A telemetry step carrying `if: always()`
+  that is not an upload will break those assertions for a legitimate reason. Update the
+  invariant with the step; do not delete the assertion.
+- Workflow-level `defaults.run.shell: bash` is load-bearing, not cosmetic. GitHub's implicit
+  runner shell is `bash -e`, which has no `pipefail`, so any step piping into `tee` would
+  report `tee`'s exit code instead of the command's. Several jobs rely on it for log evidence.
+
+`date-timezone` ships **expected-red on its UTC leg** while Child Plan B is deferred, and
+`vitest-unit` carries the same three failures because hosted runners are UTC. See audit
+findings **T1** and **T2**: neither job may be marked a required status in branch protection
+until B1 lands, and the merge decision in T1 is a precondition for releasing the tranche.
 
 The Storybook and E2E jobs must retain explicit Chromium installation. Commit `cb5fdaa` proved that dependency installation does not provision Playwright browser binaries on a fresh runner; moving the command between jobs is allowed, deleting it is not.
 
@@ -1779,6 +1975,16 @@ Each atom scores `0` when absent, `1` when present but an implementer must still
 | Bottom-up | CI and dependency maintenance | Compatible cohort `2`; immutable pins `2`; lint fixtures `2`; override lifecycle `2`; Dependabot ownership `2`                                                 | 10/10 |
 
 **A/C/D tranche readiness score: 98/100.** Top-down: 50/50. Bottom-up: 48/50. No A/C/D prerequisite scores zero. Full-portfolio and Child B readiness remain `BLOCKED` because authoritative contract evidence currently scores zero; the resume trigger prevents that missing authority from being silently delegated to the implementer. The two one-point A/C/D atoms are honest evidence/version uncertainty with explicit revalidation gates.
+
+> **Withdrawn 2026-08-27 — do not cite this score.** The rubric is self-assessed and the
+> 2026-08-27 audit falsified two of its full-mark atoms: "Task executability — exact stable
+> paths `2`" and "lint fixtures `2`" cannot both hold when a file the plan names five times
+> was never created inside a task marked `accepted` (finding **B1**), and "Priority and
+> sequencing — dependency order `2`" cannot hold when D3 shipped ahead of its declared C4
+> predecessor (finding **T3**). "Feasibility — estimates `2`" is contradicted by finding
+> **T5**. A rubric scored by the plan's own author, against the plan's own prose rather than
+> against the repository, measures internal consistency and nothing else. Re-score it against
+> commands and evidence, or delete it; do not use 98/100 as a readiness signal.
 
 ## Self-Review
 
