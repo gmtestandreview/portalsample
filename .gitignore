@@ -16,9 +16,21 @@ ClientApp/src/main.*.js.map
 *.tsbuildinfo
 
 # Test output (all artifacts consolidated under reports/)
-reports/
+# Contents form, not `reports/`: git does not descend into an excluded
+# directory, so a negation below it is inert unless the directory itself stays
+# traversable. Same correction already applied to `quality/`.
+reports/*
 coverage/
 tmp/
+
+# The Task C1 warning census is hand-authored analysis, and the three logs are
+# the runs every count in it is derived from. C2-C7 consume the census, so it
+# must survive a clone rather than living only in one working tree.
+!reports/stabilisation/
+reports/stabilisation/*
+!reports/stabilisation/warnings.md
+# The three C1 evidence logs are re-included below the `*.log` rule instead of
+# here: the last matching pattern wins, so a negation above `*.log` is undone.
 
 # `coverage/` matches by basename at any depth, so it also swallowed
 # tests/unit/coverage/ — test SOURCE, not output. Re-include that directory.
@@ -46,6 +58,13 @@ Thumbs.db
 # Logs
 npm-debug.log*
 *.log
+
+# Task C1 evidence: the three runs every count in
+# reports/stabilisation/warnings.md is derived from. Must sit below `*.log`,
+# because the last matching pattern wins.
+!reports/stabilisation/c1-unit-census.log
+!reports/stabilisation/c1-storybook-census.log
+!reports/stabilisation/c1-modal-repetitions.log
 full-test-output.txt
 test-output.txt
 test_output.txt

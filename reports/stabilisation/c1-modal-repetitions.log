@@ -1,0 +1,21 @@
+===== REPETITION 1 =====
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  20:24:11
+   Duration  5.65s (transform 0ms, setup 6.34s, import 655ms, tests 1.46s, environment 0ms)
+
+===== REPETITION 2 =====
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  20:24:19
+   Duration  5.58s (transform 0ms, setup 6.47s, import 708ms, tests 1.44s, environment 0ms)
+
+===== REPETITION 3 =====
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  20:24:27
+   Duration  5.42s (transform 0ms, setup 6.02s, import 634ms, tests 1.48s, environment 0ms)
+
