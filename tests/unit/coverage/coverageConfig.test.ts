@@ -16,11 +16,15 @@ describe('unit coverage configuration', () => {
         // function and branch maps. `json-summary` carries only per-file
         // totals, so Task A3's gap queue could rank work but not locate it.
         // Both are required; see scripts/coverage-gap-queue.mjs.
+        // `lcov` is the only format SonarQube imports for TypeScript; dropping
+        // it silently reports 0% coverage on SonarCloud, which reads as a real
+        // regression rather than a missing file. See sonar-project.properties.
         expect(testConfig?.coverage?.reporter).toEqual([
             'text',
             'html',
             'json-summary',
             'json',
+            'lcov',
         ]);
         expect(testConfig?.coverage?.reportsDirectory).toBe('./reports/coverage/unit');
     });

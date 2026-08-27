@@ -78,3 +78,8 @@ test_output.txt
 # rather than inheriting them silently.
 .claude/settings.json
 .claude/settings.local.json
+
+# SonarScanner working directory. Regenerated on every `sonar-scanner` run and
+# ~4 MB per analysis (protobuf UDG graphs, report staging). Build artifact, not
+# source. `sonar-project.properties` IS tracked - it is the project binding.
+.scannerwork/

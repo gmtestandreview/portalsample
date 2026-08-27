@@ -17,7 +17,10 @@ const coverageConfig: CoverageOptions = {
     // `json` emits coverage-final.json, which retains the statement, function and
     // branch maps. `json-summary` carries only per-file totals, so Task A3's gap
     // queue could rank work but not locate it. Both are needed.
-    reporter: ['text', 'html', 'json-summary', 'json'],
+    // `lcov` is the only format SonarQube imports for TypeScript
+    // (sonar.javascript.lcov.reportPaths in sonar-project.properties); without
+    // it SonarCloud reports 0% coverage regardless of the real figure.
+    reporter: ['text', 'html', 'json-summary', 'json', 'lcov'],
     // Vitest defaults this to false, which writes no coverage report at all when
     // any test fails - and it cleans the output directory first, so a red run
     // leaves nothing behind. The PR workflow uploads reports/coverage/unit/**
