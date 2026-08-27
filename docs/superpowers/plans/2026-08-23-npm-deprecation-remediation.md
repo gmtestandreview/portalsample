@@ -205,6 +205,36 @@ decision, recorded in the ledger, between:
 
 Doing nothing is the current default, and the current default is "never merges."
 
+> **DECIDED 2026-08-27 by the repository owner: option 1, the recorded exemption.**
+>
+> `vitest-unit` and `date-timezone` are **not** to be marked required statuses in
+> branch protection until B1 lands. Every other status in the eight-status graph
+> stays required. Nothing is suppressed: both jobs keep running, both keep failing
+> visibly on the three characterized `datePickerWrapper` assertions, and no
+> assertion is skipped, quarantined, or relabelled.
+>
+> | Status | Required in branch protection | Re-require when |
+> | --- | --- | --- |
+> | `static-quality-node24` | yes | — |
+> | `vitest-unit` | **no** | B0 signed and B1 accepted |
+> | `vitest-storybook` | yes | — |
+> | `vitest-quality` | yes | — |
+> | `build-node24` | yes | — |
+> | `date-timezone` | **no** | B0 signed and B1 accepted |
+> | `e2e-node24` | yes | — |
+> | `lower-bound-node24` | yes | — |
+>
+> The exemption covers exactly three assertions in
+> `tests/unit/components/inputs/datePickerWrapper.test.tsx` — stored day, blur, and
+> summary display — under `TZ=UTC` only; the same file passes 21/21 in
+> Australia/Sydney and America/Los_Angeles. **Any other failure in either job is a
+> regression and blocks the merge**, which is precisely the property a blanket
+> "expected red" label would destroy. Re-requiring both statuses is part of B1's
+> definition of done, not a follow-up.
+>
+> This decision must be applied in the repository's branch-protection settings,
+> which are outside the working tree; recording it here does not enforce it.
+
 **T2 — Two required statuses are red by design at G1A, not one.**
 GitHub-hosted runners run in UTC, so `vitest-unit` carries the same three DatePicker
 failures as `date-timezone`'s UTC leg — the plan's own evidence for PR run `32644658694`
@@ -356,6 +386,47 @@ The ordering below is chosen so that no step invalidates the evidence of a later
 **Critical path:** working-tree drift → C1 → C2 → C3 → C4 → C5 → C6 → C7 → C8, with A3
 running in parallel once the concurrent lane is declared. D is complete apart from B1 and
 first-run CI proof. B remains outside the path and outside the tranche.
+
+### Declared concurrent lane (finding B6)
+
+`git worktree list` shows a second checkout of this repository:
+
+| Worktree | Branch | Head |
+| --- | --- | --- |
+| `..\portal.measurement.gov.au-storybook-autodocs` | `refactor/storybook-autodocs` | `f71c9c9` |
+
+Its scope is recorded in `docs/qa/2026-08-23-storybook-autodocs-review.md` and
+`docs/superpowers/plans/2026-08-23-storybook-autodocs-refactor-plan.md`, both tracked on
+this branch as of 2026-08-27.
+
+**No-overlap rule.** That lane refactors Storybook autodocs across
+`ClientApp/src/components` — the same tree Task A3 measures. A coverage run taken while
+files in that tree are changing is invalid, and this has already happened once: the
+"Concurrent Work Taken Into Scope" section records an agent traversing
+`ClientApp/src/components` alphabetically until it broke `Alert.stories.tsx`. Therefore:
+
+- Before generating a coverage queue or running `npm run test:unit:coverage` for A3,
+  confirm the autodocs worktree is idle and its working tree is clean.
+- A3 and the autodocs lane may not both hold uncommitted changes under
+  `ClientApp/src/components` at the same time.
+- If a coverage run overlaps autodocs work, discard the result rather than reconciling it;
+  a queue generated from a moving denominator is worse than no queue.
+
+### Resolutions — 2026-08-27
+
+| Finding | Resolution | Commit |
+| --- | --- | --- |
+| **B1** eslintPolicy.test.ts missing | Written, 27 assertions, mutation-verified. Falsified two of the plan's own rule-mapping claims in the process. | `256e97d` |
+| **B2** uncommitted lint pair | Adopted into Lane D. The rule fix is load-bearing (ESLint exits 2 without it when run from `.storybook`); the test's flakiness was a missing timeout on a spawned ESLint process. | `31718f5` |
+| **B3** StrictMode hoist | Committed with its test. **Finding corrected:** the original claim that it invalidates C1's census was wrong — `index.tsx` is imported only by `indexBootstrap.test.tsx` (fully mocked) and named as a string in `webpackConfig.test.ts`; Storybook's preview neither imports it nor uses StrictMode. The behavioural change is visible in the dev server and therefore in `test:e2e:app`, which is **C8's** surface. C1 was never blocked by it. | `c09a62c` |
+| **B4** nine modified tracked files | Reviewed file by file, not committed wholesale. The security code tour was resyncing docs to code; one edit inside it was factually wrong (React Router v7 → v8, against a declared `^7.18.2`) and was reverted. | `a6a603e`, `c09a62c`, `31718f5` |
+| **B5** `.gitignore` contradiction | Resolved toward local: both `.claude/settings.json` and `.claude/settings.local.json` are ignored, and the comment now describes what the rules do. Committing a standing Bash allowlist to a shared repository was judged the wrong default. | `7710136` |
+| **B6** undeclared worktree | Declared above with a no-overlap rule. | `10e1218` |
+| **B7** stale coverage measurement | Open — next action. | — |
+| **T1** merge path | Decided: recorded exemption. See the decision block under T1. | this commit |
+
+Working tree after these resolutions: no modified tracked file, and the only untracked item
+is generated `public/mockServiceWorker.js` — which is what the Global Constraints require.
 
 ## Target Test Topology
 
