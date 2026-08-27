@@ -93,8 +93,11 @@ const config: StorybookConfig = {
         docsMode: false,
     },
 
-    // Expose the public/ directory so the MSW service worker (mockServiceWorker.js)
-    // is served at the root. Run `npx msw init public/` once after install.
+    // Expose ClientApp/public so the MSW service worker (mockServiceWorker.js)
+    // is served at the root. Run `npx msw init ClientApp/public/` once after
+    // install - NOT `public/`. A root public/ copy is served by nothing here
+    // (webpack devServer and staticDirs both point at ClientApp/public) and
+    // silently drifts from the tracked worker on the next msw upgrade.
     staticDirs: ['../ClientApp/public'],
 
     async viteFinal(config, { configType }) {
