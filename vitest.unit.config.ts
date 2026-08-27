@@ -14,7 +14,18 @@ type CoverageOptions = NonNullable<
  */
 const coverageConfig: CoverageOptions = {
     provider: 'v8',
-    reporter: ['text', 'html', 'json-summary'],
+    // `json` emits coverage-final.json, which retains the statement, function and
+    // branch maps. `json-summary` carries only per-file totals, so Task A3's gap
+    // queue could rank work but not locate it. Both are needed.
+    reporter: ['text', 'html', 'json-summary', 'json'],
+    // Vitest defaults this to false, which writes no coverage report at all when
+    // any test fails - and it cleans the output directory first, so a red run
+    // leaves nothing behind. The PR workflow uploads reports/coverage/unit/**
+    // with `if: always()` and `if-no-files-found: error`, so a red unit run would
+    // fail that upload with "no files found" and mask the real failure behind an
+    // artifact error. Under the T1 exemption a red vitest-unit is the expected
+    // state until Child Plan B1 lands, so coverage evidence has to survive it.
+    reportOnFailure: true,
     reportsDirectory: './reports/coverage/unit',
     include: [
         'ClientApp/src/**/*.{ts,tsx}',

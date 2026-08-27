@@ -12,8 +12,30 @@ describe('unit coverage configuration', () => {
 
         expect(testConfig?.coverage).toBeDefined();
         expect(testConfig?.coverage?.provider).toBe('v8');
-        expect(testConfig?.coverage?.reporter).toEqual(['text', 'html', 'json-summary']);
+        // `json` emits coverage-final.json, which retains the statement,
+        // function and branch maps. `json-summary` carries only per-file
+        // totals, so Task A3's gap queue could rank work but not locate it.
+        // Both are required; see scripts/coverage-gap-queue.mjs.
+        expect(testConfig?.coverage?.reporter).toEqual([
+            'text',
+            'html',
+            'json-summary',
+            'json',
+        ]);
         expect(testConfig?.coverage?.reportsDirectory).toBe('./reports/coverage/unit');
+    });
+
+    it('still writes coverage evidence when the run is red', async () => {
+        const testConfig = await resolveConfig();
+
+        // Vitest defaults reportOnFailure to false, which writes no report at
+        // all when any test fails - and it cleans the output directory first, so
+        // a red run leaves nothing behind. The PR workflow uploads
+        // reports/coverage/unit/** with `if: always()` and
+        // `if-no-files-found: error`, so the upload would fail with "no files
+        // found" and mask the real failure. A red vitest-unit is the expected
+        // state until Child Plan B1 lands, so this must stay true.
+        expect(testConfig?.coverage?.reportOnFailure).toBe(true);
     });
 
     it('measures editable handwritten source and excludes generated/vendor artifacts', async () => {
