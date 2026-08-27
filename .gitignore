@@ -34,3 +34,12 @@ npm-debug.log*
 full-test-output.txt
 test-output.txt
 test_output.txt
+
+# Claude Code configuration for this project stays per-developer. Both files
+# hold permission grants - settings.json is a Bash/tool allowlist and
+# settings.local.json adds machine-specific absolute paths - and a standing
+# pre-approval that is right for one developer's workflow is not automatically
+# right for everyone who clones. Neither is tracked; agree changes in review
+# rather than inheriting them silently.
+.claude/settings.json
+.claude/settings.local.json
