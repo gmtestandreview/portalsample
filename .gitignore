@@ -18,8 +18,23 @@ ClientApp/src/main.*.js.map
 # Test output (all artifacts consolidated under reports/)
 reports/
 coverage/
-quality/
 tmp/
+
+# `coverage/` matches by basename at any depth, so it also swallowed
+# tests/unit/coverage/ — test SOURCE, not output. Re-include that directory.
+!tests/unit/coverage/
+!tests/unit/coverage/**
+
+# quality/ is mostly local analysis output (BUGS.md, code_reviews/, generated
+# grids and reports) and stays ignored — but two files in it are CI-critical
+# SOURCE: `npm run test:ci:quality` loads the config, which includes the only
+# test file it runs. While the whole directory was ignored, a fresh clone could
+# not run that script at all, so the vitest-quality required status could never
+# pass in CI. Ignore the contents rather than the directory, because git will not
+# descend into an excluded directory and a negation inside one has no effect.
+quality/*
+!quality/vitest.regression.config.ts
+!quality/test_regression.ts
 .features-gen/
 .playwright-mcp/
 .testagent/
