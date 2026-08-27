@@ -29,6 +29,7 @@ tmp/
 !reports/stabilisation/
 reports/stabilisation/*
 !reports/stabilisation/warnings.md
+!reports/stabilisation/storybook-mcp.md
 # The three C1 evidence logs are re-included below the `*.log` rule instead of
 # here: the last matching pattern wins, so a negation above `*.log` is undone.
 
