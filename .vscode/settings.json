@@ -1,3 +1,5 @@
 {
-    "sonarlint.analysisExcludesStandalone": "**/ClientApp/src/api/web-api-client.ts"
+    "sonarlint.analysisExcludesStandalone": "**/ClientApp/src/api/web-api-client.ts",
+    "i18n-ally.disabled": true,
+    "stylelint.enable": false
 }
