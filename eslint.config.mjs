@@ -5,7 +5,10 @@ import { defineConfig } from 'eslint/config';
 import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
+import { fileURLToPath } from 'node:url';
 import tseslint from 'typescript-eslint';
+
+const packageJsonPath = fileURLToPath(new URL('./package.json', import.meta.url));
 
 /**
  * Native ESLint 10 flat configuration.
@@ -67,6 +70,17 @@ export default defineConfig(
     },
 
     ...storybook.configs['flat/recommended'],
+
+    {
+        name: 'nmi/storybook-main',
+        files: ['.storybook/main.@(js|cjs|mjs|ts)'],
+        rules: {
+            'storybook/no-uninstalled-addons': [
+                'error',
+                { packageJsonLocation: packageJsonPath },
+            ],
+        },
+    },
 
     {
         name: 'nmi/base',
