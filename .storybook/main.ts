@@ -137,6 +137,17 @@ const config: StorybookConfig = {
                 // chunks (Storybook renderer, addon manager) are irreducible.
                 chunkSizeWarningLimit: 1500,
                 rolldownOptions: {
+                    checks: {
+                        // Application Insights 3.4.3 ships ineffective PURE
+                        // annotations in its dist-es5 modules. Rolldown already
+                        // ignores them; avoid repeating the upstream warning in
+                        // every Storybook build until the package fix is released.
+                        invalidAnnotation: false,
+                        // Storybook's own transform plugins dominate this docs-
+                        // heavy build, so the generic timing notice is not an
+                        // actionable portal performance regression.
+                        pluginTimings: false,
+                    },
                     output: {
                         codeSplitting: {
                             minSize: 0,
