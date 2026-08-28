@@ -432,6 +432,60 @@ Yup.addMethod(
     },
 );
 
+/**
+ * Local part: dot-separated runs of permitted characters. `.` is absent from the
+ * class, so it is a hard separator - there is exactly one way to split the
+ * input and the match is linear.
+ */
+const EMAIL_LOCAL_PART = /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+)*$/;
+
+/** A single DNS label, already split on `.`. One character class, so linear. */
+const DNS_LABEL = /^[a-zA-Z0-9-]+$/;
+
+/** RFC 1035: labels are capped at 63 characters. */
+const MAX_LABEL_LENGTH = 63;
+
+/**
+ * Validates an email address without regex backtracking.
+ *
+ * The previous single-regex form was vulnerable to catastrophic backtracking
+ * (`typescript:S5852`): in `(-*\.?[a-zA-Z0-9-]){0,62}` both `-*` and the
+ * character class match `-`, so a run of hyphens could be split exponentially
+ * many ways. A 34-character address took ~18s. These schemas are shared with a
+ * Node backend, where one stalled request stalls the whole event loop.
+ *
+ * Splitting on the structural characters first means each part is matched by an
+ * unambiguous pattern, so validation is linear in the length of the input.
+ */
+const isValidEmailAddress = (value: string): boolean => {
+    const at = value.indexOf('@');
+    // Need exactly one `@`, and a non-empty local part before it.
+    if (at < 1 || value.indexOf('@', at + 1) !== -1) {
+        return false;
+    }
+
+    if (!EMAIL_LOCAL_PART.test(value.slice(0, at))) {
+        return false;
+    }
+
+    const labels = value.slice(at + 1).split('.');
+    // A bare host is not enough; a domain needs at least one dot.
+    if (labels.length < 2) {
+        return false;
+    }
+
+    const tld = labels[labels.length - 1];
+    if (tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
+        return false;
+    }
+
+    return labels.every((label) => label.length > 0
+        && label.length <= MAX_LABEL_LENGTH
+        && DNS_LABEL.test(label)
+        && !label.startsWith('-')
+        && !label.endsWith('-'));
+};
+
 Yup.addMethod(
     Yup.string,
     YUP_EMAIL_METHOD,
@@ -454,8 +508,7 @@ Yup.addMethod(
                         return true;
                     }
 
-                    const regExStr = /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9-]){0,62}\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
-                    return value.match(new RegExp(regExStr)) !== null;
+                    return isValidEmailAddress(value);
                 } catch {
                     /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
                     return false;
