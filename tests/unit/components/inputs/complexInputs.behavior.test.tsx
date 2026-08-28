@@ -700,9 +700,11 @@ describe('complex input behavior slice', () => {
     });
 
     it('renders AutoSuggestOption within its collection and exposes selected state', () => {
+        // Rendered outside a `ComboBox`, so it carries its own `aria-label`.
+        // Nested, the popup inherits the ComboBox's visible label instead.
         render(
             <AutoSuggestOptions
-                name='Options'
+                aria-label='Options'
                 options={[{
                     id: 'option-1',
                     displayText: 'Approved option',

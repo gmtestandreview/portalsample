@@ -5,6 +5,7 @@ import {
   ComboBox,
   ComboBoxStateContext,
   Input,
+  Label,
   Popover,
 } from 'react-aria-components/ComboBox';
 import AutoSuggestOptions from './AutoSuggestOptions';
@@ -117,12 +118,20 @@ const AutoSuggestContainer = <T,>(
                     onOpenChange={setIsOpen}
                 >
                     <AutoSuggestMenuState hasOptions={options.length > 0} />
-                    <label
+                    {/*
+                      * React Aria's `Label`, not a raw `<label>`: `ComboBox`
+                      * detects its label through `LabelContext`, and without a
+                      * registered `Label` it treats the widget as unnamed -
+                      * emitting the missing-visible-label warning and omitting
+                      * `aria-labelledby` from the input. `htmlFor` is kept so
+                      * the existing control id association is unchanged.
+                      */}
+                    <Label
                         htmlFor={controlId}
                         className={`${name.toLowerCase()}-auto-suggest-label form-label`}
                     >
                         {label}
-                    </label>
+                    </Label>
                     {inlineHelp && (
                         <p id={helpId} className='contextual-help'>
                             {inlineHelp}
@@ -149,7 +158,6 @@ const AutoSuggestContainer = <T,>(
                             <AutoSuggestOptions<T>
                                 id={`${name}-options`}
                                 options={options}
-                                name={name}
                             />
                         </Popover>
                     )}
