@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { ReactElement } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import PrimaryButton from '../../Buttons/PrimaryButton';
@@ -17,17 +18,22 @@ const ContentModal = (props: ContentModalProps) => {
         modalTitle,
     } = props;
 
+    // Per-instance so concurrently mounted modals cannot collide. Footer renders
+    // three, and a shared literal id made every dialog resolve its accessible
+    // name to whichever title came first in document order.
+    const titleId = useId();
+
     return (
         <Modal
             size='lg'
             show={showModal}
-            aria-labelledby='modal-content'
+            aria-labelledby={titleId}
             tabIndex={-1}
             onHide={onCancelModal}
         >
             <Modal.Header closeButton>
                 <Modal.Title
-                    id='modal-content'
+                    id={titleId}
                     as='h3'
                 >
                     {modalTitle}
