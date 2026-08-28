@@ -372,8 +372,8 @@ The ordering below is chosen so that no step invalidates the evidence of a later
 | B | B0 contract approval | `EXTERNALLY DEFERRED` | no authoritative schema, no named approver |
 | B | B1 date-only adapter | blocked on B0 | — |
 | C | C1 warning census | landed `25d1e4e`, `b051172` | none. Census is `reports/stabilisation/warnings.md`, 8 rows W1-W8; helper is tested at 30/30 and deliberately not installed |
-| C | C2 shared inputs | not started | C1 |
-| C | C3 async owners | not started | C2; inherits D1's 56 `set-state-in-effect` sites |
+| C | C2 shared inputs | landed `f37790c`, `f1de495` | none. AutoSuggest names its React Aria ComboBox via `Label`/`LabelContext`; the popup no longer announces the Formik field name. Five bare `element.focus()` calls replaced with awaited `user.click`. Console guard now installed in all three shared-input files. 1486/1486 unit, 8/8 stories with a11y |
+| C | C3 async owners | ready to start | C2 clean; inherits D1's 56 `set-state-in-effect` sites |
 | C | C4 runtime/telemetry policy | not started | C3; must amend D3's workflow (T3) |
 | C | C5 MSW contracts | not started | C4 |
 | C | C6 modal lifecycle | **re-scope required** | The 10 assertions do not reproduce at HEAD: full run 218/218 exit 0, plus 3 focused repetitions 7/7. C6 now confirms a resolved failure and pins it, rather than repairing a reproducing one |
@@ -1243,11 +1243,11 @@ Expected: `list-all-documentation`, `get-documentation`, `get-storybook-story-in
 - Consumes: C1 warning signatures and the repository-required Storybook component documentation.
 - Produces: a named React Aria combobox at initial render and settled shared-input interactions for C3 consumers.
 
-- [ ] **Step 1: Query required Storybook documentation before UI edits**
+- [x] **Step 1: Query required Storybook documentation before UI edits**
 
 Use `my-storybook-mcp-server` `list-all-documentation`, `get-documentation`, and `get-storybook-story-instructions`. Verify the documented React Aria label relationship and every component/story property used. If the tools are unavailable, mark C2 blocked and continue only non-UI tasks; do not infer a `Label` or accessibility prop from naming conventions.
 
-- [ ] **Step 2: Prove the label boundary with RED assertions**
+- [x] **Step 2: Prove the label boundary with RED assertions**
 
 Trace:
 
@@ -1269,15 +1269,15 @@ expect(
 
 Also assert that accessible naming survives loading, results, no-results, error, manual-entry, cancellation, and validation states. The nominal labelled-combobox test must fail if React Aria's component context is unnamed even when a native input can be found through an external label.
 
-- [ ] **Step 3: Apply the documented visible-label relationship**
+- [x] **Step 3: Apply the documented visible-label relationship**
 
 Change the first shared owner only. Preserve visible copy, existing control ID, contextual help, error description, `aria-invalid`, and Formik name. Do not add a duplicate label, hidden generic copy, or route-specific `aria-label` values.
 
-- [ ] **Step 4: Repair shared-input scheduler ownership separately**
+- [x] **Step 4: Repair shared-input scheduler ownership separately**
 
 Use `userEvent.setup()`, awaited interactions, and semantic postconditions. Use `findBy*`/`waitFor` for real async UI and `act` only around timer advancement or externally resolved promises owned by the test. Do not add empty `act(async () => {})` drains. Prove each repaired warning by its owner stack; accessible naming and scheduler settlement are separate acceptance rows.
 
-- [ ] **Step 5: Verify shared inputs and direct consumers**
+- [x] **Step 5: Verify shared inputs and direct consumers**
 
 ```powershell
 npm run test:unit -- `
