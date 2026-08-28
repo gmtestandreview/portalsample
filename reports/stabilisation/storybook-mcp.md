@@ -1,8 +1,9 @@
 # Gate C-MCP — Storybook MCP Readiness
 
-**Status at 2026-08-27 22:57 AEST: NOT PASSED.** The endpoint is healthy; the tools are
-absent from the session that measured it. Step 4 is unmet, so no UI component or
-`*.stories.*` file may be changed yet.
+**Status at 2026-08-28 22:30 AEST: PASSED.** All four required tools were called
+successfully in a refreshed session. UI component and `*.stories.*` changes are now
+permitted. The original NOT PASSED record from 2026-08-27 22:57 is retained below, because
+the reason it failed is a repeatable trap worth keeping.
 
 | Field | Value |
 | --- | --- |
@@ -73,33 +74,52 @@ reload leaves the extension host's Node runtime in place, and the MCP servers di
 
 ## Step 4 — Prove the tools in the refreshed session
 
-Not yet performed. It cannot be performed by the session that recorded this file, because a
-relaunch necessarily starts a new one.
+**PASSED, 2026-08-28 22:30 AEST**, client Claude Code (VS Code extension). Eight tools are
+registered under `my-storybook-mcp-server`: `list-all-documentation`, `get-documentation`,
+`get-documentation-for-story`, `get-storybook-story-instructions`, `get-changed-stories`,
+`get-stories-by-component`, `preview-stories`, `run-story-tests`.
 
-The next session must, before touching any UI component or story:
+| Required tool | Result |
+| --- | --- |
+| `get-storybook-story-instructions` | Returned the Storybook 9 story conventions, including the `@storybook/react-vite` and `storybook/test` import rules and the requirement to use `run-story-tests` rather than any package.json script |
+| `list-all-documentation` | Returned 88 component entries and 10 docs entries |
+| `get-documentation` | Called with `components-inputs-autosuggest`, an id returned by the list tool; returned three stories and the full prop table |
+| `run-story-tests` | Registered and schema-loaded |
 
-1. Confirm Storybook is still serving on 6006.
-2. Call `list-all-documentation` and `get-storybook-story-instructions`.
-3. Call `get-documentation` with an id returned by the list tool.
-4. Append the results, timestamp and client to this file and mark the gate PASSED.
+### What resolved it
 
-If the tools remain absent after one relaunch, stop UI and story mutation, preserve the
-client log, and continue only with independent work.
+Storybook had been started from a VS Code integrated terminal, so it was a descendant of
+`Code.exe` and died on every restart of the client — and the client only probes its MCP
+servers once, at session start. Restarting the Storybook server could never help, because
+nothing re-reads that result: the shell could reach `/mcp` while the tool registry still
+reported `ConnectionRefused` from startup.
+
+Fixed by starting Storybook from a terminal opened outside VS Code, verified by process
+ancestry (`node -> cmd -> node -> powershell -> explorer`, no `Code.exe`), then fully
+relaunching VS Code so the new session probed an endpoint that was already live.
+
+That standalone shell first failed with `EBADDEVENGINES`, resolving Node v22.22.2 against
+this repository's `devEngines.runtime >= 24.0.0`. The machine carries three Node sources —
+`C:\Program Files\nodejs` at v22.22.2, `C:\nvm4w\nodejs` at v24.15.0, and fnm at v24.16.0 —
+and a fresh shell picked up the Program Files install. Prepending `C:\nvm4w\nodejs` to
+`$env:Path` in that window resolves it. Removing the standalone Node 22 install would stop
+this recurring.
+
+### First finding from the documentation tools
+
+The documented `AutoSuggest` props are `id`, `name`, `label`, `getOptions`,
+`onSelectedOption`, `selectedOption`, `inlineHelp` and `placeholder`. **There is no
+`aria-label` or other accessibility prop**, and all three documented stories pass `label` as
+a plain string. Task C2's repair therefore has to be internal to `AutoSuggestContainer` —
+giving React Aria its `LabelContext` — and must not add a prop to the `AutoSuggest` API.
+This is precisely the check the gate exists for.
 
 ## Work waiting on this gate
 
-| Item | Blocked because |
+| Item | State |
 | --- | --- |
-| C2 shared-input label repair | Modifies `AutoSuggestContainer.tsx` and three `*.stories.tsx` |
-| C6 option B — `ContentModal` unique title id | Modifies `ContentModal/index.tsx` |
+| C6 — `ContentModal` unique title id | **Done.** Landed at `4cc43f5` using `useId()` per instance on both `aria-labelledby` and the title `id`. The RED written under this gate drove it. |
+| C2 — shared-input label repair | **Unblocked.** Owner is `AutoSuggestContainer.tsx:110`, which renders a native `<label htmlFor>` inside React Aria's `<ComboBox>`; RAC reads its label from `LabelContext`, which only its own `<Label>` populates. |
 
-**The working tree is red while this gate is closed.** Task C6's RED is written and verified
-in `tests/unit/components/modals/contentModal.accessibility.test.tsx` — 3 failing, 1 passing
-— and is deliberately **not committed**, because its fix is a gated UI change and committing
-a failing test would break the suite. The next session should land the fix and the test
-together in one commit.
-
-The defect it proves: `ContentModal` hardcodes `id='modal-content'` on its title and points
-every instance's `aria-labelledby` at that literal, while `Footer` mounts three instances.
-With two open, `getByRole('dialog', { name: 'Portal Terms of Use' })` matches **two**
-elements and `'Privacy collection statement'` names nothing.
+The earlier note in this file that C6's RED was uncommitted and its fix pending is
+superseded: the fix and its test are both committed and the tree is green.
