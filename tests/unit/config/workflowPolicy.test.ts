@@ -61,6 +61,8 @@ const SETUP_NODE_PIN =
   "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020";
 const UPLOAD_ARTIFACT_PIN =
   "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f";
+const DOWNLOAD_ARTIFACT_PIN =
+  "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53";
 const CHROMATIC_ACTION_PIN =
   "chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7";
 
@@ -82,6 +84,7 @@ const declaredJobs = [
   "date-timezone",
   "e2e-node24",
   "lower-bound-node24",
+  "sonarcloud",
 ];
 
 const timezones = [
@@ -304,6 +307,55 @@ describe("the lower-bound job proves the declared Node floor", () => {
 
   it("keeps browser suites out of the floor job", () => {
     expect(block).not.toContain("playwright install");
+  });
+});
+
+describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
+  const block = jobBlock(workflow, "sonarcloud");
+
+  it("checks out full history so blame can attribute new code", () => {
+    // SonarCloud decides what counts as new code from SCM blame dates. A
+    // shallow clone leaves it no history to read, so the new-code period -
+    // and every quality gate condition built on it - becomes meaningless.
+    expect(block).toContain("fetch-depth: 0");
+  });
+
+  it("reuses the unit partition's coverage instead of re-running the suite", () => {
+    // Each test environment runs exactly once, through the matrix. Re-running
+    // the unit suite here would duplicate several minutes per PR and could
+    // report a different result than the partition that owns that status.
+    expect(block).toContain(`uses: ${DOWNLOAD_ARTIFACT_PIN}`);
+    expect(block).toContain("vitest-unit-coverage-");
+    expect(block).not.toContain("npm run test:ci:unit");
+  });
+
+  it("restores coverage before the scan rather than scanning bare", () => {
+    const download = block.indexOf(DOWNLOAD_ARTIFACT_PIN);
+    const scan = block.indexOf("@sonar/scan");
+
+    expect(download).toBeGreaterThan(-1);
+    expect(scan).toBeGreaterThan(download);
+  });
+
+  it("waits for the partition that produces the coverage it consumes", () => {
+    expect(block).toContain("needs: vitest");
+  });
+
+  it("pins the scanner version rather than floating on latest", () => {
+    // The repo pins npm itself for the same reason; an unpinned scanner can
+    // change analysis results between runs with no commit to explain it.
+    expect(block).toContain("@sonar/scan@4.3.6");
+  });
+
+  it("authenticates from a secret, never an inline token", () => {
+    expect(block).toContain("SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}");
+    expect(block).not.toMatch(/sonar\.token=/);
+  });
+
+  it("waits for the quality gate so a red gate fails the build", () => {
+    // Without this the scanner uploads and exits 0 whatever the verdict, and
+    // the gate can never block a merge.
+    expect(block).toContain("sonar.qualitygate.wait=true");
   });
 });
 

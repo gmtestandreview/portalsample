@@ -339,3 +339,74 @@ jobs:
           path: reports/ci/lower-bound/**
           if-no-files-found: error
           retention-days: 14
+
+  # SonarCloud analysis. Its own job so a scanner or gate failure is
+  # attributable on its own status rather than folded into a test partition.
+  #
+  # Depends on `vitest` because it consumes that job's unit coverage artifact.
+  # Each test environment runs exactly once through the matrix, so re-running
+  # the unit suite here would both duplicate minutes per PR and risk reporting
+  # a different result than the partition that owns that status.
+  sonarcloud:
+    name: sonarcloud
+    runs-on: ubuntu-latest
+    needs: vitest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # SonarCloud derives new code from SCM blame dates. The default
+          # shallow clone gives it no history to read, which silently breaks
+          # new-code attribution and every gate condition resting on it.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Prepare evidence directory
+        run: mkdir -p reports/ci/sonarcloud
+
+      # The analyzer resolves TypeScript types against installed dependencies;
+      # without them type inference degrades and findings change.
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/sonarcloud/install.log
+
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: |
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+
+      # Must precede the scan: sonar.javascript.lcov.reportPaths points at
+      # reports/coverage/unit/lcov.info, and a missing report is imported as
+      # zero coverage rather than raising an error.
+      - name: Restore unit coverage from the vitest partition
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: vitest-unit-coverage-${{ github.run_attempt }}
+          path: reports/coverage/unit
+
+      # The scanner version is pinned for the same reason npm is: an unpinned
+      # scanner can move analysis results between runs with no commit to
+      # explain it. sonar.qualitygate.wait makes a red gate fail this job,
+      # which is what turns the gate into a merge block.
+      - name: SonarCloud scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >-
+          npx --yes @sonar/scan@4.3.6
+          -Dsonar.qualitygate.wait=true
+          2>&1 | tee reports/ci/sonarcloud/scan.log
+
+      - name: Upload SonarCloud evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: sonarcloud-${{ github.run_attempt }}
+          path: reports/ci/sonarcloud/**
+          if-no-files-found: error
+          retention-days: 14
