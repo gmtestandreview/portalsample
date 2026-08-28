@@ -1,5 +1,5 @@
 import {
-    act, fireEvent, render, screen, waitFor, within,
+    act, cleanup, fireEvent, render, screen, waitFor, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -15,6 +15,7 @@ import NumberInput from '@/components/Inputs/NumberInput';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
 import type * as WebApiClientModule from '@/api/web-api-client';
+import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
 
 type MockAccount = { homeAccountId: string } | null;
 
@@ -99,6 +100,13 @@ function ValuesProbe() {
 }
 
 describe('complex input behavior slice', () => {
+    installUnexpectedConsoleGuard();
+
+    // Registered after the guard so it runs first: Vitest runs `afterEach` in
+    // reverse order, and a guard failure would otherwise skip the global
+    // cleanup and leak the previous test's DOM into the next one.
+    afterEach(cleanup);
+
     beforeEach(() => {
         vi.clearAllMocks();
         mocks.account = { homeAccountId: 'account-1' };
@@ -309,6 +317,8 @@ describe('complex input behavior slice', () => {
     });
 
     it('handles missing match collections and non-service lookup errors', async () => {
+        const user = userEvent.setup();
+
         mocks.addressSearch
             .mockResolvedValueOnce({ matches: undefined })
             .mockRejectedValueOnce({ status: 500, message: 'Failure' });
@@ -325,7 +335,7 @@ describe('complex input behavior slice', () => {
         );
 
         const input = screen.getByRole('combobox', { name: 'Address' });
-        input.focus();
+        await user.click(input);
         fireEvent.change(input, { target: { value: 'first' } });
         expect(await screen.findByRole('option', { name: /No matches found/i })).toBeInTheDocument();
 
@@ -574,7 +584,7 @@ describe('complex input behavior slice', () => {
         );
 
         const combobox = screen.getByRole('combobox', { name: 'Suburb' });
-        combobox.focus();
+        await user.click(combobox);
 
         await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}');
         expect(combobox).toHaveAttribute('aria-activedescendant', 'suburb-options-option-last');
@@ -613,7 +623,7 @@ describe('complex input behavior slice', () => {
         );
 
         const combobox = screen.getByRole('combobox', { name: 'Suburb' });
-        combobox.focus();
+        await user.click(combobox);
         await user.keyboard('{Enter}');
         expect(onCancel).not.toHaveBeenCalled();
 

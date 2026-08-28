@@ -1,5 +1,5 @@
 import {
-    act, fireEvent, render, screen,
+    act, cleanup, fireEvent, render, screen,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik } from 'formik';
@@ -11,6 +11,7 @@ import RadioButtonGroup from '@/components/Inputs/RadioButtonGroup';
 import SelectInput from '@/components/Inputs/SelectInput';
 import TextAreaInput from '@/components/Inputs/TextAreaInput';
 import TextInput from '@/components/Inputs/TextInput';
+import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
 
 interface HarnessProps {
     readonly children: React.ReactNode;
@@ -38,6 +39,13 @@ function Harness({
 }
 
 describe('residual input branches', () => {
+    installUnexpectedConsoleGuard();
+
+    // Registered after the guard so it runs first: Vitest runs `afterEach` in
+    // reverse order, and a guard failure would otherwise skip the global
+    // cleanup and leak the previous test's DOM into the next one.
+    afterEach(cleanup);
+
     afterEach(() => {
         vi.useRealTimers();
     });
@@ -174,7 +182,7 @@ describe('residual input branches', () => {
         );
 
         const input = screen.getByRole('combobox', { name: 'Suburb' });
-        input.focus();
+        await user.click(input);
         await user.keyboard('{ArrowDown}{ArrowUp}');
 
         expect(input).toHaveValue('');
@@ -199,7 +207,7 @@ describe('residual input branches', () => {
         );
 
         const input = screen.getByRole('combobox', { name: 'Suburb' });
-        input.focus();
+        await user.click(input);
         await user.keyboard('{ArrowUp}');
         expect(input).toHaveAttribute(
             'aria-activedescendant',
