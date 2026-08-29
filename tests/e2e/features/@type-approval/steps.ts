@@ -130,7 +130,7 @@ Then('document {string} is displayed', async ({ page }, fileName: string) => {
 When('the applicant sends the message {string}', async ({ page }, message: string) => {
     await page.getByRole('tab', { name: 'Messages', exact: true }).click();
     await page.getByRole('textbox', { name: 'Message NMI' }).fill(message);
-    await page.getByRole('button', { name: 'Send message' }).click();
+    await page.getByRole('button', { name: 'Send', exact: true }).click();
 });
 
 Then('the message appears in the application thread', async ({ page }) => {

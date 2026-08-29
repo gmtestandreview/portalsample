@@ -3,8 +3,6 @@ import {
     ApplicationType,
     CRMLookupTypes,
     FormStepStatus,
-    PatternApprovalRequiredValueOptions,
-    PatternApprovalRequiredValues,
 } from '../../../ClientApp/src/api/web-api-client';
 import {
     createDraftTypeApprovalApplication,

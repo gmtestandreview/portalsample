@@ -17,6 +17,7 @@ uplift before migration.
   headers={['Measure', 'Current state']}
   rows={[
     ['Route paths in `ClientApp/src/App.tsx`', '`41`'],
+    ['Routes mapped to executable BDD scenarios', '`41 / 41 (100%)`'],
     ['Route families under `ClientApp/src/routes`', '`15`'],
     ['Top-level component families under `ClientApp/src/components`', '`31`'],
     ['Story files under `ClientApp/src`', '`87`'],
@@ -52,7 +53,7 @@ mutating workflows require `app-bdd` scenarios.
     ['Quotation detail', '`/quotation/:id/*`', '`Routes/Quotation` covers active and expired/no-delivery variants', 'Optional additional action states only'],
     ['Measurement reports (`measurementReport`)', '`/instrument-reports/:id/*`, `/report/:id/*`', '`Routes/MeasurementReport` covers standard and file-error variants', 'Optional list/index permutations only'],
     ['Services catalogue', '`/services-we-offer`', '`Routes/ServicesWeOffer` covers the authenticated services catalogue', 'Secondary service-card variants are still missing if migration expands that surface'],
-    ['Pattern/type approval (`ta`)', '`/dashboard-ta`, `/ta/type-approval-create-pre`, `/ta/type-approval-create`, `/ta/:id/*`, `/ta/type-approval-success/:id/*`, `/ta/:id/manage`', 'Isolated-render stories now cover `DashboardTypeApproval`, `PreApplication`, the wizard steps (`ApplicationAndInstrument`, `OrganisationAndContact`, `SupportingDocuments`, `SummaryAndSubmit`), `InstrumentInfoPanel`, and the manage tabs (`ApplicationDetails`, `ApplicationDocuments`, `ApplicationMessages`)', 'End-to-end workflow coverage remains excluded in `tests/e2e/route-coverage.ts` (no deterministic Playwright fixture contract); the Storybook stories document component-level rendering states only'],
+    ['Pattern/type approval (`ta`)', '`/dashboard-ta`, `/ta/type-approval-create-pre`, `/ta/type-approval-create`, `/ta/:id/*`, `/ta/type-approval-success/:id/*`, `/ta/:id/manage`', 'Isolated-render stories cover `DashboardTypeApproval`, `PreApplication`, the wizard steps (`ApplicationAndInstrument`, `OrganisationAndContact`, `SupportingDocuments`, `SummaryAndSubmit`), `InstrumentInfoPanel`, and the manage tabs (`ApplicationDetails`, `ApplicationDocuments`, `ApplicationMessages`); app BDD covers creation through submission and submitted-application management', 'Optional error and alternate application-type permutations only'],
     ['Auth entry and exit', '`/sign-in`, `/sign-out`', '`Routes/Auth` covers sign-in loading, sign-out loading, and sign-out completion — `sign-out` and `sign-out-helper` route families have no dedicated story files; their behavior is fully covered by `Routes/Auth`', 'None'],
     ['Error and gate routes', '`/server-error`, `/conflict`, `/forbidden`, `/no-longer-available`, `/unprocessable`, `/precondition-failed`, `/service-unavailable`, `/not-found`, `*`', '`Routes/ErrorStates` covers each HTTP-state surface', 'Precondition wrapper redirects remain documented structurally rather than rendered as browser redirects'],
   ]}
@@ -73,10 +74,9 @@ The following route families exist under `ClientApp/src/routes/` but have no sta
 
 > `preConditions` and `ta` were previously listed here as having no story files.
 > Both now have isolated-render stories (`Routes/PreConditions`, and the
-> `Routes/TypeApproval/*` family) so they are covered in the Route Coverage Matrix
-> above. Their *end-to-end* workflow coverage in `tests/e2e/route-coverage.ts`
-> remains excluded — that exclusion is about deterministic Playwright fixtures, not
-> Storybook rendering.
+> `Routes/TypeApproval/*` family). The Type Approval routes also have deterministic
+> app-BDD coverage for application creation, submission, details, documents, and
+> messages. No declared route remains excluded from executable BDD traceability.
 
 ## Component Coverage Matrix
 
