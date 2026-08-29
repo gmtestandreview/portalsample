@@ -31,6 +31,7 @@ reports/stabilisation/*
 !reports/stabilisation/warnings.md
 !reports/stabilisation/storybook-mcp.md
 !reports/stabilisation/warning-settlement.md
+!reports/stabilisation/lockfile-integrity.md
 # The Task C3 settlement evidence directory. Git will not descend into an
 # excluded directory, so the directory itself must be re-included before any
 # negation inside it can take effect.
