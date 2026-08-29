@@ -184,6 +184,54 @@ exists once the lookup has resolved.
 | Row | Owner | Status |
 | --- | --- | --- |
 | W3 | C3 | **closed** by C2, verified by re-measurement, no edit |
-| W4 | C3 | open — 13 owner stories across 11 files, all mode 1 or mode 2 |
+| W4 | C3 | **closed to 2 residual third-party lines**, see below |
 | W2 | C2 | closed, verified here (132 to 0) |
 | W5 | C4 | unchanged at 140 lines |
+
+
+---
+
+## Steps 2-4 outcome
+
+Full suite after the repairs: **87 files / 218 tests, exit 0, 2 act lines** — down from
+118. Every owner in the Step 1 table is at zero.
+
+### Two causes the owner table did not predict
+
+The Step 1 table located owners by story. Two of them turned out to be *component*
+defects shared across every consumer, and fixing the component closed several stories at
+once:
+
+1. **Both lookups scheduled a no-op state update on mount.** `OrganisationNameLookup` and
+   `CertificateNumberLookup` each run a 300ms debounce that, with an empty input, called
+   `setFilteredSuggestions([])`. A fresh array literal is never referentially equal, so
+   React committed an identical render — once per instance, on every mount, in production
+   as well as in tests. Returning the previous array when it is already empty lets React
+   bail out. This alone took the full-suite count from 14 to 4 and closed
+   `ta/summaryAndSubmit`, `ta/applicationAndInstrument`, `account/organisationDetails` and
+   `requestForQuoteSummary` without touching a single one of those stories.
+
+2. **`RouteAccessibleNavigation` and `useRouteAccessibility` share a 100ms announcement
+   timer**, which is why `routeAccessibleNavigation`, `PreConditions` and `Layout` all
+   appeared as separate owners. Awaiting the announcement text closes all three.
+
+### The 2 remaining lines
+
+`An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner`, attributed to
+`AutoSuggest.stories.tsx > Loading`.
+
+| Mode | act lines |
+| --- | ---: |
+| Each of the three AutoSuggest stories alone | 0 |
+| Whole file | 2 |
+
+React Aria commits this on unmount, as one story is torn down and the next mounted. It is
+not reachable from the story: closing the popover with Escape removed the accompanying
+`PopoverInner` lines but not these, and blurring the input before the story ends changes
+nothing either. Both were tried and measured.
+
+This is the census's **"third-party warning with a proven upstream issue and narrowly
+bounded exception"** classification, and it is the only row that needs one. C7 should give
+it an exact local expectation scoped to this signature rather than a blanket allowance —
+the hashed name `$dbdc5e6e7ce01b4b$var$ComboBoxInner` is a Parcel scope-hoisting artefact
+and must not be anchored on, exactly as the C1 census warns for W3.

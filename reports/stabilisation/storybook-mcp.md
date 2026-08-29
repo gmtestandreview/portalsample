@@ -1,6 +1,12 @@
 # Gate C-MCP — Storybook MCP Readiness
 
-**Status at 2026-08-29 10:55 AEST: NOT PASSED for the current session.** Storybook is
+**Status at 2026-08-29 11:20 AEST: PASSED.** Storybook was restarted from a terminal
+outside VS Code and the client relaunched; all eight tools are registered again and the four
+the gate requires were called successfully. C3 story mutation is permitted. The 11:20 entry
+at the end of this file records the proof, and the 10:55 entry below it records the trap
+that had blocked it.
+
+**Status at 2026-08-29 10:55 AEST: NOT PASSED.** Storybook was
 running and `/mcp` answers a real `initialize` with `@storybook/addon-mcp` 0.7.0, but this
 session was initialised while Storybook was stopped, so its tool registry still reports
 `ConnectionRefused` and a lookup for the four required tools returns no matches. C3's story
@@ -190,3 +196,31 @@ prefix.
 | C3 Step 1 — three-mode settlement experiment | **Done.** Read-only evidence, explicitly permitted before the gate. See `warning-settlement.md`. |
 | C3 — W3 (unit `act` warnings) | **Closed with no edit.** Re-measurement only; no UI or story file touched. |
 | C3 Steps 2-4 — W4 story settlement | **Blocked.** Every remaining repair adds a `play` function to a `*.stories.tsx` file, which is squarely inside this gate. |
+
+
+## 2026-08-29 11:20 AEST — gate re-proven
+
+| Field | Value |
+| --- | --- |
+| Agent client | Claude Code (VS Code extension), session `f6307217` after relaunch |
+| Commit | `d1fd81f` |
+| Registered tools | `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `get-storybook-story-instructions`, `get-changed-stories`, `get-stories-by-component`, `preview-stories`, `run-story-tests` |
+
+| Required tool | Result |
+| --- | --- |
+| `get-storybook-story-instructions` | Returned the Storybook 9 conventions: `Meta`/`StoryObj` from `@storybook/react-vite`, test helpers from `storybook/test`, `canvas` used directly or `within(canvasElement)` but never `within(canvas)`, and the rule that `run-story-tests` is the only way to run story tests |
+| `list-all-documentation` | 88 component entries and 10 docs entries, with story IDs |
+| `get-documentation` | Called with `routes-requestforquote`, an id returned by the list tool; returned all four stories and the `Props` type |
+| `run-story-tests` | Registered and schema-loaded |
+
+Resolved exactly as the 10:55 entry prescribed: Storybook started from a terminal outside
+VS Code, then a full VS Code relaunch. The recorded remedy worked first time.
+
+### One deviation from the server's instructions, and why
+
+The server instructs that `run-story-tests` replaces any package.json test script. That
+holds for pass/fail and a11y validation, and C3 uses it for exactly that. It does **not**
+replace `npm run test:storybook -- --reporter=default` for this task's *warning census*:
+C3's acceptance is a console-warning count, and only the reporter-flagged Vitest run emits
+the intercepted `console.error` lines the count is derived from. Both are run for every
+owner. This is the same `--reporter=default` dependency recorded in `warnings.md`.

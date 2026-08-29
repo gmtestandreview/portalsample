@@ -78,6 +78,7 @@ npm-debug.log*
 !reports/stabilisation/c3-unit-remeasure.log
 !reports/stabilisation/c3-storybook-remeasure.log
 !reports/stabilisation/c3-settlement/*.log
+!reports/stabilisation/c3-storybook-verify.log
 full-test-output.txt
 test-output.txt
 test_output.txt

@@ -1352,11 +1352,57 @@ Two findings change the rest of this task:
 
 W4 also moved rather than only shrinking: C2's labelled render path added 12 lines across four React Aria internal rows (`OrganisationNameLookup` 4→8, `CertificateNumberLookup` 4→8, plus `ComboBoxInner`, `PopoverInner` and one hashed collection export appearing for the first time). Total 106 → 118. These are C3's to settle, not a C2 regression to revert.
 
-- [ ] **Step 2: Repair RequestForQuote and AcceptQuote descendants by first owner**
+#### C3 evidence protocol — how "focused RED/GREEN evidence" is satisfied here
+
+Settled 2026-08-29. The obvious reading of Step 3's "focused RED/GREEN evidence" does not
+work for this task as written, and the resolution is recorded here so no later reader has to
+re-derive it.
+
+**The problem.** For a story-synchronisation defect the repair *is* the assertion: a `play`
+function that awaits a named stable UI state both settles the effect and tests it. There is
+no intermediate state in which the assertion exists and fails, so the warning cannot be
+watched failing through the assertion itself.
+
+**Rejected: a scoped console ratchet in C3.** Installing `installUnexpectedConsoleGuard()`
+in `vitest.storybook.setup.ts` behind an allowlist would give a genuine failing test per
+owner. It is rejected because `vitest.storybook.setup.ts` and the decision of how the ratchet
+is scoped both belong to C7, which cannot start until C3 is clean. C3 pre-empting that design
+would settle C7's open question about W6 by accident. **C3 does not touch either setup file.**
+
+**Adopted: a three-part cycle per owner.**
+
+1. **Warning RED.** Focused run before any edit, recorded as a line count:
+
+   ```powershell
+   npm run test:storybook -- <story file> --reporter=default -t "<Story Name>"
+   ```
+
+2. **Assertion RED.** Write the settlement assertion first, as a *synchronous* query
+   (`getByRole`, `getByText`, `getByLabelText`). Run it and watch it fail with
+   "unable to find an element". This is a real watched failure, and it proves the assertion
+   is not vacuous: it targets state that exists only after the owner's effect resolves. An
+   assertion that passes synchronously is testing the pre-settlement render and must be
+   re-chosen.
+
+3. **GREEN.** Change that query to its awaited form (`findByRole`, `findByText`). The await
+   is simultaneously the settlement fix. Re-run: the assertion passes and the focused warning
+   count is 0.
+
+Every assertion must also be nameable in the form *"this fails if production change X is
+made"* — for `InstrumentAndRequest`, dropping `setMeasurementCategories(sorted)` or breaking
+the `/api/lookup` handler leaves the component on its `BlockUISpinner` branch forever and the
+heading never appears.
+
+**Tooling split.** `run-story-tests` from `my-storybook-mcp-server` is the pass/fail and a11y
+authority, per that server's instructions. It does not replace the reporter-flagged Vitest run
+for the warning count: only that run emits the intercepted `console.error` lines C3's
+acceptance is measured in. Both are run for every owner.
+
+- [x] **Step 2: Repair RequestForQuote and AcceptQuote descendants by first owner**
 
 Keep DatePicker calendar semantics in Child B. For RequestForQuote, trace the story's post-interaction settlement through `InstrumentAndRequest`, react-datepicker, `HidableField`, `NumberFormatBase`, `DatePicker`, and `CustomDatePicker`. For AcceptQuote, run Report Recipient, Payment Details, Delivery And Return, and Quotation Summary singly and sequentially, then trace each successful MSW response through the component that schedules the state update. Await a named stable UI state after the triggering interaction; change a production component only when cancellation/lifecycle evidence proves it owns post-unmount work.
 
-- [ ] **Step 3: Repair lookup, route, and editor clusters independently**
+- [x] **Step 3: Repair lookup, route, and editor clusters independently**
 
 Use the smallest direct reproduction for each:
 
@@ -1369,7 +1415,7 @@ Use the smallest direct reproduction for each:
 
 Each repair receives its own focused RED/GREEN evidence and commit when it changes a different owner. Do not patch higher-level routes when a shared child owns the update.
 
-- [ ] **Step 4: Verify every remaining owner together**
+- [x] **Step 4: Verify every remaining owner together**
 
 ```powershell
 npm run test:storybook -- `
@@ -1385,6 +1431,20 @@ npm run test:storybook -- `
 ```
 
 Expected: every C3 census row is closed, no new warning signature appears, and story behaviour remains green.
+
+**Completed 2026-08-29.** Full suite: 87 files / 218 tests, exit 0, **118 act lines to 2**.
+
+Two owners in the Step 1 table turned out to be component-level rather than story-level, and fixing the component closed four stories that were never edited:
+
+- Both `OrganisationNameLookup` and `CertificateNumberLookup` ran a 300ms debounce that called `setFilteredSuggestions([])` on mount with an empty input. A fresh array literal is never referentially equal, so React committed an identical render once per instance on every mount — in production too, not only in tests. Returning the previous array when it is already empty lets React bail out. Guarded by a Profiler-based unit test that counts real commits, watched failing at exactly one wasted commit.
+- `RouteAccessibleNavigation` and `useRouteAccessibility` share one 100ms announcement timer, which is why `routeAccessibleNavigation`, `PreConditions` and `Layout` appeared as three owners.
+
+Two lines remain, and they are the only row needing C7's third-party classification: `$dbdc5e6e7ce01b4b$var$ComboBoxInner` committed by React Aria as one AutoSuggest story unmounts and the next mounts. Zero in isolation, two across the file boundary; unaffected by closing the popover with Escape or by blurring before the story ends, both measured. C7 must scope its expectation to the signature, not the hashed name.
+
+Two findings were recorded rather than fixed, both pre-existing and outside C3's owner list:
+
+1. `.storybook/preview.ts` mounts every story under a single `path: '*'` route, so no story ever binds a route param. That is why `indexList > Shell` renders an empty `<h1>{id}</h1>` and reports an axe `empty-heading` violation.
+2. The `Organisation Details Validation` fixture seeds errors for `businessWebsiteAddress`, `streetAddress` and `postalAddress`, none of which `AccountDetails` renders.
 
 Use focused commits matching the proven owner:
 

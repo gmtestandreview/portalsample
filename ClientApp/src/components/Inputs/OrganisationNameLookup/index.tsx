@@ -54,7 +54,11 @@ const OrganisationNameLookup = (
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (!inputValue.trim()) {
-                setFilteredSuggestions([]);
+                // Returning the previous array when it is already empty lets React bail out
+                // of the update. A fresh `[]` is never referentially equal, so this timer
+                // committed an identical render once per instance on every mount - and in
+                // Storybook it committed after the owning story had ended.
+                setFilteredSuggestions((prev) => (prev.length === 0 ? prev : []));
                 return;
             }
             const options = (_orgNameOptions.value || []) as any[];

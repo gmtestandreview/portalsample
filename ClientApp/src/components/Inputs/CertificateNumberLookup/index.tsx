@@ -63,7 +63,10 @@ const CertificateNumberLookup = (
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (!inputValue.trim()) {
-                setFilteredSuggestions([]);
+                // Same bail-out as OrganisationNameLookup: a fresh `[]` is never
+                // referentially equal, so this timer committed an identical render once per
+                // instance on every mount. This step renders two of these lookups.
+                setFilteredSuggestions((prev) => (prev.length === 0 ? prev : []));
                 return;
             }
             const options = (_certNumOptions.value || [] as LookupResponse[]) as any[];
@@ -239,7 +242,13 @@ const CertificateNumberLookup = (
                                 className={`suggestion-list ${showSuggestions ? 'show' : ''}`}
                                 aria-label='Suggested options'
                             >
-                                <ListGroup.Item as='li' className='suggestion-option auto-suggestions mt-0 border-0 small text-muted' aria-readonly>
+                                {/*
+                                  * Presentational for the same reason as the identical row
+                                  * in OrganisationNameLookup: a listbox may only own
+                                  * `option` and `group` children, and `aria-readonly` is not
+                                  * an allowed attribute here.
+                                  */}
+                                <ListGroup.Item as='li' role='presentation' className='suggestion-option auto-suggestions mt-0 border-0 small text-muted'>
                                     Did you mean?
                                 </ListGroup.Item>
                                 {filteredSuggestions.map((item, index) => (
