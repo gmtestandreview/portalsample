@@ -6,6 +6,9 @@ const publicDirectory = path.join(repositoryRoot, 'ClientApp/public');
 
 const getPublicAsset = async (document: Document, selector: string) => {
     const element = document.querySelector<HTMLLinkElement | HTMLMetaElement>(selector);
+
+    expect(element, `index.html declares no element matching ${selector}`).not.toBeNull();
+
     const publicUrl = element instanceof HTMLLinkElement
         ? element.getAttribute('href')
         : element?.getAttribute('content');
