@@ -195,6 +195,10 @@ export async function installMockApi(page: Page, state: ScenarioState): Promise<
         await json(route, {});
     });
 
+    await page.route('**/api/users/set-userprofile**', async (route) => {
+        await json(route, {});
+    });
+
     await page.route('**/api/dashboard/get-filtered-dashboard-**', async (route) => {
         await json(route, dashboardResponse(state));
     });

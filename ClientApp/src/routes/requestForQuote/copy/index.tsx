@@ -14,6 +14,7 @@ const CopyRequestForQuote = () => {
 
     useEffect(() => {
         const copyApplication = async () => {
+            isSaving.current = true;
             try {
                 const client = new ApplicationClient();
                 const tokenResult = await instance.acquireTokenSilent({
@@ -24,13 +25,13 @@ const CopyRequestForQuote = () => {
                 const application = await client.copyApplication(id!, { applicationType: ApplicationType.QuoteRequest });
                 setApplicationId(application.referenceId!);
             } catch (e) {
+                isSaving.current = false;
                 AppLogger.error('Failed to copy application', e as Error);
             }
         };
-        if (!isSaving.current) {
+        if (accounts.length > 0 && !isSaving.current) {
             copyApplication();
         }
-        return () => { isSaving.current = true; };
     }, [accounts, id, instance, isSaving]);
 
     return (

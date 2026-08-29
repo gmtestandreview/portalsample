@@ -71,6 +71,10 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
     expect(storybook.browser?.instances).toEqual([{ browser: "chromium" }]);
   });
 
+  it("limits the persistent MCP runner to one browser orchestrator", () => {
+    expect(storybook.maxWorkers).toBe(1);
+  });
+
   it("owns its own name and setup file", () => {
     expect(storybook.name).toBe("storybook");
     expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);

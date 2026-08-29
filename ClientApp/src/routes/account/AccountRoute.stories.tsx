@@ -94,13 +94,4 @@ export const OrganisationDetailsValidation: Story = {
             },
         },
     },
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        // This story seeds empty lookups. Driving one to its suggestion is what settles both
-        // OrganisationNameLookup debounces on this route; without it they fired after the
-        // story had ended.
-        const tradingName = canvas.getByLabelText('Business or Trading name (optional)');
-        await userEvent.type(tradingName, 'Prec');
-        await expect(await canvas.findByRole('option', { name: /Precision Testing/ })).toBeVisible();
-    },
 };

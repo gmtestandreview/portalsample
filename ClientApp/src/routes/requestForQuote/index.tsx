@@ -40,7 +40,8 @@ const RequestForQuote = () => {
             if (!applicationId) {
                 return;
             }
-            if (hasAccountDetails && !statuses && accounts.length > 0) {
+            if (hasAccountDetails && !statuses && accounts.length > 0 && !isLoading.current) {
+                isLoading.current = true;
                 const client = new RequestForQuoteClient();
                 const tokenResult = await instance.acquireTokenSilent({
                     ...tokenRequest,
@@ -53,13 +54,12 @@ const RequestForQuote = () => {
                 } catch (error) {
                     AppLogger.error('Failed to load application steps', error as Error, { Id: applicationId });
                     navigate('/not-found');
+                } finally {
+                    isLoading.current = false;
                 }
             }
         };
-        if (!isLoading.current) {
-            loadApplicationSteps();
-        }
-        return () => { isLoading.current = true; };
+        loadApplicationSteps();
     }, [accounts, applicationId, hasAccountDetails, instance, isLoading, navigate, statuses]);
 
     if (!applicationId) {

@@ -337,7 +337,9 @@ const Dashboard = () => {
 
     // Set to default userprofile page number when the branch is changed
     useEffect(() => {
-        if (savedUserProfile && branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg) {
+        if (savedUserProfile
+            && branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg
+            && savedUserProfile.testingCalibrationDashboard?.filterCurrentPage !== defaultFilter.filterCurrentPage) {
             const tcDash = savedUserProfile?.testingCalibrationDashboard;
             const profile = {
                 filterYearType: tcDash?.filterYearType,
@@ -480,7 +482,7 @@ const Dashboard = () => {
                     <span className='text-end'>
                         <Link
                             data-testid='new-request-button'
-                            to='/services-we-offer'
+                            to='/request-for-quote-create'
                             className='btn btn-primary text-nowrap'
                             onClick={() => trackGAEvent('New request')}
                         >
