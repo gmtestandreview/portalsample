@@ -65,7 +65,13 @@ export default {
             // 'todo' - show a11y violations in the test UI only
             // 'error' - fail CI on a11y violations
             // 'off' - skip a11y checks entirely
-            test: 'todo',
+            //
+            // Raised from 'todo' to 'error' once the suite reached zero violations across
+            // all 218 stories. Under 'todo' the checks ran but could never fail a build, so
+            // four real defects sat unreported: unnamed progress bars, an aria-hidden
+            // stepper containing focusable links, an empty h1, and muted text at 4.28:1 on
+            // the grey band. Enforcing it is what stops the next one going unnoticed.
+            test: 'error',
         },
         docs: {
             toc: true,

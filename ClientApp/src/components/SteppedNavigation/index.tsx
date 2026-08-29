@@ -13,7 +13,11 @@ const SteppedNavigation = (props: SteppedNavigationProps) => {
     const firstNotCompleted = steps.findIndex((x) => !x.completed);
 
     return (
-        <Container role='presentation' data-testid={id} aria-hidden='true'>
+        // Not aria-hidden: the step links are focusable, and hiding a subtree that can be
+        // tabbed into is the aria-hidden-focus violation. Everything needed to announce it
+        // well is already here - the visually-hidden heading below, aria-labelledby,
+        // aria-current per step and the per-step completion text.
+        <Container data-testid={id}>
             <h2 id='step-nav' className='visually-hidden'>Form progress</h2>
             <ul className='stepped-navigation' aria-labelledby='step-nav'>
                 {steps.map((step, index) => {
