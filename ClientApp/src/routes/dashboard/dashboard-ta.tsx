@@ -30,6 +30,7 @@ import type {
 import {
     type PagedListOfPatternApprovalDashboardDetailsDto,
     PatternApprovalClient,
+    ServiceType,
     type PatternApprovalDashboardDetailsDto,
     type PatternApprovalDashboardDto,
     type ProblemDetails,
@@ -174,6 +175,7 @@ const DashboardTA = () => {
     const [totalCount, setTotalCount] = useState(0);
     const tabSaveTimeoutRef = useRef<number | null>(null);
     const lastBranchResetOrganisationIdRef = useRef<number>();
+    const initialFiltersLoadedRef = useRef(false);
 
     useHtmlTitle('Dashboard Pattern/type approval | NMI Services portal');
     useBodyClass(['dashboard', 'dashboard-ta']);
@@ -255,6 +257,9 @@ const DashboardTA = () => {
 
     // Set values from the userprofile
     useEffect(() => {
+        if (initialFiltersLoadedRef.current) {
+            return;
+        }
         if (accountDetails?.userProfile) {
             if (accountDetails?.userProfile?.patternApprovalDashboard) {
                 const tabToSet: string | null | undefined = SessionStorageCache().getItem('set-tabop-after-save');
@@ -271,6 +276,7 @@ const DashboardTA = () => {
 
                 // Only need to do this on first load`
                 setInitialFilters(updatedP);
+                initialFiltersLoadedRef.current = true;
             }
         }
     }, [accountDetails?.userProfile]);
@@ -311,8 +317,14 @@ const DashboardTA = () => {
     ]);
 
     useEffect(() => {
-        if (!services || services.filter((x: ServicesOffered) => x.isActive).length === 0) {
+        const userProfileLoaded = accountDetails?.userProfile !== undefined;
+        const patternApprovalIsActive = services.some(
+            (service: ServicesOffered) => service.service === ServiceType.PatternApproval
+                && service.isActive,
+        );
+        if (userProfileLoaded && !patternApprovalIsActive) {
             navigate('/services-we-offer');
+            return;
         }
         setIsDataLoading(true); // Dashboard data
         const loadDataForDisplay = async () => {

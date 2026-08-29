@@ -3,6 +3,7 @@ import {
     ApplicationType,
     CRMLookupTypes,
     FormStepStatus,
+    ServiceType,
     YesNo,
 } from '../../../ClientApp/src/api/web-api-client';
 import type { ScenarioState } from './scenario-state';
@@ -19,6 +20,7 @@ import {
     buildRfqSummary,
 } from './mock-builders';
 import { failureKey } from './mock-failure';
+import { installTypeApprovalMockApi } from './type-approval-api';
 
 const defaultContact = {
     firstName: 'Test',
@@ -103,6 +105,28 @@ const buildSignInResponse = (state: ScenarioState) => ({
         }
         : null,
     userProfile: {
+        services: [
+            { service: ServiceType.TestingCalibration, isActive: true, isDefault: true },
+            { service: ServiceType.PatternApproval, isActive: true, isDefault: false },
+        ],
+        testingCalibrationDashboard: {
+            filterYearType: '',
+            filterStatusType: '',
+            filterSortOrder: 'descending',
+            filtersChanged: false,
+            filterCurrentPage: 1,
+            filterActiveTab: 'drafts',
+            filterSearchText: '',
+        },
+        patternApprovalDashboard: {
+            filterYearType: '',
+            filterStatusType: '',
+            filterSortOrder: 'descending',
+            filtersChanged: false,
+            filterCurrentPage: 1,
+            filterActiveTab: 'drafts',
+            filterSearchText: '',
+        },
         filterYearType: '',
         filterStatusType: '',
         filterSortOrder: 'descending',
@@ -499,4 +523,6 @@ export async function installMockApi(page: Page, state: ScenarioState): Promise<
     await page.route('**/api/address/search**', async (route) => {
         await json(route, { matches: [] });
     });
+
+    await installTypeApprovalMockApi(page, state);
 }
