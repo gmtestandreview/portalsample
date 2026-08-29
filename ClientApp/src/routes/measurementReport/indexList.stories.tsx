@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
+import { within, expect, waitFor } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import InstrMeasurementReport from './indexList';
 
@@ -30,5 +30,12 @@ export const Shell: Story = {
         const canvas = within(canvasElement);
         await expect(canvas.getByText('Testing and calibration service')).toBeVisible();
         await expect(canvas.getByTestId('go-to-dashboard-button')).toBeVisible();
+        // The report API is not served here, so no table ever appears and there is no
+        // content anchor to await. The route's own busy contract is the settled state:
+        // aria-busy is true while the request is in flight and returns to false once it
+        // settles, success or failure. Awaiting it is what stops the list route and its
+        // React Aria breadcrumb collection updating after the story has ended.
+        const reportRegion = canvasElement.querySelector('[aria-live="polite"]');
+        await waitFor(() => expect(reportRegion).toHaveAttribute('aria-busy', 'false'));
     },
 };
