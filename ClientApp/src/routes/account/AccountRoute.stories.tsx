@@ -54,6 +54,13 @@ export const OrganisationDetails: Story = {
         // is what left OrganisationNameLookup updating outside act - twice, once per instance
         // on this route.
         await expect(await canvas.findByRole('option', { name: /Precision Testing/ })).toBeVisible();
+        // A listbox may only own `option` and `group` children. The "Did you mean?" heading
+        // row sits inside the list, so it has to stay out of the accessibility tree; if it
+        // is exposed as a listitem, axe reports aria-required-children and listitem, and the
+        // list becomes unnavigable for a screen reader. Asserted here because the project's
+        // a11y checks run in `todo` mode and never fail a build on their own.
+        const suggestions = canvas.getByRole('listbox', { name: 'Suggested options' });
+        await expect(within(suggestions).queryAllByRole('listitem')).toHaveLength(0);
     },
 };
 

@@ -48,8 +48,10 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
-        // The Slate Editable surface is exposed as a textbox.
-        await expect(canvas.getByRole('textbox')).toBeVisible();
+        // The Slate Editable surface is exposed as a textbox. Slate renders a contenteditable
+        // div, which takes no accessible name from its placeholder the way a native input
+        // would, so the name is asserted by role rather than just the element's presence.
+        await expect(canvas.getByRole('textbox', { name: 'Type your message…' })).toBeVisible();
         await expect(canvas.getByRole('button', { name: /send/i })).toBeVisible();
         // Formatting controls are present.
         await expect(canvas.getByRole('button', { name: /bold/i })).toBeVisible();

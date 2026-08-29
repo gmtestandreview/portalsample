@@ -218,7 +218,14 @@ const OrganisationNameLookup = (
                                 className='suggestion-list show'
                                 aria-label='Suggested options'
                             >
-                                <ListGroup.Item as='li' className='suggestion-option auto-suggestions mt-0 border-0 small text-muted' aria-readonly>
+                                {/*
+                                  * A listbox may only own `option` and `group` children, so
+                                  * this heading row is presentational: it is removed from the
+                                  * accessibility tree and the list is announced through the
+                                  * `aria-label` above instead. `aria-readonly` is not an
+                                  * allowed attribute here and carried no meaning.
+                                  */}
+                                <ListGroup.Item as='li' role='presentation' className='suggestion-option auto-suggestions mt-0 border-0 small text-muted'>
                                     Did you mean?
                                 </ListGroup.Item>
                                 {filteredSuggestions.map((item, index) => (

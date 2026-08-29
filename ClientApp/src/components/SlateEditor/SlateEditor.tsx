@@ -175,6 +175,10 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                 <Slate editor={editor} initialValue={value} onChange={handleChange}>
                     <Editable
                         id='slate-editor'
+                        // Slate renders a contenteditable div with role="textbox", which gets
+                        // no accessible name from the placeholder the way a native input
+                        // would. Name it explicitly with the same text a sighted user sees.
+                        aria-label={placeholder || 'Message NMI'}
                         placeholder={placeholder || 'Message NMI'}
                         className='form-control mb-0 border border-bottom-0'
                         style={{ minHeight: '4rem' }}
