@@ -454,7 +454,7 @@ describe("Chromatic publishing reports asynchronously through GitHub", () => {
   });
 
   it("uses the repository's enforced Node 24 runtime", () => {
-    expect(nodeVersions(chromaticWorkflow)).toEqual(["24.19.0"]);
+    expect(nodeVersions(chromaticWorkflow)).toEqual(["24.20.0"]);
   });
 
   it("pins the Chromatic action and reads its protected repository secret", () => {

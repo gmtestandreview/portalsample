@@ -9,7 +9,7 @@
 | Package manager | npm | Root `package.json` + `package-lock.json` |
 | Module/build system | Dual: Webpack 5 (production) + Vite (Storybook/test tooling path) | `webpack.config.js`; `ClientApp/webpack/` runtime bootstrap; Storybook configured with `@storybook/react-vite` |
 | React version | 18.x (`createRoot` API) | `ClientApp/src/index.tsx` line 3 |
-| Node.js | 20+ for local tooling | `package.json` → `"engines": { "node": ">=20.0.0" }` |
+| Node.js | 24+ for local tooling and CI | `package.json` → `"engines": { "node": ">=24.0.0" }`, `devEngines.runtime` (`onFail: error`); `.node-version` pins the local dev runtime to `24.20.0` |
 
 ## 2) Production Frameworks and Dependencies
 

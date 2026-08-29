@@ -147,6 +147,9 @@ Two runtimes are versioned independently and must not be inferred from each othe
 
 - **Application/tooling floor** — `engines.node` and `devEngines.runtime.version` are both `>=24.0.0`, with `devEngines.runtime.onFail: error`. The floor deliberately excludes EOL Node 20, Node 22, and odd-numbered Node 23. `packageManager` stays on `npm@11.17.0` (Task D3; the floor itself landed early in Task D1 because `@eslint-react/eslint-plugin@5.18.6` requires Node >= 22).
 - **Action runtime** — supplied by the reviewed `checkout`/`setup-node` v7 and `upload-artifact` v6 majors, independent of the application version above.
+- **Local dev runtime** — `.node-version` records the exact Node the repository is developed against (`24.20.0`). It is a *hint*, not a gate: no workflow reads it, and it must always satisfy the `>=24.0.0` floor above. Bump it when the team's local runtime moves; do not raise `engines.node` to match, because the `lower-bound-node24` job deliberately installs the floor itself.
+- **Version-manager hazard (Windows)** — `fnm` and `nvm4w` prepend their own shim directory to `PATH`, so a machine-wide Node MSI can be silently shadowed by an older managed version. Verify with `Get-Command node -All` (not just `node -v`) before trusting the runtime, and note that each manager ships its own bundled `npm` — removing the manager can drop `npm` below the `packageManager` declaration.
+- **Exact-pinned workflow** — `.github/workflows/chromatic.yml` is the only workflow pinned to a full patch version (`24.20.0`) rather than the floating `'24'`, so visual-regression baselines are captured on a reproducible runtime. `tests/unit/config/workflowPolicy.test.ts` asserts the exact string, so the pin and its assertion must be changed in the same commit.
 
 ### Immutable action pins
 
