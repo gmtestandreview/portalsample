@@ -809,6 +809,32 @@ describe('Dashboard', () => {
         await waitFor(() => expect(mockMapToUserProfile).toHaveBeenCalled());
     });
 
+    it('writes the branch reset once even when the saved profile identity changes', async () => {
+        mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
+        const Dashboard = await importDashboard();
+        const view = renderDashboard(Dashboard);
+
+        await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledTimes(1));
+
+        // A fresh userProfile object with identical contents is what
+        // accountDispatch.setUserProfile produces in the real app; the reset
+        // must not fire again for the same branch selection.
+        mockAccountDetails = {
+            ...BASE,
+            userProfile: { testingCalibrationDashboard: { ...BASE_USER_PROFILE } },
+        };
+        view.rerender(
+            <MemoryRouter initialEntries={['/']}>
+                <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+
+        await waitFor(() => expect(screen.getAllByTestId('pagination')[0]).toHaveAttribute('data-current', '1'));
+        expect(mockSetUserProfile).toHaveBeenCalledTimes(1);
+    });
+
     it('uses branch-reset defaults when the mapped profile omits tab and page', async () => {
         mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
         mockMapToUserProfile.mockReturnValue({

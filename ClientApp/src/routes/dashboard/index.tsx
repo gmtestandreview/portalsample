@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { Navigate, Link } from 'react-router';
 import {
     Col, Row, Container,
@@ -335,11 +335,22 @@ const Dashboard = () => {
         }
     }, [savedUserProfile]);
 
-    // Set to default userprofile page number when the branch is changed
+    // Set to default userprofile page number when the branch is changed.
+    // The reset fires once per branch selection. Keying on the selection itself
+    // rather than on the profile's current page matters twice over: writing the
+    // profile replaces `savedUserProfile`, which this effect depends on, so a
+    // value-free guard would loop; and comparing the saved page against the
+    // default skipped the whole reset - tab and filters included - whenever the
+    // user already sat on page 1, which is the common case.
+    const branchResetKeyRef = useRef<string | null>(null);
+
     useEffect(() => {
+        const branchResetKey = `${branchSelectionModalMode}:${accountDetails?.defaultOrganisationId ?? ''}`;
+
         if (savedUserProfile
             && branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg
-            && savedUserProfile.testingCalibrationDashboard?.filterCurrentPage !== defaultFilter.filterCurrentPage) {
+            && branchResetKeyRef.current !== branchResetKey) {
+            branchResetKeyRef.current = branchResetKey;
             const tcDash = savedUserProfile?.testingCalibrationDashboard;
             const profile = {
                 filterYearType: tcDash?.filterYearType,
