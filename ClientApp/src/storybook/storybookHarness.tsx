@@ -124,6 +124,9 @@ export interface PortalFormikConfig {
 export interface PortalStoryParameters {
     authenticated?: boolean;
     initialEntries?: string[];
+    /** Route pattern the story is mounted under. Defaults to the `*` catch-all; set it
+     *  when the rendered route reads params through `useParams`. */
+    routePath?: string;
     accountDetails?: Partial<AccountDetails>;
     accountState?: Partial<AccountStateContext>;
     accountDispatch?: Partial<AccountDispatchContext>;

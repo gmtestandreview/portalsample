@@ -17,6 +17,7 @@ const meta = {
         layout: 'fullscreen',
         portal: {
             authenticated: true,
+            routePath: '/instrument-reports/:id',
             initialEntries: ['/instrument-reports/INS-1'],
         },
     },
@@ -28,6 +29,9 @@ type Story = StoryObj<typeof meta>;
 export const Shell: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
+        // The banner title renders the :id route param. It was empty in every story,
+        // because the preview decorator used to mount everything under `path: '*'`.
+        await expect(canvas.getByRole('heading', { level: 1, name: 'INS-1' })).toBeVisible();
         await expect(canvas.getByText('Testing and calibration service')).toBeVisible();
         await expect(canvas.getByTestId('go-to-dashboard-button')).toBeVisible();
         // The report API is not served here, so no table ever appears and there is no

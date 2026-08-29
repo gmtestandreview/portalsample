@@ -18,8 +18,14 @@ export default {
         (Story, { parameters }) => {
             const initialEntries = (parameters?.portal
                 ?.initialEntries as string[]) ?? ['/'];
+            // A story that renders a route reading useParams needs a pattern to match
+            // against; under the catch-all every param is undefined, which is why
+            // InstrMeasurementReport rendered an empty <h1>{id}</h1> and axe reported
+            // empty-heading. Stories opt in via `portal.routePath`, and anything that does
+            // not care keeps the catch-all it has always had.
+            const routePath = (parameters?.portal?.routePath as string) ?? '*';
             const router = createMemoryRouter(
-                [{ path: '*', element: createElement(Story) }],
+                [{ path: routePath, element: createElement(Story) }],
                 { initialEntries },
             );
             return createElement(RouterProvider, { router });

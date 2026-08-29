@@ -72,7 +72,17 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                         </div>
                         {/* Progress bar below the row */}
                         {hasProgress && (
-                            <div role='progressbar' className='mt-1'>
+                            // The byte counts and percentage render inside the role, so they
+                            // are not this progressbar's name or value. Named per row so a
+                            // screen reader can tell several concurrent uploads apart.
+                            <div
+                                role='progressbar'
+                                className='mt-1'
+                                aria-label={`Uploading ${f.fileName}`}
+                                aria-valuenow={progressPercent}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                            >
                                 <div
                                     className='d-flex justify-content-between ms-1 mb-1'
                                 >
