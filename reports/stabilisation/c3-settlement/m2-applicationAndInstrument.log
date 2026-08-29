@@ -1,0 +1,21 @@
+
+> nmi-portal@0.1.0 test:storybook
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.storybook.config.ts ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+11:01:45 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22m[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
+11:01:45 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22m[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
+stderr | unknown test
+[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
+stderr | unknown test
+[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
+ ✓ |storybook (chromium)| ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx (1 test) 427ms
+   ✓ Edit Step  425ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  11:01:40
+   Duration  5.46s (transform 0ms, setup 2.68s, import 419ms, tests 427ms, environment 0ms)
+

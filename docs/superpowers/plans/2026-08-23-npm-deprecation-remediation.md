@@ -1331,7 +1331,7 @@ Stage and commit additional scheduler-only consumer files separately with `test(
 - Consumes: C2-clean shared inputs.
 - Produces: zero warning rows outside runtime fixtures, MSW, and modal owners; C7 cannot start until this output is clean.
 
-- [ ] **Step 1: Run the three-mode settlement experiment**
+- [x] **Step 1: Run the three-mode settlement experiment**
 
 For one representative story in each cluster, run:
 
@@ -1342,6 +1342,15 @@ For one representative story in each cluster, run:
 ```
 
 Record whether the warning appears in mode 1, 2, or 3. A mode-1 warning is local settlement; mode 2 supports story-to-story lifecycle contamination; mode 3 supports project-level leakage/interleaving. Do not design a global cleanup around cross-story leakage unless modes 2 or 3 prove it.
+
+**Completed 2026-08-29. Results in `reports/stabilisation/warning-settlement.md`, logs in `reports/stabilisation/c3-settlement/`.**
+
+Two findings change the rest of this task:
+
+1. **W3 (the unit surface) is closed with no C3 edit.** C2's `<Label>` repair took the React Aria `ComboBox` off its unlabelled render path, and the post-C2 unit re-measure records 0 `act` lines, down from 15. The C1 census predicted exactly this. Step 3's unit-side work is therefore empty; C3 owns only the story surface.
+2. **Every owner is mode 1 or mode 2 — no cross-file leakage owner exists.** Eleven stories reproduce alone (mode 1) and two more only within their own file (mode 2). Six files that carry a count in the full sequential run are clean in isolation: React attributes a late update to whichever test is *currently active*, not the one that scheduled it. `RequestForQuote.stories.tsx` proves this unambiguously — it has no `play` functions at all, yet the full-file run attributes `InstrumentAndRequest`'s 24 lines to the *next* story, which renders a different component. **Repairing the story the census names would have changed nothing.** Those six files get no edit and are expected to fall to zero as a side effect.
+
+W4 also moved rather than only shrinking: C2's labelled render path added 12 lines across four React Aria internal rows (`OrganisationNameLookup` 4→8, `CertificateNumberLookup` 4→8, plus `ComboBoxInner`, `PopoverInner` and one hashed collection export appearing for the first time). Total 106 → 118. These are C3's to settle, not a C2 regression to revert.
 
 - [ ] **Step 2: Repair RequestForQuote and AcceptQuote descendants by first owner**
 

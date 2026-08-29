@@ -1,5 +1,13 @@
 # Gate C-MCP — Storybook MCP Readiness
 
+**Status at 2026-08-29 10:55 AEST: NOT PASSED for the current session.** Storybook is
+running and `/mcp` answers a real `initialize` with `@storybook/addon-mcp` 0.7.0, but this
+session was initialised while Storybook was stopped, so its tool registry still reports
+`ConnectionRefused` and a lookup for the four required tools returns no matches. C3's story
+mutation is blocked until the client is relaunched. See the 2026-08-29 record at the end of
+this file, which also names a new trap: **Storybook must not be started by the agent's own
+shell.**
+
 **Status at 2026-08-28 22:30 AEST: PASSED.** All four required tools were called
 successfully in a refreshed session. UI component and `*.stories.*` changes are now
 permitted. The original NOT PASSED record from 2026-08-27 22:57 is retained below, because
@@ -123,3 +131,62 @@ This is precisely the check the gate exists for.
 
 The earlier note in this file that C6's RED was uncommitted and its fix pending is
 superseded: the fix and its test are both committed and the tree is green.
+
+---
+
+## 2026-08-29 record — the gate regressed, and how not to regress it again
+
+| Field | Value |
+| --- | --- |
+| Measured at | 2026-08-29 10:55 AEST |
+| Commit | `430820c` |
+| Agent client | Claude Code (VS Code extension), session `f6307217` |
+| Storybook endpoint | healthy — `POST /mcp` `initialize` returns HTTP 200, `mcp-session-id`, `@storybook/addon-mcp` 0.7.0 |
+| Tool registry | **empty for this server** — startup reported `ConnectionRefused`; `list-all-documentation`, `get-documentation`, `get-storybook-story-instructions` and `run-story-tests` are all absent |
+
+### Why it regressed
+
+The 2026-08-28 pass depended on a Storybook process started **outside** VS Code. That
+process is gone. At the start of this session nothing was listening on 6006 (`netstat` for
+`6006` returned nothing, and `POST /mcp` returned HTTP 000), so the client's one startup
+probe failed and the tools were never registered.
+
+### The new trap: the agent must not start Storybook itself
+
+Storybook was restarted from the agent's own Bash tool. It came up correctly — but its
+process ancestry is:
+
+```text
+node.exe (storybook dev, pid 34692) -> cmd.exe -> node.exe -> bash.exe -> bash.exe -> (extension host) -> Code.exe
+```
+
+That is the **same defect this file already documents**: a Storybook descended from
+`Code.exe` dies on the VS Code relaunch that is the only thing which can register its tools.
+Starting it from the agent shell therefore cannot pass the gate, no matter how healthy the
+endpoint looks in between.
+
+The endpoint being reachable from a shell is **not** the gate. The gate is the tools being
+present in the client's registry, and that is decided once, at client start.
+
+### Correct sequence
+
+1. Open a terminal **outside VS Code** (Windows Terminal or PowerShell from the Start menu,
+   not the integrated terminal and not the agent's shell).
+2. `cd` to the repository root and run `npm run storybook`; leave the window open.
+3. Confirm it is not a VS Code descendant, then fully **relaunch VS Code** — a window reload
+   is not enough, because the extension host's Node runtime survives it.
+4. In the new session, call `list-all-documentation` and `get-storybook-story-instructions`
+   before touching any component or `*.stories.*` file.
+
+The `EBADDEVENGINES` failure recorded in the 2026-08-28 section no longer applies:
+`C:\Program Files\nodejs\node.exe` now reports v24.20.0, above this repository's
+`devEngines.runtime >= 24.0.0` floor, so a standalone shell no longer needs a `$env:Path`
+prefix.
+
+### Work waiting on this gate as at 2026-08-29
+
+| Item | State |
+| --- | --- |
+| C3 Step 1 — three-mode settlement experiment | **Done.** Read-only evidence, explicitly permitted before the gate. See `warning-settlement.md`. |
+| C3 — W3 (unit `act` warnings) | **Closed with no edit.** Re-measurement only; no UI or story file touched. |
+| C3 Steps 2-4 — W4 story settlement | **Blocked.** Every remaining repair adds a `play` function to a `*.stories.tsx` file, which is squarely inside this gate. |

@@ -109,7 +109,8 @@ inside `<ComboBox>`, keeping the existing class names and the `controlId` associ
 rendered DOM contract and existing selectors are unchanged. Consumers listed above are
 regression surfaces and should not be edited.
 
-**Status:** open, owned by C2.
+**Status:** closed by C2 in `f1de495`. C3's post-C2 re-measurement on 2026-08-29 records 0
+lines for this signature; see `reports/stabilisation/warning-settlement.md`.
 
 ---
 
@@ -134,7 +135,7 @@ component-level cause.
 **Intended repair (C2).** Closed by W1's repair. Any story edit here is a Gate C-MCP surface
 and must not precede that gate.
 
-**Status:** open, owned by C2, closes with W1.
+**Status:** closed with W1. C3's post-C2 re-measurement records 0 lines (was 132).
 
 ---
 
@@ -170,7 +171,9 @@ rather than wrapping assertions in bare `act`. C3 should re-measure after C2 lan
 unlabelled React Aria `ComboBox` takes a different internal path, so part of this count may
 be a consequence of W1 rather than an independent defect.
 
-**Status:** open, owned by C3, sequenced after C2.
+**Status:** closed. Re-measured after C2 on 2026-08-29: 0 lines (was 15). The census's own
+hypothesis is confirmed — W3 was entirely downstream of W1 and was never an independent
+defect. C3 edits no unit test file. See `reports/stabilisation/warning-settlement.md`.
 
 ---
 
@@ -208,7 +211,11 @@ census's — the owner list is what C3 needs to start.
 **Intended repair (C3).** Settle each owner at its own effect boundary. Story edits are a
 Gate C-MCP surface.
 
-**Status:** open, owned by C3.
+**Status:** open, owned by C3. Re-measured 2026-08-29 at 118 lines across 13 owner stories
+in 11 files. C2's labelled React Aria render path added 12 lines across four React Aria
+internal rows; six files that carry a count in the full run are clean in isolation and are
+attribution drift, not owners. Full three-mode settlement evidence in
+`reports/stabilisation/warning-settlement.md`.
 
 ---
 
