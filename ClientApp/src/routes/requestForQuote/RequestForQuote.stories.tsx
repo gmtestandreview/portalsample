@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { http, HttpResponse } from 'msw';
+import { within, expect, waitFor } from 'storybook/test';
 import OrganisationAndContact from './organisationAndContact';
 import InstrumentAndRequest from './instrumentAndRequest';
 import { withPortalProviders } from '../../storybook/storybookHarness';
@@ -99,6 +100,20 @@ export const InstrumentAndRequestStep: Story = {
             },
         },
     },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // The component renders a BlockUISpinner until both lookup setters have run, so
+        // awaiting this heading is the settled-state contract: it cannot appear before
+        // /api/lookup has resolved into measurementCategories and artefactTypesSelected.
+        const heading = await canvas.findByRole('heading', { name: 'Instrument/artefact details' });
+        await expect(heading).toBeVisible();
+        // Both lookups reached the DOM: the category list, and the artefact types filtered
+        // to the story's initial 'electrical' category.
+        await expect(canvas.getByRole('option', { name: 'Electrical' })).toBeInTheDocument();
+        await expect(canvas.getByRole('option', { name: 'Digital thermometer' })).toBeInTheDocument();
+        const availabilityDate = canvas.getByLabelText('Preferred Instrument/artefact availability date (optional)');
+        await waitFor(() => expect(availabilityDate).toHaveValue('01/06/2026'));
+    },
 };
 
 export const OrganisationAndContactValidation: Story = {
@@ -190,5 +205,15 @@ export const InstrumentAndRequestValidation: Story = {
                 },
             },
         },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // Same settled-state contract as Instrument And Request Step: the heading is behind
+        // the component's BlockUISpinner branch and appears only once /api/lookup resolves.
+        const heading = await canvas.findByRole('heading', { name: 'Instrument/artefact details' });
+        await expect(heading).toBeVisible();
+        // The seeded validation state survives the lookup settling rather than being
+        // cleared by the re-render it causes.
+        await expect(canvas.getByText('Select a measurement category.')).toBeVisible();
     },
 };
