@@ -1,4 +1,5 @@
 const path = require('node:path');
+const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -123,6 +124,19 @@ module.exports = function webpackConfig(env, argv) {
             new HtmlWebpackPlugin({
                 template: './index.html',
                 templateParameters: devEnvVars,
+            }),
+
+            new CopyPlugin({
+                patterns: [
+                    {
+                        from: path.resolve(__dirname, 'ClientApp/public/favicon.ico'),
+                        to: 'favicon.ico',
+                    },
+                    {
+                        from: path.resolve(__dirname, 'ClientApp/public/NMI-tile.png'),
+                        to: 'NMI-tile.png',
+                    },
+                ],
             }),
 
             new ForkTsCheckerWebpackPlugin({

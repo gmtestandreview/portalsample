@@ -45,6 +45,10 @@ interface WebpackConfig {
         constructor: {
             name: string;
         };
+        patterns?: Array<{
+            from: string;
+            to: string;
+        }>;
         userOptions?: {
             templateParameters?: Record<string, string>;
         };
@@ -125,6 +129,24 @@ describe('webpack config', () => {
             });
             delete require.cache[configPath];
         }
+    });
+
+    it('copies application shell identity assets into production output', () => {
+        const config = webpackConfigFactory({}, { mode: 'production' });
+        const copyPlugin = config.plugins.find(
+            (plugin) => plugin.constructor.name === 'CopyPlugin',
+        );
+
+        expect(copyPlugin?.patterns).toEqual([
+            {
+                from: expect.stringMatching(/ClientApp[\\/]public[\\/]favicon\.ico$/),
+                to: 'favicon.ico',
+            },
+            {
+                from: expect.stringMatching(/ClientApp[\\/]public[\\/]NMI-tile\.png$/),
+                to: 'NMI-tile.png',
+            },
+        ]);
     });
 
     it('configures the SCSS rule to use Dart Sass via the modern API', () => {
