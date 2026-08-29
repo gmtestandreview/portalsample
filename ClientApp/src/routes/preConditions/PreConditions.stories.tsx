@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
+import { within, expect, waitFor } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import PreConditions from './PreConditions';
 
@@ -42,5 +42,9 @@ export const RendersProtectedContent: Story = {
         const canvas = within(canvasElement);
         await expect(canvas.getByTestId('protected-content')).toBeVisible();
         await expect(canvas.getByText('Protected dashboard content')).toBeVisible();
+        // Both assertions above pass on the first render. The route announcement does not:
+        // useRouteAccessibility starts it empty and fills it from a 100ms setTimeout, which
+        // is what left PreConditions and Layout updating after the story had ended.
+        await waitFor(() => expect(canvas.getByRole('status')).toHaveTextContent(/^Navigated to .* page\.$/));
     },
 };

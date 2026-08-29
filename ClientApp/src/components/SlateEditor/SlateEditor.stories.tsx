@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { within, expect, fn } from 'storybook/test';
+import { within, expect, fn, userEvent } from 'storybook/test';
 import SlateEditor, { type CustomElement } from './SlateEditor';
 
 /**
@@ -53,6 +53,14 @@ export const Default: Story = {
         await expect(canvas.getByRole('button', { name: /send/i })).toBeVisible();
         // Formatting controls are present.
         await expect(canvas.getByRole('button', { name: /bold/i })).toBeVisible();
+        // Typing is what drives Slate's Editable through act; the three assertions above are
+        // static chrome, so without an interaction the editor kept updating after the story
+        // had ended and the warning surfaced against whichever story ran next.
+        await userEvent.type(canvas.getByRole('textbox'), ' Noted.');
+        await expect(canvas.getByText('Thanks for the update on the application. Noted.')).toBeVisible();
+        // The counter measures serialised HTML length, not visible characters: the 48
+        // characters above plus the <p></p> wrapper.
+        await expect(canvas.getByText(/55\s*\/\s*500/)).toBeVisible();
     },
 };
 
@@ -65,5 +73,7 @@ export const Empty: Story = {
         // Live counter starts at zero out of the budget.
         await expect(canvas.getByText(/0/)).toBeVisible();
         await expect(canvas.getByText(/500/)).toBeVisible();
+        await userEvent.type(canvas.getByRole('textbox'), 'Hi');
+        await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();
     },
 };
