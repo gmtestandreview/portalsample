@@ -248,3 +248,61 @@ describe("publisher deprecations", () => {
     expect(deprecatedEntries).toEqual([]);
   });
 });
+
+describe("install-script approvals", () => {
+  /**
+   * npm 11.17 records reviewed install scripts in package.json's `allowScripts`
+   * and warns on every install about packages not yet covered. The field is
+   * advisory today - the scripts still run - but npm has announced that a
+   * future release will block unreviewed ones, so an unreviewed script is a
+   * build that breaks later, not just noise.
+   *
+   * Keys are npm-package-arg specs and values are booleans: `true` allows,
+   * `false` denies, and a deny always wins over an allow.
+   *
+   * The keys are deliberately name-only rather than pinned `pkg@version`, and
+   * that is forced by this repository's lockfile. arborist derives a package's
+   * trusted identity from the `resolved` URL; where `resolved` is absent it
+   * falls back to the name from the incoming edges and reports the version as
+   * null, so a pinned key can never match. Only 126 of this lockfile's 1399
+   * entries carry `resolved`, which is why `npm approve-scripts` reports
+   * "Nothing to approve" while `--allow-scripts-pending` still lists the three
+   * packages. Once the lockfile carries `resolved` for every entry, these
+   * should become pinned so that a version bump re-triggers review.
+   */
+  const APPROVED_INSTALL_SCRIPTS = [
+    "@parcel/watcher",
+    "esbuild",
+    "msw",
+  ] as const;
+
+  const allowScripts = (
+    JSON.parse(readFileSync("package.json", "utf8")) as {
+      allowScripts?: Record<string, boolean>;
+    }
+  ).allowScripts;
+
+  it("reviews every dependency that runs an install script", () => {
+    expect(Object.keys(allowScripts ?? {}).sort()).toEqual(
+      [...APPROVED_INSTALL_SCRIPTS].sort(),
+    );
+  });
+
+  it("records each review as an explicit allow", () => {
+    for (const packageName of APPROVED_INSTALL_SCRIPTS) {
+      expect(
+        allowScripts?.[packageName],
+        `${packageName} must be an explicit boolean allow, not a version string`,
+      ).toBe(true);
+    }
+  });
+
+  it("keeps each approved package installed at exactly one version", () => {
+    for (const packageName of APPROVED_INSTALL_SCRIPTS) {
+      expect(
+        installedVersions(packageName),
+        `${packageName} must resolve to a single version, so one name-only approval covers one reviewed build`,
+      ).toHaveLength(1);
+    }
+  });
+});

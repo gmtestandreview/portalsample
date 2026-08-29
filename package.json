@@ -163,5 +163,10 @@
     "uuid": "^11.1.1",
     "valibot": "1.4.2"
   },
-  "packageManager": "npm@11.17.0"
+  "packageManager": "npm@11.17.0",
+  "allowScripts": {
+    "@parcel/watcher": true,
+    "esbuild": true,
+    "msw": true
+  }
 }
