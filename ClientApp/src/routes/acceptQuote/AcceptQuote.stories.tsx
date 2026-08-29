@@ -108,6 +108,13 @@ export const ReportRecipientStep: Story = {
         await expect(canvas.getByRole('heading', { name: /report recipient organisation/i })).toBeVisible();
         await expect(canvas.getByLabelText(/organisation name for report/i)).toBeVisible();
         await expect(canvas.getByText(/organisation address for report/i)).toBeVisible();
+        // The spinner here overlays the form rather than replacing it, so the headings above
+        // are present before the fetch resolves. The address descriptors are not: they are
+        // rendered from the loaded rfqOrganisation, so awaiting them is the settled-state
+        // contract for all three setters in the effect. Both the street and postal options
+        // carry it, because this fixture sets postalAddressSameAsStreetAddress.
+        const addressDescriptors = await canvas.findAllByText(/100 Example Street/);
+        await expect(addressDescriptors).toHaveLength(2);
     },
 };
 
@@ -138,6 +145,11 @@ export const ReportRecipientSummaryOtherAddress: Story = {
         const canvas = within(canvasElement);
         await expect(canvas.getByText(/report recipient organisation/i)).toBeVisible();
         await expect(canvas.getByText(/organisation name for report/i)).toBeVisible();
+        // Both assertions above are static summary chrome and pass before the fetch resolves.
+        // The "Other" address is the settled-state contract: its value comes from Formik and
+        // is available immediately, but it is only rendered once reportRecipientStep has
+        // loaded and reports reportAddressType 'Other'.
+        await expect(await canvas.findByText(/200 Custom Street/)).toBeVisible();
     },
 };
 
@@ -160,6 +172,14 @@ export const PaymentDetailsStep: Story = {
                 },
             },
         },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // The Prepaid paragraph is rendered only once acceptQuotePreInfo has loaded and
+        // reports paymentTerms 'Prepaid'. Its negative counterpart is not usable as a
+        // settlement anchor, because `paymentTerms !== 'Prepaid'` is already true while the
+        // value is undefined.
+        await expect(await canvas.findByText(/Prepayment required/)).toBeVisible();
     },
 };
 
@@ -194,9 +214,16 @@ export const PaymentDetailsPostpaid: Story = {
             ],
         },
     },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // This story's handler returns paymentTerms 'Invoice', whose paragraph also renders
+        // pre-settlement, so the quotation id in the PO inline help is the anchor instead:
+        // it appears only when acceptQuotePreInfo has arrived.
+        await expect(await canvas.findByText(/Q-2024-000456/)).toBeVisible();
+    },
 };
 
-const deliveryAndReturnHandler = http.get('/api/accept-quote/:id/delivery-and-return', () => HttpResponse.json({
+const deliveryAndReturnHandler =http.get('/api/accept-quote/:id/delivery-and-return', () => HttpResponse.json({
     acceptQuotePreInfo: {
         quotationIdNum: 'Q-2024-000456',
         receiptAndDispatchNA: false,
@@ -238,6 +265,12 @@ export const DeliveryAndReturnStep: Story = {
         },
         msw: { handlers: [deliveryAndReturnHandler] },
     },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
+        // so this text is the settled-state contract for the four setters in the effect.
+        await expect(await canvas.findByText(/loading dock at the rear of the building/)).toBeVisible();
+    },
 };
 
 const quotationSummaryHandler = http.get('/api/quote/get-quote-request-details', () => HttpResponse.json({
@@ -262,6 +295,12 @@ export const QuotationSummaryStep: Story = {
             },
         },
         msw: { handlers: [quotationSummaryHandler] },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // QuoteDetails renders the quotation id only when quotationData has arrived, so this
+        // is the settled-state contract for the QuotationSummary and ViewPdfQuote subtree.
+        await expect(await canvas.findByText('Q-2024-000456')).toBeVisible();
     },
 };
 
@@ -321,5 +360,9 @@ export const SummaryAndAcceptStep: Story = {
     play: async ({ canvas }) => {
         const heading = await canvas.findByText(/Before you accept and submit our offer/i);
         await expect(heading).toBeVisible();
+        // The heading is static chrome and appears before the fetches resolve. The embedded
+        // QuotationSummary's quotation id is the actual settled-state contract, and is what
+        // holds the story open until ViewPdfQuote has stopped scheduling updates.
+        await expect(await canvas.findByText('Q-2024-000456')).toBeVisible();
     },
 };
