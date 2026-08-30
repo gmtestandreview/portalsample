@@ -80,7 +80,7 @@ export default {
                 exclude: ['as', 'bsPrefix', 'ref', 'key'],
                 sort: 'requiredFirst',
             },
-            canvas: { sourceState: 'hidden' },
+            canvas: { sourceState: 'shown' },
             source: {
                 excludeDecorators: true,
                 type: 'auto',
