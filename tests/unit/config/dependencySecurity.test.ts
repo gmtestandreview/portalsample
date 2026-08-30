@@ -306,3 +306,18 @@ describe("install-script approvals", () => {
     }
   });
 });
+
+describe("coverage remapping cohort", () => {
+  // ast-v8-to-istanbul performs the V8-to-Istanbul remap that emitted the
+  // `terms-config.json?import` parse failure. It moved 1.0.4 -> 1.0.5 as an
+  // incidental lockfile re-resolution in 23f0a2f, confounding that commit's
+  // remap fix with a dependency change. Pin it so the next incidental move is
+  // visible rather than silent.
+  it("resolves the V8-to-Istanbul remapper at exactly one reviewed version", () => {
+    expect(installedVersions("ast-v8-to-istanbul")).toEqual(["1.0.5"]);
+  });
+
+  it("keeps the coverage provider aligned with the Vitest cohort", () => {
+    expect(installedVersions("@vitest/coverage-v8")).toEqual(["4.1.11"]);
+  });
+});
