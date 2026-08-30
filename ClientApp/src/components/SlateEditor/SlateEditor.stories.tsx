@@ -75,9 +75,11 @@ export const Empty: Story = {
         // Live counter starts at zero out of the budget.
         await expect(canvas.getByText(/0/)).toBeVisible();
         await expect(canvas.getByText(/500/)).toBeVisible();
-        const textbox = canvas.getByRole('textbox');
-        await userEvent.click(textbox);
-        await userEvent.type(textbox, 'Hi');
+        // Do not add a userEvent.click() before this line. user-event defaults to
+        // skipClick: false, so type() already clicks and focuses the target; a
+        // preceding click is a duplicate that settles nothing. See
+        // docs/change-record/2026-08-30-storybook-remediation-audit.md.
+        await userEvent.type(canvas.getByRole('textbox'), 'Hi');
         await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();
     },
 };
