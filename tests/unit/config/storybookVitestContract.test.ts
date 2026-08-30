@@ -4,6 +4,7 @@ import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
+import storybookConfig from "../../../vitest.storybook.config";
 
 const requireFrom = createRequire(import.meta.url);
 
@@ -62,6 +63,10 @@ describe("Storybook/Vitest runtime bridge contract", () => {
     // When this fails, Storybook has moved off init(): delete the init
     // assignment in vitest.storybook.runtime.ts and this test with it.
     expect(addonSource).toContain("this.vitest.init()");
+  });
+
+  it("wires the runtime compatibility plugin into the Storybook Vitest config", () => {
+    expect(storybookConfig.plugins).toContain(storybookVitestRuntimePlugin);
   });
 
   it("bridges to an API that Vitest still exposes as the supported replacement", () => {

@@ -14,6 +14,8 @@ const oomRun = [
     'FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory',
 ].join('\n');
 
+const summaryThenOomRun = `${completedRun}\n${oomRun}`;
+
 describe('storybook run log audit', () => {
     it('reports clean only when the run reached its summary', () => {
         const audit = auditLog(completedRun);
@@ -33,6 +35,15 @@ describe('storybook run log audit', () => {
         expect(audit.hits).toEqual([]);
         expect(audit.verdict).toBe('invalid');
         expect(audit.truncatedBy).toContain('JavaScript heap out of memory');
+    });
+
+    it('refuses to call a summary followed by an OOM clean', () => {
+        const audit = auditLog(summaryThenOomRun);
+
+        expect(audit.completed).toBe(true);
+        expect(audit.hits).toEqual([]);
+        expect(audit.truncatedBy).toContain('FATAL ERROR');
+        expect(audit.verdict).toBe('invalid');
     });
 
     it('still reports a positive hit found in a truncated log', () => {

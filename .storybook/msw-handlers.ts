@@ -36,7 +36,10 @@ export const mswHandlers = [
     // and surfaces inside the story that needs the fixture.
     http.get('/api/lookup', ({ request }) => {
         const lookupType = new URL(request.url).searchParams.get('LookupType') as CRMLookupTypes | null;
-        const fixture = lookupType === null ? undefined : lookupResponsesByType[lookupType];
+        const fixture =
+            lookupType === null || !Object.hasOwn(lookupResponsesByType, lookupType)
+                ? undefined
+                : lookupResponsesByType[lookupType];
 
         if (fixture === undefined) {
             return HttpResponse.json(

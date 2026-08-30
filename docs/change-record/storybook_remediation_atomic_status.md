@@ -1,5 +1,8 @@
 # Storybook Diagnostic Remediation — Atomic Status and Decision Record
 
+> Historical checkpoint only. For final acceptance, use
+> [`2026-08-30-storybook-remediation-audit.md`](2026-08-30-storybook-remediation-audit.md).
+
 **Record date:** 30 August 2026  
 **Sources:** `storybook_remediation_status.md` execution transcript and `2026-08-30-storybook-diagnostic-remediation-audit.md` original plan  
 **Overall status:** **Remediation implemented; final acceptance incomplete**  

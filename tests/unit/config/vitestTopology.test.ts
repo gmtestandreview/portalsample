@@ -108,9 +108,20 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
       readFileSync("package.json", "utf8"),
     ) as PackageScripts;
 
+    const reviewedCoverageConfigs = new Set([
+      "vitest.unit.config.ts",
+      "vitest.storybook.config.ts",
+    ]);
     const aggregateRunsWithCoverage = Object.entries(scripts).filter(
-      ([, command]) =>
-        command.includes("--coverage") && !command.includes("--config"),
+      ([, command]) => {
+        if (!command.includes("--coverage")) {
+          return false;
+        }
+
+        const config = /--config(?:=|\s+)([^\s]+)/.exec(command)?.[1];
+
+        return config === undefined || !reviewedCoverageConfigs.has(config);
+      },
     );
 
     expect(aggregateRunsWithCoverage).toEqual([]);

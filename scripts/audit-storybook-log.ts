@@ -49,7 +49,7 @@ export const auditLog = (log: string): LogAudit => {
         .map((target) => ({ target, count: log.split(target).length - 1 }))
         .filter(({ count }) => count > 0);
 
-    const verdict = hits.length > 0 ? 'dirty' : completed ? 'clean' : 'invalid';
+    const verdict = hits.length > 0 ? 'dirty' : completed && truncatedBy.length === 0 ? 'clean' : 'invalid';
 
     return { completed, truncatedBy, hits, verdict };
 };

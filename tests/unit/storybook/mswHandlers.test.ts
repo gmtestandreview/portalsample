@@ -69,4 +69,16 @@ describe('Storybook MSW handlers', () => {
 
         expect(response.status).toBe(501);
     });
+
+    it.each(['__proto__', 'constructor', 'toString'])(
+        'fails closed with 501 for inherited object member %s',
+        async (lookupType) => {
+            const url = apiUrl('/api/lookup');
+            url.searchParams.set('LookupType', lookupType);
+
+            const response = await fetch(url);
+
+            expect(response.status).toBe(501);
+        },
+    );
 });

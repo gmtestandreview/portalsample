@@ -131,8 +131,9 @@ affordable — e.g. alongside the next planned `npm ci` cycle.
 
 ## Open item: Storybook manager-path memory growth (not fixed by this plan)
 
-A long-lived `npm run storybook` session hosting `@storybook/addon-vitest` grows
-without bound and dies at Node's default ~4 GB ceiling.
+A prior long-lived `npm run storybook` session hosting `@storybook/addon-vitest`
+grew until it died at Node's default ~4 GB ceiling. This is an observed
+failure, not evidence that every manager session grows without bound.
 
 ### Measured
 
@@ -161,7 +162,8 @@ i.e. it died at ~4092 MB — Node's default ceiling, not the 8192 MB that
 
 ### Attribution
 
-The measurement above makes the mechanism concrete rather than speculative:
+Installed-source behaviour gives a plausible attribution, but it is not a
+manager-path measurement:
 
 * The end-of-run V8 coverage remap alone needs ~3.6 GB. Against Node's default
   ~4.09 GB ceiling that leaves under 500 MB of headroom **before** any session
@@ -173,12 +175,14 @@ The measurement above makes the mechanism concrete rather than speculative:
   `// TODO: Clearing the whole internal state of Vitest might be too aggressive`
   — the addon's own note that its `clearVitestState` is partial.
 
-So the manager path runs the same ~3.6 GB remap as the CLI path, but with a
-smaller ceiling and with retained state on top. It does not need a leak to die;
-one remap plus a few retained runs is sufficient.
+The manager path plausibly runs the same ~3.6 GB remap as the CLI path, but
+with a smaller ceiling and potentially retained state on top. It does not need
+a proven leak to explain the recorded OOM; one remap plus a few retained runs
+is sufficient.
 
-**Not measured:** whether `maxWorkers: 2` changes the peak (plan Task 8 Step 3).
-That experiment belongs with the live manager-path measurement and was not run.
+**Not measured:** the manager-process peak RSS or whether `maxWorkers: 2`
+changes that peak (plan Task 8 Step 3). Those comparisons belong with the live
+manager-path measurement and were not run.
 
 ### Deliberately NOT fixed here
 
@@ -397,7 +401,7 @@ The implementation files are grouped below so the conflated `23f0a2f` remains re
 | MSW contract | `.storybook/msw-handlers.ts`, `ClientApp/src/storybook/storybookFixtures.ts`, `tests/unit/storybook/mswHandlers.test.ts` | Supply the explicit application-source-derived lookup fixtures and fail-closed response. |
 | Coverage topology | `vitest.storybook.config.ts`, `vitest.storybook.coverage.ts`, `vitest.unit.config.ts`, `tests/unit/config/coverageRemapPolicy.test.ts`, `tests/unit/config/vitestTopology.test.ts`, `tests/unit/coverage/coverageConfig.test.ts` | Keep executable-source coverage at the active root, guard the aggregate topology, and retain the runtime JSON-data assertion. |
 | Behavioural regression checks | `ClientApp/src/analytics/GoogleAnalytics.tsx`, `tests/unit/analytics/googleAnalytics.test.tsx`, `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx`, `ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx` | Prevent empty-ID analytics loading while retaining production initialisation coverage, and restore/verify the two previously touched story interactions. |
-| Conflated user telemetry work | `.storybook/preview-setup.ts`, `ClientApp/src/env.ts`, `ClientApp/src/instrumentation/AppInsightsService.ts`, `ClientApp/src/components/ErrorBoundary/index.tsx`, `tests/unit/runtime/env.test.ts`, `tests/unit/instrumentation/appInsightsService.test.ts`, `tests/unit/components/errorBoundary.test.tsx`, `tests/unit/instrumentation/appInsightsService.test.ts` | Not a Storybook diagnostic fix. These files are preserved and separately owned as documented in the ownership split. |
+| Conflated user telemetry work | `.storybook/preview-setup.ts`, `ClientApp/src/env.ts`, `ClientApp/src/instrumentation/AppInsightsService.ts`, `ClientApp/src/components/ErrorBoundary/index.tsx`, `tests/unit/runtime/env.test.ts`, `tests/unit/instrumentation/appInsightsService.test.ts`, `tests/unit/components/errorBoundary.test.tsx`, `tests/unit/storybook/previewEnvStubs.test.ts` | Not a Storybook diagnostic fix. These files are preserved and separately owned as documented in the ownership split. |
 | Record | `docs/change-record/2026-08-30-storybook-remediation-audit.md` | Documents evidence, decisions, limitations and final acceptance disposition. |
 
 No direct dependency was changed by this plan. `package.json` and
@@ -450,6 +454,7 @@ node scripts/audit-coverage-report.ts reports/coverage/storybook/coverage-final.
 | Unit coverage | `03-unit-coverage-attempt1.log`: 131 files / 1,525 tests passed; `03-unit-coverage-audit-attempt1.log`: `CLEAN`. The command exit is 1 only because coverage is 76.27% statements, 77.06% branches, 76.70% functions and 76.77% lines against the pre-existing 100% global threshold. Test result and threshold result are separate. |
 | Initial non-coverage Storybook attempt | `04-storybook-no-coverage-attempt1.log`: **85 passed / 2 failed files and 215 passed / 3 failed tests**. `SubmittedSuccess` (`Prepaid`, `Postpaid`) and `ErrorSummary` (`Server Error`) each timed out at 15 s. `04-storybook-no-coverage-audit-attempt1.log` is `CLEAN` only for its targeted diagnostic scan; it does not make the red test run pass. |
 | Storybook with coverage | `05-storybook-coverage-attempt1.log`: 87/87 files and 218/218 tests passed in 306.28 s; `05-storybook-coverage-audit-attempt1.log`: `CLEAN`; `05-storybook-coverage-artifact-audit-attempt1.log`: `CLEAN`, 276 executable and zero non-executable entries. |
+| Storybook MCP test gate | The successful full gate reported every listed story passing. The previously timed-out `SubmittedSuccess` and `ErrorSummary` cases also passed their focused checks before the accepted full retry. |
 | Storybook build | `06-build-storybook-attempt1.log`: exit 0; fresh build completed successfully. The prior unattributed `storybook-static/` artifact is not used as evidence. |
 | Production analytics test | `08-google-analytics-unit-attempt1.log`: 1 file / 10 tests passed, including the positive `ReactGA.initialize` assertion for configured `env.REACT_APP_GA_TRACKINGID`. |
 
