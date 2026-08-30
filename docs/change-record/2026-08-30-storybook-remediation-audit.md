@@ -456,8 +456,26 @@ node scripts/audit-coverage-report.ts reports/coverage/storybook/coverage-final.
 The brief's `grep -c` command is unavailable in this Windows PowerShell
 environment (`grep` is not installed). The exact PowerShell `Select-String`
 equivalent above wrote `0` for both completed initial Storybook logs to
-`07-analytics-network-count-powershell-equivalent.log`. The completed coverage
-log and the later completed non-coverage retry also had zero hits for
+`07-analytics-network-count-powershell-equivalent.log`. The accepted coverage
+and non-coverage retry logs were counted separately after the retry, using the
+following exact successful PowerShell command and distinct retained output:
+
+```powershell
+$coverageLog = Join-Path $acceptanceLogDir '05-storybook-coverage-attempt1.log'
+$acceptedNoCoverageLog = Join-Path $acceptanceLogDir '11-storybook-no-coverage-full-attempt2.log'
+$evidenceLog = Join-Path $acceptanceLogDir '12-analytics-network-count-accepted-storybook-logs-attempt1.log'
+@("${coverageLog}:$((Select-String -Path $coverageLog -Pattern 'googletagmanager\.com' -AllMatches | Measure-Object).Count)", "${acceptedNoCoverageLog}:$((Select-String -Path $acceptedNoCoverageLog -Pattern 'googletagmanager\.com' -AllMatches | Measure-Object).Count)") | Tee-Object -FilePath $evidenceLog
+```
+
+`12-analytics-network-count-accepted-storybook-logs-attempt1.log` contains:
+
+```text
+C:\Users\gregm\AppData\Local\Temp\storybook-diagnostic-remediation-acceptance-20260830-211500\05-storybook-coverage-attempt1.log:0
+C:\Users\gregm\AppData\Local\Temp\storybook-diagnostic-remediation-acceptance-20260830-211500\11-storybook-no-coverage-full-attempt2.log:0
+```
+
+Thus, the two **accepted completed** Storybook logs have zero GTM-domain hits.
+They also had zero hits for
 `DEPRECATED`, `vitest.init`, `[MSW] Warning`, `unhandled request`, `Failed to
 parse`, `RolldownError`, `PARSE_ERROR`, and `unknown test`; their Storybook-log
 audits returned `CLEAN`. The known `act(...)` messages and intentional
@@ -535,7 +553,7 @@ receives only the evidence-supported portion.
 | 2 | Bridge guarded on both sides and expires | 5 | 5 | Four contract tests in the 1,525-test unit run. |
 | 3 | No unhandled application lookup request | 5 | 5 | Both target audits `CLEAN`; source-derived handler tests passed. |
 | 4 | Unmapped lookup fails closed | 5 | 5 | Explicit 501 test passed. |
-| 5 | No real GTM request during Storybook tests | 5 | 5 | Zero domain hits in both completed logs. |
+| 5 | No real GTM request during Storybook tests | 5 | 5 | `12-analytics-network-count-accepted-storybook-logs-attempt1.log` records zero `googletagmanager.com` hits in accepted coverage log 05 and accepted non-coverage retry log 11. |
 | 6 | Production analytics positive path asserted | 5 | 5 | Focused GA unit run: 10/10 passed. |
 | 7 | V8 coverage has no JSON remap failure | 10 | 10 | Green coverage run and clean artifact audit. |
 | 8 | Coverage narrowed, not gutted | 5 | 5 | 276 executable entries, zero non-executable entries. |
