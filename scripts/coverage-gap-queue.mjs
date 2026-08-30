@@ -172,15 +172,15 @@ writeFileSync(
     `${JSON.stringify({ generatedFrom: COVERAGE_FINAL, measuredFiles: Object.keys(coverage).length, filesNeedingWork: rows.length, totals, byFamily, rows }, null, 2)}\n`,
 );
 
-console.log(`Measured files:      ${Object.keys(coverage).length}`);
-console.log(`Files needing work:  ${rows.length}`);
-console.log(`Uncovered branches:  ${totals.branches}`);
-console.log(`Uncovered functions: ${totals.functions}`);
-console.log(`Uncovered statements:${totals.statements}`);
-console.log('\nBy family:');
+console.warn(`Measured files:      ${Object.keys(coverage).length}`);
+console.warn(`Files needing work:  ${rows.length}`);
+console.warn(`Uncovered branches:  ${totals.branches}`);
+console.warn(`Uncovered functions: ${totals.functions}`);
+console.warn(`Uncovered statements:${totals.statements}`);
+console.warn('\nBy family:');
 for (const [id, family] of Object.entries(byFamily).sort()) {
-    console.log(
+    console.warn(
         `  ${id}. ${family.name.padEnd(62)} ${String(family.files).padStart(3)} files  ${String(family.branches).padStart(5)}b ${String(family.functions).padStart(4)}f ${String(family.statements).padStart(5)}s`,
     );
 }
-console.log(`\nWrote ${OUTPUT}`);
+console.warn(`\nWrote ${OUTPUT}`);
