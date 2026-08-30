@@ -1,5 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
+import termsConfig from "../../../ClientApp/src/terms-config.json";
+import { storybookCoverageConfig } from "../../../vitest.storybook.coverage";
+import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
 import unitConfig from "../../../vitest.unit.config";
 
 /**
@@ -17,9 +20,10 @@ import unitConfig from "../../../vitest.unit.config";
  */
 
 const coverage = unitConfig.test?.coverage;
+const storybookCoverage = storybookCoverageConfig;
 
-if (coverage === undefined) {
-  throw new Error("vitest.unit.config.ts must declare unit coverage");
+if (coverage?.provider !== "v8") {
+  throw new Error("vitest.unit.config.ts must declare V8 unit coverage");
 }
 
 /** Categories the reviewed policy allows to leave the denominator. */
@@ -66,6 +70,10 @@ describe("unit coverage denominator", () => {
 });
 
 describe("remap inputs", () => {
+  it("loads the terms configuration as data", () => {
+    expect(termsConfig).toEqual({ TermsVersion: "1" });
+  });
+
   it("carries no removed Vitest 3 coverage.all option", () => {
     // `all` was removed in Vitest 4; asserting it through a type escape claims
     // behaviour the runtime does not provide and reintroduces the JSON remap
@@ -89,5 +97,33 @@ describe("remap inputs", () => {
   it("reports through providers that do not require an all-files sweep", () => {
     expect(coverage.provider).toBe("v8");
     expect(coverage.reportsDirectory).toBe("./reports/coverage/unit");
+  });
+
+  it("limits Storybook coverage remapping to executable application source", () => {
+    expect(storybookCoverage.provider).toBe("v8");
+    expect(storybookCoverage.include).toEqual(["ClientApp/src/**/*.{ts,tsx}"]);
+    expect(storybookCoverage.exclude).toEqual(expect.arrayContaining([
+      "ClientApp/src/api/web-api-client.ts",
+      "ClientApp/src/external/**",
+      "ClientApp/src/storybook/**",
+      "ClientApp/src/**/*.stories.{ts,tsx}",
+    ]));
+  });
+
+  it("adapts Storybook manager runs to supported Vitest and JSON coverage APIs", async () => {
+    const standalone = vi.fn();
+    const legacyInit = vi.fn();
+    const vitest = {
+      config: { coverage: { exclude: [] as string[] } },
+      init: legacyInit,
+      standalone,
+    };
+
+    storybookVitestRuntimePlugin.configureVitest({ vitest });
+    await vitest.init();
+
+    expect(standalone).toHaveBeenCalledOnce();
+    expect(legacyInit).not.toHaveBeenCalled();
+    expect(vitest.config.coverage.exclude).toContain("ClientApp/src/**/*.json");
   });
 });

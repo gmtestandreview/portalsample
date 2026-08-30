@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { env } from '../../../ClientApp/src/env';
 
 const reactGaMock = vi.hoisted(() => ({
     event: vi.fn(),
@@ -45,6 +46,20 @@ describe('GoogleAnalytics', () => {
         render(<GoogleAnalytics />);
 
         expect(reactGaMock.initialize).not.toHaveBeenCalled();
+    });
+
+    it('does not initialize ReactGA when no tracking ID is configured', async () => {
+        const originalTrackingId = env.REACT_APP_GA_TRACKINGID;
+        env.REACT_APP_GA_TRACKINGID = '';
+        const { default: GoogleAnalytics } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+
+        try {
+            render(<GoogleAnalytics />);
+
+            expect(reactGaMock.initialize).not.toHaveBeenCalled();
+        } finally {
+            env.REACT_APP_GA_TRACKINGID = originalTrackingId;
+        }
     });
 
     it('tracks click events with the default dashboard category', async () => {

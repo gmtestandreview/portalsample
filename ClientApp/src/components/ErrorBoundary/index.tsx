@@ -8,7 +8,10 @@ import ErrorDisplay from './ErrorDisplay';
 import { HttpStatusCode } from '../../types';
 
 export interface ErrorBoundaryProps {
-    appInsights: ReactPlugin;
+    // Nullable by contract: createTelemetryService returns a null reactPlugin
+    // whenever the App Insights connection string is missing or dummy, so every
+    // environment without telemetry configured passes null here.
+    appInsights: ReactPlugin | null;
     children: ReactNode;
 }
 
@@ -22,7 +25,9 @@ const ErrorBoundary = ({ appInsights, children }: ErrorBoundaryProps) => (
     <ReactErrorBoundary
         FallbackComponent={ErrorFallback}
         onError={(error, info) => {
-            appInsights.getAppInsights().trackException({
+            // The boundary is the last line of defence - it must render its
+            // fallback even when there is nowhere to report the exception.
+            appInsights?.getAppInsights().trackException({
                 error,
                 exception: error,
                 severityLevel: SeverityLevel.Error,

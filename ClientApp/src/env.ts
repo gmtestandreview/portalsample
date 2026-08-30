@@ -55,7 +55,24 @@ const requiredVars: (keyof EnvType)[] = [
     'REACT_APP_GA_TRACKINGID',
 ];
 
+// Telemetry is reported as missing only outside development. Local dev and
+// Storybook have no instrumentation backend to point these at - Storybook stubs
+// both as empty strings - and the app degrades cleanly without them, so an
+// absent key there is a deliberate configuration, not a misconfiguration.
+// Everywhere else they stay required, so a genuinely unconfigured deployment
+// still says so.
+const developmentOptionalVars: (keyof EnvType)[] = [
+    'REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY',
+    'REACT_APP_GA_TRACKINGID',
+];
+
+const isDevelopment = globalThis.REACT_APP_ENVIRONMENT === 'development';
+
 requiredVars.forEach((key) => {
+    if (isDevelopment && developmentOptionalVars.includes(key)) {
+        return;
+    }
+
     if (!globalThis[key]) {
          
         console.error(`[env] Missing required runtime variable: ${key}`);

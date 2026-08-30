@@ -80,8 +80,13 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
     expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);
   });
 
-  it("does not own unit coverage", () => {
-    expect(storybook.coverage).toBeUndefined();
+  it("owns only the Storybook executable-source coverage policy", () => {
+    expect(storybook.coverage?.reportsDirectory).toBe(
+      "./reports/coverage/storybook",
+    );
+    expect(storybook.coverage?.include).toEqual([
+      "ClientApp/src/**/*.{ts,tsx}",
+    ]);
   });
 });
 

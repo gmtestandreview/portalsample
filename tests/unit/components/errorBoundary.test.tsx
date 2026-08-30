@@ -91,6 +91,31 @@ describe('ErrorBoundary', () => {
         expect(trackException).not.toHaveBeenCalled();
     });
 
+    it('renders the fallback when telemetry is disabled', () => {
+        const expectedError = Object.assign(new Error('Request failed'), {
+            status: HttpStatusCode.Conflict,
+        });
+        const ThrowingChild = () => {
+            throw expectedError;
+        };
+
+        // createTelemetryService hands back a null reactPlugin whenever the App
+        // Insights connection string is missing or dummy - every environment
+        // without telemetry configured. The boundary is the last line of
+        // defence, so it has to render its fallback rather than throw from
+        // inside its own error handler.
+        renderWithExpectedError(
+            expectedError,
+            <MemoryRouter>
+                <ErrorBoundary appInsights={null as unknown as React.ComponentProps<typeof ErrorBoundary>['appInsights']}>
+                    <ThrowingChild />
+                </ErrorBoundary>
+            </MemoryRouter>,
+        );
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveAccessibleName('Oops - Conflict 409');
+    });
+
     it('renders the fallback and tracks an exception when a child throws', () => {
         const expectedError = Object.assign(new Error('Request failed'), {
             status: HttpStatusCode.Conflict,

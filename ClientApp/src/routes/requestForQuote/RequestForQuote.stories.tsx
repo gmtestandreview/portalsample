@@ -1,22 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { http, HttpResponse } from 'msw';
 import { within, expect, waitFor } from 'storybook/test';
 import OrganisationAndContact from './organisationAndContact';
 import InstrumentAndRequest from './instrumentAndRequest';
 import { withPortalProviders } from '../../storybook/storybookHarness';
-import { artefactTypeResponses, lookupResponses } from '../../storybook/storybookFixtures';
-import { CRMLookupTypes } from '../../api/web-api-client';
-
-const lookupHandlers = [
-    http.get('/api/lookup', ({ request }) => {
-        const lookupType = new URL(request.url).searchParams.get('LookupType');
-        return HttpResponse.json(
-            lookupType === CRMLookupTypes.TCArtefactTypePortalCategory
-                ? artefactTypeResponses
-                : lookupResponses,
-        );
-    }),
-];
 
 const meta = {
     title: 'Routes/RequestForQuote',
@@ -63,9 +49,6 @@ const meta = {
                     measurementReportAndCertificateRequired: 'MeasurementReportOnly',
                 },
             },
-        },
-        msw: {
-            handlers: lookupHandlers,
         },
     },
 } satisfies Meta<typeof OrganisationAndContact>;

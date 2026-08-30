@@ -75,7 +75,9 @@ export const Empty: Story = {
         // Live counter starts at zero out of the budget.
         await expect(canvas.getByText(/0/)).toBeVisible();
         await expect(canvas.getByText(/500/)).toBeVisible();
-        await userEvent.type(canvas.getByRole('textbox'), 'Hi');
+        const textbox = canvas.getByRole('textbox');
+        await userEvent.click(textbox);
+        await userEvent.type(textbox, 'Hi');
         await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();
     },
 };

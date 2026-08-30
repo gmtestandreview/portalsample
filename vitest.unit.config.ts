@@ -1,10 +1,6 @@
 import path from 'node:path';
-import type { ViteUserConfig } from 'vitest/config';
+import type { CoverageOptions } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
-
-type CoverageOptions = NonNullable<
-    NonNullable<ViteUserConfig['test']>['coverage']
->;
 
 /**
  * Vitest 4 removed `coverage.all`. The explicit `include` below already brings
