@@ -127,6 +127,21 @@ export const artefactTypeResponses: LookupResponse[] = [
     { id: 'no-instrument', label: 'No instrument/artefact type available', parentId: 'no-measurement' },
 ];
 
+/**
+ * Pattern approval lookups requested by ClientApp/src/routes/ta/**. The
+ * instrument type entries carry the parentId of their category, mirroring the
+ * TC category/artefact-type pair above.
+ */
+export const paCategoryResponses: LookupResponse[] = [
+    { id: 'pa-measuring-instruments', label: 'Measuring instruments' },
+    { id: 'pa-weighing-instruments', label: 'Weighing instruments' },
+];
+
+export const paInstrumentTypeResponses: LookupResponse[] = [
+    { id: 'pa-non-automatic-weighing', label: 'Non-automatic weighing instrument', parentId: 'pa-weighing-instruments' },
+    { id: 'pa-utility-meter', label: 'Utility meter', parentId: 'pa-measuring-instruments' },
+];
+
 export const serviceResponses: ServiceDto[] = [
     {
         serviceType: ServiceType.TestingCalibration,
