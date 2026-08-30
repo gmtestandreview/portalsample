@@ -363,15 +363,18 @@ empty, no conflict markers remained, `tsc --noEmit` exited 0, and
 
 ---
 
-## Final Task 10 acceptance evidence — NOT COMPLETE
+## Final Task 10 acceptance evidence — execution gates complete; criterion 14 remains unproven
 
 Task 10 was run from commit `132991e008eb926266726edbd41d9d95b80ebd35` on
 30 August 2026. Each test/build attempt has a distinct retained temporary log
 under `C:\Users\gregm\AppData\Local\Temp\storybook-diagnostic-remediation-acceptance-20260830-211500`; no retry overwrote a red attempt.
 
-The final classification is **NOT COMPLETE**. The non-coverage Storybook gate
-completed, but its required 87/218 pass result was not met. This is a genuine
-red, not the documented `AutoSuggestOption`-only flake, so it was not retried.
+The first non-coverage attempt was a genuine red, not the documented
+`AutoSuggestOption`-only flake. It was retained, investigated in focused runs,
+and followed by one fresh full retry in a distinct log. The retry met the named
+87-file / 218-test gate. The execution gates are therefore complete; the wider
+remediation remains **not fully proven** because the recorded, user-declined
+`ast-v8-to-istanbul@1.0.4` isolation experiment leaves criterion 14 partial.
 
 ### Root causes and the narrow fixes
 
@@ -407,30 +410,83 @@ isolation is not claimed.
 
 Task 10 added no tests. The full unit result is 1,525 tests versus the recorded
 1,495 baseline (+30 from the plan's earlier regression coverage). The Storybook
-baseline remains 87 files / 218 tests: the coverage run reached that total; the
-required non-coverage run reached 87 files / 218 tests but failed 3 tests.
+baseline is 87 files / 218 tests. The retained initial non-coverage attempt had
+85 passed / 2 failed files and 215 passed / 3 failed tests; the fresh retry had
+87 passed files and 218 passed tests.
 
-### Commands and fresh results
+### Exact verification commands and results
 
-| Gate | Command/result | Assessment |
-| --- | --- | --- |
-| Static checks | `npm run type-check`; `npm run lint` | Both exit 0. |
-| Unit coverage | `npm run test:unit:coverage -- --reporter=default` with the output retained in `03-unit-coverage-attempt1.log`; then `node scripts/audit-storybook-log.ts <log>` | 131 files / 1,525 tests passed; audit `CLEAN`. The command exits 1 because coverage is 76.27% statements, 77.06% branches, 76.70% functions and 76.77% lines against the pre-existing 100% global threshold. Test result and threshold result are separate. |
-| Storybook without coverage | `npm run test:storybook -- --reporter=default` in `04-storybook-no-coverage-attempt1.log`; then the log auditor | Completed with auditor `CLEAN` for the targeted diagnostics, but **2 failed / 85 passed files and 3 failed / 215 passed tests**. `SubmittedSuccess` (`Prepaid`, `Postpaid`) and `ErrorSummary` (`Server Error`) each timed out at 15 s. This is a genuine red and was not retried. |
-| Storybook with coverage | `npm run test:storybook -- --coverage --reporter=default` in `05-storybook-coverage-attempt1.log`; then both auditors | 87/87 files and 218/218 tests passed in 306.28 s; diagnostic-log audit `CLEAN`; coverage-artifact audit `CLEAN` with 276 executable and zero non-executable entries. |
-| Storybook build | `npm run build-storybook` in `06-build-storybook-attempt1.log` | Exit 0; fresh build completed successfully. The prior unattributed `storybook-static/` artifact is not used as evidence. |
-| Production analytics test | `npm run test:unit -- --reporter=default tests/unit/analytics/googleAnalytics.test.tsx` in `08-google-analytics-unit-attempt1.log` | 1 file / 10 tests passed, including the positive `ReactGA.initialize` assertion for configured `env.REACT_APP_GA_TRACKINGID`. |
+All commands below ran at the repository root in PowerShell. This is the exact
+capture pattern and the exact retained paths; each test/build attempt has a
+new filename. `$runExitCode` preserves the underlying npm result after
+`Tee-Object`.
 
-The brief's `grep -c` command is unavailable in the Windows PowerShell
-environment (`grep` is not installed). The equivalent `Select-String` count was
-captured in `07-analytics-network-count-powershell-equivalent.log`: 0
-`googletagmanager.com` hits in both completed Storybook logs. This is stated
-alongside their completion markers above, not as a bare zero. The two completed
-logs also had zero hits for `DEPRECATED`, `vitest.init`, `[MSW] Warning`,
-`unhandled request`, `Failed to parse`, `RolldownError`, `PARSE_ERROR`, and
-`unknown test`; the Storybook log auditor returned `CLEAN` for both. The known
-`act(...)` messages and intentional ErrorBoundary render errors remain outside
-those target diagnostics.
+```powershell
+$acceptanceLogDir = 'C:\Users\gregm\AppData\Local\Temp\storybook-diagnostic-remediation-acceptance-20260830-211500'
+
+& npm run type-check 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '01-type-check-attempt1.log'); $runExitCode = $LASTEXITCODE
+& npm run lint 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '02-lint-attempt1.log'); $runExitCode = $LASTEXITCODE
+
+& npm run test:unit:coverage -- --reporter=default 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '03-unit-coverage-attempt1.log'); $runExitCode = $LASTEXITCODE
+node scripts/audit-storybook-log.ts (Join-Path $acceptanceLogDir '03-unit-coverage-attempt1.log') 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '03-unit-coverage-audit-attempt1.log')
+
+& npm run test:storybook -- --reporter=default 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '04-storybook-no-coverage-attempt1.log'); $runExitCode = $LASTEXITCODE
+node scripts/audit-storybook-log.ts (Join-Path $acceptanceLogDir '04-storybook-no-coverage-attempt1.log') 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '04-storybook-no-coverage-audit-attempt1.log')
+
+& npm run test:storybook -- --coverage --reporter=default 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '05-storybook-coverage-attempt1.log'); $runExitCode = $LASTEXITCODE
+node scripts/audit-storybook-log.ts (Join-Path $acceptanceLogDir '05-storybook-coverage-attempt1.log') 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '05-storybook-coverage-audit-attempt1.log')
+node scripts/audit-coverage-report.ts reports/coverage/storybook/coverage-final.json 100 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '05-storybook-coverage-artifact-audit-attempt1.log')
+
+& npm run build-storybook 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '06-build-storybook-attempt1.log'); $runExitCode = $LASTEXITCODE
+
+@("$acceptanceLogDir\04-storybook-no-coverage-attempt1.log:$((Select-String -Path (Join-Path $acceptanceLogDir '04-storybook-no-coverage-attempt1.log') -Pattern 'googletagmanager\.com' -AllMatches | Measure-Object).Count)", "$acceptanceLogDir\05-storybook-coverage-attempt1.log:$((Select-String -Path (Join-Path $acceptanceLogDir '05-storybook-coverage-attempt1.log') -Pattern 'googletagmanager\.com' -AllMatches | Measure-Object).Count)") | Tee-Object -FilePath (Join-Path $acceptanceLogDir '07-analytics-network-count-powershell-equivalent.log')
+
+& npm run test:unit -- --reporter=default tests/unit/analytics/googleAnalytics.test.tsx 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '08-google-analytics-unit-attempt1.log'); $runExitCode = $LASTEXITCODE
+```
+
+| Gate | Exact log(s) and assessment |
+| --- | --- |
+| Static checks | `01-type-check-attempt1.log` and `02-lint-attempt1.log`: both exit 0. |
+| Unit coverage | `03-unit-coverage-attempt1.log`: 131 files / 1,525 tests passed; `03-unit-coverage-audit-attempt1.log`: `CLEAN`. The command exit is 1 only because coverage is 76.27% statements, 77.06% branches, 76.70% functions and 76.77% lines against the pre-existing 100% global threshold. Test result and threshold result are separate. |
+| Initial non-coverage Storybook attempt | `04-storybook-no-coverage-attempt1.log`: **85 passed / 2 failed files and 215 passed / 3 failed tests**. `SubmittedSuccess` (`Prepaid`, `Postpaid`) and `ErrorSummary` (`Server Error`) each timed out at 15 s. `04-storybook-no-coverage-audit-attempt1.log` is `CLEAN` only for its targeted diagnostic scan; it does not make the red test run pass. |
+| Storybook with coverage | `05-storybook-coverage-attempt1.log`: 87/87 files and 218/218 tests passed in 306.28 s; `05-storybook-coverage-audit-attempt1.log`: `CLEAN`; `05-storybook-coverage-artifact-audit-attempt1.log`: `CLEAN`, 276 executable and zero non-executable entries. |
+| Storybook build | `06-build-storybook-attempt1.log`: exit 0; fresh build completed successfully. The prior unattributed `storybook-static/` artifact is not used as evidence. |
+| Production analytics test | `08-google-analytics-unit-attempt1.log`: 1 file / 10 tests passed, including the positive `ReactGA.initialize` assertion for configured `env.REACT_APP_GA_TRACKINGID`. |
+
+The brief's `grep -c` command is unavailable in this Windows PowerShell
+environment (`grep` is not installed). The exact PowerShell `Select-String`
+equivalent above wrote `0` for both completed initial Storybook logs to
+`07-analytics-network-count-powershell-equivalent.log`. The completed coverage
+log and the later completed non-coverage retry also had zero hits for
+`DEPRECATED`, `vitest.init`, `[MSW] Warning`, `unhandled request`, `Failed to
+parse`, `RolldownError`, `PARSE_ERROR`, and `unknown test`; their Storybook-log
+audits returned `CLEAN`. The known `act(...)` messages and intentional
+ErrorBoundary render errors remain outside those target diagnostics.
+
+### Timeout investigation and fresh non-coverage acceptance retry
+
+Before retrying the full gate, the three failures were isolated without changing
+source, Storybook configuration, timeouts, retries, or expectations:
+
+```powershell
+& npm run test:storybook -- --reporter=default ClientApp/src/routes/acceptQuote/SubmittedSuccess.stories.tsx 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '09-submitted-success-no-coverage-focused-attempt1.log'); $runExitCode = $LASTEXITCODE
+node scripts/audit-storybook-log.ts (Join-Path $acceptanceLogDir '09-submitted-success-no-coverage-focused-attempt1.log') 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '09-submitted-success-no-coverage-focused-audit-attempt1.log')
+
+& npm run test:storybook -- --reporter=default ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '10-error-summary-no-coverage-focused-attempt1.log'); $runExitCode = $LASTEXITCODE
+node scripts/audit-storybook-log.ts (Join-Path $acceptanceLogDir '10-error-summary-no-coverage-focused-attempt1.log') 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '10-error-summary-no-coverage-focused-audit-attempt1.log')
+
+& npm run test:storybook -- --reporter=default 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '11-storybook-no-coverage-full-attempt2.log'); $runExitCode = $LASTEXITCODE
+node scripts/audit-storybook-log.ts (Join-Path $acceptanceLogDir '11-storybook-no-coverage-full-attempt2.log') 2>&1 | Tee-Object -FilePath (Join-Path $acceptanceLogDir '11-storybook-no-coverage-full-audit-attempt2-validation2.log')
+```
+
+`09-submitted-success-no-coverage-focused-attempt1.log` passed 1 file / 2
+tests in 9.13 s and its audit is `CLEAN`. `10-error-summary-no-coverage-focused-attempt1.log`
+passed 1 file / 4 tests in 6.89 s and its audit is `CLEAN`. Neither timeout was
+reproducible in isolation, so no code defect was evidenced and no fix was made.
+The fresh, single full retry in `11-storybook-no-coverage-full-attempt2.log`
+passed **87/87 files and 218/218 tests** in 134.56 s. Its authoritative retained
+diagnostic audit is `11-storybook-no-coverage-full-audit-attempt2-validation2.log`:
+`CLEAN`. The original red attempt remains retained at `04...attempt1.log`.
 
 ### Risks, follow-up and scope assessment
 
@@ -447,17 +503,23 @@ those target diagnostics.
 * The Task 9 partial-revert dry run conflicted in six files and was aborted.
   Future partial reverts require manual conflict resolution; the documented
   command shape is not an executable no-conflict recipe.
-* The Task 10 blocker is the completed non-coverage Storybook red described
-  above. It must be investigated and re-run in a distinct log before this work
-  can be accepted. It cannot be recast as the permitted AutoSuggest-only flake.
+* The retained initial non-coverage red is not recast as an AutoSuggest flake:
+  it was isolated first and the fresh full retry is separately retained. No
+  automatic test retry, timeout increase, expectation edit, or source change
+  was used to obtain the green result.
 
-`git status --porcelain` was empty before this report edit. The Task 10 base
-range has no `package.json` or `package-lock.json` delta. The requested
-`git diff --stat main...HEAD -- package.json package-lock.json` does show the
-pre-existing branch-wide dependency-remediation delta (106 package manifest
-lines and 14,690 lockfile lines); it is outside Task 10 and is not represented
-as changed by this plan. The full plan/code history and its incidental
-`23f0a2f` lockfile change are recorded above rather than concealed.
+The Task 10 base range has no `package.json` or `package-lock.json` delta. The
+requested `git diff --stat main...HEAD -- package.json package-lock.json` does
+show the pre-existing branch-wide dependency-remediation delta (106 package
+manifest lines and 14,690 lockfile lines); it is outside Task 10 and is not
+represented as changed by this plan. The full plan/code history and its
+incidental `23f0a2f` lockfile change are recorded above rather than concealed.
+
+Final post-commit assessment for this fix round: immediately after the commit
+containing this section, `git status --porcelain` emitted no entries and
+`git diff --check HEAD` emitted no errors. The only Task 10 fix-round tracked
+delta is this change record; the branch-wide dependency-file statistic above is
+unchanged and remains pre-existing.
 
 ### 100-point rubric scorecard
 
@@ -478,15 +540,18 @@ receives only the evidence-supported portion.
 | 7 | V8 coverage has no JSON remap failure | 10 | 10 | Green coverage run and clean artifact audit. |
 | 8 | Coverage narrowed, not gutted | 5 | 5 | 276 executable entries, zero non-executable entries. |
 | 9 | Aggregate coverage hole guarded | 5 | 5 | Topology invariant/fire-guard coverage in unit run. |
-| 10 | 87 Storybook files / 218 tests pass without coverage | 10 | 0 | Required Step 3 run is 85/87 files and 215/218 tests. |
+| 10 | 87 Storybook files / 218 tests pass without coverage | 10 | 10 | Focused timeout investigation passed 2/2 and 4/4; fresh retained full retry passed 87/87 files and 218/218 tests. The initial 85/87-file, 215/218-test red is retained. |
 | 11 | Unit suite at/above baseline | 5 | 5 | 1,525 passed versus 1,495 baseline. |
 | 12 | Type-check, lint and Storybook build | 5 | 5 | All three fresh commands exit 0. |
 | 13 | No unrelated plan dependency/file change | 5 | 5 | Task 10 base delta is documentation only; dependency files unchanged. |
 | 14 | `23f0a2f` lockfile drift isolated, guarded and recorded | 5 | 2 | Recording/guarding complete; user-declined 1.0.4 isolation remains unproven. |
 | 15 | Out-of-scope diagnostics recorded, not suppressed | 5 | 5 | Manager risk, `act(...)` backlog, lockfile defect and flake documented. |
-| 16 | No claim rests on a truncated log scan | 10 | 10 | Each diagnostic claim names a completed log/auditor; red Step 3 is not relabelled. |
+| 16 | No claim rests on a truncated log scan | 10 | 10 | Each diagnostic claim names a completed log/auditor; the red initial Step 3 attempt and completed fresh retry are distinguished. |
 | 17 | `terms-config.json` loads as runtime data | 5 | 5 | Retained runtime-data test passed in the unit suite. |
-|  | **Total** | **100** | **87** | **NOT COMPLETE: criterion 10 fails; criterion 14 remains limited.** |
+|  | **Total** | **100** | **97** | **Execution gates complete; criterion 14 remains explicitly limited/unproven.** |
 
-The score is intentionally not rounded up based on the green coverage run. A
-passing coverage path does not replace the named, completed non-coverage gate.
+The score is not rounded to 100: a passing coverage path and a passing fresh
+non-coverage retry do not clear the separately documented Task 2 dependency
+attribution gap. Criterion 14 remains explicitly limited/unproven until the
+recorded user-declined reinstall isolation is performed or the governing
+criterion is formally amended.
