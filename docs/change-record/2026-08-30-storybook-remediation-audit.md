@@ -192,6 +192,90 @@ measurements above.
 
 ---
 
+## Open item: AutoSuggestOption story flake (pre-existing, not fixed)
+
+`ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestOption.stories.tsx`
+fails intermittently under full-suite load. Recorded here under the spec's
+*record out-of-scope diagnostics rather than suppress them* constraint.
+
+### Observed
+
+Once, in the **first** acceptance coverage run of this plan:
+
+```text
+FAIL |storybook (chromium)| .../AutoSuggest/AutoSuggestOption.stories.tsx > Default
+FAIL |storybook (chromium)| .../AutoSuggest/AutoSuggestOption.stories.tsx > Highlighted
+TestingLibraryElementError:
+Unable to find role="option" and name "National Measurement Institute"
+
+ Test Files  1 failed | 86 passed (87)
+      Tests  2 failed | 216 passed (218)
+   Duration  305.61s
+```
+
+### Not attributable to this plan
+
+Four independent lines of evidence:
+
+1. **No network dependency.** The story contains zero references to `msw`,
+   `getLookup` or `CRMLookupTypes`. The expected name is a hardcoded fixture
+   (`displayText` / `ariaLabel`, lines 26-27) and the assertion uses the
+   auto-retrying `findByRole` (line 37). The MSW work in Task 5 cannot reach it.
+2. **Green in isolation.** Three consecutive isolated runs with `--coverage`:
+   `Test Files 2 passed (2) / Tests 5 passed (5)` each time.
+3. **Green in a full suite that already contained the MSW change.** The Task 7
+   full-suite coverage run, executed after commit `7878bf7`, passed
+   `Test Files 87 passed (87) / Tests 218 passed (218)`.
+4. **Green before this plan existed.** The pre-remediation capture
+   `docs/change-record/storybbok_change_remaining_errors.md:1735` records this
+   same file running and passing: `AutoSuggestOption.stories.tsx (2 tests) 407ms`
+   followed by `✓ Default 358ms`.
+
+Point 4 is a *positive* pass record, which is why it counts. The mere absence of
+this failure elsewhere in that capture would prove nothing: the file audits
+`INVALID` (see `scripts/audit-storybook-log.ts`), so absence of evidence in it is
+not evidence of absence.
+
+### Retry disclosure for the acceptance evidence
+
+**The `Test Files 87 passed (87) / Tests 218 passed (218)` acceptance result for
+the coverage path is the second attempt.** The first attempt is the failure
+above. This is disclosed so no reader takes the headline figure as a first-pass
+result.
+
+A re-run was not merely cosmetic. Vitest defaults `coverage.reportOnFailure` to
+`false` and `coverage.clean` to `true`, and `vitest.storybook.coverage.ts`
+overrides neither, so the red run **wiped `reports/coverage/storybook/` and wrote
+no report at all**. Obtaining `coverage-final.json` for the artifact audit
+required a green run; there was no option to audit the red one.
+
+**Evidence-retention caveat:** both attempts were written to the same log path,
+so the re-run overwrote the red log. The failure above is evidenced by this
+record and the execution transcript, not by a retained file. Future acceptance
+runs should write one log per attempt (`...-attempt1.log`, `...-attempt2.log`).
+
+### Effect on acceptance
+
+* Criterion 10 (*all 87 files / 218 story tests still pass*) is met by a
+  completed, audited run — but the suite contains a known intermittent story, so
+  a single red acceptance run is **not** by itself evidence of a regression.
+* Any future acceptance run failing **only** on `AutoSuggestOption` should be
+  re-run, with both attempts recorded rather than the red one discarded.
+* The plan's closure rule requiring the non-coverage run to reach 87/87 is
+  exposed to the same flake and may legitimately need a retry.
+
+### Deliberately NOT fixed here
+
+Out of scope under *do not broaden the task into fixing unrelated pre-existing
+warnings*. It is recorded, not suppressed, and no retry logic, timeout increase
+or `retry:` option was added to mask it.
+
+**Follow-up:** root-cause the failure under full-suite load. The suite runs
+`maxWorkers: 1` against a shared Chromium instance, so the candidate area is
+render/commit timing of the React Aria listbox under sustained load, not data.
+
+---
+
 ## Ownership split for 23f0a2f
 
 `23f0a2f` bundles two unrelated concerns across 23 files. Recorded here because
