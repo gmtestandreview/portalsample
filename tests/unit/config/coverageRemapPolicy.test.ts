@@ -1,8 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import termsConfig from "../../../ClientApp/src/terms-config.json";
 import { storybookCoverageConfig } from "../../../vitest.storybook.coverage";
-import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
 import unitConfig from "../../../vitest.unit.config";
 
 /**
@@ -110,20 +109,11 @@ describe("remap inputs", () => {
     ]));
   });
 
-  it("adapts Storybook manager runs to supported Vitest and JSON coverage APIs", async () => {
-    const standalone = vi.fn();
-    const legacyInit = vi.fn();
-    const vitest = {
-      config: { coverage: { exclude: [] as string[] } },
-      init: legacyInit,
-      standalone,
-    };
-
-    storybookVitestRuntimePlugin.configureVitest({ vitest });
-    await vitest.init();
-
-    expect(standalone).toHaveBeenCalledOnce();
-    expect(legacyInit).not.toHaveBeenCalled();
-    expect(vitest.config.coverage.exclude).toContain("ClientApp/src/**/*.json");
-  });
+  // The Storybook/Vitest runtime bridge is proven in
+  // tests/unit/config/storybookVitestContract.test.ts, which asserts both sides
+  // of the dependency contract against the installed sources. The block that
+  // stood here built a hand-rolled `{ config, init, standalone }` object, called
+  // the plugin on it, and asserted the plugin did what the plugin does — it
+  // could not fail if Storybook renamed the call site, moved to `standalone()`,
+  // or stopped calling `configureVitest` at all.
 });
