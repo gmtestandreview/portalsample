@@ -360,3 +360,133 @@ Consequences, stated plainly:
 showed only this change record, `git diff HEAD` over every plan-touched file was
 empty, no conflict markers remained, `tsc --noEmit` exited 0, and
 `tests/unit/{config,storybook,quality}` passed 17 files / 228 tests.
+
+---
+
+## Final Task 10 acceptance evidence — NOT COMPLETE
+
+Task 10 was run from commit `132991e008eb926266726edbd41d9d95b80ebd35` on
+30 August 2026. Each test/build attempt has a distinct retained temporary log
+under `C:\Users\gregm\AppData\Local\Temp\storybook-diagnostic-remediation-acceptance-20260830-211500`; no retry overwrote a red attempt.
+
+The final classification is **NOT COMPLETE**. The non-coverage Storybook gate
+completed, but its required 87/218 pass result was not met. This is a genuine
+red, not the documented `AutoSuggestOption`-only flake, so it was not retried.
+
+### Root causes and the narrow fixes
+
+| Diagnostic group | Root-cause evidence | Narrow fix and rationale |
+| --- | --- | --- |
+| Deprecated `vitest.init()` | Evidence Base F4 identifies Vitest's deprecated delegating alias at `node_modules/vitest/dist/chunks/cli-api.CnMVyzaz.js:13553-13557` and its Storybook-owned caller at `node_modules/@storybook/addon-vitest/dist/node/vitest.js:256`; see `docs/superpowers/plans/2026-08-30-storybook-diagnostic-remediation-audit.md:85-103`. | `vitest.storybook.runtime.ts:19-27` bridges only Storybook's temporary `init()` call to the installed equivalent `standalone()` path. `tests/unit/config/storybookVitestContract.test.ts:62-93` proves both dependency sides and deliberately becomes obsolete when Storybook changes, rather than changing a dependency or suppressing a warning. |
+| Unhandled lookup and analytics requests | Evidence Base F5 (`docs/superpowers/plans/2026-08-30-storybook-diagnostic-remediation-audit.md:105-113`) found a log-derived two-type handler while application source requested four types, with non-matches falling through. The empty-GTM path was caused by analytics initialisation being reachable without a configured ID. | `.storybook/msw-handlers.ts:16-48` uses one explicit four-type fixture map and returns 501 for an unmapped type; no catch-all or unhandled-request suppression was added. `ClientApp/src/analytics/GoogleAnalytics.tsx:13-22` only initialises when a non-empty runtime tracking ID is present. The production-positive assertion remains in `tests/unit/analytics/googleAnalytics.test.tsx:23-42`. |
+| V8 JSON remap/parse failure | Evidence Base F3 (`docs/superpowers/plans/2026-08-30-storybook-diagnostic-remediation-audit.md:67-83`) establishes that project coverage is inert on two paths because Vitest resolves coverage from the root config, allowing JSON to enter coverage remapping. The historical parse target was `terms-config.json?import`. | `vitest.storybook.config.ts:31` applies `vitest.storybook.coverage.ts:4-17` from the applicable root; it limits Storybook coverage to executable handwritten source. `scripts/audit-coverage-report.ts` then checks the emitted artifact, not a config literal. The green artifact has 276 executable entries and zero non-executable/JSON entries, so this is narrower than disabling coverage or source maps. |
+
+The remapper's historical attribution remains intentionally **unproven**: Task 2 did not perform the user-declined reinstall experiment against `ast-v8-to-istanbul@1.0.4`. A current green artifact proves the symptom is absent on the reviewed dependency cohort; it does not prove the configuration change alone caused that absence.
+
+### Files and dependency scope
+
+The implementation files are grouped below so the conflated `23f0a2f` remains reviewable. The existing ownership split above remains authoritative for the user's telemetry files.
+
+| Group | Files | Justification |
+| --- | --- | --- |
+| Evidence gates | `scripts/audit-storybook-log.ts`, `scripts/audit-coverage-report.ts`, `tsconfig.json`, `tests/unit/quality/storybookLogAudit.test.ts`, `tests/unit/quality/coverageReportAudit.test.ts` | Add typed, tested completed-run and emitted-artifact evidence checks; `tsconfig.json` adds only `scripts/**/*.ts`. |
+| Dependency and bridge guards | `tests/unit/config/dependencySecurity.test.ts`, `tests/unit/config/storybookVitestContract.test.ts`, `vitest.storybook.runtime.ts` | Record the reviewed remapper cohort and make the temporary Storybook/Vitest bridge observable and self-expiring. |
+| MSW contract | `.storybook/msw-handlers.ts`, `ClientApp/src/storybook/storybookFixtures.ts`, `tests/unit/storybook/mswHandlers.test.ts` | Supply the explicit application-source-derived lookup fixtures and fail-closed response. |
+| Coverage topology | `vitest.storybook.config.ts`, `vitest.storybook.coverage.ts`, `vitest.unit.config.ts`, `tests/unit/config/coverageRemapPolicy.test.ts`, `tests/unit/config/vitestTopology.test.ts`, `tests/unit/coverage/coverageConfig.test.ts` | Keep executable-source coverage at the active root, guard the aggregate topology, and retain the runtime JSON-data assertion. |
+| Behavioural regression checks | `ClientApp/src/analytics/GoogleAnalytics.tsx`, `tests/unit/analytics/googleAnalytics.test.tsx`, `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx`, `ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx` | Prevent empty-ID analytics loading while retaining production initialisation coverage, and restore/verify the two previously touched story interactions. |
+| Conflated user telemetry work | `.storybook/preview-setup.ts`, `ClientApp/src/env.ts`, `ClientApp/src/instrumentation/AppInsightsService.ts`, `ClientApp/src/components/ErrorBoundary/index.tsx`, `tests/unit/runtime/env.test.ts`, `tests/unit/instrumentation/appInsightsService.test.ts`, `tests/unit/components/errorBoundary.test.tsx`, `tests/unit/instrumentation/appInsightsService.test.ts` | Not a Storybook diagnostic fix. These files are preserved and separately owned as documented in the ownership split. |
+| Record | `docs/change-record/2026-08-30-storybook-remediation-audit.md` | Documents evidence, decisions, limitations and final acceptance disposition. |
+
+No direct dependency was changed by this plan. `package.json` and
+`package-lock.json` have no delta from the Task 10 base commit. The earlier,
+incidental `23f0a2f` lockfile drift remains recorded: `ast-v8-to-istanbul`
+`1.0.4` → `1.0.5`, `magicast` `0.5.3` → `0.5.4`, `obug` `2.1.3` → `2.1.4`, and
+`std-env` `4.1.0` → `4.2.0`, plus 33 added `resolved` fields. The Task 2
+Step 5 reinstall/isolation was skipped by recorded user decision, so causal
+isolation is not claimed.
+
+Task 10 added no tests. The full unit result is 1,525 tests versus the recorded
+1,495 baseline (+30 from the plan's earlier regression coverage). The Storybook
+baseline remains 87 files / 218 tests: the coverage run reached that total; the
+required non-coverage run reached 87 files / 218 tests but failed 3 tests.
+
+### Commands and fresh results
+
+| Gate | Command/result | Assessment |
+| --- | --- | --- |
+| Static checks | `npm run type-check`; `npm run lint` | Both exit 0. |
+| Unit coverage | `npm run test:unit:coverage -- --reporter=default` with the output retained in `03-unit-coverage-attempt1.log`; then `node scripts/audit-storybook-log.ts <log>` | 131 files / 1,525 tests passed; audit `CLEAN`. The command exits 1 because coverage is 76.27% statements, 77.06% branches, 76.70% functions and 76.77% lines against the pre-existing 100% global threshold. Test result and threshold result are separate. |
+| Storybook without coverage | `npm run test:storybook -- --reporter=default` in `04-storybook-no-coverage-attempt1.log`; then the log auditor | Completed with auditor `CLEAN` for the targeted diagnostics, but **2 failed / 85 passed files and 3 failed / 215 passed tests**. `SubmittedSuccess` (`Prepaid`, `Postpaid`) and `ErrorSummary` (`Server Error`) each timed out at 15 s. This is a genuine red and was not retried. |
+| Storybook with coverage | `npm run test:storybook -- --coverage --reporter=default` in `05-storybook-coverage-attempt1.log`; then both auditors | 87/87 files and 218/218 tests passed in 306.28 s; diagnostic-log audit `CLEAN`; coverage-artifact audit `CLEAN` with 276 executable and zero non-executable entries. |
+| Storybook build | `npm run build-storybook` in `06-build-storybook-attempt1.log` | Exit 0; fresh build completed successfully. The prior unattributed `storybook-static/` artifact is not used as evidence. |
+| Production analytics test | `npm run test:unit -- --reporter=default tests/unit/analytics/googleAnalytics.test.tsx` in `08-google-analytics-unit-attempt1.log` | 1 file / 10 tests passed, including the positive `ReactGA.initialize` assertion for configured `env.REACT_APP_GA_TRACKINGID`. |
+
+The brief's `grep -c` command is unavailable in the Windows PowerShell
+environment (`grep` is not installed). The equivalent `Select-String` count was
+captured in `07-analytics-network-count-powershell-equivalent.log`: 0
+`googletagmanager.com` hits in both completed Storybook logs. This is stated
+alongside their completion markers above, not as a bare zero. The two completed
+logs also had zero hits for `DEPRECATED`, `vitest.init`, `[MSW] Warning`,
+`unhandled request`, `Failed to parse`, `RolldownError`, `PARSE_ERROR`, and
+`unknown test`; the Storybook log auditor returned `CLEAN` for both. The known
+`act(...)` messages and intentional ErrorBoundary render errors remain outside
+those target diagnostics.
+
+### Risks, follow-up and scope assessment
+
+* The long-lived Storybook manager/Test-panel path remains an open memory risk:
+  its live peak and `maxWorkers` comparison were deliberately replaced by the
+  recorded source-only attribution decision. Do not state that path is proven
+  healthy by the terminating CLI runs.
+* The existing 118-line `act(...)` backlog across 13 stories remains owned by
+  `reports/stabilisation/warning-settlement.md`; it was observed but not
+  broadened into this remediation.
+* The pre-existing lockfile-corruption defect (1,272 packages missing
+  `resolved`) remains deferred. The Task 2 guard covers only the reviewed
+  remapper cohort.
+* The Task 9 partial-revert dry run conflicted in six files and was aborted.
+  Future partial reverts require manual conflict resolution; the documented
+  command shape is not an executable no-conflict recipe.
+* The Task 10 blocker is the completed non-coverage Storybook red described
+  above. It must be investigated and re-run in a distinct log before this work
+  can be accepted. It cannot be recast as the permitted AutoSuggest-only flake.
+
+`git status --porcelain` was empty before this report edit. The Task 10 base
+range has no `package.json` or `package-lock.json` delta. The requested
+`git diff --stat main...HEAD -- package.json package-lock.json` does show the
+pre-existing branch-wide dependency-remediation delta (106 package manifest
+lines and 14,690 lockfile lines); it is outside Task 10 and is not represented
+as changed by this plan. The full plan/code history and its incidental
+`23f0a2f` lockfile change are recorded above rather than concealed.
+
+### 100-point rubric scorecard
+
+The scorecard uses the 17 acceptance lines from the governing plan. The
+allocation preserves its explicit 10-point *no false negatives by log scan*
+item and 5-point dependency-scope item: 5 points each for criteria 1-6,
+8-9, 11-15 and 17; 10 points each for criteria 7, 10 and 16. A partial line
+receives only the evidence-supported portion.
+
+| # | Criterion | Points | Result | Evidence |
+| ---: | --- | ---: | ---: | --- |
+| 1 | No `vitest.init()` warning in completed acceptance logs | 5 | 5 | Both completed logs audited `CLEAN`. |
+| 2 | Bridge guarded on both sides and expires | 5 | 5 | Four contract tests in the 1,525-test unit run. |
+| 3 | No unhandled application lookup request | 5 | 5 | Both target audits `CLEAN`; source-derived handler tests passed. |
+| 4 | Unmapped lookup fails closed | 5 | 5 | Explicit 501 test passed. |
+| 5 | No real GTM request during Storybook tests | 5 | 5 | Zero domain hits in both completed logs. |
+| 6 | Production analytics positive path asserted | 5 | 5 | Focused GA unit run: 10/10 passed. |
+| 7 | V8 coverage has no JSON remap failure | 10 | 10 | Green coverage run and clean artifact audit. |
+| 8 | Coverage narrowed, not gutted | 5 | 5 | 276 executable entries, zero non-executable entries. |
+| 9 | Aggregate coverage hole guarded | 5 | 5 | Topology invariant/fire-guard coverage in unit run. |
+| 10 | 87 Storybook files / 218 tests pass without coverage | 10 | 0 | Required Step 3 run is 85/87 files and 215/218 tests. |
+| 11 | Unit suite at/above baseline | 5 | 5 | 1,525 passed versus 1,495 baseline. |
+| 12 | Type-check, lint and Storybook build | 5 | 5 | All three fresh commands exit 0. |
+| 13 | No unrelated plan dependency/file change | 5 | 5 | Task 10 base delta is documentation only; dependency files unchanged. |
+| 14 | `23f0a2f` lockfile drift isolated, guarded and recorded | 5 | 2 | Recording/guarding complete; user-declined 1.0.4 isolation remains unproven. |
+| 15 | Out-of-scope diagnostics recorded, not suppressed | 5 | 5 | Manager risk, `act(...)` backlog, lockfile defect and flake documented. |
+| 16 | No claim rests on a truncated log scan | 10 | 10 | Each diagnostic claim names a completed log/auditor; red Step 3 is not relabelled. |
+| 17 | `terms-config.json` loads as runtime data | 5 | 5 | Retained runtime-data test passed in the unit suite. |
+|  | **Total** | **100** | **87** | **NOT COMPLETE: criterion 10 fails; criterion 14 remains limited.** |
+
+The score is intentionally not rounded up based on the green coverage run. A
+passing coverage path does not replace the named, completed non-coverage gate.
