@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import type { ViteUserConfig } from "vitest/config";
 import { describe, expect, it } from "vitest";
 
@@ -18,6 +20,8 @@ import unitConfig from "../../../vitest.unit.config";
  */
 
 type TestOptions = NonNullable<ViteUserConfig["test"]>;
+
+type PackageScripts = { scripts: Record<string, string> };
 
 const testOptions = (config: ViteUserConfig, label: string): TestOptions => {
   const options = config.test;
@@ -80,13 +84,36 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
     expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);
   });
 
-  it("owns only the Storybook executable-source coverage policy", () => {
+  it("owns the Storybook coverage policy for the one path that applies it", () => {
+    // Vitest 4 resolves coverage from the ROOT config only
+    // (vitest/dist/chunks/cli-api...js, `get _coverageOptions()`). This block
+    // therefore applies when `--config vitest.storybook.config.ts` makes this
+    // file the root - i.e. the `test:storybook` script - and is inert when the
+    // project is loaded through the aggregate `vitest.config.ts`.
     expect(storybook.coverage?.reportsDirectory).toBe(
       "./reports/coverage/storybook",
     );
     expect(storybook.coverage?.include).toEqual([
       "ClientApp/src/**/*.{ts,tsx}",
     ]);
+  });
+
+  it("never lets a script enable coverage through the aggregate root config", () => {
+    // Where project coverage is inert, enabling coverage would silently fall
+    // back to Vitest defaults - reinstating the JSON remap failure and dropping
+    // the unit config's 100% thresholds - with nothing to signal it.
+    expect(root.coverage).toBeUndefined();
+
+    const { scripts } = JSON.parse(
+      readFileSync("package.json", "utf8"),
+    ) as PackageScripts;
+
+    const aggregateRunsWithCoverage = Object.entries(scripts).filter(
+      ([, command]) =>
+        command.includes("--coverage") && !command.includes("--config"),
+    );
+
+    expect(aggregateRunsWithCoverage).toEqual([]);
   });
 });
 
