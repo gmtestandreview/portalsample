@@ -1,18 +1,21 @@
-import {Popover} from '../src/Popover';
-import {Button} from '../src/Button';
-import {DialogTrigger} from '../src/Dialog';
-import {Heading} from '../src/Content';
-import {HelpCircle} from 'lucide-react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Popover} from './Popover';
+import {Button} from '../Buttons/AriaButton/Button';
+import {DialogTrigger} from '../Dialog/Dialog';
+import {Heading} from './Content';
+import {HelpCircle} from './NmiIcon';
 import './styles.css';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Popover> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Popover',
   component: Popover,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Popover>;
 
 export default meta;
 type Story = StoryFn<typeof Popover>;

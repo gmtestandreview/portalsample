@@ -6,8 +6,8 @@ import {
   type ToastProps,
   Text,
 } from 'react-aria-components/Toast';
-import { Button } from './Button';
-import { X } from 'lucide-react';
+import { Button } from '../Buttons/AriaButton/Button';
+import { X } from './NmiIcon';
 import './Toast.css';
 import { type CSSProperties } from 'react';
 import { queue, type MyToastContent } from './ToastQueue';

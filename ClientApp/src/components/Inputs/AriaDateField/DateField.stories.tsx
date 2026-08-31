@@ -1,13 +1,16 @@
-import {DateField} from '../src/DateField';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../../storybook/withReactAriaEvaluation';
+import {DateField} from './DateField';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof DateField> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/DateField',
   component: DateField,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof DateField>;
 
 export default meta;
 type Story = StoryFn<typeof DateField>;

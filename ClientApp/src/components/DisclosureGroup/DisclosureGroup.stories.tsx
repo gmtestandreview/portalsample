@@ -1,14 +1,17 @@
-import {DisclosureGroup} from '../src/DisclosureGroup';
-import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src/Disclosure';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {DisclosureGroup} from './DisclosureGroup';
+import {Disclosure, DisclosureHeader, DisclosurePanel} from '../Disclosure/Disclosure';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof DisclosureGroup> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/DisclosureGroup',
   component: DisclosureGroup,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof DisclosureGroup>;
 
 export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;

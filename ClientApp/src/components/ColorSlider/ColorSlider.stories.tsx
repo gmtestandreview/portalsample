@@ -1,13 +1,16 @@
-import {ColorSlider} from '../src/ColorSlider';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ColorSlider} from './ColorSlider';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ColorSlider> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ColorSlider',
   component: ColorSlider,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ColorSlider>;
 
 export default meta;
 type Story = StoryFn<typeof ColorSlider>;

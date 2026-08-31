@@ -13,8 +13,8 @@ import {
   TreeSection as AriaTreeSection,
   TreeHeader as AriaTreeHeader,
 } from 'react-aria-components/Tree';
-import { ChevronRight, GripVertical } from 'lucide-react';
-import { Checkbox } from './Checkbox';
+import { ChevronRight, GripVertical } from './NmiIcon';
+import { Checkbox } from '../Inputs/AriaCheckbox/Checkbox';
 import { ProgressCircle } from './ProgressCircle';
 import './Tree.css';
 
@@ -52,7 +52,7 @@ export interface TreeItemProps extends Partial<AriaTreeItemProps> {
 }
 
 export function TreeItem(props: TreeItemProps) {
-  let textValue = typeof props.title === 'string' ? props.title : '';
+  const textValue = typeof props.title === 'string' ? props.title : '';
   return (
     <AriaTreeItem textValue={textValue} {...props}>
       {props.title != null ? (

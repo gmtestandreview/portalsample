@@ -1,13 +1,16 @@
-import {Tree, TreeItem} from '../src/Tree';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Tree, TreeItem} from './Tree';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Tree> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Tree',
   component: Tree,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Tree>;
 
 export default meta;
 

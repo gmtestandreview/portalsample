@@ -1,4 +1,4 @@
-import {Button} from '../src/Button';
+import {Button} from './Button';
 import type {Meta, StoryFn} from '@storybook/react';
 
 const meta: Meta<typeof Button> = {

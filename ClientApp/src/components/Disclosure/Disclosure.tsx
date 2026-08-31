@@ -7,8 +7,8 @@ import {
   type DisclosurePanelProps,
   type HeadingProps,
 } from 'react-aria-components/Disclosure';
-import { Heading } from './Content';
-import { ChevronRight } from 'lucide-react';
+import { Heading } from '../AriaComponents/Content';
+import { ChevronRight } from '../AriaComponents/NmiIcon';
 import './Disclosure.css';
 
 export function Disclosure(props: DisclosureProps) {

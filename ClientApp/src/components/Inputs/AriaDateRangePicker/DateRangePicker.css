@@ -1,5 +1,5 @@
-@import './theme.css';
-@import './utilities.css';
+@import '../../AriaComponents/theme.css';
+@import '../../AriaComponents/utilities.css';
 
 .react-aria-DateRangePicker {
   color: var(--text-color);

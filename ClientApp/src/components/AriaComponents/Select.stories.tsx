@@ -1,13 +1,16 @@
-import {Select, SelectItem} from '../src/Select';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Select, SelectItem} from './Select';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Select> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Select',
   component: Select,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Select>;
 
 export default meta;
 

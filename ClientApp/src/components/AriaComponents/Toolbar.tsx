@@ -6,11 +6,11 @@ import { ToggleButtonGroupContext } from 'react-aria-components/ToggleButtonGrou
 import './Toolbar.css';
 
 export function Toolbar(props: Readonly<ToolbarProps>) {
-  let { orientation = 'horizontal' } = props;
-  let separatorOrientation: 'horizontal' | 'vertical' =
+  const { orientation = 'horizontal' } = props;
+  const separatorOrientation: 'horizontal' | 'vertical' =
     orientation === 'horizontal' ? 'vertical' : 'horizontal';
-  let toggleButtonGroupValue = useMemo(() => ({ orientation }), [orientation]);
-  let separatorValue = useMemo(
+  const toggleButtonGroupValue = useMemo(() => ({ orientation }), [orientation]);
+  const separatorValue = useMemo(
     () => ({ orientation: separatorOrientation }),
     [separatorOrientation]
   );

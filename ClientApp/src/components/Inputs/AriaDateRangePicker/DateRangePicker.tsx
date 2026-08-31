@@ -6,12 +6,12 @@ import {
   Group,
   type ValidationResult,
 } from 'react-aria-components/DateRangePicker';
-import { DateInput, DateSegment } from './DateField';
-import { Description, FieldButton } from './Form';
-import { Popover } from './Popover';
-import { Label, FieldError } from './Form';
-import { RangeCalendar } from './RangeCalendar';
-import { ChevronDown } from 'lucide-react';
+import { DateInput, DateSegment } from '../AriaDateField/DateField';
+import { Description, FieldButton } from '../../forms/AriaForm/Form';
+import { Popover } from '../../AriaComponents/Popover';
+import { Label, FieldError } from '../../forms/AriaForm/Form';
+import { RangeCalendar } from '../../AriaComponents/RangeCalendar';
+import { ChevronDown } from '../../AriaComponents/NmiIcon';
 import './DateRangePicker.css';
 
 export interface DateRangePickerProps<T extends DateValue> extends AriaDateRangePickerProps<T> {

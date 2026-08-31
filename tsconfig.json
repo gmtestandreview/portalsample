@@ -29,6 +29,9 @@
     "tests/**/*"
   ],
   "exclude": [
+    "ClientApp/src/components/App/**",
+    "ClientApp/src/components/AriaComponents/main.tsx",
+    "ClientApp/src/components/reactaria_components/**",
     "ClientApp/src/main.*.js",
     "ClientApp/src/parent/node_modules",
     "ClientApp/src/parent/packages",

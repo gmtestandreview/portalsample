@@ -1,14 +1,17 @@
-import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from '../src/Menu';
-import {Button} from '../src/Button';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from './Menu';
+import {Button} from '../Buttons/AriaButton/Button';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Menu> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Menu',
   component: Menu,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Menu>;
 
 export default meta;
 type Story = StoryFn<typeof Menu>;

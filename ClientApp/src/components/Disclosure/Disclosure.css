@@ -1,4 +1,4 @@
-@import './theme.css';
+@import '../AriaComponents/theme.css';
 
 .react-aria-Disclosure {
   width: calc(var(--spacing) * 50);
@@ -14,7 +14,7 @@
     text-shadow: none;
     width: 100%;
     color: var(--text-color);
-    font: var(--font-size) system-ui;
+    font: var(--font-size) var(--font-family);
     font-weight: 600;
     display: flex;
     align-items: center;

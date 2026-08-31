@@ -1,13 +1,16 @@
-import {SearchField} from '../src/SearchField';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {SearchField} from './SearchField';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof SearchField> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/SearchField',
   component: SearchField,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof SearchField>;
 
 export default meta;
 

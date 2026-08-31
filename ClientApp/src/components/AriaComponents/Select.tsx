@@ -7,11 +7,11 @@ import {
   type ValidationResult,
   type ListBoxProps,
 } from 'react-aria-components/Select';
-import { Button } from './Button';
+import { Button } from '../Buttons/AriaButton/Button';
 import { DropdownItem, DropdownListBox } from './ListBox';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown } from './NmiIcon';
 import { Popover } from './Popover';
-import { Label, FieldError, Description } from './Form';
+import { Label, FieldError, Description } from '../forms/AriaForm/Form';
 import './Select.css';
 
 export interface SelectProps<T, M extends 'single' | 'multiple'> extends Omit<

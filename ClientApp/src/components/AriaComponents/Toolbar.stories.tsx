@@ -1,18 +1,21 @@
-import {Toolbar} from '../src/Toolbar';
-import {Separator} from '../src/Separator';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Toolbar} from './Toolbar';
+import {Separator} from './Separator';
 import {Group} from 'react-aria-components/Group';
-import {Button} from '../src/Button';
-import {ToggleButton} from '../src/ToggleButton';
-import {Checkbox} from '../src/Checkbox';
-import type {Meta, StoryFn} from '@storybook/react';
+import {Button} from '../Buttons/AriaButton/Button';
+import {ToggleButton} from './ToggleButton';
+import {Checkbox} from '../Inputs/AriaCheckbox/Checkbox';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Toolbar> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Toolbar',
   component: Toolbar,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Toolbar>;
 
 export default meta;
 

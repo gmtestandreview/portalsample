@@ -5,7 +5,7 @@ import {
   Input,
   type ValidationResult,
 } from 'react-aria-components/ColorField';
-import { Label, FieldError, Description } from './Form';
+import { Label, FieldError, Description } from '../forms/AriaForm/Form';
 import './ColorField.css';
 
 export interface ColorFieldProps extends AriaColorFieldProps {

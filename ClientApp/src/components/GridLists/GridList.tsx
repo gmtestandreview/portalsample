@@ -11,9 +11,9 @@ import {
   type GridListProps,
   type GridListLoadMoreItemProps,
 } from 'react-aria-components/GridList';
-import { Checkbox } from './Checkbox';
-import { GripVertical } from 'lucide-react';
-import { ProgressCircle } from './ProgressCircle';
+import { Checkbox } from '../Inputs/AriaCheckbox/Checkbox';
+import { GripVertical } from '../AriaComponents/NmiIcon';
+import { ProgressCircle } from '../AriaComponents/ProgressCircle';
 import './GridList.css';
 
 export function GridList<T>({ children, layout = 'grid', ...props }: GridListProps<T>) {
@@ -30,7 +30,7 @@ export function GridListItem({
 }: Omit<GridListItemProps, 'children'> & {
   children?: React.ReactNode;
 }) {
-  let textValue = typeof children === 'string' ? children : undefined;
+  const textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props}>
       {({ selectionMode, selectionBehavior, allowsDragging }) => (

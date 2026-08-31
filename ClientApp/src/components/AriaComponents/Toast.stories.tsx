@@ -1,8 +1,9 @@
-import {MyToastRegion} from '../src/Toast';
-import {queue} from '../src/ToastQueue';
-import {Button} from '../src/Button';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {MyToastRegion} from './Toast';
+import {queue} from './ToastQueue';
+import {Button} from '../Buttons/AriaButton/Button';
 import {expect, waitFor, within} from 'storybook/test';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-vite';
 
 interface ToastStoryArgs {
   title: string;
@@ -11,8 +12,9 @@ interface ToastStoryArgs {
   buttonLabel: string;
 }
 
-const meta: Meta<ToastStoryArgs> = {
-  title: 'Toast',
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Toast',
   parameters: {
     layout: 'centered'
   },
@@ -40,7 +42,7 @@ const meta: Meta<ToastStoryArgs> = {
     description: '3 files uploaded successfully.',
     buttonLabel: 'Show toast'
   }
-};
+} satisfies Meta<ToastStoryArgs>;
 
 export default meta;
 type Story = StoryObj<ToastStoryArgs>;

@@ -6,9 +6,9 @@ import {
 } from 'react-aria-components/Autocomplete';
 import { type MenuProps as AriaMenuProps } from 'react-aria-components/Menu';
 import { Dialog } from 'react-aria-components/Dialog';
-import { Menu } from './Menu';
-import { SearchField } from './SearchField';
-import { Modal } from './Modal';
+import { Menu } from '../AriaComponents/Menu';
+import { SearchField } from '../AriaComponents/SearchField';
+import { Modal } from '../AriaComponents/Modal';
 import { useEffect } from 'react';
 import './CommandPalette.css';
 
@@ -19,11 +19,11 @@ export interface CommandPaletteProps<T>
 }
 
 export function CommandPalette<T>(props: CommandPaletteProps<T>) {
-  let { isOpen, onOpenChange } = props;
-  let { contains } = useFilter({ sensitivity: 'base' });
+  const { isOpen, onOpenChange } = props;
+  const { contains } = useFilter({ sensitivity: 'base' });
 
   useEffect(() => {
-    let isMacUA = /mac(os|intosh)/i.test(navigator.userAgent);
+    const isMacUA = /mac(os|intosh)/i.test(navigator.userAgent);
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'j' && (isMacUA ? e.metaKey : e.ctrlKey)) {
         e.preventDefault();

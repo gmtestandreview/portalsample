@@ -1,4 +1,4 @@
-@import './theme.css';
+@import '../AriaComponents/theme.css';
 
 .command-palette-dialog {
   width: min(90vw, 500px);

@@ -1,7 +1,10 @@
-import {ComboBox, ComboBoxItem} from '../src/ComboBox';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ComboBox, ComboBoxItem} from './ComboBox';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ComboBox> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ComboBox',
   component: ComboBox,
   parameters: {
     layout: 'centered'
@@ -10,7 +13,7 @@ const meta: Meta<typeof ComboBox> = {
   args: {
     placeholder: 'Choose a flavor'
   }
-};
+} satisfies Meta<typeof ComboBox>;
 
 export default meta;
 type Story = StoryFn<typeof ComboBox>;

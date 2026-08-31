@@ -1,16 +1,19 @@
-import {Button} from '../src/Button';
-import {CommandPalette} from '../src/CommandPalette';
-import {DialogTrigger} from '../src/Dialog';
-import {MenuItem} from '../src/Menu';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Button} from '../Buttons/AriaButton/Button';
+import {CommandPalette} from './CommandPalette';
+import {DialogTrigger} from '../Dialog/Dialog';
+import {MenuItem} from '../AriaComponents/Menu';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof CommandPalette> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/CommandPalette',
   component: CommandPalette,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof CommandPalette>;
 
 export default meta;
 type Story = StoryFn<typeof CommandPalette>;

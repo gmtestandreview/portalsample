@@ -6,8 +6,8 @@ import {
   type SearchFieldProps as AriaSearchFieldProps,
   type ValidationResult,
 } from 'react-aria-components/SearchField';
-import { Label, FieldError, Description } from './Form';
-import { Search, X } from 'lucide-react';
+import { Label, FieldError, Description } from '../forms/AriaForm/Form';
+import { Search, X } from './NmiIcon';
 import './SearchField.css';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {

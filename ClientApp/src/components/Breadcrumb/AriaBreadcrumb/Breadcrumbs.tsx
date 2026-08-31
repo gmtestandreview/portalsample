@@ -7,7 +7,7 @@ import {
   type LinkProps,
   Link,
 } from 'react-aria-components/Breadcrumbs';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight } from '../../AriaComponents/NmiIcon';
 import './Breadcrumbs.css';
 
 export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {

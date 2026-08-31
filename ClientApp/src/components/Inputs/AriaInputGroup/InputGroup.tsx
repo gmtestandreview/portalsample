@@ -2,7 +2,7 @@
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { Group, type GroupProps } from 'react-aria-components/Group';
 import { InputContext } from 'react-aria-components/Input';
-import { Label } from './Form';
+import { Label } from '../../forms/AriaForm/Form';
 import { useId } from 'react';
 import './InputGroup.css';
 
@@ -11,7 +11,7 @@ interface InputGroupProps extends GroupProps {
 }
 
 export function InputGroup(props: InputGroupProps) {
-  let id = useId();
+  const id = useId();
   return (
     <div className="input-group">
       {props.label && (

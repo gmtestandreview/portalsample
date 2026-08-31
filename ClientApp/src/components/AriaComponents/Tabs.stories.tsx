@@ -1,8 +1,11 @@
-import {Tabs, Tab, TabList, TabPanel, TabPanels} from '../src/Tabs';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Tabs, Tab, TabList, TabPanel, TabPanels} from './Tabs';
 import {expect, fn} from 'storybook/test';
-import type {Meta, StoryObj} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react-vite';
 
 const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Tabs',
   component: Tabs,
   parameters: {
     layout: 'centered'

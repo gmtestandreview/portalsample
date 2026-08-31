@@ -58,6 +58,18 @@ const config: StorybookConfig = {
 
     features: {
         changeDetection: true,
+        componentsManifest: true,
+    },
+
+    typescript: {
+        check: true,
+        checkOptions: {
+        eslint: true,     },     
+        reactDocgen: 'react-docgen-typescript',
+        reactDocgenTypescriptOptions: {
+        shouldExtractLiteralValuesFromEnum: true,
+        // 👇 Default prop filter, which excludes props from node_modules
+        propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
     },
 
     addons: [
@@ -69,11 +81,15 @@ const config: StorybookConfig = {
         {
             name: '@storybook/addon-docs',
             options: {
+                autodocs: 'tag', 
+                defaultName: 'Documentation', 
+                docsMode: true,
                 mdxPluginOptions: {
                     mdxCompileOptions: {
                         remarkPlugins: [remarkGfm],
                     },
                 },
+    
             },
         },
         {

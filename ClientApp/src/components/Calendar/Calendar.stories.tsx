@@ -1,7 +1,10 @@
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Calendar } from './Calendar';
 
 const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Calendar',
   component: Calendar,
   tags: ['ai-generated'],
 } satisfies Meta<typeof Calendar>;

@@ -1,13 +1,16 @@
-import {ToggleButton} from '../src/ToggleButton';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ToggleButton} from './ToggleButton';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ToggleButton> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ToggleButton',
   component: ToggleButton,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ToggleButton>;
 
 export default meta;
 

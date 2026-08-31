@@ -8,7 +8,7 @@ import {
 import { type ButtonProps, Button } from 'react-aria-components/Button';
 import { type TextProps } from 'react-aria-components/Text';
 import './Form.css';
-import { Text } from './Content';
+import { Text } from '../../AriaComponents/Content';
 
 export function Form(props: Readonly<FormProps>) {
   return <RACForm {...props} />;

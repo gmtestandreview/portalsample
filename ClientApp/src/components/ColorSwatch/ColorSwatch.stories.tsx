@@ -1,13 +1,16 @@
-import {ColorSwatch} from '../src/ColorSwatch';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ColorSwatch} from './ColorSwatch';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ColorSwatch> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ColorSwatch',
   component: ColorSwatch,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ColorSwatch>;
 
 export default meta;
 type Story = StoryFn<typeof ColorSwatch>;

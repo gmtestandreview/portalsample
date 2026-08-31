@@ -1,13 +1,16 @@
-import {DateRangePicker} from '../src/DateRangePicker';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../../storybook/withReactAriaEvaluation';
+import {DateRangePicker} from './DateRangePicker';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof DateRangePicker> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/DateRangePicker',
   component: DateRangePicker,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof DateRangePicker>;
 
 export default meta;
 type Story = StoryFn<typeof DateRangePicker>;

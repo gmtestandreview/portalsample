@@ -9,9 +9,9 @@ import {
   type CalendarCellProps,
   type CalendarGridProps,
 } from 'react-aria-components/Calendar';
-import { Text } from './Content';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from './Button';
+import { Text } from '../AriaComponents/Content';
+import { ChevronLeft, ChevronRight } from '../AriaComponents/NmiIcon';
+import { Button } from '../Buttons/AriaButton/Button';
 import './Calendar.css';
 
 export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T> {
@@ -19,13 +19,13 @@ export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T>
 }
 
 export function Calendar<T extends DateValue>({ errorMessage, ...props }: CalendarProps<T>) {
-  let months = props.visibleDuration?.months || 1;
+  const months = props.visibleDuration?.months || 1;
   return (
     <AriaCalendar {...props}>
       <div className="months">
         {Array.from({ length: months }, (_, i) => (
           <div key={i} className="month">
-            <header>
+            <div className="calendar-header">
               {i === 0 && (
                 <Button slot="previous" variant="quiet">
                   <ChevronLeft />
@@ -37,7 +37,7 @@ export function Calendar<T extends DateValue>({ errorMessage, ...props }: Calend
                   <ChevronRight />
                 </Button>
               )}
-            </header>
+            </div>
             <CalendarGrid offset={{ months: i }}>
               {(date) => <CalendarCell date={date} />}
             </CalendarGrid>

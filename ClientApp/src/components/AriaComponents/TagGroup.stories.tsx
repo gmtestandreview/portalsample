@@ -1,13 +1,16 @@
-import {Tag, TagGroup} from '../src/TagGroup';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Tag, TagGroup} from './TagGroup';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof TagGroup> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/TagGroup',
   component: TagGroup,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof TagGroup>;
 
 export default meta;
 

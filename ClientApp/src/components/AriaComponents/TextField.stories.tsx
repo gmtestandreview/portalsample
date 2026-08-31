@@ -1,7 +1,10 @@
-import {TextField} from '../src/TextField';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {TextField} from './TextField';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof TextField> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/TextField',
   component: TextField,
   parameters: {
     layout: 'centered'
@@ -10,7 +13,7 @@ const meta: Meta<typeof TextField> = {
   args: {
     placeholder: 'Enter your full name'
   }
-};
+} satisfies Meta<typeof TextField>;
 
 export default meta;
 

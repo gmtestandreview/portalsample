@@ -9,7 +9,7 @@ import {
   type DateValue,
   type ValidationResult,
 } from 'react-aria-components/DateField';
-import { Label, FieldError, Description } from './Form';
+import { Label, FieldError, Description } from '../../forms/AriaForm/Form';
 import './DateField.css';
 
 export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {

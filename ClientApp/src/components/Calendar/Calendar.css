@@ -1,5 +1,5 @@
-@import './theme.css';
-@import './utilities.css';
+@import '../AriaComponents/theme.css';
+@import '../AriaComponents/utilities.css';
 
 .react-aria-Calendar {
   display: flex;
@@ -9,7 +9,7 @@
   width: 100%;
   max-width: fit-content;
   color: var(--text-color);
-  font: var(--font-size) system-ui;
+  font: var(--font-size) var(--font-family);
 
   .months {
     display: flex;
@@ -22,7 +22,7 @@
     container-type: inline-size;
   }
 
-  header {
+  .calendar-header {
     display: flex;
     align-items: center;
     margin: 0 var(--spacing-1) var(--spacing-4) var(--spacing-1);
@@ -41,7 +41,7 @@
   }
 
   [slot='errorMessage'] {
-    font: var(--font-size-sm) system-ui;
+    font: var(--font-size-sm) var(--font-family);
     color: var(--invalid-color);
   }
 }

@@ -1,5 +1,5 @@
 'use client';
-import { Check, ChevronRight, Dot } from 'lucide-react';
+import { Check, ChevronRight, Dot } from './NmiIcon';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
@@ -21,7 +21,7 @@ import React from 'react';
 import './Menu.css';
 
 export function MenuTrigger(props: MenuTriggerProps) {
-  let [trigger, menu] = React.Children.toArray(props.children) as [
+  const [trigger, menu] = props.children as unknown as [
     React.ReactElement,
     React.ReactElement,
   ];
@@ -38,7 +38,7 @@ export function Menu<T>(props: MenuProps<T>) {
 }
 
 export function MenuItem(props: Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }) {
-  let textValue =
+  const textValue =
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaMenuItem {...props} textValue={textValue}>
@@ -63,7 +63,7 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
 }
 
 export function SubmenuTrigger(props: SubmenuTriggerProps) {
-  let [trigger, menu] = React.Children.toArray(props.children) as [
+  const [trigger, menu] = props.children as unknown as [
     React.ReactElement,
     React.ReactElement,
   ];

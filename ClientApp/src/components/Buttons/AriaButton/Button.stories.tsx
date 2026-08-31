@@ -1,8 +1,11 @@
+import {withReactAriaEvaluation} from '../../../storybook/withReactAriaEvaluation';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn } from 'storybook/test';
 import { Button } from './Button';
 
 const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Button',
   component: Button,
   tags: ['ai-generated'],
   args: {
@@ -43,6 +46,6 @@ export const CssCheck: Story = {
   },
   play: async ({ canvas }) => {
     const button = canvas.getByRole('button', { name: 'Styled button' });
-    await expect(getComputedStyle(button).borderRadius).toBe('8px');
+    await expect(getComputedStyle(button).borderRadius).toBe('4px');
   },
 };

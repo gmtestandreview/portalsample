@@ -1,13 +1,16 @@
-import {ColorSwatchPicker, ColorSwatchPickerItem} from '../src/ColorSwatchPicker';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ColorSwatchPicker, ColorSwatchPickerItem} from './ColorSwatchPicker';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ColorSwatchPicker> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ColorSwatchPicker',
   component: ColorSwatchPicker,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ColorSwatchPicker>;
 
 export default meta;
 type Story = StoryFn<typeof ColorSwatchPicker>;

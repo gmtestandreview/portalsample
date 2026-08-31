@@ -1,13 +1,16 @@
-import {Column, Row, Table, TableHeader, TableBody, Cell} from '../src/Table';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Column, Row, Table, TableHeader, TableBody, Cell} from './Table';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Table> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Table',
   component: Table,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Table>;
 
 export default meta;
 

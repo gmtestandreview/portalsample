@@ -22,7 +22,7 @@ const storybookMswLoader = mswLoader(async () => {
     return worker;
 });
 
-export default {
+const Preview = {
     tags: ['autodocs'],
 
     decorators: [
@@ -95,3 +95,5 @@ export default {
         },
     },
 } satisfies Preview;
+
+export default Preview;

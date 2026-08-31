@@ -1,13 +1,16 @@
-import {RadioGroup, Radio} from '../src/RadioGroup';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {RadioGroup, Radio} from './RadioGroup';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof RadioGroup> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/RadioGroup',
   component: RadioGroup,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof RadioGroup>;
 
 export default meta;
 

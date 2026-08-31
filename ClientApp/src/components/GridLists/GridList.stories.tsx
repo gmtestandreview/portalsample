@@ -1,15 +1,18 @@
-import {GridList, GridListItem} from '../src/GridList';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {GridList, GridListItem} from './GridList';
 import {Text} from 'react-aria-components/Text';
 import {GridListSection, GridListHeader} from 'react-aria-components/GridList';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof GridList> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/GridList',
   component: GridList,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof GridList>;
 
 export default meta;
 type Story = StoryFn<typeof GridList>;

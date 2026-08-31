@@ -1,7 +1,10 @@
-import {ColorField} from '../src/ColorField';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ColorField} from './ColorField';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ColorField> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ColorField',
   component: ColorField,
   parameters: {
     layout: 'centered'
@@ -10,7 +13,7 @@ const meta: Meta<typeof ColorField> = {
   args: {
     placeholder: 'Enter a color'
   }
-};
+} satisfies Meta<typeof ColorField>;
 
 export default meta;
 type Story = StoryFn<typeof ColorField>;

@@ -1,13 +1,16 @@
-import {Slider} from '../src/Slider';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Slider} from './Slider';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Slider> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Slider',
   component: Slider,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Slider>;
 
 export default meta;
 

@@ -1,13 +1,16 @@
-import {Disclosure, DisclosureHeader, DisclosurePanel} from '../src/Disclosure';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Disclosure, DisclosureHeader, DisclosurePanel} from './Disclosure';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Disclosure> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Disclosure',
   component: Disclosure,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Disclosure>;
 
 export default meta;
 type Story = StoryFn<typeof Disclosure>;

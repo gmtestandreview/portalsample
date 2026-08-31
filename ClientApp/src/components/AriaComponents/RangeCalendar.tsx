@@ -9,9 +9,9 @@ import {
   type CalendarCellProps,
 } from 'react-aria-components/RangeCalendar';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
-import { Button } from './Button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { CalendarGrid } from './Calendar';
+import { Button } from '../Buttons/AriaButton/Button';
+import { ChevronLeft, ChevronRight } from './NmiIcon';
+import { CalendarGrid } from '../Calendar/Calendar';
 import './RangeCalendar.css';
 
 export interface RangeCalendarProps<T extends DateValue> extends AriaRangeCalendarProps<T> {
@@ -22,13 +22,13 @@ export function RangeCalendar<T extends DateValue>({
   errorMessage,
   ...props
 }: RangeCalendarProps<T>) {
-  let months = props.visibleDuration?.months || 1;
+  const months = props.visibleDuration?.months || 1;
   return (
     <AriaRangeCalendar {...props}>
       <div className="months">
         {Array.from({ length: months }, (_, i) => (
           <div key={i} className="month">
-            <header>
+            <div className="calendar-header">
               {i === 0 && (
                 <Button slot="previous" variant="quiet">
                   <ChevronLeft />
@@ -40,7 +40,7 @@ export function RangeCalendar<T extends DateValue>({
                   <ChevronRight />
                 </Button>
               )}
-            </header>
+            </div>
             <CalendarGrid offset={{ months: i }}>
               {(date) => <CalendarCell date={date} />}
             </CalendarGrid>

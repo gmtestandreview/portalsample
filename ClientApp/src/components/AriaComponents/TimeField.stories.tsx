@@ -1,13 +1,16 @@
-import {TimeField} from '../src/TimeField';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {TimeField} from './TimeField';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof TimeField> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/TimeField',
   component: TimeField,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof TimeField>;
 
 export default meta;
 

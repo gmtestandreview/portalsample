@@ -1,13 +1,16 @@
-import {ColorArea} from '../src/ColorArea';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ColorArea} from './ColorArea';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ColorArea> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ColorArea',
   component: ColorArea,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ColorArea>;
 
 export default meta;
 type Story = StoryFn<typeof ColorArea>;

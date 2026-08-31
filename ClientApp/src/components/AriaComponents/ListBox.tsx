@@ -11,7 +11,7 @@ import {
   type ListBoxSectionProps,
 } from 'react-aria-components/ListBox';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
-import { Check } from 'lucide-react';
+import { Check } from './NmiIcon';
 import { Text } from './Content';
 import { ProgressCircle } from './ProgressCircle';
 import './ListBox.css';
@@ -21,7 +21,7 @@ export function ListBox<T>({ children, ...props }: ListBoxProps<T>) {
 }
 
 export function ListBoxItem(props: ListBoxItemProps) {
-  let textValue =
+  const textValue =
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaListBoxItem {...props} textValue={textValue}>
@@ -49,7 +49,7 @@ export function DropdownListBox<T>(props: ListBoxProps<T>) {
 }
 
 export function DropdownItem(props: ListBoxItemProps) {
-  let textValue =
+  const textValue =
     props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <ListBoxItem {...props} textValue={textValue} className="dropdown-item">

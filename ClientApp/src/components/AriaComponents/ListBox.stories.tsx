@@ -1,14 +1,17 @@
-import {ListBox, ListBoxItem, ListBoxSection} from '../src/ListBox';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ListBox, ListBoxItem, ListBoxSection} from './ListBox';
 import {Header} from 'react-aria-components/Header';
-import type {Meta, StoryFn} from '@storybook/react';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ListBox> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ListBox',
   component: ListBox,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ListBox>;
 
 export default meta;
 type Story = StoryFn<typeof ListBox>;

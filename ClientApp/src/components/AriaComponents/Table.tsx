@@ -23,9 +23,9 @@ import {
 } from 'react-aria-components/Table';
 import { Group } from 'react-aria-components/Group';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
-import { Checkbox } from './Checkbox';
+import { Checkbox } from '../Inputs/AriaCheckbox/Checkbox';
 import { ProgressCircle } from './ProgressCircle';
-import { ChevronUp, ChevronDown, GripVertical, ChevronRight } from 'lucide-react';
+import { ChevronUp, ChevronDown, GripVertical, ChevronRight } from './NmiIcon';
 import './Table.css';
 
 export function Table(props: TableProps) {
@@ -57,7 +57,7 @@ export function Column(props: Omit<ColumnProps, 'children'> & { children?: React
 }
 
 export function TableHeader<T>({ columns, children, ...otherProps }: TableHeaderProps<T>) {
-  let { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
+  const { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
 
   return (
     <AriaTableHeader {...otherProps}>
@@ -86,7 +86,7 @@ export function TableHeader<T>({ columns, children, ...otherProps }: TableHeader
 }
 
 export function Row<T>({ id, columns, children, ...otherProps }: RowProps<T>) {
-  let { selectionBehavior, allowsDragging } = useTableOptions();
+  const { selectionBehavior, allowsDragging } = useTableOptions();
 
   return (
     <AriaRow id={id} {...otherProps}>

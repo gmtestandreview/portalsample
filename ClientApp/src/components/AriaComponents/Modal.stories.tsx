@@ -1,17 +1,20 @@
-import {Modal} from '../src/Modal';
-import {Dialog, DialogTrigger} from '../src/Dialog';
-import {TextField} from '../src/TextField';
-import {Button} from '../src/Button';
-import {Heading} from '../src/Content';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {Modal} from './Modal';
+import {Dialog, DialogTrigger} from '../Dialog/Dialog';
+import {TextField} from './TextField';
+import {Button} from '../Buttons/AriaButton/Button';
+import {Heading} from './Content';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Modal> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Modal',
   component: Modal,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Modal>;
 
 export default meta;
 type Story = StoryFn<typeof Modal>;

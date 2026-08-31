@@ -7,7 +7,7 @@ import {
   SliderTrack,
   SliderFill,
 } from 'react-aria-components/Slider';
-import { Label } from './Form';
+import { Label } from '../forms/AriaForm/Form';
 import './Slider.css';
 
 export interface SliderProps<T> extends AriaSliderProps<T> {
@@ -39,11 +39,14 @@ export function Slider<T extends number | number[]>({
             <div className="track inset" data-disabled={isDisabled || undefined}>
               <SliderFill offset={fillOffset} />
             </div>
-            {state.values.map((_, i) => (
+            {state.values.map((_, index) => ({
+              id: thumbLabels?.[index] ?? `thumb-${index}`,
+              index,
+            })).map((thumb) => (
               <SliderThumb
-                key={i}
-                index={i}
-                aria-label={thumbLabels?.[i]}
+                key={thumb.id}
+                index={thumb.index}
+                aria-label={thumbLabels?.[thumb.index]}
                 className="react-aria-SliderThumb indicator"
               />
             ))}

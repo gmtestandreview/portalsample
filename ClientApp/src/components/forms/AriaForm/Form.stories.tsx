@@ -1,15 +1,18 @@
-import {Form} from '../src/Form';
-import {Button} from '../src/Button';
-import {TextField} from '../src/TextField';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../../storybook/withReactAriaEvaluation';
+import {Form} from './Form';
+import {Button} from '../../Buttons/AriaButton/Button';
+import {TextField} from '../../AriaComponents/TextField';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Form> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Form',
   component: Form,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Form>;
 
 export default meta;
 type Story = StoryFn<typeof Form>;

@@ -1,13 +1,16 @@
-import {Checkbox} from '../src/Checkbox';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../../storybook/withReactAriaEvaluation';
+import {Checkbox} from './Checkbox';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof Checkbox> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Checkbox',
   component: Checkbox,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof Checkbox>;
 
 export default meta;
 type Story = StoryFn<typeof Checkbox>;

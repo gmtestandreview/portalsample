@@ -1,13 +1,16 @@
-import {ColorWheel} from '../src/ColorWheel';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ColorWheel} from './ColorWheel';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ColorWheel> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ColorWheel',
   component: ColorWheel,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ColorWheel>;
 
 export default meta;
 type Story = StoryFn<typeof ColorWheel>;

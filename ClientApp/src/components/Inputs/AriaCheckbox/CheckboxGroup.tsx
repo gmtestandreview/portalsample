@@ -4,7 +4,7 @@ import {
   type CheckboxGroupProps as AriaCheckboxGroupProps,
   type ValidationResult,
 } from 'react-aria-components/CheckboxGroup';
-import { Label, FieldError, Description } from './Form';
+import { Label, FieldError, Description } from '../../forms/AriaForm/Form';
 import './CheckboxGroup.css';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'> {

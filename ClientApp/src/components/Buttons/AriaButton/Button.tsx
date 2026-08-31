@@ -4,7 +4,7 @@ import {
   type ButtonProps as RACButtonProps,
 } from 'react-aria-components/Button';
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
-import { ProgressCircle } from './ProgressCircle';
+import { ProgressCircle } from '../../AriaComponents/ProgressCircle';
 import './Button.css';
 
 interface ButtonProps extends RACButtonProps {

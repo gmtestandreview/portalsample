@@ -1,13 +1,16 @@
-import {ProgressBar} from '../src/ProgressBar';
-import type {Meta, StoryFn} from '@storybook/react';
+import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
+import {ProgressBar} from './ProgressBar';
+import type {Meta, StoryFn} from '@storybook/react-vite';
 
-const meta: Meta<typeof ProgressBar> = {
+const meta = {
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/ProgressBar',
   component: ProgressBar,
   parameters: {
     layout: 'centered'
   },
   tags: ['autodocs']
-};
+} satisfies Meta<typeof ProgressBar>;
 
 export default meta;
 type Story = StoryFn<typeof ProgressBar>;
