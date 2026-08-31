@@ -17,7 +17,6 @@ import {
     clearDashboardNotification,
     setDashboardNotification,
     getDashboardInfoNotification,
-    setDashboardInfoNotification,
     clearDashboardInfoNotification,
 } from '../../storage/notification';
 import NotificationMessage from '../../components/Alert/NotificationMessage';
@@ -154,7 +153,6 @@ const DashboardTA = () => {
     const [isDataLoading, setIsDataLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [reload, setReload] = useState(false);
-    const [showInfo, setShowInfo] = useState(false);
     const accountContext = useAccountContext();
     const accountDispatch = useAccountDispatch();
     const accountDetails = accountContext?.details;
@@ -371,7 +369,6 @@ const DashboardTA = () => {
                         setCurrentPage(requestsResponse.currentPage!);
                         setTotalPages(requestsResponse.totalPages!);
                         setTotalCount(requestsResponse.totalCount!);
-                        setShowInfo(false);
                         // trackGAPii(); // Keep this here for later when we track pii-data
                     } catch (error) {
                         AppLogger.error('Failed to load dashboard.', error as Error);
@@ -614,12 +611,7 @@ const DashboardTA = () => {
         return <Navigate to={getUnexpectedErrorRoute(errorStatus.status)} />;
     }
 
-    if (showInfo) {
-        const message = DashBoardNotifications.getReportFormsGeneratedNotification();
-        setDashboardInfoNotification(message);
-    } else {
-        clearDashboardInfoNotification();
-    }
+    clearDashboardInfoNotification();
 
     return (
         <>
