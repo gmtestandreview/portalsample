@@ -3,6 +3,10 @@ import { within, expect } from 'storybook/test';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import RequestForQuoteSummary from './requestForQuoteSummary';
 
+const expectInstrumentSectionReady = async (canvas: ReturnType<typeof within>) => {
+    await expect(await canvas.findByText('Serial number')).toBeInTheDocument();
+};
+
 /**
  * `RequestForQuoteSummary` is the review surface of the request-for-quote wizard. It
  * presents the captured Organisation/Contact and Instrument/Request sections inside
@@ -39,6 +43,7 @@ export const Editable: Story = {
         const canvas = within(canvasElement);
         await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
         await expect(canvas.getByText('Instrument and Request')).toBeVisible();
+        await expectInstrumentSectionReady(canvas);
         // Review guidance is shown while still editable.
         await expect(canvas.getByText(/before you submit your request/i)).toBeVisible();
     },
@@ -50,6 +55,7 @@ export const Submitted: Story = {
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
+        await expectInstrumentSectionReady(canvas);
         // Submitted view replaces guidance/edit with a back-to-dashboard link.
         await expect(canvas.getByTestId('back-button')).toBeVisible();
         await expect(canvas.queryByText(/before you submit your request/i)).toBeNull();

@@ -13,6 +13,7 @@ const config: StorybookConfig = {
     features: {
         changeDetection: true,
         componentsManifest: true,
+        experimentalReview: true,
     },
 
     typescript: {

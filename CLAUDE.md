@@ -35,6 +35,10 @@ See `package.json` for the full script list.
 
 When working on UI components, always use the `my-storybook-mcp-server` MCP tools to access Storybook's component and documentation knowledge before answering or taking any action.
 
+### Storybook async/render hygiene
+
+Do not suppress React `act(...)` warnings in Storybook stories or setup. Treat them as ownership signals. For Formik, lookup-driven, or route stories, make component state either synchronously derived from props/context or explicitly await the user-visible settled state in the story play function with `canvas.findBy...` or `waitFor`. Do not put purely derived visibility/state behind `useEffect` + `setState`; it creates post-render updates outside the Storybook test interaction boundary.
+
 Before the first Storybook MCP call, ensure `npm run storybook` is running and `http://localhost:6006/mcp` responds successfully. Confirm the configured `my-storybook-mcp-server` points to that endpoint. If the agent client started before Storybook was ready and the tools are absent, restart the client after the endpoint is healthy; do not bypass the MCP requirement.
 
 - **CRITICAL: Never hallucinate component properties!** Before using ANY property on a component from a design system (including common-sounding ones like `shadow`, etc.), you MUST use the MCP tools to check if the property is actually documented for that component.

@@ -132,6 +132,7 @@ Then(
             expect.arrayContaining([
                 'list-all-documentation',
                 'preview-stories',
+                'display-review',
                 'run-story-tests',
             ]),
         );

@@ -158,6 +158,11 @@ describe("Storybook documentation architecture", () => {
     expect(allDependencies).not.toHaveProperty("@storybook/addon-designs");
   });
 
+  it("enables agentic review for direct Storybook MCP clients", () => {
+    expect(main).toMatch(/features:\s*\{[\s\S]*experimentalReview:\s*true/);
+    expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
+  });
+
   it("keeps Vite customization limited to required Sass compatibility", () => {
     expect(main).toContain("quietDeps: true");
     expect(main).toContain("silenceDeprecations:");
