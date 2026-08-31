@@ -1,4 +1,6 @@
 import addonDocs from '@storybook/addon-docs';
+import addonA11y from '@storybook/addon-a11y';
+import addonTest from '@storybook/addon-vitest';
 import { definePreview } from '@storybook/react-vite';
 import MockDate from 'mockdate';
 import { createElement } from 'react';
@@ -16,6 +18,8 @@ import './preview-setup';
 const preview = definePreview({
     addons: [
         addonDocs(),
+        addonA11y(),
+        addonTest(),
         ...(globalThis.navigator?.serviceWorker === undefined
             ? []
             : [addonMsw(async () => {

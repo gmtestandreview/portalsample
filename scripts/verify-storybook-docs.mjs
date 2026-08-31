@@ -1,4 +1,4 @@
-import { access, readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import process from 'node:process';
 
@@ -38,6 +38,60 @@ const hasDocumentationSection = docsEntries.some((entry) =>
 
 if (!hasDocumentationSection) {
     throw new Error('Expected at least one standalone Documentation/* MDX entry.');
+}
+
+const docsEntryIds = new Set(docsEntries.map((entry) => String(entry.id)));
+const docsSourceDirs = ['.storybook', 'ClientApp/src'];
+
+const readDocsSources = async (dir) => {
+    const absoluteDir = resolve(root, dir);
+    const results = [];
+    const pending = [absoluteDir];
+
+    while (pending.length > 0) {
+        const current = pending.pop();
+        const children = await readdir(current, { withFileTypes: true });
+
+        for (const child of children) {
+            const childPath = resolve(current, child.name);
+
+            if (child.isDirectory()) {
+                pending.push(childPath);
+                continue;
+            }
+
+            if (/\.(?:md|mdx)$/i.test(child.name)) {
+                results.push(childPath);
+            }
+        }
+    }
+
+    return results;
+};
+
+const markdownLinkPattern = /\]\((\/docs\/[^)\s]+)\)|href=["'](\/docs\/[^"']+)["']/g;
+const internalDocsLinkFailures = [];
+
+for (const sourceFile of (await Promise.all(docsSourceDirs.map(readDocsSources))).flat()) {
+    const source = await readFile(sourceFile, 'utf8');
+
+    for (const match of source.matchAll(markdownLinkPattern)) {
+        const href = match[1] ?? match[2];
+        const docsId = href
+            .slice('/docs/'.length)
+            .split(/[?#]/, 1)[0]
+            .replace(/\/$/, '');
+
+        if (!docsEntryIds.has(docsId)) {
+            internalDocsLinkFailures.push(`${sourceFile}: ${href}`);
+        }
+    }
+}
+
+if (internalDocsLinkFailures.length > 0) {
+    throw new Error(
+        `Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join('\n  ')}`,
+    );
 }
 
 const manifest = JSON.parse(
@@ -138,6 +192,7 @@ console.warn(
             totalEntries: entries.length,
             docsEntries: docsEntries.length,
             storyEntries: storyEntries.length,
+            validatedInternalDocsLinks: true,
             documentationSection: hasDocumentationSection,
             components: components.length,
             reusableComponents: reusableComponents.length,
