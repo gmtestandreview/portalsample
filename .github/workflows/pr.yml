@@ -7,6 +7,9 @@ on:
 permissions:
   contents: read
 
+env:
+  STORYBOOK_DISABLE_TELEMETRY: '1'
+
 # GitHub's implicit runner shell is `bash -e`, which has no pipefail: a step
 # that pipes into `tee` would report the exit code of `tee`, not of the command
 # being recorded. Naming bash explicitly restores `-o pipefail`.

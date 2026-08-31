@@ -2,37 +2,43 @@ import type { Preview } from '@storybook/react-vite';
 import MockDate from 'mockdate';
 import { createElement } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
+import { setupWorker } from 'msw/browser';
 import { mswLoader } from 'msw-storybook-addon/csf3';
 import '../ClientApp/public/fonts/fonts.css';
 import '../ClientApp/public/fonts/nmi-iconfonts.css';
 import '../ClientApp/src/styles/index.scss';
 import './docs-table-styles.css';
 import { mswHandlers } from './msw-handlers';
+import { isStorybookMswDebugEnabled } from './msw-policy';
 import './preview-setup';
 export { mockMsalContext, mockAppInsights } from './storybookMocks';
+
+const storybookMswLoader = mswLoader(async () => {
+    const worker = setupWorker();
+    await worker.start({
+        quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
+    });
+    return worker;
+});
 
 export default {
     tags: ['autodocs'],
 
     decorators: [
         (Story, { parameters }) => {
-            const initialEntries = (parameters?.portal
-                ?.initialEntries as string[]) ?? ['/'];
+            const initialEntries = (parameters?.portal?.initialEntries as string[]) ?? ['/'];
             // A story that renders a route reading useParams needs a pattern to match
             // against; under the catch-all every param is undefined, which is why
             // InstrMeasurementReport rendered an empty <h1>{id}</h1> and axe reported
             // empty-heading. Stories opt in via `portal.routePath`, and anything that does
             // not care keeps the catch-all it has always had.
             const routePath = (parameters?.portal?.routePath as string) ?? '*';
-            const router = createMemoryRouter(
-                [{ path: routePath, element: createElement(Story) }],
-                { initialEntries },
-            );
+            const router = createMemoryRouter([{ path: routePath, element: createElement(Story) }], { initialEntries });
             return createElement(RouterProvider, { router });
         },
     ],
 
-    loaders: [...(navigator?.serviceWorker === undefined ? [] : [mswLoader()])],
+    loaders: [...(navigator?.serviceWorker === undefined ? [] : [storybookMswLoader])],
 
     async beforeEach() {
         globalThis.sessionStorage.setItem(
