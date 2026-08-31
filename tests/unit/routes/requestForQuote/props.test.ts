@@ -103,7 +103,7 @@ describe('request for quote wizard prop factories', () => {
         expect(mocks.saveInstrumentAndRequest).toHaveBeenCalledWith('APP-1', {
             applicationId: 'APP-1',
             formStep: expect.objectContaining({
-                preferredInstrumentOrArtefactAvailabilityDate: expect.any(Date),
+                preferredInstrumentOrArtefactAvailabilityDate: new Date('2026-06-12T00:00:00.000Z'),
             }),
             isCompletingStep: true,
         }, abortSignal);

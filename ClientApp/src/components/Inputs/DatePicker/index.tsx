@@ -1,9 +1,14 @@
 import { useField, useFormikContext } from 'formik';
-import { format, parseISO } from 'date-fns';
 
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { formatDateToUTC, isDateValid, parseDateUTC } from '../../../utils';
+import {
+    dateOnlyToPickerDate,
+    dateOnlyToStoredDateTimeString,
+    formatDateOnlyForDisplay,
+    parseApiDateOnlyInput,
+    parseDateOnlyInput,
+} from '../../../utils/dateOnly';
 import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
@@ -28,9 +33,9 @@ const DatePicker = (datePickerProps: DatePickerProps) => {
 
     useEffect(() => {
         if (!currentDate && _field.value) {
-            const parsedDate = parseDateUTC(_field.value);
-            if (parsedDate) {
-                setCurrentDate(parsedDate);
+            const dateOnlyValue = parseApiDateOnlyInput(_field.value);
+            if (dateOnlyValue) {
+                setCurrentDate(dateOnlyToPickerDate(dateOnlyValue));
             }
         }
     }, [_field.value, currentDate]);
@@ -41,13 +46,11 @@ const DatePicker = (datePickerProps: DatePickerProps) => {
         if (dateUpdateValue === null) {
             dateString = null;
         } else if (typeof dateUpdateValue === 'string') {
-            if (isDateValid(dateUpdateValue)) {
-                dateString = formatDateToUTC(dateUpdateValue);
-            } else {
-                dateString = dateUpdateValue;
-            }
+            const dateOnlyValue = parseDateOnlyInput(dateUpdateValue);
+            dateString = dateOnlyValue ? dateOnlyToStoredDateTimeString(dateOnlyValue) : dateUpdateValue;
         } else {
-            dateString = formatDateToUTC(dateUpdateValue);
+            const dateOnlyValue = parseDateOnlyInput(dateUpdateValue);
+            dateString = dateOnlyValue ? dateOnlyToStoredDateTimeString(dateOnlyValue) : null;
         }
 
         await setFieldValue(_field.name, dateString, true);
@@ -56,18 +59,22 @@ const DatePicker = (datePickerProps: DatePickerProps) => {
     const dateOnBlur = async (event: React.FocusEvent) => {
         const element = (event.target as HTMLInputElement);
         const dateUpdateValue = element.value;
+        const currentDateOnlyValue = parseDateOnlyInput(_field.value);
+        const updateDateOnlyValue = parseDateOnlyInput(dateUpdateValue);
+        const dateChanged = currentDateOnlyValue && updateDateOnlyValue
+            ? currentDateOnlyValue !== updateDateOnlyValue
+            : dateUpdateValue !== _field.value;
 
-        if (dateUpdateValue !== _field.value) {
+        if (dateChanged) {
             await dateOnChange(dateUpdateValue || null);
         }
 
         setFieldTouched(_field.name);
     };
 
-    const getDate = (date: string | Date) => (typeof date === 'string' ? parseISO(date) : date);
-
     if (isSummary) {
-        const displayValue = _field.value ? format(getDate(_field.value), 'dd LLL yyyy') : _field.value;
+        const dateOnlyValue = parseApiDateOnlyInput(_field.value);
+        const displayValue = dateOnlyValue ? formatDateOnlyForDisplay(dateOnlyValue) : _field.value;
 
         return (
             <SummaryDisplay

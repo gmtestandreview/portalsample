@@ -7,7 +7,7 @@ import {
 import { YesNo } from '../../api/web-api-client';
 import type { InstrumentAndRequestStep, OrganisationAndContact } from '../../api/web-api-client';
 import type { Validation } from '../../components/forms/FormikForm/types';
-import { formatDateStringToUTC } from '../../utils';
+import { parseApiDateOnlyInput, parseDateOnlyInput } from '../../utils/dateOnly';
 
 export const organisationAndContactSubmitValidation = yup.object<Validation<OrganisationAndContact>>({
     businessWebsiteAddress: websiteUrlSchema('Business website address is not a valid website address')
@@ -128,9 +128,9 @@ export const instrumentAndRequestSubmitValidation = yup.object<Validation<Instru
                     return true; // Null or undefined is valid
                 }
 
-                const now = formatDateStringToUTC(new Date());
-                const valToTest = formatDateStringToUTC(new Date(value as string));
-                return valToTest && now && valToTest >= now;
+                const today = parseDateOnlyInput(new Date());
+                const valToTest = parseApiDateOnlyInput(value as Date | string);
+                return Boolean(valToTest && today && valToTest >= today);
             },
         ),
 });

@@ -3,6 +3,10 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
+vi.mock("@storybook/addon-vitest/vitest-plugin", () => ({
+  storybookTest: vi.fn(() => ({ name: "storybook-test-mock" })),
+}));
+
 import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
 import storybookConfig from "../../../vitest.storybook.config";
 

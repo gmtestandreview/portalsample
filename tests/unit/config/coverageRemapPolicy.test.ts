@@ -34,6 +34,9 @@ const allowedExclusionCategories = [
   /\/external\/\*\*$/,
   /\/parent\/\*\*$/,
   /\/storybook\/\*\*$/,
+  /\/components\/App\/\*\*$/,
+  /\/components\/AriaComponents\/main\.tsx$/,
+  /\/components\/reactaria_components\/\*\*$/,
   /source-map-http-downloads\/\*\*$/,
   /\*\.test\.\{ts,tsx\}$/,
   /\*\.spec\.\{ts,tsx\}$/,
@@ -105,6 +108,9 @@ describe("remap inputs", () => {
       "ClientApp/src/api/web-api-client.ts",
       "ClientApp/src/external/**",
       "ClientApp/src/storybook/**",
+      "ClientApp/src/components/App/**",
+      "ClientApp/src/components/AriaComponents/main.tsx",
+      "ClientApp/src/components/reactaria_components/**",
       "ClientApp/src/**/*.stories.{ts,tsx}",
     ]));
   });
