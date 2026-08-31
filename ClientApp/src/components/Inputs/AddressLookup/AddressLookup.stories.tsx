@@ -36,6 +36,9 @@ export const Default: Story = {
         maxResults: 5,
         placeholder: 'Start typing an address...',
     },
+    beforeEach({ msw }) {
+        msw.use(addressSearchHandler);
+    },
     parameters: {
         portal: {
             formik: {
@@ -49,9 +52,6 @@ export const Default: Story = {
                     },
                 },
             },
-        },
-        msw: {
-            handlers: [addressSearchHandler],
         },
     },
     render: () => (

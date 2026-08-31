@@ -1,9 +1,10 @@
-import type { Preview } from '@storybook/react-vite';
+import addonDocs from '@storybook/addon-docs';
+import { definePreview } from '@storybook/react-vite';
 import MockDate from 'mockdate';
 import { createElement } from 'react';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import { setupWorker } from 'msw/browser';
-import { mswLoader } from 'msw-storybook-addon/csf3';
+import addonMsw from 'msw-storybook-addon';
 import '../ClientApp/public/fonts/fonts.css';
 import '../ClientApp/public/fonts/nmi-iconfonts.css';
 import '../ClientApp/src/styles/index.scss';
@@ -11,18 +12,22 @@ import './docs-table-styles.css';
 import { mswHandlers } from './msw-handlers';
 import { isStorybookMswDebugEnabled, onUnhandledStorybookRequest } from './msw-policy';
 import './preview-setup';
-export { mockMsalContext, mockAppInsights } from './storybookMocks';
 
-const storybookMswLoader = mswLoader(async () => {
-    const worker = setupWorker();
-    await worker.start({
-        quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
-        onUnhandledRequest: onUnhandledStorybookRequest,
-    });
-    return worker;
-});
+const preview = definePreview({
+    addons: [
+        addonDocs(),
+        ...(globalThis.navigator?.serviceWorker === undefined
+            ? []
+            : [addonMsw(async () => {
+                const worker = setupWorker(...mswHandlers);
+                await worker.start({
+                    quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
+                    onUnhandledRequest: onUnhandledStorybookRequest,
+                });
+                return worker;
+            })]),
+    ],
 
-const Preview = {
     tags: ['autodocs'],
 
     decorators: [
@@ -39,8 +44,6 @@ const Preview = {
         },
     ],
 
-    loaders: [...(navigator?.serviceWorker === undefined ? [] : [storybookMswLoader])],
-
     async beforeEach() {
         globalThis.sessionStorage.setItem(
             'targetOrganisation',
@@ -53,11 +56,7 @@ const Preview = {
     },
 
     parameters: {
-        msw: {
-            handlers: mswHandlers,
-        },
         controls: {
-            hideNoControlsWarning: true,
             matchers: {
                 color: /(background|color)$/i,
                 date: /date$/i,
@@ -74,7 +73,7 @@ const Preview = {
             // 'off' - skip a11y checks entirely
             //
             // Raised from 'todo' to 'error' once the suite reached zero violations across
-            // all 218 stories. Under 'todo' the checks ran but could never fail a build, so
+            // the generated catalogue. Under 'todo' the checks ran but could never fail a build, so
             // four real defects sat unreported: unnamed progress bars, an aria-hidden
             // stepper containing focusable links, an empty h1, and muted text at 4.28:1 on
             // the grey band. Enforcing it is what stops the next one going unnoticed.
@@ -87,13 +86,12 @@ const Preview = {
                 exclude: ['as', 'bsPrefix', 'ref', 'key'],
                 sort: 'requiredFirst',
             },
-            canvas: { sourceState: 'shown' },
             source: {
                 excludeDecorators: true,
                 type: 'auto',
             },
         },
     },
-} satisfies Preview;
+});
 
-export default Preview;
+export default preview;

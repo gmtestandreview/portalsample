@@ -71,6 +71,9 @@ const meta = {
     title: 'Routes/AcceptQuote',
     component: ReportRecipient,
     decorators: [withPortalProviders],
+    beforeEach({ msw }) {
+        msw.use(reportRecipientHandler, paymentDetailsHandler);
+    },
     parameters: {
         layout: 'padded',
         portal: {
@@ -91,9 +94,6 @@ const meta = {
                     },
                 },
             },
-        },
-        msw: {
-            handlers: [reportRecipientHandler, paymentDetailsHandler],
         },
     },
 } satisfies Meta<typeof ReportRecipient>;
@@ -120,6 +120,9 @@ export const ReportRecipientStep: Story = {
 
 export const ReportRecipientSummaryOtherAddress: Story = {
     render: () => <ReportRecipient id='123' isSummary />,
+    beforeEach({ msw }) {
+        msw.use(reportRecipientOtherAddressHandler);
+    },
     parameters: {
         portal: {
             initialEntries: ['/accept-quote/123/summary-and-accept'],
@@ -136,9 +139,6 @@ export const ReportRecipientSummaryOtherAddress: Story = {
                     },
                 },
             },
-        },
-        msw: {
-            handlers: [reportRecipientOtherAddressHandler],
         },
     },
     play: async ({ canvasElement }) => {
@@ -185,6 +185,16 @@ export const PaymentDetailsStep: Story = {
 
 export const PaymentDetailsPostpaid: Story = {
     render: () => <PaymentDetails id='123' />,
+    beforeEach({ msw }) {
+        msw.use(
+            http.get('/api/accept-quote/:id/payment-details', () => HttpResponse.json({
+                acceptQuotePreInfo: {
+                    paymentTerms: 'Invoice',
+                    quotationIdNum: 'Q-2024-000456',
+                },
+            })),
+        );
+    },
     parameters: {
         portal: {
             initialEntries: ['/accept-quote/123/payment-details'],
@@ -201,17 +211,6 @@ export const PaymentDetailsPostpaid: Story = {
                     },
                 },
             },
-        },
-        msw: {
-            handlers: [
-                reportRecipientHandler,
-                http.get('/api/accept-quote/:id/payment-details', () => HttpResponse.json({
-                    acceptQuotePreInfo: {
-                        paymentTerms: 'Invoice',
-                        quotationIdNum: 'Q-2024-000456',
-                    },
-                })),
-            ],
         },
     },
     play: async ({ canvasElement }) => {
@@ -251,6 +250,9 @@ const deliveryAndReturnHandler =http.get('/api/accept-quote/:id/delivery-and-ret
 
 export const DeliveryAndReturnStep: Story = {
     render: () => <DeliveryAndReturn id='123' />,
+    beforeEach({ msw }) {
+        msw.use(deliveryAndReturnHandler);
+    },
     parameters: {
         portal: {
             initialEntries: ['/accept-quote/123/delivery-and-return'],
@@ -263,7 +265,6 @@ export const DeliveryAndReturnStep: Story = {
                 },
             },
         },
-        msw: { handlers: [deliveryAndReturnHandler] },
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
@@ -287,6 +288,9 @@ const quotationSummaryHandler = http.get('/api/quote/get-quote-request-details',
 
 export const QuotationSummaryStep: Story = {
     render: () => <QuotationSummary cRMQuoteRequestId='crm-456' />,
+    beforeEach({ msw }) {
+        msw.use(quotationSummaryHandler);
+    },
     parameters: {
         portal: {
             initialEntries: ['/accept-quote/123/quotation-summary'],
@@ -294,7 +298,6 @@ export const QuotationSummaryStep: Story = {
                 initialValues: {},
             },
         },
-        msw: { handlers: [quotationSummaryHandler] },
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
@@ -337,6 +340,15 @@ const summaryAndAcceptHandler = http.get('/api/accept-quote/:id/summary-and-acce
 
 export const SummaryAndAcceptStep: Story = {
     render: () => <SummaryAndAccept id='123' />,
+    beforeEach({ msw }) {
+        msw.use(
+            summaryAndAcceptHandler,
+            deliveryAndReturnHandler,
+            reportRecipientHandler,
+            paymentDetailsHandler,
+            quotationSummaryHandler,
+        );
+    },
     parameters: {
         portal: {
             initialEntries: ['/accept-quote/123/summary-and-accept'],
@@ -346,15 +358,6 @@ export const SummaryAndAcceptStep: Story = {
                     acceptanceOfQuote: false,
                 },
             },
-        },
-        msw: {
-            handlers: [
-                summaryAndAcceptHandler,
-                deliveryAndReturnHandler,
-                reportRecipientHandler,
-                paymentDetailsHandler,
-                quotationSummaryHandler,
-            ],
         },
     },
     play: async ({ canvas }) => {

@@ -49,6 +49,13 @@ const meta = {
     title: 'Routes/Dashboard',
     component: Dashboard,
     decorators: [withPortalProviders],
+    beforeEach({ msw }) {
+        msw.use(
+            http.get('/api/dashboard/get-filtered-dashboard-drafts', () => buildDashboardResponse(draftItems)),
+            http.get('/api/dashboard/get-filtered-dashboard-quotes', () => buildDashboardResponse(requestItems)),
+            http.get('/api/dashboard/get-filtered-dashboard-artefacts', () => buildDashboardResponse(instrumentItems)),
+        );
+    },
     parameters: {
         layout: 'fullscreen',
         portal: {
@@ -64,13 +71,6 @@ const meta = {
                     filterSearchText: '',
                 },
             },
-        },
-        msw: {
-            handlers: [
-                http.get('/api/dashboard/get-filtered-dashboard-drafts', () => buildDashboardResponse(draftItems)),
-                http.get('/api/dashboard/get-filtered-dashboard-quotes', () => buildDashboardResponse(requestItems)),
-                http.get('/api/dashboard/get-filtered-dashboard-artefacts', () => buildDashboardResponse(instrumentItems)),
-            ],
         },
     },
 } satisfies Meta<typeof Dashboard>;
@@ -90,14 +90,12 @@ export const Populated: Story = {
 };
 
 export const EmptyState: Story = {
-    parameters: {
-        msw: {
-            handlers: [
-                http.get('/api/dashboard/get-filtered-dashboard-drafts', () => buildDashboardResponse([])),
-                http.get('/api/dashboard/get-filtered-dashboard-quotes', () => buildDashboardResponse([])),
-                http.get('/api/dashboard/get-filtered-dashboard-artefacts', () => buildDashboardResponse([])),
-            ],
-        },
+    beforeEach({ msw }) {
+        msw.use(
+            http.get('/api/dashboard/get-filtered-dashboard-drafts', () => buildDashboardResponse([])),
+            http.get('/api/dashboard/get-filtered-dashboard-quotes', () => buildDashboardResponse([])),
+            http.get('/api/dashboard/get-filtered-dashboard-artefacts', () => buildDashboardResponse([])),
+        );
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);

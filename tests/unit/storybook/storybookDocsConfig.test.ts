@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { resolve } from "node:path";
+import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
 const repoRoot = process.cwd();
@@ -9,6 +10,14 @@ const read = (path: string) => readFileSync(resolve(repoRoot, path), "utf8");
 const main = read(".storybook/main.ts");
 const preview = read(".storybook/preview.ts");
 const componentDocsGuide = read(".storybook/component-docs-guide.mdx");
+const introduction = read(".storybook/introduction.mdx");
+const styleGuide = read(".storybook/style-guide.mdx");
+const scssVariables = read("ClientApp/src/styles/_variables.scss");
+const docsVerifier = read("scripts/verify-storybook-docs.mjs");
+const tsconfigJson = ts.parseConfigFileTextToJson(
+  "tsconfig.json",
+  read("tsconfig.json"),
+).config as { compilerOptions?: { types?: string[] } };
 const packageJson = JSON.parse(read("package.json")) as {
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
@@ -103,6 +112,22 @@ const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
 ];
 
 describe("Storybook documentation architecture", () => {
+  it("keeps main.ts syntactically valid", () => {
+    const result = ts.transpileModule(main, {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+      },
+      fileName: ".storybook/main.ts",
+      reportDiagnostics: true,
+    });
+    const syntaxErrors = (result.diagnostics ?? [])
+      .filter((diagnostic) => diagnostic.category === ts.DiagnosticCategory.Error)
+      .map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n"));
+
+    expect(syntaxErrors).toEqual([]);
+  });
+
   it("uses the audited latest stable Storybook package set", () => {
     const storybookPackages = [
       "storybook",
@@ -133,6 +158,15 @@ describe("Storybook documentation architecture", () => {
     expect(allDependencies).not.toHaveProperty("@storybook/addon-designs");
   });
 
+  it("keeps Vite customization limited to required Sass compatibility", () => {
+    expect(main).toContain("quietDeps: true");
+    expect(main).toContain("silenceDeprecations:");
+    expect(main).not.toContain("rolldownOptions");
+    expect(main).not.toContain("chunkSizeWarningLimit");
+    expect(main).not.toContain("getNodeModulesPackageName");
+    expect(main).not.toContain("getPackageSubArea");
+  });
+
   it("uses non-overlapping canonical story and MDX globs", () => {
     expect(main).toMatch(/["']\.\.\/\.storybook\/\*\.mdx["']/);
     expect(main).toMatch(/["']\.\.\/ClientApp\/src\/\*\*\/\*\.mdx["']/);
@@ -149,6 +183,10 @@ describe("Storybook documentation architecture", () => {
       /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
     );
     expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/);
+    expect(main.match(/defaultName:/g)).toHaveLength(1);
+    expect(main.match(/docsMode:/g)).toHaveLength(1);
+    expect(main).not.toMatch(/autodocs:\s*['"]tag['"]/);
+    expect(main).not.toMatch(/docsMode:\s*true/);
   });
 
   it("does not use Webpack-only TypeScript checking in React Vite", () => {
@@ -188,6 +226,36 @@ describe("Storybook documentation architecture", () => {
     expect(preview).toMatch(/codePanel:\s*true/);
     expect(preview).toMatch(/excludeDecorators:\s*true/);
     expect(preview).toMatch(/type:\s*['"]auto['"]/);
+    expect(preview).not.toMatch(/sourceState:\s*['"]shown['"]/);
+    expect(preview).not.toContain("hideNoControlsWarning");
+  });
+
+  it("uses the current MSW preview addon without legacy parameters", () => {
+    expect(main).not.toMatch(/['"]msw-storybook-addon['"]/);
+    expect(preview).toMatch(/import\s+addonMsw\s+from\s+['"]msw-storybook-addon['"]/);
+    expect(preview).toMatch(/definePreview\s*\(/);
+    expect(preview).not.toContain("mswLoader");
+    expect(tsconfigJson.compilerOptions?.types).toContain(
+      "msw-storybook-addon/types",
+    );
+
+    const legacyMswParameters = storyFiles.filter((path) =>
+      /parameters:\s*\{[\s\S]{0,800}?\bmsw\s*:/.test(readFileSync(path, "utf8")),
+    );
+
+    expect(legacyMswParameters.map(toRepoPath)).toEqual([]);
+  });
+
+  it("composes the Docs preview annotations required by definePreview", () => {
+    expect(preview).toMatch(
+      /import\s+addonDocs\s+from\s+['"]@storybook\/addon-docs['"]/,
+    );
+    expect(preview).toMatch(/addons:\s*\[[\s\S]*addonDocs\(\)/);
+  });
+
+  it("keeps preview mocks in the canonical portal harness", () => {
+    expect(preview).not.toContain("storybookMocks");
+    expect(existsSync(resolve(repoRoot, ".storybook/storybookMocks.ts"))).toBe(false);
   });
 
   it("does not replace inferred component descriptions globally", () => {
@@ -232,5 +300,44 @@ describe("Storybook documentation architecture", () => {
     expect(componentDocsGuide).toMatch(/\bCode Panel\b/);
     expect(componentDocsGuide).toMatch(/\bDoc Blocks\b/);
     expect(componentDocsGuide).toMatch(/\bMDX\b/);
+  });
+
+  it("documents configuration ownership, current MSW setup, and exact gates", () => {
+    expect(componentDocsGuide).toContain("definePreview");
+    expect(componentDocsGuide).toContain("addonMsw");
+    expect(componentDocsGuide).toContain("beforeEach");
+    expect(componentDocsGuide).toContain("msw.use");
+    expect(componentDocsGuide).toContain("npm run type-check");
+    expect(componentDocsGuide).toContain("npm run test:storybook");
+    expect(componentDocsGuide).toContain("npm run storybook:verify:docs");
+  });
+
+  it("limits strict docgen verification to reusable component stories", () => {
+    expect(docsVerifier).toContain("./ClientApp/src/components/");
+    expect(docsVerifier).toContain("reusableComponents");
+    expect(docsVerifier).toContain("staleAcceptedDocgenExceptions");
+    expect(componentDocsGuide).toContain("Reusable components with public props");
+    expect(componentDocsGuide).toContain("Route and page stories");
+  });
+
+  it("keeps status guidance independent of transient test totals", () => {
+    expect(introduction).not.toMatch(/\b\d+\s+passed\b/i);
+    expect(introduction).toContain("npm run test:storybook");
+  });
+
+  it("keeps documented NMI brand colours aligned with SCSS tokens", () => {
+    for (const token of ["nmi-primary", "nmi-header-primary"]) {
+      const scssValue = new RegExp(`\\$${token}:\\s*(#[0-9a-f]{6})`, "i").exec(
+        scssVariables,
+      )?.[1];
+      const documentedValue = new RegExp(
+        `\\(\\$${token}\\)'\\s*:\\s*'(#[0-9a-f]{6})'`,
+        "i",
+      ).exec(styleGuide)?.[1];
+
+      expect(scssValue, `SCSS value for $${token}`).toBeDefined();
+      expect(documentedValue, `documented value for $${token}`).toBeDefined();
+      expect(documentedValue?.toLowerCase()).toBe(scssValue?.toLowerCase());
+    }
   });
 });

@@ -45,7 +45,15 @@ Run the Storybook-specific generator and Playwright configuration together:
 npm run test:e2e:storybook
 ```
 
-Current Storybook baseline in this snapshot: **135 passed**.
+Run Storybook interaction tests without embedding a transient result count in
+the documentation:
+
+```bash
+npm run test:storybook
+```
+
+CI validates the generated documentation with `npm run build-storybook-docs`
+and `npm run storybook:verify:docs`.
 
 ## Contributing Guidelines
 

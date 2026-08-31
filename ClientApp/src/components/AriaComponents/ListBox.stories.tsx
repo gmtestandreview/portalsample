@@ -10,7 +10,6 @@ const meta = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
 } satisfies Meta<typeof ListBox>;
 
 export default meta;

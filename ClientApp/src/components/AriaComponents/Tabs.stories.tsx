@@ -13,7 +13,7 @@ const meta = {
   args: {
     onSelectionChange: fn()
   },
-  tags: ['autodocs', 'interaction-test']
+  tags: ['interaction-test']
 } satisfies Meta<typeof Tabs>;
 
 export default meta;

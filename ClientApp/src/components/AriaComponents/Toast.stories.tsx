@@ -18,7 +18,7 @@ const meta = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs', 'interaction-test'],
+  tags: ['interaction-test'],
   argTypes: {
     title: {
       control: 'text',

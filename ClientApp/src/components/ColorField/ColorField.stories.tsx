@@ -9,7 +9,6 @@ const meta = {
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs'],
   args: {
     placeholder: 'Enter a color'
   }

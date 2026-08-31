@@ -50,15 +50,52 @@ if (components.length === 0) {
     throw new Error('Storybook component manifest contains no components.');
 }
 
+const reusableComponentStoryPrefix = './ClientApp/src/components/';
+const reusableComponents = components.filter((component) =>
+    String(component.path ?? '').startsWith(reusableComponentStoryPrefix),
+);
+
+if (reusableComponents.length === 0) {
+    throw new Error('Storybook component manifest contains no reusable components.');
+}
+
 /**
  * Components whose missing prop metadata is accepted, with the reason. Anything
  * not listed here must produce docgen output: a component that silently loses its
  * props documents nothing, and Autodocs gives no build error when that happens.
  */
-const acceptedDocgenFailures = new Map([
+const acceptedDocgenExceptions = new Map([
+    [
+        'evaluation-react-aria-toast',
+        'composite example: stories coordinate a toast region and trigger rather than document one public component API',
+    ],
+    [
+        'components-footer',
+        'prop-less portal shell component whose behaviour comes from application context',
+    ],
+    [
+        'components-header',
+        'prop-less portal shell component whose behaviour comes from application context',
+    ],
+    [
+        'components-home',
+        'prop-less composition component with no public prop API',
+    ],
+    [
+        'components-utilities-routeaccessiblenavigation',
+        'prop-less accessibility utility with no public prop API',
+    ],
+    [
+        'components-welcome',
+        'prop-less composition component with no public prop API',
+    ],
     [
         'forms-inputs',
         'meta.component resolves to a react-bootstrap component inside node_modules',
+    ],
+    [
+        'routes-home-getstarted',
+        'prop-less reusable composition component with no public prop API',
     ],
     [
         'modals',
@@ -66,9 +103,24 @@ const acceptedDocgenFailures = new Map([
     ],
 ]);
 
-const docgenFailures = components
+const reusableDocgenFailureIds = new Set(
+    reusableComponents
+        .filter((component) => component.error)
+        .map((component) => component.id),
+);
+const staleAcceptedDocgenExceptions = [...acceptedDocgenExceptions.keys()].filter(
+    (componentId) => !reusableDocgenFailureIds.has(componentId),
+);
+
+if (staleAcceptedDocgenExceptions.length > 0) {
+    throw new Error(
+        `Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join('\n  ')}`,
+    );
+}
+
+const docgenFailures = reusableComponents
     .filter((component) => component.error)
-    .filter((component) => !acceptedDocgenFailures.has(component.id))
+    .filter((component) => !acceptedDocgenExceptions.has(component.id))
     .map(
         (component) =>
             `${component.name} (${component.id}): ${component.error.name}`,
@@ -88,7 +140,11 @@ console.warn(
             storyEntries: storyEntries.length,
             documentationSection: hasDocumentationSection,
             components: components.length,
-            acceptedDocgenFailures: [...acceptedDocgenFailures.keys()],
+            reusableComponents: reusableComponents.length,
+            routeAndPageComponents: components.length - reusableComponents.length,
+            acceptedDocgenExceptions: Object.fromEntries(
+                acceptedDocgenExceptions,
+            ),
         },
         null,
         2,
