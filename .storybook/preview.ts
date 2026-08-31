@@ -9,7 +9,7 @@ import '../ClientApp/public/fonts/nmi-iconfonts.css';
 import '../ClientApp/src/styles/index.scss';
 import './docs-table-styles.css';
 import { mswHandlers } from './msw-handlers';
-import { isStorybookMswDebugEnabled } from './msw-policy';
+import { isStorybookMswDebugEnabled, onUnhandledStorybookRequest } from './msw-policy';
 import './preview-setup';
 export { mockMsalContext, mockAppInsights } from './storybookMocks';
 
@@ -17,6 +17,7 @@ const storybookMswLoader = mswLoader(async () => {
     const worker = setupWorker();
     await worker.start({
         quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
+        onUnhandledRequest: onUnhandledStorybookRequest,
     });
     return worker;
 });

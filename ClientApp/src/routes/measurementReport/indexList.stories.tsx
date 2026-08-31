@@ -5,9 +5,9 @@ import InstrMeasurementReport from './indexList';
 
 /**
  * `InstrMeasurementReport` (the instrument-reports index route) is the banner + shell
- * around an instrument/artefact's measurement-report list. It loads the report list for
- * the active organisation; the report table appears once data resolves. In Storybook
- * the report API is not served, so the story documents the framed empty shell.
+ * around an instrument/artefact's measurement-report list. The endpoint-specific
+ * Storybook fixture supplies one issued report so the story verifies the complete
+ * loaded route rather than only its static shell.
  */
 const meta = {
     title: 'Routes/MeasurementReport/InstrumentReports',
@@ -34,12 +34,9 @@ export const Shell: Story = {
         await expect(canvas.getByRole('heading', { level: 1, name: 'INS-1' })).toBeVisible();
         await expect(canvas.getByText('Testing and calibration service')).toBeVisible();
         await expect(canvas.getByTestId('go-to-dashboard-button')).toBeVisible();
-        // The report API is not served here, so no table ever appears and there is no
-        // content anchor to await. The route's own busy contract is the settled state:
-        // aria-busy is true while the request is in flight and returns to false once it
-        // settles, success or failure. Awaiting it is what stops the list route and its
-        // React Aria breadcrumb collection updating after the story has ended.
         const reportRegion = canvasElement.querySelector('[aria-live="polite"]');
         await waitFor(() => expect(reportRegion).toHaveAttribute('aria-busy', 'false'));
+        await expect(canvas.getByTestId('instReports-table')).toBeVisible();
+        await expect(canvas.getByText('RPT-1001')).toBeVisible();
     },
 };

@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ComponentType } from 'react';
-import { http, HttpResponse } from 'msw';
 import { AccountStateCtx, AccountDispatchCtx } from '../../authentication/accountContext';
 import type { AccountContextState } from '../../authentication/accountContext';
 import RequestItem from './requestItem';
@@ -175,18 +174,6 @@ const meta = {
     component: RequestItem,
     parameters: {
         layout: 'padded',
-        msw: {
-            handlers: [
-                http.get('/api/dashboard/*', () =>
-                    HttpResponse.json({
-                        items: [draftRequest, quoteAvailableRequest, reportIssuedRequest],
-                        currentPage: 1,
-                        totalPages: 1,
-                        totalCount: 3,
-                    })
-                ),
-            ],
-        },
     },
     decorators: [DashboardDecorator],
 } satisfies Meta<typeof RequestItem>;
