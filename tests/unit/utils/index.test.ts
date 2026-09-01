@@ -170,6 +170,7 @@ describe('date helpers', () => {
     it('returns undefined for invalid parsed dates', () => {
         expect(utils.parseDate('not-a-date')).toBeUndefined();
         expect(utils.parseDateUTC('not-a-date')).toBeUndefined();
+        expect(utils.parseDateUTC(0 as unknown as Date)).toBeUndefined();
     });
 
     it('parses UTC-format date-time values and normalizes time to local midnight', () => {
@@ -210,6 +211,7 @@ describe('date helpers', () => {
     it('formats valid dates to local offset date-time strings or null for invalid input', () => {
         expect(utils.formatDateToUTC(null)).toBeNull();
         expect(utils.formatDateToUTC('not-a-date')).toBeNull();
+        expect(utils.formatDateToUTC(0 as unknown as Date)).toBeNull();
         expect(utils.formatDateToUTC('10/05/2024')).toMatch(/^2024-05-10T00:00:00[+-]\d{2}:\d{2}$/);
     });
 
@@ -235,6 +237,7 @@ describe('date helpers', () => {
         expect(utils.formatDateToString(null)).toBeNull();
         expect(utils.formatDateToString(undefined)).toBeNull();
         expect(utils.formatDateToString('not-a-date')).toBeNull();
+        expect(utils.formatDateToString(0 as unknown as Date)).toBeNull();
         expect(utils.formatDateToString('10/05/2024')).toBe('10 May 2024');
         expect(utils.formatDateToString('10/05/2024', 'yyyy/MM/dd')).toBe('2024/05/10');
         expect(utils.formatDateToString(date)).toBe('10 May 2024');
@@ -246,6 +249,7 @@ describe('date helpers', () => {
         expect(utils.formatDateTimeToString(null)).toBeNull();
         expect(utils.formatDateTimeToString(undefined)).toBeNull();
         expect(utils.formatDateTimeToString('not-a-date')).toBeNull();
+        expect(utils.formatDateTimeToString(0 as unknown as Date)).toBeNull();
         expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00')).toMatch(/^10 May 2024 (2|3):30 PM$/);
         expect(utils.formatDateTimeToString(date, 'yyyy/MM/dd HH:mm')).toBe('2024/05/10 15:30');
     });

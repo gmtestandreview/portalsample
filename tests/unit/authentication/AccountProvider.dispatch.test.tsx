@@ -83,6 +83,8 @@ const AccountConsumer = () => {
             <button onClick={() => accountDispatch?.setCompleted()} type="button">complete account</button>
             <button onClick={() => accountDispatch?.setContactCompleted()} type="button">complete contact</button>
             <button onClick={() => accountDispatch?.setDefaultOrganisationId(42, 'crm-42')} type="button">set default org</button>
+            <button onClick={() => accountDispatch?.setShowBranchSelector(true)} type="button">show branch selector</button>
+            <button onClick={() => accountDispatch?.setShowRFQSelectModal(true, 'rfq-123', '/requests')} type="button">show rfq selector</button>
             <button onClick={() => accountDispatch?.setTargetOrganisation('99999999999', 'Target Org')} type="button">set target org</button>
             <button onClick={() => accountDispatch?.setOrganisationAndBranch('New Org', 'Trading Name', 'Branch Name')} type="button">set org branch</button>
             <button
@@ -173,6 +175,8 @@ describe('AccountProvider dispatch callbacks', () => {
         await user.click(screen.getByRole('button', { name: 'complete account' }));
         await user.click(screen.getByRole('button', { name: 'complete contact' }));
         await user.click(screen.getByRole('button', { name: 'set default org' }));
+        await user.click(screen.getByRole('button', { name: 'show branch selector' }));
+        await user.click(screen.getByRole('button', { name: 'show rfq selector' }));
         await user.click(screen.getByRole('button', { name: 'set target org' }));
         await user.click(screen.getByRole('button', { name: 'set org branch' }));
         await user.click(screen.getByRole('button', { name: 'set profile' }));
@@ -183,6 +187,9 @@ describe('AccountProvider dispatch callbacks', () => {
         expect(details).toContain('"accountContactCompleted":true');
         expect(details).toContain('"defaultOrganisationId":42');
         expect(details).toContain('"organisationCRMGuid":"crm-42"');
+        expect(details).toContain('"showBranchSelector":true');
+        expect(details).toContain('"rfqId":"rfq-123"');
+        expect(details).toContain('"callingPath":"/requests"');
         expect(details).toContain('"targetOrganisationAbn":"99999999999"');
         expect(details).toContain('"targetOrganisationName":"Target Org"');
         expect(details).toContain('"organisation":"New Org"');
@@ -302,6 +309,8 @@ describe('AccountProvider dispatch callbacks', () => {
         await user.click(screen.getByRole('button', { name: 'complete account' }));
         await user.click(screen.getByRole('button', { name: 'complete contact' }));
         await user.click(screen.getByRole('button', { name: 'set default org' }));
+        await user.click(screen.getByRole('button', { name: 'show branch selector' }));
+        await user.click(screen.getByRole('button', { name: 'show rfq selector' }));
         await user.click(screen.getByRole('button', { name: 'set target org' }));
         await user.click(screen.getByRole('button', { name: 'set org branch' }));
         await user.click(screen.getByRole('button', { name: 'set profile' }));

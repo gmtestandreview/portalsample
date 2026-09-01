@@ -166,6 +166,14 @@ describe('route common helper functions', () => {
         expect(getFormattedAddress({
             line1: '1 National Circuit',
             line2: 'Level 2',
+            line3: 'Building A',
+            suburb: 'Barton',
+            state: State.ACT,
+            postcode: '2600',
+        })).toBe('1 National Circuit, Level 2, Building A,  Barton ACT 2600');
+        expect(getFormattedAddress({
+            line1: '1 National Circuit',
+            line2: 'Level 2',
             line3: '',
             suburb: 'Barton',
             state: State.ACT,
@@ -219,6 +227,7 @@ describe('route common helper functions', () => {
 
         expect(formatTradingBranchFromStrings('Trading', 'Branch')).toBe('Trading - Branch');
         expect(formatTradingBranchFromStrings('', 'Branch')).toBe('Branch');
+        expect(formatTradingBranchFromStrings('', '')).toBe('');
         expect(formatTradingBranchFromStrings(null as unknown as string, 'Branch')).toBe('');
     });
 
@@ -331,6 +340,14 @@ describe('route common helper functions', () => {
         expect(sortedOptions.map((option) => option.displayText)).toEqual(['Alpha', 'Beta', 'Zed']);
         expect(lastOptionId).toBe('z');
 
+        const [sortedDisplayTextOptions, lastDisplayTextOptionId] = sortList([
+            { value: 'b', displayText: 'Beta' },
+            { value: 'z', displayText: 'Zed' },
+            { value: 'a', displayText: 'Alpha' },
+        ], 'missing', 'displayText');
+        expect(sortedDisplayTextOptions.map((option) => option.displayText)).toEqual(['Alpha', 'Beta', 'Zed']);
+        expect(lastDisplayTextOptionId).toBe('');
+
         const lookups = [
             { id: '2', name: 'Beta' },
             { id: '1', name: 'Alpha' },
@@ -341,6 +358,7 @@ describe('route common helper functions', () => {
         expect(lastLookupId).toBe('');
 
         expect(sortList([], 'anything', 'name')).toEqual([[], '']);
+        expect(sortList(undefined as unknown as Array<{ name: string }>, 'anything', 'name')).toEqual([undefined, '']);
     });
 
     it('covers empty address lines and unusual optional organisation fields', () => {

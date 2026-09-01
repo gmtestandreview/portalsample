@@ -64,9 +64,6 @@ const StatusPill = ({ status }: StatusPillProps) => {
             case PaDashboardItemStatus.PaDraft:
                 setPillProps({ bgColour: 'light', textColour: 'dark', text: PaDashboardItemStatus.PaDraft });
                 break;
-            case PaDashboardItemStatus.PaSubmitted:
-                setPillProps({ bgColour: 'info', textColour: 'light', text: PaDashboardItemStatus.PaSubmitted });
-                break;
             default:
                 setPillProps({ bgColour: 'info', textColour: 'light', text: itemStatus });
         }

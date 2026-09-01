@@ -170,16 +170,14 @@ const CertificateNumberLookup = (
     };
 
     if (isSummary) {
-        if (_field) {
-            return (
-                <SummaryDisplay
-                    label={label}
-                    id={name}
-                    as='p'
-                    value={_field.value ? _field.value : '-'}
-                />
-            );
-        }
+        return (
+            <SummaryDisplay
+                label={label}
+                id={name}
+                as='p'
+                value={_field.value ? _field.value : '-'}
+            />
+        );
     }
 
     return (
@@ -239,7 +237,7 @@ const CertificateNumberLookup = (
                                 id={`${name}-autosuggest-options`}
                                 as='ul'
                                 role='listbox'
-                                className={`suggestion-list ${showSuggestions ? 'show' : ''}`}
+                                className='suggestion-list show'
                                 aria-label='Suggested options'
                             >
                                 {/*

@@ -57,4 +57,22 @@ describe('useUserServices', () => {
         expect(screen.getByRole('status', { name: 'Services' }))
             .toHaveTextContent('Pattern approval,Calibration');
     });
+
+    it('returns an empty service list when the profile has no services', () => {
+        const stateContext = {
+            details: {
+                userProfile: {},
+            },
+        } as unknown as AccountStateContext;
+
+        render(
+            <AccountStateCtx.Provider value={stateContext}>
+                <AccountDispatchCtx.Provider value={dispatchContext}>
+                    <ServicesProbe />
+                </AccountDispatchCtx.Provider>
+            </AccountStateCtx.Provider>,
+        );
+
+        expect(screen.getByRole('status', { name: 'Services' })).toHaveTextContent('none');
+    });
 });

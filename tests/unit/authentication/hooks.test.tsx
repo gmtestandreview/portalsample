@@ -81,4 +81,27 @@ describe('authentication hooks', () => {
         expect(screen.getByRole('status', { name: 'Dispatch account' }))
             .toHaveTextContent('available');
     });
+
+    it('returns a partial combined context when only account state is provided', () => {
+        render(
+            <AccountStateCtx.Provider value={stateContext}>
+                <AccountProbe />
+            </AccountStateCtx.Provider>,
+        );
+
+        expect(screen.getByRole('status', { name: 'Combined account' }))
+            .toHaveTextContent('National Measurement Institute');
+        expect(screen.getByRole('status', { name: 'Dispatch account' })).toHaveTextContent('none');
+    });
+
+    it('returns a partial combined context when only account dispatch is provided', () => {
+        render(
+            <AccountDispatchCtx.Provider value={dispatchContext}>
+                <AccountProbe />
+            </AccountDispatchCtx.Provider>,
+        );
+
+        expect(screen.getByRole('status', { name: 'Combined account' })).toHaveTextContent('none');
+        expect(screen.getByRole('status', { name: 'Dispatch account' })).toHaveTextContent('available');
+    });
 });

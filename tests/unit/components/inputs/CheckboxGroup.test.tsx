@@ -99,6 +99,20 @@ describe('CheckboxGroup', () => {
         expect(onChange).toHaveBeenCalledTimes(1);
     });
 
+    it('omits describedby when there is no inline help or validation message', () => {
+        render(
+            <FormikHarness initialValues={{ contactMethod: '' }}>
+                <CheckboxGroup
+                    name='contactMethod'
+                    legend='Contact method'
+                    options={contactOptions}
+                />
+            </FormikHarness>,
+        );
+
+        expect(screen.getByTestId('fs-contactMethod')).not.toHaveAttribute('aria-describedby');
+    });
+
     it('renders the selected option label in summary mode', () => {
         render(
             <FormikHarness initialValues={{ contactMethod: 'sms' }}>
@@ -118,8 +132,8 @@ describe('CheckboxGroup', () => {
         expect(document.querySelector('.summary-container')).toBeInTheDocument();
     });
 
-    it('renders nothing in summary mode when the field is empty or unmatched', () => {
-        const { container, rerender } = render(
+    it('renders nothing in summary mode when the field is empty', () => {
+        const { container } = render(
             <FormikHarness initialValues={{ contactMethod: '' }}>
                 <CheckboxGroup
                     name='contactMethod'
@@ -132,8 +146,10 @@ describe('CheckboxGroup', () => {
 
         expect(container).not.toHaveTextContent('Contact method');
         expect(container.querySelector('fieldset')).not.toBeInTheDocument();
+    });
 
-        rerender(
+    it('renders nothing in summary mode when the selected field value is unmatched', () => {
+        const { container } = render(
             <FormikHarness initialValues={{ contactMethod: 'fax' }}>
                 <CheckboxGroup
                     name='contactMethod'
