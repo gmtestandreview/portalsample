@@ -66,8 +66,14 @@ const PreConditions = (props: PreConditionsProps) => {
         [setShowBranchSelector, setShowRFQDeleteModal, setShowRFQSelectModal],
     );
 
+    // Loose `!= null` is deliberate: it means "an organisation exists", covering both
+    // null and undefined. The API contract declares defaultOrganisationId as
+    // `number | undefined` and never emits null, so the previous strict `!== null`
+    // was always true and this guard never blocked - sending users with no
+    // organisation to /create-account instead of the intended /create-contact.
+    // Matches hasDefaultOrganisationId() in components/modals/BranchSelectorModal.
     const redirectToCreateAccount = isAuthenticated
-    && account?.details?.defaultOrganisationId !== null
+    && account?.details?.defaultOrganisationId != null
     && account?.details?.accountCreationCompleted === false
     && !path?.includes('create-account');
 

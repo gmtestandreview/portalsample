@@ -294,6 +294,58 @@ describe('PreConditions state machine', () => {
         expect(screen.getByTestId('child-content')).toBeInTheDocument();
     });
 
+    /*
+     * 4a-4c cover `defaultOrganisationId: undefined` — the ONLY representation of
+     * "no organisation" the API actually produces. The contract is
+     * `number | undefined` and the server never emits null (confirmed with the
+     * backend team 2026-09-01), so test 4's `null` input is unreachable in
+     * production while `undefined` was previously untested entirely.
+     *
+     * Intended semantics, confirmed with product:
+     *   organisation exists  + creation incomplete -> /create-account
+     *   organisation absent  + creation incomplete -> /create-contact
+     */
+
+    it('4a. redirectToCreateAccount not triggered when defaultOrganisationId is undefined (no organisation)', () => {
+        mockIsAuthenticated = true;
+        mockAccountStateDetails = {
+            ...BASE,
+            accountCreationCompleted: false,
+            defaultOrganisationId: undefined,
+        };
+        // No organisation -> create-account redirect must not fire.
+        // accountContactCompleted=true from BASE -> no contact redirect either.
+        renderAt('/some-path');
+        expect(screen.getByTestId('child-content')).toBeInTheDocument();
+        expect(screen.getByTestId('current-path').textContent).toBe('/some-path');
+    });
+
+    it('4b. no organisation + incomplete account and contact redirects to /create-contact', () => {
+        mockIsAuthenticated = true;
+        mockAccountStateDetails = {
+            ...BASE,
+            accountCreationCompleted: false,
+            accountContactCompleted: false,
+            defaultOrganisationId: undefined,
+        };
+        // create-account is suppressed (no org), so this falls through to create-contact.
+        renderAt('/some-path');
+        expect(screen.getByTestId('current-path').textContent).toBe('/create-contact');
+    });
+
+    it('4c. organisation exists + incomplete account and contact redirects to /create-account', () => {
+        mockIsAuthenticated = true;
+        mockAccountStateDetails = {
+            ...BASE,
+            accountCreationCompleted: false,
+            accountContactCompleted: false,
+            defaultOrganisationId: 1,
+        };
+        // Mirror of 4b: with an organisation present, create-account wins on precedence.
+        renderAt('/some-path');
+        expect(screen.getByTestId('current-path').textContent).toBe('/create-account');
+    });
+
     // ── 5-7. redirectToCreateContact ─────────────────────────────────────────
 
     it('5. redirectToCreateContact: navigates to /create-contact when account created but contact not completed', () => {
@@ -434,6 +486,30 @@ describe('PreConditions state machine', () => {
         };
         renderAt('/success-creating-account');
         expect(screen.queryByTestId('branch-selector-modal')).not.toBeInTheDocument();
+    });
+
+    /*
+     * KNOWN GAP - pinning current behaviour, not endorsing it.
+     *
+     * autoShowBranchSelector still uses strict `=== null` (PreConditions.tsx:91).
+     * Because the API never emits null, that branch is effectively dead: the
+     * selector cannot open automatically for a user with no organisation.
+     *
+     * It was NOT changed to `== null` alongside redirectToCreateAccount because
+     * BranchSelectorModal renders with backdrop='static' and keyboard={false},
+     * and gates BOTH its close affordances on defaultOrganisationIdSet. Making
+     * this branch live for an undefined organisation would open a modal the user
+     * cannot dismiss. Fixing it requires disabling Continue until a branch is
+     * selected, and providing an exit when no organisation is set.
+     */
+    it('14a. autoShowBranchSelector does NOT fire when defaultOrganisationId is undefined (known gap)', () => {
+        mockIsAuthenticated = true;
+        mockAccountStateDetails = {
+            ...BASE,
+            defaultOrganisationId: undefined,
+        };
+        renderAt('/dashboard');
+        expect(screen.queryByTestId('prompt-branchselector-modal')).not.toBeInTheDocument();
     });
 
     it('14. autoShowBranchSelector not triggered when defaultOrganisationId is set (not null)', () => {
