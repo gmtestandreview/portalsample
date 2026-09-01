@@ -20,13 +20,17 @@ import {
     getMakeModelDetails,
     getQuotationFileDetails,
     getQuoteOfferPageNumber,
+    isEmptyGuid,
+    isValidGUID,
     handleReportFileError,
     handleUnexpectedError,
     mapToUserProfile,
     openInNewTab,
     openPdfPageInNewTab,
+    sanitiseHtml,
     sortList,
     triggerDownload,
+    downloadFileFromUrl,
 } from '../../../../ClientApp/src/routes/common/helperFunctions';
 import { Environment, QuoteStatus } from '../../../../ClientApp/src/routes/common/enums';
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from '../../../../ClientApp/src/routes/common/openWindow';
@@ -360,5 +364,26 @@ describe('route common helper functions', () => {
             trading: 'Trading',
             branch: '',
         } as AccountDetails)).toBe('Trading');
+    });
+
+    it('classifies empty and syntactically valid GUID values', () => {
+        expect(isEmptyGuid(undefined)).toBe(true);
+        expect(isEmptyGuid('00000000-0000-0000-0000-000000000000')).toBe(true);
+        expect(isEmptyGuid('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(false);
+
+        expect(isValidGUID(undefined)).toBe(false);
+        expect(isValidGUID('not-a-guid')).toBe(false);
+        expect(isValidGUID('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(true);
+    });
+
+    it('sanitises unsafe markup before returning HTML', () => {
+        expect(sanitiseHtml('<img src="x" onerror="alert(1)"><p>Safe copy</p>'))
+            .toBe('<img src="x"><p>Safe copy</p>');
+    });
+
+    it('opens downloaded file URLs in a secure new tab', () => {
+        downloadFileFromUrl('https://example.test/report.pdf', {}, [], 'report.pdf');
+
+        expect(openUrlInSecureNewTab).toHaveBeenCalledWith('https://example.test/report.pdf');
     });
 });

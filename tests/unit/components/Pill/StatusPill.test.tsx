@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import StatusPill from '../../../../ClientApp/src/components/Pill/StatusPill';
-import { DashboardItemStatus, QuoteStatus, ReportStatus } from '../../../../ClientApp/src/routes/common/enums';
+import { DashboardItemStatus, PaDashboardItemStatus, QuoteStatus, ReportStatus } from '../../../../ClientApp/src/routes/common/enums';
 
 describe('StatusPill', () => {
     describe('DashboardItemStatus', () => {
@@ -174,6 +174,24 @@ describe('StatusPill', () => {
             const pill = await screen.findByText(DashboardItemStatus.ReportWithdrawn);
 
             expect(pill).toHaveClass('bg-secondary', 'text-light');
+        });
+    });
+
+    describe('pattern approval status mappings', () => {
+        it('maps a draft pattern approval status to light styling', async () => {
+            render(<StatusPill status={PaDashboardItemStatus.PaDraft} />);
+
+            const pill = await screen.findByText(PaDashboardItemStatus.PaDraft);
+
+            expect(pill).toHaveClass('bg-light', 'text-dark');
+        });
+
+        it('uses the quote-submitted label for the shared Submitted status value', async () => {
+            render(<StatusPill status={PaDashboardItemStatus.PaSubmitted} />);
+
+            const pill = await screen.findByText(DashboardItemStatus.QuoteSubmitted);
+
+            expect(pill).toHaveClass('bg-info', 'text-light');
         });
     });
 });

@@ -356,6 +356,36 @@ describe('applicationAndInstrumentSubmitValidation', () => {
         expect(errors.some((e) => e.includes('cannot select'))).toBe(false);
     });
 
+    it('treats the mutual-exclusion custom test as passing for non-array values', () => {
+        type ConditionalArraySchema = {
+            resolve(options: { parent: unknown; value: unknown }): {
+                tests: Array<{
+                    OPTIONS?: {
+                        name?: string;
+                        test?: (value: unknown) => boolean;
+                    };
+                }>;
+            };
+        };
+        type SchemaWithOtherOptions = {
+            fields: {
+                othSubOptions: ConditionalArraySchema;
+            };
+        };
+        const schema = applicationAndInstrumentSubmitValidation as unknown as SchemaWithOtherOptions;
+        const otherOptionsSchema = schema.fields.othSubOptions.resolve({
+            parent: {
+                patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
+            },
+            value: 'CertificateCancellation',
+        });
+        const customTest = otherOptionsSchema.tests.find((test) => (
+            test.OPTIONS?.name === 'mutually-exclusive-options'
+        ));
+
+        expect(customTest?.OPTIONS?.test?.('CertificateCancellation')).toBe(true);
+    });
+
     it('accepts certificate cancellation on its own', async () => {
         const errors = await errorsFor(applicationAndInstrumentSubmitValidation, {
             patternApprovalType: PatternApprovalRequiredValues.OtherApproval,
