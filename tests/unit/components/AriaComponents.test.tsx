@@ -1,30 +1,65 @@
-import {Time} from '@internationalized/date';
-import {render, screen, within} from '@testing-library/react';
+import {Time, parseDate} from '@internationalized/date';
+import {act} from 'react';
+import {render, screen, waitFor, within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {describe, expect, it, vi} from 'vitest';
+import {ResizableTableContainer} from 'react-aria-components/Table';
+import {DialogTrigger} from '@/components/Dialog/Dialog';
+import {Button} from '@/components/Buttons/AriaButton/Button';
 import {Heading, Text} from '@/components/AriaComponents/Content';
 import {Link} from '@/components/AriaComponents/Link';
-import {ListBox, ListBoxItem} from '@/components/AriaComponents/ListBox';
+import {Header as ListBoxHeader, ListBox, ListBoxItem, ListBoxLoadMoreItem, ListBoxSection} from '@/components/AriaComponents/ListBox';
+import {Menu, MenuItem, MenuTrigger, SubmenuTrigger} from '@/components/AriaComponents/Menu';
 import {Meter} from '@/components/AriaComponents/Meter';
+import {Modal} from '@/components/AriaComponents/Modal';
 import {Check, ChevronDown} from '@/components/AriaComponents/NmiIcon';
 import {NumberField} from '@/components/AriaComponents/NumberField';
+import {Popover} from '@/components/AriaComponents/Popover';
 import {ProgressBar} from '@/components/AriaComponents/ProgressBar';
 import {ProgressCircle} from '@/components/AriaComponents/ProgressCircle';
+import {Radio, RadioGroup} from '@/components/AriaComponents/RadioGroup';
+import {RangeCalendar} from '@/components/AriaComponents/RangeCalendar';
 import {SearchField} from '@/components/AriaComponents/SearchField';
+import {Select, SelectItem} from '@/components/AriaComponents/Select';
 import {SegmentedControl, SegmentedControlItem} from '@/components/AriaComponents/SegmentedControl';
 import {Separator} from '@/components/AriaComponents/Separator';
+import {Sheet, Heading as SheetHeading} from '@/components/AriaComponents/Sheet';
+import {Slider} from '@/components/AriaComponents/Slider';
 import {Switch} from '@/components/AriaComponents/Switch';
 import {Tab, TabList, TabPanel, TabPanels, Tabs} from '@/components/AriaComponents/Tabs';
+import {Cell, Column, Row, Table, TableBody, TableHeader, TableLoadMoreItem} from '@/components/AriaComponents/Table';
 import {Tag, TagGroup} from '@/components/AriaComponents/TagGroup';
 import {TextArea, TextField} from '@/components/AriaComponents/TextField';
 import {TimeField} from '@/components/AriaComponents/TimeField';
+import {MyToastRegion} from '@/components/AriaComponents/Toast';
+import {queue} from '@/components/AriaComponents/ToastQueue';
 import {ToggleButton} from '@/components/AriaComponents/ToggleButton';
 import {ToggleButtonGroup} from '@/components/AriaComponents/ToggleButtonGroup';
 import {Toolbar} from '@/components/AriaComponents/Toolbar';
+import {Tooltip, TooltipTrigger} from '@/components/AriaComponents/Tooltip';
+import {Tree, TreeHeader, TreeItem, TreeLoadMoreItem, TreeSection} from '@/components/AriaComponents/Tree';
 
 if (!Element.prototype.getAnimations) {
     Element.prototype.getAnimations = vi.fn(() => []);
 }
+
+class TestIntersectionObserver implements IntersectionObserver {
+    readonly root = null;
+    readonly rootMargin = '';
+    readonly thresholds = [];
+
+    disconnect() {}
+
+    observe() {}
+
+    takeRecords() {
+        return [];
+    }
+
+    unobserve() {}
+}
+
+globalThis.IntersectionObserver ??= TestIntersectionObserver;
 
 describe('React Aria evaluation wrappers', () => {
     it('renders content, links, separators, and icons through their public wrappers', () => {
@@ -65,6 +100,94 @@ describe('React Aria evaluation wrappers', () => {
         expect(screen.getByRole('listbox', {name: 'Ice cream flavor'})).toBeInTheDocument();
         expect(screen.getByRole('option', {name: 'Chocolate'})).toBeInTheDocument();
         expect(screen.getByRole('option', {name: 'Mint'})).toBeInTheDocument();
+    });
+
+    it('renders listbox sections and loading rows with accessible labels', () => {
+        render(
+            <ListBox aria-label='Available services'>
+                <ListBoxSection>
+                    <ListBoxHeader>Dimensional services</ListBoxHeader>
+                    <ListBoxItem id='length'>Length</ListBoxItem>
+                </ListBoxSection>
+                <ListBoxLoadMoreItem onLoadMore={vi.fn()} />
+            </ListBox>,
+        );
+
+        expect(screen.getByRole('listbox', {name: 'Available services'})).toBeInTheDocument();
+        expect(screen.getByText('Dimensional services')).toBeInTheDocument();
+        expect(screen.getByRole('option', {name: 'Length'})).toBeInTheDocument();
+        expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+    });
+
+    it('opens menus, shows selected indicators, and renders submenu affordances', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <MenuTrigger>
+                <Button>Actions</Button>
+                <Menu selectionMode='multiple' selectedKeys={['copy']}>
+                    <MenuItem id='copy'>Copy</MenuItem>
+                    <SubmenuTrigger>
+                        <MenuItem id='share'>Share</MenuItem>
+                        <Menu>
+                            <MenuItem id='email'>Email</MenuItem>
+                        </Menu>
+                    </SubmenuTrigger>
+                </Menu>
+            </MenuTrigger>,
+        );
+
+        await user.click(screen.getByRole('button', {name: 'Actions'}));
+
+        expect(screen.getByRole('menu')).toBeInTheDocument();
+        expect(screen.getByRole('menuitemcheckbox', {name: 'Copy'})).toHaveAttribute('aria-checked', 'true');
+        expect(screen.getByRole('menuitem', {name: 'Share'})).toBeInTheDocument();
+        expect(document.querySelector('[data-nmi-icon="chevron-right"]')).toBeInTheDocument();
+    });
+
+    it('renders selects with labels, validation text, and selectable options', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <Select label='Ice cream flavor' description='Choose one flavor' errorMessage='Flavor is required' isInvalid>
+                <SelectItem id='chocolate'>Chocolate</SelectItem>
+                <SelectItem id='mint'>Mint</SelectItem>
+            </Select>,
+        );
+
+        expect(screen.getByText('Choose one flavor')).toBeInTheDocument();
+        expect(screen.getByText('Flavor is required')).toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', {name: /Ice cream flavor/}));
+
+        expect(screen.getByRole('listbox')).toHaveClass('dropdown-listbox');
+        expect(screen.getByRole('option', {name: 'Chocolate'})).toHaveClass('dropdown-item');
+        expect(screen.getByRole('option', {name: 'Mint'})).toBeInTheDocument();
+    });
+
+    it('renders radio groups with per-option descriptions and invalid feedback', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <RadioGroup
+                label='Certificate type'
+                description='Select one certificate'
+                errorMessage='Certificate type is required'
+                isInvalid
+            >
+                <Radio value='new' description='Create a new certificate'>New certificate</Radio>
+                <Radio value='variation'>Variation</Radio>
+            </RadioGroup>,
+        );
+
+        expect(screen.getByRole('radiogroup', {name: 'Certificate type'})).toBeInTheDocument();
+        expect(screen.getByText('Select one certificate')).toBeInTheDocument();
+        expect(screen.getByText('Certificate type is required')).toBeInTheDocument();
+        expect(screen.getByText('Create a new certificate')).toBeInTheDocument();
+
+        await user.click(screen.getByRole('radio', {name: 'Variation'}));
+
+        expect(screen.getByRole('radio', {name: 'Variation'})).toBeChecked();
     });
 
     it.each([
@@ -112,6 +235,42 @@ describe('React Aria evaluation wrappers', () => {
         });
         expect(container.querySelectorAll('circle')[1]).toHaveAttribute('stroke-dashoffset', '75');
         expect(container.querySelector('animateTransform')).toBeInTheDocument();
+    });
+
+    it('renders range calendars with visible month controls and validation feedback', () => {
+        render(
+            <RangeCalendar
+                aria-label='Booking window'
+                visibleDuration={{months: 2}}
+                defaultValue={{start: parseDate('2026-01-10'), end: parseDate('2026-01-12')}}
+                errorMessage='Select an available date range'
+            />,
+        );
+
+        expect(screen.getByRole('application', {name: /Booking window/})).toBeInTheDocument();
+        expect(screen.getByRole('button', {name: /previous/i})).toHaveAttribute('data-variant', 'quiet');
+        expect(screen.getAllByRole('button', {name: /next/i})[0]).toHaveAttribute('data-variant', 'quiet');
+        expect(screen.getByText('Select an available date range')).toBeInTheDocument();
+        expect(document.querySelectorAll('.month')).toHaveLength(2);
+    });
+
+    it('renders sliders with explicit thumb labels, fill offsets, and disabled track state', () => {
+        const {container} = render(
+            <Slider
+                label='Target range'
+                defaultValue={[25, 75]}
+                minValue={0}
+                maxValue={100}
+                thumbLabels={['Minimum target', 'Maximum target']}
+                fillOffset={10}
+                isDisabled
+            />,
+        );
+
+        expect(screen.getByRole('slider', {name: /Minimum target/})).toHaveValue('25');
+        expect(screen.getByRole('slider', {name: /Maximum target/})).toHaveValue('75');
+        expect(container.querySelector('.track')).toHaveAttribute('data-disabled', 'true');
+        expect(container.querySelector('.react-aria-SliderThumb')).toHaveClass('indicator');
     });
 
     it('renders text, textarea, number, search, time, and switch field content', () => {
@@ -194,6 +353,33 @@ describe('React Aria evaluation wrappers', () => {
         expect(screen.getByRole('radio', {name: 'Grid'})).toHaveClass('segmented-control-item');
     });
 
+    it('renders table wrappers with sorting, selection, row headers, and load-more status', () => {
+        render(
+            <ResizableTableContainer>
+                <Table aria-label='Files' selectionMode='multiple' selectionBehavior='toggle' sortDescriptor={{column: 'name', direction: 'ascending'}}>
+                    <TableHeader>
+                        <Column id='name' isRowHeader allowsSorting allowsResizing>Name</Column>
+                        <Column id='type'>Type</Column>
+                    </TableHeader>
+                    <TableBody>
+                        <Row id='games'>
+                            <Cell>Games</Cell>
+                            <Cell>Folder</Cell>
+                        </Row>
+                        <TableLoadMoreItem onLoadMore={vi.fn()} />
+                    </TableBody>
+                </Table>
+            </ResizableTableContainer>,
+        );
+
+        expect(screen.getByRole('grid', {name: 'Files'})).toBeInTheDocument();
+        expect(screen.getByRole('columnheader', {name: /Name/})).toHaveClass('button-base');
+        expect(screen.getByRole('rowheader', {name: 'Games'})).toBeInTheDocument();
+        expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+        expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
+        expect(document.querySelector('[data-nmi-icon="chevron-up"]')).toBeInTheDocument();
+    });
+
     it('renders tabs and changes the visible panel through the wrapped tab pieces', async () => {
         const onSelectionChange = vi.fn();
         const user = userEvent.setup();
@@ -250,6 +436,106 @@ describe('React Aria evaluation wrappers', () => {
             </TagGroup>,
         );
         expect(screen.getByText('No services selected')).toBeInTheDocument();
+    });
+
+    it('renders modal dialog content when open', () => {
+        render(
+            <Modal isOpen>
+                <div role='dialog' aria-label='Review application'>Modal content</div>
+            </Modal>,
+        );
+
+        expect(screen.getByRole('dialog', {name: 'Review application'})).toHaveTextContent('Modal content');
+    });
+
+    it('opens sheet content from dialog trigger context', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <DialogTrigger>
+                <Button>Open sheet</Button>
+                <Sheet>
+                    <SheetHeading slot='title'>Sheet title</SheetHeading>
+                    <p>Sheet content</p>
+                </Sheet>
+            </DialogTrigger>,
+        );
+
+        await user.click(screen.getByRole('button', {name: 'Open sheet'}));
+
+        expect(screen.getByRole('dialog', {name: 'Sheet title'})).toHaveTextContent('Sheet content');
+    });
+
+    it('opens popover content from dialog trigger context', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <DialogTrigger>
+                <Button>Open popover</Button>
+                <Popover>
+                    <div>Popover content</div>
+                </Popover>
+            </DialogTrigger>,
+        );
+
+        await user.click(screen.getByRole('button', {name: 'Open popover'}));
+
+        expect(screen.getByText('Popover content')).toBeInTheDocument();
+        expect(screen.getByRole('dialog', {name: 'Open popover'})).toHaveClass('react-aria-Popover');
+    });
+
+    it('shows tooltip content from its trigger', async () => {
+        const user = userEvent.setup();
+
+        render(
+            <TooltipTrigger delay={0}>
+                <Button>Help</Button>
+                <Tooltip>Tooltip content</Tooltip>
+            </TooltipTrigger>,
+        );
+
+        await user.hover(screen.getByRole('button', {name: 'Help'}));
+        expect(await screen.findByRole('tooltip')).toHaveTextContent('Tooltip content');
+    });
+
+    it('renders and dismisses queued toast content', async () => {
+        const user = userEvent.setup();
+
+        render(<MyToastRegion />);
+
+        act(() => {
+            queue.add({title: 'Files uploaded', description: '3 files uploaded successfully.'});
+        });
+
+        await screen.findByText('Files uploaded');
+
+        expect(screen.getByRole('alertdialog', {name: 'Files uploaded'})).toBeInTheDocument();
+        expect(screen.getByText('3 files uploaded successfully.')).toBeInTheDocument();
+
+        await user.click(screen.getByRole('button', {name: 'Close'}));
+        await waitFor(() => {
+            expect(screen.queryByText('Files uploaded')).not.toBeInTheDocument();
+        });
+    });
+
+    it('renders tree sections, selectable child items, and load-more status', () => {
+        render(
+            <Tree aria-label='Files' selectionMode='multiple' selectionBehavior='toggle' defaultExpandedKeys={['documents']}>
+                <TreeSection>
+                    <TreeHeader>Shared files</TreeHeader>
+                    <TreeItem id='documents' title='Documents'>
+                        <TreeItem id='report' title='Weekly Report' />
+                    </TreeItem>
+                </TreeSection>
+                <TreeLoadMoreItem onLoadMore={vi.fn()} />
+            </Tree>,
+        );
+
+        expect(screen.getByRole('treegrid', {name: 'Files'})).toBeInTheDocument();
+        expect(screen.getByText('Shared files')).toBeInTheDocument();
+        expect(screen.getByRole('row', {name: /Documents/})).toHaveAttribute('aria-expanded', 'true');
+        expect(screen.getByRole('row', {name: /Weekly Report/})).toBeInTheDocument();
+        expect(screen.getByTestId('loadMoreSentinel')).toBeInTheDocument();
     });
 
     it('provides toolbar orientation context to child controls', () => {

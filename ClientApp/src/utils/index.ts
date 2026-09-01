@@ -141,7 +141,7 @@ export const isDateValid = (value: Date | string | null | undefined): boolean =>
         return false;
     }
 
-    return isValid(parseDate(value));
+    return isString(value) ? isValid(parseDate(value)) : isValid(value);
 };
 
 export const formatDateToUTC = (value: Date | string | null): string | null => {

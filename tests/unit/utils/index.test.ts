@@ -184,6 +184,20 @@ describe('date helpers', () => {
         expect(parsedDate?.getMilliseconds()).toBe(0);
     });
 
+    it('parses date-time values without normalizing the time portion', () => {
+        const parsedShortDate = utils.parseDateWithTime('10/05/2024');
+        const dateValue = new Date(2024, 4, 10, 15, 30, 45, 250);
+        const parsedDate = utils.parseDateWithTime(dateValue);
+
+        expect(parsedShortDate?.getFullYear()).toBe(2024);
+        expect(parsedShortDate?.getMonth()).toBe(4);
+        expect(parsedShortDate?.getDate()).toBe(10);
+        expect(parsedDate).toBe(dateValue);
+        expect(parsedDate?.getHours()).toBe(15);
+        expect(parsedDate?.getMinutes()).toBe(30);
+        expect(utils.parseDateWithTime('not-a-date')).toBeUndefined();
+    });
+
     it('validates non-empty dates only', () => {
         expect(utils.isDateValid(null)).toBe(false);
         expect(utils.isDateValid(undefined)).toBe(false);
@@ -216,11 +230,24 @@ describe('date helpers', () => {
     });
 
     it('formats dates to strings or null for null, undefined, and invalid values', () => {
+        const date = new Date(2024, 4, 10);
+
         expect(utils.formatDateToString(null)).toBeNull();
         expect(utils.formatDateToString(undefined)).toBeNull();
         expect(utils.formatDateToString('not-a-date')).toBeNull();
         expect(utils.formatDateToString('10/05/2024')).toBe('10 May 2024');
         expect(utils.formatDateToString('10/05/2024', 'yyyy/MM/dd')).toBe('2024/05/10');
+        expect(utils.formatDateToString(date)).toBe('10 May 2024');
+    });
+
+    it('formats date-time values with time or returns null for invalid input', () => {
+        const date = new Date(2024, 4, 10, 15, 30);
+
+        expect(utils.formatDateTimeToString(null)).toBeNull();
+        expect(utils.formatDateTimeToString(undefined)).toBeNull();
+        expect(utils.formatDateTimeToString('not-a-date')).toBeNull();
+        expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00')).toMatch(/^10 May 2024 (2|3):30 PM$/);
+        expect(utils.formatDateTimeToString(date, 'yyyy/MM/dd HH:mm')).toBe('2024/05/10 15:30');
     });
 });
 
