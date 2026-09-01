@@ -1,8 +1,9 @@
 # Active Team — nmi-portal
 
 Generated: 2026-09-02
-Source: `INIT.md` (root, authoritative) · A Team plugin v1.4.0 (RBraga01, MIT), vendored at `a-team/`
-Install method: official "Adding A Team to an Existing Project" — `cp -rn` (no-clobber) from `a-team/`
+Source: `INIT.md` (root, authoritative) · A Team plugin v1.4.0 (RBraga01, MIT)
+Install method: official "Adding A Team to an Existing Project" — `cp -rn` (no-clobber) from
+`a-team/`, which was then **deleted**. Root is now the sole source of truth.
 Roster: **18 of 26 agents active** · **19 of 20 skills active**
 
 ---
@@ -21,9 +22,20 @@ Roster: **18 of 26 agents active** · **19 of 20 skills active**
 | `.claude/skills/react-aria/` | **Preserved by `-n`.** Pre-existing project skill untouched. |
 
 **Authoritative source (resolves the open housekeeping point in `INIT.md` §CLI Environment):**
-root `.claude/agents/` and root `skills/` are **authoritative and pruned**. `a-team/` is
-**vendored, read-only, and complete at 26/20** — never edit or delete inside it. A plugin update
-refreshes `a-team/`; re-run `/orchestrate init` afterwards to re-apply the prune to the root copies.
+root `.claude/agents/` and root `skills/` are the **sole** source of truth. The vendored `a-team/`
+directory was **deleted in commit `95dc32e` (2026-09-02, 137 files / 13,964 deletions)** once the
+install was verified.
+
+**Why deletion rather than keeping it as a vendor reference.** Claude Code loads agents only from
+`.claude/agents/`; all 26 definitions sat unread in `a-team/` for a full session and *none*
+registered. Of its 137 tracked files, 82 were byte-duplicates of root and ~45 were A Team's own
+self-test harness — including a nested `package.json` that added noise to knip, depcheck and the
+Problems panel. Only 10 files were unique and worth keeping; those are preserved under
+`.agent-sync/pruned/`. The upstream README's install options B, C and D all end in `rm -rf a-team`
+for the same reason.
+
+**To upgrade the plugin:** re-clone `https://github.com/RBraga01/a-team`, repeat the `cp -rn`
+install, re-run `/orchestrate init` to re-apply the prune, then delete the clone again.
 
 ---
 
@@ -63,7 +75,7 @@ refreshes `a-team/`; re-run `/orchestrate init` afterwards to re-apply the prune
 | `ai-reviewer` | No LLM SDK is a dependency. Nothing reaches an LLM at runtime; LLM use is development-loop only. |
 | `loop-operator` | No autonomous loops. No cron or routine definitions; all agent work is human-initiated. |
 
-Restore any of these with `cp a-team/.claude/agents/<name>.md .claude/agents/`.
+Restore any of these with `cp .agent-sync/pruned/agents/<name>.md .claude/agents/`.
 
 ---
 
@@ -97,7 +109,7 @@ Restore any of these with `cp a-team/.claude/agents/<name>.md .claude/agents/`.
 | --- | --- |
 | `data-migration` | Plugin rule keeps it only if the project uses a database. This project has none. |
 
-Restore with `cp -r a-team/skills/data-migration skills/`.
+Restore with `cp -r .agent-sync/pruned/skills/data-migration skills/`.
 
 ---
 
@@ -105,7 +117,7 @@ Restore with `cp -r a-team/skills/data-migration skills/`.
 
 | Agent | Allowed surface | Forbidden |
 | --- | --- | --- |
-| `python-reviewer` | `.github/skills/**`, `analysis/`, `a-team/scripts/` — tooling only, none of it built, shipped or covered by CI | `ClientApp/src/**`. There is **zero** Python application code. |
+| `python-reviewer` | `.github/skills/**`, `analysis/`, `scripts/*.py` — tooling only, none of it built, shipped or covered by CI | `ClientApp/src/**`. There is **zero** Python application code. |
 | `compliance-reviewer` | **WCAG 2.2 AA only** — `docs/accessibility/wcag-2.2-aa-98-plan.md`, target ≥ 98/100 | Must not assume GDPR, SOC2, PCI-DSS, HIPAA or COPPA. None applies. |
 | `infra-reviewer` | `.github/workflows/**`, `sonar-project.properties`, Chromatic config | `ClientApp/src/**`. No Terraform, Docker, K8s or Helm exists; deployment is outside this repo. |
 | `performance-profiler` | Advisory only, low priority | Must not invent a performance budget. None is declared. |
@@ -120,7 +132,7 @@ Restore with `cp -r a-team/skills/data-migration skills/`.
 | `infra-reviewer` | Keep if Terraform / Docker / K8s **or CI/CD** in stack | **Kept, CI/CD-scoped** | `INIT.md` originally said prune, citing only the absence of Terraform/Docker/K8s. But the repo owns `.github/workflows/{pr,release,chromatic}.yml`, 8 required statuses and a blocking SonarCloud gate, and CI is the only reviewer. Human decision at init 2026-09-02; `INIT.md` row corrected. |
 | `compliance-reviewer` | Keep only if GDPR / COPPA / PCI-DSS / SOC2 / HIPAA | **Kept, WCAG-scoped** | None of the five listed regimes applies, but WCAG 2.2 AA is documented and gated. Project doc overrides the generic list. |
 | `chief-of-staff` | Keep if email / Slack / comms tools listed | **Kept** | Slack, Linear and email are pruned surfaces, but GitHub and Notion are declared in use. |
-| Pruning mechanism | `rm` from `.claude/agents/` and `skills/` | **Applied to the root copies only** | Follows the official existing-project install: `a-team/` stays a pristine vendored plugin at 26/20. |
+| Pruning mechanism | `rm` from `.claude/agents/` and `skills/` | **Applied to the root copies; `a-team/` then deleted entirely** | The official existing-project install copies to root, and options B/C/D end in `rm -rf a-team`. Pruning at root keeps the decision re-appliable after any future plugin update. |
 | Skill deletion | Delete skills failing their rule | **Only `data-migration` deleted** | Deliberately conservative — the official guidance is to review this file and restore anything wrongly pruned. |
 
 ---

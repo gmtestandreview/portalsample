@@ -7,8 +7,9 @@
 > are machine-derived; versions come from the installed tree (`node_modules/<pkg>/package.json`), not
 > from `package.json` ranges.
 >
-> The source template lives at `a-team/INIT_TEMPLATE.md` and carries the same content, but `a-team/`
-> is a vendored third-party plugin (RBraga01/a-team v1.4.0, MIT) that a plugin update may overwrite.
+> This file originated as the A Team plugin's `INIT_TEMPLATE.md` (RBraga01/a-team v1.4.0, MIT). The
+> vendored `a-team/` directory was deleted on 2026-09-02 after the install was verified; the blank
+> template is preserved at `.agent-sync/pruned/INIT_TEMPLATE.md`.
 > **This root copy is authoritative** — make edits here.
 
 ---
@@ -52,7 +53,7 @@ artefacts of the snapshot. Do not discount a finding as "just a snapshot".
       `tsconfig.json` sets `"strict": true`, `target: ES2022`, `jsx: react-jsx`.
 - [x] **Python** — **tooling only, zero application code.** 12 files under `.github/skills/**`
       (diagram generators, codebase-knowledge scanners, `quality_gate.py`) plus
-      `analysis/extract_topology.py`, and a further 10 in `a-team/scripts/` (vendored plugin tooling —
+      `analysis/extract_topology.py`, and a further 10 in `scripts/` (A Team plugin tooling —
       metrics, watcher, session export, `pre_tool_use.py` hook). None is built, shipped, or covered
       by CI. **Agents must never treat any of this as application code.**
 - [ ] Go
@@ -66,7 +67,7 @@ artefacts of the snapshot. Do not discount a finding as "just a snapshot".
 - [x] **Other: Gherkin** — 33 `.feature` files driving the Playwright BDD suites
 
 **Agent-pruning guidance:** only TypeScript/JavaScript agents are needed for application work.
-Python agents apply *only* to `.github/skills/**`, `analysis/` and `a-team/scripts/` — never to
+Python agents apply *only* to `.github/skills/**`, `analysis/` and `scripts/*.py` — never to
 `ClientApp/src/**`; PowerShell agents only to the migration-verifier harness. **Do not prune SCSS or
 Gherkin capability** — both are load-bearing.
 
@@ -288,7 +289,7 @@ each has bitten this codebase before.
 - **Pass `--reporter=default` when piping a Vitest run.** Without it a piped run emits no console
   warnings and a broken suite can look clean.
 - **Do not treat the Problems panel as a work queue.** It aggregates across vendored plugins
-  (`a-team/`, `.agents/skills/`), generated output (`dist/`, `storybook-static/`, `quality/_phase5_*`)
+  (`.agents/skills/`), generated output (`dist/`, `storybook-static/`, `quality/_phase5_*`)
   and reference docs. Attribute a diagnostic to owned source before acting on it.
 
 ---
@@ -303,22 +304,20 @@ each has bitten this codebase before.
 
 **Layout status — verified 2026-09-01:**
 
-The multi-CLI note refers to the plugin's own directories. Both are present as shipped:
+**The vendored `a-team/` directory no longer exists** — deleted in commit `95dc32e` (2026-09-02,
+137 files) after `/orchestrate init` verified the root install. It was installer payload, not a
+runtime path: Claude Code loads agents only from `.claude/agents/`, and none of the 26 definitions
+was ever loaded while they sat in `a-team/`. Everything now lives at the repository root:
 
 | Location | Status |
 | --- | --- |
-| `a-team/.claude/agents/` | **present** — the 26 shared agent definitions (plugin source of truth) |
-| `a-team/.agent-sync/` | **present** — shared state directory, kept by `.gitkeep` |
-
-Additionally, root-level copies now exist so Claude Code picks the agents up natively for this project:
-
-| Location | Status |
-| --- | --- |
-| `.claude/agents/` | **present, populated — 18 active agents** after `/orchestrate init` 2026-09-02. Installed via the official `cp -rn a-team/.claude ./`, then pruned in place; 8 irrelevant definitions removed. *(Before init this directory existed but was **empty** — an earlier revision of this document wrongly claimed all 26 were already copied.)* |
+| `.claude/agents/` | **present, populated — 18 active agents** after `/orchestrate init` 2026-09-02. Installed via the official `cp -rn` pass, then pruned in place; 8 irrelevant definitions removed. *(Before init this directory existed but was **empty** — an earlier revision of this document wrongly claimed all 26 were already copied.)* |
 | `skills/`, `hooks/`, `templates/` | **present** — installed by the same `cp -rn` pass. `skills/` holds 19 active skills (`data-migration` pruned). Note `skills/` sits at the repo root, **not** under `.claude/`, so its 11 name-collisions with the `superpowers:*` plugin skills do not shadow each other. |
 | `.claude/commands/` | **present** — 10 A Team slash commands, `/orchestrate` among them |
 | `.claude/settings.json` | **NOT overwritten** — `cp -rn` preserved the project file. The plugin's own `settings.json` is unmerged; see the deferred-merge note below. |
-| `.agent-sync/` | **present, tracked via `.gitkeep`** — `/orchestrate init` writes `TEAM.md` and `ROUTING.md` here |
+| `.agent-sync/` | **present, tracked** — holds `TEAM.md` and `ROUTING.md` written by `/orchestrate init` |
+| `.agent-sync/pruned/` | **present** — the 8 pruned agents, the pruned `data-migration` skill and the blank `INIT_TEMPLATE.md`, kept so anything pruned in error restores in one command |
+| `scripts/` | **merged** — 10 A Team Python scripts alongside the 6 pre-existing project scripts; the plugin hooks reference these paths |
 
 **One genuine deviation from the template's assumption:**
 
@@ -326,12 +325,12 @@ Additionally, root-level copies now exist so Claude Code picks the agents up nat
 | --- | --- |
 | `.codex-plugin/` for Codex CLI | **`.codex/`** (`config.toml`). `.codex-plugin/` does not exist; the Codex config is read from `.codex/config.toml`. |
 
-> **Open housekeeping point.** The root `.claude/agents/` is a **copy** of the plugin's 26
-> definitions at `a-team/.claude/agents/`. If the plugin updates, the two will silently diverge.
-> Decide which is authoritative and record it in `.agent-sync/ROUTING.md` at init.
+> **Housekeeping point — RESOLVED 2026-09-02.** The duplication risk (root copies silently diverging
+> from the plugin's) is gone: `a-team/` was deleted, so there is exactly one copy of every agent,
+> skill, rule, command and script, at the repository root. Recorded in `.agent-sync/ROUTING.md` §0.4.
 >
-> *(Resolved 2026-09-01: `.agent-sync/.gitkeep` added, so the empty state directory is tracked and
-> survives a clone — matching `a-team/.agent-sync/.gitkeep`.)*
+> **To upgrade the plugin:** re-clone `https://github.com/RBraga01/a-team`, repeat the `cp -rn`
+> install, re-run `/orchestrate init` to re-apply the prune, then delete the clone again.
 
 ### Agent pruning decisions
 
@@ -423,13 +422,13 @@ messages, meeting notes or issue comments. Items reach Resolved only when closur
 **Currently open P1:** `COVERAGE-GATE-001`.
 
 > **Known conflict with the orchestrator's state-machine protocol.**
-> `a-team/.claude/rules/orchestration.md` instructs the orchestrator to "Read `TASKS.md` for backlog"
+> `.claude/rules/orchestration.md` instructs the orchestrator to "Read `TASKS.md` for backlog"
 > on every invocation. **This project has no `TASKS.md` and should not gain one.** Point the
 > orchestrator at `docs/change-record/OPEN-ITEMS-BACKLOG.md` instead, and record the substitution in
 > `.agent-sync/ROUTING.md` at init — otherwise every session reads an empty backlog and concludes
 > there is no outstanding work, while `COVERAGE-GATE-001` and the migration items sit unseen.
 >
-> **Known conflict with the testing rules.** `a-team/.claude/rules/testing.md` sets a minimum of 80%
+> **Known conflict with the testing rules.** `.claude/rules/testing.md` sets a minimum of 80%
 > coverage. This project configures **100%** thresholds in `vitest.unit.config.ts`. The project
 > standard is the higher one — do not let an agent relax the gate to 80% on the basis of the plugin
 > rule.

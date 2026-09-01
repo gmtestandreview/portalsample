@@ -13,7 +13,7 @@ default is wrong here, and following it silently produces a bad outcome.
 
 ### 0.1 Backlog Substitution — there is no `TASKS.md` and none may be created
 
-`a-team/.claude/rules/orchestration.md` and the `orchestrator` agent both say "Read `TASKS.md` for
+`.claude/rules/orchestration.md` and the `orchestrator` agent both say "Read `TASKS.md` for
 backlog". **This project has no `TASKS.md`.** It has a governed backlog with a formal intake process,
 and a second list would fragment it.
 
@@ -40,7 +40,7 @@ commit message or an issue comment. Items reach Resolved only when closure evide
 
 ### 0.2 Coverage floor is 100%, not 80%
 
-`a-team/.claude/rules/testing.md` sets a minimum of 80%. `vitest.unit.config.ts` configures **100%**
+`.claude/rules/testing.md` sets a minimum of 80%. `vitest.unit.config.ts` configures **100%**
 statements / branches / functions / lines. **The project standard is the higher one.** No agent may
 relax the gate to 80% citing the plugin rule. `COVERAGE-GATE-001` closes by adding behaviour-focused
 tests, or by an explicit reviewed change to the measured-scope policy — never by silently lowering a
@@ -54,9 +54,16 @@ by relaxing a threshold is a silent regression with nobody left to catch it.
 
 ### 0.4 Authoritative agent source
 
-Root `.claude/agents/` (18, pruned) and root `skills/` (19, pruned) are **authoritative**.
-`a-team/` is a **vendored read-only plugin** at full 26/20 — never edit or delete inside it. After a
-plugin update, re-run `/orchestrate init` to re-apply the prune to the root copies.
+Root `.claude/agents/` (18, pruned) and root `skills/` (19, pruned) are the **sole** source of
+truth. The vendored `a-team/` plugin directory **was deleted in commit `95dc32e` (2026-09-02, 137
+files)** once the install was verified — it was installer payload, never a runtime path. Claude Code
+loads agents only from `.claude/agents/`; it never loaded any of the 26 definitions while they sat
+in `a-team/`.
+
+The 8 pruned agents, the pruned `data-migration` skill and the blank `INIT_TEMPLATE.md` are
+preserved under `.agent-sync/pruned/`. To re-install or upgrade the plugin, re-clone it from
+`https://github.com/RBraga01/a-team`, repeat the `cp -rn` install, and re-run `/orchestrate init` to
+re-apply the prune.
 
 ---
 
@@ -89,7 +96,7 @@ Most specific match wins. Paths are repo-relative.
 
 `ClientApp/src/api/web-api-client.ts` · `ClientApp/src/main.*.js` · `ClientApp/css/main.*.css` ·
 `ClientApp/src/external/**` · `ClientApp/src/parent/**` · `ClientApp/webpack/**` ·
-`ClientApp/source-map-http-downloads/**` · `a-team/**` · `dist/**` · `storybook-static/**`
+`ClientApp/source-map-http-downloads/**` · `dist/**` · `storybook-static/**`
 
 Mirrored in `sonar.exclusions` and the Vitest coverage `exclude` list so all three tools agree.
 
@@ -157,7 +164,7 @@ for unsaved-change detection — do not re-implement navigation guards.
 warnings and a broken suite looks clean.
 
 **3.10 — Do not treat the Problems panel as a work queue.** It aggregates across vendored plugins
-(`a-team/`, `.agents/skills/`), generated output (`dist/`, `storybook-static/`, `quality/_phase5_*`)
+(`.agents/skills/`), generated output (`dist/`, `storybook-static/`, `quality/_phase5_*`)
 and reference docs. Attribute a diagnostic to owned source before acting on it.
 
 **3.11 — Never raise worker counts.** `maxWorkers: 1` is deliberate everywhere. The unit suite runs
