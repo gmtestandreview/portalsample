@@ -194,7 +194,11 @@ const AttachmentNew = (
     };
 
     const renderAttachments = () => {
-        const attachments = value as AttachmentDto[];
+        const attachments = isArray(value)
+            ? value
+            : value
+                ? [value]
+                : [];
         return attachments?.map((attachment, i) => (
             <AttachmentItemNew
                 id={attachment.id}

@@ -425,7 +425,7 @@ describe('AttachmentNew', () => {
 
         const attachmentRegion = screen.getByText('manual.pdf').closest('.attachment');
         expect(attachmentRegion).not.toBeNull();
-        expect(within(attachmentRegion!).queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
+        expect(within(attachmentRegion as HTMLElement).queryByRole('button', { name: 'Delete' })).not.toBeInTheDocument();
     });
 
     it('shows uploaded attachments when progress completed with errors', () => {

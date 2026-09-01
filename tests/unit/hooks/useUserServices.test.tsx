@@ -44,7 +44,7 @@ describe('useUserServices', () => {
                     services,
                 },
             },
-        } as AccountStateContext;
+        } as unknown as AccountStateContext;
 
         render(
             <AccountStateCtx.Provider value={stateContext}>

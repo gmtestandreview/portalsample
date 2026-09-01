@@ -8,7 +8,6 @@ import supportingDocumentsProps from '../../../../ClientApp/src/routes/ta/suppor
 import summaryAndSubmitProps from '../../../../ClientApp/src/routes/ta/summaryAndSubmitProps';
 import type {
     ApplicationAndInstrumentStepDto,
-    PatternApprovalOrgAndContact,
     RequestForPatternApprovalSummaryDto,
 } from '../../../../ClientApp/src/routes/ta/types';
 import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
@@ -16,6 +15,7 @@ import {
     CRMLookupTypes,
     PatternApprovalRequiredValueOptions,
     PatternApprovalRequiredValues,
+    type PatternApprovalOrgAndContact,
     type RequestForPatternApprovalSummary,
     type SupportingDocumentsStep,
     YesNo,
@@ -141,10 +141,10 @@ describe('pattern approval wizard prop factories', () => {
 
         await props.onSaveAndNext?.({
             patternApprovalType: PatternApprovalRequiredValues.NewCertificate,
-            instrumentCategoryLookup: [{ id: 'category-1', name: 'Category 1' }],
-            instrumentTypeLookup: [{ id: 'type-1', name: 'Type 1' }],
+            instrumentCategoryLookup: [{ id: 'category-1', label: 'Category 1' }],
+            instrumentTypeLookup: [{ id: 'type-1', label: 'Type 1' }],
             instrumentTypeContent: [{ instrumentTypeId: 'type-1' }],
-            certNameOptions: [{ id: 'cert-1', name: 'Certificate 1' }],
+            certNameOptions: [{ id: 'cert-1', label: 'Certificate 1' }],
         }, true, formikHelpers<ApplicationAndInstrumentStepDto>(), abortSignal);
         expect(mocks.saveApplicationAndInstrument).toHaveBeenCalledWith('PA-1', {
             applicationId: 'PA-1',
@@ -228,7 +228,7 @@ describe('pattern approval wizard prop factories', () => {
         expect(props.suppressErrorSummaryPath).toBe(true);
 
         const documents: SupportingDocumentsStep = {
-            form: { documents: [{ fileName: 'manual.pdf', attachmentCategory: 'Manual' }] },
+            form: { documents: [{ attachmentName: 'manual.pdf', attachmentCategory: 'Manual' }] },
         };
         await props.onSaveAndNext?.(documents, true, formikHelpers<SupportingDocumentsStep>(), abortSignal);
         expect(mocks.saveSupportingDocuments).toHaveBeenCalledWith('PA-3', {
