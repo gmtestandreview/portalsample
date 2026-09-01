@@ -2,9 +2,15 @@
 
 **Purpose:** Single authoritative chronological log of every change made to the NMI Portal codebase during migration preparation. Every migration batch decision is traceable to an entry here.
 **Reference:** Migration preparation Phases A–N (2026-05-29 to 2026-05-31), Sprint 1 Storybook Quality Remediation, and the 2026-06-28 current-tree reconciliation.
-**Last updated:** 2026-06-28 (CRD-041)
+**Last updated:** 2026-09-02 (CRD-044)
 
-**Latest delta (CRD-041):** Current-tree migration reconciliation records React Router v7, 41 registered paths, the six pattern/type approval routes and supporting components, expanded Storybook inventories, 114 unit-test files / 1,169 passing tests, and zero-diagnostic type-check/lint results. It opens `TYPE-APPROVAL-E2E-001` for the six reviewed app-BDD exclusions and `COVERAGE-GATE-001` because the configured 100% unit-coverage thresholds currently fail.
+**Latest delta (CRD-044):** Verification pass over the business rules register finds the line citations systematically unreliable (18 of 21 examined wrong, 5 P0, 3 past end of file), 6 of 53 rules listed but never defined, and RULE-022's ABN checksum validator dead code with zero callers. Opens `RULES-REGISTER-001`, blocking BA/Legal sign-off on P2 items 16, 17, 18 and 21.
+
+**Prior delta (CRD-043):** Business rule register reconciliation annotates RULE-042 (number-of-items 1-100) and corrects a factual defect in the RULE-035 entry, which wrongly stated that `&` is excluded from the ASIC business-name charset - proven false by executing the live regex. The P0 SME question built on that premise is void; the residual charset question is restated.
+
+**Prior delta (CRD-042):** Orchestrated backlog intake applies the RULE-035, RULE-050 and RULE-015 sign-off markers (comment-only; type-check and lint clean), blocks P2 item 18 because RULE-042 is undefined repository-wide, records explicit acceptance of `TYPE-APPROVAL-E2E-001`, and opens `COVERAGE-SCOPE-001` for a coverage measured-scope change made without a recorded decision.
+
+**Prior delta (CRD-041):** Current-tree migration reconciliation records React Router v7, 41 registered paths, the six pattern/type approval routes and supporting components, expanded Storybook inventories, 114 unit-test files / 1,169 passing tests, and zero-diagnostic type-check/lint results. It opens `TYPE-APPROVAL-E2E-001` for the six reviewed app-BDD exclusions and `COVERAGE-GATE-001` because the configured 100% unit-coverage thresholds currently fail.
 
 ---
 
@@ -1047,6 +1053,170 @@ No historical item may remain implicit. If the review identifies an item that is
 **Actions outstanding (Design Lead):** SVG source files for 10 active icons; confirm `packages/icons` package vs inline data: URI approach; confirm 3 dead-code variables safe to remove.
 
 **Outcome:** Icon audit is complete. No Batch E blocker found — the icon font can be retired without creating new React SVG components first. BATCH-E-PREREQ-002 is closed pending Design Lead sign-off on SVG sources. Batch E Item 8 prerequisite gate is cleared for planning purposes.
+
+---
+
+### [Business Rules Register Verification] - 2026-09-02 - Full Citation Reconciliation and Defect Report
+
+**Change ID:** CRD-044
+**Source:** `analysis/BUSINESS_RULES.md` reconciled against `git show HEAD:<file>` for every cited path, so the same day's annotation line-shifts cannot confound the result.
+**Status:** COMPLETE - verification pass delivered; remediation opened as `RULES-REGISTER-001`
+**Security findings resolved:** None
+**New migration gates:** `RULES-REGISTER-001` - blocks BA/Legal sign-off on P2 items 16, 17, 18, 21
+
+**Trigger.** `DEC-002`. CRD-043 found a P0 register entry factually wrong about the code it cites, so the
+operator requested a verification pass over all rules before any sign-off is sought.
+
+**Method.** Every `Source:` citation in all 47 detail blocks was parsed and resolved (58 citations). 21
+were then examined in depth by locating each rule's actual construct at HEAD with a targeted pattern. Two
+specifications were verified by execution.
+
+| Check | Result |
+| --- | --- |
+| Rules in summary table | 53 |
+| Rules with a detail section | 47 - 6 missing |
+| Cited files that do not exist | 0 |
+| Citations examined in detail | 21 |
+| Confirmed miscited | **18** (5 of them P0) |
+| Citations past end of file | 3 (RULE-010, RULE-012, RULE-015) |
+| Specifications verified | 3 of 53 |
+
+**Four findings.**
+
+1. **Systematic miscitation.** Every file path is right; most line numbers are wrong. RULE-037 cites a
+   line inside the *email* validator; RULE-005 cites the dashboard redirect rather than the branch gate;
+   RULE-012 cites line 398 of a 375-line file. This is the signature of a generated document never
+   reconciled with the tree.
+2. **Six rules listed but never defined** - RULE-023/024/025/029/030/051. RULE-051 is P1 and is the NMI
+   registered address Legal is being asked to confirm under P2 item 17.
+3. **RULE-022 is correct but inert.** The ATO checksum is specified and implemented exactly - verified by
+   execution on four inputs including the register's own worked example. But `isValidAbn` has **zero
+   callers**. The P0 rule asserts ABNs "are validated" on a path where nothing validates them. Needs a
+   backend answer. *By-product:* the hardcoded NMI ABN `74 599 608 295` passes the checksum, so it is
+   structurally valid - which says nothing about whether it is NMI's current ABN.
+4. **RULE-042 is implemented twice and the register documented one.** `numberOfItems` is validated in both
+   `instrumentAndRequestSubmitValidation` (required) and `instrumentAndRequestSaveValidation` (nullable
+   draft), each with the same 1-100 bounds. The second site is now annotated and the register entry
+   completed. A bounds change applied to one schema only would silently diverge submit from draft.
+
+**Changes made.** Verification banner at the top of `BUSINESS_RULES.md`; corrected citations for RULE-042,
+RULE-050 and RULE-051 (the ones whose true location is unambiguous); RULE-042's specification completed
+with the submit/save split; source annotation at the second RULE-042 site. The remaining miscitations are
+**not** silently patched - several have multiple candidate locations and guessing would reintroduce the
+defect being reported. They are listed with evidence for mechanical re-derivation.
+
+**Deliverable:** `docs/change-record/2026-09-02-business-rules-verification.md`.
+
+**Scope.** Comment-only in source. `npm run type-check` and `npx eslint` both clean.
+
+**Explicitly not verified:** 50 of 53 specifications; citations for the ~37 rules outside the detailed
+sample beyond file-exists and line-in-range; and whether the register omits rules present in code.
+
+
+---
+
+### [Business Rule Register Reconciliation] — 2026-09-02 — RULE-042 Annotated, RULE-035 Register Defect Corrected
+
+**Change ID:** CRD-043
+**Source:** `analysis/BUSINESS_RULES.md` (supplied by the operator, unblocking `BLK-001` raised in CRD-042), reconciled against the live validators.
+**Status:** COMPLETE — P2 item 18 unblocked and closed to the sign-off boundary
+**Security findings resolved:** None
+**Migration gates cleared:** None — item 18 still awaits BA sign-off, now on correctly-stated questions
+
+**1. RULE-042 identified and annotated.** The register defines RULE-042 as *Number of items range
+(1-100)*, a P1 validation rule on the RFQ `numberOfItems` field. Marker applied at
+`ClientApp/src/routes/requestForQuote/validation.ts:87`, directly above the `.min(1)` / `.max(100)`
+chain. Bounds unchanged. The open SME question - whether 100 is a hard operational limit (lab capacity
+or a system constraint) or an informal cap - is quoted in the annotation.
+
+**2. Register defect found and corrected — RULE-035.** The register's RULE-035 entry stated that the
+ASIC-referenced charset **excludes** `&`, and gave `"Smith & Sons Pty Ltd"` as an INVALID example. Both
+claims are false. The charset it prints one line earlier contains `&` in the `!@#$%^&*` run.
+
+Verified by executing the regex from `stringExtensions.ts:735` against the register's own examples:
+
+| Input | Register claimed | Actual |
+| --- | --- | --- |
+| `Smith & Sons Pty Ltd` | INVALID | **VALID** |
+| `Smith & Jones` | (implied INVALID) | **VALID** |
+| `O'Brien & Co` | - | **VALID** |
+| `Smith+Sons` | INVALID | INVALID (correct) |
+| `ACME Corp. Pty Ltd` | VALID | VALID (correct) |
+
+**Why this mattered.** RULE-035 is P0 and flagged as a migration blocker. The BA was being asked to rule
+on whether `&` should be permitted in business names, when it already is. An answer of "yes, allow `&`"
+would have prompted a change to a P0 validator that is already correct - introducing risk to fix a
+defect that does not exist. The likely cause is an HTML-escaping artefact (`&amp;` appears in the
+original line), so the charset was probably mis-read through an HTML rendering step rather than from
+source.
+
+**Corrected in `analysis/BUSINESS_RULES.md`:** the worked example, the SME question, the summary-table
+row, the P0 blocker note, and the confidence rating (Medium → High). The residual open question is
+restated: whether ASIC BRS v1.7 is still the correct reference, and whether any *other* excluded
+character (notably `+`) should be permitted.
+
+**3. Stale source citations corrected.** The register cited RULE-035 at `stringExtensions.ts:678-707`;
+the validator is at `713-741`. RULE-042 was cited at `validation.ts:88`; it is at `91-96`. Both updated.
+
+**Scope.** Comment-only in source; no logic, bounds, regex or behaviour changed. `npm run type-check`
+and `npx eslint` on the changed file both pass with zero diagnostics.
+
+**Follow-up for the operator:** `analysis/BUSINESS_RULES.md` documents 50+ rules and at least one entry
+was demonstrably wrong about the code it cites. The other P0/P1 entries carrying SME questions have not
+been re-verified against source. A verification pass over the P0 rules before BA sign-off would be
+proportionate - a signature obtained against a wrong premise is worse than no signature.
+
+
+---
+
+### [Orchestrated Backlog Intake] — 2026-09-02 — Rule Annotations, Type Approval Acceptance, Coverage Scope Finding
+
+**Change ID:** CRD-042
+**Source:** `/orchestrate morning` against `docs/change-record/OPEN-ITEMS-BACKLOG.md` (this project has no `TASKS.md`; see `.agent-sync/ROUTING.md` §0.1). Verified against the working tree at commit `29f2579`.
+**Status:** COMPLETE — three backlog items advanced, one new item opened, one item blocked pending external input
+**Security findings resolved:** None
+**New migration gates:** `COVERAGE-SCOPE-001`
+**Migration gates cleared:** `TYPE-APPROVAL-E2E-001`
+
+**1. Business-rule annotations applied (P2 items 16, 17, 21).**
+
+Prior state verified before editing: **zero `RULE-` markers existed anywhere in `ClientApp/src`**, so
+none of the 2026-06-04 recommendations had been actioned and nothing awaiting SME sign-off was
+discoverable by grep or CI.
+
+| Rule | File and line | Nature |
+| --- | --- | --- |
+| RULE-035 | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:731` | Comment above the ASIC-aligned charset regex. Confirmed the charset permits `&` — the exact question item 16 raises. |
+| RULE-050 | `ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:364` | JSX comment above the NMI ABN and registered-address block. |
+| RULE-015 | `ClientApp/src/components/RequestList/instrumentItem.tsx:291` | Comment above the `ReportWithdrawn` / `ReportInProgress` fall-through that offers "Request recalibration". |
+
+**Comment-only. No logic, behaviour, regex, formatting or import changed.** The recommendations
+explicitly direct that the rules are preserved during migration; these markers only make the pending
+sign-offs greppable. `ClientApp/src/api/web-api-client.ts` also contains `ReportInProgress` and was
+**not** touched — it is generated, is on the never-routed list, and is denied in `.claude/settings.json`.
+
+**Validation:** `npm run type-check` passes with zero diagnostics; `npx eslint` on all three changed
+files reports zero problems.
+
+**2. P2 item 18 blocked — cannot be actioned as written.** Its RULE-035 half is covered by item 16. Its
+RULE-042 half cannot proceed: a repository-wide search returns **zero** references to RULE-042 in source,
+tests or documentation, so "the affected schemas" are unidentifiable. The rule register defining RULE-042
+is not in this repository. The item needs the register supplied, or restating against named schema files.
+
+**3. `TYPE-APPROVAL-E2E-001` accepted (P2).** The item offered two terminal states; the operator selected
+explicit acceptance of the residual gap over building deterministic authenticated app-BDD fixtures.
+Recorded via `/orchestrate morning` Veto Buffer `AMB-001`. Full risk statement and the counter-signature
+caveat are in the acceptance detail in `OPEN-ITEMS-BACKLOG.md`.
+
+**4. `COVERAGE-SCOPE-001` opened (P1 gate).** Commit `c6391fb` widened the Vitest coverage `exclude` list
+(`setupTests.ts`, `*.stories copy.tsx`) under a commit message about debugging and TDD skills, with no
+matching change to `sonar.exclusions`. Raising the reported percentage by narrowing the measured surface
+is the specific thing `COVERAGE-GATE-001` says must not happen silently. Not actioned here: a second
+session holds `in-progress` File Claims on the coverage surface.
+
+**Also recorded:** the `COVERAGE-GATE-001` percentages are stale — measured 2026-06-28 against 114 test
+files, versus 163 files / 1,734 tests today. Re-measure before planning that item.
+
 
 ---
 

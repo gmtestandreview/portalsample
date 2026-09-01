@@ -728,6 +728,9 @@ Yup.addMethod(Yup.string, YUP_BUSINESSNAME_METHOD, function yupBusinessName(
                     return true;
                 }
 
+                // RULE-035: BA sign-off required — do not change during migration.
+                // OPEN-ITEMS-BACKLOG P2 item 16 asks whether business names may contain '&' and
+                // whether this ASIC-aligned charset is correct. The charset below does permit '&'.
                 // based on the CompanyName rule in https://download.asic.gov.au/media/jdchdnzn/message-implementation-guide-for-brs-v1-7.pdf
                 const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/;
                 return value.match(new RegExp(regExStr)) !== null;

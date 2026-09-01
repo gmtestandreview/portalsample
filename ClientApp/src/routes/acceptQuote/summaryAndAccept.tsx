@@ -361,6 +361,13 @@ const SummaryAndAccept = (props : SummaryAndAcceptProps) => {
                                         </span>
                                     )}
                                 </p>
+                                {/*
+                                    RULE-050: Legal confirmation pending — OPEN-ITEMS-BACKLOG P2 item 17.
+                                    Legal must confirm the ABN and registered address below are current
+                                    for contract display. Recommendation 2026-06-04: externalise to
+                                    VITE_NMI_ABN / VITE_NMI_ADDRESS in the target platform. Do not change
+                                    the values during migration without Legal sign-off.
+                                */}
                                 <p className='mb-0'>
                                     <span className='text-break'>National Measurement Institute</span>
                                     <br />

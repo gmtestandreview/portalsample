@@ -137,32 +137,73 @@ Restore with `cp -r .agent-sync/pruned/skills/data-migration skills/`.
 
 ---
 
-## Deferred Items (require a human decision — not resolved at init)
+## Deferred Items (3 of 4 resolved 2026-09-02)
 
-1. **`.claude/settings.json` is unmerged.** `cp -rn` preserved the project file, as the official
-   install note requires. The plugin's own settings were **not** applied, so the following are
-   inactive: the `PreToolUse` security gate, the `SessionStart` roster echo, the `PostToolUse`
-   review reminder, the `Stop` metrics/export hooks, `worktreeDirectory: .claude/worktrees`, and
-   ~100 permission entries. Merging it as-is would also grant `Write(*)`, `Edit(*)`,
-   `Bash(git push*)` and `Bash(pip install *)`, and pin `model: claude-sonnet-4-6` — all of which
-   should be a deliberate choice, not an install side effect.
+1. ~~**`.claude/settings.json` is unmerged.**~~ **RESOLVED 2026-09-02 — merged on the operator's
+   instruction to preserve the existing configuration and its intended use cases.** All 11
+   pre-existing project allow entries survive verbatim; 78 A Team entries were added; 0 duplicates.
+   All four hooks (`PreToolUse`, `SessionStart`, `PostToolUse`, `Stop`) are configured and were
+   pipe-tested green, as was the status line. Note `.claude/settings.json` is **gitignored**
+   (`.gitignore:93`), so this merge is machine-local and is not shared through the repository.
+
+   **Deliberately NOT copied from the plugin, with reasons:**
+
+   | Omitted | Why |
+   | --- | --- |
+   | `"model": "claude-sonnet-4-6"` | Would pin every session to Sonnet 4.6. `orchestrator` and `architect` are Tier 1 and the operator runs Opus 5 — this is a downgrade, not a setting. |
+   | `"worktreeDirectory"` | **Not a valid settings key** — the schema defines a `worktree` object instead. Its intended value (`<project>/.claude/worktrees`) is already the default, so the key was both invalid and redundant. |
+   | `"plugins"` key | Plugin enablement for this project already lives in `.claude/settings.local.json` under `enabledPlugins`. Adding a second, differently-named key invites drift. |
+   | `Bash(git push*)` | Outward-facing and irreversible. Omitting it from `allow` means push still works — it just prompts. |
+   | `Bash(npm install*)` | Rewrites the lockfile to `^` ranges, which silently breaks the `dependencySecurity` policy test (see Special Constraint 3.8). `Bash(npm ci)` was added instead. |
+   | `Bash(python *)`, `pip install`, `pytest`, `ruff`, `mypy`, `black`, `bandit` | Arbitrary interpreter execution and package installation for a language that exists here only as uncompiled, un-CI'd tooling. Narrowed to `Bash(python scripts/*)` / `python3 scripts/*`, which is all the hooks need. |
+   | `Bash(gh api *)`, `Bash(gh repo *)` | `gh api` can perform any GitHub mutation including deletes; `gh repo` includes `gh repo delete`. `gh pr *` and `gh issue *` are kept — they are the documented workflow. |
+   | Go, Rust, `psql` toolchains | None of those languages or a database exists in this repository. |
+   | `WebFetch` for nextjs.org, fastapi.tiangolo.com, docs.supabase.com | Irrelevant stacks. `docs.anthropic.com` and `developer.mozilla.org` are kept. |
+   | `Skill(data-migration)` | The skill was pruned at init. |
+
+   **Added beyond the plugin — an 18-rule `permissions.deny` block.** A Team grants blanket
+   `Write(*)` / `Edit(*)`, which directly contradicts this project's hard edit boundaries. Rather
+   than drop those grants (which would cripple every agent), the never-edit paths are denied
+   outright, and deny beats allow: `ClientApp/src/api/web-api-client.ts`, `main.*.js`,
+   `css/main.*.css`, `external/**`, `parent/**`, `webpack/**`, `source-map-http-downloads/**`,
+   `dist/**`, `storybook-static/**`. Agents keep full freedom on owned source and cannot touch
+   generated or vendored output.
+
+   **Two defects in the plugin's own settings were corrected, not copied:** its `statusLine` omits
+   the schema-required `"type": "command"` (it would silently never render), and `worktreeDirectory`
+   is not a recognised key.
+
+   **Action required:** hooks load at client start. Open `/hooks` once, or restart the client, for
+   the four hooks and the status line to take effect.
 2. ~~**Hook scripts missing from the repo root.**~~ **RESOLVED at init.** The README's
    "Adding A Team to an Existing Project" list omits `scripts/`, but the full-install options
    (B/C/D) all include `cp -r a-team/scripts`, and the plugin hooks reference `scripts/*.py` at the
    root. Copied with `cp -rn`. All five hook targets now resolve: `pre_tool_use.py`, `watcher.py`,
    `status.py`, `metrics.py`, `session_export.py`. They remain **inert until item 1 is done** —
    the hooks that invoke them live in the unmerged plugin `settings.json`.
-3. **11 of the 19 active root skills duplicate `superpowers:*` skills already loaded in-session** —
+3. **11 of the 19 active root skills share a name with a `superpowers:*` skill** —
    `brainstorming`, `systematic-debugging`, `test-driven-development`, `writing-plans`,
    `executing-plans`, `subagent-driven-development`, `dispatching-parallel-agents`,
    `using-git-worktrees`, `verification-before-completion`, `writing-skills`,
-   `finishing-a-development-branch`. Root `skills/` is outside `.claude/`, so neither shadows the
-   other and nothing is currently broken. Run `skill-duplication-audit` before promoting any of them
-   into `.claude/skills/`.
-4. **Two MCP servers failed to connect this session** — `my-storybook-mcp-server`
-   (`http://localhost:6006/mcp`, ConnectionRefused) and `sonarqube` (CONNECTION_CLOSED). `INIT.md`
-   marks the Storybook server **mandatory before any UI or component work**. **No UI task may be
-   dispatched until `npm run storybook` is up and the endpoint is healthy.**
+   `finishing-a-development-branch`.
+
+   **Operator decision, 2026-09-02: A Team is PRIMARY.** The `superpowers:*` versions are retained
+   as a **comparison source** — read them to find capability the A Team skill lacks, then uplift the
+   A Team skill. They are not a parallel implementation to switch between, and the A Team skill is
+   the one that ships.
+
+   Nothing is broken today: root `skills/` sits outside `.claude/`, so neither set shadows the
+   other. Sequence when this work starts: run `skill-duplication-audit` first to produce the
+   per-skill capability diff, uplift the A Team skill from the findings, and only then consider
+   promoting it into `.claude/skills/` — promoting before the uplift would create a real name
+   collision with no gain.
+4. ~~**Two MCP servers failed to connect.**~~ **RESOLVED 2026-09-02.** All four servers are up
+   and their tools are present: `my-storybook-mcp-server` (`@storybook/addon-mcp` 0.7.0),
+   `sonarqube` (the `mcp/sonarqube` container, bound to Cloud org `gmtestandreview`), `react-aria`
+   and `playwright`. The earlier failure was **startup order**, not misconfiguration — MCP sessions
+   are negotiated once at client start, so servers brought up afterwards stay absent from that
+   session however healthy they are. The UI/component gate in `ROUTING.md` §4 is therefore
+   satisfied; keep the ordering rule (servers first, client second).
 
 ---
 

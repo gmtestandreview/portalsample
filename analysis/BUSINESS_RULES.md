@@ -5,6 +5,35 @@
 
 ---
 
+> ## ⚠️ VERIFICATION STATUS — read before using this register (2026-09-02, CRD-044)
+>
+> **The line numbers in this document are unreliable. Do not navigate by them, and do not take a rule
+> to a BA or to Legal for signature on the strength of its citation.**
+>
+> A verification pass on 2026-09-02 examined 21 citations in detail and found **18 wrong**, including
+> five P0 rules, with three pointing past the end of the file entirely. Every *file path* is correct;
+> the *line numbers* are not. That pattern indicates the register was generated against an earlier
+> tree and never reconciled.
+>
+> | | |
+> | --- | --- |
+> | Rules in the summary table | 53 |
+> | Rules with a detail section | 47 — **6 are listed but never defined** (RULE-023/024/025/029/030/051) |
+> | Citations examined in detail | 21 — **18 miscited**, 3 correct |
+> | Specifications verified against code | **3 of 53** (RULE-022 sound · RULE-035 was wrong, corrected · RULE-042 sound but incomplete) |
+>
+> **Two substantive defects were found, not just bad line numbers:**
+>
+> - **RULE-035** claimed the ASIC charset excludes `&`. It does not. Corrected under CRD-043; the SME
+>   question built on that premise was void.
+> - **RULE-022** is specified correctly but **`isValidAbn` is never called anywhere in the client**.
+>   The rule asserts that ABNs "are validated using the official ATO checksum"; on the client, they
+>   are not. Needs a backend answer.
+>
+> The other 50 specifications are **unverified**, not known-wrong. Full evidence and recommendations:
+> `docs/change-record/2026-09-02-business-rules-verification.md`. Tracked as `RULES-REGISTER-001`.
+
+
 ## Summary Table
 
 | ID | Name | Category | Priority | Source | Confidence |
@@ -50,7 +79,7 @@
 | RULE-039 | RFQ multi-branch confirmation | Validation | P1 | `requestForQuote/validation.ts:23` | High |
 | RULE-040 | Acceptance T&C checkbox | Validation | P0 | `acceptQuote/validation.ts:136` | High |
 | RULE-041 | Preferred date not in the past | Validation | P1 | `requestForQuote/validation.ts:123` | High |
-| RULE-042 | Number of items range (1–100) | Validation | P1 | `requestForQuote/validation.ts:88` | High |
+| RULE-042 | Number of items range (1–100) | Validation | P1 | `requestForQuote/validation.ts:91-96` *(annotated 2026-09-02, CRD-043)* | High |
 | RULE-043 | Carrier details when client ships | Validation | P1 | `acceptQuote/validation.ts:47` | High |
 | RULE-044 | Invoice contact for different person | Validation | P1 | `acceptQuote/validation.ts:114` | High |
 | RULE-045 | Date format DD/MM/YYYY, ceil 9999 | Validation | P1 | `common.ts:65` | High |
@@ -58,8 +87,8 @@
 | RULE-047 | Field character limits catalogue | Validation | P1 | multiple | High |
 | RULE-048 | Website URL format | Validation | P2 | `common.ts:111` | High |
 | RULE-049 | Postal address same-as-street | Validation | P1 | `account/validation.ts:25` | High |
-| RULE-050 | NMI ABN hardcoded | Policy | P0 | `summaryAndAccept.tsx:382` | High |
-| RULE-051 | NMI address hardcoded | Policy | P1 | `summaryAndAccept.tsx:383` | High |
+| RULE-050 | NMI ABN hardcoded | Policy | P0 | `summaryAndAccept.tsx:374` *(corrected CRD-044)* | High |
+| RULE-051 | NMI address hardcoded | Policy | P1 | `summaryAndAccept.tsx:376` *(corrected CRD-044)* | **NO DETAIL SECTION — see CRD-044** |
 | RULE-052 | Terms version config | Policy | P0 | `terms-config.json:1` | High |
 | RULE-053 | Dashboard/report page size | Policy | P2 | `dashboard/index.tsx:51` | High |
 
@@ -710,18 +739,44 @@ nameAllowedFormat(extended=false) regex: /^[-–—A-Za-z ']*$/
 ### RULE-035: Business Name Charset (ASIC-Aligned)
 **Category:** Validation
 **Priority:** P0
-**Source:** `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:678-707`
+**Source:** `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:713-741` *(corrected 2026-09-02, CRD-043 — the previously cited 678-707 range is a different validator)*
 **Plain English:** Business and trading names must conform to the character set defined in the ASIC CompanyName Business Rules message implementation guide (v1.7).
 **Specification:**
 ```
 businessName() regex: /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/
 
-"Smith & Sons Pty Ltd" → INVALID (&amp; not in charset)
+"Smith & Sons Pty Ltd" → VALID    (& IS in the charset — corrected 2026-09-02, CRD-043)
 "Smith+Sons" → INVALID (+ not in charset)
 "ACME Corp. Pty Ltd" → VALID
 ```
 **Parameters:** Character set referenced to ASIC BRS message implementation guide v1.7 (comment in source)
-**Confidence:** Medium — **SME question: Can business names contain `&` (as in "Smith & Jones")? The ASIC-referenced charset excludes it. Verify against current ASIC rules.**
+**Confidence:** High *(raised from Medium 2026-09-02, CRD-043)*
+
+> **CORRECTION — 2026-09-02 (CRD-043). The previous entry was factually wrong and its SME question
+> rested on a false premise.** It stated that the ASIC-referenced charset *excludes* `&` and that
+> `"Smith & Sons Pty Ltd"` is INVALID. **Both claims are wrong.** The charset printed one line above
+> contains `&` in the `!@#$%^&*` run, and the live validator accepts the name. Verified by executing
+> the regex from `stringExtensions.ts:735` against the register's own worked examples:
+>
+> | Input | Register claimed | Actual |
+> | --- | --- | --- |
+> | `Smith & Sons Pty Ltd` | INVALID | **VALID** |
+> | `Smith & Jones` | (implied INVALID) | **VALID** |
+> | `O'Brien & Co` | — | **VALID** |
+> | `Smith+Sons` | INVALID | INVALID *(claim was correct)* |
+> | `ACME Corp. Pty Ltd` | VALID | VALID *(claim was correct)* |
+>
+> **Likely cause:** the `&amp;` in the original line is an HTML-escaping artefact, so the charset was
+> probably mis-read through an HTML rendering step rather than from source.
+>
+> **Consequence had this not been caught:** the BA was being asked to rule on whether `&` should be
+> permitted, when it already is. An answer of "yes, allow `&`" would have prompted a change to a
+> regex that is already correct — introducing risk into a P0 validator to fix a defect that does not
+> exist. **No source change is required for `&`.**
+>
+> **What remains genuinely open for the BA:** whether the ASIC BRS v1.7 charset as a whole is still
+> the correct reference, and whether any *other* character it excludes (notably `+`) should be
+> permitted. That question stands; the `&` question does not.
 
 ---
 
@@ -843,7 +898,7 @@ Then   passes (no date is valid)
 ### RULE-042: Number of Items Range (1–100)
 **Category:** Validation
 **Priority:** P1
-**Source:** `ClientApp/src/routes/requestForQuote/validation.ts:88-93`
+**Source:** `ClientApp/src/routes/requestForQuote/validation.ts:91-96` (`instrumentAndRequestSubmitValidation`) **and `:189-195`** (`instrumentAndRequestSaveValidation`) *(corrected and completed 2026-09-02, CRD-044 - previously cited 88-93 and documented only one of the two sites)*
 **Plain English:** The number of instruments/artefacts on a single RFQ must be between 1 and 100.
 **Specification:**
 ```
@@ -853,6 +908,14 @@ numberOfItems: yup.number()
   .required()
 ```
 **Parameters:** Min: `1`, Max: `100` (hardcoded)
+
+> **Completed 2026-09-02 (CRD-044) — the rule is implemented twice, not once.**
+> `instrumentAndRequestSubmitValidation` (`:91-96`) makes `numberOfItems` **required**;
+> `instrumentAndRequestSaveValidation` (`:189-195`) makes it **nullable**, so a draft can be saved
+> incomplete, while still enforcing the same 1-100 bounds when a value is present (consistent with
+> RULE-018 draft-save). The register previously documented only the submit site. Both are now
+> annotated in source. **Any change to the bounds must be applied to both schemas**, or submit and
+> draft validation will silently diverge.
 **Confidence:** High — SME question: Is 100 a hard operational limit or a guess?
 
 ---
@@ -1017,7 +1080,7 @@ Then   postalAddress: addressSchema applies (all required fields enforced)
 ### RULE-050: NMI ABN Hardcoded in Contract Display
 **Category:** Policy
 **Priority:** P0
-**Source:** `ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:382`
+**Source:** `ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:374` *(corrected 2026-09-02, CRD-044 - previously cited 382, which is a different element)*
 **Plain English:** NMI's Australian Business Number is hardcoded in the Accept Quote summary page as part of the legal contract display.
 **Specification:**
 ```
@@ -1028,7 +1091,7 @@ NMI address displayed:
 
 Any change to NMI's registered ABN or address requires a code deployment.
 ```
-**Parameters:** Both values are string literals in `summaryAndAccept.tsx:382-388`
+**Parameters:** Both values are string literals in `summaryAndAccept.tsx:374-380` *(corrected 2026-09-02, CRD-044)*
 **Confidence:** High
 
 ---
@@ -1081,7 +1144,7 @@ The following rules have Medium confidence or unresolved questions that require 
 | RULE-017 | Payment terms | Are there valid `paymentTerms` values other than `'Prepaid'`? All non-Prepaid values fall to 30-day terms. |
 | RULE-022 | ABN client-side validation | Is `isValidAbn` enforced client-side before account creation, or only server-side? No Yup `.test()` call using it was found. |
 | RULE-034 | Name charset | Should person name fields accept accented/diacritical characters (é, ü, ñ)? Currently rejected. |
-| RULE-035 | Business name charset (ASIC) | Can business names contain `&` (e.g., "Smith & Jones")? Current ASIC-referenced charset excludes it. |
+| RULE-035 | Business name charset (ASIC) | ~~Can business names contain `&`?~~ **Resolved by inspection 2026-09-02 (CRD-043) — `&` IS already permitted; the original question rested on a false premise.** Still open: is ASIC BRS v1.7 the correct reference, and should any other excluded character (notably `+`) be permitted? |
 | RULE-036 | Consecutive chars | Is the default threshold of 3 (max 2 repeating) correct for all fields, or should some fields be stricter/looser? |
 | RULE-042 | Number of items 1–100 | Is 100 a hard operational limit (lab capacity / system constraint) or an informal cap? |
 | RULE-046 | Date validator inconsistency | The `isFutureDate()` in `common.ts` rejects today; the RFQ preferred-date rule accepts today. Is this intentional? |
@@ -1089,5 +1152,5 @@ The following rules have Medium confidence or unresolved questions that require 
 | RULE-050 | NMI ABN hardcoded | Verify `74 599 608 295` is current NMI ABN; verify `36 Bradfield Road, West Lindfield NSW 2070` is current registered address. |
 
 **P0 rules requiring SME confirmation (flagged as migration blockers):**
-- **RULE-035** (Business name charset) — affects account creation; wrong charset could block valid businesses
+- **RULE-035** (Business name charset) — affects account creation; wrong charset could block valid businesses. **Narrowed 2026-09-02 (CRD-043):** the `&` concern is void — `&` is already accepted. The residual question is the charset's overall ASIC alignment, not any specific character.
 - **RULE-050** (NMI ABN/address) — appears in legal contract display; must be correct before go-live

@@ -84,6 +84,10 @@ export const instrumentAndRequestSubmitValidation = yup.object<Validation<Instru
                 return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
             },
         ),
+    // RULE-042: BA sign-off required — do not change during migration.
+    // OPEN-ITEMS-BACKLOG P2 item 18 / analysis/BUSINESS_RULES.md RULE-042. The 1-100 bounds are
+    // hardcoded; the open SME question is whether 100 is a hard operational limit (lab capacity or
+    // a system constraint) or an informal cap. Confirm before changing or externalising it.
     numberOfItems: yup.number()
         .label('Number of items')
         .typeError('Number of items is a required field')
@@ -178,6 +182,10 @@ export const instrumentAndRequestSaveValidation = yup.object<Validation<Instrume
                 return extAlphaNumMultiLineMatchRegex.test(value); // Apply regex validation if not blank
             },
         ),
+    // RULE-042 (draft-save variant): BA sign-off required — do not change during migration.
+    // Second of two sites. The submit schema above requires numberOfItems; this save/draft schema
+    // is nullable but applies the same 1-100 bounds when a value is present (see RULE-018 draft-save).
+    // analysis/BUSINESS_RULES.md documents only the submit site — register incompleteness, CRD-044.
     numberOfItems: yup.number()
         .label('Number of items')
         .transform(

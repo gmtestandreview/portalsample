@@ -97,3 +97,11 @@ test_output.txt
 # ~4 MB per analysis (protobuf UDG graphs, report staging). Build artifact, not
 # source. `sonar-project.properties` IS tracked - it is the project binding.
 .scannerwork/
+
+# A Team runtime output. `.agent-sync/logs/` is written by the SessionStart
+# watcher and the Stop metrics/export hooks; `scripts/__pycache__/` is bytecode
+# for the plugin's Python scripts. Both are per-machine and regenerate on every
+# session. The orchestrator's actual state - TEAM.md, ROUTING.md, DAILY.md and
+# the pruned/ restore copies - IS tracked and must stay so.
+.agent-sync/logs/
+scripts/__pycache__/
