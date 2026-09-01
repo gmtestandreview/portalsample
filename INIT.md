@@ -1,16 +1,15 @@
 # Project Init Document
 
-> **Filled in for this project on 2026-09-01.** Every answer below was verified against the codebase,
-> not inferred. Counts are machine-derived; versions come from the installed tree
-> (`node_modules/<pkg>/package.json`), not from `package.json` ranges.
+> **This is the live init document for `nmi-portal`.** The Lead Orchestrator reads it from this
+> path when you run `/orchestrate init`.
 >
-> **To use with the orchestrator:** copy this file to the repository root as `INIT.md`, then run
-> `/orchestrate init`. The Lead Orchestrator reads `INIT.md` at the project root — it does not read
-> this file in place (`.claude/commands/orchestrate.md` → "`INIT.md` must exist"; the session-start
-> hook checks the same path).
+> **Verified 2026-09-01.** Every answer below was checked against the codebase, not inferred. Counts
+> are machine-derived; versions come from the installed tree (`node_modules/<pkg>/package.json`), not
+> from `package.json` ranges.
 >
-> **Note:** `a-team/` is a vendored third-party plugin (RBraga01/a-team v1.4.0, MIT). Edits here may
-> be overwritten when the plugin updates; the root `INIT.md` copy is the durable one.
+> The source template lives at `a-team/INIT_TEMPLATE.md` and carries the same content, but `a-team/`
+> is a vendored third-party plugin (RBraga01/a-team v1.4.0, MIT) that a plugin update may overwrite.
+> **This root copy is authoritative** — make edits here.
 
 ---
 
@@ -31,7 +30,19 @@ greenfield nor idle maintenance.
 artefacts of the snapshot. Do not discount a finding as "just a snapshot".
 
 **Reference Documents:**
-docs\ARCHITECTURE.md
+
+`docs\ARCHITECTURE.md`
+`docs\STRUCTURE.md`
+`docs\STACK.md`
+`docs\INTEGRATIONS.md`
+`docs\TESTING.md`
+`docs\STORYBOOK-MIGRATION-READINESS.md`
+`docs\MIGRATION_ROADMAP.md`
+`docs\nmi-portal-modernisation-assessment-colour-revised.html`
+`docs\change-record\MASTER-CHANGE-RECORD.html`
+`docs\change-record\OPEN-ITEMS-BACKLOG-REPORT.html`
+`docs\change-record\2026-08-30-storybook-remediation-audit.md`
+`architecture/precondition-redirect-matrix.md`
 
 ---
 
@@ -411,5 +422,4 @@ Target stack differences: React 19 + React Compiler, react-hook-form + zod, TanS
 
 ---
 
-> Once this file is complete, copy it to the repository root as `INIT.md` and run `/orchestrate init`
-> to initialize the team.
+> This file is complete. Run `/orchestrate init` to initialize the team.

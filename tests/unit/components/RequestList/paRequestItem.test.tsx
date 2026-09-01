@@ -8,6 +8,8 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router';
+import type * as NotificationModule from '@/storage/notification';
+import type * as WebApiClientModule from '@/api/web-api-client';
 import {
     ApplicationType,
     type PatternApprovalDashboardDetailsDto,
@@ -45,13 +47,16 @@ vi.mock('@/instrumentation/AppLogger', () => ({
     },
 }));
 
-vi.mock('@/storage/notification', async (importOriginal) => ({
-    ...(await importOriginal<typeof import('@/storage/notification')>()),
-    setDashboardNotification: mocks.setDashboardNotification,
-}));
+vi.mock('@/storage/notification', async (importOriginal) => {
+    const actual = await importOriginal<typeof NotificationModule>();
+    return {
+        ...actual,
+        setDashboardNotification: mocks.setDashboardNotification,
+    };
+});
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('@/api/web-api-client')>();
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
     return {
         ...actual,
@@ -75,7 +80,10 @@ const baseRequest: PatternApprovalDashboardDetailsDto = {
     portalReferenceId: 'PA-2024-0001',
     status: PaDashboardItemStatus.PaSubmitted,
     title: 'Pattern approval for flow meter',
-    lastUpdated: new Date('2024-03-15T00:00:00Z'),
+    // PatternApprovalDashboardDetailsDto.lastUpdated is `string | undefined` - the
+    // wire format. formattedDate() calls new Date() on it, so this ISO string is the
+    // same instant the previous Date object represented and renders identically.
+    lastUpdated: '2024-03-15T00:00:00Z',
     statusDetail: 'Under technical review',
     summary: 'Approval for a custody transfer flow meter',
     appliedFor: 'Pattern approval certificate',

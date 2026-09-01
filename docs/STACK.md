@@ -52,11 +52,11 @@
 
 ## 4) Communication & Collaboration Tools
 
-- [x] **GitHub Issues / PRs** — the only collaboration surface in use. `pr.yml` gates `pull_request` into `main`; `release.yml` gates `push` to `main`.
+- [x] **GitHub Issues / PRs** — code review and the CI gate. `pr.yml` gates `pull_request` into `main`; `release.yml` gates `push` to `main`.
+- [x] **Notion** — declared in use by the project owner (2026-09-01). In-repo traces appear in `.github/agents/` and `.github/skills/roundup-setup/`, but no credential, database ID or sync config is committed, so the integration surface is not derivable from this repository.
 - [ ] Gmail / email
 - [ ] Slack
 - [ ] Linear
-- [ ] Notion
 
 **External SaaS in the pipeline** (not communication tools, but they post status back to PRs):
 
@@ -65,7 +65,7 @@
 | SonarCloud (EU) | Static analysis + quality gate; `sonar.qualitygate.wait=true` makes a red gate fail the job | `SONAR_TOKEN` |
 | Chromatic | Storybook publishing + visual baselines | `CHROMATIC_PROJECT_TOKEN` |
 
-> **Agent-pruning note:** prune Slack, Linear, Notion, and email agents. Keep GitHub agents.
+> **Agent-pruning note:** prune Slack, Linear, and email agents. Keep GitHub and Notion agents.
 
 ---
 

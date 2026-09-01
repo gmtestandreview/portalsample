@@ -4,6 +4,7 @@ import {
     screen,
     waitFor,
 } from '@testing-library/react';
+import type * as WebApiClientModule from '@/api/web-api-client';
 import InstrumentInfoPanel from '@/routes/ta/instrumentInfoPanel';
 
 const mocks = vi.hoisted(() => {
@@ -27,7 +28,7 @@ vi.mock('@azure/msal-react', () => ({
 }));
 
 vi.mock('@/api/web-api-client', async (importOriginal) => {
-    const actual = await importOriginal<typeof import('@/api/web-api-client')>();
+    const actual = await importOriginal<typeof WebApiClientModule>();
 
     return {
         ...actual,
