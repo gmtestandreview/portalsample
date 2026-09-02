@@ -408,11 +408,15 @@ describe('application for type approval', () => {
                 await documentsStep.props.onUploadAttachment('token', []);
             });
 
-            await waitFor(() => expect(
-                clients.progress.methods.deleteProgressStatistics,
-            ).toHaveBeenCalled());
+            // The retry now waits PROGRESS_RETRY_DELAY_MS before polling again, which is longer
+            // than waitFor's 1s default - so this asserts against the real backoff rather than
+            // faking timers, which RTL's waitFor does not reliably detect under Vitest.
+            await waitFor(
+                () => expect(clients.progress.methods.deleteProgressStatistics).toHaveBeenCalled(),
+                { timeout: 10000 },
+            );
             expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
-        });
+        }, 20000);
 
         it('abandons polling when the component unmounts mid-flight', async () => {
             const { unmount } = await renderLoadedWizard();

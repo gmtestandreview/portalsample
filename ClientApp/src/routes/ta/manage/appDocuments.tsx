@@ -24,6 +24,12 @@ import AppLogger from '../../../instrumentation/AppLogger';
 import SupportingDocuments from '../supportingDocuments';
 import { supportingDocsSubmitValidation } from '../validation';
 
+/**
+ * Backoff between failed progress polls. Without it a persistently failing endpoint turns the
+ * retry path into a tight loop that pegs a core and hammers the failing service.
+ */
+const PROGRESS_RETRY_DELAY_MS = 2000;
+
 const ApplicationDocuments = () => {
     const { accounts, instance } = useMsal();
     const { id } = useParams();
@@ -69,6 +75,15 @@ const ApplicationDocuments = () => {
         fetchDocs();
     }, [accounts, id, instance, commitSuccess]);
 
+    // Without this the controller stored below is never aborted, so the progress loop's
+    // `while (!controller.signal.aborted)` can never exit and its `if (aborted) break` never fires.
+    // The poll then outlives the component, and against a failing endpoint spins with no delay.
+    useEffect(() => () => {
+        if (abortRef.current) {
+            abortRef.current.abort();
+        }
+    }, []);
+
     const startLongPolling = useCallback(
         async (uploadId: string) => {
             const controller = new AbortController();
@@ -99,6 +114,9 @@ const ApplicationDocuments = () => {
                     }
                 } catch {
                     if (controller.signal.aborted) break;
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, PROGRESS_RETRY_DELAY_MS);
+                    });
                 }
             }
         },
@@ -151,7 +169,7 @@ const ApplicationDocuments = () => {
                 parentTimeStamp: new Date().toDateString(),
                 documentLocked: x.documentLocked,
                 documentBytes: x.documentBytes,
-            } as AttachmentDto)) as AttachmentDto[];
+            } as AttachmentDto)) ?? [];
             setFilesToCommit(attachments.some((doc) => !doc.documentLocked));
         } catch (error) {
             AppLogger.error('Failed to load application documents', error as Error, { Id: id });
