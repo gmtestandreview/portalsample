@@ -53,6 +53,13 @@ jobs:
       - name: Lint MDX
         run: npm run lint:mdx 2>&1 | tee reports/ci/static-quality/lint-mdx.log
 
+      # Guards analysis/BUSINESS_RULES.md against citation rot. A 2026-09-02 audit (CRD-044) found
+      # 18 of 21 examined citations pointing at the wrong line, three past end of file, because line
+      # numbers decay on every edit above them. Fails only on citations that are provably wrong or
+      # unreachable; weakly-anchored ones are reported without failing the build.
+      - name: Verify business rule citations
+        run: npm run lint:rules 2>&1 | tee reports/ci/static-quality/lint-rules.log
+
       - name: Upload static quality logs
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

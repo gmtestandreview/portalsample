@@ -61,7 +61,7 @@ All items in this section are hard blockers unless explicitly marked `CLEARED`. 
 | VALIDATION-GATE-001 | `migration-check` combined Vitest/Storybook gate remediation | High | CLOSED_SUCCESS — combined gate now passes after Vitest parity, runtime hardening, and dashboard test stabilization | Frontend Lead / QA Agent | Migration pre-flight and target CI verification — CLEARED | CRD-032 |
 | COVERAGE-GATE-001 | Unit coverage thresholds not met | High | **OPEN 2026-06-28** — all 1,169 tests pass, but `npm run test:unit:coverage` exits nonzero: statements 74.43%, branches 75.51%, functions 72.56%, lines 74.92% versus 100% thresholds | Frontend Lead / QA Agent | Full CI gate and migration pre-flight | `vitest.unit.config.ts`; `reports/coverage/unit/coverage-summary.json`; CRD-041 |
 | COVERAGE-SCOPE-001 | Coverage measured-scope narrowed without a recorded decision | High | **OPEN 2026-09-02** — commit `c6391fb` added `ClientApp/src/**/setupTests.ts` and `ClientApp/src/**/*.stories copy.tsx` to the Vitest coverage `exclude` list. This raises the reported percentage by shrinking the measured surface rather than by adding a test, which `COVERAGE-GATE-001` explicitly forbids doing silently. The commit message ("feat: add systematic debugging and test-driven development skills") does not mention coverage, so the change is not discoverable from the log. `sonar.exclusions` was **not** updated to match, so SonarCloud and local coverage now measure different sets. | Frontend Lead / QA Agent | Full CI gate and migration pre-flight — same gate as `COVERAGE-GATE-001` | `vitest.unit.config.ts`; `sonar-project.properties`; CRD-042 |
-| RULES-REGISTER-001 | Business rules register unreliable for sign-off | High | **OPEN 2026-09-02** - verification pass over `analysis/BUSINESS_RULES.md` found 18 of 21 examined citations wrong (5 P0 rules; 3 point past end of file), 6 of 53 rules listed but never defined (including RULE-051, a P1 Legal sign-off item), one P0 specification factually wrong (RULE-035, corrected CRD-043), and one P0 rule whose validator is dead code (RULE-022 `isValidAbn`, zero callers). 50 of 53 specifications remain unverified. | Frontend Lead / NMI Business Analyst / Backend Team | **Blocks BA and Legal sign-off on P2 items 16, 17, 18, 21** | `docs/change-record/2026-09-02-business-rules-verification.md`; CRD-044 |
+| RULES-REGISTER-001 | Business rules register unreliable for sign-off | High | **PARTIALLY REMEDIATED 2026-09-02 (CRD-045)** - citation rot now guarded by `npm run lint:rules` in CI (`static-quality-node24`); the 3 past-EOF citations and RULE-051's missing section are fixed; summary-table line numbers removed to end the duplication. **STILL OPEN:** 5 missing detail sections, 22 weakly-anchored citations, RULE-022 dead-code question, and 50 unverified specifications. Originally **OPEN 2026-09-02** - verification pass over `analysis/BUSINESS_RULES.md` found 18 of 21 examined citations wrong (5 P0 rules; 3 point past end of file), 6 of 53 rules listed but never defined (including RULE-051, a P1 Legal sign-off item), one P0 specification factually wrong (RULE-035, corrected CRD-043), and one P0 rule whose validator is dead code (RULE-022 `isValidAbn`, zero callers). 50 of 53 specifications remain unverified. | Frontend Lead / NMI Business Analyst / Backend Team | **Blocks BA and Legal sign-off on P2 items 16, 17, 18, 21** | `docs/change-record/2026-09-02-business-rules-verification.md`; CRD-044 |
 
 **SEC-010 detail (CLOSED 2026-06-04):** Backend team confirmed the finding was identified in a pentest prior to go-live and was remediated before production deployment. Checklist ticked; inline comment in `ClientApp/src/routes/dashboard/index.tsx` updated. Full pentest report reference to be added by backend team to `docs/sec/SEC-010-idor-backend-verification.md`. Recorded as CRD-035.
 
@@ -91,6 +91,23 @@ Ordered remediation:
 **Gate impact:** P2 items 16, 17, 18 and 21 all await BA or Legal sign-off against entries in this
 register. Seeking those signatures before steps 1 and 2 risks a repeat of the RULE-035 outcome, where the
 question put to the BA rested on a false premise.
+
+
+**RULES-REGISTER-001 progress (2026-09-02, CRD-045):**
+
+| Done | Detail |
+| --- | --- |
+| CI gate | `scripts/verify-rule-citations.mjs`, wired as `npm run lint:rules` into the `static-quality-node24` job. Fails on citations that are provably wrong or unreachable; reports weakly-anchored ones without blocking. Negative-tested: a bad line and a bad filename both fail the build, and `--fix` repairs what it can. |
+| Duplication removed | Summary-table Source column no longer carries line numbers - the file name is stable, the line number is not, and holding it in two places guaranteed drift. The detail section owns the line. |
+| Past-EOF citations | RULE-010, RULE-012, RULE-015 corrected to verified locations. |
+| RULE-051 written | Detail section authored; Legal is no longer being asked to confirm an unstated rule. |
+
+| Still open | Detail |
+| --- | --- |
+| 5 missing sections | RULE-023, RULE-024, RULE-025, RULE-029, RULE-030 - all P2 calculation/display rules, none blocking a sign-off. |
+| 22 weak citations | Reported as UNRESOLVED by the gate each run. These need a human to add a distinctive anchor or confirm the line; auto-derivation refuses to guess between tied candidates. |
+| RULE-022 | `isValidAbn` has zero callers. Needs a Backend Team answer on server-side enforcement. |
+| 50 specifications | Unverified against code. |
 
 **COVERAGE-SCOPE-001 detail (OPEN 2026-09-02):** Raised by `/orchestrate morning` under the backlog
 intake rule — an unresolved finding must become a backlog item immediately rather than living only in a

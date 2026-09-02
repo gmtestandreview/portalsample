@@ -30,6 +30,8 @@ backlog is `docs/change-record/OPEN-ITEMS-BACKLOG.md`).
 - [x] **TASK-004**: P2 item 18 — RULE-042 annotation <!-- COMPLETE — operator supplied analysis/BUSINESS_RULES.md; RULE-042 annotated; RULE-035 register defect found and corrected; CRD-043 -->
 - [x] **TASK-005**: `.gitignore` — ignore A Team runtime output <!-- COMPLETE — .agent-sync/logs/ + scripts/__pycache__/; verified via git check-ignore -->
 - [x] **TASK-006**: Verification pass over all 53 business rules <!-- COMPLETE — DEC-002 approved; 18/21 citations miscited, 6 rules undefined, RULE-022 dead code, RULE-042 double-implemented; RULES-REGISTER-001 opened; CRD-044 -->
+- [x] **TASK-007**: CI gate for business-rule citations <!-- COMPLETE - scripts/verify-rule-citations.mjs, npm run lint:rules, wired into pr.yml static-quality-node24; negative-tested; CRD-045 -->
+- [x] **TASK-008**: Write RULE-051 (unblock Legal) <!-- COMPLETE - detail section authored; suburb discrepancy found between production and Storybook fixture; CRD-045 -->
 
 ### TASK-006 — Business rules register verification (operator-requested, DEC-002)
 

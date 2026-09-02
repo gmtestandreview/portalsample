@@ -2,9 +2,11 @@
 
 **Purpose:** Single authoritative chronological log of every change made to the NMI Portal codebase during migration preparation. Every migration batch decision is traceable to an entry here.
 **Reference:** Migration preparation Phases A–N (2026-05-29 to 2026-05-31), Sprint 1 Storybook Quality Remediation, and the 2026-06-28 current-tree reconciliation.
-**Last updated:** 2026-09-02 (CRD-044)
+**Last updated:** 2026-09-02 (CRD-045)
 
-**Latest delta (CRD-044):** Verification pass over the business rules register finds the line citations systematically unreliable (18 of 21 examined wrong, 5 P0, 3 past end of file), 6 of 53 rules listed but never defined, and RULE-022's ABN checksum validator dead code with zero callers. Opens `RULES-REGISTER-001`, blocking BA/Legal sign-off on P2 items 16, 17, 18 and 21.
+**Latest delta (CRD-045):** Adds a CI gate (`npm run lint:rules`) that fails the build on business-rule citations which are wrong or unreachable, removes the duplicated line numbers from the summary table, corrects the three past-EOF citations, and writes the missing RULE-051 section - unblocking Legal on P2 item 17, where a suburb discrepancy between the production address and the Storybook fixture was also found.
+
+**Prior delta (CRD-044):** Verification pass over the business rules register finds the line citations systematically unreliable (18 of 21 examined wrong, 5 P0, 3 past end of file), 6 of 53 rules listed but never defined, and RULE-022's ABN checksum validator dead code with zero callers. Opens `RULES-REGISTER-001`, blocking BA/Legal sign-off on P2 items 16, 17, 18 and 21.
 
 **Prior delta (CRD-043):** Business rule register reconciliation annotates RULE-042 (number-of-items 1-100) and corrects a factual defect in the RULE-035 entry, which wrongly stated that `&` is excluded from the ASIC business-name charset - proven false by executing the live regex. The P0 SME question built on that premise is void; the residual charset question is restated.
 
@@ -1053,6 +1055,67 @@ No historical item may remain implicit. If the review identifies an item that is
 **Actions outstanding (Design Lead):** SVG source files for 10 active icons; confirm `packages/icons` package vs inline data: URI approach; confirm 3 dead-code variables safe to remove.
 
 **Outcome:** Icon audit is complete. No Batch E blocker found — the icon font can be retired without creating new React SVG components first. BATCH-E-PREREQ-002 is closed pending Design Lead sign-off on SVG sources. Batch E Item 8 prerequisite gate is cleared for planning purposes.
+
+---
+
+### [Business Rules Register Remediation] - 2026-09-02 - CI Citation Gate and RULE-051
+
+**Change ID:** CRD-045
+**Source:** Remediation of `RULES-REGISTER-001`, opened by the CRD-044 verification pass.
+**Status:** COMPLETE for the automated half; the manual half stays open on `RULES-REGISTER-001`
+**Security findings resolved:** None
+
+**1. CI gate - `scripts/verify-rule-citations.mjs`.** Wired as `npm run lint:rules` into the
+`static-quality-node24` job in `pr.yml`, beside type-check and lint.
+
+Each rule's own text supplies the evidence: quoted error strings, Yup method constants and field
+names are mined from the rule block as ANCHORS, filtered to those rare enough in the target file to
+actually locate something, and matched against the cited line. The same derivation drives both the
+check and `--fix`, so the fixer and the gate cannot drift apart.
+
+Two design decisions worth recording, both learned from getting them wrong first:
+
+- **A citation with anchor support near its cited line is never rewritten.** An early build proposed
+  "correcting" RULE-035 and RULE-041 - both already correct. An auto-fixer that damages good data is
+  worse than no fixer, so the cited location is checked for support before any alternative is considered.
+- **Rewrites require a single unambiguous winner.** Tied candidates are reported as UNRESOLVED rather
+  than guessed. 22 citations currently sit there; they are visible on every run and do not fail the build,
+  because a gate nobody can turn green gets disabled.
+
+The script also refuses to report success if it parses fewer than 40 rules. Its first run reported a
+clean "0 citations checked" - the register is CRLF, and in JavaScript `.` excludes ``, so `(.*)$`
+matched no heading at all. A parser that matches nothing is indistinguishable from a clean pass.
+
+**Negative-tested before shipping:** a wrong line number fails the build (exit 1) and `--fix` repairs it;
+a nonexistent filename in the summary table fails the build; the pristine register passes (exit 0).
+
+**2. Duplication removed from the summary table.** The Source column carried a line number that the
+rule's own section also carried. Two copies of a value that rots on every edit above it will disagree,
+which is precisely what CRD-044 found. The table now names the file only; the detail section owns the
+line. 52 rows changed. The gate still validates the table's filenames.
+
+**3. Three past-EOF citations corrected** to verified locations: RULE-010 to `instrumentItem.tsx:254`
+(the action-menu builder), RULE-012 to `quotation/index.tsx:122` (the `declineQuote` handler),
+RULE-015 to `instrumentItem.tsx:296` (the `ReportInProgress` case).
+
+**4. RULE-051 written.** The NMI registered address had a summary row and no detail section, so Legal
+was being asked under P2 item 17 to confirm a rule the register never stated. Now specified with its
+exact rendering and location.
+
+**Finding while writing it:** the address exists twice and the copies disagree.
+`summaryAndAccept.tsx:376-378` renders `36 Bradfield Road / West Lindfield NSW 2070`;
+`storybookFixtures.ts:184` holds `nmiFacilityAddress: '36 Bradfield Road, Lindfield NSW 2070'` -
+**`Lindfield`, not `West Lindfield`**. Same street, different suburb. Either one is wrong, or the
+fixture describes a facility address distinct from the registered address. Referred to Legal alongside
+item 17.
+
+**Gates:** `npm run lint:rules` exit 0 · `npm run type-check` zero diagnostics · `npm run lint` exit 0 ·
+`npx eslint scripts/verify-rule-citations.mjs` clean.
+
+**Still open on `RULES-REGISTER-001`:** 5 missing detail sections (RULE-023/024/025/029/030, all P2),
+22 weakly-anchored citations, the RULE-022 dead-code question for the Backend Team, and 50 unverified
+specifications.
+
 
 ---
 

@@ -36,61 +36,68 @@
 
 ## Summary Table
 
+> **The Source column names the file only — the precise line lives in each rule's own section.**
+> Changed 2026-09-02 (CRD-045). Carrying line numbers in two places doubled the surface that rots and
+> guaranteed the two would disagree, which is exactly what the CRD-044 audit found. The file name is
+> stable; the line number is not, so only one place owns it. Both are checked by
+> `npm run lint:rules`, which runs in CI.
+
+
 | ID | Name | Category | Priority | Source | Confidence |
 |---|---|---|---|---|---|
-| RULE-001 | Account creation gate | Lifecycle | P0 | `PreConditions.tsx:64` | High |
-| RULE-002 | Contact creation gate | Lifecycle | P0 | `PreConditions.tsx:69` | High |
-| RULE-003 | Post-onboarding redirect | Lifecycle | P1 | `PreConditions.tsx:75` | High |
-| RULE-004 | Terms of Use version gate | Lifecycle | P0 | `AccountProvider.tsx:25`, `terms-config.json` | High |
-| RULE-005 | Branch selection gate | Lifecycle | P0 | `PreConditions.tsx:84` | High |
-| RULE-006 | Quote status lifecycle (12 states) | Lifecycle | P0 | `enums.ts:1`, `quoteStatus.ts` | High |
-| RULE-007 | Status → document mapping | Lifecycle | P0 | `helperFunctions.ts:26` | High |
-| RULE-008 | PDF page number by status | Lifecycle | P1 | `helperFunctions.ts:123` | Medium |
-| RULE-009 | Proceed/decline button eligibility | Lifecycle | P1 | `quoteStatus.ts:14`, `quotation/index.tsx:124` | High |
-| RULE-010 | Dashboard action menu by status | Lifecycle | P0 | `requestItem.tsx:394`, `instrumentItem.tsx:448` | High |
-| RULE-011 | Optimistic UI status override | Lifecycle | P1 | `dashboard/index.tsx:176` | High |
-| RULE-012 | Decline is irreversible | Policy | P0 | `quotation/index.tsx:398` | High |
-| RULE-013 | RFQ submission is irreversible | Policy | P0 | `requestForQuote/index.tsx:83` | High |
-| RULE-014 | Quote acceptance is irreversible | Policy | P0 | `acceptQuote/index.tsx:42` | High |
-| RULE-015 | Recalibration eligibility by status | Lifecycle | P1 | `requestItem.tsx:454`, `instrumentItem.tsx:469` | High |
-| RULE-016 | Dashboard item suppression | Lifecycle | P1 | `requestItem.tsx:492` | High |
-| RULE-017 | Payment terms: Prepaid vs 30-day | Policy | P0 | `paymentDetails.tsx:86`, `submittedSuccess.tsx:50` | High |
-| RULE-018 | Draft-save capability per wizard | Policy | P1 | `requestForQuote/index.tsx:79`, `acceptQuote/index.tsx:39` | High |
-| RULE-019 | Report link hidden for Withdrawn | Lifecycle | P1 | `reportList.tsx:95`, `instrumentItem.tsx:362` | High |
-| RULE-020 | Artefact heading display rule | Lifecycle | P2 | `quoteStatus.ts:35`, `requestItem.tsx:371` | High |
-| RULE-021 | View-quotation URL selection | Lifecycle | P1 | `quoteStatus.ts:24`, `requestItem.tsx:152` | High |
-| RULE-022 | ABN checksum algorithm | Calculation | P0 | `common.ts:133` | High |
-| RULE-023 | Pagination item-range display | Calculation | P2 | `PaginationHeader/index.tsx:11` | High |
-| RULE-024 | Responsive pagination button count | Calculation | P2 | `useVisiblePageRange.tsx:10` | High |
-| RULE-025 | Pagination window-centering | Calculation | P2 | `Pagination/index.tsx:27` | High |
-| RULE-026 | AUD currency formatting | Calculation | P1 | `utils/index.ts:248` | High |
-| RULE-027 | Date parsing dispatch | Calculation | P1 | `utils/index.ts:77` | High |
-| RULE-028 | Reporting period abbreviation | Calculation | P2 | `utils/index.ts:197` | High |
-| RULE-029 | Phone auto-format selection | Calculation | P2 | `NumberInput/index.tsx:57` | High |
-| RULE-030 | ABN display mask | Calculation | P2 | `accountDetails.tsx:25` | High |
-| RULE-031 | Australian postcode range | Validation | P1 | `stringExtensions.ts:349` | High |
-| RULE-032 | Phone number format (AU) | Validation | P1 | `stringExtensions.ts:426` | High |
-| RULE-033 | Email address format | Validation | P1 | `stringExtensions.ts:467` | High |
-| RULE-034 | Name charset (no accented chars) | Validation | P1 | `stringExtensions.ts:644` | High |
-| RULE-035 | Business name charset (ASIC) | Validation | P0 | `stringExtensions.ts:678` | Medium |
-| RULE-036 | No consecutive identical chars | Validation | P1 | `stringExtensions.ts:568` | High |
-| RULE-037 | No consecutive punctuation | Validation | P1 | `stringExtensions.ts:502` | High |
-| RULE-038 | At-least-one phone number | Validation | P1 | `contactValidation.ts:42` | High |
-| RULE-039 | RFQ multi-branch confirmation | Validation | P1 | `requestForQuote/validation.ts:23` | High |
-| RULE-040 | Acceptance T&C checkbox | Validation | P0 | `acceptQuote/validation.ts:136` | High |
-| RULE-041 | Preferred date not in the past | Validation | P1 | `requestForQuote/validation.ts:123` | High |
-| RULE-042 | Number of items range (1–100) | Validation | P1 | `requestForQuote/validation.ts:91-96` *(annotated 2026-09-02, CRD-043)* | High |
-| RULE-043 | Carrier details when client ships | Validation | P1 | `acceptQuote/validation.ts:47` | High |
-| RULE-044 | Invoice contact for different person | Validation | P1 | `acceptQuote/validation.ts:114` | High |
-| RULE-045 | Date format DD/MM/YYYY, ceil 9999 | Validation | P1 | `common.ts:65` | High |
-| RULE-046 | isFutureDate strict vs today-ok | Validation | P1 | `common.ts:91` | Medium |
+| RULE-001 | Account creation gate | Lifecycle | P0 | `PreConditions.tsx` | High |
+| RULE-002 | Contact creation gate | Lifecycle | P0 | `PreConditions.tsx` | High |
+| RULE-003 | Post-onboarding redirect | Lifecycle | P1 | `PreConditions.tsx` | High |
+| RULE-004 | Terms of Use version gate | Lifecycle | P0 | `AccountProvider.tsx`, `terms-config.json` | High |
+| RULE-005 | Branch selection gate | Lifecycle | P0 | `PreConditions.tsx` | High |
+| RULE-006 | Quote status lifecycle (12 states) | Lifecycle | P0 | `enums.ts`, `quoteStatus.ts` | High |
+| RULE-007 | Status → document mapping | Lifecycle | P0 | `helperFunctions.ts` | High |
+| RULE-008 | PDF page number by status | Lifecycle | P1 | `helperFunctions.ts` | Medium |
+| RULE-009 | Proceed/decline button eligibility | Lifecycle | P1 | `quoteStatus.ts`, `quotation/index.tsx` | High |
+| RULE-010 | Dashboard action menu by status | Lifecycle | P0 | `requestItem.tsx`, `instrumentItem.tsx` *(corrected CRD-045)* | High |
+| RULE-011 | Optimistic UI status override | Lifecycle | P1 | `dashboard/index.tsx` | High |
+| RULE-012 | Decline is irreversible | Policy | P0 | `quotation/index.tsx` *(corrected CRD-045)* | High |
+| RULE-013 | RFQ submission is irreversible | Policy | P0 | `requestForQuote/index.tsx` | High |
+| RULE-014 | Quote acceptance is irreversible | Policy | P0 | `acceptQuote/index.tsx` | High |
+| RULE-015 | Recalibration eligibility by status | Lifecycle | P1 | `requestItem.tsx`, `instrumentItem.tsx` *(corrected CRD-045)* | High |
+| RULE-016 | Dashboard item suppression | Lifecycle | P1 | `requestItem.tsx` | High |
+| RULE-017 | Payment terms: Prepaid vs 30-day | Policy | P0 | `paymentDetails.tsx`, `submittedSuccess.tsx` | High |
+| RULE-018 | Draft-save capability per wizard | Policy | P1 | `requestForQuote/index.tsx`, `acceptQuote/index.tsx` | High |
+| RULE-019 | Report link hidden for Withdrawn | Lifecycle | P1 | `reportList.tsx`, `instrumentItem.tsx` | High |
+| RULE-020 | Artefact heading display rule | Lifecycle | P2 | `quoteStatus.ts`, `requestItem.tsx` | High |
+| RULE-021 | View-quotation URL selection | Lifecycle | P1 | `quoteStatus.ts`, `requestItem.tsx` | High |
+| RULE-022 | ABN checksum algorithm | Calculation | P0 | `common.ts` | High |
+| RULE-023 | Pagination item-range display | Calculation | P2 | `PaginationHeader/index.tsx` | High |
+| RULE-024 | Responsive pagination button count | Calculation | P2 | `useVisiblePageRange.tsx` | High |
+| RULE-025 | Pagination window-centering | Calculation | P2 | `Pagination/index.tsx` | High |
+| RULE-026 | AUD currency formatting | Calculation | P1 | `utils/index.ts` | High |
+| RULE-027 | Date parsing dispatch | Calculation | P1 | `utils/index.ts` | High |
+| RULE-028 | Reporting period abbreviation | Calculation | P2 | `utils/index.ts` | High |
+| RULE-029 | Phone auto-format selection | Calculation | P2 | `NumberInput/index.tsx` | High |
+| RULE-030 | ABN display mask | Calculation | P2 | `accountDetails.tsx` | High |
+| RULE-031 | Australian postcode range | Validation | P1 | `stringExtensions.ts` | High |
+| RULE-032 | Phone number format (AU) | Validation | P1 | `stringExtensions.ts` | High |
+| RULE-033 | Email address format | Validation | P1 | `stringExtensions.ts` | High |
+| RULE-034 | Name charset (no accented chars) | Validation | P1 | `stringExtensions.ts` | High |
+| RULE-035 | Business name charset (ASIC) | Validation | P0 | `stringExtensions.ts` | Medium |
+| RULE-036 | No consecutive identical chars | Validation | P1 | `stringExtensions.ts` | High |
+| RULE-037 | No consecutive punctuation | Validation | P1 | `stringExtensions.ts` | High |
+| RULE-038 | At-least-one phone number | Validation | P1 | `contactValidation.ts` | High |
+| RULE-039 | RFQ multi-branch confirmation | Validation | P1 | `requestForQuote/validation.ts` | High |
+| RULE-040 | Acceptance T&C checkbox | Validation | P0 | `acceptQuote/validation.ts` | High |
+| RULE-041 | Preferred date not in the past | Validation | P1 | `requestForQuote/validation.ts` | High |
+| RULE-042 | Number of items range (1–100) | Validation | P1 | `requestForQuote/validation.ts` *(annotated 2026-09-02, CRD-043)* | High |
+| RULE-043 | Carrier details when client ships | Validation | P1 | `acceptQuote/validation.ts` | High |
+| RULE-044 | Invoice contact for different person | Validation | P1 | `acceptQuote/validation.ts` | High |
+| RULE-045 | Date format DD/MM/YYYY, ceil 9999 | Validation | P1 | `common.ts` | High |
+| RULE-046 | isFutureDate strict vs today-ok | Validation | P1 | `common.ts` | Medium |
 | RULE-047 | Field character limits catalogue | Validation | P1 | multiple | High |
-| RULE-048 | Website URL format | Validation | P2 | `common.ts:111` | High |
-| RULE-049 | Postal address same-as-street | Validation | P1 | `account/validation.ts:25` | High |
-| RULE-050 | NMI ABN hardcoded | Policy | P0 | `summaryAndAccept.tsx:374` *(corrected CRD-044)* | High |
-| RULE-051 | NMI address hardcoded | Policy | P1 | `summaryAndAccept.tsx:376` *(corrected CRD-044)* | **NO DETAIL SECTION — see CRD-044** |
-| RULE-052 | Terms version config | Policy | P0 | `terms-config.json:1` | High |
-| RULE-053 | Dashboard/report page size | Policy | P2 | `dashboard/index.tsx:51` | High |
+| RULE-048 | Website URL format | Validation | P2 | `common.ts` | High |
+| RULE-049 | Postal address same-as-street | Validation | P1 | `account/validation.ts` | High |
+| RULE-050 | NMI ABN hardcoded | Policy | P0 | `summaryAndAccept.tsx` *(corrected CRD-044)* | High |
+| RULE-051 | NMI address hardcoded | Policy | P1 | `summaryAndAccept.tsx` *(corrected CRD-044)* | High *(detail section written CRD-045)* |
+| RULE-052 | Terms version config | Policy | P0 | `terms-config.json` | High |
+| RULE-053 | Dashboard/report page size | Policy | P2 | `dashboard/index.tsx` | High |
 
 ---
 
@@ -304,7 +311,7 @@ Then   show: "Back to dashboard" only
 ### RULE-010: Dashboard Action Menu by Status
 **Category:** Lifecycle
 **Priority:** P0
-**Source:** `ClientApp/src/components/RequestList/requestItem.tsx:394-478`, `ClientApp/src/components/RequestList/instrumentItem.tsx:448-510`
+**Source:** `ClientApp/src/components/RequestList/requestItem.tsx:394-478`, `ClientApp/src/components/RequestList/instrumentItem.tsx:254-310` *(corrected 2026-09-02, CRD-045 - previous citation was past end of file)*
 **Plain English:** Each dashboard card exposes a specific subset of actions depending on the record's status. This is the master gating table for all customer-initiated workflow actions.
 **Specification:**
 ```
@@ -373,7 +380,7 @@ Then   override quoteData.quoteRequestStatus → QuoteAccepted
 ### RULE-012: Decline is Irreversible
 **Category:** Policy
 **Priority:** P0
-**Source:** `ClientApp/src/routes/quotation/index.tsx:398-400`
+**Source:** `ClientApp/src/routes/quotation/index.tsx:122-142` *(corrected 2026-09-02, CRD-045 - previous citation was past end of file)* - the `declineQuote` handler
 **Plain English:** Declining a quotation permanently ends that quote opportunity; the action cannot be undone from the portal.
 **Specification:**
 ```
@@ -425,7 +432,7 @@ Then   status transitions to QuoteAccepted (optimistically shown immediately)
 ### RULE-015: Recalibration Request Eligibility
 **Category:** Lifecycle
 **Priority:** P1
-**Source:** `ClientApp/src/components/RequestList/requestItem.tsx:454-469`, `instrumentItem.tsx:469-498`
+**Source:** `ClientApp/src/components/RequestList/requestItem.tsx:454-469`, `ClientApp/src/components/RequestList/instrumentItem.tsx:296-301` *(corrected 2026-09-02, CRD-045 - previous citation was past end of file)*
 **Plain English:** A customer can copy a completed or withdrawn RFQ as a recalibration request only when the original has reached specific end states.
 **Specification:**
 ```
@@ -1093,6 +1100,60 @@ Any change to NMI's registered ABN or address requires a code deployment.
 ```
 **Parameters:** Both values are string literals in `summaryAndAccept.tsx:374-380` *(corrected 2026-09-02, CRD-044)*
 **Confidence:** High
+
+---
+
+### RULE-051: NMI Registered Address Hardcoded in Contract Display
+
+**Category:** Policy
+**Priority:** P1
+**Source:** `ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:376-380`
+**Plain English:** The National Measurement Institute's registered postal address is hardcoded as
+literal JSX in the quote acceptance summary, immediately below the ABN (RULE-050), and is presented
+to the customer as part of the contract they are accepting.
+
+*Written 2026-09-02 (CRD-045). This rule was listed in the summary table but had no detail section,
+so Legal was being asked to confirm a rule the register never stated. See `RULES-REGISTER-001`.*
+
+**Specification:**
+```
+Rendered verbatim in the accept-quote summary, one <span> per line:
+
+  National Measurement Institute        (line 372)
+  ABN 74 599 608 295                    (line 374 - RULE-050)
+  36 Bradfield Road                     (line 376)
+  West Lindfield NSW 2070               (line 378)
+  Australia                             (line 380)
+
+No conditional logic, no environment lookup, no API call. The value is identical for every user,
+every organisation and every environment, including production.
+```
+
+**Parameters:**
+
+- Street: `36 Bradfield Road` (string literal)
+- Locality/state/postcode: `West Lindfield NSW 2070` (string literal)
+- Country: `Australia` (string literal)
+
+**Confidence:** High — the values and their location are verified. What is *unverified* is whether
+they are current, which is Legal's call.
+
+> **Open for Legal — P2 backlog item 17.** Confirm that `36 Bradfield Road, West Lindfield NSW 2070`
+> is NMI's current registered address for contract display. This text appears in a document the
+> customer legally accepts, so a stale address is a contract defect, not a cosmetic one.
+>
+> **Inconsistency found 2026-09-02 (CRD-045) — resolve alongside the above.** A second copy of the
+> address exists at `ClientApp/src/storybook/storybookFixtures.ts:184` as
+> `nmiFacilityAddress: '36 Bradfield Road, Lindfield NSW 2070'` — **`Lindfield`, not `West
+> Lindfield`.** Same street number and road, different suburb. One of the two is wrong, or the
+> fixture deliberately describes a *facility* address distinct from the *registered* address (its
+> field name suggests the latter, but the identical street argues against it). Legal should confirm
+> which suburb is correct; whichever it is, the two should not silently disagree.
+>
+> **Recommendation 2026-06-04 (unchanged):** externalise to `VITE_NMI_ADDRESS` in the target
+> platform rather than re-hardcoding it, so a future address change is a configuration edit and not
+> a code change. Pair with `VITE_NMI_ABN` from RULE-050 — they are displayed together and should
+> move together.
 
 ---
 
