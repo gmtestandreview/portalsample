@@ -27,6 +27,7 @@ import SupportingDocuments from '../supportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import ApplicationMessages from './appMessages';
 import { tokenRequest } from '../../../authentication/authConfig';
+import AppLogger from '../../../instrumentation/AppLogger';
 
 const POLL_MS = 5000;
 
@@ -151,15 +152,24 @@ const ApplicationDetails = () => {
     useEffect(() => {
         const fetchData = async () => {
             setIsDataLoading(true);
-            const result = await loadStepValues();
-            setAppDetails(result.formValues);
-            const appType = result.formValues?.applicationDetails as ApplicationDetailsDto;
-            setApplicationType(appType.patternApprovalType || null);
-            setMessageCount(appType.messageCount || 0);
-            setIsDataLoading(false);
+            try {
+                const result = await loadStepValues();
+                setAppDetails(result.formValues);
+                const appType = result.formValues?.applicationDetails as ApplicationDetailsDto | undefined;
+                setApplicationType(appType?.patternApprovalType || null);
+                setMessageCount(appType?.messageCount || 0);
+            } catch (error) {
+                // Previously unguarded: a rejected load became an unhandled rejection, and because
+                // setIsDataLoading(false) sat only on the success path the page stayed on its
+                // spinner for good. Reading applicationDetails without a guard threw for the same
+                // reason - which is the only way the `|| {}` further down was ever reachable.
+                AppLogger.error('Failed to load application details', error as Error, { Id: id });
+            } finally {
+                setIsDataLoading(false);
+            }
         };
         fetchData();
-    }, [loadStepValues]);
+    }, [id, loadStepValues]);
 
     function routeToMessages() {
         handleTabSelect('messages');
