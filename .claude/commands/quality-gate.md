@@ -23,7 +23,7 @@ Full pre-merge quality check. Runs multiple agents in parallel to validate readi
 - BLOCK: Audit flagged evasion OR any CRITICAL review finding — must fix before merge
 
 **Also verifies:**
-- [ ] Tests passing (80%+ coverage)
+- [ ] Tests passing (100%+ coverage)
 - [ ] Build succeeds
 - [ ] No console.log or debug statements
 - [ ] No hardcoded secrets
