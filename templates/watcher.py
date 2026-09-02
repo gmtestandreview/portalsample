@@ -63,6 +63,47 @@ def log(msg):
     print(line, end="")
 
 
+def pid_is_running(pid):
+    """Return whether a process exists, without sending it a signal on Windows.
+
+    The POSIX idiom for this is `os.kill(pid, 0)`, and it is WRONG on Windows:
+    there is no signal-0 semantics there, so os.kill opens the target and calls
+    TerminateProcess for any signal value. Used as a liveness probe it kills the
+    very process it is asking about, then reports it alive because nothing was
+    raised — so a second watcher would terminate the running one and then exit
+    itself, leaving none. Query an access-limited handle instead.
+
+    Kept inline rather than imported: this file is copied to .agent-sync/ on its
+    own (see SETUP above), so it must have no local imports. The maintained twin
+    is scripts/process_utils.py — change both, and tests/hooks/test_watcher_pid.py
+    fails if they drift apart.
+    """
+    if os.name == "nt":
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+        kernel32.OpenProcess.argtypes = [wintypes.DWORD, wintypes.BOOL, wintypes.DWORD]
+        kernel32.OpenProcess.restype = wintypes.HANDLE
+        kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
+        kernel32.CloseHandle.restype = wintypes.BOOL
+
+        process_query_limited_information = 0x1000
+        handle = kernel32.OpenProcess(process_query_limited_information, False, pid)
+        if handle:
+            kernel32.CloseHandle(handle)
+            return True
+        return ctypes.get_last_error() == 5  # Access denied means it exists.
+
+    try:
+        os.kill(pid, 0)
+        return True
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+
+
 def is_already_running():
     if not PID_FILE.exists():
         return False
@@ -70,9 +111,11 @@ def is_already_running():
         pid = int(PID_FILE.read_text().strip())
         if pid == os.getpid():
             return False
-        os.kill(pid, 0)
-        return True
-    except (ProcessLookupError, PermissionError, ValueError, OSError):
+        if pid_is_running(pid):
+            return True
+        PID_FILE.unlink(missing_ok=True)
+        return False
+    except (ValueError, OSError):
         PID_FILE.unlink(missing_ok=True)
         return False
 

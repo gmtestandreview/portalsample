@@ -60,6 +60,28 @@ jobs:
       - name: Verify business rule citations
         run: npm run lint:rules 2>&1 | tee reports/ci/static-quality/lint-rules.log
 
+      # The agent-orchestration scripts under scripts/ and templates/ had no
+      # automated verification of any kind - not even a syntax check - despite
+      # gating real behaviour: a PreToolUse security hook, a background watcher
+      # that shells out and writes files, and the statusline command. compileall
+      # is the cheap floor; the two suites below cover behaviour.
+      - name: Python tooling syntax
+        run: python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee reports/ci/static-quality/python-compile.log
+
+      # Exercises scripts/pre_tool_use.py the way Claude Code invokes it - a JSON
+      # tool call on stdin, an exit code out - across both what must be blocked
+      # and the ordinary commands that must still be allowed. A guard that blocks
+      # real work gets switched off, so the false-positive half is load-bearing.
+      - name: Hook guard behaviour
+        run: python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee reports/ci/static-quality/hook-guard.log
+
+      # os.kill(pid, 0) is the POSIX liveness idiom and is destructive on Windows,
+      # where it terminates the process it is probing. scripts/watcher.py was
+      # fixed; the templates/ copy that ships downstream was not. This keeps the
+      # two from drifting apart again.
+      - name: Watcher pid handling
+        run: python3 tests/hooks/test_watcher_pid.py 2>&1 | tee reports/ci/static-quality/watcher-pid.log
+
       - name: Upload static quality logs
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0

@@ -99,9 +99,13 @@ test_output.txt
 .scannerwork/
 
 # A Team runtime output. `.agent-sync/logs/` is written by the SessionStart
-# watcher and the Stop metrics/export hooks; `scripts/__pycache__/` is bytecode
-# for the plugin's Python scripts. Both are per-machine and regenerate on every
-# session. The orchestrator's actual state - TEAM.md, ROUTING.md, DAILY.md and
-# the pruned/ restore copies - IS tracked and must stay so.
+# watcher and the Stop metrics/export hooks; `__pycache__/` is bytecode for the
+# plugin's Python scripts. Both are per-machine and regenerate on every session.
+# The orchestrator's actual state - TEAM.md, ROUTING.md, DAILY.md and the
+# pruned/ restore copies - IS tracked and must stay so.
+#
+# The pattern is unanchored rather than `scripts/__pycache__/`: the CI syntax
+# gate runs `compileall` over scripts/, templates/ AND tests/hooks/, so bytecode
+# now appears in three places, and a fourth would otherwise go unignored.
 .agent-sync/logs/
-scripts/__pycache__/
+__pycache__/
