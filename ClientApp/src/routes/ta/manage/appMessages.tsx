@@ -140,9 +140,9 @@ const ApplicationMessages = () => {
                         setRefreshTick((prev) => prev + 1); // force refetch if already on page 1
                     }}
                 >
-                    <option value='1'>All Messages</option>
-                    <option value='2'>NMI Messages</option>
-                    <option value='3'>Portal Messages</option>
+                    <option value={FilterMessages.ShowAllMessages}>All Messages</option>
+                    <option value={FilterMessages.ShowNmiMessages}>NMI Messages</option>
+                    <option value={FilterMessages.ShowPortalMessages}>Portal Messages</option>
                 </Form.Select>
             </Col>
             <Col className='text-end'>

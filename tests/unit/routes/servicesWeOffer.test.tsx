@@ -181,17 +181,17 @@ describe('services we offer', () => {
             expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
         });
 
-        it('shows no loading state at all while only the token is pending', async () => {
-            // Characterizing current behaviour, not endorsing it. `setIsDataLoading(true)` runs
-            // AFTER `await acquireTokenSilent`, so for the whole token round trip the user sees the
-            // selector with an empty service list and no spinner. Reported rather than changed:
-            // this is a UX gap, not something the coverage work needs to touch.
+        it('shows a loading state while the token is still pending', async () => {
+            // Regression guard. `setIsDataLoading(true)` used to run AFTER
+            // `await acquireTokenSilent`, so for the whole token round trip the user was shown the
+            // selector with an empty service list and no indication anything was happening - which
+            // reads as "this account has no services" rather than "still loading".
             pendingToken();
 
             await renderRoute();
 
             await waitFor(() => expect(msalMocks.acquireTokenSilent).toHaveBeenCalled());
-            expect(screen.queryByText('Loading data...')).not.toBeInTheDocument();
+            expect(screen.getByText('Loading data...')).toBeInTheDocument();
             expect(screen.queryByText('Testing and calibration')).not.toBeInTheDocument();
         });
 

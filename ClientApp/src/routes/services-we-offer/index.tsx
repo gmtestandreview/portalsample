@@ -62,14 +62,18 @@ const ServicesWeOffer = () => {
         const loadServices = async () => {
             try {
                 if (!services.length && accounts.length > 0 && accountDetails && accountDetails.userProfile) {
+                    // Raised before the token round trip, not after it. Acquiring the token is
+                    // itself a network call, and while it was in flight the selector rendered with
+                    // an empty service list and no spinner - which reads as "you have no services"
+                    // rather than "still loading".
+                    setIsLoading(true);
+                    setIsDataLoading(true);
                     const client = new LookupClient();
                     const tokenResult = await instance.acquireTokenSilent({
                         ...tokenRequest,
                         account: accounts[0],
                     });
                     client.setAuthToken(tokenResult.accessToken);
-                    setIsLoading(true);
-                    setIsDataLoading(true);
                     const serviceDtos = await client.getServices();
                     setServices(serviceDtos);
                     serviceDtos.forEach((service) => {

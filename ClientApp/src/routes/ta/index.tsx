@@ -171,7 +171,7 @@ const ApplicationForTypeApproval = () => {
                 attachmentUrl: x.attachmentUrl,
                 attachmentCategory: x.attachmentCategory,
                 parentTimeStamp: new Date().toDateString(),
-            } as AttachmentDto)) as AttachmentDto[];
+            } as AttachmentDto)) ?? [];
         } catch (e) {
         // handle errors as needed
             const status = (e as any)?.status as number | undefined;

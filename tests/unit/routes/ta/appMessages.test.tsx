@@ -407,32 +407,51 @@ describe('application messages', () => {
             await renderRoute();
             await waitFor(() => expect(screen.getByText('Assessment update')).toBeInTheDocument());
 
-            await user.selectOptions(screen.getByLabelText('Select your view'), '2');
+            await user.selectOptions(
+                screen.getByLabelText('Select your view'),
+                FilterMessages.ShowNmiMessages,
+            );
 
             await waitFor(() => expect(clients.patternApproval.methods.getAppMessages)
-                .toHaveBeenLastCalledWith('APP-1', 10, 1, '2', 'APP-1'));
+                .toHaveBeenLastCalledWith('APP-1', 10, 1, FilterMessages.ShowNmiMessages, 'APP-1'));
         });
 
-        it('sends the select option value, not a FilterMessages member, once the view changes', async () => {
-            // DEFECT, characterized not fixed. The options are valued '1'/'2'/'3' while
-            // FilterMessages members are 'ShowAllMessages'/'ShowNmiMessages'/'ShowPortalMessages'.
-            // `setMessageView(e.target.value as FilterMessages)` casts that mismatch away, so the
-            // first request sends the real member and every request after a filter change sends a
-            // digit the API has no case for. The `as` is doing the lying - the compiler cannot see
-            // it. Two further consequences: the select renders with no option matching its own
-            // initial value, and "All Messages" sends '1' rather than returning to ShowAllMessages.
+        it('only ever sends a real FilterMessages member', async () => {
+            // Regression guard. The options were valued '1'/'2'/'3' while FilterMessages members
+            // are ShowAllMessages/ShowNmiMessages/ShowPortalMessages, and
+            // `e.target.value as FilterMessages` cast the mismatch away - so every request after a
+            // filter change sent a digit the API has no case for. The `as` was doing the lying;
+            // the compiler could not see it. Selecting each option in turn proves the wire value
+            // is always a member.
             const user = userEvent.setup();
             await renderRoute();
             await waitFor(() => expect(screen.getByText('Assessment update')).toBeInTheDocument());
 
-            expect(clients.patternApproval.methods.getAppMessages)
-                .toHaveBeenLastCalledWith('APP-1', 10, 1, FilterMessages.ShowAllMessages, 'APP-1');
+            const select = screen.getByLabelText('Select your view');
+            const members = Object.values(FilterMessages);
 
-            await user.selectOptions(screen.getByLabelText('Select your view'), '1');
+            for (const member of members) {
+                // eslint-disable-next-line no-await-in-loop
+                await user.selectOptions(select, member);
+                // eslint-disable-next-line no-await-in-loop
+                await waitFor(() => expect(clients.patternApproval.methods.getAppMessages)
+                    .toHaveBeenLastCalledWith('APP-1', 10, 1, member, 'APP-1'));
+            }
 
-            await waitFor(() => expect(clients.patternApproval.methods.getAppMessages)
-                .toHaveBeenLastCalledWith('APP-1', 10, 1, '1', 'APP-1'));
-            expect(Object.values(FilterMessages)).not.toContain('1');
+            for (const call of clients.patternApproval.methods.getAppMessages.mock.calls) {
+                expect(members).toContain(call[3]);
+            }
+        });
+
+        it('starts on a view the select can actually show', async () => {
+            // The initial state is ShowAllMessages. While the options were valued '1'/'2'/'3' no
+            // option matched it, so the control displayed a selection the component did not hold.
+            await renderRoute();
+            await waitFor(() => expect(screen.getByText('Assessment update')).toBeInTheDocument());
+
+            expect(screen.getByLabelText('Select your view')).toHaveValue(
+                FilterMessages.ShowAllMessages,
+            );
         });
 
         it('fetches the requested page and scrolls back to the heading', async () => {

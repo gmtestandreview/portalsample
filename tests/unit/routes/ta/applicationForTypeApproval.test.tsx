@@ -250,10 +250,10 @@ describe('application for type approval', () => {
             });
         });
 
-        it('returns undefined rather than an empty list when the response carries no form', async () => {
-            // Characterizing a latent defect, not endorsing it. `documents?.map(...)` is cast to
-            // AttachmentDto[], so a response without a form resolves to undefined while the
-            // signature promises an array. Any caller doing `.length` on the result throws.
+        it('returns an empty list when the response carries no form', async () => {
+            // Regression guard. `documents?.map(...)` was cast to AttachmentDto[], so a response
+            // without a form resolved to undefined while the signature promised an array - any
+            // caller doing `.length` on the result threw.
             await renderLoadedWizard();
             clients.patternApproval.methods.addDocuments.mockResolvedValue({ uploadId: 'upload-3' });
 
@@ -262,7 +262,22 @@ describe('application for type approval', () => {
                 attachments = await documentsStep.props.onUploadAttachment('token', []);
             });
 
-            expect(attachments).toBeUndefined();
+            expect(attachments).toEqual([]);
+        });
+
+        it('returns an empty list when the form carries no documents', async () => {
+            await renderLoadedWizard();
+            clients.patternApproval.methods.addDocuments.mockResolvedValue({
+                uploadId: 'upload-4',
+                form: {},
+            });
+
+            let attachments: AttachmentDto[] | undefined;
+            await act(async () => {
+                attachments = await documentsStep.props.onUploadAttachment('token', []);
+            });
+
+            expect(attachments).toEqual([]);
         });
 
         it('reports a blocked upload distinctly from a generic failure', async () => {
