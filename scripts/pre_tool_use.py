@@ -10,7 +10,14 @@ import sys
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Destructive command patterns — POSIX and Windows
+# Tools that carry a shell command. PowerShell is the primary shell on Windows
+# hosts, so guarding only Bash leaves the main execution path uninspected.
+# ---------------------------------------------------------------------------
+
+_COMMAND_TOOLS = ("Bash", "PowerShell")
+
+# ---------------------------------------------------------------------------
+# Destructive command patterns — POSIX, Windows and PowerShell
 # ---------------------------------------------------------------------------
 
 _RM_POSIX = [
@@ -29,6 +36,24 @@ _RM_WINDOWS = [
     r"\bformat\s+[a-zA-Z]:",           # format c:
 ]
 
+# PowerShell removal takes cmdlet form rather than POSIX switches, and accepts
+# any unambiguous prefix of a parameter name (-Recurse / -Rec / -R, -Force / -F).
+# `del`, `rd`, `rmdir`, `ri` and `rm` are all aliases of Remove-Item there, so
+# the switch spelling — not the verb — is what distinguishes these from the
+# CMD forms already covered by _RM_WINDOWS. The `[^|;]*` spans keep a match
+# inside one pipeline segment, so a later unrelated command cannot supply the
+# second switch.
+_PS_REMOVE = r"(?:remove-item|ri|rmdir|rd|del|erase|rm)"
+_PS_RECURSE = r"-r(?:ec(?:urse)?)?\b"
+_PS_FORCE = r"-f(?:o(?:rce)?)?\b"
+
+_RM_POWERSHELL = [
+    rf"\b{_PS_REMOVE}\b[^|;]*{_PS_RECURSE}[^|;]*{_PS_FORCE}",
+    rf"\b{_PS_REMOVE}\b[^|;]*{_PS_FORCE}[^|;]*{_PS_RECURSE}",
+    r"\bformat-volume\b",
+    r"\bclear-disk\b",
+]
+
 _DANGEROUS_PATHS_RE = re.compile(
     r"(?:/\*?$|~/?|\\*\.?\*|"
     r"\$HOME|/\s*$|^\s*/[^/\s]*\s*/?\s*$)"
@@ -36,6 +61,7 @@ _DANGEROUS_PATHS_RE = re.compile(
 
 _POSIX_PATTERNS = [re.compile(p) for p in _RM_POSIX]
 _WINDOWS_PATTERNS = [re.compile(p, re.IGNORECASE) for p in _RM_WINDOWS]
+_POWERSHELL_PATTERNS = [re.compile(p) for p in _RM_POWERSHELL]
 
 
 def _is_destructive(command: str) -> bool:
@@ -54,6 +80,11 @@ def _is_destructive(command: str) -> bool:
         if pat.search(command):
             return True
 
+    # PowerShell patterns are written lowercase and matched against `normalized`.
+    for pat in _POWERSHELL_PATTERNS:
+        if pat.search(normalized):
+            return True
+
     return False
 
 
@@ -69,17 +100,42 @@ _ENV_BASH_PATTERNS = [
     re.compile(r"(?:cp|mv|touch)\s+.*\.env\b"),
 ]
 
+# PowerShell equivalents of the read/write/copy verbs above, including aliases.
+_ENV_PS_PATTERNS = [
+    re.compile(r"(?:get-content|gc|type|select-string|sls)\s+[^|;]*\.env\b", re.IGNORECASE),
+    re.compile(r"(?:set-content|add-content|out-file)\s+[^|;]*\.env\b", re.IGNORECASE),
+    re.compile(r"(?:copy-item|move-item|cpi|mi)\s+[^|;]*\.env\b", re.IGNORECASE),
+]
+
+_ENV_COMMAND_PATTERNS = _ENV_BASH_PATTERNS + _ENV_PS_PATTERNS
+
+# Which input fields name a file, per tool. Search tools reach file *contents*
+# without ever supplying a file_path, so omitting them let `.env` be read in
+# full through Grep. Note Grep's own `pattern` is deliberately absent: it is
+# what is searched FOR, not what is searched IN, and grepping the source for
+# the text ".env" is legitimate work. Glob's `pattern` IS the file selector,
+# so there it is inspected.
+_ENV_PATH_FIELDS = {
+    "Read": ("file_path",),
+    "Edit": ("file_path",),
+    "MultiEdit": ("file_path",),
+    "Write": ("file_path",),
+    "NotebookEdit": ("notebook_path",),
+    "Grep": ("path", "glob"),
+    "Glob": ("pattern", "path"),
+}
+
 
 def _is_env_access(tool_name: str, tool_input: dict) -> bool:
-    if tool_name in ("Read", "Edit", "MultiEdit", "Write"):
-        path = tool_input.get("file_path", "")
-        if ".env" in path and not any(path.endswith(s) for s in _ENV_SAFE_SUFFIXES):
+    for field in _ENV_PATH_FIELDS.get(tool_name, ()):
+        value = tool_input.get(field) or ""
+        if ".env" in value and not any(value.endswith(s) for s in _ENV_SAFE_SUFFIXES):
             return True
 
-    if tool_name == "Bash":
+    if tool_name in _COMMAND_TOOLS:
         cmd = tool_input.get("command", "")
         if ".env" in cmd and not any(s in cmd for s in _ENV_SAFE_SUFFIXES):
-            for pat in _ENV_BASH_PATTERNS:
+            for pat in _ENV_COMMAND_PATTERNS:
                 if pat.search(cmd):
                     return True
 
@@ -125,7 +181,7 @@ def main() -> None:
         print("Usa .env.sample para templates.", file=sys.stderr)
         sys.exit(2)
 
-    if tool_name == "Bash":
+    if tool_name in _COMMAND_TOOLS:
         cmd = tool_input.get("command", "")
         if _is_destructive(cmd):
             print("BLOQUEADO: comando destrutivo detectado e cancelado.", file=sys.stderr)

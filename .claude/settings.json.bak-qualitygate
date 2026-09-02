@@ -1,0 +1,183 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const p=require\\('./package.json'\\);console.log\\(JSON.stringify\\(p.prettier||'none'\\)\\)\")",
+      "Bash(awk '/interface BaseCoverageOptions/,/^}/' node_modules/vitest/dist/chunks/reporters.d.DtoKVV2s.d.ts)",
+      "Bash(git check-ignore *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git commit -q -m ' *)",
+      "Bash(npm run lint)",
+      "Bash(npm run lint:mdx)",
+      "Bash(npm run type-check)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "mcp__plugin_sonatype-guide_sonatype-guide__getComponentVersion",
+
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit -m *)",
+      "Bash(git branch*)",
+      "Bash(git checkout *)",
+      "Bash(git stash*)",
+      "Bash(git fetch*)",
+      "Bash(git pull*)",
+      "Bash(git worktree *)",
+
+      "Bash(npm ci)",
+      "Bash(npm run *)",
+      "Bash(npm test*)",
+      "Bash(npm audit *)",
+      "Bash(node *)",
+      "Bash(npx tsc *)",
+      "Bash(npx tsx *)",
+      "Bash(npx vitest *)",
+      "Bash(npx playwright *)",
+      "Bash(npx eslint *)",
+      "Bash(npx knip*)",
+      "Bash(npx depcheck*)",
+      "Bash(npx ts-prune*)",
+
+      "Bash(python scripts/*)",
+      "Bash(python3 scripts/*)",
+
+      "Bash(gh pr *)",
+      "Bash(gh issue *)",
+
+      "Bash(ls *)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(agent-browser *)",
+
+      "Read(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Edit(*)",
+      "Write(*)",
+      "Agent(*)",
+
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:developer.mozilla.org)",
+
+      "Skill(using-a-team)",
+      "Skill(using-a-team:*)",
+      "Skill(verification-before-completion)",
+      "Skill(verification-before-completion:*)",
+      "Skill(systematic-debugging)",
+      "Skill(systematic-debugging:*)",
+      "Skill(subagent-driven-development)",
+      "Skill(subagent-driven-development:*)",
+      "Skill(brainstorming)",
+      "Skill(brainstorming:*)",
+      "Skill(executing-plans)",
+      "Skill(executing-plans:*)",
+      "Skill(writing-plans)",
+      "Skill(writing-plans:*)",
+      "Skill(dispatching-parallel-agents)",
+      "Skill(dispatching-parallel-agents:*)",
+      "Skill(finishing-a-development-branch)",
+      "Skill(finishing-a-development-branch:*)",
+      "Skill(using-git-worktrees)",
+      "Skill(using-git-worktrees:*)",
+      "Skill(test-driven-development)",
+      "Skill(test-driven-development:*)",
+      "Skill(writing-skills)",
+      "Skill(writing-skills:*)",
+      "Skill(api-contract-first)",
+      "Skill(api-contract-first:*)",
+      "Skill(incident-response)",
+      "Skill(incident-response:*)",
+      "Skill(performance-audit)",
+      "Skill(performance-audit:*)",
+      "Skill(architecture-audit)",
+      "Skill(architecture-audit:*)",
+      "Skill(five-whys)",
+      "Skill(five-whys:*)",
+      "Skill(skill-duplication-audit)",
+      "Skill(skill-duplication-audit:*)",
+      "Skill(smart-init)",
+      "Skill(smart-init:*)"
+    ],
+    "deny": [
+      "Edit(ClientApp/src/api/web-api-client.ts)",
+      "Write(ClientApp/src/api/web-api-client.ts)",
+      "Edit(ClientApp/src/main.*.js)",
+      "Write(ClientApp/src/main.*.js)",
+      "Edit(ClientApp/css/main.*.css)",
+      "Write(ClientApp/css/main.*.css)",
+      "Edit(ClientApp/src/external/**)",
+      "Write(ClientApp/src/external/**)",
+      "Edit(ClientApp/src/parent/**)",
+      "Write(ClientApp/src/parent/**)",
+      "Edit(ClientApp/webpack/**)",
+      "Write(ClientApp/webpack/**)",
+      "Edit(ClientApp/source-map-http-downloads/**)",
+      "Write(ClientApp/source-map-http-downloads/**)",
+      "Edit(dist/**)",
+      "Write(dist/**)",
+      "Edit(storybook-static/**)",
+      "Write(storybook-static/**)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "python scripts/status.py 2>/dev/null || python3 scripts/status.py 2>/dev/null || py scripts/status.py 2>/dev/null || echo '⚡ A Team'"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if test -f scripts/pre_tool_use.py; then python scripts/pre_tool_use.py 2>/dev/null || python3 scripts/pre_tool_use.py 2>/dev/null; else echo '[A Team] WARNING: security gate inactive (scripts/pre_tool_use.py missing — re-run installer)'; fi"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"skills/using-a-team/SKILL.md\" 2>/dev/null || cat \"hooks/session-start.md\" 2>/dev/null || echo '[A Team] Session started. Run /orchestrate init if INIT.md and .agent-sync/TEAM.md are missing.'"
+          },
+          {
+            "type": "command",
+            "command": "for f in scripts/pre_tool_use.py scripts/watcher.py scripts/status.py scripts/metrics.py scripts/session_export.py; do test -f \"$f\" || echo \"[A Team] WARNING: $f not found — enforcement inactive. Re-run the installer.\"; done"
+          },
+          {
+            "type": "command",
+            "command": "if test -f scripts/watcher.py; then (python scripts/watcher.py >/dev/null 2>&1 || python3 scripts/watcher.py >/dev/null 2>&1) & fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '[A Team] File modified. Use code-reviewer agent before committing. Use verification-before-completion before claiming done.'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "test -f scripts/metrics.py && (python scripts/metrics.py session_end 2>/dev/null || python3 scripts/metrics.py session_end 2>/dev/null) || true"
+          },
+          {
+            "type": "command",
+            "command": "test -f scripts/session_export.py && (python scripts/session_export.py 2>/dev/null || python3 scripts/session_export.py 2>/dev/null) || true"
+          }
+        ]
+      }
+    ]
+  }
+}
