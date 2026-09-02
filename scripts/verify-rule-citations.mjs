@@ -352,12 +352,44 @@ if (JSON_OUT) {
     for (const [k, v] of Object.entries(counts).sort()) console.log(`  ${k.padEnd(12)} ${v}`);
 }
 
-// UNRESOLVED is reported but does not fail the build: those citations need a human, and failing on
-// them would make the gate un-greenable rather than useful. Wrong and unreachable citations do fail.
+// Wrong and unreachable citations always fail — they are machine-decidable.
 const failing = results.filter((r) => ['MISCITED', 'PAST_EOF', 'MISSING_FILE'].includes(r.status));
+
+/**
+ * UNRESOLVED citations name a real file but no line the script can anchor, so placing them needs a
+ * human. Failing on the whole set would make the gate un-greenable and it would simply be disabled.
+ * Failing on none of them lets new unanchored citations accumulate unnoticed, which is the drift
+ * this script exists to stop. So it is ratcheted against the count measured on 2026-09-02: any NEW
+ * unresolved citation fails, the existing ones are carried as declared debt.
+ *
+ * A drop below the baseline is reported, not auto-accepted. Tracking the current number
+ * automatically would mean the ceiling is always whatever today happens to be, which catches
+ * nothing — lowering it is a deliberate edit that records the gain.
+ */
+const UNRESOLVED_BASELINE = 23;
+const unresolved = counts.UNRESOLVED ?? 0;
+
+let exitCode = 0;
+
 if (failing.length > 0 && !FIX) {
     console.error('');
     console.error(`FAIL: ${failing.length} citation(s) in analysis/BUSINESS_RULES.md do not resolve.`);
     console.error('Run: node scripts/verify-rule-citations.mjs --fix');
-    process.exit(1);
+    exitCode = 1;
+}
+
+if (!FIX && unresolved > UNRESOLVED_BASELINE) {
+    console.error('');
+    console.error(`FAIL: ${unresolved} UNRESOLVED citation(s) against a baseline of ${UNRESOLVED_BASELINE}.`);
+    console.error(`${unresolved - UNRESOLVED_BASELINE} citation(s) were added without an anchorable line.`);
+    console.error('Anchor them, or raise UNRESOLVED_BASELINE with a written rationale.');
+    exitCode = 1;
+} else if (!FIX && unresolved < UNRESOLVED_BASELINE) {
+    console.log('');
+    console.log(`NOTE: UNRESOLVED is ${unresolved}, below the baseline of ${UNRESOLVED_BASELINE}.`);
+    console.log('Lower UNRESOLVED_BASELINE in scripts/verify-rule-citations.mjs to lock the gain in.');
+}
+
+if (exitCode !== 0) {
+    process.exit(exitCode);
 }

@@ -206,7 +206,7 @@ const SupportingDocuments = (props: TASupportingDocumentsProps & { onDeleteSucce
                 name='InstrumentInfo'
                 selectedInstrumentCategoryId={instrumentCategoryId}
                 selectedInstrumentTypeId={instrumentTypeId}
-                isNewCustomer={true}
+                isNewCustomer
             />
         );
     };

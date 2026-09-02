@@ -275,24 +275,29 @@ merge conflicting parallel changes.
 
 ## File Claims
 
-**Active external claim — a second AI session is driving `COVERAGE-GATE-001` to 100%.**
-Acknowledged 2026-09-02. That session is not dispatched by this orchestrator and does not write
-result receipts, so these rows are held manually and released only when the operator says so.
+**External claim released 2026-09-02 by the operator (Gate Clearance Plan, Pre-phase 0).**
+Evidence for release: all four files landed together in commit `c6391fb` on 2026-09-02, and the
+working tree was clean for all four at release time — the diff described below as "uncommitted" had
+in fact been committed. Released on the operator's explicit say-so, as this section requires.
 
-**No agent dispatched from this session may write to a claimed file.** A task needing one is added
-to PENDING with `depends_on: external-coverage`, not dispatched. Reads are fine; writes collide.
+| File                                       | Agent                       | Task              | Status |
+| ------------------------------------------ | --------------------------- | ----------------- | ------ |
+| ClientApp/src/utils/index.ts               | external-session (coverage) | COVERAGE-GATE-001 | done   |
+| tests/unit/utils/index.test.ts             | external-session (coverage) | COVERAGE-GATE-001 | done   |
+| tests/unit/coverage/coverageConfig.test.ts | external-session (coverage) | COVERAGE-GATE-001 | done   |
+| vitest.unit.config.ts                      | external-session (coverage) | COVERAGE-GATE-001 | done   |
 
-| File                                       | Agent                       | Task              | Status      |
-| ------------------------------------------ | --------------------------- | ----------------- | ----------- |
-| ClientApp/src/utils/index.ts               | external-session (coverage) | COVERAGE-GATE-001 | in-progress |
-| tests/unit/utils/index.test.ts             | external-session (coverage) | COVERAGE-GATE-001 | in-progress |
-| tests/unit/coverage/coverageConfig.test.ts | external-session (coverage) | COVERAGE-GATE-001 | in-progress |
-| vitest.unit.config.ts                      | external-session (coverage) | COVERAGE-GATE-001 | in-progress |
+No claim is active. Agents dispatched from this session may write to these files.
 
-**Standing note on the coverage work.** The uncommitted diff adds `ClientApp/src/**/setupTests.ts`
-and `ClientApp/src/**/*.stories copy.tsx` to the Vitest coverage `exclude` list. Shrinking the
-measured surface raises the reported percentage without adding a test, which §0.2 says requires an
-explicit reviewed scope decision rather than a silent edit. Two riders, both from `INIT.md`:
+**Resolved 2026-09-02 — Gate Clearance Plan Phase 1.** Both `ClientApp/src/**/setupTests.ts` and
+`ClientApp/src/**/*.stories copy.tsx` have been **removed** from the Vitest coverage `exclude` list,
+and the four files they hid are deleted: two accidental `*.stories copy.tsx` duplicates, and
+`AriaComponents/setupTests.ts` plus its unreferenced siblings `setupBrowserTests.ts` and
+`testStyleMock.ts`. No vitest config loaded any of them — the unit leaf uses `./vitest.setup.ts` and
+Storybook uses `./vitest.storybook.setup.ts`. The denominator was therefore widened, not narrowed,
+which is the outcome §0.2 requires. `coverageRemapPolicy.test.ts` is 8/8 green.
+`coverageConfig.test.ts` now pins both patterns out with `not.toContain`. Two riders remain live,
+both from `INIT.md`:
 
 - `sonar.exclusions` and the Vitest coverage `exclude` list are meant to agree. A change to one
   without the other splits the two gates and SonarCloud will disagree with local coverage.

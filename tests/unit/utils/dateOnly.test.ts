@@ -43,6 +43,35 @@ describe('date-only utilities', () => {
         expect(parseApiDateOnlyInput(undefined)).toBeUndefined();
     });
 
+    it('pairs each Date convention with the parser that reads it back', () => {
+        // The local/UTC asymmetry between parseDateOnlyInput and
+        // parseApiDateOnlyInput is deliberate, not an oversight. Picker Dates
+        // are built at LOCAL noon by dateOnlyToPickerDate, so local getters
+        // round-trip them; API Dates are built at UTC midnight by
+        // dateOnlyToApiDate, so UTC getters round-trip them. Reading either one
+        // with the other parser shifts the stored calendar date by a day for
+        // any host east or west of UTC.
+        const dateOnlyValue = parseDateOnlyValue('2026-06-11');
+
+        expect(dateOnlyValue).toBeDefined();
+        expect(parseDateOnlyInput(dateOnlyToPickerDate(dateOnlyValue!))).toBe('2026-06-11');
+        expect(parseApiDateOnlyInput(dateOnlyToApiDate(dateOnlyValue!))).toBe('2026-06-11');
+    });
+
+    it('reads the UTC calendar date for API input and the host calendar date for picker input', () => {
+        // An instant late in the UTC day: east of UTC the local calendar date
+        // has already rolled over, west of UTC it has not. Asserting the local
+        // half against the Date's own getters keeps this true in every zone
+        // while still pinning the API half to a fixed UTC answer.
+        const instant = new Date('2026-06-11T23:00:00.000Z');
+        const pad = (part: number) => String(part).padStart(2, '0');
+        const hostCalendarDate =
+            `${instant.getFullYear()}-${pad(instant.getMonth() + 1)}-${pad(instant.getDate())}`;
+
+        expect(parseApiDateOnlyInput(instant)).toBe('2026-06-11');
+        expect(parseDateOnlyInput(instant)).toBe(hostCalendarDate);
+    });
+
     it('formats display text from the calendar date rather than the host timezone instant', () => {
         const dateOnlyValue = parseDateOnlyInput('2026-06-11T00:00:00+10:00');
 

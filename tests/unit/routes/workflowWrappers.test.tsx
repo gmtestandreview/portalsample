@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { StrictMode } from 'react';
@@ -271,6 +271,82 @@ describe('workflow route wrappers', () => {
             expect.any(Error),
             { Id: 'APP-2' },
         );
+    });
+
+    it('recovers from a rejected token refresh instead of deadlocking the wizard', async () => {
+        // `acquireTokenSilent` sat outside the `try`, so a rejected refresh threw
+        // past the `finally` that resets `isLoading.current`. The ref stayed true
+        // for the life of the component and its own `!isLoading.current` guard
+        // then blocked every subsequent attempt - the wizard hung with no error
+        // and no way back. Statement coverage never caught it: the happy path
+        // executes the same line.
+        const RequestForQuote = (await import('../../../ClientApp/src/routes/requestForQuote')).default;
+
+        mocks.acquireTokenSilent.mockRejectedValueOnce(new Error('interaction_required'));
+
+        renderAt('/request-for-quote/APP-5/organisation-and-contact', <RequestForQuote />, '/request-for-quote/:id/*');
+
+        await waitFor(() => expect(screen.getByTestId('not-found')).toBeInTheDocument());
+
+        expect(mocks.appLoggerError).toHaveBeenCalledWith(
+            'Failed to load application steps',
+            expect.any(Error),
+            { Id: 'APP-5' },
+        );
+        // The rejection must be handled before the client is ever built.
+        expect(mocks.requestForQuoteGetStepStatuses).not.toHaveBeenCalled();
+    });
+
+    it('does not log or navigate once the wizard has unmounted', async () => {
+        // The unmount guard. A token refresh that settles after the user has
+        // navigated away must not push them to /not-found from a route they are
+        // no longer on, and must not write to unmounted state.
+        const RequestForQuote = (await import('../../../ClientApp/src/routes/requestForQuote')).default;
+
+        let rejectToken: (reason: Error) => void = () => undefined;
+        mocks.acquireTokenSilent.mockReturnValueOnce(
+            new Promise((_resolve, reject) => {
+                rejectToken = reject;
+            }),
+        );
+
+        const { unmount } = renderAt('/request-for-quote/APP-6/organisation-and-contact', <RequestForQuote />, '/request-for-quote/:id/*');
+
+        await waitFor(() => expect(mocks.acquireTokenSilent).toHaveBeenCalled());
+        unmount();
+
+        rejectToken(new Error('interaction_required'));
+        await act(async () => {
+            await Promise.resolve();
+        });
+
+        expect(mocks.appLoggerError).not.toHaveBeenCalled();
+    });
+
+    it('does not apply loaded statuses once the wizard has unmounted', async () => {
+        // The success half of the same unmount guard: a status load that lands
+        // after the user has navigated away must not write to dead state.
+        const RequestForQuote = (await import('../../../ClientApp/src/routes/requestForQuote')).default;
+
+        let resolveStatuses: (value: unknown) => void = () => undefined;
+        mocks.requestForQuoteGetStepStatuses.mockReturnValueOnce(
+            new Promise((resolve) => {
+                resolveStatuses = resolve;
+            }),
+        );
+
+        const { unmount } = renderAt('/request-for-quote/APP-7/organisation-and-contact', <RequestForQuote />, '/request-for-quote/:id/*');
+
+        await waitFor(() => expect(mocks.requestForQuoteGetStepStatuses).toHaveBeenCalledWith('APP-7'));
+        unmount();
+
+        resolveStatuses([{ name: 'Organisation and contact', status: 'current' }]);
+        await act(async () => {
+            await Promise.resolve();
+        });
+
+        expect(mocks.appLoggerError).not.toHaveBeenCalled();
+        expect(screen.queryByTestId('wizard-form')).not.toBeInTheDocument();
     });
 
     it('shows a loading state until request-for-quote account details are available', async () => {

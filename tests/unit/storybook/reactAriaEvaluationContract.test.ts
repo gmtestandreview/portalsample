@@ -113,11 +113,40 @@ describe('React Aria Storybook evaluation contract', () => {
         expect(source).not.toMatch(/(^|[\s,]):root\b/m);
     });
 
-    test('excludes copied demo-only surfaces from TypeScript validation', () => {
+    test('type-checks the evaluation surface with no demo-only carve-outs', () => {
+        // The three excludes that stood here carved live directories out of the
+        // TypeScript program to hide a broken scaffold. `components/App` never
+        // existed, `AriaComponents/main.tsx` imported an absent `App.tsx`, and
+        // `reactaria_components/AlertMessage.tsx` imported an absent
+        // `ClientApp/src/Content`. The scaffold is kept and repaired, so the
+        // carve-outs are gone and `tsc --noEmit` covers it like any other source.
         const tsconfig = readFileSync(path.join(repositoryRoot, 'tsconfig.json'), 'utf8');
 
-        expect(tsconfig).toContain('ClientApp/src/components/App/**');
-        expect(tsconfig).toContain('ClientApp/src/components/AriaComponents/main.tsx');
-        expect(tsconfig).toContain('ClientApp/src/components/reactaria_components/**');
+        expect(tsconfig).not.toContain('ClientApp/src/components/App/**');
+        expect(tsconfig).not.toContain('ClientApp/src/components/AriaComponents/main.tsx');
+        expect(tsconfig).not.toContain('ClientApp/src/components/reactaria_components/**');
+    });
+
+    test('keeps the retained reactaria_components scaffold import-resolvable', () => {
+        const scaffoldRoot = path.join(componentsRoot, 'reactaria_components');
+        const scaffoldSources = collectFiles(scaffoldRoot).filter((file) =>
+            /\.tsx?$/.test(file),
+        );
+
+        expect(scaffoldSources.length).toBeGreaterThan(0);
+
+        const unresolved = scaffoldSources.flatMap((file) =>
+            findRelativeImports(file)
+                .filter((specifier) => !importResolves(file, specifier))
+                .map((specifier) => `${path.relative(repositoryRoot, file)} -> ${specifier}`),
+        );
+
+        expect(unresolved).toEqual([]);
+    });
+
+    test('removes the dead AriaComponents entry point', () => {
+        expect(
+            existsSync(path.join(componentsRoot, 'AriaComponents/main.tsx')),
+        ).toBe(false);
     });
 });

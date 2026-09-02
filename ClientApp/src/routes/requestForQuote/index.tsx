@@ -36,22 +36,30 @@ const RequestForQuote = () => {
     const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
     useEffect(() => {
+        let isMounted = true;
+
         const loadApplicationSteps = async () => {
             if (!applicationId) {
                 return;
             }
             if (hasAccountDetails && !statuses && accounts.length > 0 && !isLoading.current) {
                 isLoading.current = true;
-                const client = new RequestForQuoteClient();
-                const tokenResult = await instance.acquireTokenSilent({
-                    ...tokenRequest,
-                    account: accounts[0],
-                });
-                client.setAuthToken(tokenResult.accessToken);
                 try {
+                    const client = new RequestForQuoteClient();
+                    const tokenResult = await instance.acquireTokenSilent({
+                        ...tokenRequest,
+                        account: accounts[0],
+                    });
+                    client.setAuthToken(tokenResult.accessToken);
                     const result = await client.getStepStatuses(applicationId);
+                    if (!isMounted) {
+                        return;
+                    }
                     setStatuses(result);
                 } catch (error) {
+                    if (!isMounted) {
+                        return;
+                    }
                     AppLogger.error('Failed to load application steps', error as Error, { Id: applicationId });
                     navigate('/not-found');
                 } finally {
@@ -60,6 +68,10 @@ const RequestForQuote = () => {
             }
         };
         loadApplicationSteps();
+
+        return () => {
+            isMounted = false;
+        };
     }, [accounts, applicationId, hasAccountDetails, instance, isLoading, navigate, statuses]);
 
     if (!applicationId) {

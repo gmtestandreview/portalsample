@@ -61,9 +61,7 @@ describe('unit coverage configuration', () => {
             'ClientApp/src/**/*.test.{ts,tsx}',
             'ClientApp/src/**/*.spec.{ts,tsx}',
             'ClientApp/src/**/*.stories.{ts,tsx}',
-            'ClientApp/src/**/*.stories copy.tsx',
             'ClientApp/src/**/*.docs.mdx',
-            'ClientApp/src/**/setupTests.ts',
             'ClientApp/src/analytics/types.ts',
             'ClientApp/src/authentication/types.ts',
             'ClientApp/src/routes/requestForQuote/types.ts',
@@ -93,6 +91,16 @@ describe('unit coverage configuration', () => {
             'ClientApp/src/components/forms/HidableField/types.ts',
             'ClientApp/src/components/tiles/StandardPathway/types.ts',
         ]));
+        // Both of these narrowed the denominator to hide scaffold artifacts
+        // rather than measuring or deleting them, which is what
+        // coverageRemapPolicy.test.ts rejects. The four files they covered are
+        // deleted; if either pattern returns, the file it hides comes back too.
+        expect(coverageConfig.exclude).not.toContain(
+            'ClientApp/src/**/*.stories copy.tsx',
+        );
+        expect(coverageConfig.exclude).not.toContain(
+            'ClientApp/src/**/setupTests.ts',
+        );
         expect(coverageConfig.exclude).not.toEqual(expect.arrayContaining([
             'ClientApp/src/**/types.ts',
             'ClientApp/src/**/*Props.ts',

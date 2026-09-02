@@ -245,15 +245,19 @@ jobs:
           npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
           node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
 
-      # Child Plan B adds tests/unit/utils/dateOnly.test.ts to this list; it does
-      # not exist while B is externally deferred, and naming it now would fail
-      # every zone for a missing file rather than for a timezone defect.
+      # tests/unit/utils/dateOnly.test.ts landed in c3b459a; the note that used
+      # to stand here still said it did not exist, so the one suite that pins the
+      # local-vs-UTC parser split was the one suite this matrix never ran. It is
+      # named below now and passes in all three zones. dateOnly.ts is where the
+      # split lives: picker Dates are built at local noon and read back with
+      # local getters, API Dates at UTC midnight and read back with UTC getters.
       - name: Run focused date suite in ${{ matrix.zone.name }}
         run: >-
           npm run test:unit --
           tests/unit/components/inputs/datePickerWrapper.test.tsx
           tests/unit/routes/requestForQuote/props.test.ts
           tests/unit/routes/requestForQuote/validation.test.ts
+          tests/unit/utils/dateOnly.test.ts
           --reporter=default --reporter=junit
           --outputFile.junit=reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
 
