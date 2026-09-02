@@ -109,4 +109,62 @@ describe('SlateEditor', () => {
 
         expect(onSubmit).toHaveBeenCalledTimes(1);
     });
+
+    it('renders bold, italic and underline marks in the editor body', () => {
+        render(
+            <SlateEditor
+                value={[{
+                    type: 'paragraph',
+                    children: [
+                        { text: 'Bold bit', bold: true },
+                        { text: 'Italic bit', italic: true },
+                        { text: 'Underlined bit', underline: true },
+                        { text: 'Plain bit' },
+                    ],
+                }]}
+                setValue={vi.fn()}
+                onSubmit={vi.fn()}
+            />,
+        );
+
+        expect(screen.getByText('Bold bit').closest('strong')).not.toBeNull();
+        expect(screen.getByText('Italic bit').closest('em')).not.toBeNull();
+        expect(screen.getByText('Underlined bit').closest('u')).not.toBeNull();
+        expect(screen.getByText('Plain bit').closest('strong')).toBeNull();
+    });
+
+    it('does not stack the same error when send is pressed repeatedly', () => {
+        render(
+            <SlateEditor
+                value={paragraph('   ')}
+                setValue={vi.fn()}
+                onSubmit={vi.fn()}
+            />,
+        );
+
+        const send = screen.getByRole('button', { name: 'Send' });
+        fireEvent.click(send);
+        fireEvent.click(send);
+        fireEvent.click(send);
+
+        expect(screen.getAllByText('Message cannot be empty or spaces only')).toHaveLength(1);
+    });
+
+    it('does not stack the length error when send is pressed repeatedly', () => {
+        render(
+            <SlateEditor
+                value={paragraph('abcdef')}
+                setValue={vi.fn()}
+                onSubmit={vi.fn()}
+                maxCharacters={5}
+            />,
+        );
+
+        const send = screen.getByRole('button', { name: 'Send' });
+        fireEvent.click(send);
+        fireEvent.click(send);
+
+        expect(screen.getAllByText('Message cannot exceed 5 characters (including formatting)')).toHaveLength(1);
+    });
+
 });

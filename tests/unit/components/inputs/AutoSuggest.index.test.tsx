@@ -55,6 +55,29 @@ describe('AutoSuggest parent state', () => {
         expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
+    it('reports a failed search and clears the previous suggestions', async () => {
+        // The stale-response tests below cover a rejection arriving after the field moved on. This
+        // is the live one: the search that is still current failed, so the user is told rather than
+        // left looking at suggestions from an earlier term.
+        const getOptions = vi.fn<(term: string) => Promise<AutoSuggestOption<string>[]>>()
+            .mockResolvedValueOnce([{ id: 'sydney', displayText: 'Sydney', value: 'sydney' }])
+            .mockRejectedValueOnce(new Error('lookup unavailable'));
+        renderAutoSuggest(getOptions);
+
+        await act(async () => {
+            await containerState.props.onSearchTermChange('syd');
+        });
+        expect(screen.getByTestId('option-count')).toHaveTextContent('1');
+
+        await act(async () => {
+            await containerState.props.onSearchTermChange('sydn');
+        });
+
+        expect(screen.getByTestId('error')).toHaveTextContent('true');
+        expect(screen.getByTestId('option-count')).toHaveTextContent('0');
+        expect(screen.getByTestId('loading')).toHaveTextContent('false');
+    });
+
     it('ignores a stale successful search response after cancel resets the field', async () => {
         let resolveSearch: (options: AutoSuggestOption<string>[]) => void = () => {};
         const getOptions = vi.fn<(term: string) => Promise<AutoSuggestOption<string>[]>>(() => new Promise((resolve) => {

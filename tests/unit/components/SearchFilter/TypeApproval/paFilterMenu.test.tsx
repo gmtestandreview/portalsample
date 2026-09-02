@@ -186,6 +186,23 @@ describe('PaFilterMenu', () => {
         expect(mocks.trackGAEvent).toHaveBeenCalledWith('CancelFilter');
     });
 
+    it('discards unapplied edits when the menu is dismissed', async () => {
+        // Dismissing the dropdown routes through onToggle, which clicks the hidden close button so
+        // the same teardown runs however the menu was left - otherwise edits made and abandoned
+        // would still be sitting there the next time it opens.
+        const { setInitialFilters } = renderMenu({
+            filterYearType: 'olderthantwoyears',
+            filterStatusType: PatternApprovalStatusEnumDto.Completed,
+            filtersChanged: true,
+        });
+        const user = await openMenu();
+
+        await user.click(screen.getByRole('button', { name: /Filters.*applied/i }));
+
+        expect(mocks.trackGAEvent).toHaveBeenCalledWith('CloseFilter');
+        expect(setInitialFilters).not.toHaveBeenCalled();
+    });
+
     it('disables status options for draft pattern approval dashboard filters', async () => {
         renderMenu({
             filterYearType: 'allYears',
