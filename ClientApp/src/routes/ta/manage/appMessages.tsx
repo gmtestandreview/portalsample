@@ -154,13 +154,13 @@ const ApplicationMessages = () => {
         </>
     );
 
-    const renderNMIAvator = (avatar: string | undefined) => (
+    const renderNMIAvator = (avatar: string) => (
         <div
             className='d-flex align-items-center justify-content-center rounded-circle bg-nmi-navbar mb-3 mb-sm-0 me-3'
             style={{ width: 36, height: 36 }}
         >
             <span className='fs-6 capitalized text-white'>
-                {avatar || 'NMI'}
+                {avatar}
             </span>
         </div>
     );
