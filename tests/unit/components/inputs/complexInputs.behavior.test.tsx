@@ -831,6 +831,43 @@ describe('complex input behavior slice', () => {
         expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
     });
 
+    it('clears OrganisationNameLookup suggestions when the field is emptied', async () => {
+        // Emptying the box has to discard the list that was already showing. The component keeps
+        // the previous array when it is already empty so React can bail out of the render, so this
+        // exercises the other side of that: a populated list being replaced with an empty one.
+        const user = userEvent.setup();
+
+        render(
+            <FormikHarness
+                initialValues={{
+                    organisationName: '',
+                    orgNameOptions: [
+                        { name: 'Alpha Labs' },
+                        { name: 'Beta Labs' },
+                    ],
+                }}
+            >
+                <OrganisationNameLookup
+                    name='organisationName'
+                    label='Organisation name'
+                    optionsFieldName='name'
+                    matchType='endsWith'
+                />
+                <ValuesProbe />
+            </FormikHarness>,
+        );
+
+        const combobox = screen.getByRole('combobox', { name: 'Organisation name' });
+        await user.type(combobox, 'Labs');
+        await screen.findByRole('listbox', { name: 'Suggested options' });
+
+        await user.clear(combobox);
+
+        await waitFor(() => expect(
+            screen.queryByRole('listbox', { name: 'Suggested options' }),
+        ).not.toBeInTheDocument());
+    });
+
     it('accepts OrganisationNameLookup free text when Enter is pressed without an active option', async () => {
         const user = userEvent.setup();
         render(
