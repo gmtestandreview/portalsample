@@ -142,6 +142,45 @@ describe('PaFilterMenu', () => {
         expect(mocks.trackGAEvent).toHaveBeenCalledWith('ApplyFilter');
     });
 
+    it('counts nothing when the changed flag is set but every value is still the default', () => {
+        // Filters changed and then changed back leave the flag set while the values match the
+        // defaults again, so the count has to compare each value rather than just check it is set.
+        renderMenu({
+            filterYearType: 'allYears',
+            filterStatusType: 'allStatuses',
+            filterSortOrder: 'descending',
+            filtersChanged: true,
+        });
+
+        const toggle = screen.getByRole('button', { name: /Filters.*applied/i });
+        expect(toggle).toHaveAttribute('title', '0 filters have been applied');
+        expect(within(toggle).getByRole('status')).toHaveTextContent('0');
+    });
+
+    it('treats a year-only change as a change even with the status left alone', async () => {
+        // The applied flag is an either-or: leaving the status at its default must not mask a
+        // year that did change.
+        const initialFilters: PatternApprovalDashboardDto = {
+            filterYearType: 'allYears',
+            filterStatusType: 'allStatuses',
+            filterSortOrder: 'descending',
+            filtersChanged: false,
+            filterActiveTab: DashboardTab.Requests,
+            filterSearchText: '',
+        };
+        const { setInitialFilters } = renderMenu(initialFilters);
+        const user = await openMenu();
+
+        await user.click(screen.getByRole('radio', { name: 'Within 2 years' }));
+        await user.click(screen.getByRole('button', { name: 'Show results' }));
+
+        expect(setInitialFilters).toHaveBeenCalledWith(expect.objectContaining({
+            filterYearType: 'withintwoyears',
+            filterStatusType: 'allStatuses',
+            filtersChanged: true,
+        }));
+    });
+
     it('resets filters to defaults while preserving the active tab and search text', async () => {
         const initialFilters: PatternApprovalDashboardDto = {
             filterYearType: 'olderthantwoyears',
