@@ -1,8 +1,62 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Editor, Transforms } from 'slate';
+import type * as SlateModule from 'slate';
 import SlateEditor from '@/components/SlateEditor/SlateEditor';
 import { serializeToHtml } from '@/components/SlateEditor/SlateEditor';
 import type { CustomElement } from '@/components/SlateEditor/SlateEditor';
+
+/**
+ * Slate builds its document as a plain JavaScript model and only mirrors it into the DOM. Driving
+ * the component through the DOM would need `beforeinput` plus a live Selection, neither of which
+ * jsdom implements - which is why `onChange` never fired here before and `handleChange` went
+ * unmeasured.
+ *
+ * So these tests drive the model instead. `createEditor` is wrapped to keep a reference to the
+ * editor the component builds; the editor itself is the real one, unstubbed. Transforms applied to
+ * it call `editor.onChange()`, which `<Slate>` forwards to the `onChange` prop - the same path a
+ * keystroke takes once the browser has finished translating it.
+ */
+const captured = vi.hoisted(() => ({ editors: [] as Editor[] }));
+
+vi.mock('slate', async (importOriginal) => {
+    const actual = await importOriginal<typeof SlateModule>();
+
+    return {
+        ...actual,
+        createEditor: () => {
+            const editor = actual.createEditor();
+            captured.editors.push(editor);
+            return editor;
+        },
+    };
+});
+
+/** The editor belonging to the most recently rendered SlateEditor. */
+const currentEditor = () => captured.editors[captured.editors.length - 1];
+
+/** Places a collapsed caret in the first text node. Slate ignores marks while there is no selection. */
+const placeCaret = async (editor: Editor, offset = 0) => {
+    await act(async () => {
+        Transforms.select(editor, {
+            anchor: { path: [0, 0], offset },
+            focus: { path: [0, 0], offset },
+        });
+    });
+};
+
+/**
+ * Applies an edit and lets Slate's change notification land.
+ *
+ * `apply` batches a burst of operations and defers `editor.onChange` to a microtask, so a
+ * synchronous `act` returns before `<Slate>` has told the component anything. Awaiting inside `act`
+ * drains that microtask and the React update it schedules together.
+ */
+const applyEdit = async (change: () => void) => {
+    await act(async () => {
+        change();
+    });
+};
 
 const paragraph = (text: string): CustomElement[] => [{
     type: 'paragraph',
@@ -168,3 +222,128 @@ describe('SlateEditor', () => {
     });
 
 });
+
+describe('SlateEditor document changes', () => {
+    beforeEach(() => {
+        captured.editors.length = 0;
+    });
+
+    it('pushes edits back to the caller and updates the live character count', async () => {
+        const setValue = vi.fn();
+
+        render(
+            <SlateEditor
+                value={paragraph('Hello')}
+                setValue={setValue}
+                maxCharacters={1000}
+            />,
+        );
+
+        const editor = currentEditor();
+        await placeCaret(editor, 5);
+        await applyEdit(() => {
+            Transforms.insertText(editor, ' there');
+        });
+
+        const lastCall = setValue.mock.calls[setValue.mock.calls.length - 1];
+        expect(serializeToHtml(lastCall[0])).toBe('<p>Hello there</p>');
+        // Counted over the serialized HTML, not the visible text: the limit exists to bound what
+        // gets sent, and the markup travels with it.
+        expect(document.querySelector('.text-muted')).toHaveTextContent('18 /1000');
+    });
+
+    it('reports a message that grows past the limit while it is being typed', async () => {
+        render(
+            <SlateEditor
+                value={paragraph('abcdef')}
+                setValue={vi.fn()}
+                maxCharacters={5}
+            />,
+        );
+
+        const editor = currentEditor();
+        await placeCaret(editor, 6);
+        await applyEdit(() => {
+            Transforms.insertText(editor, 'g');
+        });
+
+        expect(screen.getByText('Message cannot exceed 5 characters (including formatting)')).toBeInTheDocument();
+    });
+
+    it('does not stack the length error as typing continues past the limit', async () => {
+        render(
+            <SlateEditor
+                value={paragraph('abcdef')}
+                setValue={vi.fn()}
+                maxCharacters={5}
+            />,
+        );
+
+        const editor = currentEditor();
+        await placeCaret(editor, 6);
+        await applyEdit(() => {
+            Transforms.insertText(editor, 'g');
+        });
+        await applyEdit(() => {
+            Transforms.insertText(editor, 'h');
+        });
+
+        expect(screen.getAllByText('Message cannot exceed 5 characters (including formatting)')).toHaveLength(1);
+    });
+
+    it('clears the length error once the message fits again', async () => {
+        render(
+            <SlateEditor
+                value={paragraph('abcdefghijkl')}
+                setValue={vi.fn()}
+                maxCharacters={20}
+            />,
+        );
+
+        const editor = currentEditor();
+        await placeCaret(editor, 12);
+        await applyEdit(() => {
+            Transforms.insertText(editor, 'xy');
+        });
+
+        expect(screen.getByText('Message cannot exceed 20 characters (including formatting)')).toBeInTheDocument();
+
+        await applyEdit(() => {
+            editor.deleteBackward('character');
+        });
+        await applyEdit(() => {
+            editor.deleteBackward('character');
+        });
+
+        // Deleting back under the limit has to withdraw the error, otherwise a stale warning blocks
+        // a message that is now perfectly valid.
+        expect(screen.queryByText('Message cannot exceed 20 characters (including formatting)')).not.toBeInTheDocument();
+    });
+
+    it('turns a mark off again when the toolbar button is pressed twice', async () => {
+        render(
+            <SlateEditor
+                value={paragraph('ready')}
+                setValue={vi.fn()}
+            />,
+        );
+
+        const editor = currentEditor();
+        // Slate drops marks when there is no selection, so the toolbar is inert until the caret is
+        // placed. Without this the second press would re-add the mark rather than remove it.
+        await placeCaret(editor, 0);
+
+        const bold = screen.getByRole('button', { name: 'Bold' });
+
+        await applyEdit(() => {
+            fireEvent.mouseDown(bold);
+        });
+        expect(Editor.marks(editor)).toMatchObject({ bold: true });
+
+        await applyEdit(() => {
+            fireEvent.mouseDown(bold);
+        });
+        expect(Editor.marks(editor)?.bold).toBeUndefined();
+    });
+});
+

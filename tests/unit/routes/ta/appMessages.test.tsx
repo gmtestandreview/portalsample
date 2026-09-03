@@ -431,9 +431,7 @@ describe('application messages', () => {
             const members = Object.values(FilterMessages);
 
             for (const member of members) {
-                // eslint-disable-next-line no-await-in-loop
                 await user.selectOptions(select, member);
-                // eslint-disable-next-line no-await-in-loop
                 await waitFor(() => expect(clients.patternApproval.methods.getAppMessages)
                     .toHaveBeenLastCalledWith('APP-1', 10, 1, member, 'APP-1'));
             }

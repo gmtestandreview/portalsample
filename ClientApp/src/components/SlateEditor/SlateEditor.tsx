@@ -128,14 +128,14 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
 
         const currentCount = getCharCount(value);
 
+        // Both branches replace rather than append: setErrors([]) above already emptied the queued
+        // state, so the de-duplicating updater handleChange uses would never find a duplicate here.
         if (currentCount === 0) {
-            const errorMsg = 'Message cannot be empty or spaces only';
-            setErrors((prev) => (prev.includes(errorMsg) ? prev : [...prev, errorMsg]));
+            setErrors(['Message cannot be empty or spaces only']);
             return;
         }
         if (currentCount > max) {
-            const errorMsg = `Message cannot exceed ${max} characters (including formatting)`;
-            setErrors((prev) => (prev.includes(errorMsg) ? prev : [...prev, errorMsg]));
+            setErrors([`Message cannot exceed ${max} characters (including formatting)`]);
             return;
         }
         onSubmit?.();

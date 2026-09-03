@@ -126,7 +126,6 @@ const renderDocs = async ({ props = {}, values = defaultValues }: RenderOptions 
                 formik = bag as FormikProps<Record<string, unknown>>;
             }}
         >
-            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             <SupportingDocuments {...(componentProps as any)} />
         </FormikWrapper>,
         { path: '/ta/:id', initialPath: '/ta/APP-1' },
