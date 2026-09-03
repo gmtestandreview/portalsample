@@ -86,3 +86,15 @@ SelectsAFlavour.play = async ({canvas}) => {
 
   await expect(input).toHaveValue('Mint');
 };
+
+export const MultipleSelection: Story = args => <ComboBox {...args}>{flavours}</ComboBox>;
+
+MultipleSelection.args = {
+  label: 'Ice cream flavor',
+  selectionMode: 'multiple'
+};
+
+MultipleSelection.play = async ({canvas}) => {
+  // Multiple selection adds a value summary above the field so chosen items stay visible.
+  await expect(canvas.getByText('No items selected')).toBeVisible();
+};
