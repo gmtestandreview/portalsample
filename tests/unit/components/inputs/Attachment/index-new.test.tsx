@@ -13,6 +13,8 @@ import { FileStatus } from '@/routes/ta/types';
 interface FormikHarnessProps<TValues extends FormikValues> {
     readonly children: React.ReactNode;
     readonly initialValues: TValues;
+    readonly initialErrors?: FormikConfig<TValues>['initialErrors'];
+    readonly initialTouched?: FormikConfig<TValues>['initialTouched'];
     readonly onSubmit?: FormikConfig<TValues>['onSubmit'];
 }
 
@@ -33,12 +35,16 @@ const uploadedAttachment = {
 function FormikHarness<TValues extends FormikValues>({
     children,
     initialValues,
+    initialErrors,
+    initialTouched,
     onSubmit = async () => {},
 }: FormikHarnessProps<TValues>) {
     return (
         <Formik
             enableReinitialize
             initialValues={initialValues}
+            initialErrors={initialErrors}
+            initialTouched={initialTouched}
             onSubmit={onSubmit}
         >
             <Form>{children}</Form>
@@ -297,9 +303,11 @@ describe('AttachmentNew', () => {
         await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"attachmentName":"small.pdf"'));
     });
 
-    it('can store a single uploaded attachment while active progress prevents attachment rendering', async () => {
+    it('stores a single-file upload as a one-item list while progress is still running', async () => {
+        // Single-file mode used to store a lone object here, which AttachmentItemNew could not read
+        // because it addresses its field as `name[index]`. The field is always a list now.
         const user = userEvent.setup();
-        const onUploadFiles = vi.fn().mockResolvedValue(uploadedAttachment);
+        const onUploadFiles = vi.fn().mockResolvedValue([uploadedAttachment]);
         renderAttachment(null, {
             allowMultiple: false,
             onUploadFiles,
@@ -314,8 +322,40 @@ describe('AttachmentNew', () => {
 
         await user.upload(screen.getByTestId('drag-upload-supporting-documents'), file('manual.pdf', 10));
 
-        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"attachments":{"id":"doc-1"'));
+        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"attachments":[{"id":"doc-1"'));
         expect(screen.getByRole('progressbar', { name: 'Uploading' })).toBeInTheDocument();
+    });
+
+    it('points the control at its validation message once the field is touched', () => {
+        // Until the field is touched the control is described by its help text; afterwards the
+        // error takes over, so assistive tech announces the problem rather than the hint.
+        render(
+            <FormikHarness
+                initialValues={{ attachments: [] }}
+                initialErrors={{ attachments: 'Upload at least one document' }}
+                initialTouched={{ attachments: true } as never}
+            >
+                <AttachmentNew
+                    name='attachments'
+                    id='supporting-documents'
+                    label='Supporting documents'
+                    ariaLabel='Upload supporting documents'
+                    buttonTitle='Browse files'
+                    inlineHelp='Upload files for assessment'
+                    allowMultiple
+                    maxFiles={3}
+                    maxSizeInMB={1}
+                    allowedTypes='.pdf, .jpg'
+                    onUploadFiles={async () => [uploadedAttachment]}
+                    onDeleteFile={async () => {}}
+                    setErrors={() => {}}
+                />
+            </FormikHarness>,
+        );
+
+        // The browse button carries the description, since that is the control the user operates.
+        expect(screen.getByTestId('supporting-documents'))
+            .toHaveAttribute('aria-describedby', 'supporting-documents-validation-msg');
     });
 
     it('reports server validation errors from a failed upload', async () => {

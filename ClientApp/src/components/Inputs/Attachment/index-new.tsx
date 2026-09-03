@@ -93,11 +93,10 @@ const AttachmentNew = (
 
             if (!hasError) {
                 try {
-                    let attachments: AttachmentDto[] = isArray(value)
-                        ? value
-                        : value !== null
-                            ? [value]
-                            : [];
+                    // The field always holds a list, even when only one file is allowed. Storing a
+                    // lone object in that case broke AttachmentItemNew, which addresses its field
+                    // as `name[index]` and so read undefined.
+                    let attachments: AttachmentDto[] = isArray(value) ? value : [];
                     let newAttachments: AttachmentDto[] = [];
                     if (currentFileCount === 1) {
                         const file = event.currentTarget.files[0];
@@ -111,19 +110,9 @@ const AttachmentNew = (
                             hasError = true;
                         } else {
                             const result = await onUploadFiles([file]);
-                            if (!allowMultiple) {
-                                setValue(result as AttachmentDto);
-                            } else {
-                                newAttachments = [...result as AttachmentDto[]];
-                                if (attachments) {
-                                    // attachments = [...attachments, ...newAttachments];
-                                    attachments = [...newAttachments];
-                                } else {
-                                    attachments = [...newAttachments];
-                                }
-
-                                setValue(attachments);
-                            }
+                            newAttachments = [...result as AttachmentDto[]];
+                            attachments = [...newAttachments];
+                            setValue(attachments);
                             if (inputRef.current && inputRef.current.value !== null) {
                                 inputRef.current.value = null;
                                 inputRef.current.files = null;
@@ -148,12 +137,7 @@ const AttachmentNew = (
 
                         const result = await onUploadFiles(files);
                         newAttachments = [...result as AttachmentDto[]];
-                        if (attachments) {
-                            // attachments = [...attachments, ...newAttachments];
-                            attachments = [...newAttachments];
-                        } else {
-                            attachments = [...newAttachments];
-                        }
+                        attachments = [...newAttachments];
 
                         setValue(attachments);
                     }
@@ -175,13 +159,9 @@ const AttachmentNew = (
         try {
             if (attachment.id) {
                 await onDeleteFile(attachment.id);
-                if (allowMultiple) {
-                    if (isArray(value)) {
-                        setValue(value.filter((item: AttachmentDto) => item.id !== attachment.id));
-                    }
-                } else {
-                    setValue(null);
-                }
+                setValue((isArray(value) ? value : []).filter(
+                    (item: AttachmentDto) => item.id !== attachment.id,
+                ));
                 if (inputRef.current && inputRef.current.value !== null) {
                     inputRef.current.value = null;
                     inputRef.current.files = null;
@@ -194,11 +174,7 @@ const AttachmentNew = (
     };
 
     const renderAttachments = () => {
-        const attachments = isArray(value)
-            ? value
-            : value
-                ? [value]
-                : [];
+        const attachments: AttachmentDto[] = isArray(value) ? value : [];
         return attachments?.map((attachment, i) => (
             <AttachmentItemNew
                 id={attachment.id}
@@ -220,7 +196,7 @@ const AttachmentNew = (
         return (
             <>
                 {
-                    ((isArray(value) && value.length > 0) || (!isArray(value) && value?.id)) // && value.id > 0
+                    isArray(value) && value.length > 0
                         ? <div className='attachments-summary'>{ renderAttachments() }</div>
                         : (<span>No details added</span>)
                 }
@@ -264,12 +240,12 @@ const AttachmentNew = (
                                 {inlineHelp}
                             </div>
                             {/* {
-                    ((isArray(value) && value.length > 0) || (!isArray(value) && value?.id)) && ( // && value.id > 0
+                    isArray(value) && value.length > 0 && (
                         renderAttachments()
                     )
                 } */}
                             {/* {
-                    ((isArray(value) && value.length < maxFiles) || (!isArray(value) && !value)) && (
+                    isArray(value) && value.length < maxFiles && (
                         <> */}
                             <input
                                 disabled={disableUpload}
@@ -346,10 +322,11 @@ const AttachmentNew = (
                     <ProgressFileList files={progress.files!} onCancelFile={handleCancelFile} />
                 </Col>
             ) : (
-                ((isArray(value) && value.length > 0) || (!isArray(value) && value?.id)) && (
+                isArray(value) && value.length > 0 && (
                     <Row className='mb-4'>
                         <h3 className='h4 mb-1'>
-                            {isArray(value) ? value.length : value ? 1 : 0}
+                            {/* Guarded by isArray(value) directly above. */}
+                            {value.length}
                             {' files uploaded'}
                         </h3>
                         <p className='h6 mb-3'>
