@@ -44,6 +44,39 @@ const coverageConfig: CoverageOptions = {
         'ClientApp/src/**/*.spec.{ts,tsx}',
         'ClientApp/src/**/*.stories.{ts,tsx}',
         'ClientApp/src/**/*.docs.mdx',
+        // React Aria evaluation surface, measured in Storybook instead of here.
+        // These are Storybook-only spike components: they are reachable from stories, not from
+        // index.tsx or App.tsx. Each entry below was verified at 100% statements, branches,
+        // functions and lines in the Storybook coverage run before being listed, so it is still
+        // measured - just by the runner that can actually drive it. Evaluation components NOT
+        // verified there are deliberately absent, and stay in this denominator.
+        // Guarded by tests/unit/config/coverageRemapPolicy.test.ts and mirrored into
+        // sonar.coverage.exclusions by tests/unit/config/sonarCoverageContract.test.ts.
+        'ClientApp/src/components/AriaComponents/RangeCalendar.tsx',
+        'ClientApp/src/components/AriaComponents/Slider.tsx',
+        'ClientApp/src/components/AriaComponents/Switch.tsx',
+        'ClientApp/src/components/Breadcrumb/AriaBreadcrumb/Breadcrumbs.tsx',
+        'ClientApp/src/components/Buttons/AriaButton/Button.tsx',
+        'ClientApp/src/components/Calendar/Calendar.tsx',
+        'ClientApp/src/components/ColorArea/ColorArea.tsx',
+        'ClientApp/src/components/ColorField/ColorField.tsx',
+        'ClientApp/src/components/ColorPicker/ColorPicker.tsx',
+        'ClientApp/src/components/ColorSlider/ColorSlider.tsx',
+        'ClientApp/src/components/ColorSwatch/ColorSwatch.tsx',
+        'ClientApp/src/components/ColorSwatch/ColorSwatchPicker.tsx',
+        'ClientApp/src/components/ColorThumb/ColorThumb.tsx',
+        'ClientApp/src/components/ColorWheel/ColorWheel.tsx',
+        'ClientApp/src/components/ComboBox/ComboBox.tsx',
+        'ClientApp/src/components/Disclosure/Disclosure.tsx',
+        'ClientApp/src/components/DisclosureGroup/DisclosureGroup.tsx',
+        'ClientApp/src/components/DropZone/DropZone.tsx',
+        'ClientApp/src/components/Inputs/AriaCheckbox/Checkbox.tsx',
+        'ClientApp/src/components/Inputs/AriaCheckbox/CheckboxGroup.tsx',
+        'ClientApp/src/components/Inputs/AriaDateField/DateField.tsx',
+        'ClientApp/src/components/Inputs/AriaDatePicker/DatePicker.tsx',
+        'ClientApp/src/components/Inputs/AriaDateRangePicker/DateRangePicker.tsx',
+        'ClientApp/src/components/Inputs/AriaInputGroup/InputGroup.tsx',
+        'ClientApp/src/components/forms/AriaForm/Form.tsx',
         'ClientApp/src/analytics/types.ts',
         'ClientApp/src/authentication/types.ts',
         'ClientApp/src/routes/requestForQuote/types.ts',
