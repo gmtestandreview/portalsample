@@ -50,6 +50,11 @@ const AttachmentNew = (
     ] = useField<AttachmentDto[] | AttachmentDto | null>(name);
 
     const { value } = meta;
+    // The field always holds a list, even when only one file is allowed. Storing a lone object
+    // in that case broke AttachmentItemNew, which addresses its field as `name[index]` and so
+    // read undefined. Normalised once here so every reader below sees the same shape - the field
+    // is typed to admit a bare object or null, so a form can still hand us one.
+    const attachments: AttachmentDto[] = isArray(value) ? value : [];
     const [isUploading, setIsUploading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
      
@@ -93,11 +98,6 @@ const AttachmentNew = (
 
             if (!hasError) {
                 try {
-                    // The field always holds a list, even when only one file is allowed. Storing a
-                    // lone object in that case broke AttachmentItemNew, which addresses its field
-                    // as `name[index]` and so read undefined.
-                    let attachments: AttachmentDto[] = isArray(value) ? value : [];
-                    let newAttachments: AttachmentDto[] = [];
                     if (currentFileCount === 1) {
                         const file = event.currentTarget.files[0];
                         if (file.size > maxSizeInKb) {
@@ -110,9 +110,7 @@ const AttachmentNew = (
                             hasError = true;
                         } else {
                             const result = await onUploadFiles([file]);
-                            newAttachments = [...result as AttachmentDto[]];
-                            attachments = [...newAttachments];
-                            setValue(attachments);
+                            setValue([...result as AttachmentDto[]]);
                             if (inputRef.current && inputRef.current.value !== null) {
                                 inputRef.current.value = null;
                                 inputRef.current.files = null;
@@ -136,10 +134,8 @@ const AttachmentNew = (
                         }
 
                         const result = await onUploadFiles(files);
-                        newAttachments = [...result as AttachmentDto[]];
-                        attachments = [...newAttachments];
 
-                        setValue(attachments);
+                        setValue([...result as AttachmentDto[]]);
                     }
                 } catch (errorMessage) {
                     const serverErrors = map(
@@ -159,7 +155,7 @@ const AttachmentNew = (
         try {
             if (attachment.id) {
                 await onDeleteFile(attachment.id);
-                setValue((isArray(value) ? value : []).filter(
+                setValue(attachments.filter(
                     (item: AttachmentDto) => item.id !== attachment.id,
                 ));
                 if (inputRef.current && inputRef.current.value !== null) {
@@ -174,7 +170,6 @@ const AttachmentNew = (
     };
 
     const renderAttachments = () => {
-        const attachments: AttachmentDto[] = isArray(value) ? value : [];
         return attachments?.map((attachment, i) => (
             <AttachmentItemNew
                 id={attachment.id}

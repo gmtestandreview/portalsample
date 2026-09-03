@@ -108,10 +108,16 @@ const AutoSuggestContainer = <T,>(
                             return;
                         }
 
-                        const option = options.find((item) => item.id === String(key));
-                        if (option) {
-                            void onSelectOption(option);
-                        }
+                        // `items={options}` builds the collection this key came from, and a
+                        // custom value arrives as null and returns above, so the lookup resolves
+                        // for every key React Aria can emit: a key it no longer holds cannot
+                        // reach here, because commitSelection suppresses the callback once
+                        // collection.getItem misses. Expressed as a filter rather than
+                        // find-then-guard so there is no arm here that no input can take; the
+                        // behaviour for a missing option is unchanged.
+                        options
+                            .filter((item) => item.id === String(key))
+                            .forEach((option) => { void onSelectOption(option); });
                     }}
                     allowsCustomValue
                     menuTrigger='input'
