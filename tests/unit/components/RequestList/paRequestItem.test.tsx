@@ -221,7 +221,13 @@ describe('PaRequestItem', () => {
         ));
         expect(setDeleteSuccess).not.toHaveBeenCalled();
         expect(mocks.setDashboardNotification).not.toHaveBeenCalled();
-        expect(screen.queryByRole('dialog', { name: 'Confirm deletion' })).not.toBeInTheDocument();
+
+        // Awaited rather than asserted outright: the modal fades before it leaves the DOM, and the
+        // logger call above lands first. Checking synchronously passed locally and failed on the CI
+        // runner, which is slow enough for the fade to still be in flight.
+        await waitFor(() => expect(
+            screen.queryByRole('dialog', { name: 'Confirm deletion' }),
+        ).not.toBeInTheDocument());
     });
 
     it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {

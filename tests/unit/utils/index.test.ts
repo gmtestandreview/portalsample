@@ -250,7 +250,17 @@ describe('date helpers', () => {
         expect(utils.formatDateTimeToString(undefined)).toBeNull();
         expect(utils.formatDateTimeToString('not-a-date')).toBeNull();
         expect(utils.formatDateTimeToString(0 as unknown as Date)).toBeNull();
-        expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00')).toMatch(/^10 May 2024 (2|3):30 PM$/);
+
+        // The parse format carries an offset token (`xxx`), so an offset-bearing string resolves to
+        // an absolute instant and is then rendered in the runner's local zone. Asserting a literal
+        // "3:30 PM" therefore only holds in Australian zones - it read 5:30 AM on the UTC CI runner.
+        // Asserting that the string and Date paths agree on the same instant pins the behaviour that
+        // actually matters (the offset is honoured, not discarded) in every zone.
+        const sameInstant = new Date(Date.UTC(2024, 4, 10, 5, 30));
+        expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00'))
+            .toBe(utils.formatDateTimeToString(sameInstant));
+
+        // Local components in, local components out - no zone conversion, so this one is literal.
         expect(utils.formatDateTimeToString(date, 'yyyy/MM/dd HH:mm')).toBe('2024/05/10 15:30');
     });
 });

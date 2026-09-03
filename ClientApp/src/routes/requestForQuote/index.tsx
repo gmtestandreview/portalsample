@@ -35,9 +35,24 @@ const RequestForQuote = () => {
     const isLoading = useRef(false);
     const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
-    useEffect(() => {
-        let isMounted = true;
+    /**
+     * True only once the wizard has actually unmounted.
+     *
+     * Deliberately a ref with an empty-dependency effect rather than a `let` inside the loader
+     * effect below. That earlier shape cleared the flag on every dependency change, not just on
+     * unmount, and the loader effect depends on `accounts`, `instance` and `statuses`. A change to
+     * any of them mid-request marked the in-flight load as abandoned, while `isLoading.current` was
+     * still true and so blocked the re-run from starting a replacement. The response then arrived,
+     * saw the flag, and dropped the result - leaving `statuses` undefined with nothing left to
+     * retrigger the effect. The wizard rendered nothing, permanently.
+     */
+    const isUnmounted = useRef(false);
 
+    useEffect(() => () => {
+        isUnmounted.current = true;
+    }, []);
+
+    useEffect(() => {
         const loadApplicationSteps = async () => {
             if (!applicationId) {
                 return;
@@ -52,12 +67,12 @@ const RequestForQuote = () => {
                     });
                     client.setAuthToken(tokenResult.accessToken);
                     const result = await client.getStepStatuses(applicationId);
-                    if (!isMounted) {
+                    if (isUnmounted.current) {
                         return;
                     }
                     setStatuses(result);
                 } catch (error) {
-                    if (!isMounted) {
+                    if (isUnmounted.current) {
                         return;
                     }
                     AppLogger.error('Failed to load application steps', error as Error, { Id: applicationId });
@@ -68,10 +83,6 @@ const RequestForQuote = () => {
             }
         };
         loadApplicationSteps();
-
-        return () => {
-            isMounted = false;
-        };
     }, [accounts, applicationId, hasAccountDetails, instance, isLoading, navigate, statuses]);
 
     if (!applicationId) {
