@@ -362,7 +362,9 @@ const Dashboard = () => {
                 filterSearchText: tcDash?.filterSearchText,
             };
             setActiveTab(profile.filterActiveTab ?? DashboardTab.Drafts);
-            setCurrentPage(profile.filterCurrentPage ?? defaultFilter.filterCurrentPage);
+            // profile.filterCurrentPage is assigned defaultFilter.filterCurrentPage a few lines
+            // above, so it can never be nullish and the fallback here was unreachable.
+            setCurrentPage(profile.filterCurrentPage);
             accountDispatch?.setUserProfile({ testingCalibrationDashboard: profile });
             setInitialFilters(profile);
         }

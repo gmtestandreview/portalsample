@@ -623,6 +623,32 @@ describe('Dashboard', () => {
         }));
     });
 
+    it('falls back to drafts when the saved profile records no active tab', async () => {
+        // A profile saved before the tab was tracked, on an account with no default organisation
+        // yet. Both gaps have to resolve to something usable rather than leaving the dashboard on
+        // an undefined tab.
+        mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
+        mockAccountDetails = {
+            ...BASE,
+            defaultOrganisationId: undefined,
+            userProfile: {
+                testingCalibrationDashboard: {
+                    ...BASE_USER_PROFILE,
+                    filterActiveTab: undefined,
+                },
+            },
+        };
+        const Dashboard = await importDashboard();
+
+        renderDashboard(Dashboard);
+
+        await waitFor(() => expect(mockSetUserProfile).toHaveBeenCalledWith({
+            testingCalibrationDashboard: expect.objectContaining({
+                filterCurrentPage: 1,
+            }),
+        }));
+    });
+
     it('renders dashboard notifications and complete organisation labels', async () => {
         mockGetDashboardNotification.mockReturnValue({ message: 'Saved', severity: 'success' });
         mockGetDashboardInfoNotification.mockReturnValue({ message: 'Information', severity: 'info' });
