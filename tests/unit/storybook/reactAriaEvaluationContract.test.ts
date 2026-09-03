@@ -74,8 +74,8 @@ function importResolves(importer: string, specifier: string): boolean {
 }
 
 describe('React Aria Storybook evaluation contract', () => {
-    test('keeps all 45 reusable component stories discoverable and isolated', () => {
-        expect(storyFiles).toHaveLength(45);
+    test('keeps all 48 reusable component stories discoverable and isolated', () => {
+        expect(storyFiles).toHaveLength(48);
 
         for (const file of storyFiles) {
             const source = readFileSync(file, 'utf8');
