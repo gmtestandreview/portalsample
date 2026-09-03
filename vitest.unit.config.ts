@@ -44,6 +44,20 @@ const coverageConfig: CoverageOptions = {
         'ClientApp/src/**/*.spec.{ts,tsx}',
         'ClientApp/src/**/*.stories.{ts,tsx}',
         'ClientApp/src/**/*.docs.mdx',
+        // React Aria evaluation surface, retained for assessment rather than shipped.
+        // These are being evaluated to understand how they might work within the portal. They are
+        // unreachable from the application: nothing outside the evaluation surface imports them,
+        // directly or transitively. Unlike the block below they are NOT covered in Storybook
+        // either, so this is an explicit decision to leave a spike unmeasured - not a claim that
+        // the measurement lives elsewhere. If any of these is promoted into the portal it must
+        // come off this list and be covered.
+        'ClientApp/src/components/AriaComponents/ListBox.tsx',
+        'ClientApp/src/components/AriaComponents/Menu.tsx',
+        'ClientApp/src/components/AriaComponents/Table.tsx',
+        'ClientApp/src/components/AriaComponents/Tree.tsx',
+        'ClientApp/src/components/CommandPalette/CommandPalette.tsx',
+        'ClientApp/src/components/GridLists/GridList.tsx',
+
         // React Aria evaluation surface, measured in Storybook instead of here.
         // These are Storybook-only spike components: they are reachable from stories, not from
         // index.tsx or App.tsx. Each entry below was verified at 100% statements, branches,
