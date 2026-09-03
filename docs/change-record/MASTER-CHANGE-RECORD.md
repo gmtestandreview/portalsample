@@ -2,9 +2,11 @@
 
 **Purpose:** Single authoritative chronological log of every change made to the NMI Portal codebase during migration preparation. Every migration batch decision is traceable to an entry here.
 **Reference:** Migration preparation Phases A–N (2026-05-29 to 2026-05-31), Sprint 1 Storybook Quality Remediation, and the 2026-06-28 current-tree reconciliation.
-**Last updated:** 2026-09-04 (CRD-046)
+**Last updated:** 2026-09-04 (CRD-047)
 
-**Latest delta (CRD-046):** Closes `COVERAGE-GATE-001` — unit coverage reaches 100% on all four metrics (6617/6617 statements, 4383/4383 branches, 1675/1675 functions, 6343/6343 lines) with `test:ci:unit`, `test:ci:storybook`, `test:ci:quality` and the production build all exiting 0. Supplies the recorded measured-scope decision `COVERAGE-SCOPE-001` demands, as two deliberately separate exclusion lists (25 files verified in Storybook; 6 knowingly-unmeasured evaluation-spike files), and corrects that item's proposed remedy: reconciling `sonar.exclusions` would drop the files from analysis entirely, so `sonar.coverage.exclusions` is used instead. Documents the bundled ESLint 8 → 10 migration, records five defects the coverage work surfaced in files already at 100%, and opens `DEV-TOOLCHAIN-AUDIT-001` for five dev-only transitive advisories that do not reach production.
+**Latest delta (CRD-047):** Closes `DEV-TOOLCHAIN-AUDIT-001` — `npm audit` reports 0 vulnerabilities, down from 5 (2 high, 3 moderate). Two of the five were pinned by this repository's own `overrides` at versions that later had advisories published against them, so the fix is bumping the override targets rather than running `npm audit fix`: `fast-uri` 3.1.5 → 3.1.7 (held on 3.x because `ajv@8.20.0` declares `^3.0.1`), `qs` → 6.16.0 as a new override that knowingly crosses the `~6.15.1` express and body-parser declare because the isBuffer DoS has no 6.15.x fix, and `browserslist` → 4.28.8. Verified by the production build and a full `test:ci` pass, not by assumption.
+
+**Prior delta (CRD-046):** Closes `COVERAGE-GATE-001` — unit coverage reaches 100% on all four metrics (6617/6617 statements, 4383/4383 branches, 1675/1675 functions, 6343/6343 lines) with `test:ci:unit`, `test:ci:storybook`, `test:ci:quality` and the production build all exiting 0. Supplies the recorded measured-scope decision `COVERAGE-SCOPE-001` demands, as two deliberately separate exclusion lists (25 files verified in Storybook; 6 knowingly-unmeasured evaluation-spike files), and corrects that item's proposed remedy: reconciling `sonar.exclusions` would drop the files from analysis entirely, so `sonar.coverage.exclusions` is used instead. Documents the bundled ESLint 8 → 10 migration, records five defects the coverage work surfaced in files already at 100%, and opens `DEV-TOOLCHAIN-AUDIT-001` for five dev-only transitive advisories that do not reach production.
 
 **Prior delta (CRD-045):** Adds a CI gate (`npm run lint:rules`) that fails the build on business-rule citations which are wrong or unreachable, removes the duplicated line numbers from the summary table, corrects the three past-EOF citations, and writes the missing RULE-051 section - unblocking Legal on P2 item 17, where a suburb discrepancy between the production address and the Storybook fixture was also found.
 
@@ -1057,6 +1059,48 @@ No historical item may remain implicit. If the review identifies an item that is
 **Actions outstanding (Design Lead):** SVG source files for 10 active icons; confirm `packages/icons` package vs inline data: URI approach; confirm 3 dead-code variables safe to remove.
 
 **Outcome:** Icon audit is complete. No Batch E blocker found — the icon font can be retired without creating new React SVG components first. BATCH-E-PREREQ-002 is closed pending Design Lead sign-off on SVG sources. Batch E Item 8 prerequisite gate is cleared for planning purposes.
+
+---
+
+### [Dev Toolchain Advisories Cleared] — 2026-09-04 — DEV-TOOLCHAIN-AUDIT-001 Closed
+
+**Change ID:** CRD-047
+**Source:** Closes `DEV-TOOLCHAIN-AUDIT-001`, opened hours earlier by CRD-046 item 8.
+**Status:** COMPLETE
+**Security findings resolved:** 5 advisories — 2 high, 3 moderate — all dev-only, none reaching production
+
+**1. `npm audit` reports 0 vulnerabilities**, down from 5.
+
+**2. Two of the five were self-inflicted, which changes the fix.** `body-parser` and `fast-uri` were
+already pinned by this repository's own `overrides` block — remediation from an earlier branch. The
+advisories were published against the versions those overrides pin. So the packages had not drifted
+out of date; the pins had frozen them in place while the advisory record moved. `npm audit fix` was
+not the remedy and would in any case have been constrained by the same overrides. The override targets
+were bumped instead.
+
+| Package | Change | Why this version |
+| --- | --- | --- |
+| `fast-uri` | 3.1.5 → 3.1.7 | Four advisories (two SSRF, two host confusion), all fixed in 3.1.6. Deliberately **not** the 4.1.4 latest: `ajv@8.20.0` declares `fast-uri@^3.0.1`, so a major bump would force a range violation on the only package that consumes it |
+| `qs` | new override → 6.16.0 | **Knowingly crosses a declared range.** `express@4.22.2` and `body-parser@1.20.6` both ask for `~6.15.1`, and the isBuffer DoS advisory has no 6.15.x fix — 6.16.0 is the first patched release. Justified by verification rather than assumption: the production build and the full `test:ci` gate both pass with it |
+| `browserslist` | new override → 4.28.8 | Two high advisories affect `<=4.28.6`. Consumers declare `^4.24.0`, so this one satisfies its range naturally |
+
+`body-parser`, `express` and `ajv` carried no advisory of their own. All three were flagged only
+through `qs` and `fast-uri`, and cleared once those moved; `body-parser`'s existing 1.20.6 pin was
+left alone.
+
+**3. Verification.** `npm audit` 0 vulnerabilities. `npm run build` exit 0 (webpack 5.108.4, no
+errors) — the sensitive check here, because `browserslist` feeds Babel's target resolution and a bad
+bump would surface as a compilation or output change rather than a test failure. `npm run test:ci`
+exit 0. `npm run type-check` and `npm run lint` exit 0.
+
+**Recorded caveat:** `npm audit --omit=dev` could not be re-run to confirm the production-only view —
+the registry returned `audit endpoint returned an error` on both attempts. The full `npm audit`
+reporting 0 subsumes it, since the production set is a subset of the full set, so the conclusion holds;
+only the separate breakdown is unavailable.
+
+**Outcome:** `DEV-TOOLCHAIN-AUDIT-001` is CLOSED_SUCCESS. No Priority 1 or Priority 2 dependency item
+remains open. The standing lesson for the next remediation: a pinned override is a snapshot of a
+security judgement, not a permanent fix, and needs re-checking whenever the advisory database moves.
 
 ---
 
