@@ -2,9 +2,11 @@
 
 **Purpose:** Single authoritative chronological log of every change made to the NMI Portal codebase during migration preparation. Every migration batch decision is traceable to an entry here.
 **Reference:** Migration preparation Phases A–N (2026-05-29 to 2026-05-31), Sprint 1 Storybook Quality Remediation, and the 2026-06-28 current-tree reconciliation.
-**Last updated:** 2026-09-02 (CRD-045)
+**Last updated:** 2026-09-04 (CRD-046)
 
-**Latest delta (CRD-045):** Adds a CI gate (`npm run lint:rules`) that fails the build on business-rule citations which are wrong or unreachable, removes the duplicated line numbers from the summary table, corrects the three past-EOF citations, and writes the missing RULE-051 section - unblocking Legal on P2 item 17, where a suburb discrepancy between the production address and the Storybook fixture was also found.
+**Latest delta (CRD-046):** Closes `COVERAGE-GATE-001` — unit coverage reaches 100% on all four metrics (6617/6617 statements, 4383/4383 branches, 1675/1675 functions, 6343/6343 lines) with `test:ci:unit`, `test:ci:storybook`, `test:ci:quality` and the production build all exiting 0. Supplies the recorded measured-scope decision `COVERAGE-SCOPE-001` demands, as two deliberately separate exclusion lists (25 files verified in Storybook; 6 knowingly-unmeasured evaluation-spike files), and corrects that item's proposed remedy: reconciling `sonar.exclusions` would drop the files from analysis entirely, so `sonar.coverage.exclusions` is used instead. Documents the bundled ESLint 8 → 10 migration, records five defects the coverage work surfaced in files already at 100%, and opens `DEV-TOOLCHAIN-AUDIT-001` for five dev-only transitive advisories that do not reach production.
+
+**Prior delta (CRD-045):** Adds a CI gate (`npm run lint:rules`) that fails the build on business-rule citations which are wrong or unreachable, removes the duplicated line numbers from the summary table, corrects the three past-EOF citations, and writes the missing RULE-051 section - unblocking Legal on P2 item 17, where a suburb discrepancy between the production address and the Storybook fixture was also found.
 
 **Prior delta (CRD-044):** Verification pass over the business rules register finds the line citations systematically unreliable (18 of 21 examined wrong, 5 P0, 3 past end of file), 6 of 53 rules listed but never defined, and RULE-022's ABN checksum validator dead code with zero callers. Opens `RULES-REGISTER-001`, blocking BA/Legal sign-off on P2 items 16, 17, 18 and 21.
 
@@ -1055,6 +1057,122 @@ No historical item may remain implicit. If the review identifies an item that is
 **Actions outstanding (Design Lead):** SVG source files for 10 active icons; confirm `packages/icons` package vs inline data: URI approach; confirm 3 dead-code variables safe to remove.
 
 **Outcome:** Icon audit is complete. No Batch E blocker found — the icon font can be retired without creating new React SVG components first. BATCH-E-PREREQ-002 is closed pending Design Lead sign-off on SVG sources. Batch E Item 8 prerequisite gate is cleared for planning purposes.
+
+---
+
+### [Coverage Gate Clearance] — 2026-09-04 — COVERAGE-GATE-001 Closed, Measured Scope Recorded
+
+**Change ID:** CRD-046
+**Source:** Gate Clearance Plan execution on `fix/dependency-vulnerability-remediation`. Closes
+`COVERAGE-GATE-001` and supplies the recorded decision `COVERAGE-SCOPE-001` demands.
+**Status:** COMPLETE for the coverage gate; `DEV-TOOLCHAIN-AUDIT-001` opened
+**Security findings resolved:** None
+
+**1. `COVERAGE-GATE-001` is closed with evidence.** `npm run test:ci:unit` exits 0 at 100% on all
+four metrics — statements 6617/6617, branches 4383/4383, functions 1675/1675, lines 6343/6343 —
+across 179 files and 2017 tests. CRD-041 recorded the baseline as 74.43 / 75.51 / 72.56 / 74.92;
+the tree stood at 88.74% statements when this clearance work began.
+
+Supporting gates, each run and read rather than assumed: `npm run type-check` exit 0;
+`npm run lint` exit 0 with no warnings; `npm run test:ci:storybook` exit 0 (135 files / 300 tests);
+`npm run test:ci:quality` exit 0 (8 tests); `npm run build` exit 0 (webpack 5.108.4, no errors).
+
+The thresholds were not lowered. `tests/unit/config/coverageRemapPolicy.test.ts` fails the build if
+any `coverage.exclude` entry falls outside a reviewed category, so the 100% figure cannot be reached
+in future by editing the exclude list.
+
+**2. The measured-scope decision `COVERAGE-SCOPE-001` asked for.** 31 React Aria files left the unit
+denominator. They are recorded as **two separate lists, deliberately not merged**, because they are
+excluded for different reasons and one reason is materially weaker than the other:
+
+- `verifiedInStorybook` — 25 files, each measured at 100% on all four metrics in a Storybook
+  coverage run **before** being listed. The measurement changed runner; it did not disappear.
+- `evaluationSpikeNotCovered` — 6 files (`CommandPalette`, `Table`, `GridList`, `Menu`, `ListBox`,
+  `Tree`) that are **knowingly unmeasured**. These are a spike retained to evaluate how the
+  components might work within the portal. Verified unreachable: nothing outside the evaluation
+  surface imports them, directly or transitively.
+
+A single glob over the evaluation directories would have been three lines instead of forty, and was
+rejected: it would have let a reader assume coverage exists for all 31 when it exists for 25, and it
+would also have swallowed `SlateEditor` and the 17 evaluation components that already pass.
+
+`SlateEditor` was deliberately **kept** in the denominator, being the basis for upcoming
+functionality, and is covered for real (see item 5).
+
+**3. Correction to `COVERAGE-SCOPE-001`'s proposed remedy.** The backlog item asks for
+`sonar.exclusions` to be reconciled with the Vitest exclude list. **Doing that would be wrong.**
+`sonar.exclusions` removes files from analysis altogether, losing bug, code-smell and vulnerability
+detection on them — a far larger change than aligning coverage scope. The correct key is
+`sonar.coverage.exclusions`, which is what was written, and
+`tests/unit/config/sonarCoverageContract.test.ts` now fails the build if the two lists drift apart.
+The original finding — that the two tools measured different sets — was correct; only the proposed
+key was wrong.
+
+**4. Roughly half the residual branches were unreachable code, not missing tests.** These were deleted
+with justification rather than tested around, each in its own commit:
+
+- `AutoSuggest/index.tsx` re-tested `requestId === requestIdRef.current` after both the success and
+  failure paths had already returned on a stale id, with nothing awaiting in between.
+- `SlateEditor.tsx` guarded two `setErrors` updaters with `prev.includes(errorMsg)` three lines after
+  `setErrors([])` had emptied the queued state. The de-duplication they appeared to provide already
+  came from the reset. The identical-looking guard in `handleChange` is live and was kept — it has no
+  reset.
+- `Attachment/index-new.tsx` normalised `isArray(value) ? value : []` at three separate points; now
+  derived once at component scope.
+- `AutoSuggestContainer.tsx` looked up the selected key with find-then-guard. React Aria cannot emit a
+  key its collection no longer holds — `commitSelection` reads `collection.getItem`, and on a miss the
+  empty `itemText` makes the `inputValue !== itemText` test fail, while custom values arrive as `null`
+  and return earlier. Rewritten as a filter: identical behaviour, no arm that no input can take.
+
+**5. `SlateEditor` reached 100% by driving the model rather than the DOM.** `handleChange` was the last
+unmeasured application code. It was unmeasured because the tests drove from the wrong end: typing into
+Slate needs `beforeinput` plus a live DOM Selection, neither of which jsdom implements, so `onChange`
+never fired. Slate's document is a plain JavaScript model — transforms call `editor.onChange()`, which
+`<Slate>` forwards to the `onChange` prop, the same path a keystroke takes once the browser has
+finished translating it. Two details made it work: `createEditor` is wrapped to keep a reference to the
+editor the component builds (the editor itself is real and unstubbed; the wrapper only observes), and
+`apply` batches operations behind a microtask, so the edit must be awaited inside `act` rather than
+applied synchronously.
+
+**6. Defects found by the coverage work, in files that were already at 100%.** Coverage percentage and
+correctness are independent; each of these sat under a green metric:
+
+| Defect | Fix |
+| --- | --- |
+| Quote wizard deadlock — `acquireTokenSilent` outside the `try`, so a token failure hung the wizard | Moved inside; added an `isMounted` guard and cleanup |
+| Progress poll uncancellable in `routes/ta/index.tsx` and `appDocuments.tsx`; no unmount abort in the latter | Abort check plus a 2000 ms backoff; unmount abort effect added |
+| `AttachmentNew` stored a lone object when `allowMultiple` was false, but `AttachmentItemNew` addresses its field as `name[index]` and so read `undefined`, throwing on `contentField.value.attachmentName` | The field always holds a list |
+| `appDetails.tsx` `fetchData` had no error handling | Wrapped in try/catch/finally with `AppLogger.error` and optional reads |
+| `appMessages.tsx` filter options hardcoded `'1'/'2'/'3'` | Replaced with the `FilterMessages` enum |
+
+The progress-poll defect was initially read as a test bug: it crashed the Vitest worker with
+`node::OnFatalError`. The crash was the symptom, not the cause.
+
+**7. The ESLint 8 → 10 migration is bundled, by decision, and documented here.** It is not dependency
+vulnerability remediation, but it is not separable from it either: the ESLint 8 line pulled part of the
+transitive graph this branch exists to clear. `.eslintrc.cjs` (146 lines) became `eslint.config.mjs`
+(flat config, 234 lines); `@typescript-eslint/*` became the unified `typescript-eslint@8.67.0`;
+`eslint-plugin-react` became `@eslint-react/eslint-plugin@5.18.6`; `eslint-plugin-react-hooks` went
+4.6.2 → 7.1.1; `@eslint/js` and `@stylistic/eslint-plugin` were added. Net suppression change across
+39 files: **57 `eslint-disable` directives removed, 6 added.**
+
+`tests/unit/config/eslintPolicy.test.ts` asserts the **effective** config ESLint resolves for an
+application file rather than the source of `eslint.config.mjs`, so a preset upgrade that silently
+changes a severity fails the build. It also records the compatibility deltas honestly: the migration
+plan asserted `@eslint-react/jsx-no-duplicate-props` and `@eslint-react/no-string-refs` exist as direct
+replacements, and **measured against the installed plugin they do not exist under any name.** Each
+outgoing rule is listed with the control that actually covers it now.
+
+**8. Dependency status, and a new backlog item.** `npm audit --omit=dev` reports **0 vulnerabilities**:
+the shipped bundle is clean. `npm audit` including dev reports 5 — 2 high, 3 moderate — all transitive,
+all with fixes available, all in build tooling: `webpack-dev-server` → `express` → `qs`,
+`copy-webpack-plugin` and `mini-css-extract-plugin` → `ajv` → `fast-uri`, and `browserslist` via Babel.
+None reach production. Not addressed here; opened as `DEV-TOOLCHAIN-AUDIT-001` rather than swept in
+silently, because clearing them touches the build toolchain and deserves its own verification.
+
+**Outcome:** `COVERAGE-GATE-001` is CLOSED_SUCCESS. `COVERAGE-SCOPE-001` has the recorded decision and
+the executable guard it required, plus a correction to its proposed remedy. `DEV-TOOLCHAIN-AUDIT-001`
+is opened. The full CI gate and the production build both pass.
 
 ---
 

@@ -1,6 +1,6 @@
 # Open Items Backlog
 
-**Date:** 2026-06-28 — CRD-041 reconciles the current tree: 41 registered routes, including six pattern/type approval paths; 31 top-level component families; 87 Storybook story files; 114 unit-test files; and 29 BDD feature files. Type-check, lint, unit tests (114 files / 1,169 tests), Storybook tests (87 files / 218 tests), and 8 quality regression tests pass. `COVERAGE-GATE-001` is open: coverage is 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines against configured 100% thresholds.
+**Date:** 2026-06-28 — CRD-041 reconciles the current tree: 41 registered routes, including six pattern/type approval paths; 31 top-level component families; 87 Storybook story files; 114 unit-test files; and 29 BDD feature files. Type-check, lint, unit tests (114 files / 1,169 tests), Storybook tests (87 files / 218 tests), and 8 quality regression tests pass. `COVERAGE-GATE-001` was open at that date: coverage was 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines against configured 100% thresholds. **Superseded 2026-09-04 (CRD-046):** coverage is 100% on all four metrics across 179 unit-test files / 2017 tests, and `COVERAGE-GATE-001` is CLOSED_SUCCESS.
 **Source references:** Master Change Record (`docs/change-record/MASTER-CHANGE-RECORD.md`), `analysis/ARCHITECTURE.mmd`, `analysis/ASSESSMENT.html`, `analysis/ASSESSMENT.md`, `analysis/MODERNIZATION_BRIEF.md`, `docs/CONCERNS.md`, Sprint 1 Storybook Quality Remediation backlog, Security Assessment findings, Architecture Decision Records
 **Purpose:** Prioritised tracking list for all work that must complete before or during the live migration of the NMI Customer Portal. This document is the authoritative gate-control companion to the Master Change Record. Items move off this list only when they reach CLOSED\_SUCCESS with appropriate sign-off.
 
@@ -24,7 +24,7 @@ Before migration execution, reconcile `analysis/ARCHITECTURE.mmd`, `analysis/ASS
 
 ## Priority 1 — Must Close Before Migration Can Proceed
 
-All items in this section are hard blockers unless explicitly marked `CLEARED`. The historical P1 set remains closed, but `COVERAGE-GATE-001` was opened by the 2026-06-28 current-tree validation and blocks the full CI/pre-flight gate.
+All items in this section are hard blockers unless explicitly marked `CLEARED`. The historical P1 set remains closed. `COVERAGE-GATE-001`, opened by the 2026-06-28 current-tree validation, and `COVERAGE-SCOPE-001`, opened 2026-09-02, were both closed on 2026-09-04 by CRD-046 — the full CI gate and the production build now pass. No Priority 1 item is currently open.
 
 ### Sprint 1 Storybook Quality Remediation Issues
 
@@ -59,8 +59,9 @@ All items in this section are hard blockers unless explicitly marked `CLEARED`. 
 | SEC-010 | IDOR Backend Verification (CWE-639) | Medium | **CLOSED — PASS 2026-06-04** — identified in pentest prior to go-live; remediated before production deployment; confirmed by backend team; CRD-035 | Backend Team | Dashboard route migration — **CLEARED** | `docs/sec/SEC-010-idor-backend-verification.md` |
 | QA-SIGNOFF-1 | Sprint 1 QA Sign-Off | Governance | **COMPLETE** — PASS verdict issued 2026-06-01; latest Storybook baseline 55 test files, 165 tests, 0 failures with clean output | QA Agent | Sprint 1 closure; Phase 5 migration gate | `docs/qa/sprint-1-signoff.md` |
 | VALIDATION-GATE-001 | `migration-check` combined Vitest/Storybook gate remediation | High | CLOSED_SUCCESS — combined gate now passes after Vitest parity, runtime hardening, and dashboard test stabilization | Frontend Lead / QA Agent | Migration pre-flight and target CI verification — CLEARED | CRD-032 |
-| COVERAGE-GATE-001 | Unit coverage thresholds not met | High | **OPEN 2026-06-28** — all 1,169 tests pass, but `npm run test:unit:coverage` exits nonzero: statements 74.43%, branches 75.51%, functions 72.56%, lines 74.92% versus 100% thresholds | Frontend Lead / QA Agent | Full CI gate and migration pre-flight | `vitest.unit.config.ts`; `reports/coverage/unit/coverage-summary.json`; CRD-041 |
-| COVERAGE-SCOPE-001 | Coverage measured-scope narrowed without a recorded decision | High | **OPEN 2026-09-02** — commit `c6391fb` added `ClientApp/src/**/setupTests.ts` and `ClientApp/src/**/*.stories copy.tsx` to the Vitest coverage `exclude` list. This raises the reported percentage by shrinking the measured surface rather than by adding a test, which `COVERAGE-GATE-001` explicitly forbids doing silently. The commit message ("feat: add systematic debugging and test-driven development skills") does not mention coverage, so the change is not discoverable from the log. `sonar.exclusions` was **not** updated to match, so SonarCloud and local coverage now measure different sets. | Frontend Lead / QA Agent | Full CI gate and migration pre-flight — same gate as `COVERAGE-GATE-001` | `vitest.unit.config.ts`; `sonar-project.properties`; CRD-042 |
+| COVERAGE-GATE-001 | Unit coverage thresholds not met | High | **CLOSED_SUCCESS 2026-09-04** — `npm run test:ci:unit` exits 0 at 100% on all four metrics: statements 6617/6617, branches 4383/4383, functions 1675/1675, lines 6343/6343, across 179 files / 2017 tests. Thresholds unchanged; the denominator is guarded by `tests/unit/config/coverageRemapPolicy.test.ts`, which fails the build on any exclusion outside a reviewed category | Frontend Lead / QA Agent | Full CI gate and migration pre-flight | `vitest.unit.config.ts`; `reports/coverage/unit/coverage-summary.json`; CRD-041; CRD-046 |
+| COVERAGE-SCOPE-001 | Coverage measured-scope narrowed without a recorded decision | High | **CLOSED_SUCCESS 2026-09-04** — the two cited exclusions are gone from `vitest.unit.config.ts` and the files themselves no longer exist in the tree, so the unannounced narrowing is reverted rather than ratified. The current exclusions are recorded as an explicit decision in CRD-046, held to a reviewed policy by `coverageRemapPolicy.test.ts`, and mirrored into `sonar.coverage.exclusions` under a drift guard (`sonarCoverageContract.test.ts`). **Correction to the proposed remedy:** this item asked for `sonar.exclusions` to be reconciled; that key removes files from analysis entirely, losing bug/smell/vulnerability detection, so `sonar.coverage.exclusions` is the correct key. Original finding — that the two tools measured different sets — was correct. *Historical detail:* commit `c6391fb` added `ClientApp/src/**/setupTests.ts` and `ClientApp/src/**/*.stories copy.tsx` to the Vitest coverage `exclude` list. This raises the reported percentage by shrinking the measured surface rather than by adding a test, which `COVERAGE-GATE-001` explicitly forbids doing silently. The commit message ("feat: add systematic debugging and test-driven development skills") does not mention coverage, so the change is not discoverable from the log. `sonar.exclusions` was **not** updated to match, so SonarCloud and local coverage now measure different sets. | Frontend Lead / QA Agent | Full CI gate and migration pre-flight — same gate as `COVERAGE-GATE-001` | `vitest.unit.config.ts`; `sonar-project.properties`; `tests/unit/config/coverageRemapPolicy.test.ts`; `tests/unit/config/sonarCoverageContract.test.ts`; CRD-042; CRD-046 |
+| DEV-TOOLCHAIN-AUDIT-001 | Dev-only transitive advisories in the build toolchain | Medium | **OPEN 2026-09-04** — `npm audit --omit=dev` reports 0, so the shipped bundle is clean. Including dev, `npm audit` reports 5 (2 high, 3 moderate), all transitive with fixes available: `webpack-dev-server` → `express` → `qs`; `copy-webpack-plugin` and `mini-css-extract-plugin` → `ajv` → `fast-uri`; `browserslist` via Babel. None reach production. Deliberately not swept into CRD-046 — clearing them touches the build toolchain and needs its own build + test verification | Frontend Lead / DevOps | Not a production gate; clear before the next toolchain bump | `package.json`; `npm audit` output 2026-09-04; CRD-046 |
 | RULES-REGISTER-001 | Business rules register unreliable for sign-off | High | **PARTIALLY REMEDIATED 2026-09-02 (CRD-045)** - citation rot now guarded by `npm run lint:rules` in CI (`static-quality-node24`); the 3 past-EOF citations and RULE-051's missing section are fixed; summary-table line numbers removed to end the duplication. **STILL OPEN:** 5 missing detail sections, 22 weakly-anchored citations, RULE-022 dead-code question, and 50 unverified specifications. Originally **OPEN 2026-09-02** - verification pass over `analysis/BUSINESS_RULES.md` found 18 of 21 examined citations wrong (5 P0 rules; 3 point past end of file), 6 of 53 rules listed but never defined (including RULE-051, a P1 Legal sign-off item), one P0 specification factually wrong (RULE-035, corrected CRD-043), and one P0 rule whose validator is dead code (RULE-022 `isValidAbn`, zero callers). 50 of 53 specifications remain unverified. | Frontend Lead / NMI Business Analyst / Backend Team | **Blocks BA and Legal sign-off on P2 items 16, 17, 18, 21** | `docs/change-record/2026-09-02-business-rules-verification.md`; CRD-044 |
 
 **SEC-010 detail (CLOSED 2026-06-04):** Backend team confirmed the finding was identified in a pentest prior to go-live and was remediated before production deployment. Checklist ticked; inline comment in `ClientApp/src/routes/dashboard/index.tsx` updated. Full pentest report reference to be added by backend team to `docs/sec/SEC-010-idor-backend-verification.md`. Recorded as CRD-035.
@@ -109,7 +110,26 @@ question put to the BA rested on a false premise.
 | RULE-022 | `isValidAbn` has zero callers. Needs a Backend Team answer on server-side enforcement. |
 | 50 specifications | Unverified against code. |
 
-**COVERAGE-SCOPE-001 detail (OPEN 2026-09-02):** Raised by `/orchestrate morning` under the backlog
+**COVERAGE-SCOPE-001 resolution (CLOSED_SUCCESS 2026-09-04, CRD-046):** All three decisions below were
+taken, and one of them was taken differently from the way this item proposed:
+
+1. **Reverted, not recorded.** `setupTests.ts` is no longer excluded and no longer exists in the tree,
+   so there was nothing left to ratify. The exclusions that *do* exist now are recorded in CRD-046 as
+   two deliberately separate lists — 25 files verified at 100% in Storybook before listing, and 6
+   knowingly-unmeasured evaluation-spike files — and `coverageRemapPolicy.test.ts` fails the build on
+   any exclusion outside a reviewed category.
+2. **Deleted, as this item asked.** The `*.stories copy.tsx` editor artefact is gone from the tree and
+   from the exclude list.
+3. **Reconciled, but under a different key.** This item asked for `sonar.exclusions`. That key removes
+   files from analysis altogether — losing bug, code-smell and vulnerability detection on them — which
+   is a much larger change than aligning coverage scope. `sonar.coverage.exclusions` is the correct key
+   and is what was written; `sonarCoverageContract.test.ts` fails the build if it drifts from the Vitest
+   list. The underlying finding, that the two tools measured different sets, was correct.
+
+The re-measure this item required is done: 100% on all four metrics across 179 files / 2017 tests,
+superseding the stale 74.43% / 75.51% / 72.56% / 74.92% figures below.
+
+**Original detail (OPEN 2026-09-02):** Raised by `/orchestrate morning` under the backlog
 intake rule — an unresolved finding must become a backlog item immediately rather than living only in a
 commit. Three things need a decision, and none of them is "re-run coverage":
 
@@ -131,7 +151,15 @@ commit. Three things need a decision, and none of them is "re-run coverage":
 (74.43% / 75.51% / 72.56% / 74.92%) date from 2026-06-28 against **114** test files. The suite is now
 **163 files / 1,734 tests**, so the figures in this backlog are two months and 49 test files stale.
 
-**COVERAGE-GATE-001 detail (OPEN):** The failure is a coverage-threshold failure, not a unit-test failure. The largest low-coverage areas include the Type Approval dashboard/routes and supporting attachment, progress, Type Approval filter/request-item, and rich-text editor components. Close this item by adding behavior-focused tests or by obtaining an explicit, reviewed change to the measured scope/threshold policy. Do not silently weaken thresholds.
+**COVERAGE-GATE-001 resolution (CLOSED_SUCCESS 2026-09-04, CRD-046):** Closed by adding tests, not by
+weakening thresholds — which remain 100/100/100/100. The areas this item named are all at 100%: the
+Type Approval dashboard and routes, the attachment and progress components, the Type Approval
+filter/request-item components, and the rich-text editor (`SlateEditor`, reached by driving Slate's
+document model rather than the DOM, which jsdom cannot do). Roughly half the residual branches turned
+out to be unreachable code and were deleted with justification rather than tested around. The coverage
+work also surfaced five defects in files that were already at 100% — see CRD-046 item 6.
+
+**Original detail (OPEN):** The failure is a coverage-threshold failure, not a unit-test failure. The largest low-coverage areas include the Type Approval dashboard/routes and supporting attachment, progress, Type Approval filter/request-item, and rich-text editor components. Close this item by adding behavior-focused tests or by obtaining an explicit, reviewed change to the measured scope/threshold policy. Do not silently weaken thresholds.
 
 **WCAG component/E2E validation detail (CRD-036, refreshed by CRD-041):** Automated evidence covers RequestList, combobox, modal/footer/date-picker, Actions, authenticated account/RFQ/quote flows, and route Storybook stories. The 2026-06-28 baseline passes 114 unit files / 1,169 tests and 87 Storybook files / 218 tests, including Type Approval isolated stories. Manual keyboard, screen-reader, 400% zoom, target-size, and focus-not-obscured evidence still gates any final WCAG 98+ claim.
 
@@ -308,5 +336,5 @@ projects pass with 28 application scenarios and 129 Storybook scenarios.
 | P2 — Modernization brief approval gates (#16–#22) | 7 decisions | Phase approval, SME sign-off, target repository readiness | STRUCTURAL — architectural recommendations provided 2026-06-04; domain sign-offs (BA, Legal, Product, DevOps) required before affected batches |
 | P2 — Batch E prerequisites (PREREQ-001–003) | 3 items | Batch E hard prerequisites | **ALL COMPLETE** — PREREQ-001 (CRD-037) · PREREQ-002 (CRD-038) · PREREQ-003 (CRD-039). Batch E may begin pending Item 22 repository provisioning. |
 | P2 — Type Approval workflow evidence | 1 item | Type Approval route migration and cutover | **CLEARED 2026-09-02** — residual gap explicitly accepted by the operator (CRD-042, `AMB-001`). Six paths remain Storybook-only evidence through cutover. |
-| P1 — Coverage measured-scope integrity | 1 finding | Full CI gate and migration pre-flight | **OPEN 2026-09-02** — `COVERAGE-SCOPE-001`: coverage `exclude` list widened without a recorded decision; `sonar.exclusions` not reconciled |
+| P1 — Coverage measured-scope integrity | 1 finding | Full CI gate and migration pre-flight | **CLOSED_SUCCESS 2026-09-04** — `COVERAGE-SCOPE-001`: the unrecorded exclusions are reverted and their files deleted; the current scope is recorded in CRD-046 and guarded by `coverageRemapPolicy.test.ts` and `sonarCoverageContract.test.ts`, mirrored into `sonar.coverage.exclusions` (not `sonar.exclusions`, which would drop the files from analysis) |
 | P3 — Deferred items | 33 items | Migration sprint / post-migration | No hard gate; must be scheduled before or during migration sprint |
