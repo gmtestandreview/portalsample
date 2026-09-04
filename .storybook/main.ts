@@ -82,6 +82,38 @@ const config: StorybookConfig = {
                     },
                 },
             },
+            build: {
+                // Storybook's own runtime dominates this bundle — iframe.js is
+                // ~1.9 MB, plus axe-core and the Storybook UI. Our largest story
+                // chunk is ~224 kB, so the 500 kB default only ever fires on
+                // framework code we don't control. Raise the ceiling above the
+                // framework bundles while still flagging a runaway story chunk.
+                chunkSizeWarningLimit: 2048,
+                rollupOptions: {
+                    // The Application Insights ES5 builds place `/*#__PURE__*/`
+                    // inside parentheses before a string literal — a malformed
+                    // annotation Rolldown (Vite 8's bundler) reports but cannot
+                    // act on and that has no functional effect. Silence it for
+                    // vendor code only; annotation problems in our own source
+                    // still surface. Mirrors the Sass `quietDeps` layer above.
+                    onLog(
+                        level: string,
+                        log: { code?: string; message?: string },
+                        handler: (
+                            level: string,
+                            log: { code?: string; message?: string },
+                        ) => void,
+                    ) {
+                        const isVendorPureNoise =
+                            log.code === 'INVALID_ANNOTATION' &&
+                            (log.message ?? '').includes('node_modules');
+                        if (isVendorPureNoise || log.code === 'PLUGIN_TIMINGS') {
+                            return;
+                        }
+                        handler(level, log);
+                    },
+                },
+            },
         });
     },
 };
