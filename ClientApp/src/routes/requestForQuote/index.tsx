@@ -38,18 +38,30 @@ const RequestForQuote = () => {
     /**
      * True only once the wizard has actually unmounted.
      *
-     * Deliberately a ref with an empty-dependency effect rather than a `let` inside the loader
-     * effect below. That earlier shape cleared the flag on every dependency change, not just on
-     * unmount, and the loader effect depends on `accounts`, `instance` and `statuses`. A change to
-     * any of them mid-request marked the in-flight load as abandoned, while `isLoading.current` was
-     * still true and so blocked the re-run from starting a replacement. The response then arrived,
-     * saw the flag, and dropped the result - leaving `statuses` undefined with nothing left to
-     * retrigger the effect. The wizard rendered nothing, permanently.
+     * Both halves of this matter, and each was got wrong once. It is a ref with its own
+     * empty-dependency effect rather than a `let` inside the loader effect, because that effect
+     * depends on `accounts`, `instance` and `statuses` - its cleanup runs on any of those changing,
+     * not just on unmount. And the flag is reset when the effect runs, not merely initialised,
+     * because StrictMode remounts in development.
+     *
+     * Either mistake produces the same failure: an in-flight load is marked abandoned while
+     * `isLoading.current` is still true, which blocks the re-run from starting a replacement. The
+     * response then arrives, sees the flag, and drops the result - leaving `statuses` undefined with
+     * nothing left to retrigger the effect, and the wizard stuck on its spinner for good.
      */
     const isUnmounted = useRef(false);
 
-    useEffect(() => () => {
-        isUnmounted.current = true;
+    useEffect(() => {
+        // Reset on every mount, not just initialised once. StrictMode mounts, unmounts and remounts
+        // in development, so without this the cleanup latches the ref true during that simulated
+        // unmount and nothing ever clears it - the first real response is then discarded and the
+        // wizard sits on its spinner forever. Only the development build shows it, which is why the
+        // unit suite (no StrictMode wrapper) passed while the browser-driven e2e did not.
+        isUnmounted.current = false;
+
+        return () => {
+            isUnmounted.current = true;
+        };
     }, []);
 
     useEffect(() => {

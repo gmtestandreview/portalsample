@@ -254,6 +254,27 @@ describe('workflow route wrappers', () => {
         expect(screen.getByText('Request summary step')).toBeInTheDocument();
     });
 
+    it('still loads statuses when StrictMode mounts, unmounts and remounts the wizard', async () => {
+        // StrictMode mounts, tears down and remounts every effect in development. An unmount flag
+        // that is only initialised - rather than reset each time the effect runs - latches true
+        // during that simulated teardown and is never cleared, so the first real response is
+        // discarded and the wizard sits on its spinner forever.
+        //
+        // This shipped once. The plain render above could not catch it, because RTL does not wrap
+        // in StrictMode, so it took a browser-driven e2e run to surface. Rendering the wizard the
+        // way index.tsx actually renders it keeps that gap closed here.
+        const RequestForQuote = (await import('../../../ClientApp/src/routes/requestForQuote')).default;
+
+        renderAt(
+            '/request-for-quote/APP-1/organisation-and-contact',
+            <StrictMode><RequestForQuote /></StrictMode>,
+            '/request-for-quote/:id/*',
+        );
+
+        await waitFor(() => expect(screen.getByTestId('wizard-form')).toBeInTheDocument());
+        expect(screen.getAllByTestId('wizard-step')).toHaveLength(3);
+    });
+
     it('redirects request-for-quote to not found for invalid ids and failed status loads', async () => {
         const RequestForQuote = (await import('../../../ClientApp/src/routes/requestForQuote')).default;
         const { unmount } = renderAt('/request-for-quote/!bad/organisation-and-contact', <RequestForQuote />, '/request-for-quote/:id/*');
