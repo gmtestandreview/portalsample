@@ -1,149 +1,152 @@
-# Pipeline Audit Report — 2026-09-02
+# Pipeline Audit Report — 2026-09-04
 
-**Branch:** `fix/dependency-vulnerability-remediation` (141 commits ahead of origin/main)  
-**Audit date:** 2026-09-02  
+**Branch:** `fix/storybook-build-warnings` (6 commits ahead of origin/main)  
+**Audit date:** 2026-09-04  
 **Auditor:** harness-optimizer (Tier 3)
 
 ---
 
 ## Executive Summary
 
-**AUDIT CLEAN WITH ADVISORIES**
+**BLOCK MERGE — Rule evasion detected**
 
-All 8 completed tasks have been examined. No rule evasion detected. File Claims are properly managed. However, two procedural advisories apply:
-
-1. **Code-reviewer not invoked** on source file modifications (TASK-002, TASK-004, TASK-007)
-2. **Bash command log unavailable** — verification commands cannot be independently confirmed, only asserted
+The branch introduces a **critical and systematic violation** of ROUTING.md §3.8 (dependency pinning policy) by loosening exact version pins to caret ranges for lint, Storybook, and related tooling. This is a direct breach of governed rule and creates silent risk of untested version combinations. While other changes in the branch are legitimate and properly scoped, this violation alone blocks merge.
 
 ---
 
-## Task Verification Matrix
+## Critical Finding: Dependency Pinning Policy Violation
 
-| Task | Type | Status | Verification Evidence | Verdict |
-|------|------|--------|----------------------|---------|
-| TASK-001 | Backlog intake | COMPLETE | Docs-only change; no behavior verification required | ✓ PASS |
-| TASK-002 | Annotation (RULE-035/050/015) | COMPLETE | Comment-only, `ClientApp/src/**`; **code-reviewer NOT invoked** | ⚠ ADVISORY |
-| TASK-003 | Coverage gate (BLOCKED) | PENDING | Depends on external-coverage; file claims held 4 files in-progress | ✓ PASS |
-| TASK-004 | RULE-042 annotation | COMPLETE | Annotation + register correction; **code-reviewer NOT invoked** | ⚠ ADVISORY |
-| TASK-005 | .gitignore | COMPLETE | Verified via `git check-ignore` | ✓ PASS |
-| TASK-006 | Business rules verification | COMPLETE | Mechanical citation audit; no behavior change | ✓ PASS |
-| TASK-007 | Citation verification CI gate | COMPLETE | Script created, wired into pr.yml line 60-61 (`npm run lint:rules`); marked "negative-tested" but no run output shown | ⚠ ADVISORY |
-| TASK-008 | RULE-051 documentation | COMPLETE | Detail section authored; docs-only | ✓ PASS |
+**Rule violated:** ROUTING.md §3.8  
+**Rule text:** "Lint / Vitest / Storybook dependency versions are pinned exactly, on purpose. Do not let `syncpack` rewrite them to `^` ranges — its default behaviour silently breaks the `dependencySecurity` policy test."
+
+**Evidence:** Package.json diff (origin/main → HEAD) shows systematic loosening:
+
+| Package | Main (exact) | HEAD (loosened) | Policy Violation |
+|---------|--------------|-----------------|------------------|
+| `eslint` | `10.9.0` | `^10.9.1` | ✓ Exact → Caret |
+| `@eslint/js` | `10.0.1` | `^10.0.1` | ✓ Exact → Caret |
+| `@eslint-react/eslint-plugin` | `5.18.6` | `^5.18.7` | ✓ Exact → Caret |
+| `@storybook/addon-a11y` | `10.5.10` | `^10.6.0` | ✓ Exact → Caret |
+| `@storybook/addon-docs` | `^10.5.10` | `^10.6.0` | ✓ Already caret, bumped |
+| `@storybook/addon-links` | `^10.5.10` | `^10.6.0` | ✓ Already caret, bumped |
+| `@storybook/addon-mcp` | `^0.7.0` | `^10.6.0` | ✓ Caret maintained |
+| `@storybook/addon-vitest` | `^10.5.10` | `^10.6.0` | ✓ Caret maintained |
+| `@storybook/react-vite` | `^10.5.10` | `^10.6.0` | ✓ Caret maintained |
+| `@stylistic/eslint-plugin` | `5.10.0` | `^5.10.0` | ✓ Exact → Caret |
+| `eslint-plugin-react-hooks` | `7.1.1` | `^7.1.1` | ✓ Exact → Caret |
+| `eslint-plugin-storybook` | `^10.5.10` | `^10.6.0` | ✓ Caret maintained |
+| `typescript-eslint` | `8.67.0` | `8.69.0` | ✓ Exact → Exact (bumped) |
+| `globals` | `17.11.0` | `^17.12.0` | ✓ Exact → Caret |
+| `@testing-library/jest-dom` | `^6.9.1` | `7.0.1` | ✓ Major bump + direction reversal |
+
+**Impact:** With caret ranges, the next `npm install` on any CI machine or developer device can pull untested minor/patch versions. The project has not validated these versions against the test suite. Running `syncpack` with default settings will rewrite remaining exact pins and amplify the risk.
+
+**Verdict:** ✗ **BLOCK MERGE** — This is a hard policy breach, not an opinion.
 
 ---
 
-## File Claims Hygiene
+## Secondary Finding: Commit Message Accuracy
 
-| File | Agent | Task | Status | Released? | Verdict |
-|------|-------|------|--------|-----------|---------|
-| ClientApp/src/utils/index.ts | external-session (coverage) | COVERAGE-GATE-001 | in-progress | NO — external session | ✓ MONITORED |
-| tests/unit/utils/index.test.ts | external-session (coverage) | COVERAGE-GATE-001 | in-progress | NO — external session | ✓ MONITORED |
-| tests/unit/coverage/coverageConfig.test.ts | external-session (coverage) | COVERAGE-GATE-001 | in-progress | NO — external session | ✓ MONITORED |
-| vitest.unit.config.ts | external-session (coverage) | COVERAGE-GATE-001 | in-progress | NO — external session | ✓ MONITORED |
+| Commit | Message | Actual Content | Verdict |
+|--------|---------|-----------------|---------|
+| `beb495d` | "update Vitest... to version 5.0.0" | vitest: 4.1.11 → 5.0.0 | ✓ Accurate for that commit |
+| `07dd729` | "update... vitest" (in list) | vitest: 5.0.0 → 4.1.11 (downgrade/revert) | ✗ Inaccurate — message implies upgrade |
 
-**Assessment:** All `in-progress` claims are explicitly acknowledged in DAILY.md §TASK-003 and ROUTING.md §File Claims as held by a documented external session that is not dispatched from this orchestrator. TASK-003 is correctly added to PENDING with `depends_on: external-coverage`. No collision risk.
+The final commit downgrades Vitest back to 4.1.11 but the message lists vitest as being updated (upgrade implied). Misleading for future archaeology, though not a gate failure.
+
+**Verdict:** ⚠ **ADVISORY** — Commit message hygiene. Log is harder to read later.
 
 ---
 
-## Source File Modifications — Code-Reviewer Audit
+## Legitimate Changes (No Evasion)
 
-**Alert:** The ROUTING.md at lines 76–87 require `code-reviewer` dispatch for all modifications to `ClientApp/src/**` and `.github/workflows/**`. Three completed tasks modified source files:
+### Vitest Configuration — `watch: false` Added
 
-### TASK-002 — Annotation of STRUCTURAL rules
+**Files:** `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`
 
-**Files modified:**
-- `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` (line 76 per DAILY.md: annotation for RULE-035)
-- `ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx` (annotation for RULE-050)
-- `ClientApp/src/components/Pill/{QuoteStatusPill,StatusPill}.tsx` (annotation for RULE-015)
-- `ClientApp/src/components/RequestList/instrumentItem.tsx` (annotation for RULE-015)
-- `ClientApp/src/routes/common/enums.ts` (annotation for RULE-015)
+**Change:** Added `watch: false` to `test` config with detailed comment explaining the heap OOM issue in resident watch processes during coverage runs in Browser Mode.
 
-**Expected routing (ROUTING.md line 80):** `typescript-reviewer` + `security-reviewer` (validation schemas are shared with Node backend; constraint 3.1)
+**Impact on tests:** None. The explicit `run` flag in CI (`test:ci:unit`, `test:ci:storybook`, etc.) already prevents watch mode. The `test:*:watch` scripts explicitly pass `--watch` to opt back in.
 
-**Evidence in `.agent-sync/results/`:** ❌ NO CODE-REVIEWER RESULT FILE
+**Gate maintained:** Coverage thresholds remain 100% on all metrics (statements, branches, functions, lines).
 
-**Verdict:** ⚠ **ADVISORY** — Annotations are comment-only and carry no logic risk. However, procedurally they should have triggered a `code-reviewer` gate per §0.3 ("CI is the reviewer"). Not blocking, but out of process.
+**Verdict:** ✓ **PASS** — Legitimate optimization, no gate weakening.
 
-### TASK-004 — RULE-042 annotation
+---
 
-**Files modified:**
-- `requestForQuote/validation.ts` (per DAILY.md: line 87, annotation for RULE-042)
+### Storybook Build Suppression — `onLog` Filter Properly Scoped
 
-**Expected routing:** `typescript-reviewer` + `security-reviewer`
+**File:** `.storybook/main.ts`
 
-**Evidence:** ❌ NO CODE-REVIEWER RESULT FILE
+**Changes:**
+1. `chunkSizeWarningLimit: 2048` — raises threshold above Storybook runtime + axe-core + Storybook UI to flag only runaway story chunks
+2. `onLog` filter (lines 99–114) suppresses:
+   - `INVALID_ANNOTATION` errors that occur in `node_modules` only (vendor ES5 builds)
+   - `PLUGIN_TIMINGS` noise
 
-**Verdict:** ⚠ **ADVISORY** — Same as TASK-002.
+**Scope verification:** Filter checks `log.message.includes('node_modules')` — first-party code errors in ClientApp/src still surface.
 
-### TASK-007 — Citation verification CI gate
+**Verdict:** ✓ **PASS** — Suppression is scoped correctly to vendor noise only.
 
-**Files modified:**
-- `scripts/verify-rule-citations.mjs` (new, 363 lines)
-- `.github/workflows/pr.yml` (lines 56–61 added; wired `npm run lint:rules` gate)
-- `package.json` (new npm scripts for rule linting)
+---
 
-**Expected routing (ROUTING.md line 88):** `infra-reviewer` for `.github/workflows/**` and gate config
+### React Aria Act() Warning Fixes
 
-**Evidence:** ❌ NO INFRA-REVIEWER RESULT FILE
+**Files:**
+- `ClientApp/src/components/ComboBox/ComboBox.tsx` — wrapped input in `<Group>` to prevent ResizeObserver post-mount state
+- `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx` — same fix
+- `ClientApp/src/components/AriaComponents/Tabs.stories.tsx` — added `transition: none` to TabPanels
+- `ClientApp/src/components/Inputs/AriaCheckbox/CheckboxGroup.stories.tsx` — added `aria-label` for accessibility
 
-**Verdict:** ⚠ **ADVISORY** — The script and CI wiring are present and correctly integrated. However, the `infra-reviewer` gate was not invoked. The script's negative-testing is mentioned in DAILY.md but no run output is provided.
+**Impact:** These are legitimate fixes to prevent post-mount state updates that fall outside act() scope. Not suppressing warnings in config; fixing the underlying cause.
+
+**Verdict:** ✓ **PASS** — Proper implementation of the CLAUDE.md §Storybook async/render hygiene rule.
+
+---
+
+### E2E Test Timeout Increases
+
+**File:** `tests/e2e/steps/storybook.steps.ts`
+
+**Changes:**
+- Added `STORY_RENDER_TIMEOUT_MS = 15_000` constant
+- Increased expect timeouts from 5s default to 15s for Code addon assertions
+- Added best-effort `waitForFunction` for story bundle compilation with `.catch(...)` fallback
+- Added assertion warmup for story preview before checking Code Panel
+
+**Impact:** More robust waiting for cold compilation (first story hit), not weakened assertions.
+
+**Test assertions:** Strengthened with additional accessibility check in CheckboxGroup story.
+
+**Verdict:** ✓ **PASS** — Test robustness improved, no weakening.
 
 ---
 
 ## Verification-Before-Completion Assessment
 
-**Per `/superpowers:verification-before-completion` rule:** Before marking a task complete, proof of verification must be recorded.
+**Per `/superpowers:verification-before-completion` rule:** Before marking complete, proof of verification must be recorded.
 
-### Commands Expected (from CLAUDE.md + ROUTING.md):
+**Expected commands:**
 - `npm run type-check` — TypeScript verification
-- `npm run lint` / `npm run lint:fix` — ESLint
-- `npm run test:unit` — Unit tests
+- `npm run lint` — ESLint with rules gate
 - `npm run test:ci` — Full CI gate (type-check + tests + regression)
-- `npm run lint:rules` — Business rules gate (new, TASK-007)
+- `npm run migration-check` — Storybook build
 
-### Evidence Collected:
+**Evidence collected:**
 - **Bash command log (`~/.claude/bash-commands.log`):** ❌ NOT FOUND
-- **Commit messages:** Do reference the features created, but not verification runs
-- **CI workflow configuration:** ✓ IS present and correct (pr.yml shows all gates including new `npm run lint:rules`)
-- **Actual command execution output:** ❌ NOT FOUND in chat logs or result files
+- **Agent result files (`.agent-sync/results/`):** ❌ EMPTY (0 files)
+- **Commit messages:** Do not cite verification runs
 
-### Verdict:
-**INCONCLUSIVE REGARDING BASH EXECUTION** — Without bash-commands.log or command execution output saved to `.agent-sync/results/`, I cannot independently verify whether:
-- `npm run lint:rules` was actually executed on the new script before marking TASK-007 complete
-- `npm run type-check` / `npm run lint` were run to gate the source file annotations in TASK-002/004
-- Any tests were run on the modified files
-
-**Mitigating factors:**
-1. **TASK-001, TASK-005, TASK-006, TASK-008** are config/docs-only and require no verification
-2. **TASK-002, TASK-004** are comment-only annotations with no logic impact
-3. **TASK-007** script is simple (format validation, no complex logic)
-4. **CI gates are live:** The pr.yml already includes `npm run lint:rules` (line 60–61), so the gate will fire on the next PR
+**Verdict:**  
+⚠ **INCONCLUSIVE — Unverifiable without bash log or result files.** This compounds the pinning policy breach: we cannot confirm the package changes do not break the build.
 
 ---
 
-## Stale Claims Check
+## File Claims Hygiene
 
-**ROUTING.md §File Claims, lines 285–290:** 4 rows for COVERAGE-GATE-001
+**ROUTING.md §File Claims (lines 276–308):** All claims from COVERAGE-GATE-001 are marked `done` and released. No stale claims.
 
-All rows correctly show:
-- Task ID: `COVERAGE-GATE-001`
-- Agent: `external-session (coverage)`
-- Status: `in-progress` ✓ (not `done`)
-- **Acknowledged in DAILY.md:** ✓ Yes, explicitly (§TASK-003: "A second AI session is already driving it")
-
-**Verdict:** ✓ NO STALE CLAIMS — All in-progress rows have an active, documented external session. No release required.
-
----
-
-## Veto Buffer Compliance
-
-**DAILY.md §3 (Veto Buffer):**
-- AMB-001 (TYPE-APPROVAL-E2E-001): ✓ RESOLVED by operator, recorded in OPEN-ITEMS-BACKLOG.md
-- DEC-001 (infra-reviewer scope): ✓ APPROVED by operator
-- BLK-001 (P2 item 18): ✓ RESOLVED
-- DEC-002 (RULE-035 register defect): ✓ Corrected in place; operator decision pending on verification pass
-
-**Verdict:** ✓ ALL DECISIONS RECORDED — No open Veto items blocking this branch.
+**Verdict:** ✓ **PASS** — File Claims properly managed.
 
 ---
 
@@ -151,32 +154,42 @@ All rows correctly show:
 
 | Category | Status | Finding |
 |----------|--------|---------|
-| **File Claims Release** | ✓ PASS | 4 in-progress claims properly held by external session; no collision risk |
-| **Verification-Before-Completion** | ⚠ INCONCLUSIVE | Bash command log unavailable; claims cannot be independently verified, only asserted. CI gates exist and will fire on next PR. |
-| **Code-Reviewer Dispatch** | ⚠ ADVISORY | 3 of 8 tasks modified source files without code-reviewer invocation. Annotations are comment-only (no logic risk); procedurally out of spec. |
-| **Infra-Reviewer Dispatch** | ⚠ ADVISORY | TASK-007 wired CI gate without infra-reviewer invocation. Gate is live and correct. |
-| **Veto Buffer** | ✓ PASS | All decisions recorded and approved. |
-| **No `--no-verify` / Hook Bypass** | ✓ PASS | No evidence of hook skips or git bypasses. |
-| **Stale Claims** | ✓ PASS | No stale file claims; all in-progress rows acknowledged. |
+| **Dependency Pinning Policy** | ✗ FAIL | Exact pins systematically loosened to `^` caret ranges. Direct §3.8 violation. |
+| **Vitest Configuration** | ✓ PASS | `watch: false` appropriate, coverage thresholds remain 100%. |
+| **Storybook Build Suppression** | ✓ PASS | Scope correctly limited to vendor code; first-party errors still surface. |
+| **React Aria Fixes** | ✓ PASS | Proper act() warning mitigation via code changes, not config suppression. |
+| **E2E Test Robustness** | ✓ PASS | Timeouts increased for cold compilation; assertions strengthened. |
+| **Coverage Thresholds** | ✓ PASS | Remain 100% on all metrics; no gate weakening. |
+| **Commit Message Accuracy** | ⚠ ADVISORY | Commit `07dd729` message doesn't match content (downgrade described as update). |
+| **Verification Evidence** | ⚠ INCONCLUSIVE | Bash log unavailable; cannot independently verify builds passed. |
+| **File Claims** | ✓ PASS | All claims released; no collision risk. |
 
 ---
 
-## Verdict: AUDIT CLEAN WITH ADVISORIES
+## Remediation Required
 
-### No `BLOCK MERGE` Conditions Met
+**To clear `BLOCK MERGE`, the branch must:**
 
-✓ **No rule evasion detected.** All 8 completed tasks are accounted for. File Claims are properly managed. No bypassed hooks. No stale claims.
+1. **Re-pin exact versions** for all lint, Storybook, and related packages that were loosened to `^` ranges:
+   - Revert changes to `eslint`, `@eslint/js`, `@eslint-react/eslint-plugin`, `@stylistic/eslint-plugin`, `eslint-plugin-react-hooks`, `globals` — back to exact pins from origin/main
+   - Review and fix other caret loosening (Storybook, typescript-eslint, etc.)
+   
+2. **Verify the build** by running (and recording output):
+   - `npm run type-check`
+   - `npm run lint`
+   - `npm run test:ci`
+   - `npm run migration-check`
 
-### Advisories for Future Reference
-
-1. **Bash logging:** Enable `bash-commands.log` in project settings for independent verification audit trails
-2. **Code-reviewer gate:** Consider routing annotations in TASK-002/004 through `code-reviewer` despite comment-only status, to maintain procedural consistency
-3. **Infra-reviewer gate:** Route CI/workflow changes through `infra-reviewer` before marking complete (TASK-007)
-
-### Action Required
-
-None. This branch is clean and ready for merge. The external session holding COVERAGE-GATE-001 claims should release them once that task completes (or confirm completion to unblock the next dispatch).
+3. **Update commit messages** if the Vitest revert/downgrade is intentional.
 
 ---
 
-**Audit Sign-off:** harness-optimizer · 2026-09-02
+## Verdict: BLOCK MERGE
+
+**This branch cannot be merged in its current state.** The dependency pinning violation is a rule evasion that contradicts ROUTING.md §3.8 and §0.3 ("Never weaken a gate to go green").
+
+All other technical changes in the branch are sound and properly scoped. Once the pinning policy is restored, the branch will be clean.
+
+---
+
+**Audit Sign-off:** harness-optimizer · 2026-09-04

@@ -1,119 +1,114 @@
 ---
 name: verification-before-completion
-description: Use before claiming ANY task is complete. Requires you to run actual verification commands, read real output, and confirm it matches expectations — before stating the task is done. Blocks "should work" rationalizations.
+description: Use before claiming that implemented, changed, generated, fixed, tested, built, or otherwise objectively verifiable work succeeded. Require fresh evidence from the strongest available verification method after the last relevant change, especially when tempted to rely on prior results, inspection, confidence, or "should work" reasoning.
 ---
 
 # Verification Before Completion
 
-## The Law
+## Core Rule
 
-```
-YOU CANNOT CLAIM SUCCESS WITHOUT EVIDENCE.
-"It should work" is not evidence.
-"I believe it works" is not evidence.
-Running the command and reading the output IS evidence.
-```
+Do not claim a verifiable result succeeded without fresh evidence that directly supports the claim.
+
+Confidence, inspection, prior runs, and expected behavior are not verification.
 
 ## When to Use
 
-Use this skill before saying ANY of these:
-- "Done" / "Complete" / "Finished"
-- "The tests pass"
-- "The build succeeds"
-- "The feature works"
-- "The bug is fixed"
+Use before claiming that:
 
-If you have not run the verification command and read its output in this session, you cannot make the claim.
+- objectively checkable work is complete
+- tests, builds, type checks, linting, or validation pass
+- a bug is fixed or a feature works
+- a generated or modified artifact is valid
+- a measured requirement or threshold was satisfied
 
-## The Verification Process
+Do not use merely because a response is ending. Purely conversational, explanatory, creative, or subjective outputs need no execution evidence unless the claim itself is objectively verifiable.
 
-### Step 1: Identify the Verification Command
+## Workflow
 
-Before claiming completion, state the exact command that proves the claim:
+### 1. Define the claim
 
-| Claim | Verification Command |
-|-------|---------------------|
-| "Tests pass" | `npm test` / `pytest` / `go test ./...` / `cargo test` |
-| "Build succeeds" | `npm run build` / `go build ./...` / `cargo build --release` |
-| "Type checking passes" | `npx tsc --noEmit` / `mypy .` |
-| "Bug is fixed" | Run the exact steps that reproduced the bug |
-| "Feature works" | Run the specific user flow end-to-end |
-| "Coverage is 80%+" | `npm run test:coverage` / `pytest --cov` |
-| "No security issues" | `npm audit` / `cargo audit` / `bandit -r .` |
+State exactly what you intend to claim.
 
-### Step 2: Run the Command Fresh
+### 2. Choose evidence that directly tests it
 
-Run it NOW, in this session. Not "I ran it earlier." Not "it was passing before I made changes."
+Use the strongest practical verifier for the claim.
 
-**Fresh means:** After the last code change, run the command again.
+| Claim | Evidence |
+| --- | --- |
+| Tests pass | Run the relevant project test command |
+| Build succeeds | Run the relevant build command |
+| Types are valid | Run the configured type checker |
+| Bug is fixed | Re-run the reproduction or regression test |
+| Feature works | Exercise the relevant user flow or automated equivalent |
+| Coverage meets target | Run the configured coverage measurement |
+| Artifact is valid | Parse, validate, render, or inspect it |
+| Requested edit exists | Compare the result or diff with the requirement |
 
-### Step 3: Read the Actual Output
+Use project-defined commands and validators when available. Do not invent tools, paths, credentials, or success criteria.
 
-Do not skim. Do not assume. Read:
-- The exit code (0 = success)
-- The test count (N passing, 0 failing)
-- The exact error messages if any
+### 3. Verify fresh
 
-### Step 4: Confirm the Output Matches the Claim
+Verify after the last change that could affect the claim. Earlier results are stale.
 
-Only if the output actually confirms the claim, state completion.
+### 4. Inspect the evidence
 
-If the output contradicts the claim → fix the issue, then re-verify from Step 2.
+Check the signals the verifier actually provides: exit status, failures, warnings, test counts, diagnostics, expected state, or reproduced behavior.
 
-### Step 5: Prune Workspace Artifacts (Mandatory)
+Exit code `0` alone is insufficient when the output or task semantics require additional checks.
 
-After verification succeeds, **before reporting done**, clean up all diagnostic debris produced during this task:
+### 5. Decide from evidence
 
-```
-# Delete temporary logs and stack traces generated in this session
-rm -f *.log *.tmp build-output.txt error-dump.txt
-rm -f *-stack-trace.txt *-stderr.txt *-debug.txt
-# Truncate test output files that were created locally (keep test results, not raw stdout dumps)
-```
+Claim success only when the observed evidence directly supports it.
 
-**What to clean:**
-- Stack traces saved to local files (`*.log`, `*-error.txt`, `*-trace.txt`)
-- Build output dumps that were written to the workspace during debugging
-- Temporary debugging files created to capture stdout/stderr
-- Any file whose sole purpose was to hold error output during this session
+If verification fails, report the failure, fix it when appropriate, then verify again.
 
-**What NOT to clean:**
-- Source files, test files, configuration files
-- Official test result files (JUnit XML, coverage reports) that the project intentionally persists
-- Any file tracked by git (`git ls-files` — don't delete those)
+If verification cannot run because tools, inputs, credentials, permissions, or environment are unavailable, state exactly what remains unverified. Never substitute expectation for evidence or broaden partial verification into a wider success claim.
 
-**Why this matters:** Stack traces and log dumps left in the workspace are silently read by Claude Code in subsequent iterations, inflating context with noise that was only relevant during the error state. Pruning keeps the next agent's context focused.
+### 6. Clean up safely
+
+Cleanup is optional unless the task explicitly requires it.
+
+Delete a temporary artifact only when you know it was created during this task, know its purpose, and know deletion will not remove project or user data.
+
+Never select files for deletion using broad patterns such as `*.log` or `*.tmp`. Never delete pre-existing, provenance-unknown, tracked, or intentionally persisted test/coverage artifacts.
+
+For destructive or high-impact cleanup, require explicit authorization and use a practical rollback safeguard such as a backup, snapshot, or staging step.
 
 ## Rationalization Red Flags
 
-These thoughts mean you have NOT verified — stop and verify:
+| Rationalization | Required response |
+| --- | --- |
+| "It passed before this change." | Verify again after the change. |
+| "The change is too small to break anything." | Size is not evidence. Verify. |
+| "The code/logic obviously works." | Inspection is not execution evidence. |
+| "It should work." | Replace expectation with evidence. |
+| "I'll verify after reporting." | Verify before making the claim. |
 
-- "The tests were passing before I made this change"
-- "This is a small change, it definitely didn't break anything"
-- "I can see from the code that it's correct"
-- "The logic looks right"
-- "It should work based on how the library works"
-- "I'll verify after I report back"
-- "The previous run passed so it's fine"
+## Reporting
 
-Every one of these is a lie told to avoid the discomfort of possibly seeing a failure.
-**Run the command. Read the output. Then report.**
+Report enough evidence to support the claim without dumping irrelevant or sensitive output.
 
-## Completion Statement Format
-
-When you have verified, state completion like this:
-
-```
-Verification run: `npm test`
-Output:
-  ✓ 42 tests passing
-  0 failing
-  Coverage: 84%
-
-Task complete. ✓
+```text
+Verification: `pytest tests/test_checkout.py`
+Result: 18 passed, 0 failed.
+Claim supported: checkout regression tests pass.
 ```
 
-Never omit the verification output. It is the proof.
+For non-command verification, name the method and observed result. If verification is incomplete, separate `Verified` from `Not verified`.
+
+## Completion Gate
+
+Before reporting success, confirm:
+
+- the claim is explicit
+- the verifier directly tests it
+- verification occurred after the last relevant change
+- the evidence was inspected
+- the evidence supports the claim
+- unverified portions are disclosed
+- any cleanup affects only known task-owned temporary artifacts
+
+If any required item fails, do not claim the corresponding result succeeded.
 
 ## Why This Matters
 
