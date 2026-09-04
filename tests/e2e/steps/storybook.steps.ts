@@ -21,6 +21,9 @@ const REPRESENTATIVE_DOCS_ID = 'components-pill--documentation';
 const REPRESENTATIVE_STORY_ID = 'components-pill--dashboard-statuses';
 const STYLE_GUIDE_DOCS_ID = 'documentation-style-guide--documentation';
 
+/** Ceiling for waiting on a story bundle to compile and render on first hit. */
+const STORY_RENDER_TIMEOUT_MS = 15_000;
+
 const MCP_HEADERS = {
     accept: 'application/json, text/event-stream',
     'content-type': 'application/json',
@@ -46,12 +49,24 @@ async function readMcpEvent(response: APIResponse): Promise<McpEnvelope> {
     return JSON.parse(dataLine.slice('data: '.length)) as McpEnvelope;
 }
 
-/** Navigate to a Storybook story iframe and wait for it to be ready. */
+/** Navigate to a Storybook story iframe and wait for the story to actually render. */
 async function loadStoryIframe(page: Page, storyId: string) {
     await page.goto(`${STORYBOOK_BASE}/iframe.html?id=${storyId}&viewMode=story`);
-    // Wait for the React root to be attached — storybook renders into #storybook-root
-    await page.waitForSelector('#storybook-root', { state: 'attached', timeout: 15_000 });
-    // Give React a tick to finish rendering
+    // #storybook-root exists in the iframe shell immediately; the story bundle is
+    // compiled lazily on first hit, so waiting only for 'attached' lets assertions
+    // race a story that has not mounted yet. Storybook toggles body.sb-show-main
+    // once the story has rendered (sb-show-preparing before, sb-show-errordisplay
+    // on failure) — a portal-safe signal, unlike #storybook-root content which
+    // stays empty for modal/toast stories. Best-effort: the step's own assertion
+    // keeps its own timeout and remains the source of truth for a broken story.
+    await page.waitForFunction(
+        () => document.body.classList.contains('sb-show-main'),
+        undefined,
+        { timeout: STORY_RENDER_TIMEOUT_MS, polling: 100 },
+    ).catch(() => {
+        // Slow cold compile — fall through to the assertion's own wait.
+    });
+    // Let late XHRs (MSW handlers, lazy assets) settle; best-effort as before.
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {
         // networkidle can be flaky with MSW; continue after domcontentloaded
     });
@@ -189,6 +204,12 @@ When('I open a representative component story', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Addon panel' })).toBeVisible({
         timeout: 15_000,
     });
+    // The manager chrome (Addon panel) is present before the preview bundle has
+    // compiled. Warm the story: wait for the preview iframe to render real content
+    // so the Code addon has a source to display.
+    await expect(
+        page.frameLocator('#storybook-preview-iframe').locator('#storybook-root'),
+    ).not.toBeEmpty({ timeout: STORY_RENDER_TIMEOUT_MS });
 });
 
 When('I open the Documentation Style Guide', async ({ page }) => {
@@ -270,8 +291,12 @@ Then('the Storybook Code Panel is available', async ({ page }) => {
 Then('the Code Panel contains source for the current story', async ({ page }) => {
     const source = visibleSource(page);
 
-    await expect(source).toContainText('StatusPill');
-    await expect(source).toContainText('DashboardItemStatus.QuoteAvailable');
+    // The Code addon fills its <pre> asynchronously once the story module has
+    // loaded; the default 5s expect timeout can lose that race on a cold bundle.
+    await expect(source).toContainText('StatusPill', { timeout: STORY_RENDER_TIMEOUT_MS });
+    await expect(source).toContainText('DashboardItemStatus.QuoteAvailable', {
+        timeout: STORY_RENDER_TIMEOUT_MS,
+    });
 });
 
 Then('the Style Guide is visible', async ({ page }) => {

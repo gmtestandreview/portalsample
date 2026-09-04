@@ -25,6 +25,10 @@ export default defineConfig({
     ],
     test: {
         name: 'storybook',
+        // Single run unless `--watch` is passed (see `test:storybook:watch`).
+        // A resident watch process here accumulates the Vite module graph and
+        // v8 coverage data in Browser Mode until it exhausts the Node heap.
+        watch: false,
         globals: true,
         setupFiles: ['./vitest.storybook.setup.ts'],
         testTimeout: 15000,
