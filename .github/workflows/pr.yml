@@ -434,17 +434,38 @@ jobs:
           merge-multiple: true
           path: reports/coverage/unit
 
-      # The scanner version is pinned for the same reason npm is: an unpinned
-      # scanner can move analysis results between runs with no commit to
-      # explain it. sonar.qualitygate.wait makes a red gate fail this job,
-      # which is what turns the gate into a merge block.
-      - name: SonarCloud scan
+      # The official action, not `npx --yes @sonar/scan`. npx resolves and installs the package at
+      # CI time and runs its lifecycle scripts, and it does so in a step that holds SONAR_TOKEN -
+      # an install-time code execution path this job never needed. The action instead downloads a
+      # prebuilt Scanner CLI and verifies its GPG signature (skipSignatureVerification defaults to
+      # false), so nothing from npm executes during scanner setup.
+      #
+      # Pinned by commit SHA, which is refs/tags/v8.1.0. scannerVersion is deliberately left at the
+      # action's own default (8.1.0.6389) so the CLI moves only when this SHA moves - the same
+      # reason npm is pinned above, an unpinned scanner can shift analysis results between runs
+      # with no commit to explain it.
+      #
+      # sonar.qualitygate.wait makes a red gate fail this job, which is what turns the gate into a
+      # merge block.
+      - name: SonarQube scan
+        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: >-
-          npx --yes @sonar/scan@4.3.6
-          -Dsonar.qualitygate.wait=true
-          2>&1 | tee reports/ci/sonarcloud/scan.log
+        with:
+          args: -Dsonar.qualitygate.wait=true
+
+      # Replaces the log the old `| tee` produced. report-task.txt is the scanner's own record of
+      # the analysis and carries the task and dashboard URLs, which is the traceability the
+      # evidence bundle exists for; the raw console output remains in the job log either way.
+      - name: Capture scanner report task
+        if: always()
+        run: |
+          if [ -f .scannerwork/report-task.txt ]; then
+            cp .scannerwork/report-task.txt reports/ci/sonarcloud/
+          else
+            echo "No .scannerwork/report-task.txt: the scan did not reach the point of submitting an analysis." \
+              > reports/ci/sonarcloud/scan-note.txt
+          fi
 
       - name: Upload SonarCloud evidence
         if: always()
