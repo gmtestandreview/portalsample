@@ -318,6 +318,6 @@ describe("coverage remapping cohort", () => {
   });
 
   it("keeps the coverage provider aligned with the Vitest cohort", () => {
-    expect(installedVersions("@vitest/coverage-v8")).toEqual(["4.1.11"]);
+    expect(installedVersions("@vitest/coverage-v8")).toEqual(["5.0.0"]);
   });
 });
