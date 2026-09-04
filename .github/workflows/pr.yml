@@ -420,10 +420,18 @@ jobs:
       # Must precede the scan: sonar.javascript.lcov.reportPaths points at
       # reports/coverage/unit/lcov.info, and a missing report is imported as
       # zero coverage rather than raising an error.
+      # Matched by pattern, not by an exact `run_attempt` name. Re-running only the failed jobs
+      # bumps `github.run_attempt` here while leaving the vitest job untouched, because it already
+      # passed - so the exact name this used to build could never exist on a re-run, and the job
+      # died on "Artifact not found for name: vitest-unit-coverage-2". The suffix has to stay on
+      # the upload side, where it keeps a second attempt from colliding with the first attempt's
+      # artifact, so the tolerance belongs here. Coverage for a given commit is the same whichever
+      # attempt produced it, which is what makes merging the matches safe.
       - name: Restore unit coverage from the vitest partition
         uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
-          name: vitest-unit-coverage-${{ github.run_attempt }}
+          pattern: vitest-unit-coverage-*
+          merge-multiple: true
           path: reports/coverage/unit
 
       # The scanner version is pinned for the same reason npm is: an unpinned
