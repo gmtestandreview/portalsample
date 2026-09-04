@@ -44,7 +44,12 @@ export interface AutoSuggestOptionProps<T = unknown> extends AutoSuggestOption<T
 
 export interface AutoSuggestOptionsProps<T = unknown> {
     id?: string;
-    name: string;
     options: AutoSuggestOption<T>[];
     selectedOptionId?: string;
+    /**
+     * Only for use outside a `ComboBox`. Nested, React Aria labels the popup
+     * from the ComboBox's own `Label`, and supplying a name here would be
+     * announced in front of it.
+     */
+    'aria-label'?: string;
 }

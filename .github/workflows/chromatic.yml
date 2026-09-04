@@ -1,0 +1,51 @@
+# Official setup references:
+# https://www.chromatic.com/docs/ci/
+# https://www.chromatic.com/docs/github-actions/
+name: Chromatic
+
+# Chromatic recommends running on push so it can associate each persistent Git
+# commit with the correct branch and visual baseline. Pull requests can then use
+# the linked Chromatic status check and badge without testing an ephemeral merge.
+on:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Publish Storybook
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          # Full history lets Chromatic identify branches and select the correct
+          # baseline commit for visual comparisons.
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.20.0"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Publishing on every push gives pull requests a Chromatic status check
+      # and enables visual-review badges when the GitHub integration is linked.
+      - name: Publish Storybook to Chromatic
+        uses: chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7 # v18.5.0
+        with:
+          # Store this token as the CHROMATIC_PROJECT_TOKEN repository secret.
+          # Never commit a project token directly to the workflow or source.
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # GitHub receives the final linked result from Chromatic, so this job
+          # can finish as soon as the Storybook bundle has uploaded.
+          exitOnceUploaded: true

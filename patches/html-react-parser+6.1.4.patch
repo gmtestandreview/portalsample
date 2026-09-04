@@ -1,0 +1,14 @@
+diff --git a/node_modules/html-react-parser/package.json b/node_modules/html-react-parser/package.json
+index a17f82a..3c293bd 100644
+--- a/node_modules/html-react-parser/package.json
++++ b/node_modules/html-react-parser/package.json
+@@ -18,7 +18,8 @@
+   "exports": {
+     ".": {
+       "import": "./esm/index.mjs",
+-      "require": "./lib/index.js"
++      "require": "./lib/index.js",
++      "default": "./esm/index.mjs"
+     },
+     "./lib/*": {
+       "import": "./esm/*.mjs",

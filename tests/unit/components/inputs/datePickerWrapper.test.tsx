@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
 import DatePicker from '@/components/Inputs/DatePicker';
 import type { CustomDatePickerProps } from '@/components/Inputs/DatePicker/types';
+import { parseDateOnlyInput } from '@/utils/dateOnly';
 
 vi.mock('@/components/Inputs/DatePicker/CustomDatePicker', () => ({
     default: ({
@@ -26,7 +27,7 @@ vi.mock('@/components/Inputs/DatePicker/CustomDatePicker', () => ({
                 onBlur={dateOnBlur}
             />
             {hasError ? <div id={`${name}-error`}>{errorMessage}</div> : null}
-            <button type='button' onClick={() => dateOnChange(new Date('2026-06-12T00:00:00.000Z'))}>
+            <button type='button' onClick={() => dateOnChange(new Date(2026, 5, 12))}>
                 Pick date object
             </button>
             <button type='button' onClick={() => dateOnChange('2026-07-13T00:00:00+10:00')}>
@@ -34,6 +35,9 @@ vi.mock('@/components/Inputs/DatePicker/CustomDatePicker', () => ({
             </button>
             <button type='button' onClick={() => dateOnChange('not a date')}>
                 Pick invalid string
+            </button>
+            <button type='button' onClick={() => dateOnChange(new Date(Number.NaN))}>
+                Pick invalid date object
             </button>
             <button type='button' onClick={() => dateOnChange(null)}>
                 Clear date
@@ -100,18 +104,21 @@ describe('DatePicker wrapper', () => {
         );
 
         const input = screen.getByLabelText('Due date');
-        expect(input).toHaveValue('2026-06-10T14:00:00.000Z');
+        expect(parseDateOnlyInput((input as HTMLInputElement).value)).toBe('2026-06-11');
         expect(input).toHaveAccessibleDescription('Enter a valid date');
         expect(input).toHaveAttribute('placeholder', 'dd/mm/yyyy');
 
         await user.click(screen.getByRole('button', { name: 'Pick date object' }));
-        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"2026-06-12T00:00:00+10:00"'));
+        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"2026-06-12T00:00:00+00:00"'));
 
         await user.click(screen.getByRole('button', { name: 'Pick valid string' }));
-        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"2026-07-13T00:00:00+10:00"'));
+        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"2026-07-13T00:00:00+00:00"'));
 
         await user.click(screen.getByRole('button', { name: 'Pick invalid string' }));
         await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"not a date"'));
+
+        await user.click(screen.getByRole('button', { name: 'Pick invalid date object' }));
+        await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'));
 
         await user.click(screen.getByRole('button', { name: 'Clear date' }));
         await waitFor(() => expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":null'));
@@ -132,7 +139,7 @@ describe('DatePicker wrapper', () => {
         await user.tab();
 
         await waitFor(() => {
-            expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"2026-08-14T00:00:00+10:00"');
+            expect(screen.getByTestId('values')).toHaveTextContent('"dueDate":"2026-08-14T00:00:00+00:00"');
             expect(screen.getByTestId('touched')).toHaveTextContent('"dueDate":true');
         });
     });

@@ -1,16 +1,21 @@
-/* eslint-disable max-len */
+ 
 import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import type { AlertProps, BaseAlertProps } from './types';
 
 /**
- * Internal Alert component with customizable styling and behavior.
- * Handles state management for dismissible alerts and ARIA announcements.
+ * Internal AlertMessage Component
  *
+ * A reusable alert message component that handles visibility and ARIA live announcements. 
+ * This component is used internally by the specific alert variants (AlertSuccess, AlertInfo, AlertWarning, AlertError).
+ * handles the visibility state and provides a consistent structure for all alert types. 
+ * 
  * @internal Use the exported Alert variant components (AlertSuccess, AlertInfo, etc.) instead.
  * @param {BaseAlertProps} props - Component props
- * @returns {JSX.Element} Rendered alert element
+ * @returns {JSX.Element} Rendered alert element 
+ * 
  */
+
 const AlertMessage = (props: BaseAlertProps) => {
     const {
         id,

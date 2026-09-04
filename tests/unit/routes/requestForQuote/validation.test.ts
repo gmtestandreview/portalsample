@@ -81,6 +81,21 @@ describe('instrumentAndRequest validation', () => {
         });
     });
 
+    it('validates RFQ availability dates as calendar dates rather than timezone-shifted instants', async () => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const year = tomorrow.getFullYear();
+        const month = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const day = String(tomorrow.getDate()).padStart(2, '0');
+
+        await expect(instrumentAndRequestSubmitValidation.validate({
+            ...validInstrument,
+            preferredInstrumentOrArtefactAvailabilityDate: `${year}-${month}-${day}T00:00:00+10:00`,
+        })).resolves.toMatchObject({
+            preferredInstrumentOrArtefactAvailabilityDate: `${year}-${month}-${day}T00:00:00+10:00`,
+        });
+    });
+
     it('requires missing submit fields', async () => {
         await expect(instrumentAndRequestSubmitValidation.validate({}, { abortEarly: false })).rejects.toMatchObject({
             errors: expect.arrayContaining([

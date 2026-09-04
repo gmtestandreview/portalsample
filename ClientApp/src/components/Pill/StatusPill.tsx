@@ -3,14 +3,15 @@ import { useEffect, useState } from 'react';
 import { DashboardItemStatus, PaDashboardItemStatus, QuoteStatus, ReportStatus } from '../../routes/common/enums';
 
 export interface StatusPillProps {
+    /** Workflow status whose label and semantic colour are displayed. Unknown strings use the informational treatment. */
     status: DashboardItemStatus | QuoteStatus | PaDashboardItemStatus | ReportStatus | string;
+    /** Accepted for API compatibility; the current renderer does not apply this value. */
     className?: string;
 }
 
 /**
- * Show the status pill according to the status of the requestitem
- * @param props StatusPillProps
- * @returns jsx
+ * Presents a compact, colour-coded label for request, quote, report, and
+ * pattern-approval workflow states.
  */
 const StatusPill = ({ status }: StatusPillProps) => {
     const [pillProps, setPillProps] = useState({ bgColour: 'info', textColour: 'light', text: '' });
@@ -62,9 +63,6 @@ const StatusPill = ({ status }: StatusPillProps) => {
                 break;
             case PaDashboardItemStatus.PaDraft:
                 setPillProps({ bgColour: 'light', textColour: 'dark', text: PaDashboardItemStatus.PaDraft });
-                break;
-            case PaDashboardItemStatus.PaSubmitted:
-                setPillProps({ bgColour: 'info', textColour: 'light', text: PaDashboardItemStatus.PaSubmitted });
                 break;
             default:
                 setPillProps({ bgColour: 'info', textColour: 'light', text: itemStatus });

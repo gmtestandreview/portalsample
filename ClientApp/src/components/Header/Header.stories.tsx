@@ -10,7 +10,6 @@ const meta = {
     parameters: {
         layout: 'fullscreen',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof Header>;
 
 export default meta;

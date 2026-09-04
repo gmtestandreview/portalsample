@@ -5,6 +5,11 @@ import { Form, InputGroup } from 'react-bootstrap';
 import findElementInTreeById from '../../Utilities/findElementInTreeById';
 import type { CustomInputControlRef, CustomInputForwardRefProps } from './types';
 
+/**
+ * Formik-connected text input and calendar trigger used by `CustomDatePicker`.
+ * The input and button behave as one focusable field so validation and calendar
+ * state remain consistent while focus moves between them.
+ */
 const CustomDateInput = React.forwardRef<CustomInputControlRef, CustomInputForwardRefProps>((customInputProps, _ref) => {
     const {
         calendarButtonTitle,
@@ -40,7 +45,7 @@ const CustomDateInput = React.forwardRef<CustomInputControlRef, CustomInputForwa
     // which triggered Formik onBlur if either were blurred.  This approach ensures that the Formik
     // onBlur is only called if the new focus is not on the input field or calendar button
     const handleInputAndButtonFocusEvents = (
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+     
         event: React.FocusEvent<any>,
         targetLosingFocus: Element | null,
         targetReceivingFocus: Element | null,

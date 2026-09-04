@@ -128,14 +128,14 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
 
         const currentCount = getCharCount(value);
 
+        // Both branches replace rather than append: setErrors([]) above already emptied the queued
+        // state, so the de-duplicating updater handleChange uses would never find a duplicate here.
         if (currentCount === 0) {
-            const errorMsg = 'Message cannot be empty or spaces only';
-            setErrors((prev) => (prev.includes(errorMsg) ? prev : [...prev, errorMsg]));
+            setErrors(['Message cannot be empty or spaces only']);
             return;
         }
         if (currentCount > max) {
-            const errorMsg = `Message cannot exceed ${max} characters (including formatting)`;
-            setErrors((prev) => (prev.includes(errorMsg) ? prev : [...prev, errorMsg]));
+            setErrors([`Message cannot exceed ${max} characters (including formatting)`]);
             return;
         }
         onSubmit?.();
@@ -164,7 +164,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                         </Alert.Heading>
                         <ul>
                             {errors.map((error, idx) => (
-                            // eslint-disable-next-line react/no-array-index-key
                                 <li className='text-danger' key={idx}>{error}</li>
                             ))}
                         </ul>
@@ -176,6 +175,10 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                 <Slate editor={editor} initialValue={value} onChange={handleChange}>
                     <Editable
                         id='slate-editor'
+                        // Slate renders a contenteditable div with role="textbox", which gets
+                        // no accessible name from the placeholder the way a native input
+                        // would. Name it explicitly with the same text a sighted user sees.
+                        aria-label={placeholder || 'Message NMI'}
                         placeholder={placeholder || 'Message NMI'}
                         className='form-control mb-0 border border-bottom-0'
                         style={{ minHeight: '4rem' }}

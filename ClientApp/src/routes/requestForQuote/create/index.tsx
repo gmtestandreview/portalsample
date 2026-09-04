@@ -13,6 +13,7 @@ const CreateRequestForQuote = () => {
 
     useEffect(() => {
         const createApplication = async () => {
+            isSaving.current = true;
             try {
                 const client = new ApplicationClient();
                 const tokenResult = await instance.acquireTokenSilent({
@@ -23,13 +24,13 @@ const CreateRequestForQuote = () => {
                 const application = await client.createApplication({ applicationType: ApplicationType.QuoteRequest });
                 setApplicationId(application.referenceId!);
             } catch (e) {
+                isSaving.current = false;
                 AppLogger.error('Failed to create application', e as Error);
             }
         };
-        if (!isSaving.current) {
+        if (accounts.length > 0 && !isSaving.current) {
             createApplication();
         }
-        return () => { isSaving.current = true; };
     }, [accounts, instance, isSaving]);
 
     return (

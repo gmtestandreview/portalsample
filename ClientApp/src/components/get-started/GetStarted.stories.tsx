@@ -30,7 +30,6 @@ const meta = {
             initialEntries: ['/'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof GetStarted>;
 
 export default meta;

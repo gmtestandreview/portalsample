@@ -17,9 +17,11 @@ const formatBytes = (bytes: number): string => {
 const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
     const [cancelling, setCancelling] = useState<{ [fileName: string]: boolean }>({});
 
-    const handleCancel = (fileName: string) => {
+    // The cancel control only renders when onCancelFile is supplied, so the handler takes it as an
+    // argument rather than re-checking it. Guarding here again was a branch nothing could reach.
+    const handleCancel = (fileName: string, cancel: (name: string) => void) => {
         setCancelling((prev) => ({ ...prev, [fileName]: true }));
-        if (onCancelFile) onCancelFile(fileName);
+        cancel(fileName);
     };
 
     return (
@@ -58,7 +60,7 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                                             title='Cancel uploading'
                                             aria-label={`Cancel uploading ${f.fileName}`}
                                             className='d-flex align-self-top mt-1 p-0 btn btn-flat fs-7'
-                                            onClick={() => handleCancel(f.fileName!)}
+                                            onClick={() => handleCancel(f.fileName!, onCancelFile)}
                                         >
                                             <i className='icon-close' aria-hidden='true' />
                                             <span className='visually-hidden'>
@@ -72,7 +74,17 @@ const ProgressFileList: React.FC<FileListProps> = ({ files, onCancelFile }) => {
                         </div>
                         {/* Progress bar below the row */}
                         {hasProgress && (
-                            <div role='progressbar' className='mt-1'>
+                            // The byte counts and percentage render inside the role, so they
+                            // are not this progressbar's name or value. Named per row so a
+                            // screen reader can tell several concurrent uploads apart.
+                            <div
+                                role='progressbar'
+                                className='mt-1'
+                                aria-label={`Uploading ${f.fileName}`}
+                                aria-valuenow={progressPercent}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                            >
                                 <div
                                     className='d-flex justify-content-between ms-1 mb-1'
                                 >

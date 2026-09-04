@@ -84,7 +84,7 @@ export const nullableDate = (label: string) => yup
     .label(label)
     .nullable();
 
-// eslint-disable-next-line max-len
+ 
 export const oneOfEnum = <T extends NonNullable<unknown>>(enumObject: { [s: string]: T } | ArrayLike<T>) => yup.mixed<T>().oneOf(Object.values(enumObject));
 
 export const isFutureDate = () => (value: Date | string | object | null | undefined) => {
@@ -98,7 +98,7 @@ export const isFutureDate = () => (value: Date | string | object | null | undefi
     return isAfter(dateValue!, startOfDayValue);
 };
 
-// eslint-disable-next-line max-len
+ 
 const urlMatchRegex = /^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)(?<!\.)$/;
 
 // To do - Explore create new Schema or stringExtensions Methods to support this
@@ -130,7 +130,7 @@ export const isValidAbn = (value: string) => {
         return false;
     }
 
-    // eslint-disable-next-line no-plusplus
+     
     for (let index = 0; index < abnWeights.length; index++) {
         const weight = abnWeights[index];
         const digit = Number.parseInt(value.substring(index, index + 1), 10) - (index === 0 ? 1 : 0);

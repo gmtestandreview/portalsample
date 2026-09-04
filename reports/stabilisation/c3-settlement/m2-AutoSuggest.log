@@ -1,0 +1,15 @@
+
+> nmi-portal@0.1.0 test:storybook
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.storybook.config.ts ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+ ✓ |storybook (chromium)| ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx (3 tests) 483ms
+   ✓ With Suggestions  406ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  11:00:43
+   Duration  5.56s (transform 0ms, setup 2.68s, import 234ms, tests 483ms, environment 0ms)
+

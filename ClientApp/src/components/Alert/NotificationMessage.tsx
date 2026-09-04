@@ -7,6 +7,17 @@ import {
 } from '.';
 import type { NotificationMessageProps } from './types';
 
+/**
+ * NotificationMessage Component
+ *
+ * A reusable notification message component that displays messages with different severity levels (success, information, warning, error).
+ * This component handles the rendering of appropriate alert variants based on the severity prop and manages ARIA live announcements for accessibility. 
+ * 
+ * @param props 
+ * @returns {JSX.Element} Rendered notification message element
+ * 
+ */
+
 const NotificationMessage = (props: NotificationMessageProps) => {
     const {
         id,

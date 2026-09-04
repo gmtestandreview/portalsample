@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect } from 'storybook/test';
+import { within, expect, waitFor } from 'storybook/test';
 import RouteAccessibleNavigation from './routeAccessibleNavigation';
 
 /**
@@ -19,7 +19,6 @@ const meta = {
             initialEntries: ['/dashboard'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof RouteAccessibleNavigation>;
 
 export default meta;
@@ -32,5 +31,10 @@ export const LiveRegion: Story = {
         const status = canvas.getByRole('status');
         await expect(status).toHaveAttribute('aria-live', 'polite');
         await expect(status).toHaveClass('visually-hidden');
+        // The announcement itself, not just the region's presence. The component seeds the
+        // region with document.title and replaces it from a 100ms setTimeout, so this is the
+        // only assertion here that reaches the settled state - and the one that stops that
+        // timer firing after the story has ended.
+        await waitFor(() => expect(status).toHaveTextContent(/^Navigated to .* page\.$/));
     },
 };

@@ -103,7 +103,7 @@ describe('request for quote wizard prop factories', () => {
         expect(mocks.saveInstrumentAndRequest).toHaveBeenCalledWith('APP-1', {
             applicationId: 'APP-1',
             formStep: expect.objectContaining({
-                preferredInstrumentOrArtefactAvailabilityDate: expect.any(Date),
+                preferredInstrumentOrArtefactAvailabilityDate: new Date('2026-06-12T00:00:00.000Z'),
             }),
             isCompletingStep: true,
         }, abortSignal);
@@ -118,6 +118,26 @@ describe('request for quote wizard prop factories', () => {
             applicationId: 'APP-1',
             formStep: { hasSerialNumber: YesNo.No },
             isCompletingStep: false,
+        }, abortSignal);
+    });
+
+    it('sends an unparseable availability date through unchanged', async () => {
+        // The date is normalised to the API's calendar form when it can be read. When it cannot,
+        // the original value is forwarded rather than silently dropped, so the server decides.
+        const props = instrumentAndRequestProps('APP-1', accounts, instance, accountDetails, statuses, 'Request quote');
+        const abortSignal = new AbortController().signal;
+
+        await props.onSaveAndNext?.({
+            hasSerialNumber: YesNo.Yes,
+            preferredInstrumentOrArtefactAvailabilityDate: 'not a date' as unknown as Date,
+        }, true, formikHelpers<InstrumentAndRequestStep>(), abortSignal);
+
+        expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith('APP-1', {
+            applicationId: 'APP-1',
+            formStep: expect.objectContaining({
+                preferredInstrumentOrArtefactAvailabilityDate: 'not a date',
+            }),
+            isCompletingStep: true,
         }, abortSignal);
     });
 

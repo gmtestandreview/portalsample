@@ -4,7 +4,7 @@ import InTextLink from './index';
 
 const meta = {
     component: InTextLink,
-    tags: ['ai-generated', 'docs'],
+    tags: ['ai-generated'],
 } satisfies Meta<typeof InTextLink>;
 
 export default meta;

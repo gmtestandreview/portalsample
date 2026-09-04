@@ -2,35 +2,61 @@ import { describe, expect, it } from 'vitest';
 
 import config from '../../../vitest.unit.config';
 
-const resolveConfig = async () => {
-    return config.test;
-};
+const coverageConfig = config.test?.coverage;
+
+if (coverageConfig?.provider !== 'v8') {
+    throw new Error('vitest.unit.config.ts must declare V8 unit coverage');
+}
 
 describe('unit coverage configuration', () => {
-    it('keeps coverage config under test so Vitest applies it', async () => {
-        const testConfig = await resolveConfig();
-
-        expect(testConfig?.coverage).toBeDefined();
-        expect(testConfig?.coverage?.provider).toBe('v8');
-        expect(testConfig?.coverage?.reporter).toEqual(['text', 'html', 'json-summary']);
-        expect(testConfig?.coverage?.reportsDirectory).toBe('./reports/coverage/unit');
+    it('keeps coverage config under test so Vitest applies it', () => {
+        expect(coverageConfig).toBeDefined();
+        expect(coverageConfig.provider).toBe('v8');
+        // `json` emits coverage-final.json, which retains the statement,
+        // function and branch maps. `json-summary` carries only per-file
+        // totals, so Task A3's gap queue could rank work but not locate it.
+        // Both are required; see scripts/coverage-gap-queue.mjs.
+        // `lcov` is the only format SonarQube imports for TypeScript; dropping
+        // it silently reports 0% coverage on SonarCloud, which reads as a real
+        // regression rather than a missing file. See sonar-project.properties.
+        expect(coverageConfig.reporter).toEqual([
+            'text',
+            'html',
+            'json-summary',
+            'json',
+            'lcov',
+        ]);
+        expect(coverageConfig.reportsDirectory).toBe('./reports/coverage/unit');
     });
 
-    it('measures editable handwritten source and excludes generated/vendor artifacts', async () => {
-        const testConfig = await resolveConfig();
-        const coverageWithAll = testConfig?.coverage as { all?: boolean } | undefined;
+    it('still writes coverage evidence when the run is red', () => {
+        // Vitest defaults reportOnFailure to false, which writes no report at
+        // all when any test fails - and it cleans the output directory first, so
+        // a red run leaves nothing behind. The PR workflow uploads
+        // reports/coverage/unit/** with `if: always()` and
+        // `if-no-files-found: error`, so the upload would fail with "no files
+        // found" and mask the real failure. A red vitest-unit is the expected
+        // state until Child Plan B1 lands, so this must stay true.
+        expect(coverageConfig.reportOnFailure).toBe(true);
+    });
 
-        expect(coverageWithAll?.all).toBe(true);
-        expect(testConfig?.coverage?.include).toEqual([
+    it('measures editable handwritten source and excludes generated/vendor artifacts', () => {
+        // Vitest 4 removed `coverage.all`; the explicit include below is what
+        // brings uncovered files into the report. See
+        // tests/unit/config/coverageRemapPolicy.test.ts for the remap policy.
+        expect(coverageConfig.include).toEqual([
             'ClientApp/src/**/*.{ts,tsx}',
             'webpack.config.js',
         ]);
-        expect(testConfig?.coverage?.exclude).toEqual(expect.arrayContaining([
+        expect(coverageConfig.exclude).toEqual(expect.arrayContaining([
             '**/*.d.ts',
             'ClientApp/src/api/web-api-client.ts',
             'ClientApp/src/external/**',
             'ClientApp/src/parent/**',
             'ClientApp/src/storybook/**',
+            'ClientApp/src/components/App/**',
+            'ClientApp/src/components/AriaComponents/main.tsx',
+            'ClientApp/src/components/reactaria_components/**',
             'ClientApp/source-map-http-downloads/**',
             'ClientApp/src/**/*.test.{ts,tsx}',
             'ClientApp/src/**/*.spec.{ts,tsx}',
@@ -65,7 +91,17 @@ describe('unit coverage configuration', () => {
             'ClientApp/src/components/forms/HidableField/types.ts',
             'ClientApp/src/components/tiles/StandardPathway/types.ts',
         ]));
-        expect(testConfig?.coverage?.exclude).not.toEqual(expect.arrayContaining([
+        // Both of these narrowed the denominator to hide scaffold artifacts
+        // rather than measuring or deleting them, which is what
+        // coverageRemapPolicy.test.ts rejects. The four files they covered are
+        // deleted; if either pattern returns, the file it hides comes back too.
+        expect(coverageConfig.exclude).not.toContain(
+            'ClientApp/src/**/*.stories copy.tsx',
+        );
+        expect(coverageConfig.exclude).not.toContain(
+            'ClientApp/src/**/setupTests.ts',
+        );
+        expect(coverageConfig.exclude).not.toEqual(expect.arrayContaining([
             'ClientApp/src/**/types.ts',
             'ClientApp/src/**/*Props.ts',
             'ClientApp/src/components/Inputs/NumberInput/types.ts',
@@ -73,10 +109,8 @@ describe('unit coverage configuration', () => {
         ]));
     });
 
-    it('fails the unit coverage gate below 100 percent', async () => {
-        const testConfig = await resolveConfig();
-
-        expect(testConfig?.coverage?.thresholds).toEqual({
+    it('fails the unit coverage gate below 100 percent', () => {
+        expect(coverageConfig.thresholds).toEqual({
             statements: 100,
             branches: 100,
             functions: 100,

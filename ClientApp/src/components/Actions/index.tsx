@@ -1,6 +1,38 @@
 import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router';
 
+/**
+ * Actions Component
+ *
+ * A dropdown menu component for displaying a list of actions.
+ * Can be rendered as a text button or an icon button.
+ *
+ * @param {ActionsProps} props - Component props
+ * @param {string} [props.id] - Unique identifier for the dropdown
+ * @param {'icon'} [props.as] - Render as an icon button if specified
+ * @param {DropdownActionItem[]} props.dropDownActions - List of action items to display in the dropdown
+ * @param {(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void} [props.onItemClick] - Callback for item click events
+ * @param {string} [props.variant='flat'] - Bootstrap variant for the dropdown toggle button
+ * @param {string} [props.containerClassName] - Additional CSS classes for the dropdown container
+ * @param {string} [props.className] - Additional CSS classes for the dropdown toggle button
+ * @param {'start' | 'end'} [props.align] - Alignment of the dropdown menu
+ * @param {string} [props.buttonTitle='Actions'] - Text for the dropdown toggle button
+ * @param {string} [props.buttonAriaTitle=''] - Additional accessible name for the button
+ *
+ * @example
+ * <Actions
+ *   id="request-actions"
+ *   dropDownActions={[
+ *     { action: 'view', text: 'View details', route: '/quotation/Q-2024-000456' },
+ *     { action: 'copy', text: 'Request recalibration' },
+ *     { action: 'delete', text: 'Delete draft' },
+ *   ]}
+ *   onItemClick={(e) => console.log('Action clicked:', e.currentTarget.textContent)}
+ * />
+ *
+ * @returns {JSX.Element} Rendered actions dropdown component
+ */
+
 export interface DropdownActionItem {
     action: string;
     text: string;

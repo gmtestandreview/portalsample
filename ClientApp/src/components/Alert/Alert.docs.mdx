@@ -1,6 +1,5 @@
-import { Meta, Title, Subtitle, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
 import * as AlertStories from './Alert.stories';
-import DocsTable from '../../storybook/DocsTable';
 
 <Meta of={AlertStories} />
 
@@ -35,6 +34,10 @@ The Alert component system provides visual feedback and important information to
 ## Props
 
 <Controls />
+
+## Static API Reference
+
+<ArgTypes of={AlertStories} />
 
 ## Implementation Examples
 
@@ -93,7 +96,7 @@ export function DismissibleErrorExample() {
   if (!show) return null;
 
   return (
-    <AlertError onClose={() => setShow(false)}>
+    <AlertError canClose onClose={() => setShow(false)}>
       An error occurred while processing your request. Please try again.
     </AlertError>
   );
@@ -102,27 +105,26 @@ export function DismissibleErrorExample() {
 
 ## Component Variants
 
-<DocsTable
-  headers={['Type', 'Color', 'ARIA Live', 'Use For']}
-  rows={[
-    ['Success', 'Green', 'polite', 'Successful actions'],
-    ['Info', 'Blue', 'polite', 'Information messages'],
-    ['Warning', 'Orange', 'polite', 'Cautions & tips'],
-    ['Error', 'Red', 'assertive', 'Errors & failures'],
-  ]}
-/>
+| Type | ARIA live behaviour | Use for |
+| --- | --- | --- |
+| Success | Polite | Successful actions |
+| Info | Polite status messaging | Information messages |
+| Warning | Polite alert messaging | Cautions and tips |
+| Error | Assertive alert messaging | Errors and failures |
 
 ## Dismissible Alerts
 
-All alert variants support a dismissible mode by providing the `onClose` callback:
+All alert variants support a dismissible mode by setting `canClose` and
+providing the `onClose` callback:
 
 ```tsx
-<AlertSuccess onClose={handleClose}>
+<AlertSuccess canClose onClose={handleClose}>
   Success message with close button
 </AlertSuccess>
 ```
 
-When `onClose` is provided, a close button automatically appears in the top-right corner.
+`canClose` controls whether the close button appears. `onClose` receives the
+dismiss action when the close button is used.
 
 ## ARIA Announcements
 
@@ -133,16 +135,10 @@ When `onClose` is provided, a close button automatically appears in the top-righ
 
 ## Styling with NMI Design System
 
-Each alert variant uses the NMI design system colors:
-
-```scss
-$nmi-success: #2E7D32;      // Green
-$nmi-info: #1976D2;         // Blue
-$nmi-warning: #F57C00;      // Orange
-$nmi-error: #D32F2F;        // Red
-```
-
-Background colors are lighter tints with high contrast text.
+Each alert variant uses Bootstrap alert variants and the NMI theme tokens from
+`ClientApp/src/styles/_variables.scss` and `ClientApp/src/styles/_alert.scss`.
+Keep colour values in SCSS and the Style Guide swatches rather than copying
+hex values into component MDX.
 
 ## Best Practices
 
@@ -161,21 +157,12 @@ Background colors are lighter tints with high contrast text.
 
 ## Alert Props
 
-All variants accept the same props:
-
-<DocsTable
-  headers={['Prop', 'Type', 'Default', 'Description']}
-  rows={[
-    ['children', 'React.ReactNode', 'required', 'Alert message content'],
-    ['onClose', '() => void', '-', 'Callback when close button clicked'],
-    ['id', 'string', '-', 'Optional HTML id attribute'],
-    ['testId', 'string', '-', 'Optional data-testid attribute'],
-    ['className', 'string', '-', 'Additional CSS classes'],
-  ]}
-/>
+All variants accept the same props. Use the generated Controls and ArgTypes on
+this page as the source of truth instead of maintaining a duplicate API table
+in MDX.
 
 ## Related Documentation
 
-- [Form Validation](/docs/components-forms--docs) — Using alerts in forms
-- [Accessibility Guidelines](/docs/documentation-getting-started--page) — WCAG 2.1 AA compliance
-- [Design Tokens](/docs/documentation-getting-started--page) — Colors and spacing
+- [Form Validation](/docs/migration-validation--documentation) — Using alerts in validation flows
+- [Accessibility Guidelines](/docs/documentation-style-guide--documentation) — Announcement and interaction standards
+- [Design Tokens](/docs/documentation-style-guide--documentation) — Colors and spacing

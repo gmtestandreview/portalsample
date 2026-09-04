@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import type { FormikHelpers } from 'formik';
 import type { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import { RequestForQuoteClient, YesNo } from '../../api/web-api-client';
@@ -9,7 +9,7 @@ import { discardChanges } from '../common/constants';
 import { instrumentAndRequestSaveValidation, instrumentAndRequestSubmitValidation } from './validation';
 import type { AccountDetails } from '../../authentication/accountContext';
 import { formatBannerTitle } from '../common/helperFunctions';
-import { formatDateStringToUTC } from '../../utils';
+import { dateOnlyToApiDate, parseApiDateOnlyInput } from '../../utils/dateOnly';
 
 const loadInstrumentAndRequest = (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) => async (
     abortSignal?: AbortSignal,
@@ -52,9 +52,12 @@ const saveStep = (
 
         let formStepValues: InstrumentAndRequestStep | undefined;
         if (values.preferredInstrumentOrArtefactAvailabilityDate) {
+            const preferredAvailabilityDate = parseApiDateOnlyInput(values.preferredInstrumentOrArtefactAvailabilityDate);
             const updatedValues = {
                 ...values,
-                preferredInstrumentOrArtefactAvailabilityDate: formatDateStringToUTC(values.preferredInstrumentOrArtefactAvailabilityDate),
+                preferredInstrumentOrArtefactAvailabilityDate: preferredAvailabilityDate
+                    ? dateOnlyToApiDate(preferredAvailabilityDate)
+                    : values.preferredInstrumentOrArtefactAvailabilityDate,
             };
             formStepValues = updatedValues;
         } else {

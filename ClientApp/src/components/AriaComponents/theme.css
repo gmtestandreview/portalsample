@@ -1,0 +1,109 @@
+/* Story-only semantic tokens for the React Aria evaluation surface. */
+.react-aria-evaluation {
+    --tint: #285576;
+    --tint-200: #e8f0f5;
+    --tint-300: #d4e2ec;
+    --tint-500: #a9c4d8;
+    --tint-700: #7299b7;
+    --tint-900: #3f6f92;
+    --tint-1200: #285576;
+    --tint-1400: #183447;
+    --gray: #58595b;
+    --gray-50: #ffffff;
+    --gray-100: #f7f7f7;
+    --gray-200: #ebebeb;
+    --gray-300: #e2e2e2;
+    --gray-400: #c7c7c7;
+    --gray-500: #bdbdbd;
+    --gray-700: #747474;
+    --gray-800: #606060;
+    --gray-1000: #58595b;
+    --gray-1200: #3f3b3b;
+    --gray-1600: #1f1d1d;
+    --background-color: #ffffff;
+    --focus-ring-color: #285576;
+    --text-color: #3f3b3b;
+    --text-color-hover: #285576;
+    --text-color-disabled: #747474;
+    --text-color-placeholder: #606060;
+    --link-color: #285576;
+    --link-color-secondary: #58595b;
+    --link-color-pressed: #183447;
+    --border-color: #8e8e8e;
+    --border-color-hover: #285576;
+    --border-color-disabled: #c7c7c7;
+    --field-background: #ffffff;
+    --field-text-color: #3f3b3b;
+    --button-background: #285576;
+    --button-background-pressed: #183447;
+    --highlight-background: #285576;
+    --highlight-background-pressed: #183447;
+    --highlight-background-invalid: #b42318;
+    --highlight-foreground: #ffffff;
+    --highlight-hover: rgb(40 85 118 / 0.1);
+    --highlight-pressed: rgb(40 85 118 / 0.18);
+    --highlight-overlay: rgb(40 85 118 / 0.15);
+    --invalid-color: #b42318;
+    --overlay-background: #ffffff;
+    --overlay-border: rgb(63 59 59 / 0.2);
+    --popover-shadow: 0 8px 20px rgb(31 29 29 / 0.2);
+    --font-size: 1rem;
+    --font-size-sm: 0.875rem;
+    --font-size-lg: 1.125rem;
+    --font-family: 'Public Sans', Arial, sans-serif;
+    --radius: 4px;
+    --radius-sm: 2px;
+    --radius-lg: 6px;
+    --radius-xl: 8px;
+    --spacing: 0.25rem;
+    --spacing-1: var(--spacing);
+    --spacing-2: calc(2 * var(--spacing));
+    --spacing-3: calc(3 * var(--spacing));
+    --spacing-4: calc(4 * var(--spacing));
+    --spacing-5: calc(5 * var(--spacing));
+    --spacing-6: calc(6 * var(--spacing));
+    --spacing-7: calc(7 * var(--spacing));
+    --spacing-8: calc(8 * var(--spacing));
+    --spacing-9: calc(9 * var(--spacing));
+    --spacing-10: calc(10 * var(--spacing));
+    --page-width: 100vw;
+    --page-height: 100vh;
+    --visual-viewport-height: 100vh;
+    color: var(--text-color);
+    font-family: var(--font-family);
+}
+
+@supports (height: 100dvh) {
+    .react-aria-evaluation {
+        --page-height: 100dvh;
+        --visual-viewport-height: 100dvh;
+    }
+}
+
+@media (forced-colors: active) {
+    .react-aria-evaluation {
+        --background-color: Canvas;
+        --focus-ring-color: Highlight;
+        --text-color: ButtonText;
+        --text-color-hover: ButtonText;
+        --text-color-disabled: GrayText;
+        --text-color-placeholder: ButtonText;
+        --link-color: LinkText;
+        --link-color-secondary: LinkText;
+        --link-color-pressed: LinkText;
+        --border-color: ButtonBorder;
+        --border-color-hover: ButtonBorder;
+        --border-color-disabled: GrayText;
+        --field-background: Field;
+        --field-text-color: FieldText;
+        --overlay-background: Canvas;
+        --overlay-border: ButtonBorder;
+        --button-background: ButtonFace;
+        --button-background-pressed: ButtonFace;
+        --highlight-background: Highlight;
+        --highlight-background-pressed: Highlight;
+        --highlight-background-invalid: LinkText;
+        --highlight-foreground: HighlightText;
+        --invalid-color: LinkText;
+    }
+}

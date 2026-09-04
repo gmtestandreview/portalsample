@@ -35,31 +35,66 @@ const RequestForQuote = () => {
     const isLoading = useRef(false);
     const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
+    /**
+     * True only once the wizard has actually unmounted.
+     *
+     * Both halves of this matter, and each was got wrong once. It is a ref with its own
+     * empty-dependency effect rather than a `let` inside the loader effect, because that effect
+     * depends on `accounts`, `instance` and `statuses` - its cleanup runs on any of those changing,
+     * not just on unmount. And the flag is reset when the effect runs, not merely initialised,
+     * because StrictMode remounts in development.
+     *
+     * Either mistake produces the same failure: an in-flight load is marked abandoned while
+     * `isLoading.current` is still true, which blocks the re-run from starting a replacement. The
+     * response then arrives, sees the flag, and drops the result - leaving `statuses` undefined with
+     * nothing left to retrigger the effect, and the wizard stuck on its spinner for good.
+     */
+    const isUnmounted = useRef(false);
+
+    useEffect(() => {
+        // Reset on every mount, not just initialised once. StrictMode mounts, unmounts and remounts
+        // in development, so without this the cleanup latches the ref true during that simulated
+        // unmount and nothing ever clears it - the first real response is then discarded and the
+        // wizard sits on its spinner forever. Only the development build shows it, which is why the
+        // unit suite (no StrictMode wrapper) passed while the browser-driven e2e did not.
+        isUnmounted.current = false;
+
+        return () => {
+            isUnmounted.current = true;
+        };
+    }, []);
+
     useEffect(() => {
         const loadApplicationSteps = async () => {
             if (!applicationId) {
                 return;
             }
-            if (hasAccountDetails && !statuses && accounts.length > 0) {
-                const client = new RequestForQuoteClient();
-                const tokenResult = await instance.acquireTokenSilent({
-                    ...tokenRequest,
-                    account: accounts[0],
-                });
-                client.setAuthToken(tokenResult.accessToken);
+            if (hasAccountDetails && !statuses && accounts.length > 0 && !isLoading.current) {
+                isLoading.current = true;
                 try {
+                    const client = new RequestForQuoteClient();
+                    const tokenResult = await instance.acquireTokenSilent({
+                        ...tokenRequest,
+                        account: accounts[0],
+                    });
+                    client.setAuthToken(tokenResult.accessToken);
                     const result = await client.getStepStatuses(applicationId);
+                    if (isUnmounted.current) {
+                        return;
+                    }
                     setStatuses(result);
                 } catch (error) {
+                    if (isUnmounted.current) {
+                        return;
+                    }
                     AppLogger.error('Failed to load application steps', error as Error, { Id: applicationId });
                     navigate('/not-found');
+                } finally {
+                    isLoading.current = false;
                 }
             }
         };
-        if (!isLoading.current) {
-            loadApplicationSteps();
-        }
-        return () => { isLoading.current = true; };
+        loadApplicationSteps();
     }, [accounts, applicationId, hasAccountDetails, instance, isLoading, navigate, statuses]);
 
     if (!applicationId) {

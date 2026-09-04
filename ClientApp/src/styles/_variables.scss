@@ -53,7 +53,10 @@ $white: #fff;
 $black: #000;
 $light: $dashboard-background;
 $text-dark: $body-color;
-$text-muted: $nmi-dark-gray;
+// $nmi-dark-gray (#6d6e70) reaches 5.10:1 on white but only 4.28:1 on the $nmi-gray-100
+// (#ebebeb) band, below the 4.5:1 AA threshold, so muted text failed wherever it sat on a
+// striped panel. $nmi-gray-800 (#606060) is 6.29:1 on white and 5.27:1 on the band.
+$text-muted: $nmi-gray-800;
 $text-placeholder: $nmi-dark-gray; // #767676; #8e8e8e; #747474;
 $info: rgba($nmi-blue, 0.85); //$nmi-site-coastline-bay-primary;
 $info-dark: #1f8383;

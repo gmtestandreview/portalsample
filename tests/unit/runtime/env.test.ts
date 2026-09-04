@@ -95,6 +95,34 @@ describe('runtime env', () => {
             });
     });
 
+    it('keeps quiet about absent telemetry variables in development', async () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+        // Storybook and local dev stub these as empty strings - there is no
+        // instrumentation backend to point them at, and the app degrades cleanly.
+        await importEnv({
+            REACT_APP_ENVIRONMENT: 'development',
+            REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: '',
+            REACT_APP_GA_TRACKINGID: '',
+        });
+
+        expect(consoleError).not.toHaveBeenCalledWith('[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY');
+        expect(consoleError).not.toHaveBeenCalledWith('[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID');
+    });
+
+    it('still reports absent telemetry variables outside development', async () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+        await importEnv({
+            REACT_APP_ENVIRONMENT: 'production',
+            REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: '',
+            REACT_APP_GA_TRACKINGID: '',
+        });
+
+        expect(consoleError).toHaveBeenCalledWith('[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY');
+        expect(consoleError).toHaveBeenCalledWith('[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID');
+    });
+
     it('rejects malformed or disallowed external redirect hosts', async () => {
         await expect(importEnv({
             EXTERNAL_REDIRECT_URL: 'https://evil.example/redirect',

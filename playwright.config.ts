@@ -5,6 +5,8 @@ const testDir = defineBddConfig({
     outputDir: '.features-gen/app',
     features: [
         'tests/e2e/features/account/**/*.feature',
+        'tests/e2e/features/@routing/**/*.feature',
+        'tests/e2e/features/@type-approval/**/*.feature',
         'tests/e2e/features/auth/**/*.feature',
         'tests/e2e/features/quote/**/*.feature',
         'tests/e2e/features/reports/**/*.feature',
@@ -13,6 +15,7 @@ const testDir = defineBddConfig({
     ],
     steps: [
         'tests/e2e/steps/{account,account-maintenance,common,copy-rfq,failure,quote,report,rfq-lifecycle}.steps.ts',
+        'tests/e2e/features/@{routing,type-approval}/**/*.ts',
         'tests/e2e/support/fixtures.ts',
     ],
 });

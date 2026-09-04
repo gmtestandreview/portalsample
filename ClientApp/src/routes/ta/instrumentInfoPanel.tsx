@@ -112,7 +112,9 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
         );
     }
 
-    if (selectedInstrumentCategoryId || (selectedInstrumentCategoryId && selectedInstrumentTypeId)) {
+    // `a || (a && b)` is just `a`: when the category is absent the second operand is false too,
+    // so it could never change the outcome and its branch was unreachable.
+    if (selectedInstrumentCategoryId) {
         return (
             <Alert id={`${name}-panel`} variant='info' className='d-flex' role='alert' aria-live='polite'>
                 <div className='d-flex justify-content-center justify-content-md-start mb-3 mb-md-0'>

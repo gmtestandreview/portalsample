@@ -1,0 +1,1504 @@
+
+> nmi-portal@0.1.0 test:unit
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.unit.config.ts --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup between search and manual entry and clears touched state
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup between search and manual entry and clears touched state
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup between search and manual entry and clears touched state
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > searches AddressLookup and writes selected address details into Formik
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses AddressLookup fallbacks for missing labels and address fields
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > returns no service results when the signed-in account cannot be resolved
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > uses the empty account fallback and skips searches while authentication is busy
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles missing match collections and non-service lookup errors
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at AutoSuggest (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/index.tsx:10:10)
+    at div
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-bootstrap\cjs\FormGroup.js:13:3
+    at fieldset
+    at AddressLookup (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AddressLookup/index.tsx:47:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at AutoSuggest (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/index.tsx:10:10)
+    at div
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-bootstrap\cjs\FormGroup.js:13:3
+    at fieldset
+    at AddressLookup (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AddressLookup/index.tsx:47:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at AutoSuggest (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/index.tsx:10:10)
+    at div
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-bootstrap\cjs\FormGroup.js:13:3
+    at fieldset
+    at AddressLookup (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AddressLookup/index.tsx:47:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles missing match collections and non-service lookup errors
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles missing match collections and non-service lookup errors
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles missing match collections and non-service lookup errors
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles missing match collections and non-service lookup errors
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles missing match collections and non-service lookup errors
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > switches AddressLookup to manual entry from a no-match result and clears a selected address
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > offers manual entry after the address service reports unavailable
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > aborts an in-flight AddressLookup request when a new search starts
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > drives AutoSuggest search and selection through the public input
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles AutoSuggestContainer keyboard selection, escape cancel, status, and validation feedback
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > wraps AutoSuggestContainer keyboard navigation and selects with Tab
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > dismisses AutoSuggestContainer without invoking Escape cancellation
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Router (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9895:13)
+    at MemoryRouter (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\react-router\dist\development\chunk-HHGH3NKS.js:9811:3)
+    at FormikHarness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/complexInputs.behavior.test.tsx:59:26)
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > dismisses AutoSuggestContainer without invoking Escape cancellation
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > dismisses AutoSuggestContainer without invoking Escape cancellation
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > dismisses AutoSuggestContainer without invoking Escape cancellation
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > renders custom AutoSuggestContainer status messages and marks the field touched on change
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > renders custom AutoSuggestContainer status messages and marks the field touched on change
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > renders custom AutoSuggestContainer status messages and marks the field touched on change
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > renders custom AutoSuggestContainer status messages and marks the field touched on change
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/complexInputs.behavior.test.tsx > complex input behavior slice > handles short, empty, and no-result AutoSuggest searches and selected-option updates
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+ ✓ |unit| tests/unit/components/inputs/complexInputs.behavior.test.tsx (36 tests) 6213ms
+     ✓ renders ManualAddressInput fields with labels and updates nested values  334ms
+     ✓ filters OrganisationNameLookup options by parent and supports keyboard and click selection  959ms
+     ✓ handles OrganisationNameLookup short, free-text, escape, outside-click, and ArrowUp branches  1514ms
+     ✓ accepts OrganisationNameLookup free text when Enter is pressed without an active option  452ms
+     ✓ uses OrganisationNameLookup defaults and moves ArrowUp from a later option  493ms
+ ✓ |unit| tests/unit/components/buildRegressionSmoke.test.tsx (9 tests) 4549ms
+     ✓ imports App with the root stylesheet path resolved  4526ms
+ ✓ |unit| tests/unit/components/requestList.behavior.test.tsx (18 tests) 2785ms
+     ✓ runs RequestItem tab and issued-report action callbacks  341ms
+     ✓ renders InstrumentItem draft and quote-available action states  410ms
+ ✓ |unit| tests/unit/config/eslintConfig.test.ts (1 test) 2107ms
+     ✓ lints the Storybook config when ESLint runs from the file directory  2105ms
+ ✓ |unit| tests/unit/config/eslintPolicy.test.ts (27 tests) 2076ms
+ ✓ |unit| tests/unit/components/searchFilter.behavior.test.tsx (10 tests) 1486ms
+     ✓ submits and clears SearchBox keywords through the public callback  393ms
+ ✓ |unit| tests/unit/components/inputs/simpleInputs.test.tsx (18 tests) 1431ms
+     ✓ updates, trims, counts, and sanitises TextAreaInput values  363ms
+     ✓ handles TextInput labels, events, blur trimming, date formatting, and summary dates  393ms
+ ✓ |unit| tests/unit/authentication/AccountProvider.dispatch.test.tsx (10 tests) 1268ms
+     ✓ updates account state through dispatch callbacks exposed by hooks  533ms
+     ✓ leaves dispatch callbacks as no-ops before account details exist  429ms
+ ✓ |unit| tests/unit/components/inputs/customDatePicker.test.tsx (6 tests) 1283ms
+     ✓ handles blur, outside click, escape, and calendar keyboard controls  453ms
+     ✓ opens from Enter and Space unless read-only, while disabled read-only follows the component condition  363ms
+ ✓ |unit| tests/unit/components/headerFooterChrome.test.tsx (11 tests) 1175ms
+     ✓ renders authenticated user menu items and tracks account-management clicks  474ms
+     ✓ opens each footer content modal and closes it through the modal callback  328ms
+ ✓ |unit| tests/unit/routes/workflowStepComponents.test.tsx (28 tests) 1201ms
+     ✓ renders request-for-quote organisation/contact inputs and opens the branch selector  591ms
+ ✓ |unit| tests/unit/routes/workflowWrappers.test.tsx (20 tests) 1283ms
+     ✓ renders the request-for-quote wizard after loading statuses  489ms
+     ✓ renders request-for-quote submitted success content  325ms
+ ✓ |unit| tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx (22 tests) 1071ms
+ ✓ |unit| tests/unit/components/inputs/datePickerWrapper.test.tsx (6 tests) 1049ms
+     ✓ parses initial Formik values, forwards validation state, and normalizes date changes  351ms
+     ✓ normalizes blur values only when the input value changed and marks the field touched  498ms
+ ✓ |unit| tests/unit/routes/quotationAndReports.test.tsx (21 tests) 1083ms
+     ✓ loads quotation details and declines a quote through the confirmation modal  786ms
+stdout | tests/unit/components/utilityCoverageSlice.test.tsx > utility component coverage slice > prints, copies and can hide mailing label actions
+Copied to clipboard:
+Deliver to:
+Quotation ID: Q-123
+ATTN: Alex Officer
+NMI Lab
+1 Measurement Way
+
+ ✓ |unit| tests/unit/components/utilityCoverageSlice.test.tsx (21 tests) 992ms
+ ✓ |unit| tests/unit/routes/dashboard.test.tsx (31 tests) 964ms
+ ✓ |unit| tests/unit/components/forms/formShell.behavior.test.tsx (8 tests) 851ms
+stderr | tests/unit/components/inputs/combobox.accessibility.test.tsx > Combobox accessibility > exposes AutoSuggest as a labelled input with keyboard navigation and listbox options
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/combobox.accessibility.test.tsx > Combobox accessibility > exposes AutoSuggest as a labelled input with keyboard navigation and listbox options
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/combobox.accessibility.test.tsx > Combobox accessibility > exposes AutoSuggest as a labelled input with keyboard navigation and listbox options
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+ ✓ |unit| tests/unit/components/inputs/combobox.accessibility.test.tsx (2 tests) 653ms
+     ✓ exposes OrganisationNameLookup as a labelled input combobox with active-descendant navigation  449ms
+ ✓ |unit| tests/unit/components/modals/BranchSelectorModal.test.tsx (23 tests) 718ms
+ ✓ |unit| tests/unit/components/Pagination.test.tsx (7 tests) 520ms
+     ✓ calls page change callbacks for numbered, previous, next, first, and last controls  358ms
+ ✓ |unit| tests/unit/components/forms/formHelpersAndBanner.test.tsx (14 tests) 494ms
+ ✓ |unit| tests/unit/components/modals/TermsAndConditionModal.test.tsx (10 tests) 480ms
+ ✓ |unit| tests/unit/components/forms/wizardControls.behavior.test.tsx (8 tests) 515ms
+     ✓ validates before opening final confirmation, closes it, then submits on confirmation  309ms
+ ✓ |unit| tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx (7 tests) 436ms
+ ✓ |unit| tests/unit/components/simpleRuntimeComponents.test.tsx (30 tests) 415ms
+ ✓ |unit| tests/unit/components/forms/buttonControls.test.tsx (4 tests) 410ms
+ ✓ |unit| tests/unit/components/Utilities/ViewPdfQuote.test.tsx (8 tests) 411ms
+ ✓ |unit| tests/unit/components/modalCoverageSlice.test.tsx (7 tests) 378ms
+ ✓ |unit| tests/unit/components/Pill/StatusPill.test.tsx (23 tests) 346ms
+ ✓ |unit| tests/unit/routes/staticPages.test.tsx (7 tests) 294ms
+ ✓ |unit| tests/unit/validationSchemas/transitiveYupImports.test.ts (2 tests) 306ms
+     ✓ update/validation.ts schema validates without relying on transitive import  302ms
+ ✓ |unit| tests/unit/routes/accountCreated.test.tsx (2 tests) 299ms
+ ✓ |unit| tests/unit/routes/accountContactDisplay.test.tsx (3 tests) 306ms
+stderr | tests/unit/components/inputs/residualBranches.test.tsx > residual input branches > keeps AutoSuggest keyboard movement inert while closed and uses fallback ids
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Harness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/residualBranches.test.tsx:26:20)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Harness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/residualBranches.test.tsx:26:20)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Harness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/residualBranches.test.tsx:26:20)
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/residualBranches.test.tsx > residual input branches > keeps AutoSuggest keyboard movement inert while closed and uses fallback ids
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/residualBranches.test.tsx > residual input branches > keeps AutoSuggest keyboard movement inert while closed and uses fallback ids
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/residualBranches.test.tsx > residual input branches > focuses the first AutoSuggest option when ArrowUp opens the popup
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Harness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/residualBranches.test.tsx:26:20)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Harness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/residualBranches.test.tsx:26:20)
+Warning: An update to ForwardRef(Input) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at $7230ffa83bc0c2cf$var$DOMElement (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:157:19)
+    at $7230ffa83bc0c2cf$export$2881499e37b75b9a (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/utils.mjs:23:62)
+    at $dbdc5e6e7ce01b4b$var$ComboBoxInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria-components/dist/private/ComboBox.mjs:93:55)
+    at $42ceafc619f9c3ba$var$CollectionInner (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:53:62)
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/CollectionBuilder.mjs:34:37)
+    at Wrapper (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/react-aria/dist/private/collections/Hidden.mjs:65:46)
+    at div
+    at AutoSuggestContainer (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:28:10)
+    at form
+    at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1414:22
+    at Formik (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\formik\dist\formik.cjs.development.js:1078:19)
+    at Harness (C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/tests/unit/components/inputs/residualBranches.test.tsx:26:20)
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/components/inputs/residualBranches.test.tsx > residual input branches > focuses the first AutoSuggest option when ArrowUp opens the popup
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+ ✓ |unit| tests/unit/components/inputs/residualBranches.test.tsx (11 tests) 284ms
+ ✓ |unit| tests/unit/components/Utilities/ViewPdfQuoteTerms.test.tsx (4 tests) 281ms
+ ✓ |unit| tests/unit/instrumentItem.a11y.test.tsx (1 test) 243ms
+ ✓ |unit| tests/unit/routes/acceptQuote/AcceptQuote.test.tsx (6 tests) 243ms
+ ✓ |unit| tests/unit/config/webpackConfig.test.ts (4 tests) 219ms
+stderr | tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx > DeliveryAndReturn > receiptAndDispatchNA=true > shows the no-delivery message inside the info banner in form mode
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx > DeliveryAndReturn > re-fetch on id prop change > calls the API again when id changes
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx > DeliveryAndReturn > API error > renders the info banner and does not crash when getDeliveryAndReturn rejects
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+stderr | tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx > DeliveryAndReturn > API error > renders the info banner and does not crash when getDeliveryAndReturn rejects
+If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
+
+ ✓ |unit| tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx (8 tests) 237ms
+ ✓ |unit| tests/unit/components/routeLeavingGuard.test.tsx (4 tests) 207ms
+ ✓ |unit| tests/unit/components/actions.accessibility.test.tsx (2 tests) 204ms
+ ✓ |unit| tests/unit/routes/acceptQuote/summaryAndAccept.test.tsx (2 tests) 162ms
+ ✓ |unit| tests/unit/components/getStarted.test.tsx (3 tests) 176ms
+ ✓ |unit| tests/unit/components/requestList.actionFallback.test.tsx (2 tests) 198ms
+ ✓ |unit| tests/unit/components/inputs/customDateInput.accessibility.test.tsx (5 tests) 146ms
+ ✓ |unit| tests/unit/components/modals/rfqDeleteModal.nullContext.test.tsx (1 test) 146ms
+ ✓ |unit| tests/unit/components/footer.accessibility.test.tsx (5 tests) 161ms
+ ✓ |unit| tests/unit/components/Pill/QuoteStatusPill.test.tsx (9 tests) 142ms
+ ✓ |unit| tests/unit/components/errorBoundary.test.tsx (12 tests) 156ms
+ ✓ |unit| tests/unit/routes/preConditions.test.tsx (20 tests) 117ms
+ ✓ |unit| tests/unit/components/requestList.accessibility.test.tsx (2 tests) 139ms
+ ✓ |unit| tests/unit/components/forms/errorSummary.test.tsx (9 tests) 125ms
+ ✓ |unit| tests/unit/components/Utilities/ViewPdfButton.test.tsx (4 tests) 120ms
+ ✓ |unit| tests/unit/components/utilities.test.tsx (8 tests) 113ms
+ ✓ |unit| tests/unit/components/steppedNavigation.test.tsx (5 tests) 108ms
+ ✓ |unit| tests/unit/components/standardPathway.test.tsx (5 tests) 110ms
+ ✓ |unit| tests/unit/components/breadcrumb.test.tsx (2 tests) 91ms
+ ✓ |unit| tests/unit/components/modals/contentModal.accessibility.test.tsx (1 test) 96ms
+ ✓ |unit| tests/unit/components/inputs/OrganisationNameLookup.behavior.test.tsx (1 test) 100ms
+ ✓ |unit| tests/unit/components/layout.test.tsx (1 test) 86ms
+ ✓ |unit| tests/unit/routes/acceptQuote/paymentDetails.test.tsx (9 tests) 82ms
+ ✓ |unit| tests/unit/components/routeAccessibility.behavior.test.tsx (2 tests) 97ms
+ ✓ |unit| tests/unit/components/routeLeavingGuard.unblockedActions.test.tsx (1 test) 87ms
+ ✓ |unit| tests/unit/authentication/AuthenticatedElement.test.tsx (6 tests) 78ms
+ ✓ |unit| tests/unit/helpers/renderWithProviders.test.tsx (2 tests) 77ms
+ ✓ |unit| tests/unit/components/Alert.test.tsx (1 test) 69ms
+ ✓ |unit| tests/unit/routes/accountContactWrappers.test.tsx (6 tests) 53ms
+ ✓ |unit| tests/unit/components/forms/contactDetails.branches.test.tsx (2 tests) 43ms
+ ✓ |unit| tests/unit/runtime/indexBootstrap.test.tsx (2 tests) 30ms
+ ✓ |unit| tests/unit/components/SummaryDisplay.test.tsx (11 tests) 38ms
+ ✓ |unit| tests/unit/routes/common/helperFunctions.test.ts (29 tests) 30ms
+ ✓ |unit| tests/unit/analytics/googleAnalytics.test.tsx (9 tests) 29ms
+ ✓ |unit| tests/unit/components/inputs/TextAreaInput.test.tsx (1 test) 26ms
+ ✓ |unit| tests/unit/config/dependencySecurity.test.ts (31 tests) 24ms
+ ✓ |unit| tests/unit/authentication/AccountProvider.errored.test.tsx (2 tests) 27ms
+ ✓ |unit| tests/unit/validationSchemas/stringExtensions.branch.test.ts (75 tests) 13ms
+ ✓ |unit| tests/unit/components/runtimeSmoke.test.tsx (2 tests) 23ms
+ ✓ |unit| tests/unit/routes/ta/validation.test.ts (48 tests) 24ms
+ ✓ |unit| tests/unit/utils/index.test.ts (25 tests) 19ms
+ ✓ |unit| tests/unit/runtime/trustedtypes.test.ts (2 tests) 10ms
+ ✓ |unit| tests/unit/routes/acceptQuote/validation.test.ts (13 tests) 15ms
+ ✓ |unit| tests/unit/validationSchemas/stringExtensions.test.ts (132 tests) 16ms
+ ✓ |unit| tests/unit/instrumentation/appInsightsService.test.ts (4 tests) 15ms
+ ✓ |unit| tests/unit/storybook/storybookDocsConfig.test.ts (14 tests) 14ms
+ ✓ |unit| tests/unit/routes/account/validation.test.ts (10 tests) 13ms
+ ✓ |unit| tests/unit/validationSchemas/contactValidation.test.ts (8 tests) 12ms
+ ✓ |unit| tests/unit/routes/requestForQuote/validation.test.ts (10 tests) 12ms
+ ✓ |unit| tests/unit/routes/accountContactProps.test.ts (8 tests) 11ms
+ ✓ |unit| tests/unit/instrumentation/appLogger.test.ts (3 tests) 10ms
+ ✓ |unit| tests/unit/security/dompurify.regression.test.ts (1 test) 11ms
+ ✓ |unit| tests/unit/validationSchemas/common.test.ts (27 tests) 11ms
+ ✓ |unit| tests/unit/validationSchemas/addressValidation.test.ts (5 tests) 10ms
+ ✓ |unit| tests/unit/routes/acceptQuote/props.test.ts (5 tests) 10ms
+ ✓ |unit| tests/unit/helpers/unexpectedConsoleGuard.test.ts (30 tests) 9ms
+ ✓ |unit| tests/unit/routes/requestForQuote/props.test.ts (5 tests) 9ms
+ ✓ |unit| tests/unit/e2e/routeCoverage.test.ts (3 tests) 9ms
+ ✓ |unit| tests/unit/authentication/authConfig.test.ts (7 tests) 7ms
+ ✓ |unit| tests/unit/config/workflowPolicy.test.ts (77 tests) 8ms
+ ✓ |unit| tests/unit/runtime/env.test.ts (4 tests) 9ms
+ ✓ |unit| tests/unit/routes/contact/validation.test.ts (5 tests) 7ms
+ ✓ |unit| tests/unit/storage/sessionStorageCache.test.ts (9 tests) 4ms
+stderr | tests/unit/config/vitestTopology.test.ts
+Unhandled promise rejection: SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook/main.ts.
+
+Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+
+If you believe this is a bug, please open an issue on Github.
+
+SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: @chromatic-com/storybook.
+
+Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+
+If you believe this is a bug, please open an issue on Github.
+
+SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@chromatic-com/storybook/dist/preset.js.
+
+Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+
+If you believe this is a bug, please open an issue on Github.
+
+TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'http://localhost:3000/preset.js'
+    at Module.createRequire (node:internal/modules/cjs/loader:2039:13)
+    at Object.<anonymous> (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\@chromatic-com\storybook\dist\preset.js:1:8853)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:326:3)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:231:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+
+More info: 
+
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+    at async Promise.all (index 0)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13552:12)
+    at async Promise.all (index 4)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+    at async Promise.all (index 1)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+
+More info: 
+
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+    at async Promise.all (index 4)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+    at async Promise.all (index 1)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+    at loadStorybook (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/core-server/index.js:12060:17)
+    at storybookTest (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@storybook/addon-vitest/dist/vitest-plugin/index.js:2546:20)
+
+More info: 
+
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+    at async Promise.all (index 1)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+    at loadStorybook (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/core-server/index.js:12060:17)
+    at storybookTest (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@storybook/addon-vitest/dist/vitest-plugin/index.js:2546:20) {
+  data: {
+    error: SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: @chromatic-com/storybook.
+    
+    Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+    
+    If you believe this is a bug, please open an issue on Github.
+    
+    SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@chromatic-com/storybook/dist/preset.js.
+    
+    Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+    
+    If you believe this is a bug, please open an issue on Github.
+    
+    TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'http://localhost:3000/preset.js'
+        at Module.createRequire (node:internal/modules/cjs/loader:2039:13)
+        at Object.<anonymous> (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\@chromatic-com\storybook\dist\preset.js:1:8853)
+        at Module._compile (node:internal/modules/cjs/loader:1830:14)
+        at Object..js (node:internal/modules/cjs/loader:1961:10)
+        at Module.load (node:internal/modules/cjs/loader:1553:32)
+        at Module._load (node:internal/modules/cjs/loader:1355:12)
+        at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+        at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:326:3)
+        at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:231:7)
+        at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    
+    More info: 
+    
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+        at async Promise.all (index 0)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13552:12)
+        at async Promise.all (index 4)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+        at async Promise.all (index 1)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+    
+    More info: 
+    
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+        at async Promise.all (index 4)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+        at async Promise.all (index 1)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+        at loadStorybook (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/core-server/index.js:12060:17)
+        at storybookTest (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@storybook/addon-vitest/dist/vitest-plugin/index.js:2546:20) {
+      data: [Object],
+      fromStorybook: true,
+      isHandledError: false,
+      subErrors: [],
+      category: 'CORE-SERVER',
+      documentation: '',
+      code: 2,
+      _name: 'CriticalPresetLoadError'
+    },
+    presetName: 'C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook/main.ts'
+  },
+  fromStorybook: true,
+  isHandledError: false,
+  subErrors: [],
+  category: 'CORE-SERVER',
+  documentation: '',
+  code: 2,
+  _name: 'CriticalPresetLoadError'
+}
+
+ ✓ |unit| tests/unit/config/vitestTopology.test.ts (16 tests) 5ms
+ ✓ |unit| tests/unit/validationSchemas/emailSchema.consolidation.test.ts (5 tests) 5ms
+ ✓ |unit| tests/unit/components/forms/wizardRoutedStep/errorState.test.ts (15 tests) 4ms
+ ✓ |unit| tests/unit/storybook/coverageDrift.test.ts (4 tests) 4ms
+ ✓ |unit| tests/unit/storybookMigrationInventory.test.ts (7 tests) 5ms
+ ✓ |unit| tests/unit/storage/storageWrappers.test.ts (7 tests) 4ms
+ ✓ |unit| tests/unit/routes/ta/displayRules.test.ts (33 tests) 5ms
+ ✓ |unit| tests/unit/validationSchemas/stringExtensions.businessName.test.ts (5 tests) 4ms
+ ✓ |unit| tests/unit/e2e/playwrightStepQuality.test.ts (21 tests) 4ms
+ ✓ |unit| tests/unit/api/authorizedApiBase.test.ts (2 tests) 3ms
+ ✓ |unit| tests/unit/config/coverageRemapPolicy.test.ts (6 tests) 5ms
+ ✓ |unit| tests/unit/coverage/coverageConfig.test.ts (4 tests) 4ms
+ ✓ |unit| tests/unit/routes/common/dashboardNotifications.test.ts (16 tests) 4ms
+ ✓ |unit| tests/unit/routes/common/openWindow.test.ts (4 tests) 4ms
+ ✓ |unit| tests/unit/routes/common/routeParams.test.ts (25 tests) 4ms
+ ✓ |unit| tests/unit/components/inputs/OrganisationNameLookup.test.ts (4 tests) 3ms
+ ✓ |unit| tests/unit/components/inputs/numberInputPhoneFormat.test.ts (9 tests) 3ms
+ ✓ |unit| tests/unit/components/forms/wizardRoutedStep/test-simple.test.ts (1 test) 2ms
+ ✓ |unit| tests/unit/types/wafError.test.ts (12 tests) 3ms
+ ✓ |unit| tests/unit/routes/errorRoutes.test.ts (9 tests) 3ms
+ ✓ |unit| tests/unit/config/sonarAnalysisConfig.test.ts (1 test) 2ms
+ ✓ |unit| tests/unit/test-simple2.test.ts (1 test) 3ms
+
+ Test Files  124 passed (124)
+      Tests  1450 passed (1450)
+   Start at  20:18:45
+   Duration  184.54s (transform 3.28s, setup 16.26s, import 29.64s, tests 45.44s, environment 76.68s)
+

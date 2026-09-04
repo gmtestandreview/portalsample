@@ -40,7 +40,6 @@ const meta = {
         onRemoveItem: fn(),
         onCategoryUpdate: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof AttachmentItemNew>;
 
 export default meta;

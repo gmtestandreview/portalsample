@@ -27,6 +27,12 @@ import OrganisationAndContact from './organisationAndContact';
 
 const bannerTitle = 'Pattern/type approval - Application';
 
+/**
+ * Backoff between failed progress polls. Without it a persistently failing endpoint turns the
+ * retry path into a tight loop that pegs a core and hammers the failing service.
+ */
+const PROGRESS_RETRY_DELAY_MS = 2000;
+
 const ApplicationForTypeApproval = () => {
     const { accounts, instance } = useMsal();
     const { id } = useParams();
@@ -102,7 +108,7 @@ const ApplicationForTypeApproval = () => {
             while (!controller.signal.aborted) {
                 try {
                     client.setAuthToken(tokenResult.accessToken);
-                    // eslint-disable-next-line no-await-in-loop
+                     
                     const data = await client.getProgress(
                         uploadId,
                         lastPercent,
@@ -120,7 +126,9 @@ const ApplicationForTypeApproval = () => {
                     }
                 } catch {
                     if (controller.signal.aborted) break;
-                    // await new Promise((resolve) => setTimeout(resolve, 2000));
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, PROGRESS_RETRY_DELAY_MS);
+                    });
                 }
             }
         },
@@ -171,7 +179,7 @@ const ApplicationForTypeApproval = () => {
                 attachmentUrl: x.attachmentUrl,
                 attachmentCategory: x.attachmentCategory,
                 parentTimeStamp: new Date().toDateString(),
-            } as AttachmentDto)) as AttachmentDto[];
+            } as AttachmentDto)) ?? [];
         } catch (e) {
         // handle errors as needed
             const status = (e as any)?.status as number | undefined;

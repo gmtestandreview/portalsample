@@ -38,7 +38,6 @@ const FormikWrapper = ({ children, initialValues = {} }: { children: ReactNode; 
 
 const meta = {
     title: 'Forms/Inputs',
-    tags: ['autodocs'],
     parameters: { layout: 'padded' },
 } satisfies Meta;
 

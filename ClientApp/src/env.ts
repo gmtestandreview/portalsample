@@ -1,28 +1,28 @@
 declare global {
     // Runtime config injected into the global scope by the HTML template.
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_CLIENTID: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_AUTHORITY: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_KNOWN_AUTHORITIES: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_READ_SCOPE: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_USER_IMPERSONATION_SCOPE: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_B2C_REDIRECT_URL: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var EXTERNAL_REDIRECT_URL: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_APPINSIGHTS_CONN_STRING: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_GA_TRACKINGID: string | undefined;
-    // eslint-disable-next-line vars-on-top, no-var
+     
     var REACT_APP_ENVIRONMENT: string | undefined;
 }
 
@@ -55,9 +55,26 @@ const requiredVars: (keyof EnvType)[] = [
     'REACT_APP_GA_TRACKINGID',
 ];
 
+// Telemetry is reported as missing only outside development. Local dev and
+// Storybook have no instrumentation backend to point these at - Storybook stubs
+// both as empty strings - and the app degrades cleanly without them, so an
+// absent key there is a deliberate configuration, not a misconfiguration.
+// Everywhere else they stay required, so a genuinely unconfigured deployment
+// still says so.
+const developmentOptionalVars: (keyof EnvType)[] = [
+    'REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY',
+    'REACT_APP_GA_TRACKINGID',
+];
+
+const isDevelopment = globalThis.REACT_APP_ENVIRONMENT === 'development';
+
 requiredVars.forEach((key) => {
+    if (isDevelopment && developmentOptionalVars.includes(key)) {
+        return;
+    }
+
     if (!globalThis[key]) {
-        // eslint-disable-next-line no-console
+         
         console.error(`[env] Missing required runtime variable: ${key}`);
     }
 });

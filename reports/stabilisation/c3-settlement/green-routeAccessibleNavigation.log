@@ -1,0 +1,16 @@
+
+> nmi-portal@0.1.0 test:storybook
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.storybook.config.ts ClientApp/src/components/Utilities/routeAccessibleNavigation.stories.tsx --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+Port 63315 is in use, trying another one...
+ ✓ |storybook (chromium)| ClientApp/src/components/Utilities/routeAccessibleNavigation.stories.tsx (1 test) 461ms
+   ✓ Live Region  459ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  11:43:05
+   Duration  5.39s (transform 0ms, setup 3.18s, import 34ms, tests 461ms, environment 0ms)
+

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect, fn } from 'storybook/test';
+import { within, expect, fn, userEvent, waitFor } from 'storybook/test';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 import ViewMeasurementReport from './ViewMeasurementReport';
@@ -7,8 +7,8 @@ import ViewMeasurementReport from './ViewMeasurementReport';
 /**
  * `ViewMeasurementReport` wraps `ViewPdfButton` with the authenticated download
  * behaviour for an issued measurement report. On mount it requests the report's
- * file size; in the Storybook/jsdom environment the API call is not served, so the
- * component settles into its loaded state and renders the download affordance.
+ * file size from the endpoint-specific MSW metadata fixture, then requests the
+ * downloadable PDF branch when the user activates the button.
  */
 const quotationData = {
     crmQuoteRequestId: 'QR-100245',
@@ -27,17 +27,21 @@ const meta = {
         setFileError: fn(),
         setIsLoading: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ViewMeasurementReport>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    play: async ({ canvasElement }) => {
+    play: async ({ canvasElement, args }) => {
         const canvas = within(canvasElement);
-        // Once the file-size lookup settles, the download button renders.
         const button = await canvas.findByRole('button', { name: /view measurement report/i });
         await expect(button).toBeVisible();
+        await expect(canvas.getByText(/PDF file size 2\.00Kb/i)).toBeVisible();
+
+        await userEvent.click(button);
+
+        await waitFor(() => expect(args.setIsLoading).toHaveBeenCalledWith(false));
+        await expect(args.setFileError).toHaveBeenLastCalledWith(false);
     },
 };

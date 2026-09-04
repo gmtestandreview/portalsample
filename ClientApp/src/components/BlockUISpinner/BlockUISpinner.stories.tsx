@@ -1,6 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import BlockUISpinner from './index';
 
+/**
+ * BlockUISpinner Component Storybook Configuration
+ *
+ * This file defines the Storybook stories for the BlockUISpinner component, which displays a loading spinner that can block the entire UI or a specific section based on the `partial` prop.
+ * 
+ * The stories demonstrate both full-page and inline usage of the BlockUISpinner component, allowing developers to visualize its behavior in different contexts.
+ * 
+ * @module BlockUISpinner.stories 
+ * @prop {Meta} meta - Storybook metadata for the BlockUISpinner component.
+ * @prop {StoryObj} FullPage - Story demonstrating the full-page spinner usage.
+ * @prop {StoryObj} Inline - Story demonstrating the inline spinner usage with a specific section of the UI.
+ *
+ */
+
 const meta = {
     title: 'Components/BlockUISpinner',
     component: BlockUISpinner,
@@ -10,7 +24,6 @@ const meta = {
     args: {
         children: <p>Loading data...</p>,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof BlockUISpinner>;
 
 export default meta;

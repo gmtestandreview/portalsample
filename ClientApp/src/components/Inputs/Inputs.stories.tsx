@@ -26,7 +26,6 @@ const meta = {
             },
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof TextInput>;
 
 export default meta;

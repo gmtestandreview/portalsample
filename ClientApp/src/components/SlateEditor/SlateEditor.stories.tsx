@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { within, expect, fn } from 'storybook/test';
+import { within, expect, fn, userEvent } from 'storybook/test';
 import SlateEditor, { type CustomElement } from './SlateEditor';
 
 /**
@@ -40,7 +40,6 @@ const meta = {
             />
         );
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SlateEditor>;
 
 export default meta;
@@ -49,11 +48,21 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
-        // The Slate Editable surface is exposed as a textbox.
-        await expect(canvas.getByRole('textbox')).toBeVisible();
+        // The Slate Editable surface is exposed as a textbox. Slate renders a contenteditable
+        // div, which takes no accessible name from its placeholder the way a native input
+        // would, so the name is asserted by role rather than just the element's presence.
+        await expect(canvas.getByRole('textbox', { name: 'Type your message…' })).toBeVisible();
         await expect(canvas.getByRole('button', { name: /send/i })).toBeVisible();
         // Formatting controls are present.
         await expect(canvas.getByRole('button', { name: /bold/i })).toBeVisible();
+        // Typing is what drives Slate's Editable through act; the three assertions above are
+        // static chrome, so without an interaction the editor kept updating after the story
+        // had ended and the warning surfaced against whichever story ran next.
+        await userEvent.type(canvas.getByRole('textbox'), ' Noted.');
+        await expect(canvas.getByText('Thanks for the update on the application. Noted.')).toBeVisible();
+        // The counter measures serialised HTML length, not visible characters: the 48
+        // characters above plus the <p></p> wrapper.
+        await expect(canvas.getByText(/55\s*\/\s*500/)).toBeVisible();
     },
 };
 
@@ -66,5 +75,11 @@ export const Empty: Story = {
         // Live counter starts at zero out of the budget.
         await expect(canvas.getByText(/0/)).toBeVisible();
         await expect(canvas.getByText(/500/)).toBeVisible();
+        // Do not add a userEvent.click() before this line. user-event defaults to
+        // skipClick: false, so type() already clicks and focuses the target; a
+        // preceding click is a duplicate that settles nothing. See
+        // docs/change-record/2026-08-30-storybook-remediation-audit.md.
+        await userEvent.type(canvas.getByRole('textbox'), 'Hi');
+        await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();
     },
 };

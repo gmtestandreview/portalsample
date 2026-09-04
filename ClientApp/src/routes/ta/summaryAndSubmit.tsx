@@ -10,21 +10,11 @@ import SupportingDocuments from './supportingDocuments';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import Checkbox from '../../components/Inputs/Checkbox';
 import InTextLink from '../../components/InTextLink';
-import { prefixedPropertyOf } from '../../utils';
-import type { RequestForPatternApprovalSummary } from '../../api/web-api-client';
-
-const getName = prefixedPropertyOf<RequestForPatternApprovalSummary>('summaryAndSubmit');
-
-function getNameForUse2(name: string | keyof RequestForPatternApprovalSummary, isSummary: boolean | undefined) {
-    const fullname = isSummary ? getName(name as keyof RequestForPatternApprovalSummary) : name;
-    return fullname;
-}
 
 const SummaryAndSubmit = (props: TASummaryProps) => {
     const { id } = useParams<{ id?: string }>();
     const { isSubmitted } = props;
 
-    function getNameForUse(name: string | keyof RequestForPatternApprovalSummary): string { return getNameForUse2(name, false); }
 
     useBodyClass('summary');
     return (
@@ -72,7 +62,7 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
                             </p>
                             <Checkbox
                                 label='I have read NMI P 106 (approval and certification procedures)'
-                                name={getNameForUse('acceptNMIP106')}
+                                name='acceptNMIP106'
                                 isSummary={false}
                                 containerClassName='mb-0 pe-1 -w-auto'
                                 validationClassName='ms-4 px-3'
@@ -87,7 +77,7 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
 
                             <Checkbox
                                 label='I have read and accept the terms and conditions associated with this application '
-                                name={getNameForUse('acceptTermsAndConditions')}
+                                name='acceptTermsAndConditions'
                                 isSummary={false}
                                 containerClassName='mb-0 pe-1 -w-auto'
                                 validationClassName='ms-4 px-3'
@@ -102,7 +92,7 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
 
                             <Checkbox
                                 label='I declare that the measuring Instrument has been designed and contracted to the relevant Australian safety standards and, where appropriate, that the measuring Instrument complies with the relevant safety test scheme'
-                                name={getNameForUse('acceptDeclaration')}
+                                name='acceptDeclaration'
                                 isSummary={false}
                                 containerClassName='mb-0 pe-1 -w-auto'
                                 validationClassName='ms-4 px-3'

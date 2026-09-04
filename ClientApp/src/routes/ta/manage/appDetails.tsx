@@ -27,6 +27,7 @@ import SupportingDocuments from '../supportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import ApplicationMessages from './appMessages';
 import { tokenRequest } from '../../../authentication/authConfig';
+import AppLogger from '../../../instrumentation/AppLogger';
 
 const POLL_MS = 5000;
 
@@ -92,7 +93,7 @@ const ApplicationDetails = () => {
     }) : '');
 
     const [activeTab, setActiveTab] = useState(getTabFromQuery);
-    const [loadMessagesTab, setLoadMessagesTab] = useState(getTabFromQuery() === 'messages');
+    const [loadMessagesTab, setLoadMessagesTab] = useState(() => getTabFromQuery() === 'messages');
     const [messagesRefreshKey, setMessagesRefreshKey] = useState(0);
 
     useEffect(() => {
@@ -109,6 +110,10 @@ const ApplicationDetails = () => {
         const poll = async () => {
             await fetchMessageCountData();
             if (!disposedRef.current) {
+                // The rule cannot trace the clear through clearPollTimeout(),
+                // which this effect's cleanup calls and which does invoke
+                // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
+                // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
                 pollTimeoutRef.current = setTimeout(poll, POLL_MS);
             }
         };
@@ -147,21 +152,30 @@ const ApplicationDetails = () => {
     useEffect(() => {
         const fetchData = async () => {
             setIsDataLoading(true);
-            const result = await loadStepValues();
-            setAppDetails(result.formValues);
-            const appType = result.formValues?.applicationDetails as ApplicationDetailsDto;
-            setApplicationType(appType.patternApprovalType || null);
-            setMessageCount(appType.messageCount || 0);
-            setIsDataLoading(false);
+            try {
+                const result = await loadStepValues();
+                setAppDetails(result.formValues);
+                const appType = result.formValues?.applicationDetails as ApplicationDetailsDto | undefined;
+                setApplicationType(appType?.patternApprovalType || null);
+                setMessageCount(appType?.messageCount || 0);
+            } catch (error) {
+                // Previously unguarded: a rejected load became an unhandled rejection, and because
+                // setIsDataLoading(false) sat only on the success path the page stayed on its
+                // spinner for good. Reading applicationDetails without a guard threw for the same
+                // reason - which is the only way the `|| {}` further down was ever reachable.
+                AppLogger.error('Failed to load application details', error as Error, { Id: id });
+            } finally {
+                setIsDataLoading(false);
+            }
         };
         fetchData();
-    }, [loadStepValues]);
+    }, [id, loadStepValues]);
 
     function routeToMessages() {
         handleTabSelect('messages');
     }
 
-    // eslint-disable-next-line arrow-body-style
+     
     const detailsTabContent = (details: RequestForPatternApprovalAppDetails) => {
         const {
             referenceId, lastUpdated, assessedAs, status, statusDetail, title, submittedDate,
@@ -242,7 +256,7 @@ const ApplicationDetails = () => {
                                                                     <>
                                                                         <span className='-me-md-2'>
                                                                             <span
-                                                                                // eslint-disable-next-line max-len
+                                                                                 
                                                                                 className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
                                                                                 style={{ fontFamily: 'monospace', top: '-10px' }}
                                                                                 role='status'

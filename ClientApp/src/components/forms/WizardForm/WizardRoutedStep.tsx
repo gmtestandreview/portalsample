@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+ 
 import {
     useCallback, useEffect, useRef, useState,
 } from 'react';
@@ -303,12 +303,15 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
                         </Row>
                         <Row className='mb-5'>
                             <Col sm={12} md={10} lg={8} className='mx-auto'>
+                                {/*
+                                  * Progress is announced once, by SteppedNavigation. This
+                                  * heading used to repeat it as a visually-hidden
+                                  * "Step N of M", which was harmless only while the stepper
+                                  * was aria-hidden. The stepper now carries focusable links
+                                  * and is exposed, so keeping both would announce the same
+                                  * position twice.
+                                  */}
                                 <h1 id='page-title' tabIndex={-1}>
-                                    {allSteps.length > 1 && (
-                                        <span className='visually-hidden'>
-                                            {`Step ${currentStepIndex + 1} of ${allSteps.length} `}
-                                        </span>
-                                    )}
                                     {title}
                                 </h1>
                                 {!isSummaryPage && (

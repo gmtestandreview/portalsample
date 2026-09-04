@@ -1,3 +1,4 @@
+import { StrictMode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
@@ -65,5 +66,17 @@ describe('application bootstrap', () => {
         expect(mocks.createPublicClientApplication).toHaveBeenCalledWith({ auth: { clientId: 'client-id' } });
         expect(mocks.createTrustedTypePolicy).toHaveBeenCalled();
         expect(mocks.render).toHaveBeenCalledWith(expect.any(Object));
+    });
+
+    it('wraps the entire application in React Strict Mode', async () => {
+        vi.resetModules();
+        document.body.innerHTML = '<div id="root"></div>';
+        mocks.createRoot.mockReturnValue({ render: mocks.render });
+
+        await import('../../../ClientApp/src/index');
+
+        expect(mocks.render).toHaveBeenCalledWith(
+            expect.objectContaining({ type: StrictMode }),
+        );
     });
 });

@@ -54,12 +54,18 @@ npm run test:e2e:storybook
 - Major route families now have route stories for dashboard, home/get-started, help, auth entry/exit, account, contact, request-for-quote, accept-quote, quotation, measurement-report, success, and error flows.
 - Pattern/type approval has isolated stories for the dashboard shell, pre-application, four wizard steps, instrument information panel, and the application details/documents/messages management tabs.
 - The narrowed Storybook-complete goal from the coverage matrix is now satisfied, and the remaining work is polish depth rather than missing family-level breadth.
-- Current inventory: 41 registered paths, 31 top-level component families, 87 story files, and 13 MDX docs files. The latest static Storybook index contains 315 entries: 218 stories and 97 docs entries.
+- Current inventory (counted 2026-09-01): **41** registered paths, **48** top-level component directories under `ClientApp/src/components/`, **132** story files, and **13** MDX docs files. The `storybook-static/index.json` build index contains **412** entries: **270** stories and **142** docs. *(Previous revision said 31 families / 87 stories / 315 entries — all stale. The index figure reflects the last static build in the tree, so re-run `npm run build-storybook` before relying on it.)*
+
+- **Not all component directories are live.** An import-reachability walk from `ClientApp/src/index.tsx` and `App.tsx` (following static, dynamic and bare side-effect imports) finds **69 of 344 first-party source files unreachable from the application**. They cluster in `components/AriaComponents/` (36 files) and the React Aria scaffold families: `ColorArea`, `ColorField`, `ColorPicker`, `ColorSlider`, `ColorSwatch`, `ColorThumb`, `ColorWheel`, `Calendar`, `ComboBox`, `CommandPalette`, `Dialog`, `Disclosure`, `DisclosureGroup`, `DropZone`, `GridLists`, `reactaria_components`.
+
+  These inflate both the component count and the coverage denominator. **But unreachable-from-the-app is not the same as deletable** — Storybook stories and tests are excluded from that walk, so some are reachable from stories only. Confirm per-directory before removing anything.
+
+  *Correction: an earlier revision of this bullet named eleven families and asserted `AriaComponents` was unreferenced. That came from a faulty search (the filter excluded the very import lines it was looking for). `AriaComponents` is imported — but only by other unreachable code, so it is unreachable from the application entry points. The figure above is from the reachability walk, not a text search.*
 - Storybook BDD now includes breadth and route/form coverage expansion through:
   - `tests/e2e/features/storybook/components/breadth.feature`
   - `tests/e2e/features/storybook/forms/forms-coverage.feature`
   - `tests/e2e/features/storybook/routes/routes-coverage.feature`
-- The six pattern/type approval paths are reviewed `app-bdd` exclusions in `tests/e2e/route-coverage.ts`; Storybook documents their isolated rendering states until deterministic authenticated backend fixtures are added.
+- ~~The six pattern/type approval paths are reviewed `app-bdd` exclusions~~ — **superseded 2026-09-01.** Those six paths now carry `app-bdd` coverage. `tests/e2e/route-coverage.ts` holds 41 entries — 25 `app-bdd`, 16 `storybook-bdd`, **0 exclusions**. Storybook remains useful as isolated-state documentation for them, but it is no longer the only evidence.
 
 ## Recent Hardening Notes
 
@@ -78,4 +84,10 @@ For the next Storybook plus Playwright-BDD execution approach, see `docs/PLAYWRI
 
 Current release gate position: `CLOSED_SUCCESS` for the narrowed Storybook migration-readiness baseline in this workspace snapshot. **Scope caveat:** API-heavy flows still require application BDD or reviewed exclusions. In particular, the pattern/type approval stories are component-level evidence and do not prove the full authenticated workflow.
 
-This Storybook-specific result does not clear the repository-wide unit-coverage gate. As of 2026-06-28, `npm run test:unit:coverage` fails the configured 100% thresholds and is tracked separately as Priority 1 `COVERAGE-GATE-001`.
+This Storybook-specific result does not clear the repository-wide unit-coverage gate. As of 2026-06-28, `npm run test:unit:coverage` failed the configured 100% thresholds and is tracked separately as Priority 1 `COVERAGE-GATE-001`. **That measurement is stale** — it was taken against 114 unit test files and the suite is now 163. No current figure exists.
+
+> **Storybook readiness is not migration readiness.** Story coverage demonstrates that components
+> render in isolation with mocked MSAL, mocked MSW handlers and a canonical mock account. It does not
+> exercise real token acquisition, the `PreConditions` redirect matrix, organisation switching, or the
+> same-origin API boundary — which is where a migration actually breaks. Treat this document as
+> evidence about the component layer only.

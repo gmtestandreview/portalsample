@@ -20,7 +20,6 @@ const meta = {
             initialEntries: ['/dashboard-ta'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof DashboardTa>;
 
 export default meta;

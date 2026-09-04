@@ -1,5 +1,12 @@
 # Architecture
 
+> **Verified against code 2026-09-01.** Provider order in §2 and §5 was corrected — the previous
+> revision showed `MsalProvider` outermost with `StrictMode` inside `AccountProvider`, and omitted
+> the provider-level `ErrorBoundary` entirely (contradicting its own §6 item 7). Route-coverage
+> exclusions were corrected from six to zero. Counts in §6 were refreshed. See
+> [`precondition-redirect-matrix.md`](architecture/precondition-redirect-matrix.md) for the
+> `PreConditions` contract, which this document previously referenced but never specified.
+
 ## 1) Architectural Style
 
 - **Primary style**: Feature-based layered SPA (Single Page Application)
@@ -8,7 +15,7 @@
   1. All authenticated routes are gate-kept by `<AuthenticatedElement>` — no route renders without MSAL confirming auth.
   2. Config is runtime-injected via `window.*`, not baked into the bundle — the same build artifact runs across environments.
   3. Multi-step workflows (account, RFQ, accept-quote, and pattern/type approval) use a single `WizardForm` engine rather than ad-hoc per-flow implementations.
-  4. `ClientApp/src/App.tsx` is the canonical inventory for all 41 registered paths. Six pattern/type approval paths are intentionally excluded from app-level Playwright coverage until deterministic backend fixtures exist, but they have isolated Storybook coverage.
+  4. `ClientApp/src/App.tsx` is the canonical inventory for all 41 registered paths. Every one of the 41 now carries executable coverage in `tests/e2e/route-coverage.ts` — 25 `app-bdd` and 16 `storybook-bdd`, with **no reviewed exclusions remaining**. The six pattern/type approval paths that were previously excluded are now covered by `app-bdd` scenarios in `tests/e2e/features/@type-approval/type-approval.feature`.
 
 ## 2) System Flow
 
@@ -18,26 +25,28 @@ Browser load
 window.* env injection  (server-side template sets REACT_APP_B2C_CLIENTID etc.)
   ↓
 ClientApp/src/index.tsx
-  ├─ await PublicClientApplication.createPublicClientApplication(configuration)
-  ├─ TrustedTypes.createTrustedTypePolicy()   ← DOMPurify CSP guard
+  ├─ await PublicClientApplication.createPublicClientApplication(configuration)   ← line 16, top-level await
+  ├─ TrustedTypes.createTrustedTypePolicy()   ← DOMPurify CSP guard, before render
   └─ createRoot(rootElement).render(
-       <MsalProvider instance={pca}>          ← Azure AD B2C session
-         <AccountProvider>                    ← User profile + org state (AccountContext — state only)
-           <StrictMode>
-             <RouterProvider router={App} />  ← React Router v7
-           </StrictMode>
-         </AccountProvider>
-       </MsalProvider>
+       <StrictMode>                           ← OUTERMOST: dev checks cover MSAL + account providers
+         <ErrorBoundary appInsights={...}>    ← provider-level; reports from commit phase
+           <MsalProvider instance={pca}>      ← Azure AD B2C session
+             <AccountProvider>                ← User profile + org state (AccountContext — state only)
+               <RouterProvider router={App} />  ← React Router v7
+             </AccountProvider>
+           </MsalProvider>
+         </ErrorBoundary>
+       </StrictMode>
      )
   ↓
 Route match → App.tsx (createBrowserRouter; 41 registered paths)
   ↓
-AuthenticatedElement (per protected route)
-  ├─ PreConditions  → checks ToU accepted, account setup complete
-  ├─ MsalAuthenticationTemplate → triggers redirect if not authenticated
-  └─ ErrorBoundary (appInsights)  → catches + reports unhandled errors
-       ↓
-       Route component (e.g. Dashboard, RequestForQuote, DashboardTA)
+AuthenticatedElement (per protected route) — nested, not sibling:
+  PreConditions                       → redirect gate + modal orchestration
+    └─ MsalAuthenticationTemplate     → triggers B2C redirect if not authenticated
+         └─ ErrorBoundary (appInsights) → catches + reports unhandled errors
+              ↓
+              Route component (e.g. Dashboard, RequestForQuote, DashboardTA)
          ├─ useAccountState() / useAccountDispatch()  → read/mutate AccountContext state
          ├─ useModalState() / useModalDispatch()    → read/mutate modal visibility state
          ├─ acquireTokenSilent()   → get fresh access token
@@ -92,23 +101,33 @@ This includes:
 
 ## 5) Key Component Relationships
 
+Provider chain (`index.tsx:25-33`) — `StrictMode` is outermost:
+
 ```
 index.tsx
-  └─ MsalProvider
-       └─ AccountProvider  (AccountContext)
-            └─ RouterProvider (App.tsx)
+  └─ StrictMode
+       └─ ErrorBoundary (provider-level, react-error-boundary)
+            └─ MsalProvider
+                 └─ AccountProvider  (AccountContext)
+                      └─ RouterProvider (App.tsx)
+```
+
+Route tree hanging off `RouterProvider`:
+
+```
+            RouterProvider (App.tsx)
                  └─ Route /dashboard
                       └─ AuthenticatedElement
-                           ├─ PreConditions (provides ModalStateCtx + ModalDispatchCtx)
-                           ├─ MsalAuthenticationTemplate
-                           └─ ErrorBoundary (react-error-boundary, functional)
-                                └─ Dashboard
-                                     ├─ useAccountState() / useAccountDispatch()
-                                     ├─ useModalState() / useModalDispatch()
-                                     ├─ DashboardClient (acquireTokenSilent)
-                                     ├─ SearchFilter
-                                     ├─ RequestItem / InstrumentItem
-                                     └─ CustomPagination
+                           └─ PreConditions (provides ModalStateCtx + ModalDispatchCtx)
+                                └─ MsalAuthenticationTemplate
+                                     └─ ErrorBoundary (route-level)
+                                          └─ Dashboard
+                                               ├─ useAccountState() / useAccountDispatch()
+                                               ├─ useModalState() / useModalDispatch()
+                                               ├─ DashboardClient (acquireTokenSilent)
+                                               ├─ SearchFilter
+                                               ├─ RequestItem / InstrumentItem
+                                               └─ CustomPagination
 
                  ├─ Route /request-for-quote/:id/*
                       └─ AuthenticatedElement (displayHeaderAndFooter=false)
@@ -151,12 +170,18 @@ index.tsx
 2. ~~**`React.Children.toArray` in `WizardForm/index.tsx:27`**~~ — **RESOLVED (Phase 4.2)**: Replaced with `React.Children.forEach` + array accumulator. Legacy API usage removed.
 3. ~~**`AccountContext` re-renders**~~ — **RESOLVED (Phase 5.1)**: Context split into `AccountStateCtx` / `AccountDispatchCtx`. All 7 dispatch callbacks converted to functional updater form (`setAccountDetails(prev => ...)`) with `[]` dep arrays — `dispatchValue` is permanently stable after mount. Components subscribing only to dispatch never re-render due to state changes.
 4. ~~**Dashboard `useEffect` dependency array**~~ — **RESOLVED (Phase 4.4)**: `AbortController` cleanup added for in-flight request cancellation; `useDebounce` (300ms) added on search text input.
-5. **Top-level `await` in `index.tsx:13`** — `await PublicClientApplication.createPublicClientApplication(...)` requires bundler + browser support for top-level await; may need polyfilling for older targets.
+5. **Top-level `await` in `index.tsx:16`** — `await PublicClientApplication.createPublicClientApplication(...)` requires bundler + browser support for top-level await. Enabled here by `experiments.topLevelAwait: true` in `webpack.config.js`; a Vite/Rollup target needs an equivalently modern build target. Still open.
 6. ~~**`any` casts in `env.ts`**~~ — **RESOLVED (Phase 4.3)**: All 11 config vars now use `declare global { var VAR_NAME: string | undefined; }` + `globalThis.VAR_NAME ?? ''`. A `requiredVars.forEach` startup guard calls `console.error` for any missing vars.
 7. ~~**No error boundary at provider level**~~ — **RESOLVED (Phase G)**: the outer `ErrorBoundary` now wraps `MsalProvider` and `AccountProvider` in `index.tsx`.
-8. **Distributed token acquisition** — route and prop modules still construct generated clients and call `acquireTokenSilent()` independently. Preserve the current token/account selection contract during migration; centralisation remains deferred.
-9. **Pattern/type approval browser fixtures (`TYPE-APPROVAL-E2E-001`)** — the six Type Approval paths are registered in `tests/e2e/route-coverage.ts` as reviewed exclusions because this snapshot has no deterministic authenticated backend fixture contract. Storybook covers the dashboard shell, wizard steps, instrument panel, and management tabs, but this is not equivalent to an end-to-end workflow test.
-10. **Unit coverage (`COVERAGE-GATE-001`)** — all 1,169 unit tests pass, but the 2026-06-28 coverage run fails the configured 100% thresholds at 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines. This is a migration pre-flight gate rather than an architectural defect, but it materially limits confidence in the new Type Approval and supporting component surfaces.
+8. **Distributed token acquisition** — route and prop modules still construct generated clients and call `acquireTokenSilent()` independently: **81 call sites across 52 files**, with **92** `setAuthToken` sites. Preserve the current token/account selection contract (`{ ...tokenRequest, account: accounts[0] }`) during migration; centralisation remains deferred per `docs/adr/2026-05-30-acquire-token-silent-interceptor.md`. **Note that ADR undercounts the sites as "35+".**
+
+    **No interaction-required fallback exists.** `InteractionRequiredAuthError`, `acquireTokenRedirect` and `acquireTokenPopup` appear **zero** times in first-party source. A failed silent acquisition falls into each call site's generic `catch`, so an expired session is surfaced to the user as a load/server error with no re-authentication path. The ADR describes this handling as "inconsistent"; it is absent.
+9. ~~**Pattern/type approval browser fixtures (`TYPE-APPROVAL-E2E-001`)**~~ — **RESOLVED**: the six Type Approval paths now carry `app-bdd` coverage via `tests/e2e/features/@type-approval/type-approval.feature`. `tests/e2e/route-coverage.ts` holds **41 entries — 25 `app-bdd`, 16 `storybook-bdd`, 0 excluded**. The `excluded` variant remains in the type union but is unused.
+10. **Unit coverage (`COVERAGE-GATE-001`)** — the last recorded run (2026-06-28) failed the configured 100% thresholds at 74.43% statements, 75.51% branches, 72.56% functions, and 74.92% lines. **That figure is stale — it was measured against 114 test files. Re-run 2026-09-01: 163 files / 1,734 tests, all passing.** The coverage percentage itself has not been re-measured. This is a migration pre-flight gate rather than an architectural defect, but it limits confidence in the Type Approval and supporting component surfaces.
+
+    Part of the gap is artificial: **11 React Aria component families are unreferenced anywhere in `ClientApp/src`** (`ColorArea`, `ColorField`, `ColorPicker`, `ColorSlider`, `ColorSwatch`, `ColorThumb`, `ColorWheel`, `Calendar`, `CommandPalette`, `Disclosure`, `DisclosureGroup`, `DropZone`), as is `components/AriaComponents/`. They sit inside the coverage denominator while being scaffold code the portal never renders. Retiring them changes the percentage without changing risk.
+
+11. **`PreConditions` redirect contract** — four interacting boolean predicates over account state gate 35 of the 41 routes. Now specified in [`architecture/precondition-redirect-matrix.md`](architecture/precondition-redirect-matrix.md), which records four behaviours that must be reproduced or changed deliberately, including a state where a user with no organisation is redirected to contact creation rather than account creation.
 
 ## 7) Evidence
 

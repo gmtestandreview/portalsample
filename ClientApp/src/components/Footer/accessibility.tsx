@@ -5,14 +5,14 @@ const Accessibility = (): ReactElement => (
     <>
         <p>
             {'We are committed to providing websites that are accessible to everyone. This is a requirement under the '}
-            <InTextLink href='http://www.comlaw.gov.au/Series/C2004A04426' target='_blank'>
+            <InTextLink href='https://www.legislation.gov.au/Series/C2004A04426' target='_blank'>
                 Disability Discrimination Act 1992
             </InTextLink>
             .
         </p>
         <p>
             {'We aim to meet the '}
-            <InTextLink href='http://www.w3.org/TR/WCAG/' target='_blank'>
+            <InTextLink href='https://www.w3.org/TR/WCAG/' target='_blank'>
                 Web Content Accessibility Guidelines (WCAG)
             </InTextLink>
             {' standard at level AA before 1 January 2026. This is the part of the '}
@@ -26,7 +26,7 @@ const Accessibility = (): ReactElement => (
         <h4>Portable Document Format (PDF) files</h4>
         <p>
             To view PDF files on this website you will need PDF reader software. You can download and install the free&nbsp;
-            <InTextLink href='http://www.adobe.com/' target='_blank'>Adobe PDF reader</InTextLink>
+            <InTextLink href='https://www.adobe.com/' target='_blank'>Adobe PDF reader</InTextLink>
       &nbsp;from the Adobe website.
         </p>
         <p>
@@ -40,7 +40,7 @@ const Accessibility = (): ReactElement => (
         </p>
         <p>
             To find out how to enable JavaScript in your browser, visit&nbsp;
-            <InTextLink href='http://enable-javascript.com/' target='_blank'>enable-javascript.com</InTextLink>
+            <InTextLink href='https://www.enable-javascript.com/' target='_blank'>enable-javascript.com</InTextLink>
             .
         </p>
         <h4>Contact us</h4>

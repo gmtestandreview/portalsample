@@ -6,8 +6,6 @@ import {
 import { Formik } from 'formik';
 import RadioButtonGroup from '../../Inputs/RadioButtonGroup';
 import { PatternApprovalStatusEnumDto } from '../../../api/web-api-client';
-import type { DashboardItemDto } from '../../../api/web-api-client';
-import { prefixedPropertyOf } from '../../../utils';
 import type { RadioButtonProps } from '../../Inputs/RadioButton/types';
 import { DashboardTab } from '../types';
 import { useAccountDispatch } from '../../../authentication/hooks';
@@ -15,15 +13,6 @@ import { defaultFilter } from '../../../routes/common/constants';
 import { trackGAEvent } from '../../../analytics/GoogleAnalytics';
 import type { PaFilterMenuProps } from './paFilterMenuProps';
 
-const getName = prefixedPropertyOf<DashboardItemDto>('paymentDetails');
-
-function getNameForUse2(
-    name: string | keyof DashboardItemDto,
-    isSummary: boolean | undefined,
-) {
-    const fullname = isSummary ? getName(name as keyof DashboardItemDto) : name;
-    return fullname;
-}
 
 const PaFilterMenu = (props: PaFilterMenuProps) => {
     const {
@@ -33,9 +22,6 @@ const PaFilterMenu = (props: PaFilterMenuProps) => {
         setCurrentPage,
     } = props;
     const accountDispatch = useAccountDispatch();
-    function getNameForUse(arg0: string): string {
-        return getNameForUse2(arg0, false);
-    }
 
     const filterStatus: RadioButtonProps<string>[] = [
         {
@@ -228,7 +214,7 @@ const PaFilterMenu = (props: PaFilterMenuProps) => {
                                             <Col xs={12} sm={6} className='pt-2'>
                                                 <RadioButtonGroup
                                                     legend='Status'
-                                                    name={getNameForUse('filterStatusType')}
+                                                    name='filterStatusType'
                                                     isSummary={false}
                                                     id='q-filterStatusType'
                                                     options={filterStatus}
@@ -245,7 +231,7 @@ const PaFilterMenu = (props: PaFilterMenuProps) => {
                                             <Col xs={12} sm={6} className='pt-2'>
                                                 <RadioButtonGroup
                                                     legend='Year'
-                                                    name={getNameForUse('filterYearType')}
+                                                    name='filterYearType'
                                                     id='q-filterYearType'
                                                     isSummary={false}
                                                     // className='my-2'

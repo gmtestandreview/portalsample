@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, screen, within } from 'storybook/test';
+import { expect, userEvent, screen, waitFor, within } from 'storybook/test';
 import { Routes, Route, Link } from 'react-router';
 import { Formik, Form } from 'formik';
 import RouteLeavingGuard from './index';
@@ -49,7 +49,6 @@ const GuardHarness = ({
 const meta = {
     title: 'Components/RouteLeavingGuard',
     component: RouteLeavingGuard,
-    tags: ['autodocs', 'docs'],
     parameters: {
         portal: { initialEntries: ['/form'] },
         docs: {
@@ -81,7 +80,7 @@ export const InterceptedNavigation: Story = {
         const link = canvas.getByRole('link', { name: /leave this page/i });
         await userEvent.click(link);
         const dialog = await screen.findByRole('dialog', { name: /unsaved changes/i });
-        await expect(dialog).toBeVisible();
+        await waitFor(() => expect(dialog).toBeVisible());
         await expect(within(dialog).getByRole('button', { name: /^cancel$/i })).toBeVisible();
         await expect(within(dialog).getByRole('button', { name: /discard changes/i })).toBeVisible();
     },
@@ -102,7 +101,7 @@ export const CustomCopy: Story = {
         const link = canvas.getByRole('link', { name: /leave this page/i });
         await userEvent.click(link);
         const dialog = await screen.findByRole('dialog', { name: /are you sure you want to log out\?/i });
-        await expect(dialog).toBeVisible();
+        await waitFor(() => expect(dialog).toBeVisible());
         await expect(within(dialog).getByText(/Any changes made will not be saved/)).toBeVisible();
         await expect(within(dialog).getByRole('button', { name: /yes, logout/i })).toBeVisible();
     },

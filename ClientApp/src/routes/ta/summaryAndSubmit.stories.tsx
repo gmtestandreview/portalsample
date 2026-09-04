@@ -35,7 +35,6 @@ const meta = {
         name: 'summaryAndSubmit',
         isSubmitted: false,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SummaryAndSubmit>;
 
 export default meta;

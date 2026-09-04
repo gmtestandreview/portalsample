@@ -1,6 +1,5 @@
 import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
 import * as PrimaryButtonStories from './PrimaryButton.stories';
-import DocsTable from '../../../storybook/DocsTable';
 
 <Meta of={PrimaryButtonStories} />
 
@@ -85,25 +84,23 @@ export function DisabledExample() {
 
 ## Props API
 
-<DocsTable
-  headers={['Prop', 'Type', 'Default', 'Description']}
-  rows={[
-    ['children', 'React.ReactNode', 'required', 'Button label or content'],
-    ['mode', "'light' | 'dark'", "'light'", 'Button color variant'],
-    ['disabled', 'boolean', 'false', 'Disables the button'],
-    ['onClick', '(e: React.MouseEvent) => void', '-', 'Click event handler'],
-  ]}
-/>
+Use the generated Controls and ArgTypes above as the source of truth for
+`PrimaryButton` props. Keep prop names, native button attributes, and mode
+descriptions in TypeScript and JSDoc rather than duplicating a hand-maintained
+MDX API table.
 
 ## Design System Integration
 
 The Primary Button follows the NMI design system specifications:
 
-- **Light Mode**: Blue background (#0066CC) with white text
-- **Dark Mode**: Dark blue background (#003D99) with white text
-- **Disabled**: Gray background (#E0E0E0) with gray text
-- **Hover**: Darkened background color on hover
+- **Light Mode**: Default NMI primary action treatment from `btn-primary`
+- **Dark Mode**: Alternate NMI primary treatment from `btn-primary-dark`
+- **Disabled**: Native disabled state forwarded through React Aria button behaviour
+- **Hover**: Theme-owned hover treatment from the button SCSS
 - **Focus**: Visible focus ring for keyboard navigation
+
+Colour values live in `ClientApp/src/styles/_variables.scss` and
+`ClientApp/src/styles/_buttons.scss`; do not copy hex values into this page.
 
 ## Best Practices
 
@@ -120,6 +117,6 @@ The Primary Button follows the NMI design system specifications:
 
 ## Related Components
 
-- [SecondaryButton](/docs/components-buttons-secondarybutton--docs) — For secondary actions
-- [Alert Component](/docs/components-alert--docs) — For success/error messages
-- [Design Tokens](/docs/documentation-getting-started--page) — Color and spacing system
+- [SecondaryButton](/docs/components-buttons-secondarybutton--documentation) — For secondary actions
+- [Alert Component](/docs/components-alert--documentation) — For success/error messages
+- [Design Tokens](/docs/documentation-style-guide--documentation) — Color and spacing system

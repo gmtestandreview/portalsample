@@ -1,6 +1,5 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues } from 'formik';
-import { useState, useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
 import { isHidden } from '../utils';
 import type { HidableFieldProps } from './types';
@@ -15,12 +14,7 @@ const HidableField = <T extends FormikValues>(props: PropsWithChildren<HidableFi
         children,
     } = props;
 
-    const [isVisible, setVisible] = useState(false);
-
-    useEffect(() => {
-        setVisible(false);
-        setVisible(!isHidden(name, hidden, values));
-    }, [name, hidden, values]);
+    const isVisible = !isHidden(name, hidden, values);
 
     return isVisible
         ? <>{children}</>

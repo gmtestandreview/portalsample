@@ -2,9 +2,21 @@
 
 **Purpose:** Single authoritative chronological log of every change made to the NMI Portal codebase during migration preparation. Every migration batch decision is traceable to an entry here.
 **Reference:** Migration preparation Phases A–N (2026-05-29 to 2026-05-31), Sprint 1 Storybook Quality Remediation, and the 2026-06-28 current-tree reconciliation.
-**Last updated:** 2026-06-28 (CRD-041)
+**Last updated:** 2026-09-04 (CRD-047)
 
-**Latest delta (CRD-041):** Current-tree migration reconciliation records React Router v7, 41 registered paths, the six pattern/type approval routes and supporting components, expanded Storybook inventories, 114 unit-test files / 1,169 passing tests, and zero-diagnostic type-check/lint results. It opens `TYPE-APPROVAL-E2E-001` for the six reviewed app-BDD exclusions and `COVERAGE-GATE-001` because the configured 100% unit-coverage thresholds currently fail.
+**Latest delta (CRD-047):** Closes `DEV-TOOLCHAIN-AUDIT-001` — `npm audit` reports 0 vulnerabilities, down from 5 (2 high, 3 moderate). Two of the five were pinned by this repository's own `overrides` at versions that later had advisories published against them, so the fix is bumping the override targets rather than running `npm audit fix`: `fast-uri` 3.1.5 → 3.1.7 (held on 3.x because `ajv@8.20.0` declares `^3.0.1`), `qs` → 6.16.0 as a new override that knowingly crosses the `~6.15.1` express and body-parser declare because the isBuffer DoS has no 6.15.x fix, and `browserslist` → 4.28.8. Verified by the production build and a full `test:ci` pass, not by assumption.
+
+**Prior delta (CRD-046):** Closes `COVERAGE-GATE-001` — unit coverage reaches 100% on all four metrics (6617/6617 statements, 4383/4383 branches, 1675/1675 functions, 6343/6343 lines) with `test:ci:unit`, `test:ci:storybook`, `test:ci:quality` and the production build all exiting 0. Supplies the recorded measured-scope decision `COVERAGE-SCOPE-001` demands, as two deliberately separate exclusion lists (25 files verified in Storybook; 6 knowingly-unmeasured evaluation-spike files), and corrects that item's proposed remedy: reconciling `sonar.exclusions` would drop the files from analysis entirely, so `sonar.coverage.exclusions` is used instead. Documents the bundled ESLint 8 → 10 migration, records five defects the coverage work surfaced in files already at 100%, and opens `DEV-TOOLCHAIN-AUDIT-001` for five dev-only transitive advisories that do not reach production.
+
+**Prior delta (CRD-045):** Adds a CI gate (`npm run lint:rules`) that fails the build on business-rule citations which are wrong or unreachable, removes the duplicated line numbers from the summary table, corrects the three past-EOF citations, and writes the missing RULE-051 section - unblocking Legal on P2 item 17, where a suburb discrepancy between the production address and the Storybook fixture was also found.
+
+**Prior delta (CRD-044):** Verification pass over the business rules register finds the line citations systematically unreliable (18 of 21 examined wrong, 5 P0, 3 past end of file), 6 of 53 rules listed but never defined, and RULE-022's ABN checksum validator dead code with zero callers. Opens `RULES-REGISTER-001`, blocking BA/Legal sign-off on P2 items 16, 17, 18 and 21.
+
+**Prior delta (CRD-043):** Business rule register reconciliation annotates RULE-042 (number-of-items 1-100) and corrects a factual defect in the RULE-035 entry, which wrongly stated that `&` is excluded from the ASIC business-name charset - proven false by executing the live regex. The P0 SME question built on that premise is void; the residual charset question is restated.
+
+**Prior delta (CRD-042):** Orchestrated backlog intake applies the RULE-035, RULE-050 and RULE-015 sign-off markers (comment-only; type-check and lint clean), blocks P2 item 18 because RULE-042 is undefined repository-wide, records explicit acceptance of `TYPE-APPROVAL-E2E-001`, and opens `COVERAGE-SCOPE-001` for a coverage measured-scope change made without a recorded decision.
+
+**Prior delta (CRD-041):** Current-tree migration reconciliation records React Router v7, 41 registered paths, the six pattern/type approval routes and supporting components, expanded Storybook inventories, 114 unit-test files / 1,169 passing tests, and zero-diagnostic type-check/lint results. It opens `TYPE-APPROVAL-E2E-001` for the six reviewed app-BDD exclusions and `COVERAGE-GATE-001` because the configured 100% unit-coverage thresholds currently fail.
 
 ---
 
@@ -1047,6 +1059,389 @@ No historical item may remain implicit. If the review identifies an item that is
 **Actions outstanding (Design Lead):** SVG source files for 10 active icons; confirm `packages/icons` package vs inline data: URI approach; confirm 3 dead-code variables safe to remove.
 
 **Outcome:** Icon audit is complete. No Batch E blocker found — the icon font can be retired without creating new React SVG components first. BATCH-E-PREREQ-002 is closed pending Design Lead sign-off on SVG sources. Batch E Item 8 prerequisite gate is cleared for planning purposes.
+
+---
+
+### [Dev Toolchain Advisories Cleared] — 2026-09-04 — DEV-TOOLCHAIN-AUDIT-001 Closed
+
+**Change ID:** CRD-047
+**Source:** Closes `DEV-TOOLCHAIN-AUDIT-001`, opened hours earlier by CRD-046 item 8.
+**Status:** COMPLETE
+**Security findings resolved:** 5 advisories — 2 high, 3 moderate — all dev-only, none reaching production
+
+**1. `npm audit` reports 0 vulnerabilities**, down from 5.
+
+**2. Two of the five were self-inflicted, which changes the fix.** `body-parser` and `fast-uri` were
+already pinned by this repository's own `overrides` block — remediation from an earlier branch. The
+advisories were published against the versions those overrides pin. So the packages had not drifted
+out of date; the pins had frozen them in place while the advisory record moved. `npm audit fix` was
+not the remedy and would in any case have been constrained by the same overrides. The override targets
+were bumped instead.
+
+| Package | Change | Why this version |
+| --- | --- | --- |
+| `fast-uri` | 3.1.5 → 3.1.7 | Four advisories (two SSRF, two host confusion), all fixed in 3.1.6. Deliberately **not** the 4.1.4 latest: `ajv@8.20.0` declares `fast-uri@^3.0.1`, so a major bump would force a range violation on the only package that consumes it |
+| `qs` | new override → 6.16.0 | **Knowingly crosses a declared range.** `express@4.22.2` and `body-parser@1.20.6` both ask for `~6.15.1`, and the isBuffer DoS advisory has no 6.15.x fix — 6.16.0 is the first patched release. Justified by verification rather than assumption: the production build and the full `test:ci` gate both pass with it |
+| `browserslist` | new override → 4.28.8 | Two high advisories affect `<=4.28.6`. Consumers declare `^4.24.0`, so this one satisfies its range naturally |
+
+`body-parser`, `express` and `ajv` carried no advisory of their own. All three were flagged only
+through `qs` and `fast-uri`, and cleared once those moved; `body-parser`'s existing 1.20.6 pin was
+left alone.
+
+**3. Verification.** `npm audit` 0 vulnerabilities. `npm run build` exit 0 (webpack 5.108.4, no
+errors) — the sensitive check here, because `browserslist` feeds Babel's target resolution and a bad
+bump would surface as a compilation or output change rather than a test failure. `npm run test:ci`
+exit 0. `npm run type-check` and `npm run lint` exit 0.
+
+**Recorded caveat:** `npm audit --omit=dev` could not be re-run to confirm the production-only view —
+the registry returned `audit endpoint returned an error` on both attempts. The full `npm audit`
+reporting 0 subsumes it, since the production set is a subset of the full set, so the conclusion holds;
+only the separate breakdown is unavailable.
+
+**Outcome:** `DEV-TOOLCHAIN-AUDIT-001` is CLOSED_SUCCESS. No Priority 1 or Priority 2 dependency item
+remains open. The standing lesson for the next remediation: a pinned override is a snapshot of a
+security judgement, not a permanent fix, and needs re-checking whenever the advisory database moves.
+
+---
+
+### [Coverage Gate Clearance] — 2026-09-04 — COVERAGE-GATE-001 Closed, Measured Scope Recorded
+
+**Change ID:** CRD-046
+**Source:** Gate Clearance Plan execution on `fix/dependency-vulnerability-remediation`. Closes
+`COVERAGE-GATE-001` and supplies the recorded decision `COVERAGE-SCOPE-001` demands.
+**Status:** COMPLETE for the coverage gate; `DEV-TOOLCHAIN-AUDIT-001` opened
+**Security findings resolved:** None
+
+**1. `COVERAGE-GATE-001` is closed with evidence.** `npm run test:ci:unit` exits 0 at 100% on all
+four metrics — statements 6617/6617, branches 4383/4383, functions 1675/1675, lines 6343/6343 —
+across 179 files and 2017 tests. CRD-041 recorded the baseline as 74.43 / 75.51 / 72.56 / 74.92;
+the tree stood at 88.74% statements when this clearance work began.
+
+Supporting gates, each run and read rather than assumed: `npm run type-check` exit 0;
+`npm run lint` exit 0 with no warnings; `npm run test:ci:storybook` exit 0 (135 files / 300 tests);
+`npm run test:ci:quality` exit 0 (8 tests); `npm run build` exit 0 (webpack 5.108.4, no errors).
+
+The thresholds were not lowered. `tests/unit/config/coverageRemapPolicy.test.ts` fails the build if
+any `coverage.exclude` entry falls outside a reviewed category, so the 100% figure cannot be reached
+in future by editing the exclude list.
+
+**2. The measured-scope decision `COVERAGE-SCOPE-001` asked for.** 31 React Aria files left the unit
+denominator. They are recorded as **two separate lists, deliberately not merged**, because they are
+excluded for different reasons and one reason is materially weaker than the other:
+
+- `verifiedInStorybook` — 25 files, each measured at 100% on all four metrics in a Storybook
+  coverage run **before** being listed. The measurement changed runner; it did not disappear.
+- `evaluationSpikeNotCovered` — 6 files (`CommandPalette`, `Table`, `GridList`, `Menu`, `ListBox`,
+  `Tree`) that are **knowingly unmeasured**. These are a spike retained to evaluate how the
+  components might work within the portal. Verified unreachable: nothing outside the evaluation
+  surface imports them, directly or transitively.
+
+A single glob over the evaluation directories would have been three lines instead of forty, and was
+rejected: it would have let a reader assume coverage exists for all 31 when it exists for 25, and it
+would also have swallowed `SlateEditor` and the 17 evaluation components that already pass.
+
+`SlateEditor` was deliberately **kept** in the denominator, being the basis for upcoming
+functionality, and is covered for real (see item 5).
+
+**3. Correction to `COVERAGE-SCOPE-001`'s proposed remedy.** The backlog item asks for
+`sonar.exclusions` to be reconciled with the Vitest exclude list. **Doing that would be wrong.**
+`sonar.exclusions` removes files from analysis altogether, losing bug, code-smell and vulnerability
+detection on them — a far larger change than aligning coverage scope. The correct key is
+`sonar.coverage.exclusions`, which is what was written, and
+`tests/unit/config/sonarCoverageContract.test.ts` now fails the build if the two lists drift apart.
+The original finding — that the two tools measured different sets — was correct; only the proposed
+key was wrong.
+
+**4. Roughly half the residual branches were unreachable code, not missing tests.** These were deleted
+with justification rather than tested around, each in its own commit:
+
+- `AutoSuggest/index.tsx` re-tested `requestId === requestIdRef.current` after both the success and
+  failure paths had already returned on a stale id, with nothing awaiting in between.
+- `SlateEditor.tsx` guarded two `setErrors` updaters with `prev.includes(errorMsg)` three lines after
+  `setErrors([])` had emptied the queued state. The de-duplication they appeared to provide already
+  came from the reset. The identical-looking guard in `handleChange` is live and was kept — it has no
+  reset.
+- `Attachment/index-new.tsx` normalised `isArray(value) ? value : []` at three separate points; now
+  derived once at component scope.
+- `AutoSuggestContainer.tsx` looked up the selected key with find-then-guard. React Aria cannot emit a
+  key its collection no longer holds — `commitSelection` reads `collection.getItem`, and on a miss the
+  empty `itemText` makes the `inputValue !== itemText` test fail, while custom values arrive as `null`
+  and return earlier. Rewritten as a filter: identical behaviour, no arm that no input can take.
+
+**5. `SlateEditor` reached 100% by driving the model rather than the DOM.** `handleChange` was the last
+unmeasured application code. It was unmeasured because the tests drove from the wrong end: typing into
+Slate needs `beforeinput` plus a live DOM Selection, neither of which jsdom implements, so `onChange`
+never fired. Slate's document is a plain JavaScript model — transforms call `editor.onChange()`, which
+`<Slate>` forwards to the `onChange` prop, the same path a keystroke takes once the browser has
+finished translating it. Two details made it work: `createEditor` is wrapped to keep a reference to the
+editor the component builds (the editor itself is real and unstubbed; the wrapper only observes), and
+`apply` batches operations behind a microtask, so the edit must be awaited inside `act` rather than
+applied synchronously.
+
+**6. Defects found by the coverage work, in files that were already at 100%.** Coverage percentage and
+correctness are independent; each of these sat under a green metric:
+
+| Defect | Fix |
+| --- | --- |
+| Quote wizard deadlock — `acquireTokenSilent` outside the `try`, so a token failure hung the wizard | Moved inside; added an `isMounted` guard and cleanup |
+| Progress poll uncancellable in `routes/ta/index.tsx` and `appDocuments.tsx`; no unmount abort in the latter | Abort check plus a 2000 ms backoff; unmount abort effect added |
+| `AttachmentNew` stored a lone object when `allowMultiple` was false, but `AttachmentItemNew` addresses its field as `name[index]` and so read `undefined`, throwing on `contentField.value.attachmentName` | The field always holds a list |
+| `appDetails.tsx` `fetchData` had no error handling | Wrapped in try/catch/finally with `AppLogger.error` and optional reads |
+| `appMessages.tsx` filter options hardcoded `'1'/'2'/'3'` | Replaced with the `FilterMessages` enum |
+
+The progress-poll defect was initially read as a test bug: it crashed the Vitest worker with
+`node::OnFatalError`. The crash was the symptom, not the cause.
+
+**7. The ESLint 8 → 10 migration is bundled, by decision, and documented here.** It is not dependency
+vulnerability remediation, but it is not separable from it either: the ESLint 8 line pulled part of the
+transitive graph this branch exists to clear. `.eslintrc.cjs` (146 lines) became `eslint.config.mjs`
+(flat config, 234 lines); `@typescript-eslint/*` became the unified `typescript-eslint@8.67.0`;
+`eslint-plugin-react` became `@eslint-react/eslint-plugin@5.18.6`; `eslint-plugin-react-hooks` went
+4.6.2 → 7.1.1; `@eslint/js` and `@stylistic/eslint-plugin` were added. Net suppression change across
+39 files: **57 `eslint-disable` directives removed, 6 added.**
+
+`tests/unit/config/eslintPolicy.test.ts` asserts the **effective** config ESLint resolves for an
+application file rather than the source of `eslint.config.mjs`, so a preset upgrade that silently
+changes a severity fails the build. It also records the compatibility deltas honestly: the migration
+plan asserted `@eslint-react/jsx-no-duplicate-props` and `@eslint-react/no-string-refs` exist as direct
+replacements, and **measured against the installed plugin they do not exist under any name.** Each
+outgoing rule is listed with the control that actually covers it now.
+
+**8. Dependency status, and a new backlog item.** `npm audit --omit=dev` reports **0 vulnerabilities**:
+the shipped bundle is clean. `npm audit` including dev reports 5 — 2 high, 3 moderate — all transitive,
+all with fixes available, all in build tooling: `webpack-dev-server` → `express` → `qs`,
+`copy-webpack-plugin` and `mini-css-extract-plugin` → `ajv` → `fast-uri`, and `browserslist` via Babel.
+None reach production. Not addressed here; opened as `DEV-TOOLCHAIN-AUDIT-001` rather than swept in
+silently, because clearing them touches the build toolchain and deserves its own verification.
+
+**Outcome:** `COVERAGE-GATE-001` is CLOSED_SUCCESS. `COVERAGE-SCOPE-001` has the recorded decision and
+the executable guard it required, plus a correction to its proposed remedy. `DEV-TOOLCHAIN-AUDIT-001`
+is opened. The full CI gate and the production build both pass.
+
+---
+
+### [Business Rules Register Remediation] - 2026-09-02 - CI Citation Gate and RULE-051
+
+**Change ID:** CRD-045
+**Source:** Remediation of `RULES-REGISTER-001`, opened by the CRD-044 verification pass.
+**Status:** COMPLETE for the automated half; the manual half stays open on `RULES-REGISTER-001`
+**Security findings resolved:** None
+
+**1. CI gate - `scripts/verify-rule-citations.mjs`.** Wired as `npm run lint:rules` into the
+`static-quality-node24` job in `pr.yml`, beside type-check and lint.
+
+Each rule's own text supplies the evidence: quoted error strings, Yup method constants and field
+names are mined from the rule block as ANCHORS, filtered to those rare enough in the target file to
+actually locate something, and matched against the cited line. The same derivation drives both the
+check and `--fix`, so the fixer and the gate cannot drift apart.
+
+Two design decisions worth recording, both learned from getting them wrong first:
+
+- **A citation with anchor support near its cited line is never rewritten.** An early build proposed
+  "correcting" RULE-035 and RULE-041 - both already correct. An auto-fixer that damages good data is
+  worse than no fixer, so the cited location is checked for support before any alternative is considered.
+- **Rewrites require a single unambiguous winner.** Tied candidates are reported as UNRESOLVED rather
+  than guessed. 22 citations currently sit there; they are visible on every run and do not fail the build,
+  because a gate nobody can turn green gets disabled.
+
+The script also refuses to report success if it parses fewer than 40 rules. Its first run reported a
+clean "0 citations checked" - the register is CRLF, and in JavaScript `.` excludes ``, so `(.*)$`
+matched no heading at all. A parser that matches nothing is indistinguishable from a clean pass.
+
+**Negative-tested before shipping:** a wrong line number fails the build (exit 1) and `--fix` repairs it;
+a nonexistent filename in the summary table fails the build; the pristine register passes (exit 0).
+
+**2. Duplication removed from the summary table.** The Source column carried a line number that the
+rule's own section also carried. Two copies of a value that rots on every edit above it will disagree,
+which is precisely what CRD-044 found. The table now names the file only; the detail section owns the
+line. 52 rows changed. The gate still validates the table's filenames.
+
+**3. Three past-EOF citations corrected** to verified locations: RULE-010 to `instrumentItem.tsx:254`
+(the action-menu builder), RULE-012 to `quotation/index.tsx:122` (the `declineQuote` handler),
+RULE-015 to `instrumentItem.tsx:296` (the `ReportInProgress` case).
+
+**4. RULE-051 written.** The NMI registered address had a summary row and no detail section, so Legal
+was being asked under P2 item 17 to confirm a rule the register never stated. Now specified with its
+exact rendering and location.
+
+**Finding while writing it:** the address exists twice and the copies disagree.
+`summaryAndAccept.tsx:376-378` renders `36 Bradfield Road / West Lindfield NSW 2070`;
+`storybookFixtures.ts:184` holds `nmiFacilityAddress: '36 Bradfield Road, Lindfield NSW 2070'` -
+**`Lindfield`, not `West Lindfield`**. Same street, different suburb. Either one is wrong, or the
+fixture describes a facility address distinct from the registered address. Referred to Legal alongside
+item 17.
+
+**Gates:** `npm run lint:rules` exit 0 · `npm run type-check` zero diagnostics · `npm run lint` exit 0 ·
+`npx eslint scripts/verify-rule-citations.mjs` clean.
+
+**Still open on `RULES-REGISTER-001`:** 5 missing detail sections (RULE-023/024/025/029/030, all P2),
+22 weakly-anchored citations, the RULE-022 dead-code question for the Backend Team, and 50 unverified
+specifications.
+
+
+---
+
+### [Business Rules Register Verification] - 2026-09-02 - Full Citation Reconciliation and Defect Report
+
+**Change ID:** CRD-044
+**Source:** `analysis/BUSINESS_RULES.md` reconciled against `git show HEAD:<file>` for every cited path, so the same day's annotation line-shifts cannot confound the result.
+**Status:** COMPLETE - verification pass delivered; remediation opened as `RULES-REGISTER-001`
+**Security findings resolved:** None
+**New migration gates:** `RULES-REGISTER-001` - blocks BA/Legal sign-off on P2 items 16, 17, 18, 21
+
+**Trigger.** `DEC-002`. CRD-043 found a P0 register entry factually wrong about the code it cites, so the
+operator requested a verification pass over all rules before any sign-off is sought.
+
+**Method.** Every `Source:` citation in all 47 detail blocks was parsed and resolved (58 citations). 21
+were then examined in depth by locating each rule's actual construct at HEAD with a targeted pattern. Two
+specifications were verified by execution.
+
+| Check | Result |
+| --- | --- |
+| Rules in summary table | 53 |
+| Rules with a detail section | 47 - 6 missing |
+| Cited files that do not exist | 0 |
+| Citations examined in detail | 21 |
+| Confirmed miscited | **18** (5 of them P0) |
+| Citations past end of file | 3 (RULE-010, RULE-012, RULE-015) |
+| Specifications verified | 3 of 53 |
+
+**Four findings.**
+
+1. **Systematic miscitation.** Every file path is right; most line numbers are wrong. RULE-037 cites a
+   line inside the *email* validator; RULE-005 cites the dashboard redirect rather than the branch gate;
+   RULE-012 cites line 398 of a 375-line file. This is the signature of a generated document never
+   reconciled with the tree.
+2. **Six rules listed but never defined** - RULE-023/024/025/029/030/051. RULE-051 is P1 and is the NMI
+   registered address Legal is being asked to confirm under P2 item 17.
+3. **RULE-022 is correct but inert.** The ATO checksum is specified and implemented exactly - verified by
+   execution on four inputs including the register's own worked example. But `isValidAbn` has **zero
+   callers**. The P0 rule asserts ABNs "are validated" on a path where nothing validates them. Needs a
+   backend answer. *By-product:* the hardcoded NMI ABN `74 599 608 295` passes the checksum, so it is
+   structurally valid - which says nothing about whether it is NMI's current ABN.
+4. **RULE-042 is implemented twice and the register documented one.** `numberOfItems` is validated in both
+   `instrumentAndRequestSubmitValidation` (required) and `instrumentAndRequestSaveValidation` (nullable
+   draft), each with the same 1-100 bounds. The second site is now annotated and the register entry
+   completed. A bounds change applied to one schema only would silently diverge submit from draft.
+
+**Changes made.** Verification banner at the top of `BUSINESS_RULES.md`; corrected citations for RULE-042,
+RULE-050 and RULE-051 (the ones whose true location is unambiguous); RULE-042's specification completed
+with the submit/save split; source annotation at the second RULE-042 site. The remaining miscitations are
+**not** silently patched - several have multiple candidate locations and guessing would reintroduce the
+defect being reported. They are listed with evidence for mechanical re-derivation.
+
+**Deliverable:** `docs/change-record/2026-09-02-business-rules-verification.md`.
+
+**Scope.** Comment-only in source. `npm run type-check` and `npx eslint` both clean.
+
+**Explicitly not verified:** 50 of 53 specifications; citations for the ~37 rules outside the detailed
+sample beyond file-exists and line-in-range; and whether the register omits rules present in code.
+
+
+---
+
+### [Business Rule Register Reconciliation] — 2026-09-02 — RULE-042 Annotated, RULE-035 Register Defect Corrected
+
+**Change ID:** CRD-043
+**Source:** `analysis/BUSINESS_RULES.md` (supplied by the operator, unblocking `BLK-001` raised in CRD-042), reconciled against the live validators.
+**Status:** COMPLETE — P2 item 18 unblocked and closed to the sign-off boundary
+**Security findings resolved:** None
+**Migration gates cleared:** None — item 18 still awaits BA sign-off, now on correctly-stated questions
+
+**1. RULE-042 identified and annotated.** The register defines RULE-042 as *Number of items range
+(1-100)*, a P1 validation rule on the RFQ `numberOfItems` field. Marker applied at
+`ClientApp/src/routes/requestForQuote/validation.ts:87`, directly above the `.min(1)` / `.max(100)`
+chain. Bounds unchanged. The open SME question - whether 100 is a hard operational limit (lab capacity
+or a system constraint) or an informal cap - is quoted in the annotation.
+
+**2. Register defect found and corrected — RULE-035.** The register's RULE-035 entry stated that the
+ASIC-referenced charset **excludes** `&`, and gave `"Smith & Sons Pty Ltd"` as an INVALID example. Both
+claims are false. The charset it prints one line earlier contains `&` in the `!@#$%^&*` run.
+
+Verified by executing the regex from `stringExtensions.ts:735` against the register's own examples:
+
+| Input | Register claimed | Actual |
+| --- | --- | --- |
+| `Smith & Sons Pty Ltd` | INVALID | **VALID** |
+| `Smith & Jones` | (implied INVALID) | **VALID** |
+| `O'Brien & Co` | - | **VALID** |
+| `Smith+Sons` | INVALID | INVALID (correct) |
+| `ACME Corp. Pty Ltd` | VALID | VALID (correct) |
+
+**Why this mattered.** RULE-035 is P0 and flagged as a migration blocker. The BA was being asked to rule
+on whether `&` should be permitted in business names, when it already is. An answer of "yes, allow `&`"
+would have prompted a change to a P0 validator that is already correct - introducing risk to fix a
+defect that does not exist. The likely cause is an HTML-escaping artefact (`&amp;` appears in the
+original line), so the charset was probably mis-read through an HTML rendering step rather than from
+source.
+
+**Corrected in `analysis/BUSINESS_RULES.md`:** the worked example, the SME question, the summary-table
+row, the P0 blocker note, and the confidence rating (Medium → High). The residual open question is
+restated: whether ASIC BRS v1.7 is still the correct reference, and whether any *other* excluded
+character (notably `+`) should be permitted.
+
+**3. Stale source citations corrected.** The register cited RULE-035 at `stringExtensions.ts:678-707`;
+the validator is at `713-741`. RULE-042 was cited at `validation.ts:88`; it is at `91-96`. Both updated.
+
+**Scope.** Comment-only in source; no logic, bounds, regex or behaviour changed. `npm run type-check`
+and `npx eslint` on the changed file both pass with zero diagnostics.
+
+**Follow-up for the operator:** `analysis/BUSINESS_RULES.md` documents 50+ rules and at least one entry
+was demonstrably wrong about the code it cites. The other P0/P1 entries carrying SME questions have not
+been re-verified against source. A verification pass over the P0 rules before BA sign-off would be
+proportionate - a signature obtained against a wrong premise is worse than no signature.
+
+
+---
+
+### [Orchestrated Backlog Intake] — 2026-09-02 — Rule Annotations, Type Approval Acceptance, Coverage Scope Finding
+
+**Change ID:** CRD-042
+**Source:** `/orchestrate morning` against `docs/change-record/OPEN-ITEMS-BACKLOG.md` (this project has no `TASKS.md`; see `.agent-sync/ROUTING.md` §0.1). Verified against the working tree at commit `29f2579`.
+**Status:** COMPLETE — three backlog items advanced, one new item opened, one item blocked pending external input
+**Security findings resolved:** None
+**New migration gates:** `COVERAGE-SCOPE-001`
+**Migration gates cleared:** `TYPE-APPROVAL-E2E-001`
+
+**1. Business-rule annotations applied (P2 items 16, 17, 21).**
+
+Prior state verified before editing: **zero `RULE-` markers existed anywhere in `ClientApp/src`**, so
+none of the 2026-06-04 recommendations had been actioned and nothing awaiting SME sign-off was
+discoverable by grep or CI.
+
+| Rule | File and line | Nature |
+| --- | --- | --- |
+| RULE-035 | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:731` | Comment above the ASIC-aligned charset regex. Confirmed the charset permits `&` — the exact question item 16 raises. |
+| RULE-050 | `ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:364` | JSX comment above the NMI ABN and registered-address block. |
+| RULE-015 | `ClientApp/src/components/RequestList/instrumentItem.tsx:291` | Comment above the `ReportWithdrawn` / `ReportInProgress` fall-through that offers "Request recalibration". |
+
+**Comment-only. No logic, behaviour, regex, formatting or import changed.** The recommendations
+explicitly direct that the rules are preserved during migration; these markers only make the pending
+sign-offs greppable. `ClientApp/src/api/web-api-client.ts` also contains `ReportInProgress` and was
+**not** touched — it is generated, is on the never-routed list, and is denied in `.claude/settings.json`.
+
+**Validation:** `npm run type-check` passes with zero diagnostics; `npx eslint` on all three changed
+files reports zero problems.
+
+**2. P2 item 18 blocked — cannot be actioned as written.** Its RULE-035 half is covered by item 16. Its
+RULE-042 half cannot proceed: a repository-wide search returns **zero** references to RULE-042 in source,
+tests or documentation, so "the affected schemas" are unidentifiable. The rule register defining RULE-042
+is not in this repository. The item needs the register supplied, or restating against named schema files.
+
+**3. `TYPE-APPROVAL-E2E-001` accepted (P2).** The item offered two terminal states; the operator selected
+explicit acceptance of the residual gap over building deterministic authenticated app-BDD fixtures.
+Recorded via `/orchestrate morning` Veto Buffer `AMB-001`. Full risk statement and the counter-signature
+caveat are in the acceptance detail in `OPEN-ITEMS-BACKLOG.md`.
+
+**4. `COVERAGE-SCOPE-001` opened (P1 gate).** Commit `c6391fb` widened the Vitest coverage `exclude` list
+(`setupTests.ts`, `*.stories copy.tsx`) under a commit message about debugging and TDD skills, with no
+matching change to `sonar.exclusions`. Raising the reported percentage by narrowing the measured surface
+is the specific thing `COVERAGE-GATE-001` says must not happen silently. Not actioned here: a second
+session holds `in-progress` File Claims on the coverage surface.
+
+**Also recorded:** the `COVERAGE-GATE-001` percentages are stale — measured 2026-06-28 against 114 test
+files, versus 163 files / 1,734 tests today. Re-measure before planning that item.
+
 
 ---
 

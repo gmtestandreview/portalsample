@@ -1,5 +1,6 @@
 import { rm } from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 
 const outputDirName = 'storybook-static';
 const cwd = process.cwd();

@@ -187,7 +187,7 @@ const AccountProvider = ({ children } : AccountProviderProps) => {
             }
         };
         saveUserProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     }, [accounts, instance, userProfileDetails]);
 
     useEffect(() => {

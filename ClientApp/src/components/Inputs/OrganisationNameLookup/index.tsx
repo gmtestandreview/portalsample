@@ -54,7 +54,11 @@ const OrganisationNameLookup = (
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (!inputValue.trim()) {
-                setFilteredSuggestions([]);
+                // Returning the previous array when it is already empty lets React bail out
+                // of the update. A fresh `[]` is never referentially equal, so this timer
+                // committed an identical render once per instance on every mount - and in
+                // Storybook it committed after the owning story had ended.
+                setFilteredSuggestions((prev) => (prev.length === 0 ? prev : []));
                 return;
             }
             const options = (_orgNameOptions.value || []) as any[];
@@ -218,7 +222,14 @@ const OrganisationNameLookup = (
                                 className='suggestion-list show'
                                 aria-label='Suggested options'
                             >
-                                <ListGroup.Item as='li' className='suggestion-option auto-suggestions mt-0 border-0 small text-muted' aria-readonly>
+                                {/*
+                                  * A listbox may only own `option` and `group` children, so
+                                  * this heading row is presentational: it is removed from the
+                                  * accessibility tree and the list is announced through the
+                                  * `aria-label` above instead. `aria-readonly` is not an
+                                  * allowed attribute here and carried no meaning.
+                                  */}
+                                <ListGroup.Item as='li' role='presentation' className='suggestion-option auto-suggestions mt-0 border-0 small text-muted'>
                                     Did you mean?
                                 </ListGroup.Item>
                                 {filteredSuggestions.map((item, index) => (

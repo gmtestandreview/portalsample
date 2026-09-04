@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { within, expect } from 'storybook/test';
 import { Container, Row, Col } from 'react-bootstrap';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import WizardForm from './index';
@@ -32,7 +33,6 @@ const stateOptions = [
 
 const meta = {
     title: 'Forms/WizardForm',
-    tags: ['autodocs'],
     parameters: { layout: 'fullscreen' },
     decorators: [withPortalProviders],
 } satisfies Meta;
@@ -81,6 +81,16 @@ export const Step1ContactDetails: Story = {
             </WizardStep>
         </WizardForm>
     ),
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement);
+        // Progress is announced once, by the stepper. The h1 used to repeat it as a
+        // visually-hidden "Step 1 of 2", which duplicated the same information for screen
+        // reader users now that the stepper is no longer aria-hidden.
+        const heading = canvas.getByRole('heading', { level: 1 });
+        await expect(heading).toHaveTextContent('Contact details');
+        await expect(heading).not.toHaveTextContent(/Step \d+ of \d+/);
+        await expect(canvas.getByRole('list', { name: 'Form progress' })).toBeVisible();
+    },
 };
 
 export const Step2WithPreviousCompleted: Story = {

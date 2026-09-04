@@ -30,7 +30,6 @@ const meta = {
         name: 'applicationAndInstrument',
         isSummary: false,
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ApplicationAndInstrument>;
 
 export default meta;

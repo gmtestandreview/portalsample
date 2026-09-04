@@ -51,7 +51,6 @@ const meta = {
         pagedListArtefactData,
         setCurrentPage: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ReportList>;
 
 export default meta;

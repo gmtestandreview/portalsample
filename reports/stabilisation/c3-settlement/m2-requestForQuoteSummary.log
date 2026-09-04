@@ -1,0 +1,73 @@
+
+> nmi-portal@0.1.0 test:storybook
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.storybook.config.ts ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+11:02:00 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22m[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
+11:02:00 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22m[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
+stderr | unknown test
+[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
+stderr | unknown test
+[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
+11:02:01 am [vite] [33m[2m(client)[22m[39m [2m[console.warn] [22m[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCPortalMeasurementCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx > Editable
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCPortalMeasurementCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx > Editable
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCArtefactTypePortalCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+11:02:01 am [vite] [33m[2m(client)[22m[39m [2m[console.warn] [22m[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCArtefactTypePortalCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+11:02:01 am [vite] [33m[2m(client)[22m[39m [2m[console.warn] [22m[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCPortalMeasurementCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+11:02:01 am [vite] [33m[2m(client)[22m[39m [2m[console.warn] [22m[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCArtefactTypePortalCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx > Submitted
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCPortalMeasurementCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx > Submitted
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup?LookupType=TCArtefactTypePortalCategory
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+ ✓ |storybook (chromium)| ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx (2 tests) 470ms
+   ✓ Editable  421ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  11:01:56
+   Duration  5.35s (transform 0ms, setup 2.66s, import 526ms, tests 470ms, environment 0ms)
+

@@ -1,0 +1,171 @@
+import { readFileSync } from "node:fs";
+
+import type { ViteUserConfig } from "vitest/config";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@storybook/addon-vitest/vitest-plugin", () => ({
+  storybookTest: vi.fn(() => ({ name: "storybook-test-mock" })),
+}));
+
+import rootConfig from "../../../vitest.config";
+import storybookConfig from "../../../vitest.storybook.config";
+import unitConfig from "../../../vitest.unit.config";
+
+/**
+ * Characterization of the committed Vitest topology (fix `0d16927`).
+ *
+ * Vitest 4 ignores a nested `test.projects` container when that config is itself
+ * referenced as a root project, which previously caused unit files to be
+ * discovered a second time without jsdom. The root config is composition only;
+ * each leaf owns its own environment, coverage, browser and worker settings.
+ *
+ * A failure here means the committed topology drifted — investigate before
+ * editing any Vitest configuration.
+ */
+
+type TestOptions = NonNullable<ViteUserConfig["test"]>;
+
+type PackageScripts = { scripts: Record<string, string> };
+
+const testOptions = (config: ViteUserConfig, label: string): TestOptions => {
+  const options = config.test;
+
+  if (options === undefined) {
+    throw new Error(`${label} must declare a test block`);
+  }
+
+  return options;
+};
+
+const root = testOptions(rootConfig, "vitest.config.ts");
+const storybook = testOptions(storybookConfig, "vitest.storybook.config.ts");
+const unit = testOptions(unitConfig, "vitest.unit.config.ts");
+
+/** Paths that belong to Playwright, never to a Vitest leaf. */
+const foreignTestPaths = [
+  ".github/migration-verifier/tests/runtime/checklist.runtime.spec.ts",
+  "tests/e2e/example.feature",
+  "tests/e2e/steps/example.steps.ts",
+];
+
+describe("root Vitest config is composition only", () => {
+  it("declares exactly the two leaf projects in order", () => {
+    expect(root.projects).toEqual([
+      "./vitest.unit.config.ts",
+      "./vitest.storybook.config.ts",
+    ]);
+  });
+
+  it("does not own a worker cap that would starve the browser pool", () => {
+    expect(root.maxWorkers).toBeUndefined();
+  });
+
+  it("does not own leaf-specific environment, coverage or browser settings", () => {
+    expect(root.environment).toBeUndefined();
+    expect(root.coverage).toBeUndefined();
+    expect(root.browser).toBeUndefined();
+    expect(root.setupFiles).toBeUndefined();
+  });
+});
+
+describe("Storybook leaf is a directly runnable Browser Mode project", () => {
+  it("is a leaf rather than another nested project container", () => {
+    expect(storybook.projects).toBeUndefined();
+  });
+
+  it("owns Chromium Browser Mode", () => {
+    expect(storybook.browser?.enabled).toBe(true);
+    expect(storybook.browser?.headless).toBe(true);
+    expect(storybook.browser?.instances).toEqual([{ browser: "chromium" }]);
+  });
+
+  it("limits the persistent MCP runner to one browser orchestrator", () => {
+    expect(storybook.maxWorkers).toBe(1);
+  });
+
+  it("owns its own name and setup file", () => {
+    expect(storybook.name).toBe("storybook");
+    expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);
+  });
+
+  it("owns the Storybook coverage policy for the one path that applies it", () => {
+    // Vitest 4 resolves coverage from the ROOT config only
+    // (vitest/dist/chunks/cli-api...js, `get _coverageOptions()`). This block
+    // therefore applies when `--config vitest.storybook.config.ts` makes this
+    // file the root - i.e. the `test:storybook` script - and is inert when the
+    // project is loaded through the aggregate `vitest.config.ts`.
+    expect(storybook.coverage?.reportsDirectory).toBe(
+      "./reports/coverage/storybook",
+    );
+    expect(storybook.coverage?.include).toEqual([
+      "ClientApp/src/**/*.{ts,tsx}",
+    ]);
+  });
+
+  it("never lets a script enable coverage through the aggregate root config", () => {
+    // Where project coverage is inert, enabling coverage would silently fall
+    // back to Vitest defaults - reinstating the JSON remap failure and dropping
+    // the unit config's 100% thresholds - with nothing to signal it.
+    expect(root.coverage).toBeUndefined();
+
+    const { scripts } = JSON.parse(
+      readFileSync("package.json", "utf8"),
+    ) as PackageScripts;
+
+    const reviewedCoverageConfigs = new Set([
+      "vitest.unit.config.ts",
+      "vitest.storybook.config.ts",
+    ]);
+    const aggregateRunsWithCoverage = Object.entries(scripts).filter(
+      ([, command]) => {
+        if (!command.includes("--coverage")) {
+          return false;
+        }
+
+        const config = /--config(?:=|\s+)([^\s]+)/.exec(command)?.[1];
+
+        return config === undefined || !reviewedCoverageConfigs.has(config);
+      },
+    );
+
+    expect(aggregateRunsWithCoverage).toEqual([]);
+  });
+});
+
+describe("unit leaf owns jsdom, unit discovery and unit coverage", () => {
+  it("runs in jsdom", () => {
+    expect(unit.environment).toBe("jsdom");
+  });
+
+  it("discovers only unit test files", () => {
+    expect(unit.include).toEqual(["tests/unit/**/*.test.{ts,tsx}"]);
+  });
+
+  it("owns the worker cap rather than inheriting one from the root", () => {
+    expect(unit.maxWorkers).toBe(1);
+  });
+
+  it("owns unit coverage reporting", () => {
+    expect(unit.coverage?.reportsDirectory).toBe("./reports/coverage/unit");
+  });
+
+  it("does not enable Browser Mode", () => {
+    expect(unit.browser?.enabled).toBeUndefined();
+  });
+});
+
+describe("Playwright files stay out of both Vitest leaves", () => {
+  it.each(foreignTestPaths)("does not discover %s", (foreignPath) => {
+    for (const pattern of unit.include ?? []) {
+      expect(
+        foreignPath.startsWith(pattern.split("*")[0]),
+        `unit include "${pattern}" must not reach ${foreignPath}`,
+      ).toBe(false);
+    }
+  });
+
+  it("leaves Storybook discovery to the storybookTest plugin", () => {
+    expect(unit.include).not.toContain("**/*.stories.tsx");
+    expect(storybook.include).toBeUndefined();
+  });
+});

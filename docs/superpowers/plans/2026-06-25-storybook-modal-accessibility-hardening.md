@@ -6,7 +6,7 @@
 
 **Architecture:** Keep the fix narrowly scoped to the existing modal components and their stories. Treat React Bootstrap `Modal` as the source of dialog semantics, remove handwritten ARIA props that land on the wrong DOM node, restore explicit accessible naming via `aria-labelledby`, and move stories toward role-based assertions so the a11y contract is exercised directly.
 
-**Tech Stack:** React 18, TypeScript, React Bootstrap 5, Storybook 9 (`@storybook/react-vite`), `storybook/test`, MSW, Formik, React Router v7
+**Tech Stack:** React 18, TypeScript, React Bootstrap 5, Storybook 10 (`@storybook/react-vite`), `storybook/test`, MSW, Formik, React Router v7
 
 ---
 

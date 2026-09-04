@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import type { SinglePageFormValues, SinglePageFormProps } from '../types';
 import AppLogger from '../../../instrumentation/AppLogger';
@@ -27,7 +26,7 @@ const loadAppDetails = (id: string, accounts: AccountInfo[], instance: IPublicCl
             return values;
         } catch (error) {
             AppLogger.error('Failed to load app details', error as Error, { Id: id });
-            throw Error(`Failed to load app details. Id: ${id}`);
+            throw new Error(`Failed to load app details. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to load app details', { Id: id, Accounts: accounts });

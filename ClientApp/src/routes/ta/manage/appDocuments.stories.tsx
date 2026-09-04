@@ -20,7 +20,6 @@ const meta = {
             initialEntries: ['/ta/PA-1/manage?tab=documents'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ApplicationDocuments>;
 
 export default meta;

@@ -37,7 +37,7 @@ Then('the copied RFQ organisation step is displayed', async ({ page }) => {
         /\/request-for-quote\/RFQ-2023-009012-COPY\/organisation-and-contact$/,
     );
     await expect(page.getByRole('heading', {
-        name: 'Step 1 of 3 Organisation and contact',
+        name: 'Organisation and contact',
         exact: true,
     })).toBeVisible();
 });
@@ -51,7 +51,7 @@ Then('the copied organisation details are pre-filled', async ({ page }) => {
 Then('the copied RFQ instrument step is displayed', async ({ page }) => {
     await expect(page).toHaveURL(/\/instrument-and-request$/);
     await expect(page.getByRole('heading', {
-        name: 'Step 2 of 3 Instrument and request',
+        name: 'Instrument and request',
         exact: true,
     })).toBeVisible();
 });

@@ -10,7 +10,6 @@ const meta = {
     parameters: {
         layout: 'fullscreen',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof Footer>;
 
 export default meta;
@@ -38,7 +37,7 @@ export const TermsModalOpen: Story = {
         const triggerBtn = screen.getByTestId('open-termsofuse-button');
         await user.click(triggerBtn);
         const modalTitle = await screen.findByRole('heading', { name: /portal terms of use/i });
-        await expect(modalTitle).toBeVisible();
+        await waitFor(() => expect(modalTitle).toBeVisible());
         await user.click(screen.getByTestId('close-button'));
         await waitFor(() =>
             expect(screen.queryByRole('heading', { name: /portal terms of use/i })).not.toBeInTheDocument()
@@ -51,7 +50,7 @@ export const PrivacyModalOpen: Story = {
         const user = userEvent.setup();
         await user.click(screen.getByTestId('open-privacy-button'));
         const modalTitle = await screen.findByRole('heading', { name: /privacy collection statement/i });
-        await expect(modalTitle).toBeVisible();
+        await waitFor(() => expect(modalTitle).toBeVisible());
         await user.click(screen.getByTestId('close-button'));
         await waitFor(() =>
             expect(screen.queryByRole('heading', { name: /privacy collection statement/i })).not.toBeInTheDocument()
@@ -64,7 +63,7 @@ export const AccessibilityModalOpen: Story = {
         const user = userEvent.setup();
         await user.click(screen.getByTestId('open-accessibility-button'));
         const modalTitle = await screen.findByRole('heading', { name: /accessibility/i });
-        await expect(modalTitle).toBeVisible();
+        await waitFor(() => expect(modalTitle).toBeVisible());
         await user.click(screen.getByTestId('close-button'));
         await waitFor(() =>
             expect(screen.queryByRole('heading', { name: /accessibility/i })).not.toBeInTheDocument()

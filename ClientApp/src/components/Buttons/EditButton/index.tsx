@@ -1,6 +1,18 @@
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 
+/**
+ * EditButton Component
+ *
+ * A button component that navigates the user to an edit page when clicked. 
+ * Provides a consistent structure for the edit button and allows for navigation via the `link` prop.
+ * Props:
+ * @param {EditButtonProps} props - Component props
+ * @param {string} [props.link] - The URL to navigate to when the button is clicked
+ *
+ * @returns {JSX.Element} Rendered edit button
+ */
+
 export interface EditButtonProps {
     link?: string;
 }

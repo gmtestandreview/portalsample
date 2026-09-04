@@ -14,16 +14,16 @@ const CreateRequestForTypeApproval = () => {
     useEffect(() => {
         const createApplication = async () => {
             try {
-                if (!applicationId) {
-                    const client = new ApplicationClient();
-                    const tokenResult = await instance.acquireTokenSilent({
-                        ...tokenRequest,
-                        account: accounts[0],
-                    });
-                    client.setAuthToken(tokenResult.accessToken);
-                    const application = await client.createApplication({ applicationType: ApplicationType.PatternApproval });
-                    setApplicationId(application.referenceId!);
-                }
+                // No applicationId check: the isSaving ref below already limits this to one run,
+                // and on that run the id has not been set yet, so the guard could not fail.
+                const client = new ApplicationClient();
+                const tokenResult = await instance.acquireTokenSilent({
+                    ...tokenRequest,
+                    account: accounts[0],
+                });
+                client.setAuthToken(tokenResult.accessToken);
+                const application = await client.createApplication({ applicationType: ApplicationType.PatternApproval });
+                setApplicationId(application.referenceId!);
             } catch (e) {
                 AppLogger.error('Failed to create application', e as Error);
             }

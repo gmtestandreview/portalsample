@@ -13,14 +13,31 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `Accordion` | Expand/collapse content blocks |
 | `Actions` | Shared action renderers |
 | `Alert` | Notification and dismissible alert surfaces |
+| `App` | Reusable application composition examples |
+| `AriaComponents` | React Aria component evaluation stories |
 | `BlockUISpinner` | Full-screen and local busy overlays |
 | `BodyText` | Typography helper |
 | `Breadcrumb` | Route breadcrumb navigation |
 | `Buttons` | Primary, secondary, link, edit, grouped actions |
+| `Calendar` | Accessible calendar evaluation |
+| `ColorArea` | Two-dimensional colour selection evaluation |
+| `ColorField` | Editable colour value evaluation |
+| `ColorPicker` | Composed colour picker evaluation |
+| `ColorSlider` | Single-channel colour adjustment evaluation |
+| `ColorSwatch` | Colour swatch and picker evaluation |
+| `ColorThumb` | Colour selection thumb evaluation |
+| `ColorWheel` | Hue wheel evaluation |
+| `ComboBox` | Accessible combobox evaluation |
+| `CommandPalette` | Searchable command palette evaluation |
+| `Dialog` | Accessible dialog evaluation |
+| `Disclosure` | Expand/collapse disclosure evaluation |
+| `DisclosureGroup` | Grouped disclosure evaluation |
+| `DropZone` | Accessible drag-and-drop target evaluation |
 | `ErrorBoundary` | Render isolation and telemetry reporting |
 | `Footer` | Public policy and footer content |
 | `forms` | Formik wrappers, wizard engine, summaries, prompts, banners |
 | `get-started` | Auth-aware entry CTA content |
+| `GridLists` | Accessible interactive grid-list evaluation |
 | `Header` | Brand, nav, environment badge, auth-aware links |
 | `HeaderIntroText` | Section introduction content |
 | `Icons` | Shared icon components |
@@ -32,6 +49,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `PaginationHeader` | Range summary display |
 | `Pill` | Status and quote pill treatments |
 | `Progress` | Upload progress bars and file-transfer status |
+| `reactaria_components` | Shared React Aria evaluation support components |
 | `RequestList` | Dashboard request/instrument list items |
 | `RouteLeavingGuard` | Navigation blocking guard |
 | `SearchFilter` | Dashboard filtering and search controls |
@@ -44,9 +62,9 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## Existing Interactive Story Coverage
 
-All 31 top-level component families are represented in the migration inventory,
-and the latest static Storybook index contains 218 stories. Notable interactive
-coverage includes:
+All top-level component families are represented in the migration inventory.
+The generated Storybook index and CI gates provide the authoritative current
+story total. Notable interactive coverage includes:
 
 - `Accordion`
 - `Alert`

@@ -7,7 +7,6 @@ const meta = {
     title: 'Components/Forms/ErrorSummary',
     component: ErrorSummary,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
     parameters: {
         portal: {
             formik: {

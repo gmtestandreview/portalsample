@@ -1,5 +1,11 @@
 import { DashboardItemStatus, QuoteStatus } from '../routes/common/enums';
-import type { DashboardItemDto, LookupResponse, RequestForQuoteDetails } from '../api/web-api-client';
+import {
+    ServiceType,
+    type DashboardItemDto,
+    type LookupResponse,
+    type RequestForQuoteDetails,
+    type ServiceDto,
+} from '../api/web-api-client';
 
 export const dashboardItems: DashboardItemDto[] = [
     {
@@ -119,6 +125,38 @@ export const artefactTypeResponses: LookupResponse[] = [
     { id: 'multimeter', label: 'Handheld multimeter', parentId: 'electrical' },
     { id: 'balance', label: 'Analytical balance', parentId: 'mass' },
     { id: 'no-instrument', label: 'No instrument/artefact type available', parentId: 'no-measurement' },
+];
+
+/**
+ * Pattern approval lookups requested by ClientApp/src/routes/ta/**. The
+ * instrument type entries carry the parentId of their category, mirroring the
+ * TC category/artefact-type pair above.
+ */
+export const paCategoryResponses: LookupResponse[] = [
+    { id: 'pa-measuring-instruments', label: 'Measuring instruments' },
+    { id: 'pa-weighing-instruments', label: 'Weighing instruments' },
+];
+
+export const paInstrumentTypeResponses: LookupResponse[] = [
+    { id: 'pa-non-automatic-weighing', label: 'Non-automatic weighing instrument', parentId: 'pa-weighing-instruments' },
+    { id: 'pa-utility-meter', label: 'Utility meter', parentId: 'pa-measuring-instruments' },
+];
+
+export const serviceResponses: ServiceDto[] = [
+    {
+        serviceType: ServiceType.TestingCalibration,
+        title: 'Testing and calibration',
+        description: 'Testing and calibration services for measurement instruments and artefacts.',
+        icon: 'icon-test-tube',
+        meta: 'Request a quote, review quotations and access measurement reports.',
+    },
+    {
+        serviceType: ServiceType.PatternApproval,
+        title: 'Pattern approval',
+        description: 'Pattern approval services for trade measurement instruments.',
+        icon: 'icon-certificate',
+        meta: 'Create and manage pattern approval applications.',
+    },
 ];
 
 export const requestForQuoteDetailsFixture = {

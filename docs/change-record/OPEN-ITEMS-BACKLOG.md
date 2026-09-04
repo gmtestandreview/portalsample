@@ -1,6 +1,6 @@
 # Open Items Backlog
 
-**Date:** 2026-06-28 — CRD-041 reconciles the current tree: 41 registered routes, including six pattern/type approval paths; 31 top-level component families; 87 Storybook story files; 114 unit-test files; and 29 BDD feature files. Type-check, lint, unit tests (114 files / 1,169 tests), Storybook tests (87 files / 218 tests), and 8 quality regression tests pass. `COVERAGE-GATE-001` is open: coverage is 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines against configured 100% thresholds.
+**Date:** 2026-06-28 — CRD-041 reconciles the current tree: 41 registered routes, including six pattern/type approval paths; 31 top-level component families; 87 Storybook story files; 114 unit-test files; and 29 BDD feature files. Type-check, lint, unit tests (114 files / 1,169 tests), Storybook tests (87 files / 218 tests), and 8 quality regression tests pass. `COVERAGE-GATE-001` was open at that date: coverage was 74.43% statements / 75.51% branches / 72.56% functions / 74.92% lines against configured 100% thresholds. **Superseded 2026-09-04 (CRD-046):** coverage is 100% on all four metrics across 179 unit-test files / 2017 tests, and `COVERAGE-GATE-001` is CLOSED_SUCCESS.
 **Source references:** Master Change Record (`docs/change-record/MASTER-CHANGE-RECORD.md`), `analysis/ARCHITECTURE.mmd`, `analysis/ASSESSMENT.html`, `analysis/ASSESSMENT.md`, `analysis/MODERNIZATION_BRIEF.md`, `docs/CONCERNS.md`, Sprint 1 Storybook Quality Remediation backlog, Security Assessment findings, Architecture Decision Records
 **Purpose:** Prioritised tracking list for all work that must complete before or during the live migration of the NMI Customer Portal. This document is the authoritative gate-control companion to the Master Change Record. Items move off this list only when they reach CLOSED\_SUCCESS with appropriate sign-off.
 
@@ -24,7 +24,7 @@ Before migration execution, reconcile `analysis/ARCHITECTURE.mmd`, `analysis/ASS
 
 ## Priority 1 — Must Close Before Migration Can Proceed
 
-All items in this section are hard blockers unless explicitly marked `CLEARED`. The historical P1 set remains closed, but `COVERAGE-GATE-001` was opened by the 2026-06-28 current-tree validation and blocks the full CI/pre-flight gate.
+All items in this section are hard blockers unless explicitly marked `CLEARED`. The historical P1 set remains closed. `COVERAGE-GATE-001`, opened by the 2026-06-28 current-tree validation, and `COVERAGE-SCOPE-001`, opened 2026-09-02, were both closed on 2026-09-04 by CRD-046 — the full CI gate and the production build now pass. No Priority 1 item is currently open.
 
 ### Sprint 1 Storybook Quality Remediation Issues
 
@@ -59,7 +59,10 @@ All items in this section are hard blockers unless explicitly marked `CLEARED`. 
 | SEC-010 | IDOR Backend Verification (CWE-639) | Medium | **CLOSED — PASS 2026-06-04** — identified in pentest prior to go-live; remediated before production deployment; confirmed by backend team; CRD-035 | Backend Team | Dashboard route migration — **CLEARED** | `docs/sec/SEC-010-idor-backend-verification.md` |
 | QA-SIGNOFF-1 | Sprint 1 QA Sign-Off | Governance | **COMPLETE** — PASS verdict issued 2026-06-01; latest Storybook baseline 55 test files, 165 tests, 0 failures with clean output | QA Agent | Sprint 1 closure; Phase 5 migration gate | `docs/qa/sprint-1-signoff.md` |
 | VALIDATION-GATE-001 | `migration-check` combined Vitest/Storybook gate remediation | High | CLOSED_SUCCESS — combined gate now passes after Vitest parity, runtime hardening, and dashboard test stabilization | Frontend Lead / QA Agent | Migration pre-flight and target CI verification — CLEARED | CRD-032 |
-| COVERAGE-GATE-001 | Unit coverage thresholds not met | High | **OPEN 2026-06-28** — all 1,169 tests pass, but `npm run test:unit:coverage` exits nonzero: statements 74.43%, branches 75.51%, functions 72.56%, lines 74.92% versus 100% thresholds | Frontend Lead / QA Agent | Full CI gate and migration pre-flight | `vitest.unit.config.ts`; `reports/coverage/unit/coverage-summary.json`; CRD-041 |
+| COVERAGE-GATE-001 | Unit coverage thresholds not met | High | **CLOSED_SUCCESS 2026-09-04** — `npm run test:ci:unit` exits 0 at 100% on all four metrics: statements 6617/6617, branches 4383/4383, functions 1675/1675, lines 6343/6343, across 179 files / 2017 tests. Thresholds unchanged; the denominator is guarded by `tests/unit/config/coverageRemapPolicy.test.ts`, which fails the build on any exclusion outside a reviewed category | Frontend Lead / QA Agent | Full CI gate and migration pre-flight | `vitest.unit.config.ts`; `reports/coverage/unit/coverage-summary.json`; CRD-041; CRD-046 |
+| COVERAGE-SCOPE-001 | Coverage measured-scope narrowed without a recorded decision | High | **CLOSED_SUCCESS 2026-09-04** — the two cited exclusions are gone from `vitest.unit.config.ts` and the files themselves no longer exist in the tree, so the unannounced narrowing is reverted rather than ratified. The current exclusions are recorded as an explicit decision in CRD-046, held to a reviewed policy by `coverageRemapPolicy.test.ts`, and mirrored into `sonar.coverage.exclusions` under a drift guard (`sonarCoverageContract.test.ts`). **Correction to the proposed remedy:** this item asked for `sonar.exclusions` to be reconciled; that key removes files from analysis entirely, losing bug/smell/vulnerability detection, so `sonar.coverage.exclusions` is the correct key. Original finding — that the two tools measured different sets — was correct. *Historical detail:* commit `c6391fb` added `ClientApp/src/**/setupTests.ts` and `ClientApp/src/**/*.stories copy.tsx` to the Vitest coverage `exclude` list. This raises the reported percentage by shrinking the measured surface rather than by adding a test, which `COVERAGE-GATE-001` explicitly forbids doing silently. The commit message ("feat: add systematic debugging and test-driven development skills") does not mention coverage, so the change is not discoverable from the log. `sonar.exclusions` was **not** updated to match, so SonarCloud and local coverage now measure different sets. | Frontend Lead / QA Agent | Full CI gate and migration pre-flight — same gate as `COVERAGE-GATE-001` | `vitest.unit.config.ts`; `sonar-project.properties`; `tests/unit/config/coverageRemapPolicy.test.ts`; `tests/unit/config/sonarCoverageContract.test.ts`; CRD-042; CRD-046 |
+| DEV-TOOLCHAIN-AUDIT-001 | Dev-only transitive advisories in the build toolchain | Medium | **CLOSED_SUCCESS 2026-09-04** — `npm audit` reports 0, down from 5 (2 high, 3 moderate). Closed by bumping override targets, not by `npm audit fix`: two of the five were pinned by this repo's own overrides at versions that later had advisories published against them. `fast-uri` 3.1.5 → 3.1.7 (kept on 3.x because `ajv@8.20.0` declares `^3.0.1`); `qs` → 6.16.0 as a new override, which knowingly crosses the `~6.15.1` that `express` and `body-parser` declare because the isBuffer DoS has no 6.15.x fix; `browserslist` → 4.28.8, which satisfies its consumers' `^4.24.0` naturally. `body-parser`, `express` and `ajv` carried no advisory of their own and cleared once `qs` and `fast-uri` moved | Frontend Lead / DevOps | Not a production gate | `package.json`; `npm audit` 2026-09-04; CRD-046; CRD-047 |
+| RULES-REGISTER-001 | Business rules register unreliable for sign-off | High | **PARTIALLY REMEDIATED 2026-09-02 (CRD-045)** - citation rot now guarded by `npm run lint:rules` in CI (`static-quality-node24`); the 3 past-EOF citations and RULE-051's missing section are fixed; summary-table line numbers removed to end the duplication. **STILL OPEN:** 5 missing detail sections, 22 weakly-anchored citations, RULE-022 dead-code question, and 50 unverified specifications. Originally **OPEN 2026-09-02** - verification pass over `analysis/BUSINESS_RULES.md` found 18 of 21 examined citations wrong (5 P0 rules; 3 point past end of file), 6 of 53 rules listed but never defined (including RULE-051, a P1 Legal sign-off item), one P0 specification factually wrong (RULE-035, corrected CRD-043), and one P0 rule whose validator is dead code (RULE-022 `isValidAbn`, zero callers). 50 of 53 specifications remain unverified. | Frontend Lead / NMI Business Analyst / Backend Team | **Blocks BA and Legal sign-off on P2 items 16, 17, 18, 21** | `docs/change-record/2026-09-02-business-rules-verification.md`; CRD-044 |
 
 **SEC-010 detail (CLOSED 2026-06-04):** Backend team confirmed the finding was identified in a pentest prior to go-live and was remediated before production deployment. Checklist ticked; inline comment in `ClientApp/src/routes/dashboard/index.tsx` updated. Full pentest report reference to be added by backend team to `docs/sec/SEC-010-idor-backend-verification.md`. Recorded as CRD-035.
 
@@ -67,7 +70,96 @@ All items in this section are hard blockers unless explicitly marked `CLEARED`. 
 
 **VALIDATION-GATE-001 detail (CLOSED_SUCCESS):** 2026-06-02 remediation completed and verified in CRD-032. `npm run migration-check` now passes end-to-end (TypeScript, Vitest default run, Storybook build). The issue is closed as a migration gate.
 
-**COVERAGE-GATE-001 detail (OPEN):** The failure is a coverage-threshold failure, not a unit-test failure. The largest low-coverage areas include the Type Approval dashboard/routes and supporting attachment, progress, Type Approval filter/request-item, and rich-text editor components. Close this item by adding behavior-focused tests or by obtaining an explicit, reviewed change to the measured scope/threshold policy. Do not silently weaken thresholds.
+**RULES-REGISTER-001 detail (OPEN 2026-09-02):** Raised by the verification pass the operator requested
+after `DEC-002`. The register is not unusable - RULE-022's algorithm is specified precisely and correctly
+- but it cannot currently support a signature, because a reviewer following a citation mostly does not
+arrive at the rule.
+
+Ordered remediation:
+
+1. **Re-derive every `Source:` citation mechanically** against the current tree. They were generated once
+   and never reconciled; regenerating removes the entire defect class in one pass. Add a CI check that
+   every citation resolves, so it cannot silently rot again.
+2. **Write the six missing detail sections** - `RULE-023`, `RULE-024`, `RULE-025`, `RULE-029`,
+   `RULE-030`, `RULE-051`. Start with **RULE-051**: it is P1, it is the NMI registered address, and
+   **Legal is being asked to confirm a rule the register never states** (P2 item 17).
+3. **Answer RULE-022 with the Backend Team.** `isValidAbn` implements the ATO checksum correctly and is
+   called by nothing. Either ABN validation is enforced server-side - in which case the rule's
+   plain-English statement is wrong about *where* - or invalid ABNs are accepted. The API is in another
+   repository, so this cannot be settled here.
+4. **Then verify the remaining 50 specifications, P0 first.**
+
+**Gate impact:** P2 items 16, 17, 18 and 21 all await BA or Legal sign-off against entries in this
+register. Seeking those signatures before steps 1 and 2 risks a repeat of the RULE-035 outcome, where the
+question put to the BA rested on a false premise.
+
+
+**RULES-REGISTER-001 progress (2026-09-02, CRD-045):**
+
+| Done | Detail |
+| --- | --- |
+| CI gate | `scripts/verify-rule-citations.mjs`, wired as `npm run lint:rules` into the `static-quality-node24` job. Fails on citations that are provably wrong or unreachable; reports weakly-anchored ones without blocking. Negative-tested: a bad line and a bad filename both fail the build, and `--fix` repairs what it can. |
+| Duplication removed | Summary-table Source column no longer carries line numbers - the file name is stable, the line number is not, and holding it in two places guaranteed drift. The detail section owns the line. |
+| Past-EOF citations | RULE-010, RULE-012, RULE-015 corrected to verified locations. |
+| RULE-051 written | Detail section authored; Legal is no longer being asked to confirm an unstated rule. |
+
+| Still open | Detail |
+| --- | --- |
+| 5 missing sections | RULE-023, RULE-024, RULE-025, RULE-029, RULE-030 - all P2 calculation/display rules, none blocking a sign-off. |
+| 22 weak citations | Reported as UNRESOLVED by the gate each run. These need a human to add a distinctive anchor or confirm the line; auto-derivation refuses to guess between tied candidates. |
+| RULE-022 | `isValidAbn` has zero callers. Needs a Backend Team answer on server-side enforcement. |
+| 50 specifications | Unverified against code. |
+
+**COVERAGE-SCOPE-001 resolution (CLOSED_SUCCESS 2026-09-04, CRD-046):** All three decisions below were
+taken, and one of them was taken differently from the way this item proposed:
+
+1. **Reverted, not recorded.** `setupTests.ts` is no longer excluded and no longer exists in the tree,
+   so there was nothing left to ratify. The exclusions that *do* exist now are recorded in CRD-046 as
+   two deliberately separate lists — 25 files verified at 100% in Storybook before listing, and 6
+   knowingly-unmeasured evaluation-spike files — and `coverageRemapPolicy.test.ts` fails the build on
+   any exclusion outside a reviewed category.
+2. **Deleted, as this item asked.** The `*.stories copy.tsx` editor artefact is gone from the tree and
+   from the exclude list.
+3. **Reconciled, but under a different key.** This item asked for `sonar.exclusions`. That key removes
+   files from analysis altogether — losing bug, code-smell and vulnerability detection on them — which
+   is a much larger change than aligning coverage scope. `sonar.coverage.exclusions` is the correct key
+   and is what was written; `sonarCoverageContract.test.ts` fails the build if it drifts from the Vitest
+   list. The underlying finding, that the two tools measured different sets, was correct.
+
+The re-measure this item required is done: 100% on all four metrics across 179 files / 2017 tests,
+superseding the stale 74.43% / 75.51% / 72.56% / 74.92% figures below.
+
+**Original detail (OPEN 2026-09-02):** Raised by `/orchestrate morning` under the backlog
+intake rule — an unresolved finding must become a backlog item immediately rather than living only in a
+commit. Three things need a decision, and none of them is "re-run coverage":
+
+1. **Record or revert the scope change.** Excluding `setupTests.ts` is defensible — test scaffolding is
+   not product code — but it must be an explicit, reviewed scope decision, not an unannounced edit
+   inside an unrelated commit.
+2. **`*.stories copy.tsx` should be deleted, not excluded.** The filename is an editor artefact. Adding
+   it to an exclusion list normalises an accident into policy and leaves the file in the tree.
+3. **Reconcile `sonar.exclusions` with the Vitest `exclude` list.** `INIT.md` records that the scanner
+   exclusions, the Vitest coverage excludes and the Sonar scope are meant to describe the same set. They
+   now differ, so the SonarCloud gate and local coverage disagree about what is measured.
+
+**Sequencing:** do not action items 1–3 while a second session holds the coverage surface. As of
+2026-09-02 `.agent-sync/ROUTING.md` records `in-progress` File Claims on `vitest.unit.config.ts`,
+`ClientApp/src/utils/index.ts`, `tests/unit/utils/index.test.ts` and
+`tests/unit/coverage/coverageConfig.test.ts`.
+
+**Also required before `COVERAGE-GATE-001` is planned:** re-measure. The recorded percentages
+(74.43% / 75.51% / 72.56% / 74.92%) date from 2026-06-28 against **114** test files. The suite is now
+**163 files / 1,734 tests**, so the figures in this backlog are two months and 49 test files stale.
+
+**COVERAGE-GATE-001 resolution (CLOSED_SUCCESS 2026-09-04, CRD-046):** Closed by adding tests, not by
+weakening thresholds — which remain 100/100/100/100. The areas this item named are all at 100%: the
+Type Approval dashboard and routes, the attachment and progress components, the Type Approval
+filter/request-item components, and the rich-text editor (`SlateEditor`, reached by driving Slate's
+document model rather than the DOM, which jsdom cannot do). Roughly half the residual branches turned
+out to be unreachable code and were deleted with justification rather than tested around. The coverage
+work also surfaced five defects in files that were already at 100% — see CRD-046 item 6.
+
+**Original detail (OPEN):** The failure is a coverage-threshold failure, not a unit-test failure. The largest low-coverage areas include the Type Approval dashboard/routes and supporting attachment, progress, Type Approval filter/request-item, and rich-text editor components. Close this item by adding behavior-focused tests or by obtaining an explicit, reviewed change to the measured scope/threshold policy. Do not silently weaken thresholds.
 
 **WCAG component/E2E validation detail (CRD-036, refreshed by CRD-041):** Automated evidence covers RequestList, combobox, modal/footer/date-picker, Actions, authenticated account/RFQ/quote flows, and route Storybook stories. The 2026-06-28 baseline passes 114 unit files / 1,169 tests and 87 Storybook files / 218 tests, including Type Approval isolated stories. Manual keyboard, screen-reader, 400% zoom, target-size, and focus-not-obscured evidence still gates any final WCAG 98+ claim.
 
@@ -115,17 +207,48 @@ Design-platform, infrastructure, runtime-platform, and modernization-brief input
 | 13 | Storybook in target: Vite or webpack? | Whether the Storybook harness and BDD story tests migrate as-is or require rebuild | Architect | Storybook migration | **RESOLVED 2026-06-04** — Vite; migrate `.storybook/` directory as-is |
 | 14 | Top-level `await` support in target bundler/browser baseline | Whether `ClientApp/src/index.tsx` can retain top-level `await` or needs bootstrap restructuring for the target platform | Architect / DevOps | App bootstrap and target bundler migration | **RESOLVED 2026-06-04** — Retain; confirm `vite.config.ts` has `build.target: 'es2022'` or higher |
 | 15 | Backend API versioning strategy | Whether regenerated target `web-api-client.ts` DTOs will preserve current route contracts or require migration shims for renamed/new required fields | Backend Team / Architect | API client and route migration | **RESOLVED 2026-06-04** — URL-path versioning on changed endpoints only (`/api/v2/`); stable contracts unchanged. Backend to confirm changed endpoints before NSwag regeneration. |
-| 16 | RULE-035 ASIC business-name charset | Whether business names may contain `&` and whether the current ASIC-aligned validator is correct | NMI Business Analyst / Product Owner | Phase 2 validation externalisation | STRUCTURAL — recommendation 2026-06-04: annotate regex with `// RULE-035: BA sign-off required`; do not change during migration. BA sign-off required. |
-| 17 | RULE-050 NMI ABN and registered address | Whether `74 599 608 295` and `36 Bradfield Road, West Lindfield NSW 2070` are current for legal contract display | NMI Business Analyst / Legal | Phase 2 config externalisation | STRUCTURAL — recommendation 2026-06-04: externalise to `VITE_NMI_ABN` / `VITE_NMI_ADDRESS` env vars; Legal to confirm values. |
-| 18 | RULE-035/042 P0 rule SME review | Business analyst sign-off that the documented P0 rules match intended behaviour | NMI Business Analyst | Phase 2 and business-rule test suite | STRUCTURAL — recommendation 2026-06-04: annotate affected schemas with CI grep marker; BA sign-off required before go-live. |
+| 16 | RULE-035 ASIC business-name charset | Whether business names may contain `&` and whether the current ASIC-aligned validator is correct | NMI Business Analyst / Product Owner | Phase 2 validation externalisation | **ANNOTATED 2026-09-02 (CRD-042)** — marker applied at `validationSchemas/yupExtensions/stringExtensions.ts:731` directly above the ASIC charset regex. Verified: the charset **does** permit `&`, which is the specific question this item asks. Regex unchanged. **BA sign-off still required.** |
+| 17 | RULE-050 NMI ABN and registered address | Whether `74 599 608 295` and `36 Bradfield Road, West Lindfield NSW 2070` are current for legal contract display | NMI Business Analyst / Legal | Phase 2 config externalisation | **ANNOTATED 2026-09-02 (CRD-042)** — marker applied at `routes/acceptQuote/summaryAndAccept.tsx:364` above the ABN/address block. Values unchanged. The same values also appear in `storybook/storybookFixtures.ts`; update both together once Legal confirms. **Legal confirmation still required.** |
+| 18 | RULE-035/042 P0 rule SME review | Business analyst sign-off that the documented P0 rules match intended behaviour | NMI Business Analyst | Phase 2 and business-rule test suite | **UNBLOCKED AND ANNOTATED 2026-09-02 (CRD-043).** Operator supplied the register: `analysis/BUSINESS_RULES.md`. RULE-042 = *Number of items range (1-100)*, at `routes/requestForQuote/validation.ts:91-96`; marker applied, bounds unchanged. RULE-035 marker was already applied under item 16. **A register defect was found and corrected in the same pass:** the RULE-035 entry claimed `&` is excluded from the ASIC charset and that "Smith & Sons Pty Ltd" is INVALID - both wrong, proven by executing the live regex. The BA question built on that premise is void. **BA sign-off still required** on the two genuinely open questions: is 100 a hard operational limit, and is ASIC BRS v1.7 still the right charset reference. |
 | 19 | Terms of Use version and re-acceptance plan | Whether terms version `1` is current and whether migration triggers re-acceptance / communications | Product Owner / Legal / Comms | Phase 6 go-live planning | STRUCTURAL — recommendation 2026-06-04: keep version 1; only a legal content change triggers re-acceptance. Legal/Comms to confirm. |
 | 20 | RULE-008 PDF page-number and template policy | Whether hardcoded PDF page numbers 2, 3, and 5 still match current quote/report templates | Product Owner / Backend Team | Phase 2 config externalisation | STRUCTURAL — recommendation 2026-06-04: externalise to `/api/config/pdf-templates` endpoint. Product/Backend to confirm current page numbers. |
-| 21 | RULE-015 recalibration policy for `ReportInProgress` | Whether allowing recalibration while a current calibration is still in progress is intentional | NMI Business Analyst | Phase 5 business-rule tests / route behaviour review | STRUCTURAL — recommendation 2026-06-04: preserve existing behaviour; annotate with `// RULE-015: BA confirmation pending`. BA review before Phase 6 go-live. |
+| 21 | RULE-015 recalibration policy for `ReportInProgress` | Whether allowing recalibration while a current calibration is still in progress is intentional | NMI Business Analyst | Phase 5 business-rule tests / route behaviour review | **ANNOTATED 2026-09-02 (CRD-042)** — marker applied at `components/RequestList/instrumentItem.tsx:291`, the confirmed gate: `ReportInProgress` falls through with `ReportWithdrawn` to offer "Request recalibration". Behaviour preserved. Scope checked — the recalibration actions in `requestItem.tsx` are gated on other statuses and are **not** RULE-015 sites. **BA confirmation still required.** |
 | 22 | Target repository provisioning | Whether the target repository exists and team access has been provisioned before CI/CD migration | DevOps / Repository Owner | Phase 6 target repository migration — also gates Batch E | STRUCTURAL — recommendation 2026-06-04: target is React19DesignSystem `dependencymangement` branch. Confirm branch protection + team write access + CI secrets before Batch E. |
 | BATCH-E-PREREQ-001 | Add `useRouteAccessibility` hook to AppShell | WCAG 2.4.2 (Page Titled) and 2.4.3 (Focus Order) compliance on route change | Frontend Lead / Target System Owner | **Batch E hard prerequisite** (gates Item 9) | **COMPLETE 2026-06-05** — `useRouteAccessibility` hook created; Layout and PreConditions wired; `routeAccessibleNavigation.tsx` deleted; 7 tests added; CRD-037 |
 | BATCH-E-PREREQ-002 | Icon audit: confirm all NMI `nmi-icon-*` usages have SVG equivalents in `packages/icons` | Whether any missing icons require addition before icon font retirement | Design Lead / Frontend Lead | **Batch E hard prerequisite** (gates Item 8) | **COMPLETE 2026-06-05** — audit done; 10 active icons SCSS-only; `packages/icons` absent (not required as prereq); 3 dead-code vars identified; no new React SVG components needed; CRD-038. Awaiting Design Lead sign-off on SVG sources before Batch E SCSS migration. Audit at `docs/change-record/ICON-AUDIT-PREREQ-002.md` |
 | BATCH-E-PREREQ-003 | Resolve `WAF-TYPE-001` — typed guard for WAF 412 error shape in WizardRoutedStep | Whether WAF detection logic can be ported safely without `[key: string]: any` escape hatch | Frontend Lead | **Batch E prerequisite** (gates Item 6 wizard port) | **COMPLETE 2026-06-05** — `isWafError` predicate in `ClientApp/src/types/wafError.ts`; `errorState.ts` inline cast removed; 8 unit tests + 2 integration tests updated to reference `AZURE_WAF_SERVER_PREFIX`; CRD-039 |
-| TYPE-APPROVAL-E2E-001 | Deterministic authenticated fixtures for pattern/type approval | Whether the six Type Approval paths can be verified as real browser workflows rather than isolated Storybook states | Frontend Lead / QA / Backend Team | **Type Approval route migration and cutover** | OPEN — all six paths are present in `tests/e2e/route-coverage.ts` as reviewed exclusions. Before cutover, implement app-BDD fixtures for dashboard, wizard submission/uploads, success, and management tabs, or obtain explicit migration-lead acceptance of the residual gap. |
+| TYPE-APPROVAL-E2E-001 | Deterministic authenticated fixtures for pattern/type approval | Whether the six Type Approval paths can be verified as real browser workflows rather than isolated Storybook states | Frontend Lead / QA / Backend Team | **Type Approval route migration and cutover** | **ACCEPTED 2026-09-02 (CRD-042)** — resolved by the second of the two options this item offered: **explicit acceptance of the residual gap**, rather than building the fixtures. Decision taken by the operator (`gregm`) via `/orchestrate morning` Veto Buffer `AMB-001`. The six Type Approval paths remain reviewed exclusions in `tests/e2e/route-coverage.ts` and stay verified as isolated Storybook states through cutover; no deterministic authenticated app-BDD fixtures will be built beforehand. **Residual risk accepted, not eliminated** — see detail below. |
+
+**TYPE-APPROVAL-E2E-001 acceptance detail (ACCEPTED 2026-09-02):**
+
+**What was accepted.** The six pattern/type approval paths — `/dashboard-ta`,
+`/ta/type-approval-create-pre`, `/ta/:id/*`, `/ta/type-approval-create`,
+`/ta/type-approval-success/:id/*`, `/ta/:id/manage` — go through migration and cutover verified as
+isolated Storybook interaction states, **not** as authenticated end-to-end browser workflows.
+
+**Why the alternative was declined.** Building the fixtures needs a deterministic authenticated session
+against Azure AD B2C with myID and RAM, where RAM provisions the user's default organisation before the
+first user fetch. That is a Backend Team dependency, not a front-end test-harness task, and it was judged
+disproportionate to the remaining migration window.
+
+**Residual risk carried into cutover — accepted, not eliminated:**
+
+- Wizard submission and document upload/progress/cancellation are the highest-value untested paths; a
+  regression there is a user-visible failure in a live Australian Government service and would not be
+  caught by Storybook states or the unit suite.
+- Storybook evidence exercises component state, not routing, auth guards, session handling or real API
+  contracts. A `PreConditions` or `AuthenticatedElement` regression on these routes is out of scope of
+  the evidence being relied on.
+
+**Signature.** Recorded against the operator (`gregm`), who is the sole developer on this repository
+(§Team & Workflow: 1 developer, automated-only review). **If the migration-lead role is formally held by
+someone else, this acceptance requires their counter-signature before cutover** — this entry records the
+decision, not a delegation of that role.
+
+**Recommended compensating control** (not a gate, not actioned): before cutover, run one manual
+authenticated pass over wizard submission and document upload and attach the result here. It costs far
+less than fixture automation and covers the two paths carrying most of the accepted risk.
+
 
 ---
 
@@ -212,5 +335,6 @@ projects pass with 28 application scenarios and 129 Storybook scenarios.
 | P2 — Runtime/API platform inputs (#14–#15) | 2 decisions | App bootstrap, target bundler, and API client migration | **RESOLVED 2026-06-04** — Actions: verify vite.config.ts build.target ≥ es2022; backend confirms changed endpoints |
 | P2 — Modernization brief approval gates (#16–#22) | 7 decisions | Phase approval, SME sign-off, target repository readiness | STRUCTURAL — architectural recommendations provided 2026-06-04; domain sign-offs (BA, Legal, Product, DevOps) required before affected batches |
 | P2 — Batch E prerequisites (PREREQ-001–003) | 3 items | Batch E hard prerequisites | **ALL COMPLETE** — PREREQ-001 (CRD-037) · PREREQ-002 (CRD-038) · PREREQ-003 (CRD-039). Batch E may begin pending Item 22 repository provisioning. |
-| P2 — Type Approval workflow evidence | 1 item | Type Approval route migration and cutover | **OPEN** — implement deterministic authenticated app-BDD fixtures or obtain explicit acceptance of the six reviewed route exclusions |
+| P2 — Type Approval workflow evidence | 1 item | Type Approval route migration and cutover | **CLEARED 2026-09-02** — residual gap explicitly accepted by the operator (CRD-042, `AMB-001`). Six paths remain Storybook-only evidence through cutover. |
+| P1 — Coverage measured-scope integrity | 1 finding | Full CI gate and migration pre-flight | **CLOSED_SUCCESS 2026-09-04** — `COVERAGE-SCOPE-001`: the unrecorded exclusions are reverted and their files deleted; the current scope is recorded in CRD-046 and guarded by `coverageRemapPolicy.test.ts` and `sonarCoverageContract.test.ts`, mirrored into `sonar.coverage.exclusions` (not `sonar.exclusions`, which would drop the files from analysis) |
 | P3 — Deferred items | 33 items | Migration sprint / post-migration | No hard gate; must be scheduled before or during migration sprint |

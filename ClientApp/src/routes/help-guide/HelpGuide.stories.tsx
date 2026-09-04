@@ -12,7 +12,6 @@ const meta = {
             initialEntries: ['/help-guide'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof HelpGuide>;
 
 export default meta;

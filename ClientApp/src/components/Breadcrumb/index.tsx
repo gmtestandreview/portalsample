@@ -5,6 +5,18 @@ import {
 } from 'react-aria-components/Breadcrumbs';
 import { Link as AriaLink } from 'react-aria-components/Link';
 
+/**
+ * CustomBreadcrumb Component
+ *
+ * A breadcrumb navigation component that uses ARIA attributes for accessibility.
+ * It displays a list of breadcrumb items, where each item can be a link or the current page. 
+ * provides a consistent structure for breadcrumb navigation and ensures proper ARIA roles and properties are applied.
+ * 
+ * @param {CustomBreadcrumbProps} props - Component props
+ * @returns {JSX.Element | null} Rendered breadcrumb navigation or null if no breadcrumbs are provided
+ * 
+ */
+
 export interface CustomBreadcrumbItem {
   to?: string;
   text: string;

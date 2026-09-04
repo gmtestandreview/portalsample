@@ -14,7 +14,6 @@ const meta = {
             initialEntries: ['/help-guide/how-to-setup-access'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof HelpHowToSetupAccess>;
 
 export default meta;

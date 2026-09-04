@@ -56,9 +56,10 @@ const AutoSuggest = <T,>(
             setError(true);
         }
 
-        if (requestId === requestIdRef.current) {
-            setIsLoading(false);
-        }
+        // Unconditional: both paths above already returned if a newer request had superseded
+        // this one, and nothing between those checks and here awaits, so the id cannot go stale
+        // in between. Re-testing it only implied a staleness this line can never see.
+        setIsLoading(false);
     };
 
     const onSelectionMade = async (option: AutoSuggestOption<T>) => {

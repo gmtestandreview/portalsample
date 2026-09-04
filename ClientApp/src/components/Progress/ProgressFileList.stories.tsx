@@ -40,7 +40,6 @@ const meta = {
         files,
         onCancelFile: fn(),
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ProgressFileList>;
 
 export default meta;
@@ -55,6 +54,10 @@ export const Uploading: Story = {
         await expect(
             canvas.getByRole('button', { name: /cancel uploading calibration-certificate\.pdf/i }),
         ).toBeVisible();
+        // Each row's progressbar has to name the file it belongs to and carry its value.
+        // The byte counts and percentage sit inside the role, so they are not its name.
+        const bar = canvas.getByRole('progressbar', { name: 'Uploading calibration-certificate.pdf' });
+        await expect(bar).toHaveAttribute('aria-valuenow', '50');
     },
 };
 

@@ -487,7 +487,8 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
                 </Row>
                 {/*  TO DO - Info panel conditions */}
                 {!isSummary && (
-                    <Row className={isSummary ? '' : 'mb-2'}>
+                    // Inside a !isSummary guard, so the summary arm of a ternary here is dead.
+                    <Row className='mb-2'>
                         <Col md={12}>
                             {renderInstrumentInfoPanel()}
                         </Col>

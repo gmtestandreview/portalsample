@@ -5,7 +5,16 @@ import PrimaryButton from './index';
 
 const meta = {
     component: PrimaryButton,
-    tags: ['ai-generated', 'needs-work', 'docs', '!autodocs'],
+    tags: ['ai-generated', 'needs-work', '!autodocs'],
+    argTypes: {
+        mode: {
+            options: ['light', 'dark'],
+            control: 'inline-radio',
+            table: {
+                category: 'Appearance',
+            },
+        },
+    },
 } satisfies Meta<typeof PrimaryButton>;
 
 export default meta;

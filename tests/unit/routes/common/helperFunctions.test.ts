@@ -20,13 +20,17 @@ import {
     getMakeModelDetails,
     getQuotationFileDetails,
     getQuoteOfferPageNumber,
+    isEmptyGuid,
+    isValidGUID,
     handleReportFileError,
     handleUnexpectedError,
     mapToUserProfile,
     openInNewTab,
     openPdfPageInNewTab,
+    sanitiseHtml,
     sortList,
     triggerDownload,
+    downloadFileFromUrl,
 } from '../../../../ClientApp/src/routes/common/helperFunctions';
 import { Environment, QuoteStatus } from '../../../../ClientApp/src/routes/common/enums';
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from '../../../../ClientApp/src/routes/common/openWindow';
@@ -162,6 +166,14 @@ describe('route common helper functions', () => {
         expect(getFormattedAddress({
             line1: '1 National Circuit',
             line2: 'Level 2',
+            line3: 'Building A',
+            suburb: 'Barton',
+            state: State.ACT,
+            postcode: '2600',
+        })).toBe('1 National Circuit, Level 2, Building A,  Barton ACT 2600');
+        expect(getFormattedAddress({
+            line1: '1 National Circuit',
+            line2: 'Level 2',
             line3: '',
             suburb: 'Barton',
             state: State.ACT,
@@ -215,6 +227,7 @@ describe('route common helper functions', () => {
 
         expect(formatTradingBranchFromStrings('Trading', 'Branch')).toBe('Trading - Branch');
         expect(formatTradingBranchFromStrings('', 'Branch')).toBe('Branch');
+        expect(formatTradingBranchFromStrings('', '')).toBe('');
         expect(formatTradingBranchFromStrings(null as unknown as string, 'Branch')).toBe('');
     });
 
@@ -327,6 +340,14 @@ describe('route common helper functions', () => {
         expect(sortedOptions.map((option) => option.displayText)).toEqual(['Alpha', 'Beta', 'Zed']);
         expect(lastOptionId).toBe('z');
 
+        const [sortedDisplayTextOptions, lastDisplayTextOptionId] = sortList([
+            { value: 'b', displayText: 'Beta' },
+            { value: 'z', displayText: 'Zed' },
+            { value: 'a', displayText: 'Alpha' },
+        ], 'missing', 'displayText');
+        expect(sortedDisplayTextOptions.map((option) => option.displayText)).toEqual(['Alpha', 'Beta', 'Zed']);
+        expect(lastDisplayTextOptionId).toBe('');
+
         const lookups = [
             { id: '2', name: 'Beta' },
             { id: '1', name: 'Alpha' },
@@ -337,6 +358,7 @@ describe('route common helper functions', () => {
         expect(lastLookupId).toBe('');
 
         expect(sortList([], 'anything', 'name')).toEqual([[], '']);
+        expect(sortList(undefined as unknown as Array<{ name: string }>, 'anything', 'name')).toEqual([undefined, '']);
     });
 
     it('covers empty address lines and unusual optional organisation fields', () => {
@@ -360,5 +382,26 @@ describe('route common helper functions', () => {
             trading: 'Trading',
             branch: '',
         } as AccountDetails)).toBe('Trading');
+    });
+
+    it('classifies empty and syntactically valid GUID values', () => {
+        expect(isEmptyGuid(undefined)).toBe(true);
+        expect(isEmptyGuid('00000000-0000-0000-0000-000000000000')).toBe(true);
+        expect(isEmptyGuid('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(false);
+
+        expect(isValidGUID(undefined)).toBe(false);
+        expect(isValidGUID('not-a-guid')).toBe(false);
+        expect(isValidGUID('8fbbf0f8-a931-48c3-951b-944c9a08b6ef')).toBe(true);
+    });
+
+    it('sanitises unsafe markup before returning HTML', () => {
+        expect(sanitiseHtml('<img src="x" onerror="alert(1)"><p>Safe copy</p>'))
+            .toBe('<img src="x"><p>Safe copy</p>');
+    });
+
+    it('opens downloaded file URLs in a secure new tab', () => {
+        downloadFileFromUrl('https://example.test/report.pdf', {}, [], 'report.pdf');
+
+        expect(openUrlInSecureNewTab).toHaveBeenCalledWith('https://example.test/report.pdf');
     });
 });

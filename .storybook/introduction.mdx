@@ -15,22 +15,89 @@ Welcome to Storybook for the NMI Services Portal. This workspace documents reusa
 - Migration readiness docs under `Migration/**`
 - Story-level accessibility and behavior examples
 
+## Audience paths
+
+### For developers
+
+Start with [Component Documentation Guide](/docs/documentation-component-documentation-guide--documentation), then open the component you plan to change and compare the generated Controls, ArgTypes, story source, and interaction tests. Use [Migration/Coverage Matrix](/docs/migration-coverage-matrix--documentation) when you need to confirm whether a route or component family already has Storybook coverage.
+
+### For design and CX
+
+Start with [Style Guide](/docs/documentation-style-guide--documentation), then review the relevant component states in the sidebar. Use component MDX pages for design rationale, content guidance, accessibility expectations, responsive behaviour, and links to related components. Treat SCSS tokens and generated story output as source-backed evidence.
+
+### For business and showcases
+
+Start with route stories under `Routes/**` and the feature-level documentation listed in [Migration/Overview](/docs/migration-overview--documentation). Use stories to confirm actors, outcomes, business rules, acceptance criteria, happy paths, edge states, and presenter-safe demo sequences before a stakeholder review.
+
+## Clean-machine first story in 15 minutes
+
+1. Install Node.js `>=24.0.0` and npm `11.17.0`.
+2. Run `npm ci` from the repository root.
+3. Run `npm run storybook`.
+4. Open `http://localhost:6006`.
+5. In the sidebar, open [PrimaryButton](/docs/components-buttons-primarybutton--documentation).
+6. Confirm the Default, Dark Mode, and Disabled stories render.
+7. Run `npm run test:storybook` for executable story checks.
+8. Run `npm run storybook:verify:docs` before sharing documentation.
+
 ## Run Storybook
 
 ```bash
 npm run storybook
 ```
 
-## Storybook BDD Workflow
+## Documentation mode
 
-When feature files or step definitions change, regenerate first and then execute Playwright:
+Preview the documentation-focused Storybook:
 
 ```bash
-npx bddgen
-npx playwright test --grep "@storybook" --reporter=list
+npm run storybook-docs
 ```
 
-Current Storybook-tagged baseline in this snapshot: **129 passed**.
+Build publishable documentation:
+
+```bash
+npm run build-storybook-docs
+```
+
+The static documentation build is emitted to `storybook-static/`.
+
+## Storybook BDD Workflow
+
+Run the Storybook-specific generator and Playwright configuration together:
+
+```bash
+npm run test:e2e:storybook
+```
+
+Run Storybook interaction tests without embedding a transient result count in
+the documentation:
+
+```bash
+npm run test:storybook
+```
+
+CI validates the generated documentation with `npm run build-storybook-docs`
+and `npm run storybook:verify:docs`.
+
+## Chromatic review workflow
+
+The repository publishes Storybook through `.github/workflows/chromatic.yml` on
+push. The workflow installs with Node `24.20.0`, runs Chromatic's pinned GitHub
+Action, reads `CHROMATIC_PROJECT_TOKEN` from repository secrets, and exits once
+the upload is accepted so GitHub receives the linked result asynchronously.
+
+For pull-request or stakeholder review:
+
+1. Push the branch and wait for the Chromatic `Publish Storybook` check.
+2. Open the Chromatic build or visual-review URL from the GitHub check details.
+3. Share direct Storybook docs or story URLs for the relevant component, route,
+   or feature rather than asking reviewers to browse the full catalogue.
+4. For showcase presenters, prepare a short ordered URL list covering the happy
+   path, the highest-risk edge state, the main error state, and the final
+   stakeholder outcome.
+5. Record unresolved design, business-rule, or content questions in the owning
+   issue before approving the review.
 
 ## Contributing Guidelines
 
@@ -40,12 +107,14 @@ When adding or updating stories:
 2. Keep story IDs stable when possible to avoid BDD drift.
 3. Use the shared Storybook providers and avoid adding nested routers.
 4. Add or update BDD feature coverage where behavior is user-facing.
-5. Run `npx bddgen` before Playwright.
+5. Run `npm run test:e2e:storybook`.
 
 ## Related Docs
 
-- `docs/STORYBOOK-MIGRATION-READINESS.md`
-- `docs/TESTING.md`
-- `docs/CONVENTIONS.md`
+- [Component Documentation Guide](/docs/documentation-component-documentation-guide--documentation)
+- [Style Guide](/docs/documentation-style-guide--documentation)
+- [Migration Readiness](/docs/migration-overview--documentation)
+- [Coverage Matrix](/docs/migration-coverage-matrix--documentation)
+- [Testing and Validation](/docs/migration-validation--documentation)
 
 Use the sidebar to browse component stories, route stories, and migration docs. Keep this documentation aligned with real story behavior and the Storybook BDD suite.

@@ -1,6 +1,6 @@
-/* eslint-disable implicit-arrow-linebreak */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-plusplus */
+ 
+ 
+ 
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
 import { isArray, map } from 'lodash';
@@ -50,9 +50,14 @@ const AttachmentNew = (
     ] = useField<AttachmentDto[] | AttachmentDto | null>(name);
 
     const { value } = meta;
+    // The field always holds a list, even when only one file is allowed. Storing a lone object
+    // in that case broke AttachmentItemNew, which addresses its field as `name[index]` and so
+    // read undefined. Normalised once here so every reader below sees the same shape - the field
+    // is typed to admit a bare object or null, so a form can still hand us one.
+    const attachments: AttachmentDto[] = isArray(value) ? value : [];
     const [isUploading, setIsUploading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+     
     const inputRef = useRef<any>(null);
     // console.log('SD: ', value);
     const maxSizeInKb = maxSizeInMB * 1024 * 1024;
@@ -86,19 +91,13 @@ const AttachmentNew = (
             }
 
             if (currentFileCount > maxFiles) {
-                // eslint-disable-next-line max-len
+                 
                 setErrors((newErrors) => [...newErrors, `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`]);
                 hasError = true;
             }
 
             if (!hasError) {
                 try {
-                    let attachments: AttachmentDto[] = isArray(value)
-                        ? value
-                        : value !== null
-                            ? [value]
-                            : [];
-                    let newAttachments: AttachmentDto[] = [];
                     if (currentFileCount === 1) {
                         const file = event.currentTarget.files[0];
                         if (file.size > maxSizeInKb) {
@@ -111,19 +110,7 @@ const AttachmentNew = (
                             hasError = true;
                         } else {
                             const result = await onUploadFiles([file]);
-                            if (!allowMultiple) {
-                                setValue(result as AttachmentDto);
-                            } else {
-                                newAttachments = [...result as AttachmentDto[]];
-                                if (attachments) {
-                                    // attachments = [...attachments, ...newAttachments];
-                                    attachments = [...newAttachments];
-                                } else {
-                                    attachments = [...newAttachments];
-                                }
-
-                                setValue(attachments);
-                            }
+                            setValue([...result as AttachmentDto[]]);
                             if (inputRef.current && inputRef.current.value !== null) {
                                 inputRef.current.value = null;
                                 inputRef.current.files = null;
@@ -147,15 +134,8 @@ const AttachmentNew = (
                         }
 
                         const result = await onUploadFiles(files);
-                        newAttachments = [...result as AttachmentDto[]];
-                        if (attachments) {
-                            // attachments = [...attachments, ...newAttachments];
-                            attachments = [...newAttachments];
-                        } else {
-                            attachments = [...newAttachments];
-                        }
 
-                        setValue(attachments);
+                        setValue([...result as AttachmentDto[]]);
                     }
                 } catch (errorMessage) {
                     const serverErrors = map(
@@ -175,13 +155,9 @@ const AttachmentNew = (
         try {
             if (attachment.id) {
                 await onDeleteFile(attachment.id);
-                if (allowMultiple) {
-                    if (isArray(value)) {
-                        setValue(value.filter((item: AttachmentDto) => item.id !== attachment.id));
-                    }
-                } else {
-                    setValue(null);
-                }
+                setValue(attachments.filter(
+                    (item: AttachmentDto) => item.id !== attachment.id,
+                ));
                 if (inputRef.current && inputRef.current.value !== null) {
                     inputRef.current.value = null;
                     inputRef.current.files = null;
@@ -194,7 +170,6 @@ const AttachmentNew = (
     };
 
     const renderAttachments = () => {
-        const attachments = value as AttachmentDto[];
         return attachments?.map((attachment, i) => (
             <AttachmentItemNew
                 id={attachment.id}
@@ -216,7 +191,7 @@ const AttachmentNew = (
         return (
             <>
                 {
-                    ((isArray(value) && value.length > 0) || (!isArray(value) && value?.id)) // && value.id > 0
+                    isArray(value) && value.length > 0
                         ? <div className='attachments-summary'>{ renderAttachments() }</div>
                         : (<span>No details added</span>)
                 }
@@ -260,12 +235,12 @@ const AttachmentNew = (
                                 {inlineHelp}
                             </div>
                             {/* {
-                    ((isArray(value) && value.length > 0) || (!isArray(value) && value?.id)) && ( // && value.id > 0
+                    isArray(value) && value.length > 0 && (
                         renderAttachments()
                     )
                 } */}
                             {/* {
-                    ((isArray(value) && value.length < maxFiles) || (!isArray(value) && !value)) && (
+                    isArray(value) && value.length < maxFiles && (
                         <> */}
                             <input
                                 disabled={disableUpload}
@@ -299,7 +274,7 @@ const AttachmentNew = (
                                 aria-describedby={
                                     meta.touched && meta.error
                                         ? `${id ?? name}-validation-msg`
-                                        : (`help-${id ?? name}` || undefined)
+                                        : `help-${id ?? name}`
                                 }
                                 onClick={() => { inputRef.current.click(); }}
                             />
@@ -342,10 +317,11 @@ const AttachmentNew = (
                     <ProgressFileList files={progress.files!} onCancelFile={handleCancelFile} />
                 </Col>
             ) : (
-                ((isArray(value) && value.length > 0) || (!isArray(value) && value?.id)) && (
+                isArray(value) && value.length > 0 && (
                     <Row className='mb-4'>
                         <h3 className='h4 mb-1'>
-                            {isArray(value) ? value.length : value ? 1 : 0}
+                            {/* Guarded by isArray(value) directly above. */}
+                            {value.length}
                             {' files uploaded'}
                         </h3>
                         <p className='h6 mb-3'>

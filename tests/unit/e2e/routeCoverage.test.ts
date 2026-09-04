@@ -22,7 +22,7 @@ describe('Playwright-BDD route coverage manifest', () => {
         expect(sortRoutes(registered)).toEqual(sortRoutes(declaredPaths));
     });
 
-    it('uses a feature reference or an explicit durable exclusion', () => {
+    it('uses feature and scenario references that exist on disk', () => {
         for (const entry of routeCoverage) {
             if (entry.status === 'excluded') {
                 expect(entry.reason.length).toBeGreaterThan(20);
@@ -30,6 +30,14 @@ describe('Playwright-BDD route coverage manifest', () => {
             } else {
                 expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
                 expect(entry.scenario).toBeTruthy();
+                const featurePath = path.join(repoRoot, ...entry.feature.split('/'));
+                expect(fs.existsSync(featurePath), `${entry.feature} should exist`).toBe(true);
+                const featureSource = fs.readFileSync(featurePath, 'utf8');
+                const escapedScenario = entry.scenario.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                expect(
+                    featureSource,
+                    `${entry.scenario} should exist in ${entry.feature}`,
+                ).toMatch(new RegExp(`^\\s*Scenario(?: Outline)?:\\s*${escapedScenario}\\s*$`, 'm'));
             }
         }
     });
@@ -38,5 +46,11 @@ describe('Playwright-BDD route coverage manifest', () => {
         expect(routeCoverage.filter((entry) => (
             (entry.status as string) === 'planned'
         ))).toEqual([]);
+    });
+
+    it('maps all 41 declared routes to executable BDD scenarios', () => {
+        expect(declaredPaths).toHaveLength(41);
+        expect(routeCoverage).toHaveLength(41);
+        expect(routeCoverage.filter((entry) => entry.status === 'excluded')).toEqual([]);
     });
 });

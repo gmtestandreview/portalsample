@@ -7,38 +7,67 @@ on:
 permissions:
   contents: read
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   quality-gate:
     name: Quality gate
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     env:
       VITE_APP_ENVIRONMENT: production
       VITE_ENTRA_CLIENT_ID: ${{ secrets.VITE_ENTRA_CLIENT_ID || '12345678-1234-4321-a432-123456789abc' }}
       VITE_ENTRA_TENANT_ID: ${{ secrets.VITE_ENTRA_TENANT_ID || '87654321-4321-4321-b432-cba987654321' }}
       VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5085' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install dependencies with declared npm
+        run: npx --yes npm@11.17.0 ci
 
-      - name: Typecheck
+      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+        run: |
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+
+      - name: Install Playwright Chromium (required by Storybook Browser Mode tests)
+        run: npx playwright install --with-deps chromium
+
+      - name: Type-check
         run: npm run type-check
 
       - name: Lint
         run: npm run lint
 
-      - name: Unit tests
-        run: npm run test:unit
+      - name: Lint MDX
+        run: npm run lint:mdx
+
+      # The same partitioned commands the PR workflow runs, so a release cannot
+      # pass through a coarser gate than the pull request that produced it.
+      - name: Vitest unit partition
+        run: npm run test:ci:unit
+
+      - name: Vitest Storybook partition
+        run: npm run test:ci:storybook
+
+      - name: Vitest quality partition
+        run: npm run test:ci:quality
+
+      - name: Run app and Storybook BDD suites
+        run: npm run test:e2e
 
       - name: Build app
         run: npm run build
 
-      - name: Build Storybook
-        run: npm run build-storybook
+      - name: Verify Storybook documentation
+        run: npm run storybook:verify:docs

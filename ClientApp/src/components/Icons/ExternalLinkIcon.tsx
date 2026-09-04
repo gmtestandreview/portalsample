@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+ 
 
 interface ClassName {
     className?: string

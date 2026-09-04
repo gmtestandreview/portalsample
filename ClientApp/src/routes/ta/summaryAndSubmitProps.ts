@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { FormikHelpers } from 'formik';
 import type { AccountInfo, IPublicClientApplication } from '@azure/msal-browser';
 import {
@@ -56,7 +55,7 @@ const loadSummary = (id: string, accounts: AccountInfo[], instance: IPublicClien
             return wizardStepValues;
         } catch (error) {
             AppLogger.error('Failed to load PA summary', error as Error, { Id: id });
-            throw Error(`Failed to load PA summary. Id: ${id}`);
+            throw new Error(`Failed to load PA summary. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to load PA summary', { Id: id, Accounts: accounts });
@@ -101,7 +100,7 @@ const submitForm = (
             );
         } catch (error) {
             AppLogger.error('Failed to submit PA summary', error as Error, { Id: id });
-            throw Error(`Failed to submit PA summary. Id: ${id}`);
+            throw new Error(`Failed to submit PA summary. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to submit PA summary', { Id: id, Accounts: accounts });

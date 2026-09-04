@@ -22,8 +22,8 @@ This workspace is a source-map capture snapshot of the live deployment, extended
 
 ## Prerequisites
 
-- **Node.js** ≥ 20 (see `engines` in `package.json`)
-- **npm** 11 (`npm@11.15.0` — declared as `packageManager`)
+- **Node.js** >= 24.0.0 (enforced by `engines` and `devEngines` in `package.json`)
+- **npm** 11 (`npm@11.17.0` - declared as `packageManager`)
 
 ## Setup
 

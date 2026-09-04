@@ -1,0 +1,26 @@
+# Git for Windows ships core.autocrlf=true in the system config, so a file
+# written with LF endings makes every later git command print
+# "LF will be replaced by CRLF the next time Git touches it".
+#
+# That is not only noise. Chromatic shells out to git to build its changed-file
+# list for TurboSnap, and the warnings were captured into that list alongside
+# real paths (see build 13). Pinning the rule here also makes checkouts
+# identical on Windows, macOS, Linux and CI instead of depending on each
+# developer's global git config.
+#
+# The index is already LF for every text file, so this normalises working trees
+# without changing any committed content.
+* text=auto eol=lf
+
+# Binaries must never be touched by end-of-line conversion.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.zip binary

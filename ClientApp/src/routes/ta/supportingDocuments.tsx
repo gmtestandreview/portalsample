@@ -206,8 +206,7 @@ const SupportingDocuments = (props: TASupportingDocumentsProps & { onDeleteSucce
                 name='InstrumentInfo'
                 selectedInstrumentCategoryId={instrumentCategoryId}
                 selectedInstrumentTypeId={instrumentTypeId}
-                // eslint-disable-next-line react/jsx-boolean-value
-                isNewCustomer={true}
+                isNewCustomer
             />
         );
     };

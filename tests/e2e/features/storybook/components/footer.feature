@@ -7,7 +7,7 @@ Feature: Footer component — Storybook acceptance criteria
     And the story iframe should have a button with accessible name "Terms of use"
     And the story iframe should have a button with accessible name "Privacy"
     And the story iframe should have a button with accessible name "Accessibility"
-    And the story iframe should have a button with accessible name "Help guide"
+    And the story iframe should have a link with accessible name "Help guide"
 
   Scenario: Terms of use link opens the terms modal
     When I load the Storybook story "components-footer--default"

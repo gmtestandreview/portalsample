@@ -1,0 +1,330 @@
+# Storybook Autodocs Refactor Baseline
+
+## Repository
+
+- Branch: `refactor/storybook-autodocs`
+- Commit: `503c9e5d17d10366aa802e083232f046e3d50450`
+- Package manager: npm (`package-lock.json`, lockfile version 3)
+- Declared Storybook version: `10.4.6`
+- Resolved local Storybook version: `10.4.6`
+- Approved stable upgrade target: `10.5.10`
+
+The generic plan command `npm exec storybook --version` reported the npm CLI
+version (`11.15.0`) rather than the local Storybook version. The resolved
+Storybook version was therefore verified from `node_modules`, `npm ls`, the
+lockfile, and the local Storybook executable.
+
+The originating checkout contained unrelated edits and untracked files. This
+work is isolated in a linked worktree so those files remain untouched:
+
+```text
+M ClientApp/src/index.tsx
+M tests/unit/runtime/indexBootstrap.test.tsx
+?? .claude/settings.json
+?? docs/qa/2026-08-23-storybook-autodocs-review.md
+?? docs/superpowers/plans/2026-08-23-storybook-autodocs-refactor-plan.md
+?? public/
+```
+
+## Existing quality commands
+
+- Type check: `npm run type-check`
+- Unit: `npm run test:unit`
+- Storybook component tests: `npm run test:storybook`
+- BDD generation: `bddgen -c playwright.storybook.config.ts`
+- Storybook E2E: `npm run test:e2e:storybook`
+- Storybook development: `npm run storybook`
+- Storybook build: `npm run build-storybook`
+- Existing docs build alias: `npm run build-storybook-docs`
+
+## Existing Storybook test paths
+
+- Feature directory: `tests/e2e/features/storybook/**/*.feature`
+- Step definition: `tests/e2e/steps/storybook.steps.ts`
+- Playwright configuration: `playwright.storybook.config.ts`
+- Pull-request CI workflow: `.github/workflows/pr.yml`
+- Release CI workflow: `.github/workflows/release.yml`
+
+## Representative components
+
+1. Simple typed props:
+   `ClientApp/src/components/Buttons/PrimaryButton/index.tsx` and
+   `ClientApp/src/components/Buttons/PrimaryButton/PrimaryButton.stories.tsx`
+2. Union/enum props: `ClientApp/src/components/Pill/StatusPill.tsx` and
+   `ClientApp/src/components/Pill/Pill.stories.tsx`
+3. Difficult inference/Formik wrapper:
+   `ClientApp/src/components/Inputs/DatePicker/CustomDateInput.tsx` and
+   `ClientApp/src/components/Inputs/DatePicker/CustomDateInput.stories.tsx`
+
+The Storybook MCP catalogue and component documentation were inspected for all
+three cases before selection.
+
+## Baseline results
+
+| Check                         | Command                                                                                                                                                | Result                                                                  |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| Type check                    | `npm run type-check`                                                                                                                                   | PASS                                                                    |
+| Targeted Storybook unit tests | `npm run test:unit -- tests/unit/storybook-autodocs.test.ts tests/unit/storybook/coverageDrift.test.ts tests/unit/storybookMigrationInventory.test.ts` | PASS: 16 tests                                                          |
+| Full unit suite               | `npm run test:unit`                                                                                                                                    | INCONCLUSIVE: no progress output for more than four minutes; terminated |
+| Storybook component tests     | `npm run test:storybook`                                                                                                                               | FAIL: 207 passed, 11 failed                                             |
+| Storybook BDD                 | `npm run test:e2e:storybook`                                                                                                                           | FAIL: 128 passed, 2 failed                                              |
+| Docs build                    | local `storybook build --docs --output-dir storybook-static-baseline`                                                                                  | PASS                                                                    |
+
+The baseline static index contained 315 entries: 97 documentation entries and
+218 story entries.
+
+## Known pre-existing failures
+
+### Storybook component tests
+
+`npm run test:storybook` exited 1 with 11 modal-visibility failures across four
+story files:
+
+- `ClientApp/src/components/Footer/Footer.stories.tsx`: three failures;
+- `ClientApp/src/components/modals/Modals.stories.tsx`: five failures;
+- `ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx`:
+  two failures;
+- `ClientApp/src/components/modals/ContentModal/ContentModal.stories.tsx`: one
+  failure.
+
+The suite also emitted existing missing-runtime-variable, accessibility-label,
+and React `act(...)` warnings. These failures predate the refactor and are not
+silently attributed to the Storybook upgrade.
+
+### Storybook BDD
+
+`npm run test:e2e:storybook` exited 1 with two failures:
+
+- the default Footer scenario expected a visible `Help guide` button that was
+  not present;
+- the ServicesWeOffer scenario remained at `Checking assigned services...`
+  instead of rendering its page heading.
+
+### Full unit runner
+
+The full unit command remained active without result output for more than four
+minutes and was terminated. The three existing Storybook-focused unit files
+were then run directly and passed all 16 tests.
+
+### Docs build warnings
+
+The successful baseline docs build reported unresolved light/medium Public Sans
+font references, existing Rolldown pure-annotation warnings from Application
+Insights dependencies, and plugin timing notices.
+
+## Configuration findings
+
+High-signal pre-refactor search evidence:
+
+```text
+package.json: @storybook/addon-styling-webpack is declared
+package.json: @storybook/addon-onboarding is declared but unreferenced
+.storybook/main.ts: addon-docs owns autodocs, defaultName, and docsMode
+.storybook/main.ts: duplicate story and MDX globs are configured
+.storybook/main.ts: typescript.check is true under React/Vite
+.storybook/main.ts: @storybook/csf-plugin is injected manually
+.storybook/preview.ts: expectedAddonDocsConfig and autoDocsTemplate are imported
+.storybook/preview.ts: docs.enabled and docs.autodocs duplicate tag state
+.storybook/preview.ts: source.type is dynamic and Canvas source is shown
+.storybook/preview.ts: a generic global component description is configured
+.storybook/preview-docs.ts: Storybook's default Autodocs template is cloned
+.storybook/component-docs-guide.mdx: developers are told to add the 'docs' tag
+tests/unit/storybook-autodocs.test.ts: hard-coded constants enforce the obsolete architecture
+```
+
+Additional inventory:
+
+- 82 story files repeat the globally inherited `autodocs` tag;
+- 9 story files use the incorrect or redundant `docs` tag;
+- `DocsTable` remains used by multiple specialist MDX pages and must not be
+  deleted as part of the simple-table policy change.
+
+## Approved upgrade extension
+
+The implementation scope was explicitly expanded after baseline discovery:
+
+- align Storybook-owned packages on stable `10.5.10`;
+- update compatible Storybook ecosystem addons to their latest stable releases;
+- remove obsolete Webpack-only and confirmed unused addons;
+- run Storybook upgrade/doctor diagnostics;
+- inspect and update Storybook configuration, stories, tests, and documentation
+  where the current architecture requires migration.
+
+## RED governance test
+
+Command:
+
+```bash
+npm run test:unit -- tests/unit/storybook/storybookDocsConfig.test.ts
+```
+
+Result: expected failure, exit code 1. All 13 governance tests failed against
+the baseline for the intended reasons, including outdated package versions,
+obsolete addons, overlapping globs, misplaced Docs configuration,
+Webpack-specific TypeScript checking, absent GFM support, repeated story tags,
+duplicate Autodocs state, missing Code Panel configuration, the cloned default
+template, the global generic description, and outdated developer guidance.
+
+The obsolete `tests/unit/storybook-autodocs.test.ts` was removed because it
+asserted hard-coded local constants rather than repository behaviour and
+encoded the architecture this executable governance contract replaces.
+
+## Metadata inference verification
+
+Storybook MCP documentation and a successful `storybook build --docs` on
+Storybook 10.5.10 produced the following default `react-docgen` evidence:
+
+| Component       | Public props                                                                                                         | Required state                                                                              | Descriptions                                         | Union/enum                                                                              | Result                                                        |
+| --------------- | -------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| PrimaryButton   | Custom props `className`, `mode`, and `size` appear; inherited native button props are omitted by the default parser | All three custom props are correctly optional                                               | Component and custom-prop JSDoc appear               | `mode` is shown as `'dark' \| 'light'` and receives an intentional inline-radio ArgType | Acceptable with a documented inherited-native-prop limitation |
+| StatusPill      | `status` and `className` appear                                                                                      | `status` is required and `className` is optional                                            | Component and prop JSDoc appear                      | The workflow enum union and string fallback are visible                                 | Pass                                                          |
+| CustomDateInput | All 22 public integration props appear                                                                               | Required calendar, Formik, handler, and wrapper props are distinguished from optional props | Meaningful descriptions appear for every public prop | No public union/enum prop requires manual augmentation                                  | Pass                                                          |
+
+The representative Default stories use args, and all three focused component
+and accessibility checks passed through the Storybook MCP. The default parser
+is sufficient for the complex Formik wrapper and enum-union sample. Task 10
+will use the PrimaryButton inherited-prop limitation as the explicit decision
+input rather than switching parsers pre-emptively.
+
+## Explicit CSF plugin A/B test
+
+### A — explicit plugin present
+
+- Governance tests: PASS, 13 assertions.
+- Storybook BDD: PASS, 135 scenarios, including all five documentation scenarios.
+- Code Panel: PASS; the representative story source was visible.
+- Source: PASS; generated docs exposed source without preview decorators.
+- Docs build: PASS, 315 entries (97 docs and 218 stories) in 10.80 seconds.
+
+### B — explicit plugin removed
+
+- Governance tests: PASS, 13 assertions.
+- Storybook BDD: PASS, 135 scenarios, including all five documentation scenarios.
+- Code Panel: PASS; the representative story source remained visible.
+- Source: PASS; generated docs retained decorator-free source.
+- Docs build: PASS, 315 entries (97 docs and 218 stories) in 10.97 seconds.
+
+### Decision
+
+- Removed: the repository-level `@storybook/csf-plugin` import and Vite plugin
+  injection.
+- Evidence: configuration governance, runtime source/Code Panel coverage, and
+  static docs structure were identical. The plugin timing report still listed
+  `plugin-csf` after removal, confirming Storybook 10.5.10 supplies its own CSF
+  transform for React/Vite.
+
+## React docgen decision
+
+- Decision: retain Storybook's default `react-docgen` parser; do not add a
+  `typescript.reactDocgen` override.
+- Evidence: StatusPill exposed its required workflow union and optional class
+  prop, CustomDateInput exposed all 22 public integration props with correct
+  required state and descriptions, and PrimaryButton exposed all three custom
+  props with the expected optional state and mode union.
+- Limitation accepted: PrimaryButton's inherited native button attributes are
+  omitted by the default parser. No component-specific public prop is missing,
+  and the native attributes do not require project-authored ArgTypes, so this
+  does not meet the plan's threshold for the slower TypeScript parser.
+- Build evidence: the final default-parser docs build completed in 10.97 seconds
+  and retained 97 docs entries and 218 story entries.
+
+### Correction — the three-component sample was not representative
+
+The evidence above sampled three components. A full survey of the generated
+components manifest (`storybook-static/manifests/components.json`, also served at
+`/manifests/components.json` in dev) shows **22 of 87 components produce no
+docgen output at all**:
+
+| Cause | Count | Components |
+| --- | ---: | --- |
+| `No component definition found` — `"." is not exported under no conditions from package node_modules/@azure/msal-react` | 20 | AddressLookup, ApplicationAndInstrument, ApplicationDetails, ApplicationDocuments, ApplicationMessages, Dashboard, DashboardTa, GetStarted, HelpGuide, InstrMeasurementReport, InstrumentInfoPanel, PaRequestItem, PreApplication, PreConditions, ReportRecipient, ServicesWeOffer, SubmittedSuccess, SupportingDocuments, ViewMeasurementReport, ViewRequestForQuoteSummary |
+| `Component file in node_modules` | 1 | Inputs |
+| `No component found` — `meta.component` not specified | 1 | Modals |
+
+None of PrimaryButton, StatusPill or CustomDateInput imports `@azure/msal-react`,
+so the original sample could not have detected the dominant failure.
+
+**Root cause of the 20:** `@azure/msal-react@2.2.0` exposes `"."` only under the
+`import` and `require` export conditions. react-docgen's resolver requests it
+under no condition and the resolution fails, so the component definition is never
+found. This is a **module-resolution** failure, not a limitation of the parser's
+type inference.
+
+### A/B evidence — `react-docgen-typescript` is worse here
+
+Tested by adding `typescript: { reactDocgen: 'react-docgen-typescript' }` to
+`.storybook/main.ts` and rebuilding, with no other change:
+
+| Parser | Build | Components with errors | Components with at least one prop |
+| --- | --- | ---: | ---: |
+| `react-docgen` (default, current) | PASS | 22 | 65 |
+| `react-docgen-typescript` | PASS, 17s | 25 | **0** |
+
+Under `react-docgen-typescript` every component lost its props, because the
+workspace source falls outside the parser's default TypeScript program — the case
+Task 10 Step 4 anticipates. Adopting it would require explicit `include`
+configuration and would still not address the msal-react resolution failure.
+
+**Decision stands: retain `react-docgen`.** The recorded justification is now the
+measured one — the default parser documents 65 components, the TypeScript parser
+documents none without further configuration, and the 22 failures are a
+resolution defect to be fixed at the resolver rather than by swapping parsers.
+
+### Resolution
+
+A Storybook-scoped Vite `resolve.alias` was tried first and **did not work**:
+Storybook's react-docgen plugin runs react-docgen over the source file, and
+react-docgen resolves imports with its own resolver, which never sees Vite's
+aliases. The alias was removed rather than left in place doing nothing.
+
+The fix is applied at the package that omits the condition. Two dependencies
+declare `exports["."]` with only `import` and `require` and no `default`, so a
+resolver that requests no condition fails:
+
+| Package | Added condition |
+| --- | --- |
+| `@azure/msal-react@2.2.0` | `"default": "./dist/index.js"` |
+| `html-react-parser@6.1.4` | `"default": "./esm/index.mjs"` |
+
+Both are `patch-package` patches in `patches/`, applied by the existing
+`postinstall` hook, and each points at the same ESM file the `import` condition
+already selects — so bundling is unchanged. Upgrading is not an alternative:
+`@azure/msal-react@5.6.0` still ships the same exports shape.
+
+Result: components without prop metadata fell from **22 to 2**. Verified by
+`npm run test:unit` (1,342), `npm run test:storybook` (218), `npm run build`
+(webpack production), and `npm run test:e2e:storybook` (135), all passing.
+
+`scripts/verify-storybook-docs.mjs` now fails the build if any component loses its
+prop metadata, so this cannot silently regress. Two components remain accepted
+exceptions, listed there with reasons:
+
+- `forms-inputs` — `meta.component` resolves into `node_modules` (formik).
+- `modals` — a multi-component gallery. Every story renders a local wrapper or a
+  different modal, so no single `meta.component` describes the page; setting one
+  makes all five stories fail type-check because they supply no args for it.
+
+## Final verification
+
+Verification on 2026-08-26 from implementation commit `f25b5a3`:
+
+- prohibited-architecture search: PASS; matches were limited to negative
+  governance assertions;
+- Storybook governance: PASS, 13 assertions;
+- workflow policy: PASS, 25 assertions;
+- TypeScript: PASS;
+- ESLint and MDX lint: PASS;
+- unit suite: PASS, 121 files and 1,333 tests;
+- Storybook interaction suite: PASS, 87 files and 218 tests;
+- Chromatic-reported interaction set: PASS locally through the Storybook MCP,
+  all 16 stories. Eleven modal assertions wait for Bootstrap transitions to
+  reach visible state; the five router, Formik, and React Aria assertions use
+  semantic asynchronous queries;
+- Storybook BDD: PASS, 135 scenarios, including all five documentation
+  architecture scenarios;
+- documentation build: PASS, 315 index entries (97 docs and 218 stories).
+
+The docs build continues to report the baseline Public Sans light/medium
+resolution warnings and third-party Application Insights pure-annotation
+warnings. They are non-fatal, unchanged by this refactor, and do not affect the
+verified Storybook index or runtime documentation scenarios.

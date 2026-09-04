@@ -12,7 +12,6 @@ const meta = {
             initialEntries: ['/request-for-quote-success/RFQ-2024-001234'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof RequestForQuoteCreated>;
 
 export default meta;

@@ -288,6 +288,10 @@ const InstrumentItem = (props: { request: DashboardItemDto }) => {
                     },
                 );
                 break;
+            // RULE-015: BA confirmation pending — OPEN-ITEMS-BACKLOG P2 item 21.
+            // 'Request recalibration' is offered while a report is still in progress. Recommendation
+            // 2026-06-04: preserve existing behaviour; BA to confirm this is intentional before Phase 6
+            // go-live. Do not change the status gate during migration.
             case DashboardItemStatus.ReportWithdrawn:
             case DashboardItemStatus.ReportInProgress:
                 actions.push({

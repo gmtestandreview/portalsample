@@ -44,12 +44,12 @@ const AttachmentItemNew = ({
     };
 
     const onCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
-        if (event.target.value !== null) {
-            setValue(event.target.value);
-            setTouched(true);
-            if (onCategoryUpdate && id) {
-                onCategoryUpdate(id, event.target.value);
-            }
+        // A form control's `value` is always a string, never null, so the guard that stood here
+        // could not fail. An unset category arrives as an empty string and is handled below.
+        setValue(event.target.value);
+        setTouched(true);
+        if (onCategoryUpdate && id) {
+            onCategoryUpdate(id, event.target.value);
         }
     };
 

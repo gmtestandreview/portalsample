@@ -31,6 +31,18 @@ updates:
         patterns:
           - 'storybook'
           - '@storybook/*'
+      # The lint cohort only resolves as a set: ESLint 10, its parser, and the
+      # React plugins share peer ranges, so they must be reviewed in one pull
+      # request rather than seven that each half-satisfy the others.
+      eslint-family:
+        patterns:
+          - 'eslint'
+          - '@eslint/js'
+          - 'typescript-eslint'
+          - '@eslint-react/*'
+          - 'eslint-plugin-react-hooks'
+          - '@stylistic/*'
+          - 'globals'
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']

@@ -12,7 +12,6 @@ const meta = {
             initialEntries: ['/success-creating-account'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof AccountCreated>;
 
 export default meta;

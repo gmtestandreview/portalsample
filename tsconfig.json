@@ -15,7 +15,11 @@
     "paths": {
       "@/*": ["ClientApp/src/*"]
     },
-    "types": ["vitest/globals", "trusted-types"],
+    "types": [
+      "vitest/globals",
+      "trusted-types",
+      "msw-storybook-addon/types"
+    ],
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "moduleDetection": "force", // auto-detects modules without imports
     "verbatimModuleSyntax": true, // preserves exact import/export syntax
@@ -23,6 +27,7 @@
   },
   "include": [
     "*.ts",
+    "scripts/**/*.ts",
     "ClientApp/src/**/*",
     ".storybook/**/*",
     "tests/**/*"

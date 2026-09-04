@@ -1,0 +1,308 @@
+
+> nmi-portal@0.1.0 test:unit
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.unit.config.ts --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+ ✓ |unit| tests/unit/components/buildRegressionSmoke.test.tsx (9 tests) 10268ms
+     ✓ imports App with the root stylesheet path resolved  10250ms
+ ✓ |unit| tests/unit/components/inputs/complexInputs.behavior.test.tsx (36 tests) 6815ms
+     ✓ renders ManualAddressInput fields with labels and updates nested values  465ms
+     ✓ filters OrganisationNameLookup options by parent and supports keyboard and click selection  961ms
+     ✓ handles OrganisationNameLookup short, free-text, escape, outside-click, and ArrowUp branches  1580ms
+     ✓ accepts OrganisationNameLookup free text when Enter is pressed without an active option  466ms
+     ✓ uses OrganisationNameLookup defaults and moves ArrowUp from a later option  511ms
+ ✓ |unit| tests/unit/config/eslintConfig.test.ts (1 test) 3305ms
+     ✓ lints the Storybook config when ESLint runs from the file directory  3303ms
+ ✓ |unit| tests/unit/components/requestList.behavior.test.tsx (18 tests) 2610ms
+     ✓ runs RequestItem tab and issued-report action callbacks  340ms
+     ✓ runs InstrumentItem tab and issued-report action callbacks  311ms
+     ✓ renders InstrumentItem draft and quote-available action states  380ms
+ ✓ |unit| tests/unit/config/eslintPolicy.test.ts (27 tests) 1759ms
+ ✓ |unit| tests/unit/components/searchFilter.behavior.test.tsx (10 tests) 1504ms
+     ✓ submits and clears SearchBox keywords through the public callback  400ms
+ ✓ |unit| tests/unit/components/inputs/simpleInputs.test.tsx (18 tests) 1434ms
+     ✓ updates, trims, counts, and sanitises TextAreaInput values  377ms
+     ✓ handles TextInput labels, events, blur trimming, date formatting, and summary dates  360ms
+ ✓ |unit| tests/unit/routes/workflowStepComponents.test.tsx (28 tests) 1437ms
+     ✓ renders request-for-quote organisation/contact inputs and opens the branch selector  817ms
+ ✓ |unit| tests/unit/routes/workflowWrappers.test.tsx (20 tests) 1394ms
+     ✓ renders the request-for-quote wizard after loading statuses  635ms
+ ✓ |unit| tests/unit/routes/quotationAndReports.test.tsx (21 tests) 1375ms
+     ✓ loads quotation details and declines a quote through the confirmation modal  1085ms
+ ✓ |unit| tests/unit/authentication/AccountProvider.dispatch.test.tsx (10 tests) 1276ms
+     ✓ updates account state through dispatch callbacks exposed by hooks  502ms
+     ✓ leaves dispatch callbacks as no-ops before account details exist  476ms
+ ✓ |unit| tests/unit/components/inputs/customDatePicker.test.tsx (6 tests) 1201ms
+     ✓ handles blur, outside click, escape, and calendar keyboard controls  448ms
+     ✓ opens from Enter and Space unless read-only, while disabled read-only follows the component condition  327ms
+ ✓ |unit| tests/unit/components/headerFooterChrome.test.tsx (11 tests) 1173ms
+     ✓ renders authenticated user menu items and tracks account-management clicks  495ms
+     ✓ opens each footer content modal and closes it through the modal callback  328ms
+ ✓ |unit| tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx (22 tests) 1099ms
+ ✓ |unit| tests/unit/components/inputs/datePickerWrapper.test.tsx (6 tests) 1057ms
+     ✓ parses initial Formik values, forwards validation state, and normalizes date changes  336ms
+     ✓ normalizes blur values only when the input value changed and marks the field touched  513ms
+stdout | tests/unit/components/utilityCoverageSlice.test.tsx > utility component coverage slice > prints, copies and can hide mailing label actions
+Copied to clipboard:
+Deliver to:
+Quotation ID: Q-123
+ATTN: Alex Officer
+NMI Lab
+1 Measurement Way
+
+ ✓ |unit| tests/unit/components/utilityCoverageSlice.test.tsx (21 tests) 939ms
+ ✓ |unit| tests/unit/routes/dashboard.test.tsx (31 tests) 894ms
+ ✓ |unit| tests/unit/components/inputs/combobox.accessibility.test.tsx (7 tests) 835ms
+     ✓ exposes OrganisationNameLookup as a labelled input combobox with active-descendant navigation  444ms
+ ✓ |unit| tests/unit/components/forms/formShell.behavior.test.tsx (8 tests) 764ms
+ ✓ |unit| tests/unit/components/modals/BranchSelectorModal.test.tsx (23 tests) 674ms
+ ✓ |unit| tests/unit/validationSchemas/transitiveYupImports.test.ts (2 tests) 579ms
+     ✓ update/validation.ts schema validates without relying on transitive import  575ms
+ ✓ |unit| tests/unit/components/forms/wizardControls.behavior.test.tsx (8 tests) 573ms
+     ✓ validates before opening final confirmation, closes it, then submits on confirmation  338ms
+ ✓ |unit| tests/unit/components/forms/formHelpersAndBanner.test.tsx (14 tests) 528ms
+ ✓ |unit| tests/unit/components/Pagination.test.tsx (7 tests) 524ms
+     ✓ calls page change callbacks for numbered, previous, next, first, and last controls  350ms
+ ✓ |unit| tests/unit/components/modals/TermsAndConditionModal.test.tsx (10 tests) 432ms
+ ✓ |unit| tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx (7 tests) 438ms
+ ✓ |unit| tests/unit/components/Utilities/ViewPdfQuote.test.tsx (8 tests) 408ms
+ ✓ |unit| tests/unit/components/forms/buttonControls.test.tsx (4 tests) 384ms
+ ✓ |unit| tests/unit/components/simpleRuntimeComponents.test.tsx (30 tests) 375ms
+ ✓ |unit| tests/unit/components/inputs/residualBranches.test.tsx (11 tests) 404ms
+ ✓ |unit| tests/unit/components/Pill/StatusPill.test.tsx (23 tests) 373ms
+ ✓ |unit| tests/unit/components/modalCoverageSlice.test.tsx (7 tests) 350ms
+ ✓ |unit| tests/unit/components/Utilities/ViewPdfQuoteTerms.test.tsx (4 tests) 259ms
+ ✓ |unit| tests/unit/routes/staticPages.test.tsx (7 tests) 278ms
+ ✓ |unit| tests/unit/routes/accountContactDisplay.test.tsx (3 tests) 300ms
+ ✓ |unit| tests/unit/config/webpackConfig.test.ts (5 tests) 290ms
+ ✓ |unit| tests/unit/routes/accountCreated.test.tsx (2 tests) 271ms
+ ✓ |unit| tests/unit/routes/acceptQuote/AcceptQuote.test.tsx (6 tests) 232ms
+ ✓ |unit| tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx (8 tests) 208ms
+ ✓ |unit| tests/unit/instrumentItem.a11y.test.tsx (1 test) 209ms
+ ✓ |unit| tests/unit/components/actions.accessibility.test.tsx (2 tests) 182ms
+ ✓ |unit| tests/unit/components/requestList.actionFallback.test.tsx (2 tests) 199ms
+ ✓ |unit| tests/unit/components/routeLeavingGuard.test.tsx (4 tests) 175ms
+ ✓ |unit| tests/unit/components/getStarted.test.tsx (3 tests) 176ms
+ ✓ |unit| tests/unit/routes/acceptQuote/summaryAndAccept.test.tsx (2 tests) 157ms
+ ✓ |unit| tests/unit/components/inputs/customDateInput.accessibility.test.tsx (5 tests) 172ms
+ ✓ |unit| tests/unit/components/footer.accessibility.test.tsx (5 tests) 172ms
+ ✓ |unit| tests/unit/components/modals/rfqDeleteModal.nullContext.test.tsx (1 test) 152ms
+ ✓ |unit| tests/unit/components/Pill/QuoteStatusPill.test.tsx (9 tests) 133ms
+ ✓ |unit| tests/unit/components/errorBoundary.test.tsx (12 tests) 139ms
+ ✓ |unit| tests/unit/components/requestList.accessibility.test.tsx (2 tests) 130ms
+ ✓ |unit| tests/unit/components/Utilities/ViewPdfButton.test.tsx (4 tests) 133ms
+ ✓ |unit| tests/unit/components/modals/contentModal.accessibility.test.tsx (4 tests) 113ms
+ ✓ |unit| tests/unit/routes/preConditions.test.tsx (20 tests) 109ms
+ ✓ |unit| tests/unit/components/steppedNavigation.test.tsx (5 tests) 107ms
+ ✓ |unit| tests/unit/components/standardPathway.test.tsx (5 tests) 104ms
+ ✓ |unit| tests/unit/components/forms/errorSummary.test.tsx (9 tests) 106ms
+ ✓ |unit| tests/unit/components/utilities.test.tsx (8 tests) 105ms
+ ✓ |unit| tests/unit/routes/acceptQuote/paymentDetails.test.tsx (9 tests) 75ms
+ ✓ |unit| tests/unit/components/breadcrumb.test.tsx (2 tests) 82ms
+ ✓ |unit| tests/unit/components/inputs/OrganisationNameLookup.behavior.test.tsx (1 test) 88ms
+ ✓ |unit| tests/unit/components/routeAccessibility.behavior.test.tsx (2 tests) 80ms
+ ✓ |unit| tests/unit/components/routeLeavingGuard.unblockedActions.test.tsx (1 test) 80ms
+ ✓ |unit| tests/unit/authentication/AuthenticatedElement.test.tsx (6 tests) 77ms
+ ✓ |unit| tests/unit/components/layout.test.tsx (1 test) 75ms
+ ✓ |unit| tests/unit/components/Alert.test.tsx (1 test) 67ms
+ ✓ |unit| tests/unit/helpers/renderWithProviders.test.tsx (2 tests) 67ms
+ ✓ |unit| tests/unit/routes/accountContactWrappers.test.tsx (6 tests) 51ms
+ ✓ |unit| tests/unit/components/SummaryDisplay.test.tsx (11 tests) 35ms
+ ✓ |unit| tests/unit/components/forms/contactDetails.branches.test.tsx (2 tests) 42ms
+ ✓ |unit| tests/unit/runtime/indexBootstrap.test.tsx (2 tests) 33ms
+ ✓ |unit| tests/unit/authentication/AccountProvider.errored.test.tsx (2 tests) 26ms
+ ✓ |unit| tests/unit/analytics/googleAnalytics.test.tsx (9 tests) 29ms
+ ✓ |unit| tests/unit/routes/common/helperFunctions.test.ts (29 tests) 31ms
+ ✓ |unit| tests/unit/config/dependencySecurity.test.ts (31 tests) 23ms
+ ✓ |unit| tests/unit/components/inputs/TextAreaInput.test.tsx (1 test) 25ms
+ ✓ |unit| tests/unit/routes/ta/validation.test.ts (48 tests) 21ms
+ ✓ |unit| tests/unit/components/runtimeSmoke.test.tsx (2 tests) 25ms
+ ✓ |unit| tests/unit/utils/index.test.ts (25 tests) 22ms
+ ✓ |unit| tests/unit/routes/account/validation.test.ts (10 tests) 13ms
+ ✓ |unit| tests/unit/config/appShellAssets.test.ts (1 test) 16ms
+ ✓ |unit| tests/unit/validationSchemas/stringExtensions.test.ts (132 tests) 15ms
+ ✓ |unit| tests/unit/instrumentation/appInsightsService.test.ts (4 tests) 15ms
+ ✓ |unit| tests/unit/routes/acceptQuote/validation.test.ts (13 tests) 13ms
+ ✓ |unit| tests/unit/validationSchemas/stringExtensions.branch.test.ts (75 tests) 14ms
+ ✓ |unit| tests/unit/validationSchemas/contactValidation.test.ts (8 tests) 12ms
+ ✓ |unit| tests/unit/storybook/storybookDocsConfig.test.ts (14 tests) 35ms
+ ✓ |unit| tests/unit/routes/requestForQuote/validation.test.ts (10 tests) 11ms
+ ✓ |unit| tests/unit/runtime/trustedtypes.test.ts (2 tests) 11ms
+ ✓ |unit| tests/unit/routes/accountContactProps.test.ts (8 tests) 11ms
+ ✓ |unit| tests/unit/security/dompurify.regression.test.ts (1 test) 10ms
+ ✓ |unit| tests/unit/instrumentation/appLogger.test.ts (3 tests) 12ms
+ ✓ |unit| tests/unit/validationSchemas/common.test.ts (27 tests) 10ms
+ ✓ |unit| tests/unit/validationSchemas/addressValidation.test.ts (5 tests) 10ms
+ ✓ |unit| tests/unit/routes/acceptQuote/props.test.ts (5 tests) 9ms
+ ✓ |unit| tests/unit/routes/requestForQuote/props.test.ts (5 tests) 9ms
+ ✓ |unit| tests/unit/helpers/unexpectedConsoleGuard.test.ts (30 tests) 9ms
+ ✓ |unit| tests/unit/e2e/routeCoverage.test.ts (3 tests) 9ms
+ ✓ |unit| tests/unit/config/workflowPolicy.test.ts (86 tests) 8ms
+ ✓ |unit| tests/unit/authentication/authConfig.test.ts (7 tests) 8ms
+ ✓ |unit| tests/unit/runtime/env.test.ts (4 tests) 7ms
+ ✓ |unit| tests/unit/routes/contact/validation.test.ts (5 tests) 6ms
+ ✓ |unit| tests/unit/validationSchemas/emailSchema.redos.test.ts (19 tests) 6ms
+ ✓ |unit| tests/unit/validationSchemas/emailSchema.consolidation.test.ts (5 tests) 5ms
+ ✓ |unit| tests/unit/storage/sessionStorageCache.test.ts (9 tests) 4ms
+ ✓ |unit| tests/unit/storybookMigrationInventory.test.ts (7 tests) 5ms
+ ✓ |unit| tests/unit/config/coverageRemapPolicy.test.ts (6 tests) 4ms
+ ✓ |unit| tests/unit/storage/storageWrappers.test.ts (7 tests) 4ms
+ ✓ |unit| tests/unit/routes/ta/displayRules.test.ts (33 tests) 4ms
+stderr | tests/unit/config/vitestTopology.test.ts
+Unhandled promise rejection: SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook/main.ts.
+
+Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+
+If you believe this is a bug, please open an issue on Github.
+
+SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: @chromatic-com/storybook.
+
+Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+
+If you believe this is a bug, please open an issue on Github.
+
+SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@chromatic-com/storybook/dist/preset.js.
+
+Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+
+If you believe this is a bug, please open an issue on Github.
+
+TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'http://localhost:3000/preset.js'
+    at Module.createRequire (node:internal/modules/cjs/loader:2138:13)
+    at Object.<anonymous> (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\@chromatic-com\storybook\dist\preset.js:1:8853)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:372:15)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:244:9)
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+
+More info: 
+
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+    at async Promise.all (index 0)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13552:12)
+    at async Promise.all (index 4)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+    at async Promise.all (index 1)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+
+More info: 
+
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+    at async Promise.all (index 4)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+    at async Promise.all (index 1)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+    at loadStorybook (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/core-server/index.js:12060:17)
+    at storybookTest (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@storybook/addon-vitest/dist/vitest-plugin/index.js:2546:20)
+
+More info: 
+
+    at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+    at async Promise.all (index 1)
+    at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+    at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+    at loadStorybook (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/core-server/index.js:12060:17)
+    at storybookTest (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@storybook/addon-vitest/dist/vitest-plugin/index.js:2546:20) {
+  data: {
+    error: SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: @chromatic-com/storybook.
+    
+    Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+    
+    If you believe this is a bug, please open an issue on Github.
+    
+    SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@chromatic-com/storybook/dist/preset.js.
+    
+    Please check whether your setup is correct, the Storybook dependencies (and their peer dependencies) are installed correctly and there are no package version clashes.
+    
+    If you believe this is a bug, please open an issue on Github.
+    
+    TypeError: The argument 'filename' must be a file URL object, file URL string, or absolute path string. Received 'http://localhost:3000/preset.js'
+        at Module.createRequire (node:internal/modules/cjs/loader:2138:13)
+        at Object.<anonymous> (C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\node_modules\@chromatic-com\storybook\dist\preset.js:1:8853)
+        at Module._compile (node:internal/modules/cjs/loader:1929:14)
+        at Object..js (node:internal/modules/cjs/loader:2060:10)
+        at Module.load (node:internal/modules/cjs/loader:1651:32)
+        at Module._load (node:internal/modules/cjs/loader:1443:12)
+        at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+        at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:372:15)
+        at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:244:9)
+        at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    
+    More info: 
+    
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+        at async Promise.all (index 0)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13552:12)
+        at async Promise.all (index 4)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+        at async Promise.all (index 1)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+    
+    More info: 
+    
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13570:13)
+        at async Promise.all (index 4)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at loadPreset (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13553:12)
+        at async Promise.all (index 1)
+        at loadPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13579:73)
+        at getPresets (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/_node-chunks/chunk-OKMX43Z2.js:13610:23)
+        at loadStorybook (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/storybook/dist/core-server/index.js:12060:17)
+        at storybookTest (file:///C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/node_modules/@storybook/addon-vitest/dist/vitest-plugin/index.js:2546:20) {
+      data: [Object],
+      fromStorybook: true,
+      isHandledError: false,
+      subErrors: [],
+      category: 'CORE-SERVER',
+      documentation: '',
+      code: 2,
+      _name: 'CriticalPresetLoadError'
+    },
+    presetName: 'C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook/main.ts'
+  },
+  fromStorybook: true,
+  isHandledError: false,
+  subErrors: [],
+  category: 'CORE-SERVER',
+  documentation: '',
+  code: 2,
+  _name: 'CriticalPresetLoadError'
+}
+
+ ✓ |unit| tests/unit/config/vitestTopology.test.ts (16 tests) 4ms
+ ✓ |unit| tests/unit/e2e/playwrightStepQuality.test.ts (21 tests) 4ms
+ ✓ |unit| tests/unit/validationSchemas/stringExtensions.businessName.test.ts (5 tests) 4ms
+ ✓ |unit| tests/unit/components/forms/wizardRoutedStep/errorState.test.ts (15 tests) 4ms
+ ✓ |unit| tests/unit/routes/common/openWindow.test.ts (4 tests) 3ms
+ ✓ |unit| tests/unit/coverage/coverageConfig.test.ts (4 tests) 3ms
+ ✓ |unit| tests/unit/routes/common/dashboardNotifications.test.ts (16 tests) 5ms
+ ✓ |unit| tests/unit/routes/common/routeParams.test.ts (25 tests) 4ms
+ ✓ |unit| tests/unit/storybook/coverageDrift.test.ts (4 tests) 4ms
+ ✓ |unit| tests/unit/api/authorizedApiBase.test.ts (2 tests) 4ms
+ ✓ |unit| tests/unit/types/wafError.test.ts (12 tests) 4ms
+ ✓ |unit| tests/unit/routes/errorRoutes.test.ts (9 tests) 4ms
+ ✓ |unit| tests/unit/components/inputs/OrganisationNameLookup.test.ts (4 tests) 3ms
+ ✓ |unit| tests/unit/components/inputs/numberInputPhoneFormat.test.ts (9 tests) 3ms
+ ✓ |unit| tests/unit/config/sonarAnalysisConfig.test.ts (1 test) 2ms
+ ✓ |unit| tests/unit/test-simple2.test.ts (1 test) 2ms
+ ✓ |unit| tests/unit/components/forms/wizardRoutedStep/test-simple.test.ts (1 test) 4ms
+
+ Test Files  126 passed (126)
+      Tests  1488 passed (1488)
+   Start at  10:50:53
+   Duration  192.79s (transform 3.91s, setup 15.41s, import 36.68s, tests 53.21s, environment 71.61s)
+

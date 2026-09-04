@@ -9,11 +9,15 @@ function AutoSuggestOptions<T>(props: Readonly<AutoSuggestOptionsProps<T>>) {
         selectedOptionId,
     } = props;
 
+    // The ListBox is left unnamed unless a caller supplies `aria-label`: inside a
+    // `ComboBox`, React Aria labels the popup from the same `Label` as the
+    // input, and any name set here makes `useLabels` self-reference this
+    // element to preserve it - announcing both, one after the other.
     return (
         <ListBox
             id={id}
             className='suggestion-options'
-            aria-label={props.name}
+            aria-label={props['aria-label']}
         >
             {options?.map((opt, index) => (
                 <AutoSuggestOption

@@ -13,38 +13,27 @@ const meta = {
             initialEntries: ['/submitted-success/Q-2024-000456'],
         },
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof SubmittedSuccess>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Prepaid: Story = {
-    parameters: {
-        msw: {
-            handlers: [
-                http.get('/api/accept-quote/:id/payment-details', () => HttpResponse.json({
-                    acceptQuotePreInfo: {
-                        paymentTerms: 'Prepaid',
-                        quotationIdNum: 'Q-2024-000456',
-                    },
-                })),
-            ],
+const paymentDetailsHandler = (paymentTerms: 'Prepaid' | 'Invoice') =>
+    http.get('/api/accept-quote/:id/payment-details', () => HttpResponse.json({
+        acceptQuotePreInfo: {
+            paymentTerms,
+            quotationIdNum: 'Q-2024-000456',
         },
+    }));
+
+export const Prepaid: Story = {
+    beforeEach({ msw }) {
+        msw.use(paymentDetailsHandler('Prepaid'));
     },
 };
 
 export const Postpaid: Story = {
-    parameters: {
-        msw: {
-            handlers: [
-                http.get('/api/accept-quote/:id/payment-details', () => HttpResponse.json({
-                    acceptQuotePreInfo: {
-                        paymentTerms: 'Invoice',
-                        quotationIdNum: 'Q-2024-000456',
-                    },
-                })),
-            ],
-        },
+    beforeEach({ msw }) {
+        msw.use(paymentDetailsHandler('Invoice'));
     },
 };

@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import {
-    expireMockAuthentication,
+    disableMockAuthenticationReseed,
     installMockAuthentication,
 } from '../support/mock-authentication';
 import { installMockApi } from '../support/mock-api';
@@ -38,8 +38,12 @@ const waitForRfqStep = async (
         .toContainText(`${step}`);
 
     if (title) {
+        const heading = step === 3 && title === 'Summary'
+            ? 'Summary and submit'
+            : title;
         await expect(page.getByRole('heading', {
-            name: new RegExp(`Step ${step} of 3 ${title}`, 'i'),
+            name: heading,
+            exact: true,
         })).toBeVisible();
     }
 };
@@ -74,14 +78,13 @@ When('the page finishes loading', async ({ page }) => {
 When('the user clicks {string}', async ({ page }, accessibleName: string) => {
     if (accessibleName === 'Sign out') {
         await page.locator('#user-menu').click();
-        await expireMockAuthentication(page);
+        await disableMockAuthenticationReseed(page);
         await page.getByRole('link', { name: 'Log out', exact: true }).click();
         return;
     }
 
     if (accessibleName === 'Create new request') {
         await page.getByRole('link', { name: 'New request', exact: true }).click();
-        await page.getByRole('link', { name: /Testing and calibration.*Request new quote/i }).click();
         await waitForAppReady(page);
         return;
     }

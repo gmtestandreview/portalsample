@@ -1,0 +1,14 @@
+diff --git a/node_modules/@azure/msal-react/package.json b/node_modules/@azure/msal-react/package.json
+index 2eee438..fb5ad2c 100644
+--- a/node_modules/@azure/msal-react/package.json
++++ b/node_modules/@azure/msal-react/package.json
+@@ -25,7 +25,8 @@
+       "require": {
+         "types": "./lib/types/index.d.ts",
+         "default": "./lib/msal-react.cjs"
+-      }
++      },
++      "default": "./dist/index.js"
+     },
+     "./package.json": "./package.json"
+   },

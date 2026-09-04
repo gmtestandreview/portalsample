@@ -16,14 +16,19 @@ const root = createRoot(rootElement!);
 const pca = await PublicClientApplication.createPublicClientApplication(configuration);
 TrustedTypes.createTrustedTypePolicy();
 
+// StrictMode is outermost so its development-only checks cover the MSAL and
+// account providers, not just the router. ErrorBoundary sits inside it
+// deliberately: its only side effect (trackException) runs from componentDidCatch,
+// a commit-phase lifecycle, so StrictMode's double-render cannot double-report an
+// exception. StrictMode emits nothing in a production build.
 root.render(
-    <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
-        <MsalProvider instance={pca}>
-            <AccountProvider>
-                <StrictMode>
+    <StrictMode>
+        <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+            <MsalProvider instance={pca}>
+                <AccountProvider>
                     <RouterProvider router={App} />
-                </StrictMode>
-            </AccountProvider>
-        </MsalProvider>
-    </ErrorBoundary>,
+                </AccountProvider>
+            </MsalProvider>
+        </ErrorBoundary>
+    </StrictMode>,
 );

@@ -170,6 +170,7 @@ describe('date helpers', () => {
     it('returns undefined for invalid parsed dates', () => {
         expect(utils.parseDate('not-a-date')).toBeUndefined();
         expect(utils.parseDateUTC('not-a-date')).toBeUndefined();
+        expect(utils.parseDateUTC(0 as unknown as Date)).toBeUndefined();
     });
 
     it('parses UTC-format date-time values and normalizes time to local midnight', () => {
@@ -184,6 +185,20 @@ describe('date helpers', () => {
         expect(parsedDate?.getMilliseconds()).toBe(0);
     });
 
+    it('parses date-time values without normalizing the time portion', () => {
+        const parsedShortDate = utils.parseDateWithTime('10/05/2024');
+        const dateValue = new Date(2024, 4, 10, 15, 30, 45, 250);
+        const parsedDate = utils.parseDateWithTime(dateValue);
+
+        expect(parsedShortDate?.getFullYear()).toBe(2024);
+        expect(parsedShortDate?.getMonth()).toBe(4);
+        expect(parsedShortDate?.getDate()).toBe(10);
+        expect(parsedDate).toBe(dateValue);
+        expect(parsedDate?.getHours()).toBe(15);
+        expect(parsedDate?.getMinutes()).toBe(30);
+        expect(utils.parseDateWithTime('not-a-date')).toBeUndefined();
+    });
+
     it('validates non-empty dates only', () => {
         expect(utils.isDateValid(null)).toBe(false);
         expect(utils.isDateValid(undefined)).toBe(false);
@@ -196,6 +211,7 @@ describe('date helpers', () => {
     it('formats valid dates to local offset date-time strings or null for invalid input', () => {
         expect(utils.formatDateToUTC(null)).toBeNull();
         expect(utils.formatDateToUTC('not-a-date')).toBeNull();
+        expect(utils.formatDateToUTC(0 as unknown as Date)).toBeNull();
         expect(utils.formatDateToUTC('10/05/2024')).toMatch(/^2024-05-10T00:00:00[+-]\d{2}:\d{2}$/);
     });
 
@@ -216,11 +232,36 @@ describe('date helpers', () => {
     });
 
     it('formats dates to strings or null for null, undefined, and invalid values', () => {
+        const date = new Date(2024, 4, 10);
+
         expect(utils.formatDateToString(null)).toBeNull();
         expect(utils.formatDateToString(undefined)).toBeNull();
         expect(utils.formatDateToString('not-a-date')).toBeNull();
+        expect(utils.formatDateToString(0 as unknown as Date)).toBeNull();
         expect(utils.formatDateToString('10/05/2024')).toBe('10 May 2024');
         expect(utils.formatDateToString('10/05/2024', 'yyyy/MM/dd')).toBe('2024/05/10');
+        expect(utils.formatDateToString(date)).toBe('10 May 2024');
+    });
+
+    it('formats date-time values with time or returns null for invalid input', () => {
+        const date = new Date(2024, 4, 10, 15, 30);
+
+        expect(utils.formatDateTimeToString(null)).toBeNull();
+        expect(utils.formatDateTimeToString(undefined)).toBeNull();
+        expect(utils.formatDateTimeToString('not-a-date')).toBeNull();
+        expect(utils.formatDateTimeToString(0 as unknown as Date)).toBeNull();
+
+        // The parse format carries an offset token (`xxx`), so an offset-bearing string resolves to
+        // an absolute instant and is then rendered in the runner's local zone. Asserting a literal
+        // "3:30 PM" therefore only holds in Australian zones - it read 5:30 AM on the UTC CI runner.
+        // Asserting that the string and Date paths agree on the same instant pins the behaviour that
+        // actually matters (the offset is honoured, not discarded) in every zone.
+        const sameInstant = new Date(Date.UTC(2024, 4, 10, 5, 30));
+        expect(utils.formatDateTimeToString('2024-05-10T15:30:00+10:00'))
+            .toBe(utils.formatDateTimeToString(sameInstant));
+
+        // Local components in, local components out - no zone conversion, so this one is literal.
+        expect(utils.formatDateTimeToString(date, 'yyyy/MM/dd HH:mm')).toBe('2024/05/10 15:30');
     });
 });
 

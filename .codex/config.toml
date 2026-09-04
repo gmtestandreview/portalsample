@@ -1,0 +1,9 @@
+[mcp_servers.my-storybook-mcp-server]
+url = "http://localhost:6006/mcp"
+enabled = true
+
+[mcp_servers.react-aria]
+command = "npx"
+args = ["@react-aria/mcp@latest"]
+enabled = true
+startup_timeout_sec = 120

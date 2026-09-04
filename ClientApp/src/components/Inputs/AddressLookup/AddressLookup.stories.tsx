@@ -24,7 +24,6 @@ const meta = {
     title: 'Components/Inputs/AddressLookup',
     component: AddressLookup,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
 } satisfies Meta<typeof AddressLookup>;
 
 export default meta;
@@ -36,6 +35,9 @@ export const Default: Story = {
         label: 'Street address',
         maxResults: 5,
         placeholder: 'Start typing an address...',
+    },
+    beforeEach({ msw }) {
+        msw.use(addressSearchHandler);
     },
     parameters: {
         portal: {
@@ -50,9 +52,6 @@ export const Default: Story = {
                     },
                 },
             },
-        },
-        msw: {
-            handlers: [addressSearchHandler],
         },
     },
     render: () => (

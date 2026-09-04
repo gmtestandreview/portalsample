@@ -78,7 +78,7 @@ describe('AppInsightsService', () => {
         }));
         vi.doMock('@/env', () => ({
             env: {
-                REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
+                REACT_APP_APPINSIGHTS_CONN_STRING: undefined,
                 REACT_APP_ENVIRONMENT: 'development',
             },
         }));
@@ -86,8 +86,34 @@ describe('AppInsightsService', () => {
         await import('@/instrumentation/AppInsightsService');
 
         expect(warn).toHaveBeenCalledWith(
-            '[AppInsights] Telemetry is DISABLED: missing or dummy connection string.',
+            '[AppInsights] Telemetry is DISABLED: missing connection string.',
         );
+    });
+
+    it('stays silent when telemetry is deliberately disabled with the dummy sentinel', async () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+        vi.doMock('@microsoft/applicationinsights-web', () => ({
+            ApplicationInsights: vi.fn(),
+        }));
+        vi.doMock('@microsoft/applicationinsights-react-js', () => ({
+            ReactPlugin: vi.fn(function ReactPlugin() {}),
+        }));
+        // 'dummy-key' is how Storybook and local dev opt out on purpose. A
+        // warning per module instantiation is noise there - 48 lines across the
+        // Storybook suite - and it drowns out warnings that mean something.
+        vi.doMock('@/env', () => ({
+            env: {
+                REACT_APP_APPINSIGHTS_CONN_STRING: 'dummy-key',
+                REACT_APP_ENVIRONMENT: 'development',
+            },
+        }));
+
+        const module = await import('@/instrumentation/AppInsightsService');
+
+        expect(warn).not.toHaveBeenCalled();
+        expect(module.ai.appInsights).toBeNull();
+        expect(module.ai.reactPlugin).toBeNull();
     });
 
     it('does not warn about disabled telemetry outside the runtime development environment', async () => {

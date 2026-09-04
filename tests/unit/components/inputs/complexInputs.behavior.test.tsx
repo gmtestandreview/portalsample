@@ -1,5 +1,5 @@
 import {
-    act, fireEvent, render, screen, waitFor, within,
+    act, cleanup, fireEvent, render, screen, waitFor, within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -15,6 +15,7 @@ import NumberInput from '@/components/Inputs/NumberInput';
 import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
 import type * as WebApiClientModule from '@/api/web-api-client';
+import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
 
 type MockAccount = { homeAccountId: string } | null;
 
@@ -99,6 +100,13 @@ function ValuesProbe() {
 }
 
 describe('complex input behavior slice', () => {
+    installUnexpectedConsoleGuard();
+
+    // Registered after the guard so it runs first: Vitest runs `afterEach` in
+    // reverse order, and a guard failure would otherwise skip the global
+    // cleanup and leak the previous test's DOM into the next one.
+    afterEach(cleanup);
+
     beforeEach(() => {
         vi.clearAllMocks();
         mocks.account = { homeAccountId: 'account-1' };
@@ -309,6 +317,8 @@ describe('complex input behavior slice', () => {
     });
 
     it('handles missing match collections and non-service lookup errors', async () => {
+        const user = userEvent.setup();
+
         mocks.addressSearch
             .mockResolvedValueOnce({ matches: undefined })
             .mockRejectedValueOnce({ status: 500, message: 'Failure' });
@@ -325,7 +335,7 @@ describe('complex input behavior slice', () => {
         );
 
         const input = screen.getByRole('combobox', { name: 'Address' });
-        input.focus();
+        await user.click(input);
         fireEvent.change(input, { target: { value: 'first' } });
         expect(await screen.findByRole('option', { name: /No matches found/i })).toBeInTheDocument();
 
@@ -574,7 +584,7 @@ describe('complex input behavior slice', () => {
         );
 
         const combobox = screen.getByRole('combobox', { name: 'Suburb' });
-        combobox.focus();
+        await user.click(combobox);
 
         await user.keyboard('{ArrowDown}{ArrowDown}{ArrowDown}');
         expect(combobox).toHaveAttribute('aria-activedescendant', 'suburb-options-option-last');
@@ -613,7 +623,7 @@ describe('complex input behavior slice', () => {
         );
 
         const combobox = screen.getByRole('combobox', { name: 'Suburb' });
-        combobox.focus();
+        await user.click(combobox);
         await user.keyboard('{Enter}');
         expect(onCancel).not.toHaveBeenCalled();
 
@@ -700,9 +710,11 @@ describe('complex input behavior slice', () => {
     });
 
     it('renders AutoSuggestOption within its collection and exposes selected state', () => {
+        // Rendered outside a `ComboBox`, so it carries its own `aria-label`.
+        // Nested, the popup inherits the ComboBox's visible label instead.
         render(
             <AutoSuggestOptions
-                name='Options'
+                aria-label='Options'
                 options={[{
                     id: 'option-1',
                     displayText: 'Approved option',
@@ -819,6 +831,43 @@ describe('complex input behavior slice', () => {
         expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
     });
 
+    it('clears OrganisationNameLookup suggestions when the field is emptied', async () => {
+        // Emptying the box has to discard the list that was already showing. The component keeps
+        // the previous array when it is already empty so React can bail out of the render, so this
+        // exercises the other side of that: a populated list being replaced with an empty one.
+        const user = userEvent.setup();
+
+        render(
+            <FormikHarness
+                initialValues={{
+                    organisationName: '',
+                    orgNameOptions: [
+                        { name: 'Alpha Labs' },
+                        { name: 'Beta Labs' },
+                    ],
+                }}
+            >
+                <OrganisationNameLookup
+                    name='organisationName'
+                    label='Organisation name'
+                    optionsFieldName='name'
+                    matchType='endsWith'
+                />
+                <ValuesProbe />
+            </FormikHarness>,
+        );
+
+        const combobox = screen.getByRole('combobox', { name: 'Organisation name' });
+        await user.type(combobox, 'Labs');
+        await screen.findByRole('listbox', { name: 'Suggested options' });
+
+        await user.clear(combobox);
+
+        await waitFor(() => expect(
+            screen.queryByRole('listbox', { name: 'Suggested options' }),
+        ).not.toBeInTheDocument());
+    });
+
     it('accepts OrganisationNameLookup free text when Enter is pressed without an active option', async () => {
         const user = userEvent.setup();
         render(
@@ -886,6 +935,382 @@ describe('complex input behavior slice', () => {
 
         expect(screen.queryByRole('option', { name: /5\/6A\/91B/ })).not.toBeInTheDocument();
         expect(screen.getByRole('option', { name: /5\/6A\/92C/ })).toBeInTheDocument();
+    });
+
+    it('filters CertificateNumberLookup suggestions by parent field and closes on outside clicks', async () => {
+        vi.useFakeTimers();
+        render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    family: 'NMI',
+                    certNameOptions: [
+                        { id: 'cert-1', lookupName: 'NMI-123', family: 'NMI' },
+                        { id: 'cert-3', lookupName: 'NMI-122', family: 'NMI' },
+                        { id: 'cert-2', lookupName: 'Industry-123', family: 'Industry' },
+                    ],
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    optionsFieldName='lookupName'
+                    parentName='family'
+                    parentOptionsName='family'
+                    matchType='startsWith'
+                />
+            </FormikHarness>,
+        );
+
+        fireEvent.change(screen.getByRole('textbox', { name: 'Certificate number' }), {
+            target: { value: 'NMI' },
+        });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+
+        expect(screen.getByRole('option', { name: /NMI-123/ })).toBeInTheDocument();
+        expect(screen.getByRole('option', { name: /NMI-122/ })).toBeInTheDocument();
+        expect(screen.queryByRole('option', { name: /Industry-123/ })).not.toBeInTheDocument();
+
+        fireEvent.mouseDown(document.body);
+
+        expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
+    });
+
+    it('selects CertificateNumberLookup suggestions with keyboard navigation and falls back to typed input', async () => {
+        vi.useFakeTimers();
+        render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    certNameOptions: [
+                        { id: 'cert-a', lookupName: '5/6A/91B' },
+                        { id: 'cert-b', lookupName: '5/6A/92C' },
+                    ],
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    optionsFieldName='lookupName'
+                    matchType='includes'
+                />
+                <ValuesProbe />
+            </FormikHarness>,
+        );
+
+        const input = screen.getByRole('textbox', { name: 'Certificate number' });
+        fireEvent.change(input, { target: { value: '5/6A' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'Enter' });
+        });
+
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumber":"5/6A"');
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumberId":"5/6A"');
+
+        fireEvent.change(input, { target: { value: '92C' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'ArrowUp' });
+        });
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'Enter' });
+        });
+
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumber":"5/6A/92C"');
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumberId":"cert-b"');
+    });
+
+    it('walks CertificateNumberLookup suggestions back down and ignores unrelated keys', async () => {
+        vi.useFakeTimers();
+        render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    certNameOptions: [
+                        { id: 'cert-a', lookupName: '5/6A/91B' },
+                        { id: 'cert-b', lookupName: '5/6A/92C' },
+                    ],
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    optionsFieldName='lookupName'
+                    matchType='includes'
+                />
+                <ValuesProbe />
+            </FormikHarness>,
+        );
+
+        const input = screen.getByRole('textbox', { name: 'Certificate number' });
+        fireEvent.change(input, { target: { value: '5/6A' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+
+        // Down twice then up steps back through the list rather than wrapping to the end, which is
+        // the other half of the ArrowUp handler.
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+        });
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+        });
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'ArrowUp' });
+        });
+
+        // A key the handler does not act on leaves the highlight where it was.
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'a' });
+        });
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'Enter' });
+        });
+
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumberId":"cert-a"');
+    });
+
+    it('clears CertificateNumberLookup suggestions when the field is emptied', async () => {
+        vi.useFakeTimers();
+        render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    certNameOptions: [{ id: 'cert-a', lookupName: '5/6A/91B' }],
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    optionsFieldName='lookupName'
+                    matchType='includes'
+                />
+            </FormikHarness>,
+        );
+
+        const input = screen.getByRole('textbox', { name: 'Certificate number' });
+        fireEvent.change(input, { target: { value: '5/6A' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: '' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+
+        expect(screen.queryByText('5/6A/91B')).not.toBeInTheDocument();
+    });
+
+    it('describes CertificateNumberLookup by name when it has no id or inline help', async () => {
+        vi.useFakeTimers();
+        render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    optionsFieldName='lookupName'
+                    matchType='includes'
+                />
+            </FormikHarness>,
+        );
+
+        // No inline help means no help element to point at, and with no id the field falls back to
+        // its name for element ids. The options field is absent too, so the lookup list is empty.
+        const input = screen.getByRole('textbox', { name: 'Certificate number' });
+        expect(input).toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: '5/6A' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+
+        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    });
+
+    it('falls back to the field name for ids when CertificateNumberLookup has none', async () => {
+        vi.useFakeTimers();
+        const { container } = render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    certNameOptions: [{ id: 'cert-a', lookupName: '5/6A/91B' }],
+                }}
+                initialErrors={{ certificateNumber: 'Certificate number is required' }}
+                initialTouched={{ certificateNumber: true }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    inlineHelp='For example: 5/6A/91B'
+                    optionsFieldName='lookupName'
+                    matchType='includes'
+                />
+            </FormikHarness>,
+        );
+
+        // With no id prop, both the help text and the validation message are addressed by the
+        // field name instead.
+        const input = screen.getByRole('textbox', { name: 'Certificate number' });
+        expect(input).toHaveAttribute('aria-describedby', 'certificateNumber-validation-msg');
+
+        fireEvent.change(input, { target: { value: '5/6A' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
+
+        // A press inside the control must not dismiss the list the way an outside one does.
+        await act(async () => {
+            fireEvent.mouseDown(container.querySelector('.form-field-container') ?? input);
+        });
+        expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: '' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(screen.queryByText('5/6A/91B')).not.toBeInTheDocument();
+    });
+
+    it('renders CertificateNumberLookup summary values and defaults', () => {
+        const { rerender } = render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '5/6A/91B',
+                    certificateNumberId: 'cert-a',
+                    certNameOptions: [],
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    label='Certificate number'
+                    isSummary
+                />
+            </FormikHarness>,
+        );
+
+        expect(screen.getByText('Certificate number')).toBeInTheDocument();
+        expect(screen.getByText('5/6A/91B')).toBeInTheDocument();
+
+        rerender(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    certNameOptions: [],
+                }}
+            >
+                <CertificateNumberLookup
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    isSummary
+                />
+            </FormikHarness>,
+        );
+
+        expect(screen.getByText('-')).toBeInTheDocument();
+    });
+
+    it('handles CertificateNumberLookup defaults, validation, keyboard dismissal, and click selection', async () => {
+        vi.useFakeTimers();
+        render(
+            <FormikHarness
+                initialValues={{
+                    certificateNumber: '',
+                    certificateNumberId: '',
+                    family: undefined,
+                    certNameOptions: [
+                        { id: 'cert-a', lookupName: '5/6A/91B', family: 'NMI' },
+                        { id: 'cert-b', lookupName: '5/6A/92C', family: 'NMI' },
+                    ],
+                }}
+                initialTouched={{ certificateNumber: true }}
+                initialErrors={{ certificateNumber: 'Choose a certificate number' }}
+            >
+                <CertificateNumberLookup
+                    id='certificate-number-field'
+                    name='certificateNumber'
+                    idName='certificateNumberId'
+                    optionsFieldName='lookupName'
+                    parentName='family'
+                    parentOptionsName='family'
+                    inlineHelp='Start typing a certificate number'
+                />
+                <ValuesProbe />
+            </FormikHarness>,
+        );
+
+        const input = screen.getByRole('textbox', { name: 'Certificate number' });
+        expect(screen.getAllByText('Choose a certificate number')[0]).toBeInTheDocument();
+
+        fireEvent.keyDown(input, { key: 'ArrowDown' });
+        expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: '5' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: '91B' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(screen.getByRole('option', { name: /5\/6A\/91B/ })).toBeInTheDocument();
+        expect(screen.getByText(/1 suggestions displayed/)).toBeInTheDocument();
+
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'ArrowDown' });
+        });
+        expect(screen.getByRole('option', { name: /5\/6A\/91B/ })).toHaveAttribute('aria-selected', 'true');
+
+        await act(async () => {
+            fireEvent.keyDown(input, { key: 'Escape' });
+        });
+        expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
+
+        fireEvent.change(input, { target: { value: '92C' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        fireEvent.click(screen.getByRole('option', { name: /5\/6A\/92C/ }));
+
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumber":"5/6A/92C"');
+        expect(screen.getByTestId('values')).toHaveTextContent('"certificateNumberId":"cert-b"');
+
+        fireEvent.change(input, { target: { value: '' } });
+        await act(async () => {
+            vi.advanceTimersByTime(300);
+        });
+        expect(screen.queryByRole('listbox', { name: 'Suggested options' })).not.toBeInTheDocument();
     });
 
     it('clears OrganisationNameLookup suggestions for blank and short input', async () => {

@@ -11,7 +11,10 @@ portal.measurement.gov.au/           ← workspace root
 ├── package-lock.json                 ← npm lockfile
 ├── webpack.config.js                 ← Webpack 5 config for build/dev server
 ├── tsconfig.json                     ← TypeScript config
-├── vitest.config.ts                  ← Vitest unit test config
+├── vitest.config.ts                  ← Vitest workspace root (composes unit + storybook projects)
+├── vitest.unit.config.ts             ← unit project: jsdom, 100% thresholds, coverage reporters
+├── vitest.storybook.config.ts        ← story play functions in real Chromium (Browser Mode)
+├── playwright.storybook.config.ts    ← storybook-bdd project
 ├── vitest.setup.ts                   ← Shared test setup (`jest-dom`, globals, mocks)
 ├── playwright.config.ts              ← Playwright E2E + BDD config
 ├── index.html                        ← HTML template (webpack HtmlWebpackPlugin)
@@ -34,7 +37,9 @@ portal.measurement.gov.au/           ← workspace root
 │   ├── playwright/                   ← Playwright HTML report
 │   ├── test-results/                 ← Playwright per-test artifacts
 │   └── vitest/
-│       └── junit.xml                 ← CI JUnit report (`npm run test:ci`)
+│       ├── unit-junit.xml            ← CI JUnit report (`npm run test:ci:unit`)
+│       ├── storybook-junit.xml       ← CI JUnit report (`npm run test:ci:storybook`)
+│       └── quality-junit.xml         ← CI JUnit report (`npm run test:ci:quality`)
 │
 ├── quality/                          ← QA workspace (regression configs, audits, docs)
 ├── .features-gen/                    ← Generated Playwright specs from `npx bddgen`
@@ -221,7 +226,7 @@ portal.measurement.gov.au/           ← workspace root
 
 | Entry point | Purpose |
 |-------------|---------|
-| `ClientApp/src/index.tsx` | App bootstrap — async MSAL init, TrustedTypes policy, React `createRoot` render |
+| `ClientApp/src/index.tsx` | App bootstrap — top-level `await` MSAL init (line 16), TrustedTypes policy, then `createRoot` render. Provider order is `StrictMode` → `ErrorBoundary` → `MsalProvider` → `AccountProvider` → `RouterProvider`; `StrictMode` is outermost. |
 | `ClientApp/src/App.tsx` | Router — `createBrowserRouter` + `createRoutesFromElements` |
 | `ClientApp/src/styles/index.scss` | SCSS entry point for the NMI Bootstrap theme |
 
@@ -240,7 +245,7 @@ portal.measurement.gov.au/           ← workspace root
 | Status | Paths |
 |--------|-------|
 | **Edit freely** | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, `ClientApp/src/styles/**/*.scss` |
-| **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `webpack.config.js`, `package.json` |
+| **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`, `quality/vitest.regression.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `playwright.storybook.config.ts`, `webpack.config.js`, `package.json`, `sonar-project.properties`, `.github/workflows/**` |
 | **Never edit** | `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/webpack/**`, `ClientApp/src/parent/node_modules/**`, `reports/**`, `node_modules/**` |
 
 ## 5) Evidence

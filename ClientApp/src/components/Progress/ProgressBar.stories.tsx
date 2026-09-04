@@ -17,7 +17,6 @@ const meta = {
         percent: 42,
         status: 'Uploading',
     },
-    tags: ['autodocs'],
 } satisfies Meta<typeof ProgressBar>;
 
 export default meta;
@@ -26,8 +25,12 @@ type Story = StoryObj<typeof meta>;
 export const InProgress: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
-        const bar = canvas.getByRole('progressbar');
+        // A progressbar has to carry its own name and value: the visible caption and
+        // percentage sit inside the role, so a screen reader announces "progress bar" and
+        // nothing else without them.
+        const bar = canvas.getByRole('progressbar', { name: 'Uploading' });
         await expect(bar).toBeVisible();
+        await expect(bar).toHaveAttribute('aria-valuenow', '42');
         await expect(canvas.getByText('Uploading')).toBeVisible();
         await expect(canvas.getByText(/42%/)).toBeVisible();
     },

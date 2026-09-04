@@ -167,10 +167,9 @@ export const applicationAndInstrumentSubmitValidation = yup.object<Validation<Ap
                     const hasReview = value.includes(REVIEW);
                     const hasProvisional = value.includes(PROVISIONAL);
                     const hasCertCancel = value.includes(CERTCANCEL);
-                    // If CertCancel is selected, neither Review nor Provisional can be selected
+                    // If CertCancel is selected, neither Review nor Provisional can be selected.
+                    // The reverse phrasing is the same condition, so it needs no second check.
                     if (hasCertCancel && (hasReview || hasProvisional)) return false;
-                    // If both Review and Provisional are selected, CertCancel cannot be selected
-                    if ((hasReview || hasProvisional) && hasCertCancel) return false;
                     return true;
                 },
             ),

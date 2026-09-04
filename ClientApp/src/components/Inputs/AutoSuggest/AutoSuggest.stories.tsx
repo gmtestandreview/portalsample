@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, screen, userEvent, within } from 'storybook/test';
 import AutoSuggest from './index';
 import AutoSuggestContainer from './AutoSuggestContainer';
 import type { AutoSuggestOption } from './types';
@@ -18,7 +18,6 @@ const meta = {
     title: 'Components/Inputs/AutoSuggest',
     component: AutoSuggest,
     decorators: [withPortalProviders],
-    tags: ['autodocs'],
 } satisfies Meta<typeof AutoSuggest>;
 
 export default meta;
@@ -55,6 +54,18 @@ export const WithSuggestions: Story = {
         await user.type(input, 'syd');
         const combobox = canvas.getByRole('combobox');
         await expect(combobox).toBeVisible();
+        // Typing kicks off the async getOptions; asserting only that the combobox is still
+        // visible passes before the results arrive, so React Aria opened its popover and
+        // committed the option list after the story had ended. Queried through `screen`
+        // rather than `canvas` because the popover renders in a portal, outside the canvas.
+        // The accessible name carries the positional announcement AutoSuggestOptions builds,
+        // "<displayText> (<n> of <total>)", not the bare display text.
+        await expect(await screen.findByRole('option', { name: 'Sydney Olympic Park NSW (2 of 3)' })).toBeVisible();
+        // Escape closes the suggestion list. Asserting it also leaves the combobox settled
+        // before Storybook unmounts the story: left open, React Aria committed a
+        // ComboBoxInner update during the next story in the file.
+        await user.keyboard('{Escape}');
+        await expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
     },
 };
 

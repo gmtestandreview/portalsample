@@ -1,6 +1,5 @@
-import { Meta, Title, Subtitle, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
 import * as AccordionStories from './Accordion.stories';
-import DocsTable from '../../storybook/DocsTable';
 
 <Meta of={AccordionStories} />
 
@@ -22,11 +21,11 @@ The Accordion system provides expandable/collapsible sections for organizing com
 
 ### Key Features
 
-- **Keyboard Navigation** — Arrow keys, Tab, and Enter support
-- **ARIA Semantics** — Proper roles and attributes for screen readers
+- **Keyboard Navigation** — Native Bootstrap accordion button interaction
+- **ARIA Semantics** — Button expansion state and panel relationships from React Bootstrap
 - **Multi-line Headers** — Support for complex header layouts
 - **Bootstrap Integration** — NMI design system styling
-- **Controlled & Uncontrolled** — Flexible expand/collapse management
+- **Default first section** — The wrapper opens the first item by default
 
 <Primary />
 
@@ -37,6 +36,10 @@ The Accordion system provides expandable/collapsible sections for organizing com
 ## Props
 
 <Controls />
+
+## Static API Reference
+
+<ArgTypes of={AccordionStories} />
 
 ## Implementation Guide
 
@@ -86,49 +89,10 @@ export function MultiLineAccordion() {
 }
 ```
 
-### Initially Expanded
-
-```tsx
-import { CustomAccordion, CustomAccordionBody } from '@/components/Accordion';
-
-export function ExpandedAccordion() {
-  return (
-    <CustomAccordion activeKey="0" defaultActiveKey="0">
-      <CustomAccordionBody 
-        eventKey="0"
-        name="Initially Open"
-      >
-        This section starts open
-      </CustomAccordionBody>
-    </CustomAccordion>
-  );
-}
-```
-
-## CustomAccordion Props
-
-<DocsTable
-  headers={['Prop', 'Type', 'Default', 'Description']}
-  rows={[
-    ['children', 'React.ReactNode', 'required', 'Accordion body items'],
-    ['activeKey', 'string | number', '-', 'Currently expanded key (controlled)'],
-    ['defaultActiveKey', 'string | number', '-', 'Initially expanded key (uncontrolled)'],
-    ['onSelect', '(key) => void', '-', 'Callback when section toggles'],
-  ]}
-/>
-
-## CustomAccordionBody Props
-
-<DocsTable
-  headers={['Prop', 'Type', 'Default', 'Description']}
-  rows={[
-    ['eventKey', 'string | number', 'required', 'Unique identifier for section'],
-    ['name', 'string', 'required', 'Primary header text'],
-    ['namePartTwo', 'string', '-', 'Secondary header line'],
-    ['namePartThree', 'string', '-', 'Tertiary header line'],
-    ['children', 'React.ReactNode', 'required', 'Expandable content'],
-  ]}
-/>
+The generated Controls and ArgTypes above are the source of truth for
+`CustomAccordion` props. `CustomAccordionBody` is demonstrated through the
+stories on this page; keep its prop names and descriptions in TypeScript and
+JSDoc rather than duplicating a hand-maintained MDX API table.
 
 ## Multi-Line Header Structure
 
@@ -156,7 +120,6 @@ CSS classes for styling:
 
 - `Tab` — Navigate between accordion headers
 - `Enter` / `Space` — Toggle section expand/collapse
-- `Arrow Up` / `Arrow Down` — Navigate between sections
 
 ### Screen Reader Support
 
@@ -170,24 +133,6 @@ CSS classes for styling:
 - Visible focus indicators on all interactive elements
 - Logical tab order through accordion items
 - Focus remains on clicked header after toggle
-
-## Controlled vs. Uncontrolled
-
-### Uncontrolled (Local State)
-```tsx
-<CustomAccordion defaultActiveKey="0">
-  {/* State managed internally */}
-</CustomAccordion>
-```
-
-### Controlled (External State)
-```tsx
-const [expanded, setExpanded] = useState('0');
-
-<CustomAccordion activeKey={expanded} onSelect={setExpanded}>
-  {/* State managed by parent */}
-</CustomAccordion>
-```
 
 ## Common Patterns
 
@@ -208,7 +153,7 @@ const [expanded, setExpanded] = useState('0');
 
 ### Multi-Step Wizard
 ```tsx
-<CustomAccordion activeKey={currentStep} onSelect={setCurrentStep}>
+<CustomAccordion id="request-steps">
   <CustomAccordionBody eventKey="0" name="Step 1: Personal Details">
     {/* Step 1 form fields */}
   </CustomAccordionBody>
@@ -249,6 +194,6 @@ Built on [React Bootstrap Accordion](https://react-bootstrap.github.io/component
 
 ## Related Documentation
 
-- [Forms & Validation](/docs/components-forms--docs) — Using accordions in forms
-- [Accessibility Guidelines](/docs/documentation-getting-started--page) — WCAG 2.1 AA compliance
-- [Design Tokens](/docs/documentation-getting-started--page) — Colors and spacing
+- [Forms & Validation](/docs/migration-validation--documentation) — Validation schema and form contracts
+- [Accessibility Guidelines](/docs/documentation-style-guide--documentation) — Accessibility and interaction standards
+- [Design Tokens](/docs/documentation-style-guide--documentation) — Colors and spacing

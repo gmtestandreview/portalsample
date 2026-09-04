@@ -140,9 +140,9 @@ const ApplicationMessages = () => {
                         setRefreshTick((prev) => prev + 1); // force refetch if already on page 1
                     }}
                 >
-                    <option value='1'>All Messages</option>
-                    <option value='2'>NMI Messages</option>
-                    <option value='3'>Portal Messages</option>
+                    <option value={FilterMessages.ShowAllMessages}>All Messages</option>
+                    <option value={FilterMessages.ShowNmiMessages}>NMI Messages</option>
+                    <option value={FilterMessages.ShowPortalMessages}>Portal Messages</option>
                 </Form.Select>
             </Col>
             <Col className='text-end'>
@@ -154,13 +154,13 @@ const ApplicationMessages = () => {
         </>
     );
 
-    const renderNMIAvator = (avatar: string | undefined) => (
+    const renderNMIAvator = (avatar: string) => (
         <div
             className='d-flex align-items-center justify-content-center rounded-circle bg-nmi-navbar mb-3 mb-sm-0 me-3'
             style={{ width: 36, height: 36 }}
         >
             <span className='fs-6 capitalized text-white'>
-                {avatar || 'NMI'}
+                {avatar}
             </span>
         </div>
     );

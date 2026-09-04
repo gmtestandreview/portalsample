@@ -1,0 +1,171 @@
+
+> nmi-portal@0.1.0 test:storybook
+> node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.storybook.config.ts ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx --reporter=default
+
+
+ RUN  v4.1.11 C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au
+
+11:00:39 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22m[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
+11:00:39 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22m[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
+stderr | unknown test
+[env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
+stderr | unknown test
+[env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
+11:00:40 am [vite] [33m[2m(client)[22m[39m [2m[console.warn] [22m[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup/services
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+stderr | ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx > Default
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET /api/lookup/services
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+11:00:40 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: An update to ServicesWeOffer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ServicesWeOffer (http://localhost:63315/ClientApp/src/routes/services-we-offer/index.tsx:18:33)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8281:9)
+    at RenderedRoute (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4139:26)
+    at RenderErrorBoundary (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4073:3)
+    at DataRoutes2 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4706:24)
+    at Router (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4771:29)
+    at RouterProvider (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4516:27)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8788:243)
+11:00:40 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: An update to ServicesWeOffer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ServicesWeOffer (http://localhost:63315/ClientApp/src/routes/services-we-offer/index.tsx:18:33)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8281:9)
+    at RenderedRoute (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4139:26)
+    at RenderErrorBoundary (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4073:3)
+    at DataRoutes2 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4706:24)
+    at Router (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4771:29)
+    at RouterProvider (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4516:27)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8788:243)
+11:00:40 am [vite] [31m[2m(client)[22m[39m [2m[console.error] [22mWarning: An update to $42ceafc619f9c3ba$export$bf788dd355e3a401 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/Collection-B9ePPz5R.js?v=2d3cdc2a:703:34)
+    at Breadcrumbs (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/Breadcrumbs-C0DnT5iV.js?v=2d3cdc2a:198:17)
+    at nav
+    at CustomBreadcrumb (http://localhost:63315/ClientApp/src/components/Breadcrumb/index.tsx:6:29)
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap_Col.js?v=2d3cdc2a:39:83
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap_Row.js?v=2d3cdc2a:10:52
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap.js?v=2d3cdc2a:900:58
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap.js?v=2d3cdc2a:900:58
+    at div
+    at ServicesWeOffer (http://localhost:63315/ClientApp/src/routes/services-we-offer/index.tsx:18:33)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8281:9)
+    at RenderedRoute (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4139:26)
+    at RenderErrorBoundary (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4073:3)
+    at DataRoutes2 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4706:24)
+    at Router (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4771:29)
+    at RouterProvider (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4516:27)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8788:243)
+stderr | ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx > Default
+Warning: An update to ServicesWeOffer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ServicesWeOffer (http://localhost:63315/ClientApp/src/routes/services-we-offer/index.tsx:18:33)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8281:9)
+    at RenderedRoute (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4139:26)
+    at RenderErrorBoundary (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4073:3)
+    at DataRoutes2 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4706:24)
+    at Router (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4771:29)
+    at RouterProvider (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4516:27)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8788:243)
+stderr | ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx > Default
+Warning: An update to ServicesWeOffer inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at ServicesWeOffer (http://localhost:63315/ClientApp/src/routes/services-we-offer/index.tsx:18:33)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8281:9)
+    at RenderedRoute (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4139:26)
+    at RenderErrorBoundary (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4073:3)
+    at DataRoutes2 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4706:24)
+    at Router (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4771:29)
+    at RouterProvider (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4516:27)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8788:243)
+stderr | ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx > Default
+Warning: An update to $42ceafc619f9c3ba$export$bf788dd355e3a401 inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://reactjs.org/link/wrap-tests-with-act
+    at $42ceafc619f9c3ba$export$bf788dd355e3a401 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/Collection-B9ePPz5R.js?v=2d3cdc2a:703:34)
+    at Breadcrumbs (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/Breadcrumbs-C0DnT5iV.js?v=2d3cdc2a:198:17)
+    at nav
+    at CustomBreadcrumb (http://localhost:63315/ClientApp/src/components/Breadcrumb/index.tsx:6:29)
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap_Col.js?v=2d3cdc2a:39:83
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap_Row.js?v=2d3cdc2a:10:52
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap.js?v=2d3cdc2a:900:58
+    at div
+    at http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-bootstrap.js?v=2d3cdc2a:900:58
+    at div
+    at ServicesWeOffer (http://localhost:63315/ClientApp/src/routes/services-we-offer/index.tsx:18:33)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8281:9)
+    at RenderedRoute (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4139:26)
+    at RenderErrorBoundary (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4073:3)
+    at DataRoutes2 (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4706:24)
+    at Router (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4771:29)
+    at RouterProvider (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/react-router.js?v=2d3cdc2a:4516:27)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206bd7a58edd27e2b4d3689eedc26f6a98c46b1c5d1ba852a9c5dce8b8/sb-vitest/deps/csf-B8OjfbGV.js?v=2d3cdc2a:8788:243)
+ ✓ |storybook (chromium)| ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx (1 test) 381ms
+   ✓ Default  379ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  11:00:35
+   Duration  5.25s (transform 0ms, setup 2.80s, import 337ms, tests 381ms, environment 0ms)
+

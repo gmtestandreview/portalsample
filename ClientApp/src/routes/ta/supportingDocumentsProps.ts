@@ -32,7 +32,7 @@ const loadSummary = (id: string, accounts: AccountInfo[], instance: IPublicClien
             return wizardStepValues;
         } catch (error) {
             AppLogger.error('Failed to load PA supporting documents', error as Error, { Id: id });
-            throw Error(`Failed to load PA supporting documents. Id: ${id}`);
+            throw new Error(`Failed to load PA supporting documents. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to load PA supporting documents', { Id: id, Accounts: accounts });
@@ -82,7 +82,7 @@ const saveStep = (
             );
         } catch (error) {
             AppLogger.error('Failed to save PA supporting documents', error as Error, { Id: id });
-            throw Error(`Failed to save PA supporting documents. Id: ${id}`);
+            throw new Error(`Failed to save PA supporting documents. Id: ${id}`, { cause: error });
         }
     } else {
         AppLogger.verbose('There are no accounts available to save PA supporting documents', { Id: id, Accounts: accounts });

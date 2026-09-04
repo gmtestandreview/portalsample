@@ -16,10 +16,44 @@ ClientApp/src/main.*.js.map
 *.tsbuildinfo
 
 # Test output (all artifacts consolidated under reports/)
-reports/
+# Contents form, not `reports/`: git does not descend into an excluded
+# directory, so a negation below it is inert unless the directory itself stays
+# traversable. Same correction already applied to `quality/`.
+reports/*
 coverage/
-quality/
 tmp/
+
+# The Task C1 warning census is hand-authored analysis, and the three logs are
+# the runs every count in it is derived from. C2-C7 consume the census, so it
+# must survive a clone rather than living only in one working tree.
+!reports/stabilisation/
+reports/stabilisation/*
+!reports/stabilisation/warnings.md
+!reports/stabilisation/storybook-mcp.md
+!reports/stabilisation/warning-settlement.md
+!reports/stabilisation/lockfile-integrity.md
+# The Task C3 settlement evidence directory. Git will not descend into an
+# excluded directory, so the directory itself must be re-included before any
+# negation inside it can take effect.
+!reports/stabilisation/c3-settlement/
+# The three C1 evidence logs are re-included below the `*.log` rule instead of
+# here: the last matching pattern wins, so a negation above `*.log` is undone.
+
+# `coverage/` matches by basename at any depth, so it also swallowed
+# tests/unit/coverage/ — test SOURCE, not output. Re-include that directory.
+!tests/unit/coverage/
+!tests/unit/coverage/**
+
+# quality/ is mostly local analysis output (BUGS.md, code_reviews/, generated
+# grids and reports) and stays ignored — but two files in it are CI-critical
+# SOURCE: `npm run test:ci:quality` loads the config, which includes the only
+# test file it runs. While the whole directory was ignored, a fresh clone could
+# not run that script at all, so the vitest-quality required status could never
+# pass in CI. Ignore the contents rather than the directory, because git will not
+# descend into an excluded directory and a negation inside one has no effect.
+quality/*
+!quality/vitest.regression.config.ts
+!quality/test_regression.ts
 .features-gen/
 .playwright-mcp/
 .testagent/
@@ -31,6 +65,47 @@ Thumbs.db
 # Logs
 npm-debug.log*
 *.log
+
+# Task C1 evidence: the three runs every count in
+# reports/stabilisation/warnings.md is derived from. Must sit below `*.log`,
+# because the last matching pattern wins.
+!reports/stabilisation/c1-unit-census.log
+!reports/stabilisation/c1-storybook-census.log
+!reports/stabilisation/c1-modal-repetitions.log
+
+# Task C3 evidence: the two post-C2 re-measurements every count in
+# reports/stabilisation/warning-settlement.md is derived from, and the
+# per-owner three-mode settlement runs. Same placement rule as the C1 logs.
+!reports/stabilisation/c3-unit-remeasure.log
+!reports/stabilisation/c3-storybook-remeasure.log
+!reports/stabilisation/c3-settlement/*.log
+!reports/stabilisation/c3-storybook-verify.log
 full-test-output.txt
 test-output.txt
 test_output.txt
+
+# Claude Code configuration for this project stays per-developer. Both files
+# hold permission grants - settings.json is a Bash/tool allowlist and
+# settings.local.json adds machine-specific absolute paths - and a standing
+# pre-approval that is right for one developer's workflow is not automatically
+# right for everyone who clones. Neither is tracked; agree changes in review
+# rather than inheriting them silently.
+.claude/settings.json
+.claude/settings.local.json
+
+# SonarScanner working directory. Regenerated on every `sonar-scanner` run and
+# ~4 MB per analysis (protobuf UDG graphs, report staging). Build artifact, not
+# source. `sonar-project.properties` IS tracked - it is the project binding.
+.scannerwork/
+
+# A Team runtime output. `.agent-sync/logs/` is written by the SessionStart
+# watcher and the Stop metrics/export hooks; `__pycache__/` is bytecode for the
+# plugin's Python scripts. Both are per-machine and regenerate on every session.
+# The orchestrator's actual state - TEAM.md, ROUTING.md, DAILY.md and the
+# pruned/ restore copies - IS tracked and must stay so.
+#
+# The pattern is unanchored rather than `scripts/__pycache__/`: the CI syntax
+# gate runs `compileall` over scripts/, templates/ AND tests/hooks/, so bytecode
+# now appears in three places, and a fourth would otherwise go unignored.
+.agent-sync/logs/
+__pycache__/

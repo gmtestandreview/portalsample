@@ -16,7 +16,9 @@ root.render(<MsalProvider instance={pca}>...</MsalProvider>);
 
 ### Per-request token acquisition
 
-Every API call that needs authentication:
+Every API call that needs authentication repeats this block inline — **81 call sites across 52
+files**, with 92 `setAuthToken` calls:
+
 ```ts
 const tokenResult = await instance.acquireTokenSilent({
     ...tokenRequest,    // scopes from authConfig.ts
@@ -24,6 +26,16 @@ const tokenResult = await instance.acquireTokenSilent({
 });
 client.setAuthToken(tokenResult.accessToken);
 ```
+
+> **No interaction-required fallback exists.** `InteractionRequiredAuthError`,
+> `acquireTokenRedirect` and `acquireTokenPopup` appear **zero** times in first-party source. When a
+> silent acquisition fails — expired session, revoked consent, changed B2C policy — the rejection
+> falls into each call site's generic `catch` and is surfaced as a load failure, so **an expired
+> session is presented to the user as a server error** with no re-authentication path short of a
+> manual reload.
+>
+> `docs/adr/2026-05-30-acquire-token-silent-interceptor.md` defers centralisation and describes this
+> handling as "inconsistent"; it is absent. That ADR also undercounts the call sites as "35+".
 
 ### Auth guard
 
@@ -51,6 +63,12 @@ client.setAuthToken(tokenResult.accessToken);
 | `REACT_APP_B2C_READ_SCOPE` | API read scope |
 | `REACT_APP_B2C_USER_IMPERSONATION_SCOPE` | API user impersonation scope |
 | `REACT_APP_B2C_REDIRECT_URL` | Post-login redirect URI |
+| `EXTERNAL_REDIRECT_URL` | External portal URL — **host-validated** |
+
+`EXTERNAL_REDIRECT_URL` is checked against an allow-list (`measurement.gov.au` and its subdomains,
+or `localhost`) in `ClientApp/src/env.ts` and **throws at module load** if it fails. This is an
+open-redirect guard, not a convenience check; do not widen the list casually. The target platform
+reproduces it at `src/config/redirectAllowlist.ts`.
 
 ---
 
@@ -86,7 +104,15 @@ const result = await client.getDashboardDraftsByPortalID(crmGuid, year, status, 
 
 **Library**: `@microsoft/applicationinsights-web` + `@microsoft/applicationinsights-react-js`  
 **Singleton**: `ClientApp/src/instrumentation/AppInsightsService.ts` — initialised once at module evaluation  
-**Config**: connection string from `env.REACT_APP_APPINSIGHTS_CONN_STRING`; falls back to `'dummy-key'` if missing
+**Config**: connection string from `env.REACT_APP_APPINSIGHTS_CONN_STRING`
+
+> **Corrected 2026-09-01.** The previous revision said the service "falls back to `'dummy-key'` if
+> missing". That is inverted. `'dummy-key'` is now a **disabled sentinel**, not a fallback: when the
+> connection string is absent *or* equals `'dummy-key'`, telemetry is switched off and the factory
+> returns `{ reactPlugin: null, appInsights: null }` (`AppInsightsService.ts:34-46`). Nothing is sent
+> to a placeholder instrumentation key. This behaviour is pinned by quality regression `BUG-003`.
+>
+> Consumers must therefore tolerate a null plugin — `ErrorBoundary` does so via optional chaining.
 
 ### Capabilities in use
 
@@ -95,7 +121,7 @@ const result = await client.getDashboardDraftsByPortalID(crmGuid, year, status, 
 | React component error tracking | `ReactPlugin` passed to every `<ErrorBoundary appInsights={ai.reactPlugin}>` |
 | Automatic route tracking | `enableAutoRouteTracking: true` in App Insights config |
 | Structured logging | `AppLogger.verbose/info/error` wraps `ai.appInsights.trackTrace`/`trackException` |
-| Exception reporting | `ErrorBoundary.componentDidCatch` calls `appInsights.trackException(...)` |
+| Exception reporting | `ErrorBoundary` is a **functional** component wrapping `react-error-boundary`; it reports from the `onError` prop via `appInsights?.getAppInsights().trackException(...)`. There is no `componentDidCatch` — the class implementation was removed in Phase 4.1. |
 
 ### Required env vars
 
@@ -129,17 +155,36 @@ trackGAEvent(DashboardTab.Drafts);  // track tab changes
 ## 5) Content Security Policy — Trusted Types + DOMPurify
 
 **File**: `ClientApp/src/trustedtypes.ts`  
-**Library**: `dompurify` (source at `ClientApp/src/parent/node_modules/dompurify/`)
+**Library**: `dompurify` 3.4.14, a direct dependency in `package.json`
 
-A `default` TrustedTypes policy is created before React renders, sanitizing script URLs:
+> The copy under `ClientApp/src/parent/node_modules/dompurify/` is a vendored mirror inside a
+> never-edit tree. It is excluded from the build, from coverage, and from Sonar analysis. Do not
+> treat it as the source of the dependency.
+
+A `default` Trusted Types policy is installed before React renders. **All three callbacks are
+implemented** — the previous revision of this document claimed `createHTML` and `createScript` were
+commented-out TODOs, which is no longer true:
 
 ```ts
-window.trustedTypes?.createPolicy('default', {
-    createScriptURL: (toEscape) => DOMPurify.sanitize(toEscape),
-});
+const { trustedTypes } = globalThis as typeof globalThis & { trustedTypes?: TrustedTypePolicyFactory };
+if (trustedTypes) { // feature test
+    trustedTypes.createPolicy('default', {
+        createScriptURL: (toEscape) => DOMPurify.sanitize(toEscape),
+        createHTML: (toEscape) => DOMPurify.sanitize(toEscape),
+        createScript: (): string => { throw new Error('Inline script creation is not allowed by the NMI TrustedTypes policy.'); },
+    });
+}
 ```
 
-**Known gap**: `createHTML` and `createScript` callbacks are commented out with TODO notes — HTML injection vectors beyond script URLs are not currently mitigated by TrustedTypes (see CONCERNS.md).
+`createScript` correctly refuses all inline script creation, and `createHTML` is an appropriate use
+of DOMPurify.
+
+**Open defect — `createScriptURL` does not validate URLs.** DOMPurify is an *HTML* sanitiser. Given a
+bare URL string containing no markup it returns that string essentially unchanged, so this callback
+**admits any script URL while appearing to enforce a restriction**. It can also corrupt legitimate
+URLs by HTML-encoding `&` in query strings. A URL allow-list check is what belongs here.
+
+Preserve the *intent* of this policy during migration, not this implementation.
 
 ---
 
@@ -147,6 +192,19 @@ window.trustedTypes?.createPolicy('default', {
 
 **Component**: `ClientApp/src/components/Inputs/AddressLookup/`  
 **Usage**: Used in account/contact creation forms for Australian address autocomplete  
-**Constants**: `ClientApp/src/components/Inputs/AddressLookup/constants.ts`
+**Constants**: `ClientApp/src/components/Inputs/AddressLookup/constants.ts` — Australian state/territory options only
 
-The specifics of the address API (endpoint, key) are injected via env vars or hardcoded service endpoints — consult the component source and the full repo's env config for details.
+> **Corrected 2026-09-01.** This is **not a third-party integration** and needs no endpoint or API
+> key of its own. The previous revision said the endpoint and key "are injected via env vars or
+> hardcoded service endpoints"; there are none. Lookup goes to the same NMI backend as every other
+> call, through the generated `AddressClient`, with the same bearer token:
+>
+> ```ts
+> const result = await instance.acquireTokenSilent({ ...tokenRequest, account });
+> const addressClient = new AddressClient('');
+> addressClient.setAuthToken(result.accessToken);
+> const addresses = await addressClient.search(term, controller.signal);
+> ```
+>
+> The empty `baseUrl` means same-origin `/api/address/search`. Requests are abortable via
+> `AbortController`.
