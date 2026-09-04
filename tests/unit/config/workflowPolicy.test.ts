@@ -55,6 +55,33 @@ const jobBlock = (contents: string, jobId: string): string => {
   return next === -1 ? rest : rest.slice(0, next + 1);
 };
 
+/** Extract top-level workflow steps without treating nested run-script lines as steps. */
+const stepBlocks = (contents: string): string[] => {
+  const lines = contents.split("\n");
+  const stepIndent = lines
+    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1].length)
+    .find((indent) => indent !== undefined);
+
+  if (stepIndent === undefined) return [];
+
+  const starts = lines.flatMap((line, index) =>
+    new RegExp(`^\\s{${stepIndent}}-\\s+`).test(line) ? [index] : [],
+  );
+
+  return starts.map((start, index) =>
+    lines.slice(start, starts[index + 1]).join("\n"),
+  );
+};
+
+const hasAlwaysGuard = (step: string): boolean =>
+  /^\s*if:\s*always\(\)(?:\s*&&|\s*$)/m.test(step);
+
+const withoutComments = (contents: string): string =>
+  contents
+    .split("\n")
+    .filter((line) => !/^\s*#/.test(line))
+    .join("\n");
+
 /** Immutable pins, each verified against the upstream tag object (Task D3). */
 const CHECKOUT_PIN = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1";
 const SETUP_NODE_PIN =
@@ -198,27 +225,38 @@ describe("workflows pin every action to an immutable commit", () => {
 });
 
 describe("every partition reports its evidence unconditionally", () => {
-  // A matrix step appears once in the workflow text but executes per partition,
-  // so the contract is "every upload carries every guarantee", not a raw count.
-  const uploadCount = occurrences(`uses: ${UPLOAD_ARTIFACT_PIN}`);
+  const artifactUploads = stepBlocks(workflow).filter((step) =>
+    step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`),
+  );
+  // Report paths identify the artifacts covered by this evidence policy. An
+  // unrelated diagnostic artifact can therefore choose its own metadata.
+  const evidenceUploads = artifactUploads.filter((step) =>
+    step.includes("reports/"),
+  );
 
   it("pins upload-artifact to an immutable commit rather than a floating tag", () => {
-    expect(uploadCount).toBeGreaterThanOrEqual(2);
+    expect(artifactUploads.length).toBeGreaterThanOrEqual(2);
+    expect(artifactUploads.every((step) =>
+      step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`),
+    )).toBe(true);
     expect(workflow).not.toMatch(/actions\/upload-artifact@v\d/);
   });
 
   it("uploads evidence even when the partition failed", () => {
-    expect(occurrences("if: always()")).toBe(uploadCount);
+    expect(evidenceUploads.length).toBeGreaterThan(0);
+    expect(evidenceUploads.every(hasAlwaysGuard)).toBe(true);
   });
 
   it("fails the job when an expected artifact is missing", () => {
-    expect(occurrences("if-no-files-found: error")).toBe(uploadCount);
-    expect(workflow).not.toContain("if-no-files-found: warn");
-    expect(workflow).not.toContain("if-no-files-found: ignore");
+    expect(evidenceUploads.every((step) =>
+      /if-no-files-found:\s*error\b/.test(step),
+    )).toBe(true);
   });
 
   it("retains evidence for 14 days", () => {
-    expect(occurrences("retention-days: 14")).toBe(uploadCount);
+    expect(evidenceUploads.every((step) =>
+      /retention-days:\s*14\b/.test(step),
+    )).toBe(true);
   });
 
   it("uploads the matrix report and unit coverage as separate evidence", () => {
@@ -341,10 +379,24 @@ describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
     expect(block).toContain("needs: vitest");
   });
 
-  it("pins the scanner version rather than floating on latest", () => {
-    // The repo pins npm itself for the same reason; an unpinned scanner can
-    // change analysis results between runs with no commit to explain it.
-    expect(block).toContain("@sonar/scan@4.3.6");
+  it("uses the official scanner action at the intended immutable commit", () => {
+    const scannerReferences = [...block.matchAll(
+      /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm,
+    )].map((match) => match[1]);
+
+    expect(scannerReferences.length).toBeGreaterThan(0);
+    expect(scannerReferences).toEqual([
+      "7006c4492b2e0ee0f816d36501671557c97f5995",
+    ]);
+    expect(scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))).toBe(true);
+  });
+
+  it("does not execute the scanner through runtime npm resolution", () => {
+    const scannerRunSteps = stepBlocks(block).filter((step) =>
+      /^\s*run:/m.test(step) && /\bnpx\b[^\n]*@sonar\/scan(?:@[^\s]+)?\b/.test(withoutComments(step)),
+    );
+
+    expect(scannerRunSteps).toEqual([]);
   });
 
   it("authenticates from a secret, never an inline token", () => {
