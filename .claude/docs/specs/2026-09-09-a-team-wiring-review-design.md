@@ -121,6 +121,45 @@ eval-tested) and drops any `superpowers:` name prefixes in cross-references
 **Provenance note:** each merged `SKILL.md` gets an HTML comment at the top:
 `<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->`
 
+### 3.3 `writing-skills` governance for the two full-body adoptions
+
+`brainstorming` (#1) and `subagent-driven-development` (#5) are **replacements**,
+not additive merges, so each is treated as a skill edit governed by
+[`skills/writing-skills/SKILL.md`](../../../skills/writing-skills/SKILL.md). The
+other nine are additive and covered by the §7 reference-integrity check alone.
+
+Neither fork has an `evals/` directory (verified — both are `SKILL.md`-only), so
+there are no local eval scenarios to preserve. The A Team refinements that MUST
+survive the replacement are, in full:
+
+1. the A Team frontmatter `description` (kept verbatim — it is the tuned trigger);
+2. spec path `.claude/docs/specs/` wherever the SP body writes `docs/superpowers/specs/`;
+3. every `superpowers:<name>` cross-reference rewritten to the bare skill name or the matching `.claude/agents/**` name that exists in this repo;
+4. the §3.2 provenance comment;
+5. `brainstorming` only: the SP body's `elements-of-style:writing-clearly-and-concisely` reference replaced with plain "write concisely" prose (that skill is not installed).
+
+Per `writing-skills`, each of the two replacements is done RED → GREEN → REFACTOR:
+
+- **RED** — before replacing, run one representative task through the *current*
+  (shadowed `superpowers:`) skill and record the behaviour, so there is a
+  baseline to compare against. For `brainstorming`: a "let's build X" request →
+  expect path classification + approval gate. For `subagent-driven-development`:
+  a 2-task plan → expect ledger creation + per-task two-stage review.
+- **GREEN** — write the merged `SKILL.md` (SP body + the five preserved items),
+  add every support file from §3.2, then re-run the same representative task and
+  confirm the behaviour is preserved and the A Team `description` still fires on
+  the same trigger phrasing.
+- **REFACTOR** — run the `writing-skills` §9 validation checklist against the
+  result: YAML frontmatter parses; `name` matches the directory; `description`
+  matches actual scope; positive **and** near-miss activation both tested; every
+  in-body `.md` / `.sh` / `.ts` reference resolves to a file that now exists;
+  ported `scripts/` were executed once in Git Bash or are marked unvalidated in
+  the traceability doc.
+
+Registration (CLAUDE.md / AGENTS.md / `using-a-team` trigger table — `writing-skills`
+scaffolding steps 7–9) is already carried by Workstream D and is not duplicated
+here.
+
 ---
 
 ## 4. Target architecture
@@ -230,6 +269,7 @@ model tier) and a command table (command → skills + agents it composes).
 
 - [ ] `skill-duplication-audit` table (§3.1) committed in this spec; all 11 pairs classified with merge direction.
 - [ ] 26 `skills/*/SKILL.md` exist; the 11 merged ones carry the provenance comment; no `superpowers:` prefixes remain in any A Team `SKILL.md`.
+- [ ] `brainstorming` and `subagent-driven-development` replacements completed under `writing-skills` RED→GREEN→REFACTOR (§3.3): baseline behaviour recorded, preserved-items 1–5 present, `writing-skills` §9 validation checklist passed for each.
 - [ ] Every supporting file listed in §3.2 and §4.2 exists at the stated path; no dangling in-body reference (grep each `SKILL.md` for `.md)` / `.sh` / `.ts` refs and confirm the target exists).
 - [ ] `.claude/skills/` contains 26 skill symlinks (+ `react-aria`), each pointing at `../../skills/<name>`.
 - [ ] `.claude/settings.json` `permissions.allow` contains `Skill(<name>)` + `Skill(<name>:*)` for all 26.
@@ -259,5 +299,6 @@ model tier) and a command table (command → skills + agents it composes).
 This spec is the input to the `writing-plans` skill. The plan will sequence the
 work as A → B → C → D with these natural checkpoints: after the 11 skill merges
 (§3.2) and before the doc reconciliation (§4). `brainstorming` and
-`subagent-driven-development` full-body adoptions get their own review step in
-the plan.
+`subagent-driven-development` full-body adoptions each get their own plan phase
+executed under `writing-skills` (§3.3), with the RED baseline captured before the
+replacement and the §9 validation checklist as the phase's validation gate.
