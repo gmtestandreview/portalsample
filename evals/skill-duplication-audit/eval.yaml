@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=./eval.schema.json
+# Trigger-accuracy + execution-fidelity eval for the skill-duplication-audit skill.
+#
+# Positives must (a) fire the skill and (b) emit its Output contract
+# (SKILL.md:187-198). Negatives are adjacency-weighted near-misses that share
+# vocabulary with the skill but must NOT fire it:
+#   - comparing agents instead of skills            (SKILL.md:33)
+#   - de-duplicating text within one skill          (SKILL.md:32-33)
+#   - a sibling "*-audit" skill (architecture-audit) that owns the request
+#   - a sibling skill-authoring skill (writing-skills) that owns the request
+#   - one trivially-unrelated request as a sanity floor
+name: skill-duplication-audit-eval
+description: >-
+  Fires-when-it-should / silent-when-it-should-not eval for skill-duplication-audit,
+  with positives also checked for the skill's completion block and >=1 classification.
+skill: skill-duplication-audit
+version: "1.1"
+config:
+  trials_per_task: 3        # was 1 - trigger behaviour is stochastic; 3 gives a variance signal
+  timeout_seconds: 300
+  parallel: true            # was false - tasks share no state
+  executor: copilot-sdk
+  model: claude-sonnet-5     # was claude-sonnet-4.6 - match the model users actually run
+metrics:
+  - name: task_completion
+    weight: 0.7
+    threshold: 0.8
+    description: >-
+      Positives fire the skill and emit its Output contract (completion block plus
+      at least one classification); negatives do not fire it and stay brief. Scored
+      from each task's expected.should_trigger and its text grader.
+  - name: efficiency
+    weight: 0.3
+    threshold: 0.7
+    description: >-
+      Response stays within the token budget appropriate to its context - a full
+      audit for positives, a short redirect for negatives.
+graders:
+  # Global ceiling. 1200 was too tight for a real multi-pair audit (per-pair table
+  # + partial-overlap detail blocks + completion block), which structurally
+  # penalised correct positive behaviour. 2800 fits a 2-5 skill audit; negatives
+  # add their own tighter per-task ceiling.
+  - type: behavior
+    name: token-budget
+    config:
+      max_tokens: 2800
+tasks:
+  - "tasks/*.yaml"

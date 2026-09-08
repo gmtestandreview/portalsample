@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../task.schema.json
+id: positive-verify-existing-boundary
+name: Verify an existing boundary doc still holds
+description: >-
+  "Verifying whether an existing skill-boundary document still matches current
+  skills" trigger (SKILL.md Use When bullet 5). Exercises Workflow step 2 - reuse
+  the boundary only if current and authoritative, otherwise continue the audit and
+  recommend updating it.
+tags:
+  - positive-trigger
+  - execution-fidelity
+inputs:
+  prompt: >-
+    The trigger table in skills/using-a-team/SKILL.md draws a line between
+    `systematic-debugging` and `five-whys`. We've edited both skills a few times
+    since that table was written - is the documented boundary still correct, or
+    does it need updating?
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: emits-completion-block
+    config:
+      contains:
+        - "skill-duplication-audit complete."
+        - "Skills analyzed:"
+        - "Pairs evaluated:"
+        - "Recommendation:"

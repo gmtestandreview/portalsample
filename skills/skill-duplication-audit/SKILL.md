@@ -1,148 +1,211 @@
 ---
 name: skill-duplication-audit
-version: v0.1
-state: Approved
-owner: Miguel
-target: a-team
-created: 2026-06-14
-updated: 2026-06-14
-score: 88
-compliance-risk: Low
+description: Use when comparing two or more Agent Skills to detect duplicated or overlapping scope, clarify ambiguous activation boundaries, or decide whether skills should merge, remain separate, or document their distinction. Do not use for identifying identical text or overlapping responsibilities within a single skill, or for comparing agents.
+metadata:
+  version: "0.5"
+  owner: Greg
+  target: a-team
 ---
 
-# skill-duplication-audit
+# Skill Duplication Audit
 
 ## Problem
 
 Skills across the 5 ecosystem repositories overlap in scope without documented distinctions. This creates confusion about which skill to invoke, silent redundancy in packs, and conflicting guidance when two skills are active in the same session. Without a structured way to detect and classify overlaps, the ecosystem grows noisier over time.
 
-## Objective
+## Purpose
 
-Given 2 or more skills with their triggers and objectives, identify pairs that have overlapping scope and classify each pair. Produce a duplication report with a classification and a specific recommendation for each pair.
+Compare two or more Agent Skills by activation scope, intended outcome, and material specialization. Classify overlap and recommend the smallest action that removes ambiguity without losing specialized value.
 
-## When to Use
+Do not classify skills based solely on names, titles, repository locations, shared terminology, or output format.
 
-- When adding a new skill and checking whether an existing skill already covers the same use case
-- When auditing a pack for internal redundancy
-- When comparing skills across packs after an ecosystem audit
-- When a user reports confusion about which of two skills to invoke
+## Use When
 
-## When NOT to Use
+* Checking whether a proposed skill duplicates an existing skill.
+* Auditing a pack or skill library for redundant capabilities.
+* Comparing skills across repositories or packs.
+* Resolving confusion about which skill should activate.
+* Verifying whether an existing skill-boundary document still matches current skills.
 
-- For a single skill — needs at least 2 skills to compare
-- For agents — agents have tool scope and state, not just trigger scope; use a separate analysis
-- When the boundary is already documented in an existing boundary doc — verify first
-- When the skills are from completely different domains with no plausible trigger overlap
+Do not use:
 
-## Inputs
+* For a single skill.
+* To detect repeated text inside one skill.
+* To compare agents rather than Agent Skills.
+* For skills that do not share a functional relationship unless the user explicitly asks to compare them or requests exhaustive pair accounting.
 
-| Input | Required | Description |
-| --- | --- | --- |
-| skill-list | required | 2+ skills, each with: name, trigger (when to use), objective (one sentence), and optionally the repo |
-| scope | optional | `pack` (compare within one repo) or `ecosystem` (compare across repos). Default: `ecosystem` |
+## Required Evidence
 
-## Outputs
+For each skill, obtain:
 
-| Output | Description |
-| --- | --- |
-| duplication-report | List of pairs with classification and recommendation |
-| boundary-docs-needed | List of pairs requiring a documented distinction (partial-overlap pairs only) |
+* `name`;
+* activation condition or trigger;
+* objective or intended outcome;
+* relevant domain or workflow stage when needed.
 
-## Steps
+Repository or pack is optional context.
 
-1. Read all inputs. For each skill, extract: name, trigger (what situation invokes it?), objective (what does it produce?).
-2. Group skills by domain. Only compare skills where triggers could plausibly describe the same situation.
-3. For each pair within the same domain, compare triggers and outputs:
-   - **Triggers:** do they describe the same situation or context?
-   - **Outputs:** do they produce the same type of result?
-4. Classify each pair using exactly one label:
-   - **True duplicate:** same trigger AND same output type → recommend merge
-   - **Partial overlap:** triggers overlap but differ, OR outputs overlap but differ → recommend document boundary
-   - **Complementary:** same domain, different workflow stage, no trigger overlap → keep both, note relationship
-   - **False positive:** similar name but different trigger and output → no action required
-5. For each partial-overlap pair, draft a one-sentence boundary statement: "Use [A] when [condition A]; use [B] when [condition B]."
-6. List pairs that need a boundary doc (partial-overlap only).
-7. Fill the Completion Statement.
+If activation or outcome evidence is missing:
 
-## Completion Statement Format
+1. Record what is missing.
+2. Do not infer scope from names or neighboring skills.
+3. Mark every affected comparison `Needs Human Review`.
+4. Do not assign another classification until sufficient evidence exists.
+
+## Workflow
+
+### 1. Prepare the comparison
+
+For each skill, record:
+
+* activation condition;
+* intended outcome;
+* material specialization: domain, workflow stage, safety/compliance, required tools, or output responsibility.
+
+Determine the comparison set:
+
+- Always evaluate any pair the user explicitly asks to compare. 
+- If the user requests exhaustive or all-pairs accounting, evaluate every possible pair. 
+- Otherwise, when discovering candidate pairs from a larger skill list, exclude pairs with no plausible activation, task, workflow, or functional relationship. 
+
+An explicitly requested or exhaustively included pair with no material functional relationship is `False positive`.
+
+### 2. Verify existing boundaries
+
+If an authoritative boundary already distinguishes a pair:
+
+1. Compare it with the current activation conditions and outcomes.
+2. Reuse it only if it is current, authoritative, and still resolves the overlap.
+3. If stale, incomplete, ambiguous, or contradicted, continue the audit and recommend updating it.
+
+### 3. Classify each pair
+
+Answer in order:
+
+1. **Evidence complete?**
+
+   * no → `Needs Human Review`.
+2. **Could the same realistic user request reasonably activate both?**
+
+   * yes → compare outcome and specialization:
+
+     * materially equivalent outcomes + no meaningful specialization → `True duplicate`;
+     * otherwise → `Partial overlap`.
+   * no → check functional relationship:
+
+     * materially related responsibilities, stages, handoffs, or specialist roles → `Complementary`;
+     * no material functional relationship → `False positive`.
+
+Use `Needs Human Review` whenever an unknown answer would change the classification.
+
+| Classification         | Meaning                                                                                                                                    | Recommendation                                             |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| **True duplicate**     | Same realistic requests activate both; outcomes are materially equivalent; no meaningful specialization warrants separation.               | Recommend merge after preservation and conflict review.    |
+| **Partial overlap**    | At least one realistic request can activate both, but conditions, outcomes, stages, responsibilities, or specialization differ materially. | Keep distinct and document a valid boundary.               |
+| **Complementary**      | Materially related skills perform distinct responsibilities or workflow stages, so the same request should not normally activate both.     | Keep both and document the relationship when useful.       |
+| **False positive**     | No material functional relationship; similarity is superficial or the pair appears only because of exhaustive accounting.                  | No duplication action.                                     |
+| **Needs Human Review** | Evidence cannot establish activation, outcome, specialization, relationship, or boundary reliably.                                         | Obtain missing evidence before structural recommendations. |
+
+Decision guards:
+
+* Similar names are not duplication evidence.
+* Different repositories do not prevent overlap.
+* Shared format, workflow pattern, or domain alone does not establish duplication or complementarity.
+* Different tools alone do not establish separate scope.
+* A broad skill and a narrower specialist are not duplicates when the specialist carries material value.
+* Do not use `Partial overlap` as a fallback for uncertainty.
+* Never recommend merging unresolved contradictory guidance.
+
+### 4. Resolve partial-overlap boundaries
+
+Every `Partial overlap` boundary must be one of:
+
+* **mutually exclusive**;
+* **precedence-aware**; or
+* **intentional composition**.
+
+For broad/narrow pairs, prefer:
+
+`Use [narrow skill] when [specialized condition]; otherwise use [broad skill] when [remaining condition].`
+
+Do not write boundaries where the specialist request still satisfies both conditions.
+
+For intentional composition:
+
+1. state that both should activate;
+2. assign each a distinct responsibility;
+3. explain why both are required.
+
+### 5. Validate the boundary
+
+For exclusive or precedence-aware boundaries, test:
+
+* an A request maps to A and not unintentionally to B;
+* a B request maps to B and not unintentionally to A.
+
+For intentional composition, verify:
+
+* both activate intentionally;
+* responsibilities are distinct;
+* neither duplicates the other.
+
+If the mapping remains ambiguous, revise the boundary or mark it `Needs Human Review`.
+
+### 6. Recommend action
+
+This skill recommends structural action; it does not perform merges, deletions, deprecations, renames, or other lifecycle changes.
+
+Before recommending a merge, identify unique material that must be preserved or reviewed:
+
+* instructions and decision rules;
+* domain knowledge;
+* edge cases and gotchas;
+* safety or permission controls;
+* tests/evals;
+* references, scripts, assets, templates, and other supporting resources.
+
+Resolve known contradictions first. If preservation cannot be established, mark the merge recommendation `Needs Human Review`.
+
+## Output
+
+For every evaluated pair:
+
+| Pair | Classification | Activation evidence | Outcome/specialization evidence | Functional relationship | Recommendation |
+| ---- | -------------- | ------------------- | ------------------------------- | ----------------------- | -------------- |
+
+For each `Partial overlap`, also provide:
+
+* proposed boundary;
+* A-side test request;
+* B-side test request;
+* boundary type: exclusive, precedence-aware, or intentional composition.
+
+For each `Complementary` pair, state the material functional relationship.
+
+Finish with:
 
 ```text
 skill-duplication-audit complete.
-Skills analysed: [count]
+Skills analyzed: [count]
 Pairs evaluated: [count]
-True duplicates: [count] — [names or NONE]
-Partial overlaps: [count] — [names or NONE]
-Complementary pairs: [count] — [names or NONE]
-False positives: [count] — [names or NONE]
-Boundary docs needed: [count] — [skill pairs or NONE]
+True duplicates: [count] — [pairs or NONE]
+Partial overlaps: [count] — [pairs or NONE]
+Complementary pairs: [count] — [pairs or NONE]
+False positives: [count] — [pairs or NONE]
+Needs Human Review: [count] — [pairs or NONE]
+Boundary docs needed: [count] — [pairs or NONE]
 Recommendation: [summary action]
 ```
 
-## Red Flags
+## Validation
 
-- "These two skills have similar names so they must be duplicates" — name similarity is not scope overlap; compare triggers and outputs, not names
-- "I'll merge them to reduce complexity" — merging loses scope distinctions; only recommend a merge if triggers AND outputs are genuinely identical
-- "The boundary is obvious so it doesn't need documentation" — undocumented boundaries get violated; if there is overlap, document it
-- "They're in different repos so they can't conflict" — cross-repo skills are the most common source of undocumented overlap in the ecosystem
-- "I'll classify as partial overlap to be safe" — over-classifying creates unnecessary boundary docs; only classify as partial overlap if trigger overlap is real and observable
+Before completion, verify:
 
-## Examples
-
-### Example 1 — True duplicate
-
-**Input:**
-- api-doc-writer: trigger "when writing documentation for a REST API", objective "produce API reference docs"
-- api-reference-generator: trigger "when documenting a REST API", objective "generate API reference documentation"
-
-**Expected output:** True duplicate. Triggers and outputs are semantically identical. Recommend merge. Keep the skill with stronger test coverage.
-
-### Example 2 — Complementary
-
-**Input:**
-- prd-quality-gate (builder-product): trigger "when a PRD is drafted and ready for engineering review", objective "gate PRD quality before handoff"
-- copy-quality-gate (builder-growth): trigger "when landing page copy is written", objective "gate copy quality before publishing"
-
-**Expected output:** Complementary. Same quality gate pattern, different domains (product vs. growth), no trigger overlap. No action needed.
-
-## Counter-Examples
-
-### Counter-Example 1 — False positive mistakenly treated as duplicate
-
-**Input:**
-- design-token-audit (builder-design): trigger "when reviewing design token consistency across components"
-- positioning-audit (builder-growth): trigger "when evaluating brand positioning and messaging clarity"
-
-**What should happen:** False positive. "Audit" in the name is irrelevant — triggers are in completely different domains. No action.
-
-**What the skill must NOT do:** Recommend a merge or boundary doc based on shared vocabulary alone.
-
-### Counter-Example 2 — Complementary pair forced into partial-overlap
-
-**Input:**
-- eval-before-ship (builder-ai): trigger "before deploying an LLM model or prompt to production"
-- prd-quality-gate (builder-product): trigger "when a PRD is drafted and ready for engineering review"
-
-**What should happen:** Complementary — different stages of the product lifecycle, no trigger overlap.
-
-**What the skill must NOT do:** Classify these as partial-overlap because both are "gates" in an AI product workflow.
-
-## Test Cases
-
-| ID | File | Description | Pass |
-| --- | --- | --- | --- |
-| TC-001 | test-cases/case-001-true-duplicate.md | True duplicate: identical trigger and output type | ✅ |
-| TC-002 | test-cases/case-002-complementary-quality-gates.md | Complementary: prd-quality-gate vs copy-quality-gate | ✅ |
-| TC-003 | test-cases/case-003-partial-overlap-ai-reviewers.md | Partial overlap: ai-reviewer vs ai-safety-reviewer | ✅ |
-| TC-004 | test-cases/case-004-false-positive-audit-name.md | False positive: same word in name, different domain | ✅ |
-| TC-005 | test-cases/case-005-ecosystem-experiment-ab-test.md | Ecosystem: experiment-design vs ab-test-design | ✅ |
-| TC-006 | test-cases/case-006-ecosystem-ai-feature-safety.md | Ecosystem: ai-feature-validation vs ai-safety-review | ✅ |
-| TC-007 | test-cases/case-007-ecosystem-messaging-safety.md | Ecosystem: ai-messaging-review vs ai-safety-review | ✅ |
-| TC-008 | test-cases/case-008-no-duplicates.md | No duplicates: 3 skills in different domains | ✅ |
-| TC-009 | test-cases/case-009-large-list.md | Large list: 5 skills, 1 true duplicate, 1 partial overlap | ✅ |
-| TC-010 | test-cases/case-010-low-context.md | Low context: skill names only, no triggers provided | ✅ |
-
-## Evaluation History
-
-| Version | Date | Score | Recommendation | Report |
-| --- | --- | --- | --- | --- |
-| v0.1 | 2026-06-14 | 88 | Approved — promotion proposal pending | evaluations/skills/skill-duplication-audit/eval-001.md |
+* every classification is evidence-backed;
+* missing evidence is documented as `Needs Human Review`;
+* complementary pairs have a material functional relationship;
+* partial-overlap boundaries pass bidirectional validation;
+* true-duplicate recommendations preserve unique material and resolve contradictions;
+* existing boundaries were checked against current behavior;
+* exhaustive audits account for every requested pair;
+* completion counts match the pair-level report.

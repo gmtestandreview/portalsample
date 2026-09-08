@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../task.schema.json
+id: negative-single-skill-cleanup
+name: De-duplicate text within one skill
+description: >-
+  Hard negative. SKILL.md:32-33 excludes "a single skill" and "detect repeated
+  text inside one skill". Contains "de-duplicate" and "duplication"-adjacent
+  wording, so a keyword match would fire here incorrectly.
+tags:
+  - negative-trigger
+  - near-miss
+inputs:
+  prompt: >-
+    My `brainstorming` SKILL.md has basically the same paragraph about "explore
+    before you build" repeated across three sections. Help me de-duplicate the
+    wording within that one file so it reads tighter.
+expected:
+  should_trigger: false
+graders:
+  - type: text
+    name: no-audit-execution
+    config:
+      not_contains:
+        - "skill-duplication-audit complete."
+        - "Pairs evaluated:"
+  - type: behavior
+    name: decline-brevity
+    config:
+      max_tokens: 700

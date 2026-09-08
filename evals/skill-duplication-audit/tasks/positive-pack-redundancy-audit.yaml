@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../task.schema.json
+id: positive-pack-redundancy-audit
+name: Audit a whole pack for redundancy
+description: >-
+  "Audit the pack for redundant capabilities" trigger (SKILL.md Use When bullet 2).
+  Five related skills force candidate-pair selection, exhaustive-exclusion
+  reasoning, and at least one False positive (e.g. brainstorming vs TDD).
+tags:
+  - positive-trigger
+  - execution-fidelity
+inputs:
+  prompt: >-
+    We just merged three skill packs into one repo and I'm worried some skills are
+    now redundant. Here's the list with their trigger lines - audit the whole set
+    for duplicates and tell me which ones to merge, keep separate, or just
+    document.
+
+    - brainstorming: before any creative work - new feature, component or capability; explore intent and design before code
+    - writing-plans: turn a chosen or approved engineering direction into a repository-grounded implementation plan before coding
+    - executing-plans: you have a written implementation plan to execute in the current session
+    - subagent-driven-development: executing a plan with independent tasks - fresh subagent per task, two-stage review
+    - test-driven-development: implementing or changing observable behaviour - new feature, bug fix, or refactor; RED before GREEN
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: emits-completion-block
+    config:
+      contains:
+        - "skill-duplication-audit complete."
+        - "Skills analyzed:"
+        - "Pairs evaluated:"
+        - "Recommendation:"

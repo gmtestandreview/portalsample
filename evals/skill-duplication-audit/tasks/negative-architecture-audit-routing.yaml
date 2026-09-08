@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../task.schema.json
+id: negative-architecture-audit-routing
+name: Shares "audit" but routes to architecture-audit
+description: >-
+  Sibling-skill confusion. The request is a codebase health check - architecture-audit
+  territory - and shares the word "audit" with this skill's name. Must not fire
+  skill-duplication-audit.
+tags:
+  - negative-trigger
+  - near-miss
+  - sibling-skill
+inputs:
+  prompt: >-
+    Before I start the React 19 migration I want an audit of this codebase's
+    architecture - module boundaries, coupling, where the risky bits are. It's a
+    large inherited SPA. Where should I focus first?
+expected:
+  should_trigger: false
+graders:
+  - type: text
+    name: no-audit-execution
+    config:
+      not_contains:
+        - "skill-duplication-audit complete."
+        - "Pairs evaluated:"
+  - type: behavior
+    name: decline-brevity
+    config:
+      max_tokens: 700

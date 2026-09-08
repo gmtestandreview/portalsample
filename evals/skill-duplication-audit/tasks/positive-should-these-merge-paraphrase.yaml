@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../task.schema.json
+id: positive-should-these-merge-paraphrase
+name: Realistic paraphrase, no skill keywords
+description: >-
+  "Resolve confusion about which skill should activate" trigger (SKILL.md Use When
+  bullet 4). Deliberately contains none of the literal tokens "duplication" or
+  "audit" - if this triggers and emits the completion block, the skill is being
+  recognised by intent, not keyword echo.
+tags:
+  - positive-trigger
+  - execution-fidelity
+inputs:
+  prompt: >-
+    Do `brainstorming` and `writing-plans` cover the same ground? I keep reaching
+    for one when I meant the other, and I'm tempted to just fold them into a single
+    skill. Talk me through whether that's a good idea or whether there's a clean
+    line between them.
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: emits-completion-block
+    config:
+      contains:
+        - "skill-duplication-audit complete."
+        - "Skills analyzed:"
+        - "Pairs evaluated:"
+        - "Recommendation:"

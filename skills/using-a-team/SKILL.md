@@ -27,7 +27,8 @@ Skipping a mandatory skill to save time is not allowed.
 | Situation | Required Skill/Agent |
 |-----------|---------------------|
 | Writing any new function or feature | **test-driven-development** skill (RED before GREEN) |
-| Any bug, test failure, unexpected behavior | **debugger** agent (systematic debugging — Phase 1 first) |
+| Any bug, test failure, unexpected behavior | **systematic-debugging** skill (Phase 1 first), via the **debugger** agent |
+| Bug persists after a surface fix, or a failure or process keeps recurring | **five-whys** skill (fix the root, not the symptom) |
 | Multiple independent problems | **dispatching-parallel-agents** skill |
 | Build or type errors | **build-error-resolver** agent (minimal diffs only) |
 
@@ -76,6 +77,13 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Any LLM API calls added or changed | **ai-reviewer** |
 | Any privacy / payment / child data code | **compliance-reviewer** |
 
+## CI / CD Changes
+
+| Situation | Required Skill |
+|-----------|---------------|
+| `.github/workflows/**`, `.github/actions/**`, or CI/CD behaviour reviewed, diagnosed, or changed | **managing-github-actions** skill |
+| `packageManager`, `engines`, `devEngines`, `allowScripts`, or root `postinstall` changed | **managing-github-actions** skill (reaches CI via corepack) |
+
 ## Before Any API Endpoint
 
 | Situation | Required Skill |
@@ -113,6 +121,14 @@ These thoughts mean you are about to skip a mandatory step. Stop.
 - "The tests were passing before so they're probably still passing"
 - "I know this language well enough, no need for the reviewer"
 - "The skill overhead slows me down" (it doesn't — it prevents the rework that slows you down)
+
+## Skill & Project Authoring
+
+| Situation | Required Skill |
+|-----------|---------------|
+| `INIT.md` is missing and the project needs onboarding | **smart-init** skill |
+| Creating, editing, optimizing, or deploying a `SKILL.md` | **writing-skills** skill |
+| Two or more skills appear to overlap in scope | **skill-duplication-audit** skill |
 
 ## Session Start Checklist
 

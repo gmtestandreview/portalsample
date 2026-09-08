@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../task.schema.json
+id: positive-compare-two-audit-skills
+name: Compare two skills pasted inline
+description: >-
+  User pastes two skill frontmatters that share the word "audit" and asks whether
+  they overlap. Exercises Workflow steps 1-6 and forces the Output contract. The
+  right answer is Partial overlap / Complementary, never True duplicate.
+tags:
+  - positive-trigger
+  - execution-fidelity
+inputs:
+  prompt: >-
+    I'm tidying up our .claude/skills folder and these two feel like they might be
+    the same thing. Work out whether they actually overlap or should stay separate,
+    and if separate, give me a boundary line I can put in the docs.
+
+    --- architecture-audit ---
+    description: Use before major work on an unfamiliar or inherited codebase,
+    before a scaling milestone, or as a periodic health check. Produces a
+    structural health report with prioritised findings.
+
+    --- performance-audit ---
+    description: Use when a performance regression is suspected, before and after
+    optimisation, or as a pre-release gate for performance-critical features.
+    Produces before/after measurements and a bottleneck analysis.
+expected:
+  should_trigger: true
+graders:
+  - type: text
+    name: emits-completion-block
+    config:
+      contains:
+        - "skill-duplication-audit complete."
+        - "Skills analyzed:"
+        - "Pairs evaluated:"
+        - "Recommendation:"

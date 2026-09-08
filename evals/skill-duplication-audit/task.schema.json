@@ -1,0 +1,55 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://schemas.local/skill-eval/task.schema.json",
+  "title": "Skill eval task (copilot-sdk executor)",
+  "description": "One task file under tasks/. Reverse-engineered from the observed grammar; additionalProperties is left open so unknown-but-valid keys are not flagged. Pinned via a `# yaml-language-server` modeline so SchemaStore does not misbind these files to the Ansible tasks-file schema.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["id", "inputs"],
+  "properties": {
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "description": { "type": "string" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["prompt"],
+      "properties": {
+        "prompt": { "type": "string" },
+        "files": { "type": "array" }
+      }
+    },
+    "expected": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "should_trigger": { "type": "boolean" }
+      }
+    },
+    "graders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["type"],
+        "properties": {
+          "type": { "type": "string" },
+          "name": { "type": "string" },
+          "config": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "contains": { "type": "array", "items": { "type": "string" } },
+              "not_contains": { "type": "array", "items": { "type": "string" } },
+              "max_tokens": { "type": "integer", "minimum": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

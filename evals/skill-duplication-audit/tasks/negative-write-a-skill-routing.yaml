@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../task.schema.json
+id: negative-write-a-skill-routing
+name: About skills, but routes to writing-skills
+description: >-
+  Sibling-skill confusion. Mentions "skill", "SKILL.md", and "trigger conditions"
+  but the task is authoring a new skill - writing-skills territory. Must not fire
+  skill-duplication-audit.
+tags:
+  - negative-trigger
+  - near-miss
+  - sibling-skill
+inputs:
+  prompt: >-
+    I want to create a new skill for our team that captures how we do release
+    cut-over. Help me draft the SKILL.md and set up its trigger conditions so it
+    activates at the right time.
+expected:
+  should_trigger: false
+graders:
+  - type: text
+    name: no-audit-execution
+    config:
+      not_contains:
+        - "skill-duplication-audit complete."
+        - "Pairs evaluated:"
+  - type: behavior
+    name: decline-brevity
+    config:
+      max_tokens: 700

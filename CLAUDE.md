@@ -152,6 +152,33 @@ font-size: math.div($h1-font-size, 1.375);
 
 **Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a Bootstrap 5 internal function available only via the global `@import` cascade. Full `@use`-based module migration for our partials is deferred until Bootstrap 6 (which supports `@use` natively). Until then, `silenceDeprecations: ['import']` in both `webpack.config.js` and `.storybook/main.ts` suppresses the remaining `@import` deprecations from our own partials, and `quietDeps: true` suppresses Bootstrap's internal deprecations.
 
+## Skills
+
+A Team skills live in `skills/**`. Each is mandatory when its trigger applies — see `skills/using-a-team/SKILL.md` for the enforced trigger tables. Invoke via the `Skill` tool.
+
+| Skill | Use when |
+| --- | --- |
+| `api-contract-first` | Before implementing or changing any externally consumed boundary — REST/OpenAPI, gRPC, GraphQL, webhooks, inter-service. Write and review the contract first. |
+| `architecture-audit` | Before major work on an unfamiliar or inherited codebase, before a scaling milestone, or as a periodic health check. |
+| `brainstorming` | Before any creative work — new feature, component, or capability. Explore intent and design before code. |
+| `dispatching-parallel-agents` | Two or more independent tasks with no shared state or sequential dependency. |
+| `executing-plans` | You have a written implementation plan to execute in the current session. |
+| `finishing-a-development-branch` | A branch is ready for pre-merge verification, cleanup, and pull-request preparation. |
+| `five-whys` | A bug persists despite surface fixes, or a failure or process keeps recurring — target the root, not the symptom. |
+| `incident-response` | Production is degraded or down — use immediately. |
+| `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
+| `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
+| `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
+| `smart-init` | `INIT.md` is missing and the project needs conversational onboarding. |
+| `subagent-driven-development` | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review. |
+| `systematic-debugging` | Any bug, failing or flaky test, regression, crash, or incorrect output whose cause is not established. |
+| `test-driven-development` | Implementing or changing observable behavior — new feature, bug fix, or refactor. RED before GREEN. |
+| `using-a-team` | The meta-skill, injected at every session start — defines which skills and agents are mandatory. |
+| `using-git-worktrees` | Before a feature, bug fix, or repository change that needs isolation from the current workspace. |
+| `verification-before-completion` | Before claiming any objectively verifiable work succeeded — edits, fixes, tests, builds, generated artifacts. Evidence before assertions. |
+| `writing-plans` | Turn a chosen or approved engineering direction into a repository-grounded implementation plan before coding. |
+| `writing-skills` | Creating, editing, optimizing, testing, validating, or deploying a `SKILL.md`. |
+
 ## Instruction files
 
 Additional per-concern guidance lives in `.github/instructions/`:

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../task.schema.json
+id: negative-compare-agents
+name: Comparing agents, not skills
+description: >-
+  Hard negative. SKILL.md:33 explicitly excludes "compare agents rather than Agent
+  Skills". Shares the whole "do these two overlap / should I drop one" shape with a
+  true positive, so a shape-matching trigger would fire here incorrectly.
+tags:
+  - negative-trigger
+  - near-miss
+inputs:
+  prompt: >-
+    Do the `code-reviewer` and `security-reviewer` subagents in .claude/agents step
+    on each other? Feels like a lot of overlap in what they flag and I want to know
+    if I should drop one.
+expected:
+  should_trigger: false
+graders:
+  - type: text
+    name: no-audit-execution
+    config:
+      not_contains:
+        - "skill-duplication-audit complete."
+        - "Pairs evaluated:"
+  - type: behavior
+    name: decline-brevity
+    config:
+      max_tokens: 700

@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../task.schema.json
+id: negative-unrelated-floor
+name: Trivially unrelated - sanity floor
+description: >-
+  The one easy negative. No shared vocabulary or intent. If this ever triggers,
+  something is badly wrong with the description. Kept as a floor, not as a real
+  discriminator.
+tags:
+  - negative-trigger
+  - sanity-floor
+inputs:
+  prompt: Tell me a short joke about coffee.
+expected:
+  should_trigger: false
+graders:
+  - type: text
+    name: no-audit-execution
+    config:
+      not_contains:
+        - "skill-duplication-audit complete."
+        - "Pairs evaluated:"
+  - type: behavior
+    name: decline-brevity
+    config:
+      max_tokens: 400
