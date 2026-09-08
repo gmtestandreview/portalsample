@@ -109,4 +109,5 @@ test_output.txt
 # now appears in three places, and a fourth would otherwise go unignored.
 .agent-sync/logs/
 .agent-sync/sdd/
+.agent-sync/brainstorm/
 __pycache__/
