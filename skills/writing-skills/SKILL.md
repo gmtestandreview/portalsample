@@ -115,9 +115,9 @@ Use the form that fits the observed failure:
 
 Do not add stronger wording by default; use test evidence.
 
-## Match the Form to the Failure
+#### Match the form to the failure — evidence and rules
 
-This section expands step 7. The four bullets above are the summary; what follows is the evidence behind each pairing and the rules that hold whichever form you pick. It does not override step 7 — still lead with test evidence, and still do not escalate wording by default.
+The four bullets above are the summary; the rest of this step is the evidence behind each pairing and the rules that hold whichever form you pick. It does not override the bullets — still lead with test evidence, and still do not escalate wording by default.
 
 Before writing guidance, classify the baseline failure. The form that bulletproofs one failure type measurably backfires on another.
 

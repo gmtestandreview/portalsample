@@ -79,7 +79,7 @@ async function waitFor<T>(
 }
 ```
 
-See `references/condition-based-waiting-example.ts` for complete implementation with domain-specific helpers (`waitForEvent`, `waitForEventCount`, `waitForEventMatch`) from actual debugging session.
+See `./condition-based-waiting-example.ts` for complete implementation with domain-specific helpers (`waitForEvent`, `waitForEventCount`, `waitForEventMatch`) from actual debugging session.
 
 ## Common Mistakes
 

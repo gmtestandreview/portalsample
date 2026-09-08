@@ -69,7 +69,6 @@ Use forward-slash relative paths in skill content. Do not invent suffixes, alter
 | Compare two skills for merge viability | `best-practices-evaluations.md` | `skill-classification.md` if scope/type differs; `../templates/SWOT Analysis.md` only when SWOT output helps |
 | Final validation before deployment | `SKILL-testing-checklist.md` | Specification plus any specialist reference needed to execute unresolved checks |
 | Claude/Anthropic-specific authoring decisions | `anthropic-best-practices.md` | Generic specification still controls universal compliance claims |
-| Anthropic/Claude-specific authoring guidance | `anthropic-best-practices.md` | Generic specification still controls universal compliance claims |
 | Adding or editing a flowchart in a skill | `graphviz-conventions.dot` | `../scripts/render-graphs.js` to render the skill's flowcharts to SVG |
 
 # Authority and role model
@@ -169,7 +168,7 @@ Use when a skill contains or proposes commands or bundled executable scripts.
 
 ### `anthropic-best-practices.md`
 
-Use only for Claude/Anthropic-specific authoring guidance (Anthropic/Claude-specific authoring guidance). Do not promote Anthropic-only conventions into universal Agent Skills requirements.
+Use only for Claude/Anthropic-specific authoring guidance. Do not promote Anthropic-only conventions into universal Agent Skills requirements.
 
 # Flowchart authoring
 

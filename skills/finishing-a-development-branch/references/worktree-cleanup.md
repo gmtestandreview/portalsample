@@ -1,45 +1,47 @@
-# Worktree cleanup mechanics (concrete bash for the parent skill's cleanup step)
+# Worktree cleanup mechanics
 
-## Step 2: Detect Environment
+Concrete bash for detecting a linked worktree and removing it safely. Load this
+when the branch you are finishing lives in a git worktree and the user has asked
+you to merge or discard it (workflow step 7, "Perform requested repository
+actions").
+
+## Detect the worktree environment
+
+Capture these values **while still inside the worktree**, before any `cd` — a
+later directory change loses them:
 
 ```bash
 GIT_DIR=$(cd "$(git rev-parse --git-dir)" 2>/dev/null && pwd -P)
 GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
-# Capture now, while still inside the workspace — Step 5 changes directory
-# before cleanup (Step 6) needs this value
 WORKTREE_PATH=$(git rev-parse --show-toplevel)
 ```
 
-This determines which menu to show and how cleanup works:
+| State | Meaning | Cleanup |
+|---|---|---|
+| `GIT_DIR == GIT_COMMON` | Primary checkout, not a linked worktree | Nothing to remove |
+| `GIT_DIR != GIT_COMMON`, on a named branch | Linked worktree | Remove it after the branch is merged or the discard is confirmed |
+| `GIT_DIR != GIT_COMMON`, detached HEAD | Externally managed workspace | Leave it in place — the host owns it |
 
-| State | Menu | Cleanup |
-|-------|------|---------|
-| `GIT_DIR == GIT_COMMON` (normal repo) | Standard 3 options | No worktree to clean up |
-| `GIT_DIR != GIT_COMMON`, named branch | Standard 3 options | Provenance-based (see Step 6) |
-| `GIT_DIR != GIT_COMMON`, detached HEAD | Reduced 2 options (no merge) | Externally managed — leave in place |
+## Remove the worktree
 
-## Step 6: Cleanup Workspace
-
-**Runs for Option 1 and confirmed discards.** Options 2 and 3 always
-preserve the worktree. Both callers have already changed directory to the
-main repo root — worktree removal must run from outside the worktree —
-and use the `GIT_DIR`/`GIT_COMMON`/`WORKTREE_PATH` values captured in
-Step 2, from before that directory change.
-
-**If `GIT_DIR == GIT_COMMON`:** Normal repo, no worktree to clean up. Done.
-
-**If `WORKTREE_PATH` is under `.worktrees/` or `worktrees/`:** Superpowers
-created this worktree — we own cleanup:
+Worktree removal must run from **outside** the worktree, so `cd` to the main repo
+root first and use the values captured above:
 
 ```bash
 git worktree remove "$WORKTREE_PATH"
-git worktree prune  # Self-healing: clean up any stale registrations
+git worktree prune   # clears any stale registrations
 ```
 
-**If removal is refused** (`contains modified or untracked files`): the
-worktree holds files that exist nowhere else — uncommitted plans, notes,
-or scratch work. Never `--force` on your own initiative. Show the user
-what is at stake and ask:
+Only remove a worktree you created for this task (typically under `.worktrees/`
+or `worktrees/`). A worktree the host environment set up is not yours to remove —
+leave it and, if your platform provides a workspace-exit tool, use that instead.
+
+## If removal is refused
+
+`contains modified or untracked files` means the worktree holds files that exist
+nowhere else — uncommitted plans, notes, or scratch work. **Never `--force` on
+your own initiative** (see the parent skill's "Common Rationalizations"). Show the
+user what is at stake and ask:
 
 ```bash
 git -C "$WORKTREE_PATH" status --porcelain -uall
@@ -58,6 +60,3 @@ Which?
 ```
 
 Carry out the choice, then remove the worktree.
-
-**Otherwise:** The host environment owns this workspace — leave it in
-place. If your platform provides a workspace-exit tool, use it.
