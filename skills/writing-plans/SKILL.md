@@ -2,6 +2,7 @@
 name: writing-plans
 description: Use when a user asks to turn a chosen, supplied, or approved engineering direction into a repository-grounded implementation plan with concrete file changes, dependencies, risks, tests, and success criteria. Use before coding or handing work to an implementation agent. Do not use to choose unresolved product or architecture direction, brainstorm solutions, review completed implementation, or implement the changes.
 ---
+<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Writing Plans
 
@@ -154,6 +155,8 @@ Resolve or report:
 - repository/spec mismatches that prevent execution.
 
 Revise all fixable issues before presenting the plan.
+
+For an independent review pass, dispatch a reviewer with [references/plan-document-reviewer-prompt.md](references/plan-document-reviewer-prompt.md).
 
 Anything that still requires a material product or architecture decision is a blocker, not an implementation step.
 
