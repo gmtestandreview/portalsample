@@ -2,6 +2,7 @@
 name: finishing-a-development-branch
 description: Use when a development branch or feature is ready for final pre-merge verification, cleanup, documentation review, and pull-request preparation; especially before declaring work complete or ready to merge.
 ---
+<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Finishing a Development Branch
 
@@ -118,6 +119,8 @@ Only when requested and permitted:
 - push the branch;
 - create or update the PR.
 
+For git-worktree detection and cleanup mechanics, see [references/worktree-cleanup.md](references/worktree-cleanup.md).
+
 Before destructive or history-rewriting Git operations:
 - state the action;
 - obtain any required authorization;
@@ -127,6 +130,17 @@ Before destructive or history-rewriting Git operations:
 Authorization does not remove rollback safeguards.
 
 Never merge directly to the protected or default branch when the project requires review through a PR.
+
+## Common Rationalizations
+
+| Excuse | Reality |
+| --- | --- |
+| "Tests passed earlier this session" | Run the suite on the tree you are about to integrate. A green run only proves the tree it ran on. |
+| "They obviously want it merged" | Integration is the user's decision. Present the options and wait. |
+| "The base branch is obviously main" | Confirm the fork point or ask. Merging into the wrong base is expensive to undo. |
+| "Removal refused — `--force` just finishes the cleanup" | The refusal means files exist only in that worktree. `--force` destroys them permanently. Show the user and ask. |
+| "The merged-result failure is probably flaky" | A failing merged result stops everything. Branch and worktree stay put while you investigate. |
+| "The push was rejected — force-push will fix it" | A rejected push means the remote moved. Investigate; force-push only on the user's explicit request. |
 
 ## Completion Gate
 
