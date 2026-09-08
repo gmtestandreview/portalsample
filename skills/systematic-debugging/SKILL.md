@@ -2,6 +2,7 @@
 name: systematic-debugging
 description: Use when diagnosing and fixing software bugs, failing or flaky tests, regressions, crashes, incorrect outputs, integration failures, or other unexpected program behavior when the cause is not already established.
 ---
+<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Systematic Debugging
 
@@ -35,7 +36,7 @@ Do not use it merely for feature implementation, general code review, refactorin
 3. Reproduce the failure with the smallest reliable case available.
 4. Record the conditions required to reproduce it: inputs, environment, configuration, version, timing, and relevant state.
 5. Check recent changes that could affect those conditions, including code, dependencies, configuration, infrastructure, and data contracts. When version control is available, inspect the relevant diff and recent commits.
-6. Trace the failing value, state, or control flow backward toward its origin.
+6. Trace the failing value, state, or control flow backward toward its origin. See [references/root-cause-tracing.md](references/root-cause-tracing.md) for the complete backward-tracing technique.
 
 If the failure is not reproducible, **do not guess a fix**. Improve observability, collect additional examples, and compare failing with successful runs.
 
@@ -92,6 +93,8 @@ If the hypothesis fails, discard or revise it using the new evidence. Do not sta
 6. Run relevant regression tests or checks for affected behavior.
 7. Confirm the fix did not merely hide the symptom through retries, suppression, fallback behavior, exception swallowing, or weakened assertions.
 
+Once the root cause is fixed, add validation at every layer the bad data passes through — see [references/defense-in-depth.md](references/defense-in-depth.md). When the failure involves flaky or timing-dependent tests built on arbitrary delays, replace the delays with condition polling — see [references/condition-based-waiting.md](references/condition-based-waiting.md).
+
 If verification fails, return to the appropriate investigation phase instead of layering on another fix.
 
 ## Safety for High-Impact Experiments
@@ -133,6 +136,30 @@ If progress now requires a broad redesign, high-impact refactor, or a decision b
 - Repeatedly modifying the same area despite evidence pointing elsewhere.
 - Treating retries, suppression, or restart-only recovery as proof that the root cause is fixed.
 
+## Common Rationalizations
+
+| Excuse | Reality |
+|--------|---------|
+| "Issue is simple, don't need process" | Simple issues have root causes too. Process is fast for simple bugs. |
+| "Emergency, no time for process" | Systematic debugging is FASTER than guess-and-check thrashing. |
+| "Just try this first, then investigate" | First fix sets the pattern. Do it right from the start. |
+| "I'll write test after confirming fix works" | Untested fixes don't stick. Test first proves it. |
+| "Multiple fixes at once saves time" | Can't isolate what worked. Causes new bugs. |
+| "Reference too long, I'll adapt the pattern" | Partial understanding guarantees bugs. Read it completely. |
+| "I see the problem, let me fix it" | Seeing symptoms ≠ understanding root cause. |
+| "One more fix attempt" (after 2+ failures) | 3+ failures = architectural problem. Question pattern, don't fix again. |
+
+## Signals The Approach Is Wrong
+
+**Watch for these redirections:**
+- "Is that not happening?" - You assumed without verifying
+- "Will it show us...?" - You should have added evidence gathering
+- "Stop guessing" - You're proposing fixes without understanding
+- "Ultra-think this" - Question fundamentals, not just symptoms
+- "We're stuck?" (frustrated) - Your approach isn't working
+
+**When you see these:** STOP. Return to Phase 1.
+
 ## Completion Criteria
 
 Do not claim the bug is fixed unless:
@@ -143,3 +170,13 @@ Do not claim the bug is fixed unless:
 - targeted verification passes;
 - relevant regression checks pass, or unavailable checks are explicitly identified;
 - any high-impact change has an acceptable rollback or recovery path.
+
+## Supporting Techniques
+
+Load these when the situation calls for them:
+
+- [references/root-cause-tracing.md](references/root-cause-tracing.md) — when the bug surfaces deep in the call stack and you need to trace backward to the original trigger.
+- [references/defense-in-depth.md](references/defense-in-depth.md) — after the root cause is known, to add validation at every layer the bad data passes through.
+- [references/condition-based-waiting.md](references/condition-based-waiting.md) — when a flaky or timing-dependent test relies on arbitrary delays instead of polling for the real condition.
+- [references/condition-based-waiting-example.ts](references/condition-based-waiting-example.ts) — a complete `waitFor`-style implementation with domain-specific helpers to adapt.
+- [scripts/find-polluter.sh](scripts/find-polluter.sh) — when state leaks between tests and you need to bisect the suite to find the polluting test.
