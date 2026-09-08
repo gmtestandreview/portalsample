@@ -40,7 +40,7 @@ The only reasons to stop: BLOCKED status you cannot resolve, genuine ambiguity, 
 | DONE | Proceed to spec compliance review |
 | DONE_WITH_CONCERNS | Read concerns, address if correctness/scope issues |
 | NEEDS_CONTEXT | Provide missing context, re-dispatch |
-| BLOCKED | Assess: context problem → more context; reasoning → higher model; too large → break up; wrong plan → escalate |
+| BLOCKED | First assess whether the problem is context, reasoning, task size, or the plan. If it is a context problem, provide more context. If it is a reasoning problem, use a higher model. If it is too large, break up the task. If the plan is wrong, escalate. |
 
 ## Model Selection
 

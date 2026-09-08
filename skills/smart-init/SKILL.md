@@ -29,19 +29,19 @@ Read the ROADMAP file and extract:
 | Project name in H1 or title | Project name |
 | Description paragraph | Project overview |
 | Stack table or technology mentions | Languages & stack |
-| "Princípios não-negociáveis" or "Non-negotiable" section | Immutable rules |
-| "Próximo" / "Next" / "Roadmap" items | Active work context |
+| "Non-negotiable principles" or "Non-negotiable" section | Immutable rules |
+| "Next" / "Roadmap" items | Active work context |
 | Compliance mentions (GDPR, local-first, privacy, HIPAA) | Compliance scope |
-| "Feito" / "Done" section | Existing coverage |
+| "Done" section | Existing coverage |
 
 After extraction, ask **only one question** (the only thing a ROADMAP cannot tell you):
 
-> "Que ferramentas de IA estás a usar para escrever código neste projecto?"
+> "Which AI tools are you currently using to write code in this project?"
 > → A) Claude Code
 > → B) Codex CLI
 > → C) Cursor
 > → D) OpenCode
-> → E) Várias — escolho mais do que uma
+> → E) Several — select more than one
 
 Then generate INIT.md (see Template section below) and show the review gate.
 
@@ -52,42 +52,42 @@ Then generate INIT.md (see Template section below) and show the review gate.
 Ask these 5 questions, one at a time. Use plain language — assume the user is non-technical.
 
 **Q1 (free text):**
-> "O que queres construir? Descreve com as tuas palavras."
+> "What do you want to build? Describe it in your own words."
 
 **Q2 (multiple choice):**
-> "Já existe código ou começas do zero?"
-> → A) Começo do zero
-> → B) Já existe código
-> → C) Não tenho a certeza
+> "Does code already exist, or are you starting from scratch?"
+> → A) Starting from scratch
+> → B) Code already exists
+> → C) I am not sure
 
 *If answer is B: run stack inference silently (see Stack Inference section).*
 
 **Q3 (multiple choice):**
-> "Que tipo de projecto é?"
-> → A) App web (abre no browser)
-> → B) App móvel (iPhone ou Android)
-> → C) API ou serviço de backend
-> → D) Análise de dados ou automação
-> → E) Outro
+> "What type of project is it?"
+> → A) Web app (runs in a browser)
+> → B) Mobile app (iPhone or Android)
+> → C) API or backend service
+> → D) Data analysis or automation
+> → E) Other
 
 **Q4 (multiple choice):**
-> "Em que dispositivo ou plataforma deve correr?"
-> → A) Browser (qualquer dispositivo)
+> "Which device or platform should it run on?"
+> → A) Browser (any device)
 > → B) iPhone / iPad
 > → C) Android
 > → D) Desktop (Windows / Mac / Linux)
-> → E) Servidor / cloud
+> → E) Server / cloud
 
 **Q5 (multiple choice):**
-> "Que ferramentas de IA estás a usar para escrever código?"
+> "Which AI tools are you currently using to write code in this project?"
 > → A) Claude Code
 > → B) Codex CLI
 > → C) Cursor
 > → D) OpenCode
-> → E) Várias — escolho mais do que uma
+> → E) Several — select more than one
 
 After Q5: generate INIT.md, show review gate, then **offer to create ROADMAP.md**:
-> "Queres que eu crie um ROADMAP.md para este projecto com base no que descreveste? É útil para futuras sessões."
+> "Would you like me to create a ROADMAP.md for this project based on what you described? It is useful for future sessions."
 
 ---
 
@@ -115,13 +115,13 @@ Confidence threshold: if one extension accounts for >40% of tracked files, pre-f
 
 ## Review Gate
 
-After generating INIT.md, display ONLY the `## O que entendi` section and ask:
+After generating INIT.md, display ONLY the `## What I understood` section and ask:
 
-> "Está correcto? Falta alguma coisa?"
+> "Is that correct? Is anything missing?"
 
-- User says "ok" / "sim" / "yes" → run `/orchestrate init` automatically
-- User describes a correction → update the relevant INIT.md section, show `## O que entendi` again
-- After 3 correction rounds without approval → ask user to edit INIT.md manually: "Não consegui perceber a correcção. Por favor edita o INIT.md directamente e diz 'ok' quando estiver pronto."
+- User says "ok" / "yes" → run `/orchestrate init` automatically
+- User describes a correction → update the relevant INIT.md section, show `## What I understood` again
+- After 3 correction rounds without approval → ask user to edit INIT.md manually: "I could not understand the correction. Please edit INIT.md directly and say 'ok' when it is ready."
 
 ---
 
@@ -129,7 +129,7 @@ After generating INIT.md, display ONLY the `## O que entendi` section and ask:
 
 Show this **before** the final approval:
 
-> "Última coisa: o Codex vai pedir para aprovares um script de segurança na próxima sessão. Clica em 'Trust' para continuar — é o script de estado da A Team."
+> "One last thing: Codex will ask you to approve a security script in the next session. Click 'Trust' to continue — it is A Team's state script."
 
 ---
 
@@ -138,10 +138,10 @@ Show this **before** the final approval:
 Generate this file at the project root. Fill each field from the interview answers or ROADMAP extraction.
 
 ```markdown
-## O que entendi
+## What I understood
 [Plain language summary: what the project is, inferred stack, active AI platforms, agent count after init]
 
-Se algo estiver errado, edita este ficheiro antes de continuar.
+If anything is wrong, edit this file before continuing.
 
 ---
 
@@ -191,11 +191,11 @@ Se algo estiver errado, edita este ficheiro antes de continuar.
 
 ## Non-Negotiable Rules
 
-[Extracted from ROADMAP "princípios não-negociáveis" section, or left blank]
+[Extracted from the ROADMAP "non-negotiable principles" section, or left blank]
 
 ## Active Work / Next Steps
 
-[Extracted from ROADMAP "Próximo" / "Next" section, or left blank]
+[Extracted from the ROADMAP "Next" section, or left blank]
 
 ## Agents to Prune
 
