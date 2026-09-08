@@ -43,6 +43,11 @@ availability, scale, consistency, security/privacy, operability). Mark every
 unknown as an open question with a labeled assumption to proceed. Do not invent
 scale targets, SLAs, or compliance requirements.
 
+If the design newly collects data about people who are **not** the system's own
+users (a viewer's email, a third party's details), treat lawful basis /
+consent, retention, and deletion as a first-class functional requirement, not a
+security footnote.
+
 ### 3. Proposal
 
 Cover, proportionate to the work:
@@ -56,6 +61,9 @@ Cover, proportionate to the work:
 - an ASCII diagram when it aids understanding
 
 `references/system-design-checklist.md` is the full list; `references/patterns-and-antipatterns.md` is the pattern/red-flag catalogue. A pattern name is not a design — justify the fit.
+
+In target-not-accessible mode this section is assumptions too: a claim like "reuse
+the existing mailer / queue" is an assumption to verify, not a fact — label it.
 
 ### 4. Trade-offs
 
@@ -72,16 +80,19 @@ significant decisions. Note the rollback/backout path.
 
 Match the mode to the consequence. Default to **Standard**.
 
-- **Brief:** problem, recommended shape, key trade-off, main risk, next step. For a contained feature on an existing stack.
+- **Brief:** problem, recommended shape, key trade-off, main risk, next step.
+  Use only when the design touches one module, adds no new component, and has
+  no unresolved question that changes the shape. Anything else → Standard.
 - **Standard:**
 
   ```markdown
   ## Design: <feature> — YYYY-MM-DD
 
   ## Summary            <problem · recommended design · why>
-  ## Assumptions        <labeled; open questions listed>
+  ## Assumptions        <labeled facts you are proceeding on>
+  ## Open questions     <unknowns that change the design; who answers each>
   ## Requirements       <functional | non-functional>
-  ## Current state      <what it fits into, with path:line>
+  ## Current state      <what it fits into, with path:line — or "target not accessible">
   ## Proposed design    <components · data ownership · interfaces · failure behaviour · observability>
   ## Trade-offs         <decision · pros · cons · alternative · risk · mitigation>
   ## Decisions needing an ADR   <list — write via the adr skill>
@@ -90,6 +101,8 @@ Match the mode to the consequence. Default to **Standard**.
   ```
 
 - **Full:** `references/architecture-review-template.md` — only for a consequential or hard-to-reverse system-level design.
+
+Before finalising, walk the **Rationalization Traps** table against your own draft.
 
 **Do not** emit full schema DDL, complete API specs, or per-endpoint detail
 unless the task asks for that depth or the mode is Full — name the tables and

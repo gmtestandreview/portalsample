@@ -78,16 +78,18 @@ Tag each finding with a severity, and let the severity decide the bucket:
 
 | Severity | Meaning | Bucket |
 | --- | --- | --- |
-| **Blocker** | Data-integrity, security, or reversibility defect | Must change before build |
+| **Blocker** | Data-integrity, security, or reversibility defect, **or a failure mode whose blast radius is a critical-path outage** | Must change before build |
 | **Major** | Real risk; acceptable only as a recorded, conscious decision | Must change or accept-and-record |
 | **Minor** | Improvement that does not gate the build | Consider / future |
+
+Before finalising, walk the **Rationalization Traps** table against your own draft.
 
 ## Output Contract
 
 ```markdown
 ## Architecture Review: <subject> — YYYY-MM-DD
 
-**Verdict:** Approve | Approve with changes | Do not approve as proposed
+**Verdict:** Approve | Approve with changes | Do not approve as proposed   <!-- prefix "Conditional — " in description-only mode -->
 **One-line rationale:** ...
 
 ## Assumptions

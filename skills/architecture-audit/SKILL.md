@@ -20,7 +20,9 @@ so a payment-provider swap requires touching all 6" is a finding.
 - Before a scaling milestone (10× users, new region, new platform)
 - After rapid growth phases where structure was sacrificed for speed
 - As a periodic health check on long-lived systems
-- NOT for greenfield design — use the **architect** agent and **brainstorming** skill instead
+- NOT for greenfield design — use the **brainstorming** then **architecture-design** skills
+- NOT for a single proposal / RFC / PR — use the **architecture-review** skill
+- NOT for a focused "will it hold at Nx" capacity question — use the **scalability-review** skill
 
 ## Audit Workflow
 
@@ -56,13 +58,15 @@ List the architectural decisions the system depends on, whether or not anyone ma
 
 Use the **dispatching-parallel-agents** skill. Each specialist gets the Step 1 system map plus a scoped question:
 
-| Agent | Scoped question |
+| Agent / skill | Scoped question |
 |-------|----------------|
-| **architect** | Do module boundaries and coupling direction support the next 12 months of planned work? |
+| **architect** agent, applying the **architecture-review** skill's lenses to the as-built system | Do module boundaries and coupling direction support the next 12 months of planned work? |
 | **security-reviewer** | Are trust boundaries enforced at every entry point in the system map? |
 | **performance-profiler** | Which architectural choices (N+1 patterns, sync chains, missing caches) cap throughput? |
 | **database-reviewer** | Does data ownership match module boundaries? Any schema shared by unrelated modules? |
 | **infra-reviewer** | Does the deploy topology match the code topology? Any single points of failure? |
+
+If the audit was triggered by a scaling milestone, add the **scalability-review** skill as a specialist lens: what is the first bottleneck at the target load, and is it config, project, or re-architecture to clear?
 
 Skip a specialist only if their domain is absent (e.g., no database → no database-reviewer).
 
@@ -109,7 +113,7 @@ Findings without evidence are deleted, not softened.
 | **SOUND-WITH-RISKS** | High findings exist with agreed mitigation dates |
 | **INTERVENTION-REQUIRED** | Any critical finding — architecture work precedes feature work |
 
-Feed CRITICAL and HIGH findings into the **writing-plans** skill as remediation plans. Record accepted risks as ADRs via the **architect** agent so the next audit can check whether the risk materialised.
+Feed CRITICAL and HIGH findings into the **writing-plans** skill as remediation plans. Record accepted risks as ADRs via the **adr** skill so the next audit can check whether the risk materialised.
 
 ## Rationalization Red Flags
 

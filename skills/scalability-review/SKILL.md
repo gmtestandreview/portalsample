@@ -74,7 +74,7 @@ fix, not a separate section.
 
 ### 5. Triggers
 
-For each fix, state the observable condition that means "start now": a sustained traffic multiple, a data-size threshold, a utilisation percentage, or a dated forecast. Re-architecture triggers to *start designing* must fire well before the wall — an emergency migration under production load is the outcome to prevent.
+For each fix, state the observable condition that means "start now": a sustained traffic multiple, a data-size threshold, a utilisation percentage, or a dated forecast. A trigger can be any of these and can fire **with no traffic growth at all** — organic row accumulation reaching a partitioning threshold on a calendar is a real trigger. Re-architecture triggers to *start designing* must fire well before the wall — an emergency migration under production load is the outcome to prevent.
 
 Reference earlier findings by number rather than restating them — the bottleneck
 list, the fix table, and the triggers describe the same items from three angles;
@@ -107,7 +107,9 @@ do not repeat the prose in each.
 - <missing inputs that materially change the assessment>
 ```
 
-Choose a shorter form when the question is narrow — but Assumptions, the ordered bottleneck list, and Triggers are always present.
+Choose a shorter form when the question is narrow — but Assumptions, the ordered bottleneck list, and Triggers are always present. If more than ~5 open questions materially move the answer, lead with them.
+
+Before finalising, walk the **Rationalization Traps** table against your own draft.
 
 ## Rationalization Traps
 

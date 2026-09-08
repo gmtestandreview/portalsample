@@ -49,9 +49,16 @@ Whatever structure you match, every ADR carries these — and these are the ones
 | Rollback / Reversal | How it could be undone, and what makes reversal expensive. |
 | Review Trigger | The observable condition (growth threshold, incident, cost line, assumption breaking) that reopens this ADR. |
 
+Matching precedent means matching its **format**, not inheriting a gap: if the
+precedent uses one flat `## Consequences` list, still split it into Positive and
+Negative here; if it omits Validation / Rollback / Review Trigger, add them.
+Sections that appear only in `references/adr-template.md` (e.g. a Risks and
+Mitigations table) are optional-but-recommended — include one when it adds
+signal, drop it silently when it would be empty.
+
 ## Status Lifecycle
 
-Canonical values: `Proposed` → `Accepted` (or `Rejected`); later, `Superseded by <ref>`. A trailing qualifier is fine (`Proposed — deferred to migration sprint`). A later ADR that replaces this one sets this ADR to `Superseded by <ref>` and links both ways. Do not edit the decision of an Accepted ADR in place — supersede it.
+Canonical values: `Proposed` → `Accepted` (or `Rejected`); later, `Superseded by <ref>`. Open at `Proposed` unless the team has already ratified the decision, in which case `Accepted` with the deciders named. A trailing qualifier is fine (`Proposed — deferred to migration sprint`). A later ADR that replaces this one sets this ADR to `Superseded by <ref>` and links both ways. Do not edit the decision of an Accepted ADR in place — supersede it.
 
 ## Rationalization Traps
 
@@ -63,6 +70,8 @@ Canonical values: `Proposed` → `Accepted` (or `Rejected`); later, `Superseded 
 | "This is reversible, but let's ADR it anyway." | If a single PR undoes it without coordination, it is a code comment or a plan note, not an ADR. |
 | "Put the ADR in the PR description." | ADRs are durable files in `docs/adr/`, discoverable independent of the PR. |
 | "Use a fresh template." | Match the most recent `docs/adr/` precedent first. |
+
+Before finalising, walk this table against your draft.
 
 ## Integration with A Team
 
