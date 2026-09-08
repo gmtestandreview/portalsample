@@ -55,12 +55,15 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 
 ## Architectural Decisions
 
-| Situation | Required Agent |
-|-----------|---------------|
-| System design, new feature architecture | **architect** agent (produces ADR) |
-| Complex feature planning | **planner** agent |
-| Tech stack or pattern decision | **architect** agent |
+| Situation | Required Skill/Agent |
+|-----------|---------------------|
+| Designing an architecture for new work from requirements | **architecture-design** skill (after **brainstorming**) |
+| Assessing a design, RFC, proposal, or structural PR someone brings you | **architecture-review** skill |
+| Recording or revisiting a hard-to-reverse decision | **adr** skill |
+| "Will it scale / handle Nx / survive the launch" | **scalability-review** skill |
 | Inherited/unfamiliar codebase, scaling milestone, or periodic health check | **architecture-audit** skill |
+| System design or tech-stack/pattern decision needing a specialist | **architect** agent (routes to the skills above) |
+| Complex feature planning | **planner** agent |
 
 ## Language & Domain Reviews
 

@@ -207,8 +207,11 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 
 | Skill | Use when |
 | --- | --- |
+| `adr` | Recording or revisiting a consequential, hard-to-reverse decision — datastore/stack choice, service or module boundary, data-ownership shift, integration pattern, major dependency, or superseding a past ADR. |
 | `api-contract-first` | Before implementing or changing any externally consumed boundary — REST/OpenAPI, gRPC, GraphQL, webhooks, inter-service. Write and review the contract first. |
 | `architecture-audit` | Before major work on an unfamiliar or inherited codebase, before a scaling milestone, or as a periodic health check. |
+| `architecture-design` | Producing an architecture or technical design for a new feature, capability, or system from requirements. Follows `brainstorming`; prefers the simplest reversible design. |
+| `architecture-review` | Assessing a design, RFC, proposal, or PR-level structural decision someone brings you, before it is built. |
 | `brainstorming` | Before any creative work — new feature, component, or capability. Explore intent and design before code. |
 | `dispatching-parallel-agents` | Two or more independent tasks with no shared state or sequential dependency. |
 | `executing-plans` | You have a written implementation plan to execute in the current session. |
@@ -217,6 +220,7 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 | `incident-response` | Production is degraded or down — use immediately. |
 | `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
 | `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
+| `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |
 | `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
 | `smart-init` | `INIT.md` is missing and the project needs conversational onboarding. |
 | `subagent-driven-development` | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review. |
