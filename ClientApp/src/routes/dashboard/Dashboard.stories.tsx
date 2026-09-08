@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { within, expect, userEvent } from 'storybook/test';
+import { within, expect, userEvent, fn, waitFor } from 'storybook/test';
 import type { ComponentType } from 'react';
 import { useEffect } from 'react';
 import { http, HttpResponse } from 'msw';
@@ -22,6 +22,8 @@ const buildDashboardResponse = (items = dashboardItems) => HttpResponse.json({
     totalPages: 1,
     totalCount: items.length,
 });
+
+const emptyDraftsResponse = fn(() => buildDashboardResponse([]));
 
 const NotificationDecorator = (Story: ComponentType) => {
     setDashboardNotification({
@@ -62,13 +64,15 @@ const meta = {
             initialEntries: ['/dashboard'],
             accountDetails: {
                 userProfile: {
-                    filterYearType: '',
-                    filterStatusType: '',
-                    filterSortOrder: 'descending',
-                    filtersChanged: false,
-                    filterCurrentPage: 1,
-                    filterActiveTab: DashboardTab.Drafts,
-                    filterSearchText: '',
+                    testingCalibrationDashboard: {
+                        filterYearType: '',
+                        filterStatusType: '',
+                        filterSortOrder: 'descending',
+                        filtersChanged: false,
+                        filterCurrentPage: 1,
+                        filterActiveTab: DashboardTab.Drafts,
+                        filterSearchText: '',
+                    },
                 },
             },
         },
@@ -81,28 +85,25 @@ type Story = StoryObj<typeof meta>;
 export const Populated: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
-        // Assert the tab navigation renders — this is immediate and does not
-        // depend on the MSW API response. Per-story handlers are only applied
-        // in the browser Storybook (mswLoader disabled in Vitest/jsdom).
-        const tabList = await canvas.findByRole('tablist');
+        const tabList = await canvas.findByRole('tablist', { name: 'Select your dashboard view' });
         await expect(tabList).toBeVisible();
+        await expect(await canvas.findByRole('heading', { name: 'Fluke 87V' })).toBeVisible();
     },
 };
 
 export const EmptyState: Story = {
     beforeEach({ msw }) {
         msw.use(
-            http.get('/api/dashboard/get-filtered-dashboard-drafts', () => buildDashboardResponse([])),
+            http.get('/api/dashboard/get-filtered-dashboard-drafts', emptyDraftsResponse),
             http.get('/api/dashboard/get-filtered-dashboard-quotes', () => buildDashboardResponse([])),
             http.get('/api/dashboard/get-filtered-dashboard-artefacts', () => buildDashboardResponse([])),
         );
     },
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
-        // The global MSW handler returns empty items, so the no-requests message
-        // renders after the API responds. Per-story empty-response override only
-        // takes effect in the browser Storybook UI.
-        // The text renders once per tab panel — findAllByText to handle multiple matches
+        // The empty message also exists before loading starts, so first wait for the request.
+        await waitFor(() => expect(emptyDraftsResponse).toHaveBeenCalled());
+        await waitFor(() => expect(canvas.queryByText('Loading data...')).not.toBeInTheDocument());
         const noRequestsTexts = await canvas.findAllByText(/you currently have no requests/i);
         await expect(noRequestsTexts[0]).toBeVisible();
     },
@@ -115,13 +116,15 @@ export const RequestsTabWithNotification: Story = {
             initialEntries: ['/dashboard'],
             accountDetails: {
                 userProfile: {
-                    filterYearType: '',
-                    filterStatusType: '',
-                    filterSortOrder: 'descending',
-                    filtersChanged: false,
-                    filterCurrentPage: 1,
-                    filterActiveTab: DashboardTab.Requests,
-                    filterSearchText: 'Keysight',
+                    testingCalibrationDashboard: {
+                        filterYearType: '',
+                        filterStatusType: '',
+                        filterSortOrder: 'descending',
+                        filtersChanged: false,
+                        filterCurrentPage: 1,
+                        filterActiveTab: DashboardTab.Requests,
+                        filterSearchText: 'Keysight',
+                    },
                 },
             },
         },
@@ -130,6 +133,7 @@ export const RequestsTabWithNotification: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         const notifications = await canvas.findAllByText(/quote request saved as draft/i);
+        await waitFor(() => expect(canvas.getByRole('heading', { name: /Keysight U1242C/ })).toBeVisible());
         await expect(notifications[0]).toBeVisible();
         // Dismiss button exists (NotificationMessage renders a close × button when dismissible)
         const dismissButtons = canvas.queryAllByRole('button', { name: /close|dismiss/i });
@@ -142,14 +146,15 @@ export const TabNavigation: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement);
         const user = userEvent.setup();
-        // Tab list renders immediately without API response
-        const tabList = await canvas.findByRole('tablist');
+        await expect(await canvas.findByRole('heading', { name: 'Fluke 87V' })).toBeVisible();
+        const tabList = await canvas.findByRole('tablist', { name: 'Select your dashboard view' });
         await expect(tabList).toBeVisible();
         // Three tabs are present
-        const tabs = canvas.getAllByRole('tab');
+        const tabs = within(tabList).getAllByRole('tab');
         await expect(tabs.length).toBeGreaterThanOrEqual(2);
         // Click the second tab and assert it becomes selected
         await user.click(tabs[1]);
         await expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+        await waitFor(() => expect(canvas.getByRole('heading', { name: /Keysight U1242C/ })).toBeVisible());
     },
 };

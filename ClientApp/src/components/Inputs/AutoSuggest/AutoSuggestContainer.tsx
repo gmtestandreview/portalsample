@@ -8,6 +8,7 @@ import {
   Label,
   Popover,
 } from 'react-aria-components/ComboBox';
+import { Group } from 'react-aria-components/Group';
 import AutoSuggestOptions from './AutoSuggestOptions';
 import type { AutoSuggestOption, AutoSuggestContainerProps } from './types';
 
@@ -143,17 +144,31 @@ const AutoSuggestContainer = <T,>(
                             {inlineHelp}
                         </p>
                     )}
-                    <Input
-                        id={controlId}
-                        name={name}
-                        autoComplete='off'
-                        spellCheck={false}
-                        onKeyDown={onKeyDown}
-                        className='search-box form-field'
-                        placeholder={placeholder}
-                        aria-describedby={describedBy}
-                        aria-invalid={_meta.touched && _meta.error ? 'true' : undefined}
-                    />
+                    {/*
+                      * React Aria's `Group`, not a bare wrapper: `ComboBox`
+                      * exposes its group ref through `GroupContext`, and once a
+                      * `Group` claims it the widget stops running the
+                      * ResizeObserver `setMenuWidth` fallback it otherwise uses
+                      * to size the menu off the lone input. That fallback
+                      * commits state after mount - outside a Storybook play's
+                      * act() scope - which is the "update to ComboBoxInner was
+                      * not wrapped in act(...)" warning. The popover then sizes
+                      * off the group instead, which is the shape React Aria's
+                      * own ComboBox docs use.
+                      */}
+                    <Group>
+                        <Input
+                            id={controlId}
+                            name={name}
+                            autoComplete='off'
+                            spellCheck={false}
+                            onKeyDown={onKeyDown}
+                            className='search-box form-field'
+                            placeholder={placeholder}
+                            aria-describedby={describedBy}
+                            aria-invalid={_meta.touched && _meta.error ? 'true' : undefined}
+                        />
+                    </Group>
                     {options.length > 0 && (
                         <Popover
                             className='suggestions-container'

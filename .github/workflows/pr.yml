@@ -7,8 +7,19 @@ on:
 permissions:
   contents: read
 
+# A new push to a PR makes the in-flight run for that PR obsolete. Cancel it
+# rather than paying for both sets of jobs - matches chromatic.yml.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   STORYBOOK_DISABLE_TELEMETRY: '1'
+  # Every job provisions npm through `corepack enable`, which resolves the version
+  # from package.json's packageManager field instead of npx-installing a pinned
+  # copy at CI time (npx also runs the fetched package's lifecycle scripts). In
+  # CI corepack must never block on its "download this package manager?" prompt.
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
 
 # GitHub's implicit runner shell is `bash -e`, which has no pipefail: a step
 # that pipes into `tee` would report the exit code of `tee`, not of the command
@@ -30,19 +41,17 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/static-quality
 
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/static-quality/install.log
+        run: npm ci 2>&1 | tee reports/ci/static-quality/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       - name: Type-check
         run: npm run type-check 2>&1 | tee reports/ci/static-quality/type-check.log
@@ -60,34 +69,104 @@ jobs:
       - name: Verify business rule citations
         run: npm run lint:rules 2>&1 | tee reports/ci/static-quality/lint-rules.log
 
-      # The agent-orchestration scripts under scripts/ and templates/ had no
-      # automated verification of any kind - not even a syntax check - despite
-      # gating real behaviour: a PreToolUse security hook, a background watcher
-      # that shells out and writes files, and the statusline command. compileall
-      # is the cheap floor; the two suites below cover behaviour.
-      - name: Python tooling syntax
-        run: python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee reports/ci/static-quality/python-compile.log
-
-      # Exercises scripts/pre_tool_use.py the way Claude Code invokes it - a JSON
-      # tool call on stdin, an exit code out - across both what must be blocked
-      # and the ordinary commands that must still be allowed. A guard that blocks
-      # real work gets switched off, so the false-positive half is load-bearing.
-      - name: Hook guard behaviour
-        run: python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee reports/ci/static-quality/hook-guard.log
-
-      # os.kill(pid, 0) is the POSIX liveness idiom and is destructive on Windows,
-      # where it terminates the process it is probing. scripts/watcher.py was
-      # fixed; the templates/ copy that ships downstream was not. This keeps the
-      # two from drifting apart again.
-      - name: Watcher pid handling
-        run: python3 tests/hooks/test_watcher_pid.py 2>&1 | tee reports/ci/static-quality/watcher-pid.log
-
       - name: Upload static quality logs
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: static-quality-node24-${{ github.run_attempt }}
           path: reports/ci/static-quality/**
+          if-no-files-found: error
+          retention-days: 14
+
+  # Path gate for the narrowly-scoped jobs below (agent-tooling, date-timezone).
+  # A whole-workflow `paths:` filter would gate every job; this classifies the
+  # PR's changed files once and lets each downstream job opt in.
+  detect-changes:
+    name: detect-changes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      agent-tooling: ${{ steps.scope.outputs.agent-tooling }}
+      date-logic: ${{ steps.scope.outputs.date-logic }}
+      deps: ${{ steps.scope.outputs.deps }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - name: Classify changed paths
+        id: scope
+        run: |
+          CHANGED=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD)
+          match() { grep -qE "$1" <<< "$CHANGED"; }
+
+          # Agent-orchestration tooling, disjoint from the React app.
+          if match '^(scripts|templates|tests/hooks)/'; then
+            echo "agent-tooling=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "agent-tooling=false" >> "$GITHUB_OUTPUT"
+            echo "No scripts/, templates/, or tests/hooks/ changes - agent-tooling will be skipped."
+          fi
+
+          # dateOnly.ts local-vs-UTC split and its consumers / tests.
+          if match '^(ClientApp/src/utils/dateOnly\.ts|ClientApp/src/components/Inputs/DatePicker/|ClientApp/src/routes/requestForQuote/|tests/unit/utils/dateOnly\.test\.ts|tests/unit/components/inputs/datePickerWrapper\.test\.tsx|tests/unit/routes/requestForQuote/)'; then
+            echo "date-logic=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "date-logic=false" >> "$GITHUB_OUTPUT"
+            echo "No dateOnly / DatePicker / requestForQuote changes - date-timezone will be skipped."
+          fi
+
+          # The dependency tree and the CI install path. lower-bound-node24 only
+          # re-proves the floor when one of these moves.
+          if match '^(package\.json|package-lock\.json|\.node-version|\.npmrc|\.github/)'; then
+            echo "deps=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deps=false" >> "$GITHUB_OUTPUT"
+            echo "No dependency or workflow changes - lower-bound-node24 will be skipped."
+          fi
+
+  # The agent-orchestration tooling under scripts/, templates/, and tests/hooks/
+  # gates real behaviour - a PreToolUse security hook, a background watcher that
+  # shells out and writes files, the statusline command - but is disjoint from
+  # the React app. It rode along in static-quality-node24 and ran on every PR;
+  # it now runs only when one of those trees changes. This workflow has no
+  # required status checks, so a skipped run blocks nothing.
+  agent-tooling:
+    name: agent-tooling
+    needs: detect-changes
+    if: needs.detect-changes.outputs.agent-tooling == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Prepare evidence directory
+        run: mkdir -p reports/ci/agent-tooling
+
+      # compileall is the cheap syntax floor; the two suites below cover behaviour.
+      - name: Python tooling syntax
+        run: python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee reports/ci/agent-tooling/python-compile.log
+
+      # Exercises scripts/pre_tool_use.py the way Claude Code invokes it - a JSON
+      # tool call on stdin, an exit code out - across both what must be blocked
+      # and the ordinary commands that must still be allowed. A guard that blocks
+      # real work gets switched off, so the false-positive half is load-bearing.
+      - name: Hook guard behaviour
+        run: python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee reports/ci/agent-tooling/hook-guard.log
+
+      # os.kill(pid, 0) is the POSIX liveness idiom and is destructive on Windows,
+      # where it terminates the process it is probing. scripts/watcher.py was
+      # fixed; the templates/ copy that ships downstream was not. This keeps the
+      # two from drifting apart again.
+      - name: Watcher pid handling
+        run: python3 tests/hooks/test_watcher_pid.py 2>&1 | tee reports/ci/agent-tooling/watcher-pid.log
+
+      - name: Upload agent-tooling logs
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: agent-tooling-${{ github.run_attempt }}
+          path: reports/ci/agent-tooling/**
           if-no-files-found: error
           retention-days: 14
 
@@ -121,22 +200,20 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       # A fresh runner has no browser binaries; dependency install does not
       # provision them (proved by commit cb5fdaa).
       - name: Install Playwright Chromium
         if: matrix.partition.install-browser
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Run ${{ matrix.partition.name }} tests
         run: ${{ matrix.partition.command }}
@@ -176,19 +253,17 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/build
 
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/build/install.log
+        run: npm ci 2>&1 | tee reports/ci/build/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       - name: Build app
         run: npm run build 2>&1 | tee reports/ci/build/app-build.log
@@ -205,27 +280,21 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # The focused date suite is timezone-sensitive by construction. Each zone is
-  # its own leg so a failure in one stays attributable; `fail-fast: false` keeps
-  # the passing zones reporting. The UTC leg carries Child Plan B's characterized
-  # DatePicker failures and stays red until B1 lands - that visibility is the
-  # point, so this job must never be allowed to mask its own result.
+  # Regression cover for the deliberate local-vs-UTC split in dateOnly.ts: picker
+  # Dates are built at local noon and read back with local getters, API Dates at
+  # UTC midnight and read back with UTC getters. The vitest-unit partition only
+  # exercises these files in the runner's default zone (UTC); this leg re-runs
+  # them under Australia/Sydney - the NMI user base, and the "east of UTC, date
+  # already rolled over" edge - so a getDate()/getUTCDate() slip cannot pass CI
+  # unseen. Path-gated by detect-changes; this workflow has no required checks.
   date-timezone:
     name: date-timezone
+    needs: detect-changes
+    if: needs.detect-changes.outputs.date-logic == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        zone:
-          - name: UTC
-            slug: utc
-          - name: Australia/Sydney
-            slug: sydney
-          - name: America/Los_Angeles
-            slug: los-angeles
+    timeout-minutes: 10
     env:
-      TZ: ${{ matrix.zone.name }}
+      TZ: Australia/Sydney
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -234,24 +303,16 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
-      # tests/unit/utils/dateOnly.test.ts landed in c3b459a; the note that used
-      # to stand here still said it did not exist, so the one suite that pins the
-      # local-vs-UTC parser split was the one suite this matrix never ran. It is
-      # named below now and passes in all three zones. dateOnly.ts is where the
-      # split lives: picker Dates are built at local noon and read back with
-      # local getters, API Dates at UTC midnight and read back with UTC getters.
-      - name: Run focused date suite in ${{ matrix.zone.name }}
+      - name: Run focused date suite under Australia/Sydney
         run: >-
           npm run test:unit --
           tests/unit/components/inputs/datePickerWrapper.test.tsx
@@ -259,14 +320,14 @@ jobs:
           tests/unit/routes/requestForQuote/validation.test.ts
           tests/unit/utils/dateOnly.test.ts
           --reporter=default --reporter=junit
-          --outputFile.junit=reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
+          --outputFile.junit=reports/vitest/date-sydney-junit.xml
 
-      - name: Upload ${{ matrix.zone.name }} JUnit report
+      - name: Upload Australia/Sydney JUnit report
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: date-${{ matrix.zone.slug }}-${{ github.run_attempt }}
-          path: reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
+          name: date-sydney-${{ github.run_attempt }}
+          path: reports/vitest/date-sydney-junit.xml
           if-no-files-found: error
           retention-days: 14
 
@@ -287,22 +348,20 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       # Both Playwright projects start their own web server (app on :3000,
       # Storybook on :6006) and mock the API and MSAL, so no backend is needed -
       # but neither provisions a browser binary.
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Run app and Storybook BDD suites
         run: npm run test:e2e
@@ -318,9 +377,14 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # Proves the declared floor itself installs, not merely "some Node 24".
+  # Proves the declared floor itself installs, not merely "some Node 24". That is
+  # a property of the dependency tree and the install path, not of the app
+  # source, so it is path-gated on dependency and workflow files (via
+  # detect-changes) rather than run on every PR.
   lower-bound-node24:
     name: lower-bound-node24
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deps == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -336,19 +400,17 @@ jobs:
           node-version: '24.0.0'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/lower-bound
 
       - name: Install on the exact floor with strict peers
-        run: npx --yes npm@11.17.0 ci --strict-peer-deps 2>&1 | tee reports/ci/lower-bound/install.log
+        run: npm ci --strict-peer-deps 2>&1 | tee reports/ci/lower-bound/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       - name: Run dependency security policy tests
         run: >-
@@ -401,21 +463,19 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/sonarcloud
 
       # The analyzer resolves TypeScript types against installed dependencies;
       # without them type inference degrades and findings change.
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/sonarcloud/install.log
+        run: npm ci 2>&1 | tee reports/ci/sonarcloud/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       # Must precede the scan: sonar.javascript.lcov.reportPaths points at
       # reports/coverage/unit/lcov.info, and a missing report is imported as

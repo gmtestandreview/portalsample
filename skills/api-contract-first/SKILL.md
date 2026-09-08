@@ -1,154 +1,180 @@
 ---
 name: api-contract-first
-description: Hard gate before implementing any API endpoint or service interface. Requires a written, reviewed contract (OpenAPI 3.x, protobuf, or GraphQL schema) before any implementation code is written. Prevents breaking changes, misaligned clients, and undocumented behaviour.
+description: "Use before implementing or modifying any externally consumed service boundary: REST/OpenAPI endpoints, gRPC/protobuf methods or messages, GraphQL schema or operations, webhooks/events/AsyncAPI, or inter-service interfaces. Require a written, reviewed contract before production implementation and a compatibility decision for changes. Do not use for purely internal functions or client-only use of an already approved contract."
 ---
 
 # API Contract First
 
-## The Law
+## Core Rule
 
-```
-NO API IMPLEMENTATION WITHOUT A REVIEWED CONTRACT.
-Writing endpoints before the contract is building to a spec that doesn't exist.
-The contract IS the spec. Code that matches it is correct. Code that doesn't is wrong.
-```
+Do not start or change production implementation for a service boundary until its contract is written and reviewed.
 
-## When to Use
+For consumer-visible interface behavior, the approved contract is the source of truth. If implementation needs different behavior, update and re-review the contract first.
 
-Use this skill before writing ANY of these:
-- A new REST endpoint
-- A new gRPC/protobuf service method
-- A new GraphQL query, mutation, or subscription
-- A new event schema (Kafka, SQS, webhooks)
-- A new inter-service interface
+## When This Applies
 
-## The Contract Process
+Use this skill when adding, changing, or removing any of these:
 
-### Step 1: Write the Contract
+- REST endpoints, request/response fields, status codes, or error shapes
+- gRPC methods, protobuf messages, or service definitions
+- GraphQL types, fields, queries, mutations, or subscriptions
+- Event, webhook, queue, or topic payloads and delivery contracts
+- Inter-service interfaces consumed outside the implementing module/service
 
-Choose the format that matches the project's stack:
+Do not use it for:
 
-**REST → OpenAPI 3.x**
-```yaml
-# docs/api/openapi.yaml
-paths:
-  /orders:
-    post:
-      summary: Create a new order
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateOrderRequest'
-      responses:
-        '201':
-          description: Order created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-components:
-  schemas:
-    CreateOrderRequest:
-      type: object
-      required: [userId, items]
-      properties:
-        userId:
-          type: string
-          format: uuid
-        items:
-          type: array
-          minItems: 1
-          items:
-            $ref: '#/components/schemas/OrderItem'
-```
+- Purely internal functions or refactors with no service-boundary effect
+- Client code that only consumes an already approved contract
+- Documentation-only work that does not change interface behavior
 
-**Events / Async → AsyncAPI or JSON Schema**
-```yaml
-# docs/events/order-created.yaml
-name: order.created
-version: 1.0.0
-payload:
-  type: object
-  required: [orderId, userId, createdAt]
-  properties:
-    orderId: { type: string, format: uuid }
-    userId: { type: string, format: uuid }
-    createdAt: { type: string, format: date-time }
-```
+A disposable feasibility spike may explore an interface, but it must not be merged, deployed, or reused as production implementation until the contract is reviewed.
 
-### Step 2: Contract Review Checklist
+## Workflow
 
-Before implementation begins, verify the contract satisfies all of these:
+### 1. Locate the Contract Baseline
 
-**Naming & Consistency**
-- [ ] Resource names are nouns, plural (`/orders` not `/createOrder`)
-- [ ] Consistent casing throughout (snake_case for JSON fields, kebab-case for URL segments)
-- [ ] New names consistent with existing API vocabulary (don't introduce synonyms for existing concepts)
+Before designing a change:
 
-**Completeness**
-- [ ] All error responses documented (at minimum: 400, 401, 403, 404, 422, 500)
-- [ ] All required vs optional fields explicitly marked
-- [ ] Field types, formats, and constraints defined (min/max, pattern, enum values)
-- [ ] Pagination documented if the endpoint returns a collection
+1. Find the existing contract and project conventions.
+2. Identify the current approved version or schema.
+3. Determine who consumes the interface.
+4. For changes, compare against the current contract before editing implementation.
 
-**Versioning**
-- [ ] Breaking changes introduce a new version (`/v2/`) — never modify `/v1/` in a breaking way
-- [ ] A change is breaking if it: removes a field, changes a field type, makes an optional field required, changes status code semantics
+Use the repository's existing contract location. Do not invent a new `docs/` path when the project already has a convention.
 
-**Security**
-- [ ] Authentication requirement stated (which scheme: Bearer, API Key, session)
-- [ ] Authorisation scope documented (who can call this: any user, admin only, service-to-service)
-- [ ] Rate limits noted if applicable
+### 2. Write or Update the Contract
 
-**Consumer Perspective**
-- [ ] The contract was designed for how clients need to use it — not how it's easiest to implement
-- [ ] A new team member could implement a client from this contract alone
+Use the format that matches the boundary:
 
-### Step 3: Get Contract Approved
+| Boundary | Contract |
+| --- | --- |
+| REST | OpenAPI 3.x |
+| gRPC | `.proto` service/message definitions |
+| GraphQL | GraphQL SDL/schema |
+| Events/webhooks | AsyncAPI, or the project's approved payload schema format |
+| Other inter-service interface | Existing project IDL/schema; otherwise choose a standard that fully describes the boundary |
 
-Save the contract file to `docs/api/` or `docs/events/`. The contract is reviewed before implementation begins — not after.
+Define all consumer-visible behavior that applies:
 
-**Approval gate:** the `planner` agent must reference the approved contract file in the implementation plan. If no contract file is referenced, the plan is not complete.
+- operation/message/event names
+- request, response, input, output, or payload shapes
+- requiredness, nullability, defaults, types, formats, constraints, and enums
+- success and applicable error behavior
+- authentication and authorization requirements
+- pagination, idempotency, rate limits, retries, ordering, or delivery guarantees when relevant
 
-### Step 4: Implement Against the Contract
+Follow existing API vocabulary and casing. Do not introduce a new naming convention inside an established API.
 
-Implementation is correct when it matches the contract exactly. The contract is the source of truth — not the implementation.
+see example: `skills\api-contract-first\contract-example.md`
 
-If the implementation reveals that the contract needs to change:
-1. Update the contract first
-2. Re-review the changed section
-3. Then update the implementation
+### 3. Classify Compatibility
 
-Never silently diverge from the contract. Every divergence is a breaking change waiting to happen.
+Before implementation, record whether the change is compatible, conditionally compatible, or breaking.
 
-### Step 5: Contract Tests
+Treat these as potentially breaking unless the project's compatibility rules prove otherwise:
 
-Write at least one contract test per endpoint that validates the actual response against the OpenAPI schema:
+- removing or renaming an operation, field, message, event, or enum value
+- changing a field type, meaning, status/error semantics, or delivery semantics
+- making optional input required or non-null
+- tightening accepted constraints or authorization requirements
+- changing defaults in a way that changes observable behavior
 
-```typescript
-// [VALID] — tests the real implementation against the contract
-import { validate } from 'openapi-validator'
-import { spec } from '../docs/api/openapi.yaml'
+Run the project's schema or breaking-change checker when one exists.
 
-test('POST /orders response matches contract', async () => {
-  const response = await request(app).post('/orders').send(validPayload)
-  const errors = validate(spec, '/orders', 'post', response)
-  expect(errors).toHaveLength(0)
-})
-```
+For a breaking or migration-sensitive change, define the required versioning, migration, rollout, and rollback approach before approval. Do not assume URL versioning such as `/v2/` is the correct strategy.
 
-## Rationalization Red Flags
+### 4. Review and Approve
 
-These mean you are about to skip the contract step:
-- "The endpoint is simple, I'll document it after"
-- "The client team knows what they're getting"
-- "We'll sort out the contract in the PR description"
-- "It's an internal API, nobody will break"
+Implementation remains blocked until review is explicit.
 
-All of these precede the same outcome: a client built on undocumented assumptions, followed by a breaking change that neither team sees coming.
+Approval evidence must identify the contract artifact and reviewed revision. Use the project's normal review mechanism. If none exists, request human approval and record it with the plan or task.
+
+If the project uses an implementation plan, the plan must reference the approved contract. If it does not, the plan is incomplete.
+
+### 5. Implement Against the Approved Contract
+
+Implement only behavior covered by the approved contract.
+
+If implementation reveals a contract change is needed:
+
+1. Stop the affected implementation.
+2. Update the contract.
+3. Re-run compatibility review.
+4. Re-approve the changed contract.
+5. Resume implementation.
+
+Never silently diverge from the approved contract.
+
+### 6. Verify Conformance
+
+Before completion:
+
+- validate the contract with the project's schema/lint tooling when available
+- run the project's applicable contract or conformance tests against every changed boundary
+- cover each materially changed consumer-visible behavior, including applicable success, validation, error, authentication, and authorization behavior
+- validate emitted and accepted event/webhook payloads against their approved schemas when applicable
+- run compatibility checks against the previous approved contract for changes
+- update generated clients/docs when the project derives them from the contract
+
+If required validation or conformance tooling is unavailable after checking the project's documented tooling and existing scripts, do not claim full conformance; identify each unverified check explicitly.
+
+See example of tests: `skills\api-contract-first\contract-test-example.md`
+
+#### 6.1 Contract Review Gate
+
+Before production implementation begins, verify all applicable items.
+
+##### Naming and consistency
+
+- [ ] Names follow the existing API's resource, casing, and vocabulary conventions.
+- [ ] New concepts do not introduce unnecessary synonyms or inconsistent terminology.
+
+##### Contract completeness
+
+- [ ] Requiredness, presence, optionality, and nullability are explicit where supported by the contract format.
+- [ ] Types, formats, enum values, applicable constraints, and default behavior are defined where relevant.
+- [ ] Success and applicable error behavior are documented.
+- [ ] Collection operations define pagination or explicitly establish that pagination is unnecessary.
+- [ ] Applicable idempotency, ordering, retry, or delivery semantics are documented.
+
+##### Compatibility
+
+- [ ] Compatibility impact is classified using the project's compatibility rules.
+- [ ] Potentially breaking changes are identified explicitly.
+- [ ] Breaking or migration-sensitive changes define the project's required versioning or migration strategy.
+
+##### Security and operational constraints
+
+- [ ] Authentication requirements and scheme are documented when applicable.
+- [ ] Authorization requirements/scopes are documented when applicable.
+- [ ] Applicable rate limits or usage constraints are documented.
+
+##### Consumer usability
+
+- [ ] The contract is designed around consumer requirements rather than implementation convenience.
+- [ ] A consumer can understand the interface well enough to implement against it without relying on undocumented behavior.
+
+## Rationalization Traps
+
+| Shortcut | Required response |
+| --- | --- |
+| "It's a tiny endpoint; I'll document it after." | Contract first. Size does not remove the boundary. |
+| "It's internal." | Inter-service consumers still depend on a contract. Purely intra-module code is out of scope. |
+| "The client team already knows." | Shared assumptions are not an approved artifact. |
+| "The PR description is enough." | Use the project's contract format and review path. |
+| "We need to ship now." | Expedite review; do not silently bypass the contract gate. |
+| "I already implemented it." | Freeze the implementation, write/review the contract, then reconcile code to the approved contract. |
+| "I'm the lead; I approve skipping the contract." | Approval can approve a contract; it cannot replace the contract. The reviewed contract artifact must still exist before production implementation. |
+
+## Completion Gate
+
+The change is ready only when all applicable items are true:
+
+- [ ] The contract artifact exists and matches project conventions.
+- [ ] The contract revision is explicitly reviewed/approved.
+- [ ] Compatibility classification is recorded.
+- [ ] Breaking or migration-sensitive changes have versioning, rollout, and rollback guidance.
+- [ ] The implementation plan/task references the contract when such a plan exists.
+- [ ] Implementation matches the approved contract with no undocumented divergence.
+- [ ] Required conformance and compatibility checks pass, or unverified checks are explicitly reported.
+- [ ] Generated clients/docs are updated when applicable.

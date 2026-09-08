@@ -29,9 +29,19 @@ export const Example: Story = {
         <Tab id="Emp">Empire</Tab>
       </TabList>
       <TabPanels>
-        <TabPanel id="FoR">Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
-        <TabPanel id="MaR">Senatus Populusque Romanus.</TabPanel>
-        <TabPanel id="Emp">Alea jacta est.</TabPanel>
+        {/*
+          `transition: none` on the panels: selecting a tab mounts its panel with
+          `data-entering` and the stylesheet's 400ms opacity transition. React
+          Aria then waits for that transition to finish and calls a post-mount
+          `flushSync` state update outside the play's act() scope — the "update to
+          ForwardRef(TabPanel) was not wrapped in act(...)" warning. With no
+          transition, `element.getAnimations()` is empty and React Aria settles
+          the entering state synchronously during the click's commit instead.
+          This is an interaction test; the fade is covered by the visual suite.
+        */}
+        <TabPanel id="FoR" style={{transition: 'none'}}>Arma virumque cano, Troiae qui primus ab oris.</TabPanel>
+        <TabPanel id="MaR" style={{transition: 'none'}}>Senatus Populusque Romanus.</TabPanel>
+        <TabPanel id="Emp" style={{transition: 'none'}}>Alea jacta est.</TabPanel>
       </TabPanels>
     </Tabs>
   ),

@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
+import { onLog } from './rollupOnLog';
 
 const config: StorybookConfig = {
     framework: '@storybook/react-vite',
@@ -67,7 +68,9 @@ const config: StorybookConfig = {
 
         // Bootstrap 5 still uses Sass APIs that emit deprecation warnings. Keep
         // this compatibility layer until Bootstrap 6 enables a complete @use
-        // migration; Vite owns all other build and code-splitting behaviour.
+        // migration. Vite still owns code-splitting; the `build` block below only
+        // raises the chunk-size *warning* threshold and silences vendor bundler
+        // log noise — it does not change chunking or output.
         return mergeConfig(viteConfig, {
             css: {
                 preprocessorOptions: {
@@ -81,6 +84,21 @@ const config: StorybookConfig = {
                         ] as string[],
                     },
                 },
+            },
+            build: {
+                // Storybook's own runtime dominates this bundle — iframe.js is
+                // ~1.9 MB, plus axe-core and the Storybook UI. Our largest story
+                // chunk is ~224 kB, so the 500 kB default only ever fires on
+                // framework code we don't control. Lift the ceiling clear of the
+                // framework bundles but keep it close enough to flag a runaway
+                // story chunk. This governs only the (non-deployed) Storybook
+                // build; the production portal bundles via webpack.config.js and
+                // is unaffected.
+                chunkSizeWarningLimit: 1024,
+                // `onLog` drops vendor `INVALID_ANNOTATION` / `PLUGIN_TIMINGS`
+                // noise and forwards everything else untouched. Extracted to
+                // ./rollupOnLog so the pass-through guarantee is unit-tested.
+                rollupOptions: { onLog },
             },
         });
     },

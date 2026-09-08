@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Verify rolldown native binding
+description: >-
+  Work around npm/cli#4828: npm ci can silently skip the platform-specific
+  optional dependency @rolldown/binding-linux-x64-gnu, and npm's own
+  satisfaction check does not detect the gap. Force-reinstall the exact version
+  pinned in the lockfile when the binding is missing. Requires a prior
+  actions/checkout, corepack enable, and npm ci in the same job.
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
+        echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
+        VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
+        npm install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
+        node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"

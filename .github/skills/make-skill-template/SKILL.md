@@ -98,7 +98,7 @@ After the frontmatter, add markdown instructions. Recommended sections:
 ## Example: Complete Skill Structure
 
 ```
-my-awesome-skill/
+skill/
 ├── SKILL.md                    # Required instructions
 ├── LICENSE.txt                 # Optional license file
 ├── scripts/

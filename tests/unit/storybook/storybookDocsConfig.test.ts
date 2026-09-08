@@ -163,11 +163,27 @@ describe("Storybook documentation architecture", () => {
     expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
   });
 
-  it("keeps Vite customization limited to required Sass compatibility", () => {
+  it("keeps Vite customization limited to Sass compatibility and audited vendor build-noise suppression", () => {
     expect(main).toContain("quietDeps: true");
     expect(main).toContain("silenceDeprecations:");
+
+    // The chunk-size ceiling may be raised, but only to the one audited value:
+    // clear of Storybook's own framework bundles, still close enough that a
+    // runaway first-party story chunk keeps warning.
+    expect(main).toMatch(/chunkSizeWarningLimit:\s*1024\b/);
+    expect(main.match(/chunkSizeWarningLimit/g)).toHaveLength(1);
+
+    // The Rollup/Rolldown log filter is the extracted `onLog` from
+    // ./rollupOnLog — its behaviour (vendor noise dropped, everything else
+    // forwarded) is verified in rollupOnLog.test.ts, not textually here. main.ts
+    // must only wire it in, not re-inline a filter.
+    expect(main).toMatch(/import \{ onLog \} from ['"]\.\/rollupOnLog['"]/);
+    expect(main).toMatch(/rollupOptions:\s*\{\s*onLog\s*\}/);
+    expect(main).not.toMatch(/onLog\s*\(/); // no inline filter body
+
+    // Still no hand-rolled code splitting or unaudited bundler-option surface.
     expect(main).not.toContain("rolldownOptions");
-    expect(main).not.toContain("chunkSizeWarningLimit");
+    expect(main).not.toContain("manualChunks");
     expect(main).not.toContain("getNodeModulesPackageName");
     expect(main).not.toContain("getPackageSubArea");
   });

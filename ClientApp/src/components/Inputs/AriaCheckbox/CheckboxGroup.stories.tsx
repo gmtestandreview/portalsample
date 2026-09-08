@@ -42,9 +42,17 @@ export const WithLabelAndDescription: Story = {
 
 export const Bare: Story = {
   render: (args) => <CheckboxGroup {...args}>{services}</CheckboxGroup>,
+  args: {
+    // No visible <Label>/<Description>: the group renders its items and nothing
+    // else. React Aria still requires an accessible name, so the group is named
+    // by `aria-label` instead — without it React Aria logs a missing-label
+    // warning and the group is exposed to assistive tech as unnamed.
+    'aria-label': 'NMI services',
+  },
   play: async ({ canvas }) => {
-    // No label and no description: the group renders its items and nothing else.
     await expect(canvas.getByRole('checkbox', { name: 'Testing and calibration' })).toBeInTheDocument();
+    // Named for assistive tech, but with no on-screen label text.
+    await expect(canvas.getByRole('group', { name: 'NMI services' })).toBeInTheDocument();
     await expect(canvas.queryByText('NMI services')).not.toBeInTheDocument();
   },
 };

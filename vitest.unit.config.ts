@@ -144,6 +144,8 @@ export default defineConfig({
     },
     test: {
         name: 'unit',
+        // Single run unless `--watch` is passed (see `test:unit:watch`).
+        watch: false,
         environment: 'jsdom',
         pool: 'forks',
         execArgv: ['--max-old-space-size=8192'],

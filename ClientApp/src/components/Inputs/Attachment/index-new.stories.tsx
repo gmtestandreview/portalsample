@@ -62,3 +62,23 @@ export const EmptyUploader: Story = {
         await expect(canvas.getByText(/maximum size for each file/i)).toBeVisible();
     },
 };
+
+export const DocumentsWithoutIds: Story = {
+    args: { isSummary: true },
+    parameters: {
+        portal: {
+            formik: {
+                initialValues: {
+                    documents: [
+                        { attachmentName: 'manual.pdf', attachmentSize: '1024', attachmentCategory: 'Manuals' },
+                        { attachmentName: 'certificate.pdf', attachmentSize: '2048', attachmentCategory: 'Certificate' },
+                    ],
+                },
+            },
+        },
+    },
+    play: async ({ canvas }) => {
+        await expect(canvas.getByText('manual.pdf')).toBeVisible();
+        await expect(canvas.getByText('certificate.pdf')).toBeVisible();
+    },
+};
