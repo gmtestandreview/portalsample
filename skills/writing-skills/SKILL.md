@@ -57,7 +57,12 @@ Treat runtime-, client-, or repository-specific paths, registration rules, valid
 
 Before drafting, record **Should trigger**, **Should not trigger**, and **Ambiguous** requests.
 
-For every critical trigger, branch, or load condition, run QAQ/RMI: map a positive request to its governing instruction and behavior; verify a near-miss does not activate it; reverse-map the behavior to the intended request class; revise indirect, ambiguous, or scope-inconsistent mappings.
+For every critical trigger, branch, or load condition, run QAQ/RMI:
+
+1. Map a positive request to its governing instruction and behavior.
+2. Verify that a near-miss does not activate it.
+3. Reverse-map the behavior to the intended request class.
+4. Revise indirect, ambiguous, or scope-inconsistent mappings.
 
 ### 2. Decide whether a skill is justified
 
@@ -65,7 +70,7 @@ Create a skill when it captures reusable domain knowledge, a repeatable techniqu
 
 Do not create a skill for:
 
-- one-off solutions;
+- solutions intended for a single use only;
 - project-only conventions better kept in project instructions;
 - generic background knowledge;
 - purely mechanical rules better enforced deterministically.
@@ -164,10 +169,22 @@ Correct these patterns:
 
 ## References
 
+Use this file `skills\writing-skills\references\index.md` as the **first lookup point** for the `writing-skills` reference set.
+
 Load only when needed:
 
-- `anthropic-best-practices.md` — Anthropic-specific authoring guidance or rationale.
-- `testing-skills-with-subagents.md` — adversarial pressure testing and rationalization capture.
-- `persuasion-principles.md` — wording support for Discipline rules; use only when test evidence shows compliance pressure is the problem.
-- `CLAUDE_MD_TESTING.md` — worked examples of skill-discovery pressure tests.
-- `SKILL-testing-checklist.md` — final validation and deployment gate.
+## Lookup rules
+
+1. Identify the task class before loading references.
+2. Load the smallest primary reference that governs the task.
+3. Load a secondary reference only when its stated condition is met.
+4. Use `agent-skill-specification-format-page-2.md` for mandatory Agent Skills format/compliance claims.
+5. Use `best-practices-evaluations.md` for quality criteria and `audit-scoring.md` for scoring mechanics.
+6. Use `SKILL-testing-checklist.md` as the final validation/deployment gate, not as a substitute for specialist methods.
+7. Treat best-practice guides, operational methods, and templates as supporting guidance rather than specification authority.
+8. Apply Anthropic-specific guidance only when the target environment is Claude or Anthropic Agent Skills.
+9. If sources conflict, use:
+   `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable environment/project rules > best-practice guidance > examples/templates`.
+10. If a referenced file is absent, report it as missing. Do not silently substitute another file.
+11. Use QAQ/RMI for critical trigger, branch, and load-condition decisions.
+12. Do not load templates or persuasion guidance unless the task actually needs them.
