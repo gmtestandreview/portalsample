@@ -37,7 +37,7 @@
 | §3.3 brainstorming full adoption | 2.1 | RED + after baselines; `writing-skills` §9 checklist |
 | §3.3 subagent-driven-development full adoption | 2.2 | RED + after baselines; `writing-skills` §9 checklist; `.agent-sync/sdd/` remap; final-review → `code-reviewer` agent |
 | §4.2 port receiving-code-review | 3.1 | resolves un-prefixed post-reload |
-| §4.5.1 symlink 12 skills into `.claude/skills/` | 4.1 | `git ls-files -s .claude/skills` shows 12 new `120000` entries |
+| §4.5.1 symlink all canonical skills into `.claude/skills/` | 4.1 | `git ls-files -s .claude/skills` shows 25 `120000` entries |
 | §4.5.2 allow-list 6 names (12 entries) | 4.2 | `grep -c` Skill entries = 50; JSON valid |
 | §4.5.3 reload gate | 4.3 | main session; user restarts |
 | §4.5.4 25/25 resolve un-prefixed, un-prompted | 4.4 | spot-check invocations post-reload |
@@ -83,7 +83,7 @@
 | `skills/brainstorming/visual-companion.md`, `spec-document-reviewer-prompt.md`, `scripts/*` | SP brainstorming support set |
 | `skills/subagent-driven-development/scripts/{sdd-workspace,task-brief,review-package}` + `implementer-prompt.md`, `task-reviewer-prompt.md`, `re-review-prompt.md` | SP SDD support set |
 | `skills/receiving-code-review/SKILL.md` | how to evaluate incoming review feedback |
-| `.claude/skills/<name>` (12 new symlinks) | resolve merged/ported skills to the A Team version |
+| `.claude/skills/<name>` (11 remaining symlinks after the Task 0.2 spike) | resolve merged/ported skills to the A Team version |
 | `.claude/commands/skills.md`, `adr.md`, `incident-response.md`, `architecture-review.md` | dispatcher index + 3 thin aliases |
 | `.claude/docs/traceability.md` | command ↔ skill ↔ agent ↔ rule matrix |
 
@@ -111,7 +111,7 @@
 
 **Files:** Create `.claude/docs/plans/_sp-6.3.0-snapshot/`
 
-- [ ] **Step 1: Copy the source**
+- [x] **Step 1: Copy the source**
 
 ```bash
 SP="C:/Users/gregm/.claude/plugins/cache/claude-plugins-official/superpowers/6.3.0/skills"
@@ -120,7 +120,7 @@ cp -r "$SP"/. .claude/docs/plans/_sp-6.3.0-snapshot/
 ls .claude/docs/plans/_sp-6.3.0-snapshot   # expect 14 skill dirs
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add .claude/docs/plans/_sp-6.3.0-snapshot .claude/docs/plans/2026-09-09-a-team-wiring-review.md
@@ -131,7 +131,7 @@ git commit -m "chore: snapshot superpowers 6.3.0 skills as the merge source of t
 
 **Files:** Create `.claude/skills/verification-before-completion` (symlink)
 
-- [ ] **Step 1: Create one symlink**
+- [x] **Step 1: Create one symlink**
 
 ```bash
 cd .claude/skills && ln -s ../../skills/verification-before-completion verification-before-completion && cd ../..
@@ -142,17 +142,17 @@ git ls-files -s .claude/skills/verification-before-completion   # want: 120000 .
 #   git checkout -- .claude/skills/verification-before-completion
 ```
 
-- [ ] **Step 2: Reload the session**
+- [x] **Step 2: Reload the session**
 
 Main session: tell the user to restart / reload so the new `.claude/skills/` entry is picked up. Wait for confirmation.
 
-- [ ] **Step 3: Check resolution**
+- [x] **Step 3: Check resolution**
 
 Invoke `Skill(verification-before-completion)`. Inspect the loaded body.
 - **PASS:** body is the A Team version (108-line rewrite; "Claim-matched evidence" table) and the skill list no longer shows a separate `superpowers:verification-before-completion`, OR shows both but the bare name resolved local.
 - **FAIL:** body is the `superpowers` version, or an error, or the bare name still routes to the plugin.
 
-- [ ] **Step 4: Decide**
+- [x] **Step 4: Decide**
 
 - PASS → commit the spike symlink, proceed to Phase 1.
   ```bash
@@ -165,15 +165,15 @@ Invoke `Skill(verification-before-completion)`. Inspect the loaded body.
 
 **Files:** Create `.claude/docs/plans/_red-baselines/{brainstorming,subagent-driven-development}-before.md`
 
-- [ ] **Step 1: `brainstorming` RED baseline**
+- [x] **Step 1: `brainstorming` RED baseline**
 
 With the pre-merge skill resolving (spike symlink is for `verification-before-completion` only, so `brainstorming` still routes to `superpowers:` — fine, that IS the baseline), run the prompt: `"Let's build a small CSV export button for the applications list."` Record: path classification announced? clarifying questions (one at a time)? approval gate before code? → `brainstorming-before.md`.
 
-- [ ] **Step 2: `subagent-driven-development` RED baseline**
+- [x] **Step 2: `subagent-driven-development` RED baseline**
 
 Prompt: `"Execute this 2-task plan: (1) add a formatDate util with a test, (2) use it in appDetails.tsx."` Record: ledger file created? fresh subagent per task? two-stage (spec + quality) review each? → `subagent-driven-development-before.md`.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add .claude/docs/plans/_red-baselines
@@ -190,13 +190,13 @@ git commit -m "docs: RED baselines for brainstorming + subagent-driven-developme
 
 **Files:** Modify `skills/{dispatching-parallel-agents,executing-plans,using-git-worktrees,verification-before-completion}/SKILL.md`
 
-- [ ] **Step 1:** Read each of `$SNAP/<name>/SKILL.md` in full before editing.
-- [ ] **Step 2: `dispatching-parallel-agents`** — after the H1, insert the snapshot body's `## Overview` paragraph (isolated-context framing) and its `## When to Use` ```dot``` digraph; keep all existing A Team sections.
-- [ ] **Step 3: `executing-plans`** — add the snapshot's `## When to Revisit Earlier Steps`; add a first sub-step to "Step 1": *"Ensure an isolated workspace — use the `using-git-worktrees` skill to create or verify one."*; ensure refs are bare (`using-git-worktrees`, `subagent-driven-development`, `finishing-a-development-branch`).
-- [ ] **Step 4: `using-git-worktrees`** — `diff` body vs snapshot; adopt any snapshot edge case not present (expected: none).
-- [ ] **Step 5: `verification-before-completion`** — add any snapshot "Rationalization" row not already in the table.
-- [ ] **Step 6:** Add the provenance comment as the first body line of all 4.
-- [ ] **Step 7: Verify**
+- [x] **Step 1:** Read each of `$SNAP/<name>/SKILL.md` in full before editing.
+- [x] **Step 2: `dispatching-parallel-agents`** — after the H1, insert the snapshot body's `## Overview` paragraph (isolated-context framing) and its `## When to Use` ```dot``` digraph; keep all existing A Team sections.
+- [x] **Step 3: `executing-plans`** — add the snapshot's `## When to Revisit Earlier Steps`; add a first sub-step to "Step 1": *"Ensure an isolated workspace — use the `using-git-worktrees` skill to create or verify one."*; ensure refs are bare (`using-git-worktrees`, `subagent-driven-development`, `finishing-a-development-branch`).
+- [x] **Step 4: `using-git-worktrees`** — `diff` body vs snapshot; adopt any snapshot edge case not present (expected: none).
+- [x] **Step 5: `verification-before-completion`** — add any snapshot "Rationalization" row not already in the table.
+- [x] **Step 6:** Add the provenance comment as the first body line of all 4.
+- [x] **Step 7: Verify**
 
 ```bash
 for s in dispatching-parallel-agents executing-plans using-git-worktrees verification-before-completion; do
@@ -205,17 +205,17 @@ for s in dispatching-parallel-agents executing-plans using-git-worktrees verific
 done
 ```
 
-- [ ] **Step 8: Commit** — `git add` the 4 dirs; `git commit -m "feat: additive superpowers merges into 4 A Team skills (no new files)"`
+- [x] **Step 8: Commit** — `git add` the 4 dirs; `git commit -m "feat: additive superpowers merges into 4 A Team skills (no new files)"`
 
 #### Task 1.2: finishing-a-development-branch
 
 **Files:** Modify `skills/finishing-a-development-branch/SKILL.md`; Create `skills/finishing-a-development-branch/references/worktree-cleanup.md`
 
-- [ ] **Step 1:** Create `references/worktree-cleanup.md` = snapshot `finishing-a-development-branch` **Step 2 (Detect Environment)** + **Step 6 (Cleanup Workspace)** verbatim, with a one-line heading `# Worktree cleanup mechanics (concrete bash for the parent skill's cleanup step)`.
-- [ ] **Step 2:** Append a `## Common Rationalizations` section to `SKILL.md` (6 rows: "Tests passed earlier"; "They obviously want it merged"; "base branch is obviously main"; "`--force` finishes cleanup"; "merged-result failure is flaky"; "force-push will fix the rejected push") — wording from the snapshot, `your human partner` → `the user`.
-- [ ] **Step 3:** In step 7 of the workflow add: `For git-worktree detection and cleanup mechanics, see [references/worktree-cleanup.md](references/worktree-cleanup.md).`
-- [ ] **Step 4:** Provenance comment.
-- [ ] **Step 5: Verify**
+- [x] **Step 1:** Create `references/worktree-cleanup.md` = snapshot `finishing-a-development-branch` **Step 2 (Detect Environment)** + **Step 6 (Cleanup Workspace)** verbatim, with a one-line heading `# Worktree cleanup mechanics (concrete bash for the parent skill's cleanup step)`.
+- [x] **Step 2:** Append a `## Common Rationalizations` section to `SKILL.md` (6 rows: "Tests passed earlier"; "They obviously want it merged"; "base branch is obviously main"; "`--force` finishes cleanup"; "merged-result failure is flaky"; "force-push will fix the rejected push") — wording from the snapshot, `your human partner` → `the user`.
+- [x] **Step 3:** In step 7 of the workflow add: `For git-worktree detection and cleanup mechanics, see [references/worktree-cleanup.md](references/worktree-cleanup.md).`
+- [x] **Step 4:** Provenance comment.
+- [x] **Step 5: Verify**
 
 ```bash
 test -f skills/finishing-a-development-branch/references/worktree-cleanup.md && echo ref OK
@@ -224,13 +224,13 @@ grep -q 'Merged from superpowers 6.3.0' skills/finishing-a-development-branch/SK
 grep -n 'superpowers:\|your human partner' skills/finishing-a-development-branch/ -r || echo clean OK
 ```
 
-- [ ] **Step 6: Commit** — `git commit -m "feat: merge superpowers worktree-cleanup + rationalizations into finishing-a-development-branch"`
+- [x] **Step 6: Commit** — `git commit -m "feat: merge superpowers worktree-cleanup + rationalizations into finishing-a-development-branch"`
 
 #### Task 1.3: systematic-debugging
 
 **Files:** Modify `skills/systematic-debugging/SKILL.md`; Create `references/{root-cause-tracing,condition-based-waiting,defense-in-depth}.md`, `references/condition-based-waiting-example.ts`, `scripts/find-polluter.sh`
 
-- [ ] **Step 1: Copy support files from the snapshot**
+- [x] **Step 1: Copy support files from the snapshot**
 
 ```bash
 mkdir -p skills/systematic-debugging/references skills/systematic-debugging/scripts
@@ -241,10 +241,10 @@ cd "$OLDPWD"
 ```
 Do NOT copy `test-*.md` or `CREATION-LOG.md`.
 
-- [ ] **Step 2:** In the 4 `.md` files, rewrite `superpowers:<name>` → bare, and sibling refs → `references/<file>`. `grep -rn 'superpowers:' skills/systematic-debugging/references/ || echo clean`
-- [ ] **Step 3:** Append the snapshot "Common Rationalizations" table and the "Signals the approach is wrong" list (retitled, no possessive) before `## Completion Criteria`.
-- [ ] **Step 4:** Add references from the body: Phase 1 → `root-cause-tracing.md`; Phase 4 → `defense-in-depth.md`, `condition-based-waiting.md`; add `## Supporting Techniques` listing all 4 + `scripts/find-polluter.sh` with load conditions.
-- [ ] **Step 5:** Provenance comment. Verify:
+- [x] **Step 2:** In the 4 `.md` files, rewrite `superpowers:<name>` → bare, and sibling refs → `references/<file>`. `grep -rn 'superpowers:' skills/systematic-debugging/references/ || echo clean`
+- [x] **Step 3:** Append the snapshot "Common Rationalizations" table and the "Signals the approach is wrong" list (retitled, no possessive) before `## Completion Criteria`.
+- [x] **Step 4:** Add references from the body: Phase 1 → `root-cause-tracing.md`; Phase 4 → `defense-in-depth.md`, `condition-based-waiting.md`; add `## Supporting Techniques` listing all 4 + `scripts/find-polluter.sh` with load conditions.
+- [x] **Step 5:** Provenance comment. Verify:
 
 ```bash
 for f in $(grep -oE 'references/[a-z-]+\.(md|ts)|scripts/[a-z-]+\.sh' skills/systematic-debugging/SKILL.md | sort -u); do
@@ -253,16 +253,16 @@ done
 grep -q 'Merged from superpowers 6.3.0' skills/systematic-debugging/SKILL.md && echo provenance OK
 ```
 
-- [ ] **Step 6: Commit** — `git commit -m "feat: port superpowers debugging technique files + tables into systematic-debugging"`
+- [x] **Step 6: Commit** — `git commit -m "feat: port superpowers debugging technique files + tables into systematic-debugging"`
 
 #### Task 1.4: test-driven-development
 
 **Files:** Modify `skills/test-driven-development/SKILL.md`; Create `skills/test-driven-development/references/writing-good-tests.md`
 
-- [ ] **Step 1:** `mkdir -p skills/test-driven-development/references && cp .claude/docs/plans/_sp-6.3.0-snapshot/test-driven-development/writing-good-tests.md skills/test-driven-development/references/`; strip `superpowers:` refs inside.
-- [ ] **Step 2:** Append snapshot `## Common Rationalizations` and `## When Stuck` tables; add the RED-GREEN-REFACTOR ```dot``` digraph near "Core rule".
-- [ ] **Step 3:** In "Test design rules" add: `When writing or changing any test, read [references/writing-good-tests.md](references/writing-good-tests.md).`
-- [ ] **Step 4:** Provenance comment. Verify:
+- [x] **Step 1:** `mkdir -p skills/test-driven-development/references && cp .claude/docs/plans/_sp-6.3.0-snapshot/test-driven-development/writing-good-tests.md skills/test-driven-development/references/`; strip `superpowers:` refs inside.
+- [x] **Step 2:** Append snapshot `## Common Rationalizations` and `## When Stuck` tables; add the RED-GREEN-REFACTOR ```dot``` digraph near "Core rule".
+- [x] **Step 3:** In "Test design rules" add: `When writing or changing any test, read [references/writing-good-tests.md](references/writing-good-tests.md).`
+- [x] **Step 4:** Provenance comment. Verify:
 
 ```bash
 test -f skills/test-driven-development/references/writing-good-tests.md && echo ref OK
@@ -271,15 +271,15 @@ grep -qi 'When Stuck' skills/test-driven-development/SKILL.md && echo table OK
 grep -n 'superpowers:' skills/test-driven-development/SKILL.md || echo no prefix OK
 ```
 
-- [ ] **Step 5: Commit** — `git commit -m "feat: port writing-good-tests + rationalization tables into test-driven-development"`
+- [x] **Step 5: Commit** — `git commit -m "feat: port writing-good-tests + rationalization tables into test-driven-development"`
 
 #### Task 1.5: writing-plans
 
 **Files:** Modify `skills/writing-plans/SKILL.md`; Create `skills/writing-plans/references/plan-document-reviewer-prompt.md`
 
-- [ ] **Step 1:** `mkdir -p skills/writing-plans/references && cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-plans/plan-document-reviewer-prompt.md skills/writing-plans/references/`; strip `superpowers:` refs.
-- [ ] **Step 2:** In the "Challenge the plan" / "Self-Review" section add: `For an independent review pass, dispatch a reviewer with [references/plan-document-reviewer-prompt.md](references/plan-document-reviewer-prompt.md).` Body otherwise unchanged (already the stronger version).
-- [ ] **Step 3:** Provenance comment. Verify:
+- [x] **Step 1:** `mkdir -p skills/writing-plans/references && cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-plans/plan-document-reviewer-prompt.md skills/writing-plans/references/`; strip `superpowers:` refs.
+- [x] **Step 2:** In the "Challenge the plan" / "Self-Review" section add: `For an independent review pass, dispatch a reviewer with [references/plan-document-reviewer-prompt.md](references/plan-document-reviewer-prompt.md).` Body otherwise unchanged (already the stronger version).
+- [x] **Step 3:** Provenance comment. Verify:
 
 ```bash
 test -f skills/writing-plans/references/plan-document-reviewer-prompt.md && echo ref OK
@@ -287,13 +287,13 @@ grep -q 'plan-document-reviewer-prompt.md' skills/writing-plans/SKILL.md && echo
 grep -n 'superpowers:' skills/writing-plans/SKILL.md || echo no prefix OK
 ```
 
-- [ ] **Step 4: Commit** — `git commit -m "feat: add plan-document-reviewer-prompt reference to writing-plans"`
+- [x] **Step 4: Commit** — `git commit -m "feat: add plan-document-reviewer-prompt reference to writing-plans"`
 
 #### Task 1.6: writing-skills  *(critical path — finish before Phase 2)*
 
 **Files:** Modify `skills/writing-skills/SKILL.md`, `skills/writing-skills/references/index.md`; Create `references/{anthropic-best-practices.md,graphviz-conventions.dot}`, `scripts/render-graphs.js`
 
-- [ ] **Step 1:** Copy the 3 not-already-present files:
+- [x] **Step 1:** Copy the 3 not-already-present files:
 
 ```bash
 mkdir -p skills/writing-skills/scripts
@@ -303,9 +303,9 @@ cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-skills/render-graphs.js        
 ```
 Do NOT copy `persuasion-principles.md`, `testing-skills-with-subagents.md`, `CLAUDE_MD_TESTING.md`.
 
-- [ ] **Step 2:** Insert the snapshot's `## Match the Form to the Failure` section (4-row failure→form table + "why prohibitions backfire" + "no nuance clauses") after the existing `### 7. Match instruction form to failure` step; reconcile so the two don't contradict (SP table = the detailed version of the existing step).
-- [ ] **Step 3:** Update `references/index.md` lookup rules to add `anthropic-best-practices.md` (load: Anthropic-specific authoring) and `graphviz-conventions.dot` (load: adding a flowchart); note `scripts/render-graphs.js`.
-- [ ] **Step 4:** Provenance comment. Verify:
+- [x] **Step 2:** Insert the snapshot's `## Match the Form to the Failure` section (4-row failure→form table + "why prohibitions backfire" + "no nuance clauses") after the existing `### 7. Match instruction form to failure` step; reconcile so the two don't contradict (SP table = the detailed version of the existing step).
+- [x] **Step 3:** Update `references/index.md` lookup rules to add `anthropic-best-practices.md` (load: Anthropic-specific authoring) and `graphviz-conventions.dot` (load: adding a flowchart); note `scripts/render-graphs.js`.
+- [x] **Step 4:** Provenance comment. Verify:
 
 ```bash
 for f in references/anthropic-best-practices.md references/graphviz-conventions.dot scripts/render-graphs.js; do
@@ -316,7 +316,7 @@ grep -n 'superpowers:' skills/writing-skills/SKILL.md || echo no prefix OK
 python3 -c "import yaml; d=yaml.safe_load(open('skills/writing-skills/SKILL.md').read().split('---')[1]); assert d['name']=='writing-skills'; print('frontmatter OK')"
 ```
 
-- [ ] **Step 5: Commit** — `git commit -m "feat: port anthropic-best-practices + graphviz + render-graphs into writing-skills"`
+- [x] **Step 5: Commit** — `git commit -m "feat: port anthropic-best-practices + graphviz + render-graphs into writing-skills"`
 
 ---
 
@@ -328,7 +328,7 @@ python3 -c "import yaml; d=yaml.safe_load(open('skills/writing-skills/SKILL.md')
 
 **Files:** Modify `skills/brainstorming/SKILL.md`; Create `skills/brainstorming/{visual-companion.md,spec-document-reviewer-prompt.md}`, `skills/brainstorming/scripts/*`
 
-- [ ] **Step 1 (GREEN): Copy support files**
+- [x] **Step 1 (GREEN): Copy support files**
 
 ```bash
 mkdir -p skills/brainstorming/scripts
@@ -337,16 +337,16 @@ cp .claude/docs/plans/_sp-6.3.0-snapshot/brainstorming/spec-document-reviewer-pr
 cp .claude/docs/plans/_sp-6.3.0-snapshot/brainstorming/scripts/*                         skills/brainstorming/scripts/
 ```
 
-- [ ] **Step 2 (GREEN): Replace the body.** Replace everything below the frontmatter `---` with the snapshot `brainstorming/SKILL.md` body, then apply §3.3 items:
+- [x] **Step 2 (GREEN): Replace the body.** Replace everything below the frontmatter `---` with the snapshot `brainstorming/SKILL.md` body, then apply §3.3 items:
   1. keep the existing A Team frontmatter `description`;
   2. `docs/superpowers/specs/` → `.claude/docs/specs/` (checklist step + "After the Design");
   3. confirm no `superpowers:` prefixes (snapshot uses bare `writing-plans` — verify);
   4. provenance comment as first body line;
   5. replace `elements-of-style:writing-clearly-and-concisely` → `Write the spec clearly and concisely.`
 
-- [ ] **Step 3 (GREEN): Re-run the representative task** (Task 0.3 prompt) by following `skills/brainstorming/SKILL.md` directly. Confirm path classification + approval gate + unchanged `description`. Write `.claude/docs/plans/_red-baselines/brainstorming-after.md`.
+- [x] **Step 3 (GREEN): Re-run the representative task** (Task 0.3 prompt) by following `skills/brainstorming/SKILL.md` directly. Confirm path classification + approval gate + unchanged `description`. Write `.claude/docs/plans/_red-baselines/brainstorming-after.md`.
 
-- [ ] **Step 4 (REFACTOR): `writing-skills` §9 checklist**
+- [x] **Step 4 (REFACTOR): `writing-skills` §9 checklist**
 
 ```bash
 python3 -c "import yaml; d=yaml.safe_load(open('skills/brainstorming/SKILL.md').read().split('---')[1]); assert d['name']=='brainstorming'; print('frontmatter OK')"
@@ -358,13 +358,13 @@ grep -q 'Merged from superpowers 6.3.0' skills/brainstorming/SKILL.md && echo pr
 ```
 Plus read-through: description matches scope; positive trigger ("let's build X") fires; near-miss ("what does this error mean?") does not.
 
-- [ ] **Step 5: Commit** — `git add skills/brainstorming .claude/docs/plans/_red-baselines/brainstorming-after.md && git commit -m "feat: adopt superpowers brainstorming body, preserve A Team description + spec path"`
+- [x] **Step 5: Commit** — `git add skills/brainstorming .claude/docs/plans/_red-baselines/brainstorming-after.md && git commit -m "feat: adopt superpowers brainstorming body, preserve A Team description + spec path"`
 
 #### Task 2.2: subagent-driven-development — replace body with the snapshot, preserve items 1–5
 
 **Files:** Modify `skills/subagent-driven-development/SKILL.md`, `.gitignore`; Create `skills/subagent-driven-development/scripts/{sdd-workspace,task-brief,review-package}`, `implementer-prompt.md`, `task-reviewer-prompt.md`, `re-review-prompt.md`
 
-- [ ] **Step 1 (GREEN): Copy support files**
+- [x] **Step 1 (GREEN): Copy support files**
 
 ```bash
 mkdir -p skills/subagent-driven-development/scripts
@@ -375,18 +375,18 @@ cp .claude/docs/plans/_sp-6.3.0-snapshot/subagent-driven-development/re-review-p
 chmod +x skills/subagent-driven-development/scripts/*
 ```
 
-- [ ] **Step 2 (GREEN): Replace the body** with the snapshot body, then apply §3.3 items:
+- [x] **Step 2 (GREEN): Replace the body** with the snapshot body, then apply §3.3 items:
   1. keep the A Team frontmatter `description`;
   2. rewrite scratch-dir refs `.superpowers/sdd/` → `.agent-sync/sdd/` (in SKILL.md **and** in `scripts/sdd-workspace`); rewrite prose `docs/superpowers/plans/` → `.claude/docs/plans/`;
   3. rewrite `superpowers:finishing-a-development-branch` → `finishing-a-development-branch`, `superpowers:using-git-worktrees` → `using-git-worktrees`; the final-review step's `../requesting-code-review/code-reviewer.md` → **dispatch the `code-reviewer` agent** (`.claude/agents/code-reviewer.md`) for the whole-branch review;
   4. provenance comment first body line;
   5. keep the A Team Model-Selection tier table; merge the snapshot's extra guidance (turn-count, escalation rounds 4–5); add `Tiers map to .claude/rules/performance.md.`
 
-- [ ] **Step 3:** Add `.agent-sync/sdd/` to `.gitignore` (below the existing `.agent-sync/logs/` line).
+- [x] **Step 3:** Add `.agent-sync/sdd/` to `.gitignore` (below the existing `.agent-sync/logs/` line).
 
-- [ ] **Step 4 (GREEN): Re-run the representative task** (Task 0.3 prompt) by following the merged `SKILL.md`. Confirm ledger creation (under `.agent-sync/sdd/`), fresh subagent per task, two-stage review. Write `.claude/docs/plans/_red-baselines/subagent-driven-development-after.md`.
+- [x] **Step 4 (GREEN): Re-run the representative task** (Task 0.3 prompt) by following the merged `SKILL.md`. Confirm ledger creation (under `.agent-sync/sdd/`), fresh subagent per task, two-stage review. Write `.claude/docs/plans/_red-baselines/subagent-driven-development-after.md`.
 
-- [ ] **Step 5 (REFACTOR): `writing-skills` §9 checklist**
+- [x] **Step 5 (REFACTOR): `writing-skills` §9 checklist**
 
 ```bash
 python3 -c "import yaml; d=yaml.safe_load(open('skills/subagent-driven-development/SKILL.md').read().split('---')[1]); assert d['name']=='subagent-driven-development'; print('frontmatter OK')"
@@ -399,7 +399,7 @@ for f in $(grep -oE '(scripts/[a-z-]+|[a-z-]+-prompt\.md)' skills/subagent-drive
 done
 ```
 
-- [ ] **Step 6: Commit** — `git add skills/subagent-driven-development .gitignore .claude/docs/plans/_red-baselines/subagent-driven-development-after.md && git commit -m "feat: adopt superpowers subagent-driven-development body (ledger, fix-loop, scripts)"`
+- [x] **Step 6: Commit** — `git add skills/subagent-driven-development .gitignore .claude/docs/plans/_red-baselines/subagent-driven-development-after.md && git commit -m "feat: adopt superpowers subagent-driven-development body (ledger, fix-loop, scripts)"`
 
 ---
 
@@ -409,26 +409,26 @@ done
 
 **Files:** Create `skills/receiving-code-review/SKILL.md`
 
-- [ ] **Step 1:** `mkdir -p skills/receiving-code-review && cp .claude/docs/plans/_sp-6.3.0-snapshot/receiving-code-review/SKILL.md skills/receiving-code-review/SKILL.md`
-- [ ] **Step 2:** Edits: keep the snapshot `description`; `your human partner` → `the user` throughout; `superpowers:<name>` → bare; provenance comment `<!-- Ported from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->`. Add a short note: *pairs with the `code-reviewer` agent and `.claude/rules/coding-style.md` "Surgical Changes".*
-- [ ] **Step 3: Verify**
+- [x] **Step 1:** `mkdir -p skills/receiving-code-review && cp .claude/docs/plans/_sp-6.3.0-snapshot/receiving-code-review/SKILL.md skills/receiving-code-review/SKILL.md`
+- [x] **Step 2:** Edits: keep the snapshot `description`; `your human partner` → `the user` throughout; `superpowers:<name>` → bare; provenance comment `<!-- Ported from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->`. Add a short note: *pairs with the `code-reviewer` agent and `.claude/rules/coding-style.md` "Surgical Changes".*
+- [x] **Step 3: Verify**
 
 ```bash
 python3 -c "import yaml; d=yaml.safe_load(open('skills/receiving-code-review/SKILL.md').read().split('---')[1]); assert d['name']=='receiving-code-review'; print('OK')"
 grep -n 'superpowers:\|your human partner' skills/receiving-code-review/SKILL.md || echo "clean OK"
 ```
 
-- [ ] **Step 4: Commit** — `git commit -m "feat: port receiving-code-review skill from superpowers"`
+- [x] **Step 4: Commit** — `git commit -m "feat: port receiving-code-review skill from superpowers"`
 
 ---
 
 ## Phase 4 — Wiring  *(main session; PR1 branch)*
 
-#### Task 4.1: Symlink the 12 skills into `.claude/skills/`
+#### Task 4.1: Symlink the remaining merged/ported skills into `.claude/skills/`
 
-**Files:** Create 12 symlinks under `.claude/skills/`
+**Files:** Create 11 remaining symlinks under `.claude/skills/`; `verification-before-completion` was already symlinked in Task 0.2.
 
-- [ ] **Step 1: Create the symlinks**
+- [x] **Step 1: Create the remaining symlinks**
 
 ```bash
 cd .claude/skills
@@ -442,16 +442,16 @@ cd ../..
 # verification-before-completion was symlinked in Task 0.2 — do not re-add
 ```
 
-- [ ] **Step 2: Confirm all are git-tracked symlinks**
+- [x] **Step 2: Confirm all are git-tracked symlinks**
 
 ```bash
 git add .claude/skills
-git ls-files -s .claude/skills | grep -c '^120000'   # expect: 25 (13 pre-existing + 12 new; react-aria is a dir of blobs, not counted)
+git ls-files -s .claude/skills | grep -c '^120000'   # expect: 25 (13 pre-existing + Task 0.2 spike + 11 new; react-aria is a dir of blobs, not counted)
 git ls-files -s .claude/skills | grep -v '^120000' | grep -v react-aria && echo "NON-SYMLINK ENTRY" || echo "all symlinks OK"
 ```
 If any new entry is not `120000`, redo it via `git update-index --add --cacheinfo 120000,$(printf '../../skills/<name>' | git hash-object -w --stdin),.claude/skills/<name>` then `git checkout -- .claude/skills/<name>`.
 
-- [ ] **Step 3: Count**
+- [x] **Step 3: Count**
 
 ```bash
 ls .claude/skills | grep -vc react-aria   # expect: 25
@@ -459,13 +459,13 @@ comm -3 <(ls -1 skills | grep -v '\.md$' | sort) <(ls -1 .claude/skills | grep -
 echo "no output = .claude/skills matches skills/ exactly"
 ```
 
-- [ ] **Step 4: Commit** — `git commit -m "feat: symlink 12 merged/ported skills into .claude/skills (25/25 resolve local)"`
+- [x] **Step 4: Commit** — `git commit -m "feat: symlink 11 merged/ported skills into .claude/skills (25/25 resolve local)"`
 
 #### Task 4.2: Complete the `Skill()` allow-list
 
 **Files:** Modify `.claude/settings.json`
 
-- [ ] **Step 1: Add 12 entries** to `permissions.allow` (keep 2-space indent + array style):
+- [x] **Step 1: Add 12 entries** to `permissions.allow` (keep 2-space indent + array style):
 
 ```
 "Skill(adr)", "Skill(adr:*)",
@@ -476,18 +476,20 @@ echo "no output = .claude/skills matches skills/ exactly"
 "Skill(receiving-code-review)", "Skill(receiving-code-review:*)"
 ```
 
-- [ ] **Step 2: Validate**
+- [x] **Step 2: Validate**
 
 ```bash
 python3 -c "import json; json.load(open('.claude/settings.json')); print('valid JSON')"
 grep -oE '"Skill\([^"]*\)"' .claude/settings.json | sort -u | wc -l   # expect: 50 (25 names x 2)
 ```
 
-- [ ] **Step 3: Commit** — `git commit -m "feat: add adr, architecture-*, managing-github-actions, scalability-review, receiving-code-review to Skill() allow-list"`
+- [x] **Step 3: Commit** — `git commit -m "feat: add adr, architecture-*, managing-github-actions, scalability-review, receiving-code-review to Skill() allow-list"`
 
 #### Task 4.3: Reload gate
 
-- [ ] **Step 1:** Main session: instruct the user to restart / reload the session so the 12 new symlinks and 12 allow-list entries take effect. Wait for confirmation before Task 4.4.
+- [ ] **Step 1:** Main session: instruct the user to restart / reload the session so the new skill symlinks and 12 allow-list entries take effect. Wait for confirmation before Task 4.4.
+
+  **Status 2026-09-09:** Reload gate reached after validation through commit `6f55eb8`. Tasks 0.1 through 4.2 are complete; Task 4.4 must wait for a fresh/reloaded session.
 
 #### Task 4.4: Verify 25/25 resolve un-prefixed and un-prompted  *(post-reload)*
 
