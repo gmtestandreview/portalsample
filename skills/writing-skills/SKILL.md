@@ -1,42 +1,27 @@
 ---
 name: writing-skills
-description: Use when creating, editing, optimizing, testing, or validating Agent Skills/SKILL.md files, including activation descriptions, frontmatter, scope, workflows, supporting resources, evals, deterministic SKILL-specific validators, and deployment readiness.
+description: Use when creating, editing, optimizing, testing, validating, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, and deployment readiness.
 ---
 
 # Writing Skills
 
-## Core principle
-
 Treat skill authoring as test-driven development for process documentation:
 
-1. **RED** — observe a realistic failure without the skill.
-2. **GREEN** — write the smallest guidance that prevents that failure.
+1. **RED** — observe a representative failure, ambiguity, or missing context without the candidate skill.
+2. **GREEN** — add the smallest guidance that prevents the failure or satisfies a mandatory requirement.
 3. **REFACTOR** — close loopholes, remove non-load-bearing content, and retest.
 
-Do not invent requirements from hypothetical failures when representative testing is possible.
+Do not invent requirements from hypothetical failures when representative evidence is available.
 
-## When to use
+## Scope
 
-Use this skill to:
+Use this skill to create or scaffold, edit, optimize, test, validate, or deploy Agent Skills; improve activation, frontmatter, scope, workflows, and progressive disclosure; organize supporting resources; and maintain SKILL-specific evals or deterministic validators.
 
-- create a new `SKILL.md`;
-- edit or optimize an existing Agent Skill;
-- improve activation or description wording;
-- include only essential information directly related to skill functionality in `SKILL.md`, while placing supplementary materials such as examples and references in supporting resources;
-- add or revise tests, examples, references, scripts, or assets;
-- create, maintain, or run deterministic validators for Agent Skill structure, frontmatter, paths, or other mechanical requirements;
-- validate a skill before deployment.
-
-Do not use it for:
-
-- ordinary Markdown or prose editing unrelated to Agent Skills;
-- one-off project instructions better kept in project-level guidance;
-- generic validators or linters unrelated to Agent Skills;
-- agent-role definitions rather than reusable skills.
+Do not use it for ordinary Markdown editing, one-off project instructions, generic linters, or agent-role definitions.
 
 ## Required shape
 
-A skill directory contains at least `SKILL.md` and may contain supporting resources:
+A skill is a directory containing `SKILL.md` plus optional supporting resources:
 
 ```text
 skill-name/
@@ -58,127 +43,184 @@ description: Use when ...
 ---
 ```
 
-Apply the current Agent Skills specification for mandatory constraints. At minimum:
+Apply the current Agent Skills specification. At minimum:
 
-- `name` is 1–64 characters, lowercase letters/numbers/hyphens only, with no leading, trailing, or consecutive hyphens;
-- `name` matches the parent skill-directory name;
-- `description` is non-empty, at most 1024 characters, and states both what the skill does and when to use it.
+- `name` is 1–64 characters, uses lowercase letters, numbers, and hyphens only, has no leading, trailing, or consecutive hyphens, and matches the parent directory name;
+- `description` is non-empty, at most 1024 characters, and states what the skill does and when to use it;
+- optional fields are limited to those supported by the current specification.
 
-Treat client- or project-specific naming, registration, and directory conventions as local policy, not universal specification requirements.
+Treat runtime-, client-, repository-, or checklist-specific paths, registration rules, validators, naming preferences, and packaging limits as local policy unless the current specification makes them mandatory. Report spec failures separately from local-policy failures.
 
 ## Authoring workflow
 
 ### 1. Define activation boundaries
 
-Write three sets before drafting:
+Before drafting, record:
 
 - **Should trigger** — realistic requests the skill must handle.
 - **Should not trigger** — near-misses with overlapping vocabulary.
 - **Ambiguous** — requests that expose unclear scope.
 
-For each critical boundary, run QAQ/RMI:
+For every critical trigger, branch, or load condition, run QAQ/RMI:
 
-1. Map a positive request to the governing instruction and expected behavior.
-2. Verify a near-miss does not activate the same behavior.
-3. Reverse-map the expected behavior to the intended request class.
-4. Revise any trigger or instruction that does not map directly and unambiguously.
+1. Map a positive request to its governing instruction and expected behavior.
+2. Verify a near-miss does not activate that behavior.
+3. Reverse-map the behavior to the intended request class.
+4. Revise any trigger, branch, or instruction whose mapping is indirect, ambiguous, or scope-inconsistent.
 
-### 2. Establish RED evidence
+### 2. Decide whether a skill is justified
 
-For a new skill or meaningful behavioral change:
+Create a skill when it captures reusable domain knowledge, a repeatable technique, a meaningful workflow, a decision pattern, or authoritative reference material the agent would not reliably reproduce unaided.
 
-1. Run at least one representative task without the candidate skill.
-2. Capture the failure, skipped step, ambiguity, or inefficiency.
-3. Record the agent's rationale verbatim when rationalization matters.
-4. Map each observed failure to a specific missing or weak instruction.
+Do not create a skill for:
 
-For discipline-enforcing skills, use combined pressure such as time, sunk cost, authority, fatigue, or speed bias.
+- one-off solutions;
+- project-only conventions better kept in project instructions;
+- generic background knowledge;
+- purely mechanical rules better enforced deterministically.
 
-If baseline execution is unavailable, mark RED evidence `Needs Human Review`; do not claim it passed.
+### 3. Classify the skill
 
-### 3. Write the minimal GREEN guidance
+Choose the narrowest type that explains its primary reusable value:
 
-Add only guidance required to prevent observed or specification-mandated failures.
+- **Discipline** — broad practice with multiple decisions or quality gates; emphasize pressure and adherence tests.
+- **Technique** — bounded repeatable method; emphasize application and edge cases.
+- **Pattern** — reusable decision structure; emphasize recognition and counterexamples.
+- **Reference** — authoritative knowledge; emphasize retrieval, coverage, and correct application.
+- **Hybrid** — use only when one category would materially misrepresent the skill.
+
+### 4. Establish RED evidence
+
+For a new skill or meaningful behavioral change, run at least one representative task without the candidate when possible.
+
+Capture the failure, skipped step, ambiguity, inefficiency, or rationalization. Map each observed failure to a specific missing or weak instruction.
+
+For Discipline skills, combine pressures such as time, sunk cost, authority, fatigue, confidence, or speed bias. If baseline execution is unavailable, mark RED evidence `Needs Human Review`; do not claim it passed.
+
+### 5. Write minimal GREEN guidance
+
+Add only guidance required to prevent observed failures or satisfy mandatory requirements.
 
 Prefer:
 
 - explicit triggers and non-triggers;
-- atomic actions and decision criteria;
-- one clear default when several approaches are possible;
+- atomic actions and observable decision criteria;
+- one clear default when several approaches are safe;
 - concrete failure → correction pairs;
 - measurable completion criteria.
 
 Avoid generic advice the base agent already knows.
 
-For deterministic SKILL-specific checks:
+For mechanically decidable SKILL-specific checks:
 
-- prefer a script or validator when the requirement is mechanically decidable;
-- keep the validator's pass/fail rule aligned with the current specification or explicit local policy;
+- prefer a deterministic script or validator;
+- align pass/fail rules with the current specification or explicit local policy;
 - distinguish specification failures from local-policy failures;
 - run the validator after relevant edits when tooling is available;
-- if the validator cannot be run, mark that check `Needs Human Review` rather than simulating success.
+- otherwise mark the check `Needs Human Review`.
 
-### 4. Apply progressive disclosure
+### 6. Apply progressive disclosure
 
-Keep activation-time guidance in `SKILL.md`. Move optional or heavy material out:
+Keep activation-time guidance in `SKILL.md`.
 
 | Content | Preferred location |
 |---|---|
-| Core triggers, workflow, validation | `SKILL.md` |
-| Detailed methodology or domain docs | `references/` |
+| Core triggers, workflow, decisions, validation | `SKILL.md` |
+| Detailed methodology or domain documentation | `references/` |
 | Reusable deterministic operations | `scripts/` |
 | Templates, images, static resources | `assets/` |
 | Evaluation cases and fixtures | `evals/` |
 
-Reference supporting files with relative paths and state when to load or run them.
+Use relative paths, state each resource's load or run condition, avoid deep reference chains, and split or extract material when the main file approaches roughly 500 lines or 5,000 tokens.
 
-### 5. REFACTOR against observed behavior
+### 7. Match instruction form to the failure
+
+Use the form that fits the observed failure:
+
+- **Rule skipped under pressure** → explicit prohibition, red flag, or rationalization counter.
+- **Output has the wrong shape** → positive output contract or template.
+- **Required element is omitted** → required structural field or slot.
+- **Behavior depends on a condition** → explicit conditional keyed to an observable predicate.
+
+Do not add stronger wording by default; justify specificity with test evidence and risk.
+
+### 8. REFACTOR against observed behavior
 
 After GREEN behavior:
 
-- remove duplicated or ignored content when it is not load-bearing;
+- remove duplicated or ignored content only when it is not load-bearing;
 - close new rationalizations with the smallest explicit counter;
 - tighten ambiguous steps;
-- preserve unique domain knowledge and edge cases;
-- split or extract material when the main file approaches roughly 500 lines or 5,000 tokens.
+- preserve unique domain knowledge, trigger boundaries, safety rules, and edge cases;
+- relocate long optional material instead of deleting it solely for length.
 
-Do not remove content only because it is long; remove or relocate it when execution evidence shows it is unnecessary at activation time.
+### 9. Test
 
-### 6. Validate
+Select tests according to skill type and risk.
+
+At minimum, cover:
+
+- positive activation;
+- realistic near-misses;
+- edge cases;
+- regressions after meaningful edits;
+- referenced paths and files;
+- scripts or tools when present;
+- safety and destructive operations when applicable.
+
+For Discipline skills, add adversarial pressure tests. When detailed scenario design is needed, load `testing-skills-with-subagents.md`. For activation problems, test multiple realistic phrasings and false-positive/false-negative boundaries.
+
+### 10. Validate
 
 Before deployment, verify:
 
-- frontmatter parses, preferably through a deterministic parser or validator;
+- YAML frontmatter parses;
 - mandatory specification constraints pass;
-- activation positives and near-misses are tested;
-- the original RED failure is prevented;
-- previously fixed failures do not regress;
+- description matches actual scope;
+- positive and near-miss activation cases are tested;
+- the original RED failure is prevented when RED evidence exists;
+- fixed failures do not regress;
 - referenced files and paths exist;
-- scripts or commands are run in a representative environment or marked unvalidated;
-- destructive or high-impact changes require authorization, backup/snapshot where practical, validation, and rollback;
+- scripts or commands were run in a representative environment or are marked unvalidated;
+- destructive or high-impact changes require authorization, backup or snapshot where practical, validation, and rollback;
 - known limitations and `Needs Human Review` items are explicit.
 
-Do not claim tests or deployment readiness without fresh evidence after the last meaningful edit.
+Run `SKILL-testing-checklist.md` for final validation when it is part of the skill library. Treat checklist-only requirements as local policy when they exceed the current specification. Do not claim tests or deployment readiness without fresh evidence after the last meaningful edit.
 
-## Common mistakes
+## Scaffolding a new skill
+
+When creating a new skill:
+
+1. Choose a lowercase hyphenated directory name that matches `name`.
+2. Create `SKILL.md`.
+3. Write a concise description focused on user intent and trigger conditions.
+4. Add only supporting directories the skill actually needs.
+5. Add representative evals before expanding documentation.
+6. Validate structure and behavior before deployment.
+
+Do not assume a repository path, registration mechanism, quoting style, asset-size limit, validator command, or client convention unless the target environment documents it.
+
+## Common failures
 
 | Failure | Correction |
 |---|---|
-| Drafting before observing a baseline failure | Run RED first when representative execution is available |
-| Description only names one narrow use case | Include actual user intents and artifacts covered by the body |
-| Description explains the whole workflow | Keep workflow details in the body |
+| Drafting before observing a baseline failure | Run RED when representative execution is available |
+| Vague or workflow-stuffed description | Focus on concrete intent, artifacts, and activation boundaries |
 | No negative activation boundary | Add realistic near-misses |
+| Generic-knowledge draft | Ground it in real tasks, artifacts, corrections, or observed failures |
 | Vague steps such as “review” or “verify” | State the action, criterion, and expected evidence |
-| Long optional material lives in `SKILL.md` | Move it to a referenced resource with a load condition |
-| Client-specific convention is presented as universal | Label it as project/runtime policy |
-| Registration is assumed for every harness | Apply only the target environment's documented discovery/registration process |
-| Mechanical requirements are judged only by prose inspection | Use or maintain a deterministic SKILL-specific validator when the rule is mechanically decidable |
-| Tests are described but never run | Mark them `Needs Human Review` instead of claiming success |
+| Long optional material lives in `SKILL.md` | Relocate it behind an explicit load condition |
+| Mechanical requirements are judged only by prose | Use deterministic SKILL-specific validation when mechanically decidable |
+| Client convention is presented as universal | Label it project/runtime policy |
+| Tests, paths, or tools are assumed | Verify them or mark `Needs Human Review` |
+| Registration is assumed for every harness | Use only the target environment's documented discovery or registration process |
 
 ## Integration
 
-After authoring, use the target agent's documented skill-discovery or registration mechanism.
+After authoring, use the target agent's documented skill-discovery or registration mechanism. Verify any required registration files and paths before editing them; preserve existing entries.
 
-For an A Team repository, update `CLAUDE.md`, `AGENTS.md`, or `skills/using-a-team/SKILL.md` only when those files exist and the repository's documented workflow requires those registrations. Verify paths before editing and preserve existing entries.
+A skill is ready to deploy only when required specification checks pass and representative activation and behavior tests support the intended scope.
 
-A skill is ready to deploy only when required specification checks pass and representative activation/behavior tests support the intended scope.
+## References
+
+When this skill is packaged with the accompanying reference set, use `index.md` as the first lookup point and load only the smallest relevant reference set for the task.
