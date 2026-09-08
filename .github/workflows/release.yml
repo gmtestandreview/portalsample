@@ -33,12 +33,7 @@ jobs:
         run: npx --yes npm@11.17.0 ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
-        run: |
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')" && exit 0
-          echo "Native binding missing after npm ci; npm's own satisfaction check won't detect this, so force-reinstall the specific package."
-          VERSION=$(node -p "require('./package-lock.json').packages['node_modules/rolldown'].optionalDependencies['@rolldown/binding-linux-x64-gnu']")
-          npx --yes npm@11.17.0 install --no-save --force "@rolldown/binding-linux-x64-gnu@$VERSION"
-          node -e "require.resolve('@rolldown/binding-linux-x64-gnu')"
+        uses: ./.github/actions/verify-rolldown-binding
 
       - name: Install Playwright Chromium (required by Storybook Browser Mode tests)
         run: npx playwright install --with-deps chromium
