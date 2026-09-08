@@ -114,11 +114,12 @@ const declaredJobs = [
   "sonarcloud",
 ];
 
-const timezones = [
-  { name: "UTC", slug: "utc" },
-  { name: "Australia/Sydney", slug: "sydney" },
-  { name: "America/Los_Angeles", slug: "los-angeles" },
-];
+/**
+ * Helper jobs that gate the narrowly-scoped checks (agent-tooling, date-timezone)
+ * on what the PR actually changed. They carry no required status, but must still
+ * be bounded, and a broken gate silently switches its downstream guard off.
+ */
+const pathGatedJobs = ["detect-changes", "agent-tooling"];
 
 describe("PR workflow runs each test environment as its own partition", () => {
   it("declares the partition matrix without fail-fast", () => {
@@ -178,13 +179,62 @@ describe("the PR workflow exposes eight independently named statuses", () => {
   });
 
   it("gives every job an explicit timeout", () => {
-    expect(occurrences("timeout-minutes:")).toBe(declaredJobs.length);
+    expect(occurrences("timeout-minutes:")).toBe(
+      declaredJobs.length + pathGatedJobs.length,
+    );
   });
 
   it("pipes step output through a shell that fails on a broken pipe", () => {
     // GitHub's default runner shell is `bash -e`, which has no pipefail; an
     // explicit `shell: bash` restores it so `| tee` cannot mask a failure.
     expect(workflow).toContain("shell: bash");
+  });
+});
+
+describe("a new push supersedes the in-flight PR run", () => {
+  it("scopes a cancel-in-progress concurrency group to the ref", () => {
+    expect(workflow).toContain("group: ${{ github.workflow }}-${{ github.ref }}");
+    expect(workflow).toContain("cancel-in-progress: true");
+  });
+});
+
+describe("path-gated jobs stay off the critical path until their tree changes", () => {
+  const detect = jobBlock(workflow, "detect-changes");
+  const agentTooling = jobBlock(workflow, "agent-tooling");
+
+  it("classifies the PR's changed files against the merge base", () => {
+    expect(detect).toContain("fetch-depth: 0");
+    expect(detect).toContain(
+      'git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD',
+    );
+  });
+
+  it("exposes one boolean output per gated job", () => {
+    expect(detect).toContain(
+      "agent-tooling: ${{ steps.scope.outputs.agent-tooling }}",
+    );
+    expect(detect).toContain(
+      "date-logic: ${{ steps.scope.outputs.date-logic }}",
+    );
+    expect(detect).toContain("deps: ${{ steps.scope.outputs.deps }}");
+  });
+
+  it("runs the agent-orchestration checks only when their trees change", () => {
+    expect(agentTooling).toContain("needs: detect-changes");
+    expect(agentTooling).toContain(
+      "if: needs.detect-changes.outputs.agent-tooling == 'true'",
+    );
+    expect(agentTooling).toContain("python3 tests/hooks/test_pre_tool_use.py");
+    expect(agentTooling).toContain("python3 tests/hooks/test_watcher_pid.py");
+  });
+
+  it("moves the Python tooling out of static-quality-node24", () => {
+    expect(jobBlock(workflow, "static-quality-node24")).not.toContain("python3");
+  });
+
+  it("bounds both helper jobs with an explicit timeout", () => {
+    expect(detect).toContain("timeout-minutes:");
+    expect(agentTooling).toContain("timeout-minutes:");
   });
 });
 
@@ -269,25 +319,29 @@ describe("every partition reports its evidence unconditionally", () => {
   });
 });
 
-describe("the date-timezone job characterizes every required zone", () => {
+describe("the date-timezone job re-runs the focused date suite off UTC", () => {
   const block = jobBlock(workflow, "date-timezone");
 
-  it.each(timezones)("runs the focused suite in $name", ({ name }) => {
-    expect(block).toContain(`name: ${name}`);
-  });
-
-  it("never lets one zone cancel the others", () => {
-    expect(block).toContain("fail-fast: false");
-  });
-
-  it("sets the zone through job env rather than a shell-specific script", () => {
-    expect(block).toContain("TZ: ${{ matrix.zone.name }}");
+  it("runs under Australia/Sydney, set through job env", () => {
+    // vitest-unit already exercises these files in the runner's default zone
+    // (UTC). This leg adds the "east of UTC, date already rolled over" edge for
+    // dateOnly.ts's deliberate local/UTC split - one zone, not a matrix, and set
+    // through job env rather than a shell-specific script.
+    expect(block).toContain("TZ: Australia/Sydney");
+    expect(block).not.toContain("matrix");
     expect(packageJson.scripts).not.toHaveProperty("test:tz");
   });
 
-  it("writes one JUnit report per zone", () => {
+  it("is path-gated, not run on every PR", () => {
+    expect(block).toContain("needs: detect-changes");
     expect(block).toContain(
-      "--outputFile.junit=reports/vitest/date-${{ matrix.zone.slug }}-junit.xml",
+      "if: needs.detect-changes.outputs.date-logic == 'true'",
+    );
+  });
+
+  it("writes a single JUnit report for the Sydney run", () => {
+    expect(block).toContain(
+      "--outputFile.junit=reports/vitest/date-sydney-junit.xml",
     );
   });
 
@@ -299,6 +353,7 @@ describe("the date-timezone job characterizes every required zone", () => {
     expect(block).toContain(
       "tests/unit/routes/requestForQuote/validation.test.ts",
     );
+    expect(block).toContain("tests/unit/utils/dateOnly.test.ts");
     expect(block).not.toContain("npm run test:ci:unit");
   });
 });
@@ -327,6 +382,16 @@ describe("the e2e job runs the full Playwright contract", () => {
 
 describe("the lower-bound job proves the declared Node floor", () => {
   const block = jobBlock(workflow, "lower-bound-node24");
+
+  it("runs only when dependency or workflow files change", () => {
+    // The floor-install result is a property of the dependency tree and the CI
+    // install path, not the app source, so it is path-gated rather than run on
+    // every PR.
+    expect(block).toContain("needs: detect-changes");
+    expect(block).toContain(
+      "if: needs.detect-changes.outputs.deps == 'true'",
+    );
+  });
 
   it("installs on the exact floor rather than the latest 24", () => {
     expect(block).toContain("node-version: '24.0.0'");
@@ -421,8 +486,47 @@ describe("no partition may mask a failure", () => {
     expect(workflow).toContain("playwright install");
   });
 
+  it("provisions npm through corepack, not an npx-installed copy", () => {
+    // `npx --yes npm@X` fetches npm at CI time and runs its lifecycle scripts -
+    // for the sonarcloud job, in a step that holds SONAR_TOKEN. corepack
+    // resolves the version from package.json's packageManager field instead, and
+    // must not stall on its download prompt in CI.
+    for (const contents of [workflow, releaseWorkflow]) {
+      expect(contents).not.toMatch(/npx\s+--yes\s+npm@/);
+      expect(contents).toContain("run: corepack enable");
+      expect(contents).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
+    }
+    // One corepack activation per job that installs dependencies.
+    expect(occurrences("run: corepack enable")).toBe(7);
+  });
+
+  it("invokes the installed Playwright binary directly, not via npx", () => {
+    for (const contents of [workflow, releaseWorkflow]) {
+      expect(contents).not.toContain("npx playwright");
+      expect(contents).toContain(
+        "./node_modules/.bin/playwright install --with-deps chromium",
+      );
+    }
+  });
+
   it("preserves the Rolldown optional-binding workaround", () => {
-    expect(workflow).toContain("@rolldown/binding-linux-x64-gnu");
+    // Deduplicated from seven inline copies into a local composite action. Every
+    // job that installs dependencies calls it, and the action still
+    // force-reinstalls the exact binding the lockfile pins.
+    const action = readFileSync(
+      ".github/actions/verify-rolldown-binding/action.yml",
+      "utf8",
+    );
+
+    expect(workflow).toContain(
+      "uses: ./.github/actions/verify-rolldown-binding",
+    );
+    expect(releaseWorkflow).toContain(
+      "uses: ./.github/actions/verify-rolldown-binding",
+    );
+    expect(action).toContain("@rolldown/binding-linux-x64-gnu");
+    expect(action).toContain("--no-save --force");
+    expect(action).not.toContain("npx");
   });
 });
 

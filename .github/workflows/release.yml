@@ -7,6 +7,11 @@ on:
 permissions:
   contents: read
 
+env:
+  # See pr.yml: npm is provisioned via `corepack enable`, and corepack must not
+  # block on its download prompt in CI.
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
+
 defaults:
   run:
     shell: bash
@@ -29,14 +34,17 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       - name: Install Playwright Chromium (required by Storybook Browser Mode tests)
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Type-check
         run: npm run type-check

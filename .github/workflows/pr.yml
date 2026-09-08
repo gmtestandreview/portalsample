@@ -15,6 +15,11 @@ concurrency:
 
 env:
   STORYBOOK_DISABLE_TELEMETRY: '1'
+  # Every job provisions npm through `corepack enable`, which resolves the version
+  # from package.json's packageManager field instead of npx-installing a pinned
+  # copy at CI time (npx also runs the fetched package's lifecycle scripts). In
+  # CI corepack must never block on its "download this package manager?" prompt.
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'
 
 # GitHub's implicit runner shell is `bash -e`, which has no pipefail: a step
 # that pipes into `tee` would report the exit code of `tee`, not of the command
@@ -36,11 +41,14 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/static-quality
 
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/static-quality/install.log
+        run: npm ci 2>&1 | tee reports/ci/static-quality/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
@@ -70,29 +78,51 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # Path gate for the agent-tooling job below. A whole-workflow `paths:` filter
-  # would gate every job; this narrows just the Python tooling checks, which are
-  # disjoint from the React app.
+  # Path gate for the narrowly-scoped jobs below (agent-tooling, date-timezone).
+  # A whole-workflow `paths:` filter would gate every job; this classifies the
+  # PR's changed files once and lets each downstream job opt in.
   detect-changes:
     name: detect-changes
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
       agent-tooling: ${{ steps.scope.outputs.agent-tooling }}
+      date-logic: ${{ steps.scope.outputs.date-logic }}
+      deps: ${{ steps.scope.outputs.deps }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
 
-      - name: Detect changes under scripts/, templates/, tests/hooks/
+      - name: Classify changed paths
         id: scope
         run: |
-          if git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD \
-            | grep -qE '^(scripts|templates|tests/hooks)/'; then
+          CHANGED=$(git diff --name-only "${{ github.event.pull_request.base.sha }}" HEAD)
+          match() { grep -qE "$1" <<< "$CHANGED"; }
+
+          # Agent-orchestration tooling, disjoint from the React app.
+          if match '^(scripts|templates|tests/hooks)/'; then
             echo "agent-tooling=true" >> "$GITHUB_OUTPUT"
           else
             echo "agent-tooling=false" >> "$GITHUB_OUTPUT"
-            echo "No changes under scripts/, templates/, or tests/hooks/ - agent-tooling will be skipped."
+            echo "No scripts/, templates/, or tests/hooks/ changes - agent-tooling will be skipped."
+          fi
+
+          # dateOnly.ts local-vs-UTC split and its consumers / tests.
+          if match '^(ClientApp/src/utils/dateOnly\.ts|ClientApp/src/components/Inputs/DatePicker/|ClientApp/src/routes/requestForQuote/|tests/unit/utils/dateOnly\.test\.ts|tests/unit/components/inputs/datePickerWrapper\.test\.tsx|tests/unit/routes/requestForQuote/)'; then
+            echo "date-logic=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "date-logic=false" >> "$GITHUB_OUTPUT"
+            echo "No dateOnly / DatePicker / requestForQuote changes - date-timezone will be skipped."
+          fi
+
+          # The dependency tree and the CI install path. lower-bound-node24 only
+          # re-proves the floor when one of these moves.
+          if match '^(package\.json|package-lock\.json|\.node-version|\.npmrc|\.github/)'; then
+            echo "deps=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deps=false" >> "$GITHUB_OUTPUT"
+            echo "No dependency or workflow changes - lower-bound-node24 will be skipped."
           fi
 
   # The agent-orchestration tooling under scripts/, templates/, and tests/hooks/
@@ -170,8 +200,11 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
@@ -180,7 +213,7 @@ jobs:
       # provision them (proved by commit cb5fdaa).
       - name: Install Playwright Chromium
         if: matrix.partition.install-browser
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Run ${{ matrix.partition.name }} tests
         run: ${{ matrix.partition.command }}
@@ -220,11 +253,14 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/build
 
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/build/install.log
+        run: npm ci 2>&1 | tee reports/ci/build/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
@@ -244,27 +280,21 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # The focused date suite is timezone-sensitive by construction. Each zone is
-  # its own leg so a failure in one stays attributable; `fail-fast: false` keeps
-  # the passing zones reporting. The UTC leg carries Child Plan B's characterized
-  # DatePicker failures and stays red until B1 lands - that visibility is the
-  # point, so this job must never be allowed to mask its own result.
+  # Regression cover for the deliberate local-vs-UTC split in dateOnly.ts: picker
+  # Dates are built at local noon and read back with local getters, API Dates at
+  # UTC midnight and read back with UTC getters. The vitest-unit partition only
+  # exercises these files in the runner's default zone (UTC); this leg re-runs
+  # them under Australia/Sydney - the NMI user base, and the "east of UTC, date
+  # already rolled over" edge - so a getDate()/getUTCDate() slip cannot pass CI
+  # unseen. Path-gated by detect-changes; this workflow has no required checks.
   date-timezone:
     name: date-timezone
+    needs: detect-changes
+    if: needs.detect-changes.outputs.date-logic == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
-    strategy:
-      fail-fast: false
-      matrix:
-        zone:
-          - name: UTC
-            slug: utc
-          - name: Australia/Sydney
-            slug: sydney
-          - name: America/Los_Angeles
-            slug: los-angeles
+    timeout-minutes: 10
     env:
-      TZ: ${{ matrix.zone.name }}
+      TZ: Australia/Sydney
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -273,17 +303,16 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
-      # dateOnly.ts is where the local-vs-UTC split lives: picker Dates are built
-      # at local noon and read back with local getters, API Dates at UTC midnight
-      # and read back with UTC getters. dateOnly.test.ts pins that split and must
-      # run in every zone, so it is named explicitly below alongside the pickers.
-      - name: Run focused date suite in ${{ matrix.zone.name }}
+      - name: Run focused date suite under Australia/Sydney
         run: >-
           npm run test:unit --
           tests/unit/components/inputs/datePickerWrapper.test.tsx
@@ -291,14 +320,14 @@ jobs:
           tests/unit/routes/requestForQuote/validation.test.ts
           tests/unit/utils/dateOnly.test.ts
           --reporter=default --reporter=junit
-          --outputFile.junit=reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
+          --outputFile.junit=reports/vitest/date-sydney-junit.xml
 
-      - name: Upload ${{ matrix.zone.name }} JUnit report
+      - name: Upload Australia/Sydney JUnit report
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: date-${{ matrix.zone.slug }}-${{ github.run_attempt }}
-          path: reports/vitest/date-${{ matrix.zone.slug }}-junit.xml
+          name: date-sydney-${{ github.run_attempt }}
+          path: reports/vitest/date-sydney-junit.xml
           if-no-files-found: error
           retention-days: 14
 
@@ -319,8 +348,11 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci
+        run: npm ci
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
@@ -329,7 +361,7 @@ jobs:
       # Storybook on :6006) and mock the API and MSAL, so no backend is needed -
       # but neither provisions a browser binary.
       - name: Install Playwright Chromium
-        run: npx playwright install --with-deps chromium
+        run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Run app and Storybook BDD suites
         run: npm run test:e2e
@@ -345,9 +377,14 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # Proves the declared floor itself installs, not merely "some Node 24".
+  # Proves the declared floor itself installs, not merely "some Node 24". That is
+  # a property of the dependency tree and the install path, not of the app
+  # source, so it is path-gated on dependency and workflow files (via
+  # detect-changes) rather than run on every PR.
   lower-bound-node24:
     name: lower-bound-node24
+    needs: detect-changes
+    if: needs.detect-changes.outputs.deps == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -363,11 +400,14 @@ jobs:
           node-version: '24.0.0'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/lower-bound
 
       - name: Install on the exact floor with strict peers
-        run: npx --yes npm@11.17.0 ci --strict-peer-deps 2>&1 | tee reports/ci/lower-bound/install.log
+        run: npm ci --strict-peer-deps 2>&1 | tee reports/ci/lower-bound/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
@@ -423,13 +463,16 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
       - name: Prepare evidence directory
         run: mkdir -p reports/ci/sonarcloud
 
       # The analyzer resolves TypeScript types against installed dependencies;
       # without them type inference degrades and findings change.
       - name: Install dependencies with declared npm
-        run: npx --yes npm@11.17.0 ci 2>&1 | tee reports/ci/sonarcloud/install.log
+        run: npm ci 2>&1 | tee reports/ci/sonarcloud/install.log
 
       - name: Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
