@@ -1,159 +1,154 @@
 ---
 name: test-driven-development
-description: Enforce RED-GREEN-REFACTOR discipline for every implementation task. Use for all new features, bug fixes, and refactors. The core rule — if you didn't watch the test fail, you don't know if it tests the right thing.
+description: Use when implementing or changing observable software behavior through a new feature, bug fix, or refactor where automated tests can verify the change. Enforces RED-GREEN-REFACTOR for new or corrected behavior, while using existing or characterization tests to protect behavior-preserving refactors.
 ---
 
 # Test-Driven Development
 
-## The Core Rule
+## Core rule
 
-```
-IF YOU DIDN'T WATCH THE TEST FAIL, YOU DON'T KNOW IF IT TESTS THE RIGHT THING.
-```
+For new or corrected behavior:
 
-A green test you've never seen red is not a test — it's a decoration.
+**RED → GREEN → REFACTOR.**
 
-## The Three Phases (Non-Negotiable)
+Do not write or retain implementation that changes behavior until you have run a test that fails for the intended reason.
 
-### Phase RED — Write a Failing Test
+For a behavior-preserving refactor, first establish a passing behavioral baseline with existing tests or characterization tests, then refactor while keeping that baseline green.
 
-Write the test FIRST. Not after. Not "I'll add it later." **First.**
+A test for new or corrected behavior that was never observed failing does not prove it can detect the missing or broken behavior. A characterization test for existing behavior is different: it may pass immediately because its purpose is to record behavior that already exists.
 
-The test must:
-- Describe the behavior you want, not the implementation
-- Be specific enough to fail for the right reason
-- Cover the exact scenario you're about to implement
+## Activation boundary
 
-```typescript
-// RED: Write this BEFORE writing the function
-test('returns empty array when no users match the filter', () => {
-  const result = filterActiveUsers([])
-  expect(result).toEqual([])
-})
-```
+Use this discipline for implementation work that changes testable software behavior, including:
 
-**Run it. Watch it fail.**
+- new features;
+- bug fixes;
+- behavior-preserving refactors that need characterization or regression protection.
 
-```bash
-npm test -- --testPathPattern="user-filter"
-# Expected: FAIL (function doesn't exist yet)
-```
+Do not force this workflow onto:
 
-If the test passes before you write the implementation: the test is wrong. Rewrite it.
+- prose-only documentation or comments;
+- generated/vendor code that the project does not maintain directly;
+- mechanical edits with no observable runtime behavior;
+- work where automated execution is unavailable or impossible.
 
-### Phase GREEN — Write Minimal Implementation
+When a task falls outside the boundary, follow the project's applicable verification process instead of inventing a test.
 
-Write the **smallest possible code** that makes the test pass. Nothing more.
+## RED — prove the test detects the gap
 
-- No extra features "while I'm here"
-- No optimization
-- No handling of edge cases not yet covered by tests
-- Ugly code that passes is better than beautiful code that doesn't exist yet
+Use RED for new behavior and bug fixes. Do not manufacture a failure for behavior that already exists solely to make a characterization test red.
 
-```typescript
-// GREEN: Minimal implementation that passes the test
-function filterActiveUsers(users: User[]): User[] {
-  return users.filter(u => u.active)
-}
-```
+1. Define one observable behavior.
+2. Write the smallest test that expresses that behavior.
+3. Run that test before implementing the behavior.
+4. Confirm it fails for the expected reason.
 
-**Run it. Watch it pass.**
+A valid RED failure means the assertion exposes the missing or broken behavior. A syntax error, broken fixture, missing dependency, or unrelated failure does not count.
 
-```bash
-npm test -- --testPathPattern="user-filter"
-# Expected: PASS
-```
+If the test passes unexpectedly, do not implement yet. Check whether:
 
-If it still fails: read the error message carefully. Fix only what the message tells you.
+- the behavior already exists;
+- the bug was not reproduced;
+- the test exercises the wrong path;
+- the assertion is too weak.
 
-### Phase REFACTOR — Improve Without Breaking
+Revise the test or understanding until the RED result is meaningful.
 
-Now clean up. Rename, extract, simplify — **while keeping tests green**.
+For a bug fix, first reproduce the bug with a regression test whenever practical.
 
-```bash
-# Run tests continuously during refactor
-npm test -- --watch --testPathPattern="user-filter"
-```
+## Characterization baseline — protect existing behavior
 
-Rules during refactor:
-- Tests must stay green at every step
-- No new behavior — only structural improvement
-- If tests go red: undo the last change, understand why
+For a behavior-preserving refactor:
 
-## Adding More Tests (Expand-Contract Pattern)
+1. Identify the observable behavior that must remain unchanged.
+2. Use existing passing tests when they already protect that behavior.
+3. Add characterization tests when important existing behavior is not adequately protected.
+4. Run the relevant tests before refactoring and confirm the baseline is green.
 
-After GREEN for the first case, expand coverage:
+A new characterization test may pass immediately. That is valid when it records behavior that already exists and will be preserved. Do not alter production code or weaken the test merely to force RED.
 
-```
-RED  → watch new test fail
-GREEN → minimal code to pass
-RED  → add next edge case test
-GREEN → handle the edge case
-...
-REFACTOR → clean up all at once when coverage is complete
-```
+If the task also changes or fixes behavior, use RED for that changed behavior before implementing it.
 
-Cover in order:
-1. Happy path (basic success case)
-2. Empty / null inputs
-3. Boundary values (min, max, exactly-at-limit)
-4. Error paths (invalid input, dependency failure)
-5. Concurrent / race conditions if applicable
+## GREEN — make only the required behavior pass
 
-## What to Test vs. What NOT to Test
+Implement the smallest change that satisfies the failing test.
 
-**Test:**
-- Public API surface (exported functions, class methods, HTTP endpoints)
-- Business logic decisions
-- Data transformations
-- Error handling
+Then run:
 
-**Do NOT test:**
-- Implementation details (private functions, internal state)
-- Third-party library behavior
-- Framework internals
+1. the focused test;
+2. the relevant surrounding test set required by the project.
 
-## Mocking External Dependencies
+If a test still fails, diagnose the failure before broadening the implementation.
 
-External dependencies (database, APIs, file system) must be mocked in unit tests:
+Do not add unrelated features, speculative edge handling, or refactors during GREEN.
 
-```typescript
-// Mock the DB before testing the service
-jest.mock('../db/users')
-const mockFindUser = db.findUser as jest.MockedFunction<typeof db.findUser>
-mockFindUser.mockResolvedValue({ id: '1', name: 'Alice', active: true })
-```
+## REFACTOR — improve structure while preserving behavior
 
-Integration tests should hit real dependencies — but unit tests must be fast and isolated.
+After GREEN:
 
-## Coverage Gate
+- simplify names, structure, duplication, or design as justified;
+- add no new behavior during the refactor;
+- rerun the relevant tests after each logical refactor step;
+- restore GREEN before continuing if a regression appears.
 
-After each feature or bug fix, verify coverage meets the project minimum:
+Keep changes small enough that a failure can be attributed to a recent edit.
 
-```bash
-npm run test:coverage
-# Required: ≥ 80% branches, functions, lines, statements
-```
+## Expand coverage one behavior at a time
 
-If coverage drops below threshold: add tests before moving on.
+Repeat RED → GREEN for additional cases that materially affect behavior, such as:
 
-## TDD Red Flags — You're Doing It Wrong
+1. normal behavior;
+2. boundaries or empty inputs;
+3. invalid input and error paths;
+4. dependency failures;
+5. concurrency or ordering hazards when applicable.
 
-- Writing the implementation before writing the test
-- Running the test only after implementation (never seeing it red)
-- Writing tests that test the implementation, not the behavior
-- Skipping the refactor phase ("it works, ship it")
-- Writing multiple failing tests before making any pass
-- Adding edge cases without first making them fail
+Do not add edge cases mechanically. Add a test when the case is required by the specification, reproduces a defect, protects a material risk, or documents an important contract.
 
-If you catch yourself rationalizing any of these: stop, revert to the last green state, and start the RED phase properly.
+## Test design rules
 
-## Integration with A Team Workflow
+Prefer tests of observable contracts:
 
-TDD fits into the full workflow:
-1. `brainstorming` → spec approved
-2. `writing-plans` → plan with test strategy included
-3. **`test-driven-development`** ← you are here, per task
-4. `subagent-driven-development` → each subagent runs TDD internally
-5. `verification-before-completion` → final proof before claiming done
-6. `finishing-a-development-branch` → branch wrap-up
+- public APIs and externally visible behavior;
+- business rules and decisions;
+- data transformations;
+- error behavior and side effects.
+
+Avoid coupling tests to implementation details unless those details are themselves part of the required contract.
+
+Use the project's established test level and dependency strategy. Mock, fake, stub, or use real dependencies according to the repository's conventions and the purpose of the test; do not introduce a universal mocking rule.
+
+## Project policy takes precedence on mechanics
+
+Use the repository's existing commands, test framework, coverage policy, fixtures, naming, and test organization.
+
+Do not invent a coverage threshold. If the project defines a coverage gate, verify it after the change.
+
+If no relevant test command or convention is known, inspect the repository before choosing one.
+
+## Anti-rationalization rules
+
+These do not justify skipping RED for new or corrected behavior:
+
+- “The change is too small.”
+- “I tested it manually.”
+- “I will add tests afterward.”
+- “The implementation is obvious.”
+- “The existing code took too long to discard.”
+- “We are in a hurry.”
+
+If implementation that changes behavior was written before a meaningful RED test, do not claim TDD compliance for that behavior. Preserve work only when required for safety or recovery, but establish a failing test before using that implementation as the solution. This rule does not require a behavior-preserving refactor to manufacture RED when a valid green characterization baseline already exists.
+
+## Completion check
+
+Before considering the behavior change complete, verify:
+
+- [ ] Each new or changed behavior has an appropriate test when automated testing is applicable.
+- [ ] Tests for new or corrected behavior were observed failing for the intended reason before implementation.
+- [ ] Behavior-preserving refactors had a passing baseline from existing or characterization tests before restructuring.
+- [ ] The focused test passes after implementation.
+- [ ] Relevant regression tests pass.
+- [ ] Refactoring did not introduce new behavior or leave tests failing.
+- [ ] Project-specific test and coverage gates pass when defined.
+
+If any item cannot be verified, state the gap instead of claiming TDD compliance.

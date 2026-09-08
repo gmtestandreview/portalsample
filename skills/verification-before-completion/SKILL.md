@@ -1,120 +1,108 @@
 ---
 name: verification-before-completion
-description: Use before claiming that implemented, changed, generated, fixed, tested, built, or otherwise objectively verifiable work succeeded. Require fresh evidence from the strongest available verification method after the last relevant change, especially when tempted to rely on prior results, inspection, confidence, or "should work" reasoning.
+description: Use before reporting that objectively verifiable work succeeded, including edits, fixes, tests, builds, validation, generated artifacts, measured thresholds, or user-visible behavior. Require claim-matched evidence produced after the last relevant change; do not substitute inspection, confidence, stale results, or expected behavior for verification.
 ---
 
 # Verification Before Completion
 
 ## Core Rule
 
-Do not claim a verifiable result succeeded without fresh evidence that directly supports the claim.
+Do not report an objectively verifiable result as successful without fresh evidence that directly supports that exact claim.
 
-Confidence, inspection, prior runs, and expected behavior are not verification.
+Inspection, confidence, prior runs, and “should work” reasoning are not verification.
 
-## When to Use
+## Activation Boundary
 
-Use before claiming that:
+Use this skill before independently reporting that objectively verifiable work succeeded, including:
 
-- objectively checkable work is complete
-- tests, builds, type checks, linting, or validation pass
-- a bug is fixed or a feature works
-- a generated or modified artifact is valid
-- a measured requirement or threshold was satisfied
+- an edit, fix, feature, or requested change is complete
+- tests, builds, type checks, linting, validation, or coverage pass
+- generated or modified artifacts are valid
+- user-visible behavior works
+- a measurable requirement or threshold is satisfied
 
-Do not use merely because a response is ending. Purely conversational, explanatory, creative, or subjective outputs need no execution evidence unless the claim itself is objectively verifiable.
+When merely summarizing or quoting user-provided verification evidence, preserve its provenance and scope instead of requiring a new run. Do not upgrade supplied evidence into an independently verified success claim.
 
-## Workflow
+## Verification Gate
 
-### 1. Define the claim
+### 1. Name the claim
 
-State exactly what you intend to claim.
+Define the exact result you intend to report.
 
-### 2. Choose evidence that directly tests it
+### 2. Select claim-matched evidence
 
-Use the strongest practical verifier for the claim.
+Use the strongest practical verifier available for that claim.
 
-| Claim | Evidence |
+| Claim | Preferred evidence |
 | --- | --- |
-| Tests pass | Run the relevant project test command |
-| Build succeeds | Run the relevant build command |
-| Types are valid | Run the configured type checker |
-| Bug is fixed | Re-run the reproduction or regression test |
-| Feature works | Exercise the relevant user flow or automated equivalent |
-| Coverage meets target | Run the configured coverage measurement |
-| Artifact is valid | Parse, validate, render, or inspect it |
+| Tests pass | Relevant project test command |
+| Build succeeds | Project build command |
+| Types are valid | Configured type checker |
+| Bug is fixed | Original reproduction or regression test |
+| Feature works | Relevant user flow or automated equivalent |
+| Coverage meets target | Configured coverage measurement |
+| Artifact is valid | Parse, validate, render, or inspect the artifact |
 | Requested edit exists | Compare the result or diff with the requirement |
 
-Use project-defined commands and validators when available. Do not invent tools, paths, credentials, or success criteria.
+Prefer project-defined commands and validators. Do not invent tools, paths, credentials, or success criteria.
 
-### 3. Verify fresh
+### 3. Verify after the last relevant change
 
-Verify after the last change that could affect the claim. Earlier results are stale.
+Evidence from before a change that could affect the claim is stale. Re-run the relevant verifier.
 
-### 4. Inspect the evidence
+### 4. Inspect the result
 
-Check the signals the verifier actually provides: exit status, failures, warnings, test counts, diagnostics, expected state, or reproduced behavior.
+Check the signals that establish success: failures, warnings, diagnostics, counts, expected state, reproduced behavior, or other claim-specific output.
 
-Exit code `0` alone is insufficient when the output or task semantics require additional checks.
+Do not treat exit code `0` as sufficient when the verifier’s output or task semantics require additional checks.
 
-### 5. Decide from evidence
+### 5. Bound the conclusion
 
-Claim success only when the observed evidence directly supports it.
+Report only what the evidence proves.
 
-If verification fails, report the failure, fix it when appropriate, then verify again.
+- If verification passes, state the verifier and observed result.
+- If verification fails, report the failure; fix and re-run when the task authorizes remediation.
+- If verification cannot run, state exactly what is unverified and why.
+- If evidence covers only part of the claim, separate verified from unverified portions.
 
-If verification cannot run because tools, inputs, credentials, permissions, or environment are unavailable, state exactly what remains unverified. Never substitute expectation for evidence or broaden partial verification into a wider success claim.
+Never broaden partial evidence into a wider success claim.
 
-### 6. Clean up safely
-
-Cleanup is optional unless the task explicitly requires it.
-
-Delete a temporary artifact only when you know it was created during this task, know its purpose, and know deletion will not remove project or user data.
-
-Never select files for deletion using broad patterns such as `*.log` or `*.tmp`. Never delete pre-existing, provenance-unknown, tracked, or intentionally persisted test/coverage artifacts.
-
-For destructive or high-impact cleanup, require explicit authorization and use a practical rollback safeguard such as a backup, snapshot, or staging step.
-
-## Rationalization Red Flags
+## Rationalization Checks
 
 | Rationalization | Required response |
 | --- | --- |
-| "It passed before this change." | Verify again after the change. |
-| "The change is too small to break anything." | Size is not evidence. Verify. |
-| "The code/logic obviously works." | Inspection is not execution evidence. |
-| "It should work." | Replace expectation with evidence. |
-| "I'll verify after reporting." | Verify before making the claim. |
+| “It passed before this change.” | Re-run after the change. |
+| “The change is too small to break anything.” | Verify anyway; size is not evidence. |
+| “The logic obviously works.” | Use a verifier that exercises the claim. |
+| “It should work.” | Replace expectation with evidence. |
+| “I’ll verify after reporting.” | Verify before making the success claim. |
 
-## Reporting
+## Reporting Format
 
-Report enough evidence to support the claim without dumping irrelevant or sensitive output.
+Use concise evidence:
 
 ```text
-Verification: `pytest tests/test_checkout.py`
-Result: 18 passed, 0 failed.
-Claim supported: checkout regression tests pass.
+Verification: <method or command>
+Observed: <relevant result>
+Supported claim: <exact claim>
 ```
 
-For non-command verification, name the method and observed result. If verification is incomplete, separate `Verified` from `Not verified`.
+When incomplete:
 
-## Completion Gate
+```text
+Verified: <supported result>
+Not verified: <remaining claim and reason>
+```
+
+## Completion Check
 
 Before reporting success, confirm:
 
 - the claim is explicit
-- the verifier directly tests it
+- the verifier directly tests that claim
 - verification occurred after the last relevant change
 - the evidence was inspected
-- the evidence supports the claim
+- the conclusion does not exceed the evidence
 - unverified portions are disclosed
-- any cleanup affects only known task-owned temporary artifacts
 
-If any required item fails, do not claim the corresponding result succeeded.
-
-## Why This Matters
-
-LLMs are optimistic by default. They report what should be true, not what is true.
-A test suite that "should pass" fails 30% of the time after non-trivial changes.
-The only way to know is to run it.
-
-One unverified claim compounds into three broken downstream tasks.
-Five minutes of verification saves two hours of debugging later.
+If any item fails, do not claim the corresponding result succeeded.
