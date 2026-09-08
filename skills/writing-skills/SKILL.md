@@ -192,13 +192,19 @@ Run `SKILL-testing-checklist.md` for final validation when it is part of the ski
 When creating a new skill:
 
 1. Choose a lowercase hyphenated directory name that matches `name`.
-2. Create `SKILL.md`.
+2. Create `SKILL.md` (always uppercase, always this name)
 3. Write a concise description focused on user intent and trigger conditions.
 4. Add only supporting directories the skill actually needs.
 5. Add representative evals before expanding documentation.
 6. Validate structure and behavior before deployment.
+7. Add it to `CLAUDE.md` skills table
+8. Add it to `AGENTS.md` skills table
+9. Add it to `skills/using-a-team/SKILL.md` trigger table
+10. Test it: give an agent a task that should trigger the skill, verify they use it correctly
 
 Do not assume a repository path, registration mechanism, quoting style, asset-size limit, validator command, or client convention unless the target environment documents it.
+
+A skill that doesn't get used is a skill that doesn't exist.
 
 ## Common failures
 
@@ -208,8 +214,10 @@ Do not assume a repository path, registration mechanism, quoting style, asset-si
 | Vague or workflow-stuffed description | Focus on concrete intent, artifacts, and activation boundaries |
 | No negative activation boundary | Add realistic near-misses |
 | Generic-knowledge draft | Ground it in real tasks, artifacts, corrections, or observed failures |
-| Vague steps such as “review” or “verify” | State the action, criterion, and expected evidence |
+| Vague steps such as "review" or "verify" | State the action, criterion, and expected evidence |
 | Long optional material lives in `SKILL.md` | Relocate it behind an explicit load condition |
+| Skill is a list of preferences | Move to `.claude/rules/` instead |
+| Skill describes an agent's role | Move to `.claude/agents/` instead |
 | Mechanical requirements are judged only by prose | Use deterministic SKILL-specific validation when mechanically decidable |
 | Client convention is presented as universal | Label it project/runtime policy |
 | Tests, paths, or tools are assumed | Verify them or mark `Needs Human Review` |
