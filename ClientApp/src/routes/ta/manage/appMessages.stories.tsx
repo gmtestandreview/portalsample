@@ -41,6 +41,8 @@ export const MessagesTab: Story = {
         await expect(await canvas.findByText('No messages to display')).toBeVisible();
         await expect(canvas.getByRole('combobox', { name: 'Select your view' })).toBeEnabled();
         await userEvent.type(canvas.getByRole('textbox', { name: 'Message NMI' }), 'Hi');
-        await expect(canvas.getByText(/^9\s*\//)).toBeVisible();
+        // The counter re-renders from Slate's onChange a tick after type() resolves;
+        // await the settled value rather than querying synchronously (see line above).
+        await expect(await canvas.findByText(/^9\s*\//)).toBeVisible();
     },
 };

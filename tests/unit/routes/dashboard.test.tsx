@@ -844,6 +844,35 @@ describe('Dashboard', () => {
         await waitFor(() => expect(mockMapToUserProfile).toHaveBeenCalled());
     });
 
+    it('seeds initial filters when the saved profile arrives after mount', async () => {
+        // Mount with no profile: the lazy useState seed resolves to undefined.
+        mockAccountDetails = { ...BASE, userProfile: undefined };
+        const Dashboard = await importDashboard();
+        const view = renderDashboard(Dashboard);
+
+        await waitFor(() => expect(screen.getByTestId('welcome')).toBeInTheDocument());
+        expect(mockGetDrafts).not.toHaveBeenCalled();
+
+        // Account context hydrates the profile asynchronously; the effect now
+        // takes the `prevState ?? p` fallback (prevState is still undefined from
+        // the seed-miss mount) and seeds the debounced fetch with the saved search.
+        mockMapToUserProfile.mockReturnValue({ ...BASE_USER_PROFILE, filterSearchText: 'Fluke' });
+        mockAccountDetails = {
+            ...BASE,
+            userProfile: { testingCalibrationDashboard: { ...BASE_USER_PROFILE, filterSearchText: 'Fluke' } },
+        };
+        view.rerender(
+            <MemoryRouter initialEntries={['/']}>
+                <Routes>
+                    <Route path="/" element={<Dashboard />} />
+                </Routes>
+            </MemoryRouter>,
+        );
+
+        await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+        expect(mockGetDrafts.mock.calls[0][4]).toBe('Fluke');
+    });
+
     it('writes the branch reset once even when the saved profile identity changes', async () => {
         mockModalState.branchSelectionModalMode = 'SelectAndEditOrg';
         const Dashboard = await importDashboard();
