@@ -252,7 +252,11 @@ const Dashboard = () => {
         hasError: false, status: 0, forbidden: false, noThirdPartyAccess: false,
     });
 
-    const [initialFilters, setInitialFilters] = useState<UserProfile | undefined>(undefined);
+    // Seed the debounce with the saved search so mounting does not fetch once without it
+    // and then fetch again when the initial profile reaches the debounce timer.
+    const [initialFilters, setInitialFilters] = useState<UserProfile | undefined>(() => (
+        accountDetails?.userProfile ? mapToUserProfile(accountDetails.userProfile) : undefined
+    ));
     const dashboardMessage = setNotification();
     const dashboardInfoMessage = setInfoNotification();
     const orgName = accountState?.details?.targetOrganisation?.targetOrganisationName;
@@ -265,9 +269,9 @@ const Dashboard = () => {
     const showRFQDeleteModal = !!modalState?.showRFQDeleteModal;
 
     // Paging
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(initialFilters?.filterCurrentPage ?? 1);
     const [totalPages, setTotalPages] = useState(1);
-    const [activeTab, setActiveTab] = useState(DashboardTab.Drafts);
+    const [activeTab, setActiveTab] = useState(initialFilters?.filterActiveTab ?? DashboardTab.Drafts);
     const [totalCount, setTotalCount] = useState(0);
     const searchPlaceholder = useMemo(
         () => (activeTab === DashboardTab.Instruments ? 'Search by instrument/artefact...' : DEFAULT_SEARCH_PLACEHOLDER),

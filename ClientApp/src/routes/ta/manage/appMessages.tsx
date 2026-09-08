@@ -212,7 +212,7 @@ const ApplicationMessages = () => {
                     ) : (
                         <ol className='list-unstyled'>
                             {message && messageCount !== undefined && messageCount === 0 && (
-                                <p className='text-center text-muted'>No messages to display</p>
+                                <li className='text-center text-muted'>No messages to display</li>
                             )}
                             {message && messageCount !== undefined && messageCount > 0 && (
                                 message!.requestForPatternApprovalMessageDetails!.items!.map((msg) => (

@@ -381,6 +381,15 @@ describe('Dashboard', () => {
         }
     });
 
+    it('uses the saved search in the first dashboard request', async () => {
+        mockMapToUserProfile.mockReturnValue({ ...BASE_USER_PROFILE, filterSearchText: 'Fluke' });
+        const Dashboard = await importDashboard();
+        renderDashboard(Dashboard);
+
+        await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
+        expect(mockGetDrafts.mock.calls[0][4]).toBe('Fluke');
+    });
+
     // ── Test 3: Sets auth token before API call ────────────────────────────────
 
     it('3. sets auth token on the client before making API calls', async () => {

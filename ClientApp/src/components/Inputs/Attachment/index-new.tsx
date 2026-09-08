@@ -57,6 +57,7 @@ const AttachmentNew = (
     const attachments: AttachmentDto[] = isArray(value) ? value : [];
     const [isUploading, setIsUploading] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+    const unidentifiedAttachmentKeys = useRef(new WeakMap<AttachmentDto, string>());
      
     const inputRef = useRef<any>(null);
     // console.log('SD: ', value);
@@ -170,20 +171,27 @@ const AttachmentNew = (
     };
 
     const renderAttachments = () => {
-        return attachments?.map((attachment, i) => (
-            <AttachmentItemNew
-                id={attachment.id}
-                name={name}
-                index={i}
-                canRemove={!isSummary && !attachment.documentLocked!}
-                cancelButtonId={`cancel-button-${attachment.id}`}
-                onRemoveItem={onConfirmDeleteFile}
-                key={attachment.id}
-                fileBytes={attachment.documentBytes}
-                isSummary={isSummary || attachment.documentLocked!}
-                onCategoryUpdate={onCategoryUpdate}
-            />
-        ));
+        return attachments?.map((attachment, i) => {
+            let attachmentKey = attachment.id ?? unidentifiedAttachmentKeys.current.get(attachment);
+            if (attachmentKey === undefined) {
+                attachmentKey = globalThis.crypto.randomUUID();
+                unidentifiedAttachmentKeys.current.set(attachment, attachmentKey);
+            }
+            return (
+                <AttachmentItemNew
+                    id={attachment.id}
+                    name={name}
+                    index={i}
+                    canRemove={!isSummary && !attachment.documentLocked!}
+                    cancelButtonId={`cancel-button-${attachment.id}`}
+                    onRemoveItem={onConfirmDeleteFile}
+                    key={attachmentKey}
+                    fileBytes={attachment.documentBytes}
+                    isSummary={isSummary || attachment.documentLocked!}
+                    onCategoryUpdate={onCategoryUpdate}
+                />
+            );
+        });
     };
     // ...existing code...
 

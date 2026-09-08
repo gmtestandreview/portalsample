@@ -330,21 +330,25 @@ describe('React Aria evaluation wrappers', () => {
         expect(screen.getByText('Choose an option')).toBeInTheDocument();
     });
 
-    it('renders toggle and segmented controls with their configured variants', () => {
-        render(
-            <>
-                <ToggleButton variant='secondary'>Pin</ToggleButton>
-                <ToggleButtonGroup aria-label='Text style' selectionMode='multiple'>
-                    <ToggleButton id='bold' variant='quiet'>Bold</ToggleButton>
-                    <ToggleButton id='italic'>Italic</ToggleButton>
-                </ToggleButtonGroup>
-                <SegmentedControl aria-label='View mode' selectedKeys={['list']} selectionMode='single'>
-                    <SegmentedControlItem id='list'>List</SegmentedControlItem>
-                    <SegmentedControlItem id='grid'>Grid</SegmentedControlItem>
-                </SegmentedControl>
-            </>,
-        );
+    it('renders toggle and segmented controls with their configured variants', async () => {
+        await act(async () => {
+            render(
+                <>
+                    <ToggleButton variant='secondary'>Pin</ToggleButton>
+                    <ToggleButtonGroup aria-label='Text style' selectionMode='multiple'>
+                        <ToggleButton id='bold' variant='quiet'>Bold</ToggleButton>
+                        <ToggleButton id='italic'>Italic</ToggleButton>
+                    </ToggleButtonGroup>
+                    <SegmentedControl aria-label='View mode' selectedKeys={['list']} selectionMode='single'>
+                        <SegmentedControlItem id='list'>List</SegmentedControlItem>
+                        <SegmentedControlItem id='grid'>Grid</SegmentedControlItem>
+                    </SegmentedControl>
+                </>,
+            );
+        });
 
+        expect(screen.getByRole('radio', {name: 'List'})).toHaveAttribute('aria-checked', 'true');
+        expect(screen.getByRole('radio', {name: 'Grid'})).toHaveAttribute('aria-checked', 'false');
         expect(screen.getByRole('button', {name: 'Pin'})).toHaveAttribute('data-variant', 'secondary');
         expect(screen.getByRole('button', {name: 'Bold'})).toHaveAttribute('data-variant', 'quiet');
         expect(screen.getByRole('button', {name: 'Italic'})).toHaveAttribute('data-variant', 'primary');

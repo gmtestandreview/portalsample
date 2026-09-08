@@ -431,18 +431,24 @@ describe('AttachmentNew', () => {
     });
 
     it('does not call delete when the selected attachment has no id', async () => {
-        const user = userEvent.setup();
-        const onDeleteFile = vi.fn().mockResolvedValue(undefined);
-        renderAttachment([{
-            ...uploadedAttachment,
-            id: undefined,
-        }], { onDeleteFile });
+        const consoleError = vi.spyOn(console, 'error');
+        try {
+            const user = userEvent.setup();
+            const onDeleteFile = vi.fn().mockResolvedValue(undefined);
+            renderAttachment([{
+                ...uploadedAttachment,
+                id: undefined,
+            }], { onDeleteFile });
 
-        await user.click(screen.getByRole('button', { name: 'Delete' }));
-        await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+            await user.click(screen.getByRole('button', { name: 'Delete' }));
+            await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
-        expect(onDeleteFile).not.toHaveBeenCalled();
-        expect(screen.getByTestId('values')).toHaveTextContent('"attachmentName":"manual.pdf"');
+            expect(onDeleteFile).not.toHaveBeenCalled();
+            expect(screen.getByTestId('values')).toHaveTextContent('"attachmentName":"manual.pdf"');
+            expect(consoleError).not.toHaveBeenCalled();
+        } finally {
+            consoleError.mockRestore();
+        }
     });
 
     it('reports delete failures without removing the attachment', async () => {
