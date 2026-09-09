@@ -2,6 +2,7 @@
 name: verification-before-completion
 description: Use before reporting that objectively verifiable work succeeded, including edits, fixes, tests, builds, validation, generated artifacts, measured thresholds, or user-visible behavior. Require claim-matched evidence produced after the last relevant change; do not substitute inspection, confidence, stale results, or expected behavior for verification.
 ---
+<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Verification Before Completion
 
@@ -76,6 +77,13 @@ Never broaden partial evidence into a wider success claim.
 | “The logic obviously works.” | Use a verifier that exercises the claim. |
 | “It should work.” | Replace expectation with evidence. |
 | “I’ll verify after reporting.” | Verify before making the success claim. |
+| “I’m confident.” | Confidence is not evidence. |
+| “Just this once.” | No exceptions. |
+| “The linter passed.” | A linter is not a compiler. |
+| “The agent reported success.” | Verify independently. |
+| “I’m tired.” | Exhaustion is not an excuse. |
+| “A partial check is enough.” | Partial verification proves nothing. |
+| “Different wording means the rule doesn’t apply.” | Spirit over letter. |
 
 ## Reporting Format
 

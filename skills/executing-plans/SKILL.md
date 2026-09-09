@@ -2,6 +2,7 @@
 name: executing-plans
 description: Use when you have a written implementation plan to execute in the current session. Loads the plan, reviews critically, executes all tasks, and reports when complete.
 ---
+<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Executing Plans
 
@@ -15,10 +16,11 @@ it provides higher quality through per-task fresh context and two-stage review.
 ## The Process
 
 ### Step 1: Load and Review Plan
-1. Read plan file completely
-2. Review critically — identify questions or concerns about the plan
-3. If concerns: raise with human partner BEFORE starting
-4. If no concerns: create TodoWrite and proceed
+1. Ensure an isolated workspace — use the `using-git-worktrees` skill to create or verify one.
+2. Read plan file completely
+3. Review critically — identify questions or concerns about the plan
+4. If concerns: raise with human partner BEFORE starting
+5. If no concerns: create TodoWrite and proceed
 
 ### Step 2: Execute Tasks
 
@@ -44,6 +46,14 @@ After all tasks complete:
 - Verification fails repeatedly
 
 **Ask for clarification rather than guessing.**
+
+## When to Revisit Earlier Steps
+
+**Return to Review (Step 1) when:**
+- Partner updates the plan based on your feedback
+- Fundamental approach needs rethinking
+
+**Don't force through blockers** - stop and ask.
 
 ## Hard Rules
 

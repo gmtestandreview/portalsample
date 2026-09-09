@@ -84,13 +84,12 @@ full-test-output.txt
 test-output.txt
 test_output.txt
 
-# Claude Code configuration for this project stays per-developer. Both files
-# hold permission grants - settings.json is a Bash/tool allowlist and
-# settings.local.json adds machine-specific absolute paths - and a standing
-# pre-approval that is right for one developer's workflow is not automatically
-# right for everyone who clones. Neither is tracked; agree changes in review
-# rather than inheriting them silently.
-.claude/settings.json
+# .claude/settings.json IS tracked - it carries the project Skill()/tool
+# allow-list, the deny list, and the enforcement hooks, and changes to it go
+# through review. See docs/adr/2026-09-09-track-claude-settings-json.md, which
+# supersedes the settings.json half of 2026-08-27 audit finding B5.
+# settings.local.json stays per-developer: machine-specific absolute paths and
+# personal pre-approvals, merged over settings.json at runtime.
 .claude/settings.local.json
 
 # SonarScanner working directory. Regenerated on every `sonar-scanner` run and
@@ -108,4 +107,6 @@ test_output.txt
 # gate runs `compileall` over scripts/, templates/ AND tests/hooks/, so bytecode
 # now appears in three places, and a fourth would otherwise go unignored.
 .agent-sync/logs/
+.agent-sync/sdd/
+.agent-sync/brainstorm/
 __pycache__/

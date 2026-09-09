@@ -2,6 +2,7 @@
 name: using-git-worktrees
 description: Create or verify an isolated Git worktree before implementing a feature, bug fix, or other repository change that requires isolation. Use before subagent-driven development, executing implementation plans, parallel development, multi-file changes, or when the user explicitly requests a separate worktree.
 ---
+<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Using Git Worktrees
 
