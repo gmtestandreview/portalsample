@@ -4,6 +4,8 @@ Review staged and recent code changes for quality, security, and correctness.
 
 **Invokes:** `code-reviewer` agent
 
+**Reception protocol:** when acting on the findings, follow the `receiving-code-review` skill — verify before implementing, technical pushback over performative agreement.
+
 **Usage:**
 ```
 /code-review

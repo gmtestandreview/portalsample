@@ -11,6 +11,8 @@ Full pre-merge quality check. Runs multiple agents in parallel to validate readi
 - `security-reviewer` — OWASP Top 10 and secrets
 - Language reviewer (`go-reviewer` / `python-reviewer` / `rust-reviewer`) based on files changed
 
+**Reception protocol:** when acting on the findings, follow the `receiving-code-review` skill — verify before implementing, technical pushback over performative agreement.
+
 **Usage:**
 ```
 /quality-gate                Full check (audit + all reviews)
