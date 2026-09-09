@@ -647,6 +647,10 @@ awk -F'|' '/^\| [a-z]/ {c++} END{print "skill rows:", c}' .claude/docs/traceabil
 - [ ] **Step 1:** Append a `## Codex surface` section: `.codex/config.toml` holds MCP server config only; Codex consumes `AGENTS.md`, whose skills table (Task 7.3) is the Codex-facing registration; no `.codex/` skills manifest exists or is expected.
 - [ ] **Step 2: Commit** — `git commit -m "docs: record that .codex needs no skills reconciliation"`
 
+#### Deferred (PR2 code review, 2026-09-09): `.claude/docs/overview.md` roster reconciliation
+
+`.claude/docs/overview.md` is the portable upstream **plugin** overview ("drop this folder into any project"). It still describes the unpruned plugin — `26 total` agents / `20 skills`, the phantom `go · rust · kotlin · swift · flutter · database · ai` language-reviewer node, a `data-migration` HARD-gate entry, and a prune-map line (`database-reviewer ←── kept (PostgreSQL declared)`) that contradicts `INIT.md`. Task 5.1's chief-of-staff sweep touched this file but the plan's task list does **not** cover reconciling it to this project's pruned roster, and whether it *should* mirror the pruned roster or keep describing the full plugin is an open question that needs its own pass. Deferred to a standalone docs task. `.claude/docs/traceability.md` is the current source of truth for the roster and carries a pointer to this note. No functional impact — `overview.md` is not loaded by any hook or agent.
+
 ---
 
 ## Phase 8 — Final verification  *(main session; PR2 branch)*

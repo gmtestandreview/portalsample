@@ -16,10 +16,10 @@ Source: `.claude/commands/skills.md`. 25 rows, alphabetical. Invoke any row with
 | brainstorming | `Skill(brainstorming)` | Before any creative work — explore intent and design first | `/feature` | main session | — |
 | dispatching-parallel-agents | `Skill(dispatching-parallel-agents)` | Two or more independent tasks with no shared state | — | main session | — |
 | executing-plans | `Skill(executing-plans)` | You have a written implementation plan to execute now | — | main session | — |
-| finishing-a-development-branch | `Skill(finishing-a-development-branch)` | Branch ready for pre-merge verification, cleanup, and PR prep | — | main session | `.claude/rules/git-workflow.md` |
+| finishing-a-development-branch | `Skill(finishing-a-development-branch)` | Branch ready for pre-merge verification, cleanup, and PR prep | `/feature` | main session | `.claude/rules/git-workflow.md` |
 | five-whys | `Skill(five-whys)` | A bug or failure recurs despite surface fixes | — | main session | — |
 | incident-response | `Skill(incident-response)` | Production is degraded or down — use immediately | `/incident-response` | main session | — |
-| managing-github-actions | `Skill(managing-github-actions)` | Reviewing or changing GitHub Actions workflows or CI/CD behaviour | — | infra-reviewer | — |
+| managing-github-actions | `Skill(managing-github-actions)` | Reviewing or changing GitHub Actions workflows or CI/CD behaviour | — | main session | — |
 | performance-audit | `Skill(performance-audit)` | Performance regression suspected, or as a pre-release gate | — | performance-profiler | — |
 | receiving-code-review | `Skill(receiving-code-review)` | Receiving code review feedback before implementing suggestions | `/code-review`, `/quality-gate` | main session | — |
 | scalability-review | `Skill(scalability-review)` | Will this system or design handle projected growth | — | architect | — |
@@ -38,6 +38,8 @@ Source: `.claude/commands/skills.md`. 25 rows, alphabetical. Invoke any row with
 
 Source: `.claude/agents/*.md` frontmatter. 17 rows. Last column is the Task 5.2 tier audit against `.claude/rules/performance.md` — all match.
 
+> `.claude/docs/overview.md` still describes the unpruned upstream plugin (26 agents / 20 skills, phantom language reviewers). Reconciling it to this project's pruned roster is deferred — see the "Deferred" note under Phase 7 in `.claude/docs/plans/2026-09-09-a-team-wiring-review.md`. This matrix is the current source of truth for the roster.
+
 | Agent | Model tier | Runs skill(s) | Dispatched by command(s) | Tier matches performance.md? |
 | --- | --- | --- | --- | --- |
 | architect | opus / Tier 1 | architecture-design, architecture-review, architecture-audit, scalability-review, adr | `/adr`, `/architecture-review` | ✅ |
@@ -50,7 +52,7 @@ Source: `.claude/agents/*.md` frontmatter. 17 rows. Last column is the Task 5.2 
 | compliance-reviewer | sonnet / Tier 2 | — | — | ✅ |
 | debugger | sonnet / Tier 2 | systematic-debugging | `/debug` | ✅ |
 | e2e-runner | sonnet / Tier 2 | — | `/e2e` | ✅ |
-| infra-reviewer | sonnet / Tier 2 | managing-github-actions | `/quality-gate` | ✅ |
+| infra-reviewer | sonnet / Tier 2 | — | `/quality-gate` | ✅ |
 | planner | sonnet / Tier 2 | writing-plans | `/plan`, `/feature` | ✅ |
 | python-reviewer | sonnet / Tier 2 | — | `/quality-gate` | ✅ |
 | refactor-cleaner | sonnet / Tier 2 | — | `/refactor` | ✅ |

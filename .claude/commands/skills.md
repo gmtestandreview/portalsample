@@ -14,15 +14,15 @@ To run one, invoke `Skill(<name>)` — all 25 resolve to the A Team version.
 | brainstorming | Before any creative work — explore intent and design first | `/feature` | main session |
 | dispatching-parallel-agents | Two or more independent tasks with no shared state | — | main session |
 | executing-plans | You have a written implementation plan to execute now | — | main session |
-| finishing-a-development-branch | Branch ready for pre-merge verification, cleanup, and PR prep | — | main session |
+| finishing-a-development-branch | Branch ready for pre-merge verification, cleanup, and PR prep | `/feature` | main session |
 | five-whys | A bug or failure recurs despite surface fixes | — | main session |
 | incident-response | Production is degraded or down — use immediately | `/incident-response` | main session |
 | managing-github-actions | Reviewing or changing GitHub Actions workflows or CI/CD behaviour | — | main session |
-| performance-audit | Performance regression suspected, or as a pre-release gate | — | main session |
+| performance-audit | Performance regression suspected, or as a pre-release gate | — | performance-profiler |
 | receiving-code-review | Receiving code review feedback before implementing suggestions | `/code-review`, `/quality-gate` | main session |
 | scalability-review | Will this system or design handle projected growth | — | architect |
 | skill-duplication-audit | Two or more skills appear to overlap in scope | — | main session |
-| smart-init | INIT.md missing; conversational project onboarding needed | `/orchestrate` | main session |
+| smart-init | INIT.md missing; conversational project onboarding needed | `/orchestrate` | orchestrator |
 | subagent-driven-development | Executing a plan's independent tasks, fresh subagent per task | `/feature` | main session |
 | systematic-debugging | Any bug, failing test, regression, or crash without known cause | `/debug` | debugger |
 | test-driven-development | Implementing or changing observable behavior; RED before GREEN | — | tdd-guide |

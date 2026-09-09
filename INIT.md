@@ -353,6 +353,7 @@ Derived from the answers above. Apply at `/orchestrate init`.
 | `flutter-reviewer`, `go-reviewer`, `kotlin-reviewer`, `rust-reviewer`, `swift-reviewer` | **prune** | None of these languages are present |
 | `ai-reviewer` | **prune** | No LLM SDK is a dependency; nothing reaches an LLM at runtime |
 | `loop-operator` | **prune** | No autonomous loops; all agent work is human-initiated |
+| `chief-of-staff` | **prune** | Unrelated — multi-channel comms triage; no email/Slack/messaging workflow in this repo. Removed 2026-09-09; `templates/SOUL.md` + `templates/relationships.md` (its only supports) deleted with it. |
 
 **Also present:** `.agents/` (plugins, skills), `.superpowers/`, `.remember/`, `.testagent/`,
 `.github/skills/**` (12 Python-backed skills), `.tours/` (code tours).

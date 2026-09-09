@@ -78,7 +78,7 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Terraform / Docker / K8s / CI files changed | **infra-reviewer** |
 | Any privacy / payment / regulated-data code | **compliance-reviewer** |
 
-> Other language reviewers (Go, Rust, Kotlin, Swift, Flutter, database) are added on demand when that stack enters the repo.
+> Other language and domain reviewers (Go, Rust, Kotlin, Swift, Flutter, database, LLM/AI) are added on demand when that stack enters the repo.
 
 ## CI / CD Changes
 
