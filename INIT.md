@@ -345,7 +345,7 @@ Derived from the answers above. Apply at `/orchestrate init`.
 | `e2e-runner` | **keep** | 33 Gherkin features, two Playwright projects, already in CI |
 | `tdd-guide` | **keep** | 100% coverage thresholds configured; `COVERAGE-GATE-001` open |
 | `architect`, `planner`, `doc-updater` | **keep** | Active migration programme with governed documentation |
-| `orchestrator`, `chief-of-staff`, `harness-optimizer` | **keep** | Infrastructure |
+| `orchestrator`, `harness-optimizer` | **keep** | Infrastructure |
 | `python-reviewer` | **keep, scoped** | Python exists **only** in `.github/skills/**` and `analysis/`. Must never touch application code. |
 | `performance-profiler` | **keep, low priority** | No performance budget or SLA is declared — that gap is itself flagged for the service owner |
 | `database-reviewer` | **prune** | No database, driver, ORM or connection string in this repository |

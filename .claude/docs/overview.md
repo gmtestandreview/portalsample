@@ -59,7 +59,7 @@ graph TB
             LA["go · python · rust\nkotlin · swift · flutter\ndatabase · infra · ai"]
         end
         subgraph OPS["Operations"]
-            OP["harness-optimizer\nperformance-profiler\ncompliance-reviewer\nloop-operator\nchief-of-staff\ndoc-updater\ne2e-runner"]
+            OP["harness-optimizer\nperformance-profiler\ncompliance-reviewer\nloop-operator\ndoc-updater\ne2e-runner"]
         end
     end
 
@@ -158,7 +158,6 @@ mindmap
       loop-operator
       e2e-runner
       doc-updater
-      chief-of-staff
 ```
 
 ---
@@ -235,7 +234,7 @@ planner                                 kotlin-reviewer
 code-reviewer                           swift-reviewer
 security-reviewer                       flutter-reviewer
 tdd-guide                               e2e-runner (if E2E = no)
-debugger                                chief-of-staff (if no comms tools)
+debugger
 build-error-resolver                    loop-operator (if no auto loops)
 python-reviewer        ←── kept
 database-reviewer      ←── kept (PostgreSQL declared)
