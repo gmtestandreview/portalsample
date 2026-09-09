@@ -78,3 +78,7 @@ Source: `.claude/commands/*.md`. 14 rows.
 | `/adr` | thin alias | adr | architect |
 | `/incident-response` | thin alias | incident-response | — |
 | `/architecture-review` | thin alias | architecture-review | architect |
+
+## Codex surface
+
+`.codex/config.toml` holds MCP server config only — two `[mcp_servers.*]` blocks (`my-storybook-mcp-server`, `react-aria`) and nothing else. Codex consumes `AGENTS.md`, whose skills table (Task 7.3) is the Codex-facing skill registration. No `.codex/` skills manifest exists or is expected, so there is nothing to reconcile on the Codex side.
