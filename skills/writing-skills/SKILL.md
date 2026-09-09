@@ -190,7 +190,7 @@ Correct these patterns:
 
 ## References
 
-Use this file `skills\writing-skills\references\index.md` as the **first lookup point** for the `writing-skills` reference set.
+Use `references/index.md` as the **first lookup point** for the `writing-skills` reference set.
 
 Load only when needed:
 
@@ -208,4 +208,4 @@ Load only when needed:
    `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable environment/project rules > best-practice guidance > examples/templates`.
 10. If a referenced file is absent, report it as missing. Do not silently substitute another file.
 11. Use QAQ/RMI for critical trigger, branch, and load-condition decisions.
-12. Do not load templates or persuasion guidance unless the task actually needs them.
+12. Do not load templates, merge prompt workflows, or persuasion guidance unless the task actually needs them.

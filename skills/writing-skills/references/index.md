@@ -51,7 +51,7 @@ Use forward-slash relative paths in skill content. Do not invent suffixes, alter
    `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable environment/project rules > best-practice guidance > examples/templates`.
 10. If a referenced file is absent, report it as missing. Do not silently substitute another file.
 11. Use QAQ/RMI for critical trigger, branch, and load-condition decisions.
-12. Do not load templates or persuasion guidance unless the task actually needs them.
+12. Do not load templates, merge prompt workflows, or persuasion guidance unless the task actually needs them.
 
 # Fast routing table
 
@@ -67,6 +67,8 @@ Use forward-slash relative paths in skill content. Do not invent suffixes, alter
 | RED/GREEN/REFACTOR pressure testing | `testing-skills-with-subagents.md` | `persuasion-principles.md` only after a concrete adherence/rationalization failure |
 | Script-bearing skills or bundled commands | `agent-skills-using-scripts-in-skills-page-6.md` | Specification for structural compliance; checklist for final validation |
 | Compare two skills for merge viability | `best-practices-evaluations.md` | `skill-classification.md` if scope/type differs; `../templates/SWOT Analysis.md` only when SWOT output helps |
+| Quick merge plan for supplied skills | `prompt-1-quick-merge-plan.md` | `best-practices-evaluations.md` only when quality criteria must be applied; `skill-classification.md` only when type affects the recommendation |
+| Full audit and conditional merge of supplied skills | `prompt-2-full-audit+conditional-merge.md` | `agent-skill-specification-format-page-2.md` for mandatory format; `SKILL-testing-checklist.md` before deployment/readiness claims |
 | Final validation before deployment | `SKILL-testing-checklist.md` | Specification plus any specialist reference needed to execute unresolved checks |
 | Claude/Anthropic-specific authoring decisions | `anthropic-best-practices.md` | Generic specification still controls universal compliance claims |
 | Adding or editing a flowchart in a skill | `graphviz-conventions.dot` | `../scripts/render-graphs.js` to render the skill's flowcharts to SVG |
@@ -170,6 +172,22 @@ Use when a skill contains or proposes commands or bundled executable scripts.
 
 Use only for Claude/Anthropic-specific authoring guidance. Do not promote Anthropic-only conventions into universal Agent Skills requirements.
 
+# Tier 4 — Task-specific merge workflows
+
+These files are executable workflow prompts for skill consolidation tasks. They are references only for merge-planning or merge-execution requests and should not be loaded for ordinary audits, description tuning, or validation.
+
+### `prompt-1-quick-merge-plan.md`
+
+Use when the user asks for an early merge plan, overlap analysis, preservation inventory, conflict list, or recommendation before deciding whether to run a full merge audit.
+
+It produces a concise plan and recommendation only. It must not produce a final merged `SKILL.md`.
+
+### `prompt-2-full-audit+conditional-merge.md`
+
+Use when the user asks for a full audit and conditional merge of supplied `SKILL.md` files and supporting resources.
+
+It may produce a final merged `SKILL.md` only when preservation and conflict review establish **Ready to Merge**. If readiness is **Needs Human Review** or **Do Not Merge**, it stops at the audit and decision.
+
 # Flowchart authoring
 
 ### `graphviz-conventions.dot`
@@ -266,6 +284,28 @@ Load:
 Load `../templates/SWOT Analysis.md` only when SWOT comparison is requested or materially clarifies the decision.
 
 After a merge is implemented, use `SKILL-testing-checklist.md` for regression and final validation.
+
+## Quick merge plan
+
+Load:
+
+1. supplied skill files and directly relevant supporting resources;
+2. `prompt-1-quick-merge-plan.md`.
+
+Add `best-practices-evaluations.md` only when the plan needs explicit quality criteria. Add `skill-classification.md` only when the source skills' type affects merge viability or testing emphasis.
+
+Do not produce the final merged `SKILL.md` from the quick-plan workflow.
+
+## Full audit and conditional merge
+
+Load:
+
+1. supplied skill files and directly relevant supporting resources;
+2. `prompt-2-full-audit+conditional-merge.md`;
+3. `agent-skill-specification-format-page-2.md` when a final `SKILL.md` may be produced;
+4. `SKILL-testing-checklist.md` before deployment/readiness claims.
+
+Produce a final merged `SKILL.md` only when the workflow's readiness decision is **Ready to Merge**. If preservation, conflicts, ownership, purpose, or supporting-resource treatment is unresolved, stop at **Needs Human Review** or **Do Not Merge**.
 
 ## Final deployment validation
 
