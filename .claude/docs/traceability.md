@@ -19,12 +19,12 @@ Source: `.claude/commands/skills.md`. 25 rows, alphabetical. Invoke any row with
 | finishing-a-development-branch | `Skill(finishing-a-development-branch)` | Branch ready for pre-merge verification, cleanup, and PR prep | — | main session | `.claude/rules/git-workflow.md` |
 | five-whys | `Skill(five-whys)` | A bug or failure recurs despite surface fixes | — | main session | — |
 | incident-response | `Skill(incident-response)` | Production is degraded or down — use immediately | `/incident-response` | main session | — |
-| managing-github-actions | `Skill(managing-github-actions)` | Reviewing or changing GitHub Actions workflows or CI/CD behaviour | — | main session | — |
-| performance-audit | `Skill(performance-audit)` | Performance regression suspected, or as a pre-release gate | — | main session | — |
+| managing-github-actions | `Skill(managing-github-actions)` | Reviewing or changing GitHub Actions workflows or CI/CD behaviour | — | infra-reviewer | — |
+| performance-audit | `Skill(performance-audit)` | Performance regression suspected, or as a pre-release gate | — | performance-profiler | — |
 | receiving-code-review | `Skill(receiving-code-review)` | Receiving code review feedback before implementing suggestions | `/code-review`, `/quality-gate` | main session | — |
 | scalability-review | `Skill(scalability-review)` | Will this system or design handle projected growth | — | architect | — |
 | skill-duplication-audit | `Skill(skill-duplication-audit)` | Two or more skills appear to overlap in scope | — | main session | — |
-| smart-init | `Skill(smart-init)` | INIT.md missing; conversational project onboarding needed | `/orchestrate` | main session | — |
+| smart-init | `Skill(smart-init)` | INIT.md missing; conversational project onboarding needed | `/orchestrate` | orchestrator | — |
 | subagent-driven-development | `Skill(subagent-driven-development)` | Executing a plan's independent tasks, fresh subagent per task | `/feature` | main session | — |
 | systematic-debugging | `Skill(systematic-debugging)` | Any bug, failing test, regression, or crash without known cause | `/debug` | debugger | — |
 | test-driven-development | `Skill(test-driven-development)` | Implementing or changing observable behavior; RED before GREEN | — | tdd-guide | `.claude/rules/testing.md` |
@@ -40,7 +40,7 @@ Source: `.claude/agents/*.md` frontmatter. 17 rows. Last column is the Task 5.2 
 
 | Agent | Model tier | Runs skill(s) | Dispatched by command(s) | Tier matches performance.md? |
 | --- | --- | --- | --- | --- |
-| architect | opus / Tier 1 | architecture-design, architecture-review, architecture-audit, scalability-review, adr | `/architecture-review` | ✅ |
+| architect | opus / Tier 1 | architecture-design, architecture-review, architecture-audit, scalability-review, adr | `/adr`, `/architecture-review` | ✅ |
 | orchestrator | opus / Tier 1 | smart-init | `/orchestrate` | ✅ |
 | doc-updater | haiku / Tier 3 | — | — | ✅ |
 | harness-optimizer | haiku / Tier 3 | — | `/quality-gate` | ✅ |
@@ -50,13 +50,13 @@ Source: `.claude/agents/*.md` frontmatter. 17 rows. Last column is the Task 5.2 
 | compliance-reviewer | sonnet / Tier 2 | — | — | ✅ |
 | debugger | sonnet / Tier 2 | systematic-debugging | `/debug` | ✅ |
 | e2e-runner | sonnet / Tier 2 | — | `/e2e` | ✅ |
-| infra-reviewer | sonnet / Tier 2 | managing-github-actions | — | ✅ |
-| planner | sonnet / Tier 2 | writing-plans | `/plan` | ✅ |
-| python-reviewer | sonnet / Tier 2 | — | — | ✅ |
+| infra-reviewer | sonnet / Tier 2 | managing-github-actions | `/quality-gate` | ✅ |
+| planner | sonnet / Tier 2 | writing-plans | `/plan`, `/feature` | ✅ |
+| python-reviewer | sonnet / Tier 2 | — | `/quality-gate` | ✅ |
 | refactor-cleaner | sonnet / Tier 2 | — | `/refactor` | ✅ |
 | security-reviewer | sonnet / Tier 2 | — | `/security-review`, `/quality-gate` | ✅ |
 | tdd-guide | sonnet / Tier 2 | test-driven-development | — | ✅ |
-| typescript-reviewer | sonnet / Tier 2 | — | — | ✅ |
+| typescript-reviewer | sonnet / Tier 2 | — | `/quality-gate` | ✅ |
 
 ## Commands
 
