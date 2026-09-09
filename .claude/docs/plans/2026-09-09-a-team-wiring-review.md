@@ -647,6 +647,10 @@ awk -F'|' '/^\| [a-z]/ {c++} END{print "skill rows:", c}' .claude/docs/traceabil
 - [ ] **Step 1:** Append a `## Codex surface` section: `.codex/config.toml` holds MCP server config only; Codex consumes `AGENTS.md`, whose skills table (Task 7.3) is the Codex-facing registration; no `.codex/` skills manifest exists or is expected.
 - [ ] **Step 2: Commit** — `git commit -m "docs: record that .codex needs no skills reconciliation"`
 
+#### Resolved (PR2 code review follow-up, 2026-09-09): `.claude/docs/overview.md` roster reconciliation
+
+The whole-branch review flagged `.claude/docs/overview.md` as still describing the unpruned upstream plugin — `26 total` agents / `20 skills`, the phantom `go · rust · kotlin · swift · flutter · database · ai` language-reviewer node, a `data-migration` HARD-gate entry, and a prune-map line (`database-reviewer ←── kept (PostgreSQL declared)`) contradicting `INIT.md`. Open question at the time: mirror the pruned roster or keep describing the full plugin. **User decision: mirror the pruned roster.** Reconciled in this PR — the 5-layer graph, the mindmap, the feature-journey, and the "What Got Pruned" example now reflect this repo's actual 17 agents (architect, build-error-resolver, code-reviewer, compliance-reviewer, debugger, doc-updater, e2e-runner, harness-optimizer, infra-reviewer, orchestrator, performance-profiler, planner, python-reviewer, refactor-cleaner, security-reviewer, tdd-guide, typescript-reviewer) and 25 skills, with the pruned agents (chief-of-staff + go/rust/kotlin/swift/flutter/database/ai-reviewer + loop-operator) named in the prune example. Not touched: the orchestration-protocol diagram bits that name `TASKS.md` (a separate ROUTING.md §0.1 substitution, not a roster item).
+
 ---
 
 ## Phase 8 — Final verification  *(main session; PR2 branch)*
@@ -680,6 +684,8 @@ echo "no DANGLING = refs OK"
 - [ ] **Step 4:** `npm run test:ci` once — confirm behaviour unchanged from `main` (no in-scope file touched).
 - [ ] **Step 5:** Optionally `git rm -r .claude/docs/plans/_red-baselines .claude/docs/plans/_sp-6.3.0-snapshot` (keep or drop per preference) and commit.
 - [ ] **Step 6:** Use `finishing-a-development-branch` on the PR2 branch: run required checks, review the full diff vs PR1 tip, prepare the PR2 summary. `git log --oneline <PR1-tip>..HEAD`.
+
+**Status 2026-09-09 (PR2 complete, branch ready — not yet pushed):** Phases 5–8 done on `feat/a-team-agents-commands-docs` (12 commits on PR1 tip `3b03548`). SDD task reviews all green (D1–D4). Whole-branch `code-reviewer`: **APPROVE**, 0 CRITICAL / 0 HIGH; 2 MEDIUM + 3 LOW follow-ups applied in `20e4de5` (traceability↔skills.md cross-alignment both ways; `/feature` command entry for `finishing-a-development-branch`; LLM/AI in the on-demand note; explicit `chief-of-staff` prune row in INIT.md). §7 mechanical checklist: all pass (25/25 skills+symlinks, 50 allow entries, 14 commands, 25/17/14 traceability rows, phantom sweep clean, no dangling refs). **Step 2** invocation spot-checks: covered by PR1 Task 4.4 evidence (same skills, no reload this session). **Step 4** `npm run test:ci`: consciously not run — PR2 touches only `.claude/**`, `skills/**/*.md` + skill refs/scripts, root `*.md`, `templates/*.md`; `skills/` is outside `tsconfig` / `vitest.unit.config.ts` / the `eslint` glob, so no gate can be affected (verification-before-completion: claim = "no in-scope file touched", evidence = diff scope + config-scope check). **Step 5** snapshot/baseline dirs kept. **Deferred:** `.claude/docs/overview.md` roster reconciliation (see Phase 7 Deferred note). **Shipped:** pushed and opened as **PR #5**, base `feat/a-team-skills-canonical` (stacked on open PR #4; retargets to `main` when #4 merges).
 
 ---
 

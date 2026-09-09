@@ -31,6 +31,7 @@ Skipping a mandatory skill to save time is not allowed.
 | Bug persists after a surface fix, or a failure or process keeps recurring | **five-whys** skill (fix the root, not the symptom) |
 | Multiple independent problems | **dispatching-parallel-agents** skill |
 | Build or type errors | **build-error-resolver** agent (minimal diffs only) |
+| Writing or changing tests, want a TDD persona | **tdd-guide** agent (persona alternative to the test-driven-development skill) |
 
 ## Before Claiming Completion
 
@@ -52,6 +53,9 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Auth, API, input handling, DB changes | **security-reviewer** agent |
 | Before any PR merge | **quality-gate** command (runs both) |
 | Wrapping up a branch | **finishing-a-development-branch** skill |
+| Docs or codemaps drift after a feature lands | **doc-updater** agent |
+| Dead code, unused deps, duplication (never during active feature work) | **refactor-cleaner** agent |
+| Acting on code-review feedback | **receiving-code-review** skill (verify before implementing) |
 
 ## Architectural Decisions
 
@@ -69,16 +73,12 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 
 | Situation | Required Agent |
 |-----------|---------------|
-| Go files changed | **go-reviewer** |
+| TypeScript / React / frontend files changed | **typescript-reviewer** |
 | Python files changed | **python-reviewer** |
-| Rust files changed | **rust-reviewer** |
-| Kotlin / Android files changed | **kotlin-reviewer** |
-| Swift / iOS files changed | **swift-reviewer** |
-| Dart / Flutter files changed | **flutter-reviewer** |
-| SQL / migrations / schema changed | **database-reviewer** |
-| Terraform / Docker / K8s / CI changed | **infra-reviewer** |
-| Any LLM API calls added or changed | **ai-reviewer** |
-| Any privacy / payment / child data code | **compliance-reviewer** |
+| Terraform / Docker / K8s / CI files changed | **infra-reviewer** |
+| Any privacy / payment / regulated-data code | **compliance-reviewer** |
+
+> Other language and domain reviewers (Go, Rust, Kotlin, Swift, Flutter, database, LLM/AI) are added on demand when that stack enters the repo.
 
 ## CI / CD Changes
 
@@ -92,7 +92,6 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Situation | Required Skill |
 |-----------|---------------|
 | Writing a new REST / gRPC / GraphQL / event endpoint | **api-contract-first** (write the contract first) |
-| Any `ALTER TABLE`, `DROP`, or backfill in production | **data-migration** (rollback plan first) |
 
 ## Performance & Production
 
@@ -101,6 +100,7 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Performance regression reported | **performance-profiler** agent (measure first) |
 | Performance-critical feature pre-release | **performance-audit** skill |
 | Production is degraded or down | **incident-response** skill (immediately) |
+| Critical user-flow E2E coverage needed | **e2e-runner** agent |
 
 ## During Code Changes — Surgical Changes Rule
 
@@ -143,6 +143,8 @@ On every session start, confirm:
 ## Skill Registration (For New Skills)
 
 When a new skill is added to A Team, add it to the trigger table above so it gets enforced from day one.
+
+The primitive responsibility model (skill vs agent vs command vs rule) is in `.claude/rules/patterns.md`.
 
 The A Team is only as good as the discipline with which it is applied.
 Skills consulted are skills that work. Skills skipped are skills that don't exist.

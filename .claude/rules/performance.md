@@ -47,6 +47,7 @@ Use for: documentation, pipeline auditing, lightweight analysis, high-frequency 
 - Tier 1 for orchestration and architecture only — not for routine code tasks
 - Flag workflows that escalate to Tier 1 without a clear reasoning requirement
 - On Claude Code: defaults in agent frontmatter are already calibrated per tier
+- Explicit assignment: Tier 1 (opus) — orchestrator, architect. Tier 3 (haiku) — doc-updater, harness-optimizer, performance-profiler. Tier 2 (sonnet) — all other agents.
 
 ## Context Window Management
 

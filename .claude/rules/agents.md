@@ -21,10 +21,10 @@ Use parallel dispatch for independent operations:
 Launch in parallel:
 1. security-reviewer on auth module
 2. code-reviewer on cache system
-3. go-reviewer on utilities
+3. typescript-reviewer on utilities
 
 # WRONG: Sequential when unnecessary
-First security, then code, then go-reviewer
+First security, then code, then typescript-reviewer
 ```
 
 ## Model Tier Selection

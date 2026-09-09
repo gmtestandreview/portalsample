@@ -1,18 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const p=require\\('./package.json'\\);console.log\\(JSON.stringify\\(p.prettier||'none'\\)\\)\")",
-      "Bash(awk '/interface BaseCoverageOptions/,/^}/' node_modules/vitest/dist/chunks/reporters.d.DtoKVV2s.d.ts)",
-      "Bash(git check-ignore *)",
-      "Bash(git commit -m ' *)",
-      "Bash(git commit -q -m ' *)",
-      "Bash(npm run lint)",
-      "Bash(npm run lint:mdx)",
-      "Bash(npm run type-check)",
-      "PowerShell(node --version)",
-      "PowerShell(npm --version)",
-      "mcp__plugin_sonatype-guide_sonatype-guide__getComponentVersion",
-
       "Bash(git status)",
       "Bash(git diff*)",
       "Bash(git log*)",

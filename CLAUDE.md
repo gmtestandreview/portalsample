@@ -171,6 +171,7 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 | `incident-response` | Production is degraded or down — use immediately. |
 | `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
 | `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
+| `receiving-code-review` | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent. |
 | `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |
 | `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
 | `smart-init` | `INIT.md` is missing and the project needs conversational onboarding. |
