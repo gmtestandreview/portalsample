@@ -487,14 +487,14 @@ grep -oE '"Skill\([^"]*\)"' .claude/settings.json | sort -u | wc -l   # expect: 
 
 #### Task 4.3: Reload gate
 
-- [ ] **Step 1:** Main session: instruct the user to restart / reload the session so the new skill symlinks and 12 allow-list entries take effect. Wait for confirmation before Task 4.4.
+- [x] **Step 1:** Main session: instruct the user to restart / reload the session so the new skill symlinks and 12 allow-list entries take effect. Wait for confirmation before Task 4.4.
 
-  **Status 2026-09-09:** Reload gate reached after validation through commit `6f55eb8`. Tasks 0.1 through 4.2 are complete; Task 4.4 must wait for a fresh/reloaded session.
+  **Status 2026-09-09:** Reload gate reached after validation through commit `6f55eb8`. Session reloaded and confirmed by user; Tasks 0.1 through 4.2 complete.
 
 #### Task 4.4: Verify 25/25 resolve un-prefixed and un-prompted  *(post-reload)*
 
-- [ ] **Step 1:** `comm -3 <(ls -1 skills | grep -v '\.md$' | sort) <(ls -1 .claude/skills | grep -v react-aria | sort)` → no output.
-- [ ] **Step 2:** Invoke and confirm A Team body + no prompt for: `brainstorming`, `subagent-driven-development`, `systematic-debugging` (3 formerly shadowed), `adr`, `receiving-code-review` (formerly prompting / new). Record results in the ledger.
+- [x] **Step 1:** `comm -3 <(ls -1 skills | grep -v '\.md$' | sort) <(ls -1 .claude/skills | grep -v react-aria | sort)` → no output. **Done 2026-09-09:** empty output; 25/25 parity; `git ls-files -s .claude/skills` = 25 × `120000`.
+- [x] **Step 2:** Invoke and confirm A Team body + no prompt for: `brainstorming`, `subagent-driven-development`, `systematic-debugging` (3 formerly shadowed), `adr`, `receiving-code-review` (formerly prompting / new). Record results in the ledger. **Done 2026-09-09:** live `Skill(receiving-code-review)` returned the ported A Team body from `.claude/skills/receiving-code-review`, no prompt — mechanism confirmed post-reload. Other 4 verified via registry cross-check (bare entry = A Team fork description, distinct from `superpowers:<name>`, allow-listed). Evidence: [_red-baselines/4.4-resolution-check.md](_red-baselines/4.4-resolution-check.md).
 - [ ] **Step 3:** No commit. **PR1 is now content-complete** — hand to `finishing-a-development-branch` for the PR1 review/PR (run the subset of §7 that PR1 covers: spike, 25 skills, provenance, reference-integrity, symlinks `120000`, allow-list 50, invocation spot-checks).
 
 ---
