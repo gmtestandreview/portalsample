@@ -11,7 +11,7 @@ A Team is a **portable multi-agent infrastructure** for AI coding assistants. It
 ```
 Without A Team                        With A Team
 ─────────────────────────────────     ─────────────────────────────────────
-One model                             26 specialist agents
+One model                             17 specialist agents (pruned for this repo)
 Does everything                       Each has one responsibility
 No enforcement                        Hard gates that can't be bypassed
 Forgets standards between sessions    Standards re-injected every session
@@ -50,26 +50,29 @@ graph TB
         ORCH <--> ROUTING
     end
 
-    subgraph A["👥  SPECIALIST AGENTS — 26 total"]
+    subgraph A["👥  SPECIALIST AGENTS — 17 active (pruned roster)"]
         direction LR
         subgraph QUALITY["Quality"]
             QA["code-reviewer\narchitect\nplanner\nsecurity-reviewer\ntdd-guide\nrefactor-cleaner\nbuild-error-resolver\ndebugger"]
         end
-        subgraph LANG["Languages"]
-            LA["go · python · rust\nkotlin · swift · flutter\ndatabase · infra · ai"]
+        subgraph LANG["Language & Domain"]
+            LA["typescript-reviewer · python-reviewer\ninfra-reviewer · compliance-reviewer"]
         end
         subgraph OPS["Operations"]
-            OP["harness-optimizer\nperformance-profiler\ncompliance-reviewer\nloop-operator\ndoc-updater\ne2e-runner"]
+            OP["harness-optimizer\nperformance-profiler\ndoc-updater\ne2e-runner"]
         end
     end
 
-    subgraph S["🔒  SKILL LAYER — 20 skills"]
+    subgraph S["🔒  SKILL LAYER — 25 skills"]
         direction LR
         subgraph HARD["Hard Gates\n(cannot skip)"]
-            HG["verification-before-completion\ntest-driven-development\nbrainstorming\nsystematic-debugging\napi-contract-first\ndata-migration"]
+            HG["verification-before-completion\ntest-driven-development\nbrainstorming\nsystematic-debugging\napi-contract-first"]
         end
-        subgraph WORK["Workflow Skills"]
-            WS["using-git-worktrees\nsubagent-driven-dev\ndispatching-parallel\nexecuting-plans\nwriting-plans\nfinishing-branch\nincident-response\nperformance-audit\narchitecture-audit\nwriting-skills"]
+        subgraph WORK["Workflow"]
+            WS["using-git-worktrees\nsubagent-driven-development\ndispatching-parallel-agents\nexecuting-plans\nwriting-plans\nfinishing-a-development-branch\nwriting-skills\nfive-whys\nskill-duplication-audit\nsmart-init\nusing-a-team\nreceiving-code-review"]
+        end
+        subgraph ARCH["Architecture & Ops"]
+            AR["architecture-audit\narchitecture-design\narchitecture-review\nadr\nscalability-review\nincident-response\nperformance-audit\nmanaging-github-actions"]
         end
     end
 
@@ -122,11 +125,11 @@ sequenceDiagram
 
 ---
 
-## The 26 Agents at a Glance
+## The 17 Agents at a Glance
 
 ```mermaid
 mindmap
-  root((A Team\n26 Agents))
+  root((A Team\n17 Agents))
     Orchestration
       orchestrator
     Planning
@@ -139,23 +142,15 @@ mindmap
       debugger
       refactor-cleaner
       build-error-resolver
-    Mobile
-      kotlin-reviewer
-      swift-reviewer
-      flutter-reviewer
-    Backend Languages
-      go-reviewer
+    Language
+      typescript-reviewer
       python-reviewer
-      rust-reviewer
-      database-reviewer
     Domain
       infra-reviewer
       compliance-reviewer
-      ai-reviewer
       performance-profiler
     Operations
       harness-optimizer
-      loop-operator
       e2e-runner
       doc-updater
 ```
@@ -177,7 +172,7 @@ journey
       subagent-driven-development: 4: Subagents
     section Review
       code-reviewer: 5: Code Reviewer
-      language specialist: 4: Go/Python/Kotlin/…
+      language specialist: 4: TypeScript / Python
       security-reviewer: 5: Security Reviewer
     section Gate
       harness-optimizer audit: 5: Harness Optimizer
@@ -223,25 +218,28 @@ After init: `.agent-sync/TEAM.md` lists what's active. Everything else is pruned
 
 ---
 
-## What Gets Pruned (example: Python API project)
+## What Got Pruned (this repo: NMI Customer Portal — TypeScript/React SPA)
 
 ```
 Active after /orchestrate init          Pruned
-─────────────────────────────────       ──────────────────────────
-orchestrator                            go-reviewer
-architect                               rust-reviewer
-planner                                 kotlin-reviewer
-code-reviewer                           swift-reviewer
-security-reviewer                       flutter-reviewer
-tdd-guide                               e2e-runner (if E2E = no)
-debugger
-build-error-resolver                    loop-operator (if no auto loops)
-python-reviewer        ←── kept
-database-reviewer      ←── kept (PostgreSQL declared)
-infra-reviewer         ←── kept (Docker declared)
-compliance-reviewer    ←── kept (GDPR declared)
+─────────────────────────────────       ──────────────────────────────────
+orchestrator                            chief-of-staff
+architect                               go-reviewer
+planner                                 rust-reviewer
+code-reviewer                           kotlin-reviewer
+security-reviewer                       swift-reviewer
+tdd-guide                               flutter-reviewer
+debugger                                database-reviewer  (no DB in repo)
+build-error-resolver                    ai-reviewer        (no LLM at runtime)
+doc-updater                             loop-operator      (no autonomous loops)
+refactor-cleaner
 harness-optimizer
-performance-profiler
+e2e-runner
+typescript-reviewer   ←── kept (React SPA)
+python-reviewer       ←── kept, scoped (.github/skills, analysis/ only)
+infra-reviewer        ←── kept, CI/CD scope only (.github/workflows)
+compliance-reviewer   ←── kept, WCAG 2.2 AA scope only
+performance-profiler  ←── kept, low priority (no perf budget declared)
 ```
 
 The team that runs is the team the project needs. Nothing more.

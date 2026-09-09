@@ -38,7 +38,7 @@ Source: `.claude/commands/skills.md`. 25 rows, alphabetical. Invoke any row with
 
 Source: `.claude/agents/*.md` frontmatter. 17 rows. Last column is the Task 5.2 tier audit against `.claude/rules/performance.md` — all match.
 
-> `.claude/docs/overview.md` still describes the unpruned upstream plugin (26 agents / 20 skills, phantom language reviewers). Reconciling it to this project's pruned roster is deferred — see the "Deferred" note under Phase 7 in `.claude/docs/plans/2026-09-09-a-team-wiring-review.md`. This matrix is the current source of truth for the roster.
+> This matrix and `.claude/docs/overview.md` are both reconciled to this repo's pruned roster (17 agents / 25 skills). `.claude/docs/overview.md` carries the visual diagrams; this file is the row-level source of truth.
 
 | Agent | Model tier | Runs skill(s) | Dispatched by command(s) | Tier matches performance.md? |
 | --- | --- | --- | --- | --- |
