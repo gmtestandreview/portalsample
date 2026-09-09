@@ -43,7 +43,7 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 **Example:**
 ```markdown
 ✅ When you find a skill, you MUST announce: "I'm using [Skill Name]"
-❌ Consider letting your partner know which skill you're using.
+❌ Consider letting the user know which skill you're using.
 ```
 
 ### 3. Scarcity

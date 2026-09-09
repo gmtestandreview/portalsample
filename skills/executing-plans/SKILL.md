@@ -19,7 +19,7 @@ it provides higher quality through per-task fresh context and two-stage review.
 1. Ensure an isolated workspace — use the `using-git-worktrees` skill to create or verify one.
 2. Read plan file completely
 3. Review critically — identify questions or concerns about the plan
-4. If concerns: raise with human partner BEFORE starting
+4. If concerns: raise with the user BEFORE starting
 5. If no concerns: create TodoWrite and proceed
 
 ### Step 2: Execute Tasks
