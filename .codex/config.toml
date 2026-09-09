@@ -7,3 +7,8 @@ command = "npx"
 args = ["@react-aria/mcp@latest"]
 enabled = true
 startup_timeout_sec = 120
+
+[mcp_servers.github]
+command = "cmd"
+args = ["/c", "scripts\\github-mcp-server.cmd"]
+enabled = true

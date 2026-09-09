@@ -2,7 +2,55 @@
   "mcpServers": {
     "my-storybook-mcp-server": {
       "type": "http",
-      "url": "http://localhost:6006/mcp"
+      "url": "http://localhost:6006/mcp",
+      "tools": ["*"]
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "Authorization": "Bearer $COPILOT_MCP_CONTEXT7_API_KEY"
+      },
+      "tools": ["resolve-library-id", "query-docs"]
+    },
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": [
+        "microsoft_docs_search",
+        "microsoft_code_sample_search",
+        "microsoft_docs_fetch"
+      ]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"],
+      "tools": ["*"]
+    },
+    "typescript-mcp": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "scripts\\lsmcp-typescript-mcp.cmd"],
+      "tools": ["*"]
+    },
+    "github": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": ["/c", "scripts\\github-mcp-server.cmd"],
+      "tools": ["*"]
+    },
+    "react-aria": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@react-aria/mcp@latest"],
+      "tools": ["*"]
+    },
+    "sonarqube": {
+      "type": "stdio",
+      "command": "C:\\Users\\gregm\\AppData\\Local\\sonarqube-cli\\bin\\sonar.exe",
+      "args": ["run", "mcp", "--project", "gmtestandreview_portalsample"],
+      "tools": ["*"]
     }
   }
 }
