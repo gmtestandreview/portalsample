@@ -93,6 +93,12 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 |-----------|---------------|
 | Writing a new REST / gRPC / GraphQL / event endpoint | **api-contract-first** (write the contract first) |
 
+## Cross-Tool API / CLI Access
+
+| Situation | Required Skill |
+|-----------|---------------|
+| Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell (notably from Codex or Copilot, which lack native MCP tool-calling), or generating a new skill from an API | **mcp2cli** skill — but call an already-wired MCP server's native tool (`mcp__github__*`, `mcp__react-aria__*`, etc.) directly from a Claude Code session instead; don't shell out to a tool you already have |
+
 ## Performance & Production
 
 | Situation | Required |

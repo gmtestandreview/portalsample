@@ -12,3 +12,8 @@ startup_timeout_sec = 120
 command = "cmd"
 args = ["/c", "scripts\\github-mcp-server.cmd"]
 enabled = true
+
+[mcp_servers.tokensave]
+command = "C:/Users/gregm/.local/bin/tokensave.exe"
+args = ["serve"]
+enabled = true

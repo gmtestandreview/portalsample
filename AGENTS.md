@@ -219,6 +219,7 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 | `five-whys` | A bug persists despite surface fixes, or a failure or process keeps recurring — target the root, not the symptom. |
 | `incident-response` | Production is degraded or down — use immediately. |
 | `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
+| `mcp2cli` | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell — especially useful here since Codex has no native MCP tool-calling — or generating a new skill from an API. |
 | `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
 | `receiving-code-review` | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent. |
 | `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |

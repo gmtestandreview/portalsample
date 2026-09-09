@@ -1,6 +1,6 @@
 {
   "servers": {
-    "React Aria": {
+    "react-aria": {
       "command": "npx",
       "args": [
         "@react-aria/mcp@latest"
@@ -29,6 +29,16 @@
         "mcp",
         "--project",
         "gmtestandreview_portalsample"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "tokensave": {
+      "type": "stdio",
+      "command": "C:/Users/gregm/.local/bin/tokensave.exe",
+      "args": [
+        "serve"
       ],
       "tools": [
         "*"
