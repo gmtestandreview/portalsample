@@ -485,6 +485,8 @@ grep -oE '"Skill\([^"]*\)"' .claude/settings.json | sort -u | wc -l   # expect: 
 
 - [x] **Step 3: Commit** — `git commit -m "feat: add adr, architecture-*, managing-github-actions, scalability-review, receiving-code-review to Skill() allow-list"`
 
+  **Reconciliation 2026-09-09 (found in PR1 review):** the plan assumed `.claude/settings.json` was tracked; `main` deliberately `.gitignore`s it (audit finding B5, commit `77101363`). Commit `6f55eb8` force-added it. Resolved by superseding the `settings.json` half of B5 — [docs/adr/2026-09-09-track-claude-settings-json.md](../../../docs/adr/2026-09-09-track-claude-settings-json.md); `.gitignore` no longer lists `settings.json` (`settings.local.json` still ignored). Commit `8f4ad2b`.
+
 #### Task 4.3: Reload gate
 
 - [x] **Step 1:** Main session: instruct the user to restart / reload the session so the new skill symlinks and 12 allow-list entries take effect. Wait for confirmation before Task 4.4.
@@ -495,7 +497,7 @@ grep -oE '"Skill\([^"]*\)"' .claude/settings.json | sort -u | wc -l   # expect: 
 
 - [x] **Step 1:** `comm -3 <(ls -1 skills | grep -v '\.md$' | sort) <(ls -1 .claude/skills | grep -v react-aria | sort)` → no output. **Done 2026-09-09:** empty output; 25/25 parity; `git ls-files -s .claude/skills` = 25 × `120000`.
 - [x] **Step 2:** Invoke and confirm A Team body + no prompt for: `brainstorming`, `subagent-driven-development`, `systematic-debugging` (3 formerly shadowed), `adr`, `receiving-code-review` (formerly prompting / new). Record results in the ledger. **Done 2026-09-09:** live `Skill(receiving-code-review)` returned the ported A Team body from `.claude/skills/receiving-code-review`, no prompt — mechanism confirmed post-reload. Other 4 verified via registry cross-check (bare entry = A Team fork description, distinct from `superpowers:<name>`, allow-listed). Evidence: [_red-baselines/4.4-resolution-check.md](_red-baselines/4.4-resolution-check.md).
-- [ ] **Step 3:** No commit. **PR1 is now content-complete** — hand to `finishing-a-development-branch` for the PR1 review/PR (run the subset of §7 that PR1 covers: spike, 25 skills, provenance, reference-integrity, symlinks `120000`, allow-list 50, invocation spot-checks).
+- [x] **Step 3:** No commit. **PR1 is now content-complete** — hand to `finishing-a-development-branch` for the PR1 review/PR (run the subset of §7 that PR1 covers: spike, 25 skills, provenance, reference-integrity, symlinks `120000`, allow-list 50, invocation spot-checks). **Done 2026-09-09:** `finishing-a-development-branch` review run — §7 PR1 subset all green; one blocker found and resolved (`.claude/settings.json` tracking, ADR `2026-09-09-track-claude-settings-json.md`, commit `8f4ad2b`); minor follow-ups logged (`your human partner` phrasing in 5 shipped skills; prune `settings.json` one-off `Bash()` entries). PR creation/push and branch rename to `feat/a-team-skills-canonical` pending user go-ahead.
 
 ---
 
