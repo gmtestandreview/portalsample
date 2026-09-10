@@ -12,9 +12,13 @@ This is a **source-map capture snapshot** of `portal.measurement.gov.au` — the
 - `npm run lint` / `npm run lint:fix` — ESLint
 - `npm run test:unit` — Unit tests (Vitest)
 - `npm run test:ci` — Full CI gate (type-check + tests + regression)
+- `npm run test:e2e:app` — App Playwright-BDD suite
+- `npm run test:e2e:storybook` — Storybook Playwright-BDD suite
 - `npm run migration-check` — Pre-migration gate (type-check + tests + storybook build)
 
 See `package.json` for the full script list.
+
+**Playwright-BDD Fix with AI:** both BDD configs enable `aiFix.promptAttachment`. To generate an AI-fix prompt, run a failing BDD suite with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the corresponding HTML report in `reports/playwright/app` or `reports/playwright/storybook` and copy the AI prompt attachment into Claude, Codex, Copilot, or another coding assistant.
 
 ## Technology stack
 

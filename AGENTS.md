@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This workspace is a **source-map capture snapshot** of portal.measurement.gov.au — the Australian Government National Measurement Institute (NMI) customer portal. The repository **does** include a root `package.json` with validation and test scripts. You may run `npm`, `pnpm`, or `yarn` commands from the workspace root for validation, type-checking, linting, and tests.
+This workspace is a **source-map capture snapshot** of portal.measurement.gov.au — the Australian Government National Measurement Institute (NMI) customer portal. The repository **does** include a root `package.json` with validation and test scripts. You may run `npm`, `pnpm`, or `yarn` commands from the workspace root for validation, type-checking, linting, and tests. This file is the canonical repository policy: path-specific instruction files supplement it only within their stated scope, and this file takes precedence when instructions conflict unless the task explicitly requires a policy change. Policy-sensitive files may be edited only when the task explicitly requests that policy change; application-code tasks must leave them unchanged. Markdown formatting follows Prettier where applicable, while fenced code blocks retain a language identifier when the language is known and normal Markdown links use the form `[descriptive text](target)`.
 
 **Validation scripts:**
 
@@ -26,6 +26,8 @@ The following scripts are available in the root `package.json`:
 - `npm run migration-check` — Full pre-migration gate (type-check + tests + storybook build)
 
 See `package.json` for the full list.
+
+**Playwright-BDD Fix with AI:** both BDD configs enable `aiFix.promptAttachment`. To generate an AI-fix prompt, run a failing BDD suite with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the corresponding HTML report in `reports/playwright/app` or `reports/playwright/storybook` and copy the AI prompt attachment into Copilot, Codex, Claude, or another coding assistant.
 
 ## Technology Stack
 
@@ -167,7 +169,7 @@ Remember: A story name might not reflect the property name correctly, so always 
 - `ClientApp/src/**/*.tsx`
 - `ClientApp/src/styles/**/*.scss`
 
-**Never edit (generated / vendor):**
+**Never edit (generated / vendor) directly, except when the task explicitly requires snapshot repair and the responsible generator or upstream source is unavailable:**
 
 - `ClientApp/src/api/web-api-client.ts`
 - `ClientApp/src/main.*.js`
