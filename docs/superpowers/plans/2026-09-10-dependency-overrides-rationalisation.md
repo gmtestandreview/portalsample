@@ -17,8 +17,10 @@
 - Do not hand-edit `package-lock.json`; regenerate it with npm.
 - Preserve `npm ci` compatibility and the existing patch-package postinstall path.
 - Keep existing user changes in `package.json` and `package-lock.json`; do not revert unrelated dependency work.
+- Before implementation begins, commit or otherwise close the current dirty worktree so this dependency-rationalisation work starts from an isolated baseline.
 - Any retained override must have one of these owners: active security advisory, publisher deprecation policy, compatibility workaround, or explicit documented exception.
 - Any removed override must be validated by lockfile resolution and the dependency security regression test.
+- Design principle: prefer minimal overrides. If a patched version resolves naturally within the parent dependency range, remove the override instead of pinning that package at the root.
 
 ---
 
@@ -34,10 +36,41 @@ Score each override from 0 to 2 on each criterion. An override should remain onl
 | Maintenance cost | Broad/global override with stale pin | Narrow but still artificial | Owner-scoped or exact transitive floor with clear removal rule |
 | Test coverage | No regression guard | Covered indirectly | Covered by `dependencySecurity.test.ts` or focused command |
 
+## Design Decisions
+
+### Decision 1: Stale Security Overrides
+
+Remove stale overrides, keep `qs`, `uuid`, and `valibot`, and remove the `js-yaml` override after raising the security floor to `4.3.2`.
+
+Consequence: npm regains normal patch-level resolver freedom for packages that now resolve safely without intervention. This is intentional under the minimal-overrides principle.
+
+Mitigation: retain explicit security-floor tests, run audit after regeneration, and keep documented removal criteria for every retained override so it does not become hidden architecture.
+
+### Decision 2: `@mizchi/lsmcp` and `glob@10.5.0`
+
+Force `@mizchi/lsmcp` to `glob@13.0.6` with an owner-scoped override.
+
+Rationale: the repository already has a hard policy test that rejects every `glob@10.x` copy as deprecated, and `glob@10.5.0` is publisher-deprecated with a warning to update. Leaving `@mizchi/lsmcp` on `glob@10.5.0` would require weakening or exception-carving that policy. The cleaner design is to keep the policy coherent and validate `lsmcp` directly under `glob@13.0.6`.
+
+Mitigation: validate `./node_modules/.bin/lsmcp --help`, `./node_modules/.bin/lsmcp --list`, and `./node_modules/.bin/lsmcp doctor` after lockfile regeneration. If any command fails because of `glob@13.0.6`, revert only the `@mizchi/lsmcp.glob` override and record a time-boxed exception in `dependencySecurity.test.ts` with a removal condition tied to the next `@mizchi/lsmcp` release.
+
+## Retained Override Removal Criteria
+
+| Override | Why it remains | Removal criteria |
+| --- | --- | --- |
+| `@mizchi/lsmcp.glob: 13.0.6` | Prevents deprecated `glob@10.5.0`. | Remove when `@mizchi/lsmcp` naturally resolves `glob >=13` or when it no longer depends on `glob`. Validate with `npm ls glob` and the `lsmcp` focused commands. |
+| `@npmcli/map-workspaces.glob: 13.0.6` | Prevents deprecated `glob@10.5.0` in the remark/unified toolchain. | Remove when this owner naturally resolves `glob >=13`. Validate with `npm ls glob` and `npm run lint:mdx`. |
+| `@npmcli/package-json.glob: 13.0.6` | Prevents deprecated `glob@10.5.0` in the remark/unified toolchain. | Remove when this owner naturally resolves `glob >=13`. Validate with `npm ls glob` and `npm run lint:mdx`. |
+| `unified-engine.glob: 13.0.6` | Prevents deprecated `glob@10.5.0` in `remark-cli`/`unified-engine`. | Remove when `unified-engine` naturally resolves `glob >=13`. Validate with `npm run lint:mdx`. |
+| `qs: 6.16.0` | Prevents vulnerable `qs@6.15.3` through `express@4.22.2`. | Remove when `express` or its owner naturally resolves `qs >=6.16.0`. Validate with `npm audit`, `npm ls qs`, `npm run build`, and `npm run test:e2e:app`. |
+| `uuid: ^11.1.1` | Prevents vulnerable `uuid@8.3.2` through `sockjs@0.3.24`. | Remove when `sockjs`/`webpack-dev-server` naturally resolves `uuid >=11.1.1` or no longer depends on `uuid`. Validate with `npm audit`, `npm ls uuid`, and dev-server-backed E2E. |
+| `valibot: 1.4.2` | Prevents vulnerable `valibot@1.2.0` through Storybook MCP. | Remove when Storybook MCP naturally resolves `valibot >1.4.1`. Validate with `npm audit`, `npm ls valibot`, Storybook MCP endpoint checks, and Storybook tests. |
+
 ## Override Decisions
 
 | Override | Decision | Evidence | Action |
 | --- | --- | --- | --- |
+| `@mizchi/lsmcp.glob: 13.0.6` | Add | Current tree contains deprecated `glob@10.5.0` through `@mizchi/lsmcp`, and the existing dependency security test rejects every `glob@10.x` copy. | Add owner-scoped override and validate `lsmcp` commands. |
 | `@npmcli/map-workspaces.glob: 13.0.6` | Keep | Prevents deprecated `glob@10.5.0` in the remark/unified toolchain. | Keep and document owner. |
 | `@npmcli/package-json.glob: 13.0.6` | Keep | Same deprecated glob toolchain risk. | Keep and document owner. |
 | `unified-engine.glob: 13.0.6` | Keep | Same deprecated glob toolchain risk. | Keep and document owner. |
@@ -47,7 +80,7 @@ Score each override from 0 to 2 on each criterion. An override should remain onl
 | `brace-expansion@5: 5.0.9` | Remove | Fresh exact-root no-overrides resolution still selects patched `5.0.9`. | Remove. |
 | `browserslist: 4.28.8` | Remove | Fresh exact-root no-overrides resolution selects newer `4.28.9`. | Remove. |
 | `fast-uri: 3.1.7` | Remove | Fresh exact-root no-overrides resolution is identical. | Remove. |
-| `js-yaml: 4.3.1` | Replace | Current audit says `<4.3.2` is vulnerable; no-overrides selects `4.3.2`. | Remove override or set `4.3.2`; prefer remove after validation. |
+| `js-yaml: 4.3.1` | Remove | Current audit says `<4.3.2` is vulnerable; no-overrides selects `4.3.2` within `cosmiconfig`'s `^4.1.0` range. | Remove override under the minimal-overrides principle. |
 | `nanoid: 3.3.18` | Remove | Fresh exact-root no-overrides resolution is identical. | Remove. |
 | `postcss: 8.5.26` | Remove | Fresh exact-root no-overrides resolution selects newer `8.5.28`. | Remove. |
 | `qs: 6.16.0` | Keep | Without override, `express@4.22.2` returns vulnerable `qs@6.15.3`. | Keep until express naturally resolves patched `qs`. |
@@ -67,7 +100,7 @@ Decision: Accept placement churn for stale overrides, but require `dependencySec
 
 The current focused test fails on `glob@10.5.0` from `@mizchi/lsmcp@0.10.0`. Keeping the three existing owner-scoped overrides is necessary but insufficient.
 
-Decision: Add a separate task to either scope an additional override for `@mizchi/lsmcp.glob: 13.0.6` or deliberately revise the policy test with a documented exception. The optimized plan prefers adding the scoped override and validating `@mizchi/lsmcp`.
+Decision: Add an owner-scoped override for `@mizchi/lsmcp.glob: 13.0.6`. This is justified because the repository already rejects `glob@10.x`; accepting the `@mizchi/lsmcp` copy would make the policy inconsistent. The mitigation is direct `lsmcp` command validation and a rollback path to a documented temporary exception if `glob@13.0.6` breaks `lsmcp`.
 
 ### Challenge 3: Removing `body-parser` may change Express middleware behavior from `1.20.6` to `1.20.8`
 
@@ -79,7 +112,7 @@ Decision: Remove the override, then validate `npm run build` and at least one de
 
 The current parent `cosmiconfig@8.3.6` depends on `js-yaml ^4.1.0`, so natural resolution is `4.3.2`, not `5.x`. Removing the override is cleaner today.
 
-Decision: Remove `js-yaml` override and raise the test floor to `4.3.2`. Re-add an override only if npm resolves outside the compatible 4.x line.
+Decision: Remove `js-yaml` override and raise the test floor to `4.3.2`. This explicitly follows the minimal-overrides design principle. Re-add an override only if npm resolves outside the compatible 4.x line.
 
 ### Challenge 5: `valibot` is pinned below latest
 
@@ -209,6 +242,26 @@ npm install
 
 Expected: install succeeds. The existing `html-react-parser` patch warning may remain unless handled by a separate patch refresh task.
 
+- [ ] **Step 4: Confirm minimal override shape**
+
+Run:
+
+```powershell
+node -e "const p=require('./package.json'); console.log(Object.keys(p.overrides).sort().join('\n'))"
+```
+
+Expected:
+
+```text
+@mizchi/lsmcp
+@npmcli/map-workspaces
+@npmcli/package-json
+qs
+unified-engine
+uuid
+valibot
+```
+
 ### Task 4: Validate Override Outcomes
 
 **Files:**
@@ -267,6 +320,18 @@ uuid: 11.1.1 or later
 valibot: 1.4.2
 ```
 
+- [ ] **Step 4: Validate `@mizchi/lsmcp` under `glob@13.0.6`**
+
+Run:
+
+```powershell
+./node_modules/.bin/lsmcp --help
+./node_modules/.bin/lsmcp --list
+./node_modules/.bin/lsmcp doctor
+```
+
+Expected: each command exits 0 and prints command help, supported presets, or environment diagnostics. Failure caused by glob resolution means the `@mizchi/lsmcp.glob` override is not compatible and must be replaced by a documented temporary `glob@10.5.0` exception instead of silently weakening the dependency policy.
+
 ### Task 5: Run Tooling Gates Affected by Override Changes
 
 **Files:**
@@ -299,7 +364,27 @@ npm run lint
 
 Expected: PASS.
 
-- [ ] **Step 3: Run the CI unit composite**
+- [ ] **Step 3: Run MDX/remark lint for the `unified-engine`/`glob` path**
+
+Run:
+
+```powershell
+npm run lint:mdx
+```
+
+Expected: PASS. This validates `remark-cli` and `unified-engine` after the `glob@13.0.6` owner-scoped overrides.
+
+- [ ] **Step 4: Run Storybook MCP validation for `valibot`**
+
+Run:
+
+```powershell
+npm run test:e2e:storybook
+```
+
+Expected: PASS. This exercises the Storybook MCP path that depends on the retained `valibot` override.
+
+- [ ] **Step 5: Run the CI unit composite**
 
 Run:
 
@@ -309,7 +394,7 @@ npm run test:ci
 
 Expected: PASS.
 
-- [ ] **Step 4: Run production build**
+- [ ] **Step 6: Run production build**
 
 Run:
 
@@ -319,7 +404,65 @@ npm run build
 
 Expected: PASS.
 
-### Task 6: Separate Follow-Up for Non-Override Findings
+- [ ] **Step 7: Run app E2E for `body-parser`/`qs` dev-server coverage**
+
+Run:
+
+```powershell
+npm run test:e2e:app
+```
+
+Expected: PASS. This validates the Webpack dev-server path after removing the `body-parser` override and retaining the `qs` override.
+
+### Task 6: Update Docs and Onboarding
+
+**Files:**
+- Modify if Step 1 reports matching references: `INIT.md`
+- Modify if Step 1 reports matching references: `docs/STACK.md`
+- Modify if Step 1 reports matching references: `docs/TESTING.md`
+- Modify if Step 1 reports matching references: `docs/change-record/OPEN-ITEMS-BACKLOG.md`
+- Modify if Step 1 reports matching references: `docs/change-record/MASTER-CHANGE-RECORD.md`
+
+**Interfaces:**
+- Consumes: completed override decisions and final retained override set.
+- Produces: docs that explain why retained overrides exist and when they can be removed.
+
+- [ ] **Step 1: Find stale override and scanner references**
+
+Run:
+
+```powershell
+rg "overrides|@sonar/scan|adm-zip|glob@10|glob 10|js-yaml|valibot|uuid|qs|body-parser" INIT.md docs
+```
+
+Expected: all docs/onboarding references needing update are visible.
+
+- [ ] **Step 2: Update onboarding text**
+
+Update any relevant docs so they state:
+
+```text
+Dependency overrides are intentionally minimal. Retained overrides are policy exceptions with removal criteria:
+- glob owner-scoped overrides prevent deprecated glob 10 in MCP/remark tooling.
+- qs prevents vulnerable Express transitives until Express naturally resolves qs >=6.16.0.
+- uuid prevents vulnerable sockjs transitives until sockjs/webpack-dev-server naturally resolves uuid >=11.1.1.
+- valibot prevents vulnerable Storybook MCP transitives until Storybook MCP naturally resolves valibot >1.4.1.
+- js-yaml is not overridden; it resolves naturally to the patched 4.3.2 line.
+```
+
+Expected: docs no longer imply removed overrides are active policy, and local Sonar scanner docs are aligned with the chosen `@sonar/scan` outcome from Task 7.
+
+- [ ] **Step 3: Validate docs**
+
+Run:
+
+```powershell
+npm run lint:mdx
+```
+
+Expected: PASS.
+
+### Task 7: Separate Follow-Up for Non-Override Findings
 
 **Files:**
 - Inspect: `package.json`
@@ -359,10 +502,15 @@ If local npm scanner is required, keep it and document the accepted dev-only ris
 
 - [ ] `package.json` contains only evidence-backed overrides.
 - [ ] `js-yaml` resolves to `4.3.2`.
+- [ ] `js-yaml` is not retained as an override, matching the minimal-overrides design principle.
 - [ ] No vulnerable `qs`, `uuid`, or `valibot` transitive copies return.
-- [ ] No deprecated `glob@10.x` copy remains, or a deliberate documented exception is added.
+- [ ] No deprecated `glob@10.x` copy remains.
+- [ ] `./node_modules/.bin/lsmcp --help`, `./node_modules/.bin/lsmcp --list`, and `./node_modules/.bin/lsmcp doctor` pass under `glob@13.0.6`.
 - [ ] `npm run test:unit -- tests/unit/config/dependencySecurity.test.ts` passes.
 - [ ] `npm audit` has no override-regression findings.
+- [ ] `npm run lint:mdx` passes, proving the remark/unified path still works.
+- [ ] `npm run test:e2e:storybook` passes, proving the Storybook MCP/`valibot` path still works.
+- [ ] `npm run test:e2e:app` passes, proving the Webpack dev-server `body-parser`/`qs` path still works.
 - [ ] Type-check, lint, `test:ci`, and build pass after lockfile regeneration.
 
 ## Rollback
