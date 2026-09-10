@@ -59,6 +59,7 @@
     "@microsoft/applicationinsights-react-js": "^3.4.3",
     "@microsoft/applicationinsights-web": "^3.4.3",
     "@popperjs/core": "^2.11.8",
+    "@qdrant/js-client-rest": "^1.19.0",
     "@react-aria/optimize-locales-plugin": "^2.0.2",
     "bootstrap": "^5.3.8",
     "date-fns": "^3.6.0",

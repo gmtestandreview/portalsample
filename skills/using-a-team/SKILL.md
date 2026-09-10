@@ -99,6 +99,18 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 |-----------|---------------|
 | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell (notably from Codex or Copilot, which lack native MCP tool-calling), or generating a new skill from an API | **mcp2cli** skill — but call an already-wired MCP server's native tool (`mcp__github__*`, `mcp__react-aria__*`, etc.) directly from a Claude Code session instead; don't shell out to a tool you already have |
 
+## Vector Search / Semantic Memory (Qdrant)
+
+Reference knowledge vendored from skills.qdrant.tech for the semantic-memory-layer tooling (self-hosted Docker Qdrant + `mcp-server-qdrant` indexing memory / docs / ADRs / source). Consult when the trigger applies — not hard-gated like the tables above. Not for the portal SPA runtime, which does not use Qdrant.
+
+| Situation | Skill |
+|-----------|-------|
+| Qdrant search returns bad / irrelevant / missing results; choosing an embedding model, hybrid search, reranking, or building a recall@k golden set | **qdrant-search-quality** (routes to `diagnosis` + `search-strategies` sub-skills) |
+| Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes | **qdrant-model-migration** |
+| Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) | **qdrant-deployment-options** (then record the decision with **adr**) |
+| Integrating or extending the Qdrant client SDK | **qdrant-clients-sdk** |
+| A whole RAG pipeline brought for sign-off (chunking, embeddings, eval coverage) | **rag-pipeline-reviewer** agent — not `qdrant-search-quality` |
+
 ## Performance & Production
 
 | Situation | Required |

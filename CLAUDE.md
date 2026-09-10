@@ -172,6 +172,10 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 | `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
 | `mcp2cli` | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell — especially from Codex or Copilot, which lack native MCP tool-calling — or generating a new skill from an API. |
 | `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
+| `qdrant-clients-sdk` | Vendored (skills.qdrant.tech). Integrating the Qdrant client SDK for the semantic-memory-layer tooling — install commands, REST vs gRPC, curated snippets. |
+| `qdrant-deployment-options` | Vendored. Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) for the semantic-memory layer; feeds an `adr`, does not replace one. |
+| `qdrant-model-migration` | Vendored. Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes, zero downtime. |
+| `qdrant-search-quality` | Vendored. Qdrant retrieval returns bad/irrelevant/missing results, or choosing embedding model / hybrid search / reranking / recall@k evaluation. Routes to `diagnosis` + `search-strategies` sub-skills. Reviewing a whole RAG pipeline for sign-off is the `rag-pipeline-reviewer` agent instead. |
 | `receiving-code-review` | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent. |
 | `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |
 | `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
