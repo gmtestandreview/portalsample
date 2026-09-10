@@ -67,6 +67,14 @@
       "args": [
         "serve"
       ]
+    },
+    "DeepGraph React MCP": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-code-graph@latest",
+        "facebook/react"
+      ]
     }
   }
 }

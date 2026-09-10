@@ -1,171 +1,217 @@
 ---
 name: using-git-worktrees
-description: Create or verify an isolated Git worktree before implementing a feature, bug fix, or other repository change that requires isolation. Use before subagent-driven development, executing implementation plans, parallel development, multi-file changes, or when the user explicitly requests a separate worktree.
+description: Use when starting feature work that needs isolation from current workspace or before executing implementation plans - creates isolated git worktrees with smart directory selection and safety verification
 ---
-<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Using Git Worktrees
 
-## Goal
+## Overview
 
-Start implementation only from a clean, isolated Git worktree based on the intended repository state.
+Git worktrees create isolated workspaces sharing the same repository, allowing work on multiple branches simultaneously without switching.
 
-## When to Use
+**Core principle:** Systematic directory selection + safety verification = reliable isolation.
 
-Use this skill before:
+**Announce at start:** "I'm using the using-git-worktrees skill to set up an isolated workspace."
 
-- implementing a feature or bug fix;
-- `subagent-driven-development`;
-- `executing-plans`;
-- parallel development that must not disturb another checkout;
-- changes spanning more than one file;
-- creating or verifying a separate worktree when the user explicitly requests isolation.
+## Directory Selection Process
 
-Do not create a worktree merely for ordinary read-only investigation unless the user explicitly requests a separate worktree or isolation is otherwise necessary.
+Follow this priority order:
 
-## Workflow
-
-### 1. Confirm repository context
-
-Run:
+### 1. Check Existing Directories
 
 ```bash
-git rev-parse --show-toplevel
-git rev-parse --git-dir
-git rev-parse --git-common-dir
-git status --short
-git branch --show-current
+# Check in priority order
+ls -d .worktrees 2>/dev/null     # Preferred (hidden)
+ls -d worktrees 2>/dev/null      # Alternative
 ```
 
-If the directory is not inside a Git worktree, stop and report that this skill does not apply.
+**If found:** Use that directory. If both exist, `.worktrees` wins.
 
-Treat the current checkout as a linked worktree only when `--git-dir` and `--git-common-dir` resolve to different paths. If they resolve to the same path, treat it as the primary checkout.
-
-If the current checkout is already a linked worktree, use these steps:
-
-1. Check whether it is the intended worktree for this task.
-2. If it is the intended worktree, continue to Step 3.
-3. If it is not the intended worktree, do not implement there. Locate or create the correct task worktree, then verify it before continuing.
-
-If the current checkout is the primary checkout and git status --short shows uncommitted changes, leave those changes untouched. Do not stash, commit, reset, copy, move, or discard them automatically.
-
-If the new task can start from the committed repository state without relocating those changes, create the isolated worktree while leaving the primary checkout unchanged.
-
-If the task requires moving or incorporating the existing uncommitted changes, stop and obtain explicit authorization for the preservation or migration strategy before modifying them.
-
-Do not begin task implementation in the primary checkout.
-
-### 2. Create an isolated worktree
-
-First inspect existing worktrees:
+### 2. Check CLAUDE.md
 
 ```bash
-git worktree list
+grep -i "worktree.*director" CLAUDE.md 2>/dev/null
 ```
 
-Choose a task-specific path and branch that match the repository's conventions. Do not reuse a path or branch already checked out elsewhere.
+**If preference specified:** Use it without asking.
 
-For a new branch:
+### 3. Ask User
+
+If no directory exists and no CLAUDE.md preference:
+
+```
+No worktree directory found. Where should I create worktrees?
+
+1. .worktrees/ (project-local, hidden)
+2. ~/.config/superpowers/worktrees/<project-name>/ (global location)
+
+Which would you prefer?
+```
+
+## Safety Verification
+
+### For Project-Local Directories (.worktrees or worktrees)
+
+**MUST verify directory is ignored before creating worktree:**
 
 ```bash
-git worktree add <worktree-path> -b <branch-name>
+# Check if directory is ignored (respects local, global, and system gitignore)
+git check-ignore -q .worktrees 2>/dev/null || git check-ignore -q worktrees 2>/dev/null
 ```
 
-Examples:
+**If NOT ignored:**
+
+Per Jesse's rule "Fix broken things immediately":
+1. Add appropriate line to .gitignore
+2. Commit the change
+3. Proceed with worktree creation
+
+**Why critical:** Prevents accidentally committing worktree contents to repository.
+
+### For Global Directory (~/.config/superpowers/worktrees)
+
+No .gitignore verification needed - outside project entirely.
+
+## Creation Steps
+
+### 1. Detect Project Name
 
 ```bash
-git worktree add ../worktrees/stripe-billing -b feat/stripe-billing
-git worktree add ../worktrees/fix-auth-bug -b fix/auth-token-expiry
+project=$(basename "$(git rev-parse --show-toplevel)")
 ```
 
-If the repository already has a dedicated worktree location such as `.claude/worktrees/`, follow that project convention instead of inventing a new one.
-
-For an existing branch that is not already checked out:
+### 2. Create Worktree
 
 ```bash
-git worktree add <worktree-path> <branch-name>
+# Determine full path
+case $LOCATION in
+  .worktrees|worktrees)
+    path="$LOCATION/$BRANCH_NAME"
+    ;;
+  ~/.config/superpowers/worktrees/*)
+    path="~/.config/superpowers/worktrees/$project/$BRANCH_NAME"
+    ;;
+esac
+
+# Create worktree with new branch
+git worktree add "$path" -b "$BRANCH_NAME"
+cd "$path"
 ```
 
-Never use `--force` to bypass an existing checkout or a dirty worktree.
+### 3. Run Project Setup
 
-### 3. Verify the isolated baseline
-
-Change into the worktree and verify:
+Auto-detect and run appropriate setup:
 
 ```bash
-cd <worktree-path>
-git status --short
-git branch --show-current
-git log --oneline -3
+# Node.js
+if [ -f package.json ]; then npm install; fi
+
+# Rust
+if [ -f Cargo.toml ]; then cargo build; fi
+
+# Python
+if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+if [ -f pyproject.toml ]; then poetry install; fi
+
+# Go
+if [ -f go.mod ]; then go mod download; fi
 ```
 
-Required conditions:
+### 4. Verify Clean Baseline
 
-- `git status --short` produces no output;
-- the current branch is the intended task branch;
-- the recent history matches the intended base.
-
-If any condition fails, investigate before implementation. Do not discard or overwrite unexpected changes.
-
-### 4. Run project-defined baseline checks
-
-Use the repository's documented setup, build, lint, and test commands. Prefer commands already defined by the project; do not guess a package manager or mutate dependency files unnecessarily.
-
-Record any baseline failure before making task changes.
-
-If the clean baseline fails, stop task implementation and report the failure. Do not fix the baseline on the primary checkout as part of this workflow. Address it only as a separate, explicitly authorized change.
-
-### 5. Proceed with implementation
-
-Implementation may begin only after:
-
-- the task is in an isolated worktree;
-- the worktree is clean;
-- the branch and base are correct;
-- required baseline checks have passed, or the user has explicitly accepted a known baseline limitation.
-
-## Cleanup
-
-Clean up only after the work is merged or explicitly abandoned.
-
-From outside the worktree:
+Run tests to ensure worktree starts clean:
 
 ```bash
-git worktree remove <worktree-path>
+# Examples - use project-appropriate command
+npm test
+cargo test
+pytest
+go test ./...
 ```
 
-The command should refuse removal if uncommitted changes remain. Do not add `--force` merely to make cleanup succeed.
+**If tests fail:** Report failures, ask whether to proceed or investigate.
 
-After a merged branch is no longer needed:
+**If tests pass:** Report ready.
 
-```bash
-git branch -d <branch-name>
+### 5. Report Location
+
+```
+Worktree ready at <full-path>
+Tests passing (<N> tests, 0 failures)
+Ready to implement <feature-name>
 ```
 
-Do not force-delete an unmerged branch unless the user explicitly authorizes losing that branch and its commits.
+## Quick Reference
 
-## Common Failures
+| Situation | Action |
+|-----------|--------|
+| `.worktrees/` exists | Use it (verify ignored) |
+| `worktrees/` exists | Use it (verify ignored) |
+| Both exist | Use `.worktrees/` |
+| Neither exists | Check CLAUDE.md → Ask user |
+| Directory not ignored | Add to .gitignore + commit |
+| Tests fail during baseline | Report failures + ask |
+| No package.json/Cargo.toml | Skip dependency install |
 
-| Failure | Response |
-| --- | --- |
-| Branch is already checked out | Use the existing worktree or choose another branch; do not force-add it |
-| Worktree path already exists | Inspect it before choosing a different path |
-| Current linked worktree belongs to another task | Do not implement there; locate or create the correct task worktree |
-| Primary checkout has uncommitted changes | Preserve them first; do not automatically stash, commit, reset, copy, move, or discard them |
-| Worktree contains unexpected changes | Stop and investigate; preserve the changes |
-| Baseline checks fail before task edits | Report the baseline failure and do not start implementation |
-| Setup assumes absolute paths | Adapt to the worktree path only after confirming project intent |
-| Submodules are required but unavailable | Follow the repository's documented submodule setup |
-| Current directory is the primary checkout | Create a separate worktree before implementation |
+## Common Mistakes
 
-## Completion Check
+### Skipping ignore verification
 
-Before declaring isolation ready, verify all of the following:
+- **Problem:** Worktree contents get tracked, pollute git status
+- **Fix:** Always use `git check-ignore` before creating project-local worktree
 
-- [ ] The current directory is the intended linked worktree for this task.
-- [ ] The intended task branch is checked out.
-- [ ] `git status --short` is empty.
-- [ ] The base commit/history is correct.
-- [ ] Project-required baseline checks passed, or an accepted limitation is documented.
-- [ ] Any pre-existing primary-checkout changes were preserved without silent mutation or loss.
-- [ ] No unexpected changes were discarded, overwritten, or force-removed.
+### Assuming directory location
+
+- **Problem:** Creates inconsistency, violates project conventions
+- **Fix:** Follow priority: existing > CLAUDE.md > ask
+
+### Proceeding with failing tests
+
+- **Problem:** Can't distinguish new bugs from pre-existing issues
+- **Fix:** Report failures, get explicit permission to proceed
+
+### Hardcoding setup commands
+
+- **Problem:** Breaks on projects using different tools
+- **Fix:** Auto-detect from project files (package.json, etc.)
+
+## Example Workflow
+
+```
+You: I'm using the using-git-worktrees skill to set up an isolated workspace.
+
+[Check .worktrees/ - exists]
+[Verify ignored - git check-ignore confirms .worktrees/ is ignored]
+[Create worktree: git worktree add .worktrees/auth -b feature/auth]
+[Run npm install]
+[Run npm test - 47 passing]
+
+Worktree ready at /Users/jesse/myproject/.worktrees/auth
+Tests passing (47 tests, 0 failures)
+Ready to implement auth feature
+```
+
+## Red Flags
+
+**Never:**
+- Create worktree without verifying it's ignored (project-local)
+- Skip baseline test verification
+- Proceed with failing tests without asking
+- Assume directory location when ambiguous
+- Skip CLAUDE.md check
+
+**Always:**
+- Follow directory priority: existing > CLAUDE.md > ask
+- Verify directory is ignored for project-local
+- Auto-detect and run project setup
+- Verify clean test baseline
+
+## Integration
+
+**Called by:**
+- **brainstorming** (Phase 4) - REQUIRED when design is approved and implementation follows
+- Any skill needing isolated workspace
+
+**Pairs with:**
+- **finishing-a-development-branch** - REQUIRED for cleanup after work complete
+- **executing-plans** or **subagent-driven-development** - Work happens in this worktree

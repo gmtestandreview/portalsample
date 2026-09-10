@@ -1,254 +1,116 @@
 ---
 name: writing-plans
-description: Use when a user asks to turn a chosen, supplied, or approved engineering direction into a repository-grounded implementation plan with concrete file changes, dependencies, risks, tests, and success criteria. Use before coding or handing work to an implementation agent. Do not use to choose unresolved product or architecture direction, brainstorm solutions, review completed implementation, or implement the changes.
+description: Use when you have a spec or requirements for a multi-step task, before touching code
 ---
-<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Writing Plans
 
-Convert an approved engineering direction into a repository-grounded plan that another agent can execute without redesigning the solution.
+## Overview
 
-Do not implement the plan.
+Write comprehensive implementation plans assuming the engineer has zero context for our codebase and questionable taste. Document everything they need to know: which files to touch for each task, code, testing, docs they might need to check, how to test it. Give them the whole plan as bite-sized tasks. DRY. YAGNI. TDD. Frequent commits.
 
-## Preconditions
+Assume they are a skilled developer, but know almost nothing about our toolset or problem domain. Assume they don't know good test design very well.
 
-Proceed only when the implementation direction is sufficiently approved to plan.
+**Announce at start:** "I'm using the writing-plans skill to create the implementation plan."
 
-Treat an unresolved decision as a **blocker** when different answers would materially change architecture, public interfaces, data models, dependencies, security boundaries, migration strategy, or success criteria.
+**Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
-Do not guess through blockers.
+**Save plans to:** `docs/plans/YYYY-MM-DD-<feature-name>.md`
 
-Minor implementation details may remain open only when they can be resolved during execution without changing the approved design. Mark them explicitly as implementation-time decisions.
+## Bite-Sized Task Granularity
 
-## Workflow
+**Each step is one action (2-5 minutes):**
+- "Write the failing test" - step
+- "Run it to make sure it fails" - step
+- "Implement the minimal code to make the test pass" - step
+- "Run the tests and make sure they pass" - step
+- "Commit" - step
 
-### 1. Read the source of truth
+## Plan Document Header
 
-Extract from the approved spec or design:
-
-- requirements
-- architecture and design decisions
-- constraints
-- success criteria
-- explicitly deferred work
-
-Preserve those decisions. Do not silently redesign, broaden, or narrow scope.
-
-Record any blocker before planning implementation that depends on it.
-
-### 2. Inspect the repository
-
-Inspect the implementation surfaces relevant to the approved change:
-
-- source files
-- tests
-- configuration
-- interfaces and schemas
-- migrations
-- neighboring modules
-- established project conventions
-
-For every path named in the plan:
-
-- verify that an existing path exists;
-- otherwise mark it **New file**;
-- use actual repository names and structure;
-- distinguish verified APIs, functions, dependencies, and tests from proposed ones.
-
-If repository access is unavailable, do not invent repository details. Mark affected paths and implementation details **Unverified** and identify what the implementation agent must inspect before proceeding.
-
-Record mismatches between the approved design and the current repository.
-
-### 3. Build requirement traceability
-
-Map every in-scope requirement and success criterion to:
-
-1. one or more implementation steps; and
-2. an objective validation path.
-
-Do not add speculative features.
-
-A requirement is not covered unless the plan states both how it will be implemented and how completion will be demonstrated.
-
-### 4. Define phases
-
-Use the smallest number of ordered phases that keeps execution coherent.
-
-Each phase must have:
-
-- **Outcome** — concrete state produced by the phase
-- **Scope** — what changes belong in it
-- **Dependencies** — prerequisites
-- **Validation gate** — objective evidence that the phase is complete
-
-Prefer vertical increments that leave working, testable behavior.
-
-Use labels such as MVP, migration, edge cases, cleanup, or optimization only when they describe the actual work. Do not force a generic phase model onto the repository.
-
-Sequence dependency-blocking, high-risk, or hard-to-reverse work early enough to expose failure before large dependent changes accumulate.
-
-### 5. Write atomic implementation steps
-
-Give every step a stable ID.
-
-Each step must include:
-
-- **Files:** exact verified paths or **New file**
-- **Action:** concrete change and intended behavior
-- **Why:** requirement or approved design decision it satisfies
-- **Dependencies:** prerequisite step IDs or `None`
-- **Risk:** Low / Medium / High
-- **Validation:** test, command, check, or observable result proving completion
-
-For Medium or High risk, also include the relevant mitigation.
-
-For High risk or hard-to-reverse work, include a practical rollback or recovery path.
-
-Keep each step small enough to implement, review, validate, and revert independently.
-
-Split a step when it combines unrelated responsibilities, independent validation boundaries, or changes that can fail separately.
-
-### 6. Identify parallel work
-
-When multiple agents may execute the plan, identify:
-
-- steps safe to run concurrently;
-- sequential dependencies;
-- shared files or interfaces that create conflicts;
-- ownership boundaries needed for safe parallel work.
-
-Do not parallelize steps that modify the same implementation surface unless ownership boundaries and integration order are explicit.
-
-Parallelism must follow the dependency graph, not merely the phase grouping.
-
-### 7. Define testing
-
-Select only applicable test levels for each phase:
-
-- **Unit** — functions, modules, or components
-- **Integration** — cooperating systems or boundaries
-- **E2E** — user or system journeys
-- **Regression** — behavior that must remain unchanged
-- **Manual/operational** — only when automated verification is impractical
-
-Name verified existing test files when known. Mark proposed test files **New file**.
-
-Every success criterion must map to at least one validation method.
-
-Do not invent test commands, fixtures, environments, or frameworks that were not verified in the repository. Mark proposed or unverified details explicitly.
-
-### 8. Challenge the plan
-
-Before handoff, review the plan from the implementer's perspective.
-
-Resolve or report:
-
-- requirements with no implementation step;
-- success criteria with no validation;
-- steps based on unverified assumptions;
-- invented paths, APIs, dependencies, or tests;
-- hidden design decisions;
-- dependency cycles or missing prerequisites;
-- unsafe parallel work;
-- high-risk changes without mitigation or rollback;
-- speculative scope;
-- repository/spec mismatches that prevent execution.
-
-Revise all fixable issues before presenting the plan.
-
-For an independent review pass, dispatch a reviewer with [references/plan-document-reviewer-prompt.md](references/plan-document-reviewer-prompt.md).
-
-Anything that still requires a material product or architecture decision is a blocker, not an implementation step.
-
-## Output
-
-Use this structure, adapting sections only when they are genuinely inapplicable:
+**Every plan MUST start with this header:**
 
 ```markdown
-# Implementation Plan: [Feature]
+# [Feature Name] Implementation Plan
 
-## Source
-[Approved spec or design]
+> **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-## Overview
-[What changes and the approved implementation approach]
+**Goal:** [One sentence describing what this builds]
 
-## Blockers
-- None
-# or
-- [Unresolved material decision]
+**Architecture:** [2-3 sentences about approach]
 
-## Requirements Traceability
-| Requirement | Steps | Validation |
-|---|---|---|
+**Tech Stack:** [Key technologies/libraries]
 
-## Repository Findings
-- [Relevant verified implementation surface or spec/repository mismatch]
-
-## Architecture Changes
-- `[path]`: [change]
-
-## Implementation Steps
-
-### Phase 1: [Outcome]
-
-#### Step 1.1: [Action]
-- Files: `path/to/file`
-- Action: ...
-- Why: ...
-- Dependencies: None
-- Risk: Low
-- Validation: ...
-
-## Parallelization
-- Can run concurrently: ...
-- Must remain sequential: ...
-
-## Testing Strategy
-- Unit: ...
-- Integration: ...
-- E2E: ...
-- Regression: ...
-- Manual/operational: ...
-
-## Risks and Rollback
-- ...
-
-## Success Criteria
-- [ ] ...
+---
 ```
 
-Omit empty testing categories rather than filling them with placeholders.
+## Task Structure
 
-## Persistence
+```markdown
+### Task N: [Component Name]
 
-If the user or surrounding workflow requires a persisted plan, save it to the requested location.
+**Files:**
+- Create: `exact/path/to/file.py`
+- Modify: `exact/path/to/existing.py:123-145`
+- Test: `tests/exact/path/to/test.py`
 
-Otherwise, when a repository convention has been verified, follow that convention.
+**Step 1: Write the failing test**
 
-If no location is specified or verified, use:
+```python
+def test_specific_behavior():
+    result = function(input)
+    assert result == expected
+```
 
-`docs/plans/YYYY-MM-DD-<feature>.md`
+**Step 2: Run test to verify it fails**
 
-Before writing, check whether the target exists. Never overwrite an existing plan without explicit authorization.
+Run: `pytest tests/path/test.py::test_name -v`
+Expected: FAIL with "function not defined"
 
-If persistence was not requested and is unnecessary for handoff, present the plan without creating a file.
+**Step 3: Write minimal implementation**
 
-## Handoff contract
+```python
+def function(input):
+    return expected
+```
 
-The plan is implementation-ready only when an implementation agent can determine:
+**Step 4: Run test to verify it passes**
 
-1. what must change;
-2. where it must change;
-3. why each change is required;
-4. what dependencies constrain execution;
-5. how each phase and success criterion will be verified; and
-6. how material risks will be mitigated or reversed,
+Run: `pytest tests/path/test.py::test_name -v`
+Expected: PASS
 
-without making unresolved product or architecture decisions.
+**Step 5: Commit**
 
-Present blockers separately from executable work.
+```bash
+git add tests/path/test.py src/path/file.py
+git commit -m "feat: add specific feature"
+```
+```
 
-When an execution skill such as `executing-plans` or `subagent-driven-development` is available and appropriate, the completed plan may be handed to it. Otherwise provide the plan as a standalone implementation artifact.
+## Remember
+- Exact file paths always
+- Complete code in plan (not "add validation")
+- Exact commands with expected output
+- Reference relevant skills with @ syntax
+- DRY, YAGNI, TDD, frequent commits
 
-Do not begin implementation as part of this skill.
+## Execution Handoff
+
+After saving the plan, offer execution choice:
+
+**"Plan complete and saved to `docs/plans/<filename>.md`. Two execution options:**
+
+**1. Subagent-Driven (this session)** - I dispatch fresh subagent per task, review between tasks, fast iteration
+
+**2. Parallel Session (separate)** - Open new session with executing-plans, batch execution with checkpoints
+
+**Which approach?"**
+
+**If Subagent-Driven chosen:**
+- **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development
+- Stay in this session
+- Fresh subagent per task + code review
+
+**If Parallel Session chosen:**
+- Guide them to open new session in worktree
+- **REQUIRED SUB-SKILL:** New session uses superpowers:executing-plans
