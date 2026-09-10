@@ -148,6 +148,9 @@
     ]
   },
   "overrides": {
+    "@mizchi/lsmcp": {
+      "glob": "13.0.6"
+    },
     "@npmcli/map-workspaces": {
       "glob": "13.0.6"
     },

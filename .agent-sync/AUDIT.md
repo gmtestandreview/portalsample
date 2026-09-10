@@ -1,7 +1,7 @@
 # Pipeline Audit Report — 2026-09-10
 
-**Branch:** `feat/a-team-agents-commands-docs` (51 commits ahead of origin/main)  
-**Audit date:** 2026-09-10  
+**Branch:** `feat/a-team-agents-commands-docs` (51 commits ahead of origin/main)
+**Audit date:** 2026-09-10
 **Auditor:** harness-optimizer (Tier 3)
 
 ---
