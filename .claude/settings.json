@@ -91,7 +91,11 @@
       "WebFetch(domain:developer.mozilla.org)",
       "WebFetch(domain:docs.anthropic.com)",
       "Write(*)",
-      "mcp__github__*",
+      "mcp__github__get_*",
+      "mcp__github__list_*",
+      "mcp__github__search_*",
+      "mcp__github__issue_read",
+      "mcp__github__pull_request_read",
       "mcp__my-storybook-mcp-server__*",
       "mcp__playwright__*",
       "mcp__plugin_context7_context7__query-docs",
@@ -149,12 +153,9 @@
       "mcp__tokensave__tokensave_impls",
       "mcp__tokensave__tokensave_imports",
       "mcp__tokensave__tokensave_inheritance_depth",
-      "mcp__tokensave__tokensave_insert_at",
-      "mcp__tokensave__tokensave_insert_at_symbol",
       "mcp__tokensave__tokensave_largest",
       "mcp__tokensave__tokensave_log",
       "mcp__tokensave__tokensave_module_api",
-      "mcp__tokensave__tokensave_multi_str_replace",
       "mcp__tokensave__tokensave_node",
       "mcp__tokensave__tokensave_port_order",
       "mcp__tokensave__tokensave_port_status",
@@ -166,7 +167,6 @@
       "mcp__tokensave__tokensave_recursion",
       "mcp__tokensave__tokensave_redundancy",
       "mcp__tokensave__tokensave_rename_preview",
-      "mcp__tokensave__tokensave_replace_symbol",
       "mcp__tokensave__tokensave_run_affected_tests",
       "mcp__tokensave__tokensave_runtime",
       "mcp__tokensave__tokensave_search",
@@ -178,7 +178,6 @@
       "mcp__tokensave__tokensave_similar",
       "mcp__tokensave__tokensave_simplify_scan",
       "mcp__tokensave__tokensave_status",
-      "mcp__tokensave__tokensave_str_replace",
       "mcp__tokensave__tokensave_test_coverage",
       "mcp__tokensave__tokensave_test_map",
       "mcp__tokensave__tokensave_test_risk",
@@ -228,10 +227,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "C:/Users/gregm/.local/bin/tokensave.exe",
-            "args": [
-              "hook-pre-tool-use"
-            ]
+            "command": "TS=$(command -v tokensave 2>/dev/null || echo \"$HOME/.local/bin/tokensave\"); if test -x \"$TS\"; then \"$TS\" hook-pre-tool-use; else exit 0; fi"
           }
         ],
         "matcher": "Agent|Grep|Bash|Glob"
@@ -283,10 +279,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "C:/Users/gregm/.local/bin/tokensave.exe",
-            "args": [
-              "hook-stop"
-            ]
+            "command": "TS=$(command -v tokensave 2>/dev/null || echo \"$HOME/.local/bin/tokensave\"); if test -x \"$TS\"; then \"$TS\" hook-stop; else exit 0; fi"
           }
         ]
       }
@@ -296,10 +289,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "C:/Users/gregm/.local/bin/tokensave.exe",
-            "args": [
-              "hook-prompt-submit"
-            ]
+            "command": "TS=$(command -v tokensave 2>/dev/null || echo \"$HOME/.local/bin/tokensave\"); if test -x \"$TS\"; then \"$TS\" hook-prompt-submit; else exit 0; fi"
           }
         ]
       }

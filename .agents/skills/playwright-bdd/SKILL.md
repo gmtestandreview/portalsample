@@ -153,7 +153,3 @@ Then('the cart badge should show {int}', async ({ page }, count: number) => {
   await expect(page.locator('.cart-badge')).toHaveText(String(count));
 });
 ```
-Suggest the most appropriate file to add them to, inferred from the existing file naming (e.g. add auth-related steps to `steps/auth.steps.ts` if that file exists).
-## Further Reading
-
-For deeper detail on any topic — configuration, step styles, fixtures, hooks, reporters — fetch the official documentation: https://vitalets.github.io/playwright-bdd/#/
