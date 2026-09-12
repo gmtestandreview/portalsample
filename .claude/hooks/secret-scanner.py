@@ -225,7 +225,7 @@ def scan_file(file_path):
                         'line': line_num,
                         'description': description,
                         'severity': severity,
-                        'match': match.group(0)[:50] + '...' if len(match.group(0)) > 50 else match.group(0),
+                        'match': '[REDACTED]',
                         'full_line': line.strip()[:100]
                     })
     except Exception as e:
