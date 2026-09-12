@@ -99,7 +99,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
 
         // Treat editor scaffolding as empty
         const htmlWithoutEmptyBlocks = serializedHtml
-            .replace(/<p>(?:\s|&nbsp;|&#xFEFF;|&#xfeff;|<br\s*\/?>)*<\/p>/gi, '')
+            .replace(/<p>(?:(?:&nbsp;|&#xfeff;|<br\s*\/?>)|\s)*<\/p>/gi, '')
             .trim();
 
         if (!htmlWithoutEmptyBlocks) return 0;
