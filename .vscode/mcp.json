@@ -1,9 +1,9 @@
 {
   "servers": {
     "react-aria": {
-      "command": "npx",
+      "command": "node",
       "args": [
-        "@react-aria/mcp@latest"
+        "${workspaceFolder}/node_modules/@react-aria/mcp/dist/react-aria/src/index.js"
       ],
       "type": "stdio",
       "tools": [

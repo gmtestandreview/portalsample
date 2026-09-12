@@ -86,6 +86,7 @@
     "@mizchi/lsmcp": "^0.10.0",
     "@playwright/test": "^1.62.1",
     "@qdrant/js-client-rest": "^1.19.0",
+    "@react-aria/mcp": "1.2.1",
     "@sonar/scan": "^5.0.0",
     "@storybook/addon-a11y": "10.5.10",
     "@storybook/addon-docs": "^10.5.10",
