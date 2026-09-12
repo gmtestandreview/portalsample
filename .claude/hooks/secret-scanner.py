@@ -225,8 +225,7 @@ def scan_file(file_path):
                         'line': line_num,
                         'description': description,
                         'severity': severity,
-                        'match': '[REDACTED]',
-                        'full_line': line.strip()[:100]
+                        'match': '[REDACTED]'
                     })
     except Exception as e:
         # Skip files that can't be read
