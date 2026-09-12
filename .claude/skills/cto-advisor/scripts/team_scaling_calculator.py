@@ -475,9 +475,9 @@ def calculate_team_scaling(current_state: Dict, growth_targets: Dict) -> str:
     output.extend([
         f"",
         f"Budget Projection:",
-        f"  Annual Salary Cost: ${results['budget_projection']['annual_salary_cost']:,.0f}",
-        f"  Total Investment: ${results['budget_projection']['total_cost']:,.0f}",
-        f"  Cost per Hire: ${results['budget_projection']['cost_per_hire']:,.0f}",
+        f"  Annual Salary Cost: [REDACTED]",
+        f"  Total Investment: [REDACTED]",
+        f"  Cost per Hire: [REDACTED]",
         f"",
         f"Team Structure:",
         f"  Model: {results['team_structure']['organizational_model']}",
