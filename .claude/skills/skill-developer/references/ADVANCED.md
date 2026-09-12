@@ -1,14 +1,25 @@
 # Advanced Topics & Future Enhancements
 
-Ideas and concepts for future improvements to the skill system.
+Proposal-only ideas for future improvements to the project-local skill system. **Nothing in this file is part of the current `skill-rules.json` schema or runtime contract unless the target implementation is inspected and confirms it.** Do not copy proposed fields into production configuration without implementation and validation.
+
+## Table of Contents
+
+- [Dynamic Rule Updates](#dynamic-rule-updates)
+- [Skill Dependencies](#skill-dependencies)
+- [Conditional Enforcement](#conditional-enforcement)
+- [Skill Analytics](#skill-analytics)
+- [Skill Versioning](#skill-versioning)
+- [Multi-Language Support](#multi-language-support)
+- [Skill Testing Framework](#skill-testing-framework)
+- [Related Files](#related-files)
 
 ---
 
 ## Dynamic Rule Updates
 
-**Current State:** Requires Claude Code restart to pick up changes to skill-rules.json
+**Documented current behavior:** `HOOK_MECHANISMS.md` says each UserPromptSubmit/PreToolUse execution loads `skill-rules.json`. This reference therefore does not assert that a Claude Code restart is required. If another layer caches rules, verify that behavior in the target project.
 
-**Future Enhancement:** Hot-reload configuration without restart
+**Future Enhancement:** If rule loading is later cached, add explicit invalidation/reload behavior
 
 **Implementation Ideas:**
 - Watch skill-rules.json for changes
@@ -98,7 +109,7 @@ Ideas and concepts for future improvements to the skill system.
 - User override rate (skip markers, env vars)
 - Performance metrics (execution time)
 
-**Dashbord Ideas:**
+**Dashboard Ideas:**
 - Most/least used skills
 - Skills with highest false positive rate
 - Performance bottlenecks

@@ -1,6 +1,6 @@
 # Troubleshooting - Skill Activation Issues
 
-Complete debugging guide for skill activation problems.
+Complete debugging guide for the documented project-local skill activation system. Commands assume the referenced `.claude` files and Node/TypeScript tooling exist; inspect the target repository before running them.
 
 ## Table of Contents
 
@@ -198,10 +198,13 @@ cat .claude/hooks/state/skills-used-{session-id}.json
 
 If the skill is in `skills_used`, it won't block again in this session.
 
-**Fix:** Delete the state file to reset:
+**Fix:** Reset only the affected session state, preserving a rollback copy first:
 ```bash
+cp .claude/hooks/state/skills-used-{session-id}.json \
+  .claude/hooks/state/skills-used-{session-id}.json.bak
 rm .claude/hooks/state/skills-used-{session-id}.json
 ```
+Do not delete shared or unrelated state files.
 
 #### 5. File Marker Present
 
