@@ -4,6 +4,16 @@ Load this reference only when the user or project explicitly requires the suppli
 
 Do not apply these requirements to ordinary `writing-plans` requests.
 
+## Precedence and composition
+
+This mode is an overlay, not a reduced-quality replacement for the core `writing-plans` contract.
+
+- Keep every mandatory item from the parent `SKILL.md` Plan contract and its final reviewer gate.
+- Use this mode's dedicated-branch, single-PR, research, path, and commit conventions when they conflict with ordinary defaults.
+- The legacy compact shape below may reorganize the plan, but it must not omit required source inputs, assumptions/unknowns, requirement traceability, framework fit, file responsibilities, tasks, safety/rollback/verification, final validation, or execution handoff.
+- If deterministic mode is also explicitly required, deterministic fixed sections govern presentation while this mode still supplies its compatible branch, research, path, and commit constraints.
+- Do not weaken evidence, safety, test-first, or non-fabrication requirements to preserve legacy formatting.
+
 ## Preserved workflow
 
 1. Research and gather context before generating the plan.
