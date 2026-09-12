@@ -2,6 +2,9 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
+    aiFix: {
+        promptAttachment: true,
+    },
     outputDir: '.features-gen/storybook',
     features: 'tests/e2e/features/storybook/**/*.feature',
     steps: ['tests/e2e/steps/storybook.steps.ts'],

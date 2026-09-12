@@ -1,4 +1,18 @@
 {
+    "cucumberautocomplete.steps": [
+        "tests/e2e/steps/**/*.{ts,js}",
+        "tests/e2e/features/@*/**/*.{ts,js}"
+    ],
+    "cucumberautocomplete.syncfeatures": "tests/e2e/features/**/*.feature",
+    "cucumberautocomplete.strictGherkinCompletion": false,
+    "cucumberautocomplete.strictGherkinValidation": false,
+    "cucumberautocomplete.smartSnippets": true,
+    "cucumberautocomplete.onTypeFormat": true,
+    "editor.quickSuggestions": {
+        "comments": false,
+        "strings": true,
+        "other": true
+    },
     "sonarlint.analysisExcludesStandalone": "**/ClientApp/src/api/web-api-client.ts",
     "i18n-ally.disabled": true,
     "stylelint.enable": false,

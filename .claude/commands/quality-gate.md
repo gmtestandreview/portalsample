@@ -9,7 +9,9 @@ Full pre-merge quality check. Runs multiple agents in parallel to validate readi
 **Step 2 — Reviews (parallel, only if audit passes):**
 - `code-reviewer` — code quality, surgical changes, security
 - `security-reviewer` — OWASP Top 10 and secrets
-- Language reviewer (`go-reviewer` / `python-reviewer` / `rust-reviewer`) based on files changed
+- Language reviewer (`typescript-reviewer` / `python-reviewer` / `infra-reviewer`) based on files changed
+
+**Reception protocol:** when acting on the findings, follow the `receiving-code-review` skill — verify before implementing, technical pushback over performative agreement.
 
 **Usage:**
 ```

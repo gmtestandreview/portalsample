@@ -10,12 +10,12 @@ Help turn ideas into fully formed designs and specs through natural collaborativ
 
 Start by classifying how much process the request needs, then work
 through your path: understand the context, refine the idea, present a
-design, and get your human partner's approval.
+design, and get the user's approval.
 
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any
-project, or take any implementation action until you have told your
-human partner what you intend and they have approved it. This applies
+project, or take any implementation action until you have told the
+user what you intend and they have approved it. This applies
 to EVERY task on EVERY path below — the ceremony scales with the task;
 the approval gate never does.
 </HARD-GATE>
@@ -24,7 +24,7 @@ the approval gate never does.
 
 Before your first question, classify the request and say the
 classification out loud — "this looks bounded, so I'll present a short
-design here rather than write a spec" — so your human partner can
+design here rather than write a spec" — so the user can
 override it:
 
 - **Spike** — a feasibility question ("can we...", "is it possible...",
@@ -40,7 +40,7 @@ override it:
   flow to change, the task is not bounded. Ask the clarifying
   questions that matter, present a short design IN CHAT (a few
   sentences to a few short paragraphs), and STOP. Implementation
-  starts only after your human partner says yes to that design — a
+  starts only after the user says yes to that design — a
   bounded task's approval is as hard a gate as an architectural
   one. No spec file, no implementation plan document.
 - **Architectural** — new projects, new subsystems, changes that
@@ -54,7 +54,7 @@ stop, say so, and step up. Nothing downgrades mid-task.
 
 ## Anti-Pattern: "Too Simple To Need Approval"
 
-Every path ends with your human partner approving your intent before
+Every path ends with the user approving your intent before
 implementation. A todo list, a single-function utility, a config
 change — the design may be two sentences in chat, but you MUST present
 it and get approval. "Simple" tasks are where unexamined assumptions

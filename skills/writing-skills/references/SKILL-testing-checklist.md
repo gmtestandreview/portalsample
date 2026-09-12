@@ -14,6 +14,20 @@ This is a **deployment gate**, not a substitute for the specialist testing refer
 
 Do not promote **[BP]**, **[COND]**, or **[LOCAL]** checks into universal specification requirements.
 
+### Behavioral evaluation outcomes
+
+Behavioral result states are separate from the requirement labels above:
+
+- **PASS** — expected behavior is demonstrated with sufficient representative evidence.
+- **AMBER** — the evaluation ran and produced useful evidence, but behavior is partial, inconsistent, ambiguous, boundary-sensitive, unstable, or insufficiently reliable for PASS.
+- **FAIL** — an expected behavior is materially violated or the claimed behavior is disproved.
+- **NHR** — required evidence cannot be verified with the available capability, isolation, inputs, permissions, or tooling.
+- **N/A** — the evaluation does not apply to the candidate's execution model or target environment, with a recorded rationale.
+
+**AMBER is unresolved evidence, not a soft PASS.** A required behavior-critical `AMBER`, `FAIL`, or `NHR` outcome blocks `deploy` until resolved.
+
+**Outcome and requiredness are separate axes.** The result records what happened; case requiredness determines deployment impact. A material expectation violation is `FAIL` whether the case is required or optional.
+
 ---
 
 ## 0. Evidence and applicability
@@ -39,7 +53,7 @@ Pass condition: the review scope and evidence limits are explicit.
 - [ ] **[SPEC]** `SKILL.md` contains YAML frontmatter followed by Markdown content.
 - [ ] **[SPEC]** YAML frontmatter parses without errors.
 - [ ] **[SPEC]** `name` exists.
-- [ ] **[SPEC]** `name` is 1–64 characters.
+- [ ] **[SPEC]** `name` is 1-64 characters.
 - [ ] **[SPEC]** `name` contains only lowercase letters, numbers, and hyphens.
 - [ ] **[SPEC]** `name` does not start or end with a hyphen.
 - [ ] **[SPEC]** `name` does not contain consecutive hyphens.
@@ -53,7 +67,7 @@ Pass condition: the review scope and evidence limits are explicit.
 
 ### Non-spec naming or metadata rules
 
-- [ ] **[LOCAL]** Any additional naming rule—such as gerund naming, reserved words, third-person wording, or organization prefixes—is documented for the target environment before being enforced.
+- [ ] **[LOCAL]** Any additional naming rule-such as gerund naming, reserved words, third-person wording, or organization prefixes-is documented for the target environment before being enforced.
 - [ ] **[LOCAL]** Client-specific metadata conventions do not conflict with mandatory specification fields.
 
 Pass condition: all applicable **[SPEC]** checks pass. Local conventions are reported separately.
@@ -143,6 +157,7 @@ Pass condition: every always-loaded instruction justifies its context cost.
 - [ ] **[BP]** Low-freedom instructions are used for fragile, destructive, or order-sensitive operations.
 - [ ] **[BP]** Common failure modes have concrete corrections.
 - [ ] **[BP]** Completion/validation criteria are explicit.
+- [ ] **[COND]** When output shape materially affects correctness, the skill defines a template or output contract whose strictness matches the actual requirement.
 - [ ] **[BP]** Instructions do not contradict each other or related loaded guidance.
 
 Pass condition: an agent can determine what to do, when to branch, and how to know it is finished.
@@ -163,7 +178,7 @@ Pass condition: the test plan matches the skill's actual execution model.
 
 ---
 
-## 7. RED — baseline evidence
+## 7. RED - baseline evidence
 
 For new skills and meaningful behavioral changes:
 
@@ -189,9 +204,9 @@ Pass condition: there is evidence for the problem the skill is intended to solve
 
 ---
 
-## 8. GREEN — with-skill behavior
+## 8. GREEN - with-skill behavior
 
-Run the same or an equivalent representative task with the candidate skill available.
+Run the same representative task with the candidate skill available where practical. If an equivalent task is necessary, record why it is equivalent and preserve the relevant inputs, constraints, success criteria, and pressure conditions.
 
 - [ ] **[COND]** The skill activates or is loaded when it should.
 - [ ] **[COND]** The agent follows the governing instructions.
@@ -206,7 +221,7 @@ Pass condition: the skill changes behavior in the intended direction with repres
 
 ---
 
-## 9. REFACTOR — loopholes, pressure, and edge behavior
+## 9. REFACTOR - loopholes, pressure, and edge behavior
 
 Apply when the skill contains rules, gates, costly procedures, safety requirements, or behavior an agent may rationalize away.
 
@@ -223,10 +238,10 @@ Create adversarial variants combining realistic pressures rather than asking the
 
 For every failure:
 
-- [ ] Map the rationalization or error to the smallest instruction defect.
-- [ ] Fix the trigger, branch, instruction, boundary, or precedence rule—not unrelated wording.
-- [ ] Rerun the failed scenario.
-- [ ] Rerun relevant positive and near-miss regression cases.
+- [ ] **[COND]** Map the rationalization or error to the smallest instruction defect.
+- [ ] **[COND]** Fix the trigger, branch, instruction, boundary, or precedence rule-not unrelated wording.
+- [ ] **[COND]** Rerun the failed scenario.
+- [ ] **[COND]** Rerun relevant positive and near-miss regression cases.
 
 Pass condition: known loopholes are closed without broadening activation or adding unnecessary context.
 
@@ -267,6 +282,26 @@ Pass condition: executable guidance is reproducible, bounded, and honestly valid
 
 ---
 
+## 11A. Deterministic validator and harness conformance
+
+Apply when the target repository ships parser, validator, prompt-generation, CLI, or other deterministic SKILL.md tooling. Keep universal specification compliance separate from repository-specific implementation contracts.
+
+- [ ] **[COND]** If deterministic tooling enforces `SKILL.md` compliance, it enforces every applicable **[SPEC]** requirement without weakening it; exact `SKILL.md` casing remains governed by the corresponding **[SPEC]** rule.
+- [ ] **[COND]** If deterministic tooling validates optional frontmatter, it accepts and validates every supported current-spec optional field, including `allowed-tools`, against the applicable **[SPEC]** requirements.
+- [ ] **[LOCAL]** Parser/validator regression tests cover every enforced validation branch that can materially affect acceptance or rejection.
+- [ ] **[LOCAL]** Parser tests cover malformed or missing frontmatter, non-mapping YAML, required fields, supported optional fields, rejected fields, normalization behavior, and serialization/model mapping where implemented.
+- [ ] **[LOCAL]** Validator tests cover valid and invalid boundaries, including minimum/maximum values and both sides of paired constraints such as leading/trailing hyphens.
+- [ ] **[LOCAL]** Repository-specific normalization or compatibility behavior is identified separately and does not silently redefine **[SPEC]** compliance.
+- [ ] **[COND]** If prompt metadata is generated, tests cover zero, one, and multiple skills; required output fields; escaping/encoding; serialization; and invalid-input behavior.
+- [ ] **[COND]** If a CLI is shipped, tests cover success and error exit codes, directory/direct-file input handling, exact `SKILL.md` casing, and serialized output.
+- [ ] **[COND]** Security-sensitive serialization escapes or encodes untrusted SKILL.md-derived values before embedding them in XML, HTML, JSON, shell, or other structured output.
+- [ ] **[COND]** Fresh deterministic tests run after the latest relevant change; unavailable dependencies or execution environments are **[NHR]**, not a pass.
+- [ ] **[COND]** A deterministic test that intentionally exceeds or differs from the specification is labeled as **[LOCAL]** compatibility behavior and cannot satisfy the corresponding **[SPEC]** gate.
+
+Pass condition: deterministic tooling proves the applicable specification and repository contracts without broadening, weakening, or silently redefining mandatory SKILL.md requirements.
+
+---
+
 ## 12. Safety, authorization, and rollback
 
 Apply in proportion to the risk of the skill.
@@ -274,6 +309,7 @@ Apply in proportion to the risk of the skill.
 - [ ] **[COND]** Destructive or high-impact operations are identified before execution.
 - [ ] **[COND]** Materially destructive/high-impact changes require appropriate authorization.
 - [ ] **[COND]** A practical backup, snapshot, or reversible checkpoint exists before destructive changes.
+- [ ] **[COND]** Batch, complex, destructive, or high-stakes operations create a reversible intermediate plan or structured representation and validate it against the applicable source of truth before side effects when this materially reduces risk.
 - [ ] **[COND]** Changes are staged when staging reduces risk.
 - [ ] **[COND]** Rollback instructions are practical and match the operation performed.
 - [ ] **[COND]** Reversible and irreversible actions are distinguished.
@@ -340,15 +376,16 @@ Do **not** recommend `deploy` until every applicable blocking item is satisfied.
 
 ### Behavioral gates
 
-For non-reference skills or meaningful behavioral changes:
+For every skill with applicable behavioral evidence requirements, including pure Reference skills:
 
 - [ ] Trigger boundary has representative positive and near-miss evidence.
-- [ ] RED evidence exists, or RED is explicitly **[NHR]** because isolation/execution/input capability is genuinely unavailable.
-- [ ] GREEN behavior is verified against representative tasks.
-- [ ] Applicable edge/pressure tests pass.
+- [ ] RED evidence exists; for a pure Reference skill, an applicable retrieval/application baseline may satisfy this gate when behavioral RED is not meaningful; otherwise genuinely unavailable evidence is explicitly **[NHR]**.
+- [ ] GREEN or with-skill behavior is verified against representative tasks.
+- [ ] Applicable pressure, edge, retrieval, unsupported-query, or resource-discovery tests pass according to the skill class.
 - [ ] Relevant regressions pass after the last change.
+- [ ] Every required behavioral evaluation records `PASS`, `AMBER`, `FAIL`, `NHR`, or `N/A` with supporting rationale/evidence.
 
-A behavior-critical skill with unresolved RED/GREEN/pressure evidence should normally be `revise` or `hold`, not `deploy`.
+A behavior-critical skill with any required `AMBER`, `FAIL`, or `NHR` outcome, or with otherwise unresolved required behavioral evidence, **MUST** be `revise` or `hold`; `deploy` is prohibited.
 
 ### Completion integrity
 
@@ -359,49 +396,51 @@ A behavior-critical skill with unresolved RED/GREEN/pressure evidence should nor
 
 ---
 
-# Result summary template
+## Result summary template
 
 ```markdown
-## Skill Validation Summary
+# Skill Validation Summary
 
 Artifact:
 Classification:
 Target environment:
 
-### Specification
+## Specification
 - Result:
 - Failures:
 
-### Trigger boundary
+## Trigger boundary
 - Positive cases:
 - Near-misses:
 - QAQ/RMI:
 
-### Behavioral evidence
+## Behavioral evidence
+- Overall outcome: PASS | AMBER | FAIL | NHR | N/A
 - RED:
 - GREEN:
 - Pressure/edge:
 - Regression:
+- Unresolved AMBER/FAIL/NHR:
 
-### Resources and execution
+## Resources and execution
 - Paths/references:
 - Scripts/tools:
 - Safety/rollback:
 
-### Local policy
+## Local policy
 - Applied:
 - Failures:
 
-### Needs Human Review
+## Needs Human Review
 - ...
 
-### Final recommendation
+## Final recommendation
 deploy | revise | split | merge | deprecate | hold
 ```
 
 ---
 
-# Reference use
+## Reference use
 
 This checklist answers **whether final validation is complete**. Use specialist references for **how** to perform complex checks:
 

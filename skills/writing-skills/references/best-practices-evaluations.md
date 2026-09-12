@@ -62,13 +62,16 @@ Verify the frontmatter and activation metadata against the applicable skill spec
 * [ ] Description is not so broad that unrelated prompts are likely to activate it.
 * [ ] Description is not so narrow that legitimate use cases are missed.
 
-### Anthropic-specific metadata
+### Specification metadata limits
 
-When evaluating Anthropic Agent Skills:
+Apply the current Agent Skills specification requirements regardless of provider-specific style guidance:
 
 * [ ] `name` is no more than 64 characters.
 * [ ] `description` is no more than 1024 characters.
-* [ ] Description is written in third person.
+
+### Provider/client-specific metadata style
+
+Apply additional description voice/style requirements, including third-person wording, only when documented by the target provider/client. Treat those style conventions as environment-specific or local guidance rather than universal Agent Skills specification compliance.
 
 ## 4. Context Efficiency
 
@@ -408,7 +411,7 @@ Before declaring a skill aligned with these sources, verify all applicable items
 * [ ] Name is clear and consistent.
 * [ ] Description states what the skill does and when to use it.
 * [ ] Trigger terms match actual scope.
-* [ ] Provider-specific metadata limits are satisfied where applicable.
+* [ ] Specification-defined metadata limits are satisfied. Provider/client-specific metadata style rules are applied only when documented for the target environment.
 
 ### Context and structure
 

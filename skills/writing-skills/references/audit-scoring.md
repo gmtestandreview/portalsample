@@ -44,7 +44,7 @@ A full audit classifies completeness, sets applicability, scores every applicabl
 ## 4. Current 100-point rubric
 
 | Criterion | Weight |
-|---|---:|
+| --- | ---: |
 | Specification compliance | 10 |
 | Activation description | 8 |
 | Scope control | 8 |
@@ -63,11 +63,11 @@ A full audit classifies completeness, sets applicability, scores every applicabl
 
 Score bands:
 
-- **96–100** — production-ready
-- **85–95** — targeted fixes
-- **70–84** — gaps
-- **50–69** — major revisions
-- **<50** — not ready
+- **96-100** - production-ready
+- **85-95** - targeted fixes
+- **70-84** - gaps
+- **50-69** - major revisions
+- **<50** - not ready
 
 A score band describes quality. It does **not** automatically authorize `deploy`.
 
@@ -107,12 +107,12 @@ Score each criterion from its full weight downward.
 Use these anchors consistently:
 
 | Condition | Typical credit |
-|---|---:|
+| --- | ---: |
 | Fully satisfies criterion with direct evidence | 100% |
-| Minor, low-risk defect; behavior remains clear | 75–90% |
-| Material gap, ambiguity, or weak evidence | 50–74% |
-| Major defect affecting reliable execution | 25–49% |
-| Criterion substantially absent or contradicted | 0–24% |
+| Minor, low-risk defect; behavior remains clear | 75-90% |
+| Material gap, ambiguity, or weak evidence | 50-74% |
+| Major defect affecting reliable execution | 25-49% |
+| Criterion substantially absent or contradicted | 0-24% |
 
 Use the smallest deduction justified by evidence.
 
@@ -173,7 +173,7 @@ Severity is risk-based. Point loss is criterion-based. They may differ.
 
 ## 8. Criterion scoring anchors
 
-### 8.1 Specification compliance — 10
+### 8.1 Specification compliance - 10
 
 Full credit requires all mandatory current-spec checks that can be verified to pass.
 
@@ -184,19 +184,20 @@ Rules:
 - If completeness is unknown, mark the unresolved check `Unverified`; do not invent a failure.
 - Any confirmed mandatory-spec failure prevents a production-ready verdict even if the normalized score is high.
 
-### 8.2 Activation description — 8
+### 8.2 Activation description - 8
 
 Full credit requires a description that states what the skill does and when to use it, with direct mapping to intended requests.
 
 Deduct for: vague or implementation-only wording; missing important trigger vocabulary; over-broad activation; legitimate use cases omitted from the activation contract; contradiction between description and actual body scope..
 For critical activation boundaries, run QAQ/RMI. Unresolved critical activation mapping prevents full credit.
 
-### 8.3 Scope control — 8
+### 8.3 Scope control - 8
 
 Full credit requires a coherent capability with explicit boundaries.
 
 Deduct for: unrelated workflows bundled together; unnecessary fragmentation; one-off project policy masquerading as reusable skill logic; scope broader or narrower than the activation description; silent activation expansion during revision/merge..
-### 8.4 Completeness — 8
+
+### 8.4 Completeness - 8
 
 Score completeness relative to the declared purpose and known artifact completeness.
 
@@ -205,33 +206,34 @@ Full credit requires all instructions/resources necessary for the claimed workfl
 Deduct for: missing required decision branches; missing failure/recovery behavior; missing required resources when the directory is known complete; workflow gaps that force the agent to guess..
 Do not deduct for content outside an excerpt or unknown artifact boundary; mark it `Unverified`.
 
-### 8.5 Procedural clarity — 8
+### 8.5 Procedural clarity - 8
 
 Full credit requires clear, active, atomic instructions with explicit sequence and decision conditions where needed.
 
 Deduct for: vague verbs such as “handle appropriately” without decision guidance; ambiguous sequencing; undefined branch conditions; contradictory instructions; unclear completion criteria; menus of options without a justified default..
-### 8.6 Related-skill consistency — 6
+
+### 8.6 Related-skill consistency - 6
 
 Full credit requires clean composition with supplied neighboring skills and library rules.
 
 Deduct for: contradictory precedence; duplicate activation with no boundary; incompatible terminology; broken handoffs; inconsistent shared conventions..
 Mark `N/A` only when related-skill context is genuinely irrelevant. If related skills likely exist but were not supplied, use `Unverified`.
 
-### 8.7 Agent usability — 8
+### 8.7 Agent usability - 8
 
 Full credit requires the agent to be able to act correctly without unnecessary interpretation.
 
 Deduct for: hidden prerequisites; unclear inputs/outputs; excessive cognitive branching; hard-to-find mandatory guidance; instructions that describe goals but not executable behavior; repeated backtracking caused by poor information architecture..
 Behavioral execution evidence should outweigh stylistic preference.
 
-### 8.8 Context efficiency — 7
+### 8.8 Context efficiency - 7
 
 Full credit requires minimum sufficient always-loaded guidance with progressive disclosure.
 
 Deduct for: duplicated content; generic explanations; long examples/templates that should be references/assets; optional branches always loaded; references with no load condition; fragmentation that forces unnecessary file loading..
 Do not reward brevity that removes necessary domain knowledge.
 
-### 8.9 Tool/script/reference/asset handling — 7
+### 8.9 Tool/script/reference/asset handling - 7
 
 Apply when the skill uses supporting resources or executable tools.
 
@@ -245,7 +247,7 @@ Full credit requires:
 
 Deduct for stale paths, hidden dependencies, unsafe commands, missing required resources, or ambiguous tool usage.
 
-### 8.10 Safety/destructive controls — 8
+### 8.10 Safety/destructive controls - 8
 
 Full credit requires controls proportional to actual risk.
 
@@ -262,14 +264,14 @@ If the skill truly contains no material destructive/high-impact behavior, score 
 
 Unresolved critical safety issues block `deploy`.
 
-### 8.11 Edge cases/gotchas — 6
+### 8.11 Edge cases/gotchas - 6
 
 Full credit requires important non-obvious failure modes to be actionable.
 
-Deduct for: predictable boundary conditions left undefined; known gotchas stated without corrective action; silent failure cases; missing escalation/human-review condition where judgment is unavoidable..
+Deduct for: predictable boundary conditions left undefined; known gotchas stated without corrective action; silent failure cases; missing escalation/human-review condition where judgment is unavoidable.
 Do not reward exhaustive hypothetical edge-case lists.
 
-### 8.12 Merge quality — 6
+### 8.12 Merge quality - 6
 
 Apply to merged skills or merge candidates.
 
@@ -284,18 +286,19 @@ Full credit requires:
 
 A merge with unresolved contradictions cannot receive full credit and should not be recommended for deployment.
 
-### 8.13 Testability/validation readiness — 6
+### 8.13 Testability/validation readiness - 6
 
 Full credit requires falsifiable success criteria and a practical validation path.
 
-Deduct for: instructions that cannot be tested; missing positive/near-miss cases for critical triggers; missing validation after consequential changes; behavior claims without evidence; inability to distinguish pass, fail, and `Needs Human Review`..
-For behavior-critical Discipline skills, unresolved RED/GREEN/pressure evidence materially limits this criterion.
+Deduct for: instructions that cannot be tested; missing positive/near-miss cases for critical triggers; missing validation after consequential changes; behavior claims without evidence; inability to distinguish `PASS`, `AMBER`, `FAIL`, and `Needs Human Review` outcomes.
+For behavior-critical skills, unresolved required `AMBER`, `FAIL`, or `NHR` outcomes, or unresolved required RED/GREEN/applicable pressure evidence, materially limit this criterion.
 
-### 8.14 Maintainability — 4
+### 8.14 Maintainability - 4
 
 Full credit requires durable terminology, discoverable references, low duplication, and clear update boundaries.
 
-Deduct for: stale/legacy rules mixed with current guidance; inconsistent terminology; duplicated rules likely to drift; unexplained magic thresholds; hard-coded paths or versions without justification; reference structure that obscures ownership or update points..
+Deduct for: stale/legacy rules mixed with current guidance; inconsistent terminology; duplicated rules likely to drift; unexplained magic thresholds; hard-coded paths or versions without justification; reference structure that obscures ownership or update points.
+
 ## 9. QAQ/RMI scoring
 
 Run QAQ/RMI for every **critical instruction, trigger, branch, or load condition**.
@@ -330,7 +333,7 @@ Scoring effects:
 
 ## 10. Blocking conditions versus numeric score
 
-The following block `deploy` regardless of score: unresolved mandatory-spec failure; Critical safety finding; core-behavior contradiction; known loss of essential unique merge guidance; missing authorization for requested destructive/high-impact implementation; or behavior-critical validation marked `Needs Human Review` when deployment depends on it.
+The following block `deploy` regardless of score: unresolved mandatory-spec failure; Critical safety finding; core-behavior contradiction; known loss of essential unique merge guidance; missing authorization for requested destructive/high-impact implementation; or any required behavior-critical evaluation with an unresolved `AMBER`, `FAIL`, or `NHR` outcome. Outcome and requiredness are separate axes: `FAIL` records a material expectation violation; whether that failure blocks deployment depends on whether the case is required.
 
 Report the numeric score anyway, but state the blocker separately.
 
@@ -387,7 +390,7 @@ N/A: [criteria or none]
 deploy | revise | split | merge | deprecate | hold
 ```
 
-Use `Skill Audit.md` only as an output-shape template when requested; this file governs scoring mechanics.
+Use `templates/skill-audit.md` only as an output-shape template when requested; this file governs scoring mechanics.
 
 ## 13. Rescoring and optimization
 
