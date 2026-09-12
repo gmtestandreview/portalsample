@@ -30,7 +30,7 @@ Purpose: route the agent to the **smallest sufficient set of references** for th
 | Full scored audit | `best-practices-evaluations.md` | `audit-scoring.md`; `SKILL-testing-checklist.md` for final validation |
 | Classify as Discipline, Technique, Pattern, Reference, or Hybrid | `skill-classification.md` | Testing reference selected from the resulting class |
 | Fix activation or description wording | `description-optimization.md` | Use for rigorous description evaluation testing. |
-| Behavioral/output-quality evals | `evaluating-skill-output.md` | `scripts/evals/README.md` for seeded case files after applying the primary eval workflow; `testing-skills-with-subagents.md` when classification-specific RED/GREEN/REFACTOR, pressure/edge, Reference retrieval/application, resource-discovery, or regression evidence is needed |
+| Behavioral/output-quality evals | `evaluating-skill-output.md` | `scripts/evals/README.md` for seeded case files after applying the primary eval workflow; `scripts/evals/campaigns/` when reviewing executed campaign evidence; `testing-skills-with-subagents.md` when classification-specific RED/GREEN/REFACTOR, pressure/edge, Reference retrieval/application, resource-discovery, or regression evidence is needed |
 | RED/GREEN/REFACTOR pressure testing | `testing-skills-with-subagents.md` | `persuasion-principles.md` only after a concrete adherence/rationalization failure |
 | Script-bearing skills or bundled commands | `using-scripts-in-skills.md` | `scripts/README.md` and `scripts/pyproject.toml` when installing or running this skill's deterministic tests; `scripts/skills_ref/` and `scripts/tests/` only for local validator/parser/CLI tooling; specification for structural compliance; checklist for final validation |
 | Persistent evidence model, audit records, or evaluation storage design | `skill-testing-data-model.md` | `scripts/evals/evaluation-schema.md` when mapping seeded behavioral case fields |
@@ -178,6 +178,10 @@ Load condition: planning or executing behavioral evaluation campaigns, seeded ca
 ### `scripts/evals/evaluation-schema.md`
 
 Load condition: recording or validating behavioral eval case fields, outcome semantics, requiredness, and evidence records.
+
+### `scripts/evals/campaigns/`
+
+Load condition: reviewing executed behavioral-evaluation campaigns, prior RED/GREEN evidence, deployment decisions, or evidence freshness for this skill. These records are evidence artifacts, not reusable case definitions.
 
 ## Deterministic tooling
 

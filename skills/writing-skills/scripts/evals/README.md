@@ -6,12 +6,16 @@ Before planning or running output-quality evals, read and apply `../../reference
 
 This suite is deliberately separate from deterministic parser, validator, prompt, and CLI tests. Those tests prove implementation contracts. These evals prove agent behavior.
 
+Executed campaign evidence belongs under `campaigns/`. Keep the activation, RED/GREEN, pressure, reference, and regression folders as reusable case-definition libraries, not mutable run summaries.
+
 ## Directory structure
 
 ```text
 evals/
   README.md
   evaluation-schema.md
+  campaigns/
+    behavioral-evidence-YYYY-MM-DD.md
   activation/
     activation-evals.md
   red-green/
