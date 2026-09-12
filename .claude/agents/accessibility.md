@@ -223,29 +223,6 @@ useEffect(() => {
   if (!open && triggerRef.current) triggerRef.current.focus();
 }, [open]);
 ```
-
-### Angular
-```ts
-// Announce route changes via a service
-@Injectable({ providedIn: 'root' })
-export class Announcer {
-  private el = document.getElementById('route-announcer');
-  say(text: string) { if (this.el) this.el.textContent = text; }
-}
-```
-
-### Vue
-```vue
-<template>
-  <div role="status" aria-live="polite" aria-atomic="true" ref="live"></div>
-  <!-- call announce on route update -->
-</template>
-<script setup lang="ts">
-const live = ref<HTMLElement | null>(null);
-function announce(text: string) { if (live.value) live.value.textContent = text; }
-</script>
-```
-
 ## PR Review Comment Template
 
 ```md

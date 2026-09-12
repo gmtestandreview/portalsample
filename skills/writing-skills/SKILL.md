@@ -199,7 +199,7 @@ Load only when needed:
 1. Identify the task class before loading references.
 2. Load the smallest primary reference that governs the task.
 3. Load a secondary reference only when its stated condition is met.
-4. Use `agent-skill-specification-format-page-2.md` for mandatory Agent Skills format/compliance claims.
+4. Use `specification.md` for mandatory Agent Skills format/compliance claims.
 5. Use `best-practices-evaluations.md` for quality criteria and `audit-scoring.md` for scoring mechanics.
 6. Use `SKILL-testing-checklist.md` as the final validation/deployment gate, not as a substitute for specialist methods.
 7. Treat best-practice guides, operational methods, and templates as supporting guidance rather than specification authority.
