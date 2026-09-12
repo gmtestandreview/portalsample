@@ -2,7 +2,7 @@
 name: skill-duplication-audit
 description: Use when comparing two or more Agent Skills to detect duplicated or overlapping scope, clarify ambiguous activation boundaries, or decide whether skills should merge, remain separate, or document their distinction. Do not use for identifying identical text or overlapping responsibilities within a single skill, or for comparing agents.
 metadata:
-  version: "0.5"
+  version: "0.6"
   owner: Greg
   target: a-team
 ---
@@ -16,8 +16,6 @@ Skills across the 5 ecosystem repositories overlap in scope without documented d
 ## Purpose
 
 Compare two or more Agent Skills by activation scope, intended outcome, and material specialization. Classify overlap and recommend the smallest action that removes ambiguity without losing specialized value.
-
-Do not classify skills based solely on names, titles, repository locations, shared terminology, or output format.
 
 ## Use When
 
@@ -64,9 +62,9 @@ For each skill, record:
 
 Determine the comparison set:
 
-- Always evaluate any pair the user explicitly asks to compare. 
-- If the user requests exhaustive or all-pairs accounting, evaluate every possible pair. 
-- Otherwise, when discovering candidate pairs from a larger skill list, exclude pairs with no plausible activation, task, workflow, or functional relationship. 
+- Always evaluate any pair the user explicitly asks to compare.
+- If the user requests exhaustive or all-pairs accounting, evaluate every possible pair.
+- Otherwise, when discovering candidate pairs from a larger skill list, exclude pairs with no plausible activation, task, workflow, or functional relationship.
 
 An explicitly requested or exhaustively included pair with no material functional relationship is `False positive`.
 
@@ -108,7 +106,7 @@ Use `Needs Human Review` whenever an unknown answer would change the classificat
 
 Decision guards:
 
-* Similar names are not duplication evidence.
+* Similar names or titles are not duplication evidence.
 * Different repositories do not prevent overlap.
 * Shared format, workflow pattern, or domain alone does not establish duplication or complementarity.
 * Different tools alone do not establish separate scope.
@@ -153,7 +151,7 @@ If the mapping remains ambiguous, revise the boundary or mark it `Needs Human Re
 
 ### 6. Recommend action
 
-This skill recommends structural action; it does not perform merges, deletions, deprecations, renames, or other lifecycle changes.
+This skill recommends structural action; it does not perform merges, deletions, deprecations, renames, or other lifecycle changes. After a `True duplicate` recommendation, route the actual merge to the `writing-skills` skill's merge workflow — this skill stops at the classification and recommendation.
 
 Before recommending a merge, identify unique material that must be preserved or reviewed:
 
