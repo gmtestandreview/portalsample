@@ -1,6 +1,13 @@
 # Common Patterns Library
 
-Ready-to-use regex and glob patterns for skill triggers. Copy and customize for your skills.
+Example regex and glob patterns for project-local skill triggers. **Customize and test these patterns before use.** They are starting points, not production-safe defaults; generic verbs or nouns can cause broad activation.
+
+## Table of Contents
+
+- [Intent Patterns (Regex)](#intent-patterns-regex)
+- [File Path Patterns (Glob)](#file-path-patterns-glob)
+- [Content Patterns (Regex)](#content-patterns-regex)
+- [Usage Example](#usage-example)
 
 ---
 
@@ -30,7 +37,7 @@ Ready-to-use regex and glob patterns for skill triggers. Copy and customize for 
 
 ### Explanation Requests
 ```regex
-(how does|how do|explain|what is|describe|tell me about).*?
+(how does|how do|explain|what is|describe|tell me about).*?(layout|workflow|schema)
 ```
 
 ### Workflow Operations
@@ -121,7 +128,7 @@ useState|useEffect              # React hooks
 
 ---
 
-**Usage Example:**
+## Usage Example
 
 ```json
 {

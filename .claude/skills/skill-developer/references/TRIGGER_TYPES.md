@@ -1,6 +1,6 @@
 # Trigger Types - Complete Guide
 
-Complete reference for configuring skill triggers in Claude Code's skill auto-activation system.
+Complete reference for configuring triggers in this project's Claude Code auto-activation system. These fields and hook semantics are project-local; do not assume another Agent Skills environment implements them.
 
 ## Table of Contents
 
@@ -93,8 +93,8 @@ Action-based activation where user describes what they want to do rather than th
 # Database Work
 (add|create|implement).*?(user|login|auth|feature)
 
-# Explanations
-(how does|explain|what is|describe).*?
+# Explanations — always pair the request verb with domain nouns
+(how does|explain|what is|describe).*?(layout|workflow|schema)
 
 # Frontend Work
 (create|add|make|build).*?(component|UI|page|modal|dialog)

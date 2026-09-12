@@ -1,6 +1,6 @@
 # Hook Mechanisms - Deep Dive
 
-Technical deep dive into how the UserPromptSubmit and PreToolUse hooks work.
+Technical deep dive into the project-local UserPromptSubmit and PreToolUse hooks. This file documents the suggestion and blocking flows; it does not imply these are the only hooks registered in the project. Confirm `.claude/settings.json` when current hook inventory matters.
 
 ## Table of Contents
 

@@ -1,6 +1,6 @@
 # skill-rules.json - Complete Reference
 
-Complete schema and configuration reference for `.claude/skills/skill-rules.json`.
+Complete project-local schema and configuration reference for `.claude/skills/skill-rules.json`. This schema is part of the documented hook system, not the universal Agent Skills specification. Verify the target repository's actual schema/hook implementation before adding fields.
 
 ## Table of Contents
 
@@ -72,7 +72,7 @@ interface SkillRule {
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `type` | string | Yes | "guardrail" (enforced) or "domain" (advisory) |
-| `enforcement` | string | Yes | "block" (PreToolUse), "suggest" (UserPromptSubmit), or "warn" |
+| `enforcement` | string | Yes | `"block"` (PreToolUse), `"suggest"` (UserPromptSubmit), or `"warn"`. The supplied hook reference does not define a distinct `"warn"` runtime path; verify implementation before relying on it. |
 | `priority` | string | Yes | "critical", "high", "medium", or "low" |
 | `promptTriggers` | object | Optional | Triggers for UserPromptSubmit hook |
 | `fileTriggers` | object | Optional | Triggers for PreToolUse hook |
@@ -305,6 +305,7 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 - [ ] File path patterns use correct glob syntax
 - [ ] Content patterns escape special characters
 - [ ] Priority matches enforcement level
+- [ ] If `warn` is used, its runtime behavior is confirmed from the target hook implementation
 - [ ] No duplicate skill names
 
 ---

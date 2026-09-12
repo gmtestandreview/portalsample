@@ -70,12 +70,16 @@ Expected: `exact pass result`
 Run: `exact command`  
 Expected: `exact result`
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 6: Commit when the repository workflow uses commits**
+
+If commits are part of the repository workflow, stage only the files for this task and create the targeted commit:
 
 ```bash
 git add exact/path exact/path
 git commit -m "type: concise specific change"
 ```
+
+If the repository workflow does not use commits, omit this step rather than inventing a commit requirement.
 
 ## Safety, Rollback, and Verification
 
