@@ -7,3 +7,13 @@ command = "npx"
 args = ["@react-aria/mcp@latest"]
 enabled = true
 startup_timeout_sec = 120
+
+[mcp_servers.github]
+command = "cmd"
+args = ["/c", "scripts\\github-mcp-server.cmd"]
+enabled = true
+
+[mcp_servers.tokensave]
+command = "C:/Users/gregm/.local/bin/tokensave.exe"
+args = ["serve"]
+enabled = true

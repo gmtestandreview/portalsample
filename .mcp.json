@@ -2,7 +2,79 @@
   "mcpServers": {
     "my-storybook-mcp-server": {
       "type": "http",
-      "url": "http://localhost:6006/mcp"
+      "url": "http://localhost:6006/mcp",
+      "tools": [
+        "*"
+      ]
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "typescript-mcp": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "scripts\\lsmcp-typescript-mcp.cmd"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "github": {
+      "type": "stdio",
+      "command": "cmd",
+      "args": [
+        "/c",
+        "scripts\\github-mcp-server.cmd"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "react-aria": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "@react-aria/mcp@latest"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "sonarqube": {
+      "type": "stdio",
+      "command": "C:\\Users\\gregm\\AppData\\Local\\sonarqube-cli\\bin\\sonar.exe",
+      "args": [
+        "run",
+        "mcp",
+        "--project",
+        "gmtestandreview_portalsample"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "tokensave": {
+      "command": "C:/Users/gregm/.local/bin/tokensave.exe",
+      "args": [
+        "serve"
+      ]
+    },
+    "DeepGraph React MCP": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-code-graph@latest",
+        "facebook/react"
+      ]
     }
   }
 }

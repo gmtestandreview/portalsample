@@ -49,3 +49,9 @@ jobs:
           # GitHub receives the final linked result from Chromatic, so this job
           # can finish as soon as the Storybook bundle has uploaded.
           exitOnceUploaded: true
+          # TurboSnap: snapshot only stories affected by files that changed
+          # since the baseline, instead of the whole Storybook, on every push.
+          # Keeps the PR status check and visual review working while cutting
+          # snapshot/credit usage on typical small PRs. Requires the full git
+          # history from checkout's fetch-depth: 0 above to locate the baseline.
+          onlyChanged: true

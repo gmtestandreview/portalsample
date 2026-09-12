@@ -345,7 +345,7 @@ Derived from the answers above. Apply at `/orchestrate init`.
 | `e2e-runner` | **keep** | 33 Gherkin features, two Playwright projects, already in CI |
 | `tdd-guide` | **keep** | 100% coverage thresholds configured; `COVERAGE-GATE-001` open |
 | `architect`, `planner`, `doc-updater` | **keep** | Active migration programme with governed documentation |
-| `orchestrator`, `chief-of-staff`, `harness-optimizer` | **keep** | Infrastructure |
+| `orchestrator`, `harness-optimizer` | **keep** | Infrastructure |
 | `python-reviewer` | **keep, scoped** | Python exists **only** in `.github/skills/**` and `analysis/`. Must never touch application code. |
 | `performance-profiler` | **keep, low priority** | No performance budget or SLA is declared — that gap is itself flagged for the service owner |
 | `database-reviewer` | **prune** | No database, driver, ORM or connection string in this repository |
@@ -353,6 +353,7 @@ Derived from the answers above. Apply at `/orchestrate init`.
 | `flutter-reviewer`, `go-reviewer`, `kotlin-reviewer`, `rust-reviewer`, `swift-reviewer` | **prune** | None of these languages are present |
 | `ai-reviewer` | **prune** | No LLM SDK is a dependency; nothing reaches an LLM at runtime |
 | `loop-operator` | **prune** | No autonomous loops; all agent work is human-initiated |
+| `chief-of-staff` | **prune** | Unrelated — multi-channel comms triage; no email/Slack/messaging workflow in this repo. Removed 2026-09-09; `templates/SOUL.md` + `templates/relationships.md` (its only supports) deleted with it. |
 
 **Also present:** `.agents/` (plugins, skills), `.superpowers/`, `.remember/`, `.testagent/`,
 `.github/skills/**` (12 Python-backed skills), `.tours/` (code tours).

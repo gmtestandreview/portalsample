@@ -31,6 +31,7 @@ Skipping a mandatory skill to save time is not allowed.
 | Bug persists after a surface fix, or a failure or process keeps recurring | **five-whys** skill (fix the root, not the symptom) |
 | Multiple independent problems | **dispatching-parallel-agents** skill |
 | Build or type errors | **build-error-resolver** agent (minimal diffs only) |
+| Writing or changing tests, want a TDD persona | **tdd-guide** agent (persona alternative to the test-driven-development skill) |
 
 ## Before Claiming Completion
 
@@ -52,6 +53,9 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Auth, API, input handling, DB changes | **security-reviewer** agent |
 | Before any PR merge | **quality-gate** command (runs both) |
 | Wrapping up a branch | **finishing-a-development-branch** skill |
+| Docs or codemaps drift after a feature lands | **doc-updater** agent |
+| Dead code, unused deps, duplication (never during active feature work) | **refactor-cleaner** agent |
+| Acting on code-review feedback | **receiving-code-review** skill (verify before implementing) |
 
 ## Architectural Decisions
 
@@ -69,16 +73,12 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 
 | Situation | Required Agent |
 |-----------|---------------|
-| Go files changed | **go-reviewer** |
+| TypeScript / React / frontend files changed | **typescript-reviewer** |
 | Python files changed | **python-reviewer** |
-| Rust files changed | **rust-reviewer** |
-| Kotlin / Android files changed | **kotlin-reviewer** |
-| Swift / iOS files changed | **swift-reviewer** |
-| Dart / Flutter files changed | **flutter-reviewer** |
-| SQL / migrations / schema changed | **database-reviewer** |
-| Terraform / Docker / K8s / CI changed | **infra-reviewer** |
-| Any LLM API calls added or changed | **ai-reviewer** |
-| Any privacy / payment / child data code | **compliance-reviewer** |
+| Terraform / Docker / K8s / CI files changed | **infra-reviewer** |
+| Any privacy / payment / regulated-data code | **compliance-reviewer** |
+
+> Other language and domain reviewers (Go, Rust, Kotlin, Swift, Flutter, database, LLM/AI) are added on demand when that stack enters the repo.
 
 ## CI / CD Changes
 
@@ -92,7 +92,24 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Situation | Required Skill |
 |-----------|---------------|
 | Writing a new REST / gRPC / GraphQL / event endpoint | **api-contract-first** (write the contract first) |
-| Any `ALTER TABLE`, `DROP`, or backfill in production | **data-migration** (rollback plan first) |
+
+## Cross-Tool API / CLI Access
+
+| Situation | Required Skill |
+|-----------|---------------|
+| Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell (notably from Codex or Copilot, which lack native MCP tool-calling), or generating a new skill from an API | **mcp2cli** skill — but call an already-wired MCP server's native tool (`mcp__github__*`, `mcp__react-aria__*`, etc.) directly from a Claude Code session instead; don't shell out to a tool you already have |
+
+## Vector Search / Semantic Memory (Qdrant)
+
+Reference knowledge vendored from skills.qdrant.tech for the semantic-memory-layer tooling (self-hosted Docker Qdrant + `mcp-server-qdrant` indexing memory / docs / ADRs / source). Consult when the trigger applies — not hard-gated like the tables above. Not for the portal SPA runtime, which does not use Qdrant.
+
+| Situation | Skill |
+|-----------|-------|
+| Qdrant search returns bad / irrelevant / missing results; choosing an embedding model, hybrid search, reranking, or building a recall@k golden set | **qdrant-search-quality** (routes to `diagnosis` + `search-strategies` sub-skills) |
+| Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes | **qdrant-model-migration** |
+| Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) | **qdrant-deployment-options** (then record the decision with **adr**) |
+| Integrating or extending the Qdrant client SDK | **qdrant-clients-sdk** |
+| A whole RAG pipeline brought for sign-off (chunking, embeddings, eval coverage) | **rag-pipeline-reviewer** agent — not `qdrant-search-quality` |
 
 ## Performance & Production
 
@@ -101,6 +118,7 @@ After verification passes, Step 5 of `verification-before-completion` is mandato
 | Performance regression reported | **performance-profiler** agent (measure first) |
 | Performance-critical feature pre-release | **performance-audit** skill |
 | Production is degraded or down | **incident-response** skill (immediately) |
+| Critical user-flow E2E coverage needed | **e2e-runner** agent |
 
 ## During Code Changes — Surgical Changes Rule
 
@@ -143,6 +161,8 @@ On every session start, confirm:
 ## Skill Registration (For New Skills)
 
 When a new skill is added to A Team, add it to the trigger table above so it gets enforced from day one.
+
+The primitive responsibility model (skill vs agent vs command vs rule) is in `.claude/rules/patterns.md`.
 
 The A Team is only as good as the discipline with which it is applied.
 Skills consulted are skills that work. Skills skipped are skills that don't exist.

@@ -186,7 +186,13 @@ h1 { color: #333; } p { color: #666; } code { background: #f0f0f0; padding: 0.1e
 <code>?key=&hellip;</code> part. Copy the complete URL and open it again.</p></body></html>`;
 
 function bootstrapPage(key) {
-  const jsonKey = JSON.stringify(String(key));
+  // Escape characters that would let the reflected value break out of the
+  // <script> block (e.g. a key containing "</script>") even though callers
+  // only reach here after the value has matched TOKEN.
+  const jsonKey = JSON.stringify(String(key))
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Opening Brainstorm Companion</title></head>

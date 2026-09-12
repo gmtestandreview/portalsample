@@ -51,7 +51,6 @@ Run when the user invokes `/orchestrate init` or when `.agent-sync/TEAM.md` does
    | rust-reviewer | Rust is in the language list |
    | database-reviewer | PostgreSQL / database is in the tech stack |
    | e2e-runner | E2E tests = yes |
-   | chief-of-staff | Email/Slack/communication tools listed |
    | loop-operator | Autonomous loops = yes |
    | harness-optimizer | Always keep |
    | doc-updater | Documentation = yes |

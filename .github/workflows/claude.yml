@@ -1,0 +1,65 @@
+name: Claude Code
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review_comment:
+    types: [created]
+
+# Least-privilege rationale (granted on every default-branch run of this workflow):
+#   contents: write       - Claude pushes commits to the PR branch.
+#   pull-requests: write  - Claude edits PR bodies and posts PR review comments.
+#   issues: write         - REQUIRED for Claude to reply in-thread on a PR
+#                           *conversation* comment (issue_comment on a PR posts via
+#                           the Issues API) and on issue threads. Kept deliberately
+#                           after review - dropping it breaks the common reply path.
+#   actions: read         - Claude reads workflow run context for its response.
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: read
+
+# Serialise runs per issue/PR so repeated "@claude" comments on one thread queue
+# instead of spawning parallel 30-minute runners. Not cancel-in-progress: a
+# mid-flight Claude run may hold an un-pushed commit.
+concurrency:
+  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  claude:
+    name: claude
+    # claude-code-action already refuses to run for actors without repo write
+    # access. This condition is defence in depth: it stops the runner starting
+    # at all for bots and non-privileged commenters, and makes the trust
+    # boundary explicit in-repo rather than only inside the action.
+    if: >-
+      contains(github.event.comment.body, '@claude')
+      && github.event.comment.user.type != 'Bot'
+      && contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 1
+
+      # github_token authenticates the action's built-in GitHub MCP tools with
+      # this repo's GH_PERSONAL_ACCESS_TOKEN PAT instead of the default
+      # GITHUB_TOKEN. GitHub does not trigger downstream workflows (pr.yml,
+      # chromatic.yml) on commits pushed with GITHUB_TOKEN, so a PAT is what
+      # lets Claude's commits flow through the normal PR gate.
+      #
+      # Required PAT shape (fine-grained personal access token):
+      #   - Resource owner + repository access: THIS repository only.
+      #   - Repository permissions: Contents = Read/Write, Pull requests = Read/Write,
+      #     Issues = Read/Write. Nothing else.
+      #   - Expiry: <= 90 days.
+      #   Rotation owner: @gregm (gtmemico) - review/rotate by 2026-12-01.
+      #   A classic or org-wide PAT here widens blast radius to every repo the
+      #   token owner can write; do not substitute one.
+      - uses: anthropics/claude-code-action@5ccc3a35a6367cdb8e6fbd0728287467540ecfe2 # v1.0.219
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
