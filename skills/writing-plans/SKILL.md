@@ -1,254 +1,103 @@
 ---
 name: writing-plans
-description: Use when a user asks to turn a chosen, supplied, or approved engineering direction into a repository-grounded implementation plan with concrete file changes, dependencies, risks, tests, and success criteria. Use before coding or handing work to an implementation agent. Do not use to choose unresolved product or architecture direction, brainstorm solutions, review completed implementation, or implement the changes.
+description: Use when creating or updating implementation plans for multi-step software changes from specs, requirements, PRDs, bug reports, feature requests, migrations, refactors, or architecture changes before coding. Produces repository-grounded, test-first, agent-ready plans. Do not use for one-step edits, non-code project planning, GitHub Epic/Feature/Story decomposition, or Copilot-specific three-artifact planning workflows.
 ---
-<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Writing Plans
 
-Convert an approved engineering direction into a repository-grounded plan that another agent can execute without redesigning the solution.
+Produce an implementation plan only. Do not implement code.
 
-Do not implement the plan.
+Read the governing source material before planning, then inspect the relevant repository implementation, tests, configuration, and documentation when available. Never invent repository paths, symbols, commands, tests, dependencies, or behavior.
 
-## Preconditions
+Use the user's requested output path or an established project convention. Otherwise use `docs/plans/YYYY-MM-DD-<feature-name>.md` when file output is available; if it is not, return the complete plan and state the intended path.
 
-Proceed only when the implementation direction is sufficiently approved to plan.
+## Scope
 
-Treat an unresolved decision as a **blocker** when different answers would materially change architecture, public interfaces, data models, dependencies, security boundaries, migration strategy, or success criteria.
+Use this skill for multi-step software implementation planning.
 
-Do not guess through blockers.
+- If an installed `refactor-plan` skill specifically governs a coupling-heavy multi-file refactor with confirmation/rollback requirements, prefer it.
+- If an installed `breakdown-plan` skill governs GitHub Epic > Feature > Story/Enabler > Test/Task decomposition or board automation, prefer it.
+- If the target workflow explicitly requires validated research plus exactly three `.copilot-tracking` artifacts, use that Copilot-specific workflow instead.
+- Do not turn a planning request into code changes.
 
-Minor implementation details may remain open only when they can be resolved during execution without changing the approved design. Mark them explicitly as implementation-time decisions.
+## Plan contract
+
+A finalized plan must be executable by a skilled engineer from the plan and cited source material alone. Include:
+
+- source inputs, assumptions, constraints, and blocking unknowns;
+- requirement-to-task traceability;
+- exact repository-relative files to create, modify, and test;
+- dependencies and ordering;
+- behavior-first tests or acceptance tests before implementation for user-visible behavior and business logic;
+- exact commands and expected results when execution is part of a task;
+- concrete code, exact edits, or repository-grounded patch guidance for code-changing steps;
+- independently reviewable tasks and targeted commits when the repository workflow uses commits;
+- verification and rollback for destructive, data-changing, migration, deployment, auth, billing, permission-sensitive, or security-sensitive work;
+- no unresolved drafting placeholders, undefined references, contradictory assumptions, or vague paths.
+
+Use DRY and YAGNI. Do not add speculative abstractions or unrelated refactors.
 
 ## Workflow
 
-### 1. Read the source of truth
-
-Extract from the approved spec or design:
-
-- requirements
-- architecture and design decisions
-- constraints
-- success criteria
-- explicitly deferred work
-
-Preserve those decisions. Do not silently redesign, broaden, or narrow scope.
-
-Record any blocker before planning implementation that depends on it.
-
-### 2. Inspect the repository
-
-Inspect the implementation surfaces relevant to the approved change:
-
-- source files
-- tests
-- configuration
-- interfaces and schemas
-- migrations
-- neighboring modules
-- established project conventions
-
-For every path named in the plan:
-
-- verify that an existing path exists;
-- otherwise mark it **New file**;
-- use actual repository names and structure;
-- distinguish verified APIs, functions, dependencies, and tests from proposed ones.
-
-If repository access is unavailable, do not invent repository details. Mark affected paths and implementation details **Unverified** and identify what the implementation agent must inspect before proceeding.
-
-Record mismatches between the approved design and the current repository.
-
-### 3. Build requirement traceability
-
-Map every in-scope requirement and success criterion to:
-
-1. one or more implementation steps; and
-2. an objective validation path.
-
-Do not add speculative features.
-
-A requirement is not covered unless the plan states both how it will be implemented and how completion will be demonstrated.
-
-### 4. Define phases
-
-Use the smallest number of ordered phases that keeps execution coherent.
-
-Each phase must have:
-
-- **Outcome** — concrete state produced by the phase
-- **Scope** — what changes belong in it
-- **Dependencies** — prerequisites
-- **Validation gate** — objective evidence that the phase is complete
-
-Prefer vertical increments that leave working, testable behavior.
-
-Use labels such as MVP, migration, edge cases, cleanup, or optimization only when they describe the actual work. Do not force a generic phase model onto the repository.
-
-Sequence dependency-blocking, high-risk, or hard-to-reverse work early enough to expose failure before large dependent changes accumulate.
-
-### 5. Write atomic implementation steps
-
-Give every step a stable ID.
-
-Each step must include:
-
-- **Files:** exact verified paths or **New file**
-- **Action:** concrete change and intended behavior
-- **Why:** requirement or approved design decision it satisfies
-- **Dependencies:** prerequisite step IDs or `None`
-- **Risk:** Low / Medium / High
-- **Validation:** test, command, check, or observable result proving completion
-
-For Medium or High risk, also include the relevant mitigation.
-
-For High risk or hard-to-reverse work, include a practical rollback or recovery path.
-
-Keep each step small enough to implement, review, validate, and revert independently.
-
-Split a step when it combines unrelated responsibilities, independent validation boundaries, or changes that can fail separately.
-
-### 6. Identify parallel work
-
-When multiple agents may execute the plan, identify:
-
-- steps safe to run concurrently;
-- sequential dependencies;
-- shared files or interfaces that create conflicts;
-- ownership boundaries needed for safe parallel work.
-
-Do not parallelize steps that modify the same implementation surface unless ownership boundaries and integration order are explicit.
-
-Parallelism must follow the dependency graph, not merely the phase grouping.
-
-### 7. Define testing
-
-Select only applicable test levels for each phase:
-
-- **Unit** — functions, modules, or components
-- **Integration** — cooperating systems or boundaries
-- **E2E** — user or system journeys
-- **Regression** — behavior that must remain unchanged
-- **Manual/operational** — only when automated verification is impractical
-
-Name verified existing test files when known. Mark proposed test files **New file**.
-
-Every success criterion must map to at least one validation method.
-
-Do not invent test commands, fixtures, environments, or frameworks that were not verified in the repository. Mark proposed or unverified details explicitly.
-
-### 8. Challenge the plan
-
-Before handoff, review the plan from the implementer's perspective.
-
-Resolve or report:
-
-- requirements with no implementation step;
-- success criteria with no validation;
-- steps based on unverified assumptions;
-- invented paths, APIs, dependencies, or tests;
-- hidden design decisions;
-- dependency cycles or missing prerequisites;
-- unsafe parallel work;
-- high-risk changes without mitigation or rollback;
-- speculative scope;
-- repository/spec mismatches that prevent execution.
-
-Revise all fixable issues before presenting the plan.
-
-For an independent review pass, dispatch a reviewer with [references/plan-document-reviewer-prompt.md](references/plan-document-reviewer-prompt.md).
-
-Anything that still requires a material product or architecture decision is a blocker, not an implementation step.
-
-## Output
-
-Use this structure, adapting sections only when they are genuinely inapplicable:
-
-```markdown
-# Implementation Plan: [Feature]
-
-## Source
-[Approved spec or design]
-
-## Overview
-[What changes and the approved implementation approach]
-
-## Blockers
-- None
-# or
-- [Unresolved material decision]
-
-## Requirements Traceability
-| Requirement | Steps | Validation |
-|---|---|---|
-
-## Repository Findings
-- [Relevant verified implementation surface or spec/repository mismatch]
-
-## Architecture Changes
-- `[path]`: [change]
-
-## Implementation Steps
-
-### Phase 1: [Outcome]
-
-#### Step 1.1: [Action]
-- Files: `path/to/file`
-- Action: ...
-- Why: ...
-- Dependencies: None
-- Risk: Low
-- Validation: ...
-
-## Parallelization
-- Can run concurrently: ...
-- Must remain sequential: ...
-
-## Testing Strategy
-- Unit: ...
-- Integration: ...
-- E2E: ...
-- Regression: ...
-- Manual/operational: ...
-
-## Risks and Rollback
-- ...
-
-## Success Criteria
-- [ ] ...
-```
-
-Omit empty testing categories rather than filling them with placeholders.
-
-## Persistence
-
-If the user or surrounding workflow requires a persisted plan, save it to the requested location.
-
-Otherwise, when a repository convention has been verified, follow that convention.
-
-If no location is specified or verified, use:
-
-`docs/plans/YYYY-MM-DD-<feature>.md`
-
-Before writing, check whether the target exists. Never overwrite an existing plan without explicit authorization.
-
-If persistence was not requested and is unnecessary for handoff, present the plan without creating a file.
-
-## Handoff contract
-
-The plan is implementation-ready only when an implementation agent can determine:
-
-1. what must change;
-2. where it must change;
-3. why each change is required;
-4. what dependencies constrain execution;
-5. how each phase and success criterion will be verified; and
-6. how material risks will be mitigated or reversed,
-
-without making unresolved product or architecture decisions.
-
-Present blockers separately from executable work.
-
-When an execution skill such as `executing-plans` or `subagent-driven-development` is available and appropriate, the completed plan may be handed to it. Otherwise provide the plan as a standalone implementation artifact.
-
-Do not begin implementation as part of this skill.
+1. **Establish evidence**
+   - Read the source requirement/specification.
+   - Inspect affected implementation, tests, configuration, docs, and existing patterns when available.
+   - Record assumptions and unknowns. Treat an unknown as blocking only when it could change behavior, files, tests, sequencing, or safety.
+
+2. **Choose mode and output shape**
+   - **Create:** build a new plan from source and repository evidence.
+   - **Update:** preserve valid requirements, decisions, traceability, and stable identifiers; change only affected sections.
+   - For ordinary plans, read `references/implementation-plan-template.md` before drafting.
+   - For a rigid machine-readable plan with fixed sections or identifier prefixes, read `references/deterministic-plan-template.md` instead.
+   - For an explicitly required single-PR/dedicated-branch, commit-shaped structured-autonomy workflow, also read `references/structured-autonomy-mode.md`.
+   - **Mode precedence:** the Plan contract and final reviewer gate remain mandatory in every mode. Deterministic mode replaces the ordinary presentation template when its fixed format is required. Structured-autonomy mode overlays the selected plan format: its branch, path, research, and commit conventions may override ordinary defaults, but it must retain all mandatory Plan contract content and reviewer-required sections, adapting their placement without dropping them.
+
+3. **Scope and structure**
+   - Split independent subsystems into separate plans only when each can produce a working, testable outcome.
+   - Map each affected file to its action and responsibility before defining tasks.
+   - Follow repository patterns and place setup, schemas, interfaces, fixtures, and helpers before dependent work.
+
+4. **Choose the smallest useful framework**
+   - Always use requirement traceability, vertical slices, test-first sequencing, risk-first ordering, and verification.
+   - Add DDD only for domain-heavy logic or unclear invariants.
+   - Add C4-style mapping only across meaningful service/system/module boundaries.
+   - Add ADR-lite only for architectural choices future engineers may reasonably question.
+   - Add migration planning for incremental replacement of legacy behavior.
+   - Add threat modeling for auth, permissions, secrets, billing, data access, or external trust boundaries.
+
+5. **Write atomic tasks**
+   - Make each task independently reviewable and testable.
+   - For behavior changes: define the failing test or acceptance test, exact run command and expected failure, minimal implementation, passing command/result, relevant regressions, then the commit step when applicable.
+   - Do not invent commands, paths, symbols, fixtures, or expected outputs that repository evidence does not support. Record the missing evidence instead.
+
+6. **Cover risk**
+   - For high-impact work, include authorization/approval gates where required, backup or checkpoint, dry-run/staging when useful, verification, and rollback.
+   - Put irreversible or dependency-sensitive work after its safeguards.
+
+7. **Critical-failure scan**
+   Do not mark the plan implementation-ready while it contains:
+   - drafting placeholders such as `TBD`, `TODO`, `implement later`, or `similar to above`;
+   - vague instructions without concrete execution guidance;
+   - undefined files, symbols, routes, commands, types, schemas, fixtures, or helpers;
+   - missing behavior tests for behavior changes;
+   - vague/conflicting paths or invalid task ordering;
+   - risky work without proportional verification and rollback;
+   - contradictory naming, signatures, commands, or environment assumptions;
+   - unsupported details presented as facts.
+
+8. **Review and refine**
+   - Try to prove the plan will fail: check requirement coverage, missing setup/imports/fixtures, undefined references, test gaps, sequencing, safety, framework misuse, overengineering, and buildability friction.
+   - Fix supported defects, then read `references/plan-document-reviewer-prompt.md` and apply its 100-point rubric.
+   - The plan passes this local quality gate only at `>=96/100` with zero critical failures.
+   - If an independent reviewer/subagent is available, use it after self-review; otherwise apply the reviewer reference manually and do not claim independent-review evidence.
+   - Do not convert missing repository evidence or human judgment into a pass.
+
+## Handoff
+
+After available validation:
+
+- state the plan path or intended path;
+- state blocking unknowns or required human decisions;
+- identify the execution mode supported by the current environment;
+- distinguish planned tests from tests actually run;
+- do not claim implementation or test execution occurred unless it did.

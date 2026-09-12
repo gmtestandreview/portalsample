@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This workspace is a **source-map capture snapshot** of portal.measurement.gov.au — the Australian Government National Measurement Institute (NMI) customer portal. The repository **does** include a root `package.json` with validation and test scripts. You may run `npm`, `pnpm`, or `yarn` commands from the workspace root for validation, type-checking, linting, and tests.
+This workspace is a **source-map capture snapshot** of portal.measurement.gov.au — the Australian Government National Measurement Institute (NMI) customer portal. The repository **does** include a root `package.json` with validation and test scripts. You may run `npm`, `pnpm`, or `yarn` commands from the workspace root for validation, type-checking, linting, and tests. This file is the canonical repository policy: path-specific instruction files supplement it only within their stated scope, and this file takes precedence when instructions conflict unless the task explicitly requires a policy change. Policy-sensitive files may be edited only when the task explicitly requests that policy change; application-code tasks must leave them unchanged. Markdown formatting follows Prettier where applicable, while fenced code blocks retain a language identifier when the language is known and normal Markdown links use the form `[descriptive text](target)`.
 
 **Validation scripts:**
 
@@ -26,6 +26,8 @@ The following scripts are available in the root `package.json`:
 - `npm run migration-check` — Full pre-migration gate (type-check + tests + storybook build)
 
 See `package.json` for the full list.
+
+**Playwright-BDD Fix with AI:** both BDD configs enable `aiFix.promptAttachment`. To generate an AI-fix prompt, run a failing BDD suite with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the corresponding HTML report in `reports/playwright/app` or `reports/playwright/storybook` and copy the AI prompt attachment into Copilot, Codex, Claude, or another coding assistant.
 
 ## Technology Stack
 
@@ -167,7 +169,7 @@ Remember: A story name might not reflect the property name correctly, so always 
 - `ClientApp/src/**/*.tsx`
 - `ClientApp/src/styles/**/*.scss`
 
-**Never edit (generated / vendor):**
+**Never edit (generated / vendor) directly, except when the task explicitly requires snapshot repair and the responsible generator or upstream source is unavailable:**
 
 - `ClientApp/src/api/web-api-client.ts`
 - `ClientApp/src/main.*.js`
@@ -219,7 +221,13 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 | `five-whys` | A bug persists despite surface fixes, or a failure or process keeps recurring — target the root, not the symptom. |
 | `incident-response` | Production is degraded or down — use immediately. |
 | `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
+| `mcp2cli` | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell — especially useful here since Codex has no native MCP tool-calling — or generating a new skill from an API. |
 | `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
+| `qdrant-clients-sdk` | Vendored (skills.qdrant.tech). Integrating the Qdrant client SDK for the semantic-memory-layer tooling — install commands, REST vs gRPC, curated snippets. |
+| `qdrant-deployment-options` | Vendored. Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) for the semantic-memory layer; feeds an `adr`, does not replace one. |
+| `qdrant-model-migration` | Vendored. Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes, zero downtime. |
+| `qdrant-search-quality` | Vendored. Qdrant retrieval returns bad/irrelevant/missing results, or choosing embedding model / hybrid search / reranking / recall@k evaluation. Routes to `diagnosis` + `search-strategies` sub-skills. Reviewing a whole RAG pipeline for sign-off is the `rag-pipeline-reviewer` agent instead. |
+| `receiving-code-review` | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent. |
 | `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |
 | `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
 | `smart-init` | `INIT.md` is missing and the project needs conversational onboarding. |

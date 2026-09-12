@@ -1,34 +1,32 @@
 import React, { useMemo } from 'react';
-import {
-    createEditor,
-    type BaseEditor,
-    Editor,
-    type Descendant,
-} from 'slate';
+import { createEditor, type BaseEditor, Editor, type Descendant } from 'slate';
 import parse from 'html-react-parser';
 import DOMPurify from 'dompurify';
 import { Slate, Editable, withReact } from 'slate-react';
 import PrimaryButton from '../Buttons/PrimaryButton';
 
 // slate helpers
-export const serializeToHtml = (value: CustomElement[]): string => value
-    .map((element) => {
-        const children = element.children.map((child) => {
-            let { text } = child;
-            if (child.bold) text = `<strong>${text}</strong>`;
-            if (child.italic) text = `<em>${text}</em>`;
-            if (child.underline) text = `<u>${text}</u>`;
-            return text;
-        }).join('');
+export const serializeToHtml = (value: CustomElement[]): string =>
+    value
+        .map((element) => {
+            const children = element.children
+                .map((child) => {
+                    let { text } = child;
+                    if (child.bold) text = `<strong>${text}</strong>`;
+                    if (child.italic) text = `<em>${text}</em>`;
+                    if (child.underline) text = `<u>${text}</u>`;
+                    return text;
+                })
+                .join('');
 
-        switch (element.type) {
-            case 'paragraph':
-                return `<p>${children}</p>`;
-            default:
-                return children; // Add more cases for other block types if needed
-        }
-    })
-    .join('');
+            switch (element.type) {
+                case 'paragraph':
+                    return `<p>${children}</p>`;
+                default:
+                    return children; // Add more cases for other block types if needed
+            }
+        })
+        .join('');
 export type CustomElement = { type: 'paragraph'; children: { text: string; bold?: boolean; italic?: boolean; underline?: boolean }[] };
 // end slate helpers
 interface SlateEditorProps {
@@ -50,7 +48,7 @@ declare module 'slate' {
 
 const isMarkActive = (editor: Editor, format: keyof CustomText) => {
     const marks = Editor.marks(editor) as Partial<CustomText> | null;
-    return marks ? (marks[format] === true) : false;
+    return marks ? marks[format] === true : false;
 };
 
 const toggleMark = (editor: Editor, format: keyof CustomText) => {
@@ -67,9 +65,7 @@ const renderHtmlBody = (html: string) => {
     return parse(safeHtml);
 };
 
-const ToolbarButton = ({
-    format, icon, label, editor,
-}: { format: keyof CustomText, icon: string, label: string, editor: Editor }) => (
+const ToolbarButton = ({ format, icon, label, editor }: { format: keyof CustomText; icon: string; label: string; editor: Editor }) => (
     <button
         type='button'
         className='btn btn-light btn-sm me-2'
@@ -80,15 +76,11 @@ const ToolbarButton = ({
         aria-label={label}
         title={label}
     >
-        <span>
-            {renderHtmlBody(icon)}
-        </span>
+        <span>{renderHtmlBody(icon)}</span>
     </button>
 );
 
-const SlateEditor: React.FC<SlateEditorProps> = ({
-    value, setValue, placeholder, onSubmit, maxCharacters,
-}) => {
+const SlateEditor: React.FC<SlateEditorProps> = ({ value, setValue, placeholder, onSubmit, maxCharacters }) => {
     const editor = useMemo(() => withReact(createEditor()), []);
     const [errors, setErrors] = React.useState<string[]>([]);
     const max = maxCharacters ?? 1000;
@@ -204,7 +196,6 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                             <ToolbarButton format='underline' icon='<u>U</u>' label='Underline' editor={editor} />
                         </div>
                         <div className='text-end'>
-
                             <PrimaryButton
                                 data-testid='send-button'
                                 type='submit'
@@ -221,16 +212,11 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
                     </div>
                     <div className='d-flex justify-content-between'>
                         <div className='text-start mt-1'>
-                            {errors.length > 0 && (
-                                <span className='text-danger ms-2'>{errors[errors.length - 1]}</span>
-                            )}
+                            {errors.length > 0 && <span className='text-danger ms-2'>{errors[errors.length - 1]}</span>}
                         </div>
                         <div className='text-end mt-1'>
                             <span className='me-2 small text-muted'>
-                                {liveCharCount}
-                                {' '}
-                                /
-                                {max}
+                                {liveCharCount} /{max}
                             </span>
                         </div>
                     </div>

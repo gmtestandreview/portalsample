@@ -30,10 +30,12 @@ skill-name/
 ├── scripts/
 ├── references/
 ├── assets/
-└── evals/
+└── evals/               # typical location for candidate behavioral evals
 ```
 
 `SKILL.md` requires YAML frontmatter followed by Markdown.
+
+This skill keeps its seeded behavioral eval library under `scripts/evals/` because it is packaged with the local deterministic harness. For other skills, use `evals/` unless the target repository documents a different location.
 
 Required frontmatter:
 
@@ -100,7 +102,9 @@ For mechanically decidable SKILL-specific checks, prefer deterministic validatio
 
 ### 6. Apply progressive disclosure
 
-Keep activation-time guidance in `SKILL.md`. Move detailed methods/docs/examples to `references/`, deterministic operations to `scripts/`, static templates/assets to `assets/`, and evaluation cases/fixtures to `evals/`.
+Keep activation-time guidance in `SKILL.md`. Move detailed methods/docs/examples to `references/`, deterministic operations to `scripts/`, static templates/assets to `assets/`, and evaluation cases/fixtures to `evals/` or a documented local eval location.
+
+For this skill, the documented local eval location is `scripts/evals/` because those fixtures live beside the parser, validator, CLI, and test harness.
 
 Use relative paths, state each resource's load/run condition, avoid deep reference chains, and split or extract material when `SKILL.md` approaches roughly 500 lines or 5,000 tokens.
 
@@ -141,7 +145,9 @@ Select tests according to skill type and risk.
 
 At minimum, cover positive activation, realistic near-misses, edge cases, regressions, referenced paths/files, scripts/tools when present, and safety/destructive operations when applicable.
 
-For Discipline skills, add adversarial pressure tests; load `testing-skills-with-subagents.md` when detailed scenario design is needed. For trigger optimization, test multiple realistic phrasings.
+For output-quality and behavioral eval design, load `references/evaluating-skill-output.md`. For Discipline pressure tests, classification-specific RED/GREEN/REFACTOR suites, reference retrieval/application checks, resource discovery, or regression evidence, load `references/testing-skills-with-subagents.md`. For this skill's deterministic parser, validator, prompt, and CLI tests, use `scripts/README.md`.
+
+For trigger optimization, test multiple realistic phrasings.
 
 ### 9. Validate
 
@@ -170,10 +176,9 @@ When creating a new skill:
 4. Add only supporting directories the skill actually needs.
 5. Add representative evals before expanding documentation.
 6. Validate structure and behavior before deployment.
-7. Add it to `CLAUDE.md` skills table
-8. Add it to `AGENTS.md` skills table
-9. Add it to `skills/using-a-team/SKILL.md` trigger table
-10. Test it: give an agent a task that should trigger the skill, verify they use it correctly
+7. If the target repository uses A Team skill registration, add it to `CLAUDE.md`, `AGENTS.md`, and `skills/using-a-team/SKILL.md`.
+8. If the target runtime has another documented registration mechanism, follow that local policy instead.
+9. Test it: give an agent a task that should trigger the skill, verify they use it correctly.
 
 Do not assume a particular repository path, runtime registration mechanism, quoting style, asset-size limit, or validator command unless the target environment documents it.
 
@@ -190,22 +195,12 @@ Correct these patterns:
 
 ## References
 
-Use this file `skills\writing-skills\references\index.md` as the **first lookup point** for the `writing-skills` reference set.
+Use `references/index.md` as the **first lookup point** for the `writing-skills` reference set.
 
-Load only when needed:
+Keep detailed routing rules in `references/index.md`; it is the source of truth for reference load conditions and conflict handling.
 
-## Lookup rules
+At minimum:
 
-1. Identify the task class before loading references.
-2. Load the smallest primary reference that governs the task.
-3. Load a secondary reference only when its stated condition is met.
-4. Use `agent-skill-specification-format-page-2.md` for mandatory Agent Skills format/compliance claims.
-5. Use `best-practices-evaluations.md` for quality criteria and `audit-scoring.md` for scoring mechanics.
-6. Use `SKILL-testing-checklist.md` as the final validation/deployment gate, not as a substitute for specialist methods.
-7. Treat best-practice guides, operational methods, and templates as supporting guidance rather than specification authority.
-8. Apply Anthropic-specific guidance only when the target environment is Claude or Anthropic Agent Skills.
-9. If sources conflict, use:
-   `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable environment/project rules > best-practice guidance > examples/templates`.
-10. If a referenced file is absent, report it as missing. Do not silently substitute another file.
-11. Use QAQ/RMI for critical trigger, branch, and load-condition decisions.
-12. Do not load templates or persuasion guidance unless the task actually needs them.
+- use `references/specification.md` for mandatory Agent Skills format/compliance claims;
+- use `references/SKILL-testing-checklist.md` as the final validation/deployment gate;
+- load only the specialist references selected by `references/index.md`.

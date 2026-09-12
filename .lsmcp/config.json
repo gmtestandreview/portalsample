@@ -1,0 +1,23 @@
+{
+  "$schema": "../node_modules/@mizchi/lsmcp/lsmcp.schema.json",
+  "preset": "typescript",
+  "bin": "node",
+  "args": ["node_modules/typescript-language-server/lib/cli.mjs", "--stdio"],
+  "files": ["ClientApp/src/**/*.ts", "ClientApp/src/**/*.tsx", ".storybook/**/*.{ts,tsx}"],
+  "settings": {
+    "autoIndex": true,
+    "indexConcurrency": 5
+  },
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/coverage/**",
+    "**/storybook-static/**",
+    "ClientApp/source-map-http-downloads/**",
+    "ClientApp/src/external/**"
+  ],
+  "symbolFilter": {
+    "excludeKinds": ["Variable", "Constant", "String", "Number", "Boolean"]
+  }
+}

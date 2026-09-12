@@ -1,15 +1,48 @@
 {
   "servers": {
-    "React Aria": {
-      "command": "npx",
+    "react-aria": {
+      "command": "node",
       "args": [
-        "@react-aria/mcp@latest"
+        "${workspaceFolder}/node_modules/@react-aria/mcp/dist/react-aria/src/index.js"
       ],
-      "type": "stdio"
+      "type": "stdio",
+      "tools": [
+        "*"
+      ]
     },
     "my-storybook-mcp-server": {
       "type": "http",
       "url": "http://localhost:6006/mcp"
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": {
+        "Authorization": "Bearer ${env:GH_PERSONAL_ACCESS_TOKEN}"
+      }
+    },
+    "sonarqube": {
+      "type": "stdio",
+      "command": "C:\\Users\\gregm\\AppData\\Local\\sonarqube-cli\\bin\\sonar.exe",
+      "args": [
+        "run",
+        "mcp",
+        "--project",
+        "gmtestandreview_portalsample"
+      ],
+      "tools": [
+        "*"
+      ]
+    },
+    "tokensave": {
+      "type": "stdio",
+      "command": "C:/Users/gregm/.local/bin/tokensave.exe",
+      "args": [
+        "serve"
+      ],
+      "tools": [
+        "*"
+      ]
     }
   },
   "inputs": []
