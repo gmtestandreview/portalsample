@@ -33,6 +33,7 @@ Purpose: route the agent to the **smallest sufficient set of references** for th
 | Behavioral/output-quality evals | `evaluating-skill-output.md` | `scripts/evals/README.md` for seeded case files after applying the primary eval workflow; `scripts/evals/campaigns/` when reviewing executed campaign evidence; `testing-skills-with-subagents.md` when classification-specific RED/GREEN/REFACTOR, pressure/edge, Reference retrieval/application, resource-discovery, or regression evidence is needed |
 | RED/GREEN/REFACTOR pressure testing | `testing-skills-with-subagents.md` | `persuasion-principles.md` only after a concrete adherence/rationalization failure |
 | Script-bearing skills or bundled commands | `using-scripts-in-skills.md` | `scripts/README.md` and `scripts/pyproject.toml` when installing or running this skill's deterministic tests; `scripts/skills_ref/` and `scripts/tests/` only for local validator/parser/CLI tooling; specification for structural compliance; checklist for final validation |
+| Codex skill listing or installation | `codex-skill-installation.md` | `using-scripts-in-skills.md` only when editing or validating installer scripts; `specification.md` when validating an installed skill package |
 | Persistent evidence model, audit records, or evaluation storage design | `skill-testing-data-model.md` | `scripts/evals/evaluation-schema.md` when mapping seeded behavioral case fields |
 | Agent Skills runtime/client support | `adding-skills-support.md` | `specification.md` for format rules; local client policy only when target environment requires it |
 | Compare two skills for merge viability | `best-practices-evaluations.md` | `skill-classification.md` if scope/type differs; `templates/SWOT Analysis.md` only when SWOT output helps |
@@ -136,6 +137,12 @@ Use for behavioral eval design, with-skill/without-skill comparisons, assertions
 #### `using-scripts-in-skills.md`
 
 Use when a skill contains or proposes commands or bundled executable scripts.
+
+#### `codex-skill-installation.md`
+
+Use when a user asks to list installable Codex skills, install curated or experimental skills, install skills from GitHub repository paths, or reason about `$CODEX_HOME/skills` installation behavior.
+
+This is operational Codex guidance. Use a dedicated installer skill or available installer scripts when the environment provides them; otherwise report the missing installer capability instead of inventing script paths.
 
 #### `adding-skills-support.md`
 

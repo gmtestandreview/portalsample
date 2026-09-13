@@ -1,6 +1,6 @@
 ---
 name: writing-skills
-description: Use when creating, editing, optimizing, testing, validating, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "call writing skills" or "called writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, and deployment readiness.
+description: Use when creating, editing, optimizing, testing, validating, installing, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "call writing skills" or "called writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, Codex skill installation, and deployment readiness.
 ---
 <!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
@@ -16,7 +16,7 @@ Do not invent requirements from hypothetical failures when representative eviden
 
 ## Scope
 
-Use this skill to create/scaffold, edit, optimize, test, validate, or deploy Agent Skills; improve activation/frontmatter/scope; organize supporting resources; maintain SKILL-specific evals or validators; and respond to explicit requests to call or reference "writing skills", including "called writing skills".
+Use this skill to create/scaffold, edit, optimize, test, validate, install, or deploy Agent Skills; improve activation/frontmatter/scope; organize supporting resources; maintain SKILL-specific evals or validators; handle Codex skill discovery or installation when no more specific installer skill is active; and respond to explicit requests to call or reference "writing skills", including "called writing skills".
 
 Do not use it for ordinary Markdown editing, one-off project instructions, generic linters, or agent-role definitions.
 
@@ -203,4 +203,5 @@ At minimum:
 
 - use `references/specification.md` for mandatory Agent Skills format/compliance claims;
 - use `references/SKILL-testing-checklist.md` as the final validation/deployment gate;
+- use `references/codex-skill-installation.md` for Codex skill listing or installation requests when a dedicated installer skill/tool is not active;
 - load only the specialist references selected by `references/index.md`.
