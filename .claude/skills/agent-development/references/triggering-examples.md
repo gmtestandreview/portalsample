@@ -1,491 +1,208 @@
-# Agent Triggering Examples: Best Practices
+# Agent Creation System Prompt
 
-Complete guide to writing effective `<example>` blocks in agent descriptions for reliable triggering.
+This is the exact system prompt used by Claude Code's agent generation feature, refined through extensive production use.
 
-## Example Block Format
+## The Prompt
 
-The standard format for triggering examples:
+```
+You are an elite AI agent architect specializing in crafting high-performance agent configurations. Your expertise lies in translating user requirements into precisely-tuned agent specifications that maximize effectiveness and reliability.
+
+**Important Context**: You may have access to project-specific instructions from CLAUDE.md files and other context that may include coding standards, project structure, and custom requirements. Consider this context when creating agents to ensure they align with the project's established patterns and practices.
+
+When a user describes what they want an agent to do, you will:
+
+1. **Extract Core Intent**: Identify the fundamental purpose, key responsibilities, and success criteria for the agent. Look for both explicit requirements and implicit needs. Consider any project-specific context from CLAUDE.md files. For agents that are meant to review code, you should assume that the user is asking to review recently written code and not the whole codebase, unless the user has explicitly instructed you otherwise.
+
+2. **Design Expert Persona**: Create a compelling expert identity that embodies deep domain knowledge relevant to the task. The persona should inspire confidence and guide the agent's decision-making approach.
+
+3. **Architect Comprehensive Instructions**: Develop a system prompt that:
+   - Establishes clear behavioral boundaries and operational parameters
+   - Provides specific methodologies and best practices for task execution
+   - Anticipates edge cases and provides guidance for handling them
+   - Incorporates any specific requirements or preferences mentioned by the user
+   - Defines output format expectations when relevant
+   - Aligns with project-specific coding standards and patterns from CLAUDE.md
+
+4. **Optimize for Performance**: Include:
+   - Decision-making frameworks appropriate to the domain
+   - Quality control mechanisms and self-verification steps
+   - Efficient workflow patterns
+   - Clear escalation or fallback strategies
+
+5. **Create Identifier**: Design a concise, descriptive identifier that:
+   - Uses lowercase letters, numbers, and hyphens only
+   - Is typically 2-4 words joined by hyphens
+   - Clearly indicates the agent's primary function
+   - Is memorable and easy to type
+   - Avoids generic terms like "helper" or "assistant"
+
+6. **Example agent descriptions**:
+   - In the 'whenToUse' field of the JSON object, you should include examples of when this agent should be used.
+   - Examples should be of the form:
+     <example>
+     Context: The user is creating a code-review agent that should be called after a logical chunk of code is written.
+     user: "Please write a function that checks if a number is prime"
+     assistant: "Here is the relevant function: "
+     <function call omitted for brevity only for this example>
+     <commentary>
+     Since a logical chunk of code was written and the task was completed, now use the code-review agent to review the code.
+     </commentary>
+     assistant: "Now let me use the code-reviewer agent to review the code"
+     </example>
+   - If the user mentioned or implied that the agent should be used proactively, you should include examples of this.
+   - NOTE: Ensure that in the examples, you are making the assistant use the Agent tool and not simply respond directly to the task.
+
+Your output must be a valid JSON object with exactly these fields:
+{
+  "identifier": "A unique, descriptive identifier using lowercase letters, numbers, and hyphens (e.g., 'code-reviewer', 'api-docs-writer', 'test-generator')",
+  "whenToUse": "A precise, actionable description starting with 'Use this agent when...' that clearly defines the triggering conditions and use cases. Ensure you include examples as described above.",
+  "systemPrompt": "The complete system prompt that will govern the agent's behavior, written in second person ('You are...', 'You will...') and structured for maximum clarity and effectiveness"
+}
+
+Key principles for your system prompts:
+- Be specific rather than generic - avoid vague instructions
+- Include concrete examples when they would clarify behavior
+- Balance comprehensiveness with clarity - every instruction should add value
+- Ensure the agent has enough context to handle variations of the core task
+- Make the agent proactive in seeking clarification when needed
+- Build in quality assurance and self-correction mechanisms
+
+Remember: The agents you create should be autonomous experts capable of handling their designated tasks with minimal additional guidance. Your system prompts are their complete operational manual.
+```
+
+## Usage Pattern
+
+Use this prompt to generate agent configurations:
 
 ```markdown
-<example>
-Context: [Describe the situation - what led to this interaction]
-user: "[Exact user message or request]"
-assistant: "[How Claude should respond before triggering]"
-<commentary>
-[Explanation of why this agent should be triggered in this scenario]
-</commentary>
-assistant: "[How Claude triggers the agent - usually 'I'll use the [agent-name] agent...']"
-</example>
+**User input:** "I need an agent that reviews pull requests for code quality issues"
+
+**You send to Claude with the system prompt above:**
+Create an agent configuration based on this request: "I need an agent that reviews pull requests for code quality issues"
+
+**Claude returns JSON:**
+{
+  "identifier": "pr-quality-reviewer",
+  "whenToUse": "Use this agent when the user asks to review a pull request, check code quality, or analyze PR changes. Examples:\n\n<example>\nContext: User has created a PR and wants quality review\nuser: \"Can you review PR #123 for code quality?\"\nassistant: \"I'll use the pr-quality-reviewer agent to analyze the PR.\"\n<commentary>\nPR review request triggers the pr-quality-reviewer agent.\n</commentary>\n</example>",
+  "systemPrompt": "You are an expert code quality reviewer...\n\n**Your Core Responsibilities:**\n1. Analyze code changes for quality issues\n2. Check adherence to best practices\n..."
+}
 ```
 
-## Anatomy of a Good Example
+## Converting to Agent File
 
-### Context
+Take the JSON output and create the agent markdown file:
 
-**Purpose:** Set the scene - what happened before the user's message
-
-**Good contexts:**
-```
-Context: User just implemented a new authentication feature
-Context: User has created a PR and wants it reviewed
-Context: User is debugging a test failure
-Context: After writing several functions without documentation
-```
-
-**Bad contexts:**
-```
-Context: User needs help (too vague)
-Context: Normal usage (not specific)
-```
-
-### User Message
-
-**Purpose:** Show the exact phrasing that should trigger the agent
-
-**Good user messages:**
-```
-user: "I've added the OAuth flow, can you check it?"
-user: "Review PR #123"
-user: "Why is this test failing?"
-user: "Add docs for these functions"
-```
-
-**Vary the phrasing:**
-Include multiple examples with different phrasings for the same intent:
-```
-Example 1: user: "Review my code"
-Example 2: user: "Can you check this implementation?"
-Example 3: user: "Look over my changes"
-```
-
-### Assistant Response (Before Triggering)
-
-**Purpose:** Show what Claude says before launching the agent
-
-**Good responses:**
-```
-assistant: "I'll analyze your OAuth implementation."
-assistant: "Let me review that PR for you."
-assistant: "I'll investigate the test failure."
-```
-
-**Proactive example:**
-```
-assistant: "Great! Now let me review the code quality."
-<commentary>
-Code was just written, proactively trigger review agent.
-</commentary>
-```
-
-### Commentary
-
-**Purpose:** Explain the reasoning - WHY this agent should trigger
-
-**Good commentary:**
-```
-<commentary>
-User explicitly requested code review, trigger the code-reviewer agent.
-</commentary>
-
-<commentary>
-After code implementation, proactively use review agent to check quality.
-</commentary>
-
-<commentary>
-PR analysis request matches pr-analyzer agent's expertise.
-</commentary>
-```
-
-**Include decision logic:**
-```
-<commentary>
-User wrote tests (Test tool used). The test-analyzer agent should check
-test quality and coverage before continuing.
-</commentary>
-```
-
-### Assistant Response (Triggering)
-
-**Purpose:** Show how Claude invokes the agent
-
-**Standard pattern:**
-```
-assistant: "I'll use the [agent-name] agent to [what it will do]."
-```
-
-**Examples:**
-```
-assistant: "I'll use the code-reviewer agent to analyze the changes."
-assistant: "Let me use the test-generator agent to create comprehensive tests."
-assistant: "I'll use the security-analyzer agent to check for vulnerabilities."
-```
-
-## Example Types
-
-### Type 1: Explicit Request
-
-User directly asks for what the agent does:
-
+**agents/pr-quality-reviewer.md:**
 ```markdown
+---
+name: pr-quality-reviewer
+description: |
+  Use this agent when the user asks to review a pull request, check code quality, or analyze PR changes. Examples:
+
+  <example>
+  Context: User has created a PR and wants quality review
+  user: "Can you review PR #123 for code quality?"
+  assistant: "I'll use the pr-quality-reviewer agent to analyze the PR."
+  <commentary>
+  PR review request triggers the pr-quality-reviewer agent.
+  </commentary>
+  </example>
+
+model: inherit
+color: blue
+---
+
+You are an expert code quality reviewer...
+
+**Your Core Responsibilities:**
+1. Analyze code changes for quality issues
+2. Check adherence to best practices
+...
+```
+
+## Customization Tips
+
+### Adapt the System Prompt
+
+The base prompt is excellent but can be enhanced for specific needs:
+
+**For security-focused agents:**
+```
+Add after "Architect Comprehensive Instructions":
+- Include OWASP top 10 security considerations
+- Check for common vulnerabilities (injection, XSS, etc.)
+- Validate input sanitization
+```
+
+**For test-generation agents:**
+```
+Add after "Optimize for Performance":
+- Follow AAA pattern (Arrange, Act, Assert)
+- Include edge cases and error scenarios
+- Ensure test isolation and cleanup
+```
+
+**For documentation agents:**
+```
+Add after "Design Expert Persona":
+- Use clear, concise language
+- Include code examples
+- Follow project documentation standards from CLAUDE.md
+```
+
+## Best Practices from Internal Implementation
+
+### 1. Consider Project Context
+
+The prompt specifically mentions using CLAUDE.md context:
+- Agent should align with project patterns
+- Follow project-specific coding standards
+- Respect established practices
+
+### 2. Proactive Agent Design
+
+Include examples showing proactive usage:
+```
 <example>
-Context: User explicitly requests security analysis
-user: "Check my code for security vulnerabilities"
-assistant: "I'll use the security-analyzer agent to perform a thorough security review."
+Context: After writing code, agent should review proactively
+user: "Please write a function..."
+assistant: "[Writes function]"
 <commentary>
-Direct security analysis request triggers the security-analyzer agent.
+Code written, now use review agent proactively.
 </commentary>
+assistant: "Now let me review this code with the code-reviewer agent"
 </example>
 ```
 
-### Type 2: Proactive Triggering
+### 3. Scope Assumptions
 
-Agent triggers after relevant work without explicit request:
-
-```markdown
-<example>
-Context: User just implemented database queries
-user: "I've added the user search functionality"
-assistant: "Great! Let me review it for security."
-<commentary>
-Database code written. Proactively trigger security-analyzer to check
-for SQL injection and other database security issues.
-</commentary>
-assistant: "I'll use the security-analyzer agent to check the database code."
-</example>
+For code review agents, assume "recently written code" not entire codebase:
+```
+For agents that review code, assume recent changes unless explicitly
+stated otherwise.
 ```
 
-### Type 3: Implicit Request
+### 4. Output Structure
 
-User implies need without stating it directly:
-
-```markdown
-<example>
-Context: User mentions code is hard to understand
-user: "This code is confusing and hard to follow"
-assistant: "I can help improve the code clarity."
-<commentary>
-User indicates complexity issues. Trigger code-simplifier agent to refactor
-for better readability.
-</commentary>
-assistant: "I'll use the code-simplifier agent to suggest improvements."
-</example>
+Always define clear output format in system prompt:
+```
+**Output Format:**
+Provide results as:
+1. Summary (2-3 sentences)
+2. Detailed findings (bullet points)
+3. Recommendations (action items)
 ```
 
-### Type 4: Tool Usage Pattern
-
-Agent triggers based on prior tool usage:
-
-```markdown
-<example>
-Context: User made multiple edits to test files
-user: "I've updated all the tests"
-assistant: "Great! Let me verify test quality."
-<commentary>
-Multiple Edit tools used on test files. Proactively trigger test-quality-analyzer
-to ensure tests follow best practices.
-</commentary>
-assistant: "I'll use the test-quality-analyzer agent to review the tests."
-</example>
-```
-
-## Multiple Examples Strategy
-
-### Cover Different Phrasings
-
-```markdown
-<example>
-user: "Review my code"
-[...]
-</example>
-
-<example>
-user: "Can you check my implementation?"
-[...]
-</example>
-
-<example>
-user: "Look over these changes"
-[...]
-</example>
-```
-
-### Cover Proactive and Reactive
-
-```markdown
-<example>
-Context: User explicitly requests review
-user: "Review my code for issues"
-[...]
-</example>
-
-<example>
-Context: After user writes code
-user: "I've implemented the feature"
-assistant: "Great! Now let me review it."
-<commentary>
-Code written, proactively review.
-</commentary>
-[...]
-</example>
-```
-
-### Cover Edge Cases
-
-```markdown
-<example>
-Context: Typical usage
-user: "Check my PR"
-[...]
-</example>
-
-<example>
-Context: Large PR that needs thorough analysis
-user: "This is a big PR, can you do a deep review?"
-[...]
-<commentary>
-Large PR mentioned, use thorough analysis mode.
-</commentary>
-</example>
-```
-
-## Common Mistakes
-
-### ❌ Missing Context
-
-```markdown
-<example>
-user: "Review my code"
-assistant: "I'll use the code-reviewer agent."
-</example>
-```
-
-**Why bad:** No context about what led to this request.
-
-### ✅ With Context
-
-```markdown
-<example>
-Context: User just finished implementing authentication
-user: "Review my code"
-assistant: "I'll use the code-reviewer agent to analyze the auth implementation."
-<commentary>
-Auth code written, review for security and best practices.
-</commentary>
-</example>
-```
-
-### ❌ No Commentary
-
-```markdown
-<example>
-Context: User requests review
-user: "Check my changes"
-assistant: "I'll use the reviewer agent."
-</example>
-```
-
-**Why bad:** Doesn't explain WHY agent triggers.
-
-### ✅ With Commentary
-
-```markdown
-<example>
-Context: User requests review after making changes
-user: "Check my changes"
-assistant: "I'll use the code-reviewer agent to analyze the modifications."
-<commentary>
-Code review request triggers agent to check quality, security, and adherence to standards.
-</commentary>
-</example>
-```
-
-### ❌ Agent Responds Directly
-
-```markdown
-<example>
-user: "Review my code"
-assistant: "I found the following issues: [lists issues]"
-</example>
-```
-
-**Why bad:** Shows agent's output, not triggering.
-
-### ✅ Shows Triggering
-
-```markdown
-<example>
-user: "Review my code"
-assistant: "I'll use the code-reviewer agent to perform the review."
-<commentary>
-Review request triggers the agent.
-</commentary>
-</example>
-```
-
-## How Many Examples?
-
-### Minimum: 2 Examples
-
-Cover at least:
-1. Explicit request
-2. One variation or proactive trigger
-
-### Recommended: 3-4 Examples
-
-Cover:
-1. Explicit request (direct ask)
-2. Implicit request (user implies need)
-3. Proactive trigger (after relevant work)
-4. Edge case or specific scenario
-
-### Maximum: 6 Examples
-
-More than 6 makes description too long. Focus on most important scenarios.
-
-## Template Library
-
-### Code Review Agent
-
-```markdown
-<example>
-Context: User just implemented a new feature
-user: "I've added the user registration feature"
-assistant: "Great! Let me review the code quality."
-<commentary>
-Code written, proactively trigger code-reviewer agent.
-</commentary>
-assistant: "I'll use the code-reviewer agent to analyze the implementation."
-</example>
-
-<example>
-Context: User explicitly requests review
-user: "Can you review my changes for issues?"
-assistant: "I'll use the code-reviewer agent to perform a thorough review."
-<commentary>
-Explicit review request triggers the agent.
-</commentary>
-</example>
-```
-
-### Test Generation Agent
-
-```markdown
-<example>
-Context: User implemented functions without tests
-user: "I've added the data processing functions"
-assistant: "Great! Let me generate tests for these."
-<commentary>
-New code without tests, proactively trigger test-generator agent.
-</commentary>
-assistant: "I'll use the test-generator agent to create comprehensive tests."
-</example>
-
-<example>
-Context: User explicitly asks for tests
-user: "Generate tests for my code"
-assistant: "I'll use the test-generator agent to create a complete test suite."
-<commentary>
-Direct test generation request triggers the agent.
-</commentary>
-</example>
-```
-
-### Documentation Agent
-
-```markdown
-<example>
-Context: User added new API endpoints
-user: "I've implemented the REST API endpoints"
-assistant: "I'll document these endpoints."
-<commentary>
-New API code, proactively generate documentation.
-</commentary>
-assistant: "I'll use the api-docs-writer agent to create comprehensive documentation."
-</example>
-
-<example>
-Context: User requests documentation
-user: "Write docs for this API"
-assistant: "I'll use the api-docs-writer agent to generate clear documentation."
-<commentary>
-Documentation request triggers the agent.
-</commentary>
-</example>
-```
-
-### Validation Agent
-
-```markdown
-<example>
-Context: User ready to commit changes
-user: "I'm ready to commit this code"
-assistant: "Let me validate it first."
-<commentary>
-Before commit, proactively validate with validation-agent.
-</commentary>
-assistant: "I'll use the code-validator agent to check for issues."
-</example>
-
-<example>
-Context: User asks for validation
-user: "Validate my implementation"
-assistant: "I'll use the code-validator agent to verify correctness."
-<commentary>
-Explicit validation request triggers the agent.
-</commentary>
-</example>
-```
-
-## Debugging Triggering Issues
-
-### Agent Not Triggering
-
-**Check:**
-1. Examples include relevant keywords from user message
-2. Context matches actual usage scenarios
-3. Commentary explains triggering logic clearly
-4. Assistant shows use of Agent tool in examples
-
-**Fix:**
-Add more examples covering different phrasings.
-
-### Agent Triggers Too Often
-
-**Check:**
-1. Examples are too broad or generic
-2. Triggering conditions overlap with other agents
-3. Commentary doesn't distinguish when NOT to use
-
-**Fix:**
-Make examples more specific, add negative examples.
-
-### Agent Triggers in Wrong Scenarios
-
-**Check:**
-1. Examples don't match actual intended use
-2. Commentary suggests inappropriate triggering
-
-**Fix:**
-Revise examples to show only correct triggering scenarios.
-
-## Best Practices Summary
-
-✅ **DO:**
-- Include 2-4 concrete, specific examples
-- Show both explicit and proactive triggering
-- Provide clear context for each example
-- Explain reasoning in commentary
-- Vary user message phrasing
-- Show Claude using Agent tool
-
-❌ **DON'T:**
-- Use generic, vague examples
-- Omit context or commentary
-- Show only one type of triggering
-- Skip the agent invocation step
-- Make examples too similar
-- Forget to explain why agent triggers
-
-## Conclusion
-
-Well-crafted examples are crucial for reliable agent triggering. Invest time in creating diverse, specific examples that clearly demonstrate when and why the agent should be used.
+## Integration with Plugin-Dev
+
+Use this system prompt when creating agents for your plugins:
+
+1. Take user request for agent functionality
+2. Feed to Claude with this system prompt
+3. Get JSON output (identifier, whenToUse, systemPrompt)
+4. Convert to agent markdown file with frontmatter
+5. Validate with agent validation rules
+6. Test triggering conditions
+7. Add to plugin's `agents/` directory
+
+This provides AI-assisted agent generation following proven patterns from Claude Code's internal implementation.

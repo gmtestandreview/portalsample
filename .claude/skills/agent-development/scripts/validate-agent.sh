@@ -1,217 +1,411 @@
-#!/bin/bash
-# Agent File Validator
-# Validates agent markdown files for correct structure and content
+# System Prompt Design Patterns
 
-set -euo pipefail
+Complete guide to writing effective agent system prompts that enable autonomous, high-quality operation.
 
-# Usage
-if [ $# -eq 0 ]; then
-  echo "Usage: $0 <path/to/agent.md>"
-  echo ""
-  echo "Validates agent file for:"
-  echo "  - YAML frontmatter structure"
-  echo "  - Required fields (name, description, model, color)"
-  echo "  - Field formats and constraints"
-  echo "  - System prompt presence and length"
-  echo "  - Example blocks in description"
-  exit 1
-fi
+## Core Structure
 
-AGENT_FILE="$1"
+Every agent system prompt should follow this proven structure:
 
-echo "🔍 Validating agent file: $AGENT_FILE"
-echo ""
+```markdown
+You are [specific role] specializing in [specific domain].
 
-# Check 1: File exists
-if [ ! -f "$AGENT_FILE" ]; then
-  echo "❌ File not found: $AGENT_FILE"
-  exit 1
-fi
-echo "✅ File exists"
+**Your Core Responsibilities:**
+1. [Primary responsibility - the main task]
+2. [Secondary responsibility - supporting task]
+3. [Additional responsibilities as needed]
 
-# Check 2: Starts with ---
-FIRST_LINE=$(head -1 "$AGENT_FILE")
-if [ "$FIRST_LINE" != "---" ]; then
-  echo "❌ File must start with YAML frontmatter (---)"
-  exit 1
-fi
-echo "✅ Starts with frontmatter"
+**[Task Name] Process:**
+1. [First concrete step]
+2. [Second concrete step]
+3. [Continue with clear steps]
+[...]
 
-# Check 3: Has closing ---
-if ! tail -n +2 "$AGENT_FILE" | grep -q '^---$'; then
-  echo "❌ Frontmatter not closed (missing second ---)"
-  exit 1
-fi
-echo "✅ Frontmatter properly closed"
+**Quality Standards:**
+- [Standard 1 with specifics]
+- [Standard 2 with specifics]
+- [Standard 3 with specifics]
 
-# Extract frontmatter and system prompt
-FRONTMATTER=$(sed -n '/^---$/,/^---$/{ /^---$/d; p; }' "$AGENT_FILE")
-SYSTEM_PROMPT=$(awk '/^---$/{i++; next} i>=2' "$AGENT_FILE")
+**Output Format:**
+Provide results structured as:
+- [Component 1]
+- [Component 2]
+- [Include specific formatting requirements]
 
-# Check 4: Required fields
-echo ""
-echo "Checking required fields..."
+**Edge Cases:**
+Handle these situations:
+- [Edge case 1]: [Specific handling approach]
+- [Edge case 2]: [Specific handling approach]
+```
 
-error_count=0
-warning_count=0
+## Pattern 1: Analysis Agents
 
-# Check name field
-NAME=$(echo "$FRONTMATTER" | grep '^name:' | sed 's/name: *//' | sed 's/^"\(.*\)"$/\1/')
+For agents that analyze code, PRs, or documentation:
 
-if [ -z "$NAME" ]; then
-  echo "❌ Missing required field: name"
-  ((error_count++))
-else
-  echo "✅ name: $NAME"
+```markdown
+You are an expert [domain] analyzer specializing in [specific analysis type].
 
-  # Validate name format
-  if ! [[ "$NAME" =~ ^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$ ]]; then
-    echo "❌ name must start/end with alphanumeric and contain only letters, numbers, hyphens"
-    ((error_count++))
-  fi
+**Your Core Responsibilities:**
+1. Thoroughly analyze [what] for [specific issues]
+2. Identify [patterns/problems/opportunities]
+3. Provide actionable recommendations
 
-  # Validate name length
-  name_length=${#NAME}
-  if [ $name_length -lt 3 ]; then
-    echo "❌ name too short (minimum 3 characters)"
-    ((error_count++))
-  elif [ $name_length -gt 50 ]; then
-    echo "❌ name too long (maximum 50 characters)"
-    ((error_count++))
-  fi
+**Analysis Process:**
+1. **Gather Context**: Read [what] using available tools
+2. **Initial Scan**: Identify obvious [issues/patterns]
+3. **Deep Analysis**: Examine [specific aspects]:
+   - [Aspect 1]: Check for [criteria]
+   - [Aspect 2]: Verify [criteria]
+   - [Aspect 3]: Assess [criteria]
+4. **Synthesize Findings**: Group related issues
+5. **Prioritize**: Rank by [severity/impact/urgency]
+6. **Generate Report**: Format according to output template
 
-  # Check for generic names
-  if [[ "$NAME" =~ ^(helper|assistant|agent|tool)$ ]]; then
-    echo "⚠️  name is too generic: $NAME"
-    ((warning_count++))
-  fi
-fi
+**Quality Standards:**
+- Every finding includes file:line reference
+- Issues categorized by severity (critical/major/minor)
+- Recommendations are specific and actionable
+- Positive observations included for balance
 
-# Check description field
-DESCRIPTION=$(echo "$FRONTMATTER" | grep '^description:' | sed 's/description: *//')
+**Output Format:**
+## Summary
+[2-3 sentence overview]
 
-if [ -z "$DESCRIPTION" ]; then
-  echo "❌ Missing required field: description"
-  ((error_count++))
-else
-  desc_length=${#DESCRIPTION}
-  echo "✅ description: ${desc_length} characters"
+## Critical Issues
+- [file:line] - [Issue description] - [Recommendation]
 
-  if [ $desc_length -lt 10 ]; then
-    echo "⚠️  description too short (minimum 10 characters recommended)"
-    ((warning_count++))
-  elif [ $desc_length -gt 5000 ]; then
-    echo "⚠️  description very long (over 5000 characters)"
-    ((warning_count++))
-  fi
+## Major Issues
+[...]
 
-  # Check for example blocks
-  if ! echo "$DESCRIPTION" | grep -q '<example>'; then
-    echo "⚠️  description should include <example> blocks for triggering"
-    ((warning_count++))
-  fi
+## Minor Issues
+[...]
 
-  # Check for "Use this agent when" pattern
-  if ! echo "$DESCRIPTION" | grep -qi 'use this agent when'; then
-    echo "⚠️  description should start with 'Use this agent when...'"
-    ((warning_count++))
-  fi
-fi
+## Recommendations
+[...]
 
-# Check model field
-MODEL=$(echo "$FRONTMATTER" | grep '^model:' | sed 's/model: *//')
+**Edge Cases:**
+- No issues found: Provide positive feedback and validation
+- Too many issues: Group and prioritize top 10
+- Unclear code: Request clarification rather than guessing
+```
 
-if [ -z "$MODEL" ]; then
-  echo "❌ Missing required field: model"
-  ((error_count++))
-else
-  echo "✅ model: $MODEL"
+## Pattern 2: Generation Agents
 
-  case "$MODEL" in
-    inherit|sonnet|opus|haiku)
-      # Valid model
-      ;;
-    *)
-      echo "⚠️  Unknown model: $MODEL (valid: inherit, sonnet, opus, haiku)"
-      ((warning_count++))
-      ;;
-  esac
-fi
+For agents that create code, tests, or documentation:
 
-# Check color field
-COLOR=$(echo "$FRONTMATTER" | grep '^color:' | sed 's/color: *//')
+```markdown
+You are an expert [domain] engineer specializing in creating high-quality [output type].
 
-if [ -z "$COLOR" ]; then
-  echo "❌ Missing required field: color"
-  ((error_count++))
-else
-  echo "✅ color: $COLOR"
+**Your Core Responsibilities:**
+1. Generate [what] that meets [quality standards]
+2. Follow [specific conventions/patterns]
+3. Ensure [correctness/completeness/clarity]
 
-  case "$COLOR" in
-    blue|cyan|green|yellow|magenta|red)
-      # Valid color
-      ;;
-    *)
-      echo "⚠️  Unknown color: $COLOR (valid: blue, cyan, green, yellow, magenta, red)"
-      ((warning_count++))
-      ;;
-  esac
-fi
+**Generation Process:**
+1. **Understand Requirements**: Analyze what needs to be created
+2. **Gather Context**: Read existing [code/docs/tests] for patterns
+3. **Design Structure**: Plan [architecture/organization/flow]
+4. **Generate Content**: Create [output] following:
+   - [Convention 1]
+   - [Convention 2]
+   - [Best practice 1]
+5. **Validate**: Verify [correctness/completeness]
+6. **Document**: Add comments/explanations as needed
 
-# Check tools field (optional)
-TOOLS=$(echo "$FRONTMATTER" | grep '^tools:' | sed 's/tools: *//')
+**Quality Standards:**
+- Follows project conventions (check CLAUDE.md)
+- [Specific quality metric 1]
+- [Specific quality metric 2]
+- Includes error handling
+- Well-documented and clear
 
-if [ -n "$TOOLS" ]; then
-  echo "✅ tools: $TOOLS"
-else
-  echo "💡 tools: not specified (agent has access to all tools)"
-fi
+**Output Format:**
+Create [what] with:
+- [Structure requirement 1]
+- [Structure requirement 2]
+- Clear, descriptive naming
+- Comprehensive coverage
 
-# Check 5: System prompt
-echo ""
-echo "Checking system prompt..."
+**Edge Cases:**
+- Insufficient context: Ask user for clarification
+- Conflicting patterns: Follow most recent/explicit pattern
+- Complex requirements: Break into smaller pieces
+```
 
-if [ -z "$SYSTEM_PROMPT" ]; then
-  echo "❌ System prompt is empty"
-  ((error_count++))
-else
-  prompt_length=${#SYSTEM_PROMPT}
-  echo "✅ System prompt: $prompt_length characters"
+## Pattern 3: Validation Agents
 
-  if [ $prompt_length -lt 20 ]; then
-    echo "❌ System prompt too short (minimum 20 characters)"
-    ((error_count++))
-  elif [ $prompt_length -gt 10000 ]; then
-    echo "⚠️  System prompt very long (over 10,000 characters)"
-    ((warning_count++))
-  fi
+For agents that validate, check, or verify:
 
-  # Check for second person
-  if ! echo "$SYSTEM_PROMPT" | grep -q "You are\|You will\|Your"; then
-    echo "⚠️  System prompt should use second person (You are..., You will...)"
-    ((warning_count++))
-  fi
+```markdown
+You are an expert [domain] validator specializing in ensuring [quality aspect].
 
-  # Check for structure
-  if ! echo "$SYSTEM_PROMPT" | grep -qi "responsibilities\|process\|steps"; then
-    echo "💡 Consider adding clear responsibilities or process steps"
-  fi
+**Your Core Responsibilities:**
+1. Validate [what] against [criteria]
+2. Identify violations and issues
+3. Provide clear pass/fail determination
 
-  if ! echo "$SYSTEM_PROMPT" | grep -qi "output"; then
-    echo "💡 Consider defining output format expectations"
-  fi
-fi
+**Validation Process:**
+1. **Load Criteria**: Understand validation requirements
+2. **Scan Target**: Read [what] needs validation
+3. **Check Rules**: For each rule:
+   - [Rule 1]: [Validation method]
+   - [Rule 2]: [Validation method]
+4. **Collect Violations**: Document each failure with details
+5. **Assess Severity**: Categorize issues
+6. **Determine Result**: Pass only if [criteria met]
 
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+**Quality Standards:**
+- All violations include specific locations
+- Severity clearly indicated
+- Fix suggestions provided
+- No false positives
 
-if [ $error_count -eq 0 ] && [ $warning_count -eq 0 ]; then
-  echo "✅ All checks passed!"
-  exit 0
-elif [ $error_count -eq 0 ]; then
-  echo "⚠️  Validation passed with $warning_count warning(s)"
-  exit 0
-else
-  echo "❌ Validation failed with $error_count error(s) and $warning_count warning(s)"
-  exit 1
-fi
+**Output Format:**
+## Validation Result: [PASS/FAIL]
+
+## Summary
+[Overall assessment]
+
+## Violations Found: [count]
+### Critical ([count])
+- [Location]: [Issue] - [Fix]
+
+### Warnings ([count])
+- [Location]: [Issue] - [Fix]
+
+## Recommendations
+[How to fix violations]
+
+**Edge Cases:**
+- No violations: Confirm validation passed
+- Too many violations: Group by type, show top 20
+- Ambiguous rules: Document uncertainty, request clarification
+```
+
+## Pattern 4: Orchestration Agents
+
+For agents that coordinate multiple tools or steps:
+
+```markdown
+You are an expert [domain] orchestrator specializing in coordinating [complex workflow].
+
+**Your Core Responsibilities:**
+1. Coordinate [multi-step process]
+2. Manage [resources/tools/dependencies]
+3. Ensure [successful completion/integration]
+
+**Orchestration Process:**
+1. **Plan**: Understand full workflow and dependencies
+2. **Prepare**: Set up prerequisites
+3. **Execute Phases**:
+   - Phase 1: [What] using [tools]
+   - Phase 2: [What] using [tools]
+   - Phase 3: [What] using [tools]
+4. **Monitor**: Track progress and handle failures
+5. **Verify**: Confirm successful completion
+6. **Report**: Provide comprehensive summary
+
+**Quality Standards:**
+- Each phase completes successfully
+- Errors handled gracefully
+- Progress reported to user
+- Final state verified
+
+**Output Format:**
+## Workflow Execution Report
+
+### Completed Phases
+- [Phase]: [Result]
+
+### Results
+- [Output 1]
+- [Output 2]
+
+### Next Steps
+[If applicable]
+
+**Edge Cases:**
+- Phase failure: Attempt retry, then report and stop
+- Missing dependencies: Request from user
+- Timeout: Report partial completion
+```
+
+## Writing Style Guidelines
+
+### Tone and Voice
+
+**Use second person (addressing the agent):**
+```
+✅ You are responsible for...
+✅ You will analyze...
+✅ Your process should...
+
+❌ The agent is responsible for...
+❌ This agent will analyze...
+❌ I will analyze...
+```
+
+### Clarity and Specificity
+
+**Be specific, not vague:**
+```
+✅ Check for SQL injection by examining all database queries for parameterization
+❌ Look for security issues
+
+✅ Provide file:line references for each finding
+❌ Show where issues are
+
+✅ Categorize as critical (security), major (bugs), or minor (style)
+❌ Rate the severity of issues
+```
+
+### Actionable Instructions
+
+**Give concrete steps:**
+```
+✅ Read the file using the Read tool, then search for patterns using Grep
+❌ Analyze the code
+
+✅ Generate test file at test/path/to/file.test.ts
+❌ Create tests
+```
+
+## Common Pitfalls
+
+### ❌ Vague Responsibilities
+
+```markdown
+**Your Core Responsibilities:**
+1. Help the user with their code
+2. Provide assistance
+3. Be helpful
+```
+
+**Why bad:** Not specific enough to guide behavior.
+
+### ✅ Specific Responsibilities
+
+```markdown
+**Your Core Responsibilities:**
+1. Analyze TypeScript code for type safety issues
+2. Identify missing type annotations and improper 'any' usage
+3. Recommend specific type improvements with examples
+```
+
+### ❌ Missing Process Steps
+
+```markdown
+Analyze the code and provide feedback.
+```
+
+**Why bad:** Agent doesn't know HOW to analyze.
+
+### ✅ Clear Process
+
+```markdown
+**Analysis Process:**
+1. Read code files using Read tool
+2. Scan for type annotations on all functions
+3. Check for 'any' type usage
+4. Verify generic type parameters
+5. List findings with file:line references
+```
+
+### ❌ Undefined Output
+
+```markdown
+Provide a report.
+```
+
+**Why bad:** Agent doesn't know what format to use.
+
+### ✅ Defined Output Format
+
+```markdown
+**Output Format:**
+## Type Safety Report
+
+### Summary
+[Overview of findings]
+
+### Issues Found
+- `file.ts:42` - Missing return type on `processData`
+- `utils.ts:15` - Unsafe 'any' usage in parameter
+
+### Recommendations
+[Specific fixes with examples]
+```
+
+## Length Guidelines
+
+### Minimum Viable Agent
+
+**~500 words minimum:**
+- Role description
+- 3 core responsibilities
+- 5-step process
+- Output format
+
+### Standard Agent
+
+**~1,000-2,000 words:**
+- Detailed role and expertise
+- 5-8 responsibilities
+- 8-12 process steps
+- Quality standards
+- Output format
+- 3-5 edge cases
+
+### Comprehensive Agent
+
+**~2,000-5,000 words:**
+- Complete role with background
+- Comprehensive responsibilities
+- Detailed multi-phase process
+- Extensive quality standards
+- Multiple output formats
+- Many edge cases
+- Examples within system prompt
+
+**Avoid > 10,000 words:** Too long, diminishing returns.
+
+## Testing System Prompts
+
+### Test Completeness
+
+Can the agent handle these based on system prompt alone?
+
+- [ ] Typical task execution
+- [ ] Edge cases mentioned
+- [ ] Error scenarios
+- [ ] Unclear requirements
+- [ ] Large/complex inputs
+- [ ] Empty/missing inputs
+
+### Test Clarity
+
+Read the system prompt and ask:
+
+- Can another developer understand what this agent does?
+- Are process steps clear and actionable?
+- Is output format unambiguous?
+- Are quality standards measurable?
+
+### Iterate Based on Results
+
+After testing agent:
+1. Identify where it struggled
+2. Add missing guidance to system prompt
+3. Clarify ambiguous instructions
+4. Add process steps for edge cases
+5. Re-test
+
+## Conclusion
+
+Effective system prompts are:
+- **Specific**: Clear about what and how
+- **Structured**: Organized with clear sections
+- **Complete**: Covers normal and edge cases
+- **Actionable**: Provides concrete steps
+- **Testable**: Defines measurable standards
+
+Use the patterns above as templates, customize for your domain, and iterate based on agent performance.

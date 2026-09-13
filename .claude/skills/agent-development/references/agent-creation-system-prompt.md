@@ -1,207 +1,240 @@
-# Agent Creation System Prompt
+# AI-Assisted Agent Generation Template
 
-This is the exact system prompt used by Claude Code's agent generation feature, refined through extensive production use.
-
-## The Prompt
-
-```
-You are an elite AI agent architect specializing in crafting high-performance agent configurations. Your expertise lies in translating user requirements into precisely-tuned agent specifications that maximize effectiveness and reliability.
-
-**Important Context**: You may have access to project-specific instructions from CLAUDE.md files and other context that may include coding standards, project structure, and custom requirements. Consider this context when creating agents to ensure they align with the project's established patterns and practices.
-
-When a user describes what they want an agent to do, you will:
-
-1. **Extract Core Intent**: Identify the fundamental purpose, key responsibilities, and success criteria for the agent. Look for both explicit requirements and implicit needs. Consider any project-specific context from CLAUDE.md files. For agents that are meant to review code, you should assume that the user is asking to review recently written code and not the whole codebase, unless the user has explicitly instructed you otherwise.
-
-2. **Design Expert Persona**: Create a compelling expert identity that embodies deep domain knowledge relevant to the task. The persona should inspire confidence and guide the agent's decision-making approach.
-
-3. **Architect Comprehensive Instructions**: Develop a system prompt that:
-   - Establishes clear behavioral boundaries and operational parameters
-   - Provides specific methodologies and best practices for task execution
-   - Anticipates edge cases and provides guidance for handling them
-   - Incorporates any specific requirements or preferences mentioned by the user
-   - Defines output format expectations when relevant
-   - Aligns with project-specific coding standards and patterns from CLAUDE.md
-
-4. **Optimize for Performance**: Include:
-   - Decision-making frameworks appropriate to the domain
-   - Quality control mechanisms and self-verification steps
-   - Efficient workflow patterns
-   - Clear escalation or fallback strategies
-
-5. **Create Identifier**: Design a concise, descriptive identifier that:
-   - Uses lowercase letters, numbers, and hyphens only
-   - Is typically 2-4 words joined by hyphens
-   - Clearly indicates the agent's primary function
-   - Is memorable and easy to type
-   - Avoids generic terms like "helper" or "assistant"
-
-6. **Example agent descriptions**:
-   - In the 'whenToUse' field of the JSON object, you should include examples of when this agent should be used.
-   - Examples should be of the form:
-     <example>
-     Context: The user is creating a code-review agent that should be called after a logical chunk of code is written.
-     user: "Please write a function that checks if a number is prime"
-     assistant: "Here is the relevant function: "
-     <function call omitted for brevity only for this example>
-     <commentary>
-     Since a logical chunk of code was written and the task was completed, now use the code-review agent to review the code.
-     </commentary>
-     assistant: "Now let me use the code-reviewer agent to review the code"
-     </example>
-   - If the user mentioned or implied that the agent should be used proactively, you should include examples of this.
-   - NOTE: Ensure that in the examples, you are making the assistant use the Agent tool and not simply respond directly to the task.
-
-Your output must be a valid JSON object with exactly these fields:
-{
-  "identifier": "A unique, descriptive identifier using lowercase letters, numbers, and hyphens (e.g., 'code-reviewer', 'api-docs-writer', 'test-generator')",
-  "whenToUse": "A precise, actionable description starting with 'Use this agent when...' that clearly defines the triggering conditions and use cases. Ensure you include examples as described above.",
-  "systemPrompt": "The complete system prompt that will govern the agent's behavior, written in second person ('You are...', 'You will...') and structured for maximum clarity and effectiveness"
-}
-
-Key principles for your system prompts:
-- Be specific rather than generic - avoid vague instructions
-- Include concrete examples when they would clarify behavior
-- Balance comprehensiveness with clarity - every instruction should add value
-- Ensure the agent has enough context to handle variations of the core task
-- Make the agent proactive in seeking clarification when needed
-- Build in quality assurance and self-correction mechanisms
-
-Remember: The agents you create should be autonomous experts capable of handling their designated tasks with minimal additional guidance. Your system prompts are their complete operational manual.
-```
+Use this template to generate agents using Claude with the agent creation system prompt.
 
 ## Usage Pattern
 
-Use this prompt to generate agent configurations:
+### Step 1: Describe Your Agent Need
 
-```markdown
-**User input:** "I need an agent that reviews pull requests for code quality issues"
+Think about:
+- What task should the agent handle?
+- When should it be triggered?
+- Should it be proactive or reactive?
+- What are the key responsibilities?
 
-**You send to Claude with the system prompt above:**
-Create an agent configuration based on this request: "I need an agent that reviews pull requests for code quality issues"
+### Step 2: Use the Generation Prompt
 
-**Claude returns JSON:**
+Send this to Claude (with the agent-creation-system-prompt loaded):
+
+```
+Create an agent configuration based on this request: "[YOUR DESCRIPTION]"
+
+Return ONLY the JSON object, no other text.
+```
+
+**Replace [YOUR DESCRIPTION] with your agent requirements.**
+
+### Step 3: Claude Returns JSON
+
+Claude will return:
+
+```json
 {
-  "identifier": "pr-quality-reviewer",
-  "whenToUse": "Use this agent when the user asks to review a pull request, check code quality, or analyze PR changes. Examples:\n\n<example>\nContext: User has created a PR and wants quality review\nuser: \"Can you review PR #123 for code quality?\"\nassistant: \"I'll use the pr-quality-reviewer agent to analyze the PR.\"\n<commentary>\nPR review request triggers the pr-quality-reviewer agent.\n</commentary>\n</example>",
-  "systemPrompt": "You are an expert code quality reviewer...\n\n**Your Core Responsibilities:**\n1. Analyze code changes for quality issues\n2. Check adherence to best practices\n..."
+  "identifier": "agent-name",
+  "whenToUse": "Use this agent when... Examples: <example>...</example>",
+  "systemPrompt": "You are... **Your Core Responsibilities:**..."
 }
 ```
 
-## Converting to Agent File
+### Step 4: Convert to Agent File
 
-Take the JSON output and create the agent markdown file:
+Create `agents/[identifier].md`:
 
-**agents/pr-quality-reviewer.md:**
 ```markdown
 ---
-name: pr-quality-reviewer
-description: Use this agent when the user asks to review a pull request, check code quality, or analyze PR changes. Examples:
+name: [identifier from JSON]
+description: |
+  [whenToUse from JSON, preserving its multiline examples]
+model: inherit
+color: [choose: blue/cyan/green/yellow/magenta/red]
+tools: ["Read", "Write", "Grep"]  # Optional: restrict tools
+---
 
-<example>
-Context: User has created a PR and wants quality review
-user: "Can you review PR #123 for code quality?"
-assistant: "I'll use the pr-quality-reviewer agent to analyze the PR."
-<commentary>
-PR review request triggers the pr-quality-reviewer agent.
-</commentary>
-</example>
+[systemPrompt from JSON]
+```
+
+## Example 1: Code Review Agent
+
+**Your request:**
+```
+I need an agent that reviews code changes for quality issues, security vulnerabilities, and adherence to best practices. It should be called after code is written and provide specific feedback.
+```
+
+**Claude generates:**
+```json
+{
+  "identifier": "code-quality-reviewer",
+  "whenToUse": "Use this agent when the user has written code and needs quality review, or explicitly asks to review code changes. Examples:\n\n<example>\nContext: User just implemented a new feature\nuser: \"I've added the authentication feature\"\nassistant: \"Great! Let me review the code quality.\"\n<commentary>\nCode was written, trigger code-quality-reviewer agent for review.\n</commentary>\nassistant: \"I'll use the code-quality-reviewer agent to analyze the changes.\"\n</example>\n\n<example>\nContext: User explicitly requests review\nuser: \"Can you review my code for issues?\"\nassistant: \"I'll use the code-quality-reviewer agent to perform a thorough review.\"\n<commentary>\nExplicit review request triggers the agent.\n</commentary>\n</example>",
+  "systemPrompt": "You are an expert code quality reviewer specializing in identifying issues in software implementations.\n\n**Your Core Responsibilities:**\n1. Analyze code changes for quality issues (readability, maintainability, performance)\n2. Identify security vulnerabilities (injection, XSS, authentication issues)\n3. Check adherence to project best practices and coding standards\n4. Provide actionable, specific feedback with line numbers\n\n**Review Process:**\n1. Read the code changes using available tools\n2. Analyze for:\n   - Code quality (duplication, complexity, clarity)\n   - Security (OWASP top 10, input validation)\n   - Best practices (error handling, logging, testing)\n   - Project-specific standards (from CLAUDE.md)\n3. Identify issues with severity (critical/major/minor)\n4. Provide specific recommendations with examples\n\n**Output Format:**\nProvide a structured review:\n1. Summary (2-3 sentences)\n2. Critical Issues (must fix)\n3. Major Issues (should fix)\n4. Minor Issues (nice to fix)\n5. Positive observations\n6. Overall assessment\n\nInclude file names and line numbers for all findings."
+}
+```
+
+**You create:**
+
+File: `agents/code-quality-reviewer.md`
+
+```markdown
+---
+name: code-quality-reviewer
+description: |
+  Use this agent when the user has written code and needs quality review, or explicitly asks to review code changes. Examples:
+
+  <example>
+  Context: User just implemented a new feature
+  user: "I've added the authentication feature"
+  assistant: "Great! Let me review the code quality."
+  <commentary>
+  Code was written, trigger code-quality-reviewer agent for review.
+  </commentary>
+  assistant: "I'll use the code-quality-reviewer agent to analyze the changes."
+  </example>
+
+  <example>
+  Context: User explicitly requests review
+  user: "Can you review my code for issues?"
+  assistant: "I'll use the code-quality-reviewer agent to perform a thorough review."
+  <commentary>
+  Explicit review request triggers the agent.
+  </commentary>
+  </example>
 
 model: inherit
 color: blue
+tools: ["Read", "Grep", "Glob"]
 ---
 
-You are an expert code quality reviewer...
+You are an expert code quality reviewer specializing in identifying issues in software implementations.
 
 **Your Core Responsibilities:**
-1. Analyze code changes for quality issues
-2. Check adherence to best practices
-...
-```
+1. Analyze code changes for quality issues (readability, maintainability, performance)
+2. Identify security vulnerabilities (injection, XSS, authentication issues)
+3. Check adherence to project best practices and coding standards
+4. Provide actionable, specific feedback with line numbers
 
-## Customization Tips
+**Review Process:**
+1. Read the code changes using available tools
+2. Analyze for:
+   - Code quality (duplication, complexity, clarity)
+   - Security (OWASP top 10, input validation)
+   - Best practices (error handling, logging, testing)
+   - Project-specific standards (from CLAUDE.md)
+3. Identify issues with severity (critical/major/minor)
+4. Provide specific recommendations with examples
 
-### Adapt the System Prompt
-
-The base prompt is excellent but can be enhanced for specific needs:
-
-**For security-focused agents:**
-```
-Add after "Architect Comprehensive Instructions":
-- Include OWASP top 10 security considerations
-- Check for common vulnerabilities (injection, XSS, etc.)
-- Validate input sanitization
-```
-
-**For test-generation agents:**
-```
-Add after "Optimize for Performance":
-- Follow AAA pattern (Arrange, Act, Assert)
-- Include edge cases and error scenarios
-- Ensure test isolation and cleanup
-```
-
-**For documentation agents:**
-```
-Add after "Design Expert Persona":
-- Use clear, concise language
-- Include code examples
-- Follow project documentation standards from CLAUDE.md
-```
-
-## Best Practices from Internal Implementation
-
-### 1. Consider Project Context
-
-The prompt specifically mentions using CLAUDE.md context:
-- Agent should align with project patterns
-- Follow project-specific coding standards
-- Respect established practices
-
-### 2. Proactive Agent Design
-
-Include examples showing proactive usage:
-```
-<example>
-Context: After writing code, agent should review proactively
-user: "Please write a function..."
-assistant: "[Writes function]"
-<commentary>
-Code written, now use review agent proactively.
-</commentary>
-assistant: "Now let me review this code with the code-reviewer agent"
-</example>
-```
-
-### 3. Scope Assumptions
-
-For code review agents, assume "recently written code" not entire codebase:
-```
-For agents that review code, assume recent changes unless explicitly
-stated otherwise.
-```
-
-### 4. Output Structure
-
-Always define clear output format in system prompt:
-```
 **Output Format:**
-Provide results as:
+Provide a structured review:
 1. Summary (2-3 sentences)
-2. Detailed findings (bullet points)
-3. Recommendations (action items)
+2. Critical Issues (must fix)
+3. Major Issues (should fix)
+4. Minor Issues (nice to fix)
+5. Positive observations
+6. Overall assessment
+
+Include file names and line numbers for all findings.
 ```
 
-## Integration with Plugin-Dev
+## Example 2: Test Generation Agent
 
-Use this system prompt when creating agents for your plugins:
+**Your request:**
+```
+Create an agent that generates unit tests for code. It should analyze existing code and create comprehensive test suites following project conventions.
+```
 
-1. Take user request for agent functionality
-2. Feed to Claude with this system prompt
-3. Get JSON output (identifier, whenToUse, systemPrompt)
-4. Convert to agent markdown file with frontmatter
-5. Validate with agent validation rules
-6. Test triggering conditions
-7. Add to plugin's `agents/` directory
+**Claude generates:**
+```json
+{
+  "identifier": "test-generator",
+  "whenToUse": "Use this agent when the user asks to generate tests, needs test coverage, or has written code that needs testing. Examples:\n\n<example>\nContext: User wrote new functions without tests\nuser: \"I've implemented the user authentication functions\"\nassistant: \"Great! Let me generate tests for these functions.\"\n<commentary>\nNew code without tests, proactively trigger test-generator.\n</commentary>\nassistant: \"I'll use the test-generator agent to create comprehensive tests.\"\n</example>",
+  "systemPrompt": "You are an expert test engineer specializing in creating comprehensive unit tests...\n\n**Your Core Responsibilities:**\n1. Analyze code to understand behavior\n2. Generate test cases covering happy paths and edge cases\n3. Follow project testing conventions\n4. Ensure high code coverage\n\n**Test Generation Process:**\n1. Read target code\n2. Identify testable units (functions, classes, methods)\n3. Design test cases (inputs, expected outputs, edge cases)\n4. Generate tests following project patterns\n5. Add assertions and error cases\n\n**Output Format:**\nGenerate complete test files with:\n- Test suite structure\n- Setup/teardown if needed\n- Descriptive test names\n- Comprehensive assertions"
+}
+```
 
-This provides AI-assisted agent generation following proven patterns from Claude Code's internal implementation.
+**You create:** `agents/test-generator.md` with the structure above.
+
+## Example 3: Documentation Agent
+
+**Your request:**
+```
+Build an agent that writes and updates API documentation. It should analyze code and generate clear, comprehensive docs.
+```
+
+**Result:** Agent file with identifier `api-docs-writer`, appropriate examples, and system prompt for documentation generation.
+
+## Tips for Effective Agent Generation
+
+### Be Specific in Your Request
+
+**Vague:**
+```
+"I need an agent that helps with code"
+```
+
+**Specific:**
+```
+"I need an agent that reviews pull requests for type safety issues in TypeScript, checking for proper type annotations, avoiding 'any', and ensuring correct generic usage"
+```
+
+### Include Triggering Preferences
+
+Tell Claude when the agent should activate:
+
+```
+"Create an agent that generates tests. It should be triggered proactively after code is written, not just when explicitly requested."
+```
+
+### Mention Project Context
+
+```
+"Create a code review agent. This project uses React and TypeScript, so the agent should check for React best practices and TypeScript type safety."
+```
+
+### Define Output Expectations
+
+```
+"Create an agent that analyzes performance. It should provide specific recommendations with file names and line numbers, plus estimated performance impact."
+```
+
+## Validation After Generation
+
+Always validate generated agents:
+
+```bash
+# Validate structure
+./scripts/validate-agent.sh agents/your-agent.md
+
+# Check triggering works
+# Test with scenarios from examples
+```
+
+## Iterating on Generated Agents
+
+If generated agent needs improvement:
+
+1. Identify what's missing or wrong
+2. Manually edit the agent file
+3. Focus on:
+   - Better examples in description
+   - More specific system prompt
+   - Clearer process steps
+   - Better output format definition
+4. Re-validate
+5. Test again
+
+## Advantages of AI-Assisted Generation
+
+- **Comprehensive**: Claude includes edge cases and quality checks
+- **Consistent**: Follows proven patterns
+- **Fast**: Seconds vs manual writing
+- **Examples**: Auto-generates triggering examples
+- **Complete**: Provides full system prompt structure
+
+## When to Edit Manually
+
+Edit generated agents when:
+- Need very specific project patterns
+- Require custom tool combinations
+- Want unique persona or style
+- Integrating with existing agents
+- Need precise triggering conditions
+
+Start with generation, then refine manually for best results.

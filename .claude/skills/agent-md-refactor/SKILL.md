@@ -1,287 +1,149 @@
 ---
 name: agent-md-refactor
-description: Refactor bloated AGENTS.md, CLAUDE.md, or similar agent instruction files to follow progressive disclosure principles. Splits monolithic files into organized, linked documentation.
+description: Use when refactoring oversized, mixed-purpose, duplicated, contradictory, or hard-to-navigate AGENTS.md, CLAUDE.md, COPILOT.md, or similar agent instruction files into a smaller root plus focused supporting files while preserving scope, precedence, safety rules, and instruction discoverability.
 license: MIT
 ---
 
 # Agent MD Refactor
 
-Refactor bloated agent instruction files (AGENTS.md, CLAUDE.md, COPILOT.md, etc.) to follow **progressive disclosure principles** - keeping essentials at root and organizing the rest into linked, categorized files.
+Refactor agent instruction files with progressive disclosure without changing their intended behavior by accident.
 
----
+## Use this workflow
 
-## Triggers
+Use it for monolithic, duplicated, contradictory, or hard-to-navigate agent instructions. Do not use it merely to rewrite prose when no structural refactor is needed.
 
-Use this skill when:
-- "refactor my AGENTS.md" / "refactor my CLAUDE.md"
-- "split my agent instructions"
-- "organize my CLAUDE.md file"
-- "my AGENTS.md is too long"
-- "progressive disclosure for my instructions"
-- "clean up my agent config"
-
----
+### 1. Inventory before editing
 
-## Quick Reference
-
-| Phase | Action | Output |
-|-------|--------|--------|
-| 1. Analyze | Find contradictions | List of conflicts to resolve |
-| 2. Extract | Identify essentials | Core instructions for root file |
-| 3. Categorize | Group remaining instructions | Logical categories |
-| 4. Structure | Create file hierarchy | Root + linked files |
-| 5. Prune | Flag for deletion | Redundant/vague instructions |
+Read the target file and every instruction file, reference, or local policy that can affect the same scope.
 
----
+Record:
 
-## Process
+- the target client or agent environment, if known;
+- root and nested instruction files;
+- precedence or directory-scoping rules supported by the available evidence;
+- existing links and load/discovery mechanisms;
+- project-specific commands, overrides, safety rules, and domain conventions;
+- unique guidance that must not be lost.
 
-### Phase 1: Find Contradictions
+Do not assume that a linked file is automatically loaded or enforced. If the target client's discovery or scoping behavior is unknown and materially affects the refactor, mark it `Needs Human Review` and avoid replacing the original file until verified.
 
-Identify any instructions that conflict with each other.
+If a known instruction source that can affect the target scope is unavailable, do not claim preservation or replace the active instructions. Stage the candidate, identify the missing source, and mark the affected preservation check `Needs Human Review`.
 
-**Look for:**
-- Contradictory style guidelines (e.g., "use semicolons" vs "no semicolons")
-- Conflicting workflow instructions
-- Incompatible tool preferences
-- Mutually exclusive patterns
+### 2. Preserve a rollback point
 
-**For each contradiction found:**
-```markdown
-## Contradiction Found
+Before implementation, preserve the original files or require an equivalent reversible checkpoint.
 
-**Instruction A:** [quote]
-**Instruction B:** [quote]
+Planning and audit-only requests are read-only. Implement changes only when the user has asked for the refactor or otherwise authorized editing.
 
-**Question:** Which should take precedence, or should both be conditional?
-```
+For high-impact changes to safety, permissions, deployment, data handling, or repository-wide behavior, keep an explicit rollback path and validate before replacing the active instructions.
 
-Ask the user to resolve before proceeding.
+### 3. Resolve contradictions
 
----
+Distinguish true conflicts from instructions that apply under different conditions.
 
-### Phase 2: Identify the Essentials
+Use this precedence when the supplied material does not define a stronger local rule:
 
-Extract ONLY what belongs in the root agent file. The root should be minimal - information that applies to **every single task**.
+1. safety, security, privacy, permissions, and compliance;
+2. explicit client, repository, or project requirements;
+3. instructions required for correct task execution;
+4. narrower domain-specific guidance over generic guidance;
+5. maintainability and style.
 
-**Essential content (keep in root):**
-| Category | Example |
-|----------|---------|
-| Project description | One sentence: "A React dashboard for analytics" |
-| Package manager | Only if not npm (e.g., "Uses pnpm") |
-| Non-standard commands | Custom build/test/typecheck commands |
-| Critical overrides | Things that MUST override defaults |
-| Universal rules | Applies to 100% of tasks |
+If a material contradiction cannot be resolved from the available evidence, do not silently choose a winner. Preserve the affected rules, describe the conflict, and mark it `Needs Human Review`. Continue with unaffected parts when safe.
 
-**NOT essential (move to linked files):**
-- Language-specific conventions
-- Testing guidelines
-- Code style details
-- Framework patterns
-- Documentation standards
-- Git workflow details
+### 4. Decide what stays in the root
 
----
+Keep root content that agents need broadly or need in order to discover the correct supporting guidance:
 
-### Phase 3: Group the Rest
+- a concise project or repository description when it changes execution;
+- critical precedence, safety, permission, or environment overrides;
+- non-standard package manager or commands that are broadly useful;
+- universal workflow constraints;
+- direct links or routing cues to conditional instructions when the target client actually uses them.
 
-Organize remaining instructions into logical categories.
+Move conditional material out of the root when its load condition is clear, including language-specific conventions, testing detail, framework patterns, documentation rules, and specialized architecture guidance.
 
-**Common categories:**
-| Category | Contents |
-|----------|----------|
-| `typescript.md` | TS conventions, type patterns, strict mode rules |
-| `testing.md` | Test frameworks, coverage, mocking patterns |
-| `code-style.md` | Formatting, naming, comments, structure |
-| `git-workflow.md` | Commits, branches, PRs, reviews |
-| `architecture.md` | Patterns, folder structure, dependencies |
-| `api-design.md` | REST/GraphQL conventions, error handling |
-| `security.md` | Auth patterns, input validation, secrets |
-| `performance.md` | Optimization rules, caching, lazy loading |
+Treat root length as a heuristic, not a validity rule. Aim for a compact root—often around 50 lines when practical—but preserve necessary universal guidance even when that requires more.
 
-**Grouping rules:**
-1. Each file should be self-contained for its topic
-2. Aim for 3-8 files (not too granular, not too broad)
-3. Name files clearly: `{topic}.md`
-4. Include only actionable instructions
+### 5. Group conditional guidance
 
----
+Group moved instructions by coherent topic and load condition. Reuse the repository's existing convention when possible instead of inventing a new directory.
 
-### Phase 4: Create the File Structure
-
-**Output structure:**
-```
-project-root/
-├── CLAUDE.md (or AGENTS.md)     # Minimal root with links
-└── .claude/                      # Or docs/agent-instructions/
-    ├── typescript.md
-    ├── testing.md
-    ├── code-style.md
-    ├── git-workflow.md
-    └── architecture.md
-```
-
-**Root file template:**
-```markdown
-# Project Name
-
-One-sentence description of the project.
-
-## Quick Reference
-
-- **Package Manager:** pnpm
-- **Build:** `pnpm build`
-- **Test:** `pnpm test`
-- **Typecheck:** `pnpm typecheck`
-
-## Detailed Instructions
-
-For specific guidelines, see:
-- [TypeScript Conventions](.claude/typescript.md)
-- [Testing Guidelines](.claude/testing.md)
-- [Code Style](.claude/code-style.md)
-- [Git Workflow](.claude/git-workflow.md)
-- [Architecture Patterns](.claude/architecture.md)
-```
-
-**Each linked file template:**
-```markdown
-# {Topic} Guidelines
-
-## Overview
-Brief context for when these guidelines apply.
-
-## Rules
-
-### Rule Category 1
-- Specific, actionable instruction
-- Another specific instruction
-
-### Rule Category 2
-- Specific, actionable instruction
-
-## Examples
-
-### Good
-\`\`\`typescript
-// Example of correct pattern
-\`\`\`
-
-### Avoid
-\`\`\`typescript
-// Example of what not to do
-\`\`\`
-```
-
----
-
-### Phase 5: Flag for Deletion
-
-Identify instructions that should be removed entirely.
+Prefer a small number of focused files over either a single monolith or excessive fragmentation. `3-8` files can be a useful starting heuristic, not a requirement.
 
-**Delete if:**
-| Criterion | Example | Why Delete |
-|-----------|---------|------------|
-| Redundant | "Use TypeScript" (in a .ts project) | Agent already knows |
-| Too vague | "Write clean code" | Not actionable |
-| Overly obvious | "Don't introduce bugs" | Wastes context |
-| Default behavior | "Use descriptive variable names" | Standard practice |
-| Outdated | References deprecated APIs | No longer applies |
-
-**Output format:**
-```markdown
-## Flagged for Deletion
-
-| Instruction | Reason |
-|-------------|--------|
-| "Write clean, maintainable code" | Too vague to be actionable |
-| "Use TypeScript" | Redundant - project is already TS |
-| "Don't commit secrets" | Agent already knows this |
-| "Follow best practices" | Meaningless without specifics |
-```
-
----
-
-## Execution Checklist
-
-```
-[ ] Phase 1: All contradictions identified and resolved
-[ ] Phase 2: Root file contains ONLY essentials
-[ ] Phase 3: All remaining instructions categorized
-[ ] Phase 4: File structure created with proper links
-[ ] Phase 5: Redundant/vague instructions removed
-[ ] Verify: Each linked file is self-contained
-[ ] Verify: Root file is under 50 lines
-[ ] Verify: All links work correctly
-```
-
----
-
-## Anti-Patterns
-
-| Avoid | Why | Instead |
-|-------|-----|---------|
-| Keeping everything in root | Bloated, hard to maintain | Split into linked files |
-| Too many categories | Fragmentation | Consolidate related topics |
-| Vague instructions | Wastes tokens, no value | Be specific or delete |
-| Duplicating defaults | Agent already knows | Only override when needed |
-| Deep nesting | Hard to navigate | Flat structure with links |
-
----
-
-## Examples
-
-### Before (Bloated Root)
-```markdown
-# CLAUDE.md
-
-This is a React project.
-
-## Code Style
-- Use 2 spaces
-- Use semicolons
-- Prefer const over let
-- Use arrow functions
-... (200 more lines)
-
-## Testing
-- Use Jest
-- Coverage > 80%
-... (100 more lines)
-
-## TypeScript
-- Enable strict mode
-... (150 more lines)
-```
-
-### After (Progressive Disclosure)
-```markdown
-# CLAUDE.md
-
-React dashboard for real-time analytics visualization.
-
-## Commands
-- `pnpm dev` - Start development server
-- `pnpm test` - Run tests with coverage
-- `pnpm build` - Production build
-
-## Guidelines
-- [Code Style](.claude/code-style.md)
-- [Testing](.claude/testing.md)
-- [TypeScript](.claude/typescript.md)
-```
-
----
-
-## Verification
-
-After refactoring, verify:
-
-1. **Root file is minimal** - Under 50 lines, only universal info
-2. **Links work** - All referenced files exist
-3. **No contradictions** - Instructions are consistent
-4. **Actionable content** - Every instruction is specific
-5. **Complete coverage** - No instructions were lost (unless flagged for deletion)
-6. **Self-contained files** - Each linked file stands alone
-
----
+For each supporting file:
+
+- keep one clear topic or scope;
+- state when it applies if the load condition is not obvious;
+- preserve domain-specific terminology and exceptions;
+- avoid duplicating rules already owned elsewhere;
+- use relative links that can be verified.
+
+Do not flatten nested instruction files or convert scoped instructions into ordinary documentation unless the target environment treats the new structure equivalently.
+
+### 6. Prune carefully
+
+Remove or rewrite content only when its execution value is demonstrably absent, duplicated, obsolete, or too vague to guide behavior.
+
+Good removal candidates include:
+
+- exact duplicates with the same scope and precedence;
+- vague statements such as "write clean code" when no concrete constraint follows;
+- outdated instructions whose replacement is established by supplied evidence;
+- generic explanation that does not change agent behavior.
+
+Never delete a safety, security, privacy, permission, compliance, or project-specific rule merely because it appears obvious or because a base model may already know the general principle.
+
+When deletion would change behavior or evidence is incomplete, flag the item instead of removing it.
+
+### 7. Build the candidate structure
+
+Create the minimal root plus supporting files only after the preservation and contradiction review.
+
+Maintain:
+
+- original scope and precedence unless an intentional change is authorized;
+- all unique operational guidance;
+- working relative links;
+- meaningful headings and stable terminology;
+- discoverability of every relocated instruction.
+
+If client behavior is unverified, produce the candidate in a reversible or staged location rather than replacing the active files.
+
+### 8. Validate against the baseline
+
+Compare the candidate with the preserved baseline.
+
+Verify statically:
+
+- every original instruction is preserved, intentionally adapted, or explicitly listed for removal;
+- no unresolved contradiction was silently resolved;
+- moved rules remain discoverable in their intended scope;
+- all links and referenced files exist;
+- root content is concise without dropping required universal guidance;
+- supporting files are coherent and not needlessly duplicated;
+- safety, permission, and compliance controls are unchanged or intentionally strengthened.
+
+Where possible, run representative tasks in the target client to confirm the new structure is actually discovered and followed. If that execution evidence is unavailable, report it as `Needs Human Review` rather than claiming behavioral equivalence.
+
+## Output contract
+
+Return enough information to audit the transformation:
+
+- contradictions and unresolved review items;
+- proposed or implemented file structure;
+- preservation/move/remove decisions for material instructions;
+- files created or changed;
+- static validation results;
+- behavioral validation status;
+- rollback location or method when implementation occurred.
+
+Do not claim links, client loading behavior, or regressions were verified unless they were actually checked.
+
+## Gotchas
+
+- A Markdown link does not prove an agent will load the linked file.
+- Nested instruction files may have directory-specific scope or precedence.
+- "Under 50 lines" and "3-8 files" are optimization heuristics, not hard requirements.
+- Removing generic-looking safety or permission rules can silently weaken project behavior.
+- Contradiction resolution may require local project knowledge; unresolved material conflicts stay explicit.

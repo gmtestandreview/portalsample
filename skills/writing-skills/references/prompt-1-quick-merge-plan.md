@@ -62,6 +62,8 @@ If a material conflict cannot be resolved from the supplied evidence, mark it `[
 
 Produce the response using this structure.
 
+```markdown
+
 # Quick Merge Plan
 
 ## 1. Executive Summary
@@ -179,3 +181,4 @@ End with exactly one recommendation:
 - Not suitable for merge based on current evidence
 
 Briefly explain why.
+```
