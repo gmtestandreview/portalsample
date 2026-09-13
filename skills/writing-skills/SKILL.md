@@ -1,6 +1,15 @@
 ---
 name: writing-skills
-description: Use when creating, editing, optimizing, testing, validating, installing, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "call writing skills" or "called writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, Codex skill installation, and deployment readiness.
+description: Use when creating, editing, optimizing, testing, validating, installing, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, Codex skill installation, and deployment readiness.
+compatibility: 
+  - codex
+  - claude
+  - a-team
+  - claude-code
+  - Github Copilot
+metadata: 
+  - version: 2026-09-09-a-team-wiring-review-design
+  - last-updated: 2026-09-09
 ---
 <!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
@@ -14,9 +23,22 @@ Treat skill authoring as test-driven development for process documentation:
 
 Do not invent requirements from hypothetical failures when representative evidence is available.
 
+## Rules
+
+* Read relevant supplied files first. Never invent contents, paths, tools, tests, edits, requirements, results, or specs.
+* Evidence over opinion. Tie findings to supplied content, omissions, conflicts, broken references, duplication, failed criteria, or unavailable evidence.
+* Preserve unique domain knowledge; remove only duplicated, obsolete, unsafe, generic, or relocatable content.
+* Use progressive disclosure: keep mandatory guidance in `SKILL.md`; move long examples, templates, docs, code, scoring, and test detail to references.
+* Target `<200` body lines/~`2,000` tokens; split near `500`/~`5,000`.
+* Ask about authorization only when implementation is requested and ambiguous. High-impact changes require authorization, backup, validation, and rollback.
+* Claim edits/tests only when performed or evidenced. Mark unverifiable required outcomes `Needs Human Review` (`NHR`).
+* Quick Triage is preliminary when requested. Label `Preliminary`; no final readiness.
+* `SKILL-testing-checklist.md` is the final deployment gate. A checklist defines required evidence; it is not evidence.
+* If references conflict, use precedence below. Report missing references; never invent/substitute them.
+
 ## Scope
 
-Use this skill to create/scaffold, edit, optimize, test, validate, install, or deploy Agent Skills; improve activation/frontmatter/scope; organize supporting resources; maintain SKILL-specific evals or validators; handle Codex skill discovery or installation when no more specific installer skill is active; and respond to explicit requests to call or reference "writing skills", including "called writing skills".
+Use this skill to create/scaffold, edit, optimize, test, validate, install, or deploy Agent Skills; improve activation/frontmatter/scope; organize supporting resources; maintain SKILL-specific evals or validators; handle Codex skill discovery or installation when no more specific installer skill is active; and respond to explicit requests to call or reference "writing skills".
 
 Do not use it for ordinary Markdown editing, one-off project instructions, generic linters, or agent-role definitions.
 
@@ -165,6 +187,18 @@ Before deployment, verify:
 - known limitations and `Needs Human Review` items are explicit.
 
 Run `SKILL-testing-checklist.md` for final validation. Treat checklist-only requirements as local policy when they exceed the current specification.
+
+### 10. Auto-optimize
+
+Only for requested optimization/remediation/revision/implementation. Audit-only requests report fixes without silent revision. If score <96 or any blocking gate remains, apply the smallest justified fixes, rerun supported checks, then rescore and re-evaluate blockers. Stop after at most 3 iterations or earlier for no improvement, repeated failure, missing authorization/context/tooling/evidence, unsafe/conflicting requirements, unresolved spec conflict, or required human judgment.
+
+## Merge Rules
+
+Same purpose+scope -> merge. Same purpose+different domain -> separate/shared base. Partial overlap -> extract shared content/preserve specialized value. Deprecate only after preserving unique content. Resolve contradictions first. Different tools -> justified default plus useful alternatives. Different triggers -> preserve boundaries or split. Retain narrow skills when domain-specific value remains.
+
+Precedence: `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable skill/project/domain requirements > audit policy > best-practice defaults > examples/legacy material`
+
+Tested behavior is evidence, never authority over mandatory requirements. Users may customize optional behavior, never safety/spec. Never merge unresolved contradictions, silently change activation scope, or claim safety without evidence.
 
 ## Scaffolding a new skill
 
