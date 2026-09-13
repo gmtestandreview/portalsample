@@ -19,5 +19,15 @@
     "sonarlint.connectedMode.project": {
         "connectionId": "gmtestandreview",
         "projectKey": "gmtestandreview_portalsample"
+    },
+    "ruff.nativeServer": "on",
+    "ruff.lineLength": 100,
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
+        }
     }
 }

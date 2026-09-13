@@ -110,6 +110,7 @@ test_output.txt
 .agent-sync/sdd/
 .agent-sync/brainstorm/
 __pycache__/
+.ruff_cache/
 
 # Local Qdrant semantic-memory layer. `.qdrant/storage/` is the Docker volume and
 # holds a second plaintext copy of ClientApp/src + docs + memory notes as Qdrant

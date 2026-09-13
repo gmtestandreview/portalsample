@@ -1,0 +1,21 @@
+target-version = "py310"
+line-length = 100
+
+# .claude/skills/** and .github/skills/** are vendored/marketplace skill
+# packages, not first-party code (they account for 877 of 933 baseline lint
+# findings). Excluding them keeps ruff focused on code this team maintains:
+# scripts/, analysis/, templates/, tests/hooks/, .claude/hooks/, skills/**.
+extend-exclude = [
+    ".claude/skills",
+    ".github/skills",
+]
+
+[lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = []
+
+[lint.isort]
+known-first-party = ["skills_ref"]
+
+[format]
+quote-style = "double"

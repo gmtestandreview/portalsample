@@ -3,17 +3,18 @@
 Skill Packager - Creates a distributable .skill file of a skill folder
 
 Usage:
-    python utils/package_skill.py <path/to/skill-folder> [output-directory]
+    python -m scripts.package_skill <path/to/skill-folder> [output-directory]
 
 Example:
-    python utils/package_skill.py skills/public/my-skill
-    python utils/package_skill.py skills/public/my-skill ./dist
+    python -m scripts.package_skill skills/public/my-skill
+    python -m scripts.package_skill skills/public/my-skill ./dist
 """
 
+import argparse
 import fnmatch
-import sys
 import zipfile
 from pathlib import Path
+
 from scripts.quick_validate import validate_skill
 
 # Patterns to exclude when packaging skills.
@@ -82,15 +83,24 @@ def package_skill(skill_path, output_dir=None):
         output_path = Path(output_dir).resolve()
         output_path.mkdir(parents=True, exist_ok=True)
     else:
-        output_path = Path.cwd()
+        # Put the archive beside the skill instead of in the current working
+        # directory; packaging from the skill root must not include its own output.
+        output_path = skill_path.parent
 
     skill_filename = output_path / f"{skill_name}.skill"
+    try:
+        skill_filename.relative_to(skill_path)
+    except ValueError:
+        pass
+    else:
+        print(f"❌ Error: output archive must be outside the skill directory: {skill_filename}")
+        return None
 
     # Create the .skill file (zip format)
     try:
-        with zipfile.ZipFile(skill_filename, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(skill_filename, "w", zipfile.ZIP_DEFLATED) as zipf:
             # Walk through the skill directory, excluding build artifacts
-            for file_path in skill_path.rglob('*'):
+            for file_path in skill_path.rglob("*"):
                 if not file_path.is_file():
                     continue
                 arcname = file_path.relative_to(skill_path.parent)
@@ -103,33 +113,23 @@ def package_skill(skill_path, output_dir=None):
         print(f"\n✅ Successfully packaged skill to: {skill_filename}")
         return skill_filename
 
-    except Exception as e:
+    except (OSError, zipfile.BadZipFile) as e:
         print(f"❌ Error creating .skill file: {e}")
         return None
 
 
-def main():
-    if len(sys.argv) < 2:
-        print("Usage: python utils/package_skill.py <path/to/skill-folder> [output-directory]")
-        print("\nExample:")
-        print("  python utils/package_skill.py skills/public/my-skill")
-        print("  python utils/package_skill.py skills/public/my-skill ./dist")
-        sys.exit(1)
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Package an Agent Skill as a .skill archive")
+    parser.add_argument("skill_path", type=Path)
+    parser.add_argument("output_directory", nargs="?", type=Path, default=None)
+    args = parser.parse_args()
 
-    skill_path = sys.argv[1]
-    output_dir = sys.argv[2] if len(sys.argv) > 2 else None
+    print(f"Packaging skill: {args.skill_path}")
+    if args.output_directory:
+        print(f"Output directory: {args.output_directory}")
 
-    print(f"📦 Packaging skill: {skill_path}")
-    if output_dir:
-        print(f"   Output directory: {output_dir}")
-    print()
-
-    result = package_skill(skill_path, output_dir)
-
-    if result:
-        sys.exit(0)
-    else:
-        sys.exit(1)
+    result = package_skill(args.skill_path, args.output_directory)
+    raise SystemExit(0 if result else 1)
 
 
 if __name__ == "__main__":

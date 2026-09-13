@@ -9,6 +9,7 @@ import argparse
 import json
 import os
 import select
+import shutil
 import subprocess
 import sys
 import time
@@ -69,8 +70,10 @@ def run_single_query(
 
         cmd = [
             "claude",
-            "-p", query,
-            "--output-format", "stream-json",
+            "-p",
+            query,
+            "--output-format",
+            "stream-json",
             "--verbose",
             "--include-partial-messages",
         ]
@@ -97,6 +100,7 @@ def run_single_query(
         pending_tool_name = None
         accumulated_json = ""
 
+        timed_out = False
         try:
             while time.time() - start_time < timeout:
                 if process.poll() is not None:
@@ -131,14 +135,15 @@ def run_single_query(
                         se_type = se.get("type", "")
 
                         if se_type == "content_block_start":
+                            # A message may use unrelated tools before consulting a skill.
+                            # Ignore those blocks instead of treating them as a non-trigger.
+                            pending_tool_name = None
+                            accumulated_json = ""
                             cb = se.get("content_block", {})
                             if cb.get("type") == "tool_use":
                                 tool_name = cb.get("name", "")
                                 if tool_name in ("Skill", "Read"):
                                     pending_tool_name = tool_name
-                                    accumulated_json = ""
-                                else:
-                                    return False
 
                         elif se_type == "content_block_delta" and pending_tool_name:
                             delta = se.get("delta", {})
@@ -149,7 +154,10 @@ def run_single_query(
 
                         elif se_type in ("content_block_stop", "message_stop"):
                             if pending_tool_name:
-                                return clean_name in accumulated_json
+                                if clean_name in accumulated_json:
+                                    return True
+                                pending_tool_name = None
+                                accumulated_json = ""
                             if se_type == "message_stop":
                                 return False
 
@@ -162,23 +170,63 @@ def run_single_query(
                             tool_name = content_item.get("name", "")
                             tool_input = content_item.get("input", {})
                             if tool_name == "Skill" and clean_name in tool_input.get("skill", ""):
-                                triggered = True
-                            elif tool_name == "Read" and clean_name in tool_input.get("file_path", ""):
-                                triggered = True
-                            return triggered
+                                return True
+                            if tool_name == "Read" and clean_name in tool_input.get(
+                                "file_path", ""
+                            ):
+                                return True
+                        return False
 
                     elif event.get("type") == "result":
+                        if event.get("is_error"):
+                            raise RuntimeError("claude CLI reported an error result")
                         return triggered
+            timed_out = process.poll() is None
         finally:
-            # Clean up process on any exit path (return, exception, timeout)
+            # Clean up process on any exit path (return, exception, timeout).
             if process.poll() is None:
                 process.kill()
                 process.wait()
 
+        if timed_out:
+            raise TimeoutError(f"trigger evaluation exceeded {timeout}s")
+        if process.returncode not in (0, None):
+            raise RuntimeError(f"claude CLI exited with status {process.returncode}")
         return triggered
     finally:
         if command_file.exists():
             command_file.unlink()
+
+
+def _validate_eval_set(eval_set: list[dict], runs_per_query: int, trigger_threshold: float) -> None:
+    if runs_per_query < 1:
+        raise ValueError("runs_per_query must be >= 1")
+    if not 0 < trigger_threshold <= 1:
+        raise ValueError("trigger_threshold must be in (0, 1]")
+
+    seen: set[str] = set()
+    for index, item in enumerate(eval_set):
+        if not isinstance(item, dict):
+            raise ValueError(f"eval item {index} must be an object")
+        query = item.get("query")
+        should_trigger = item.get("should_trigger")
+        if not isinstance(query, str) or not query.strip():
+            raise ValueError(f"eval item {index} has an invalid query")
+        if query in seen:
+            raise ValueError(f"duplicate eval query: {query!r}")
+        seen.add(query)
+        if not isinstance(should_trigger, bool):
+            raise ValueError(f"eval item {index} should_trigger must be boolean")
+
+
+def _require_claude_cli() -> str:
+    """Return the claude executable path or raise a clear prerequisite error."""
+    path = shutil.which("claude")
+    if not path:
+        raise RuntimeError(
+            "claude CLI not found on PATH; trigger evaluation is unavailable in this runtime"
+        )
+    return path
 
 
 def run_eval(
@@ -193,6 +241,8 @@ def run_eval(
     model: str | None = None,
 ) -> dict:
     """Run the full eval set and return results."""
+    _validate_eval_set(eval_set, runs_per_query, trigger_threshold)
+    _require_claude_cli()
     results = []
 
     with ProcessPoolExecutor(max_workers=num_workers) as executor:
@@ -210,36 +260,49 @@ def run_eval(
                 )
                 future_to_info[future] = (item, run_idx)
 
-        query_triggers: dict[str, list[bool]] = {}
+        query_outcomes: dict[str, list[bool | None]] = {}
         query_items: dict[str, dict] = {}
+        query_errors: dict[str, list[str]] = {}
         for future in as_completed(future_to_info):
             item, _ = future_to_info[future]
             query = item["query"]
             query_items[query] = item
-            if query not in query_triggers:
-                query_triggers[query] = []
+            query_outcomes.setdefault(query, [])
+            query_errors.setdefault(query, [])
             try:
-                query_triggers[query].append(future.result())
-            except Exception as e:
-                print(f"Warning: query failed: {e}", file=sys.stderr)
-                query_triggers[query].append(False)
+                query_outcomes[query].append(future.result())
+            except (OSError, RuntimeError, TimeoutError) as e:
+                print(f"Warning: query execution failed: {e}", file=sys.stderr)
+                query_outcomes[query].append(None)
+                query_errors[query].append(str(e))
 
-    for query, triggers in query_triggers.items():
+    for query, outcomes in query_outcomes.items():
         item = query_items[query]
-        trigger_rate = sum(triggers) / len(triggers)
+        valid = [value for value in outcomes if value is not None]
+        execution_errors = len(outcomes) - len(valid)
+        trigger_rate = (sum(valid) / len(valid)) if valid else 0.0
         should_trigger = item["should_trigger"]
-        if should_trigger:
+
+        # Execution failures are evidence failures, not successful non-triggers.
+        if execution_errors:
+            did_pass = False
+        elif should_trigger:
             did_pass = trigger_rate >= trigger_threshold
         else:
             did_pass = trigger_rate < trigger_threshold
-        results.append({
-            "query": query,
-            "should_trigger": should_trigger,
-            "trigger_rate": trigger_rate,
-            "triggers": sum(triggers),
-            "runs": len(triggers),
-            "pass": did_pass,
-        })
+
+        results.append(
+            {
+                "query": query,
+                "should_trigger": should_trigger,
+                "trigger_rate": trigger_rate,
+                "triggers": sum(valid),
+                "runs": len(outcomes),
+                "execution_errors": execution_errors,
+                "error_messages": query_errors.get(query, []),
+                "pass": did_pass,
+            }
+        )
 
     passed = sum(1 for r in results if r["pass"])
     total = len(results)
@@ -264,8 +327,14 @@ def main():
     parser.add_argument("--num-workers", type=int, default=10, help="Number of parallel workers")
     parser.add_argument("--timeout", type=int, default=30, help="Timeout per query in seconds")
     parser.add_argument("--runs-per-query", type=int, default=3, help="Number of runs per query")
-    parser.add_argument("--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold")
-    parser.add_argument("--model", default=None, help="Model to use for claude -p (default: user's configured model)")
+    parser.add_argument(
+        "--trigger-threshold", type=float, default=0.5, help="Trigger rate threshold"
+    )
+    parser.add_argument(
+        "--model",
+        default=None,
+        help="Model to use for claude -p (default: user's configured model)",
+    )
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     args = parser.parse_args()
 
@@ -276,24 +345,28 @@ def main():
         print(f"Error: No SKILL.md found at {skill_path}", file=sys.stderr)
         sys.exit(1)
 
-    name, original_description, content = parse_skill_md(skill_path)
+    name, original_description, _content = parse_skill_md(skill_path)
     description = args.description or original_description
     project_root = find_project_root()
 
     if args.verbose:
         print(f"Evaluating: {description}", file=sys.stderr)
 
-    output = run_eval(
-        eval_set=eval_set,
-        skill_name=name,
-        description=description,
-        num_workers=args.num_workers,
-        timeout=args.timeout,
-        project_root=project_root,
-        runs_per_query=args.runs_per_query,
-        trigger_threshold=args.trigger_threshold,
-        model=args.model,
-    )
+    try:
+        output = run_eval(
+            eval_set=eval_set,
+            skill_name=name,
+            description=description,
+            num_workers=args.num_workers,
+            timeout=args.timeout,
+            project_root=project_root,
+            runs_per_query=args.runs_per_query,
+            trigger_threshold=args.trigger_threshold,
+            model=args.model,
+        )
+    except (RuntimeError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
 
     if args.verbose:
         summary = output["summary"]
@@ -301,7 +374,10 @@ def main():
         for r in output["results"]:
             status = "PASS" if r["pass"] else "FAIL"
             rate_str = f"{r['triggers']}/{r['runs']}"
-            print(f"  [{status}] rate={rate_str} expected={r['should_trigger']}: {r['query'][:70]}", file=sys.stderr)
+            print(
+                f"  [{status}] rate={rate_str} expected={r['should_trigger']}: {r['query'][:70]}",
+                file=sys.stderr,
+            )
 
     print(json.dumps(output, indent=2))
 

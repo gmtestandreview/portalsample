@@ -1,0 +1,82 @@
+[
+  {
+    "query": "Create a new Agent Skill for triaging application logs, with a SKILL.md and only the supporting resources it actually needs.",
+    "should_trigger": true
+  },
+  {
+    "query": "Audit this existing SKILL.md for activation scope, progressive disclosure, broken references, and release readiness, then revise it.",
+    "should_trigger": true
+  },
+  {
+    "query": "My Agent Skill works sometimes but its outputs are inconsistent. Set up representative with-skill and baseline evals and help me iterate.",
+    "should_trigger": true
+  },
+  {
+    "query": "Benchmark the new version of this skill against the old one across the supplied eval cases and summarize variance.",
+    "should_trigger": true
+  },
+  {
+    "query": "Validate this skill directory and package it as a distributable .skill file if the checks pass.",
+    "should_trigger": true
+  },
+  {
+    "query": "This SKILL.md has ballooned to nearly 500 lines. Refactor it so detailed examples and schemas load only when needed.",
+    "should_trigger": true
+  },
+  {
+    "query": "The skill keeps firing on unrelated requests. Tighten its frontmatter description and design near-miss trigger tests.",
+    "should_trigger": true
+  },
+  {
+    "query": "Organize these scripts, references, and assets around the existing SKILL.md without losing unique domain guidance.",
+    "should_trigger": true
+  },
+  {
+    "query": "I changed several helper scripts inside my Agent Skill. Check the interfaces, paths, and packaging behavior before release.",
+    "should_trigger": true
+  },
+  {
+    "query": "I have two revisions of the same skill and want a blind comparison of their outputs before choosing which instructions to keep.",
+    "should_trigger": true
+  },
+  {
+    "query": "Rewrite this product description so it triggers more purchases without sounding pushy.",
+    "should_trigger": false
+  },
+  {
+    "query": "Benchmark these two Python sorting functions and report which one is faster.",
+    "should_trigger": false
+  },
+  {
+    "query": "Package this Python project as a wheel and publish it to PyPI.",
+    "should_trigger": false
+  },
+  {
+    "query": "Validate this YAML configuration file and fix its indentation.",
+    "should_trigger": false
+  },
+  {
+    "query": "Write a concise README for my command-line tool.",
+    "should_trigger": false
+  },
+  {
+    "query": "Create unit tests for this parser and improve code coverage.",
+    "should_trigger": false
+  },
+  {
+    "query": "Compare these two essay drafts blindly and tell me which is better written.",
+    "should_trigger": false
+  },
+  {
+    "query": "Optimize the activation conditions for my browser extension's content script.",
+    "should_trigger": false
+  },
+  {
+    "query": "Design a reusable system prompt for a customer-support chatbot.",
+    "should_trigger": false
+  },
+  {
+    "query": "Review this JSON schema for API request validation; it is not part of an Agent Skill.",
+    "should_trigger": false
+  }
+]
