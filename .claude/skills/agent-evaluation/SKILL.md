@@ -1,64 +1,95 @@
 ---
 name: agent-evaluation
-description: "Testing and benchmarking LLM agents including behavioral testing, capability assessment, reliability metrics, and production monitoring—where even top agents achieve less than 50% on real-world benchmarks Use when: agent testing, agent evaluation, benchmark agents, agent reliability, test agent."
-source: vibeship-spawner-skills (Apache 2.0)
+description: "Use when evaluating, benchmarking, regression-testing, or monitoring LLM agents, especially when results are nondeterministic, benchmark scores may not predict production behavior, or reliability must be measured across repeated runs."
+license: Apache-2.0
+metadata:
+  source: vibeship-spawner-skills
 ---
 
 # Agent Evaluation
 
-You're a quality engineer who has seen agents that aced benchmarks fail spectacularly in
-production. You've learned that evaluating LLM agents is fundamentally different from
-testing traditional software—the same input can produce different outputs, and "correct"
-often has no single answer.
+Evaluate agent behavior as a distribution, not a single deterministic result. A strong benchmark result is not sufficient evidence of production reliability.
 
-You've built evaluation frameworks that catch issues before production: behavioral regression
-tests, capability assessments, and reliability metrics. You understand that the goal isn't
-100% test pass rate—it
+## Workflow
 
-## Capabilities
+1. **Define the behavioral contract.**
+   - State the capability or invariant being evaluated.
+   - Define observable success and failure conditions.
+   - Prefer semantic or behavioral criteria over exact output-string matching.
 
-- agent-testing
-- benchmark-design
-- capability-assessment
-- reliability-metrics
-- regression-testing
+2. **Build representative cases.**
+   - Include normal tasks, edge cases, and adversarial cases.
+   - Include cases that reflect production conditions when benchmark-to-production transfer matters.
+   - Keep evaluation data separate from prompts, training material, and other channels that could leak expected answers.
 
-## Requirements
+3. **Run repeated trials.**
+   - Execute nondeterministic cases multiple times.
+   - Record the distribution of outcomes rather than treating one pass as conclusive.
+   - Treat intermittent failures as reliability evidence, not noise to discard.
 
-- testing-fundamentals
-- llm-fundamentals
+4. **Assess capability and reliability separately.**
+   - Capability asks whether the agent can succeed.
+   - Reliability asks how consistently it succeeds across repeated and varied cases.
+   - Use multiple dimensions when one metric could be gamed or hide important failures.
+
+5. **Investigate failures.**
+   - Compare benchmark behavior with production-like behavior when results diverge.
+   - For flaky cases, identify the conditions associated with pass/fail variation before changing thresholds.
+   - For metric gaming, add or revise dimensions that measure the intended task rather than the proxy.
+
+6. **Regression-test changes.**
+   - Preserve representative prior failures as regression cases.
+   - Re-run affected cases after prompt, model, tool, policy, or orchestration changes.
+   - Do not call a regression fixed from a single successful rerun when the behavior is stochastic.
+
+7. **Monitor production behavior.**
+   - Track the same behavioral contracts or reliability dimensions that matter in evaluation.
+   - Investigate material gaps between offline evaluation and production outcomes.
+   - Feed production failures back into representative evaluation and regression cases.
+
+## Required Evidence
+
+For each material evaluation claim, report:
+
+- the behavior or capability tested;
+- the cases used;
+- the number of repeated trials when nondeterminism matters;
+- the success/failure criteria;
+- the observed outcome distribution or reliability result;
+- known limitations, confounders, or leakage risks.
+
+Do not claim reliability from a single run.
 
 ## Patterns
 
 ### Statistical Test Evaluation
-
-Run tests multiple times and analyze result distributions
+Run repeated trials and analyze outcome distributions.
 
 ### Behavioral Contract Testing
-
-Define and test agent behavioral invariants
+Define observable invariants and test whether agent behavior satisfies them.
 
 ### Adversarial Testing
-
-Actively try to break agent behavior
+Include realistic attempts to expose brittle assumptions, unsafe shortcuts, or boundary failures.
 
 ## Anti-Patterns
 
-### ❌ Single-Run Testing
+- **Single-run testing:** one pass or failure is insufficient evidence for stochastic behavior.
+- **Happy-path-only testing:** normal cases alone do not characterize robustness.
+- **Exact output string matching:** use only when exact text is genuinely the contract; otherwise evaluate semantics or behavior.
+- **Benchmark-only confidence:** benchmark performance does not establish production reliability.
+- **Metric monoculture:** one optimized score can hide regressions or encourage proxy gaming.
+- **Evaluation leakage:** do not expose expected answers or held-out evaluation material through prompts, training data, or test setup.
 
-### ❌ Only Happy Path Tests
+## Failure Handling
 
-### ❌ Output String Matching
+| Failure mode | Response |
+| --- | --- |
+| Strong benchmark, weak production behavior | Add production-representative cases and compare the failure conditions. |
+| Same case alternates between pass and fail | Increase repeated trials and report the outcome distribution. |
+| Score improves while task quality degrades | Revisit the metric and add dimensions tied to the intended behavior. |
+| Evaluation data may have leaked | Treat affected results as invalid until the contamination risk is resolved. |
+| Exact-match grading rejects valid behavior | Replace it with behavioral or semantic criteria unless exact text is required. |
 
-## ⚠️ Sharp Edges
+## Completion Criteria
 
-| Issue | Severity | Solution |
-|-------|----------|----------|
-| Agent scores well on benchmarks but fails in production | high | // Bridge benchmark and production evaluation |
-| Same test passes sometimes, fails other times | high | // Handle flaky tests in LLM agent evaluation |
-| Agent optimized for metric, not actual task | medium | // Multi-dimensional evaluation to prevent gaming |
-| Test data accidentally used in training or prompts | critical | // Prevent data leakage in agent evaluation |
-
-## Related Skills
-
-Works well with: `multi-agent-orchestration`, `agent-communication`, `autonomous-agents`
+An evaluation is complete only when the tested behavior, cases, success criteria, repeated-run treatment, observed results, and material limitations are explicit. Production-readiness claims require evidence that the evaluation covers relevant production failure modes; otherwise state the coverage gap.
