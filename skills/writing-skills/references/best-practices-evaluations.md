@@ -21,6 +21,20 @@ Verify that the skill adds knowledge the agent would not reliably supply on its 
 
 If not, treat it as probable context waste.
 
+### Knowledge-delta scan
+
+For each material section, classify the content before judging whether it should stay:
+
+| Type | Meaning | Treatment |
+| --- | --- | --- |
+| Expert | The agent would not reliably know or apply it without the skill: project/domain conventions, non-obvious trade-offs, workflow-specific sequences, real failure modes, or expert decision criteria. | Keep, unless it belongs in a conditional reference. |
+| Activation | The agent may know it, but a short reminder prevents missed activation, wrong prioritization, or a common omission. | Keep only if brief and tied to execution. |
+| Redundant | The agent already knows it and it does not change task execution. | Remove or replace with a narrower instruction. |
+
+Do not classify unique material as redundant merely because it appears in only one source. Test uncertain cases against representative execution: if removal would not change behavior, it is probable context waste; if removal would remove a domain rule, edge case, or decision criterion, preserve or relocate it.
+
+Watch for basic explanatory sections such as "What is X", standard-library tutorials, generic "best practices", and mechanical file-operation steps. These may be useful in user-facing documentation but usually do not belong in an always-loaded skill body.
+
 ## 2. Scope and Coherence
 
 Verify that the skill represents a coherent unit of work.
@@ -224,6 +238,19 @@ Good gotchas include:
 * [ ] Corrections learned from real execution are incorporated where they prevent recurrence.
 
 Avoid generic statements such as "handle errors appropriately."
+
+### Anti-pattern quality
+
+Anti-patterns are valuable when they encode mistakes that a capable agent is still likely to make.
+
+Strong anti-patterns:
+
+* name the exact behavior to avoid;
+* explain the non-obvious reason it fails;
+* include the condition where the rule applies;
+* point to the safer alternative when one exists.
+
+Weak anti-patterns are vague warnings such as "be careful", "avoid errors", or "do not write bad code". Do not require every skill to contain a `NEVER` list, but when known traps exist, make them concrete enough to change execution.
 
 ## 10. Workflows and Decision Points
 
@@ -447,6 +474,20 @@ Before declaring a skill aligned with these sources, verify all applicable items
 * [ ] Execution behavior, not only final output, has been reviewed.
 * [ ] Observed failures and inefficiencies drive revisions.
 * [ ] Regressions are retested after changes.
+
+### Common audit failure patterns
+
+Flag these patterns when they materially affect execution:
+
+* Tutorial: explains basic concepts or standard operations instead of supplying domain guidance.
+* Dump: keeps rare, long, or conditional material in `SKILL.md` instead of routing to references.
+* Orphan references: supporting files exist but no workflow tells the agent when to load them.
+* Checkbox procedure: lists mechanical steps without the decision criteria needed to adapt them.
+* Vague warning: names risk without a concrete trigger, consequence, or corrective action.
+* Invisible skill: useful body content with a description too vague, too narrow, or too broad to activate correctly.
+* Wrong location: activation information lives only in the body even though only metadata is visible before loading.
+* Over-engineered package: auxiliary docs, templates, scripts, or changelogs exist without execution value.
+* Freedom mismatch: rigid instructions constrain creative/judgment work, or vague guidance governs fragile/high-risk operations.
 
 ## Evaluation Principle
 

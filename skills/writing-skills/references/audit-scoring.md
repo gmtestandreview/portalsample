@@ -41,6 +41,17 @@ Use only when explicitly requested. Label it **Preliminary**, report highest-ris
 
 A full audit classifies completeness, sets applicability, scores every applicable criterion, records evidence/deductions, runs QAQ/RMI for critical mappings, separates specification from local/best-practice failures, names `Needs Human Review` items, and ends with one recommendation.
 
+### First-pass quality scans
+
+Before assigning points, run lightweight passes that expose likely deductions:
+
+1. **Knowledge delta:** classify material sections as `Expert`, `Activation`, or `Redundant` using `best-practices-evaluations.md`. Map redundant or generic material to the affected criteria, usually Context efficiency, Domain value, Completeness, or Agent usability.
+2. **Mindset and procedure:** distinguish expert thinking patterns and domain-specific procedures from generic step lists. Keep procedures that encode non-obvious ordering, fragile operations, project/runtime constraints, or easy-to-miss checks.
+3. **Anti-patterns:** check whether known traps are specific, conditional, and justified. Do not deduct merely because a skill lacks a `NEVER` list; deduct when known or source-supported gotchas are absent, vague, or unactionable.
+4. **Practical usability:** mentally execute critical decision trees, defaults, references, and fallbacks. If the workflow does not lead to a concrete next action, score the affected criteria from that evidence.
+
+These scans are diagnostic aids, not a separate scoring system.
+
 ## 4. Current 100-point rubric
 
 | Criterion | Weight |
@@ -409,7 +420,19 @@ Stop after at most three optimization iterations, or earlier for no improvement,
 
 If the score remains below 96, document the remaining deficiencies and required human actions.
 
-## 14. Scoring sanity checks
+## 14. Evaluator guardrails
+
+When evaluating a skill:
+
+- Do not give high scores because the writing looks polished or comprehensive.
+- Do not let length impress you; concise skills can outperform longer ones.
+- Do not forgive generic explanations as "helpful context" unless they change execution.
+- Do not assume all procedures are valuable; distinguish domain-specific sequencing from mechanical steps.
+- Do not put activation failures solely on description wording until registration, discoverability, observability, direct handling, and neighboring skill boundaries have been considered.
+- Do not treat examples, legacy rubrics, or provider-specific style as current specification authority.
+- Do not raise a score unless fresh evidence shows the underlying criterion improved.
+
+## 15. Scoring sanity checks
 
 Before finalizing:
 

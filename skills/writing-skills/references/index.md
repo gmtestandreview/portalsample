@@ -10,7 +10,7 @@ Purpose: route the agent to the **smallest sufficient set of references** for th
 2. Load the smallest primary reference that governs the task.
 3. Load a secondary reference only when its stated condition is met.
 4. Use `specification.md` for mandatory Agent Skills format/compliance claims.
-5. Use `best-practices-evaluations.md` for quality criteria and `audit-scoring.md` for scoring mechanics.
+5. Use `best-practices-evaluations.md` for quality criteria, including knowledge-delta, anti-pattern, and common failure-pattern review; use `audit-scoring.md` for scoring mechanics.
 6. Use `SKILL-testing-checklist.md` as the final validation/deployment gate, not as a substitute for specialist methods.
 7. Treat best-practice guides, operational methods, and templates as supporting guidance rather than specification authority.
 8. Apply Anthropic-specific guidance only when the target environment is Claude or Anthropic Agent Skills.
@@ -62,7 +62,7 @@ Do not let local checks, templates, or provider-specific conventions override it
 
 #### `best-practices-evaluations.md`
 
-Defines **what good looks like** for scope, discoverability, context efficiency, execution quality, resource handling, safety, edge cases, testability, and maintainability.
+Defines **what good looks like** for scope, discoverability, context efficiency, execution quality, resource handling, safety, edge cases, testability, maintainability, knowledge delta, anti-pattern quality, and common audit failure patterns.
 
 Use it to identify quality failures. Do not use it alone for numeric scoring.
 
