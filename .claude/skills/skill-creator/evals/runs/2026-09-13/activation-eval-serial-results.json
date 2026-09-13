@@ -1,0 +1,211 @@
+{
+  "skill_name": "skill-creator",
+  "description": "Use when creating, revising, evaluating, benchmarking, packaging, or improving activation of an Agent Skill (`SKILL.md`), including Claude Code skill rules, hooks, guardrails, and activation failures. Covers portable authoring, resource organization, output evals, candidate-vs-baseline comparison, trigger testing, and deployment readiness. Do not use for ordinary code or document editing unrelated to Agent Skills.",
+  "results": [
+    {
+      "query": "Create a new Agent Skill for triaging application logs, with a SKILL.md and only the supporting resources it actually needs.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Audit this existing SKILL.md for activation scope, progressive disclosure, broken references, and release readiness, then revise it.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "My Agent Skill works sometimes but its outputs are inconsistent. Set up representative with-skill and baseline evals and help me iterate.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Benchmark the new version of this skill against the old one across the supplied eval cases and summarize variance.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Validate this skill directory and package it as a distributable .skill file if the checks pass.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "This SKILL.md has ballooned to nearly 500 lines. Refactor it so detailed examples and schemas load only when needed.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "The skill keeps firing on unrelated requests. Tighten its frontmatter description and design near-miss trigger tests.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Organize these scripts, references, and assets around the existing SKILL.md without losing unique domain guidance.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "I changed several helper scripts inside my Agent Skill. Check the interfaces, paths, and packaging behavior before release.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "I have two revisions of the same skill and want a blind comparison of their outputs before choosing which instructions to keep.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Rewrite this product description so it triggers more purchases without sounding pushy.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Benchmark these two Python sorting functions and report which one is faster.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Package this Python project as a wheel and publish it to PyPI.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Validate this YAML configuration file and fix its indentation.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Write a concise README for my command-line tool.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Create unit tests for this parser and improve code coverage.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Compare these two essay drafts blindly and tell me which is better written.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Optimize the activation conditions for my browser extension's content script.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Design a reusable system prompt for a customer-support chatbot.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Review this JSON schema for API request validation; it is not part of an Agent Skill.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 20,
+    "passed": 10,
+    "failed": 10
+  }
+}

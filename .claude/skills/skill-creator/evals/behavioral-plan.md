@@ -1,6 +1,24 @@
 # Deployment behavioral test plan
 
-Status: **Not executed**. These cases define required evidence; they are not PASS evidence.
+Status: **Partially executed on 2026-09-13**. These cases now have initial evidence, but the
+skill is **not production-ready** under this plan's bar because positive activation failed in
+the inspected Claude CLI runtime path and true independent RED/GREEN behavioral execution
+remains NHR.
+
+Evidence:
+
+- `evals/runs/2026-09-13/activation-eval-results.json` - full activation train attempt,
+  3 runs per query; failed with widespread CLI timeout/crash execution errors.
+- `evals/runs/2026-09-13/activation-eval-serial-results.json` - cleaned serial activation
+  train pass, 1 run per query; 10/20 passed, with all 10 positive triggers failing and all
+  10 near-misses passing.
+- `evals/runs/2026-09-13/activation-holdout-results.json` - activation holdout pass,
+  1 run per query; 4/8 passed, with all 4 positive triggers failing and all 4 near-misses
+  passing.
+- `evals/red-green-representative-report.md` - analytical RED/GREEN representative report;
+  useful as structural evidence, but explicitly not a true independent behavioral run.
+- `evals/runs/2026-09-13/closeout-summary.md` - close-out interpretation, commands, and
+  remaining blockers.
 
 ## Activation boundary
 

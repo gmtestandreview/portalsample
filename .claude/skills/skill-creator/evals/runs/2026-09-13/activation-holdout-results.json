@@ -1,0 +1,91 @@
+{
+  "skill_name": "skill-creator",
+  "description": "Use when creating, revising, evaluating, benchmarking, packaging, or improving activation of an Agent Skill (`SKILL.md`), including Claude Code skill rules, hooks, guardrails, and activation failures. Covers portable authoring, resource organization, output evals, candidate-vs-baseline comparison, trigger testing, and deployment readiness. Do not use for ordinary code or document editing unrelated to Agent Skills.",
+  "results": [
+    {
+      "query": "Turn the workflow we just developed into a reusable SKILL.md, including a bounded activation description and a small validation path.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Users say my specialist skill never loads unless they literally say its name. Diagnose the activation boundary and improve the description.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Before I share this skill folder, make sure its frontmatter, helper scripts, references, and archive are internally consistent.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Build a small eval campaign to see whether this SKILL.md actually improves the task compared with no skill at all.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": false
+    },
+    {
+      "query": "Shorten this marketing blurb and make the call to action stronger.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Run an A/B test on these landing-page headlines.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Zip this directory and exclude node_modules.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    },
+    {
+      "query": "Explain what YAML frontmatter is in Markdown files.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 1,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "passed": 4,
+    "failed": 4
+  }
+}
