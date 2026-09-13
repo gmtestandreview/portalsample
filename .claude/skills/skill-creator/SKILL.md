@@ -46,6 +46,8 @@ Use the conversation and supplied artifacts first. Identify:
 
 Ask only for information that is both missing and necessary. Do not invent project-specific tools, paths, APIs, or requirements.
 
+Calibrate explanations to the user's apparent fluency rather than a fixed register: don't assume familiarity with terms like "JSON" or "assertion" without cues that the user knows them, but don't over-explain to a user who clearly already does.
+
 ### 2. Load only the authoring guidance needed
 
 For a non-trivial skill, read `references/authoring-craft.md`.

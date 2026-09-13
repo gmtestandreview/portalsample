@@ -239,11 +239,17 @@ Do not use blind comparison when the runtime cannot keep the judge blind to cand
 
 ### Claude Code / Cowork-like runtimes
 
-Use subagents only when actually available. If a browser/display is unavailable, prefer the viewer's `--static` mode.
+Use subagents only when actually available. If a browser/display is unavailable, prefer the viewer's `--static` mode; its "Submit All Reviews" downloads `feedback.json` instead of posting to a server — read that file once the user confirms they're done reviewing.
+
+Always generate the eval viewer before evaluating outputs yourself — get results in front of the human first rather than pre-judging them.
 
 ### Claude.ai or runtimes without independent subagents
 
-You can perform a qualitative sanity check serially, but do not present it as independent RED/GREEN evidence. Baseline benchmarking and blind comparison may be unavailable.
+You can perform a qualitative sanity check serially, but do not present it as independent RED/GREEN evidence. Baseline benchmarking and blind comparison may be unavailable — skip them and present results directly in the conversation instead of via the browser reviewer. Save any output file the user needs to inspect (e.g. a `.docx` or `.xlsx`) to disk and tell them where to find it. Description-optimization tooling requires the `claude` CLI and is typically unavailable here — skip it too.
+
+### Updating an already-installed skill
+
+When the task is updating an existing skill rather than creating a new one: preserve its original name and directory name unchanged, copy it to a writeable location (e.g. `/tmp/<skill-name>/`) before editing since the installed path may be read-only, and package from the copy rather than in place.
 
 ### Missing execution capability
 
