@@ -4,22 +4,30 @@ Code Quality Checker
 Automated tool for code reviewer tasks
 """
 
-import os
-import sys
 import json
 import argparse
+import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import TypedDict
+
+
+class QualityResults(TypedDict, total=False):
+    """Analysis result payload emitted by the checker."""
+
+    status: str
+    target: str
+    findings: list[str]
+
 
 class CodeQualityChecker:
     """Main class for code quality checker functionality"""
     
-    def __init__(self, target_path: str, verbose: bool = False):
+    def __init__(self, target_path: str, verbose: bool = False) -> None:
         self.target_path = Path(target_path)
         self.verbose = verbose
-        self.results = {}
+        self.results: QualityResults = {}
     
-    def run(self) -> Dict:
+    def run(self) -> QualityResults:
         """Execute the main functionality"""
         print(f"🚀 Running {self.__class__.__name__}...")
         print(f"📁 Target: {self.target_path}")
@@ -36,7 +44,7 @@ class CodeQualityChecker:
             print(f"❌ Error: {e}")
             sys.exit(1)
     
-    def validate_target(self):
+    def validate_target(self) -> None:
         """Validate the target path exists and is accessible"""
         if not self.target_path.exists():
             raise ValueError(f"Target path does not exist: {self.target_path}")
@@ -44,7 +52,7 @@ class CodeQualityChecker:
         if self.verbose:
             print(f"✓ Target validated: {self.target_path}")
     
-    def analyze(self):
+    def analyze(self) -> None:
         """Perform the main analysis or operation"""
         if self.verbose:
             print("📊 Analyzing...")
@@ -58,7 +66,7 @@ class CodeQualityChecker:
         if self.verbose:
             print(f"✓ Analysis complete: {len(self.results.get('findings', []))} findings")
     
-    def generate_report(self):
+    def generate_report(self) -> None:
         """Generate and display the report"""
         print("\n" + "="*50)
         print("REPORT")
@@ -68,7 +76,7 @@ class CodeQualityChecker:
         print(f"Findings: {len(self.results.get('findings', []))}")
         print("="*50 + "\n")
 
-def main():
+def main() -> None:
     """Main entry point"""
     parser = argparse.ArgumentParser(
         description="Code Quality Checker"

@@ -2,6 +2,8 @@
 Name: prompt-1-quick-merge-plan
 Description: Create a quick merge plan for the supplied `SKILL.md` files and supporting resources. This is an early planning workflow only. Do not write the final merged `SKILL.md` unless the user explicitly asks for a full audit and conditional merge.
 ---
+# prompt-1-quick-merge-plan
+
 You are a SKILL.md merge-planning analyst.
 
 Create a quick merge plan for the supplied `SKILL.md` files and supporting resources. This is an early planning workflow only. Do not write the final merged `SKILL.md` unless the user explicitly asks for a full audit and conditional merge.
@@ -74,7 +76,7 @@ Briefly state:
 ## 2. Source Summary
 
 | Source | Purpose | Key Responsibilities | Notable Constraints | Unique Material |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 
 ## 3. Target Skill
 
@@ -89,7 +91,7 @@ Use `[missing]` where needed.
 ## 4. Preserve
 
 | Source | Content to Preserve | Reason | Priority |
-|---|---|---|---|
+| --- | --- | --- | --- |
 
 Priority values:
 
@@ -101,7 +103,7 @@ Priority values:
 ## 5. Remove or Relocate
 
 | Content | Action | Reason |
-|---|---|---|
+| --- | --- | --- |
 
 Allowed actions:
 
@@ -115,7 +117,7 @@ Allowed actions:
 ## 6. Conflicts
 
 | Conflict | Source A Position | Source B Position | Recommended Resolution | Risk |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 
 Risk values:
 
@@ -146,7 +148,7 @@ Briefly explain what belongs in each section.
 Score the quick merge plan out of 100:
 
 | Criterion | Points |
-|---|---:|
+| --- | ---: |
 | Preserves unique source instructions | 25 |
 | Resolves or flags conflicts clearly | 20 |
 | Avoids invented requirements or unsupported claims | 15 |

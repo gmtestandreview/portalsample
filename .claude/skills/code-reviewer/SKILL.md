@@ -1,209 +1,107 @@
 ---
-name: code-reviewer
-description: Comprehensive code review skill for TypeScript, JavaScript, Python, Swift, Kotlin, Go. Includes automated code analysis, best practice checking, security scanning, and review checklist generation. Use when reviewing pull requests, providing code feedback, identifying issues, or ensuring code quality standards.
+name: code-review
+description: Use when reviewing code changes or pull requests, establishing code-review practice, or applying repository-aware review/edit discipline. Supports comprehensive review, Claude-specific GitHub PR orchestration when available, explicit GitHub review posting, progressive loading of bundled language and cross-cutting guides, and minimum-change repository editing when implementation is explicitly requested.
 ---
 
-# Code Reviewer
+# Code Review
 
-Complete toolkit for code reviewer with modern tools and best practices.
+Use the narrowest applicable mode. Do not mix review-only behavior with code editing unless the user explicitly requests both.
 
-## Quick Start
+## Route the request
 
-### Main Capabilities
+- **Review mode:** review supplied code, diffs, files, or pull requests for correctness, security, performance, architecture, maintainability, tests, and applicable project conventions.
+- **Review-practice mode:** create or improve review standards, checklists, mentoring guidance, or review process.
+- **Repository-edit mode:** when the user asks to implement fixes or change code, follow `resources/code-change-discipline.instructions.md` and repository-local instructions. Make the minimum necessary change.
+- **Claude PR mode:** when the user explicitly requests the bundled Claude/GitHub PR workflow and the required environment is available, follow `resources/code-review.md`.
+- If a request is ambiguous and the available artifact/context does not establish a review target or implementation target, identify the missing context instead of inventing it.
 
-This skill provides three core capabilities through automated scripts:
+External side effects are not implied by review access. Post a GitHub comment only when the user explicitly requests posting or the invoked Claude PR workflow explicitly includes posting and that action is authorized.
 
-```bash
-# Script 1: Pr Analyzer
-python scripts/pr_analyzer.py [options]
+## Review workflow
 
-# Script 2: Code Quality Checker
-python scripts/code_quality_checker.py [options]
+1. Establish the review scope, requirements, changed files, relevant repository instructions, test/CI evidence, and primary risks.
+2. Scale depth to the change. For large diffs, use `scripts/pr-analyzer.py` when available and useful. If the change is too large for reliable review, narrow or split the scope rather than pretending exhaustive coverage.
+3. Review architecture/design, correctness and edge cases, security, performance, error/resource handling, tests, maintainability, documentation, compatibility, and project conventions where relevant.
+4. Load only the language/framework and cross-cutting references relevant to the code or risk being reviewed.
+5. Report findings by severity with concrete location/evidence where available, risk, and actionable remediation.
+6. Do not block for formatting or personal style preferences. Use repository automation for mechanical formatting/lint concerns when applicable.
+7. Never claim tests, builds, scanners, CI, or validations passed unless they were run or directly evidenced.
 
-# Script 3: Review Report Generator
-python scripts/review_report_generator.py [options]
-```
+## Severity
 
-## Core Capabilities
+- **Blocking:** exploitable security problems, correctness/data-loss defects, unsafe breaking changes, or other issues that must be resolved before merge.
+- **Important:** significant maintainability, testing, performance, architecture, or reliability concerns that should be addressed or explicitly discussed.
+- **Nit / suggestion:** non-blocking readability, style, or optional improvement.
+- Praise and educational notes are allowed when useful.
 
-### 1. Pr Analyzer
+## Progressive reference loading
 
-Automated tool for pr analyzer tasks.
+Load the minimum relevant files.
 
-**Features:**
-- Automated scaffolding
-- Best practices built-in
-- Configurable templates
-- Quality checks
+### Language/framework
+- React: `reference/react.md`
+- TypeScript/JavaScript: `reference/typescript.md`
+- Python: `reference/python.md`
+- C#/.NET: `reference/csharp.md`
+- CSS/Less/Sass: `reference/css-less-sass.md`
 
-**Usage:**
-```bash
-python scripts/pr_analyzer.py <project-path> [options]
-```
+### Cross-cutting
+- Architecture: `reference/architecture-review-guide.md`
+- Performance: `reference/performance-review-guide.md`
+- Security: `reference/security-review-guide.md`
+- Universal quality: `reference/code-quality-universal.md`
+- Common bugs: `reference/common-bugs-checklist.md`
+- SQL injection: `reference/cross-cutting/sql-injection-prevention.md`
+- XSS: `reference/cross-cutting/xss-prevention.md`
+- N+1 queries: `reference/cross-cutting/n-plus-one-queries.md`
+- Error handling: `reference/cross-cutting/error-handling-principles.md`
+- Async/concurrency: `reference/cross-cutting/async-concurrency-patterns.md`
+- Review practice: `reference/code-review-best-practices.md`
 
-### 2. Code Quality Checker
+Use specialist references only when the reviewed code or identified risk makes them relevant.
+References may mention other upstream language/framework guides that are not bundled for this repro; do not require or attempt to load those out-of-scope guides.
 
-Comprehensive analysis and optimization tool.
+## Assets and scripts
 
-**Features:**
-- Deep analysis
-- Performance metrics
-- Recommendations
-- Automated fixes
+- `assets/review-checklist.md`: lightweight review checklist.
+- `assets/pr-review-template.md`: full review-report template.
+- `scripts/pr-analyzer.py`: substantive PR diff analyzer for size, complexity, risks, and review suggestions.
+- `scripts/test_pr_analyzer.py`: deterministic analyzer tests.
+- `resources/implementation-playbook.md`: detailed review patterns and examples.
 
-**Usage:**
-```bash
-python scripts/code_quality_checker.py <target-path> [--verbose]
-```
+The preserved legacy scaffold files under `legacy/` are not authoritative analysis engines. Do not claim they perform deep analysis, scanning, automated fixes, or production-grade reporting unless their implementation is changed and separately validated.
 
-### 3. Review Report Generator
+## Repository editing
 
-Advanced tooling for specialized tasks.
+When implementation is explicitly requested:
+- follow `resources/code-change-discipline.instructions.md`;
+- preserve repository structure and patterns;
+- avoid unrelated cleanup or speculative dependencies/architecture;
+- honor repository-local package-manager and validation commands;
+- do not weaken CI or suppress warnings to make validation pass;
+- report failed or unavailable validation exactly.
 
-**Features:**
-- Expert-level automation
-- Custom configurations
-- Integration ready
-- Production-grade output
+## Claude/GitHub PR orchestration
 
-**Usage:**
-```bash
-python scripts/review_report_generator.py [arguments] [options]
-```
+When Claude PR mode applies, follow `resources/code-review.md` for:
+- PR eligibility checks;
+- repository-guidance discovery;
+- independent review passes;
+- confidence rescoring/filtering;
+- final eligibility recheck;
+- GitHub interaction and final-comment format.
 
-## Reference Documentation
+Treat named-model/subagent behavior as environment-specific. If the required orchestration is unavailable, say so rather than inventing equivalent runs.
 
-### Code Review Checklist
+## Output
 
-Comprehensive guide available in `references/code_review_checklist.md`:
+For normal reviews, provide:
+- concise review summary;
+- findings ordered by severity;
+- risk and concrete remediation for each substantive finding;
+- test/validation evidence status;
+- merge recommendation when the evidence supports one.
 
-- Detailed patterns and practices
-- Code examples
-- Best practices
-- Anti-patterns to avoid
-- Real-world scenarios
+Use `assets/pr-review-template.md` when a full structured report is useful. Use the shorter checklist for lightweight reviews.
 
-### Coding Standards
-
-Complete workflow documentation in `references/coding_standards.md`:
-
-- Step-by-step processes
-- Optimization strategies
-- Tool integrations
-- Performance tuning
-- Troubleshooting guide
-
-### Common Antipatterns
-
-Technical reference guide in `references/common_antipatterns.md`:
-
-- Technology stack details
-- Configuration examples
-- Integration patterns
-- Security considerations
-- Scalability guidelines
-
-## Tech Stack
-
-**Languages:** TypeScript, JavaScript, Python, Go, Swift, Kotlin
-**Frontend:** React, Next.js, React Native, Flutter
-**Backend:** Node.js, Express, GraphQL, REST APIs
-**Database:** PostgreSQL, Prisma, NeonDB, Supabase
-**DevOps:** Docker, Kubernetes, Terraform, GitHub Actions, CircleCI
-**Cloud:** AWS, GCP, Azure
-
-## Development Workflow
-
-### 1. Setup and Configuration
-
-```bash
-# Install dependencies
-npm install
-# or
-pip install -r requirements.txt
-
-# Configure environment
-cp .env.example .env
-```
-
-### 2. Run Quality Checks
-
-```bash
-# Use the analyzer script
-python scripts/code_quality_checker.py .
-
-# Review recommendations
-# Apply fixes
-```
-
-### 3. Implement Best Practices
-
-Follow the patterns and practices documented in:
-- `references/code_review_checklist.md`
-- `references/coding_standards.md`
-- `references/common_antipatterns.md`
-
-## Best Practices Summary
-
-### Code Quality
-- Follow established patterns
-- Write comprehensive tests
-- Document decisions
-- Review regularly
-
-### Performance
-- Measure before optimizing
-- Use appropriate caching
-- Optimize critical paths
-- Monitor in production
-
-### Security
-- Validate all inputs
-- Use parameterized queries
-- Implement proper authentication
-- Keep dependencies updated
-
-### Maintainability
-- Write clear code
-- Use consistent naming
-- Add helpful comments
-- Keep it simple
-
-## Common Commands
-
-```bash
-# Development
-npm run dev
-npm run build
-npm run test
-npm run lint
-
-# Analysis
-python scripts/code_quality_checker.py .
-python scripts/review_report_generator.py --analyze
-
-# Deployment
-docker build -t app:latest .
-docker-compose up -d
-kubectl apply -f k8s/
-```
-
-## Troubleshooting
-
-### Common Issues
-
-Check the comprehensive troubleshooting section in `references/common_antipatterns.md`.
-
-### Getting Help
-
-- Review reference documentation
-- Check script output messages
-- Consult tech stack documentation
-- Review error logs
-
-## Resources
-
-- Pattern Reference: `references/code_review_checklist.md`
-- Workflow Guide: `references/coding_standards.md`
-- Technical Guide: `references/common_antipatterns.md`
-- Tool Scripts: `scripts/` directory
+Stop when the requested review or edit is complete, required evidence limits are stated, and no authorized follow-up action remains.
