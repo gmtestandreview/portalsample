@@ -30,7 +30,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 ## TypeScript/JavaScript
 
 - [ ] `==` instead of `===`
-- [ ] Using `any` — prefer proper types or `unknown` with type guards
+- [ ] Using `any` - prefer proper types or `unknown` with type guards
 - [ ] Missing `await` on async calls
 - [ ] Unhandled promise rejections (no try-catch around await)
 - [ ] `this` context lost in callbacks
@@ -90,7 +90,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Directly mutating props instead of emitting events
 - [ ] `watchEffect` with unclear dependencies causing over-triggering
 
-**Full guide:** [Vue 3 Review Guide](vue.md)
+**Full guide:** Vue 3 review guide is not bundled with this skill.
 
 ## Python
 
@@ -132,11 +132,11 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Ignoring `must_use` return values
 
 **Performance:**
-- [ ] Unnecessary `.collect()` — prefer lazy iterators
+- [ ] Unnecessary `.collect()` - prefer lazy iterators
 - [ ] String concatenation in loops without `with_capacity`
 - [ ] `Box<dyn Trait>` when `impl Trait` would work
 
-**Full guide:** [Rust Review Guide](rust.md)
+**Full guide:** Rust review guide is not bundled with this skill.
 
 ## Go
 
@@ -149,7 +149,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Map used before initialization
 - [ ] Error wrapping with `%v` instead of `%w` (breaks `errors.Is`/`errors.As`)
 
-**Full guide:** [Go Review Guide](go.md)
+**Full guide:** Go review guide is not bundled with this skill.
 
 ## Java / Spring Boot
 
@@ -157,11 +157,11 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Traditional switch missing `break` (use switch expressions) *(Java 14+)*
 - [ ] Field injection instead of constructor injection
 - [ ] JPA N+1 query (missing `fetch join` or `@EntityGraph`)
-- [ ] Incorrect `equals`/`hashCode` on JPA entities (avoid `@Data`; prefer stable business key or null-safe id — never all lazy fields)
+- [ ] Incorrect `equals`/`hashCode` on JPA entities (avoid `@Data`; prefer stable business key or null-safe id - never all lazy fields)
 - [ ] `Optional.get()` without `isPresent()` check
 - [ ] Stream operations with side effects
 
-**Full guide:** [Java Review Guide](java.md) (17/21 + Boot 3)
+**Full guide:** Java 17/21 + Boot 3 review guide is not bundled with this skill.
 
 ## Java 8 / Spring Boot 2 (Legacy)
 
@@ -174,7 +174,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] `parallelStream` with shared mutable state
 - [ ] Mixing `javax.*` and `jakarta.*` on Boot 2
 
-**Full guide:** [Java 8 Review Guide](java8.md)
+**Full guide:** Java 8 review guide is not bundled with this skill.
 
 ## PHP
 
@@ -189,7 +189,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Errors hidden with `@` or swallowed in empty `catch` blocks
 - [ ] File uploads using client-provided names or missing MIME/size validation
 
-**Full guide:** [PHP Review Guide](php.md)
+**Full guide:** PHP review guide is not bundled with this skill.
 
 ## Ruby / Rails
 
@@ -214,7 +214,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Transaction contains external side effects that cannot roll back
 - [ ] Retried create/payment request can duplicate committed work without an idempotency key
 
-**Full guide:** [Ruby and Rails Review Guide](ruby.md)
+**Full guide:** Ruby and Rails review guide is not bundled with this skill.
 
 ## Swift
 
@@ -228,7 +228,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Implicitly unwrapped optional (`var x: T!`) outside IBOutlets
 - [ ] Over-broad access control (`public` / `open` where `internal` suffices)
 
-**Full guide:** [Swift Review Guide](swift.md)
+**Full guide:** Swift review guide is not bundled with this skill.
 
 ## Dart / Flutter
 
@@ -239,12 +239,12 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] `setState` / `BuildContext` used after `await` without `mounted` / `context.mounted`
 - [ ] `ref.watch` / `context.watch` in a callback; `read` used in `build` (or the reverse)
 - [ ] `BlocProvider.value` / `ChangeNotifierProvider.value` given a new instance constructed in `build` (use `create`; `value` does not dispose)
-- [ ] `BlocProvider(create: ...)` captures a stale `id` — missing `ValueKey(id)` remount or `didUpdateWidget` reload (`UniqueKey()` remounts every rebuild)
+- [ ] `BlocProvider(create: ...)` captures a stale `id` - missing `ValueKey(id)` remount or `didUpdateWidget` reload (`UniqueKey()` remounts every rebuild)
 - [ ] Platform channel `invokeMethod` without `PlatformException` handling
 - [ ] List children holding `State` missing a stable `ValueKey` (or using `UniqueKey()` in `build`)
 - [ ] `TextEditingController` / `AnimationController` / `StreamSubscription` not disposed
 
-**Full guide:** [Dart / Flutter Review Guide](dart.md)
+**Full guide:** Dart / Flutter review guide is not bundled with this skill.
 
 ## C
 
@@ -255,7 +255,7 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Resource leaks (missing `free`, `fclose`, etc.)
 - [ ] Missing `static` on file-local functions/variables
 
-**Full guide:** [C Review Guide](c.md)
+**Full guide:** C review guide is not bundled with this skill.
 
 ## C++
 
@@ -265,11 +265,11 @@ Quick-reference bug patterns organized by category. For detailed code examples, 
 - [ ] Dangling references from returned iterators or references
 - [ ] Unnecessary copies (missing `std::move` or pass-by-reference)
 
-**Full guide:** [C++ Review Guide](cpp.md)
+**Full guide:** C++ review guide is not bundled with this skill.
 
 ## SQL
 
-- [ ] String concatenation for queries (SQL injection risk) — use parameterized queries
+- [ ] String concatenation for queries (SQL injection risk) - use parameterized queries
 - [ ] Missing indexes on filtered/joined columns
 - [ ] `SELECT *` instead of specific columns
 - [ ] N+1 query patterns

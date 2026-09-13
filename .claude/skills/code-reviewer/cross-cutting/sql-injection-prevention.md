@@ -163,7 +163,7 @@ SELECT u.name, p.avatar_url FROM users u JOIN profiles p ON ...
 
 ### Python / Django
 
-> 详见 [Django Guide](../django.md#n1-查询优化)
+> Django-specific full guide is not bundled with this skill; use the examples in this section.
 
 ```python
 # ForeignKey / OneToOne → select_related (SQL JOIN)
@@ -184,7 +184,7 @@ authors = Author.objects.prefetch_related(
 
 ### Python / SQLAlchemy (FastAPI)
 
-> 详见 [FastAPI Guide](../fastapi.md#database-sessions--n1)
+> FastAPI-specific full guide is not bundled with this skill; use the SQLAlchemy examples in this section.
 
 ```python
 from sqlalchemy.orm import selectinload
@@ -198,7 +198,7 @@ stmt = select(Order).options(joinedload(Order.customer))
 
 ### Java / JPA (Spring Boot)
 
-> 详见 [Java Guide](../java.md)
+> Java-specific full guide is not bundled with this skill; use the JPA examples in this section.
 
 ```java
 // ❌ FetchType.EAGER 或循环中触发懒加载
@@ -220,7 +220,7 @@ private List<Order> orders;
 
 ### C# / EF Core
 
-> 详见 [C# Guide](../csharp.md)
+> 详见 [C# Guide](../references/csharp.md)
 
 ```csharp
 // ❌ N+1: foreach 触发懒加载
@@ -240,7 +240,7 @@ var data = await context.Blogs
 
 ### PHP / Laravel / Doctrine
 
-> 详见 [PHP Guide](../php.md)
+> PHP-specific full guide is not bundled with this skill; use the Laravel / Doctrine examples in this section.
 
 ```php
 // ❌ 循环内查询

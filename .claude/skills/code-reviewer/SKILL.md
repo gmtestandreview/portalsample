@@ -1,6 +1,6 @@
 ---
-name: code-review
-description: Use when reviewing code changes or pull requests, establishing code-review practice, or applying repository-aware review/edit discipline. Supports comprehensive review, Claude-specific GitHub PR orchestration when available, explicit GitHub review posting, progressive loading of bundled language and cross-cutting guides, and minimum-change repository editing when implementation is explicitly requested.
+name: code-reviewer
+description: Use when reviewing code changes or pull requests, establishing code-review practice, or applying repository-aware review/edit discipline. Supports comprehensive review, explicit GitHub review posting when authorized, progressive loading of bundled language and cross-cutting guides, and minimum-change repository editing when implementation is explicitly requested.
 ---
 
 # Code Review
@@ -11,8 +11,8 @@ Use the narrowest applicable mode. Do not mix review-only behavior with code edi
 
 - **Review mode:** review supplied code, diffs, files, or pull requests for correctness, security, performance, architecture, maintainability, tests, and applicable project conventions.
 - **Review-practice mode:** create or improve review standards, checklists, mentoring guidance, or review process.
-- **Repository-edit mode:** when the user asks to implement fixes or change code, follow `resources/code-change-discipline.instructions.md` and repository-local instructions. Make the minimum necessary change.
-- **Claude PR mode:** when the user explicitly requests the bundled Claude/GitHub PR workflow and the required environment is available, follow `resources/code-review.md`.
+- **Repository-edit mode:** when the user asks to implement fixes or change code, follow repository-local instructions and make the minimum necessary change.
+- **Claude/GitHub PR mode:** when the user explicitly requests posting or GitHub PR interaction, use the available environment-specific GitHub tools only after authorization.
 - If a request is ambiguous and the available artifact/context does not establish a review target or implementation target, identify the missing context instead of inventing it.
 
 External side effects are not implied by review access. Post a GitHub comment only when the user explicitly requests posting or the invoked Claude PR workflow explicitly includes posting and that action is authorized.
@@ -39,24 +39,23 @@ External side effects are not implied by review access. Post a GitHub comment on
 Load the minimum relevant files.
 
 ### Language/framework
-- React: `reference/react.md`
-- TypeScript/JavaScript: `reference/typescript.md`
-- Python: `reference/python.md`
-- C#/.NET: `reference/csharp.md`
-- CSS/Less/Sass: `reference/css-less-sass.md`
+- React: `references/react.md`
+- TypeScript/JavaScript: `references/typescript.md`
+- Python: `references/python.md`
+- C#/.NET: `references/csharp.md`
+- CSS/Less/Sass: `references/css-less-sass.md`
 
 ### Cross-cutting
-- Architecture: `reference/architecture-review-guide.md`
-- Performance: `reference/performance-review-guide.md`
-- Security: `reference/security-review-guide.md`
-- Universal quality: `reference/code-quality-universal.md`
-- Common bugs: `reference/common-bugs-checklist.md`
-- SQL injection: `reference/cross-cutting/sql-injection-prevention.md`
-- XSS: `reference/cross-cutting/xss-prevention.md`
-- N+1 queries: `reference/cross-cutting/n-plus-one-queries.md`
-- Error handling: `reference/cross-cutting/error-handling-principles.md`
-- Async/concurrency: `reference/cross-cutting/async-concurrency-patterns.md`
-- Review practice: `reference/code-review-best-practices.md`
+- Architecture: `references/architecture-review-guide.md`
+- Performance: `references/performance-review-guide.md`
+- Security: `references/security-review-guide.md`
+- Universal quality: `references/code-quality-universal.md`
+- Common bugs: `references/common-bugs-checklist.md`
+- SQL injection: `cross-cutting/sql-injection-prevention.md`
+- XSS: `cross-cutting/xss-prevention.md`
+- N+1 queries: `cross-cutting/n-plus-one-queries.md`
+- Error handling: `cross-cutting/error-handling-principles.md`
+- Review practice: `references/code-review-best-practices.md`
 
 Use specialist references only when the reviewed code or identified risk makes them relevant.
 References may mention other upstream language/framework guides that are not bundled for this repro; do not require or attempt to load those out-of-scope guides.
@@ -69,27 +68,24 @@ References may mention other upstream language/framework guides that are not bun
 - `scripts/test_pr_analyzer.py`: deterministic analyzer tests.
 - `resources/implementation-playbook.md`: detailed review patterns and examples.
 
-The preserved legacy scaffold files under `legacy/` are not authoritative analysis engines. Do not claim they perform deep analysis, scanning, automated fixes, or production-grade reporting unless their implementation is changed and separately validated.
+The scaffold helper scripts `scripts/code_quality_checker.py` and `scripts/review_report_generator.py` are not authoritative analysis engines. Do not claim they perform deep analysis, scanning, automated fixes, or production-grade reporting unless their implementation is changed and separately validated.
 
 ## Repository editing
 
 When implementation is explicitly requested:
-- follow `resources/code-change-discipline.instructions.md`;
 - preserve repository structure and patterns;
 - avoid unrelated cleanup or speculative dependencies/architecture;
 - honor repository-local package-manager and validation commands;
 - do not weaken CI or suppress warnings to make validation pass;
 - report failed or unavailable validation exactly.
 
-## Claude/GitHub PR orchestration
+## GitHub PR interaction
 
-When Claude PR mode applies, follow `resources/code-review.md` for:
-- PR eligibility checks;
-- repository-guidance discovery;
-- independent review passes;
-- confidence rescoring/filtering;
-- final eligibility recheck;
-- GitHub interaction and final-comment format.
+When GitHub PR interaction applies:
+- verify the PR target, permissions, and intended external side effect before posting;
+- inspect repository guidance and changed files before drafting comments;
+- keep findings evidence-based and scoped to reviewed changes;
+- recheck authorization immediately before posting comments or reviews.
 
 Treat named-model/subagent behavior as environment-specific. If the required orchestration is unavailable, say so rather than inventing equivalent runs.
 

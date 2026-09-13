@@ -2,7 +2,7 @@
 
 Language-agnostic SQL injection prevention strategies with cross-language code examples.
 
-> **Related**: [Security Review Guide](../security-review-guide.md) for comprehensive security checklist and decision framework.
+> **Related**: [Security Review Guide](../references/security-review-guide.md) for comprehensive security checklist and decision framework.
 
 ## Attack Types
 

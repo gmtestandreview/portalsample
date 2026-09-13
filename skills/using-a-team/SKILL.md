@@ -148,7 +148,7 @@ These thoughts mean you are about to skip a mandatory step. Stop.
 | Situation | Required Skill |
 |-----------|---------------|
 | `INIT.md` is missing and the project needs onboarding | **smart-init** skill |
-| Creating, editing, optimizing, or deploying a `SKILL.md` | **writing-skills** skill |
+| Creating, editing, optimizing, or deploying a `SKILL.md`; explicitly asking to call "writing skills" or "called writing skills" | **writing-skills** skill |
 | Two or more skills appear to overlap in scope | **skill-duplication-audit** skill |
 
 ## Session Start Checklist

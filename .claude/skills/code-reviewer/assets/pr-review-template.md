@@ -25,7 +25,7 @@ Copy and use this template for your code reviews.
 - [ ] Dependency direction — do dependencies flow toward stability?
 - [ ] Consistent with existing patterns and conventions
 
-> See [Architecture Review Guide](../reference/architecture-review-guide.md) for detailed SOLID, anti-pattern, and coupling analysis.
+> See [Architecture Review Guide](../references/architecture-review-guide.md) for detailed SOLID, anti-pattern, and coupling analysis.
 
 **Performance Assessment**
 - [ ] Algorithm complexity — any O(n²) or worse on large inputs?
@@ -33,7 +33,7 @@ Copy and use this template for your code reviews.
 - [ ] I/O impact — excessive API calls, unbatched writes, missing caching?
 - [ ] Database queries — N+1 risks, missing indexes, unoptimized joins?
 
-> See [Performance Review Guide](../reference/performance-review-guide.md) for comprehensive Web Vitals, N+1, and caching guidance.
+> See [Performance Review Guide](../references/performance-review-guide.md) for comprehensive Web Vitals, N+1, and caching guidance.
 
 ## Required Changes
 
@@ -72,7 +72,7 @@ Copy and use this template for your code reviews.
 - [ ] Sensitive data not leaked in logs/errors
 - [ ] Dependency vulnerabilities checked (npm audit / pip audit / cargo audit)
 
-> See [Security Review Guide](../reference/security-review-guide.md) for comprehensive injection, XSS, CSRF, secrets, and auth checklist.
+> See [Security Review Guide](../references/security-review-guide.md) for comprehensive injection, XSS, CSRF, secrets, and auth checklist.
 
 ## Test Coverage
 
