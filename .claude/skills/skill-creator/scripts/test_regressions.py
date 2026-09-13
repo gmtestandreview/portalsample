@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import ast
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from scripts import run_eval
 
@@ -32,6 +34,59 @@ class RunEvalValidationTests(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             run_eval._validate_eval_set(eval_set, runs_per_query=1, trigger_threshold=0.5)
+
+
+class RunEvalRegistrationTests(unittest.TestCase):
+    def test_run_single_query_registers_temp_agent_skill_not_slash_command(self) -> None:
+        class FakeUuid:
+            hex = "1234567890abcdef"
+
+        class FakeStdout:
+            def __init__(self) -> None:
+                self._lines = [b'{"type":"result","is_error":false}\n', b""]
+
+            def readline(self) -> bytes:
+                return self._lines.pop(0)
+
+        class FakeProcess:
+            stdout = FakeStdout()
+            returncode = 0
+
+            def poll(self) -> int:
+                return 0
+
+            def kill(self) -> None:
+                raise AssertionError("process should not need to be killed")
+
+            def wait(self) -> int:
+                return 0
+
+        def fake_popen(*_args, **kwargs) -> FakeProcess:
+            root = Path(kwargs["cwd"])
+            skill_md = root / ".claude" / "skills" / "example-skill-12345678" / "SKILL.md"
+            command_file = root / ".claude" / "commands" / "example-skill-12345678.md"
+            self.assertTrue(skill_md.is_file())
+            self.assertFalse(command_file.exists())
+            return FakeProcess()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            (project_root / ".claude").mkdir()
+            with (
+                patch.object(run_eval.uuid, "uuid4", return_value=FakeUuid()),
+                patch.object(run_eval.subprocess, "Popen", side_effect=fake_popen),
+            ):
+                triggered = run_eval.run_single_query(
+                    query="Create an Agent Skill",
+                    skill_name="example",
+                    skill_description="Use when creating Agent Skills.",
+                    timeout=5,
+                    project_root=str(project_root),
+                )
+
+            self.assertFalse(triggered)
+            self.assertFalse((project_root / ".claude" / "skills").exists())
+            self.assertFalse((project_root / ".claude" / "commands").exists())
 
 
 def _find_subprocess_call(filename: str, func_name: str) -> ast.Call:
