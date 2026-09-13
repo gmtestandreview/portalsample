@@ -8,10 +8,11 @@ for a set of queries. Outputs results as JSON.
 import argparse
 import json
 import os
-import select
+import queue
 import shutil
 import subprocess
 import sys
+import threading
 import time
 import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -85,108 +86,125 @@ def run_single_query(
         # programmatic subprocess usage is safe.
         env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
 
+        # shell=True on Windows so a bare "claude" resolves through cmd.exe:
+        # npm installs the CLI as claude.cmd/.ps1, which CreateProcess cannot
+        # launch directly even though shutil.which() finds it (WinError 2).
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
             cwd=project_root,
             env=env,
+            shell=(os.name == "nt"),
         )
 
         triggered = False
         start_time = time.time()
-        buffer = ""
         # Track state for stream event detection
         pending_tool_name = None
         accumulated_json = ""
 
+        # select.select() only supports sockets on Windows, not pipe file
+        # objects (WinError 10038), so poll process.stdout via a background
+        # reader thread and a queue instead. This works identically on
+        # Windows and POSIX and readline() already yields whole lines, so
+        # no manual chunk/newline buffering is needed.
+        line_queue: "queue.Queue[bytes | None]" = queue.Queue()
+
+        def _pump_stdout() -> None:
+            try:
+                for raw_line in iter(process.stdout.readline, b""):
+                    line_queue.put(raw_line)
+            finally:
+                line_queue.put(None)
+
+        reader = threading.Thread(target=_pump_stdout, daemon=True)
+        reader.start()
+
         timed_out = False
         try:
             while time.time() - start_time < timeout:
-                if process.poll() is not None:
-                    remaining = process.stdout.read()
-                    if remaining:
-                        buffer += remaining.decode("utf-8", errors="replace")
-                    break
-
-                ready, _, _ = select.select([process.stdout], [], [], 1.0)
-                if not ready:
+                try:
+                    raw_line = line_queue.get(timeout=1.0)
+                except queue.Empty:
+                    if process.poll() is not None:
+                        break
                     continue
 
-                chunk = os.read(process.stdout.fileno(), 8192)
-                if not chunk:
-                    break
-                buffer += chunk.decode("utf-8", errors="replace")
+                if raw_line is None:
+                    # stdout closed; keep polling until the process exits.
+                    if process.poll() is not None:
+                        break
+                    continue
 
-                while "\n" in buffer:
-                    line, buffer = buffer.split("\n", 1)
-                    line = line.strip()
-                    if not line:
-                        continue
+                line = raw_line.decode("utf-8", errors="replace").strip()
+                if not line:
+                    continue
 
-                    try:
-                        event = json.loads(line)
-                    except json.JSONDecodeError:
-                        continue
+                try:
+                    event = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
 
-                    # Early detection via stream events
-                    if event.get("type") == "stream_event":
-                        se = event.get("event", {})
-                        se_type = se.get("type", "")
+                # Early detection via stream events
+                if event.get("type") == "stream_event":
+                    se = event.get("event", {})
+                    se_type = se.get("type", "")
 
-                        if se_type == "content_block_start":
-                            # A message may use unrelated tools before consulting a skill.
-                            # Ignore those blocks instead of treating them as a non-trigger.
+                    if se_type == "content_block_start":
+                        # A message may use unrelated tools before consulting a skill.
+                        # Ignore those blocks instead of treating them as a non-trigger.
+                        pending_tool_name = None
+                        accumulated_json = ""
+                        cb = se.get("content_block", {})
+                        if cb.get("type") == "tool_use":
+                            tool_name = cb.get("name", "")
+                            if tool_name in ("Skill", "Read"):
+                                pending_tool_name = tool_name
+
+                    elif se_type == "content_block_delta" and pending_tool_name:
+                        delta = se.get("delta", {})
+                        if delta.get("type") == "input_json_delta":
+                            accumulated_json += delta.get("partial_json", "")
+                            if clean_name in accumulated_json:
+                                return True
+
+                    elif se_type in ("content_block_stop", "message_stop"):
+                        if pending_tool_name:
+                            if clean_name in accumulated_json:
+                                return True
                             pending_tool_name = None
                             accumulated_json = ""
-                            cb = se.get("content_block", {})
-                            if cb.get("type") == "tool_use":
-                                tool_name = cb.get("name", "")
-                                if tool_name in ("Skill", "Read"):
-                                    pending_tool_name = tool_name
+                        if se_type == "message_stop":
+                            return False
 
-                        elif se_type == "content_block_delta" and pending_tool_name:
-                            delta = se.get("delta", {})
-                            if delta.get("type") == "input_json_delta":
-                                accumulated_json += delta.get("partial_json", "")
-                                if clean_name in accumulated_json:
-                                    return True
+                # Fallback: full assistant message
+                elif event.get("type") == "assistant":
+                    message = event.get("message", {})
+                    for content_item in message.get("content", []):
+                        if content_item.get("type") != "tool_use":
+                            continue
+                        tool_name = content_item.get("name", "")
+                        tool_input = content_item.get("input", {})
+                        if tool_name == "Skill" and clean_name in tool_input.get("skill", ""):
+                            return True
+                        if tool_name == "Read" and clean_name in tool_input.get(
+                            "file_path", ""
+                        ):
+                            return True
+                    return False
 
-                        elif se_type in ("content_block_stop", "message_stop"):
-                            if pending_tool_name:
-                                if clean_name in accumulated_json:
-                                    return True
-                                pending_tool_name = None
-                                accumulated_json = ""
-                            if se_type == "message_stop":
-                                return False
-
-                    # Fallback: full assistant message
-                    elif event.get("type") == "assistant":
-                        message = event.get("message", {})
-                        for content_item in message.get("content", []):
-                            if content_item.get("type") != "tool_use":
-                                continue
-                            tool_name = content_item.get("name", "")
-                            tool_input = content_item.get("input", {})
-                            if tool_name == "Skill" and clean_name in tool_input.get("skill", ""):
-                                return True
-                            if tool_name == "Read" and clean_name in tool_input.get(
-                                "file_path", ""
-                            ):
-                                return True
-                        return False
-
-                    elif event.get("type") == "result":
-                        if event.get("is_error"):
-                            raise RuntimeError("claude CLI reported an error result")
-                        return triggered
+                elif event.get("type") == "result":
+                    if event.get("is_error"):
+                        raise RuntimeError("claude CLI reported an error result")
+                    return triggered
             timed_out = process.poll() is None
         finally:
             # Clean up process on any exit path (return, exception, timeout).
             if process.poll() is None:
                 process.kill()
                 process.wait()
+            reader.join(timeout=1.0)
 
         if timed_out:
             raise TimeoutError(f"trigger evaluation exceeded {timeout}s")

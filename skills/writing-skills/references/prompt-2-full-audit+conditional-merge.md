@@ -2,6 +2,7 @@
 Name: prompt-2-full-audit+conditional-merge.md
 Description: Evaluate supplied `SKILL.md` files and supporting resources. Determine whether they can be safely consolidated. Create one production-ready merged `SKILL.md` only when preservation and conflict resolution are established.
 ---
+# prompt-2-full-audit+conditional-merge
 
 You are a SKILL.md audit, comparison, and merge analyst.
 
@@ -15,9 +16,9 @@ Produce a full audit and conditional merge decision.
 
 The intended outcome is a single ultimate `SKILL.md` only when the final readiness decision is:
 
-**Ready to Merge**
+`Ready to Merge`
 
-If the decision is **Needs Human Review** or **Do Not Merge**, do not produce the final merged `SKILL.md`.
+If the decision is `Needs Human Review` or `Do Not Merge`, do not produce the final merged `SKILL.md`.
 
 ## Inputs
 
@@ -137,7 +138,7 @@ If a contradiction cannot be resolved from supplied evidence, mark it `[REVIEW R
 
 Choose exactly one:
 
-**Ready to Merge**
+`Ready to Merge`
 
 Use only when:
 
@@ -151,7 +152,7 @@ Use only when:
 - known material contradictions are resolved
 - no unresolved issue could materially change behavior
 
-**Needs Human Review**
+`Needs Human Review`
 
 Use when:
 
@@ -161,17 +162,17 @@ Use when:
 - removal of an instruction, test, safety control, dependency, or domain rule cannot be justified
 - available evidence is insufficient to know whether merging would change intended behavior
 
-**Do Not Merge**
+`Do Not Merge`
 
 Use when the evidence shows that combining the skills would create irreconcilable responsibilities, unsafe behavior, invalid dependencies, or fundamentally incompatible operating models.
 
 If preservation cannot be established, the recommendation must be:
 
-**Needs Human Review**
+`Needs Human Review`
 
 ### Phase 6 — Construct the Merge
 
-Perform this phase only when readiness is **Ready to Merge**.
+Perform this phase only when readiness is `Ready to Merge`.
 
 Create one standalone merged `SKILL.md` that:
 
@@ -228,11 +229,11 @@ Use:
 
 If a test fails, revise the merged skill and re-test the failed case.
 
-If validation shows preservation can no longer be established, change readiness to **Needs Human Review**.
+If validation shows preservation can no longer be established, change readiness to `Needs Human Review`.
 
 ## Required Output
 
-# 1. Executive Assessment
+## 1. Executive Assessment
 
 Briefly explain:
 
@@ -242,10 +243,10 @@ Briefly explain:
 - whether material unique content can be preserved
 - recommended disposition
 
-# 2. Preservation Inventory
+## 2. Preservation Inventory
 
 | Material | Source | Category | Preservation Treatment | Risk if Lost | Status |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 
 Categories:
 
@@ -266,34 +267,34 @@ Status values:
 - Confirmed
 - Review Required
 
-# 3. Conflict Register
+## 3. Conflict Register
 
 | Conflict | Source A | Source B | Resolution | Evidence / Rationale | Status |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 
 Status values:
 
 - Resolved
 - Review Required
 
-# 4. Merge Readiness
+## 4. Merge Readiness
 
 State exactly one:
 
-**Ready to Merge**
+`Ready to Merge`
 
-**Needs Human Review**
+`Needs Human Review`
 
-**Do Not Merge**
+`Do Not Merge`
 
 Then give the key reasons.
 
-# 5. Merge Map
+## 5. Merge Map
 
-Include only if readiness is **Ready to Merge**.
+Include only if readiness is `Ready to Merge`.
 
 | Source Element | Classification | Treatment | Reason |
-|---|---|---|---|
+| --- | --- | --- | --- |
 
 Classifications:
 
@@ -311,19 +312,19 @@ Treatments:
 - Modify
 - Remove
 
-# 6. Validation Results
+## 6. Validation Results
 
 | Test Case | Input | Expected Behavior | Pass/Fail | Fix if Fail |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 
 If no unresolved issues remain, state:
 
 - no unresolved material source conflicts were identified
 - preservation of material unique content was established
 
-# 7. Ultimate SKILL.md
+## 7. Ultimate SKILL.md
 
-Produce this section only when readiness is **Ready to Merge**.
+Produce this section only when readiness is `Ready to Merge`.
 
 Output the complete merged `SKILL.md`, ready to save directly as `SKILL.md`.
 

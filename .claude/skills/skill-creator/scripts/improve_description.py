@@ -35,6 +35,9 @@ def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
 
     try:
+        # shell=True on Windows so a bare "claude" resolves through cmd.exe:
+        # npm installs the CLI as claude.cmd/.ps1, which CreateProcess cannot
+        # launch directly even when the binary is genuinely on PATH.
         result = subprocess.run(
             cmd,
             input=prompt,
@@ -43,6 +46,7 @@ def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
             env=env,
             timeout=timeout,
             check=False,
+            shell=(os.name == "nt"),
         )
     except OSError as exc:
         raise RuntimeError(
