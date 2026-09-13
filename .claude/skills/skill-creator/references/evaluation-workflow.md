@@ -249,7 +249,7 @@ You can perform a qualitative sanity check serially, but do not present it as in
 
 ### Updating an already-installed skill
 
-When the task is updating an existing skill rather than creating a new one: preserve its original name and directory name unchanged, copy it to a writeable location (e.g. `/tmp/<skill-name>/`) before editing since the installed path may be read-only, and package from the copy rather than in place.
+When the task is updating an existing skill rather than creating a new one: preserve its original name and directory name unchanged, copy it to a writeable scratch location before editing since the installed path may be read-only (e.g. `/tmp/<skill-name>/` on Unix-like runtimes, or the session's scratch directory when one is provided), and package from the copy rather than in place.
 
 ### Missing execution capability
 

@@ -110,6 +110,12 @@ python -m scripts.quick_validate .
 
 For Python-bearing skills, also run syntax/import/interface checks that the environment supports. A checklist or validator definition is not evidence that the checks passed.
 
+For this skill's own helper scripts, also run its regression suite:
+
+```bash
+python -m unittest scripts.test_regressions
+```
+
 If any required deterministic check fails, stop, fix the defect or report it, and do not package or claim validation success.
 
 Package only after validation succeeds:
