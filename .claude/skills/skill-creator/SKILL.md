@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Use when creating, revising, evaluating, benchmarking, packaging, or improving activation of an Agent Skill (`SKILL.md`), including Claude Code skill rules, hooks, guardrails, and activation failures. Covers portable authoring, resource organization, output evals, candidate-vs-baseline comparison, trigger testing, and deployment readiness. Do not use for ordinary code or document editing unrelated to Agent Skills.
+description: Use when creating, revising, evaluating, benchmarking, packaging, or improving activation of an Agent Skill (`SKILL.md`), including turning a proven workflow into a reusable skill, checking skill-folder resource consistency before sharing, and Claude Code skill rules, hooks, guardrails, and activation failures. Covers portable authoring, resource organization, output evals, candidate-vs-baseline comparison, trigger testing, and deployment readiness. Do not use for ordinary code, document editing, generic packaging, or generic A/B testing unrelated to Agent Skills.
 compatibility: Agent Skills authoring is spec-based. Bundled evaluation tooling targets Claude Code/Cowork workflows; Python 3.10+ and PyYAML are required for validation/packaging, and the `claude` CLI is required only for trigger-description evaluation.
 ---
 

@@ -1,9 +1,11 @@
 # Deployment behavioral test plan
 
-Status: **Partially executed on 2026-09-13**. These cases now have initial evidence, but the
-skill is **not production-ready** under this plan's bar because positive activation failed in
-the inspected Claude CLI runtime path and true independent RED/GREEN behavioral execution
-remains NHR.
+Status: **Partially executed on 2026-09-13; activation harness corrected and rerun on 2026-09-14**.
+The command-file activation path was a false-negative harness bug: temporary skills must be
+registered as isolated `.claude/skills/<name>/SKILL.md` projects and run with `--setting-sources
+project`. The skill is still **not production-ready** under this plan's bar because the corrected
+train/holdout evidence is not fully green, the final post-description full rerun hit Claude CLI
+rate limit, and true independent RED/GREEN behavioral execution remains NHR.
 
 Evidence:
 
@@ -19,6 +21,21 @@ Evidence:
   useful as structural evidence, but explicitly not a true independent behavioral run.
 - `evals/runs/2026-09-13/closeout-summary.md` - close-out interpretation, commands, and
   remaining blockers.
+- `evals/runs/2026-09-14/activation-eval-serial-results.json` - corrected isolated activation
+  train pass, 1 run per query; 19/20 passed, with no execution errors.
+- `evals/runs/2026-09-14/activation-holdout-serial-results.json` - corrected isolated activation
+  holdout pass, 1 run per query; 6/8 passed, with no execution errors.
+- `evals/runs/2026-09-14/activation-eval-serial-after-description-results.json` - attempted
+  post-description train rerun; first 5 positive cases passed, then Claude CLI returned rate-limit
+  errors (`429`, reset 2026-09-14 21:30 Australia/Sydney), so the run is not acceptance evidence.
+- `evals/runs/2026-09-14/activation-eval-serial-post-description-rerun-results.json` - requested
+  post-description train rerun; 0/20 passed because every row returned Claude CLI `429` rate-limit
+  errors (`reset 2026-09-14 21:30 Australia/Sydney`), so this is not acceptance evidence.
+- `evals/runs/2026-09-14/activation-holdout-serial-post-description-rerun-results.json` -
+  requested post-description holdout rerun; 0/8 passed because every row returned Claude CLI `429`
+  rate-limit errors (`reset 2026-09-14 21:30 Australia/Sydney`), so this is not acceptance evidence.
+- `evals/runs/2026-09-14/closeout-summary.md` - corrected-harness interpretation, commands,
+  remaining blockers, and next verification step.
 
 ## Activation boundary
 

@@ -62,11 +62,15 @@ class RunEvalRegistrationTests(unittest.TestCase):
                 return 0
 
         def fake_popen(*_args, **kwargs) -> FakeProcess:
+            cmd = _args[0]
             root = Path(kwargs["cwd"])
             skill_md = root / ".claude" / "skills" / "example-skill-12345678" / "SKILL.md"
             command_file = root / ".claude" / "commands" / "example-skill-12345678.md"
+            self.assertNotEqual(root, project_root)
             self.assertTrue(skill_md.is_file())
             self.assertFalse(command_file.exists())
+            self.assertIn("--setting-sources", cmd)
+            self.assertEqual(cmd[cmd.index("--setting-sources") + 1], "project")
             return FakeProcess()
 
         with tempfile.TemporaryDirectory() as tmp:
@@ -87,6 +91,100 @@ class RunEvalRegistrationTests(unittest.TestCase):
             self.assertFalse(triggered)
             self.assertFalse((project_root / ".claude" / "skills").exists())
             self.assertFalse((project_root / ".claude" / "commands").exists())
+
+    def test_run_single_query_ignores_partial_assistant_snapshots_before_tool_use(self) -> None:
+        class FakeUuid:
+            hex = "1234567890abcdef"
+
+        class FakeStdout:
+            def __init__(self) -> None:
+                self._lines = [
+                    b'{"type":"assistant","message":{"content":[{"type":"thinking","thinking":"checking"}]}}\n',
+                    (
+                        b'{"type":"assistant","message":{"content":[{"type":"tool_use",'
+                        b'"name":"Skill","input":{"skill":"example-skill-12345678"}}]}}\n'
+                    ),
+                    b"",
+                ]
+
+            def readline(self) -> bytes:
+                return self._lines.pop(0)
+
+        class FakeProcess:
+            stdout = FakeStdout()
+            returncode = 0
+
+            def poll(self) -> int:
+                return 0
+
+            def kill(self) -> None:
+                raise AssertionError("process should not need to be killed")
+
+            def wait(self) -> int:
+                return 0
+
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            (project_root / ".claude").mkdir()
+            with (
+                patch.object(run_eval.uuid, "uuid4", return_value=FakeUuid()),
+                patch.object(run_eval.subprocess, "Popen", return_value=FakeProcess()),
+            ):
+                triggered = run_eval.run_single_query(
+                    query="Create an Agent Skill",
+                    skill_name="example",
+                    skill_description="Use when creating Agent Skills.",
+                    timeout=5,
+                    project_root=str(project_root),
+                )
+
+            self.assertTrue(triggered)
+
+    def test_run_single_query_preserves_claude_error_details(self) -> None:
+        class FakeUuid:
+            hex = "1234567890abcdef"
+
+        class FakeStdout:
+            def __init__(self) -> None:
+                self._lines = [
+                    (
+                        b'{"type":"result","is_error":true,"api_error_status":429,'
+                        b'"result":"You have hit your limit"}\n'
+                    ),
+                    b"",
+                ]
+
+            def readline(self) -> bytes:
+                return self._lines.pop(0)
+
+        class FakeProcess:
+            stdout = FakeStdout()
+            returncode = 0
+
+            def poll(self) -> int:
+                return 0
+
+            def kill(self) -> None:
+                raise AssertionError("process should not need to be killed")
+
+            def wait(self) -> int:
+                return 0
+
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            (project_root / ".claude").mkdir()
+            with (
+                patch.object(run_eval.uuid, "uuid4", return_value=FakeUuid()),
+                patch.object(run_eval.subprocess, "Popen", return_value=FakeProcess()),
+            ):
+                with self.assertRaisesRegex(RuntimeError, "429: You have hit your limit"):
+                    run_eval.run_single_query(
+                        query="Create an Agent Skill",
+                        skill_name="example",
+                        skill_description="Use when creating Agent Skills.",
+                        timeout=5,
+                        project_root=str(project_root),
+                    )
 
 
 def _find_subprocess_call(filename: str, func_name: str) -> ast.Call:

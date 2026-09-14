@@ -12,6 +12,7 @@ import queue
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -24,7 +25,7 @@ from scripts.utils import parse_skill_md
 def find_project_root() -> Path:
     """Find the project root by walking up from cwd looking for .claude/.
 
-    Mimics how Claude Code discovers its project root, so the command file
+    Mimics how Claude Code discovers its project root, so the temp skill
     we create ends up where claude -p will look for it.
     """
     current = Path.cwd()
@@ -44,30 +45,34 @@ def run_single_query(
 ) -> bool:
     """Run a single query and return whether the skill was triggered.
 
-    Creates a command file in .claude/commands/ so it appears in Claude's
-    available_skills list, then runs `claude -p` with the raw query.
+    Creates an isolated temporary Claude project with exactly one skill in
+    .claude/skills/ so ambient project/user skills cannot satisfy the query,
+    then runs `claude -p` with the raw query.
     Uses --include-partial-messages to detect triggering early from
     stream events (content_block_start) rather than waiting for the
     full assistant message, which only arrives after tool execution.
     """
     unique_id = uuid.uuid4().hex[:8]
     clean_name = f"{skill_name}-skill-{unique_id}"
-    project_commands_dir = Path(project_root) / ".claude" / "commands"
-    command_file = project_commands_dir / f"{clean_name}.md"
+    eval_project_root = Path(tempfile.mkdtemp(prefix="skill-activation-eval-"))
+    project_skills_dir = eval_project_root / ".claude" / "skills"
+    skill_dir = project_skills_dir / clean_name
+    skill_file = skill_dir / "SKILL.md"
 
     try:
-        project_commands_dir.mkdir(parents=True, exist_ok=True)
+        skill_dir.mkdir(parents=True, exist_ok=False)
         # Use YAML block scalar to avoid breaking on quotes in description
         indented_desc = "\n  ".join(skill_description.split("\n"))
-        command_content = (
+        skill_content = (
             f"---\n"
+            f"name: {clean_name}\n"
             f"description: |\n"
             f"  {indented_desc}\n"
             f"---\n\n"
             f"# {skill_name}\n\n"
             f"This skill handles: {skill_description}\n"
         )
-        command_file.write_text(command_content)
+        skill_file.write_text(skill_content, encoding="utf-8")
 
         cmd = [
             "claude",
@@ -77,6 +82,8 @@ def run_single_query(
             "stream-json",
             "--verbose",
             "--include-partial-messages",
+            "--setting-sources",
+            "project",
         ]
         if model:
             cmd.extend(["--model", model])
@@ -93,7 +100,7 @@ def run_single_query(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.DEVNULL,
-            cwd=project_root,
+            cwd=str(eval_project_root),
             env=env,
             shell=(os.name == "nt"),
         )
@@ -192,18 +199,20 @@ def run_single_query(
                             "file_path", ""
                         ):
                             return True
-                    return False
+                    continue
 
                 elif event.get("type") == "result":
                     if event.get("is_error"):
-                        raise RuntimeError("claude CLI reported an error result")
+                        status = event.get("api_error_status")
+                        message = event.get("result") or event.get("subtype") or "unknown error"
+                        if status:
+                            raise RuntimeError(f"claude CLI error {status}: {message}")
+                        raise RuntimeError(f"claude CLI reported an error result: {message}")
                     return triggered
             timed_out = process.poll() is None
         finally:
             # Clean up process on any exit path (return, exception, timeout).
-            if process.poll() is None:
-                process.kill()
-                process.wait()
+            _terminate_process_tree(process)
             reader.join(timeout=1.0)
 
         if timed_out:
@@ -212,8 +221,20 @@ def run_single_query(
             raise RuntimeError(f"claude CLI exited with status {process.returncode}")
         return triggered
     finally:
-        if command_file.exists():
-            command_file.unlink()
+        for attempt in range(5):
+            try:
+                shutil.rmtree(eval_project_root)
+                break
+            except FileNotFoundError:
+                break
+            except PermissionError:
+                if attempt == 4:
+                    shutil.rmtree(eval_project_root, ignore_errors=True)
+                else:
+                    time.sleep(0.2)
+            except OSError:
+                shutil.rmtree(eval_project_root, ignore_errors=True)
+                break
 
 
 def _validate_eval_set(eval_set: list[dict], runs_per_query: int, trigger_threshold: float) -> None:
@@ -245,6 +266,26 @@ def _require_claude_cli() -> str:
             "claude CLI not found on PATH; trigger evaluation is unavailable in this runtime"
         )
     return path
+
+
+def _terminate_process_tree(process: subprocess.Popen) -> None:
+    """Terminate a subprocess and its children before deleting its cwd."""
+    if process.poll() is not None:
+        return
+    if os.name == "nt":
+        subprocess.run(
+            ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+    else:
+        process.kill()
+    try:
+        process.wait(timeout=5)
+    except subprocess.TimeoutExpired:
+        process.kill()
+        process.wait()
 
 
 def run_eval(
