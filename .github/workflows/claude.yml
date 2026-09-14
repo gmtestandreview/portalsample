@@ -59,7 +59,7 @@ jobs:
       #   Rotation owner: @gregm (gtmemico) - review/rotate by 2026-12-01.
       #   A classic or org-wide PAT here widens blast radius to every repo the
       #   token owner can write; do not substitute one.
-      - uses: anthropics/claude-code-action@5ccc3a35a6367cdb8e6fbd0728287467540ecfe2 # v1.0.219
+      - uses: anthropics/claude-code-action@56cf60fde42f7b19c3abfd5c9c48b69a1288461f # v1.0.222
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
