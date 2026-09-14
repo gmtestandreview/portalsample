@@ -69,7 +69,7 @@
       "required": true,
       "kind": "activation-near-miss",
       "prompt": "Why is this Python function returning None?",
-      "expected": "Treat as ordinary focused debugging unless the user asks for broader review/root-cause remediation. Do not automatically activate the full code-review discipline."
+      "expected": "Do not activate the full review skill for isolated debugging of a single local defect. Activate only when the user also asks for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation."
     },
     {
       "id": "near-miss-routine-refactor",

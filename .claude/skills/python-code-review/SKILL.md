@@ -1,6 +1,6 @@
 ---
 name: python-code-review
-description: Use when reviewing, auditing, hardening, or remediating existing Python code for correctness, typing or static-analysis diagnostics (including Ruff, Pyright/Pylance, mypy, or supplied Sonar findings), unsafe external-data handling, async/error/security risks, performance, determinism, regression protection, or compatibility-sensitive changes. Do not use for ordinary Python explanations, greenfield implementation, isolated feature coding, or test authoring unless the user also asks for code-quality review or remediation.
+description: Use when reviewing, auditing, hardening, or remediating existing Python code for correctness, typing or static-analysis diagnostics (including Ruff, Pyright/Pylance, mypy, or supplied Sonar findings), unsafe external-data handling, async/error/security risks, performance, determinism, regression protection, or compatibility-sensitive changes. Do not use for ordinary Python explanations, greenfield implementation, isolated feature coding, standalone test authoring, or debugging a single local defect unless the user also asks for broader code-quality review, hardening, or remediation.
 ---
 
 # Python Code Review
@@ -11,7 +11,7 @@ Review **existing Python code** for correct behavior first, then sound data mode
 
 Use this skill for code review, audit, hardening, root-cause analysis of quality defects, and compatibility-sensitive remediation.
 
-Do not use it merely because a request mentions Python. Ordinary explanations, greenfield feature implementation, narrow syntax help, routine refactors, and standalone test authoring are outside scope unless the user also asks for review, hardening, or remediation. For specialist domains such as security, databases, or framework architecture, apply this skill only to the Python-specific review concerns and compose with a narrower specialist skill when available.
+Do not use it merely because a request mentions Python. Ordinary explanations, greenfield feature implementation, narrow syntax help, routine refactors, standalone test authoring, and isolated debugging of a single local defect are outside scope unless the user also asks for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation. For specialist domains such as security, databases, or framework architecture, apply this skill only to the Python-specific review concerns and compose with a narrower specialist skill when available.
 
 ## Evidence boundary
 

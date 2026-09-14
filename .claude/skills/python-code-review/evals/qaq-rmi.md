@@ -6,7 +6,7 @@ These are static mappings for critical activation, branch, and load conditions. 
 | --- | --- | --- | --- | --- | --- | --- |
 | Review activation | Audit an existing Python module for correctness/typing | Explain `zip()` | Frontmatter + Scope boundary | Activate only for review/audit/hardening/remediation | Existing-code quality review | NHR |
 | Greenfield boundary | Review a new endpoint after implementation | Implement a new FastAPI endpoint | Scope boundary | Do not activate for greenfield implementation alone | Implementation without review intent | NHR |
-| Focused debug boundary | Audit recurring `None` semantics across a module | Why does one function return `None`? | Scope boundary | Reserve full discipline for broader review/remediation | Narrow debugging | NHR |
+| Focused debug boundary | Audit recurring `None` semantics across a module | Why does one function return `None`? | Frontmatter + Scope boundary | Do not activate for isolated debugging of a single local defect; activate for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation | Narrow debugging vs broad review | NHR |
 | Performance branch | Review memory/N+1/concurrency risks | Write a faster loop from scratch | Conditional references | Load `python-general-review.md` for review | Performance review of existing code | NHR |
 | Static-analysis branch | Audit mypy/Ruff/Pyright diagnostics | Explain what mypy is | Conditional references | Load verification reference only for diagnostics/remediation | Static-analysis remediation | NHR |
 | Async branch | Review cancellation/blocking I/O | Explain `asyncio.gather` | Conditional references | Load remediation reference; avoid unrelated references | Async code review | NHR |
