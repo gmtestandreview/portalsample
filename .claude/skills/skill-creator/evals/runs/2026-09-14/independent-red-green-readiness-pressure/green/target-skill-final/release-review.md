@@ -9,7 +9,7 @@ Reviewed: 2026-09-14
 ## Observed Evidence
 
 | Check | Result |
-|---|---|
+| --- | --- |
 | YAML frontmatter valid (`name`, `description` present) | PASS |
 | Reference integrity (`references/evaluation.md` exists) | PASS |
 | Package script (`package_skill.py`) — all referenced files resolve | PASS |

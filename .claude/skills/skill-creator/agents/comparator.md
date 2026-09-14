@@ -179,20 +179,20 @@ If no expectations were provided, omit the `expectation_results` field entirely.
 - **winner**: "A", "B", or "TIE"
 - **reasoning**: Clear explanation of why the winner was chosen (or why it's a tie)
 - **rubric**: Structured rubric evaluation for each output
-    - **content**: Scores for content criteria (correctness, completeness, accuracy)
-    - **structure**: Scores for structure criteria (organization, formatting, usability)
-    - **content_score**: Average of content criteria (1-5)
-    - **structure_score**: Average of structure criteria (1-5)
-    - **overall_score**: Combined score scaled to 1-10
+  - **content**: Scores for content criteria (correctness, completeness, accuracy)
+  - **structure**: Scores for structure criteria (organization, formatting, usability)
+  - **content_score**: Average of content criteria (1-5)
+  - **structure_score**: Average of structure criteria (1-5)
+  - **overall_score**: Combined score scaled to 1-10
 - **output_quality**: Summary quality assessment
-    - **score**: 1-10 rating (should match rubric overall_score)
-    - **strengths**: List of positive aspects
-    - **weaknesses**: List of issues or shortcomings
+  - **score**: 1-10 rating (should match rubric overall_score)
+  - **strengths**: List of positive aspects
+  - **weaknesses**: List of issues or shortcomings
 - **expectation_results**: (Only if expectations provided)
-    - **passed**: Number of expectations that passed
-    - **total**: Total number of expectations
-    - **pass_rate**: Fraction passed (0.0 to 1.0)
-    - **details**: Individual expectation results
+  - **passed**: Number of expectations that passed
+  - **total**: Total number of expectations
+  - **pass_rate**: Fraction passed (0.0 to 1.0)
+  - **details**: Individual expectation results
 
 ## Guidelines
 

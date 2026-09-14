@@ -190,32 +190,32 @@ Write a JSON file with this structure:
 ## Field Descriptions
 
 - **expectations**: Array of graded expectations
-    - **text**: The original expectation text
-    - **passed**: Boolean - true if expectation passes
-    - **evidence**: Specific quote or description supporting the verdict
+  - **text**: The original expectation text
+  - **passed**: Boolean - true if expectation passes
+  - **evidence**: Specific quote or description supporting the verdict
 - **summary**: Aggregate statistics
-    - **passed**: Count of passed expectations
-    - **failed**: Count of failed expectations
-    - **total**: Total expectations evaluated
-    - **pass_rate**: Fraction passed (0.0 to 1.0)
+  - **passed**: Count of passed expectations
+  - **failed**: Count of failed expectations
+  - **total**: Total expectations evaluated
+  - **pass_rate**: Fraction passed (0.0 to 1.0)
 - **execution_metrics**: Copied from executor's metrics.json (if available)
-    - **output_chars**: Total character count of output files (proxy for tokens)
-    - **transcript_chars**: Character count of transcript
+  - **output_chars**: Total character count of output files (proxy for tokens)
+  - **transcript_chars**: Character count of transcript
 - **timing**: Wall clock timing from timing.json (if available)
-    - **executor_duration_seconds**: Time spent in executor subagent
-    - **total_duration_seconds**: Total elapsed time for the run
+  - **executor_duration_seconds**: Time spent in executor subagent
+  - **total_duration_seconds**: Total elapsed time for the run
 - **claims**: Extracted and verified claims from the output
-    - **claim**: The statement being verified
-    - **type**: "factual", "process", or "quality"
-    - **verified**: Boolean - whether the claim holds
-    - **evidence**: Supporting or contradicting evidence
+  - **claim**: The statement being verified
+  - **type**: "factual", "process", or "quality"
+  - **verified**: Boolean - whether the claim holds
+  - **evidence**: Supporting or contradicting evidence
 - **user_notes_summary**: Issues flagged by the executor
-    - **uncertainties**: Things the executor wasn't sure about
-    - **needs_review**: Items requiring human attention
-    - **workarounds**: Places where the skill didn't work as expected
+  - **uncertainties**: Things the executor wasn't sure about
+  - **needs_review**: Items requiring human attention
+  - **workarounds**: Places where the skill didn't work as expected
 - **eval_feedback**: Improvement suggestions for the evals (only when warranted)
-    - **suggestions**: List of concrete suggestions, each with a `reason` and optionally an `assertion` it relates to
-    - **overall**: Brief assessment — can be "No suggestions, evals look solid" if nothing to flag
+  - **suggestions**: List of concrete suggestions, each with a `reason` and optionally an `assertion` it relates to
+  - **overall**: Brief assessment — can be "No suggestions, evals look solid" if nothing to flag
 
 ## Guidelines
 

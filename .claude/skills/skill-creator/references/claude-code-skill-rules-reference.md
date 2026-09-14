@@ -70,7 +70,7 @@ interface SkillRule {
 ### SkillRule Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `type` | string | Yes | "guardrail" (enforced) or "domain" (advisory) |
 | `enforcement` | string | Yes | `"block"` (PreToolUse), `"suggest"` (UserPromptSubmit), or `"warn"`. The supplied hook reference does not define a distinct `"warn"` runtime path; verify implementation before relying on it. |
 | `priority` | string | Yes | "critical", "high", "medium", or "low" |
@@ -91,7 +91,7 @@ interface SkillRule {
 ### fileTriggers Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `pathPatterns` | string[] | Yes* | Glob patterns for file paths |
 | `pathExclusions` | string[] | Optional | Glob patterns to exclude (e.g., test files) |
 | `contentPatterns` | string[] | Optional | Regex patterns to match file content |
@@ -102,7 +102,7 @@ interface SkillRule {
 ### skipConditions Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `sessionSkillUsed` | boolean | Optional | Skip if skill already used this session |
 | `fileMarkers` | string[] | Optional | Skip if file contains comment marker |
 | `envOverride` | string | Optional | Environment variable name to disable skill |
@@ -275,6 +275,7 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 ### Common JSON Errors
 
 **Trailing comma:**
+
 ```json
 {
   "keywords": ["one", "two",]  // ❌ Trailing comma
@@ -282,6 +283,7 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 ```
 
 **Missing quotes:**
+
 ```json
 {
   type: "guardrail"  // ❌ Missing quotes on key
@@ -289,6 +291,7 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 ```
 
 **Single quotes (invalid JSON):**
+
 ```json
 {
   'type': 'guardrail'  // ❌ Must use double quotes
@@ -311,6 +314,7 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md) - Main skill guide
 - [TRIGGER_TYPES.md](TRIGGER_TYPES.md) - Complete trigger documentation
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Debugging configuration issues
