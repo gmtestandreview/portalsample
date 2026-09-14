@@ -1,63 +1,66 @@
-AND The Stndrd
-for Project Mngement
-Seventh Edition
-A ide to the Project
-Mngement Bod of nowledge
-PMBO
-®
-UIDE
-ANSI/PMI 99 001 2021
-G L O B A L S T A N D A R D
-PMBOK®Guide – Seventh Edition
-AND The Standard for Project Management
+# PMBOKGuide – Seventh Edition AND The Global Standard for Project Management
+
 Over the past few years, emerging technology, new approaches, and rapid market changes
 disrupted our ways of working, driving the project management profession to evolve. Each
 industry, organization and project face unique challenges, and team members must adapt
 their approaches to successfully manage projects and deliver results.
+
 ```
-With this in mind, A Guide to the Project Management Body of Knowledge (PMBOK® Guide) –
+With this in mind, A Guide to the Project Management Body of Knowledge (PMBOK Guide) –
 ```
+
 Seventh Edition takes a deeper look into the fundamental concepts and constructs of the
 profession.
-Including both The Standard for Project Management and the PMBOK® Guide, this edition
+Including both The Standard for Project Management and the PMBOK Guide, this edition
 presents 12 principles of project management and eight project performance domains
 that are critical for effectively delivering project outcomes.
-This edition of the PMBOK® Guide:
+This edition of the PMBOK Guide:
+
 ```
 • Reflects the full range of development approaches (predictive, traditional, adaptive,
 ```
+
 ```
 agile, hybrid, etc.);
 ```
+
 ```
 • Devotes an entire section to tailoring development approaches and processes;
 ```
+
 • Expands the list of tools and techniques in a new section, “Models, Methods, and
+
 ```
 Artifacts”;
 ```
+
 ```
 • Focuses on project outcomes, in addition to deliverables; and
 ```
+
 • Integrates with PMIstandards+ ™, giving users access to content that helps them apply
-the PMBOK® Guide on the job.
+the PMBOK Guide on the job.
 The result is a modern guide that better enables project team members to be proactive,
 innovative, and nimble in delivering project outcomes.
+
 ```
 A Guide to the Project Management Body of Knowledge (PMBOK
 ```
-®
+
 ```
 Guide) – Seventh Edition
 ```
+
 and The Standard for Project Management
 Project Management Institute
 Global Headquarters
 14 Campus Boulevard
 Newtown Square, PA 19073 USA
+
 ```
 Tel: +1 610 356 4600
 ```
+
 PMI.org
 THE STANDARD FOR
 PROJECT MANAGEMENT
@@ -65,91 +68,121 @@ and
 A GUIDE TO THE PROJECT
 MANAGEMENT BODY
 OF KNOWLEDGE
+
 ```
-(PMBOK® GUIDE)
+(PMBOK GUIDE)
 ```
+
 Seventh Edition
 Library of Congress Cataloging-in-Publication Data
+
 ```
 Names: Project Management Institute, publisher.
 ```
+
 ```
 Title: The standard for project management and a guide to the project management body
 ```
+
 ```
 of knowledge (PMBOK guide).
 ```
+
 ```
 Other titles: Guide to the project management body of knowledge (PMBOK guide) | PMBOK guide
 ```
+
 ```
 Description: Seventh edition. | Newtown Square, Pennsylvania: Project Management Institute, Inc.,
 ```
+
 [2021] | Includes bibliographical references and index. | Summary: "Over the past few years, emerging
 technology, new approaches, and rapid market changes disrupted our ways of working, driving
 the project management profession to evolve. Each industry, organization and project face unique
 challenges, and team members must adapt their approaches to successfully manage projects and
+
 ```
-deliver results. With this in mind, A Guide to the Project Management Body of Knowledge (PMBOK®
+deliver results. With this in mind, A Guide to the Project Management Body of Knowledge (PMBOK
 ```
+
 ```
 Guide) - Seventh Edition takes a deeper look into the fundamental concepts and constructs of the
 ```
-profession. Including both The Standard for Project Management and the PMBOK® Guide, this edition
+
+profession. Including both The Standard for Project Management and the PMBOK Guide, this edition
 presents 12 principles of project management and eight project performance domains that are critical
-for effectively delivering project outcomes. This edition of the PMBOK® Guide: Reflects the full range of
+for effectively delivering project outcomes. This edition of the PMBOK Guide: Reflects the full range of
+
 ```
 development approaches (predictive, traditional, adaptive, agile, hybrid, etc.); Devotes an entire section
 ```
+
 ```
 to tailoring development approaches and processes; Expands the list of tools and techniques in a new
 ```
+
 ```
 section, "Models, Methods, and Artifacts"; Focuses on project outcomes, in addition to deliverables; and
 ```
-Integrates with PMIstandards+, giving users access to content that helps them apply the PMBOK® Guide
+
+Integrates with PMIstandards+, giving users access to content that helps them apply the PMBOK Guide
 on the job. The result is a modern guide that betters enables project team members to be proactive,
 innovative, and nimble in delivering project outcomes." – Provided by publisher.
+
 ```
 Identifiers: LCCN 2021011107 (print) | LCCN 2021011108 (ebook) | ISBN 9781628256642 (paperback)
 ```
+
 ```
 | ISBN 9781628256659 (epub) | ISBN 9781628256666 (kindle edition) | ISBN 9781628256673 (pdf)
 ```
+
 ```
 Subjects: LCSH: Project management–Standards
 ```
+
 ```
 Classification: LCC HD69.P75 G845 2021 (print) | LCC HD69.P75 (ebook) | DDC 658.4/04–dc23
 ```
-LC record available at https://lccn.loc.gov/2021011107
-LC ebook record available at https://lccn.loc.gov/2021011108
+
+LC record available at <https://lccn.loc.gov/2021011107>
+LC ebook record available at <https://lccn.loc.gov/2021011108>
+
 ```
 A Guide to the Project Management Body of Knowledge (PMBOK Guide) -- Seventh Edition
 ```
+
 and The Standard for Project Management
+
 ```
 ISBN: 978-1-62825-664-2
 ```
+
 Published by:
 Project Management Institute, Inc.
 14 Campus Boulevard
 Newtown Square, Pennsylvania 19073-3299 USA
+
 ```
 Phone: +1 610 356 4600
 ```
+
 ```
 Email: customercare@pmi.org
 ```
+
 ```
 Internet: www.PMI.org
 ```
+
 ©2021 Project Management Institute, Inc. All rights reserved.
 Our copyright content is protected by U.S. intellectual property law that is recognized by most
 countries. To republish or reproduce our content, you must obtain our permission. Please go to
+
 ```
 http://www.pmi.org/permissions for details.
 ```
+
 PMI, the PMI logo, PMBOK, OPM3, PMP, CAPM, PgMP, PfMP, PMI-RMP, PMI-SP, PMI-ACP, PMI-PBA,
 PROJECT MANAGEMENT JOURNAL, PM NETWORK, PMI TODAY, PULSE OF THE PROFESSION and
 the slogan MAKING PROJECT MANAGEMENT INDISPENSABLE FOR BUSINESS RESULTS. are all marks
@@ -162,27 +195,35 @@ Independent Publishers Group
 Order Department
 814 North Franklin Street
 Chicago, IL 60610 USA
+
 ```
 Phone: 800 888 4741
 ```
+
 ```
 Fax: +1 312 337 5985
 ```
+
 ```
 Email: orders@ipgbook.com (For orders only)
 ```
+
 Printed in the United States of America. No part of this work may be reproduced or transmitted
 in any form or by any means, electronic, manual, photocopying, recording, or by any information
 storage and retrieval system, without prior written permission of the publisher.
 The paper used in this book complies with the Permanent Paper Standard issued by the National
+
 ```
 Information Standards Organization (Z39.48—1984).
 ```
+
 10 9 8 7 6 5 4 3 2 1
 Notice
+
 ```
 The Project Management Institute, Inc. (PMI) standards and guideline publications, of which
 ```
+
 the document contained herein is one, are developed through a voluntary consensus standards
 development process. This process brings together volunteers and/or seeks out the views of persons
 who have an interest in the topic covered by this publication. While PMI administers the process
@@ -210,7 +251,7 @@ information in this document shall not be attributable to PMI and is solely the 
 certifier or maker of the statement.
 Preface
 Each time work begins on a new edition of The Standard for Project Management and the
-PMBOK® Guide, there is an opportunity to consider global perspectives on changes in project
+PMBOK Guide, there is an opportunity to consider global perspectives on changes in project
 management and the approaches used for realizing benefits and value from project outputs. In
 the time between every edition, a world of change has occurred. Some organizations have ceased
 to exist, and new organizations have emerged. Older technologies have reached end of life while
@@ -223,38 +264,45 @@ that remain in place. The understanding that collective thinking produces more h
 than the thoughts of one individual continues. And the fact that organizations use projects as
 a vehicle for delivering a unique result or output endures.
 CUSTOMER- AND END-USER-CENTERED DESIGN
-While the Sixth Edition of the PMBOK® Guide was under development and throughout development
+While the Sixth Edition of the PMBOK Guide was under development and throughout development
 of this Seventh Edition, PMI has actively engaged with a broad range of global stakeholders on their
-experiences with using The Standard for Project Management and the PMBOK® Guide. These engagements
+experiences with using The Standard for Project Management and the PMBOK Guide. These engagements
 have included:
+
 ```
 ▶ Online surveys to representative samples of PMI stakeholders;
 ```
+
 ▶ Focus groups with PMO leaders, project managers, agile practitioners, project team
+
 ```
 members, and educators and trainers; and
 ```
+
 ▶ Interactive workshops with practitioners at various PMI events around the globe.
 The feedback and inputs collectively emphasized four key points:
-▶ Maintain and enhance the credibility and relevance of the PMBOK® Guide.
-▶ Improve the readability and usefulness of the PMBOK® Guide while avoiding overstuffing
+▶ Maintain and enhance the credibility and relevance of the PMBOK Guide.
+▶ Improve the readability and usefulness of the PMBOK Guide while avoiding overstuffing
 it with new content.
 ▶ Sense stakeholder information and content needs and provide vetted supplemental
 content supporting practical application.
 ▶ Recognize that there is continued value for some stakeholders in the structure and content
 of previous editions so that any shifts enhance without negating that value.
-SUSTAINING THE RELEVANCE OF THE PMBOK® GUIDE
+SUSTAINING THE RELEVANCE OF THE PMBOK GUIDE
+
 ```
 Since its inception as the Project Management Body of Knowledge (PMBOK) in 1987, A Guide to the
 ```
+
 ```
-Project Management Body of Knowledge (PMBOK® Guide) has evolved while recognizing that fundamental
+Project Management Body of Knowledge (PMBOK Guide) has evolved while recognizing that fundamental
 ```
+
 elements of project management endure. Its evolution has not just involved an increase in the page
 count, it has also involved significant and substantive changes in the nature of the content. A sampling
 of some of those key changes is reflected in the following table:
-Evolution of Key Changes in the PMBOK® Guide
-PMBOK® Guide
+Evolution of Key Changes in the PMBOK Guide
+PMBOK Guide
 Edition Key Evolutionary Changes
 • Distinguished as “a guide to the body of knowledge,” rather than the body of knowledge for project
 management.
@@ -265,9 +313,11 @@ value and usefulness.
 activities in order to meet or exceed stakeholder needs and expectations [emphasis added] from
 a project.”
 • Specific decision to shift to a process-based standard driven by a desire to show interactions among
+
 ```
 Knowledge Areas; create a robust and flexible structure; and recognize that ISO and other standards
 ```
+
 organizations were establishing process-based standards.
 • First edition to incorporate the “ANSI Standard” logo on the cover.
 • First edition to formally designate The Standard for Project Management of a Project separate and
@@ -280,13 +330,16 @@ activities to meet the project requirements.”
 • Expansion of Knowledge Area front material, including key concepts, trends and emerging practices,
 tailoring considerations, and considerations for agile/adaptive environments.
 1996
+
 ```
 Third (2004)
 ```
+
 ```
 Sixth (2017)
 ```
-Like previous editions of The Standard for Project Management and the PMBOK® Guide, this
+
+Like previous editions of The Standard for Project Management and the PMBOK Guide, this
 edition recognizes that the project management landscape continues to evolve and adapt. Over the
 past 10 years alone, the advancement of software into all types of products, services, and solutions
 has grown exponentially. What software can enable continues to change as artificial intelligence,
@@ -296,18 +349,21 @@ for a broad range of approaches to project and product delivery, and a stronger 
 rather than deliverables. Individual contributors can join project teams from anywhere in the world,
 serve in a broader array of roles, and enable new ways of thinking and working collaboratively.
 These changes and more have created this opportunity to reconsider perspectives to support the
-continued evolution of The Standard for Project Management and the PMBOK® Guide.
+continued evolution of The Standard for Project Management and the PMBOK Guide.
 SUMMARY OF CHANGES
 Since 1987, The Standard for Project Management has represented a process-based standard.
-The Standard for Project Management included in the PMBOK® Guide aligned the project management
+The Standard for Project Management included in the PMBOK Guide aligned the project management
 discipline and function around a collection of business processes. Those business processes enabled
 consistent and predictable practices:
+
 ```
 ▶ That could be documented;
 ```
+
 ```
 ▶ Through which performance against the processes could be assessed; and
 ```
+
 ▶ Through which improvements to the process could be made to maximize efficiency
 and minimize threats.
 While effective in supporting good practice, process-based standards are prescriptive by their
@@ -317,7 +373,7 @@ delivery landscape. Therefore, this edition shifts to a principles-based standar
 project management and to focus more on intended outcomes rather than deliverables.
 A global community of practitioners from different industries and organizations, in different
 roles, and working on different types of projects have developed and/or provided feedback on drafts
-of the standard as it has evolved for this edition. In addition, the PMBOK® Guide – Seventh Edition
+of the standard as it has evolved for this edition. In addition, the PMBOK Guide – Seventh Edition
 coleaders and staff reviewed other bodies of knowledge and works focused on project management
 to identify principle concepts embedded in those texts. These combined efforts showed strong
 alignment and supported the validation that the guiding principles in this edition of the standard
@@ -329,12 +385,15 @@ statements provide broad parameters within which project teams can operate and o
 to remain aligned with the intent of the principles.
 Using these principle statements, PMI can reflect effective management of projects across the
 full value delivery landscape: predictive to adaptive and everything in between. This principles-based
+
 ```
 approach is also consistent with the evolution of The Standard for Program Management (Third and
 ```
+
 ```
 Fourth Editions) and The Standard for Portfolio Management – Fourth Edition. The Standard for Risk
 ```
+
 Management in Portfolios, Programs, and Projects and Benefits Realization Management: A Practice Guide
 represent new standard products intentionally developed with a principles-based focus by global
 teams of subject matter experts.
@@ -343,16 +402,16 @@ Management Body of Knowledge negates alignment with the process-based approach o
 editions. Many organizations and practitioners continue to find that approach useful for guiding
 their project management capabilities, aligning their methodologies, and evaluating their project
 management capabilities. That approach remains relevant in the context of this new edition.
-Another significant change with this edition of the PMBOK® Guide is a systems view of project
+Another significant change with this edition of the PMBOK Guide is a systems view of project
 management. This shift begins with a systems view of value delivery as part of The Standard for
-Project Management and continues with the presentation of the PMBOK® Guide content. A systems
+Project Management and continues with the presentation of the PMBOK Guide content. A systems
 focus for value delivery changes the perspective from one of governing portfolios, programs, and
 projects to focusing on the value chain that links those and other business capabilities to advancing
 organizational strategy, value, and business objectives. In the context of project management,
-The Standard for Project Management and the PMBOK® Guide emphasize that projects do not simply
+The Standard for Project Management and the PMBOK Guide emphasize that projects do not simply
 produce outputs, but more importantly, enable those outputs to drive outcomes that ultimately
 deliver value to the organization and its stakeholders.
-This systems view reflects a shift from the Knowledge Areas in past editions of thePMBOK® Guide
+This systems view reflects a shift from the Knowledge Areas in past editions of thePMBOK Guide
 to eight project performance domains. A performance domain is a group of related activities that are
 critical for the effective delivery of project outcomes. Collectively, the performance domains represent
 a project management system of interactive, interrelated, and interdependent management capabilities
@@ -362,17 +421,17 @@ changes with the whole system in mind—not just the specific performance domain
 occurred. Aligned with the concept of a system for value delivery in The Standard for Project Management,
 teams evaluate effective performance in each performance domain through outcomes-focused
 measures, rather than through adherence to processes or the production of artifacts, plans, etc.
-Previous editions of the PMBOK® Guide emphasized the importance of tailoring the project
+Previous editions of the PMBOK Guide emphasized the importance of tailoring the project
 management approach to the unique characteristics of each project and its context. The Sixth
 Edition specifically incorporated considerations to help project teams think about how to tailor their
 approach to project management. That content was included in the front matter of each of the
 Knowledge Areas and provided considerations for all types of project environments. This edition
-further expands upon that work with a dedicated section on Tailoring in the PMBOK® Guide.
+further expands upon that work with a dedicated section on Tailoring in the PMBOK Guide.
 A new section on Models, Methods, and Artifacts provides a high-level grouping of models,
 methods, and artifacts that support project management. This section maintains linkages to
 tools, techniques, and outputs from previous editions that support project management without
 prescribing when, how, or which tools teams should use.
-The final change reflects the most significant advancement in the PMBOK® Guide’s history—
+The final change reflects the most significant advancement in the PMBOK Guide’s history—
 the creation of PMIstandards+™, an interactive digital platform that incorporates current, emerging,
 and future practices, methods, artifacts, and other useful information. The digital content better
 reflects the dynamic nature of a body of knowledge. PMIstandards+ provides project practitioners
@@ -380,17 +439,17 @@ and other stakeholders with access to a richer and broader range of information 
 that can more quickly accommodate advances and changes in project management. The content
 explains how specific practices, methods, or artifacts apply to projects based on industry segments,
 project types, or other characteristics. Starting with the inputs, tools and techniques, and outputs
-from the PMBOK® Guide – Sixth Edition, PMIstandards+ will continue to incorporate new resources
+from the PMBOK Guide – Sixth Edition, PMIstandards+ will continue to incorporate new resources
 that support continued evolution in project management. Going forward, users of The Standard
-for Project Management and the PMBOK® Guide can find information in PMIstandards+ that will
+for Project Management and the PMBOK Guide can find information in PMIstandards+ that will
 supplement the information included in the printed publication.
 The following figure illustrates the revision to The Standard for Project Management and
-migration from the Sixth to the Seventh Edition of the PMBOK® Guide, along with the connection
+migration from the Sixth to the Seventh Edition of the PMBOK Guide, along with the connection
 to the PMIstandards+ digital platform.
-• The platform links to the PMBOK® Guide via the Models, Methods, and Artifacts section while further expanding on that content.
+• The platform links to the PMBOK Guide via the Models, Methods, and Artifacts section while further expanding on that content.
 • Platform incorporates content from all PMI standards as well as content developed specifically for the platform.
 • Content reflects “how to…” in actual practice, including emerging practices.
-PMBOK® Guide – Sixth Edition
+PMBOK Guide – Sixth Edition
 A Guide to the Project Management
 Body of Knowledge:
 • Introduction, Project Environment, and Role of the
@@ -413,7 +472,7 @@ The Standard for Project Management:
 • Monitoring and Controlling
 • Closing
 Appendixes, Glossary, and Index
-PMBOK® Guide – Seventh Edition
+PMBOK Guide – Seventh Edition
 The Standard for Project Management:
 • Introduction
 • System for Value Delivery
@@ -442,12 +501,12 @@ Life Cycle
 • Uncertainty
 PMIstandards+TM Digital Content Platform
 Revision to The Standard for Project Management and Migration from the Sixth Edition to the Seventh
-Edition of the PMBOK® Guide and the PMIstandards+TM Digital Content Platform
+Edition of the PMBOK Guide and the PMIstandards+TM Digital Content Platform
 CONCLUSION
-The Standard for Project Management and the PMBOK® Guide – Seventh Edition respond to all four
+The Standard for Project Management and the PMBOK Guide – Seventh Edition respond to all four
 elements that stakeholders have emphasized in their feedback. The revision maintains and enhances
-the credibility and relevance of the PMBOK® Guide. It improves the readability and usefulness of the
-PMBOK® Guide. It recognizes that there is continued value for some stakeholders in the structure and
+the credibility and relevance of the PMBOK Guide. It improves the readability and usefulness of the
+PMBOK Guide. It recognizes that there is continued value for some stakeholders in the structure and
 content of previous editions and enhances the content in this edition without negating that value.
 Most importantly, it links with the PMIstandards+ digital content platform to respond to stakeholders’
 needs with vetted supplemental content that supports practical application.
@@ -491,14 +550,16 @@ THE STANDARD FOR PROJECT MANAGEMENT
 References ......................................................................................60
 INDEX ...................................................................................................61
 A GUIDE TO THE PROJECT MANAGEMENT
+
 ```
-BODY OF KNOWLEDGE (PMBOK® GUIDE)
+BODY OF KNOWLEDGE (PMBOK GUIDE)
 ```
+
 1. INTRODUCTION .................................................................................3
-1.1 Structure of the PMBOK® Guide ...............................................3
-1.2 Relationship of the PMBOK® Guide
+1.1 Structure of the PMBOK Guide ...............................................3
+1.2 Relationship of the PMBOK Guide
 and The Standard for Project Management ...............................4
-1.3 Changes to the PMBOK® Guide ................................................6
+1.3 Changes to the PMBOK Guide ................................................6
 1.4 Relationship to PMIstandards+ .................................................6
 2. PROJECT PERFORMANCE DOMAINS .................................................7
 2.1 Stakeholder Performance Domain ............................................8
@@ -667,9 +728,9 @@ X5.4 Standard Development Process ..........................................229
 X5.5 Validating the Standard ......................................................230
 X5.6 Summary ............................................................................232
 GLOSSARY ..........................................................................................233
-1. Inclusions and Exclusions ..........................................................233
-2. Common Acronyms ..................................................................234
-3. Definitions ................................................................................235
+5. Inclusions and Exclusions ..........................................................233
+6. Common Acronyms ..................................................................234
+7. Definitions ................................................................................235
 INDEX .................................................................................................255
 List of Figures and Tables
 THE STANDARD FOR PROJECT MANAGEMENT
@@ -694,9 +755,11 @@ Figure 3-12. Embrace Adaptability and Resiliency ..............................5
 Figure 3-13. Enable Change to Achieve
 the Envisioned Future State ...........................................58
 A GUIDE TO THE PROJECT MANAGEMENT
+
 ```
-BODY OF KNOWLEDGE (PMBOK® GUIDE)
+BODY OF KNOWLEDGE (PMBOK GUIDE)
 ```
+
 Figure 1-1. Relationship between Project Management
 Principles and Project Performance Domains ....................5
 Figure 2-1. Stakeholder Performance Domain ....................................8
@@ -822,9 +885,11 @@ a phase of the project work. Projects can stand alone or be part of a program or
 ▶ Project management. The application of knowledge, skills, tools, and techniques to
 project activities to meet project requirements. Project management refers to guiding the
 project work to deliver the intended outcomes. Project teams can achieve the outcomes
+
 ```
 using a broad range of approaches (e.g., predictive, hybrid, and adaptive).
 ```
+
 ▶ Project manager. The person assigned by the performing organization to lead the project
 team that is responsible for achieving the project objectives. Project managers perform
 a variety of functions, such as facilitating the project team work to achieve the outcomes
@@ -846,31 +911,41 @@ Management Terms [1].1
 This standard provides a foundational reference for stakeholders participating in a project.
 This includes, but is not limited to, project practitioners, consultants, educators, students, sponsors,
 stakeholders, and vendors who:
+
 ```
 ▶ Are responsible or accountable for delivering project outcomes;
 ```
+
 ```
 ▶ Work on projects full or part time;
 ```
+
 ```
 ▶ Work in portfolio, program, or project management offices (PMOs);
 ```
+
 ▶ Are involved in project sponsorship, product ownership, product management,
+
 ```
 executive leadership, or project governance;
 ```
+
 ```
 ▶ Are involved with portfolio or program management;
 ```
+
 ```
 ▶ Provide resources for project work;
 ```
+
 ```
 ▶ Focus on value delivery for portfolios, programs, and projects;
 ```
+
 ```
 ▶ Teach or study project management; and
 ```
+
 ▶ Are involved in any aspect of the project value delivery chain.
 1 The numbers in brackets refer to the list of references at the end of this standard.
 The information in this section provides a context for value delivery, governance, project
@@ -893,19 +968,25 @@ Organizations create value for stakeholders. Examples of ways that projects prod
 are not limited to:
 A System for Value Delivery
 2
+
 ```
 ▶ Creating a new product, service, or result that meets the needs of customers or end users;
 ```
+
 ```
 ▶ Creating positive social or environmental contributions;
 ```
+
 ```
 ▶ Improving efficiency, productivity, effectiveness, or responsiveness;
 ```
+
 ▶ Enabling the changes needed to facilitate organizational transition to its desired future
+
 ```
 state; and
 ```
+
 ▶ Sustaining benefits enabled by previous programs, projects, or business operations.
 2.1.1 VALUE DELIVERY COMPONENTS
 There are various components, such as portfolios, programs, projects, products, and
@@ -1066,9 +1147,11 @@ team members who have broad skill sets.
 Gaining insights from cross-functional project team members representing different parts of
 the organization can provide a mix of internal perspectives, establish alliances with key business
 units, and encourage project team members to act as change agents within their functional areas.
+
 ```
 This work can extend into support functions (during or after the project) as the project deliverables
 ```
+
 are implemented or transitioned into operations.
 2.3.5 APPLY EXPERTISE
 People in this function provide the knowledge, vision, and expertise in a specific subject for
@@ -1172,9 +1255,11 @@ business systems to create, maintain, and develop a product or service throughou
 product life cycle is a series of phases that represents the evolution of a product, from introduction
 through growth, maturity, and to retirement.
 Product management may initiate programs or projects at any point in the product life cycle to
+
 ```
 create or enhance specific components, functions, or capabilities (see Figure 2-4). The initial product
 ```
+
 may begin as a deliverable of a program or project. Throughout its life cycle, a new program or project
 may add or improve specific components, attributes, or capabilities that create additional value for
 customers and the sponsoring organization. In some instances, a program can encompass the full life
@@ -1183,39 +1268,55 @@ Introduction Growth Maturity Decline/Retirement
 Project Usage, Sales, Impact
 Time
 Project 3
+
 ```
 (Additions)
 ```
+
 Project 7
+
 ```
 (Retirement)
 ```
+
 Project 1
+
 ```
 (Initial Creation)
 ```
+
 Project 4
+
 ```
 (Revisions)
 ```
+
 Project 5
+
 ```
 (Revisions)
 ```
+
 Project 6
+
 ```
 (Revisions)
 ```
+
 Project 2
+
 ```
 (More Features)
 ```
+
 Program A Program B
 Portfolio Governance
 ProductLife Cycle
+
 ```
 Phases:
 ```
+
 Figure 2-4. Sample Product Life Cycle
 Product management can exist in different forms, including but not limited to:
 ▶ Program management within a product life cycle. This approach incorporates related
@@ -1283,42 +1384,55 @@ The principle labels are listed here without any specific weighting or order. Th
 statements are presented and described in Sections 3.1 through 3.12. Each section begins with a
 figure that provides the principle label across the top with the principle and key points under the
 label. Following the figure, each principle is elaborated in the text. The principle labels are:
+
 ```
 ▶ Be a diligent, respectful, and caring steward (see Section 3.1).
 ```
+
 ```
 ▶ Create a collaborative project team environment (see Section 3.2).
 ```
+
 ```
 ▶ Effectively engage with stakeholders (see Section 3.3).
 ```
+
 ```
 ▶ Focus on value (see Section 3.4).
 ```
+
 ```
 ▶ Recognize, evaluate, and respond to system interactions (see Section 3.5).
 ```
+
 ```
 ▶ Demonstrate leadership behaviors (see Section 3.6).
 ```
+
 ```
 ▶ Tailor based on context (see Section 3.7).
 ```
+
 ```
 ▶ Build quality into processes and deliverables (see Section 3.8).
 ```
+
 ```
 ▶ Navigate complexity (see Section 3.9).
 ```
+
 ```
 ▶ Optimize risk responses (see Section 3.10).
 ```
+
 ```
 ▶ Embrace adaptability and resiliency (see Section 3.11).
 ```
+
 ```
 ▶ Enable change to achieve the envisioned future state (see Section 3.12).
 ```
+
 3.1 BE A DILIGENT, RESPECTFUL, AND CARING STEWARD
 STEWARDSHIP
 Stewards act responsibly
@@ -1350,30 +1464,41 @@ values and ethics.
 Stewardship encompasses responsibilities both within and external to the organization. Within
 the organization, stewardship includes:
 ▶ Operating in alignment with the organization, its objectives, strategy, vision, mission,
+
 ```
 and sustainment of its long-term value;
 ```
+
 ▶ Commitment to and respectful engagement of project team members, including their
+
 ```
 compensation, access to opportunity, and fair treatment;
 ```
+
 ▶ Diligent oversight of organizational finances, materials, and other resources used within
+
 ```
 a project; and
 ```
+
 ▶ Understanding the appropriate use of authority, accountability, and responsibility,
 particularly in leadership positions.
 Stewardship outside the organization includes responsibilities in areas such as:
+
 ```
 ▶ Environmental sustainability and the organization’s use of materials and natural resources;
 ```
+
 ```
 ▶ Organization’s relationship with external stakeholders such as its partners and channels;
 ```
+
 ▶ Impact of the organization or project on the market, social community, and regions
+
 ```
 in which it operates; and
 ```
+
 ▶ Advancing the state of practice in professional industries.
 Stewardship reflects understanding and acceptance of trust as well as actions and decisions
 that engender and sustain that trust. Stewards also adhere to both implicit and explicit duties. These
@@ -1384,9 +1509,11 @@ behaviors expected of those in their organization. Stewards serve as role models
 trust by living and demonstrating personal and organizational values in their engagements,
 work activities, and decisions. In the project management context, this duty often requires
 stewards to challenge team members, peers, and other stakeholders to consider their
+
 ```
 words and actions; and to be empathetic, self-reflective, and open to feedback.
 ```
+
 ▶ Care. Stewards are fiduciaries of the organizational matters in their charge, and they
 diligently oversee them. Higher-performing projects feature professionals who diligently
 oversee those matters, beyond the confines of strictly defined responsibilities. Stewards
@@ -1474,9 +1601,11 @@ limited to:
 ▹ Standing meetings that regularly review a given topic.
 ▶ Processes. Project teams define processes that enable completion of tasks and work
 assignments. For example, project teams may agree to a decomposition process using
+
 ```
 a work breakdown structure (WBS), backlog, or task board.
 ```
+
 Project teams are influenced by the culture of the organizations involved in the project, the
 nature of the project, and the environment in which they operate. Within these influences, project
 teams establish their own team cultures. Project teams can tailor their structure to best accomplish
@@ -1530,43 +1659,61 @@ Stakeholder engagement proactively advances value delivery.
 Figure 3-4. Effectively Engage with Stakeholders
 Stakeholders can affect many aspects of a project, including but not limited to:
 ▶ Scope/requirements, by revealing the need to add, adjust, or remove elements of the scope
+
 ```
 and/or project requirements;
 ```
+
 ▶ Schedule, by offering ideas to accelerate delivery or by slowing down or stop delivery of key
+
 ```
 project activities;
 ```
+
 ▶ Cost, by helping to reduce or eliminate planned expenditures or by adding steps,
+
 ```
 requirements, or restrictions that increase cost or require additional resources;
 ```
+
 ▶ Project team, by restricting or enabling access to people with the skills, knowledge, and
+
 ```
 experience needed to deliver the intended outcomes, and promote a learning culture;
 ```
+
 ▶ Plans, by providing information for plans or by advocating for changes to agreed activities
+
 ```
 and work;
 ```
+
 ```
 ▶ Outcomes, by enabling or blocking work required for the desired outcomes;
 ```
+
 ▶ Culture, by establishing or influencing—or even defining—the level and character
+
 ```
 of engagement of the project team and broader organization;
 ```
+
 ▶ Benefits realization, by generating and identifying long-term goals so that the project
+
 ```
 delivers the intended identified value;
 ```
+
 ▶ Risk, by defining the risk thresholds of the project, as well as participating in subsequent
+
 ```
 risk management activities;
 ```
+
 ```
 ▶ Quality, by identifying and requiring quality requirements; and
 ```
+
 ▶ Success, by defining success factors and participating in the evaluation of success.
 Stakeholders may come and go throughout the life cycle of the project. Additionally, the degree
 of a stakeholder’s interest, influence, or impact may change over time. Stakeholders, especially those
@@ -1581,9 +1728,11 @@ stakeholders to understand, consider, communicate, and respond to their interest
 and opinions.
 Effective and efficient engagement and communication include determining how, when,
 how often, and under what circumstances stakeholders want to be—and should be—engaged.
+
 ```
 Communication is a key part of engagement; however, engagement delves deeper to include
 ```
+
 awareness of the ideas of others, assimilation of other perspectives, and collective shaping of a shared
 solution. Engagement includes building and maintaining solid relationships through frequent, two-
 way communication. It encourages collaboration through interactive meetings, face-to-face meetings,
@@ -1752,64 +1901,88 @@ project system works.
 Because of the interactivity among systems, project teams should operate with awareness of,
 and vigilance toward, changing system dynamics. The following skills support a systems view
 of the project:
+
 ```
 ▶ Empathy with the business areas;
 ```
+
 ```
 ▶ Critical thinking with a big picture focus;
 ```
+
 ```
 ▶ Challenging of assumptions and mental models;
 ```
+
 ```
 ▶ Seeking external review and advice;
 ```
+
 ▶ Use of integrated methods, artifacts, and practices so there is a common understanding
+
 ```
 of project work, deliverables, and outcomes;
 ```
+
 ▶ Use of modeling and scenarios to envision how system dynamics may interact
+
 ```
 and react; and
 ```
+
 ▶ Proactive management of the integration to help achieve business outcomes.
 Recognizing, evaluating, and responding to system interactions can lead to the following
 positive outcomes:
 ▶ Early consideration of uncertainty and risk within the project, exploration of alternatives,
+
 ```
 and consideration of unintended consequences;
 ```
+
 ```
 ▶ Ability to adjust assumptions and plans throughout the project life cycle;
 ```
+
 ```
 ▶ Provision of ongoing information and insights that inform planning and delivery;
 ```
+
 ```
 ▶ Clear communication of plans, progress, and projections to relevant stakeholders;
 ```
+
 ▶ Alignment of project goals and objectives to the customer organization’s goals,
+
 ```
 objectives, and vision;
 ```
+
 ▶ Ability to adjust to the changing needs of the end user, sponsor, or customer
+
 ```
 of the project deliverables;
 ```
+
 ```
 ▶ Ability to see synergies and savings between aligned projects or initiatives;
 ```
+
 ▶ Ability to exploit opportunities not otherwise captured or see threats posed to
+
 ```
 or by other projects or initiatives;
 ```
+
 ▶ Clarity regarding the best project performance measurement and their influence
+
 ```
 on the behavior of the people involved in the project;
 ```
+
 ```
 ▶ Decisions that benefit the organization as a whole; and
 ```
+
 ▶ More comprehensive and informed identification of risks.
 3.6 DEMONSTRATE LEADERSHIP BEHAVIORS
 Projects create a unique need for effective leadership. Unlike general business operations,
@@ -1994,24 +2167,33 @@ an important influencing factor in the tailoring of the project, and
 ▶ More efficient use of project resources, as project teams are conscious of the weight
 of project processes.
 Tailoring projects can lead to the following positive outcomes:
+
 ```
 ▶ Increased innovation, efficiency, and productivity;
 ```
+
 ▶ Lessons learned, so that improvements from a specific delivery approach can be shared
+
 ```
 and applied to the next round of work or future projects;
 ```
+
 ▶ Further improvement of an organization’s methodology, with new practices, methods,
+
 ```
 and artifacts;
 ```
+
 ```
 ▶ Discovery of improved outcomes, processes, or methods through experimentation;
 ```
+
 ▶ Effective integration within multidisciplinary project teams of methods and practices used
+
 ```
 to deliver project results; and
 ```
+
 ▶ Increased adaptability for the organization in the long term.
 Tailoring an approach is iterative in nature, and therefore is a constant process itself during
 the project life cycle. Project teams collect feedback from all stakeholders on how the methods and
@@ -2020,9 +2202,11 @@ add value to the organization.
 3.8 BUILD QUALITY INTO PROCESSES AND DELIVERABLES
 Quality is the degree to which a set of inherent characteristics of a product, service, or result
 fulfills the requirements. Quality includes the ability to satisfy the customer’s stated or implied needs.
+
 ```
 The product, service, or result of a project (referred to here as deliverables) is measured for the quality
 ```
+
 of both the conformance to acceptance criteria and fitness for use.
 QUALITY
 Project quality entails satisfying stakeholders’ expectations and
@@ -2170,19 +2354,24 @@ A risk is an uncertain event or condition that, if it occurs, can have a positiv
 on one or more objectives. Identified risks may or may not materialize in a project. Project teams
 endeavor to identify and evaluate known and emergent risks, both internal and external to the
 project, throughout the life cycle.
+
 ```
 Project teams seek to maximize positive risks (opportunities) and decrease exposure to negative
 ```
+
 ```
 risks (threats). Threats may result in issues such as delay, cost overrun, technical failure, performance
 ```
+
 shortfall, or loss of reputation. Opportunities can lead to benefits such as reduced time and cost,
 improved performance, increased market share, or enhanced reputation.
 RISK
 Individual and overall risks can impact projects.
+
 ```
 Risks can be positive (opportunities) or negative (threats).
 ```
+
 Risks are addressed continually throughout the project.
 An organization’s risk attitude, appetite, and threshold influence
 how risk is addressed.
@@ -2265,54 +2454,73 @@ stakeholders, including customers and end users, as this limits the potential fo
 However, adapting should be done with a holistic view, such as a proper change control process, to
 avoid problems such as scope creep. In a project environment, capabilities that support adaptability
 and resilience include:
+
 ```
 ▶ Short feedback loops to adapt quickly;
 ```
+
 ```
 ▶ Continuous learning and improvement;
 ```
+
 ▶ Project teams with broad skill sets, coupled with individuals having extensive knowledge
+
 ```
 in each required skill area;
 ```
+
 ```
 ▶ Regular inspection and adaptation of project work to identify improvement opportunities;
 ```
+
 ```
 ▶ Diverse project teams to capture a broad range of experiences;
 ```
+
 ```
 ▶ Open and transparent planning that engages internal and external stakeholders;
 ```
+
 ```
 ▶ Small-scale prototypes and experiments to test ideas and try new approaches;
 ```
+
 ```
 ▶ Ability to leverage new ways of thinking and working;
 ```
+
 ```
 ▶ Process design that balances velocity of work and stability of requirements;
 ```
+
 ```
 ▶ Open organizational conversations;
 ```
+
 ▶ Diverse project teams with broad skill sets, cultures, and experience, coupled with subject
+
 ```
 matter experts in each required skill area;
 ```
+
 ```
 ▶ Understanding from past learning of the same or similar endeavors;
 ```
+
 ▶ Ability and willingness to anticipate multiple potential scenarios and prepare for multiple
+
 ```
 eventualities;
 ```
+
 ```
 ▶ Deferring decision making to the last responsible moment;
 ```
+
 ```
 ▶ Management support; and
 ```
+
 ▶ Open-ended design that balances speed and stability.
 Envisioning outcomes rather than deliverables can enable solutions, harnessing a better
 result than the one originally planned. For example, a project team may find an alternative solution
@@ -2403,13 +2611,17 @@ More information on organizational change management may be found in Managing Ch
 in Organizations: A Practice Guide [4].
 REFERENCES
 [1] Project Management Institute. 2016. PMI Lexicon of Project Management Terms. Available from
+
 ```
 http://www.pmi.org/lexiconterms
 ```
+
 [2] Project Management Institute. 2006. PMI Code of Ethics and Professional Conduct. Available from
+
 ```
 http://www.pmi.org/codeofethics
 ```
+
 [3] Project Management Institute. 2019. The Standard for Risk Management in Portfolios, Programs,
 and Projects. Newtown Square, PA: Author.
 [4] Project Management Institute. 2013. Managing Change in Organizations: A Practice Guide.
@@ -2432,9 +2644,11 @@ team, 29
 Ambiguity
 definition, 51
 uncertainty and, 51
+
 ```
 Assumption(s), 35, 39
 ```
+
 Audience, 5
 Audits, quality, 48
 Authority
@@ -2445,9 +2659,11 @@ B
 Behavior
 human, 51
 system, 51
+
 ```
 Benefit(s)
 ```
+
 tailored project approach and, 46
 value and, 10
 Benefits realization
@@ -2475,9 +2691,11 @@ Change control
 project, 58
 systems thinking and, 54
 Change management, 58
+
 ```
 Charter. See Project charter; Team charter
 ```
+
 Code of ethics, 21
 Collaborative project team environment,
 principle 28–30
@@ -2503,9 +2721,11 @@ Confidentiality, 17
 Configuration management systems, 17
 Conformity, 48
 Context, tailoring based on, principle, 44–46
+
 ```
 Contractor(s), 38. See also Subcontractors
 ```
+
 Conversation, 41
 Coordination
 oversight and, 13
@@ -2518,30 +2738,37 @@ Culture, organization and, 17
 D
 Data assets, 17
 Databases, commercial, 18
+
 ```
 Deliverable(s). See also Result(s)
 ```
+
 building quality into processes and, principle
 47–49
 information flow and, 11
 outcomes and, 10, 34, 36, 57
 products as, 18, 20
 quality activities and, 48
+
 ```
 Domains. See Performance domains; Project
 ```
+
 performance domains
 E
 Efficiency, 48
 Employee capability, 17
 Engagement. See also Stakeholder engagement
 communication and, 33, 59
+
 ```
 Environment. See also Adaptive environments;
 ```
+
 ```
 Globalization/global environment; Project
 ```
+
 environment
 business, 42, 58
 external, 18
@@ -2616,18 +2843,23 @@ personal character and, 43
 styles of leadership, 41
 Leadership skills and techniques, 42
 M
+
 ```
 Management. See also Product management;
 ```
+
 ```
 Program management; Project management
 ```
+
 change, 58
 risk, 32
 supply chain, 8
+
 ```
 Manager(s). See also Project manager
 ```
+
 Methodology, definition, 45
 Monitoring
 project risk and, 54
@@ -2636,9 +2868,11 @@ change management and, 59
 leadership and, 43
 N
 Navigate complexity, principle, 50
+
 ```
 Negative risks (threats), 53
 ```
+
 O
 Objectives
 feedback and, 13–14
@@ -2646,20 +2880,26 @@ Opportunities
 adaptation and, 57
 identification of, 16
 maximizing, 53, 54
+
 ```
 Organization(s)
 ```
+
 definition, 7
 Organizational culture, 17
 Organizational governance
 systems, 12
+
 ```
 Organizational structure(s)
 ```
+
 collaborative project team environment and, 29
+
 ```
 Outcome(s)
 ```
+
 definition, 4
 envisioning, 57
 leadership and, 43
@@ -2667,9 +2907,11 @@ stakeholders and, 32
 system interactions and, 39
 tailoring projects and, 46
 updating of, 35
+
 ```
 Output(s).
 ```
+
 outcomes and, 4, 35, 55
 Oversight, coordination and, 13
 P
@@ -2678,9 +2920,11 @@ Performance, 48
 Performing organization, 4, 35, 36
 Physical environment, 18
 PM. See Project manager
+
 ```
 Portfolio(s)
 ```
+
 definition, 4
 governance of, 19, 20
 information flow and, 11
@@ -2705,13 +2949,17 @@ tailoring, context and, 44–46
 value, focus on, 34–36
 Problem solving, 57
 Process assets, 17
+
 ```
 Process(es)
 ```
+
 tailoring, 45
+
 ```
 Product(s)
 ```
+
 definition, 4
 Product life cycle
 definition, 19
@@ -2724,16 +2972,20 @@ considerations, 18–20
 forms of, 20
 within a program, 20
 Professional conduct, 21
+
 ```
 Program(s)
 ```
+
 definition, 4
 product management within, 20
 Program management
 within product life cycle, 20
+
 ```
 Project(s)
 ```
+
 as agents of change, 58
 business case and, 34
 definition, 4, 50
@@ -2778,12 +3030,15 @@ system interactions and, 37–39
 tailoring, context and, 44–46
 value, focus on, 34–36
 Project management team. See also Project
+
 ```
 team(s)
 ```
+
 ```
 Project manager (PM). See also Competencies;
 ```
+
 Leadership skills
 definition, 4
 Project requirements, 4, 14, 32
@@ -2791,16 +3046,20 @@ Project risk
 exposure, 54
 management of, 54
 Project sponsor, 57
+
 ```
 Project stakeholder(s)
 ```
+
 external, 25, 56
 Project success
 leadership and, 43
 tailoring and, 44
+
 ```
 Project team(s).
 ```
+
 complexity and, 52
 definition, 5
 diverse, 30
@@ -2826,9 +3085,11 @@ Regulatory environment, 18
 Relevance, 58
 Reliability, 48
 Requested change, 13
+
 ```
 Requirement(s).
 ```
+
 business, 35
 definition, 48
 project, 4, 14, 32
@@ -2837,37 +3098,47 @@ Resilience, 48
 Resiliency
 adaptability and, principle, 55–57
 definition, 55
+
 ```
 Resource(s)
 ```
+
 availability of, 17
 direction and, 15–16
 geographical distribution of, 17
 Responsibility, collaborative project team
 environment and, 30
+
 ```
 Risk(s). See also Opportunities; Project risk;
 ```
+
 ```
 Threat(s)
 ```
+
 definition, 53
 identification of, 53
+
 ```
 negative (threats), 53
 ```
+
 ```
 positive (opportunities), 53
 ```
+
 project teams and, 53–54
 Risk appetite
 definition, 54
 Risk attitude, 53
 Risk responses, optimizing, principle, 53–54
 Risk threshold, 54
+
 ```
 Role(s)
 ```
+
 clarity on, 30
 definitions of, 53
 leadership and, 40, 41
@@ -2885,9 +3156,11 @@ Software
 information technology, 17
 value realization and, 36
 Sponsoring organization, 19
+
 ```
 Stakeholder(s). See also Project stakeholder(s)
 ```
+
 external, 25, 56
 project aspects and, 32
 project teams as group of, 33
@@ -2906,18 +3179,22 @@ within the organization, 25
 outside the organization, 25
 overview, 24
 trustworthiness and, 27
+
 ```
 Subcontractor(s), 17, 38, 50
 ```
+
 Subsidiary programs, 4, 20
 Success, 32. See also Project success
 value and, 34
 Support
 facilitation and, 14
 Sustainability, 25, 48
+
 ```
 System(s)
 ```
+
 definition, 37
 system of, 37
 System behavior, 51
@@ -2945,16 +3222,20 @@ benefits, direct and indirect, 46
 context and, principle, 44–46
 definition, 44
 positive outcomes and, 46
+
 ```
 Team(s). See Project team(s)
 ```
+
 Team agreements, 29
 Team environment, collaborative, principle,
 28–30
 Technological innovation, 51
+
 ```
 Threat(s)
 ```
+
 decreasing exposure to, 53
 Threshold
 risk, 54
@@ -2980,37 +3261,47 @@ Variations, 54
 W
 WBS. See Work breakdown structure
 Work, performance of, 14
+
 ```
 Work breakdown structure (WBS)
 ```
+
 decomposition and, 29A GUIDE TO
 THE PROJECT MANAGEMENT
 BODY OF KNOWLEDGE
+
 ```
-(PMBOK® GUIDE)
+(PMBOK GUIDE)
 ```
+
 The information contained in the
-PMBOK ® Guide is not an American
+PMBOK  Guide is not an American
+
 ```
 National Standard (ANS) and has not
 ```
+
 been processed in accordance with
 ANSI’s requirements for an ANS.
 As such, the information in the
-PMBOK ® Guide may contain material
+PMBOK  Guide may contain material
 that has not been subjected to public
 review or a consensus process.
 Introduction
 This section describes important information about A Guide to the Project Management Body
+
 ```
-of Knowledge (PMBOK® Guide) – Seventh Edition. It describes the relationship of the PMBOK® Guide
+of Knowledge (PMBOK Guide) – Seventh Edition. It describes the relationship of the PMBOK Guide
 ```
-to The Standard for Project Management [1],1 changes to the PMBOK® Guide, the relationship to
+
+to The Standard for Project Management [1],1 changes to the PMBOK Guide, the relationship to
+
 ```
 PMIstandards+™ (PMI’s digital platform for standards), and provides a brief overview of the content.
 ```
-1.1 STRUCTURE OF THE PMBOK® GUIDE
-In addition to this Introduction, this edition of the PMBOK® Guide contains three sections:
+
+1.1 STRUCTURE OF THE PMBOK GUIDE
+In addition to this Introduction, this edition of the PMBOK Guide contains three sections:
 ▶ Section 2 Project Performance Domains. This section identifies and describes eight
 project performance domains that form an integrated system to enable successful delivery
 of the project and intended outcomes.
@@ -3021,8 +3312,8 @@ of commonly used models, methods, and artifacts. These models, methods, and arti
 illustrate the range of options project teams can use to produce deliverables, organize
 work, and enable communication and collaboration.
 1
-1 The numbers in brackets refer to the list of references at the end of the PMBOK® Guide.
-1.2 RELATIONSHIP OF THE PMBOK® GUIDE AND
+1 The numbers in brackets refer to the list of references at the end of the PMBOK Guide.
+1.2 RELATIONSHIP OF THE PMBOK GUIDE AND
 THE STANDARD FOR PROJECT MANAGEMENT
 Work in the project performance domains is guided by the principles of project management.
 As described in The Standard for Project Management [1], a principle is a fundamental norm, truth,
@@ -3065,14 +3356,16 @@ Approach
 and
 Life Cycle
 Figure 1-1. Relationship between Project Management Principles and Project Performance Domains
-1.3 CHANGES TO THE PMBOK® GUIDE
-This edition of the PMBOK® Guide focuses on delivering outcomes regardless of the approach
-used by the project team. However, project practitioners using the PMBOK® Guide also benefit from
+1.3 CHANGES TO THE PMBOK GUIDE
+This edition of the PMBOK Guide focuses on delivering outcomes regardless of the approach
+used by the project team. However, project practitioners using the PMBOK Guide also benefit from
 some level of understanding of how to deliver projects.
+
 ```
 This edition is very different from the inputs, tools/techniques, and outputs (ITTOs) from
 ```
-previous editions of the PMBOK® Guide. In the previous editions, the ITTOs supported implementation
+
+previous editions of the PMBOK Guide. In the previous editions, the ITTOs supported implementation
 of various processes used in project management. The shift from a process-based standard to one
 based on principles necessitates a different approach for thinking about the various aspects of
 project management. Thus, the project performance domains represent a group of related activities
@@ -3082,7 +3375,7 @@ Tailoring is the deliberate adaptation of the project management approach, gover
 and processes to make them more suitable for the given environment and the work at hand. The
 tailoring process is driven by the guiding project management principles, organizational values, and
 organizational culture.
-In embracing the full spectrum of project approaches, this edition of the PMBOK® Guide
+In embracing the full spectrum of project approaches, this edition of the PMBOK Guide
 recognizes that no publication can capture every tool, technique, or practice that project teams
 might use. Therefore, this edition presents an array of commonly used models, methods, and
 artifacts that project practitioners can use to accomplish their work.
@@ -3112,9 +3405,11 @@ Together the performance domains form a unified whole. In this way, the performa
 operate as an integrated system, with each performance domain being interdependent of the other
 performance domains to enable successful delivery of the project and its intended outcomes.
 Performance domains run concurrently throughout the project, regardless of how value is
+
 ```
 delivered (frequently, periodically, or at the end of the project). For example, project leads spend
 ```
+
 time focused on stakeholders, the project team, the project life cycle, the project work, and so forth,
 from the outset of the project to its closure. These areas of focus are not addressed as siloed efforts
 because they overlap and interconnect. The ways in which the performance domains relate are
@@ -3150,9 +3445,11 @@ the project.
 Projects are performed by people and for people. This performance domain entails working
 with stakeholders to maintain alignment and engaging with them to foster positive relationships
 and satisfaction.
+
 ```
 Stakeholders include individuals, groups, and organizations (see Figure 2-2). A project can
 ```
+
 have a small group of stakeholders or potentially millions of stakeholders. There may be different
 stakeholders in different phases of the project, and the influence, power, or interests of stakeholders
 may change as the project unfolds.
@@ -3236,9 +3533,11 @@ Communication methods include push, pull, and interactive communication:
 ▶ Push. Communication sent to stakeholders such as memos, emails, status reports,
 voice mail, and so forth. Push communication is used for one-way communications with
 individual stakeholders or groups of stakeholders. Push communication inhibits the ability
+
 ```
 to immediately gauge reaction and assess understanding; therefore, it should be used
 ```
+
 deliberately.
 ▶ Pull. Information sought by the stakeholder, such as a project team member going to an
 intranet to find communication policies or templates, running internet searches, and using
@@ -3247,9 +3546,11 @@ Engagement goes deeper than pushing or pulling communication. Engagement is inte
 It includes an exchange of information with one or more stakeholders such as conversations, phone
 calls, meetings, brainstorming, product demos, and the like.
 With all forms of communication, quick feedback loops provide useful information to:
+
 ```
 ▶ Confirm the degree to which the stakeholder(s) heard the message.
 ```
+
 ▶ Determine if stakeholders agree with the message.
 ▶ Identify nuanced or other unintended messages the recipient detected.
 ▶ Gain other helpful insights.
@@ -3306,9 +3607,11 @@ Stakeholder agreement with project
 objectives
 Stakeholders who are project
 beneficiaries are supportive
+
 ```
 and satisfied; stakeholders who
 ```
+
 may oppose the project or its
 deliverables do not negatively
 impact project results
@@ -3361,9 +3664,11 @@ Both are important in delivering the intended outcomes.
 2.2.1.1 Centralized Management and Leadership
 While leadership activities should be practiced by all project team members, management
 activities may be centralized or distributed. In an environment where management activities are
+
 ```
 centralized, accountability (being answerable for an outcome), is usually assigned to one individual,
 ```
+
 such as the project manager or similar role. In these situations, a project charter or other authorizing
 document can provide approval for the project manager to form a project team to achieve the
 project outcomes.
@@ -3529,34 +3834,45 @@ identify the root cause of problems, and consider challenging issues, such as am
 and so forth. Critical thinking helps to accomplish these activities. Critical thinking includes
 disciplined, rational, logical, evidence-based thinking. It requires an open mind and the ability to
 analyze objectively. Critical thinking, especially when applied to discovery, can include conceptual
+
 ```
 imagination, insight, and intuition. It can also include reflective thinking and metacognition (thinking
 ```
+
 ```
 about thinking and being aware of one’s awareness).
 ```
+
 Project team members apply critical thinking to:
+
 ```
 ▶ Research and gather unbiased, well-balanced information;
 ```
+
 ```
 ▶ Recognize, analyze, and resolve problems;
 ```
+
 ```
 ▶ Identify bias, unstated assumptions, and values;
 ```
+
 ```
 ▶ Discern the use of language and the influence on oneself and others;
 ```
+
 ```
 ▶ Analyze data and evidence to evaluate arguments and perspectives;
 ```
+
 ```
 ▶ Observe events to identify patterns and relationships;
 ```
+
 ```
 ▶ Apply inductive, deductive, and abductive reasoning appropriately; and
 ```
+
 ▶ Identify and articulate false premises, false analogy, emotional appeals, and other faulty logic.
 2.2.4.3 Motivation
 Motivating project team members has two aspects: the first is understanding what motivates
@@ -3576,9 +3892,11 @@ Examples of intrinsic motivation factors include:
 ▶ Personal growth,
 ▶ Relatedness, and
 ▶ Being part of a project team.
+
 ```
 People are not motivated by just one thing; however, most people have a dominant motivator.
 ```
+
 To effectively motivate project team members, it is helpful to know each member’s dominant
 motivator. For example, a project team member who is motivated by challenge will respond well to
 stretch goals and problems to solve. A project team member who is motivated by relatedness will
@@ -3776,18 +4094,22 @@ Effective execution of this performance domain results in the
 following desired outcomes:
 Figure 2-6. Development Approach and Life Cycle Performance Domain
 2.3.1 DEVELOPMENT, CADENCE, AND LIFE CYCLE RELATIONSHIP
+
 ```
 The type of project deliverable(s) determines how it can be developed. The type of deliverable(s)
 ```
+
 and the development approach influence the number and cadence for project deliveries. The
 deliverable approach and the desired delivery cadence determine the project life cycle and its phases.
 2.3.2 DELIVERY CADENCE
 Delivery cadence refers to the timing and frequency of project deliverables. Projects can have
 a single delivery, multiple deliveries, or periodic deliveries.
 The following definitions are relevant to the Development Approach and Life Cycle Performance
+
 ```
 Domain:
 ```
+
 Deliverable. Any unique and verifiable product, result, or capability to perform a service that is
 required to be produced to complete a process, phase, or project.
 Development Approach. A method used to create and evolve the product, service, or result during
@@ -3858,9 +4180,11 @@ iterative approach is useful for clarifying requirements and investigating vario
 An iterative approach may produce sufficient capability to be considered acceptable prior
 to the final iteration. An incremental approach is used to produce a deliverable throughout
 a series of iterations. Each iteration adds functionality within a predetermined time frame
+
 ```
 (a timebox). The deliverable contains the capability to be considered as completed only
 ```
+
 after the final iteration.
 The differences and interactions between iterative and incremental development are
 shown in Figure 2-8.
@@ -3886,9 +4210,11 @@ and functions
 Feedback and adapt Feedback and adapt Feedback and adapt
 VoiceTranscription
 Feedback and adapt Feedback and adapt Feedback and adapt
+
 ```
 Customer:
 ```
+
 I need a
 method to
 capture ideas
@@ -3923,9 +4249,11 @@ However, the community action patrol training program will only be complete afte
 modules are developed, integrated, and deployed.
 2.3.4 CONSIDERATIONS FOR SELECTING A DEVELOPMENT APPROACH
 There are several factors that influence the selection of a development approach. They can
+
 ```
 be divided into categories of the product, service, or result; the project; and the organization. The
 ```
+
 following subsections describe the variables associated with each category.
 2.3.4.1 Product, Service, or Result
 There are many variables associated with the nature of the product, service, or result that
@@ -4021,9 +4349,11 @@ go-live, or acceptance by the customer.
 sustainment, benefits realization, and organizational change management are completed.
 ▶ Close. The project is closed, project knowledge and artifacts are archived, project team
 members are released, and contracts are closed.
+
 ```
 Project phases often have a phase gate review (also known as stage gate) to check that the
 ```
+
 desired outcomes or exit criteria for the phase have been achieved before proceeding to the next
 phase. Exit criteria may tie to acceptance criteria for deliverables, contractual obligations, meeting
 specific performance targets, or other tangible measures.
@@ -4056,9 +4386,11 @@ Build
 Close
 Figure 2-10. Life Cycle with an Incremental Development Approach
 Figure 2-11 shows a life cycle using an adaptive development approach. At the end of each
+
 ```
 iteration (sometimes known as a sprint), the customer reviews a functional deliverable. At the review,
 ```
+
 the key stakeholders provide feedback, and the project team updates the project backlog of features
 and functions to prioritize for the next iteration.
 This approach can be modified for use in continuous delivery situations, as described in
@@ -4085,9 +4417,11 @@ Figure 2-11. Life Cycle with Adaptive Development Approach
 AND LIFE CYCLE
 The community center examples described in Section 2.3.3 will be revisited to demonstrate
 how the delivery cadence, development approach, and life cycle fit together. In this example, there
+
 ```
 are four products and services: the building, the community action patrol (CAP) training, the senior
 ```
+
 services, and the website. Table 2-4 describes the delivery cadence and the development approach.
 Based on this information, a potential life cycle might be:
 ▶ Start Up. Entry criteria for this phase are that the business case has been approved and
@@ -4123,9 +4457,11 @@ more deliverables become available. The final deployment for the project will be
 of the community center. Ongoing updates to the website and the senior services will be
 part of operations once the community center is open.
 ▶ Close. This phase takes place periodically as deliverables are completed. When the initial
+
 ```
 website has been deployed, project personnel (including contractors) will be released and
 ```
+
 retrospectives or lessons learned for each deliverable will be completed. When the entire
 project is done, information from the various phase gate reviews and an overall evaluation
 of project performance compared to baselines will be conducted. Prior to final closeout,
@@ -4151,9 +4487,11 @@ PlanningReview
 WebsiteRelease 1SeniorOfferingsCommunity ActionPatrol Training Launch
 CommunityCenter Open
 Close
+
 ```
 KEY:
 ```
+
 Milestone
 Deliveries
 Senior ServiceRelease 1Senior ServiceRelease 2Senior ServiceRelease 3Senior ServiceRelease 4
@@ -4209,9 +4547,11 @@ Project life cycle phases that
 facilitate the delivery cadence and
 development approach required to
 produce the project deliverables
+
 ```
 The development approach for deliverables (predictive, hybrid, or adaptive)
 ```
+
 reflects the product variables and is appropriate given the project and
 organizational variables.
 Project work from launch to close is represented in the project phases.
@@ -4264,9 +4604,11 @@ Crashing. A method used to shorten the schedule duration for the least increment
 by adding resources.
 Fast Tracking. A schedule compression method in which activities or phases normally done
 in sequence are performed in parallel for at least a portion of their duration.
+
 ```
 Budget. The approved estimate for the project or any work breakdown structure (WBS)
 ```
+
 component or any schedule activity.
 The amount of time spent planning, both up front and throughout the project, should be
 determined by the circumstances. It is inefficient to spend more time planning than is needed.
@@ -4289,9 +4631,11 @@ the project team completes more detailed planning.
 occurs up front to establish release plans and further planning occurs at the
 beginning of each iteration.
 It is becoming more common for initial planning to consider social and environmental impacts
+
 ```
 in addition to the financial impacts (sometimes referred to as the triple bottom line). This may
 ```
+
 take the form of a product life cycle assessment which evaluates the potential environmental
 impacts of a product, process, or system. The product life cycle assessment informs the design
 of products and processes. It considers the impacts of materials and processes with regards to
@@ -4317,9 +4661,11 @@ service, or result. Project scope is the work performed to deliver a product, se
 specified features and functions.
 Predictive planning approaches start with the high-level project deliverables up front and
 decompose them into more detail. This approach can employ a scope statement and/or a work
+
 ```
 breakdown structure (WBS) to decompose the scope into lower levels of detail.
 ```
+
 Projects that use iterative or incremental approaches can have high-level themes or epics
 that are decomposed into features, which are then further decomposed into user stories and
 other backlog items. Work that is unique, significant, risky, or novel can be prioritized to reduce the
@@ -4343,9 +4689,11 @@ range of -5 to +10%.
 in that the lower the accuracy, the larger the potential range of values. An estimate
 at the start of the project will have less accuracy than one that is developed halfway
 through the project.
+
 ```
 ▶ Precision. Precision is different from accuracy (see Figure 2-15). Precision refers to the
 ```
+
 degree of exactness associated with the estimate. For example, an estimate of 2 days is
 more precise than “sometime this week.” The precision of estimates should be compatible
 with the desired accuracy.
@@ -4376,12 +4724,15 @@ There are different ways of presenting and/or adjusting estimates:
 ▶ Deterministic and probabilistic estimating. Deterministic estimates, also known as
 point estimates, present a single number or amount, such as 36 months.
 Probabilistic estimates include a range of estimates along with the associated probabilities
+
 ```
 within the range. They can be developed manually by (a) developing a weighted average
 ```
+
 ```
 based on multiple likely outcomes, or (b) running a simulation to develop a probability
 ```
+
 analysis of a particular outcome, usually in terms of cost or schedule.
 ▶ Absolute and relative estimating. Absolute estimates are specific information and use
 actual numbers. An absolute estimate for effort might be shown as 120 hours of work. One
@@ -4390,6 +4741,7 @@ productivity per workday.
 While absolute estimates are specific, relative estimates are shown in comparison to other
 estimates. Relative estimates only have meaning within a given context.
 A probabilistic estimate derived from a computer simulation has three associated factors:
+
 1. A point estimate with a range such as 36 months +3 months/-1 month.
 2. A statement of confidence such as a 95% confidence level.
 3. A probability distribution describing the dispersion of the data within and around the given range.
@@ -4429,18 +4781,24 @@ activity is accelerated, such as starting a successor activity before the predec
 Figure 2-16, there is a lead between the finish of Task 2 and the start of Task 4.
 A lag is a delay of a successor activity. An example of using a lag would be changing the type
 of relationship between activities, and then applying a lag. For example, rather than waiting for an
+
 ```
 activity to finish before the next one starts (a finish-to-start relationship), change the relationship
 ```
+
 to have the end of the successor activity finish a determined amount of time after the end of the
+
 ```
 predecessor (a finish-to-finish relationship). The network logic would show a lag between the finish
 ```
+
 of the predecessor and the finish of the successor activities. There is an example of a finish-to-finish
 relationship with a lag in Figure 2-16 between Task 8 and Task 7. A lag can also be applied between
+
 ```
 the start of one activity and the start of another activity (a start-to-start relationship).
 ```
+
 When compressing the schedule, it is important to determine the nature of the dependencies
 between activities. Some activities cannot be fast tracked due to the nature of the work—others can.
 The four types of dependencies are:
@@ -4467,9 +4825,11 @@ FS –1
 FF+1
 Figure 2-16. Fast Tracking Examples
 Adaptive schedule planning uses incremental planning. One such scheduling approach is
+
 ```
 based on iterations and releases (see Figure 2-17). A high-level release plan is developed that
 ```
+
 indicates the basic features and functionality to be included in each release. Within each release,
 there will be two or more iterations. Each iteration adds business and/or stakeholder value. Value
 may include features, risk reduction, experimentation, or other ways of delivering or protecting
@@ -4480,25 +4840,35 @@ Release Plan
 Iteration Plan
 Iteration 0 Iteration 1 Iteration 2 Iteration 3 Iteration n
 Feature D
+
 ```
 (User Story 5)
 ```
+
 Feature C
+
 ```
 (User Story 4)
 ```
+
 Feature B
+
 ```
 (User Story 3)
 ```
+
 Feature A
+
 ```
 (User Story 2)
 ```
+
 Feature A
+
 ```
 (User Story 1)
 ```
+
 5 Hours
 8 Hours
 4 Hours
@@ -4517,21 +4887,27 @@ the iterations
 Iteration plans
 schedule feature
 development
+
 ```
 Tasks (estimated in
 ```
+
 ```
 hours) created to
 ```
+
 deliver user stories
 Prioritized features
 delivered by user
+
 ```
 stories (estimated
 ```
+
 ```
 in story points)
 ```
+
 Figure 2-17. Release and Iteration Plan
 Adaptive approaches often use timeboxes. The work in each timebox is based on a prioritized
 backlog. The project team determines the amount of work they can do in each timebox, estimates
@@ -4591,9 +4967,11 @@ or countries. On projects where project team members work virtually, more time i
 people through technology.
 2.4.4 COMMUNICATION
 Communication planning overlaps with stakeholder identification, analysis, prioritization, and
+
 ```
 engagement as described in the Stakeholder Performance Domain (Section 2.1). Communication is
 ```
+
 the most important factor in engaging with stakeholders effectively. Planning communication for the
 project entails considering the following:
 ▶ Who needs information?
@@ -4750,28 +5128,37 @@ Tacit Knowledge. Personal knowledge that can be difficult to articulate and shar
 beliefs, experience, and insights.
 Project work keeps the project team focused and project activities running smoothly. This
 includes but is not limited to:
+
 ```
 ▶ Managing the flow of existing work, new work, and changes to work;
 ```
+
 ```
 ▶ Keeping the project team focused;
 ```
+
 ```
 ▶ Establishing efficient project systems and processes;
 ```
+
 ```
 ▶ Communicating with stakeholders;
 ```
+
 ```
 ▶ Managing material, equipment, supplies, and logistics;
 ```
+
 ▶ Working with contracting professionals and vendors to plan and manage procurements
+
 ```
 and contracts;
 ```
+
 ```
 ▶ Monitoring changes that can affect the project; and
 ```
+
 ▶ Enabling project learning and knowledge transfer.
 2.5.1 PROJECT PROCESSES
 The project manager and the project team establish and periodically review the processes
@@ -4822,12 +5209,15 @@ attention. This involves evaluating short- and long-term projections of progress
 Leading the project team includes balancing the workload and assessing if project team members
 are satisfied with their work so they remain motivated. To maximize business and stakeholder value
 delivered throughout the project, project team attention needs to be kept in a healthy balance. Leading
+
 ```
 with a goal of maximizing overall delivered value involves focusing on production (delivering value) and
 ```
+
 ```
 protecting the project team’s production capability (project team health and satisfaction). The goal is to
 ```
+
 keep the project team focused on delivering value and maintain awareness of when potential issues,
 delays, and cost overruns enter the project.
 2.5.4 PROJECT COMMUNICATIONS AND ENGAGEMENT
@@ -4865,12 +5255,15 @@ have rigorous policies and procedures associated with procurements. The policies
 authority to enter into a contract, the limits of authority, and the processes and procedures that
 should be followed.
 Prior to conducting a procurement, the project manager and technically qualified project team
+
 ```
 members work with contracting professionals to develop the request for proposals (RFP), statement
 ```
+
 ```
 of work (SOW), terms and conditions, and other necessary documents to go out to bid.
 ```
+
 2.5.6.1 The Bid Process
 The bid process includes developing and publicizing bid documents, bidder conferences, and
 selecting a bidder.
@@ -4881,9 +5274,11 @@ from the market prior to sending out bid documents to a set of selected vendors.
 the buyer is looking for the vendor to provide a solution.
 ▶ Request for quote. This bid document is used when price is the main deciding factor, and
 the proposed solution is readily available.
+
 ```
 These three types cover the majority of bidding needs. There are other bid documents;
 ```
+
 however, they tend to be industry specific.
 Once the bid documents are distributed, the buyer generally has a bidder conference to
 respond to bidder questions and provide clarifying information. Then the bidders develop their
@@ -4891,9 +5286,11 @@ responses and deliver them to the buyer by the date specified in the bid documen
 Choosing the best vendor, sometimes known as source selection, is often based on a number
 of criteria, such as experience, references, price, and timely delivery. These variables may be
 weighted to reflect the relative importance of each. The buyer evaluates vendor bids against the
+
 ```
 criteria to select an appropriate vendor(s). The buyer and vendor negotiate terms and conditions.
 ```
+
 Most everything can be negotiated, from cost to delivery and payment dates, to location of work,
 ownership of intellectual property, and so forth.
 2.5.6.2 Contracting
@@ -4903,9 +5300,11 @@ tolerances of the organizations.
 Once the vendor is selected, the project plans and documents are updated to incorporate
 vendor dates, resources, costs, quality requirements, risks, etc. From that point, the vendor becomes
 a project stakeholder. Information in the Stakeholders Performance Domain and Measurement
+
 ```
 Performance Domain will apply to the vendor(s) throughout the project.
 ```
+
 Procurements can take place at any point during the project. All procurement activities are
 integrated into the project operations.
 2.5.7 MONITORING NEW WORK AND CHANGES
@@ -4924,21 +5323,26 @@ without impacting the overall contract.
 In predictive projects, the project team actively manages changes to the work to ensure only
 approved changes are included in the scope baseline. Any changes to the scope are then accompanied
 by appropriate changes to the people, resources, schedule, and budget. Scope changes can add to
+
 ```
 uncertainty; therefore, any change requests should be accompanied by an evaluation of any new risks
 ```
+
 that are introduced due to the addition to or change in scope. The project manager works with the
 change control board and the change requestor to guide change requests through the change control
 process. Approved changes are integrated into the applicable project planning documents, product
 backlog, and project scope. The changes are also communicated to the appropriate stakeholders.
 2.5.8 LEARNING THROUGHOUT THE PROJECT
 Periodically, the project team may meet to determine what they can do better in the future
+
 ```
 (lessons learned) and how they can improve and challenge the process in upcoming iterations
 ```
+
 ```
 (retrospectives). Ways of working can evolve to produce better outcomes.
 ```
+
 2.5.8.1 Knowledge Management
 A lot of learning takes place during projects. Some of the learning is project specific, such as
 a faster way to accomplish specific work. Some learning can be shared with other project teams to
@@ -4964,9 +5368,11 @@ from the experience of running projects.
 The Project Work Performance Domain interacts and enables other performance domains
 on the project. Project work enables and supports efficient and effective planning, delivery, and
 measurement. It provides the environment for project team meetings, interactions, and stakeholder
+
 ```
 engagement to be effective. Project work supports navigating uncertainty, ambiguity, and complexity;
 ```
+
 and it balances their impacts with the other project constraints.
 2.5.10 CHECKING RESULTS
 Table 2-7 identifies the outcomes on the left and ways of checking them on the right.
@@ -5033,19 +5439,25 @@ Figure 2-20. Delivery Performance Domain
 The following definitions are relevant to the Delivery Performance Domain:
 Requirement. A condition or capability that is necessary to be present in a product, service,
 or result to satisfy a business need.
+
 ```
 Work Breakdown Structure (WBS). A hierarchical decomposition of the total scope of work to
 ```
+
 be carried out by the project team to accomplish the project objectives and create the required
 deliverables.
+
 ```
 Definition of Done (DoD). A checklist of all the criteria required to be met so that a deliverable
 ```
+
 can be considered ready for customer use.
 Quality. The degree to which a set of inherent characteristics fulfills requirements.
+
 ```
 Cost of Quality (COQ). All costs incurred over the life of the product by investment in preventing
 ```
+
 nonconformance to requirements, appraisal of the product or service for conformance to
 requirements, and failure to meet requirements.
 Projects provide business value by developing new products or services, solving problems,
@@ -5120,9 +5532,11 @@ front, it can evolve over time, or it can be discovered.
 ▶ Scope decomposition. Scope can be elaborated using a scope statement to identify
 the major deliverables associated with the project and the acceptance criteria for each
 deliverable. Scope can also be elaborated by decomposing it into lower levels of detail
+
 ```
 using a work breakdown structure (WBS). A WBS is a hierarchical decomposition of the total
 ```
+
 scope of work to be carried out by the project team to accomplish the project objectives
 and create the required deliverables. Each level down in the hierarchy represents a greater
 level of detail of the deliverable and work required to produce it.
@@ -5146,9 +5560,11 @@ documented in a scope statement.
 ▹ Technical performance measures. The technical specifications for a product may be
 documented in a separate specifications document, or they may be documented as
 an extension to the WBS. This extension, known as a WBS dictionary, elaborates the
+
 ```
 information for each deliverable (work package) in the WBS.
 ```
+
 ▹ Definition of done. The definition of done is used with adaptive approaches, particularly
 in software development projects. It is a checklist of all the criteria required to be met
 so that a deliverable can be considered ready for customer use.
@@ -5200,9 +5616,11 @@ the organization’s quality policy. The cost of overhead, training, and process
 organization, though they are employed by the project. Inherent in projects is balancing the quality
 needs of the processes and products with the costs associated with meeting those needs.
 2.6.3.1 Cost of Quality
+
 ```
 The cost of quality (COQ) methodology is used to find the appropriate balance for investing
 ```
+
 in quality prevention and appraisal to avoid defect or product failures. This model identifies four
 categories of costs associated with quality: prevention, appraisal, internal failure, and external failure.
 Prevention and appraisal costs are associated with the cost of compliance to quality requirements.
@@ -5212,16 +5630,21 @@ product. Prevention costs avoid quality problems. They are associated with the d
 implementation, and maintenance of the quality management system. They are planned
 and incurred before actual operation. Examples include:
 ▹ Product or service requirements, such as the establishment of specifications for incoming
+
 ```
 materials, processes, finished products, and services;
 ```
+
 ▹ Quality planning, such as the creation of plans for quality, reliability, operations,
+
 ```
 production, and inspection;
 ```
+
 ```
 ▹ Quality assurance, such as the creation and maintenance of the quality system; and
 ```
+
 ▹ Training, such as the development, preparation, and maintenance of programs.
 ▶ Appraisal. Appraisal costs are incurred to determine the degree of conformance to
 quality requirements. Appraisal costs are associated with measuring and monitoring
@@ -5229,26 +5652,33 @@ activities related to quality. These costs may be associated with evaluation of 
 materials, processes, products, and services to ensure that they conform to specifications.
 They could include:
 ▹ Verification, such as checking incoming material, process setup, and products against
+
 ```
 agreed specifications;
 ```
+
 ```
 ▹ Quality audits, such as confirmation that the quality system is functioning correctly; and
 ```
+
 ▹ Supplier rating, such as assessment and approval of suppliers of products and services.
 ▶ Internal Failure. Internal failure costs are associated with finding and correcting defects
 before the customer receives the product. These costs are incurred when the results
 of work fail to reach design quality standards. Examples include:
 ▹ Waste, such as performance of unnecessary work or holding enough stock to account
+
 ```
 for errors, poor organization, or communication;
 ```
+
 ```
 ▹ Scrap, such as defective product or material that cannot be repaired, used, or sold;
 ```
+
 ```
 ▹ Rework or rectification, such as correction of defective material or errors; and
 ```
+
 ▹ Failure analysis, such as activities required to establish the causes of internal product
 or service failure.
 ▶ External Failure. External failure costs are associated with defects found after the
@@ -5257,21 +5687,29 @@ holistically requires thinking about the project's product while it is in operat
 months or years, not just at the handover date. External failure costs occur when products
 or services that fail to reach design quality standards are not detected until after they have
 reached the customer. Examples include:
+
 ```
 ▹ Repairs and servicing, for both returned products and those that are deployed;
 ```
+
 ▹ Warranty claims, such as failed products that are replaced or services that are
+
 ```
 reperformed under a guarantee;
 ```
+
 ▹ Complaints, for all work and costs associated with handling and servicing customers’
+
 ```
 complaints;
 ```
+
 ▹ Returns, for handling and investigation of rejected or recalled products, including
+
 ```
 transport costs; and
 ```
+
 ▹ Reputation, where reputation and public perception can be damaged depending on the
 type and severity of defects.
 To optimize delivered value, early inspection and review work focused on finding quality issues as
@@ -5282,9 +5720,11 @@ to high rates of scrap and rework, along with the ripple effect to downstream ou
 The later a defect is found, the more expensive it is to correct. This is because design and
 development work have typically already occurred based on the flawed component. Also, activities
 are more costly to modify as the life cycle progresses since more stakeholders are impacted. This
+
 ```
 phenomenon is characterized by the cost of change curve (see Figure 2-22).
 ```
+
 Cost
 Phase Detected
 Build Test ProductionDesignRequirements
@@ -5384,24 +5824,31 @@ Performance Domain. Having timely and accurate information about project work an
 allows the project team to learn and determine the appropriate action to take to address current or
 expected variances from the desired performance.
 Measures are used for multiple reasons, including:
+
 ```
 ▶ Evaluating performance compared to plan;
 ```
+
 ```
 ▶ Tracking the utilization of resources, work completed, budget expended, etc.;
 ```
+
 ```
 ▶ Demonstrating accountability;
 ```
+
 ```
 ▶ Providing information to stakeholders;
 ```
+
 ```
 ▶ Assessing whether project deliverables are on track to deliver planned benefits;
 ```
+
 ```
 ▶ Focusing conversations about trade-offs, threats, opportunities, and options; and
 ```
+
 ▶ Ensuring the project deliverables will meet customer acceptance criteria.
 The value of measurements is not in the collection and dissemination of the data, but rather
 in the conversations about how to use the data to take appropriate action. Therefore, while much of
@@ -5415,9 +5862,11 @@ can communicate project status, help improve project performance, and reduce the
 of performance deterioration. These measures allow the project team to use information to make
 timely decisions and take effective actions.
 2.7.1.1 Key Performance Indicators
+
 ```
 Key performance indicators (KPIs) for projects are quantifiable measures used to evaluate the
 ```
+
 success of a project. There are two types of KPIs: leading indicators and lagging indicators.
 This performance domain focuses on measures for active projects. A portfolio leader may
 want to include measures that address the success of the project after it is completed, such
@@ -5453,13 +5902,17 @@ In and of themselves, KPIs are simply measures that have no real use unless and 
 are used. Discussing leading and lagging indicators and identifying areas for improvement, as
 appropriate, can have a positive impact on performance.
 2.7.1.2 Effective Metrics
+
 ```
 Measuring takes time and effort, which could otherwise be spent on other productive work;
 ```
+
 therefore, project teams should only measure what is relevant and should ensure that the metrics
+
 ```
 are useful. Characteristics of effective metrics (or SMART criteria) include:
 ```
+
 ▶ Specific. Measurements are specific as to what to measure. Examples include the number
 of defects, the defects that have been fixed, or the average time it takes to fix defects.
 ▶ Meaningful. Measures should be tied to the business case, baselines, or requirements.
@@ -5516,12 +5969,15 @@ compared to the work in progress limit. Little’s Law states that queue size is
 to both the rate of arrival in the queue and the rate of completion of items from the queue.
 One can gain insights into completion times by measuring work in progress and developing
 a forecast for future work completion.
+
 ```
 ▶ Batch size. Batch size measures the estimated amount of work (level of effort, story points,
 ```
+
 ```
 etc.) that is expected to be completed in an iteration.
 ```
+
 ▶ Process efficiency. Process efficiency is a ratio used in lean systems to optimize the flow
 of work. This measure calculates the ratio between value-adding time and non-value-adding
 activities. Tasks that are waiting increase the non-value-adding time. Tasks that are in
@@ -5533,64 +5989,83 @@ baseline can use information in the deliverable measures.
 Most schedule measures track actual performance to planned performance related to:
 ▶ Start and finish dates. Comparing the actual start dates to the planned start dates and
 the actual finish dates to the planned finish dates can measure the extent to which work is
+
 ```
 accomplished as planned. Even if work is not on the longest path through the project (the
 ```
+
 ```
 critical path), late start and finish dates indicate that the project is not performing to plan.
 ```
+
 ▶ Effort and duration. Actual effort and duration compared to planned effort and duration
 indicates whether estimates for the amount of work and the time the work takes are valid.
+
 ```
 ▶ Schedule variance (SV). A simple schedule variance is determined by looking at
 ```
+
 performance on the critical path. When used with earned value management, it is the
 difference between the earned value and the planned value. Figure 2-24 shows an earned
 value graph illustrating the schedule variance.
+
 ```
 ▶ Schedule performance index (SPI). Schedule performance index is an earned value
 ```
+
 management measure that indicates how efficiently the scheduled work is being performed.
 ▶ Feature completion rates. Examining the rate of feature acceptance during frequent
 reviews can help assess progress and estimate completion dates and costs.
 Common cost measures include:
 ▶ Actual cost compared to planned cost. This cost measure compares the actual cost for
 labor or resources to the estimated cost. This term may be referred to as the burn rate.
+
 ```
 ▶ Cost variance (CV). A simple cost variance is determined by comparing the actual cost
 ```
+
 of a deliverable to the estimated cost. When used with earned value management, it is
 the difference between the earned value and the actual cost. Figure 2-24 shows an earned
 value graph illustrating the cost variance.
+
 ```
 ▶ Cost performance index (CPI). An earned value management measure that indicates
 ```
+
 how efficiently the work is being performed with regard to the budgeted cost of the work.
 Time
 Cost
 CV
 SV
+
 ```
 Planned Value (PV)
 ```
+
 ```
 Actual Costs (AC)
 ```
+
 ```
 Earned Value (EV)
 ```
+
 ```
 CV = EV – AC
 ```
+
 ```
 SV = EV – PV
 ```
+
 ```
 CPI = EV / AC
 ```
+
 ```
 SPI = EV / PV
 ```
+
 BAC
 Figure 2-24. Earned Value Analysis Showing Schedule and Cost Variance
 2.7.2.4 Resources
@@ -5620,16 +6095,20 @@ doing the project. For projects that expect to deliver benefits during the proje
 measuring the benefits delivered and the value of those benefits, then comparing that
 information to the business case, provides information that can justify the continuation
 of the project, or in some cases, the cancellation of the project.
+
 ```
 ▶ Return on investment (ROI). A measure of the amount of financial return compared to
 ```
+
 the cost, ROI is generally developed as an input to the decision to undertake a project. There
 may be estimates of ROI at different points in time across the project life cycle. By measuring
 ROI throughout the project, the project team can determine if it makes sense to continue the
 investment of organizational resources.
+
 ```
 ▶ Net present value (NPV). The difference between the present value of inflows of
 ```
+
 capital and the present value of outflows of capital over a period of time, NPV is generally
 developed when deciding to undertake a project. By measuring the NPV throughout the
 project, the project team can determine if it makes sense to continue the investment of
@@ -5637,12 +6116,15 @@ organizational resources.
 2.7.2.6 Stakeholders
 Stakeholder satisfaction can be measured with surveys or by inferring satisfaction, or lack
 thereof, and by looking at related metrics, such as:
+
 ```
-▶ Net Promoter Score® (NPS®). A Net Promoter Score measures the degree to which a
+▶ Net Promoter Score (NPS). A Net Promoter Score measures the degree to which a
 ```
+
 ```
 stakeholder (usually the customer) is willing to recommend a product or service to others.
 ```
+
 It measures a range from -100 to +100. A high Net Promoter Score not only measures
 satisfaction with a brand, product, or service, it is also an indicator of customer loyalty.
 ▶ Mood chart. A mood chart can track the mood or reactions of a group of very important
@@ -5666,20 +6148,25 @@ and discuss whether to adapt plans and project work accordingly. Forecasts can b
 as using expert judgment about what the future will hold. They can also be causal when seeking to
 understand the impact a specific event or condition will have on future events. Quantitative forecasts
 seek to use past information to estimate what will happen in the future. Quantitative forecasts include:
+
 ```
 ▶ Estimate to complete (ETC).3 An earned value management measure that forecasts
 ```
+
 the expected cost to finish all the remaining project work. There are many different ways
 to calculate the estimate to complete. Assuming past performance is indicative of future
 performance, a common measurement is calculation of the budget at completion minus
 the earned value, then dividing by the cost performance index. For more calculations to
 determine the ETC, see The Standard for Earned Value Management [2].
+
 ```
 ▶ Estimate at completion (EAC). This earned value management measure forecasts the
 ```
+
 ```
 expected total cost of completing all work (see Figure 2-26). There are many different
 ```
+
 ways to calculate the estimate at completion. Assuming past performance is indicative of
 future performance, a common measurement is the budget at completion divided by the
 cost performance index. For more calculations to determine the EAC, see The Standard for
@@ -5687,16 +6174,21 @@ Earned Value Management [2].
 3 Quantitative forecasts associated with earned value management are often used for very large projects. Some
 deliverables in those projects may use adaptive development methods. However, the forecasting metrics in
 earned value management are predominantly used in predictive environments.
+
 ```
 ▶ Variance at completion (VAC). An earned value management measure that forecasts the
 ```
+
 amount of budget deficit or surplus. It is expressed as the difference between the budget
+
 ```
 at completion (BAC) and the estimate at completion (EAC).
 ```
+
 ```
 ▶ To-complete performance index (TCPI). An earned value management measure that
 ```
+
 estimates the cost performance required to meet a specified management goal. TCPI is
 expressed as the ratio of the cost to finish the outstanding work to the remaining budget.
 ▶ Regression analysis. An analytical method where a series of input variables are examined
@@ -5712,27 +6204,36 @@ Cost
 EV
 AC
 PV
+
 ```
 Budget at Completion (BAC)
 ```
+
 ```
 Estimate at Completion (EAC)
 ```
+
 Estimate to
 Complete
+
 ```
 (ETC)
 ```
+
 Status Date
+
 ```
 Planned Value (PV) Curve
 ```
+
 ```
 Actual Costs (AC) Curve
 ```
+
 ```
 Earned Value (EV) Curve
 ```
+
 Figure 2-26. Forecast of Estimate at Completion and Estimate to Complete
 2.7.3 PRESENTING INFORMATION
 The measures being collected are important, but what is done with the measures is just as
@@ -5744,12 +6245,15 @@ A common way of showing large quantities of information on metrics is a dashboar
 generally collect information electronically and generate charts that depict status. Often, dashboards
 offer high-level summaries of data and allow drill-down analysis into contributing data. Figure 2-27
 provides an example of a dashboard.
+
 ```
 Dashboards often include information displayed as stoplight charts (also known as RAG charts
 ```
+
 ```
 where RAG is an abbreviation for red-amber-green), bar charts, pie charts, and control charts. A text
 ```
+
 explanation can be used for any measures that are outside the established thresholds.
 Organization Project Name
 Project Name and
@@ -5757,12 +6261,15 @@ High-Level
 Description
 Exec Sponsor:
 Start Date:
+
 ```
 Status:
 ```
+
 ```
 PM:
 ```
+
 End Date:
 Schedule
 Activity #1
@@ -5776,16 +6283,20 @@ Recent Accomplishments Upcoming Key Deliverables StatusKey Activities
 Current Key Risks – Current Key Issues –
 Budget
 Report Period:
+
 ```
 Threats and opportunities;
 ```
+
 Mitigation Description
 On Track Complete Concern Issue On Hold Canceled Not Started
 Figure 2-27. Dashboard Example
 2.7.3.2 Information Radiators
+
 ```
 Information radiators, also known as big visible charts (BVCs), are visible, physical displays
 ```
+
 that provide information to the rest of the organization, enabling timely knowledge sharing. They
 are posted in a place where people can see the information easily, rather than having information
 in a scheduling or reporting tool. BVCs should be easy to update, and they should be updated
@@ -5812,26 +6323,35 @@ completed
 and how much
 remains
 Include financial penalties in
+
 ```
 contract; build contingency into
 ```
+
 ```
 the schedule; monitor
 ```
+
 contractor performance
 Order leased line earlier than
+
 ```
 necessary; incur additional
 ```
+
 rental fees
 Employ temporary staff
+
 ```
 to free up resources for testing;
 ```
+
 revise project schedule
+
 ```
 Prioritize projects; temporarily
 ```
+
 remove alternative development
 instance
 The lead time for the leased
@@ -5879,9 +6399,11 @@ process using visual cues. Visual controls can be present for all levels of info
 value delivered to tasks that have started. They should be highly visible for anyone to see.
 ▶ Task boards. A task board is a visual representation of the planned work that allows
 everyone to see the status of the tasks. A task board can show work that is ready to be
+
 ```
 started (to do), work in progress, and work that is completed (see Figure 2-29).
 ```
+
 A task board allows anyone to see at a glance the status of a particular task or the number
 of tasks in each stage of work. Different color sticky notes can represent different types of
 work, and dots can be used to show how many days a task has been in its current position.
@@ -5892,9 +6414,11 @@ tasks that are slowing the flow.
 ▶ Burn charts. Burn charts, such as a burnup or burndown charts, can show project team
 velocity. Velocity measures the productivity rate at which the deliverables are produced,
 validated, and accepted within a predefined interval. A burnup chart can track the amount
+
 ```
 of work done compared to the expected work that should be done (see Figure 2-30).
 ```
+
 A burndown chart can show the number of story points remaining or the amount of risk
 exposure that has been reduced.
 ▶ Other types of charts. Visual charts can also include information such as an impediment
@@ -5993,9 +6517,11 @@ in addition to being vigilant regarding the dangers associated with inappropriat
 Part of measurement is having agreed to plans for measures that are outside the threshold
 ranges. Thresholds can be established for a variety of metrics such as schedule, budget, velocity, and
 other project-specific measures. The degree of variance will depend on stakeholder risk tolerances.
+
 ```
 Figure 2-31 shows an example of a budget threshold set at +10% (orange) and -20% (green) of
 ```
+
 the predicted spend rate. The blue line is tracking the actual spend, and in January, it exceeded the
 +10% upper tolerance that would trigger the exception plan.
 Ideally, project teams should not wait until a threshold has been breached before taking action.
@@ -6016,9 +6542,11 @@ Lower – 20%
 Actuals
 Figure 2-31. Planned and Actual Spend Rates
 An exception plan is an agreed-upon set of actions to be taken if a threshold is crossed or
+
 ```
 forecast. Exception plans do not have to be formal; they can be as simple as calling a stakeholder
 ```
+
 meeting to discuss the matter. The importance of the exception plan is to discuss the issue
 and develop a plan for what needs to be done. Then follow through to make sure the plan is
 implemented and determine if the plan is working.
@@ -6116,34 +6644,44 @@ Successfully navigating uncertainty begins with understanding the larger environ
 which the project is operating. Aspects of the environment that contribute to project uncertainty
 include, but are not limited to:
 ▶ Economic factors such as volatility in prices, availability of resources, ability to borrow
+
 ```
 funds, and inflation/deflation;
 ```
+
 ▶ Technical considerations such as new or emerging technology, complexity associated with
+
 ```
 systems, and interfaces;
 ```
+
 ```
 ▶ Legal or legislative constraints or requirements;
 ```
+
 ```
 ▶ Physical environment as it pertains to safety, weather, and working conditions;
 ```
+
 ```
 ▶ Ambiguity associated with current or future conditions;
 ```
+
 ```
 ▶ Social and market influences shaped by opinion and media; and,
 ```
+
 ▶ Political influences, either external or internal to the organization.
 This performance domain addresses the various aspects of uncertainty, implications of
 uncertainty, such as project risk, as well as options for navigating the various forms of uncertainty.
 2.8.1 GENERAL UNCERTAINTY
 Uncertainty is inherent in all projects. For this reason, the effects of any activity cannot be
 predicted precisely, and a range of outcomes can occur. Potential outcomes that benefit the project
+
 ```
 objectives are known as opportunities; potential outcomes that have a negative effect on objectives
 ```
+
 are called threats. Together, the set of opportunities and threats comprise the set of project risks.
 There are several options for responding to uncertainty:
 ▶ Gather information. Sometimes uncertainty can be reduced by finding out more
@@ -6190,9 +6728,11 @@ many interconnected influences that behave and interact in diverse ways. In comp
 it is not uncommon to see an aggregation of individual elements leading to unforeseen or
 unintended outcomes. The effect of complexity is that there is no way of making accurate predictions
 about the likelihood of any potential outcome or even of knowing what outcomes might emerge.
+
 ```
 There are numerous ways to work with complexity; some of them are systems-based, some entail
 ```
+
 reframing, and others are based on process.
 2.8.3.1 Systems-Based
 Examples of working with complexity that is systems based include:
@@ -6265,9 +6805,11 @@ or impact of a threat. Early mitigation action is often more effective than tryi
 damage after the threat has occurred.
 ▶ Accept. Threat acceptance acknowledges the existence of a threat, but no proactive
 action is planned. Actively accepting a risk can include developing a contingency plan that
+
 ```
 would be triggered if the event occurred; or it can include passive acceptance, which means
 ```
+
 doing nothing.
 Overall Project Risk
 Overall project risk is the effect of uncertainty on the project as a whole, arising from all sources
@@ -6394,16 +6936,21 @@ that will remain once the response actions have been carried out. Response plann
 repeated until residual risk is compatible with the organization's risk appetite.
 Taking an economic view of work prioritization allows the team to prioritize threat avoidance
 and reduction activities.
+
 ```
 Comparing the expected monetary value (EMV) of a risk to the anticipated return on investment
 ```
+
 ```
 (ROI) of a deliverable or feature allows the project manager to have conversations with sponsors
 ```
+
 or product owners about where and when to incorporate risks responses into the planned work
+
 ```
 (see Figure 2-34).
 ```
+
 20%
 Best
 Case
@@ -6536,9 +7083,11 @@ specifies a mandated approach.
 Tailoring is performed to better suit the organization, operating environment, and project needs.
 Many variables factor into the tailoring process, including the criticality of the project and the number
 of stakeholders involved. Using these variables as an example, it is evident that the rigor, checks
+
 ```
 and balances, and reporting required for a critical project (e.g., building a nuclear reactor) are much
 ```
+
 greater than those for building a new office building.
 Likewise, the communication and coordination of work necessary for a project team of
 10 people is insufficient for a project team of 200 people. Too few processes can omit key activities
@@ -6568,12 +7117,15 @@ Sections 3.3.1 through 3.3.4 explore each of these in more detail.
 Deciding on a life cycle and the phases of the life cycle is an example of tailoring. Additional
 tailoring can be done when selecting the development and delivery approach for the project. Some
 large projects may use a combination of development and delivery approaches simultaneously.
+
 ```
 For instance, building a new data center could involve (a) the use of predictive approaches for the
 ```
+
 ```
 physical building construction and finishing and (b) an iterative approach for understanding and
 ```
+
 establishing the computing capabilities required. Viewed from a project level, this combination of
 approaches represents a hybrid approach, but the construction team and the computing team may
 only experience a predictive or iterative development approach.
@@ -6581,45 +7133,61 @@ only experience a predictive or iterative development approach.
 Process tailoring for the selected life cycle and development approach includes determining
 which portions or elements should be:
 ▶ Added, to bring required rigor, coverage, or address unique product or operating environment
+
 ```
 conditions, etc. (e.g., adding independent inspections for safety-critical projects);
 ```
+
 ```
 ▶ Modified, to better suit the project or project team requirements (e.g., modifying
 ```
+
 the format of project documents to accommodate project team members with
+
 ```
 vision limitations);
 ```
+
 ▶ Removed, to reduce cost or effort since it is no longer required or is not economical
+
 ```
 for the value it adds (e.g., removing the creation of meeting minutes for a small, colocated
 ```
+
 ```
 project team with good communications);
 ```
+
 ```
 ▶ Blended, to bring additional benefits or value by mixing or combining elements (e.g., adding
 ```
+
 appreciative inquiry methods from organizational management to the lessons learned
+
 ```
 meetings of predictive project management to help foster better collaboration); and
 ```
+
 ▶ Aligned, to harmonize elements so there is consistent definition, understanding, and
+
 ```
 application (e.g., many disciplines have standards and practices associated with risk
 ```
+
 ```
 management that are sufficiently different from each other that would need to be aligned).
 ```
+
 For example, on multidisciplinary project teams, different disciplines may have specific
 elements, such as their own language, tools, and practices related to the same area of focus.
 3.3.3 ENGAGEMENT
 Tailoring engagement for the people involved in the project includes:
 ▶ People. This entails evaluating the skills and capabilities of the project leadership and the
+
 ```
 project team; then selecting who should be involved and in what capacities based on the
 ```
+
 project type and operating conditions. For example, on a challenging or time-constrained
 project, assigning very experienced project team members is more logical than using
 inexperienced project team members.
@@ -6633,9 +7201,11 @@ organization. Tailoring considers how to create one project team from a diverse
 collection of contributors to facilitate optimal project team performance and realization
 of project outcomes.
 3.3.4 TOOLS
+
 ```
 Selecting the tools (e.g., software or equipment) the project team will use for the project
 ```
+
 is a form of tailoring. Often, the project team has the best insight into the most suitable tools for
 the situation, but those choices might need tempering based on the associated costs. Additionally,
 organizational leaders can impose constraints that the project team cannot change.
@@ -6661,22 +7231,30 @@ modifications
 Adjust based on
 size, criticality,
 and other factors Inspectand adapt
+
 ```
 1) Select Initial
 ```
+
 Development
 Approach
+
 ```
 2) Tailor for
 ```
+
 Organization
+
 ```
 3) Tailor for
 ```
+
 Project
+
 ```
 4) Implement
 ```
+
 Ongoing
 Improvement
 Figure 3-1. Details of the Steps in the Tailoring Process
@@ -6711,19 +7289,25 @@ organizational maturity, and other considerations.
 Figure 3-3. Tailoring the Approach for the Organization
 Tailoring for the organization involves adding, removing, and reconfiguring elements of the
 approach to make it more suitable for the individual organization. This process is shown in Figure 3-4.
+
 ```
 Organizations with a project management office (PMO) or value delivery office (VDO) may play
 ```
+
 a role in reviewing and approving tailored delivery approaches.
+
 ```
 Tailoring that only impacts the project team (e.g., when they hold internal meetings, who works
 ```
+
 ```
 where, etc.) requires less oversight than tailoring that impacts external groups (e.g., how and when
 ```
+
 ```
 other departments are engaged, etc.). Therefore, internal project tailoring might be approved by the
 ```
+
 project manager while tailoring changes that impact external groups may require approval by the
 PMO or VDO. The PMO or VDO can assist project teams as they tailor their approaches by providing
 ideas and solutions from other project teams.
@@ -6755,9 +7339,11 @@ process. Answers to these questions can help identify the need to tailor process
 life cycle, tools, methods, and artifacts.
 A VDO may be found in organizations that use more adaptive delivery approaches. The VDO
 serves an enabling role, rather than a management or oversight function. It focuses on coaching
+
 ```
 project teams; building adaptive skills and capabilities throughout the organization; and
 ```
+
 mentoring sponsors and product owners to be more effective in those roles.
 3.4.3.1 Product/Deliverable
 Attributes associated with the product or deliverable include, but are not limited to:
@@ -6822,19 +7408,25 @@ The work associated with each performance domain can also be tailored, based on 
 uniqueness of the project. As shown in Figure 3-8, the principles for project management provide
 guidance for the behavior of project practitioners as they tailor the performance domains to meet
 the unique needs of the project context and the environment.
+
 ```
 1) Select Approach
 ```
+
 Tailoring Steps
+
 ```
 2) Tailor for the Organization
 ```
+
 ```
 3) Tailor for the Project
 ```
+
 ```
 4) Implement Ongoing
 ```
+
 Improvement
 Figure 3-7. The Tailoring Process
 Guide Behavior
@@ -6909,12 +7501,15 @@ and guidelines?
 3.5.4 PLANNING
 ▶ How might internal and external environmental factors influence the project and its
 deliverable?
+
 ```
 ▶ What are the factors influencing durations (such as the correlation between available
 ```
+
 ```
 resources and their productivity)?
 ```
+
 ▶ Does the organization have formal or informal policies, procedures, and guidelines related
 to cost estimating and budgeting?
 ▶ How does the organization estimate cost when using adaptive approaches?
@@ -6998,18 +7593,23 @@ Use techniques like value stream mapping and kanban
 boards to visualize the work, identify the issues, and
 propose solutions.
 Evaluate whether sufficient information is being shared
+
 ```
 with stakeholders; feedback loops are present and
 ```
+
 ```
 working; and deeper engagement may work better than
 ```
+
 simply communicating.
 Check to ensure appropriate measures are being
 collected, analyzed, shared, and discussed during team
+
 ```
 and stakeholder meetings; validate agreement with the
 ```
+
 measures within the team and with stakeholders.
 Explore root causes to identify whether there are
 related gaps in project processes or activities.
@@ -7098,20 +7698,23 @@ or meeting needs. Some models were developed with projects and project teams in 
 are more general in nature. Where feasible, models in this section are presented as they apply to
 projects. The content in this section does not describe how to develop or create new models.
 The model descriptions presented provide a high-level view. Project team members and
+
 ```
 other stakeholders can refer to many sources (e.g., PMI’s library of standards products and
 ```
+
 ```
 PMIstandards+™) for more-complete descriptions and explanations of the models.
 ```
+
 4.2.1 SITUATIONAL LEADERSHIP MODELS
 Situational leadership models are a subset of a vast array of leadership models. Just as
 project teams tailor the processes, methods, life cycles, and development approaches, leadership
 styles are also tailored. Situational leadership models describe ways to tailor one’s leadership
 style to meet the needs of the individual and the project team. The following are examples of two
 situational leadership models.
-4.2.1.1 Situational Leadership® II
-Ken Blanchard’s Situational Leadership® II measures project team member development using
+4.2.1.1 Situational Leadership II
+Ken Blanchard’s Situational Leadership II measures project team member development using
 competence and commitment as the two main variables. Competence is the combination of ability,
 knowledge, and skill. Commitment speaks to the confidence and motivation an individual has. As an
 individual’s competence and commitment evolve, leadership styles evolve from directing to coaching
@@ -7123,9 +7726,11 @@ an action plan for personal development. The model refers to five contributing f
 ▶ Outcome. An outcome identifies the long-term goals of an individual and the desired
 result from each conversation session.
 ▶ Situation. A situation enables conversation about the current skills, abilities, and
+
 ```
 knowledge level of the project team member; why the person is at that level; and how
 ```
+
 that level impacts the individual’s performance and peer relationships.
 ▶ Choices/consequences. Choice and/or consequences identify all the potential avenues
 for attaining the desired outcome and the consequences of each choice so an individual
@@ -7249,8 +7854,8 @@ necessary improvements or adaptations in response.
 that may surface once the future state is achieved.
 ▶ Sustain change. This element seeks to ensure that the new capabilities continue and
 previous processes or behaviors cease.
-4.2.4.2 ADKAR® Model
-Jeff Hiatt developed the ADKAR® Model which focuses on five sequential steps that individuals
+4.2.4.2 ADKAR Model
+Jeff Hiatt developed the ADKAR Model which focuses on five sequential steps that individuals
 undergo when adapting to change:
 ▶ Step 1: Awareness. This step identifies why the change is necessary.
 ▶ Step 2: Desire. Once people know why the change is necessary, there needs to be a desire
@@ -7361,12 +7966,15 @@ The Cynefin framework helps identify behaviors, such as probing, sensing, respon
 and categorizing, which can help impact the relationships between variables and guide actions.
 4.2.5.2 Stacey Matrix
 Ralph Stacey developed the Stacey matrix which is similar to the Cynefin framework, but it looks
+
 ```
 at two dimensions to determine the relative complexity of a project: (a) the relative uncertainty of the
 ```
+
 ```
 requirements for the deliverable, and (b) the relative uncertainty of the technology that will be used to
 ```
+
 create the deliverable. Based on the relative uncertainty of these dimensions, a project is considered
 simple, complicated, complex, or chaotic. The degree of complexity is one factor that influences
 tailoring methods and practices for the project.
@@ -7495,9 +8103,11 @@ more time to plan up front, many projects can reduce uncertainty, oversights, an
 the longer the time spent planning, the longer it takes to get a return on investment, the more
 market share could be lost, and the more circumstances can change by the time the output is
 delivered. The intent of this model is to help identify the optimum amount of planning, sometimes
+
 ```
 called the sweet spot. The sweet spot is different for every project; therefore, there is no correct
 ```
+
 answer for the right amount of planning overall. This model demonstrates that there is a point
 where additional planning becomes counterproductive.
 4.2.7.4 Process Groups
@@ -7518,23 +8128,30 @@ was undertaken to achieve.
 ▶ Executing. Those processes performed to complete the work defined in the project
 management plan to satisfy the project requirements.
 ▶ Monitoring and Controlling. Those processes required to track, review, and regulate the
+
 ```
 progress and performance of the project; identify any areas in which changes to the plan
 ```
+
 ```
 are required; and initiate the corresponding changes.
 ```
+
 ▶ Closing. Those processes performed to formally complete or close a project, phase,
 or contract.
+
 ```
 These Process Groups are independent of the delivery approach, application areas (such as
 ```
+
 ```
 marketing, information services, and accounting), or industry (such as construction, aerospace, and
 ```
+
 ```
 telecommunications). In a process-based approach, the output of one process generally becomes
 ```
+
 an input to another process or is a deliverable of the project or project phase. For example, a project
 management plan and project documents, such as the risk register, assumption log, etc., which are
 produced in the planning process grouping, are inputs to the executing process grouping where
@@ -7549,12 +8166,15 @@ claim on the project for stakeholder engagement.
 Different models are more likely to be useful in different project performance domains. While
 the needs of the project, stakeholders, and organizational environment will determine which models
 are most applicable for a specific project, there are some performance domains that are more likely
+
 ```
 to make use of each model. Table 4-1 suggests the performance domain(s) where each model is most
 ```
+
 ```
 likely to be of use; however, the project manager and project team have the ultimate responsibility
 ```
+
 for selecting the right models for their project.
 Table 4-1. Mapping of Models Likely to Be Used in Each Performance Domain
 Performance Domain
@@ -7626,7 +8246,7 @@ X
 X X
 X
 X
-Situational Leadership® II
+Situational Leadership II
 OSCAR
 Cross-cultural communication
 Effectiveness of communication channels
@@ -7636,7 +8256,7 @@ Intrinsic versus extrinsic motivation
 Theory of needs
 Theory X, Theory Y, and Theory Z
 Managing Change in Organizations
-ADKAR ®
+ADKAR
 8-Step Process for Leading Change
 Transition
 Cynefin framework
@@ -7660,12 +8280,15 @@ A method is a means for achieving an outcome, output, result, or project deliver
 methods described here are a sampling of those commonly used to support project work. There are
 many methods that are not described here, either because they are used in project management the
 same way they are in other disciplines, such as interviewing, focus groups, checklists, and so forth,
+
 ```
 or because they are not frequently used across a broad spectrum of projects (i.e., the methods are
 ```
+
 ```
 industry specific).
 ```
+
 Many of the methods are related by the purpose they serve, such as estimating or data gathering,
 and therefore, are presented in a group. Others are related by the type of activity involved, such as
 those in the meetings and analysis groups.
@@ -7693,19 +8316,25 @@ with authorizing or justifying a project or a decision. The outcomes of the foll
 are often used in a business case that justifies undertaking a project:
 ▹ Payback period. The payback period is the time needed to recover an investment,
 usually in months or years.
+
 ```
 ▹ Internal rate of return (IRR). The internal rate of return is the projected annual yield
 ```
+
 of a project investment, incorporating both initial and ongoing costs into an estimated
 percentage growth rate a given project is expected to have.
+
 ```
 ▹ Return on investment (ROI). Return on investment is the percent return on an initial
 ```
+
 investment, calculated by taking the projected average of all net benefits and dividing
 them by the initial cost.
+
 ```
 ▹ Net present value (NPV). Net present value is the future value of expected benefits,
 ```
+
 expressed in the value those benefits have at the time of investment. NPV considers
 current and future costs and benefits and inflation.
 ▹ Cost-benefit analysis. A cost-benefit analysis is a financial analysis tool used to determine
@@ -7723,9 +8352,11 @@ analysis to populate the branches of the decision tree.
 ▶ Earned value analysis. Earned value analysis is a method that utilizes a set of measures
 associated with scope, schedule, and cost to determine the cost and schedule performance
 of a project.
+
 ```
 ▶ Expected monetary value (EMV). The expected monetary value is the estimated value
 ```
+
 of an outcome expressed in monetary terms. It is used to quantify the value of uncertainty,
 such as a risk, or compare the value of alternatives that are not necessarily equivalent. The
 EMV is calculated by multiplying the probability that an event will occur and the economic
@@ -7792,9 +8423,11 @@ and Fibonacci numbers.
 or a project using historical data from a similar activity or project.
 ▶ Function point. A function point is an estimate of the amount of business functionality in
 an information system. Function points are used to calculate a functional size measurement
+
 ```
 (FSM) of a software system.
 ```
+
 ▶ Multipoint estimating. Multipoint estimating assesses cost or duration by applying an
 average or weighted average of optimistic, pessimistic, and most likely estimates when
 there is uncertainty with the individual activity estimates.
@@ -7820,9 +8453,11 @@ Planning poker is a variation of Wideband Delphi.
 Meetings are an important means for engaging the project team and other stakeholders. They
 are a primary means of communication throughout the project.
 ▶ Backlog refinement. At a backlog refinement meeting, the backlog is progressively
+
 ```
 elaborated and (re)prioritized to identify the work that can be accomplished in an
 ```
+
 upcoming iteration.
 ▶ Bidder conference. Meetings with prospective sellers prior to the preparation of a bid
 or proposal to ensure all prospective vendors have a clear and common understanding
@@ -7851,9 +8486,11 @@ knowledge gained during a project, phase, or iteration with a focus on improving
 team performance. This meeting can address situations that could have been handled
 better in addition to good practices and situations that produced very favorable outcomes.
 ▶ Planning meeting. A planning meeting is used to create, elaborate, or review a plan or
+
 ```
 plans and secure commitment for the plan(s).
 ```
+
 ▶ Project closeout. A project closeout meeting is used to obtain final acceptance of the
 delivered scope from the sponsor, product owner, or client. This meeting indicates that
 the product delivery is complete.
@@ -7867,9 +8504,11 @@ explore their work and results in order to improve both process and product.
 Retrospectives are a form of lessons learned meeting.
 ▶ Risk review. A meeting to analyze the status of existing risks and identify new risks.
 This includes determining if the risk is still active and if there have been changes to the
+
 ```
 risk attributes (such as probability, impact, urgency, etc.). Risk responses are evaluated
 ```
+
 to determine if they are effective or should be updated. New risks may be identified
 and analyzed and risks that are no longer active may be closed. Risk reassessment is an
 example of a risk-review meeting.
@@ -7878,9 +8517,11 @@ information about the current progress of the project and its performance.
 ▶ Steering committee. A meeting where senior stakeholders provide direction and support
 to the project team and make decisions outside of the project team’s authority.
 4.4.4 OTHER METHODS
+
 ```
 The methods described in this section don’t fit into a specific category; however, they are
 ```
+
 common methods that are used for a variety of purposes on projects.
 ▶ Impact mapping. Impact mapping is a strategic planning method that serves as a visual
 roadmap for the organization during product development.
@@ -7888,32 +8529,40 @@ roadmap for the organization during product development.
 solutions, or deliverables such as prototypes, diagrams, or storyboards. Modeling can
 facilitate further analysis by identifying gaps in information, areas of miscommunication,
 or additional requirements.
+
 ```
-▶ Net Promoter Score (NPS®). An index that measures the willingness of customers to
+▶ Net Promoter Score (NPS). An index that measures the willingness of customers to
 ```
+
 recommend an organization’s products or services to others. The score is used as a proxy
 for gauging the customer’s overall satisfaction with an organization’s product or service
 and the customer’s loyalty to the brand.
 ▶ Prioritization schema. Prioritization schema are methods used to prioritize portfolio,
 program, or project components, as well as requirements, risks, features, or other product
+
 ```
 information. Examples include a multicriteria weighted analysis and the MoSCoW (must
 ```
+
 ```
 have, should have, could have, and won’t have) method.
 ```
+
 ▶ Timebox. A timebox is a short, fixed period of time in which work is to be completed,
 such as 1 week, 2 weeks, or 1 month.
 4.5 METHODS APPLIED ACROSS PERFORMANCE DOMAINS
 Different methods are more likely to be useful in each of the performance domains. While
 the needs of the delivery approach, product, and organizational environment will determine which
 methods are most applicable for a specific project, there are some performance domains that are
+
 ```
 more likely to make use of specific methods. Table 4-2 suggests the performance domain(s) where
 ```
+
 ```
 each method is most likely to be of use; however, the project manager and/or project team have the
 ```
+
 ultimate responsibility for selecting the right methods for their project.
 Table 4-2. Mapping of Methods Likely to Be Used in Each Performance Domain
 Performance Domain
@@ -8014,9 +8663,11 @@ X
 X
 X
 X
+
 ```
 Table 4-2. Mapping of Methods Likely to Be Used in Each Performance Domain (cont.)
 ```
+
 Performance Domain
 Method
 Team
@@ -8053,7 +8704,7 @@ Status
 Steering committee
 Impact mapping
 Modeling
-Net Promoter Score®
+Net Promoter Score
 Prioritization schema
 Timebox
 Other Methods:
@@ -8123,12 +8774,15 @@ X
 X X
 4.6 COMMONLY USED ARTIFACTS
 An artifact is a template, document, output, or project deliverable. There are many documents
+
 ```
 or deliverables that are not described here, either because (a) they are somewhat generic, such as
 ```
+
 ```
 updates; (b) they are industry specific; or (c) they are a result of a specific method that was used to
 ```
+
 create it, for example, while cost estimates are an important artifact, they are the result of various
 estimating methods.
 The content in this section is not meant to describe how to develop or create an artifact.
@@ -8246,18 +8900,22 @@ and create the required deliverables.
 A baseline is the approved version of a work product or plan. Actual performance is compared
 to baselines to identify variances.
 ▶ Budget. A budget is the approved estimate for the project or any work breakdown
+
 ```
 structure (WBS) component or any schedule activity.
 ```
+
 ▶ Milestone schedule. This type of schedule presents milestones with planned dates.
 ▶ Performance measurement baseline. Integrated scope, schedule, and cost baselines
 are used for comparison to manage, measure, and control project execution.
 ▶ Project schedule. A project schedule is an output of a schedule model that presents
 linked activities with planned dates, durations, milestones, and resources.
 ▶ Scope baseline. This baseline is the approved version of a scope statement, work
+
 ```
 breakdown structure (WBS), and its associated WBS dictionary that can be changed using
 ```
+
 formal change control procedures and is used as the basis for comparison to actual results.
 4.6.6 VISUAL DATA AND INFORMATION
 Visual data and information are artifacts that organize and present data and information in
@@ -8270,9 +8928,11 @@ review and analysis.
 in a timebox or the work completed toward the release of a product or project deliverable.
 ▶ Cause-and-effect diagram. This diagram is a visual representation that helps trace an
 undesirable effect back to its root cause.
+
 ```
 ▶ Cumulative flow diagram (CFD). This chart indicates features completed over time,
 ```
+
 features in development, and those in the backlog. It may also include features at
 intermediate states, such as features designed but not yet constructed, those in quality
 assurance, or those in testing.
@@ -8297,9 +8957,11 @@ by priority.
 relationships among the project schedule activities.
 ▶ Requirements traceability matrix. This matrix links product requirements from their
 origin to the deliverables that satisfy them.
+
 ```
 ▶ Responsibility assignment matrix (RAM). This matrix is a grid that shows the project
 ```
+
 resources assigned to each work package. A RACI chart is a common way of showing
 stakeholders who are responsible, accountable, consulted, or informed and are associated
 with project activities, decisions, and deliverables.
@@ -8321,9 +8983,11 @@ a customer. Value stream maps can be used to identify waste.
 and accepted within a predefined interval.
 4.6.7 REPORTS
 Reports are formal records or summaries of information. Reports communicate relevant
+
 ```
 (usually summary level) information to stakeholders. Often reports are given to stakeholders who are
 ```
+
 interested in the project status, such as sponsors, business owners, or PMOs.
 ▶ Quality report. This project document includes quality management issues,
 recommendations for corrective actions, and a summary of findings from quality control
@@ -8341,59 +9005,77 @@ a mutually binding agreement that obligates the seller to provide the specified 
 result and obligates the buyer to pay for it. There are different types of contracts, some of which fall
 within a category of fixed-price or cost-reimbursable contracts.
 ▶ Fixed-price contracts. This category of contract involves setting a fixed price for a
+
 ```
 well-defined product, service, or result. Fixed-price contracts include firm fixed price (FFP),
 ```
+
 ```
 fixed-price incentive fee (FPIF), and fixed price with economic price adjustment (FP-EPA),
 ```
+
 among others.
 ▶ Cost-reimbursable contracts. This category of contracts involves payments to the seller
 for actual costs incurred for completing the work plus a fee representing seller profit. These
 contracts are often used when the project scope is not well defined or is subject to frequent
+
 ```
 change. Cost-reimbursable contracts include cost plus award fee (CPAF), cost plus fixed fee
 ```
+
 ```
 (CPFF), and cost plus incentive fee (CPIF).
 ```
+
 ```
 ▶ Time and materials (T&M). This contract establishes a fixed rate, but not a precise
 ```
+
 statement of work. It can be used for staff augmentation, subject matter expertise,
 or other outside support.
+
 ```
 ▶ Indefinite delivery indefinite quantity (IDIQ). This contract provides for an indefinite
 ```
+
 quantity of goods or services, with a stated lower and upper limit, and within a fixed
 time period. These contracts can be used for architectural, engineering, or information
 technology engagements.
 ▶ Other agreements. Other types of agreements include memorandum of understanding
+
 ```
 (MOU), memorandum of agreement (MOA), service level agreement (SLA), basic ordering
 ```
+
 ```
 agreement (BOA), among others.
 ```
+
 4.6.9 OTHER ARTIFACTS
+
 ```
 The documents and deliverables described here do not fit into a specific category; however,
 ```
+
 they are important artifacts that are used for a variety of purposes.
 ▶ Activity list. This document provides a tabulation of schedule activities that shows the
 activity description, activity identifier, and a sufficiently detailed scope of work description
 so project team members understand what work is to be performed.
 ▶ Bid documents. Bid documents are used to request proposals from prospective sellers.
 Depending on the goods or services needed, bid documents can include, among others:
+
 ```
 ▹ Request for information (RFI),
 ```
+
 ```
 ▹ Request for quotation (RFQ), and
 ```
+
 ```
 ▹ Request for proposal (RFP).
 ```
+
 ▶ Metrics. Metrics describe an attribute and how to measure it.
 ▶ Project calendar. This calendar identifies working days and shifts that are available
 for scheduled activities.
@@ -8409,12 +9091,15 @@ is a promise of a conversation to clarify details.
 Different artifacts are more likely to be useful in different performance domains. While the
 delivery approach, product, and organizational environment will determine which artifacts are most
 applicable for a specific project, there are some performance domains that are more likely to make
+
 ```
 use of specific artifacts. Table 4-3 suggests the performance domain(s) where each artifact is more
 ```
+
 ```
 likely to be of use; however, the project manager and/or project team has the ultimate responsibility
 ```
+
 for selecting and tailoring the artifacts for their project.
 Table 4-3. Mapping of Artifacts Likely to Be Used in Each Performance Domain
 Performance Domain
@@ -8498,9 +9183,11 @@ X
 Log and Register Artifacts:
 Plan Artifacts:
 Strategy Artifacts:
+
 ```
 Table 4-3. Mapping of Artifacts Likely to Be Used in Each Performance Domain (cont.)
 ```
+
 Budget
 Milestone schedule
 Performance measurement baseline
@@ -8582,9 +9269,11 @@ X
 XX
 X X
 X X X X
+
 ```
 Table 4-3. Mapping of Artifacts Likely to Be Used in Each Performance Domain (cont.)
 ```
+
 Performance Domain
 Artifact
 Quality report
@@ -8599,9 +9288,11 @@ MeasurementUncertainty
 Fixed-price
 Cost-reimbursable
 Time and materials
+
 ```
 Indefinite time indefinite quantity (IDIQ)
 ```
+
 Other agreements
 Agreements and Contracts:
 Project schedule network diagram
@@ -8690,13 +9381,17 @@ X X
 X
 REFERENCES
 [1] Project Management Institute. 2020. The Standard for Project Management. Newtown Square,
+
 ```
 PA: Author.
 ```
+
 [2] Project Management Institute. 2019. The Standard for Earned Value Management. Newtown Square,
+
 ```
 PA: Author.Appendix X1
 ```
+
 Contributors and Reviewers of
 The Standard for Project Management and
 A Guide to the Project Management Body
@@ -8705,7 +9400,7 @@ The Project Management Institute is grateful to all of the contributors for thei
 acknowledges their outstanding contributions to the project management profession.
 X1.1 CONTRIBUTORS
 The following list of contributors had input into shaping the content of the standard and/or the
-guide. Individuals listed in bold served on the PMBOK® Guide – Seventh Edition Development Team.
+guide. Individuals listed in bold served on the PMBOK Guide – Seventh Edition Development Team.
 Inclusion of an individual’s name in the list does not represent his or her approval or endorsement
 of the final content in all its parts.
 Cynthia Snyder Dionisio, Chair,
@@ -8949,9 +9644,11 @@ Algin Erozan, MSc, PMP
 Fernando Escobar, MSc, PMP
 Behnam Faizabadi
 Delphine Falcoz, PMP
+
 ```
 Saurater (Sam) Faraday,
 ```
+
 MBA, PMI-ACP, PMI-RMP
 Jamil Faraj
 Fereydoun Fardad, PMI-PBA, PMI-RMP, PMP
@@ -9041,9 +9738,11 @@ Regina Holzinger, PhD, PMP
 George Hord, PMP
 Gheorghe Hriscu, CGEIT, PMP
 Zayar Htun, ICM.PM, AGTI.IT
+
 ```
 Varetta Huggins, MS(IST), PMP, PgMP
 ```
+
 Ritchie Hughes, CSM, CSPO, PMP
 Edward Hung, MBA, PMI-ACP, PMP
 David J. L. Hunter, MA, PMI-ACP, PMP
@@ -9057,9 +9756,11 @@ Muhammad A. B. Ilyas, PMI-ACP, PMP, PgMP
 Andrea Innocenti, CGEIT, PMP
 Suhail Iqbal, PMP, PgMP, PfMP
 Ilya Ivanichkin, CSM, CSPO, PMP
+
 ```
 Ravi Iyer, MS (M&E), MBA, PE
 ```
+
 Can Izgi, PMP
 Tony Jacob, C Eng, PMI-PBA, PMP
 Md Javeed, BE, PMP
@@ -9211,9 +9912,11 @@ Nitin Mukesh, PMP
 Gaurav Mukherjee, CSM, PMP
 Stephen Murefu
 Wanja Murekio, MBA, PMP
+
 ```
 Jennifer Murphy, B.Comm(Int), MBS, MSc
 ```
+
 Syed Ahsan Mustaqeem, PE, PMP
 Yassir Nagy, PMI-ACP, PMP, PgMP
 Devan Naidu, MBA, PMP, PfMP
@@ -9248,9 +9951,11 @@ Habeeb Omar, PMP, PgMP, PfMP
 Austin Baraza Omonyo, PhD, P2 Pr, PMP
 Stefan Ondek, PMP
 Arivazhagan Ondiappan,
+
 ```
 PhD(hon), MBB, PMI-RMP, PMP
 ```
+
 Michael Ord, AccMIVMA, CPEng, RPEQ
 Stefano Orfei, PMI-PBA, PMP
 Henrique Ortega-Tenorio, MBA, PMP
@@ -9263,9 +9968,11 @@ Jorge Palomino Garcia, Eng, MBA, PMP
 Hariyo Pangarso
 Emmanouil Papadakis, PhD, MSc, PMP
 Paul Paquette, MBA, PMI-RMP, PMP
+
 ```
 Divya Pareek, BTech, GMP-YLP (IIMB Alumna)
 ```
+
 Stéphane Parent, PMI-RMP, PMI-SP, PMP
 Reginald Paul Parker, MS, CAS, PMP
 Cristina Parodi
@@ -9464,9 +10171,11 @@ Vijay Vemana, SAFe, PMP, PgMP
 Nagesh Venkataramanappa, PMP
 Charu Venkatararaman, CSM, CSPO, PMP
 Vanessa Ventura
+
 ```
 Eddy Vertil, PhD (ABD), PMI-RMP, PMP
 ```
+
 Anand Vijayakumar, PMI-RMP, PMP, PgMP
 Roberto Villa, PMP
 Tiziano Villa, PMI-ACP, PMP
@@ -9481,9 +10190,11 @@ Thomas Walenta, PMP, PgMP
 Qun Wang, CSPO, CSM, PMP
 Gorakhanath Wankhede, PMP
 J. LeRoy Ward, PMP, PgMP, PfMP
+
 ```
 Muhammad Waseem, MS(PM), PMP
 ```
+
 Toshiyuki Henry Watanabe, PE.JP, PMR.JP, PMP
 Barb Waters, MBA, PMP
 John Watson, PMP, PMI-ACP
@@ -9606,37 +10317,48 @@ are available. These activities and behaviors increase the likelihood of achievi
 project outcomes.
 X2.6 SUGGESTED RESOURCES
 Ahmed, R., Mohamad, N. A. B., & Ahmad, M. S. 2016. Effect of multidimensional top management
+
 ```
 support on project success: An empirical investigation. Quality & Quantity, 50(1), 151–176. https://doi.
 ```
+
 org/10.1007/s11135-014-0142-4
 Kloppenborg, T. J., Tesch, D., & Manolis, C. 2014. Project success and executive sponsor behaviors:
+
 ```
 Empirical life cycle stage investigations. Project Management Journal, 45(1), 9–20.
 ```
+
 ```
 https://doi.org/10.1002/pmj.21396
 ```
+
 ```
 Project Management Institute (PMI). 2012. Executive engagement: The role of the sponsor. Retrieved
 ```
-from https://www.pmi.org/business-solutions/white-papers/executive-engagement-sponsor-role.
-Project Management Institute. 2014. Pulse of the Profession® Report, Executive sponsor engagement:
-Top driver of project and program success. Retrieved from https://www.pmi.org/-/media/pmi/documents/
+
+from <https://www.pmi.org/business-solutions/white-papers/executive-engagement-sponsor-role>.
+Project Management Institute. 2014. Pulse of the Profession Report, Executive sponsor engagement:
+Top driver of project and program success. Retrieved from <https://www.pmi.org/-/media/pmi/documents/>
 public/pdf/learning/thought-leadership/pulse/executive-sponsor-engagement.pdf?v=411b7196-1cb4-
 4b29-b8d2-2764513bd175&sc_lang_temp=en
 Zwikael, O. 2008. Top management involvement in project management: Exclusive support practices
+
 ```
 for different project scenarios. International Journal of Managing Projects in Business, 1(3), 387–403.
 ```
+
 ```
 https://doi.org/10.1108/17538370810883837
 ```
+
 X3.1 INTRODUCTION
 The acronym “PMO” can refer to a portfolio, program, or project management office. In the
+
 ```
-context of the PMBOK® Guide – Seventh Edition, the project management office (PMO) represents
+context of the PMBOK Guide – Seventh Edition, the project management office (PMO) represents
 ```
+
 a management structure that standardizes project-related governance processes and facilitates
 the sharing of resources, tools, methodologies, and techniques. Recognizing that the character
 and function of a PMO varies between organizations, and even within the same organization, this
@@ -9667,20 +10389,25 @@ project scope or activities, and similar functions. This type of PMO provides ce
 management of projects. This structure exists in organizations that have departments with
 multiple projects and that deliver strategically important results, such as IT capabilities or
 new product development.
+
 ```
 ▶ An organization may have an enterprise-level PMO (EPMO) that links implementation
 ```
+
 of organizational strategy with portfolio-level investments in programs and projects that
 deliver specific results, changes, or products. This structure exists in organizations with
 well-established project management capabilities that are directly linked to achieving
 organizational strategy and broad business objectives.
 ▶ Organizations with flatter structures, customer-centered initiatives, and more adaptive
+
 ```
 delivery approaches may adopt an Agile Center of Excellence (ACoE) or Value Delivery
 ```
+
 ```
 Office (VDO) structure. The ACoE/VDO serves an enabling role, rather than a management
 ```
+
 or oversight function. It focuses on coaching teams, building agile skills and capabilities
 throughout the organization, and mentoring sponsors and product owners to be more
 effective in those roles. This type of structure is emerging within organizations adopting more
@@ -9690,9 +10417,11 @@ reside within specific departments. Such layering supports strategic alignment a
 specific project management capabilities within the departmental PMO or VDO.
 The formation of any type of PMO or VDO is based on organizational needs. Key influencers
 that help to shape the PMO or VDO include the types of projects being delivered, the size of the
+
 ```
 organization, its structure(s), the degree of centralized/decentralized decision making, and corporate
 ```
+
 culture. As organizational needs change over time, PMOs and VDOs evolve in response. For example,
 a PMO may transform into a VDO or the PMO may be closed after fulfilling its charter.
 X3.3 KEY PMO CAPABILITIES
@@ -9752,34 +10481,42 @@ from different perspectives. They may offer additional insights and useful infor
 Project Management Institute. 2017. The Standard for Organizational Project Management. Newtown
 Square, PA: Author.
 Project Management Institute. 2017. The Standard for Portfolio Management. Newtown Square,
+
 ```
 PA: Author.
 ```
+
 Project Management Institute. 2017. The Standard for Program Management. Newtown Square,
+
 ```
 PA: Author.
 ```
+
 Project Management Institute. 2017. The Standard for Business Analysis. 2017. Newtown Square,
+
 ```
 PA: Author.
 ```
+
 Project Management Institute. 2017. Agile Practice Guide. Newtown Square, PA: Author.
 Project Management Institute. 2016. Governance of Portfolios, Programs, and Projects: A Practice Guide.
 Newtown Square, PA: Author.
 X3.6 SUGGESTED RESOURCES
 Project Management Institute. 2013. Strategic Initiative Management: The PMO Imperative. Available
-at https://www.pmi.org/learning/thought-leadership/pulse/strategic-initiative-management-the-
+at <https://www.pmi.org/learning/thought-leadership/pulse/strategic-initiative-management-the->
 pmo-imperative.
 Project Management Institute. 2013. The Impact of PMOs on Strategy Implementation. Available
-at https://www.pmi.org/learning/thought-leadership/pulse/impact-pmo-strategy-in-depth.
-Project Management Institute. 2013. PMO Frameworks. Available at https://www.pmi.org/learning/
+at <https://www.pmi.org/learning/thought-leadership/pulse/impact-pmo-strategy-in-depth>.
+Project Management Institute. 2013. PMO Frameworks. Available at <https://www.pmi.org/learning/>
 thought-leadership/pulse/pmo-frameworks.
 X4.1 INTRODUCTION
 There has been a gradual transition in project management concepts over the last decade.
 Views such as defining success as meeting scope, schedule, and budget objectives have transitioned
+
 ```
 to measuring value and the outcomes (not the outputs) of the project. Product management is
 ```
+
 aligned with this value view and adds a longer time frame perspective. These concepts are shown
 in Table X4-1.
 Appendix X4
@@ -9802,7 +10539,7 @@ Product life cycle. A product life cycle is a series of phases that represents t
 of a product, from concept through delivery, growth, maturity, and to retirement.
 Given these definitions, products extend beyond a project life cycle. They operate more like
 long-running programs that focus on maximizing benefits realization. For example:
-▶ The Apple iPhone® product has been through multiple versions with future updates on
+▶ The Apple iPhone product has been through multiple versions with future updates on
 someone’s drawing board.
 ▶ Once they are finished, buildings and homes require ongoing maintenance to keep them
 functioning correctly and, at specific points, they may be refurbished or expanded for
@@ -9811,14 +10548,18 @@ Continuous development has impacts on many factors including, but not limited to
 models, staffing models, development, and sustainment practices.
 X4.2 GLOBAL MARKET SHIFTS
 Three global trends are disrupting traditional business models and transforming products and
+
 ```
 services (see Figure X4-1).
 ```
+
 ▶ Customer centricity. Customer centricity inverts the traditional model of organizations
 developing products and pushing them out to customers. Today, organizations are changing
+
 ```
 to better understand, serve, and maintain customer loyalty (see Figure X4-2). Today’s
 ```
+
 technology can capture a range of customer data and requirements that organizations
 analyze and use for potential product enhancements, cross-selling opportunities, new
 product ideas, etc.
@@ -9863,9 +10604,11 @@ in smaller batches is based on evaluation of value delivered.
 ▹ Start-ups. With the increase in the gig economy and custom markets, there are more
 start-ups and small businesses today than ever. Work is more distributed, fragmented,
 and fluid than with traditional models.
+
 ```
 ▹ Media. A move away from buying DVDs and CDs from centralized outlets; instead,
 ```
+
 a rise in subscription services with ongoing funding and delivery of benefits.
 X4.3 IMPACT ON PROJECT DELIVERY PRACTICES
 As markets shift from a single project delivery model to an ongoing delivery model, some
@@ -9883,9 +10626,11 @@ X4.4 ORGANIZATIONAL CONSIDERATIONS
 FOR PRODUCT MANAGEMENT
 Organizations that are shifting to long-running, product-based environments can utilize
 several strategies to align and coordinate product management. Three strategies include, but are
+
 ```
 not limited to, the following (see also Figure X4-3):
 ```
+
 ▶ Establish stable teams. Instead of disbanding the team when initial development is
 complete, use that team to sustain and evolve the product with the designated product
 owner or person within the team reflecting the customer perspective. This removes the
@@ -9908,9 +10653,11 @@ to maintain the product once it is transitioned. Part of transition planning can
 discussions on building a team within the receiving organization that can support and
 evolve the product over its life cycle.
 ▶ Use incremental guidance and funding. Instead of predefined project durations or
+
 ```
 annual budgets, consider more frequent reviews (such as quarterly) and funding for the
 ```
+
 next quarter. With more frequent evaluations and funding, the business is in closer control
 of overall progress, direction, and decision making.
 Similar to venture capital funding, regular reviews of delivered value allow direct funding
@@ -10018,9 +10765,11 @@ X4.6 SUGGESTED RESOURCES
 Kelly, A. 2018. Continuous Digital: An Agile Alternative to Projects for Digital Business. Columbus, OH:
 Allan Kelly Associates.
 Leybourn, E. and Hastie, S. 2019. #noprojects: A Culture of Continuous Value. Toronto, Ontario,
+
 ```
 Canada: C4Media.
 ```
+
 Kersten, M. 2018. Project to Product: How to Survive and Thrive in the Age of Digital Disruption with the
 Flow Framework. Portland, OR: IT Revolution Press.
 Project Management Institute. 2017. The Standard for Program Management – Fourth Edition.
@@ -10059,11 +10808,13 @@ conducted, including:
 agile, and design thinking principles and some of the mostly commonly used frameworks.
 This research helped to identify common practice areas and themes that served as inputs
 into developing the principles in the The Standard for Project Management.
-▶ PMI research, such as Pulse of the Profession®, which indicated that more organizations
+▶ PMI research, such as Pulse of the Profession, which indicated that more organizations
 and practitioners are embracing agile and hybrid models along with new ways of working
+
 ```
 (i.e., tools, frameworks, technologies, etc.).
 ```
+
 ▶ Review of published white papers, thought leadership articles, and related documents
 to elicit underlying principles.
 ▶ Focus groups and workshops to gather stakeholder input for improving the usability
@@ -10093,12 +10844,15 @@ Prior to developing the content for the standard, a Development Team and two rev
 were formed. Approximately 450 individuals applied to participate on the teams. Twelve people were
 selected for the Development Team and approximately 70 were selected to participate in one of
 two review teams. The Development Team and review teams were comprised of stakeholders from
+
 ```
 around the globe and across industry segments and roles (e.g., government, practitioners, academic,
 ```
+
 ```
 consulting, and organizational providers). The teams included expertise in delivering projects using
 ```
+
 predictive, hybrid, and adaptive approaches.
 X5.4.2 CONTENT
 The standard is comprised of three sections: Introduction, A System for Value Delivery, and
@@ -10130,15 +10884,19 @@ iterative development, and public exposure draft.
 X5.5.1 GLOBAL WORKSHOPS
 Throughout the development process, global workshops were held where the move to a
 principle-based standard was presented and workshop participants were asked to explore guiding
+
 ```
 principles for project management. Workshops were presented in Dublin, Ireland (PMI Global
 ```
+
 ```
 Congress – EMEA); Bangalore, India; Brazilia, Brazil; Ottawa, Canada (PMI Global Executive Council
 ```
+
 ```
 meeting); Philadelphia, Pennsylvania, United States (PMI Global Conference); and Beijing, China.
 ```
+
 These workshops served as input into the Development Team’s work and as validation checkpoints
 during development.
 X5.5.2 ITERATIVE DEVELOPMENT
@@ -10164,32 +10922,43 @@ industry representation, and an iterative review process shaped and validated th
 process-based standard to a principle-based standard. Future teams can evaluate the impact of the
 shift in presentation of The Standard for Project Management and use that information to enhance or
 revise future editions.
+
 1. INCLUSIONS AND EXCLUSIONS
 This combined glossary includes definitions of terms and acronyms from the following:
 ▶ The Standard for Project Management
+
 ```
-▶ A Guide to the Project Management Body of Knowledge (PMBOK® Guide) – Seventh Edition
+▶ A Guide to the Project Management Body of Knowledge (PMBOK Guide) – Seventh Edition
 ```
+
 This glossary includes terms that are:
+
 ```
 ▶ Unique or nearly unique to project management (e.g., minimum viable product, work
 ```
+
 ```
 breakdown structure, Gantt chart), and
 ```
+
 ▶ Not unique to project management but used differently or with a narrower meaning
+
 ```
 in project management than in general everyday usage (e.g., release planning,
 ```
+
 ```
 contingency reserve).
 ```
+
 This glossary generally does not include:
 ▶ Application-area-specific terms,
 ▶ Terms used in project management that do not differ in any material way from everyday
+
 ```
 use (e.g., calendar day, delay),
 ```
+
 ▶ Compound terms whose meanings are clear from the meanings of the component parts,
 ▶ Variants when the meaning of the variant is clear from the base term, and
 ▶ Terms that are used only once and are not critical to understanding the point of the
@@ -10222,7 +10991,7 @@ FPIF fixed price incentive fee
 IDIQ indefinite delivery indefinite quantity
 LCA life cycle assessment
 MVP minimum viable product
-NPS® Net Promotor Score®
+NPS Net Promotor Score
 OBS organizational breakdown structure
 OPA organizational process assets
 PMB performance measurement baseline
@@ -10242,17 +11011,21 @@ VDO value delivery office
 WBS work breakdown structure
 3. DEFINITIONS
 Many of the words defined here have broader, and in some cases, different dictionary definitions.
+
 ```
 In some cases, a single glossary term consists of multiple words (e.g., root cause analysis).
 ```
+
 Acceptance Criteria. A set of conditions that is required to be met before deliverables are accepted.
 Accuracy. Within the quality management system, accuracy is an assessment of correctness.
 Activity List. A documented tabulation of schedule activities that shows the activity description,
 activity identifier, and a sufficiently detailed scope of work description so project team members
 understand what work is to be performed.
+
 ```
 Actual Cost (AC). The realized cost incurred for the work performed on an activity during a specific
 ```
+
 time period.
 Adaptive Approach. A development approach in which the requirements are subject to a high level
 of uncertainty and volatility and are likely to change throughout the project.
@@ -10276,9 +11049,11 @@ Assumption Log. A project document used to record all assumptions and constraint
 the project.
 Authority. The right to apply project resources, expend funds, make decisions, or give approvals.
 Backlog. An ordered list of work to be done.
+
 ```
 Backlog Refinement. Progressive elaboration of the content in the backlog and (re)prioritization
 ```
+
 of it to identify the work that can be accomplished in an upcoming iteration.
 Baseline. The approved version of a work product, used as a basis for comparison to actual results.
 Basis of Estimates. Supporting documentation outlining the details used in establishing project
@@ -10294,13 +11069,17 @@ Bidder Conference. The meetings with prospective sellers prior to the preparatio
 or proposal to ensure all prospective vendors have a clear and common understanding of the
 procurement. Also known as contractor conferences, vendor conferences, or pre-bid conferences.
 Blocker. See impediment.
+
 ```
 Budget. The approved estimate for the project or any work breakdown structure (WBS) component
 ```
+
 or any schedule activity.
+
 ```
 Budget at Completion (BAC). The sum of all budgets established for the work to be performed.
 ```
+
 Burn Chart. A graphical representation of the work remaining in a timebox or the work completed
 toward the release of a product or project deliverable.
 Business Case. A value proposition for a proposed project that may include financial and
@@ -10316,9 +11095,11 @@ Change. A modification to any formally controlled deliverable, project managemen
 or project document.
 Change Control. A process whereby modifications to documents, deliverables, or baselines
 associated with the project are identified, documented, approved, or rejected.
+
 ```
 Change Control Board (CCB). A formally chartered group responsible for reviewing, evaluating,
 ```
+
 approving, delaying, or rejecting changes to the project, and for recording and communicating
 such decisions.
 Change Control Plan. A component of the project management plan that establishes the change
@@ -10332,9 +11113,11 @@ groups, and organizations from a current state to a future state with intended b
 Change Request. A formal proposal to modify a document, deliverable, or baseline.
 Charter. See project charter.
 Check Sheet. A tally sheet that can be used as a checklist when gathering data.
+
 ```
 Closing Process Group. The process(es) performed to formally complete or close a project, phase,
 ```
+
 or contract.
 Communications Management Plan. A component of the project, program, or portfolio
 management plan that describes how, when, and by whom information about the project will be
@@ -10364,40 +11147,54 @@ Cost-Benefit Analysis. A financial analysis method used to determine the benefit
 a project against its costs.
 Cost Management Plan. A component of a project or program management plan that describes
 how costs will be planned, structured, and controlled.
+
 ```
 Cost of Quality (COQ). All costs incurred over the life of the product by investment in preventing
 ```
+
 nonconformance to requirements, appraisal of the product or service for conformance to requirements,
 and failure to meet requirements.
+
 ```
 Cost Performance Index (CPI). A measure of the cost efficiency of budgeted resources expressed
 ```
+
 as the ratio of earned value to actual cost.
+
 ```
 Cost Plus Award Fee Contract (CPAF). A category of contract that involves payments to the seller for
 ```
+
 all legitimate actual costs incurred for completed work, plus an award fee representing seller profit.
+
 ```
 Cost Plus Fixed Fee Contract (CPFF). A type of cost-reimbursable contract where the buyer
 ```
+
 ```
 reimburses the seller for the seller’s allowable costs (allowable costs are defined by the contract)
 ```
+
 ```
 plus a fixed amount of profit (fee).
 ```
+
 ```
 Cost Plus Incentive Fee Contract (CPIF). A type of cost-reimbursable contract where the buyer
 ```
+
 ```
 reimburses the seller for the seller’s allowable costs (allowable costs are defined by the contract),
 ```
+
 and the seller earns its profit if it meets defined performance criteria.
 Cost-Reimbursable Contract. A type of contract involving payment to the seller for the seller’s
 actual costs, plus a fee typically representing the seller’s profit.
+
 ```
 Cost Variance (CV). The amount of budget deficit or surplus at a given point in time, expressed
 ```
+
 as the difference between the earned value and the actual cost.
 Crashing. A method used to shorten the schedule duration for the least incremental cost by
 adding resources.
@@ -10405,13 +11202,17 @@ Criteria. Standards, rules, or tests on which a judgment or decision can be base
 a product, service, result, or process can be evaluated.
 Critical Path. The sequence of activities that represents the longest path through a project, which
 determines the shortest possible duration.
+
 ```
 Critical Path Method (CPM). A method used to estimate the minimum project duration and
 ```
+
 determine the amount of schedule flexibility on the logical network paths within the schedule model.
+
 ```
 Cumulative Flow Diagram (CFD). A chart indicating features completed over time, features in other
 ```
+
 states of development, and those in the backlog.
 Cycle Time. The total elapsed time from the start of a particular activity or work item to its completion.
 Cycle Time Chart. A diagram that shows the average cycle time of the work items completed
@@ -10427,9 +11228,11 @@ Decision Tree Analysis. A diagramming and calculation method for evaluating the 
 of a chain of multiple options in the presence of uncertainty.
 Decomposition. A method used for dividing and subdividing the project scope and project
 deliverables into smaller, more manageable parts.
+
 ```
 Definition of Done (DoD). A checklist of all the criteria required to be met so that a deliverable can
 ```
+
 be considered ready for customer use.
 Deliverable. Any unique and verifiable product, result, or capability to perform a service that is
 required to be produced to complete a process, phase, or project.
@@ -10446,69 +11249,91 @@ Digital Product. A product or service that is delivered, used, and stored in an 
 Discretionary Dependency. A relationship that is based on best practices or project preferences.
 Duration. The total number of work periods required to complete an activity or work breakdown
 structure component, expressed in hours, days, or weeks. Contrast with effort.
+
 ```
 Earned Value (EV). The measure of work performed expressed in terms of the budget authorized
 ```
+
 for that work.
+
 ```
 Earned Value Analysis (EVA). An analysis method that uses a set of measures associated with scope,
 ```
+
 schedule, and cost to determine the cost and schedule performance of a project.
 Effort. The number of labor units required to complete a schedule activity or work breakdown
 structure component, often expressed in hours, days, or weeks. Contrast with duration.
 Emotional Intelligence. The ability to identify, assess, and manage the personal emotions of oneself
 and other people, as well as the collective emotions of groups of people.
+
 ```
 Enterprise Environmental Factors (EEF). Conditions, not under the immediate control of the team,
 ```
+
 that influence, constrain, or direct the project, program, or portfolio.
 Epic. A large, related body of work intended to hierarchically organize a set of requirements and
 deliver specific business outcomes.
 Estimate. A quantitative assessment of the likely amount or outcome of a variable, such as project
 costs, resources, effort, or durations.
+
 ```
 Estimate at Completion (EAC). The expected total cost of completing all work expressed as the sum
 ```
+
 of the actual cost to date and the estimate to complete.
+
 ```
 Estimate to Complete (ETC). The expected cost to finish all the remaining project work.
 ```
+
 Estimating Methods. Methods used to develop an approximation of work, time, or cost on a project.
 Executing Process Group. Those processes performed to complete the work defined in the project
 management plan to satisfy the project requirements.
+
 ```
 Expected Monetary Value (EMV). The estimated value of an outcome expressed in monetary terms.
 ```
+
 Explicit Knowledge. Knowledge that can be codified using symbols such as words, numbers,
 and pictures.
 External Dependency. A relationship between project activities and non-project activities.
 Fast Tracking. A schedule compression method in which activities or phases normally done
 in sequence are performed in parallel for at least a portion of their duration.
 Feature. A set of related requirements or functionalities that provides value to an organization.
+
 ```
 Firm Fixed Price Contract (FFP). A type of fixed-price contract where the buyer pays the seller a set
 ```
+
 ```
 amount (as defined by the contract), regardless of the seller’s costs.
 ```
+
 Fixed Duration. A type of activity where the length of time required to complete the activity remains
 constant regardless of the number of people or resources assigned to the activity.
 Fixed-Price Contract. An agreement that sets the fee that will be paid for a defined scope of work
 regardless of the cost or effort to deliver it.
+
 ```
 Fixed Price Incentive Fee Contract (FPIF). A type of contract where the buyer pays the seller a set
 ```
+
 ```
 amount (as defined by the contract), and the seller can earn an additional amount if the seller meets
 ```
+
 defined performance criteria.
+
 ```
 Fixed Price with Economic Price Adjustment Contract (FPEPA). A fixed-price contract, but with
 ```
+
 a special provision allowing for predefined final adjustments to the contract price due to changed
+
 ```
 conditions, such as inflation changes, or cost increases (or decreases) for specific commodities.
 ```
+
 Flow. The measure of how efficiently work moves through a given process or framework.
 Flowchart. The depiction in a diagram format of the inputs, process actions, and outputs of one
 or more processes within a system.
@@ -10535,9 +11360,11 @@ as a blocker.
 Incremental Approach. An adaptive development approach in which the deliverable is produced
 successively, adding functionality until the deliverable contains the necessary and sufficient capability
 to be considered complete.
+
 ```
 Indefinite Delivery Indefinite Quantity (IDIQ). A contract that provides for an indefinite quantity
 ```
+
 of goods or services, with a stated lower and upper limit, within a fixed time period.
 Influence Diagram. A graphical representation of situations showing causal influences, time ordering
 of events, and other relationships among variables and outcomes.
@@ -10581,9 +11408,11 @@ Lessons Learned Register. A project document used to record knowledge gained dur
 phase, or iteration so that it can be used to improve future performance for the team and the
 organization.
 Life Cycle. See project life cycle.
+
 ```
 Life Cycle Assessment (LCA). A tool used to evaluate the total environmental impact of a product,
 ```
+
 process, or system.
 Log. A document used to record and describe or denote selected items identified during execution
 of a process or activity. Usually used with a modifier, such as issue, change, or assumption.
@@ -10606,21 +11435,26 @@ in a discipline.
 Metric. A description of a project or product attribute and how to measure it.
 Milestone. A significant point or event in a project, program, or portfolio.
 Milestone Schedule. A type of schedule that presents milestones with planned dates.
+
 ```
 Minimum Viable Product (MVP). A concept used to define the scope of the first release of a solution
 ```
+
 to customers by identifying the fewest number of features or requirements that would deliver value.
 Modeling. Creating simplified representations of systems, solutions, or deliverables, such as prototypes,
 diagrams, or storyboards.
 Monitor. Collect project performance data, produce performance measures, and report and
 disseminate performance information.
 Monitoring and Controlling Process Group. Those processes required to track, review, and regulate
+
 ```
 the progress and performance of the project; identify any areas in which changes to the plan are
 ```
+
 ```
 required; and initiate corresponding changes.
 ```
+
 Monte Carlo Simulation. A method of identifying the potential impacts of risk and uncertainty using
 multiple iterations of a computer model to develop a probability distribution of a range of outcomes
 that could result from a decision or course of action.
@@ -10628,7 +11462,7 @@ Mood Chart. A visualization chart for tracking moods or reactions to identify ar
 Multipoint Estimating. A method used to estimate cost or duration by applying an average
 or weighted average of optimistic, pessimistic, and most likely estimates when there is uncertainty
 with the individual activity estimates.
-Net Promoter Score®. An index that measures the willingness of customers to recommend
+Net Promoter Score. An index that measures the willingness of customers to recommend
 an organization’s products or services to others.
 Network Path. A sequence of activities connected by logical relationships in a project schedule
 network diagram.
@@ -10636,30 +11470,38 @@ Objective. Something toward which work is to be directed, a strategic position t
 a purpose to be achieved, a result to be obtained, a product to be produced, or a service
 to be performed.
 Opportunity. A risk that would have a positive effect on one or more project objectives.
+
 ```
 Organizational Breakdown Structure (OBS). A hierarchical representation of the project
 ```
+
 organization, which illustrates the relationship between project activities and the organizational
 units that will perform those activities.
+
 ```
 Organizational Process Assets (OPA). Plans, processes, policies, procedures, and knowledge bases
 ```
+
 that are specific to and used by the performing organization.
 Osmotic Communication. Means of receiving information without direct communication
 by overhearing and through nonverbal cues.
 Outcome. An end result or consequence of a process or project.
 Parametric Estimating. An estimating method in which an algorithm is used to calculate cost
 or duration based on historical data and project parameters.
+
 ```
 Performance Measurement Baseline (PMB). Integrated scope, schedule, and cost baselines used
 ```
+
 for comparison to manage, measure, and control project execution.
 Phase Gate. A review at the end of a phase in which a decision is made to continue to the next phase,
 to continue with modification, or to end a project or program.
 Plan. A proposed means of accomplishing something.
+
 ```
 Planned Value (PV). The authorized budget assigned to scheduled work.
 ```
+
 Planning Performance Domain. The performance domain that addresses activities and functions
 associated with the initial, ongoing, and evolving organization and coordination necessary for
 delivering project deliverables and results.
@@ -10717,13 +11559,17 @@ by orchestrating the work of the project. See also project manager.
 Project Life Cycle. The series of phases that a project passes through from its start to its completion.
 Project Management. The application of knowledge, skills, tools, and techniques to project activities
 to meet the project requirements.
+
 ```
 Project Management Body of Knowledge (PMBOK). A term that describes the knowledge within
 ```
+
 the profession of project management.
+
 ```
 Project Management Office (PMO). A management structure that standardizes the project-related
 ```
+
 governance processes and facilitates the sharing of resources, methodologies, tools, and techniques.
 Project Management Plan. The document that describes how the project will be executed,
 monitored and controlled, and closed.
@@ -10788,9 +11634,11 @@ describes how requirements will be analyzed, documented, and managed.
 Requirements Traceability Matrix. A grid that links product requirements from their origin to the
 deliverables that satisfy them.
 Reserve. A provision in the project management plan to mitigate cost and/or schedule risk, often
+
 ```
 used with a modifier (e.g., management reserve, contingency reserve) to provide further detail on
 ```
+
 what types of risk are meant to be mitigated.
 Reserve Analysis. A method used to evaluate the amount of risk on the project and the amount
 of schedule and budget reserve to determine whether the reserve is sufficient for the remaining risk.
@@ -10799,9 +11647,11 @@ Resource Management Plan. A component of the project management plan that descri
 project resources are acquired, allocated, monitored, and controlled.
 Responsibility. An assignment that can be delegated within a project management plan such that
 the assigned resource incurs a duty to perform the requirements of the assignment.
+
 ```
 Responsibility Assignment Matrix (RAM). A grid that shows the project resources assigned to each
 ```
+
 work package.
 Result. An output from performing project management processes and activities. See also deliverable.
 Retrospective. A regularly occurring workshop in which participants explore their work and results
@@ -10818,9 +11668,11 @@ Risk Appetite. The degree of uncertainty an organization or individual is willin
 anticipation of a reward.
 Risk Avoidance. A risk response strategy whereby the project team acts to eliminate the threat
 or protect the project from its impact.
+
 ```
 Risk Breakdown Structure (RBS). A hierarchical representation of potential sources of risks.
 ```
+
 Risk Enhancement. A risk response strategy whereby the project team acts to increase the
 probability of occurrence or impact of an opportunity.
 Risk Escalation. A risk response strategy whereby the team acknowledges that a risk is outside
@@ -10866,19 +11718,25 @@ establishes the criteria and the activities for developing, monitoring, and cont
 Schedule Model. A representation of the plan for executing the project’s activities including durations,
 dependencies, and other planning information, used to produce a project schedule along with other
 scheduling artifacts.
+
 ```
 Schedule Performance Index (SPI). A measure of schedule efficiency expressed as the ratio
 ```
+
 of earned value to planned value.
+
 ```
 Schedule Variance (SV). A measure of schedule performance expressed as the difference between
 ```
+
 the earned value and the planned value.
 Scope. The sum of the products, services, and results to be provided as a project. See also project
 scope and product scope.
+
 ```
 Scope Baseline. The approved version of a scope statement, work breakdown structure (WBS),
 ```
+
 and its associated WBS dictionary that can be changed using formal change control procedures and
 is used as the basis for comparison to actual results.
 Scope Creep. The uncontrolled expansion to product or project scope without adjustments to time,
@@ -10918,9 +11776,11 @@ functions associated with stakeholders.
 Stakeholder Register. A project document that includes information about project stakeholders
 including an assessment and classification of project stakeholders.
 Standard. A document established by an authority, custom, or general consent as a model or example.
+
 ```
 Statement of Work (SOW). A narrative description of products, services, or results to be delivered
 ```
+
 by the project.
 Status Meeting. A regularly scheduled meeting to exchange and analyze information about the current
 progress of the project and its performance.
@@ -10961,9 +11821,11 @@ Threshold. A predetermined value of a measurable project variable that represent
 requires action to be taken if it is reached.
 Throughput. The number of items passing through a process.
 Throughput Chart. A diagram that shows the accepted deliverables over time.
+
 ```
 Time and Materials Contract (T&M). A type of contract that is a hybrid contractual arrangement
 ```
+
 containing aspects of both cost-reimbursable and fixed-price contracts.
 Timebox. A short, fixed period of time in which work is to be completed.
 Tolerance. The quantified description of acceptable variation for a quality requirement.
@@ -10982,12 +11844,15 @@ to clarify details.
 Validation. The assurance that a product, service, or result meets the needs of the customer and
 other identified stakeholders. See also verification.
 Value. The worth, importance, or usefulness of something.
+
 ```
 Value Delivery Office (VDO). A project delivery support structure that focuses on coaching teams;
 ```
+
 ```
 building agile skills and capabilities throughout the organization; and mentoring sponsors and
 ```
+
 product owners to be more effective in those roles.
 Value Delivery System. A collection of strategic business activities aimed at building, sustaining,
 and/or advancing an organization.
@@ -11003,9 +11868,11 @@ Variance. A quantifiable deviation, departure, or divergence away from a known b
 or expected value.
 Variance Analysis. A method for determining the cause and degree of difference between the
 baseline and actual performance.
+
 ```
 Variance at Completion (VAC). A projection of the amount of budget deficit or surplus, expressed
 ```
+
 as the difference between the budget at completion and the estimate at completion.
 Velocity. A measure of a team’s productivity rate at which the deliverables are produced, validated,
 and accepted within a predefined interval.
@@ -11031,9 +11898,11 @@ project objectives.
 Wideband Delphi. An estimating method in which subject matter experts go through multiple
 rounds of producing estimates individually, with a team discussion after each round, until
 a consensus is achieved.
+
 ```
 Work Breakdown Structure (WBS). A hierarchical decomposition of the total scope of work
 ```
+
 to be carried out by the project team to accomplish the project objectives and create the required
 deliverables.
 Work Package. The work defined at the lowest level of the work breakdown structure for which cost
@@ -11052,23 +11921,27 @@ Adaptability, high-performing project teams
 and, 22
 Adaptive development approach, 38, 45, 49, 53
 Adaptive schedule planning, 81, 82
-ADKAR® Model, 161
+ADKAR Model, 161
 Affiliation, theory of needs and, 159
 Affinity diagram, 188
 Affinity grouping, 178
 Agile approaches, 38
+
 ```
 Agile Center of Excellence (ACoE), 212
 ```
+
 Agile charter, 84
 Agile methods
 adaptive approach and, 50
 development approach and, 49
 flow-based scheduling and, 45
 organization and, 41
+
 ```
 Agreements. See also Contract(s); Service level
 ```
+
 agreement
 contracts and, 191
 Alignment
@@ -11102,12 +11975,15 @@ visual data and information, 188–190
 Assignment matrix, 189
 Assumption and constraint analysis, 174
 Assumption log, 185
+
 ```
 Assumption(s), 20, 24, 121
 ```
+
 ```
 Attribute(s), tailoring and, 141
 ```
+
 Audits, 115
 process, 72, 79, 87
 procurement, 79
@@ -11122,15 +11998,19 @@ Balance
 competing constraints and, 72
 reframing and, 111
 Bar chart, 106
+
 ```
 Baseline(s), 188. See also Cost baseline; Scope
 ```
+
 baseline
 definition, 93
 Baseline performance, 100–101
+
 ```
 Basic ordering agreement (BOA), 191
 ```
+
 Basis of estimates, 20, 54
 Behavior
 project management principles and, 146
@@ -11139,27 +12019,33 @@ Benchmarking, 175
 Benefit-cost ratio, 102
 Benefits realization, PMO and, 214
 Best practices, benchmarking and, 175
+
 ```
 Bias(es)
 ```
+
 confirmation bias, 112
 conscious and unconscious, 20
 Bidder conferences, 70, 75, 179
 Bid documents, 70, 75, 192
 Bid process, 75
 Big picture perspective, 207, 213
+
 ```
 Big visible charts (BVCs), 108
 ```
+
 Bottlenecks, 71
 Brainstorming, 13, 22, 121
 Budget
 budget build up, 62–63
 definition, 52, 188
 Planning Performance Domain, 62–63
+
 ```
 Budget at completion (BAC), 104–105
 ```
+
 Burn charts, 108, 109, 111
 Burndown/burnup chart, 188
 Burndown chart, 108, 109
@@ -11194,9 +12080,11 @@ Calendar, project, 192
 Capabilities, PMO and, 213, 214
 Cause-and-effect diagram, 188
 Celebrating success, 21
+
 ```
 Change(s)
 ```
+
 cost of, 90–91
 culture of, 214
 ease of, 40
@@ -11207,29 +12095,36 @@ transitions associated with, 164
 Change control
 changes and, 66
 checking results and, 68
+
 ```
 Change control board (CCB), 68, 77, 169, 183, 186
 ```
+
 Change control plan, 186
 Change control system, 107
 Change log, 185
 Change management, 213
 Change models, 160–164
 8-Step Process for Leading Change, 162
-ADKAR® Model, 161
+ADKAR Model, 161
 Transition Model, 164
 Virginia Satir Change Model, 163
+
 ```
 Change request(s), 77
 ```
+
 Chaos, 163
 Character, win-win perspective and, 170
+
 ```
 Chart(s)
 ```
+
 ```
 big visible charts (BVCs), 108
 ```
+
 burn, 108, 109
 burndown, 108
 burnup, 108
@@ -11279,9 +12174,11 @@ gulf of evaluation, 158
 gulf of execution, 158
 Communication planning, 64
 Communications management plan, 79, 186
+
 ```
 Community action patrol (CAP) training, 45
 ```
+
 Community center
 development approaches, 36, 38, 39
 life cycle, 48
@@ -11328,9 +12225,11 @@ Conversation, 14, 156, 192
 COQ. See Cost of quality
 Corrective action, 190
 Correlation versus causation, 112
+
 ```
 Cost(s)
 ```
+
 actual, 100
 appraisal, 88
 change and, 90–91
@@ -11344,9 +12243,11 @@ Cost-benefit ratio, 102
 Cost estimates, 62, 63, 105
 Cost management plan, 186
 Cost of change, 90–91
+
 ```
 Cost of quality (COQ), 88–89
 ```
+
 appraisal, 88
 data gathering and analysis, 175
 definition, 81
@@ -11354,23 +12255,30 @@ Delivery Performance Domain, 88–89
 external failure, 89
 internal failure, 89
 prevention, 88
+
 ```
 Cost performance index (CPI), 100, 104
 ```
+
 ```
 Cost plus award fee (CPAF), 191
 ```
+
 ```
 Cost plus fixed fee (CPFF), 191
 ```
+
 ```
 Cost plus incentive fee (CPIF), 191
 ```
+
 Cost-reimbursable contracts, 191
 Cost reserve, 122
+
 ```
 Cost variance (CV), 80
 ```
+
 Courage, 21
 CPAF. See Cost plus award fee
 CPFF. See Cost plus fixed fee
@@ -11391,9 +12299,11 @@ Culture
 organization and, 41, 143
 tailoring for project, 143
 team, 20
+
 ```
 Cumulative flow diagram (CFD), 188
 ```
+
 Customer centricity, 131, 219, 225
 Customer-centric organizations, 225
 Customer focus, 208
@@ -11415,26 +12325,33 @@ group-based, 28
 sponsors and, 208
 Decision tree analysis, 175
 Decomposition. See also Work breakdown
+
 ```
 structure (WBS)
 ```
+
 scope, 84
 Decoupling, 121
+
 ```
 Defect(s)
 ```
+
 external failure costs and, 89
 integrity and, 20
 internal failure costs and, 89
 metrics and, 97, 98
 prevention of, 68
 reputation and, 69
+
 ```
 Definition of done (DoD), 81, 85
 ```
+
 ```
 Deliverable(s)
 ```
+
 completion of, 85
 definition, 33, 82
 degree of innovation and, 39
@@ -11457,9 +12374,11 @@ ongoing delivery model and, 221
 options for, 40
 periodic, 34
 Planning Performance Domain, 54
+
 ```
 project management office (PMO) and, 213
 ```
+
 single delivery, 34
 Delivery Performance Domain, 80–92
 definitions relevant to, 81
@@ -11517,9 +12436,11 @@ Discourse, positive, 21
 Discretionary dependency, 60
 Diversion shield, 18
 Diversity, reframing and, 121
+
 ```
 Document(s)
 ```
+
 bid, 70, 75, 192
 business, 82
 business case document, 82
@@ -11528,9 +12449,11 @@ project-authorizing, 82
 Documentation
 requirements, 83, 192
 written communication, 73
+
 ```
 Domains. See Performance domains; Project
 ```
+
 performance domains
 Drexler/Sibbet Team Performance Model, 167
 Duration, 52, 62, 224
@@ -11538,31 +12461,40 @@ effort and, 100
 Duration estimates, 105
 E
 EAC. See Estimate at completion
+
 ```
 Earned value (EV), 100, 101
 ```
+
 ```
 Earned value analysis (EVA)
 ```
+
 definition, 176
 schedule and cost variance, 101
+
 ```
 Earned value management (EVM), 100, 104, 105
 ```
+
 Effort, 100
 8-Step Process for Leading Change, 162, 173
+
 ```
 Emotional intelligence (EI), 25–27
 ```
+
 components of, 27
 key areas, 26
 Empowerment
 culture and, 143
 high-performing project teams and, 22
 tailoring engagement and, 136
+
 ```
 EMV. See Expected monetary value (EMV)
 ```
+
 Encouragement, development opportunities
 and, 18
 Engage, 121
@@ -11571,27 +12503,34 @@ communication and, 73
 lack of, sponsor and, 208
 Project Work Performance Domain, 73
 tailoring, 136
+
 ```
 Enterprise-level PMO (EPMO), 212
 ```
+
 Environment
 product, 222
 tailoring and, 154
 Environmental considerations, 53, 129
 Escalation
 threats and, 123
+
 ```
 Estimate(s). See also Basis of estimates
 ```
+
 analogous, 178
 definition, 52
 parametric, 178
+
 ```
 Estimate at completion (EAC), 104, 105
 ```
+
 ```
 Estimate to complete (ETC), 104, 105
 ```
+
 Estimating, 55–58
 absolute, 57
 adjusting estimates for uncertainty, 58
@@ -11610,13 +12549,17 @@ Exception plan
 definition, 114
 triggering of, 113
 Executing Process Group, 171
+
 ```
 Expected monetary value (EMV), 116, 126, 176
 ```
+
 Expert judgment, 104. See also Subject matter
+
 ```
 experts (SMEs)
 ```
+
 Explicit knowledge, 70, 77–78
 External dependency, 60
 External failure costs, 89
@@ -11637,18 +12580,24 @@ Finance, 221
 Finish date, 100
 Finish-to-finish relationship, 59
 Finish-to-start relationship, 59
+
 ```
 Firm fixed price (FFP), 191
 ```
+
 Fist of five voting, 28
 Fixed-price contracts, 191
+
 ```
 Fixed price incentive fee (FPIF), 191
 ```
+
 Fixed price with economic price adjustment
+
 ```
 (FPEPA), 191
 ```
+
 Flow-based estimating, 58
 Flow-based projects, 109
 Flow-based scheduling, 45
@@ -11679,9 +12628,11 @@ Governance. See also Organizational governance
 development approach and, 148
 project, 87
 tailoring, and, 131, 139
+
 ```
 Group(s).
 ```
+
 external, 140
 Process Groups, 170–171
 Growth, 19
@@ -11709,12 +12660,15 @@ Impact mapping, 181
 Improvement, continuous, 139, 213, 214
 Incremental development approach, 37, 44
 Incremental guidance and funding, 223
+
 ```
 Indefinite delivery indefinite quantity (IDIQ), 191
 ```
+
 ```
 Indicators. See Key performance indicators (KPIs)
 ```
+
 Individual project risk, 177, 190
 Industry/industries
 market and, 142
@@ -11734,14 +12688,18 @@ Initiating Process Group, 171
 Initiatives, critical, 214
 Innovation
 degree of, 39
+
 ```
 Input(s)
 ```
+
 flow of deliveries and, 45
 Process Groups and, 171
+
 ```
 Inputs, tools/techniques, and outputs (ITTOs), 6
 ```
+
 Inspection, 42, 47, 88, 89
 Integration
 practice and, 163
@@ -11760,9 +12718,11 @@ Team Performance Domain, 31
 Uncertainty Performance Domain, 128
 Internal dependency, 60
 Internal failure costs, 89
+
 ```
 Internal rate of return (IRR), 175
 ```
+
 Interpersonal skills, 25–29
 soft skills, 12
 stakeholder engagement and, 12
@@ -11785,9 +12745,11 @@ Just-in-time scheduling approach, 45
 K
 Kanban boards, 109, 110
 Kanban scheduling system, 45
+
 ```
 Key performance indicators (KPIs), 95–96
 ```
+
 Key stakeholders, 11, 23, 44, 167, 179
 Kickoff meeting, 179, 183
 Knowledge
@@ -11828,12 +12790,15 @@ meetings, 127, 180
 retrospectives or, 71
 tailoring and, 151
 Lessons learned register, 185
+
 ```
 Life cycle. See also Predictive life cycle; Product
 ```
+
 ```
 life cycle; Project life cycle
 ```
+
 adaptive development approach, 45
 community center, 48
 development, 89
@@ -11863,17 +12828,21 @@ Market shifts, global, 219–221
 Master project schedule, 74
 Mastery, 159
 Materials, environment and, 53
+
 ```
 Measurement(s). See also Metrics
 ```
+
 baseline performance, 100–101
 business value, 102
 delivery, 99
 effective, establishment of, 95–105
 forecasts, 104–105
+
 ```
 key performance indicators (KPIs), 95–96
 ```
+
 pitfalls, 111–112
 resources, 101
 stakeholders, 103–104
@@ -11903,12 +12872,15 @@ retrospectives/lessons learned, 71, 127, 179
 risk review and, 127
 standup, 127, 179
 types of, 179–180
+
 ```
 Memorandum of agreement (MOA), 191
 ```
+
 ```
 Memorandum of understanding (MOU), 191
 ```
+
 Methods, 174–181
 applied across performance domains, 181–183
 data gathering and analysis, 174–177
@@ -11917,17 +12889,21 @@ estimating, 178
 impact mapping, 181
 meetings and events, 179–180
 modeling, 181
+
 ```
-Net Promoter Score® (NPS®), 181
+Net Promoter Score (NPS), 181
 ```
+
 overview, 153–155
 prioritization schema, 181
 tailoring, 136
 timebox, 181
 Metrics. See also Measurement Performance
+
 ```
 Domain; Measurement(s)
 ```
+
 definition, 93, 192
 deliverable, 98
 effective, 97
@@ -11940,15 +12916,19 @@ Milestones, roadmap and, 184
 Milestone schedule, 188. See also Master
 project schedule
 Modeling, 181
+
 ```
 Models. See also Change models; Communication
 ```
+
 ```
 models; Complexity models; Motivation
 ```
+
 ```
 models; Negotiation models
 ```
+
 applied across performance domains, 112–113
 commonly used, 95–98
 conflict, 168–169
@@ -11984,19 +12964,24 @@ MOU. See Memorandum of understanding
 Multicriteria weighted analysis, 181
 Multipoint estimating, 178
 N
+
 ```
 Negative risks (threats), 121, 122
 ```
+
 Negotiation models, 169–171
 planning, 170
 Process Groups, 170–171
 win-win perspective and, 169, 170
+
 ```
 Net present value (NPV), 102, 175
 ```
+
 ```
-Net Promoter Score® (NPS®), 103, 181
+Net Promoter Score (NPS), 103, 181
 ```
+
 Networking, 78
 Network logic, 59
 Network path, 59
@@ -12012,15 +12997,19 @@ Ongoing provision and payment, 220–221
 Opportunities
 development, 18
 strategies for, 125
+
 ```
 Organization(s)
 ```
+
 customer-centric, 225
 customers and, relationship between, 220
 tailoring for, 139–140
+
 ```
 Organizational breakdown structure (OBS), 187
 ```
+
 Organizational capability, 41
 Organizational culture, 41, 143. See also Culture
 Organizational factors, tailoring and, 140
@@ -12029,29 +13018,38 @@ structures, 30
 tailoring and, 152
 Organizational requirements, 54
 Organizational strategy, 212
+
 ```
 Organizational structure(s). See also Project
 ```
+
 ```
 management office (PMO)
 ```
+
 description of, 41
 governance, 30
 OSCAR model, 156
+
 ```
 Outcome(s). See also Checking outcomes;
 ```
+
 Desired outcomes
 checking results and, 68
 multiple, preparing for, 119
 outcomes-oriented capabilities, 213
+
 ```
 project management office (PMO) and, 213
 ```
+
 suboptimal, 91
+
 ```
 Output(s). See also Inputs, tools/techniques,
 ```
+
 and outputs
 data analysis and, 174
 Process Groups and, 171
@@ -12067,9 +13065,11 @@ Payment, ongoing provision and, 220–221
 PBP. See Payback period
 People, tailoring engagement and, 136
 Performance. See also Key performance
+
 ```
 indicators (KPIs)
 ```
+
 baseline, 100–101, 188
 Measurement Performance Domain, 113–114
 reviews, 68
@@ -12091,13 +13091,17 @@ Project Work Performance Domain, 69–79
 Stakeholder Performance Domain, 8–15
 Team Performance Domain, 16–31
 Uncertainty Performance Domain, 116–129
+
 ```
 Perspective, project management office (PMO)
 ```
+
 and, 213
+
 ```
 Phase. See Project phase(s)
 ```
+
 Phase definitions, life cycle and, 42–45
 Phase gate reviews, 42, 46, 47
 Physical resources
@@ -12106,9 +13110,11 @@ planning for, 65
 Planning Performance Domain, 65
 Project Work Performance Domain, 73–74
 Pie charts, 106
+
 ```
 Plan(s), 186–187
 ```
+
 exception plan, 113, 114
 Planned benefits delivery compared to actual
 benefits delivery, 102
@@ -12116,9 +13122,11 @@ Planned resource cost compared to actual
 resource cost, 101
 Planned resource utilization compared to actual
 resource utilization, 101
+
 ```
 Planned value (PV), 100, 101
 ```
+
 Planning
 high-level, 52
 negotiation models and, 170
@@ -12149,13 +13157,17 @@ estimating and, 55–58
 schedules, 58–62
 PM. See Project manager
 PMIstandards+, 6, 174
+
 ```
 PMO. See Project management office (PMO)
 ```
+
 Portfolio leaders, 95
+
 ```
 Positive risks (opportunities), 122
 ```
+
 Power, theory of needs and, 159
 Pre-bid conferences, 70, 179
 Precision
@@ -12181,9 +13193,11 @@ Problem solving, 21, 29, 168
 Process analysis, 176
 Process-based approach, 171
 Process-based complexity, 121
+
 ```
 Process(es)
 ```
+
 adding, removing and changing, 144
 conformance and, 71
 environment and, 53
@@ -12193,9 +13207,11 @@ smart and simple, 214
 tailoring, 137–145
 Process Groups, negotiation models and, 170
 Process tailoring, 71, 135
+
 ```
 Procurement(s)
 ```
+
 bid process, 75
 contracting, 75–76
 Planning Performance Domain, 65
@@ -12204,9 +13220,11 @@ working with, 74–76
 Procurement audit, 79
 Procurement management plan, 186
 Procurement strategy, 46
+
 ```
 Product(s)
 ```
+
 definition, 218
 development approach and, 39–40
 digital, 34
@@ -12247,9 +13265,11 @@ structures, utilization of, 223–225
 Program manager, 14
 Programs, unique characteristics of, 224
 ongoing improvement and, 144
+
 ```
 Project(s)
 ```
+
 development approach and, 40–41
 Development Approach and Life Cycle
 Performance Domain, 40–41
@@ -12287,15 +13307,19 @@ Process Groups and, 170
 products extending beyond, 218
 project phases and, 42
 tailoring and, 131
+
 ```
 Project management office (PMO), 211–215
 ```
+
 benefits realization and, 214
 key capabilities of, 213
 learning more about, 215
+
 ```
 value delivery office (VDO), and, 140
 ```
+
 value proposition for, 211–213
 Project management plan
 definition, 186
@@ -12307,12 +13331,15 @@ Project management principles
 performance domains and, 4
 tailoring to fit project, 154
 Project management team, 16. See also Project
+
 ```
 team(s)
 ```
+
 ```
 Project manager (PM). See also Competencies;
 ```
+
 Leadership skills
 conflict models and, 168, 169
 definition, 16
@@ -12341,9 +13368,11 @@ stakeholder, 8–15
 tailoring and, 145–150, 154
 team, 16–31
 uncertainty, 116–129
+
 ```
 Project phase(s)
 ```
+
 definition, 33
 examples of, 42
 life cycle and, 42–45
@@ -12358,9 +13387,11 @@ Project schedule network diagram, 189
 Project scope, 54
 Project size, 132, 139
 Project sponsor, 123, 125, 207. See also Sponsor
+
 ```
 Project stakeholder(s)
 ```
+
 examples of, 9
 internal, 39
 scope and, 82
@@ -12368,13 +13399,17 @@ tailoring and, 152
 Project statement of work. See Statement of work
 Project success
 communication and, 157
+
 ```
 key performance indicators (KPIs) and, 95
 ```
+
 sponsors and, 207
+
 ```
 Project team(s). See also Team(s)
 ```
+
 definition, 16
 distributed, 30
 focus, maintaining, 73
@@ -12411,9 +13446,11 @@ project processes, 71–72
 project team focus, maintaining, 73
 tailoring considerations, 149
 Project work performance domain, 69–79
+
 ```
 Proposals, 70. See also Request for proposal (RFP)
 ```
+
 bid documents and, 192
 Provision and payment, ongoing, 220–221
 Pull communication, 13
@@ -12421,9 +13458,11 @@ Purpose, 159
 Push communication, 13
 PV. See Planned value
 Q
+
 ```
 Quality. See also Cost of quality (COQ)
 ```
+
 definition, 81
 Delivery Performance Domain, 87–91
 Quality assurance, 88
@@ -12442,16 +13481,20 @@ Quotations, 70, 192
 R
 RACI chart, 189
 Radiators, information, 108
+
 ```
 RAG (red-amber-green) charts, 106
 ```
+
 RAM. See Responsibility assignment matrix
 Range
 description of, 55
 time and material, 56
+
 ```
 RBS. See Resource breakdown structure; Risk
 ```
+
 breakdown structure
 RCA. See Root cause analysis
 Recognition, high-performing project teams
@@ -12465,22 +13508,29 @@ Release and iteration plan, 61
 Release plan, 61, 186
 Release planning meetings, 180
 Repairs, 89
+
 ```
 Report(s), 190. See also Quality report; Risk report
 ```
+
 Reputation, 89
+
 ```
 Request for information (RFI), 75, 192
 ```
+
 ```
 Request for proposal (RFP), 75, 192
 ```
+
 ```
 Request for quotation (RFQ), 75, 192
 ```
+
 ```
 Requirement(s). See also Quality requirements
 ```
+
 definition, 81
 deliverables and, 82–83
 elicitation of, 111
@@ -12497,9 +13547,11 @@ well-documented, 83
 Requirement elicitation, 83
 Requirements certainty, 39
 Requirements documentation, 192. See also
+
 ```
 Contract(s)
 ```
+
 Requirements elicitation, 83
 Requirements management, 83
 Requirements management plan, 186
@@ -12511,35 +13563,45 @@ Residual risk, 125
 Resilience
 building in, 119
 high-performing project teams and, 22
+
 ```
 Resource(s). See also Physical resources
 ```
+
 measurement of, 101
 sponsors and, 209
 Resolution of conflicts, 29
+
 ```
 Resource breakdown structure, (RBS), 187
 ```
+
 Resource management plan, 186
 Resource requirements, 46
 Respect, 21
+
 ```
 Responsibility assignment matrix (RAM), 189
 ```
+
 ```
 Result(s). See also Checking outcomes;
 ```
+
 ```
 Deliverable(s)
 ```
+
 development approach and, 39–40
 internal failure and, 89
 Retrospectives, 127, 180. See also Lessons learned
 project processes and, 71
 tailoring and, 151
+
 ```
 Return on investment (ROI), 102, 175
 ```
+
 Returns, 89
 Reviews
 design, 127
@@ -12554,15 +13616,19 @@ Rework, 89
 RFI. See Request for information
 RFP. See Request for proposal
 RFQ. See Request for quotation
+
 ```
 Risk(s), 122–127.
 ```
+
 definition, 117
 identification of, 122, 127
 levels of, 127, 128
+
 ```
 negative (threats), 121, 122
 ```
+
 opportunities, 122, 125
 overall project, 122
 products and, 40
@@ -12579,9 +13645,11 @@ Risk appetite
 response planning and, 125
 risk thresholds and, 122
 uncertainty and, 150
+
 ```
 Risk breakdown structure (RBS), 187
 ```
+
 Risk exposure, 109, 122. See also Risk report
 Risk impact. See Probability and impact matrix
 Risk log, 108
@@ -12602,9 +13670,11 @@ S
 Safety requirements, 40
 Salience Model, 171
 Scatter diagrams, 189
+
 ```
 Schedule(s), 58–62. See also Project schedule;
 ```
+
 Schedule model
 adaptive schedule planning, 61, 62
 fast tracking, 59, 60
@@ -12616,18 +13686,23 @@ Schedule compression techniques, 52, 59
 Schedule constraints, 41
 Schedule management plan, 187
 Schedule model, 59, 188
+
 ```
 Schedule performance index (SPI), 100
 ```
+
 ```
 Schedule variance (SV), 100
 ```
+
 Scheduling
 adaptive methodologies and, 45
 effort, duration and, 62
+
 ```
 Scope, 224. See also Product scope; Project scope
 ```
+
 definition, 84–85
 Scope baseline
 definition, 188
@@ -12648,24 +13723,30 @@ Self-awareness, 26, 27
 Self-management, 26, 27
 Sensitivity analysis, 177
 Servant leaders, 18
+
 ```
 Service(s)
 ```
+
 development approach and, 39–40
 global market shifts, 219–221
+
 ```
 Service level agreement (SLA), 191
 ```
+
 Set-based design, 119
 Shared ownership, 22
 Shared understanding, 22
 Sharing, opportunity and, 125
+
 ```
 Simulation(s), 121, 177
 ```
+
 Single-point estimating, 178
 Situational ambiguity, 120
-Situational Leadership® II, 156
+Situational Leadership II, 156
 Situational leadership models, 155–156
 Skills. See also Interpersonal skills
 leadership, 10, 23–29
@@ -12696,9 +13777,11 @@ Sprint planning meeting, 179
 SS. See Start-to-start relationship
 Stacey matrix, 165
 Stage gate, 14, 42
+
 ```
 Stakeholder(s). See also Project stakeholder(s)
 ```
+
 definition, 8
 examples of project, 9
 internal, 39
@@ -12740,9 +13823,11 @@ Start date, 100
 Start-to-start relationship, 59
 Start up, 46
 Start-ups, 221
+
 ```
 Statement of work (SOW), 74, 87, 191
 ```
+
 Status meeting, 180
 Status quo, 163
 Status report, 190
@@ -12754,9 +13839,11 @@ Story points, 58, 119, 121. See also User stories
 Strategy artifacts, 184
 Strengths, weaknesses, opportunities, and
 threats. See SWOT analysis
+
 ```
 Subject matter experts (SMEs), 6, 176. See also
 ```
+
 Expert judgment
 Success, 224. See also Project success
 celebrating, 21
@@ -12821,12 +13908,15 @@ tailoring for the organization, 139–140
 tailoring for the project, 141–144
 Talent, 214
 Task boards, 109, 110
+
 ```
 Team(s). See also Project management team;
 ```
+
 ```
 Project team(s)
 ```
+
 colocation of, 135, 142, 147
 high-performing project, 22
 stable, 222–223, 225
@@ -12859,9 +13949,11 @@ Test plan, 187
 Theory of needs, 159
 Theory X, Theory Y, and Theory Z, 160
 Thinking, critical, 24
+
 ```
 Threat(s)
 ```
+
 definition, 123
 strategies for, 123
 threat profile, 124
@@ -12870,14 +13962,18 @@ budget, 113–114
 tolerance, 96
 Throughput analysis, 105
 Throughput chart, 190
+
 ```
 Time and materials (T&M), 191
 ```
+
 Timeboxes, 62, 181
 Time fragmentation, 18
+
 ```
 To-complete performance index (TCPI), 105
 ```
+
 Tools. See also Software
 methods and artifacts, 136
 suitability filter, 138
@@ -12887,9 +13983,11 @@ Training, 88
 Transforming idea, 163
 Transition Model, 164
 Transparency, 20
+
 ```
 Trend(s)
 ```
+
 global business, 219–221
 leading indicators and, 96
 technology, 85
@@ -12924,9 +14022,11 @@ volatility, 122
 Understand and analyze, stakeholders and,
 11–12
 Understanding, shared, 22
+
 ```
 Update(s)
 ```
+
 artifacts and, 171
 generic, 183
 Use case, 190
@@ -12941,25 +14041,33 @@ VAC. See Variance at completion
 Value. See also Business value
 delivery of, 81–82
 software-enhanced, 220
+
 ```
 Value analysis. See Earned value analysis (EVA)
 ```
+
 Value delivery
 continuous, 222
 Delivery Performance Domain, 81–82
+
 ```
 Value delivery office (VDO), 140, 141, 212
 ```
+
 Value stream map, 190
 Value stream mapping, 177
 Vanity metric, 112
+
 ```
 Variance(s), 68, 72, 94, 96, 101, 115, 188
 ```
+
 Variance analysis, 177
+
 ```
 Variance at completion (VAC), 105
 ```
+
 Variations, 121, 123, 177
 Velocity chart, 190
 Vendor conferences. See Bidder conferences
@@ -12970,9 +14078,11 @@ defining and sharing, 11
 establishing and maintaining, 23
 objectives and, 18
 sponsors and, 208
+
 ```
 Visual controls, 109–111. See also Chart(s)
 ```
+
 kanban boards, 110
 task boards, 110
 Visual data and information, 188–190
@@ -12983,9 +14093,11 @@ W
 Warranty claims, 89
 Waste, 89
 Waterfall approach, 15, 49
+
 ```
 WBS. See Work breakdown structure (WBS)
 ```
+
 WBS dictionary, 85, 188
 What-if scenario analysis, 177
 Wideband Delphi, 28, 178
@@ -12993,9 +14105,11 @@ Win-win perspective, 169, 170
 Work
 new work effort, 58
 non-value-added, 72
+
 ```
 Work breakdown structure (WBS)
 ```
+
 decomposition and, 54, 84
 definition, 81, 187
 Work packages, 85, 189
@@ -13008,58 +14122,71 @@ Seventh Edition
 A ide to the Project
 Mngement Bod of nowledge
 PMBO
-®
+
 UIDE
 ANSI/PMI 99 001 2021
 G L O B A L S T A N D A R D
-PMBOK®Guide – Seventh Edition
+PMBOKGuide – Seventh Edition
 AND The Standard for Project Management
 Over the past few years, emerging technology, new approaches, and rapid market changes
 disrupted our ways of working, driving the project management profession to evolve. Each
 industry, organization and project face unique challenges, and team members must adapt
 their approaches to successfully manage projects and deliver results.
+
 ```
-With this in mind, A Guide to the Project Management Body of Knowledge (PMBOK® Guide) –
+With this in mind, A Guide to the Project Management Body of Knowledge (PMBOK Guide) –
 ```
+
 Seventh Edition takes a deeper look into the fundamental concepts and constructs of the
 profession.
-Including both The Standard for Project Management and the PMBOK® Guide, this edition
+Including both The Standard for Project Management and the PMBOK Guide, this edition
 presents 12 principles of project management and eight project performance domains
 that are critical for effectively delivering project outcomes.
-This edition of the PMBOK® Guide:
+This edition of the PMBOK Guide:
+
 ```
 • Reflects the full range of development approaches (predictive, traditional, adaptive,
 ```
+
 ```
 agile, hybrid, etc.);
 ```
+
 ```
 • Devotes an entire section to tailoring development approaches and processes;
 ```
+
 • Expands the list of tools and techniques in a new section, “Models, Methods, and
+
 ```
 Artifacts”;
 ```
+
 ```
 • Focuses on project outcomes, in addition to deliverables; and
 ```
+
 • Integrates with PMIstandards+ ™, giving users access to content that helps them apply
-the PMBOK® Guide on the job.
+the PMBOK Guide on the job.
 The result is a modern guide that better enables project team members to be proactive,
 innovative, and nimble in delivering project outcomes.
+
 ```
 A Guide to the Project Management Body of Knowledge (PMBOK
 ```
-®
+
 ```
 Guide) – Seventh Edition
 ```
+
 and The Standard for Project Management
 Project Management Institute
 Global Headquarters
 14 Campus Boulevard
 Newtown Square, PA 19073 USA
+
 ```
 Tel: +1 610 356 4600
 ```
+
 PMI.org

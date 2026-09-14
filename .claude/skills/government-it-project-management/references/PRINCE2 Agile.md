@@ -1,59 +1,5 @@
-PRINCE2 Agile
-®
-```
-Published by TSO (The Stationery Office), part of Williams Lea Tag,
-```
-and available from:
-Online
-www.tsoshop.co.uk
-Mail, Telephone, Fax & E-mail
-TSO
-PO Box 29, Norwich, NR3 1GN
-Telephone orders/General enquiries: 0333 202 5070
-Fax orders: 0333 202 5080
-E-mail: customer.services@tso.co.uk
-Textphone 0333 202 5077
-TSO@Blackwell and other Accredited Agents
-Copyright © AXELOS Limited 2018
-All rights reserved. No part of this publication may be reproduced in any form or by any
-means without permission in writing from AXELOS Limited.
-Applications to reuse, reproduce or republish material in this publication should be sent to:
-The Licensing Team, AXELOS Limited, 17 Rochester Row, London SW1P 1QT. Email
-licensing@AXELOS.com
-AXELOS, the AXELOS logo, the AXELOS swirl logo, ITIL®, MoP®, M_o_R®, MoV®,
-MSP®, P3M3®, P3O®, PRINCE2®, PRINCE2 Agile® and RESILIA® are registered trade
-marks of AXELOS Limited.
-Cover image © istock/marty8801.
-```
-Chp 1 © istock/JacobH; Chp 2 © FrankRamspott; Chp 3 © istock/JacobH; Chp 4 ©
-```
-```
-istock/nadla; Chp 5 © istock/bpperry; 6 © istock/nadla; Chp 7 © istock/nadla; Chp 8 ©
-```
-```
-istock/nadla; Chp 9 © istock/nadla; Chp 10 © istock/nadla; Chp 11 © istock/nadla; Chp 12
-```
-```
-©FrankRamspott; Chp 13 © istock/nadla; Chp 14 © 3dbobber; Chp 15 © FrankRamspott;
-```
-```
-Chp 16 © 3dbobber; Chp 17 © FrankRamspott; Chp 18 © FrankRamspott; Chp 19 ©
-```
-```
-FrankRamspott; Chp 20 © FrankRamspott; 21 © FrankRamspott; Chp 22 ©
-```
-```
-FrankRamspott; Chp 23 © 3dbobber; Chp 24 © FrankRamspott; Chp 25 © EscoLux; Chp
-```
-```
-26 © Ivcandy; Chp 27 © FrankRamspott; Chp 28 © FrankRamspott.
-```
-```
-Image 3.1 © istock/rusm; Image 8.1 © istock/joreks; Image 15.1 © istock/olaser; Image 23.1
-```
-```
-© istock/Rawpixel; Image 25.1 © istock/Krockodilius; Image 26.1 © istock/TommL.
-```
+# PRINCE2 Agile
+
 First edition 2015
 Third impression 2018
 ISBN 9780113314676
@@ -255,9 +201,11 @@ Progress theme summary
 Agile and the PRINCE2 processes
 The PRINCE2 processes
 Tailoring guidance for the PRINCE2 processes
+
 ```
 Starting up a project; initiating a project
 ```
+
 PRINCE2 guidance on starting up a project and
 initiating a project
 Agile ways of working that may already exist
@@ -358,9 +306,11 @@ PART III: AREAS OF PARTICULAR FOCUS FOR PRINCE2 AGILE
 The Agilometer
 Purpose
 When to assess suitability
+
 ```
 How suitability is assessed (the Agilometer)
 ```
+
 Responding to the assessment
 Monitoring the assessment
 Evolving the Agilometer
@@ -519,12 +469,15 @@ Figure D.2
 Figure D.3
 Figure D.4
 A cumulative flow diagram
+
 ```
 A simple view of how to calculate WIP and lead (or
 ```
+
 ```
 cycle) time
 ```
+
 The effect of delaying the delivery of a product
 A Kanban card is used to signal that stock needs to be
 replenished
@@ -596,12 +549,15 @@ Things to consider when tailoring the PRINCE2 themes
 to PRINCE2 Agile
 Combining PRINCE2 roles with agile roles
 Mapping the responsibilities of a PRINCE2 team
+
 ```
 manager to the common agile roles (in this case
 ```
+
 ```
 Scrum)
 ```
+
 Integrating the project manager with the delivery team
 – options to consider
 Guidance on the PRINCE2 roles and possible agile
@@ -676,9 +632,9 @@ PRINCE2 Agile delivery roles
 Example of a project product description for the
 conference
 Foreword
-PRINCE2 Agile® is the world’s most complete project management
+PRINCE2 Agile is the world’s most complete project management
 solution, combining the flexibility and responsiveness of agile with
-the world’s most practised project management method, PRINCE2®.
+the world’s most practised project management method, PRINCE2.
 Effective project management is critical to the successful delivery of
 new products and services that are necessary to keep organizations
 competitive in a changing world. PRINCE2 has been taken up by
@@ -701,9 +657,11 @@ organizations to work with ever-evolving solutions while being
 confident in their ability to manage their investments.
 As well as project managers working with agile development
 approaches, PRINCE2 Agile will be of interest to programme
+
 ```
-managers with Managing Successful Programmes (MSP®)
+managers with Managing Successful Programmes (MSP)
 ```
+
 knowledge. It will help them to understand the effects of using agile
 in projects that contribute to the outcomes of their programmes.
 The PRINCE2 Agile guidance is supported by an accredited
@@ -729,7 +687,7 @@ developing, enhancing and promoting a number of best-practice
 methodologies used globally by professionals working primarily in
 project, programme and portfolio management, IT service
 management and cyber resilience.
-The methodologies, including ITIL®, PRINCE2®, MSP® and the
+The methodologies, including ITIL, PRINCE2, MSP and the
 new collection of cyber resilience best-practice products, RESILIA™,
 are adopted in more than 150 countries to improve employees’ skills,
 knowledge and competence in order to make both individuals and
@@ -738,15 +696,15 @@ In addition to globally recognized qualifications, AXELOS equips
 professionals with a wide range of content, templates and toolkits
 through its membership scheme, its professional development
 programme and its online community of practitioners and experts.
-Visit www.axelos.com for the latest news about how AXELOS is
+Visit <www.axelos.com> for the latest news about how AXELOS is
 making organizations more effective and registration details to join
 the AXELOS online community. If you have specific queries or
 requests, or would like to be added to the AXELOS mailing list,
-please contact ask@axelos.com.
+please contact <ask@axelos.com>.
 Publications
 AXELOS publishes a comprehensive range of guidance, including:
-Managing Successful Projects with PRINCE2®
-Directing Successful Projects with PRINCE2®
+Managing Successful Projects with PRINCE2
+Directing Successful Projects with PRINCE2
 •
 •
 •
@@ -760,61 +718,79 @@ Directing Successful Projects with PRINCE2®
 •
 •
 •
+
 ```
-Managing Successful Programmes (MSP®)
+Managing Successful Programmes (MSP)
 ```
+
 ```
-Management of Portfolios (MoP®)
+Management of Portfolios (MoP)
 ```
+
 ```
-Portfolio, Programme and Project Offices (P3O®)
+Portfolio, Programme and Project Offices (P3O)
 ```
+
 ```
-Management of Risk (M_o_R®)
+Management of Risk (M_o_R)
 ```
+
 ```
-Management of Value (MoV®)
+Management of Value (MoV)
 ```
+
 Portfolio, Programme and Project Management Maturity Model
+
 ```
-(P3M3®)
+(P3M3)
 ```
+
 RESILIA™: Cyber Resilience Best Practice
-ITIL® Practitioner Guidance
-ITIL® Continual Service Improvement
-ITIL® Service Design
-ITIL® Service Operation
-ITIL® Service Strategy
-ITIL® Service Transition.
+ITIL Practitioner Guidance
+ITIL Continual Service Improvement
+ITIL Service Design
+ITIL Service Operation
+ITIL Service Strategy
+ITIL Service Transition.
 Full details of the range of materials published under the AXELOS
 Global Best Practice banner, including PRINCE2 Agile, can be found
+
 ```
 at:
 ```
+
 ```
 https://www.axelos.com/best-practice-solutions
 ```
+
 If you would like to inform AXELOS of any changes that may be
 required to PRINCE2 Agile or any other AXELOS publication, please
 log them at:
+
 ```
 https://www.axelos.com/best-practice-feedback
 ```
+
 Contact information
 Full details on how to contact AXELOS can be found at:
+
 ```
 https://www.axelos.com
 ```
+
 For further information on qualifications and training accreditation,
 please visit:
+
 ```
 https://www.axelos.com/certifications
 ```
+
 ```
 https://www.axelos.com/becoming-an-axelos-partner
 ```
+
 For all other enquiries, please email:
-Ask@AXELOS.comAcknowledgements
+<Ask@AXELOS.comAcknowledgements>
 AXELOS Ltd is grateful to everyone who has contributed to the
 development of this guidance and in particular would like to thank
 the following:
@@ -833,13 +809,17 @@ and in the following year led the team that created DSDM Atern, a
 project-focused agile framework. Specializing in the pioneering
 approach of combining agile with PRINCE2, he authored the book
 Agile Project Management: Running PRINCE2 projects with DSDM
+
 ```
 Atern (TSO, 2007).
 ```
+
 In 2010 Keith was involved in the development of Agile Project
+
 ```
 Management (AgilePM), a ground-breaking new training course and
 ```
+
 agile qualification from APMG. He was presented with the ‘Most
 Valuable Agile Player’ award at the UK Agile Awards in 2011, in
 recognition of a decade of thought leadership, delivery and
@@ -857,7 +837,7 @@ and holds close to 25 industry certifications in agile, project
 management and ITIL. He has contributed to books, magazines and
 industry-leading websites, and achieved the top ITIL download for
 his White Paper ‘Implementing ITIL using the PMBOK in Four Easy
-Steps’ on www.forbes.com
+Steps’ on <www.forbes.com>
 Involved in the training industry since 2007, he has developed more
 than 30 courses on ITIL, project management, agile, and value
 management. He has been invited to speak at numerous
@@ -871,74 +851,98 @@ AXELOS entitled ‘Next Generation Agile’.
 Advisers and collaborators
 The author team had advice and guidance from many collaborators
 and thought leaders, including:
+
 ```
 David J. Anderson, David J. Anderson & Associates; Brian Askew,
 ```
+
 ```
 independent business/IT management consultant; Gabrielle
 ```
+
 ```
 Benefield, Evolve Beyond; Robert Buttrick, Project Workout Ltd;
 ```
+
 ```
 Phillip de Caux, C&J Clark International Ltd; Joe French,
 ```
+
 ```
 Consonance Project Management; Carl Grice, Keynetix; Julie
 ```
+
 ```
 Hendry, Cow Consulting Ltd; Tom Holsøe, Kammeradvokaten; Liz
 ```
+
 ```
 Keogh, Lunivore; Matthew Perkins, Mars Inc.; Troy Plant, Davisbase
 ```
+
 ```
 Consulting; Rob Smith, IndigoBlue; Dave Snowden, Cognitive Edge;
 ```
+
 ```
 Jennifer Stone, BSSNexus Global Inc. (Canada, USA); Kelly
 ```
+
 ```
 Walters, P2A; Dave Watson, Mars Inc.; Geoff Watts, Inspect & Adapt
 ```
+
 ```
 Ltd; James Yoxall, Indigo Blue.
 ```
+
 Thanks are also due for the support given by:
+
 ```
 Maree Butler, agilekrc; Mike Cohn, Mountain Goat Software; Tom
 ```
+
 ```
 Gilb; David Hinde, Orgtopia; Jude Irvine, agilekrc; Dan North,
 ```
+
 ```
 independent consultant; Erik Petersen, Emprove; David Putman,
 ```
+
 ```
 Value Driven Software; Amy Richards, UCLH; Ranjit Sidhu,
 ```
+
 ChangeQuest.
 Reviewers
 Appreciation is due to the following for the time and effort put into
 reviewing drafts of the book:
+
 ```
 Harminder Ahluwalia, SPOCE, Consulting 2U; Mike Burrows, David
 ```
+
 ```
 J Anderson & Associates Ltd; James Cannings, MMT Digital; Steven
 ```
+
 ```
 Deneir, be.Projectized; Jonas Högstrand, Metier; Dan Martland,
 ```
+
 ```
 Capita; Tim Matthew, Capita; Andy Murray, Outperform UK Ltd;
 ```
+
 ```
 Nader K Rad, Management Plaza; Darren Radford, Aspire; Scott
 ```
+
 ```
 Spence, CC Learning; Steve Tait, Capita; Dot Tudor, TCC Ltd.
 ```
+
 •
 •
 •
@@ -1015,9 +1019,11 @@ Chapter 15 Progress theme Covers agile techniques for
 managing progress within the overall project progress theme.
 Chapter 16 Agile and the PRINCE2 processes Introduces
 how agile activities fit in the key PRINCE2 processes.
+
 ```
 Chapter 17 Starting up a project; initiating a project
 ```
+
 Identifies the agile techniques that can be used in the
 •
 •
@@ -1039,9 +1045,11 @@ agile review techniques.
 Chapter 20 Managing product delivery Covers a wide range
 of agile concepts and techniques that support product delivery,
 such as Kanban, Lean Startup and minimum viable product
+
 ```
 (MVP), as well as the relationship between the project
 ```
+
 manager and delivery team manager.
 Chapter 21 Managing a stage boundary Describes how agile
 concepts such as frequent delivery can provide the assurance
@@ -1098,9 +1106,11 @@ apart from the first time it is mentioned or when the full name is used
 in figures and activity names.
 Capitalization
 The term ‘agile’ appears in lower case throughout this publication,
+
 ```
 unless it is linked to PRINCE2 (as in ‘PRINCE2 Agile’).
 ```
+
 Glossary terms
 Please note that certain terms are emboldened in the main text.
 This is to signify their inclusion in the glossary. They are emboldened
@@ -1124,16 +1134,21 @@ techniques.
 PRINCE2 and PRINCE2 Agile are only suitable for use on projects,
 whereas agile can be used for projects and routine ongoing work as
 well. Throughout this manual, routine ongoing work is referred to as
+
 ```
 ‘business as usual’ (BAU) and covers areas such as ongoing product
 ```
+
 development, product maintenance and continual improvement.
+
 ```
 The distinction between project work and BAU work (see Table 1.1
 ```
+
 ```
 and Figure 1.1) is important because some of the agile ways of
 ```
+
 working need to be applied differently in each situation. Therefore,
 when carrying out a piece of work, it is important to understand the
 type of work being undertaken, to ensure that it is addressed in the
@@ -1145,9 +1160,11 @@ Team is created Stable team
 Difficult Routine
 A degree of uncertainty A degree of certainty
 Tip
+
 ```
 AXELOS’s Managing Successful Programmes (MSP) provides
 ```
+
 best-practice guidance for managing related projects and
 activities in programmes of work that deliver business benefits
 through new capabilities.
@@ -1165,9 +1182,11 @@ A project is a temporary situation where a team is assembled to
 address a specific problem, opportunity or change that is sufficiently
 difficult that it cannot be handled as BAU. It may even be a collection
 of BAU items handled collectively. An example of a project would be
+
 ```
 the creation of a new product or service; there may be a need to
 ```
+
 engage many stakeholders and a significant amount of uncertainty
 exists. The project team may be based in different locations, the
 team personnel may change, the project may last a long time and it
@@ -1178,31 +1197,40 @@ comparison with BAU work. A project has defined stages for upfront
 work before any delivery activity commences. It also has layers of
 project management and project direction to ensure the correct
 output is ultimately reached. By the end of a project, at which point
+
 ```
 the project team disbands (or moves to other work), the product
 ```
+
 created will have gone into operational use. From then on it may be
 maintained and enhanced in a BAU environment.
 Figure 1.1 The difference between project work and BAU work
+
 ```
 Note: PRINCE2 Agile can be used on the left-hand side of the dashed line only (i.e. for
 ```
+
 ```
 projects). Agile can be used on both sides (i.e. used on projects and for BAU).
 ```
+
 ```
 Definition: Timebox
 ```
+
 A finite period of time when work is carried out to achieve a
 goal or meet an objective. The deadline should not be moved,
 as the method of managing a timebox is to prioritize the work
 inside it. At a low level a timebox will last a matter of days or
+
 ```
 weeks (e.g. a sprint). Higher-level timeboxes act as aggregated
 ```
+
 ```
 timeboxes and contain lower-level timeboxes (e.g. stages).
 ```
+
 In a BAU environment, the list of work is prioritized in some form and
 may be batched into timeboxes. As the work is completed the
 existing product evolves, continually, over time.
@@ -1225,19 +1253,25 @@ frameworks referred to as ‘agile methods’ and there are also well-
 known behaviours, concepts and techniques that are recognized as
 characterizing the agile way of working. But there is no single
 definition of agile that accurately encapsulates them all, although the
+
 ```
 Agile Manifesto (see Figure 2.1) comes the closest to achieving this.
 ```
+
 2.1.1 Some history
+
 ```
 The term ‘agile’ was created in 2001 (www.agilemanifesto.org) when
 ```
+
 a group of ‘independent thinkers around software development’
 came together to talk about an alternative to the heavyweight,
 document-driven processes that existed at the time. Known as the
+
 ```
 ‘waterfall method’ (see Figure 2.2), these old-fashioned processes
 ```
+
 comprised a sequence of technical phases that were slow and
 struggled to respond to changing requirements, particularly when
 they were mired in too much detail from the start.
@@ -1247,14 +1281,18 @@ The group was already working in ways that were eventually
 described as agile. An output from this meeting was the Manifesto
 for Agile Software Development, or the ‘Agile Manifesto’ as it is more
 commonly known, and its impact and success have been quite
+
 ```
 dramatic. The Agile Manifesto is summarized in Figure 2.1; it also
 ```
+
 contains 12 principles which are listed in Appendix E.1. It is
 important to appreciate the intent of the final two lines of the Agile
+
 ```
 Manifesto: it is a case of relative importance of the values, and not a
 ```
+
 case of ‘good’ or ‘bad’.
 The reason why agile became so popular was that it helped to
 address the new demands being placed on how software was
@@ -1262,13 +1300,17 @@ delivered. Software needed to be produced more frequently while at
 the same time being of the appropriate level of quality to meet the
 demands of new technologies, the internet and the digital era. In
 contrast to the waterfall way of working, agile phases are smaller,
+
 ```
 more iterative and incremental (see Figure 2.2).
 ```
+
 By definition, the Agile Manifesto only applies to developing
+
 ```
 software; most of its underlying principles appear to suggest that this
 ```
+
 is in the context of the continual timeboxed development of a
 software product. Although it was created as a way to develop
 software, it has since been recognized as a successful approach
@@ -1281,9 +1323,11 @@ nature and happening in a wide array of contexts far beyond
 software development.
 Nowadays, most organizations are aware of the term agile, and
 every organization should have a strategy in place to adopt it to
+
 ```
 some degree. For many years it was seen as a niche area; it is now
 ```
+
 mainstream and is used by organizations that are large and small,
 old and new, public sector and private sector.
 Figure 2.3 A basic ‘backlog’ and ‘sprint’ structure for delivering
@@ -1294,9 +1338,11 @@ software
 2.2 Agile basics
 When combining PRINCE2 with agile it is important to know what
 agile is. An inconsistent view of the basics of agile will make it
+
 ```
 difficult to combine the two; for example, if someone in an
 ```
+
 organization thinks that agile can only be used on the IT part of a
 project, whereas someone else thinks it can be applied across the
 whole project, then this will present a problem.
@@ -1305,9 +1351,11 @@ of the following:
 a timeboxed and iterative approach to delivering software
 a collection of techniques such as daily stand-up meetings,
 sprints and user stories
+
 ```
 the Scrum framework (see Table 2.1).
 ```
+
 Figure 2.3 shows a very common structure that is used when
 working in an agile way for developing software. In simple terms,
 new features for a product are held in a prioritized list called the
@@ -1315,104 +1363,136 @@ product backlog. The list may be made up of user stories, which are
 structured in a way that describes who wants the feature and why.
 The team that will build the features decides which items from the
 top of the product backlog they can create in a timeframe of typically
+
 ```
 2–4 weeks (which is known as a sprint). The work that the team think
 ```
+
 they can achieve during the sprint is held in a list called a sprint
 backlog. Each day throughout the sprint, a meeting is held to assess
 progress. At the end of a sprint new features should have been
 created and they may go into operational use.
+
 ```
 Definition: Release
 ```
+
 The set of products in a handover. The contents of a release
 are managed, tested and deployed as a single entity.
 In PRINCE2 Agile, a release is typically a container for more
+
 ```
 than one low-level timebox (e.g. a sprint). This is not always the
 ```
+
 case as the act of releasing features into operational use may
+
 ```
 happen more regularly (e.g. after each sprint or several times
 ```
+
 ```
 during a sprint). The term ‘deployment’ is sometimes used in
 ```
+
 agile and has a similar meaning, although it is not used in
 PRINCE2 Agile.
 Figure 2.4 Sprints may exist within a wider context
 •
 •
 •
+
 ```
 The output (i.e. the new features) is reviewed along with the way the
 ```
+
 team worked to achieve that output. This basic structure may exist
 within an overall approach that includes a vision, a product
+
 ```
 roadmap (which is a plan of how a product will evolve) and a series
 ```
+
 ```
 of releases (see Figure 2.4).
 ```
+
 The two examples represented in Figures 2.3 and 2.4 provide a
 typical view of agile, although it is somewhat limited. A more
 comprehensive view would include:
 IT and non-IT situations
 large and small projects as well as routine ‘business as usual’
+
 ```
 (BAU) tasks
 ```
+
 flow-based working as well as timeboxing.
 Further to this there also needs to be a wider mindset and a
 collection of behaviours that enable the agile way of working to
 thrive.
+
 ```
 Definition: Flow-based
 ```
+
 This avoids the use of partitioning work into timeboxes and
 manages work by using a queue. Work is then continually
+
 ```
 pulled into the system (which may itself be a high-level timebox)
 ```
+
 and moves through various work states until it is done.
 2.2.1 Agile frameworks
+
 ```
 There is a family of frameworks (also referred to as methods or
 ```
+
 ```
 approaches) that are generally recognized as being agile. However,
 ```
+
 some are only applicable to IT situations. A summary of the most
 well known is shown in Table 2.1.
 Table 2.1 The most well-known agile methods and approaches
 Term Brief description
+
 ```
 ASD (Adaptive Software Development) (IT only) Iterative development process (Highsmith, 2000).
 ```
+
 ```
 Crystal (IT only) Iterative development method (Cockburn, 2001).
 ```
+
 ```
 DAD (Disciplined Agile Delivery) (IT only) An enterprise-wide scalable process framework
 ```
+
 described as ‘a process decision framework that is a people-
 first, learning-oriented hybrid agile approach to IT solution
 delivery’, that has ‘a risk-value delivery lifecycle, is goal-
 driven, is enterprise aware and is scalable.’
-See http://www.disciplinedagiledelivery.com
+See <http://www.disciplinedagiledelivery.com>
+
 ```
 DevOps (IT only) A collaborative approach between development and
 ```
+
 operations aimed at creating a product or service where the
 two types of work and even the teams merge as much as
 possible.
+
 ```
 DSDM (Dynamic Systems Development
 ```
+
 ```
 Method)/ AgilePM
 ```
+
 An agile project framework that focuses on the iterative
 delivery of business systems through the use of timeboxing
 and continual business involvement. It has a defined process
@@ -1420,40 +1500,51 @@ and corresponding set of products, a set of roles that operate
 at all levels of a project, eight guiding principles and a
 collection of key techniques that can be used throughout a
 project.
+
 ```
 FDD (feature-driven development) (IT only) Iterative software development process focusing on
 ```
+
 features.
 Kanban A way to improve flow and provoke system improvement
 through visualization and controlling work in progress.
 Lean An approach that focuses on improving processes through
+
 ```
 maximizing value by eliminating waste (such as wasted time
 ```
+
 ```
 and wasted effort).
 ```
+
 Lean Startup Originally an approach to creating and managing start-up
 companies, but now applied to any business, to help them
 deliver products to customers quickly.
+
 ```
 SAFe (Scaled Agile Framework) (IT only) Large-scale application of agile across an
 ```
+
 organization. PRINCE2 and PRINCE2 Agile could be used in
 SAFe where a piece of work is of a sufficient size or level of
 difficulty that it should be run as a project.
 Scrum An iterative timeboxed approach to product delivery that is
 described as ‘a framework within which people can address
 complex adaptive problems, while productively and creatively
+
 ```
 delivering products of the highest possible value’ (see
 ```
+
 ```
 Appendix H).
 ```
+
 ```
 XP (eXtreme Programming) (IT only) Iterative software engineering practice that can be
 ```
+
 used on its own but often exists in tandem with Scrum or
 Kanban, where XP covers the creation of the software and
 Scrum or Kanban is used as an overarching framework to
@@ -1465,19 +1556,25 @@ concepts, frameworks and techniques.
 techniques
 Along with the agile frameworks there are a variety of behaviours,
 concepts and techniques that are seen as being part of the agile way
+
 ```
 of working. Examples are shown in Table 2.2 (some of which are
 ```
+
 ```
 defined in the glossary) but the table only provides a few illustrative
 ```
+
 examples of what is seen as agile. It is not a complete list and it is
+
 ```
 not necessary to be strict on the exact terms used (e.g. whether or
 ```
+
 ```
 not something is a technique or a behaviour).
 ```
+
 Table 2.2 Typical agile behaviours, concepts and techniques
 Term Examples Similar terms
 Behaviours Being collaborative, self-organizing,
@@ -1488,30 +1585,38 @@ Concepts Prioritizing what is delivered, working
 iteratively and incrementally, not
 delivering everything, time-focused,
 ‘inspect and adapt’. Kaizen. Limiting
+
 ```
 work in progress (WIP).
 ```
+
 Fundamentals
 Techniques Burn charts, user stories,
 retrospectives, timeboxing, measuring
 flow.
 Practices, tools
 PRINCE2 and PRINCE2 Agile do not favour one agile approach over
+
 ```
 any other; this is sometimes referred to as being ‘agile agnostic’.
 ```
+
 With due care and consideration, they can engage with agile in all of
 its many forms to provide a holistic project management approach
 that can be tailored to suit a wide variety of conditions and working
 environments.
 Acknowledgements and further research
+
 ```
 Cockburn, A. (2001) Agile Software Development: Software Through
 ```
+
 People. Addison Wesley.
+
 ```
 Highsmith, J.A. (2000) Adaptive Software Development: A
 ```
+
 Collaborative Approach to Managing Complex Systems. Dorset
 House, New York.
 •
@@ -1538,12 +1643,15 @@ The strength of PRINCE2 lies in the areas of project direction and
 project management. However, it provides little focus on the field of
 product delivery.
 Conversely, agile has a very strong focus on product delivery but
+
 ```
 relatively little on project direction and project management (see
 ```
+
 ```
 Figure 3.1).
 ```
+
 Therefore, when PRINCE2 and agile are combined, all three areas in
 Figure 3.1 are addressed.
 It is essential to see this combination as a blend and a mixture as
@@ -1570,12 +1678,15 @@ existing PRINCE2 community and in particular PRINCE2
 practitioners. Anyone directing or managing a PRINCE2 project who
 is using agile will benefit from this guidance. Anyone involved with,
 or impacted by, a PRINCE2 project that is using agile will also
+
 ```
 benefit from this guidance (e.g. project support, quality
 ```
+
 ```
 assurance).
 ```
+
 Organizations and individuals outside the PRINCE2 community can
 also benefit from this guidance in one of the following ways:
 Those who currently have experience with agile may want to
@@ -1608,14 +1719,18 @@ projects, or an agile way of
 working exists and is evolving
 with a limited level of maturity
 in terms of processes and
+
 ```
 behaviours (e.g. how
 ```
+
 formalized and documented
 they are and how predominant
+
 ```
 they are).
 ```
+
 Suitable for organizations, departments
 and the individuals working within them.
 Agile is used for BAU An agile way of working exists
@@ -1626,12 +1741,15 @@ is handled this way.
 Not suitable for organizations and
 departments.
 However, it is suitable to support and
+
 ```
 enhance this style of working (i.e.
 ```
+
 ```
 product delivery) in a project context, as
 ```
+
 some work may be better suited to being
 managed as a project. Additionally, it
 may help individuals’ career progression.
@@ -1664,14 +1782,18 @@ PRINCE2 Agile, when faced with the situations described in Table
 •
 Table 3.3 The relationship between each community and each situation with respect to
 PRINCE2 Agile
+
 ```
 Notes:
 ```
+
 1. Mapping of similar terms may be of benefit (e.g. product board may be an equivalent to
+
 ```
 project sponsor).
 ```
-2. A situation where a mature level of agile is used for projects may potentially benefit from
+
+1. A situation where a mature level of agile is used for projects may potentially benefit from
 using PRINCE2 Agile, unless it is felt that the existing governance and project
 management controls are sufficient. Using PRINCE2 Agile may be appropriate if a more
 challenging piece of work is being undertaken or a project involves a customer, supplier
@@ -1681,12 +1803,15 @@ between the different approaches.
 3.5 What does PRINCE2 Agile consist
 of?
 PRINCE2 comprises an integrated set of principles, themes and
+
 ```
 processes that are tailored to the specific needs of a project (see
 ```
+
 ```
 Figure 3.2).
 ```
+
 PRINCE2 Agile provides guidance on tailoring PRINCE2 in an agile
 context and covers:
 how to apply the principles and tailor the themes and processes
@@ -1699,22 +1824,28 @@ how to incorporate the fundamental agile behaviours, concepts
 and techniques into PRINCE2
 what areas are of particular significance when using agile and
 need specific focus.
+
 ```
 This applies to all levels of a PRINCE2 project (i.e. project direction,
 ```
+
 ```
 project management and product delivery).
 ```
+
 Agile encapsulates a wide collection of frameworks, and PRINCE2
 Agile incorporates and references several of them. A few of these
 methods and approaches receive particular attention in PRINCE2
 Agile because they are seen as very popular or good practice. They
+
 ```
 are Scrum, Kanban and Lean Startup (see Table 2.1 for a brief
 ```
+
 ```
 description).
 ```
+
 Figure 3.2 Tailoring PRINCE2 by blending in the agile ingredients
 1.
 2.
@@ -1731,12 +1862,15 @@ are intended to provide clarity where there is potential for ambiguity,
 and accuracy where there may be misconceptions. These points are
 summarized in Table 3.4 for quick reference.
 All references to PRINCE2 refer to the edition created in 2017
+
 ```
 (Managing Successful Projects with PRINCE2). This version is
 ```
+
 ```
 already enabled to work with agile; it just needs to be tailored to
 ```
+
 suit any given project. Configuring PRINCE2 in the most effective
 way for agile is a matter of where to put emphasis and where to
 add further levels of detailed guidance. Nothing needs to be
@@ -1756,23 +1890,30 @@ and software development, but PRINCE2 Agile does not assume
 5.
 6.
 7.
+
 ```
 an IT context; although it can be used in an IT context, it is not an
 ```
+
 IT framework or an IT method.
 Many agile approaches and frameworks are created solely for IT
+
 ```
 situations; for example, eXtreme Programming (XP) and the
 ```
+
 ```
 Scaled Agile Framework (SAFe). PRINCE2 Agile will only make
 ```
+
 ```
 passing reference to IT-only frameworks (see Table 2.1 for brief
 ```
+
 ```
 descriptions).
 ```
+
 The most well-known agile framework is Scrum, and PRINCE2
 Agile is written with the view that although Scrum can rightly be
 described as being ‘agile’, the converse is not the case: it is not
@@ -1780,12 +1921,15 @@ true to describe agile as ‘using the Scrum framework’. Other
 frameworks exist and a framework is only part of the agile way of
 working.
 Although agile appears in many forms, the use of the Scrum
+
 ```
 framework and, to a lesser extent, the Kanban framework (either
 ```
+
 ```
 separately or in combination) make up the vast majority of what
 ```
+
 agile practitioners use. There are many other frameworks and
 approaches but when this manual uses expressions such as
 ‘commonly used in agile’ or ‘widely used in agile’ it will usually be
@@ -1805,15 +1949,19 @@ community as being part of the agile way of working. The terms
 encapsulate other similar terms such as methods, principles,
 values, mindsets and approaches.
 PRINCE2 Agile does not see working in an agile way as a binary
+
 ```
 condition (i.e. you either are or you are not working in an agile
 ```
+
 ```
 way). It always sees agile as a question of how much (or how
 ```
+
 ```
 little) it can be used according to the situation that exists. To
 ```
+
 illustrate this point, PRINCE2 Agile does not refer to ‘agile
 projects’ as this would infer that some projects are agile, whereas
 others are not. PRINCE2 Agile is written with the view that agile
@@ -1821,9 +1969,11 @@ behaviours, concepts, frameworks and techniques can be applied
 to any project.
 Table 3.4 Summary of the key points in Chapter 3
 Key point
+
 ```
 1 PRINCE2 (2009 edition onwards) is already enabled for use with agile.
 ```
+
 2 PRINCE2 is suitable for any style of project and is not a ‘traditional’ project management
 approach as is typically contrasted to agile.
 3 PRINCE2 Agile is for any project and not just for IT projects.
@@ -1832,9 +1982,11 @@ approach as is typically contrasted to agile.
 6 The most ‘commonly used’ agile approaches are Scrum and Kanban, but they are not
 suitable for managing a project in isolation. However, they can be effectively used in a
 project context.
+
 ```
 7 The term ‘agile’ (in this manual) refers to a family of behaviours, concepts, frameworks and
 ```
+
 techniques.
 8 Using agile on a project is not a question of ‘yes or no’: it is about ‘how much’.
 3.7 Beware of prejudice!
@@ -1866,16 +2018,21 @@ This chapter acts as a brief summary of how PRINCE2 would
 typically look when working in an agile way. The best way to tailor
 PRINCE2 depends on the project context, and the purpose of this
 chapter is to illustrate examples that would be common in many
+
 ```
 situations; however, many other alternatives exist. The chapter
 ```
+
 illustrates a way but not the way.
+
 ```
 PRINCE2 provides a process model for managing a project (see
 ```
+
 ```
 Figure 4.1). The processes can easily be scaled and tailored to suit
 ```
+
 the requirements of all types of project. They consist of a set of
 activities that are required to direct, manage and deliver a project.
 Figure 4.1 The life of a PRINCE2 project
@@ -1886,9 +2043,11 @@ project may come from new business objectives, responding to
 competitive pressures, changes in legislation or a recommendation
 in a report or an audit. In PRINCE2, this trigger is called a project
 mandate. The project mandate is provided by the commissioning
+
 ```
 organization (corporate, programme management or the customer)
 ```
+
 and can vary in form from a verbal instruction to a well-defined and
 justified project definition.
 Prior to the activity to scope the project fully, it is important to verify
@@ -1913,9 +2072,11 @@ management stage in detail.
 The initiation stage culminates in the production of the PID [project
 initiation documentation], which is reviewed by the project board to
 decide whether to authorize the project. As the contents of the PID
+
 ```
 are likely to change throughout the project (under change control),
 ```
+
 this version of the PID is preserved as input for later performance
 reviews.
 •
@@ -1926,12 +2087,15 @@ Tip
 The guidance uses the terms ‘output’ and ‘deliverable’
 synonymously with the term ‘product’. ‘Project product’ is used
 to describe the output from the project, including its component
+
 ```
 products, as defined in the project product description (see
 ```
+
 ```
 section A.21). The term ‘project’s products’ refers to the
 ```
+
 specialist and management products created during the project.
 4.1.3 How pre-project and the initiation stage
 would typically look when using agile
@@ -1944,9 +2108,11 @@ Stage-level planning is carried out collaboratively with the
 customer in order to most accurately meet their needs and
 achieve the most benefit.
 Plans are timeboxed in some form. This could be a specific time
+
 ```
 interval (e.g. 2-weekly) or flow-based over a longer period. These
 ```
+
 plans would be created at a time and at a level of detail to allow
 for uncertainties.
 •
@@ -1954,17 +2120,22 @@ for uncertainties.
 •
 •
 •
+
 ```
 Definition: Feature
 ```
+
 A generic term that is widely used to describe something a
 product does, or the way in which a product does something. A
+
 ```
 feature can be at any level of detail (e.g. it is waterproof, it
 ```
+
 ```
 makes a tone when switched off) and can be related to a
 ```
+
 specific requirement, user story or epic. Another similar term is
 ‘function’.
 4.1.3.2 Behaviour
@@ -1974,17 +2145,21 @@ approach.
 Mandating or recommending the use of specific agile approaches
 such as Scrum and/or Kanban may be explicitly defined as part of
 the project approach.
+
 ```
 The project initiation documentation (PID) may have been
 ```
+
 created collaboratively in a workshop in order to disseminate
 information to the project team quickly and more accurately and
 with a high level of engagement and ownership.
 4.1.3.3 Process
 Information on what constitutes a minimum viable product
+
 ```
 (MVP) is defined (see section 20.4.2.5).
 ```
+
 The trigger for the project may have come from a product
 roadmap.
 •
@@ -2002,19 +2177,25 @@ project.
 The project product description is likely to have been defined to
 show which requirements are mandatory and which are not.
 The project product description purpose is likely to be outcome-
+
 ```
 based (focusing on the delivery of value) as opposed to the
 ```
+
 delivery of a specific solution.
 Product descriptions have initially been captured using user
+
 ```
 stories (or as epics), although it will be expected that more will be
 ```
+
 discovered throughout this phase and beyond.
 The business case is defined in a flexible way to allow for the
+
 ```
 amount of what is being delivered (and its value) to change to a
 ```
+
 degree during the project.
 The benefits management approach focuses on how to deliver
 value regularly and as early as possible. This will involve
@@ -2022,15 +2203,19 @@ describing what products will be delivered when, and what value
 will be enabled.
 The PID is likely to be a less formal document, as some of the
 baseline information is visible in the form of an information
+
 ```
 radiator (see section 15.4.2).
 ```
+
 ```
 The PID will be less detailed in certain sections (e.g. product
 ```
+
 ```
 descriptions), since the solution is not necessarily defined at the
 ```
+
 start. It is a living document that evolves, although it will still need
 to be baselined.
 The communication management approach will have been
@@ -2040,21 +2225,27 @@ assessed on the basis of the minimum acceptable level that does
 not compromise the quality level of the final product.
 • See also explanations of tailoring the project brief and PID in
 section 23.1.
+
 ```
 Definition: User story
 ```
+
 A tool used to write a requirement in the form of who, what and
 why.
+
 ```
 Definition: Epic
 ```
+
 A high-level definition of a requirement that has not been
 sufficiently refined or understood yet. Eventually, an epic will be
 refined and broken down into several user stories or
 requirements.
+
 ```
 Definition: Information radiator
 ```
+
 A general term used to describe the use of walls or boards
 containing information that can be readily accessed by people
 working on the project. It can contain any information, although
@@ -2064,9 +2255,11 @@ is progressing.
 The project board delegates day-to-day control to the project
 manager management stage by management stage. The project
 manager needs to assign work to be done, ensure that the outputs of
+
 ```
 such work (products) meet relevant specifications, and gain suitable
 ```
+
 approval where appropriate. At this point, products may be
 transitioned into operational use by corporate, programme
 management or the customer.
@@ -2078,15 +2271,19 @@ assist with progress control. The project manager informs the project
 board of progress through regular highlight reports. The activities to
 control each management stage are covered by the controlling a
 stage process.
+
 ```
 In the managing product delivery process, the team manager(s) or
 ```
+
 ```
 team members execute assigned work packages (that will deliver
 ```
+
 ```
 one or more products) and keep the project manager appraised of
 ```
+
 progress via checkpoint reports.
 •
 •
@@ -2101,12 +2298,15 @@ look when using agile
 Work assignment throughout the stage is carried out
 collaboratively and in conjunction with the customer in order to
 address the customer’s needs. This is likely to take the form of
+
 ```
 the delivery teams collectively selecting their own work (and
 ```
+
 ```
 collaboratively creating customer-focused work packages) as
 ```
+
 part of the agile concept of self-organization. The focus would be
 to work iteratively and deliver incrementally.
 High levels of trust and transparency mean that work packages
@@ -2118,9 +2318,11 @@ the accuracy of the products being delivered.
 Progress is being measured by work completed and is visualized
 on a burn chart.
 Progress is supported by the use of reviews and demonstrations
+
 ```
 (‘demos’) by the project management team and the delivery
 ```
+
 teams in association with the customer.
 Tracking of time and cost still takes place but it is less prominent
 than the tracking of features and/or work completed. This is
@@ -2130,12 +2332,15 @@ Scope and quality criteria are the primary focus of any
 tolerances used.
 •
 •
+
 ```
 Definition: Burn chart
 ```
+
 ```
 A technique for showing progress (e.g. such as with a timebox),
 ```
+
 where work that is completed and work still to do are shown
 with one or more lines that are updated regularly or daily.
 4.2.1.2 Behaviour
@@ -2150,25 +2355,33 @@ as time and cost.
 4.2.1.4 Products
 Quality tolerances in product descriptions are written in such a
 way as to allow for change without compromising the product’s
+
 ```
 purpose (e.g. there are levels of tolerance that can be prioritized).
 ```
+
 There is less formality for registers at both the project
+
 ```
 management and delivery levels (particularly the latter); risks
 ```
+
 may be written on a whiteboard, or an issue could be shown as a
 sticky note on a Kanban board. These can be photographed to
 safeguard against accidental loss of the information.
 •
 •
+
 ```
 Definition: Kanban board
 ```
+
 A tool used in Kanban to visually display the work in the system
+
 ```
 (or timebox). It is usually made up of a series of columns and
 ```
+
 possibly rows where work items move from left to right as they
 move through various states in order to be completed.
 Highlight reports are low-tech and focus primarily on how much
@@ -2179,9 +2392,11 @@ Checkpoint reports are usually informal and they may also
 appear on information radiators. They may be replaced by stand-
 up meetings if the delivery team is happy for the project manager
 to attend.
+
 ```
 Definition: Stand-up meeting
 ```
+
 A short meeting to assess progress. Typically lasting 15
 minutes or less, they involve describing work that has been
 done, work still to be done and any problems being
@@ -2189,12 +2404,15 @@ encountered.
 4.3 Final stage
 •
 As a project is a temporary undertaking, towards the end of the final
+
 ```
 management stage (when the project manager has gained approval
 ```
+
 ```
 for the project product) it is time to start the closing a project
 ```
+
 process. The project board needs to be satisfied that the recipients
 of the project product are in a position to own and use it on an
 ongoing basis. Should this be the case, the product can be
@@ -2204,9 +2422,11 @@ should be assessed for performance against its original plan and the
 resources assigned to the project need to be released. Closure
 activities include planning post-project benefits reviews to take place
 for those benefits that can only be assessed after the product has
+
 ```
 been in use (and therefore after the project has closed). The
 ```
+
 activities to decommission a project are covered by the closing a
 project process.
 4.3.1 How the final stage would typically look
@@ -2233,9 +2453,11 @@ The customer is already in ownership of several products that
 have transitioned into operational use and is now realizing
 benefits.
 Tidying up and archiving is a routine task by this point, as it has
+
 ```
 been taking place regularly throughout the project; its value is
 ```
+
 known to everyone and it is not seen as simply a bureaucratic
 task.
 4.3.1.3 Process
@@ -2243,12 +2465,15 @@ Closing and decommissioning a project is not a significant event
 as it is a case of ‘tidying up’ and finishing off many activities to do
 with lessons, archiving and handover which have already been
 started because by this point several releases have taken place.
+
 ```
 Project closure involves (or is held as) a retrospective.
 ```
+
 ```
 Definition: Retrospective
 ```
+
 A regular event that looks at how the process of doing work can
 be improved. In keeping with the agile concept of ‘inspect and
 adapt’ these events help teams to continually improve their
@@ -2256,22 +2481,28 @@ working practices, little by little, over time.
 There is an assessment of how appropriate the use of agile
 turned out to be to help with guidance on the use of agile for
 future projects.
+
 ```
 Outstanding work still exists on backlogs of some kind (e.g. a
 ```
+
 ```
 release backlog), and this is then moved to other backlogs (e.g.
 ```
+
 ```
 an existing BAU backlog), discarded or archived.
 ```
+
 4.3.1.4 Products
 Lessons may be handed to project support informally, or project
 support may have been included in retrospectives if the teams were
 happy for them to be in attendance.
+
 ```
 Definition: Backlog
 ```
+
 A list of new features for a product. The list may be made up of
 user stories which are structured in a way that describes who
 wants the features and why. It is also a generic term that can be
@@ -2317,9 +2548,11 @@ Much of the material in this chapter is drawn from Managing
 Successful Projects with PRINCE2 and Directing Successful
 Projects with PRINCE2, although in many cases the wording and
 order of presentation have been adapted to suit this guide.
+
 ```
 Definition: Project
 ```
+
 A temporary organization that is created for the purpose of
 delivering one or more business products according to an
 agreed business case.
@@ -2331,29 +2564,37 @@ management’ task, using PRINCE2 could create an inappropriate
 management overhead.
 Figure 5.1 Project management
 •
+
 ```
 Definition: Programme
 ```
+
 A temporary, flexible organization structure created to
 coordinate, direct and oversee the implementation of a set of
 related projects and activities in order to deliver outcomes and
 benefits related to the organization’s strategic objectives. A
 programme is likely to have a life that spans several years.
+
 ```
 Definition: Project management
 ```
+
 The planning, delegating, monitoring and control of all aspects
 of the project, and the motivation of those involved, to achieve
 the project objectives within the expected performance targets
+
 ```
 for time, cost, quality, scope, benefits and risk (see Figure 5.1).
 ```
+
 5.1 The structure of PRINCE2
 The PRINCE2 method addresses project management with four
 integrated elements of principles, themes, processes and the project
+
 ```
 environment (see Figure 5.2).
 ```
+
 PRINCE2 principles The principles are the guiding obligations
 and good practices which determine whether the project is
 genuinely being managed using PRINCE2. There are seven
@@ -2389,12 +2630,15 @@ Figure 5.2 The structure of PRINCE2
 •
 •
 •
+
 ```
 PRINCE2 is principle-based rather than prescriptive; the principles
 ```
+
 ```
 are:
 ```
+
 universal in that they apply to every project
 self-validating in that they have been proven in practice over
 many years
@@ -2417,19 +2661,25 @@ managing a project.
 5.3 The themes
 The PRINCE2 themes describe aspects of project management that
 must be addressed continually as the project progresses through its
+
 ```
 lifecycle (see Table 5.1).
 ```
+
 Table 5.1 The PRINCE2 themes
 Theme Purpose and description Answers
 Business case The purpose of the business case theme is to establish Why?
+
 ```
 mechanisms to judge whether the project is (and remains)
 ```
+
 desirable, viable and achievable as a means to support
+
 ```
 decision-making in its (continued) investment.
 ```
+
 The project starts with an idea which is considered to have
 potential value for the organization concerned. This theme
 addresses how the idea is developed into a viable investment
@@ -2480,12 +2730,15 @@ control any potential and approved changes to the project
 baselines.
 This theme describes how project management assesses
 and acts upon issues which have a potential impact on any of
+
 ```
 the baseline aspects of the project (its plans and completed
 ```
+
 ```
 products). Issues may be unanticipated general problems,
 ```
+
 What is the impact?
 •
 •
@@ -2494,12 +2747,15 @@ requests for change or instances of a product not meeting its
 specification.
 Progress The purpose of the progress theme is to establish
 mechanisms to monitor and compare actual achievements
+
 ```
 against those planned; provide a forecast for the project
 ```
+
 ```
 objectives and the project’s continual viability; and control any
 ```
+
 unacceptable deviations.
 This theme addresses the ongoing viability of the plans. The
 theme explains the decision-making process for approving
@@ -2513,35 +2769,45 @@ going?
 Should we carry
 on?
 In summary, the set of PRINCE2 themes describe:
+
 ```
 How baselines are established (in the business case and plans
 ```
+
 ```
 themes). The baselines cover all six project performance targets –
 ```
+
 time, cost, quality, scope, benefits and risk – and act as key
 reference points for subsequent monitoring and control.
 How the PRINCE2 approach established the questions ‘why, who,
 what, how and how much?’
 How the project management team monitors and controls the
+
 ```
 work as the project progresses (in the progress, quality, change
 ```
+
 ```
 and risk themes).
 ```
+
 The organization theme underpins the PRINCE2 themes with a
 defined structure of roles, clarifying accountability and offering clear
 paths for delegation and escalation. For example, the processes
+
 ```
 require a division of responsibilities between those who direct (the
 ```
+
 ```
 project board), those who manage (the project and team managers)
 ```
+
 ```
 and those who deliver (the project team), as defined in the
 ```
+
 organization theme.
 5.4 The processes
 PRINCE2 provides a process model for managing a project. The
@@ -2556,30 +2822,39 @@ seven processes can easily be scaled and tailored to suit the
 requirements of all types of project. They consist of a set of activities
 that are required to direct, manage and deliver a project.
 The processes are located in the following sections:
+
 ```
 Agile and the PRINCE2 processes (Chapter 16)
 ```
+
 ```
 Starting up a project; initiating a project (sections 17.1–17.3 and
 ```
+
 ```
 17.5)
 ```
+
 ```
 Directing a project (Chapter 18)
 ```
+
 ```
 Controlling a stage (Chapter 19)
 ```
+
 ```
 Managing product delivery (Chapter 20)
 ```
+
 ```
 Managing a stage boundary (Chapter 21)
 ```
+
 ```
 Closing a project (Chapter 22).
 ```
+
 5.5 The project environment
 Organizations often want a consistent approach to managing
 projects and tailor PRINCE2 to create their own project management
@@ -2602,9 +2877,11 @@ PRINCE2 Agile, one of the most important is that it focuses on
 flexing what is being delivered, as opposed to focusing on flexing
 time and cost or flexing time and resources.
 However, it is not enough just to understand how to flex what is
+
 ```
 delivered; it is essential to understand why.
 ```
+
 Historically, the competing constraints on a project have often been
 shown graphically as a shape such as a triangle with constraints of
 time, cost, quality, etc. pulling against each other. PRINCE2 does not
@@ -2615,20 +2892,26 @@ PRINCE2 does not place emphasis on any of these aspects over
 and above the others. It sees them as equally significant and to be
 managed according to the needs of a particular project.
 However, PRINCE2 Agile does define what to emphasize by giving
+
 ```
 guidance on the use of tolerance levels (i.e. permissible deviations
 ```
+
 ```
 from what is planned) for the six aspects in terms of which should be
 ```
+
 ```
 fixed and which ones should vary (or flex) (see Table 6.1).
 ```
+
 In PRINCE2, tolerance is the permissible deviation above and below
 what has been planned, with respect to the six aspects of a project
+
 ```
 (i.e. time, cost, quality, scope, benefits and risk). Whenever any of
 ```
+
 these tolerances are forecast to be exceeded an exception will
 occur. It is not that fixed aspects can never flex, but they have
 tolerances set to zero and would be subject to management by
@@ -2646,9 +2929,11 @@ acceptance criteria that are essential.
 Tolerance may be used for the customer’s quality
 expectations and acceptance criteria that are desirable but
 not essential.
+
 ```
 Product descriptions (in general)
 ```
+
 Zero tolerance for the quality criteria that are essential.
 Tolerance may be used for the quality criteria that are
 desirable but not essential.
@@ -2741,9 +3026,11 @@ that on which projects have traditionally been based.
 6.4.1 Being on time and hitting deadlines
 For any project or piece of work being on time is naturally seen as
 desirable, but the advantages that meeting deadlines creates may
+
 ```
 not all be obvious; when the many upsides of this are taken together,
 ```
+
 •
 •
 •
@@ -2755,74 +3042,100 @@ just desirable.
 Some of these advantages can include:
 delivering early realization of benefits, and these can be planned
 around
+
 ```
 helping with planning (e.g. dependencies within a project or
 ```
+
 between projects, capacity and resources at the portfolio and
+
 ```
 programme level)
 ```
+
 ```
 giving confidence (e.g. with progress)
 ```
+
 ```
 there may be no choice (e.g. external market forces or regulatory
 ```
+
 ```
 considerations)
 ```
+
 ```
 reducing the likelihood of cost overruns (assuming that resources
 ```
+
 ```
 are fixed)
 ```
+
 ```
 improving reputation (e.g. with the customer).
 ```
+
 ‘Being on time and hitting deadlines’ applies to any timescale,
+
 ```
 whether it is short-term (e.g. a 2-week sprint), medium-term (e.g. a
 ```
+
 ```
 2-month stage) or long-term (a 6-month project).
 ```
+
 6.4.2 Protecting the level of quality
 Any framework for projects or product delivery strives to ensure that
 the appropriate level of quality is achieved. However, in practice
+
 ```
 does the level of quality suffer (or is at risk of suffering) due to the
 ```
+
 very nature of the approach being used? For example, when using a
 traditional waterfall lifecycle that is broken down into ‘technical’
+
 ```
 phases such as analyse, design, build, test and implement (NB:
 ```
+
 PRINCE2 is built around ‘management stages’ and not ‘technical
+
 ```
 stages’), there is a risk that frequently materializes of the earlier
 ```
+
 phases overrunning, leading to later phases becoming compressed
 in order to deliver on time. The most common example of this is
 where quality checking or testing is reduced in order to meet
 deadlines.
 Tip
+
 ```
 Technical phases (such as analyse, design, build, test and
 ```
+
 ```
 implement) take many forms and can cover such terms as
 ```
+
 requirements, planning, deployment, integration, acceptance
 and construction.
 There is a likelihood that this leads to ‘short-term gain but long-term
+
 ```
 pain’ (e.g. a product goes into operational use on time but it contains
 ```
+
 errors that were missed during quality checking and testing, and
+
 ```
 several products need to be recalled).
 ```
+
 Tip
 Acceptance criteria are commonly used in agile to assess
 whether a user story has been completed. They are the
@@ -2830,12 +3143,15 @@ equivalent of quality criteria in PRINCE2.
 The concept of flexing what is being delivered ensures that the
 emphasis is on delivering less scope or using lower-priority quality
 criteria, as opposed to compromising the overall quality level of the
+
 ```
 final product (as described by the customer’s quality expectations
 ```
+
 ```
 and the associated acceptance criteria).
 ```
+
 Compromising the quality level of anything delivered during a project
 can take many forms but results from such situations as:
 •
@@ -2850,12 +3166,15 @@ can take many forms but results from such situations as:
 reduced testing
 incomplete documentation
 sub-optimal design
+
 ```
 lack of appropriate training (e.g. for end-users, customers,
 ```
+
 ```
 support teams)
 ```
+
 non-compliance with standards.
 The result of any compromise to the level of quality can have
 damaging long-term effects in terms of the total cost of ownership of
@@ -2875,29 +3194,39 @@ idea that has not previously been thought of or a misunderstanding
 where an assumption proves to be incorrect. Change should be seen
 as positive because a more accurate final product is likely to be
 produced.
+
 ```
 It is important to distinguish between minor change (e.g. to the
 ```
+
 ```
 detail) and major change (e.g. to the project baseline) because only
 ```
+
 the former can be handled dynamically and with little overhead. This
 illustrates the importance of setting the project baseline in the PID at
+
 ```
 the correct level (e.g. avoiding unnecessary detail early on).
 ```
+
 ```
 Definition: Trading (or swapping)
 ```
+
 The act of handling change by replacing one or more
+
 ```
 requirements (or features or user stories) with others of a
 ```
+
 similar size in terms of effort.
 Minor change can be handled by flexing what is being delivered
+
 ```
 through prioritization and trading (or swapping), whereas major
 ```
+
 change would usually require more formal change control processes
 and may even necessitate going into exception and/or stopping the
 project if the business case is no longer viable.
@@ -2913,12 +3242,15 @@ is set to zero.
 Although this has an impact in any situation, the agile way of working
 is particularly impacted by the changing of personnel. This is
 because agile utilizes such things as informal communication and
+
 ```
 self-organizing while scheduling work into short timeframes (e.g. a 2-
 ```
+
 ```
 week timebox). Therefore, changing team members or adding to the
 ```
+
 team can have a far more detrimental effect than normal for reasons
 such as:
 •
@@ -2934,9 +3266,11 @@ The team dynamics change and need to be re-established.
 The impact of changing a team’s dynamics is usually underestimated
 and can sometimes be the most counterproductive side-effect of the
 four.
+
 ```
 Definition: Team dynamics
 ```
+
 The interpersonal interactions between the individuals on a
 team. This relates to the culture and attitudes of the people in
 the team and needs to be managed carefully as it can be a very
@@ -2945,12 +3279,15 @@ destructive when it breaks down.
 It is important to understand that team members may need to
 change throughout the life of a project as the needs of a project
 change. However, this concept of avoiding the use of extra people to
+
 ```
 improve progress applies primarily to the short term (for example, 4
 ```
+
 ```
 weeks or less), such as within a sprint.
 ```
+
 6.4.5 Do we need everything we have asked
 for?
 Usually no, although the customer may not realize this at the start of
@@ -2964,21 +3301,27 @@ unusual to find many people who used more than just a few of the
 options available. Most people would use two programmes at most.
 The importance of this concept lies in the PRINCE2 Agile belief that
 the features of the product are the safest and most sensible area to
+
 ```
 compromise on (i.e. to use as contingency). A project using
 ```
+
 PRINCE2 Agile does not set out with the intention of not delivering
 everything, but it does aim to hit deadlines and protect the level of
 quality by reducing what is delivered accordingly. This in turn can
+
 ```
 result in the early delivery of a minimum viable product (MVP), and in
 ```
+
 ```
 general terms the project delivers what the customer really wants (or
 ```
+
 ```
 needs) more quickly.
 ```
+
 6.5 Chapter summary
 It is important to understand all of the five targets that underpin the
 thinking behind flexing what is being delivered. The five targets do
@@ -2991,36 +3334,47 @@ namely, ‘If you want your project delivered on time, the level of
 quality protected and changes at the detailed level to be handled
 dynamically and at no extra cost … are you happy to forgo some of
 your lower-priority requirements or lower-priority acceptance/quality
+
 ```
 criteria, if necessary?’ (see Figure 6.2).
 ```
+
 Getting an appropriate balance of what is essential and what is not
 essential becomes important when working this way. If the balance is
+
 ```
 not conducive to flexing what is being delivered (e.g. there is very
 ```
+
 ```
 little that can be described as not essential) then this creates a risk
 ```
+
 ```
 to this way of working and in extreme situations (e.g. where
 ```
+
 ```
 practically everything is essential), it may make the use of agile on a
 ```
+
 project inadvisable.
 A lot of the understanding of agile falls into place when the thinking
 behind flexing what is being delivered is understood correctly. One of
 the reasons that agile is often misunderstood or hard to understand
+
 ```
 at times is that these concepts are a mixture of common sense (e.g.
 ```
+
 ```
 being on time) and ideas that are counterintuitive (e.g. seeing
 ```
+
 ```
 change in a positive light).
 ```
+
 In order for a customer to understand that this is for their benefit,
 they need to see the holistic view that is supported by flexing what is
 being delivered. If this is not achieved then the customer may feel
@@ -3052,12 +3406,15 @@ taking account of its scale, organization, geography and culture. It is
 designed to contribute to the success of a project without burdening
 it with bureaucracy. The themes, processes and product descriptions
 describe what should be done but, in general, not how.
+
 ```
 PRINCE2 is principle-based rather than prescriptive; the principles
 ```
+
 ```
 are:
 ```
+
 universal in that they apply to every project
 self-validating in that they have been proven in practice over
 many years
@@ -3073,9 +3430,11 @@ done.
 7.2 The agile view of the PRINCE2
 principles
 Agile has a very strong focus on such things as principles. The Agile
+
 ```
 Manifesto and the agile frameworks and methods (see Appendix E)
 ```
+
 all promote a set of principles in some form, although the exact
 wording used to describe the fundamental mindset, attitudes and
 ethos does vary and includes or is sometimes replaced by such
@@ -3099,26 +3458,35 @@ Example
 Continued business
 justification
 Agile often uses the term ‘value’ instead
+
 ```
 of ‘benefit’ (see section 9.4 for a detailed
 ```
+
 ```
 discussion of this).
 ```
+
 The rationale behind creating a minimum
+
 ```
 viable product (MVP) needs to be
 ```
+
 understood, and attention should be paid
 to it throughout the project by the project
+
 ```
 management team (for more
 ```
+
 information, see the business case
 theme covered in Chapter 9, and also
+
 ```
 section 20.4.2).
 ```
+
 An MVP for an online service may
 comprise a simple landing page
 describing the service. If an insufficient
@@ -3144,35 +3512,46 @@ responsibilities
 Additional agile roles will apply at the
 delivery level and they should be
 mapped and merged carefully to the
+
 ```
 PRINCE2 roles (for more information,
 ```
+
 see the organization theme, which is
+
 ```
 covered in Chapter 10).
 ```
+
 A new project involves three teams from
 the customer area who all have differing
 needs from those of the project. Each of
 the teams will need to be clear who is
+
 ```
 fulfilling the project-level roles (e.g.
 ```
+
 ```
 senior user) and the delivery-level roles
 ```
+
 ```
 (e.g. product owner).
 ```
+
 Manage by stages Significant timeboxes such as releases
 should be carefully planned to integrate
 with, and fit into, management stages.
+
 ```
 In situations of high uncertainty (e.g.
 ```
+
 ```
 creating something very innovative)
 ```
+
 many short stages can be used to
 ensure that control is maintained and a
 fail fast/learn fast environment exists.
@@ -3219,21 +3598,27 @@ card option as a ‘should’.
 Tailor to suit the
 project environment
 PRINCE2 Agile incorporates an agile
+
 ```
 assessment tool (the Agilometer: see
 ```
+
 ```
 Chapter 24), which enables further
 ```
+
 specific tailoring by assessing the risks
 associated with the agile way of working
 with respect to the project environment
+
 ```
 (e.g. How engaged is the customer?
 ```
+
 ```
 How easy is communication?).
 ```
+
 A project is about to start and everyone
 is very excited about the months ahead.
 When assessing the project it transpires
@@ -3276,12 +3661,15 @@ progress of a 3-month stage as a burn-down chart on the wall of
 the office. As each day passes, the gap between the actual rate of
 progress and the planned rate keeps widening. The project team is
 aware of the situation and every day the team looks to close the gap
+
 ```
 by addressing the reasons for being behind (e.g. Is it extra work?
 ```
+
 ```
 Are the estimates too low?). Transparency means that everyone
 ```
+
 knows the situation and there are no surprises.
 7.4.2 Collaboration
 A motivated and respectful team is greater than the sum of its parts if
@@ -3313,9 +3701,11 @@ point face-to-face. They agree a way forward in a matter of minutes.
 7.4.4 Self-organization
 The people closest to the work will usually know best how to get the
 job done. Therefore people should be trusted to do it. If they create a
+
 ```
 plan, then they own it and buy into it; it is far more likely to happen if
 ```
+
 they do. Self-organizing creates mutual respect. A project manager
 can leave a team manager to focus on product delivery, thereby
 making the team manager feel trusted. This principle extends far
@@ -3338,20 +3728,27 @@ Projects are difficult, and in order to create ‘the right thing’ you need
 to be able to work out what ‘the right thing’ is! Frequent iteration and
 rapid feedback loops in any form provide an opportunity to learn.
 Learning helps to improve the products. However, feedback will not
+
 ```
 just happen; it needs to be sought out collaboratively (perhaps
 ```
+
 ```
 through experiments and spikes) with people such as the customer,
 ```
+
 customer representatives, other team members or stakeholders.
+
 ```
 Definition: Experiment
 ```
+
 An investigation into something that is carried out in a series of
+
 ```
 specific steps (which may involve research) in order to prove or
 ```
+
 disprove a theory or idea. This can be used to validate an idea
 or to try and improve something such as the way a team is
 working.
@@ -3362,9 +3759,11 @@ forward. The shorter these feedback loops are, the quicker progress
 can be made and the smaller will be the impact of any mistakes. The
 sooner the team solves ‘known unknowns’ and uncovers ‘unknown
 unknowns’, the sooner they can arrive at the right destination.
+
 ```
 Definition: Spike/spiking
 ```
+
 A temporary piece of work used to understand more about a
 given situation. It may take the form of a prototype or some
 research and is often used to reduce uncertainty from a
@@ -3379,12 +3778,15 @@ Chapter and section references
 Be transparent Section 15.4.2, Appendix H
 Collaborate Chapter 10, in particular section 10.5.3
 Communicate Chapter 26
+
 ```
 Self-organize Sections 10.5.1 and 20.3.1; Appendix H
 ```
+
 ```
 Explore Sections 14.4.1, 20.4.2 and 25.6.1; Chapter 27
 ```
+
 7.5 PRINCE2 principles summary
 When using PRINCE2 in an agile context it is important to monitor
 these behaviours and ensure that they are happening as well as
@@ -3393,9 +3795,11 @@ this way as much as possible.
 Ultimately, the project board or the project manager will need to
 monitor the situation. One option is to use a simple traffic light
 dashboard to highlight any behaviours that are in need of attention or
+
 ```
 may be causing damage to the project (see Figure 7.2). The values
 ```
+
 will be subjective and may be for the project board or project
 manager only. A green light would mean that the situation is fine.
 Yellow/amber would indicate that there is cause for concern. Red
@@ -3424,12 +3828,15 @@ need to be updated and revalidated throughout the project lifecycle,
 change will take place and risks will need to be managed.
 However, the strength of PRINCE2 is the way in which the seven
 themes are integrated, and this is achieved because of the specific
+
 ```
 PRINCE2 treatment of each theme (i.e. they are carefully designed
 ```
+
 ```
 to link together effectively).
 ```
+
 PRINCE2 Agile complies with the minimum requirements for the
 themes of a project to be following PRINCE2. How PRINCE2 Agile is
 tailored for the PRINCE2 themes is described in Table 8.1.
@@ -3441,24 +3848,30 @@ tailored for the PRINCE2 themes is described in Table 8.1.
 Table 8.1 Things to consider when tailoring the PRINCE2 themes to PRINCE2 Agile
 Theme Overview of the tailoring required and further considerations
 Business case Although no changes are required to this theme, it may contain more
+
 ```
 information (and possibly emphasis) on the tolerances around benefits
 ```
+
 with respect to priorities, timescales and the amount of product being
 delivered. This business case could show the amount of product being
 delivered in the form of a best-case, a worst-case and an expected-
 case scenario in relation to the amount of the final product that may be
 delivered or flexed.
 It may be appropriate to explicitly define what would constitute a
+
 ```
 minimum viable product (MVP), as well as some indication of priorities
 ```
+
 within the overall scope and related quality criteria.
 When creating a business case, it is essential to have an understanding
 of how the incremental delivery of a product and the value associated
+
 ```
 with it could impact project viability (positively or negatively) and also
 ```
+
 the ability to achieve the early delivery of some benefits.
 Where there is a high level of uncertainty the business case should be
 developed very quickly and the assumptions tested rapidly. This
@@ -3493,27 +3906,36 @@ prioritization.
 The use of agile concepts and techniques such as the definition of
 ‘done’ and the definition of ‘ready’ can be used to define quality
 criteria and acceptance criteria.
+
 ```
 The frequency of quality checking (in the form of reviews or tests) will
 ```
+
 have a significant impact on how a project is planned, as this will affect
+
 ```
 the iterative and incremental delivery of the project product (and its
 ```
+
 ```
 components) and how they are released.
 ```
+
 Plans Although no changes are required with this theme, many agile
 techniques and approaches exist in this area. They focus on the effort
+
 ```
 related to features (e.g. sprint planning) and often appear in an informal,
 ```
+
 low-tech, visible format such as a simple list or backlog.
 Planning is often done empirically.
 Agile typically looks at how much can be produced in a fixed timeframe
+
 ```
 such as a sprint or a release (or how much value can be delivered).
 ```
+
 This is often shown at the start in the form of a burn chart that can then
 be tracked.
 This is in contrast to creating milestones representing how long
@@ -3523,19 +3945,25 @@ but they should be synchronized to the agile way of working and should
 avoid the duplication of information that is being held in the form of
 backlogs.
 Risk The agile way of working addresses many risk areas such as avoiding
+
 ```
 too much detail at the start of a project (as it will not be fully understood
 ```
+
 ```
 at this point). However, agile comes with its own set of potential risks
 ```
+
 ```
 and these need to be proactively managed (e.g. ensuring that customer
 ```
+
 engagement is continual and that customer representatives are
+
 ```
 correctly empowered).
 ```
+
 Many agile techniques address risks, for example daily stand-up
 meetings, frequent delivery of products, frequent use reviews, customer
 interaction and empowered teams organizing themselves to deliver the
@@ -3564,9 +3992,11 @@ tracking time and cost, which are not suitable as a measure of a
 project’s progress. Tolerances would be set in accordance with this.
 Tracking progress will depend on the situation and what people need
 information on. If it is within a sprint, then burn-up or burn-down charts
+
 ```
 may suffice (see section 15.4.1). If it is across releases, then showing
 ```
+
 the value accrued and how this relates to the business case may be
 more appropriate.
 The frequent delivery of products that meet the appropriate acceptance
@@ -3578,31 +4008,40 @@ relative size of development goals. Each member of the
 development group selects one card from a set of numbered
 cards and places it face down on a table. The cards are
 revealed, and the estimates are then discussed.
+
 ```
 Definition: Velocity
 ```
+
 A description of the rate of progress a team is making. For
 example, if a team is completing 20 user stories per week, then
 this is their velocity and it can be used to empirically forecast
+
 ```
 their future rate of progress (assuming that the conditions
 ```
+
 ```
 remain the same).
 ```
+
 8.2 Some themes are more prominent
 than others
 Because most agile guidance is focused on product delivery, some
 of the themes are very prominent when combining agile with
+
 ```
 PRINCE2 (e.g. the plans theme and the progress theme), whereas
 ```
+
 ```
 others are less prominent (e.g. the business case theme and the risk
 ```
+
 ```
 theme). However, all of the themes still need to be used, as they are
 ```
+
 equally important.
 8.3 Summary of tailoring guidance for
 the PRINCE2 themes
@@ -3624,12 +4063,15 @@ agile concepts and techniques
 9.1 The PRINCE2 approach to the
 business case theme
 The purpose of the business case theme is to establish mechanisms
+
 ```
 to judge whether the project is (and remains) desirable, viable and
 ```
+
 ```
 achievable as a means to support decision-making in its (continued)
 ```
+
 investment.
 It is a PRINCE2 principle that a project must have continued
 business justification.
@@ -3638,9 +4080,11 @@ must stop or change the project following review by the project
 board.
 In PRINCE2 the business case is developed at the beginning of the
 project. Throughout the life of the project the business case is
+
 ```
 reviewed and updated as it develops and evolves (see Figure 9.1). It
 ```
+
 is formally verified by the project board at each key decision point,
 such as at stage boundaries, and confirmed throughout the period
 that benefits accrue.
@@ -3648,9 +4092,11 @@ that benefits accrue.
 •
 Figure 9.1 The development path of the business case
 [The business case] describes the justification for an organizational
+
 ```
 activity (project), which typically contains timescales, costs, benefits
 ```
+
 and risks, and against which continuing viability is tested.
 Section A.2 provides a product description and suggested content
 for the business case.
@@ -3667,35 +4113,46 @@ following reasons:
 Teams talk in terms of the delivery of ‘value’ instead.
 The most common agile ways of working focus more on the value
 of delivering individual features rather than assessing the totality
+
 ```
 of the features as a whole in advance. Work is prioritized (in a
 ```
+
 ```
 product backlog) by a product owner, in an ongoing manner,
 ```
+
 based on value and maximizing that value. In effect this plays the
 role of a business case and is authorized by the product owner.
+
 ```
 Definition: Product owner
 ```
+
 The role assigned to managing the product backlog in order to
 get the most value from it by ordering and prioritizing it.
 It is important to understand that in some agile environments this
+
 ```
 does not mean that a business case is not needed or is undesirable;
 ```
+
 it may just be assumed that one exists or that the rationale for the
 work being undertaken has already been justified.
+
 ```
 Scrum, for example, starts with a backlog of features; when Scrum is
 ```
+
 used in a project context it assumes that this backlog has already
 been created. In a BAU environment, a backlog will already exist and
 each entry on the backlog is prioritized on its relative merits in
 relation to the value it will deliver. In a project environment, upfront
+
 ```
 work is required (such as creating a backlog) and this would include
 ```
+
 the evolution of a business case, which would need to be authorized
 before delivery work could commence. A mature agile environment
 would cater for this although there is not a commonly agreed
@@ -3703,66 +4160,87 @@ standard for how to do this or what it would look like.
 •
 •
 •
+
 ```
 Definition: Visioning (may take place during project kick-
 ```
+
 ```
 off)
 ```
+
 An exercise or phase that aims to understand the overarching
+
 ```
 goal of something (e.g. a project). It would try to answer
 ```
+
 questions such as: Why is this work taking place? Who is it for?
 What might it look like?
 One common approach that is used is to have a specific sprint at the
 beginning of a piece of work in order to address many upfront
+
 ```
 activities (e.g. forming a team, visioning, defining the architecture)
 ```
+
 and understanding and approving a business case would be part of
+
 ```
 this. This is commonly referred to as sprint zero (or iteration zero or
 ```
+
 ```
 (the) discovery (phase)) but the following points should be
 ```
+
 ```
 recognized:
 ```
+
 There is no formal standard for what sprint zero looks like.
 Sprint zero is perceived both positively and negatively by the agile
 community.
+
 ```
 The Scrum Guide (see Appendix H) does not support the
 ```
+
 concept.
 •
 •
 •
 •
+
 ```
 Definition: Sprint zero
 ```
+
 A specific sprint at the beginning of a piece of work in order to
+
 ```
 address many upfront activities (e.g. forming a team, visioning,
 ```
+
 ```
 defining the architecture). Also referred to as iteration zero or
 ```
+
 ```
 (the) discovery (phase).
 ```
+
 9.3 PRINCE2 Agile guidance for the
 business case theme
 PRINCE2 Agile is based upon flexing what is delivered, and
 therefore the project board and the project manager should be aware
 that the business case is affected by the following:
 Flexing what is delivered may directly affect the expected benefits
+
 ```
 (e.g. fewer features than expected are delivered), so this needs to
 ```
+
 be appreciated when the business case is created and
 maintained as benefits are likely to be expressed in the form of a
 range, which relates to the amount delivered.
@@ -3779,14 +4257,18 @@ also need to be taken into account.
 •
 •
 The business case should clearly state what the minimum viable
+
 ```
 product (MVP) is and may give an indication of when this will be
 ```
+
 delivered and whether it will be put into operational use. The
 appropriate tolerances would be created around this so that if the
+
 ```
 project is forecast to deliver the MVP late (or even not at all) then
 ```
+
 an exception condition occurs. More information on MVP can be
 found in section 20.4.2.
 The viability of the project is a different concept from an MVP. At
@@ -3799,12 +4281,15 @@ that the strategic alignment and business justification are in place.
 Mature agile organizations would already have these in place.
 One way to present a business case is to describe best-case and
 worst-case scenarios that relate to the number of features that are
+
 ```
 planned to be delivered. The worst-case scenario (i.e. the lowest
 ```
+
 ```
 expectation of the amount delivered) would need to clearly show that
 ```
+
 the project is still viable. The best-case scenario could represent
 everything being delivered as planned. What would be useful to the
 project board assessing the business case, in an agile context, is to
@@ -3812,41 +4297,54 @@ be given clear information on what is expected to be delivered,
 creating an expected case that is between the two extremes
 although this will not necessarily be the mid-point.
 These scenarios can only be calculated when using high-level or
+
 ```
 (perhaps) intermediate-level requirements. It is unlikely that detailed
 ```
+
 requirements can be mapped directly to the business case.
+
 ```
 When using agile, the business case (along with the project product
 ```
+
 ```
 description) will have much more emphasis on what features are
 ```
+
 being delivered and when partial deliveries or releases can be
 expected, and with them the benefits that will be achieved.
 The business case is mandatory in PRINCE2 and needs to be
 created by someone who has the appropriate level of skill to create it
+
 ```
 correctly (e.g. it should be coherent, accurate and strategically
 ```
+
 ```
 aligned).
 ```
+
 In situations of high uncertainty it may be appropriate that the
 creation of a business case takes very little time, so that tests can be
+
 ```
 carried out quickly in order to validate it (see section 20.4.2 on the
 ```
+
 ```
 Lean Startup method).
 ```
+
 9.4 Agile concepts and techniques
 9.4.1 Defining value
 Agile usually refers to ‘value’ whereas PRINCE2 usually refers to
 ‘benefits’. Although not precisely the same thing the terms are often
+
 ```
 interchangeable (see section 9.4.2).
 ```
+
 9.4.1.1 Agile and value
 The very first principle of the Agile Manifesto refers to delivering
 value, but there is very little guidance in most agile sources on how
@@ -3873,18 +4371,22 @@ the value measure being used can be derived quickly from historical
 data and can easily be validated by customer feedback. An example
 of this would be the desire to increase traffic to a website. In this
 scenario other websites could be analysed to see how beneficial
+
 ```
 certain features proved to be; then after implementing the feature,
 ```
+
 hard data would be available to measure the impact.
 But even in the previous example measuring value may not be as
 straightforward as it looks. Should the customer be measuring the
 increase of visitors to a website or the increase in time spent on the
 website? Perhaps they should not be measuring either and they
 should be focusing on how much revenue the website is generating.
+
 ```
 Measures drive behaviours; therefore it is important to use the
 ```
+
 correct measure of value.
 9.4.1.3 Measuring value
 Measuring value can be quite difficult due to the fact there are so
@@ -3893,9 +4395,11 @@ reducing costs, retaining customers, reducing risks, meeting
 regulatory targets, customer satisfaction, brand improvement and so
 on.
 It is important to understand what kind of value is needed and to
+
 ```
 quantify it at the project level (i.e. in the business case). This will
 ```
+
 then help when assigning relative values at the delivery team level,
 because these people are working with the detail.
 One thing that is more important than building the product right is to
@@ -3910,15 +4414,19 @@ demonstrate the way in which a project team working in an agile way
 can respond and adapt to the circumstances happening around
 them.
 We need to close more customer incidents on the first call! We
+
 ```
 need a knowledge management (KM) system!
 ```
+
 Change in an organization can start from anywhere. There may be a
 problem to solve or an opportunity to take. Although the idea can
 come from anywhere, it needs to be authorized at the right level and
+
 ```
 in the right way (e.g. at a strategic level).
 ```
+
 Once a project begins to come into existence, it is essential to define
 the ultimate benefit and value that will be delivered. Asking for a KM
 system is asking for what PRINCE2 refers to as an output. Assuming
@@ -3931,9 +4439,11 @@ are similar they are not the same and this is explored in the rest of
 this chapter. Value is sometimes referred to as ‘net benefit’ as it
 represents the benefits after the expenditure has been factored in.
 Tip
+
 ```
 AXELOS’s Management of Value (MoV) says that value is
 ```
+
 subjective, with different people applying different criteria to
 assess whether they are getting good value. It is this
 subjectivity that makes it so essential to manage value
@@ -3942,12 +4452,15 @@ management activity. Added value is provided by the delivery of
 enhanced, but useful, benefits and more effective use of
 resources. Not all perceived benefits are actually necessary.
 MoV provides a means of distinguishing between needs and
+
 ```
 wants. Likewise the supply of resources is often (indeed
 ```
+
 ```
 usually) limited. Effective expenditure is essential to make the
 ```
+
 most of what is available.
 MoV recognizes that not all benefits are financial and that the
 differing priorities of key stakeholders need to be considered
@@ -3967,9 +4480,11 @@ Why is it assumed that a KM system will close more calls on the
 first call?
 What is the significance of closing an incident on the first call?
 Why is that different from closing an incident in two calls?
+
 ```
 Spending time to work out exactly what the problem (or opportunity)
 ```
+
 is and how to solve it is essential to getting a project off to a good
 start.
 The reason for wanting a KM system could be that:
@@ -3980,41 +4495,54 @@ The reason for wanting to close calls on the first call could be that:
 Existing measurements and metrics within the organization show
 that to re-visit an incident takes 25 per cent more time in total
 because subsequent calls need to cover the same information
+
 ```
 again (e.g. customer details and security). This in turn is leading
 ```
+
 to the need to hire many temporary workers over and above the
 existing company headcount, and temporary personnel are
 relatively expensive.
+
 ```
 9.4.2.2 Clarifying the output, outcome and benefit (or
 ```
+
 ```
 value)
 ```
+
 Investigating the thinking behind the desire for a KM system can
 drive out the real reasoning behind it. Continually asking ‘why?’ can
 help to determine the answer, and may result in a well-defined
 statement such as:
+
 ```
 We want a KM system (output) so that we can close 80 per cent
 ```
+
 ```
 of all incident calls on the first call (outcome) in order to reduce
 ```
+
 the workload in the call centre by 10 per cent so that we will not
 need to hire as many temporary workers, and this will save us
+
 ```
 £200 000 per year (benefit).
 ```
+
 Importantly, the outcome and benefits are now measurable.
 However, it is important to measure the current situation as well so
+
 ```
 that progress can be monitored (e.g. the percentage of calls closed
 ```
+
 ```
 on the first call is currently standing at 63 per cent).
 ```
+
 9.4.2.3 What if things change?
 Assuming that the project has gone ahead, working in an agile way
 would focus on getting feedback as early as possible by the early
@@ -4024,28 +4552,36 @@ to deliver certain important and useful features in the early months
 that are intended to help close calls on the first call. This then gives a
 chance to measure how effective they are.
 After 6 months, if the percentage of closed calls on the first call has
+
 ```
 improved to 70 per cent (from 63 per cent) then this would probably
 ```
+
 be seen as a good sign. However, this is still an outcome. Has the
 expected benefit been achieved in saving the expense of the
 temporary workers? It may be the case that there is no reduction in
 the temporary personnel. A project that is benefit- or value-focused
 will react to this, whereas a project that is output-focused will
+
 ```
 continue to build the KM system (as this is what it has been asked to
 ```
+
 ```
 do).
 ```
+
 As a surprise, what if the customer satisfaction ratings for the call
 centre have gone up recently by 4 per cent due to the increase in
+
 ```
 calls closed on the first call? Perhaps the happier customers (due to
 ```
+
 ```
 calls being closed on the first call) are resulting in more calls to the
 ```
+
 sales teams, which in turn is resulting in more calls to the call centre!
 Which is why the number of temporary workers has not reduced.
 Seeing that the KM system may be delivering benefit and value, but
@@ -4057,40 +4593,54 @@ improved incident resolution time that they are buying other products
 and they do so in large volumes. Therefore, if the call centre focused
 more on closing premium customers’ calls on the first call, this would
 deliver more benefits and value than with the original outcome, yet
+
 ```
 still deliver a KM system (the output).
 ```
+
 Revising the earlier request may therefore be:
+
 ```
 We want a KM system (output) so that we can close 90 per cent
 ```
+
 of all incident calls from premium customers on the first call
+
 ```
 (outcome) in order to increase their customer satisfaction
 ```
+
 ratings by 3 per cent so that we get an increase in sales of new
+
 ```
 products of £300 000 per year (benefit).
 ```
+
 9.4.2.4 The need to focus on benefits and value
 To deliver as much benefit and value as possible, it is important to be
 able to measure and track them. It is also important to be able to
 adjust the work taking place to maximize this. As feedback is
 received it will affect the priority of the requirements. This may
+
 ```
 generate new requirements that are essential (e.g. we need to know
 ```
+
 ```
 if a call is from a premium customer). This is why the business case
 ```
+
 needs to be flexible so that the benefits can be achieved by adjusting
 the originally defined outcomes and outputs, and therefore the
+
 ```
 setting of the appropriate tolerances (e.g. for scope, quality criteria
 ```
+
 ```
 and benefits) becomes important.
 ```
+
 9.4.2.5 How collaboration helps
 If the feedback being received by the early delivery of features is not
 quite what was expected, it is desirable to handle this collaboratively,
@@ -4101,9 +4651,11 @@ means that anyone representing the customer needs to seize the
 opportunity to adjust the course of the project by working out what is
 happening and why, and then reprioritize accordingly. Equally,
 anyone from the supplier side needs to make clear what is possible
+
 ```
 (e.g. ‘Have you thought of this?’, ‘We could do it that way.’) More
 ```
+
 benefit and value are likely to be delivered if the team collaboratively
 focuses on benefits and value in preference to focusing on just the
 output. This is why the contractual side of the relationship needs to
@@ -4124,12 +4676,15 @@ enables the decision-making that is being made at the more detailed
 levels in order to have a clearly defined position in this wider context
 and not just where requirements exist in isolation.
 Tip
+
 ```
 For any situation that arises on a project, a key question (for
 ```
+
 ```
 anyone) to ask is ‘How does this affect the business case?’ This
 ```
+
 represents the bigger picture or, to put it another way, the main
 thing is to keep the business case as the main focus.
 As outlined in section 9.4.2, the skill of crafting a well-written project
@@ -4139,23 +4694,30 @@ but also to detect as quickly as possible if a project is no longer
 viable.
 Acknowledgements and further research
 Benefield, G. The Mobius Loop. Available from:
+
 ```
 http://www.gabriellebenefield.com/mobius/how-to-measure-value
 ```
+
 [accessed: 19 April 2016].
 Gilb, T. Quantifying Value: on-line resources. Available from:
+
 ```
 http://gilb.com [accessed: 19 April 2016].
 ```
+
 ```
 Office of Government Commerce (2010) Management of Value
 ```
+
 ```
 (MoV). TSO, London.
 ```
+
 ```
 Ries, E. (2011) The Lean Startup: How Constant Innovation Creates
 ```
+
 Radically Successful Businesses. Portfolio Penguin.
 •
 •
@@ -4172,9 +4734,11 @@ agile concepts and techniques
 10.1 The PRINCE2 approach to the
 organization theme
 The purpose of the organization theme is to define and establish the
+
 ```
 project’s structure of accountability and responsibilities (the who?).
 ```
+
 Every project needs effective direction, management, control and
 communication. Establishing an effective project management team
 structure and approach for communication at the beginning of a
@@ -4191,13 +4755,17 @@ roles. PRINCE2 does not define jobs to be allocated to people on a
 one-to-one basis. Roles can be shared or combined according to the
 project’s needs, but the responsibilities must always be allocated.
 PRINCE2 identifies three principal categories of project stakeholders
+
 ```
 (business, user and supplier; see Figure 10.1), although there may
 ```
+
 be a wide range of other stakeholders with an interest in the project
+
 ```
 (e.g. government, regulator or unions). Each of the three principal
 ```
+
 categories of stakeholders has a specific interest in, or viewpoint on,
 •
 •
@@ -4224,22 +4792,28 @@ they will operate, maintain or support the project’s outputs
 the outputs of the project will impact them.
 The user presence is needed to specify the desired outputs and
 ensure that the project delivers them through the supplier.
+
 ```
 PRINCE2 defines a senior user(s) role to represent user interests
 ```
+
 on the project.
 Supplier The creation of the project’s outputs will need resources
 with certain skills. The supplier viewpoint should represent those
 who will provide the necessary skills and produce the project
 product. The supplier needs to have an understanding of all the
+
 ```
 relevant standards with which the output (product) needs to
 ```
+
 comply, and the project may need to use both in-house and
 external supplier teams to construct the project product. PRINCE2
+
 ```
 defines a senior supplier(s) role to represent supplier interest on
 ```
+
 the project.
 Figure 10.1 The three principal project interests
 In PRINCE2, the business, user and supplier interests are brought
@@ -4292,44 +4866,58 @@ should self-organize, be empowered, remain stable and have a large
 amount of autonomy. This creates a feeling of the team being
 collectively responsible for what it delivers, which contrasts with the
 view that the person in charge of the team is solely responsible. It
+
 ```
 also prefers the team members to be multi-skilled (i.e. they can offer
 ```
+
 ```
 more than one discipline) as much as possible.
 ```
+
 10.2.1 Common agile viewpoints of roles
 Generally speaking the most well-known and well-defined agile roles
 operate at the product delivery level with relatively little reference
+
 ```
 made to roles which sit above this (e.g. sponsorship, technical
 ```
+
 ```
 strategy). A mature agile environment would have clearly defined
 ```
+
 roles that are responsible for areas such as vision and product
+
 ```
 roadmaps (e.g. a sponsor or a product manager). A summary of how
 ```
+
 agile views certain common roles is as follows:
 The Scrum master A common role in agile is that of the Scrum
+
 ```
 master, who is seen as a servant leader (see section 10.5.1). The
 ```
+
 Scrum master facilitates and coaches the Scrum process while
 removing impediments identified by the team working at the
 delivery level. It could be said that there is no equivalent role in
 PRINCE2. The team manager is the most obvious candidate, but
 in Scrum and in many agile belief systems the team does not
+
 ```
 need to be ‘managed’ per se; it needs to be ‘led and coached’.
 ```
+
 When using agile in a PRINCE2 environment there will need to be
 a team manager or equivalent who is accountable to the project
 manager for the delivery of a team’s products, but this will need to
+
 ```
 be handled appropriately (see section 10.4.1).
 ```
+
 The product owner Another common and perhaps pivotal role in
 agile is that of the product owner, and this role is often regarded
 as the key stakeholder. It is difficult to draw a simple parallel with
@@ -4342,14 +4930,18 @@ involved on a project. Even making a general rule is difficult as
 there may be many teams with many product owners. The
 product owner role is discussed in detail in section 10.5.2. The
 business ambassador role in DSDM is similar to this.
+
 ```
 The project manager (and team manager) A significant body of
 ```
+
 opinion in the agile community suggests there is no longer a need
 for the project manager role. This view has arisen primarily for two
+
 ```
 reasons:
 ```
+
 There is a view that any work can be carried out and managed
 as if it were BAU by breaking the work down to a size and a
 level of certainty that allows it to be handled as routine work.
@@ -4364,12 +4956,15 @@ behaviours, relationships and responsibilities may be emphasized
 differently.
 The requirements engineer/business analyst The most
 common agile approaches give little prominence to a specific role
+
 ```
 for gathering the requirements for a project (e.g. a requirements
 ```
+
 ```
 engineer or business analyst). This role is usually undertaken by
 ```
+
 the product owner.
 10.3 PRINCE2 Agile guidance for the
 organization theme
@@ -4384,27 +4979,35 @@ is described at the beginning of Chapter 3 and illustrated in Figure
 3.1.
 The ease with which PRINCE2 and agile can be blended together
 depends upon the nature of the work involved. As soon as a piece of
+
 ```
 work involves more than just a few people and is difficult (i.e. it
 ```
+
 ```
 needs to be run as a project), there is a requirement to have clearly
 ```
+
 defined roles and responsibilities so that the correct communication
 and decisions can be taken at the right time and at the appropriate
+
 ```
 level (see Table 10.1).
 ```
+
 Table 10.1 Combining PRINCE2 roles with agile roles
 In a mature agile environment the contrasting concepts of the roles
 needed for a project context and how they integrate with the roles
 that commonly appear in agile will probably have been aligned. The
+
 ```
 concept that there is a need to represent a customer (someone who
 ```
+
 ```
 wants the product) and a supplier (someone who builds the product)
 ```
+
 in some form is the same in PRINCE2 as it is in agile, as it refers to
 roles rather than job titles. However, there are concepts which are
 different.
@@ -4423,13 +5026,17 @@ founded on teams being self-organized and collectively
 responsible for what they deliver. The Scrum master is seen as a
 coach and a servant leader to the team and not a manager of the
 team. PRINCE2 defines the role of team manager, which has
+
 ```
 clear accountability at the team/delivery level; the mapping of this
 ```
+
 to any role in an agile team is not straightforward and needs to be
+
 ```
 handled appropriately (see section 10.4.1).
 ```
+
 Common agile guidance refers to a single product owner. If a
 project involves more than just a handful of people and needs to
 canvass the views of several stakeholders and perhaps
@@ -4438,9 +5045,11 @@ recommends taking a more blended view of the customer rather
 than listening to one single voice. This would mean engaging with
 the customer at different levels of authority and ensuring that all
 areas of expertise have been included in the decision-making and
+
 ```
 communication process (see sections 10.4.1 and 10.5.2).
 ```
+
 Common agile guidance does not have a project manager
 role. Unsurprisingly, PRINCE2 sees this role as mandatory on the
 basis that if a piece of work is difficult enough to be classed as a
@@ -4460,13 +5069,17 @@ Table 10.3 shows the three options available when integrating an
 agile delivery team into a PRINCE2 project structure with respect to
 the team manager role. The key point is that the project manager
 needs to liaise with the team in the five areas of responsibility
+
 ```
 described in Table 10.2 (see Appendix B for descriptions of roles).
 ```
+
 Table 10.2 Mapping the responsibilities of a PRINCE2 team manager to the common agile
+
 ```
 roles (in this case Scrum)
 ```
+
 Figure 10.3 Integrating the team manager role into an agile delivery
 team
 PRINCE2 Agile does not have a preference for any one of the three
@@ -4476,9 +5089,11 @@ the delivery team. It may be that the project board, who are
 ultimately accountable for the project, express a preference or make
 a decision.
 These three options could be said to represent a range from ‘very
+
 ```
 agile’ (at the top) to ‘less agile’ (at the bottom) and could be a sign of
 ```
+
 how mature an organization is with respect to the agile ways of
 working. However, each project has its own set of unique
 circumstances and the choice should be made according to those
@@ -4500,9 +5115,11 @@ Leave the delivery team roles
 as they are
 Ensure that everyone is aware of who is responsible for each of the
 five areas.
+
 ```
 Role names remain the same (e.g. product owner, Scrum master).
 ```
+
 No-one is referred to as the team manager.
 The project manager will liaise with more than one person in the
 team.
@@ -4530,9 +5147,11 @@ The relationship between the project manager and the delivery team
 is one of the most important areas to get right when using PRINCE2
 and agile together. This may need to be defined as part of a work
 package, and it should be defined in the PID as this is where the
+
 ```
 project board (and perhaps the project manager) will need to agree
 ```
+
 on an appropriate interface between the project manager and the
 team manager/delivery team. Potentially, the relationship may be
 different from team to team.
@@ -4550,9 +5169,11 @@ products.
 10.4.3 The composition of a delivery team
 There is no mention of the composition of the delivery team in
 PRINCE2. This is for two reasons. Firstly, PRINCE2 operates in a
+
 ```
 variety of situations and industry sectors; therefore defining delivery
 ```
+
 teams is difficult as there is a wide variety of disciplines to cover.
 Secondly, the technical delivery aspects of a project are separate
 from project management and project direction. All that is required
@@ -4561,33 +5182,44 @@ project manager and the team manager.
 Agile does define the delivery team roles, and they would usually
 represent some or all of the following:
 someone to lead the team
+
 ```
 someone from the customer (or at least someone to represent the
 ```
+
 ```
 customer)
 ```
+
 a team to create the product
 someone to assure the quality of the product
+
 ```
 someone to coach the team (which includes coaching them in
 ```
+
 ```
 agile).
 ```
+
 How many of each role will vary according to the needs of the
+
 ```
 delivery team. One person could do more than one role (e.g. lead
 ```
+
 ```
 the team and coach it). Several people could carry out one role (e.g.
 ```
+
 ```
 create the product). Some roles may be peripheral to the delivery
 ```
+
 ```
 team (e.g. from customer areas that provide relatively minor input). A
 ```
+
 typical guide for the size of a team is seven, plus or minus two. It
 may be better for delivery teams that are larger than this to be
 divided into more than one team.
@@ -4601,22 +5233,29 @@ mention of roles such as engineer, designer, editor, etc. PRINCE2
 •
 •
 Agile provides the following set of generic roles that can be used if
+
 ```
 desired (see Appendix B):
 ```
+
 ```
 customer subject matter expert (SME)
 ```
+
 ```
 customer representative (usually outside the delivery team)
 ```
+
 supplier SME
+
 ```
 supplier representative (usually outside the delivery team)
 ```
+
 ```
 delivery team quality assurance (QA).
 ```
+
 10.4.3.1 Multi-skilled people and roles
 Many in the agile community promote the idea of teams made up of
 multi-skilled people, where any team member can do any other team
@@ -4628,23 +5267,31 @@ Organizations developing their agile capability and looking to
 broaden people’s skill-sets need to allow enough time for this
 transition to take place. When using PRINCE2 with agile it is
 recommended to aim for delivery teams that are made up of
+
 ```
 ‘generalizing specialists’ (sometimes referred to as ‘T-shaped’
 ```
+
 people as they have a lot of depth in one particular skill, and a
+
 ```
 breadth of knowledge, to a limited degree, in other skills). This
 ```
+
 creates a team in which everyone has a core skill, but they also have
+
 ```
 the ability to help out other team members (to some degree) in other
 ```
+
 areas of expertise.
 Furthermore, the whole project management team needs to be set
 up so that any stakeholder who needs to contribute is aware of their
+
 ```
 role (e.g. to provide information or to assure deliverables). Various
 ```
+
 techniques such as RACI exist for analysing stakeholder
 involvement, assessing the contribution, commitment and support
 levels of stakeholders in terms of whether their involvement is
@@ -4659,9 +5306,11 @@ appropriately trained in agile may also be needed. A lot of agile
 training is focused on specific delivery roles such as the product
 owner, the Scrum master and the agile coach, and corresponding
 qualifications also exist.
+
 ```
 Definition: RACI
 ```
+
 A model used to help define roles and responsibilities. RACI
 stands for ‘responsible, accountable, consulted and informed’.
 In some senses, PRINCE2 has no interest in the inner workings of a
@@ -4695,13 +5344,17 @@ many teams
 •
 •
 Tips
+
 ```
 An independent quality assurance (QA) role means that there is
 ```
+
 a separation of duties and people do not ‘mark their own
+
 ```
 homework’ (hence the need for the role).
 ```
+
 Customer QA and supplier QA are split into two so that it is
 possible to check that:
 the thing has been built right, and
@@ -4723,9 +5376,11 @@ be said to date back to ancient history.
 Although servant leadership can be used anywhere it is generally
 aimed at corporate or organizational leadership, or those who ‘lead’
 as opposed to those who ‘manage’. The term is referenced by the
+
 ```
 Scrum method (although the term is not explained); through the wide
 ```
+
 adoption of Scrum, servant leadership now has widespread adoption
 too as a concept, although how far it can be adopted is often
 affected by existing organizational constraints.
@@ -4756,13 +5411,17 @@ any style and this includes servant leadership.
 Table 10.4 Guidance on the PRINCE2 roles and possible agile mappings
 Role Overview of the tailoring required and further considerations
 Project board Needs to be fully conversant with the agile way of working and needs to
+
 ```
 understand:
 ```
+
 The fact that everything might not get delivered.
+
 ```
 The implications of the degree of agility being used; the project board
 ```
+
 needs to authorize the intended level of use of agile and ensure that
 it does not create unnecessary levels of risk. Risks can be created
 by using too much agile, or not enough agile, in relation to the project
@@ -4776,33 +5435,42 @@ project board the appropriate level of control, and the project
 manager and the delivery teams the necessary empowerment and
 trust.
 The general level of agile knowledge within the organization and how
+
 ```
 this will impact the project (e.g. agile knowledge of the people
 ```
+
 ```
 representing the customer on a project).
 ```
+
 Executive Needs to be familiar with the term ‘value’ as this will be frequently used
 by the project management team and the delivery teams. The term is
 often used interchangeably with the word ‘benefits’ and although they
 are similar in how they can be used, they are not identical.
 Knowledge of how PRINCE2 integrates with Management of Value
+
 ```
 (MoV) would be beneficial.
 ```
+
 This role broadly maps to agile environments that refer to a role of
 ‘sponsor’.
+
 ```
 Senior user(s) This role is unlikely to map to the common agile role of product owner,
 ```
+
 although it may function as a ‘super product owner’ under some
 circumstances.
 It is an important role in PRINCE2 Agile, in that it is the role that is
 ultimately responsible for the prioritization of the work being delivered in
 order to maximize value and realization of the customer’s goals.
+
 ```
 Senior supplier(s) No further guidance is required to that already mentioned for the project
 ```
+
 board above and the role description in Appendix B.
 Project manager Needs to be fully conversant with the agile way of working and how to
 manage a project using agile. Furthermore, the project manager is
@@ -4816,14 +5484,18 @@ Team manager This is an important role when using PRINCE2 in an agile context an
 represents the main interface between project management and
 product delivery.
 See section 10.4.1 for a detailed explanation of the tailoring required.
+
 ```
 Change authority Will need to be aware of the agile way of working (e.g. the focus of
 ```
+
 tolerances set for the project will be in the form of flexing what is being
 delivered, and the delivery teams will be empowered and self-
+
 ```
 organizing).
 ```
+
 Project assurance This has an important role to play in ensuring that management by
 exception is operating correctly to support the agile way of working.
 They need to assure that the project manager is being agile and
@@ -4834,21 +5506,27 @@ They may wish to put particular emphasis on the interface between the
 project manager and the team manager role as this may have been set
 up with a particularly agile emphasis or a more formal emphasis. Either
 way, it needs to be functioning in the most effective way possible for
+
 ```
 each team (see section 10.4.2).
 ```
+
 Project support May be responsible for the provision of agile coaching to the project
 management team or at the delivery team level unless the delivery
 team already has someone in that role.
 Corporate, programme
 management or the customer
+
 ```
 Will need to be aware of the agile way of working (e.g. the use of
 ```
+
 empowering the project management team and frequent releases of
+
 ```
 products to enable and provide benefits). They may also be looking at
 ```
+
 the organization as a whole and how the agile way of working can be
 applied or improved.
 10.5.1.2 Further information
@@ -4860,32 +5538,41 @@ can be achieved by the team manager leading by example and
 working collaboratively with the team to achieve this.
 When using PRINCE2 in an agile context, someone still needs to
 manage and lead the team, but by using the style of a servant leader
+
 ```
 their focus will primarily (but not solely) be on helping and supporting
 ```
+
 ```
 the team (i.e. serving). Therefore, leadership of the team is a
 ```
+
 secondary focus and comes from how well the primary focus is
 achieved.
 In some cases different terminology is used to achieve the servant-
+
 ```
 leadership philosophy (e.g. ‘facilitative’ leadership or ‘collaborative’
 ```
+
 ```
 leadership). A lot of the thinking behind servant leadership is that
 ```
+
 people feel more valued when they work as equals and share
 responsibility. This is in contrast to autocratic, dictatorial or
 authoritarian leadership where those in charge enjoy the feeling of
 power and the kudos that comes with it.
 Servant leadership will fit into any PRINCE2 Agile role where
+
 ```
 leadership skills are needed (e.g. project board, project manager and
 ```
+
 ```
 team manager) although certain areas of responsibility may need to
 ```
+
 be defined. An example of this would be to clarify the difference
 between leadership and management. Leadership normally refers to
 such things as vision, direction and the ability to inspire.
@@ -4895,9 +5582,11 @@ sometimes need to manage people, and managers always need to
 lead in some form.
 Some of the agile behaviours focus on collaboration, respect and
 honesty, which is very much in keeping with the servant-leader
+
 ```
 philosophy; these behaviours would be typical of an agile team
 ```
+
 manager managing a team with a servant-leader style.
 It is possible for a team to naturally select its own leader/Scrum
 master. This may be anyone from the team and not necessarily the
@@ -4929,9 +5618,11 @@ environment.
 •
 To help further understand the typical attributes a servant leader
 would need, the following lists may be of use.
+
 ```
 Robert Greenleaf (2002) listed the following desired attributes of a
 ```
+
 servant leader:
 listening
 empathy
@@ -4943,9 +5634,11 @@ foresight
 persuasion
 stewardship
 conceptualization.
+
 ```
 Ann McGee-Cooper and Duane Trammell (2012) summarized
 ```
+
 servant leadership as:
 listen without judgement
 be authentic
@@ -5006,9 +5699,11 @@ adjustments will probably need to be made.
 10.5.2.1 The basics
 In simple terms the product owner is the ‘voice of the customer’ and
 this role covers the following responsibilities as described in the
+
 ```
 Scrum Guide (see Appendix H):
 ```
+
 clearly expressing product backlog items
 ordering the items in the product backlog to best achieve goals
 and missions
@@ -5037,57 +5732,73 @@ authority to decide what goes into the product.
 10.5.2.2 The simplicity of the product owner role
 Crucial to this role, as commonly expressed in agile frameworks, is
 that there is only one person doing this. This creates the simplicity
+
 ```
 which many people (e.g. from the technical delivery side) find
 ```
+
 attractive as it creates a very clear single point of contact and a
 single version of the truth. The simplicity of the product owner role
 can work well in a straightforward BAU context, but there are
 limitations when working on a project.
 10.5.2.3 Limitations due to project size
+
 ```
 Project teams (small or large) would typically require a wider and
 ```
+
 more representative view of a customer’s interests than are perhaps
 required in a BAU situation.
 It may not be appropriate to have one person from the customer side
 responsible for the many views and angles that exist on a project.
 There may be high-level views held by certain stakeholders that
+
 ```
 need to be taken into account (e.g. strategic), along with other more
 ```
+
 ```
 detailed views from a different set of stakeholders (e.g. to do with
 ```
+
 ```
 how the product looks).
 ```
+
 10.5.2.4 Limitations due to size of the role in a project
 context
 It is one thing to assign several responsibilities and attributes to a
 role, but it is something different altogether to find an individual who
 can carry out that role effectively. The product owner role contains
 some responsibilities that even in isolation may require advanced
+
 ```
 levels of skill and may form a discipline (or role) in its own right, in
 ```
+
 the context of a project.
 Gathering requirements, defining them, facilitating communication
+
 ```
 with the wider customer community of project stakeholders (which
 ```
+
 ```
 would include many contrasting perspectives) and creating buy-in to
 ```
+
 the way forward is a significant undertaking for even the most
 experienced individual.
 This can be too much for one person as it involves a lot of work, and
+
 ```
 some of this work involves a high degree of technical skill (e.g.
 ```
+
 ```
 requirements engineering).
 ```
+
 A project requires many customer roles in order to correctly reflect
 the customer’s view. A single product owner may not be the best
 way to achieve this.
@@ -5098,9 +5809,11 @@ structured as Figures 10.4 and 10.5 show. Most of the common agile
 frameworks do not have the structures to accommodate this
 naturally, although DSDM is an exception to this general rule and
 mature agile organizations will have created their own.
+
 ```
 The PRINCE2 Agile role of customer subject matter expert (SME) is
 ```
+
 similar to product owner if it is inside a delivery team, and it can still
 be referred to as ‘product owner’ if the team already uses and
 understands this term and what the role entails. However, in a
@@ -5112,9 +5825,11 @@ product. The executive would be responsible for the business case.
 10.5.2.6 Specialist role to support capturing the customer
 view
 Another option is to have a role that can help to define the project’s
+
 ```
 products (often referred to as requirements) by acting as a catalyst
 ```
+
 between the customer view and the supplier view. Roles such as a
 requirements engineer or business analyst would be examples of
 •
@@ -5136,12 +5851,15 @@ gathering and correctly writing and defining requirements/user
 stories along with quality criteria and acceptance criteria
 helping where appropriate by providing support with testing from
 the customer perspective
+
 ```
 ensuring that requirements prioritization is appropriate (this
 ```
+
 ```
 includes being prepared to challenge decisions where necessary)
 ```
+
 creating and evolving models and supporting documentation
 facilitating discussions and running workshops with the wider
 stakeholder community
@@ -5164,9 +5882,11 @@ ultimately justifying the investment.
 On a PRINCE2 project the senior user is ultimately responsible for
 the appropriateness of the delivered product, and the executive is
 responsible for the justification of the project itself. The product
+
 ```
 owner role as commonly defined in agile (e.g. in Scrum) operates in
 ```
+
 the best way from inside the delivery teams.
 10.5.3 Working agreements and team
 ground rules
@@ -5181,25 +5901,33 @@ Working agreements and team rules include or are similar to
 policies, team norms or team charters.
 10.5.3.1 The basics
 These agreements can operate at many levels. Some of them may
+
 ```
 relate to concepts such as values (e.g. ‘we should be honest’, ‘we
 ```
+
 ```
 should be open’) while others may relate to simple rules about how
 ```
+
 ```
 long a stand-up meeting lasts (e.g. 10 or 15 minutes), or agreeing
 ```
+
 the core working hours for the team. They are created and reviewed
+
 ```
 by the team members themselves (typically during a retrospective)
 ```
+
 and their purpose is to improve the effectiveness of the team by
 reducing mistakes and promoting successful behaviours and
 practices.
+
 ```
 Typically they are made visible (perhaps displayed on the wall) and
 ```
+
 the team develops them over time. The team manager should make
 sure that everyone is involved, that improvements to the rules are
 facilitated and that everyone can contribute freely as the features
@@ -5213,9 +5941,11 @@ opposite effect.
 10.5.3.3 Hints that may prove useful
 Team ground rules can help with the internal workings of the team.
 They could be included as part of a work package as long as
+
 ```
 everyone (i.e. the team, the project manager and the team manager)
 ```
+
 is in agreement.
 Agreements and rules are potentially destructive if they are not built
 carefully by consensus and involve all of those impacted. Some
@@ -5237,9 +5967,11 @@ collaborative culture in the teams and fostering motivated and happy
 people. An example of this is where a team creates a role for a
 person called the Pastor of Fun, and this role is responsible for
 ensuring that the team develops a close bond by organizing social
+
 ```
 activities (perhaps inside and outside of work) and coming up with
 ```
+
 ideas to make certain work activities or events more fun and
 enjoyable. This typically results in bringing out the more human side
 of everyone, and in turn this creates behaviours such as loyalty and
@@ -5286,45 +6018,62 @@ Tip
 Assess carefully the people representing the customer side of
 the project. Are they empowered? Are they respected? One
 useful ‘rule’ is to engage with people who the customer ‘will not
+
 ```
 let you have access to’ (people who are seen as indispensable
 ```
+
 and the customer cannot afford to lose them to project work for
+
 ```
 any length of time).
 ```
+
 Acknowledgements and further research
+
 ```
 George, B. (2007) True North: Discover Your Authentic Leadership.
 ```
+
 John Wiley & Sons.
+
 ```
 Greenleaf, R.K. (2002) Servant Leadership: A Journey into the
 ```
+
 Nature of Legitimate Power and Greatness. Paulist Press.
+
 ```
 Lencioni, P.M. (2002) The Five Dysfunctions of a Team: A
 ```
+
 Leadership Fable. John Wiley & Sons.
+
 ```
 Trammell, D., McGee Cooper, A. and Lowe, J. (2012) Being the
 ```
+
 ```
 Change: Profiles from Our Servant Leadership Learning Community.
 ```
+
 Ann McGee-Cooper and Associates.
+
 ```
 Tuckman, B.W. (1965) Developmental sequence in small groups.
 ```
+
 Psychological Bulletin 63, 384–399.
+
 ```
 Watts, G. (2013) Scrum Mastery: From Good to Great Servant
 ```
+
 Leadership. Inspect & Adapt, Cheltenham, UK.
-Belbin team roles: http://www.belbin.com [accessed: 19 April 2016].
-Insights discovery: https://www.insights.com [accessed: 19 April
+Belbin team roles: <http://www.belbin.com> [accessed: 19 April 2016].
+Insights discovery: <https://www.insights.com> [accessed: 19 April
 2016].
-Myers-Briggs Type Indicator: http://www.myersbriggs.org [accessed:
+Myers-Briggs Type Indicator: <http://www.myersbriggs.org> [accessed:
 19 April 2016].
 •
 •
@@ -5352,12 +6101,15 @@ PRINCE2’s focus on products principle is central to its approach to
 quality. PRINCE2 requires systematic activities to:
 explicitly agree the customer’s quality expectations and
 acceptance criteria for the project product
+
 ```
 identify the project’s products (i.e. to the level at which the project
 ```
+
 ```
 intends to exert control)
 ```
+
 define the project product and its components in product
 descriptions, including the quality criteria by which they will be
 assessed, the quality methods to be used in designing,
@@ -5370,12 +6122,15 @@ control is summarized in Figure 11.1.
 11.2 The agile view of the quality theme
 There is a lot of emphasis put on quality throughout the whole agile
 movement, and some of the most prominent agile techniques
+
 ```
 address this area (e.g. the definition of ‘done’ in Scrum and the
 ```
+
 ```
 general use of acceptance criteria). However, perhaps surprisingly,
 ```
+
 the Agile Manifesto does not contain the word ‘quality’, although it
 does refer to working software.
 Tip
@@ -5388,9 +6143,11 @@ waterfall approach would typically see activities such as quality
 checking and testing take place after a product has been built. Agile
 takes a much more dynamic view and uses such concepts as
 integrating the testing and quality checking ‘as you go’, or even
+
 ```
 doing this before you start (‘test first’). This contrasts greatly with
 ```
+
 performing this afterwards or at the end.
 Figure 11.1 The quality audit trail
 In some agile environments there may not be a lot of emphasis given
@@ -5409,36 +6166,48 @@ description
 Although product descriptions are mandatory in PRINCE2, they are
 very flexible and can be written in the form of epics or user stories as
 long as they meet the requirements of the product description outline
+
 ```
 (as defined in Appendix A). These represent what are commonly
 ```
+
 ```
 referred to as the project’s ‘requirements’ (see Figure 25.1 for an
 ```
+
 ```
 example of decomposition).
 ```
+
 Product descriptions can be formal or informal, and they can evolve
 during the project to allow for change as long as it is clear what the
+
 ```
 baseline is and what level of plan they have been baselined to (e.g.
 ```
+
 ```
 they could be baselined at the stage plan level). The project
 ```
+
 management team may decide that the higher-level product
+
 ```
 descriptions need to be more formally defined (e.g. they are to be
 ```
+
 ```
 baselined in a configuration management system) and the lower-
 ```
+
 ```
 level product descriptions can be informal (e.g. captured as user
 ```
+
 ```
 stories on index cards).
 ```
+
 When using agile with PRINCE2, full advantage should be taken of
 the flexibility built into the product description outline as shown in
 Table 11.1.
@@ -5446,27 +6215,35 @@ Table 11.1 How to use some of the product description components to provide flex
 Product description
 component
 Guidance
+
 ```
 Quality criteria This usually equates to acceptance criteria (e.g. for a user story),
 ```
+
 although sometimes the definition of ‘done’ in Scrum is used for the
 same purpose. It should avoid too much unnecessary detail that will
 restrict positive change but does need to be of sufficient clarity so that it
 can be quality checked.
+
 ```
 Quality tolerances Use a range of values (perhaps prioritized) to allow for change.
 ```
+
 Quality method Select the appropriate technique for the agile environment. Sometimes
 some form of automated ‘test-driven’ approach may be
+
 ```
 desirable/required (e.g. when writing software) whereas at other times a
 ```
+
 ```
 more conventional quality review may be the more appropriate (e.g.
 ```
+
 ```
 when producing a brochure).
 ```
+
 Using the quality method to define the approach to quality would be
 specific to a particular product. A more general view across all products
 would be contained in the quality management approach.
@@ -5478,13 +6255,17 @@ level quality tolerances are defined with a level of formality and detail
 that embraces the agile way of working.
 Furthermore, when using agile the preferred way to define the
 purpose of the project product description is to use a clearly defined
+
 ```
 outcome (or outcomes); see section 9.4.2 for more information on
 ```
+
 outcomes. This can also help if the contractual side of the project is
+
 ```
 to be based on a more agile style of working (see Chapter 28).
 ```
+
 11.3.3 Quality management and quality
 planning
 The tools and approaches that are to be used should be defined as
@@ -5494,15 +6275,19 @@ part of the quality management approach: working in an agile way
 •
 •
 needs the appropriate choice of tooling and techniques as teams
+
 ```
 may be distributed and the testing may be ‘test-driven’ (see section
 ```
+
 ```
 11.3.4).
 ```
+
 ```
 Definition: Test-driven
 ```
+
 The concept of writing tests or quality checks before building
 the product or sub-product as opposed to after.
 The role of the customer should be well defined as the customer is
@@ -5516,15 +6301,19 @@ attendance at product demos.
 It is the upfront quality planning that enables PRINCE2 to develop an
 approach for how testing and quality checking will be carried out
 prior to the work taking place. If several frequent releases are
+
 ```
 planned, then the resources needed (human or otherwise) can be
 ```
+
 assessed and costed so that they can be factored in to the business
 case.
 Quality control considerations that look at what quality methods to
+
 ```
 use (e.g. the frequent use of demos and sprint reviews) are a natural
 ```
+
 evolution from this planning.
 Ultimately the learnings from many projects contribute to the
 evolution of the wider quality management system for an
@@ -5549,33 +6338,43 @@ the use of lots of automation.
 The challenge here when using PRINCE2 and agile together is to
 apply this concept as much as possible. The more it can be applied,
 the more agile the project will be. In an agile software context one
+
 ```
 approach is to use test-driven development (TDD) in the creation of
 ```
+
 software. Although this is a software-specific approach, the
 fundamental thinking behind it has led to similar techniques that can
 be used at a higher level and not necessarily in an IT context. One
+
 ```
 such example is behaviour-driven development (BDD); see Table
 ```
+
 11.2. BDD can be applied to both ‘building the right thing’ and
 ‘building the thing right’. This is sometimes referred to by two
+
 ```
 separate processes called ‘validation’ and ‘verification’ (or V&V).
 ```
+
 The idea of continually writing tests or quality-checking processes
 before building a product or sub-product may seem counterintuitive
 to many but this is one of the concepts of the agile way of working.
 When it works in partnership with developing the product iteratively
+
 ```
 and refactoring the product (see Table 11.2), this helps to build the
 ```
+
 appropriate level of quality into the final product.
 This can be quite challenging but it is agile best practice and is one
 of the reasons why the agile way of working has become popular
+
 ```
 (because it ensures that quality is built into a product).
 ```
+
 •
 •
 •
@@ -5588,53 +6387,70 @@ criteria to determine if work can be started on something such as a user
 story or a sprint.
 See section 25.6.1 for an example.
 Test-driven development
+
 ```
 (TDD)
 ```
+
 This is a software development process that uses a very short
 development cycle whereby:
+
 ```
 A developer writes an (initially failing) automated test for a new
 ```
+
 function.
 The developer then produces the minimum amount of code to pass
 that test.
 Finally, the new code is refactored to meet the appropriate coding
 standards.
 TDD is related to the test-first programming concepts of eXtreme
+
 ```
 Programming (XP) from the late nineties: it requires automation and
 ```
+
 ```
 usually takes place at the ‘unit-testing’ level (i.e. the smallest testable
 ```
+
 ```
 part of a system).
 ```
+
 Behaviour-driven development
+
 ```
 (BDD)
 ```
+
 This is a software development process based on TDD. BDD is usually
 more collaborative and uses the general techniques and principles of
+
 ```
 TDD in a wider behavioural context (e.g. what the customer may want
 ```
+
 ```
 to achieve). It uses a style of language that is easy for the customer to
 ```
+
 ```
 understand (hence the use of words such as ‘behaviour’ in preference
 ```
+
 ```
 to ‘test’).
 ```
+
 Refactoring In a software context, this is defined by Martin Fowler as ‘…the process
 of changing a software system in such a way that it does not alter the
 external behavior of the code yet improves its internal structure’
+
 ```
 (Refactoring: Improving the Design of Existing Code by Martin Fowler).
 ```
+
 The same concept can be applied to any product irrespective of
 whether or not it contains software.
 Technical debt Another term mostly used in the software domain, which is a metaphor
@@ -5664,9 +6480,11 @@ too significant it will cause an exception.
 •
 •
 Examples of the definition of ‘done’ and behaviour-driven
+
 ```
 development (taken from Table 11.2) are given below.
 ```
+
 Definition of ‘done’:
 The user documentation is up to date.
 The customer has seen the product demonstrated and is happy
@@ -5675,9 +6493,11 @@ The product has been peer-reviewed.
 The support team has been notified of when it will be released.
 The product meets the organization’s accessibility standards.
 The ‘given, when, then’ format used in BDD:
+
 ```
 Given Some initial context (the givens):
 ```
+
 given the account is in sufficient credit
 and the card is valid
 and the dispenser contains cash
@@ -5699,17 +6519,22 @@ Identify outputs, outcomes and benefits Section 9.4.2
 Tailor any of the PRINCE2 management products Chapter 23
 11.5 Quality theme summary
 It is important when using agile to distinguish between the quality of
+
 ```
 a product (defined by quality criteria) and the scope (defined by the
 ```
+
 ```
 products themselves). Some project management philosophies see
 ```
+
 a reduction in scope as a reduction in quality. PRINCE2 does not
 see it this way. From the beginning of a project the customer’s
+
 ```
 quality expectations (and associated acceptance criteria) are set,
 ```
+
 and this level of quality needs to be maintained. At the end of a
 project if 10 per cent of the scope is not delivered but the remaining
 90 per cent that has been delivered has achieved the desired quality
@@ -5720,16 +6545,19 @@ If you do not know how to test a requirement, then assume you
 have not understood the requirement yet.
 Furthermore, and as part of the thinking behind flexing what is being
 delivered, it is the de-scoping that enables the quality level to be
+
 ```
 protected and therefore avoids incurring ownership costs (e.g. due to
 ```
+
 ```
 maintenance) throughout the life of the final product.
 ```
+
 Acknowledgements and further research
-Matts. C. https://theitriskmanager.wordpress.com [accessed: 19 April
+Matts. C. <https://theitriskmanager.wordpress.com> [accessed: 19 April
 2016].
-North, D. http://dannorth.net/introducing-bdd [accessed: 19 April
+North, D. <http://dannorth.net/introducing-bdd> [accessed: 19 April
 2016].
 •
 •
@@ -5744,19 +6572,24 @@ agile concepts and techniques
 12.1 The PRINCE2 approach to the
 plans theme
 The purpose of the plans theme is to facilitate communication and
+
 ```
 control by defining the means of delivering the products (the where
 ```
+
 ```
 and how, by whom, and estimating the when and how much).
 ```
+
 In PRINCE2, there are three levels of plan: project, stage and team.
 In addition, PRINCE2 has exception plans, which are created at the
 same level as the plan they are replacing.
 All PRINCE2 plans have the same fundamental structure and
+
 ```
 contents; it is the purpose, scope and level of detail in the plans that
 ```
+
 vary. For this reason, PRINCE2 provides a single ‘plan’ product
 covering all these plans and Appendix A, section A.16, provides the
 product description and suggested content.
@@ -5764,12 +6597,15 @@ The relationship between these plans is illustrated in Figure 12.1.
 Figure 12.1 How PRINCE2’s plans relate to each other
 12.2 The agile view of the plans theme
 Agile puts a lot of emphasis on planning, and there are several
+
 ```
 concepts and techniques (e.g. planning and estimating with story
 ```
+
 ```
 points) that could be said to be common to the agile way of working.
 ```
+
 However, not only are there significant differences between agile and
 conventional approaches to planning, there are also differences
 between the various agile frameworks. This means that there are
@@ -5778,9 +6614,11 @@ most appropriate approach to suit the situation.
 12.2.1 Empiricism
 A fundamental principle upon which most agile methods are based is
 the concept of empiricism. This involves making decisions based on
+
 ```
 experience (i.e. what is happening or has already happened). A
 ```
+
 simple example of this would be to start a piece of work and then
 •
 •
@@ -5789,12 +6627,15 @@ calculate how much work is left to complete by comparing it with how
 much work is getting done. This then allows the team to forecast or
 create an end date.
 Starting work and seeing how much is getting done is sometimes
+
 ```
 called ‘calibration’ (in a similar way to manually setting weighing
 ```
+
 ```
 scales to zero), or calculating ‘velocity’ (i.e. the rate of progress).
 ```
+
 Another expression used to encapsulate this is ‘using yesterday’s
 weather’ as it can often be the best indicator of what is to follow.
 Future estimates are then based on this.
@@ -5809,17 +6650,22 @@ that.
 Agile plans are often created in a particular style which involves:
 basing planning around requirements and features
 making planning a team-based exercise
+
 ```
 planning at the last responsible moment (also known as JIT or
 ```
+
 ```
 just-in-time planning).
 ```
+
 The first point means that the focus of any agile plan is on what
 features are being delivered as opposed to focusing on technical
+
 ```
 phases such as design, build and test (see section 2.1).
 ```
+
 The second point is a vital component of the agile mindset that
 creates ownership of plans and underpins the ability of a team to
 self-organize. In some agile environments this may only happen at
@@ -5837,35 +6683,45 @@ right time.
 Figure 12.2 Timeboxed versus flow-based working
 12.2.3 Using points to plan
 As agile has evolved over the years many people have moved from
+
 ```
 controlling their work with a timeboxing approach (e.g. Scrum) to
 ```
+
 ```
 using flow-based systems through the use of Kanban (see Figure
 ```
+
 ```
 12.2). This has created choice for agile teams whereby teams can
 ```
+
 ```
 use a point-scoring system to negotiate and plan (e.g. effort points
 ```
+
 ```
 per story), or they can choose to forecast according to such things
 ```
+
 ```
 as lead times (i.e. how long it takes a piece of work of this type to
 ```
+
 ```
 complete). There are advantages and disadvantages when using
 ```
+
 points in their many forms, so care should be taken to use them
 appropriately as described in the guidance later in section 12.4.1.
 It is important to note that the use of ‘points’ for estimation is seen by
 some as fundamental to working in an agile way. Although they are
 still popular and still useful, they should be seen as ‘a way’ and not
+
 ```
 ‘the way’ (see section 12.4.1). A middle ground is often used
 ```
+
 whereby a simple form of estimation is used where work is classified
 as either large, medium or small, or high, medium and low, and this
 can be used with either a timeboxed or flow-based approach.
@@ -5873,17 +6729,22 @@ can be used with either a timeboxed or flow-based approach.
 plans theme
 PRINCE2 supports any type of planning style from a conventional
 Gantt chart to a simple backlog list. Both styles are in keeping with
+
 ```
 the product description for a plan (see Appendix A.16). It may be the
 ```
+
 case that more than one planning style is used on a single project.
 There may be a tendency to use more conventional planning
+
 ```
 techniques for the higher levels of planning (e.g. where departmental
 ```
+
 ```
 and organizational dependencies may exist) but this may not be
 ```
+
 necessary. When using PRINCE2 in an agile environment a Gantt
 chart can be of limited value as it is not geared to monitor and
 control the amount of products delivered or their quality.
@@ -5897,9 +6758,11 @@ Agile planning is collaborative, for all types of plan and at all levels,
 and this is desirable in order to create an environment where the
 people involved in a project can respond to changing circumstances.
 If a group of people are working to a plan that was created by
+
 ```
 someone else (e.g. the project manager) there is likely to be less
 ```
+
 commitment and responsiveness. This does not mean that the role
 of the project manager or team manager is any less important, but it
 does mean that they need to facilitate this style of planning.
@@ -5907,29 +6770,38 @@ does mean that they need to facilitate this style of planning.
 Empiricism has many advantages, and to use PRINCE2 in an agile
 environment this needs to be fully understood and embraced as far
 as is practicable. A potential drawback with some of the agile
+
 ```
 planning techniques is that in a project context (where a project is
 ```
+
 ```
 finite), we need to estimate and plan before we start and not after.
 ```
+
 PRINCE2 needs a project plan with an end date for the following
+
 ```
 reasons:
 ```
+
 It will enable the project to be justified and therefore authorized.
 It will provide a baseline against which progress can be measured
 and stages defined.
+
 ```
 Projects are finite pieces of work that are ‘bounded’; therefore
 ```
+
 without an end date PRINCE2 and PRINCE2 Agile would not see
 the work as a project.
 From a supplier perspective it enables them to give the customer
 a price and a delivery date.
+
 ```
 It will show if a minimum viable product (MVP) can be created in
 ```
+
 time.
 Stage plans and team plans are similarly affected, albeit at a lower
 level.
@@ -5942,22 +6814,29 @@ an increasing margin of error compared with shorter-term estimation.
 This leads to the use of the term ‘planning horizon’ whereby a plan
 for the next two weeks would be quite detailed and have a relatively
 low margin of error, whereas a plan for the next 12 months would be
+
 ```
 much less detailed and have a relatively high margin of error (see
 ```
+
 ```
 Figure 12.3). Long-term planning addresses the uncertainties and
 ```
+
 ```
 unknowns (sometimes referred to as the ‘cone of uncertainty’) by
 ```
+
 providing a level of confidence or a range with each estimate in the
+
 ```
 form of agreed tolerances (see section 25.4).
 ```
+
 ```
 Definition: Emergent
 ```
+
 A concept in agile that refers to creating solutions and making
 decisions in a way that gradually converges on an accurate
 solution and does not involve a lot of upfront work. The
@@ -5970,61 +6849,80 @@ develops.
 Figure 12.3 Different planning levels, horizons and formats
 Estimation and planning are seen as evolutionary when using agile
 and not a one-off activity. They are carried out throughout the project
+
 ```
 and for every level of plan (see Table 12.1). Empirical and emergent
 ```
+
 planning is more likely to occur in the lower levels of plan such as
 with product delivery within the managing product delivery process
+
 ```
 (i.e. where agile is predominantly used) because the timescales (and
 ```
+
 ```
 therefore the planning horizons) will be short, perhaps in the order of
 ```
+
 ```
 2–4 weeks. The tasks at this level of plan will be so small (e.g. a
 ```
+
 ```
 matter of days or hours) that feedback in the form of metrics will be
 ```
+
 frequent and planning will have a relatively low margin of error. ‘Just-
+
 ```
 in-time’ (or JIT) planning at these low levels of plan is sometimes
 ```
+
 referred to as ‘rolling-wave planning’ or ‘progressive elaboration’.
 Table 12.1 Estimation approaches that may be used at each PRINCE2 plan level
 PRINCE2 plan level Possible agile
 equivalent
 Typical estimation approaches and/or
 techniques
+
 ```
 (Corporate, programme management or
 ```
+
 ```
 the customer)
 ```
+
 Product roadmap
 Project Project By analogy with other projects or by
 using more predictive or ‘rational’ means
 or expert knowledge
+
 ```
 Stage Release (one or
 ```
+
 ```
 more)
 ```
+
 Effort per feature in the form of points
 and expected value or by using existing
 lead times if available
+
 ```
 Team Sprint (one or more) Effort per backlog item in the form of
 ```
+
 points or by using existing lead times if
 available
 A more predictive style of the planning would typically be applied for
+
 ```
 higher-level plans (e.g. project plans and possibly stage plans) as
 ```
+
 these have a relatively higher margin of error. However, empiricism
 can still be used at these levels, and it would be a good sign of an
 organization’s maturity if measures and metrics from previous
@@ -6042,18 +6940,23 @@ based planning, and this can be applied very easily in agile
 situations. When creating a product breakdown structure or product
 description the focus will typically be similar to the content of a
 requirement or user story. It would not be appropriate to use
+
 ```
 technical phases during this exercise in an agile context (e.g.
 ```
+
 ```
 analysis, design, build and test) as this is not the focus of the agile
 ```
+
 way of working.
 When using PRINCE2 in an agile context it is important to plan
 around features and groups of features. Due to the primary focus of
+
 ```
 agile being based on flexing what is being delivered (see Chapter 6),
 ```
+
 features expressed in the form of requirements or user stories
 represent the contingency on a project when combining PRINCE2
 with agile. Conversely, time and cost are not used as contingency
@@ -6071,9 +6974,11 @@ around the immediate future and this often relates to a timebox of 2–
 timebox, both flow-based and iterative timeboxing approaches focus
 predominantly upon prioritization. That is to say the focus is on doing
 the highest-priority work as soon as possible.
+
 ```
 This is typified by sprint planning in Scrum (see Appendix H)
 ```
+
 whereby the highest-priority items in the product backlog are broken
 down into tasks by the team that will be developing them. An
 indication of a well-maintained product backlog is that each entry in
@@ -6082,34 +6987,43 @@ increasing the likelihood that work can be carried out by any member
 of the team with the appropriate skills, without impacting on any of
 the others. However, there will typically be limitations due to people
 having certain types of skill and experience, and which people are
+
 ```
 available; therefore a balance will always need to be struck.
 ```
+
 Projects by their very nature are challenging, and therefore when
 planning at the levels above the product delivery level it is usually
 too simplistic to create a prioritized to-do list and start working from
 the top. Longer-term planning needs to consider many factors such
+
 ```
 as dependencies (internal and external to the project) and the
 ```
+
 grouping together of similar work items.
 12.4 Agile concepts and techniques
 12.4.1 Agile estimation
 One of the most popular techniques used in agile environments is to
 estimate the work to be done using a points system. This technique
+
 ```
 can be used for any type of plan in PRINCE2 (see ‘sprint planning’ in
 ```
+
 ```
 Appendix H). Although the technique is reasonably straightforward
 ```
+
 and commonly used, many of its advantages are not that obvious
 and sometimes overlooked.
 12.4.1.1 The basics
 The principal thinking behind this technique is to start estimating by
+
 ```
 using ‘relative’ estimates (not ‘actual’ estimates) and to do so by
 ```
+
 harnessing the knowledge of the whole team in a way that everyone
 can contribute without being prejudiced by other team members.
 The most common form of relative estimation is achieved by giving
@@ -6121,9 +7035,11 @@ twice the effort compared with painting the wall. Importantly, this
 does not give any indication of how long either task will take, but it
 does mean that if painting the wall turns out to take 5 days then
 painting the ceiling should take something in the region of 10 days
+
 ```
 (assuming that we have made a correct relative estimate).
 ```
+
 Creating these relative estimates is carried out as a team, where
 each team member simultaneously gives their opinion by using pre-
 numbered playing cards or pieces of paper showing their chosen
@@ -6149,19 +7065,24 @@ Therefore, using this points system a requirement estimated at eight
 points would involve four times the effort compared with a
 requirement classified as being worth two points.
 Another very popular technique is called ‘T-shirt sizing’. This involves
+
 ```
 classifying each requirement or user story as being either small (S),
 ```
+
 ```
 medium (M), large (L) or extra-large (XL) and so on. Even a simple
 ```
+
 rating of ‘high, medium or low’ as a guide to effort can still be
 effective. These systems are deliberately abstract in that they can be
 carried out without any relative values or ratios. In effect they just
 say that a medium task is bigger than a small and not as big as a
+
 ```
 large. Ratios (or values) can be used with these approaches if
 ```
+
 desired as shown in Table 12.2.
 The reason why the numbers increase exponentially, and not in a
 linear manner, is because there is more uncertainty as the size of a
@@ -6175,16 +7096,21 @@ XL 8
 XXL 16
 12.4.1.3 Hints that may prove useful
 When starting the estimation exercise, see if the team can agree on
+
 ```
 a single base story that represents a value of one (or another
 ```
+
 ```
 number if preferred) so that every other story has something relative
 ```
+
 to refer to from the start.
+
 ```
 If a story is estimated at a very large number (e.g. 40 or 100) then it
 ```
+
 would normally indicate that not enough is known about the story to
 provide a realistic estimate. Further investigative work is likely to be
 required to understand more about the story.
@@ -6196,12 +7122,15 @@ calculate. Points are arbitrary and therefore reduce the likelihood of
 this problem and the potential for conflict.
 Do not compare your relative estimates with the relative estimates of
 other teams. Each team has its own individual way of doing this, and
+
 ```
 the approach may not be the same across teams (e.g. the degree to
 ```
+
 ```
 which they factor in their own risk appetite might vary).
 ```
+
 When using playing cards or paper to estimate, do not at any time
 average out the point scores. It is the debate and interaction
 between the team members that will result in a greater
@@ -6211,19 +7140,24 @@ When considering the relative effort involved it is best not to think of
 the actual effort required, as this defeats the purpose of the
 technique. Ultimately these relative estimates can be converted into
 actual estimates of time and cost if desired but this may not take
+
 ```
 place (e.g. a delivery team might try and do as much work as
 ```
+
 ```
 possible (measured in points) in the allotted time period). However,
 ```
+
 in a project context deadlines will need to be forecast so it may be
 necessary to go some way in converting the relative estimates into
 times. Please note that when using the more common agile
 frameworks in the BAU domain, teams are quite happy dealing with
+
 ```
 relative estimates in the style of points (or similar) and do not convert
 ```
+
 them to an actual effort figure such as hours or days.
 The concept of team-based estimation is often referred to as ‘the
 wisdom of crowds’. It focuses on bringing different areas of
@@ -6241,22 +7175,27 @@ illustrated in Figure 12.4.
 Figure 12.4 Painting a wall – comparing effort with complexity
 12.5 Plans theme summary
 Planning in PRINCE2 operates at several levels and throughout a
+
 ```
 project. PRINCE2 Agile planning is very comprehensive (e.g. the
 ```
+
 ```
 plans include the requirements/user stories). When this is carried out
 ```
+
 in a very collaborative and feature-focused planning style, it creates
 a lot of knowledge transfer about the plan and the ownership of it.
 Tip
 An estimate should always have at least two parts: the estimate
 itself and a level of confidence for that estimate.
 Acknowledgements and further research
+
 ```
 Cohn, M. (2005) Agile Estimating and Planning. Prentice Hall.
 ```
-Grenning, J. https://wingman-sw.com/renaissance/ [accessed: 19
+
+Grenning, J. <https://wingman-sw.com/renaissance/> [accessed: 19
 April 2016].
 •
 •
@@ -6275,9 +7214,11 @@ theme
 The purpose of the risk theme is to identify, assess and control
 uncertainty and, as a result, improve the ability of the project to
 succeed.
+
 ```
 Definition: Risk
 ```
+
 An uncertain event or set of events that, should it occur, will
 have an effect on the achievement of objectives. A risk is
 measured by a combination of the probability of a perceived
@@ -6299,20 +7240,26 @@ scope and benefits to an agreed time, cost and quality.
 procedure
 PRINCE2 recommends, but does not mandate, a risk management
 procedure based on Management of Risk: Guidance for Practitioners
+
 ```
 (2010).
 ```
+
 Figure 13.1 shows the elements of the risk management procedure.
 The procedure consists of five steps, the first four of which are
+
 ```
 sequential:
 ```
+
 ```
 identify: context and risks
 ```
+
 ```
 assess: estimate and evaluate
 ```
+
 plan
 implement.
 ‘Communicate’, the fifth step, operates in parallel as the outputs of
@@ -6350,9 +7297,11 @@ planned in response.
 The plan step involves identifying and evaluating the appropriate risk
 response to remove or reduce threats, and to maximize
 opportunities. If the risk falls within the tolerances set for the project,
+
 ```
 the project manager decides on the appropriate response; otherwise
 ```
+
 the decision is escalated to the project board.
 13.1.1.4 Implement
 Planned risk responses need to be actioned, their effectiveness
@@ -6366,17 +7315,22 @@ the project and externally to stakeholders.
 13.2 The agile view of the risk theme
 In general terms relatively less prominence is given to the area of
 risk in agile when compared with other areas such as planning and
+
 ```
 progress. Issues (often referred to as blockers or impediments) are
 ```
+
 ```
 explicitly addressed (e.g. during a stand-up meeting) but risks and
 ```
+
 the management of them are handled more implicitly. Agile, by the
 very nature of some of its concepts, mitigates many risks associated
+
 ```
 with other approaches (e.g. waterfall) by preferring the detail to
 ```
+
 emerge later rather than sooner, and thereby reducing the impact of
 changes.
 It could be said that risk management happens due to the
@@ -6397,18 +7351,23 @@ environment. In many situations it may be possible to manage risk in
 a real-time way but PRINCE2 puts a lot of emphasis on planned risk
 management, clearly defining who is responsible for this.
 In PRINCE2:
+
 ```
 It is the responsibility of the role that is managing the team (i.e.
 ```
+
 ```
 the team manager) to manage risk at the delivery level, and the
 ```
+
 ```
 responsibility of the role managing the project (i.e. the project
 ```
+
 ```
 manager) to manage risk at the project level.
 ```
+
 Risk management is formalized and planned, but at a level that is
 appropriate for the situation.
 That does not mean to say that the team-based approach to risk
@@ -6422,35 +7381,45 @@ Formalizing risk management does not mean creating processes or
 documents that are bureaucratic. The level of formality should be
 appropriate to the needs of a project. On some projects, a risk
 register of a few columns manually updated on a team board may
+
 ```
 suffice (see Figure 13.2) whereas other projects may require a
 ```
+
 dozen columns electronically held and accessible remotely.
 13.3.2 Addressing risk during stand-up
 meetings
 Due to the implicit nature of risk management in some forms of agile,
 it is good practice to ensure that the delivery teams understand the
 difference between something that ‘has happened’ or ‘is happening’
+
 ```
 (referred to as an ‘issue’ in PRINCE2) versus something that ‘may
 ```
+
 ```
 happen’ (referred to as a ‘risk’ in PRINCE2).
 ```
+
 Figure 13.2 An informal risk register may be appropriate in certain
 situations
+
 ```
 This is particularly relevant in stand-up meetings (or daily Scrums;
 ```
+
 ```
 see Appendix H). When asking team members if anything is blocking
 ```
+
 •
 •
 •
+
 ```
 their progress (sometimes called an ‘impediment’), it is good practice
 ```
+
 to also ask if they are aware of anything that ‘may potentially’ block
 their progress. This does not necessarily need to be a separate
 question but the distinction is important, as the two questions require
@@ -6460,15 +7429,19 @@ actively manage risk. PRINCE2 sees this as essential in all
 situations. It is not optional.
 13.3.3 Agile risks
 Much of the agile way of working has been created to address the
+
 ```
 many risks associated with waterfall projects; for example, avoiding
 ```
+
 detailed specifications at the early stages because the details may
 change, or delivering early and often to highlight misunderstandings.
 Although the agile way of working may reduce many common risks
+
 ```
 (which is one of the reasons for its growth in popularity) it does have
 ```
+
 risk areas of its own, such as:
 Agile relies on customer involvement, so what happens if the
 customer lacks commitment or is not empowered to make
@@ -6482,15 +7455,19 @@ the existing infrastructure or legislation?
 Another risk that should not be overlooked when working in an agile
 way is that value is delivered before it has been planned. Although
 this may be a positive situation and will not happen as a surprise
+
 ```
 (due to frequent customer involvement), it is still a risk and needs to
 ```
+
 ```
 be managed accordingly (e.g. end-users need training earlier or
 ```
+
 ```
 benefits that are delivered earlier can be applied to other projects).
 ```
+
 A PRINCE2 project using agile will face many risks faced by any
 project but it is vulnerable to specific agile risks and these need to be
 managed. PRINCE2 Agile contains an agile risk assessment tool
@@ -6502,28 +7479,37 @@ Table 13.1 Agile concepts and techniques relevant to risk management
 Approaches and techniques
 associated with risk
 Description
+
 ```
 M_o_R (Management of Risk) AXELOS’s M_o_R offers an effective framework for taking informed
 ```
+
 decisions about the risks that affect performance objectives. The
+
 ```
 framework allows organizations to assess risk accurately (selecting the
 ```
+
 ```
 correct responses to threats and opportunities created by uncertainty)
 ```
+
 and thereby improve service delivery.
 Risk burn-down charts Originally introduced by John Brothers and then elaborated on by Mike
 Cohn, this technique multiplies the probability of a risk occurring by the
 impact it will have in days lost. This then creates a value for the days
 that may be lost from a timebox. When this is accumulated for all risks
+
 ```
 associated with a timebox, a total exposure (in potential days lost) can
 ```
+
 be calculated. This is shown graphically in the form of a burn-down
+
 ```
 chart that can be addressed (i.e. burnt down) by mitigating or
 ```
+
 addressing the identified risks.
 On a PRINCE2 risk register entry, ‘expected value’ can be used to
 record this, although it will usually be measured in days or hours.
@@ -6534,29 +7520,36 @@ project that are uncertain and need to have the level of uncertainty
 reduced to help with such things as planning and risk mitigation.
 13.5 Risk theme summary
 PRINCE2 places focus on the risk theme and, with its alignment to
+
 ```
 Management of Risk (M_o_R), it brings a wide body of knowledge to
 ```
+
 this area offering many benefits to the agile way of working, such as
 when planning a risk management approach and managing risks
 throughout the project.
 When using PRINCE2 Agile it is important to ensure that the
 behaviours, concepts, frameworks and techniques of agile are
 correctly in place as many elements of the agile way of working
+
 ```
 manage and mitigate risk by their very nature; for example, concepts
 ```
+
 such as working iteratively and incrementally, and techniques that
 help to prioritize the work.
 The most important areas that help with managing risk in an agile
 context are the five behaviours in PRINCE2 Agile of transparency,
 collaboration, rich communication, self-organization and exploration
+
 ```
 (see section 7.4). If these are then complemented by appropriate
 ```
+
 ```
 planning and ongoing risk management (see section 13.1), it greatly
 ```
+
 increases the chances of completing a successful project.
 Tip
 A good project manager would prefer to be better at managing
@@ -6614,29 +7607,36 @@ being compromised, then this may not be seen in a positive light, as
 it may be a symptom of significant misunderstandings from earlier on
 in the project.
 One caveat to the idea of baseline change perhaps being
+
 ```
 unwelcome is that in a wider context it may be positive news; in
 ```
+
 other words, it results in the fast failure of the project that would
 ultimately have delivered an unsuccessful outcome. This could
 represent good news in general, but perhaps not good news for that
 particular project.
 In simple terms these different types of change to what is being
+
 ```
 delivered can be described as detail or baseline changes (see Figure
 ```
+
 ```
 14.1).
 ```
+
 14.2.2 Other types of change
 Agile usually refers to change as something that affects a project’s
 products. PRINCE2 sees anything that affects the agreed baseline
 as change and handles it accordingly. If a team member becomes ill
 and will be unavailable for 2 weeks, then this would be handled as a
 change in the form of an issue as it will impact planning. A typical
+
 ```
 agile response to this (assuming the team was of sufficient size)
 ```
+
 would be for the delivery team to re-organize and aim to deliver less
 due to the reduced capacity, although this would depend on the level
 of collaboration with the customer.
@@ -6658,9 +7658,11 @@ may affect the agreed baseline upon which the project was justified.
 Techniques for handling change are described in section 14.4.
 One particular area of note when handling change is to assess if the
 change has any impact on the ability to deliver a minimum viable
+
 ```
 product (MVP) at the right time, as this will immediately raise an
 ```
+
 exception.
 •
 •
@@ -6680,12 +7682,15 @@ single micrometre may have a seriously damaging effect on its
 effectiveness.
 When a lesser degree of accuracy is needed The operating
 temperature for radio equipment used by a soldier may be best
+
 ```
 specified by a range which can be prioritized (‘must’ work at –
 ```
+
 ```
 10°C, ‘should’ work at –20°C, ‘could’ work at –30°C).
 ```
+
 The examples illustrate that sometimes requirements definition is like
 a binary condition in that it is either exactly right or it is not, whereas
 at other times it is more of a spectrum in that there is a varying
@@ -6727,29 +7732,37 @@ description as a range or spectrum can prove beneficial. Any
 significant change that may impact baselines set at the stage or
 project level may need to be escalated to the project board or to a
 change authority if one has been set up.
+
 ```
 In either situation it is useful to track the type of change; for example,
 ```
+
 is it an off-specification that the supplier needs to rectify or is it a
 request for change that the customer has raised? This can be useful
 for learning lessons from the project in terms of where these
+
 ```
 changes originated; this information may also be relevant in
 ```
+
 ```
 contractual terms depending on how the contract was created (see
 ```
+
 ```
 Chapter 28 for a description of an agile style of contract).
 ```
+
 It is important when establishing controls to handle change that they
 create an environment which enables quick and accurate change
 when the change has a positive effect on the project, while at the
 same time protecting the project from change that may have a more
 unwelcome impact.
+
 ```
 PRINCE2 has a clearly defined issue and change control procedure;
 ```
+
 for a baseline change this needs to be carried out as quickly as
 possible, although it may take several days. For a detail change the
 same process is used but it may take seconds: a quick discussion, a
@@ -6762,12 +7775,15 @@ A fundamental concept in agile is to gather feedback from a
 customer as quickly as possible. This is in keeping with the
 PRINCE2 Agile behaviour of exploration. This takes the form of a
 cycle where something is delivered, gets used, creates feedback
+
 ```
 (which can be in many forms) and then drives further decisions and
 ```
+
 ```
 deliveries (see Figure 14.2).
 ```
+
 •
 •
 •
@@ -6784,41 +7800,53 @@ Ideally, this feedback should be as ‘true’ as possible and involve the
 end customer. Having said that, any feedback about the project
 process or the product being created is going to have value. The
 ultimate goal is to have real customer feedback in as short a time as
+
 ```
 possible: this may require continual customer involvement.
 ```
+
 The feedback loop is of great importance to being truly agile. A lot of
 emphasis on effort should be channelled into making this as short
 and effective as possible.
 Other forms of feedback loop exist such as:
+
 ```
 OODA (Observe, Orient(ate), Decide, Act)
 ```
+
 ```
 PDCA (Plan, Do, Check, Act)
 ```
+
 ```
 PDSA (Plan, Do, Study, Act)
 ```
+
 ```
 Build, measure, learn (Lean Startup).
 ```
+
 Figure 14.2 The feedback loop
 14.5 Change theme summary
 Change will happen, and the combination of PRINCE2 and agile in
 this area typifies the marriage of these two. A project increases its
+
 ```
 chances of success if it can be responsive at the detail level (e.g. by
 ```
+
 ```
 flexing or trading detailed requirements) and remain in control at the
 ```
+
 ```
 higher levels (e.g. by ensuring that the business case is still viable at
 ```
+
 ```
 the end of a stage).
 ```
+
 The processes for starting up a project and initiating a project also
 help to create an environment where change can happen, and be
 responded to, at the correct level and at the correct point in a project.
@@ -6888,16 +7916,21 @@ PRINCE2 provides progress control through:
 delegating authority from one level of management to the level
 below it
 dividing the project into management stages and authorizing the
+
 ```
 project one management stage at a time (PRINCE2’s manage by
 ```
+
 ```
 stages principle)
 ```
+
 time-driven and event-driven progress reporting and reviews
+
 ```
 raising exceptions (PRINCE2’s manage by exception principle).
 ```
+
 The project’s controls should be documented in the PID.
 15.1.1 Raising exceptions
 The output from reviewing progress is a decision as to whether the
@@ -6949,9 +7982,11 @@ create a strong blend that provides comprehensive coverage in all
 areas and at all levels of a project.
 When using PRINCE2 with agile, flexibility in what is delivered is the
 primary aspect of performance that is of most interest to the whole
+
 ```
 project management team; therefore displaying this in the form of a
 ```
+
 burn chart is quite natural irrespective of the project level.
 It is also quite natural for a project manager to know that they will
 need to react quickly to how things are progressing as it may take
@@ -6960,12 +7995,15 @@ be delivered by tracking overall velocity.
 15.3.1 Control
 Whenever an organization invests time and money into a project it is
 essential that this investment is monitored and controlled
+
 ```
 appropriately. Although common terms such as ‘progress’ (in
 ```
+
 ```
 PRINCE2) and ‘velocity’ (in agile) give a positive feel when helping
 ```
+
 to answer the question ‘How are things going?’, it should not be
 overlooked that behind all of the techniques and concepts lies the
 necessity to be in control at all times. The word ‘control’ does not
@@ -6973,34 +8011,43 @@ resonate well with many in the agile community as they see it as
 inferring ‘command and control’. This is certainly not the case as
 PRINCE2 is more focused on creating guiding boundaries that
 empower people to carry out their work by self-organizing. PRINCE2
+
 ```
 creates these boundaries by using such things as tolerances (as well
 ```
+
 ```
 as stage boundaries and the role of project assurance), and if these
 ```
+
 are forecast to be exceeded, it will trigger an exception. This then
 acts as a safety net to catch a situation that has gone outside what
 was reasonable to expect.
 •
 •
 15.3.2 Progress at different levels
+
 ```
 PRINCE2 tracks progress at different levels (see Figure 12.3) and
 ```
+
 many techniques can be used at any level. Using only agile
 techniques for delivery and only traditional techniques for direction
 and management would be limiting, as many of the agile concepts
 and techniques can prove effective at all levels for tracking progress.
 Care may need to be taken in the choice of technique, as the
 audience will need to be comfortable with the information it is
+
 ```
 conveying (e.g. to use a burn-down chart for the project board may
 ```
+
 prove counter-productive if the project board members are not
+
 ```
 familiar with this format). However, many of the PRINCE2 products
 ```
+
 can be created by using agile artefacts. For example:
 An agile technique used at the direction level On a PRINCE2
 project where scope and quality criteria are variable, it is often
@@ -7012,13 +8059,17 @@ further.
 A PRINCE2 theme at the delivery level On a project using
 timeboxing, it is recommended to first define the stage
 boundaries, and then to build in the appropriate number of
+
 ```
 releases and/or sprints (of suitable length) inside each stage.
 ```
+
 In either example progress is typically tracked by completed
+
 ```
 products (as opposed to days or hours).
 ```
+
 15.4 Agile concepts and techniques
 15.4.1 Burn charts
 •
@@ -7026,57 +8077,74 @@ products (as opposed to days or hours).
 One of the most popular techniques in agile environments is to
 display progress using graphs. These graphs are known as burn
 charts and they come in two forms: burn-down charts and burn-up
+
 ```
 charts (see Figure 15.1).
 ```
+
 15.4.1.1 The basics
 Burn-down charts are the most well known and they are used to
 show how much work remains, whereas burn-up charts are slightly
 more complex and they are used to show how much work has been
 done. Both types of chart aim to provide two important pieces of
+
 ```
 information:
 ```
+
 ```
 What is the situation regarding progress (i.e. what is the current
 ```
+
 ```
 situation and what should it be)?
 ```
+
 At the current rate of progress what will be the situation at the end
+
 ```
 of this time period (which could be a sprint, release, stage, project
 ```
+
 ```
 or any other period of time)?
 ```
+
 Typically the vertical axis shows the amount of work to do in terms of
 effort and the horizontal axis shows time in some form such as days
 or dates.
 Figure 15.1 Burn-down and burn-up charts
 15.4.1.2 How a burn-down chart works
+
 ```
 In its most simple form the burn-down chart has two lines (see
 ```
+
 ```
 Figure 15.1): a straight line that shows where the ‘ideal’ rate of
 ```
+
 ```
 progress should be (in black on the figure), and a line that is updated
 ```
+
 ```
 on a regular basis (usually daily) that shows the amount of work
 ```
+
 ```
 done (in purple on the figure). The work remaining is shown by the
 ```
+
 end of the purple line. When the purple line is above the black line
 this means that work is behind schedule. If the purple line is below
 the black line this means that work is ahead of schedule.
 The current rate of progress can be determined by the trend of the
+
 ```
 line (i.e. its gradient) showing effort remaining. This is commonly
 ```
+
 referred to as ‘velocity’ by the agile community. Assuming that there
 is stability and constancy in the team, this can then be used to
 project forward and forecast when the work will be complete and
@@ -7084,16 +8152,21 @@ importantly determine if the deadline is likely to be met.
 15.4.1.3 How a burn-up chart works
 One limitation with burn-down charts is that they assume the amount
 of work does not change. This is not a significant limitation in most
+
 ```
 situations (e.g. where a 2-week sprint has been agreed and locked-
 ```
+
 ```
 in/baselined) but if the amount of work is likely to change, or does
 ```
+
 change, then this will not be picked up by a burn-down chart easily,
+
 ```
 and therefore a burn-up chart should be used (see Figure 15.1). The
 ```
+
 purple line shows work completed, which can now be used in
 tandem with the red line showing the total amount of work. The work
 remaining is therefore the difference between the red and purple
@@ -7101,16 +8174,21 @@ lines. Any work that has been added or removed during the time
 period can now be seen by the red line.
 15.4.1.4 Further information
 The reason why burn charts are so prevalent in agile environments
+
 ```
 is because agile is based on what is (or is not) being delivered and
 ```
+
 where time and the team size are fixed. Therefore to monitor
+
 ```
 progress, an agile delivery team (or team manager or project
 ```
+
 ```
 manager) will focus on what, of the planned work for a specific time
 ```
+
 period, has been completed. Depending on the level at which this
 work is taking place this could refer to such things as requirements,
 user stories or tasks.
@@ -7129,23 +8207,30 @@ completed work. If a 2-day task is 50 per cent complete do not mark
 anything as completed on the burn chart. The same applies even if it
 is 95 per cent complete.
 Burn charts are less accurate if the size of the tasks being reported
+
 ```
 on are relatively large for the given time period (e.g. a 5-day task in a
 ```
+
 ```
 2-week sprint). When working in an agile way it may be appropriate
 ```
+
 ```
 for teams working in sprints (which should last no more than 4
 ```
+
 ```
 weeks) to break down tasks to a size that needs only a few days of
 ```
+
 effort or less. Primarily this is needed in order to help make it easier
 for a team to organize its work. A desirable side-effect of this is to
+
 ```
 make burn charts more sensitive (to issues/impediments) and
 ```
+
 accurate. However, there is an overhead with this as time needs to
 be spent breaking down work into smaller work items.
 Either type of burn chart can be used in a wide variety of situations
@@ -7164,9 +8249,11 @@ and you would also expect to see this information conveyed in a
 paper, colour, symbols, pictures and graphics.
 Tip
 Information radiators include or are similar to information
+
 ```
 displays, big visible charts (BVCs), team boards, Kanban
 ```
+
 boards.
 15.4.2.1 The basics
 One of the best ways to convey most information is visually, and if it
@@ -7177,12 +8264,15 @@ of information that can be accessed immediately. If information is
 held on someone’s desk or computer it is not immediately accessible
 and also needs to be ‘pulled’.
 Furthermore, and of similar importance, the creation and
+
 ```
 maintenance of this information is best carried out manually (i.e.
 ```
+
 ```
 physically writing on charts and moving sticky notes). This can
 ```
+
 happen very quickly and in any format or style that is felt to be
 appropriate. For example spontaneous annotations and informal
 codes and symbols such as ticks, crosses, red dots, green stars, etc.
@@ -7190,9 +8280,11 @@ can be used. Although this can be achieved electronically, and
 perhaps it can be printed off, this takes longer and can be seen as
 being sterile and not as engaging as the ‘low-tech’ option.
 15.4.2.2 Further information
+
 ```
 Transparency (or visibility) is one of the key behaviours that is at the
 ```
+
 heart of most agile approaches. It is a hugely significant part of agile
 and the use of visible information, handcrafted, simple to understand
 and instantly available to digest, contributes significantly in this area.
@@ -7201,12 +8293,15 @@ However there is a risk that comes with this. In order to be fully, or
 truly, transparent all information about a project needs to be visible
 and that includes displaying information that may at times be
 negative as well as positive. This is where another key value which
+
 ```
 is also at the heart of most agile approaches (and perhaps at the
 ```
+
 ```
 heart of manage by exception) can be enhanced: that value being
 ```
+
 trust. The opposite of this is when the information is massaged which
 is sometimes referred to as ‘gaming’.
 15.4.2.3 Hints that may prove useful
@@ -7219,18 +8314,23 @@ describe these figures and charts. Many people use the abbreviation
 BVC which stands for ‘big visible chart’.
 A wide variety of information can be displayed using this approach.
 The most commonly displayed information relates to work and how it
+
 ```
 is progressing (e.g. a burn-down chart or a WIP (work-in-progress)
 ```
+
 ```
 board). Other information commonly displayed would cover quality
 ```
+
 ```
 and defects, risks and issues, vision statements (or similar) and
 ```
+
 ```
 working practices (see Figure 15.2).
 ```
+
 Information displayed this way needs to be regularly updated and it
 will not update itself! Holding a daily stand-up meeting by these
 displays, and moving the information across immediately, is one way
@@ -7254,25 +8354,32 @@ the situation.
 The most effective use of PRINCE2 and agile is achieved when
 progress is managed within an appropriate set of responsive and
 flexible tolerances that cover the six aspects of the PRINCE2 Agile
+
 ```
 hexagon (see Figure 6.1).
 ```
+
 Tip
 If progress is visible and transparent it goes a long way to
+
 ```
 making life easier. You get all the news (good or bad) quickly.
 ```
+
 ```
 One of the principles of PRINCE2 is to manage by exception;
 ```
+
 therefore, to have transparency of how a project is progressing is an
 essential ingredient to help stay in control.
 Acknowledgements and further research
-Beck, K. https://github.com/KentBeck [accessed: 19 April 2016].
+Beck, K. <https://github.com/KentBeck> [accessed: 19 April 2016].
+
 ```
 Cockburn, A. (2001) Agile Software Development. Addison Wesley.
 ```
-Fowler, M. http://martinfowler.com/intro.html [accessed: 19 April
+
+Fowler, M. <http://martinfowler.com/intro.html> [accessed: 19 April
 2016].
 •
 •
@@ -7285,9 +8392,11 @@ tailoring guidance for the PRINCE2 processes
 16 Agile and the PRINCE2
 processes
 PRINCE2 is a process-based approach to project management and
+
 ```
 has seven processes (containing activities) which apply to all levels
 ```
+
 of a project. All seven processes are required, and agile needs to be
 incorporated into all of them in some form. The amount of agile that
 is relevant to each process varies significantly, and therefore the
@@ -7307,64 +8416,84 @@ PRINCE2 can be used on projects irrespective of project scale,
 complexity, geography, culture, etc. PRINCE2 can also be used
 whether the project is part of a programme or is being managed as a
 stand-alone initiative. This reflects the principle that PRINCE2 must
+
 ```
 be tailored to suit the particular project context; PRINCE2 Agile is an
 ```
+
 example of such tailoring to suit an agile context.
 A mature agile environment may have many processes in existence
+
 ```
 that address the areas of project direction and stages (or an
 ```
+
 ```
 equivalent concept to stages), as well as processes to ensure that a
 ```
+
 project is started and ended in a controlled way.
 16.2 Tailoring guidance for the
 PRINCE2 processes
 Figure 16.2 shows the seven PRINCE2 processes and the PRINCE2
+
 ```
 management products (see Table 16.1 for a key to the
 ```
+
 ```
 abbreviations). More details of how sprints and flow-based
 ```
+
 timeboxes are incorporated are shown in the inset, which has been
 expanded in Figure 16.3. The numbers in Figures 16.2 and 16.3
 refer to the PRINCE2 management products as identified in
 Managing Successful Projects with PRINCE2 and shown in Table
+
 ```
 16.2 (see Chapter 23 and Appendix A for further information about
 ```
+
 ```
 the products).
 ```
+
 Table 16.1 Key to abbreviations in Figures 16.2 to 16.4
 Abbreviation PRINCE2 process Key agile artefacts and events that
 may exist within the process
 DP Directing a project
 SU Starting up a project Vision, product roadmap
 IP Initiating a project Product backlog
+
 ```
 CS Controlling a stage Release(s), release backlog, release
 ```
+
 retrospective
+
 ```
 MP Managing product delivery Sprint(s), sprint backlog, sprint review
 ```
+
 and retrospective
 SB Managing a stage boundary As for CS
+
 ```
 XSB Managing a stage boundary (when an
 ```
+
 ```
 exception has occurred)
 ```
+
 As for CS
 CP Closing a project Project retrospective
 Figure 16.2 The PRINCE2 processes and management products
+
 ```
 See Figure 16.3 for an expanded view of the inset (shown by the dashed line).
 ```
+
 Table 16.2 Key to the PRINCE2 management products
 Baseline management products,
 shown in red
@@ -7374,12 +8503,15 @@ Records, shown in black Reports, shown in blue
 3 Change control approach
 5 Communication management
 approach
+
 ```
 16 Plan (covers project, stage and,
 ```
+
 ```
 optionally, team plans)
 ```
+
 17 Product description
 19 Project brief
 20 PID
@@ -7406,27 +8538,36 @@ more than one type of plan.
 •
 •
 •
+
 ```
 Figure 16.3 shows how releases and low-level timeboxes (i.e. as
 ```
+
 ```
 sprints or flow-based) may appear inside a PRINCE2 management
 ```
+
 stage. The figure assumes a common agile situation where a
 product backlog is used to create a series of releases, and each
+
 ```
 release in turn creates a series of sprints (e.g. when using Scrum) or
 ```
+
 ```
 is run as one timebox using a flow-based approach (e.g. when using
 ```
+
 ```
 Kanban).
 ```
+
 Although this represents a common approach there are many other
+
 ```
 equally valid situations (see Figure 16.4). Examples of such
 ```
+
 situations might be:
 Releases and release backlogs are not used because sprints and
 sprint backlogs are all that are required. In this case a sprint may
@@ -7447,9 +8588,11 @@ PRINCE2 process model
 •
 •
 17
+
 ```
 Starting up a project; initiating a
 ```
+
 project
 This chapter covers:
 PRINCE2 guidance on starting up a project and initiating a project
@@ -7457,21 +8600,26 @@ agile ways of working that may already exist
 PRINCE2 Agile guidance on starting up a project and initiating a
 project
 agile concepts and techniques
+
 ```
 17 Starting up a project; initiating
 ```
+
 a project
 17.1 PRINCE2 guidance on starting up
 a project and initiating a project
 17.1.1 Starting up a project
 The purpose of the starting up a project process is to ensure that the
 prerequisites for initiating a project are in place by answering the
+
 ```
 question: Do we have a viable and worthwhile project? The decision
 ```
+
 ```
 to start the project must be explicit; the activities from starting up a
 ```
+
 project happen before this decision.
 Nothing should be done until certain base information needed to
 make rational decisions about the commissioning of the project is
@@ -7507,22 +8655,29 @@ financial resources to a project without fully understanding how its
 objectives will be achieved.
 All activities within the initiating a project process need further
 consideration if the relationship between the customer and the
+
 ```
 supplier is a commercial one (e.g. the reasons for undertaking the
 ```
+
 project as defined in the supplier’s business case may be different
+
 ```
 from those defined in the customer’s business case).
 ```
+
 During the initiating a project process the project manager will be
 creating the suite of management products required for the level of
 control specified by the project board. The project manager should
+
 ```
 have agreed (as part of the initiation stage plan) the means by which
 ```
+
 ```
 the project board will review and approve the management products;
 ```
+
 the two extremes are one at a time or all at once.
 Figure 17.2 provides an overview of initiating a project.
 Please note that starting up a project and initiating a project are
@@ -7538,13 +8693,17 @@ already exist
 The most common agile approaches focus on product delivery and
 therefore they do not have processes beforehand to formally define
 any upfront work. Some agile approaches such as DSDM, DAD and
+
 ```
 FDD (see Table 2.1) do acknowledge the need to do this work;
 ```
+
 however, there is little standardization in this area across the agile
+
 ```
 community. This is usually for one of two reasons; either the agile
 ```
+
 •
 •
 approach assumes that the upfront work would have already taken
@@ -7553,9 +8712,11 @@ using agile build their own processes for upfront work when they use
 agile in a project context.
 Two concepts that occur quite frequently in agile are:
 project chartering or visioning
+
 ```
 sprint zero (iteration zero or (the) discovery (phase)); see section
 ```
+
 9.2.
 Project chartering or visioning in agile is typically used to gain a
 basic understanding of the project and is seen as a short process
@@ -7580,104 +8741,138 @@ the appropriate amount of upfront work. Not only that but this upfront
 work is typically broken down into two parts. Most upfront work done
 in some agile environments only concerns getting ready for delivery.
 PRINCE2 provides more rigour to this work by putting more structure
+
 ```
 around what ‘being ready’ means (during the initiating a project
 ```
+
 ```
 process), and also making sure it is worth getting ready in the first
 ```
+
 ```
 place (during the starting up a project process).
 ```
+
 Upfront work can be regarded as unnecessary to a degree by some
 in the agile community as it is seen as being ‘predictive’ and not
 ‘emergent’. PRINCE2 is predictive to a degree but can be very
+
 ```
 emergent if required (e.g. by reducing the length and formality of the
 ```
+
 ```
 initiation stage). However, any PRINCE2 project needs to be justified
 ```
+
 and has to be viable from the start. Fundamentally, part of this
 upfront work must answer the ‘why?’ question in the form of a
+
 ```
 business case (i.e. Why are we doing this project?). One important
 ```
+
 ```
 reason for knowing this is so that the project manager (and perhaps
 ```
+
 ```
 anyone involved on the project) can tell when it needs to be stopped
 ```
+
 before the planned end date.
+
 ```
 Definition: Disruptive
 ```
+
 A widely used term that has more than one definition but in
 general terms refers to situations where there are high degrees
+
 ```
 of uncertainty (e.g. with product innovation) and the product
 ```
+
 ```
 being developed will significantly disrupt (intentionally or
 ```
+
 ```
 accidentally) the existing environment or marketplace (e.g. 3D
 ```
+
 ```
 printing).
 ```
+
 Lean Startup is often cited as demonstrating how agile can work
 when faced with high levels of uncertainty, and there are parallels
+
 ```
 between growing a small company (often using ‘disruptive’
 ```
+
 ```
 technologies) and running a challenging project. Even dynamic
 ```
+
 ground-breaking start-ups need to justify coming into existence to
 investors and need to be held to account at funding reviews from
 time to time.
 Collecting enough information means that a lot of areas need to be
 looked at because they can all impact the business case in one form
+
 ```
 or another (e.g. risks, organizational structure, quality planning,
 ```
+
 ```
 communication planning and how the project is tailored).
 ```
+
 How this information is presented depends on the needs of the
 project and the project board. Typically this may be in a document
 but it could be delivered along with a face-to-face presentation.
 Alternatively, most, if not all, of this information could be visible on
 the walls of a team room using lots of visualization.
+
 ```
 As part of these two processes (starting up a project and initiating a
 ```
+
 ```
 project), the suitability of using agile needs to be assessed. The use
 ```
+
 of agile will bring many advantages but it will also bring with it a set
 of risks if agile is used inappropriately. This is assessed using the
+
 ```
 Agilometer (see Chapter 24).
 ```
+
 17.3.1 Further guidance that may also be
 appropriate
+
 ```
 The project product description (and the business case) should be
 ```
+
 defined with more focus on how the output can be described so that
 the outcomes and benefits can be adjusted during the project. If the
 project product description just focuses on the intended solution then
 the supplier is more likely to focus on this than the value it intends to
 deliver. This in turn may impact contractual arrangements made
+
 ```
 before delivery commences (e.g. how much the style will reflect the
 ```
+
 ```
 agile way of working).
 ```
+
 The high-level and intermediate-level requirements are likely to be
 held as a list which may take the form of a spreadsheet or a low-tech
 list on a wall and may be referred to as a backlog.
@@ -7685,24 +8880,31 @@ An early definition of ‘done’ is likely to be part of the quality
 management approach or an existing one that has been used from a
 previous project.
 The mapping of existing agile roles to the PRINCE2 roles will be
+
 ```
 defined and understood (e.g. how the team manager role will be
 ```
+
 ```
 fulfilled).
 ```
+
 Understanding is required of agile terminology such as project
 chartering, discovery phase, visioning, sprint zero and product
 roadmaps.
 Agile suitability needs to be assessed by looking at what agile ways
 of working exist or need to exist, and what their respective
+
 ```
 advantages and disadvantages are (e.g. is co-locating the team a
 ```
+
 good idea or will it be too expensive and undermine the business
+
 ```
 case?)
 ```
+
 Workshops are likely to be used to collaboratively create and
 understand deliverables.
 Levels of uncertainty need to be explicitly stated as these may affect
@@ -7712,29 +8914,38 @@ Sometimes a project may be taking place in a very volatile context or
 with vague requirements. At other times the context could be more
 stable and there is less need for prototypes, spikes and experiments.
 The level of formality will be decided with respect to such things as
+
 ```
 control, communication and planning (e.g. how will progress be
 ```
+
 ```
 tracked: on a wall or using a tool?).
 ```
+
 If there are high levels of uncertainty then this phase is likely to be
 very short.
 An assessment should be made of the impact of frequent releases
 on areas such as how quality will be managed and how the frequent
+
 ```
 delivery of products (or products in differing states) will take place
 ```
+
 ```
 (e.g. whether they will always go directly into operational use).
 ```
+
 Table 17.1 shows PRINCE2 activities for start up and initiation and
+
 ```
 how they relate to agile artefacts and events (all product description
 ```
+
 ```
 references for PRINCE2 products are located in Appendix A).
 ```
+
 •
 •
 •
@@ -7779,52 +8990,67 @@ Appoint the executive and the project manager:
 Create the daily log, A.7
 Create executive role description, A.19
 Create project manager role description, A.19
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Capture previous lessons:
 Create lessons log, A.14
+
 ```
 Event(s):
 ```
+
 ```
 (Previous) project/release
 ```
+
 retrospectives
 Design and appoint the project management team:
 Update the daily log, A.7
 Create project management team role descriptions, A.19
 Create project management team structure, A.19
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Prepare the outline business case:
 Create the outline business case, A.2
 Create the project product description, A.21
 Update the daily log, A.7
+
 ```
 Artefacts:
 ```
+
 Vision
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Select the project approach and assemble the project brief:
 Create/select the project approach, A.19
 Create additional role descriptions, A.19
 Assemble the project brief, A.19
 Update the daily log, A.7
+
 ```
 Artefacts:
 ```
+
 Vision
 Product backlog
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Plan the initiation stage:
 Create the stage plan, A.16
@@ -7832,16 +9058,20 @@ Update the daily log, A.7
 No common equivalent
 Agree the tailoring requirements:
 Create project controls, A.20
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Prepare the risk management approach:
 Create the risk management approach, A.24
 Create and populate the risk register, A.25
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Prepare the change control approach:
 Create the change control approach, A.3
@@ -7849,25 +9079,33 @@ Update the project management team structure, A.20
 Update the role descriptions, A.20
 Create the initial configuration item records, A.6
 Create and populate the issue register, A.12
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Prepare the quality management approach:
 Create the quality management approach, A.22
 Create the quality register, A.23
+
 ```
 Artefacts:
 ```
+
 Vision
 Definition of ‘done’
+
 ```
 Event(s):
 ```
+
 Project kick-off
+
 ```
 Prepare the communication management approach: Event(s):
 ```
+
 • •
 •
 •
@@ -7897,13 +9135,17 @@ Set up the project controls:
 Update the project controls, A.20
 Update the role descriptions, A.20
 Update the project management team structure, A.20
+
 ```
 Artefact(s):
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Release planning
 Create the project plan:
@@ -7912,37 +9154,49 @@ Create product descriptions, A.17
 Create and update the configuration item records, A.6
 Update the project management team structure, A.20
 Update role descriptions, A.20
+
 ```
 Artefacts:
 ```
+
 Vision
 Product backlog
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Release planning
 Prepare the benefits management approach:
 Create the benefits management approach, A.1
 Create the detailed business case, A.2
+
 ```
 Artefacts:
 ```
+
 Vision
 Product backlog
 Release backlog
+
 ```
 Event(s):
 ```
+
 Project kick-off
 Release planning
+
 ```
 Assemble the project initiation documentation (PID):
 ```
+
 Assemble the PID, A.20
+
 ```
 Event(s):
 ```
+
 Project kick-off
 17.3.2 How to …
 There are many behaviours, concepts, frameworks and techniques
@@ -7959,12 +9213,15 @@ Agilometer
 Chapter 24
 Use the project product description Section 23.1, A.21
 Define a business case in an agile context Chapter 9
+
 ```
 Know what is covered by sprint zero (iteration zero or (the)
 ```
+
 ```
 discovery (phase))
 ```
+
 Section 9.2
 Run workshops to kick off a project Section 26.4.1
 Assess different levels of uncertainty with Cynefin Section 17.4.1
@@ -7980,9 +9237,11 @@ Plan and control a PRINCE2 project using agile Chapters 12, 15
 Tailor any of the PRINCE2 management products Chapter 23
 17.4 Agile concepts and techniques
 17.4.1 The Cynefin framework
+
 ```
 The Cynefin framework (pronounced kuh-nev-in) was created by
 ```
+
 David Snowden. It is a decision-making framework that has been
 designed to help understand and determine the level of complexity in
 a given situation or environment.
@@ -8022,47 +9281,63 @@ between these two domains is regarded as potentially catastrophic,
 whereas transitioning across any of the other boundaries is not.
 17.4.1.2 When to use Cynefin and what to use it for
 During the starting up a project process and the initiating a project
+
 ```
 process, this framework can be used to understand (or attempt to
 ```
+
 ```
 understand), the complexity of a project. The framework can be used
 ```
+
 to analyse two areas:
 the level of complexity of the final product in terms of the output,
+
 ```
 outcome and benefits (e.g. whether it is highly innovative and
 ```
+
 •
+
 ```
 there is little knowledge of how well it will sell)
 ```
+
 the level of complexity of the project environment covering things
 such as the levels of co-location, collaboration and experience
+
 ```
 (e.g. there are many teams involved from all around the world).
 ```
+
 Figure 17.3 The Cynefin framework
 17.4.1.3 Assessing the level of complexity
 Correctly assessing the level of complexity of the product and the
 project environment can help to determine the appropriate use of
 PRINCE2 and agile. It can be the case that certain areas of a project
+
 ```
 have different levels of complexity (e.g. the user interface of a control
 ```
+
 panel may be highly volatile and difficult to design, whereas the
+
 ```
 internal mechanics may be reasonably straightforward).
 ```
+
 17.4.1.4 An example of a complex or chaotic situation
 If the output from a project is a highly innovative children’s toy that is
 very different from anything currently in the marketplace then
+
 ```
 approaches such as Lean Startup (where strong emphasis is placed
 ```
+
 ```
 on learning quickly) and techniques such as spiking and prototyping
 ```
+
 are likely to be appropriate at the delivery level.
 Making the PRINCE2 processes as short as possible and using
 many stages may also be appropriate and the project could feel very
@@ -8089,39 +9364,52 @@ configured appropriately.
 When a project is in progress it is possible that the level of
 complexity of the project, or the product, may change and migrate
 across the domain boundaries. PRINCE2 and the agile approaches
+
 ```
 being used may then need to be tuned (e.g. timebox durations may
 ```
+
 ```
 need to be shortened or lengthened; more customer demos may be
 ```
+
 ```
 required).
 ```
+
 17.4.1.6 Evolving PRINCE2 in an agile context with
 Cynefin
 The Cynefin framework can also be used to apply the learnings from
 a project to other projects and evolve the use of PRINCE2 and agile
 throughout an organization. A project framework may typically exist
+
 ```
 in the complicated domain (‘good practice’) but that is a matter of
 ```
+
 choice for an organization as it may be more beneficial to see it in
+
 ```
 the complex domain (‘emergent practice’). One approach would be
 ```
+
 to assign different areas of the project framework to their most
+
 ```
 appropriate domain (e.g. some innovative agile techniques that may
 ```
+
 ```
 be unproven may be used when in the chaotic domain).
 ```
+
 One specific area the Cynefin framework focuses on is the area of
 complacency which exists between the obvious and the chaotic
+
 ```
 domains (referred to earlier as the cliff). An example of this would be
 ```
+
 where the use of PRINCE2 Agile becomes robotic and routine, as
 when it is applied inappropriately and not adapted to suit the
 environment or the level of uncertainty. Perhaps it has become stale
@@ -8129,22 +9417,28 @@ as it only exists in the obvious domain and therefore does not
 change or evolve and is regarded as a simple thing to do. This can
 lead to what Cynefin describes as a crisis or catastrophe, when a
 sudden realization occurs that an approach is no longer fit for
+
 ```
 purpose (e.g. a major project disaster occurs because the underlying
 ```
+
 ```
 process is no longer appropriate).
 ```
+
 17.4.1.7 Appropriateness
 The Cynefin framework can help with how PRINCE2 is configured
 for projects of varying degrees of uncertainty. In a similar way to
 driving a car, there is a need to understand the prevailing conditions
+
 ```
 (e.g. it is snowing and it is dark, so drive in the most appropriate way
 ```
+
 ```
 using the controls that are available).
 ```
+
 17.5 Summary
 A distinguishing feature of PRINCE2 is that a project needs to be set
 up and started in a controlled and appropriate manner in order to
@@ -8165,7 +9459,7 @@ as effectively as possible by starting at the right time when just
 enough information has been collected in order to appropriately
 authorize delivery to commence.
 Acknowledgements and further research
-Snowden, D. http://cognitive-edge.com [accessed: 19 April 2016].
+Snowden, D. <http://cognitive-edge.com> [accessed: 19 April 2016].
 •
 •
 •
@@ -8282,9 +9576,11 @@ ongoing viability of a project. It needs to provide direction and
 authorization as required.
 In an agile context this needs to happen quickly by empowering the
 project manager and the delivery teams so that information can be
+
 ```
 pulled; the use of transparency and collaborative interaction helps to
 ```
+
 ensure that the project remains viable and on target, and that any
 deviations to this can be detected quickly and responded to
 immediately.
@@ -8338,9 +9634,11 @@ The controlling a stage process is normally first used after the project
 board authorizes the project, but it may also be used during the
 initiation stage, especially for large or complex projects.
 Work packages are used to define and control the work to be done,
+
 ```
 and also to set tolerances for the team manager(s). If the project
 ```
+
 manager is fulfilling the team manager role, work packages should
 still be used to define and control the work of the individual team
 members being assigned work. When this is the case, references to
@@ -8353,9 +9651,11 @@ management stage, this will consist of a cycle of:
 authorizing work to be done
 monitoring progress information about that work, including signing
 off completed work packages
+
 ```
 reviewing the situation (including that for product quality) and
 ```
+
 triggering new work packages
 reporting highlights
 •
@@ -8373,9 +9673,11 @@ level timebox that acts as a container for a set of lower-level
 timeboxes. This may be referred to using terms such as release,
 iteration or increment. These could involve more than one team and
 they would be typically managed by a project manager or product
+
 ```
 manager (the latter being at a higher level than a product owner).
 ```
+
 It should be noted that a management stage is slightly different from
 such concepts as a release, iteration or increment in that it focuses
 on the commitment of resources and grants the project manager the
@@ -8406,26 +9708,35 @@ does not use them
 •
 •
 attends and facilitates the meetings
+
 ```
 uses them but may or may not attend the meetings (and uses
 ```
+
 other sources of information to help with the management of the
+
 ```
 stage; for example, the use of information radiators and liaising
 ```
+
 with the delivery teams by other means such as informal
+
 ```
 discussions).
 ```
+
 19.3 PRINCE2 Agile guidance on
 controlling a stage
 19.3.1 The structure of a stage
+
 ```
 Stages are likely to be made up of timeboxes (e.g. one or more
 ```
+
 ```
 releases, containing one or more sprints), with the focus being on
 ```
+
 delivering sets of features ideally into operational use and
 therefore enabling their respective benefits.
 19.3.2 Work assignment
@@ -8433,16 +9744,21 @@ Planning, scheduling and estimating are likely to be carried out as
 a collaborative team-based exercise.
 At the delivery level team members typically select the next piece
 of work to be done based on the order decided by the customer
+
 ```
 subject matter expert (SME) who is in the delivery team (such as
 ```
+
 ```
 a product owner). As a result, work is typically not assigned to
 ```
+
 specific team members.
+
 ```
 Work packages provide the flexibility (e.g. through tolerances)
 ```
+
 needed to enable teams to self-organize, and their sign-off may
 be informal. Reviews and demos at the end of a sprint or a
 release provide rich and regular feedback to the customer as a
@@ -8455,12 +9771,15 @@ release provide rich and regular feedback to the customer as a
 •
 means to validate that the acceptance criteria for the agreed work
 package have been met.
+
 ```
 A work package may contain several timeboxes (e.g. in the form
 ```
+
 ```
 of sprints) and although each one will deliver something, they
 ```
+
 may not necessarily deliver something into operational use.
 19.3.3 Monitoring progress and reporting
 Within agile environments, teams report progress to one another
@@ -8475,9 +9794,11 @@ which provides the opportunity to discuss planned features which
 were not delivered or those that were but were not originally
 planned for the release.
 Monitoring and forecasting in general is more likely to be in an
+
 ```
 empirical style (based on evidence).
 ```
+
 Progress is more likely to be shown as a burn chart rather than a
 Gantt chart.
 Although PRINCE2 identifies six aspects of control the project
@@ -8506,13 +9827,17 @@ be able to implement in the next sprint or release. This makes it
 more likely for the corrective action to be successful and to have
 the greatest positive effect for the team.
 Table 19.1 shows PRINCE2 activities for the controlling a stage
+
 ```
 process and how they relate to agile artefacts and events (all product
 ```
+
 description references for PRINCE2 products are located in
+
 ```
 Appendix A).
 ```
+
 19.3.5 How to …
 There are many behaviours, concepts, frameworks and techniques
 that are used in agile and referenced throughout this manual. Table
@@ -8576,23 +9901,30 @@ Update the risk register, A.25
 Update the issue register, A.12
 Review team plan, A.16
 Update the stage plan, A.16
+
 ```
 Artefacts:
 ```
+
 Product backlog
 Release backlog
 Sprint backlog
+
 ```
 Event(s):
 ```
+
 Release planning
 Sprint planning
+
 ```
 Review work package status (NB: A work package can
 ```
+
 ```
 contain one or more releases and one or more sprints):
 ```
+
 Review checkpoint report, A.4
 Review team plan, A.16
 Update stage plan, A.16
@@ -8600,37 +9932,49 @@ Update configuration item records, A.6
 Update the risk register, A.25
 Update the issue register, A.12
 Update the work package, A.26
+
 ```
 Artefacts:
 ```
+
 Burn charts
+
 ```
 Sprint backlog (done/not done)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Daily stand-ups
 Sprint reviews
 Release reviews
 Receive completed work packages:
 Update configuration item records, A.6
 Update stage plan, A.16
+
 ```
 Artefacts:
 ```
+
 Potentially shippable product
 User story acceptance criteria
+
 ```
 Event(s):
 ```
+
 ```
 User acceptance (during a sprint
 ```
+
 ```
 demo or release demo)
 ```
+
 Sprint review
 Sprint demo
 Release review
@@ -8641,30 +9985,40 @@ Update the issue register, A.12
 Update the stage plan, A.16
 Update the lessons log, A.14
 Update the issue report, A.13
+
 ```
 Artefacts:
 ```
+
 Burn charts
+
 ```
 Sprint backlog (done/not done)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Daily stand-ups
 Sprint reviews
 Release reviews
 Report highlights:
 Create highlight report, A.11
+
 ```
 Artefacts:
 ```
+
 Burn charts
 Information radiators
+
 ```
 Event(s):
 ```
+
 Sprint demos
 •
 •
@@ -8705,14 +10059,18 @@ Update the daily log, A.7
 Create an issue report, A.13
 Update the issue register, A.12
 Update the risk register, A.25
+
 ```
 Artefacts:
 ```
+
 Impediments from daily stand-ups
 Information radiators
+
 ```
 Event(s):
 ```
+
 Daily stand-ups
 Sprint planning
 Sprint reviews
@@ -8725,9 +10083,11 @@ Create exception report, A.10
 Update issue register, A.12
 Update risk register, A.25
 Update issue report, A.13
+
 ```
 Artefacts:
 ```
+
 Impediments from daily stand-ups
 Outputs or decisions from a
 retrospective, sprint review or release
@@ -8739,9 +10099,11 @@ Update issue report, A.13
 Update stage plan, A.16
 Update configuration item records, A.6
 Update daily log, A.7
+
 ```
 Artefacts:
 ```
+
 Daily impediments
 Sprint backlog
 Release backlog
@@ -8768,9 +10130,11 @@ when working in an agile way. It involves looking back and reflecting
 on how things went in terms of how a team worked, in order to make
 improvements to how they work going forward. A retrospective is a
 type of review that specifically looks at the way of working as
+
 ```
 opposed to looking at what was produced (e.g. sprint review).
 ```
+
 Tip
 Retrospectives include or are similar to continual improvement,
 Kaizen, inspect and adapt.
@@ -8786,16 +10150,21 @@ running them well, is that they must be planned, structured and
 facilitated. If they are run as an unstructured meeting, they can
 become ineffective and they may also become a chore. How to run a
 retrospective is decided by the team, so it may become quite
+
 ```
 informal; however this does not imply any lack of structure.
 ```
+
 Tip
+
 ```
 PRINCE2 uses the term ‘review’ for a specific purpose (i.e.
 ```
+
 ```
 when using the quality review technique) whereas it is used
 ```
+
 frequently in many forms when using agile.
 Not only do retrospectives need to be planned, but they also need to
 be adapted to keep the participants stimulated. Retrospectives are
@@ -8807,9 +10176,11 @@ time but it is usually proportionate to the duration of activity that is
 being reviewed. A retrospective for a 2-week sprint may take 2
 hours, whereas a retrospective of a 6-month project may take a
 whole day. In effect a retrospective is a mini-workshop. Section
+
 ```
 26.4.1 describes how powerful workshops can be; all of the tools,
 ```
+
 techniques and considerations involved in workshops can also be
 used by retrospectives. Examples would be the choice of tool or
 technique, how to manage conflict, laying out the room, etc.
@@ -8833,35 +10204,45 @@ Objective This could be very specific to a certain area or more
 broadly based.
 Attendees Usually this would just be the team and all of them
 should be present.
+
 ```
 Agenda This would need to be adjusted to suit the situation (see
 ```
+
 ```
 section 19.4.1.3).
 ```
+
 ```
 Logistics These would be the same as for any workshop (e.g.
 ```
+
 ```
 layout, materials, refreshments).
 ```
+
 Pre-reading Distributing key information and results in advance
 could result in a faster start to the retrospective and therefore it
 would take less time.
 19.4.1.3 Agenda
+
 ```
 Many techniques exist to capture lessons (or ‘learnings’) but typically
 ```
+
 a retrospective will involve an agenda with the following steps in
 some form:
 agreeing the objective, agenda and any house rules
 reflecting on what has happened in terms of actual results and
+
 ```
 measures (e.g. 42 story points were delivered, 7 defects were
 ```
+
 ```
 found)
 ```
+
 generating views on what went well and what did not go so well
 actions on what to do next time, who is responsible for each one
 and when they are due to be completed
@@ -8873,9 +10254,11 @@ projects and the organization as a whole. The team would need to
 be comfortable with this, as they may prefer to pass on their findings
 after the retrospective.
 Occasionally, key documents and artefacts could be specifically
+
 ```
 reviewed (e.g. the definition of ‘done’ or working agreements).
 ```
+
 It is often a good idea to ensure that only a few changes to the
 process are suggested at each retrospective, as opposed to working
 on too many improvements at the same time. In other words it is
@@ -8885,19 +10268,24 @@ opposed to ten actions which can psychologically seem like too
 much extra work for a team, and therefore not worth starting.
 Feedback can be prioritized using a simple classification system of
 ‘high, medium and low’ or by plotting the feedback on an
+
 ```
 impact/effort grid (which contains two axes that show the effect of the
 ```
+
 ```
 change and the amount of work involved in it).
 ```
+
 A final step in a retrospective could be to reflect on how well the
 retrospective process worked. Put another way it would be a
 retrospective retrospective! Even if a team has become very good at
 doing retrospectives in a certain way, it can be worth introducing new
+
 ```
 techniques to keep people’s creativity fresh (e.g. Glad! Sad! Mad!).
 ```
+
 Introducing an independent facilitator can be very effective. If the
 group does not choose this option then the person leading the
 retrospective should still be facilitative.
@@ -8906,17 +10294,21 @@ some of them to look for improvements on specific areas of the
 process, whereas other retrospectives may have no specific area of
 focus.
 Figure 19.2 A Glad! Sad! Mad! board
+
 ```
 Definition: Glad! Sad! Mad!
 ```
+
 This is a feedback technique that can be used by a team in a
 retrospective. Each team member writes one or more sticky
 notes and puts them into the appropriate column. This lets
 everyone else know what made them ‘glad’ during the last
 timebox, what made them ‘sad’ and what even made them
+
 ```
 ‘mad’ (see Figure 19.2)!
 ```
+
 Involving the people who use the process in improving the process
 ensures that there is buy-in to any changes, and that any change is
 permanent.
@@ -8925,9 +10317,11 @@ team level, and operations reviews at a higher level, but they can be
 run in the same style or similar.
 During a retrospective, feedback usually comes in two forms: facts
 and feelings. Sometimes it is beneficial to separate feedback when it
+
 ```
 covers both of these (e.g. having separate steps in the agenda).
 ```
+
 Facts are usually objective and measurable, such as ‘the customer
 was not available during week two’. Feelings are usually subjective
 and harder to quantify, such as ‘I felt let down by the release team as
@@ -8957,15 +10351,19 @@ along with setting the appropriate tolerances create an environment
 where creativity and responding to change exist in order to best
 address the customer’s needs.
 Acknowledgements and further research
+
 ```
 Derby, E. and Larsen, G. (2006) Agile Retrospectives: Making Good
 ```
+
 Teams Great. Pragmatic Bookshelf.
+
 ```
 Kerth, N. (2001) Project Retrospectives: A Handbook for Team
 ```
+
 Reviews. Dorset House Publishing.
-Agile retrospective resource wiki: http://retrospectivewiki.org
+Agile retrospective resource wiki: <http://retrospectivewiki.org>
 [accessed: 19 April 2016].
 •
 •
@@ -8986,13 +10384,17 @@ agile concepts and techniques
 20.1 PRINCE2 guidance on managing
 product delivery
 The purpose of the managing product delivery process is to control
+
 ```
 the link between the project manager and the team manager(s), by
 ```
+
 agreeing the requirements for acceptance, execution and delivery.
+
 ```
 The role of the team manager(s) is to coordinate an area of work that
 ```
+
 will deliver one or more of the project product’s components. They
 can be internal or external to the customer’s organization.
 Figure 20.1 provides an overview of managing product delivery.
@@ -9005,30 +10407,40 @@ accepting and checking authorized work packages from the
 project manager
 ensuring that interfaces identified in the work package are
 maintained
+
 ```
 creating a team plan for the work packages being assigned (this
 ```
+
 may be done in parallel with the project manager creating the
+
 ```
 stage plan for the management stage)
 ```
+
 ensuring that the products are developed in accordance with any
+
 ```
 development method(s) specified in the work package
 ```
+
 •
 •
 •
 demonstrating that each product meets its quality criteria through
+
 ```
 the quality method(s) specified in the product description; this
 ```
+
 ```
 may include using the PRINCE2 quality review technique (see
 ```
+
 ```
 Chapter 11)
 ```
+
 Figure 20.1 Overview of managing product delivery
 obtaining approval for completed products from the authorities
 identified in the product description
@@ -9055,19 +10467,24 @@ product delivery’ with just ‘product delivery’. According to the Scrum
 Guide, Scrum does not contain any engineering or delivery practices
 so it could be said to ‘manage’ product delivery as opposed to ‘do’
 product delivery. Equally some agile approaches could be said to be
+
 ```
 solely delivery practices (such as XP in the software/IT domain) as
 ```
+
 they have very little that could be described as management
 practices.
 Care needs to be taken to identify agile concepts, behaviours and
 techniques correctly in terms of what function they perform. Are they
+
 ```
 delivery practices (sometimes referred to as development or
 ```
+
 ```
 engineering practices) that create products and sub-products, or do
 ```
+
 they exist at a level above this where they help to organize and
 control the delivery work? It is possible that they could be doing both.
 20.3 PRINCE2 Agile guidance for
@@ -9075,12 +10492,15 @@ managing product delivery
 When combining PRINCE2 with agile, the managing product delivery
 process and the use of work packages needs to be seen as a vital
 interface and linking process. It is the glue that joins together project
+
 ```
 management (where PRINCE2 provides lots of guidance) with
 ```
+
 ```
 product delivery (where agile provides lots of guidance).
 ```
+
 It could be said that this process is more to do with ‘managing the
 interface’ between project management and product delivery, as
 opposed to ‘managing product delivery’. The management of one
@@ -9090,96 +10510,126 @@ opposed to ‘managing product delivery’. The management of one
 •
 •
 •
+
 ```
 specific work package (and the product or products contained within
 ```
+
 ```
 it) still needs to be carried out, but this is the responsibility of the
 ```
+
 team manager from within the agile team.
 20.3.1 Work package definition
 It is the definition of the work package that is at the heart of this
 interface. Therefore it needs to blend the complementary styles of
 PRINCE2 and agile. Blending this will vary according to the project
 environment, but the main guidance when defining a work package
+
 ```
 is:
 ```
+
 It should be collaboratively defined by the project manager and
+
 ```
 the team manager (and the team), perhaps with agreement that
 ```
+
 there is visibility of both the team plans and the stage plans that
+
 ```
 they form part of; (this may take place as part of a sprint planning
 ```
+
 ```
 or release planning meeting).
 ```
+
 ```
 The formality of reporting arrangements should be agreed (e.g.
 ```
+
 ```
 low-tech burn charts). Checkpoint reports may be done verbally or
 ```
+
 as a group. Perhaps the same information could be pulled from
 information on display, or the project manager could attend sprint
 demos.
 Tolerance with respect to scope and quality could be defined in
+
 ```
 the work package (as well as in the product description(s)).
 ```
+
 ```
 The product description(s) contained in the work package may be
 ```
+
 defined at a level that clearly describes what the team needs to
 deliver, while at the same time not being so detailed that they
 restrict the team and how they create those products.
 Guidance on the use of appropriate agile behaviours, concepts
 and techniques may be appropriate if the delivery team would
 benefit from this.
+
 ```
 Indicating the level of (internal or external) uncertainty relating to
 ```
+
 the work package would provide the delivery team with an
 indication of the levels of risk involved so that they could plan
 •
 •
 •
 •
+
 ```
 their approach to the work accordingly (e.g. this work package
 ```
+
 may be classed as complex and it is suggested that a lot of
+
 ```
 prototyping may be beneficial in this instance).
 ```
+
 ```
 Agreement on what the work package may release (if anything)
 ```
+
 ```
 and the preferred size of the timeboxes involved (if there are
 ```
+
 ```
 more than one).
 ```
+
 Agreement that the team plan will evolve, as it may be based on
 the self-allocation of work and because empirical forecasting is
 being used.
+
 ```
 Guidance on the appropriate quality-checking techniques (e.g.
 ```
+
 using techniques the team is comfortable with or identifying
 certain reviews that the PRINCE2 quality review technique
+
 ```
 could be used for).
 ```
+
 ```
 Guidance on the impact on external stakeholders (such as
 ```
+
 ```
 operations or the training department) with respect to how the
 ```
+
 frequent releases may need their involvement.
 In some ways the work package is like a handshake. If this
 partnership is built correctly it brings the benefits of control in a
@@ -9190,21 +10640,27 @@ This process and the use of work packages may not result in
 significant changes in how agile teams work. The teams do need,
 however, to understand the role they play in a wider PRINCE2
 context and also that they need to provide information in the form of
+
 ```
 reports (e.g. checkpoint reports) and records (e.g. the quality
 ```
+
 ```
 register) in a timely manner to the project manager to enable the
 ```
+
 project manager to carry out their duties effectively.
 Table 20.1 shows PRINCE2 activities for the managing product
 delivery process and how they relate to agile artefacts and events
+
 ```
 (all product description references for PRINCE2 products are located
 ```
+
 ```
 in Appendix A).
 ```
+
 •
 •
 •
@@ -9244,14 +10700,18 @@ Create a team plan, A.16
 Update the risk register, A.25
 Update the quality register, A.23
 Approve the work package, A.26
+
 ```
 Artefacts:
 ```
+
 Release backlog
 Sprint backlog
+
 ```
 Event(s):
 ```
+
 Release planning
 Sprint planning
 Execute a work package:
@@ -9259,42 +10719,56 @@ Create specialist products
 Update the quality register, A.23
 Update the configuration item records, A.6
 Update the team plan, A.16
+
 ```
 Create checkpoint report(s), A.4
 ```
+
 Update the issue register, A.12
 Update the risk register, A.25
+
 ```
 Obtain approval record(s), A.8
 ```
+
 ```
 Artefacts:
 ```
+
 ```
 Sprint backlog (done/not done)
 ```
+
 Information radiators, burn charts
 Impediments
+
 ```
 Event(s):
 ```
+
 Daily stand-ups
 Deliver a work package:
 Update the work package, A.26
 Update the team plan, A.16
+
 ```
 Artefacts:
 ```
+
 ```
 Release backlog (done/not done)
 ```
+
 ```
 Sprint backlog (done/not done)
 ```
+
 Potentially shippable increment
+
 ```
 Event(s):
 ```
+
 Sprint review
 Release review
 Table 20.2 Relevant agile guidance for managing product delivery
@@ -9317,9 +10791,11 @@ number of work items in circulation. This creates a ‘pull system’.
 Kanban systems exist in a wide variety of forms, and in the late
 1940s Taiichi Ohno employed a system of signal cards to deliver the
 just-in-time element of the Toyota production system. More recently,
+
 ```
 Kanban boards (see Figure 20.2) have become commonplace when
 ```
+
 working in an agile way.
 Figure 20.2 An example of how a Kanban board might look
 As at Toyota, Kanban is usually applied not only to improve flow in
@@ -9336,12 +10812,15 @@ The first of the Kanban method’s foundational principles is ‘Start with
 what you do now’. This means that Kanban should not be regarded
 as an alternative either to PRINCE2 or to any agile framework. It is
 better to see it as a way to increase agility through improved day-to-
+
 ```
 day decision-making (the result of increased transparency), the
 ```
+
 ```
 deferral of commitment (the result of controls on work in progress),
 ```
+
 and the reduced lead times and increased opportunity for feedback
 that follow.
 Kanban becomes applicable with the establishment of a reasonably
@@ -9350,9 +10829,11 @@ to be found after the PID has been approved and there are discrete
 work items that can be pulled into a Kanban system. The use of
 Kanban may then continue after the products have been delivered
 into operation. This is a transition that Kanban can help to facilitate.
+
 ```
 Definition: Work in progress (WIP)
 ```
+
 Work that has been started but not yet delivered from the
 system or timebox. It can also indicate the status for incidents,
 problems, changes, etc.
@@ -9375,24 +10856,31 @@ By making work visible, teams can easily see how work is
 progressing, what has been done, what is still to do and what
 problems exist that are hindering progress. For more information on
 the benefits of visualization, see section 15.4.2. How the work is
+
 ```
 physically displayed can vary but it is often a simple grid (or ‘ticket’,
 ```
+
 ```
 see Figure 20.3) primarily showing the different states a work item
 ```
+
 passes through and information that will help with prioritization and
+
 ```
 scheduling (e.g. recording risks associated with the work). The
 ```
+
 information is usually recorded on cards or sticky notes that are
 typically updated throughout the day.
 ‘Swim lanes’ can be added to identify similar types of work or
 ‘classes of service’. These would be horizontal rows going across
 the vertical columns. A Kanban ticket can exist in many forms.
+
 ```
 Definition: Class of service
 ```
+
 A broadly defined category for different types of work. The
 classes influence selection decisions because different classes
 of service are typically associated with qualitatively different risk
@@ -9402,9 +10890,11 @@ delay. Four generic classes of service are widely recognized:
 Figure 20.3 An example of how a Kanban ticket might look
 •
 •
+
 ```
 Limit ‘work in progress’ (WIP)
 ```
+
 Although this is a fundamental concept in Kanban, it appears
 counterintuitive to many who would be forgiven for thinking that it
 may slow work down. It is important to understand the reasoning
@@ -9414,9 +10904,11 @@ Reducing the pressure Introducing reduced speed limits on
 motorways and highways speeds up the flow of traffic at busy
 times.
 Reducing task-switching Writing a document takes much longer
+
 ```
 (in terms of actual writing time) if the author is receiving email
 ```
+
 notifications through a desktop alert, or similar, at the same time.
 Each email notification breaks the concentration and the current
 thought processes which then have to be ‘reloaded’ and
@@ -9427,9 +10919,11 @@ number of sticky notes or cards that are allowed to be present in that
 column at any one time.
 The use of WIP limits underpins the ‘pull’ system which
 characterizes the way Kanban avoids scheduling work at specific
+
 ```
 times (referred to as a ‘push system’) and instead pulls work from
 ```
+
 upstream, when the capacity exists to work on it.
 Furthermore, limiting WIP reduces the impact of task-switching and
 multi-tasking. If a team or individual is working on several things at
@@ -9444,9 +10938,11 @@ A Kanban system aims to achieve the highest level of performance
 from the existing way of working in order to deliver something of
 value as quickly as possible. Therefore the team is constantly
 looking at ways to maximize flow efficiency and minimize delays
+
 ```
 (e.g. by removing obstacles). Kanban highlights problems that the
 ```
+
 team needs to solve. This is a constant team exercise where the
 objective is to remove waste as quickly as possible. The Kanban
 board visualizes the work moving through the system and acts like a
@@ -9461,57 +10957,76 @@ management by exception enables empowerment and autonomy, a
 team needs to clearly define how it works and make these policies
 transparent. These could be described as ‘rules’ and they create an
 environment that is more objective for decision-making and where
+
 ```
 scrutiny may be required. Policies (similar to ‘working practices’ in
 ```
+
 ```
 section 15.4.2) should evolve and be built up collaboratively over
 ```
+
 time to create a set of guidelines that then become the team norm.
 Implement feedback loops
+
 ```
 Ultimately, the value being delivered by any process (e.g. a project
 ```
+
 ```
 or a timebox) is judged by the final consumer such as the end
 ```
+
 customer. Being able to quantitatively assess this is very
 advantageous as it will directly affect what will subsequently be
 delivered. Typically there is a long time between a team adding a
 feature to the to-do list and the team receiving quantitative feedback
 from the feature being used. Constantly aiming to shorten this
 feedback loop so that the most valuable work is in the Kanban
+
 ```
 system is essential in order to deliver the most value (see also
 ```
+
 ```
 section 14.4.1).
 ```
+
 The Kanban method contains four types of review to gather
+
 ```
 feedback (the stand-up meeting, the service delivery review, the
 ```
+
 ```
 operations review and the risk review). The stand-up meeting and
 ```
+
 the service delivery review can be used within a project context to
+
 ```
 check what is happening against what was forecast (e.g. for a
 ```
+
 ```
 timebox). Following this, policies can be adjusted as necessary. A
 ```
+
 risk review can be run at any time to see if there is a pattern to the
 types of risk that are being identified. The operations review would
+
 ```
 apply at a higher level than a project (e.g. programme level).
 ```
+
 Improve collaboratively, evolve experimentally
 The Kanban method embraces the idea that improvement is a
 collaborative exercise. Its transparency and the ease by which the
+
 ```
 Kanban system (and thereby the underlying process) can be
 ```
+
 modified creates the natural conditions for collaborative improvement
 to occur. The method builds on these advantages in its promotion of
 experimental improvement.
@@ -9520,15 +11035,19 @@ metrics such as lead times and delivery rates, the team is able to
 form hypotheses of what may be holding the system back and then
 agree to changes that can be tested experimentally in a safe-to-fail
 manner.
+
 ```
 Definition: Safe-to-fail
 ```
+
 A safe-to-fail experiment is one that is designed to have only
 limited impact on the system or the plan in the event of failure.
 This practice implies a significant cultural shift for many because it
+
 ```
 embraces the concept of Kaizen from Toyota’s culture; in other
 ```
+
 words, ‘Process improvement is everyone’s business every day!’
 There are no process engineers prescribed in Kanban, the point
 being that everyone focuses on managing the outcome of their
@@ -9542,9 +11061,11 @@ and yet many people get confused regarding the differences
 between them. They are similar in that they both focus strongly on
 process improvement, transparency and empiricism. Yet they are
 different in that Scrum has specific roles, the work is timeboxed and
+
 ```
 it relates to a specific product; whereas there are no defined roles in
 ```
+
 Kanban, work is pulled to create a flow and the work may relate to
 anything.
 The very simple structure of Kanban and the fact that it can be
@@ -9555,23 +11076,31 @@ the creation of a concept known as ‘Scrumban’, which is the
 •
 •
 •
+
 ```
 application of Kanban where the underlying process (the ‘what you
 ```
+
 ```
 do now’) is based on Scrum. In its most limited form this may simply
 ```
+
 involve the use of Kanban systems to manage the work of the sprint.
+
 ```
 It is more powerful (and increasingly typical) to apply Kanban to a
 ```
+
 broader workflow that starts upstream of the build process and ends
+
 ```
 with customer delivery or even post-deployment validation (e.g.
 ```
+
 ```
 using Kanban at a programme or portfolio level).
 ```
+
 Work item size and similarity
 Kanban systems are able to deal with multiple types of work and/or
 classes of service. These are typically indicated as tickets of different
@@ -9602,58 +11131,78 @@ analyse the results
 draw a conclusion.
 Cumulative flow diagrams
 A common technique used in Kanban is to track work items on a
+
 ```
 cumulative flow diagram (CFD). This shows the amount of work in
 ```
+
 ```
 each column on a daily basis (see Figure 20.4).
 ```
+
 The spreadsheet on the left shows how many work items are in each
 area of the system and this is represented on the CFD. Reading the
 spreadsheet from right to left helps when transposing the data
+
 ```
 vertically onto the CFD (e.g. on day 15, 13 items had been deployed,
 ```
+
 ```
 none were ready to deploy, 4 were in test, etc.).
 ```
+
 Figure 20.4 A cumulative flow diagram
+
 ```
 Definition: Lead time/cycle time
 ```
+
 These two terms are interpreted differently by many in the
+
 ```
 Kanban community (some see them as representing different
 ```
+
 ```
 things) but in simple terms they refer to how long a work item
 ```
+
 takes to go through the system or timebox. So although they
 are often interpreted differently, they are, in effect, the same
 thing.
+
 ```
 Figure 20.5 A simple view of how to calculate WIP and lead (or
 ```
+
 ```
 cycle) time
 ```
+
 Put more simply, WIP is therefore the vertical difference between the
 line showing work that is ready and the line showing what has been
+
 ```
 deployed in Figures 20.4 and 20.5, whereas lead (or cycle) time is
 ```
+
 the difference horizontally between the two, as shown in Figure 20.5.
 Hints that may prove useful
 Further to the comments made regarding applicability earlier in this
 chapter it is important to see Kanban for what it is, and what it offers,
 and then apply it in a project context in the most appropriate way. A
+
 ```
 2-week sprint could be planned (to a degree) in advance with a finite
 ```
+
 amount of work as per Scrum. Alternatively, the sprint could be
+
 ```
 unplanned (to a degree) and work could be pulled from a list when
 ```
+
 necessary as per Kanban. The choice will depend on several factors
 such as the needs of any particular situation, the agile maturity of the
 team or the preferred working style of the team. It may be
@@ -9663,42 +11212,57 @@ If work items in a Kanban system are different in size by a significant
 order of magnitude, such as when comparing a day to a week, or a
 week to a month, it may be appropriate to use separate swim lanes
 for these, as these could represent different ‘classes of service’.
+
 ```
 Improving flow and delivering value as early as possible (and as
 ```
+
 ```
 much of it as possible) is very much in keeping with the thinking
 ```
+
 behind flexing what is being delivered. Kanban aims for timeliness
+
 ```
 and reducing the impact of ‘cost of delay’ (see Figure 20.6) which
 ```
+
 can be considerable in many organizations: it is often intangible, as it
 is not measured. The significance of ‘cost of delay’ in a project
 context using agile is that there is a drive to deliver value as early as
+
 ```
 possible in some form during the project (e.g. a set of features) and
 ```
+
 ```
 a desire that the final product is not ultimately delayed (e.g. by
 ```
+
 ```
 reducing some of what was intended to be delivered).
 ```
+
 If Kanban is being introduced for the first time to a team or it is being
+
 ```
 used in a specific way for the first time (e.g. it has already been used
 ```
+
 ```
 for stages but not sprints) then Kanban needs to be implemented
 ```
+
 carefully and gradually. Wholesale changes to existing processes
+
 ```
 and working practices (i.e. those used for the previous stages or
 ```
+
 ```
 sprints) should be avoided and the team need to agree to gradually
 ```
+
 change from where they are now and do it collaboratively.
 Figure 20.6 The effect of delaying the delivery of a product
 When using Kanban you should always have WIP limits. If you are
@@ -9708,21 +11272,28 @@ Take care when someone mentions that they are using Kanban,
 because quite often all they are using is a Kanban board. Although
 this is still beneficial, it is the collective power of all of the Kanban
 practices that enables it to work at its full potential.
+
 ```
 Definition: Little’s Law
 ```
+
 ```
 L = λW
 ```
+
 In simple terms, it is the average number of items in a system.
 L is equal to the average arrival rate, λ, multiplied by the
+
 ```
 average time an item spends in the system, W (assuming that
 ```
+
 this is over a long enough period of time and the system is
+
 ```
 stable).
 ```
+
 Little’s Law is part of the queueing theory body of knowledge and
 an adjusted version of it is used to understand the flow of work
 through a Kanban system. If the nature of the variety of work and the
@@ -9737,9 +11308,11 @@ with different meanings. In Japanese it roughly equates to a ‘signal
 card’ or ‘sign/visual board’. It is used in inventory control to signal
 that a particular level of stock has been reached meaning new stock
 needs to be ordered or pulled from a supplier. It is a physical card or
+
 ```
 token (see Figure 20.7). In Chinese, it means ‘looking at the board’.
 ```
+
 In Figure 20.7, stock is being taken from the front of the box.
 20.4.2 The Lean Startup method
 •
@@ -9753,12 +11326,15 @@ many ideas and concepts that can be taken from it that add value
 when combining PRINCE2 with agile.
 The core concepts of Lean Startup that apply to PRINCE2 are:
 build, measure, learn
+
 ```
 create a minimum viable product (MVP)
 ```
+
 ```
 fail fast (in PRINCE2 this is coupled with ‘learn fast’)
 ```
+
 validated learning.
 Drawing on an approach to developing businesses may not seem to
 be an obvious parallel to running a project, or even a timebox, but
@@ -9776,9 +11352,11 @@ as they can get in as short a time as possible’. They do not want it
 technologies, and the pace of change in this area is so fast that they
 have to use a different management approach, and that approach
 needs to be an agile one based on the early delivery of value
+
 ```
 (sometimes this being in the form of ‘learnings’).
 ```
+
 20.4.2.1 Uncertainty still needs to be managed
 Lean Startup and PRINCE2 both see the need for a managed
 process even though Lean Startup is geared to handling uncertainty
@@ -9793,12 +11371,15 @@ Startup focuses on uncertainty, learning and handling change.
 It should be remembered that Lean Startup in its entirety is not built
 for projects or timeboxes. It is included in PRINCE2 Agile as there
 are many similarities between creating a successful business and
+
 ```
 running a successful project in an agile context (e.g. a business
 ```
+
 ```
 needs a business plan and a project needs a business case).
 ```
+
 20.4.2.2 Applying Lean Startup to PRINCE2
 When applying some of the thinking behind Lean Startup to
 PRINCE2, it should be seen in the context of a timebox. This
@@ -9810,12 +11391,15 @@ At the heart of Lean Startup is the idea that in order to be successful
 there is a need to focus on learning as this feeds into everything a
 team is trying to achieve. Understanding the customer’s needs and
 understanding them quickly is vital. The ultimate goals are to get a
+
 ```
 better understanding of the customer’s needs (bearing in mind that
 ```
+
 ```
 they themselves may not know them) and to speed up this learning.
 ```
+
 Lean Startup refers to this as shortening or accelerating the
 feedback loop and this is in keeping with the PRINCE2 Agile
 behaviour of exploration.
@@ -9824,12 +11408,15 @@ behaviour of exploration.
 •
 Essential to learning is that feedback needs to be measurable. Even
 if the feedback is subjective it has to be measurable so that it can be
+
 ```
 quantified (e.g. an opinion could be measured on a scale from 1 to
 ```
+
 ```
 10). Lean Startup refers to ‘vanity metrics’ and ‘actionable metrics’.
 ```
+
 The metrics you need to capture are those that directly relate to the
 business case or a timebox objective. These would be actionable
 metrics and not vanity metrics. The latter do not relate directly to the
@@ -9843,12 +11430,15 @@ product will provide feedback. This will have an impact on the rest of
 the project. The sooner this is received the better. This feedback
 could turn out to be negative and result in the project being
 cancelled. Lean Startup is happy with this. If you are going to fail you
+
 ```
 need to fail as fast as possible (‘fail fast, fail quickly’ or put another
 ```
+
 ```
 way, ‘learn fast’).
 ```
+
 One of the key stories described in The Lean Startup is that of a
 company that took 6 months to build a product and when they
 launched it the product failed. If they had released a reduced version
@@ -9863,9 +11453,11 @@ a prototype is made and shown to a customer, and immediately
 rejected. The learning has already started.
 20.4.2.4 Build, measure, learn
 The three steps of build, measure and learn apply both to releases
+
 ```
 and interim products (see Figure 20.8). The most important of the
 ```
+
 three is the final step to do with learning. This then drives a project
 forward. In Lean Startup terms, if this results in refinements and
 adjustments this is seen as positive change and is described as
@@ -9880,12 +11472,15 @@ Figure 20.8 The build–measure–learn feedback loop from Lean
 Startup
 20.4.2.5 Minimum viable product in Lean Startup
 The concept of an MVP is well known in agile. There are other
+
 ```
 similar concepts such as minimum marketable feature set (MMFS)
 ```
+
 ```
 and minimum usable subset (MUST) but these are not the same.
 ```
+
 The basic idea behind MVP, in Lean Startup terms, is to create the
 simplest form of the product in order to get feedback. This would
 typically involve a limited set of features which could then be
@@ -9897,18 +11492,22 @@ depends on the levels of uncertainty that are involved. In very
 innovative situations it can involve educated guesswork or instincts,
 but the Lean Startup method forces target measures to be created
 and then validated as soon as possible by the results.
+
 ```
 Definition: Minimum viable product
 ```
+
 In a PRINCE2 Agile context, the term MVP broadly aligns with
 the Lean Startup view that it is a ‘version of the final product
 which allows the maximum amount of validated learning with
 the least effort’. This should not be confused with the viability of
 the project as a whole. Typically, an MVP would be delivered as
 early as possible during the project.
+
 ```
 It is important to note that an MVP is about learning; it may not
 ```
+
 go into operational use and may be in the form of a simple
 experiment or prototype.
 Lean Startup could be said to view the MVP concept differently from
@@ -9929,12 +11528,15 @@ volatile start-up arena. This is why the concepts of Lean Startup can
 be used to complement PRINCE2 as it believes that to be
 responsive you need control.
 20.4.2.7 Hints that may prove useful
+
 ```
 Where there is extreme uncertainty (what Cynefin may describe as
 ```
+
 ```
 ‘complex’; see section 17.4.1) Lean Startup is happy for the MVP to
 ```
+
 have less than the ideal level of quality: i.e. it may contain defects.
 Lean Startup is comfortable with this, as part of its learning process
 is to find out from the customer what level of quality they are happy
@@ -9948,34 +11550,44 @@ defined user group for a project, but it illustrates why it is important to
 engage with a representative view of the stakeholders from the
 customer side. They may have different views on the product or use
 it in different ways. A single product owner may be a disadvantage if
+
 ```
 you are using this approach (i.e. segmentation with cohorts).
 ```
+
 ```
 Lean Startup refers to ‘funnel metrics’ (e.g. How many enquired
 ```
+
 about the product? How many asked for a demonstration of the
+
 ```
 product? How many bought the product?). These all represent data
 ```
+
 ```
 that can be learned from to a degree, but the key metrics (referred to
 ```
+
 ```
 as actionable) need to tie back to the business case to validate the
 ```
+
 original rationale. A twofold increase in demonstrations is not great
 news if there is no increase in sales. However, opportunities to learn
 about why the number of demonstrations increased, and to
 hypothesize as to why they are not converting into sales, now exist.
 On a PRINCE2 project using agile that is releasing frequently, these
 funnel metrics may start arriving during the project and may affect
+
 ```
 how future work is planned and organized (e.g. features may be
 ```
+
 ```
 reprioritized).
 ```
+
 20.4.2.8 Reducing uncertainty
 It could be said that Lean Startup is at its best when faced with
 extreme uncertainty and in a project context this level of uncertainty
@@ -9988,44 +11600,59 @@ reduce uncertainty and to understand the customer’s needs as well
 as possible.
 20.5 Summary
 The managing product delivery process handles the important
+
 ```
 interface between the project manager and the team manager (and
 ```
+
 ```
 therefore the delivery team who will be working in an agile way). The
 ```
+
 interface would ideally be collaborative and transparent where there
 is a collective agreement on what is to be produced and how this will
+
 ```
 be achieved (as opposed to a situation where instructions are given
 ```
+
 ```
 and followed).
 ```
+
 Progress information would be visible and frequently updated by way
 of the daily activities of working in an agile way. This then makes it
 easier for the project manager to manage the project at the stage
 level by having clear and regular information across all of the teams
 at the delivery level.
 Acknowledgements and further research
+
 ```
 Andersen, D.J. (2010) Kanban – Successful Evolutionary Change for
 ```
+
 your Technology Business. Blue Hole Press.
+
 ```
 Burrows, M. (2014) Kanban from the Inside. Blue Hole Press.
 ```
+
 ```
 Croll, A. and Yoskovitz, B. (2013) Lean Analytics: Use Data to Build
 ```
+
 a Better Startup Faster. O’Reilly Media.
+
 ```
 Maurya, A. (2012) Running Lean: Iterate from Plan A to a Plan that
 ```
+
 Works. O’Reilly Media.
+
 ```
 Ries, E. (2011) The Lean Startup: How Constant Innovation Creates
 ```
+
 Radically Successful Businesses. Portfolio Penguin.
 •
 •
@@ -10054,15 +11681,19 @@ risks.
 Therefore, the process should be executed at, or close to, the end of
 each management stage.
 Projects do not always go to plan and in response to an exception
+
 ```
 report (if the management stage or project is forecast to exceed its
 ```
+
 ```
 tolerances) the project board may request that the current
 ```
+
 ```
 management stage (and possibly the project) is replanned. The
 ```
+
 output from replanning is an exception plan which is submitted for
 project board approval in the same way that a stage plan is
 submitted for approval.
@@ -10097,12 +11728,15 @@ longer the case. In agile there is a similar concept of stopping the
 regular delivery cycle of releases when the value being delivered
 drops off, becomes marginal to the amount of effort involved or there
 is an opportunity cost to other work or projects. In agile this is usually
+
 ```
 determined as and when it happens (e.g. at the end of a sprint or
 ```
+
 ```
 release), whereas in PRINCE2 a stage end and a formal check on
 ```
+
 ongoing project viability is determined well in advance and the
 planned delivery of features needs to fit into this.
 Tip
@@ -10110,12 +11744,15 @@ The project board should determine how long a stage should
 last before deciding what goes into it. They may wish to adjust
 this in a collaborative manner in the light of what is planned, but
 they should not be driven by this.
+
 ```
 There is a similarity between a major review of a release (e.g. one
 ```
+
 ```
 that took 3 months) and the managing a stage boundary process. In
 ```
+
 both, progress can be reviewed with respect to how much value or
 benefit has been delivered, how the team is performing, how the
 processes are working, and how the project is progressing with
@@ -10139,9 +11776,11 @@ launched a rival product and the expected benefits of the project are
 now significantly lower. Despite the good efforts of the delivery
 teams it may be prudent to cancel the project if it is no longer viable.
 Tailoring guidance that may be appropriate is as follows:
+
 ```
 Review how much is being delivered (and the quality of it)
 ```
+
 compared with what had been planned. This would include
 comparing the amount of value being delivered with the amount
 of cost incurred to create that value in order to ascertain if the
@@ -10149,62 +11788,82 @@ project is still on track and is still viable.
 What has been released would typically be reviewed. What
 benefits are being realized?
 The appropriate use of agile could be reviewed in case risks are
+
 ```
 surfacing in certain areas (e.g. if the level of customer
 ```
+
 involvement is lower than expected more formality may be
+
 ```
 required).
 ```
+
 Release planning would typically be reviewed. For example,
 would it be a good idea to increase the frequency of the releases
+
 ```
 (if it is possible)? Would it be a good idea to alter the number of
 ```
+
 ```
 sprints (or their lengths) inside each release?
 ```
+
 The efficiency of configuration management and the choice of
 configuration item records could be assessed with respect to the
 iterative and incremental nature of the agile way of working. For
 example, are the configuration item records defined at too low a
 level and is this causing an unnecessary overhead?
 Is it worth carrying out a formal workshop to review the
+
 ```
 management stage (perhaps as part of a release review) and
 ```
+
 ```
 then plan the next management stage (see Chapter 22 on closing
 ```
+
 ```
 a project for how to handle a similar one) or at least a large-scale
 ```
+
 ```
 demo for as many stakeholders as appropriate? (NB: it is unlikely
 ```
+
 •
 that this event will take place at the very end of a stage, such as
+
 ```
 on the final day.)
 ```
+
 Decide on which of the suggested improvements to the way the
+
 ```
 teams are working (perhaps created during a release
 ```
+
 ```
 retrospective) can be reasonably expected to be adopted in the
 ```
+
 next release. Further learnings could be formalized at this point
 and given to project support so these lessons can help the wider
 organization.
 Table 21.1 shows PRINCE2 activities for the managing a stage
 boundary process and how they relate to agile artefacts and events
+
 ```
 (all product description references for PRINCE2 products are located
 ```
+
 ```
 in Appendix A).
 ```
+
 •
 •
 •
@@ -10259,44 +11918,58 @@ Create/update the configuration item records, A.6
 Update the risk register, A.25
 Update the issue register, A.12
 Update the quality register, A.23
+
 ```
 Artefacts:
 ```
+
 ```
 Product backlog (done/not done)
 ```
+
 ```
 Release backlog (done/not done)
 ```
+
 Potentially shippable increment
+
 ```
 Event(s):
 ```
+
 Release planning
 Release reviews
 Release retrospectives
+
 ```
 Note: Sprint planning would typically be
 ```
+
 too detailed at this point but it may be
 useful.
 Update the project plan:
 Update the project plan, A.16
 Update the issue register, A.12
 Update the risk register, A.25
+
 ```
 Artefacts:
 ```
+
 ```
 Product backlog (done/not done)
 ```
+
 ```
 Release backlog (done/not done)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Release review
 Release planning
 Update the business case:
@@ -10304,44 +11977,58 @@ Update the business case, A.2
 Update the benefits management approach, A.1
 Update the risk register, A.25
 Update the issue register, A.12
+
 ```
 Artefacts:
 ```
+
 ```
 Product backlog (value enabled)
 ```
+
 ```
 Release backlog (value enabled)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Release review
 Release planning
 Report management stage end:
 Create an end stage report, A.9
 Create a lessons report, A.15
 Create follow-on action recommendations, A.9
+
 ```
 Artefacts:
 ```
+
 ```
 Product backlog (done/not done,
 ```
+
 ```
 value enabled)
 ```
+
 ```
 Release backlog (done/not done,
 ```
+
 ```
 value enabled)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Release planning
 Release review
 Release retrospectives
@@ -10350,15 +12037,19 @@ Update the PID, A.20
 Create an exception plan, A.16
 Create/update the configuration item records, A.6
 Update the risk register, A.25
+
 ```
 Artefacts:
 ```
+
 ```
 Product backlog (done/not done)
 ```
+
 ```
 Release backlog (done/not done)
 ```
+
 Impediments from daily stand-ups
 •
 •
@@ -10369,9 +12060,11 @@ Update the issue register, A.12
 Update the quality register, A.23
 Outputs or decisions from a
 retrospective or a review
+
 ```
 Event(s):
 ```
+
 Sprint planning
 Release planning
 Table 21.2 Relevant agile guidance for managing a stage boundary
@@ -10432,16 +12125,21 @@ project
 The purpose of the closing a project process is to provide a fixed
 point at which acceptance of the project product is confirmed, and to
 recognize that objectives set out in the original PID have been
+
 ```
 achieved (or approved changes to the objectives have been
 ```
+
 ```
 achieved), or that the project has nothing more to contribute.
 ```
+
 Figure 22.1 provides an overview of closing a project.
+
 ```
 One of the defining features of a PRINCE2 project is that it is finite; it
 ```
+
 has a start and an end. If the project loses this distinctiveness, it
 loses some of its advantages over purely operational management
 approaches.
@@ -10454,12 +12152,15 @@ Figure 22.1 Overview of closing a project
 A clear end to a project:
 is always more successful than a slow drift into use as it is a
 recognition by all concerned that:
+
 ```
 the original objectives have been met (subject to any approved
 ```
+
 ```
 changes)
 ```
+
 the current project has run its course
 either the operational regime must now take over the products
 from this project, or the products become inputs into some
@@ -10481,21 +12182,26 @@ to close the project. Subsequently, the executive should also notify
 corporate, programme management or the customer that the project
 has closed.
 It is also possible that the project board may wish to trigger a
+
 ```
 premature closure of the project under some circumstances (e.g. if
 ```
+
 ```
 the business case is no longer valid). If the project is being brought
 ```
+
 to a premature close, this process will still need to be executed, but
 may have to be tailored to the actual project situation.
 A number of actions specific to the project product may be required
 after the project, and these should be documented and planned for
 as follow-on action recommendations. These may have different
 audiences and therefore may need to be issued individually. The
+
 ```
 needs of the recipient will determine the format and content; some
 ```
+
 may want a formal report, some a log entry on a system, and others
 a meeting.
 22.2 Agile ways of working that may
@@ -10503,9 +12209,11 @@ already exist
 It is possible in some agile environments that there are not many
 defined processes with respect to closing down a project, although
 mature agile environments will have these in place. This is primarily
+
 ```
 because:
 ```
+
 •
 •
 •
@@ -10513,25 +12221,33 @@ because:
 •
 •
 •
+
 ```
 Regular handovers (preferably carried out collaboratively) into
 ```
+
 ```
 operational use (or near operational use) reduce some of the
 ```
+
 need to formalize certain activities at the end, as they have
+
 ```
 become second nature (e.g. process reviews, updating
 ```
+
 ```
 operational documentation, getting sign-off/acceptance).
 ```
+
 ```
 Ending a piece of work is often decided upon at the time (when
 ```
+
 ```
 added value has become marginal) as opposed to in advance, or
 ```
+
 when acceptance criteria become satisfied.
 Due to the iterative and incremental nature of agile, the frequency of
 the delivery of product into operational use, and ease of delivery, are
@@ -10540,12 +12256,15 @@ organization.
 22.3 PRINCE2 Agile guidance on
 closing a project
 Tailoring guidance that may be appropriate is as follows:
+
 ```
 Project closure may take the form of a workshop (see section
 ```
+
 ```
 22.4) where the original baseline is checked in relation to the final
 ```
+
 outputs and outcomes of the project, and preparation for closure
 authorization can take place. This may include a review of the
 final release.
@@ -10568,22 +12287,28 @@ should be taken to ensure that user acceptance is not too
 informal when closing the project in order to ensure that the
 customer’s quality expectations and acceptance criteria have
 been met.
+
 ```
 Operational handovers (and acceptance) are likely to have
 ```
+
 happened many times due to the incremental delivery of
 products, so the final handover should be a routine event.
 Training and technical documentation would be finalized, as it
 would have been created iteratively and incrementally
 throughout the project.
 Table 22.1 shows PRINCE2 activities for the closing a project
+
 ```
 process and how they relate to agile artefacts and events (all product
 ```
+
 description references for PRINCE2 products are located in
+
 ```
 Appendix A).
 ```
+
 •
 •
 •
@@ -10631,21 +12356,28 @@ PRINCE2 activities and products Applicable agile artefacts and events
 Prepare planned closure:
 Update the project plan, A.16
 Create a product status account, A.18
+
 ```
 Artefacts:
 ```
+
 Project vision
+
 ```
 Product backlog (done/not done)
 ```
+
 ```
 (Final) release backlog (done/not done)
 ```
+
 Potentially shippable increment
 Information radiators
+
 ```
 Event(s):
 ```
+
 Release review
 Release retrospective
 Prepare premature closure:
@@ -10653,27 +12385,36 @@ Update the issue register, A.12
 Update the project plan, A.16
 Create a product status account, A.18
 Create additional work estimates, A.8
+
 ```
 Artefacts:
 ```
+
 Outstanding impediments
 Project vision
+
 ```
 Product backlog (done/not done)
 ```
+
 ```
 (Final) release backlog (done/not done)
 ```
+
 ```
 Potentially shippable increment (or part thereof,
 ```
+
 ```
 if shippable)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 Release review
 Release retrospective
 Hand over products:
@@ -10682,60 +12423,80 @@ recommendations, A.8
 Update the configuration item records, A.6
 Update the benefits management approach, A.1
 Obtain the acceptance record
+
 ```
 Artefacts:
 ```
+
 Potentially shippable increment
+
 ```
 Product backlog (done/not done and value
 ```
+
 ```
 enabled)
 ```
+
 ```
 Event(s):
 ```
+
 ```
 Release review (or subsequently)
 ```
+
 Evaluate the project:
 Create the end project report, A.8
 Create the lessons report, A.15
+
 ```
 Artefacts:
 ```
+
 Project vision
+
 ```
 Product backlog (done/not done, value enabled)
 ```
+
 ```
 Release backlog (done/not done, value
 ```
+
 ```
 enabled)
 ```
+
 Information radiators
+
 ```
 Event(s):
 ```
+
 ```
 (Final) release review
 ```
+
 Project/release retrospective
 Recommend project closure:
 Close issue register, A.12
 Close the risk register, A.25
 Close the quality register, A.23
 Close the daily log, A.7
+
 ```
 Artefacts:
 ```
+
 ```
 Product backlog (done/not done, value enabled)
 ```
+
 ```
 Decisions from the (final) release review or
 ```
+
 project retrospective
 •
 •
@@ -10772,18 +12533,23 @@ place and the project management team worked.
 •
 •
 •
+
 ```
 The whole project team should be present (e.g. the project board,
 ```
+
 ```
 project assurance) along with other stakeholders such as those who
 ```
+
 ```
 will make the final product operational (or the final release of the
 ```
+
 ```
 product operational), those who will maintain and support it, and
 ```
+
 those from the strategic level who will be interested in the project
 outcome from a programme perspective.
 The following is an example of how a workshop could be structured:
@@ -10826,12 +12592,15 @@ if lessons about the use of agile on this project, and how the
 associated risks were handled, could be used on other projects.
 Ideally, project support would be in attendance to capture these
 learnings.
+
 ```
 Closing the event Perhaps the executive (depending on
 ```
+
 ```
 personal style), who would be there to look at the final costs,
 ```
+
 could thank the team and celebrate the end in some form such as
 a team meal. When a project has involved high levels of
 collaboration and teamwork, and the team is disbanded, it can
@@ -10841,13 +12610,17 @@ this.
 22.4.2 Premature close
 If the project has closed prematurely, it could have been triggered by
 a fail fast/learn fast situation caused by the correct use of
+
 ```
 management by exception (for example, a stage boundary was
 ```
+
 reached and the project was no longer viable, or tolerances were
+
 ```
 forecast to be exceeded and it was not worth taking remedial action).
 ```
+
 Many agile techniques are designed to help with this, such as
 timeboxing or empirical forecasting, which forces the ‘bad’ news to
 surface in a transparent way.
@@ -10857,9 +12630,11 @@ to this, but the following are the most significant:
 empirical forecasting
 transparency
 timeboxing
+
 ```
 sprint (or release) demonstrations, reviews and retrospectives
 ```
+
 shortening the feedback loop to the customer
 •
 •
@@ -10899,20 +12674,26 @@ report products
 23 Summary of tailoring guidance
 for the PRINCE2 products
 All products can exist in a wide range of formats from the very formal
+
 ```
 (e.g. a bound document) to the very informal (e.g. an email or a
 ```
+
 ```
 conversation). They all need to exist in some form even if only a
 ```
+
 sentence or a paragraph within another product. It should not be
 assumed that each product is a document.
+
 ```
 PRINCE2 identifies three types of management product (baseline,
 ```
+
 ```
 record and report). They are used by the PRINCE2 processes so
 ```
+
 that certain roles can take actions and/or make decisions.
 All of the product descriptions defined by PRINCE2 can be used
 without any changes: see Appendix A for the full list of PRINCE2
@@ -10923,9 +12704,11 @@ project.
 Baseline products are subject to change control. In Table 23.1, the
 numbered baseline products refer to those used in Managing
 Successful Projects with PRINCE2 for the PRINCE2 management
+
 ```
 products (see also Table 16.2).
 ```
+
 Table 23.1 Tailoring baseline products
 Baseline products Overview of the tailoring required and further considerations
 A.1 Benefits management
@@ -10935,20 +12718,26 @@ planned in order to enable benefits during the course of a project. This
 may lead to the early delivery of actual benefits to the customer. The
 way these are planned will have an impact on the ongoing viability of
 the project. It would be likely that a significant amount of benefits are
+
 ```
 planned to be delivered (or at least enabled) before the project end
 ```
+
 date.
 A.2 Business case This needs to be expressed in a way that allows for flexing of the
 amount being delivered. The MVP would need to be identified so that
 an exception can be raised if this is forecast to be delivered later than
+
 ```
 expected (see Chapter 9 on the business case theme for more details).
 ```
+
 A.3 Change control approach The iterative and incremental nature of agile means that there will
+
 ```
 naturally be several versions of products and that change is inevitable;
 ```
+
 therefore this should be embraced and supported accordingly. In
 environments where automation and frequent releases into operational
 use occur, specific tools may exist and their use should be clearly
@@ -10960,40 +12749,52 @@ A.5 Communication
 management approach
 It is essential that there is a clearly understood and agreed approach
 regarding the common techniques and concepts that agile uses to
+
 ```
 communicate (e.g. informal interactions, daily stand-ups, modelling,
 ```
+
 ```
 prototyping, visualization and workshops). See also Chapter 26.
 ```
+
 This applies to all levels of the project and would define approaches to
 such things as how a sprint review will take place and how the delivery
 teams will communicate with the project manager through checkpoint
 reports.
+
 ```
 A.16 Plan (project, stage and
 ```
+
 ```
 team)
 ```
+
 Agile plans tend to be informal or low-tech at the delivery level and this
 can be highly effective even though they may be no more than to-do
 lists or backlogs. However, there may be more formality as the level of
 planning goes higher. Release plans may also be created to
 complement the planning at the stage plan level.
+
 ```
 Agile plans are likely to show features (or sets of features) and their
 ```
+
 order and their dependencies, and are likely to have been created
 collaboratively by those who will carry out the planned work.
 Product-based planning can still be used at all levels of the project
+
 ```
 (including product delivery).
 ```
+
 A.17 Product description Product descriptions can be used interchangeably with user stories
+
 ```
 (and sometimes epics). Both product descriptions and user stories can
 ```
+
 be product backlog items. They describe the ‘who, what and why’. A
 product description can contain more information than a user story.
 Product descriptions can be used in tandem with user stories by
@@ -11024,30 +12825,39 @@ In an agile context the PID should be created with the view of ‘enough
 and no more’. That is to say it should be complete, but it needs to be as
 concise as possible and at the appropriate level of detail. Otherwise its
 role as a form of communication will suffer.
+
 ```
 This product (or parts of it) may exist on an information radiator if
 ```
+
 appropriate for the project environment.
 A.21 Project product
 description
 In alignment with the business case this is likely to focus on defining a
 product with a close link to a desired outcome in preference to just
+
 ```
 defining a solution. It may be created as part of a workshop (e.g. a
 ```
+
 ```
 visioning workshop). The purpose of this product should be clearly
 ```
+
 ```
 visible to all irrespective of the project environment (e.g. it should be
 ```
+
 ```
 clearly displayed on a wall or clearly displayed on the intranet).
 ```
+
 It is an important product when combining PRINCE2 with agile in that it
+
 ```
 defines the ultimate output (the final product) and the outcome, which
 ```
+
 needs to be clear and precise so that the iterative and incremental
 nature of agile does not go off track.
 The ‘composition’ field will either contain the highest level of product
@@ -11057,41 +12867,53 @@ A.22 Quality management
 approach
 The agile way of working needs to be incorporated into the strategy for
 ensuring that the quality level is maintained. Some agile concepts exist
+
 ```
 in order to protect the level of quality (e.g. by delivering fewer
 ```
+
 requirements in order to ensure that the quality reviewing is not
+
 ```
 compromised). Agile behaviours will need to be part of the strategy, as
 ```
+
 they need to be assured.
 There may be occasions when the quality level will be set at a low level
+
 ```
 due to the uncertainty of the work involved (e.g. the project could be
 ```
+
 ```
 highly innovative). The audience for this may be ‘early adopters’ who
 ```
+
 are more interested in utilizing the product and do not mind some
 deficiencies in terms of robustness or stability.
 A.24 Risk management
 approach
 Any way of working has risks associated with it, and the risks
 associated with using agile need to be managed. An agile risk
+
 ```
 assessment is used to help with this (see Chapter 24). There is likely to
 ```
+
 be more focus on the risks associated with the agile behaviours than
 with other areas of agile because this is where many of the benefits of
 using agile are found. There may be a significant impact on the project
 should the behaviours break down.
 In terms of roles and responsibilities, the agile way of working relies on
+
 ```
 everyone looking out for risks and raising them quickly (see also
 ```
+
 ```
 Chapter 13).
 ```
+
 A.26 Work package How work packages are specified has a very significant impact on
 successfully combining PRINCE2 with agile. Although it is a formal
 interface this would typically be carried out in a collaborative way and
@@ -11101,13 +12923,17 @@ One or more work packages may be collaboratively defined as the
 output from a sprint planning meeting.
 A work package should be defined in such a way as to create a safe
 boundary of control, while at the same time creating the space for the
+
 ```
 delivery team to create the product (or products) in the most effective
 ```
+
 way through self-organizing.
+
 ```
 A customer subject matter expert (SME) is likely to help with prioritizing
 ```
+
 the work involved.
 A work package may include one or more releases and one or more
 sprints. Therefore it is essential from the start to get clarity on how work
@@ -11116,12 +12942,15 @@ packages will be designed and how they will operate on a project.
 Records are dynamic management products that maintain
 information regarding project progress. In Table 23.2, the numbered
 records refer to those used in Managing Successful Projects with
+
 ```
 PRINCE2 for the PRINCE2 management products (see also Table
 ```
+
 ```
 16.2).
 ```
+
 Table 23.2 Tailoring record products
 Records Overview of the tailoring required and further considerations
 A.6 Configuration item record Configuration item records may need to cater for high degrees of
@@ -11131,69 +12960,91 @@ consulted with respect to this.
 A.7 Daily log The project manager can use this to store information, as there may be
 a lot of informal communications such as those taking place face-to-
 face.
+
 ```
 A.12 Issue register May be informal or low-tech (e.g. on a wall).
 ```
+
 A.14 Lessons log Continual process improvement is a prominent agile concept and
+
 ```
 therefore this may be very conspicuous (perhaps on the wall in a team
 ```
+
 ```
 room or a virtual version of this). This may be used quickly to create
 ```
+
 working agreements and may take place during a retrospective.
 A.23 Quality register On some occasions this may be low-tech.
 A.25 Risk register May be informal or low-tech. May contain risks identified by the agile
+
 ```
 risk assessment (see Chapter 24).
 ```
+
 23.3 Record products
 Reports are management products providing a snapshot of the
 status of certain aspects of the project. In Table 23.3, the numbered
 reports refer to those used in Managing Successful Projects with
+
 ```
 PRINCE2 for the PRINCE2 management products (see also Table
 ```
+
 ```
 16.2).
 ```
+
 Image 23.1 Adapting and reworking the PRINCE2 products
 Table 23.3 Tailoring report products
 Reports Overview of the tailoring required and further considerations
 A.4 Checkpoint report An important product that would typically be in the form of an
+
 ```
 information radiator and/or a burn chart (see Figure 15.1). Could be
 ```
+
 replaced by a daily stand-up or Scrum meeting with the agreement of
 the delivery team but would need to avoid being seen as a ‘reporting to’
 mechanism. If the information is transparent then this can be extracted
+
 ```
 (or ‘pulled’) by the project manager when required.
 ```
+
 A.8 End project report An assessment of the use of agile is likely to be included in this with
 reference to the judgements made when using the Agilometer.
 A.9 End stage report May be built incrementally throughout a stage depending on the
 frequency of timeboxes or releases. May be part of a release review.
 A.10 Exception report Most likely to occur due to the expected amount to be delivered being
+
 ```
 forecast to exceed tolerance. This could be triggered by a burn chart (at
 ```
+
 ```
 the sprint or release level) showing how progress has gone outside
 ```
+
 tolerance. This may result in an immediate meeting where options are
 discussed before raising it with the project board.
 A.11 Highlight report An important product that may contain additional information on
+
 ```
 releases (e.g. what has been released and what benefits have been
 ```
+
 ```
 enabled). May be delivered verbally.
 ```
+
 Could be in the form of an information radiator and/or a burn chart. If
+
 ```
 the information is transparent then this can be extracted (or ‘pulled’) by
 ```
+
 the project board when required.
 A.13 Issue report May be low-tech and produced or updated during a sprint review or
 release review.
@@ -11209,9 +13060,11 @@ PRINCE2 Agile
 24
 The Agilometer
 This chapter covers:
+
 ```
 what it is; when and how to assess suitability
 ```
+
 responding to and monitoring the assessment
 evolving the Agilometer
 24 The Agilometer
@@ -11228,18 +13081,23 @@ In order to receive the most benefit from using a method or approach
 it is essential to adjust and adapt it to suit the context and conditions
 it is operating in. PRINCE2 is no exception to this rule and it provides
 a lot of guidance on how to tailor PRINCE2 for any project situation.
+
 ```
 The aim of the Agilometer is to provide further guidance (with
 ```
+
 ```
 respect to agile considerations) that will create a level of control and
 ```
+
 predictability, without becoming overly prescriptive.
 Take the analogy of driving a car. A typical car provides a mode of
 transport and has many features to help make a journey in a safe
+
 ```
 manner (e.g. engine, lights, wipers); however, it still needs a driver to
 ```
+
 make decisions and use those features to control the car
 appropriately. On a regular car journey the route and the destination
 may not change but the conditions do. This is why a driver drives
@@ -11248,12 +13106,15 @@ a sunny day. Importantly, assessing the conditions before the
 journey commences helps improve the chances of carrying out the
 journey in the safest and most effective way.
 24.2 When to assess suitability
+
 ```
 Agile suitability is assessed throughout the project (e.g. during
 ```
+
 ```
 retrospectives). It is specifically assessed during pre-project and
 ```
+
 again, in a more detailed way, during the initiation stage. The results
 of these assessments would appear in the project brief and the PID
 in order to provide the project board with information to help shape
@@ -11263,42 +13124,54 @@ understand what the assessment is saying and make an informed
 decision about such things as potential areas of risk or benefit.
 As an example, a situation may occur where a project is assessed
 as being ideal for a highly agile approach, but the project board is
+
 ```
 concerned that the approach is susceptible to certain risks (e.g. the
 ```
+
 ```
 customer is unable to sustain its involvement) and therefore requests
 ```
+
 that more governance is put in place in this area. Further to this
 example, another scenario may involve a project being assessed as
 ‘neutral’ or ‘average’ in terms of how much agile can be used, but the
 project board realizes that too much formal reporting has been put in
 place and the business case is not viable unless more frequent
+
 ```
 deliveries of benefits take place (e.g. it needs the earlier realization
 ```
+
 of benefits or earlier customer feedback, and therefore it is happy to
+
 ```
 receive reports in a much more informal manner or by other means).
 ```
+
 These examples show that all the project team members need to
 understand the risks and benefits associated with agile in order to
 get the most from it. It is not something that is only relevant at the
 delivery level or to the project manager.
+
 ```
 24.3 How suitability is assessed (the
 ```
+
 ```
 Agilometer)
 ```
+
 It is the project manager’s role to facilitate the agile assessment, as
 this will affect how the project is managed.
 In order to tailor PRINCE2 in the best way possible it is important to
 assess the context that a project exists in with regard to the
 environment and the working relationships. To achieve this PRINCE2
+
 ```
 Agile has an assessment tool called the Agilometer (see Figure 24.1)
 ```
+
 to answer the question of ‘How agile can we be on this project?’
 The Agilometer looks at six key areas, and the project manager is
 responsible for canvassing the key stakeholders involved in the
@@ -11341,14 +13214,18 @@ The customer may be unaware of why there is a need to be
 flexible with what is delivered. Therefore training and
 education may be appropriate.
 Are there too many requirements that are ‘musts’? Can they
+
 ```
 (or the assumptions behind them) be challenged to see if the
 ```
+
 priority is too high?
 Tip
+
 ```
 ‘Must’ is a level of priority for a requirement (or user story) that
 ```
+
 ‘must’ be satisfied because without it, either the output from a
 timebox will not work or it is not worth delivering the output.
 The ‘level of collaboration’ slider
@@ -11382,13 +13259,17 @@ slider
 Challenge the team to think of partial deliveries that will be ‘of
 use’ in some form or another.
 What could go into a first release?
+
 ```
 Something ‘of use’ can have many forms (e.g. a quick win,
 ```
+
 technical proof of concept, getting the hardest work out of the
+
 ```
 way first).
 ```
+
 Try to calculate the value of delivering something early.
 The ‘advantageous environmental conditions’ slider
 Would new tools help? Can you do more to protect the team
@@ -11401,20 +13282,25 @@ The ‘acceptance of agile’ slider
 Would training help? Would a more informal workshop
 approach get over key messages?
 Can you direct people to helpful information on your
+
 ```
 knowledge base about agile (e.g. the company intranet)?
 ```
+
 ```
 Can you get key personnel (e.g. at project board level) to help
 ```
+
 explain agile to key stakeholders?
 Make it clear to the key stakeholders what the benefit is for
 them.
 24.5 Monitoring the assessment
 The assessment can be reviewed at various times throughout the
+
 ```
 project (for example, at stage end or after a release) to see if the
 ```
+
 settings on the Agilometer are happening as predicted. Any deviation
 between the prediction and reality as perceived by the team would
 result in a change to the project management or delivery process. A
@@ -11424,9 +13310,11 @@ predicted could mean that less governance or control is needed in
 certain areas.
 24.6 Evolving the Agilometer
 From a wider organizational or programme-level viewpoint, it is
+
 ```
 important to see the Agilometer (as it appears in this manual) as only
 ```
+
 a starting point. Organizations need to evolve their own Agilometer
 as they may need to include factors that are specific to themselves,
 representing significant areas of risk and benefit to working in an
@@ -11456,17 +13344,22 @@ Ultimately the most important point to understand when tailoring the
 approach to a project is that the result will always be a case of ‘How
 much agile can we use?’ as opposed to a yes/no decision. In
 PRINCE2 there is no such thing as an ‘agile project’ or a ‘non-agile
+
 ```
 project’. How agile you can be on a project is like a spectrum; it is
 ```
+
 always a matter of degree.
 24.7 The Agilometer slider definitions
+
 ```
 (Only Level 5 is discussed; this indicates the highest and most
 ```
+
 ```
 preferred condition.)
 ```
+
 24.7.1 Flexibility on what is delivered
 Definition of Level 5: Stakeholders are very comfortable with the
 fact that change is inevitable and needs to happen in order to
@@ -11477,9 +13370,11 @@ being flexed in order to protect the level of quality and the deadline
 for what is being delivered.
 Example behaviours:
 Stakeholders are ‘change friendly’.
+
 ```
 It is accepted that the detail will change; however, significant
 ```
+
 changes need to be controlled.
 Everything is prioritized, using techniques such as MoSCoW.
 •
@@ -11534,23 +13429,30 @@ in such forms as prototypes and models. Retrieval of information is
 also easy in order to reference knowledge, information or data that is
 either historical or current.
 Example behaviours:
+
 ```
 There are high levels of visibility and transparency (e.g. plans on
 ```
+
 ```
 walls).
 ```
+
 A lot of information is managed in a ‘low-tech’ and/or tactile way.
 There are high levels of co-location.
+
 ```
 Where there is a less than ideal situation (e.g. the team is
 ```
+
 ```
 physically dispersed), measures have been taken to reduce the
 ```
+
 ```
 impact (e.g. video-conferencing).
 ```
+
 There is a lot of informal communication, face-to-face and over
 the phone.
 There is a limited amount of formal reporting.
@@ -11561,12 +13463,15 @@ customer by regular partial deliveries of the final product. It is also
 very easy to work iteratively in the sense that products and
 understanding can be refined interactively by the frequent delivery of
 formal and informal deliverables. There is a desire to learn,
+
 ```
 experiment and explore (and fail!) as well as an overarching feeling
 ```
+
 ```
 of ‘think big; start small’.
 ```
+
 Example behaviours:
 The team is happy to experiment and be creative.
 It is understood that things are rarely right first time.
@@ -11590,12 +13495,15 @@ confidence to the customer as they see things being delivered.
 conditions
 Definition of Level 5: The overall working environment is very
 supportive of working in an agile way. Personnel are assigned full-
+
 ```
 time to their work; they are appropriately skilled; they have very
 ```
+
 ```
 efficient platforms to work from (e.g. tooling, communications).
 ```
+
 Contractual frameworks and compliance considerations are not seen
 as restrictive.
 Example behaviours:
@@ -11620,17 +13528,22 @@ Everyone accepts the agile philosophy and understands the
 difference from a traditional way of working.
 People have been trained to an appropriate level.
 There are no blockers to using agile from peripheral areas such
+
 ```
 as procurement or quality assurance (i.e. they understand the
 ```
+
 ```
 philosophy too).
 ```
+
 Further research
 DSDM project approach questionnaire:
+
 ```
 https://www.dsdm.org/shop/templates/agilepm-v2-project-approach-
 ```
+
 questionnaire-paq [accessed: 19 April 2016].
 •
 •
@@ -11644,18 +13557,23 @@ agile concepts and techniques
 25 Requirements
 25.1 Purpose
 The purpose of this focus area is to describe how to define and
+
 ```
 prioritize requirements (or user stories), so that they are in a form
 ```
+
 ```
 that is conducive to working in an agile way (where the requirements
 ```
+
 ```
 are subject to the inevitability of change; see also Chapter 14 on the
 ```
+
 ```
 change theme).
 ```
+
 25.1.1 Requirements terminology
 There are many terms that are used to describe what a product does
 or how well it does it. In PRINCE2 Agile the conventions in Table
@@ -11686,25 +13604,33 @@ The following lists some of the ways requirements are treated in
 PRINCE2 Agile:
 In order to meet a requirement or produce a product it may be
 necessary to carry out one or more ‘tasks’. These could appear
+
 ```
 on a team plan or sprint backlog (not referred to as requirements
 ```
+
 ```
 by PRINCE2 Agile).
 ```
+
 ```
 Requirements fall into two types: functional (what it does) and
 ```
+
 ```
 non-functional (how well it does it).
 ```
+
 Throughout the PRINCE2 and the agile communities, many of
+
 ```
 these terms are used interchangeably (e.g. function, feature, user
 ```
+
 ```
 story, requirement) although they are not necessarily referring to
 ```
+
 the same thing. Table 25.1 provides the view of PRINCE2 Agile
 and how it refers to these terms.
 Throughout this manual, the terms ‘requirements’, ‘product
@@ -11732,20 +13658,26 @@ important are these features? Requirements describe what the
 customer means by ‘a kitchen’.
 25.2 Requirements definition
 One of the most powerful techniques in PRINCE2 is that of product-
+
 ```
 based planning (see Appendix D). This technique shifts the
 ```
+
 emphasis from activity-based planning to a more black-and-white
 form of planning focused on the end state of a product or sub-
+
 ```
 product (i.e. is it complete and 100 per cent finished, or is it still a
 ```
+
 ```
 work in progress?). Agile works in the same way as the definition of
 ```
+
 ```
 ‘done’ in Scrum (see Appendix H) and ‘acceptance criteria’ in the
 ```
+
 glossary.
 25.3 Defining product descriptions
 It is important when using PRINCE2 with agile to define product
@@ -11761,15 +13693,19 @@ granularity
 Essential to the success of using PRINCE2 with agile is to ensure
 that requirements are defined at the appropriate level of
 understanding during each stage of a project. This normally involves
+
 ```
 a simple three-step process (see Table 25.2 and Figure 25.1),
 ```
+
 although this may be done in two steps on smaller projects where
 the processes of starting up a project and initiating a project may
 have been combined.
+
 ```
 This could be likened to JIT (just-in-time) inventory management in
 ```
+
 that just enough detail needs to be available at the right time. The
 ‘Level of requirement’ column in Table 25.2 is only a very general
 guide and is included to give at least some idea of scale, but this
@@ -11788,20 +13724,26 @@ Table 25.2 Typical levels of requirements decomposition
 •
 •
 •
+
 ```
 From an estimation point of view (in the form of time, cost or
 ```
+
 ```
 benefits), the margin of error at each of these stages could be as
 ```
+
 ```
 follows:
 ```
+
 pre-project, 50–100 per cent
 initiating stage, 20–40 per cent
+
 ```
 delivery stage(s), 10–20 per cent.
 ```
+
 Again, this should only be seen as a guide and for illustrative
 purposes as this will vary according to such things as industry sector,
 organization and experience. It is sometimes referred to as the ‘cone
@@ -11817,9 +13759,11 @@ enables deadlines to be hit and the quality level to be protected.
 With respect to product delivery, there are two approaches to
 prioritization that are frequently used when working in an agile way:
 MoSCoW
+
 ```
 ordering (1, 2, 3 … n).
 ```
+
 It is important to use the correct approach in the correct situation
 because these do not work in the same way.
 MoSCoW typically works at higher levels and over longer timescales
@@ -11829,9 +13773,11 @@ exist between these functions.
 •
 •
 •
+
 ```
 Ordering primarily works at a lower level (or task level) where certain
 ```
+
 technical activities are taking place.
 The choice of approach will be dictated by the level of uncertainty of
 the work being undertaken. Generally speaking MoSCoW would be
@@ -11841,9 +13787,11 @@ in a timebox.
 25.5.2 Definition of MoSCoW
 This acronym is used to categorize items such as requirements or
 tasks into one of the four following levels of how they relate to a
+
 ```
 deadline (see Table 25.3):
 ```
+
 must have
 should have
 could have
@@ -11865,12 +13813,15 @@ important, but it is not a must have
 Could have Could be satisfied because it is still desirable or important,
 but not as much as a should have
 Won’t have for now Won’t be satisfied before the deadline
+
 ```
 *Where the timebox could relate to a project, a stage, a release or a low-level timebox (e.g.
 ```
+
 ```
 a sprint).
 ```
+
 Tip
 MoSCoW always relates to a deadline.
 25.5.4 Is the requirement essential?
@@ -11892,9 +13843,11 @@ features that are not essential may have satisfactory alternatives
 •
 such as a manual winder for the windows. Further to this, the
 analogy also highlights the need to understand the overall objective
+
 ```
 for the project (as defined in the project product description), as the
 ```
+
 MoSCoW priorities would be different if the objective was to produce
 a luxury car as opposed to a budget car.
 25.5.5 Can the requirement be
@@ -11908,9 +13861,11 @@ contingency in the form of shoulds and coulds. Take, for example,
 the search function of a customer relationship management system
 that must be able to search for customer details. The sub-
 requirements or musts, shoulds and coulds of such a function
+
 ```
 include:
 ```
+
 must be able to search by customer name
 could be able to search on parts of the customer name
 must be able to search by customer account number
@@ -11919,12 +13874,15 @@ could be able to search by date of birth.
 Figure 25.2 ‘MoSCoWing’ a pen
 Tip
 If you ever need a quick demonstration of prioritization with
+
 ```
 MoSCoW, a simple ballpoint pen can be a useful prop (see
 ```
+
 ```
 Figure 25.2). It can also be used to illustrate decomposition and
 ```
+
 how a ‘must’ can exist within a ‘could’.
 25.5.6 Ordering
 There are situations when the best way to prioritize is to use a
@@ -11937,12 +13895,15 @@ scoring system from 1 to 5 for each item in the list, and then ordering
 •
 all the 5s relative to one another and then so on with the 4s and 3s
 etc. This approach to prioritization is most appropriate when there is
+
 ```
 little dependency among the items on the list (i.e. they are broadly
 ```
+
 ```
 independent of one another) and the items on the list do not naturally
 ```
+
 group together so that they can be worked on at the same time.
 Kanban and Scrum tend to use ordering rather than MoSCoW.
 However, this approach may not work as well as MoSCoW if a list of
@@ -11956,22 +13917,29 @@ The best prioritization approach to use in this situation is MoSCoW,
 as you would plan a series of high-level deliverables based around
 activities that can be grouped together and dependencies that need
 to be met. For example:
+
 ```
 Clear the site, lay the foundations and install services (e.g.
 ```
+
 ```
 electricity and water).
 ```
+
 ```
 Build the main house (so that you can live somewhere).
 ```
+
 Build the garage.
+
 ```
 Create the garden (after most of the construction vehicles have
 ```
+
 ```
 left).
 ```
+
 You may feel that the most important part of the whole project is the
 roof on the main house, but you would not start with this. You may
 also feel that the garden is more important to you than the garage,
@@ -11985,13 +13953,17 @@ other.
 •
 •
 •
+
 ```
 If your plan for the garden involves creating several features (for
 ```
+
 example, a pond, a patio, planting trees, creating flowerbeds,
+
 ```
 building a greenhouse, creating a sandpit and installing a bird table),
 ```
+
 then this part of the project may lend itself more to ordering than
 MoSCoW because the features are reasonably independent of each
 other and do not naturally group together. You would then complete
@@ -12003,12 +13975,15 @@ respect to the requirements of the project, and this covers those that
 are both functional and non-functional. Using a camera as an
 example, its functional and non-functional requirements could
 include that:
+
 ```
 It must take a photograph (functional).
 ```
+
 ```
 Its shutter must work in cold temperatures (non-functional).
 ```
+
 Many other areas could be prioritized, such as the tasks that need to
 be completed to satisfy a requirement. One especially useful area
 that could be prioritized is the quality criteria relating to a particular
@@ -12025,12 +14000,15 @@ appropriate circumstance. This is affected by the level of the
 requirements and their dependency on one another.
 25.5.8 Handling change with prioritization
 Change is inevitable on any project and PRINCE2 Agile refers to two
+
 ```
 types of change: detail and baseline (see also Chapter 14 on the
 ```
+
 ```
 change theme).
 ```
+
 25.5.8.1 Detail change
 If the customer changes their mind on a requirement or comes up
 with a new requirement but this does not affect the project product
@@ -12069,13 +14047,17 @@ Although answering these questions may involve discussions with
 various stakeholders including representatives of the supplier side,
 ultimately it needs to be driven from the customer side.
 Hints that may prove useful:
+
 ```
 See the list of requirements as dynamic; embrace change at the
 ```
+
 detailed level.
+
 ```
 Remember ‘Archimedes’ law of displacement’; it also applies to
 ```
+
 new requirements or tasks. If new ones are coming in then some
 of the existing ones need to make way. This will be carried out by
 removing requirements or tasks that are of a similar level of effort.
@@ -12109,37 +14091,49 @@ and why?’
 25.6.1.2 As a <role>, I want to <function>, so that
 <benefit>
 Originally the above heading would have been physically written on
+
 ```
 a card or sticky note (see Figure 25.3 for an example of a well-
 ```
+
 ```
 written user story) but capturing this electronically (e.g. on a
 ```
+
 ```
 spreadsheet) now also takes place. However, there is more visibility
 ```
+
 ```
 and transparency if it is hand written (or printed off) and this is the
 ```
+
 preferred approach if possible.
 Additional information is needed to evolve the user story. One
+
 ```
 important area is the addition of acceptance criteria (in the same way
 ```
+
 ```
 as quality criteria are used in a PRINCE2 product description) in
 ```
+
 order to be able to test the user story. Sometimes this is called
 acceptance criteria or the definition of ‘done’. Further to this the user
 story should also contain at some point an idea of the effort involved
 in creating it and an idea of the value that it is worth to the customer.
+
 ```
 These two values could be relative or actual (see section 12.4.1).
 ```
+
 PRINCE2 sees user stories as broadly similar to a requirement
+
 ```
 (which may be a product description or contained within a product
 ```
+
 •
 •
 •
@@ -12148,18 +14142,23 @@ PRINCE2 sees user stories as broadly similar to a requirement
 •
 •
 •
+
 ```
 description (see section 25.1.1 for information on how to map these
 ```
+
 ```
 terms). A user story does have its own style in that it is often low-
 ```
+
 ```
 tech (i.e. it is very simple in form) and is often a physical thing (such
 ```
+
 ```
 as an index card).
 ```
+
 It is essential to avoid the common mistake made when using user
 stories, which is to see them for more than what they are. They are
 not fully or partially defined requirements: they are a starting point.
@@ -12167,37 +14166,47 @@ The purpose of a user story is to enable discussion and
 communication to take place in order to arrive at a thorough
 understanding of what the customer needs. The card provides
 interesting information but it is the conversation around it that is vital.
+
 ```
 Mike Cohn (verbal communication) describes it as ‘a token for a
 ```
+
 conversation’.
 Further to this point it could be argued that the information on a user
 story is deliberately insufficient in order to necessitate a conversation
 with the customer.
 25.6.1.3 Further information
+
 ```
 The ‘Three Cs’ technique (created by Ron Jeffries) distils this into
 ```
+
 three steps:
 card writing the story card
 conversation the ongoing discussion involving the card
 confirmation writing the acceptance test.
+
 ```
 The INVEST mnemonic (created by Bill Wake) is used by many as a
 ```
+
 simple checklist to create a well-written user story in that it should
+
 ```
 be:
 ```
+
 I – independent
 N – negotiable
 V – valuable
 E – estimable
 S – small
 • T – testable.
+
 ```
 In terms of managing the user stories (e.g. for planning purposes),
 ```
+
 making each user story ‘independent’ from one another means that
 someone can work on that user story without overlapping with or
 being dependent on someone else’s work. Making them ‘small’
@@ -12208,12 +14217,15 @@ The thinking behind making the user story ‘valuable’, ‘estimable’ and
 ‘testable’ focuses the customer and the team to be clear on what
 they are really trying to achieve. If these three cannot be achieved
 then there is more to do before work commences.
+
 ```
 The SMART abbreviation can also be used in this way (i.e. Specific,
 ```
+
 ```
 Measurable, Agreed, Realistic, Timed).
 ```
+
 25.6.1.4 Epics
 Embryonic customer requirements can initially be quite large or
 vague. This has given rise to a different type of user story known as
@@ -12244,21 +14256,27 @@ Acceptance criteria are often harder to write than they may first
 appear. One approach is to frame the acceptance criteria in the form
 of user-focused questions. For example, if you are setting
 acceptance criteria for a coffee mug, the following may be
+
 ```
 appropriate:
 ```
+
 Can I put boiling-hot water into the mug and drink from it within
 five minutes by holding the mug by the handle?
 Just specifying the criterion that ‘it will need to hold boiling-hot water’
+
 ```
 does not help with what the user actually wants to do (as the handle
 ```
+
 ```
 may be too hot to touch). Equally, specifying a thickness
 ```
+
 ```
 measurement in respect of the width of the mug (e.g. 2 mm) still
 ```
+
 does not relate directly to the user’s need.
 25.6.1.6 Creating user stories requires some skill
 Creating user stories is often a lot harder than it appears. Creating
@@ -12269,9 +14287,11 @@ On projects that normally require more than one customer
 representative, the need for technical specialization in the area of
 writing user stories and requirements may become necessary.
 It is one thing to write a user story, but another thing altogether to
+
 ```
 write a good one (see Figure 25.3).
 ```
+
 Figure 25.3 A good user story and a poor one
 25.6.1.7 Definition of ‘ready’
 Although not as common as using the definition of ‘done’ or using
@@ -12288,12 +14308,15 @@ delivery team knows that it can start working on it.
 •
 •
 •
+
 ```
 For example, in order for a user story (in this case prior to
 ```
+
 ```
 sizing/estimation) to be considered ‘ready’, it must:
 ```
+
 contain all three fields describing the who, what and why
 be understood by the delivery team
 have a benefit that is measurable
@@ -12314,21 +14337,27 @@ this kind of requirement can cut across several user stories.
 These kinds of requirements are often described as ‘non-functional’
 and they need to be handled carefully when working in an agile
 environment. Fitting them into the standard user story format is
+
 ```
 possible (e.g. refer to the ‘user’ as ‘the system’) but treating them
 ```
+
 slightly differently and referring to them as technical stories is also an
 option.
 An example of a technical story may be when work needs to be
+
 ```
 completed on the underlying quality of the product (often called
 ```
+
 ```
 refactoring in agile) or experiments and investigations need to take
 ```
+
 ```
 place (often called prototyping or spiking in agile). Sometimes this
 ```
+
 kind of story or requirement can be included in the definition of
 ‘done’, but these types of story are still important as normal user
 stories though they may be captured in a slightly different way.
@@ -12339,20 +14368,26 @@ used correctly, improve communication. But always remember it is
 what happens around the user story that is far more important than
 the user story itself.
 Acknowledgements and further research
-Beck, K. https://github.com/KentBeck [accessed: 19 April 2016].
+Beck, K. <https://github.com/KentBeck> [accessed: 19 April 2016].
+
 ```
 Clegg, D. and Barker, R. (2004) Case Method Fast-Track: A RAD
 ```
+
 Approach. Addison Wesley.
+
 ```
 Cohn, M. (2004) User Stories Applied: For Agile Software
 ```
+
 Development. Addison Wesley.
+
 ```
 Coleman, L.B. Sr. (2015) The Customer-Driven Organization:
 ```
+
 Employing the Kano Model. Apple Academic Press.
-Jeffries, R. http://ronjeffries.com/ [accessed: 19 April 2016].
+Jeffries, R. <http://ronjeffries.com/> [accessed: 19 April 2016].
 •
 •
 •
@@ -12375,18 +14410,22 @@ important when a group of people come together to create
 something, it needs to be proactively addressed and managed
 throughout a project.
 Effective communication is fundamental to the agile way of working
+
 ```
 but it will not just happen; it needs to be made to happen.
 ```
+
 26.2 Forms of communication
 Communication can take place in many ways and can operate at
 many levels. An email could contain the start and end time for a
 meeting, and a conversation could involve strong views and
 emotions about an individual’s poor performance.
 Communication can take on many forms such as data, information,
+
 ```
 knowledge and wisdom (the DIKW hierarchy), and it can be
 ```
+
 communicated in many ways, such as a document, a phone call, a
 video-conference or a face-to-face conversation. Further to this, it
 could be taking place between two people, or two groups of people
@@ -12425,9 +14464,11 @@ using the written word in the form of documents, emails or instant
 messaging
 using visualizations in the form of figures or pictures
 verbally by telephone
+
 ```
 verbally face-to-face (perhaps by webcam).
 ```
+
 People working on a project will be using some or all of these
 channels at some point and often mixing them together.
 To run a project in the most effective way and to get the most
@@ -12438,9 +14479,11 @@ as possible, ideally accompanied by visualization. This is why a team
 room, where everyone is co-located, having lots of information
 readily available on the walls, is seen as an ideal situation.
 However, projects have complexity, and they may involve several
+
 ```
 people and involve many teams; this is far from ideal with respect to
 ```
+
 the ease of communication.
 Even so, it is still essential to move the communication traffic to the
 faster, clearer channels. The phone should be favoured over email,
@@ -12451,18 +14494,23 @@ collaboration tools can help build a multi-faceted approach to
 communication.
 The type and frequency of communication need to be agreed by the
 project management team and the level of formality agreed. It needs
+
 ```
 to be understood when informal channels are appropriate (e.g. a
 ```
+
 ```
 regular one-to-one meeting that is not recorded) and when there is a
 ```
+
 ```
 need to formally record decisions (e.g. that may be needed for
 ```
+
 ```
 auditing purposes). This should be recorded in the communication
 ```
+
 management approach, which itself could be an informal document
 in that it is displayed as part of an information radiator.
 26.3.2 The difficulties with the written word
@@ -12470,9 +14518,11 @@ The biggest problem with communication lies in the fact that human
 beings find it relatively difficult to process large amounts of
 information in the form of the written word. Communicating between
 two people, or two groups of people, with a document containing
+
 ```
 many pages of text has many disadvantages; for example, parts of it
 ```
+
 might not be read or the reader might be unable to interact with the
 document.
 This is not to say that there is no role for the written word. The
@@ -12491,9 +14541,11 @@ prone to being misunderstood.
 Typical emoticons: :D
 A characteristic of the agile way of working is the way team
 members will try to shift the communication traffic to the more
+
 ```
 effective channels (see Figure 26.1). But this takes effort and a
 ```
+
 desire to work this way. It is usually a lot easier to send an email
 than to meet with someone to discuss a problem. However, a face-
 to-face discussion is very likely to achieve a lot more in a very short
@@ -12508,12 +14560,15 @@ vibrant and interactive team using a lot of visualization should be
 easy to identify. Somewhat harder to identify is when a team, or
 some members of it, are relying too heavily on such things as email.
 One particular example of a communication problem that can be
+
 ```
 very damaging for a project is when a project manager (or team
 ```
+
 ```
 manager) primarily manages a team using email. On the surface this
 ```
+
 will cause communication to be slow and open to misinterpretation.
 However, there is a much more serious problem that is likely to
 emerge with this form of communication, and that is that it takes the
@@ -12537,12 +14592,15 @@ shift in emphasis, because an agile team needs to work faster due to
 the iterative and responsive nature of agile. This is why agile makes
 extensive use of workshops, face-to-face meetings, visualizations in
 the form of models and prototypes, and video. But this does not
+
 ```
 mean there is no a place for email or written documents (which need
 ```
+
 ```
 to be used to record decisions and actions); it just means that some,
 ```
+
 or most, of this needs to be moved to the faster, clearer channels
 whenever possible. It is also worth mentioning that a team whose
 members are not co-located may have a greater need for email and
@@ -12554,9 +14612,11 @@ several people come together in order to achieve an objective by
 harnessing the interactions and creativity of the participants.
 Typically, a workshop would last from 2 or 3 hours to a whole day,
 but the principles behind the technique can be applied to any
+
 ```
 timescale (e.g. running a 15-minute retrospective).
 ```
+
 Image 26.1 Agile makes extensive use of workshops
 The ideal way to run a workshop is by using a neutral facilitator who
 has no stake in the outcome. Without a facilitator the group will need
@@ -12568,12 +14628,15 @@ In simple terms the thinking behind the workshop technique is that it
 is better to consolidate the understanding of many people by
 listening to them at the same time, as opposed to consolidating this
 understanding having listened to them separately. In a workshop,
+
 ```
 different viewpoints (and their explanations) can be seen
 ```
+
 ```
 immediately by everyone involved; however, the interaction needs to
 ```
+
 be managed to ensure that everyone can contribute fairly.
 Preparation is essential for a successful workshop, and this can take
 as long as the workshop itself. Typical steps would include:
@@ -12594,19 +14657,24 @@ Pre-reading What do the participants need to know in advance to
 enable a workshop to run as smoothly as possible?
 An experienced facilitator would be familiar with these steps, and this
 is another reason why it is preferable to use a facilitator who can
+
 ```
 work with the person authorizing the workshop (known as the
 ```
+
 ```
 workshop owner), to structure the workshop in the most appropriate
 ```
+
 way.
 When creating an agenda for a workshop a variety of tools and
 techniques are available that can be used to address certain
 problems and situations. Again, an experienced facilitator would be
+
 ```
 conversant with many of these (see Table 26.1).
 ```
+
 26.4.1.2 Example workshop technique 1: group work
 At some points during a workshop it may be a good idea to break the
 whole group into smaller sub-groups. This can enable more areas to
@@ -12652,27 +14720,35 @@ will be heard.
 Table 26.1 Possible workshop techniques
 SWOT analysis Focuses on the four areas of strengths, weaknesses, opportunities and
 threats for a given situation.
+
 ```
 Impact/effort grids A two-by-two (four box) grid that allows items to be positioned against
 ```
+
 ```
 two criteria on the x and y axes (e.g. cost versus effort, impact versus
 ```
+
 ```
 probability).
 ```
+
 ```
 Rich pictures Using visualization to convey messages (often feelings) in a form that
 ```
+
 can use metaphors and humour.
 Prioritization with dots The use of sticky dots or marker pen dots to quickly vote on a set of
 options.
+
 ```
 Gap analysis A three-step technique used to describe how something (e.g. an
 ```
+
 ```
 organization or a project) can get from one state or situation to another.
 ```
+
 The first step is to describe where it is now. Step two describes where it
 needs to be, and step three describes what actions need to happen in
 order to get from the ‘now’ state to the ‘to be’ state.
@@ -12681,21 +14757,26 @@ all ideas are initially produced without being affected by other people.
 Ideas are then discussed, perhaps grouped and then developed further.
 Visioning Creating shared goals or objectives, often using visualization. Defining
 the overall ‘why?’
+
 ```
 The five whys (repeatedly
 ```
+
 ```
 asking ‘why?’)
 ```
+
 A questioning technique to get to the root of a problem or request.
 Dr Edward de Bono’s Six
 Thinking Hats
 A technique to help people think in six different ways:
 The White Hat calls for information known or needed.
 The Yellow Hat symbolizes brightness and optimism.
+
 ```
 The Black Hat is judgement; the devil’s advocate or why something
 ```
+
 may not work.
 The Red Hat signifies feelings, hunches and intuition.
 The Green Hat focuses on creativity.
@@ -12708,33 +14789,44 @@ in teams that have been together for a significant period of time.
 A workshop is quite a significant event that takes a lot of time and
 resources to set up and run. Therefore, it is always advisable to
 question whether a workshop is really necessary or if there could be
+
 ```
 another way of achieving the objective (e.g. a small meeting).
 ```
+
 With some workshops it is a good idea to create something
+
 ```
 collectively as a group (e.g. a plan); whereas at other times it is
 ```
+
 better for specific individuals to create something and then have it
+
 ```
 reviewed as a group (e.g. a business case).
 ```
+
 26.4.1.6 Run workshops well
 Workshops are a very powerful tool. When run correctly they can
 create high-quality outputs in short spaces of time through motivated
 individuals collaborating and communicating effectively. This in turn
 creates clarity, consensus and ownership.
 Acknowledgements and further research
+
 ```
 Rosenberg, M.B. (2003) Nonviolent Communication: a Language of
 ```
+
 Life. Puddle Dancer Press.
+
 ```
 Zachman Framework (i.e. the who, what, when, where, why and
 ```
+
 ```
 how): https://www.zachman.com/about-the-zachman-framework
 ```
+
 [accessed: 19 April 2016].
 •
 •
@@ -12757,18 +14849,22 @@ considerations to take into account when planning releases and
 planning the project as a whole. This focus area also addresses
 what to do when a release cannot go directly into the operational
 environment.
+
 ```
 This focus area is closely linked to the plans theme (see Chapter 12)
 ```
+
 and configuration management.
 A fundamental concept of any agile method or approach is to
 frequently deliver something of use. There are many advantages
 associated with this such as:
 It enables an early delivery of benefit to the customer.
 It allows for feedback.
+
 ```
 It is likely to reduce risk (e.g. of delivering the wrong product).
 ```
+
 It gives confidence about how the project is proceeding through
 visibility and evidence.
 It fosters engagement with project stakeholders.
@@ -12779,21 +14875,26 @@ taken into account.
 27.2 Releasing early and frequently
 Traditionally, many projects have delivered the final product using a
 serial, or waterfall, approach whereby a series of technical phases
+
 ```
 (such as analysis, design, build, test, implement) lead to the whole
 ```
+
 ```
 product being delivered at the end of the project (see Figure 2.2).
 ```
+
 Even when working in this way, the project can still be broken down
 into chunks to allow for an earlier delivery of parts of the final
 product. This is sometimes referred to as ‘phased waterfall’ as each
 chunk is still planned around technical phases. But this is still not an
 agile way of working.
 Agile looks at this in a completely different way. It does not base its
+
 ```
 plans upon technical phases; it bases them on features and
 ```
+
 requirements instead. As part of the initiation stage of a project
 PRINCE2 Agile looks at how the final product can be broken down
 into coherent chunks and what parts of the final product can be
@@ -12802,9 +14903,11 @@ delivered early to achieve the advantages outlined previously.
 process
 Releases can be planned using product-based planning, and
 individual product descriptions can have their quality criteria defined
+
 ```
 to allow for different product ‘states’ (to reflect releases). Release
 ```
+
 backlogs would then sit under these. An alternative to this is to avoid
 using ‘states’ and assign products to a release backlog when
 appropriate. This is likely to be more appropriate if there are many
@@ -12815,9 +14918,11 @@ Release planning needs to be incorporated into the PRINCE2 plans.
 A project plan would need to clearly show how many releases were
 expected throughout the project, when they will take place and what
 features are intended to be released. The same applies to a stage
+
 ```
 plan, albeit with a shorter horizon (see Figure 12.3).
 ```
+
 The different levels of plan would need to be synchronized with
 respect to release planning. An example of this would be where the
 project board would like to establish a stage boundary in order to
@@ -12839,18 +14944,23 @@ the product and enables it to fail fast if it is going to fail. A well-
 crafted release plan can prove significantly beneficial to an
 organization. It can create feedback that can be responded to at the
 earliest opportunity.
+
 ```
 How frequently and regularly releases take place (in terms of
 ```
+
 ```
 creating a regular cadence or ‘heartbeat’) needs to be collectively
 ```
+
 ```
 decided by the key stakeholders involved on the project (e.g. the
 ```
+
 ```
 helpdesk or the training department). In some situations products
 ```
+
 and sub-products can be delivered too quickly for the customer to
 absorb them efficiently. This could result in disruption from an
 operational point of view.
@@ -12886,9 +14996,11 @@ Tip
 It may be appropriate to populate a list of FAQs for when the
 product goes into operational use.
 Unfortunately there is a significant limitation with respect to agile’s
+
 ```
 desire for regular, frequent (even continual) delivery when some form
 ```
+
 of staging area is involved. Typical reasons for inclusion of a staging
 area are regulatory compliance checking, integration testing or any
 other form of validation and verification process. The problem is that
@@ -12938,33 +15050,42 @@ wrong. Any project using PRINCE2 Agile needs to choose between
 using existing practices or using a different underlying structure that
 is more amenable to working in an agile way.
 28.1 Traditional contracts
+
 ```
 In simple terms a typical contract (sometimes referred to as a
 ```
+
 ```
 ‘traditional’ contract) would involve the customer engaging the
 ```
+
 supplier to deliver a specific solution or output that is defined by a set
 of specific requirements. These requirements would usually be
 several in number and may be quite detailed. Along with this there
 would usually be a deadline and a price.
+
 ```
 Projects are difficult and face uncertainty; therefore the detailed
 ```
+
 requirements are likely to change over the course of the project, as
 well as the understanding of how long the work will take.
 The principal issue with the traditional structure of a contract is that
 the requirements and the understanding of the work involved will
 inevitably change over time, and someone will need to pay for that
 change, or at least factor this into the contract in the form of a
+
 ```
 contingency (e.g. the supplier adds 20 per cent to the price).
 ```
+
 In an agile context this structure is counter-productive because agile
 is ‘change friendly’ and works on the basis that modifications will
+
 ```
 inevitably happen; it is not necessarily a negative situation if changes
 ```
+
 ultimately result in something that is more closely aligned with the
 customer’s real needs and potentially delivers more value than
 originally intended.
@@ -12979,12 +15100,15 @@ to working with agile, it is most important to understand the level of
 trust and collaboration between the customer and the supplier. Trust
 is a difficult area to cover in a contract, as many elements of a
 contract concern the problems that may occur. Therefore a contract
+
 ```
 needs to support collaborative ways of working (e.g. by containing
 ```
+
 ```
 incentives and levels of commitment).
 ```
+
 A customer and supplier may have worked together for several years
 and the trust and collaboration between them may be very high.
 Alternatively, if a supplier is new to a customer, levels of trust and
@@ -13007,27 +15131,35 @@ the less likely it is that:
 the supplier will add a contingency premium to the price of the
 contract in relation to the amount of risk involved
 the customer will go into too much detail when initiating a project
+
 ```
 in the belief that they are removing uncertainty (sometimes
 ```
+
 ```
 referred to as ‘the illusion of certainty’).
 ```
+
 28.3 Guidance on how to structure an
 agile contract
 Structuring a contract that is suitable when working with agile does
 not necessarily involve creating a completely new type of contract.
 Existing contract frameworks currently being used by organizations
+
 ```
 may still be suitable to a large extent (e.g. as a master agreement).
 ```
+
 However, change will be needed at the lower levels in order to work
+
 ```
 in a more agile way (e.g. in a statement of work (or SOW), which
 ```
+
 ```
 may apply to a period of time, such as a sprint or a release).
 ```
+
 When using agile, structuring a contract according to the following
 guidelines is likely to be more beneficial to both parties than using a
 traditional style of contract:
@@ -13036,22 +15168,28 @@ based’ in preference to ‘output-based’. An output focus is typically
 about a product or solution that either is, or is not, as specified.
 An outcome focus relates to the benefits and value that a project
 enables. This allows the customer and supplier to work together
+
 ```
 to create an output (or product) that can be changed and adjusted
 ```
+
 throughout the course of the project, in order to deliver something
 •
 •
 •
 more valuable if the opportunity arises. There is a difficulty with
 outcome-based contracts in that outcomes can be hard to define
+
 ```
 objectively (see section 9.4.1, Defining value) and if this is the
 ```
+
 case, then a middle ground between outcome and output is to
+
 ```
 use such things as service levels or throughputs (e.g. velocity),
 ```
+
 while still allowing the customer and supplier to respond to
 change in order to optimize the value delivered.
 Define the level of customer involvement needed during the
@@ -13068,25 +15206,32 @@ level of commitment in advance and clearly defining
 responsibilities increase the chance that this collaboration will
 happen.
 Create several time-based deliveries as part of the main
+
 ```
 agreement (e.g. based around sprints or releases), which can be
 ```
+
 used to monitor the overall project against an agreed baseline
 that relates to the value the project should deliver. This may, or
 may not, be put into operational use, but it will show how much is
 being delivered by the supplier, and it can be measured according
 to, for example, value, velocity or story points. This allows the
 customer to see how the project is progressing. In effect the
+
 ```
 customer is buying amounts of time (or a throughput of work) from
 ```
+
 the supplier. It may be appropriate to create an initial delivery that
+
 ```
 goes into more detail of what the project intends to achieve (e.g.
 ```
+
 ```
 this may include requirements-gathering and/or a prototype).
 ```
+
 Allow for the project to be stopped at any time by the project
 board. This allows the customer to stop a project if feedback from
 early deliveries indicates that the project as a whole is no longer
@@ -13099,17 +15244,22 @@ This does not preclude the contract from being fixed-price,
 although the full price will only be relevant if the project runs to
 completion.
 Tip
+
 ```
 Sometimes sprint zero (or early sprints) can be used for the
 ```
+
 ```
 initial delivery (also referred to as iteration zero or discovery).
 ```
+
 Table 28.1 Sliding-scale incentives
 Delivery target Amount received Customer credit
+
 ```
 90% or greater 100% (or more) 0%
 ```
+
 80% to 90% 90% 10%
 70% to 80% 80% 20%
 60% to 70% 70% 30%
@@ -13117,26 +15267,34 @@ Table 28.2 Levels of trust and incentives
 Level of trust Composition of the incentive scheme
 Very high No need to incentivize.
 High Incentives for amount delivered and shortfalls used as credits for use on
+
 ```
 future work (see column 3 in Table 28.1).
 ```
+
 ```
 Moderate Incentives acting more as penalty clauses (although the supplier may
 ```
+
 ```
 be happy with this arrangement).
 ```
+
 Incentives can be linked to the amount delivered. If the supplier
 delivers everything that was intended during a particular
+
 ```
 timeframe, then they receive 100 per cent (or even 100 per cent
 ```
+
 •
 •
 •
+
 ```
 +) of the remuneration agreed. Lesser deliveries could then be on
 ```
+
 a sliding scale as shown in Table 28.1.
 The composition of an incentive scheme would depend on the
 level of trust and collaboration between the customer and
@@ -13144,17 +15302,22 @@ supplier, which may take the form of schemes shown in Table
 28.2.
 An incentive scheme can be seen as a penalty clause depending
 on the nature of the relationship. If the incentives are linked to
+
 ```
 throughput (e.g. velocity) this can create a mutually beneficial
 ```
+
 ```
 situation; although trust plays an important part here as
 ```
+
 throughput can be manipulated. For example, the supplier inflates
 the story points used for estimation or delivers more features by
+
 ```
 focusing on easier, less critical ones; sometimes this is referred to
 ```
+
 as ‘gaming’. If the incentives are related to outcomes and value
 delivered, the risk of ‘gaming’ is reduced.
 Requirements will be defined in the contract at a high or
@@ -13166,18 +15329,22 @@ initiation, which may form part of the contract.
 Requirements need to be prioritized so that the most important in
 terms of value are delivered, and the least important can be used
 as contingency in order to protect the quality of what is delivered
+
 ```
 and also to meet deadlines. A minimum viable product (MVP) is
 ```
+
 also likely to be described. The level of trust is important with
 respect to the MVP as this may represent a ‘material breach’ and
 a failure to deliver. Alternatively, it could still be classed as ‘best
 endeavours’, in that what the customer and supplier set out to
 achieve did not actually turn out to be possible.
 Requirements change is handled by ‘trading’ new ones for
+
 ```
 existing ones (see section 25.5); for example, any new
 ```
+
 requirements discovered during the project can be added to the
 requirements list, but the effort needed to satisfy the new
 •
@@ -13195,20 +15362,26 @@ either given a lower place in the order of priorities or removed
 from the list altogether.
 Depending on the level of trust between the customer and the
 supplier, it may be agreeable to create a contract using as few
+
 ```
 clauses as possible and then add clauses when needed (in effect
 ```
+
 ```
 this represents a ‘minimum viable contract’). This is counter to the
 ```
+
 usual approach of starting with many clauses and removing the
 ones that are not needed. However, it is the quality of the clauses
+
 ```
 that is the most important consideration and not the quantity (e.g.
 ```
+
 ```
 specification of who owns the intellectual property of the output).
 ```
+
 In summary, the guidelines for structuring a contract for use in an
 agile context are as follows:
 Focus on outcomes or throughput in preference to outputs.
@@ -13216,9 +15389,11 @@ Define the amount of customer involvement required in order to
 collaborate with the supplier in the best way.
 Buy amounts of time relating to timeboxes with deliverables.
 Allow for a premature end to the project.
+
 ```
 Relate incentives to the amount delivered (value or throughput).
 ```
+
 Avoid including detailed requirements.
 Prioritize the requirements and identify an MVP.
 Handle changing requirements by trading out the less important
@@ -13228,12 +15403,15 @@ If preferred, build a contract up from the ‘minimum’ to start with.
 outcome-based contract
 An outcome cannot be achieved by the supplier alone, whereas an
 output can. This means that the supplier will need to estimate the
+
 ```
 amount of work they can achieve (e.g. by calculating their expected
 ```
+
 ```
 velocity) and then work with the customer to agree how they commit
 ```
+
 to this, and how the risk is shared.
 Typically, the delivery rate is what goes into the contract, as this is
 under the control of the supplier. It is possible for the outcome or the
@@ -13242,9 +15420,11 @@ will depend on how much risk each party wants to share.
 28.5 Summary
 A contract based on outcomes or throughput needs collaboration
 between the customer and the supplier.
+
 ```
 In simple terms an agile contract should create the right behaviours;
 ```
+
 moving from a solution-based view to a view based around
 throughput or outcomes is more likely to produce those beneficial
 behaviours.
@@ -13257,7 +15437,7 @@ value and allowing for change.
 Ultimately, the contract should be seen as a safety net and not a
 weapon.
 Acknowledgements and further research
-www.flexiblecontracts.com [accessed: 19 April 2016].
+<www.flexiblecontracts.com> [accessed: 19 April 2016].
 Appendices
 A
 Product description outlines
@@ -13277,9 +15457,11 @@ outlines
 Management products should be tailored to the requirements and
 environment of each project. This could include the composition,
 format, quality criteria and naming of the management products. For
+
 ```
 example:
 ```
+
 Management products can be in other formats and do not
 necessarily need to be ‘text documents’. They could be slides,
 spreadsheets or data in information systems, which are brought
@@ -13294,9 +15476,11 @@ Management products can be split into smaller parts if it makes
 them easier to use and maintain.
 Parts of the composition that are not relevant to the project can
 be added to or left out, or elements can be combined. The
+
 ```
 composition is not a table of contents; rather it is simply a list of
 ```
+
 •
 •
 •
@@ -13310,13 +15494,17 @@ recommend specific record or report formats for the information,
 and formal management products are not always used in projects
 unless there is a specific requirement for the additional
 information they provide. The following document names are
+
 ```
 used to show when the information is required in some form; they
 ```
+
 have outline descriptions of purpose but no recommended
+
 ```
 composition:
 ```
+
 configuration item record
 lessons report
 product status account.
@@ -13356,13 +15544,17 @@ how the performance of the project product will be reviewed.
 A.2 Business case
 A.2.1 Purpose
 A business case is used to document the business justification for
+
 ```
 undertaking a project, based on the estimated costs (of
 ```
+
 development, implementation and incremental ongoing operations
+
 ```
 and maintenance costs) against the anticipated benefits to be gained
 ```
+
 and offset by any associated risks. It should outline how and when
 the anticipated benefits can be measured.
 The outline business case is developed in the starting up a project
@@ -13403,44 +15595,59 @@ the project might be perceived as negative by one or more
 stakeholders. Dis-benefits are actual consequences of an activity
 whereas, by definition, a risk is uncertain and may never
 materialize. For example, a decision to merge two elements of an
+
 ```
 organization onto a new site may have benefits (e.g. better joint
 ```
+
 ```
 working), costs (e.g. expanding one of the two sites) and dis-
 ```
+
 •
 •
 •
 •
+
 ```
 benefits (e.g. drop in productivity during the merger). Dis-benefits
 ```
+
 need to be valued and incorporated into the investment appraisal.
+
 ```
 Timescale The period over which the project will run (summary of
 ```
+
 ```
 the project plan) and the period over which the benefits will be
 ```
+
 realized. This information is subsequently used to help timing
+
 ```
 decisions when planning (project plan, stage plan and benefits
 ```
+
 ```
 management approach).
 ```
+
 ```
 Costs A summary of the project costs (taken from the project
 ```
+
 ```
 plan), the ongoing operations and maintenance costs and their
 ```
+
 funding arrangements.
 Investment appraisal Compares the aggregated benefits and
+
 ```
 dis-benefits with the project costs (extracted from the project plan)
 ```
+
 and ongoing incremental operations and maintenance costs. The
 analysis may use techniques such as cash-flow statement, return
 on investment, net present value, internal rate of return and
@@ -13471,9 +15678,11 @@ A change control approach includes the following:
 Introduction States the purpose, objectives and scope, and
 identifies who is responsible for the approach.
 Issue management and change control procedure Describes
+
 ```
 (or refers to) the issue management and change control
 ```
+
 procedure to be used. Any variance from corporate, programme
 management or customer standards should be highlighted,
 together with a justification for the variances.
@@ -13487,9 +15696,11 @@ that are to be produced, their purpose, timing and chosen
 recipients. This should include reviewing the performance of the
 procedures.
 Timing of issue management and change control and issue
+
 ```
 activities States when formal activities (e.g. reviews or audits)
 ```
+
 are to be undertaken.
 Roles and responsibilities Describes who will be responsible for
 what aspects of the procedures, including any corporate,
@@ -13521,12 +15732,15 @@ A.4.2 Composition
 A checkpoint report includes the following:
 Date The date of the checkpoint
 Period The reporting period covered by the checkpoint report
+
 ```
 Follow-ups The outstanding items from previous reports (e.g.
 ```
+
 ```
 action items completed or unresolved issues)
 ```
+
 This reporting period:
 the products being developed by the team during the reporting
 period
@@ -13541,12 +15755,15 @@ reporting period
 quality management activities planned for the next reporting
 period
 Work package tolerance status How execution of the work
+
 ```
 package is performing against its tolerances (e.g. cost/time/scope
 ```
+
 ```
 actuals and forecast)
 ```
+
 •
 •
 •
@@ -13567,9 +15784,11 @@ A.5.2 Composition
 A communication management approach includes the following:
 Introduction States the purpose, objectives and scope, and
 identifies who is responsible for the approach.
+
 ```
 Communication procedure Describes (or refers to) any
 ```
+
 communication methods to be used. Any variance from corporate,
 programme management or customer standards should be
 highlighted, together with a justification for the variance.
@@ -13577,12 +15796,15 @@ Tools and techniques Refers to any communication tools to be
 used, and any preference for techniques that may be used, for
 each step in the communication process.
 Records Defines what communication records will be required
+
 ```
 and where they will be stored (e.g. logging of external
 ```
+
 ```
 correspondence).
 ```
+
 Reporting Describes any reports on the communication process
 that are to be produced, including their purpose, timing and
 •
@@ -13600,30 +15822,39 @@ that are to be produced, including their purpose, timing and
 •
 •
 •
+
 ```
 recipients (e.g. performance indicators).
 ```
+
 Timing of communication activities States when formal
+
 ```
 communication activities are to be undertaken (e.g. at the end of
 ```
+
 ```
 a management stage), including performance audits of the
 ```
+
 communication methods.
 Roles and responsibilities Describes who will be responsible for
 what aspects of the communication process, including any
 corporate, programme management or customer roles involved
 with communication.
 Stakeholder analysis, including:
+
 ```
 identification of the interested party (which may include
 ```
+
 accounts staff, user forum, internal audit, corporate,
 programme management or customer quality assurance,
+
 ```
 competitors, etc.)
 ```
+
 current relationship
 desired relationship
 interfaces
@@ -13694,9 +15925,11 @@ Project manager’s report Summarizes the project’s performance
 Review of the business case Summarizes the validity of the
 project’s business case, including:
 benefits achieved to date
+
 ```
 residual benefits expected (post-project)
 ```
+
 expected net benefits
 deviations from the approved business case
 Review of project objectives Review of how the project
@@ -13721,12 +15954,15 @@ approvals
 Off-specifications Listing any missing products or products
 that do not meet the original requirements, and confirmation of
 any concessions granted
+
 ```
 Project product handover Confirmation (in the form of
 ```
+
 ```
 acceptance records) by the customer that operations and
 ```
+
 maintenance functions are ready to receive the project product
 Summary of follow-on action recommendations Request
 for project board advice about who should receive each
@@ -13736,15 +15972,19 @@ activities needed to take the products to the next phase of their
 life
 Lessons A review of what went well, what went badly, and any
 recommendations for corporate, programme management or
+
 ```
 customer consideration (and if the project was prematurely
 ```
+
 ```
 closed, then the reasons should be explained). Sourced from the
 ```
+
 ```
 lessons log (see section A.14) or any lessons reports that may
 ```
+
 exist.
 A.9 End stage report
 A.9.1 Purpose
@@ -13764,9 +16004,11 @@ the overall project situation, and sufficient information to ask for a
 project board decision on what to do next with the project.
 The project board uses the information in the end stage report in
 tandem with the next stage plan to decide what action to take with
+
 ```
 the project; for example, authorize the next stage, amend the project
 ```
+
 scope or stop the project.
 A.9.2 Composition
 An end stage report includes the following:
@@ -13775,12 +16017,15 @@ performance
 Review of the business case Summarizes the validity of the
 project’s business case, including:
 benefits achieved to date
+
 ```
 residual benefits expected (remaining management stages and
 ```
+
 ```
 post-project)
 ```
+
 expected net benefits
 deviations from approved business case
 aggregated risk exposure
@@ -13809,29 +16054,38 @@ in the management stage and their requisite approvals
 Off-specifications Listing any missing products or products
 that do not meet the original requirements, and confirmation of
 any concessions granted
+
 ```
 Phased handover (if applicable) Confirmation by the customer
 ```
+
 that operations and maintenance functions are ready to
 receive the release
+
 ```
 Summary of follow-on action recommendations (if
 ```
+
 ```
 applicable) Request for project board advice for who should
 ```
+
 receive each recommended action. The recommended actions
 are related to unfinished work, ongoing issues and risks, and
 any other activities needed to take the products handed over to
 the next phase of their life
+
 ```
 Lessons (if appropriate) A review of what went well, what went
 ```
+
 badly, and any recommendations for corporate, programme
 management or customer consideration. Sourced from the
+
 ```
 lessons log (see section A.14) or any lessons reports that may
 ```
+
 exist
 Issues and risks Summary of the current set of issues and risks
 affecting the project
@@ -13885,12 +16139,15 @@ A.11.1 Purpose
 •
 •
 •
+
 ```
 A highlight report is used to provide the project board (and possibly
 ```
+
 ```
 other stakeholders) with a summary of the management stage status
 ```
+
 at intervals defined by them. The project board uses the report to
 monitor management stage and project progress. The project
 manager also uses it to advise the project board of any potential
@@ -13903,32 +16160,43 @@ Status summary An overview of the status of the management
 stage at this time
 This reporting period:
 work packages, including those pending authorization, in
+
 ```
 execution, and completed in the period (if the work packages
 ```
+
 are being performed by external suppliers, this information
+
 ```
 may be accompanied by purchase order and invoicing data)
 ```
+
 products completed in the period
 products planned but not started or completed in the period
+
 ```
 (providing an early warning indicator or potential breach of time
 ```
+
 ```
 tolerance)
 ```
+
 corrective actions taken during the period
 Next reporting period:
 work packages, including those to be authorized, in execution
+
 ```
 and to be completed during the next period (if the work
 ```
+
 packages are being performed by external suppliers, this
 information may be accompanied by purchase order and
+
 ```
 invoicing data)
 ```
+
 products to be completed in the next period
 corrective actions to be completed during the next period
 •
@@ -13940,20 +16208,26 @@ corrective actions to be completed during the next period
 •
 Project and management stage tolerance status How
 execution of the project and management stage are performing
+
 ```
 against their tolerances (e.g. cost/time actuals and forecast)
 ```
+
 Requests for change Raised, approved/rejected and pending
 Key issues and risks Summary of actual or potential problems
 and risks
+
 ```
 Lessons (if appropriate) A review of what went well, what went
 ```
+
 badly, and any recommendations for corporate, programme
 management or customer consideration. Sourced from the
+
 ```
 lessons log (see section A.14) or any lessons reports that may
 ```
+
 exist.
 A.12 Issue register
 A.12.1 Purpose
@@ -14025,12 +16299,15 @@ closed.
 A.13.2 Composition
 The composition of the issue report will be defined in the change
 control approach. It includes the following:
+
 ```
 Issue identifier As shown in the issue register (provides a unique
 ```
+
 ```
 reference for every issue report)
 ```
+
 Issue type Defines the type of issue being recorded, namely:
 request for change
 off-specification
@@ -14045,20 +16322,25 @@ impact
 Impact analysis A detailed analysis of the likely impact of the
 issue. This may include, for example, a list of products impacted
 Recommendation A description of what the project manager
+
 ```
 believes should be done to resolve the issue (and why)
 ```
+
 Priority This should be given in terms of the project’s chosen
 scale. It should be re-evaluated after impact analysis
 Severity This should be given in terms of the project’s chosen
 scale. Severity will indicate what level of management is required
 to make a decision on the issue
+
 ```
 Decision The decision made (accept, reject, defer or grant
 ```
+
 ```
 concession)
 ```
+
 •
 •
 •
@@ -14080,30 +16362,39 @@ The lessons log is a project repository for lessons that apply to this
 project or future projects. Some lessons may originate from other
 projects and should be captured on the lessons log for input to the
 project’s approaches and plans. Some lessons may originate from
+
 ```
 within the project, where new experience (both good and bad) can
 ```
+
 be passed on to others.
 A.14.2 Composition
 For each entry in the lessons log, the following should be recorded:
 Lesson type Defines the type of lesson being recorded, namely:
+
 ```
 project (to be applied to this project)
 ```
+
 ```
 corporate, programme management or the customer (to be
 ```
+
 passed on to corporate, programme management or the
+
 ```
 customer)
 ```
+
 both project and corporate, programme management or the
 customer
 Lesson detail The detail may include:
 event
+
 ```
 effect (e.g. positive/negative financial impact)
 ```
+
 causes/trigger
 whether there were any early warning indicators
 •
@@ -14112,12 +16403,15 @@ whether there were any early warning indicators
 •
 •
 recommendations
+
 ```
 whether it was previously identified as a risk (threat or
 ```
+
 ```
 opportunity)
 ```
+
 Date logged The date on which the lesson was originally logged
 Logged by The name of the person or team who raised the
 lesson
@@ -14134,15 +16428,19 @@ future projects.
 A lessons report can be created at any time in a project and should
 not necessarily be delayed until the end. Typically it can be included
 as part of the end stage report and end project report. It may be
+
 ```
 appropriate (and necessary) for there to be several lessons reports
 ```
+
 ```
 specific to the particular organization (e.g. user, supplier, corporate
 ```
+
 ```
 or programme).
 ```
+
 The data in the report should be used by the corporate group that is
 responsible for the quality management system, in order to refine,
 change and improve the standards. Statistics on how much effort
@@ -14153,27 +16451,35 @@ A lessons report may be derived from:
 •
 •
 •
+
 ```
 the PID (for the baseline position)
 ```
+
 ```
 the lessons log (for identification of lessons)
 ```
+
 ```
 the quality register, issue register and risk register (for statistical
 ```
+
 ```
 analysis)
 ```
+
 ```
 quality records (for statistical analysis)
 ```
+
 ```
 the communication management approach (for the distribution
 ```
+
 ```
 list).
 ```
+
 PRINCE2 does not define the composition, format and presentation,
 nor any quality criteria for this product.
 A.16 Plan
@@ -14202,12 +16508,15 @@ against which to monitor management stage progress.
 •
 •
 •
+
 ```
 Team plans (if used) could comprise just a schedule appended to the
 ```
+
 ```
 work package(s) assigned to the team manager.
 ```
+
 A plan should cover not just the activities to create products but also
 the activities to manage product creation, including activities for
 assurance, quality management, risk management, change control,
@@ -14215,9 +16524,11 @@ communication and any other project controls required.
 A.16.2 Composition
 A plan includes the following:
 Plan description A brief description of what the plan
+
 ```
 encompasses (i.e. project, stage, team, exception) and the
 ```
+
 planning approach
 Plan prerequisites Any fundamental aspects that must be in
 place, and remain in place, for the plan to succeed
@@ -14225,9 +16536,11 @@ External dependencies Dependencies that may influence the
 plan
 Planning assumptions Assumptions upon which the plan is
 based
+
 ```
 Delivery approach(es) A description of the approaches to be
 ```
+
 used
 Lessons incorporated Details of relevant lessons from previous
 similar projects, which have been reviewed and accommodated
@@ -14237,12 +16550,15 @@ and controlled
 Budgets Time and cost budgets, including provisions for risks
 and changes
 Tolerances Time, cost and scope tolerances for the level of plan
+
 ```
 (which may also include more specific management-stage or
 ```
+
 ```
 team-level risk tolerances)
 ```
+
 •
 •
 •
@@ -14257,41 +16573,55 @@ team-level risk tolerances)
 •
 •
 •
+
 ```
 Product descriptions (see section A.17) Descriptions of the
 ```
+
 ```
 products within the scope of the plan (for the project plan this will
 ```
+
 ```
 include the project’s products; for the stage plan this will be the
 ```
+
 ```
 management stage products; and for a team plan this should be a
 ```
+
 ```
 reference to the work package assigned). Quality tolerances will
 ```
+
 be defined in each product description
 Schedule This may include graphical representations as:
 a Gantt or bar chart
+
 ```
 a product breakdown structure (see Appendix D for examples)
 ```
+
 ```
 a product flow diagram (see Appendix D for an example)
 ```
+
 an activity network
+
 ```
 a table of resource requirements, by resource type (e.g. four
 ```
+
 ```
 engineers, one test manager, one business analyst)
 ```
+
 a table of requested/assigned specific resources, by name
+
 ```
 (e.g. Nikki, Jay, Francesca).
 ```
+
 A.17 Product description
 A.17.1 Purpose
 A product description is used to:
@@ -14335,15 +16665,19 @@ a design is derived from a specification
 a product is bought in from a supplier
 a statement of the expected benefits is obtained from the user
 a product is obtained from another department or team
+
 ```
 Format and presentation The characteristics of the product; for
 ```
+
 example, if the product were a report, this would specify whether
 the report should be a document, presentation slides or an email
 Development skills required An indication of the skills required
+
 ```
 to develop the product or a pointer to which area(s) should supply
 ```
+
 the development resources. Identification of the actual people
 may be left until planning the management stage in which the
 product is to be created
@@ -14358,35 +16692,46 @@ reference to one or more common standards that are
 •
 documented elsewhere, or it might be a full explanation of some
 yardstick to be applied. If the product is to be developed and
+
 ```
 approved in different states (e.g. dismantled machinery, moved
 ```
+
 ```
 machinery and reassembled machinery), then the quality criteria
 ```
+
 should be grouped into those that apply for each state
 Quality tolerance Details of any range in the quality criteria
 within which the product would be acceptable
+
 ```
 Quality method The kinds of quality method (e.g. design
 ```
+
 ```
 verification, pilot, test, inspection or review) that are to be used to
 ```
+
 check the quality or functionality of the product
 Quality skills required An indication of the skills required to
+
 ```
 undertake the quality method or a pointer to which area(s) should
 ```
+
 supply the checking resources. Identification of the actual people
 may be left until planning the management stage in which the
 quality inspection is to be done
+
 ```
 Quality responsibilities These define the producer, reviewer(s)
 ```
+
 ```
 and approver(s) for the product.
 ```
+
 A.18 Product status account
 A.18.1 Purpose
 Information about the status of products should be maintained and
@@ -14424,19 +16769,24 @@ A project brief includes the following:
 Project definition Explains what the project needs to achieve. It
 should include:
 background
+
 ```
 project objectives (covering time, cost, quality, scope, benefits
 ```
+
 ```
 and risk performance)
 ```
+
 desired outcomes
 project scope and exclusions
 constraints and assumptions
 project tolerances
+
 ```
 the user(s) and any other known interested parties
 ```
+
 interfaces
 •
 •
@@ -14444,24 +16794,30 @@ interfaces
 •
 •
 •
+
 ```
 Outline business case (see section A.2) Reasons why the
 ```
+
 project is needed and the business option selected. This will later
 be developed into a detailed business case during the initiating a
 project process
+
 ```
 Project product description (see section A.21) Includes the
 ```
+
 customer’s quality expectations, user acceptance criteria, and
 operations and maintenance acceptance criteria
 Project approach Defines the choice of solution that will be used
 within the project to deliver the business option selected from the
 business case. This will take into consideration the operational
 environment into which the solution must fit and any tailoring
+
 ```
 requirements (if known)
 ```
+
 Project management team structure A chart showing who will
 be involved with the project
 Role descriptions These describe the roles of those in the
@@ -14470,18 +16826,23 @@ at this time
 References These include references to any associated
 documents or products.
 A.20 Project initiation documentation
+
 ```
 (PID)
 ```
+
 A.20.1 Purpose
 The purpose of the PID is to define the project, in order to form the
 basis for its management and an assessment of its overall success.
+
 ```
 The PID gives the direction and scope of the project and (along with
 ```
+
 ```
 the stage plan) forms the ‘contract’ between the project manager and
 ```
+
 the project board.
 The three primary uses of the PID are to:
 •
@@ -14520,9 +16881,11 @@ background
 project objectives and desired outcomes
 project scope and exclusions
 constraints and assumptions
+
 ```
 the user(s) and any other known interested parties
 ```
+
 interfaces
 Project approach Defines the choice of solution and delivery
 approach that will be used in the project to deliver the business
@@ -14538,37 +16901,49 @@ approach that will be used in the project to deliver the business
 •
 option selected from the business case, taking into consideration
 the operational environment into which the solution must fit
+
 ```
 Business case (see section A.2) Describes the justification for
 ```
+
 the project based on estimated costs, risks and benefits
 Project management team structure A chart showing who will
 be involved with the project
 Role descriptions These describe the roles of those in the
 project management team and any other key resources
+
 ```
 Quality management approach (see section A.22) Describes
 ```
+
 the quality techniques and standards to be applied, and the
 responsibilities for achieving the required quality levels
+
 ```
 Change control approach (see section A.3) Describes how and
 ```
+
 by whom the project’s products will be controlled and protected
+
 ```
 Risk management approach (see section A.24) Describes the
 ```
+
 specific risk management techniques and standards to be
 applied, and the responsibilities for achieving an effective risk
 management procedure
+
 ```
 Communication management approach (see section A.5)
 ```
+
 Defines the parties interested in the project and the means and
 frequency of communication between them and the project
+
 ```
 Project plan (see section A.16) Describes how and when the
 ```
+
 project’s objectives are to be achieved, by showing the major
 products, activities and resources required on the project. It
 provides a baseline against which to monitor the project’s
@@ -14599,12 +16974,15 @@ The product description for the project product is created in the
 starting up a project process as part of the initial scoping activity, and
 is refined during the initiating a project process when creating the
 project plan. It is subject to formal change control and should be
+
 ```
 checked at management stage boundaries (during managing a stage
 ```
+
 ```
 boundary) to see if any changes are required. It is used by the
 ```
+
 closing a project process as part of the verification that the project
 has delivered what was expected of it, and that the acceptance
 criteria have been met.
@@ -14633,9 +17011,11 @@ design specifications
 a feasibility report
 the project mandate
 Development skills required An indication of the skills required
+
 ```
 to develop the product, or a pointer to which area(s) should
 ```
+
 supply the development resources
 Customer’s quality expectations A description of the quality
 expected of the project product and/or outcomes and the
@@ -14682,31 +17062,40 @@ A.22.2 Composition
 A quality management approach includes the following:
 Introduction States the purpose, objectives and scope, and
 identifies who is responsible for the approach
+
 ```
 Quality management process or procedure A description of (or
 ```
+
 ```
 reference to) the quality management procedure to be used. Any
 ```
+
 variance from corporate, programme management or customer
 quality standards should be highlighted, together with a
 justification for the variance. The process or procedure should
+
 ```
 cover:
 ```
+
 the approach to quality assurance and quality planning
 quality control: the project’s approach to quality control
 activities. This may include:
 quality standards
+
 ```
 templates and forms to be employed (e.g. product
 ```
+
 ```
 description(s), quality register)
 ```
+
 ```
 definitions of types of quality methods (e.g. inspection, pilot)
 ```
+
 metrics to be employed in support of quality control
 project assurance: the project’s approach to project assurance
 activities. This may include:
@@ -14733,12 +17122,15 @@ the quality register
 Reporting Describes any quality management reports, including
 their purpose, timing and recipients
 Timing of quality management activities States when formal
+
 ```
 quality management activities are to be undertaken (e.g. during
 ```
+
 ```
 audits, when this may involve reference to the quality register)
 ```
+
 Roles and responsibilities Defines the roles and responsibilities
 for quality management activities, including those with quality
 responsibilities from corporate, programme management or the
@@ -14770,35 +17162,46 @@ following should be recorded:
 Quality identifier Provides a unique reference for every quality
 activity entered into the quality register. It will typically be a
 numeric or alphanumeric value
+
 ```
 Product identifier(s) Unique identifier(s) for the product(s) that
 ```
+
 the quality activity relates to
+
 ```
 Product title(s) The name(s) by which the product(s) is known
 ```
+
 ```
 Method The method employed for the quality activity (e.g. pilot,
 ```
+
 ```
 quality review, audit, etc.)
 ```
+
 Roles and responsibilities The person or team responsible for
+
 ```
 the quality management activities (e.g. auditor or, for quality
 ```
+
 ```
 reviews, presenter, reviewer(s), chair, administrator)
 ```
+
 Dates Planned, forecast and actual dates for:
 the quality activity
 sign-off that the quality activity is complete
 Result The result of the quality activity. If a product fails a quality
 review, then any reassessment should be listed as a separate
 entry in the register, as the original quality activity has been
+
 ```
 completed (in deciding that the result is a ‘fail’)
 ```
+
 Quality records The quality inspection documentation, such as a
 test plan or the details of any actions required to correct errors
 and omissions of the products being inspected.
@@ -14822,12 +17225,15 @@ A.24.2 Composition
 The risk management approach includes the following:
 Introduction States the purpose, objectives and scope, and
 identifies who is responsible for the approach
+
 ```
 Risk management process or procedure Describes (or refers
 ```
+
 ```
 to) the risk management process or procedure to be used. Any
 ```
+
 variance from corporate, programme management or customer
 standards should be highlighted, together with a justification for
 the variance. The process or procedure must describe how:
@@ -14842,21 +17248,27 @@ and any other risk records to be used by the project
 Reporting Describes any risk management reports that are to be
 produced, including their purpose, timing and recipients
 Timing of risk management activities States when formal risk
+
 ```
 management activities are to be undertaken (e.g. at the end of
 ```
+
 ```
 management stages)
 ```
+
 Roles and responsibilities Defines the roles and responsibilities
 for risk management activities
 Scales Defines the scales for estimating probability and impact
+
 ```
 for the project to ensure that the scales for cost and time (for
 ```
+
 ```
 instance) are relevant to the cost and timeframe of the project.
 ```
+
 •
 •
 •
@@ -14864,21 +17276,26 @@ instance) are relevant to the cost and timeframe of the project.
 •
 •
 These may be shown in the form of probability impact grids giving
+
 ```
 the criteria for each level within the scale (e.g. for ‘very high’,
 ```
+
 ```
 ‘high’, ‘medium’, ‘low’ and ‘very low’)
 ```
+
 Proximity Provides guidance on how proximity for risk events is
 to be assessed. Proximity reflects the fact that risks will occur at
 particular times and the severity of their impact will vary according
 to when they occur. Typical proximity categories will be: imminent,
 within the management stage, within the project, beyond the
 project
+
 ```
 Risk categories Defines the risk categories to be used (if at all).
 ```
+
 These may be derived from a risk breakdown structure or prompt
 list. If no risks have been recorded against a category, this may
 suggest that the risk identification has not been as thorough as it
@@ -14892,14 +17309,18 @@ levels are reached corrective action will be triggered. They will be
 selected for their relevance to the project objectives
 Risk tolerance Defines the threshold levels of risk exposure
 which, when exceeded, require the risk to be escalated to the
+
 ```
 next level of management. (For example, a project-level risk
 ```
+
 tolerance could be set as any risk that, should it occur, would
 result in loss of trading. Such risks would need to be escalated to
+
 ```
 corporate, programme management or the customer.) The risk
 ```
+
 tolerance should define the risk expectations of corporate,
 programme management or customer and the project board
 Risk budget Describes whether a risk budget is to be established
@@ -14927,28 +17348,38 @@ value
 Risk author The person who raised the risk
 Date registered The date the risk was identified
 Risk category The type of risk in terms of the project’s chosen
+
 ```
 categories (e.g. schedule, quality, legal)
 ```
+
 Risk description Describes the risk in terms of the cause, event
+
 ```
 (threat or opportunity) and effect (in words of the impact)
 ```
+
 Probability, impact and expected value It is helpful to estimate
+
 ```
 the inherent values (pre-response action) and residual values
 ```
+
 ```
 (post-response action). These should be recorded in accordance
 ```
+
 with the project’s chosen scales
 Proximity This would typically state how close to the present time
+
 ```
 the risk event is anticipated to happen (e.g. imminent, within the
 ```
+
 ```
 management stage, within the project, beyond the project).
 ```
+
 Proximity should be recorded in accordance with the project’s
 chosen scales
 •
@@ -14971,15 +17402,19 @@ Note that more than one risk response may apply to a risk
 Risk status Typically described in terms of whether the risk is
 active or closed. Inclusion of a date last amended will help track
 changes in risk status
+
 ```
 Risk owner The person responsible for managing the risk (there
 ```
+
 ```
 should be only one risk owner per risk)
 ```
+
 ```
 Risk actionee The person(s) who will implement the action(s)
 ```
+
 described in the risk response. This may or may not be the same
 person as the risk owner.
 A.26 Work package
@@ -15017,17 +17452,22 @@ Development interfaces Interfaces that must be maintained
 while developing the products. These may be people providing
 information or those who need to receive information
 Operations and maintenance interfaces Identification of any
+
 ```
 specialist products with which the product(s) in the work package
 ```
+
 will have to interface during their operational life. These may be
 other products to be produced by the project, existing products, or
+
 ```
 those to be produced by other projects (e.g. if the project is part of
 ```
+
 ```
 a programme)
 ```
+
 Change control requirements A statement of any arrangements
 that must be made by the producer for:
 version control of the products in the work package
@@ -15038,13 +17478,17 @@ who, if anyone, needs to be advised of changes in the status of
 the work package
 Joint agreements Details of the agreements on effort, cost, start
 and end dates, and key milestones for the work package
+
 ```
 Tolerances Details of the tolerances for the work package (the
 ```
+
 tolerances will be for time and cost but may also include scope
+
 ```
 and risk)
 ```
+
 •
 •
 •
@@ -15052,13 +17496,17 @@ and risk)
 •
 •
 •
+
 ```
 Constraints Any constraints (apart from the tolerances) on the
 ```
+
 work, people to be involved, timings, charges, rules to be followed
+
 ```
 (e.g. security and safety), etc.
 ```
+
 Reporting arrangements The expected frequency and content
 of checkpoint reports
 Problem handling and escalation This refers to the procedure
@@ -15068,18 +17516,23 @@ documents, specifically:
 Stage plan extract This will be the relevant section of the
 stage plan for the current management stage or will be a
 pointer to it
+
 ```
 Product description(s) This would normally be an attachment
 ```
+
 ```
 of the product description(s) for the products identified in the
 ```
+
 ```
 work package (note that the product description contains the
 ```
+
 ```
 quality methods to be used)
 ```
+
 Approval method The person, role or group who will approve the
 completed products within the work package, and how the project
 manager is to be advised of completion of the products and work
@@ -15108,12 +17561,15 @@ the customer for the success of the project, and has the authority to direct
 the project within the remit set by corporate, programme management or the
 customer as documented in the project mandate.
 The project board is also responsible for the communications between the
+
 ```
 project management team and stakeholders external to that team (e.g.
 ```
+
 ```
 corporate, programme management or the customer).
 ```
+
 According to the scale, complexity, importance and risk of the project, project
 board members may delegate some project assurance tasks to separate
 individuals. The project board may also delegate decisions regarding
@@ -15133,9 +17589,11 @@ the project product, for user liaison with the project management team, and
 for monitoring that the solution will meet those needs within the constraints of
 the business case in terms of quality, functionality and ease of use.
 The role represents the interests of all those who will use the project product
+
 ```
 (including operations and maintenance services), those for whom the product
 ```
+
 will achieve an objective, or those who will use the product to deliver
 benefits. The senior user role commits user resources and monitors products
 against requirements. This role may require more than one person to cover
@@ -15148,21 +17606,27 @@ been realized. This is likely to involve a commitment beyond the end of the
 life of the project.
 Senior supplier The senior supplier represents the interests of those designing, developing,
 facilitating, procuring and implementing the project product. This role is
+
 ```
 accountable for the quality of the project product (and its components)
 ```
+
 ```
 delivered by the supplier(s) and is responsible for the technical integrity of
 ```
+
 the project. If necessary, more than one person may represent the suppliers.
 Depending on the particular customer/supplier environment, the customer
 may also wish to appoint an independent person or group to carry out
+
 ```
 assurance on the supplier’s products (e.g. if the relationship between the
 ```
+
 ```
 customer and supplier is a commercial one).
 ```
+
 Project manager The project manager is accountable to the project board and ultimately the
 executive and has the authority to run the project on a day-to-day basis,
 within the constraints laid down by them.
@@ -15175,23 +17639,29 @@ Team manager The team manager’s prime responsibility is to ensure production o
 products defined by the project manager to an appropriate quality, in a set
 timescale and at a cost acceptable to the project board. The team manager
 is accountable to, and takes direction from, the project manager.
+
 ```
 Project assurance Project assurance covers the primary stakeholder interests (business, user
 ```
+
 ```
 and supplier). The role has to be independent of the project manager;
 ```
+
 therefore the project board cannot delegate any of its assurance activities to
 the project manager.
 Change authority The project board may delegate authority for approving responses to
 requests for change or off-specifications to a separate individual or group,
 called a change authority. The project manager could be assigned as the
+
 ```
 change authority for some aspects of the project (e.g. changing baselined
 ```
+
 ```
 work packages if this does not affect management stage tolerances).
 ```
+
 Project support The provision of any project support on a formal basis is optional. If it is not
 delegated to a separate person or function, it will need to be undertaken by
 the project manager.
@@ -15201,9 +17671,11 @@ formalize this and it may become a task with which the project manager
 cannot cope without support.
 Project support functions may be provided by a project office or by specific
 resources for the project. For further information on the use of a project
+
 ```
 office, see Portfolio, Programme and Project Offices (2013).
 ```
+
 In PRINCE2 Agile a set of delivery roles have been defined so that
 they can be used if appropriate, or they can be used to understand
 what may be expected of a delivery team using agile. These are
@@ -15212,12 +17684,15 @@ It should be noted that roles are not the same as job titles. A role on
 a project is temporary and is carried out by one or more individuals.
 Someone could be carrying out several roles on several projects. A
 job title is different from this in that it is usually defined by a job
+
 ```
 description and represents a person’s role in an organization (e.g.
 ```
+
 ```
 engineer, administrator, tester, designer, etc.)
 ```
+
 •
 •
 •
@@ -15242,16 +17717,21 @@ Table B.2 PRINCE2 Agile delivery roles
 Role Description
 Customer subject matter
 expert
+
 ```
 A customer subject matter expert (SME) is assigned to the delivery team and
 ```
+
 plays an active part by acting as a representative of all of the customer
+
 ```
 stakeholders with a responsibility for ensuring that the project product (and
 ```
+
 ```
 its components) is understood and is correct at the detailed level. The person
 ```
+
 carrying out this role probably wants, or needs, the final product and is
 motivated for the project to succeed as they are impacted or helped by its
 delivery.
@@ -15264,12 +17744,15 @@ level requirements agreed by the senior user
 prioritization of requirements at the detailed level
 ensuring that products have been reviewed appropriately and are fit for
 purpose from a customer perspective
+
 ```
 collaborating and communicating with other customer stakeholders (such
 ```
+
 ```
 as customer representatives) in order to ensure that all views and needs
 ```
+
 relevant to the project are understood and addressed.
 Competencies include being:
 open-minded
@@ -15286,13 +17769,17 @@ project that may be involved or impacted.
 Responsibilities may include:
 defining requirements for their own specific area of interest
 highlighting any areas that the project may impact directly or indirectly
+
 ```
 working with the customer SME(s) to provide a wider and more
 ```
+
 representative picture of the customer view
+
 ```
 providing support in reviewing the project product (and its components)
 ```
+
 where relevant.
 Competencies include being:
 knowledgeable about their own area
@@ -15320,12 +17807,15 @@ Supplier subject matter
 expert
 A supplier SME is assigned to the delivery team and provides the
 appropriate technical skills to build and initially quality check the project
+
 ```
 product (and its components). They should be working collaboratively with
 ```
+
 ```
 the customer SME(s) and other customer representatives to evolve the
 ```
+
 products so that they deliver what is required in order to ultimately achieve
 the highest value possible for the customer.
 Responsibilities include:
@@ -15349,12 +17839,15 @@ specialist information that may be of use to the project. This is a consultative
 role that provides general or detailed technical information relating to specific
 areas of the products being delivered.
 Responsibilities may include:
+
 ```
 providing technical guidance on specific areas where appropriate (e.g.
 ```
+
 ```
 design, performance, releasing into operational use, ongoing support)
 ```
+
 communicating technical standards and guidance on areas such as
 technical compliance
 highlighting any areas that the project may impact directly or indirectly
@@ -15384,9 +17877,11 @@ quality criteria from both a customer and supplier perspective
 advising and supporting the rest of the delivery team on how the products
 will be assured in order to make the process as transparent and as easy
 as possible
+
 ```
 engaging with other stakeholders (customer or supplier) in order to check
 ```
+
 that nothing is overlooked from the wider view of the project.
 Competencies include being:
 excellent in quality assurance
@@ -15433,34 +17928,44 @@ project.
 The desired outcome and output are clear to everyone.
 There is a thirst for feedback and a collective desire to find out what the customer really
 wants.
+
 ```
 Agile learnings are being moved around the organization (e.g. by project support).
 ```
+
 Communication is very good and fast-moving.
 Control has a light touch and people are empowered.
 Musts really are musts.
 The project management team and the delivery teams are ‘understanding agile’ and not just
 ‘doing agile’.
 The overriding mindset of the people on the project is an agile one.
+
 ```
 Frequent releases are happening that are ideally put into operational use (or a staging area
 ```
+
 ```
 if the live environment is not ready).
 ```
+
 The five targets of what to fix and what to flex are understood by all.
+
 ```
 Significant events become routine because they happen frequently (e.g. stage boundaries or
 ```
+
 ```
 release reviews).
 ```
+
 ```
 All roles are clearly defined and understood (taking into account that the mapping of the
 ```
+
 ```
 agile roles to PRINCE2 is not necessarily straightforward).
 ```
+
 PRINCE2 is seen as agile.
 C.1.3 Process
 Statement Rating
@@ -15478,12 +17983,15 @@ learning.
 Quality checking and testing includes independent quality checking and testing.
 Quality checking is happening continually and sometimes even drives the building of the
 products.
+
 ```
 Planning is happening well in relation to all planning horizons (i.e. short term, medium term
 ```
+
 ```
 and long term) and with respect to the appropriate level of uncertainty.
 ```
+
 A lot of planning is being done empirically.
 Early requirements are based at a level that avoids unnecessary detail.
 Project assurance is adding value from an agile perspective.
@@ -15491,9 +17999,11 @@ C.1.4 Techniques
 Statement Rating
 Prioritization is happening continually, and timeboxes are not being extended or having
 people added to them.
+
 ```
 Information is very visible (e.g. on the walls) and is kept up to date.
 ```
+
 When prioritizing, teams are looking at both scope and quality criteria.
 Acceptance criteria always exist and are well written.
 Estimation is a team-based activity.
@@ -15504,12 +18014,15 @@ Burn charts are being widely used and progress is clear to see.
 User stories are being used to stimulate conversation and communication.
 When Kanban is used, a holistic approach is adopted, not just a Kanban board.
 Workshops are a regular occurrence and are being used appropriately.
+
 ```
 Stand-ups are happening daily and are taking place quickly (i.e. lasting 15 minutes or less,
 ```
+
 ```
 perhaps 10).
 ```
+
 People understand terms such as ‘requirement’, ‘user story’, ‘feature’ and ‘epic’.
 Product descriptions have been written at the appropriate level and with flexibility with regard
 to quality criteria.
@@ -15541,12 +18054,15 @@ based on the final attendance list.
 D.2 Product examples
 Table D.1 gives an example of a project product description for the
 conference. Examples of a product breakdown structure for this
+
 ```
 event are provided as a hierarchical chart (Figure D.1), a mind map
 ```
+
 ```
 (Figure D.2) and an indented list. Note that PRINCE2 does not
 ```
+
 specify the format in which the product breakdown structure is
 drawn.
 Figure D.3 gives an example of a product description for the bulk
@@ -15557,15 +18073,19 @@ transferred from the product breakdown structure in Figure D.1 to the
 product flow diagram in Figure D.4. For example, in this scenario the
 planner has used ‘publicity’ in the product breakdown structure but
 the only publicity products that need to be produced are the bulk
+
 ```
 email and press release. (Note that ‘product groups’ in Figure D.1
 ```
+
 are not products that require work but a way of identifying products
 that have some common characteristics or focus. In this case,
 ‘publicity’ is a convenient way to describe the products that provide
+
 ```
 publicity for the conference.) The delegate handout, however, is a
 ```
+
 product that is created by bringing together the covers, printed
 agenda, print-outs of the conference slides and notes, and the
 satisfaction survey form products.
@@ -15605,12 +18125,15 @@ Customer’s quality
 expectations
 Must have:
 The conference must be professional in style, be funded by attendees,
+
 ```
 and address the needs of the range of members (from beginners to
 ```
+
 ```
 experienced professionals).
 ```
+
 The event must provide a forum for networking.
 The conference must generate repeat attendance at future events by
 satisfied members.
@@ -15627,12 +18150,15 @@ In priority order:
 The cost of the conference must be covered by the attendance fees.
 A minimum of 80 and a maximum of 100 people must attend the
 conference.
+
 ```
 More than 50% of the presentations are interactive (tutorials rather than
 ```
+
 ```
 lectures).
 ```
+
 The speakers and programme are approved by the editorial board
 representing the interests of the members.
 The attendees’ satisfaction survey indicates that more than 75% will
@@ -15673,12 +18199,15 @@ Candidate venues
 Venue assessments
 Selected and booked venue
 Attendees
+
 ```
 Email list (external)
 ```
+
 ```
 Responses (external)
 ```
+
 Booking arrangements
 Final attendee list
 Speakers
@@ -15710,17 +18239,22 @@ Printed agenda
 Slides and notes
 Satisfaction survey form
 Conference logistics
+
 ```
 Selected subject matter (external)
 ```
+
 ```
 Agreed date (external)
 ```
+
 Agreed programme
 On-the-day staff
+
 ```
 Previous conference lessons and materials (external)
 ```
+
 Figure D.3 Example of a product description for the conference bulk
 email
 Figure D.4 Example of a product flow diagram for the conference
@@ -15743,12 +18277,15 @@ compromised in any way then so is the approach. The values and
 principles of some of the agile frameworks, methods and approaches
 are discussed in this appendix. Some of the approaches below are
 for software development only.
+
 ```
 E.1 The Agile Manifesto (the Manifesto
 ```
+
 ```
 for Agile Software Development)
 ```
+
 We are uncovering better ways of developing software by doing it
 and helping others do it. Through this work we have come to value:
 Individuals and interactions over processes and tools
@@ -15757,9 +18294,11 @@ Customer collaboration over contract negotiation
 Responding to change over following a plan.
 That is, while there is value in the items on the right, we value the
 items on the left more.
+
 ```
 The manifesto is a set of values (www.agilemanifesto.org). There are
 ```
+
 12 principles behind it:
 •
 •
@@ -15801,9 +18340,11 @@ At regular intervals, the team reflects on how to become more
 effective, then tunes and adjusts its behaviour accordingly.
 E.2 Scrum theory
 Three pillars uphold every implementation of empirical process
+
 ```
 control:
 ```
+
 •
 •
 •
@@ -15820,33 +18361,44 @@ Transparency
 Inspection
 Adaptation.
 E.3 The five values of eXtreme
+
 ```
 Programming (XP)
 ```
+
 The five values are:
 communication
 simplicity
 feedback
+
 ```
 courage (e.g. being confident, being persistent)
 ```
+
 respect.
 E.4 The four core values of the Scaled
+
 ```
 Agile Framework (SAFe) v3.0
 ```
+
 The four core values are:
+
 ```
 alignment (i.e. lining up work to such things as vision and
 ```
+
 ```
 strategy)
 ```
+
 code quality
 transparency
+
 ```
 programme execution (i.e. getting things done).
 ```
+
 E.5 The project management
 Declaration of Interdependence
 •
@@ -15861,9 +18413,11 @@ This was published in 2004/2005 by a group of several agile thought
 leaders. It was an evolution of the Agile Manifesto and its aim was to
 address a wider audience such as the project management
 community and not necessarily just those in the software domain
+
 ```
 (www.pmdoi.org). To achieve successful results, the declaration
 ```
+
 commits its proponents to:
 increase return on investment by making continuous flow of value
 their focus
@@ -15881,9 +18435,11 @@ strategies, processes and practices.
 E.6 The eight principles of the Dynamic
 Systems Development Method
 The principles of the Dynamic Systems Development Method
+
 ```
 (DSDM) represent the ethos and culture that need to exist for the
 ```
+
 successful use of agile. If any of the principles are not being adhered
 to, this represents a significant risk to the project and therefore the
 project manager needs to respond accordingly. The eight principles
@@ -15925,12 +18481,15 @@ limit WIP
 manage the flow
 make policies explicit
 implement feedback loops
+
 ```
 improve collaboratively, evolve experimentally (using models and
 ```
+
 ```
 the scientific method).
 ```
+
 E.8 The principles of Lean thinking
 •
 •
@@ -15967,9 +18526,11 @@ agile, should understand the problems they are trying to solve, or the
 opportunities they are looking to leverage, before commencing on
 any transition to a new or different way of working.
 With respect to ‘traditional’ projects, there are many common
+
 ```
 problems that are encountered; examples of these can be delivering
 ```
+
 the final product late, being over budget, the solution containing
 defects or the solution not being what the customer was expecting.
 Therefore, when using PRINCE2 and agile together to solve the
@@ -16017,28 +18578,33 @@ business case is already covered by PRINCE2, but measuring the
 success of how agile has been used is not. The areas to look at
 when reviewing the success or otherwise are identified by the
 Agilometer in Chapter 24. The question to ask for each of the sliders
+
 ```
 is:
 ```
+
 How much did each area help?
 How much did each area hinder?
 Did we assess the slider correctly at the start of the project?
 When an organization invests in improving how projects are
 delivered, it is important to be able to assess the merits of that
 investment. It is also important to be able to distinguish between the
+
 ```
 benefits delivered (as a whole) by the appropriate use of PRINCE2
 ```
+
 ```
 and the benefits delivered by agile (as a whole). It may turn out to be
 ```
+
 the case that the benefits have been achieved through using the two
 together, as the whole is greater than the sum of the parts.
 PRINCE2, agile and PRINCE2 with agile are all enablers. Their
 contribution needs to be measured. If it is not being measured, it will
 not be possible to gauge success.
 Further research
-Organizational maturity and P3M3: https://www.axelos.com/p3m3
+Organizational maturity and P3M3: <https://www.axelos.com/p3m3>
 [accessed: 19 April 2016].
 G
 Advice for a project manager
@@ -16056,9 +18622,11 @@ As <a project manager responsible for managing a project
 using agile>
 I would <something you would do>
 So that <some kind of benefit>
+
 ```
 Their replies were as follows; we hope you find them useful.
 ```
+
 G.1 Collaboration and self-organization
 I would So that
 Trust the team to deliver I am not getting in their way by checking up on
@@ -16066,9 +18634,11 @@ them
 Leave the team to get on with it Their creativity is not stifled by an interfering boss
 Trust the people who know best how to deliver the
 right solution
+
 ```
 The (right) solution is delivered right
 ```
+
 Ensure that the project board is very clear on what
 ‘empowered’ means
 Team members will be supported and will not be
@@ -16078,9 +18648,11 @@ releases and what’s involved
 Focus on having a stable team around me We can harness the fact that teams are more
 innovative and effective than individuals
 Insist that the customer has cleared their diary to
+
 ```
 guarantee their involvement (e.g. 3 days a week)
 ```
+
 The risk of the customer not being available is
 largely removed
 Ensure the agile delivery team is satisfied that the
@@ -16095,9 +18667,11 @@ Deliver something that users can use and relate to
 quickly
 We get input from users in order to make sure we
 are on the right track
+
 ```
 Ensure the whole team (customer and supplier) is
 ```
+
 involved in the process of defining and agreeing
 the project’s vision
 The team is engaged and motivated to realize this
@@ -16105,14 +18679,18 @@ vision from the start
 Make sure that the project team has an MVP that
 is truly a ‘minimum’
 The team can learn something useful as soon as
+
 ```
 possible (and then refine it)
 ```
+
 Ensure that the senior stakeholders involved
 understand very well that some requirements WILL
+
 ```
 be dropped from the list (MoSCoW)
 ```
+
 Their expectations can be managed from the start
 Engage with and try to understand the project’s
 stakeholders
@@ -16151,12 +18729,15 @@ to suit it
 Be clear about the delivery process and
 methodology with stakeholders
 I am setting expectations early around the delivery
+
 ```
 outputs (i.e. we will be working iteratively towards
 ```
+
 ```
 our destination)
 ```
+
 Make sure that I have read The Lean Startup I have a viewpoint on how projects running under
 ‘conditions of extreme uncertainty’ could be run
 and how PRINCE2 could support this
@@ -16164,9 +18745,11 @@ Hire a brilliant product owner and get them trained
 accordingly
 The project has more chance of being successful
 Ensure that the team is set up to make releases on
+
 ```
 demand (or as close to that as possible)
 ```
+
 The technical infrastructure does not get in the way
 of delivering business value
 Ensure that the entire team works in the same
@@ -16179,12 +18762,15 @@ The team knows what to expect throughout the
 project in terms of the level of control versus
 coaching and support. This will help to ensure that
 delivery teams are empowered and collaborate,
+
 ```
 can be self-organizing (within the agreed
 ```
+
 ```
 tolerances) and are able to make rapid, informed
 ```
+
 decisions without unnecessary delay
 G.4 Plan, monitor and control
 I would So that
@@ -16192,19 +18778,25 @@ Touch base with everyone in the project every day I know whether they are happy
 Focus on removing problems hindering the teams They can get the work done
 Make sure we hold frequent retrospectives The team improves over time
 Ensure that the project team understands and has
+
 ```
 agreed on ‘what to fix and what to flex’ (i.e.
 ```
+
 tolerances have been set for the six key aspects of
+
 ```
 the project)
 ```
+
 The project can benefit from agile and thereby
 maximize the value delivered to the customer
 Ensure that I understand the teams’ information
+
 ```
 radiators (visibility boards)
 ```
+
 I can track progress without asking for additional
 reporting from the agile teams
 Ensure that the project-level requirements are
@@ -16238,14 +18830,18 @@ This appendix is a copy of the Scrum Guide which is the copyright of
 Scrum.Org and ScrumInc. It is reproduced here under the
 Attribution-ShareAlike licence of Creative Commons, which is
 accessible at:
+
 ```
 http://creativecommons.org/licenses/by-sa/4.0/legalcode [accessed:
 ```
+
 19 April 2018]
 and also described in summary form at:
+
 ```
 http://creativecommons.org/licenses/by-sa/4.0/ [accessed: 19 April
 ```
+
 2018].
 By utilizing this Scrum Guide, AXELOS acknowledges and agrees to
 be bound by the terms of the Attribution-ShareAlike licence of
@@ -16253,10 +18849,12 @@ Creative Commons for the content of this appendix.
 The material in this appendix was developed and sustained by Ken
 Schwaber and Jeff Sutherland and is reproduced here with the
 original punctuation and spelling.
+
 ```
 The Scrum Guide (November 2017) can be downloaded from
 ```
-www.scrumguides.org [accessed: 19 April 2018].
+
+<www.scrumguides.org> [accessed: 19 April 2018].
 The Scrum Guide™
 Purpose of the Scrum Guide
 Scrum is a framework for developing, delivering, and sustaining
@@ -16266,14 +18864,18 @@ that bind them together. Ken Schwaber and Jeff Sutherland
 •
 •
 •
+
 ```
 developed Scrum; the Scrum Guide is written and provided by them.
 ```
+
 Together, they stand behind the Scrum Guide.
 Definition of Scrum
+
 ```
 Scrum (n): A framework within which people can address complex
 ```
+
 adaptive problems, while productively and creatively delivering
 products of the highest possible value.
 Scrum is:
@@ -16300,20 +18902,27 @@ Uses of Scrum
 Scrum was initially developed for managing and developing
 products. Starting in the early 1990s, Scrum has been used
 extensively, worldwide, to:
+
 1. Research and identify viable markets, technologies, and
+
 ```
 product capabilities;
 ```
-2. Develop products and enhancements;
-3. Release products and enhancements, as frequently as many
+
+1. Develop products and enhancements;
+2. Release products and enhancements, as frequently as many
+
 ```
 times per day;
 ```
-4. Develop and sustain Cloud (online, secure, on-demand) and
+
+1. Develop and sustain Cloud (online, secure, on-demand) and
+
 ```
 other operational environments for product use; and,
 ```
-5. Sustain and renew products.
+
+1. Sustain and renew products.
 Scrum has been used to develop software, hardware, embedded
 software, networks of interacting function, autonomous vehicles,
 schools, government, marketing, managing the operation of
@@ -16344,9 +18953,11 @@ making decisions based on what is known. Scrum employs an
 iterative, incremental approach to optimize predictability and control
 risk.
 Three pillars uphold every implementation of empirical process
+
 ```
 control: transparency, inspection, and adaptation.
 ```
+
 Transparency
 Significant aspects of the process must be visible to those
 responsible for the outcome. Transparency requires those aspects
@@ -16354,9 +18965,11 @@ be defined by a common standard so observers share a common
 understanding of what is being seen.
 For example:
 A common language referring to the process must be shared by
+
 ```
 all participants; and,
 ```
+
 Those performing the work and those inspecting the resulting
 increment must share a common definition of “Done”.
 Inspection
@@ -16424,21 +19037,29 @@ done may vary widely across organizations, Scrum Teams, and
 individuals.
 The Product Owner is the sole person responsible for managing the
 Product Backlog. Product Backlog management includes:
+
 ```
 Clearly expressing Product Backlog items;
 ```
+
 Ordering the items in the Product Backlog to best achieve goals
+
 ```
 and missions;
 ```
+
 Optimizing the value of the work the Development Team
+
 ```
 performs;
 ```
+
 Ensuring that the Product Backlog is visible, transparent, and
+
 ```
 clear to all, and shows what the Scrum Team will work on next;
 ```
+
 and,
 Ensuring the Development Team understands items in the
 Product Backlog to the level needed.
@@ -16468,28 +19089,38 @@ organization to organize and manage their own work. The resulting
 synergy optimizes the Development Team’s overall efficiency and
 effectiveness.
 Development Teams have the following characteristics:
+
 ```
 They are self-organizing. No one (not even the Scrum Master)
 ```
+
 tells the Development Team how to turn Product Backlog into
+
 ```
 Increments of potentially releasable functionality;
 ```
+
 Development Teams are cross-functional, with all of the skills as a
+
 ```
 team necessary to create a product Increment;
 ```
+
 Scrum recognizes no titles for Development Team members,
+
 ```
 regardless of the work being performed by the person;
 ```
+
 •
 •
 Scrum recognizes no sub-teams in the Development Team,
 regardless of domains that need to be addressed like testing,
+
 ```
 architecture, operations, or business analysis; and,
 ```
+
 Individual Development Team members may have specialized
 skills and areas of focus, but accountability belongs to the
 Development Team as a whole.
@@ -16529,75 +19160,102 @@ interactions to maximize the value created by the Scrum Team.
 •
 Scrum Master Service to the Product Owner
 The Scrum Master serves the Product Owner in several ways,
+
 ```
 including:
 ```
+
 Ensuring that goals, scope, and product domain are understood
+
 ```
 by everyone on the Scrum Team as well as possible;
 ```
+
 ```
 Finding techniques for effective Product Backlog management;
 ```
+
 Helping the Scrum Team understand the need for clear and
+
 ```
 concise Product Backlog items;
 ```
+
 ```
 Understanding product planning in an empirical environment;
 ```
+
 Ensuring the Product Owner knows how to arrange the Product
+
 ```
 Backlog to maximize value;
 ```
+
 ```
 Understanding and practicing agility; and,
 ```
+
 Facilitating Scrum events as requested or needed.
 Scrum Master Service to the Development Team
 The Scrum Master serves the Development Team in several ways,
+
 ```
 including:
 ```
+
 Coaching the Development Team in self-organization and cross-
+
 ```
 functionality;
 ```
+
 ```
 Helping the Development Team to create high-value products;
 ```
+
 ```
 Removing impediments to the Development Team’s progress;
 ```
+
 ```
 Facilitating Scrum events as requested or needed; and,
 ```
+
 Coaching the Development Team in organizational environments
 in which Scrum is not yet fully adopted and understood.
 Scrum Master Service to the Organization
 The Scrum Master serves the organization in several ways,
+
 ```
 including:
 ```
+
 •
 •
 •
 •
 •
+
 ```
 Leading and coaching the organization in its Scrum adoption;
 ```
+
 ```
 Planning Scrum implementations within the organization;
 ```
+
 Helping employees and stakeholders understand and enact
+
 ```
 Scrum and empirical product development;
 ```
+
 Causing change that increases the productivity of the Scrum
+
 ```
 Team; and,
 ```
+
 Working with other Scrum Masters to increase the effectiveness
 of the application of Scrum in the organization.
 Scrum Events
@@ -16626,12 +19284,15 @@ conclusion of the previous Sprint.
 Sprints contain and consist of the Sprint Planning, Daily Scrums, the
 development work, the Sprint Review, and the Sprint Retrospective.
 During the Sprint:
+
 ```
 No changes are made that would endanger the Sprint Goal;
 ```
+
 ```
 Quality goals do not decrease; and,
 ```
+
 Scope may be clarified and re-negotiated between the Product
 Owner and Development Team as more is learned.
 Each Sprint may be considered a project with no more than a one-
@@ -16762,9 +19423,11 @@ The structure of the meeting is set by the Development Team and
 can be conducted in different ways if it focuses on progress toward
 the Sprint Goal. Some Development Teams will use questions, some
 will be more discussion based. Here is an example of what might be
+
 ```
 used:
 ```
+
 What did I do yesterday that helped the Development Team meet
 the Sprint Goal?
 What will I do today to help the Development Team meet the
@@ -16808,36 +19471,50 @@ purpose. The Scrum Master teaches everyone involved to keep it
 within the time-box.
 The Sprint Review includes the following elements:
 Attendees include the Scrum Team and key stakeholders invited
+
 ```
 by the Product Owner;
 ```
+
 The Product Owner explains what Product Backlog items have
+
 ```
 been “Done” and what has not been “Done”;
 ```
+
 The Development Team discusses what went well during the
 Sprint, what problems it ran into, and how those problems were
+
 ```
 solved;
 ```
+
 The Development Team demonstrates the work that it has “Done”
+
 ```
 and answers questions about the Increment;
 ```
+
 The Product Owner discusses the Product Backlog as it stands.
 He or she projects likely target and delivery dates based on
+
 ```
 progress to date (if needed);
 ```
+
 The entire group collaborates on what to do next, so that the
 Sprint Review provides valuable input to subsequent Sprint
+
 ```
 Planning;
 ```
+
 Review of how the marketplace or potential use of the product
+
 ```
 might have changed what is the most valuable thing to do next;
 ```
+
 •
 •
 •
@@ -16865,13 +19542,17 @@ box. The Scrum Master participates as a peer team member in the
 meeting from the accountability over the Scrum process.
 The purpose of the Sprint Retrospective is to:
 Inspect how the last Sprint went with regards to people,
+
 ```
 relationships, process, and tools;
 ```
+
 Identify and order the major items that went well and potential
+
 ```
 improvements; and,
 ```
+
 Create a plan for implementing improvements to the way the
 Scrum Team does its work.
 The Scrum Master encourages the Scrum Team to improve, within
@@ -16903,9 +19584,11 @@ and ordering.
 A Product Backlog is never complete. The earliest development of it
 lays out the initially known and best-understood requirements. The
 Product Backlog evolves as the product and the environment in
+
 ```
 which it will be used evolves. The Product Backlog is dynamic; it
 ```
+
 constantly changes to identify what the product needs to be
 appropriate, competitive, and useful. If a product exists, its Product
 Backlog also exists.
@@ -16936,9 +19619,11 @@ Team. However, Product Backlog items can be updated at any time
 by the Product Owner or at the Product Owner’s discretion.
 Higher ordered Product Backlog items are usually clearer and more
 detailed than lower ordered ones. More precise estimates are made
+
 ```
 based on the greater clarity and increased detail; the lower the order,
 ```
+
 the less detail. Product Backlog items that will occupy the
 Development Team for the upcoming Sprint are refined so that any
 one item can reasonably be “Done” within the Sprint time-box.
@@ -17016,9 +19701,11 @@ risk may increase.
 The Scrum Master must work with the Product Owner, Development
 Team, and other involved parties to understand if the artifacts are
 completely transparent. There are practices for coping with
+
 ```
 incomplete transparency; the Scrum Master must help everyone
 ```
+
 apply the most appropriate practices in the absence of complete
 transparency. A Scrum Master can detect incomplete transparency
 by inspecting the artifacts, sensing patterns, listening closely to what
@@ -17082,9 +19769,11 @@ Jeff gained over the previous few years, and made public the first
 formal definition of Scrum.
 The history of Scrum is described elsewhere. To honor the first
 places where it was tried and refined, we recognize Individual, Inc.,
+
 ```
 Newspage, Fidelity Investments, and IDX (now GE Medical).
 ```
+
 The Scrum Guide documents Scrum as developed, evolved, and
 sustained for 20-plus years by Jeff Sutherland and Ken Schwaber.
 Other sources provide you with patterns, processes, and insights
@@ -17093,31 +19782,42 @@ productivity, value, creativity, and satisfaction with the results.
 Glossary
 Glossary
 acceptance criteria
+
 ```
 A prioritized list of criteria that the project product must meet before the customer will accept it (i.e.
 ```
+
 measurable definitions of the attributes required for the set of products to be acceptable to key
+
 ```
 stakeholders) (PRINCE2 definition).
 ```
+
 Acceptance criteria are commonly used in agile for assessing whether a user story has been completed.
 agile behaviours
+
 ```
 Those behaviours that are seen as typifying working in an agile way (e.g. being collaborative, self-
 ```
+
 ```
 organizing, customer-focused, empowered, trusting not blaming).
 ```
+
 agile plans
+
 ```
 Agile plans may show features (or sets of features) in their order and dependencies, and are likely to
 ```
+
 have been created collaboratively by those who will carry out the planned work. Agile plans tend to be
 informal or low-tech at the delivery-team level and this can be highly effective even though they may be
 no more than to-do lists or backlogs. Product-based planning can still be used at all levels of the project
+
 ```
 (including product delivery).
 ```
+
 Agilometer
 The Agilometer is a tool that assesses the level of risk associated with using agile in combination with
 PRINCE2. This allows PRINCE2 to be tailored in such a way that best mitigates the level of risk. The
@@ -17133,9 +19833,11 @@ baseline
 Reference levels against which an entity is monitored and controlled.
 benefit
 The measurable improvement resulting from an outcome perceived as an advantage by one or more
+
 ```
 stakeholders, and which contributes towards one or more organizational objective(s).
 ```
+
 benefits management approach
 An approach that defines the benefits management actions and benefits reviews that will be put in place
 to ensure that the project’s outcomes are achieved and to confirm that the project’s benefits are
@@ -17145,23 +19847,29 @@ A technique that helps a team to generate ideas. Ideas are not reviewed during t
 session, but at a later stage. Brainstorming is often used by problem management to identify possible
 causes.
 burn chart
+
 ```
 A technique for showing progress (e.g. such as with a timebox), where work that is completed and work
 ```
+
 still to do are shown with one or more lines that are updated regularly or daily.
 burn-down chart
 A burn-down chart is a run chart of outstanding work. See also burn chart.
 burn-up chart
 A burn-up chart is a run chart of completed work. See also burn chart.
 business ambassador
+
 ```
 A role in DSDM that is the pivotal role (but not the only role) in understanding the business view of a
 ```
+
 project. Sometimes known as a requirements engineer or business analyst.
 business case
+
 ```
 The justification for an organizational activity (project) which typically contains timescales, costs,
 ```
+
 benefits and risks, and against which continuing viability is tested.
 change authority
 A person or group to which the project board may delegate responsibility for the consideration of
@@ -17176,9 +19884,11 @@ class of service
 Broadly defined category for different types of work. The classes influence selection decisions because
 different classes of service are typically associated with qualitatively different risk profiles, especially
 with regard to schedule risk and the cost of delay. Four generic classes of service are widely
+
 ```
 recognized: ‘standard’, ‘fixed date’, ‘expedite’ and ‘intangible’.
 ```
+
 communication management approach
 A description of the means and frequency of communication between the project and its stakeholders.
 configuration item
@@ -17194,17 +19904,22 @@ The restrictions or limitations by which a project is bound.
 contingency
 Something that is held in reserve, typically to handle time and cost variances, or risks. PRINCE2 does
 not advocate the use of contingency because estimating variances is managed by setting tolerances,
+
 ```
 and risks are managed through appropriate risk responses (including the fallback response that is
 ```
+
 ```
 contingent on the risk occurring).
 ```
+
 customer subject matter expert
 The role assigned to the delivery team, to act as a representative of all customer stakeholders, with a
+
 ```
 responsibility for ensuring that the project product (and its components) is understood and is correct at
 ```
+
 the detailed level. Also referred to as customer SME.
 definition of ‘done’
 A set of criteria that is used to determine if a piece of work or a collection of work items is completed.
@@ -17213,36 +19928,47 @@ definition of ‘ready’
 A set of criteria that is used to determine if a piece of work is ready to be started.
 demo
 Short for ‘demonstration’, this is an event where a product or interim product, in whatever state of
+
 ```
 readiness, is shown to a person or group (e.g. to a customer) in order to get feedback and show
 ```
+
 ```
 progress. The product being ‘demoed’ could be static (e.g. a paper design) or dynamic (e.g. a working
 ```
+
 ```
 prototype).
 ```
+
 DevOps
 A collaborative approach between development and operations aimed at creating a product or service
 where the two types of work and even the teams merge as much as possible.
+
 ```
 discovery (phase)
 ```
+
 See sprint zero.
 disruptive
 A widely used term that has more than one definition but in general terms refers to situations where
+
 ```
 there are high degrees of uncertainty (e.g. with product innovation) and the product being developed will
 ```
+
 ```
 significantly disrupt (intentionally or accidentally) the existing environment or marketplace (e.g. 3D
 ```
+
 ```
 printing).
 ```
+
 ```
 Dynamic Systems Development Method (DSDM)
 ```
+
 An agile project delivery framework developed and owned by the DSDM consortium.
 early adopter
 A term given to a customer who is one of the first to buy or use a product. They typically may like
@@ -17262,39 +19988,50 @@ A high-level definition of a requirement that has not been sufficiently refined 
 Eventually, an epic will be refined and broken down into several user stories or requirements.
 exception
 A situation where it can be forecast that there will be a deviation beyond the tolerance levels agreed
+
 ```
 between the project manager and the project board (or between the project board and corporate,
 ```
+
 ```
 programme management or the customer).
 ```
+
 executive
 The individual with overall responsibility for ensuring that a project meets its objectives and delivers the
 projected benefits. This individual should ensure that the project maintains its business focus, that it has
 clear authority, and that the work, including risks, is actively managed. The executive is the chair of the
 project board. He or she represents the customer and is responsible for the business case.
 experiment
+
 ```
 An investigation into something that is carried out in a series of specific steps (which may involve
 ```
+
 ```
 research) in order to prove or disprove a theory or idea. This can be used to validate an idea or to try to
 ```
+
 improve something such as the way a team is working.
 feature
 A generic term that is widely used to describe something a product does, or the way in which a product
+
 ```
 does something. A feature can be at any level of detail (e.g. it is waterproof, it makes a tone when
 ```
+
 ```
 switched off) and can be related to a specific requirement, user story or epic. Another similar term is
 ```
+
 ‘function’.
 flow-based
 This avoids the use of partitioning work into timeboxes and manages work by using a queue. Work is
+
 ```
 then continually pulled into the system (which may itself be a high-level timebox) and moves through
 ```
+
 various work states until it is done.
 Gantt chart
 A commonly used technique for planning work activities against time in the form of horizontal lines or
@@ -17323,49 +20060,64 @@ improvement. It involves everyone contributing on a regular basis to make many s
 changes that build up over time to improve the efficiency of the way a team or organization works.
 Kanban
 A way to improve flow and provoke system improvement through visualization and controlling work in
+
 ```
 progress. Written in kanji (Chinese characters), it means ‘sign’ or ‘large visual board’. Written in
 ```
+
 ```
 hiragana (Japanese characters) it means ‘signal cards’ (singular or plural). In technical presentations of
 ```
+
 the mechanics of Kanban systems it usually means the latter. Used informally, it refers to the use of
+
 ```
 Kanban systems (visual or otherwise) and the Kanban method.
 ```
+
 Kanban board
+
 ```
 A tool used in Kanban to visually display the work in the system (or timebox). It is usually made up of a
 ```
+
 series of columns and possibly rows where work items move from left to right as they move through
 various states in order to be completed.
 Kanban method
 An evolutionary approach to change described by David J. Anderson in Six Core Practices and Four
 Foundational Principles.
 Kanban system
+
 ```
 A ‘pull system’ implemented by limiting the number of Kanban (cards) in circulation.
 ```
+
 Kano
 A model, developed by Professor Noriaki Kano, which is used to help understand customer preferences.
 The Kano model considers attributes of a product or service grouped into areas such as basic factors,
 excitement factors and performance factors.
 lead time/cycle time
+
 ```
 These two terms are interpreted differently by many in the Kanban community (some see them as
 ```
+
 ```
 representing different things) but in simple terms they refer to how long a work item takes to go through
 ```
+
 the system or timebox. So although they are often interpreted differently, they are, in effect, the same
 thing.
 Lean
+
 ```
 An approach that focuses on improving processes by maximizing value through eliminating waste (such
 ```
+
 ```
 as wasted time and wasted effort).
 ```
+
 Lean Startup
 Originally an approach to creating and managing start-up companies, but now applied to any business,
 to help them deliver products to customers quickly.
@@ -17375,30 +20127,40 @@ report is to provoke action so that the positive lessons from a project become e
 organization’s way of working and the organization is able to avoid the negative lessons on future
 projects.
 level of quality
+
 ```
 The overall quality level of a product as defined by the project product description (customer’s quality
 ```
+
 ```
 expectations and acceptance criteria).
 ```
+
 Little’s Law
+
 ```
 L = λW. In simple terms, it is the average number of items in a system. L is equal to the average arrival
 ```
+
 ```
 rate, λ, multiplied by the average time an item spends in the system, W (assuming that this is over a
 ```
+
 ```
 long enough period of time and the system is stable).
 ```
+
 manage by exception
 A technique by which variances from plan that exceed a pre-set control limit are escalated for action
+
 ```
 (e.g. where spends exceed budget by 10 per cent).
 ```
+
 ```
 minimum viable product (MVP)
 ```
+
 In a PRINCE2 Agile context the term MVP broadly aligns with the Lean Startup view that it is a ‘version
 of the final product which allows the maximum amount of validated learning with the least effort’. This
 should not be confused with the viability of the project as a whole. Typically, an MVP would be delivered
@@ -17407,9 +20169,11 @@ as early as possible during the project.
 •
 •
 •
+
 ```
 It is important to note that an MVP is about learning and may not go into operational use; it may be in
 ```
+
 the form of a simple experiment or prototype.
 MoSCoW
 This technique is used to categorize items such as requirements or tasks into one of the four following
@@ -17418,19 +20182,25 @@ Must have
 Should have
 Could have
 Won’t have for now.
+
 ```
 Plan-Do-Check-Act (PDCA)
 ```
+
 A four-stage cycle for process management, attributed to W. Edwards Deming. Plan-Do-Check-Act is
+
 ```
 also called the Deming Cycle. Plan: design or revise processes that support the IT services; Do:
 ```
+
 ```
 implement the plan and manage the processes; Check: measure the processes and IT services,
 ```
+
 ```
 compare with objectives and produce reports; Act: plan and implement changes to improve the
 ```
+
 processes.
 planning horizon
 The period of time for which it is possible to plan accurately.
@@ -17458,20 +20228,25 @@ according to an agreed business case.
 project assurance
 The project board’s responsibilities to assure itself that the project is being conducted correctly. The
 project board members each have a specific area of focus for project assurance, namely business
+
 ```
 assurance for the executive, user assurance for the senior user(s), and supplier assurance for the senior
 ```
+
 ```
 supplier(s).
 ```
+
 project brief
 A statement that describes the purpose, cost, time and performance requirements, and constraints for a
 project. It is created before the project begins, during the starting up a project process, and is used
 during the initiating a project process to create the PID and its components. It is superseded by the PID
 and not maintained.
+
 ```
 project initiation documentation (PID)
 ```
+
 A logical set of documents that brings together the key information needed to start the project on a
 sound basis and that conveys the information to all concerned with the project.
 project kick-off
@@ -17499,9 +20274,11 @@ help with project management tools, guidance, administrative services such as fi
 of actual data.
 prototype
 Something created to help prove or disprove an idea, or to help to improve the general understanding of
+
 ```
 a situation (e.g. the customer’s needs). It could be something that evolves into a real product or is
 ```
+
 thrown away.
 pull system
 A way of working in which work is started or ‘pulled’ from upstream, but only as capacity becomes
@@ -17519,16 +20296,20 @@ A description of the quality specification that the product must meet, and the q
 will be applied by those inspecting the finished product.
 quality review technique
 A technique with defined roles and a specific structure, designed to assess whether a product in the
+
 ```
 form of a document (or similar, such as a presentation) is complete, adheres to standards and meets the
 ```
+
 quality criteria agreed for it in the relevant product description. The participants are drawn from those
 with the necessary competence to evaluate its fitness for purpose.
 quality tolerance
 The tolerance identified for a product for a quality criterion defining an acceptable range of values.
+
 ```
 Quality tolerance is documented in the project product description (for the project-level quality tolerance)
 ```
+
 and in the product description for each product to be delivered.
 RACI
 A model used to help define roles and responsibilities. RACI stands for ‘responsible, accountable,
@@ -17536,13 +20317,17 @@ consulted and informed’.
 release
 The set of products in a handover. The contents of a release are managed, tested and deployed as a
 single entity.
+
 ```
 In PRINCE2 Agile, a release is typically a container for more than one low-level timebox (e.g. a sprint).
 ```
+
 This is not always the case as the act of releasing features into operational use may happen more
+
 ```
 regularly (e.g. after each sprint or several times during a sprint). The term ‘deployment’ is sometimes
 ```
+
 used in agile and has a similar meaning, although it is not used in PRINCE2 Agile.
 requirement
 A term to describe what a product does and/or how it will do it. A requirement can be written in the form
@@ -17561,9 +20346,11 @@ adopted, roles and responsibilities, risk tolerances, the timing of risk managem
 tools and techniques that will be used, and the reporting requirements.
 risk register
 A record of identified risks relating to an initiative, including their status and history.
+
 ```
 SAFe (Scaled Agile Framework)
 ```
+
 Large-scale application of agile across an organization.
 safe-to-fail
 A safe-to-fail experiment is one that is designed to have only limited impact on the system or the plan in
@@ -17571,12 +20358,15 @@ the event of failure.
 Scrum
 An iterative, timeboxed approach to product delivery that is described as ‘a framework within which
 people can address complex adaptive problems, while productively and creatively delivering products of
+
 ```
 the highest possible value’ (The Scrum Guide by Ken Schwaber and Jeff Sutherland, updated
 ```
+
 ```
 November 2017).
 ```
+
 Scrum master
 A Scrum role that is responsible for ensuring Scrum is understood and enacted and that the Scrum team
 adheres to Scrum theory, practice and rules.
@@ -17588,35 +20378,46 @@ solution meets those needs.
 sensitivity analysis
 A technique for testing the robustness of a calculation or model by assessing the impact of varying the
 input, to reflect the risk that the calculation or model might not be accurate.
+
 ```
 spike (or spiking)
 ```
+
 A temporary piece of work used to understand more about a given situation. It may take the form of a
 prototype or some research and is often used to reduce uncertainty from a technical or customer
 viewpoint. Experiments are similar.
 sprint
+
 ```
 A fixed timeframe (typically of 2–4 weeks) for creating selected features from the backlog.
 ```
+
 sprint zero
+
 ```
 A specific sprint at the beginning of a piece of work in order to address many upfront activities (e.g.
 ```
+
 ```
 forming a team, visioning, defining the architecture). Also referred to as iteration zero or (the) discovery
 ```
+
 ```
 (phase).
 ```
+
 ```
 stage (management stage)
 ```
+
 A section of the project that a project manager is managing on behalf of the project board at any one
 time, at the end of which the project board will wish to review progress to date, the state of the project
 plan, the business case and risks and the next stage plan, in order to decide whether to continue with
+
 ```
 the project (PRINCE2).
 ```
+
 In agile terms, it is in effect a high-level timebox and will usually contain one or more lower-level
 timeboxes such as releases or sprints.
 The concept of a PRINCE2 stage does not have an exact equivalent commonly used in agile.
@@ -17627,9 +20428,11 @@ A short meeting to assess progress. Typically lasting 15 minutes or less, they i
 that has been done, work still to be done and any problems being encountered.
 supplier subject matter expert
 The role assigned to the delivery team to provide the appropriate technical skills to build and initially
+
 ```
 quality-check the project product (and its components). Also referred to as the supplier SME.
 ```
+
 SWOT analysis
 Acronym for ‘strengths, weaknesses, opportunities and threats’. A technique to determine favourable
 and unfavourable factors in relation to business change or current state.
@@ -17638,12 +20441,15 @@ The interpersonal interactions between the individuals on a team. This relates t
 attitudes of the people in the team and needs to be managed carefully as it can be a very positive and
 powerful force when it is working well, but it can be destructive when it breaks down.
 team manager
+
 ```
 The person responsible for the production of products allocated by the project manager (as defined in a
 ```
+
 ```
 work package) to an appropriate quality, timescale and at a cost acceptable to the project board. This
 ```
+
 role reports to, and takes direction from, the project manager. If a team manager is not assigned, the
 project manager undertakes the responsibilities of the team manager role.
 test-driven
@@ -17652,22 +20458,28 @@ after.
 timebox
 A finite period of time when work is carried out to achieve a goal or meet an objective. The deadline
 should not be moved, as the method of managing a timebox is to prioritize the work inside it. At a low
+
 ```
 level a timebox will last a matter of days or weeks (e.g. a sprint). Higher-level timeboxes act as
 ```
+
 ```
 aggregated timeboxes and contain lower-level timeboxes (e.g. stages).
 ```
+
 tolerance
 The permissible deviation above and below a plan’s target for time and cost without escalating the
 deviation to the next level of management. There may also be tolerance levels for quality, scope,
 benefits and risk. Tolerance is applied at project, management stage and team levels.
+
 ```
 trading (or swapping)
 ```
+
 ```
 The act of handling change by replacing one or more requirements (or features or user stories) with
 ```
+
 others of a similar size in terms of effort.
 transparency
 A fundamental agile behaviour which involves making as many things visible as possible in order to help
@@ -17676,64 +20488,84 @@ Importantly, transparency also covers areas such as openness and honesty.
 user story
 A tool used to write a requirement in the form of who, what and why.
 validated learning
+
 ```
 The idea of learning through the use of experiments carried out in a scientific way (i.e. using a series of
 ```
+
 ```
 carefully designed steps and measures to prove whether the experiment has been successful).
 ```
+
 value
 The benefits delivered in proportion to the resources put into acquiring them.
 velocity
 A description of the rate of progress a team is making. For example, if a team is completing 20 user
 stories per week then this is their velocity and it can be used to empirically forecast their future rate of
+
 ```
 progress (assuming that the conditions remain the same).
 ```
+
 vision
 The statement of a desired future state.
 visioning
+
 ```
 An exercise or phase that aims to understand the overarching goal of something (e.g. a project). It
 ```
+
 would try to answer questions such as: Why is this work taking place? Who is it for? What might it look
 like? See also project kick-off.
 waterfall method
 A development approach that is linear and sequential, with distinct goals for each phase of
 development. After a phase of development has been completed, the development proceeds to the next
+
 ```
 phase and earlier phases are not revisited (hence the analogy that water flowing down a mountain
 ```
+
 ```
 cannot go back).
 ```
+
 ```
 work in progress (WIP)
 ```
+
 Work that has been started but not yet delivered from the system or timebox. It can also indicate the
 status for incidents, problems, changes, etc.
+
 ```
 work-in-progress (WIP) limit
 ```
+
 ```
 A constraint on the amount of WIP allowed in a given part (or column) of the system at any one time.
 ```
+
 ```
 Typically expressed as a number (i.e. the maximum number of work items allowed), it creates the
 ```
+
 concept of a pull system.
 work package
 The set of information relevant to the creation of one or more products. It will contain a description of the
+
 ```
 work, the product description(s), details of any constraints on production, and confirmation of the
 ```
+
 agreement between the project manager and the person or team manager who is to implement the work
 package that the work can be done within the constraints.
 workshop
+
 ```
 An event where people come together in a room to achieve an objective (e.g. to create a list of
 ```
+
 ```
 requirements or solve a problem) by using interaction and creativity in order to work quickly and
 ```
+
 accurately.
