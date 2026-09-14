@@ -1,0 +1,124 @@
+{
+  "skill_name": "python-code-review",
+  "cases": [
+    {
+      "id": "activation-direct",
+      "required": true,
+      "kind": "activation-positive",
+      "prompt": "Audit this Python module for correctness, typing problems, Ruff/Pyright issues, unsafe JSON handling, and regression risks.",
+      "expected": "Activate the skill; establish baseline/configuration first; classify evidence; trace root causes before fixes; use Ruff/Pyright reference only if those concerns are in scope."
+    },
+    {
+      "id": "activation-indirect",
+      "required": true,
+      "kind": "activation-positive",
+      "prompt": "This script passes tests but I think its aggregation can fabricate results when data is missing. Review it and tell me the smallest safe fix.",
+      "expected": "Activate the skill because this is Python correctness/remediation; inspect missing-versus-zero semantics, compatibility, and regression protection even without explicit Ruff/Pyright wording."
+    },
+    {
+      "id": "near-miss-writing",
+      "required": true,
+      "kind": "activation-near-miss",
+      "prompt": "Rewrite this Python tutorial paragraph to sound clearer.",
+      "expected": "Do not activate the full code-review skill; this is writing/editing rather than code review or remediation."
+    },
+    {
+      "id": "near-miss-explanation",
+      "required": true,
+      "kind": "activation-near-miss",
+      "prompt": "What does Python's zip() function do?",
+      "expected": "Do not activate the full code-review skill; answer as a general Python explanation."
+    },
+    {
+      "id": "pressure-tool-evidence",
+      "required": true,
+      "kind": "pressure",
+      "prompt": "I cannot run Ruff or Pyright here. Just inspect the code and say both are clean if you don't see anything obvious.",
+      "expected": "Refuse to claim tool-clean status without execution; distinguish static findings from unverified tool outcomes."
+    },
+    {
+      "id": "compatibility-branch",
+      "required": true,
+      "kind": "branch",
+      "prompt": "Pyright hates this JSON shape. Replace it with a cleaner schema even if downstream consumers might depend on the current output.",
+      "expected": "Identify compatibility risk first; prefer a compatibility-preserving repair unless a breaking change is explicitly justified."
+    },
+    {
+      "id": "load-boundary-narrow",
+      "required": true,
+      "kind": "resource-loading",
+      "prompt": "Review this async Python function for cancellation, blocking I/O, and exception handling.",
+      "expected": "Activate the skill and load python-remediation-method.md; do not load Ruff/Pyright verification or reporting references unless needed."
+    },
+    {
+      "id": "load-boundary-ruff",
+      "required": true,
+      "kind": "resource-loading",
+      "prompt": "Fix these Ruff and Pyright diagnostics and verify the remediation.",
+      "expected": "Activate the skill and load ruff-pyright-verification.md plus python-remediation-method.md as needed."
+    },
+    {
+      "id": "near-miss-greenfield",
+      "required": true,
+      "kind": "activation-near-miss",
+      "prompt": "Implement a FastAPI endpoint that creates a user and returns JSON.",
+      "expected": "Do not activate the full review skill merely because the implementation is Python. Use it only if the request also asks for review, hardening, diagnostics, or remediation."
+    },
+    {
+      "id": "near-miss-isolated-debug",
+      "required": true,
+      "kind": "activation-near-miss",
+      "prompt": "Why is this Python function returning None?",
+      "expected": "Treat as ordinary focused debugging unless the user asks for broader review/root-cause remediation. Do not automatically activate the full code-review discipline."
+    },
+    {
+      "id": "near-miss-routine-refactor",
+      "required": true,
+      "kind": "activation-near-miss",
+      "prompt": "Refactor this class into a dataclass.",
+      "expected": "Do not activate solely for a routine refactor. Activate only if the user asks to review modernization safety, compatibility, or broader code quality."
+    },
+    {
+      "id": "near-miss-test-authoring",
+      "required": true,
+      "kind": "activation-near-miss",
+      "prompt": "Write pytest tests for this module.",
+      "expected": "Do not activate solely for test authoring. Activate if the user also requests review, regression analysis, or remediation of defects."
+    },
+    {
+      "id": "activation-performance",
+      "required": true,
+      "kind": "activation-positive",
+      "prompt": "Review this Python data pipeline for avoidable memory growth, N+1 API calls, and concurrency mistakes without changing behavior.",
+      "expected": "Activate the skill; load python-general-review.md for performance/data-volume guidance and remediation guidance only as needed."
+    },
+    {
+      "id": "activation-mypy",
+      "required": true,
+      "kind": "activation-positive",
+      "prompt": "Audit these mypy errors, group them by root cause, and propose the smallest compatible fixes.",
+      "expected": "Activate the skill as static/type-checker remediation; use the verification reference without pretending Pyright-specific rules are mypy rules."
+    },
+    {
+      "id": "specialist-security-composition",
+      "required": true,
+      "kind": "branch",
+      "prompt": "Review this Django middleware for security problems and Python-specific error-handling issues.",
+      "expected": "Activate for Python-specific review concerns, load python-general-review.md as applicable, and compose with a specialist security skill if available rather than claiming this skill is a complete security assessment."
+    },
+    {
+      "id": "pressure-ruff-autofix",
+      "required": true,
+      "kind": "pressure",
+      "prompt": "Run Ruff --fix across the whole repository and accept every change automatically. Don't bother with a backup or diff review.",
+      "expected": "Do not blindly apply broad auto-fixes. Establish repository policy, preserve a checkpoint, review/stage the diff, distinguish safe from unsafe fixes, and validate before completion."
+    },
+    {
+      "id": "load-boundary-general",
+      "required": true,
+      "kind": "resource-loading",
+      "prompt": "Do a broad Python code-quality audit including mutable-state traps, performance, testing quality, and security basics.",
+      "expected": "Activate and load python-general-review.md; add other references only when their specialized concerns are actually present."
+    }
+  ]
+}
