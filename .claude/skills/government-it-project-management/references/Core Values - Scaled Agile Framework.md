@@ -1,22 +1,26 @@
+# Core Values
 
-
-## Core Values
 The four Core Values of alignment, built-in quality, transparency, and program execution represent the
 fundamental beliefs that are key to SAFe’s effectiveness. These guiding principles help dictate behavior and action
 for everyone who participates in a SAFe portfolio.
+
 ## Details
+
 SAFe is based on four primary bodies of knowledge: Agile development, Lean product development, systems
 thinking, and DevOps. That makes SAFe broad, deep and scalable. But at its core, SAFe places the highest value on
 four things:  alignment, built-in quality, transparency, and program execution. These are illustrated in Figure 1
 and described in the following sections.
 Figure 1. SAFe’s four core values
+
 ## Alignment
+
 Like cars out of alignment, misaligned companies can develop serious problems. They are hard to steer, and they
 don’t respond well to changes in direction [1]. Even if it’s clear where everyone thinks they’re headed, the
 vehicle is unlikely to get them there.
 Find people who share your values, and you’ll
 conquer the world together.
 —John Ratzenberger
+
 ## “
 
 Alignment is needed to keep pace with fast change, disruptive competitive forces, and geographically distributed
@@ -42,7 +46,9 @@ based on the current context and evolving facts.
 Alignment, however, does not imply or encourage top-down command and control. Alignment occurs when
 everyone is working toward a common direction. Indeed, Alignment enables empowerment, autonomy, and
 Decentralized Decision-making, allowing those who implement value to make better local decisions.
+
 ## Built-in Quality
+
 “Inspection does not improve the quality, nor guarantee quality. Inspection is too late. The quality, good or bad, is
 already in the product. Quality cannot be inspected into a product or service; it must be built into it.”
 —W. Edwards Deming
@@ -62,7 +68,9 @@ security are integral to how enterprises develop software-based solutions. In ad
 augmented by three Advanced Topic articles, Agile Testing, Behavior-Driven Development (BDD) and Test-
 Driven Development. Together, this set of articles provides a fairly comprehensive starting point for achieving
 built-in quality in large systems.
+
 ## Transparency
+
 Solution development is hard. Things go wrong or do not work out as planned. Without openness, facts are
 obscure and decision-making is based on speculative assumptions and lack of data. No one can fix a secret.
 To ensure openness—trust is needed. Trust exists when the business and development can confidently rely on
@@ -84,7 +92,9 @@ Everyone can understand the velocity and WIP of the teams and programs; strategy
 execute are visibly aligned.
 Programs execute reliably, as noted below.
 Lean-Agile Leaders also play a critical role in creating an environment that fosters trust and transparency.
+
 ## Program Execution
+
 Of course, none of the rest of SAFe matters if teams can’t execute and continuously deliver value. Therefore, SAFe
 places an intense focus on working systems and business outcomes. History shows us that while many
 enterprises start the transformation with individual Agile teams, they often become frustrated as even those
@@ -103,12 +113,18 @@ Agile Principles and practices and an orientation toward creating value for cus
 persistent and meaningful culture for the teams and their stakeholders.
 This is the way successful teams and programs are doing it, and that’s why they are getting the many benefits—
 employee engagement, productivity, quality, and time to market—that Lean-Agile enterprises so enjoy.
+
 ## Learn More
+
 [1] Labovitz, George H., and Victor Rosansky.The Power of Alignment: How Great Companies Stay Centered and
-## Accomplish Extraordinary Things. Wiley, 1997.
-[2] Manifesto for Software Development. http://AgileManifesto.org
+
+## Accomplish Extraordinary Things. Wiley, 1997
+
+[2] Manifesto for Software Development. <http://AgileManifesto.org>
 [3] Oosterwal, Dantar P. The Lean Machine: How Harley-Davidson Drove Top-Line Growth and Profitability with
-## Revolutionary Lean Product Development. Amacom, 2010.
+
+## Revolutionary Lean Product Development. Amacom, 2010
+
 Last update: 10 February 2021
 The information on this page is © 2010-2023 Scaled Agile, Inc. and is protected by US and International copyright laws.
 ither images nor text can be copied from this site without the express written permission of the copyright holder. Scal

@@ -19,7 +19,10 @@ import uuid
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
-from scripts.utils import parse_skill_md
+try:
+    from scripts.utils import parse_skill_md
+except ModuleNotFoundError:
+    from utils import parse_skill_md
 
 
 def find_project_root() -> Path:
@@ -116,7 +119,7 @@ def run_single_query(
         # reader thread and a queue instead. This works identically on
         # Windows and POSIX and readline() already yields whole lines, so
         # no manual chunk/newline buffering is needed.
-        line_queue: "queue.Queue[bytes | None]" = queue.Queue()
+        line_queue: queue.Queue[bytes | None] = queue.Queue()
 
         def _pump_stdout() -> None:
             try:
@@ -153,11 +156,26 @@ def run_single_query(
                 except json.JSONDecodeError:
                     continue
 
-                # Early detection via stream events
-                if event.get("type") == "stream_event":
+                # Early detection via stream events. Claude CLI versions emit
+                # either wrapped stream_event objects or raw top-level stream
+                # events, so normalize both shapes before inspecting deltas.
+                event_type = event.get("type")
+                if event_type == "stream_event":
                     se = event.get("event", {})
                     se_type = se.get("type", "")
+                elif event_type in (
+                    "content_block_start",
+                    "content_block_delta",
+                    "content_block_stop",
+                    "message_stop",
+                ):
+                    se = event
+                    se_type = event_type
+                else:
+                    se = {}
+                    se_type = ""
 
+                if se_type:
                     if se_type == "content_block_start":
                         # A message may use unrelated tools before consulting a skill.
                         # Ignore those blocks instead of treating them as a non-trigger.
@@ -182,8 +200,6 @@ def run_single_query(
                                 return True
                             pending_tool_name = None
                             accumulated_json = ""
-                        if se_type == "message_stop":
-                            return False
 
                 # Fallback: full assistant message
                 elif event.get("type") == "assistant":

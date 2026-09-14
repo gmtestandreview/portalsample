@@ -44,12 +44,14 @@ Avoid a vague “hybrid” label. Specify the boundary, for example:
 ## Counterexamples
 
 Do **not** recommend adaptive delivery merely because:
+
 - the team uses Scrum or Kanban;
 - requirements are poorly documented;
 - leadership wants faster delivery;
 - the word “digital” appears in the initiative.
 
 Do **not** recommend predictive delivery merely because:
+
 - governance requires a business case;
 - funding is annual;
 - a fixed final date exists;
@@ -60,6 +62,7 @@ Do **not** call the model hybrid merely because different teams use different ce
 ## Reassessment triggers
 
 Revisit the model when:
+
 - policy, funding, procurement, security, or assurance constraints change;
 - user access/feedback becomes unavailable or newly available;
 - integration/dependency assumptions materially change;

@@ -10,7 +10,7 @@ transformation_scope: formatting and retrieval optimization
 
 # Agile Extension to the BABOK Guide — Version 2
 
-` **Editorial note for AI agents:** This file is a source-preserving Markdown transformation optimized for retrieval and factual lookup. Repeated PDF headers, footers, printed page numbers, and extraction-only heading artifacts have been removed. Heading hierarchy, lists, glossary entries, and source terminology have been normalized. Where the source extraction flattened figures or tables, the text remains linearized; do not infer relationships that are not explicit in the text.
+**Editorial note for AI agents:** This file is a source-preserving Markdown transformation optimized for retrieval and factual lookup. Repeated PDF headers, footers, printed page numbers, and extraction-only heading artifacts have been removed. Heading hierarchy, lists, glossary entries, and source terminology have been normalized. Where the source extraction flattened figures or tables, the text remains linearized; do not infer relationships that are not explicit in the text.
 
 ## Agent usage contract
 
@@ -59,8 +59,6 @@ International Institute of Business Analysis, Toronto, Ontario, Canada. Agile Al
   - 7.24 Visioning
 - [Appendix A: Glossary](#appendix-a-glossary)
 - [Appendix B: Mapping BABOK Guide Tasks to Horizons](#appendix-b-mapping-babok-guide-tasks-to-horizons)
-- [Appendix C: Contributors](#appendix-c-contributors)
-- [Appendix D: Summary of Changes from Agile Extension to the BABOK® Guide version 1](#appendix-d-summary-of-changes-from-agile-extension-to-the-babok-guide-version-1)
 
 ## 1. Introduction
 
@@ -1752,6 +1750,7 @@ Conditions of satisfaction or criteria needed to validate a user story. Can be w
 - A common anti-pattern is the temptation to treat Story Decomposition as a way of reverting to detailed requirements upfront. Ensuring the continued
 
 emphasis on just-enough and just-in-time means knowing when to stop decomposing.
+
 - Story Decomposition should not be done based on process (step 1, 2, and 3 in a flow), architecture (build database, build server, build front-end), or procedure (design it, build it, test it). Rather, decomposition should be done based on customer valued features.
 
 ### 7.19 Story Elaboration
@@ -1763,6 +1762,7 @@ Story Elaboration is used to define the detailed design and acceptance criteria 
 #### 7.19.2 Description
 
 Story Elaboration is the lowest level of Story Decomposition and the process by which the story is broken down into pieces of work. Story Elaboration facilitates the elicitation and communication of the most detailed requirements. Story Elaboration is an ongoing activity which occurs in the Delivery Horizon (for more information, see
+
 - Delivery Horizon). Wasted effort is reduced by elaborating stories on a just-in-time and just-enough basis. Business analysis practitioners continually develop and communicate dynamic requirements, and this necessitates a high degree of skill in both facilitation and communication.
 During each iteration, time is scheduled to expand on the story to understand the detail. Often, this is completed in a workshop with those who will execute the story: subject matter experts, the customer representative who needs the story, the person who will test the story, and a business analysis practitioner who facilitates and challenges the story. Story Elaboration is completed in preparation for the Planning Workshop (for more information, see 7.8. Planning Workshops). In order to ensure detailed requirements include the most current feedback on learning, Story Elaboration is done on a just-in-time basis for stories that have been determined to be in scope for the upcoming iteration.
 
@@ -2206,6 +2206,7 @@ This is specific information which can be measured objectively and will indicate
 
 **relative estimation**: A way of estimating work effort by identifying features/ requirements with stories and then assigning story points to stories. The cumulative story points represent the estimated amount of effort required to deliver the story. The story points are then calculated against the team's velocity to create an estimate on how much the team can deliver in a particular iteration.
 **release planning**: At the beginning of a project the team will create a high-level release plan. The team cannot possibly know everything upfront so a detailed plan is not necessary. The release plan should address:
+
 - the number and duration of the iterations,
 - how many people or teams should be on this project,
 - the number of releases, the value delivered in each release, and
@@ -2293,7 +2294,7 @@ Ensuring stakeholders have a shared understanding of business analysis informati
 
 Encouraging stakeholders to work towards a common goal involves establishing an environment for constructive communication, collaboration, and continuous improvement throughout the organization Driving collaboration and connection is a core agile value, and a core agile business analysis value. Find ways to ensure that your activities are transparent and communicated. Driving collaboration and connection is a core agile value, and a core agile business analysis value. Business analysis practitioners find ways to ensure that activities are transparent and communicated.
 
-5. Requirements Life Cycle Management
+1. Requirements Life Cycle Management
 
 ### 5.1 Trace Requirements
 
@@ -2357,7 +2358,7 @@ While the detailed design options are defined elsewhere, the vision for the cust
 
 The scope of analysis is do just enough analysis to decide to start an initiative or not. Ensuring continuous collaboration and feedback between initiatives aids this analysis. The strategy for the vision of creating value is defined at the Strategy Horizon. Experimentation is used to analyze potential value and make solution recommendations. Collaboration, feedback, and learning are used to select solution options or make decisions with key stakeholders such as the product owner.
 
-8. Solution Evaluation
+1. Solution Evaluation
 
 ### 8.1 Measure Solution Performance
 
@@ -2378,85 +2379,3 @@ Assessing enterprise limitations involves continually understanding and communic
 ### 8.5 Recommend Actions to Increase Solution Value
 
 The Strategy Horizon is responsible for recommending changes to goals or strategy. This includes recommending to start, stop, or change an initiative. Recommended changes are based on ongoing feedback and learning. The Initiative Horizon is responsible for recommending changes to the outcomes of the initiative. This includes recommending to start, stop, or change an initiative. Recommended changes are based on ongoing feedback and learning. This activity is of high priority at the Delivery Horizon. A subtle difference in implemented stories is where value can be enhanced or diminished. Learning and feedback about implementations and metrics will drive this activity.
-
-## Appendix C: Contributors
-
-### C.1 Core Team of Authors
-
-IIBA® and The Agile Alliance® would like to thank the following contributors to the Agile Extension to the BABOK® Guide. Without their efforts and commitment, the Agile Extension to the BABOK® Guide version 2.0 would not be possible.
-
-- James King
-- Jas Phul, Product Owner, IIBA
-- Kent J. McDonald
-- Paul Stapleton, Editor, IIBA
-- Ryland Leyton
-- Shane Hastie, Team Facilitator, The Agile Alliance
-- Stephanie Vineyard
-- Steve Adolph
-
-### C.2 Expert Advisory and Review Group
-
-The following industry experts generously provided IIBA® and The Agile Alliance®
-
-with advice and guidance on the scope and content of version 2.0 of the Agile Extension to the BABOK® Guide during its planning and development, and helped to shape the content and direction of this release.
-- Ellan Young
-- Linda Cook
-- Angela Wick
-- Mary Gorman
-- Chirs Matts
-- Ali Mazer
-- Luiz Claudio Parzianello
-- Zoya Royblat
-- Tim Coventry
-- Mindy Bohannon
-- Ellen Gottesdiener
-
-### C.3 Agile Extension to the BABOK® Guide version 1
-
-Contributors
-- Ali Mazer
-- Brian Hemker
-- Carol Scalice
-- Chris Matts
-- David C. Cook
-- David Morris
-- Dennis Stevens
-- Ellen Gottesdiener
-- Kevin Brennan
-- Luiz Claudio Parzianello
-- Marsha Hughes
-- Pascal Van Cauwenberghe
-- Paul Stapleton, Editor
-- Peter Gordon
-- Shane Hastie
-- Steve Erlank
-- Susan Block
-
-### C.4 Other Significant Contributors
-
-- Irena Duniskvaric: Technical illustrations
-- Lynda Sydney, Ignite Writing Services: Copy editing
-- Vic Bhai, Technical Writer/Editor, IIBA: Layout and design
-
-## Appendix D: Summary of Changes from Agile Extension to the BABOK® Guide version 1
-
-` **Extraction note for AI agents:** The comparison table in this appendix was flattened by the source extraction. Preserve its sequence, but do not infer missing row/column boundaries unless they are explicit.
-
-The Agile Extension to the BABOK® Guide (Agile Extension) has be entirely rethought and re-architected for version 2. There is no direct mapping of changes for Agile Extension version 1 to Agile Extension version 2. This appendix provides details into the rational for the changes and results of these changes. The Agile Extension to the BABOK® Guide (Agile Extension) version 2 describes the benefits, activities, tasks, skills, and practices required for effective agile business analysis with a constant focus on delivering business value. The Agile Extension version 2:
-
-- positions agile business analysis beyond software development. The thinking and practices found in Agile Extension version 2 can be applied in any domain operating in an agile context.
-- places a increased focus on agile business analysis practices and thinking as a means to helping business analysis practitioners and organizations realize the value delivered by effective agile business analysis.
-- embraces and incorporates the
-- Business Analysis Core Concept Model™ (BACCM™).
-- builds on values established in the Manifesto for Agile Software Development by describing and ingraining the seven principles for agile business analysis.
-- introduces the concept of rolling planning horizons that, from an agile perspective, represent a view of work within an organization with a level of granularity appropriate to the planning time frame and the nature of the feedback loops.
-- places increased emphasis on the importance of feedback and learning to the continuous delivery of value.
-- rethinks, updates, adds, and removes techniques that support agile business analysis practices. Some techniques found in Agile Extension version 1 have be included in BABOK® Guide. Unless there is a significant difference to the technique in an agile context, these techniques are not included in the Agile Extension version 2.
-
-Agile Extension version 1 Technique Agile Extension version 2 Technique Change Backlog Management Moved to BABOK® Guide
-
-Backlog Refinement New Behaviour Driven Development Behaviour Driven Development Updated Business Capability Analysis Moved to BABOK® Guide
-
-Business Value Definition Removed Collaborative Games Moved to BABOK® Guide
-
-Impact MappingNew Job StoriesNew Kano AnalysisKano AnalysisUpdated Lightweight DocumentationRemoved MoSCoW PrioritizationRemoved Minimal Viable Product New PersonasPersonasUpdated Planning WorkshopPlanning Workshop Updated Portfolio KanbanNew Product RoadmapNew Purpose Alignment Model Purpose Alignment Model Updated Real OptionsReal OptionsUpdated Relative EstimationRelative Estimation Updated RetrospectivesRetrospectivesUpdated ReviewsNew SpikesNew StoryboardingStoryboardingUpdated Story DecompositionStory Decomposition Updated Story ElaborationStory ElaborationUpdated Story MappingStory MappingUpdated User StoryUser StoriesUpdated Value Stream Mapping Value Stream Mapping Updated VisioningNew

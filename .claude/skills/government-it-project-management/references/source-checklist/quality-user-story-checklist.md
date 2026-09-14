@@ -1,12 +1,11 @@
-Updated Quality User Story Checklist
+---
+name: "Updated Quality User Story Checklist"
 
-Introduction
-
-This Quality User Story Checklist is an evidence-based tool designed to support the creation, evaluation, and continuous refinement of high-quality user stories within agile environments. It synthesises insights from academic frameworks such as QUS (Lucassen et al.), INVEST (Cohn/Wake), Agile Requirements Verification Framework (ARVF), AmbiTRUS, and industry standards including BABOK v3, IEEE 29148, and SAFe’s agile delivery principles. It covers three core dimensions of quality: syntactic (form and structure), semantic (meaning and logic), and pragmatic (usefulness in practice), while addressing non-functional concerns, traceability, and user experience. It is especially relevant in regulated or enterprise-scale agile contexts.
-
+Description: "This Quality User Story Checklist is an evidence-based tool designed to support the creation, evaluation, and continuous refinement of high-quality user stories within agile environments. It synthesises insights from academic frameworks such as QUS (Lucassen et al.), INVEST (Cohn/Wake), Agile Requirements Verification Framework (ARVF), AmbiTRUS, and industry standards including BABOK v3, IEEE 29148, and SAFe’s agile delivery principles. It covers three core dimensions of quality syntactic (form and structure), semantic (meaning and logic), and pragmatic (usefulness in practice), while addressing non-functional concerns, traceability, and user experience. It is especially relevant in regulated or enterprise-scale agile contexts."
+---
 # Updated Quality User Story Checklist
 
-## Syntactic Quality:
+## Syntactic Quality
 
 * **Well-formed:** The user story is a complete sentence using the “As a [role], I want [goal], so that [benefit]” structure. Minor adaptations are allowed if all three elements are explicit and meaningful.
 * **Atomic & Minimal but Sufficient:** The story represents one discrete feature or goal with no unrelated requirements, yet includes sufficient context and domain-specific assumptions to ensure clarity.
@@ -15,8 +14,7 @@ This Quality User Story Checklist is an evidence-based tool designed to support 
 * **Uniformity Across Stories:** All stories follow a consistent style, structure, and level of detail across the backlog.
 * **Humanised Language:** The user story is written in a natural, conversational tone to improve clarity and human resonance. Avoids overly mechanical or generic phrasing that may suggest it was AI-generated. Stories should sound like they were written by and for real people, supporting authenticity and empathy. For example: Poor: "System should allow content ingestion from heterogeneous input channels." Better: "As a content manager, I want to upload stories from different sources, so I can keep the news feed fresh."
 
-
-## Semantic Quality:
+## Semantic Quality
 
 * **Conceptually Sound:** The means (functionality) is logically justified by an appropriate ends (benefit), avoiding irrational or missing rationales.
 * **Problem-oriented:** The story defines a user need or problem, not the technical implementation or UI layout.
@@ -30,7 +28,7 @@ This Quality User Story Checklist is an evidence-based tool designed to support 
 * **Shared Understanding Promoted:** Explicitly documents or references assumptions to reduce reliance on tacit knowledge and cognitive bias.
 * **Reviewed via Goal-Oriented Modelling (e.g., iStar):** Ensures alignment with higher-level goals and reveals semantic gaps or redundancies.
 
-## Pragmatic Quality:
+## Pragmatic Quality
 
 * **Effort Estimatable & Small:** The story is small enough to complete within a sprint and can be relatively estimated by the team.
 * **Negotiability:** The story is a placeholder for conversation and remains open to refinement, not a rigid specification.
@@ -41,7 +39,7 @@ This Quality User Story Checklist is an evidence-based tool designed to support 
 * **Acceptance Criteria Defined:** Clear acceptance criteria or concrete examples (e.g., Given-When-Then) are provided to enable testability and shared understanding.
 * **Automated Quality Analysis:** NLP tools (e.g., AQUSA) are used to scan stories for linguistic and semantic issues, supplemented by team review. Automation supports, but does not replace, human judgment.
 
-## Extended Quality Characteristics (from BABOK v3, IEEE 29148, and ARVF):
+## Extended Quality Characteristics (from BABOK v3, IEEE 29148, and ARVF)
 
 * **Feasibility:** Story is technically feasible and deliverable within constraints (e.g., time, skillset, architecture).
 * **Scalability & Architecture Fit:** The feature aligns with the system’s architectural vision and does not compromise scalability.
@@ -57,9 +55,11 @@ This Quality User Story Checklist is an evidence-based tool designed to support 
 * **Example-based Clarification:** Each major criterion includes practical examples illustrating good vs. poor practices for clarity and education.
 
 ## Callouts
+
 * The review if user story found deficent should call out clarifications requiredm from the different stakeholders.
 
-## Usage Notes:
+## Usage Notes
+
 * Examples per Criterion: Each major checklist item is accompanied by a good vs. poor practice example (available in the full appendix or inline via hyperlinks in digital formats).
 * Minimal but Sufficient Reminder: Stories should be concise, yet include all essential background context to avoid ambiguity or reliance on tribal knowledge.
 * Emphasize minimal documentation, ensuring that modifiability and traceability remain agile-friendly and do not compromise agility.
