@@ -71,7 +71,9 @@ When creating or reviewing user stories, load `references/user-story-quality.md`
 
 When creating or reviewing acceptance criteria or BDD scenarios, load `references/acceptance-criteria-quality.md`.
 
-When reviewing a status report, change request, risk/issue log, benefits plan, planning document, backlog, feature, or PI objective, load `references/project-artefact-review.md` and apply only the relevant section.
+When reviewing a status report, executive report, weekly/monthly update, dashboard/RAG summary, change request, risk/issue log, benefits plan, planning document, backlog, feature, or PI objective, load `references/project-artefact-review.md` and apply only the relevant section.
+
+For SES, board, executive, or steering-committee status material, load `references/project-artefact-review.md` and apply its **Status reports** section even when the user does not name the artefact type explicitly.
 
 Use Gherkin when BDD is appropriate or locally required; do not force it where another approved format is clearer and equally testable.
 

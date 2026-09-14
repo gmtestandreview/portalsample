@@ -46,4 +46,4 @@ Automated language-quality tools may supplement team review; they do not replace
 
 If deficient, identify the exact clarification needed and the stakeholder best placed to answer it. Do not silently rewrite missing business intent, policy, architecture, or acceptance rules.
 
-For detailed source rationale, consult `references/source-checklists/quality-user-story-checklist.txt`.
+For detailed source rationale, consult `references/source-checklist/quality-user-story-checklist.md`.

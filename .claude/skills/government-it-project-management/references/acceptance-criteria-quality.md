@@ -45,4 +45,4 @@ Where material, define measurable performance/load conditions, failure handling,
 
 Trace criteria back to the story, regulation/policy, business rule, or quality requirement and forward to tests where the delivery process supports it. Use stable IDs/tags when useful. Keep criteria as living documentation and avoid brittle detail that does not affect the intended outcome.
 
-For detailed rationale and examples, consult `references/source-checklists/acceptance-criteria-quality-checklist.txt`.
+For detailed rationale and examples, consult `references/source-checklist/acceptance-criteria-quality-checklist.md`.

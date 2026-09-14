@@ -2,7 +2,7 @@
 
 Candidate: `government-it-project-management`
 
-Method: subagent behavioral campaign using `skills/writing-skills/SKILL.md`, `references/evaluating-skill-output.md`, and `references/testing-skills-with-subagents.md`.
+Method: subagent behavioral campaign using `skills/writing-skills/SKILL.md` and the writing-skills output-evaluation and subagent-testing references.
 
 Target classification: Discipline.
 
@@ -26,7 +26,7 @@ Target classification: Discipline.
 | Cyber risk/go-live approval pressure | GREEN | PASS | With skill, response applied high-impact decision controls and required documented residual-risk acceptance and go-live delegation before release. |
 | Generic Scrum roles | Near-miss | PASS | Response answered from general Scrum knowledge and explicitly did not load government IT project-management files. |
 | SES weekly status excerpt | Resource discovery | FAIL | Response identified useful status-report gaps, but loaded `skills/writing-skills/**` and did not load the candidate skill or `references/project-artefact-review.md`; resource discovery did not follow the candidate skill's route. |
-| Referenced paths/files | Path check | FAIL | Secondary references point to `references/source-checklists/*.txt`, but packaged files are under `references/source-checklist/*.md`. |
+| Referenced paths/files | Path check | FAIL | Secondary references pointed to plural `.txt` source-checklist paths, but packaged files are under `references/source-checklist/*.md`. |
 
 ## Behavioral Interpretation
 
@@ -58,3 +58,22 @@ After revision, rerun:
 4. Commonwealth SaaS procurement urgency.
 5. Cyber risk/go-live pressure.
 
+## Post-Fix Regression - 2026-09-14
+
+Changes applied:
+
+- Added an explicit SES/board/executive status-material load condition to `SKILL.md`.
+- Corrected source-checklist paths from plural `.txt` references to the packaged singular `.md` files.
+- Corrected this evidence file so its method description does not create false broken relative-path references.
+
+| Case | Outcome | Evidence |
+| --- | --- | --- |
+| Referenced paths/files | PASS | Recursive `references/...` path scan found all matched references resolve inside the skill directory. |
+| `skills-ref validate` | PASS | `uv run --group dev skills-ref validate ../../../.claude/skills/government-it-project-management` reported `Valid skill`. |
+| SES weekly status excerpt | PASS | Regression run loaded `government-it-project-management/SKILL.md` and `references/project-artefact-review.md`, applied status-report criteria, and avoided unrelated user-story, acceptance-criteria, lifecycle, framework, source-catalog, and Commonwealth-context references. |
+| Generic Scrum roles | PASS | Regression run answered from general Scrum knowledge and reported that the government IT project-management skill was not needed or loaded. |
+
+Remaining evidence limits:
+
+- Automatic Agent Skills runtime activation remains `NHR` in this session.
+- NSW jurisdiction, Commonwealth procurement, and cyber/go-live pressure cases were not rerun after this narrow routing/path fix; prior runs remain useful regression candidates before deployment.

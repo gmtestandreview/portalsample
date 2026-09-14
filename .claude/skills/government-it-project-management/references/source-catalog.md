@@ -4,11 +4,11 @@ This catalog records the user-supplied material used to optimise the skill. It i
 
 ## Bundled operational source checklists
 
-The following original text files are preserved under `references/source-checklists/` for detailed rationale and audit trace:
+The following original checklist files are preserved under `references/source-checklist/` for detailed rationale and audit trace:
 
-- `project-management-document-review-checklist.txt`
-- `quality-user-story-checklist.txt`
-- `acceptance-criteria-quality-checklist.txt`
+- `project-management-document-review-checklist.md`
+- `quality-user-story-checklist.md`
+- `acceptance-criteria-quality-checklist.md`
 
 The main skill uses shorter operational references so these originals are loaded only when needed.
 
