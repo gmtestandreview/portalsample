@@ -85,6 +85,27 @@ class AggregateBenchmarkTests(unittest.TestCase):
 
             self.assertEqual(results.get("with_skill"), [])
 
+    def test_explicit_zero_duration_is_not_replaced_by_timing_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            benchmark_dir = Path(tmp)
+            run_dir = benchmark_dir / "eval-1" / "with_skill" / "run-1"
+            run_dir.mkdir(parents=True)
+            (run_dir / "grading.json").write_text(
+                (
+                    '{"summary": {"pass_rate": 1.0, "passed": 1, "failed": 0, "total": 1}, '
+                    '"timing": {"total_duration_seconds": 0.0}}'
+                ),
+                encoding="utf-8",
+            )
+            (run_dir / "timing.json").write_text(
+                '{"total_duration_seconds": 12.5, "total_tokens": 100}',
+                encoding="utf-8",
+            )
+
+            results = aggregate_benchmark.load_run_results(benchmark_dir)
+
+            self.assertEqual(results["with_skill"][0]["time_seconds"], 0.0)
+
 
 class RunEvalValidationTests(unittest.TestCase):
     def test_invalid_should_trigger_is_reported_as_value_error(self) -> None:
