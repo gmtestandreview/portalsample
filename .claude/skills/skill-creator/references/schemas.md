@@ -1,452 +1,363 @@
 # JSON Schemas
 
-This document defines the JSON schemas used by skill-creator.
+This reference is the human-readable index for skill-creator JSON contracts.
 
----
+The canonical machine-readable definitions live in `references/schemas/*.schema.json`.
+Do not duplicate full schema definitions in this document. Update the JSON Schema file first,
+then update this index only when semantics, locations, producers, consumers, or compatibility
+rules change.
 
-## evals.json
+All schema files use JSON Schema Draft 2020-12.
 
-Defines the evals for a skill. Located at `evals/evals.json` within the skill directory.
+## Why the schemas are split
+
+Keep one schema per persisted artifact so that:
+
+- validation can run directly against the artifact being read or written;
+- producers and consumers can share the same contract;
+- a change to one artifact does not require editing a large monolithic document;
+- schema diffs remain small and reviewable;
+- tests can validate examples and malformed fixtures automatically;
+- compatibility-breaking changes can be versioned deliberately.
+
+Shared definitions live in `schemas/common.schema.json`.
+
+## Canonical layout
+
+```text
+references/
+├── schemas.md
+└── schemas/
+    ├── common.schema.json
+    ├── evals.schema.json
+    ├── eval-metadata.schema.json
+    ├── history.schema.json
+    ├── grading.schema.json
+    ├── metrics.schema.json
+    ├── timing.schema.json
+    ├── benchmark.schema.json
+    ├── comparison.schema.json
+    ├── analysis.schema.json
+    └── feedback.schema.json
+```
+
+## Global evidence semantics
+
+These rules apply across all artifacts.
+
+1. **Missing is not zero.** Omit an optional metric when it was not observed. A numeric `0`
+   means an actual observed zero.
+2. **Do not invent `null` as a generic missing-value convention.** Use `null` only where the
+   relevant schema explicitly permits it.
+3. **Observed metrics keep their original units.** Do not convert character counts into token
+   counts or infer timing from unrelated values.
+4. **Fields are independently recoverable.** Preserve a valid field even when another optional
+   field is absent.
+5. **Persisted evidence is immutable.** Do not rewrite old run artifacts to match a newer
+   contract. Create a new run or iteration when the evaluation contract changes materially.
+6. **Strict JSON only.** Reject non-finite numeric values such as `NaN` and `Infinity`.
+7. **Semantic validation still matters.** JSON Schema validates shape and local constraints;
+   cross-file and derived invariants listed below require application-level checks.
+
+## Schema catalog
+
+| Persisted artifact | Canonical schema | Producer | Primary consumers |
+| --- | --- | --- | --- |
+| `evals/evals.json` | `schemas/evals.schema.json` | author/eval setup | executor, metadata setup |
+| `<eval-dir>/eval_metadata.json` | `schemas/eval-metadata.schema.json` | workspace setup | grader, viewer, benchmark |
+| `<workspace>/history.json` | `schemas/history.schema.json` | iteration controller | improve mode, reporting |
+| `<run-dir>/grading.json` | `schemas/grading.schema.json` | grader | benchmark, viewer |
+| `<run-dir>/outputs/metrics.json` | `schemas/metrics.schema.json` | executor | grader, benchmark |
+| `<run-dir>/timing.json` | `schemas/timing.schema.json` | runtime/executor | grader, benchmark |
+| `benchmark.json` | `schemas/benchmark.schema.json` | benchmark aggregator | viewer, analyzer |
+| `comparison-N.json` | `schemas/comparison.schema.json` | blind comparator | post-hoc analyzer |
+| `analysis.json` | `schemas/analysis.schema.json` | post-hoc analyzer | human review/iteration |
+| `feedback.json` | `schemas/feedback.schema.json` | review viewer | feedback interpretation |
+
+## `evals.json`
+
+**Location:** `evals/evals.json`  
+**Schema:** `schemas/evals.schema.json`
+
+Defines the frozen representative eval set for an iteration.
+
+Important semantic rules:
+
+- `skill_name` must match the skill frontmatter.
+- `evals[].id` must be unique across the file.
+- `files` are relative to the skill root unless another contract explicitly says otherwise.
+- `expectations` contain only objectively verifiable statements.
+- a materially revised prompt or expected outcome creates a revised eval contract; do not
+  silently reinterpret previously produced evidence.
+
+The JSON Schema validates individual IDs but cannot enforce uniqueness of the `id` property
+across separate objects; validate that semantically.
+
+## `eval_metadata.json`
+
+**Location:** `<eval-dir>/eval_metadata.json`  
+**Schema:** `schemas/eval-metadata.schema.json`
+
+Binds workspace evidence to the exact eval contract.
+
+Rules:
+
+- copy `eval_id`, `prompt`, and `expectations` from the authoritative eval definition;
+- keep `eval_name` descriptive only; it must not become a second source of requirements;
+- never store grading decisions, timing, outputs, or inferred success here;
+- once run evidence exists, treat this metadata as immutable.
+
+## `history.json`
+
+**Location:** workspace root  
+**Schema:** `schemas/history.schema.json`
+
+Tracks iteration lineage.
+
+Rules:
+
+- `version` identifiers must be unique;
+- every non-null `parent` must identify a preserved predecessor;
+- `expectation_pass_rate` is optional because unavailable grading evidence is not zero;
+- `grading_result: "unavailable"` may be used when comparison evidence is unavailable;
+- exactly one iteration should be marked `is_current_best: true` when `current_best` is non-null;
+- `current_best` must name that same version.
+
+Those lineage constraints require semantic validation.
+
+## `grading.json`
+
+**Location:** `<run-dir>/grading.json`  
+**Schema:** `schemas/grading.schema.json`
+
+Contains run-level expectation verdicts.
+
+The stable expectation fields are exactly:
 
 ```json
 {
-  "skill_name": "example-skill",
-  "evals": [
-    {
-      "id": 1,
-      "prompt": "User's example prompt",
-      "expected_output": "Description of expected result",
-      "files": ["evals/files/sample1.pdf"],
-      "expectations": [
-        "The output includes X",
-        "The skill used script Y"
-      ]
-    }
-  ]
+  "text": "The output includes X",
+  "passed": true,
+  "evidence": "Observed in ..."
 }
 ```
 
-**Fields:**
+Rules:
 
-- `skill_name`: Name matching the skill's frontmatter
-- `evals[].id`: Unique integer identifier
-- `evals[].prompt`: The task to execute
-- `evals[].expected_output`: Human-readable description of success
-- `evals[].files`: Optional list of input file paths (relative to skill root)
-- `evals[].expectations`: List of verifiable statements
+- preserve the original expectation text;
+- PASS requires affirmative evidence;
+- `summary.passed + summary.failed == summary.total`;
+- `summary.total == expectations.length`;
+- `pass_rate` must equal `passed / total` when `total > 0`;
+- optional `execution_metrics` and `timing` appear only when those observations exist;
+- claim `verified: null` means the claim could not be verified from available evidence;
+- eval-design criticism belongs in `eval_feedback`, not by rewriting frozen verdicts.
 
----
+The arithmetic relations require semantic validation.
 
-## eval_metadata.json
+## `metrics.json`
 
-Per-eval workspace metadata used by the benchmark and viewer tooling.
+**Location:** `<run-dir>/outputs/metrics.json`  
+**Schema:** `schemas/metrics.schema.json`
+
+Contains only executor-observed counts and sizes.
+
+All fields are optional because runtimes expose different evidence. If the artifact is written,
+it must contain at least one observed metric.
+
+Rules:
+
+- omitted means unavailable;
+- `0` means observed zero;
+- `output_chars` and `transcript_chars` are character counts only;
+- never use either character count as a token proxy;
+- `total_tool_calls`, when present, should equal the sum of `tool_calls`;
+- `files_created` lists artifacts actually created by this run.
+
+## `timing.json`
+
+**Location:** `<run-dir>/timing.json`  
+**Schema:** `schemas/timing.schema.json`
+
+Contains only runtime-observed token and timing data.
+
+Each field is independently optional. Write this artifact only when at least one timing/token
+observation exists.
+
+Rules:
+
+- preserve milliseconds and seconds exactly as their names specify;
+- `total_tokens` is an observed token count, never a character estimate;
+- do not generate `0` when a runtime omitted a metric;
+- when start/end timestamps and a duration are all present, validate their consistency within
+  the runtime's measurement precision.
+
+## `benchmark.json`
+
+**Location:** iteration/benchmark output directory  
+**Schema:** `schemas/benchmark.schema.json`
+
+Aggregates valid run-level grading and execution evidence.
+
+The current flattened `run_summary` shape remains supported for compatibility.
+
+Important changes from the previous prose-only contract:
+
+- per-run `time_seconds`, `tokens`, `tool_calls`, and `errors` are optional;
+- absent measurements stay absent;
+- a valid benchmark contains at least one run;
+- configuration names are restricted to the supported comparison identities;
+- `metadata.comparison_pair` is supported and recommended for explicit candidate/baseline identity;
+- configuration summary metrics may be omitted when no observations exist;
+- `tokens: null` remains accepted in summaries for compatibility with the existing aggregator,
+  but new producers should prefer omission when a metric is unavailable.
+
+Semantic checks required in code:
+
+- candidate/baseline must be one supported pair:
+  `with_skill`/`without_skill` or `new_skill`/`old_skill`;
+- reject ambiguous mixed pairs;
+- every run's `passed + failed == total`;
+- run `pass_rate` must match its counts;
+- `runs_per_configuration` is an integer only when every expected configuration × eval
+  combination has the same positive run count; otherwise it is `null`;
+- natural run order is numeric (`1`, `2`, `10`), not lexical (`1`, `10`, `2`);
+- summaries are calculated only from present observations;
+- do not synthesize an empty configuration summary;
+- do not emit a numeric delta when either side lacks the corresponding observed metric;
+- pass-rate display deltas must use a clearly documented unit and remain consistent across
+  JSON and Markdown.
+
+## `comparison.json`
+
+**Location:** `<grading-dir>/comparison-N.json`  
+**Schema:** `schemas/comparison.schema.json`
+
+Stores blind comparator output.
+
+Rules:
+
+- candidate identity must remain hidden while the comparison is performed;
+- `A` and `B` must map to fixed outputs for the entire comparison;
+- expectation results support the quality judgment but do not replace qualitative comparison;
+- scores describe the comparator's rubric result; they are not execution measurements.
+
+If tie support is introduced later, update the comparator and schema together as a deliberate
+schema change rather than silently emitting a new winner value.
+
+## `analysis.json`
+
+**Location:** `<grading-dir>/analysis.json`  
+**Schema:** `schemas/analysis.schema.json`
+
+Stores post-hoc analysis after the comparison has been unblinded.
+
+Rules:
+
+- analysis must be grounded in the comparison result, skills, and transcripts;
+- distinguish observed execution differences from inferred causes;
+- suggestions are recommendations, not proof that a proposed change will improve future runs;
+- any retained revision must still pass the iteration workflow and regression checks.
+
+## `feedback.json`
+
+**Location:** iteration workspace  
+**Schema:** `schemas/feedback.schema.json`
+
+Stores explicit human review feedback.
+
+Current viewer-compatible shape:
 
 ```json
 {
-  "eval_id": 1,
-  "eval_name": "descriptive-name",
-  "prompt": "User task prompt",
-  "expectations": ["Verifiable statement"]
-}
-```
-
-Use `expectations` consistently for machine-checkable statements.
-
----
-
-## history.json
-
-Tracks version progression in Improve mode. Located at workspace root.
-
-```json
-{
-  "started_at": "2026-01-15T10:30:00Z",
-  "skill_name": "pdf",
-  "current_best": "v2",
-  "iterations": [
+  "reviews": [
     {
-      "version": "v0",
-      "parent": null,
-      "expectation_pass_rate": 0.65,
-      "grading_result": "baseline",
-      "is_current_best": false
-    },
-    {
-      "version": "v1",
-      "parent": "v0",
-      "expectation_pass_rate": 0.75,
-      "grading_result": "won",
-      "is_current_best": false
-    },
-    {
-      "version": "v2",
-      "parent": "v1",
-      "expectation_pass_rate": 0.85,
-      "grading_result": "won",
-      "is_current_best": true
-    }
-  ]
-}
-```
-
-**Fields:**
-
-- `started_at`: ISO timestamp of when improvement started
-- `skill_name`: Name of the skill being improved
-- `current_best`: Version identifier of the best performer
-- `iterations[].version`: Version identifier (v0, v1, ...)
-- `iterations[].parent`: Parent version this was derived from
-- `iterations[].expectation_pass_rate`: Pass rate from grading
-- `iterations[].grading_result`: "baseline", "won", "lost", or "tie"
-- `iterations[].is_current_best`: Whether this is the current best version
-
----
-
-## grading.json
-
-Output from the grader agent. Located at `<run-dir>/grading.json`.
-
-```json
-{
-  "expectations": [
-    {
-      "text": "The output includes the name 'John Smith'",
-      "passed": true,
-      "evidence": "Found in transcript Step 3: 'Extracted names: John Smith, Sarah Johnson'"
-    },
-    {
-      "text": "The spreadsheet has a SUM formula in cell B10",
-      "passed": false,
-      "evidence": "No spreadsheet was created. The output was a text file."
+      "run_id": "eval-1-with_skill-run-1",
+      "feedback": "",
+      "timestamp": "2026-09-16T07:00:00Z"
     }
   ],
-  "summary": {
-    "passed": 2,
-    "failed": 1,
-    "total": 3,
-    "pass_rate": 0.67
-  },
-  "execution_metrics": {
-    "tool_calls": {
-      "Read": 5,
-      "Write": 2,
-      "Bash": 8
-    },
-    "total_tool_calls": 15,
-    "total_steps": 6,
-    "errors_encountered": 0,
-    "output_chars": 12450,
-    "transcript_chars": 3200
-  },
-  "timing": {
-    "executor_duration_seconds": 165.0,
-    "grader_duration_seconds": 26.0,
-    "total_duration_seconds": 191.0
-  },
-  "claims": [
-    {
-      "claim": "The form has 12 fillable fields",
-      "type": "factual",
-      "verified": true,
-      "evidence": "Counted 12 fields in field_info.json"
-    }
-  ],
-  "user_notes_summary": {
-    "uncertainties": ["Used 2023 data, may be stale"],
-    "needs_review": [],
-    "workarounds": ["Fell back to text overlay for non-fillable fields"]
-  },
-  "eval_feedback": {
-    "suggestions": [
-      {
-        "assertion": "The output includes the name 'John Smith'",
-        "reason": "A hallucinated document that mentions the name would also pass"
-      }
-    ],
-    "overall": "Assertions check presence but not correctness."
-  }
+  "status": "complete"
 }
 ```
 
-**Fields:**
+Rules:
 
-- `expectations[]`: Graded expectations with evidence
-- `summary`: Aggregate pass/fail counts
-- `execution_metrics`: Tool usage and output size (from executor's metrics.json)
-- `timing`: Wall clock timing (from timing.json)
-- `claims`: Extracted and verified claims from the output
-- `user_notes_summary`: Issues flagged by the executor
-- `eval_feedback`: (optional) Improvement suggestions for the evals, only present when the grader identifies issues worth raising
+- empty or whitespace-only `feedback` means **no comment**, not approval;
+- `status: "complete"` means the review was submitted, not that blank entries passed;
+- `run_id` must resolve to exactly one run;
+- current and previous-iteration feedback must remain distinguishable;
+- consumers should trim feedback before deciding whether it is substantive.
 
----
+## Validation
 
-## metrics.json
+Validate artifacts at every external JSON boundary, before converting them into internal domain
+models.
 
-Output from the executor agent. Located at `<run-dir>/outputs/metrics.json`.
+Example with Python's `jsonschema` package:
 
-```json
-{
-  "tool_calls": {
-    "Read": 5,
-    "Write": 2,
-    "Bash": 8,
-    "Edit": 1,
-    "Glob": 2,
-    "Grep": 0
-  },
-  "total_tool_calls": 18,
-  "total_steps": 6,
-  "files_created": ["filled_form.pdf", "field_values.json"],
-  "errors_encountered": 0,
-  "output_chars": 12450,
-  "transcript_chars": 3200
-}
+```python
+import json
+from pathlib import Path
+
+from jsonschema import Draft202012Validator
+from referencing import Registry, Resource
+
+schema_dir = Path("references/schemas")
+schema = json.loads((schema_dir / "evals.schema.json").read_text(encoding="utf-8"))
+instance = json.loads(Path("evals/evals.json").read_text(encoding="utf-8"))
+
+registry = Registry()
+for path in schema_dir.glob("*.schema.json"):
+    resource_data = json.loads(path.read_text(encoding="utf-8"))
+    registry = registry.with_resource(
+        resource_data["$id"],
+        Resource.from_contents(resource_data),
+    )
+
+Draft202012Validator(schema, registry=registry).validate(instance)
 ```
 
-**Fields:**
+Validation failures are controlled input errors. Do not silently coerce malformed fields to
+defaults such as `0`, `false`, `{}`, or `[]` unless the artifact contract explicitly defines that
+fallback.
 
-- `tool_calls`: Count per tool type
-- `total_tool_calls`: Sum of all tool calls
-- `total_steps`: Number of major execution steps
-- `files_created`: List of output files created
-- `errors_encountered`: Number of errors during execution
-- `output_chars`: Total character count of output files
-- `transcript_chars`: Character count of transcript
+## Versioning and compatibility
 
----
+Treat persisted JSON as an interface.
 
-## timing.json
+- **Patch change:** wording/description change only; accepted payloads are unchanged.
+- **Minor change:** additive optional field or relaxed validation that preserves existing valid
+  payloads.
+- **Major change:** required field, renamed/removed field, changed meaning/unit, changed enum, or
+  incompatible structure.
 
-Wall clock timing for a run. Located at `<run-dir>/timing.json`.
+For a major change:
 
-**How to capture:** When a subagent task completes, the task notification includes `total_tokens` and `duration_ms`. Save these immediately — they are not persisted anywhere else and cannot be recovered after the fact.
+1. add a new versioned schema or migration path;
+2. identify all producers and consumers;
+3. preserve existing evidence rather than rewriting it in place;
+4. differential-test old and new readers/writers on representative fixtures;
+5. update `schemas.md`, schema tests, scripts, viewer, grader/analyzer agents, and examples
+   together.
 
-```json
-{
-  "total_tokens": 84852,
-  "duration_ms": 23332,
-  "total_duration_seconds": 23.3,
-  "executor_start": "2026-01-15T10:30:00Z",
-  "executor_end": "2026-01-15T10:32:45Z",
-  "executor_duration_seconds": 165.0,
-  "grader_start": "2026-01-15T10:32:46Z",
-  "grader_end": "2026-01-15T10:33:12Z",
-  "grader_duration_seconds": 26.0
-}
-```
+## Required semantic validator coverage
 
----
+JSON Schema is intentionally not the only validation layer. Add regression tests for:
 
-## benchmark.json
-
-Output from Benchmark mode. Located at `benchmarks/<timestamp>/benchmark.json`.
-
-```json
-{
-  "metadata": {
-    "skill_name": "pdf",
-    "skill_path": "/path/to/pdf",
-    "executor_model": "claude-sonnet-4-6",
-    "analyzer_model": "most-capable-model",
-    "timestamp": "2026-01-15T10:30:00Z",
-    "evals_run": [1, 2, 3],
-    "runs_per_configuration": 3
-  },
-
-  "runs": [
-    {
-      "eval_id": 1,
-      "eval_name": "Ocean",
-      "configuration": "with_skill",
-      "run_number": 1,
-      "result": {
-        "pass_rate": 0.85,
-        "passed": 6,
-        "failed": 1,
-        "total": 7,
-        "time_seconds": 42.5,
-        "tokens": 3800,
-        "tool_calls": 18,
-        "errors": 0
-      },
-      "expectations": [
-        {"text": "...", "passed": true, "evidence": "..."}
-      ],
-      "notes": [
-        "Used 2023 data, may be stale",
-        "Fell back to text overlay for non-fillable fields"
-      ]
-    }
-  ],
-
-  "run_summary": {
-    "with_skill": {
-      "pass_rate": {"mean": 0.85, "stddev": 0.05, "min": 0.80, "max": 0.90},
-      "time_seconds": {"mean": 45.0, "stddev": 12.0, "min": 32.0, "max": 58.0},
-      "tokens": {"mean": 3800, "stddev": 400, "min": 3200, "max": 4100}
-    },
-    "without_skill": {
-      "pass_rate": {"mean": 0.35, "stddev": 0.08, "min": 0.28, "max": 0.45},
-      "time_seconds": {"mean": 32.0, "stddev": 8.0, "min": 24.0, "max": 42.0},
-      "tokens": {"mean": 2100, "stddev": 300, "min": 1800, "max": 2500}
-    },
-    "delta": {
-      "pass_rate": "+0.50",
-      "time_seconds": "+13.0",
-      "tokens": "+1700"
-    }
-  },
-
-  "notes": [
-    "Assertion 'Output is a PDF file' passes 100% in both configurations - may not differentiate skill value",
-    "Eval 3 shows high variance (50% ± 40%) - may be flaky or model-dependent",
-    "Without-skill runs consistently fail on table extraction expectations",
-    "Skill adds 13s average execution time but improves pass rate by 50%"
-  ]
-}
-```
-
-**Fields:**
-
-- `metadata`: Information about the benchmark run
-  - `skill_name`: Name of the skill
-  - `timestamp`: When the benchmark was run
-  - `evals_run`: List of eval names or IDs
-  - `runs_per_configuration`: Number of runs per config when uniform; `null` when run counts vary
-- `runs[]`: Individual run results
-  - `eval_id`: Numeric eval identifier
-  - `eval_name`: Human-readable eval name (used as section header in the viewer)
-  - `configuration`: Use `"with_skill"` / `"without_skill"` for new-skill comparisons or `"new_skill"` / `"old_skill"` for revision comparisons
-  - `run_number`: Integer run number (1, 2, 3...)
-  - `result`: Nested object with `pass_rate`, `passed`, `total`, `time_seconds`, optional/measured `tokens`, and `errors`; do not substitute character counts for tokens
-- `run_summary`: Statistical aggregates per configuration
-  - candidate/baseline configuration keys: Each contains `pass_rate`, `time_seconds`, `tokens` objects with `mean` and `stddev` fields
-  - `delta`: Difference strings like `"+0.50"`, `"+13.0"`, `"+1700"`
-- `notes`: Freeform observations from the analyzer
-
-**Important:** The viewer reads these field names exactly. Using `config` instead of `configuration`, or putting `pass_rate` at the top level of a run instead of nested under `result`, will cause empty/zero values. Always reference this schema when generating benchmark JSON manually.
-
----
-
-## comparison.json
-
-Output from blind comparator. Located at `<grading-dir>/comparison-N.json`.
-
-```json
-{
-  "winner": "A",
-  "reasoning": "Output A provides a complete solution with proper formatting and all required fields. Output B is missing the date field and has formatting inconsistencies.",
-  "rubric": {
-    "A": {
-      "content": {
-        "correctness": 5,
-        "completeness": 5,
-        "accuracy": 4
-      },
-      "structure": {
-        "organization": 4,
-        "formatting": 5,
-        "usability": 4
-      },
-      "content_score": 4.7,
-      "structure_score": 4.3,
-      "overall_score": 9.0
-    },
-    "B": {
-      "content": {
-        "correctness": 3,
-        "completeness": 2,
-        "accuracy": 3
-      },
-      "structure": {
-        "organization": 3,
-        "formatting": 2,
-        "usability": 3
-      },
-      "content_score": 2.7,
-      "structure_score": 2.7,
-      "overall_score": 5.4
-    }
-  },
-  "output_quality": {
-    "A": {
-      "score": 9,
-      "strengths": ["Complete solution", "Well-formatted", "All fields present"],
-      "weaknesses": ["Minor style inconsistency in header"]
-    },
-    "B": {
-      "score": 5,
-      "strengths": ["Readable output", "Correct basic structure"],
-      "weaknesses": ["Missing date field", "Formatting inconsistencies", "Partial data extraction"]
-    }
-  },
-  "expectation_results": {
-    "A": {
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.80,
-      "details": [
-        {"text": "Output includes name", "passed": true}
-      ]
-    },
-    "B": {
-      "passed": 3,
-      "total": 5,
-      "pass_rate": 0.60,
-      "details": [
-        {"text": "Output includes name", "passed": true}
-      ]
-    }
-  }
-}
-```
-
----
-
-## analysis.json
-
-Output from post-hoc analyzer. Located at `<grading-dir>/analysis.json`.
-
-```json
-{
-  "comparison_summary": {
-    "winner": "A",
-    "winner_skill": "path/to/winner/skill",
-    "loser_skill": "path/to/loser/skill",
-    "comparator_reasoning": "Brief summary of why comparator chose winner"
-  },
-  "winner_strengths": [
-    "Clear step-by-step instructions for handling multi-page documents",
-    "Included validation script that caught formatting errors"
-  ],
-  "loser_weaknesses": [
-    "Vague instruction 'process the document appropriately' led to inconsistent behavior",
-    "No script for validation, agent had to improvise"
-  ],
-  "instruction_following": {
-    "winner": {
-      "score": 9,
-      "issues": ["Minor: skipped optional logging step"]
-    },
-    "loser": {
-      "score": 6,
-      "issues": [
-        "Did not use the skill's formatting template",
-        "Invented own approach instead of following step 3"
-      ]
-    }
-  },
-  "improvement_suggestions": [
-    {
-      "priority": "high",
-      "category": "instructions",
-      "suggestion": "Replace 'process the document appropriately' with explicit steps",
-      "expected_impact": "Would eliminate ambiguity that caused inconsistent behavior"
-    }
-  ],
-  "transcript_insights": {
-    "winner_execution_pattern": "Read skill -> Followed 5-step process -> Used validation script",
-    "loser_execution_pattern": "Read skill -> Unclear on approach -> Tried 3 different methods"
-  }
-}
-```
+- duplicate eval IDs;
+- stale or mismatched eval metadata;
+- grading arithmetic mismatches;
+- observed zero versus missing metric;
+- invalid/non-finite numeric input;
+- timing field independence;
+- unsupported or ambiguous comparison pairs;
+- no/one/both comparison configurations;
+- incomplete configuration × eval matrices;
+- variable run counts;
+- `run-1`, `run-2`, `run-10` natural ordering;
+- pass-rate and time/token delta units;
+- blank feedback versus explicit feedback;
+- duplicate/colliding `run_id` values;
+- current versus previous-iteration feedback;
+- schema-valid payloads that are semantically inconsistent across files.

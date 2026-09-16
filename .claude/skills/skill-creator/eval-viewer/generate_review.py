@@ -1,35 +1,57 @@
 #!/usr/bin/env python3
 """Generate and serve a review page for eval results.
 
-Reads the workspace directory, discovers runs (directories with outputs/),
-embeds all output data into a self-contained HTML page, and serves it via
-a tiny HTTP server. Feedback auto-saves to feedback.json in the workspace.
+The viewer is an evidence-presentation layer. It discovers current run evidence,
+embeds task-relevant outputs into a self-contained HTML page, optionally adds a
+benchmark and previous-iteration context, and persists explicit human feedback.
 
-Usage:
-    python generate_review.py <workspace-path> [--port PORT] [--skill-name NAME]
-    python generate_review.py <workspace-path> --previous-workspace /path/to/old/workspace
-
-No dependencies beyond the Python stdlib are required.
+The module is stdlib-only and supports Python 3.10+.
 """
+
+from __future__ import annotations
 
 import argparse
 import base64
+import errno
+import hashlib
 import json
 import mimetypes
+import os
 import sys
+import tempfile
+import threading
+import webbrowser
+from dataclasses import dataclass
+from functools import partial
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
 from socket import socket
 from socketserver import BaseServer
-import webbrowser
-from functools import partial
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from pathlib import Path
-from typing import TypedDict, cast
+from typing import TypeAlias, TypedDict, cast
+from urllib.parse import urlsplit
 
-
-
+TEXT_ENCODING = "utf-8"
+JSON_CONTENT_TYPE = "application/json"
 TRANSCRIPT_FILE = "transcript.md"
+OUTPUTS_DIR_NAME = "outputs"
+GRADING_FILE = "grading.json"
+TIMING_FILE = "timing.json"
+FEEDBACK_FILE = "feedback.json"
 ERROR_READING_FILE = "(Error reading file)"
+UNSAFE_PATH_MESSAGE = "(Skipped path that resolves outside the workspace)"
+FILE_TOO_LARGE_MESSAGE = "(File too large to embed)"
 EMBEDDED_DATA_MARKER = "/*__EMBEDDED_DATA__*/"
+
+MAX_FEEDBACK_BYTES = 1_000_000
+MAX_EMBED_FILE_BYTES = 50 * 1024 * 1024
+REQUEST_TIMEOUT_SECONDS = 15.0
+SUPPORTED_FEEDBACK_STATUSES = frozenset({"in_progress", "complete"})
+SKIP_DIRECTORIES = frozenset({"node_modules", ".git", "__pycache__", "skill", "inputs"})
+METADATA_FILES = frozenset({TRANSCRIPT_FILE, "user_notes.md", "metrics.json"})
+
+EvalId: TypeAlias = int | str
+
+_feedback_write_lock = threading.Lock()
 
 
 class EmbeddedFile(TypedDict, total=False):
@@ -44,9 +66,9 @@ class EmbeddedFile(TypedDict, total=False):
 class Run(TypedDict):
     id: str
     prompt: str
-    eval_id: int | None
+    eval_id: EvalId | None
     outputs: list[EmbeddedFile]
-    grading: object | None
+    grading: dict[str, object] | None
 
 
 class PreviousRun(TypedDict):
@@ -54,70 +76,16 @@ class PreviousRun(TypedDict):
     outputs: list[EmbeddedFile]
 
 
-def _read_json_object(path: Path) -> dict[str, object] | None:
-    """Read a JSON object, returning None for missing/invalid/non-object data."""
-    try:
-        value: object = json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return None
-    return _as_object_dict(value)
+@dataclass(frozen=True, slots=True)
+class CliOptions:
+    workspace: Path
+    port: int
+    skill_name: str | None
+    previous_workspace: Path | None
+    benchmark: Path | None
+    static_path: Path | None
 
 
-def _extract_prompt(text: str) -> str:
-    """Extract the Eval Prompt section without relying on a complex regex."""
-    marker = "## Eval Prompt\n\n"
-    start = text.find(marker)
-    if start < 0:
-        return ""
-    body = text[start + len(marker) :]
-    end = body.find("\n##")
-    return (body if end < 0 else body[:end]).strip()
-
-
-def _coerce_eval_id(value: object) -> int | None:
-    """Accept integer eval IDs while rejecting booleans and malformed values."""
-    return value if isinstance(value, int) and not isinstance(value, bool) else None
-
-
-def _as_object_dict(value: object) -> dict[str, object] | None:
-    """Narrow an unknown JSON object to a string-keyed mapping at the boundary."""
-    if not isinstance(value, dict):
-        return None
-    mapping = cast(dict[object, object], value)
-    if not all(isinstance(key, str) for key in mapping):
-        return None
-    return {key: item for key, item in mapping.items() if isinstance(key, str)}
-
-
-def _load_feedback_map(path: Path) -> dict[str, str]:
-    data = _read_json_object(path)
-    if data is None:
-        return {}
-
-    reviews = data.get("reviews")
-    if not isinstance(reviews, list):
-        return {}
-
-    feedback: dict[str, str] = {}
-    for item in cast(list[object], reviews):
-        review = _as_object_dict(item)
-        if review is None:
-            continue
-        run_id = review.get("run_id")
-        text = review.get("feedback")
-        if isinstance(run_id, str) and isinstance(text, str) and text.strip():
-            feedback[run_id] = text
-    return feedback
-
-
-def _load_optional_json_object(path: Path | None) -> dict[str, object] | None:
-    return _read_json_object(path) if path is not None else None
-
-
-# Files to exclude from output listings
-METADATA_FILES = {TRANSCRIPT_FILE, "user_notes.md", "metrics.json"}
-
-# Extensions we render as inline text
 TEXT_EXTENSIONS = {
     ".txt",
     ".md",
@@ -147,16 +115,133 @@ TEXT_EXTENSIONS = {
     ".toml",
 }
 
-# Extensions we render as inline images
 IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
 
-# MIME type overrides for common types
 MIME_OVERRIDES = {
     ".svg": "image/svg+xml",
     ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
 }
+
+
+def _reject_non_standard_json_constant(value: str) -> object:
+    """Reject Python json's non-standard NaN/Infinity extensions."""
+    raise ValueError(f"non-standard JSON numeric constant: {value}")
+
+
+def _as_object_dict(value: object) -> dict[str, object] | None:
+    """Narrow an unknown JSON value to a string-keyed object."""
+    if not isinstance(value, dict):
+        return None
+    mapping = cast(dict[object, object], value)
+    if not all(isinstance(key, str) for key in mapping):
+        return None
+    return {cast(str, key): item for key, item in mapping.items()}
+
+
+def _read_json_object(path: Path) -> dict[str, object] | None:
+    """Read a strict JSON object, returning None for invalid or unavailable data."""
+    try:
+        value: object = json.loads(
+            path.read_text(encoding=TEXT_ENCODING),
+            parse_constant=_reject_non_standard_json_constant,
+        )
+    except (json.JSONDecodeError, OSError, ValueError):
+        return None
+    return _as_object_dict(value)
+
+
+def _read_required_json_object(path: Path, *, label: str) -> dict[str, object]:
+    """Read a required strict JSON object with a controlled error."""
+    if not path.is_file():
+        raise ValueError(f"{label} not found or not a file: {path}")
+    data = _read_json_object(path)
+    if data is None:
+        raise ValueError(f"{label} must contain a valid JSON object: {path}")
+    return data
+
+
+def _extract_prompt(text: str) -> str:
+    """Extract the Eval Prompt section without a complex regular expression."""
+    marker = "## Eval Prompt\n\n"
+    start = text.find(marker)
+    if start < 0:
+        return ""
+    body = text[start + len(marker) :]
+    end = body.find("\n##")
+    return (body if end < 0 else body[:end]).strip()
+
+
+def _coerce_eval_id(value: object) -> EvalId | None:
+    """Accept schema-supported eval IDs while rejecting booleans/empty strings."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str) and value:
+        return value
+    return None
+
+
+def _is_within(path: Path, boundary: Path, *, strict: bool = True) -> bool:
+    """Return whether *path* resolves inside *boundary*."""
+    try:
+        resolved_path = path.resolve(strict=strict)
+        resolved_boundary = boundary.resolve(strict=True)
+        resolved_path.relative_to(resolved_boundary)
+    except (OSError, ValueError):
+        return False
+    return True
+
+
+def _iter_ancestors_to_root(path: Path, root: Path) -> list[Path]:
+    """Return path and ancestors up to root, nearest first."""
+    result: list[Path] = []
+    current = path
+    while True:
+        result.append(current)
+        if current == root:
+            return result
+        if current.parent == current:
+            return result
+        current = current.parent
+
+
+def _load_prompt_and_eval_id(root: Path, run_dir: Path) -> tuple[str, EvalId | None]:
+    """Load prompt and eval ID independently from metadata/transcript fallbacks."""
+    prompt: str | None = None
+    eval_id: EvalId | None = None
+
+    for directory in _iter_ancestors_to_root(run_dir, root):
+        metadata = _read_json_object(directory / "eval_metadata.json")
+        if metadata is None:
+            continue
+
+        if prompt is None:
+            prompt_value = metadata.get("prompt")
+            if isinstance(prompt_value, str) and prompt_value.strip():
+                prompt = prompt_value
+
+        if eval_id is None:
+            eval_id = _coerce_eval_id(metadata.get("eval_id"))
+
+        if prompt is not None and eval_id is not None:
+            break
+
+    if prompt is None:
+        for candidate in (run_dir / TRANSCRIPT_FILE, run_dir / OUTPUTS_DIR_NAME / TRANSCRIPT_FILE):
+            if not candidate.is_file() or not _is_within(candidate, root):
+                continue
+            try:
+                extracted = _extract_prompt(candidate.read_text(encoding=TEXT_ENCODING))
+            except OSError:
+                continue
+            if extracted:
+                prompt = extracted
+                break
+
+    return prompt or "(No prompt found)", eval_id
 
 
 def get_mime_type(path: Path) -> str:
@@ -167,143 +252,342 @@ def get_mime_type(path: Path) -> str:
     return mime or "application/octet-stream"
 
 
-def find_runs(workspace: Path) -> list[Run]:
-    """Recursively find directories that contain an outputs/ subdirectory."""
-    runs: list[Run] = []
-    _find_runs_recursive(workspace, workspace, runs)
-    runs.sort(
-        key=lambda run: (
-            run["eval_id"] is None,
-            run["eval_id"] if run["eval_id"] is not None else 0,
-            run["id"],
-        )
-    )
-    return runs
+def _error_file(name: str, message: str = ERROR_READING_FILE) -> EmbeddedFile:
+    return {"name": name, "type": "error", "content": message}
 
 
-def _find_runs_recursive(root: Path, current: Path, runs: list[Run]) -> None:
-    if not current.is_dir():
-        return
-
-    outputs_dir = current / "outputs"
-    if outputs_dir.is_dir():
-        run = build_run(root, current)
-        if run:
-            runs.append(run)
-        return
-
-    skip = {"node_modules", ".git", "__pycache__", "skill", "inputs"}
-    for child in sorted(current.iterdir()):
-        if child.is_dir() and child.name not in skip:
-            _find_runs_recursive(root, child, runs)
-
-
-def _load_prompt_and_eval_id(run_dir: Path) -> tuple[str, int | None]:
-    for candidate in (run_dir / "eval_metadata.json", run_dir.parent / "eval_metadata.json"):
-        metadata = _read_json_object(candidate)
-        if metadata is None:
-            continue
-        prompt_value = metadata.get("prompt")
-        prompt = prompt_value if isinstance(prompt_value, str) else ""
-        eval_id = _coerce_eval_id(metadata.get("eval_id"))
-        if prompt:
-            return prompt, eval_id
-
-    for candidate in (run_dir / TRANSCRIPT_FILE, run_dir / "outputs" / TRANSCRIPT_FILE):
-        try:
-            prompt = _extract_prompt(candidate.read_text(encoding="utf-8"))
-        except OSError:
-            continue
-        if prompt:
-            return prompt, None
-
-    return "(No prompt found)", None
-
-
-def _collect_output_files(outputs_dir: Path) -> list[EmbeddedFile]:
-    if not outputs_dir.is_dir():
-        return []
-    return [
-        embed_file(path)
-        for path in sorted(outputs_dir.iterdir())
-        if path.is_file() and path.name not in METADATA_FILES
-    ]
-
-
-def _load_grading(run_dir: Path) -> object | None:
-    for candidate in (run_dir / "grading.json", run_dir.parent / "grading.json"):
-        data = _read_json_object(candidate)
-        if data:
-            return data
-    return None
-
-
-def build_run(root: Path, run_dir: Path) -> Run:
-    """Build a typed run record with prompt, outputs, and grading data."""
-    prompt, eval_id = _load_prompt_and_eval_id(run_dir)
-    return {
-        "id": str(run_dir.relative_to(root)).replace("/", "-").replace("\\", "-"),
-        "prompt": prompt,
-        "eval_id": eval_id,
-        "outputs": _collect_output_files(run_dir / "outputs"),
-        "grading": _load_grading(run_dir),
-    }
-
-
-def _error_file(path: Path) -> EmbeddedFile:
-    return {"name": path.name, "type": "error", "content": ERROR_READING_FILE}
+def _safe_file_size(path: Path) -> int | None:
+    try:
+        return path.stat().st_size
+    except OSError:
+        return None
 
 
 def _read_base64(path: Path) -> str | None:
+    size = _safe_file_size(path)
+    if size is None or size > MAX_EMBED_FILE_BYTES:
+        return None
     try:
         return base64.b64encode(path.read_bytes()).decode("ascii")
     except OSError:
         return None
 
 
-def embed_file(path: Path) -> EmbeddedFile:
+def _make_data_uri(mime: str, b64: str) -> str:
+    return f"data:{mime};base64,{b64}"
+
+
+def embed_file(
+    path: Path,
+    *,
+    display_name: str | None = None,
+    allowed_root: Path | None = None,
+) -> EmbeddedFile:
     """Read a file and return an embedded representation."""
+    name = display_name or path.name
+
+    if allowed_root is not None and not _is_within(path, allowed_root):
+        return _error_file(name, UNSAFE_PATH_MESSAGE)
+
+    size = _safe_file_size(path)
+    if size is None:
+        return _error_file(name)
+    if size > MAX_EMBED_FILE_BYTES:
+        return _error_file(name, FILE_TOO_LARGE_MESSAGE)
+
     ext = path.suffix.lower()
     mime = get_mime_type(path)
 
     if ext in TEXT_EXTENSIONS:
         try:
-            content = path.read_text(encoding="utf-8", errors="replace")
+            content = path.read_text(encoding=TEXT_ENCODING, errors="replace")
         except OSError:
-            content = ERROR_READING_FILE
-        return {"name": path.name, "type": "text", "content": content}
+            return _error_file(name)
+        return {"name": name, "type": "text", "content": content}
 
     b64 = _read_base64(path)
     if b64 is None:
-        return _error_file(path)
+        return _error_file(name)
 
     if ext in IMAGE_EXTENSIONS:
         return {
-            "name": path.name,
+            "name": name,
             "type": "image",
             "mime": mime,
-            "data_uri": f"data:{mime};base64,{b64}",
+            "data_uri": _make_data_uri(mime, b64),
         }
     if ext == ".pdf":
         return {
-            "name": path.name,
+            "name": name,
             "type": "pdf",
-            "data_uri": f"data:{mime};base64,{b64}",
+            "data_uri": _make_data_uri(mime, b64),
         }
     if ext == ".xlsx":
-        return {"name": path.name, "type": "xlsx", "data_b64": b64}
+        return {"name": name, "type": "xlsx", "data_b64": b64}
 
     return {
-        "name": path.name,
+        "name": name,
         "type": "binary",
         "mime": mime,
-        "data_uri": f"data:{mime};base64,{b64}",
+        "data_uri": _make_data_uri(mime, b64),
     }
 
 
+def _walk_output_entries(
+    outputs_dir: Path,
+    workspace_root: Path,
+) -> list[tuple[Path, str, str | None]]:
+    """Return safe output files plus explicit entries for unsafe/unreadable paths."""
+    if not outputs_dir.is_dir() or not _is_within(outputs_dir, workspace_root):
+        return []
+
+    entries: list[tuple[Path, str, str | None]] = []
+    stack: list[Path] = [outputs_dir]
+
+    while stack:
+        directory = stack.pop()
+        try:
+            children = sorted(directory.iterdir(), key=lambda path: path.name)
+        except OSError:
+            continue
+
+        for child in children:
+            try:
+                relative_name = child.relative_to(outputs_dir).as_posix()
+            except ValueError:
+                continue
+
+            if child.name in METADATA_FILES and child.parent == outputs_dir:
+                continue
+
+            if child.is_symlink():
+                if not _is_within(child, workspace_root):
+                    entries.append((child, relative_name, UNSAFE_PATH_MESSAGE))
+                    continue
+                try:
+                    resolved = child.resolve(strict=True)
+                except OSError:
+                    entries.append((child, relative_name, ERROR_READING_FILE))
+                    continue
+                if resolved.is_dir():
+                    # Do not recurse through directory symlinks; this avoids cycles and
+                    # keeps discovery rooted in the physical workspace tree.
+                    continue
+                entries.append((child, relative_name, None))
+                continue
+
+            if child.is_dir():
+                if _is_within(child, workspace_root):
+                    stack.append(child)
+                continue
+
+            if child.is_file():
+                entries.append((child, relative_name, None))
+
+    entries.sort(key=lambda item: item[1])
+    return entries
+
+
+def _collect_output_files(outputs_dir: Path, workspace_root: Path) -> list[EmbeddedFile]:
+    files: list[EmbeddedFile] = []
+    for path, display_name, error in _walk_output_entries(outputs_dir, workspace_root):
+        if error is not None:
+            files.append(_error_file(display_name, error))
+        else:
+            files.append(
+                embed_file(
+                    path,
+                    display_name=display_name,
+                    allowed_root=workspace_root,
+                )
+            )
+    return files
+
+
+def _load_grading(run_dir: Path) -> dict[str, object] | None:
+    """Load grading from the run first, with one legacy parent fallback."""
+    for candidate in (run_dir / GRADING_FILE, run_dir.parent / GRADING_FILE):
+        data = _read_json_object(candidate)
+        if data is not None:
+            return data
+    return None
+
+
+def _parse_prefixed_index(name: str, prefix: str) -> int | None:
+    expected = f"{prefix}-"
+    if not name.startswith(expected):
+        return None
+    suffix = name[len(expected) :]
+    return int(suffix) if suffix.isdecimal() else None
+
+
+def _looks_like_run_dir(path: Path) -> bool:
+    """Recognize normal run-N directories and legacy evidence directories."""
+    if _parse_prefixed_index(path.name, "run") is not None:
+        return True
+    return (
+        (path / OUTPUTS_DIR_NAME).is_dir()
+        or (path / TRANSCRIPT_FILE).is_file()
+        or (path / GRADING_FILE).is_file()
+        or (path / TIMING_FILE).is_file()
+    )
+
+
+def _discover_run_dirs(root: Path) -> list[Path]:
+    """Discover run directories without following directory symlinks."""
+    discovered: list[Path] = []
+    stack: list[Path] = [root]
+
+    while stack:
+        current = stack.pop()
+        if not current.is_dir() or not _is_within(current, root):
+            continue
+
+        if current != root and _looks_like_run_dir(current):
+            discovered.append(current)
+            continue
+
+        try:
+            children = sorted(current.iterdir(), key=lambda path: path.name, reverse=True)
+        except OSError:
+            continue
+
+        for child in children:
+            if not child.is_dir() or child.name in SKIP_DIRECTORIES or child.is_symlink():
+                continue
+            if _is_within(child, root):
+                stack.append(child)
+
+    return discovered
+
+
+def _base_run_id(root: Path, run_dir: Path) -> str:
+    """Preserve the historical flattened ID for ordinary non-colliding paths."""
+    relative = run_dir.relative_to(root)
+    return str(relative).replace("/", "-").replace("\\", "-")
+
+
+def _assign_run_ids(root: Path, run_dirs: list[Path]) -> dict[Path, str]:
+    """Preserve legacy IDs unless deterministic disambiguation is necessary."""
+    by_base: dict[str, list[Path]] = {}
+    for run_dir in run_dirs:
+        by_base.setdefault(_base_run_id(root, run_dir), []).append(run_dir)
+
+    assigned: dict[Path, str] = {}
+    used: set[str] = set()
+
+    for base in sorted(by_base):
+        paths = sorted(by_base[base], key=lambda path: path.relative_to(root).as_posix())
+        if len(paths) == 1 and base not in used:
+            assigned[paths[0]] = base
+            used.add(base)
+            continue
+
+        for path in paths:
+            relative = path.relative_to(root).as_posix()
+            digest = hashlib.sha256(relative.encode(TEXT_ENCODING)).hexdigest()[:12]
+            candidate = f"{base}--{digest}"
+            counter = 2
+            while candidate in used:
+                candidate = f"{base}--{digest}-{counter}"
+                counter += 1
+            assigned[path] = candidate
+            used.add(candidate)
+
+    return assigned
+
+
+def build_run(
+    root: Path,
+    run_dir: Path,
+    *,
+    run_id: str | None = None,
+) -> Run:
+    """Build one viewer run while preserving independent evidence fallbacks."""
+    prompt, eval_id = _load_prompt_and_eval_id(root, run_dir)
+    return {
+        "id": run_id if run_id is not None else _base_run_id(root, run_dir),
+        "prompt": prompt,
+        "eval_id": eval_id,
+        "outputs": _collect_output_files(run_dir / OUTPUTS_DIR_NAME, root),
+        "grading": _load_grading(run_dir),
+    }
+
+
+def _eval_id_sort_key(eval_id: EvalId | None) -> tuple[int, object]:
+    if isinstance(eval_id, int):
+        return 0, eval_id
+    if isinstance(eval_id, str):
+        return 1, eval_id
+    return 2, ""
+
+
+def _config_sort_key(name: str) -> tuple[int, str]:
+    priority = {
+        "with_skill": 0,
+        "new_skill": 0,
+        "without_skill": 1,
+        "old_skill": 1,
+    }
+    return priority.get(name, 2), name
+
+
+def _run_sort_key(root: Path, run_dir: Path, run: Run) -> tuple[object, ...]:
+    relative = run_dir.relative_to(root)
+    parts = relative.parts
+    config = run_dir.parent.name if len(parts) >= 2 else ""
+    run_number = _parse_prefixed_index(run_dir.name, "run")
+    return (
+        *_eval_id_sort_key(run["eval_id"]),
+        *_config_sort_key(config),
+        run_number is None,
+        run_number if run_number is not None else 0,
+        relative.as_posix(),
+    )
+
+
+def find_runs(workspace: Path) -> list[Run]:
+    """Discover viewer runs deterministically, including failed run-N directories."""
+    root = workspace.resolve()
+    if not root.is_dir():
+        return []
+
+    run_dirs = _discover_run_dirs(root)
+    run_ids = _assign_run_ids(root, run_dirs)
+
+    entries: list[tuple[Path, Run]] = [
+        (run_dir, build_run(root, run_dir, run_id=run_ids[run_dir]))
+        for run_dir in run_dirs
+    ]
+    entries.sort(key=lambda item: _run_sort_key(root, item[0], item[1]))
+    return [run for _, run in entries]
+
+
+def _load_feedback_map(path: Path) -> dict[str, str]:
+    """Return only explicit non-blank feedback from an existing artifact."""
+    data = _read_json_object(path)
+    if data is None:
+        return {}
+
+    reviews = data.get("reviews")
+    if not isinstance(reviews, list):
+        return {}
+
+    feedback: dict[str, str] = {}
+    for item in cast(list[object], reviews):
+        review = _as_object_dict(item)
+        if review is None:
+            continue
+        run_id = review.get("run_id")
+        text = review.get("feedback")
+        if isinstance(run_id, str) and run_id and isinstance(text, str) and text.strip():
+            feedback[run_id] = text
+    return feedback
+
+
 def load_previous_iteration(workspace: Path) -> dict[str, PreviousRun]:
-    """Load previous iteration feedback and embedded outputs."""
-    feedback_map = _load_feedback_map(workspace / "feedback.json")
+    """Load previous outputs and explicit prior feedback as historical context."""
+    feedback_map = _load_feedback_map(workspace / FEEDBACK_FILE)
     result: dict[str, PreviousRun] = {}
 
     for run in find_runs(workspace):
@@ -319,9 +603,9 @@ def load_previous_iteration(workspace: Path) -> dict[str, PreviousRun]:
 
 
 def _json_for_script(data: object) -> str:
-    """Serialize JSON so embedded data cannot terminate the surrounding <script>."""
+    """Serialize JSON so data cannot terminate the surrounding script element."""
     return (
-        json.dumps(data)
+        json.dumps(data, allow_nan=False)
         .replace("<", "\\u003c")
         .replace(">", "\\u003e")
         .replace("&", "\\u0026")
@@ -336,15 +620,22 @@ def generate_html(
     previous: dict[str, PreviousRun] | None = None,
     benchmark: dict[str, object] | None = None,
 ) -> str:
-    """Generate the complete standalone HTML page with embedded data."""
+    """Generate a self-contained review page from the viewer template."""
     template_path = Path(__file__).parent / "viewer.html"
-    template = template_path.read_text(encoding="utf-8")
+    template = template_path.read_text(encoding=TEXT_ENCODING)
+
+    marker_count = template.count(EMBEDDED_DATA_MARKER)
+    if marker_count != 1:
+        raise ValueError(
+            f"viewer template must contain exactly one {EMBEDDED_DATA_MARKER!r}; "
+            f"found {marker_count}"
+        )
 
     previous_feedback: dict[str, str] = {}
     previous_outputs: dict[str, list[EmbeddedFile]] = {}
     if previous:
         for run_id, data in previous.items():
-            if data["feedback"]:
+            if data["feedback"].strip():
                 previous_feedback[run_id] = data["feedback"]
             if data["outputs"]:
                 previous_outputs[run_id] = data["outputs"]
@@ -358,21 +649,159 @@ def generate_html(
     if benchmark is not None:
         embedded["benchmark"] = benchmark
 
-    data_json = _json_for_script(embedded)
     return template.replace(
         EMBEDDED_DATA_MARKER,
-        f"const EMBEDDED_DATA = {data_json};",
+        f"const EMBEDDED_DATA = {_json_for_script(embedded)};",
     )
 
 
+def _parse_iso_datetime(value: str) -> bool:
+    """Validate an ISO-8601 date-time string without adding dependencies."""
+    from datetime import datetime
 
-# ---------------------------------------------------------------------------
-# HTTP server (stdlib only, zero dependencies)
-# ---------------------------------------------------------------------------
+    normalized = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        parsed = datetime.fromisoformat(normalized)
+    except ValueError:
+        return False
+    return parsed.tzinfo is not None
+
+
+def _utc_now_iso() -> str:
+    from datetime import datetime, timezone
+
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
+
+
+def _normalize_feedback_payload(
+    data: dict[str, object],
+    *,
+    allowed_run_ids: set[str] | None,
+) -> dict[str, object]:
+    """Validate feedback and normalize legacy omissions conservatively."""
+    unexpected = set(data).difference({"reviews", "status"})
+    if unexpected:
+        raise ValueError(f"unexpected feedback fields: {sorted(unexpected)}")
+
+    reviews_value = data.get("reviews")
+    if not isinstance(reviews_value, list):
+        raise ValueError("feedback must contain a 'reviews' list")
+
+    status_value = data.get("status", "in_progress")
+    if not isinstance(status_value, str) or status_value not in SUPPORTED_FEEDBACK_STATUSES:
+        raise ValueError(
+            "feedback status must be 'in_progress' or 'complete'"
+        )
+
+    normalized_reviews: list[dict[str, object]] = []
+    seen_run_ids: set[str] = set()
+
+    for item in cast(list[object], reviews_value):
+        review = _as_object_dict(item)
+        if review is None:
+            raise ValueError("each feedback review must be a JSON object")
+
+        unexpected_review = set(review).difference({"run_id", "feedback", "timestamp"})
+        if unexpected_review:
+            raise ValueError(
+                f"unexpected review fields: {sorted(unexpected_review)}"
+            )
+
+        run_id = review.get("run_id")
+        feedback = review.get("feedback")
+        timestamp = review.get("timestamp")
+
+        if not isinstance(run_id, str) or not run_id:
+            raise ValueError("review.run_id must be a non-empty string")
+        if run_id in seen_run_ids:
+            raise ValueError(f"duplicate review.run_id: {run_id}")
+        if allowed_run_ids is not None and run_id not in allowed_run_ids:
+            raise ValueError(f"unknown review.run_id for this workspace: {run_id}")
+        if not isinstance(feedback, str):
+            raise ValueError("review.feedback must be a string")
+
+        if timestamp is None:
+            timestamp = _utc_now_iso()
+        elif not isinstance(timestamp, str) or not _parse_iso_datetime(timestamp):
+            raise ValueError("review.timestamp must be an offset-aware ISO-8601 date-time")
+
+        seen_run_ids.add(run_id)
+        normalized_reviews.append(
+            {
+                "run_id": run_id,
+                "feedback": feedback,
+                "timestamp": timestamp,
+            }
+        )
+
+    return {"reviews": normalized_reviews, "status": status_value}
+
+
+def _default_feedback_payload() -> dict[str, object]:
+    return {"reviews": [], "status": "in_progress"}
+
+
+def _atomic_write_json(path: Path, data: dict[str, object]) -> None:
+    """Atomically replace a JSON file so concurrent readers never see a partial write."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    payload = json.dumps(data, indent=2, allow_nan=False) + "\n"
+
+    temp_name: str | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding=TEXT_ENCODING,
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as stream:
+            temp_name = stream.name
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        Path(temp_name).replace(path)
+    finally:
+        if temp_name is not None:
+            try:
+                Path(temp_name).unlink(missing_ok=True)
+            except OSError:
+                pass
+
+
+def _origin_allowed(origin: str | None) -> bool:
+    """Allow same-machine browser origins; reject cross-site localhost POSTs."""
+    if origin is None:
+        return True
+    try:
+        parsed = urlsplit(origin)
+    except ValueError:
+        return False
+    return parsed.scheme in {"http", "https"} and parsed.hostname in {
+        "localhost",
+        "127.0.0.1",
+        "::1",
+    }
+
+
+def _load_benchmark(path: Path | None) -> dict[str, object] | None:
+    if path is None:
+        return None
+    data = _read_required_json_object(path, label="benchmark")
+    # Minimal shape check: keep the renderer permissive for legacy benchmark fields,
+    # but reject a wrong-root or unrelated JSON object supplied as --benchmark.
+    for required in ("metadata", "runs", "run_summary"):
+        if required not in data:
+            raise ValueError(f"benchmark missing required field: {required}")
+    if not isinstance(data["runs"], list):
+        raise ValueError("benchmark.runs must be a list")
+    if not isinstance(data["metadata"], dict) or not isinstance(data["run_summary"], dict):
+        raise ValueError("benchmark metadata/run_summary must be JSON objects")
+    return data
 
 
 class ReviewHandler(BaseHTTPRequestHandler):
-    """Serve the review HTML and persist local feedback."""
+    """Serve review HTML and persist explicit feedback on loopback."""
 
     def __init__(
         self,
@@ -392,6 +821,10 @@ class ReviewHandler(BaseHTTPRequestHandler):
         self.benchmark_path = benchmark_path
         super().__init__(request, client_address, server)
 
+    def setup(self) -> None:
+        super().setup()
+        self.connection.settimeout(REQUEST_TIMEOUT_SECONDS)
+
     def _send_bytes(
         self,
         content: bytes,
@@ -399,38 +832,61 @@ class ReviewHandler(BaseHTTPRequestHandler):
         content_type: str,
         status: int = 200,
     ) -> None:
-        self.send_response(status)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(content)))
-        self.end_headers()
-        self.wfile.write(content)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(content)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(content)
+        except (BrokenPipeError, ConnectionResetError, TimeoutError):
+            return
 
     def _send_json(self, payload: dict[str, object], *, status: int = 200) -> None:
-        content = json.dumps(payload).encode("utf-8")
-        self._send_bytes(content, content_type="application/json", status=status)
+        content = json.dumps(payload, allow_nan=False).encode(TEXT_ENCODING)
+        self._send_bytes(content, content_type=JSON_CONTENT_TYPE, status=status)
 
     def do_GET(self) -> None:
         if self.path in {"/", "/index.html"}:
-            benchmark = _load_optional_json_object(self.benchmark_path)
-            html = generate_html(
-                find_runs(self.workspace),
-                self.skill_name,
-                self.previous,
-                benchmark,
-            )
+            try:
+                benchmark = _load_benchmark(self.benchmark_path)
+                html = generate_html(
+                    find_runs(self.workspace),
+                    self.skill_name,
+                    self.previous,
+                    benchmark,
+                )
+            except (OSError, ValueError) as exc:
+                self._send_json({"error": str(exc)}, status=500)
+                return
             self._send_bytes(
-                html.encode("utf-8"),
+                html.encode(TEXT_ENCODING),
                 content_type="text/html; charset=utf-8",
             )
             return
 
         if self.path == "/api/feedback":
             try:
-                data = self.feedback_path.read_bytes() if self.feedback_path.is_file() else b"{}"
-            except OSError as exc:
+                allowed_run_ids = {run["id"] for run in find_runs(self.workspace)}
+                if self.feedback_path.is_file():
+                    data = _read_required_json_object(
+                        self.feedback_path,
+                        label="feedback",
+                    )
+                    normalized = _normalize_feedback_payload(
+                        data,
+                        allowed_run_ids=allowed_run_ids,
+                    )
+                else:
+                    normalized = _default_feedback_payload()
+                content = json.dumps(
+                    normalized,
+                    allow_nan=False,
+                ).encode(TEXT_ENCODING)
+            except ValueError as exc:
                 self._send_json({"error": str(exc)}, status=500)
                 return
-            self._send_bytes(data, content_type="application/json")
+            self._send_bytes(content, content_type=JSON_CONTENT_TYPE)
             return
 
         self.send_error(404)
@@ -440,28 +896,66 @@ class ReviewHandler(BaseHTTPRequestHandler):
             self.send_error(404)
             return
 
-        try:
-            length = int(self.headers.get("Content-Length", "0"))
-            if length < 0:
-                raise ValueError("Content-Length must be non-negative")
-            body = self.rfile.read(length)
-            raw: object = json.loads(body)
-            data = _as_object_dict(raw)
-            if data is None or not isinstance(data.get("reviews"), list):
-                raise ValueError("Expected JSON object with a 'reviews' list")
-            self.feedback_path.write_text(
-                json.dumps(data, indent=2) + "\n",
-                encoding="utf-8",
+        if not _origin_allowed(self.headers.get("Origin")):
+            self._send_json({"error": "Origin is not allowed"}, status=403)
+            return
+
+        if self.headers.get_content_type() != JSON_CONTENT_TYPE:
+            self._send_json(
+                {"error": "Content-Type must be application/json"},
+                status=415,
             )
-        except (OSError, ValueError) as exc:
+            return
+
+        raw_length = self.headers.get("Content-Length")
+        if raw_length is None:
+            self._send_json({"error": "Content-Length is required"}, status=411)
+            return
+
+        try:
+            length = int(raw_length)
+        except ValueError:
+            self._send_json({"error": "Invalid Content-Length"}, status=400)
+            return
+
+        if length < 0:
+            self._send_json({"error": "Content-Length must be non-negative"}, status=400)
+            return
+        if length > MAX_FEEDBACK_BYTES:
+            self._send_json({"error": "Feedback payload is too large"}, status=413)
+            return
+
+        try:
+            body = self.rfile.read(length)
+            raw: object = json.loads(
+                body,
+                parse_constant=_reject_non_standard_json_constant,
+            )
+            data = _as_object_dict(raw)
+            if data is None:
+                raise ValueError("feedback payload must be a JSON object")
+
+            allowed_run_ids = {run["id"] for run in find_runs(self.workspace)}
+            normalized = _normalize_feedback_payload(
+                data,
+                allowed_run_ids=allowed_run_ids,
+            )
+            with _feedback_write_lock:
+                _atomic_write_json(self.feedback_path, normalized)
+        except (json.JSONDecodeError, OSError, ValueError) as exc:
             self._send_json({"error": str(exc)}, status=400)
             return
 
         self._send_json({"ok": True})
 
     def log_message(self, format: str, *args: object) -> None:
-        """Suppress request logging to keep terminal output focused."""
+        """Suppress normal request logging to keep CLI output focused."""
 
+
+class ReviewHTTPServer(ThreadingHTTPServer):
+    """Loopback review server that does not block shutdown on client threads."""
+
+    daemon_threads = True
 
 
 def _port_number(value: str) -> int:
@@ -474,16 +968,28 @@ def _port_number(value: str) -> int:
     return port
 
 
-def main() -> int:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Generate and serve eval review")
     parser.add_argument("workspace", type=Path, help="Path to workspace directory")
-    parser.add_argument("--port", "-p", type=_port_number, default=3117, help="Server port (default: 3117)")
-    parser.add_argument("--skill-name", "-n", type=str, default=None, help="Skill name for header")
+    parser.add_argument(
+        "--port",
+        "-p",
+        type=_port_number,
+        default=3117,
+        help="Server port (default: 3117; 0 asks the OS for an ephemeral port)",
+    )
+    parser.add_argument(
+        "--skill-name",
+        "-n",
+        type=str,
+        default=None,
+        help="Skill name for header",
+    )
     parser.add_argument(
         "--previous-workspace",
         type=Path,
         default=None,
-        help="Path to previous iteration's workspace (shows old outputs and feedback as context)",
+        help="Previous iteration workspace used only as historical context",
     )
     parser.add_argument(
         "--benchmark",
@@ -498,63 +1004,132 @@ def main() -> int:
         default=None,
         help="Write standalone HTML to this path instead of starting a server",
     )
-    args = parser.parse_args()
+    return parser
 
-    workspace_arg = cast(Path, args.workspace)
-    skill_name_arg = cast(str | None, args.skill_name)
-    previous_workspace = cast(Path | None, args.previous_workspace)
-    benchmark_arg = cast(Path | None, args.benchmark)
-    static_path = cast(Path | None, args.static)
-    port = cast(int, args.port)
 
-    workspace = workspace_arg.resolve()
-    if not workspace.is_dir():
-        print(f"Error: {workspace} is not a directory", file=sys.stderr)
-        return 1
+def _parse_cli_options(argv: list[str] | None = None) -> CliOptions:
+    args = _build_parser().parse_args(argv)
+    return CliOptions(
+        workspace=cast(Path, args.workspace),
+        port=cast(int, args.port),
+        skill_name=cast(str | None, args.skill_name),
+        previous_workspace=cast(Path | None, args.previous_workspace),
+        benchmark=cast(Path | None, args.benchmark),
+        static_path=cast(Path | None, args.static),
+    )
 
-    runs = find_runs(workspace)
-    if not runs:
-        print(f"No runs found in {workspace}", file=sys.stderr)
-        return 1
 
-    skill_name = skill_name_arg or workspace.name.replace("-workspace", "")
-    feedback_path = workspace / "feedback.json"
+def _load_previous_workspace(path: Path | None) -> tuple[Path | None, dict[str, PreviousRun]]:
+    if path is None:
+        return None, {}
+    resolved = path.resolve()
+    if not resolved.is_dir():
+        raise ValueError(f"previous workspace is not a directory: {resolved}")
+    return resolved, load_previous_iteration(resolved)
 
-    previous: dict[str, PreviousRun] = {}
-    if previous_workspace is not None:
-        previous = load_previous_iteration(previous_workspace.resolve())
 
-    benchmark_path = benchmark_arg.resolve() if benchmark_arg is not None else None
-    benchmark = _load_optional_json_object(benchmark_path)
-
-    if static_path is not None:
-        html = generate_html(runs, skill_name, previous, benchmark)
-        static_path.parent.mkdir(parents=True, exist_ok=True)
-        static_path.write_text(html, encoding="utf-8")
-        print(f"\n  Static viewer written to: {static_path}\n")
-        return 0
-
-    # Never terminate an existing listener. Fall back to an ephemeral port if needed.
-    handler = partial(ReviewHandler, workspace, skill_name, feedback_path, previous, benchmark_path)
+def _write_static_viewer(
+    path: Path,
+    runs: list[Run],
+    skill_name: str,
+    previous: dict[str, PreviousRun],
+    benchmark: dict[str, object] | None,
+) -> int:
     try:
-        server = HTTPServer(("127.0.0.1", port), handler)
-    except OSError:
-        # Port still in use after kill attempt — find a free one
-        server = HTTPServer(("127.0.0.1", 0), handler)
-        port = cast(tuple[str, int], server.server_address)[1]
+        html = generate_html(runs, skill_name, previous, benchmark)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(html, encoding=TEXT_ENCODING)
+    except (OSError, ValueError) as exc:
+        print(f"Error writing static viewer: {exc}", file=sys.stderr)
+        return 1
 
-    url = f"http://localhost:{port}"
+    print(f"\n  Static viewer written to: {path}\n")
+    return 0
+
+
+def _create_server(
+    workspace: Path,
+    skill_name: str,
+    feedback_path: Path,
+    previous: dict[str, PreviousRun],
+    benchmark_path: Path | None,
+    port: int,
+) -> ReviewHTTPServer:
+    handler = partial(
+        ReviewHandler,
+        workspace,
+        skill_name,
+        feedback_path,
+        previous,
+        benchmark_path,
+    )
+    try:
+        return ReviewHTTPServer(("127.0.0.1", port), handler)
+    except OSError as exc:
+        if exc.errno not in {errno.EADDRINUSE, errno.EACCES}:
+            raise
+        print(
+            f"Warning: unable to bind requested port {port}; using an ephemeral port",
+            file=sys.stderr,
+        )
+        return ReviewHTTPServer(("127.0.0.1", 0), handler)
+
+
+def _print_server_banner(
+    *,
+    url: str,
+    workspace: Path,
+    feedback_path: Path,
+    previous_workspace: Path | None,
+    previous_count: int,
+    benchmark_path: Path | None,
+) -> None:
     print("\n  Eval Viewer")
     print("  ─────────────────────────────────")
     print(f"  URL:       {url}")
     print(f"  Workspace: {workspace}")
     print(f"  Feedback:  {feedback_path}")
-    if previous:
-        print(f"  Previous:  {previous_workspace} ({len(previous)} runs)")
-    if benchmark_path:
+    if previous_workspace is not None:
+        print(f"  Previous:  {previous_workspace} ({previous_count} runs)")
+    if benchmark_path is not None:
         print(f"  Benchmark: {benchmark_path}")
     print("\n  Press Ctrl+C to stop.\n")
 
+
+def _serve_review(
+    workspace: Path,
+    skill_name: str,
+    feedback_path: Path,
+    previous: dict[str, PreviousRun],
+    previous_workspace: Path | None,
+    benchmark_path: Path | None,
+    port: int,
+) -> int:
+    try:
+        server = _create_server(
+            workspace,
+            skill_name,
+            feedback_path,
+            previous,
+            benchmark_path,
+            port,
+        )
+    except OSError as exc:
+        print(f"Unable to start review server: {exc}", file=sys.stderr)
+        return 1
+
+    bound_address = cast(tuple[str, int], server.server_address)
+    bound_port = bound_address[1]
+    url = f"http://localhost:{bound_port}"
+
+    _print_server_banner(
+        url=url,
+        workspace=workspace,
+        feedback_path=feedback_path,
+        previous_workspace=previous_workspace,
+        previous_count=len(previous),
+        benchmark_path=benchmark_path,
+    )
     webbrowser.open(url)
 
     try:
@@ -564,6 +1139,55 @@ def main() -> int:
     finally:
         server.server_close()
     return 0
+
+
+def main(argv: list[str] | None = None) -> int:
+    options = _parse_cli_options(argv)
+    workspace = options.workspace.resolve()
+    if not workspace.is_dir():
+        print(f"Error: {workspace} is not a directory", file=sys.stderr)
+        return 1
+
+    runs = find_runs(workspace)
+    if not runs:
+        print(f"No runs found in {workspace}", file=sys.stderr)
+        return 1
+
+    skill_name = options.skill_name or workspace.name.replace("-workspace", "")
+    feedback_path = workspace / FEEDBACK_FILE
+
+    try:
+        previous_workspace, previous = _load_previous_workspace(
+            options.previous_workspace
+        )
+        benchmark_path = (
+            options.benchmark.resolve()
+            if options.benchmark is not None
+            else None
+        )
+        benchmark = _load_benchmark(benchmark_path)
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 1
+
+    if options.static_path is not None:
+        return _write_static_viewer(
+            options.static_path,
+            runs,
+            skill_name,
+            previous,
+            benchmark,
+        )
+
+    return _serve_review(
+        workspace,
+        skill_name,
+        feedback_path,
+        previous,
+        previous_workspace,
+        benchmark_path,
+        options.port,
+    )
 
 
 if __name__ == "__main__":
