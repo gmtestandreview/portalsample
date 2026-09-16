@@ -4,7 +4,11 @@ import type {Decorator} from '@storybook/react-vite';
 const evaluationClassName = 'react-aria-evaluation';
 let mountedEvaluationStories = 0;
 
-function ReactAriaEvaluationFrame({children}: {children: ReactNode}) {
+type ReactAriaEvaluationFrameProps = Readonly<{
+    children: ReactNode;
+}>;
+
+function ReactAriaEvaluationFrame({children}: ReactAriaEvaluationFrameProps) {
     useLayoutEffect(() => {
         mountedEvaluationStories += 1;
         globalThis.document.body.classList.add(evaluationClassName);
