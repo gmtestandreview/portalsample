@@ -13,6 +13,21 @@
         "strings": true,
         "other": true
     },
+    "js/ts.tsdk.path": "./node_modules/typescript/lib",
+    "eslint.enable": true,
+    "eslint.lintTask.enable": true,
+    "eslint.workingDirectories": [
+        {
+            "mode": "location"
+        }
+    ],
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact"
+    ],
+    "sonarlint.focusOnNewCode": true,
     "sonarlint.analysisExcludesStandalone": "**/ClientApp/src/api/web-api-client.ts",
     "i18n-ally.disabled": true,
     "stylelint.enable": false,
