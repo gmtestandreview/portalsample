@@ -1,0 +1,57 @@
+{
+    "paging": {
+        "pageIndex": 1,
+        "pageSize": 3,
+        "total": 5
+    },
+    "issues": [
+        {
+            "key": "SONAR-SECURITY-HIGH",
+            "rule": "typescript:S2077",
+            "component": "gmtestandreview_portalsample:ClientApp/src/routes/paymentDetails.tsx",
+            "project": "gmtestandreview_portalsample",
+            "line": 42,
+            "message": "Make sure using a dynamically formatted SQL query is safe here.",
+            "type": "VULNERABILITY",
+            "severity": "CRITICAL",
+            "impactSeverity": "HIGH",
+            "impactSoftwareQuality": "SECURITY",
+            "status": "OPEN",
+            "effort": "30min",
+            "creationDate": "2026-08-20T10:11:12+0000",
+            "updateDate": "2026-09-10T05:00:00+0000"
+        },
+        {
+            "key": "SONAR-BUG-MEDIUM",
+            "rule": "typescript:S2259",
+            "component": "gmtestandreview_portalsample:ClientApp/src/utils/index.ts",
+            "project": "gmtestandreview_portalsample",
+            "line": 77,
+            "message": "Null pointers should not be dereferenced.",
+            "type": "BUG",
+            "severity": "MAJOR",
+            "impactSeverity": "MEDIUM",
+            "impactSoftwareQuality": "RELIABILITY",
+            "status": "CONFIRMED",
+            "effort": "15min",
+            "creationDate": "2026-08-21T10:11:12+0000",
+            "updateDate": "2026-09-11T05:00:00+0000"
+        },
+        {
+            "key": "SONAR-ACCEPTED-LOW",
+            "rule": "typescript:S3776",
+            "component": "gmtestandreview_portalsample:ClientApp/src/routes/dashboard/index.tsx",
+            "project": "gmtestandreview_portalsample",
+            "line": 101,
+            "message": "Refactor this function to reduce its cognitive complexity.",
+            "type": "CODE_SMELL",
+            "severity": "MINOR",
+            "impactSeverity": "LOW",
+            "impactSoftwareQuality": "MAINTAINABILITY",
+            "status": "ACCEPTED",
+            "effort": "45min",
+            "creationDate": "2026-07-01T10:11:12+0000",
+            "updateDate": "2026-09-01T05:00:00+0000"
+        }
+    ]
+}

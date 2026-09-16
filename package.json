@@ -21,6 +21,8 @@
     "lint:mdx": "remark \".storybook/**/*.mdx\" \"ClientApp/src/**/*.mdx\" --frail",
     "lint:rules": "node scripts/verify-rule-citations.mjs",
     "lint:rules:fix": "node scripts/verify-rule-citations.mjs --fix",
+    "sonar:backlog": "node scripts/sonar-issues-backlog.mjs",
+    "sonar:backlog:test-fixture": "node scripts/sonar-issues-backlog.mjs --fixture tests/fixtures/sonar --out analysis/sonar-issues-backlog.md",
     "lint:fix": "npm run lint -- --fix",
     "test:unit": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.unit.config.ts",
     "test:unit:coverage": "node --max-old-space-size=8192 ./node_modules/vitest/vitest.mjs run --config vitest.unit.config.ts --coverage",
