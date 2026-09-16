@@ -460,7 +460,7 @@ const MAX_LABEL_LENGTH = 63;
 const isValidEmailAddress = (value: string): boolean => {
     const at = value.indexOf('@');
     // Need exactly one `@`, and a non-empty local part before it.
-    if (at < 1 || value.indexOf('@', at + 1) !== -1) {
+    if (at < 1 || value.includes('@', at + 1)) {
         return false;
     }
 
@@ -474,7 +474,7 @@ const isValidEmailAddress = (value: string): boolean => {
         return false;
     }
 
-    const tld = labels[labels.length - 1];
+    const tld = labels.at(-1) ?? '';
     if (tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
         return false;
     }

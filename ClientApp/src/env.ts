@@ -2,27 +2,16 @@ declare global {
     // Runtime config injected into the global scope by the HTML template.
      
     var REACT_APP_B2C_CLIENTID: string | undefined;
-     
     var REACT_APP_B2C_AUTHORITY: string | undefined;
-     
     var REACT_APP_B2C_KNOWN_AUTHORITIES: string | undefined;
-     
     var REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL: string | undefined;
-     
     var REACT_APP_B2C_READ_SCOPE: string | undefined;
-     
     var REACT_APP_B2C_USER_IMPERSONATION_SCOPE: string | undefined;
-     
     var REACT_APP_B2C_REDIRECT_URL: string | undefined;
-     
     var EXTERNAL_REDIRECT_URL: string | undefined;
-     
     var REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY: string | undefined;
-     
     var REACT_APP_APPINSIGHTS_CONN_STRING: string | undefined;
-     
     var REACT_APP_GA_TRACKINGID: string | undefined;
-     
     var REACT_APP_ENVIRONMENT: string | undefined;
 }
 
@@ -61,15 +50,15 @@ const requiredVars: (keyof EnvType)[] = [
 // absent key there is a deliberate configuration, not a misconfiguration.
 // Everywhere else they stay required, so a genuinely unconfigured deployment
 // still says so.
-const developmentOptionalVars: (keyof EnvType)[] = [
+const developmentOptionalVars = new Set<keyof EnvType>([
     'REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY',
     'REACT_APP_GA_TRACKINGID',
-];
+]);
 
 const isDevelopment = globalThis.REACT_APP_ENVIRONMENT === 'development';
 
 requiredVars.forEach((key) => {
-    if (isDevelopment && developmentOptionalVars.includes(key)) {
+    if (isDevelopment && developmentOptionalVars.has(key)) {
         return;
     }
 
