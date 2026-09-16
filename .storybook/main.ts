@@ -2,6 +2,13 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
 import { onLog } from './rollupOnLog';
 
+const sassDeprecationsToSilence = [
+    'import',
+    'global-builtin',
+    'color-functions',
+    'if-function',
+];
+
 const config: StorybookConfig = {
     framework: '@storybook/react-vite',
 
@@ -76,12 +83,7 @@ const config: StorybookConfig = {
                 preprocessorOptions: {
                     scss: {
                         quietDeps: true,
-                        silenceDeprecations: [
-                            'import',
-                            'global-builtin',
-                            'color-functions',
-                            'if-function',
-                        ] as string[],
+                        silenceDeprecations: sassDeprecationsToSilence,
                     },
                 },
             },

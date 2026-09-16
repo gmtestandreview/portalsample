@@ -166,6 +166,10 @@ describe("Storybook documentation architecture", () => {
   it("keeps Vite customization limited to Sass compatibility and audited vendor build-noise suppression", () => {
     expect(main).toContain("quietDeps: true");
     expect(main).toContain("silenceDeprecations:");
+    expect(main).toContain("'import'");
+    expect(main).toContain("'global-builtin'");
+    expect(main).toContain("'color-functions'");
+    expect(main).toContain("'if-function'");
 
     // The chunk-size ceiling may be raised, but only to the one audited value:
     // clear of Storybook's own framework bundles, still close enough that a

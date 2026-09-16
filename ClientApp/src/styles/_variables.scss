@@ -94,7 +94,7 @@ $spacers: (
   6: $spacer * 2, // This is new NMI
 ) !default;
 
-$negative-spacers: if($enable-negative-margins, negativify-map($spacers), null) !default;
+$negative-spacers: if(sass($enable-negative-margins): negativify-map($spacers)) !default;
 
 //////////////////////////////////////////////
 // Global var
