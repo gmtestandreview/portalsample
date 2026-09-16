@@ -1,6 +1,9 @@
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { CoverageOptions } from 'vitest/node';
 import { defineConfig } from 'vitest/config';
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Vitest 4 removed `coverage.all`. The explicit `include` below already brings
@@ -139,7 +142,7 @@ const coverageConfig: CoverageOptions = {
 export default defineConfig({
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'ClientApp/src'),
+            '@': path.resolve(dirname, 'ClientApp/src'),
         },
     },
     test: {

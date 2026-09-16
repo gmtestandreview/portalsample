@@ -5,11 +5,15 @@ from __future__ import annotations
 
 import argparse
 import json
+from collections.abc import Sequence
 from pathlib import Path
+from typing import cast
 
 try:
     from scripts.utils import parse_skill_md
-except ModuleNotFoundError:
+except ModuleNotFoundError as exc:
+    if exc.name not in {"scripts", "scripts.utils"}:
+        raise
     from utils import parse_skill_md
 
 
@@ -24,21 +28,41 @@ def _json_for_script(data: object) -> str:
     )
 
 
-def generate_review(eval_set: list[dict], skill_path: Path, template_path: Path) -> str:
-    name, description, _ = parse_skill_md(skill_path)
-    for index, item in enumerate(eval_set):
-        if not isinstance(item, dict):
+def _validated_eval_set(data: Sequence[object]) -> list[dict[str, object]]:
+    eval_set: list[dict[str, object]] = []
+    for index, raw_item in enumerate(data):
+        if not isinstance(raw_item, dict):
             raise TypeError(f"eval item {index} must be an object")
-        if not isinstance(item.get("query"), str) or not item["query"].strip():
+
+        # JSON object keys are strings. The cast narrows json.loads()'s
+        # untyped boundary after the runtime container check above.
+        item = cast(dict[str, object], raw_item)
+        query = item.get("query")
+        if not isinstance(query, str) or not query.strip():
             raise ValueError(f"eval item {index} has an invalid query")
-        if not isinstance(item.get("should_trigger"), bool):
+
+        should_trigger = item.get("should_trigger")
+        if not isinstance(should_trigger, bool):
             raise TypeError(f"eval item {index} should_trigger must be boolean")
 
+        eval_set.append(item)
+
+    return eval_set
+
+
+def generate_review(
+    eval_set: Sequence[object],
+    skill_path: Path,
+    template_path: Path,
+) -> str:
+    name, description, _ = parse_skill_md(skill_path)
+    validated_eval_set = _validated_eval_set(eval_set)
+
     template = template_path.read_text(encoding="utf-8")
-    payload = {
+    payload: dict[str, object] = {
         "skill_name": name,
         "skill_description": description,
-        "evals": eval_set,
+        "evals": validated_eval_set,
     }
     marker = "__REVIEW_DATA_PLACEHOLDER__"
     if marker not in template:
@@ -59,9 +83,10 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    eval_set = json.loads(args.eval_set.read_text(encoding="utf-8"))
-    if not isinstance(eval_set, list):
+    raw_eval_set: object = json.loads(args.eval_set.read_text(encoding="utf-8"))
+    if not isinstance(raw_eval_set, list):
         raise SystemExit("eval set must be a JSON array")
+    eval_set = cast(list[object], raw_eval_set)
 
     template = args.template or (
         Path(__file__).resolve().parents[1] / "assets" / "eval_review.html"

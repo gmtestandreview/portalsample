@@ -223,8 +223,20 @@ describe('phone (general)', () => {
         expect(valid(schema, '0212345678')).toBe(true);
     });
 
+    it('accepts a landline number with +61 prefix and spacing', () => {
+        expect(valid(schema, '+61 2 1234 5678')).toBe(true);
+    });
+
     it('accepts a 1300 number', () => {
         expect(valid(schema, '1300123456')).toBe(true);
+    });
+
+    it('accepts an 1800 number with spacing', () => {
+        expect(valid(schema, '1800 123 456')).toBe(true);
+    });
+
+    it('accepts a 13 number with spacing', () => {
+        expect(valid(schema, '13 12 34')).toBe(true);
     });
 
     it('rejects an invalid phone number', () => {
@@ -256,6 +268,10 @@ describe('phone (mobileOnly)', () => {
 
     it('accepts a mobile with +61 prefix', () => {
         expect(valid(schema, '+61412345678')).toBe(true);
+    });
+
+    it('accepts a mobile with grouped spacing', () => {
+        expect(valid(schema, '0412 345 678')).toBe(true);
     });
 
     it('rejects a landline number', () => {

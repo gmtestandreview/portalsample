@@ -7,6 +7,10 @@ import { storybookCoverageConfig } from './vitest.storybook.coverage';
 import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+const storybookBrowserApi = {
+    host: '127.0.0.1',
+    port: 61005,
+} as const;
 
 /**
  * Vitest config for running Storybook story play-function tests in isolation.
@@ -40,6 +44,7 @@ export default defineConfig({
         browser: {
             enabled: true,
             headless: true,
+            api: storybookBrowserApi,
             provider: playwright({}),
             instances: [{ browser: 'chromium' }],
         },

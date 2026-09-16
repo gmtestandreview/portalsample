@@ -130,6 +130,21 @@ const YUP_REQUIREDWITHTRIM_METHOD = 'isRequired';
 
 let yupStringExtensionsRegistered = false;
 
+const STANDARD_LANDLINE_PHONE_REGEX = /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}$/;
+const LONG_SERVICE_PHONE_REGEX = /^1[38]00 ?\d{3} ?\d{3}$/;
+const SHORT_SERVICE_PHONE_REGEX = /^13 ?\d{2} ?\d{2}$/;
+const MOBILE_PHONE_REGEX = /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/;
+const BUSINESS_PHONE_REGEXES = [
+    STANDARD_LANDLINE_PHONE_REGEX,
+    LONG_SERVICE_PHONE_REGEX,
+    SHORT_SERVICE_PHONE_REGEX,
+    MOBILE_PHONE_REGEX,
+] as const;
+
+const matchesAnyPhonePattern = (value: string, patterns: readonly RegExp[]) => (
+    patterns.some((pattern) => pattern.test(value))
+);
+
 export const registerYupStringExtensions = () => {
     if (yupStringExtensionsRegistered) {
         return;
@@ -415,14 +430,15 @@ Yup.addMethod(
                         return true;
                     }
 
-                    const landlineRegex = /^(?:(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}|1[38]00 ?\d{3} ?\d{3}|13 ?\d{2} ?\d{2})$/;
-                    const mobileRegex = /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/;
-
-                    if (mobileOnly === undefined || mobileOnly === false) {
-                        return value.match(landlineRegex) !== null || value.match(mobileRegex) !== null;
+                    if (typeof value !== 'string') {
+                        return false;
                     }
 
-                    return value.match(mobileRegex) !== null;
+                    if (mobileOnly === undefined || mobileOnly === false) {
+                        return matchesAnyPhonePattern(value, BUSINESS_PHONE_REGEXES);
+                    }
+
+                    return MOBILE_PHONE_REGEX.test(value);
                 } catch {
                     /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
                     return false;
