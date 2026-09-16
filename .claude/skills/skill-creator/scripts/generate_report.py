@@ -38,7 +38,7 @@ class QueryResult:
 
 
 @dataclass(frozen=True)
-class Iteration:
+class IterationRecord:
     """Validated optimization iteration."""
 
     iteration: Union[int, str] = "?"
@@ -47,11 +47,15 @@ class Iteration:
     test_results: tuple[QueryResult, ...] = ()
 
 
+# Compatibility alias for any callers that imported the previous internal model name.
+Iteration = IterationRecord
+
+
 @dataclass(frozen=True)
 class ReportData:
     """Validated subset of run_loop.py output consumed by this renderer."""
 
-    history: tuple[Iteration, ...] = ()
+    history: tuple[IterationRecord, ...] = ()
     original_description: str = "N/A"
     best_description: str = "N/A"
     best_score: object = "N/A"
@@ -134,7 +138,7 @@ def _parse_results(value: object, *, context: str) -> tuple[QueryResult, ...]:
     return results
 
 
-def _parse_iteration(value: object, *, index: int) -> Iteration:
+def _parse_iteration(value: object, *, index: int) -> IterationRecord:
     item = _mapping(value, context=f"history[{index}]")
     iteration_value = item.get("iteration", "?")
     if isinstance(iteration_value, bool) or not isinstance(iteration_value, (int, str)):
@@ -142,7 +146,7 @@ def _parse_iteration(value: object, *, index: int) -> Iteration:
 
     train_source = item.get("train_results", item.get("results", ()))
     test_source = item.get("test_results", ())
-    return Iteration(
+    return IterationRecord(
         iteration=iteration_value,
         description=_optional_str(item, "description", ""),
         train_results=_parse_results(train_source, context=f"history[{index}].train_results"),
@@ -196,7 +200,7 @@ def _score_class(correct: int, total: int) -> str:
 
 
 def _collect_query_catalog(
-    history: Sequence[Iteration], *, use_test_results: bool
+    history: Sequence[IterationRecord], *, use_test_results: bool
 ) -> tuple[QueryResult, ...]:
     """Collect first-seen query definitions and verify stable query semantics."""
     queries: dict[str, QueryResult] = {}
@@ -223,31 +227,22 @@ def _passed_count(results: Sequence[QueryResult]) -> int:
 
 
 def _best_history_index(
-    history: Sequence[Iteration], *, use_test_results: bool
+    history: Sequence[IterationRecord], *, use_test_results: bool
 ) -> Optional[int]:
     """Return the stable row index with the highest canonical pass count."""
     if not history:
         return None
 
-    def pass_count(item: Iteration) -> int:
+    def pass_count(item: IterationRecord) -> int:
         results = item.test_results if use_test_results else item.train_results
         return _passed_count(results)
 
     return max(range(len(history)), key=lambda index: pass_count(history[index]))
 
 
-def generate_html(data: Mapping[str, object], auto_refresh: bool = False, skill_name: str = "") -> str:
-    """Generate an HTML report from validated run_loop output."""
-    report = _parse_report_data(data)
-    history = report.history
-    title_prefix = html.escape(f"{skill_name} — ", quote=True) if skill_name else ""
-
-    train_queries = _collect_query_catalog(history, use_test_results=False)
-    test_queries = _collect_query_catalog(history, use_test_results=True)
-
-    refresh_tag = '    <meta http-equiv="refresh" content="5">\n' if auto_refresh else ""
-
-    html_parts = [
+def _render_page_start(*, title_prefix: str, refresh_tag: str) -> str:
+    """Render the document head and opening explanatory content."""
+    return (
         """<!DOCTYPE html>
 <html>
 <head>
@@ -374,20 +369,25 @@ def generate_html(data: Mapping[str, object], auto_refresh: bool = False, skill_
         <strong>Optimizing your skill's description.</strong> This page updates automatically as Claude tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, Claude will apply the best-performing description to your skill.
     </div>
 """
-    ]
+    )
 
-    # Summary section
-    html_parts.append(f"""
+
+def _render_summary(report: ReportData) -> str:
+    """Render the report summary using only escaped display values."""
+    score_source = "(test)" if report.has_best_test_score else "(train)"
+    return f"""
     <div class="summary">
         <p><strong>Original:</strong> {html.escape(report.original_description, quote=True)}</p>
         <p class="best"><strong>Best:</strong> {html.escape(report.best_description, quote=True)}</p>
-        <p><strong>Best Score:</strong> {_escape_display(report.best_score)} {"(test)" if report.has_best_test_score else "(train)"}</p>
+        <p><strong>Best Score:</strong> {_escape_display(report.best_score)} {score_source}</p>
         <p><strong>Iterations:</strong> {_escape_display(report.iterations_run)} | <strong>Train:</strong> {_escape_display(report.train_size)} | <strong>Test:</strong> {_escape_display(report.test_size)}</p>
     </div>
-""")
+"""
 
-    # Legend
-    html_parts.append("""
+
+def _render_legend() -> str:
+    """Render the static query-column legend."""
+    return """
     <div class="legend">
         <span style="font-weight:600">Query columns:</span>
         <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
@@ -395,10 +395,21 @@ def generate_html(data: Mapping[str, object], auto_refresh: bool = False, skill_
         <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
         <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
     </div>
-""")
+"""
 
-    # Table header
-    html_parts.append("""
+
+def _render_query_header(query: QueryResult, *, is_test: bool) -> str:
+    polarity = "positive-col" if query.should_trigger else "negative-col"
+    class_name = f"test-col {polarity}" if is_test else polarity
+    return f'                <th class="{class_name}">{html.escape(query.query)}</th>\n'
+
+
+def _render_table_header(
+    train_queries: Sequence[QueryResult],
+    test_queries: Sequence[QueryResult],
+) -> str:
+    """Render the table opening and all stable query columns."""
+    parts = ["""
     <div class="table-container">
     <table>
         <thead>
@@ -407,99 +418,142 @@ def generate_html(data: Mapping[str, object], auto_refresh: bool = False, skill_
                 <th>Train</th>
                 <th>Test</th>
                 <th class="query-col">Description</th>
-""")
-
-    # Add column headers for train queries
-    for qinfo in train_queries:
-        polarity = "positive-col" if qinfo.should_trigger else "negative-col"
-        html_parts.append(
-            f'                <th class="{polarity}">{html.escape(qinfo.query)}</th>\n'
-        )
-
-    # Add column headers for test queries (different color)
-    for qinfo in test_queries:
-        polarity = "positive-col" if qinfo.should_trigger else "negative-col"
-        html_parts.append(
-            f'                <th class="test-col {polarity}">{html.escape(qinfo.query)}</th>\n'
-        )
-
-    html_parts.append("""            </tr>
+"""]
+    parts.extend(_render_query_header(query, is_test=False) for query in train_queries)
+    parts.extend(_render_query_header(query, is_test=True) for query in test_queries)
+    parts.append("""            </tr>
         </thead>
         <tbody>
 """)
+    return "".join(parts)
 
-    # Rank from the same canonical per-query result data that the table renders.
-    # Row position is the internal identity; the iteration label is display-only.
-    best_index = _best_history_index(
-        history, use_test_results=bool(test_queries)
+
+def _render_result_cell(result: Optional[QueryResult], *, is_test: bool) -> str:
+    if result is None:
+        did_pass = False
+        triggers = 0
+        runs = 0
+    else:
+        did_pass = result.passed
+        triggers = result.triggers
+        runs = result.runs
+
+    icon = "✓" if did_pass else "✗"
+    css_class = "pass" if did_pass else "fail"
+    test_class = " test-result" if is_test else ""
+    return (
+        f'                <td class="result{test_class} {css_class}">'
+        f'{icon}<span class="rate">{triggers}/{runs}</span></td>\n'
     )
 
-    # Add rows for each iteration
-    for row_index, item in enumerate(history):
-        iteration = item.iteration
-        train_results = item.train_results
-        test_results = item.test_results
 
-        # Create lookups for results by query.
-        train_by_query = {result.query: result for result in train_results}
-        test_by_query = {result.query: result for result in test_results}
+def _render_result_cells(
+    queries: Sequence[QueryResult],
+    results: Sequence[QueryResult],
+    *,
+    is_test: bool,
+) -> str:
+    by_query = {result.query: result for result in results}
+    return "".join(
+        _render_result_cell(by_query.get(query.query), is_test=is_test)
+        for query in queries
+    )
 
-        train_correct, train_runs = _aggregate_runs(train_results)
-        test_correct, test_runs = _aggregate_runs(test_results)
 
-        train_class = _score_class(train_correct, train_runs)
-        test_class = _score_class(test_correct, test_runs)
+def _render_iteration_row(
+    item: IterationRecord,
+    *,
+    row_index: int,
+    best_index: Optional[int],
+    train_queries: Sequence[QueryResult],
+    test_queries: Sequence[QueryResult],
+) -> str:
+    """Render one history row; row position is identity, iteration is display-only."""
+    train_correct, train_runs = _aggregate_runs(item.train_results)
+    test_correct, test_runs = _aggregate_runs(item.test_results)
+    row_class = "best-row" if row_index == best_index else ""
 
-        row_class = "best-row" if row_index == best_index else ""
-
-        html_parts.append(f"""            <tr class="{row_class}">
-                <td>{_escape_display(iteration)}</td>
-                <td><span class="score {train_class}">{train_correct}/{train_runs}</span></td>
-                <td><span class="score {test_class}">{test_correct}/{test_runs}</span></td>
+    return "".join(
+        (
+            f"""            <tr class="{row_class}">
+                <td>{_escape_display(item.iteration)}</td>
+                <td><span class="score {_score_class(train_correct, train_runs)}">{train_correct}/{train_runs}</span></td>
+                <td><span class="score {_score_class(test_correct, test_runs)}">{test_correct}/{test_runs}</span></td>
                 <td class="description">{html.escape(item.description, quote=True)}</td>
-""")
+""",
+            _render_result_cells(
+                train_queries,
+                item.train_results,
+                is_test=False,
+            ),
+            _render_result_cells(
+                test_queries,
+                item.test_results,
+                is_test=True,
+            ),
+            "            </tr>\n",
+        )
+    )
 
-        # Add result for each train query
-        for qinfo in train_queries:
-            result = train_by_query.get(qinfo.query)
-            did_pass = result.passed if result is not None else False
-            triggers = result.triggers if result is not None else 0
-            runs = result.runs if result is not None else 0
 
-            icon = "✓" if did_pass else "✗"
-            css_class = "pass" if did_pass else "fail"
-
-            html_parts.append(
-                f'                <td class="result {css_class}">{icon}<span class="rate">{triggers}/{runs}</span></td>\n'
-            )
-
-        # Add result for each test query (with different background)
-        for qinfo in test_queries:
-            result = test_by_query.get(qinfo.query)
-            did_pass = result.passed if result is not None else False
-            triggers = result.triggers if result is not None else 0
-            runs = result.runs if result is not None else 0
-
-            icon = "✓" if did_pass else "✗"
-            css_class = "pass" if did_pass else "fail"
-
-            html_parts.append(
-                f'                <td class="result test-result {css_class}">{icon}<span class="rate">{triggers}/{runs}</span></td>\n'
-            )
-
-        html_parts.append("            </tr>\n")
-
-    html_parts.append("""        </tbody>
+def _render_table(
+    history: Sequence[IterationRecord],
+    train_queries: Sequence[QueryResult],
+    test_queries: Sequence[QueryResult],
+) -> str:
+    """Render the query matrix and select the best row from canonical result data."""
+    best_index = _best_history_index(
+        history,
+        use_test_results=bool(test_queries),
+    )
+    rows = "".join(
+        _render_iteration_row(
+            item,
+            row_index=row_index,
+            best_index=best_index,
+            train_queries=train_queries,
+            test_queries=test_queries,
+        )
+        for row_index, item in enumerate(history)
+    )
+    return (
+        _render_table_header(train_queries, test_queries)
+        + rows
+        + """        </tbody>
     </table>
     </div>
-""")
+"""
+    )
 
-    html_parts.append("""
+
+def _render_page_end() -> str:
+    return """
 </body>
 </html>
-""")
+"""
 
-    return "".join(html_parts)
+
+def generate_html(
+    data: Mapping[str, object],
+    auto_refresh: bool = False,
+    skill_name: str = "",
+) -> str:
+    """Generate an HTML report from validated run_loop output."""
+    report = _parse_report_data(data)
+    title_prefix = html.escape(f"{skill_name} — ", quote=True) if skill_name else ""
+    refresh_tag = '    <meta http-equiv="refresh" content="5">\n' if auto_refresh else ""
+    train_queries = _collect_query_catalog(report.history, use_test_results=False)
+    test_queries = _collect_query_catalog(report.history, use_test_results=True)
+
+    return "".join(
+        (
+            _render_page_start(title_prefix=title_prefix, refresh_tag=refresh_tag),
+            _render_summary(report),
+            _render_legend(),
+            _render_table(report.history, train_queries, test_queries),
+            _render_page_end(),
+        )
+    )
 
 
 def main() -> int:

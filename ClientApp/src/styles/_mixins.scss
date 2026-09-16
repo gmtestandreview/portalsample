@@ -115,13 +115,16 @@
     }
   }
 
+  // Line clamp
+  @mixin lineClamp($lines) {
+    line-clamp: $lines;
+    -webkit-line-clamp: $lines;
+  }
+
   // Text truncate base
   @mixin textTruncateBase {
     display: -webkit-box !important;
     -webkit-box-orient: vertical;
     white-space: normal;
-    line-clamp: 1;
-    -webkit-line-clamp: 1; // About 1 text lines on mobile
+    @include lineClamp(1);
   }
-  
-  
