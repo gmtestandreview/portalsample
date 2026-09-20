@@ -1,5 +1,7 @@
 """Tests for parser module."""
 
+from pathlib import Path
+
 import pytest
 
 from skills_ref.parser import (
@@ -64,7 +66,7 @@ Body
         parse_frontmatter(content)
 
 
-def test_read_valid_skill(tmp_path):
+def test_read_valid_skill(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -80,7 +82,7 @@ license: MIT
     assert props.license == "MIT"
 
 
-def test_read_with_metadata(tmp_path):
+def test_read_with_metadata(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -96,12 +98,12 @@ Body
     assert props.metadata == {"author": "Test Author", "version": "1.0"}
 
 
-def test_missing_skill_md(tmp_path):
+def test_missing_skill_md(tmp_path: Path):
     with pytest.raises(ParseError, match="SKILL.md not found"):
         read_properties(tmp_path)
 
 
-def test_missing_name(tmp_path):
+def test_missing_name(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -113,7 +115,7 @@ Body
         read_properties(skill_dir)
 
 
-def test_missing_description(tmp_path):
+def test_missing_description(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -134,7 +136,7 @@ def test_validation_error_copies_error_list():
     assert error.errors == ["first problem"]
 
 
-def test_find_skill_md_requires_exact_uppercase(tmp_path):
+def test_find_skill_md_requires_exact_uppercase(tmp_path: Path):
     """Only exact-cased SKILL.md satisfies specification discovery."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -142,7 +144,7 @@ def test_find_skill_md_requires_exact_uppercase(tmp_path):
     assert find_skill_md(skill_dir) is None
 
 
-def test_find_skill_md_returns_none_when_missing(tmp_path):
+def test_find_skill_md_returns_none_when_missing(tmp_path: Path):
     """find_skill_md should return None when exact SKILL.md does not exist."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -150,7 +152,7 @@ def test_find_skill_md_returns_none_when_missing(tmp_path):
     assert result is None
 
 
-def test_read_properties_rejects_lowercase_skill_md(tmp_path):
+def test_read_properties_rejects_lowercase_skill_md(tmp_path: Path):
     """Lowercase skill.md must not satisfy the exact-casing requirement."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -165,7 +167,7 @@ description: A test skill
         read_properties(skill_dir)
 
 
-def test_read_properties_metadata_defaults_to_empty_dict(tmp_path):
+def test_read_properties_metadata_defaults_to_empty_dict(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -179,7 +181,7 @@ Body
     assert props.metadata == {}
 
 
-def test_read_with_allowed_tools(tmp_path):
+def test_read_with_allowed_tools(tmp_path: Path):
     """allowed-tools should be parsed into SkillProperties."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -216,12 +218,12 @@ def test_opener_must_be_exactly_three_dashes():
         "---\nname: x\n--- \nBody\n",
     ],
 )
-def test_delimiters_must_not_have_trailing_whitespace(content):
+def test_delimiters_must_not_have_trailing_whitespace(content: str):
     with pytest.raises(ParseError):
         parse_frontmatter(content)
 
 
-def test_read_properties_reports_undecodable_file_as_parse_error(tmp_path):
+def test_read_properties_reports_undecodable_file_as_parse_error(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_bytes(b"---\nname: my-skill\n\xff\xfe\n---\nBody\n")
