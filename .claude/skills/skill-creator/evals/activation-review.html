@@ -45,18 +45,18 @@
                 font-weight: 500;
             }
             .btn-add {
-                background: #6a9bcc;
+                background: #386f9f;
                 color: white;
             }
             .btn-add:hover {
-                background: #5889b8;
+                background: #2f5f88;
             }
             .btn-export {
-                background: #d97757;
+                background: #a84f31;
                 color: white;
             }
             .btn-export:hover {
-                background: #c4613f;
+                background: #8f4228;
             }
             table {
                 width: 100%;
@@ -107,8 +107,8 @@
             }
             .query-input:focus {
                 outline: none;
-                border-color: #d97757;
-                box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.15);
+                border-color: #a84f31;
+                box-shadow: 0 0 0 2px rgba(168, 79, 49, 0.18);
             }
             .toggle {
                 position: relative;
@@ -141,7 +141,7 @@
                 transition: 0.2s;
             }
             .toggle input:checked + .slider {
-                background: #d97757;
+                background: #a84f31;
             }
             .toggle input:checked + .slider::before {
                 transform: translateX(20px);
@@ -340,7 +340,7 @@
                 a.download = 'eval_set.json';
                 document.body.appendChild(a);
                 a.click();
-                document.body.removeChild(a);
+                a.remove();
                 URL.revokeObjectURL(url);
             }
 

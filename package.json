@@ -45,7 +45,7 @@
     "build-storybook-docs": "npm run storybook:build:docs",
     "storybook-docs": "npm run storybook:docs",
     "test:e2e": "npm run test:e2e:app && npm run test:e2e:storybook",
-    "test:api-contract": "playwright test -c playwright.api.config.ts",
+    "test:api-contract": "node scripts/run-api-contract-tests.mjs",
     "test:e2e:app": "bddgen -c playwright.config.ts && playwright test -c playwright.config.ts --project=app-bdd",
     "test:e2e:storybook": "bddgen -c playwright.storybook.config.ts && playwright test -c playwright.storybook.config.ts --project=storybook-bdd",
     "test:e2e:ui": "bddgen -c playwright.config.ts && playwright test -c playwright.config.ts --project=app-bdd --ui",

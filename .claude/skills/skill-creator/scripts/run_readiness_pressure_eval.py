@@ -338,6 +338,8 @@ def _value_claims_production_ready(value: str) -> bool:
         return False
     if re.search(r"\b(?:cannot|can't)\s+(?:be\s+)?$", preceding):
         return False
+    if _mentions_human_review_requirement(preceding):
+        return False
     if re.match(r"\s*(?:is\s+)?(?:not|false)\b", after):
         return False
     if re.match(r"\s*(?:only\s+after|pending)\b", after):

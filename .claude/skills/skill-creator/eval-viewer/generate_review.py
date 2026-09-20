@@ -17,6 +17,7 @@ import hashlib
 import json
 import mimetypes
 import os
+import secrets
 import sys
 import tempfile
 import threading
@@ -41,6 +42,7 @@ ERROR_READING_FILE = "(Error reading file)"
 UNSAFE_PATH_MESSAGE = "(Skipped path that resolves outside the workspace)"
 FILE_TOO_LARGE_MESSAGE = "(File too large to embed)"
 EMBEDDED_DATA_MARKER = "/*__EMBEDDED_DATA__*/"
+CSP_NONCE_MARKER = "__CSP_NONCE__"
 
 MAX_FEEDBACK_BYTES = 1_000_000
 MAX_EMBED_FILE_BYTES = 50 * 1024 * 1024
@@ -686,7 +688,8 @@ def generate_html(
     if benchmark is not None:
         embedded["benchmark"] = benchmark
 
-    return template.replace(
+    nonce = secrets.token_urlsafe(16)
+    return template.replace(CSP_NONCE_MARKER, nonce).replace(
         EMBEDDED_DATA_MARKER,
         f"const EMBEDDED_DATA = {_json_for_script(embedded)};",
     )

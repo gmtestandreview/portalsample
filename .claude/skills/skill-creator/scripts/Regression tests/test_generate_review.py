@@ -13,7 +13,8 @@ from unittest.mock import patch
 
 MODULE_PATH = Path(__file__).with_name("generate_review.py")
 SPEC = importlib.util.spec_from_file_location("generate_review", MODULE_PATH)
-assert SPEC is not None and SPEC.loader is not None
+assert SPEC is not None
+assert SPEC.loader is not None
 review = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = review
 SPEC.loader.exec_module(review)

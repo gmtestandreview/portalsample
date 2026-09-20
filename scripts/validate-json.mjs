@@ -3,6 +3,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 
 const root = process.cwd();
 const ignoredDirectories = new Set([
@@ -92,7 +93,7 @@ const getAjvForSchema = (schema) => {
 await collectJsonFiles(root);
 
 const parsedFiles = await Promise.all(
-  jsonFiles.sort().map(async (filePath) => {
+  jsonFiles.toSorted((left, right) => left.localeCompare(right)).map(async (filePath) => {
     try {
       const content = await readFile(filePath, 'utf8');
       const parsed = JSON.parse(content);
@@ -122,6 +123,6 @@ if (failures.length > 0) {
   failures.forEach((failure) => console.error(`- ${failure}`));
   process.exitCode = 1;
 } else {
-  console.log(`Validated JSON syntax in ${jsonFiles.length} files.`);
-  console.log(`Compiled ${schemaFiles.length} JSON Schema files.`);
+  process.stdout.write(`Validated JSON syntax in ${jsonFiles.length} files.\n`);
+  process.stdout.write(`Compiled ${schemaFiles.length} JSON Schema files.\n`);
 }

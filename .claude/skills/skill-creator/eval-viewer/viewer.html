@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'none'; img-src data:; frame-src data:; style-src 'unsafe-inline'; script-src 'unsafe-inline' https://cdn.sheetjs.com; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'"
+            content="default-src 'none'; img-src data:; frame-src data:; style-src 'nonce-__CSP_NONCE__'; script-src 'nonce-__CSP_NONCE__' https://cdn.sheetjs.com; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'"
         />
         <title>Eval Review</title>
         <script
@@ -13,7 +13,7 @@
             integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT"
             crossorigin="anonymous"
         ></script>
-        <style>
+        <style nonce="__CSP_NONCE__">
             :root {
                 --bg: #faf9f5;
                 --surface: #ffffff;
@@ -44,6 +44,14 @@
                 height: 100vh;
                 display: flex;
                 flex-direction: column;
+            }
+            .app-shell {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+            .is-hidden {
+                display: none !important;
             }
 
             /* ---- Header ---- */
@@ -171,7 +179,7 @@
                 font-size: 0.8125rem;
                 line-height: 1.5;
                 white-space: pre-wrap;
-                word-break: break-word;
+                overflow-wrap: anywhere;
                 font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
             }
             .output-file-content img {
@@ -271,6 +279,12 @@
                 align-items: center;
                 cursor: pointer;
                 user-select: none;
+                width: 100%;
+                border: 0;
+                background: transparent;
+                color: inherit;
+                font: inherit;
+                text-align: left;
             }
             .grades-toggle:hover {
                 color: var(--accent);
@@ -350,18 +364,22 @@
                 color: var(--text-muted);
                 font-style: italic;
             }
-            .grades-toggle {
-                width: 100%;
-                border: 0;
-                background: transparent;
-                color: inherit;
-                font: inherit;
-                text-align: left;
-            }
             .review-state {
                 font-size: 0.75rem;
                 color: var(--text-muted);
                 margin-top: 0.25rem;
+            }
+            .artifact-wrapper {
+                padding: 1rem;
+            }
+            .sheet-label {
+                font-weight: 600;
+                font-size: 0.8rem;
+                color: var(--text-muted);
+                margin: 0.5rem 0 0.25rem;
+            }
+            .error-text {
+                color: var(--red);
             }
 
             /* ---- View tabs ---- */
@@ -465,6 +483,25 @@
                 color: var(--red);
                 font-weight: 600;
             }
+            .benchmark-heading,
+            .benchmark-title {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            }
+            .benchmark-heading {
+                margin: 1rem 0 0.5rem;
+                color: var(--text);
+            }
+            .benchmark-title {
+                margin-bottom: 0.5rem;
+            }
+            .benchmark-meta {
+                color: var(--text-muted);
+                font-size: 0.875rem;
+                margin-bottom: 1.25rem;
+            }
+            .benchmark-expectations {
+                margin-top: 0.5rem;
+            }
             .benchmark-notes {
                 background: var(--surface);
                 border: 1px solid var(--border);
@@ -552,12 +589,18 @@
                 display: none;
                 position: fixed;
                 inset: 0;
+                width: 100%;
+                height: 100%;
+                max-width: none;
+                max-height: none;
+                padding: 0;
+                border: 0;
                 background: rgba(0, 0, 0, 0.5);
                 z-index: 100;
                 justify-content: center;
                 align-items: center;
             }
-            .done-overlay.visible {
+            .done-overlay[open] {
                 display: flex;
             }
             .done-card {
@@ -615,7 +658,7 @@
         </style>
     </head>
     <body>
-        <div id="app" style="height: 100vh; display: flex; flex-direction: column">
+        <div class="app-shell" id="app">
             <div class="header">
                 <div>
                     <h1>Eval Review: <span id="skill-name"></span></h1>
@@ -628,9 +671,9 @@
             </div>
 
             <!-- View tabs (only shown when benchmark data exists) -->
-            <div class="view-tabs" id="view-tabs" style="display: none">
-                <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
-                <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+            <div class="view-tabs is-hidden" id="view-tabs">
+                <button class="view-tab active" data-view="outputs" type="button">Outputs</button>
+                <button class="view-tab" data-view="benchmark" type="button">Benchmark</button>
             </div>
 
             <!-- Outputs panel (qualitative review) -->
@@ -638,7 +681,7 @@
                 <div class="main">
                     <!-- Prompt -->
                     <div class="section">
-                        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display: none"></span></div>
+                        <div class="section-header">Prompt <span class="config-badge is-hidden" id="config-badge"></span></div>
                         <div class="section-body">
                             <div class="prompt-text" id="prompt-text"></div>
                         </div>
@@ -653,9 +696,9 @@
                     </div>
 
                     <!-- Previous Output (collapsible) -->
-                    <div class="section" id="prev-outputs-section" style="display: none">
+                    <div class="section is-hidden" id="prev-outputs-section">
                         <div class="section-header">
-                            <button class="grades-toggle" id="prev-outputs-toggle" type="button" aria-expanded="false" onclick="togglePrevOutputs()">
+                            <button class="grades-toggle" id="prev-outputs-toggle" type="button" aria-expanded="false">
                                 <span class="arrow" id="prev-outputs-arrow" aria-hidden="true">&#9654;</span>
                                 Previous Output
                             </button>
@@ -664,9 +707,9 @@
                     </div>
 
                     <!-- Grades (collapsible) -->
-                    <div class="section" id="grades-section" style="display: none">
+                    <div class="section is-hidden" id="grades-section">
                         <div class="section-header">
-                            <button class="grades-toggle" id="grades-toggle" type="button" aria-expanded="false" onclick="toggleGrades()">
+                            <button class="grades-toggle" id="grades-toggle" type="button" aria-expanded="false">
                                 <span class="arrow" id="grades-arrow" aria-hidden="true">&#9654;</span>
                                 Formal Grades
                             </button>
@@ -685,7 +728,7 @@
                                 placeholder="Optional: note specific issues, strengths, or suggestions. Blank means no comment."
                             ></textarea>
                             <div class="feedback-status" id="feedback-status" aria-live="polite"></div>
-                            <div class="prev-feedback" id="prev-feedback" style="display: none">
+                            <div class="prev-feedback is-hidden" id="prev-feedback">
                                 <div class="prev-feedback-label">Previous feedback</div>
                                 <div id="prev-feedback-text"></div>
                             </div>
@@ -694,9 +737,9 @@
                 </div>
 
                 <div class="nav" id="outputs-nav">
-                    <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
-                    <button class="done-btn" id="done-btn" type="button" disabled onclick="showDoneDialog()">Submit All Reviews</button>
-                    <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+                    <button class="nav-btn" id="prev-btn" type="button">&#8592; Previous</button>
+                    <button class="done-btn" id="done-btn" type="button" disabled>Submit All Reviews</button>
+                    <button class="nav-btn" id="next-btn" type="button">Next &#8594;</button>
                 </div>
             </div>
             <!-- end panel-outputs -->
@@ -710,20 +753,20 @@
         </div>
 
         <!-- Done overlay -->
-        <div class="done-overlay" id="done-overlay" role="dialog" aria-modal="true" aria-labelledby="done-title">
+        <dialog class="done-overlay" id="done-overlay" aria-labelledby="done-title">
             <div class="done-card">
                 <h2 id="done-title">Review Complete</h2>
                 <p id="done-message">Your review has been submitted.</p>
                 <div class="btn-row">
-                    <button onclick="closeDoneDialog()">OK</button>
+                    <button id="done-ok-btn" type="button">OK</button>
                 </div>
             </div>
-        </div>
+        </dialog>
 
         <!-- Toast -->
         <div class="toast" id="toast" aria-live="polite"></div>
 
-        <script>
+        <script nonce="__CSP_NONCE__">
             // ---- Embedded data (injected by generate_review.py) ----
             /*__EMBEDDED_DATA__*/
 
@@ -757,7 +800,7 @@
 
             function formatConfigName(value) {
                 return String(value)
-                    .replace(/_/g, ' ')
+                    .replaceAll('_', ' ')
                     .replace(/\b\w/g, (char) => char.toUpperCase());
             }
 
@@ -814,6 +857,61 @@
                 return null;
             }
 
+            const XLSX_PREVIEW_LIMITS = { rows: 500, columns: 100 };
+
+            function workbookBytesFromBase64(b64Data) {
+                return Uint8Array.from(atob(b64Data), (char) => char.codePointAt(0) ?? 0);
+            }
+
+            function appendSheetLabel(container, sheetName) {
+                container.appendChild(createElement('div', 'sheet-label', 'Sheet: ' + sheetName));
+            }
+
+            function createSheetTable(rows) {
+                const table = document.createElement('table');
+                for (const row of rows.slice(0, XLSX_PREVIEW_LIMITS.rows)) {
+                    const tr = document.createElement('tr');
+                    const values = Array.isArray(row) ? row.slice(0, XLSX_PREVIEW_LIMITS.columns) : [];
+                    for (const value of values) {
+                        const td = document.createElement('td');
+                        td.textContent = value == null ? '' : String(value);
+                        tr.appendChild(td);
+                    }
+                    table.appendChild(tr);
+                }
+                return table;
+            }
+
+            function sheetPreviewTruncated(rows) {
+                return (
+                    rows.length > XLSX_PREVIEW_LIMITS.rows ||
+                    rows.some((row) => Array.isArray(row) && row.length > XLSX_PREVIEW_LIMITS.columns)
+                );
+            }
+
+            function appendTruncationNotice(container) {
+                container.appendChild(
+                    createElement(
+                        'div',
+                        'review-state',
+                        `Preview truncated to ${XLSX_PREVIEW_LIMITS.rows} rows × ${XLSX_PREVIEW_LIMITS.columns} columns. Download the workbook for the complete artifact.`,
+                    ),
+                );
+            }
+
+            function renderWorkbook(container, workbook) {
+                for (const sheetName of workbook.SheetNames) {
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                        header: 1,
+                        raw: false,
+                        defval: '',
+                    });
+                    if (workbook.SheetNames.length > 1) appendSheetLabel(container, sheetName);
+                    container.appendChild(createSheetTable(rows));
+                    if (sheetPreviewTruncated(rows)) appendTruncationNotice(container);
+                }
+            }
+
             function renderXlsx(container, b64Data) {
                 if (typeof b64Data !== 'string' || !b64Data) {
                     container.appendChild(createElement('div', 'empty-state', 'Spreadsheet preview unavailable.'));
@@ -831,54 +929,9 @@
                 }
 
                 try {
-                    const raw = Uint8Array.from(atob(b64Data), (char) => char.charCodeAt(0));
-                    const workbook = XLSX.read(raw, { type: 'array' });
-                    const MAX_ROWS = 500;
-                    const MAX_COLS = 100;
-
-                    for (const sheetName of workbook.SheetNames) {
-                        const worksheet = workbook.Sheets[sheetName];
-                        const rows = XLSX.utils.sheet_to_json(worksheet, {
-                            header: 1,
-                            raw: false,
-                            defval: '',
-                        });
-
-                        if (workbook.SheetNames.length > 1) {
-                            const label = createElement('div', '', 'Sheet: ' + sheetName);
-                            label.style.cssText =
-                                'font-weight:600;font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 0.25rem;';
-                            container.appendChild(label);
-                        }
-
-                        const table = document.createElement('table');
-                        const visibleRows = rows.slice(0, MAX_ROWS);
-                        for (const row of visibleRows) {
-                            const tr = document.createElement('tr');
-                            const values = Array.isArray(row) ? row.slice(0, MAX_COLS) : [];
-                            for (const value of values) {
-                                const td = document.createElement('td');
-                                td.textContent = value == null ? '' : String(value);
-                                tr.appendChild(td);
-                            }
-                            table.appendChild(tr);
-                        }
-                        container.appendChild(table);
-
-                        const truncated =
-                            rows.length > MAX_ROWS ||
-                            rows.some((row) => Array.isArray(row) && row.length > MAX_COLS);
-                        if (truncated) {
-                            container.appendChild(
-                                createElement(
-                                    'div',
-                                    'review-state',
-                                    `Preview truncated to ${MAX_ROWS} rows × ${MAX_COLS} columns. Download the workbook for the complete artifact.`,
-                                ),
-                            );
-                        }
-                    }
+                    renderWorkbook(container, XLSX.read(workbookBytesFromBase64(b64Data), { type: 'array' }));
                 } catch (error) {
+                    console.warn('Spreadsheet preview failed.', error);
                     container.appendChild(
                         createElement(
                             'div',
@@ -889,55 +942,70 @@
                 }
             }
 
-            function createFileView(file) {
-                const fileDiv = createElement('div', 'output-file');
+            function createFileHeader(file, uri) {
                 const header = createElement('div', 'output-file-header');
                 header.appendChild(createElement('span', '', String(file.name || '(unnamed file)')));
-
-                const uri = getDownloadUri(file);
                 if (uri) {
                     const download = createElement('a', 'dl-btn', 'Download');
                     download.download = String(file.name || 'artifact');
                     download.href = uri;
                     header.appendChild(download);
                 }
-                fileDiv.appendChild(header);
+                return header;
+            }
 
-                const content = createElement('div', 'output-file-content');
+            function appendTypedFilePreview(content, file, uri) {
                 if (file.type === 'text') {
                     const pre = document.createElement('pre');
                     pre.textContent = typeof file.content === 'string' ? file.content : '';
                     content.appendChild(pre);
-                } else if (file.type === 'image' && typeof file.data_uri === 'string') {
+                    return;
+                }
+                if (file.type === 'image' && typeof file.data_uri === 'string') {
                     const image = document.createElement('img');
                     image.src = file.data_uri;
                     image.alt = String(file.name || 'Output image');
                     content.appendChild(image);
-                } else if (file.type === 'pdf' && typeof file.data_uri === 'string') {
+                    return;
+                }
+                if (file.type === 'pdf' && typeof file.data_uri === 'string') {
                     const frame = document.createElement('iframe');
                     frame.src = file.data_uri;
                     frame.title = String(file.name || 'PDF output');
                     content.appendChild(frame);
-                } else if (file.type === 'xlsx') {
+                    return;
+                }
+                if (file.type === 'xlsx') {
                     renderXlsx(content, file.data_b64);
-                } else if (file.type === 'binary' && uri) {
+                    return;
+                }
+                if (file.type === 'binary' && uri) {
                     const link = createElement('a', 'download-link', 'Download ' + String(file.name || 'artifact'));
                     link.href = uri;
                     link.download = String(file.name || 'artifact');
                     content.appendChild(link);
-                } else if (file.type === 'error') {
-                    const pre = document.createElement('pre');
-                    pre.textContent =
+                    return;
+                }
+                if (file.type === 'error') {
+                    const pre = createElement(
+                        'pre',
+                        'error-text',
                         typeof file.content === 'string' && file.content
                             ? file.content
-                            : 'Output evidence is unavailable.';
-                    pre.style.color = 'var(--red)';
+                            : 'Output evidence is unavailable.',
+                    );
                     content.appendChild(pre);
-                } else {
-                    content.appendChild(createElement('div', 'empty-state', 'Preview unavailable for this artifact.'));
+                    return;
                 }
+                content.appendChild(createElement('div', 'empty-state', 'Preview unavailable for this artifact.'));
+            }
 
-                fileDiv.appendChild(content);
+            function createFileView(file) {
+                const uri = getDownloadUri(file);
+                const fileDiv = createElement('div', 'output-file');
+                const content = createElement('div', 'output-file-content');
+                appendTypedFilePreview(content, file, uri);
+                fileDiv.append(createFileHeader(file, uri), content);
                 return fileDiv;
             }
 
@@ -971,33 +1039,114 @@
                 const previous = Array.isArray(previousMap[run.id]) ? previousMap[run.id] : [];
 
                 if (previous.length === 0) {
-                    section.style.display = 'none';
+                    section.classList.add('is-hidden');
                     content.replaceChildren();
                     setExpanded('prev-outputs-content', 'prev-outputs-arrow', 'prev-outputs-toggle', false);
                     return;
                 }
 
-                section.style.display = 'block';
+                section.classList.remove('is-hidden');
                 setExpanded('prev-outputs-content', 'prev-outputs-arrow', 'prev-outputs-toggle', false);
                 content.replaceChildren();
 
-                const wrapper = document.createElement('div');
-                wrapper.style.padding = '1rem';
+                const wrapper = createElement('div', 'artifact-wrapper');
                 for (const file of previous) {
                     if (isRecord(file)) wrapper.appendChild(createFileView(file));
                 }
                 content.appendChild(wrapper);
             }
 
+            function gradeClass(passRate) {
+                if (passRate === null) return 'grade-unavailable';
+                if (passRate >= 0.8) return 'grade-pass';
+                return passRate < 0.5 ? 'grade-fail' : '';
+            }
+
+            function expectationVerdict(expectation) {
+                if (expectation.passed === true) return 'pass';
+                return expectation.passed === false ? 'fail' : 'unknown';
+            }
+
+            function verdictSymbol(verdict) {
+                if (verdict === 'pass') return '✓';
+                return verdict === 'fail' ? '✗' : '?';
+            }
+
+            function createGradesSummary(summary) {
+                const summaryLine = createElement('div', 'grades-summary');
+                const passRate = finiteNumber(summary.pass_rate);
+                summaryLine.appendChild(
+                    createElement(
+                        'span',
+                        'grade-badge ' + gradeClass(passRate),
+                        passRate === null ? 'Unavailable' : Math.round(passRate * 100) + '%',
+                    ),
+                );
+
+                const passed = integerNumber(summary.passed);
+                const failed = integerNumber(summary.failed);
+                const total = integerNumber(summary.total);
+                const counts =
+                    passed === null || failed === null || total === null
+                        ? 'Counts unavailable'
+                        : `${passed} passed, ${failed} failed of ${total}`;
+                summaryLine.appendChild(createElement('span', '', counts));
+                return summaryLine;
+            }
+
+            function createExpectationItem(rawExpectation) {
+                const expectation = isRecord(rawExpectation) ? rawExpectation : {};
+                const verdict = expectationVerdict(expectation);
+                const item = createElement('li', 'assertion-item');
+                const status = createElement(
+                    'span',
+                    'assertion-status ' + (verdict === 'unknown' ? '' : verdict),
+                    verdictSymbol(verdict),
+                );
+                if (verdict === 'unknown') status.classList.add('evidence-unavailable');
+                item.appendChild(status);
+                item.appendChild(
+                    createElement(
+                        'span',
+                        '',
+                        typeof expectation.text === 'string'
+                            ? expectation.text
+                            : '(Expectation text unavailable)',
+                    ),
+                );
+
+                const hasEvidence = typeof expectation.evidence === 'string' && expectation.evidence;
+                const evidence = createElement(
+                    'div',
+                    'assertion-evidence',
+                    hasEvidence ? expectation.evidence : 'Evidence unavailable',
+                );
+                if (!hasEvidence) evidence.classList.add('evidence-unavailable');
+                item.appendChild(evidence);
+                return item;
+            }
+
+            function createExpectationList(expectations) {
+                if (expectations.length === 0) {
+                    return createElement(
+                        'div',
+                        'evidence-unavailable',
+                        'No machine-checkable expectation results are present.',
+                    );
+                }
+                const list = createElement('ul', 'assertion-list');
+                for (const expectation of expectations) list.appendChild(createExpectationItem(expectation));
+                return list;
+            }
+
             function renderGrades(run) {
                 const section = document.getElementById('grades-section');
                 const content = document.getElementById('grades-content');
-                section.style.display = 'block';
+                section.classList.remove('is-hidden');
                 content.replaceChildren();
 
+                const wrapper = createElement('div', 'artifact-wrapper');
                 if (!isRecord(run.grading)) {
-                    const wrapper = document.createElement('div');
-                    wrapper.style.padding = '1rem';
                     wrapper.appendChild(
                         createElement(
                             'div',
@@ -1014,83 +1163,7 @@
                 const grading = run.grading;
                 const summary = isRecord(grading.summary) ? grading.summary : {};
                 const expectations = Array.isArray(grading.expectations) ? grading.expectations : [];
-                const wrapper = document.createElement('div');
-                wrapper.style.padding = '1rem';
-
-                const summaryLine = createElement('div', 'grades-summary');
-                const passRate = finiteNumber(summary.pass_rate);
-                const badge = createElement(
-                    'span',
-                    'grade-badge ' +
-                        (passRate === null
-                            ? 'grade-unavailable'
-                            : passRate >= 0.8
-                              ? 'grade-pass'
-                              : passRate < 0.5
-                                ? 'grade-fail'
-                                : ''),
-                    passRate === null ? 'Unavailable' : Math.round(passRate * 100) + '%',
-                );
-                summaryLine.appendChild(badge);
-
-                const passed = integerNumber(summary.passed);
-                const failed = integerNumber(summary.failed);
-                const total = integerNumber(summary.total);
-                const counts =
-                    passed === null || failed === null || total === null
-                        ? 'Counts unavailable'
-                        : `${passed} passed, ${failed} failed of ${total}`;
-                summaryLine.appendChild(createElement('span', '', counts));
-                wrapper.appendChild(summaryLine);
-
-                if (expectations.length === 0) {
-                    wrapper.appendChild(
-                        createElement(
-                            'div',
-                            'evidence-unavailable',
-                            'No machine-checkable expectation results are present.',
-                        ),
-                    );
-                } else {
-                    const list = createElement('ul', 'assertion-list');
-                    for (const rawExpectation of expectations) {
-                        const expectation = isRecord(rawExpectation) ? rawExpectation : {};
-                        const item = createElement('li', 'assertion-item');
-                        const verdict =
-                            expectation.passed === true ? 'pass' : expectation.passed === false ? 'fail' : 'unknown';
-                        const status = createElement(
-                            'span',
-                            'assertion-status ' + (verdict === 'unknown' ? '' : verdict),
-                            verdict === 'pass' ? '✓' : verdict === 'fail' ? '✗' : '?',
-                        );
-                        if (verdict === 'unknown') status.classList.add('evidence-unavailable');
-                        item.appendChild(status);
-                        item.appendChild(
-                            createElement(
-                                'span',
-                                '',
-                                typeof expectation.text === 'string'
-                                    ? expectation.text
-                                    : '(Expectation text unavailable)',
-                            ),
-                        );
-
-                        const evidence = createElement(
-                            'div',
-                            'assertion-evidence',
-                            typeof expectation.evidence === 'string' && expectation.evidence
-                                ? expectation.evidence
-                                : 'Evidence unavailable',
-                        );
-                        if (!(typeof expectation.evidence === 'string' && expectation.evidence)) {
-                            evidence.classList.add('evidence-unavailable');
-                        }
-                        item.appendChild(evidence);
-                        list.appendChild(item);
-                    }
-                    wrapper.appendChild(list);
-                }
-
+                wrapper.append(createGradesSummary(summary), createExpectationList(expectations));
                 content.appendChild(wrapper);
             }
 
@@ -1098,12 +1171,11 @@
                 const badge = document.getElementById('config-badge');
                 const token = getConfigToken(run.id);
                 if (!token) {
-                    badge.style.display = 'none';
+                    badge.classList.add('is-hidden');
                     return;
                 }
                 badge.textContent = SUPPORTED_CONFIG_LABELS[token] || 'Configuration';
                 badge.className = 'config-badge config-neutral';
-                badge.style.display = 'inline-block';
             }
 
             function updateProgress() {
@@ -1147,9 +1219,9 @@
                 const previousElement = document.getElementById('prev-feedback');
                 if (typeof previousText === 'string' && previousText.trim()) {
                     document.getElementById('prev-feedback-text').textContent = previousText;
-                    previousElement.style.display = 'block';
+                    previousElement.classList.remove('is-hidden');
                 } else {
-                    previousElement.style.display = 'none';
+                    previousElement.classList.add('is-hidden');
                 }
 
                 document.getElementById('feedback').value =
@@ -1318,7 +1390,7 @@
                 button.disabled = true;
                 button.textContent = 'Submitting…';
 
-                await Promise.allSettled([...pendingSaves]);
+                await Promise.allSettled(pendingSaves);
 
                 const completePayload = {
                     reviews: buildReviews(true),
@@ -1339,13 +1411,14 @@
                 savedReviewStatus = 'complete';
                 reviewSubmitted = true;
                 document.getElementById('done-message').textContent = completionMessage;
-                document.getElementById('done-overlay').classList.add('visible');
+                const doneOverlay = document.getElementById('done-overlay');
+                if (!doneOverlay.open) doneOverlay.showModal();
                 document.getElementById('feedback-status').textContent = 'Submitted';
                 updateNavButtons();
             }
 
             function closeDoneDialog() {
-                document.getElementById('done-overlay').classList.remove('visible');
+                document.getElementById('done-overlay').close();
             }
 
             function showToast(message) {
@@ -1356,8 +1429,9 @@
             }
 
             function switchView(view) {
+                if (typeof view !== 'string') return;
                 for (const tab of document.querySelectorAll('.view-tab')) {
-                    const active = tab.getAttribute('onclick') === `switchView('${view}')`;
+                    const active = tab.dataset.view === view;
                     tab.classList.toggle('active', active);
                     tab.setAttribute('aria-selected', String(active));
                 }
@@ -1432,6 +1506,45 @@
                 row.appendChild(cell);
             }
 
+            const SUMMARY_METRICS = [
+                { key: 'pass_rate', label: 'Pass Rate', pct: true, lowerIsBetter: false },
+                { key: 'time_seconds', label: 'Time (s)', pct: false, lowerIsBetter: true },
+                { key: 'tokens', label: 'Tokens', pct: false, lowerIsBetter: true },
+            ];
+
+            function createSummaryHeader(configs, hasDelta) {
+                const head = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                appendHeader(headerRow, 'Metric');
+                for (const config of configs) appendHeader(headerRow, formatConfigName(config));
+                if (hasDelta) appendHeader(headerRow, 'Delta');
+                head.appendChild(headerRow);
+                return head;
+            }
+
+            function createSummaryMetricRow(summary, configs, metric, delta) {
+                const row = document.createElement('tr');
+                const labelCell = appendCell(row, metric.label);
+                const strong = document.createElement('strong');
+                strong.textContent = metric.label;
+                labelCell.replaceChildren(strong);
+
+                for (const config of configs) {
+                    const configSummary = isRecord(summary[config]) ? summary[config] : {};
+                    appendCell(row, formatStat(configSummary[metric.key], metric.pct));
+                }
+
+                if (delta) {
+                    const value = delta[metric.key];
+                    appendCell(
+                        row,
+                        typeof value === 'string' && value ? value : '—',
+                        deltaClass(value, metric.lowerIsBetter),
+                    );
+                }
+                return row;
+            }
+
             function renderSummaryTable(container, data) {
                 const summary = isRecord(data.run_summary) ? data.run_summary : {};
                 const metadata = isRecord(data.metadata) ? data.metadata : {};
@@ -1445,45 +1558,13 @@
 
                 const delta = isRecord(summary.delta) ? summary.delta : null;
                 const table = createElement('table', 'benchmark-table');
-                const head = document.createElement('thead');
-                const headerRow = document.createElement('tr');
-                appendHeader(headerRow, 'Metric');
-                for (const config of configs) appendHeader(headerRow, formatConfigName(config));
-                if (delta) appendHeader(headerRow, 'Delta');
-                head.appendChild(headerRow);
-                table.appendChild(head);
+                table.appendChild(createSummaryHeader(configs, Boolean(delta)));
 
                 const body = document.createElement('tbody');
-                const metrics = [
-                    { key: 'pass_rate', label: 'Pass Rate', pct: true, lowerIsBetter: false },
-                    { key: 'time_seconds', label: 'Time (s)', pct: false, lowerIsBetter: true },
-                    { key: 'tokens', label: 'Tokens', pct: false, lowerIsBetter: true },
-                ];
-
-                for (const metric of metrics) {
+                for (const metric of SUMMARY_METRICS) {
                     const anyObserved = configs.some((config) => isRecord(summary[config]?.[metric.key]));
                     if (!anyObserved && metric.key !== 'pass_rate') continue;
-
-                    const row = document.createElement('tr');
-                    const labelCell = appendCell(row, metric.label);
-                    const strong = document.createElement('strong');
-                    strong.textContent = metric.label;
-                    labelCell.replaceChildren(strong);
-
-                    for (const config of configs) {
-                        const configSummary = isRecord(summary[config]) ? summary[config] : {};
-                        appendCell(row, formatStat(configSummary[metric.key], metric.pct));
-                    }
-
-                    if (delta) {
-                        const value = delta[metric.key];
-                        appendCell(
-                            row,
-                            typeof value === 'string' && value ? value : '—',
-                            deltaClass(value, metric.lowerIsBetter),
-                        );
-                    }
-                    body.appendChild(row);
+                    body.appendChild(createSummaryMetricRow(summary, configs, metric, delta));
                 }
 
                 table.appendChild(body);
@@ -1521,143 +1602,148 @@
                 return observed.reduce((sum, value) => sum + value, 0) / observed.length;
             }
 
+            function rateClass(rate) {
+                if (rate === null) return '';
+                if (rate >= 0.8) return 'benchmark-delta-positive';
+                return rate < 0.5 ? 'benchmark-delta-negative' : '';
+            }
+
+            function sortedRunsByNumber(runs) {
+                return [...runs].sort((left, right) => {
+                    const a = integerNumber(left.run_number);
+                    const b = integerNumber(right.run_number);
+                    if (a === null && b === null) return 0;
+                    if (a === null) return 1;
+                    if (b === null) return -1;
+                    return a - b;
+                });
+            }
+
+            function benchmarkColumns(evalRuns) {
+                return {
+                    time: evalRuns.some((run) => finiteNumber(run.result?.time_seconds) !== null),
+                    tokens: evalRuns.some((run) => finiteNumber(run.result?.tokens) !== null),
+                    errors: evalRuns.some((run) => finiteNumber(run.result?.errors) !== null),
+                };
+            }
+
+            function configGroupsFor(evalRuns) {
+                return [...new Set(evalRuns.map((run) => run.configuration))]
+                    .filter((value) => typeof value === 'string')
+                    .sort();
+            }
+
+            function createPerEvalHeader(columns) {
+                const head = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                for (const label of ['Config', 'Run', 'Pass Rate']) appendHeader(headerRow, label);
+                if (columns.time) appendHeader(headerRow, 'Time (s)');
+                if (columns.tokens) appendHeader(headerRow, 'Tokens');
+                if (columns.errors) appendHeader(headerRow, 'Errors');
+                head.appendChild(headerRow);
+                return head;
+            }
+
+            function appendRunMetricCells(row, result, columns) {
+                if (columns.time) {
+                    const value = finiteNumber(result.time_seconds);
+                    appendCell(row, value === null ? '—' : value.toFixed(1));
+                }
+                if (columns.tokens) {
+                    const value = finiteNumber(result.tokens);
+                    appendCell(row, value === null ? '—' : value.toFixed(0));
+                }
+                if (columns.errors) {
+                    const value = integerNumber(result.errors);
+                    appendCell(row, value === null ? '—' : String(value));
+                }
+            }
+
+            function appendAverageMetricCells(row, configRuns, columns) {
+                if (columns.time) {
+                    const averageTime = averageObserved(
+                        configRuns.map((run) => (isRecord(run.result) ? run.result.time_seconds : null)),
+                    );
+                    appendCell(row, averageTime === null ? '—' : averageTime.toFixed(1));
+                }
+                if (columns.tokens) {
+                    const averageTokens = averageObserved(
+                        configRuns.map((run) => (isRecord(run.result) ? run.result.tokens : null)),
+                    );
+                    appendCell(row, averageTokens === null ? '—' : averageTokens.toFixed(0));
+                }
+                if (columns.errors) appendCell(row, '');
+            }
+
+            function appendConfigRunRows(body, config, configRuns, rowClass, columns) {
+                for (const run of sortedRunsByNumber(configRuns)) {
+                    const result = isRecord(run.result) ? run.result : {};
+                    const row = createElement('tr', rowClass);
+                    const runNumber = integerNumber(run.run_number);
+                    appendCell(row, formatConfigName(config));
+                    appendCell(row, runNumber === null ? '—' : String(runNumber));
+                    appendCell(row, formatPassRate(result), rateClass(finiteNumber(result.pass_rate)));
+                    appendRunMetricCells(row, result, columns);
+                    body.appendChild(row);
+                }
+            }
+
+            function appendConfigAverageRow(body, config, configRuns, rowClass, columns) {
+                const averageRow = createElement('tr', 'benchmark-row-avg ' + rowClass);
+                const averageRate = averageObserved(
+                    configRuns.map((run) => (isRecord(run.result) ? run.result.pass_rate : null)),
+                );
+                appendCell(averageRow, formatConfigName(config));
+                appendCell(averageRow, 'Avg');
+                appendCell(
+                    averageRow,
+                    averageRate === null ? '—' : `${(averageRate * 100).toFixed(0)}%`,
+                    rateClass(averageRate),
+                );
+                appendAverageMetricCells(averageRow, configRuns, columns);
+                body.appendChild(averageRow);
+            }
+
+            function renderPerEvalTable(container, evalRuns, configGroups) {
+                const columns = benchmarkColumns(evalRuns);
+                const table = createElement('table', 'benchmark-table');
+                table.appendChild(createPerEvalHeader(columns));
+                const body = document.createElement('tbody');
+
+                configGroups.forEach((config, configIndex) => {
+                    const configRuns = evalRuns.filter((run) => run.configuration === config);
+                    const rowClass = configIndex % 2 === 0 ? 'benchmark-row-with' : 'benchmark-row-without';
+                    appendConfigRunRows(body, config, configRuns, rowClass, columns);
+                    appendConfigAverageRow(body, config, configRuns, rowClass, columns);
+                });
+
+                table.appendChild(body);
+                container.appendChild(table);
+            }
+
+            function evalHeading(evalId, evalRuns) {
+                const first = evalRuns[0] || {};
+                return typeof first.eval_name === 'string' && first.eval_name
+                    ? first.eval_name
+                    : 'Eval ' + String(evalId);
+            }
+
             function renderPerEval(container, data) {
                 const runs = Array.isArray(data.runs) ? data.runs.filter(isRecord) : [];
                 if (runs.length === 0) return;
 
                 container.appendChild(createElement('h3', '', 'Per-Eval Breakdown'));
                 const evalIds = [...new Set(runs.map((run) => run.eval_id))].sort(compareEvalIds);
-
                 for (const evalId of evalIds) {
                     const evalRuns = runs.filter((run) => run.eval_id === evalId);
-                    const first = evalRuns[0] || {};
-                    const heading = createElement(
-                        'h4',
-                        '',
-                        typeof first.eval_name === 'string' && first.eval_name
-                            ? first.eval_name
-                            : 'Eval ' + String(evalId),
-                    );
-                    heading.style.cssText =
-                        'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin:1rem 0 0.5rem;color:var(--text);';
-                    container.appendChild(heading);
-
-                    const hasTime = evalRuns.some((run) => finiteNumber(run.result?.time_seconds) !== null);
-                    const hasTokens = evalRuns.some((run) => finiteNumber(run.result?.tokens) !== null);
-                    const hasErrors = evalRuns.some((run) => finiteNumber(run.result?.errors) !== null);
-
-                    const table = createElement('table', 'benchmark-table');
-                    const head = document.createElement('thead');
-                    const headerRow = document.createElement('tr');
-                    for (const label of ['Config', 'Run', 'Pass Rate']) appendHeader(headerRow, label);
-                    if (hasTime) appendHeader(headerRow, 'Time (s)');
-                    if (hasTokens) appendHeader(headerRow, 'Tokens');
-                    if (hasErrors) appendHeader(headerRow, 'Errors');
-                    head.appendChild(headerRow);
-                    table.appendChild(head);
-
-                    const body = document.createElement('tbody');
-                    const configGroups = [...new Set(evalRuns.map((run) => run.configuration))]
-                        .filter((value) => typeof value === 'string')
-                        .sort();
-
-                    for (let configIndex = 0; configIndex < configGroups.length; configIndex++) {
-                        const config = configGroups[configIndex];
-                        const configRuns = evalRuns
-                            .filter((run) => run.configuration === config)
-                            .sort((left, right) => {
-                                const a = integerNumber(left.run_number);
-                                const b = integerNumber(right.run_number);
-                                if (a === null && b === null) return 0;
-                                if (a === null) return 1;
-                                if (b === null) return -1;
-                                return a - b;
-                            });
-                        const rowClass =
-                            configIndex % 2 === 0 ? 'benchmark-row-with' : 'benchmark-row-without';
-
-                        for (const run of configRuns) {
-                            const result = isRecord(run.result) ? run.result : {};
-                            const row = createElement('tr', rowClass);
-                            appendCell(row, formatConfigName(config));
-                            appendCell(
-                                row,
-                                integerNumber(run.run_number) === null ? '—' : String(run.run_number),
-                            );
-
-                            const rate = finiteNumber(result.pass_rate);
-                            const rateClass =
-                                rate === null
-                                    ? ''
-                                    : rate >= 0.8
-                                      ? 'benchmark-delta-positive'
-                                      : rate < 0.5
-                                        ? 'benchmark-delta-negative'
-                                        : '';
-                            appendCell(row, formatPassRate(result), rateClass);
-                            if (hasTime) {
-                                const value = finiteNumber(result.time_seconds);
-                                appendCell(row, value === null ? '—' : value.toFixed(1));
-                            }
-                            if (hasTokens) {
-                                const value = finiteNumber(result.tokens);
-                                appendCell(row, value === null ? '—' : value.toFixed(0));
-                            }
-                            if (hasErrors) {
-                                const value = integerNumber(result.errors);
-                                appendCell(row, value === null ? '—' : String(value));
-                            }
-                            body.appendChild(row);
-                        }
-
-                        const averageRow = createElement('tr', 'benchmark-row-avg ' + rowClass);
-                        appendCell(averageRow, formatConfigName(config));
-                        appendCell(averageRow, 'Avg');
-                        const averageRate = averageObserved(
-                            configRuns.map((run) => (isRecord(run.result) ? run.result.pass_rate : null)),
-                        );
-                        appendCell(
-                            averageRow,
-                            averageRate === null ? '—' : `${(averageRate * 100).toFixed(0)}%`,
-                            averageRate === null
-                                ? ''
-                                : averageRate >= 0.8
-                                  ? 'benchmark-delta-positive'
-                                  : averageRate < 0.5
-                                    ? 'benchmark-delta-negative'
-                                    : '',
-                        );
-                        if (hasTime) {
-                            const averageTime = averageObserved(
-                                configRuns.map((run) =>
-                                    isRecord(run.result) ? run.result.time_seconds : null,
-                                ),
-                            );
-                            appendCell(
-                                averageRow,
-                                averageTime === null ? '—' : averageTime.toFixed(1),
-                            );
-                        }
-                        if (hasTokens) {
-                            const averageTokens = averageObserved(
-                                configRuns.map((run) => (isRecord(run.result) ? run.result.tokens : null)),
-                            );
-                            appendCell(
-                                averageRow,
-                                averageTokens === null ? '—' : averageTokens.toFixed(0),
-                            );
-                        }
-                        if (hasErrors) appendCell(averageRow, '');
-                        body.appendChild(averageRow);
-                    }
-
-                    table.appendChild(body);
-                    container.appendChild(table);
+                    const configGroups = configGroupsFor(evalRuns);
+                    container.appendChild(createElement('h4', 'benchmark-heading', evalHeading(evalId, evalRuns)));
+                    renderPerEvalTable(container, evalRuns, configGroups);
                     renderExpectationBreakdown(container, evalRuns, configGroups);
                 }
             }
 
-            function renderExpectationBreakdown(container, evalRuns, configGroups) {
+            function expectationRunsByConfig(evalRuns, configGroups) {
                 const byConfig = {};
                 for (const config of configGroups) {
                     byConfig[config] = evalRuns.filter(
@@ -1667,25 +1753,66 @@
                             run.expectations.length > 0,
                     );
                 }
-                if (!Object.values(byConfig).some((items) => items.length > 0)) return;
+                return byConfig;
+            }
 
+            function uniqueExpectationTexts(byConfig, configGroups) {
                 const texts = [];
                 const seen = new Set();
                 for (const config of configGroups) {
                     for (const run of byConfig[config]) {
                         for (const rawExpectation of run.expectations) {
                             if (!isRecord(rawExpectation) || typeof rawExpectation.text !== 'string') continue;
-                            if (!seen.has(rawExpectation.text)) {
-                                seen.add(rawExpectation.text);
-                                texts.push(rawExpectation.text);
-                            }
+                            if (seen.has(rawExpectation.text)) continue;
+                            seen.add(rawExpectation.text);
+                            texts.push(rawExpectation.text);
                         }
                     }
                 }
-                if (texts.length === 0) return;
+                return texts;
+            }
 
+            function expectationClassName(expectation) {
+                if (expectation.passed === true) return 'benchmark-delta-positive';
+                if (expectation.passed === false) return 'benchmark-delta-negative';
+                return 'evidence-unavailable';
+            }
+
+            function expectationFragment(run, expectation) {
+                if (!isRecord(expectation)) {
+                    return { symbol: '—', className: '', title: 'Expectation unavailable' };
+                }
+                const evidence =
+                    typeof expectation.evidence === 'string' && expectation.evidence
+                        ? expectation.evidence
+                        : 'Evidence unavailable';
+                return {
+                    symbol: verdictSymbol(expectationVerdict(expectation)),
+                    className: expectationClassName(expectation),
+                    title: `Run ${run.run_number ?? '—'}: ${evidence}`,
+                };
+            }
+
+            function createExpectationBreakdownCell(runs, text) {
+                const cell = document.createElement('td');
+                const fragments = runs.map((run) =>
+                    expectationFragment(
+                        run,
+                        run.expectations.find((item) => isRecord(item) && item.text === text),
+                    ),
+                );
+                fragments.forEach((fragment, index) => {
+                    const span = createElement('span', fragment.className, fragment.symbol);
+                    span.title = fragment.title;
+                    cell.appendChild(span);
+                    if (index < fragments.length - 1) cell.appendChild(document.createTextNode(' '));
+                });
+                return cell;
+            }
+
+            function createExpectationBreakdownTable(texts, byConfig, configGroups) {
                 const table = createElement('table', 'benchmark-table');
-                table.style.marginTop = '0.5rem';
+                table.classList.add('benchmark-expectations');
                 const head = document.createElement('thead');
                 const header = document.createElement('tr');
                 appendHeader(header, 'Expectation');
@@ -1697,73 +1824,37 @@
                 for (const text of texts) {
                     const row = document.createElement('tr');
                     appendCell(row, text);
-
                     for (const config of configGroups) {
-                        const cell = document.createElement('td');
-                        const fragments = [];
-                        for (const run of byConfig[config]) {
-                            const expectation = run.expectations.find(
-                                (item) => isRecord(item) && item.text === text,
-                            );
-                            if (!isRecord(expectation)) {
-                                fragments.push({ symbol: '—', className: '', title: 'Expectation unavailable' });
-                                continue;
-                            }
-                            const symbol =
-                                expectation.passed === true
-                                    ? '✓'
-                                    : expectation.passed === false
-                                      ? '✗'
-                                      : '?';
-                            const className =
-                                expectation.passed === true
-                                    ? 'benchmark-delta-positive'
-                                    : expectation.passed === false
-                                      ? 'benchmark-delta-negative'
-                                      : 'evidence-unavailable';
-                            fragments.push({
-                                symbol,
-                                className,
-                                title:
-                                    `Run ${run.run_number ?? '—'}: ` +
-                                    (typeof expectation.evidence === 'string' && expectation.evidence
-                                        ? expectation.evidence
-                                        : 'Evidence unavailable'),
-                            });
-                        }
-
-                        fragments.forEach((fragment, index) => {
-                            const span = createElement('span', fragment.className, fragment.symbol);
-                            span.title = fragment.title;
-                            cell.appendChild(span);
-                            if (index < fragments.length - 1) cell.appendChild(document.createTextNode(' '));
-                        });
-                        row.appendChild(cell);
+                        row.appendChild(createExpectationBreakdownCell(byConfig[config], text));
                     }
                     body.appendChild(row);
                 }
-
                 table.appendChild(body);
-                container.appendChild(table);
+                return table;
+            }
+
+            function renderExpectationBreakdown(container, evalRuns, configGroups) {
+                const byConfig = expectationRunsByConfig(evalRuns, configGroups);
+                if (!Object.values(byConfig).some((items) => items.length > 0)) return;
+
+                const texts = uniqueExpectationTexts(byConfig, configGroups);
+                if (texts.length === 0) return;
+                container.appendChild(createExpectationBreakdownTable(texts, byConfig, configGroups));
             }
 
             function renderBenchmark() {
                 const data = EMBEDDED_DATA.benchmark;
                 if (!isRecord(data)) return;
 
-                document.getElementById('view-tabs').style.display = 'flex';
+                document.getElementById('view-tabs').classList.remove('is-hidden');
                 const container = document.getElementById('benchmark-content');
                 container.replaceChildren();
 
-                const title = createElement('h2', '', 'Benchmark Results');
-                title.style.cssText =
-                    'font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;margin-bottom:0.5rem;';
+                const title = createElement('h2', 'benchmark-title', 'Benchmark Results');
                 container.appendChild(title);
 
                 const metadata = isRecord(data.metadata) ? data.metadata : {};
-                const metadataLine = document.createElement('p');
-                metadataLine.style.cssText =
-                    'color:var(--text-muted);font-size:0.875rem;margin-bottom:1.25rem;';
+                const metadataLine = createElement('p', 'benchmark-meta');
                 const parts = [];
                 if (typeof metadata.skill_name === 'string' && metadata.skill_name) {
                     parts.push(metadata.skill_name);
@@ -1810,6 +1901,18 @@
                 }
             });
 
+            function bindControls() {
+                for (const tab of document.querySelectorAll('.view-tab')) {
+                    tab.addEventListener('click', () => switchView(tab.dataset.view));
+                }
+                document.getElementById('prev-outputs-toggle').addEventListener('click', togglePrevOutputs);
+                document.getElementById('grades-toggle').addEventListener('click', toggleGrades);
+                document.getElementById('prev-btn').addEventListener('click', () => navigate(-1));
+                document.getElementById('next-btn').addEventListener('click', () => navigate(1));
+                document.getElementById('done-btn').addEventListener('click', showDoneDialog);
+                document.getElementById('done-ok-btn').addEventListener('click', closeDoneDialog);
+            }
+
             async function init() {
                 if (!Array.isArray(EMBEDDED_DATA.runs) || EMBEDDED_DATA.runs.length === 0) {
                     throw new Error('Viewer requires at least one run.');
@@ -1821,6 +1924,7 @@
                         ? EMBEDDED_DATA.skill_name
                         : '(unnamed skill)';
 
+                bindControls();
                 document.getElementById('feedback').addEventListener('input', queueCurrentFeedbackSave);
                 showRun(0);
                 renderBenchmark();

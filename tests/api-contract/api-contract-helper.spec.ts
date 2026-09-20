@@ -103,7 +103,9 @@ test.describe('API contract helper', () => {
     test('validates JSON responses returned by the Playwright request fixture', async ({ request }) => {
         const response = await request.get(`${baseUrl}/dashboard`);
 
-        await expectJsonResponseToMatchSchema(response, dashboardResponseSchema);
+        await expect(
+            expectJsonResponseToMatchSchema(response, dashboardResponseSchema),
+        ).resolves.toEqual(validDashboardResponse);
     });
 
     test('reports response contract mismatches with the failing JSON path', async ({ request }) => {

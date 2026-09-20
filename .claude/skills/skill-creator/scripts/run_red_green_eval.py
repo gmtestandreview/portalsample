@@ -269,7 +269,7 @@ def run_claude(
                     parse_constant=_reject_nonfinite_json_constant,
                 ),
             )
-        except (json.JSONDecodeError, ValueError):
+        except ValueError:
             continue
         if not isinstance(parsed, dict):
             continue
