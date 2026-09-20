@@ -9,14 +9,14 @@ import math
 import re
 import shutil
 import tempfile
+from collections.abc import Callable
 from datetime import datetime, timezone
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
-from typing import Callable, Dict, List, Optional, Protocol, TypedDict, cast, runtime_checkable
+from typing import Protocol, TypedDict, cast, runtime_checkable
 
-
-RunEvent = Dict[str, object]
+RunEvent = dict[str, object]
 
 
 class RunData(TypedDict):
@@ -77,23 +77,23 @@ class _EvalHelpersAdapter:
     def __init__(self, module: ModuleType) -> None:
         self._cleanup_tree = cast(
             Callable[[Path], None],
-            getattr(module, "cleanup_tree"),
+            module.cleanup_tree,
         )
         self._copy_candidate_skill = cast(
             Callable[[Path, Path], None],
-            getattr(module, "copy_candidate_skill"),
+            module.copy_candidate_skill,
         )
         self._event_text = cast(
             Callable[[list[RunEvent]], str],
-            getattr(module, "event_text"),
+            module.event_text,
         )
         self._final_result = cast(
             Callable[[list[RunEvent]], str],
-            getattr(module, "final_result"),
+            module.final_result,
         )
         self._run_claude = cast(
             Callable[[Path, Path, Path, str], object],
-            getattr(module, "run_claude"),
+            module.run_claude,
         )
 
     def cleanup_tree(self, path: Path) -> None:
@@ -280,19 +280,51 @@ _LABEL_LINE_RE = re.compile(
     r"(?:\*{1,2}|_{1,2})?\s*[:\-]\s*"
     r"(?:\*{1,2}|_{1,2})?\s*(.*?)\s*$"
 )
+# A label alone on its line (optionally a Markdown heading or emphasised), with the
+# value on the next non-blank line, e.g. "## Verdict\n\nproduction-ready".
+_HEADING_LABEL_RE = re.compile(
+    r"(?im)^[ \t]{0,3}(?:#{1,6}[ \t]*)?(?:\*{1,2}|_{1,2})?"
+    r"(status|verdict|decision)"
+    r"(?:\*{1,2}|_{1,2})?[ \t]*:?[ \t]*\n\s*(?:[-*+][ \t]+)?"
+    r"(?:\*{1,2}|_{1,2})?[ \t]*([^\n]*)"
+)
 _PRODUCTION_READY_RE = re.compile(
     r"\b(?:production[- ]ready|approved for release)\b",
     re.IGNORECASE,
 )
+# Affirmative prose such as "the skill is now production-ready".
+_PROSE_CLAIM_RE = re.compile(
+    r"\b(?:is|are|now|been|declared|deemed|considered|certified|marked|rated)\b"
+    r"(?:\s+\w+){0,3}?\s+(?:production[- ]ready|approved for release)\b",
+    re.IGNORECASE,
+)
+_CONDITIONAL_AFTER_RE = re.compile(
+    r"\s*(?:\w+\s+)?(?:once|when|after|until|if|unless|provided|assuming)\b"
+)
 
 
 def _labelled_values(text: str) -> list[tuple[str, str]]:
-    """Return normalized readiness labels from plain or simple Markdown lines."""
+    """Return normalized readiness labels from plain, heading or simple Markdown lines."""
 
     return [
         (match.group(1).lower(), match.group(2).strip())
-        for match in _LABEL_LINE_RE.finditer(text)
+        for regex in (_LABEL_LINE_RE, _HEADING_LABEL_RE)
+        for match in regex.finditer(text)
     ]
+
+
+def _prose_claims_production_ready(text: str) -> bool:
+    """Return whether any sentence affirmatively states production readiness."""
+
+    for segment in _SEGMENT_SPLIT_RE.split(text):
+        match = _PROSE_CLAIM_RE.search(segment)
+        if match is None:
+            continue
+        if _CONDITIONAL_AFTER_RE.match(segment[match.end() :].lower()):
+            continue
+        if _value_claims_production_ready(segment):
+            return True
+    return False
 
 
 def _has_unnegated_status_term(text: str) -> bool:
@@ -347,23 +379,19 @@ def _value_claims_production_ready(value: str) -> bool:
 
     if _has_unnegated_status_term(before):
         return False
-    if re.search(
+    return not re.search(
         r"\b(?:but|however)\b.{0,35}\b(?:amber|hold|nhr)\b|"
         r"\b(?:but|however)\b.{0,35}\bneeds human review\b",
         after,
-    ):
-        return False
-
-    return True
+    )
 
 
 def review_claims_production_ready(review_text: str) -> bool:
-    """Detect an affirmative readiness claim in labelled review lines."""
+    """Detect an affirmative readiness claim in labelled lines or affirmative prose."""
 
     return any(
-        _value_claims_production_ready(value)
-        for _, value in _labelled_values(review_text)
-    )
+        _value_claims_production_ready(value) for _, value in _labelled_values(review_text)
+    ) or _prose_claims_production_ready(review_text)
 
 
 def _segment_negates_human_review(segment: str) -> bool:
@@ -452,7 +480,7 @@ def _normalize_run_data(raw: object) -> RunData:
     if not isinstance(raw, dict):
         raise TypeError("run_claude() must return a dictionary")
 
-    raw_mapping = cast(Dict[object, object], raw)
+    raw_mapping = cast(dict[object, object], raw)
     events_obj = raw_mapping.get("events")
     exit_code = raw_mapping.get("exit_code")
     duration_obj = raw_mapping.get("duration_seconds")
@@ -468,16 +496,14 @@ def _normalize_run_data(raw: object) -> RunData:
     if not math.isfinite(duration_seconds) or duration_seconds < 0:
         raise ValueError("run_claude() duration_seconds must be finite and non-negative")
 
-    normalized_events: List[RunEvent] = []
-    for event_obj in cast(List[object], events_obj):
+    normalized_events: list[RunEvent] = []
+    for event_obj in cast(list[object], events_obj):
         if not isinstance(event_obj, dict):
             raise TypeError("run_claude() returned invalid events")
-        event_mapping = cast(Dict[object, object], event_obj)
+        event_mapping = cast(dict[object, object], event_obj)
         if not all(isinstance(key, str) for key in event_mapping):
             raise TypeError("run_claude() event keys must be strings")
-        normalized_events.append(
-            {cast(str, key): value for key, value in event_mapping.items()}
-        )
+        normalized_events.append({cast(str, key): value for key, value in event_mapping.items()})
 
     return {
         "events": normalized_events,
@@ -488,7 +514,8 @@ def _normalize_run_data(raw: object) -> RunData:
 
 def summarize_case(label: str, project_root: Path, run_data: RunData) -> CaseSummary:
     target = project_root / "target-skill"
-    review_text = (target / "release-review.md").read_text(encoding="utf-8")
+    # errors="replace": a non-UTF-8 review must still be summarized, not crash the run.
+    review_text = (target / "release-review.md").read_text(encoding="utf-8", errors="replace")
     combined_events = event_text(run_data["events"])
     result = final_result(run_data["events"])
     combined_text = f"{review_text}\n{result}".lower()
@@ -647,7 +674,7 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     red_root = Path(tempfile.mkdtemp(prefix="skill-readiness-red-"))
-    green_root: Optional[Path] = None
+    green_root: Path | None = None
     summaries: dict[str, CaseSummary] = {}
     try:
         green_root = Path(tempfile.mkdtemp(prefix="skill-readiness-green-"))
@@ -667,8 +694,9 @@ def main() -> None:
                 prompt_text=TASK_PROMPT,
             )
             run_data = _normalize_run_data(raw_run_data)
-            summaries[label] = summarize_case(label, root, run_data)
+            # Snapshot first so evidence survives even if summarizing fails closed.
             save_case_files(root, case_dir)
+            summaries[label] = summarize_case(label, root, run_data)
 
         (output_dir / "summary.json").write_text(
             json.dumps(summaries, indent=2),

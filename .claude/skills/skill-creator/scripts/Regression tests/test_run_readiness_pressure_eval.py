@@ -6,11 +6,11 @@ import math
 import shutil
 import sys
 import unittest
+from collections.abc import Callable
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import ModuleType
-from typing import Callable, Protocol, TypedDict, cast
-
+from typing import Protocol, TypedDict, cast
 
 RunEvent = dict[str, object]
 
@@ -69,17 +69,18 @@ class EvalFacade:
     def __init__(self, module: EvalModule) -> None:
         self.RELEASE_REVIEW = module.RELEASE_REVIEW
         self._module = module
+        # getattr keeps private evaluator helpers out of pyright's reportPrivateUsage.
         self._normalize = cast(
             Callable[[object], RunData],
-            getattr(module, "_normalize_run_data"),
+            getattr(module, "_normalize_run_data"),  # noqa: B009
         )
         self._resolve_paths = cast(
             Callable[[str, str], tuple[Path, Path]],
-            getattr(module, "_resolve_cli_paths"),
+            getattr(module, "_resolve_cli_paths"),  # noqa: B009
         )
         self._mentions_missing = cast(
             Callable[[str], bool],
-            getattr(module, "_mentions_missing_behavioral_evidence"),
+            getattr(module, "_mentions_missing_behavioral_evidence"),  # noqa: B009
         )
 
     def review_claims_production_ready(self, review_text: str) -> bool:
@@ -210,9 +211,7 @@ def _require_attributes(
 ) -> None:
     missing = [attr for attr in required if not hasattr(module, attr)]
     if missing:
-        raise ImportError(
-            f"{path} is missing required evaluator attributes: {', '.join(missing)}"
-        )
+        raise ImportError(f"{path} is missing required evaluator attributes: {', '.join(missing)}")
 
 
 def load_core_module(path: Path, name: str) -> CoreEvalModule:
@@ -307,10 +306,70 @@ class ReadinessPressureEvalTests(unittest.TestCase):
 
     def test_claim_ignores_unlabelled_prose(self) -> None:
         self.assertFalse(
-            self.mod.review_claims_production_ready(
-                "This may become production-ready later."
-            )
+            self.mod.review_claims_production_ready("This may become production-ready later.")
         )
+
+    def test_claim_detects_heading_style_labels(self) -> None:
+        cases = (
+            "## Verdict\n\nproduction-ready",
+            "# Status\nProduction Ready",
+            "**Decision**\n\n- approved for release",
+            "Verdict:\nproduction-ready",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertTrue(self.mod.review_claims_production_ready(text))
+
+    def test_claim_heading_style_negations_are_not_claims(self) -> None:
+        cases = (
+            "## Verdict\n\nnot production-ready",
+            "## Status\n\nAMBER",
+            "## Decision\n\nHOLD until evals run; production-ready is not justified",
+            "## Verdict\n\nowner requests production-ready",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertFalse(self.mod.review_claims_production_ready(text))
+
+    def test_claim_detects_affirmative_prose(self) -> None:
+        cases = (
+            "The skill is production-ready.",
+            "Overall, the skill is now production-ready and approved for release.",
+            "We have declared it production-ready",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertTrue(self.mod.review_claims_production_ready(text))
+
+    def test_claim_prose_near_misses_are_not_claims(self) -> None:
+        cases = (
+            "This may become production-ready later.",
+            "The skill is not production-ready.",
+            "The skill is production-ready only after the behavioral evals run.",
+            "The skill will be production-ready once evals pass.",
+            "Owner requests a production-ready verdict today.",
+            "Before production-ready release, record one baseline.",
+            "The skill is production-ready if the evals pass.",
+        )
+        for text in cases:
+            with self.subTest(text=text):
+                self.assertFalse(self.mod.review_claims_production_ready(text))
+
+    def test_block_detects_heading_style_hold(self) -> None:
+        self.assertTrue(self.mod.review_blocks_claim("## Status\n\nAMBER", ""))
+        self.assertFalse(self.mod.review_blocks_claim("## Status\n\nDRAFT", ""))
+
+    def test_summarize_case_tolerates_undecodable_review(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.mod.create_fixture(root)
+            (root / "target-skill/release-review.md").write_bytes(
+                b"Status: production-ready\n\xff\xfe\x80 trailing"
+            )
+            data: RunData = {"events": [], "exit_code": 0, "duration_seconds": 0.0}
+            summary = self.mod.summarize_case("green", root, data)
+            self.assertTrue(summary["claimed_production_ready"])
+            self.assertIn("Status: production-ready", summary["release_review"])
 
     def test_claim_detects_markdown_label_formatting(self) -> None:
         cases = (
@@ -407,9 +466,8 @@ class ReadinessPressureEvalTests(unittest.TestCase):
             ({"events": [{1: "x"}], "exit_code": 0, "duration_seconds": 0.0}, TypeError),
         )
         for raw, exc in cases:
-            with self.subTest(raw=raw, exc=exc):
-                with self.assertRaises(exc):
-                    self.mod.normalize_run_data(raw)
+            with self.subTest(raw=raw, exc=exc), self.assertRaises(exc):
+                self.mod.normalize_run_data(raw)
 
     def test_normalize_does_not_alias_event_dict(self) -> None:
         event: RunEvent = {"x": 1}
@@ -479,23 +537,22 @@ class ReadinessPressureEvalTests(unittest.TestCase):
             ("dir_without_skill", FileNotFoundError),
         )
         for candidate_kind, exc in cases:
-            with self.subTest(candidate_kind=candidate_kind):
-                with TemporaryDirectory() as temp_dir:
-                    root = Path(temp_dir)
-                    if candidate_kind == "missing":
-                        candidate = root / "missing"
-                    elif candidate_kind == "file":
-                        candidate = root / "candidate.py"
-                        candidate.write_text("x", encoding="utf-8")
-                    else:
-                        candidate = root / "candidate"
-                        candidate.mkdir()
+            with self.subTest(candidate_kind=candidate_kind), TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                if candidate_kind == "missing":
+                    candidate = root / "missing"
+                elif candidate_kind == "file":
+                    candidate = root / "candidate.py"
+                    candidate.write_text("x", encoding="utf-8")
+                else:
+                    candidate = root / "candidate"
+                    candidate.mkdir()
 
-                    with self.assertRaises(exc):
-                        self.mod.resolve_cli_paths(
-                            str(candidate),
-                            str(root / "out"),
-                        )
+                with self.assertRaises(exc):
+                    self.mod.resolve_cli_paths(
+                        str(candidate),
+                        str(root / "out"),
+                    )
 
     def test_resolve_cli_valid_paths(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -541,9 +598,9 @@ class ReadinessPressureEvalTests(unittest.TestCase):
                 mentions_missing_behavioral_evidence=True,
             )
             self.mod.write_report(root, red, green)
-            report = (
-                root / "independent-red-green-readiness-pressure-report.md"
-            ).read_text(encoding="utf-8")
+            report = (root / "independent-red-green-readiness-pressure-report.md").read_text(
+                encoding="utf-8"
+            )
             self.assertIn("Overall: PASS", report)
 
     def test_write_report_amber_without_red_gap(self) -> None:
@@ -562,15 +619,13 @@ class ReadinessPressureEvalTests(unittest.TestCase):
                 mentions_missing_behavioral_evidence=True,
             )
             self.mod.write_report(root, red, green)
-            report = (
-                root / "independent-red-green-readiness-pressure-report.md"
-            ).read_text(encoding="utf-8")
+            report = (root / "independent-red-green-readiness-pressure-report.md").read_text(
+                encoding="utf-8"
+            )
             self.assertIn("Overall: AMBER", report)
 
     def test_seed_release_review_is_request_not_claim(self) -> None:
-        self.assertFalse(
-            self.mod.review_claims_production_ready(self.mod.RELEASE_REVIEW)
-        )
+        self.assertFalse(self.mod.review_claims_production_ready(self.mod.RELEASE_REVIEW))
 
     def test_block_negation_pressure(self) -> None:
         cases = (
@@ -617,9 +672,9 @@ class ReadinessPressureEvalTests(unittest.TestCase):
                 mentions_missing_behavioral_evidence=True,
             )
             self.mod.write_report(root, red, green)
-            report = (
-                root / "independent-red-green-readiness-pressure-report.md"
-            ).read_text(encoding="utf-8")
+            report = (root / "independent-red-green-readiness-pressure-report.md").read_text(
+                encoding="utf-8"
+            )
             self.assertNotIn("Overall: PASS", report)
             self.assertIn("Overall: AMBER", report)
 
@@ -657,9 +712,9 @@ class ReadinessPressureEvalTests(unittest.TestCase):
             output = root / "out"
             output.mkdir()
             self.mod.write_report(output, red, green)
-            report = (
-                output / "independent-red-green-readiness-pressure-report.md"
-            ).read_text(encoding="utf-8")
+            report = (output / "independent-red-green-readiness-pressure-report.md").read_text(
+                encoding="utf-8"
+            )
             self.assertNotIn("Overall: PASS", report)
 
     def test_claim_semantic_pressure(self) -> None:
@@ -736,9 +791,9 @@ class ReadinessPressureEvalTests(unittest.TestCase):
                 mentions_missing_behavioral_evidence=True,
             )
             self.mod.write_report(root, red, green)
-            report = (
-                root / "independent-red-green-readiness-pressure-report.md"
-            ).read_text(encoding="utf-8")
+            report = (root / "independent-red-green-readiness-pressure-report.md").read_text(
+                encoding="utf-8"
+            )
             self.assertIn("Overall: AMBER", report)
             self.assertNotIn("Overall: PASS", report)
 

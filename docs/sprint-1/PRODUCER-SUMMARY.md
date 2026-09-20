@@ -107,7 +107,7 @@ PROJECT_BRIEF.md (single source of truth)
 ## Execution Timeline (Planned)
 
 | Phase | Focus | Dev Days | QA Days | Total | Completion |
-|-------|-------|----------|---------|-------|------------|
+| ------- | ------- | ---------- | --------- | ------- | ------------ |
 | 1 | Critical Infrastructure (Issues #1–4, #9) | 2 | 1 | 3 | 2026-05-22 |
 | 2 | Critical Story Coverage (Issues #4–6) | 2 | 1 | 3 | 2026-05-24 |
 | 3 | High-Priority Coverage (Issues #7–12) | 2 | 1 | 3 | 2026-05-27 |
@@ -122,6 +122,7 @@ PROJECT_BRIEF.md (single source of truth)
 ### Producer (Remy)
 
 **Completed:**
+
 - ✅ Created GitHub Issues (severity-triaged)
 - ✅ Created Dev handoff (scope, sequence, patterns)
 - ✅ Created QA handoff (validation, DoD, testing)
@@ -129,6 +130,7 @@ PROJECT_BRIEF.md (single source of truth)
 - ✅ Updated PROJECT_BRIEF
 
 **During Execution:**
+
 - Monitor `progress.md` daily
 - Triage blockers (Dev/QA → Producer escalation)
 - Update `workflow-state-log.md` phase transitions
@@ -140,6 +142,7 @@ PROJECT_BRIEF.md (single source of truth)
 ### Dev Agent (Nova or Sage)
 
 **Next:**
+
 1. Read `docs/sprint-1/dev-handoff.md` completely
 2. Review GitHub Issues for DoD expectations
 3. Estimate Phase 1 effort (Issues #3, #1, #2, #9)
@@ -147,22 +150,26 @@ PROJECT_BRIEF.md (single source of truth)
 5. Start Phase 1 on 2026-05-21
 
 **Daily:**
+
 - Update `docs/sprint-1/progress.md` with day's work
 - Flag blockers immediately
 
 **Phase Completion:**
+
 - Move all issues in phase to VERIFYING state
 - Notify Producer "Phase N ready for QA"
 
 ### QA Agent (Ivy)
 
 **Now:**
+
 1. Read `docs/sprint-1/qa-handoff.md` completely
 2. Set up test environment (verify `npm run build-storybook` works)
 3. Review DoD checklists per issue
 4. Stand by for Phase 1 completion notice
 
 **When Dev Completes Phase:**
+
 1. Read phase updates from `progress.md`
 2. Verify each issue against DoD checklist
 3. Run targeted tests
@@ -170,6 +177,7 @@ PROJECT_BRIEF.md (single source of truth)
 5. Update `progress.md` with QA status (VERIFIED / BLOCKED)
 
 **After All Phases:**
+
 - Run full test suite
 - Generate final sign-off in `docs/sprint-1/qa-signoff.md`
 - Notify Producer when approved for merge
@@ -179,7 +187,7 @@ PROJECT_BRIEF.md (single source of truth)
 ## Critical Success Factors
 
 | Factor | Responsibility | How |
-|--------|-----------------|-----|
+| -------- | ----------------- | ----- |
 | **Issue Clarity** | Producer | 15 issues pre-triaged with DoD; Dev shouldn't need to ask "what does done look like?" |
 | **Phase Sequencing** | Dev | Don't skip phases; #2 depends on #1 infrastructure fixes; #4 depends on #5 infrastructure work |
 | **Daily Communication** | Dev + QA | Update `progress.md` daily; escalate blockers immediately |
@@ -192,7 +200,7 @@ PROJECT_BRIEF.md (single source of truth)
 ## Risk Mitigation
 
 | Risk | Severity | Mitigation |
-|------|----------|-----------|
+| ------ | ---------- | ----------- |
 | **MSW handler shape unfamiliar** | Medium | Dev handoff includes specific pattern + code example |
 | **AcceptQuote wizard complex (5 steps)** | High | Phase 2 dedicated; 2 days allocated; break into per-step stories |
 | **Play functions new to team** | Medium | QA handoff includes examples; QA validates patterns first |
@@ -205,15 +213,18 @@ PROJECT_BRIEF.md (single source of truth)
 ## Communication Cadence
 
 **Daily (Optional but Encouraged):**
+
 - Dev Agent updates `docs/sprint-1/progress.md` EOD
 
 **Phase Completion (Required):**
+
 - Dev Agent → Producer: "Phase N ready for QA"
 - Producer → QA Agent: "Start Phase N validation"
 - QA Agent → Producer: "Phase N verified / blocked"
 - Producer → slack/teams: phase status update
 
 **Final (Required):**
+
 - QA Agent → Producer: "Full test suite complete, sign-off ready"
 - Producer: Approves merge, closes sprint, updates PROJECT_BRIEF
 
@@ -245,6 +256,7 @@ PROJECT_BRIEF.md (single source of truth)
 ## Closing Note
 
 This sprint is **scope-locked** on 15 specific issues from the assessment. The Producer role ensures:
+
 - Clear handoffs (no ambiguity)
 - Sequence discipline (no out-of-order work)
 - Quality gates (100% test pass)

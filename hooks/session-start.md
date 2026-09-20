@@ -23,7 +23,7 @@ Before taking any action, confirm:
 ## Quick Skill Trigger Reference
 
 | You are about to... | Use first |
-|--------------------|-----------|
+| -------------------- | ----------- |
 | Write a new feature | `brainstorming` skill |
 | Start development | `using-git-worktrees` skill |
 | Write any code | `test-driven-development` skill |

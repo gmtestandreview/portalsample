@@ -286,31 +286,36 @@ render/commit timing of the React Aria listbox under sustained load, not data.
 history is on a pushed branch (PR #1) and is not being rewritten.
 
 ### User's in-flight telemetry work (unrelated to the Storybook diagnostics)
-- `ClientApp/src/env.ts`
-- `ClientApp/src/instrumentation/AppInsightsService.ts`
-- `ClientApp/src/components/ErrorBoundary/index.tsx`
-- `.storybook/preview-setup.ts`
-- `tests/unit/runtime/env.test.ts`
-- `tests/unit/instrumentation/appInsightsService.test.ts`
-- `tests/unit/components/errorBoundary.test.tsx`
-- `tests/unit/storybook/previewEnvStubs.test.ts`
+
+* `ClientApp/src/env.ts`
+
+* `ClientApp/src/instrumentation/AppInsightsService.ts`
+* `ClientApp/src/components/ErrorBoundary/index.tsx`
+* `.storybook/preview-setup.ts`
+* `tests/unit/runtime/env.test.ts`
+* `tests/unit/instrumentation/appInsightsService.test.ts`
+* `tests/unit/components/errorBoundary.test.tsx`
+* `tests/unit/storybook/previewEnvStubs.test.ts`
 
 ### Storybook diagnostic remediation
-- `.storybook/msw-handlers.ts`
-- `ClientApp/src/analytics/GoogleAnalytics.tsx`
-- `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx`
-- `ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx`
-- `ClientApp/src/storybook/storybookFixtures.ts`
-- `vitest.storybook.config.ts`, `vitest.storybook.coverage.ts`,
+
+* `.storybook/msw-handlers.ts`
+
+* `ClientApp/src/analytics/GoogleAnalytics.tsx`
+* `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx`
+* `ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx`
+* `ClientApp/src/storybook/storybookFixtures.ts`
+* `vitest.storybook.config.ts`, `vitest.storybook.coverage.ts`,
   `vitest.storybook.runtime.ts`, `vitest.unit.config.ts`
-- `tests/unit/analytics/googleAnalytics.test.tsx`,
+* `tests/unit/analytics/googleAnalytics.test.tsx`,
   `tests/unit/config/coverageRemapPolicy.test.ts`,
   `tests/unit/config/vitestTopology.test.ts`,
   `tests/unit/coverage/coverageConfig.test.ts`,
   `tests/unit/storybook/mswHandlers.test.ts`
 
 ### Incidental, declared by neither
-- `package-lock.json` (+78/−0 across 72 insertions / 6 deletions). See
+
+* `package-lock.json` (+78/−0 across 72 insertions / 6 deletions). See
   `## Dependency isolation`.
 
 8 + 14 + 1 = 23 files, reconciling with `git show --stat 23f0a2f`.
@@ -571,7 +576,7 @@ receives only the evidence-supported portion.
 | 15 | Out-of-scope diagnostics recorded, not suppressed | 5 | 5 | Manager risk, `act(...)` backlog, lockfile defect and flake documented. |
 | 16 | No claim rests on a truncated log scan | 10 | 10 | Each diagnostic claim names a completed log/auditor; the red initial Step 3 attempt and completed fresh retry are distinguished. |
 | 17 | `terms-config.json` loads as runtime data | 5 | 5 | Retained runtime-data test passed in the unit suite. |
-|  | **Total** | **100** | **97** | **Execution gates complete; criterion 14 remains explicitly limited/unproven.** |
+| | **Total** | **100** | **97** | **Execution gates complete; criterion 14 remains explicitly limited/unproven.** |
 
 The score is not rounded to 100: a passing coverage path and a passing fresh
 non-coverage retry do not clear the separately documented Task 2 dependency

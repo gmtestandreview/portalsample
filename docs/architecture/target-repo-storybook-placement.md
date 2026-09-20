@@ -9,7 +9,7 @@ production build in the target repository.
 The current snapshot has two distinct build pipelines:
 
 | Concern | Current config | File |
-|---|---|---|
+| --- | --- | --- |
 | Production bundle | webpack 5 | `ClientApp/webpack/webpack.config.js` |
 | Storybook (dev/test) | Vite adapter | `.storybook/main.ts` (framework: `@storybook/react-vite`) |
 
@@ -19,6 +19,7 @@ implications.
 ## Placement options for the rebuild
 
 ### Option A: Storybook co-located in the app repo (current approach)
+
 `.storybook/` and story files live alongside source in `ClientApp/src/`.
 
 **Pros:** Stories are adjacent to components; single `npm install`.
@@ -26,6 +27,7 @@ implications.
 split must be managed.
 
 ### Option B: Storybook in a dedicated workspace package
+
 A monorepo structure (e.g. `packages/ui/`, `packages/storybook/`) separates
 the Storybook harness from the production app package.
 
@@ -34,6 +36,7 @@ webpack or Vite independently.
 **Cons:** More complex monorepo tooling (npm workspaces / Turborepo).
 
 ### Option C: Storybook migrated to webpack adapter
+
 Switch `.storybook/main.ts` to `@storybook/react-webpack5` to align with
 the production bundler.
 
@@ -67,7 +70,7 @@ Before choosing a placement strategy:
 ## Files involved
 
 | File | Role |
-|---|---|
+| --- | --- |
 | `.storybook/main.ts` | Current: `@storybook/react-vite` adapter |
 | `ClientApp/webpack/webpack.config.js` | Current: production webpack 5 config — do not edit |
 | `docs/architecture/storybook-vs-webpack-runtime.md` | Divergence analysis |

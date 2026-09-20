@@ -253,9 +253,11 @@ CLOSED_SUCCESS      ← sprint complete
 ## Communication Checkpoints
 
 **Daily (Optional):**
+
 - Dev Agent updates `docs/sprint-1/progress.md` with day's work
 
 **Phase Completion (Required):**
+
 - Dev Agent notifies Producer: "Phase N ready for QA"
 - Producer routes to QA Agent
 - QA Agent runs verification, posts results
@@ -263,6 +265,7 @@ CLOSED_SUCCESS      ← sprint complete
 - If any fail: Dev Agent remediates, re-submits
 
 **Final (Required):**
+
 - QA Agent posts sign-off to `docs/sprint-1/qa-signoff.md`
 - Producer approves merge
 - Sprint marked CLOSED_SUCCESS

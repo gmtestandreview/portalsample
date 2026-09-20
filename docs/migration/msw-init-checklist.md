@@ -22,6 +22,7 @@ npx msw init public/ --save
 ```
 
 This command:
+
 1. Copies the correct version of `mockServiceWorker.js` into `public/`
 2. Adds `"msw": { "workerDirectory": ["public"] }` to `package.json`
 
@@ -98,7 +99,7 @@ using `http.get()` / `HttpResponse` API). When regenerating in the target:
 ## Files involved
 
 | File | Status |
-|---|---|
+| --- | --- |
 | `public/mockServiceWorker.js` | Absent — must be generated in target via `npx msw init public/` |
 | `.storybook/msw-handlers.ts` | Present — uses MSW v2 `http.*` / `HttpResponse` API |
 | `package.json` | Must contain `"msw": { "workerDirectory": ["public"] }` after init |
