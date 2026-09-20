@@ -32,6 +32,8 @@
 | Linked worktree | Breaks (absolute links both ways) | High | `git worktree repair` |
 | `.venv` | Breaks (absolute paths in scripts and `pyvenv.cfg`) | High | Delete and recreate |
 | Claude Code memory (14 memories, `MEMORY.md`) and session history | Not found under the new path (new project dir starts empty) | High | Copy old project dir contents to new key |
+| `.claude/skills/react-aria` symlink | 1 of 31 skill symlinks has an absolute target (the other 30 are relative, e.g. `..\..\skills\adr`); it will dangle | Medium | Recreate with a relative target (Task 3b) |
+| `.tokensave/config.json`, `.remember/logs`, `.agent-sync/logs` | Contain old-path strings; logs are harmless, tokensave config is not | Low | Re-run `tokensave sync`; leave logs |
 | `.claude/settings.local.json` allow-list | Stale absolute-path permissions | Medium | Re-approve or rewrite paths |
 | claude-mem observations | Filed under old project name `portal.measurement.gov.au` | Medium | Accept split history or re-tag |
 | tokensave index | Registry keyed by path | Medium | `tokensave sync` in the new root |
@@ -70,6 +72,18 @@ git -C C:\Users\gregm\source\portal-example worktree list
 ```
 
 Expected: both entries show `C:/Users/gregm/source/portal-example[...]`, and `Get-Content .worktrees\vscode-problems-remediation\.git` points at the new path.
+
+### Task 3b: Fix the absolute `react-aria` skill symlink
+
+Use PowerShell, not git-bash `ln` (which silently copies). Inspect the current target first with `(Get-Item .claude\skills\react-aria).Target`; keep the same destination folder but express it relatively (as the other 30 links do):
+
+```powershell
+cd C:\Users\gregm\source\portal-example
+Remove-Item .claude\skills\react-aria
+New-Item -ItemType SymbolicLink -Path .claude\skills\react-aria -Target <relative-target-matching-old-destination>
+```
+
+If the old target pointed outside the repo, stop and confirm intent before relinking. Verify: `Test-Path .claude\skills\react-aria\SKILL.md` returns `True`. Note: `git status` may show a type change if the link is tracked.
 
 ### Task 4: Recreate `.venv`
 

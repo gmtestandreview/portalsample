@@ -34,7 +34,7 @@ Three custom documentation pages using Doc Blocks:
 ### Core Blocks
 
 | Block | Purpose | Use Case |
-|-------|---------|----------|
+| ------- | --------- | ---------- |
 | **Meta** | Links MDX file to story file | Attach documentation to component |
 | **Title** | Main page heading | Component name |
 | **Subtitle** | Secondary heading | Component tagline |
@@ -50,7 +50,7 @@ Three custom documentation pages using Doc Blocks:
 ### Specialized Blocks
 
 | Block | Purpose |
-|-------|---------|
+| ------- | --------- |
 | **ColorPalette / ColorItem** | Design tokens documentation |
 | **IconGallery / IconItem** | Icon library documentation |
 | **TableOfContents** | Navigation sidebar |
@@ -160,6 +160,7 @@ static/js/
 ```
 
 **Naming Convention:**
+
 - `Component.stories.tsx` — Story definitions (CSF format)
 - `Component.docs.mdx` — Doc Blocks documentation page
 - Both are discoverable by Storybook's story indexer
@@ -181,6 +182,7 @@ stories: [
 ```
 
 The glob pattern `'../static/js/**/*(docs|Docs).mdx'` discovers:
+
 - `Component.docs.mdx` (lowercase)
 - `Component.Docs.mdx` (uppercase)
 - Nested in any `static/js` subdirectory
@@ -189,7 +191,7 @@ The glob pattern `'../static/js/**/*(docs|Docs).mdx'` discovers:
 
 ## 🎨 Doc Blocks in the Sidebar
 
-When you open Storybook at http://localhost:6009/, the sidebar shows:
+When you open Storybook at <http://localhost:6009/>, the sidebar shows:
 
 ```
 📚 Documentation
@@ -225,6 +227,7 @@ When you open Storybook at http://localhost:6009/, the sidebar shows:
 ### Alert.docs.mdx
 
 **Available Doc Blocks:**
+
 - `<Meta of={AlertStories} />` — Links to Alert.stories.tsx
 - `<Title />` — Shows "Alert"
 - `<Subtitle />` — "Displays contextual messages with multiple severity levels"
@@ -233,6 +236,7 @@ When you open Storybook at http://localhost:6009/, the sidebar shows:
 - `<Controls />` — Interactive props editor
 
 **Sections:**
+
 - Component overview
 - Use cases (success, info, warning, error)
 - Accessibility features
@@ -245,9 +249,11 @@ When you open Storybook at http://localhost:6009/, the sidebar shows:
 ### Accordion.docs.mdx
 
 **Available Doc Blocks:**
+
 - All core blocks (Meta, Title, Subtitle, Primary, Stories, Controls)
 
 **Sections:**
+
 - Component overview
 - Use cases (FAQ, wizards, settings)
 - Key features
@@ -262,9 +268,11 @@ When you open Storybook at http://localhost:6009/, the sidebar shows:
 ### PrimaryButton.docs.mdx
 
 **Available Doc Blocks:**
+
 - All core blocks
 
 **Sections:**
+
 - Component overview
 - Use cases (form submission, primary actions)
 - Accessibility features
@@ -359,13 +367,16 @@ Some description here.
 ```tsx
 <MyComponent prop="value" />
 ```
+
 ```
 
 ### Step 6: File Discovery
 
 The `.docs.mdx` file is automatically discovered by the pattern:
 ```
+
 ../static/js/**/*(docs|Docs).mdx
+
 ```
 
 No additional configuration needed!
@@ -407,6 +418,7 @@ parameters: {
 ```
 
 ### 5. **SEO & Accessibility**
+
 - Proper semantic HTML structure
 - Heading hierarchy preserved
 - Code examples are copy-paste ready
@@ -417,7 +429,7 @@ parameters: {
 ## 🔗 Doc Blocks vs. Autodocs
 
 | Feature | Autodocs | Doc Blocks |
-|---------|----------|-----------|
+| --------- | ---------- | ----------- |
 | **Generation** | Automatic | Manual MDX |
 | **Customization** | Limited | Extensive |
 | **Structure** | Fixed template | Flexible layout |
@@ -426,6 +438,7 @@ parameters: {
 | **Maintenance** | Low effort | Medium effort |
 
 **Recommendation:** Use both!
+
 - **Autodocs** — Default documentation for all components
 - **Doc Blocks** — Enhanced documentation for key components
 
@@ -478,7 +491,7 @@ parameters: {
 
 ### In Storybook UI
 
-1. **Open Storybook** at http://localhost:6009/
+1. **Open Storybook** at <http://localhost:6009/>
 2. **Find Component** in sidebar (e.g., Alert, Accordion, PrimaryButton)
 3. **Click 📚 Icon** or "Documentation" link
 4. **View** the Doc Block page with all interactive elements
@@ -506,6 +519,7 @@ http://localhost:6009/?path=/docs/components-buttons-primarybutton--docs
 ## 🎯 Next Steps (Optional Enhancements)
 
 ### 1. **Expand Doc Block Coverage**
+
 ```
 Create .docs.mdx files for:
 - SecondaryButton
@@ -516,6 +530,7 @@ Create .docs.mdx files for:
 ```
 
 ### 2. **Design Tokens Documentation**
+
 ```mdx
 import { ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
 
@@ -526,6 +541,7 @@ import { ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
 ```
 
 ### 3. **Icon Gallery**
+
 ```mdx
 import { IconGallery, IconItem } from '@storybook/addon-docs/blocks';
 
@@ -536,6 +552,7 @@ import { IconGallery, IconItem } from '@storybook/addon-docs/blocks';
 ```
 
 ### 4. **Table of Contents Navigation**
+
 ```mdx
 import { TableOfContents } from '@storybook/addon-docs/blocks';
 
@@ -543,6 +560,7 @@ import { TableOfContents } from '@storybook/addon-docs/blocks';
 ```
 
 ### 5. **Custom Doc Blocks**
+
 Create reusable documentation components using Storybook's `useOf` hook for advanced use cases.
 
 ---
@@ -554,16 +572,19 @@ Create reusable documentation components using Storybook's `useOf` hook for adva
 Doc Blocks have been successfully implemented for three key components (Alert, Accordion, PrimaryButton). The MDX documentation files use interactive Doc Block components to provide rich, customizable documentation with live previews, interactive controls, and code examples.
 
 **Files Created:**
+
 - `static/js/components/Alert/Alert.docs.mdx`
 - `static/js/components/Accordion/Accordion.docs.mdx`
 - `static/js/components/Buttons/PrimaryButton/PrimaryButton.docs.mdx`
 
 **Configuration Updated:**
+
 - `.storybook/main.ts` — Added `.docs.mdx` discovery pattern
 
 **Verification:**
+
 - ✅ TypeScript: 0 errors
 - ✅ Tests: 39/39 passing
-- ✅ Storybook: Running at http://localhost:6009/
+- ✅ Storybook: Running at <http://localhost:6009/>
 
 You can now view the Doc Block documentation pages in Storybook by clicking the 📚 icon on Alert, Accordion, and PrimaryButton components!

@@ -33,11 +33,19 @@ DEFAULT_TARGET = Path(__file__).resolve().parents[1] / "init_skill.py"
 TARGET = Path(os.environ.get("INIT_SKILL_TARGET", DEFAULT_TARGET)).resolve()
 
 
+RESERVED_DEVICE_NAMES = frozenset(
+    {"con", "prn", "aux", "nul"}
+    | {f"{device}{digit}" for device in ("com", "lpt") for digit in "123456789"}
+)
+
+
 def is_valid_skill_name(name: str) -> bool:
     """Test double matching the production validator's documented contract."""
     if not 1 <= len(name) <= 64:
         return False
     if name.startswith("-") or name.endswith("-") or "--" in name:
+        return False
+    if name in RESERVED_DEVICE_NAMES:
         return False
 
     for char in name:
@@ -160,6 +168,51 @@ class InitSkillRegressionTests(unittest.TestCase):
                 case_root.mkdir()
                 self.assertIsNone(self.mod.init_skill(name, case_root))
                 self.assertEqual(list(case_root.iterdir()), [])
+
+    def test_windows_reserved_device_names_are_rejected(self) -> None:
+        reserved = ("con", "prn", "aux", "nul", "com1", "com9", "lpt1", "lpt9")
+
+        for index, name in enumerate(reserved):
+            with self.subTest(name=name):
+                self.assertFalse(is_valid_skill_name(name))
+                case_root = self.root / f"reserved-{index}"
+                case_root.mkdir()
+                self.assertIsNone(self.mod.init_skill(name, case_root))
+                self.assertEqual(list(case_root.iterdir()), [])
+
+    def test_reserved_name_near_misses_are_accepted(self) -> None:
+        near_misses = ("console", "con-sole", "com0", "com10", "lpt0", "my-con", "nul-1")
+
+        for index, name in enumerate(near_misses):
+            with self.subTest(name=name):
+                case_root = self.root / f"near-{index}"
+                case_root.mkdir()
+                self.assertIsNotNone(self.mod.init_skill(name, case_root))
+
+    def test_write_failure_removes_parents_it_created(self) -> None:
+        original = Path.write_text
+
+        def fail_skill_md(
+            path: Path,
+            data: str,
+            encoding: str | None = None,
+            errors: str | None = None,
+            newline: str | None = None,
+        ) -> int:
+            if path.name == "SKILL.md":
+                raise OSError("injected")
+            return original(path, data, encoding=encoding, errors=errors, newline=newline)
+
+        existing = self.root / "existing"
+        existing.mkdir()
+        target_parent = existing / "new-a" / "new-b"
+
+        with patch.object(Path, "write_text", new=fail_skill_md):
+            result = self.mod.init_skill("demo-skill", target_parent)
+
+        self.assertIsNone(result)
+        self.assertTrue(existing.is_dir())
+        self.assertEqual(list(existing.iterdir()), [])
 
     def test_valid_yaml_ambiguous_names_remain_strings(self) -> None:
         ambiguous_names = (

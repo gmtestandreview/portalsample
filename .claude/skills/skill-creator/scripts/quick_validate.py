@@ -22,6 +22,12 @@ ALLOWED_PROPERTIES = frozenset(
     }
 )
 FRONTMATTER_PATTERN = re.compile(r"^---\r?\n(.*?)\r?\n---(?:\r?\n|$)", re.DOTALL)
+# Skill names become directory names; these are device names on Windows, where
+# creating or resolving them misbehaves, so they are rejected on every platform.
+WINDOWS_RESERVED_NAMES = frozenset(
+    {"con", "prn", "aux", "nul"}
+    | {f"{device}{digit}" for device in ("com", "lpt") for digit in "123456789"}
+)
 
 
 class SkillValidationError(ValueError):
@@ -37,6 +43,8 @@ def is_valid_skill_name(name: str) -> bool:
     if not 1 <= len(name) <= 64:
         return False
     if name.startswith("-") or name.endswith("-") or "--" in name:
+        return False
+    if name in WINDOWS_RESERVED_NAMES:
         return False
     return all(
         char == "-" or (char.isalnum() and (not char.isalpha() or char == char.lower()))
@@ -142,6 +150,8 @@ def _validate_frontmatter(frontmatter: Mapping[object, object], skill_path: Path
     _validate_keys(frontmatter)
 
     name = _required_string(frontmatter, "name").strip()
+    if name in WINDOWS_RESERVED_NAMES:
+        _invalid(f"name '{name}' is a reserved Windows device name")
     if not is_valid_skill_name(name):
         _invalid(
             "name must be 1-64 Unicode lowercase alphanumeric/hyphen characters, "

@@ -75,7 +75,7 @@ AuthenticatedElement (per protected route) — nested, not sibling:
 ## 4) Reused Patterns
 
 | Pattern | Where | Why |
-|---------|-------|-----|
+| --------- | ------- | ----- |
 | **Compound component** | `WizardForm` + `WizardStep` | Exposes a clean JSX API for multi-step forms while keeping step-routing and lifecycle internal. `WizardForm` reads `children`, validates they are `WizardStep` elements, and converts each to a `<Route>`. |
 | **Context + hook** | `AccountStateCtx` / `AccountDispatchCtx` + `useAccountState()` / `useAccountDispatch()` in `authentication/hooks.tsx` | Prevents direct context imports; splits read from write so components that only consume state do not re-render on dispatch mutations and vice versa. `ModalStateCtx` / `ModalDispatchCtx` + `useModalState()` / `useModalDispatch()` in `components/modals/ModalContext.tsx` isolate modal visibility state from user profile state. |
 | **Module augmentation** | `yupExtensions/stringExtensions.ts` — `declare module 'yup'` | Adds 19 custom validators to `Yup.StringSchema` without forking the library. **Side-effect import required** in any file that calls them. |

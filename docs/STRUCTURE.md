@@ -209,7 +209,7 @@ portal.measurement.gov.au/           ← workspace root
 ### Test and tooling folders
 
 | Path | Purpose |
-|------|---------|
+| ------ | --------- |
 | `tests/unit/` | Vitest unit suites for components, helpers, and instrumentation |
 | `tests/unit/helpers/` | Shared test wrappers and form helpers |
 | `tests/e2e/features/` | BDD feature files grouped by domain (25 files) |
@@ -225,7 +225,7 @@ portal.measurement.gov.au/           ← workspace root
 ## 2) Entry Points
 
 | Entry point | Purpose |
-|-------------|---------|
+| ------------- | --------- |
 | `ClientApp/src/index.tsx` | App bootstrap — top-level `await` MSAL init (line 16), TrustedTypes policy, then `createRoot` render. Provider order is `StrictMode` → `ErrorBoundary` → `MsalProvider` → `AccountProvider` → `RouterProvider`; `StrictMode` is outermost. |
 | `ClientApp/src/App.tsx` | Router — `createBrowserRouter` + `createRoutesFromElements` |
 | `ClientApp/src/styles/index.scss` | SCSS entry point for the NMI Bootstrap theme |
@@ -233,7 +233,7 @@ portal.measurement.gov.au/           ← workspace root
 ## 3) Key Files (read these early)
 
 | File | Why critical |
-|------|-------------|
+| ------ | ------------- |
 | `ClientApp/src/env.ts` | All runtime config lives here; `process.env` is undefined at runtime |
 | `ClientApp/src/authentication/hooks.tsx` | ONLY way to access AccountContext — exports `useAccountState()` and `useAccountDispatch()`; do not import the contexts directly |
 | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` | Side-effect import required in every Yup schema that uses custom methods |
@@ -243,7 +243,7 @@ portal.measurement.gov.au/           ← workspace root
 ## 4) Edit Boundaries
 
 | Status | Paths |
-|--------|-------|
+| -------- | ------- |
 | **Edit freely** | `ClientApp/src/**/*.ts`, `ClientApp/src/**/*.tsx`, `ClientApp/src/styles/**/*.scss` |
 | **Edit with care** | `docs/**/*.md`, `tests/**/*.ts`, `tests/**/*.tsx`, `vitest.config.ts`, `vitest.unit.config.ts`, `vitest.storybook.config.ts`, `quality/vitest.regression.config.ts`, `vitest.setup.ts`, `playwright.config.ts`, `playwright.storybook.config.ts`, `webpack.config.js`, `package.json`, `sonar-project.properties`, `.github/workflows/**` |
 | **Never edit** | `ClientApp/src/main.*.js`, `ClientApp/css/main.*.css`, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, `ClientApp/webpack/**`, `ClientApp/src/parent/node_modules/**`, `reports/**`, `node_modules/**` |

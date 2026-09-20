@@ -3,7 +3,7 @@
 ## 1) Naming Rules
 
 | Item | Rule | Example | Evidence |
-|------|------|---------|----------|
+| ------ | ------ | --------- | ---------- |
 | React component files | PascalCase, `.tsx` extension | `AuthenticatedElement.tsx`, `Dashboard.tsx` | `ClientApp/src/authentication/AuthenticatedElement.tsx` |
 | Directory entry-points | `index.tsx` as default export | `components/Layout/index.tsx` | Throughout `components/` |
 | TypeScript utility files | camelCase or kebab-case, `.ts` | `authConfig.ts`, `errorRoutes.ts` | `ClientApp/src/authentication/authConfig.ts` |

@@ -52,7 +52,7 @@ reports/test-results/               # generated
 Use the existing scripts in `package.json`:
 
 | Command | Purpose |
-|---|---|
+| --- | --- |
 | `npm run type-check` | Compile-time validation for TS/TSX changes |
 | `npm run test:unit` | Run the unit test suite |
 | `npm run test:unit:watch` | Run unit tests in watch mode |
@@ -121,14 +121,14 @@ cannot pass through a coarser gate than the PR that produced it.
 Storybook BDD support commands:
 
 | Command | Purpose |
-|---|---|
+| --- | --- |
 | `npx bddgen` | Regenerate Playwright-BDD specs from `.feature` files |
 | `npx playwright test --grep "@storybook" --reporter=list` | Run all Storybook-tagged BDD scenarios |
 
 Generated outputs:
 
 | Output | Location |
-|---|---|
+| --- | --- |
 | HTML coverage report | `reports/coverage/unit/index.html` |
 | JSON coverage summary | `reports/coverage/unit/coverage-summary.json` |
 | JUnit report | `reports/vitest/junit.xml` |
@@ -244,7 +244,7 @@ Guidelines:
 ## 6) Mocking Strategy
 
 | Concern | Approach |
-|---|---|
+| --- | --- |
 | Formik context | Wrap components with a tiny helper Formik wrapper |
 | React Router | Use `MemoryRouter` or `createMemoryRouter` in tests |
 | App Insights | Mock constructors and assert initialization config |

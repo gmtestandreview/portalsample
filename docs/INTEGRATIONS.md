@@ -55,7 +55,7 @@ client.setAuthToken(tokenResult.accessToken);
 ### Required env vars
 
 | Var | Purpose |
-|-----|---------|
+| ----- | --------- |
 | `REACT_APP_B2C_CLIENTID` | Application (client) ID in Azure AD B2C |
 | `REACT_APP_B2C_AUTHORITY` | User flow authority URL |
 | `REACT_APP_B2C_KNOWN_AUTHORITIES` | Trusted authority domain |
@@ -117,7 +117,7 @@ const result = await client.getDashboardDraftsByPortalID(crmGuid, year, status, 
 ### Capabilities in use
 
 | Feature | How |
-|---------|-----|
+| --------- | ----- |
 | React component error tracking | `ReactPlugin` passed to every `<ErrorBoundary appInsights={ai.reactPlugin}>` |
 | Automatic route tracking | `enableAutoRouteTracking: true` in App Insights config |
 | Structured logging | `AppLogger.verbose/info/error` wraps `ai.appInsights.trackTrace`/`trackException` |
@@ -140,10 +140,12 @@ const result = await client.getDashboardDraftsByPortalID(crmGuid, year, status, 
 ### Usage
 
 `<GoogleAnalytics>` is used as a wrapper:
+
 - Inside `Layout/index.tsx` — wraps all public pages
 - Inside `WizardStep.tsx` — wraps each wizard step for per-step tracking
 
 Manual event tracking:
+
 ```ts
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 trackGAEvent('New request');        // tracks named GA event

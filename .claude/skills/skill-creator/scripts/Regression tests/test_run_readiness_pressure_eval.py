@@ -167,7 +167,7 @@ def _script_dir() -> Path:
 
 SCRIPT_DIR = _script_dir()
 ORIG = SCRIPT_DIR / "run_readiness_pressure_eval.py"
-OPT = SCRIPT_DIR / "run_readiness_pressure_eval_optimized_v7.py"
+OPT = SCRIPT_DIR / "run_readiness_pressure_eval.py"
 
 
 def make_helper_module() -> ModuleType:

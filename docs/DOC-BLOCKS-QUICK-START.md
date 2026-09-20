@@ -41,7 +41,7 @@ I've successfully implemented Storybook Doc Blocks for your component library. H
 
 - ✅ TypeScript: 0 errors
 - ✅ Tests: 39/39 passing
-- ✅ Storybook: Ready at http://localhost:6009/
+- ✅ Storybook: Ready at <http://localhost:6009/>
 
 ---
 
@@ -49,7 +49,7 @@ I've successfully implemented Storybook Doc Blocks for your component library. H
 
 ### View Documentation in Storybook
 
-1. Open http://localhost:6009/
+1. Open <http://localhost:6009/>
 2. Find component in sidebar (Alert, Accordion, PrimaryButton)
 3. Click the **📚 icon** or "Documentation" link
 4. Explore the Doc Block page with:
@@ -136,6 +136,7 @@ import * as ComponentStories from './Component.stories';
 ## 🔗 Next Steps (Optional)
 
 Create more Doc Block pages for remaining components:
+
 - SecondaryButton
 - Breadcrumb
 - BodyText
@@ -143,6 +144,7 @@ Create more Doc Block pages for remaining components:
 - InTextLink
 
 Add specialized blocks:
+
 - `<ColorPalette>` for design tokens
 - `<IconGallery>` for icons
 - `<TableOfContents>` for navigation
@@ -160,6 +162,7 @@ Add specialized blocks:
 ## ✨ Result
 
 Your component library now has **professional, interactive documentation** with:
+
 - Live component previews
 - Interactive prop editing
 - Copy-paste code examples
