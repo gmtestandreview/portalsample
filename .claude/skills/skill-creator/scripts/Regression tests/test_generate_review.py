@@ -11,7 +11,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-MODULE_PATH = Path(__file__).with_name("generate_review.py")
+MODULE_PATH = Path(__file__).resolve().parents[2] / "eval-viewer" / "generate_review.py"
 SPEC = importlib.util.spec_from_file_location("generate_review", MODULE_PATH)
 assert SPEC is not None
 assert SPEC.loader is not None
@@ -327,7 +327,9 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
             bad = root / "benchmark.json"
             bad.write_text('{"not":"a benchmark"}', encoding="utf-8")
 
-            result = review.main([str(root), "--benchmark", str(bad), "--static", str(root / "x.html")])
+            result = review.main(
+                [str(root), "--benchmark", str(bad), "--static", str(root / "x.html")]
+            )
 
             self.assertEqual(result, 1)
 

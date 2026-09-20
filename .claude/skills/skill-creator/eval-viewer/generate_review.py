@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import errno
 import hashlib
 import json
@@ -813,10 +814,8 @@ def _atomic_write_json(path: Path, data: dict[str, object]) -> None:
         Path(temp_name).replace(path)
     finally:
         if temp_name is not None:
-            try:
+            with contextlib.suppress(OSError):
                 Path(temp_name).unlink(missing_ok=True)
-            except OSError:
-                pass
 
 
 def _origin_allowed(origin: str | None) -> bool:
