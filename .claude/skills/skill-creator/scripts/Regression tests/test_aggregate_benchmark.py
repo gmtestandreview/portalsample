@@ -1,4 +1,4 @@
-"""Focused regression tests for aggregate_benchmark_optimized.py."""
+"""Focused regression tests for aggregate_benchmark.py."""
 
 from __future__ import annotations
 
@@ -12,10 +12,10 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from aggregate_benchmark_optimized import RunResult
+    from aggregate_benchmark import RunResult
 
-MODULE_PATH = Path(__file__).with_name("aggregate_benchmark_optimized.py")
-SPEC = importlib.util.spec_from_file_location("aggregate_benchmark_optimized", MODULE_PATH)
+MODULE_PATH = Path(__file__).with_name("aggregate_benchmark.py")
+SPEC = importlib.util.spec_from_file_location("aggregate_benchmark", MODULE_PATH)
 assert SPEC is not None
 assert SPEC.loader is not None
 aggregate_benchmark = importlib.util.module_from_spec(SPEC)

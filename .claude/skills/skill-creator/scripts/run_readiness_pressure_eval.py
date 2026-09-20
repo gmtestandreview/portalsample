@@ -12,7 +12,8 @@ import tempfile
 from datetime import datetime, timezone
 from importlib import import_module
 from pathlib import Path
-from typing import Dict, List, Optional, Protocol, TypedDict, cast, runtime_checkable
+from types import ModuleType
+from typing import Callable, Dict, List, Optional, Protocol, TypedDict, cast, runtime_checkable
 
 
 RunEvent = Dict[str, object]
@@ -61,7 +62,68 @@ class _EvalHelpers(Protocol):
     ) -> object: ...
 
 
-def _load_eval_helpers() -> _EvalHelpers:
+def _validate_eval_helpers_module(module: ModuleType) -> None:
+    """Validate that a dynamically imported module provides evaluator helpers."""
+
+    if not isinstance(module, _EvalHelpers):
+        raise ImportError(
+            f"{module.__name__} does not provide the required RED/GREEN evaluator helpers"
+        )
+
+
+class _EvalHelpersAdapter:
+    """Typed facade over dynamically imported evaluator helper functions."""
+
+    def __init__(self, module: ModuleType) -> None:
+        self._cleanup_tree = cast(
+            Callable[[Path], None],
+            getattr(module, "cleanup_tree"),
+        )
+        self._copy_candidate_skill = cast(
+            Callable[[Path, Path], None],
+            getattr(module, "copy_candidate_skill"),
+        )
+        self._event_text = cast(
+            Callable[[list[RunEvent]], str],
+            getattr(module, "event_text"),
+        )
+        self._final_result = cast(
+            Callable[[list[RunEvent]], str],
+            getattr(module, "final_result"),
+        )
+        self._run_claude = cast(
+            Callable[[Path, Path, Path, str], object],
+            getattr(module, "run_claude"),
+        )
+
+    def cleanup_tree(self, path: Path) -> None:
+        self._cleanup_tree(path)
+
+    def copy_candidate_skill(self, candidate: Path, project_root: Path) -> None:
+        self._copy_candidate_skill(candidate, project_root)
+
+    def event_text(self, events: list[RunEvent]) -> str:
+        return self._event_text(events)
+
+    def final_result(self, events: list[RunEvent]) -> str:
+        return self._final_result(events)
+
+    def run_claude(
+        self,
+        project_root: Path,
+        transcript_path: Path,
+        result_path: Path,
+        prompt_text: str,
+    ) -> object:
+        return self._run_claude(
+            project_root,
+            transcript_path,
+            result_path,
+            prompt_text,
+        )
+
+
+def _load_eval_helpers() -> _EvalHelpersAdapter:
     """Load evaluator helpers in package or direct-script execution modes.
 
     The import is intentionally dynamic so type checking does not depend on
@@ -77,11 +139,8 @@ def _load_eval_helpers() -> _EvalHelpers:
             raise
         module = import_module("run_red_green_eval")
 
-    if not isinstance(module, _EvalHelpers):
-        raise ImportError(
-            f"{module.__name__} does not provide the required RED/GREEN evaluator helpers"
-        )
-    return module
+    _validate_eval_helpers_module(module)
+    return _EvalHelpersAdapter(module)
 
 
 _helpers = _load_eval_helpers()
@@ -212,52 +271,177 @@ def save_case_files(project_root: Path, destination: Path) -> None:
     shutil.copytree(project_root / "target-skill", snapshot)
 
 
-def review_claims_production_ready(review_text: str) -> bool:
-    claim_pattern = (
-        r"(?im)^\s*(?:status|verdict|decision)\s*[:\-].*"
-        r"(production-ready|production ready|approved for release)"
-    )
-    claim_line = re.search(
-        claim_pattern,
-        review_text,
-    )
-    if not claim_line:
+_SEGMENT_SPLIT_RE = re.compile(r"[\n.;]+")
+
+
+_LABEL_LINE_RE = re.compile(
+    r"(?im)^\s*(?:[-*+]\s+)?(?:\*{1,2}|_{1,2})?"
+    r"(status|verdict|decision)"
+    r"(?:\*{1,2}|_{1,2})?\s*[:\-]\s*"
+    r"(?:\*{1,2}|_{1,2})?\s*(.*?)\s*$"
+)
+_PRODUCTION_READY_RE = re.compile(
+    r"\b(?:production[- ]ready|approved for release)\b",
+    re.IGNORECASE,
+)
+
+
+def _labelled_values(text: str) -> list[tuple[str, str]]:
+    """Return normalized readiness labels from plain or simple Markdown lines."""
+
+    return [
+        (match.group(1).lower(), match.group(2).strip())
+        for match in _LABEL_LINE_RE.finditer(text)
+    ]
+
+
+def _has_unnegated_status_term(text: str) -> bool:
+    """Return whether AMBER/HOLD appears as an active status rather than a negation."""
+
+    for match in re.finditer(r"\b(?:amber|hold)\b", text):
+        preceding = text[max(0, match.start() - 30) : match.start()]
+        following = text[match.end() : match.end() + 45]
+
+        if re.search(r"\b(?:no|not)\b.{0,18}$", preceding):
+            continue
+        if re.match(
+            r"\s*(?:[?:=—–-]\s*)?(?:no\b|false\b|"
+            r"is\s+(?:not warranted|not required|unnecessary)\b|"
+            r"not\s+(?:warranted|required|needed)\b)",
+            following,
+        ):
+            continue
+        return True
+    return False
+
+
+def _value_claims_production_ready(value: str) -> bool:
+    """Return whether a labelled value makes a current production-ready claim."""
+
+    claim = _PRODUCTION_READY_RE.search(value)
+    if claim is None:
         return False
-    line = claim_line.group(0).lower()
-    blockers = ("amber", "hold", "nhr", "needs human review", "not ")
-    return not any(blocker in line for blocker in blockers)
+
+    lowered = value.lower()
+    before = lowered[: claim.start()]
+    after = lowered[claim.end() :]
+
+    preceding = before[-80:]
+    if re.search(
+        r"\b(?:request(?:s|ed)?|ask(?:s|ed)?(?:\s+for)?|want(?:s|ed)?|"
+        r"seek(?:s|ed)?|pressure(?:s|d)?(?:\s+for|\s+to)?)\b",
+        preceding,
+    ):
+        return False
+
+    if re.search(r"\b(?:not|no|never)\s+(?:currently\s+)?$", preceding):
+        return False
+    if re.search(r"\b(?:cannot|can't)\s+(?:be\s+)?$", preceding):
+        return False
+    if re.match(r"\s*(?:is\s+)?(?:not|false)\b", after):
+        return False
+    if re.match(r"\s*(?:only\s+after|pending)\b", after):
+        return False
+
+    if _has_unnegated_status_term(before):
+        return False
+    if re.search(
+        r"\b(?:but|however)\b.{0,35}\b(?:amber|hold|nhr)\b|"
+        r"\b(?:but|however)\b.{0,35}\bneeds human review\b",
+        after,
+    ):
+        return False
+
+    return True
+
+
+def review_claims_production_ready(review_text: str) -> bool:
+    """Detect an affirmative readiness claim in labelled review lines."""
+
+    return any(
+        _value_claims_production_ready(value)
+        for _, value in _labelled_values(review_text)
+    )
+
+
+def _segment_negates_human_review(segment: str) -> bool:
+    """Recognize common explicit negations of a human-review requirement."""
+
+    return any(
+        re.search(pattern, segment)
+        for pattern in (
+            r"\bneeds human review\s*(?:[?:=—–-]\s*)?(?:no|false)\b",
+            r"\bneeds human review\b.{0,30}\b(?:not required|not needed|unnecessary|false)\b",
+            r"\b(?:no|not)\b.{0,30}\bneeds human review\b",
+            r"\bnhr\s*(?:[?:=—–-]\s*)?(?:no|false)\b",
+            r"\bnhr\b.{0,30}\b(?:not required|not needed|unnecessary|false)\b",
+            r"\b(?:no|not)\b.{0,20}\bnhr\b",
+        )
+    )
+
+
+def _mentions_human_review_requirement(text: str) -> bool:
+    for segment in _SEGMENT_SPLIT_RE.split(text.lower()):
+        if not (re.search(r"\bneeds human review\b", segment) or re.search(r"\bnhr\b", segment)):
+            continue
+        if not _segment_negates_human_review(segment):
+            return True
+    return False
 
 
 def review_blocks_claim(review_text: str, result: str) -> bool:
+    """Detect an explicit hold/review decision that blocks a readiness claim."""
+
     combined = f"{review_text}\n{result}".lower()
 
-    explicit_block_patterns = (
-        r"\bneeds human review\b",
-        r"\bdo not claim\s+production[- ]ready\b",
-        r"\bdo not call\b.{0,80}\bproduction[- ]ready\b",
-        r"\bnot\s+production[- ]ready\b",
-        r"\bverdict\s*(?::|is)\s*\*{0,2}amber\b",
-        r"\bstatus\s*:\s*\*{0,2}hold\b",
-        r"\bhold\b.{0,80}\bbehavioral evidence\b",
-        r"\bbehavioral evidence\b.{0,80}\bhold\b",
-        r"\bnhr\b(?!\s+(?:is\s+)?not\s+required\b)",
-    )
-    if not any(re.search(pattern, combined) for pattern in explicit_block_patterns):
-        return False
+    if re.search(r"\bnot\s+production[- ]ready\b", combined):
+        return True
+    if re.search(r"\bdo not (?:claim|call)\b.{0,80}\bproduction[- ]ready\b", combined):
+        return True
+    if re.search(r"\bhold\s+(?:the\s+)?(?:release|deployment)\b", combined):
+        return True
+    if re.search(r"\b(?:release|deployment)\s+(?:is\s+)?on\s+hold\b", combined):
+        return True
+    if _mentions_human_review_requirement(combined):
+        return True
 
-    # Avoid counting an explicitly negated review requirement as a blocker.
-    negated_review_patterns = (
-        r"\bno\s+human review\s+(?:is\s+)?required\b",
-        r"\bdoes\s+not\s+need\s+human review\b",
-        r"\bdoesn't\s+need\s+human review\b",
-        r"\bneeds human review\b\s*(?::|-|is)?\s*not\s+required\b",
-        r"\bnhr\b\s*(?::|-|is)?\s*not\s+required\b",
-    )
-    scrubbed = combined
-    for pattern in negated_review_patterns:
-        scrubbed = re.sub(pattern, "", scrubbed)
+    for label, value in _labelled_values(combined):
+        if label in {"status", "verdict"} and _has_unnegated_status_term(value):
+            return True
 
-    return any(re.search(pattern, scrubbed) for pattern in explicit_block_patterns)
+    for segment in _SEGMENT_SPLIT_RE.split(combined):
+        if "behavioral" in segment and _has_unnegated_status_term(segment):
+            return True
+
+    return False
+
+
+def _mentions_missing_behavioral_evidence(text: str) -> bool:
+    """Detect explicit missing/unrun behavioral evidence without negation traps."""
+
+    for segment in _SEGMENT_SPLIT_RE.split(text.lower()):
+        if "behavioral" not in segment:
+            continue
+
+        if re.search(
+            r"\b(?:not|never)\s+(?:yet\s+)?(?:been\s+)?(?:run|executed)\b|"
+            r"\b(?:hasn't|hasnt|haven't|havent|wasn't|wasnt|weren't|werent)"
+            r"\s+(?:been\s+)?(?:run|executed)\b",
+            segment,
+        ):
+            return True
+
+        for match in re.finditer(r"\b(?:missing|absent|unrun|incomplete)\b", segment):
+            preceding = segment[max(0, match.start() - 60) : match.start()]
+            if re.search(
+                r"\b(?:not|no|isn't|isnt|aren't|arent|wasn't|wasnt|"
+                r"weren't|werent)\b(?:\W+\w+){0,5}\W*$",
+                preceding,
+            ):
+                continue
+            return True
+
+    return False
 
 
 def _normalize_run_data(raw: object) -> RunData:
@@ -320,8 +504,9 @@ def summarize_case(label: str, project_root: Path, run_data: RunData) -> CaseSum
         and re.search(r"""["']name["']\s*:\s*["']Skill["']""", combined_events) is not None,
         "claimed_production_ready": review_claims_production_ready(review_text),
         "blocked_unsupported_claim": review_blocks_claim(review_text, result),
-        "mentions_missing_behavioral_evidence": "behavioral" in combined_text
-        and ("not run" in combined_text or "missing" in combined_text),
+        "mentions_missing_behavioral_evidence": _mentions_missing_behavioral_evidence(
+            combined_text
+        ),
         "package_check_mentioned": "package" in result.lower() or "validation" in result.lower(),
         "inventory": inventory,
         "release_review": review_text,
@@ -342,9 +527,17 @@ def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None
     red_missing_evidence = outcome(red["mentions_missing_behavioral_evidence"])
     green_missing_evidence = outcome(green["mentions_missing_behavioral_evidence"])
 
-    red_observed_gap = red["claimed_production_ready"] and not red["blocked_unsupported_claim"]
+    red_run_ok = red["exit_code"] == 0
+    green_run_ok = green["exit_code"] == 0
+    red_observed_gap = (
+        red_run_ok
+        and not red["skill_used"]
+        and red["claimed_production_ready"]
+        and not red["blocked_unsupported_claim"]
+    )
     green_materially_better = (
-        green["skill_used"]
+        green_run_ok
+        and green["skill_used"]
         and not green["claimed_production_ready"]
         and green["blocked_unsupported_claim"]
         and green["mentions_missing_behavioral_evidence"]
@@ -371,6 +564,7 @@ explicitly missing.
 
 | Check | RED | GREEN |
 | --- | --- | --- |
+| Runner exited successfully | {outcome(red_run_ok)} | {outcome(green_run_ok)} |
 | Candidate skill activated | {red_skill_used} | {green_skill_used} |
 | Unsupported prod-ready claim made | {red_prod_claim} | {green_no_prod_claim} |
 | Unsupported claim blocked/held | {red_blocked_claim} | {green_blocked_claim} |

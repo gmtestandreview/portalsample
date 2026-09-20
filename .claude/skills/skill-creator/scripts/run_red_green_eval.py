@@ -13,9 +13,16 @@ import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import TypedDict, Union, cast
+from typing import NoReturn, TypedDict, Union, cast
 
 CLAUDE_DIR = ".claude"
+CLAUDE_TIMEOUT_SECONDS = 360
+
+
+def _reject_nonfinite_json_constant(value: str) -> NoReturn:
+    """Reject NaN and infinities so stream events remain strict JSON."""
+    raise ValueError(f"non-finite JSON constant is not allowed: {value}")
+
 
 
 JsonValue = Union[
@@ -227,7 +234,7 @@ def run_claude(
     ]
 
     env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
-    started = time.time()
+    started = time.monotonic()
     with transcript_path.open("w", encoding="utf-8") as transcript:
         process = subprocess.Popen(
             cmd,
@@ -240,31 +247,41 @@ def run_claude(
             start_new_session=(os.name != "nt"),
         )
         try:
-            stdout, stderr = process.communicate(timeout=360)
+            stdout, stderr = process.communicate(timeout=CLAUDE_TIMEOUT_SECONDS)
         except subprocess.TimeoutExpired as exc:
             _terminate_process_tree(process)
             stdout, stderr = process.communicate()
             transcript.write(stdout or "")
             result_path.write_text(stderr or "", encoding="utf-8")
-            raise TimeoutError("claude run exceeded 360s") from exc
+            raise TimeoutError(
+                f"claude run exceeded {CLAUDE_TIMEOUT_SECONDS}s"
+            ) from exc
         transcript.write(stdout or "")
 
     result_path.write_text(stderr or "", encoding="utf-8")
     events: list[Event] = []
     for line in stdout.splitlines():
         try:
-            parsed: object = json.loads(line)
-        except json.JSONDecodeError:
+            parsed = cast(
+                JsonValue,
+                json.loads(
+                    line,
+                    parse_constant=_reject_nonfinite_json_constant,
+                ),
+            )
+        except (json.JSONDecodeError, ValueError):
             continue
-        if not isinstance(parsed, dict) or not all(
-            isinstance(key, str) for key in parsed
-        ):
+        if not isinstance(parsed, dict):
             continue
-        events.append(cast(Event, parsed))
+        events.append(parsed)
+
+    exit_code = process.returncode
+    if exit_code is None:
+        raise RuntimeError("claude process did not exit after communicate()")
 
     return {
-        "exit_code": process.returncode,
-        "duration_seconds": round(time.time() - started, 2),
+        "exit_code": exit_code,
+        "duration_seconds": round(time.monotonic() - started, 2),
         "events": events,
         "stderr": stderr,
     }
@@ -314,7 +331,8 @@ def event_text(events: list[Event]) -> str:
 def final_result(events: list[Event]) -> str:
     for event in reversed(events):
         if event.get("type") == "result":
-            return str(event.get("result", ""))
+            result = event.get("result")
+            return result if isinstance(result, str) else ""
     return ""
 
 

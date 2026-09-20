@@ -7,7 +7,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-VIEWER = Path(__file__).with_name("viewer_optimized.html")
+VIEWER = Path(__file__).with_name("viewer.html")
 
 
 class ViewerOptimizedTests(unittest.TestCase):

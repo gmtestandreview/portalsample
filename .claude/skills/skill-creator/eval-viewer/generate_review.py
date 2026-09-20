@@ -147,7 +147,7 @@ def _read_json_object(path: Path) -> dict[str, object] | None:
             path.read_text(encoding=TEXT_ENCODING),
             parse_constant=_reject_non_standard_json_constant,
         )
-    except (json.JSONDecodeError, OSError, ValueError):
+    except (OSError, ValueError):
         return None
     return _as_object_dict(value)
 
@@ -201,46 +201,55 @@ def _iter_ancestors_to_root(path: Path, root: Path) -> list[Path]:
     current = path
     while True:
         result.append(current)
-        if current == root:
-            return result
-        if current.parent == current:
-            return result
+        if current == root or current.parent == current:
+            break
         current = current.parent
+    return result
 
 
-def _load_prompt_and_eval_id(root: Path, run_dir: Path) -> tuple[str, EvalId | None]:
-    """Load prompt and eval ID independently from metadata/transcript fallbacks."""
+def _metadata_prompt(metadata: dict[str, object]) -> str | None:
+    value = metadata.get("prompt")
+    return value if isinstance(value, str) and value.strip() else None
+
+
+def _load_metadata_fields(root: Path, run_dir: Path) -> tuple[str | None, EvalId | None]:
     prompt: str | None = None
     eval_id: EvalId | None = None
-
     for directory in _iter_ancestors_to_root(run_dir, root):
         metadata = _read_json_object(directory / "eval_metadata.json")
         if metadata is None:
             continue
-
         if prompt is None:
-            prompt_value = metadata.get("prompt")
-            if isinstance(prompt_value, str) and prompt_value.strip():
-                prompt = prompt_value
-
+            prompt = _metadata_prompt(metadata)
         if eval_id is None:
             eval_id = _coerce_eval_id(metadata.get("eval_id"))
-
         if prompt is not None and eval_id is not None:
             break
+    return prompt, eval_id
 
+
+def _load_transcript_prompt(root: Path, run_dir: Path) -> str | None:
+    candidates = (
+        run_dir / TRANSCRIPT_FILE,
+        run_dir / OUTPUTS_DIR_NAME / TRANSCRIPT_FILE,
+    )
+    for candidate in candidates:
+        if not candidate.is_file() or not _is_within(candidate, root):
+            continue
+        try:
+            extracted = _extract_prompt(candidate.read_text(encoding=TEXT_ENCODING))
+        except OSError:
+            continue
+        if extracted:
+            return extracted
+    return None
+
+
+def _load_prompt_and_eval_id(root: Path, run_dir: Path) -> tuple[str, EvalId | None]:
+    """Load prompt and eval ID independently from metadata/transcript fallbacks."""
+    prompt, eval_id = _load_metadata_fields(root, run_dir)
     if prompt is None:
-        for candidate in (run_dir / TRANSCRIPT_FILE, run_dir / OUTPUTS_DIR_NAME / TRANSCRIPT_FILE):
-            if not candidate.is_file() or not _is_within(candidate, root):
-                continue
-            try:
-                extracted = _extract_prompt(candidate.read_text(encoding=TEXT_ENCODING))
-            except OSError:
-                continue
-            if extracted:
-                prompt = extracted
-                break
-
+        prompt = _load_transcript_prompt(root, run_dir)
     return prompt or "(No prompt found)", eval_id
 
 
@@ -333,6 +342,61 @@ def embed_file(
     }
 
 
+def _sorted_children(directory: Path, *, reverse: bool = False) -> list[Path]:
+    try:
+        return sorted(directory.iterdir(), key=lambda path: path.name, reverse=reverse)
+    except OSError:
+        return []
+
+
+def _relative_output_name(child: Path, outputs_dir: Path) -> str | None:
+    try:
+        return child.relative_to(outputs_dir).as_posix()
+    except ValueError:
+        return None
+
+
+def _symlink_output_entry(
+    child: Path,
+    display_name: str,
+    workspace_root: Path,
+) -> tuple[Path, str, str | None] | None:
+    if not _is_within(child, workspace_root):
+        return child, display_name, UNSAFE_PATH_MESSAGE
+    try:
+        resolved = child.resolve(strict=True)
+    except OSError:
+        return child, display_name, ERROR_READING_FILE
+    if resolved.is_dir():
+        # Never recurse through directory symlinks: avoids cycles and preserves
+        # discovery rooted in the physical workspace tree.
+        return None
+    return child, display_name, None
+
+
+def _visit_output_child(
+    child: Path,
+    *,
+    outputs_dir: Path,
+    workspace_root: Path,
+    stack: list[Path],
+) -> tuple[Path, str, str | None] | None:
+    display_name = _relative_output_name(child, outputs_dir)
+    if display_name is None:
+        return None
+    if child.name in METADATA_FILES and child.parent == outputs_dir:
+        return None
+    if child.is_symlink():
+        return _symlink_output_entry(child, display_name, workspace_root)
+    if child.is_dir():
+        if _is_within(child, workspace_root):
+            stack.append(child)
+        return None
+    if child.is_file():
+        return child, display_name, None
+    return None
+
+
 def _walk_output_entries(
     outputs_dir: Path,
     workspace_root: Path,
@@ -343,46 +407,17 @@ def _walk_output_entries(
 
     entries: list[tuple[Path, str, str | None]] = []
     stack: list[Path] = [outputs_dir]
-
     while stack:
         directory = stack.pop()
-        try:
-            children = sorted(directory.iterdir(), key=lambda path: path.name)
-        except OSError:
-            continue
-
-        for child in children:
-            try:
-                relative_name = child.relative_to(outputs_dir).as_posix()
-            except ValueError:
-                continue
-
-            if child.name in METADATA_FILES and child.parent == outputs_dir:
-                continue
-
-            if child.is_symlink():
-                if not _is_within(child, workspace_root):
-                    entries.append((child, relative_name, UNSAFE_PATH_MESSAGE))
-                    continue
-                try:
-                    resolved = child.resolve(strict=True)
-                except OSError:
-                    entries.append((child, relative_name, ERROR_READING_FILE))
-                    continue
-                if resolved.is_dir():
-                    # Do not recurse through directory symlinks; this avoids cycles and
-                    # keeps discovery rooted in the physical workspace tree.
-                    continue
-                entries.append((child, relative_name, None))
-                continue
-
-            if child.is_dir():
-                if _is_within(child, workspace_root):
-                    stack.append(child)
-                continue
-
-            if child.is_file():
-                entries.append((child, relative_name, None))
+        for child in _sorted_children(directory):
+            entry = _visit_output_child(
+                child,
+                outputs_dir=outputs_dir,
+                workspace_root=workspace_root,
+                stack=stack,
+            )
+            if entry is not None:
+                entries.append(entry)
 
     entries.sort(key=lambda item: item[1])
     return entries
@@ -433,6 +468,15 @@ def _looks_like_run_dir(path: Path) -> bool:
     )
 
 
+def _is_discoverable_directory(path: Path, root: Path) -> bool:
+    return (
+        path.is_dir()
+        and path.name not in SKIP_DIRECTORIES
+        and not path.is_symlink()
+        and _is_within(path, root)
+    )
+
+
 def _discover_run_dirs(root: Path) -> list[Path]:
     """Discover run directories without following directory symlinks."""
     discovered: list[Path] = []
@@ -442,21 +486,14 @@ def _discover_run_dirs(root: Path) -> list[Path]:
         current = stack.pop()
         if not current.is_dir() or not _is_within(current, root):
             continue
-
         if current != root and _looks_like_run_dir(current):
             discovered.append(current)
             continue
-
-        try:
-            children = sorted(current.iterdir(), key=lambda path: path.name, reverse=True)
-        except OSError:
-            continue
-
-        for child in children:
-            if not child.is_dir() or child.name in SKIP_DIRECTORIES or child.is_symlink():
-                continue
-            if _is_within(child, root):
-                stack.append(child)
+        stack.extend(
+            child
+            for child in _sorted_children(current, reverse=True)
+            if _is_discoverable_directory(child, root)
+        )
 
     return discovered
 
@@ -673,6 +710,54 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
+def _feedback_status(data: dict[str, object]) -> str:
+    status = data.get("status", "in_progress")
+    if not isinstance(status, str) or status not in SUPPORTED_FEEDBACK_STATUSES:
+        raise ValueError("feedback status must be 'in_progress' or 'complete'")
+    return status
+
+
+def _feedback_timestamp(value: object) -> str:
+    if value is None:
+        return _utc_now_iso()
+    if not isinstance(value, str) or not _parse_iso_datetime(value):
+        raise ValueError("review.timestamp must be an offset-aware ISO-8601 date-time")
+    return value
+
+
+def _normalize_feedback_review(
+    item: object,
+    *,
+    allowed_run_ids: set[str] | None,
+    seen_run_ids: set[str],
+) -> dict[str, object]:
+    review = _as_object_dict(item)
+    if review is None:
+        raise ValueError("each feedback review must be a JSON object")
+
+    unexpected = set(review).difference({"run_id", "feedback", "timestamp"})
+    if unexpected:
+        raise ValueError(f"unexpected review fields: {sorted(unexpected)}")
+
+    run_id = review.get("run_id")
+    feedback = review.get("feedback")
+    if not isinstance(run_id, str) or not run_id:
+        raise ValueError("review.run_id must be a non-empty string")
+    if run_id in seen_run_ids:
+        raise ValueError(f"duplicate review.run_id: {run_id}")
+    if allowed_run_ids is not None and run_id not in allowed_run_ids:
+        raise ValueError(f"unknown review.run_id for this workspace: {run_id}")
+    if not isinstance(feedback, str):
+        raise ValueError("review.feedback must be a string")
+
+    seen_run_ids.add(run_id)
+    return {
+        "run_id": run_id,
+        "feedback": feedback,
+        "timestamp": _feedback_timestamp(review.get("timestamp")),
+    }
+
+
 def _normalize_feedback_payload(
     data: dict[str, object],
     *,
@@ -687,54 +772,16 @@ def _normalize_feedback_payload(
     if not isinstance(reviews_value, list):
         raise ValueError("feedback must contain a 'reviews' list")
 
-    status_value = data.get("status", "in_progress")
-    if not isinstance(status_value, str) or status_value not in SUPPORTED_FEEDBACK_STATUSES:
-        raise ValueError(
-            "feedback status must be 'in_progress' or 'complete'"
-        )
-
-    normalized_reviews: list[dict[str, object]] = []
     seen_run_ids: set[str] = set()
-
-    for item in cast(list[object], reviews_value):
-        review = _as_object_dict(item)
-        if review is None:
-            raise ValueError("each feedback review must be a JSON object")
-
-        unexpected_review = set(review).difference({"run_id", "feedback", "timestamp"})
-        if unexpected_review:
-            raise ValueError(
-                f"unexpected review fields: {sorted(unexpected_review)}"
-            )
-
-        run_id = review.get("run_id")
-        feedback = review.get("feedback")
-        timestamp = review.get("timestamp")
-
-        if not isinstance(run_id, str) or not run_id:
-            raise ValueError("review.run_id must be a non-empty string")
-        if run_id in seen_run_ids:
-            raise ValueError(f"duplicate review.run_id: {run_id}")
-        if allowed_run_ids is not None and run_id not in allowed_run_ids:
-            raise ValueError(f"unknown review.run_id for this workspace: {run_id}")
-        if not isinstance(feedback, str):
-            raise ValueError("review.feedback must be a string")
-
-        if timestamp is None:
-            timestamp = _utc_now_iso()
-        elif not isinstance(timestamp, str) or not _parse_iso_datetime(timestamp):
-            raise ValueError("review.timestamp must be an offset-aware ISO-8601 date-time")
-
-        seen_run_ids.add(run_id)
-        normalized_reviews.append(
-            {
-                "run_id": run_id,
-                "feedback": feedback,
-                "timestamp": timestamp,
-            }
+    normalized_reviews = [
+        _normalize_feedback_review(
+            item,
+            allowed_run_ids=allowed_run_ids,
+            seen_run_ids=seen_run_ids,
         )
-
-    return {"reviews": normalized_reviews, "status": status_value}
+        for item in cast(list[object], reviews_value)
+    ]
+    return {"reviews": normalized_reviews, "status": _feedback_status(data)}
 
 
 def _default_feedback_payload() -> dict[str, object]:
@@ -942,7 +989,7 @@ class ReviewHandler(BaseHTTPRequestHandler):
             )
             with _feedback_write_lock:
                 _atomic_write_json(self.feedback_path, normalized)
-        except (json.JSONDecodeError, OSError, ValueError) as exc:
+        except (OSError, ValueError) as exc:
             self._send_json({"error": str(exc)}, status=400)
             return
 

@@ -1,6 +1,8 @@
 # Common Patterns Library
 
-Example regex and glob patterns for project-local skill triggers. **Customize and test these patterns before use.** They are starting points, not production-safe defaults; generic verbs or nouns can cause broad activation.
+Example regex and glob patterns for project-local skill triggers. **Customize
+and test these patterns before use.** They are starting points, not
+production-safe defaults; generic verbs or nouns can cause broad activation.
 
 ## Table of Contents
 
@@ -126,7 +128,7 @@ router\.                         # Express router
 app\.(get|post|put|delete|patch) # Express app routes
 ```
 
-### Error Handling
+### Error Handling Content
 
 ```regex
 try\s*\{                        # Try blocks

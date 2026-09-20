@@ -1,6 +1,9 @@
 # Hook Mechanisms - Deep Dive
 
-Technical deep dive into the project-local UserPromptSubmit and PreToolUse hooks. This file documents the suggestion and blocking flows; it does not imply these are the only hooks registered in the project. Confirm `.claude/settings.json` when current hook inventory matters.
+Technical deep dive into the project-local UserPromptSubmit and PreToolUse
+hooks. This file documents the suggestion and blocking flows; it does not imply
+these are the only hooks registered in the project. Confirm
+`.claude/settings.json` when current hook inventory matters.
 
 ## Table of Contents
 
@@ -14,9 +17,9 @@ Technical deep dive into the project-local UserPromptSubmit and PreToolUse hooks
 
 ## UserPromptSubmit Hook Flow
 
-### Execution Sequence
+### UserPromptSubmit Execution Sequence
 
-```
+```text
 User submits prompt
     ↓
 .claude/settings.json registers hook
@@ -40,7 +43,7 @@ stdout becomes context for Claude (injected before prompt)
 Claude sees: [skill suggestion] + user's prompt
 ```
 
-### Key Points
+### UserPromptSubmit Key Points
 
 - **Exit code**: Always 0 (allow)
 - **stdout**: → Claude's context (injected as system message)
@@ -48,7 +51,7 @@ Claude sees: [skill suggestion] + user's prompt
 - **Behavior**: Non-blocking, advisory only
 - **Purpose**: Make Claude aware of relevant skills
 
-### Input Format
+### UserPromptSubmit Input Format
 
 ```json
 {
@@ -61,9 +64,9 @@ Claude sees: [skill suggestion] + user's prompt
 }
 ```
 
-### Output Format (to stdout)
+### UserPromptSubmit Output Format
 
-```
+```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 SKILL ACTIVATION CHECK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -75,15 +78,16 @@ ACTION: Use Skill tool BEFORE responding
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-Claude sees this output as additional context before processing the user's prompt.
+Claude sees this output as additional context before processing the user's
+prompt.
 
 ---
 
 ## PreToolUse Hook Flow
 
-### Execution Sequence
+### PreToolUse Execution Sequence
 
-```
+```text
 Claude calls Edit/Write tool
     ↓
 .claude/settings.json registers hook (matcher: Edit|Write)
@@ -119,7 +123,7 @@ IF ALLOWED:
   Tool executes normally
 ```
 
-### Key Points
+### PreToolUse Key Points
 
 - **Exit code 2**: BLOCK (stderr → Claude)
 - **Exit code 0**: ALLOW
@@ -128,7 +132,7 @@ IF ALLOWED:
 - **Fail open**: On errors, allows operation (don't break workflow)
 - **Purpose**: Enforce critical guardrails
 
-### Input Format
+### PreToolUse Input Format
 
 ```json
 {
@@ -146,9 +150,9 @@ IF ALLOWED:
 }
 ```
 
-### Output Format (to stderr when blocked)
+### PreToolUse Blocked Output Format
 
-```
+```text
 ⚠️ BLOCKED - Database Operation Detected
 
 📋 REQUIRED ACTION:
@@ -163,7 +167,8 @@ File: form/src/services/user.ts
 💡 TIP: Add '// @skip-validation' comment to skip future checks
 ```
 
-Claude receives this message and understands it needs to use the skill before retrying the edit.
+Claude receives this message and understands it needs to use the skill before
+retrying the edit.
 
 ---
 
@@ -190,7 +195,7 @@ This is THE critical mechanism for enforcement:
 
 ### Example Conversation Flow
 
-```
+```text
 User: "Add a new user service with Prisma"
 
 Claude: "I'll create the user service..."
@@ -212,7 +217,8 @@ Claude sees error, responds:
 
 ### Purpose
 
-Prevent repeated nagging in the same session - once Claude uses a skill, don't block again.
+Prevent repeated nagging in the same session. Once Claude uses a skill, don't
+block again.
 
 ### State File Location
 
@@ -249,9 +255,11 @@ Prevent repeated nagging in the same session - once Claude uses a skill, don't b
 
 ### Limitation
 
-The hook cannot detect when the skill is *actually* invoked - it just blocks once per session per skill. This means:
+The hook cannot detect when the skill is *actually* invoked. It just blocks
+once per session per skill. This means:
 
-- If Claude doesn't use the skill but makes a different edit, it won't block again
+- If Claude doesn't use the skill but makes a different edit, it won't block
+  again
 - Trust that Claude follows the instruction
 - Future enhancement: detect actual Skill tool usage
 

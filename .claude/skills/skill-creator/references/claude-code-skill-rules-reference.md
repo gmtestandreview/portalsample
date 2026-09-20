@@ -1,6 +1,9 @@
 # skill-rules.json - Complete Reference
 
-Complete project-local schema and configuration reference for `.claude/skills/skill-rules.json`. This schema is part of the documented hook system, not the universal Agent Skills specification. Verify the target repository's actual schema/hook implementation before adding fields.
+Complete project-local schema and configuration reference for
+`.claude/skills/skill-rules.json`. This schema is part of the documented hook
+system, not the universal Agent Skills specification. Verify the target
+repository's actual schema/hook implementation before adding fields.
 
 ## Table of Contents
 
@@ -17,7 +20,8 @@ Complete project-local schema and configuration reference for `.claude/skills/sk
 
 **Path:** `.claude/skills/skill-rules.json`
 
-This JSON file defines all skills and their trigger conditions for the auto-activation system.
+This JSON file defines all skills and their trigger conditions for the
+auto-activation system.
 
 ---
 
@@ -63,7 +67,7 @@ interface SkillRule {
 ### Top Level
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `version` | string | Yes | Schema version (currently "1.0") |
 | `skills` | object | Yes | Map of skill name → SkillRule |
 
@@ -72,20 +76,26 @@ interface SkillRule {
 | Field | Type | Required | Description |
 | ------- | ------ | ---------- | ------------- |
 | `type` | string | Yes | "guardrail" (enforced) or "domain" (advisory) |
-| `enforcement` | string | Yes | `"block"` (PreToolUse), `"suggest"` (UserPromptSubmit), or `"warn"`. The supplied hook reference does not define a distinct `"warn"` runtime path; verify implementation before relying on it. |
+| `enforcement` | string | Yes | Allowed hook behavior |
 | `priority` | string | Yes | "critical", "high", "medium", or "low" |
 | `promptTriggers` | object | Optional | Triggers for UserPromptSubmit hook |
 | `fileTriggers` | object | Optional | Triggers for PreToolUse hook |
-| `blockMessage` | string | Optional* | Required if enforcement="block". Use `{file_path}` placeholder |
+| `blockMessage` | string | Optional* | Block text with `{file_path}` |
 | `skipConditions` | object | Optional | Escape hatches and session tracking |
 
 *Required for guardrails
 
+`enforcement` accepts `"block"` (PreToolUse), `"suggest"` (UserPromptSubmit),
+or `"warn"`. The supplied hook reference does not define a distinct `"warn"`
+runtime path; verify implementation before relying on it.
+
+`blockMessage` is required if `enforcement` is `"block"`.
+
 ### promptTriggers Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `keywords` | string[] | Optional | Exact substring matches (case-insensitive) |
+| ------- | ------ | ---------- | ------------- |
+| `keywords` | string[] | Optional | Exact case-insensitive substrings |
 | `intentPatterns` | string[] | Optional | Regex patterns for intent detection |
 
 ### fileTriggers Fields
@@ -93,8 +103,8 @@ interface SkillRule {
 | Field | Type | Required | Description |
 | ------- | ------ | ---------- | ------------- |
 | `pathPatterns` | string[] | Yes* | Glob patterns for file paths |
-| `pathExclusions` | string[] | Optional | Glob patterns to exclude (e.g., test files) |
-| `contentPatterns` | string[] | Optional | Regex patterns to match file content |
+| `pathExclusions` | string[] | Optional | Glob patterns to exclude |
+| `contentPatterns` | string[] | Optional | Regex content matches |
 | `createOnly` | boolean | Optional | Only trigger when creating new files |
 
 *Required if fileTriggers is present
@@ -103,15 +113,17 @@ interface SkillRule {
 
 | Field | Type | Required | Description |
 | ------- | ------ | ---------- | ------------- |
-| `sessionSkillUsed` | boolean | Optional | Skip if skill already used this session |
+| `sessionSkillUsed` | boolean | Optional | Skip after session use |
 | `fileMarkers` | string[] | Optional | Skip if file contains comment marker |
-| `envOverride` | string | Optional | Environment variable name to disable skill |
+| `envOverride` | string | Optional | Disable-skill environment variable |
 
 ---
 
 ## Example: Guardrail Skill
 
 Complete example of a blocking guardrail skill with all features:
+
+<!-- markdownlint-disable MD013 -->
 
 ```json
 {
@@ -181,6 +193,8 @@ Complete example of a blocking guardrail skill with all features:
   }
 }
 ```
+
+<!-- markdownlint-enable MD013 -->
 
 ### Key Points for Guardrails
 
@@ -308,7 +322,8 @@ If valid, jq will pretty-print the JSON. If invalid, it will show the error.
 - [ ] File path patterns use correct glob syntax
 - [ ] Content patterns escape special characters
 - [ ] Priority matches enforcement level
-- [ ] If `warn` is used, its runtime behavior is confirmed from the target hook implementation
+- [ ] If `warn` is used, its runtime behavior is confirmed from the target
+  hook implementation
 - [ ] No duplicate skill names
 
 ---

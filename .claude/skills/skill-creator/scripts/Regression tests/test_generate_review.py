@@ -11,8 +11,8 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-MODULE_PATH = Path(__file__).with_name("generate_review_optimized.py")
-SPEC = importlib.util.spec_from_file_location("generate_review_optimized", MODULE_PATH)
+MODULE_PATH = Path(__file__).with_name("generate_review.py")
+SPEC = importlib.util.spec_from_file_location("generate_review", MODULE_PATH)
 assert SPEC is not None and SPEC.loader is not None
 review = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = review
@@ -182,7 +182,7 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
     def test_generate_html_requires_exactly_one_marker(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             module_dir = Path(tmp)
-            fake_module = module_dir / "generate_review_optimized.py"
+            fake_module = module_dir / "generate_review.py"
             fake_module.write_text("", encoding="utf-8")
             (module_dir / "viewer.html").write_text("<html>no marker</html>", encoding="utf-8")
             old_file = review.__file__

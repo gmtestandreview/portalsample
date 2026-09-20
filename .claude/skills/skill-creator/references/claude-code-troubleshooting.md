@@ -1,6 +1,8 @@
 # Troubleshooting - Skill Activation Issues
 
-Complete debugging guide for the documented project-local skill activation system. Commands assume the referenced `.claude` files and Node/TypeScript tooling exist; inspect the target repository before running them.
+Complete debugging guide for the documented project-local skill activation
+system. Commands assume the referenced `.claude` files and Node/TypeScript
+tooling exist; inspect the target repository before running them.
 
 ## Table of Contents
 
@@ -261,7 +263,7 @@ If set, the skill is disabled.
 unset SKIP_DB_VERIFICATION
 ```
 
-#### Debug Command
+#### PreToolUse Debug Command
 
 Test the hook manually:
 

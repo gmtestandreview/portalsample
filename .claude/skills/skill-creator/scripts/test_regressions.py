@@ -8,12 +8,18 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import patch
 
-try:
-    from scripts import aggregate_benchmark, run_eval, run_red_green_eval
-    from scripts.utils import parse_skill_md
-except (ImportError, ModuleNotFoundError):
+if TYPE_CHECKING:
+    import aggregate_benchmark
+    import run_eval
+    import run_red_green_eval
+    from utils import parse_skill_md
+elif __package__:
+    from . import aggregate_benchmark, run_eval, run_red_green_eval
+    from .utils import parse_skill_md
+else:
     import aggregate_benchmark
     import run_eval
     import run_red_green_eval
@@ -104,7 +110,9 @@ class AggregateBenchmarkTests(unittest.TestCase):
 
             results = aggregate_benchmark.load_run_results(benchmark_dir)
 
-            self.assertEqual(results["with_skill"][0]["time_seconds"], 0.0)
+            result = results["with_skill"][0]
+            self.assertIn("time_seconds", result)
+            self.assertEqual(result.get("time_seconds"), 0.0)
 
 
 class RunEvalValidationTests(unittest.TestCase):
@@ -112,7 +120,11 @@ class RunEvalValidationTests(unittest.TestCase):
         eval_set = [{"query": "Create a useful skill", "should_trigger": "yes"}]
 
         with self.assertRaises(ValueError):
-            run_eval._validate_eval_set(eval_set, runs_per_query=1, trigger_threshold=0.5)
+            run_eval._validate_eval_set(  # pyright: ignore[reportPrivateUsage]
+                eval_set,
+                runs_per_query=1,
+                trigger_threshold=0.5,
+            )
 
 
 class RunEvalRegistrationTests(unittest.TestCase):
@@ -140,9 +152,15 @@ class RunEvalRegistrationTests(unittest.TestCase):
             def wait(self) -> int:
                 return 0
 
-        def fake_popen(*_args, **kwargs) -> FakeProcess:
-            cmd = _args[0]
-            root = Path(kwargs["cwd"])
+        def fake_popen(
+            cmd: list[str],
+            *_args: object,
+            **kwargs: object,
+        ) -> FakeProcess:
+            cwd = kwargs.get("cwd")
+            if not isinstance(cwd, str):
+                raise AssertionError("expected subprocess cwd to be a string")
+            root = Path(cwd)
             skill_md = root / ".claude" / "skills" / "example-skill-12345678" / "SKILL.md"
             command_file = root / ".claude" / "commands" / "example-skill-12345678.md"
             self.assertNotEqual(root, project_root)
@@ -396,7 +414,11 @@ class RedGreenEvalTests(unittest.TestCase):
                 patch.object(run_red_green_eval, "_terminate_process_tree") as terminate,
                 self.assertRaisesRegex(TimeoutError, "exceeded 360s"),
             ):
-                run_red_green_eval.run_claude(root, transcript_path, stderr_path)
+                run_red_green_eval.run_claude(  # pyright: ignore[reportUnknownMemberType]
+                    root,
+                    transcript_path,
+                    stderr_path,
+                )
 
         terminate.assert_called_once_with(fake_process)
 
