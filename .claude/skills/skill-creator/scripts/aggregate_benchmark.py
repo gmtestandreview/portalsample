@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from statistics import fmean, stdev
-from typing import TypeAlias, TypeGuard, TypedDict, cast
+from typing import TypeAlias, TypedDict, TypeGuard, cast
 
 JsonScalar: TypeAlias = str | int | float | bool | None
 JsonValue: TypeAlias = JsonScalar | list["JsonValue"] | dict[str, "JsonValue"]
@@ -42,6 +42,7 @@ REQUIRED_EXPECTATION_FIELDS: frozenset[str] = frozenset({"text", "passed", "evid
 PASS_RATE_TOLERANCE = 1e-9
 EVAL_DIR_GLOB = "eval-*"
 RUN_DIR_GLOB = "run-*"
+MAX_INDEX_DIGITS = 18
 
 
 class Stats(TypedDict):
@@ -181,7 +182,10 @@ def require_number(
     """Validate and return a finite numeric field."""
     if not is_number(value):
         raise ValueError(f"{field} must be a finite number")
-    result = float(value)
+    try:
+        result = float(value)
+    except OverflowError as exc:
+        raise ValueError(f"{field} must be a finite number") from exc
     if minimum is not None and result < minimum:
         raise ValueError(f"{field} must be >= {minimum}")
     if maximum is not None and result > maximum:
@@ -232,8 +236,11 @@ def calculate_stats(values: Sequence[float]) -> Stats | None:
         return None
     if not all(math.isfinite(value) for value in values):
         raise ValueError("statistics require finite values")
-    mean = fmean(values)
-    stddev = stdev(values) if len(values) > 1 else 0.0
+    try:
+        mean = fmean(values)
+        stddev = stdev(values) if len(values) > 1 else 0.0
+    except OverflowError as exc:
+        raise ValueError("statistics overflow for observed values") from exc
     return {
         "count": len(values),
         "mean": round(mean, 4),
@@ -249,7 +256,9 @@ def parse_prefixed_index(name: str, prefix: str) -> int | None:
     if not name.startswith(expected_prefix):
         return None
     suffix = name[len(expected_prefix) :]
-    return int(suffix) if suffix.isdecimal() else None
+    if not (suffix.isascii() and suffix.isdecimal() and len(suffix) <= MAX_INDEX_DIGITS):
+        return None
+    return int(suffix)
 
 
 def numeric_path_sort_key(path: Path, prefix: str) -> tuple[int, int, str]:
@@ -279,10 +288,10 @@ def config_sort_key(config_dir: Path) -> tuple[int, str]:
     return config_name_sort_key(config_dir.name)
 
 
-def eval_id_sort_key(eval_id: EvalId) -> tuple[int, str]:
+def eval_id_sort_key(eval_id: EvalId) -> tuple[int, int, str]:
     if isinstance(eval_id, int):
-        return 0, f"{eval_id:+021d}"
-    return 1, eval_id
+        return 0, eval_id, ""
+    return 1, 0, eval_id
 
 
 def load_json_object(path: Path) -> JsonObject:
@@ -378,9 +387,7 @@ def validate_expectation(
     if not isinstance(passed, bool):
         raise ValueError(f"expectations[{index}].passed in {grading_file} must be boolean")
     if not isinstance(evidence, str) or not evidence.strip():
-        raise ValueError(
-            f"expectations[{index}].evidence in {grading_file} must be non-empty"
-        )
+        raise ValueError(f"expectations[{index}].evidence in {grading_file} must be non-empty")
     return cast(JsonValue, dict(obj))
 
 
@@ -458,6 +465,8 @@ def load_timing_file(run_dir: Path) -> tuple[float | None, int | None]:
             field=f"{timing_file}: total_tokens",
             minimum=0,
         )
+        if tokens is not None:
+            require_number(tokens, field=f"{timing_file}: total_tokens")
     except ValueError as exc:
         warn(str(exc))
         return None, None
@@ -639,7 +648,6 @@ def load_config_results(config_dir: Path, eval_id: EvalId, eval_name: str) -> li
         if result is not None:
             runs.append(result)
     return runs
-
 
 
 def _sorted_eval_dirs(search_dir: Path) -> list[Path]:
@@ -888,13 +896,14 @@ def build_coverage_notes(evidence: WorkspaceEvidence) -> list[str]:
     return notes
 
 
-def benchmark_run_sort_key(run: BenchmarkRun) -> tuple[tuple[int, str], tuple[int, str], int]:
+def benchmark_run_sort_key(
+    run: BenchmarkRun,
+) -> tuple[tuple[int, int, str], tuple[int, str], int]:
     return (
         eval_id_sort_key(run["eval_id"]),
         config_name_sort_key(run["configuration"]),
         run["run_number"],
     )
-
 
 
 def _build_run_metrics(result: RunResult) -> RunMetrics:
@@ -978,7 +987,6 @@ def generate_benchmark(
     return benchmark
 
 
-
 def _validate_run_semantics(runs: Sequence[BenchmarkRun]) -> None:
     seen: set[tuple[str, EvalId, int]] = set()
     for run in runs:
@@ -1044,7 +1052,6 @@ def get_config_summary(run_summary: RunSummary, config: str) -> ConfigSummary:
 def get_delta_summary(run_summary: RunSummary) -> DeltaSummary | None:
     value = run_summary.get("delta")
     return cast(DeltaSummary, value) if value is not None else None
-
 
 
 def _format_time_stats(summary: ConfigSummary) -> str:
@@ -1201,13 +1208,25 @@ def parse_cli_args(argv: Sequence[str] | None = None) -> CliArgs:
     )
 
 
+def markdown_output_path(output_json: Path) -> Path:
+    """Return the Markdown sibling of output_json, refusing paths that would collide."""
+    if not output_json.name:
+        raise ValueError(f"output path has no file name: {output_json}")
+    output_md = output_json.with_suffix(".md")
+    if output_md == output_json:
+        raise ValueError(f"output path must not use the .md suffix: {output_json}")
+    return output_md
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     args = parse_cli_args(argv)
     if not args.benchmark_dir.is_dir():
         print(f"Directory not found: {args.benchmark_dir}", file=sys.stderr)
         return 2
 
+    output_json = args.output or (args.benchmark_dir / "benchmark.json")
     try:
+        output_md = markdown_output_path(output_json)
         benchmark = generate_benchmark(
             args.benchmark_dir,
             args.skill_name,
@@ -1217,9 +1236,6 @@ def main(argv: Sequence[str] | None = None) -> int:
     except ValueError as exc:
         print(f"Unable to aggregate benchmark: {exc}", file=sys.stderr)
         return 2
-
-    output_json = args.output or (args.benchmark_dir / "benchmark.json")
-    output_md = output_json.with_suffix(".md")
 
     try:
         output_json.parent.mkdir(parents=True, exist_ok=True)
@@ -1234,9 +1250,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(f"Generated: {output_json}")
     print(f"Generated: {output_md}")
     print("\nSummary:")
-    for config in (
-        key for key in benchmark["run_summary"] if key != "delta"
-    ):
+    for config in (key for key in benchmark["run_summary"] if key != "delta"):
         summary = get_config_summary(benchmark["run_summary"], config)
         print(
             f"  {config.replace('_', ' ').title()}: "

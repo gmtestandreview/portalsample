@@ -141,6 +141,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -158,8 +159,8 @@ class RunEvalRegistrationTests(unittest.TestCase):
             **kwargs: object,
         ) -> FakeProcess:
             cwd = kwargs.get("cwd")
-            if not isinstance(cwd, str):
-                raise AssertionError("expected subprocess cwd to be a string")
+            if not isinstance(cwd, (str, Path)):
+                raise AssertionError("expected subprocess cwd to be a path")
             root = Path(cwd)
             skill_md = root / ".claude" / "skills" / "example-skill-12345678" / "SKILL.md"
             command_file = root / ".claude" / "commands" / "example-skill-12345678.md"
@@ -209,6 +210,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -256,6 +258,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -307,6 +310,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -360,6 +364,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
