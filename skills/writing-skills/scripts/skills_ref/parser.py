@@ -1,11 +1,19 @@
 """YAML frontmatter parsing for SKILL.md files."""
 
+import re
 from pathlib import Path
+from typing import Any
 
 import strictyaml
 
 from .errors import ParseError, ValidationError
 from .models import SkillProperties
+
+# Opening and closing delimiters must each be a whole line of exactly ``---``.
+_FRONTMATTER_RE = re.compile(
+    r"\A---[ \t]*\r?\n(?P<frontmatter>.*?)^---[ \t]*(?:\r?\n|\Z)(?P<body>.*)",
+    re.DOTALL | re.MULTILINE,
+)
 
 
 def find_skill_md(skill_dir: Path) -> Path | None:
@@ -27,7 +35,15 @@ def find_skill_md(skill_dir: Path) -> Path | None:
     return None
 
 
-def parse_frontmatter(content: str) -> tuple[dict, str]:
+def read_skill_text(skill_md: Path) -> str:
+    """Read SKILL.md as UTF-8, reporting I/O and decoding failures as ParseError."""
+    try:
+        return skill_md.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError) as e:
+        raise ParseError(f"Cannot read {skill_md} as UTF-8: {e}") from e
+
+
+def parse_frontmatter(content: str) -> tuple[dict[str, Any], str]:
     """Parse YAML frontmatter from SKILL.md content.
 
     Args:
@@ -39,21 +55,22 @@ def parse_frontmatter(content: str) -> tuple[dict, str]:
     Raises:
         ParseError: If frontmatter is missing or invalid
     """
-    if not content.startswith("---"):
+    first_line = next(iter(content.splitlines()), "")
+    if first_line.rstrip() != "---":
         raise ParseError("SKILL.md must start with YAML frontmatter (---)")
 
-    parts = content.split("---", 2)
-    if len(parts) < 3:
+    match = _FRONTMATTER_RE.match(content)
+    if match is None:
         raise ParseError("SKILL.md frontmatter not properly closed with ---")
 
-    frontmatter_str = parts[1]
-    body = parts[2].strip()
+    frontmatter_str = match.group("frontmatter")
+    body = match.group("body").strip()
 
     try:
         parsed = strictyaml.load(frontmatter_str)
         metadata = parsed.data
     except strictyaml.YAMLError as e:
-        raise ParseError(f"Invalid YAML in frontmatter: {e}")
+        raise ParseError(f"Invalid YAML in frontmatter: {e}") from e
 
     if not isinstance(metadata, dict):
         raise ParseError("SKILL.md frontmatter must be a YAML mapping")
@@ -83,8 +100,7 @@ def read_properties(skill_dir: Path) -> SkillProperties:
     if skill_md is None:
         raise ParseError(f"SKILL.md not found in {skill_dir}")
 
-    content = skill_md.read_text()
-    metadata, _ = parse_frontmatter(content)
+    metadata, _ = parse_frontmatter(read_skill_text(skill_md))
 
     if "name" not in metadata:
         raise ValidationError("Missing required field in frontmatter: name")

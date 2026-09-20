@@ -2,9 +2,10 @@
 
 import unicodedata
 from pathlib import Path
+from typing import Any
 
 from .errors import ParseError
-from .parser import find_skill_md, parse_frontmatter
+from .parser import find_skill_md, parse_frontmatter, read_skill_text
 
 MAX_SKILL_NAME_LENGTH = 64
 MAX_DESCRIPTION_LENGTH = 1024
@@ -21,7 +22,7 @@ ALLOWED_FIELDS = {
 }
 
 
-def _validate_name(name: str, skill_dir: Path) -> list[str]:
+def _validate_name(name: str, skill_dir: Path | None) -> list[str]:
     """Validate skill name format and directory match.
 
     Skill names support i18n characters (Unicode letters) plus hyphens.
@@ -107,7 +108,7 @@ def _validate_license(license_value: str) -> list[str]:
     return []
 
 
-def _validate_metadata_value(metadata_value: dict) -> list[str]:
+def _validate_metadata_value(metadata_value: object) -> list[str]:
     """Validate metadata as a string-to-string mapping when present."""
     if not isinstance(metadata_value, dict):
         return ["Field 'metadata' must be a mapping"]
@@ -131,7 +132,7 @@ def _validate_allowed_tools(allowed_tools: str) -> list[str]:
     return errors
 
 
-def _validate_metadata_fields(metadata: dict) -> list[str]:
+def _validate_metadata_fields(metadata: dict[str, Any]) -> list[str]:
     """Validate that only allowed fields are present."""
     errors = []
 
@@ -145,7 +146,7 @@ def _validate_metadata_fields(metadata: dict) -> list[str]:
     return errors
 
 
-def validate_metadata(metadata: dict, skill_dir: Path | None = None) -> list[str]:
+def validate_metadata(metadata: dict[str, Any], skill_dir: Path | None = None) -> list[str]:
     """Validate parsed skill metadata.
 
     This is the core validation function that works on already-parsed metadata,
@@ -210,8 +211,7 @@ def validate(skill_dir: Path) -> list[str]:
         return ["Missing required file: SKILL.md"]
 
     try:
-        content = skill_md.read_text()
-        metadata, body = parse_frontmatter(content)
+        metadata, body = parse_frontmatter(read_skill_text(skill_md))
     except ParseError as e:
         return [str(e)]
 

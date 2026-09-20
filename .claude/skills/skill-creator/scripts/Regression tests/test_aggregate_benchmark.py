@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from aggregate_benchmark import RunResult
 
-MODULE_PATH = Path(__file__).with_name("aggregate_benchmark.py")
+MODULE_PATH = Path(__file__).resolve().parents[1] / "aggregate_benchmark.py"
 SPEC = importlib.util.spec_from_file_location("aggregate_benchmark", MODULE_PATH)
 assert SPEC is not None
 assert SPEC.loader is not None

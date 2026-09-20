@@ -1,15 +1,10 @@
 ---
 name: writing-skills
-description: Use when creating, editing, optimizing, testing, validating, installing, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, Codex skill installation, and deployment readiness.
-compatibility: 
-  - codex
-  - claude
-  - a-team
-  - claude-code
-  - Github Copilot
-metadata: 
-  - version: 2026-09-09-a-team-wiring-review-design
-  - last-updated: 2026-09-09
+description: Use when creating, editing, optimizing, testing, validating, installing, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "writing skills" or "called writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, Codex skill installation, and deployment readiness.
+compatibility: codex, claude, a-team, claude-code, Github Copilot
+metadata:
+  version: 2026-09-09-a-team-wiring-review-design
+  last-updated: 2026-09-09
 ---
 <!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 

@@ -186,3 +186,23 @@ Body
     # Verify to_dict outputs as "allowed-tools" (hyphenated)
     d = props.to_dict()
     assert d["allowed-tools"] == "Bash(jq:*) Bash(git:*)"
+
+
+def test_delimiter_inside_value_does_not_truncate_frontmatter():
+    content = "---\nname: my-skill\ndescription: uses a --- rule inside\n---\nBody\n"
+    metadata, body = parse_frontmatter(content)
+    assert metadata["description"] == "uses a --- rule inside"
+    assert body == "Body"
+
+
+def test_opener_must_be_exactly_three_dashes():
+    with pytest.raises(ParseError):
+        parse_frontmatter("----\nname: x\n---\nBody\n")
+
+
+def test_read_properties_reports_undecodable_file_as_parse_error(tmp_path):
+    skill_dir = tmp_path / "my-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_bytes(b"---\nname: my-skill\n\xff\xfe\n---\nBody\n")
+    with pytest.raises(ParseError):
+        read_properties(skill_dir)

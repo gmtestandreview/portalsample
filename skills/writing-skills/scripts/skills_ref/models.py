@@ -2,6 +2,8 @@
 
 from dataclasses import dataclass, field
 
+SkillPropertyValue = str | dict[str, str]
+
 
 @dataclass
 class SkillProperties:
@@ -24,9 +26,12 @@ class SkillProperties:
     allowed_tools: str | None = None
     metadata: dict[str, str] = field(default_factory=dict)
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> dict[str, SkillPropertyValue]:
         """Convert to dictionary, excluding None values."""
-        result = {"name": self.name, "description": self.description}
+        result: dict[str, SkillPropertyValue] = {
+            "name": self.name,
+            "description": self.description,
+        }
         if self.license is not None:
             result["license"] = self.license
         if self.compatibility is not None:
