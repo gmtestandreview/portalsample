@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib.util
+import os
 import sys
 import tempfile
 import unittest
@@ -261,6 +262,136 @@ class RunEvalOptimizedTests(unittest.TestCase):
                 "example-skill-12345678",
                 timeout=1,
             )
+
+
+HOSTILE_QUERY = 'x" & echo pwn>PWNED.txt & "y'
+
+
+def _write_stub_claude(directory: Path) -> Path:
+    """Create a fake claude executable that records its stdin to stdin.txt in cwd."""
+    if os.name == "nt":
+        stub = directory / "claude.cmd"
+        stub.write_text(
+            '@echo off\r\nfindstr "^" > stdin.txt\r\nexit /b 0\r\n',
+            encoding="ascii",
+        )
+        return stub
+    stub = directory / "claude"
+    stub.write_text("#!/bin/sh\ncat > stdin.txt\n", encoding="ascii")
+    stub.chmod(0o755)
+    return stub
+
+
+class RunEvalBoundaryTests(unittest.TestCase):
+    def test_hostile_query_is_delivered_on_stdin_without_shell_execution(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            stub_dir = Path(tmp) / "stub"
+            work = Path(tmp) / "work"
+            stub_dir.mkdir()
+            work.mkdir()
+            stub = _write_stub_claude(stub_dir)
+
+            process = run_eval._launch_claude(
+                HOSTILE_QUERY,
+                None,
+                work,
+                executable=str(stub),
+            )
+            try:
+                process.wait(timeout=20)
+            finally:
+                for stream in (process.stdout, process.stderr):
+                    if stream is not None:
+                        stream.close()
+
+            self.assertFalse((work / "PWNED.txt").exists())
+            self.assertEqual(
+                (work / "stdin.txt").read_text(encoding="utf-8").strip(),
+                HOSTILE_QUERY,
+            )
+
+    def test_model_with_shell_metacharacters_rejected(self) -> None:
+        for model in ("x&calc", "a b", 'a"b', "a|b", "%PATH%", "a^b", "-x"):
+            with self.subTest(model=model), self.assertRaises(ValueError):
+                run_eval._validate_model(model)
+
+    def test_real_model_identifiers_accepted(self) -> None:
+        for model in (
+            "claude-opus-4-8",
+            "opus[1m]",
+            "us.anthropic.claude-sonnet-4-6:0",
+        ):
+            with self.subTest(model=model):
+                self.assertEqual(run_eval._validate_model(model), model)
+
+    def test_description_cannot_inject_frontmatter_keys(self) -> None:
+        for description in (
+            "safe\rname: hijacked",
+            "safename: hijacked",
+            "safe\x85name: hijacked",
+        ):
+            with self.subTest(description=description):
+                root, clean = run_eval._create_eval_project("example", description)
+                try:
+                    text = (root / ".claude" / "skills" / clean / "SKILL.md").read_text(
+                        encoding="utf-8"
+                    )
+                finally:
+                    run_eval._remove_temp_tree(root)
+                frontmatter = text.split("---")[1]
+                name_lines = [line for line in frontmatter.splitlines() if line.startswith("name:")]
+                self.assertEqual(len(name_lines), 1)
+
+    @unittest.skipUnless(importlib.util.find_spec("yaml"), "PyYAML not installed")
+    def test_description_round_trips_through_yaml(self) -> None:
+        import yaml
+
+        for description in (
+            "  indented first line\nsecond",
+            "multi\nline",
+            'quote " and \\ backslash',
+            "unicode é \U0001f600",
+        ):
+            with self.subTest(description=description):
+                root, clean = run_eval._create_eval_project("example", description)
+                try:
+                    text = (root / ".claude" / "skills" / clean / "SKILL.md").read_text(
+                        encoding="utf-8"
+                    )
+                finally:
+                    run_eval._remove_temp_tree(root)
+                parsed = yaml.safe_load(text.split("---")[1])
+                self.assertEqual(parsed["name"], clean)
+                self.assertEqual(parsed["description"].strip(), description.strip())
+
+    @unittest.skipUnless(os.name == "nt", "Windows caps ProcessPoolExecutor workers")
+    def test_worker_count_respects_windows_pool_limit(self) -> None:
+        recorded: list[int] = []
+
+        class RecordingExecutor(FakeExecutor):
+            errors: list[BaseException | bool] = [True] * 130
+
+            def __init__(self, max_workers: int) -> None:
+                super().__init__(max_workers)
+                recorded.append(max_workers)
+
+        items: list[dict[str, object]] = [
+            {"query": f"q{index}", "should_trigger": True} for index in range(130)
+        ]
+        with (
+            patch.object(run_eval, "ProcessPoolExecutor", RecordingExecutor),
+            patch.object(run_eval, "_require_claude_cli", return_value="claude"),
+        ):
+            run_eval.run_eval(
+                eval_set=items,
+                skill_name="example",
+                description="Use for examples.",
+                num_workers=100,
+                timeout=5,
+                project_root=Path("."),
+                runs_per_query=1,
+            )
+        self.assertLessEqual(recorded[0], 61)
 
 
 if __name__ == "__main__":

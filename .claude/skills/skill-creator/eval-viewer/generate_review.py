@@ -22,12 +22,13 @@ import secrets
 import sys
 import tempfile
 import threading
+import time
 import webbrowser
 from dataclasses import dataclass
 from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from socket import socket
+from socket import SHUT_WR, socket
 from socketserver import BaseServer
 from typing import TypeAlias, TypedDict, cast
 from urllib.parse import urlsplit
@@ -46,6 +47,10 @@ EMBEDDED_DATA_MARKER = "/*__EMBEDDED_DATA__*/"
 CSP_NONCE_MARKER = "__CSP_NONCE__"
 
 MAX_FEEDBACK_BYTES = 1_000_000
+# Bounds for draining unread request data after an early rejection.
+LINGER_CHUNK_BYTES = 65_536
+LINGER_MAX_BYTES = 8 * MAX_FEEDBACK_BYTES
+LINGER_SECONDS = 2.0
 MAX_EMBED_FILE_BYTES = 50 * 1024 * 1024
 REQUEST_TIMEOUT_SECONDS = 15.0
 SUPPORTED_FEEDBACK_STATUSES = frozenset({"in_progress", "complete"})
@@ -940,38 +945,64 @@ class ReviewHandler(BaseHTTPRequestHandler):
 
         self.send_error(404)
 
+    def _reject(self, message: str, status: int) -> None:
+        """Reply with an error, then close without resetting the client.
+
+        Closing a socket that still holds unread request data sends a TCP reset
+        on some platforms (notably Windows), which can discard the response
+        before the client reads it. Send the response first, then linger: half
+        close the write side and drain leftover input, bounded by bytes and
+        time, before the connection is closed (RFC 7230 section 6.6).
+        """
+        self._send_json({"error": message}, status=status)
+        self.close_connection = True
+        try:
+            self.wfile.flush()
+            self.connection.shutdown(SHUT_WR)
+        except OSError:
+            return
+
+        remaining = LINGER_MAX_BYTES
+        deadline = time.monotonic() + LINGER_SECONDS
+        self.connection.settimeout(LINGER_SECONDS)
+        try:
+            while remaining > 0 and time.monotonic() < deadline:
+                chunk = self.connection.recv(min(remaining, LINGER_CHUNK_BYTES))
+                if not chunk:
+                    return
+                remaining -= len(chunk)
+        except OSError:
+            return
+
     def do_POST(self) -> None:
         if self.path != "/api/feedback":
             self.send_error(404)
             return
 
         if not _origin_allowed(self.headers.get("Origin")):
-            self._send_json({"error": "Origin is not allowed"}, status=403)
+            self._reject("Origin is not allowed", 403)
             return
 
         if self.headers.get_content_type() != JSON_CONTENT_TYPE:
-            self._send_json(
-                {"error": "Content-Type must be application/json"},
-                status=415,
-            )
+            self._reject("Content-Type must be application/json", 415)
             return
 
         raw_length = self.headers.get("Content-Length")
         if raw_length is None:
-            self._send_json({"error": "Content-Length is required"}, status=411)
+            self._reject("Content-Length is required", 411)
             return
 
         try:
             length = int(raw_length)
         except ValueError:
-            self._send_json({"error": "Invalid Content-Length"}, status=400)
+            self._reject("Invalid Content-Length", 400)
             return
 
         if length < 0:
-            self._send_json({"error": "Content-Length must be non-negative"}, status=400)
+            self._reject("Content-Length must be non-negative", 400)
             return
         if length > MAX_FEEDBACK_BYTES:
-            self._send_json({"error": "Feedback payload is too large"}, status=413)
+            self._reject("Feedback payload is too large", 413)
             return
 
         try:

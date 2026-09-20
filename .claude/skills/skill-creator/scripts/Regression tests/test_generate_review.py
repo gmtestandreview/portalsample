@@ -278,6 +278,49 @@ class GenerateReviewOptimizedTests(unittest.TestCase):
                 server.server_close()
                 thread.join(timeout=2)
 
+    def test_rejected_post_with_unread_body_still_delivers_the_response(self) -> None:
+        # Rejecting before reading a large body and then closing the socket
+        # sends a TCP reset that can discard the response the client has not
+        # read yet, so the rejection must be delivered reliably.
+        json_type = {"Content-Type": "application/json"}
+        rejected_bodies = (
+            ({"Content-Type": "text/plain"}, 500_000, 415),
+            ({**json_type, "Origin": "https://x.example"}, 500_000, 403),
+            ({**json_type, "Content-Length": "abc"}, 500_000, 400),
+            (json_type, 3_000_000, 413),
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "run-1" / "outputs").mkdir(parents=True)
+            handler = review.partial(
+                review.ReviewHandler, root, "skill", root / "feedback.json", {}, None
+            )
+            server = review.ReviewHTTPServer(("127.0.0.1", 0), handler)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            port = server.server_address[1]
+            try:
+                for headers, body_size, expected in rejected_bodies:
+                    body = b"x" * body_size
+                    for attempt in range(8):
+                        with self.subTest(status=expected, attempt=attempt):
+                            conn = http.client.HTTPConnection(
+                                "127.0.0.1", port, timeout=2
+                            )
+                            try:
+                                conn.request(
+                                    "POST", "/api/feedback", body=body, headers=headers
+                                )
+                                response = conn.getresponse()
+                                self.assertEqual(response.status, expected)
+                                response.read()
+                            finally:
+                                conn.close()
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=2)
+
     def test_static_output_directory_returns_clean_error(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

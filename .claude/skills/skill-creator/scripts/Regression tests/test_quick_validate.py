@@ -69,5 +69,62 @@ class ReservedNameTests(unittest.TestCase):
         self.assertIn("reserved", message)
 
 
+class SuperscriptReservedNameTests(unittest.TestCase):
+    mod: QuickValidateModule
+
+    def setUp(self) -> None:
+        self.mod = load_candidate()
+
+    def test_superscript_device_names_are_invalid(self) -> None:
+        # Windows 10+ also reserves COM/LPT followed by superscript 1-3.
+        for name in ("com¹", "com²", "com³", "lpt¹", "lpt²", "lpt³"):
+            with self.subTest(name=name):
+                self.assertFalse(self.mod.is_valid_skill_name(name))
+
+    def test_other_superscripts_remain_valid(self) -> None:
+        for name in ("com⁴", "con²", "my-lpt¹"):
+            with self.subTest(name=name):
+                self.assertTrue(self.mod.is_valid_skill_name(name))
+
+
+class HostileFrontmatterTests(unittest.TestCase):
+    """validate_skill must report bad input as (False, message), never raise."""
+
+    VALID_HEAD = b"---\nname: demo\ndescription: d\n"
+    mod: QuickValidateModule
+
+    def setUp(self) -> None:
+        self.mod = load_candidate()
+
+    def validate_raw(self, raw: bytes) -> tuple[bool, str]:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "demo"
+            skill_dir.mkdir()
+            (skill_dir / "SKILL.md").write_bytes(raw)
+            return self.mod.validate_skill(skill_dir)
+
+    def test_baseline_is_valid(self) -> None:
+        self.assertEqual(self.validate_raw(self.VALID_HEAD + b"---\n"), (True, "Skill is valid"))
+
+    def test_undecodable_skill_md_is_reported(self) -> None:
+        valid, message = self.validate_raw(self.VALID_HEAD + b"---\n\xff\xfe")
+
+        self.assertFalse(valid)
+        self.assertIn("Cannot read SKILL.md", message)
+
+    def test_out_of_range_yaml_date_is_reported(self) -> None:
+        valid, message = self.validate_raw(b"---\nname: demo\ndescription: 2023-13-45\n---\n")
+
+        self.assertFalse(valid)
+        self.assertIn("Invalid YAML frontmatter", message)
+
+    def test_deeply_nested_yaml_is_reported(self) -> None:
+        nested = b"[" * 3000 + b"]" * 3000
+        valid, message = self.validate_raw(self.VALID_HEAD + b"metadata: " + nested + b"\n---\n")
+
+        self.assertFalse(valid)
+        self.assertIn("Invalid YAML frontmatter", message)
+
+
 if __name__ == "__main__":
     unittest.main()

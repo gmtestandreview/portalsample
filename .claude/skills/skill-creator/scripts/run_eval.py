@@ -9,10 +9,12 @@ failures; unavailable trigger-rate evidence is never converted to a numeric zero
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import math
 import os
 import queue
+import re
 import shutil
 import signal
 import subprocess
@@ -41,6 +43,12 @@ GENERATED_SUFFIX_LENGTH = len("-skill-") + 8
 STDERR_TAIL_BYTES = 32 * 1024
 EXIT_DRAIN_GRACE_SECONDS = 0.25
 SKILL_FILENAME = "SKILL.md"
+QUERY_FILENAME = "query.txt"
+# Windows caps ProcessPoolExecutor at 61 workers (WaitForMultipleObjects limit).
+MAX_POOL_WORKERS = 61 if os.name == "nt" else sys.maxsize
+_SAFE_MODEL_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:/\[\]-]*")
+# Characters YAML treats as line breaks or forbids raw in a scalar.
+_YAML_ESCAPE_RE = re.compile("[\x7f-\x9f﻿￾￿]")
 
 
 class EvalItem(TypedDict):
@@ -399,6 +407,8 @@ def _validate_model(model: object) -> str | None:
         raise ValueError("model must be a non-empty string when provided")
     if "\x00" in model:
         raise ValueError("model must not contain NUL characters")
+    if _SAFE_MODEL_RE.fullmatch(model) is None:
+        raise ValueError("model contains characters outside [A-Za-z0-9._:/[]-]")
     return model
 
 
@@ -409,6 +419,12 @@ def _generated_skill_name(validated_name: str) -> str:
     if not prefix:
         prefix = "eval"
     return f"{prefix}-skill-{uuid.uuid4().hex[:8]}"
+
+
+def _yaml_double_quoted(value: str) -> str:
+    """Render text as a YAML double-quoted scalar that cannot span or break lines."""
+    quoted = json.dumps(value, ensure_ascii=False)
+    return _YAML_ESCAPE_RE.sub(lambda match: f"\\u{ord(match.group()):04x}", quoted)
 
 
 def _create_eval_project(
@@ -423,12 +439,10 @@ def _create_eval_project(
     skill_dir = eval_project_root / ".claude" / "skills" / clean_name
     skill_dir.mkdir(parents=True, exist_ok=False)
 
-    indented_desc = "\n  ".join(validated_description.split("\n"))
     skill_content = (
         "---\n"
         f"name: {json.dumps(clean_name, ensure_ascii=False)}\n"
-        "description: |\n"
-        f"  {indented_desc}\n"
+        f"description: {_yaml_double_quoted(validated_description)}\n"
         "---\n\n"
         f"# {validated_name}\n\n"
         f"This skill handles: {validated_description}\n"
@@ -438,15 +452,17 @@ def _create_eval_project(
 
 
 def _build_claude_command(
-    query: str,
     model: str | None,
     executable: str = "claude",
 ) -> list[str]:
-    """Build the Claude CLI command for one trigger probe."""
+    """Build the Claude CLI command for one trigger probe.
+
+    The query is deliberately absent: it is delivered on stdin so that no
+    shell (cmd.exe for Windows npm shims) ever parses external text.
+    """
     command = [
         executable,
         "-p",
-        query,
         "--output-format",
         "stream-json",
         "--verbose",
@@ -468,28 +484,33 @@ def _launch_claude(
     """Launch Claude in the isolated project with bounded, inspectable pipes."""
     env = {key: value for key, value in os.environ.items() if key != "CLAUDECODE"}
 
-    command = _build_claude_command(query, model, executable)
-    if os.name == "nt":
+    # Resolve npm shims (claude.cmd) to a full path so no shell is needed.
+    command = _build_claude_command(model, shutil.which(executable) or executable)
+    query_file = eval_project_root / QUERY_FILENAME
+    query_file.write_text(query, encoding="utf-8")
+    with query_file.open("rb") as stdin:
+        if os.name == "nt":
+            return subprocess.Popen(
+                command,
+                stdin=stdin,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                cwd=eval_project_root,
+                env=env,
+                shell=False,
+                creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
+            )
+
         return subprocess.Popen(
             command,
+            stdin=stdin,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             cwd=eval_project_root,
             env=env,
-            # Windows npm shims (claude.cmd/.ps1) require shell resolution.
-            shell=True,
-            creationflags=getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0),
+            shell=False,
+            start_new_session=True,
         )
-
-    return subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        cwd=eval_project_root,
-        env=env,
-        shell=False,
-        start_new_session=True,
-    )
 
 
 def _pump_stdout(
@@ -618,10 +639,8 @@ def _close_process_streams(
         close = getattr(stream, "close", None)
         if not callable(close):
             continue
-        try:
+        with contextlib.suppress(OSError):
             close()
-        except OSError:
-            pass
     stdout_reader.join(timeout=1.0)
     if stderr_reader is not None:
         stderr_reader.join(timeout=1.0)
@@ -908,10 +927,8 @@ def _terminate_process_directly(process: subprocess.Popen[bytes]) -> None:
     try:
         process.terminate()
     except (AttributeError, OSError):
-        try:
+        with contextlib.suppress(OSError):
             process.kill()
-        except OSError:
-            pass
 
 
 def _terminate_posix_process_tree(process: subprocess.Popen[bytes]) -> None:
@@ -936,10 +953,8 @@ def _terminate_posix_process_tree(process: subprocess.Popen[bytes]) -> None:
     except OSError:
         pass
 
-    try:
+    with contextlib.suppress(subprocess.TimeoutExpired):
         process.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        pass
 
 
 def _terminate_process_tree(process: subprocess.Popen[bytes]) -> None:
@@ -1006,7 +1021,7 @@ def run_eval(
         [None] * runs_per_query for _ in items
     ]
 
-    max_workers = min(num_workers, len(items) * runs_per_query)
+    max_workers = min(num_workers, len(items) * runs_per_query, MAX_POOL_WORKERS)
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         future_to_attempt: dict[Future[bool], _Attempt] = {}
         for item_index, item in enumerate(items):

@@ -26,7 +26,7 @@ FRONTMATTER_PATTERN = re.compile(r"^---\r?\n(.*?)\r?\n---(?:\r?\n|$)", re.DOTALL
 # creating or resolving them misbehaves, so they are rejected on every platform.
 WINDOWS_RESERVED_NAMES = frozenset(
     {"con", "prn", "aux", "nul"}
-    | {f"{device}{digit}" for device in ("com", "lpt") for digit in "123456789"}
+    | {f"{device}{digit}" for device in ("com", "lpt") for digit in "123456789¹²³"}
 )
 
 
@@ -55,7 +55,7 @@ def is_valid_skill_name(name: str) -> bool:
 def _load_frontmatter(skill_md: Path) -> dict[object, object]:
     try:
         content = skill_md.read_text(encoding="utf-8")
-    except OSError as exc:
+    except (OSError, UnicodeError) as exc:
         _invalid(f"Cannot read SKILL.md: {exc}")
 
     match = FRONTMATTER_PATTERN.match(content)
@@ -64,7 +64,7 @@ def _load_frontmatter(skill_md: Path) -> dict[object, object]:
 
     try:
         loaded: object = yaml.safe_load(match.group(1))
-    except yaml.YAMLError as exc:
+    except (yaml.YAMLError, ValueError, RecursionError) as exc:
         _invalid(f"Invalid YAML frontmatter: {exc}")
 
     if not isinstance(loaded, dict):
