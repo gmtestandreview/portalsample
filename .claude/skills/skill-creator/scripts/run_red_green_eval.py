@@ -6,12 +6,50 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import signal
 import shutil
 import subprocess
 import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import TypedDict, Union, cast
+
+CLAUDE_DIR = ".claude"
+
+
+JsonValue = Union[
+    None,
+    bool,
+    int,
+    float,
+    str,
+    list["JsonValue"],
+    dict[str, "JsonValue"],
+]
+Event = dict[str, JsonValue]
+
+
+class RunData(TypedDict):
+    exit_code: int
+    duration_seconds: float
+    events: list[Event]
+    stderr: str
+
+
+class CaseSummary(TypedDict):
+    label: str
+    exit_code: int
+    duration_seconds: float
+    skill_used: bool
+    stale_reference_remaining: bool
+    evaluation_reference_linked: bool
+    mentions_nhr: bool
+    mentions_production_ready: bool
+    package_check_mentioned: bool
+    inventory: list[str]
+    final_result: str
+
 
 TASK_PROMPT = """You are in an isolated project containing target-skill/.
 
@@ -146,7 +184,7 @@ def create_fixture(root: Path) -> None:
 
 
 def copy_candidate_skill(candidate: Path, project_root: Path) -> None:
-    destination = project_root / ".claude" / "skills" / "skill-creator"
+    destination = project_root / CLAUDE_DIR / "skills" / "skill-creator"
 
     def ignore(_dir: str, names: list[str]) -> set[str]:
         return {
@@ -163,7 +201,7 @@ def run_claude(
     transcript_path: Path,
     result_path: Path,
     prompt_text: str = TASK_PROMPT,
-) -> dict:
+) -> RunData:
     prompt = " ".join(prompt_text.split())
     cmd = [
         "claude",
@@ -199,6 +237,7 @@ def run_claude(
             env=env,
             text=True,
             shell=(os.name == "nt"),
+            start_new_session=(os.name != "nt"),
         )
         try:
             stdout, stderr = process.communicate(timeout=360)
@@ -211,12 +250,17 @@ def run_claude(
         transcript.write(stdout or "")
 
     result_path.write_text(stderr or "", encoding="utf-8")
-    events = []
+    events: list[Event] = []
     for line in stdout.splitlines():
         try:
-            events.append(json.loads(line))
+            parsed: object = json.loads(line)
         except json.JSONDecodeError:
             continue
+        if not isinstance(parsed, dict) or not all(
+            isinstance(key, str) for key in parsed
+        ):
+            continue
+        events.append(cast(Event, parsed))
 
     return {
         "exit_code": process.returncode,
@@ -240,7 +284,7 @@ def cleanup_tree(path: Path) -> None:
     shutil.rmtree(path, ignore_errors=True)
 
 
-def _terminate_process_tree(process: subprocess.Popen) -> None:
+def _terminate_process_tree(process: subprocess.Popen[str]) -> None:
     """Terminate a subprocess and children before deleting its cwd."""
     if process.poll() is not None:
         return
@@ -252,7 +296,10 @@ def _terminate_process_tree(process: subprocess.Popen) -> None:
             check=False,
         )
     else:
-        process.kill()
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
     try:
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:
@@ -260,20 +307,21 @@ def _terminate_process_tree(process: subprocess.Popen) -> None:
         process.wait()
 
 
-def event_text(events: list[dict]) -> str:
+def event_text(events: list[Event]) -> str:
     return "\n".join(json.dumps(event, sort_keys=True) for event in events)
 
 
-def final_result(events: list[dict]) -> str:
+def final_result(events: list[Event]) -> str:
     for event in reversed(events):
         if event.get("type") == "result":
             return str(event.get("result", ""))
     return ""
 
 
-def summarize_case(label: str, project_root: Path, run_data: dict) -> dict:
+def summarize_case(label: str, project_root: Path, run_data: RunData) -> CaseSummary:
     target = project_root / "target-skill"
-    skill_text = (target / "SKILL.md").read_text(encoding="utf-8")
+    skill_path = target / "SKILL.md"
+    skill_text = skill_path.read_text(encoding="utf-8") if skill_path.is_file() else ""
     combined = event_text(run_data["events"])
     result = final_result(run_data["events"])
     inventory = sorted(
@@ -306,7 +354,7 @@ def save_case_files(project_root: Path, destination: Path) -> None:
     shutil.copytree(target, snapshot)
 
 
-def write_report(output_dir: Path, red: dict, green: dict) -> None:
+def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None:
     def outcome(value: bool) -> str:
         return "PASS" if value else "FAIL"
 
@@ -320,13 +368,26 @@ def write_report(output_dir: Path, red: dict, green: dict) -> None:
     green_package_check = outcome(green["package_check_mentioned"])
     red_mentions_nhr = outcome(red["mentions_nhr"])
     green_mentions_nhr = outcome(green["mentions_nhr"])
+    red_run_succeeded = red["exit_code"] == 0
+    green_run_succeeded = green["exit_code"] == 0
 
     green_materially_better = (
-        green["skill_used"]
+        green_run_succeeded
+        and green["skill_used"]
         and not green["stale_reference_remaining"]
         and green["evaluation_reference_linked"]
     )
-    red_observed_gap = red["stale_reference_remaining"] or not red["evaluation_reference_linked"]
+    red_observed_gap = red_run_succeeded and (
+        red["stale_reference_remaining"] or not red["evaluation_reference_linked"]
+    )
+    overall = (
+        "PASS"
+        if red_run_succeeded
+        and green_run_succeeded
+        and red_observed_gap
+        and green_materially_better
+        else "AMBER"
+    )
 
     report = f"""# Independent RED/GREEN Behavioral Execution
 
@@ -347,6 +408,7 @@ for release.
 
 | Check | RED | GREEN |
 | --- | --- | --- |
+| Run exited successfully | {outcome(red_run_succeeded)} | {outcome(green_run_succeeded)} |
 | Candidate skill activated | {red_skill_used} | {green_skill_used} |
 | Stale reference removed | {red_stale_reference_removed} | {green_stale_reference_removed} |
 | Eval reference linked | {red_eval_reference_linked} | {green_eval_reference_linked} |
@@ -358,7 +420,7 @@ for release.
 - RED observed gap: {outcome(red_observed_gap)}
 - GREEN materially reduced the observed gap: {outcome(green_materially_better)}
 
-Overall: {"PASS" if red_observed_gap and green_materially_better else "AMBER"}
+Overall: {overall}
 
 ## RED Final Result
 
@@ -395,12 +457,12 @@ def main() -> None:
     output_dir = Path(args.output_dir).resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    summaries = {}
+    summaries: dict[str, CaseSummary] = {}
     red_root = Path(tempfile.mkdtemp(prefix="skill-red-green-"))
     green_root = Path(tempfile.mkdtemp(prefix="skill-red-green-"))
     try:
-        (red_root / ".claude").mkdir()
-        (green_root / ".claude" / "skills").mkdir(parents=True)
+        (red_root / CLAUDE_DIR).mkdir()
+        (green_root / CLAUDE_DIR / "skills").mkdir(parents=True)
         create_fixture(red_root)
         create_fixture(green_root)
         copy_candidate_skill(candidate, green_root)
