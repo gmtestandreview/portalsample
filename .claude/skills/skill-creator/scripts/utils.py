@@ -2,7 +2,6 @@
 
 from pathlib import Path
 
-
 _BLOCK_SCALAR_MARKERS = frozenset({">", "|", ">-", "|-"})
 
 
@@ -60,10 +59,7 @@ def _parse_block_scalar(
         index += 1
 
     normalized = _strip_block_indentation(continuation_lines)
-    if marker.startswith("|"):
-        value = "\n".join(normalized)
-    else:
-        value = _fold_block_scalar(normalized)
+    value = "\n".join(normalized) if marker.startswith("|") else _fold_block_scalar(normalized)
 
     # ``parse_skill_md`` historically returned descriptions without the
     # block scalar's final YAML line break. Keep that compatibility while

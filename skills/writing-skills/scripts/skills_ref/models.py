@@ -5,6 +5,10 @@ from dataclasses import dataclass, field
 SkillPropertyValue = str | dict[str, str]
 
 
+def _empty_metadata() -> dict[str, str]:
+    return {}
+
+
 @dataclass
 class SkillProperties:
     """Properties parsed from a skill's SKILL.md frontmatter.
@@ -24,7 +28,7 @@ class SkillProperties:
     license: str | None = None
     compatibility: str | None = None
     allowed_tools: str | None = None
-    metadata: dict[str, str] = field(default_factory=dict)
+    metadata: dict[str, str] = field(default_factory=_empty_metadata)
 
     def to_dict(self) -> dict[str, SkillPropertyValue]:
         """Convert to dictionary, excluding None values."""
@@ -39,5 +43,5 @@ class SkillProperties:
         if self.allowed_tools is not None:
             result["allowed-tools"] = self.allowed_tools
         if self.metadata:
-            result["metadata"] = self.metadata
+            result["metadata"] = dict(self.metadata)
         return result

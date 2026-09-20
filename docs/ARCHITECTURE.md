@@ -19,7 +19,7 @@
 
 ## 2) System Flow
 
-```
+```text
 Browser load
   ↓
 window.* env injection  (server-side template sets REACT_APP_B2C_CLIENTID etc.)
@@ -103,7 +103,7 @@ This includes:
 
 Provider chain (`index.tsx:25-33`) — `StrictMode` is outermost:
 
-```
+```text
 index.tsx
   └─ StrictMode
        └─ ErrorBoundary (provider-level, react-error-boundary)
@@ -114,7 +114,7 @@ index.tsx
 
 Route tree hanging off `RouterProvider`:
 
-```
+```text
             RouterProvider (App.tsx)
                  └─ Route /dashboard
                       └─ AuthenticatedElement

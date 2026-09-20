@@ -141,7 +141,7 @@ def split_eval_set(
         )
 
     def stable_order(item: EvalCase) -> bytes:
-        payload = f"{seed}\0{item['query']}".encode("utf-8")
+        payload = f"{seed}\0{item['query']}".encode()
         return hashlib.sha256(payload).digest()
 
     trigger.sort(key=stable_order)

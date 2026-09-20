@@ -11,12 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from unittest.mock import patch
 
-if TYPE_CHECKING:
-    import aggregate_benchmark
-    import run_eval
-    import run_red_green_eval
-    from utils import parse_skill_md
-elif __package__:
+if TYPE_CHECKING or __package__:
     from . import aggregate_benchmark, run_eval, run_red_green_eval
     from .utils import parse_skill_md
 else:
@@ -395,6 +390,39 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
 
 class RedGreenEvalTests(unittest.TestCase):
+    def test_main_returns_nonzero_when_eval_runs_fail(self) -> None:
+        failed_run: run_red_green_eval.RunData = {
+            "exit_code": 1,
+            "duration_seconds": 0.1,
+            "events": [{"type": "result", "result": "rate limited"}],
+            "stderr": "",
+        }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate = root / "candidate-skill"
+            candidate.mkdir()
+            (candidate / "SKILL.md").write_text(
+                "---\nname: skill-creator\ndescription: Test fixture.\n---\n",
+                encoding="utf-8",
+            )
+            output_dir = root / "out"
+
+            with (
+                patch.object(sys, "argv", [
+                    "run_red_green_eval.py",
+                    "--candidate-skill",
+                    str(candidate),
+                    "--output-dir",
+                    str(output_dir),
+                ]),
+                patch.object(run_red_green_eval, "run_claude", return_value=failed_run),
+                patch("builtins.print"),
+            ):
+                status = run_red_green_eval.main()
+
+        self.assertEqual(status, 1)
+
     def test_run_claude_terminates_process_tree_on_timeout(self) -> None:
         class FakeProcess:
             returncode = None
@@ -443,14 +471,36 @@ def _find_subprocess_call(filename: str, func_name: str) -> ast.Call:
 
 
 class WindowsClaudeCliInvocationTests(unittest.TestCase):
-    """npm installs `claude` as claude.cmd/.ps1 on Windows. CreateProcess
-    cannot launch those directly, so subprocess.Popen(["claude", ...]) fails
-    with WinError 2 even though shutil.which("claude") finds it. Both call
-    sites must pass shell= so cmd.exe resolves the shim."""
+    """Windows npm shims need explicit launch handling."""
 
-    def test_run_eval_popen_passes_shell_kwarg(self) -> None:
-        call = _find_subprocess_call("run_eval.py", "Popen")
-        self.assertIn("shell", {kw.arg for kw in call.keywords})
+    def test_run_eval_resolves_windows_npm_shim_without_shell(self) -> None:
+        shim_path = r"C:\Users\test\AppData\Roaming\npm\claude.cmd"
+
+        class FakeProcess:
+            stdout = None
+            stderr = None
+
+        def fake_popen(
+            cmd: list[str],
+            *_args: object,
+            **kwargs: object,
+        ) -> FakeProcess:
+            self.assertEqual(cmd[0], shim_path)
+            self.assertIs(kwargs.get("shell"), False)
+            return FakeProcess()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with (
+                patch.object(run_eval.os, "name", "nt"),
+                patch.object(run_eval.shutil, "which", return_value=shim_path),
+                patch.object(run_eval.subprocess, "Popen", side_effect=fake_popen),
+            ):
+                run_eval._launch_claude(  # pyright: ignore[reportPrivateUsage]
+                    query="Create an Agent Skill",
+                    model=None,
+                    eval_project_root=root,
+                )
 
     def test_improve_description_run_passes_shell_kwarg(self) -> None:
         call = _find_subprocess_call("improve_description.py", "run")

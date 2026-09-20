@@ -2,7 +2,7 @@
 
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import strictyaml
 
@@ -11,7 +11,7 @@ from .models import SkillProperties
 
 # Opening and closing delimiters must each be a whole line of exactly ``---``.
 _FRONTMATTER_RE = re.compile(
-    r"\A---[ \t]*\r?\n(?P<frontmatter>.*?)^---[ \t]*(?:\r?\n|\Z)(?P<body>.*)",
+    r"\A---\r?\n(?P<frontmatter>.*?)^---(?:\r?\n|\Z)(?P<body>.*)",
     re.DOTALL | re.MULTILINE,
 )
 
@@ -56,7 +56,7 @@ def parse_frontmatter(content: str) -> tuple[dict[str, Any], str]:
         ParseError: If frontmatter is missing or invalid
     """
     first_line = next(iter(content.splitlines()), "")
-    if first_line.rstrip() != "---":
+    if first_line != "---":
         raise ParseError("SKILL.md must start with YAML frontmatter (---)")
 
     match = _FRONTMATTER_RE.match(content)
@@ -67,14 +67,14 @@ def parse_frontmatter(content: str) -> tuple[dict[str, Any], str]:
     body = match.group("body").strip()
 
     try:
-        parsed = strictyaml.load(frontmatter_str)
-        metadata = parsed.data
+        parsed_data: object = strictyaml.load(frontmatter_str).data
     except strictyaml.YAMLError as e:
         raise ParseError(f"Invalid YAML in frontmatter: {e}") from e
 
-    if not isinstance(metadata, dict):
+    if not isinstance(parsed_data, dict):
         raise ParseError("SKILL.md frontmatter must be a YAML mapping")
 
+    metadata = cast(dict[str, Any], parsed_data)
     return metadata, body
 
 

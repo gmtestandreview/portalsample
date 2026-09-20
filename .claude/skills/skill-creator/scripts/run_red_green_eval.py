@@ -4,16 +4,17 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import os
-import signal
 import shutil
+import signal
 import subprocess
 import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import NoReturn, TypedDict, Union, cast
+from typing import Any, NoReturn, TypedDict, cast
 
 CLAUDE_DIR = ".claude"
 CLAUDE_TIMEOUT_SECONDS = 360
@@ -23,17 +24,15 @@ def _reject_nonfinite_json_constant(value: str) -> NoReturn:
     """Reject NaN and infinities so stream events remain strict JSON."""
     raise ValueError(f"non-finite JSON constant is not allowed: {value}")
 
-
-
-JsonValue = Union[
-    None,
-    bool,
-    int,
-    float,
-    str,
-    list["JsonValue"],
-    dict[str, "JsonValue"],
-]
+JsonValue = (
+    bool
+    | int
+    | float
+    | str
+    | list["JsonValue"]
+    | dict[str, "JsonValue"]
+    | None
+)
 Event = dict[str, JsonValue]
 
 
@@ -313,10 +312,10 @@ def _terminate_process_tree(process: subprocess.Popen[str]) -> None:
             check=False,
         )
     else:
-        try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        with contextlib.suppress(ProcessLookupError):
+            posix_os = cast(Any, os)
+            posix_signal = cast(Any, signal)
+            posix_os.killpg(process.pid, posix_signal.SIGKILL)
     try:
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:
@@ -372,6 +371,17 @@ def save_case_files(project_root: Path, destination: Path) -> None:
     shutil.copytree(target, snapshot)
 
 
+def eval_passed(red: CaseSummary, green: CaseSummary) -> bool:
+    return (
+        red["exit_code"] == 0
+        and green["exit_code"] == 0
+        and (red["stale_reference_remaining"] or not red["evaluation_reference_linked"])
+        and green["skill_used"]
+        and not green["stale_reference_remaining"]
+        and green["evaluation_reference_linked"]
+    )
+
+
 def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None:
     def outcome(value: bool) -> str:
         return "PASS" if value else "FAIL"
@@ -398,14 +408,7 @@ def write_report(output_dir: Path, red: CaseSummary, green: CaseSummary) -> None
     red_observed_gap = red_run_succeeded and (
         red["stale_reference_remaining"] or not red["evaluation_reference_linked"]
     )
-    overall = (
-        "PASS"
-        if red_run_succeeded
-        and green_run_succeeded
-        and red_observed_gap
-        and green_materially_better
-        else "AMBER"
-    )
+    overall = "PASS" if eval_passed(red, green) else "AMBER"
 
     report = f"""# Independent RED/GREEN Behavioral Execution
 
@@ -465,7 +468,7 @@ Overall: {overall}
     (output_dir / "independent-red-green-report.md").write_text(report, encoding="utf-8")
 
 
-def main() -> None:
+def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--candidate-skill", default=".", help="Path to candidate skill directory")
     parser.add_argument("--output-dir", required=True, help="Directory for evidence artifacts")
@@ -496,10 +499,11 @@ def main() -> None:
         summary_path.write_text(json.dumps(summaries, indent=2), encoding="utf-8")
         write_report(output_dir, summaries["red"], summaries["green"])
         print(json.dumps(summaries, indent=2))
+        return 0 if eval_passed(summaries["red"], summaries["green"]) else 1
     finally:
         cleanup_tree(red_root)
         cleanup_tree(green_root)
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

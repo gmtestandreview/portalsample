@@ -125,6 +125,15 @@ Body
         read_properties(skill_dir)
 
 
+def test_validation_error_copies_error_list():
+    errors = ["first problem"]
+    error = ValidationError("validation failed", errors)
+
+    errors.append("second problem")
+
+    assert error.errors == ["first problem"]
+
+
 def test_find_skill_md_requires_exact_uppercase(tmp_path):
     """Only exact-cased SKILL.md satisfies specification discovery."""
     skill_dir = tmp_path / "my-skill"
@@ -198,6 +207,18 @@ def test_delimiter_inside_value_does_not_truncate_frontmatter():
 def test_opener_must_be_exactly_three_dashes():
     with pytest.raises(ParseError):
         parse_frontmatter("----\nname: x\n---\nBody\n")
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        "--- \nname: x\n---\nBody\n",
+        "---\nname: x\n--- \nBody\n",
+    ],
+)
+def test_delimiters_must_not_have_trailing_whitespace(content):
+    with pytest.raises(ParseError):
+        parse_frontmatter(content)
 
 
 def test_read_properties_reports_undecodable_file_as_parse_error(tmp_path):

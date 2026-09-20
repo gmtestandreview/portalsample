@@ -25,6 +25,7 @@ import threading
 import time
 import webbrowser
 from dataclasses import dataclass
+from email.message import Message
 from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -51,6 +52,7 @@ MAX_FEEDBACK_BYTES = 1_000_000
 LINGER_CHUNK_BYTES = 65_536
 LINGER_MAX_BYTES = 8 * MAX_FEEDBACK_BYTES
 LINGER_SECONDS = 2.0
+UNKNOWN_LENGTH_LINGER_SECONDS = 0.05
 MAX_EMBED_FILE_BYTES = 50 * 1024 * 1024
 REQUEST_TIMEOUT_SECONDS = 15.0
 SUPPORTED_FEEDBACK_STATUSES = frozenset({"in_progress", "complete"})
@@ -838,6 +840,16 @@ def _origin_allowed(origin: str | None) -> bool:
     }
 
 
+def _declared_content_length(headers: Message[str, str]) -> int | None:
+    raw_length = headers.get("Content-Length")
+    if raw_length is None:
+        return None
+    try:
+        return max(int(raw_length), 0)
+    except ValueError:
+        return None
+
+
 def _load_benchmark(path: Path | None) -> dict[str, object] | None:
     if path is None:
         return None
@@ -878,6 +890,12 @@ class ReviewHandler(BaseHTTPRequestHandler):
     def setup(self) -> None:
         super().setup()
         self.connection.settimeout(REQUEST_TIMEOUT_SECONDS)
+
+    def handle(self) -> None:
+        try:
+            super().handle()
+        except (BrokenPipeError, ConnectionResetError, TimeoutError):
+            return
 
     def _send_bytes(
         self,
@@ -945,7 +963,32 @@ class ReviewHandler(BaseHTTPRequestHandler):
 
         self.send_error(404)
 
-    def _reject(self, message: str, status: int) -> None:
+    def _drain_request_body(self, byte_limit: int, *, seconds: float) -> None:
+        remaining = min(max(byte_limit, 0), LINGER_MAX_BYTES)
+        deadline = time.monotonic() + seconds
+        previous_timeout = self.connection.gettimeout()
+        try:
+            while remaining > 0:
+                timeout = min(previous_timeout or seconds, deadline - time.monotonic())
+                if timeout <= 0:
+                    return
+                self.connection.settimeout(timeout)
+                chunk = self.rfile.read1(min(remaining, LINGER_CHUNK_BYTES))
+                if not chunk:
+                    return
+                remaining -= len(chunk)
+        except OSError:
+            return
+        finally:
+            self.connection.settimeout(previous_timeout)
+
+    def _reject(
+        self,
+        message: str,
+        status: int,
+        *,
+        remaining_body_bytes: int | None = None,
+    ) -> None:
         """Reply with an error, then close without resetting the client.
 
         Closing a socket that still holds unread request data sends a TCP reset
@@ -962,17 +1005,13 @@ class ReviewHandler(BaseHTTPRequestHandler):
         except OSError:
             return
 
-        remaining = LINGER_MAX_BYTES
-        deadline = time.monotonic() + LINGER_SECONDS
-        self.connection.settimeout(LINGER_SECONDS)
-        try:
-            while remaining > 0 and time.monotonic() < deadline:
-                chunk = self.connection.recv(min(remaining, LINGER_CHUNK_BYTES))
-                if not chunk:
-                    return
-                remaining -= len(chunk)
-        except OSError:
-            return
+        if remaining_body_bytes is None:
+            self._drain_request_body(
+                LINGER_MAX_BYTES,
+                seconds=UNKNOWN_LENGTH_LINGER_SECONDS,
+            )
+        else:
+            self._drain_request_body(remaining_body_bytes, seconds=LINGER_SECONDS)
 
     def do_POST(self) -> None:
         if self.path != "/api/feedback":
@@ -980,11 +1019,19 @@ class ReviewHandler(BaseHTTPRequestHandler):
             return
 
         if not _origin_allowed(self.headers.get("Origin")):
-            self._reject("Origin is not allowed", 403)
+            self._reject(
+                "Origin is not allowed",
+                403,
+                remaining_body_bytes=_declared_content_length(self.headers),
+            )
             return
 
         if self.headers.get_content_type() != JSON_CONTENT_TYPE:
-            self._reject("Content-Type must be application/json", 415)
+            self._reject(
+                "Content-Type must be application/json",
+                415,
+                remaining_body_bytes=_declared_content_length(self.headers),
+            )
             return
 
         raw_length = self.headers.get("Content-Length")
@@ -1002,7 +1049,12 @@ class ReviewHandler(BaseHTTPRequestHandler):
             self._reject("Content-Length must be non-negative", 400)
             return
         if length > MAX_FEEDBACK_BYTES:
-            self._reject("Feedback payload is too large", 413)
+            self._drain_request_body(length, seconds=LINGER_SECONDS)
+            self._reject(
+                "Feedback payload is too large",
+                413,
+                remaining_body_bytes=0,
+            )
             return
 
         try:

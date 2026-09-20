@@ -27,14 +27,17 @@ from collections.abc import Callable, Mapping, Sequence
 from concurrent.futures import Future, ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
-from typing import IO, Literal, TypedDict, cast
+from typing import IO, TYPE_CHECKING, Literal, TypedDict, cast
 
-try:
+if TYPE_CHECKING:
     from scripts.utils import parse_skill_md
-except ModuleNotFoundError as exc:
-    if exc.name not in {"scripts", "scripts.utils"}:
-        raise
-    from utils import parse_skill_md
+else:
+    try:
+        from scripts.utils import parse_skill_md
+    except ModuleNotFoundError as exc:
+        if exc.name not in {"scripts", "scripts.utils"}:
+            raise
+        from utils import parse_skill_md
 
 
 MAX_SKILL_NAME_LENGTH = 64
