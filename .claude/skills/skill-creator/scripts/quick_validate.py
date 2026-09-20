@@ -119,8 +119,7 @@ def _validate_metadata(frontmatter: Mapping[object, object]) -> None:
 
     typed_metadata = cast(dict[object, object], metadata)
     if not all(
-        isinstance(key, str) and isinstance(value, str)
-        for key, value in typed_metadata.items()
+        isinstance(key, str) and isinstance(value, str) for key, value in typed_metadata.items()
     ):
         _invalid("metadata keys and values must be strings")
 
@@ -137,9 +136,7 @@ def _validate_allowed_tools(frontmatter: Mapping[object, object]) -> None:
 
     if isinstance(allowed_tools, list):
         tools = cast(list[object], allowed_tools)
-        if tools and all(
-            isinstance(tool, str) and bool(tool.strip()) for tool in tools
-        ):
+        if tools and all(isinstance(tool, str) and bool(tool.strip()) for tool in tools):
             return
         _invalid("allowed-tools list entries must be non-empty strings")
 
