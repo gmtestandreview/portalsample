@@ -485,7 +485,12 @@ def _launch_claude(
     executable: str = "claude",
 ) -> subprocess.Popen[bytes]:
     """Launch Claude in the isolated project with bounded, inspectable pipes."""
-    env = {key: value for key, value in os.environ.items() if key != "CLAUDECODE"}
+    # REMEMBER_NESTED_SUMMARIZER makes the Remember plugin's hooks no-op in this
+    # throwaway session, so parallel evals do not contend for its save lock.
+    env = {
+        **{key: value for key, value in os.environ.items() if key != "CLAUDECODE"},
+        "REMEMBER_NESTED_SUMMARIZER": "1",
+    }
 
     # Resolve npm shims (claude.cmd) to a full path so no shell is needed.
     command = _build_claude_command(model, shutil.which(executable) or executable)

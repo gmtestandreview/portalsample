@@ -232,7 +232,12 @@ def run_claude(
         "Skill",
     ]
 
-    env = {k: v for k, v in os.environ.items() if k != "CLAUDECODE"}
+    # REMEMBER_NESTED_SUMMARIZER makes the Remember plugin's hooks no-op in this
+    # throwaway session, so parallel evals do not contend for its save lock.
+    env = {
+        **{k: v for k, v in os.environ.items() if k != "CLAUDECODE"},
+        "REMEMBER_NESTED_SUMMARIZER": "1",
+    }
     started = time.monotonic()
     with transcript_path.open("w", encoding="utf-8") as transcript:
         process = subprocess.Popen(

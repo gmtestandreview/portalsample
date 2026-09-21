@@ -4,12 +4,12 @@
 
 [Keep separate / merge / split / deprecate / use as companion skills]
 
-| Category | Skill A | Skill B |
-|---|---|---|
-| Strengths |  |  |
-| Weaknesses |  |  |
-| Opportunities |  |  |
-| Threats |  |  |
+| Category      | Skill A | Skill B |
+| ------------- | ------- | ------- |
+| Strengths     |         |         |
+| Weaknesses    |         |         |
+| Opportunities |         |         |
+| Threats       |         |         |
 
 ## Merge Recommendation
 

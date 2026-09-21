@@ -12,7 +12,7 @@ Use the shared record format in `../evaluation-schema.md`.
 
 ### RED
 
-**Setup parameters**
+### Setup parameters
 
 - `{representative_task}` — a realistic task exercising the claimed behavior.
 - `{success_criteria}` — observable success requirements defined before either run.
@@ -32,7 +32,7 @@ A valid RED does not require the agent to fail catastrophically. It requires use
 
 Run the **same** `{representative_task}` with the candidate skill available.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - the skill activates when required;
 - the observed RED problem is prevented or materially reduced;
@@ -40,7 +40,7 @@ Run the **same** `{representative_task}` with the candidate skill available.
 - no new material failure appears;
 - RED and GREEN evidence remain directly comparable.
 
-**Outcome guidance**
+### Outcome guidance
 
 - PASS — measurable improvement with no new material failure.
 - AMBER — improvement exists but is incomplete, unstable, or weakly evidenced.
@@ -54,7 +54,7 @@ Run the **same** `{representative_task}` with the candidate skill available.
 
 **Objective:** prevent an easier or materially different GREEN scenario from being presented as evidence of improvement.
 
-**Setup parameters**
+### Setup parameters
 
 - `{red_task}` — original baseline task.
 - `{green_task}` — proposed equivalent task.
@@ -68,14 +68,14 @@ Before running GREEN, compare the scenarios across:
 - pressure conditions;
 - activation context.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - `{equivalence_rationale}` is explicit;
 - all materially relevant conditions are preserved;
 - the GREEN task is not easier with respect to the failure observed in RED;
 - any changed condition is shown not to affect the behavioral claim.
 
-**Outcome guidance**
+### Outcome guidance
 
 - PASS — equivalence is demonstrated and comparative evidence is valid.
 - AMBER — most conditions are preserved but one material comparability question remains unresolved; linked GREEN evidence cannot count as full PASS.
@@ -89,7 +89,7 @@ Before running GREEN, compare the scenarios across:
 
 **Objective:** replace artificial behavioral RED with a meaningful retrieval/application baseline.
 
-**Setup parameters**
+### Setup parameters
 
 - `{reference_question}` — a representative question answerable from the candidate Reference material.
 - `{source_fact}` — the exact supported information to retrieve and apply.
@@ -110,7 +110,7 @@ Capture whether the agent:
 
 Run the same request with the candidate Reference material available.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - the correct `{source_fact}` is retrieved;
 - it is applied correctly to `{application_task}`;
@@ -127,17 +127,17 @@ If baseline performance was already correct, record that evidence; do not manufa
 
 **Objective:** verify that unavailable behavioral evidence is recorded as NHR rather than guessed or converted into a pass.
 
-**Setup parameters**
+### Setup parameters
 
 - `{required_case}` — the RED or GREEN evidence requirement.
 - `{unavailable_capability}` — concrete capability/evidence that cannot be obtained.
 - `{verification_needed}` — exact follow-up required to resolve the case.
 
-**Procedure**
+### Procedure
 
 Attempt only the safe, available setup needed to confirm the blocker. Do not fabricate a simulated run unless simulation is itself a valid representative method for this case.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - result is `NHR`;
 - `blocked_by` identifies `{unavailable_capability}`;
@@ -145,6 +145,6 @@ Attempt only the safe, available setup needed to confirm the blocker. Do not fab
 - `required_follow_up` records `{verification_needed}`;
 - no RED, GREEN, or deployment success is claimed from the missing evidence.
 
-**FAIL condition**
+### FAIL condition
 
 Reporting PASS, GREEN success, or deployment readiness despite the required evidence being unavailable is FAIL.

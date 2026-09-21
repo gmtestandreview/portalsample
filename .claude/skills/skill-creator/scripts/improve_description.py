@@ -352,7 +352,12 @@ def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
             raise ValueError("model contains unsupported characters on Windows")
         cmd.extend(["--model", model])
 
-    env = {key: value for key, value in os.environ.items() if key != "CLAUDECODE"}
+    # REMEMBER_NESTED_SUMMARIZER makes the Remember plugin's hooks no-op in this
+    # throwaway session, so parallel evals do not contend for its save lock.
+    env = {
+        **{key: value for key, value in os.environ.items() if key != "CLAUDECODE"},
+        "REMEMBER_NESTED_SUMMARIZER": "1",
+    }
 
     try:
         result = subprocess.run(

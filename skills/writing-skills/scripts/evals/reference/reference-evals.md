@@ -10,13 +10,13 @@ Use the shared record format in `../evaluation-schema.md`.
 
 **Objective:** verify that the agent retrieves the correct supported information and applies it to a real task.
 
-**Setup parameters**
+### Setup parameters
 
 - `{source_section}` — authoritative section within the loaded Reference material.
 - `{supported_fact}` — specific information stated by that source.
 - `{application_request}` — user task that requires applying the fact rather than merely quoting it.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - `{supported_fact}` is retrieved accurately;
 - the response preserves material conditions, exceptions, and scope from `{source_section}`;
@@ -24,7 +24,7 @@ Use the shared record format in `../evaluation-schema.md`.
 - the response does not substitute general model knowledge for contradictory source content;
 - any claim not supported by the source is clearly distinguished if outside context is allowed.
 
-**FAIL condition**
+### FAIL condition
 
 Fluent but materially incorrect application is FAIL even when retrieval wording appears accurate.
 
@@ -36,12 +36,12 @@ Fluent but materially incorrect application is FAIL even when retrieval wording 
 
 **Objective:** verify that a query outside the supplied Reference coverage is identified as unsupported rather than answered by invention.
 
-**Setup parameters**
+### Setup parameters
 
 - `{unsupported_question}` — plausible question adjacent to the Reference domain but not answered by the loaded sources.
 - `{coverage_boundary}` — what the sources actually cover.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - the agent does not invent a source-backed answer;
 - it states that `{unsupported_question}` is not supported by the available Reference material;
@@ -49,7 +49,7 @@ Fluent but materially incorrect application is FAIL even when retrieval wording 
 - if outside research is permitted, it clearly separates external information from source-derived information;
 - if outside research is not permitted, it stops at the evidence boundary.
 
-**Outcome guidance**
+### Outcome guidance
 
 - PASS — explicit evidence boundary and no fabrication.
 - AMBER — correctly identifies the gap but mixes in unsupported detail without clearly labeling it.
@@ -63,13 +63,13 @@ Fluent but materially incorrect application is FAIL even when retrieval wording 
 
 **Objective:** verify correct handling of conflicting or incomplete reference evidence.
 
-**Setup parameters**
+### Setup parameters
 
 - `{source_a}` and `{source_b}` — two loaded sources with a real material difference or apparent conflict.
 - `{precedence_rule}` — documented rule for resolving the difference, or `none` when no precedence exists.
 - `{decision_request}` — task requiring the disputed information.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 If `{precedence_rule}` exists:
 
@@ -83,7 +83,7 @@ If no precedence rule exists:
 - avoids fabricating reconciliation;
 - marks the unresolved decision AMBER, NHR, or requests human clarification according to the candidate's instructions.
 
-**FAIL condition**
+### FAIL condition
 
 Silently merging contradictory entries into a false statement is FAIL.
 
@@ -95,14 +95,14 @@ Silently merging contradictory entries into a false statement is FAIL.
 
 **Objective:** verify that the agent can discover and load the correct supporting resource from the user task, skill instructions, and documented load conditions without being artificially told the file name or path.
 
-**Setup parameters**
+### Setup parameters
 
 - `{user_task}` — realistic request requiring one supporting resource.
 - `{target_resource}` — the resource that uniquely governs the request.
 - `{nearby_resources}` — plausible but non-governing alternatives.
 - `{load_condition}` — instruction or boundary that should lead to `{target_resource}`.
 
-**Blocking success criteria**
+### Blocking success criteria
 
 - the prompt does not pre-name `{target_resource}`;
 - the agent identifies the correct resource from `{user_task}` and `{load_condition}`;
@@ -110,7 +110,7 @@ Silently merging contradictory entries into a false statement is FAIL.
 - the retrieved content is applied correctly to the task;
 - if discovery is impossible from the available instructions, the result is AMBER or NHR rather than guessed PASS.
 
-**Outcome guidance**
+### Outcome guidance
 
 - PASS — correct resource is discovered and applied without filename/path prompting.
 - AMBER — correct resource is eventually found, but discovery is inconsistent, indirect, or depends on accidental context.
