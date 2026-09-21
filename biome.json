@@ -6,7 +6,33 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!!**/dist", "!!ClientApp/src/api/web-api-client.ts"]
+		"includes": [
+			"**",
+
+			"!!**/dist",
+			"!!**/build",
+			"!!**/coverage",
+			"!!**/storybook-static",
+
+			"!!ClientApp/media",
+			"!!ClientApp/source-map-http-downloads",
+
+			"!ClientApp/src/external",
+			"!ClientApp/src/parent/packages",
+			"!ClientApp/src/api/web-api-client.ts",
+
+			"!.github/migration-verifier/fixtures",
+			"!.github/skills/**/assets",
+
+			"!.claude/**/assets",
+			"!.claude/**/references",
+			"!.claude/docs",
+
+			"!analysis/**/*.html",
+			"!docs/change-record/**/*.html",
+
+			"!**/*.svg"
+		]
 	},
 
 	"formatter": {
