@@ -29,7 +29,14 @@ except ModuleNotFoundError as exc:
 PathInput = str | Path
 
 # Patterns to exclude when packaging skills.
-EXCLUDE_DIRS = {"__pycache__", "node_modules"}
+EXCLUDE_DIRS = {
+    "__pycache__",
+    "node_modules",
+    ".remember",
+    ".mypy_cache",
+    ".pytest_cache",
+    ".ruff_cache",
+}
 EXCLUDE_GLOBS = {"*.pyc"}
 EXCLUDE_FILES = {".DS_Store"}
 # Directories excluded only at the skill root (not when nested deeper).

@@ -256,6 +256,19 @@ class PackageSkillTests(unittest.TestCase):
         with zipfile.ZipFile(archive_path) as archive:
             self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
 
+    def test_tool_caches_and_session_memory_are_excluded_at_any_depth(self) -> None:
+        skill = make_skill(self.root)
+        for junk in (".remember", ".mypy_cache", ".pytest_cache", ".ruff_cache"):
+            (skill / junk / "logs").mkdir(parents=True)
+            (skill / junk / "logs" / "a.log").write_text("x", encoding="utf-8")
+            (skill / "sub" / junk).mkdir(parents=True)
+            (skill / "sub" / junk / "b.log").write_text("x", encoding="utf-8")
+
+        archive_path = self._package_quietly(skill, self.root / "out")
+
+        with zipfile.ZipFile(archive_path) as archive:
+            self.assertEqual(sorted(archive.namelist()), ["demo/SKILL.md", "demo/ok.txt"])
+
     def test_validator_failure_returns_none_and_writes_nothing(self) -> None:
         skill = make_skill(self.root)
         output = self.root / "out"

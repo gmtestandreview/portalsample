@@ -135,9 +135,9 @@ or performance. Change the smallest responsible rule, branch, or instruction.
 ## Claude Code runtime branch
 
 Use this branch only when the target project actually contains the documented
-Claude Code runtime files. Read the applicable references directly from the
-`skill-developer` reference set; they document project-local behavior and are not
-part of the universal Agent Skills specification.
+Claude Code runtime files. Read the applicable `references/claude-code-*.md`
+files listed under "Runtime references"; they document project-local behavior and
+are not part of the universal Agent Skills specification.
 
 ### Runtime inspection
 
@@ -199,7 +199,12 @@ For this skill's own helper scripts, also run its regression suite:
 
 ```bash
 python -m unittest scripts.test_regressions
+python -m pytest "scripts/Regression tests" -q
 ```
+
+The `unittest` command covers only the cross-script smoke cases. The `pytest` suite
+(directory name contains a space, so it is not importable) is the full script gate
+and requires `pytest`.
 
 If any required deterministic check fails, stop, fix the defect or report it, and do not package or claim validation success.
 
