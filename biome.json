@@ -74,5 +74,25 @@
 				"organizeImports": "on"
 			}
 		}
+	},
+	"overrides": [
+	{
+		"includes": [
+			"ClientApp/src/routes/acceptQuote/validation.ts",
+			"ClientApp/src/routes/account/addBranch/validation.ts",
+			"ClientApp/src/routes/account/update/validation.ts",
+			"ClientApp/src/routes/account/validation.ts",
+			"ClientApp/src/routes/requestForQuote/validation.ts",
+			"ClientApp/src/routes/ta/validation.ts",
+			"ClientApp/src/validationSchemas/addressValidation.ts"
+		],
+		"linter": {
+			"rules": {
+				"suspicious": {
+					"noThenProperty": "off"
+				}
+			}
+		}
 	}
+]
 }
