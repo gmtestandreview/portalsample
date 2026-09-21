@@ -1,0 +1,6 @@
+[
+  {"query": "Optimize the activation conditions for my browser extension's content script.", "expect_engaged": false},
+  {"query": "Improve the activation rules for my Chrome extension so the popup only opens on checkout pages.", "expect_engaged": false},
+  {"query": "Tune the trigger conditions for my GitHub Actions workflow so it only runs on release tags.", "expect_engaged": false},
+  {"query": "Validate this Agent Skill folder with the bundled validator and package it as a .skill file.", "expect_engaged": true}
+]

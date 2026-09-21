@@ -8,20 +8,39 @@
 	"files": {
 		"includes": ["**", "!!**/dist", "!!ClientApp/src/api/web-api-client.ts"]
 	},
+	
 	"formatter": {
 		"enabled": true,
-		"indentStyle": "tab"
+		"formatWithErrors": false,
+		"attributePosition": "auto",
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineWidth": 80,
+		"lineEnding": "lf"
 	},
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"preset": "recommended"
+            "recommended": true,
+            "fix": "safe
 		}
 	},
 	"javascript": {
 		"formatter": {
-			"quoteStyle": "double"
+			"arrowParentheses":"always",
+			"bracketSameLine": false,
+			"bracketSpacing": true,
+			"delimiterSpacing": false,
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"semicolons": "always",
+			"trailingCommas": "all"
 		}
+	},
+	"json": {
+		"formatter": {
+			"trailingCommas": "none"
+    	}
 	},
 	"assist": {
 		"enabled": true,
@@ -32,3 +51,4 @@
 		}
 	}
 }
+

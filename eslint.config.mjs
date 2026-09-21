@@ -40,19 +40,22 @@ export default defineConfig(
 		],
 	},
 	{
-	files: ["**/*.{js,ts,tsx}"],
-  	extends: [
-		js.configs.recommended,
-		tseslint.configs.recommendedTypeChecked,
-		tseslint.configs.stylisticTypeChecked,
-		],
-  	languageOptions: {
-    	parserOptions: {
-      		projectService: true,
-  		  },
-  		},
+		name: "nmi/javascript-recommended",
+		files: ["**/*.{js,ts,tsx}"],
+		extends: [js.configs.recommended],
 	},
-	
+
+	{
+		name: "nmi/typescript-parser",
+		files: ["**/*.{ts,tsx}"],
+		extends: [tseslint.configs.base, tseslint.configs.eslintRecommended],
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+			},
+		},
+	},
+
 	{
 		name: "nmi/react",
 		files: ["**/*.{ts,tsx}"],
@@ -97,7 +100,7 @@ export default defineConfig(
 	{
 		name: "nmi/base",
 		files: ["**/*.{ts,tsx,js,jsx,cjs,mjs}"],
-		plugins: { "@stylistic": stylistic },
+		plugins: { "@stylistic": stylistic, "@typescript-eslint": tseslint.plugin },
 		languageOptions: {
 			ecmaVersion: "latest",
 			sourceType: "module",
@@ -106,6 +109,20 @@ export default defineConfig(
 		},
 		// Every rule is an error: this configuration is a clean baseline, and a
 		// warning tier would let findings accumulate unnoticed.
+		rules: {
+			"no-console": ["error", { allow: ["warn", "error"] }],
+
+			// Promoted into js.configs.recommended by ESLint 10 and absent from
+			// the outgoing ESLint 8 policy.
+			"preserve-caught-error": "error",
+			"no-useless-assignment": "error",
+			"no-constant-binary-expression": "error",
+		},
+	},
+
+	{
+		name: "nmi/typescript-rules",
+		files: ["**/*.{ts,tsx}"],
 		rules: {
 			"@typescript-eslint/consistent-type-imports": [
 				"error",
@@ -122,13 +139,6 @@ export default defineConfig(
 					caughtErrorsIgnorePattern: "^_",
 				},
 			],
-			"no-console": ["error", { allow: ["warn", "error"] }],
-
-			// Promoted into js.configs.recommended by ESLint 10 and absent from
-			// the outgoing ESLint 8 policy.
-			"preserve-caught-error": "error",
-			"no-useless-assignment": "error",
-			"no-constant-binary-expression": "error",
 		},
 	},
 
