@@ -4,9 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from skills_ref.errors import ParseError, ValidationError
 from skills_ref.parser import (
-    ParseError,
-    ValidationError,
     find_skill_md,
     parse_frontmatter,
     read_properties,

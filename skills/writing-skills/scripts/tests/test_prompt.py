@@ -1,5 +1,7 @@
 """Tests for prompt module."""
 
+from pathlib import Path
+
 import pytest
 
 from skills_ref.errors import ParseError
@@ -11,7 +13,7 @@ def test_empty_list():
     assert result == "<available_skills>\n</available_skills>"
 
 
-def test_single_skill(tmp_path):
+def test_single_skill(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -29,7 +31,7 @@ Body
     assert "SKILL.md" in result
 
 
-def test_multiple_skills(tmp_path):
+def test_multiple_skills(tmp_path: Path):
     skill_a = tmp_path / "skill-a"
     skill_a.mkdir()
     (skill_a / "SKILL.md").write_text("""---
@@ -55,7 +57,7 @@ Body
     assert "skill-b" in result
 
 
-def test_special_characters_escaped(tmp_path):
+def test_special_characters_escaped(tmp_path: Path):
     """XML special characters in description are escaped."""
     skill_dir = tmp_path / "special-skill"
     skill_dir.mkdir()
@@ -73,7 +75,7 @@ Body
     assert "<bar>" not in result
 
 
-def test_name_special_characters_escaped(tmp_path):
+def test_name_special_characters_escaped(tmp_path: Path):
     skill_dir = tmp_path / "special-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -87,7 +89,7 @@ Body
     assert "rock&roll" not in result
 
 
-def test_location_special_characters_escaped(tmp_path):
+def test_location_special_characters_escaped(tmp_path: Path):
     skill_dir = tmp_path / "skill&docs" / "my-skill"
     skill_dir.mkdir(parents=True)
     (skill_dir / "SKILL.md").write_text("""---
@@ -101,7 +103,7 @@ Body
     assert "skill&docs" not in result
 
 
-def test_missing_skill_file_raises_parse_error(tmp_path):
+def test_missing_skill_file_raises_parse_error(tmp_path: Path):
     skill_dir = tmp_path / "missing-skill"
     skill_dir.mkdir()
     with pytest.raises(ParseError, match="SKILL.md not found"):

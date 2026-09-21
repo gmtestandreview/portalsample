@@ -10,12 +10,40 @@
  * Extracts all ```dot blocks from SKILL.md and renders to SVG.
  * Useful for helping the user visualize the process flows.
  *
- * Requires: graphviz (dot) installed on system
+ * Requires: graphviz (dot) in a standard location, or set GRAPHVIZ_DOT to
+ * its absolute path.
  */
 
-import * as fs from 'fs';
-import * as path from 'path';
-import { execFileSync } from 'child_process';
+import { execFileSync } from 'node:child_process';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+
+const defaultDotPaths = {
+  win32: [
+    'C:\\Program Files\\Graphviz\\bin\\dot.exe',
+    'C:\\Program Files (x86)\\Graphviz\\bin\\dot.exe',
+    'C:\\ProgramData\\chocolatey\\bin\\dot.exe'
+  ],
+  darwin: [
+    '/opt/homebrew/bin/dot',
+    '/usr/local/bin/dot',
+    '/opt/local/bin/dot',
+    '/usr/bin/dot'
+  ],
+  linux: ['/usr/bin/dot', '/usr/local/bin/dot', '/snap/bin/dot']
+};
+
+function writeLine(message) {
+  process.stdout.write(`${message}\n`);
+}
+
+function resolveExistingPath(candidate) {
+  try {
+    return fs.realpathSync(candidate);
+  } catch {
+    return null;
+  }
+}
 
 function extractDotBlocks(markdown) {
   const blocks = [];
@@ -26,7 +54,7 @@ function extractDotBlocks(markdown) {
     const content = match[1].trim();
 
     // Extract digraph name
-    const nameMatch = content.match(/digraph\s+(\w+)/);
+    const nameMatch = /digraph\s+(\w+)/.exec(content);
     const name = nameMatch ? nameMatch[1] : `graph_${blocks.length + 1}`;
 
     blocks.push({ name, content });
@@ -37,13 +65,17 @@ function extractDotBlocks(markdown) {
 
 function extractGraphBody(dotContent) {
   // Extract just the body (nodes and edges) from a digraph
-  const match = dotContent.match(/digraph\s+\w+\s*\{([\s\S]*)\}/);
-  if (!match) return '';
+  const headerMatch = /digraph\s+\w+\s*\{/.exec(dotContent);
+  if (!headerMatch) return '';
 
-  let body = match[1];
+  const bodyStart = headerMatch.index + headerMatch[0].length;
+  const bodyEnd = dotContent.lastIndexOf('}');
+  if (bodyEnd < bodyStart) return '';
+
+  let body = dotContent.slice(bodyStart, bodyEnd);
 
   // Remove rankdir (we'll set it once at the top level)
-  body = body.replace(/^\s*rankdir\s*=\s*\w+\s*;?\s*$/gm, '');
+  body = body.replaceAll(/^\s*rankdir\s*=\s*\w+\s*;?\s*$/gm, '');
 
   return body.trim();
 }
@@ -67,9 +99,37 @@ ${bodies.join('\n\n')}
 }`;
 }
 
-function renderToSvg(dotContent) {
+function resolveDotExecutable() {
+  const configuredDot = process.env.GRAPHVIZ_DOT;
+  const platformPaths = defaultDotPaths[process.platform] ?? defaultDotPaths.linux;
+  const configuredCandidate = path.isAbsolute(configuredDot ?? '')
+    ? resolveExistingPath(configuredDot)
+    : null;
+  const trustedDefaults = platformPaths
+    .map(resolveExistingPath)
+    .filter(candidate => candidate !== null);
+  const candidates = [configuredCandidate, ...trustedDefaults].filter(
+    candidate => candidate !== null
+  );
+
+  return [...new Set(candidates)].find(candidate => {
+    try {
+      const output = execFileSync(candidate, ['-Tsvg'], {
+        input: 'digraph probe {}',
+        encoding: 'utf-8',
+        maxBuffer: 1024 * 1024,
+        stdio: ['pipe', 'pipe', 'ignore']
+      });
+      return output.includes('<svg');
+    } catch {
+      return false;
+    }
+  });
+}
+
+function renderToSvg(dotExecutable, dotContent) {
   try {
-    return execFileSync('dot', ['-Tsvg'], {
+    return execFileSync(dotExecutable, ['-Tsvg'], {
       input: dotContent,
       encoding: 'utf-8',
       maxBuffer: 10 * 1024 * 1024
@@ -100,19 +160,17 @@ function main() {
 
   const skillDir = path.resolve(skillDirArg);
   const skillFile = path.join(skillDir, 'SKILL.md');
-  const skillName = path.basename(skillDir).replace(/-/g, '_');
+  const skillName = path.basename(skillDir).replaceAll('-', '_');
 
   if (!fs.existsSync(skillFile)) {
     console.error(`Error: ${skillFile} not found`);
     process.exit(1);
   }
 
-  // Check if dot is available. Run the binary directly rather than probing
-  // with `which`, which is not a command on Windows.
-  try {
-    execFileSync('dot', ['-V'], { stdio: 'ignore' });
-  } catch {
-    console.error('Error: graphviz (dot) not found. Install with:');
+  const dotExecutable = resolveDotExecutable();
+  if (!dotExecutable) {
+    console.error('Error: graphviz (dot) not found in a standard location.');
+    console.error('Set GRAPHVIZ_DOT to its absolute path or install with:');
     console.error('  brew install graphviz    # macOS');
     console.error('  apt install graphviz     # Linux');
     process.exit(1);
@@ -122,48 +180,46 @@ function main() {
   const blocks = extractDotBlocks(markdown);
 
   if (blocks.length === 0) {
-    console.log('No ```dot blocks found in', skillFile);
+    writeLine(`No \`\`\`dot blocks found in ${skillFile}`);
     process.exit(0);
   }
 
-  console.log(`Found ${blocks.length} diagram(s) in ${path.basename(skillDir)}/SKILL.md`);
+  writeLine(`Found ${blocks.length} diagram(s) in ${path.basename(skillDir)}/SKILL.md`);
 
   const outputDir = path.join(skillDir, 'diagrams');
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir);
-  }
+  fs.mkdirSync(outputDir, { recursive: true });
 
   if (combine) {
     // Combine all graphs into one
     const combined = combineGraphs(blocks, skillName);
-    const svg = renderToSvg(combined);
+    const svg = renderToSvg(dotExecutable, combined);
     if (svg) {
       const outputPath = path.join(outputDir, `${skillName}_combined.svg`);
       fs.writeFileSync(outputPath, svg);
-      console.log(`  Rendered: ${skillName}_combined.svg`);
+      writeLine(`  Rendered: ${skillName}_combined.svg`);
 
       // Also write the dot source for debugging
       const dotPath = path.join(outputDir, `${skillName}_combined.dot`);
       fs.writeFileSync(dotPath, combined);
-      console.log(`  Source: ${skillName}_combined.dot`);
+      writeLine(`  Source: ${skillName}_combined.dot`);
     } else {
       console.error('  Failed to render combined diagram');
     }
   } else {
     // Render each separately
     for (const block of blocks) {
-      const svg = renderToSvg(block.content);
+      const svg = renderToSvg(dotExecutable, block.content);
       if (svg) {
         const outputPath = path.join(outputDir, `${block.name}.svg`);
         fs.writeFileSync(outputPath, svg);
-        console.log(`  Rendered: ${block.name}.svg`);
+        writeLine(`  Rendered: ${block.name}.svg`);
       } else {
         console.error(`  Failed: ${block.name}`);
       }
     }
   }
 
-  console.log(`\nOutput: ${outputDir}/`);
+  writeLine(`\nOutput: ${outputDir}/`);
 }
 
 main();
