@@ -1,14 +1,14 @@
 import { useField } from "formik";
 import { forEach, keys } from "lodash";
 import { Col, Form, Row } from "react-bootstrap";
-import { Title } from "../../../../api/web-api-client";
 import type { ContactDto } from "../../../../api/web-api-client";
+import { Title } from "../../../../api/web-api-client";
 import { prefixedPropertyOf } from "../../../../utils";
-import SelectInput from "../../../Inputs/SelectInput";
-import TextInput from "../../../Inputs/TextInput";
-import type { SelectInputOption } from "../../../Inputs/SelectInput/types";
-import HidableField from "../../HidableField";
 import NumberInput from "../../../Inputs/NumberInput";
+import SelectInput from "../../../Inputs/SelectInput";
+import type { SelectInputOption } from "../../../Inputs/SelectInput/types";
+import TextInput from "../../../Inputs/TextInput";
+import HidableField from "../../HidableField";
 
 export interface ContactDetailsProps {
 	name: string;

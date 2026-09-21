@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { within, expect, fn } from "storybook/test";
+import { expect, fn, within } from "storybook/test";
 import type { PatternApprovalDashboardDetailsDto } from "../../api/web-api-client";
 import { PaDashboardItemStatus } from "../../routes/common/enums";
-import { DashboardTab } from "../SearchFilter/types";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import { DashboardTab } from "../SearchFilter/types";
 import PaRequestItem from "./paRequestItem";
 
 /**

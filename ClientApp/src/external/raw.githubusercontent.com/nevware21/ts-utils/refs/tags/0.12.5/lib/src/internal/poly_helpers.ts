@@ -14,7 +14,7 @@ export const POLYFILL_TYPE_NAME = "__nw21$polytype__";
 /*#__NO_SIDE_EFFECTS__*/
 export function makePolyFn<T extends Function>(poly: T): T {
 	return function (): T {
-		let theArgs = [this];
+		const theArgs = [this];
 		for (let lp = 0; lp < arguments[LENGTH]; lp++) {
 			theArgs[lp + 1] = arguments[lp];
 		}

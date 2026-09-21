@@ -8,13 +8,13 @@
 
 import { NULL_VALUE, UNDEF_VALUE } from "../internal/constants";
 import { _getGlobalValue } from "../internal/global";
+import { createCachedValue, type ICachedValue } from "./cache";
 import {
-	ILazyValue,
 	_globalLazyTestHooks,
 	_initTestHooks,
 	getLazy,
+	type ILazyValue,
 } from "./lazy";
-import { ICachedValue, createCachedValue } from "./cache";
 import { safe } from "./safe";
 
 const WINDOW = "window";
@@ -37,7 +37,7 @@ export function _getGlobalInstFn<T>(
 	theArgs?: unknown[],
 ): () => T | null | undefined {
 	let cachedValue: ICachedValue<T>;
-	return function () {
+	return () => {
 		!_globalLazyTestHooks && _initTestHooks();
 		if (!cachedValue || _globalLazyTestHooks.lzy) {
 			cachedValue = createCachedValue(safe(getFn, theArgs).v);

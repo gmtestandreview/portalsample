@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
+import { trackGAEvent } from "@/analytics/GoogleAnalytics";
+import type { DashboardItemDto } from "@/api/web-api-client";
+import { ModalDispatchCtx } from "@/components/modals/ModalContext";
 import InstrumentItem from "@/components/RequestList/instrumentItem";
 import NoRequests from "@/components/RequestList/noRequests";
 import RequestItem from "@/components/RequestList/requestItem";
-import { ModalDispatchCtx } from "@/components/modals/ModalContext";
-import type { DashboardItemDto } from "@/api/web-api-client";
 import { DashboardItemStatus, ReportStatus } from "@/routes/common/enums";
-import { trackGAEvent } from "@/analytics/GoogleAnalytics";
 
 vi.mock("@/analytics/GoogleAnalytics", () => ({
 	trackGAEvent: vi.fn(),

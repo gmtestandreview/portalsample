@@ -1,4 +1,3 @@
-import type React from "react";
 import {
 	act,
 	fireEvent,
@@ -6,14 +5,15 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
+import type React from "react";
 import "@testing-library/jest-dom/vitest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	ServiceType,
 	type ServicesOffered,
+	ServiceType,
 } from "../../../../ClientApp/src/api/web-api-client";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
 
 const {
 	mockAcquireTokenSilent,

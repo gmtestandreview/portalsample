@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect } from "storybook/test";
 import { Input } from "react-aria-components/Input";
+import { expect } from "storybook/test";
 import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
 import { InputGroup } from "./InputGroup";
 

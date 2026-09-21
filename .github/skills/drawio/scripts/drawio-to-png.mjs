@@ -10,11 +10,11 @@
  *        node drawio-to-png.mjs --renderer=cli|viewer|auto <input.drawio> [output.png]
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
-import { join, basename, dirname, resolve } from "path";
 import { spawnSync } from "child_process";
-import { inflateRawSync } from "zlib";
+import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
+import { basename, dirname, join, resolve } from "path";
 import puppeteer from "puppeteer-core";
+import { inflateRawSync } from "zlib";
 
 // --- Build HTML that uses the official draw.io viewer for rendering ---
 function buildViewerHtml(rawFileContent) {

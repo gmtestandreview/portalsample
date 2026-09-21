@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Field, ErrorMessage } from "formik";
+import { ErrorMessage, Field } from "formik";
 import { describe, expect, it } from "vitest";
 import * as yup from "yup";
 
 import "../../../ClientApp/src/validationSchemas/yupExtensions";
-import { FormikWrapper, createSubmitSpy } from "./formik";
+import { createSubmitSpy, FormikWrapper } from "./formik";
 
 const schema = yup.object({
 	name: yup.string().label("Name").isRequired(),

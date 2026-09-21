@@ -1,47 +1,47 @@
-import { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
-import { Col, Row, Container } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router";
-import {
-	CustomAccordion,
-	CustomAccordionBody,
-} from "../../components/Accordion";
-import EditButton from "../../components/Buttons/EditButton";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import type { SummaryAndAcceptProps } from "./types";
-import ReportRecipient from "./reportRecipient";
-import DeliveryAndReturn from "./deliveryAndReturn";
-import PaymentDetails from "./paymentDetails";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import { AcceptQuoteClient, DashboardClient } from "../../api/web-api-client";
 import type {
 	AcceptQuotePreInfoDto,
 	OrganisationDto,
 	RequestForQuote,
 } from "../../api/web-api-client";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import HidableField from "../../components/forms/HidableField";
-import Checkbox from "../../components/Inputs/Checkbox";
-import InTextLink from "../../components/InTextLink";
-import { useAccountState } from "../../authentication/hooks";
-import QuotationSummary from "./quotationSummary";
+import { AcceptQuoteClient, DashboardClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
+import { useAccountState } from "../../authentication/hooks";
 import {
-	getDashboardNotification,
-	clearDashboardNotification,
-	setDashboardNotification,
-	clearDashboardInfoNotification,
-} from "../../storage/notification";
+	CustomAccordion,
+	CustomAccordionBody,
+} from "../../components/Accordion";
 import NotificationMessage from "../../components/Alert/NotificationMessage";
-import { NotificationSeverity } from "../../storage/types";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import EditButton from "../../components/Buttons/EditButton";
+import HidableField from "../../components/forms/HidableField";
+import HeaderIntroText from "../../components/HeaderIntroText";
 import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon";
+import Checkbox from "../../components/Inputs/Checkbox";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import TextAreaInput from "../../components/Inputs/TextAreaInput";
+import InTextLink from "../../components/InTextLink";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import AppLogger from "../../instrumentation/AppLogger";
+import {
+	clearDashboardInfoNotification,
+	clearDashboardNotification,
+	getDashboardNotification,
+	setDashboardNotification,
+} from "../../storage/notification";
+import { NotificationSeverity } from "../../storage/types";
 import {
 	getFileUrlFromBase64,
 	openPdfPageInNewTab,
 } from "../common/helperFunctions";
-import AppLogger from "../../instrumentation/AppLogger";
+import DeliveryAndReturn from "./deliveryAndReturn";
+import PaymentDetails from "./paymentDetails";
+import QuotationSummary from "./quotationSummary";
+import ReportRecipient from "./reportRecipient";
+import type { SummaryAndAcceptProps } from "./types";
 
 const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 	const { id } = useParams<{ id?: string }>();

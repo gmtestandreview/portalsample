@@ -1,5 +1,5 @@
-import Badge from "react-bootstrap/Badge";
 import { useEffect, useState } from "react";
+import Badge from "react-bootstrap/Badge";
 import {
 	DashboardItemStatus,
 	PaDashboardItemStatus,

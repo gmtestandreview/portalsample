@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
+import { useEffect, useState } from "react";
+import type { RequestForQuoteDetails } from "../../api/web-api-client";
+import { DashboardClient } from "../../api/web-api-client";
+import { tokenRequest } from "../../authentication/authConfig";
+import AppLogger from "../../instrumentation/AppLogger";
 import {
 	getFileSize,
 	getFileUrlFromBase64,
 	handleReportFileError,
 	openInNewTab,
 } from "../../routes/common/helperFunctions";
-import { DashboardClient } from "../../api/web-api-client";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import ViewPdfButton from "./ViewPdfButton";
 import { clearDashboardNotification } from "../../storage/notification";
-import AppLogger from "../../instrumentation/AppLogger";
+import ViewPdfButton from "./ViewPdfButton";
 
 export interface ViewMeasurementReportProps {
 	text?: string;

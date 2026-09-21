@@ -1,5 +1,5 @@
-import { NotificationSeverity } from "../../storage/types";
 import type { Notification } from "../../storage/types";
+import { NotificationSeverity } from "../../storage/types";
 import { HttpStatusCode } from "../../types";
 
 export class DashBoardNotifications {

@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
+import { withPortalProviders } from "../../storybook/storybookHarness";
+import BackToTopButton from "./backToTopButton";
 import ContactLink from "./ContactLink";
 import SkipLinks from "./skipLinks";
-import BackToTopButton from "./backToTopButton";
 import ViewPdfButton from "./ViewPdfButton";
-import { withPortalProviders } from "../../storybook/storybookHarness";
 
 const meta = {
 	title: "Components/Utilities",

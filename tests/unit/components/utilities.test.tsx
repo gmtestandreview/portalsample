@@ -1,7 +1,7 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
 import vm from "node:vm";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import BackToTopButton from "@/components/Utilities/backToTopButton";
 import ContactLink from "@/components/Utilities/ContactLink";
 import DeliveryInstructions from "@/components/Utilities/deliveryInstructions";

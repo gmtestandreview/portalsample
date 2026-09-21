@@ -7,8 +7,8 @@ vi.mock("@storybook/addon-vitest/vitest-plugin", () => ({
 	storybookTest: vi.fn(() => ({ name: "storybook-test-mock" })),
 }));
 
-import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
 import storybookConfig from "../../../vitest.storybook.config";
+import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
 
 const requireFrom = createRequire(import.meta.url);
 

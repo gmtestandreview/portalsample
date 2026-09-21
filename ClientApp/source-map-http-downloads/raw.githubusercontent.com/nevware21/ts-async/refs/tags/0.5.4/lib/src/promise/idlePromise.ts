@@ -6,7 +6,11 @@
  * Licensed under the MIT license.
  */
 
-import { ICachedValue, isUndefined } from "@nevware21/ts-utils";
+import { type ICachedValue, isUndefined } from "@nevware21/ts-utils";
+import type { IPromise } from "../interfaces/IPromise";
+import type { IPromiseResult } from "../interfaces/IPromiseResult";
+import type { PromiseExecutor } from "../interfaces/types";
+import { _pureAssign } from "../internal/treeshake_helpers";
 import {
 	_createAllPromise,
 	_createAllSettledPromise,
@@ -16,11 +20,7 @@ import {
 	_createRejectedPromise,
 	_createResolvedPromise,
 } from "./base";
-import { IPromise } from "../interfaces/IPromise";
 import { idleItemProcessor } from "./itemProcessor";
-import { PromiseExecutor } from "../interfaces/types";
-import { IPromiseResult } from "../interfaces/IPromiseResult";
-import { _pureAssign } from "../internal/treeshake_helpers";
 
 let _defaultIdleTimeout: number | undefined;
 
@@ -84,7 +84,7 @@ export function createIdlePromise<T>(
 	executor: PromiseExecutor<T>,
 	timeout?: number,
 ): IPromise<T> {
-	let theTimeout = isUndefined(timeout) ? _defaultIdleTimeout : timeout;
+	const theTimeout = isUndefined(timeout) ? _defaultIdleTimeout : timeout;
 	return _createPromise(
 		createIdlePromise,
 		idleItemProcessor(theTimeout),

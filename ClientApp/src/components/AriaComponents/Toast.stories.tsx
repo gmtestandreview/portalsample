@@ -1,9 +1,9 @@
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, waitFor, within } from "storybook/test";
 import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { Button } from "../Buttons/AriaButton/Button";
 import { MyToastRegion } from "./Toast";
 import { queue } from "./ToastQueue";
-import { Button } from "../Buttons/AriaButton/Button";
-import { expect, waitFor, within } from "storybook/test";
-import type { Meta, StoryObj } from "@storybook/react-vite";
 
 interface ToastStoryArgs {
 	title: string;

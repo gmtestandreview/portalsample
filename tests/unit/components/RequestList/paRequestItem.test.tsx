@@ -1,4 +1,3 @@
-import type React from "react";
 import {
 	fireEvent,
 	render,
@@ -7,8 +6,8 @@ import {
 	within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type React from "react";
 import { MemoryRouter, useLocation } from "react-router";
-import type * as NotificationModule from "@/storage/notification";
 import type * as WebApiClientModule from "@/api/web-api-client";
 import {
 	ApplicationType,
@@ -17,6 +16,7 @@ import {
 import PaRequestItem from "@/components/RequestList/paRequestItem";
 import { DashboardTab } from "@/components/SearchFilter/types";
 import { PaDashboardItemStatus } from "@/routes/common/enums";
+import type * as NotificationModule from "@/storage/notification";
 import { NotificationSeverity } from "@/storage/types";
 
 const mocks = vi.hoisted(() => ({

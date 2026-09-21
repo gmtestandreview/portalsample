@@ -1,8 +1,8 @@
 import type { ProblemDetails } from "../../../api/web-api-client";
 import { HttpStatusCode } from "../../../types";
 import { isWafError } from "../../../types/wafError";
-import { ErrorType } from "./types";
 import type { WizardStepError } from "./types";
+import { ErrorType } from "./types";
 
 /**
  * Classifies a 403 Forbidden error into the appropriate WizardStepError variant.

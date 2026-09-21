@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { describe, expect, it } from "vitest";
 import { Link, useLocation } from "react-router";
+import { describe, expect, it } from "vitest";
 import { renderWithProviders } from "./renderWithProviders";
 
 const LocationProbe = () => {

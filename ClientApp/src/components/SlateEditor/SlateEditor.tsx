@@ -1,8 +1,8 @@
-import React, { useMemo } from "react";
-import { createEditor, type BaseEditor, Editor, type Descendant } from "slate";
-import parse from "html-react-parser";
 import DOMPurify from "dompurify";
-import { Slate, Editable, withReact } from "slate-react";
+import parse from "html-react-parser";
+import React, { useMemo } from "react";
+import { type BaseEditor, createEditor, type Descendant, Editor } from "slate";
+import { Editable, Slate, withReact } from "slate-react";
 import PrimaryButton from "../Buttons/PrimaryButton";
 
 // slate helpers

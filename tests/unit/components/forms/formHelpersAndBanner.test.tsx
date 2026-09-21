@@ -1,15 +1,15 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Field, Form, Formik, useFormikContext } from "formik";
 import type { FormikConfig, FormikValues } from "formik";
+import { Field, Form, Formik, useFormikContext } from "formik";
 import { useEffect } from "react";
 import { MemoryRouter, useLocation } from "react-router";
 import * as Yup from "yup";
 import Details from "@/components/forms/Details";
 import FormBanner from "@/components/forms/FormBanner";
+import countOfErrors from "@/components/forms/FormikForm/formikHelpers";
 import HidableField from "@/components/forms/HidableField";
 import UnsavedFormPrompt from "@/components/forms/UnsavedFormPrompt";
-import countOfErrors from "@/components/forms/FormikForm/formikHelpers";
 import { isHidden, removeHidden, validateForm } from "@/components/forms/utils";
 
 vi.mock("@/components/RouteLeavingGuard", () => ({

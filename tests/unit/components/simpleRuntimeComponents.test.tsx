@@ -2,6 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useAccountState } from "@/authentication/hooks";
 import { CustomAccordion, CustomAccordionBody } from "@/components/Accordion";
 import {
 	AlertError,
@@ -19,7 +20,6 @@ import Home from "@/components/Home";
 import InTextLink from "@/components/InTextLink";
 import PaginationHeader from "@/components/PaginationHeader";
 import Welcome from "@/components/Welcome";
-import { useAccountState } from "@/authentication/hooks";
 import { NotificationSeverity } from "@/storage/types";
 
 vi.mock("@/components/get-started/get-started", () => ({

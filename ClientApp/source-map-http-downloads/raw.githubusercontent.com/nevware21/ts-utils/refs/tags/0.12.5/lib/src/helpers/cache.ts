@@ -131,14 +131,14 @@ export function getDeferred<R, F extends (...args: any[]) => R>(
 	cb: F,
 	argArray?: Parameters<F>,
 ): ICachedValue<R> {
-	let theValue: any = {
+	const theValue: any = {
 		toJSON: () => theValue.v,
 	};
 
 	return objDefineProp(theValue as ICachedValue<R>, "v", {
 		get: () => {
 			// Use apply to call the callback with the provided arguments
-			let result: R = fnApply(cb, null, argArray);
+			const result: R = fnApply(cb, null, argArray);
 			cb = NULL_VALUE;
 			objDefineProp(theValue, "v", { value: result });
 			return result;
@@ -194,11 +194,11 @@ export function getWritableDeferred<
 	R,
 	F extends (...args: any[]) => R = () => R,
 >(cb: F, argArray?: Parameters<F>): ICachedValue<R> {
-	let theValue: any = {
+	const theValue: any = {
 		toJSON: () => theValue.v,
 	};
 
-	let _setValue = (newValue: R) => {
+	const _setValue = (newValue: R) => {
 		// Just replace the value
 		objDefineProp(theValue, "v", {
 			value: newValue,
@@ -208,7 +208,7 @@ export function getWritableDeferred<
 
 	return objDefineProp(theValue as ICachedValue<R>, "v", {
 		get: () => {
-			let result = fnApply(cb, null, argArray);
+			const result = fnApply(cb, null, argArray);
 			_setValue(result);
 			cb = NULL_VALUE;
 

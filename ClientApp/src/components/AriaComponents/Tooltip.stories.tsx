@@ -1,8 +1,8 @@
+import type { Meta, StoryFn } from "@storybook/react-vite";
 import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Tooltip, TooltipTrigger } from "./Tooltip";
 import { Button } from "../Buttons/AriaButton/Button";
 import { Save } from "./NmiIcon";
-import type { Meta, StoryFn } from "@storybook/react-vite";
+import { Tooltip, TooltipTrigger } from "./Tooltip";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

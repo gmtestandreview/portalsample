@@ -5,18 +5,18 @@ import {
 	phoneSchema,
 } from "../../validationSchemas/contactValidation";
 import "../../validationSchemas/yupExtensions";
+import type {
+	DeliveryAndReturnStep,
+	PaymentDetailsStep,
+	ReportRecipientStep,
+	SummaryAndAcceptStep,
+} from "../../api/web-api-client";
 import {
 	InvoiceSentToValues,
 	ReturnAddressTypeValues,
 	ReturnContactTypeValues,
 	ReturnMethodValues,
 	YesNo,
-} from "../../api/web-api-client";
-import type {
-	DeliveryAndReturnStep,
-	PaymentDetailsStep,
-	ReportRecipientStep,
-	SummaryAndAcceptStep,
 } from "../../api/web-api-client";
 import type { Validation } from "../../components/forms/FormikForm/types";
 import addressSchema from "../../validationSchemas/addressValidation";

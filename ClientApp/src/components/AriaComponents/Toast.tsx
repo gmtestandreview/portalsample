@@ -1,16 +1,16 @@
 "use client";
 import {
-	UNSTABLE_ToastRegion as ToastRegion,
+	Text,
 	UNSTABLE_Toast as Toast,
 	UNSTABLE_ToastContent as ToastContent,
 	type ToastProps,
-	Text,
+	UNSTABLE_ToastRegion as ToastRegion,
 } from "react-aria-components/Toast";
 import { Button } from "../Buttons/AriaButton/Button";
 import { X } from "./NmiIcon";
 import "./Toast.css";
-import { type CSSProperties } from "react";
-import { queue, type MyToastContent } from "./ToastQueue";
+import type { CSSProperties } from "react";
+import { type MyToastContent, queue } from "./ToastQueue";
 
 export function MyToastRegion() {
 	return (

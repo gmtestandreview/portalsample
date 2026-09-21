@@ -7,9 +7,9 @@
  */
 
 import { arrForEach } from "../array/forEach";
-import { isNullOrUndefined } from "./base";
-import { strSplit } from "../string/split";
 import { iterForOf } from "../iterator/forOf";
+import { strSplit } from "../string/split";
+import { isNullOrUndefined } from "./base";
 
 /**
  * Get the named value from the target object where the path may be presented by a string which
@@ -60,8 +60,8 @@ export function getValueByKey<V, T extends object = any>(
 		return defValue;
 	}
 
-	let parts = strSplit(path, ".");
-	let cnt = parts.length;
+	const parts = strSplit(path, ".");
+	const cnt = parts.length;
 
 	for (let lp = 0; lp < cnt && !isNullOrUndefined(target); lp++) {
 		target = (target as any)[parts[lp]];
@@ -157,8 +157,8 @@ export function getValueByIter<V, T extends object = any>(
  */
 export function setValueByKey<T>(target: any, path: string, value: T) {
 	if (target && path) {
-		let parts = strSplit(path, ".");
-		let lastKey = parts.pop();
+		const parts = strSplit(path, ".");
+		const lastKey = parts.pop();
 
 		arrForEach(parts, (key) => {
 			if (isNullOrUndefined(target[key])) {

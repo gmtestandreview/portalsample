@@ -1,11 +1,11 @@
-import { render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MemoryRouter, Route, Routes } from "react-router";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
+import { render, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
+import { MemoryRouter, Route, Routes } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import CreateRequestForTypeApproval from "../../../../ClientApp/src/routes/ta/create";
 

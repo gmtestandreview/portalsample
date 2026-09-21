@@ -6,13 +6,13 @@ import {
 } from "../../components/Accordion";
 import EditButton from "../../components/Buttons/EditButton";
 import HeaderIntroText from "../../components/HeaderIntroText";
-import type { TASummaryProps } from "./types";
-import OrganisationAndContact from "./organisationAndContact";
-import ApplicationAndInstrument from "./applicationAndInstrument";
-import SupportingDocuments from "./supportingDocuments";
-import useBodyClass from "../../components/Utilities/useBodyClass";
 import Checkbox from "../../components/Inputs/Checkbox";
 import InTextLink from "../../components/InTextLink";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import ApplicationAndInstrument from "./applicationAndInstrument";
+import OrganisationAndContact from "./organisationAndContact";
+import SupportingDocuments from "./supportingDocuments";
+import type { TASummaryProps } from "./types";
 
 const SummaryAndSubmit = (props: TASummaryProps) => {
 	const { id } = useParams<{ id?: string }>();

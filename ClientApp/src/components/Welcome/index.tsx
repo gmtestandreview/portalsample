@@ -1,4 +1,4 @@
-import { Container, Row, Col } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { useAccountState } from "../../authentication/hooks";
 
 const Welcome = () => {

@@ -12,15 +12,15 @@ const INTEGRITY_CHECKSUM = "03cb67ac84128e63d7cd722a6e5b7f1e";
 const IS_MOCKED_RESPONSE = Symbol("isMockedResponse");
 const activeClientIds = new Set();
 
-addEventListener("install", function () {
+addEventListener("install", () => {
 	self.skipWaiting();
 });
 
-addEventListener("activate", function (event) {
+addEventListener("activate", (event) => {
 	event.waitUntil(self.clients.claim());
 });
 
-addEventListener("message", async function (event) {
+addEventListener("message", async (event) => {
 	const clientId = Reflect.get(event.source || {}, "id");
 
 	if (!clientId || !self.clients) {
@@ -88,7 +88,7 @@ addEventListener("message", async function (event) {
 	}
 });
 
-addEventListener("fetch", function (event) {
+addEventListener("fetch", (event) => {
 	const requestInterceptedAt = Date.now();
 
 	// Bypass navigation requests.

@@ -1,20 +1,20 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import { RequestForQuoteClient } from "../../api/web-api-client";
+import type { FormikHelpers } from "formik";
 import type {
 	FormStepStatusDto,
 	RequestForQuoteSummary,
 } from "../../api/web-api-client";
+import { RequestForQuoteClient } from "../../api/web-api-client";
+import type { AccountDetails } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
 } from "../../components/forms/WizardForm/types";
-import type { AccountDetails } from "../../authentication/accountContext";
 import AppLogger from "../../instrumentation/AppLogger";
 import { formatBannerTitle } from "../common/helperFunctions";
 

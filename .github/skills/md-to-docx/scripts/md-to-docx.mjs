@@ -4,25 +4,25 @@
  * Usage: node md-to-docx.mjs <input.md> [output.docx]
  */
 
-import { readFileSync, writeFileSync, existsSync } from "fs";
-import { dirname, join, resolve } from "path";
-import { marked } from "marked";
 import {
+	AlignmentType,
+	BorderStyle,
 	Document,
-	Packer,
-	Paragraph,
-	TextRun,
 	HeadingLevel,
 	ImageRun,
-	TableRow,
-	TableCell,
-	Table,
-	WidthType,
-	BorderStyle,
-	AlignmentType,
-	ShadingType,
+	Packer,
 	PageBreak,
+	Paragraph,
+	ShadingType,
+	Table,
+	TableCell,
+	TableRow,
+	TextRun,
+	WidthType,
 } from "docx";
+import { existsSync, readFileSync, writeFileSync } from "fs";
+import { marked } from "marked";
+import { dirname, join, resolve } from "path";
 
 // --- Image dimensions from PNG header ---
 function pngDimensions(buffer) {

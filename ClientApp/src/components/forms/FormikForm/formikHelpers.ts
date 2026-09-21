@@ -1,5 +1,5 @@
-import { isObject } from "formik";
 import type { FormikErrors } from "formik";
+import { isObject } from "formik";
 
 const countOfErrors = <T>(value: FormikErrors<T>): number => {
 	let count = 0;

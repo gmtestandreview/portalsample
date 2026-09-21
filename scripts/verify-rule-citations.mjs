@@ -25,12 +25,12 @@
  */
 
 /* eslint-disable no-console -- this is a CLI reporter; stdout is its interface. */
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 // Imported explicitly rather than relied on as a global: eslint.config.mjs gives `**/*.mjs` browser
 // globals, so a bare `process` is an undefined-variable error here.
 import process from "node:process";
+import { fileURLToPath } from "node:url";
 
 const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const REGISTER = join(REPO_ROOT, "analysis", "BUSINESS_RULES.md");

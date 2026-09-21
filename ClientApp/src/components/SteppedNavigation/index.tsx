@@ -1,6 +1,6 @@
 import { Container } from "react-bootstrap";
-import type { SteppedNavigationProps } from "./types";
 import stepIcon from "../../assets/Stepper.svg";
+import type { SteppedNavigationProps } from "./types";
 
 const SteppedNavigation = (props: SteppedNavigationProps) => {
 	const { activeStep, steps, id, interactive } = props;

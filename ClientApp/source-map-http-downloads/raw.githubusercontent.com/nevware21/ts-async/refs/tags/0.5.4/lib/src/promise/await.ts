@@ -7,9 +7,9 @@
  */
 
 import { isPromiseLike } from "@nevware21/ts-utils";
-import { AwaitResponse } from "../interfaces/await-response";
-import { IPromise } from "../interfaces/IPromise";
-import {
+import type { AwaitResponse } from "../interfaces/await-response";
+import type { IPromise } from "../interfaces/IPromise";
+import type {
 	FinallyPromiseHandler,
 	RejectedPromiseHandler,
 	ResolvedPromiseHandler,
@@ -372,11 +372,11 @@ export function doFinally<T>(
 			} else {
 				// Simulate finally if not available
 				result = value.then(
-					function (value) {
+					(value) => {
 						finallyFn();
 						return value;
 					},
-					function (reason: any) {
+					(reason: any) => {
 						finallyFn();
 						throw reason;
 					},

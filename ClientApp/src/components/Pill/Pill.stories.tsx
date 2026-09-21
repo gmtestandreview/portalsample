@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import StatusPill from "./StatusPill";
-import QuoteStatusPill from "./QuoteStatusPill";
 import { DashboardItemStatus, QuoteStatus } from "../../routes/common/enums";
+import QuoteStatusPill from "./QuoteStatusPill";
+import StatusPill from "./StatusPill";
 
 const meta = {
 	title: "Components/Pill",

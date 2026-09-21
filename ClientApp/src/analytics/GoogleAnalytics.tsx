@@ -1,7 +1,7 @@
-import ReactGA from "react-ga4";
 import { useEffect } from "react";
-import type { GoogleAnalyticsProps } from "./types";
+import ReactGA from "react-ga4";
 import { env } from "../env";
+import type { GoogleAnalyticsProps } from "./types";
 
 const GoogleAnalytics = ({
 	children,
@@ -63,4 +63,4 @@ const trackGAPageView = () => {
 };
 
 export default GoogleAnalytics;
-export { trackGAEvent, trackGAPii, trackGAPageView };
+export { trackGAEvent, trackGAPageView, trackGAPii };

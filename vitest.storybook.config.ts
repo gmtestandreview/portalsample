@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { playwright } from "@vitest/browser-playwright";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 import { storybookCoverageConfig } from "./vitest.storybook.coverage";
 import { storybookVitestRuntimePlugin } from "./vitest.storybook.runtime";

@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import type {
-	StatusEnumDto,
 	PatternApprovalDashboardDto,
+	StatusEnumDto,
 } from "../../api/web-api-client";
 
 export interface Filters {

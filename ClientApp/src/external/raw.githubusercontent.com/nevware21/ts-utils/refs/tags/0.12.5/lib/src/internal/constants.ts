@@ -55,7 +55,7 @@ export const StrCls = /*#__PURE__*/ _pureAssign(String);
 export const StrProto = /*#__PURE__*/ _pureRef<typeof String.prototype>(
 	StrCls,
 	PROTOTYPE,
-) as String;
+) as string;
 
 /**
  * @ignore

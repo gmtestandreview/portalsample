@@ -1,14 +1,14 @@
 "use client";
 import {
-	Group,
-	Input,
 	NumberField as AriaNumberField,
 	type NumberFieldProps as AriaNumberFieldProps,
+	Group,
+	Input,
 	type ValidationResult,
 } from "react-aria-components/NumberField";
 import { Button } from "../Buttons/AriaButton/Button";
-import { Plus, Minus } from "./NmiIcon";
-import { Label, FieldError, Description } from "../forms/AriaForm/Form";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form";
+import { Minus, Plus } from "./NmiIcon";
 import "./NumberField.css";
 
 export interface NumberFieldProps extends AriaNumberFieldProps {

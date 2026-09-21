@@ -1,11 +1,11 @@
+import type * as MsalBrowserModule from "@azure/msal-browser";
+import { BrowserUtils, InteractionStatus } from "@azure/msal-browser";
+import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { BrowserUtils, InteractionStatus } from "@azure/msal-browser";
-import { useIsAuthenticated, useMsal } from "@azure/msal-react";
-import type * as MsalBrowserModule from "@azure/msal-browser";
-import FAQs from "../../../ClientApp/src/routes/help-guide/faqs";
 import HelpGuide from "../../../ClientApp/src/routes/help-guide";
+import FAQs from "../../../ClientApp/src/routes/help-guide/faqs";
 import HelpHowToSetupAccess from "../../../ClientApp/src/routes/help-guide/how-to-setup-access";
 import ServicesWeOffer from "../../../ClientApp/src/routes/services-we-offer";
 import SignIn from "../../../ClientApp/src/routes/sign-in";

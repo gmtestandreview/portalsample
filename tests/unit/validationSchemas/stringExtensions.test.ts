@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as Yup from "yup";
 // Side-effect import registers all custom Yup string methods
 import "../../../ClientApp/src/validationSchemas/yupExtensions";

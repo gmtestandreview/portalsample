@@ -1,7 +1,7 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Menu, MenuTrigger, MenuItem, SubmenuTrigger } from "./Menu";
-import { Button } from "../Buttons/AriaButton/Button";
 import type { Meta, StoryFn } from "@storybook/react-vite";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { Button } from "../Buttons/AriaButton/Button";
+import { Menu, MenuItem, MenuTrigger, SubmenuTrigger } from "./Menu";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

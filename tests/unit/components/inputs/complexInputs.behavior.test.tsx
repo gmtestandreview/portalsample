@@ -16,15 +16,15 @@ import {
 	useFormikContext,
 } from "formik";
 import { MemoryRouter } from "react-router";
+import type * as WebApiClientModule from "@/api/web-api-client";
 import AddressLookup from "@/components/Inputs/AddressLookup";
+import ManualAddressInput from "@/components/Inputs/AddressLookup/ManualAddressInput";
 import AutoSuggest from "@/components/Inputs/AutoSuggest";
 import AutoSuggestContainer from "@/components/Inputs/AutoSuggest/AutoSuggestContainer";
 import AutoSuggestOptions from "@/components/Inputs/AutoSuggest/AutoSuggestOptions";
-import ManualAddressInput from "@/components/Inputs/AddressLookup/ManualAddressInput";
+import CertificateNumberLookup from "@/components/Inputs/CertificateNumberLookup";
 import NumberInput from "@/components/Inputs/NumberInput";
 import OrganisationNameLookup from "@/components/Inputs/OrganisationNameLookup";
-import CertificateNumberLookup from "@/components/Inputs/CertificateNumberLookup";
-import type * as WebApiClientModule from "@/api/web-api-client";
 import { installUnexpectedConsoleGuard } from "../../../helpers/unexpectedConsoleGuard";
 
 type MockAccount = { homeAccountId: string } | null;

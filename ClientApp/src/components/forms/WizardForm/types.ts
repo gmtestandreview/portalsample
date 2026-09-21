@@ -1,12 +1,12 @@
-import type { ReactElement, ReactNode } from "react";
 import type { FormikHelpers, FormikValues } from "formik";
-import type { InitialValue } from "../../../types";
-import type { DiscardProps, ModalProps } from "../FormikForm/types";
+import type { ReactElement, ReactNode } from "react";
 import type {
 	FormStepStatusDto,
 	ProblemDetails,
 	ValidationProblemDetails,
 } from "../../../api/web-api-client";
+import type { InitialValue } from "../../../types";
+import type { DiscardProps, ModalProps } from "../FormikForm/types";
 
 export interface WizardFormStepValues<T extends FormikValues> {
 	stepValues: InitialValue<T>;

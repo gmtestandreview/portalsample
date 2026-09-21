@@ -1,12 +1,12 @@
-import { Formik, isEmptyChildren, isFunction } from "formik";
 import type { FormikHelpers, FormikProps, FormikValues } from "formik";
+import { Formik, isEmptyChildren, isFunction } from "formik";
 import React from "react";
+import { removeEmptyKeys } from "../../../utils";
 import BlockUISpinner from "../../BlockUISpinner";
 import FormBanner from "../FormBanner";
-import type { FormikFormProps } from "./types";
 import UnsavedFormPrompt from "../UnsavedFormPrompt";
 import { removeHidden, validateForm } from "../utils";
-import { removeEmptyKeys } from "../../../utils";
+import type { FormikFormProps } from "./types";
 
 const FormikForm = <Values extends FormikValues>(
 	props: FormikFormProps<Values>,

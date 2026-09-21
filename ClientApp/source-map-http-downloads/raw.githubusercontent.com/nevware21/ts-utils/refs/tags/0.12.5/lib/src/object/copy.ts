@@ -122,10 +122,10 @@ function _deepCopy<T>(
 	ctx: _DeepCopyContext,
 	key?: string | number | symbol,
 ): T {
-	let userHandler = ctx.handler;
-	let newPath = ctx.path ? (key ? ctx.path.concat(key) : ctx.path) : [];
+	const userHandler = ctx.handler;
+	const newPath = ctx.path ? (key ? ctx.path.concat(key) : ctx.path) : [];
 
-	let newCtx: _DeepCopyContext = {
+	const newCtx: _DeepCopyContext = {
 		handler: ctx.handler,
 		src: ctx.src,
 		path: newPath,
@@ -142,7 +142,7 @@ function _deepCopy<T>(
 		}
 	}
 
-	let details: IObjDeepCopyHandlerDetails = {
+	const details: IObjDeepCopyHandlerDetails = {
 		type: theType,
 		isPrim: isPrim,
 		isPlain: isPlain,
@@ -162,10 +162,8 @@ function _deepCopy<T>(
 		return _getSetVisited(visitMap, value, newPath, (newEntry) => {
 			// Use an accessor to set the new value onto the new entry
 			objDefine(details, "result", {
-				g: function () {
-					return newEntry.v;
-				},
-				s: function (newValue: any) {
+				g: () => newEntry.v,
+				s: (newValue: any) => {
 					newEntry.v = newValue;
 				},
 			});
@@ -270,7 +268,7 @@ export function objCopyProps<T>(
 	source: any,
 	handler?: ObjDeepCopyHandler,
 ) {
-	let ctx: _DeepCopyContext = {
+	const ctx: _DeepCopyContext = {
 		handler: handler,
 		src: source,
 		path: [],
@@ -414,7 +412,7 @@ export type ObjDeepCopyHandler = (
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function objDeepCopy<T>(source: T, handler?: ObjDeepCopyHandler): T {
-	let ctx: _DeepCopyContext = {
+	const ctx: _DeepCopyContext = {
 		handler: handler,
 		src: source,
 	};
@@ -432,10 +430,10 @@ export function objDeepCopy<T>(source: T, handler?: ObjDeepCopyHandler): T {
 export function arrayDeepCopyHandler(
 	details: IObjDeepCopyHandlerDetails,
 ): boolean {
-	let value = details.value;
+	const value = details.value;
 	if (isArray(value)) {
 		// Assign the "result" value before performing any additional deep Copying, so any recursive object get a reference to this instance
-		let target: any[] = (details.result = []);
+		const target: any[] = (details.result = []);
 		target.length = value.length;
 
 		// Copying all properties as arrays can contain non-indexed based properties
@@ -454,7 +452,7 @@ export function arrayDeepCopyHandler(
  * @returns `true` if the current value is a function otherwise `false`
  */
 export function dateDeepCopyHandler(details: IObjDeepCopyHandlerDetails) {
-	let value = details.value;
+	const value = details.value;
 	if (isDate(value)) {
 		details.result = new Date(value.getTime());
 		return true;
@@ -491,10 +489,10 @@ export function functionDeepCopyHandler(
 export function plainObjDeepCopyHandler(
 	details: IObjDeepCopyHandlerDetails,
 ): boolean {
-	let value = details.value;
+	const value = details.value;
 	if (value && details.isPlain) {
 		// Assign the "result" value before performing any additional deep Copying, so any recursive object get a reference to this instance
-		let target = (details.result = {});
+		const target = (details.result = {});
 		details.copyTo(target, value);
 		return true;
 	}

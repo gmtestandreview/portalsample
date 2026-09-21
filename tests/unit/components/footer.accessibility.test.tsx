@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import Footer from "@/components/Footer";
 import Privacy from "@/components/Footer/privacy";
 import TermsOfUse from "@/components/Footer/termsOfUse";

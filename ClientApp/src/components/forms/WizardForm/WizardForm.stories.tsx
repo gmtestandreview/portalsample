@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { within, expect } from "storybook/test";
-import { Container, Row, Col } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
+import { expect, within } from "storybook/test";
+import type { FormStepStatusDto } from "../../../api/web-api-client";
+import { FormStepStatus } from "../../../api/web-api-client";
 import { withPortalProviders } from "../../../storybook/storybookHarness";
+import SelectInput from "../../Inputs/SelectInput";
+import TextInput from "../../Inputs/TextInput";
 import WizardForm from "./index";
 import WizardStep from "./WizardStep";
-import TextInput from "../../Inputs/TextInput";
-import SelectInput from "../../Inputs/SelectInput";
-import { FormStepStatus } from "../../../api/web-api-client";
-import type { FormStepStatusDto } from "../../../api/web-api-client";
 
 const twoStepStatuses: FormStepStatusDto[] = [
 	{ status: FormStepStatus.NotStarted },

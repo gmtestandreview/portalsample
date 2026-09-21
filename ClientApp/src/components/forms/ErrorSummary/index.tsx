@@ -1,6 +1,6 @@
+import type { FormikErrors, FormikValues } from "formik";
 import { useFormikContext } from "formik";
-import type { FormikValues, FormikErrors } from "formik";
-import { map, startCase, capitalize } from "lodash";
+import { capitalize, map, startCase } from "lodash";
 import { useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import { Link } from "react-router";
@@ -8,9 +8,9 @@ import type {
 	ProblemDetails,
 	ValidationProblemDetails,
 } from "../../../api/web-api-client";
-import type { ErrorSummaryProps, FormikErrorsSummaryProps } from "./types";
-import HashLink from "../../Utilities/hashLink";
 import { HttpStatusCode } from "../../../types";
+import HashLink from "../../Utilities/hashLink";
+import type { ErrorSummaryProps, FormikErrorsSummaryProps } from "./types";
 
 type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;

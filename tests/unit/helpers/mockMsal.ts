@@ -1,5 +1,5 @@
-import { vi } from "vitest";
 import type { AccountInfo } from "@azure/msal-browser";
+import { vi } from "vitest";
 
 /**
  * One shared MSAL mock for the unit leaf.

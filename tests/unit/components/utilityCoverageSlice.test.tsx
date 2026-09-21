@@ -5,8 +5,10 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Link, MemoryRouter, Route, Routes } from "react-router";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics";
+import { DashboardClient } from "../../../ClientApp/src/api/web-api-client";
 import findElementInTreeById from "../../../ClientApp/src/components/Utilities/findElementInTreeById";
 import HashLink from "../../../ClientApp/src/components/Utilities/hashLink";
 import MailingLabel from "../../../ClientApp/src/components/Utilities/mailingLabel";
@@ -15,7 +17,6 @@ import ViewMeasurementReport from "../../../ClientApp/src/components/Utilities/V
 import ViewPdfButton from "../../../ClientApp/src/components/Utilities/ViewPdfButton";
 import ViewPdfQuote from "../../../ClientApp/src/components/Utilities/ViewPdfQuote";
 import ViewPdfQuoteTerms from "../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms";
-import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics";
 import {
 	getFileSize,
 	getFileUrlFromBase64,
@@ -25,7 +26,6 @@ import {
 	openInNewTab,
 	openPdfPageInNewTab,
 } from "../../../ClientApp/src/routes/common/helperFunctions";
-import { DashboardClient } from "../../../ClientApp/src/api/web-api-client";
 
 const mocks = vi.hoisted(() => {
 	const acquireTokenSilent = vi.fn();

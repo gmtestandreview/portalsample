@@ -1,5 +1,5 @@
-import { getIn, isObject, setIn } from "formik";
 import type { FormikErrors, FormikValues } from "formik";
+import { getIn, isObject, setIn } from "formik";
 import {
 	entriesIn,
 	fromPairs,
@@ -9,8 +9,8 @@ import {
 	toPath,
 } from "lodash";
 import type { ValidationError } from "yup";
-import type { Hideable } from "./types";
 import type { ValidationSchema } from "./FormikForm/types";
+import type { Hideable } from "./types";
 export const isFieldPathHidden = <TValues>(hidden: any, values: TValues) =>
 	hidden !== undefined &&
 	((isBoolean(hidden) && hidden === true) ||

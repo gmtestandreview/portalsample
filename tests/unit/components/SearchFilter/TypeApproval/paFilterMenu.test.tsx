@@ -1,10 +1,10 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, beforeEach, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { PatternApprovalDashboardDto } from "@/api/web-api-client";
 import { PatternApprovalStatusEnumDto } from "@/api/web-api-client";
-import { DashboardTab } from "@/components/SearchFilter/types";
 import PaFilterMenu from "@/components/SearchFilter/TypeApproval/paFilterMenu";
+import { DashboardTab } from "@/components/SearchFilter/types";
 
 const mocks = vi.hoisted(() => ({
 	setUserProfile: vi.fn(),

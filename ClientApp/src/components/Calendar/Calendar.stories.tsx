@@ -1,5 +1,5 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
 import { Calendar } from "./Calendar";
 
 const meta = {

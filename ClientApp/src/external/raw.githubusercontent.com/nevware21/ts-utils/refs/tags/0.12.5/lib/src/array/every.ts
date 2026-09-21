@@ -8,7 +8,10 @@
 
 import { ArrProto } from "../internal/constants";
 import { _unwrapFunction } from "../internal/unwrapFunction";
-import { ArrPredicateCallbackFn, ArrPredicateCallbackFn2 } from "./callbacks";
+import type {
+	ArrPredicateCallbackFn,
+	ArrPredicateCallbackFn2,
+} from "./callbacks";
 
 /**
  * The arrEvery() method is an iterative method. It calls a provided callbackFn function once for

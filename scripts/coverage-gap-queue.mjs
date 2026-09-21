@@ -15,7 +15,7 @@
  * Usage: node scripts/coverage-gap-queue.mjs
  */
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const COVERAGE_FINAL = "reports/coverage/unit/coverage-final.json";

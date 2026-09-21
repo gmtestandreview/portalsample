@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import AutoSuggestContainer from "./AutoSuggestContainer";
-import type { AutoSuggestProps, AutoSuggestOption } from "./types";
+import type { AutoSuggestOption, AutoSuggestProps } from "./types";
 
 const AutoSuggest = <T,>(props: AutoSuggestProps<T>) => {
 	const {

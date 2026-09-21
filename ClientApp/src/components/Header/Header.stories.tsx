@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import Header from "./index";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import Header from "./index";
 
 const meta = {
 	title: "Components/Header",

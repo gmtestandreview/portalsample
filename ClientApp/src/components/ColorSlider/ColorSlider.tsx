@@ -5,8 +5,8 @@ import {
 	SliderOutput,
 	SliderTrack,
 } from "react-aria-components/ColorSlider";
-import { Label } from "../forms/AriaForm/Form";
 import { ColorThumb } from "../ColorThumb/ColorThumb";
+import { Label } from "../forms/AriaForm/Form";
 import "./ColorSlider.css";
 
 export interface ColorSliderProps extends AriaColorSliderProps {

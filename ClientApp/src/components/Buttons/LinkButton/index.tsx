@@ -1,7 +1,7 @@
 import type React from "react";
 import type { AnchorHTMLAttributes, ComponentProps } from "react";
-import { Link as RouterLink } from "react-router";
 import { Link as AriaLink } from "react-aria-components/Link";
+import { Link as RouterLink } from "react-router";
 import { getButtonClassName } from "../buttonClassName";
 
 /**

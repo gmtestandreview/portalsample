@@ -55,12 +55,12 @@ export function _unwrapFunctionWithPoly<T, P extends (...args: any) => any>(
 	clsProto?: T,
 	polyFunc?: P,
 ) {
-	let clsFn = clsProto ? clsProto[funcName] : NULL_VALUE;
+	const clsFn = clsProto ? clsProto[funcName] : NULL_VALUE;
 
 	return function (thisArg: any): ReturnType<P> {
-		let theFunc = (thisArg ? thisArg[funcName] : NULL_VALUE) || clsFn;
+		const theFunc = (thisArg ? thisArg[funcName] : NULL_VALUE) || clsFn;
 		if (theFunc || polyFunc) {
-			let theArgs = arguments;
+			const theArgs = arguments;
 			return ((theFunc || polyFunc) as Function).apply(
 				thisArg,
 				theFunc ? ArrSlice[CALL](theArgs, 1) : theArgs,
@@ -85,7 +85,5 @@ export function _unwrapFunctionWithPoly<T, P extends (...args: any) => any>(
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function _unwrapProp<T>(propName: keyof T) {
-	return function (thisArg: T) {
-		return thisArg[propName];
-	};
+	return (thisArg: T) => thisArg[propName];
 }

@@ -1,13 +1,13 @@
 import { expect } from "@playwright/test";
 import { Given, Then, When } from "../support/fixtures";
+import { installMockApi } from "../support/mock-api";
 import {
 	disableMockAuthenticationReseed,
 	expireMockAuthentication,
 	installMockAuthentication,
 } from "../support/mock-authentication";
-import { installMockApi } from "../support/mock-api";
-import { waitForAppReady } from "./common.steps";
 import { failureKey } from "../support/mock-failure";
+import { waitForAppReady } from "./common.steps";
 
 Given(
 	"a first-time user is signed in as {string}",

@@ -1,11 +1,11 @@
+import { useMsal } from "@azure/msal-react";
 import React, { useEffect } from "react";
 import { Alert } from "react-bootstrap";
-import { useMsal } from "@azure/msal-react";
-import InTextLink from "../../components/InTextLink";
 import { LookupClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import { isEmptyGuid, isValidGUID } from "../common/helperFunctions";
 import BlockUISpinner from "../../components/BlockUISpinner";
+import InTextLink from "../../components/InTextLink";
+import { isEmptyGuid, isValidGUID } from "../common/helperFunctions";
 
 // Define enums for instrument categories and types
 export enum InstrumentCategory {

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, userEvent, waitFor, within } from "storybook/test";
-import Footer from "./index";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import Footer from "./index";
 
 const meta = {
 	title: "Components/Footer",

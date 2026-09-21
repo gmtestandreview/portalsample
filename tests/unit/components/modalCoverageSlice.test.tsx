@@ -1,17 +1,17 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics";
 import ConfirmationModal from "../../../ClientApp/src/components/modals/ConfirmationModal";
 import {
 	type ModalDispatch,
-	type ModalState,
 	ModalDispatchCtx,
+	type ModalState,
 	ModalStateCtx,
 	useModalDispatch,
 	useModalState,
 } from "../../../ClientApp/src/components/modals/ModalContext";
 import RFQDeleteModal from "../../../ClientApp/src/components/modals/RFQDeleteModal";
-import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics";
 import { setDashboardNotification } from "../../../ClientApp/src/storage/notification";
 
 const mocks = vi.hoisted(() => ({

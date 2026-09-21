@@ -1,11 +1,11 @@
-import { DashboardItemStatus, QuoteStatus } from "../routes/common/enums";
 import {
-	ServiceType,
 	type DashboardItemDto,
 	type LookupResponse,
 	type RequestForQuoteDetails,
 	type ServiceDto,
+	ServiceType,
 } from "../api/web-api-client";
+import { DashboardItemStatus, QuoteStatus } from "../routes/common/enums";
 
 export const dashboardItems: DashboardItemDto[] = [
 	{

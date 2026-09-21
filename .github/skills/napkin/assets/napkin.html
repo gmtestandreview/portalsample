@@ -828,7 +828,7 @@ html, body {
 //  NAPKIN — Self-contained whiteboard for Copilot collaboration
 // ═══════════════════════════════════════════════════════════════════
 
-(function () {
+(() => {
   'use strict';
 
   // ── DOM references ───────────────────────────────────────────────
@@ -870,7 +870,7 @@ html, body {
   let currentPath = null;
 
   // Undo/redo stacks
-  let undoStack = [];
+  const undoStack = [];
   let redoStack = [];
 
   // Unique ID counter

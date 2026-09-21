@@ -1,9 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import appDetailsProps from "../../../../../ClientApp/src/routes/ta/manage/appDetailsProps";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as WebApiClientModule from "../../../../../ClientApp/src/api/web-api-client";
 import {
 	PatternApprovalRequiredValueOptions,
@@ -11,6 +10,7 @@ import {
 	type RequestForPatternApprovalAppDetails,
 	YesNo,
 } from "../../../../../ClientApp/src/api/web-api-client";
+import appDetailsProps from "../../../../../ClientApp/src/routes/ta/manage/appDetailsProps";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),

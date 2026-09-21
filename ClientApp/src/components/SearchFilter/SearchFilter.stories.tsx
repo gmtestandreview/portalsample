@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { expect, userEvent, within } from "storybook/test";
+import { withPortalProviders } from "../../storybook/storybookHarness";
 import SearchFilter from "./index";
 import type { UserProfile } from "./types";
 import { DashboardTab } from "./types";
-import { withPortalProviders } from "../../storybook/storybookHarness";
 
 const initialFilters: UserProfile = {
 	filterYearType: "",

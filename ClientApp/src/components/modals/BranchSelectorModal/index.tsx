@@ -1,26 +1,26 @@
-import { Link, useNavigate } from "react-router";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import { useEffect, useState } from "react";
 import type { ChangeEvent, ReactElement } from "react";
-import { Alert, Button, Modal, Row, Col, Table } from "react-bootstrap";
-import {
-	useAccountState,
-	useAccountDispatch,
-} from "../../../authentication/hooks";
-import { useModalState, useModalDispatch } from "../ModalContext";
-import BlockUISpinner from "../../BlockUISpinner";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import ButtonGroup from "../../Buttons/ButtonGroup";
-import { OrganisationsClient, UsersClient } from "../../../api/web-api-client";
+import { useEffect, useState } from "react";
+import { Alert, Button, Col, Modal, Row, Table } from "react-bootstrap";
+import { Link, useNavigate } from "react-router";
 import type { OrganisationDto } from "../../../api/web-api-client";
+import { OrganisationsClient, UsersClient } from "../../../api/web-api-client";
 import { tokenRequest } from "../../../authentication/authConfig";
-import NotificationMessage from "../../Alert/NotificationMessage";
+import {
+	useAccountDispatch,
+	useAccountState,
+} from "../../../authentication/hooks";
+import AppLogger from "../../../instrumentation/AppLogger";
 import {
 	clearBranchModalNotification,
 	getBranchModalNotification,
 } from "../../../storage/notification";
-import AppLogger from "../../../instrumentation/AppLogger";
+import NotificationMessage from "../../Alert/NotificationMessage";
+import BlockUISpinner from "../../BlockUISpinner";
+import ButtonGroup from "../../Buttons/ButtonGroup";
+import PrimaryButton from "../../Buttons/PrimaryButton";
+import { useModalDispatch, useModalState } from "../ModalContext";
 import { BranchSelectionModalMode } from "./enums";
 
 interface SavingBranchSelectorErrorProps {

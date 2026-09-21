@@ -7,10 +7,6 @@ import {
 } from "../../validationSchemas/contactValidation";
 import "../../validationSchemas/yupExtensions";
 import {
-	extAlphaNumMultiLineMatchRegex,
-	websiteUrlSchema,
-} from "../../validationSchemas/common";
-import {
 	type ApplicationAndInstrumentStep,
 	type OrganisationAndContact,
 	type PatternApprovalOrgAndContact,
@@ -19,6 +15,10 @@ import {
 	YesNo,
 } from "../../api/web-api-client";
 import type { Validation } from "../../components/forms/FormikForm/types";
+import {
+	extAlphaNumMultiLineMatchRegex,
+	websiteUrlSchema,
+} from "../../validationSchemas/common";
 import { ValidationMessages } from "./types";
 
 export const organisationAndContactSubmitValidation = yup.object<

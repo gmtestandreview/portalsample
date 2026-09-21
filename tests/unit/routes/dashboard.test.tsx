@@ -1,8 +1,8 @@
-import type React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type React from "react";
 import "@testing-library/jest-dom/vitest";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────

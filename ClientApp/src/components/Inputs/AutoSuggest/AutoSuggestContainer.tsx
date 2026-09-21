@@ -1,6 +1,6 @@
 import { useField } from "formik";
-import { useContext, useEffect, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import {
 	ComboBox,
 	ComboBoxStateContext,
@@ -10,7 +10,7 @@ import {
 } from "react-aria-components/ComboBox";
 import { Group } from "react-aria-components/Group";
 import AutoSuggestOptions from "./AutoSuggestOptions";
-import type { AutoSuggestOption, AutoSuggestContainerProps } from "./types";
+import type { AutoSuggestContainerProps, AutoSuggestOption } from "./types";
 
 const keys = {
 	ESC: "Escape",

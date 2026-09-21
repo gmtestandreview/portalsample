@@ -1,7 +1,7 @@
 import { Button, Col, Container, Row } from "react-bootstrap";
+import BodyText from "../../components/BodyText";
 import useBodyClass from "../../components/Utilities/useBodyClass";
 import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import BodyText from "../../components/BodyText";
 
 const SignoutHelper = () => {
 	useHtmlTitle("NMI Services portal | NMI");

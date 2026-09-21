@@ -1,7 +1,7 @@
 "use client";
 import {
-	DisclosureGroup as RACDisclosureGroup,
 	type DisclosureGroupProps,
+	DisclosureGroup as RACDisclosureGroup,
 } from "react-aria-components/DisclosureGroup";
 import "./DisclosureGroup.css";
 

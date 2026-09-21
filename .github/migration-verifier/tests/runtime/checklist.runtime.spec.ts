@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 test.describe("migration checklist runtime verifier", () => {
 	test("demonstrates why the audited notification selector is broken", async ({

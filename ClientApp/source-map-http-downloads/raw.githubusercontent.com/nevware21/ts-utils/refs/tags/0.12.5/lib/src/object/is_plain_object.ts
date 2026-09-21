@@ -11,8 +11,8 @@ import {
 	CALL,
 	CONSTRUCTOR,
 	FUNCTION,
-	ObjClass,
 	OBJECT,
+	ObjClass,
 	PROTOTYPE,
 	TO_STRING,
 } from "../internal/constants";

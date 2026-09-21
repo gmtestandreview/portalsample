@@ -6,7 +6,10 @@
  * Licensed under the MIT license.
  */
 
-import { createCachedValue, ICachedValue } from "@nevware21/ts-utils";
+import { createCachedValue, type ICachedValue } from "@nevware21/ts-utils";
+import type { IPromise } from "../interfaces/IPromise";
+import type { IPromiseResult } from "../interfaces/IPromiseResult";
+import type { PromiseExecutor } from "../interfaces/types";
 import {
 	_createAllPromise,
 	_createAllSettledPromise,
@@ -15,10 +18,7 @@ import {
 	_createRejectedPromise,
 	_createResolvedPromise,
 } from "./base";
-import { IPromise } from "../interfaces/IPromise";
 import { createNativePromise } from "./nativePromise";
-import { PromiseExecutor } from "../interfaces/types";
-import { IPromiseResult } from "../interfaces/IPromiseResult";
 
 let _promiseCreator: ICachedValue<
 	<T>(executor: PromiseExecutor<T>, timeout?: number) => IPromise<T>

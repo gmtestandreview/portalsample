@@ -6,10 +6,10 @@
  * Licensed under the MIT license.
  */
 
-import { isArray, isUndefined } from "../helpers/base";
-import { isIterable, isIterator } from "../iterator/iterator";
-import { iterForOf } from "../iterator/forOf";
 import { fnApply } from "../funcs/funcs";
+import { isArray, isUndefined } from "../helpers/base";
+import { iterForOf } from "../iterator/forOf";
+import { isIterable, isIterator } from "../iterator/iterator";
 
 /**
  * Appends the `elms` to the `target` where the elms may be an array, a single object

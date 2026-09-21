@@ -1,20 +1,20 @@
-import { useEffect, useRef, useState } from "react";
 import { useMsal } from "@azure/msal-react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import type { SummaryProps } from "./types";
-import WizardForm from "../../components/forms/WizardForm";
-import WizardStep from "../../components/forms/WizardForm/WizardStep";
-import viewRequestForQuoteSummaryProps from "./viewRequestForQuoteSummaryProps";
-import RequestForQuoteSummary from "./requestForQuoteSummary";
-import type { WizardFormProps } from "../../components/forms/WizardForm/types";
-import { useAccountState } from "../../authentication/hooks";
-import { RequestForQuoteClient } from "../../api/web-api-client";
 import type { FormStepStatusDto } from "../../api/web-api-client";
+import { RequestForQuoteClient } from "../../api/web-api-client";
 import type { AccountDetails } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
 import BlockUISpinner from "../../components/BlockUISpinner";
+import WizardForm from "../../components/forms/WizardForm";
+import type { WizardFormProps } from "../../components/forms/WizardForm/types";
+import WizardStep from "../../components/forms/WizardForm/WizardStep";
+import useBodyClass from "../../components/Utilities/useBodyClass";
 import AppLogger from "../../instrumentation/AppLogger";
+import RequestForQuoteSummary from "./requestForQuoteSummary";
+import type { SummaryProps } from "./types";
+import viewRequestForQuoteSummaryProps from "./viewRequestForQuoteSummaryProps";
 
 const bannerTitle = "Testing and calibration service - Request for quote";
 

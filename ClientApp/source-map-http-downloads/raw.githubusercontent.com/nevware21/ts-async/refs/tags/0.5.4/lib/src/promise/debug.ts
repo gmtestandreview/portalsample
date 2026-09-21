@@ -61,7 +61,7 @@ export function _addDebugState(
 	_debugResult = _debugResult || { toString: () => "[[PromiseResult]]" };
 	_debugHandled = _debugHandled || { toString: () => "[[PromiseIsHandled]]" };
 
-	let props: PropertyDescriptorMap = {};
+	const props: PropertyDescriptorMap = {};
 	props[_debugState] = { get: stateFn };
 	props[_debugResult] = { get: resultFn };
 	props[_debugHandled] = { get: handledFn };

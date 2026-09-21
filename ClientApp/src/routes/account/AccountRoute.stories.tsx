@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { within, expect, userEvent } from "storybook/test";
-import AccountDetails from "./accountDetails";
+import { expect, userEvent, within } from "storybook/test";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import AccountDetails from "./accountDetails";
 
 const meta = {
 	title: "Routes/Account/CreateAccountStep",

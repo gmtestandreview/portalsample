@@ -6,19 +6,22 @@
  * Licensed under the MIT license.
  */
 
-import { WellKnownSymbols, _wellKnownSymbolMap } from "../symbol/well_known";
 import { throwTypeError } from "../helpers/throw";
 import { SYMBOL, TO_STRING } from "../internal/constants";
-import { objHasOwn } from "../object/has_own";
-import { asString } from "../string/as_string";
-import { _GlobalPolySymbols, _getGlobalConfig } from "../internal/global";
-import { strSubstring } from "../string/substring";
-import { objKeys } from "../object/object";
-import { objDefine } from "../object/define";
+import { type _GlobalPolySymbols, _getGlobalConfig } from "../internal/global";
+import { _uniqueInstanceId } from "../internal/instance";
 import { _isPolyfill } from "../internal/poly_helpers";
 import { _tagAsPolyfill } from "../internal/poly_utils";
 import { objCreate } from "../object/create";
-import { _uniqueInstanceId } from "../internal/instance";
+import { objDefine } from "../object/define";
+import { objHasOwn } from "../object/has_own";
+import { objKeys } from "../object/object";
+import { asString } from "../string/as_string";
+import { strSubstring } from "../string/substring";
+import {
+	_wellKnownSymbolMap,
+	type WellKnownSymbols,
+} from "../symbol/well_known";
 
 const UNIQUE_REGISTRY_ID = "_urid";
 const POLY_SYM = "$nw21sym";
@@ -29,7 +32,7 @@ let _polyId = 0;
 /*#__NO_SIDE_EFFECTS__*/
 function _globalSymbolRegistry(): _GlobalPolySymbols {
 	if (!_polySymbols) {
-		let gblCfg = _getGlobalConfig();
+		const gblCfg = _getGlobalConfig();
 		_polySymbols = gblCfg.gblSym = gblCfg.gblSym || { k: {}, s: {} };
 	}
 
@@ -63,7 +66,7 @@ export function polyNewSymbol(description?: string | number): symbol {
 		});
 	}
 
-	let theSymbol = objCreate(null) as symbol;
+	const theSymbol = objCreate(null) as symbol;
 
 	_setProp("description", asString(description));
 	_setProp(TO_STRING, () => symString + POLY_SYM + uniqueId);
@@ -83,10 +86,10 @@ export function polyNewSymbol(description?: string | number): symbol {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function polySymbolFor(key: string): symbol {
-	let registry = _globalSymbolRegistry();
+	const registry = _globalSymbolRegistry();
 	if (!objHasOwn(registry.k, key)) {
-		let newSymbol: any = polyNewSymbol(key);
-		let regId = objKeys(registry.s).length;
+		const newSymbol: any = polyNewSymbol(key);
+		const regId = objKeys(registry.s).length;
 		newSymbol[UNIQUE_REGISTRY_ID] = () => regId + "_" + newSymbol[TO_STRING]();
 		registry.k[key] = newSymbol;
 		registry.s[newSymbol[UNIQUE_REGISTRY_ID]()] = asString(key);
@@ -144,7 +147,7 @@ export function polySymbolKeyFor(sym: symbol): string | undefined {
 export function polyGetKnownSymbol(name: string | WellKnownSymbols): symbol {
 	!_wellKnownSymbolCache && (_wellKnownSymbolCache = {} as any);
 	let result: symbol;
-	let knownName: WellKnownSymbols = (_wellKnownSymbolMap as any)[name];
+	const knownName: WellKnownSymbols = (_wellKnownSymbolMap as any)[name];
 	if (knownName) {
 		result = (_wellKnownSymbolCache as any)[knownName] =
 			_wellKnownSymbolCache[knownName] ||

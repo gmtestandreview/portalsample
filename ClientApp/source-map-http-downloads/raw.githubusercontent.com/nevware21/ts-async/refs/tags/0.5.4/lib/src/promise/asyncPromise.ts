@@ -6,6 +6,10 @@
  * Licensed under the MIT license.
  */
 
+import type { ICachedValue } from "@nevware21/ts-utils";
+import type { IPromise } from "../interfaces/IPromise";
+import type { IPromiseResult } from "../interfaces/IPromiseResult";
+import type { PromiseExecutor } from "../interfaces/types";
 import {
 	_createAllPromise,
 	_createAllSettledPromise,
@@ -15,11 +19,7 @@ import {
 	_createRejectedPromise,
 	_createResolvedPromise,
 } from "./base";
-import { IPromise } from "../interfaces/IPromise";
 import { timeoutItemProcessor } from "./itemProcessor";
-import { PromiseExecutor } from "../interfaces/types";
-import { IPromiseResult } from "../interfaces/IPromiseResult";
-import { ICachedValue } from "@nevware21/ts-utils";
 
 let _allAsyncSettledCreator: ICachedValue<
 	<T extends readonly unknown[] | []>(

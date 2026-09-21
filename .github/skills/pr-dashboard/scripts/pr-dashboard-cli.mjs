@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 // pr-dashboard-cli.mjs
 // Standalone CLI for the PR dashboard — no Copilot SDK required.
 // Usage: node pr-dashboard-cli.mjs [query] [role]
@@ -6,12 +7,12 @@
 //   role:  one of "Authored by me" | "Requested reviews" | "Assigned to me" | "All"
 //          (default: "Authored by me")
 
+import { execFile, spawn } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
-import { promisify } from "util";
-import { execFile, spawn } from "child_process";
 import { fileURLToPath } from "url";
+import { promisify } from "util";
 import { parseDateRange } from "./lib/utils.mjs";
 
 const execFileP = promisify(execFile);

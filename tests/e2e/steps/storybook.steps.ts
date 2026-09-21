@@ -11,7 +11,7 @@
  * project's baseURL setting.
  */
 
-import { expect, type APIResponse, type Page } from "@playwright/test";
+import { type APIResponse, expect, type Page } from "@playwright/test";
 import { createBdd } from "playwright-bdd";
 
 const { Given, When, Then } = createBdd();

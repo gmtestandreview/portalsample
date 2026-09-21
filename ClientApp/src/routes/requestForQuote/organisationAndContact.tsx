@@ -1,14 +1,14 @@
-import Row from "react-bootstrap/Row";
-import { useLocation, useParams } from "react-router";
+import { getIn, useField, useFormikContext } from "formik";
 import { Alert, Button } from "react-bootstrap";
-import { useField, useFormikContext, getIn } from "formik";
+import Row from "react-bootstrap/Row";
 import { PatternFormat } from "react-number-format";
-import type { OrganisationAndContactProps } from "./types";
+import { useLocation, useParams } from "react-router";
 import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
 import HidableField from "../../components/forms/HidableField";
 import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import { formatTradingBranchFromStrings } from "../common/helperFunctions";
 import { useModalDispatch } from "../../components/modals/ModalContext";
+import { formatTradingBranchFromStrings } from "../common/helperFunctions";
+import type { OrganisationAndContactProps } from "./types";
 
 const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
 	const [_field] = useField(fieldName);

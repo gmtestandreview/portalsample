@@ -22,4 +22,5 @@ export const onUnhandledStorybookRequest: UnhandledRequestCallback = (
 		print.error();
 	}
 };
+
 import type { UnhandledRequestCallback } from "msw";

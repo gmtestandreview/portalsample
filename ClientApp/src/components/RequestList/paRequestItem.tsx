@@ -1,23 +1,23 @@
+import { useMsal } from "@azure/msal-react";
 import type React from "react";
 import { useRef, useState } from "react";
+import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { Row, Col, Card, Button } from "react-bootstrap";
-import { useMsal } from "@azure/msal-react";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 import {
-	type PatternApprovalDashboardDetailsDto,
 	ApplicationClient,
 	ApplicationType,
+	type PatternApprovalDashboardDetailsDto,
 } from "../../api/web-api-client";
-import { PaDashboardItemStatus } from "../../routes/common/enums";
-import StatusPill from "../Pill/StatusPill";
-import Actions, { type DropdownActionItem } from "../Actions";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
-import { DashboardTab } from "../SearchFilter/types";
-import ConfirmationModal from "../modals/ConfirmationModal";
 import { tokenRequest } from "../../authentication/authConfig";
 import AppLogger from "../../instrumentation/AppLogger";
+import { PaDashboardItemStatus } from "../../routes/common/enums";
 import { setDashboardNotification } from "../../storage/notification";
 import { NotificationSeverity } from "../../storage/types";
+import Actions, { type DropdownActionItem } from "../Actions";
+import ConfirmationModal from "../modals/ConfirmationModal";
+import StatusPill from "../Pill/StatusPill";
+import { DashboardTab } from "../SearchFilter/types";
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
 	dateToFormat

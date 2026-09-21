@@ -2,9 +2,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import type { DashboardItemDto } from "@/api/web-api-client";
+import { ModalDispatchCtx } from "@/components/modals/ModalContext";
 import InstrumentItem from "@/components/RequestList/instrumentItem";
 import RequestItem from "@/components/RequestList/requestItem";
-import { ModalDispatchCtx } from "@/components/modals/ModalContext";
 import { DashboardItemStatus } from "@/routes/common/enums";
 
 vi.mock("@/components/Actions", () => ({

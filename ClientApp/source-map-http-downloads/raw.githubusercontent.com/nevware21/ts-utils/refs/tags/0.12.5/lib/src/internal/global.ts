@@ -7,7 +7,7 @@
  */
 
 import { safe } from "../helpers/safe";
-import { TimeoutOverrideFuncs } from "../timer/timeout";
+import type { TimeoutOverrideFuncs } from "../timer/timeout";
 import { UNDEFINED } from "./constants";
 
 const GLOBAL_CONFIG_KEY = "__tsUtils$gblCfg";
@@ -81,7 +81,7 @@ export function _getGlobalValue(): Window {
 /*#__NO_SIDE_EFFECTS__*/
 export function _getGlobalConfig(): TsUtilsGlobalConfig {
 	if (!_globalCfg) {
-		let gbl: any = safe(_getGlobalValue).v || {};
+		const gbl: any = safe(_getGlobalValue).v || {};
 		_globalCfg = gbl[GLOBAL_CONFIG_KEY] = gbl[GLOBAL_CONFIG_KEY] || {};
 	}
 

@@ -1,15 +1,14 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { FormikProps } from "formik";
 import type { ChangeEvent, ReactNode } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
 } from "../../../../ClientApp/src/api/web-api-client";
-
-import { resetMsalMock } from "../../helpers/mockMsal";
 import { FormikWrapper } from "../../helpers/formik";
+import { resetMsalMock } from "../../helpers/mockMsal";
 
 const mocks = vi.hoisted(() => ({
 	appLoggerError: vi.fn(),

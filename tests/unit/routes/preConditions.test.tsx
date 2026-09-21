@@ -1,11 +1,11 @@
-import React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
+import React from "react";
 import "@testing-library/jest-dom/vitest";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
-import PreConditions from "../../../ClientApp/src/routes/preConditions/PreConditions";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
 import { ModalDispatchCtx } from "../../../ClientApp/src/components/modals/ModalContext";
+import PreConditions from "../../../ClientApp/src/routes/preConditions/PreConditions";
 import { getBranchModalNotification } from "../../../ClientApp/src/storage/notification";
 import { NotificationSeverity } from "../../../ClientApp/src/storage/types";
 

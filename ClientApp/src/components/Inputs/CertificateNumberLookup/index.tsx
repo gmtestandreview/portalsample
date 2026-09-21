@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
 import { useField } from "formik";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Form, ListGroup } from "react-bootstrap";
-import TextInput from "../TextInput";
 import type {
 	ApplicationAndInstrumentStepDto,
 	LookupResponse,
 } from "../../../api/web-api-client";
 import SummaryDisplay from "../../SummaryDisplay";
+import TextInput from "../TextInput";
 
 export interface CertificateNumberLookupProps {
 	id?: string;

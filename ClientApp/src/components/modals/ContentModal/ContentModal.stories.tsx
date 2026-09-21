@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";
 import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
-import ContentModal from "./index";
 import { withPortalProviders } from "../../../storybook/storybookHarness";
+import ContentModal from "./index";
 
 const meta = {
 	title: "Components/Modals/ContentModal",

@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 
-import { ICachedValue, createCachedValue } from "./cache";
+import { createCachedValue, type ICachedValue } from "./cache";
 import { utcNow } from "./date";
 import { getInst } from "./environment";
 import { _globalLazyTestHooks, _initTestHooks } from "./lazy";
@@ -63,7 +63,7 @@ export function getPerformance(): Performance {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function perfNow(): number {
-	let perf = getPerformance();
+	const perf = getPerformance();
 	if (perf && perf.now) {
 		return perf.now();
 	}

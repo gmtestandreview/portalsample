@@ -1,10 +1,10 @@
-import Form from "react-bootstrap/Form";
-import type { AriaAttributes, AriaRole, ReactNode } from "react";
+import { format, parseISO } from "date-fns";
 import { useField } from "formik";
 import { trim } from "lodash";
-import { format, parseISO } from "date-fns";
-import SummaryDisplay from "../../SummaryDisplay";
+import type { AriaAttributes, AriaRole, ReactNode } from "react";
+import Form from "react-bootstrap/Form";
 import Details from "../../forms/Details";
+import SummaryDisplay from "../../SummaryDisplay";
 
 export interface TextInputProps {
 	label: string;

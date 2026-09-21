@@ -1,7 +1,7 @@
+import { useMsal } from "@azure/msal-react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useEffect, useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useMsal } from "@azure/msal-react";
 
 import {
 	DEFAULT_ACCESS_TOKEN,

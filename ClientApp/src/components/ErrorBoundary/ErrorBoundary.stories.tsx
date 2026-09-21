@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
-import { Button, Alert } from "react-bootstrap";
-import { Component, useState } from "react";
-import ErrorBoundary from "./index";
-import { ai } from "../../instrumentation/AppInsightsService";
 import type { ReactPlugin } from "@microsoft/applicationinsights-react-js";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Component, useState } from "react";
+import { Alert, Button } from "react-bootstrap";
+import { expect, within } from "storybook/test";
+import { ai } from "../../instrumentation/AppInsightsService";
+import ErrorBoundary from "./index";
 
 const WorkingComponent = () => (
 	<Alert variant="success">

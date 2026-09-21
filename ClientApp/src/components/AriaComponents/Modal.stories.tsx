@@ -1,10 +1,10 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Modal } from "./Modal";
-import { Dialog, DialogTrigger } from "../Dialog/Dialog";
-import { TextField } from "./TextField";
-import { Button } from "../Buttons/AriaButton/Button";
-import { Heading } from "./Content";
 import type { Meta, StoryFn } from "@storybook/react-vite";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { Button } from "../Buttons/AriaButton/Button";
+import { Dialog, DialogTrigger } from "../Dialog/Dialog";
+import { Heading } from "./Content";
+import { Modal } from "./Modal";
+import { TextField } from "./TextField";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

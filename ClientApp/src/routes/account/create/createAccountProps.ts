@@ -1,23 +1,23 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import { AccountsClient } from "../../../api/web-api-client";
+import type { FormikHelpers } from "formik";
 import type {
 	AccountDto,
-	GetAccountValuesDto,
 	FormStepStatusDto,
+	GetAccountValuesDto,
 } from "../../../api/web-api-client";
+import { AccountsClient } from "../../../api/web-api-client";
+import type { AccountContextState } from "../../../authentication/accountContext";
 import { tokenRequest } from "../../../authentication/authConfig";
+import type { DiscardProps } from "../../../components/forms/FormikForm/types";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
 } from "../../../components/forms/WizardForm/types";
 import accountSubmitValidation from "../validation";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types";
-import type { AccountContextState } from "../../../authentication/accountContext";
 
 const loadAccountDetails =
 	(accounts: AccountInfo[], instance: IPublicClientApplication) =>

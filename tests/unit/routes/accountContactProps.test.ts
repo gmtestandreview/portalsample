@@ -1,22 +1,22 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import createAccountProps from "../../../ClientApp/src/routes/account/create/createAccountProps";
-import updateAccountProps from "../../../ClientApp/src/routes/account/update/updateAccountProps";
-import addBranchProps from "../../../ClientApp/src/routes/account/addBranch/addBranchProps";
-import createContactProps from "../../../ClientApp/src/routes/contact/create/createContactProps";
-import updateContactProps from "../../../ClientApp/src/routes/contact/update/updateContactProps";
-import { HttpStatusCode } from "../../../ClientApp/src/types";
-import { ErrorType } from "../../../ClientApp/src/components/forms/WizardForm/types";
-import type { AccountContextState } from "../../../ClientApp/src/authentication/accountContext";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-	Title,
 	type AccountDto,
 	type ContactFormStep,
 	type GetAccountValuesDto,
+	Title,
 } from "../../../ClientApp/src/api/web-api-client";
+import type { AccountContextState } from "../../../ClientApp/src/authentication/accountContext";
+import { ErrorType } from "../../../ClientApp/src/components/forms/WizardForm/types";
+import addBranchProps from "../../../ClientApp/src/routes/account/addBranch/addBranchProps";
+import createAccountProps from "../../../ClientApp/src/routes/account/create/createAccountProps";
+import updateAccountProps from "../../../ClientApp/src/routes/account/update/updateAccountProps";
+import createContactProps from "../../../ClientApp/src/routes/contact/create/createContactProps";
+import updateContactProps from "../../../ClientApp/src/routes/contact/update/updateContactProps";
+import { HttpStatusCode } from "../../../ClientApp/src/types";
 import { formikHelpers, stepStatuses } from "./testFixtures";
 
 const mocks = vi.hoisted(() => ({

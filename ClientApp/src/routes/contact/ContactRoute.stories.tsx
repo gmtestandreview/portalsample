@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import ContactDetails from "./contactDetails";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import ContactDetails from "./contactDetails";
 
 const meta = {
 	title: "Routes/Contact/ContactDetailsStep",

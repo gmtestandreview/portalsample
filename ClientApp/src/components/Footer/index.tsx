@@ -3,9 +3,9 @@ import { Button, Container } from "react-bootstrap";
 import CoatOfArms from "../../assets/GovCrest.svg";
 import LinkButton from "../Buttons/LinkButton";
 import ContentModal from "../modals/ContentModal";
-import TermsOfUse from "./termsOfUse";
-import Privacy from "./privacy";
 import Accessibility from "./accessibility";
+import Privacy from "./privacy";
+import TermsOfUse from "./termsOfUse";
 
 const Footer = () => {
 	const [termsDialogOpen, setTermsDialogOpen] = useState(false);

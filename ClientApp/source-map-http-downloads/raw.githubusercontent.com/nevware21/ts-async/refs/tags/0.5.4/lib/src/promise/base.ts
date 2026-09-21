@@ -7,59 +7,58 @@
  */
 
 import {
+	arrForEach,
 	arrSlice,
+	createCachedValue,
+	createCustomError,
 	dumpObj,
+	getGlobal,
+	getInst,
 	getKnownSymbol,
+	getWindow,
 	hasSymbol,
+	type ICachedValue,
+	type ITimerHandler,
+	isArray,
 	isFunction,
+	isIterable,
+	isNode,
 	isPromiseLike,
 	isUndefined,
-	throwTypeError,
-	WellKnownSymbols,
-	objToString,
-	scheduleTimeout,
-	ITimerHandler,
-	getWindow,
-	isNode,
-	getGlobal,
+	iterForOf,
 	objDefine,
 	objDefineProp,
-	iterForOf,
-	isIterable,
-	isArray,
-	arrForEach,
-	createCachedValue,
-	ICachedValue,
+	objToString,
 	safe,
-	getInst,
-	createCustomError,
+	scheduleTimeout,
+	throwTypeError,
+	WellKnownSymbols,
 } from "@nevware21/ts-utils";
-import { doAwait, doAwaitResponse } from "./await";
-import { _addDebugState, _promiseDebugEnabled } from "./debug";
-import { IPromise } from "../interfaces/IPromise";
-import { PromisePendingProcessor } from "./itemProcessor";
-import {
+import type { IPromise } from "../interfaces/IPromise";
+import type { IPromiseResult } from "../interfaces/IPromiseResult";
+import type {
 	FinallyPromiseHandler,
 	PromiseCreatorFn,
 	PromiseExecutor,
 	RejectedPromiseHandler,
 	ResolvedPromiseHandler,
 } from "../interfaces/types";
-import { ePromiseState, STRING_STATES } from "../internal/state";
-import { emitEvent } from "./event";
 import { REJECTED, STR_PROMISE } from "../internal/constants";
-import { IPromiseResult } from "../interfaces/IPromiseResult";
-
+import { ePromiseState, STRING_STATES } from "../internal/state";
+import { doAwait, doAwaitResponse } from "./await";
 //#ifdef DEBUG
-import { _debugLog } from "./debug";
+import { _addDebugState, _debugLog, _promiseDebugEnabled } from "./debug";
+import { emitEvent } from "./event";
+import type { PromisePendingProcessor } from "./itemProcessor";
+
 //#endif
 
 const NODE_UNHANDLED_REJECTION = "unhandledRejection";
 const UNHANDLED_REJECTION = NODE_UNHANDLED_REJECTION.toLowerCase();
 
-let _currentPromiseId: number[] = [];
+const _currentPromiseId: number[] = [];
 let _uniquePromiseId = 0;
-let _unhandledRejectionTimeout = 10;
+const _unhandledRejectionTimeout = 10;
 let _aggregationError: ICachedValue<any>;
 
 /**
@@ -89,9 +88,9 @@ function dumpFnObj(value: any) {
 
 //#ifdef DEBUG
 function _getCaller(prefix: string, start: number) {
-	let stack = new Error().stack;
+	const stack = new Error().stack;
 	if (stack) {
-		let lines = stack.split("\n");
+		const lines = stack.split("\n");
 		if (lines.length > start) {
 			return (
 				prefix + ":" + arrSlice(lines, start, start + 5).join("\n") + "\n..."
@@ -149,13 +148,13 @@ export function _createPromise<T>(
 	processor: PromisePendingProcessor,
 	executor: PromiseExecutor<T>,
 ): IPromise<T> {
-	let additionalArgs = arrSlice(arguments, 3);
+	const additionalArgs = arrSlice(arguments, 3);
 	let _state = ePromiseState.Pending;
 	let _hasResolved = false;
 	let _settledValue: T;
 	let _queue: (() => void)[] = [];
-	let _id = _uniquePromiseId++;
-	let _parentId =
+	const _id = _uniquePromiseId++;
+	const _parentId =
 		_currentPromiseId.length > 0
 			? _currentPromiseId[_currentPromiseId.length - 1]
 			: undefined;
@@ -174,17 +173,14 @@ export function _createPromise<T>(
 			_unHandledRejectionHandler && _unHandledRejectionHandler.cancel();
 			_unHandledRejectionHandler = null;
 
-			let thenPromise = newPromise<TResult1, TResult2>(function (
-				resolve,
-				reject,
-			) {
+			const thenPromise = newPromise<TResult1, TResult2>((resolve, reject) => {
 				//#ifdef DEBUG
 				_debugLog(_toString(), _getCaller("_then", 7));
 				//#endif
 
 				// Queue the new promise returned to be resolved or rejected
 				// when this promise settles.
-				_queue.push(function () {
+				_queue.push(() => {
 					// https://tc39.es/ecma262/#sec-newpromisereactionjob
 					//let value: any;
 					try {
@@ -197,9 +193,9 @@ export function _createPromise<T>(
 							"Handling settled value " + dumpFnObj(_settledValue),
 						);
 						//#endif
-						let handler =
+						const handler =
 							_state === ePromiseState.Resolved ? onResolved : onRejected;
-						let value = isUndefined(handler)
+						const value = isUndefined(handler)
 							? _settledValue
 							: isFunction(handler)
 								? handler(_settledValue)
@@ -263,12 +259,12 @@ export function _createPromise<T>(
 		let thenFinally: any = onFinally;
 		let catchFinally: any = onFinally;
 		if (isFunction(onFinally)) {
-			thenFinally = function (value: TResult1 | TResult2) {
+			thenFinally = (value: TResult1 | TResult2) => {
 				onFinally && onFinally();
 				return value;
 			};
 
-			catchFinally = function (reason: any) {
+			catchFinally = (reason: any) => {
 				onFinally && onFinally();
 				throw reason;
 			};
@@ -285,7 +281,7 @@ export function _createPromise<T>(
 		if (_queue.length > 0) {
 			// The onFulfilled and onRejected handlers must be called asynchronously. Thus,
 			// we make a copy of the queue and work on it once the current call stack unwinds.
-			let pending = _queue.slice();
+			const pending = _queue.slice();
 			_queue = [];
 
 			//#ifdef DEBUG
@@ -362,7 +358,7 @@ export function _createPromise<T>(
 				//#endif
 				process.emit(NODE_UNHANDLED_REJECTION, _settledValue, _thePromise);
 			} else {
-				let gbl = getWindow() || getGlobal();
+				const gbl = getWindow() || getGlobal();
 
 				!_hasPromiseRejectionEvent &&
 					(_hasPromiseRejectionEvent = createCachedValue(
@@ -492,10 +488,10 @@ export function _createAllPromise(
 	return function <T>(
 		input: Iterable<T | PromiseLike<T>>,
 	): IPromise<Awaited<T>[]> {
-		let additionalArgs = arrSlice(arguments, 1);
+		const additionalArgs = arrSlice(arguments, 1);
 		return newPromise<Awaited<T>[]>((resolve, reject) => {
 			try {
-				let values = [] as any;
+				const values = [] as any;
 				let pending = 1; // Prefix to 1 so we finish iterating over all of the input promises first
 
 				iterForOf(input, (item, idx) => {
@@ -545,7 +541,7 @@ export function _createResolvedPromise(
 	newPromise: PromiseCreatorFn,
 ): <T>(value: T, ...additionalArgs: any) => IPromise<T> {
 	return function <T>(value: T): IPromise<T> {
-		let additionalArgs = arrSlice(arguments, 1);
+		const additionalArgs = arrSlice(arguments, 1);
 		if (isPromiseLike<T>(value)) {
 			return value as unknown as IPromise<T>;
 		}
@@ -573,7 +569,7 @@ export function _createRejectedPromise(
 	newPromise: PromiseCreatorFn,
 ): <T>(reason: any, ...additionalArgs: any) => IPromise<T> {
 	return function <T>(reason: any): IPromise<T> {
-		let additionalArgs = arrSlice(arguments, 1);
+		const additionalArgs = arrSlice(arguments, 1);
 		return newPromise((_resolve, reject) => {
 			//#ifdef DEBUG
 			_debugLog(String(this), "Rejecting Promise");
@@ -608,12 +604,13 @@ export function _createAllSettledPromise(
 		input: T,
 		..._args: any[]
 	): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }> {
-		let additionalArgs = arrSlice(arguments, 1);
+		const additionalArgs = arrSlice(arguments, 1);
 		return newPromise<{
 			-readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>;
 		}>((resolve, reject) => {
-			let values: { -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> } =
-				[] as any;
+			const values: {
+				-readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>;
+			} = [] as any;
 			let pending = 1; // Prefix to 1 so we finish iterating over all of the input promises first
 
 			function processItem(item: any, idx: number) {
@@ -688,7 +685,7 @@ export function _createRacePromise(
 		input: T,
 		..._args: any[]
 	): IPromise<Awaited<T[number]>> {
-		let additionalArgs = arrSlice(arguments, 1);
+		const additionalArgs = arrSlice(arguments, 1);
 		return newPromise<Awaited<T[number]>>((resolve, reject) => {
 			let isDone = false;
 
@@ -744,9 +741,9 @@ export function _createAnyPromise(
 		input: T,
 		..._args: any[]
 	): IPromise<Awaited<T[number]>> {
-		let additionalArgs = arrSlice(arguments, 1);
+		const additionalArgs = arrSlice(arguments, 1);
 		return newPromise<Awaited<T[number]>>((resolve, reject) => {
-			let theErros: Array<any> = [] as any;
+			const theErros: Array<any> = [] as any;
 			let pending = 1; // Prefix to 1 so we finish iterating over all of the input promises first
 			let isDone = false;
 

@@ -1,12 +1,12 @@
 "use client";
 import {
-	Button,
-	Input,
 	SearchField as AriaSearchField,
 	type SearchFieldProps as AriaSearchFieldProps,
+	Button,
+	Input,
 	type ValidationResult,
 } from "react-aria-components/SearchField";
-import { Label, FieldError, Description } from "../forms/AriaForm/Form";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form";
 import { Search, X } from "./NmiIcon";
 import "./SearchField.css";
 

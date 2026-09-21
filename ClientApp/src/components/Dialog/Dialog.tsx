@@ -1,9 +1,9 @@
 "use client";
 import {
-	Dialog as RACDialog,
-	DialogTrigger as RACDialogTrigger,
 	type DialogProps,
 	type DialogTriggerProps,
+	Dialog as RACDialog,
+	DialogTrigger as RACDialogTrigger,
 } from "react-aria-components/Dialog";
 import "./Dialog.css";
 

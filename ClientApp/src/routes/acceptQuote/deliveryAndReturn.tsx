@@ -1,29 +1,29 @@
 import { useMsal } from "@azure/msal-react";
-import Row from "react-bootstrap/Row";
-import { Alert, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import { AcceptQuoteClient, AccountsClient } from "../../api/web-api-client";
+import { Alert, Col } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
 import type {
 	AcceptQuotePreInfoDto,
 	AddressDetailsDto,
 	DeliveryAndReturnStep,
 } from "../../api/web-api-client";
-import { prefixedPropertyOf } from "../../utils";
-import type { DeliveryAndReturnProps } from "./types";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import TextInput from "../../components/Inputs/TextInput";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import HidableField from "../../components/forms/HidableField";
-import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
-import AddressLookup from "../../components/Inputs/AddressLookup";
-import NumberInput from "../../components/Inputs/NumberInput";
-import BlockUISpinner from "../../components/BlockUISpinner";
+import { AcceptQuoteClient, AccountsClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
 import { useAccountState } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
+import HidableField from "../../components/forms/HidableField";
+import AddressLookup from "../../components/Inputs/AddressLookup";
+import NumberInput from "../../components/Inputs/NumberInput";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import TextAreaInput from "../../components/Inputs/TextAreaInput";
+import TextInput from "../../components/Inputs/TextInput";
+import DeliveryInstructions from "../../components/Utilities/deliveryInstructions";
 import MailingLabel from "../../components/Utilities/mailingLabel";
 import AppLogger from "../../instrumentation/AppLogger";
-import DeliveryInstructions from "../../components/Utilities/deliveryInstructions";
+import { prefixedPropertyOf } from "../../utils";
 import { getFormattedAddress } from "../common/helperFunctions";
+import type { DeliveryAndReturnProps } from "./types";
 
 const getName = prefixedPropertyOf<DeliveryAndReturnStep>("deliveryAndReturn");
 

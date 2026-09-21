@@ -1,22 +1,22 @@
-import { Col, Row, Alert, Container } from "react-bootstrap";
 import { useMemo } from "react";
-import InTextLink from "../../components/InTextLink";
+import { Alert, Col, Container, Row } from "react-bootstrap";
 import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { formatDateToString, formatCurrencyAmount } from "../../utils";
-import {
-	getDashboardNotification,
-	clearDashboardNotification,
-} from "../../storage/notification";
 import NotificationMessage from "../../components/Alert/NotificationMessage";
 import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon";
+import InTextLink from "../../components/InTextLink";
+import QuoteStatusPill from "../../components/Pill/QuoteStatusPill";
+import DeliveryInstructions from "../../components/Utilities/deliveryInstructions";
+import type { MailingLabelProps } from "../../components/Utilities/mailingLabel";
+import MailingLabel from "../../components/Utilities/mailingLabel";
+import {
+	clearDashboardNotification,
+	getDashboardNotification,
+} from "../../storage/notification";
+import { formatCurrencyAmount, formatDateToString } from "../../utils";
 import { QuoteStatus } from "../common/enums";
 import { getMakeModelDetails } from "../common/helperFunctions";
-import { validPillStatuses } from "../common/quoteStatus";
-import QuoteStatusPill from "../../components/Pill/QuoteStatusPill";
-import MailingLabel from "../../components/Utilities/mailingLabel";
-import type { MailingLabelProps } from "../../components/Utilities/mailingLabel";
-import DeliveryInstructions from "../../components/Utilities/deliveryInstructions";
 import { openInternalRouteInNewTab } from "../common/openWindow";
+import { validPillStatuses } from "../common/quoteStatus";
 
 const QuoteDetails = (props: {
 	quotationData: RequestForQuoteDetails | undefined;

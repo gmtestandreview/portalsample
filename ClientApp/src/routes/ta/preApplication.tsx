@@ -1,13 +1,12 @@
+import { useMsal } from "@azure/msal-react";
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router";
-import { useMsal } from "@azure/msal-react";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-
 import CustomBreadcrumb, {
 	type CustomBreadcrumbItem,
 } from "../../components/Breadcrumb";
-import useBodyClass from "../../components/Utilities/useBodyClass";
 import InTextLink from "../../components/InTextLink";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
 import { downloadFileFromUrl } from "../common/helperFunctions";
 
 const PreApplication = () => {

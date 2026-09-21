@@ -1,27 +1,27 @@
 import { useIsAuthenticated } from "@azure/msal-react";
-import { Navigate, useLocation } from "react-router";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Navigate, useLocation } from "react-router";
 import {
-	useAccountState,
 	useAccountDispatch,
+	useAccountState,
 } from "../../authentication/hooks";
 import Layout from "../../components/Layout";
+import BranchSelectorModal from "../../components/modals/BranchSelectorModal";
+import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
+import type { ModalState } from "../../components/modals/ModalContext";
+import {
+	ModalDispatchCtx,
+	ModalStateCtx,
+} from "../../components/modals/ModalContext";
+import RFQDeleteModal from "../../components/modals/RFQDeleteModal";
 import TermsAndConditionModal from "../../components/modals/TermsAndCondition";
+import BackToTopButton from "../../components/Utilities/backToTopButton";
+import RouteChangeScrollTop from "../../components/Utilities/routeChangeScrollTop";
+import { useRouteAccessibility } from "../../hooks/useRouteAccessibility";
 import {
 	clearDashboardNotification,
 	getBranchModalNotification,
 } from "../../storage/notification";
-import BranchSelectorModal from "../../components/modals/BranchSelectorModal";
-import RouteChangeScrollTop from "../../components/Utilities/routeChangeScrollTop";
-import BackToTopButton from "../../components/Utilities/backToTopButton";
-import { useRouteAccessibility } from "../../hooks/useRouteAccessibility";
-import RFQDeleteModal from "../../components/modals/RFQDeleteModal";
-import {
-	ModalStateCtx,
-	ModalDispatchCtx,
-} from "../../components/modals/ModalContext";
-import type { ModalState } from "../../components/modals/ModalContext";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
 
 export interface PreConditionsProps {
 	children: any;

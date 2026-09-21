@@ -1,4 +1,4 @@
-(function () {
+(() => {
 	const MIN_RECONNECT_MS = 500;
 	const MAX_RECONNECT_MS = 30000;
 	const TOMBSTONE_AFTER_MS = 15000; // show the "paused" overlay after this long disconnected
@@ -167,7 +167,7 @@
 	// Frame UI: selection tracking
 	window.selectedChoice = null;
 
-	window.toggleSelect = function (el) {
+	window.toggleSelect = (el) => {
 		const container = el.closest(".options") || el.closest(".cards");
 		const multi = container && container.dataset.multiselect !== undefined;
 		if (container && !multi) {

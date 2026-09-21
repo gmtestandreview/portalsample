@@ -1,5 +1,5 @@
-import type { Vitest } from "vitest/node";
 import type { Plugin } from "vite";
+import type { Vitest } from "vitest/node";
 
 type StorybookVitest = Pick<Vitest, "init" | "standalone"> & {
 	config: {

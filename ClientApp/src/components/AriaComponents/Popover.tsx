@@ -1,10 +1,10 @@
 "use client";
+import clsx from "clsx";
 import {
-	OverlayArrow,
 	Popover as AriaPopover,
 	type PopoverProps as AriaPopoverProps,
+	OverlayArrow,
 } from "react-aria-components/Popover";
-import clsx from "clsx";
 import "./Popover.css";
 
 export interface PopoverProps extends Omit<AriaPopoverProps, "children"> {

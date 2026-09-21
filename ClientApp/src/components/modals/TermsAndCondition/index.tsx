@@ -1,19 +1,19 @@
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import { useState } from "react";
 import type { ReactElement } from "react";
+import { useState } from "react";
 import { Alert, Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import {
-	useAccountState,
-	useAccountDispatch,
-} from "../../../authentication/hooks";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import ButtonGroup from "../../Buttons/ButtonGroup";
-import TermsOfUse from "../../Footer/termsOfUse";
 import { UsersClient } from "../../../api/web-api-client";
 import { tokenRequest } from "../../../authentication/authConfig";
+import {
+	useAccountDispatch,
+	useAccountState,
+} from "../../../authentication/hooks";
 import termsData from "../../../terms-config.json";
+import ButtonGroup from "../../Buttons/ButtonGroup";
+import PrimaryButton from "../../Buttons/PrimaryButton";
+import TermsOfUse from "../../Footer/termsOfUse";
 
 interface DefaultTermsAndConditionModalHeaderProps {
 	userName?: string;

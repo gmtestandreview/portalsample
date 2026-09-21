@@ -5,6 +5,7 @@ import {
 	PatternApprovalRequiredValues,
 	YesNo,
 } from "../../../../ClientApp/src/api/web-api-client";
+import { ValidationMessages } from "../../../../ClientApp/src/routes/ta/types";
 import {
 	applicationAndInstrumentSaveValidation,
 	applicationAndInstrumentSubmitValidation,
@@ -17,7 +18,6 @@ import {
 	supportingDocsSaveValidation,
 	supportingDocsSubmitValidation,
 } from "../../../../ClientApp/src/routes/ta/validation";
-import { ValidationMessages } from "../../../../ClientApp/src/routes/ta/types";
 
 /**
  * Structural schema type: the exported schemas carry different generic context

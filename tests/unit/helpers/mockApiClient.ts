@@ -1,5 +1,5 @@
-import { vi } from "vitest";
 import type { Mock } from "vitest";
+import { vi } from "vitest";
 import type * as WebApiClient from "../../../ClientApp/src/api/web-api-client";
 
 /**

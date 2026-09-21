@@ -1,12 +1,12 @@
-import { Col, Row, Container, Alert } from "react-bootstrap";
-import InTextLink from "../../components/InTextLink";
+import { Alert, Col, Container, Row } from "react-bootstrap";
 import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import {
-	getDashboardNotification,
-	clearDashboardNotification,
-} from "../../storage/notification";
 import NotificationMessage from "../../components/Alert/NotificationMessage";
 import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon";
+import InTextLink from "../../components/InTextLink";
+import {
+	clearDashboardNotification,
+	getDashboardNotification,
+} from "../../storage/notification";
 import { formatDateToString } from "../../utils";
 import { openInternalRouteInNewTab } from "../common/openWindow";
 

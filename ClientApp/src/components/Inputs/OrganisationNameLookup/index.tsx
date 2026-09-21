@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import type { ReactNode } from "react";
 import { useField } from "formik";
+import type { ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Form, ListGroup } from "react-bootstrap";
-import TextInput from "../TextInput";
 import type { GetAccountValuesDto } from "../../../api/web-api-client";
+import TextInput from "../TextInput";
 import { getFilteredSuggestions } from "./suggestionUtils";
 
 export interface OrganisationNameLookupProps {

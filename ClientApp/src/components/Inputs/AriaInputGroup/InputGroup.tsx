@@ -1,9 +1,9 @@
 "use client";
+import { useId } from "react";
 import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import { Group, type GroupProps } from "react-aria-components/Group";
 import { InputContext } from "react-aria-components/Input";
 import { Label } from "../../forms/AriaForm/Form";
-import { useId } from "react";
 import "./InputGroup.css";
 
 interface InputGroupProps extends GroupProps {

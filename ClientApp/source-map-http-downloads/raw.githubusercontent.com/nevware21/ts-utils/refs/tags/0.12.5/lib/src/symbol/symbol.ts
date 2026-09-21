@@ -6,6 +6,11 @@
  * Licensed under the MIT license.
  */
 
+import { _createIsWithPoly } from "../helpers/base";
+import { createCachedValue, type ICachedValue } from "../helpers/cache";
+import { getInst } from "../helpers/environment";
+import { _globalLazyTestHooks, _initTestHooks } from "../helpers/lazy";
+import { safe } from "../helpers/safe";
 import { NULL_VALUE, SYMBOL, UNDEF_VALUE } from "../internal/constants";
 import {
 	polyGetKnownSymbol,
@@ -13,26 +18,22 @@ import {
 	polySymbolFor,
 	polySymbolKeyFor,
 } from "../polyfills/symbol";
-import { WellKnownSymbols, _wellKnownSymbolMap } from "./well_known";
-import { _createIsWithPoly } from "../helpers/base";
-import { _globalLazyTestHooks, _initTestHooks } from "../helpers/lazy";
-import { ICachedValue, createCachedValue } from "../helpers/cache";
-import { safe } from "../helpers/safe";
-import { getInst } from "../helpers/environment";
+import { _wellKnownSymbolMap, type WellKnownSymbols } from "./well_known";
 
-let _symbol: ICachedValue<Symbol>;
+let _symbol: ICachedValue<symbol>;
 let _symbolFor: ICachedValue<(key: string) => symbol>;
 let _symbolKeyFor: ICachedValue<(sym: symbol) => string | undefined>;
 
 /*#__NO_SIDE_EFFECTS__*/
 function _initSymbol() {
-	_symbol = /*#__PURE__*/ createCachedValue(safe(getInst<Symbol>, [SYMBOL]).v);
+	_symbol = /*#__PURE__*/ createCachedValue(safe(getInst<symbol>, [SYMBOL]).v);
 
 	return _symbol;
 }
 
 function _getSymbolKey<R>(key: string) {
-	let gblSym: any = (!_globalLazyTestHooks.lzy ? _symbol : 0) || _initSymbol();
+	const gblSym: any =
+		(!_globalLazyTestHooks.lzy ? _symbol : 0) || _initSymbol();
 
 	return (gblSym.v ? gblSym.v[key] : UNDEF_VALUE) as R;
 }
@@ -64,7 +65,7 @@ export function hasSymbol(): boolean {
  * @returns The value of the named Symbol (if available)
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getSymbol(): Symbol {
+export function getSymbol(): symbol {
 	!_globalLazyTestHooks && _initTestHooks();
 
 	// Get the current lazy symbol or cause it to get initialized
@@ -90,11 +91,11 @@ export function getKnownSymbol<T = symbol>(
 	name: string | WellKnownSymbols,
 	noPoly?: boolean,
 ): T {
-	let knownName = (_wellKnownSymbolMap as any)[name];
+	const knownName = (_wellKnownSymbolMap as any)[name];
 	!_globalLazyTestHooks && _initTestHooks();
 
 	// Get the current lazy symbol or cause it to get initialized
-	let sym: any = (!_globalLazyTestHooks.lzy ? _symbol : 0) || _initSymbol();
+	const sym: any = (!_globalLazyTestHooks.lzy ? _symbol : 0) || _initSymbol();
 
 	return sym.v
 		? sym.v[knownName || name]
@@ -119,7 +120,7 @@ export function newSymbol(
 	!_globalLazyTestHooks && _initTestHooks();
 
 	// Get the current lazy symbol or cause it to get initialized
-	let sym = (!_globalLazyTestHooks.lzy ? _symbol : 0) || _initSymbol();
+	const sym = (!_globalLazyTestHooks.lzy ? _symbol : 0) || _initSymbol();
 
 	return sym.v
 		? (sym.v as any)(description)

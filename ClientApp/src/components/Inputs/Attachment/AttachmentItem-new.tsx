@@ -1,13 +1,13 @@
-import { useState } from "react";
-import type { ChangeEvent } from "react";
-import { Button } from "react-bootstrap";
 import { useField } from "formik";
+import type { ChangeEvent } from "react";
+import { useState } from "react";
+import { Button } from "react-bootstrap";
 import type { AttachmentDto } from "../../../api/web-api-client";
+import { getFileUrlFromBase64 } from "../../../routes/common/helperFunctions";
 import { formatBytes } from "../../../utils";
 import ConfirmationModal from "../../modals/ConfirmationModal";
 import SelectInput from "../SelectInput";
 import type { SelectInputOption } from "../SelectInput/types";
-import { getFileUrlFromBase64 } from "../../../routes/common/helperFunctions";
 
 interface AttachmentItemProps {
 	id?: string;

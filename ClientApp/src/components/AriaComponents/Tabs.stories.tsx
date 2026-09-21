@@ -1,7 +1,7 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Tabs, Tab, TabList, TabPanel, TabPanels } from "./Tabs";
-import { expect, fn } from "storybook/test";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { expect, fn } from "storybook/test";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from "./Tabs";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

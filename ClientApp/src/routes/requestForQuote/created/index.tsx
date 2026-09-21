@@ -1,11 +1,11 @@
-import { Col, Row, Container } from "react-bootstrap";
-import { useParams, Link } from "react-router";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import { useAccountState } from "../../../authentication/hooks";
-import HeaderIntroText from "../../../components/HeaderIntroText";
-import FormBanner from "../../../components/forms/FormBanner";
+import { Col, Container, Row } from "react-bootstrap";
+import { Link, useParams } from "react-router";
 import type { AccountDetails } from "../../../authentication/accountContext";
+import { useAccountState } from "../../../authentication/hooks";
+import FormBanner from "../../../components/forms/FormBanner";
+import HeaderIntroText from "../../../components/HeaderIntroText";
+import useBodyClass from "../../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
 import { formatBannerTitle } from "../../common/helperFunctions";
 
 const RequestForQuoteCreated = () => {

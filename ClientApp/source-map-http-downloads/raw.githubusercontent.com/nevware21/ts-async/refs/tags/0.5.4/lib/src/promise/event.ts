@@ -7,11 +7,11 @@
  */
 
 import {
+	createCachedValue,
 	dumpObj,
 	getDocument,
 	getInst,
-	ICachedValue,
-	createCachedValue,
+	type ICachedValue,
 	safe,
 } from "@nevware21/ts-utils";
 
@@ -48,11 +48,11 @@ export function emitEvent(
 	populateEvent: (theEvt: Event | any) => Event | any,
 	useNewEvent: boolean,
 ) {
-	let doc = getDocument();
+	const doc = getDocument();
 	!_hasInitEvent &&
 		(_hasInitEvent = createCachedValue(!!safe(_hasInitEventFn, [doc]).v));
 
-	let theEvt: Event = _hasInitEvent.v
+	const theEvt: Event = _hasInitEvent.v
 		? doc.createEvent("Event")
 		: useNewEvent
 			? new Event(evtName)
@@ -66,11 +66,11 @@ export function emitEvent(
 	if (theEvt && target[DISPATCH_EVENT]) {
 		target[DISPATCH_EVENT](theEvt);
 	} else {
-		let handler = target["on" + evtName];
+		const handler = target["on" + evtName];
 		if (handler) {
 			handler(theEvt);
 		} else {
-			let theConsole = getInst("console");
+			const theConsole = getInst("console");
 			theConsole &&
 				(theConsole["error"] || theConsole["log"])(evtName, dumpObj(theEvt));
 		}

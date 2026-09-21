@@ -1,24 +1,23 @@
 import { act, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { FormikErrors, FormikProps } from "formik";
-import { PatternApprovalRequiredValues } from "../../../../ClientApp/src/api/web-api-client";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
+import { PatternApprovalRequiredValues } from "../../../../ClientApp/src/api/web-api-client";
 import {
 	FileStatus,
 	ValidationMessages,
 } from "../../../../ClientApp/src/routes/ta/types";
-
+import { FormikWrapper } from "../../helpers/formik";
+import type {
+	ClientMethodMocks,
+	ClientMock,
+} from "../../helpers/mockApiClient";
 import {
+	DEFAULT_ACCESS_TOKEN,
 	msalMocks,
 	resetMsalMock,
-	DEFAULT_ACCESS_TOKEN,
 } from "../../helpers/mockMsal";
-import type {
-	ClientMock,
-	ClientMethodMocks,
-} from "../../helpers/mockApiClient";
 import { renderWithRouter } from "../../helpers/renderWithRouter";
-import { FormikWrapper } from "../../helpers/formik";
 
 const mocks = vi.hoisted(() => ({
 	accountContext: vi.fn(),

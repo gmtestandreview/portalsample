@@ -70,7 +70,7 @@ let _htmlEntityCache: { [key: string]: string };
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function normalizeJsName(jsName: string, camelCase?: boolean): string {
-	let result = asString(jsName).replace(INVALID_JS_NAME, "_");
+	const result = asString(jsName).replace(INVALID_JS_NAME, "_");
 
 	return !isUndefined(camelCase) ? strCamelCase(result, !camelCase) : result;
 }
@@ -122,7 +122,7 @@ export function encodeAsJson<T>(value: T, format?: boolean | number): string {
 		// encode if a character is not an alpha, numeric, space or some special characters
 		result =
 			DBL_QUOTE +
-			value.replace(/[^\w .,\-!@#$%\^&*\(\)_+={}\[\]:;|<>?]/g, (match) => {
+			value.replace(/[^\w .,\-!@#$%^&*()_+={}[\]:;|<>?]/g, (match) => {
 				if (match === DBL_QUOTE || match === "\\") {
 					return "\\" + match;
 				}

@@ -1,19 +1,19 @@
-import { BrowserUtils, InteractionStatus } from "@azure/msal-browser";
 import type { AccountInfo } from "@azure/msal-browser";
+import { BrowserUtils, InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { UsersClient } from "../api/web-api-client";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UserDto, UserProfileDto } from "../api/web-api-client";
+import { UsersClient } from "../api/web-api-client";
 import BlockUISpinner from "../components/BlockUISpinner";
+import AppLogger from "../instrumentation/AppLogger";
 import setTargetOrganisation, {
 	getTargetOrganisation,
 } from "../storage/targetOrganisation";
-import { AccountStateCtx, AccountDispatchCtx } from "./accountContext";
-import type { AccountDetails } from "./accountContext";
-import { tokenRequest } from "./authConfig";
 import termsData from "../terms-config.json";
-import AppLogger from "../instrumentation/AppLogger";
+import type { AccountDetails } from "./accountContext";
+import { AccountDispatchCtx, AccountStateCtx } from "./accountContext";
+import { tokenRequest } from "./authConfig";
 
 interface AccountProviderProps {
 	children: ReactNode;

@@ -1,11 +1,11 @@
+import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import stylistic from "@stylistic/eslint-plugin";
 import eslintReact from "@eslint-react/eslint-plugin";
+import stylistic from "@stylistic/eslint-plugin";
 import { defineConfig } from "eslint/config";
 import reactHooks from "eslint-plugin-react-hooks";
 import storybook from "eslint-plugin-storybook";
 import globals from "globals";
-import { fileURLToPath } from "node:url";
 import tseslint from "typescript-eslint";
 
 const packageJsonPath = fileURLToPath(

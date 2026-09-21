@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import AccountProvider from "../../../ClientApp/src/authentication/AccountProvider";
-import { vi, describe, it, expect, beforeEach } from "vitest";
 
 // ── Mock setup ────────────────────────────────────────────────────────────────
 

@@ -11,6 +11,9 @@ import {
 	objDefineProp,
 	WellKnownSymbols,
 } from "@nevware21/ts-utils";
+import type { IPromise } from "../interfaces/IPromise";
+import type { IPromiseResult } from "../interfaces/IPromiseResult";
+import type { PromiseExecutor } from "../interfaces/types";
 import {
 	createAsyncAllPromise,
 	createAsyncAllSettledPromise,
@@ -20,9 +23,6 @@ import {
 	createAsyncRejectedPromise,
 	createAsyncResolvedPromise,
 } from "../promise/asyncPromise";
-import { IPromise } from "../interfaces/IPromise";
-import { PromiseExecutor } from "../interfaces/types";
-import { IPromiseResult } from "../interfaces/IPromiseResult";
 
 const toStringTagSymbol: symbol = getKnownSymbol(
 	WellKnownSymbols.toStringTag,
@@ -234,7 +234,7 @@ export interface PolyPromiseConstructor {
  * @group Polyfill
  * @group Promise
  */
-export let PolyPromise = /*#__PURE__*/ (function () {
+export const PolyPromise = /*#__PURE__*/ (() => {
 	/**
 	 * Creates a new Promise.
 	 * @constructor
@@ -263,7 +263,7 @@ export let PolyPromise = /*#__PURE__*/ (function () {
 	PolyPromiseImpl.reject = createAsyncRejectedPromise;
 	PolyPromiseImpl.resolve = createAsyncResolvedPromise;
 	PolyPromiseImpl.allSettled = createAsyncAllSettledPromise;
-	let theProto = PolyPromiseImpl.prototype;
+	const theProto = PolyPromiseImpl.prototype;
 	theProto.then = function (onResolved: any, onRejected: any) {
 		return this._$.then(onResolved, onRejected);
 	};

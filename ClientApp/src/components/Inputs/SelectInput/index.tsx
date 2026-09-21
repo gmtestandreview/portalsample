@@ -1,6 +1,6 @@
 import { useField } from "formik";
 import type { ChangeEvent } from "react";
-import { Form, Row, Col } from "react-bootstrap";
+import { Col, Form, Row } from "react-bootstrap";
 import Details from "../../forms/Details";
 import SummaryDisplay from "../../SummaryDisplay";
 import TextReadOnly from "../TextReadOnly";

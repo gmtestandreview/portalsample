@@ -1,9 +1,9 @@
 "use client";
 import {
-	OverlayArrow,
 	Tooltip as AriaTooltip,
 	type TooltipProps as AriaTooltipProps,
 	TooltipTrigger as AriaTooltipTrigger,
+	OverlayArrow,
 	type TooltipTriggerComponentProps,
 } from "react-aria-components/Tooltip";
 import "./Tooltip.css";

@@ -1,28 +1,25 @@
 import { useMsal } from "@azure/msal-react";
-import { useState, useEffect } from "react";
-import { useParams } from "react-router";
-import { Card, Row, Col, Form } from "react-bootstrap";
 import parse from "html-react-parser";
-import SlateEditor, {
-	type CustomElement,
-	serializeToHtml,
-} from "../../../components/SlateEditor/SlateEditor";
-
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-
-import AppLogger from "../../../instrumentation/AppLogger";
+import { useEffect, useState } from "react";
+import { Card, Col, Form, Row } from "react-bootstrap";
+import { useParams } from "react-router";
 import {
 	FilterMessages,
 	type RequestForPatternApprovalApplicationMessage,
 	RequestForPatternApprovalClient,
 } from "../../../api/web-api-client";
 import { tokenRequest } from "../../../authentication/authConfig";
-import { formatDateTimeToString } from "../../../utils";
-import CustomPagination from "../../../components/Pagination";
 import BlockUISpinner from "../../../components/BlockUISpinner";
+import CustomPagination from "../../../components/Pagination";
 import CustomPaginationHeader from "../../../components/PaginationHeader";
+import SlateEditor, {
+	type CustomElement,
+	serializeToHtml,
+} from "../../../components/SlateEditor/SlateEditor";
+import useBodyClass from "../../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
+import AppLogger from "../../../instrumentation/AppLogger";
+import { formatDateTimeToString } from "../../../utils";
 import { sanitiseHtml } from "../../common/helperFunctions";
 
 const DEFAULT_DASHBOARD_PAGESIZE = 10;

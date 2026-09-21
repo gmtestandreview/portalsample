@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { useEffect } from "react";
 import type { ComponentType } from "react";
-import GetStarted from "./get-started";
+import { useEffect } from "react";
 import {
-	setGetStartedNotification,
 	clearGetStartedNotification,
+	setGetStartedNotification,
 } from "../../storage/notification";
 import { NotificationSeverity } from "../../storage/types";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import GetStarted from "./get-started";
 
 const NotificationDecorator = (Story: ComponentType) => {
 	setGetStartedNotification({

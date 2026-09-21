@@ -1,8 +1,8 @@
 import { Button } from "react-bootstrap";
 import "../../styles/media-print.scss";
 
-import BlockUISpinner from "../BlockUISpinner";
 import { trackGAEvent } from "../../analytics/GoogleAnalytics";
+import BlockUISpinner from "../BlockUISpinner";
 
 export interface ViewPdfButtonProps {
 	text?: string;

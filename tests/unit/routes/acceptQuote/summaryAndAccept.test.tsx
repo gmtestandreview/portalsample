@@ -1,7 +1,7 @@
-import { Form, Formik } from "formik";
 import { render, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Form, Formik } from "formik";
 import type * as ReactRouterModule from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import SummaryAndAccept from "../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept";
 
 const mocks = vi.hoisted(() => {

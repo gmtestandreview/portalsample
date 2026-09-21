@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import TextInput from "./TextInput";
-import SelectInput from "./SelectInput";
+import { withPortalProviders } from "../../storybook/storybookHarness";
 import Checkbox from "./Checkbox";
 import NumberInput from "./NumberInput";
-import TextAreaInput from "./TextAreaInput";
 import RadioButtonGroup from "./RadioButtonGroup";
-import { withPortalProviders } from "../../storybook/storybookHarness";
+import SelectInput from "./SelectInput";
+import TextAreaInput from "./TextAreaInput";
+import TextInput from "./TextInput";
 
 const meta = {
 	title: "Components/Inputs",

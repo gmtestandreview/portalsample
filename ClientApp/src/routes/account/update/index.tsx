@@ -1,20 +1,20 @@
 import { useMsal } from "@azure/msal-react";
 import { Navigate, useParams } from "react-router";
+import type { FormStepStatusDto } from "../../../api/web-api-client";
+import { FormStepStatus } from "../../../api/web-api-client";
+import type { AccountContextState } from "../../../authentication/accountContext";
+import {
+	useAccountDispatch,
+	useAccountState,
+} from "../../../authentication/hooks";
 import WizardForm from "../../../components/forms/WizardForm";
 import type { WizardFormProps } from "../../../components/forms/WizardForm/types";
 import WizardStep from "../../../components/forms/WizardForm/WizardStep";
-import updateAccountProps from "./updateAccountProps";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
 import useBodyClass from "../../../components/Utilities/useBodyClass";
-import { FormStepStatus } from "../../../api/web-api-client";
-import type { FormStepStatusDto } from "../../../api/web-api-client";
-import {
-	useAccountState,
-	useAccountDispatch,
-} from "../../../authentication/hooks";
-import type { AccountContextState } from "../../../authentication/accountContext";
-import OrganisationDetails from "../organisationDetails";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
 import { getValidPositiveIntegerId } from "../../common/routeParams";
+import OrganisationDetails from "../organisationDetails";
+import updateAccountProps from "./updateAccountProps";
 
 const updateAccountWizardProps: WizardFormProps = {
 	locationOnCompletion: "/",

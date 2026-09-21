@@ -1,18 +1,18 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import { ContactClient } from "../../api/web-api-client";
+import type { FormikHelpers } from "formik";
 import type {
 	ContactFormStep,
 	ValidationProblemDetails,
 } from "../../api/web-api-client";
+import { ContactClient } from "../../api/web-api-client";
+import type { AccountContextState } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
-import { HttpStatusCode } from "../../types";
 import { setDashboardNotification } from "../../storage/notification";
 import { NotificationSeverity } from "../../storage/types";
-import type { AccountContextState } from "../../authentication/accountContext";
+import { HttpStatusCode } from "../../types";
 
 const getAccessToken = async (
 	accounts: AccountInfo[],

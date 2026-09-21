@@ -1,17 +1,17 @@
 "use client";
 import {
-	type ListBoxItemProps,
 	Select as AriaSelect,
 	type SelectProps as AriaSelectProps,
+	type ListBoxItemProps,
+	type ListBoxProps,
 	SelectValue,
 	type ValidationResult,
-	type ListBoxProps,
 } from "react-aria-components/Select";
 import { Button } from "../Buttons/AriaButton/Button";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form";
 import { DropdownItem, DropdownListBox } from "./ListBox";
 import { ChevronDown } from "./NmiIcon";
 import { Popover } from "./Popover";
-import { Label, FieldError, Description } from "../forms/AriaForm/Form";
 import "./Select.css";
 
 export interface SelectProps<T, M extends "single" | "multiple">

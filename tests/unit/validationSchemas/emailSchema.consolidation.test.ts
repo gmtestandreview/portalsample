@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 // After the fix, contactValidation re-exports emailSchema from common.
 // This import verifies the re-routed version behaves identically.
 import { emailSchema } from "../../../ClientApp/src/validationSchemas/contactValidation";

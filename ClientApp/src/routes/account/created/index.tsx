@@ -1,10 +1,10 @@
-import { Col, Row, Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
 import { useAccountState } from "../../../authentication/hooks";
 import FormBanner from "../../../components/forms/FormBanner";
 import HeaderIntroText from "../../../components/HeaderIntroText";
+import useBodyClass from "../../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
 
 const AccountCreated = () => {
 	const account = useAccountState();

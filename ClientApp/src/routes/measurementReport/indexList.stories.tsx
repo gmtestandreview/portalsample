@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { within, expect, waitFor } from "storybook/test";
+import { expect, waitFor, within } from "storybook/test";
 import { withPortalProviders } from "../../storybook/storybookHarness";
 import InstrMeasurementReport from "./indexList";
 

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
-import NotificationMessage from "./NotificationMessage";
 import { NotificationSeverity } from "../../storage/types";
+import NotificationMessage from "./NotificationMessage";
 
 /**
  * NotificationMessage Component Storybook Configuration

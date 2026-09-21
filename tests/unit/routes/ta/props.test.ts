@@ -1,28 +1,28 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import type { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
-import applicationAndInstrumentProps from "../../../../ClientApp/src/routes/ta/applicationAndInstrumentProps";
-import organisationAndContactProps from "../../../../ClientApp/src/routes/ta/organisationAndContactProps";
-import supportingDocumentsProps from "../../../../ClientApp/src/routes/ta/supportingDocumentsProps";
-import summaryAndSubmitProps from "../../../../ClientApp/src/routes/ta/summaryAndSubmitProps";
-import type {
-	ApplicationAndInstrumentStepDto,
-	RequestForPatternApprovalSummaryDto,
-} from "../../../../ClientApp/src/routes/ta/types";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
 import {
 	CRMLookupTypes,
+	type PatternApprovalOrgAndContact,
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
-	type PatternApprovalOrgAndContact,
 	type RequestForPatternApprovalSummary,
 	type SupportingDocumentsStep,
 	YesNo,
 } from "../../../../ClientApp/src/api/web-api-client";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+import type { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
+import applicationAndInstrumentProps from "../../../../ClientApp/src/routes/ta/applicationAndInstrumentProps";
+import organisationAndContactProps from "../../../../ClientApp/src/routes/ta/organisationAndContactProps";
+import summaryAndSubmitProps from "../../../../ClientApp/src/routes/ta/summaryAndSubmitProps";
+import supportingDocumentsProps from "../../../../ClientApp/src/routes/ta/supportingDocumentsProps";
+import type {
+	ApplicationAndInstrumentStepDto,
+	RequestForPatternApprovalSummaryDto,
+} from "../../../../ClientApp/src/routes/ta/types";
 import { formikHelpers, stepStatuses } from "../testFixtures";
 
 const mocks = vi.hoisted(() => ({

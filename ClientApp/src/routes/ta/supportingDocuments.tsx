@@ -1,13 +1,8 @@
-import { Alert, Col, Row } from "react-bootstrap";
-import { useEffect, useState, useRef } from "react";
 import { useMsal } from "@azure/msal-react";
-import { useParams } from "react-router";
 import { useFormikContext } from "formik";
-import {
-	FileStatus,
-	type TASupportingDocumentsProps,
-	ValidationMessages,
-} from "./types";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Col, Row } from "react-bootstrap";
+import { useParams } from "react-router";
 import {
 	type AttachmentDto,
 	type FileParameter,
@@ -16,15 +11,20 @@ import {
 	RequestForPatternApprovalClient,
 	type SupportingDocumentsStep,
 } from "../../api/web-api-client";
-import { HttpStatusCode } from "../../types";
 import { tokenRequest } from "../../authentication/authConfig";
 import useAccountContext, {
 	useAccountDispatch,
 } from "../../authentication/hooks";
+import AttachmentNew from "../../components/Inputs/Attachment/index-new";
 import { setDashboardNotification } from "../../storage/notification";
 import { NotificationSeverity } from "../../storage/types";
-import AttachmentNew from "../../components/Inputs/Attachment/index-new";
+import { HttpStatusCode } from "../../types";
 import InstrumentInfoPanel from "./instrumentInfoPanel";
+import {
+	FileStatus,
+	type TASupportingDocumentsProps,
+	ValidationMessages,
+} from "./types";
 
 const handleAlertScroll = () => {
 	setTimeout(() => {

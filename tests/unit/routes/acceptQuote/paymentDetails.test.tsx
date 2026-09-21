@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { type AcceptQuotePreInfoDto } from "@/api/web-api-client";
 import type * as WebApiClientModule from "@/api/web-api-client";
+import type { AcceptQuotePreInfoDto } from "@/api/web-api-client";
 import PaymentDetails from "@/routes/acceptQuote/paymentDetails";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────

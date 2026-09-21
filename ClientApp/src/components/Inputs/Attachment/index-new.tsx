@@ -1,8 +1,8 @@
-import { useField } from "formik";
 import type { FieldHookConfig } from "formik";
+import { useField } from "formik";
 import { isArray, map } from "lodash";
-import { useRef, useState } from "react";
 import type { ChangeEvent } from "react";
+import { useRef, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import type {
 	AttachmentDto,
@@ -10,10 +10,10 @@ import type {
 } from "../../../api/web-api-client";
 import { formatBytes } from "../../../utils";
 import BlockUISpinner from "../../BlockUISpinner";
-import type { AttachmentProps } from "./types";
-import AttachmentItemNew from "./AttachmentItem-new";
 import ProgressBar from "../../Progress/ProgressBar";
 import ProgressFileList from "../../Progress/ProgressFileList";
+import AttachmentItemNew from "./AttachmentItem-new";
+import type { AttachmentProps } from "./types";
 
 const AttachmentNew = (
 	props: AttachmentProps & FieldHookConfig<AttachmentDto[]>,

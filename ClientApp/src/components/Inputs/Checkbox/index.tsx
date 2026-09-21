@@ -1,5 +1,5 @@
-import { Field, useField } from "formik";
 import type { FieldHookConfig } from "formik";
+import { Field, useField } from "formik";
 import Form from "react-bootstrap/Form";
 import SummaryDisplay from "../../SummaryDisplay";
 import type { CheckboxProps } from "./types";

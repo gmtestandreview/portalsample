@@ -1,16 +1,14 @@
-import { Time, parseDate } from "@internationalized/date";
-import { act } from "react";
+import { parseDate, Time } from "@internationalized/date";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it, vi } from "vitest";
+import { act } from "react";
 import { ResizableTableContainer } from "react-aria-components/Table";
-import { DialogTrigger } from "@/components/Dialog/Dialog";
-import { Button } from "@/components/Buttons/AriaButton/Button";
+import { describe, expect, it, vi } from "vitest";
 import { Heading, Text } from "@/components/AriaComponents/Content";
 import { Link } from "@/components/AriaComponents/Link";
 import {
-	Header as ListBoxHeader,
 	ListBox,
+	Header as ListBoxHeader,
 	ListBoxItem,
 	ListBoxLoadMoreItem,
 	ListBoxSection,
@@ -31,11 +29,11 @@ import { ProgressCircle } from "@/components/AriaComponents/ProgressCircle";
 import { Radio, RadioGroup } from "@/components/AriaComponents/RadioGroup";
 import { RangeCalendar } from "@/components/AriaComponents/RangeCalendar";
 import { SearchField } from "@/components/AriaComponents/SearchField";
-import { Select, SelectItem } from "@/components/AriaComponents/Select";
 import {
 	SegmentedControl,
 	SegmentedControlItem,
 } from "@/components/AriaComponents/SegmentedControl";
+import { Select, SelectItem } from "@/components/AriaComponents/Select";
 import { Separator } from "@/components/AriaComponents/Separator";
 import {
 	Sheet,
@@ -43,13 +41,6 @@ import {
 } from "@/components/AriaComponents/Sheet";
 import { Slider } from "@/components/AriaComponents/Slider";
 import { Switch } from "@/components/AriaComponents/Switch";
-import {
-	Tab,
-	TabList,
-	TabPanel,
-	TabPanels,
-	Tabs,
-} from "@/components/AriaComponents/Tabs";
 import {
 	Cell,
 	Column,
@@ -59,6 +50,13 @@ import {
 	TableHeader,
 	TableLoadMoreItem,
 } from "@/components/AriaComponents/Table";
+import {
+	Tab,
+	TabList,
+	TabPanel,
+	TabPanels,
+	Tabs,
+} from "@/components/AriaComponents/Tabs";
 import { Tag, TagGroup } from "@/components/AriaComponents/TagGroup";
 import { TextArea, TextField } from "@/components/AriaComponents/TextField";
 import { TimeField } from "@/components/AriaComponents/TimeField";
@@ -75,6 +73,8 @@ import {
 	TreeLoadMoreItem,
 	TreeSection,
 } from "@/components/AriaComponents/Tree";
+import { Button } from "@/components/Buttons/AriaButton/Button";
+import { DialogTrigger } from "@/components/Dialog/Dialog";
 
 if (!Element.prototype.getAnimations) {
 	Element.prototype.getAnimations = vi.fn(() => []);

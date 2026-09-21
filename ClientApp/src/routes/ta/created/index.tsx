@@ -1,14 +1,13 @@
-import { Col, Row, Container, Alert, Button } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router";
-import { Link } from "react-router";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
+import { Alert, Button, Col, Container, Row } from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router";
+import type { AccountDetails } from "../../../authentication/accountContext";
 import useAccountContext from "../../../authentication/hooks";
 import FormBanner from "../../../components/forms/FormBanner";
-import type { AccountDetails } from "../../../authentication/accountContext";
-import { formatBannerTitle } from "../../common/helperFunctions";
-import SessionStorageCache from "../../../storage/sessionStorageCache";
 import { DashboardTab } from "../../../components/SearchFilter/types";
+import useBodyClass from "../../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
+import SessionStorageCache from "../../../storage/sessionStorageCache";
+import { formatBannerTitle } from "../../common/helperFunctions";
 
 const RequestForPatternApprovalCreated = () => {
 	const account = useAccountContext();

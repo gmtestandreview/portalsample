@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
-import { Profiler } from "react";
 import { Formik } from "formik";
+import { Profiler } from "react";
 import { describe, expect, it, vi } from "vitest";
 import OrganisationNameLookup from "@/components/Inputs/OrganisationNameLookup";
 

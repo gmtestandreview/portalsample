@@ -6,9 +6,9 @@
  * Licensed under the MIT license.
  */
 
+import { isFunction, isStrictNullOrUndefined } from "../helpers/base";
 import { getKnownSymbol } from "../symbol/symbol";
 import { WellKnownSymbols } from "../symbol/well_known";
-import { isFunction, isStrictNullOrUndefined } from "../helpers/base";
 
 /**
  * Checks if the type of value looks like an iterator instance (contains a next function).

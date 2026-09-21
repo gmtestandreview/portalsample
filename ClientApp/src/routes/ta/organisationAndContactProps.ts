@@ -1,28 +1,28 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
+import type { FormikHelpers } from "formik";
 import {
 	type FormStepStatusDto,
 	type PatternApprovalOrgAndContact,
 	RequestForPatternApprovalClient,
 	YesNo,
 } from "../../api/web-api-client";
+import type { AccountDetails } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
 } from "../../components/forms/WizardForm/types";
+import AppLogger from "../../instrumentation/AppLogger";
 import { discardChanges } from "../common/constants";
+import { formatBannerTitle } from "../common/helperFunctions";
 import {
 	patternApprovalOrgAndContactSaveValidation,
 	patternApprovalOrgAndContactSubmitValidation,
 } from "./validation";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { formatBannerTitle } from "../common/helperFunctions";
-import AppLogger from "../../instrumentation/AppLogger";
 
 const loadOrganisationAndContact =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

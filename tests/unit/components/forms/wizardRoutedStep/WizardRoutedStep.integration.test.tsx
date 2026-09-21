@@ -1,20 +1,20 @@
-import type React from "react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { FormikValues } from "formik";
+import type React from "react";
 import { createMemoryRouter, RouterProvider } from "react-router";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	FormStepStatus,
 	type FormStepStatusDto,
 } from "../../../../../ClientApp/src/api/web-api-client";
 import {
-	AccountStateCtx,
 	AccountDispatchCtx,
+	AccountStateCtx,
 } from "../../../../../ClientApp/src/authentication/accountContext";
+import type { WizardRoutedStepProps } from "../../../../../ClientApp/src/components/forms/WizardForm/types";
 import WizardRoutedStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep";
 import WizardStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardStep";
-import type { WizardRoutedStepProps } from "../../../../../ClientApp/src/components/forms/WizardForm/types";
-import { type FormikValues } from "formik";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 

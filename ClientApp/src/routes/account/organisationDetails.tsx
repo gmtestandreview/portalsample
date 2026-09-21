@@ -1,10 +1,10 @@
 import Row from "react-bootstrap/Row";
-import TextInput from "../../components/Inputs/TextInput";
-import Checkbox from "../../components/Inputs/Checkbox";
-import AddressLookup from "../../components/Inputs/AddressLookup";
 import HidableField from "../../components/forms/HidableField";
+import AddressLookup from "../../components/Inputs/AddressLookup";
+import Checkbox from "../../components/Inputs/Checkbox";
 import NumberInput from "../../components/Inputs/NumberInput";
 import OrganisationNameLookup from "../../components/Inputs/OrganisationNameLookup";
+import TextInput from "../../components/Inputs/TextInput";
 
 const OrganisationDetails = () => (
 	<>

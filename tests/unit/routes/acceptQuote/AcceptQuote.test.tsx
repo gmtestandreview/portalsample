@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MemoryRouter, Route, Routes } from "react-router";
 import type * as ReactRouterModule from "react-router";
+import { MemoryRouter, Route, Routes } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
 import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
 

@@ -1,23 +1,23 @@
 import { useMsal } from "@azure/msal-react";
-import Row from "react-bootstrap/Row";
-import { Alert } from "react-bootstrap";
 import { useEffect, useState } from "react";
-import TextInput from "../../components/Inputs/TextInput";
-import type { ReportRecipientProps } from "./types";
-import { AcceptQuoteClient } from "../../api/web-api-client";
+import { Alert } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
 import type {
 	AddressDetailsDto,
 	ReportRecipientStep,
 } from "../../api/web-api-client";
-import { prefixedPropertyOf } from "../../utils";
+import { AcceptQuoteClient } from "../../api/web-api-client";
+import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
 import HidableField from "../../components/forms/HidableField";
 import AddressLookup from "../../components/Inputs/AddressLookup";
-import { useAccountState } from "../../authentication/hooks";
-import { getFormattedAddress } from "../common/helperFunctions";
 import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import TextInput from "../../components/Inputs/TextInput";
 import AppLogger from "../../instrumentation/AppLogger";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
+import { prefixedPropertyOf } from "../../utils";
+import { getFormattedAddress } from "../common/helperFunctions";
+import type { ReportRecipientProps } from "./types";
 
 const getName = prefixedPropertyOf<ReportRecipientStep>("reportRecipient");
 

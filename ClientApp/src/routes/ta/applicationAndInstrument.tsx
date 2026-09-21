@@ -1,29 +1,29 @@
-import { useField, useFormikContext } from "formik";
-import Row from "react-bootstrap/Row";
-import { useEffect, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
 import { useMsal } from "@azure/msal-react";
-import { Alert, Card, Col, Container } from "react-bootstrap";
+import { useField, useFormikContext } from "formik";
 import { forEach } from "lodash";
-import HidableField from "../../components/forms/HidableField";
-import SelectInput from "../../components/Inputs/SelectInput";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import type { TAApplicationAndInstrumentProps } from "./types";
+import type { ChangeEvent } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Alert, Card, Col, Container } from "react-bootstrap";
+import Row from "react-bootstrap/Row";
 import {
 	type LookupResponse,
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
 } from "../../api/web-api-client";
-import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
-import CheckboxGroup from "../../components/Inputs/CheckboxGroup";
-import AppLogger from "../../instrumentation/AppLogger";
-import CertificateNumberLookup from "../../components/Inputs/CertificateNumberLookup";
-import RadioButton from "../../components/Inputs/RadioButton";
-import InstrumentInfoPanel from "./instrumentInfoPanel";
-import TextInput from "../../components/Inputs/TextInput";
-import { sortList } from "../common/helperFunctions";
-import SummaryDisplay from "../../components/SummaryDisplay";
 import BlockUISpinner from "../../components/BlockUISpinner";
+import HidableField from "../../components/forms/HidableField";
+import CertificateNumberLookup from "../../components/Inputs/CertificateNumberLookup";
+import CheckboxGroup from "../../components/Inputs/CheckboxGroup";
+import RadioButton from "../../components/Inputs/RadioButton";
+import SelectInput from "../../components/Inputs/SelectInput";
+import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
+import TextAreaInput from "../../components/Inputs/TextAreaInput";
+import TextInput from "../../components/Inputs/TextInput";
+import SummaryDisplay from "../../components/SummaryDisplay";
+import AppLogger from "../../instrumentation/AppLogger";
+import { sortList } from "../common/helperFunctions";
+import InstrumentInfoPanel from "./instrumentInfoPanel";
+import type { TAApplicationAndInstrumentProps } from "./types";
 
 export const applicationTypes = [
 	{

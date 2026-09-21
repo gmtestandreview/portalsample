@@ -1,7 +1,7 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Switch } from "./Switch";
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect, userEvent } from "storybook/test";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { Switch } from "./Switch";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

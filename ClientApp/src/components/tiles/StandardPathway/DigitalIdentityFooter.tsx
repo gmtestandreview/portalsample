@@ -1,6 +1,6 @@
 import { Card } from "react-bootstrap";
-import type { StandardPathwayFooterProps } from "./types";
 import DICoatOfArms from "../../../assets/DI_CoatOfArms.svg";
+import type { StandardPathwayFooterProps } from "./types";
 
 const DigitalIdentityFooter = (props: StandardPathwayFooterProps) => {
 	const { linkDescription } = props;

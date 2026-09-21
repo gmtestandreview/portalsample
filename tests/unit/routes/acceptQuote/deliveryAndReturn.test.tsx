@@ -1,8 +1,8 @@
-import { render, screen, waitFor, act } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { Formik, Form } from "formik";
-import { MemoryRouter } from "react-router";
+import { act, render, screen, waitFor } from "@testing-library/react";
+import { Form, Formik } from "formik";
 import type { ReactNode } from "react";
+import { MemoryRouter } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AddressDetailsDto } from "../../../../ClientApp/src/api/web-api-client";
 import DeliveryAndReturn from "../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn";
 

@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { AccountStateCtx, AccountDispatchCtx } from "./accountContext";
+import { AccountDispatchCtx, AccountStateCtx } from "./accountContext";
 
 export const useAccountState = () => useContext(AccountStateCtx);
 export const useAccountDispatch = () => useContext(AccountDispatchCtx);

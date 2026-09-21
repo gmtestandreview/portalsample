@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { Button } from "react-bootstrap";
-import { expect, userEvent, within, screen, waitFor } from "storybook/test";
-import ConfirmationModal from "./ConfirmationModal";
-import BranchSelectorModal from "./BranchSelectorModal";
-import RFQDeleteModal from "./RFQDeleteModal";
-import { BranchSelectionModalMode } from "./BranchSelectorModal/enums";
+import { expect, screen, userEvent, waitFor, within } from "storybook/test";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import BranchSelectorModal from "./BranchSelectorModal";
+import { BranchSelectionModalMode } from "./BranchSelectorModal/enums";
+import ConfirmationModal from "./ConfirmationModal";
+import RFQDeleteModal from "./RFQDeleteModal";
 
 const mockBranches = [
 	{

@@ -1,19 +1,18 @@
 import { act, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ComponentProps, ReactNode } from "react";
 import type * as ReactBootstrap from "react-bootstrap";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
-
+import type {
+	ClientMethodMocks,
+	ClientMock,
+} from "../../helpers/mockApiClient";
 import {
+	DEFAULT_ACCESS_TOKEN,
 	resetMsalMock,
 	signOut,
-	DEFAULT_ACCESS_TOKEN,
 } from "../../helpers/mockMsal";
-import type {
-	ClientMock,
-	ClientMethodMocks,
-} from "../../helpers/mockApiClient";
 import { renderWithRouter } from "../../helpers/renderWithRouter";
 
 const mocks = vi.hoisted(() => ({

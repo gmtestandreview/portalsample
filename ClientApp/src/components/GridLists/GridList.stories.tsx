@@ -1,11 +1,11 @@
+import type { Meta, StoryFn } from "@storybook/react-vite";
+import {
+	GridListHeader,
+	GridListSection,
+} from "react-aria-components/GridList";
+import { Text } from "react-aria-components/Text";
 import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
 import { GridList, GridListItem } from "./GridList";
-import { Text } from "react-aria-components/Text";
-import {
-	GridListSection,
-	GridListHeader,
-} from "react-aria-components/GridList";
-import type { Meta, StoryFn } from "@storybook/react-vite";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

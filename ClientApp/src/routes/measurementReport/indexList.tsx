@@ -1,21 +1,20 @@
-import { useEffect, useState } from "react";
-import { Col, Row, Container } from "react-bootstrap";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
+import { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router";
-import BlockUISpinner from "../../components/BlockUISpinner";
-
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import { useAccountState } from "../../authentication/hooks";
-import CustomBreadcrumb from "../../components/Breadcrumb";
-import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import { DashboardClient } from "../../api/web-api-client";
 import type { PagedListOfInstrumentArtefactDto } from "../../api/web-api-client";
+import { DashboardClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import { handleReportFileError } from "../common/helperFunctions";
+import { useAccountState } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
+import CustomBreadcrumb from "../../components/Breadcrumb";
+import HeaderIntroText from "../../components/HeaderIntroText";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
 import AppLogger from "../../instrumentation/AppLogger";
+import { handleReportFileError } from "../common/helperFunctions";
 import ReportList from "./reportList";
 
 const InstrMeasurementReport = () => {

@@ -12,8 +12,8 @@ import {
 	scheduleIdleCallback,
 	scheduleTimeout,
 } from "@nevware21/ts-utils";
-import { IPromise } from "../interfaces/IPromise";
-import { PromiseExecutor } from "../interfaces/types";
+import type { IPromise } from "../interfaces/IPromise";
+import type { PromiseExecutor } from "../interfaces/types";
 
 export type PromisePendingProcessor = (pending: PromisePendingFn[]) => void;
 export type PromisePendingFn = () => void;
@@ -49,7 +49,7 @@ export function syncItemProcessor(pending: PromisePendingFn[]): void {
 export function timeoutItemProcessor(
 	timeout?: number,
 ): (pending: PromisePendingFn[]) => void {
-	let callbackTimeout = isNumber(timeout) ? timeout : 0;
+	const callbackTimeout = isNumber(timeout) ? timeout : 0;
 
 	return (pending: PromisePendingFn[]) => {
 		scheduleTimeout(() => {

@@ -6,8 +6,8 @@ import {
 	type ValidationResult,
 } from "react-aria-components/Checkbox";
 import "./Checkbox.css";
-import { Description, FieldError } from "../../forms/AriaForm/Form";
 import type { ReactNode } from "react";
+import { Description, FieldError } from "../../forms/AriaForm/Form";
 
 interface CheckboxProps extends CheckboxFieldProps {
 	children?: ReactNode;

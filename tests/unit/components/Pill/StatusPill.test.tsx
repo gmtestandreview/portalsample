@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import StatusPill from "../../../../ClientApp/src/components/Pill/StatusPill";
 import {
 	DashboardItemStatus,

@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { Form, Formik } from "formik";
 import type { FormikConfig, FormikValues } from "formik";
+import { Form, Formik } from "formik";
 import { describe, expect, it, vi } from "vitest";
 import CheckboxGroup from "@/components/Inputs/CheckboxGroup";
 

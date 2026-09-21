@@ -8,11 +8,11 @@ import {
 import userEvent from "@testing-library/user-event";
 import { Form, useFormikContext } from "formik";
 import { MemoryRouter } from "react-router";
-import FormikForm from "@/components/forms/FormikForm";
-import ErrorSummary from "@/components/forms/ErrorSummary";
-import ContactDetailsInput from "@/components/forms/CommonForms/ContactDetails";
-import { HttpStatusCode } from "@/types";
 import * as Yup from "yup";
+import ContactDetailsInput from "@/components/forms/CommonForms/ContactDetails";
+import ErrorSummary from "@/components/forms/ErrorSummary";
+import FormikForm from "@/components/forms/FormikForm";
+import { HttpStatusCode } from "@/types";
 
 vi.mock("@/components/forms/UnsavedFormPrompt", () => ({
 	default: () => <div data-testid="unsaved-form-prompt" />,

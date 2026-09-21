@@ -1,5 +1,5 @@
-import { Button as AriaButton } from "react-aria-components/Button";
 import type { ButtonHTMLAttributes, ComponentProps } from "react";
+import { Button as AriaButton } from "react-aria-components/Button";
 import { getButtonClassName } from "../buttonClassName";
 
 /**

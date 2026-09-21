@@ -1,12 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import {
-	AccountDispatchCtx,
-	AccountStateCtx,
-} from "@/authentication/accountContext";
 import type {
 	AccountDispatchContext,
 	AccountStateContext,
+} from "@/authentication/accountContext";
+import {
+	AccountDispatchCtx,
+	AccountStateCtx,
 } from "@/authentication/accountContext";
 import useUserServices from "@/hooks/useUserServices";
 

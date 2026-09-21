@@ -1,5 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { StatusEnumDto } from "@/api/web-api-client";
 import SearchFilter from "@/components/SearchFilter";
 import FilterMenu from "@/components/SearchFilter/filterMenu";
 import SearchBox from "@/components/SearchFilter/searchBox";
@@ -7,7 +8,6 @@ import {
 	DashboardTab,
 	type UserProfile,
 } from "@/components/SearchFilter/types";
-import { StatusEnumDto } from "@/api/web-api-client";
 
 const accountDispatchMock = vi.hoisted(() => ({
 	setUserProfile: vi.fn(),

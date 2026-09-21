@@ -1,29 +1,29 @@
-import { useFormikContext } from "formik";
-import Row from "react-bootstrap/Row";
-import { forEach } from "lodash";
-import { useEffect, useRef, useState } from "react";
-import type { ChangeEvent } from "react";
 import { useMsal } from "@azure/msal-react";
+import { useFormikContext } from "formik";
+import { forEach } from "lodash";
+import type { ChangeEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import type { InstrumentAndRequestProps } from "./types";
-import { CRMLookupTypes, LookupClient } from "../../api/web-api-client";
+import Row from "react-bootstrap/Row";
 import type {
-	LookupResponse,
 	InstrumentAndRequestStep,
+	LookupResponse,
 } from "../../api/web-api-client";
-import HidableField from "../../components/forms/HidableField";
-import SelectInput from "../../components/Inputs/SelectInput";
-import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import { CRMLookupTypes, LookupClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
 import BlockUISpinner from "../../components/BlockUISpinner";
-import { prefixedPropertyOf } from "../../utils";
+import HidableField from "../../components/forms/HidableField";
+import DatePicker from "../../components/Inputs/DatePicker";
 import NumberInput from "../../components/Inputs/NumberInput";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import SelectInput from "../../components/Inputs/SelectInput";
+import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
+import TextAreaInput from "../../components/Inputs/TextAreaInput";
 import TextInput from "../../components/Inputs/TextInput";
 import AppLogger from "../../instrumentation/AppLogger";
-import DatePicker from "../../components/Inputs/DatePicker";
+import { prefixedPropertyOf } from "../../utils";
 import { sortList } from "../common/helperFunctions";
+import type { InstrumentAndRequestProps } from "./types";
 
 const measurementReportInlineHelp = (
 	<div>

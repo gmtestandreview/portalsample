@@ -8,7 +8,7 @@
 
 import { ArrProto } from "../internal/constants";
 import { _unwrapFunction } from "../internal/unwrapFunction";
-import { ArrMapCallbackFn } from "./callbacks";
+import type { ArrMapCallbackFn } from "./callbacks";
 
 /**
  * The arrMap() method creates a new array populated with the results of calling a provided function on every

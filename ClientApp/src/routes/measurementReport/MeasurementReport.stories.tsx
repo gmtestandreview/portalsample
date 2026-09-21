@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import ReportDetails from "./reportDetails";
-import NMIContactDetails from "./nMIContactDetails";
-import { withPortalProviders } from "../../storybook/storybookHarness";
 import { requestForQuoteDetailsFixture } from "../../storybook/storybookFixtures";
+import { withPortalProviders } from "../../storybook/storybookHarness";
+import NMIContactDetails from "./nMIContactDetails";
+import ReportDetails from "./reportDetails";
 
 const meta = {
 	title: "Routes/MeasurementReport",

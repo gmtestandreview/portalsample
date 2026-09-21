@@ -2,9 +2,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Form, Formik } from "formik";
 import { MemoryRouter } from "react-router";
+import WizardForm from "@/components/forms/WizardForm";
 import NextStepButton from "@/components/forms/WizardForm/NextStepButton";
 import PreviousStepButton from "@/components/forms/WizardForm/PreviousStepButton";
-import WizardForm from "@/components/forms/WizardForm";
 import WizardStep from "@/components/forms/WizardForm/WizardStep";
 
 const wrapperMocks = vi.hoisted(() => ({

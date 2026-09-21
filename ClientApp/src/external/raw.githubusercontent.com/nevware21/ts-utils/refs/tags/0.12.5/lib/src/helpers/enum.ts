@@ -7,9 +7,9 @@
  */
 
 import {
-	eMapValues,
-	_createKeyValueMap,
 	_assignMapValue,
+	_createKeyValueMap,
+	eMapValues,
 } from "../internal/map";
 import { objForEachKey } from "../object/for_each_key";
 import { objFreeze } from "../object/object";
@@ -242,7 +242,7 @@ export function createEnumValueMap<E>(
 export function createSimpleMap<E, V>(
 	values: { [key in keyof E]: [E[keyof E], V] },
 ): EnumTypeMap<E, V> {
-	let mapClass: any = {};
+	const mapClass: any = {};
 	objForEachKey(values, (key, value) => {
 		_assignMapValue(mapClass, key, value[1]);
 		_assignMapValue(mapClass, value[0], value[1]);

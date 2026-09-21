@@ -1,25 +1,25 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import { AccountsClient } from "../../../api/web-api-client";
+import type { FormikHelpers } from "formik";
 import type {
 	AccountDto,
-	GetAccountValuesDto,
 	FormStepStatusDto,
+	GetAccountValuesDto,
 	ValidationProblemDetails,
 } from "../../../api/web-api-client";
+import { AccountsClient } from "../../../api/web-api-client";
+import type { AccountContextState } from "../../../authentication/accountContext";
 import { tokenRequest } from "../../../authentication/authConfig";
+import type { DiscardProps } from "../../../components/forms/FormikForm/types";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
 } from "../../../components/forms/WizardForm/types";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types";
 import { setDashboardNotification } from "../../../storage/notification";
 import { NotificationSeverity } from "../../../storage/types";
-import type { AccountContextState } from "../../../authentication/accountContext";
 import { HttpStatusCode } from "../../../types";
 import organisationSubmitValidation from "./validation";
 

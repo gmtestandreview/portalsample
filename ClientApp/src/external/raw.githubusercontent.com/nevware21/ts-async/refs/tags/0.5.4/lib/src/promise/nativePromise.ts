@@ -6,6 +6,21 @@
  * Licensed under the MIT license.
  */
 
+import {
+	createCachedValue,
+	dumpObj,
+	getInst,
+	type ICachedValue,
+	isFunction,
+	objDefineProp,
+	safe,
+	throwTypeError,
+} from "@nevware21/ts-utils";
+import type { IPromise } from "../interfaces/IPromise";
+import type { IPromiseResult } from "../interfaces/IPromiseResult";
+import type { PromiseExecutor } from "../interfaces/types";
+import { STR_PROMISE } from "../internal/constants";
+import { ePromiseState, STRING_STATES } from "../internal/state";
 import { createAsyncPromise } from "./asyncPromise";
 import {
 	_createAllPromise,
@@ -15,28 +30,13 @@ import {
 	_createRejectedPromise,
 	_createResolvedPromise,
 } from "./base";
-import { IPromise } from "../interfaces/IPromise";
-import { ePromiseState, STRING_STATES } from "../internal/state";
-import { PromiseExecutor } from "../interfaces/types";
-import {
-	dumpObj,
-	isFunction,
-	objDefineProp,
-	throwTypeError,
-	getInst,
-	ICachedValue,
-	createCachedValue,
-	safe,
-} from "@nevware21/ts-utils";
-import { STR_PROMISE } from "../internal/constants";
-import { IPromiseResult } from "../interfaces/IPromiseResult";
 
 /**
  * @internal
  * @ignore
  * Flag to determine if the native Promise class should be used if available, used for testing purposes.
  */
-let _useNative: boolean = true;
+const _useNative: boolean = true;
 
 /**
  * @internal
@@ -120,14 +120,13 @@ export function _createNativePromiseHelper<F>(
 			(_useNative && safe(getInst, [STR_PROMISE]).v) || (null as any),
 		));
 	if (_promiseCls.v && _promiseCls.v[name]) {
-		return createCachedValue(function <T extends readonly unknown[] | []>(
+		return createCachedValue((<T extends readonly unknown[] | []>(
 			input: T,
 			timeout?: number,
-		) {
-			return createNativePromise((resolve, reject) => {
+		) =>
+			createNativePromise((resolve, reject) => {
 				_promiseCls.v[name](input).then(resolve, reject);
-			});
-		} as F);
+			})) as F);
 	}
 
 	return func();
@@ -171,7 +170,7 @@ export function createNativePromise<T>(
 		return STRING_STATES[_state];
 	}
 
-	let thePromise = new PrmCls<T>((resolve, reject) => {
+	const thePromise = new PrmCls<T>((resolve, reject) => {
 		function _resolve(value: T) {
 			_state = ePromiseState.Resolved;
 			resolve(value);

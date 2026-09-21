@@ -13,7 +13,7 @@ import { _unwrapFunctionWithPoly } from "../internal/unwrapFunction";
 
 function _objPropertyIsEnum(obj: any, propKey: PropertyKey): boolean {
 	let desc: PropertyDescriptor | undefined;
-	let fn = ObjClass.getOwnPropertyDescriptor;
+	const fn = ObjClass.getOwnPropertyDescriptor;
 
 	if (!isStrictNullOrUndefined(obj) && fn) {
 		// Try to call the native getOwnPropertyDescriptor function

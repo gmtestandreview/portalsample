@@ -6,17 +6,17 @@ import type {
 	ContactFormStep,
 	FormStepStatusDto,
 } from "../../../api/web-api-client";
+import type { AccountContextState } from "../../../authentication/accountContext";
 import type { DiscardProps } from "../../../components/forms/FormikForm/types";
 import type {
 	ErrorType,
 	WizardStepProps,
 } from "../../../components/forms/WizardForm/types";
-import type { AccountContextState } from "../../../authentication/accountContext";
-import contactSubmitValidation from "../validation";
 import {
 	completeContactDetails,
 	loadContactDetails,
 } from "../contactWizardStepProps";
+import contactSubmitValidation from "../validation";
 
 const discardChanges: DiscardProps = {
 	cancelButtonTitle: "Cancel",

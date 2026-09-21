@@ -1,57 +1,57 @@
-import { useState, useEffect, useMemo, useRef } from "react";
-import { Navigate, Link } from "react-router";
-import { Col, Row, Container, Tab, Nav } from "react-bootstrap";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { PatternFormat } from "react-number-format";
-import Welcome from "../../components/Welcome";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import {
-	getDashboardNotification,
-	clearDashboardNotification,
-	setDashboardNotification,
-	getDashboardInfoNotification,
-	clearDashboardInfoNotification,
-} from "../../storage/notification";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useDebounce from "../../components/Utilities/useDebounce";
-import {
-	useAccountState,
-	useAccountDispatch,
-} from "../../authentication/hooks";
-import {
-	useModalState,
-	useModalDispatch,
-} from "../../components/modals/ModalContext";
-import StandardPathway from "../../components/tiles/StandardPathway";
-import { DashboardClient } from "../../api/web-api-client";
+import { Link, Navigate } from "react-router";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 import type {
 	DashboardItemDto,
 	PagedListOfDashboardItemDto,
 	ProblemDetails,
 	StatusEnumDto,
 } from "../../api/web-api-client";
+import { DashboardClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import AppLogger from "../../instrumentation/AppLogger";
-import getUnexpectedErrorRoute from "../common/errorRoutes";
-import { HttpStatusCode } from "../../types";
-import { DashBoardNotifications } from "../common/dashboardNotifications";
-import SearchFilter from "../../components/SearchFilter";
-import RequestItem from "../../components/RequestList/requestItem";
-import InstrumentItem from "../../components/RequestList/instrumentItem";
-import NoRequests from "../../components/RequestList/noRequests";
-import { DashboardTab } from "../../components/SearchFilter/types";
-import type { UserProfile } from "../../components/SearchFilter/types";
+import {
+	useAccountDispatch,
+	useAccountState,
+} from "../../authentication/hooks";
+import NotificationMessage from "../../components/Alert/NotificationMessage";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
+import {
+	useModalDispatch,
+	useModalState,
+} from "../../components/modals/ModalContext";
 import CustomPagination from "../../components/Pagination";
 import CustomPaginationHeader from "../../components/PaginationHeader";
-import { defaultFilter } from "../common/constants";
-import { mapToUserProfile } from "../common/helperFunctions";
+import InstrumentItem from "../../components/RequestList/instrumentItem";
+import NoRequests from "../../components/RequestList/noRequests";
+import RequestItem from "../../components/RequestList/requestItem";
+import SearchFilter from "../../components/SearchFilter";
+import type { UserProfile } from "../../components/SearchFilter/types";
+import { DashboardTab } from "../../components/SearchFilter/types";
+import StandardPathway from "../../components/tiles/StandardPathway";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useDebounce from "../../components/Utilities/useDebounce";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
+import Welcome from "../../components/Welcome";
+import AppLogger from "../../instrumentation/AppLogger";
+import {
+	clearDashboardInfoNotification,
+	clearDashboardNotification,
+	getDashboardInfoNotification,
+	getDashboardNotification,
+	setDashboardNotification,
+} from "../../storage/notification";
 import SessionStorageCache from "../../storage/sessionStorageCache";
+import { HttpStatusCode } from "../../types";
+import { defaultFilter } from "../common/constants";
+import { DashBoardNotifications } from "../common/dashboardNotifications";
 import { DashboardItemStatus } from "../common/enums";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
+import getUnexpectedErrorRoute from "../common/errorRoutes";
+import { mapToUserProfile } from "../common/helperFunctions";
 
 // TS Move this to a constants file if we need this setting app wide
 const DEFAULT_DASHBOARD_PAGESIZE = 10;

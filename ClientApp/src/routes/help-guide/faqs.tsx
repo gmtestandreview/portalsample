@@ -1,11 +1,11 @@
 import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router";
-import CustomBreadcrumb from "../../components/Breadcrumb";
 import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
+import CustomBreadcrumb from "../../components/Breadcrumb";
 import HeaderIntroText from "../../components/HeaderIntroText";
 import HashLink from "../../components/Utilities/hashLink";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
 
 const FAQs = () => {
 	const breadcrumbs: CustomBreadcrumbItem[] = [

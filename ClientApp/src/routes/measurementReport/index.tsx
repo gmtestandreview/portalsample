@@ -1,30 +1,30 @@
-import { useEffect, useState } from "react";
-import { Col, Row, Container } from "react-bootstrap";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
+import { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router";
+import type { RequestForQuoteDetails } from "../../api/web-api-client";
+import { ApplicationType, QuoteClient } from "../../api/web-api-client";
+import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
+import NotificationMessage from "../../components/Alert/NotificationMessage";
 import BlockUISpinner from "../../components/BlockUISpinner";
+import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
+import CustomBreadcrumb from "../../components/Breadcrumb";
+import HeaderIntroText from "../../components/HeaderIntroText";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
+import ViewMeasurementReport from "../../components/Utilities/ViewMeasurementReport";
+import AppLogger from "../../instrumentation/AppLogger";
 import {
-	getDashboardNotification,
+	clearDashboardInfoNotification,
 	clearDashboardNotification,
 	getDashboardInfoNotification,
-	clearDashboardInfoNotification,
+	getDashboardNotification,
 } from "../../storage/notification";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import { useAccountState } from "../../authentication/hooks";
-import CustomBreadcrumb from "../../components/Breadcrumb";
-import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import { ApplicationType, QuoteClient } from "../../api/web-api-client";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import ReportDetails from "./reportDetails";
-import NMIContactDetails from "./nMIContactDetails";
-import ViewMeasurementReport from "../../components/Utilities/ViewMeasurementReport";
-import { tokenRequest } from "../../authentication/authConfig";
 import { handleReportFileError } from "../common/helperFunctions";
-import AppLogger from "../../instrumentation/AppLogger";
+import NMIContactDetails from "./nMIContactDetails";
+import ReportDetails from "./reportDetails";
 
 const showDashboardMessage = (message: JSX.Element | null) => (
 	<>

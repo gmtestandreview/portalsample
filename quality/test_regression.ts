@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
-import { test, expect, vi, afterEach } from "vitest";
 import { render } from "@testing-library/react";
 import { createElement } from "react";
+import { afterEach, expect, test, vi } from "vitest";
 import getUnexpectedErrorRoute from "../ClientApp/src/routes/common/errorRoutes";
-import { HttpStatusCode } from "../ClientApp/src/types";
 import SessionStorageCache from "../ClientApp/src/storage/sessionStorageCache";
+import { HttpStatusCode } from "../ClientApp/src/types";
 
 afterEach(() => {
 	vi.resetModules();

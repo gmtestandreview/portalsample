@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import { AlertInfo } from "@/components/Alert";
 import { CustomAccordion, CustomAccordionBody } from "@/components/Accordion";
+import { AlertInfo } from "@/components/Alert";
 
 describe("runtime smoke coverage for restored local type modules", () => {
 	it("renders AlertInfo", () => {

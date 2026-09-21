@@ -1,20 +1,20 @@
 import { useMemo } from "react";
-import { Link, useNavigate } from "react-router";
-import type { NavigateFunction } from "react-router";
-import { Row, Col, Tab, Card, Button, Table } from "react-bootstrap";
+import { Button, Card, Col, Row, Tab, Table } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
+import type { NavigateFunction } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 import type {
-	InstrumentArtefactDto,
 	DashboardItemDto,
+	InstrumentArtefactDto,
 	RequestForQuoteDto,
 } from "../../api/web-api-client";
-import Actions from "../Actions";
-import type { DropdownActionItem } from "../Actions";
-import { useModalDispatch } from "../modals/ModalContext";
 import { DashboardItemStatus, ReportStatus } from "../../routes/common/enums";
 import { viewArtefactHeadingStatus } from "../../routes/common/quoteStatus";
+import type { DropdownActionItem } from "../Actions";
+import Actions from "../Actions";
+import { useModalDispatch } from "../modals/ModalContext";
 import ContactDetails from "../Utilities/contactDetails";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 
 // TS Move this to a common location
 const formattedDate = (dateToFormat: Date | string | undefined) =>

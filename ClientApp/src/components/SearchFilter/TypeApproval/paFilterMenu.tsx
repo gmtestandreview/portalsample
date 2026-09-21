@@ -1,14 +1,14 @@
+import { Formik } from "formik";
 import type React from "react";
 import { useRef, useState } from "react";
-import { Row, Col, Button, Form, Dropdown, Container } from "react-bootstrap";
-import { Formik } from "formik";
-import RadioButtonGroup from "../../Inputs/RadioButtonGroup";
+import { Button, Col, Container, Dropdown, Form, Row } from "react-bootstrap";
+import { trackGAEvent } from "../../../analytics/GoogleAnalytics";
 import { PatternApprovalStatusEnumDto } from "../../../api/web-api-client";
-import type { RadioButtonProps } from "../../Inputs/RadioButton/types";
-import { DashboardTab } from "../types";
 import { useAccountDispatch } from "../../../authentication/hooks";
 import { defaultFilter } from "../../../routes/common/constants";
-import { trackGAEvent } from "../../../analytics/GoogleAnalytics";
+import type { RadioButtonProps } from "../../Inputs/RadioButton/types";
+import RadioButtonGroup from "../../Inputs/RadioButtonGroup";
+import { DashboardTab } from "../types";
 import type { PaFilterMenuProps } from "./paFilterMenuProps";
 
 const PaFilterMenu = (props: PaFilterMenuProps) => {

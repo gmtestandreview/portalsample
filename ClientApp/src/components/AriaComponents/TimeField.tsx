@@ -5,7 +5,7 @@ import {
 	type TimeValue,
 	type ValidationResult,
 } from "react-aria-components/TimeField";
-import { Label, FieldError, Description } from "../forms/AriaForm/Form";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form";
 import { DateInput, DateSegment } from "../Inputs/AriaDateField/DateField";
 import "./TimeField.css";
 

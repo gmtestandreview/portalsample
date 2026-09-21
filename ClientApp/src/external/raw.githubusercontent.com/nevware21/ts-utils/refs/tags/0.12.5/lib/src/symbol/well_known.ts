@@ -14,7 +14,7 @@ import { createEnumKeyMap } from "../helpers/enum";
  * See: [Well Known Symbols](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Symbol#well-known_symbols)
  * @group Symbol
  */
-export const enum WellKnownSymbols {
+export enum WellKnownSymbols {
 	/**
 	 * The Symbol.asyncIterator symbol is a builtin symbol that is used to access an
 	 * object's `Symbol.asyncIterator` method. In order for an object to be async iterable,

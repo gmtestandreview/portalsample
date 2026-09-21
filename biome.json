@@ -8,7 +8,7 @@
 	"files": {
 		"includes": ["**", "!!**/dist", "!!ClientApp/src/api/web-api-client.ts"]
 	},
-	
+
 	"formatter": {
 		"enabled": true,
 		"formatWithErrors": false,
@@ -26,7 +26,7 @@
 	},
 	"javascript": {
 		"formatter": {
-			"arrowParentheses":"always",
+			"arrowParentheses": "always",
 			"bracketSameLine": false,
 			"bracketSpacing": true,
 			"delimiterSpacing": false,
@@ -39,7 +39,7 @@
 	"json": {
 		"formatter": {
 			"trailingCommas": "none"
-    	}
+		}
 	},
 	"assist": {
 		"enabled": true,
@@ -50,4 +50,3 @@
 		}
 	}
 }
-

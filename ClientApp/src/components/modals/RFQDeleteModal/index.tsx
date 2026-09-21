@@ -1,18 +1,18 @@
 import { useMsal } from "@azure/msal-react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { useModalState, useModalDispatch } from "../ModalContext";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import ButtonGroup from "../../Buttons/ButtonGroup";
+import { trackGAEvent } from "../../../analytics/GoogleAnalytics";
 import {
 	ApplicationClient,
 	ApplicationType,
 } from "../../../api/web-api-client";
 import { tokenRequest } from "../../../authentication/authConfig";
+import AppLogger from "../../../instrumentation/AppLogger";
 import { setDashboardNotification } from "../../../storage/notification";
 import { NotificationSeverity } from "../../../storage/types";
-import AppLogger from "../../../instrumentation/AppLogger";
-import { trackGAEvent } from "../../../analytics/GoogleAnalytics";
+import ButtonGroup from "../../Buttons/ButtonGroup";
+import PrimaryButton from "../../Buttons/PrimaryButton";
+import { useModalDispatch, useModalState } from "../ModalContext";
 
 interface SaveButtonProps {
 	onClick: () => void;

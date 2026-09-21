@@ -47,10 +47,10 @@ export function polyStrEndsWith(
 ): boolean {
 	_throwIfNotString(value);
 
-	let searchValue = isString(searchString)
+	const searchValue = isString(searchString)
 		? searchString
 		: asString(searchString);
-	let end =
+	const end =
 		!isUndefined(length) && length < value[LENGTH] ? length : value[LENGTH];
 
 	return strSubstring(value, end - searchValue[LENGTH], end) === searchValue;

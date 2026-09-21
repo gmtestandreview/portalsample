@@ -1,18 +1,18 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useState } from "react";
-import Row from "react-bootstrap/Row";
 import { Col } from "react-bootstrap";
-import { QuoteClient } from "../../api/web-api-client";
+import Row from "react-bootstrap/Row";
 import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import type { QuotationSummaryProps } from "./types";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import QuoteDetails from "../quotation/quoteDetails";
-import NMIContactDetails from "../quotation/nMIContactDetails";
-import { useAccountState } from "../../authentication/hooks";
-import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms";
-import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote";
+import { QuoteClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote";
+import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms";
 import AppLogger from "../../instrumentation/AppLogger";
+import NMIContactDetails from "../quotation/nMIContactDetails";
+import QuoteDetails from "../quotation/quoteDetails";
+import type { QuotationSummaryProps } from "./types";
 
 const QuotationSummary = (props: QuotationSummaryProps) => {
 	const { isSummary, cRMQuoteRequestId } = props;

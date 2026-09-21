@@ -9,15 +9,15 @@ import {
 	type ValidationResult,
 } from "react-aria-components/ComboBox";
 import { Group } from "react-aria-components/Group";
-import {
-	Label,
-	FieldError,
-	FieldButton,
-	Description,
-} from "../forms/AriaForm/Form";
 import { DropdownItem, DropdownListBox } from "../AriaComponents/ListBox";
-import { Popover } from "../AriaComponents/Popover";
 import { ChevronDown } from "../AriaComponents/NmiIcon";
+import { Popover } from "../AriaComponents/Popover";
+import {
+	Description,
+	FieldButton,
+	FieldError,
+	Label,
+} from "../forms/AriaForm/Form";
 import "./ComboBox.css";
 
 export interface ComboBoxProps<T, M extends "single" | "multiple">

@@ -1,8 +1,8 @@
 import type React from "react";
 import { Row } from "react-bootstrap";
 import AddressLookup from "../AddressLookup";
-import TextInput from "../TextInput";
 import NumberInput from "../NumberInput";
+import TextInput from "../TextInput";
 
 interface AuthorisedAgentProps {
 	name?: string;

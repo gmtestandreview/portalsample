@@ -1,7 +1,7 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { ColorField } from "./ColorField";
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect } from "storybook/test";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { ColorField } from "./ColorField";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

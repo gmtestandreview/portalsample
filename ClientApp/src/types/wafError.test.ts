@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { isWafError, AZURE_WAF_SERVER_PREFIX } from "./wafError";
+import { describe, expect, it } from "vitest";
+import { AZURE_WAF_SERVER_PREFIX, isWafError } from "./wafError";
 
 describe("isWafError", () => {
 	it("returns true for an error shaped like an Azure WAF response", () => {

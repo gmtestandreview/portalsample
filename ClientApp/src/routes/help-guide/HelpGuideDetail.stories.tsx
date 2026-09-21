@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import HelpHowToSetupAccess from "./how-to-setup-access";
-import FAQs from "./faqs";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import FAQs from "./faqs";
+import HelpHowToSetupAccess from "./how-to-setup-access";
 
 const meta = {
 	title: "Routes/HelpGuide/Details",

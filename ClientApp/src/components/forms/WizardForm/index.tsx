@@ -1,6 +1,6 @@
 import type { FormikValues } from "formik";
-import React from "react";
 import type { FC } from "react";
+import React from "react";
 import { Navigate, Route, Routes, useResolvedPath } from "react-router";
 import type { WizardFormProps, WizardStepProps } from "./types";
 import WizardRoutedStep from "./WizardRoutedStep";

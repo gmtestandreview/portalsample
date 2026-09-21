@@ -1,9 +1,9 @@
-import type { FormikValues } from "formik";
 import type { ReactPlugin } from "@microsoft/applicationinsights-react-js";
-import type { WizardStepProps } from "./types";
-import ErrorBoundary from "../../ErrorBoundary";
-import { ai } from "../../../instrumentation/AppInsightsService";
+import type { FormikValues } from "formik";
 import GoogleAnalytics from "../../../analytics/GoogleAnalytics";
+import { ai } from "../../../instrumentation/AppInsightsService";
+import ErrorBoundary from "../../ErrorBoundary";
+import type { WizardStepProps } from "./types";
 
 const WizardStep = <T extends FormikValues>(props: WizardStepProps<T>) => {
 	const { children } = props;

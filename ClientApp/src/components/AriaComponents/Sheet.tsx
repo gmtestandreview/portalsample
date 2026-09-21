@@ -1,11 +1,11 @@
 "use client";
+import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import {
+	Heading,
 	Modal,
 	ModalOverlay,
 	type ModalOverlayProps,
-	Heading,
 } from "react-aria-components/Modal";
-import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import { Dialog } from "../Dialog/Dialog";
 import "./Sheet.css";
 

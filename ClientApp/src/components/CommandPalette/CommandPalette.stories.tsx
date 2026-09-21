@@ -1,9 +1,9 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Button } from "../Buttons/AriaButton/Button";
-import { CommandPalette } from "./CommandPalette";
-import { DialogTrigger } from "../Dialog/Dialog";
-import { MenuItem } from "../AriaComponents/Menu";
 import type { Meta, StoryFn } from "@storybook/react-vite";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { MenuItem } from "../AriaComponents/Menu";
+import { Button } from "../Buttons/AriaButton/Button";
+import { DialogTrigger } from "../Dialog/Dialog";
+import { CommandPalette } from "./CommandPalette";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

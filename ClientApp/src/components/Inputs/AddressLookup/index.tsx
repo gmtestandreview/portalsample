@@ -1,24 +1,24 @@
-import { useField } from "formik";
+import { useAccount, useMsal } from "@azure/msal-react";
 import type { FieldHookConfig } from "formik";
+import { useField } from "formik";
 import { useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useAccount, useMsal } from "@azure/msal-react";
-import { AddressClient } from "../../../api/web-api-client";
 import type {
-	MatchedAddress,
 	AddressDetailsDto,
+	MatchedAddress,
 	ProblemDetails,
 } from "../../../api/web-api-client";
+import { AddressClient } from "../../../api/web-api-client";
+import { tokenRequest } from "../../../authentication/authConfig";
+import AppLogger from "../../../instrumentation/AppLogger";
+import { getFormattedAddress } from "../../../routes/common/helperFunctions";
+import { HttpStatusCode } from "../../../types";
+import SummaryDisplay from "../../SummaryDisplay";
 import AutoSuggest from "../AutoSuggest";
 import type { AutoSuggestOption } from "../AutoSuggest/types";
 import ManualAddressInput from "./ManualAddressInput";
 import type { AddressLookupProps } from "./types";
-import { tokenRequest } from "../../../authentication/authConfig";
-import { HttpStatusCode } from "../../../types";
-import SummaryDisplay from "../../SummaryDisplay";
-import AppLogger from "../../../instrumentation/AppLogger";
-import { getFormattedAddress } from "../../../routes/common/helperFunctions";
 
 const noAddressFoundOption = {
 	displayText: "No matches found",

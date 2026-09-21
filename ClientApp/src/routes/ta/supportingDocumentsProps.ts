@@ -1,27 +1,27 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
+import type { FormikHelpers } from "formik";
 import {
 	type FormStepStatusDto,
 	RequestForPatternApprovalClient,
 	type SupportingDocumentsStep,
 } from "../../api/web-api-client";
+import type { AccountDetails } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
+import type { DiscardProps } from "../../components/forms/FormikForm/types";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
 } from "../../components/forms/WizardForm/types";
-import type { AccountDetails } from "../../authentication/accountContext";
 import AppLogger from "../../instrumentation/AppLogger";
 import { formatBannerTitle } from "../common/helperFunctions";
 import {
 	supportingDocsSaveValidation,
 	supportingDocsSubmitValidation,
 } from "./validation";
-import type { DiscardProps } from "../../components/forms/FormikForm/types";
 
 const loadSummary =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

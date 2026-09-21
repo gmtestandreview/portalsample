@@ -6,18 +6,18 @@
  * Licensed under the MIT license.
  */
 
+import { arrForEach } from "../array/forEach";
+import { isFunction, isStrictUndefined } from "../helpers/base";
+import type { ILazyValue } from "../helpers/lazy";
 import {
 	GET_OWN_PROPERTY_DESCRIPTOR,
 	GET_OWN_PROPERTY_SYMBOLS,
 	ObjClass,
 } from "../internal/constants";
-import { isFunction, isStrictUndefined } from "../helpers/base";
-import { objForEachKey } from "./for_each_key";
-import { ILazyValue } from "../helpers/lazy";
-import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
-import { arrForEach } from "../array/forEach";
-import { objPropertyIsEnumerable } from "./property_is_enumerable";
 import { _returnEmptyArray, _returnNothing } from "../internal/stubs";
+import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
+import { objForEachKey } from "./for_each_key";
+import { objPropertyIsEnumerable } from "./property_is_enumerable";
 
 const _objGetOwnPropertyDescriptor: (
 	target: any,
@@ -137,7 +137,7 @@ const propMap: {
  */
 /*#__NO_SIDE_EFFECTS__*/
 function _createProp(value: ObjDefinePropDescriptor): PropertyDescriptor {
-	let prop: PropertyDescriptor = {};
+	const prop: PropertyDescriptor = {};
 	prop[propMap["c"]] = true;
 	prop[propMap["e"]] = true;
 
@@ -146,7 +146,7 @@ function _createProp(value: ObjDefinePropDescriptor): PropertyDescriptor {
 		prop.get = () => value.l.v;
 
 		// If it has a setter then expose it as well
-		let desc = _objGetOwnPropertyDescriptor(value.l, "v");
+		const desc = _objGetOwnPropertyDescriptor(value.l, "v");
 		if (desc && desc.set) {
 			prop.set = (newValue: any) => {
 				value.l.v = newValue;
@@ -267,7 +267,7 @@ export function objDefineAccessors<T, V = any>(
 	configurable?: boolean,
 	enumerable?: boolean,
 ): T {
-	let desc: ObjDefinePropDescriptor = {
+	const desc: ObjDefinePropDescriptor = {
 		e: enumerable,
 		c: configurable,
 	};
@@ -320,7 +320,7 @@ export function objDefineProps<T>(
 	target: T,
 	propDescMap: ObjDefinePropDescriptorMap,
 ) {
-	let props: PropertyDescriptorMap = {};
+	const props: PropertyDescriptorMap = {};
 
 	objForEachKey(propDescMap, (key, value: ObjDefinePropDescriptor) => {
 		props[key] = _createProp(value);

@@ -68,7 +68,7 @@ export function safeGet<T = boolean, F extends (...args: any[]) => T = () => T>(
 	defValue: T,
 	argArray?: Parameters<F>,
 ): T {
-	let result = safe(cb, argArray);
+	const result = safe(cb, argArray);
 
 	return result.e ? defValue : result.v;
 }

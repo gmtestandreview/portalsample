@@ -137,28 +137,27 @@ export function createCustomError<
 	constructCb?: ((self: any, args: IArguments) => void) | null,
 	errorBase?: B,
 ): T {
-	let theBaseClass = errorBase || Error;
-	let orgName = theBaseClass[PROTOTYPE][NAME];
-	let captureFn = Error.captureStackTrace;
+	const theBaseClass = errorBase || Error;
+	const orgName = theBaseClass[PROTOTYPE][NAME];
+	const captureFn = Error.captureStackTrace;
 	return _createCustomError<T>(
 		name,
 		function (this: any) {
-			let _this = this;
-			let theArgs = arguments;
+			const theArgs = arguments;
 			try {
 				safe(_setName, [theBaseClass, name]);
-				let _self =
-					fnApply(theBaseClass, _this, ArrSlice[CALL](theArgs)) || _this;
-				if (_self !== _this) {
+				const _self =
+					fnApply(theBaseClass, this, ArrSlice[CALL](theArgs)) || this;
+				if (_self !== this) {
 					// Looks like runtime error constructor reset the prototype chain, so restore it
-					let orgProto = objGetPrototypeOf(_this);
+					const orgProto = objGetPrototypeOf(this);
 					if (orgProto !== objGetPrototypeOf(_self)) {
 						objSetPrototypeOf(_self, orgProto);
 					}
 				}
 
 				// Make sure we only capture our stack details
-				captureFn && captureFn(_self, _this[CONSTRUCTOR]);
+				captureFn && captureFn(_self, this[CONSTRUCTOR]);
 
 				// Run the provided construction function
 				constructCb && constructCb(_self, theArgs);

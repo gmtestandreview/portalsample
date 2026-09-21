@@ -1,12 +1,12 @@
-import Row from "react-bootstrap/Row";
 import { useField } from "formik";
-import type { TAOrganisationAndContactProps } from "./types";
+import Row from "react-bootstrap/Row";
 import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
 import HidableField from "../../components/forms/HidableField";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import AuthorisedAgent from "../../components/Inputs/AuthorisedAgent";
-import TextInput from "../../components/Inputs/TextInput";
 import AddressLookup from "../../components/Inputs/AddressLookup";
+import AuthorisedAgent from "../../components/Inputs/AuthorisedAgent";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import TextInput from "../../components/Inputs/TextInput";
+import type { TAOrganisationAndContactProps } from "./types";
 
 const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
 	const [_field] = useField(fieldName);

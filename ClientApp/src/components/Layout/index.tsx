@@ -1,12 +1,12 @@
-import { Container } from "react-bootstrap";
 import type { ReactNode } from "react";
-import Header from "../Header";
-import Footer from "../Footer";
-import SkipLinks from "../Utilities/skipLinks";
-import BackToTopButton from "../Utilities/backToTopButton";
-import RouteChangeScrollTop from "../Utilities/routeChangeScrollTop";
+import { Container } from "react-bootstrap";
 import GoogleAnalytics from "../../analytics/GoogleAnalytics";
 import { useRouteAccessibility } from "../../hooks/useRouteAccessibility";
+import Footer from "../Footer";
+import Header from "../Header";
+import BackToTopButton from "../Utilities/backToTopButton";
+import RouteChangeScrollTop from "../Utilities/routeChangeScrollTop";
+import SkipLinks from "../Utilities/skipLinks";
 
 interface LayoutProps {
 	children: ReactNode;

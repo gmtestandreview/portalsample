@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
 import { SeverityLevel } from "@microsoft/applicationinsights-common";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import ErrorBoundary from "@/components/ErrorBoundary";

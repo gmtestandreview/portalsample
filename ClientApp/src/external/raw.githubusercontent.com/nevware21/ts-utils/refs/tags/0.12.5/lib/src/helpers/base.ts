@@ -13,8 +13,8 @@ import {
 	OBJECT,
 	ObjProto,
 	TO_STRING,
-	UNDEFINED,
 	UNDEF_VALUE,
+	UNDEFINED,
 } from "../internal/constants";
 import { _isPolyfillType } from "../internal/poly_helpers";
 import { _pureRef } from "../internal/treeshake_helpers";
@@ -32,9 +32,7 @@ let _primitiveTypes: string[];
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function _createIs<T>(theType: string): (value: any) => value is T {
-	return function (value: any): value is T {
-		return typeof value === theType;
-	};
+	return (value: any): value is T => typeof value === theType;
 }
 
 /**
@@ -49,9 +47,8 @@ export function _createIs<T>(theType: string): (value: any) => value is T {
 export function _createIsWithPoly<T>(
 	theType: string,
 ): (value: any) => value is T {
-	return function (value: any): value is T {
-		return typeof value === theType || _isPolyfillType(value, theType);
-	};
+	return (value: any): value is T =>
+		typeof value === theType || _isPolyfillType(value, theType);
 }
 
 /**
@@ -65,9 +62,8 @@ export function _createIsWithPoly<T>(
 /*#__NO_SIDE_EFFECTS__*/
 export function _createObjIs<T>(theName: string): (value: any) => value is T {
 	const theType = "[object " + theName + "]";
-	return function (value: any): value is T {
-		return !!(value && objToString(value) === theType);
-	};
+	return (value: any): value is T =>
+		!!(value && objToString(value) === theType);
 }
 
 /**

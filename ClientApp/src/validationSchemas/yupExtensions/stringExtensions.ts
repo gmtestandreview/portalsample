@@ -487,7 +487,7 @@ export const registerYupStringExtensions = () => {
 	 * input and the match is linear.
 	 */
 	const EMAIL_LOCAL_PART =
-		/^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~]+)*$/;
+		/^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~]+)*$/;
 
 	/** A single DNS label, already split on `.`. One character class, so linear. */
 	const DNS_LABEL = /^[a-zA-Z0-9-]+$/;
@@ -861,7 +861,7 @@ export const registerYupStringExtensions = () => {
 						// OPEN-ITEMS-BACKLOG P2 item 16 asks whether business names may contain '&' and
 						// whether this ASIC-aligned charset is correct. The charset below does permit '&'.
 						// based on the CompanyName rule in https://download.asic.gov.au/media/jdchdnzn/message-implementation-guide-for-brs-v1-7.pdf
-						const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/;
+						const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/.,'{}| "]+$/;
 						return value.match(new RegExp(regExStr)) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */

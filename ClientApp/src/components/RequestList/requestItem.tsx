@@ -1,27 +1,27 @@
 import type React from "react";
 import { useMemo } from "react";
-import { Link, useNavigate } from "react-router";
-import type { NavigateFunction } from "react-router";
-import { Row, Col, Tab, Card, Button } from "react-bootstrap";
+import { Button, Card, Col, Row, Tab } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
+import type { NavigateFunction } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 import type {
 	DashboardItemDto,
 	DashboardQuoteDto,
 	ReportDto,
 	RequestForQuoteDto,
 } from "../../api/web-api-client";
-import Actions from "../Actions";
-import type { DropdownActionItem } from "../Actions";
-import { useModalDispatch } from "../modals/ModalContext";
 import { DashboardItemStatus } from "../../routes/common/enums";
 import {
 	validQuoteIdStatus,
 	viewArtefactHeadingStatus,
 	viewQuotationAcceptMenu,
 } from "../../routes/common/quoteStatus";
+import type { DropdownActionItem } from "../Actions";
+import Actions from "../Actions";
+import { useModalDispatch } from "../modals/ModalContext";
 import StatusPill from "../Pill/StatusPill";
 import ContactDetails from "../Utilities/contactDetails";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
 	dateToFormat
@@ -240,7 +240,7 @@ const renderQuotationContent = (
 						className="ms-md-auto"
 						onClick={() => {
 							trackGAEvent("Request item/quotation tab");
-							 
+
 							useQuoteId
 								? navigate(`/quotation/${dashboardQuoteDto.quotationId}`)
 								: navigate(`/quotation/${referenceId}`);

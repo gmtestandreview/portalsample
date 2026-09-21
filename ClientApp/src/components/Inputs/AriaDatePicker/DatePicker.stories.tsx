@@ -1,7 +1,7 @@
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { DatePicker } from "./DatePicker";
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect } from "storybook/test";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
+import { DatePicker } from "./DatePicker";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

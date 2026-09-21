@@ -14,7 +14,10 @@ import {
 	polyArrFindLast,
 	polyArrFindLastIndex,
 } from "../polyfills/array";
-import { ArrPredicateCallbackFn, ArrPredicateCallbackFn2 } from "./callbacks";
+import type {
+	ArrPredicateCallbackFn,
+	ArrPredicateCallbackFn2,
+} from "./callbacks";
 
 /**
  * The arrFind() method returns the first element in the provided array that satisfies

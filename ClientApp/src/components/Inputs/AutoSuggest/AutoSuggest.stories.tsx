@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, userEvent, within } from "storybook/test";
-import AutoSuggest from "./index";
-import AutoSuggestContainer from "./AutoSuggestContainer";
-import type { AutoSuggestOption } from "./types";
 import { withPortalProviders } from "../../../storybook/storybookHarness";
+import AutoSuggestContainer from "./AutoSuggestContainer";
+import AutoSuggest from "./index";
+import type { AutoSuggestOption } from "./types";
 
 const noopAsync = async () => {};
 const noop = () => {};

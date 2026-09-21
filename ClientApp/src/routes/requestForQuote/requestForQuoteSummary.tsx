@@ -8,8 +8,8 @@ import EditButton from "../../components/Buttons/EditButton";
 import HeaderIntroText from "../../components/HeaderIntroText";
 import useBodyClass from "../../components/Utilities/useBodyClass";
 import InstrumentAndRequest from "./instrumentAndRequest";
-import type { SummaryProps } from "./types";
 import OrganisationAndContact from "./organisationAndContact";
+import type { SummaryProps } from "./types";
 
 const RequestForQuoteSummary = ({ isSubmitted }: SummaryProps) => {
 	const { id } = useParams<{ id?: string }>();

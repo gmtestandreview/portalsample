@@ -1,12 +1,12 @@
-import { useEffect, useRef } from "react";
-import Form from "react-bootstrap/Form";
-import { InputGroup } from "react-bootstrap";
-import { useField } from "formik";
 import { format as formatDate, parseISO } from "date-fns";
+import { useField } from "formik";
+import { useEffect, useRef } from "react";
+import { InputGroup } from "react-bootstrap";
+import Form from "react-bootstrap/Form";
 import SummaryDisplay from "../../SummaryDisplay";
 import { getPhoneNumberFormat } from "./phoneFormat";
-import { NumericFormatFixed, PatternFormatFixed } from "./types";
 import type { NumberInputProps } from "./types";
+import { NumericFormatFixed, PatternFormatFixed } from "./types";
 
 const NumberInput = ({
 	label,

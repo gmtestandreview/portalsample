@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import Actions from "./index";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import Actions from "./index";
 
 /**
  * Actions Component Storybook Configuration

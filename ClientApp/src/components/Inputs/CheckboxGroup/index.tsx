@@ -1,12 +1,12 @@
-import { useField } from "formik";
 import type { FieldHookConfig } from "formik";
-import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
+import { useField } from "formik";
 import Col from "react-bootstrap/Col";
-import Checkbox from "../Checkbox";
-import type { CheckboxGroupProps } from "./types";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import Details from "../../forms/Details";
 import SummaryDisplay from "../../SummaryDisplay";
+import Checkbox from "../Checkbox";
+import type { CheckboxGroupProps } from "./types";
 
 const CheckboxGroup = <T,>(
 	props: CheckboxGroupProps<T> & FieldHookConfig<T>,

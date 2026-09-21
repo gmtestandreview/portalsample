@@ -1,21 +1,20 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
 import type {
 	AttachmentDto,
 	FileParameter,
 } from "../../../../ClientApp/src/api/web-api-client";
-import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
-
+import type {
+	ClientMethodMocks,
+	ClientMock,
+} from "../../helpers/mockApiClient";
 import {
+	DEFAULT_ACCESS_TOKEN,
 	msalMocks,
 	rejectToken,
 	resetMsalMock,
-	DEFAULT_ACCESS_TOKEN,
 } from "../../helpers/mockMsal";
-import type {
-	ClientMock,
-	ClientMethodMocks,
-} from "../../helpers/mockApiClient";
 import {
 	NOT_FOUND_TEST_ID,
 	renderWithRouter,

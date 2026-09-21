@@ -1,11 +1,11 @@
-import { expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { Given, Then, When } from "../support/fixtures";
+import { installMockApi } from "../support/mock-api";
 import {
 	disableMockAuthenticationReseed,
 	installMockAuthentication,
 } from "../support/mock-authentication";
-import { installMockApi } from "../support/mock-api";
 
 const rfqStepLocations = [
 	"organisation-and-contact",

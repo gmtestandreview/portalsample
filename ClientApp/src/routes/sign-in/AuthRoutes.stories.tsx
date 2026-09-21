@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
 import { InteractionStatus } from "@azure/msal-browser";
-import SignIn from "./index";
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import {
+	mockMsalAccount,
+	withPortalProviders,
+} from "../../storybook/storybookHarness";
 import SignOut from "../sign-out";
 import SignOutHelper from "../sign-out-helper";
-import {
-	withPortalProviders,
-	mockMsalAccount,
-} from "../../storybook/storybookHarness";
+import SignIn from "./index";
 
 const meta = {
 	title: "Routes/Auth",

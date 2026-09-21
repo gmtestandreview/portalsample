@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, userEvent, within } from "storybook/test";
 import type { ComponentType } from "react";
-import InstrumentItem from "./instrumentItem";
+import { expect, userEvent, within } from "storybook/test";
 import type { DashboardItemDto } from "../../api/web-api-client";
 import { DashboardItemStatus } from "../../routes/common/enums";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import InstrumentItem from "./instrumentItem";
 
 const instrumentFixture: DashboardItemDto = {
 	referenceId: "RFQ-2023-009012",

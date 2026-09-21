@@ -3,13 +3,13 @@ import {
 	DateField as AriaDateField,
 	type DateFieldProps as AriaDateFieldProps,
 	DateInput as AriaDateInput,
-	type DateInputProps,
 	DateSegment as AriaDateSegment,
+	type DateInputProps,
 	type DateSegmentProps,
 	type DateValue,
 	type ValidationResult,
 } from "react-aria-components/DateField";
-import { Label, FieldError, Description } from "../../forms/AriaForm/Form";
+import { Description, FieldError, Label } from "../../forms/AriaForm/Form";
 import "./DateField.css";
 
 export interface DateFieldProps<T extends DateValue>

@@ -1,21 +1,21 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useState } from "react";
-import Row from "react-bootstrap/Row";
 import { Alert } from "react-bootstrap";
-import { prefixedPropertyOf } from "../../utils";
-import { AcceptQuoteClient } from "../../api/web-api-client";
+import Row from "react-bootstrap/Row";
 import type {
 	AcceptQuotePreInfoDto,
 	PaymentDetailsStep,
 } from "../../api/web-api-client";
-import type { PaymentDetailsProps } from "./types";
-import TextInput from "../../components/Inputs/TextInput";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import HidableField from "../../components/forms/HidableField";
-import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
+import { AcceptQuoteClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
 import BlockUISpinner from "../../components/BlockUISpinner";
+import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
+import HidableField from "../../components/forms/HidableField";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
+import TextInput from "../../components/Inputs/TextInput";
 import AppLogger from "../../instrumentation/AppLogger";
+import { prefixedPropertyOf } from "../../utils";
+import type { PaymentDetailsProps } from "./types";
 
 const getName = prefixedPropertyOf<PaymentDetailsStep>("paymentDetails");
 

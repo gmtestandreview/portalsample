@@ -1,5 +1,5 @@
 import { NotificationSeverity } from "../../storage/types";
-import { AlertSuccess, AlertInfo, AlertWarning, AlertError } from ".";
+import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from ".";
 import type { NotificationMessageProps } from "./types";
 
 /**

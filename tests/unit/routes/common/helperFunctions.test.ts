@@ -1,48 +1,48 @@
 import ReactGA from "react-ga4";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
 import {
 	DashboardClient,
 	State,
 } from "../../../../ClientApp/src/api/web-api-client";
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
 import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification";
-import { NotificationSeverity } from "../../../../ClientApp/src/storage/types";
+import {
+	Environment,
+	QuoteStatus,
+} from "../../../../ClientApp/src/routes/common/enums";
 import {
 	contentLoaded,
+	downloadFileFromUrl,
 	formatBannerTitle,
 	formatOrganisationTitle,
 	formatTradingBranch,
 	formatTradingBranchFromStrings,
+	getEnvironment,
 	getFileDetails,
 	getFileIdFromBase64,
 	getFileSize,
 	getFileUrlFromBase64,
 	getFormattedAddress,
-	getEnvironment,
 	getMakeModelDetails,
 	getQuotationFileDetails,
 	getQuoteOfferPageNumber,
-	isEmptyGuid,
-	isValidGUID,
 	handleReportFileError,
 	handleUnexpectedError,
+	isEmptyGuid,
+	isValidGUID,
 	mapToUserProfile,
 	openInNewTab,
 	openPdfPageInNewTab,
 	sanitiseHtml,
 	sortList,
 	triggerDownload,
-	downloadFileFromUrl,
 } from "../../../../ClientApp/src/routes/common/helperFunctions";
-import {
-	Environment,
-	QuoteStatus,
-} from "../../../../ClientApp/src/routes/common/enums";
 import {
 	openPdfPageInSecureNewTab,
 	openUrlInSecureNewTab,
 } from "../../../../ClientApp/src/routes/common/openWindow";
+import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification";
+import { NotificationSeverity } from "../../../../ClientApp/src/storage/types";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),

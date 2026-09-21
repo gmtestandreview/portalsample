@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { Form, Formik } from "formik";
 import type { ReactNode } from "react";
-import { Formik, Form } from "formik";
 import { expect, userEvent, within } from "storybook/test";
-import TextInput from "../Inputs/TextInput";
-import SelectInput from "../Inputs/SelectInput";
-import RadioButtonGroup from "../Inputs/RadioButtonGroup";
-import DatePicker from "../Inputs/DatePicker";
-import TextAreaInput from "../Inputs/TextAreaInput";
 import Checkbox from "../Inputs/Checkbox";
+import DatePicker from "../Inputs/DatePicker";
+import RadioButtonGroup from "../Inputs/RadioButtonGroup";
+import SelectInput from "../Inputs/SelectInput";
+import TextAreaInput from "../Inputs/TextAreaInput";
+import TextInput from "../Inputs/TextInput";
 
 const stateOptions = [
 	{ value: "NSW", displayText: "New South Wales" },

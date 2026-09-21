@@ -14,7 +14,7 @@ import { objForEachKey } from "../object/for_each_key";
  * @ignore
  * Internal constant enum used to identify the mapping values for the _createMap function
  */
-export const enum eMapValues {
+export enum eMapValues {
 	Key = 0,
 	Value = 1,
 }
@@ -38,7 +38,7 @@ export function _createKeyValueMap(
 	completeFn?: <T>(value: T) => T,
 	writable?: boolean,
 ) {
-	let theMap: any = {};
+	const theMap: any = {};
 	objForEachKey(values, (key, value) => {
 		_assignMapValue(theMap, key, keyType ? value : key, writable);
 		_assignMapValue(theMap, value, valueType ? value : key, writable);

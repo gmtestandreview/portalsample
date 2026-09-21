@@ -1,30 +1,30 @@
-import type { FormikHelpers } from "formik";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import { AcceptQuoteClient } from "../../api/web-api-client";
+import type { FormikHelpers } from "formik";
 import type {
 	FormStepStatusDto,
 	SummaryAndAcceptStep,
 } from "../../api/web-api-client";
+import { AcceptQuoteClient } from "../../api/web-api-client";
+import type { AccountDetails } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
-import { ErrorType } from "../../components/forms/WizardForm/types";
 import type {
 	WizardFormStepValues,
 	WizardStepProps,
 } from "../../components/forms/WizardForm/types";
+import { ErrorType } from "../../components/forms/WizardForm/types";
 import { setDashboardNotification } from "../../storage/notification";
+import SessionStorageCache from "../../storage/sessionStorageCache";
 import { NotificationSeverity } from "../../storage/types";
 import { HttpStatusCode } from "../../types";
-import type { AccountDetails } from "../../authentication/accountContext";
 import { discardChanges } from "../common/constants";
+import { formatBannerTitle } from "../common/helperFunctions";
 import {
 	summaryAndAcceptSaveValidation,
 	summaryAndAcceptSubmitValidation,
 } from "./validation";
-import { formatBannerTitle } from "../common/helperFunctions";
-import SessionStorageCache from "../../storage/sessionStorageCache";
 
 const loadSummary =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

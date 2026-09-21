@@ -6,8 +6,8 @@
  * Licensed under the MIT license.
  */
 
-import { ICachedValue, createCachedValue } from "../helpers/cache";
-import { ObjClass, __PROTO__ } from "../internal/constants";
+import { createCachedValue, type ICachedValue } from "../helpers/cache";
+import { __PROTO__, ObjClass } from "../internal/constants";
 import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
 import { objForEachKey } from "./for_each_key";
 

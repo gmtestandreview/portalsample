@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { within, expect, userEvent, fn } from "storybook/test";
+import { expect, fn, userEvent, within } from "storybook/test";
 import type { PatternApprovalDashboardDto } from "../../../api/web-api-client";
 import { withPortalProviders } from "../../../storybook/storybookHarness";
 import PaFilterMenu from "./paFilterMenu";

@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { ComponentType } from "react";
 import { expect, within } from "storybook/test";
-import Welcome from "./index";
 import { AccountStateCtx } from "../../authentication/accountContext";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import Welcome from "./index";
 
 const meta = {
 	title: "Components/Welcome",

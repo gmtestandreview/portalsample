@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 
-import { ICachedValue, createCachedValue } from "../helpers/cache";
+import { createCachedValue, type ICachedValue } from "../helpers/cache";
 import { CALL, NULL_VALUE, UNDEF_VALUE } from "../internal/constants";
 import { getKnownSymbol } from "../symbol/symbol";
 import { WellKnownSymbols } from "../symbol/well_known";

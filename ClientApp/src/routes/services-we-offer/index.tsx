@@ -1,26 +1,25 @@
-import { useEffect, useState } from "react";
-import { Col, Row, Container, Card, Alert, Button } from "react-bootstrap";
-import { useNavigate, useSearchParams } from "react-router";
-
 import { useMsal } from "@azure/msal-react";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import CustomBreadcrumb, {
-	type CustomBreadcrumbItem,
-} from "../../components/Breadcrumb";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
+import { useEffect, useState } from "react";
+import { Alert, Button, Card, Col, Container, Row } from "react-bootstrap";
+import { useNavigate, useSearchParams } from "react-router";
 import {
 	LookupClient,
 	type ServiceDto,
 	ServiceType,
 } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import AppLogger from "../../instrumentation/AppLogger";
-import BlockUISpinner from "../../components/BlockUISpinner";
 import useAccountContext, {
 	useAccountDispatch,
 } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import CustomBreadcrumb, {
+	type CustomBreadcrumbItem,
+} from "../../components/Breadcrumb";
+import PrimaryButton from "../../components/Buttons/PrimaryButton";
 import Details from "../../components/forms/Details";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
+import AppLogger from "../../instrumentation/AppLogger";
 
 const ServicesWeOffer = () => {
 	const { accounts, instance } = useMsal();

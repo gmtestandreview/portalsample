@@ -1,11 +1,6 @@
 import { useMsal } from "@azure/msal-react";
-import { useNavigate, useParams } from "react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
-import WizardForm from "../../components/forms/WizardForm";
-import type { WizardFormProps } from "../../components/forms/WizardForm/types";
-import WizardStep from "../../components/forms/WizardForm/WizardStep";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useAccountContext from "../../authentication/hooks";
+import { useNavigate, useParams } from "react-router";
 import {
 	type AttachmentDto,
 	type FileParameter,
@@ -14,18 +9,23 @@ import {
 	RequestForPatternApprovalClient,
 	type UploadProgress,
 } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
 import type { AccountDetails } from "../../authentication/accountContext";
+import { tokenRequest } from "../../authentication/authConfig";
+import useAccountContext from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import WizardForm from "../../components/forms/WizardForm";
+import type { WizardFormProps } from "../../components/forms/WizardForm/types";
+import WizardStep from "../../components/forms/WizardForm/WizardStep";
+import useBodyClass from "../../components/Utilities/useBodyClass";
 import AppLogger from "../../instrumentation/AppLogger";
 import ApplicationAndInstrument from "./applicationAndInstrument";
 import applicationAndInstrumentProps from "./applicationAndInstrumentProps";
+import OrganisationAndContact from "./organisationAndContact";
+import organisationAndContactProps from "./organisationAndContactProps";
 import SummaryAndSubmit from "./summaryAndSubmit";
 import summaryAndSubmitProps from "./summaryAndSubmitProps";
 import SupportingDocuments from "./supportingDocuments";
 import supportingDocumentsProps from "./supportingDocumentsProps";
-import organisationAndContactProps from "./organisationAndContactProps";
-import OrganisationAndContact from "./organisationAndContact";
 
 const bannerTitle = "Pattern/type approval - Application";
 

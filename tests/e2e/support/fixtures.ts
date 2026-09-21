@@ -1,4 +1,4 @@
-import { createBdd, test as base } from "playwright-bdd";
+import { test as base, createBdd } from "playwright-bdd";
 import { createScenarioState, type ScenarioState } from "./scenario-state";
 
 export const test = base.extend<{ scenarioState: ScenarioState }>({

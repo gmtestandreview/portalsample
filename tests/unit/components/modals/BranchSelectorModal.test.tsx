@@ -1,3 +1,5 @@
+import { InteractionStatus, Logger } from "@azure/msal-browser";
+import { type IMsalContext, MsalContext } from "@azure/msal-react";
 import {
 	act,
 	fireEvent,
@@ -5,18 +7,16 @@ import {
 	screen,
 	waitFor,
 } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
 import type * as ReactRouterModule from "react-router";
+import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { MsalContext, type IMsalContext } from "@azure/msal-react";
-import { InteractionStatus, Logger } from "@azure/msal-browser";
-import BranchSelectorModal from "@/components/modals/BranchSelectorModal";
-import { BranchSelectionModalMode } from "@/components/modals/BranchSelectorModal/enums";
+import type { AccountDispatchContext } from "@/authentication/accountContext";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
 } from "@/authentication/accountContext";
-import type { AccountDispatchContext } from "@/authentication/accountContext";
+import BranchSelectorModal from "@/components/modals/BranchSelectorModal";
+import { BranchSelectionModalMode } from "@/components/modals/BranchSelectorModal/enums";
 import {
 	ModalDispatchCtx,
 	ModalStateCtx,

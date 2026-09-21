@@ -1,7 +1,7 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { CoverageOptions } from "vitest/node";
 import { defineConfig } from "vitest/config";
+import type { CoverageOptions } from "vitest/node";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 

@@ -1,38 +1,37 @@
-import { useEffect, useMemo, useState } from "react";
-import { Col, Row, Container, Button } from "react-bootstrap";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
+import { useEffect, useMemo, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import {
-	getDashboardNotification,
-	clearDashboardNotification,
-	setDashboardNotification,
-	getDashboardInfoNotification,
-	clearDashboardInfoNotification,
-} from "../../storage/notification";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import { useAccountState } from "../../authentication/hooks";
-import { NotificationSeverity } from "../../storage/types";
-import CustomBreadcrumb from "../../components/Breadcrumb";
-import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import type { QuotationtProps } from "./types";
-import { ApplicationType, QuoteClient } from "../../api/web-api-client";
 import type { RequestForQuoteDetails } from "../../api/web-api-client";
+import { ApplicationType, QuoteClient } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import QuoteDetails from "./quoteDetails";
-import NMIContactDetails from "./nMIContactDetails";
+import { useAccountState } from "../../authentication/hooks";
+import NotificationMessage from "../../components/Alert/NotificationMessage";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
+import CustomBreadcrumb from "../../components/Breadcrumb";
+import HeaderIntroText from "../../components/HeaderIntroText";
 import ConfirmationModal from "../../components/modals/ConfirmationModal";
-
-import { QuoteStatus } from "../common/enums";
-import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
 import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote";
-import { proceedDeclineValidStatuses } from "../common/quoteStatus";
+import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms";
 import AppLogger from "../../instrumentation/AppLogger";
+import {
+	clearDashboardInfoNotification,
+	clearDashboardNotification,
+	getDashboardInfoNotification,
+	getDashboardNotification,
+	setDashboardNotification,
+} from "../../storage/notification";
 import SessionStorageCache from "../../storage/sessionStorageCache";
+import { NotificationSeverity } from "../../storage/types";
+import { QuoteStatus } from "../common/enums";
+import { proceedDeclineValidStatuses } from "../common/quoteStatus";
+import NMIContactDetails from "./nMIContactDetails";
+import QuoteDetails from "./quoteDetails";
+import type { QuotationtProps } from "./types";
 
 const showDashboardMessage = (message: JSX.Element | null) => (
 	<>

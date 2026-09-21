@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
-import RequestItem from "@/components/RequestList/requestItem";
-import InstrumentItem from "@/components/RequestList/instrumentItem";
-import { ModalDispatchCtx } from "@/components/modals/ModalContext";
-import { DashboardItemStatus, ReportStatus } from "@/routes/common/enums";
 import type { DashboardItemDto } from "@/api/web-api-client";
+import { ModalDispatchCtx } from "@/components/modals/ModalContext";
+import InstrumentItem from "@/components/RequestList/instrumentItem";
+import RequestItem from "@/components/RequestList/requestItem";
+import { DashboardItemStatus, ReportStatus } from "@/routes/common/enums";
 
 vi.mock("@/analytics/GoogleAnalytics", () => ({
 	trackGAEvent: vi.fn(),

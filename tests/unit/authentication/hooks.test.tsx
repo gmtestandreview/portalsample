@@ -1,17 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import useAccountContext, {
-	useAccountDispatch,
-	useAccountState,
-} from "@/authentication/hooks";
-import {
-	AccountDispatchCtx,
-	AccountStateCtx,
-} from "@/authentication/accountContext";
 import type {
 	AccountDispatchContext,
 	AccountStateContext,
 } from "@/authentication/accountContext";
+import {
+	AccountDispatchCtx,
+	AccountStateCtx,
+} from "@/authentication/accountContext";
+import useAccountContext, {
+	useAccountDispatch,
+	useAccountState,
+} from "@/authentication/hooks";
 
 const dispatchContext: AccountDispatchContext = {
 	setAgree: vi.fn(),

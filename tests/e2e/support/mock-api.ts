@@ -6,7 +6,6 @@ import {
 	ServiceType,
 	YesNo,
 } from "../../../ClientApp/src/api/web-api-client";
-import type { ScenarioState } from "./scenario-state";
 import {
 	buildAcceptQuoteStatuses,
 	buildAcceptQuoteSummary,
@@ -20,6 +19,7 @@ import {
 	buildRfqSummary,
 } from "./mock-builders";
 import { failureKey } from "./mock-failure";
+import type { ScenarioState } from "./scenario-state";
 import { installTypeApprovalMockApi } from "./type-approval-api";
 
 const defaultContact = {

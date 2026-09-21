@@ -1,15 +1,15 @@
 "use client";
+import { useEffect } from "react";
 import {
 	Autocomplete as AriaAutocomplete,
 	type AutocompleteProps as AriaAutocompleteProps,
 	useFilter,
 } from "react-aria-components/Autocomplete";
-import { type MenuProps as AriaMenuProps } from "react-aria-components/Menu";
 import { Dialog } from "react-aria-components/Dialog";
+import type { MenuProps as AriaMenuProps } from "react-aria-components/Menu";
 import { Menu } from "../AriaComponents/Menu";
-import { SearchField } from "../AriaComponents/SearchField";
 import { Modal } from "../AriaComponents/Modal";
-import { useEffect } from "react";
+import { SearchField } from "../AriaComponents/SearchField";
 import "./CommandPalette.css";
 
 export interface CommandPaletteProps<T>

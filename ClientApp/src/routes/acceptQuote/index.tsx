@@ -1,25 +1,25 @@
 import { useMsal } from "@azure/msal-react";
-import { useNavigate, useParams } from "react-router";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import type { FormStepStatusDto } from "../../api/web-api-client";
+import { AcceptQuoteClient, QuoteClient } from "../../api/web-api-client";
+import type { AccountDetails } from "../../authentication/accountContext";
+import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
 import WizardForm from "../../components/forms/WizardForm";
 import type { WizardFormProps } from "../../components/forms/WizardForm/types";
 import WizardStep from "../../components/forms/WizardForm/WizardStep";
 import useBodyClass from "../../components/Utilities/useBodyClass";
-import { useAccountState } from "../../authentication/hooks";
-import { AcceptQuoteClient, QuoteClient } from "../../api/web-api-client";
-import type { FormStepStatusDto } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import type { AccountDetails } from "../../authentication/accountContext";
-import ReportRecipient from "./reportRecipient";
-import reportRecipientProps from "./reportRecipientProps";
+import AppLogger from "../../instrumentation/AppLogger";
 import DeliveryAndReturn from "./deliveryAndReturn";
 import deliveryAndReturnProps from "./deliveryAndReturnProps";
 import PaymentDetails from "./paymentDetails";
 import paymentDetailsProps from "./paymentDetailsProps";
+import ReportRecipient from "./reportRecipient";
+import reportRecipientProps from "./reportRecipientProps";
 import SummaryAndAccept from "./summaryAndAccept";
 import summaryAndAcceptProps from "./summaryAndAcceptProps";
-import AppLogger from "../../instrumentation/AppLogger";
 
 const bannerTitle = "Testing and calibration service - Quotation";
 

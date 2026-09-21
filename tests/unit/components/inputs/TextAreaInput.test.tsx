@@ -1,5 +1,5 @@
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { Formik } from "formik";
-import { render, screen, fireEvent, act } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import TextAreaInput from "@/components/Inputs/TextAreaInput";
 

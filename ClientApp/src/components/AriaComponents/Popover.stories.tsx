@@ -1,9 +1,9 @@
 import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Popover } from "./Popover";
 import { Button } from "../Buttons/AriaButton/Button";
 import { DialogTrigger } from "../Dialog/Dialog";
 import { Heading } from "./Content";
 import { HelpCircle } from "./NmiIcon";
+import { Popover } from "./Popover";
 import "./styles.css";
 import type { Meta, StoryFn } from "@storybook/react-vite";
 

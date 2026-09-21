@@ -1,8 +1,8 @@
-import Form from "react-bootstrap/Form";
 import { useField } from "formik";
 import type { ReactNode } from "react";
-import SummaryDisplay from "../../SummaryDisplay";
+import Form from "react-bootstrap/Form";
 import Details from "../../forms/Details";
+import SummaryDisplay from "../../SummaryDisplay";
 
 export interface TextReadOnlyProps {
 	label: string;

@@ -1,5 +1,5 @@
 "use client";
-import { Check, ChevronRight, Dot } from "./NmiIcon";
+import type React from "react";
 import {
 	Menu as AriaMenu,
 	MenuItem as AriaMenuItem,
@@ -7,17 +7,17 @@ import {
 	MenuTrigger as AriaMenuTrigger,
 	SubmenuTrigger as AriaSubmenuTrigger,
 	Header,
-	Separator,
 	Keyboard,
 	type MenuItemProps,
 	type MenuProps,
 	type MenuSectionProps,
 	type MenuTriggerProps,
+	Separator,
 	type SubmenuTriggerProps,
 } from "react-aria-components/Menu";
-import { Popover } from "./Popover";
 import { Text } from "./Content";
-import React from "react";
+import { Check, ChevronRight, Dot } from "./NmiIcon";
+import { Popover } from "./Popover";
 import "./Menu.css";
 
 export function MenuTrigger(props: MenuTriggerProps) {
@@ -80,4 +80,4 @@ export function SubmenuTrigger(props: SubmenuTriggerProps) {
 	);
 }
 
-export { Text, Header, Separator, Keyboard };
+export { Header, Keyboard, Separator, Text };

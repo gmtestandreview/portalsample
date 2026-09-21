@@ -1,5 +1,5 @@
-import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ReactPlugin } from "@microsoft/applicationinsights-react-js";
+import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { env } from "../env";
 
 let reactPlugin: ReactPlugin | null = null;

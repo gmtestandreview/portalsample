@@ -2,10 +2,10 @@ import * as yup from "yup";
 import "./yupExtensions";
 import type { ContactDto } from "../api/web-api-client";
 import {
+	emailSchema,
 	NotEmpty,
 	nullableString,
 	requiredNullableString,
-	emailSchema,
 } from "./common";
 
 export const titleSchema = (label: string, required = true) =>

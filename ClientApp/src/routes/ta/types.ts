@@ -1,19 +1,19 @@
 import type { FormikFormProps, FormikValues } from "formik";
 import type { ReactNode } from "react";
-import type { FormStepStatus } from "../../api/web-api-client";
-import {
-	type AttachmentDto,
-	type FileParameter,
-	type UploadProgress,
-	type PatternApprovalDashboardDto,
-	type ApplicationAndInstrumentStep,
-	type LookupResponse,
-	type InstrumentTypeContentDto,
-	type PatternApprovalOrgAndContact,
-	type SupportingDocumentsStep,
+import type {
+	ApplicationAndInstrumentStep,
+	AttachmentDto,
+	FileParameter,
+	FormStepStatus,
+	InstrumentTypeContentDto,
+	LookupResponse,
+	PatternApprovalDashboardDto,
+	PatternApprovalOrgAndContact,
+	SupportingDocumentsStep,
+	UploadProgress,
 } from "../../api/web-api-client";
-import { DashboardTab } from "../../components/SearchFilter/types";
 import type { Hideable } from "../../components/forms/types";
+import { DashboardTab } from "../../components/SearchFilter/types";
 import type { InitialValue } from "../../types";
 
 export interface TASummaryProps {

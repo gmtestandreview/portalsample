@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 describe("Yup side-effect import — explicit import guard", () => {
 	it("update/validation.ts schema validates without relying on transitive import", async () => {

@@ -6,19 +6,19 @@
  * Licensed under the MIT license.
  */
 
+import { isStrictNullOrUndefined } from "../helpers/base";
+import { dumpObj } from "../helpers/diagnostics";
+import { safe } from "../helpers/safe";
+import { throwTypeError } from "../helpers/throw";
 import {
 	__PROTO__,
 	FUNCTION,
-	ObjClass,
 	OBJECT,
+	ObjClass,
 	PROTOTYPE,
 } from "../internal/constants";
-import { dumpObj } from "../helpers/diagnostics";
-import { throwTypeError } from "../helpers/throw";
 import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
 import { objDefineProperties } from "./define";
-import { safe } from "../helpers/safe";
-import { isStrictNullOrUndefined } from "../helpers/base";
 
 /**
  * Creates an object that has the specified prototype, and that optionally contains specified properties. This helper exists to avoid adding a polyfil
@@ -57,7 +57,7 @@ export function polyObjCreate(
 	function tempFunc() {}
 
 	if (!isStrictNullOrUndefined(obj)) {
-		let type = typeof obj;
+		const type = typeof obj;
 		if (type !== OBJECT && type !== FUNCTION) {
 			throwTypeError(
 				"Prototype must be an Object or function: " + dumpObj(obj),

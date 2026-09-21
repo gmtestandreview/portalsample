@@ -1,31 +1,31 @@
 "use client";
+import { composeRenderProps } from "react-aria-components/composeRenderProps";
+import { Group } from "react-aria-components/Group";
 import {
-	Button,
-	Collection,
+	Cell as AriaCell,
 	Column as AriaColumn,
 	type ColumnProps as AriaColumnProps,
 	Row as AriaRow,
-	type RowProps,
 	Table as AriaTable,
+	TableBody as AriaTableBody,
+	TableFooter as AriaTableFooter,
 	TableHeader as AriaTableHeader,
+	TableLoadMoreItem as AriaTableLoadMoreItem,
+	Button,
+	type CellProps,
+	Collection,
+	ColumnResizer,
+	type RowProps,
+	type TableBodyProps,
+	type TableFooterProps,
 	type TableHeaderProps,
+	type TableLoadMoreItemProps,
 	type TableProps,
 	useTableOptions,
-	type TableBodyProps,
-	TableBody as AriaTableBody,
-	type CellProps,
-	Cell as AriaCell,
-	ColumnResizer,
-	TableLoadMoreItem as AriaTableLoadMoreItem,
-	type TableLoadMoreItemProps,
-	TableFooter as AriaTableFooter,
-	type TableFooterProps,
 } from "react-aria-components/Table";
-import { Group } from "react-aria-components/Group";
-import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox";
+import { ChevronDown, ChevronRight, ChevronUp, GripVertical } from "./NmiIcon";
 import { ProgressCircle } from "./ProgressCircle";
-import { ChevronUp, ChevronDown, GripVertical, ChevronRight } from "./NmiIcon";
 import "./Table.css";
 
 export function Table(props: TableProps) {

@@ -1,7 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MemoryRouter } from "react-router";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { trackGAEvent } from "@/analytics/GoogleAnalytics";
+import { useAccountState } from "@/authentication/hooks";
 import Actions from "@/components/Actions";
 import BodyText from "@/components/BodyText";
 import Footer from "@/components/Footer";
@@ -14,8 +16,6 @@ import NavbarEnvironment from "@/components/Header/NavbarEnvironment";
 import NavbarMessage from "@/components/Header/NavbarMessage";
 import HeaderIntroText from "@/components/HeaderIntroText";
 import ExternalLinkIcon from "@/components/Icons/ExternalLinkIcon";
-import { trackGAEvent } from "@/analytics/GoogleAnalytics";
-import { useAccountState } from "@/authentication/hooks";
 import { useModalDispatch } from "@/components/modals/ModalContext";
 import { getEnvironment } from "@/routes/common/helperFunctions";
 

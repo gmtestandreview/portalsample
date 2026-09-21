@@ -1,16 +1,16 @@
-import { Container, Col, Row } from "react-bootstrap";
 import { useIsAuthenticated } from "@azure/msal-react";
+import { Col, Container, Row } from "react-bootstrap";
 import { Navigate } from "react-router";
-import useHtmlTitle from "../Utilities/useHtmlTitle";
-import useBodyClass from "../Utilities/useBodyClass";
-import StandardPathway from "../tiles/StandardPathway";
-import InTextLink from "../InTextLink";
-import HeaderIntroText from "../HeaderIntroText";
 import {
 	clearGetStartedNotification,
 	getGetStartedNotification,
 } from "../../storage/notification";
 import NotificationMessage from "../Alert/NotificationMessage";
+import HeaderIntroText from "../HeaderIntroText";
+import InTextLink from "../InTextLink";
+import StandardPathway from "../tiles/StandardPathway";
+import useBodyClass from "../Utilities/useBodyClass";
+import useHtmlTitle from "../Utilities/useHtmlTitle";
 
 const GetStarted = () => {
 	const isAuthenticated = useIsAuthenticated();

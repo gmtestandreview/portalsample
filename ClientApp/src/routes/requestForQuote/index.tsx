@@ -1,23 +1,23 @@
 import { useMsal } from "@azure/msal-react";
-import { Navigate, useNavigate, useParams } from "react-router";
 import { useEffect, useRef, useState } from "react";
+import { Navigate, useNavigate, useParams } from "react-router";
+import type { FormStepStatusDto } from "../../api/web-api-client";
+import { RequestForQuoteClient } from "../../api/web-api-client";
+import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
+import BlockUISpinner from "../../components/BlockUISpinner";
 import WizardForm from "../../components/forms/WizardForm";
 import type { WizardFormProps } from "../../components/forms/WizardForm/types";
 import WizardStep from "../../components/forms/WizardForm/WizardStep";
 import useBodyClass from "../../components/Utilities/useBodyClass";
-import { useAccountState } from "../../authentication/hooks";
-import organisationAndContactProps from "./organisationAndContactProps";
-import InstrumentAndRequest from "./instrumentAndRequest";
-import instrumentAndRequestProps from "./instrumentAndRequestProps";
-import { RequestForQuoteClient } from "../../api/web-api-client";
-import type { FormStepStatusDto } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import RequestForQuoteSummary from "./requestForQuoteSummary";
-import requestForQuoteSummaryProps from "./requestForQuoteSummaryProps";
-import OrganisationAndContact from "./organisationAndContact";
 import AppLogger from "../../instrumentation/AppLogger";
 import { getValidApplicationId } from "../common/routeParams";
+import InstrumentAndRequest from "./instrumentAndRequest";
+import instrumentAndRequestProps from "./instrumentAndRequestProps";
+import OrganisationAndContact from "./organisationAndContact";
+import organisationAndContactProps from "./organisationAndContactProps";
+import RequestForQuoteSummary from "./requestForQuoteSummary";
+import requestForQuoteSummaryProps from "./requestForQuoteSummaryProps";
 
 const bannerTitle = "Testing and calibration service - Request for quote";
 

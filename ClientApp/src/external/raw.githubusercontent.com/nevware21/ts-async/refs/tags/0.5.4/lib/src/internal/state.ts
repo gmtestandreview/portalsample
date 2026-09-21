@@ -12,7 +12,7 @@ import { REJECTED } from "./constants";
  * @ignore -- Don't include in the generated documentation
  * @internal
  */
-export const enum ePromiseState {
+export enum ePromiseState {
 	Pending = 0,
 	Resolving = 1,
 	Resolved = 2,

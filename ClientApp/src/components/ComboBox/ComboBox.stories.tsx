@@ -1,7 +1,7 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { ComboBox, ComboBoxItem } from "./ComboBox";
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect, userEvent } from "storybook/test";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { ComboBox, ComboBoxItem } from "./ComboBox";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

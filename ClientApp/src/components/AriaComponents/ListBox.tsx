@@ -1,18 +1,18 @@
 "use client";
+import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import {
 	ListBox as AriaListBox,
 	ListBoxItem as AriaListBoxItem,
-	ListBoxSection as AriaListBoxSection,
 	ListBoxLoadMoreItem as AriaListBoxLoadMoreItem,
+	ListBoxSection as AriaListBoxSection,
 	Header,
 	type ListBoxItemProps,
 	type ListBoxLoadMoreItemProps,
 	type ListBoxProps,
 	type ListBoxSectionProps,
 } from "react-aria-components/ListBox";
-import { composeRenderProps } from "react-aria-components/composeRenderProps";
-import { Check } from "./NmiIcon";
 import { Text } from "./Content";
+import { Check } from "./NmiIcon";
 import { ProgressCircle } from "./ProgressCircle";
 import "./ListBox.css";
 
@@ -73,4 +73,4 @@ export function DropdownItem(props: ListBoxItemProps) {
 	);
 }
 
-export { Text, Header };
+export { Header, Text };

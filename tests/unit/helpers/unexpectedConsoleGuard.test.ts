@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	expectConsoleMessage,
-	installUnexpectedConsoleGuard,
 	type GuardedConsoleLevel,
+	installUnexpectedConsoleGuard,
 } from "../../helpers/unexpectedConsoleGuard";
 
 /**

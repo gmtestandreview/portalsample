@@ -1,23 +1,20 @@
 import { useMsal } from "@azure/msal-react";
-import { useState, useRef, useCallback, useEffect } from "react";
-import { useParams } from "react-router";
-import { Button, Col, Row } from "react-bootstrap";
 import { Formik } from "formik";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button, Col, Row } from "react-bootstrap";
+import { useParams } from "react-router";
 import {
-	type UploadProgress,
 	type AttachmentDto,
 	type FileParameter,
 	ProgressClient,
 	RequestForPatternApprovalClient,
 	type SupportingDocumentsStep,
+	type UploadProgress,
 } from "../../../api/web-api-client";
-
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-
 import { tokenRequest } from "../../../authentication/authConfig";
+import BlockUISpinner from "../../../components/BlockUISpinner";
+import useBodyClass from "../../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
 import AppLogger from "../../../instrumentation/AppLogger";
 import SupportingDocuments from "../supportingDocuments";
 import { supportingDocsSubmitValidation } from "../validation";

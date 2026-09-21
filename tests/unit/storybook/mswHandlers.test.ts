@@ -1,12 +1,12 @@
 import { globSync, readFileSync } from "node:fs";
 import { setupServer } from "msw/node";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
-import { CRMLookupTypes } from "../../../ClientApp/src/api/web-api-client";
-import { serviceResponses } from "../../../ClientApp/src/storybook/storybookFixtures";
 import {
 	lookupResponsesByType,
 	mswHandlers,
 } from "../../../.storybook/msw-handlers";
+import { CRMLookupTypes } from "../../../ClientApp/src/api/web-api-client";
+import { serviceResponses } from "../../../ClientApp/src/storybook/storybookFixtures";
 
 const server = setupServer(...mswHandlers);
 

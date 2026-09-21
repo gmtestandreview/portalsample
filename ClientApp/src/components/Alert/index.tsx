@@ -1,5 +1,5 @@
-import { Alert } from "react-bootstrap";
 import { useEffect, useState } from "react";
+import { Alert } from "react-bootstrap";
 import type { AlertProps, BaseAlertProps } from "./types";
 
 /**

@@ -1,5 +1,5 @@
+import DOMPurify from "dompurify";
 import ReactGA from "react-ga4";
-import { DashboardClient } from "../../api/web-api-client";
 import type {
 	AddressDetailsDto,
 	DownloadedFileResponse,
@@ -8,7 +8,9 @@ import type {
 	RequestForQuoteDetails,
 	UserProfileDto,
 } from "../../api/web-api-client";
+import { DashboardClient } from "../../api/web-api-client";
 import type { AccountDetails } from "../../authentication/accountContext";
+import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
 import type {
 	DashboardTab,
 	UserProfile,
@@ -18,9 +20,7 @@ import { NotificationSeverity } from "../../storage/types";
 import { base64toBlob } from "../../utils";
 import { DashBoardNotifications } from "./dashboardNotifications";
 import { Environment, QuoteStatus } from "./enums";
-import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
 import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from "./openWindow";
-import DOMPurify from "dompurify";
 
 /**
  * Gets downloadable files from CRM depending on status

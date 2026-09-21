@@ -1,51 +1,51 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Navigate, Link, useNavigate } from "react-router";
-import { Col, Row, Container, Tab, Nav } from "react-bootstrap";
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { PatternFormat } from "react-number-format";
-import Welcome from "../../components/Welcome";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import {
-	getDashboardNotification,
-	clearDashboardNotification,
-	setDashboardNotification,
-	getDashboardInfoNotification,
-	clearDashboardInfoNotification,
-} from "../../storage/notification";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useAccountContext, {
-	useAccountDispatch,
-} from "../../authentication/hooks";
-import StandardPathway from "../../components/tiles/StandardPathway";
+import { Link, Navigate, useNavigate } from "react-router";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics";
 import type { PatternApprovalStatusEnumDto } from "../../api/web-api-client";
 import {
 	type PagedListOfPatternApprovalDashboardDetailsDto,
 	PatternApprovalClient,
-	ServiceType,
 	type PatternApprovalDashboardDetailsDto,
 	type PatternApprovalDashboardDto,
 	type ProblemDetails,
 	type ServicesOffered,
+	ServiceType,
 } from "../../api/web-api-client";
 import { tokenRequest } from "../../authentication/authConfig";
-import AppLogger from "../../instrumentation/AppLogger";
-import getUnexpectedErrorRoute from "../common/errorRoutes";
-import { HttpStatusCode } from "../../types";
-import { DashBoardNotifications } from "../common/dashboardNotifications";
-import NoRequests from "../../components/RequestList/noRequests";
-import PaRequestItem from "../../components/RequestList/paRequestItem";
-import { DashboardTab } from "../../components/SearchFilter/types";
+import useAccountContext, {
+	useAccountDispatch,
+} from "../../authentication/hooks";
+import NotificationMessage from "../../components/Alert/NotificationMessage";
+import BlockUISpinner from "../../components/BlockUISpinner";
+import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
 import CustomPagination from "../../components/Pagination";
 import CustomPaginationHeader from "../../components/PaginationHeader";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
+import NoRequests from "../../components/RequestList/noRequests";
+import PaRequestItem from "../../components/RequestList/paRequestItem";
 import PaSearchFilter from "../../components/SearchFilter/TypeApproval/paSearchFilter";
-import { defaultFilter } from "../common/constants";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
+import { DashboardTab } from "../../components/SearchFilter/types";
+import StandardPathway from "../../components/tiles/StandardPathway";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
+import Welcome from "../../components/Welcome";
 import useUserServices from "../../hooks/useUserServices";
+import AppLogger from "../../instrumentation/AppLogger";
+import {
+	clearDashboardInfoNotification,
+	clearDashboardNotification,
+	getDashboardInfoNotification,
+	getDashboardNotification,
+	setDashboardNotification,
+} from "../../storage/notification";
 import SessionStorageCache from "../../storage/sessionStorageCache";
+import { HttpStatusCode } from "../../types";
+import { defaultFilter } from "../common/constants";
+import { DashBoardNotifications } from "../common/dashboardNotifications";
+import getUnexpectedErrorRoute from "../common/errorRoutes";
 
 // TS Move this to a constants file if we need this setting app wide
 const DEFAULT_DASHBOARD_PAGESIZE = 10;

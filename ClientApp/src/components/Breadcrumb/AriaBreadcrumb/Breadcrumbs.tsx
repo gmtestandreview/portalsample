@@ -1,11 +1,11 @@
 "use client";
 import {
-	Breadcrumbs as RACBreadcrumbs,
-	type BreadcrumbsProps,
-	Breadcrumb as RACBreadcrumb,
 	type BreadcrumbProps,
-	type LinkProps,
+	type BreadcrumbsProps,
 	Link,
+	type LinkProps,
+	Breadcrumb as RACBreadcrumb,
+	Breadcrumbs as RACBreadcrumbs,
 } from "react-aria-components/Breadcrumbs";
 import { ChevronRight } from "../../AriaComponents/NmiIcon";
 import "./Breadcrumbs.css";

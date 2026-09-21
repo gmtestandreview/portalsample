@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
-import { within, expect, userEvent } from "storybook/test";
+import { expect, userEvent, within } from "storybook/test";
 import CustomPagination from "./index";
 
 const PaginationStory = ({

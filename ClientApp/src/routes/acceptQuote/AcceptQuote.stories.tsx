@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
 import { expect, within } from "storybook/test";
-import ReportRecipient from "./reportRecipient";
-import PaymentDetails from "./paymentDetails";
-import DeliveryAndReturn from "./deliveryAndReturn";
-import QuotationSummary from "./quotationSummary";
-import SummaryAndAccept from "./summaryAndAccept";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import DeliveryAndReturn from "./deliveryAndReturn";
+import PaymentDetails from "./paymentDetails";
+import QuotationSummary from "./quotationSummary";
+import ReportRecipient from "./reportRecipient";
+import SummaryAndAccept from "./summaryAndAccept";
 
 const reportRecipientHandler = http.get(
 	"/api/accept-quote/:id/report-recipient",

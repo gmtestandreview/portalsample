@@ -1,5 +1,5 @@
-import { LogLevel } from "@azure/msal-browser";
 import type { Configuration, SilentRequest } from "@azure/msal-browser";
+import { LogLevel } from "@azure/msal-browser";
 import { env } from "../env";
 
 export const configuration: Configuration = {

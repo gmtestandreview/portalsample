@@ -2,8 +2,6 @@ import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
-import type { SinglePageFormValues, SinglePageFormProps } from "../types";
-import AppLogger from "../../../instrumentation/AppLogger";
 import {
 	PatternApprovalRequiredValues,
 	type RequestForPatternApprovalAppDetails,
@@ -11,7 +9,9 @@ import {
 	YesNo,
 } from "../../../api/web-api-client";
 import { tokenRequest } from "../../../authentication/authConfig";
+import AppLogger from "../../../instrumentation/AppLogger";
 import { DisplayRules } from "../displayRules";
+import type { SinglePageFormProps, SinglePageFormValues } from "../types";
 
 const loadAppDetails =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

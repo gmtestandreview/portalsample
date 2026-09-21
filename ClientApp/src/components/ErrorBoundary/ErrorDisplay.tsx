@@ -1,9 +1,9 @@
 import { Container } from "react-bootstrap";
 import { HttpStatusCode } from "../../types";
-import ContactLink from "../Utilities/ContactLink";
-import useHtmlTitle from "../Utilities/useHtmlTitle";
-import useBodyClass from "../Utilities/useBodyClass";
 import HeaderIntroText from "../HeaderIntroText";
+import ContactLink from "../Utilities/ContactLink";
+import useBodyClass from "../Utilities/useBodyClass";
+import useHtmlTitle from "../Utilities/useHtmlTitle";
 
 interface ErrorContent {
 	body: string;

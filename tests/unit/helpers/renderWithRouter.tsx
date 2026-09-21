@@ -1,8 +1,8 @@
-import { render } from "@testing-library/react";
 import type { RenderOptions, RenderResult } from "@testing-library/react";
+import { render } from "@testing-library/react";
 import type { ReactElement } from "react";
-import { RouterProvider, createMemoryRouter } from "react-router";
 import type { RouteObject } from "react-router";
+import { createMemoryRouter, RouterProvider } from "react-router";
 
 /**
  * Render a route component the way the application actually mounts it.

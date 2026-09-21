@@ -1,30 +1,30 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
+import {
+	type DeliveryAndReturnStep,
+	InvoiceSentToValues,
+	type PaymentDetailsStep,
+	ReportAddressTypeValues,
+	type ReportRecipientStep,
+	ReturnAddressTypeValues,
+	ReturnContactTypeValues,
+	ReturnMethodValues,
+	type SummaryAndAcceptStep,
+	Title,
+	YesNo,
+} from "../../../../ClientApp/src/api/web-api-client";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
 import deliveryAndReturnProps from "../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps";
 import paymentDetailsProps from "../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps";
 import reportRecipientProps from "../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps";
 import summaryAndAcceptProps from "../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps";
-import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
-import { HttpStatusCode } from "../../../../ClientApp/src/types";
 import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
-import {
-	InvoiceSentToValues,
-	ReportAddressTypeValues,
-	ReturnAddressTypeValues,
-	ReturnContactTypeValues,
-	ReturnMethodValues,
-	Title,
-	YesNo,
-	type DeliveryAndReturnStep,
-	type PaymentDetailsStep,
-	type ReportRecipientStep,
-	type SummaryAndAcceptStep,
-} from "../../../../ClientApp/src/api/web-api-client";
+import { HttpStatusCode } from "../../../../ClientApp/src/types";
 import { formikHelpers, stepStatuses } from "../testFixtures";
 
 const mocks = vi.hoisted(() => ({

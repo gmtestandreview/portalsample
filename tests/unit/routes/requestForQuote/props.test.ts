@@ -1,20 +1,20 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import type {
 	AccountInfo,
 	IPublicClientApplication,
 } from "@azure/msal-browser";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	type InstrumentAndRequestStep,
+	type OrganisationAndContact,
+	type RequestForQuoteSummary,
+	YesNo,
+} from "../../../../ClientApp/src/api/web-api-client";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
 import instrumentAndRequestProps from "../../../../ClientApp/src/routes/requestForQuote/instrumentAndRequestProps";
 import organisationAndContactProps from "../../../../ClientApp/src/routes/requestForQuote/organisationAndContactProps";
 import requestForQuoteSummaryProps from "../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummaryProps";
 import viewRequestForQuoteSummaryProps from "../../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummaryProps";
-import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import {
-	YesNo,
-	type InstrumentAndRequestStep,
-	type OrganisationAndContact,
-	type RequestForQuoteSummary,
-} from "../../../../ClientApp/src/api/web-api-client";
 import { formikHelpers, stepStatuses } from "../testFixtures";
 
 const mocks = vi.hoisted(() => ({

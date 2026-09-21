@@ -1,11 +1,11 @@
 "use client";
 import {
 	Slider as AriaSlider,
-	SliderOutput,
 	type SliderProps as AriaSliderProps,
+	SliderFill,
+	SliderOutput,
 	SliderThumb,
 	SliderTrack,
-	SliderFill,
 } from "react-aria-components/Slider";
 import { Label } from "../forms/AriaForm/Form";
 import "./Slider.css";

@@ -1,12 +1,12 @@
-import { useField } from "formik";
 import type { FieldHookConfig } from "formik";
-import Row from "react-bootstrap/Row";
-import Form from "react-bootstrap/Form";
+import { useField } from "formik";
 import Col from "react-bootstrap/Col";
-import RadioButton from "../RadioButton";
-import type { RadioButtonGroupProps } from "./types";
+import Form from "react-bootstrap/Form";
+import Row from "react-bootstrap/Row";
 import Details from "../../forms/Details";
 import SummaryDisplay from "../../SummaryDisplay";
+import RadioButton from "../RadioButton";
+import type { RadioButtonGroupProps } from "./types";
 
 const RadioButtonGroup = <T,>(
 	props: RadioButtonGroupProps<T> & FieldHookConfig<T>,

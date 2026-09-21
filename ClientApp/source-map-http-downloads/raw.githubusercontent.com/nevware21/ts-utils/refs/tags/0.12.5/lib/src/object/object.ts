@@ -6,14 +6,14 @@
  * Licensed under the MIT license.
  */
 
-import { NULL_VALUE, ObjClass, __PROTO__ } from "../internal/constants";
 import { isArray, isFunction, isObject } from "../helpers/base";
-import { objForEachKey } from "./for_each_key";
-import { polyObjEntries, polyObjValues } from "../polyfills/object/objKeys";
-import { polyObjIs } from "../polyfills/object/objIs";
-import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
-import { objIsFrozen } from "./object_state";
+import { __PROTO__, NULL_VALUE, ObjClass } from "../internal/constants";
 import { _throwIfNullOrUndefined } from "../internal/throwIf";
+import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
+import { polyObjIs } from "../polyfills/object/objIs";
+import { polyObjEntries, polyObjValues } from "../polyfills/object/objKeys";
+import { objForEachKey } from "./for_each_key";
+import { objIsFrozen } from "./object_state";
 
 const _objFreeze = /*#__PURE__*/ _pureRef<typeof Object.freeze>(
 	ObjClass,

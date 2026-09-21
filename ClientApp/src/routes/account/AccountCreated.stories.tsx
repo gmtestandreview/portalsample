@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import AccountCreated from "./created";
 import { withPortalProviders } from "../../storybook/storybookHarness";
+import AccountCreated from "./created";
 
 const meta = {
 	title: "Routes/Account/AccountCreated",

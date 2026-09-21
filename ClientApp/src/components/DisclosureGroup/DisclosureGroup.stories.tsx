@@ -1,11 +1,11 @@
+import type { Meta, StoryFn } from "@storybook/react-vite";
 import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { DisclosureGroup } from "./DisclosureGroup";
 import {
 	Disclosure,
 	DisclosureHeader,
 	DisclosurePanel,
 } from "../Disclosure/Disclosure";
-import type { Meta, StoryFn } from "@storybook/react-vite";
+import { DisclosureGroup } from "./DisclosureGroup";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

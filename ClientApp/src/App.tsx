@@ -1,46 +1,46 @@
 import "./styles/index.scss";
 import {
-	Route,
 	createBrowserRouter,
 	createRoutesFromElements,
+	Route,
 } from "react-router";
 import AuthenticatedElement from "./authentication/AuthenticatedElement";
+import ErrorDisplay from "./components/ErrorBoundary/ErrorDisplay";
 import Home from "./components/Home";
-import Dashboard from "./routes/dashboard";
-import SignIn from "./routes/sign-in";
-import SignOut from "./routes/sign-out";
-import ServicesWeOffer from "./routes/services-we-offer";
-import RequestForQuote from "./routes/requestForQuote";
-import CreateAccount from "./routes/account/create";
-import UpdateAccount from "./routes/account/update";
 import Layout from "./components/Layout";
-import CreateRequestForQuote from "./routes/requestForQuote/create";
-import AccountCreated from "./routes/account/created";
-import AddBranch from "./routes/account/addBranch";
-import RequestForQuoteCreated from "./routes/requestForQuote/created";
-import ViewRequestForQuoteSummary from "./routes/requestForQuote/viewRequestForQuoteSummary";
-import Quotation from "./routes/quotation";
 import AcceptQuote from "./routes/acceptQuote";
 import CreateAcceptQuote from "./routes/acceptQuote/create";
 import SubmittedSuccess from "./routes/acceptQuote/submittedSuccess";
+import AddBranch from "./routes/account/addBranch";
+import CreateAccount from "./routes/account/create";
+import AccountCreated from "./routes/account/created";
+import UpdateAccount from "./routes/account/update";
+import CreateContact from "./routes/contact/create";
+import UpdateContact from "./routes/contact/update";
+import Dashboard from "./routes/dashboard";
+import DashboardTA from "./routes/dashboard/dashboard-ta";
+import HelpGuide from "./routes/help-guide";
+import FAQs from "./routes/help-guide/faqs";
+import HelpHowToSetupAccess from "./routes/help-guide/how-to-setup-access";
 import MeasurementReport from "./routes/measurementReport";
 import InstrMeasurementReport from "./routes/measurementReport/indexList";
-import SignOutHelper from "./routes/sign-out-helper";
-import UpdateContact from "./routes/contact/update";
-import ErrorDisplay from "./components/ErrorBoundary/ErrorDisplay";
-import { HttpStatusCode } from "./types";
 import PreConditions from "./routes/preConditions/PreConditions";
+import Quotation from "./routes/quotation";
+import RequestForQuote from "./routes/requestForQuote";
 import CopyRequestForQuote from "./routes/requestForQuote/copy";
-import HelpGuide from "./routes/help-guide";
-import HelpHowToSetupAccess from "./routes/help-guide/how-to-setup-access";
-import FAQs from "./routes/help-guide/faqs";
-import CreateContact from "./routes/contact/create";
-import CreateRequestForTypeApproval from "./routes/ta/create";
-import PreApplication from "./routes/ta/preApplication";
+import CreateRequestForQuote from "./routes/requestForQuote/create";
+import RequestForQuoteCreated from "./routes/requestForQuote/created";
+import ViewRequestForQuoteSummary from "./routes/requestForQuote/viewRequestForQuoteSummary";
+import ServicesWeOffer from "./routes/services-we-offer";
+import SignIn from "./routes/sign-in";
+import SignOut from "./routes/sign-out";
+import SignOutHelper from "./routes/sign-out-helper";
 import ApplicationForTypeApproval from "./routes/ta";
+import CreateRequestForTypeApproval from "./routes/ta/create";
 import RequestForPatternApprovalCreated from "./routes/ta/created";
 import TAApplicationManage from "./routes/ta/manage";
-import DashboardTA from "./routes/dashboard/dashboard-ta";
+import PreApplication from "./routes/ta/preApplication";
+import { HttpStatusCode } from "./types";
 
 const App = createBrowserRouter(
 	createRoutesFromElements(

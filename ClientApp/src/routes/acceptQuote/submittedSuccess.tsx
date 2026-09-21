@@ -1,17 +1,17 @@
-import { useParams, Link } from "react-router";
-import { Col, Container, Row } from "react-bootstrap";
-import { useEffect, useState } from "react";
 import { useMsal } from "@azure/msal-react";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import FormBanner from "../../components/forms/FormBanner";
-import { useAccountState } from "../../authentication/hooks";
-import { AcceptQuoteClient } from "../../api/web-api-client";
+import { useEffect, useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import { Link, useParams } from "react-router";
 import type { AcceptQuotePreInfoDto } from "../../api/web-api-client";
+import { AcceptQuoteClient } from "../../api/web-api-client";
+import type { AccountDetails } from "../../authentication/accountContext";
 import { tokenRequest } from "../../authentication/authConfig";
+import { useAccountState } from "../../authentication/hooks";
 import BlockUISpinner from "../../components/BlockUISpinner";
+import FormBanner from "../../components/forms/FormBanner";
+import useBodyClass from "../../components/Utilities/useBodyClass";
 import AppLogger from "../../instrumentation/AppLogger";
 import { formatBannerTitle } from "../common/helperFunctions";
-import type { AccountDetails } from "../../authentication/accountContext";
 
 const SubmittedSuccess = () => {
 	const { id } = useParams<{ id?: string }>();

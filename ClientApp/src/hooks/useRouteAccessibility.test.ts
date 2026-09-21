@@ -1,7 +1,7 @@
-import { renderHook, act } from "@testing-library/react";
-import { MemoryRouter } from "react-router";
+import { act, renderHook } from "@testing-library/react";
 import React from "react";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import { MemoryRouter } from "react-router";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRouteAccessibility } from "./useRouteAccessibility";
 
 function wrapper({ children }: { children: React.ReactNode }) {

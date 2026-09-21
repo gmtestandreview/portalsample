@@ -10,7 +10,7 @@ import { fnApply } from "../funcs/funcs";
 import { isArray, isFunction } from "../helpers/base";
 import { ArrSlice, CALL, UNDEF_VALUE } from "../internal/constants";
 import { _getGlobalConfig } from "../internal/global";
-import { ITimerHandler, _createTimerHandler } from "./handler";
+import { _createTimerHandler, type ITimerHandler } from "./handler";
 
 // Package instance timeout override functions
 let _setTimeoutFn: TimeoutOverrideFn | undefined;
@@ -20,7 +20,7 @@ function _resolveTimeoutFn(timeoutFn: TimeoutOverrideFn): TimeoutOverrideFn {
 	let result = isFunction(timeoutFn) ? timeoutFn : _setTimeoutFn;
 	if (!result) {
 		// Get global timeout overrides if available
-		let globalOverrides = _getGlobalConfig().tmOut || [];
+		const globalOverrides = _getGlobalConfig().tmOut || [];
 		if (
 			isArray(globalOverrides) &&
 			globalOverrides.length > 0 &&
@@ -39,7 +39,7 @@ function _resolveClearTimeoutFn(
 	let result = isFunction(timeoutFn) ? timeoutFn : _clearTimeoutFn;
 	if (!result) {
 		// Get global timeout overrides if available
-		let globalOverrides = _getGlobalConfig().tmOut || [];
+		const globalOverrides = _getGlobalConfig().tmOut || [];
 		if (
 			isArray(globalOverrides) &&
 			globalOverrides.length > 1 &&
@@ -57,29 +57,29 @@ function _createTimeoutWith(
 	overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs,
 	theArgs: any[],
 ): ITimerHandler {
-	let isArr = isArray(overrideFn);
-	let len = isArr ? overrideFn.length : 0;
+	const isArr = isArray(overrideFn);
+	const len = isArr ? overrideFn.length : 0;
 
 	// Use package instance override functions if provided and no specific override was given
 	// If no package overrides, try global overrides before falling back to native functions
-	let setFn = _resolveTimeoutFn(
+	const setFn = _resolveTimeoutFn(
 		len > 0
 			? (overrideFn as TimeoutOverrideFuncs)[0]
 			: !isArr
 				? (overrideFn as TimeoutOverrideFn)
 				: UNDEF_VALUE,
 	);
-	let clearFn = _resolveClearTimeoutFn(
+	const clearFn = _resolveClearTimeoutFn(
 		len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : UNDEF_VALUE,
 	);
 
-	let timerFn = theArgs[0];
+	const timerFn = theArgs[0];
 	theArgs[0] = function () {
 		handler.dn();
 		fnApply(timerFn, UNDEF_VALUE, ArrSlice[CALL](arguments));
 	};
 
-	let handler = _createTimerHandler(
+	const handler = _createTimerHandler(
 		startTimer,
 		(timerId?: any) => {
 			if (timerId) {
@@ -93,7 +93,7 @@ function _createTimeoutWith(
 
 			return fnApply(setFn, UNDEF_VALUE, theArgs);
 		},
-		function (timerId: any) {
+		(timerId: any) => {
 			fnApply(clearFn, UNDEF_VALUE, [timerId]);
 		},
 	);
@@ -167,8 +167,8 @@ function _createTimeoutWith(
 export function setTimeoutOverrides(
 	overrideFn?: TimeoutOverrideFn | TimeoutOverrideFuncs,
 ): void {
-	let isArr = isArray(overrideFn);
-	let len = isArr ? overrideFn.length : 0;
+	const isArr = isArray(overrideFn);
+	const len = isArr ? overrideFn.length : 0;
 
 	_setTimeoutFn =
 		len > 0
@@ -227,10 +227,10 @@ export function setTimeoutOverrides(
 export function setGlobalTimeoutOverrides(
 	overrideFn?: TimeoutOverrideFn | TimeoutOverrideFuncs,
 ): void {
-	let isArr = isArray(overrideFn);
-	let len = isArr ? overrideFn.length : 0;
+	const isArr = isArray(overrideFn);
+	const len = isArr ? overrideFn.length : 0;
 
-	let globalCfg = _getGlobalConfig();
+	const globalCfg = _getGlobalConfig();
 
 	if (!overrideFn) {
 		// If no override provided, reset the global overrides

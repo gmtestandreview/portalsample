@@ -1,4 +1,4 @@
-import { Row, Col } from "react-bootstrap";
+import { Col, Row } from "react-bootstrap";
 import SelectInput from "../SelectInput";
 import TextInput from "../TextInput";
 import states from "./constants";

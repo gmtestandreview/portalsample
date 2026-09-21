@@ -1,36 +1,35 @@
-import { Button, Col, Container, Nav, Row, Tab } from "react-bootstrap";
-import { useParams } from "react-router";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMsal } from "@azure/msal-react";
 import type { FormikValues } from "formik";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-
-import CustomBreadcrumb, {
-	type CustomBreadcrumbItem,
-} from "../../../components/Breadcrumb";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-import {
-	CustomAccordion,
-	CustomAccordionBody,
-} from "../../../components/Accordion";
-import BackToDashboardButton from "../../../components/Buttons/BackToDashboardButton";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, Col, Container, Nav, Row, Tab } from "react-bootstrap";
+import { useParams } from "react-router";
 import {
 	type ApplicationDetailsDto,
 	type RequestForPatternApprovalAppDetails,
 	RequestForPatternApprovalClient,
 } from "../../../api/web-api-client";
-import StatusPill from "../../../components/Pill/StatusPill";
-import type { PaDashboardItemStatus } from "../../common/enums";
+import { tokenRequest } from "../../../authentication/authConfig";
+import {
+	CustomAccordion,
+	CustomAccordionBody,
+} from "../../../components/Accordion";
+import BlockUISpinner from "../../../components/BlockUISpinner";
+import CustomBreadcrumb, {
+	type CustomBreadcrumbItem,
+} from "../../../components/Breadcrumb";
+import BackToDashboardButton from "../../../components/Buttons/BackToDashboardButton";
 import FormikForm from "../../../components/forms/FormikForm";
+import StatusPill from "../../../components/Pill/StatusPill";
+import useBodyClass from "../../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
+import AppLogger from "../../../instrumentation/AppLogger";
+import type { PaDashboardItemStatus } from "../../common/enums";
 import ApplicationAndInstrument from "../applicationAndInstrument";
-import appDetailsProps from "./appDetailsProps";
 import OrganisationAndContact from "../organisationAndContact";
 import SupportingDocuments from "../supportingDocuments";
+import appDetailsProps from "./appDetailsProps";
 import ApplicationDocuments from "./appDocuments";
 import ApplicationMessages from "./appMessages";
-import { tokenRequest } from "../../../authentication/authConfig";
-import AppLogger from "../../../instrumentation/AppLogger";
 
 const POLL_MS = 5000;
 

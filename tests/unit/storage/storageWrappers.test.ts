@@ -24,8 +24,8 @@ import setTargetOrganisation, {
 	getTargetOrganisation,
 } from "../../../ClientApp/src/storage/targetOrganisation";
 import {
-	NotificationSeverity,
 	type Notification,
+	NotificationSeverity,
 } from "../../../ClientApp/src/storage/types";
 
 describe("notification storage wrappers", () => {

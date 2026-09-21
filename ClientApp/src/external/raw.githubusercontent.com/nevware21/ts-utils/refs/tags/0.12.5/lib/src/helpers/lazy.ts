@@ -7,9 +7,9 @@
  */
 
 import { fnApply } from "../funcs/funcs";
-import { _GlobalTestHooks, _getGlobalConfig } from "../internal/global";
+import { type _GlobalTestHooks, _getGlobalConfig } from "../internal/global";
 import { objDefineProp } from "../object/define";
-import { ICachedValue } from "./cache";
+import type { ICachedValue } from "./cache";
 
 /**
  * @internal
@@ -78,14 +78,14 @@ export function getLazy<T, F extends (...args: any[]) => T = () => T>(
 	cb: F,
 	argArray?: Parameters<F>,
 ): ILazyValue<T> {
-	let lazyValue = {} as ILazyValue<T>;
+	const lazyValue = {} as ILazyValue<T>;
 	!_globalLazyTestHooks && _initTestHooks();
 	lazyValue.b = _globalLazyTestHooks.lzy;
 
 	objDefineProp(lazyValue, "v", {
 		configurable: true,
-		get: function () {
-			let result = fnApply(cb, null, argArray);
+		get: () => {
+			const result = fnApply(cb, null, argArray);
 			if (!_globalLazyTestHooks.lzy) {
 				// Just replace the value
 				objDefineProp(lazyValue, "v", {
@@ -168,11 +168,11 @@ export function getWritableLazy<T, F extends (...args: any[]) => T = () => T>(
 	cb: F,
 	argArray?: Parameters<F>,
 ): ILazyValue<T> {
-	let lazyValue = {} as ILazyValue<T>;
+	const lazyValue = {} as ILazyValue<T>;
 	!_globalLazyTestHooks && _initTestHooks();
 	lazyValue.b = _globalLazyTestHooks.lzy;
 
-	let _setValue = (newValue: T) => {
+	const _setValue = (newValue: T) => {
 		// Just replace the value
 		objDefineProp(lazyValue, "v", {
 			value: newValue,
@@ -186,8 +186,8 @@ export function getWritableLazy<T, F extends (...args: any[]) => T = () => T>(
 
 	objDefineProp(lazyValue, "v", {
 		configurable: true,
-		get: function () {
-			let result = fnApply(cb, null, argArray);
+		get: () => {
+			const result = fnApply(cb, null, argArray);
 			if (!_globalLazyTestHooks.lzy) {
 				// Just replace the value
 				_setValue(result);

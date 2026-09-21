@@ -3,11 +3,11 @@ import {
 	UnauthenticatedTemplate,
 } from "@azure/msal-react";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import NavbarBrand from "./NavbarBrand";
-import UnauthenticatedNavbarItems from "./UnauthenticatedNavbarItems";
 import AuthenticatedNavbarItems from "./AuthenticatedNavbarItems";
+import NavbarBrand from "./NavbarBrand";
 import NavbarEnvironment from "./NavbarEnvironment";
 import NavbarMessage from "./NavbarMessage";
+import UnauthenticatedNavbarItems from "./UnauthenticatedNavbarItems";
 
 const Header = () => (
 	<header id="header" data-testid="nmi-header">

@@ -1,8 +1,8 @@
+import { InteractionStatus, Logger } from "@azure/msal-browser";
+import { type IMsalContext, MsalContext } from "@azure/msal-react";
 import type { Decorator, StoryContext } from "@storybook/react-vite";
-import { Logger, InteractionStatus } from "@azure/msal-browser";
-import { MsalContext, type IMsalContext } from "@azure/msal-react";
-import { useEffect, useRef, type ReactNode } from "react";
 import { Formik, Form as FormikForm } from "formik";
+import { type ReactNode, useEffect, useRef } from "react";
 import type {
 	AccountDetails,
 	AccountDispatchContext,

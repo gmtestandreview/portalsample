@@ -1,6 +1,6 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Column, Row, Table, TableHeader, TableBody, Cell } from "./Table";
 import type { Meta, StoryFn } from "@storybook/react-vite";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
+import { Cell, Column, Row, Table, TableBody, TableHeader } from "./Table";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

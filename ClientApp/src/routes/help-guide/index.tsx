@@ -1,13 +1,13 @@
-import { Col, Container, Row } from "react-bootstrap";
 import { useIsAuthenticated } from "@azure/msal-react";
+import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router";
-import CustomBreadcrumb from "../../components/Breadcrumb";
 import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import StandardPathway from "../../components/tiles/StandardPathway";
-import HeaderIntroText from "../../components/HeaderIntroText";
+import CustomBreadcrumb from "../../components/Breadcrumb";
 import BackToDashboardButton from "../../components/Buttons/BackToDashboardButton";
+import HeaderIntroText from "../../components/HeaderIntroText";
+import StandardPathway from "../../components/tiles/StandardPathway";
+import useBodyClass from "../../components/Utilities/useBodyClass";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
 
 const HelpGuide = () => {
 	const isAuthenticated = useIsAuthenticated();
