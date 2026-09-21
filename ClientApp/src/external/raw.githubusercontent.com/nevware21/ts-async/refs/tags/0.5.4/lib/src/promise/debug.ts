@@ -28,13 +28,15 @@ export let _promiseDebugEnabled = false;
  * @ignore Internal function enable logging the internal state of the promise during execution, this code and references are
  * removed from the production artifacts
  */
-export const _debugLog = (/*#__PURE__*/_pureAssign((id: string, message: string) => {
-    //#ifdef DEBUG
-    //#:(!DEBUG) if (_theLogger) {
-    //#:(!DEBUG)     _theLogger(id, message);
-    //#:(!DEBUG) }
-    //#endif
-}));
+export const _debugLog = /*#__PURE__*/ _pureAssign(
+	(id: string, message: string) => {
+		//#ifdef DEBUG
+		//#:(!DEBUG) if (_theLogger) {
+		//#:(!DEBUG)     _theLogger(id, message);
+		//#:(!DEBUG) }
+		//#endif
+	},
+);
 
 /**
  * @internal
@@ -47,19 +49,24 @@ export const _debugLog = (/*#__PURE__*/_pureAssign((id: string, message: string)
  * @param handledFn - The function to return whether the promise has been handled (used for throwing
  * unhandled rejection events)
  */
-export function _addDebugState(thePromise: any, stateFn: () => string, resultFn: () => string, handledFn: () => boolean) {
-    // While the IPromise implementations provide a `state` property, keeping the `[[PromiseState]]`
-    // as native promises also have a non-enumerable property of the same name
-    _debugState = _debugState || { toString: () => "[[PromiseState]]" };
-    _debugResult = _debugResult || { toString: () => "[[PromiseResult]]" };
-    _debugHandled = _debugHandled || { toString: () => "[[PromiseIsHandled]]" };
-    
-    let props: PropertyDescriptorMap = {};
-    props[_debugState] = { get: stateFn };
-    props[_debugResult] = { get: resultFn };
-    props[_debugHandled] = { get: handledFn };
+export function _addDebugState(
+	thePromise: any,
+	stateFn: () => string,
+	resultFn: () => string,
+	handledFn: () => boolean,
+) {
+	// While the IPromise implementations provide a `state` property, keeping the `[[PromiseState]]`
+	// as native promises also have a non-enumerable property of the same name
+	_debugState = _debugState || { toString: () => "[[PromiseState]]" };
+	_debugResult = _debugResult || { toString: () => "[[PromiseResult]]" };
+	_debugHandled = _debugHandled || { toString: () => "[[PromiseIsHandled]]" };
 
-    objDefineProperties(thePromise, props);
+	let props: PropertyDescriptorMap = {};
+	props[_debugState] = { get: stateFn };
+	props[_debugResult] = { get: resultFn };
+	props[_debugHandled] = { get: handledFn };
+
+	objDefineProperties(thePromise, props);
 }
 
 /**
@@ -96,9 +103,12 @@ export function _addDebugState(thePromise: any, stateFn: () => string, resultFn:
  * // debugging information
  * ```
  */
-export function setPromiseDebugState(enabled: boolean, logger?: (id: string, message: string) => void) {
-    _promiseDebugEnabled = enabled;
-    //#ifdef DEBUG
-    //#:(!DEBUG) _theLogger = logger;
-    //#endif
+export function setPromiseDebugState(
+	enabled: boolean,
+	logger?: (id: string, message: string) => void,
+) {
+	_promiseDebugEnabled = enabled;
+	//#ifdef DEBUG
+	//#:(!DEBUG) _theLogger = logger;
+	//#endif
 }

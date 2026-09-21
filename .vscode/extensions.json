@@ -1,9 +1,9 @@
 {
-    "recommendations": [
-        "ms-playwright.playwright",
-        "alexkrechik.cucumberautocomplete",
-        "charliermarsh.ruff",
-        "dbaeumer.vscode-eslint",
-        "sonarsource.sonarlint-vscode"
-    ]
+	"recommendations": [
+		"ms-playwright.playwright",
+		"alexkrechik.cucumberautocomplete",
+		"charliermarsh.ruff",
+		"dbaeumer.vscode-eslint",
+		"sonarsource.sonarlint-vscode"
+	]
 }

@@ -7,8 +7,13 @@
  */
 
 import {
-    _createAllPromise, _createAllSettledPromise, _createAnyPromise, _createPromise, _createRacePromise,
-    _createRejectedPromise, _createResolvedPromise
+	_createAllPromise,
+	_createAllSettledPromise,
+	_createAnyPromise,
+	_createPromise,
+	_createRacePromise,
+	_createRejectedPromise,
+	_createResolvedPromise,
 } from "./base";
 import { IPromise } from "../interfaces/IPromise";
 import { syncItemProcessor } from "./itemProcessor";
@@ -16,9 +21,24 @@ import { PromiseExecutor } from "../interfaces/types";
 import { IPromiseResult } from "../interfaces/IPromiseResult";
 import { ICachedValue } from "@nevware21/ts-utils";
 
-let _allSyncSettledCreator: ICachedValue<<T extends readonly unknown[] | []>(input: T, timeout?: number) => IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>; }>>;
-let _raceSyncCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T, timeout?: number) => IPromise<Awaited<T[number]>>>;
-let _anySyncCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T, timeout?: number) => IPromise<Awaited<T[number]>>>;
+let _allSyncSettledCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		input: T,
+		timeout?: number,
+	) => IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }>
+>;
+let _raceSyncCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		values: T,
+		timeout?: number,
+	) => IPromise<Awaited<T[number]>>
+>;
+let _anySyncCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		values: T,
+		timeout?: number,
+	) => IPromise<Awaited<T[number]>>
+>;
 
 /**
  * Creates a synchronous Promise instance that when resolved or rejected will execute it's pending chained operations
@@ -29,8 +49,10 @@ let _anySyncCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T,
  * @param executor - The function to be executed during the creation of the promise. Any errors thrown in the executor will
  * cause the promise to be rejected. The return value of the executor is always ignored
  */
-export function createSyncPromise<T>(executor: PromiseExecutor<T>): IPromise<T>  {
-    return _createPromise(createSyncPromise, syncItemProcessor, executor);
+export function createSyncPromise<T>(
+	executor: PromiseExecutor<T>,
+): IPromise<T> {
+	return _createPromise(createSyncPromise, syncItemProcessor, executor);
 }
 
 /**
@@ -53,7 +75,9 @@ export function createSyncPromise<T>(executor: PromiseExecutor<T>): IPromise<T> 
  * promises reject.
  * </ul>
  */
-export const createSyncAllPromise: <T>(input: Iterable<PromiseLike<T>>) => IPromise<T[]> = /*#__PURE__*/_createAllPromise(createSyncPromise);
+export const createSyncAllPromise: <T>(
+	input: Iterable<PromiseLike<T>>,
+) => IPromise<T[]> = /*#__PURE__*/ _createAllPromise(createSyncPromise);
 
 /**
  * Returns a single synchronous Promise instance that is already resolved with the given value. If the value passed is
@@ -65,7 +89,8 @@ export const createSyncAllPromise: <T>(input: Iterable<PromiseLike<T>>) => IProm
  * @group Resolved
  * @param value - The value to be used by this `Promise`. Can also be a `Promise` or a thenable to resolve.
  */
-export const createSyncResolvedPromise: <T>(value: T) => IPromise<T> = /*#__PURE__*/_createResolvedPromise(createSyncPromise);
+export const createSyncResolvedPromise: <T>(value: T) => IPromise<T> =
+	/*#__PURE__*/ _createResolvedPromise(createSyncPromise);
 
 /**
  * Returns a single synchronous Promise instance that is already rejected with the given reason.
@@ -75,7 +100,9 @@ export const createSyncResolvedPromise: <T>(value: T) => IPromise<T> = /*#__PURE
  * @group Rejected
  * @param reason - The rejection reason
  */
-export const createSyncRejectedPromise: <T = unknown>(reason: any) => IPromise<T> = /*#__PURE__*/_createRejectedPromise(createSyncPromise);
+export const createSyncRejectedPromise: <T = unknown>(
+	reason: any,
+) => IPromise<T> = /*#__PURE__*/ _createRejectedPromise(createSyncPromise);
 
 /**
  * Returns a single Promise instance that resolves to an array of the results from the input promises.
@@ -113,7 +140,10 @@ export const createSyncRejectedPromise: <T = unknown>(reason: any) => IPromise<T
  * // ]
  * ```
  */
-export function createSyncAllSettledPromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<IPromiseResult<Awaited<T>>[]>;
+export function createSyncAllSettledPromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<IPromiseResult<Awaited<T>>[]>;
 
 /**
  * Returns a single Promise instance that resolves to an array of the results from the input promises.
@@ -151,9 +181,13 @@ export function createSyncAllSettledPromise<T>(values: Iterable<T | PromiseLike<
  * // ]
  * ```
  */
-export function createSyncAllSettledPromise<T extends readonly unknown[] | []>(input: T, timeout?: number): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>; }> {
-    !_allSyncSettledCreator && (_allSyncSettledCreator = _createAllSettledPromise(createSyncPromise));
-    return _allSyncSettledCreator.v(input, timeout);
+export function createSyncAllSettledPromise<T extends readonly unknown[] | []>(
+	input: T,
+	timeout?: number,
+): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }> {
+	!_allSyncSettledCreator &&
+		(_allSyncSettledCreator = _createAllSettledPromise(createSyncPromise));
+	return _allSyncSettledCreator.v(input, timeout);
 }
 
 /**
@@ -174,7 +208,10 @@ export function createSyncAllSettledPromise<T extends readonly unknown[] | []>(i
  * if the iterable passed is empty. If the iterable passed is non-empty but contains no pending promises, the returned promise will settle
  * synchronously.
  */
-export function createSyncRacePromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<Awaited<T>>;
+export function createSyncRacePromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<Awaited<T>>;
 
 /**
  * The `createSyncRacePromise` method takes an array of promises as input and returns a single Promise. This returned promise
@@ -194,9 +231,13 @@ export function createSyncRacePromise<T>(values: Iterable<T | PromiseLike<T>>, t
  * if the iterable passed is empty. If the iterable passed is non-empty but contains no pending promises, the returned promise will settle
  * synchronously.
  */
-export function  createSyncRacePromise<T extends readonly unknown[] | []>(values: T, timeout?: number): IPromise<Awaited<T[number]>> {
-    !_raceSyncCreator && (_raceSyncCreator = _createRacePromise(createSyncPromise));
-    return _raceSyncCreator.v(values, timeout);
+export function createSyncRacePromise<T extends readonly unknown[] | []>(
+	values: T,
+	timeout?: number,
+): IPromise<Awaited<T[number]>> {
+	!_raceSyncCreator &&
+		(_raceSyncCreator = _createRacePromise(createSyncPromise));
+	return _raceSyncCreator.v(values, timeout);
 }
 
 /**
@@ -220,8 +261,11 @@ export function  createSyncRacePromise<T extends readonly unknown[] | []>(values
  * contains no pending promises, the returned promise is still asynchronously (instead of synchronously)
  * rejected.
  */
-export function createSyncAnyPromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<Awaited<T>>;
-        
+export function createSyncAnyPromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<Awaited<T>>;
+
 /**
  * The `createSyncAnyPromise` method takes an array of promises as input and returns a single Promise.
  * This returned promise fulfills when any of the input's promises fulfills, with this first fulfillment value.
@@ -243,7 +287,10 @@ export function createSyncAnyPromise<T>(values: Iterable<T | PromiseLike<T>>, ti
  * contains no pending promises, the returned promise is still asynchronously (instead of synchronously)
  * rejected.
  */
-export function createSyncAnyPromise<T extends readonly unknown[] | []>(values: T, timeout?: number): IPromise<Awaited<T[number]>> {
-    !_anySyncCreator && (_anySyncCreator = _createAnyPromise(createSyncPromise));
-    return _anySyncCreator.v(values, timeout);
+export function createSyncAnyPromise<T extends readonly unknown[] | []>(
+	values: T,
+	timeout?: number,
+): IPromise<Awaited<T[number]>> {
+	!_anySyncCreator && (_anySyncCreator = _createAnyPromise(createSyncPromise));
+	return _anySyncCreator.v(values, timeout);
 }

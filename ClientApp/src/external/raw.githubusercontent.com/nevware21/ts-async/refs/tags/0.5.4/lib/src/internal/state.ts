@@ -13,16 +13,19 @@ import { REJECTED } from "./constants";
  * @internal
  */
 export const enum ePromiseState {
-    Pending = 0,
-    Resolving = 1,
-    Resolved = 2,
-    Rejected = 3
+	Pending = 0,
+	Resolving = 1,
+	Resolved = 2,
+	Rejected = 3,
 }
 
 /**
  * @ignore -- Don't include in the generated documentation
  * @internal
  */
-export const STRING_STATES: string[] = /*#__PURE__*/[
-    "pending", "resolving", "resolved", REJECTED
+export const STRING_STATES: string[] = /*#__PURE__*/ [
+	"pending",
+	"resolving",
+	"resolved",
+	REJECTED,
 ];

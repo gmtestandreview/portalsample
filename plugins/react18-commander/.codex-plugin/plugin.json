@@ -1,33 +1,24 @@
 {
-  "name": "react18-commander",
-  "version": "1.0.0",
-  "description": "Master orchestrator that migrates class-component-heavy React 16/17 codebases to React 18.3.1, gating audit, dependency upgrade, class-component surgery, automatic-batching fixes, and test verification through a resumable, memory-backed pipeline.",
-  "author": {
-    "name": "gregm",
-    "email": "gtmemico@gmail.com"
-  },
-  "license": "UNLICENSED",
-  "keywords": [
-    "react",
-    "react18",
-    "migration",
-    "codemod",
-    "orchestrator"
-  ],
-  "interface": {
-    "displayName": "React 18 Commander",
-    "shortDescription": "Orchestrates a React 16/17 to 18.3.1 migration end-to-end.",
-    "longDescription": "Coordinates a five-phase, gated pipeline (audit, dependency surgery, class-component surgery, automatic-batching fixes, test verification) to bring class-component-heavy React 16/17 codebases to a warning-free React 18.3.1 baseline. Uses memory to track phase completion so an interrupted run resumes instead of restarting. Targets 18.3.1 specifically because it surfaces every deprecation React 19 will remove, making it the direct prerequisite for a subsequent React 19 migration. Includes an applicability gate that stops immediately if the target repo is already on React 18.",
-    "developerName": "gregm",
-    "category": "Productivity",
-    "capabilities": [
-      "Interactive",
-      "Write"
-    ],
-    "defaultPrompt": [
-      "Migrate this React 16/17 codebase to React 18.3.1.",
-      "Audit my codebase for React 18 migration blockers.",
-      "Resume the React 18 migration from where it left off."
-    ]
-  }
+	"name": "react18-commander",
+	"version": "1.0.0",
+	"description": "Master orchestrator that migrates class-component-heavy React 16/17 codebases to React 18.3.1, gating audit, dependency upgrade, class-component surgery, automatic-batching fixes, and test verification through a resumable, memory-backed pipeline.",
+	"author": {
+		"name": "gregm",
+		"email": "gtmemico@gmail.com"
+	},
+	"license": "UNLICENSED",
+	"keywords": ["react", "react18", "migration", "codemod", "orchestrator"],
+	"interface": {
+		"displayName": "React 18 Commander",
+		"shortDescription": "Orchestrates a React 16/17 to 18.3.1 migration end-to-end.",
+		"longDescription": "Coordinates a five-phase, gated pipeline (audit, dependency surgery, class-component surgery, automatic-batching fixes, test verification) to bring class-component-heavy React 16/17 codebases to a warning-free React 18.3.1 baseline. Uses memory to track phase completion so an interrupted run resumes instead of restarting. Targets 18.3.1 specifically because it surfaces every deprecation React 19 will remove, making it the direct prerequisite for a subsequent React 19 migration. Includes an applicability gate that stops immediately if the target repo is already on React 18.",
+		"developerName": "gregm",
+		"category": "Productivity",
+		"capabilities": ["Interactive", "Write"],
+		"defaultPrompt": [
+			"Migrate this React 16/17 codebase to React 18.3.1.",
+			"Audit my codebase for React 18 migration blockers.",
+			"Resume the React 18 migration from where it left off."
+		]
+	}
 }

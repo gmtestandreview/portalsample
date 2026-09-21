@@ -1,7 +1,7 @@
 export interface SearchBoxProps {
-    containerClassName?: string;
-    className?: string;
-    onSearchSubmit: (searchValue?: string) => void;
-    initialSearchValue?: string;
-    placeholder?: string;
+	containerClassName?: string;
+	className?: string;
+	onSearchSubmit: (searchValue?: string) => void;
+	initialSearchValue?: string;
+	placeholder?: string;
 }

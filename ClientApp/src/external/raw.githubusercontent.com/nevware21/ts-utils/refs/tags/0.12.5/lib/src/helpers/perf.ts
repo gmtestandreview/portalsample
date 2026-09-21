@@ -12,7 +12,7 @@ import { getInst } from "./environment";
 import { _globalLazyTestHooks, _initTestHooks } from "./lazy";
 import { safe } from "./safe";
 
-let _perf: ICachedValue<Performance>
+let _perf: ICachedValue<Performance>;
 
 /**
  * Identify whether the runtimne contains a `performance` object
@@ -23,7 +23,7 @@ let _perf: ICachedValue<Performance>
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function hasPerformance(): boolean {
-    return !!getPerformance();
+	return !!getPerformance();
 }
 
 /**
@@ -38,12 +38,12 @@ export function hasPerformance(): boolean {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function getPerformance(): Performance {
-    !_globalLazyTestHooks && _initTestHooks();
-    if (!_perf || _globalLazyTestHooks.lzy) {
-        _perf = createCachedValue(safe(getInst<Performance>, ["performance"]).v);
-    }
-    
-    return _perf.v;
+	!_globalLazyTestHooks && _initTestHooks();
+	if (!_perf || _globalLazyTestHooks.lzy) {
+		_perf = createCachedValue(safe(getInst<Performance>, ["performance"]).v);
+	}
+
+	return _perf.v;
 }
 
 /**
@@ -63,12 +63,12 @@ export function getPerformance(): Performance {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function perfNow(): number {
-    let perf = getPerformance();
-    if (perf && perf.now) {
-        return perf.now();
-    }
+	let perf = getPerformance();
+	if (perf && perf.now) {
+		return perf.now();
+	}
 
-    return utcNow();
+	return utcNow();
 }
 
 /**
@@ -90,5 +90,5 @@ export function perfNow(): number {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function elapsedTime(startTime: number): number {
-    return perfNow() - startTime;
+	return perfNow() - startTime;
 }

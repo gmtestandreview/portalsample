@@ -1,16 +1,16 @@
 {
-  "draft": "2020-12",
-  "canonical_directory": "references/schemas/",
-  "artifacts": {
-    "evals/evals.json": "evals.schema.json",
-    "<eval-dir>/eval_metadata.json": "eval-metadata.schema.json",
-    "<workspace>/history.json": "history.schema.json",
-    "<run-dir>/grading.json": "grading.schema.json",
-    "<run-dir>/outputs/metrics.json": "metrics.schema.json",
-    "<run-dir>/timing.json": "timing.schema.json",
-    "<iteration-or-benchmark>/benchmark.json": "benchmark.schema.json",
-    "<grading-dir>/comparison-N.json": "comparison.schema.json",
-    "<grading-dir>/analysis.json": "analysis.schema.json",
-    "<iteration>/feedback.json": "feedback.schema.json"
-  }
+	"draft": "2020-12",
+	"canonical_directory": "references/schemas/",
+	"artifacts": {
+		"evals/evals.json": "evals.schema.json",
+		"<eval-dir>/eval_metadata.json": "eval-metadata.schema.json",
+		"<workspace>/history.json": "history.schema.json",
+		"<run-dir>/grading.json": "grading.schema.json",
+		"<run-dir>/outputs/metrics.json": "metrics.schema.json",
+		"<run-dir>/timing.json": "timing.schema.json",
+		"<iteration-or-benchmark>/benchmark.json": "benchmark.schema.json",
+		"<grading-dir>/comparison-N.json": "comparison.schema.json",
+		"<grading-dir>/analysis.json": "analysis.schema.json",
+		"<iteration>/feedback.json": "feedback.schema.json"
+	}
 }

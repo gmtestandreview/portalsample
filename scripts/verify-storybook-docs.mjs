@@ -1,116 +1,123 @@
-import { access, readFile, readdir } from 'node:fs/promises';
-import { resolve } from 'node:path';
-import process from 'node:process';
+import { access, readFile, readdir } from "node:fs/promises";
+import { resolve } from "node:path";
+import process from "node:process";
 
 const root = process.cwd();
-const staticDir = resolve(root, 'storybook-static');
+const staticDir = resolve(root, "storybook-static");
 
-const requiredFiles = ['index.html', 'iframe.html', 'index.json'];
+const requiredFiles = ["index.html", "iframe.html", "index.json"];
 
 for (const file of requiredFiles) {
-    await access(resolve(staticDir, file));
+	await access(resolve(staticDir, file));
 }
 
 const index = JSON.parse(
-    await readFile(resolve(staticDir, 'index.json'), 'utf8'),
+	await readFile(resolve(staticDir, "index.json"), "utf8"),
 );
 
 const entries = Object.values(index.entries ?? {});
 
 if (entries.length === 0) {
-    throw new Error('Storybook index contains no entries.');
+	throw new Error("Storybook index contains no entries.");
 }
 
-const docsEntries = entries.filter((entry) => entry.type === 'docs');
-const storyEntries = entries.filter((entry) => entry.type === 'story');
+const docsEntries = entries.filter((entry) => entry.type === "docs");
+const storyEntries = entries.filter((entry) => entry.type === "story");
 
 if (docsEntries.length === 0) {
-    throw new Error('Storybook index contains no documentation entries.');
+	throw new Error("Storybook index contains no documentation entries.");
 }
 
 if (storyEntries.length === 0) {
-    throw new Error('Storybook index contains no story entries.');
+	throw new Error("Storybook index contains no story entries.");
 }
 
 const hasDocumentationSection = docsEntries.some((entry) =>
-    String(entry.title ?? '').startsWith('Documentation/'),
+	String(entry.title ?? "").startsWith("Documentation/"),
 );
 
 if (!hasDocumentationSection) {
-    throw new Error('Expected at least one standalone Documentation/* MDX entry.');
+	throw new Error(
+		"Expected at least one standalone Documentation/* MDX entry.",
+	);
 }
 
 const docsEntryIds = new Set(docsEntries.map((entry) => String(entry.id)));
-const docsSourceDirs = ['.storybook', 'ClientApp/src'];
+const docsSourceDirs = [".storybook", "ClientApp/src"];
 
 const readDocsSources = async (dir) => {
-    const absoluteDir = resolve(root, dir);
-    const results = [];
-    const pending = [absoluteDir];
+	const absoluteDir = resolve(root, dir);
+	const results = [];
+	const pending = [absoluteDir];
 
-    while (pending.length > 0) {
-        const current = pending.pop();
-        const children = await readdir(current, { withFileTypes: true });
+	while (pending.length > 0) {
+		const current = pending.pop();
+		const children = await readdir(current, { withFileTypes: true });
 
-        for (const child of children) {
-            const childPath = resolve(current, child.name);
+		for (const child of children) {
+			const childPath = resolve(current, child.name);
 
-            if (child.isDirectory()) {
-                pending.push(childPath);
-                continue;
-            }
+			if (child.isDirectory()) {
+				pending.push(childPath);
+				continue;
+			}
 
-            if (/\.(?:md|mdx)$/i.test(child.name)) {
-                results.push(childPath);
-            }
-        }
-    }
+			if (/\.(?:md|mdx)$/i.test(child.name)) {
+				results.push(childPath);
+			}
+		}
+	}
 
-    return results;
+	return results;
 };
 
-const markdownLinkPattern = /\]\((\/docs\/[^)\s]+)\)|href=["'](\/docs\/[^"']+)["']/g;
+const markdownLinkPattern =
+	/\]\((\/docs\/[^)\s]+)\)|href=["'](\/docs\/[^"']+)["']/g;
 const internalDocsLinkFailures = [];
 
-for (const sourceFile of (await Promise.all(docsSourceDirs.map(readDocsSources))).flat()) {
-    const source = await readFile(sourceFile, 'utf8');
+for (const sourceFile of (
+	await Promise.all(docsSourceDirs.map(readDocsSources))
+).flat()) {
+	const source = await readFile(sourceFile, "utf8");
 
-    for (const match of source.matchAll(markdownLinkPattern)) {
-        const href = match[1] ?? match[2];
-        const docsId = href
-            .slice('/docs/'.length)
-            .split(/[?#]/, 1)[0]
-            .replace(/\/$/, '');
+	for (const match of source.matchAll(markdownLinkPattern)) {
+		const href = match[1] ?? match[2];
+		const docsId = href
+			.slice("/docs/".length)
+			.split(/[?#]/, 1)[0]
+			.replace(/\/$/, "");
 
-        if (!docsEntryIds.has(docsId)) {
-            internalDocsLinkFailures.push(`${sourceFile}: ${href}`);
-        }
-    }
+		if (!docsEntryIds.has(docsId)) {
+			internalDocsLinkFailures.push(`${sourceFile}: ${href}`);
+		}
+	}
 }
 
 if (internalDocsLinkFailures.length > 0) {
-    throw new Error(
-        `Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join('\n  ')}`,
-    );
+	throw new Error(
+		`Internal Storybook docs links that do not resolve in generated index.json:\n  ${internalDocsLinkFailures.join("\n  ")}`,
+	);
 }
 
 const manifest = JSON.parse(
-    await readFile(resolve(staticDir, 'manifests/components.json'), 'utf8'),
+	await readFile(resolve(staticDir, "manifests/components.json"), "utf8"),
 );
 
 const components = Object.values(manifest.components ?? {});
 
 if (components.length === 0) {
-    throw new Error('Storybook component manifest contains no components.');
+	throw new Error("Storybook component manifest contains no components.");
 }
 
-const reusableComponentStoryPrefix = './ClientApp/src/components/';
+const reusableComponentStoryPrefix = "./ClientApp/src/components/";
 const reusableComponents = components.filter((component) =>
-    String(component.path ?? '').startsWith(reusableComponentStoryPrefix),
+	String(component.path ?? "").startsWith(reusableComponentStoryPrefix),
 );
 
 if (reusableComponents.length === 0) {
-    throw new Error('Storybook component manifest contains no reusable components.');
+	throw new Error(
+		"Storybook component manifest contains no reusable components.",
+	);
 }
 
 /**
@@ -119,89 +126,87 @@ if (reusableComponents.length === 0) {
  * props documents nothing, and Autodocs gives no build error when that happens.
  */
 const acceptedDocgenExceptions = new Map([
-    [
-        'evaluation-react-aria-toast',
-        'composite example: stories coordinate a toast region and trigger rather than document one public component API',
-    ],
-    [
-        'components-footer',
-        'prop-less portal shell component whose behaviour comes from application context',
-    ],
-    [
-        'components-header',
-        'prop-less portal shell component whose behaviour comes from application context',
-    ],
-    [
-        'components-home',
-        'prop-less composition component with no public prop API',
-    ],
-    [
-        'components-utilities-routeaccessiblenavigation',
-        'prop-less accessibility utility with no public prop API',
-    ],
-    [
-        'components-welcome',
-        'prop-less composition component with no public prop API',
-    ],
-    [
-        'forms-inputs',
-        'meta.component resolves to a react-bootstrap component inside node_modules',
-    ],
-    [
-        'routes-home-getstarted',
-        'prop-less reusable composition component with no public prop API',
-    ],
-    [
-        'modals',
-        'multi-component gallery: every story renders a local wrapper or a different modal, so no single meta.component describes the page',
-    ],
+	[
+		"evaluation-react-aria-toast",
+		"composite example: stories coordinate a toast region and trigger rather than document one public component API",
+	],
+	[
+		"components-footer",
+		"prop-less portal shell component whose behaviour comes from application context",
+	],
+	[
+		"components-header",
+		"prop-less portal shell component whose behaviour comes from application context",
+	],
+	[
+		"components-home",
+		"prop-less composition component with no public prop API",
+	],
+	[
+		"components-utilities-routeaccessiblenavigation",
+		"prop-less accessibility utility with no public prop API",
+	],
+	[
+		"components-welcome",
+		"prop-less composition component with no public prop API",
+	],
+	[
+		"forms-inputs",
+		"meta.component resolves to a react-bootstrap component inside node_modules",
+	],
+	[
+		"routes-home-getstarted",
+		"prop-less reusable composition component with no public prop API",
+	],
+	[
+		"modals",
+		"multi-component gallery: every story renders a local wrapper or a different modal, so no single meta.component describes the page",
+	],
 ]);
 
 const reusableDocgenFailureIds = new Set(
-    reusableComponents
-        .filter((component) => component.error)
-        .map((component) => component.id),
+	reusableComponents
+		.filter((component) => component.error)
+		.map((component) => component.id),
 );
-const staleAcceptedDocgenExceptions = [...acceptedDocgenExceptions.keys()].filter(
-    (componentId) => !reusableDocgenFailureIds.has(componentId),
-);
+const staleAcceptedDocgenExceptions = [
+	...acceptedDocgenExceptions.keys(),
+].filter((componentId) => !reusableDocgenFailureIds.has(componentId));
 
 if (staleAcceptedDocgenExceptions.length > 0) {
-    throw new Error(
-        `Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join('\n  ')}`,
-    );
+	throw new Error(
+		`Stale accepted docgen exceptions (remove or re-audit):\n  ${staleAcceptedDocgenExceptions.join("\n  ")}`,
+	);
 }
 
 const docgenFailures = reusableComponents
-    .filter((component) => component.error)
-    .filter((component) => !acceptedDocgenExceptions.has(component.id))
-    .map(
-        (component) =>
-            `${component.name} (${component.id}): ${component.error.name}`,
-    );
+	.filter((component) => component.error)
+	.filter((component) => !acceptedDocgenExceptions.has(component.id))
+	.map(
+		(component) =>
+			`${component.name} (${component.id}): ${component.error.name}`,
+	);
 
 if (docgenFailures.length > 0) {
-    throw new Error(
-        `Components without generated prop metadata:\n  ${docgenFailures.join('\n  ')}`,
-    );
+	throw new Error(
+		`Components without generated prop metadata:\n  ${docgenFailures.join("\n  ")}`,
+	);
 }
 
 console.warn(
-    JSON.stringify(
-        {
-            totalEntries: entries.length,
-            docsEntries: docsEntries.length,
-            storyEntries: storyEntries.length,
-            validatedInternalDocsLinks: true,
-            documentationSection: hasDocumentationSection,
-            components: components.length,
-            reusableComponents: reusableComponents.length,
-            routeAndPageComponents: components.length - reusableComponents.length,
-            acceptedDocgenExceptions: Object.fromEntries(
-                acceptedDocgenExceptions,
-            ),
-        },
-        null,
-        2,
-    ),
+	JSON.stringify(
+		{
+			totalEntries: entries.length,
+			docsEntries: docsEntries.length,
+			storyEntries: storyEntries.length,
+			validatedInternalDocsLinks: true,
+			documentationSection: hasDocumentationSection,
+			components: components.length,
+			reusableComponents: reusableComponents.length,
+			routeAndPageComponents: components.length - reusableComponents.length,
+			acceptedDocgenExceptions: Object.fromEntries(acceptedDocgenExceptions),
+		},
+		null,
+		2,
+	),
 );

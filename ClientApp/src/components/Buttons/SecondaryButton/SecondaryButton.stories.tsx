@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import SecondaryButton from './index';
+import type { Meta, StoryObj } from "@storybook/react-vite";
+import SecondaryButton from "./index";
 
 /**
  * SecondaryButton Component Storybook Configuration
@@ -13,22 +13,22 @@ import SecondaryButton from './index';
  */
 
 const meta = {
-    component: SecondaryButton,
-    tags: ['ai-generated', 'needs-work'],
+	component: SecondaryButton,
+	tags: ["ai-generated", "needs-work"],
 } satisfies Meta<typeof SecondaryButton>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    args: {
-        children: 'Cancel',
-    },
+	args: {
+		children: "Cancel",
+	},
 };
 
 export const Disabled: Story = {
-    args: {
-        children: 'Cancel',
-        disabled: true,
-    },
+	args: {
+		children: "Cancel",
+		disabled: true,
+	},
 };

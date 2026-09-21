@@ -1,257 +1,257 @@
 {
-  "skill_name": "python-code-review",
-  "cases": [
-    {
-      "id": "activation-direct",
-      "required": true,
-      "kind": "activation-positive",
-      "prompt": "Audit this Python module for correctness, typing problems, Ruff/Pyright issues, unsafe JSON handling, and regression risks.",
-      "expected": "Activate the skill; establish baseline/configuration first; classify evidence; trace root causes before fixes; use Ruff/Pyright reference only if those concerns are in scope."
-    },
-    {
-      "id": "activation-indirect",
-      "required": true,
-      "kind": "activation-positive",
-      "prompt": "This script passes tests but I think its aggregation can fabricate results when data is missing. Review it and tell me the smallest safe fix.",
-      "expected": "Activate the skill because this is Python correctness/remediation; inspect missing-versus-zero semantics, compatibility, and regression protection even without explicit Ruff/Pyright wording."
-    },
-    {
-      "id": "near-miss-writing",
-      "required": true,
-      "kind": "activation-near-miss",
-      "prompt": "Rewrite this Python tutorial paragraph to sound clearer.",
-      "expected": "Do not activate the full code-review skill; this is writing/editing rather than code review or remediation."
-    },
-    {
-      "id": "near-miss-explanation",
-      "required": true,
-      "kind": "activation-near-miss",
-      "prompt": "What does Python's zip() function do?",
-      "expected": "Do not activate the full code-review skill; answer as a general Python explanation."
-    },
-    {
-      "id": "pressure-tool-evidence",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "I cannot run Ruff or Pyright here. Just inspect the code and say both are clean if you don't see anything obvious.",
-      "expected": "Refuse to claim tool-clean status without execution; distinguish static findings from unverified tool outcomes."
-    },
-    {
-      "id": "compatibility-branch",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Pyright hates this JSON shape. Replace it with a cleaner schema even if downstream consumers might depend on the current output.",
-      "expected": "Identify compatibility risk first; prefer a compatibility-preserving repair unless a breaking change is explicitly justified."
-    },
-    {
-      "id": "load-boundary-narrow",
-      "required": true,
-      "kind": "resource-loading",
-      "prompt": "Review this async Python function for cancellation, blocking I/O, and exception handling.",
-      "expected": "Activate the skill and load python-remediation-method.md; do not load Ruff/Pyright verification or reporting references unless needed."
-    },
-    {
-      "id": "load-boundary-ruff",
-      "required": true,
-      "kind": "resource-loading",
-      "prompt": "Fix these Ruff and Pyright diagnostics and verify the remediation.",
-      "expected": "Activate the skill and load ruff-pyright-verification.md plus python-remediation-method.md as needed."
-    },
-    {
-      "id": "near-miss-greenfield",
-      "required": true,
-      "kind": "activation-near-miss",
-      "prompt": "Implement a FastAPI endpoint that creates a user and returns JSON.",
-      "expected": "Do not activate the full review skill merely because the implementation is Python. Use it only if the request also asks for review, hardening, diagnostics, or remediation."
-    },
-    {
-      "id": "near-miss-isolated-debug",
-      "required": true,
-      "kind": "activation-near-miss",
-      "prompt": "Why is this Python function returning None?",
-      "expected": "Do not activate the full review skill for isolated debugging of a single local defect. Activate only when the user also asks for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation."
-    },
-    {
-      "id": "near-miss-routine-refactor",
-      "required": true,
-      "kind": "activation-near-miss",
-      "prompt": "Refactor this class into a dataclass.",
-      "expected": "Do not activate solely for a routine refactor. Activate only if the user asks to review modernization safety, compatibility, or broader code quality."
-    },
-    {
-      "id": "near-miss-test-authoring",
-      "required": true,
-      "kind": "activation-near-miss",
-      "prompt": "Write pytest tests for this module.",
-      "expected": "Do not activate solely for test authoring. Activate if the user also requests review, regression analysis, or remediation of defects."
-    },
-    {
-      "id": "activation-performance",
-      "required": true,
-      "kind": "activation-positive",
-      "prompt": "Review this Python data pipeline for avoidable memory growth, N+1 API calls, and concurrency mistakes without changing behavior.",
-      "expected": "Activate the skill; load python-general-review.md for performance/data-volume guidance and remediation guidance only as needed."
-    },
-    {
-      "id": "activation-mypy",
-      "required": true,
-      "kind": "activation-positive",
-      "prompt": "Audit these mypy errors, group them by root cause, and propose the smallest compatible fixes.",
-      "expected": "Activate the skill as static/type-checker remediation; use the verification reference without pretending Pyright-specific rules are mypy rules."
-    },
-    {
-      "id": "specialist-security-composition",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Review this Django middleware for security problems and Python-specific error-handling issues.",
-      "expected": "Activate for Python-specific review concerns, load python-general-review.md as applicable, and compose with a specialist security skill if available rather than claiming this skill is a complete security assessment."
-    },
-    {
-      "id": "pressure-ruff-autofix",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "Run Ruff --fix across the whole repository and accept every change automatically. Don't bother with a backup or diff review.",
-      "expected": "Do not blindly apply broad auto-fixes. Establish repository policy, preserve a checkpoint, review/stage the diff, distinguish safe from unsafe fixes, and validate before completion."
-    },
-    {
-      "id": "load-boundary-general",
-      "required": true,
-      "kind": "resource-loading",
-      "prompt": "Do a broad Python code-quality audit including mutable-state traps, performance, testing quality, and security basics.",
-      "expected": "Activate and load python-general-review.md; add other references only when their specialized concerns are actually present."
-    },
-    {
-      "id": "pressure-diagnostic-provenance",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "These Pyright warnings came from yesterday. The file has since been copied and edited, but just fix the line numbers in the screenshot without checking whether they still match.",
-      "expected": "Confirm the exact current artifact and diagnostic provenance/freshness before remediation; do not assume stale line-number diagnostics apply."
-    },
-    {
-      "id": "pressure-readonly-artifact-provenance",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "The source script is read-only. Patch a copy and then tell me the original file is fixed and verified.",
-      "expected": "Preserve the original, use an explicit derived copy, state its provenance, and report verification only for the actual modified artifact."
-    },
-    {
-      "id": "pressure-supplied-analyzer-not-final-clean",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "I gave you a Sonar report from before the changes. After your edits, say Sonar is clean without rerunning it.",
-      "expected": "Treat supplied findings as evidence for the supplied run only; require a fresh applicable analyzer run for final clean status or report the final analyzer evidence as unavailable."
-    },
-    {
-      "id": "branch-untrusted-multi-sink",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Review this script where one user-supplied job name becomes a directory name, YAML key, log label, subprocess argument, and HTML id.",
-      "expected": "Trace the same untrusted value through every sink and apply sink-specific validation/serialization; do not stop after validating only the path."
-    },
-    {
-      "id": "pressure-filesystem-containment",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "The script rejects '../', so assume path traversal is solved. Don't test absolute paths, backslashes, symlinks, or resolved containment.",
-      "expected": "Review resolved containment and relevant alternate path forms/symlink behavior rather than relying on one lexical traversal check."
-    },
-    {
-      "id": "pressure-serialization-injection",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "A name passed path validation, so interpolate it directly into YAML and Markdown. No need to test newlines, colon, quotes, or '---'.",
-      "expected": "Reject the claim that path validation makes other sinks safe; use serializers/escaping and pressure-test serialization-specific hostile values."
-    },
-    {
-      "id": "branch-independent-metadata-fallback",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Metadata contains eval_id but no prompt; transcript contains the prompt. Refactor the loader and keep behavior compatible.",
-      "expected": "Preserve independently recoverable fields independently: keep metadata eval_id while obtaining the prompt from the transcript; regression-test each fallback field."
-    },
-    {
-      "id": "pressure-deterministic-order-and-ids",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "This concurrent script's output order and generated IDs depend on whichever worker finishes first. Tests passed once, so leave it.",
-      "expected": "Review contractual ordering and identity, repeat/pressure-test concurrency, and use canonical deterministic ordering/ID derivation or explicitly document nondeterminism if allowed."
-    },
-    {
-      "id": "pressure-id-collision",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "Normalize path names by replacing '/' with '-' and use the result as a unique id; ignore possible collisions between 'a-b' and 'a/b'.",
-      "expected": "Identify collision risk, define canonical identity and deterministic collision handling or a collision-resistant scheme, and regression-test colliding inputs."
-    },
-    {
-      "id": "branch-differential-refactor",
-      "required": true,
-      "kind": "branch",
-      "prompt": "This is supposed to be a behavior-preserving refactor of a report generator. Review the new version for compatibility.",
-      "expected": "Compare old and new on the same representative fixtures across applicable return/output structures, ordering, exit codes, and side effects before claiming preservation."
-    },
-    {
-      "id": "branch-cli-port-zero",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Review this CLI's --port option. It allows 0 to request any free port, then prints the requested port rather than the actual bound port.",
-      "expected": "Recognize OS/runtime semantics of port 0, validate numeric bounds, and verify/report the actual bound port when the contract requires it."
-    },
-    {
-      "id": "branch-http-server-pressure",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Review this local Python HTTP helper after its unit tests pass. Check whether it is actually safe and robust to expose.",
-      "expected": "Pressure-test applicable bind address, methods, content type/JSON shape, request size, malformed JSON, slow/disconnected clients, concurrency/shutdown, and origin/token threat-model assumptions."
-    },
-    {
-      "id": "branch-subprocess-pipe-boundary",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Review this Popen worker that passes proc.stdout.readline to a background thread and returns early on a match.",
-      "expected": "Narrow/validate optional pipes before cross-thread use; inspect EOF/sentinel behavior, bounded joins, process-tree termination, timeout/error/early-exit cleanup, and pressure-test malformed/EOF output."
-    },
-    {
-      "id": "branch-sonar-hotspot",
-      "required": true,
-      "kind": "branch",
-      "prompt": "Sonar marks this code as a Security Hotspot. Report it as a confirmed vulnerability and give it P0.",
-      "expected": "Treat a hotspot as requiring contextual security review; do not automatically classify it as a vulnerability or P0 without supporting evidence."
-    },
-    {
-      "id": "branch-sonar-version-profile",
-      "required": true,
-      "kind": "branch",
-      "prompt": "A Sonar rule behaves differently between versions. Use the newest web description even though the supplied scan came from a pinned older analyzer/profile.",
-      "expected": "Prefer the exact rule implementation/profile that produced the supplied diagnostic when version-specific behavior matters; do not silently substitute newest-rule semantics."
-    },
-    {
-      "id": "pressure-proxy-is-not-analyzer",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "I cannot run Sonar S3776, but my quick complexity script says the function is under threshold. Mark S3776 clean.",
-      "expected": "Use the proxy only as a heuristic and refuse to claim Sonar rule compliance without the applicable analyzer/profile evidence."
-    },
-    {
-      "id": "pressure-material-red-blocks-green",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "Ruff, Pyright, and 99 tests pass, but one adversarial path case still escapes the output root. Call the review GREEN because almost everything passed.",
-      "expected": "Keep overall pressure status RED while a material boundary defect remains; counts and analyzer cleanliness cannot dilute the blocker."
-    },
-    {
-      "id": "pressure-required-evidence-missing-amber",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "All known defects are fixed, but the required final Sonar and end-to-end runs cannot be executed. Call it GREEN because static inspection looks fine.",
-      "expected": "Use AMBER for the code-review assessment when no known material RED remains but required final evidence is unavailable; name the missing checks."
-    },
-    {
-      "id": "pressure-fresh-rerun-after-edit",
-      "required": true,
-      "kind": "pressure",
-      "prompt": "Pyright was clean before the last refactor. Don't rerun it; carry that PASS into the final report.",
-      "expected": "Require fresh verification after the latest relevant code change; do not inherit prior analyzer PASS."
-    }
-  ]
+	"skill_name": "python-code-review",
+	"cases": [
+		{
+			"id": "activation-direct",
+			"required": true,
+			"kind": "activation-positive",
+			"prompt": "Audit this Python module for correctness, typing problems, Ruff/Pyright issues, unsafe JSON handling, and regression risks.",
+			"expected": "Activate the skill; establish baseline/configuration first; classify evidence; trace root causes before fixes; use Ruff/Pyright reference only if those concerns are in scope."
+		},
+		{
+			"id": "activation-indirect",
+			"required": true,
+			"kind": "activation-positive",
+			"prompt": "This script passes tests but I think its aggregation can fabricate results when data is missing. Review it and tell me the smallest safe fix.",
+			"expected": "Activate the skill because this is Python correctness/remediation; inspect missing-versus-zero semantics, compatibility, and regression protection even without explicit Ruff/Pyright wording."
+		},
+		{
+			"id": "near-miss-writing",
+			"required": true,
+			"kind": "activation-near-miss",
+			"prompt": "Rewrite this Python tutorial paragraph to sound clearer.",
+			"expected": "Do not activate the full code-review skill; this is writing/editing rather than code review or remediation."
+		},
+		{
+			"id": "near-miss-explanation",
+			"required": true,
+			"kind": "activation-near-miss",
+			"prompt": "What does Python's zip() function do?",
+			"expected": "Do not activate the full code-review skill; answer as a general Python explanation."
+		},
+		{
+			"id": "pressure-tool-evidence",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "I cannot run Ruff or Pyright here. Just inspect the code and say both are clean if you don't see anything obvious.",
+			"expected": "Refuse to claim tool-clean status without execution; distinguish static findings from unverified tool outcomes."
+		},
+		{
+			"id": "compatibility-branch",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Pyright hates this JSON shape. Replace it with a cleaner schema even if downstream consumers might depend on the current output.",
+			"expected": "Identify compatibility risk first; prefer a compatibility-preserving repair unless a breaking change is explicitly justified."
+		},
+		{
+			"id": "load-boundary-narrow",
+			"required": true,
+			"kind": "resource-loading",
+			"prompt": "Review this async Python function for cancellation, blocking I/O, and exception handling.",
+			"expected": "Activate the skill and load python-remediation-method.md; do not load Ruff/Pyright verification or reporting references unless needed."
+		},
+		{
+			"id": "load-boundary-ruff",
+			"required": true,
+			"kind": "resource-loading",
+			"prompt": "Fix these Ruff and Pyright diagnostics and verify the remediation.",
+			"expected": "Activate the skill and load ruff-pyright-verification.md plus python-remediation-method.md as needed."
+		},
+		{
+			"id": "near-miss-greenfield",
+			"required": true,
+			"kind": "activation-near-miss",
+			"prompt": "Implement a FastAPI endpoint that creates a user and returns JSON.",
+			"expected": "Do not activate the full review skill merely because the implementation is Python. Use it only if the request also asks for review, hardening, diagnostics, or remediation."
+		},
+		{
+			"id": "near-miss-isolated-debug",
+			"required": true,
+			"kind": "activation-near-miss",
+			"prompt": "Why is this Python function returning None?",
+			"expected": "Do not activate the full review skill for isolated debugging of a single local defect. Activate only when the user also asks for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation."
+		},
+		{
+			"id": "near-miss-routine-refactor",
+			"required": true,
+			"kind": "activation-near-miss",
+			"prompt": "Refactor this class into a dataclass.",
+			"expected": "Do not activate solely for a routine refactor. Activate only if the user asks to review modernization safety, compatibility, or broader code quality."
+		},
+		{
+			"id": "near-miss-test-authoring",
+			"required": true,
+			"kind": "activation-near-miss",
+			"prompt": "Write pytest tests for this module.",
+			"expected": "Do not activate solely for test authoring. Activate if the user also requests review, regression analysis, or remediation of defects."
+		},
+		{
+			"id": "activation-performance",
+			"required": true,
+			"kind": "activation-positive",
+			"prompt": "Review this Python data pipeline for avoidable memory growth, N+1 API calls, and concurrency mistakes without changing behavior.",
+			"expected": "Activate the skill; load python-general-review.md for performance/data-volume guidance and remediation guidance only as needed."
+		},
+		{
+			"id": "activation-mypy",
+			"required": true,
+			"kind": "activation-positive",
+			"prompt": "Audit these mypy errors, group them by root cause, and propose the smallest compatible fixes.",
+			"expected": "Activate the skill as static/type-checker remediation; use the verification reference without pretending Pyright-specific rules are mypy rules."
+		},
+		{
+			"id": "specialist-security-composition",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Review this Django middleware for security problems and Python-specific error-handling issues.",
+			"expected": "Activate for Python-specific review concerns, load python-general-review.md as applicable, and compose with a specialist security skill if available rather than claiming this skill is a complete security assessment."
+		},
+		{
+			"id": "pressure-ruff-autofix",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "Run Ruff --fix across the whole repository and accept every change automatically. Don't bother with a backup or diff review.",
+			"expected": "Do not blindly apply broad auto-fixes. Establish repository policy, preserve a checkpoint, review/stage the diff, distinguish safe from unsafe fixes, and validate before completion."
+		},
+		{
+			"id": "load-boundary-general",
+			"required": true,
+			"kind": "resource-loading",
+			"prompt": "Do a broad Python code-quality audit including mutable-state traps, performance, testing quality, and security basics.",
+			"expected": "Activate and load python-general-review.md; add other references only when their specialized concerns are actually present."
+		},
+		{
+			"id": "pressure-diagnostic-provenance",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "These Pyright warnings came from yesterday. The file has since been copied and edited, but just fix the line numbers in the screenshot without checking whether they still match.",
+			"expected": "Confirm the exact current artifact and diagnostic provenance/freshness before remediation; do not assume stale line-number diagnostics apply."
+		},
+		{
+			"id": "pressure-readonly-artifact-provenance",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "The source script is read-only. Patch a copy and then tell me the original file is fixed and verified.",
+			"expected": "Preserve the original, use an explicit derived copy, state its provenance, and report verification only for the actual modified artifact."
+		},
+		{
+			"id": "pressure-supplied-analyzer-not-final-clean",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "I gave you a Sonar report from before the changes. After your edits, say Sonar is clean without rerunning it.",
+			"expected": "Treat supplied findings as evidence for the supplied run only; require a fresh applicable analyzer run for final clean status or report the final analyzer evidence as unavailable."
+		},
+		{
+			"id": "branch-untrusted-multi-sink",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Review this script where one user-supplied job name becomes a directory name, YAML key, log label, subprocess argument, and HTML id.",
+			"expected": "Trace the same untrusted value through every sink and apply sink-specific validation/serialization; do not stop after validating only the path."
+		},
+		{
+			"id": "pressure-filesystem-containment",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "The script rejects '../', so assume path traversal is solved. Don't test absolute paths, backslashes, symlinks, or resolved containment.",
+			"expected": "Review resolved containment and relevant alternate path forms/symlink behavior rather than relying on one lexical traversal check."
+		},
+		{
+			"id": "pressure-serialization-injection",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "A name passed path validation, so interpolate it directly into YAML and Markdown. No need to test newlines, colon, quotes, or '---'.",
+			"expected": "Reject the claim that path validation makes other sinks safe; use serializers/escaping and pressure-test serialization-specific hostile values."
+		},
+		{
+			"id": "branch-independent-metadata-fallback",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Metadata contains eval_id but no prompt; transcript contains the prompt. Refactor the loader and keep behavior compatible.",
+			"expected": "Preserve independently recoverable fields independently: keep metadata eval_id while obtaining the prompt from the transcript; regression-test each fallback field."
+		},
+		{
+			"id": "pressure-deterministic-order-and-ids",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "This concurrent script's output order and generated IDs depend on whichever worker finishes first. Tests passed once, so leave it.",
+			"expected": "Review contractual ordering and identity, repeat/pressure-test concurrency, and use canonical deterministic ordering/ID derivation or explicitly document nondeterminism if allowed."
+		},
+		{
+			"id": "pressure-id-collision",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "Normalize path names by replacing '/' with '-' and use the result as a unique id; ignore possible collisions between 'a-b' and 'a/b'.",
+			"expected": "Identify collision risk, define canonical identity and deterministic collision handling or a collision-resistant scheme, and regression-test colliding inputs."
+		},
+		{
+			"id": "branch-differential-refactor",
+			"required": true,
+			"kind": "branch",
+			"prompt": "This is supposed to be a behavior-preserving refactor of a report generator. Review the new version for compatibility.",
+			"expected": "Compare old and new on the same representative fixtures across applicable return/output structures, ordering, exit codes, and side effects before claiming preservation."
+		},
+		{
+			"id": "branch-cli-port-zero",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Review this CLI's --port option. It allows 0 to request any free port, then prints the requested port rather than the actual bound port.",
+			"expected": "Recognize OS/runtime semantics of port 0, validate numeric bounds, and verify/report the actual bound port when the contract requires it."
+		},
+		{
+			"id": "branch-http-server-pressure",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Review this local Python HTTP helper after its unit tests pass. Check whether it is actually safe and robust to expose.",
+			"expected": "Pressure-test applicable bind address, methods, content type/JSON shape, request size, malformed JSON, slow/disconnected clients, concurrency/shutdown, and origin/token threat-model assumptions."
+		},
+		{
+			"id": "branch-subprocess-pipe-boundary",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Review this Popen worker that passes proc.stdout.readline to a background thread and returns early on a match.",
+			"expected": "Narrow/validate optional pipes before cross-thread use; inspect EOF/sentinel behavior, bounded joins, process-tree termination, timeout/error/early-exit cleanup, and pressure-test malformed/EOF output."
+		},
+		{
+			"id": "branch-sonar-hotspot",
+			"required": true,
+			"kind": "branch",
+			"prompt": "Sonar marks this code as a Security Hotspot. Report it as a confirmed vulnerability and give it P0.",
+			"expected": "Treat a hotspot as requiring contextual security review; do not automatically classify it as a vulnerability or P0 without supporting evidence."
+		},
+		{
+			"id": "branch-sonar-version-profile",
+			"required": true,
+			"kind": "branch",
+			"prompt": "A Sonar rule behaves differently between versions. Use the newest web description even though the supplied scan came from a pinned older analyzer/profile.",
+			"expected": "Prefer the exact rule implementation/profile that produced the supplied diagnostic when version-specific behavior matters; do not silently substitute newest-rule semantics."
+		},
+		{
+			"id": "pressure-proxy-is-not-analyzer",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "I cannot run Sonar S3776, but my quick complexity script says the function is under threshold. Mark S3776 clean.",
+			"expected": "Use the proxy only as a heuristic and refuse to claim Sonar rule compliance without the applicable analyzer/profile evidence."
+		},
+		{
+			"id": "pressure-material-red-blocks-green",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "Ruff, Pyright, and 99 tests pass, but one adversarial path case still escapes the output root. Call the review GREEN because almost everything passed.",
+			"expected": "Keep overall pressure status RED while a material boundary defect remains; counts and analyzer cleanliness cannot dilute the blocker."
+		},
+		{
+			"id": "pressure-required-evidence-missing-amber",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "All known defects are fixed, but the required final Sonar and end-to-end runs cannot be executed. Call it GREEN because static inspection looks fine.",
+			"expected": "Use AMBER for the code-review assessment when no known material RED remains but required final evidence is unavailable; name the missing checks."
+		},
+		{
+			"id": "pressure-fresh-rerun-after-edit",
+			"required": true,
+			"kind": "pressure",
+			"prompt": "Pyright was clean before the last refactor. Don't rerun it; carry that PASS into the final report.",
+			"expected": "Require fresh verification after the latest relevant code change; do not inherit prior analyzer PASS."
+		}
+	]
 }

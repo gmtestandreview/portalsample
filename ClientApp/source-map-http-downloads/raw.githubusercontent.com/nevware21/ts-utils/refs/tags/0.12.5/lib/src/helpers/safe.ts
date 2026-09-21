@@ -12,7 +12,11 @@
  * @group Safe
  * @typeParam T - The type of the function which to infer the return type
  */
-export type SafeReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any
+export type SafeReturnType<T extends (...args: any) => any> = T extends (
+	...args: any
+) => infer R
+	? R
+	: any;
 
 /**
  * Defines the return value of the {@link safe} function, which is an object with either a value or an error
@@ -21,16 +25,19 @@ export type SafeReturnType<T extends (...args: any) => any> = T extends (...args
  * @typeParam T - The type of the function to call
  * @typeParam R - The return type of the function
  */
-export interface ISafeReturn<T extends (...args: any) => R, R = SafeReturnType<T>> {
-    /**
-     * The value returned by the function call
-     */
-    v?: R;
+export interface ISafeReturn<
+	T extends (...args: any) => R,
+	R = SafeReturnType<T>,
+> {
+	/**
+	 * The value returned by the function call
+	 */
+	v?: R;
 
-    /**
-     * The error thrown by the function call
-     */
-    e?: Error;
+	/**
+	 * The error thrown by the function call
+	 */
+	e?: Error;
 }
 
 /**
@@ -60,12 +67,15 @@ export interface ISafeReturn<T extends (...args: any) => R, R = SafeReturnType<T
  * // result2.v === { valid: "json value" }
  * ```
  */
-export function safe<F extends (...args: unknown[]) => R, R = any>(func: F, argArray?: any[]): ISafeReturn<F, R> {
-    try {
-        return {
-            v: func.apply(this, argArray)
-        };
-    } catch (e) {
-        return { e };
-    }
+export function safe<F extends (...args: unknown[]) => R, R = any>(
+	func: F,
+	argArray?: any[],
+): ISafeReturn<F, R> {
+	try {
+		return {
+			v: func.apply(this, argArray),
+		};
+	} catch (e) {
+		return { e };
+	}
 }

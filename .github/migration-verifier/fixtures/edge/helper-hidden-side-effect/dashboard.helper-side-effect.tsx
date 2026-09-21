@@ -1,7 +1,7 @@
 const writeForbiddenNotification = () => {
-    setDashboardNotification(DashBoardNotifications.getForbiddenNotification());
+	setDashboardNotification(DashBoardNotifications.getForbiddenNotification());
 };
 
 if (errorStatus.forbidden) {
-    writeForbiddenNotification();
+	writeForbiddenNotification();
 }

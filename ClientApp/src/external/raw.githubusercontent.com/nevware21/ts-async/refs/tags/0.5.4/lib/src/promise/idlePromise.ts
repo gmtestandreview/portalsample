@@ -7,7 +7,15 @@
  */
 
 import { ICachedValue, isUndefined } from "@nevware21/ts-utils";
-import { _createAllPromise, _createAllSettledPromise, _createAnyPromise, _createPromise, _createRacePromise, _createRejectedPromise, _createResolvedPromise } from "./base";
+import {
+	_createAllPromise,
+	_createAllSettledPromise,
+	_createAnyPromise,
+	_createPromise,
+	_createRacePromise,
+	_createRejectedPromise,
+	_createResolvedPromise,
+} from "./base";
 import { IPromise } from "../interfaces/IPromise";
 import { idleItemProcessor } from "./itemProcessor";
 import { PromiseExecutor } from "../interfaces/types";
@@ -16,9 +24,24 @@ import { _pureAssign } from "../internal/treeshake_helpers";
 
 let _defaultIdleTimeout: number | undefined;
 
-let _allIdleSettledCreator: ICachedValue<<T extends readonly unknown[] | []>(input: T, timeout?: number) => IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>; }>>;
-let _raceIdleCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T, timeout?: number) => IPromise<Awaited<T[number]>>>;
-let _anyIdleCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T, timeout?: number) => IPromise<Awaited<T[number]>>>;
+let _allIdleSettledCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		input: T,
+		timeout?: number,
+	) => IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }>
+>;
+let _raceIdleCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		values: T,
+		timeout?: number,
+	) => IPromise<Awaited<T[number]>>
+>;
+let _anyIdleCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		values: T,
+		timeout?: number,
+	) => IPromise<Awaited<T[number]>>
+>;
 
 /**
  * Sets the global default idle timeout / deadline to use when no timeout is passed during promise creation.
@@ -26,8 +49,10 @@ let _anyIdleCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T,
  * outstanding chained items should be executed.
  * @group Idle
  */
-export function setDefaultIdlePromiseTimeout(idleDeadline?: number | undefined) {
-    _defaultIdleTimeout = idleDeadline;
+export function setDefaultIdlePromiseTimeout(
+	idleDeadline?: number | undefined,
+) {
+	_defaultIdleTimeout = idleDeadline;
 }
 
 /**
@@ -37,7 +62,9 @@ export function setDefaultIdlePromiseTimeout(idleDeadline?: number | undefined) 
  * outstanding chained items should be executed.
  * @group Idle
  */
-export const setDefaultIdleTimeout = (/*#__PURE__*/_pureAssign(setDefaultIdlePromiseTimeout));
+export const setDefaultIdleTimeout = /*#__PURE__*/ _pureAssign(
+	setDefaultIdlePromiseTimeout,
+);
 
 /**
  * Creates an idle Promise instance that when resolved or rejected will execute it's pending chained operations
@@ -53,9 +80,17 @@ export const setDefaultIdleTimeout = (/*#__PURE__*/_pureAssign(setDefaultIdlePro
  * the callback is queued in the event loop (even if doing so risks causing a negative performance impact). timeout must be a
  * positive value or it is ignored.
  */
-export function createIdlePromise<T>(executor: PromiseExecutor<T>, timeout?: number): IPromise<T>  {
-    let theTimeout = isUndefined(timeout) ? _defaultIdleTimeout : timeout;
-    return _createPromise(createIdlePromise, idleItemProcessor(theTimeout), executor, theTimeout);
+export function createIdlePromise<T>(
+	executor: PromiseExecutor<T>,
+	timeout?: number,
+): IPromise<T> {
+	let theTimeout = isUndefined(timeout) ? _defaultIdleTimeout : timeout;
+	return _createPromise(
+		createIdlePromise,
+		idleItemProcessor(theTimeout),
+		executor,
+		theTimeout,
+	);
 }
 
 /**
@@ -84,7 +119,10 @@ export function createIdlePromise<T>(executor: PromiseExecutor<T>, timeout?: num
  * promises reject.
  * </ul>
  */
-export const createIdleAllPromise: <T>(input: Iterable<PromiseLike<T>>, timeout?: number) => IPromise<T[]> = /*#__PURE__*/_createAllPromise(createIdlePromise);
+export const createIdleAllPromise: <T>(
+	input: Iterable<PromiseLike<T>>,
+	timeout?: number,
+) => IPromise<T[]> = /*#__PURE__*/ _createAllPromise(createIdlePromise);
 
 /**
  * Returns an idle Promise instance that is already resolved with the given value. If the value passed is
@@ -98,7 +136,10 @@ export const createIdleAllPromise: <T>(input: Iterable<PromiseLike<T>>, timeout?
  * @param value - The value to be used by this `Promise`. Can also be a `Promise` or a thenable to resolve.
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  */
-export const createIdleResolvedPromise: <T>(value: T, timeout?: number) => IPromise<T> = /*#__PURE__*/_createResolvedPromise(createIdlePromise);
+export const createIdleResolvedPromise: <T>(
+	value: T,
+	timeout?: number,
+) => IPromise<T> = /*#__PURE__*/ _createResolvedPromise(createIdlePromise);
 
 /**
  * Returns an idle Promise instance that is already rejected with the given reason.
@@ -111,7 +152,10 @@ export const createIdleResolvedPromise: <T>(value: T, timeout?: number) => IProm
  * @param reason - The rejection reason
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  */
-export const createIdleRejectedPromise: <T = unknown>(reason: any, timeout?: number) => IPromise<T> = /*#__PURE__*/_createRejectedPromise(createIdlePromise);
+export const createIdleRejectedPromise: <T = unknown>(
+	reason: any,
+	timeout?: number,
+) => IPromise<T> = /*#__PURE__*/ _createRejectedPromise(createIdlePromise);
 
 /**
  * Returns a single Promise instance that resolves to an array of the results from the input promises.
@@ -149,7 +193,10 @@ export const createIdleRejectedPromise: <T = unknown>(reason: any, timeout?: num
  * // ]
  * ```
  */
-export function createIdleAllSettledPromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<IPromiseResult<Awaited<T>>[]>;
+export function createIdleAllSettledPromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<IPromiseResult<Awaited<T>>[]>;
 
 /**
  * Returns a single Promise instance that resolves to an array of the results from the input promises.
@@ -187,9 +234,13 @@ export function createIdleAllSettledPromise<T>(values: Iterable<T | PromiseLike<
  * // ]
  * ```
  */
-export function createIdleAllSettledPromise<T extends readonly unknown[] | []>(input: T, timeout?: number): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>; }> {
-    !_allIdleSettledCreator && (_allIdleSettledCreator = _createAllSettledPromise(createIdlePromise));
-    return _allIdleSettledCreator.v(input, timeout);
+export function createIdleAllSettledPromise<T extends readonly unknown[] | []>(
+	input: T,
+	timeout?: number,
+): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }> {
+	!_allIdleSettledCreator &&
+		(_allIdleSettledCreator = _createAllSettledPromise(createIdlePromise));
+	return _allIdleSettledCreator.v(input, timeout);
 }
 
 /**
@@ -210,7 +261,10 @@ export function createIdleAllSettledPromise<T extends readonly unknown[] | []>(i
  * if the iterable passed is empty. If the iterable passed is non-empty but contains no pending promises, the returned promise will settle
  * asynchronously when the system detects that the runtime is idle.
  */
-export function createIdleRacePromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<Awaited<T>>;
+export function createIdleRacePromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<Awaited<T>>;
 
 /**
  * The `createIdleRacePromise` method takes an array of promises as input and returns a single Promise. This returned promise
@@ -230,9 +284,13 @@ export function createIdleRacePromise<T>(values: Iterable<T | PromiseLike<T>>, t
  * if the iterable passed is empty. If the iterable passed is non-empty but contains no pending promises, the returned promise will settle
  * asynchronously when the system detects that the runtime is idle.
  */
-export function createIdleRacePromise<T extends readonly unknown[] | []>(values: T, timeout?: number): IPromise<Awaited<T[number]>> {
-    !_raceIdleCreator && (_raceIdleCreator = _createRacePromise(createIdlePromise));
-    return _raceIdleCreator.v(values, timeout);
+export function createIdleRacePromise<T extends readonly unknown[] | []>(
+	values: T,
+	timeout?: number,
+): IPromise<Awaited<T[number]>> {
+	!_raceIdleCreator &&
+		(_raceIdleCreator = _createRacePromise(createIdlePromise));
+	return _raceIdleCreator.v(values, timeout);
 }
 
 /**
@@ -256,8 +314,11 @@ export function createIdleRacePromise<T extends readonly unknown[] | []>(values:
  * contains no pending promises, the returned promise is still asynchronously (instead of synchronously)
  * rejected.
  */
-export function createIdleAnyPromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<Awaited<T>>;
-        
+export function createIdleAnyPromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<Awaited<T>>;
+
 /**
  * The `createIdleAnyPromise` method takes an array of promises as input and returns a single Promise.
  * This returned promise fulfills when any of the input's promises fulfills, with this first fulfillment value.
@@ -279,7 +340,10 @@ export function createIdleAnyPromise<T>(values: Iterable<T | PromiseLike<T>>, ti
  * contains no pending promises, the returned promise is still asynchronously (instead of synchronously)
  * rejected.
  */
-export function createIdleAnyPromise<T extends readonly unknown[] | []>(values: T, timeout?: number): IPromise<Awaited<T[number]>> {
-    !_anyIdleCreator && (_anyIdleCreator = _createAnyPromise(createIdlePromise));
-    return _anyIdleCreator.v(values, timeout);
+export function createIdleAnyPromise<T extends readonly unknown[] | []>(
+	values: T,
+	timeout?: number,
+): IPromise<Awaited<T[number]>> {
+	!_anyIdleCreator && (_anyIdleCreator = _createAnyPromise(createIdlePromise));
+	return _anyIdleCreator.v(values, timeout);
 }

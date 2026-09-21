@@ -17,62 +17,88 @@ let _setTimeoutFn: TimeoutOverrideFn | undefined;
 let _clearTimeoutFn: ClearTimeoutOverrideFn | undefined;
 
 function _resolveTimeoutFn(timeoutFn: TimeoutOverrideFn): TimeoutOverrideFn {
-    let result = isFunction(timeoutFn) ? timeoutFn : _setTimeoutFn;
-    if (!result) {
-        // Get global timeout overrides if available
-        let globalOverrides = _getGlobalConfig().tmOut || [];
-        if (isArray(globalOverrides) && globalOverrides.length > 0 && isFunction(globalOverrides[0])) {
-            result = (globalOverrides as TimeoutOverrideFuncs)[0];
-        }
-    }
+	let result = isFunction(timeoutFn) ? timeoutFn : _setTimeoutFn;
+	if (!result) {
+		// Get global timeout overrides if available
+		let globalOverrides = _getGlobalConfig().tmOut || [];
+		if (
+			isArray(globalOverrides) &&
+			globalOverrides.length > 0 &&
+			isFunction(globalOverrides[0])
+		) {
+			result = (globalOverrides as TimeoutOverrideFuncs)[0];
+		}
+	}
 
-    return result || setTimeout;
+	return result || setTimeout;
 }
 
-function _resolveClearTimeoutFn(timeoutFn: ClearTimeoutOverrideFn): ClearTimeoutOverrideFn {
-    let result = isFunction(timeoutFn) ? timeoutFn : _clearTimeoutFn;
-    if (!result) {
-        // Get global timeout overrides if available
-        let globalOverrides = _getGlobalConfig().tmOut || [];
-        if (isArray(globalOverrides) && globalOverrides.length > 1 && isFunction(globalOverrides[1])) {
-            result = (globalOverrides as TimeoutOverrideFuncs)[1];
-        }
-    }
+function _resolveClearTimeoutFn(
+	timeoutFn: ClearTimeoutOverrideFn,
+): ClearTimeoutOverrideFn {
+	let result = isFunction(timeoutFn) ? timeoutFn : _clearTimeoutFn;
+	if (!result) {
+		// Get global timeout overrides if available
+		let globalOverrides = _getGlobalConfig().tmOut || [];
+		if (
+			isArray(globalOverrides) &&
+			globalOverrides.length > 1 &&
+			isFunction(globalOverrides[1])
+		) {
+			result = (globalOverrides as TimeoutOverrideFuncs)[1];
+		}
+	}
 
-    return result || clearTimeout;
+	return result || clearTimeout;
 }
 
-function _createTimeoutWith(startTimer: boolean, overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs, theArgs: any[]): ITimerHandler {
-    let isArr = isArray(overrideFn);
-    let len = isArr ? overrideFn.length : 0;
-    
-    // Use package instance override functions if provided and no specific override was given
-    // If no package overrides, try global overrides before falling back to native functions
-    let setFn = _resolveTimeoutFn(len > 0 ? (overrideFn as TimeoutOverrideFuncs)[0] : (!isArr ? overrideFn as TimeoutOverrideFn: UNDEF_VALUE));
-    let clearFn = _resolveClearTimeoutFn(len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : UNDEF_VALUE);
+function _createTimeoutWith(
+	startTimer: boolean,
+	overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs,
+	theArgs: any[],
+): ITimerHandler {
+	let isArr = isArray(overrideFn);
+	let len = isArr ? overrideFn.length : 0;
 
-    let timerFn = theArgs[0];
-    theArgs[0] = function () {
-        handler.dn();
-        fnApply(timerFn, UNDEF_VALUE, ArrSlice[CALL](arguments));
-    };
-    
-    let handler = _createTimerHandler(startTimer, (timerId?: any) => {
-        if (timerId) {
-            if (timerId.refresh) {
-                timerId.refresh();
-                return timerId;
-            }
+	// Use package instance override functions if provided and no specific override was given
+	// If no package overrides, try global overrides before falling back to native functions
+	let setFn = _resolveTimeoutFn(
+		len > 0
+			? (overrideFn as TimeoutOverrideFuncs)[0]
+			: !isArr
+				? (overrideFn as TimeoutOverrideFn)
+				: UNDEF_VALUE,
+	);
+	let clearFn = _resolveClearTimeoutFn(
+		len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : UNDEF_VALUE,
+	);
 
-            fnApply(clearFn, UNDEF_VALUE, [ timerId ]);
-        }
+	let timerFn = theArgs[0];
+	theArgs[0] = function () {
+		handler.dn();
+		fnApply(timerFn, UNDEF_VALUE, ArrSlice[CALL](arguments));
+	};
 
-        return fnApply(setFn, UNDEF_VALUE, theArgs);
-    }, function (timerId: any) {
-        fnApply(clearFn, UNDEF_VALUE, [ timerId ]);
-    });
+	let handler = _createTimerHandler(
+		startTimer,
+		(timerId?: any) => {
+			if (timerId) {
+				if (timerId.refresh) {
+					timerId.refresh();
+					return timerId;
+				}
 
-    return handler.h;
+				fnApply(clearFn, UNDEF_VALUE, [timerId]);
+			}
+
+			return fnApply(setFn, UNDEF_VALUE, theArgs);
+		},
+		function (timerId: any) {
+			fnApply(clearFn, UNDEF_VALUE, [timerId]);
+		},
+	);
+
+	return handler.h;
 }
 
 /**
@@ -138,12 +164,20 @@ function _createTimeoutWith(startTimer: boolean, overrideFn: TimeoutOverrideFn |
  * setTimeoutOverrides();
  * ```
  */
-export function setTimeoutOverrides(overrideFn?: TimeoutOverrideFn | TimeoutOverrideFuncs): void {
-    let isArr = isArray(overrideFn);
-    let len = isArr ? overrideFn.length : 0;
-    
-    _setTimeoutFn = (len > 0 ? (overrideFn as TimeoutOverrideFuncs)[0] : (!isArr ? overrideFn as TimeoutOverrideFn: UNDEF_VALUE));
-    _clearTimeoutFn = (len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : UNDEF_VALUE);
+export function setTimeoutOverrides(
+	overrideFn?: TimeoutOverrideFn | TimeoutOverrideFuncs,
+): void {
+	let isArr = isArray(overrideFn);
+	let len = isArr ? overrideFn.length : 0;
+
+	_setTimeoutFn =
+		len > 0
+			? (overrideFn as TimeoutOverrideFuncs)[0]
+			: !isArr
+				? (overrideFn as TimeoutOverrideFn)
+				: UNDEF_VALUE;
+	_clearTimeoutFn =
+		len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : UNDEF_VALUE;
 }
 
 /**
@@ -190,22 +224,28 @@ export function setTimeoutOverrides(overrideFn?: TimeoutOverrideFn | TimeoutOver
  * setGlobalTimeoutOverrides();
  * ```
  */
-export function setGlobalTimeoutOverrides(overrideFn?: TimeoutOverrideFn | TimeoutOverrideFuncs): void {
-    let isArr = isArray(overrideFn);
-    let len = isArr ? overrideFn.length : 0;
-    
-    let globalCfg = _getGlobalConfig();
-    
-    if (!overrideFn) {
-        // If no override provided, reset the global overrides
-        globalCfg.tmOut = undefined;
-    } else {
-        // Set the global timeout overrides
-        globalCfg.tmOut = [
-            (len > 0 ? (overrideFn as TimeoutOverrideFuncs)[0] : (!isArr ? overrideFn as TimeoutOverrideFn : null)),
-            (len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : null)
-        ] as TimeoutOverrideFuncs;
-    }
+export function setGlobalTimeoutOverrides(
+	overrideFn?: TimeoutOverrideFn | TimeoutOverrideFuncs,
+): void {
+	let isArr = isArray(overrideFn);
+	let len = isArr ? overrideFn.length : 0;
+
+	let globalCfg = _getGlobalConfig();
+
+	if (!overrideFn) {
+		// If no override provided, reset the global overrides
+		globalCfg.tmOut = undefined;
+	} else {
+		// Set the global timeout overrides
+		globalCfg.tmOut = [
+			len > 0
+				? (overrideFn as TimeoutOverrideFuncs)[0]
+				: !isArr
+					? (overrideFn as TimeoutOverrideFn)
+					: null,
+			len > 1 ? (overrideFn as TimeoutOverrideFuncs)[1] : null,
+		] as TimeoutOverrideFuncs;
+	}
 }
 
 /**
@@ -220,7 +260,11 @@ export function setGlobalTimeoutOverrides(overrideFn?: TimeoutOverrideFn | Timeo
  * @return The returned timeoutID is a positive integer value which identifies the timer created by the call to setTimeout().
  * This value can be passed to clearTimeout() to cancel the timeout.
  */
-export type TimeoutOverrideFn = <TArgs extends any[]>(callback: (...args: TArgs) => void, ms?: number, ...args: TArgs) => number | any;
+export type TimeoutOverrideFn = <TArgs extends any[]>(
+	callback: (...args: TArgs) => void,
+	ms?: number,
+	...args: TArgs
+) => number | any;
 
 /**
  * The signatire of the function to override clearing a previous timeout created with the {@link TimeoutOverrideFn}, it will be passed
@@ -237,7 +281,10 @@ export type ClearTimeoutOverrideFn = (timeoutId: number | any) => void;
  * @since 0.4.5
  * @group Timer
  */
-export type TimeoutOverrideFuncs = [ TimeoutOverrideFn | null, ClearTimeoutOverrideFn | null ];
+export type TimeoutOverrideFuncs = [
+	TimeoutOverrideFn | null,
+	ClearTimeoutOverrideFn | null,
+];
 
 /**
  * Creates and starts a timer which executes a function or specified piece of code once the timer expires, this is simular
@@ -276,7 +323,11 @@ export type TimeoutOverrideFuncs = [ TimeoutOverrideFn | null, ClearTimeoutOverr
  * theTimeout.refresh();
  * ```
  */
-export function scheduleTimeout<A extends any[]>(callback: (...args: A) => void, timeout: number, ...args: A): ITimerHandler;
+export function scheduleTimeout<A extends any[]>(
+	callback: (...args: A) => void,
+	timeout: number,
+	...args: A
+): ITimerHandler;
 
 /**
  * Creates and starts a timer which executes a function or specified piece of code once the timer expires, this is simular
@@ -315,8 +366,11 @@ export function scheduleTimeout<A extends any[]>(callback: (...args: A) => void,
  * theTimeout.refresh();
  * ```
  */
-export function scheduleTimeout<A extends any[]>(callback: (...args: A) => void, timeout: number): ITimerHandler {
-    return _createTimeoutWith(true, UNDEF_VALUE, ArrSlice[CALL](arguments));
+export function scheduleTimeout<A extends any[]>(
+	callback: (...args: A) => void,
+	timeout: number,
+): ITimerHandler {
+	return _createTimeoutWith(true, UNDEF_VALUE, ArrSlice[CALL](arguments));
 }
 
 /**
@@ -400,7 +454,12 @@ export function scheduleTimeout<A extends any[]>(callback: (...args: A) => void,
  * theTimeout.refresh();
  * ```
  */
-export function scheduleTimeoutWith<A extends any[]>(overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs, callback: (...args: A) => void, timeout: number, ...args: A): ITimerHandler;
+export function scheduleTimeoutWith<A extends any[]>(
+	overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs,
+	callback: (...args: A) => void,
+	timeout: number,
+	...args: A
+): ITimerHandler;
 
 /**
  * Creates and starts a timer which executes a function or specified piece of code once the timer expires. The overrideFn will be
@@ -481,45 +540,15 @@ export function scheduleTimeoutWith<A extends any[]>(overrideFn: TimeoutOverride
  *
  * // You can also "restart" the timer, whether it has previously triggered not not via the `refresh()`
  * theTimeout.refresh();
-  * ```
+ * ```
  */
-export function scheduleTimeoutWith<A extends any[]>(overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs, callback: (...args: A) => void, timeout: number): ITimerHandler {
-    return _createTimeoutWith(true, overrideFn, ArrSlice[CALL](arguments, 1));
+export function scheduleTimeoutWith<A extends any[]>(
+	overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs,
+	callback: (...args: A) => void,
+	timeout: number,
+): ITimerHandler {
+	return _createTimeoutWith(true, overrideFn, ArrSlice[CALL](arguments, 1));
 }
-
-/**
- * Creates a non-running (paused) timer which will execute a function or specified piece of code when enabled and the timer expires,
- * this is simular to using `scheduleTimeout` but the timer is not enabled (running) and you MUST call `refresh` to start the timer.
- *
- * The timer may be cancelled (cleared) by calling the `cancel()` function on the returned {@link ITimerHandler}, or
- * you can "reschedule" and/or "restart" the timer by calling the `refresh()` function on the returned {@link ITimerHandler}
- * instance
- *
- * @since 0.7.0
- * @group Timer
- *
- * @param callback - The function to be executed after the timer expires.
- * @param timeout - The time, in milliseconds that the timer should wait before the specified
- * function or code is executed. If this parameter is omitted, a value of 0 is used, meaning
- * execute "immediately", or more accurately, the next event cycle.
- * @param args - Additional arguments which are passed through to the function specified by `callback`.
- * @returns A {@link ITimerHandler} instance which can be used to cancel the timeout.
- * @example
- * ```ts
- * let timeoutCalled = false;
- * let theTimeout = createTimeout(() => {
- *     // This callback will be called after 100ms as this uses setTimeout()
- *     timeoutCalled = true;
- * }, 100);
- *
- * // As the timer is not started you will need to call "refresh" to start the timer
- * theTimeout.refresh();
- *
- * // or set enabled to true
- * theTimeout.enabled = true;
-* ```
- */
-export function createTimeout<A extends any[]>(callback: (...args: A) => void, timeout: number, ...args: A): ITimerHandler;
 
 /**
  * Creates a non-running (paused) timer which will execute a function or specified piece of code when enabled and the timer expires,
@@ -553,8 +582,49 @@ export function createTimeout<A extends any[]>(callback: (...args: A) => void, t
  * theTimeout.enabled = true;
  * ```
  */
-export function createTimeout<A extends any[]>(callback: (...args: A) => void, timeout: number): ITimerHandler {
-    return _createTimeoutWith(false, UNDEF_VALUE, ArrSlice[CALL](arguments));
+export function createTimeout<A extends any[]>(
+	callback: (...args: A) => void,
+	timeout: number,
+	...args: A
+): ITimerHandler;
+
+/**
+ * Creates a non-running (paused) timer which will execute a function or specified piece of code when enabled and the timer expires,
+ * this is simular to using `scheduleTimeout` but the timer is not enabled (running) and you MUST call `refresh` to start the timer.
+ *
+ * The timer may be cancelled (cleared) by calling the `cancel()` function on the returned {@link ITimerHandler}, or
+ * you can "reschedule" and/or "restart" the timer by calling the `refresh()` function on the returned {@link ITimerHandler}
+ * instance
+ *
+ * @since 0.7.0
+ * @group Timer
+ *
+ * @param callback - The function to be executed after the timer expires.
+ * @param timeout - The time, in milliseconds that the timer should wait before the specified
+ * function or code is executed. If this parameter is omitted, a value of 0 is used, meaning
+ * execute "immediately", or more accurately, the next event cycle.
+ * @param args - Additional arguments which are passed through to the function specified by `callback`.
+ * @returns A {@link ITimerHandler} instance which can be used to cancel the timeout.
+ * @example
+ * ```ts
+ * let timeoutCalled = false;
+ * let theTimeout = createTimeout(() => {
+ *     // This callback will be called after 100ms as this uses setTimeout()
+ *     timeoutCalled = true;
+ * }, 100);
+ *
+ * // As the timer is not started you will need to call "refresh" to start the timer
+ * theTimeout.refresh();
+ *
+ * // or set enabled to true
+ * theTimeout.enabled = true;
+ * ```
+ */
+export function createTimeout<A extends any[]>(
+	callback: (...args: A) => void,
+	timeout: number,
+): ITimerHandler {
+	return _createTimeoutWith(false, UNDEF_VALUE, ArrSlice[CALL](arguments));
 }
 
 /**
@@ -628,7 +698,12 @@ export function createTimeout<A extends any[]>(callback: (...args: A) => void, t
  * theTimeout.enabled = true;
  * ```
  */
-export function createTimeoutWith<A extends any[]>(overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs, callback: (...args: A) => void, timeout: number, ...args: A): ITimerHandler;
+export function createTimeoutWith<A extends any[]>(
+	overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs,
+	callback: (...args: A) => void,
+	timeout: number,
+	...args: A
+): ITimerHandler;
 
 /**
  * Creates a non-running (paused) timer which will execute a function or specified piece of code when enabled once the timer expires.
@@ -701,6 +776,10 @@ export function createTimeoutWith<A extends any[]>(overrideFn: TimeoutOverrideFn
  * theTimeout.enabled = true;
  * ```
  */
-export function createTimeoutWith<A extends any[]>(overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs, callback: (...args: A) => void, timeout: number): ITimerHandler {
-    return _createTimeoutWith(false, overrideFn, ArrSlice[CALL](arguments, 1));
+export function createTimeoutWith<A extends any[]>(
+	overrideFn: TimeoutOverrideFn | TimeoutOverrideFuncs,
+	callback: (...args: A) => void,
+	timeout: number,
+): ITimerHandler {
+	return _createTimeoutWith(false, overrideFn, ArrSlice[CALL](arguments, 1));
 }

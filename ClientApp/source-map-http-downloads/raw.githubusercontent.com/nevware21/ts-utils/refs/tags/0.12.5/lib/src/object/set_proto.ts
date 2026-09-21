@@ -23,11 +23,21 @@ let _isProtoArray: ICachedValue<boolean>;
  * @param proto - The object's new prototype (an object or null)
  * @returns The specified object.
  */
-export const objSetPrototypeOf: (obj: any, proto: object) => any = (/*#__PURE__*/_pureAssign((/*#__PURE__*/_pureRef<typeof Object.setPrototypeOf>(ObjClass, "setPrototypeOf")), _polyObjSetPrototypeOf));
+export const objSetPrototypeOf: (obj: any, proto: object) => any =
+	/*#__PURE__*/ _pureAssign(
+		/*#__PURE__*/ _pureRef<typeof Object.setPrototypeOf>(
+			ObjClass,
+			"setPrototypeOf",
+		),
+		_polyObjSetPrototypeOf,
+	);
 
 export function _polyObjSetPrototypeOf(obj: any, proto: object) {
-    !_isProtoArray && (_isProtoArray = createCachedValue({ [__PROTO__]: [] } instanceof Array));
-    _isProtoArray.v ? obj[__PROTO__] = proto : objForEachKey(proto, (key: any, value: any) => obj[key] = value );
-    
-    return obj;
+	!_isProtoArray &&
+		(_isProtoArray = createCachedValue({ [__PROTO__]: [] } instanceof Array));
+	_isProtoArray.v
+		? (obj[__PROTO__] = proto)
+		: objForEachKey(proto, (key: any, value: any) => (obj[key] = value));
+
+	return obj;
 }

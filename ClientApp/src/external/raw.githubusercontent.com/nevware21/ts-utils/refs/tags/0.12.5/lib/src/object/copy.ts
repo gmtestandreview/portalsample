@@ -7,7 +7,12 @@
  */
 
 import { arrForEach } from "../array/forEach";
-import { isArray, isDate, isNullOrUndefined, isPrimitiveType } from "../helpers/base";
+import {
+	isArray,
+	isDate,
+	isNullOrUndefined,
+	isPrimitiveType,
+} from "../helpers/base";
 import { CALL, FUNCTION, NULL_VALUE, OBJECT } from "../internal/constants";
 import { objDefine } from "./define";
 import { isPlainObject } from "./is_plain_object";
@@ -18,9 +23,9 @@ import { isPlainObject } from "./is_plain_object";
  * Provides the current context while performing a deep copy
  */
 interface _DeepCopyContext {
-    handler: ObjDeepCopyHandler;
-    src: any;
-    path?: Array<string | number | symbol>;
+	handler: ObjDeepCopyHandler;
+	src: any;
+	path?: Array<string | number | symbol>;
 }
 
 /**
@@ -30,8 +35,8 @@ interface _DeepCopyContext {
  * objects.
  */
 interface _RecursiveVisitMap {
-    k: any;
-    v: any;
+	k: any;
+	v: any;
 }
 
 /**
@@ -44,11 +49,11 @@ interface _RecursiveVisitMap {
  */
 /*#__NO_SIDE_EFFECTS__*/
 function _defaultDeepCopyHandler(details: IObjDeepCopyHandlerDetails): boolean {
-    // Make sure we at least copy plain objects
-    details.value && plainObjDeepCopyHandler(details);
+	// Make sure we at least copy plain objects
+	details.value && plainObjDeepCopyHandler(details);
 
-    // Always return true so that the iteration completes
-    return true;
+	// Always return true so that the iteration completes
+	return true;
 }
 
 /**
@@ -57,10 +62,10 @@ function _defaultDeepCopyHandler(details: IObjDeepCopyHandlerDetails): boolean {
  * The ordered default deep copy handlers
  */
 const defaultDeepCopyHandlers: ObjDeepCopyHandler[] = [
-    arrayDeepCopyHandler,
-    plainObjDeepCopyHandler,
-    functionDeepCopyHandler,
-    dateDeepCopyHandler
+	arrayDeepCopyHandler,
+	plainObjDeepCopyHandler,
+	functionDeepCopyHandler,
+	dateDeepCopyHandler,
 ];
 
 /**
@@ -74,26 +79,31 @@ const defaultDeepCopyHandlers: ObjDeepCopyHandler[] = [
  * @returns The new deep copied property, may be incomplete as the object is recursive and is still in the process of being copied
  */
 /*#__NO_SIDE_EFFECTS__*/
-function _getSetVisited(visitMap: _RecursiveVisitMap[], source: any, newPath: Array<string | number | symbol>, cb: (newEntry: _RecursiveVisitMap) => void) {
-    let theEntry: _RecursiveVisitMap;
-    arrForEach(visitMap, (entry) => {
-        if (entry.k === source) {
-            theEntry = entry;
-            return -1;
-        }
-    });
+function _getSetVisited(
+	visitMap: _RecursiveVisitMap[],
+	source: any,
+	newPath: Array<string | number | symbol>,
+	cb: (newEntry: _RecursiveVisitMap) => void,
+) {
+	let theEntry: _RecursiveVisitMap;
+	arrForEach(visitMap, (entry) => {
+		if (entry.k === source) {
+			theEntry = entry;
+			return -1;
+		}
+	});
 
-    if (!theEntry) {
-        // Add the target to the visit map so that deep nested objects refer to the single instance
-        // Even if we have not finished processing it yet.
-        theEntry = { k: source, v: source };
-        visitMap.push(theEntry);
+	if (!theEntry) {
+		// Add the target to the visit map so that deep nested objects refer to the single instance
+		// Even if we have not finished processing it yet.
+		theEntry = { k: source, v: source };
+		visitMap.push(theEntry);
 
-        // Now call the copy callback so that it populates the target
-        cb(theEntry);
-    }
+		// Now call the copy callback so that it populates the target
+		cb(theEntry);
+	}
 
-    return theEntry.v;
+	return theEntry.v;
 }
 
 /**
@@ -106,70 +116,79 @@ function _getSetVisited(visitMap: _RecursiveVisitMap[], source: any, newPath: Ar
  * @param key - [Optional] the current `key` for the value from the source object
  * @returns The new deep copied instance of the value.
  */
-function _deepCopy<T>(visitMap: _RecursiveVisitMap[], value: T, ctx: _DeepCopyContext, key?: string | number | symbol): T {
-    let userHandler = ctx.handler;
-    let newPath = ctx.path ? (key ? ctx.path.concat(key) : ctx.path) : [];
+function _deepCopy<T>(
+	visitMap: _RecursiveVisitMap[],
+	value: T,
+	ctx: _DeepCopyContext,
+	key?: string | number | symbol,
+): T {
+	let userHandler = ctx.handler;
+	let newPath = ctx.path ? (key ? ctx.path.concat(key) : ctx.path) : [];
 
-    let newCtx: _DeepCopyContext = {
-        handler: ctx.handler,
-        src: ctx.src,
-        path: newPath
-    };
+	let newCtx: _DeepCopyContext = {
+		handler: ctx.handler,
+		src: ctx.src,
+		path: newPath,
+	};
 
-    const theType = typeof value;
-    let isPlain = false;
-    let isPrim = value === NULL_VALUE;
-    if (!isPrim) {
-        if (value && theType === OBJECT) {
-            isPlain = isPlainObject(value);
-        } else {
-            isPrim = isPrimitiveType(theType);
-        }
-    }
+	const theType = typeof value;
+	let isPlain = false;
+	let isPrim = value === NULL_VALUE;
+	if (!isPrim) {
+		if (value && theType === OBJECT) {
+			isPlain = isPlainObject(value);
+		} else {
+			isPrim = isPrimitiveType(theType);
+		}
+	}
 
-    let details: IObjDeepCopyHandlerDetails = {
-        type: theType,
-        isPrim: isPrim,
-        isPlain: isPlain,
-        value: value,
-        result: value,
-        path: newPath,
-        origin: ctx.src,
-        copy: <T>(source: T, newKey?: string | number | symbol): T => {
-            return _deepCopy(visitMap, source, newKey ? newCtx : ctx, newKey);
-        },
-        copyTo: <T>(target: T, source: T): T => {
-            return _copyProps(visitMap, target, source, newCtx);
-        }
-    };
+	let details: IObjDeepCopyHandlerDetails = {
+		type: theType,
+		isPrim: isPrim,
+		isPlain: isPlain,
+		value: value,
+		result: value,
+		path: newPath,
+		origin: ctx.src,
+		copy: <T>(source: T, newKey?: string | number | symbol): T => {
+			return _deepCopy(visitMap, source, newKey ? newCtx : ctx, newKey);
+		},
+		copyTo: <T>(target: T, source: T): T => {
+			return _copyProps(visitMap, target, source, newCtx);
+		},
+	};
 
-    if (!details.isPrim) {
-        return _getSetVisited(visitMap, value, newPath, (newEntry) => {
+	if (!details.isPrim) {
+		return _getSetVisited(visitMap, value, newPath, (newEntry) => {
+			// Use an accessor to set the new value onto the new entry
+			objDefine(details, "result", {
+				g: function () {
+					return newEntry.v;
+				},
+				s: function (newValue: any) {
+					newEntry.v = newValue;
+				},
+			});
 
-            // Use an accessor to set the new value onto the new entry
-            objDefine(details, "result", {
-                g: function () {
-                    return newEntry.v;
-                },
-                s: function (newValue: any) {
-                    newEntry.v = newValue;
-                }
-            });
+			let idx = 0;
+			let handler = userHandler;
+			while (
+				!(handler ||
+					(idx < defaultDeepCopyHandlers.length
+						? defaultDeepCopyHandlers[idx++]
+						: _defaultDeepCopyHandler))[CALL](ctx, details)
+			) {
+				handler = NULL_VALUE;
+			}
+		});
+	}
 
-            let idx = 0;
-            let handler = userHandler;
-            while (!(handler || (idx < defaultDeepCopyHandlers.length ? defaultDeepCopyHandlers[idx++] : _defaultDeepCopyHandler))[CALL](ctx, details)) {
-                handler = NULL_VALUE;
-            }
-        });
-    }
+	// Allow the user handler to override the provided value
+	if (userHandler && userHandler[CALL](ctx, details)) {
+		return details.result;
+	}
 
-    // Allow the user handler to override the provided value
-    if (userHandler && userHandler[CALL](ctx, details)) {
-        return details.result;
-    }
-
-    return value;
+	return value;
 }
 
 /**
@@ -182,16 +201,21 @@ function _deepCopy<T>(visitMap: _RecursiveVisitMap[], value: T, ctx: _DeepCopyCo
  * @param ctx - The current deep copy context
  * @returns The populated target object
  */
-function _copyProps<T>(visitMap: _RecursiveVisitMap[], target: T, source: T, ctx: _DeepCopyContext) {
-    if (!isNullOrUndefined(source)) {
-        // Copy all properties (not just own properties)
-        for (const key in source) {
-            // Perform a deep copy of the object
-            target[key] = _deepCopy(visitMap, source[key], ctx, key);
-        }
-    }
+function _copyProps<T>(
+	visitMap: _RecursiveVisitMap[],
+	target: T,
+	source: T,
+	ctx: _DeepCopyContext,
+) {
+	if (!isNullOrUndefined(source)) {
+		// Copy all properties (not just own properties)
+		for (const key in source) {
+			// Perform a deep copy of the object
+			target[key] = _deepCopy(visitMap, source[key], ctx, key);
+		}
+	}
 
-    return target;
+	return target;
 }
 
 /**
@@ -241,14 +265,18 @@ function _copyProps<T>(visitMap: _RecursiveVisitMap[], target: T, source: T, ctx
  * assert.ok(isObject(c.b.d), "The copied date is now an object");
  * ```
  */
-export function objCopyProps<T>(target: T, source: any, handler?: ObjDeepCopyHandler) {
-    let ctx: _DeepCopyContext = {
-        handler: handler,
-        src: source,
-        path: []
-    };
+export function objCopyProps<T>(
+	target: T,
+	source: any,
+	handler?: ObjDeepCopyHandler,
+) {
+	let ctx: _DeepCopyContext = {
+		handler: handler,
+		src: source,
+		path: [],
+	};
 
-    return _copyProps([], target, source, ctx);
+	return _copyProps([], target, source, ctx);
 }
 
 /**
@@ -259,60 +287,60 @@ export function objCopyProps<T>(target: T, source: any, handler?: ObjDeepCopyHan
  * @group Object - Deep Copy
  */
 export interface IObjDeepCopyHandlerDetails {
-    /**
-     * Identifies the type of the value as per `typeof value`, saves each check having to process this value.
-     */
-    type: string;
+	/**
+	 * Identifies the type of the value as per `typeof value`, saves each check having to process this value.
+	 */
+	type: string;
 
-    /**
-     * Identifies whether the type of the value is considered to be a primitive value
-     */
-    isPrim: boolean;
+	/**
+	 * Identifies whether the type of the value is considered to be a primitive value
+	 */
+	isPrim: boolean;
 
-    /**
-     * Identifies whether the type is a plain object or not, this also saves each handler from checking
-     * the `type`, currently the type will also be "object" if this is `true`.
-     * @since 0.9.6
-     */
-    isPlain: boolean;
+	/**
+	 * Identifies whether the type is a plain object or not, this also saves each handler from checking
+	 * the `type`, currently the type will also be "object" if this is `true`.
+	 * @since 0.9.6
+	 */
+	isPlain: boolean;
 
-    /**
-     * The current value to be processed, replace this value with the new deep copied value to use when returning
-     * true from the handler. Ignored when the handler returns false.
-     */
-    readonly value: any;
+	/**
+	 * The current value to be processed, replace this value with the new deep copied value to use when returning
+	 * true from the handler. Ignored when the handler returns false.
+	 */
+	readonly value: any;
 
-    /**
-     * Replace this value with the new deep copied value (defaults to the same as the value property) this value will be
-     * used when returning true from the handler. Ignored when the handler returns false.
-     */
-    result: any;
+	/**
+	 * Replace this value with the new deep copied value (defaults to the same as the value property) this value will be
+	 * used when returning true from the handler. Ignored when the handler returns false.
+	 */
+	result: any;
 
-    /**
-     * A array of keys from the orginal source (origin) object which lead to the current value
-     */
-    path: Array<string | number | symbol>;
+	/**
+	 * A array of keys from the orginal source (origin) object which lead to the current value
+	 */
+	path: Array<string | number | symbol>;
 
-    /**
-     * The original source object passed into the `objDeepCopy()` or `objCopyProps()` functions.
-     */
-    origin?: any;
+	/**
+	 * The original source object passed into the `objDeepCopy()` or `objCopyProps()` functions.
+	 */
+	origin?: any;
 
-    /**
-     * Continue the deep copy with the current context and recursive checks, effectively calls {@link objDeepCopy}
-     * but keeps the current context and recursive references.
-     * @param source - The source object to be copied
-     */
-    copy<T>(source: T, key?: string | number | symbol): T;
+	/**
+	 * Continue the deep copy with the current context and recursive checks, effectively calls {@link objDeepCopy}
+	 * but keeps the current context and recursive references.
+	 * @param source - The source object to be copied
+	 */
+	copy<T>(source: T, key?: string | number | symbol): T;
 
-    /**
-     * Continue the deep copy with the current context and recursive checks by copying all of the properties
-     * from the source to the target instance, effectively calls {@link objCopyProps} but keeps the current context
-     * and recursive references.
-     * @param target - The target object to populated
-     * @param source - The source object to copy the properties from
-     */
-    copyTo<T>(target: T, source: T): T;
+	/**
+	 * Continue the deep copy with the current context and recursive checks by copying all of the properties
+	 * from the source to the target instance, effectively calls {@link objCopyProps} but keeps the current context
+	 * and recursive references.
+	 * @param target - The target object to populated
+	 * @param source - The source object to copy the properties from
+	 */
+	copyTo<T>(target: T, source: T): T;
 }
 
 /**
@@ -330,7 +358,9 @@ export interface IObjDeepCopyHandlerDetails {
  * - {@link plainObjDeepCopyHandler} - Used to copy plain objects
  * - {@link dateDeepCopyHandler} - Used to copy date instances
  */
-export type ObjDeepCopyHandler = (details: IObjDeepCopyHandlerDetails) => boolean;
+export type ObjDeepCopyHandler = (
+	details: IObjDeepCopyHandlerDetails,
+) => boolean;
 
 /**
  * Performs a deep copy of the source object, this is designed to work with base (plain) objects, arrays and primitives
@@ -384,12 +414,12 @@ export type ObjDeepCopyHandler = (details: IObjDeepCopyHandlerDetails) => boolea
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function objDeepCopy<T>(source: T, handler?: ObjDeepCopyHandler): T {
-    let ctx: _DeepCopyContext = {
-        handler: handler,
-        src: source
-    };
+	let ctx: _DeepCopyContext = {
+		handler: handler,
+		src: source,
+	};
 
-    return _deepCopy([], source, ctx);
+	return _deepCopy([], source, ctx);
 }
 
 /**
@@ -399,19 +429,21 @@ export function objDeepCopy<T>(source: T, handler?: ObjDeepCopyHandler): T {
  * @param details - The details object for the current property being copied
  * @returns `true` if the current value is a function otherwise `false`
  */
-export function arrayDeepCopyHandler(details: IObjDeepCopyHandlerDetails): boolean {
-    let value = details.value;
-    if (isArray(value)) {
-        // Assign the "result" value before performing any additional deep Copying, so any recursive object get a reference to this instance
-        let target: any[] = details.result = [];
-        target.length = value.length;
+export function arrayDeepCopyHandler(
+	details: IObjDeepCopyHandlerDetails,
+): boolean {
+	let value = details.value;
+	if (isArray(value)) {
+		// Assign the "result" value before performing any additional deep Copying, so any recursive object get a reference to this instance
+		let target: any[] = (details.result = []);
+		target.length = value.length;
 
-        // Copying all properties as arrays can contain non-indexed based properties
-        details.copyTo(target, value);
-        return true;
-    }
+		// Copying all properties as arrays can contain non-indexed based properties
+		details.copyTo(target, value);
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -422,13 +454,13 @@ export function arrayDeepCopyHandler(details: IObjDeepCopyHandlerDetails): boole
  * @returns `true` if the current value is a function otherwise `false`
  */
 export function dateDeepCopyHandler(details: IObjDeepCopyHandlerDetails) {
-    let value = details.value;
-    if (isDate(value)) {
-        details.result = new Date(value.getTime());
-        return true;
-    }
+	let value = details.value;
+	if (isDate(value)) {
+		details.result = new Date(value.getTime());
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -439,12 +471,14 @@ export function dateDeepCopyHandler(details: IObjDeepCopyHandlerDetails) {
  * @param details - The details object for the current property being copied
  * @returns `true` if the current value is a function otherwise `false`
  */
-export function functionDeepCopyHandler(details: IObjDeepCopyHandlerDetails): boolean {
-    if (details.type === FUNCTION) {
-        return true;
-    }
+export function functionDeepCopyHandler(
+	details: IObjDeepCopyHandlerDetails,
+): boolean {
+	if (details.type === FUNCTION) {
+		return true;
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -454,14 +488,16 @@ export function functionDeepCopyHandler(details: IObjDeepCopyHandlerDetails): bo
  * @param details - The details object for the current property being copied
  * @returns `true` if the current value is a function otherwise `false`
  */
-export function plainObjDeepCopyHandler(details: IObjDeepCopyHandlerDetails): boolean {
-    let value = details.value;
-    if (value && details.isPlain) {
-        // Assign the "result" value before performing any additional deep Copying, so any recursive object get a reference to this instance
-        let target = details.result = {};
-        details.copyTo(target, value);
-        return true;
-    }
+export function plainObjDeepCopyHandler(
+	details: IObjDeepCopyHandlerDetails,
+): boolean {
+	let value = details.value;
+	if (value && details.isPlain) {
+		// Assign the "result" value before performing any additional deep Copying, so any recursive object get a reference to this instance
+		let target = (details.result = {});
+		details.copyTo(target, value);
+		return true;
+	}
 
-    return false;
+	return false;
 }

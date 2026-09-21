@@ -1,7 +1,5 @@
-import GetStarted from './get-started/get-started';
+import GetStarted from "./get-started/get-started";
 
-const Home = () => (
-    <GetStarted />
-);
+const Home = () => <GetStarted />;
 
 export default Home;

@@ -1,14 +1,14 @@
 export function dateToYMD(d) {
 	const y = d.getFullYear();
-	const m = String(d.getMonth() + 1).padStart(2, '0');
-	const day = String(d.getDate()).padStart(2, '0');
+	const m = String(d.getMonth() + 1).padStart(2, "0");
+	const day = String(d.getDate()).padStart(2, "0");
 	return `${y}-${m}-${day}`;
 }
 
 export function parseDateRange(text) {
 	const now = new Date();
 	const todayStr = dateToYMD(now);
-	const lower = (text || '').toLowerCase();
+	const lower = (text || "").toLowerCase();
 	let match;
 
 	if ((match = lower.match(/last\s+(\d+)\s+days?/))) {
@@ -25,16 +25,16 @@ export function parseDateRange(text) {
 		return { start: dateToYMD(start), end: todayStr, label: `Last ${n} weeks` };
 	}
 
-	if (lower.includes('this week')) {
+	if (lower.includes("this week")) {
 		const d = new Date();
 		const day = d.getDay();
 		const diff = (day + 6) % 7;
 		const start = new Date();
 		start.setDate(start.getDate() - diff);
-		return { start: dateToYMD(start), end: todayStr, label: 'This week' };
+		return { start: dateToYMD(start), end: todayStr, label: "This week" };
 	}
 
-	if (lower.includes('last week')) {
+	if (lower.includes("last week")) {
 		const currentWeekStart = new Date();
 		const day = currentWeekStart.getDay();
 		const diff = (day + 6) % 7;
@@ -46,38 +46,38 @@ export function parseDateRange(text) {
 		const start = new Date(end);
 		start.setDate(start.getDate() - 6);
 
-		return { start: dateToYMD(start), end: dateToYMD(end), label: 'Last week' };
+		return { start: dateToYMD(start), end: dateToYMD(end), label: "Last week" };
 	}
 
-	if (lower.includes('this month')) {
+	if (lower.includes("this month")) {
 		const start = new Date(now.getFullYear(), now.getMonth(), 1);
-		return { start: dateToYMD(start), end: todayStr, label: 'This month' };
+		return { start: dateToYMD(start), end: todayStr, label: "This month" };
 	}
 
-	if (lower.includes('last month')) {
+	if (lower.includes("last month")) {
 		const start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
 		const end = new Date(now.getFullYear(), now.getMonth(), 0);
 		return {
 			start: dateToYMD(start),
 			end: dateToYMD(end),
-			label: 'Last month',
+			label: "Last month",
 		};
 	}
 
-	if (lower.includes('next month')) {
+	if (lower.includes("next month")) {
 		const start = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 		const end = new Date(now.getFullYear(), now.getMonth() + 2, 0);
 		return {
 			start: dateToYMD(start),
 			end: dateToYMD(end),
-			label: 'Next month',
+			label: "Next month",
 		};
 	}
 
 	// month-year like "february 2006" or "feb 2006"
 	if (
 		(match = lower.match(
-			/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\s+(\d{4})\b/
+			/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\s+(\d{4})\b/,
 		))
 	) {
 		const monthStr = match[1];
@@ -120,7 +120,7 @@ export function parseDateRange(text) {
 	// explicit YYYY-MM-DD - YYYY-MM-DD or YYYY-MM-DD to YYYY-MM-DD
 	if (
 		(match = text.match(
-			/(\d{4}-\d{2}-\d{2})(?:\s*-\s*|\s+to\s+)(\d{4}-\d{2}-\d{2})/
+			/(\d{4}-\d{2}-\d{2})(?:\s*-\s*|\s+to\s+)(\d{4}-\d{2}-\d{2})/,
 		))
 	) {
 		return {
@@ -133,7 +133,7 @@ export function parseDateRange(text) {
 	// explicit like "Apr 1 - Apr 5" or "Apr 1 to Apr 5"
 	if (
 		(match = text.match(
-			/([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)(?:\s*-\s*|\s+to\s+)([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)/
+			/([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)(?:\s*-\s*|\s+to\s+)([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)/,
 		))
 	) {
 		const s = new Date(match[1]);
@@ -158,7 +158,7 @@ export function parseDateRange(text) {
 	// month-only like "february" or "feb" (assume current year)
 	if (
 		(match = lower.match(
-			/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b/
+			/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b/,
 		))
 	) {
 		const monthStr = match[1];
@@ -199,5 +199,5 @@ export function parseDateRange(text) {
 
 	const start = new Date();
 	start.setDate(start.getDate() - 6);
-	return { start: dateToYMD(start), end: todayStr, label: 'Last 7 days' };
+	return { start: dateToYMD(start), end: todayStr, label: "Last 7 days" };
 }

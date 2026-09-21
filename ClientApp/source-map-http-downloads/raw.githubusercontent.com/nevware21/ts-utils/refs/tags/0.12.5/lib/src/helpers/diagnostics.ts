@@ -6,7 +6,14 @@
  * Licensed under the MIT license.
  */
 
-import { CALL, EMPTY, NULL_VALUE, ObjProto, TO_STRING, UNDEF_VALUE } from "../internal/constants";
+import {
+	CALL,
+	EMPTY,
+	NULL_VALUE,
+	ObjProto,
+	TO_STRING,
+	UNDEF_VALUE,
+} from "../internal/constants";
 import { asString } from "../string/as_string";
 
 const ERROR_TYPE = "[object Error]";
@@ -67,19 +74,34 @@ const ERROR_TYPE = "[object Error]";
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function dumpObj(object: any, format?: boolean | number): string {
-    let propertyValueDump = EMPTY;
-    const objType = ObjProto[TO_STRING][CALL](object);
-    if (objType === ERROR_TYPE) {
-        object = { stack: asString(object.stack), message: asString(object.message), name: asString(object.name) };
-    }
+	let propertyValueDump = EMPTY;
+	const objType = ObjProto[TO_STRING][CALL](object);
+	if (objType === ERROR_TYPE) {
+		object = {
+			stack: asString(object.stack),
+			message: asString(object.message),
+			name: asString(object.name),
+		};
+	}
 
-    try {
-        propertyValueDump = JSON.stringify(object, NULL_VALUE, format ? (((typeof format as unknown) === "number") ? format as number : 4) : UNDEF_VALUE);
-        propertyValueDump = (propertyValueDump ? propertyValueDump.replace(/"(\w+)"\s*:\s{0,1}/g, "$1: ") : NULL_VALUE) || asString(object);
-    } catch(e) {
-        // Unable to convert object (probably circular)
-        propertyValueDump = " - " + dumpObj(e, format);
-    }
+	try {
+		propertyValueDump = JSON.stringify(
+			object,
+			NULL_VALUE,
+			format
+				? (typeof format as unknown) === "number"
+					? (format as number)
+					: 4
+				: UNDEF_VALUE,
+		);
+		propertyValueDump =
+			(propertyValueDump
+				? propertyValueDump.replace(/"(\w+)"\s*:\s{0,1}/g, "$1: ")
+				: NULL_VALUE) || asString(object);
+	} catch (e) {
+		// Unable to convert object (probably circular)
+		propertyValueDump = " - " + dumpObj(e, format);
+	}
 
-    return objType + ": " + propertyValueDump;
+	return objType + ": " + propertyValueDump;
 }

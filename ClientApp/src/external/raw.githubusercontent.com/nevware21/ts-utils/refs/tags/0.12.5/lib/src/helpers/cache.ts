@@ -24,15 +24,15 @@ import { objDefineProp } from "../object/define";
  * ```
  */
 export interface ICachedValue<T> {
-    /**
-     * Returns the current cached value
-     */
-    v: T,
+	/**
+	 * Returns the current cached value
+	 */
+	v: T;
 
-    /**
-     * Returns the current cached value
-     */
-    toJSON(): T;
+	/**
+	 * Returns the current cached value
+	 */
+	toJSON(): T;
 }
 
 /**
@@ -57,9 +57,13 @@ export interface ICachedValue<T> {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function createCachedValue<T>(value: T): ICachedValue<T> {
-    return objDefineProp({
-        toJSON: () => value
-    }, "v", { value }) as ICachedValue<T>;
+	return objDefineProp(
+		{
+			toJSON: () => value,
+		},
+		"v",
+		{ value },
+	) as ICachedValue<T>;
 }
 
 /**
@@ -78,7 +82,8 @@ export function createCachedValue<T>(value: T): ICachedValue<T> {
  * @param cb - The callback function to fetch the value to be lazily evaluated and cached
  * @returns
  */
-export const createDeferredCachedValue: <T>(cb: () => T) => ICachedValue<T> = getDeferred;
+export const createDeferredCachedValue: <T>(cb: () => T) => ICachedValue<T> =
+	getDeferred;
 
 /**
  * Create and return a readonly {@link ICachedValue} instance which will cache and return the value returned
@@ -122,21 +127,24 @@ export const createDeferredCachedValue: <T>(cb: () => T) => ICachedValue<T> = ge
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getDeferred<R, F extends (...args: any[]) => R>(cb: F, argArray?: Parameters<F>): ICachedValue<R> {
-    let theValue: any = {
-        toJSON: () => theValue.v
-    };
+export function getDeferred<R, F extends (...args: any[]) => R>(
+	cb: F,
+	argArray?: Parameters<F>,
+): ICachedValue<R> {
+	let theValue: any = {
+		toJSON: () => theValue.v,
+	};
 
-    return objDefineProp(theValue as ICachedValue<R>, "v", {
-        get: () => {
-            // Use apply to call the callback with the provided arguments
-            let result: R = fnApply(cb, null, argArray);
-            cb = NULL_VALUE;
-            objDefineProp(theValue, "v", { value: result });
-            return result;
-        },
-        configurable: true
-    });
+	return objDefineProp(theValue as ICachedValue<R>, "v", {
+		get: () => {
+			// Use apply to call the callback with the provided arguments
+			let result: R = fnApply(cb, null, argArray);
+			cb = NULL_VALUE;
+			objDefineProp(theValue, "v", { value: result });
+			return result;
+		},
+		configurable: true,
+	});
 }
 
 /**
@@ -182,28 +190,31 @@ export function getDeferred<R, F extends (...args: any[]) => R>(cb: F, argArray?
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getWritableDeferred<R, F extends (...args: any[]) => R = () => R>(cb: F, argArray?: Parameters<F>): ICachedValue<R> {
-    let theValue: any = {
-        toJSON: () => theValue.v
-    };
+export function getWritableDeferred<
+	R,
+	F extends (...args: any[]) => R = () => R,
+>(cb: F, argArray?: Parameters<F>): ICachedValue<R> {
+	let theValue: any = {
+		toJSON: () => theValue.v,
+	};
 
-    let _setValue = (newValue: R) => {
-        // Just replace the value
-        objDefineProp(theValue, "v", {
-            value: newValue,
-            writable: true
-        });
-    };
+	let _setValue = (newValue: R) => {
+		// Just replace the value
+		objDefineProp(theValue, "v", {
+			value: newValue,
+			writable: true,
+		});
+	};
 
-    return objDefineProp(theValue as ICachedValue<R>, "v", {
-        get: () => {
-            let result = fnApply(cb, null, argArray);
-            _setValue(result);
-            cb = NULL_VALUE;
-            
-            return result;
-        },
-        set: _setValue,
-        configurable: true
-    });
+	return objDefineProp(theValue as ICachedValue<R>, "v", {
+		get: () => {
+			let result = fnApply(cb, null, argArray);
+			_setValue(result);
+			cb = NULL_VALUE;
+
+			return result;
+		},
+		set: _setValue,
+		configurable: true,
+	});
 }

@@ -9,7 +9,11 @@
 import { StrProto } from "../internal/constants";
 import { _pureAssign } from "../internal/treeshake_helpers";
 import { _unwrapFunctionWithPoly } from "../internal/unwrapFunction";
-import { polyStrTrim, polyStrTrimEnd, polyStrTrimStart } from "../polyfills/trim";
+import {
+	polyStrTrim,
+	polyStrTrimEnd,
+	polyStrTrimStart,
+} from "../polyfills/trim";
 
 /**
  * The trim() method removes whitespace from both ends of a string and returns a new string,
@@ -25,7 +29,8 @@ import { polyStrTrim, polyStrTrimEnd, polyStrTrimStart } from "../polyfills/trim
  * a copy of str), with no exception being thrown.
  * To return a new string with whitespace trimmed from just one end, use `strTrimStart()` or `strTrimEnd()`.
  */
-export const strTrim: (value: string) => string = (/*#__PURE__*/_unwrapFunctionWithPoly("trim", StrProto, polyStrTrim));
+export const strTrim: (value: string) => string =
+	/*#__PURE__*/ _unwrapFunctionWithPoly("trim", StrProto, polyStrTrim);
 
 /**
  * The `strTrimStart()` method removes whitespace from the beginning of a string.
@@ -37,7 +42,12 @@ export const strTrim: (value: string) => string = (/*#__PURE__*/_unwrapFunctionW
  * If the beginning of str has no whitespace, a new string is still returned (essentially a copy of str),
  * with no exception being thrown.
  */
-export const strTrimStart: (value: string) => string = (/*#__PURE__*/_unwrapFunctionWithPoly("trimStart", StrProto, polyStrTrimStart));
+export const strTrimStart: (value: string) => string =
+	/*#__PURE__*/ _unwrapFunctionWithPoly(
+		"trimStart",
+		StrProto,
+		polyStrTrimStart,
+	);
 
 /**
  * Alias for `strTrimStart()` method removes whitespace from the beginning of a string.
@@ -49,7 +59,7 @@ export const strTrimStart: (value: string) => string = (/*#__PURE__*/_unwrapFunc
  * If the beginning of str has no whitespace, a new string is still returned (essentially a copy of str),
  * with no exception being thrown.
  */
-export const strTrimLeft = (/*#__PURE__*/_pureAssign(strTrimStart));
+export const strTrimLeft = /*#__PURE__*/ _pureAssign(strTrimStart);
 
 /**
  * The `strTrimEnd()` method removes whitespace from the end of a string.
@@ -61,7 +71,8 @@ export const strTrimLeft = (/*#__PURE__*/_pureAssign(strTrimStart));
  * If the end of str has no whitespace, a new string is still returned (essentially a copy of str),
  * with no exception being thrown.
  */
-export const strTrimEnd: (value: string) => string = (/*#__PURE__*/_unwrapFunctionWithPoly("trimEnd", StrProto, polyStrTrimEnd));
+export const strTrimEnd: (value: string) => string =
+	/*#__PURE__*/ _unwrapFunctionWithPoly("trimEnd", StrProto, polyStrTrimEnd);
 
 /**
  * Alias for `strTrimEnd()` method removes whitespace from the end of a string.
@@ -73,4 +84,4 @@ export const strTrimEnd: (value: string) => string = (/*#__PURE__*/_unwrapFuncti
  * If the end of str has no whitespace, a new string is still returned (essentially a copy of str),
  * with no exception being thrown.
  */
-export const strTrimRight = (/*#__PURE__*/_pureAssign(strTrimEnd));
+export const strTrimRight = /*#__PURE__*/ _pureAssign(strTrimEnd);

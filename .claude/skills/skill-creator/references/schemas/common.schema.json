@@ -1,115 +1,95 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "common.schema.json",
-  "title": "Skill Creator Common Definitions",
-  "$defs": {
-    "evalId": {
-      "oneOf": [
-        {
-          "type": "integer",
-          "minimum": 1
-        },
-        {
-          "type": "string",
-          "minLength": 1
-        }
-      ]
-    },
-    "configuration": {
-      "type": "string",
-      "enum": [
-        "with_skill",
-        "without_skill",
-        "new_skill",
-        "old_skill"
-      ]
-    },
-    "expectationResult": {
-      "type": "object",
-      "required": [
-        "text",
-        "passed",
-        "evidence"
-      ],
-      "properties": {
-        "text": {
-          "type": "string",
-          "minLength": 1
-        },
-        "passed": {
-          "type": "boolean"
-        },
-        "evidence": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": false
-    },
-    "stats": {
-      "type": "object",
-      "required": [
-        "mean",
-        "stddev",
-        "min",
-        "max"
-      ],
-      "properties": {
-        "count": {
-          "type": "integer",
-          "minimum": 1
-        },
-        "mean": {
-          "type": "number"
-        },
-        "stddev": {
-          "type": "number",
-          "minimum": 0
-        },
-        "min": {
-          "type": "number"
-        },
-        "max": {
-          "type": "number"
-        }
-      },
-      "additionalProperties": false
-    },
-    "comparisonPair": {
-      "oneOf": [
-        {
-          "type": "object",
-          "required": [
-            "candidate",
-            "baseline"
-          ],
-          "properties": {
-            "candidate": {
-              "const": "with_skill"
-            },
-            "baseline": {
-              "const": "without_skill"
-            }
-          },
-          "additionalProperties": false
-        },
-        {
-          "type": "object",
-          "required": [
-            "candidate",
-            "baseline"
-          ],
-          "properties": {
-            "candidate": {
-              "const": "new_skill"
-            },
-            "baseline": {
-              "const": "old_skill"
-            }
-          },
-          "additionalProperties": false
-        }
-      ]
-    }
-  }
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "common.schema.json",
+	"title": "Skill Creator Common Definitions",
+	"$defs": {
+		"evalId": {
+			"oneOf": [
+				{
+					"type": "integer",
+					"minimum": 1
+				},
+				{
+					"type": "string",
+					"minLength": 1
+				}
+			]
+		},
+		"configuration": {
+			"type": "string",
+			"enum": ["with_skill", "without_skill", "new_skill", "old_skill"]
+		},
+		"expectationResult": {
+			"type": "object",
+			"required": ["text", "passed", "evidence"],
+			"properties": {
+				"text": {
+					"type": "string",
+					"minLength": 1
+				},
+				"passed": {
+					"type": "boolean"
+				},
+				"evidence": {
+					"type": "string",
+					"minLength": 1
+				}
+			},
+			"additionalProperties": false
+		},
+		"stats": {
+			"type": "object",
+			"required": ["mean", "stddev", "min", "max"],
+			"properties": {
+				"count": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"mean": {
+					"type": "number"
+				},
+				"stddev": {
+					"type": "number",
+					"minimum": 0
+				},
+				"min": {
+					"type": "number"
+				},
+				"max": {
+					"type": "number"
+				}
+			},
+			"additionalProperties": false
+		},
+		"comparisonPair": {
+			"oneOf": [
+				{
+					"type": "object",
+					"required": ["candidate", "baseline"],
+					"properties": {
+						"candidate": {
+							"const": "with_skill"
+						},
+						"baseline": {
+							"const": "without_skill"
+						}
+					},
+					"additionalProperties": false
+				},
+				{
+					"type": "object",
+					"required": ["candidate", "baseline"],
+					"properties": {
+						"candidate": {
+							"const": "new_skill"
+						},
+						"baseline": {
+							"const": "old_skill"
+						}
+					},
+					"additionalProperties": false
+				}
+			]
+		}
+	}
 }

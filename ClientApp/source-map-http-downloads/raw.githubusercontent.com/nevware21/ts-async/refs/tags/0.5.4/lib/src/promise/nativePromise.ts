@@ -7,11 +7,27 @@
  */
 
 import { createAsyncPromise } from "./asyncPromise";
-import { _createAllPromise, _createAllSettledPromise, _createAnyPromise, _createRacePromise, _createRejectedPromise, _createResolvedPromise } from "./base";
+import {
+	_createAllPromise,
+	_createAllSettledPromise,
+	_createAnyPromise,
+	_createRacePromise,
+	_createRejectedPromise,
+	_createResolvedPromise,
+} from "./base";
 import { IPromise } from "../interfaces/IPromise";
 import { ePromiseState, STRING_STATES } from "../internal/state";
 import { PromiseExecutor } from "../interfaces/types";
-import { dumpObj, isFunction, objDefineProp, throwTypeError, getInst, ICachedValue, createCachedValue, safe } from "@nevware21/ts-utils";
+import {
+	dumpObj,
+	isFunction,
+	objDefineProp,
+	throwTypeError,
+	getInst,
+	ICachedValue,
+	createCachedValue,
+	safe,
+} from "@nevware21/ts-utils";
 import { STR_PROMISE } from "../internal/constants";
 import { IPromiseResult } from "../interfaces/IPromiseResult";
 
@@ -34,28 +50,48 @@ let _promiseCls: ICachedValue<PromiseConstructor>;
  * @ignore
  * Cached value for the `Promise.all` method
  */
-let _allCreator: ICachedValue<<T>(input: Iterable<T | PromiseLike<T>>, ...additionalArgs: any) => IPromise<Awaited<T>[]>>;
+let _allCreator: ICachedValue<
+	<T>(
+		input: Iterable<T | PromiseLike<T>>,
+		...additionalArgs: any
+	) => IPromise<Awaited<T>[]>
+>;
 
 /**
  * @internal
  * @ignore
  * Cached value for the `Promise.allSettled` method
  */
-let _allNativeSettledCreator: ICachedValue<<T extends readonly unknown[] | []>(input: T, timeout?: number) => IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>; }>>;
+let _allNativeSettledCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		input: T,
+		timeout?: number,
+	) => IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }>
+>;
 
 /**
  * @internal
  * @ignore
  * Cached value for the `Promise.race` method
  */
-let _raceNativeCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T, timeout?: number) => IPromise<Awaited<T[number]>>>;
+let _raceNativeCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		values: T,
+		timeout?: number,
+	) => IPromise<Awaited<T[number]>>
+>;
 
 /**
  * @internal
  * @ignore
  * Cached value for the `Promise.any` method
  */
-let _anyNativeCreator: ICachedValue<<T extends readonly unknown[] | []>(values: T, timeout?: number) => IPromise<Awaited<T[number]>>>;
+let _anyNativeCreator: ICachedValue<
+	<T extends readonly unknown[] | []>(
+		values: T,
+		timeout?: number,
+	) => IPromise<Awaited<T[number]>>
+>;
 
 /**
  * @internal
@@ -64,28 +100,37 @@ let _anyNativeCreator: ICachedValue<<T extends readonly unknown[] | []>(values: 
  * @param useNative - Flag to determine if the native Promise class should be used if available
  */
 export function _clearPromiseCache(useNative: boolean) {
-//#ifdef _DEBUG
-    _useNative = !!useNative;
-    _promiseCls = null as any;
-    _allCreator = null as any;
-    _allNativeSettledCreator = null as any;
-    _raceNativeCreator = null as any;
-    _anyNativeCreator = null as any;
-//#endif
+	//#ifdef _DEBUG
+	_useNative = !!useNative;
+	_promiseCls = null as any;
+	_allCreator = null as any;
+	_allNativeSettledCreator = null as any;
+	_raceNativeCreator = null as any;
+	_anyNativeCreator = null as any;
+	//#endif
 }
 
 /*#__NO_SIDE_EFFECTS__*/
-export function _createNativePromiseHelper<F>(name: string, func: () => ICachedValue<F>): ICachedValue<F> {
-    !_promiseCls && (_promiseCls = createCachedValue<PromiseConstructor>((_useNative && safe(getInst, [STR_PROMISE]).v) || null as any));
-    if (_promiseCls.v && _promiseCls.v[name]) {
-        return createCachedValue(function<T extends readonly unknown[] | []>(input: T, timeout?: number) {
-            return createNativePromise((resolve, reject) => {
-                _promiseCls.v[name](input).then(resolve, reject);
-            });
-        } as F);
-    }
-    
-    return func();
+export function _createNativePromiseHelper<F>(
+	name: string,
+	func: () => ICachedValue<F>,
+): ICachedValue<F> {
+	!_promiseCls &&
+		(_promiseCls = createCachedValue<PromiseConstructor>(
+			(_useNative && safe(getInst, [STR_PROMISE]).v) || (null as any),
+		));
+	if (_promiseCls.v && _promiseCls.v[name]) {
+		return createCachedValue(function <T extends readonly unknown[] | []>(
+			input: T,
+			timeout?: number,
+		) {
+			return createNativePromise((resolve, reject) => {
+				_promiseCls.v[name](input).then(resolve, reject);
+			});
+		} as F);
+	}
+
+	return func();
 }
 
 /**
@@ -101,43 +146,50 @@ export function _createNativePromiseHelper<F>(name: string, func: () => ICachedV
  * cause the promise to be rejected. The return value of the executor is always ignored
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  */
-export function createNativePromise<T>(executor: PromiseExecutor<T>, timeout?: number): IPromise<T> {
-    !_promiseCls && (_promiseCls = createCachedValue<PromiseConstructor>((_useNative && safe(getInst, [STR_PROMISE]).v) || null as any));
-    const PrmCls = _promiseCls.v;
-    if (!PrmCls) {
-        return createAsyncPromise(executor);
-    }
+export function createNativePromise<T>(
+	executor: PromiseExecutor<T>,
+	timeout?: number,
+): IPromise<T> {
+	!_promiseCls &&
+		(_promiseCls = createCachedValue<PromiseConstructor>(
+			(_useNative && safe(getInst, [STR_PROMISE]).v) || (null as any),
+		));
+	const PrmCls = _promiseCls.v;
+	if (!PrmCls) {
+		return createAsyncPromise(executor);
+	}
 
-    if (!isFunction(executor)) {
-        throwTypeError(STR_PROMISE + ": executor is not a function - " + dumpObj(executor));
-    }
+	if (!isFunction(executor)) {
+		throwTypeError(
+			STR_PROMISE + ": executor is not a function - " + dumpObj(executor),
+		);
+	}
 
-    let _state = ePromiseState.Pending;
+	let _state = ePromiseState.Pending;
 
-    function _strState() {
-        return STRING_STATES[_state];
-    }
+	function _strState() {
+		return STRING_STATES[_state];
+	}
 
-    let thePromise = new PrmCls<T>((resolve, reject) => {
-        function _resolve(value: T) {
-            _state = ePromiseState.Resolved;
-            resolve(value);
-        }
+	let thePromise = new PrmCls<T>((resolve, reject) => {
+		function _resolve(value: T) {
+			_state = ePromiseState.Resolved;
+			resolve(value);
+		}
 
-        function _reject(reason: any) {
-            _state = ePromiseState.Rejected;
-            reject(reason);
-        }
+		function _reject(reason: any) {
+			_state = ePromiseState.Rejected;
+			reject(reason);
+		}
 
-        executor(_resolve, _reject);
+		executor(_resolve, _reject);
+	}) as IPromise<T>;
 
-    }) as IPromise<T>;
+	objDefineProp(thePromise, "state", {
+		get: _strState,
+	});
 
-    objDefineProp(thePromise, "state", {
-        get: _strState
-    });
-
-    return thePromise;
+	return thePromise;
 }
 
 /**
@@ -161,9 +213,15 @@ export function createNativePromise<T>(executor: PromiseExecutor<T>, timeout?: n
  * promises reject.
  * </ul>
  */
-export function createNativeAllPromise<T>(input: Iterable<PromiseLike<T>>, timeout?: number): IPromise<T[]> {
-    !_allCreator && (_allCreator = _createNativePromiseHelper("all", () => createCachedValue(_createAllPromise(createNativePromise))));
-    return _allCreator.v(input, timeout);
+export function createNativeAllPromise<T>(
+	input: Iterable<PromiseLike<T>>,
+	timeout?: number,
+): IPromise<T[]> {
+	!_allCreator &&
+		(_allCreator = _createNativePromiseHelper("all", () =>
+			createCachedValue(_createAllPromise(createNativePromise)),
+		));
+	return _allCreator.v(input, timeout);
 }
 
 /**
@@ -178,7 +236,10 @@ export function createNativeAllPromise<T>(input: Iterable<PromiseLike<T>>, timeo
  * @param value - The value to be used by this `Promise`. Can also be a `Promise` or a thenable to resolve.
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  */
-export const createNativeResolvedPromise: <T>(value: T, timeout?: number) => Promise<T> =  /*#__PURE__*/_createResolvedPromise(createNativePromise);
+export const createNativeResolvedPromise: <T>(
+	value: T,
+	timeout?: number,
+) => Promise<T> = /*#__PURE__*/ _createResolvedPromise(createNativePromise);
 
 /**
  * Returns a single asynchronous Promise instance that is already rejected with the given reason.
@@ -191,7 +252,10 @@ export const createNativeResolvedPromise: <T>(value: T, timeout?: number) => Pro
  * @param reason - The rejection reason
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  */
-export const createNativeRejectedPromise: <T = unknown>(reason: any, timeout?: number) => Promise<T> = /*#__PURE__*/_createRejectedPromise(createNativePromise);
+export const createNativeRejectedPromise: <T = unknown>(
+	reason: any,
+	timeout?: number,
+) => Promise<T> = /*#__PURE__*/ _createRejectedPromise(createNativePromise);
 
 /**
  * Returns a single asynchronous Promise instance that resolves to an array of the results from the input promises.
@@ -229,7 +293,10 @@ export const createNativeRejectedPromise: <T = unknown>(reason: any, timeout?: n
  * // ]
  * ```
  */
-export function createNativeAllSettledPromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<IPromiseResult<Awaited<T>>[]>;
+export function createNativeAllSettledPromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<IPromiseResult<Awaited<T>>[]>;
 
 /**
  * Returns a single asynchronous Promise instance that resolves to an array of the results from the input promises.
@@ -267,9 +334,17 @@ export function createNativeAllSettledPromise<T>(values: Iterable<T | PromiseLik
  * // ]
  * ```
  */
-export function createNativeAllSettledPromise<T extends readonly unknown[] | []>(input: T, timeout?: number): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>>; }> {
-    !_allNativeSettledCreator && (_allNativeSettledCreator = _createNativePromiseHelper("allSettled", () => _createAllSettledPromise(createNativePromise)));
-    return _allNativeSettledCreator.v(input, timeout);
+export function createNativeAllSettledPromise<
+	T extends readonly unknown[] | [],
+>(
+	input: T,
+	timeout?: number,
+): IPromise<{ -readonly [P in keyof T]: IPromiseResult<Awaited<T[P]>> }> {
+	!_allNativeSettledCreator &&
+		(_allNativeSettledCreator = _createNativePromiseHelper("allSettled", () =>
+			_createAllSettledPromise(createNativePromise),
+		));
+	return _allNativeSettledCreator.v(input, timeout);
 }
 
 /**
@@ -291,7 +366,10 @@ export function createNativeAllSettledPromise<T extends readonly unknown[] | []>
  * if the iterable passed is empty. If the iterable passed is non-empty but contains no pending promises, the returned promise will settle
  * asynchronously.
  */
-export function createNativeRacePromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<Awaited<T>>;
+export function createNativeRacePromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<Awaited<T>>;
 
 /**
  * The `createNativeRacePromise` method takes an array of promises as input and returns a single Promise. This returned promise
@@ -312,9 +390,15 @@ export function createNativeRacePromise<T>(values: Iterable<T | PromiseLike<T>>,
  * if the iterable passed is empty. If the iterable passed is non-empty but contains no pending promises, the returned promise will settle
  * asynchronously.
  */
-export function  createNativeRacePromise<T extends readonly unknown[] | []>(values: T, timeout?: number): IPromise<Awaited<T[number]>> {
-    !_raceNativeCreator && (_raceNativeCreator = _createNativePromiseHelper("race", () => _createRacePromise(createNativePromise)));
-    return _raceNativeCreator.v(values, timeout);
+export function createNativeRacePromise<T extends readonly unknown[] | []>(
+	values: T,
+	timeout?: number,
+): IPromise<Awaited<T[number]>> {
+	!_raceNativeCreator &&
+		(_raceNativeCreator = _createNativePromiseHelper("race", () =>
+			_createRacePromise(createNativePromise),
+		));
+	return _raceNativeCreator.v(values, timeout);
 }
 
 /**
@@ -339,8 +423,11 @@ export function  createNativeRacePromise<T extends readonly unknown[] | []>(valu
  * contains no pending promises, the returned promise is still asynchronously (instead of synchronously)
  * rejected.
  */
-export function createNativeAnyPromise<T>(values: Iterable<T | PromiseLike<T>>, timeout?: number): IPromise<Awaited<T>>;
-        
+export function createNativeAnyPromise<T>(
+	values: Iterable<T | PromiseLike<T>>,
+	timeout?: number,
+): IPromise<Awaited<T>>;
+
 /**
  * The `createNativeAnyPromise` method takes an array of promises as input and returns a single Promise.
  * This returned promise fulfills when any of the input's promises fulfills, with this first fulfillment value.
@@ -363,7 +450,13 @@ export function createNativeAnyPromise<T>(values: Iterable<T | PromiseLike<T>>, 
  * contains no pending promises, the returned promise is still asynchronously (instead of synchronously)
  * rejected.
  */
-export function createNativeAnyPromise<T extends readonly unknown[] | []>(values: T, timeout?: number): IPromise<Awaited<T[number]>> {
-    !_anyNativeCreator && (_anyNativeCreator = _createNativePromiseHelper("any", () => _createAnyPromise(createNativePromise)));
-    return _anyNativeCreator.v(values, timeout);
+export function createNativeAnyPromise<T extends readonly unknown[] | []>(
+	values: T,
+	timeout?: number,
+): IPromise<Awaited<T[number]>> {
+	!_anyNativeCreator &&
+		(_anyNativeCreator = _createNativePromiseHelper("any", () =>
+			_createAnyPromise(createNativePromise),
+		));
+	return _anyNativeCreator.v(values, timeout);
 }

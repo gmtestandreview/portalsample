@@ -1,12 +1,15 @@
- 
-import type { ReactElement, ReactNode } from 'react';
-import type { FormikHelpers, FormikValues } from 'formik';
-import type { InitialValue } from '../../../types';
-import type { DiscardProps, ModalProps } from '../FormikForm/types';
-import type { FormStepStatusDto, ProblemDetails, ValidationProblemDetails } from '../../../api/web-api-client';
+import type { ReactElement, ReactNode } from "react";
+import type { FormikHelpers, FormikValues } from "formik";
+import type { InitialValue } from "../../../types";
+import type { DiscardProps, ModalProps } from "../FormikForm/types";
+import type {
+	FormStepStatusDto,
+	ProblemDetails,
+	ValidationProblemDetails,
+} from "../../../api/web-api-client";
 
 export interface WizardFormStepValues<T extends FormikValues> {
-    stepValues: InitialValue<T>;
+	stepValues: InitialValue<T>;
 }
 
 /**
@@ -26,27 +29,28 @@ export interface WizardFormStepValues<T extends FormikValues> {
  *                             useResolvedPath in WizardForm). Prepended to each
  *                             step's location when building navigation paths.
  */
-export type WizardRoutedStepProps<T extends FormikValues> = WizardStepProps<T> & WizardFormProps & {
-    allSteps: React.ReactElement<any>[];
-    currentStepIndex: number;
-    url: string;
-};
+export type WizardRoutedStepProps<T extends FormikValues> = WizardStepProps<T> &
+	WizardFormProps & {
+		allSteps: React.ReactElement<any>[];
+		currentStepIndex: number;
+		url: string;
+	};
 
 export enum ErrorType {
-    Load,
-    Update,
+	Load,
+	Update,
 }
 
 export type WizardStepError =
-    | { kind: 'none' }
-    | { kind: 'loading' }
-    | { kind: 'notFound' }
-    | { kind: 'noThirdPartyAccess' }
-    | { kind: 'gone' }
-    | { kind: 'concurrency'; details: ProblemDetails | ValidationProblemDetails }
-    | { kind: 'wafViolation'; details: ProblemDetails | ValidationProblemDetails }
-    | { kind: 'serverError'; details: ProblemDetails | ValidationProblemDetails }
-    | { kind: 'redirect'; location: string };
+	| { kind: "none" }
+	| { kind: "loading" }
+	| { kind: "notFound" }
+	| { kind: "noThirdPartyAccess" }
+	| { kind: "gone" }
+	| { kind: "concurrency"; details: ProblemDetails | ValidationProblemDetails }
+	| { kind: "wafViolation"; details: ProblemDetails | ValidationProblemDetails }
+	| { kind: "serverError"; details: ProblemDetails | ValidationProblemDetails }
+	| { kind: "redirect"; location: string };
 
 /**
  * Props owned by an individual wizard step (WizardStep).
@@ -90,40 +94,47 @@ export type WizardStepError =
  * @property showBanner     - Whether the page banner is rendered.
  */
 export interface WizardStepProps<T extends FormikValues> {
-    title: string;
-    children?: ReactNode;
-    location: string;
-    initialValues: InitialValue<T>;
-    isSummaryPage?: boolean;
-    getRedirectionLocationOnError?: (errorCode: number, errorType: ErrorType) => string | undefined;
-    discard?: DiscardProps;
-    onSaveAndExit?: (
-        values: T,
-        isDirty: boolean,
-        formikHelpers: FormikHelpers<T>,
-        abortSignal?: AbortSignal) => void | Promise<any>;
-    onSaveAndNext?: (
-        values: T,
-        isDirty: boolean,
-        formikHelpers: FormikHelpers<T>,
-        abortSignal?: AbortSignal) => void | Promise<any>;
-    stepStatuses: FormStepStatusDto[];
-    loadStepValues: (abortSignal?: AbortSignal) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
-    validateHard?: any;
-    validateSoft?: any;
-    hidingFields?: any;
-    bannerTitle?: string;
-    bannerRefTitle?: string;
-    bannerSubTitle?: string;
-    canSaveDraft?: boolean;
-    showSaveAndNextButton?: boolean;
-    showGoToDashboardButton?: boolean;
-    showBanner?: boolean;
-    [key: string]: any;
+	title: string;
+	children?: ReactNode;
+	location: string;
+	initialValues: InitialValue<T>;
+	isSummaryPage?: boolean;
+	getRedirectionLocationOnError?: (
+		errorCode: number,
+		errorType: ErrorType,
+	) => string | undefined;
+	discard?: DiscardProps;
+	onSaveAndExit?: (
+		values: T,
+		isDirty: boolean,
+		formikHelpers: FormikHelpers<T>,
+		abortSignal?: AbortSignal,
+	) => void | Promise<any>;
+	onSaveAndNext?: (
+		values: T,
+		isDirty: boolean,
+		formikHelpers: FormikHelpers<T>,
+		abortSignal?: AbortSignal,
+	) => void | Promise<any>;
+	stepStatuses: FormStepStatusDto[];
+	loadStepValues: (
+		abortSignal?: AbortSignal,
+	) => WizardFormStepValues<T> | Promise<WizardFormStepValues<T>>;
+	validateHard?: any;
+	validateSoft?: any;
+	hidingFields?: any;
+	bannerTitle?: string;
+	bannerRefTitle?: string;
+	bannerSubTitle?: string;
+	canSaveDraft?: boolean;
+	showSaveAndNextButton?: boolean;
+	showGoToDashboardButton?: boolean;
+	showBanner?: boolean;
+	[key: string]: any;
 }
 
 export interface SubmitFormResult {
-    baseUrl?: string;
+	baseUrl?: string;
 }
 
 /**
@@ -149,34 +160,37 @@ export interface SubmitFormResult {
  *                                    all steps from the form level.
  */
 export interface WizardFormProps {
-    children?: ReactElement<any> | Array<ReactElement<any>>;
-    previousButtonTitle?: string;
-    nextButtonTitle?: string;
-    lastStepNextButtonTitle?: string;
-    locationAfterExit?: string;
-    locationOnCompletion: string;
-    canSaveDraft?: boolean;
-    showSaveAndNextButton?: boolean;
-    showGoToDashboardButton?: boolean;
-    showBanner?: boolean;
-    confirmationOnSubmission?: ModalProps;
-    getRedirectionLocationOnError?: (errorCode: number, errorType: ErrorType) => string | undefined;
-    [key: string]: any;
+	children?: ReactElement<any> | Array<ReactElement<any>>;
+	previousButtonTitle?: string;
+	nextButtonTitle?: string;
+	lastStepNextButtonTitle?: string;
+	locationAfterExit?: string;
+	locationOnCompletion: string;
+	canSaveDraft?: boolean;
+	showSaveAndNextButton?: boolean;
+	showGoToDashboardButton?: boolean;
+	showBanner?: boolean;
+	confirmationOnSubmission?: ModalProps;
+	getRedirectionLocationOnError?: (
+		errorCode: number,
+		errorType: ErrorType,
+	) => string | undefined;
+	[key: string]: any;
 }
 
 export interface PreviousStepButtonProps {
-    steps: React.ReactElement<any>[];
-    currentStepIndex: number;
-    title?: string;
-    url: string;
-    className?: string;
+	steps: React.ReactElement<any>[];
+	currentStepIndex: number;
+	title?: string;
+	url: string;
+	className?: string;
 }
 
 export interface NextStepButtonProps {
-    steps: any[];
-    currentStepIndex: number;
-    title?: string;
-    finalStepTitle?: string;
-    finalStepConfirmation?: ModalProps;
-    className?: string;
+	steps: any[];
+	currentStepIndex: number;
+	title?: string;
+	finalStepTitle?: string;
+	finalStepConfirmation?: ModalProps;
+	className?: string;
 }

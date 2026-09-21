@@ -1,33 +1,28 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "eval-metadata.schema.json",
-  "title": "Skill Creator Eval Metadata",
-  "type": "object",
-  "required": [
-    "eval_id",
-    "eval_name",
-    "prompt",
-    "expectations"
-  ],
-  "properties": {
-    "eval_id": {
-      "$ref": "common.schema.json#/$defs/evalId"
-    },
-    "eval_name": {
-      "type": "string",
-      "minLength": 1
-    },
-    "prompt": {
-      "type": "string",
-      "minLength": 1
-    },
-    "expectations": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "minLength": 1
-      }
-    }
-  },
-  "additionalProperties": false
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "eval-metadata.schema.json",
+	"title": "Skill Creator Eval Metadata",
+	"type": "object",
+	"required": ["eval_id", "eval_name", "prompt", "expectations"],
+	"properties": {
+		"eval_id": {
+			"$ref": "common.schema.json#/$defs/evalId"
+		},
+		"eval_name": {
+			"type": "string",
+			"minLength": 1
+		},
+		"prompt": {
+			"type": "string",
+			"minLength": 1
+		},
+		"expectations": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"minLength": 1
+			}
+		}
+	},
+	"additionalProperties": false
 }

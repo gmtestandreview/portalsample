@@ -1,28 +1,28 @@
 {
-  "json_parse": {
-    "analysis.schema.json": "PASS",
-    "benchmark.schema.json": "PASS",
-    "common.schema.json": "PASS",
-    "comparison.schema.json": "PASS",
-    "eval-metadata.schema.json": "PASS",
-    "evals.schema.json": "PASS",
-    "feedback.schema.json": "PASS",
-    "grading.schema.json": "PASS",
-    "history.schema.json": "PASS",
-    "metrics.schema.json": "PASS",
-    "timing.schema.json": "PASS"
-  },
-  "jsonschema_check": {
-    "analysis.schema.json": "PASS",
-    "benchmark.schema.json": "PASS",
-    "common.schema.json": "PASS",
-    "comparison.schema.json": "PASS",
-    "eval-metadata.schema.json": "PASS",
-    "evals.schema.json": "PASS",
-    "feedback.schema.json": "PASS",
-    "grading.schema.json": "PASS",
-    "history.schema.json": "PASS",
-    "metrics.schema.json": "PASS",
-    "timing.schema.json": "PASS"
-  }
+	"json_parse": {
+		"analysis.schema.json": "PASS",
+		"benchmark.schema.json": "PASS",
+		"common.schema.json": "PASS",
+		"comparison.schema.json": "PASS",
+		"eval-metadata.schema.json": "PASS",
+		"evals.schema.json": "PASS",
+		"feedback.schema.json": "PASS",
+		"grading.schema.json": "PASS",
+		"history.schema.json": "PASS",
+		"metrics.schema.json": "PASS",
+		"timing.schema.json": "PASS"
+	},
+	"jsonschema_check": {
+		"analysis.schema.json": "PASS",
+		"benchmark.schema.json": "PASS",
+		"common.schema.json": "PASS",
+		"comparison.schema.json": "PASS",
+		"eval-metadata.schema.json": "PASS",
+		"evals.schema.json": "PASS",
+		"feedback.schema.json": "PASS",
+		"grading.schema.json": "PASS",
+		"history.schema.json": "PASS",
+		"metrics.schema.json": "PASS",
+		"timing.schema.json": "PASS"
+	}
 }

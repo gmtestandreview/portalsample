@@ -1,16 +1,16 @@
-import type { Vitest } from 'vitest/node';
-import type { Plugin } from 'vite';
+import type { Vitest } from "vitest/node";
+import type { Plugin } from "vite";
 
-type StorybookVitest = Pick<Vitest, 'init' | 'standalone'> & {
-    config: {
-        coverage: {
-            exclude: string[];
-        };
-    };
+type StorybookVitest = Pick<Vitest, "init" | "standalone"> & {
+	config: {
+		coverage: {
+			exclude: string[];
+		};
+	};
 };
 
 type StorybookVitestPlugin = Plugin & {
-    configureVitest: (context: { vitest: StorybookVitest }) => void;
+	configureVitest: (context: { vitest: StorybookVitest }) => void;
 };
 
 /**
@@ -22,9 +22,9 @@ type StorybookVitestPlugin = Plugin & {
  * Remove the init bridge after Storybook switches to `standalone()` upstream.
  */
 export const storybookVitestRuntimePlugin: StorybookVitestPlugin = {
-    name: 'nmi:storybook-vitest-runtime-policy',
-    configureVitest({ vitest }) {
-        vitest.config.coverage.exclude.push('ClientApp/src/**/*.json');
-        vitest.init = vitest.standalone.bind(vitest);
-    },
+	name: "nmi:storybook-vitest-runtime-policy",
+	configureVitest({ vitest }) {
+		vitest.config.coverage.exclude.push("ClientApp/src/**/*.json");
+		vitest.init = vitest.standalone.bind(vitest);
+	},
 };

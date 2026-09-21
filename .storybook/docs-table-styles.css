@@ -11,25 +11,29 @@
  */
 
 :where(#storybook-docs, .sbdocs) table:not([class]) {
-  width: 100%;
-  margin-bottom: 1rem;
-  border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 1rem;
+	border-collapse: collapse;
 }
 
 :where(#storybook-docs, .sbdocs) table:not([class]) th,
 :where(#storybook-docs, .sbdocs) table:not([class]) td {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #dee2e6;
-  vertical-align: top;
-  text-align: left;
+	padding: 0.5rem 0.75rem;
+	border: 1px solid #dee2e6;
+	vertical-align: top;
+	text-align: left;
 }
 
 :where(#storybook-docs, .sbdocs) table:not([class]) thead th {
-  background-color: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
-  font-weight: 600;
+	background-color: #f8f9fa;
+	border-bottom: 2px solid #dee2e6;
+	font-weight: 600;
 }
 
-:where(#storybook-docs, .sbdocs) table:not([class]) tbody tr:nth-child(even) td {
-  background-color: #f8f9fa;
+:where(#storybook-docs, .sbdocs)
+	table:not([class])
+	tbody
+	tr:nth-child(even)
+	td {
+	background-color: #f8f9fa;
 }

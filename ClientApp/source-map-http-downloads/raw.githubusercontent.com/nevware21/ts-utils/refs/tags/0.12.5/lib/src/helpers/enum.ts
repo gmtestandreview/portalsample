@@ -6,7 +6,11 @@
  * Licensed under the MIT license.
  */
 
-import { eMapValues, _createKeyValueMap, _assignMapValue } from "../internal/map";
+import {
+	eMapValues,
+	_createKeyValueMap,
+	_assignMapValue,
+} from "../internal/map";
 import { objForEachKey } from "../object/for_each_key";
 import { objFreeze } from "../object/object";
 
@@ -18,7 +22,9 @@ import { objFreeze } from "../object/object";
  * Returned from {@link createEnum}
  */
 export declare type EnumCls<E = any> = {
-    readonly [key in keyof E extends string | number | symbol ? keyof E : never]: key extends string ? E[key] : key
+	readonly [key in keyof E extends string | number | symbol
+		? keyof E
+		: never]: key extends string ? E[key] : key;
 } & { readonly [key in keyof E]: E[key] };
 
 /**
@@ -29,8 +35,13 @@ export declare type EnumCls<E = any> = {
  *
  * Returned from {@link createEnumKeyMap}
  */
-export declare type EnumNameMap<E = any, T = { readonly [key in keyof E]: key extends string ? key : keyof E }> = {
-    readonly [key in keyof E extends string | number | symbol ? keyof E : never]: key extends string ? key : keyof E
+export declare type EnumNameMap<
+	E = any,
+	T = { readonly [key in keyof E]: key extends string ? key : keyof E },
+> = {
+	readonly [key in keyof E extends string | number | symbol
+		? keyof E
+		: never]: key extends string ? key : keyof E;
 } & T;
 
 /**
@@ -41,8 +52,13 @@ export declare type EnumNameMap<E = any, T = { readonly [key in keyof E]: key ex
  *
  * Returned from {@link createEnumValueMap}
  */
-export declare type EnumValueMap<E = any, T = { readonly [key in keyof E]: E[keyof E] }> = {
-    readonly [key in keyof E extends string | number | symbol ? keyof E : never]: key extends string ? E[key] : E[key]
+export declare type EnumValueMap<
+	E = any,
+	T = { readonly [key in keyof E]: E[keyof E] },
+> = {
+	readonly [key in keyof E extends string | number | symbol
+		? keyof E
+		: never]: key extends string ? E[key] : E[key];
 } & T;
 
 /**
@@ -55,7 +71,7 @@ export declare type EnumValueMap<E = any, T = { readonly [key in keyof E]: E[key
  * Returned from {@link createSimpleMap}
  */
 export declare type EnumTypeMap<E, V, T = { readonly [key in keyof E]: V }> = {
-    readonly [key in keyof E extends string ? keyof E : never]: V
+	readonly [key in keyof E extends string ? keyof E : never]: V;
 } & T;
 
 /**
@@ -90,8 +106,15 @@ export declare type EnumTypeMap<E, V, T = { readonly [key in keyof E]: V }> = {
  * @returns A new frozen (immutable) object which looks and acts like a TypeScript Enum class.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function createEnum<E>(values: { [key in keyof E]: E[keyof E] }): EnumCls<E> {
-    return _createKeyValueMap(values, eMapValues.Value, eMapValues.Key, objFreeze);
+export function createEnum<E>(
+	values: { [key in keyof E]: E[keyof E] },
+): EnumCls<E> {
+	return _createKeyValueMap(
+		values,
+		eMapValues.Value,
+		eMapValues.Key,
+		objFreeze,
+	);
 }
 
 /**
@@ -129,8 +152,10 @@ export function createEnum<E>(values: { [key in keyof E]: E[keyof E] }): EnumCls
  * @returns A new frozen (immutable) object which contains a property for each key and value that returns the value.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function createEnumKeyMap<E>(values: { [key in keyof E]: E[keyof E] }): EnumNameMap<E> {
-    return _createKeyValueMap(values, eMapValues.Key, eMapValues.Key, objFreeze);
+export function createEnumKeyMap<E>(
+	values: { [key in keyof E]: E[keyof E] },
+): EnumNameMap<E> {
+	return _createKeyValueMap(values, eMapValues.Key, eMapValues.Key, objFreeze);
 }
 
 /**
@@ -170,8 +195,15 @@ export function createEnumKeyMap<E>(values: { [key in keyof E]: E[keyof E] }): E
  * @returns A new frozen (immutable) object which contains a property for each key and value that returns the value.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function createEnumValueMap<E>(values: { [key in keyof E]: E[keyof E] }): EnumValueMap<E> {
-    return _createKeyValueMap(values, eMapValues.Value, eMapValues.Value, objFreeze);
+export function createEnumValueMap<E>(
+	values: { [key in keyof E]: E[keyof E] },
+): EnumValueMap<E> {
+	return _createKeyValueMap(
+		values,
+		eMapValues.Value,
+		eMapValues.Value,
+		objFreeze,
+	);
 }
 
 /**
@@ -207,14 +239,16 @@ export function createEnumValueMap<E>(values: { [key in keyof E]: E[keyof E] }):
  * @returns A new frozen (immutable) object which contains a property for each key and value that returns the defiend mapped value.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function createSimpleMap<E, V>(values: { [key in keyof E]: [ E[keyof E], V] }): EnumTypeMap<E, V> {
-    let mapClass: any = {};
-    objForEachKey(values, (key, value) => {
-        _assignMapValue(mapClass, key, value[1]);
-        _assignMapValue(mapClass, value[0], value[1]);
-    });
+export function createSimpleMap<E, V>(
+	values: { [key in keyof E]: [E[keyof E], V] },
+): EnumTypeMap<E, V> {
+	let mapClass: any = {};
+	objForEachKey(values, (key, value) => {
+		_assignMapValue(mapClass, key, value[1]);
+		_assignMapValue(mapClass, value[0], value[1]);
+	});
 
-    return objFreeze(mapClass);
+	return objFreeze(mapClass);
 }
 
 /**
@@ -290,6 +324,8 @@ export function createSimpleMap<E, V>(values: { [key in keyof E]: [ E[keyof E], 
  * @returns A new frozen (immutable) object which contains a property for each key and value that returns the defined mapped value.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function createTypeMap<E, T>(values: { [key in keyof E]: [ E[keyof E], T[keyof T] ] }): T {
-    return createSimpleMap<E, T>(values as any) as unknown as T;
+export function createTypeMap<E, T>(
+	values: { [key in keyof E]: [E[keyof E], T[keyof T]] },
+): T {
+	return createSimpleMap<E, T>(values as any) as unknown as T;
 }

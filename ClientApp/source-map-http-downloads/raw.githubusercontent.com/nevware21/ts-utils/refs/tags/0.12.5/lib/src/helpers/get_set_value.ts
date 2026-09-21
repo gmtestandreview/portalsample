@@ -51,19 +51,23 @@ import { iterForOf } from "../iterator/forOf";
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getValueByKey<V, T extends object = any>(target: T, path: string, defValue?: V): V {
-    if (!path || !target) {
-        return defValue;
-    }
+export function getValueByKey<V, T extends object = any>(
+	target: T,
+	path: string,
+	defValue?: V,
+): V {
+	if (!path || !target) {
+		return defValue;
+	}
 
-    let parts = strSplit(path, ".");
-    let cnt = parts.length;
+	let parts = strSplit(path, ".");
+	let cnt = parts.length;
 
-    for (let lp = 0; lp < cnt && !isNullOrUndefined(target); lp++) {
-        target = (target as any)[parts[lp]];
-    }
+	for (let lp = 0; lp < cnt && !isNullOrUndefined(target); lp++) {
+		target = (target as any)[parts[lp]];
+	}
 
-    return (!isNullOrUndefined(target) ? target : defValue) as V;
+	return (!isNullOrUndefined(target) ? target : defValue) as V;
 }
 
 /**
@@ -112,20 +116,24 @@ export function getValueByKey<V, T extends object = any>(target: T, path: string
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getValueByIter<V, T extends object = any>(target: T, iter: Iterator<string> | Iterable<string>, defValue?: V): V {
-    if (!iter || !target) {
-        return defValue;
-    }
+export function getValueByIter<V, T extends object = any>(
+	target: T,
+	iter: Iterator<string> | Iterable<string>,
+	defValue?: V,
+): V {
+	if (!iter || !target) {
+		return defValue;
+	}
 
-    iterForOf(iter, (value) => {
-        if (isNullOrUndefined(target)) {
-            return -1;
-        }
+	iterForOf(iter, (value) => {
+		if (isNullOrUndefined(target)) {
+			return -1;
+		}
 
-        target = (target as any)[value];
-    });
+		target = (target as any)[value];
+	});
 
-    return (!isNullOrUndefined(target) ? target : defValue) as V;
+	return (!isNullOrUndefined(target) ? target : defValue) as V;
 }
 
 /**
@@ -148,21 +156,21 @@ export function getValueByIter<V, T extends object = any>(target: T, iter: Itera
  * ```
  */
 export function setValueByKey<T>(target: any, path: string, value: T) {
-    if (target && path) {
-        let parts = strSplit(path, ".");
-        let lastKey = parts.pop();
-    
-        arrForEach(parts, (key) => {
-            if (isNullOrUndefined(target[key])) {
-                // Add an empty object / map
-                target[key] = {};
-            }
-    
-            target = target[key];
-        });
-    
-        target[lastKey] = value;
-    }
+	if (target && path) {
+		let parts = strSplit(path, ".");
+		let lastKey = parts.pop();
+
+		arrForEach(parts, (key) => {
+			if (isNullOrUndefined(target[key])) {
+				// Add an empty object / map
+				target[key] = {};
+			}
+
+			target = target[key];
+		});
+
+		target[lastKey] = value;
+	}
 }
 
 /**
@@ -189,23 +197,27 @@ export function setValueByKey<T>(target: any, path: string, value: T) {
  * // Resulting Object: { Hello: { Darkness: { my: "old" } }, friend: "I've", come: { to : { see: "you" } } }
  * ```
  */
-export function setValueByIter<T>(target: any, iter: Iterator<string> | Iterable<string>, value: T) {
-    if (target && iter) {
-        let lastKey: string;
-    
-        iterForOf(iter, (key: string) => {
-            if (lastKey) {
-                if (isNullOrUndefined(target[lastKey])) {
-                    // Add an empty object / map
-                    target[lastKey] = {};
-                }
-        
-                target = target[lastKey];
-            }
+export function setValueByIter<T>(
+	target: any,
+	iter: Iterator<string> | Iterable<string>,
+	value: T,
+) {
+	if (target && iter) {
+		let lastKey: string;
 
-            lastKey = key;
-        });
-    
-        target[lastKey] = value;
-    }
+		iterForOf(iter, (key: string) => {
+			if (lastKey) {
+				if (isNullOrUndefined(target[lastKey])) {
+					// Add an empty object / map
+					target[lastKey] = {};
+				}
+
+				target = target[lastKey];
+			}
+
+			lastKey = key;
+		});
+
+		target[lastKey] = value;
+	}
 }

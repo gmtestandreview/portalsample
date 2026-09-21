@@ -1,24 +1,26 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 export interface StandardPathwayFooterProps {
-    linkDescription?: ReactNode;
+	linkDescription?: ReactNode;
 }
 
 export interface StandardBasePathwayProps extends StandardPathwayFooterProps {
-    title: ReactNode;
-    bodyText?: ReactNode;
-    digitalIdentity?: boolean;
+	title: ReactNode;
+	bodyText?: ReactNode;
+	digitalIdentity?: boolean;
 }
 
 export interface StandardInternalPathwayProps extends StandardBasePathwayProps {
-    type: 'internal';
-    to: string;
+	type: "internal";
+	to: string;
 }
 
 export interface StandardExternalPathwayProps extends StandardBasePathwayProps {
-    type: 'external';
-    linkHref: string;
-    target?: string;
+	type: "external";
+	linkHref: string;
+	target?: string;
 }
 
-export type StandardPathwayProps = StandardInternalPathwayProps | StandardExternalPathwayProps;
+export type StandardPathwayProps =
+	| StandardInternalPathwayProps
+	| StandardExternalPathwayProps;

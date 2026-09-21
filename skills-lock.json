@@ -1,16 +1,16 @@
 {
-  "version": 1,
-  "skills": {
-    "playwright-bdd": {
-      "source": "vitalets/playwright-bdd",
-      "sourceType": "github",
-      "skillPath": "skills/playwright-bdd/SKILL.md",
-      "computedHash": "b8981118393cbfc1f8dae83ef5f59ee01ecdf6d05b73cc8a88106a32895f4db1"
-    },
-    "react-aria": {
-      "source": "react-aria.adobe.com",
-      "sourceType": "well-known",
-      "computedHash": "c778864aedee25fb7dfe980f772954e13ac76cdf3ff00879dd59b72621d797ae"
-    }
-  }
+	"version": 1,
+	"skills": {
+		"playwright-bdd": {
+			"source": "vitalets/playwright-bdd",
+			"sourceType": "github",
+			"skillPath": "skills/playwright-bdd/SKILL.md",
+			"computedHash": "b8981118393cbfc1f8dae83ef5f59ee01ecdf6d05b73cc8a88106a32895f4db1"
+		},
+		"react-aria": {
+			"source": "react-aria.adobe.com",
+			"sourceType": "well-known",
+			"computedHash": "c778864aedee25fb7dfe980f772954e13ac76cdf3ff00879dd59b72621d797ae"
+		}
+	}
 }

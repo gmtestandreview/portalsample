@@ -14,7 +14,7 @@
  * @template T - The type of the return value
  */
 export function _returnNothing<T>(): T | undefined {
-    return;
+	return;
 }
 
 /**
@@ -25,7 +25,7 @@ export function _returnNothing<T>(): T | undefined {
  * @template T - The type of the array elements
  */
 export function _returnEmptyArray<T>(): T[] {
-    return [];
+	return [];
 }
 
 /**
@@ -34,5 +34,5 @@ export function _returnEmptyArray<T>(): T[] {
  * @returns false
  */
 export function _returnFalse(): boolean {
-    return false;
+	return false;
 }

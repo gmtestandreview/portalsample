@@ -1,4 +1,4 @@
 export enum BranchSelectionModalMode {
-    SelectAndEditOrg = 'SelectAndEditOrg',
-    RFQSelectOrg = 'RFQSelectOrg',
+	SelectAndEditOrg = "SelectAndEditOrg",
+	RFQSelectOrg = "RFQSelectOrg",
 }

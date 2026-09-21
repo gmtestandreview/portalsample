@@ -1,1 +1,3 @@
-const printAreaRef = (useRef(null) as unknown) as MutableRefObject<HTMLDivElement>;
+const printAreaRef = useRef(
+	null,
+) as unknown as MutableRefObject<HTMLDivElement>;

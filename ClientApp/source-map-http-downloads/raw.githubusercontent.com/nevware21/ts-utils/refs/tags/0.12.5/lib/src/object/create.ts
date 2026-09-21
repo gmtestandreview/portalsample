@@ -6,7 +6,13 @@
  * Licensed under the MIT license.
  */
 
-import { __PROTO__, FUNCTION, ObjClass, OBJECT, PROTOTYPE } from "../internal/constants";
+import {
+	__PROTO__,
+	FUNCTION,
+	ObjClass,
+	OBJECT,
+	PROTOTYPE,
+} from "../internal/constants";
 import { dumpObj } from "../helpers/diagnostics";
 import { throwTypeError } from "../helpers/throw";
 import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
@@ -23,7 +29,13 @@ import { isStrictNullOrUndefined } from "../helpers/base";
  * @param obj - Object to use as a prototype. May be null
  * @param properties - JavaScript object that contains one or more property descriptors.
  */
-export const objCreate: (obj: any, properties?: PropertyDescriptorMap & ThisType<any>) => any = (/* #__PURE__*/_pureAssign((/* #__PURE__*/_pureRef<typeof Object.create>(ObjClass as any, "create")), polyObjCreate));
+export const objCreate: (
+	obj: any,
+	properties?: PropertyDescriptorMap & ThisType<any>,
+) => any = /* #__PURE__*/ _pureAssign(
+	/* #__PURE__*/ _pureRef<typeof Object.create>(ObjClass as any, "create"),
+	polyObjCreate,
+);
 
 /**
  * Creates an object that has the specified prototype, and that optionally contains specified properties. This helper exists to avoid adding a polyfil
@@ -35,32 +47,37 @@ export const objCreate: (obj: any, properties?: PropertyDescriptorMap & ThisType
  * @param properties - JavaScript object that contains one or more property descriptors.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function polyObjCreate(obj: any, properties?: PropertyDescriptorMap & ThisType<any>): any {
-    let newObj: any = null;
+export function polyObjCreate(
+	obj: any,
+	properties?: PropertyDescriptorMap & ThisType<any>,
+): any {
+	let newObj: any = null;
 
-    // Create a temporary constructor function to set the prototype
-    function tempFunc() {}
+	// Create a temporary constructor function to set the prototype
+	function tempFunc() {}
 
-    if (!isStrictNullOrUndefined(obj)) {
-        let type = typeof obj;
-        if (type !== OBJECT && type !== FUNCTION) {
-            throwTypeError("Prototype must be an Object or function: " + dumpObj(obj));
-        }
+	if (!isStrictNullOrUndefined(obj)) {
+		let type = typeof obj;
+		if (type !== OBJECT && type !== FUNCTION) {
+			throwTypeError(
+				"Prototype must be an Object or function: " + dumpObj(obj),
+			);
+		}
 
-        tempFunc[PROTOTYPE] = obj;
-        safe(() => {
-            (tempFunc as any)[__PROTO__] = obj;
-        });
-        newObj = new (tempFunc as any)();
-    } else {
-        // If obj is null or undefined, create an empty object
-        newObj = {};
-    }
+		tempFunc[PROTOTYPE] = obj;
+		safe(() => {
+			(tempFunc as any)[__PROTO__] = obj;
+		});
+		newObj = new (tempFunc as any)();
+	} else {
+		// If obj is null or undefined, create an empty object
+		newObj = {};
+	}
 
-    // Apply property descriptors if provided
-    if (properties) {
-        safe(objDefineProperties, [newObj, properties]);
-    }
-    
-    return newObj;
+	// Apply property descriptors if provided
+	if (properties) {
+		safe(objDefineProperties, [newObj, properties]);
+	}
+
+	return newObj;
 }

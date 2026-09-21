@@ -1,45 +1,35 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "feedback.schema.json",
-  "title": "Skill Creator Review Feedback",
-  "type": "object",
-  "required": [
-    "reviews",
-    "status"
-  ],
-  "properties": {
-    "reviews": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "run_id",
-          "feedback",
-          "timestamp"
-        ],
-        "properties": {
-          "run_id": {
-            "type": "string",
-            "minLength": 1
-          },
-          "feedback": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      }
-    },
-    "status": {
-      "type": "string",
-      "enum": [
-        "in_progress",
-        "complete"
-      ]
-    }
-  },
-  "additionalProperties": false
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "feedback.schema.json",
+	"title": "Skill Creator Review Feedback",
+	"type": "object",
+	"required": ["reviews", "status"],
+	"properties": {
+		"reviews": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": ["run_id", "feedback", "timestamp"],
+				"properties": {
+					"run_id": {
+						"type": "string",
+						"minLength": 1
+					},
+					"feedback": {
+						"type": "string"
+					},
+					"timestamp": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"additionalProperties": false
+			}
+		},
+		"status": {
+			"type": "string",
+			"enum": ["in_progress", "complete"]
+		}
+	},
+	"additionalProperties": false
 }

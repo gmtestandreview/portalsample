@@ -1,80 +1,54 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "history.schema.json",
-  "title": "Skill Creator Iteration History",
-  "type": "object",
-  "required": [
-    "started_at",
-    "skill_name",
-    "current_best",
-    "iterations"
-  ],
-  "properties": {
-    "started_at": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "skill_name": {
-      "type": "string",
-      "minLength": 1
-    },
-    "current_best": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "iterations": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": [
-          "version",
-          "parent",
-          "grading_result",
-          "is_current_best"
-        ],
-        "properties": {
-          "version": {
-            "type": "string",
-            "minLength": 1
-          },
-          "parent": {
-            "type": [
-              "string",
-              "null"
-            ]
-          },
-          "expectation_pass_rate": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "grading_result": {
-            "type": "string",
-            "enum": [
-              "baseline",
-              "won",
-              "lost",
-              "tie",
-              "unavailable"
-            ]
-          },
-          "is_current_best": {
-            "type": "boolean"
-          },
-          "evidence_status": {
-            "type": "string",
-            "enum": [
-              "observed",
-              "partial",
-              "unavailable"
-            ]
-          }
-        },
-        "additionalProperties": false
-      }
-    }
-  },
-  "additionalProperties": false
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "history.schema.json",
+	"title": "Skill Creator Iteration History",
+	"type": "object",
+	"required": ["started_at", "skill_name", "current_best", "iterations"],
+	"properties": {
+		"started_at": {
+			"type": "string",
+			"format": "date-time"
+		},
+		"skill_name": {
+			"type": "string",
+			"minLength": 1
+		},
+		"current_best": {
+			"type": ["string", "null"]
+		},
+		"iterations": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"required": ["version", "parent", "grading_result", "is_current_best"],
+				"properties": {
+					"version": {
+						"type": "string",
+						"minLength": 1
+					},
+					"parent": {
+						"type": ["string", "null"]
+					},
+					"expectation_pass_rate": {
+						"type": "number",
+						"minimum": 0,
+						"maximum": 1
+					},
+					"grading_result": {
+						"type": "string",
+						"enum": ["baseline", "won", "lost", "tie", "unavailable"]
+					},
+					"is_current_best": {
+						"type": "boolean"
+					},
+					"evidence_status": {
+						"type": "string",
+						"enum": ["observed", "partial", "unavailable"]
+					}
+				},
+				"additionalProperties": false
+			}
+		}
+	},
+	"additionalProperties": false
 }

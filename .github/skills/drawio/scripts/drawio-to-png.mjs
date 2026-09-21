@@ -10,19 +10,19 @@
  *        node drawio-to-png.mjs --renderer=cli|viewer|auto <input.drawio> [output.png]
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join, basename, dirname, resolve } from 'path';
-import { spawnSync } from 'child_process';
-import { inflateRawSync } from 'zlib';
-import puppeteer from 'puppeteer-core';
+import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
+import { join, basename, dirname, resolve } from "path";
+import { spawnSync } from "child_process";
+import { inflateRawSync } from "zlib";
+import puppeteer from "puppeteer-core";
 
 // --- Build HTML that uses the official draw.io viewer for rendering ---
 function buildViewerHtml(rawFileContent) {
 	// Escape for embedding in a JS template literal
 	const escaped = rawFileContent
-		.replace(/\\/g, '\\\\')
-		.replace(/`/g, '\\`')
-		.replace(/\$/g, '\\$');
+		.replace(/\\/g, "\\\\")
+		.replace(/`/g, "\\`")
+		.replace(/\$/g, "\\$");
 
 	// The official draw.io viewer (viewer-static.min.js) contains the full mxGraph
 	// rendering engine — it handles orthogonal edge routing, all shape types,
@@ -109,55 +109,55 @@ function buildViewerHtml(rawFileContent) {
 function extractMxGraphModelXml(inputXml) {
 	const trimmed = inputXml.trim();
 
-	if (trimmed.startsWith('<mxGraphModel')) {
+	if (trimmed.startsWith("<mxGraphModel")) {
 		return trimmed;
 	}
 
 	const diagramMatch = trimmed.match(/<diagram\b[^>]*>([\s\S]*?)<\/diagram>/i);
 	if (!diagramMatch) {
 		throw new Error(
-			'Unsupported .drawio format: missing <mxGraphModel> or <diagram> content'
+			"Unsupported .drawio format: missing <mxGraphModel> or <diagram> content",
 		);
 	}
 
 	const diagramContent = diagramMatch[1].trim();
 
-	if (diagramContent.startsWith('<mxGraphModel')) {
+	if (diagramContent.startsWith("<mxGraphModel")) {
 		return diagramContent;
 	}
 
 	// draw.io compressed diagrams are base64(deflateRaw(encodeURIComponent(xml)))
 	try {
 		const inflated = inflateRawSync(
-			Buffer.from(diagramContent, 'base64')
-		).toString('utf-8');
+			Buffer.from(diagramContent, "base64"),
+		).toString("utf-8");
 		const decoded = decodeURIComponent(inflated);
-		if (!decoded.trim().startsWith('<mxGraphModel')) {
-			throw new Error('decoded content is not mxGraphModel XML');
+		if (!decoded.trim().startsWith("<mxGraphModel")) {
+			throw new Error("decoded content is not mxGraphModel XML");
 		}
 		return decoded;
 	} catch (err) {
 		throw new Error(
-			`Failed to decode compressed <diagram> content: ${err.message}`
+			`Failed to decode compressed <diagram> content: ${err.message}`,
 		);
 	}
 }
 
 function resolveRenderer(rawArgs) {
-	let renderer = 'auto';
+	let renderer = "auto";
 	const args = [];
 
 	for (const arg of rawArgs) {
-		if (arg.startsWith('--renderer=')) {
-			renderer = arg.substring('--renderer='.length).trim().toLowerCase();
+		if (arg.startsWith("--renderer=")) {
+			renderer = arg.substring("--renderer=".length).trim().toLowerCase();
 			continue;
 		}
 		args.push(arg);
 	}
 
-	if (!['auto', 'cli', 'viewer'].includes(renderer)) {
+	if (!["auto", "cli", "viewer"].includes(renderer)) {
 		throw new Error(
-			`Invalid renderer '${renderer}'. Use auto, cli, or viewer.`
+			`Invalid renderer '${renderer}'. Use auto, cli, or viewer.`,
 		);
 	}
 
@@ -175,11 +175,11 @@ function findDrawioCliPath() {
 	}
 
 	const candidates = [
-		'C:\\Program Files\\draw.io\\draw.io.exe',
-		'C:\\Program Files (x86)\\draw.io\\draw.io.exe',
-		'/Applications/draw.io.app/Contents/MacOS/draw.io',
-		'/usr/bin/drawio',
-		'/usr/local/bin/drawio',
+		"C:\\Program Files\\draw.io\\draw.io.exe",
+		"C:\\Program Files (x86)\\draw.io\\draw.io.exe",
+		"/Applications/draw.io.app/Contents/MacOS/draw.io",
+		"/usr/bin/drawio",
+		"/usr/local/bin/drawio",
 	];
 
 	for (const p of candidates) {
@@ -190,12 +190,12 @@ function findDrawioCliPath() {
 		}
 	}
 
-	const locator = process.platform === 'win32' ? 'where' : 'which';
+	const locator = process.platform === "win32" ? "where" : "which";
 	const names =
-		process.platform === 'win32' ? ['drawio', 'draw.io'] : ['drawio'];
+		process.platform === "win32" ? ["drawio", "draw.io"] : ["drawio"];
 
 	for (const name of names) {
-		const probe = spawnSync(locator, [name], { encoding: 'utf-8' });
+		const probe = spawnSync(locator, [name], { encoding: "utf-8" });
 		if (probe.status === 0 && probe.stdout) {
 			const first = probe.stdout
 				.split(/\r?\n/)
@@ -209,13 +209,13 @@ function findDrawioCliPath() {
 }
 
 function exportWithDrawioCli(drawioPath, input, output) {
-	const args = ['-x', '-f', 'png', '-e', '-b', '10', '-o', output, input];
-	const result = spawnSync(drawioPath, args, { encoding: 'utf-8' });
+	const args = ["-x", "-f", "png", "-e", "-b", "10", "-o", output, input];
+	const result = spawnSync(drawioPath, args, { encoding: "utf-8" });
 	if (result.status !== 0) {
-		const stderr = (result.stderr || '').trim();
-		const stdout = (result.stdout || '').trim();
+		const stderr = (result.stderr || "").trim();
+		const stdout = (result.stdout || "").trim();
 		throw new Error(
-			stderr || stdout || `draw.io CLI failed with exit code ${result.status}`
+			stderr || stdout || `draw.io CLI failed with exit code ${result.status}`,
 		);
 	}
 }
@@ -227,39 +227,39 @@ async function main() {
 	const args = parsed.args;
 
 	let files = [];
-	if (args[0] === '--dir') {
-		const dir = resolve(args[1] || '.');
+	if (args[0] === "--dir") {
+		const dir = resolve(args[1] || ".");
 		files = readdirSync(dir)
-			.filter((f) => f.endsWith('.drawio'))
+			.filter((f) => f.endsWith(".drawio"))
 			.map((f) => ({
 				input: join(dir, f),
-				output: join(dir, f.replace(/\.drawio$/, '.drawio.png')),
+				output: join(dir, f.replace(/\.drawio$/, ".drawio.png")),
 			}));
 	} else if (args[0]) {
 		const input = resolve(args[0]);
-		const output = args[1] || input.replace(/\.drawio$/, '.drawio.png');
+		const output = args[1] || input.replace(/\.drawio$/, ".drawio.png");
 		files = [{ input, output }];
 	} else {
-		console.error('Usage: node drawio-to-png.mjs <input.drawio> [output.png]');
-		console.error('       node drawio-to-png.mjs --dir <directory>');
+		console.error("Usage: node drawio-to-png.mjs <input.drawio> [output.png]");
+		console.error("       node drawio-to-png.mjs --dir <directory>");
 		console.error(
-			'       node drawio-to-png.mjs --renderer=cli|auto|custom <input.drawio> [output.png]'
+			"       node drawio-to-png.mjs --renderer=cli|auto|custom <input.drawio> [output.png]",
 		);
 		process.exit(1);
 	}
 
 	if (files.length === 0) {
-		console.log('No .drawio files found.');
+		console.log("No .drawio files found.");
 		return;
 	}
 
 	const drawioCliPath = findDrawioCliPath();
 
 	// --- Path 1: draw.io CLI (best fidelity, no network needed) ---
-	if (renderer === 'cli' || (renderer === 'auto' && drawioCliPath)) {
+	if (renderer === "cli" || (renderer === "auto" && drawioCliPath)) {
 		if (!drawioCliPath) {
 			console.error(
-				'draw.io CLI not found. Install draw.io desktop or set DRAWIO_PATH.'
+				"draw.io CLI not found. Install draw.io desktop or set DRAWIO_PATH.",
 			);
 			process.exit(1);
 		}
@@ -268,7 +268,7 @@ async function main() {
 			console.log(`Rendering: ${basename(input)}`);
 			try {
 				exportWithDrawioCli(drawioCliPath, input, output);
-				let kb = '?';
+				let kb = "?";
 				try {
 					kb = (statSync(output).size / 1024).toFixed(0);
 				} catch {
@@ -279,7 +279,7 @@ async function main() {
 				console.error(`  Error rendering ${basename(input)}: ${err.message}`);
 			}
 		}
-		console.log('Done.');
+		console.log("Done.");
 		return;
 	}
 
@@ -288,15 +288,15 @@ async function main() {
 	const browserPaths = [
 		process.env.CHROME_PATH,
 		process.env.EDGE_PATH,
-		'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
-		'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
-		'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
-		'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-		'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-		'/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
-		'/usr/bin/google-chrome',
-		'/usr/bin/chromium-browser',
-		'/usr/bin/microsoft-edge',
+		"C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
+		"C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
+		"C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+		"C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
+		"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+		"/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+		"/usr/bin/google-chrome",
+		"/usr/bin/chromium-browser",
+		"/usr/bin/microsoft-edge",
 	].filter(Boolean);
 
 	let execPath;
@@ -313,7 +313,7 @@ async function main() {
 
 	if (!execPath) {
 		console.error(
-			'No browser found. Set CHROME_PATH or EDGE_PATH environment variable.'
+			"No browser found. Set CHROME_PATH or EDGE_PATH environment variable.",
 		);
 		process.exit(1);
 	}
@@ -323,13 +323,13 @@ async function main() {
 	const browser = await puppeteer.launch({
 		executablePath: execPath,
 		headless: true,
-		args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+		args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
 	});
 
 	for (const { input, output } of files) {
 		console.log(`Rendering: ${basename(input)}`);
 		try {
-			const rawContent = readFileSync(input, 'utf-8');
+			const rawContent = readFileSync(input, "utf-8");
 			const html = buildViewerHtml(rawContent);
 
 			const page = await browser.newPage();
@@ -340,15 +340,15 @@ async function main() {
 			});
 
 			// Set HTML content first (sets up the .mxgraph div with diagram XML)
-			await page.setContent(html, { waitUntil: 'domcontentloaded' });
+			await page.setContent(html, { waitUntil: "domcontentloaded" });
 
 			// Load the official draw.io viewer JS via addScriptTag (more reliable than inline src)
-			const VIEWER_URL = 'https://viewer.diagrams.net/js/viewer-static.min.js';
+			const VIEWER_URL = "https://viewer.diagrams.net/js/viewer-static.min.js";
 			try {
 				await page.addScriptTag({ url: VIEWER_URL });
 			} catch (scriptErr) {
 				throw new Error(
-					`Failed to load draw.io viewer JS: ${scriptErr.message}`
+					`Failed to load draw.io viewer JS: ${scriptErr.message}`,
 				);
 			}
 
@@ -364,16 +364,16 @@ async function main() {
 			const viewerOk = await page.evaluate(() => window.__renderWidth > 0);
 			if (!viewerOk) {
 				throw new Error(
-					'draw.io viewer failed to load or render (check network access)'
+					"draw.io viewer failed to load or render (check network access)",
 				);
 			}
 
 			// Take element screenshot of just the diagram div for exact bounds
-			const containerHandle = await page.$('.mxgraph');
+			const containerHandle = await page.$(".mxgraph");
 			let pngBuffer;
 
 			if (containerHandle) {
-				pngBuffer = await containerHandle.screenshot({ type: 'png' });
+				pngBuffer = await containerHandle.screenshot({ type: "png" });
 			} else {
 				// Fallback: full-page screenshot
 				const dims = await page.evaluate(() => ({
@@ -381,14 +381,14 @@ async function main() {
 					h: Math.ceil(window.__renderHeight),
 				}));
 				pngBuffer = await page.screenshot({
-					type: 'png',
+					type: "png",
 					clip: { x: 0, y: 0, width: dims.w + 20, height: dims.h + 20 },
 				});
 			}
 
 			writeFileSync(output, pngBuffer);
 			console.log(
-				`  -> ${basename(output)} (${(pngBuffer.length / 1024).toFixed(0)} KB)`
+				`  -> ${basename(output)} (${(pngBuffer.length / 1024).toFixed(0)} KB)`,
 			);
 
 			await page.close();
@@ -398,7 +398,7 @@ async function main() {
 	}
 
 	await browser.close();
-	console.log('Done.');
+	console.log("Done.");
 }
 
 main().catch((err) => {

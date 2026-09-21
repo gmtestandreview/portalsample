@@ -6,7 +6,11 @@
  * Licensed under the MIT license.
  */
 
-import { GET_OWN_PROPERTY_DESCRIPTOR, GET_OWN_PROPERTY_SYMBOLS, ObjClass } from "../internal/constants";
+import {
+	GET_OWN_PROPERTY_DESCRIPTOR,
+	GET_OWN_PROPERTY_SYMBOLS,
+	ObjClass,
+} from "../internal/constants";
 import { isFunction, isStrictUndefined } from "../helpers/base";
 import { objForEachKey } from "./for_each_key";
 import { ILazyValue } from "../helpers/lazy";
@@ -15,8 +19,24 @@ import { arrForEach } from "../array/forEach";
 import { objPropertyIsEnumerable } from "./property_is_enumerable";
 import { _returnEmptyArray, _returnNothing } from "../internal/stubs";
 
-const _objGetOwnPropertyDescriptor: (target: any, prop: PropertyKey) => PropertyDescriptor | undefined = (/*#__PURE__*/_pureAssign((/*#__PURE__*/_pureRef<typeof Object.getOwnPropertyDescriptor>(ObjClass as any, GET_OWN_PROPERTY_DESCRIPTOR)), _returnNothing));
-const _objGetOwnPropertySymbols: (obj: any) => symbol[] = (/*#__PURE__*/_pureAssign((/*#__PURE__*/_pureRef<typeof Object.getOwnPropertySymbols>(ObjClass, GET_OWN_PROPERTY_SYMBOLS)), _returnEmptyArray));
+const _objGetOwnPropertyDescriptor: (
+	target: any,
+	prop: PropertyKey,
+) => PropertyDescriptor | undefined = /*#__PURE__*/ _pureAssign(
+	/*#__PURE__*/ _pureRef<typeof Object.getOwnPropertyDescriptor>(
+		ObjClass as any,
+		GET_OWN_PROPERTY_DESCRIPTOR,
+	),
+	_returnNothing,
+);
+const _objGetOwnPropertySymbols: (obj: any) => symbol[] =
+	/*#__PURE__*/ _pureAssign(
+		/*#__PURE__*/ _pureRef<typeof Object.getOwnPropertySymbols>(
+			ObjClass,
+			GET_OWN_PROPERTY_SYMBOLS,
+		),
+		_returnEmptyArray,
+	);
 
 /**
  * Definition of the Property Descriptor mappings for the objDefine functions.
@@ -30,55 +50,55 @@ const _objGetOwnPropertySymbols: (obj: any) => symbol[] = (/*#__PURE__*/_pureAss
  * @group Object
  */
 export interface ObjDefinePropDescriptor<V = any> {
-    /**
-     * Identifies if this property should be configurable (true) when this value is set to false,
-     * - the type of this property cannot be changed between data property and accessor property, and
-     * - the property may not be deleted, and
-     * - other attributes of its descriptor cannot be changed (however, if it's a data descriptor with writable: true,
-     * the value can be changed, and writable can be changed to false).
-     * Defaults to true.
-     */
-    c?: boolean;
+	/**
+	 * Identifies if this property should be configurable (true) when this value is set to false,
+	 * - the type of this property cannot be changed between data property and accessor property, and
+	 * - the property may not be deleted, and
+	 * - other attributes of its descriptor cannot be changed (however, if it's a data descriptor with writable: true,
+	 * the value can be changed, and writable can be changed to false).
+	 * Defaults to true.
+	 */
+	c?: boolean;
 
-    /**
-     * Identifies if this property will be visible during enumeration of the properties on the corresponding object.
-     * Defaults to true.
-     */
-    e?: boolean;
+	/**
+	 * Identifies if this property will be visible during enumeration of the properties on the corresponding object.
+	 * Defaults to true.
+	 */
+	e?: boolean;
 
-    /**
-     * __data descriptor__
-     * The value associated with the property. Can be any valid JavaScript value (number, object, function, etc.).
-     * Defaults to undefined.
-     */
-    v?: V;
+	/**
+	 * __data descriptor__
+	 * The value associated with the property. Can be any valid JavaScript value (number, object, function, etc.).
+	 * Defaults to undefined.
+	 */
+	v?: V;
 
-    /**
-     * A Lazy value instance which will be used to return the value, this will be wrapped in a getter function.
-     * @since 0.9.4
-     */
-    l?: ILazyValue<V>;
+	/**
+	 * A Lazy value instance which will be used to return the value, this will be wrapped in a getter function.
+	 * @since 0.9.4
+	 */
+	l?: ILazyValue<V>;
 
-    /**
-     * true if the value associated with the property may be changed with an assignment operator. Defaults to false.
-     */
-    w?: boolean;
+	/**
+	 * true if the value associated with the property may be changed with an assignment operator. Defaults to false.
+	 */
+	w?: boolean;
 
-    /**
-     * A function which serves as a getter for the property, or undefined if there is no getter. When the property
-     * is accessed, this function is called without arguments and with this set to the object through which the
-     * property is accessed (this may not be the object on which the property is defined due to inheritance). The
-     * return value will be used as the value of the property. Defaults to undefined.
-     */
-    g?(): V;
+	/**
+	 * A function which serves as a getter for the property, or undefined if there is no getter. When the property
+	 * is accessed, this function is called without arguments and with this set to the object through which the
+	 * property is accessed (this may not be the object on which the property is defined due to inheritance). The
+	 * return value will be used as the value of the property. Defaults to undefined.
+	 */
+	g?(): V;
 
-    /**
-     * A function which serves as a setter for the property, or undefined if there is no setter. When the property
-     * is assigned, this function is called with one argument (the value being assigned to the property) and with
-     * this set to the object through which the property is assigned. Defaults to undefined.
-     * @param value - The value to set the property to.
-     */
-    s?(value: V): void;
+	/**
+	 * A function which serves as a setter for the property, or undefined if there is no setter. When the property
+	 * is assigned, this function is called with one argument (the value being assigned to the property) and with
+	 * this set to the object through which the property is assigned. Defaults to undefined.
+	 * @param value - The value to set the property to.
+	 */
+	s?(value: V): void;
 }
 
 /**
@@ -89,7 +109,7 @@ export interface ObjDefinePropDescriptor<V = any> {
  * @group Object
  */
 export type ObjDefinePropDescriptorMap = {
-    [key: PropertyKey]: ObjDefinePropDescriptor
+	[key: PropertyKey]: ObjDefinePropDescriptor;
 };
 
 /**
@@ -97,13 +117,15 @@ export type ObjDefinePropDescriptorMap = {
  * @ignore
  * Mapping from ObjDefinePropDescriptor key to PropertyDescriptor key
  */
-const propMap: { [key in keyof ObjDefinePropDescriptor]: keyof PropertyDescriptor } = {
-    e: "enumerable",
-    c: "configurable",
-    v: "value",
-    w: "writable",
-    g: "get",
-    s: "set"
+const propMap: {
+	[key in keyof ObjDefinePropDescriptor]: keyof PropertyDescriptor;
+} = {
+	e: "enumerable",
+	c: "configurable",
+	v: "value",
+	w: "writable",
+	g: "get",
+	s: "set",
 };
 
 /**
@@ -115,28 +137,28 @@ const propMap: { [key in keyof ObjDefinePropDescriptor]: keyof PropertyDescripto
  */
 /*#__NO_SIDE_EFFECTS__*/
 function _createProp(value: ObjDefinePropDescriptor): PropertyDescriptor {
-    let prop: PropertyDescriptor = {};
-    prop[propMap["c"]] = true;
-    prop[propMap["e"]] = true;
+	let prop: PropertyDescriptor = {};
+	prop[propMap["c"]] = true;
+	prop[propMap["e"]] = true;
 
-    if (value.l) {
-        // Asign a getter function to return the value when requested
-        prop.get = () => value.l.v;
+	if (value.l) {
+		// Asign a getter function to return the value when requested
+		prop.get = () => value.l.v;
 
-        // If it has a setter then expose it as well
-        let desc = _objGetOwnPropertyDescriptor(value.l, "v");
-        if (desc && desc.set) {
-            prop.set = (newValue: any) => {
-                value.l.v = newValue;
-            };
-        }
-    }
+		// If it has a setter then expose it as well
+		let desc = _objGetOwnPropertyDescriptor(value.l, "v");
+		if (desc && desc.set) {
+			prop.set = (newValue: any) => {
+				value.l.v = newValue;
+			};
+		}
+	}
 
-    objForEachKey(value, (key: keyof ObjDefinePropDescriptor, value) => {
-        prop[propMap[key]] = isStrictUndefined(value) ? prop[propMap[key]] : value;
-    });
+	objForEachKey(value, (key: keyof ObjDefinePropDescriptor, value) => {
+		prop[propMap[key]] = isStrictUndefined(value) ? prop[propMap[key]] : value;
+	});
 
-    return prop;
+	return prop;
 }
 
 /**
@@ -160,7 +182,14 @@ function _createProp(value: ObjDefinePropDescriptor): PropertyDescriptor {
  * @param descriptor - The descriptor for the property being defined or modified.
  * @returns The object that was passed to the function with the new or updated property.
  */
-export const objDefineProp: <T>(target: T, key: PropertyKey, descriptor: PropertyDescriptor & ThisType<any>) => T = (/*#__PURE__*/_pureRef<typeof Object.defineProperty>(ObjClass as any, "defineProperty"));
+export const objDefineProp: <T>(
+	target: T,
+	key: PropertyKey,
+	descriptor: PropertyDescriptor & ThisType<any>,
+) => T = /*#__PURE__*/ _pureRef<typeof Object.defineProperty>(
+	ObjClass as any,
+	"defineProperty",
+);
 
 /**
  * The objDefineProperties() method defines new or modifies existing properties directly on an object, returning the object.
@@ -174,7 +203,13 @@ export const objDefineProp: <T>(target: T, key: PropertyKey, descriptor: Propert
  * it cannot be both (see {@link ObjDefinePropDescriptorMap} for more details).
  * @returns
  */
-export const objDefineProperties: <T>(target: T, props: PropertyDescriptorMap & ThisType<any>) => T = (/*#__PURE__*/_pureRef<typeof Object.defineProperties>(ObjClass as any, "defineProperties"));
+export const objDefineProperties: <T>(
+	target: T,
+	props: PropertyDescriptorMap & ThisType<any>,
+) => T = /*#__PURE__*/ _pureRef<typeof Object.defineProperties>(
+	ObjClass as any,
+	"defineProperties",
+);
 
 /**
  * Try to define a get object property accessor for the target object, if a function is past as the value this will
@@ -190,12 +225,22 @@ export const objDefineProperties: <T>(target: T, props: PropertyDescriptorMap & 
  * @param enumerable - Should this get property be enumerable, defaults to true.
  * @returns The object that was passed to the function
  */
-export function objDefineGet<T, V = any>(target: T, key: PropertyKey, value: (() => V) | V, configurable?: boolean, enumerable?: boolean): T {
-    return objDefineProp(target, key, _createProp({
-        e: enumerable,
-        c: configurable,
-        [isFunction(value) ? "g" : "v"]: value
-    }));
+export function objDefineGet<T, V = any>(
+	target: T,
+	key: PropertyKey,
+	value: (() => V) | V,
+	configurable?: boolean,
+	enumerable?: boolean,
+): T {
+	return objDefineProp(
+		target,
+		key,
+		_createProp({
+			e: enumerable,
+			c: configurable,
+			[isFunction(value) ? "g" : "v"]: value,
+		}),
+	);
 }
 
 /**
@@ -214,21 +259,28 @@ export function objDefineGet<T, V = any>(target: T, key: PropertyKey, value: (()
  * @param enumerable - Should this get property be enumerable, defaults to true.
  * @returns The object that was passed to the function
  */
-export function objDefineAccessors<T, V = any>(target: T, prop: PropertyKey, getProp?: (() => V) | null, setProp?: ((v: V) => void) | null, configurable?: boolean, enumerable?: boolean): T {
-    let desc: ObjDefinePropDescriptor = {
-        e: enumerable,
-        c: configurable
-    };
+export function objDefineAccessors<T, V = any>(
+	target: T,
+	prop: PropertyKey,
+	getProp?: (() => V) | null,
+	setProp?: ((v: V) => void) | null,
+	configurable?: boolean,
+	enumerable?: boolean,
+): T {
+	let desc: ObjDefinePropDescriptor = {
+		e: enumerable,
+		c: configurable,
+	};
 
-    if (getProp) {
-        desc.g = getProp;
-    }
+	if (getProp) {
+		desc.g = getProp;
+	}
 
-    if (setProp) {
-        desc.s = setProp;
-    }
-    
-    return objDefineProp(target, prop, _createProp(desc));
+	if (setProp) {
+		desc.s = setProp;
+	}
+
+	return objDefineProp(target, prop, _createProp(desc));
 }
 
 /**
@@ -243,8 +295,12 @@ export function objDefineAccessors<T, V = any>(target: T, prop: PropertyKey, get
  * @param propDesc - An object which defines the Property Descriptor mappings for the mapping.
  * @returns The target object.
  */
-export function objDefine<T>(target: T, key: keyof T, propDesc: ObjDefinePropDescriptor): T {
-    return objDefineProp(target, key, _createProp(propDesc));
+export function objDefine<T>(
+	target: T,
+	key: keyof T,
+	propDesc: ObjDefinePropDescriptor,
+): T {
+	return objDefineProp(target, key, _createProp(propDesc));
 }
 
 /**
@@ -260,18 +316,21 @@ export function objDefine<T>(target: T, key: keyof T, propDesc: ObjDefinePropDes
  * it cannot be both (see {@link ObjDefinePropDescriptorMap} for more details).
  * @returns The target object.
  */
-export function objDefineProps<T>(target: T, propDescMap: ObjDefinePropDescriptorMap) {
-    let props: PropertyDescriptorMap = {};
+export function objDefineProps<T>(
+	target: T,
+	propDescMap: ObjDefinePropDescriptorMap,
+) {
+	let props: PropertyDescriptorMap = {};
 
-    objForEachKey(propDescMap, (key, value: ObjDefinePropDescriptor) => {
-        props[key] = _createProp(value);
-    });
+	objForEachKey(propDescMap, (key, value: ObjDefinePropDescriptor) => {
+		props[key] = _createProp(value);
+	});
 
-    arrForEach(_objGetOwnPropertySymbols(propDescMap), (sym) => {
-        if (objPropertyIsEnumerable(propDescMap, sym)) {
-            props[sym] = _createProp(propDescMap[sym]);
-        }
-    });
+	arrForEach(_objGetOwnPropertySymbols(propDescMap), (sym) => {
+		if (objPropertyIsEnumerable(propDescMap, sym)) {
+			props[sym] = _createProp(propDescMap[sym]);
+		}
+	});
 
-    return objDefineProperties(target, props);
+	return objDefineProperties(target, props);
 }

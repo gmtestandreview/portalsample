@@ -12,7 +12,16 @@ import { _throwIfNullOrUndefined } from "../internal/throwIf";
 import { _pureAssign, _pureRef } from "../internal/treeshake_helpers";
 import { objHasOwnProperty } from "./has_own_prop";
 
-const _objGetOwnPropertyDescriptor: (target: any, prop: PropertyKey) => PropertyDescriptor | undefined = (/*#__PURE__*/_pureAssign((/*#__PURE__*/_pureRef<typeof Object.getOwnPropertyDescriptor>(ObjClass as any, GET_OWN_PROPERTY_DESCRIPTOR)), _returnNothing));
+const _objGetOwnPropertyDescriptor: (
+	target: any,
+	prop: PropertyKey,
+) => PropertyDescriptor | undefined = /*#__PURE__*/ _pureAssign(
+	/*#__PURE__*/ _pureRef<typeof Object.getOwnPropertyDescriptor>(
+		ObjClass as any,
+		GET_OWN_PROPERTY_DESCRIPTOR,
+	),
+	_returnNothing,
+);
 
 /**
  * The objHasOwn() method returns a boolean indicating whether the object
@@ -50,8 +59,11 @@ const _objGetOwnPropertyDescriptor: (target: any, prop: PropertyKey) => Property
  * objHasOwn(example, 'prop');   // true - own property exists with value of undefined
  * ```
  */
-export const objHasOwn: <T = any>(obj: T, prop: PropertyKey) => boolean = (/*#__PURE__*/_pureAssign((/*#__PURE__*/_pureRef(ObjClass as any, "hasOwn")), polyObjHasOwn));
-
+export const objHasOwn: <T = any>(obj: T, prop: PropertyKey) => boolean =
+	/*#__PURE__*/ _pureAssign(
+		/*#__PURE__*/ _pureRef(ObjClass as any, "hasOwn"),
+		polyObjHasOwn,
+	);
 
 /**
  * The polyObjHasOwn() method is a polyfill for {@link objHasOwn} when the native
@@ -93,8 +105,10 @@ export const objHasOwn: <T = any>(obj: T, prop: PropertyKey) => boolean = (/*#__
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function polyObjHasOwn<T = any>(obj: T, prop: PropertyKey): boolean {
-    // Ensure we're working with an object
-    _throwIfNullOrUndefined(obj);
-        
-    return objHasOwnProperty(obj, prop) || !!_objGetOwnPropertyDescriptor(obj, prop)
+	// Ensure we're working with an object
+	_throwIfNullOrUndefined(obj);
+
+	return (
+		objHasOwnProperty(obj, prop) || !!_objGetOwnPropertyDescriptor(obj, prop)
+	);
 }

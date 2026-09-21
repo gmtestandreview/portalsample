@@ -21,25 +21,33 @@ import { POLYFILL_TAG, POLYFILL_TYPE_NAME } from "./poly_helpers";
  * @returns
  */
 export function _tagAsPolyfill<T>(target: T, polyfillTypeName: string): T {
-    if (target) {
-        safe(() => {
-            (target as any)[POLYFILL_TAG] = true;
-            (target as any)[POLYFILL_TYPE_NAME] = polyfillTypeName;
-        });
-        // Attempt to define the POLYFILL_TAG property on the target object)
-        safe(objDefine, [target, POLYFILL_TAG, {
-            v: true,
-            w: false,
-            e: false
-        }]);
+	if (target) {
+		safe(() => {
+			(target as any)[POLYFILL_TAG] = true;
+			(target as any)[POLYFILL_TYPE_NAME] = polyfillTypeName;
+		});
+		// Attempt to define the POLYFILL_TAG property on the target object)
+		safe(objDefine, [
+			target,
+			POLYFILL_TAG,
+			{
+				v: true,
+				w: false,
+				e: false,
+			},
+		]);
 
-        // Attempt to define the POLYFILL_TYPE_NAME property on the target object
-        safe(objDefine, [target, POLYFILL_TYPE_NAME, {
-            v: polyfillTypeName,
-            w: false,
-            e: false
-        }]);
-    }
+		// Attempt to define the POLYFILL_TYPE_NAME property on the target object
+		safe(objDefine, [
+			target,
+			POLYFILL_TYPE_NAME,
+			{
+				v: polyfillTypeName,
+				w: false,
+				e: false,
+			},
+		]);
+	}
 
-    return target;
+	return target;
 }

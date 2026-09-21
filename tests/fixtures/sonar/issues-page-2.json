@@ -1,39 +1,39 @@
 {
-    "paging": {
-        "pageIndex": 2,
-        "pageSize": 3,
-        "total": 5
-    },
-    "issues": [
-        {
-            "key": "SONAR-UNKNOWN-SEVERITY",
-            "rule": "typescript:S9999",
-            "component": "gmtestandreview_portalsample:ClientApp/src/components/RequestList/requestItem.tsx",
-            "project": "gmtestandreview_portalsample",
-            "line": 12,
-            "message": "This fixture represents a future Sonar issue shape.",
-            "type": "CODE_SMELL",
-            "severity": "UNKNOWN",
-            "status": "OPEN",
-            "effort": "5min",
-            "creationDate": "2026-09-01T10:11:12+0000",
-            "updateDate": "2026-09-12T05:00:00+0000"
-        },
-        {
-            "key": "SONAR-INFO-LOW",
-            "rule": "typescript:S1481",
-            "component": "gmtestandreview_portalsample:ClientApp/src/routes/quotation/index.tsx",
-            "project": "gmtestandreview_portalsample",
-            "line": 120,
-            "message": "Remove this unused local variable.",
-            "type": "CODE_SMELL",
-            "severity": "INFO",
-            "impactSeverity": "LOW",
-            "impactSoftwareQuality": "MAINTAINABILITY",
-            "status": "OPEN",
-            "effort": "2min",
-            "creationDate": "2026-09-02T10:11:12+0000",
-            "updateDate": "2026-09-13T05:00:00+0000"
-        }
-    ]
+	"paging": {
+		"pageIndex": 2,
+		"pageSize": 3,
+		"total": 5
+	},
+	"issues": [
+		{
+			"key": "SONAR-UNKNOWN-SEVERITY",
+			"rule": "typescript:S9999",
+			"component": "gmtestandreview_portalsample:ClientApp/src/components/RequestList/requestItem.tsx",
+			"project": "gmtestandreview_portalsample",
+			"line": 12,
+			"message": "This fixture represents a future Sonar issue shape.",
+			"type": "CODE_SMELL",
+			"severity": "UNKNOWN",
+			"status": "OPEN",
+			"effort": "5min",
+			"creationDate": "2026-09-01T10:11:12+0000",
+			"updateDate": "2026-09-12T05:00:00+0000"
+		},
+		{
+			"key": "SONAR-INFO-LOW",
+			"rule": "typescript:S1481",
+			"component": "gmtestandreview_portalsample:ClientApp/src/routes/quotation/index.tsx",
+			"project": "gmtestandreview_portalsample",
+			"line": 120,
+			"message": "Remove this unused local variable.",
+			"type": "CODE_SMELL",
+			"severity": "INFO",
+			"impactSeverity": "LOW",
+			"impactSoftwareQuality": "MAINTAINABILITY",
+			"status": "OPEN",
+			"effort": "2min",
+			"creationDate": "2026-09-02T10:11:12+0000",
+			"updateDate": "2026-09-13T05:00:00+0000"
+		}
+	]
 }

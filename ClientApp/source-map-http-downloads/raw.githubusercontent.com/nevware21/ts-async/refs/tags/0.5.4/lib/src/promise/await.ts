@@ -9,7 +9,11 @@
 import { isPromiseLike } from "@nevware21/ts-utils";
 import { AwaitResponse } from "../interfaces/await-response";
 import { IPromise } from "../interfaces/IPromise";
-import { FinallyPromiseHandler, RejectedPromiseHandler, ResolvedPromiseHandler } from "../interfaces/types";
+import {
+	FinallyPromiseHandler,
+	RejectedPromiseHandler,
+	ResolvedPromiseHandler,
+} from "../interfaces/types";
 import { REJECTED } from "../internal/constants";
 
 /**
@@ -48,7 +52,12 @@ import { REJECTED } from "../internal/constants";
  * });
  * ```
  */
-export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(value: T | Promise<T>, cb: (response: AwaitResponse<T | TResult1>) => T | TResult1 | TResult2 | Promise<T | TResult1 | TResult2>): T | TResult1 | TResult2 | Promise<T | TResult1 | TResult2>;
+export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(
+	value: T | Promise<T>,
+	cb: (
+		response: AwaitResponse<T | TResult1>,
+	) => T | TResult1 | TResult2 | Promise<T | TResult1 | TResult2>,
+): T | TResult1 | TResult2 | Promise<T | TResult1 | TResult2>;
 
 /**
  * Helper to coallesce the promise resolved / reject into a single callback to simplify error handling.
@@ -86,7 +95,12 @@ export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(value: T | Pr
  * });
  * ```
  */
-export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(value: T | PromiseLike<T>, cb: (response: AwaitResponse<T | TResult1>) => T | TResult1 | TResult2 | PromiseLike<T | TResult1 | TResult2>): T | TResult1 | TResult2 | PromiseLike<T | TResult1 | TResult2>;
+export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(
+	value: T | PromiseLike<T>,
+	cb: (
+		response: AwaitResponse<T | TResult1>,
+	) => T | TResult1 | TResult2 | PromiseLike<T | TResult1 | TResult2>,
+): T | TResult1 | TResult2 | PromiseLike<T | TResult1 | TResult2>;
 
 /**
  * Helper to coallesce the promise resolved / reject into a single callback to simplify error handling.
@@ -124,21 +138,33 @@ export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(value: T | Pr
  * });
  * ```
  */
-export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(value: T | IPromise<T>, cb: (response: AwaitResponse<T | TResult1>) => T | TResult1 | TResult2 | IPromise<T | TResult1 | TResult2>): T | TResult1 | TResult2 | IPromise<T | TResult1 | TResult2> {
-    return doAwait(value as T, (value) => {
-        return cb ? cb({
-            status: "fulfilled",
-            rejected: false,
-            value: value
-        }) : value;
-    },
-    (reason) => {
-        return cb ? cb({
-            status: REJECTED,
-            rejected: true,
-            reason: reason
-        }) : reason;
-    });
+export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(
+	value: T | IPromise<T>,
+	cb: (
+		response: AwaitResponse<T | TResult1>,
+	) => T | TResult1 | TResult2 | IPromise<T | TResult1 | TResult2>,
+): T | TResult1 | TResult2 | IPromise<T | TResult1 | TResult2> {
+	return doAwait(
+		value as T,
+		(value) => {
+			return cb
+				? cb({
+						status: "fulfilled",
+						rejected: false,
+						value: value,
+					})
+				: value;
+		},
+		(reason) => {
+			return cb
+				? cb({
+						status: REJECTED,
+						rejected: true,
+						reason: reason,
+					})
+				: reason;
+		},
+	);
 }
 
 /**
@@ -176,7 +202,12 @@ export function doAwaitResponse<T, TResult1 = T, TResult2 = never>(value: T | IP
  * });
  * ```
  */
-export function doAwait<T, TResult1 = T, TResult2 = never>(value: T | Promise<T>, resolveFn: ResolvedPromiseHandler<T, TResult1>, rejectFn?: RejectedPromiseHandler<TResult2>, finallyFn?: FinallyPromiseHandler): TResult1 | TResult2 | Promise<TResult1 | TResult2>;
+export function doAwait<T, TResult1 = T, TResult2 = never>(
+	value: T | Promise<T>,
+	resolveFn: ResolvedPromiseHandler<T, TResult1>,
+	rejectFn?: RejectedPromiseHandler<TResult2>,
+	finallyFn?: FinallyPromiseHandler,
+): TResult1 | TResult2 | Promise<TResult1 | TResult2>;
 
 /**
  * Wait for the promise to resolve or reject, if resolved the callback function will be called with it's value and if
@@ -213,7 +244,12 @@ export function doAwait<T, TResult1 = T, TResult2 = never>(value: T | Promise<T>
  * });
  * ```
  */
-export function doAwait<T, TResult1 = T, TResult2 = never>(value: T | PromiseLike<T>, resolveFn: ResolvedPromiseHandler<T, TResult1>, rejectFn?: RejectedPromiseHandler<TResult2>, finallyFn?: FinallyPromiseHandler): TResult1 | TResult2 | PromiseLike<TResult1 | TResult2>;
+export function doAwait<T, TResult1 = T, TResult2 = never>(
+	value: T | PromiseLike<T>,
+	resolveFn: ResolvedPromiseHandler<T, TResult1>,
+	rejectFn?: RejectedPromiseHandler<TResult2>,
+	finallyFn?: FinallyPromiseHandler,
+): TResult1 | TResult2 | PromiseLike<TResult1 | TResult2>;
 
 /**
  * Wait for the promise to resolve or reject, if resolved the callback function will be called with it's value and if
@@ -250,34 +286,44 @@ export function doAwait<T, TResult1 = T, TResult2 = never>(value: T | PromiseLik
  * });
  * ```
  */
-export function doAwait<T, TResult1 = T, TResult2 = never>(value: T | IPromise<T>, resolveFn: ResolvedPromiseHandler<T, TResult1>, rejectFn?: RejectedPromiseHandler<TResult2>, finallyFn?: FinallyPromiseHandler): TResult1 | TResult2 | IPromise<TResult1 | TResult2> {
-    let result: T | TResult1 | TResult2 | IPromise<T | TResult1 | TResult2> | PromiseLike<TResult1 | TResult2> = value;
-    
-    try {
-        if (isPromiseLike<T>(value)) {
-            if (resolveFn || rejectFn) {
-                result = value.then(resolveFn, rejectFn) as any;
-            }
-        } else {
-            try {
-                if (resolveFn) {
-                    result = resolveFn(value);
-                }
-            } catch (err) {
-                if (rejectFn) {
-                    result = rejectFn(err);
-                } else {
-                    throw err;
-                }
-            }
-        }
-    } finally {
-        if (finallyFn) {
-            doFinally(result as any, finallyFn);
-        }
-    }
+export function doAwait<T, TResult1 = T, TResult2 = never>(
+	value: T | IPromise<T>,
+	resolveFn: ResolvedPromiseHandler<T, TResult1>,
+	rejectFn?: RejectedPromiseHandler<TResult2>,
+	finallyFn?: FinallyPromiseHandler,
+): TResult1 | TResult2 | IPromise<TResult1 | TResult2> {
+	let result:
+		| T
+		| TResult1
+		| TResult2
+		| IPromise<T | TResult1 | TResult2>
+		| PromiseLike<TResult1 | TResult2> = value;
 
-    return result as any;
+	try {
+		if (isPromiseLike<T>(value)) {
+			if (resolveFn || rejectFn) {
+				result = value.then(resolveFn, rejectFn) as any;
+			}
+		} else {
+			try {
+				if (resolveFn) {
+					result = resolveFn(value);
+				}
+			} catch (err) {
+				if (rejectFn) {
+					result = rejectFn(err);
+				} else {
+					throw err;
+				}
+			}
+		}
+	} finally {
+		if (finallyFn) {
+			doFinally(result as any, finallyFn);
+		}
+	}
+
+	return result as any;
 }
 
 /**
@@ -288,7 +334,10 @@ export function doAwait<T, TResult1 = T, TResult2 = never>(value: T | IPromise<T
  * @param value - The value or promise like value to wait for
  * @param finallyFn - The finally function to call once the promise has resolved or rejected
  */
-export function doFinally<T>(value: T | Promise<T>, finallyFn: FinallyPromiseHandler): T | Promise<T>;
+export function doFinally<T>(
+	value: T | Promise<T>,
+	finallyFn: FinallyPromiseHandler,
+): T | Promise<T>;
 
 /**
  * Wait for the promise to resolve or reject and then call the finallyFn. If the passed promise argument is not a promise the callback
@@ -298,7 +347,10 @@ export function doFinally<T>(value: T | Promise<T>, finallyFn: FinallyPromiseHan
  * @param value - The value or promise like value to wait for
  * @param finallyFn - The finally function to call once the promise has resolved or rejected
  */
-export function doFinally<T>(value: T | PromiseLike<T>, finallyFn: FinallyPromiseHandler): T | PromiseLike<T>;
+export function doFinally<T>(
+	value: T | PromiseLike<T>,
+	finallyFn: FinallyPromiseHandler,
+): T | PromiseLike<T>;
 
 /**
  * Wait for the promise to resolve or reject and then call the finallyFn. If the passed promise argument is not a promise the callback
@@ -308,27 +360,32 @@ export function doFinally<T>(value: T | PromiseLike<T>, finallyFn: FinallyPromis
  * @param value - The value or promise like value to wait for
  * @param finallyFn - The finally function to call once the promise has resolved or rejected
  */
-export function doFinally<T>(value: T | IPromise<T>, finallyFn: FinallyPromiseHandler): T | IPromise<T> {
-    let result = value;
-    if (finallyFn) {
-        if (isPromiseLike<T>(value)) {
-            if ((value as IPromise<T>).finally) {
-                result = (value as IPromise<T>).finally(finallyFn);
-            } else {
-                // Simulate finally if not available
-                result = value.then(
-                    function(value) {
-                        finallyFn();
-                        return value;
-                    }, function(reason: any) {
-                        finallyFn();
-                        throw reason;
-                    });
-            }
-        } else {
-            finallyFn();
-        }
-    }
+export function doFinally<T>(
+	value: T | IPromise<T>,
+	finallyFn: FinallyPromiseHandler,
+): T | IPromise<T> {
+	let result = value;
+	if (finallyFn) {
+		if (isPromiseLike<T>(value)) {
+			if ((value as IPromise<T>).finally) {
+				result = (value as IPromise<T>).finally(finallyFn);
+			} else {
+				// Simulate finally if not available
+				result = value.then(
+					function (value) {
+						finallyFn();
+						return value;
+					},
+					function (reason: any) {
+						finallyFn();
+						throw reason;
+					},
+				);
+			}
+		} else {
+			finallyFn();
+		}
+	}
 
-    return result;
+	return result;
 }

@@ -24,7 +24,7 @@
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function utcNow() {
-    return (Date.now || polyUtcNow)();
+	return (Date.now || polyUtcNow)();
 }
 
 /**
@@ -39,12 +39,12 @@ export function utcNow() {
  * @group Polyfill
  *
  * @returns A Number representing the milliseconds elapsed since the UNIX epoch.
-  * @example
+ * @example
  * ```ts
  * let now = polyUtcNow();
  * ```
-*/
+ */
 /*#__NO_SIDE_EFFECTS__*/
 export function polyUtcNow() {
-    return new Date().getTime();
+	return new Date().getTime();
 }

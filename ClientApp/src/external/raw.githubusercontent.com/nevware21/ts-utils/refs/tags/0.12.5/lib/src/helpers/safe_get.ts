@@ -63,8 +63,12 @@ import { safe } from "./safe";
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function safeGet<T = boolean, F extends (...args: any[]) => T = () => T>(cb: F, defValue: T, argArray?: Parameters<F>): T {
-    let result = safe(cb, argArray);
-    
-    return result.e ? defValue : result.v;
+export function safeGet<T = boolean, F extends (...args: any[]) => T = () => T>(
+	cb: F,
+	defValue: T,
+	argArray?: Parameters<F>,
+): T {
+	let result = safe(cb, argArray);
+
+	return result.e ? defValue : result.v;
 }

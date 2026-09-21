@@ -1,6 +1,6 @@
-import { vi } from 'vitest';
-import type { Mock } from 'vitest';
-import type * as WebApiClient from '../../../ClientApp/src/api/web-api-client';
+import { vi } from "vitest";
+import type { Mock } from "vitest";
+import type * as WebApiClient from "../../../ClientApp/src/api/web-api-client";
 
 /**
  * Factory for the generated API clients.
@@ -23,12 +23,12 @@ import type * as WebApiClient from '../../../ClientApp/src/api/web-api-client';
 export type ClientMethodMocks = Record<string, Mock>;
 
 export interface ClientMock<TMethods extends ClientMethodMocks> {
-    /** Drop-in replacement for the generated client class. */
-    readonly constructor: Mock;
-    /** The single instance every construction returns, so assertions survive re-renders. */
-    readonly instance: TMethods & { setAuthToken: Mock };
-    readonly setAuthToken: Mock;
-    readonly methods: TMethods;
+	/** Drop-in replacement for the generated client class. */
+	readonly constructor: Mock;
+	/** The single instance every construction returns, so assertions survive re-renders. */
+	readonly instance: TMethods & { setAuthToken: Mock };
+	readonly setAuthToken: Mock;
+	readonly methods: TMethods;
 }
 
 /**
@@ -39,26 +39,26 @@ export interface ClientMock<TMethods extends ClientMethodMocks> {
  * never sees.
  */
 export const createClientMock = <TMethods extends ClientMethodMocks>(
-    methods: TMethods,
+	methods: TMethods,
 ): ClientMock<TMethods> => {
-    const setAuthToken = vi.fn();
-    const instance = { setAuthToken, ...methods };
-    const clientConstructor = vi.fn(function ClientMock() {
-        return instance;
-    });
+	const setAuthToken = vi.fn();
+	const instance = { setAuthToken, ...methods };
+	const clientConstructor = vi.fn(function ClientMock() {
+		return instance;
+	});
 
-    return { constructor: clientConstructor, instance, setAuthToken, methods };
+	return { constructor: clientConstructor, instance, setAuthToken, methods };
 };
 
 /** Convenience for the common case: name the methods, get mocks for them. */
 export const createClientMockFor = <TName extends string>(
-    ...methodNames: readonly TName[]
+	...methodNames: readonly TName[]
 ): ClientMock<Record<TName, Mock>> => {
-    const methods = Object.fromEntries(
-        methodNames.map((name) => [name, vi.fn()]),
-    ) as Record<TName, Mock>;
+	const methods = Object.fromEntries(
+		methodNames.map((name) => [name, vi.fn()]),
+	) as Record<TName, Mock>;
 
-    return createClientMock(methods);
+	return createClientMock(methods);
 };
 
 /**
@@ -78,21 +78,21 @@ export const createClientMockFor = <TName extends string>(
  * ```
  */
 export const webApiClientModuleMock = (
-    original: typeof WebApiClient,
-    clients: Record<string, ClientMock<ClientMethodMocks>>,
+	original: typeof WebApiClient,
+	clients: Record<string, ClientMock<ClientMethodMocks>>,
 ) => ({
-    ...original,
-    ...Object.fromEntries(
-        Object.entries(clients).map(([name, client]) => [name, client.constructor]),
-    ),
+	...original,
+	...Object.fromEntries(
+		Object.entries(clients).map(([name, client]) => [name, client.constructor]),
+	),
 });
 
 /** Reset every mock on a client between tests without rebuilding it. */
 export const resetClientMock = (client: ClientMock<ClientMethodMocks>) => {
-    client.constructor.mockClear();
-    client.setAuthToken.mockReset();
+	client.constructor.mockClear();
+	client.setAuthToken.mockReset();
 
-    for (const method of Object.values(client.methods)) {
-        method.mockReset();
-    }
+	for (const method of Object.values(client.methods)) {
+		method.mockReset();
+	}
 };

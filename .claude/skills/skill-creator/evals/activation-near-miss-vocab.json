@@ -1,7 +1,22 @@
 [
-  {"query": "Optimize the activation conditions for my browser extension's content script.", "should_trigger": false},
-  {"query": "Tune the trigger conditions for my GitHub Actions workflow so it only runs on release tags.", "should_trigger": false},
-  {"query": "Improve the activation rules for my Chrome extension so the popup only opens on checkout pages.", "should_trigger": false},
-  {"query": "Write regression tests for the guardrails in my API rate limiter and validate the trigger thresholds.", "should_trigger": false},
-  {"query": "Benchmark the trigger latency of my webhook handler and report the p95.", "should_trigger": false}
+	{
+		"query": "Optimize the activation conditions for my browser extension's content script.",
+		"should_trigger": false
+	},
+	{
+		"query": "Tune the trigger conditions for my GitHub Actions workflow so it only runs on release tags.",
+		"should_trigger": false
+	},
+	{
+		"query": "Improve the activation rules for my Chrome extension so the popup only opens on checkout pages.",
+		"should_trigger": false
+	},
+	{
+		"query": "Write regression tests for the guardrails in my API rate limiter and validate the trigger thresholds.",
+		"should_trigger": false
+	},
+	{
+		"query": "Benchmark the trigger latency of my webhook handler and report the p95.",
+		"should_trigger": false
+	}
 ]

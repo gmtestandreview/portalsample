@@ -15,11 +15,11 @@ import { objCopyProps, objDeepCopy } from "../object/copy";
  * @ignore
  */
 function _doExtend<T>(target: T, theArgs: any[]): any {
-    arrForEach(theArgs, (theArg) => {
-        objCopyProps(target, theArg);
-    });
+	arrForEach(theArgs, (theArg) => {
+		objCopyProps(target, theArg);
+	});
 
-    return target;
+	return target;
 }
 
 /**
@@ -40,10 +40,18 @@ export function deepExtend<T>(target: T, ...theArgs: any): T & any;
  * @param objN - The optional number of arguments to be copied
  * @returns - A new object or the original
  */
-export function deepExtend<T, T1, T2, T3, T4, T5, T6>(target: T, obj1?: T1, obj2?: T2, obj3?: T3, obj4?: T4, obj5?: T5, obj6?: T6): T & T1 & T2 & T3 & T4 & T5 & T6 {
-    return _doExtend(objDeepCopy(target) || {}, ArrSlice[CALL](arguments));
+export function deepExtend<T, T1, T2, T3, T4, T5, T6>(
+	target: T,
+	obj1?: T1,
+	obj2?: T2,
+	obj3?: T3,
+	obj4?: T4,
+	obj5?: T5,
+	obj6?: T6,
+): T & T1 & T2 & T3 & T4 & T5 & T6 {
+	return _doExtend(objDeepCopy(target) || {}, ArrSlice[CALL](arguments));
 }
- 
+
 /**
  * Extend the target object by merging the passed arguments into it
  * @group Object
@@ -60,8 +68,14 @@ export function objExtend<T>(target: T, ...theArgs: any): T & any;
  * @param objN - The optional number of arguments to be copied
  * @returns - A new object or the original
  */
-export function objExtend<T, T1, T2, T3, T4, T5, T6>(target: T, obj1?: T1, obj2?: T2, obj3?: T3, obj4?: T4, obj5?: T5, obj6?: T6): T & T1 & T2 & T3 & T4 & T5 & T6 {
-    return _doExtend(target || {}, ArrSlice[CALL](arguments));
+export function objExtend<T, T1, T2, T3, T4, T5, T6>(
+	target: T,
+	obj1?: T1,
+	obj2?: T2,
+	obj3?: T3,
+	obj4?: T4,
+	obj5?: T5,
+	obj6?: T6,
+): T & T1 & T2 & T3 & T4 & T5 & T6 {
+	return _doExtend(target || {}, ArrSlice[CALL](arguments));
 }
-
- 

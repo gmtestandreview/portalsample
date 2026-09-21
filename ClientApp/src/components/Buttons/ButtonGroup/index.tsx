@@ -7,23 +7,23 @@
  * @param {ButtonGroupProps} props - Component props
  * @param {() => JSX.Element} props.left - Function that returns the JSX for the left button.
  * @param {() => JSX.Element} props.right - Function that returns the JSX for the right button.
- * @returns {JSX.Element} Rendered button group element 
- * 
+ * @returns {JSX.Element} Rendered button group element
+ *
  */
 
 export interface ButtonGroupProps {
-    left: () => JSX.Element,
-    right: () => JSX.Element,
+	left: () => JSX.Element;
+	right: () => JSX.Element;
 }
 
 const ButtonGroup = (props: ButtonGroupProps) => {
-    const { left, right } = props;
-    return (
-        <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
-            {left()}
-            {right()}
-        </div>
-    );
+	const { left, right } = props;
+	return (
+		<div className="d-grid w-100 gap-3 d-md-flex justify-content-md-between">
+			{left()}
+			{right()}
+		</div>
+	);
 };
 
 export default ButtonGroup;

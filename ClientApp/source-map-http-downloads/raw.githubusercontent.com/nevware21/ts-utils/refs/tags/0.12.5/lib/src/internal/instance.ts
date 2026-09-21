@@ -16,13 +16,13 @@ import { mathRandom } from "../math/random";
  * Internal constant to hold the unique instance ID for the current instance
  * of the library. This is used to ensure that each instance of the library has a unique identifier.
  */
-export let _uniqueInstanceId: ILazyValue<string> = (/*#__PURE__*/getLazy(() => {
-    let value = (utcNow().toString(36).slice(2));
-    while(value.length < 16) {
-        value += mathRandom().toString(36).slice(2);
-    }
+export let _uniqueInstanceId: ILazyValue<string> = /*#__PURE__*/ getLazy(() => {
+	let value = utcNow().toString(36).slice(2);
+	while (value.length < 16) {
+		value += mathRandom().toString(36).slice(2);
+	}
 
-    value = value.substring(0, 16);
+	value = value.substring(0, 16);
 
-    return value;
-}));
+	return value;
+});

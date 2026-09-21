@@ -7,7 +7,15 @@
  */
 
 import { getWindow, hasWindow } from "../helpers/environment";
-import { CALL, CONSTRUCTOR, FUNCTION, ObjClass, OBJECT, PROTOTYPE, TO_STRING } from "../internal/constants";
+import {
+	CALL,
+	CONSTRUCTOR,
+	FUNCTION,
+	ObjClass,
+	OBJECT,
+	PROTOTYPE,
+	TO_STRING,
+} from "../internal/constants";
 import { objHasOwnProperty } from "./has_own_prop";
 import { objGetPrototypeOf } from "./object";
 
@@ -52,41 +60,44 @@ let _gblWindow: Window;
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function isPlainObject(value: any): value is object {
-    if (!value || typeof value !== OBJECT) {
-        return false;
-    }
+	if (!value || typeof value !== OBJECT) {
+		return false;
+	}
 
-    if (!_gblWindow) {
-        // Lazily cache the current global window value and default it to "true" (so we bypass this check in the future)
-        _gblWindow = hasWindow() ? getWindow() : (true as any);
-    }
+	if (!_gblWindow) {
+		// Lazily cache the current global window value and default it to "true" (so we bypass this check in the future)
+		_gblWindow = hasWindow() ? getWindow() : (true as any);
+	}
 
-    let result = false;
-    if (value !== _gblWindow) {
+	let result = false;
+	if (value !== _gblWindow) {
+		if (!_objCtrFnString) {
+			// Lazily caching what the runtime reports as the object function constructor (as a string)
+			// Using an current function lookup to find what this runtime calls a "native" function
+			_fnToString = Function[PROTOTYPE][TO_STRING];
+			_objCtrFnString = _fnToString[CALL](ObjClass);
+		}
 
-        if (!_objCtrFnString) {
-            // Lazily caching what the runtime reports as the object function constructor (as a string)
-            // Using an current function lookup to find what this runtime calls a "native" function
-            _fnToString = Function[PROTOTYPE][TO_STRING];
-            _objCtrFnString = _fnToString[CALL](ObjClass);
-        }
+		try {
+			let proto = objGetPrototypeOf(value);
 
-        try {
-            let proto = objGetPrototypeOf(value);
+			// No prototype so looks like an object created with Object.create(null)
+			result = !proto;
+			if (!result) {
+				if (objHasOwnProperty(proto, CONSTRUCTOR)) {
+					proto = proto[CONSTRUCTOR];
+				}
 
-            // No prototype so looks like an object created with Object.create(null)
-            result = !proto;
-            if (!result) {
-                if (objHasOwnProperty(proto, CONSTRUCTOR)) {
-                    proto = proto[CONSTRUCTOR]
-                }
-            
-                result = !!(proto && typeof proto === FUNCTION && _fnToString[CALL](proto) === _objCtrFnString);
-            }
-        } catch (ex) {
-            // Something went wrong, so it's not an object we are playing with
-        }
-    }
+				result = !!(
+					proto &&
+					typeof proto === FUNCTION &&
+					_fnToString[CALL](proto) === _objCtrFnString
+				);
+			}
+		} catch (ex) {
+			// Something went wrong, so it's not an object we are playing with
+		}
+	}
 
-    return result;
+	return result;
 }

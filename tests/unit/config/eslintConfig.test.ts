@@ -1,6 +1,6 @@
-import { spawnSync } from 'node:child_process';
-import path from 'node:path';
-import { describe, expect, it } from 'vitest';
+import { spawnSync } from "node:child_process";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
 
 /**
  * `storybook/no-uninstalled-addons` resolves `package.json` relative to the
@@ -23,34 +23,34 @@ import { describe, expect, it } from 'vitest';
 const CHILD_TIMEOUT_MS = 45_000;
 const TEST_TIMEOUT_MS = 60_000;
 
-describe('ESLint editor integration', () => {
-    it(
-        'lints the Storybook config when ESLint runs from the file directory',
-        () => {
-            const storybookDirectory = path.resolve('.storybook');
-            const eslintEntryPoint = path.resolve(
-                'node_modules/eslint/bin/eslint.js',
-            );
+describe("ESLint editor integration", () => {
+	it(
+		"lints the Storybook config when ESLint runs from the file directory",
+		() => {
+			const storybookDirectory = path.resolve(".storybook");
+			const eslintEntryPoint = path.resolve(
+				"node_modules/eslint/bin/eslint.js",
+			);
 
-            const result = spawnSync(
-                process.execPath,
-                [eslintEntryPoint, 'main.ts'],
-                {
-                    cwd: storybookDirectory,
-                    encoding: 'utf8',
-                    timeout: CHILD_TIMEOUT_MS,
-                },
-            );
+			const result = spawnSync(
+				process.execPath,
+				[eslintEntryPoint, "main.ts"],
+				{
+					cwd: storybookDirectory,
+					encoding: "utf8",
+					timeout: CHILD_TIMEOUT_MS,
+				},
+			);
 
-            expect(
-                result.error,
-                `ESLint could not be spawned: ${result.error?.message}`,
-            ).toBeUndefined();
-            expect(
-                result.status,
-                `ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
-            ).toBe(0);
-        },
-        TEST_TIMEOUT_MS,
-    );
+			expect(
+				result.error,
+				`ESLint could not be spawned: ${result.error?.message}`,
+			).toBeUndefined();
+			expect(
+				result.status,
+				`ESLint exited ${result.status}.\nstdout:\n${result.stdout}\nstderr:\n${result.stderr}`,
+			).toBe(0);
+		},
+		TEST_TIMEOUT_MS,
+	);
 });

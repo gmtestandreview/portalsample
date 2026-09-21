@@ -12,27 +12,27 @@ import { NULL_VALUE, ObjClass } from "../internal/constants";
 import { _unwrapFunctionWithPoly } from "../internal/unwrapFunction";
 
 function _objPropertyIsEnum(obj: any, propKey: PropertyKey): boolean {
-    let desc: PropertyDescriptor | undefined;
-    let fn = ObjClass.getOwnPropertyDescriptor;
-    
-    if (!isStrictNullOrUndefined(obj) && fn) {
-        // Try to call the native getOwnPropertyDescriptor function
-        desc = safe(fn, [obj, propKey]).v || NULL_VALUE;
-    }
+	let desc: PropertyDescriptor | undefined;
+	let fn = ObjClass.getOwnPropertyDescriptor;
 
-    if (!desc) {
-        desc = safe(() => {
-            // Check enumerability of the property in the object
-            // This is a workaround for the fact that `in` operator does not check for non-enumerable properties
-            for (const key in obj) {
-                if (key === propKey) {
-                    return { enumerable: true };
-                }
-            }
-        }).v;
-    }
+	if (!isStrictNullOrUndefined(obj) && fn) {
+		// Try to call the native getOwnPropertyDescriptor function
+		desc = safe(fn, [obj, propKey]).v || NULL_VALUE;
+	}
 
-    return (desc && desc.enumerable) || false;
+	if (!desc) {
+		desc = safe(() => {
+			// Check enumerability of the property in the object
+			// This is a workaround for the fact that `in` operator does not check for non-enumerable properties
+			for (const key in obj) {
+				if (key === propKey) {
+					return { enumerable: true };
+				}
+			}
+		}).v;
+	}
+
+	return (desc && desc.enumerable) || false;
 }
 
 /**
@@ -66,4 +66,9 @@ function _objPropertyIsEnum(obj: any, propKey: PropertyKey): boolean {
  * console.log(objPropertyIsEnumerable(obj, "nonExistent")); // false
  * ```
  */
-export const objPropertyIsEnumerable: (obj: any, prop: PropertyKey) => boolean = (/*#__PURE__*/_unwrapFunctionWithPoly("propertyIsEnumerable", NULL_VALUE as any, _objPropertyIsEnum));
+export const objPropertyIsEnumerable: (obj: any, prop: PropertyKey) => boolean =
+	/*#__PURE__*/ _unwrapFunctionWithPoly(
+		"propertyIsEnumerable",
+		NULL_VALUE as any,
+		_objPropertyIsEnum,
+	);
