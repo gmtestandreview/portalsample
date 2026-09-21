@@ -8,6 +8,10 @@ compatibility: Agent Skills authoring is spec-based. Bundled evaluation tooling 
 
 Create or improve Agent Skills without conflating authoring quality, behavioral evidence, and deployment readiness.
 
+If the request is not about an Agent Skill (a `SKILL.md` or skill folder) — for example
+activation or trigger rules for a browser extension, CI workflow, or webhook — stop here,
+do not apply this workflow, and handle the request normally.
+
 This is a hybrid skill. Portable Agent Skills are the default target. Claude Code
 runtime configuration is an explicit local branch and must not be presented as
 universal Agent Skills behavior.

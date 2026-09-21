@@ -39,10 +39,20 @@ export default defineConfig(
 			"ClientApp/webpack/**",
 		],
 	},
-
-	js.configs.recommended,
-	tseslint.configs.recommended,
-
+	{
+	files: ["**/*.{js,ts,tsx}"],
+  	extends: [
+		js.configs.recommended,
+		tseslint.configs.recommendedTypeChecked,
+		tseslint.configs.stylisticTypeChecked,
+		],
+  	languageOptions: {
+    	parserOptions: {
+      		projectService: true,
+  		  },
+  		},
+	},
+	
 	{
 		name: "nmi/react",
 		files: ["**/*.{ts,tsx}"],
@@ -103,6 +113,7 @@ export default defineConfig(
 			],
 			"@typescript-eslint/no-empty-object-type": "error",
 			"@typescript-eslint/no-explicit-any": "off",
+			"@typescript-eslint/prefer-readonly-parameter-types": "error",
 			"@typescript-eslint/no-unused-vars": [
 				"error",
 				{
