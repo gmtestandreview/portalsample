@@ -20,9 +20,9 @@ import * as path from 'node:path';
 
 const defaultDotPaths = {
   win32: [
-    'C:\\Program Files\\Graphviz\\bin\\dot.exe',
-    'C:\\Program Files (x86)\\Graphviz\\bin\\dot.exe',
-    'C:\\ProgramData\\chocolatey\\bin\\dot.exe'
+    String.raw`C:\Program Files\Graphviz\bin\dot.exe`,
+    String.raw`C:\Program Files (x86)\Graphviz\bin\dot.exe`,
+    String.raw`C:\ProgramData\chocolatey\bin\dot.exe`
   ],
   darwin: [
     '/opt/homebrew/bin/dot',
@@ -74,8 +74,13 @@ function extractGraphBody(dotContent) {
 
   let body = dotContent.slice(bodyStart, bodyEnd);
 
-  // Remove rankdir (we'll set it once at the top level)
-  body = body.replaceAll(/^\s*rankdir\s*=\s*\w+\s*;?\s*$/gm, '');
+  // Remove rankdir (we'll set it once at the top level). Testing trimmed lines
+  // avoids the overlapping \s* quantifiers that backtrack super-linearly.
+  const rankdirLine = /^rankdir\s*=\s*\w+\s*;?$/;
+  body = body
+    .split('\n')
+    .filter(line => !rankdirLine.test(line.trim()))
+    .join('\n');
 
   return body.trim();
 }

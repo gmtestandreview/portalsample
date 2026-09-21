@@ -127,7 +127,7 @@ eval-tested) and drops any `superpowers:` name prefixes in cross-references
 | 8 | `using-git-worktrees` | Parity check against SP; adopt any SP edge case not already covered. Expected: no body change — but the skill is still symlinked (§4.5) and still gets the provenance comment. | none |
 | 9 | `verification-before-completion` | Keep A Team body; fold any unique SP rationalization rows into the existing table. | none |
 | 10 | `writing-plans` | Keep A Team body; reference the plan reviewer prompt. | `references/plan-document-reviewer-prompt.md` |
-| 11 | `writing-skills` | Keep A Team body; add SP's "Match the Form to the Failure" section and "Bulletproofing" subsections if not already covered by `references/`. Add `anthropic-best-practices.md`, `graphviz-conventions.dot`, `render-graphs.js`. (`persuasion-principles.md`, `testing-skills-with-subagents.md` already present — skip.) | `references/anthropic-best-practices.md`, `references/graphviz-conventions.dot`, `scripts/render-graphs.js` |
+| 11 | `writing-skills` | Keep A Team body; add SP's "Match the Form to the Failure" section and "Bulletproofing" subsections if not already covered by `references/`. Add `anthropic-best-practices.md`, `graphviz-conventions.dot`, `render-graphs.js`. (`persuasion-principles.md`, `testing-skills-with-subagents.md` already present — skip.) | `references/anthropic-best-practices.md`, `scripts/graphviz-conventions.dot`, `scripts/render-graphs.js` |
 
 **Provenance note:** each merged `SKILL.md` gets an HTML comment at the top:
 `<!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->`
