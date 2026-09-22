@@ -1,11 +1,26 @@
 {
 	"$schema": "https://unpkg.com/knip@6/schema.json",
-	"entry": ["index.{js,ts}", "scripts/*.ts", "src/index.{js,ts}"],
-	"project": ["**/*.{js,ts}"],
+	"entry": ["ClientApp/src/index.tsx"],
+	"project": [
+		"ClientApp/src/**/*.{js,jsx,ts,tsx,mdx,scss,sass}",
+		"!ClientApp/src/**/*.test.{js,jsx,ts,tsx}",
+		"!ClientApp/src/**/*.spec.{js,jsx,ts,tsx}",
+		"!ClientApp/src/**/*.stories.{js,jsx,ts,tsx}",
+		"!ClientApp/src/**/*.docs.mdx",
+		"!ClientApp/src/**/*.d.ts",
+		"!ClientApp/src/api/web-api-client.ts",
+		"!ClientApp/src/parent/**",
+		"!ClientApp/source-map-http-downloads/**",
+		"!ClientApp/src/external/**"
+	],
+	"include": ["files"],
+	"ignoreFiles": ["ClientApp/src/**/*.{mdx,scss,sass}"],
 	"treatConfigHintsAsErrors": true,
 	"treatTagHintsAsErrors": true,
 	"tags": ["-lintignore"],
-	"playwright": true,
+	"playwright": false,
+	"storybook": false,
+	"vitest": false,
 	"webpack": false,
 	"eslint": {
 		"config": [
