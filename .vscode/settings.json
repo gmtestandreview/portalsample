@@ -35,6 +35,7 @@
 		"connectionId": "gmtestandreview",
 		"projectKey": "gmtestandreview_portalsample"
 	},
+	"biome.configurationPath": "biome.json",
 	"ruff.nativeServer": "on",
 	"ruff.lineLength": 100,
 	"[python]": {
