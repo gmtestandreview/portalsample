@@ -34,7 +34,7 @@ const CheckboxGroup = <T,>(
 	const [_field, _meta] = useField<T>(name);
 
 	if (isSummary) {
-		if (_field && _field.value) {
+		if (_field?.value) {
 			const currentFieldIndex = options.findIndex(
 				(x) => x.value === _field.value,
 			);

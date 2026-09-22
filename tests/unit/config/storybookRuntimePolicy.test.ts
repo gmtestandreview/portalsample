@@ -12,7 +12,7 @@ const preview = readRepositoryFile(".storybook/preview.ts");
 const pullRequestWorkflow = readRepositoryFile(".github/workflows/pr.yml");
 
 const runtimeFixtureValue = (source: string, key: string): string | undefined =>
-	new RegExp(`${key}\\s*:\\s*['"]([^'"]*)['"]`).exec(source)?.[1];
+	new RegExp(`${key}\\s*:\\s*['"]([^'"]*)['"]`, "u").exec(source)?.[1];
 
 const requiredTelemetryFixtures = {
 	REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY:

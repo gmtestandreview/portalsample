@@ -22,7 +22,7 @@ const RouteAccessibleNavigation = () => {
 				clearTimeout(timeoutId);
 			}
 		};
-	}, [path, location]);
+	}, [path]);
 
 	return (
 		<span

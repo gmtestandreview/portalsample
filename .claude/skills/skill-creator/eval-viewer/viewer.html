@@ -51,7 +51,7 @@
                 flex-direction: column;
             }
             .is-hidden {
-                display: none !important;
+                display: none;
             }
 
             /* ---- Header ---- */
@@ -849,10 +849,10 @@
                 if (!isRecord(file) || file.type === 'error') return null;
                 if (typeof file.data_uri === 'string' && file.data_uri) return file.data_uri;
                 if (typeof file.data_b64 === 'string' && file.data_b64) {
-                    return 'data:application/octet-stream;base64,' + file.data_b64;
+                    return `data:application/octet-stream;base64,${file.data_b64}`;
                 }
                 if (file.type === 'text' && typeof file.content === 'string') {
-                    return 'data:text/plain;charset=utf-8,' + encodeURIComponent(file.content);
+                    return `data:text/plain;charset=utf-8,${encodeURIComponent(file.content)}`;
                 }
                 return null;
             }
@@ -864,7 +864,7 @@
             }
 
             function appendSheetLabel(container, sheetName) {
-                container.appendChild(createElement('div', 'sheet-label', 'Sheet: ' + sheetName));
+                container.appendChild(createElement('div', 'sheet-label', `Sheet: ${sheetName}`));
             }
 
             function createSheetTable(rows) {
@@ -980,7 +980,7 @@
                     return;
                 }
                 if (file.type === 'binary' && uri) {
-                    const link = createElement('a', 'download-link', 'Download ' + String(file.name || 'artifact'));
+                    const link = createElement('a', 'download-link', `Download ${String(file.name || 'artifact')}`);
                     link.href = uri;
                     link.download = String(file.name || 'artifact');
                     content.appendChild(link);
@@ -1078,8 +1078,8 @@
                 summaryLine.appendChild(
                     createElement(
                         'span',
-                        'grade-badge ' + gradeClass(passRate),
-                        passRate === null ? 'Unavailable' : Math.round(passRate * 100) + '%',
+                        `grade-badge ${gradeClass(passRate)}`,
+                        passRate === null ? 'Unavailable' : `${Math.round(passRate * 100)}%`,
                     ),
                 );
 
@@ -1100,7 +1100,7 @@
                 const item = createElement('li', 'assertion-item');
                 const status = createElement(
                     'span',
-                    'assertion-status ' + (verdict === 'unknown' ? '' : verdict),
+                    `assertion-status ${verdict === 'unknown' ? '' : verdict}`,
                     verdictSymbol(verdict),
                 );
                 if (verdict === 'unknown') status.classList.add('evidence-unavailable');
@@ -1291,7 +1291,7 @@
                     let detail = '';
                     try {
                         const body = await response.json();
-                        if (isRecord(body) && typeof body.error === 'string') detail = ': ' + body.error;
+                        if (isRecord(body) && typeof body.error === 'string') detail = `: ${body.error}`;
                     } catch {
                         // Ignore response-body parsing failures.
                     }
@@ -1438,7 +1438,7 @@
                 for (const panel of document.querySelectorAll('.view-panel')) {
                     panel.classList.remove('active');
                 }
-                document.getElementById('panel-' + view).classList.add('active');
+                document.getElementById(`panel-${view}`).classList.add('active');
             }
 
             function formatStat(stat, percentage) {
@@ -1689,7 +1689,7 @@
             }
 
             function appendConfigAverageRow(body, config, configRuns, rowClass, columns) {
-                const averageRow = createElement('tr', 'benchmark-row-avg ' + rowClass);
+                const averageRow = createElement('tr', `benchmark-row-avg ${rowClass}`);
                 const averageRate = averageObserved(
                     configRuns.map((run) => (isRecord(run.result) ? run.result.pass_rate : null)),
                 );
@@ -1725,7 +1725,7 @@
                 const first = evalRuns[0] || {};
                 return typeof first.eval_name === 'string' && first.eval_name
                     ? first.eval_name
-                    : 'Eval ' + String(evalId);
+                    : `Eval ${String(evalId)}`;
             }
 
             function renderPerEval(container, data) {
@@ -1863,7 +1863,7 @@
                     parts.push(metadata.timestamp);
                 }
                 if (Array.isArray(metadata.evals_run)) {
-                    parts.push('Evals: ' + metadata.evals_run.map(String).join(', '));
+                    parts.push(`Evals: ${metadata.evals_run.map(String).join(', ')}`);
                 }
                 const uniformRuns = integerNumber(metadata.runs_per_configuration);
                 parts.push(

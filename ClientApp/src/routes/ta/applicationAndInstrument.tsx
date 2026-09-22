@@ -2,7 +2,7 @@ import { useMsal } from "@azure/msal-react";
 import { useField, useFormikContext } from "formik";
 import { forEach } from "lodash";
 import type { ChangeEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Card, Col, Container } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import {
@@ -146,27 +146,34 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 	const [isInstrumentTypeDisabled, setIsInstrumentTypeDisabled] =
 		useState(false);
 
-	const getInstrumentTypes = (
-		values: LookupResponse[],
-		parentId: string,
-	): SelectInputOption<string>[] => {
-		const options: SelectInputOption<string>[] = [];
-		if (parentId !== undefined && parentId !== "") {
-			forEach(values, (l) => {
-				if (l.parentId === parentId) {
+	const getInstrumentTypes = useCallback(
+		(
+			values: LookupResponse[],
+			parentId: string,
+		): SelectInputOption<string>[] => {
+			const options: SelectInputOption<string>[] = [];
+			if (parentId !== undefined && parentId !== "") {
+				forEach(values, (l) => {
+					if (l.parentId === parentId) {
+						options.push({ displayText: l.label!, value: l.id! });
+					}
+				});
+			} else if (isSummary) {
+				forEach(values, (l) => {
 					options.push({ displayText: l.label!, value: l.id! });
-				}
-			});
-		} else if (isSummary) {
-			forEach(values, (l) => {
-				options.push({ displayText: l.label!, value: l.id! });
-			});
-		}
-		const [sorted, lastId] = sortList(options, "No instrument", "displayText");
-		noInstrumentTypeId.current = lastId;
+				});
+			}
+			const [sorted, lastId] = sortList(
+				options,
+				"No instrument",
+				"displayText",
+			);
+			noInstrumentTypeId.current = lastId;
 
-		return sorted;
-	};
+			return sorted;
+		},
+		[isSummary],
+	);
 
 	// Sync selectedApplication with Formik's patternApprovalType value
 	useEffect(() => {
@@ -233,9 +240,11 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 	}, [
 		_categoryLookupField.value,
 		_typeLookupField.value,
-		accounts,
-		instance,
 		instrumentCategories,
+		_instrumentTypeField.value,
+		isSummary,
+		getInstrumentTypes,
+		_instrumentCatField.value,
 	]);
 
 	const getInstrumentCategories = () => {
@@ -375,7 +384,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 		return (
 			<Container>
 				<Row className="mb-5">
-					<fieldset id="appl-selector" role="group" tabIndex={-1}>
+					<fieldset id="appl-selector" tabIndex={-1}>
 						<legend className="h4">
 							What type of application do you need?
 						</legend>

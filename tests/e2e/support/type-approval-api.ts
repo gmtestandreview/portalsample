@@ -26,7 +26,7 @@ const multipartValue = (body: string, name: string): string | undefined => {
 	const escapedName = name.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 	return new RegExp(
 		`name="${escapedName}"[^\\r\\n]*\\r?\\n(?:[^\\r\\n]+\\r?\\n)*\\r?\\n([^\\r\\n]*)`,
-		"i",
+		"iu",
 	).exec(body)?.[1];
 };
 

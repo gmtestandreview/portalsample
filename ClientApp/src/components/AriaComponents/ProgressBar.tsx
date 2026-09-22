@@ -22,7 +22,7 @@ export function ProgressBar({ label, ...props }: ProgressBarProps) {
 							className="fill"
 							style={
 								{
-									"--percent": (isIndeterminate ? 100 : percentage) + "%",
+									"--percent": `${isIndeterminate ? 100 : percentage}%`,
 								} as any
 							}
 						/>

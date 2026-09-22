@@ -9,16 +9,17 @@ export function parseDateRange(text) {
 	const now = new Date();
 	const todayStr = dateToYMD(now);
 	const lower = (text || "").toLowerCase();
-	let match;
 
-	if ((match = lower.match(/last\s+(\d+)\s+days?/u))) {
+	let match = lower.match(/last\s+(\d+)\s+days?/u);
+	if (match) {
 		const n = Number.parseInt(match[1], 10);
 		const start = new Date();
 		start.setDate(start.getDate() - (n - 1));
 		return { start: dateToYMD(start), end: todayStr, label: `Last ${n} days` };
 	}
 
-	if ((match = lower.match(/last\s+(\d+)\s+weeks?/u))) {
+	match = lower.match(/last\s+(\d+)\s+weeks?/u);
+	if (match) {
 		const n = Number.parseInt(match[1], 10);
 		const start = new Date();
 		start.setDate(start.getDate() - (n * 7 - 1));
@@ -75,11 +76,10 @@ export function parseDateRange(text) {
 	}
 
 	// month-year like "february 2006" or "feb 2006"
-	if (
-		(match = lower.match(
-			/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\s+(\d{4})\b/u,
-		))
-	) {
+	match = lower.match(
+		/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\s+(\d{4})\b/u,
+	);
+	if (match) {
 		const monthStr = match[1];
 		const year = Number.parseInt(match[2], 10);
 		const months = {
@@ -109,7 +109,7 @@ export function parseDateRange(text) {
 			dec: 11,
 		};
 		const mIdx = months[monthStr];
-		if (mIdx !== undefined && !isNaN(year)) {
+		if (mIdx !== undefined && !Number.isNaN(year)) {
 			const start = new Date(year, mIdx, 1);
 			const end = new Date(year, mIdx + 1, 0);
 			const label = `${monthStr.charAt(0).toUpperCase()}${monthStr.slice(1)} ${year}`;
@@ -118,11 +118,10 @@ export function parseDateRange(text) {
 	}
 
 	// explicit YYYY-MM-DD - YYYY-MM-DD or YYYY-MM-DD to YYYY-MM-DD
-	if (
-		(match = text.match(
-			/(\d{4}-\d{2}-\d{2})(?:\s*-\s*|\s+to\s+)(\d{4}-\d{2}-\d{2})/u,
-		))
-	) {
+	match = text.match(
+		/(\d{4}-\d{2}-\d{2})(?:\s*-\s*|\s+to\s+)(\d{4}-\d{2}-\d{2})/u,
+	);
+	if (match) {
 		return {
 			start: match[1],
 			end: match[2],
@@ -131,14 +130,13 @@ export function parseDateRange(text) {
 	}
 
 	// explicit like "Apr 1 - Apr 5" or "Apr 1 to Apr 5"
-	if (
-		(match = text.match(
-			/([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)(?:\s*-\s*|\s+to\s+)([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)/u,
-		))
-	) {
+	match = text.match(
+		/([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)(?:\s*-\s*|\s+to\s+)([A-Za-z]{3,}\s+\d{1,2}(?:,\s*\d{4})?)/u,
+	);
+	if (match) {
 		const s = new Date(match[1]);
 		const e = new Date(match[2]);
-		if (!(isNaN(s) || isNaN(e))) {
+		if (!(Number.isNaN(s) || Number.isNaN(e))) {
 			return {
 				start: dateToYMD(s),
 				end: dateToYMD(e),
@@ -148,7 +146,8 @@ export function parseDateRange(text) {
 	}
 
 	// year-only like "2006"
-	if ((match = lower.match(/\b(\d{4})\b/u))) {
+	match = lower.match(/\b(\d{4})\b/u);
+	if (match) {
 		const y = Number.parseInt(match[1], 10);
 		const start = new Date(y, 0, 1);
 		const end = new Date(y, 11, 31);
@@ -156,11 +155,10 @@ export function parseDateRange(text) {
 	}
 
 	// month-only like "february" or "feb" (assume current year)
-	if (
-		(match = lower.match(
-			/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b/u,
-		))
-	) {
+	match = lower.match(
+		/\b(january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)\b/u,
+	);
+	if (match) {
 		const monthStr = match[1];
 		const months = {
 			january: 0,

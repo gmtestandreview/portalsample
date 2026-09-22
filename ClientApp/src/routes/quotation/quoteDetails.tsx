@@ -174,7 +174,7 @@ const QuoteDetails = (props: {
                                         {getPillText(quotationData!.quoteRequestStatus)}
                                     </Badge> */}
 									<QuoteStatusPill
-										status={quotationData!.quoteRequestStatus as QuoteStatus}
+										status={quotationData?.quoteRequestStatus as QuoteStatus}
 									/>
 								</Col>
 								<p className="mb-0 text-break">
@@ -341,33 +341,30 @@ const QuoteDetails = (props: {
 					</Row>
 				</Col>
 			</Row>
-			{quotationData && (
-				<>
-					{quotationData?.receiptandDispatchNA ? (
-						<Row>
-							<Col md={12}>
-								<h3 className="h5 mb-0 py-2">
-									Instrument/artefact delivery or return
-								</h3>
-								{renderNoDeliveryInfoPanel()}
-							</Col>
-						</Row>
-					) : (
-						<Row>
+			{quotationData &&
+				(quotationData?.receiptandDispatchNA ? (
+					<Row>
+						<Col md={12}>
 							<h3 className="h5 mb-0 py-2">
-								On quotation acceptance, please deliver the instrument/artefact
-								to NMI with the following label attached
+								Instrument/artefact delivery or return
 							</h3>
-							<MailingLabel {...mailingLabelProps} />
-							<DeliveryInstructions
-								deliveryInstructions={
-									quotationData?.nmiFacilityDeliveryInstructions
-								}
-							/>
-						</Row>
-					)}
-				</>
-			)}
+							{renderNoDeliveryInfoPanel()}
+						</Col>
+					</Row>
+				) : (
+					<Row>
+						<h3 className="h5 mb-0 py-2">
+							On quotation acceptance, please deliver the instrument/artefact to
+							NMI with the following label attached
+						</h3>
+						<MailingLabel {...mailingLabelProps} />
+						<DeliveryInstructions
+							deliveryInstructions={
+								quotationData?.nmiFacilityDeliveryInstructions
+							}
+						/>
+					</Row>
+				))}
 			{!!quotationData?.quoteRequestStatus &&
 				quotationData.quoteRequestStatus !== QuoteStatus.QuoteExpired && (
 					<Row className="mb-3">

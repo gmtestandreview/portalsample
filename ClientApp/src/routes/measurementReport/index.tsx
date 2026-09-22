@@ -66,7 +66,7 @@ const MeasurementReport = () => {
 	const { id } = useParams<{ id?: string }>();
 	const { inProgress, accounts, instance } = useMsal();
 	const [isLoading, setIsLoading] = useState(false);
-	const [reload, setReload] = useState(false);
+	const [_reload, setReload] = useState(false);
 	const [measurementReportData, setMeasurementReportData] = useState<
 		RequestForQuoteDetails | undefined
 	>();
@@ -81,7 +81,7 @@ const MeasurementReport = () => {
 		{ to: "", text: "Testing and calibration service - Report" },
 	];
 
-	const targetOrganisationAbn =
+	const _targetOrganisationAbn =
 		accountState?.details?.targetOrganisation?.targetOrganisationAbn;
 
 	useEffect(() => {
@@ -122,10 +122,8 @@ const MeasurementReport = () => {
 		loadDataForDisplay();
 	}, [
 		accountState,
-		targetOrganisationAbn,
 		accounts.length,
 		inProgress,
-		reload,
 		accounts,
 		instance,
 		id,

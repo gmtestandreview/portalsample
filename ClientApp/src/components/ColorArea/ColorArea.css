@@ -6,6 +6,6 @@
 	flex-shrink: 0;
 
 	&[data-disabled] {
-		background: gray !important;
+		background: gray;
 	}
 }

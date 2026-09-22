@@ -141,7 +141,6 @@ const DashboardTA = () => {
 	>([]);
 	const [isDataLoading, setIsDataLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [reload, setReload] = useState(false);
 	const accountContext = useAccountContext();
 	const accountDispatch = useAccountDispatch();
 	const accountDetails = accountContext?.details;
@@ -271,14 +270,14 @@ const DashboardTA = () => {
 				const tabToSet: string | null | undefined =
 					SessionStorageCache().getItem("set-tabop-after-save");
 				const p = accountDetails.userProfile.patternApprovalDashboard;
-				const tabFromSession = tabToSet ?? p!.filterActiveTab;
+				const tabFromSession = tabToSet ?? p?.filterActiveTab;
 				const updatedP = {
 					...p,
 					filterActiveTab: tabFromSession,
 				};
 				setActiveTab(tabFromSession as DashboardTab);
 				// changePlaceholderForSearchBox(p!.filterActiveTab! as DashboardTab);
-				setCurrentPage(updatedP!.filterCurrentPage!);
+				setCurrentPage(updatedP.filterCurrentPage);
 				SessionStorageCache().removeItem("set-tabop-after-save");
 
 				// Only need to do this on first load`
@@ -335,6 +334,9 @@ const DashboardTA = () => {
 			(service: ServicesOffered) =>
 				service.service === ServiceType.PatternApproval && service.isActive,
 		);
+		if (deleteSuccess) {
+			setRequests([]);
+		}
 		if (userProfileLoaded && !patternApprovalIsActive) {
 			navigate("/services-we-offer");
 			return;
@@ -343,7 +345,6 @@ const DashboardTA = () => {
 		const loadDataForDisplay = async () => {
 			if (
 				accountContext &&
-				accountDetails &&
 				accountDetails?.organisationCRMGuid &&
 				initialFilters
 			) {
@@ -423,7 +424,6 @@ const DashboardTA = () => {
 						AppLogger.info("Dashboard load error values", errorStatus);
 					} finally {
 						setIsDataLoading(false);
-						setReload(false);
 					}
 				}
 			}
@@ -436,10 +436,16 @@ const DashboardTA = () => {
 		accountContext?.details?.organisationCRMGuid,
 		instance,
 		inProgress,
-		reload,
 		initialFilters,
 		deleteSuccess,
 		services,
+		navigate,
+		errorStatus,
+		accounts[0],
+		accountDetails?.userProfile,
+		accountDetails,
+		accountContext.details,
+		accountContext,
 	]);
 
 	const renderDashTypeTitle = () => (

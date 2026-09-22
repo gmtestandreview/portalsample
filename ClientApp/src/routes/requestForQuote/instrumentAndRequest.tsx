@@ -2,7 +2,7 @@ import { useMsal } from "@azure/msal-react";
 import { useFormikContext } from "formik";
 import { forEach } from "lodash";
 import type { ChangeEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import type {
@@ -67,27 +67,34 @@ const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
 		setIsInstrumentOrArtefactTypeDisabled,
 	] = useState(false);
 
-	const getArtefactTypes = (
-		values: LookupResponse[],
-		parentId: string,
-	): SelectInputOption<string>[] => {
-		const options: SelectInputOption<string>[] = [];
-		if (parentId !== undefined && parentId !== "") {
-			forEach(values, (l) => {
-				if (l.parentId === parentId) {
+	const getArtefactTypes = useCallback(
+		(
+			values: LookupResponse[],
+			parentId: string,
+		): SelectInputOption<string>[] => {
+			const options: SelectInputOption<string>[] = [];
+			if (parentId !== undefined && parentId !== "") {
+				forEach(values, (l) => {
+					if (l.parentId === parentId) {
+						options.push({ displayText: l.label ?? "", value: l.id ?? "" });
+					}
+				});
+			} else if (isSummary) {
+				forEach(values, (l) => {
 					options.push({ displayText: l.label ?? "", value: l.id ?? "" });
-				}
-			});
-		} else if (isSummary) {
-			forEach(values, (l) => {
-				options.push({ displayText: l.label ?? "", value: l.id ?? "" });
-			});
-		}
-		const [sorted, lastId] = sortList(options, "No instrument", "displayText");
-		noInstrumentId.current = lastId;
+				});
+			}
+			const [sorted, lastId] = sortList(
+				options,
+				"No instrument",
+				"displayText",
+			);
+			noInstrumentId.current = lastId;
 
-		return sorted;
-	};
+			return sorted;
+		},
+		[isSummary],
+	);
 
 	useEffect(() => {
 		const loadMeasurementCategories = async () => {
@@ -145,8 +152,11 @@ const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
 	}, [
 		accounts,
 		instance,
-		isLoadingMeasurementCategories,
 		measurementCategories,
+		getArtefactTypes,
+		isEditable,
+		isSummary,
+		context.getFieldMeta,
 	]);
 
 	const getMeasurementCategories = () => {

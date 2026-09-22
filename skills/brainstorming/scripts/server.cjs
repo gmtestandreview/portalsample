@@ -1,8 +1,9 @@
 "use strict";
-const crypto = require("crypto");
-const http = require("http");
-const fs = require("fs");
-const path = require("path");
+const crypto = require("node:crypto");
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
+const process = require("node:process");
 
 // ========== WebSocket Protocol (RFC 6455) ==========
 
@@ -96,7 +97,7 @@ function preferredPort() {
 		try {
 			const p = Number(fs.readFileSync(PORT_FILE, "utf-8").trim());
 			if (Number.isInteger(p) && p > 1023 && p < 65_536) return p;
-		} catch (e) {
+		} catch (_e) {
 			/* no prior port recorded */
 		}
 	}
@@ -141,7 +142,7 @@ function generateToken() {
 function chmodOwnerOnly(file) {
 	try {
 		fs.chmodSync(file, 0o600);
-	} catch (e) {
+	} catch (_e) {
 		/* best effort */
 	}
 }
@@ -157,7 +158,7 @@ function initialToken() {
 				chmodOwnerOnly(TOKEN_FILE);
 				return { value: t, source: "file" };
 			}
-		} catch (e) {
+		} catch (_e) {
 			/* no prior token recorded */
 		}
 	}
@@ -167,7 +168,7 @@ function initialToken() {
 const tokenInfo = initialToken();
 let Token = tokenInfo.value;
 let tokenSource = tokenInfo.source;
-let CookieName = "brainstorm-key-" + Port; // refined to the actual bound port in onListen
+let CookieName = `brainstorm-key-${Port}`; // refined to the actual bound port in onListen
 
 const MIME_TYPES = {
 	".html": "text/html",
@@ -238,7 +239,7 @@ const helperScript = fs.readFileSync(
 	path.join(__dirname, "helper.js"),
 	"utf-8",
 );
-const helperInjection = "<script>\n" + helperScript + "\n</script>";
+const helperInjection = `<script>\n${helperScript}\n</script>`;
 
 // ========== Helper Functions ==========
 
@@ -253,7 +254,7 @@ function readSuperpowersVersion() {
 		try {
 			const data = JSON.parse(fs.readFileSync(manifest, "utf-8"));
 			if (data.version) return String(data.version);
-		} catch (e) {
+		} catch (_e) {
 			// Packaged Codex plugins omit package.json; try the next manifest.
 		}
 	}
@@ -279,8 +280,8 @@ function escapeHtmlText(value) {
 function brandMarkup() {
 	const version = escapeHtmlText(SUPERPOWERS_VERSION);
 	const text = SUPERPOWERS_TELEMETRY_DISABLED
-		? "Prime Radiant Superpowers v" + version
-		: "Superpowers v" + version;
+		? `Prime Radiant Superpowers v${version}`
+		: `Superpowers v${version}`;
 	const logo = SUPERPOWERS_TELEMETRY_DISABLED
 		? ""
 		: '<img class="brand-logo" src="' +
@@ -328,18 +329,18 @@ function getNewestScreen() {
 function urlHostForHttp(host) {
 	const h = String(host);
 	if (h.startsWith("[") && h.endsWith("]")) return h;
-	return h.includes(":") ? "[" + h + "]" : h;
+	return h.includes(":") ? `[${h}]` : h;
 }
 
 function companionUrl() {
-	return "http://" + urlHostForHttp(URL_HOST) + ":" + Port + "/?key=" + Token;
+	return `http://${urlHostForHttp(URL_HOST)}:${Port}/?key=${Token}`;
 }
 
 function browserLauncherForPlatform(
 	url,
 	{
 		platform = process.platform,
-		osRelease = require("os").release(),
+		osRelease = require("node:os").release(),
 		env = process.env,
 	} = {},
 ) {
@@ -362,7 +363,7 @@ function isRegularFileInsideContentDir(filePath) {
 		if (stat.nlink !== 1) return false;
 		realContentDir = fs.realpathSync(CONTENT_DIR);
 		realFilePath = fs.realpathSync(filePath);
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 	return realFilePath.startsWith(realContentDir + path.sep);
@@ -399,7 +400,7 @@ function isAuthorized(req) {
 			return Boolean(key && timingSafeEqualStr(key, Token));
 		}
 	}
-	const cookie = parseCookies(req.headers["cookie"])[CookieName];
+	const cookie = parseCookies(req.headers.cookie)[CookieName];
 	if (cookie && timingSafeEqualStr(cookie, Token)) return true;
 	return false;
 }
@@ -431,7 +432,7 @@ function isAllowedWebSocketOrigin(req) {
 	if (!origin) return true;
 	const host = req.headers.host;
 	if (!host) return false;
-	return origin === "http://" + host;
+	return origin === `http://${host}`;
 }
 
 // ========== HTTP Request Handler ==========
@@ -452,7 +453,7 @@ function handleRequest(req, res) {
 	// WebSocket Origin check below is what blocks cross-origin localhost injection.
 	res.setHeader(
 		"Set-Cookie",
-		CookieName + "=" + Token + "; HttpOnly; SameSite=Strict; Path=/",
+		`${CookieName}=${Token}; HttpOnly; SameSite=Strict; Path=/`,
 	);
 
 	const pathname = pathnameOf(req.url);
@@ -477,7 +478,7 @@ function handleRequest(req, res) {
 			: waitingPage();
 
 		if (html.includes("</body>")) {
-			html = html.replace("</body>", helperInjection + "\n</body>");
+			html = html.replace("</body>", `${helperInjection}\n</body>`);
 		} else {
 			html += helperInjection;
 		}
@@ -546,7 +547,7 @@ function handleUpgrade(req, socket) {
 			let result;
 			try {
 				result = decodeFrame(buffer);
-			} catch (e) {
+			} catch (_e) {
 				socket.end(encodeFrame(OPCODES.CLOSE, Buffer.alloc(0)));
 				clients.delete(socket);
 				return;
@@ -592,9 +593,9 @@ function handleMessage(text) {
 	}
 	touchActivity();
 	console.log(JSON.stringify({ source: "user-event", ...event }));
-	if (event && event.choice) {
+	if (event?.choice) {
 		const eventsFile = path.join(STATE_DIR, "events");
-		fs.appendFileSync(eventsFile, JSON.stringify(event) + "\n");
+		fs.appendFileSync(eventsFile, `${JSON.stringify(event)}\n`);
 	}
 }
 
@@ -603,7 +604,7 @@ function broadcast(msg) {
 	for (const socket of clients) {
 		try {
 			socket.write(frame);
-		} catch (e) {
+		} catch (_e) {
 			clients.delete(socket);
 		}
 	}
@@ -620,15 +621,15 @@ function maybeOpenBrowser() {
 	if (HOST !== "127.0.0.1" && HOST !== "localhost") return;
 	if (clients.size > 0) return; // the user already opened it
 	const url = companionUrl(); // must carry the key or the gate 403s it
-	const cp = require("child_process");
+	const cp = require("node:child_process");
 	// Operator-provided launcher: run as given (this env var is trusted operator input).
 	if (process.env.BRAINSTORM_OPEN_CMD) {
 		try {
 			cp.exec(
-				process.env.BRAINSTORM_OPEN_CMD + " " + JSON.stringify(url),
+				`${process.env.BRAINSTORM_OPEN_CMD} ${JSON.stringify(url)}`,
 				() => {},
 			);
-		} catch (e) {
+		} catch (_e) {
 			/* best effort */
 		}
 		return;
@@ -639,7 +640,7 @@ function maybeOpenBrowser() {
 	if (!launcher) return; // headless: nothing to open
 	try {
 		cp.execFile(launcher.bin, launcher.args, () => {});
-	} catch (e) {
+	} catch (_e) {
 		/* best effort */
 	}
 }
@@ -687,7 +688,7 @@ function startServer() {
 	const server = http.createServer(handleRequest);
 	server.on("upgrade", handleUpgrade);
 
-	const watcher = fs.watch(CONTENT_DIR, (eventType, filename) => {
+	const watcher = fs.watch(CONTENT_DIR, (_eventType, filename) => {
 		if (!filename || filename.startsWith(".") || !filename.endsWith(".html"))
 			return;
 
@@ -726,7 +727,7 @@ function startServer() {
 		if (fs.existsSync(infoFile)) fs.unlinkSync(infoFile);
 		fs.writeFileSync(
 			path.join(STATE_DIR, "server-stopped"),
-			JSON.stringify({ reason, timestamp: Date.now() }) + "\n",
+			`${JSON.stringify({ reason, timestamp: Date.now() })}\n`,
 		);
 		watcher.close();
 		clearInterval(lifecycleCheck);
@@ -735,7 +736,7 @@ function startServer() {
 		for (const socket of clients) {
 			try {
 				socket.destroy();
-			} catch (e) {
+			} catch (_e) {
 				/* already gone */
 			}
 		}
@@ -788,7 +789,7 @@ function startServer() {
 		// Cookie name keys on the ACTUAL bound port (may differ from the preferred
 		// one after an EADDRINUSE fallback) so it can't collide with another server's
 		// cookie in the shared localhost jar.
-		CookieName = "brainstorm-key-" + Port;
+		CookieName = `brainstorm-key-${Port}`;
 		// Record the bound port AND token so the next restart of this session reuses
 		// them — but ONLY when we got our preferred port. On a fallback we bound a
 		// *different* port because someone else holds the preferred one; persisting
@@ -796,14 +797,14 @@ function startServer() {
 		if (PORT_FILE && !triedFallback) {
 			try {
 				fs.writeFileSync(PORT_FILE, String(Port));
-			} catch (e) {
+			} catch (_e) {
 				/* best effort */
 			}
 			if (TOKEN_FILE) {
 				try {
 					fs.writeFileSync(TOKEN_FILE, Token, { mode: 0o600 });
 					chmodOwnerOnly(TOKEN_FILE);
-				} catch (e) {
+				} catch (_e) {
 					/* best effort */
 				}
 			}
@@ -820,7 +821,7 @@ function startServer() {
 		});
 		console.log(info);
 		// server-info embeds the key — keep it owner-only.
-		fs.writeFileSync(path.join(STATE_DIR, "server-info"), info + "\n", {
+		fs.writeFileSync(path.join(STATE_DIR, "server-info"), `${info}\n`, {
 			mode: 0o600,
 		});
 	}

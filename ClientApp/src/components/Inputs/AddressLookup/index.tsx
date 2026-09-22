@@ -232,7 +232,7 @@ const AddressLookup = (
 	return (
 		<>
 			{manual === true ? (
-				<fieldset className="d-block" aria-live="polite" role="group">
+				<fieldset className="d-block" aria-live="polite">
 					<legend>
 						{label}
 						<span className="visually-hidden">
@@ -256,7 +256,7 @@ const AddressLookup = (
 					</Form.Group>
 				</fieldset>
 			) : (
-				<fieldset className="d-block" aria-live="polite" role="group">
+				<fieldset className="d-block" aria-live="polite">
 					<legend className="visually-hidden">Find an address.</legend>
 					<Form.Group className="form-field-container">
 						<AutoSuggest<MatchedAddress>

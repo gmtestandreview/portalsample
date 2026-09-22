@@ -109,13 +109,13 @@ export interface WizardStepProps<T extends FormikValues> {
 		isDirty: boolean,
 		formikHelpers: FormikHelpers<T>,
 		abortSignal?: AbortSignal,
-	) => void | Promise<any>;
+	) => undefined | Promise<any>;
 	onSaveAndNext?: (
 		values: T,
 		isDirty: boolean,
 		formikHelpers: FormikHelpers<T>,
 		abortSignal?: AbortSignal,
-	) => void | Promise<any>;
+	) => undefined | Promise<any>;
 	stepStatuses: FormStepStatusDto[];
 	loadStepValues: (
 		abortSignal?: AbortSignal,

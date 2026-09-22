@@ -57,7 +57,7 @@ const saveStep =
 	) =>
 	async (
 		values: InstrumentAndRequestStep,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<InstrumentAndRequestStep>,
 		abortSignal?: AbortSignal,
 	) => {

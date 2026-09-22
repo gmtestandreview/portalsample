@@ -34,7 +34,7 @@ const ApplicationMessages = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [totalCount, setTotalCount] = useState(0);
 	const [editorResetKey, setEditorResetKey] = useState(0);
-	const [refreshTick, setRefreshTick] = useState(0);
+	const [_refreshTick, setRefreshTick] = useState(0);
 	const [messageView, setMessageView] = useState<FilterMessages>(
 		FilterMessages.ShowAllMessages,
 	);
@@ -70,19 +70,19 @@ const ApplicationMessages = () => {
 						messageView,
 						id,
 					);
-					if (response.requestForPatternApprovalMessageDetails!.currentPage) {
+					if (response.requestForPatternApprovalMessageDetails?.currentPage) {
 						setCurrentPage(
-							response.requestForPatternApprovalMessageDetails!.currentPage,
+							response.requestForPatternApprovalMessageDetails?.currentPage,
 						);
 					}
-					if (response.requestForPatternApprovalMessageDetails!.totalPages) {
+					if (response.requestForPatternApprovalMessageDetails?.totalPages) {
 						setTotalPages(
-							response.requestForPatternApprovalMessageDetails!.totalPages,
+							response.requestForPatternApprovalMessageDetails?.totalPages,
 						);
 					}
-					if (response.requestForPatternApprovalMessageDetails!.totalCount) {
+					if (response.requestForPatternApprovalMessageDetails?.totalCount) {
 						setTotalCount(
-							response.requestForPatternApprovalMessageDetails!.totalCount,
+							response.requestForPatternApprovalMessageDetails?.totalCount,
 						);
 					}
 					setMessage(response);
@@ -96,7 +96,7 @@ const ApplicationMessages = () => {
 			}
 		};
 		fetchMessages();
-	}, [accounts, id, instance, currentPage, refreshTick, messageView]);
+	}, [accounts, id, instance, currentPage, messageView]);
 
 	const changePage = (page: number) => {
 		setCurrentPage(page);
@@ -144,9 +144,7 @@ const ApplicationMessages = () => {
 	);
 
 	const messageCount =
-		message &&
-		message.requestForPatternApprovalMessageDetails &&
-		message!.requestForPatternApprovalMessageDetails!.items!.length;
+		message?.requestForPatternApprovalMessageDetails?.items?.length;
 
 	const renderToolbar = () => (
 		<>
@@ -240,7 +238,7 @@ const ApplicationMessages = () => {
 						{message &&
 							messageCount !== undefined &&
 							messageCount > 0 &&
-							message!.requestForPatternApprovalMessageDetails!.items!.map(
+							message?.requestForPatternApprovalMessageDetails?.items?.map(
 								(msg) => (
 									<li key={msg.id} id={msg.id}>
 										<Card

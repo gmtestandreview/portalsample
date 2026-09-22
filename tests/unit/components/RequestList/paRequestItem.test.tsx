@@ -6,7 +6,6 @@ import {
 	within,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type React from "react";
 import { MemoryRouter, useLocation } from "react-router";
 import type * as WebApiClientModule from "@/api/web-api-client.ts";
 import {

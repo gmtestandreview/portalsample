@@ -31,7 +31,7 @@ export function Meter({ label, ...props }: MeterProps) {
 							className="fill"
 							style={
 								{
-									width: percentage + "%",
+									width: `${percentage}%`,
 									"--fill-color":
 										percentage < 70
 											? "var(--green)"

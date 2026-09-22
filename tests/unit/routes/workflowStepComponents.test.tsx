@@ -1042,7 +1042,7 @@ describe("workflow step components", () => {
 
 			await waitFor(() =>
 				expect(
-					screen.getByText(new RegExp(expectedAddress)),
+					screen.getByText(new RegExp(expectedAddress, "u")),
 				).toBeInTheDocument(),
 			);
 		},

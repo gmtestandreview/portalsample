@@ -76,7 +76,7 @@ const saveStep =
 	) =>
 	async (
 		values: PatternApprovalOrgAndContact,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<PatternApprovalOrgAndContact>,
 		abortSignal?: AbortSignal,
 	) => {

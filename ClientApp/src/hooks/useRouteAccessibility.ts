@@ -6,7 +6,7 @@ export interface RouteAccessibilityResult {
 }
 
 export function useRouteAccessibility(): RouteAccessibilityResult {
-	const location = useLocation();
+	const _location = useLocation();
 	const [announcement, setAnnouncement] = useState("");
 
 	useEffect(() => {
@@ -15,7 +15,7 @@ export function useRouteAccessibility(): RouteAccessibilityResult {
 			document.getElementById("main")?.focus();
 		}, 100);
 		return () => clearTimeout(id);
-	}, [location.pathname]);
+	}, []);
 
 	return { announcement };
 }

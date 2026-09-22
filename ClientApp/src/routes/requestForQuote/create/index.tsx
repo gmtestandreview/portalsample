@@ -36,7 +36,7 @@ const CreateRequestForQuote = () => {
 		if (accounts.length > 0 && !isSaving.current) {
 			createApplication();
 		}
-	}, [accounts, instance, isSaving]);
+	}, [accounts, instance]);
 
 	return applicationId ? (
 		<Navigate

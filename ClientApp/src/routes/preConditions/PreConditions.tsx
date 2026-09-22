@@ -143,7 +143,7 @@ const PreConditions = (props: PreConditionsProps) => {
 		setIsModalOpen(
 			!!(showBranchSelector || showRfqDelete || showTermsAndConditions),
 		);
-	}, [showBranchSelector, showRfqDelete, showTermsAndConditions, isModalOpen]);
+	}, [showBranchSelector, showRfqDelete, showTermsAndConditions]);
 
 	const renderWithLayout = () => (
 		<Layout>

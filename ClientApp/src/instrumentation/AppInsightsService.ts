@@ -27,7 +27,7 @@ const createTelemetryService = () => {
 				extensions: [reactPlugin as never],
 			},
 		});
-		appInsights!.loadAppInsights();
+		appInsights?.loadAppInsights();
 	};
 	// Explicit opt-out sentinel. Storybook and local dev set this to disable
 	// telemetry deliberately, which is different from forgetting to configure it.

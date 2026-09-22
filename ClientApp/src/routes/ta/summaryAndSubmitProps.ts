@@ -94,7 +94,7 @@ const submitForm =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
 	async (
 		values: RequestForPatternApprovalSummaryDto,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<RequestForPatternApprovalSummaryDto>,
 		abortSignal?: AbortSignal,
 	) => {

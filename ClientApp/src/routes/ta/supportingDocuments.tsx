@@ -80,7 +80,7 @@ const SupportingDocuments = (
 	const errorName = errorNames[errorNames.length - 1]; // e.g. 'documents'
 	// Get Formik field errors for this field
 	let formikFieldErrors: string[] = [];
-	if (formikErrors && formikErrors[errorNames[0]]) {
+	if (formikErrors?.[errorNames[0]]) {
 		const fieldError = formikErrors[errorNames[0]];
 		if (typeof fieldError === "string") {
 			formikFieldErrors = [fieldError];

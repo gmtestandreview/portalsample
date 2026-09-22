@@ -15,7 +15,7 @@ const HidableField = <T extends FormikValues>(
 
 	const isVisible = !isHidden(name, hidden, values);
 
-	return isVisible ? <>{children}</> : null;
+	return isVisible ? children : null;
 };
 
 export default HidableField;

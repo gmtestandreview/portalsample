@@ -56,7 +56,7 @@
 
 	&[data-disabled] {
 		.react-aria-SliderTrack {
-			background: gray !important;
+			background: gray;
 		}
 	}
 }

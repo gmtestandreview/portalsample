@@ -113,6 +113,7 @@ const renderRequestContent = (
 							<span className="text-nowrap">
 								<i
 									className="icon-info bgCircle me-1"
+									role="img"
 									aria-label="Info note: This is the previous request Ref ID"
 									title="Info note: This is the previous request Ref ID"
 								/>

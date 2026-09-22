@@ -50,7 +50,9 @@ const runGuardedTest = async (
 	let bodyError: unknown;
 	let teardownError: unknown;
 
-	hooks.before.forEach((fn) => fn());
+	hooks.before.forEach((fn) => {
+		fn();
+	});
 
 	try {
 		await body();
@@ -59,7 +61,9 @@ const runGuardedTest = async (
 	}
 
 	try {
-		hooks.after.forEach((fn) => fn());
+		hooks.after.forEach((fn) => {
+			fn();
+		});
 	} catch (error) {
 		teardownError = error;
 	}

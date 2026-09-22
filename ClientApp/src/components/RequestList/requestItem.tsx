@@ -140,6 +140,7 @@ const renderRequestContent = (
 							<span className="text-nowrap">
 								<i
 									className="icon-info bgCircle me-1"
+									role="img"
 									aria-label="Info note: This is the previous request Ref ID"
 									title="Info note: This is the previous request Ref ID"
 								/>
@@ -556,6 +557,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
 										{!!sourceReferenceId && (
 											<i
 												className="icon-info bgCircle ms-1"
+												role="img"
 												aria-label={`Info note: This request was copied from previous Ref ID ${sourceReferenceId}`}
 												title={`Info note: This request was copied from previous Ref ID ${sourceReferenceId}`}
 											/>

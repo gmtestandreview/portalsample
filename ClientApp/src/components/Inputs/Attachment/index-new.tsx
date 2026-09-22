@@ -80,7 +80,7 @@ const AttachmentNew = (
 			for (let i = 0; i < currentFileCount; i++) {
 				const file = event.currentTarget.files[i];
 				const fileHasExtension = file.name.includes(".");
-				const currentFileExtension = `.${file.name.split(".").pop()!.toString()}`;
+				const currentFileExtension = `.${file.name.split(".").pop()?.toString()}`;
 
 				if (
 					!(

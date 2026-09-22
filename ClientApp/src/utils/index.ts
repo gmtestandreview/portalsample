@@ -101,7 +101,7 @@ export const parseDate = (value: Date | string): Date | undefined => {
 	let parsedDate: Date | undefined;
 
 	if (isString(value)) {
-		let dateFormat;
+		let dateFormat: string;
 		if (value.length === 10) {
 			dateFormat = DATE_DDMMYYY_FORMAT;
 		} else {

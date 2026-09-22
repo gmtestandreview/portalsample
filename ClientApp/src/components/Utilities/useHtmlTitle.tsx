@@ -4,14 +4,14 @@ import { useLocation } from "react-router";
 const useHtmlTitle = (
 	title = "NMI", // default props
 ): void => {
-	const location = useLocation();
+	const _location = useLocation();
 	useEffect(() => {
 		const prevTitle = document.title;
 		document.title = title;
 		return () => {
 			document.title = prevTitle;
 		};
-	}, [location, title]);
+	}, [title]);
 };
 
 export default useHtmlTitle;

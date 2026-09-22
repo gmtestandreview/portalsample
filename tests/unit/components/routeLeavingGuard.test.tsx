@@ -28,10 +28,8 @@ const renderGuard = (
 			initialErrors={initialErrors}
 			onSubmit={vi.fn()}
 		>
-			<>
-				<RouteLeavingGuard {...props} />
-				<ErrorsProbe />
-			</>
+			<RouteLeavingGuard {...props} />
+			<ErrorsProbe />
 		</Formik>,
 	);
 

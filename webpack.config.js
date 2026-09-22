@@ -50,7 +50,7 @@ const devEnvVars = {
 	REACT_APP_GA_TRACKINGID: process.env.REACT_APP_GA_TRACKINGID || "",
 };
 
-module.exports = function webpackConfig(env, argv) {
+module.exports = function webpackConfig(_env, argv) {
 	const isProd = argv.mode === "production";
 
 	return {

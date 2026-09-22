@@ -74,7 +74,7 @@ const saveStep =
 	) =>
 	async (
 		values: SupportingDocumentsStep,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<SupportingDocumentsStep>,
 		abortSignal?: AbortSignal,
 	) => {
@@ -89,7 +89,7 @@ const saveStep =
 
 				// Save for later
 				let formStepValues: SupportingDocumentsStep | undefined;
-				if (values.form!.documents) {
+				if (values.form?.documents) {
 					const updatedValues: SupportingDocumentsStep = {
 						...values,
 					};

@@ -49,9 +49,9 @@ function resolveExistingPath(candidate) {
 function extractDotBlocks(markdown) {
 	const blocks = [];
 	const regex = /```dot\n([\s\S]*?)```/gu;
-	let match;
+	let match = regex.exec(markdown);
 
-	while ((match = regex.exec(markdown)) !== null) {
+	while (match !== null) {
 		const content = match[1].trim();
 
 		// Extract digraph name
@@ -59,6 +59,7 @@ function extractDotBlocks(markdown) {
 		const name = nameMatch ? nameMatch[1] : `graph_${blocks.length + 1}`;
 
 		blocks.push({ name, content });
+		match = regex.exec(markdown);
 	}
 
 	return blocks;
@@ -94,7 +95,7 @@ function combineGraphs(blocks, skillName) {
     label="${block.name}";
     ${body
 			.split("\n")
-			.map((line) => "  " + line)
+			.map((line) => `  ${line}`)
 			.join("\n")}
   }`;
 	});

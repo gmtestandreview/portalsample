@@ -206,7 +206,7 @@ const CertificateNumberLookup = (props: CertificateNumberLookupProps) => {
 	}
 
 	return (
-		<fieldset className="d-block" aria-live="polite" role="group">
+		<fieldset className="d-block" aria-live="polite">
 			<legend className="visually-hidden">
 				{"Enter or find a "}
 				{label}

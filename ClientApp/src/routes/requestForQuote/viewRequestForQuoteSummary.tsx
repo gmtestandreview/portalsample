@@ -64,7 +64,7 @@ const ViewRequestForQuoteSummary = ({
 		return () => {
 			isLoading.current = true;
 		};
-	}, [accounts, id, instance, isLoading]);
+	}, [accounts, id, instance]);
 
 	const accountDetails: AccountDetails = account!.details!;
 	const hasStatuses = statuses !== undefined;

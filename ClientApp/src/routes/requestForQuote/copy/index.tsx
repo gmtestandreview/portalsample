@@ -37,7 +37,7 @@ const CopyRequestForQuote = () => {
 		if (accounts.length > 0 && !isSaving.current) {
 			copyApplication();
 		}
-	}, [accounts, id, instance, isSaving]);
+	}, [accounts, id, instance]);
 
 	return applicationId ? (
 		<Navigate

@@ -85,7 +85,7 @@ const Quotation = (props: QuotationtProps) => {
 	const { isSummary } = props;
 	const { inProgress, accounts, instance } = useMsal();
 	const [isLoading, setIsLoading] = useState(false);
-	const [reload, setReload] = useState(false);
+	const [_reload, setReload] = useState(false);
 	const [scrollToTop, setScrollToTop] = useState(false);
 	const [quotationData, setQuotationData] = useState<
 		RequestForQuoteDetails | undefined
@@ -157,7 +157,6 @@ const Quotation = (props: QuotationtProps) => {
 		accountState?.details?.targetOrganisation?.targetOrganisationAbn,
 		accounts.length,
 		inProgress,
-		reload,
 		scrollToTop,
 	]);
 

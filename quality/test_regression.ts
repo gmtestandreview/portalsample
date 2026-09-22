@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { render } from "@testing-library/react";
 import { createElement } from "react";
-import { afterEach, expect, test as it, test, vi } from "vitest";
+import { afterEach, expect, test as it, vi } from "vitest";
 import getUnexpectedErrorRoute from "../ClientApp/src/routes/common/errorRoutes.ts";
 import SessionStorageCache from "../ClientApp/src/storage/sessionStorageCache.ts";
 import { HttpStatusCode } from "../ClientApp/src/types.ts";

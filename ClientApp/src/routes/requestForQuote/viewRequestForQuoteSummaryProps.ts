@@ -50,7 +50,7 @@ const submitForm =
 	) =>
 	async (
 		values: RequestForQuoteSummary,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<RequestForQuoteSummary>,
 		abortSignal?: AbortSignal,
 	) => {

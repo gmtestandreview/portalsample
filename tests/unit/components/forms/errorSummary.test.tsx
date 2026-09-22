@@ -174,7 +174,7 @@ describe("ErrorSummary", () => {
 		);
 
 		await act(async () => {
-			await formikInstance!.submitForm();
+			await formikInstance?.submitForm();
 		});
 
 		// sanitizeErrorData is called with { name: undefined, extra: 'Shown' }.
@@ -206,7 +206,7 @@ describe("ErrorSummary", () => {
 
 		// Submit once: sets submitCount=1 and errors → errorSummary state updates → hasErrors=true
 		await act(async () => {
-			await formikInstance!.submitForm();
+			await formikInstance?.submitForm();
 		});
 
 		expect(document.querySelector("#form-error-summary")).not.toBeNull();
@@ -214,7 +214,7 @@ describe("ErrorSummary", () => {
 		// Set isSubmitting=true directly while hasErrors=true and isValidating=false.
 		// This triggers the useEffect condition: isSubmitting && !isValidating && hasErrors → handleAlertScroll()
 		await act(async () => {
-			formikInstance!.setSubmitting(true);
+			formikInstance?.setSubmitting(true);
 		});
 
 		act(() => {

@@ -49,7 +49,7 @@ describe("Playwright-BDD route coverage manifest", () => {
 				).toMatch(
 					new RegExp(
 						`^\\s*Scenario(?: Outline)?:\\s*${escapedScenario}\\s*$`,
-						"m",
+						"mu",
 					),
 				);
 			}

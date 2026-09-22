@@ -49,7 +49,7 @@ function getExtraHeadersFromEnv() {
 async function launchBrowser(browserType = "chromium", options = {}) {
 	const defaultOptions = {
 		headless: process.env.HEADLESS !== "false",
-		slowMo: process.env.SLOW_MO ? Number.parseInt(process.env.SLOW_MO) : 0,
+		slowMo: process.env.SLOW_MO ? Number.parseInt(process.env.SLOW_MO, 10) : 0,
 		args: ["--no-sandbox", "--disable-setuid-sandbox"],
 	};
 
@@ -102,7 +102,7 @@ async function waitForPageReady(page, options = {}) {
 		await page.waitForLoadState(waitOptions.waitUntil, {
 			timeout: waitOptions.timeout,
 		});
-	} catch (e) {
+	} catch (_e) {
 		console.warn("Page load timeout, continuing...");
 	}
 
@@ -319,7 +319,7 @@ async function handleCookieBanner(page, timeout = 3000) {
 				console.log("Cookie banner dismissed");
 				return true;
 			}
-		} catch (e) {
+		} catch (_e) {
 			// Continue to next selector
 		}
 	}
@@ -388,7 +388,7 @@ async function createContext(browser, options = {}) {
  * @returns {Promise<Array>} Array of detected server URLs
  */
 async function detectDevServers(customPorts = []) {
-	const http = require("http");
+	const http = require("node:http");
 
 	// Common dev server ports
 	const commonPorts = [
@@ -402,7 +402,7 @@ async function detectDevServers(customPorts = []) {
 
 	for (const port of allPorts) {
 		try {
-			await new Promise((resolve, reject) => {
+			await new Promise((resolve, _reject) => {
 				const req = http.request(
 					{
 						hostname: "localhost",
@@ -428,7 +428,7 @@ async function detectDevServers(customPorts = []) {
 
 				req.end();
 			});
-		} catch (e) {
+		} catch (_e) {
 			// Port not available, continue
 		}
 	}

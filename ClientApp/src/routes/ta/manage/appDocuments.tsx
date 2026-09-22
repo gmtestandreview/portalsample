@@ -45,7 +45,7 @@ const ApplicationDocuments = () => {
 	const [filesUploaded, setFilesUploaded] =
 		useState<SupportingDocumentsStep | null>(null);
 	const [filesToCommit, setFilesToCommit] = useState<boolean>(false);
-	const [commitSuccess, setCommitSuccess] = useState<boolean>(false);
+	const [_commitSuccess, setCommitSuccess] = useState<boolean>(false);
 	const [submitErrors, setSubmitErrors] = useState<string[]>([]);
 
 	useEffect(() => {
@@ -76,7 +76,7 @@ const ApplicationDocuments = () => {
 			}
 		};
 		fetchDocs();
-	}, [accounts, id, instance, commitSuccess]);
+	}, [accounts, id, instance]);
 
 	// Without this the controller stored below is never aborted, so the progress loop's
 	// `while (!controller.signal.aborted)` can never exit and its `if (aborted) break` never fires.

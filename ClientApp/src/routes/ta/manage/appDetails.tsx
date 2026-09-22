@@ -56,12 +56,12 @@ const ApplicationDetails = () => {
 	const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const disposedRef = useRef(false);
 
-	const clearPollTimeout = () => {
+	const clearPollTimeout = useCallback(() => {
 		if (pollTimeoutRef.current) {
 			clearTimeout(pollTimeoutRef.current);
 			pollTimeoutRef.current = null;
 		}
-	};
+	}, []);
 
 	const fetchMessageCountData = useCallback(async () => {
 		if (!id || accounts.length === 0) return;
@@ -132,14 +132,14 @@ const ApplicationDetails = () => {
 		return () => {
 			clearPollTimeout();
 		};
-	}, [fetchMessageCountData]);
+	}, [fetchMessageCountData, clearPollTimeout]);
 
 	useEffect(
 		() => () => {
 			disposedRef.current = true;
 			clearPollTimeout();
 		},
-		[],
+		[clearPollTimeout],
 	);
 
 	const refreshMessagesTab = () => {
@@ -359,9 +359,8 @@ const ApplicationDetails = () => {
 											eventKey="3"
 											className="mb-4 py-2"
 											nameRHS={
-												<span
-													role="button"
-													tabIndex={0}
+												<button
+													type="button"
 													className="btn btn-link text-nowrap"
 													title="Jump to the documents tab"
 													onClick={(e) => {
@@ -375,22 +374,9 @@ const ApplicationDetails = () => {
 														window.scrollTo(0, 0);
 														setActiveTab("documents");
 													}}
-													onKeyDown={(e) => {
-														if (e.key === "Enter" || e.key === " ") {
-															e.stopPropagation();
-															const params = new URLSearchParams(
-																window.location.search,
-															);
-															params.set("tab", "documents");
-															const newUrl = `${window.location.pathname}?${params.toString()}`;
-															window.history.pushState({}, "", newUrl);
-															window.scrollTo(0, 0);
-															setActiveTab("documents");
-														}
-													}}
 												>
 													View documents
-												</span>
+												</button>
 											}
 										>
 											<SupportingDocuments
@@ -538,7 +524,7 @@ const ApplicationDetails = () => {
 				<Col md={12} lg={9}>
 					<h1 id="page-title" tabIndex={-1} className="h2 banner-title mb-5">
 						<span className="visually-hidden">Pattern/type approval:</span>
-						{(data && data.applicationDetails?.title) || "Application details"}
+						{data?.applicationDetails?.title || "Application details"}
 						<span className="visually-hidden"> manage</span>
 					</h1>
 					{/* <HeaderIntroText className='mb-4'>

@@ -195,6 +195,7 @@ vi.mock("../../../ClientApp/src/components/RequestList/noRequests", () => ({
 vi.mock("../../../ClientApp/src/components/Pagination", () => ({
 	default: ({ onPageChange, currentPage, totalPages }: any) => (
 		<button
+			type="button"
 			data-testid="pagination"
 			data-current={currentPage}
 			data-total={totalPages}

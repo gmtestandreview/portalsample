@@ -103,7 +103,6 @@ const NumberInput = ({
 			valueIsNumericString={valueIsNumericString}
 			allowemptyformatting={allowemptyformatting}
 			renderText={renderText}
-			role={undefined}
 		>
 			{undefined}
 		</PatternFormatFixed>
@@ -141,7 +140,6 @@ const NumberInput = ({
 			renderText={renderText}
 			allowedDecimalSeparators={allowedDecimalSeparators}
 			decimalScale={decimalScale}
-			role={undefined}
 		>
 			{undefined}
 		</NumericFormatFixed>

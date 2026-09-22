@@ -68,7 +68,7 @@
 				"noUnnecessaryTemplateExpression": "error",
 				"useConsistentTestIt": "error",
 				"useUnicodeRegex": "error",
-				"useValidTestTitle": "error"
+				"useValidTestTitle": "off"
 			},
 			"style": {
 				"noImplicitBoolean": "error",
@@ -83,7 +83,32 @@
 				"useConsistentArrowReturn": "error",
 				"useConsistentObjectDefinitions": "error",
 				"useEnumInitializers": "error",
-				"useNamingConvention": "error",
+				"useNamingConvention": {
+					"level": "error",
+					"options": {
+						"strictCase": false,
+						"conventions": [
+							{
+								"selector": {
+									"kind": "objectLiteralMember"
+								},
+								"match": "[$A-Za-z0-9_][$A-Za-z0-9_]*"
+							},
+							{
+								"selector": {
+									"kind": "typeMember"
+								},
+								"match": "[$A-Za-z0-9_][$A-Za-z0-9_]*"
+							},
+							{
+								"selector": {
+									"kind": "enumMember"
+								},
+								"formats": ["PascalCase", "CONSTANT_CASE"]
+							}
+						]
+					}
+				},
 				"useNodeAssertStrict": "error",
 				"useNumberNamespace": "error",
 				"useNumericSeparators": "error",

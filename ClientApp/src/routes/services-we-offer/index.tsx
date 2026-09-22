@@ -76,8 +76,7 @@ const ServicesWeOffer = () => {
 				if (
 					!services.length &&
 					accounts.length > 0 &&
-					accountDetails &&
-					accountDetails.userProfile
+					accountDetails?.userProfile
 				) {
 					// Raised before the token round trip, not after it. Acquiring the token is
 					// itself a network call, and while it was in flight the selector rendered with
@@ -123,7 +122,13 @@ const ServicesWeOffer = () => {
 		};
 		loadServices();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [accounts, instance, accountDetails, accountDetails?.userProfile]);
+	}, [
+		accounts,
+		instance,
+		accountDetails,
+		accountDetails?.userProfile,
+		services.length,
+	]);
 
 	useEffect(() => {
 		if (shouldRedirect) {
@@ -139,7 +144,7 @@ const ServicesWeOffer = () => {
 					break;
 			}
 		}
-	}, [shouldRedirect, serviceSelected, navigate, isManageMode]);
+	}, [shouldRedirect, serviceSelected, navigate]);
 
 	function setCheckedServicesFn(checked: boolean, serviceType?: ServiceType) {
 		if (!checked) {
@@ -330,97 +335,94 @@ const ServicesWeOffer = () => {
 						<fieldset
 							id="service-selector"
 							className="w-100 px-0"
-							role="group"
 							tabIndex={-1}
 						>
 							<legend className="h5 visually-hidden">
 								Set your default view and/or add more NMI services to your
 								account
 							</legend>
-							{services &&
-								services.map((service) => (
-									<Card
-										key={service.serviceType}
-										className={`mb-4 border border-3 border-light ${
-											(selectedService || defaultService) ===
-											service.serviceType
-												? "selected-service"
-												: ""
-										}`}
-									>
-										<Card.Body className="d-flex align-items-start p-0">
-											<div
-												className="form-field-container col-9 mb-0"
-												tabIndex={-1}
-											>
-												<div className="radio-button p-4">
-													<input
-														type="radio"
-														id={`radio-${service.serviceType}`}
-														name="service-radio"
-														checked={defaultService === service.serviceType}
-														onChange={() =>
-															setDefaultServiceFn(service.serviceType)
-														}
-														className="form-field me-2"
-														// aria-label={service.title}
-													/>
-													<label
-														htmlFor={`radio-${service.serviceType}`}
-														className="border-0"
-													>
-														<span className="ms-5 pt-1">
-															<i
-																className={`${service.icon || "icon-file"} me-3 p-2 fs-2 text-placeholder`}
-																aria-hidden="true"
-																role="presentation"
-															/>
-														</span>
-														<span className="d-flex flex-column mb-2 pt-1">
-															<span className="h3 mb-1">{service.title}</span>
-															<span className="body-text mb-3">
-																{service.description}
-															</span>
-															<span className="body-text small fs-6 lh-sm">
-																{service.meta}
-															</span>
-														</span>
-													</label>
-												</div>
-											</div>
-											<div className="form-field-container mb-0 mx-auto pt-2">
-												<div className="checkbox p-4">
-													<input
-														type="checkbox"
-														id={`checkbox-${service.serviceType}`}
-														name="service-checkbox"
-														checked={!!checkedServices[service.serviceType!]}
-														onChange={(e) =>
-															setCheckedServicesFn(
-																e.target.checked,
-																service.serviceType,
-															)
-														}
-														className="me-2"
-													/>
-													<label htmlFor={`checkbox-${service.serviceType}`}>
+							{services?.map((service) => (
+								<Card
+									key={service.serviceType}
+									className={`mb-4 border border-3 border-light ${
+										(selectedService || defaultService) === service.serviceType
+											? "selected-service"
+											: ""
+									}`}
+								>
+									<Card.Body className="d-flex align-items-start p-0">
+										<div
+											className="form-field-container col-9 mb-0"
+											tabIndex={-1}
+										>
+											<div className="radio-button p-4">
+												<input
+													type="radio"
+													id={`radio-${service.serviceType}`}
+													name="service-radio"
+													checked={defaultService === service.serviceType}
+													onChange={() =>
+														setDefaultServiceFn(service.serviceType)
+													}
+													className="form-field me-2"
+													// aria-label={service.title}
+												/>
+												<label
+													htmlFor={`radio-${service.serviceType}`}
+													className="border-0"
+												>
+													<span className="ms-5 pt-1">
 														<i
-															className="icon-tick me-1"
+															className={`${service.icon || "icon-file"} me-3 p-2 fs-2 text-placeholder`}
 															aria-hidden="true"
 															role="presentation"
 														/>
-														<span className="text-nowrap">
-															{"Add "}
-															<span className="d-none d-md-inline-block">
-																service
-															</span>
+													</span>
+													<span className="d-flex flex-column mb-2 pt-1">
+														<span className="h3 mb-1">{service.title}</span>
+														<span className="body-text mb-3">
+															{service.description}
 														</span>
-													</label>
-												</div>
+														<span className="body-text small fs-6 lh-sm">
+															{service.meta}
+														</span>
+													</span>
+												</label>
 											</div>
-										</Card.Body>
-									</Card>
-								))}
+										</div>
+										<div className="form-field-container mb-0 mx-auto pt-2">
+											<div className="checkbox p-4">
+												<input
+													type="checkbox"
+													id={`checkbox-${service.serviceType}`}
+													name="service-checkbox"
+													checked={!!checkedServices[service.serviceType!]}
+													onChange={(e) =>
+														setCheckedServicesFn(
+															e.target.checked,
+															service.serviceType,
+														)
+													}
+													className="me-2"
+												/>
+												<label htmlFor={`checkbox-${service.serviceType}`}>
+													<i
+														className="icon-tick me-1"
+														aria-hidden="true"
+														role="presentation"
+													/>
+													<span className="text-nowrap">
+														{"Add "}
+														<span className="d-none d-md-inline-block">
+															service
+														</span>
+													</span>
+												</label>
+											</div>
+										</div>
+									</Card.Body>
+								</Card>
+							))}
 						</fieldset>
 					</Row>
 					<Row>
@@ -450,14 +452,7 @@ const ServicesWeOffer = () => {
 		</Container>
 	);
 
-	if (
-		!(
-			isManageMode ||
-			(accountDetails &&
-				accountDetails.userProfile &&
-				accountDetails.userProfile.services)
-		)
-	) {
+	if (!(isManageMode || accountDetails?.userProfile?.services)) {
 		return (
 			<BlockUiSpinner>
 				<p>Checking assigned services...</p>

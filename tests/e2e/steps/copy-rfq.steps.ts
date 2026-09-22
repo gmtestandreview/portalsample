@@ -19,6 +19,7 @@ Given(
 		await expect(page).toHaveURL(
 			new RegExp(
 				`/request-for-quote/${referenceId}-COPY/organisation-and-contact$`,
+				"u",
 			),
 		);
 	},

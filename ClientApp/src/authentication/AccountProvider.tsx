@@ -56,7 +56,7 @@ const toAccountDetails = (
 		currentTermsVersion,
 		defaultOrganisationId: user.defaultOrganisationId,
 		organisationCRMGuid: user.organisation?.crmGuid,
-		organisationIsCompleted: user.organisation?.isCompleted,
+		organisationIsCompleted: user.organisation?.isCompleted ?? false,
 		isDefaultOrganisation: user.defaultOrganisationId !== null,
 		showBranchSelector: false,
 		contactId: user.contactId,
@@ -277,13 +277,7 @@ const AccountProvider = ({ children }: AccountProviderProps) => {
 		) {
 			loadAccountDetails();
 		}
-	}, [
-		inProgress,
-		accounts,
-		accountDetails,
-		accountDetails?.userProfile,
-		instance,
-	]);
+	}, [inProgress, accounts, accountDetails, instance]);
 
 	const stateValue = useMemo(
 		() => ({

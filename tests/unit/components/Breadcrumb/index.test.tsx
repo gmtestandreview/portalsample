@@ -43,7 +43,7 @@ vi.mock("react-aria-components/Link", () => ({
 				ariaLinkMockState.includeHref ? { children, href } : { children },
 			)
 		) : (
-			<a>{children}</a>
+			<a href="#breadcrumb-test">{children}</a>
 		),
 }));
 

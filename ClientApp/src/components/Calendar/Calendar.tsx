@@ -28,6 +28,7 @@ export function Calendar<T extends DateValue>({
 		<AriaCalendar {...props}>
 			<div className="months">
 				{Array.from({ length: months }, (_, i) => (
+					// biome-ignore lint/suspicious/noArrayIndexKey: Months are generated as a fixed contiguous offset sequence.
 					<div key={i} className="month">
 						<div className="calendar-header">
 							{i === 0 && (

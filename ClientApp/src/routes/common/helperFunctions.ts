@@ -407,7 +407,7 @@ export function sortList<T>(
 	lastItem: string,
 	displayFieldName: keyof T,
 ): [T[], string] {
-	let removedItems;
+	let removedItems: T[] | undefined;
 	let lastId = "";
 	let removeId: string | undefined;
 

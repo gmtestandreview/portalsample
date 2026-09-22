@@ -3,19 +3,19 @@ import { getAppInsights } from "./AppInsightsService.ts";
 
 class AppLogger {
 	static info(message: string, properties?: any) {
-		this.trace(message, SeverityLevel.Information, properties);
+		AppLogger.trace(message, SeverityLevel.Information, properties);
 	}
 
 	static warning(message: string, properties?: any) {
-		this.trace(message, SeverityLevel.Warning, properties);
+		AppLogger.trace(message, SeverityLevel.Warning, properties);
 	}
 
 	static verbose(message: string, properties?: any) {
-		this.trace(message, SeverityLevel.Verbose, properties);
+		AppLogger.trace(message, SeverityLevel.Verbose, properties);
 	}
 
 	static critical(message: string, properties?: any) {
-		this.trace(message, SeverityLevel.Critical, properties);
+		AppLogger.trace(message, SeverityLevel.Critical, properties);
 	}
 
 	static trace(

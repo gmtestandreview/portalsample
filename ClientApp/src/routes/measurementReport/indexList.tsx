@@ -21,7 +21,7 @@ const InstrMeasurementReport = () => {
 	const { id } = useParams<{ id?: string }>();
 	const { inProgress, accounts, instance } = useMsal();
 	const [isLoading, setIsLoading] = useState(false);
-	const [reload, setReload] = useState(false);
+	const [_reload, setReload] = useState(false);
 	const [measurementReportData, setMeasurementReportData] =
 		useState<PagedListOfInstrumentArtefactDto>();
 	const [_fileError, setFileError] = useState(false);
@@ -35,7 +35,7 @@ const InstrMeasurementReport = () => {
 		{ to: "", text: "Instrument/artefact reports" },
 	];
 
-	const crmGuid = accountContext?.details?.organisationCRMGuid;
+	const _crmGuid = accountContext?.details?.organisationCRMGuid;
 
 	useEffect(() => {
 		const getReportList = async (portalId: string) => {
@@ -78,10 +78,8 @@ const InstrMeasurementReport = () => {
 		loadDataForDisplay();
 	}, [
 		accountContext,
-		crmGuid,
 		accounts.length,
 		inProgress,
-		reload,
 		accounts,
 		instance,
 		id,

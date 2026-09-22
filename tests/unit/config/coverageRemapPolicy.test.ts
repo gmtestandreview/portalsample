@@ -115,8 +115,11 @@ const allowedExclusionCategories = [
 	/\*\.stories\.\{ts,tsx\}$/u,
 	/\*\.docs\.mdx$/u,
 	// Only the exact paths verified above; no pattern that could admit an unmeasured file.
-	new RegExp(`^(${verifiedInStorybook.map(escapeForRegExp).join("|")})$`),
-	new RegExp(`^(${evaluationSpikeNotCovered.map(escapeForRegExp).join("|")})$`),
+	new RegExp(`^(${verifiedInStorybook.map(escapeForRegExp).join("|")})$`, "u"),
+	new RegExp(
+		`^(${evaluationSpikeNotCovered.map(escapeForRegExp).join("|")})$`,
+		"u",
+	),
 ];
 
 describe("unit coverage denominator", () => {

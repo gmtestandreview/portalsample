@@ -27,7 +27,7 @@ const waitForRfqStep = async (page: Page, step: number, title?: string) => {
 	}
 
 	await expect(page).toHaveURL(
-		new RegExp(`/request-for-quote/[^/]+/${location}$`),
+		new RegExp(`/request-for-quote/[^/]+/${location}$`, "u"),
 	);
 	await expect(page.getByTestId("form")).toBeVisible();
 	await expect(page.locator(".stepped-navigation .current-step")).toContainText(

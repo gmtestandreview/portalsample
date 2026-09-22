@@ -110,7 +110,7 @@ describe("InstrumentInfoPanel", () => {
 
 		expect(await screen.findByText("Loading data...")).toBeInTheDocument();
 		await act(async () => {
-			resolveInfoPanelContent!([
+			resolveInfoPanelContent?.([
 				{
 					requirements: "Pattern approval evidence checklist",
 					requirementsLink:

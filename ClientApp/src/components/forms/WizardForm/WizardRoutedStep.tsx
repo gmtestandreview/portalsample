@@ -79,10 +79,10 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
 	const accountState = useAccountState();
 	const accountDispatch = useAccountDispatch();
 	const controllerRef = useRef<AbortController | null>();
-	const abortSignal = () => {
+	const abortSignal = useCallback(() => {
 		const controller = new AbortController();
 		controllerRef.current = controller;
-	};
+	}, []);
 
 	const [stepState, setStepState] = useState<
 		StepState<InitialValue<FormikValues>>
@@ -119,7 +119,7 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
 			setIsLoading(false);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [loadStepValues]);
+	}, [loadStepValues, getRedirectionLocationOnError, abortSignal]);
 
 	useEffect(() => {
 		loadData();
@@ -147,7 +147,14 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [errorState.kind]);
+	}, [
+		errorState.kind,
+		accountState?.details?.organisation,
+		accountDispatch.setTargetOrganisation,
+		accountState?.details?.targetOrganisation?.targetOrganisationName,
+		accountState?.details?.abn,
+		accountDispatch,
+	]);
 
 	useEffect(() => {
 		if (errorState.kind === "gone") {

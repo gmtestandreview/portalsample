@@ -81,7 +81,12 @@ const ReportRecipient = (props: ReportRecipientProps) => {
 		};
 		loadDataForDisplay();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [
+		instance.acquireTokenSilent,
+		id,
+		accounts[0],
+		account?.details?.homeAccountId,
+	]);
 
 	return (
 		<>

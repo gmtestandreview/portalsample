@@ -53,39 +53,38 @@ const ReportDetails = (props: {
 
 	return (
 		<>
-			<>
-				<Row className="mb-3">
-					<Col>
-						<h2 className="h2 my-3">Measurement report</h2>
-					</Col>
-				</Row>
-				<Row className="mb-3">
-					{fileError && dashMessage()}
-					<Col>
-						<Alert
-							variant="info"
-							data-testid="info-summary"
-							role="status"
-							aria-live="polite"
-							className="d-flex mb-4"
-						>
-							<div className="d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
-								<div className="bgCircle mb-3 me-3">
-									<i className="icon-info" aria-hidden="true" />
-								</div>
+			<Row className="mb-3">
+				<Col>
+					<h2 className="h2 my-3">Measurement report</h2>
+				</Col>
+			</Row>
+			<Row className="mb-3">
+				{fileError && dashMessage()}
+				<Col>
+					<Alert
+						variant="info"
+						data-testid="info-summary"
+						role="status"
+						aria-live="polite"
+						className="d-flex mb-4"
+					>
+						<div className="d-flex justify-content-center justify-content-md-start mb-3 mb-md-0">
+							<div className="bgCircle mb-3 me-3">
+								<i className="icon-info" aria-hidden="true" />
 							</div>
-							<div>
-								<strong>Important information</strong>
-								<p>
-									The following report is regarding the instrument/artefact that
-									was received by the National Measurement Institute for
-									examination.
-								</p>
-							</div>
-						</Alert>
-					</Col>
-				</Row>
-			</>
+						</div>
+						<div>
+							<strong>Important information</strong>
+							<p>
+								The following report is regarding the instrument/artefact that
+								was received by the National Measurement Institute for
+								examination.
+							</p>
+						</div>
+					</Alert>
+				</Col>
+			</Row>
+
 			<Row className="mb-3">
 				<Col md={6}>
 					<div className="form-label mb-0">Report ID</div>

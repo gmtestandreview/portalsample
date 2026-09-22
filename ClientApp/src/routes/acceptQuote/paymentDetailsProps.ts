@@ -60,7 +60,7 @@ const saveStep =
 	) =>
 	async (
 		values: PaymentDetailsStep,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<PaymentDetailsStep>,
 		abortSignal?: AbortSignal,
 	) => {

@@ -53,7 +53,7 @@ const completeAccountDetails =
 	) =>
 	async (
 		values: AccountDto,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<AccountDto>,
 		abortSignal?: AbortSignal,
 	) => {

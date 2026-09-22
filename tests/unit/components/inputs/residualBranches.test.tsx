@@ -48,9 +48,8 @@ describe("residual input branches", () => {
 	// Registered after the guard so it runs first: Vitest runs `afterEach` in
 	// reverse order, and a guard failure would otherwise skip the global
 	// cleanup and leak the previous test's DOM into the next one.
-	afterEach(cleanup);
-
 	afterEach(() => {
+		cleanup();
 		vi.useRealTimers();
 	});
 

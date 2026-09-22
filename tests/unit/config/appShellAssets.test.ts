@@ -21,7 +21,7 @@ const getPublicAsset = async (document: Document, selector: string) => {
 
 	expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/u);
 
-	const assetPath = path.join(publicDirectory, publicUrl!.slice(1));
+	const assetPath = path.join(publicDirectory, publicUrl?.slice(1));
 	const asset = await stat(assetPath);
 
 	expect(asset.isFile()).toBe(true);

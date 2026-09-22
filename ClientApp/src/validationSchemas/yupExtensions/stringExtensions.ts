@@ -775,7 +775,7 @@ export const registerYupStringExtensions = () => {
 								? /^[-–—0-9A-Za-z ‘.&#,]*$/u
 								: /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/u;
 
-						return value.match(new RegExp(regExStr)) !== null;
+						return value.match(regExStr) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;
@@ -821,7 +821,7 @@ export const registerYupStringExtensions = () => {
 								? /^[-–—A-Za-z ‘]*$/u
 								: /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/u;
 
-						return value.match(new RegExp(regExStr)) !== null;
+						return value.match(regExStr) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;
@@ -862,7 +862,7 @@ export const registerYupStringExtensions = () => {
 						// whether this ASIC-aligned charset is correct. The charset below does permit '&'.
 						// based on the CompanyName rule in https://download.asic.gov.au/media/jdchdnzn/message-implementation-guide-for-brs-v1-7.pdf
 						const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/.,'{}| "]+$/u;
-						return value.match(new RegExp(regExStr)) !== null;
+						return value.match(regExStr) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;

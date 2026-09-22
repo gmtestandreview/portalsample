@@ -50,7 +50,7 @@ const CreateAcceptQuote = () => {
 		return () => {
 			isSaving.current = true;
 		};
-	}, [accounts, id, instance, isSaving]);
+	}, [accounts, id, instance]);
 
 	return applicationId ? (
 		<Navigate to={`/accept-quote/${applicationId}/report-recipient`} />

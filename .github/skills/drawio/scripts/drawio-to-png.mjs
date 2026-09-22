@@ -10,12 +10,12 @@
  *        node drawio-to-png.mjs --renderer=cli|viewer|auto <input.drawio> [output.png]
  */
 
+import { spawnSync } from "node:child_process";
+import { readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { basename, join, resolve } from "node:path";
 import process from "node:process";
-import { spawnSync } from "child_process";
-import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
-import { basename, dirname, join, resolve } from "path";
+import { inflateRawSync } from "node:zlib";
 import puppeteer from "puppeteer-core";
-import { inflateRawSync } from "zlib";
 
 // --- Build HTML that uses the official draw.io viewer for rendering ---
 function buildViewerHtml(rawFileContent) {
@@ -107,7 +107,7 @@ function buildViewerHtml(rawFileContent) {
 }
 
 // --- Extract mxGraph XML from .drawio input (supports mxGraphModel and mxfile) ---
-function extractMxGraphModelXml(inputXml) {
+function _extractMxGraphModelXml(inputXml) {
 	const trimmed = inputXml.trim();
 
 	if (trimmed.startsWith("<mxGraphModel")) {

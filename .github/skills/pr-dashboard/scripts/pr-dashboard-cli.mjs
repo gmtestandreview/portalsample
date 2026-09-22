@@ -7,13 +7,13 @@
 //   role:  one of "Authored by me" | "Requested reviews" | "Assigned to me" | "All"
 //          (default: "Authored by me")
 
+import { execFile, spawn } from "node:child_process";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import process from "node:process";
-import { execFile, spawn } from "child_process";
-import fs from "fs";
-import os from "os";
-import path from "path";
-import { fileURLToPath } from "url";
-import { promisify } from "util";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 import { parseDateRange } from "./lib/utils.mjs";
 
 const execFileP = promisify(execFile);
@@ -41,7 +41,7 @@ function formatHumanDate(d) {
 			day: "numeric",
 			year: "numeric",
 		});
-	} catch (e) {
+	} catch (_e) {
 		return d;
 	}
 }
@@ -60,7 +60,7 @@ async function ghApi(args) {
 			try {
 				const parsed = JSON.parse(err.stdout);
 				if (parsed?.message) errorMessage = parsed.message;
-			} catch (e) {
+			} catch (_e) {
 				/* fall through */
 			}
 		}
@@ -144,7 +144,7 @@ async function getPrDetails(item) {
 			} else {
 				out.review = "REVIEW_REQUIRED";
 			}
-		} catch (e) {
+		} catch (_e) {
 			/* ignore */
 		}
 
@@ -156,7 +156,7 @@ async function getPrDetails(item) {
 				]);
 				if (status?.state) out.ci = (status.state || "").toUpperCase();
 			}
-		} catch (e) {
+		} catch (_e) {
 			/* ignore */
 		}
 
@@ -193,12 +193,12 @@ async function getPrDetails(item) {
 				out.bodyMarkdown = "";
 				out.summary = "";
 			}
-		} catch (e) {
+		} catch (_e) {
 			out.bodyHtml = null;
 		}
 
 		return out;
-	} catch (e) {
+	} catch (_e) {
 		return null;
 	}
 }
@@ -213,7 +213,7 @@ async function pMap(list, mapper, concurrency = 5) {
 				const idx = i++;
 				try {
 					results[idx] = await mapper(list[idx]);
-				} catch (e) {
+				} catch (_e) {
 					results[idx] = null;
 				}
 			}
@@ -249,7 +249,7 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 	let template = "";
 	try {
 		template = fs.readFileSync(templatePath, "utf8");
-	} catch (e) {
+	} catch (_e) {
 		template = `<html><head><title>PR Dashboard — ${escapeHtml(label)}</title></head><body><pre>${escapeHtml(JSON.stringify(md))}</pre></body></html>`;
 	}
 
@@ -337,13 +337,13 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 			/<title>[^<]*<\/title>/u,
 			`<title>PR Dashboard — ${escapeHtml(label)}</title>`,
 		);
-	} catch (e) {}
+	} catch (_e) {}
 	try {
 		replaced = replaced.replace(
 			/<h1[^>]*>[^<]*<\/h1>/u,
 			`<h1>🔀 PR Dashboard — ${escapeHtml(label)}</h1>`,
 		);
-	} catch (e) {}
+	} catch (_e) {}
 
 	try {
 		const nowStr = new Date().toLocaleString();
@@ -374,7 +374,7 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 		replaceStat("stat merged", counts.merged);
 		replaceStat("stat closed", counts.closed);
 		replaceStat("stat draft", counts.draft);
-	} catch (e) {}
+	} catch (_e) {}
 
 	try {
 		const safe = String(label).replace(/[^a-z0-9]/giu, "_");
@@ -382,7 +382,7 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 			/const filename = '[^']*';/u,
 			`const filename = 'pr-dashboard-${safe}.md';`,
 		);
-	} catch (e) {}
+	} catch (_e) {}
 
 	const outPath = path.join(os.tmpdir(), "pr-dashboard.html");
 	fs.writeFileSync(outPath, replaced, "utf8");
@@ -401,7 +401,7 @@ function openInBrowser(filePath) {
 					stdio: "ignore",
 				});
 		child.unref();
-	} catch (e) {
+	} catch (_e) {
 		/* ignore */
 	}
 }
@@ -432,7 +432,7 @@ function openInBrowser(filePath) {
 		console.log(`[pr-dashboard] Found ${items.length} PR(s)`);
 
 		if (!items.length) {
-			const extDir = path.dirname(fileURLToPath(import.meta.url));
+			const _extDir = path.dirname(fileURLToPath(import.meta.url));
 			const noResultsPath = path.join(
 				os.tmpdir(),
 				"pr-dashboard-no-results.html",

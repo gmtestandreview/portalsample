@@ -80,7 +80,6 @@ const NotificationMessage = (props: NotificationMessageProps) => {
 					<div>{message}</div>
 				</AlertWarning>
 			);
-		case NotificationSeverity.Error:
 		default:
 			return (
 				<AlertError

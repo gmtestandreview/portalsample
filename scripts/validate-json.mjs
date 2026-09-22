@@ -130,7 +130,9 @@ for (const { filePath, parsed } of schemaFiles) {
 
 if (failures.length > 0) {
 	console.error("JSON validation failed:");
-	failures.forEach((failure) => console.error(`- ${failure}`));
+	failures.forEach((failure) => {
+		console.error(`- ${failure}`);
+	});
 	process.exitCode = 1;
 } else {
 	process.stdout.write(`Validated JSON syntax in ${jsonFiles.length} files.\n`);

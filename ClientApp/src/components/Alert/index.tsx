@@ -40,7 +40,7 @@ const AlertMessage = (props: BaseAlertProps) => {
 
 	useEffect(() => {
 		setShow(true);
-	}, [children]);
+	}, []);
 
 	return (
 		<Alert

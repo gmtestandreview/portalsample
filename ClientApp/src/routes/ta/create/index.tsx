@@ -39,7 +39,7 @@ const CreateRequestForTypeApproval = () => {
 		return () => {
 			isSaving.current = true;
 		};
-	}, [accounts, applicationId, instance, isSaving]);
+	}, [accounts, instance]);
 
 	return applicationId ? (
 		<Navigate to={`/ta/${applicationId}/organisation-details`} />

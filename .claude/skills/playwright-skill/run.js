@@ -12,9 +12,9 @@
 
 import process from "node:process";
 
-const fs = require("fs");
-const path = require("path");
-const { execSync } = require("child_process");
+const fs = require("node:fs");
+const path = require("node:path");
+const { execSync } = require("node:child_process");
 
 // Change to skill directory for proper module resolution
 process.chdir(import.meta.dirname);
@@ -26,7 +26,7 @@ function checkPlaywrightInstalled() {
 	try {
 		require.resolve("playwright");
 		return true;
-	} catch (e) {
+	} catch (_e) {
 		return false;
 	}
 }
@@ -104,12 +104,12 @@ function cleanupOldTempFiles() {
 				const filePath = path.join(import.meta.dirname, file);
 				try {
 					fs.unlinkSync(filePath);
-				} catch (e) {
+				} catch (_e) {
 					// Ignore errors - file might be in use or already deleted
 				}
 			});
 		}
-	} catch (e) {
+	} catch (_e) {
 		// Ignore directory read errors
 	}
 }

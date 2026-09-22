@@ -80,7 +80,7 @@ When("the user confirms {string}", async ({ page }, name: string) => {
 Then(
 	"the quotation page for {string} is displayed",
 	async ({ page }, referenceId: string) => {
-		await expect(page).toHaveURL(new RegExp(`/quotation/${referenceId}$`));
+		await expect(page).toHaveURL(new RegExp(`/quotation/${referenceId}$`, "u"));
 		await expect(
 			page.getByRole("heading", { name: "Quotation", exact: true }),
 		).toBeVisible();

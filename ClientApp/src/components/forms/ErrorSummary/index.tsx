@@ -236,7 +236,7 @@ const ErrorSummary = ({
 	}
 
 	if (serverErrors) {
-		let error;
+		let error: JSX.Element;
 		switch (serverErrors.status) {
 			case HttpStatusCode.Conflict:
 				error = (

@@ -65,7 +65,7 @@ const stepBlocks = (contents: string): string[] => {
 	if (stepIndent === undefined) return [];
 
 	const starts = lines.flatMap((line, index) =>
-		new RegExp(`^\\s{${stepIndent}}-\\s+`).test(line) ? [index] : [],
+		new RegExp(`^\\s{${stepIndent}}-\\s+`, "u").test(line) ? [index] : [],
 	);
 
 	return starts.map((start, index) =>

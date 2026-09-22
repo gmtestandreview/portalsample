@@ -95,7 +95,7 @@ const ApplicationForTypeApproval = () => {
 		return () => {
 			isLoading.current = true;
 		};
-	}, [accounts, id, instance, isLoading, navigate, statuses]);
+	}, [accounts, id, instance, navigate, statuses]);
 
 	useEffect(
 		() => () => {

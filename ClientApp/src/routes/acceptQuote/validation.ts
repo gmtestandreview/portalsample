@@ -52,7 +52,7 @@ export const deliveryAndReturnSubmitValidation = yup.object<
 	}),
 	returnAddress: yup.mixed().when(["returnMethod", "returnAddressType"], {
 		is: (
-			returnMethod: ReturnMethodValues | undefined,
+			_returnMethod: ReturnMethodValues | undefined,
 			returnAddressType: ReturnAddressTypeValues | undefined,
 		) => returnAddressType === ReturnAddressTypeValues.Other,
 		then: () => addressSchema("Return address"),

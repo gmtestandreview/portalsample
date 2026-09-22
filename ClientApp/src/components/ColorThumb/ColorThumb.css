@@ -16,7 +16,7 @@
 	}
 
 	&[data-disabled] {
-		background: gray !important;
+		background: gray;
 		opacity: 0.5;
 	}
 }

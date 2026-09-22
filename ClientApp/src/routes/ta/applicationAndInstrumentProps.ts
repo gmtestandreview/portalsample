@@ -99,7 +99,7 @@ const saveStep =
 	) =>
 	async (
 		values: ApplicationAndInstrumentStepDto,
-		isDirty: boolean,
+		_isDirty: boolean,
 		_: FormikHelpers<ApplicationAndInstrumentStepDto>,
 		abortSignal?: AbortSignal,
 	) => {

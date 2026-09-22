@@ -63,7 +63,7 @@ Then(
 		if (!location) {
 			throw new Error(`Unsupported type-approval step: ${title}`);
 		}
-		await expect(page).toHaveURL(new RegExp(`/ta/[^/]+/${location}$`));
+		await expect(page).toHaveURL(new RegExp(`/ta/[^/]+/${location}$`, "u"));
 		await expect(page.getByTestId("form")).toBeVisible();
 		await expect(
 			page.getByRole("heading", { level: 1, name: new RegExp(title, "iu") }),

@@ -2,12 +2,12 @@ import HashLink from "./hashLink.tsx";
 
 const SkipLinks = () => (
 	<div id="page-top" tabIndex={-1}>
-		<h1 className="d-none" aria-hidden="true">
+		<h1 className="visually-hidden">
 			{document.title || "NMI Services portal"}
 		</h1>
 		<nav className="noindex" aria-labelledby="skiplink-title">
 			<div className="d-flex justify-content-center">
-				<h2 id="skiplink-title" className="visually-hidden" aria-hidden="true">
+				<h2 id="skiplink-title" className="visually-hidden">
 					In page nav
 				</h2>
 				<HashLink

@@ -370,7 +370,7 @@ describe("Storybook documentation architecture", () => {
 			)?.[1];
 			const documentedValue = new RegExp(
 				`\\(\\$${token}\\)'\\s*:\\s*'(#[0-9a-f]{6})'`,
-				"i",
+				"iu",
 			).exec(styleGuide)?.[1];
 
 			expect(scssValue, `SCSS value for $${token}`).toBeDefined();

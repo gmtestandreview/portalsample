@@ -261,7 +261,7 @@ const BranchSelectorModal = () => {
 	};
 
 	const handleChange = (
-		event: ChangeEvent<HTMLInputElement>,
+		_event: ChangeEvent<HTMLInputElement>,
 		branchId: number | undefined,
 		organisationName: string | undefined,
 		tradingName: string | undefined,
@@ -469,7 +469,7 @@ const BranchSelectorModal = () => {
 				{showBranchModalMessage(branchModalMessage)}
 				<Row className="mb-4">
 					<Col>
-						<div aria-labelledby="caption-org-select-list">
+						<div>
 							{/* Fix 9 — S6842: role='radiogroup' removed from fieldset (implicit group semantics) */}
 							<fieldset className="w-100">
 								<legend className="h4 visually-hidden">
@@ -544,87 +544,83 @@ const BranchSelectorModal = () => {
 												</td>
 											</tr>
 										</tbody>
-									) : (
-										<>
-											{branches !== undefined && branches?.length > 0 ? (
-												<tbody key="tBodyKey">
-													{branches.map((branch, index) => (
-														<tr key={branch.organisationId}>
-															<td className="pe-0" data-header="Set as default">
-																{/* To do - replace this with RadioButton component */}
-																<div
-																	className="form-field-container mb-0"
-																	tabIndex={-1}
+									) : branches !== undefined && branches?.length > 0 ? (
+										<tbody key="tBodyKey">
+											{branches.map((branch, index) => (
+												<tr key={branch.organisationId}>
+													<td className="pe-0" data-header="Set as default">
+														{/* To do - replace this with RadioButton component */}
+														<div
+															className="form-field-container mb-0"
+															tabIndex={-1}
+														>
+															<div className="radio-button">
+																<input
+																	type="radio"
+																	id={`branch${index}`}
+																	name="branchSelector"
+																	value={branch.organisationId}
+																	checked={
+																		branch.organisationId === selectedBranch
+																	}
+																	onChange={(e) =>
+																		handleChange(
+																			e,
+																			branch.organisationId,
+																			branch.name,
+																			branch.businessOrTradingName,
+																			branch.branchOrLocationName,
+																			branch.abn,
+																			branch.crmGuid,
+																		)
+																	}
+																/>
+																<label
+																	htmlFor={`branch${index}`}
+																	className="form-field flex-column"
+																	title="Set as default"
 																>
-																	<div className="radio-button">
-																		<input
-																			type="radio"
-																			id={`branch${index}`}
-																			name="branchSelector"
-																			value={branch.organisationId}
-																			checked={
-																				branch.organisationId === selectedBranch
-																			}
-																			onChange={(e) =>
-																				handleChange(
-																					e,
-																					branch.organisationId,
-																					branch.name,
-																					branch.businessOrTradingName,
-																					branch.branchOrLocationName,
-																					branch.abn,
-																					branch.crmGuid,
-																				)
-																			}
-																		/>
-																		<label
-																			htmlFor={`branch${index}`}
-																			className="form-field flex-column"
-																			title="Set as default"
-																		>
-																			{/* <span className='visually-hidden'>
+																	{/* <span className='visually-hidden'>
                                                                                     {'Set as default '}
                                                                                 </span> */}
-																			<span className="text-break">
-																				{branch.businessListName}
-																			</span>
-																		</label>
-																	</div>
-																</div>
-															</td>
-															<td data-header="Location" className="text-break">
-																<span>
-																	{`${branch.streetAddress?.suburb}, ${branch.streetAddress?.state}`}
-																</span>
-															</td>
-															{branchSelectionModalMode ===
-																BranchSelectionModalMode.SelectAndEditOrg && (
-																<td>
-																	<span>
-																		<Link
-																			to={`/update-organisation/${branch.organisationId}`}
-																			onClick={handleClose}
-																			aria-label="Edit details for this branch/location"
-																		>
-																			Edit
-																		</Link>
+																	<span className="text-break">
+																		{branch.businessListName}
 																	</span>
-																</td>
-															)}
-														</tr>
-													))}
-												</tbody>
-											) : (
-												<tbody key="tBodyKey">
-													<tr>
-														<td colSpan={3}>
-															No branch/locations available. Please create a new
-															one.
+																</label>
+															</div>
+														</div>
+													</td>
+													<td data-header="Location" className="text-break">
+														<span>
+															{`${branch.streetAddress?.suburb}, ${branch.streetAddress?.state}`}
+														</span>
+													</td>
+													{branchSelectionModalMode ===
+														BranchSelectionModalMode.SelectAndEditOrg && (
+														<td>
+															<span>
+																<Link
+																	to={`/update-organisation/${branch.organisationId}`}
+																	onClick={handleClose}
+																	aria-label="Edit details for this branch/location"
+																>
+																	Edit
+																</Link>
+															</span>
 														</td>
-													</tr>
-												</tbody>
-											)}
-										</>
+													)}
+												</tr>
+											))}
+										</tbody>
+									) : (
+										<tbody key="tBodyKey">
+											<tr>
+												<td colSpan={3}>
+													No branch/locations available. Please create a new
+													one.
+												</td>
+											</tr>
+										</tbody>
 									)}
 								</Table>
 							</fieldset>

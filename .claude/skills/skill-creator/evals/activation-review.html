@@ -171,8 +171,8 @@
         <p class="description">Current description: <span id="skill-desc"></span></p>
 
         <div class="controls">
-            <button class="btn btn-add" onclick="addRow()">+ Add Query</button>
-            <button class="btn btn-export" onclick="exportEvalSet()">Export Eval Set</button>
+            <button type="button" class="btn btn-add" onclick="addRow()">+ Add Query</button>
+            <button type="button" class="btn btn-export" onclick="exportEvalSet()">Export Eval Set</button>
         </div>
 
         <table>
@@ -303,20 +303,20 @@
                 return div.innerHTML;
             }
 
-            function updateQuery(idx, value) {
+            function _updateQuery(idx, value) {
                 evalItems[idx].query = value;
                 updateSummary();
             }
-            function updateTrigger(idx, value) {
+            function _updateTrigger(idx, value) {
                 evalItems[idx].should_trigger = value;
                 render();
             }
-            function deleteRow(idx) {
+            function _deleteRow(idx) {
                 evalItems.splice(idx, 1);
                 render();
             }
 
-            function addRow() {
+            function _addRow() {
                 evalItems.push({ query: '', should_trigger: true });
                 render();
                 const inputs = document.querySelectorAll('.query-input');
@@ -330,7 +330,7 @@
                     `${evalItems.length} queries total: ${trigger} should trigger, ${noTrigger} should not trigger`;
             }
 
-            function exportEvalSet() {
+            function _exportEvalSet() {
                 const valid = evalItems.filter((i) => i.query.trim() !== '');
                 const data = valid.map((i) => ({ query: i.query.trim(), should_trigger: i.should_trigger }));
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });

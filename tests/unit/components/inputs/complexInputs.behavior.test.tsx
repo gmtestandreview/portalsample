@@ -113,7 +113,10 @@ describe("complex input behavior slice", () => {
 	// Registered after the guard so it runs first: Vitest runs `afterEach` in
 	// reverse order, and a guard failure would otherwise skip the global
 	// cleanup and leak the previous test's DOM into the next one.
-	afterEach(cleanup);
+	afterEach(() => {
+		cleanup();
+		vi.useRealTimers();
+	});
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -134,10 +137,6 @@ describe("complex input behavior slice", () => {
 				},
 			],
 		});
-	});
-
-	afterEach(() => {
-		vi.useRealTimers();
 	});
 
 	it("renders ManualAddressInput fields with labels and updates nested values", async () => {

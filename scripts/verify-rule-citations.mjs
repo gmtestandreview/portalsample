@@ -363,8 +363,8 @@ if (FIX) {
 			.pop()
 			.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 		const pattern = new RegExp(
-			"`([A-Za-z0-9_\\-./]*" + base + "):" + r.cited + "(?![0-9-])`",
-			"g",
+			`\`([A-Za-z0-9_\\-./]*${base}):${r.cited}(?![0-9-])\``,
+			"gu",
 		);
 		const replaced = updated.replace(
 			pattern,

@@ -1,6 +1,6 @@
 import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { PatternFormat } from "react-number-format";
 import { Link, Navigate } from "react-router";
@@ -274,7 +274,6 @@ const Dashboard = () => {
 	const [requests, setRequests] = useState<DashboardItemDto[]>([]);
 	const [isDataLoading, setIsDataLoading] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [reload, setReload] = useState(false);
 	const accountState = useAccountState();
 	const accountDispatch = useAccountDispatch();
 	const accountDetails = accountState?.details;
@@ -454,19 +453,22 @@ const Dashboard = () => {
 		],
 	);
 
-	const resolveFilterParams = (
-		filterYearType: string | undefined,
-		filterStatusType: string | undefined,
-	) => ({
-		actualYear:
-			filterYearType === defaultFilter.filterYearType
-				? undefined
-				: filterYearType,
-		actualStatus:
-			filterStatusType === defaultFilter.filterStatusType
-				? undefined
-				: (filterStatusType as StatusEnumDto),
-	});
+	const resolveFilterParams = useCallback(
+		(
+			filterYearType: string | undefined,
+			filterStatusType: string | undefined,
+		) => ({
+			actualYear:
+				filterYearType === defaultFilter.filterYearType
+					? undefined
+					: filterYearType,
+			actualStatus:
+				filterStatusType === defaultFilter.filterStatusType
+					? undefined
+					: (filterStatusType as StatusEnumDto),
+		}),
+		[],
+	);
 
 	useEffect(() => {
 		const controller = new AbortController();
@@ -527,7 +529,6 @@ const Dashboard = () => {
 				handleDashboardLoadError(error, setErrorStatus);
 			} finally {
 				setIsDataLoading(false);
-				setReload(false);
 			}
 		};
 		loadDataForDisplay();
@@ -539,11 +540,11 @@ const Dashboard = () => {
 		inProgress,
 		instance,
 		organisationCrmGuid,
-		reload,
 		showBranchSelector,
 		showRfqDeleteModal,
 		stableFilters,
 		userAcceptedTermsOfUse,
+		resolveFilterParams,
 	]);
 
 	useEffect(() => {

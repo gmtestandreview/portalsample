@@ -1,6 +1,6 @@
 import { createServer, type Server, type ServerResponse } from "node:http";
 
-import { expect, test as it, test } from "@playwright/test";
+import { expect, test as it } from "@playwright/test";
 
 import { expectJsonResponseToMatchSchema } from "../e2e/support/api-contract.ts";
 

@@ -29,11 +29,8 @@
 
 	function sessionKey() {
 		try {
-			return (
-				window.sessionStorage &&
-				window.sessionStorage.getItem("brainstorm-session-key")
-			);
-		} catch (e) {}
+			return window.sessionStorage?.getItem("brainstorm-session-key");
+		} catch (_e) {}
 		return null;
 	}
 
@@ -42,14 +39,14 @@
 		return (
 			"ws://" +
 			window.location.host +
-			(key ? "/?key=" + encodeURIComponent(key) : "")
+			(key ? `/?key=${encodeURIComponent(key)}` : "")
 		);
 	}
 
 	function reloadAfterRecovery() {
 		const key = sessionKey();
 		if (key) {
-			window.location.replace("/?key=" + encodeURIComponent(key));
+			window.location.replace(`/?key=${encodeURIComponent(key)}`);
 		} else {
 			window.location.reload();
 		}
@@ -103,7 +100,9 @@
 			reconnectDelay = MinReconnectMs;
 			tombstoneShown = false;
 			setStatus("connected");
-			eventQueue.forEach((e) => ws.send(JSON.stringify(e)));
+			eventQueue.forEach((e) => {
+				ws.send(JSON.stringify(e));
+			});
 			eventQueue = [];
 			// Recovered from a tombstoned outage (e.g. the server restarted on the same
 			// port) — reload through the keyed bootstrap when possible so the cookie is
@@ -115,7 +114,7 @@
 			let data;
 			try {
 				data = JSON.parse(msg.data);
-			} catch (e) {
+			} catch (_e) {
 				return;
 			}
 			if (data.type === "reload") window.location.reload();
@@ -138,7 +137,7 @@
 		ws.onerror = () => {
 			try {
 				ws.close();
-			} catch (e) {}
+			} catch (_e) {}
 		};
 	}
 
@@ -171,9 +170,9 @@
 		const container = el.closest(".options") || el.closest(".cards");
 		const multi = container && container.dataset.multiselect !== undefined;
 		if (container && !multi) {
-			container
-				.querySelectorAll(".option, .card")
-				.forEach((o) => o.classList.remove("selected"));
+			container.querySelectorAll(".option, .card").forEach((o) => {
+				o.classList.remove("selected");
+			});
 		}
 		if (multi) {
 			el.classList.toggle("selected");

@@ -4,6 +4,8 @@
  * Usage: node md-to-docx.mjs <input.md> [output.docx]
  */
 
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import process from "node:process";
 import {
 	AlignmentType,
@@ -21,9 +23,7 @@ import {
 	TextRun,
 	WidthType,
 } from "docx";
-import { existsSync, readFileSync, writeFileSync } from "fs";
 import { marked } from "marked";
-import { dirname, join, resolve } from "path";
 
 // --- Image dimensions from PNG header ---
 function pngDimensions(buffer) {

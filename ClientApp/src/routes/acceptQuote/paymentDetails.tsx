@@ -1,5 +1,5 @@
 import { useMsal } from "@azure/msal-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Alert } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import type {
@@ -38,7 +38,7 @@ const PaymentDetails = (props: PaymentDetailsProps) => {
 		return getNameForUse2(name, isSummary);
 	}
 
-	const getAcceptQuotePreInfo = async () => {
+	const getAcceptQuotePreInfo = useCallback(async () => {
 		try {
 			AppLogger.verbose("PaymentDetails.getAcceptQuotePreInfo", { Id: id });
 			const acceptQuoteClient = new AcceptQuoteClient();
@@ -53,7 +53,7 @@ const PaymentDetails = (props: PaymentDetailsProps) => {
 		} catch (e) {
 			AppLogger.error("Failed to load Payment details", e as Error, { Id: id });
 		}
-	};
+	}, [accounts, id, instance]);
 
 	useEffect(() => {
 		const loadDataForDisplay = async () => {
@@ -63,7 +63,7 @@ const PaymentDetails = (props: PaymentDetailsProps) => {
 		};
 		loadDataForDisplay();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [getAcceptQuotePreInfo]);
 
 	return (
 		<>

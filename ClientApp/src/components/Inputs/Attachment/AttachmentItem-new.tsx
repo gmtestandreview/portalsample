@@ -131,7 +131,7 @@ const AttachmentItemNew = ({
 						titleText="Confirm deletion"
 						bodyText="Are you sure you want to remove this file?"
 						onModalNo={closeModal}
-						onModalYes={() => onRemoveItem && onRemoveItem(contentField.value)}
+						onModalYes={() => onRemoveItem?.(contentField.value)}
 						noButtonTitle="Cancel"
 						yesButtonTitle="Yes, delete"
 					/>

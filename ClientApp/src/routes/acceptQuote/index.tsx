@@ -87,7 +87,7 @@ const AcceptQuote = () => {
 		return () => {
 			isLoading.current = true;
 		};
-	}, [accounts, id, instance, isLoading, navigate, statuses]);
+	}, [accounts, id, instance, navigate, statuses]);
 
 	const accountDetails: AccountDetails = account!.details!;
 	return statuses ? (

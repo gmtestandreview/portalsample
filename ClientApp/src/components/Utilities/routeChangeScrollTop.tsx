@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useLocation } from "react-router";
 
 const RouteChangeScrollTop = () => {
 	const { pathname } = useLocation();
 
-	const resetFocusAndScroll = () => {
+	const resetFocusAndScroll = useCallback((_currentPath: string) => {
 		window.scrollTo(0, 0);
 		setTimeout(() => {
 			if (document.querySelector("#page-title")) {
@@ -21,11 +21,11 @@ const RouteChangeScrollTop = () => {
 				el?.focus();
 			}
 		}, 100);
-	};
+	}, []);
 
 	useEffect(() => {
-		resetFocusAndScroll();
-	}, [pathname]);
+		resetFocusAndScroll(pathname);
+	}, [pathname, resetFocusAndScroll]);
 
 	return null;
 };
