@@ -2,10 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Form, Formik } from "formik";
 import { MemoryRouter } from "react-router";
-import WizardForm from "@/components/forms/WizardForm";
-import NextStepButton from "@/components/forms/WizardForm/NextStepButton";
-import PreviousStepButton from "@/components/forms/WizardForm/PreviousStepButton";
-import WizardStep from "@/components/forms/WizardForm/WizardStep";
+import WizardForm from "@/components/forms/WizardForm/index.tsx";
+import NextStepButton from "@/components/forms/WizardForm/NextStepButton.tsx";
+import PreviousStepButton from "@/components/forms/WizardForm/PreviousStepButton.tsx";
+import WizardStep from "@/components/forms/WizardForm/WizardStep.tsx";
 
 const wrapperMocks = vi.hoisted(() => ({
 	analytics: vi.fn(({ children }: { children?: React.ReactNode }) => (
@@ -39,7 +39,7 @@ vi.mock("@/components/modals/ConfirmationModal", () => ({
 		titleText: string;
 	}) =>
 		isOpen ? (
-			<dialog open aria-label={titleText}>
+			<dialog open={true} aria-label={titleText}>
 				<button type="button" onClick={onModalYes}>
 					Confirm yes
 				</button>

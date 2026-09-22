@@ -7,11 +7,11 @@ import {
 	type RequestForPatternApprovalAppDetails,
 	RequestForPatternApprovalClient,
 	YesNo,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import AppLogger from "../../../instrumentation/AppLogger";
-import { DisplayRules } from "../displayRules";
-import type { SinglePageFormProps, SinglePageFormValues } from "../types";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
+import { DisplayRules } from "../displayRules.ts";
+import type { SinglePageFormProps, SinglePageFormValues } from "../types.ts";
 
 const loadAppDetails =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

@@ -7,7 +7,7 @@ import {
 	SliderThumb,
 	SliderTrack,
 } from "react-aria-components/Slider";
-import { Label } from "../forms/AriaForm/Form";
+import { Label } from "../forms/AriaForm/Form.tsx";
 import "./Slider.css";
 
 export interface SliderProps<T> extends AriaSliderProps<T> {

@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Given, Then, When } from "../support/fixtures";
-import { waitForAppReady } from "./common.steps";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { waitForAppReady } from "./common.steps.ts";
 
 Given(
 	"the user opens organisation {int} for editing",

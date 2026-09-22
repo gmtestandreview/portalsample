@@ -17,6 +17,7 @@
 import { execFileSync } from "node:child_process";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import process from "node:process";
 
 const defaultDotPaths = {
 	win32: [
@@ -47,14 +48,14 @@ function resolveExistingPath(candidate) {
 
 function extractDotBlocks(markdown) {
 	const blocks = [];
-	const regex = /```dot\n([\s\S]*?)```/g;
+	const regex = /```dot\n([\s\S]*?)```/gu;
 	let match;
 
 	while ((match = regex.exec(markdown)) !== null) {
 		const content = match[1].trim();
 
 		// Extract digraph name
-		const nameMatch = /digraph\s+(\w+)/.exec(content);
+		const nameMatch = /digraph\s+(\w+)/u.exec(content);
 		const name = nameMatch ? nameMatch[1] : `graph_${blocks.length + 1}`;
 
 		blocks.push({ name, content });
@@ -65,7 +66,7 @@ function extractDotBlocks(markdown) {
 
 function extractGraphBody(dotContent) {
 	// Extract just the body (nodes and edges) from a digraph
-	const headerMatch = /digraph\s+\w+\s*\{/.exec(dotContent);
+	const headerMatch = /digraph\s+\w+\s*\{/u.exec(dotContent);
 	if (!headerMatch) return "";
 
 	const bodyStart = headerMatch.index + headerMatch[0].length;
@@ -76,7 +77,7 @@ function extractGraphBody(dotContent) {
 
 	// Remove rankdir (we'll set it once at the top level). Testing trimmed lines
 	// avoids the overlapping \s* quantifiers that backtrack super-linearly.
-	const rankdirLine = /^rankdir\s*=\s*\w+\s*;?$/;
+	const rankdirLine = /^rankdir\s*=\s*\w+\s*;?$/u;
 	body = body
 		.split("\n")
 		.filter((line) => !rankdirLine.test(line.trim()))

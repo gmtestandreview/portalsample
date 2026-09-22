@@ -7,20 +7,20 @@ import {
 	FilterMessages,
 	type RequestForPatternApprovalApplicationMessage,
 	RequestForPatternApprovalClient,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-import CustomPagination from "../../../components/Pagination";
-import CustomPaginationHeader from "../../../components/PaginationHeader";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
+import CustomPagination from "../../../components/Pagination/index.tsx";
+import CustomPaginationHeader from "../../../components/PaginationHeader/index.tsx";
 import SlateEditor, {
 	type CustomElement,
 	serializeToHtml,
-} from "../../../components/SlateEditor/SlateEditor";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import AppLogger from "../../../instrumentation/AppLogger";
-import { formatDateTimeToString } from "../../../utils";
-import { sanitiseHtml } from "../../common/helperFunctions";
+} from "../../../components/SlateEditor/SlateEditor.tsx";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
+import { formatDateTimeToString } from "../../../utils/index.ts";
+import { sanitiseHtml } from "../../common/helperFunctions.ts";
 
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
 
@@ -183,7 +183,7 @@ const ApplicationMessages = () => {
 		</>
 	);
 
-	const renderNMIAvator = (avatar: string) => (
+	const renderNmiAvator = (avatar: string) => (
 		<div
 			className="d-flex align-items-center justify-content-center rounded-circle bg-nmi-navbar mb-3 mb-sm-0 me-3"
 			style={{ width: 36, height: 36 }}
@@ -229,9 +229,9 @@ const ApplicationMessages = () => {
 			</Row>
 			<Row id="application-messages" className="message-items mb-4">
 				{isDataLoading ? (
-					<BlockUISpinner partial>
+					<BlockUiSpinner partial={true}>
 						<p>Loading...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				) : (
 					<ol className="list-unstyled">
 						{message && messageCount !== undefined && messageCount === 0 && (
@@ -256,7 +256,7 @@ const ApplicationMessages = () => {
 														title={msg.senderName}
 													>
 														{msg.avatar === "NMI"
-															? renderNMIAvator(msg.avatar)
+															? renderNmiAvator(msg.avatar)
 															: renderUserAvator(msg.avatar)}
 													</div>
 													<div className="flex-row flex-grow-1">

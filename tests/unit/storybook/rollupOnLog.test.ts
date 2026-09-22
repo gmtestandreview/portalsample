@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { onLog } from "../../../.storybook/rollupOnLog";
+import { onLog } from "../../../.storybook/rollupOnLog.ts";
 
 describe("storybook rollup onLog filter", () => {
 	it("suppresses vendor INVALID_ANNOTATION originating in node_modules", () => {

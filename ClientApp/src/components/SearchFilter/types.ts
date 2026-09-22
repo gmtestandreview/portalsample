@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type {
 	PatternApprovalDashboardDto,
 	StatusEnumDto,
-} from "../../api/web-api-client";
+} from "../../api/web-api-client.ts";
 
 export interface Filters {
 	year?: number;

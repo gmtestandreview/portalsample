@@ -1,7 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { expect, test as it, test } from "@playwright/test";
 
-test.describe("migration checklist runtime verifier", () => {
-	test("demonstrates why the audited notification selector is broken", async ({
+it.describe("migration checklist runtime verifier", () => {
+	it("demonstrates why the audited notification selector is broken", async ({
 		page,
 	}) => {
 		await page.setContent(
@@ -17,7 +17,7 @@ test.describe("migration checklist runtime verifier", () => {
 		expect(matchCounts.fixed).toBe(1);
 	});
 
-	test("shows the corrected alert focus contract the dashboard and quotation routes need", async ({
+	it("shows the corrected alert focus contract the dashboard and quotation routes need", async ({
 		page,
 	}) => {
 		await page.setContent(
@@ -44,7 +44,7 @@ test.describe("migration checklist runtime verifier", () => {
 		});
 	});
 
-	test("models the routeAccessibleNavigation timer cleanup needed for StrictMode remounts", async ({
+	it("models the routeAccessibleNavigation timer cleanup needed for StrictMode remounts", async ({
 		page,
 	}) => {
 		const updates = await page.evaluate(async () => {
@@ -78,7 +78,7 @@ test.describe("migration checklist runtime verifier", () => {
 		expect(updates).toEqual(["Navigated to Quotation page."]);
 	});
 
-	test("models the quotation loading race the migration needs to remove", async ({
+	it("models the quotation loading race the migration needs to remove", async ({
 		page,
 	}) => {
 		const timelines = await page.evaluate(async () => {

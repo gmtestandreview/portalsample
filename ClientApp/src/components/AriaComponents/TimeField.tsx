@@ -5,8 +5,8 @@ import {
 	type TimeValue,
 	type ValidationResult,
 } from "react-aria-components/TimeField";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
-import { DateInput, DateSegment } from "../Inputs/AriaDateField/DateField";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form.tsx";
+import { DateInput, DateSegment } from "../Inputs/AriaDateField/DateField.tsx";
 import "./TimeField.css";
 
 export interface TimeFieldProps<T extends TimeValue>

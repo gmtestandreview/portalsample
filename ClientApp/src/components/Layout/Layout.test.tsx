@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import Layout from "./index";
+import Layout from "./index.tsx";
 
 describe("Layout AppShell — WCAG accessibility", () => {
 	beforeEach(() => {

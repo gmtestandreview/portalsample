@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ComponentProps } from "react";
 import { Button as AriaButton } from "react-aria-components/Button";
-import { getButtonClassName } from "../buttonClassName";
+import { getButtonClassName } from "../buttonClassName.ts";
 
 export type PrimaryButtonProps = Omit<
 	ButtonHTMLAttributes<HTMLButtonElement>,

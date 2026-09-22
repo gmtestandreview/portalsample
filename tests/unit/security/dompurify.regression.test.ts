@@ -1,9 +1,9 @@
-import DOMPurify from "dompurify";
+import DomPurify from "dompurify";
 import { afterEach, describe, expect, it } from "vitest";
 
 describe("DOMPurify security regressions", () => {
 	afterEach(() => {
-		DOMPurify.removeAllHooks();
+		DomPurify.removeAllHooks();
 	});
 
 	it("neutralizes a detached descendant after an IN_PLACE hook removes its ancestor", () => {
@@ -20,13 +20,13 @@ describe("DOMPurify security regressions", () => {
 			throw new Error("Exploit fixture must contain an image");
 		}
 
-		DOMPurify.addHook("uponSanitizeElement", (node) => {
+		DomPurify.addHook("uponSanitizeElement", (node) => {
 			if (node.nodeName === "FOOTER") {
 				(node as Element).remove();
 			}
 		});
 
-		DOMPurify.sanitize(root, {
+		DomPurify.sanitize(root, {
 			ALLOWED_TAGS: ["div", "#text", "footer"],
 			IN_PLACE: true,
 		});

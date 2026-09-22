@@ -4,43 +4,43 @@ import userEvent from "@testing-library/user-event";
 import { act } from "react";
 import { ResizableTableContainer } from "react-aria-components/Table";
 import { describe, expect, it, vi } from "vitest";
-import { Heading, Text } from "@/components/AriaComponents/Content";
-import { Link } from "@/components/AriaComponents/Link";
+import { Heading, Text } from "@/components/AriaComponents/Content.tsx";
+import { Link } from "@/components/AriaComponents/Link.tsx";
 import {
 	ListBox,
 	Header as ListBoxHeader,
 	ListBoxItem,
 	ListBoxLoadMoreItem,
 	ListBoxSection,
-} from "@/components/AriaComponents/ListBox";
+} from "@/components/AriaComponents/ListBox.tsx";
 import {
 	Menu,
 	MenuItem,
 	MenuTrigger,
 	SubmenuTrigger,
-} from "@/components/AriaComponents/Menu";
-import { Meter } from "@/components/AriaComponents/Meter";
-import { Modal } from "@/components/AriaComponents/Modal";
-import { Check, ChevronDown } from "@/components/AriaComponents/NmiIcon";
-import { NumberField } from "@/components/AriaComponents/NumberField";
-import { Popover } from "@/components/AriaComponents/Popover";
-import { ProgressBar } from "@/components/AriaComponents/ProgressBar";
-import { ProgressCircle } from "@/components/AriaComponents/ProgressCircle";
-import { Radio, RadioGroup } from "@/components/AriaComponents/RadioGroup";
-import { RangeCalendar } from "@/components/AriaComponents/RangeCalendar";
-import { SearchField } from "@/components/AriaComponents/SearchField";
+} from "@/components/AriaComponents/Menu.tsx";
+import { Meter } from "@/components/AriaComponents/Meter.tsx";
+import { Modal } from "@/components/AriaComponents/Modal.tsx";
+import { Check, ChevronDown } from "@/components/AriaComponents/NmiIcon.tsx";
+import { NumberField } from "@/components/AriaComponents/NumberField.tsx";
+import { Popover } from "@/components/AriaComponents/Popover.tsx";
+import { ProgressBar } from "@/components/AriaComponents/ProgressBar.tsx";
+import { ProgressCircle } from "@/components/AriaComponents/ProgressCircle.tsx";
+import { Radio, RadioGroup } from "@/components/AriaComponents/RadioGroup.tsx";
+import { RangeCalendar } from "@/components/AriaComponents/RangeCalendar.tsx";
+import { SearchField } from "@/components/AriaComponents/SearchField.tsx";
 import {
 	SegmentedControl,
 	SegmentedControlItem,
-} from "@/components/AriaComponents/SegmentedControl";
-import { Select, SelectItem } from "@/components/AriaComponents/Select";
-import { Separator } from "@/components/AriaComponents/Separator";
+} from "@/components/AriaComponents/SegmentedControl.tsx";
+import { Select, SelectItem } from "@/components/AriaComponents/Select.tsx";
+import { Separator } from "@/components/AriaComponents/Separator.tsx";
 import {
 	Sheet,
 	Heading as SheetHeading,
-} from "@/components/AriaComponents/Sheet";
-import { Slider } from "@/components/AriaComponents/Slider";
-import { Switch } from "@/components/AriaComponents/Switch";
+} from "@/components/AriaComponents/Sheet.tsx";
+import { Slider } from "@/components/AriaComponents/Slider.tsx";
+import { Switch } from "@/components/AriaComponents/Switch.tsx";
 import {
 	Cell,
 	Column,
@@ -49,32 +49,35 @@ import {
 	TableBody,
 	TableHeader,
 	TableLoadMoreItem,
-} from "@/components/AriaComponents/Table";
+} from "@/components/AriaComponents/Table.tsx";
 import {
 	Tab,
 	TabList,
 	TabPanel,
 	TabPanels,
 	Tabs,
-} from "@/components/AriaComponents/Tabs";
-import { Tag, TagGroup } from "@/components/AriaComponents/TagGroup";
-import { TextArea, TextField } from "@/components/AriaComponents/TextField";
-import { TimeField } from "@/components/AriaComponents/TimeField";
-import { MyToastRegion } from "@/components/AriaComponents/Toast";
-import { queue } from "@/components/AriaComponents/ToastQueue";
-import { ToggleButton } from "@/components/AriaComponents/ToggleButton";
-import { ToggleButtonGroup } from "@/components/AriaComponents/ToggleButtonGroup";
-import { Toolbar } from "@/components/AriaComponents/Toolbar";
-import { Tooltip, TooltipTrigger } from "@/components/AriaComponents/Tooltip";
+} from "@/components/AriaComponents/Tabs.tsx";
+import { Tag, TagGroup } from "@/components/AriaComponents/TagGroup.tsx";
+import { TextArea, TextField } from "@/components/AriaComponents/TextField.tsx";
+import { TimeField } from "@/components/AriaComponents/TimeField.tsx";
+import { MyToastRegion } from "@/components/AriaComponents/Toast.tsx";
+import { queue } from "@/components/AriaComponents/ToastQueue.ts";
+import { ToggleButton } from "@/components/AriaComponents/ToggleButton.tsx";
+import { ToggleButtonGroup } from "@/components/AriaComponents/ToggleButtonGroup.tsx";
+import { Toolbar } from "@/components/AriaComponents/Toolbar.tsx";
+import {
+	Tooltip,
+	TooltipTrigger,
+} from "@/components/AriaComponents/Tooltip.tsx";
 import {
 	Tree,
 	TreeHeader,
 	TreeItem,
 	TreeLoadMoreItem,
 	TreeSection,
-} from "@/components/AriaComponents/Tree";
-import { Button } from "@/components/Buttons/AriaButton/Button";
-import { DialogTrigger } from "@/components/Dialog/Dialog";
+} from "@/components/AriaComponents/Tree.tsx";
+import { Button } from "@/components/Buttons/AriaButton/Button.tsx";
+import { DialogTrigger } from "@/components/Dialog/Dialog.tsx";
 
 if (!Element.prototype.getAnimations) {
 	Element.prototype.getAnimations = vi.fn(() => []);
@@ -218,7 +221,7 @@ describe("React Aria evaluation wrappers", () => {
 				label="Ice cream flavor"
 				description="Choose one flavor"
 				errorMessage="Flavor is required"
-				isInvalid
+				isInvalid={true}
 			>
 				<SelectItem id="chocolate">Chocolate</SelectItem>
 				<SelectItem id="mint">Mint</SelectItem>
@@ -228,7 +231,7 @@ describe("React Aria evaluation wrappers", () => {
 		expect(screen.getByText("Choose one flavor")).toBeInTheDocument();
 		expect(screen.getByText("Flavor is required")).toBeInTheDocument();
 
-		await user.click(screen.getByRole("button", { name: /Ice cream flavor/ }));
+		await user.click(screen.getByRole("button", { name: /Ice cream flavor/u }));
 
 		expect(screen.getByRole("listbox")).toHaveClass("dropdown-listbox");
 		expect(screen.getByRole("option", { name: "Chocolate" })).toHaveClass(
@@ -245,7 +248,7 @@ describe("React Aria evaluation wrappers", () => {
 				label="Certificate type"
 				description="Select one certificate"
 				errorMessage="Certificate type is required"
-				isInvalid
+				isInvalid={true}
 			>
 				<Radio value="new" description="Create a new certificate">
 					New certificate
@@ -312,7 +315,7 @@ describe("React Aria evaluation wrappers", () => {
 			),
 		).toBe("30%");
 
-		rerender(<ProgressBar label="Upload progress" isIndeterminate />);
+		rerender(<ProgressBar label="Upload progress" isIndeterminate={true} />);
 		expect(
 			(container.querySelector(".fill") as HTMLElement).style.getPropertyValue(
 				"--percent",
@@ -340,7 +343,7 @@ describe("React Aria evaluation wrappers", () => {
 			"40",
 		);
 
-		rerender(<ProgressCircle aria-label="Loading" isIndeterminate />);
+		rerender(<ProgressCircle aria-label="Loading" isIndeterminate={true} />);
 		expect(screen.getByRole("progressbar", { name: "Loading" })).toHaveStyle({
 			width: "16px",
 			height: "16px",
@@ -366,16 +369,15 @@ describe("React Aria evaluation wrappers", () => {
 		);
 
 		expect(
-			screen.getByRole("application", { name: /Booking window/ }),
+			screen.getByRole("application", { name: /Booking window/u }),
 		).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: /previous/i })).toHaveAttribute(
+		expect(screen.getByRole("button", { name: /previous/iu })).toHaveAttribute(
 			"data-variant",
 			"quiet",
 		);
-		expect(screen.getAllByRole("button", { name: /next/i })[0]).toHaveAttribute(
-			"data-variant",
-			"quiet",
-		);
+		expect(
+			screen.getAllByRole("button", { name: /next/iu })[0],
+		).toHaveAttribute("data-variant", "quiet");
 		expect(
 			screen.getByText("Select an available date range"),
 		).toBeInTheDocument();
@@ -391,14 +393,14 @@ describe("React Aria evaluation wrappers", () => {
 				maxValue={100}
 				thumbLabels={["Minimum target", "Maximum target"]}
 				fillOffset={10}
-				isDisabled
+				isDisabled={true}
 			/>,
 		);
 
-		expect(screen.getByRole("slider", { name: /Minimum target/ })).toHaveValue(
+		expect(screen.getByRole("slider", { name: /Minimum target/u })).toHaveValue(
 			"25",
 		);
-		expect(screen.getByRole("slider", { name: /Maximum target/ })).toHaveValue(
+		expect(screen.getByRole("slider", { name: /Maximum target/u })).toHaveValue(
 			"75",
 		);
 		expect(container.querySelector(".track")).toHaveAttribute(
@@ -418,7 +420,7 @@ describe("React Aria evaluation wrappers", () => {
 					description="Use the legal name"
 					errorMessage="Name is required"
 					placeholder="Legal name"
-					isInvalid
+					isInvalid={true}
 				/>
 				<TextArea
 					label="Instructions"
@@ -426,33 +428,33 @@ describe("React Aria evaluation wrappers", () => {
 					errorMessage="Instructions are required"
 					placeholder="Notes"
 					rows={4}
-					isInvalid
+					isInvalid={true}
 				/>
 				<NumberField
 					label="Quantity"
 					description="Whole numbers only"
 					errorMessage="Quantity is required"
 					defaultValue={2}
-					isInvalid
+					isInvalid={true}
 				/>
 				<SearchField
 					label="Find service"
 					description="Search by keyword"
 					errorMessage="Search is required"
 					placeholder="Mass"
-					isInvalid
+					isInvalid={true}
 				/>
 				<TimeField
 					label="Collection time"
 					description="Use local time"
 					errorMessage="Time is required"
 					defaultValue={new Time(9, 30)}
-					isInvalid
+					isInvalid={true}
 				/>
 				<Switch
 					description="Applies to all instruments"
 					errorMessage="Choose an option"
-					isInvalid
+					isInvalid={true}
 				>
 					Expedited handling
 				</Switch>
@@ -550,7 +552,12 @@ describe("React Aria evaluation wrappers", () => {
 					sortDescriptor={{ column: "name", direction: "ascending" }}
 				>
 					<TableHeader>
-						<Column id="name" isRowHeader allowsSorting allowsResizing>
+						<Column
+							id="name"
+							isRowHeader={true}
+							allowsSorting={true}
+							allowsResizing={true}
+						>
 							Name
 						</Column>
 						<Column id="type">Type</Column>
@@ -567,7 +574,7 @@ describe("React Aria evaluation wrappers", () => {
 		);
 
 		expect(screen.getByRole("grid", { name: "Files" })).toBeInTheDocument();
-		expect(screen.getByRole("columnheader", { name: /Name/ })).toHaveClass(
+		expect(screen.getByRole("columnheader", { name: /Name/u })).toHaveClass(
 			"button-base",
 		);
 		expect(
@@ -638,7 +645,7 @@ describe("React Aria evaluation wrappers", () => {
 		).toBeInTheDocument();
 		expect(screen.getByText("Select at least one service")).toBeInTheDocument();
 		expect(
-			within(screen.getByRole("row", { name: /Mass/ })).getByRole("button", {
+			within(screen.getByRole("row", { name: /Mass/u })).getByRole("button", {
 				name: "Remove Mass",
 			}),
 		).toBeInTheDocument();
@@ -656,7 +663,7 @@ describe("React Aria evaluation wrappers", () => {
 
 	it("renders modal dialog content when open", () => {
 		render(
-			<Modal isOpen>
+			<Modal isOpen={true}>
 				<div role="dialog" aria-label="Review application">
 					Modal content
 				</div>
@@ -771,12 +778,12 @@ describe("React Aria evaluation wrappers", () => {
 
 		expect(screen.getByRole("treegrid", { name: "Files" })).toBeInTheDocument();
 		expect(screen.getByText("Shared files")).toBeInTheDocument();
-		expect(screen.getByRole("row", { name: /Documents/ })).toHaveAttribute(
+		expect(screen.getByRole("row", { name: /Documents/u })).toHaveAttribute(
 			"aria-expanded",
 			"true",
 		);
 		expect(
-			screen.getByRole("row", { name: /Weekly Report/ }),
+			screen.getByRole("row", { name: /Weekly Report/u }),
 		).toBeInTheDocument();
 		expect(screen.getByTestId("loadMoreSentinel")).toBeInTheDocument();
 	});

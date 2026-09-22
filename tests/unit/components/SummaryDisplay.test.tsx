@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import SummaryDisplay from "@/components/SummaryDisplay";
+import SummaryDisplay from "@/components/SummaryDisplay/index.tsx";
 
 describe("SummaryDisplay", () => {
 	it("renders the label, span value, descriptor, and custom classes by default", () => {
@@ -132,7 +132,7 @@ describe("SummaryDisplay", () => {
 				value="12345678901"
 				as="number"
 				format="## ### ### ###"
-				valueIsNumericString
+				valueIsNumericString={true}
 			/>,
 		);
 

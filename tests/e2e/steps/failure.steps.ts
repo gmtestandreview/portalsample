@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Given, Then, When } from "../support/fixtures";
-import { failureKey } from "../support/mock-failure";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { failureKey } from "../support/mock-failure.ts";
 
 Given(
 	"saving the RFQ instrument step will fail with status {int}",

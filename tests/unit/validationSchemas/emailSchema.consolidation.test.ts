@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 // After the fix, contactValidation re-exports emailSchema from common.
 // This import verifies the re-routed version behaves identically.
-import { emailSchema } from "../../../ClientApp/src/validationSchemas/contactValidation";
+import { emailSchema } from "../../../ClientApp/src/validationSchemas/contactValidation.ts";
 
 describe("emailSchema — post-consolidation (sourced from common.ts)", () => {
 	it("accepts a valid email address", async () => {

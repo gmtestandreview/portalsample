@@ -3,10 +3,10 @@ import { Link } from "react-router";
 import type {
 	InstrumentArtefactDto,
 	PagedListOfInstrumentArtefactDto,
-} from "../../api/web-api-client";
-import CustomPagination from "../../components/Pagination";
-import StatusPill from "../../components/Pill/StatusPill";
-import { ReportStatus } from "../common/enums";
+} from "../../api/web-api-client.ts";
+import CustomPagination from "../../components/Pagination/index.tsx";
+import StatusPill from "../../components/Pill/StatusPill.tsx";
+import { ReportStatus } from "../common/enums.ts";
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
 	dateToFormat
@@ -61,7 +61,7 @@ const ReportList = (props: {
 					<Table
 						id="instReports-table"
 						data-testid="instReports-table"
-						striped
+						striped={true}
 						className="table-sm table-hover table-striped table-responsive-stack small mb-4"
 						aria-live="off"
 					>

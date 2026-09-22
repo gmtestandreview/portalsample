@@ -1,9 +1,8 @@
-/* eslint-disable no-useless-escape */
 import { isEmpty, trim } from "lodash";
-import "./yupExtensions";
+import "./yupExtensions/index.ts";
 import { isAfter, startOfDay } from "date-fns";
 import * as yup from "yup";
-import { containsWhitespace, parseDate } from "../utils";
+import { containsWhitespace, parseDate } from "../utils/index.ts";
 
 export const NotEmpty = (value: string | undefined | null) =>
 	value !== undefined && value !== null && !isEmpty(trim(value));
@@ -102,15 +101,15 @@ export const isFutureDate =
 	};
 
 const urlMatchRegex =
-	/^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)(?<!\.)$/;
+	/^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&/=]*)(?<!\.)$/u;
 
 // To do - Explore create new Schema or stringExtensions Methods to support this
 export const serialNumMatchRegEx =
-	/^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]]+$/;
+	/^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]]+$/u;
 export const extAlphaNumSingleLineMatchRegex =
-	/^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]]+$/;
+	/^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]]+$/u;
 export const extAlphaNumMultiLineMatchRegex =
-	/^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]<>\r\n]+$/;
+	/^[0-9A-Za-z#'\-. $%!&?+:,/()@=^~*_`"{}[\]<>\r\n]+$/u;
 
 export const websiteUrlSchema = (message: string, excludeEmpty = true) =>
 	yup.string().matches(urlMatchRegex, {

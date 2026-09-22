@@ -1,13 +1,13 @@
 import { Card } from "react-bootstrap";
-import DICoatOfArms from "../../../assets/DI_CoatOfArms.svg";
-import type { StandardPathwayFooterProps } from "./types";
+import DiCoatOfArms from "../../../assets/DI_CoatOfArms.svg";
+import type { StandardPathwayFooterProps } from "./types.ts";
 
 const DigitalIdentityFooter = (props: StandardPathwayFooterProps) => {
 	const { linkDescription } = props;
 	return (
 		<Card.Footer as="span" bsPrefix="standard-pathway-footer">
 			<img
-				src={DICoatOfArms}
+				src={DiCoatOfArms}
 				alt="Australian Government Coat of Arms"
 				className="me-3 digital-identity"
 			/>

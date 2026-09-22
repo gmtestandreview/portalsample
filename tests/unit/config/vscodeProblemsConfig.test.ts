@@ -1,9 +1,10 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import { describe, expect, it } from "vitest";
 
-const repoRoot = path.resolve(__dirname, "../../..");
+const repoRoot = path.resolve(import.meta.dirname, "../../..");
 
 function readJson<T>(relativePath: string): T {
 	return JSON.parse(
@@ -70,14 +71,14 @@ describe("VS Code Problems configuration", () => {
 
 		expect(result.status).toBe(0);
 		const diagnosticLines = result.stdout
-			.split(/\r?\n/)
+			.split(/\r?\n/u)
 			.filter(
 				(line) => line.includes("): warning ") || line.includes("): error "),
 			);
 
 		expect(diagnosticLines.length).toBeGreaterThan(0);
 		expect(diagnosticLines[0]).toMatch(
-			/^[^(]+\(\d+,\d+\): (warning|error) RULE-\d+: \[[A-Z_]+\] .+$/,
+			/^[^(]+\(\d+,\d+\): (warning|error) RULE-\d+: \[[A-Z_]+\] .+$/u,
 		);
 	});
 

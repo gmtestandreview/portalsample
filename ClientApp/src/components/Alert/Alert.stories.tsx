@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from "./index";
+import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from "./index.tsx";
 
 /**
  * Alert Component Storybook Configuration
@@ -49,7 +49,7 @@ export const ErrorDismissible: Story = {
 		canClose: true,
 	},
 	play: async ({ canvas }) => {
-		const closeButton = canvas.getByRole("button", { name: /close/i });
+		const closeButton = canvas.getByRole("button", { name: /close/iu });
 		await expect(closeButton).toBeVisible();
 	},
 };

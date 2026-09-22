@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { requestForQuoteDetailsFixture } from "../../storybook/storybookFixtures";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import NMIContactDetails from "./nMIContactDetails";
-import QuoteDetails from "./quoteDetails";
+import { requestForQuoteDetailsFixture } from "../../storybook/storybookFixtures.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import NmiContactDetails from "./nMIContactDetails.tsx";
+import QuoteDetails from "./quoteDetails.tsx";
 
 const meta = {
 	title: "Routes/Quotation",
@@ -33,7 +33,7 @@ export const QuoteSummary: Story = {
 				lastName="Nguyen"
 				fileError={false}
 			/>
-			<NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
+			<NmiContactDetails quotationData={requestForQuoteDetailsFixture} />
 		</>
 	),
 };
@@ -53,7 +53,7 @@ export const ExpiredNoDelivery: Story = {
 	render: (args) => (
 		<>
 			<QuoteDetails {...args} />
-			<NMIContactDetails quotationData={args.quotationData} />
+			<NmiContactDetails quotationData={args.quotationData} />
 		</>
 	),
 };

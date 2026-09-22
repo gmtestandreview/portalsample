@@ -8,7 +8,7 @@ import {
 	type RadioFieldProps,
 	type ValidationResult,
 } from "react-aria-components/RadioGroup";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form.tsx";
 import "./RadioGroup.css";
 import "./utilities.css";
 

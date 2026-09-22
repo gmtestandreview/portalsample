@@ -1,5 +1,5 @@
 import type { ChangeEventHandler, ReactNode } from "react";
-import type { RadioButtonProps } from "../RadioButton/types";
+import type { RadioButtonProps } from "../RadioButton/types.ts";
 
 export interface RadioButtonGroupProps<T = unknown> {
 	displayHorizontally?: boolean;

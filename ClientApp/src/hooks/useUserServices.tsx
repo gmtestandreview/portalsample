@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import useAccountContext from "../authentication/hooks";
+import useAccountContext from "../authentication/hooks.tsx";
 
 export default function useUserServices() {
 	const accountContext = useAccountContext();

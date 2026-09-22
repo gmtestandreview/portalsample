@@ -1,6 +1,8 @@
 // playwright-helpers.js
 // Reusable utility functions for Playwright automation
 
+import process from "node:process";
+
 const { chromium, firefox, webkit } = require("playwright");
 
 /**
@@ -47,7 +49,7 @@ function getExtraHeadersFromEnv() {
 async function launchBrowser(browserType = "chromium", options = {}) {
 	const defaultOptions = {
 		headless: process.env.HEADLESS !== "false",
-		slowMo: process.env.SLOW_MO ? parseInt(process.env.SLOW_MO) : 0,
+		slowMo: process.env.SLOW_MO ? Number.parseInt(process.env.SLOW_MO) : 0,
 		args: ["--no-sandbox", "--disable-setuid-sandbox"],
 	};
 
@@ -80,7 +82,7 @@ async function createPage(context, options = {}) {
 	}
 
 	// Set default timeout
-	page.setDefaultTimeout(options.timeout || 30000);
+	page.setDefaultTimeout(options.timeout || 30_000);
 
 	return page;
 }
@@ -93,7 +95,7 @@ async function createPage(context, options = {}) {
 async function waitForPageReady(page, options = {}) {
 	const waitOptions = {
 		waitUntil: options.waitUntil || "networkidle",
-		timeout: options.timeout || 30000,
+		timeout: options.timeout || 30_000,
 	};
 
 	try {
@@ -129,7 +131,7 @@ async function safeClick(page, selector, options = {}) {
 				timeout: options.timeout || 5000,
 			});
 			await page.click(selector, {
-				force: options.force || false,
+				force: options.force,
 				timeout: options.timeout || 5000,
 			});
 			return true;
@@ -156,7 +158,7 @@ async function safeClick(page, selector, options = {}) {
 async function safeType(page, selector, text, options = {}) {
 	await page.waitForSelector(selector, {
 		state: "visible",
-		timeout: options.timeout || 10000,
+		timeout: options.timeout || 10_000,
 	});
 
 	if (options.clear !== false) {
@@ -176,7 +178,7 @@ async function safeType(page, selector, text, options = {}) {
  * @param {string} selector - Elements selector
  */
 async function extractTexts(page, selector) {
-	await page.waitForSelector(selector, { timeout: 10000 });
+	await page.waitForSelector(selector, { timeout: 10_000 });
 	return await page.$$eval(selector, (elements) =>
 		elements.map((el) => el.textContent?.trim()).filter(Boolean),
 	);
@@ -189,7 +191,7 @@ async function extractTexts(page, selector) {
  * @param {Object} options - Screenshot options
  */
 async function takeScreenshot(page, name, options = {}) {
-	const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+	const timestamp = new Date().toISOString().replace(/[:.]/gu, "-");
 	const filename = `${name}-${timestamp}.png`;
 
 	await page.screenshot({
@@ -227,7 +229,7 @@ async function authenticate(page, credentials, selectors = {}) {
 		page.waitForNavigation({ waitUntil: "networkidle" }),
 		page.waitForSelector(
 			selectors.successIndicator || ".dashboard, .user-menu, .logout",
-			{ timeout: 10000 },
+			{ timeout: 10_000 },
 		),
 	]).catch(() => {
 		console.log("Login might have completed without navigation");
@@ -281,9 +283,8 @@ async function extractTableData(page, tableSelector) {
 					obj[headers[index] || `column_${index}`] = cell.textContent?.trim();
 					return obj;
 				}, {});
-			} else {
-				return cells.map((cell) => cell.textContent?.trim());
 			}
+			return cells.map((cell) => cell.textContent?.trim());
 		});
 
 		return { headers, rows };
@@ -405,7 +406,7 @@ async function detectDevServers(customPorts = []) {
 				const req = http.request(
 					{
 						hostname: "localhost",
-						port: port,
+						port,
 						path: "/",
 						method: "HEAD",
 						timeout: 500,

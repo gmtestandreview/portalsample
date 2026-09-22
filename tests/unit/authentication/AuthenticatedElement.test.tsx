@@ -133,7 +133,7 @@ describe("AuthenticatedElement", () => {
 
 	it("wraps children in preconditions, MSAL authentication, and an error boundary", async () => {
 		const { default: AuthenticatedElement } = await import(
-			"../../../ClientApp/src/authentication/AuthenticatedElement"
+			"../../../ClientApp/src/authentication/AuthenticatedElement.tsx"
 		);
 
 		render(
@@ -163,7 +163,7 @@ describe("AuthenticatedElement", () => {
 
 	it("passes displayHeaderAndFooter as true by default", async () => {
 		const { default: AuthenticatedElement } = await import(
-			"../../../ClientApp/src/authentication/AuthenticatedElement"
+			"../../../ClientApp/src/authentication/AuthenticatedElement.tsx"
 		);
 
 		render(<AuthenticatedElement />);
@@ -177,7 +177,7 @@ describe("AuthenticatedElement", () => {
 	it("renders the logging in loading component for MSAL loading state", async () => {
 		authElementMocks.msalTemplateMode = "loading";
 		const { default: AuthenticatedElement } = await import(
-			"../../../ClientApp/src/authentication/AuthenticatedElement"
+			"../../../ClientApp/src/authentication/AuthenticatedElement.tsx"
 		);
 
 		render(<AuthenticatedElement />);
@@ -190,7 +190,7 @@ describe("AuthenticatedElement", () => {
 		authElementMocks.routeError = { status: 404 };
 		authElementMocks.isRouteErrorResponse.mockReturnValue(true);
 		const { default: AuthenticatedElement } = await import(
-			"../../../ClientApp/src/authentication/AuthenticatedElement"
+			"../../../ClientApp/src/authentication/AuthenticatedElement.tsx"
 		);
 
 		render(<AuthenticatedElement />);
@@ -204,7 +204,7 @@ describe("AuthenticatedElement", () => {
 		authElementMocks.routeError = { status: 500 };
 		authElementMocks.isRouteErrorResponse.mockReturnValue(true);
 		const { default: AuthenticatedElement } = await import(
-			"../../../ClientApp/src/authentication/AuthenticatedElement"
+			"../../../ClientApp/src/authentication/AuthenticatedElement.tsx"
 		);
 
 		render(<AuthenticatedElement />);
@@ -218,7 +218,7 @@ describe("AuthenticatedElement", () => {
 		authElementMocks.routeError = new Error("Auth failed");
 		authElementMocks.isRouteErrorResponse.mockReturnValue(false);
 		const { default: AuthenticatedElement } = await import(
-			"../../../ClientApp/src/authentication/AuthenticatedElement"
+			"../../../ClientApp/src/authentication/AuthenticatedElement.tsx"
 		);
 
 		render(<AuthenticatedElement />);

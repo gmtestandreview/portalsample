@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { classifyDotnetScript } from "../support/verifierDetectors";
+import { classifyDotnetScript } from "../support/verifierDetectors.ts";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);

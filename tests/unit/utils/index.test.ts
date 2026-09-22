@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import * as utils from "../../../ClientApp/src/utils";
+import * as utils from "../../../ClientApp/src/utils/index.ts";
 
 describe("utils exports", () => {
 	it("exports each runtime utility function", () => {
@@ -217,7 +217,7 @@ describe("date helpers", () => {
 		expect(utils.formatDateToUTC("not-a-date")).toBeNull();
 		expect(utils.formatDateToUTC(0 as unknown as Date)).toBeNull();
 		expect(utils.formatDateToUTC("10/05/2024")).toMatch(
-			/^2024-05-10T00:00:00[+-]\d{2}:\d{2}$/,
+			/^2024-05-10T00:00:00[+-]\d{2}:\d{2}$/u,
 		);
 	});
 

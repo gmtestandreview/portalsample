@@ -1,4 +1,4 @@
-import ExternalLinkIcon from "../Icons/ExternalLinkIcon";
+import ExternalLinkIcon from "../Icons/ExternalLinkIcon.tsx";
 
 export type InTextLinkProps = Omit<
 	React.AnchorHTMLAttributes<HTMLAnchorElement>,

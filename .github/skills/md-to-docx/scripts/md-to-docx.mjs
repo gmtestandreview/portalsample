@@ -4,6 +4,7 @@
  * Usage: node md-to-docx.mjs <input.md> [output.docx]
  */
 
+import process from "node:process";
 import {
 	AlignmentType,
 	BorderStyle,
@@ -42,7 +43,7 @@ if (!inputPath) {
 	console.error("Usage: node md-to-docx.mjs <input.md> [output.docx]");
 	process.exit(1);
 }
-const outputPath = process.argv[3] || inputPath.replace(/\.md$/i, ".docx");
+const outputPath = process.argv[3] || inputPath.replace(/\.md$/iu, ".docx");
 const inputDir = dirname(resolve(inputPath));
 
 const mdSource = readFileSync(inputPath, "utf-8");
@@ -54,30 +55,30 @@ let date = new Date().toISOString().slice(0, 10);
 let version = "1.0";
 let audience = "";
 
-const fmMatch = mdSource.match(/^---\n([\s\S]*?)\n---/m);
+const fmMatch = mdSource.match(/^---\n([\s\S]*?)\n---/mu);
 if (fmMatch) {
 	const fm = fmMatch[1];
 	title =
 		fm
-			.match(/^title:\s*(.+)$/m)?.[1]
+			.match(/^title:\s*(.+)$/mu)?.[1]
 			?.trim()
-			.replace(/^["']|["']$/g, "") || title;
-	date = fm.match(/^date:\s*(.+)$/m)?.[1]?.trim() || date;
-	version = fm.match(/^version:\s*(.+)$/m)?.[1]?.trim() || version;
-	audience = fm.match(/^audience:\s*(.+)$/m)?.[1]?.trim() || "";
+			.replace(/^["']|["']$/gu, "") || title;
+	date = fm.match(/^date:\s*(.+)$/mu)?.[1]?.trim() || date;
+	version = fm.match(/^version:\s*(.+)$/mu)?.[1]?.trim() || version;
+	audience = fm.match(/^audience:\s*(.+)$/mu)?.[1]?.trim() || "";
 }
 
 // Strip front-matter from markdown content
-const md = mdSource.replace(/^---[\s\S]*?---\n*/m, "");
+const md = mdSource.replace(/^---[\s\S]*?---\n*/mu, "");
 
 // Derive title / subtitle from front-matter title or first H1
-const titleParts = title.split(/\s*[—–]\s*/);
+const titleParts = title.split(/\s*[—–]\s*/u);
 const mainTitle = titleParts[0] || title;
 subtitle = titleParts[1] || "";
 if (!subtitle) {
-	const h1Match = md.match(/^#\s+(.+)$/m);
+	const h1Match = md.match(/^#\s+(.+)$/mu);
 	if (h1Match) {
-		const h1Parts = h1Match[1].split(/\s*[—–]\s*/);
+		const h1Parts = h1Match[1].split(/\s*[—–]\s*/u);
 		if (h1Parts.length > 1) {
 			subtitle = h1Parts[1];
 			if (!mainTitle || mainTitle === "Document") title = h1Parts[0];
@@ -113,11 +114,11 @@ function decodeEntities(str) {
 	// &amp; must be unescaped last, otherwise an already-escaped entity like
 	// "&amp;lt;" gets unescaped to "&lt;" and then to "<" in a later step.
 	return str
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, '"')
-		.replace(/&#39;/g, "'")
-		.replace(/&amp;/g, "&");
+		.replace(/&lt;/gu, "<")
+		.replace(/&gt;/gu, ">")
+		.replace(/&quot;/gu, '"')
+		.replace(/&#39;/gu, "'")
+		.replace(/&amp;/gu, "&");
 }
 
 // --- Inline tokens to TextRun[] ---
@@ -281,7 +282,7 @@ function buildList(token, level = 0) {
 	for (const item of token.items) {
 		const textTokens = item.tokens?.find((t) => t.type === "text");
 		const bullet = token.ordered
-			? `${item.raw?.match(/^\d+/)?.[0] || "1"}.`
+			? `${item.raw?.match(/^\d+/u)?.[0] || "1"}.`
 			: "\u2022";
 		const indent = 720 + level * 360;
 		items.push(

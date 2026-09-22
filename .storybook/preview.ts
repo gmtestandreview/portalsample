@@ -11,12 +11,12 @@ import "../ClientApp/public/fonts/fonts.css";
 import "../ClientApp/public/fonts/nmi-iconfonts.css";
 import "../ClientApp/src/styles/index.scss";
 import "./docs-table-styles.css";
-import { mswHandlers } from "./msw-handlers";
+import { mswHandlers } from "./msw-handlers.ts";
 import {
 	isStorybookMswDebugEnabled,
 	onUnhandledStorybookRequest,
-} from "./msw-policy";
-import "./preview-setup";
+} from "./msw-policy.ts";
+import "./preview-setup.ts";
 
 const preview = definePreview({
 	addons: [
@@ -71,8 +71,8 @@ const preview = definePreview({
 	parameters: {
 		controls: {
 			matchers: {
-				color: /(background|color)$/i,
-				date: /date$/i,
+				color: /(background|color)$/iu,
+				date: /date$/iu,
 			},
 		},
 		layout: "centered",

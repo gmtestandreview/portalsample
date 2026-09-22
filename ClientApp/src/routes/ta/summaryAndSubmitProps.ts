@@ -11,22 +11,22 @@ import {
 	RequestForPatternApprovalClient,
 	type RequestForPatternApprovalSummary,
 	YesNo,
-} from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import AppLogger from "../../instrumentation/AppLogger";
-import { formatBannerTitle } from "../common/helperFunctions";
-import { DisplayRules } from "./displayRules";
-import type { RequestForPatternApprovalSummaryDto } from "./types";
+} from "../../components/forms/WizardForm/types.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
+import { DisplayRules } from "./displayRules.ts";
+import type { RequestForPatternApprovalSummaryDto } from "./types.ts";
 import {
 	summaryAndSaveValidation,
 	summaryAndSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadSummary =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

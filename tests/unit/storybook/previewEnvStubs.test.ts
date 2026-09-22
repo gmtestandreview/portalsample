@@ -9,7 +9,7 @@ describe("Storybook runtime env stubs", () => {
 		vi.spyOn(console, "warn").mockImplementation(() => undefined);
 		vi.resetModules();
 
-		await import("../../../.storybook/preview-setup");
+		await import("../../../.storybook/preview-setup.ts");
 
 		const loadAppInsights = vi.fn();
 		const applicationInsightsCtor = vi.fn(function ApplicationInsights(this: {
@@ -24,7 +24,7 @@ describe("Storybook runtime env stubs", () => {
 			ReactPlugin: vi.fn(function ReactPlugin() {}),
 		}));
 
-		const module = await import("@/instrumentation/AppInsightsService");
+		const module = await import("@/instrumentation/AppInsightsService.ts");
 
 		expect(applicationInsightsCtor).not.toHaveBeenCalled();
 		expect(module.ai.appInsights).toBeNull();

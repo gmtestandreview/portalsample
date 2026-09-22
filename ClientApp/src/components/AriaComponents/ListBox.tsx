@@ -11,9 +11,9 @@ import {
 	type ListBoxProps,
 	type ListBoxSectionProps,
 } from "react-aria-components/ListBox";
-import { Text } from "./Content";
-import { Check } from "./NmiIcon";
-import { ProgressCircle } from "./ProgressCircle";
+import { Text } from "./Content.tsx";
+import { Check } from "./NmiIcon.tsx";
+import { ProgressCircle } from "./ProgressCircle.tsx";
 import "./ListBox.css";
 
 export function ListBox<T>({ children, ...props }: ListBoxProps<T>) {
@@ -44,7 +44,7 @@ export function ListBoxSection<T>(props: ListBoxSectionProps<T>) {
 export function ListBoxLoadMoreItem(props: ListBoxLoadMoreItemProps) {
 	return (
 		<AriaListBoxLoadMoreItem {...props}>
-			<ProgressCircle isIndeterminate aria-label="Loading more..." />
+			<ProgressCircle isIndeterminate={true} aria-label="Loading more..." />
 		</AriaListBoxLoadMoreItem>
 	);
 }

@@ -4,10 +4,10 @@ import { Navigate } from "react-router";
 import {
 	ApplicationClient,
 	ApplicationType,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-import AppLogger from "../../../instrumentation/AppLogger";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
 
 const CreateRequestForQuote = () => {
 	const { accounts, instance } = useMsal();
@@ -43,9 +43,9 @@ const CreateRequestForQuote = () => {
 			to={`/request-for-quote/${applicationId}/organisation-and-contact`}
 		/>
 	) : (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

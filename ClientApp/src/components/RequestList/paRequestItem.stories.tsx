@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import type { PatternApprovalDashboardDetailsDto } from "../../api/web-api-client";
-import { PaDashboardItemStatus } from "../../routes/common/enums";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import { DashboardTab } from "../SearchFilter/types";
-import PaRequestItem from "./paRequestItem";
+import type { PatternApprovalDashboardDetailsDto } from "../../api/web-api-client.ts";
+import { PaDashboardItemStatus } from "../../routes/common/enums.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import { DashboardTab } from "../SearchFilter/types.ts";
+import PaRequestItem from "./paRequestItem.tsx";
 
 /**
  * `PaRequestItem` is the dashboard card for a single pattern/type-approval (PA)
@@ -61,7 +61,7 @@ export const DraftApplication: Story = {
 		const canvas = within(canvasElement);
 		await expect(
 			canvas.getByRole("heading", {
-				name: /non-automatic weighing instrument/i,
+				name: /non-automatic weighing instrument/iu,
 			}),
 		).toBeVisible();
 		// Draft status appears in the pill (and status detail) after mount.
@@ -77,7 +77,7 @@ export const SubmittedApplication: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByRole("heading", { name: /fuel dispenser flow meter/i }),
+			canvas.getByRole("heading", { name: /fuel dispenser flow meter/iu }),
 		).toBeVisible();
 		await expect((await canvas.findAllByText("Submitted"))[0]).toBeVisible();
 	},

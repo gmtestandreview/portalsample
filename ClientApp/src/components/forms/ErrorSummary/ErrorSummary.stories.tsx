@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import ErrorSummary from ".";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import ErrorSummary from "./index.tsx";
 
 const meta = {
 	title: "Components/Forms/ErrorSummary",
@@ -34,7 +34,7 @@ export const ServerError: Story = {
 		const canvas = within(canvasElement);
 		const alert = canvas.getByTestId("form-error-summary");
 		await expect(alert).toBeInTheDocument();
-		await expect(canvas.getByText(/server error/i)).toBeVisible();
+		await expect(canvas.getByText(/server error/iu)).toBeVisible();
 	},
 };
 
@@ -59,9 +59,9 @@ export const ValidationErrors: Story = {
 		const canvas = within(canvasElement);
 		const alert = canvas.getByTestId("form-error-summary");
 		await expect(alert).toBeInTheDocument();
-		await expect(canvas.getByText(/first name is required/i)).toBeVisible();
+		await expect(canvas.getByText(/first name is required/iu)).toBeVisible();
 		await expect(
-			canvas.getByText(/phone number is not in a valid format/i),
+			canvas.getByText(/phone number is not in a valid format/iu),
 		).toBeVisible();
 	},
 };
@@ -82,8 +82,8 @@ export const WAFViolation: Story = {
 		const canvas = within(canvasElement);
 		const alert = canvas.getByTestId("form-error-summary");
 		await expect(alert).toBeInTheDocument();
-		await expect(canvas.getByText(/an error has occurred/i)).toBeVisible();
-		await expect(canvas.getByText(/invalid characters/i)).toBeVisible();
+		await expect(canvas.getByText(/an error has occurred/iu)).toBeVisible();
+		await expect(canvas.getByText(/invalid characters/iu)).toBeVisible();
 	},
 };
 
@@ -103,7 +103,7 @@ export const ConflictError: Story = {
 		const alert = canvas.getByTestId("form-error-summary");
 		await expect(alert).toBeInTheDocument();
 		await expect(
-			canvas.getByText(/another person has already saved this page/i),
+			canvas.getByText(/another person has already saved this page/iu),
 		).toBeVisible();
 	},
 };

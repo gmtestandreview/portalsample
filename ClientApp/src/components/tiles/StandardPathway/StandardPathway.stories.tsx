@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import StandardPathway from "./index";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import StandardPathway from "./index.tsx";
 
 const meta = {
 	title: "Components/Tiles/StandardPathway",

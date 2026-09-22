@@ -11,10 +11,10 @@ import type {
 	PatternApprovalOrgAndContact,
 	SupportingDocumentsStep,
 	UploadProgress,
-} from "../../api/web-api-client";
-import type { Hideable } from "../../components/forms/types";
-import { DashboardTab } from "../../components/SearchFilter/types";
-import type { InitialValue } from "../../types";
+} from "../../api/web-api-client.ts";
+import type { Hideable } from "../../components/forms/types.ts";
+import { DashboardTab } from "../../components/SearchFilter/types.ts";
+import type { InitialValue } from "../../types.ts";
 
 export interface TASummaryProps {
 	isSubmitted?: boolean;

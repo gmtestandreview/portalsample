@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Tag, TagGroup } from "./TagGroup";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Tag, TagGroup } from "./TagGroup.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

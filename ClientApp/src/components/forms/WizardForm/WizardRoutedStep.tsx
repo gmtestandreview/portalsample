@@ -4,35 +4,35 @@ import { isEqual } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Navigate, useNavigate } from "react-router";
-import type { ProblemDetails } from "../../../api/web-api-client";
-import { FormStepStatus } from "../../../api/web-api-client";
+import type { ProblemDetails } from "../../../api/web-api-client.ts";
+import { FormStepStatus } from "../../../api/web-api-client.ts";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../../authentication/hooks";
-import { env } from "../../../env";
-import AppLogger from "../../../instrumentation/AppLogger";
+} from "../../../authentication/hooks.tsx";
+import { env } from "../../../env.ts";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
 import {
 	setDashboardNotification,
 	setGetStartedNotification,
-} from "../../../storage/notification";
-import { NotificationSeverity } from "../../../storage/types";
-import type { InitialValue } from "../../../types";
-import { nullOrUndefinedToEmpty } from "../../../utils";
-import SteppedNavigation from "../../SteppedNavigation";
-import useBodyClass from "../../Utilities/useBodyClass";
-import useHtmlTitle from "../../Utilities/useHtmlTitle";
-import ErrorSummary from "../ErrorSummary";
-import FormikForm from "../FormikForm";
-import { resolveErrorState } from "./errorState";
-import NextStepButton from "./NextStepButton";
-import PreviousStepButton from "./PreviousStepButton";
+} from "../../../storage/notification.ts";
+import { NotificationSeverity } from "../../../storage/types.ts";
+import type { InitialValue } from "../../../types.ts";
+import { nullOrUndefinedToEmpty } from "../../../utils/index.ts";
+import SteppedNavigation from "../../SteppedNavigation/index.tsx";
+import useBodyClass from "../../Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../Utilities/useHtmlTitle.tsx";
+import ErrorSummary from "../ErrorSummary/index.tsx";
+import FormikForm from "../FormikForm/index.tsx";
+import { resolveErrorState } from "./errorState.ts";
+import NextStepButton from "./NextStepButton.tsx";
+import PreviousStepButton from "./PreviousStepButton.tsx";
 import type {
 	WizardRoutedStepProps,
 	WizardStepError,
 	WizardStepProps,
-} from "./types";
-import { ErrorType } from "./types";
+} from "./types.ts";
+import { ErrorType } from "./types.ts";
 
 interface StepState<T extends FormikValues> {
 	values: InitialValue<T>;
@@ -339,7 +339,13 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
 			isSummaryPage={isSummaryPage}
 		>
 			{(formik) => (
-				<Container fluid id="main" role="main" className="px-0" tabIndex={-1}>
+				<Container
+					fluid={true}
+					id="main"
+					role="main"
+					className="px-0"
+					tabIndex={-1}
+				>
 					<Container className="py-5">
 						<Row>
 							{allSteps.length > 1 && (

@@ -8,21 +8,21 @@ import {
 	type PatternApprovalOrgAndContact,
 	RequestForPatternApprovalClient,
 	YesNo,
-} from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import AppLogger from "../../instrumentation/AppLogger";
-import { discardChanges } from "../common/constants";
-import { formatBannerTitle } from "../common/helperFunctions";
+} from "../../components/forms/WizardForm/types.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { discardChanges } from "../common/constants.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
 import {
 	patternApprovalOrgAndContactSaveValidation,
 	patternApprovalOrgAndContactSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadOrganisationAndContact =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

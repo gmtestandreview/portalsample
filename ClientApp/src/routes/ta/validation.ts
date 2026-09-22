@@ -4,8 +4,8 @@ import {
 	authorisedAgentSchemaSoft,
 	contactSchema,
 	contactSchemaSoft,
-} from "../../validationSchemas/contactValidation";
-import "../../validationSchemas/yupExtensions";
+} from "../../validationSchemas/contactValidation.ts";
+import "../../validationSchemas/yupExtensions/index.ts";
 import {
 	type ApplicationAndInstrumentStep,
 	type OrganisationAndContact,
@@ -13,13 +13,13 @@ import {
 	PatternApprovalRequiredValues,
 	type RequestForPatternApprovalSummary,
 	YesNo,
-} from "../../api/web-api-client";
-import type { Validation } from "../../components/forms/FormikForm/types";
+} from "../../api/web-api-client.ts";
+import type { Validation } from "../../components/forms/FormikForm/types.ts";
 import {
 	extAlphaNumMultiLineMatchRegex,
 	websiteUrlSchema,
-} from "../../validationSchemas/common";
-import { ValidationMessages } from "./types";
+} from "../../validationSchemas/common.ts";
+import { ValidationMessages } from "./types.ts";
 
 export const organisationAndContactSubmitValidation = yup.object<
 	Validation<OrganisationAndContact>
@@ -207,13 +207,13 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
 						'You cannot select "Certificate cancellation" together with "Review of an approval" or "Provisional".',
 						(value) => {
 							if (!Array.isArray(value)) return true;
-							const REVIEW = "ReviewofApproval";
-							const PROVISIONAL = "ProvisionalCertificate";
+							const Review = "ReviewofApproval";
+							const Provisional = "ProvisionalCertificate";
 							// const WITHDRAW = 'WithdrawCertificate';
-							const CERTCANCEL = "CertificateCancellation";
-							const hasReview = value.includes(REVIEW);
-							const hasProvisional = value.includes(PROVISIONAL);
-							const hasCertCancel = value.includes(CERTCANCEL);
+							const Certcancel = "CertificateCancellation";
+							const hasReview = value.includes(Review);
+							const hasProvisional = value.includes(Provisional);
+							const hasCertCancel = value.includes(Certcancel);
 							// If CertCancel is selected, neither Review nor Provisional can be selected.
 							// The reverse phrasing is the same condition, so it needs no second check.
 							if (hasCertCancel && (hasReview || hasProvisional)) return false;

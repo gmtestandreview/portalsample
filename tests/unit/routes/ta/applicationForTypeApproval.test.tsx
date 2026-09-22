@@ -1,24 +1,24 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	AttachmentDto,
 	FileParameter,
-} from "../../../../ClientApp/src/api/web-api-client";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	ClientMethodMocks,
 	ClientMock,
-} from "../../helpers/mockApiClient";
+} from "../../helpers/mockApiClient.ts";
 import {
 	DEFAULT_ACCESS_TOKEN,
 	msalMocks,
 	rejectToken,
 	resetMsalMock,
-} from "../../helpers/mockMsal";
+} from "../../helpers/mockMsal.ts";
 import {
 	NOT_FOUND_TEST_ID,
 	renderWithRouter,
-} from "../../helpers/renderWithRouter";
+} from "../../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	accountContext: vi.fn(),
@@ -46,7 +46,7 @@ const documentsStep = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -55,7 +55,7 @@ vi.mock(
 	"../../../../ClientApp/src/api/web-api-client",
 	async (importOriginal) => {
 		const { createClientMockFor, webApiClientModuleMock } = await import(
-			"../../helpers/mockApiClient"
+			"../../helpers/mockApiClient.ts"
 		);
 		const original = await importOriginal<typeof WebApiClient>();
 
@@ -135,7 +135,7 @@ const statuses = [{ name: "Organisation and contact", status: "current" }];
 
 const renderRoute = async (path = "/ta/APP-1") => {
 	const ApplicationForTypeApproval = (
-		await import("../../../../ClientApp/src/routes/ta")
+		await import("../../../../ClientApp/src/routes/ta/index.tsx")
 	).default;
 
 	const result = renderWithRouter(<ApplicationForTypeApproval />, {
@@ -165,7 +165,7 @@ describe("application for type approval", () => {
 		// vi.mock factories are lazy: they run when the mocked module is first imported. This file
 		// imports web-api-client for types only, and those are erased at compile time, so without
 		// this the factory has not run yet and `clients` is still undefined here.
-		await import("../../../../ClientApp/src/api/web-api-client");
+		await import("../../../../ClientApp/src/api/web-api-client.ts");
 
 		resetMsalMock();
 		mocks.accountContext.mockReset().mockReturnValue({
@@ -252,7 +252,7 @@ describe("application for type approval", () => {
 		});
 
 		it("does not load anything without a signed-in account", async () => {
-			const { signOut } = await import("../../helpers/mockMsal");
+			const { signOut } = await import("../../helpers/mockMsal.ts");
 			signOut();
 
 			await renderRoute();
@@ -499,10 +499,10 @@ describe("application for type approval", () => {
 					expect(
 						clients.progress.methods.deleteProgressStatistics,
 					).toHaveBeenCalled(),
-				{ timeout: 10000 },
+				{ timeout: 10_000 },
 			);
 			expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
-		}, 20000);
+		}, 20_000);
 
 		it("abandons polling when the component unmounts mid-flight", async () => {
 			const { unmount } = await renderLoadedWizard();

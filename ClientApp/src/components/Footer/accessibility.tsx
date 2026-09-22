@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import InTextLink from "../InTextLink";
+import InTextLink from "../InTextLink/index.tsx";
 
 const Accessibility = (): ReactElement => (
 	<>

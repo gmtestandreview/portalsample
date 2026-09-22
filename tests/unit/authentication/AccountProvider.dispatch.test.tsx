@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import AccountProvider from "../../../ClientApp/src/authentication/AccountProvider";
+import AccountProvider from "../../../ClientApp/src/authentication/AccountProvider.tsx";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../../ClientApp/src/authentication/hooks";
+} from "../../../ClientApp/src/authentication/hooks.tsx";
 
 const providerMocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn(),
@@ -368,7 +368,7 @@ describe("AccountProvider dispatch callbacks", () => {
 		);
 
 		expect(
-			screen.getByText(/Unable to load account details/i),
+			screen.getByText(/Unable to load account details/iu),
 		).toBeInTheDocument();
 		expect(screen.queryByTestId("details")).not.toBeInTheDocument();
 		expect(providerMocks.appLoggerError).toHaveBeenCalledWith(

@@ -62,7 +62,7 @@ const readDocsSources = async (dir) => {
 				continue;
 			}
 
-			if (/\.(?:md|mdx)$/i.test(child.name)) {
+			if (/\.(?:md|mdx)$/iu.test(child.name)) {
 				results.push(childPath);
 			}
 		}
@@ -72,7 +72,7 @@ const readDocsSources = async (dir) => {
 };
 
 const markdownLinkPattern =
-	/\]\((\/docs\/[^)\s]+)\)|href=["'](\/docs\/[^"']+)["']/g;
+	/\]\((\/docs\/[^)\s]+)\)|href=["'](\/docs\/[^"']+)["']/gu;
 const internalDocsLinkFailures = [];
 
 for (const sourceFile of (
@@ -84,8 +84,8 @@ for (const sourceFile of (
 		const href = match[1] ?? match[2];
 		const docsId = href
 			.slice("/docs/".length)
-			.split(/[?#]/, 1)[0]
-			.replace(/\/$/, "");
+			.split(/[?#]/u, 1)[0]
+			.replace(/\/$/u, "");
 
 		if (!docsEntryIds.has(docsId)) {
 			internalDocsLinkFailures.push(`${sourceFile}: ${href}`);

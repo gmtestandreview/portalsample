@@ -10,8 +10,8 @@ import {
 	vi,
 } from "vitest";
 
-import * as handlersModule from "../../../.storybook/msw-handlers";
-import * as policyModule from "../../../.storybook/msw-policy";
+import * as handlersModule from "../../../.storybook/msw-handlers.ts";
+import * as policyModule from "../../../.storybook/msw-policy.ts";
 
 const server = setupServer(...handlersModule.mswHandlers);
 const apiUrl = (path: string): URL => new URL(path, globalThis.location.origin);

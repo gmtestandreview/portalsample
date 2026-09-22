@@ -1,6 +1,9 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { ColorSwatchPicker, ColorSwatchPickerItem } from "./ColorSwatchPicker";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import {
+	ColorSwatchPicker,
+	ColorSwatchPickerItem,
+} from "./ColorSwatchPicker.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

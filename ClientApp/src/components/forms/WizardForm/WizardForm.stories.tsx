@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Col, Container, Row } from "react-bootstrap";
 import { expect, within } from "storybook/test";
-import type { FormStepStatusDto } from "../../../api/web-api-client";
-import { FormStepStatus } from "../../../api/web-api-client";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import SelectInput from "../../Inputs/SelectInput";
-import TextInput from "../../Inputs/TextInput";
-import WizardForm from "./index";
-import WizardStep from "./WizardStep";
+import type { FormStepStatusDto } from "../../../api/web-api-client.ts";
+import { FormStepStatus } from "../../../api/web-api-client.ts";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import SelectInput from "../../Inputs/SelectInput/index.tsx";
+import TextInput from "../../Inputs/TextInput/index.tsx";
+import WizardForm from "./index.tsx";
+import WizardStep from "./WizardStep.tsx";
 
 const twoStepStatuses: FormStepStatusDto[] = [
 	{ status: FormStepStatus.NotStarted },
@@ -49,9 +49,9 @@ export const Step1ContactDetails: Story = {
 			nextButtonTitle="Save and next"
 			lastStepNextButtonTitle="Submit"
 			previousButtonTitle="Back"
-			canSaveDraft
-			showSaveAndNextButton
-			showBanner
+			canSaveDraft={true}
+			showSaveAndNextButton={true}
+			showBanner={true}
 			bannerTitle="Create account"
 		>
 			<WizardStep<{ firstName: string; lastName: string; email: string }>
@@ -72,7 +72,7 @@ export const Step1ContactDetails: Story = {
 				title="Review and submit"
 				location="/step-2"
 				initialValues={{ comments: "" }}
-				isSummaryPage
+				isSummaryPage={true}
 				stepStatuses={twoStepStatuses}
 				loadStepValues={async () => ({ stepValues: { comments: "" } })}
 				bannerTitle="Create account"
@@ -88,7 +88,7 @@ export const Step1ContactDetails: Story = {
 		// reader users now that the stepper is no longer aria-hidden.
 		const heading = canvas.getByRole("heading", { level: 1 });
 		await expect(heading).toHaveTextContent("Contact details");
-		await expect(heading).not.toHaveTextContent(/Step \d+ of \d+/);
+		await expect(heading).not.toHaveTextContent(/Step \d+ of \d+/u);
 		await expect(
 			canvas.getByRole("list", { name: "Form progress" }),
 		).toBeVisible();
@@ -104,9 +104,9 @@ export const Step2WithPreviousCompleted: Story = {
 			nextButtonTitle="Save and next"
 			lastStepNextButtonTitle="Submit"
 			previousButtonTitle="Back"
-			canSaveDraft
-			showSaveAndNextButton
-			showBanner
+			canSaveDraft={true}
+			showSaveAndNextButton={true}
+			showBanner={true}
 		>
 			<WizardStep<{ firstName: string; lastName: string }>
 				title="Contact details"
@@ -141,7 +141,7 @@ export const Step2WithPreviousCompleted: Story = {
 					name="state"
 					label="State or territory"
 					options={stateOptions}
-					addBlank
+					addBlank={true}
 				/>
 				<TextInput name="notes" label="Additional notes" />
 			</WizardStep>
@@ -158,8 +158,8 @@ export const ThreeStepSummaryPage: Story = {
 			lastStepNextButtonTitle="Submit request"
 			previousButtonTitle="Back"
 			canSaveDraft={false}
-			showSaveAndNextButton
-			showBanner
+			showSaveAndNextButton={true}
+			showBanner={true}
 		>
 			<WizardStep<{ manufacturer: string }>
 				title="Instrument details"
@@ -185,7 +185,7 @@ export const ThreeStepSummaryPage: Story = {
 				title="Summary"
 				location="/step-3"
 				initialValues={{}}
-				isSummaryPage
+				isSummaryPage={true}
 				stepStatuses={threeStepStatuses}
 				loadStepValues={async () => ({ stepValues: {} })}
 				bannerTitle="Request for quote"

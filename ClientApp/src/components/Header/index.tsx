@@ -3,11 +3,11 @@ import {
 	UnauthenticatedTemplate,
 } from "@azure/msal-react";
 import { Container, Nav, Navbar } from "react-bootstrap";
-import AuthenticatedNavbarItems from "./AuthenticatedNavbarItems";
-import NavbarBrand from "./NavbarBrand";
-import NavbarEnvironment from "./NavbarEnvironment";
-import NavbarMessage from "./NavbarMessage";
-import UnauthenticatedNavbarItems from "./UnauthenticatedNavbarItems";
+import AuthenticatedNavbarItems from "./AuthenticatedNavbarItems.tsx";
+import NavbarBrand from "./NavbarBrand.tsx";
+import NavbarEnvironment from "./NavbarEnvironment.tsx";
+import NavbarMessage from "./NavbarMessage.tsx";
+import UnauthenticatedNavbarItems from "./UnauthenticatedNavbarItems.tsx";
 
 const Header = () => (
 	<header id="header" data-testid="nmi-header">
@@ -18,12 +18,12 @@ const Header = () => (
 			variant="dark"
 			bg="nmi-navbar"
 			aria-label="Site header"
-			collapseOnSelect
+			collapseOnSelect={true}
 		>
-			<Container fluid className="container-lg align-items-stretch p-0">
+			<Container fluid={true} className="container-lg align-items-stretch p-0">
 				<NavbarBrand />
 				<NavbarEnvironment />
-				<Nav navbar>
+				<Nav navbar={true}>
 					<UnauthenticatedTemplate>
 						<UnauthenticatedNavbarItems />
 					</UnauthenticatedTemplate>

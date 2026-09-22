@@ -1,20 +1,20 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import type { FormStepStatusDto } from "../../api/web-api-client";
-import { RequestForQuoteClient } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import WizardForm from "../../components/forms/WizardForm";
-import type { WizardFormProps } from "../../components/forms/WizardForm/types";
-import WizardStep from "../../components/forms/WizardForm/WizardStep";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import AppLogger from "../../instrumentation/AppLogger";
-import RequestForQuoteSummary from "./requestForQuoteSummary";
-import type { SummaryProps } from "./types";
-import viewRequestForQuoteSummaryProps from "./viewRequestForQuoteSummaryProps";
+import type { FormStepStatusDto } from "../../api/web-api-client.ts";
+import { RequestForQuoteClient } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import WizardForm from "../../components/forms/WizardForm/index.tsx";
+import type { WizardFormProps } from "../../components/forms/WizardForm/types.ts";
+import WizardStep from "../../components/forms/WizardForm/WizardStep.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import RequestForQuoteSummary from "./requestForQuoteSummary.tsx";
+import type { SummaryProps } from "./types.ts";
+import viewRequestForQuoteSummaryProps from "./viewRequestForQuoteSummaryProps.ts";
 
 const bannerTitle = "Testing and calibration service - Request for quote";
 
@@ -80,13 +80,13 @@ const ViewRequestForQuoteSummary = ({
 					bannerTitle,
 				)}
 			>
-				<RequestForQuoteSummary name="" isSubmitted />
+				<RequestForQuoteSummary name="" isSubmitted={true} />
 			</WizardStep>
 		</WizardForm>
 	) : (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

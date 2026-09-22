@@ -1,11 +1,11 @@
 import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router";
-import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import CustomBreadcrumb from "../../components/Breadcrumb";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import HashLink from "../../components/Utilities/hashLink";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
+import type { CustomBreadcrumbItem } from "../../components/Breadcrumb/index.tsx";
+import CustomBreadcrumb from "../../components/Breadcrumb/index.tsx";
+import HeaderIntroText from "../../components/HeaderIntroText/index.tsx";
+import HashLink from "../../components/Utilities/hashLink.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
 
 const HelpHowToSetupAccess = () => {
 	const breadcrumbs: CustomBreadcrumbItem[] = [
@@ -18,7 +18,7 @@ const HelpHowToSetupAccess = () => {
 
 	return (
 		<div aria-live="off">
-			<Container fluid className="default-banner-background mb-5">
+			<Container fluid={true} className="default-banner-background mb-5">
 				<Container>
 					<Row>
 						<Col>
@@ -400,7 +400,7 @@ const HelpHowToSetupAccess = () => {
 							<Link
 								data-testid="back-to-help-guide"
 								to="/help-guide"
-								replace
+								replace={true}
 								className="btn btn-tertiary"
 							>
 								<i className="icon-back me-1" aria-hidden="true" />
@@ -409,7 +409,7 @@ const HelpHowToSetupAccess = () => {
 							<Link
 								data-testid="next-faqs"
 								to="/help-guide/faqs/"
-								replace
+								replace={true}
 								className="btn btn-secondary"
 							>
 								{"View "}

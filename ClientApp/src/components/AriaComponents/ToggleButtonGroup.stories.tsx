@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { ToggleButton } from "./ToggleButton";
-import { ToggleButtonGroup } from "./ToggleButtonGroup";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { ToggleButton } from "./ToggleButton.tsx";
+import { ToggleButtonGroup } from "./ToggleButtonGroup.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

@@ -2,8 +2,8 @@ import { act, render, screen } from "@testing-library/react";
 import { Form, Formik, type FormikProps } from "formik";
 import { MemoryRouter } from "react-router";
 import { afterEach, vi } from "vitest";
-import ErrorSummary from "@/components/forms/ErrorSummary";
-import { HttpStatusCode } from "@/types";
+import ErrorSummary from "@/components/forms/ErrorSummary/index.tsx";
+import { HttpStatusCode } from "@/types.ts";
 
 afterEach(() => {
 	vi.useRealTimers();
@@ -50,7 +50,7 @@ describe("ErrorSummary", () => {
 						} as any
 					}
 					prefixToRemove="formStep."
-					disableLinkedError
+					disableLinkedError={true}
 				/>
 			</TestRouter>,
 		);
@@ -62,15 +62,15 @@ describe("ErrorSummary", () => {
 	it("renders the WAF violation message", () => {
 		render(
 			<TestRouter>
-				<ErrorSummary isWafViolation />
+				<ErrorSummary isWafViolation={true} />
 			</TestRouter>,
 		);
 
 		expect(
-			screen.getByText(/This form contains invalid characters/i),
+			screen.getByText(/This form contains invalid characters/iu),
 		).toBeInTheDocument();
 		expect(
-			screen.getByText(/Please avoid special characters/i),
+			screen.getByText(/Please avoid special characters/iu),
 		).toBeInTheDocument();
 	});
 
@@ -84,10 +84,10 @@ describe("ErrorSummary", () => {
 		);
 
 		expect(
-			screen.getByText(/Another person has already submitted this form/i),
+			screen.getByText(/Another person has already submitted this form/iu),
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole("link", { name: /go to the Dashboard/i }),
+			screen.getByRole("link", { name: /go to the Dashboard/iu }),
 		).toHaveAttribute("href", "/dashboard");
 	});
 
@@ -133,7 +133,7 @@ describe("ErrorSummary", () => {
 			<TestRouter>
 				<ErrorSummary
 					serverErrors={{ errors: { FirstName: ["Required"] } } as any}
-					disableLinkedError
+					disableLinkedError={true}
 				/>
 			</TestRouter>,
 		);

@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { CustomAccordion, CustomAccordionBody } from "./index";
+import { CustomAccordion, CustomAccordionBody } from "./index.tsx";
 
 const meta = {
 	component: CustomAccordion,
@@ -26,7 +26,7 @@ export const SingleSection: Story = {
 		id: "wizard-accordion-single",
 	},
 	play: async ({ canvas }) => {
-		await expect(canvas.getByText(/quote request details/i)).toBeVisible();
+		await expect(canvas.getByText(/quote request details/iu)).toBeVisible();
 	},
 };
 

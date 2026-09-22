@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { UserProfileDto } from "../api/web-api-client";
+import type { UserProfileDto } from "../api/web-api-client.ts";
 
 export interface AccountDetails {
 	organisation: string;
@@ -43,7 +43,7 @@ export interface AccountDispatchContext {
 	setContactCompleted: () => void;
 	setDefaultOrganisationId: (
 		defaultOrganisationId: number | undefined,
-		defaultOrganisationCRMId: string | undefined,
+		defaultOrganisationCrmId: string | undefined,
 	) => void;
 	setTargetOrganisation: (
 		targetOrganisationAbn: string,

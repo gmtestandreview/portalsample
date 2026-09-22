@@ -7,29 +7,29 @@ import {
 	type ApplicationDetailsDto,
 	type RequestForPatternApprovalAppDetails,
 	RequestForPatternApprovalClient,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
 import {
 	CustomAccordion,
 	CustomAccordionBody,
-} from "../../../components/Accordion";
-import BlockUISpinner from "../../../components/BlockUISpinner";
+} from "../../../components/Accordion/index.tsx";
+import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
 import CustomBreadcrumb, {
 	type CustomBreadcrumbItem,
-} from "../../../components/Breadcrumb";
-import BackToDashboardButton from "../../../components/Buttons/BackToDashboardButton";
-import FormikForm from "../../../components/forms/FormikForm";
-import StatusPill from "../../../components/Pill/StatusPill";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import AppLogger from "../../../instrumentation/AppLogger";
-import type { PaDashboardItemStatus } from "../../common/enums";
-import ApplicationAndInstrument from "../applicationAndInstrument";
-import OrganisationAndContact from "../organisationAndContact";
-import SupportingDocuments from "../supportingDocuments";
-import appDetailsProps from "./appDetailsProps";
-import ApplicationDocuments from "./appDocuments";
-import ApplicationMessages from "./appMessages";
+} from "../../../components/Breadcrumb/index.tsx";
+import BackToDashboardButton from "../../../components/Buttons/BackToDashboardButton/index.tsx";
+import FormikForm from "../../../components/forms/FormikForm/index.tsx";
+import StatusPill from "../../../components/Pill/StatusPill.tsx";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
+import type { PaDashboardItemStatus } from "../../common/enums.ts";
+import ApplicationAndInstrument from "../applicationAndInstrument.tsx";
+import OrganisationAndContact from "../organisationAndContact.tsx";
+import SupportingDocuments from "../supportingDocuments.tsx";
+import appDetailsProps from "./appDetailsProps.ts";
+import ApplicationDocuments from "./appDocuments.tsx";
+import ApplicationMessages from "./appMessages.tsx";
 
 const POLL_MS = 5000;
 
@@ -205,9 +205,9 @@ const ApplicationDetails = () => {
 			<Row className="mb-4">
 				<Col aria-busy={isDataLoading} aria-live="polite">
 					{isDataLoading ? (
-						<BlockUISpinner partial>
+						<BlockUiSpinner partial={true}>
 							<p>Loading data...</p>
-						</BlockUISpinner>
+						</BlockUiSpinner>
 					) : (
 						<div className="appl-items mb-5">
 							<h2 className="visually-hidden">Details</h2>
@@ -328,7 +328,7 @@ const ApplicationDetails = () => {
 											className="mb-4 py-2"
 										>
 											<OrganisationAndContact
-												isSummary
+												isSummary={true}
 												name="organisationAndContact"
 											/>
 											{/* {!isSubmitted ? <EditButton link={`/ta/${id}/organisation-details`} /> : null} */}
@@ -344,7 +344,7 @@ const ApplicationDetails = () => {
 											className="mb-4 py-2"
 										>
 											<ApplicationAndInstrument
-												isSummary
+												isSummary={true}
 												name="applicationAndInstrument"
 											/>
 											{/* {!isSubmitted ? <EditButton link={`/ta/${id}/application-details`} /> : null} */}
@@ -394,8 +394,8 @@ const ApplicationDetails = () => {
 											}
 										>
 											<SupportingDocuments
-												isSummary
-												suppressDocChanges
+												isSummary={true}
+												suppressDocChanges={true}
 												name="supportingDocuments.form.documents"
 												onUploadAttachment={() => Promise.resolve([])} // Not used
 												attachment={{
@@ -418,9 +418,9 @@ const ApplicationDetails = () => {
 		<Row className="mb-4">
 			<Col aria-busy={isDataLoading} aria-live="polite">
 				{isDataLoading ? (
-					<BlockUISpinner partial>
+					<BlockUiSpinner partial={true}>
 						<p>Loading data...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				) : (
 					<div className="appl-items mb-5">
 						<h2 className="visually-hidden">Timeline</h2>
@@ -554,7 +554,7 @@ const ApplicationDetails = () => {
 	return (
 		<FormikForm<RequestForPatternApprovalAppDetails>
 			initialValues={appDetails as RequestForPatternApprovalAppDetails}
-			isSummaryPage
+			isSummaryPage={true}
 			onSubmit={() => Promise.resolve()}
 			promptPath=""
 			bannerTitle=""
@@ -563,12 +563,12 @@ const ApplicationDetails = () => {
 			{(formik) => (
 				<>
 					{isDataLoading && (
-						<BlockUISpinner>
+						<BlockUiSpinner>
 							<p>Loading...</p>
-						</BlockUISpinner>
+						</BlockUiSpinner>
 					)}
 					<div aria-busy={isDataLoading} aria-live="off">
-						<Container fluid className="default-banner-background mb-5">
+						<Container fluid={true} className="default-banner-background mb-5">
 							<Container>{renderTitle(formik.values)}</Container>
 						</Container>
 						<Container style={{ marginTop: "-6.2rem" }}>

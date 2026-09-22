@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HttpResponse, http } from "msw";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import AddressLookup from "./index";
-import ManualAddressInput from "./ManualAddressInput";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import AddressLookup from "./index.tsx";
+import ManualAddressInput from "./ManualAddressInput.tsx";
 
 const addressSearchHandler = http.get("/api/address/*", () =>
 	HttpResponse.json({
@@ -99,9 +99,9 @@ export const ManualEntry: Story = {
 	),
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const line1 = canvas.getByLabelText(/address line 1/i);
+		const line1 = canvas.getByLabelText(/address line 1/iu);
 		await expect(line1).toBeVisible();
-		const suburb = canvas.getByLabelText(/suburb/i);
+		const suburb = canvas.getByLabelText(/suburb/iu);
 		await expect(suburb).toBeVisible();
 	},
 };

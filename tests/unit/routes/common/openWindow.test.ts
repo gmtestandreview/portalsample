@@ -2,7 +2,7 @@ import {
 	openInternalRouteInNewTab,
 	openPdfPageInSecureNewTab,
 	openUrlInSecureNewTab,
-} from "../../../../ClientApp/src/routes/common/openWindow";
+} from "../../../../ClientApp/src/routes/common/openWindow.ts";
 
 describe("openWindow helpers", () => {
 	const originalOpen = globalThis.open;

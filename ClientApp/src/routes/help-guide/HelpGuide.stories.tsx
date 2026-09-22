@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import HelpGuide from "./index";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import HelpGuide from "./index.tsx";
 
 const meta = {
 	title: "Routes/HelpGuide",

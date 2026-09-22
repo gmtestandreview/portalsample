@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { auditLog, formatReport } from "../../../scripts/audit-storybook-log";
+import {
+	auditLog,
+	formatReport,
+} from "../../../scripts/audit-storybook-log.ts";
 
 const completedRun = [
 	"stdout | Some.stories.tsx > Default",

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import ViewMeasurementReport from "./ViewMeasurementReport";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import ViewMeasurementReport from "./ViewMeasurementReport.tsx";
 
 /**
  * `ViewMeasurementReport` wraps `ViewPdfButton` with the authenticated download
@@ -36,10 +36,10 @@ export const Default: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 		const button = await canvas.findByRole("button", {
-			name: /view measurement report/i,
+			name: /view measurement report/iu,
 		});
 		await expect(button).toBeVisible();
-		await expect(canvas.getByText(/PDF file size 2\.00Kb/i)).toBeVisible();
+		await expect(canvas.getByText(/PDF file size 2\.00Kb/iu)).toBeVisible();
 
 		await userEvent.click(button);
 

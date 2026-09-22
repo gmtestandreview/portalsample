@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import RequestForQuoteCreated from "./created";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import RequestForQuoteCreated from "./created/index.tsx";
 
 const meta = {
 	title: "Routes/RequestForQuote/RequestCreated",

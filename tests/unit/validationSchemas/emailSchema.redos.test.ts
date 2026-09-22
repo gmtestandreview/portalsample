@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { emailSchema } from "../../../ClientApp/src/validationSchemas/common";
+import { emailSchema } from "../../../ClientApp/src/validationSchemas/common.ts";
 
 /**
  * The domain part of the `.email()` regex in stringExtensions.ts is ambiguous:

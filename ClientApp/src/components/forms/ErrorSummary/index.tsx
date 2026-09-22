@@ -7,10 +7,10 @@ import { Link } from "react-router";
 import type {
 	ProblemDetails,
 	ValidationProblemDetails,
-} from "../../../api/web-api-client";
-import { HttpStatusCode } from "../../../types";
-import HashLink from "../../Utilities/hashLink";
-import type { ErrorSummaryProps, FormikErrorsSummaryProps } from "./types";
+} from "../../../api/web-api-client.ts";
+import { HttpStatusCode } from "../../../types.ts";
+import HashLink from "../../Utilities/hashLink.tsx";
+import type { ErrorSummaryProps, FormikErrorsSummaryProps } from "./types.ts";
 
 type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;

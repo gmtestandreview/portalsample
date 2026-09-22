@@ -31,7 +31,7 @@ const occurrences = (needle: string, haystack: string = workflow): number =>
 	haystack.split(needle).length - 1;
 
 const nodeVersions = (contents: string): string[] =>
-	[...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].map(
+	[...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/gu)].map(
 		(match) => match[1],
 	);
 
@@ -50,7 +50,7 @@ const jobBlock = (contents: string, jobId: string): string => {
 	if (start === -1) return "";
 
 	const rest = contents.slice(start + 1);
-	const next = rest.slice(1).search(/\n {2}[a-z0-9-]+:\n/);
+	const next = rest.slice(1).search(/\n {2}[a-z0-9-]+:\n/u);
 
 	return next === -1 ? rest : rest.slice(0, next + 1);
 };
@@ -59,7 +59,7 @@ const jobBlock = (contents: string, jobId: string): string => {
 const stepBlocks = (contents: string): string[] => {
 	const lines = contents.split("\n");
 	const stepIndent = lines
-		.map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1].length)
+		.map((line) => /^(\s+)-\s+(?:name|uses|run):/u.exec(line)?.[1].length)
 		.find((indent) => indent !== undefined);
 
 	if (stepIndent === undefined) return [];
@@ -74,12 +74,12 @@ const stepBlocks = (contents: string): string[] => {
 };
 
 const hasAlwaysGuard = (step: string): boolean =>
-	/^\s*if:\s*always\(\)(?:\s*&&|\s*$)/m.test(step);
+	/^\s*if:\s*always\(\)(?:\s*&&|\s*$)/mu.test(step);
 
 const withoutComments = (contents: string): string =>
 	contents
 		.split("\n")
-		.filter((line) => !/^\s*#/.test(line))
+		.filter((line) => !/^\s*#/u.test(line))
 		.join("\n");
 
 /** Immutable pins, each verified against the upstream tag object (Task D3). */
@@ -147,7 +147,7 @@ describe("PR workflow runs each test environment as its own partition", () => {
 	])(
 		"no longer runs the monolithic aggregate in the %s workflow",
 		(_name, contents) => {
-			expect(contents).not.toMatch(/run: npm run test:ci\s*$/m);
+			expect(contents).not.toMatch(/run: npm run test:ci\s*$/mu);
 			expect(contents).not.toContain("npm run test:ci\n");
 		},
 	);
@@ -266,7 +266,7 @@ describe("workflows pin every action to an immutable commit", () => {
 	it.each(pinnedWorkflows)(
 		"leaves no floating actions/* tag in the %s workflow",
 		(_name, contents) => {
-			expect(contents).not.toMatch(/uses:\s*actions\/[\w-]+@v\d/);
+			expect(contents).not.toMatch(/uses:\s*actions\/[\w-]+@v\d/u);
 		},
 	);
 
@@ -296,7 +296,7 @@ describe("every partition reports its evidence unconditionally", () => {
 				step.includes(`uses: ${UPLOAD_ARTIFACT_PIN}`),
 			),
 		).toBe(true);
-		expect(workflow).not.toMatch(/actions\/upload-artifact@v\d/);
+		expect(workflow).not.toMatch(/actions\/upload-artifact@v\d/u);
 	});
 
 	it("uploads evidence even when the partition failed", () => {
@@ -307,14 +307,14 @@ describe("every partition reports its evidence unconditionally", () => {
 	it("fails the job when an expected artifact is missing", () => {
 		expect(
 			evidenceUploads.every((step) =>
-				/if-no-files-found:\s*error\b/.test(step),
+				/if-no-files-found:\s*error\b/u.test(step),
 			),
 		).toBe(true);
 	});
 
 	it("retains evidence for 14 days", () => {
 		expect(
-			evidenceUploads.every((step) => /retention-days:\s*14\b/.test(step)),
+			evidenceUploads.every((step) => /retention-days:\s*14\b/u.test(step)),
 		).toBe(true);
 	});
 
@@ -454,7 +454,7 @@ describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
 	it("uses the official scanner action at the intended immutable commit", () => {
 		const scannerReferences = [
 			...block.matchAll(
-				/^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm,
+				/^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gmu,
 			),
 		].map((match) => match[1]);
 
@@ -463,15 +463,15 @@ describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
 			"7006c4492b2e0ee0f816d36501671557c97f5995",
 		]);
 		expect(
-			scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference)),
+			scannerReferences.every((reference) => /^[0-9a-f]{40}$/u.test(reference)),
 		).toBe(true);
 	});
 
 	it("does not execute the scanner through runtime npm resolution", () => {
 		const scannerRunSteps = stepBlocks(block).filter(
 			(step) =>
-				/^\s*run:/m.test(step) &&
-				/\bnpx\b[^\n]*@sonar\/scan(?:@[^\s]+)?\b/.test(withoutComments(step)),
+				/^\s*run:/mu.test(step) &&
+				/\bnpx\b[^\n]*@sonar\/scan(?:@[^\s]+)?\b/u.test(withoutComments(step)),
 		);
 
 		expect(scannerRunSteps).toEqual([]);
@@ -479,7 +479,7 @@ describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
 
 	it("authenticates from a secret, never an inline token", () => {
 		expect(block).toContain("SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}");
-		expect(block).not.toMatch(/sonar\.token=/);
+		expect(block).not.toMatch(/sonar\.token=/u);
 	});
 
 	it("waits for the quality gate so a red gate fails the build", () => {
@@ -505,7 +505,7 @@ describe("no partition may mask a failure", () => {
 		// resolves the version from package.json's packageManager field instead, and
 		// must not stall on its download prompt in CI.
 		for (const contents of [workflow, releaseWorkflow]) {
-			expect(contents).not.toMatch(/npx\s+--yes\s+npm@/);
+			expect(contents).not.toMatch(/npx\s+--yes\s+npm@/u);
 			expect(contents).toContain("run: corepack enable");
 			expect(contents).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
 		}
@@ -574,7 +574,7 @@ describe("CI uses the repository's enforced Node runtime", () => {
 
 		expect(configuredVersions.length).toBeGreaterThan(0);
 		expect(
-			configuredVersions.every((version) => /^24(?:\.|$)/.test(version)),
+			configuredVersions.every((version) => /^24(?:\.|$)/u.test(version)),
 		).toBe(true);
 	});
 
@@ -584,7 +584,7 @@ describe("CI uses the repository's enforced Node runtime", () => {
 	])(
 		"retains no retired Node 20 runtime in the %s workflow",
 		(_name, contents) => {
-			expect(contents).not.toMatch(/node-version:\s*["']?20/);
+			expect(contents).not.toMatch(/node-version:\s*["']?20/u);
 			expect(contents).not.toContain("node20");
 			expect(contents).not.toContain("20.19");
 		},
@@ -631,7 +631,7 @@ describe("Chromatic publishing reports asynchronously through GitHub", () => {
 		expect(chromaticWorkflow).toContain(
 			"projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}",
 		);
-		expect(chromaticWorkflow).not.toMatch(/chpt_[a-zA-Z0-9]+/);
+		expect(chromaticWorkflow).not.toMatch(/chpt_[a-zA-Z0-9]+/u);
 	});
 
 	it("exits after upload instead of waiting for cloud test results", () => {

@@ -1,10 +1,10 @@
 import { useField } from "formik";
 import type { ChangeEvent } from "react";
 import { Col, Form, Row } from "react-bootstrap";
-import Details from "../../forms/Details";
-import SummaryDisplay from "../../SummaryDisplay";
-import TextReadOnly from "../TextReadOnly";
-import type { SelectInputOption, SelectInputProps } from "./types";
+import Details from "../../forms/Details/index.tsx";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import TextReadOnly from "../TextReadOnly/index.tsx";
+import type { SelectInputOption, SelectInputProps } from "./types.ts";
 
 const hasSelectedValue = (value: unknown) =>
 	value !== undefined && value !== null && value !== "";
@@ -42,7 +42,7 @@ const SelectInput = <T extends string | number>(
 	const {
 		displayHorizontally,
 		label,
-		inlineHelp = undefined, // default props
+		inlineHelp, // default props
 		inlineHelpTitle,
 		options,
 		defaultValue = "", // default props
@@ -65,7 +65,7 @@ const SelectInput = <T extends string | number>(
 	const validationMessageId = `${controlId}-validation-msg`;
 	const describedBy = meta.touched && meta.error ? validationMessageId : helpId;
 
-	const defaultUIOption = (
+	const defaultUiOption = (
 		<option value={defaultValue} key={defaultValue} hidden={false}>
 			{defaultDisplayText || "Please select"}
 		</option>
@@ -119,7 +119,7 @@ const SelectInput = <T extends string | number>(
 				isInvalid={!!(meta.touched && meta.error)}
 				aria-describedby={describedBy}
 			>
-				{addBlank && defaultUIOption}
+				{addBlank && defaultUiOption}
 				{options?.map((option) => (
 					<option
 						value={option.value}

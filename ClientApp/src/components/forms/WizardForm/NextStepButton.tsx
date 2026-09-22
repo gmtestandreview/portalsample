@@ -1,11 +1,11 @@
 import type { FormikValues } from "formik";
 import { useFormikContext } from "formik";
 import { useState } from "react";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import ConfirmationModal from "../../modals/ConfirmationModal";
-import countOfErrors from "../FormikForm/formikHelpers";
-import SubmitFormButton from "../SubmitFormButton";
-import type { NextStepButtonProps } from "./types";
+import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
+import ConfirmationModal from "../../modals/ConfirmationModal/index.tsx";
+import countOfErrors from "../FormikForm/formikHelpers.ts";
+import SubmitFormButton from "../SubmitFormButton/index.tsx";
+import type { NextStepButtonProps } from "./types.ts";
 
 const NextStepButton = ({
 	steps,

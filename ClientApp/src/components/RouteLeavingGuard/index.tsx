@@ -2,8 +2,8 @@ import { useFormikContext } from "formik";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useBlocker } from "react-router";
-import PrimaryButton from "../Buttons/PrimaryButton";
-import type { RouteLeavingGuardProps } from "./types";
+import PrimaryButton from "../Buttons/PrimaryButton/index.tsx";
+import type { RouteLeavingGuardProps } from "./types.ts";
 
 const RouteLeavingGuard = ({
 	when,
@@ -42,7 +42,7 @@ const RouteLeavingGuard = ({
 			keyboard={false}
 			data-testid="prompt-save-modal"
 		>
-			<Modal.Header closeButton>
+			<Modal.Header closeButton={true}>
 				<Modal.Title id="modal-unsaved" as="h3">
 					{title}
 				</Modal.Title>

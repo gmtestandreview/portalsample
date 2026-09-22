@@ -6,24 +6,24 @@ import type { FormikHelpers } from "formik";
 import type {
 	DeliveryAndReturnStep,
 	FormStepStatusDto,
-} from "../../api/web-api-client";
-import { AcceptQuoteClient } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { AcceptQuoteClient } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import type {
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import { ErrorType } from "../../components/forms/WizardForm/types";
-import { setDashboardNotification } from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import { HttpStatusCode } from "../../types";
-import { discardChanges } from "../common/constants";
-import { formatBannerTitle } from "../common/helperFunctions";
+} from "../../components/forms/WizardForm/types.ts";
+import { ErrorType } from "../../components/forms/WizardForm/types.ts";
+import { setDashboardNotification } from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { HttpStatusCode } from "../../types.ts";
+import { discardChanges } from "../common/constants.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
 import {
 	deliveryAndReturnSaveValidation,
 	deliveryAndReturnSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadDeliveryAndReturn =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -103,8 +103,6 @@ const getRedirectionLocationOnError =
 			});
 			return "/";
 		}
-
-		return undefined;
 	};
 
 const deliveryAndReturnProps = (

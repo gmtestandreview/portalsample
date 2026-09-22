@@ -9,10 +9,10 @@ import "@testing-library/jest-dom/vitest";
 import type * as MsalBrowserModule from "@azure/msal-browser";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
-import { QuoteStatus } from "../../../ClientApp/src/routes/common/enums";
-import type * as HelperFunctionsModule from "../../../ClientApp/src/routes/common/helperFunctions";
+import type * as WebApiClientModule from "../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext.tsx";
+import { QuoteStatus } from "../../../ClientApp/src/routes/common/enums.ts";
+import type * as HelperFunctionsModule from "../../../ClientApp/src/routes/common/helperFunctions.ts";
 
 const mocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn(),
@@ -428,8 +428,9 @@ describe("quotation and measurement report routes", () => {
 	});
 
 	it("loads quotation details and declines a quote through the confirmation modal", async () => {
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 
 		renderRoute("/quotation/RFQ-100", <Quotation />, "/quotation/:id");
 
@@ -460,8 +461,9 @@ describe("quotation and measurement report routes", () => {
 
 	it("shows a file error notification when declining a quote fails", async () => {
 		mocks.declineQuote.mockRejectedValueOnce(new Error("decline failed"));
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 
 		renderRoute("/quotation/RFQ-100", <Quotation />, "/quotation/:id");
 
@@ -488,8 +490,9 @@ describe("quotation and measurement report routes", () => {
 	});
 
 	it("closes the decline confirmation without submitting", async () => {
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 		renderRoute("/quotation/RFQ-100", <Quotation />, "/quotation/:id");
 
 		fireEvent.click(await screen.findByTestId("decline-button"));
@@ -508,8 +511,9 @@ describe("quotation and measurement report routes", () => {
 			quoteRequestStatus: "Quote - Available",
 		};
 		mocks.getQuoteRequestDetailsByRefId.mockResolvedValueOnce(quotation);
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 
 		renderRoute("/quotation/RFQ-100", <Quotation />, "/quotation/:id");
 
@@ -527,8 +531,9 @@ describe("quotation and measurement report routes", () => {
 			quoteRequestStatus: "Quote - Available",
 		};
 		mocks.getQuoteRequestDetailsByRefId.mockResolvedValueOnce(quotation);
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 
 		renderRoute("/quotation/RFQ-100", <Quotation />, "/quotation/:id");
 
@@ -546,8 +551,9 @@ describe("quotation and measurement report routes", () => {
 				resolveLoad = resolve;
 			}),
 		);
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 		const { unmount } = renderRoute(
 			"/quotation/RFQ-100",
 			<Quotation />,
@@ -569,8 +575,9 @@ describe("quotation and measurement report routes", () => {
 				rejectLoad = reject;
 			}),
 		);
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 		const { unmount } = renderRoute(
 			"/quotation/RFQ-100",
 			<Quotation />,
@@ -589,8 +596,9 @@ describe("quotation and measurement report routes", () => {
 		mocks.getQuoteRequestDetailsByRefId.mockRejectedValueOnce(
 			new Error("load failed"),
 		);
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 
 		renderRoute("/quotation/RFQ-404", <Quotation />, "/quotation/:id");
 
@@ -604,7 +612,7 @@ describe("quotation and measurement report routes", () => {
 
 	it("renders quote details notification, view-request action, and no-delivery branch", async () => {
 		const QuoteDetails = (
-			await import("../../../ClientApp/src/routes/quotation/quoteDetails")
+			await import("../../../ClientApp/src/routes/quotation/quoteDetails.tsx")
 		).default;
 
 		render(
@@ -614,7 +622,7 @@ describe("quotation and measurement report routes", () => {
 					isSummary={false}
 					firstName="Alex"
 					lastName="Tester"
-					fileError
+					fileError={true}
 				/>
 			</MemoryRouter>,
 		);
@@ -623,9 +631,9 @@ describe("quotation and measurement report routes", () => {
 			"Dashboard notification",
 		);
 		expect(
-			screen.getByText(/does not require the delivery or return/),
+			screen.getByText(/does not require the delivery or return/u),
 		).toBeInTheDocument();
-		fireEvent.click(screen.getByRole("button", { name: /View request/i }));
+		fireEvent.click(screen.getByRole("button", { name: /View request/iu }));
 		expect(mocks.openInternalRouteInNewTab).toHaveBeenCalledWith(
 			"/request-for-quote/RFQ-100/view-summary",
 		);
@@ -633,7 +641,7 @@ describe("quotation and measurement report routes", () => {
 
 	it("loads a measurement report route and renders report PDF action", async () => {
 		const MeasurementReport = (
-			await import("../../../ClientApp/src/routes/measurementReport")
+			await import("../../../ClientApp/src/routes/measurementReport/index.tsx")
 		).default;
 
 		renderRoute("/report/AQ-100", <MeasurementReport />, "/report/:id");
@@ -658,7 +666,7 @@ describe("quotation and measurement report routes", () => {
 			new Error("load failed"),
 		);
 		const MeasurementReport = (
-			await import("../../../ClientApp/src/routes/measurementReport")
+			await import("../../../ClientApp/src/routes/measurementReport/index.tsx")
 		).default;
 
 		renderRoute("/report/AQ-404", <MeasurementReport />, "/report/:id");
@@ -674,7 +682,7 @@ describe("quotation and measurement report routes", () => {
 		mocks.getDashboardInfoNotification.mockReturnValue(null);
 		mocks.useAccountState.mockReturnValue(undefined);
 		const MeasurementReport = (
-			await import("../../../ClientApp/src/routes/measurementReport")
+			await import("../../../ClientApp/src/routes/measurementReport/index.tsx")
 		).default;
 		const { unmount } = renderRoute(
 			"/report/AQ-100",
@@ -697,7 +705,9 @@ describe("quotation and measurement report routes", () => {
 
 	it("loads measurement report history and updates pagination", async () => {
 		const InstrMeasurementReport = (
-			await import("../../../ClientApp/src/routes/measurementReport/indexList")
+			await import(
+				"../../../ClientApp/src/routes/measurementReport/indexList.tsx"
+			)
 		).default;
 
 		renderRoute("/reports/Balance", <InstrMeasurementReport />, "/reports/:id");
@@ -732,7 +742,9 @@ describe("quotation and measurement report routes", () => {
 			new Error("history failed"),
 		);
 		const InstrMeasurementReport = (
-			await import("../../../ClientApp/src/routes/measurementReport/indexList")
+			await import(
+				"../../../ClientApp/src/routes/measurementReport/indexList.tsx"
+			)
 		).default;
 
 		renderRoute("/reports/Balance", <InstrMeasurementReport />, "/reports/:id");
@@ -750,7 +762,9 @@ describe("quotation and measurement report routes", () => {
 			details: { ...accountDetails, organisationCRMGuid: undefined },
 		});
 		const InstrMeasurementReport = (
-			await import("../../../ClientApp/src/routes/measurementReport/indexList")
+			await import(
+				"../../../ClientApp/src/routes/measurementReport/indexList.tsx"
+			)
 		).default;
 		const { unmount } = renderRoute(
 			"/reports/Balance",
@@ -771,13 +785,13 @@ describe("quotation and measurement report routes", () => {
 	it("renders report details notification and view-request action", async () => {
 		const ReportDetails = (
 			await import(
-				"../../../ClientApp/src/routes/measurementReport/reportDetails"
+				"../../../ClientApp/src/routes/measurementReport/reportDetails.tsx"
 			)
 		).default;
 
 		render(
 			<MemoryRouter>
-				<ReportDetails reportData={quoteDetails} fileError />
+				<ReportDetails reportData={quoteDetails} fileError={true} />
 			</MemoryRouter>,
 		);
 
@@ -788,7 +802,7 @@ describe("quotation and measurement report routes", () => {
 		expect(
 			screen.getByRole("link", { name: "return@example.test" }),
 		).toHaveAttribute("href", "mailto:return@example.test");
-		fireEvent.click(screen.getByRole("button", { name: /View request/i }));
+		fireEvent.click(screen.getByRole("button", { name: /View request/iu }));
 		expect(mocks.openInternalRouteInNewTab).toHaveBeenCalledWith(
 			"/request-for-quote/RFQ-100/view-summary",
 		);
@@ -797,7 +811,7 @@ describe("quotation and measurement report routes", () => {
 	it("renders sparse quote details in summary mode without optional notifications or request links", async () => {
 		mocks.getDashboardNotification.mockReturnValue(null);
 		const QuoteDetails = (
-			await import("../../../ClientApp/src/routes/quotation/quoteDetails")
+			await import("../../../ClientApp/src/routes/quotation/quoteDetails.tsx")
 		).default;
 
 		render(
@@ -807,8 +821,8 @@ describe("quotation and measurement report routes", () => {
 						quoteRequestStatus: "Unknown status",
 						receiptandDispatchNA: false,
 					}}
-					isSummary
-					fileError
+					isSummary={true}
+					fileError={true}
 					firstName={undefined}
 					lastName={undefined}
 				/>
@@ -819,13 +833,13 @@ describe("quotation and measurement report routes", () => {
 			screen.queryByTestId("notification-message"),
 		).not.toBeInTheDocument();
 		expect(screen.queryByTestId("quote-status-pill")).not.toBeInTheDocument();
-		fireEvent.click(screen.getByRole("button", { name: /View request/i }));
+		fireEvent.click(screen.getByRole("button", { name: /View request/iu }));
 		expect(mocks.openInternalRouteInNewTab).not.toHaveBeenCalled();
 	});
 
 	it("renders summary no-delivery details and valid quote status outcomes", async () => {
 		const QuoteDetails = (
-			await import("../../../ClientApp/src/routes/quotation/quoteDetails")
+			await import("../../../ClientApp/src/routes/quotation/quoteDetails.tsx")
 		).default;
 		const { unmount } = render(
 			<MemoryRouter>
@@ -836,7 +850,7 @@ describe("quotation and measurement report routes", () => {
 						outcomeDate: new Date("2026-06-10T00:00:00Z"),
 						receiptandDispatchNA: true,
 					}}
-					isSummary
+					isSummary={true}
 					firstName="Alex"
 					lastName="Tester"
 					fileError={false}
@@ -845,7 +859,7 @@ describe("quotation and measurement report routes", () => {
 		);
 
 		expect(
-			screen.getByText(/does not require the delivery or return/),
+			screen.getByText(/does not require the delivery or return/u),
 		).toBeInTheDocument();
 		expect(screen.getByTestId("quote-status-pill")).toHaveTextContent(
 			QuoteStatus.QuoteAccepted,
@@ -876,20 +890,20 @@ describe("quotation and measurement report routes", () => {
 		mocks.getDashboardNotification.mockReturnValue(null);
 		const ReportDetails = (
 			await import(
-				"../../../ClientApp/src/routes/measurementReport/reportDetails"
+				"../../../ClientApp/src/routes/measurementReport/reportDetails.tsx"
 			)
 		).default;
 
 		render(
 			<MemoryRouter>
-				<ReportDetails reportData={undefined} fileError />
+				<ReportDetails reportData={undefined} fileError={true} />
 			</MemoryRouter>,
 		);
 
 		expect(
 			screen.queryByTestId("notification-message"),
 		).not.toBeInTheDocument();
-		fireEvent.click(screen.getByRole("button", { name: /View request/i }));
+		fireEvent.click(screen.getByRole("button", { name: /View request/iu }));
 		expect(mocks.openInternalRouteInNewTab).not.toHaveBeenCalled();
 	});
 
@@ -901,8 +915,9 @@ describe("quotation and measurement report routes", () => {
 			crmQuoteRequestId: undefined,
 			quoteRequestStatus: "Draft",
 		});
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 
 		renderRoute("/quotation/RFQ-100", <Quotation />, "/quotation/:id");
 
@@ -925,8 +940,9 @@ describe("quotation and measurement report routes", () => {
 			...quoteDetails,
 			quoteRequestStatus: QuoteStatus.QuoteAccepted,
 		});
-		const Quotation = (await import("../../../ClientApp/src/routes/quotation"))
-			.default;
+		const Quotation = (
+			await import("../../../ClientApp/src/routes/quotation/index.tsx")
+		).default;
 		const { unmount } = renderRoute(
 			"/quotation/RFQ-100",
 			<Quotation />,

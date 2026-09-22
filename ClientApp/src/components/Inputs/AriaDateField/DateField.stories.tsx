@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { DateField } from "./DateField";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
+import { DateField } from "./DateField.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

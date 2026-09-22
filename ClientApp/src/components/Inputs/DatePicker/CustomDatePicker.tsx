@@ -2,9 +2,9 @@ import type { Placement } from "@popperjs/core";
 import { enAU } from "date-fns/locale";
 import React, { useEffect, useRef, useState } from "react";
 import ReactDatePicker from "react-datepicker";
-import SecondaryButton from "../../Buttons/SecondaryButton";
-import CustomDateInput from "./CustomDateInput";
-import type { CustomDatePickerProps } from "./types";
+import SecondaryButton from "../../Buttons/SecondaryButton/index.tsx";
+import CustomDateInput from "./CustomDateInput.tsx";
+import type { CustomDatePickerProps } from "./types.ts";
 
 const DATE_INPUT_FORMAT = "dd/MM/yyyy";
 
@@ -39,7 +39,7 @@ const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
 	// which Child Plan B's DatePicker characterization asserts against, so it is
 	// deferred to that plan rather than changed in a lint migration.
 	// eslint-disable-next-line @eslint-react/purity
-	const wrapperUUID = useRef(crypto.randomUUID());
+	const wrapperUuid = useRef(crypto.randomUUID());
 
 	const customInputControlRef = useRef<HTMLInputElement>(null);
 	const customInputInlineHelpRef = useRef<HTMLDivElement>(null);
@@ -161,12 +161,12 @@ const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
 			forwardedControlRef={customInputControlRef}
 			forwardedInlineHelpRef={customInputInlineHelpRef}
 			forwardedFeedbackRef={customInputFeedbackRef}
-			wrapperUUID={wrapperUUID.current}
+			wrapperUUID={wrapperUuid.current}
 		/>
 	);
 
 	return (
-		<div id={wrapperUUID.current}>
+		<div id={wrapperUuid.current}>
 			<ReactDatePicker
 				autoComplete="off"
 				calendarClassName={`custom-date-picker-calendar ${showCalendarInvalid ? "custom-calendar-focus" : ""}`}
@@ -188,12 +188,12 @@ const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
 				openToDate={selectedDate || new Date()}
 				placeholderText={placeholder ?? ""}
 				popperModifiers={[offSetModifier as never]}
-				preventOpenOnFocus
+				preventOpenOnFocus={true}
 				readOnly={readOnly}
 				ref={datePickerRef as any}
 				selected={selectedDate}
 				startDate={startDate}
-				strictParsing
+				strictParsing={true}
 				showPopperArrow={false}
 			>
 				<div className="custom-calendary-container">

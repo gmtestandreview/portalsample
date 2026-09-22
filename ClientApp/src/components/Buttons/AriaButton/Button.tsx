@@ -1,13 +1,13 @@
 "use client";
 import {
-	Button as RACButton,
-	type ButtonProps as RACButtonProps,
+	Button as RacButton,
+	type ButtonProps as RacButtonProps,
 } from "react-aria-components/Button";
 import { composeRenderProps } from "react-aria-components/composeRenderProps";
-import { ProgressCircle } from "../../AriaComponents/ProgressCircle";
+import { ProgressCircle } from "../../AriaComponents/ProgressCircle.tsx";
 import "./Button.css";
 
-interface ButtonProps extends RACButtonProps {
+interface ButtonProps extends RacButtonProps {
 	/**
 	 * The visual style of the button (Vanilla CSS implementation specific).
 	 *
@@ -18,7 +18,7 @@ interface ButtonProps extends RACButtonProps {
 
 export function Button(props: Readonly<ButtonProps>) {
 	return (
-		<RACButton
+		<RacButton
 			{...props}
 			className="react-aria-Button button-base"
 			data-variant={props.variant || "primary"}
@@ -27,10 +27,10 @@ export function Button(props: Readonly<ButtonProps>) {
 				<>
 					{!isPending && children}
 					{isPending && (
-						<ProgressCircle aria-label="Saving..." isIndeterminate />
+						<ProgressCircle aria-label="Saving..." isIndeterminate={true} />
 					)}
 				</>
 			))}
-		</RACButton>
+		</RacButton>
 	);
 }

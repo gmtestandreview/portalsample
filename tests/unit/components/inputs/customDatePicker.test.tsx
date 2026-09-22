@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import React from "react";
-import CustomDatePicker from "@/components/Inputs/DatePicker/CustomDatePicker";
+import CustomDatePicker from "@/components/Inputs/DatePicker/CustomDatePicker.tsx";
 
 const mockDate = new Date("2026-05-18T00:00:00.000Z");
 
@@ -38,7 +38,7 @@ vi.mock("@/components/Inputs/DatePicker/CustomDateInput", () => ({
 				ref={forwardedControlRef}
 				onBlur={onBlur}
 				onKeyDown={onKeyDown}
-				required
+				required={true}
 			/>
 			<div ref={forwardedInlineHelpRef} data-testid="inline-help-ref" />
 			<div ref={forwardedFeedbackRef} data-testid="feedback-ref" />
@@ -319,7 +319,7 @@ describe("CustomDatePicker", () => {
 				dateOnBlur={vi.fn()}
 				dateOnChange={vi.fn()}
 				name="inputKeyboardDate"
-				readOnly
+				readOnly={true}
 			/>,
 		);
 		await user.click(screen.getByRole("button", { name: "Close calendar" }));
@@ -335,9 +335,9 @@ describe("CustomDatePicker", () => {
 				calendarButtonTitle="Date"
 				dateOnBlur={vi.fn()}
 				dateOnChange={vi.fn()}
-				disabled
+				disabled={true}
 				name="inputKeyboardDate"
-				readOnly
+				readOnly={true}
 			/>,
 		);
 		await user.click(
@@ -358,7 +358,7 @@ describe("CustomDatePicker", () => {
 				currentDate={currentDate}
 				dateOnBlur={vi.fn()}
 				dateOnChange={vi.fn()}
-				hasError
+				hasError={true}
 				inlineHelp="Date help"
 				name="offsetDate"
 			/>,

@@ -3,17 +3,17 @@ import { BrowserUtils, InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { UserDto, UserProfileDto } from "../api/web-api-client";
-import { UsersClient } from "../api/web-api-client";
-import BlockUISpinner from "../components/BlockUISpinner";
-import AppLogger from "../instrumentation/AppLogger";
+import type { UserDto, UserProfileDto } from "../api/web-api-client.ts";
+import { UsersClient } from "../api/web-api-client.ts";
+import BlockUiSpinner from "../components/BlockUISpinner/index.tsx";
+import AppLogger from "../instrumentation/AppLogger.ts";
 import setTargetOrganisation, {
 	getTargetOrganisation,
-} from "../storage/targetOrganisation";
-import termsData from "../terms-config.json";
-import type { AccountDetails } from "./accountContext";
-import { AccountDispatchCtx, AccountStateCtx } from "./accountContext";
-import { tokenRequest } from "./authConfig";
+} from "../storage/targetOrganisation.ts";
+import termsData from "../terms-config.json" with { type: "json" };
+import type { AccountDetails } from "./accountContext.tsx";
+import { AccountDispatchCtx, AccountStateCtx } from "./accountContext.tsx";
+import { tokenRequest } from "./authConfig.ts";
 
 interface AccountProviderProps {
 	children: ReactNode;
@@ -56,7 +56,7 @@ const toAccountDetails = (
 		currentTermsVersion,
 		defaultOrganisationId: user.defaultOrganisationId,
 		organisationCRMGuid: user.organisation?.crmGuid,
-		organisationIsCompleted: user.organisation?.isCompleted || false,
+		organisationIsCompleted: user.organisation?.isCompleted,
 		isDefaultOrganisation: user.defaultOrganisationId !== null,
 		showBranchSelector: false,
 		contactId: user.contactId,
@@ -102,7 +102,7 @@ const AccountProvider = ({ children }: AccountProviderProps) => {
 		});
 	}, []);
 
-	const setShowRFQSelectModal = useCallback(
+	const setShowRfqSelectModal = useCallback(
 		(show: boolean, rfqId: string, callingPath: string) => {
 			setAccountDetails((prev) => {
 				if (!prev) return prev;
@@ -151,14 +151,14 @@ const AccountProvider = ({ children }: AccountProviderProps) => {
 	const setDefaultOrganisationId = useCallback(
 		(
 			defaultOrganisationId: number | undefined,
-			defaultOrganisationCRMId: string | undefined,
+			defaultOrganisationCrmId: string | undefined,
 		) => {
 			setAccountDetails((prev) => {
 				if (!prev) return prev;
 				return {
 					...prev,
 					defaultOrganisationId,
-					organisationCRMGuid: defaultOrganisationCRMId,
+					organisationCRMGuid: defaultOrganisationCrmId,
 				};
 			});
 		},
@@ -302,7 +302,7 @@ const AccountProvider = ({ children }: AccountProviderProps) => {
 			setTargetOrganisation: setOrganisation,
 			setOrganisationAndBranch,
 			setShowBranchSelector,
-			setShowRFQSelectModal,
+			setShowRFQSelectModal: setShowRfqSelectModal,
 			setUserProfile,
 		}),
 		[
@@ -313,7 +313,7 @@ const AccountProvider = ({ children }: AccountProviderProps) => {
 			setOrganisation,
 			setOrganisationAndBranch,
 			setShowBranchSelector,
-			setShowRFQSelectModal,
+			setShowRfqSelectModal,
 			setUserProfile,
 		],
 	);
@@ -322,16 +322,16 @@ const AccountProvider = ({ children }: AccountProviderProps) => {
 		<AccountStateCtx.Provider value={stateValue}>
 			<AccountDispatchCtx.Provider value={dispatchValue}>
 				{isLoading && !errored && (
-					<BlockUISpinner>
+					<BlockUiSpinner>
 						<p>Loading...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				)}
 				{errored && (
-					<BlockUISpinner>
+					<BlockUiSpinner>
 						<p>
 							Unable to load account details. Redirecting to sign-in&hellip;
 						</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				)}
 				{!errored && children}
 			</AccountDispatchCtx.Provider>

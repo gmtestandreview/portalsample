@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import "../../../../ClientApp/src/validationSchemas/yupExtensions";
-import contactSubmitValidation from "../../../../ClientApp/src/routes/contact/validation";
+import "../../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import contactSubmitValidation from "../../../../ClientApp/src/routes/contact/validation.ts";
 
 const validContact = {
 	title: "",

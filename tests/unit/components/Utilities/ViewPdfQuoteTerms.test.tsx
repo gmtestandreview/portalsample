@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { RequestForQuoteDetails } from "@/api/web-api-client";
-import ViewPdfQuoteTerms from "@/components/Utilities/ViewPdfQuoteTerms";
+import type { RequestForQuoteDetails } from "@/api/web-api-client.ts";
+import ViewPdfQuoteTerms from "@/components/Utilities/ViewPdfQuoteTerms.tsx";
 
 const helperMocks = vi.hoisted(() => ({
 	getQuotationFileDetails: vi.fn(),
@@ -11,7 +11,7 @@ const helperMocks = vi.hoisted(() => ({
 	openPdfPageInNewTab: vi.fn(),
 }));
 
-const trackGAEventMock = vi.hoisted(() => vi.fn());
+const trackGaEventMock = vi.hoisted(() => vi.fn());
 const acquireTokenSilentMock = vi.hoisted(() => vi.fn());
 
 vi.mock("@azure/msal-react", () => ({
@@ -24,7 +24,7 @@ vi.mock("@azure/msal-react", () => ({
 vi.mock("@/routes/common/helperFunctions", () => helperMocks);
 
 vi.mock("@/analytics/GoogleAnalytics", () => ({
-	trackGAEvent: trackGAEventMock,
+	trackGAEvent: trackGaEventMock,
 }));
 
 vi.mock("@/instrumentation/AppLogger", () => ({
@@ -66,9 +66,9 @@ describe("ViewPdfQuoteTerms", () => {
 		const { container } = render(<ViewPdfQuoteTerms {...defaultProps} />);
 
 		expect(screen.getByText("Note:")).toBeInTheDocument();
-		expect(screen.getByText(/Please review the/)).toBeInTheDocument();
+		expect(screen.getByText(/Please review the/u)).toBeInTheDocument();
 		expect(getTermsAnchor(container)).toHaveTextContent("Terms");
-		expect(screen.getByText(/before accepting/)).toBeInTheDocument();
+		expect(screen.getByText(/before accepting/u)).toBeInTheDocument();
 	});
 
 	it("opens the PDF at the correct page and tracks a GA event on click", async () => {
@@ -94,7 +94,7 @@ describe("ViewPdfQuoteTerms", () => {
 				"blob:test-url",
 				2,
 			);
-			expect(trackGAEventMock).toHaveBeenCalledWith("Terms", "download");
+			expect(trackGaEventMock).toHaveBeenCalledWith("Terms", "download");
 			expect(setIsLoading).toHaveBeenCalledWith(true);
 			expect(setIsLoading).toHaveBeenCalledWith(false);
 		});

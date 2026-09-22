@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Badge from "react-bootstrap/Badge";
-import type { DashboardItemStatus } from "../../routes/common/enums";
-import { QuoteStatus } from "../../routes/common/enums";
+import type { DashboardItemStatus } from "../../routes/common/enums.ts";
+import { QuoteStatus } from "../../routes/common/enums.ts";
 
 export interface StatusPillProps {
 	status: DashboardItemStatus | QuoteStatus;
@@ -67,7 +67,7 @@ const QuoteStatusPill = ({ status }: StatusPillProps) => {
 	}, [status]);
 
 	return (
-		<Badge pill bg={pillProps.bgColour} text={pillProps.textColour}>
+		<Badge pill={true} bg={pillProps.bgColour} text={pillProps.textColour}>
 			{pillProps.text}
 		</Badge>
 	);

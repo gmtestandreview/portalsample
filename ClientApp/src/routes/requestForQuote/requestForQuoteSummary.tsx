@@ -3,13 +3,13 @@ import { Link, useParams } from "react-router";
 import {
 	CustomAccordion,
 	CustomAccordionBody,
-} from "../../components/Accordion";
-import EditButton from "../../components/Buttons/EditButton";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import InstrumentAndRequest from "./instrumentAndRequest";
-import OrganisationAndContact from "./organisationAndContact";
-import type { SummaryProps } from "./types";
+} from "../../components/Accordion/index.tsx";
+import EditButton from "../../components/Buttons/EditButton/index.tsx";
+import HeaderIntroText from "../../components/HeaderIntroText/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import InstrumentAndRequest from "./instrumentAndRequest.tsx";
+import OrganisationAndContact from "./organisationAndContact.tsx";
+import type { SummaryProps } from "./types.ts";
 
 const RequestForQuoteSummary = ({ isSubmitted }: SummaryProps) => {
 	const { id } = useParams<{ id?: string }>();
@@ -33,7 +33,10 @@ const RequestForQuoteSummary = ({ isSubmitted }: SummaryProps) => {
 						eventKey="0"
 						className="mb-4 py-2"
 					>
-						<OrganisationAndContact isSummary name="organisationAndContact" />
+						<OrganisationAndContact
+							isSummary={true}
+							name="organisationAndContact"
+						/>
 						{isEditable ? (
 							<EditButton
 								link={`/request-for-quote/${id}/organisation-and-contact`}
@@ -47,7 +50,10 @@ const RequestForQuoteSummary = ({ isSubmitted }: SummaryProps) => {
 						eventKey="1"
 						className="mb-4 py-2"
 					>
-						<InstrumentAndRequest isSummary name="instrumentAndRequest" />
+						<InstrumentAndRequest
+							isSummary={true}
+							name="instrumentAndRequest"
+						/>
 						{isEditable ? (
 							<EditButton
 								link={`/request-for-quote/${id}/instrument-and-request`}
@@ -62,7 +68,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: SummaryProps) => {
 						<Link
 							data-testid="back-button"
 							to="/dashboard"
-							replace
+							replace={true}
 							className="btn btn-tertiary"
 						>
 							<span>

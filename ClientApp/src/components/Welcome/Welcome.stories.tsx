@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { ComponentType } from "react";
 import { expect, within } from "storybook/test";
-import { AccountStateCtx } from "../../authentication/accountContext";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import Welcome from "./index";
+import { AccountStateCtx } from "../../authentication/accountContext.tsx";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import Welcome from "./index.tsx";
 
 const meta = {
 	title: "Components/Welcome",
@@ -24,9 +24,9 @@ export const Default: Story = {
 		const banner = canvas.getByTestId("welcome-banner");
 		await expect(banner).toBeVisible();
 		// Given name is inside the h1 "Welcome Taylor" — use heading role + regex
-		const heading = canvas.getByRole("heading", { name: /welcome/i });
+		const heading = canvas.getByRole("heading", { name: /welcome/iu });
 		await expect(heading).toBeVisible();
-		await expect(heading.textContent).toMatch(/Taylor/);
+		expect(heading.textContent).toMatch(/Taylor/u);
 	},
 };
 

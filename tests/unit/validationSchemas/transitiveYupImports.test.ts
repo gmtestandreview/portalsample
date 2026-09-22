@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 describe("Yup side-effect import — explicit import guard", () => {
 	it("update/validation.ts schema validates without relying on transitive import", async () => {
 		const { default: schema } = await import(
-			"../../../ClientApp/src/routes/account/update/validation"
+			"../../../ClientApp/src/routes/account/update/validation.ts"
 		);
 
 		const validData = {
@@ -21,7 +21,7 @@ describe("Yup side-effect import — explicit import guard", () => {
 
 	it("addBranch/validation.ts schema validates without relying on transitive import", async () => {
 		const { default: schema } = await import(
-			"../../../ClientApp/src/routes/account/addBranch/validation"
+			"../../../ClientApp/src/routes/account/addBranch/validation.ts"
 		);
 
 		const validData = {

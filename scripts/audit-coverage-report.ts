@@ -9,6 +9,7 @@
  * Usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>
  */
 import { readFileSync } from "node:fs";
+import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 export type CoverageReportAudit = {
@@ -26,7 +27,7 @@ const normalizedPath = (id: string): string =>
 	withoutQuery(id).replaceAll("\\", "/");
 
 const normalizedDirectory = (path: string): string =>
-	normalizedPath(path).replace(/\/+$/, "");
+	normalizedPath(path).replace(/\/+$/u, "");
 
 const isExecutable = (id: string): boolean =>
 	EXECUTABLE_EXTENSIONS.some((extension) =>
@@ -45,7 +46,7 @@ const isIntendedApplicationSource = (
 		!path.startsWith(`${sourceRoot}api/web-api-client.ts`) &&
 		!path.startsWith(`${sourceRoot}external/`) &&
 		!path.startsWith(`${sourceRoot}storybook/`) &&
-		!/\.(?:test|spec|stories)\.[cm]?[jt]sx?$/.test(path)
+		!/\.(?:test|spec|stories)\.[cm]?[jt]sx?$/u.test(path)
 	);
 };
 

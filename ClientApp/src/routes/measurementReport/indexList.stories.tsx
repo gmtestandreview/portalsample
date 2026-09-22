@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import InstrMeasurementReport from "./indexList";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import InstrMeasurementReport from "./indexList.tsx";
 
 /**
  * `InstrMeasurementReport` (the instrument-reports index route) is the banner + shell

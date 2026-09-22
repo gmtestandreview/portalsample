@@ -2,8 +2,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { ComponentProps } from "react";
 import { useEffect, useState } from "react";
 import { expect, fn, screen, userEvent, waitFor, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import ContentModal from "./index";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import ContentModal from "./index.tsx";
 
 const meta = {
 	title: "Components/Modals/ContentModal",
@@ -45,7 +45,7 @@ export const OpenWithContent: Story = {
 	render: (args) => <DismissibleContentModalDemo {...args} />,
 	play: async ({ args }) => {
 		const dialog = await screen.findByRole("dialog", {
-			name: /example modal title/i,
+			name: /example modal title/iu,
 		});
 		await waitFor(() => expect(dialog).toBeVisible());
 		await expect(
@@ -55,7 +55,7 @@ export const OpenWithContent: Story = {
 		await expect(args.onCancelModal).toHaveBeenCalled();
 		await waitFor(() =>
 			expect(
-				screen.queryByRole("dialog", { name: /example modal title/i }),
+				screen.queryByRole("dialog", { name: /example modal title/iu }),
 			).not.toBeInTheDocument(),
 		);
 	},

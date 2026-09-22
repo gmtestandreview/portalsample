@@ -6,24 +6,24 @@ import type {
 	AcceptQuotePreInfoDto,
 	AddressDetailsDto,
 	DeliveryAndReturnStep,
-} from "../../api/web-api-client";
-import { AcceptQuoteClient, AccountsClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
-import HidableField from "../../components/forms/HidableField";
-import AddressLookup from "../../components/Inputs/AddressLookup";
-import NumberInput from "../../components/Inputs/NumberInput";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import TextInput from "../../components/Inputs/TextInput";
-import DeliveryInstructions from "../../components/Utilities/deliveryInstructions";
-import MailingLabel from "../../components/Utilities/mailingLabel";
-import AppLogger from "../../instrumentation/AppLogger";
-import { prefixedPropertyOf } from "../../utils";
-import { getFormattedAddress } from "../common/helperFunctions";
-import type { DeliveryAndReturnProps } from "./types";
+} from "../../api/web-api-client.ts";
+import { AcceptQuoteClient, AccountsClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import AddressLookup from "../../components/Inputs/AddressLookup/index.tsx";
+import NumberInput from "../../components/Inputs/NumberInput/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import TextAreaInput from "../../components/Inputs/TextAreaInput/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
+import DeliveryInstructions from "../../components/Utilities/deliveryInstructions.tsx";
+import MailingLabel from "../../components/Utilities/mailingLabel.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { prefixedPropertyOf } from "../../utils/index.ts";
+import { getFormattedAddress } from "../common/helperFunctions.ts";
+import type { DeliveryAndReturnProps } from "./types.ts";
 
 const getName = prefixedPropertyOf<DeliveryAndReturnStep>("deliveryAndReturn");
 
@@ -132,9 +132,9 @@ const DeliveryAndReturn = (props: DeliveryAndReturnProps) => {
 	return (
 		<>
 			{isLoading && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			{isSummary ? null : (
 				<Alert
@@ -518,10 +518,10 @@ const DeliveryAndReturn = (props: DeliveryAndReturnProps) => {
 									prepend="AUD$"
 									placeholder="0.00"
 									allowNegative={false}
-									thousandSeparator
-									fixedDecimalScale
+									thousandSeparator={true}
+									fixedDecimalScale={true}
 									decimalScale={2}
-									valueIsNumericString
+									valueIsNumericString={true}
 									maxLength={13} // Set to 13 rather than 10 to account for the thousands sep and decimal point
 								/>
 								<TextAreaInput

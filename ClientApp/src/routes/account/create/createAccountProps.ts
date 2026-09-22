@@ -7,17 +7,17 @@ import type {
 	AccountDto,
 	FormStepStatusDto,
 	GetAccountValuesDto,
-} from "../../../api/web-api-client";
-import { AccountsClient } from "../../../api/web-api-client";
-import type { AccountContextState } from "../../../authentication/accountContext";
-import { tokenRequest } from "../../../authentication/authConfig";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types";
+} from "../../../api/web-api-client.ts";
+import { AccountsClient } from "../../../api/web-api-client.ts";
+import type { AccountContextState } from "../../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import type { DiscardProps } from "../../../components/forms/FormikForm/types.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../../components/forms/WizardForm/types";
-import accountSubmitValidation from "../validation";
+} from "../../../components/forms/WizardForm/types.ts";
+import accountSubmitValidation from "../validation.ts";
 
 const loadAccountDetails =
 	(accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -104,8 +104,6 @@ const getRedirectionLocationOnError = (
 	if (errorCode === 412) {
 		return "/";
 	}
-
-	return undefined;
 };
 
 const createAccountProps = (

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { AuthorizedApiBase } from "../../../ClientApp/src/api/web-api-client";
+import { AuthorizedApiBase } from "../../../ClientApp/src/api/web-api-client.ts";
 
 class TestClient extends AuthorizedApiBase {
 	public exposeTransformOptions(options: any): Promise<any> {

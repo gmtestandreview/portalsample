@@ -1,17 +1,17 @@
 import "../../styles/media-print.scss";
 import { useMsal } from "@azure/msal-react";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import AppLogger from "../../instrumentation/AppLogger";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 import {
 	getFileUrlFromBase64,
 	getQuotationFileDetails,
 	getQuoteOfferPageNumber,
 	openPdfPageInNewTab,
-} from "../../routes/common/helperFunctions";
-import ExternalLinkIcon from "../Icons/ExternalLinkIcon";
-import InTextLink from "../InTextLink";
+} from "../../routes/common/helperFunctions.ts";
+import ExternalLinkIcon from "../Icons/ExternalLinkIcon.tsx";
+import InTextLink from "../InTextLink/index.tsx";
 
 export interface ViewPdfQuoteTermsProps {
 	prefixText: string;

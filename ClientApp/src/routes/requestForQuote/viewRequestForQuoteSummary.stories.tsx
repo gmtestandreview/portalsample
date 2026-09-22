@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import ViewRequestForQuoteSummary from "./viewRequestForQuoteSummary";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import ViewRequestForQuoteSummary from "./viewRequestForQuoteSummary.tsx";
 
 /**
  * `ViewRequestForQuoteSummary` is the read-only summary of a submitted request-for-quote,

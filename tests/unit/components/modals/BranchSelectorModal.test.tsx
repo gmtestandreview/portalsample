@@ -10,17 +10,17 @@ import {
 import type * as ReactRouterModule from "react-router";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { AccountDispatchContext } from "@/authentication/accountContext";
+import type { AccountDispatchContext } from "@/authentication/accountContext.tsx";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "@/authentication/accountContext";
-import BranchSelectorModal from "@/components/modals/BranchSelectorModal";
-import { BranchSelectionModalMode } from "@/components/modals/BranchSelectorModal/enums";
+} from "@/authentication/accountContext.tsx";
+import { BranchSelectionModalMode } from "@/components/modals/BranchSelectorModal/enums.ts";
+import BranchSelectorModal from "@/components/modals/BranchSelectorModal/index.tsx";
 import {
 	ModalDispatchCtx,
 	ModalStateCtx,
-} from "@/components/modals/ModalContext";
+} from "@/components/modals/ModalContext.tsx";
 
 // ─── hoisted mocks ────────────────────────────────────────────────────────────
 
@@ -37,13 +37,16 @@ const mocks = vi.hoisted(() => ({
 	setTargetOrganisation: vi.fn(),
 }));
 
-const getOrganisationsByABN = vi.fn();
+const getOrganisationsByAbn = vi.fn();
 
 vi.mock("@/api/web-api-client", () => ({
-	OrganisationsClient: function OrganisationsClient() {
-		return { setAuthToken: vi.fn(), getOrganisationsByABN };
+	OrganisationsClient() {
+		return {
+			setAuthToken: vi.fn(),
+			getOrganisationsByABN: getOrganisationsByAbn,
+		};
 	},
-	UsersClient: function UsersClient() {
+	UsersClient() {
 		return {
 			setAuthToken: vi.fn(),
 			setDefaultOrganisation: mocks.setDefaultOrganisation,
@@ -229,7 +232,7 @@ const renderModal = (opts: RenderOptions = {}) => {
 describe("BranchSelectorModal", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		getOrganisationsByABN.mockResolvedValue(mockBranches);
+		getOrganisationsByAbn.mockResolvedValue(mockBranches);
 		mocks.setDefaultOrganisation.mockResolvedValue(undefined);
 		mocks.getBranchModalNotification.mockReturnValue(null);
 	});
@@ -267,25 +270,25 @@ describe("BranchSelectorModal", () => {
 	it("shows no-branches message when the API returns an empty array", async () => {
 		// An empty result causes a TypeError accessing result[0] which the catch handles,
 		// but branches is set to [] before the throw so the empty-branches tbody renders.
-		getOrganisationsByABN.mockResolvedValue([]);
+		getOrganisationsByAbn.mockResolvedValue([]);
 
 		renderModal();
 
 		await waitFor(() => {
 			expect(
-				screen.getByText(/No branch\/locations available/i),
+				screen.getByText(/No branch\/locations available/iu),
 			).toBeInTheDocument();
 		});
 	});
 
 	it("shows error alert when branch loading fails", async () => {
-		getOrganisationsByABN.mockRejectedValueOnce(new Error("network error"));
+		getOrganisationsByAbn.mockRejectedValueOnce(new Error("network error"));
 
 		renderModal();
 
 		await waitFor(() => {
 			expect(
-				screen.getByText(/Error trying to save default branch\/location/i),
+				screen.getByText(/Error trying to save default branch\/location/iu),
 			).toBeInTheDocument();
 		});
 		expect(mocks.appLoggerError).toHaveBeenCalledWith(
@@ -296,7 +299,7 @@ describe("BranchSelectorModal", () => {
 
 	it("ignores branch load result after the component unmounts (covers !isActive return in try)", async () => {
 		let resolveLoad!: (v: any) => void;
-		getOrganisationsByABN.mockReturnValueOnce(
+		getOrganisationsByAbn.mockReturnValueOnce(
 			new Promise((resolve) => {
 				resolveLoad = resolve;
 			}),
@@ -315,7 +318,7 @@ describe("BranchSelectorModal", () => {
 
 	it("ignores branch load error after the component unmounts (covers !isActive return in catch)", async () => {
 		let rejectLoad!: (e: any) => void;
-		getOrganisationsByABN.mockReturnValueOnce(
+		getOrganisationsByAbn.mockReturnValueOnce(
 			new Promise((_, reject) => {
 				rejectLoad = reject;
 			}),
@@ -338,7 +341,7 @@ describe("BranchSelectorModal", () => {
 
 		await Promise.resolve();
 
-		expect(getOrganisationsByABN).not.toHaveBeenCalled();
+		expect(getOrganisationsByAbn).not.toHaveBeenCalled();
 	});
 
 	// ── UI modes ────────────────────────────────────────────────────────────
@@ -350,7 +353,7 @@ describe("BranchSelectorModal", () => {
 
 		expect(screen.getByText("Change branch/location")).toBeInTheDocument();
 		expect(
-			screen.getByText(/Select default branch or location name/i),
+			screen.getByText(/Select default branch or location name/iu),
 		).toBeInTheDocument();
 	});
 
@@ -389,7 +392,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		expect(screen.getByRole("button", { name: /cancel/i })).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: /cancel/iu }),
+		).toBeInTheDocument();
 	});
 
 	it("does not show the cancel button when no default organisation id is set", async () => {
@@ -398,7 +403,7 @@ describe("BranchSelectorModal", () => {
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
 		expect(
-			screen.queryByRole("button", { name: /cancel/i }),
+			screen.queryByRole("button", { name: /cancel/iu }),
 		).not.toBeInTheDocument();
 	});
 
@@ -407,7 +412,7 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+		fireEvent.click(screen.getByRole("button", { name: /cancel/iu }));
 
 		expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
 		expect(mocks.clearBranchModalNotification).toHaveBeenCalled();
@@ -417,7 +422,7 @@ describe("BranchSelectorModal", () => {
 
 	it("toggles sort direction from asc to desc and covers all getArrow icon paths", async () => {
 		// Branch with undefined businessListName exercises the ?? '' fallback in toSortableText
-		getOrganisationsByABN.mockResolvedValueOnce([
+		getOrganisationsByAbn.mockResolvedValueOnce([
 			...mockBranches,
 			mockBranchUndefinedName,
 		]);
@@ -427,7 +432,7 @@ describe("BranchSelectorModal", () => {
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
 		const sortBtn = screen.getByRole("button", {
-			name: /branch\/location name/i,
+			name: /branch\/location name/iu,
 		});
 
 		// First click: key 'branchOrLocationName' → 'businessListName', direction stays 'asc'
@@ -449,7 +454,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
@@ -479,7 +486,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
@@ -504,11 +513,13 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(
-				screen.getByText(/Error trying to save default branch\/location/i),
+				screen.getByText(/Error trying to save default branch\/location/iu),
 			).toBeInTheDocument();
 		});
 		expect(mocks.appLoggerError).toHaveBeenCalledWith(
@@ -524,7 +535,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
@@ -538,7 +551,9 @@ describe("BranchSelectorModal", () => {
 		// No ABN → branches never load → selectedOrganisation stays undefined
 		renderModal({ abn: undefined });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.setDefaultOrganisation).toHaveBeenCalled();
@@ -552,7 +567,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.setCompleted).toHaveBeenCalled();
@@ -565,7 +582,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await Promise.resolve();
 
@@ -574,7 +593,7 @@ describe("BranchSelectorModal", () => {
 	});
 
 	it("passes empty-string fallbacks when tradingName and branchName are undefined on save", async () => {
-		getOrganisationsByABN.mockResolvedValueOnce([
+		getOrganisationsByAbn.mockResolvedValueOnce([
 			{
 				organisationId: 5,
 				name: "No-Name Corp",
@@ -591,7 +610,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "No-Name WA Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.setOrganisationAndBranch).toHaveBeenCalledWith(
@@ -607,7 +628,9 @@ describe("BranchSelectorModal", () => {
 
 		await screen.findByRole("radio", { name: "ACME Sydney Office" });
 
-		fireEvent.click(screen.getByRole("button", { name: /save and continue/i }));
+		fireEvent.click(
+			screen.getByRole("button", { name: /save and continue/iu }),
+		);
 
 		await waitFor(() => {
 			expect(mocks.navigate).toHaveBeenCalledWith("/");

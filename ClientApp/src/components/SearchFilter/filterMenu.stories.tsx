@@ -3,8 +3,8 @@ import { expect, fn, userEvent, within } from "storybook/test";
 import {
 	defaultUserProfile,
 	withPortalProviders,
-} from "../../storybook/storybookHarness";
-import FilterMenu from "./filterMenu";
+} from "../../storybook/storybookHarness.tsx";
+import FilterMenu from "./filterMenu.tsx";
 
 /**
  * `FilterMenu` is the testing/calibration dashboard filter dropdown. Its toggle shows
@@ -36,7 +36,7 @@ export const Closed: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByRole("button", { name: /filters/i }),
+			canvas.getByRole("button", { name: /filters/iu }),
 		).toBeVisible();
 	},
 };
@@ -45,7 +45,7 @@ export const Opened: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const user = userEvent.setup();
-		await user.click(canvas.getByRole("button", { name: /filters/i }));
+		await user.click(canvas.getByRole("button", { name: /filters/iu }));
 		// The radio groups render once the menu is open.
 		await expect(await canvas.findByText("Show results")).toBeVisible();
 		await expect(canvas.getByText("Quote offer is available")).toBeVisible();

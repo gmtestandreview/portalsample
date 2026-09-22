@@ -9,9 +9,9 @@ import {
 	CalendarHeading,
 	type DateValue,
 } from "react-aria-components/Calendar";
-import { Text } from "../AriaComponents/Content";
-import { ChevronLeft, ChevronRight } from "../AriaComponents/NmiIcon";
-import { Button } from "../Buttons/AriaButton/Button";
+import { Text } from "../AriaComponents/Content.tsx";
+import { ChevronLeft, ChevronRight } from "../AriaComponents/NmiIcon.tsx";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
 import "./Calendar.css";
 
 export interface CalendarProps<T extends DateValue>

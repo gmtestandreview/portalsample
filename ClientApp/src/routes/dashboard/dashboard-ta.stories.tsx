@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import DashboardTa from "./dashboard-ta";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import DashboardTa from "./dashboard-ta.tsx";
 
 /**
  * `DashboardTa` is the authenticated pattern/type-approval dashboard. It frames the
@@ -32,7 +32,7 @@ export const Shell: Story = {
 			canvas.getByRole("heading", { name: "Quick links" }),
 		).toBeVisible();
 		await expect(
-			canvas.getByText(/your feedback about using the portal/i),
+			canvas.getByText(/your feedback about using the portal/iu),
 		).toBeInTheDocument();
 	},
 };

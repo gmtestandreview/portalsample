@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { RangeCalendar } from "./RangeCalendar";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { RangeCalendar } from "./RangeCalendar.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

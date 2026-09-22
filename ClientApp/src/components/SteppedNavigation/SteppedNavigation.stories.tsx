@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import SteppedNavigation from "./index";
+import SteppedNavigation from "./index.tsx";
 
 const steps = [
 	{
@@ -48,7 +48,7 @@ export const CurrentStep: Story = {
 		await expect(progress).toBeVisible();
 		// The completion state each step announces is part of that contract.
 		await expect(
-			canvas.getByRole("link", { name: /Organisation and contact/ }),
+			canvas.getByRole("link", { name: /Organisation and contact/u }),
 		).toBeVisible();
 	},
 };

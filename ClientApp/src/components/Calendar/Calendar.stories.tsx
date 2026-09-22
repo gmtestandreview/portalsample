@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Calendar } from "./Calendar";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Calendar } from "./Calendar.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

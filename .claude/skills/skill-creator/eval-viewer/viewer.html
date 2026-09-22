@@ -766,7 +766,7 @@
         <!-- Toast -->
         <div class="toast" id="toast" aria-live="polite"></div>
 
-        <script nonce="__CSP_NONCE__">
+        <script nonce="__CSP_NONCE__">"use strict";
             // ---- Embedded data (injected by generate_review.py) ----
             /*__EMBEDDED_DATA__*/
 
@@ -801,7 +801,7 @@
             function formatConfigName(value) {
                 return String(value)
                     .replaceAll('_', ' ')
-                    .replace(/\b\w/g, (char) => char.toUpperCase());
+                    .replace(/\b\w/gu, (char) => char.toUpperCase());
             }
 
             function createElement(tag, className, text) {
@@ -841,7 +841,7 @@
             }
 
             function getConfigToken(runId) {
-                const match = String(runId).match(/(?:^|-)(with_skill|without_skill|new_skill|old_skill)(?:-|$)/);
+                const match = String(runId).match(/(?:^|-)(with_skill|without_skill|new_skill|old_skill)(?:-|$)/u);
                 return match ? match[1] : null;
             }
 
@@ -1235,7 +1235,7 @@
             }
 
             function normalizeLoadedFeedback(data) {
-                if (!isRecord(data) || !Array.isArray(data.reviews)) return;
+                if (!(isRecord(data) && Array.isArray(data.reviews))) return;
                 for (const rawReview of data.reviews) {
                     if (!isRecord(rawReview)) continue;
                     if (typeof rawReview.run_id === 'string' && typeof rawReview.feedback === 'string') {
@@ -1867,9 +1867,9 @@
                 }
                 const uniformRuns = integerNumber(metadata.runs_per_configuration);
                 parts.push(
-                    uniformRuns !== null
-                        ? `${uniformRuns} runs per configuration`
-                        : 'variable or incomplete run counts',
+                    uniformRuns === null
+                        ? 'variable or incomplete run counts'
+                        : `${uniformRuns} runs per configuration`,
                 );
                 metadataLine.textContent = parts.join(' — ');
                 container.appendChild(metadataLine);

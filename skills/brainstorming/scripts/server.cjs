@@ -1,3 +1,4 @@
+"use strict";
 const crypto = require("crypto");
 const http = require("http");
 const fs = require("fs");
@@ -25,7 +26,7 @@ function encodeFrame(opcode, payload) {
 		header = Buffer.alloc(2);
 		header[0] = fin | opcode;
 		header[1] = len;
-	} else if (len < 65536) {
+	} else if (len < 65_536) {
 		header = Buffer.alloc(4);
 		header[0] = fin | opcode;
 		header[1] = 126;
@@ -86,7 +87,7 @@ function decodeFrame(buffer) {
 // ========== Configuration ==========
 
 const PORT_FILE = process.env.BRAINSTORM_PORT_FILE || null;
-const randomPort = () => 49152 + Math.floor(Math.random() * 16383);
+const randomPort = () => 49_152 + Math.floor(Math.random() * 16_383);
 // Prefer an explicit port, else the port this session last bound (so a restart
 // reuses it and an already-open browser tab reconnects), else a random high port.
 function preferredPort() {
@@ -94,14 +95,14 @@ function preferredPort() {
 	if (PORT_FILE) {
 		try {
 			const p = Number(fs.readFileSync(PORT_FILE, "utf-8").trim());
-			if (Number.isInteger(p) && p > 1023 && p < 65536) return p;
+			if (Number.isInteger(p) && p > 1023 && p < 65_536) return p;
 		} catch (e) {
 			/* no prior port recorded */
 		}
 	}
 	return randomPort();
 }
-let PORT = preferredPort();
+let Port = preferredPort();
 const HOST = process.env.BRAINSTORM_HOST || "127.0.0.1";
 const URL_HOST =
 	process.env.BRAINSTORM_URL_HOST ||
@@ -152,7 +153,7 @@ function initialToken() {
 	if (TOKEN_FILE) {
 		try {
 			const t = fs.readFileSync(TOKEN_FILE, "utf-8").trim();
-			if (/^[0-9a-f]{32,}$/i.test(t)) {
+			if (/^[0-9a-f]{32,}$/iu.test(t)) {
 				chmodOwnerOnly(TOKEN_FILE);
 				return { value: t, source: "file" };
 			}
@@ -164,9 +165,9 @@ function initialToken() {
 }
 
 const tokenInfo = initialToken();
-let TOKEN = tokenInfo.value;
+let Token = tokenInfo.value;
 let tokenSource = tokenInfo.source;
-let COOKIE_NAME = "brainstorm-key-" + PORT; // refined to the actual bound port in onListen
+let CookieName = "brainstorm-key-" + Port; // refined to the actual bound port in onListen
 
 const MIME_TYPES = {
 	".html": "text/html",
@@ -214,9 +215,9 @@ function bootstrapPage(key) {
 	// <script> block (e.g. a key containing "</script>") even though callers
 	// only reach here after the value has matched TOKEN.
 	const jsonKey = JSON.stringify(String(key))
-		.replace(/</g, "\\u003c")
-		.replace(/>/g, "\\u003e")
-		.replace(/&/g, "\\u0026");
+		.replace(/</gu, "\\u003c")
+		.replace(/>/gu, "\\u003e")
+		.replace(/&/gu, "\\u0026");
 	return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Opening Brainstorm Companion</title></head>
@@ -269,10 +270,10 @@ function isTruthyEnv(value) {
 
 function escapeHtmlText(value) {
 	return String(value)
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;");
+		.replace(/&/gu, "&amp;")
+		.replace(/</gu, "&lt;")
+		.replace(/>/gu, "&gt;")
+		.replace(/"/gu, "&quot;");
 }
 
 function brandMarkup() {
@@ -331,7 +332,7 @@ function urlHostForHttp(host) {
 }
 
 function companionUrl() {
-	return "http://" + urlHostForHttp(URL_HOST) + ":" + PORT + "/?key=" + TOKEN;
+	return "http://" + urlHostForHttp(URL_HOST) + ":" + Port + "/?key=" + Token;
 }
 
 function browserLauncherForPlatform(
@@ -342,9 +343,9 @@ function browserLauncherForPlatform(
 		env = process.env,
 	} = {},
 ) {
-	const isWSL = platform === "linux" && /microsoft/i.test(osRelease);
+	const isWsl = platform === "linux" && /microsoft/iu.test(osRelease);
 	if (platform === "darwin") return { bin: "open", args: [url] };
-	if (platform === "win32" || isWSL) {
+	if (platform === "win32" || isWsl) {
 		return { bin: "rundll32.exe", args: ["url.dll,FileProtocolHandler", url] };
 	}
 	if (env.DISPLAY || env.WAYLAND_DISPLAY)
@@ -395,11 +396,11 @@ function isAuthorized(req) {
 		const params = new URLSearchParams(req.url.slice(q + 1));
 		if (params.has("key")) {
 			const key = params.get("key");
-			return Boolean(key && timingSafeEqualStr(key, TOKEN));
+			return Boolean(key && timingSafeEqualStr(key, Token));
 		}
 	}
-	const cookie = parseCookies(req.headers["cookie"])[COOKIE_NAME];
-	if (cookie && timingSafeEqualStr(cookie, TOKEN)) return true;
+	const cookie = parseCookies(req.headers["cookie"])[CookieName];
+	if (cookie && timingSafeEqualStr(cookie, Token)) return true;
 	return false;
 }
 
@@ -451,7 +452,7 @@ function handleRequest(req, res) {
 	// WebSocket Origin check below is what blocks cross-origin localhost injection.
 	res.setHeader(
 		"Set-Cookie",
-		COOKIE_NAME + "=" + TOKEN + "; HttpOnly; SameSite=Strict; Path=/",
+		CookieName + "=" + Token + "; HttpOnly; SameSite=Strict; Path=/",
 	);
 
 	const pathname = pathnameOf(req.url);
@@ -460,7 +461,7 @@ function handleRequest(req, res) {
 		req.method === "GET" &&
 		pathname === "/" &&
 		keyFromQuery &&
-		timingSafeEqualStr(keyFromQuery, TOKEN)
+		timingSafeEqualStr(keyFromQuery, Token)
 	) {
 		res.writeHead(
 			200,
@@ -515,7 +516,7 @@ function handleRequest(req, res) {
 const clients = new Set();
 
 function handleUpgrade(req, socket) {
-	if (!isAuthorized(req) || !isAllowedWebSocketOrigin(req)) {
+	if (!(isAuthorized(req) && isAllowedWebSocketOrigin(req))) {
 		socket.destroy();
 		return;
 	}
@@ -701,16 +702,16 @@ function startServer() {
 				if (!fs.existsSync(filePath)) return; // file was deleted
 				touchActivity();
 
-				if (!knownFiles.has(filename)) {
+				if (knownFiles.has(filename)) {
+					console.log(
+						JSON.stringify({ type: "screen-updated", file: filePath }),
+					);
+				} else {
 					knownFiles.add(filename);
 					const eventsFile = path.join(STATE_DIR, "events");
 					if (fs.existsSync(eventsFile)) fs.unlinkSync(eventsFile);
 					console.log(JSON.stringify({ type: "screen-added", file: filePath }));
 					maybeOpenBrowser();
-				} else {
-					console.log(
-						JSON.stringify({ type: "screen-updated", file: filePath }),
-					);
 				}
 
 				broadcast({ type: "reload" });
@@ -787,20 +788,20 @@ function startServer() {
 		// Cookie name keys on the ACTUAL bound port (may differ from the preferred
 		// one after an EADDRINUSE fallback) so it can't collide with another server's
 		// cookie in the shared localhost jar.
-		COOKIE_NAME = "brainstorm-key-" + PORT;
+		CookieName = "brainstorm-key-" + Port;
 		// Record the bound port AND token so the next restart of this session reuses
 		// them — but ONLY when we got our preferred port. On a fallback we bound a
 		// *different* port because someone else holds the preferred one; persisting
 		// would overwrite the shared files and strand that other session's open tab.
 		if (PORT_FILE && !triedFallback) {
 			try {
-				fs.writeFileSync(PORT_FILE, String(PORT));
+				fs.writeFileSync(PORT_FILE, String(Port));
 			} catch (e) {
 				/* best effort */
 			}
 			if (TOKEN_FILE) {
 				try {
-					fs.writeFileSync(TOKEN_FILE, TOKEN, { mode: 0o600 });
+					fs.writeFileSync(TOKEN_FILE, Token, { mode: 0o600 });
 					chmodOwnerOnly(TOKEN_FILE);
 				} catch (e) {
 					/* best effort */
@@ -809,7 +810,7 @@ function startServer() {
 		}
 		const info = JSON.stringify({
 			type: "server-started",
-			port: Number(PORT),
+			port: Number(Port),
 			host: HOST,
 			url_host: URL_HOST,
 			url: companionUrl(),
@@ -833,18 +834,18 @@ function startServer() {
 				process.exit(1);
 			}
 			triedFallback = true;
-			PORT = randomPort();
+			Port = randomPort();
 			if (tokenSource === "file") {
-				TOKEN = generateToken();
+				Token = generateToken();
 				tokenSource = "generated-fallback";
 			}
-			server.listen(PORT, HOST, onListen);
+			server.listen(Port, HOST, onListen);
 		} else {
 			console.error("Server failed to bind:", err.message);
 			process.exit(1);
 		}
 	});
-	server.listen(PORT, HOST, onListen);
+	server.listen(Port, HOST, onListen);
 }
 
 if (require.main === module) {

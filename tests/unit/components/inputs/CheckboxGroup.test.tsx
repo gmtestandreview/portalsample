@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { FormikConfig, FormikValues } from "formik";
 import { Form, Formik } from "formik";
 import { describe, expect, it, vi } from "vitest";
-import CheckboxGroup from "@/components/Inputs/CheckboxGroup";
+import CheckboxGroup from "@/components/Inputs/CheckboxGroup/index.tsx";
 
 interface FormikHarnessProps<TValues extends FormikValues> {
 	readonly initialValues: TValues;
@@ -93,7 +93,7 @@ describe("CheckboxGroup", () => {
 					options={contactOptions}
 					inlineHelp="The selected method is used for updates"
 					inlineHelpTitle="Choosing a contact method"
-					displayHorizontally
+					displayHorizontally={true}
 					onChange={onChange}
 				/>
 			</FormikHarness>,
@@ -134,7 +134,7 @@ describe("CheckboxGroup", () => {
 					name="contactMethod"
 					legend="Contact method"
 					options={contactOptions}
-					isSummary
+					isSummary={true}
 					containerClassName="summary-container"
 					className="summary-value"
 				/>
@@ -153,7 +153,7 @@ describe("CheckboxGroup", () => {
 					name="contactMethod"
 					legend="Contact method"
 					options={contactOptions}
-					isSummary
+					isSummary={true}
 				/>
 			</FormikHarness>,
 		);
@@ -169,7 +169,7 @@ describe("CheckboxGroup", () => {
 					name="contactMethod"
 					legend="Contact method"
 					options={contactOptions}
-					isSummary
+					isSummary={true}
 				/>
 			</FormikHarness>,
 		);

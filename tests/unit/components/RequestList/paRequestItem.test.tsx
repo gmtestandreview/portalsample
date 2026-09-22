@@ -8,16 +8,16 @@ import {
 import userEvent from "@testing-library/user-event";
 import type React from "react";
 import { MemoryRouter, useLocation } from "react-router";
-import type * as WebApiClientModule from "@/api/web-api-client";
+import type * as WebApiClientModule from "@/api/web-api-client.ts";
 import {
 	ApplicationType,
 	type PatternApprovalDashboardDetailsDto,
-} from "@/api/web-api-client";
-import PaRequestItem from "@/components/RequestList/paRequestItem";
-import { DashboardTab } from "@/components/SearchFilter/types";
-import { PaDashboardItemStatus } from "@/routes/common/enums";
-import type * as NotificationModule from "@/storage/notification";
-import { NotificationSeverity } from "@/storage/types";
+} from "@/api/web-api-client.ts";
+import PaRequestItem from "@/components/RequestList/paRequestItem.tsx";
+import { DashboardTab } from "@/components/SearchFilter/types.ts";
+import { PaDashboardItemStatus } from "@/routes/common/enums.ts";
+import type * as NotificationModule from "@/storage/notification.ts";
+import { NotificationSeverity } from "@/storage/types.ts";
 
 const mocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn(),
@@ -140,7 +140,7 @@ describe("PaRequestItem", () => {
 			"Application item/view details",
 		);
 
-		await user.click(screen.getByRole("button", { name: /messages/i }));
+		await user.click(screen.getByRole("button", { name: /messages/iu }));
 		expect(
 			screen.getByRole("status", { name: "Current route" }),
 		).toHaveTextContent("/ta/PA-2024-0001/manage?tab=messages");
@@ -204,7 +204,7 @@ describe("PaRequestItem", () => {
 			screen.getByRole("heading", { name: "Draft request for Quote" }),
 		).toBeInTheDocument();
 		expect(
-			screen.queryByRole("button", { name: /messages/i }),
+			screen.queryByRole("button", { name: /messages/iu }),
 		).not.toBeInTheDocument();
 
 		await user.click(

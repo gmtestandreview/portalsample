@@ -1,5 +1,5 @@
 import { Col, Row } from "react-bootstrap";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
 
 const NMIContactDetails = (props: {
 	quotationData: RequestForQuoteDetails | undefined;

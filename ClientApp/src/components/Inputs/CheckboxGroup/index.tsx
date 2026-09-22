@@ -3,10 +3,10 @@ import { useField } from "formik";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import Details from "../../forms/Details";
-import SummaryDisplay from "../../SummaryDisplay";
-import Checkbox from "../Checkbox";
-import type { CheckboxGroupProps } from "./types";
+import Details from "../../forms/Details/index.tsx";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import Checkbox from "../Checkbox/index.tsx";
+import type { CheckboxGroupProps } from "./types.ts";
 
 const CheckboxGroup = <T,>(
 	props: CheckboxGroupProps<T> & FieldHookConfig<T>,
@@ -39,7 +39,7 @@ const CheckboxGroup = <T,>(
 				(x) => x.value === _field.value,
 			);
 			const summaryLabel =
-				currentFieldIndex !== -1 ? options[currentFieldIndex].label : "";
+				currentFieldIndex === -1 ? "" : options[currentFieldIndex].label;
 
 			if (currentFieldIndex < 0) {
 				return null;

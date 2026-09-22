@@ -1,10 +1,10 @@
 import * as yup from "yup";
-import "../../../validationSchemas/yupExtensions";
-import addressSchema from "../../../validationSchemas/addressValidation";
+import "../../../validationSchemas/yupExtensions/index.ts";
+import addressSchema from "../../../validationSchemas/addressValidation.ts";
 import {
 	nullableString,
 	websiteUrlSchema,
-} from "../../../validationSchemas/common";
+} from "../../../validationSchemas/common.ts";
 
 const branchSubmitValidation = yup.object({
 	businessOrTradingName: nullableString("Business/trading name")

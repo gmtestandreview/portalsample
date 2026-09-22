@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent } from "storybook/test";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { Checkbox } from "./Checkbox";
-import { CheckboxGroup } from "./CheckboxGroup";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
+import { Checkbox } from "./Checkbox.tsx";
+import { CheckboxGroup } from "./CheckboxGroup.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

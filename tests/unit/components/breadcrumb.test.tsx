@@ -1,7 +1,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import CustomBreadcrumb from "../../../ClientApp/src/components/Breadcrumb";
-import { renderWithProviders } from "../helpers/renderWithProviders";
+import CustomBreadcrumb from "../../../ClientApp/src/components/Breadcrumb/index.tsx";
+import { renderWithProviders } from "../helpers/renderWithProviders.tsx";
 
 describe("CustomBreadcrumb", () => {
 	it("marks the final breadcrumb item as the current page", () => {
@@ -16,9 +16,9 @@ describe("CustomBreadcrumb", () => {
 		);
 
 		expect(
-			screen.getByRole("navigation", { name: /breadcrumb/i }),
+			screen.getByRole("navigation", { name: /breadcrumb/iu }),
 		).toBeInTheDocument();
-		expect(screen.getByText(/request for quote/i)).toHaveAttribute(
+		expect(screen.getByText(/request for quote/iu)).toHaveAttribute(
 			"aria-current",
 			"page",
 		);

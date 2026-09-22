@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import ExternalLinkIcon from "./ExternalLinkIcon";
+import ExternalLinkIcon from "./ExternalLinkIcon.tsx";
 
 const meta = {
 	title: "Components/Icons",

@@ -1,12 +1,12 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import StatusPill from "../../../../ClientApp/src/components/Pill/StatusPill";
+import StatusPill from "../../../../ClientApp/src/components/Pill/StatusPill.tsx";
 import {
 	DashboardItemStatus,
 	PaDashboardItemStatus,
 	QuoteStatus,
 	ReportStatus,
-} from "../../../../ClientApp/src/routes/common/enums";
+} from "../../../../ClientApp/src/routes/common/enums.ts";
 
 describe("StatusPill", () => {
 	describe("DashboardItemStatus", () => {

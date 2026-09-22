@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Cell, Column, Row, Table, TableBody, TableHeader } from "./Table";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Cell, Column, Row, Table, TableBody, TableHeader } from "./Table.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],
@@ -18,7 +18,7 @@ type Story = StoryFn<typeof Table>;
 export const Example: Story = (args) => (
 	<Table aria-label="Files" {...args}>
 		<TableHeader>
-			<Column isRowHeader>Name</Column>
+			<Column isRowHeader={true}>Name</Column>
 			<Column>Type</Column>
 			<Column>Date Modified</Column>
 		</TableHeader>

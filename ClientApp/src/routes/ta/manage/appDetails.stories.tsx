@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Route, Routes } from "react-router";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import ApplicationDetails from "./appDetails";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import ApplicationDetails from "./appDetails.tsx";
 
 /**
  * `ApplicationDetails` is the "Details" tab of the type-approval management surface. It

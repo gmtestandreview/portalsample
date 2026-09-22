@@ -7,11 +7,11 @@ import {
 	SelectValue,
 	type ValidationResult,
 } from "react-aria-components/Select";
-import { Button } from "../Buttons/AriaButton/Button";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
-import { DropdownItem, DropdownListBox } from "./ListBox";
-import { ChevronDown } from "./NmiIcon";
-import { Popover } from "./Popover";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form.tsx";
+import { DropdownItem, DropdownListBox } from "./ListBox.tsx";
+import { ChevronDown } from "./NmiIcon.tsx";
+import { Popover } from "./Popover.tsx";
 import "./Select.css";
 
 export interface SelectProps<T, M extends "single" | "multiple">
@@ -42,7 +42,7 @@ export function Select<T, M extends "single" | "multiple" = "single">({
 			</Button>
 			{description && <Description>{description}</Description>}
 			<FieldError>{errorMessage}</FieldError>
-			<Popover hideArrow className="select-popover">
+			<Popover hideArrow={true} className="select-popover">
 				<SelectListBox items={items}>{children}</SelectListBox>
 			</Popover>
 		</AriaSelect>

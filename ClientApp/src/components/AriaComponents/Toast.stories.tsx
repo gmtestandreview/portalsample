@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor, within } from "storybook/test";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Button } from "../Buttons/AriaButton/Button";
-import { MyToastRegion } from "./Toast";
-import { queue } from "./ToastQueue";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { MyToastRegion } from "./Toast.tsx";
+import { queue } from "./ToastQueue.ts";
 
 interface ToastStoryArgs {
 	title: string;
@@ -66,8 +66,7 @@ export const Example: Story = {
 	parameters: {
 		docs: {
 			source: {
-				transform: () => {
-					return `
+				transform: () => `
 const queue = new ToastQueue<MyToastContent>();
 
 function MyToast(props: ToastProps<MyToastContent>) {
@@ -102,8 +101,7 @@ function MyToastRegion() {
   )}>
     {args.buttonLabel}
   </Button>
-</>`;
-				},
+</>`,
 			},
 		},
 	},

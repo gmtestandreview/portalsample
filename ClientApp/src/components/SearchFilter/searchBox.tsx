@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Button, Form, InputGroup } from "react-bootstrap";
-import type { SearchBoxProps } from "./searchBoxProps";
+import type { SearchBoxProps } from "./searchBoxProps.ts";
 
 const SearchBox = (props: SearchBoxProps) => {
 	const {

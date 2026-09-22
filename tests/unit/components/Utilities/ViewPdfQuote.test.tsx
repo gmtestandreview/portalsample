@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { RequestForQuoteDetails } from "@/api/web-api-client";
-import ViewPdfQuote from "@/components/Utilities/ViewPdfQuote";
+import type { RequestForQuoteDetails } from "@/api/web-api-client.ts";
+import ViewPdfQuote from "@/components/Utilities/ViewPdfQuote.tsx";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -63,7 +63,7 @@ describe("ViewPdfQuote", () => {
 		acquireTokenSilentMock.mockResolvedValue({ accessToken: "test-token" });
 		msalContext.instance.acquireTokenSilent = acquireTokenSilentMock;
 		helperMocks.getQuotationFileDetails.mockResolvedValue({
-			fileSizeBytes: 1234567,
+			fileSizeBytes: 1_234_567,
 			fileData: "base64data",
 			mimeType: "application/pdf",
 			filename: "quote.pdf",
@@ -86,7 +86,7 @@ describe("ViewPdfQuote", () => {
 
 		await waitFor(() => {
 			expect(
-				screen.getByRole("button", { name: /Download Quote/i }),
+				screen.getByRole("button", { name: /Download Quote/iu }),
 			).toBeInTheDocument();
 		});
 
@@ -95,8 +95,8 @@ describe("ViewPdfQuote", () => {
 			mockQuotationData,
 			false, // size-only flag
 		);
-		expect(helperMocks.getFileSize).toHaveBeenCalledWith(1234567);
-		expect(screen.getByText(/1\.2 MB/)).toBeInTheDocument();
+		expect(helperMocks.getFileSize).toHaveBeenCalledWith(1_234_567);
+		expect(screen.getByText(/1\.2 MB/u)).toBeInTheDocument();
 		expect(defaultProps.setFileError).toHaveBeenCalledWith(false);
 	});
 
@@ -129,10 +129,10 @@ describe("ViewPdfQuote", () => {
 
 		render(<ViewPdfQuote {...defaultProps} setIsLoading={setIsLoading} />);
 		await waitFor(() =>
-			screen.getByRole("button", { name: /Download Quote/i }),
+			screen.getByRole("button", { name: /Download Quote/iu }),
 		);
 
-		await user.click(screen.getByRole("button", { name: /Download Quote/i }));
+		await user.click(screen.getByRole("button", { name: /Download Quote/iu }));
 
 		await waitFor(() => {
 			expect(helperMocks.getQuotationFileDetails).toHaveBeenCalledWith(
@@ -162,11 +162,11 @@ describe("ViewPdfQuote", () => {
 			/>,
 		);
 		await waitFor(() =>
-			screen.getByRole("button", { name: /Download Quote/i }),
+			screen.getByRole("button", { name: /Download Quote/iu }),
 		);
 
 		acquireTokenSilentMock.mockRejectedValueOnce(new Error("Network failure"));
-		await user.click(screen.getByRole("button", { name: /Download Quote/i }));
+		await user.click(screen.getByRole("button", { name: /Download Quote/iu }));
 
 		await waitFor(() => {
 			expect(setFileError).toHaveBeenCalledWith(true);
@@ -179,15 +179,15 @@ describe("ViewPdfQuote", () => {
 		const user = userEvent.setup();
 
 		helperMocks.getQuotationFileDetails
-			.mockResolvedValueOnce({ fileSizeBytes: 1234567 }) // size fetch on mount
-			.mockResolvedValueOnce({ fileSizeBytes: 1234567 }); // click fetch — no fileData
+			.mockResolvedValueOnce({ fileSizeBytes: 1_234_567 }) // size fetch on mount
+			.mockResolvedValueOnce({ fileSizeBytes: 1_234_567 }); // click fetch — no fileData
 
 		render(<ViewPdfQuote {...defaultProps} />);
 		await waitFor(() =>
-			screen.getByRole("button", { name: /Download Quote/i }),
+			screen.getByRole("button", { name: /Download Quote/iu }),
 		);
 
-		await user.click(screen.getByRole("button", { name: /Download Quote/i }));
+		await user.click(screen.getByRole("button", { name: /Download Quote/iu }));
 
 		await waitFor(() => {
 			expect(helperMocks.openInNewTab).not.toHaveBeenCalled();
@@ -210,7 +210,7 @@ describe("ViewPdfQuote", () => {
 			<ViewPdfQuote {...defaultProps} setFileError={firstSetter} />,
 		);
 		await waitFor(() =>
-			screen.getByRole("button", { name: /Download Quote/i }),
+			screen.getByRole("button", { name: /Download Quote/iu }),
 		);
 		expect(firstSetter).not.toHaveBeenCalledWith(true);
 

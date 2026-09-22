@@ -29,7 +29,7 @@ const BackToDashboardButton = (props: BackToDashboardButtonProps) => {
 			<Link
 				data-testid="back-button"
 				to="/dashboard"
-				replace
+				replace={true}
 				className={`btn btn-tertiary ${className}`}
 			>
 				<i className="icon-back me-1" aria-hidden="true" />

@@ -2,17 +2,17 @@ import { useMsal } from "@azure/msal-react";
 import { useEffect, useState } from "react";
 import { Col } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { QuoteClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote";
-import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms";
-import AppLogger from "../../instrumentation/AppLogger";
-import NMIContactDetails from "../quotation/nMIContactDetails";
-import QuoteDetails from "../quotation/quoteDetails";
-import type { QuotationSummaryProps } from "./types";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import { QuoteClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote.tsx";
+import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import NmiContactDetails from "../quotation/nMIContactDetails.tsx";
+import QuoteDetails from "../quotation/quoteDetails.tsx";
+import type { QuotationSummaryProps } from "./types.ts";
 
 const QuotationSummary = (props: QuotationSummaryProps) => {
 	const { isSummary, cRMQuoteRequestId } = props;
@@ -87,16 +87,16 @@ const QuotationSummary = (props: QuotationSummaryProps) => {
 					</div>
 				</Col>
 			</Row>
-			<NMIContactDetails quotationData={quotationData} />
+			<NmiContactDetails quotationData={quotationData} />
 		</>
 	);
 
 	return (
 		<>
 			{isLoading && !isSummary && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			{/* <Container> */}
 			{renderQuotationSummary()}

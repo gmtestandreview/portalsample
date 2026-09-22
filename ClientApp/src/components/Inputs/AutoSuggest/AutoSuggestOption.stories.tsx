@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { ListBox } from "react-aria-components";
 import { expect } from "storybook/test";
-import AutoSuggestOption from "./AutoSuggestOption";
+import AutoSuggestOption from "./AutoSuggestOption.tsx";
 
 /**
  * `AutoSuggestOption` is a single suggestion row for the `AutoSuggest` combobox. It

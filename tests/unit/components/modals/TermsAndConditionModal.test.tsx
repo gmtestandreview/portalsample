@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import TermsAndConditionModal from "../../../../ClientApp/src/components/modals/TermsAndCondition/index";
+import TermsAndConditionModal from "../../../../ClientApp/src/components/modals/TermsAndCondition/index.tsx";
 
 // ── Mock external dependencies ──────────────────────────────────────────────
 
@@ -51,7 +51,7 @@ vi.mock("../../../../ClientApp/src/terms-config.json", () => ({
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../../../ClientApp/src/authentication/hooks";
+} from "../../../../ClientApp/src/authentication/hooks.tsx";
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
@@ -112,7 +112,7 @@ describe("TermsAndConditionModal", () => {
 
 		render(<TermsAndConditionModal />);
 		fireEvent.click(
-			screen.getByRole("button", { name: /agree and continue/i }),
+			screen.getByRole("button", { name: /agree and continue/iu }),
 		);
 
 		await waitFor(() => {
@@ -131,7 +131,7 @@ describe("TermsAndConditionModal", () => {
 
 		render(<TermsAndConditionModal />);
 		fireEvent.click(
-			screen.getByRole("button", { name: /agree and continue/i }),
+			screen.getByRole("button", { name: /agree and continue/iu }),
 		);
 
 		await waitFor(() => {
@@ -150,7 +150,7 @@ describe("TermsAndConditionModal", () => {
 		render(<TermsAndConditionModal />);
 
 		expect(
-			screen.getByRole("heading", { name: /welcome, solo/i }),
+			screen.getByRole("heading", { name: /welcome, solo/iu }),
 		).toBeInTheDocument();
 	});
 
@@ -166,7 +166,7 @@ describe("TermsAndConditionModal", () => {
 		render(<TermsAndConditionModal />);
 
 		expect(
-			screen.getByRole("button", { name: /exit portal/i }),
+			screen.getByRole("button", { name: /exit portal/iu }),
 		).toHaveAttribute("href", "/sign-out");
 	});
 
@@ -182,7 +182,7 @@ describe("TermsAndConditionModal", () => {
 
 		render(<TermsAndConditionModal />);
 		fireEvent.click(
-			screen.getByRole("button", { name: /agree and continue/i }),
+			screen.getByRole("button", { name: /agree and continue/iu }),
 		);
 
 		await waitFor(() => {
@@ -202,7 +202,7 @@ describe("TermsAndConditionModal", () => {
 
 		render(<TermsAndConditionModal />);
 		fireEvent.click(
-			screen.getByRole("button", { name: /agree and continue/i }),
+			screen.getByRole("button", { name: /agree and continue/iu }),
 		);
 
 		await waitFor(() => {
@@ -222,7 +222,7 @@ describe("TermsAndConditionModal", () => {
 
 		render(<TermsAndConditionModal />);
 		fireEvent.click(
-			screen.getByRole("button", { name: /agree and continue/i }),
+			screen.getByRole("button", { name: /agree and continue/iu }),
 		);
 
 		await waitFor(() => {
@@ -248,13 +248,13 @@ describe("TermsAndConditionModal", () => {
 
 		render(<TermsAndConditionModal />);
 		fireEvent.click(
-			screen.getByRole("button", { name: /agree and continue/i }),
+			screen.getByRole("button", { name: /agree and continue/iu }),
 		);
 
 		await waitFor(() => {
 			expect(screen.getByRole("alert")).toBeInTheDocument();
 			expect(
-				screen.getByText(/error found trying to save/i),
+				screen.getByText(/error found trying to save/iu),
 			).toBeInTheDocument();
 		});
 	});

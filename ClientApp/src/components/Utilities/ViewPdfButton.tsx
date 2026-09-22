@@ -1,8 +1,8 @@
 import { Button } from "react-bootstrap";
 import "../../styles/media-print.scss";
 
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
-import BlockUISpinner from "../BlockUISpinner";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
+import BlockUiSpinner from "../BlockUISpinner/index.tsx";
 
 export interface ViewPdfButtonProps {
 	text?: string;
@@ -41,9 +41,9 @@ const ViewPdfButton = (props: ViewPdfButtonProps) => {
 					</span>
 				</>
 			) : (
-				<BlockUISpinner partial>
+				<BlockUiSpinner partial={true}>
 					<p>Loading data...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 		</div>
 	);

@@ -1,23 +1,23 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import type { FormikErrors, FormikProps } from "formik";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
-import { PatternApprovalRequiredValues } from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client.ts";
+import { PatternApprovalRequiredValues } from "../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	FileStatus,
 	ValidationMessages,
-} from "../../../../ClientApp/src/routes/ta/types";
-import { FormikWrapper } from "../../helpers/formik";
+} from "../../../../ClientApp/src/routes/ta/types.ts";
+import { FormikWrapper } from "../../helpers/formik.tsx";
 import type {
 	ClientMethodMocks,
 	ClientMock,
-} from "../../helpers/mockApiClient";
+} from "../../helpers/mockApiClient.ts";
 import {
 	DEFAULT_ACCESS_TOKEN,
 	msalMocks,
 	resetMsalMock,
-} from "../../helpers/mockMsal";
-import { renderWithRouter } from "../../helpers/renderWithRouter";
+} from "../../helpers/mockMsal.ts";
+import { renderWithRouter } from "../../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	accountContext: vi.fn(),
@@ -42,7 +42,7 @@ const attachmentControl = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -51,7 +51,7 @@ vi.mock(
 	"../../../../ClientApp/src/api/web-api-client",
 	async (importOriginal) => {
 		const { createClientMockFor, webApiClientModuleMock } = await import(
-			"../../helpers/mockApiClient"
+			"../../helpers/mockApiClient.ts"
 		);
 		const original = await importOriginal<typeof WebApiClient>();
 
@@ -135,7 +135,7 @@ const renderDocs = async ({
 	values = defaultValues,
 }: RenderOptions = {}) => {
 	const SupportingDocuments = (
-		await import("../../../../ClientApp/src/routes/ta/supportingDocuments")
+		await import("../../../../ClientApp/src/routes/ta/supportingDocuments.tsx")
 	).default;
 
 	const componentProps = {
@@ -185,7 +185,7 @@ const alertItems = () =>
 
 describe("supporting documents", () => {
 	beforeEach(async () => {
-		await import("../../../../ClientApp/src/api/web-api-client");
+		await import("../../../../ClientApp/src/api/web-api-client.ts");
 
 		resetMsalMock();
 		formik = undefined;
@@ -656,7 +656,7 @@ describe("supporting documents", () => {
 			await renderDocs();
 
 			expect(
-				screen.getByText(/you may be asked to provide additional documents/),
+				screen.getByText(/you may be asked to provide additional documents/u),
 			).toBeInTheDocument();
 			expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
 				"Upload one or more supporting documents",
@@ -667,7 +667,7 @@ describe("supporting documents", () => {
 			await renderDocs({ props: { suppressDocChanges: true } });
 
 			expect(
-				screen.getByText(/Documents cannot be changed once committed/),
+				screen.getByText(/Documents cannot be changed once committed/u),
 			).toBeInTheDocument();
 		});
 

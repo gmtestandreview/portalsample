@@ -10,6 +10,7 @@
  *        node drawio-to-png.mjs --renderer=cli|viewer|auto <input.drawio> [output.png]
  */
 
+import process from "node:process";
 import { spawnSync } from "child_process";
 import { readdirSync, readFileSync, statSync, writeFileSync } from "fs";
 import { basename, dirname, join, resolve } from "path";
@@ -20,9 +21,9 @@ import { inflateRawSync } from "zlib";
 function buildViewerHtml(rawFileContent) {
 	// Escape for embedding in a JS template literal
 	const escaped = rawFileContent
-		.replace(/\\/g, "\\\\")
-		.replace(/`/g, "\\`")
-		.replace(/\$/g, "\\$");
+		.replace(/\\/gu, "\\\\")
+		.replace(/`/gu, "\\`")
+		.replace(/\$/gu, "\\$");
 
 	// The official draw.io viewer (viewer-static.min.js) contains the full mxGraph
 	// rendering engine — it handles orthogonal edge routing, all shape types,
@@ -113,7 +114,7 @@ function extractMxGraphModelXml(inputXml) {
 		return trimmed;
 	}
 
-	const diagramMatch = trimmed.match(/<diagram\b[^>]*>([\s\S]*?)<\/diagram>/i);
+	const diagramMatch = trimmed.match(/<diagram\b[^>]*>([\s\S]*?)<\/diagram>/iu);
 	if (!diagramMatch) {
 		throw new Error(
 			"Unsupported .drawio format: missing <mxGraphModel> or <diagram> content",
@@ -198,7 +199,7 @@ function findDrawioCliPath() {
 		const probe = spawnSync(locator, [name], { encoding: "utf-8" });
 		if (probe.status === 0 && probe.stdout) {
 			const first = probe.stdout
-				.split(/\r?\n/)
+				.split(/\r?\n/u)
 				.map((line) => line.trim())
 				.find(Boolean);
 			if (first) return first;
@@ -233,11 +234,11 @@ async function main() {
 			.filter((f) => f.endsWith(".drawio"))
 			.map((f) => ({
 				input: join(dir, f),
-				output: join(dir, f.replace(/\.drawio$/, ".drawio.png")),
+				output: join(dir, f.replace(/\.drawio$/u, ".drawio.png")),
 			}));
 	} else if (args[0]) {
 		const input = resolve(args[0]);
-		const output = args[1] || input.replace(/\.drawio$/, ".drawio.png");
+		const output = args[1] || input.replace(/\.drawio$/u, ".drawio.png");
 		files = [{ input, output }];
 	} else {
 		console.error("Usage: node drawio-to-png.mjs <input.drawio> [output.png]");
@@ -343,9 +344,9 @@ async function main() {
 			await page.setContent(html, { waitUntil: "domcontentloaded" });
 
 			// Load the official draw.io viewer JS via addScriptTag (more reliable than inline src)
-			const VIEWER_URL = "https://viewer.diagrams.net/js/viewer-static.min.js";
+			const ViewerUrl = "https://viewer.diagrams.net/js/viewer-static.min.js";
 			try {
-				await page.addScriptTag({ url: VIEWER_URL });
+				await page.addScriptTag({ url: ViewerUrl });
 			} catch (scriptErr) {
 				throw new Error(
 					`Failed to load draw.io viewer JS: ${scriptErr.message}`,
@@ -357,7 +358,7 @@ async function main() {
 
 			// Wait for the viewer to finish rendering
 			await page.waitForFunction(() => window.__renderComplete === true, {
-				timeout: 30000,
+				timeout: 30_000,
 			});
 
 			// Check rendering succeeded

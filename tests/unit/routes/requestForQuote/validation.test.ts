@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import "../../../../ClientApp/src/validationSchemas/yupExtensions";
-import { YesNo } from "../../../../ClientApp/src/api/web-api-client";
+import "../../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import { YesNo } from "../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	instrumentAndRequestSaveValidation,
 	instrumentAndRequestSubmitValidation,
 	organisationAndContactSaveValidation,
 	organisationAndContactSubmitValidation,
-} from "../../../../ClientApp/src/routes/requestForQuote/validation";
+} from "../../../../ClientApp/src/routes/requestForQuote/validation.ts";
 
 const validInstrument = {
 	hasSerialNumber: YesNo.Yes,

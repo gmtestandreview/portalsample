@@ -1,11 +1,11 @@
 import { useMsal } from "@azure/msal-react";
 import React, { useEffect } from "react";
 import { Alert } from "react-bootstrap";
-import { LookupClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import InTextLink from "../../components/InTextLink";
-import { isEmptyGuid, isValidGUID } from "../common/helperFunctions";
+import { LookupClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import InTextLink from "../../components/InTextLink/index.tsx";
+import { isEmptyGuid, isValidGUID } from "../common/helperFunctions.ts";
 
 // Define enums for instrument categories and types
 export enum InstrumentCategory {
@@ -30,8 +30,8 @@ interface InstrumentInfoPanelProps {
 
 const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
 	name,
-	selectedInstrumentCategoryId = undefined,
-	selectedInstrumentTypeId = undefined,
+	selectedInstrumentCategoryId,
+	selectedInstrumentTypeId,
 	isNewCustomer = true,
 }) => {
 	const { accounts, instance } = useMsal();
@@ -93,7 +93,7 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
 				<InTextLink
 					href="https://www.industry.gov.au/sites/default/files/2025-07/NMI-credit-application-form.pdf"
 					target="_blank"
-					download
+					download={true}
 				>
 					Download credit check application form
 					<span className="visually-hidden"> Opens in a new tab</span>
@@ -116,9 +116,9 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
 
 	if (isDataLoading) {
 		return (
-			<BlockUISpinner partial>
+			<BlockUiSpinner partial={true}>
 				<p>Loading data...</p>
-			</BlockUISpinner>
+			</BlockUiSpinner>
 		);
 	}
 

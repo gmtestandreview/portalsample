@@ -8,9 +8,9 @@ import {
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
-import type * as HelperFunctionsModule from "../../../ClientApp/src/routes/common/helperFunctions";
+import type * as WebApiClientModule from "../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext.tsx";
+import type * as HelperFunctionsModule from "../../../ClientApp/src/routes/common/helperFunctions.ts";
 
 const mocks: {
 	acquireTokenSilent: ReturnType<typeof vi.fn>;
@@ -216,7 +216,7 @@ vi.mock("../../../ClientApp/src/components/Inputs/SelectInput", () => ({
 					data-readonly={readOnly ? "true" : "false"}
 					onChange={onChange}
 					value={options[0]?.value ?? ""}
-					readOnly
+					readOnly={true}
 				/>
 			</label>
 		);
@@ -551,7 +551,7 @@ describe("workflow step components", () => {
 	it("renders request-for-quote organisation/contact inputs and opens the branch selector", async () => {
 		const OrganisationAndContact = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/organisationAndContact"
+				"../../../ClientApp/src/routes/requestForQuote/organisationAndContact.tsx"
 			)
 		).default;
 
@@ -563,7 +563,7 @@ describe("workflow step components", () => {
 
 		expect(screen.getByText("Organisation details")).toBeInTheDocument();
 		expect(
-			screen.getByText(/This "Recalibration Request" is prefilled/),
+			screen.getByText(/This "Recalibration Request" is prefilled/u),
 		).toBeInTheDocument();
 		fireEvent.click(screen.getByTestId("open-manage-branch-division-button"));
 
@@ -577,7 +577,7 @@ describe("workflow step components", () => {
 	it("opens the branch selector with an empty request id when the route id is omitted", async () => {
 		const OrganisationAndContact = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/organisationAndContact"
+				"../../../ClientApp/src/routes/requestForQuote/organisationAndContact.tsx"
 			)
 		).default;
 
@@ -598,7 +598,7 @@ describe("workflow step components", () => {
 	it("renders request-for-quote instrument/request inputs and dependent lookup options", async () => {
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
@@ -646,7 +646,7 @@ describe("workflow step components", () => {
 		mocks.formikValues.measurementCategory = "no-measurement";
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
@@ -667,7 +667,7 @@ describe("workflow step components", () => {
 		mocks.formikValues.measurementCategory = undefined;
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
@@ -691,13 +691,13 @@ describe("workflow step components", () => {
 		mocks.formikValues = {};
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
 		renderRoute(
 			"/request-for-quote/RFQ-1/instrument-and-request",
-			<InstrumentAndRequest name="instrumentAndRequest" isSummary />,
+			<InstrumentAndRequest name="instrumentAndRequest" isSummary={true} />,
 			"/request-for-quote/:id/*",
 		);
 
@@ -731,13 +731,13 @@ describe("workflow step components", () => {
 			]);
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
 		renderRoute(
 			"/request-for-quote/RFQ-1/instrument-and-request",
-			<InstrumentAndRequest name="instrumentAndRequest" isSummary />,
+			<InstrumentAndRequest name="instrumentAndRequest" isSummary={true} />,
 			"/request-for-quote/:id/*",
 		);
 
@@ -770,7 +770,7 @@ describe("workflow step components", () => {
 			]);
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
@@ -804,7 +804,7 @@ describe("workflow step components", () => {
 	it("handles empty and null measurement category changes", async () => {
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 		renderRoute(
@@ -838,7 +838,7 @@ describe("workflow step components", () => {
 		mocks.msalAccounts.length = 0;
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 
@@ -855,7 +855,7 @@ describe("workflow step components", () => {
 	it("renders request-for-quote summary edit and submitted states", async () => {
 		const RequestForQuoteSummary = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary"
+				"../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary.tsx"
 			)
 		).default;
 
@@ -874,7 +874,7 @@ describe("workflow step components", () => {
 
 		renderRoute(
 			"/request-for-quote/RFQ-1/summary",
-			<RequestForQuoteSummary isSubmitted />,
+			<RequestForQuoteSummary isSubmitted={true} />,
 			"/request-for-quote/:id/*",
 		);
 
@@ -890,7 +890,9 @@ describe("workflow step components", () => {
 
 	it("renders report recipient edit and summary address branches", async () => {
 		const ReportRecipient = (
-			await import("../../../ClientApp/src/routes/acceptQuote/reportRecipient")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/reportRecipient.tsx"
+			)
 		).default;
 		const { unmount } = renderRoute(
 			"/accept-quote/AQ-1/report-recipient",
@@ -921,7 +923,7 @@ describe("workflow step components", () => {
 		});
 		renderRoute(
 			"/accept-quote/AQ-1/report-recipient",
-			<ReportRecipient id="AQ-1" name="reportRecipient" isSummary />,
+			<ReportRecipient id="AQ-1" name="reportRecipient" isSummary={true} />,
 			"/accept-quote/:id/*",
 		);
 
@@ -936,7 +938,7 @@ describe("workflow step components", () => {
 	it("renders delivery/return editable, no-delivery, and summary branches", async () => {
 		const DeliveryAndReturn = (
 			await import(
-				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn"
+				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx"
 			)
 		).default;
 		const { unmount } = renderRoute(
@@ -961,13 +963,13 @@ describe("workflow step components", () => {
 		});
 		renderRoute(
 			"/accept-quote/AQ-1/delivery-and-return",
-			<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary />,
+			<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary={true} />,
 			"/accept-quote/:id/*",
 		);
 
 		await waitFor(() =>
 			expect(
-				screen.getByText(/does not require the delivery or return/),
+				screen.getByText(/does not require the delivery or return/u),
 			).toBeInTheDocument(),
 		);
 	});
@@ -978,7 +980,7 @@ describe("workflow step components", () => {
 		});
 		const DeliveryAndReturn = (
 			await import(
-				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn"
+				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx"
 			)
 		).default;
 
@@ -990,7 +992,7 @@ describe("workflow step components", () => {
 
 		await waitFor(() =>
 			expect(
-				screen.getByText(/does not require the delivery or return/),
+				screen.getByText(/does not require the delivery or return/u),
 			).toBeInTheDocument(),
 		);
 		expect(screen.getByRole("status")).toHaveClass("alert-info");
@@ -1024,13 +1026,17 @@ describe("workflow step components", () => {
 			});
 			const DeliveryAndReturn = (
 				await import(
-					"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn"
+					"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx"
 				)
 			).default;
 
 			renderRoute(
 				"/accept-quote/AQ-1/delivery-and-return",
-				<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary />,
+				<DeliveryAndReturn
+					id="AQ-1"
+					name="deliveryAndReturn"
+					isSummary={true}
+				/>,
 				"/accept-quote/:id/*",
 			);
 
@@ -1050,13 +1056,13 @@ describe("workflow step components", () => {
 		});
 		const DeliveryAndReturn = (
 			await import(
-				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn"
+				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx"
 			)
 		).default;
 
 		renderRoute(
 			"/accept-quote/AQ-1/delivery-and-return",
-			<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary />,
+			<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary={true} />,
 			"/accept-quote/:id/*",
 		);
 
@@ -1071,7 +1077,7 @@ describe("workflow step components", () => {
 		);
 		const DeliveryAndReturn = (
 			await import(
-				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn"
+				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx"
 			)
 		).default;
 		const { unmount } = renderRoute(
@@ -1093,7 +1099,7 @@ describe("workflow step components", () => {
 		mocks.getLookup.mockRejectedValueOnce(new Error("lookup failed"));
 		const InstrumentAndRequest = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest"
+				"../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest.tsx"
 			)
 		).default;
 		renderRoute(
@@ -1112,7 +1118,9 @@ describe("workflow step components", () => {
 
 	it("renders payment details prepaid, postpaid, and summary contact sections", async () => {
 		const PaymentDetails = (
-			await import("../../../ClientApp/src/routes/acceptQuote/paymentDetails")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/paymentDetails.tsx"
+			)
 		).default;
 		const { unmount } = renderRoute(
 			"/accept-quote/AQ-1/payment-details",
@@ -1121,7 +1129,7 @@ describe("workflow step components", () => {
 		);
 
 		await waitFor(() =>
-			expect(screen.getByText(/Prepayment required/)).toBeInTheDocument(),
+			expect(screen.getByText(/Prepayment required/u)).toBeInTheDocument(),
 		);
 		expect(
 			screen.getByText("Purchase Order (PO) number (optional)"),
@@ -1133,7 +1141,7 @@ describe("workflow step components", () => {
 		});
 		renderRoute(
 			"/accept-quote/AQ-1/payment-details",
-			<PaymentDetails id="AQ-1" name="paymentDetails" isSummary />,
+			<PaymentDetails id="AQ-1" name="paymentDetails" isSummary={true} />,
 			"/accept-quote/:id/*",
 		);
 
@@ -1146,7 +1154,9 @@ describe("workflow step components", () => {
 	it("logs payment and report recipient load failures", async () => {
 		mocks.getPaymentDetails.mockRejectedValueOnce(new Error("payment failed"));
 		const PaymentDetails = (
-			await import("../../../ClientApp/src/routes/acceptQuote/paymentDetails")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/paymentDetails.tsx"
+			)
 		).default;
 		const { unmount } = renderRoute(
 			"/accept-quote/AQ-1/payment-details",
@@ -1167,7 +1177,9 @@ describe("workflow step components", () => {
 			new Error("recipient failed"),
 		);
 		const ReportRecipient = (
-			await import("../../../ClientApp/src/routes/acceptQuote/reportRecipient")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/reportRecipient.tsx"
+			)
 		).default;
 		renderRoute(
 			"/accept-quote/AQ-2/report-recipient",
@@ -1199,17 +1211,19 @@ describe("workflow step components", () => {
 			},
 		});
 		const ReportRecipient = (
-			await import("../../../ClientApp/src/routes/acceptQuote/reportRecipient")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/reportRecipient.tsx"
+			)
 		).default;
 
 		renderRoute(
 			"/accept-quote/AQ-1/report-recipient",
-			<ReportRecipient id="AQ-1" name="reportRecipient" isSummary />,
+			<ReportRecipient id="AQ-1" name="reportRecipient" isSummary={true} />,
 			"/accept-quote/:id/*",
 		);
 
 		await waitFor(() =>
-			expect(screen.getByText(/PO Box 44/)).toBeInTheDocument(),
+			expect(screen.getByText(/PO Box 44/u)).toBeInTheDocument(),
 		);
 	});
 
@@ -1223,25 +1237,27 @@ describe("workflow step components", () => {
 		});
 		const DeliveryAndReturn = (
 			await import(
-				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn"
+				"../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx"
 			)
 		).default;
 
 		renderRoute(
 			"/accept-quote/AQ-1/delivery-and-return",
-			<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary />,
+			<DeliveryAndReturn id="AQ-1" name="deliveryAndReturn" isSummary={true} />,
 			"/accept-quote/:id/*",
 		);
 
 		await waitFor(() =>
-			expect(screen.getByText(/1 National Circuit/)).toBeInTheDocument(),
+			expect(screen.getByText(/1 National Circuit/u)).toBeInTheDocument(),
 		);
 	});
 
 	it("renders summary-and-accept content and downloads quote terms", async () => {
 		mocks.dashboardNotification = { message: "Saved draft", severity: "info" };
 		const SummaryAndAccept = (
-			await import("../../../ClientApp/src/routes/acceptQuote/summaryAndAccept")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx"
+			)
 		).default;
 
 		renderRoute(
@@ -1259,7 +1275,7 @@ describe("workflow step components", () => {
 		expect(screen.getByText("Alex Tester")).toBeInTheDocument();
 		expect(screen.getByText("Request Owner")).toBeInTheDocument();
 
-		fireEvent.click(screen.getAllByRole("button", { name: /Terms/i })[0]);
+		fireEvent.click(screen.getAllByRole("button", { name: /Terms/iu })[0]);
 
 		await waitFor(() =>
 			expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
@@ -1278,7 +1294,9 @@ describe("workflow step components", () => {
 			new Error("download failed"),
 		);
 		const SummaryAndAccept = (
-			await import("../../../ClientApp/src/routes/acceptQuote/summaryAndAccept")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx"
+			)
 		).default;
 
 		renderRoute(
@@ -1286,7 +1304,7 @@ describe("workflow step components", () => {
 			<SummaryAndAccept
 				id="AQ-2"
 				name=""
-				isSubmitted
+				isSubmitted={true}
 				cRMQuoteRequestId="CRM-2"
 			/>,
 			"/accept-quote/:id/*",
@@ -1298,7 +1316,7 @@ describe("workflow step components", () => {
 				"/submitted-success/AQ-2",
 			),
 		);
-		fireEvent.click(screen.getAllByRole("button", { name: /Terms/i })[0]);
+		fireEvent.click(screen.getAllByRole("button", { name: /Terms/iu })[0]);
 
 		await waitFor(() =>
 			expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
@@ -1311,7 +1329,9 @@ describe("workflow step components", () => {
 
 	it("downloads terms from the acceptance link", async () => {
 		const SummaryAndAccept = (
-			await import("../../../ClientApp/src/routes/acceptQuote/summaryAndAccept")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx"
+			)
 		).default;
 		renderRoute(
 			"/accept-quote/AQ-1/summary-and-accept",
@@ -1320,9 +1340,11 @@ describe("workflow step components", () => {
 		);
 
 		await waitFor(() =>
-			expect(screen.getAllByRole("button", { name: /terms/i })).toHaveLength(2),
+			expect(screen.getAllByRole("button", { name: /terms/iu })).toHaveLength(
+				2,
+			),
 		);
-		fireEvent.click(screen.getAllByRole("button", { name: /terms/i })[1]);
+		fireEvent.click(screen.getAllByRole("button", { name: /terms/iu })[1]);
 
 		await waitFor(() =>
 			expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalled(),
@@ -1351,7 +1373,9 @@ describe("workflow step components", () => {
 			},
 		});
 		const SummaryAndAccept = (
-			await import("../../../ClientApp/src/routes/acceptQuote/summaryAndAccept")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx"
+			)
 		).default;
 
 		const { unmount } = renderRoute(
@@ -1365,7 +1389,7 @@ describe("workflow step components", () => {
 		);
 		expect(screen.getByText("Level 2")).toBeInTheDocument();
 		expect(screen.getByText("Building A")).toBeInTheDocument();
-		fireEvent.click(screen.getAllByRole("button", { name: /Terms/i })[0]);
+		fireEvent.click(screen.getAllByRole("button", { name: /Terms/iu })[0]);
 		await waitFor(() =>
 			expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalled(),
 		);
@@ -1395,7 +1419,9 @@ describe("workflow step components", () => {
 			new Error("summary failed"),
 		);
 		const SummaryAndAccept = (
-			await import("../../../ClientApp/src/routes/acceptQuote/summaryAndAccept")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx"
+			)
 		).default;
 
 		renderRoute(

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import PreApplication from "./preApplication";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import PreApplication from "./preApplication.tsx";
 
 /**
  * `PreApplication` is the pattern/type-approval pre-application landing page. It frames
@@ -31,11 +31,11 @@ export const Default: Story = {
 		await expect(
 			canvas.getByRole("heading", {
 				level: 1,
-				name: /pattern\/type approval/i,
+				name: /pattern\/type approval/iu,
 			}),
 		).toBeVisible();
 		await expect(
-			canvas.getByRole("heading", { name: /what you may need/i }),
+			canvas.getByRole("heading", { name: /what you may need/iu }),
 		).toBeVisible();
 	},
 };

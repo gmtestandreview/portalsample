@@ -1,8 +1,8 @@
 import type React from "react";
 import { Row } from "react-bootstrap";
-import AddressLookup from "../AddressLookup";
-import NumberInput from "../NumberInput";
-import TextInput from "../TextInput";
+import AddressLookup from "../AddressLookup/index.tsx";
+import NumberInput from "../NumberInput/index.tsx";
+import TextInput from "../TextInput/index.tsx";
 
 interface AuthorisedAgentProps {
 	name?: string;
@@ -32,7 +32,7 @@ const AuthorisedAgent: React.FC<AuthorisedAgentProps> = ({
 				name={getName("abn")}
 				key={getName("abn")}
 				format="## ### ### ###"
-				allowLeadingZeros
+				allowLeadingZeros={true}
 				inlineHelp="For Australian manufacturers, enter ABN (Australian Business Number)"
 				isSummary={isSummary}
 			/>

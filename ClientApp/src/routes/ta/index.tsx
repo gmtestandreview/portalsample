@@ -8,24 +8,24 @@ import {
 	ProgressClient,
 	RequestForPatternApprovalClient,
 	type UploadProgress,
-} from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
-import useAccountContext from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import WizardForm from "../../components/forms/WizardForm";
-import type { WizardFormProps } from "../../components/forms/WizardForm/types";
-import WizardStep from "../../components/forms/WizardForm/WizardStep";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import AppLogger from "../../instrumentation/AppLogger";
-import ApplicationAndInstrument from "./applicationAndInstrument";
-import applicationAndInstrumentProps from "./applicationAndInstrumentProps";
-import OrganisationAndContact from "./organisationAndContact";
-import organisationAndContactProps from "./organisationAndContactProps";
-import SummaryAndSubmit from "./summaryAndSubmit";
-import summaryAndSubmitProps from "./summaryAndSubmitProps";
-import SupportingDocuments from "./supportingDocuments";
-import supportingDocumentsProps from "./supportingDocumentsProps";
+} from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import useAccountContext from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import WizardForm from "../../components/forms/WizardForm/index.tsx";
+import type { WizardFormProps } from "../../components/forms/WizardForm/types.ts";
+import WizardStep from "../../components/forms/WizardForm/WizardStep.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import ApplicationAndInstrument from "./applicationAndInstrument.tsx";
+import applicationAndInstrumentProps from "./applicationAndInstrumentProps.ts";
+import OrganisationAndContact from "./organisationAndContact.tsx";
+import organisationAndContactProps from "./organisationAndContactProps.ts";
+import SummaryAndSubmit from "./summaryAndSubmit.tsx";
+import summaryAndSubmitProps from "./summaryAndSubmitProps.ts";
+import SupportingDocuments from "./supportingDocuments.tsx";
+import supportingDocumentsProps from "./supportingDocumentsProps.ts";
 
 const bannerTitle = "Pattern/type approval - Application";
 
@@ -181,9 +181,9 @@ const ApplicationForTypeApproval = () => {
 			if (uploadIdRef.current) {
 				startLongPolling(uploadIdRef.current);
 			}
-			const clientPA = new RequestForPatternApprovalClient();
-			clientPA.setAuthToken(token);
-			const result = await clientPA.addDocuments(
+			const clientPa = new RequestForPatternApprovalClient();
+			clientPa.setAuthToken(token);
+			const result = await clientPa.addDocuments(
 				id,
 				null,
 				uploadId,
@@ -232,11 +232,7 @@ const ApplicationForTypeApproval = () => {
 	};
 
 	const accountDetails: AccountDetails = account!.details!;
-	return !statuses ? (
-		<BlockUISpinner>
-			<p>Loading...</p>
-		</BlockUISpinner>
-	) : (
+	return statuses ? (
 		<WizardForm {...applicationForTypeApprovalProps}>
 			<WizardStep
 				{...organisationAndContactProps(
@@ -300,6 +296,10 @@ const ApplicationForTypeApproval = () => {
 				<SummaryAndSubmit name="" />
 			</WizardStep>
 		</WizardForm>
+	) : (
+		<BlockUiSpinner>
+			<p>Loading...</p>
+		</BlockUiSpinner>
 	);
 };
 

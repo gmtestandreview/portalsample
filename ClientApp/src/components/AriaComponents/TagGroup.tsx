@@ -8,9 +8,9 @@ import {
 	type TagListProps,
 	type TagProps,
 } from "react-aria-components/TagGroup";
-import { Description, Label } from "../forms/AriaForm/Form";
-import { Text } from "./Content";
-import { X } from "./NmiIcon";
+import { Description, Label } from "../forms/AriaForm/Form.tsx";
+import { Text } from "./Content.tsx";
+import { X } from "./NmiIcon.tsx";
 import "./TagGroup.css";
 
 export interface TagGroupProps<T>

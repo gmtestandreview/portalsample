@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
-import { NotificationSeverity } from "../../storage/types";
-import NotificationMessage from "./NotificationMessage";
+import { NotificationSeverity } from "../../storage/types.ts";
+import NotificationMessage from "./NotificationMessage.tsx";
 
 /**
  * NotificationMessage Component Storybook Configuration
@@ -78,7 +78,7 @@ export const DismissibleError: Story = {
 		onClose: fn(),
 	},
 	play: async ({ canvas }) => {
-		const closeButton = canvas.getByRole("button", { name: /close/i });
+		const closeButton = canvas.getByRole("button", { name: /close/iu });
 		await expect(closeButton).toBeVisible();
 	},
 };

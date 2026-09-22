@@ -1,6 +1,6 @@
 import { ListBox } from "react-aria-components/ComboBox";
-import AutoSuggestOption from "./AutoSuggestOption";
-import type { AutoSuggestOptionsProps } from "./types";
+import AutoSuggestOption from "./AutoSuggestOption.tsx";
+import type { AutoSuggestOptionsProps } from "./types.ts";
 
 function AutoSuggestOptions<T>(props: Readonly<AutoSuggestOptionsProps<T>>) {
 	const { id, options, selectedOptionId } = props;

@@ -5,7 +5,7 @@ import {
 	FormStepStatus,
 	ServiceType,
 	YesNo,
-} from "../../../ClientApp/src/api/web-api-client";
+} from "../../../ClientApp/src/api/web-api-client.ts";
 import {
 	buildAcceptQuoteStatuses,
 	buildAcceptQuoteSummary,
@@ -17,10 +17,10 @@ import {
 	buildPaymentDetails,
 	buildReportRecipient,
 	buildRfqSummary,
-} from "./mock-builders";
-import { failureKey } from "./mock-failure";
-import type { ScenarioState } from "./scenario-state";
-import { installTypeApprovalMockApi } from "./type-approval-api";
+} from "./mock-builders.ts";
+import { failureKey } from "./mock-failure.ts";
+import type { ScenarioState } from "./scenario-state.ts";
+import { installTypeApprovalMockApi } from "./type-approval-api.ts";
 
 const defaultContact = {
 	firstName: "Test",

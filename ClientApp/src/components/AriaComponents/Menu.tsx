@@ -15,9 +15,9 @@ import {
 	Separator,
 	type SubmenuTriggerProps,
 } from "react-aria-components/Menu";
-import { Text } from "./Content";
-import { Check, ChevronRight, Dot } from "./NmiIcon";
-import { Popover } from "./Popover";
+import { Text } from "./Content.tsx";
+import { Check, ChevronRight, Dot } from "./NmiIcon.tsx";
+import { Popover } from "./Popover.tsx";
 import "./Menu.css";
 
 export function MenuTrigger(props: MenuTriggerProps) {
@@ -73,7 +73,7 @@ export function SubmenuTrigger(props: SubmenuTriggerProps) {
 	return (
 		<AriaSubmenuTrigger {...props}>
 			{trigger}
-			<Popover hideArrow offset={-2} crossOffset={-4}>
+			<Popover hideArrow={true} offset={-2} crossOffset={-4}>
 				{menu}
 			</Popover>
 		</AriaSubmenuTrigger>

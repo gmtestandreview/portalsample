@@ -22,7 +22,7 @@ describe("TrustedTypes", () => {
 			globalThis as { trustedTypes?: { createPolicy: typeof createPolicy } }
 		).trustedTypes = { createPolicy };
 		const { TrustedTypes } = await import(
-			"../../../ClientApp/src/trustedtypes"
+			"../../../ClientApp/src/trustedtypes.ts"
 		);
 
 		TrustedTypes.createTrustedTypePolicy();
@@ -45,7 +45,7 @@ describe("TrustedTypes", () => {
 
 	it("does nothing when trusted types are unavailable", async () => {
 		const { TrustedTypes } = await import(
-			"../../../ClientApp/src/trustedtypes"
+			"../../../ClientApp/src/trustedtypes.ts"
 		);
 
 		expect(() => TrustedTypes.createTrustedTypePolicy()).not.toThrow();

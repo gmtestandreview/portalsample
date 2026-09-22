@@ -4,10 +4,10 @@ import { Navigate } from "react-router";
 import {
 	ApplicationClient,
 	ApplicationType,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-import AppLogger from "../../../instrumentation/AppLogger";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
 
 const CreateRequestForTypeApproval = () => {
 	const { accounts, instance } = useMsal();
@@ -44,9 +44,9 @@ const CreateRequestForTypeApproval = () => {
 	return applicationId ? (
 		<Navigate to={`/ta/${applicationId}/organisation-details`} />
 	) : (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

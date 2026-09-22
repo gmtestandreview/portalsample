@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import CreateRequestForTypeApproval from "../../../../ClientApp/src/routes/ta/create";
+import CreateRequestForTypeApproval from "../../../../ClientApp/src/routes/ta/create/index.tsx";
 
 const mocks = vi.hoisted(() => ({
 	accounts: [{ homeAccountId: "account-1" }] as AccountInfo[],

@@ -1,12 +1,12 @@
 import * as yup from "yup";
-import "./yupExtensions";
-import type { ContactDto } from "../api/web-api-client";
+import "./yupExtensions/index.ts";
+import type { ContactDto } from "../api/web-api-client.ts";
 import {
 	emailSchema,
 	NotEmpty,
 	nullableString,
 	requiredNullableString,
-} from "./common";
+} from "./common.ts";
 
 export const titleSchema = (label: string, required = true) =>
 	(required ? requiredNullableString(label) : nullableString(label))

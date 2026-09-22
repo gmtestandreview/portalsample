@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Formik } from "formik";
-import CustomDateInput from "@/components/Inputs/DatePicker/CustomDateInput";
+import CustomDateInput from "@/components/Inputs/DatePicker/CustomDateInput.tsx";
 
 const renderInput = (
 	props: Partial<React.ComponentProps<typeof CustomDateInput>> = {},
@@ -127,7 +127,7 @@ describe("CustomDateInput accessibility", () => {
 						handleOpenCalendar={vi.fn()}
 						label="Calibration date"
 						name="calibrationDate"
-						readOnly
+						readOnly={true}
 						wrapperUUID="date-wrapper"
 					/>
 				</div>

@@ -1,7 +1,7 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { Formik } from "formik";
 import { describe, expect, it } from "vitest";
-import TextAreaInput from "@/components/Inputs/TextAreaInput";
+import TextAreaInput from "@/components/Inputs/TextAreaInput/index.tsx";
 
 const renderTextAreaInput = () =>
 	render(

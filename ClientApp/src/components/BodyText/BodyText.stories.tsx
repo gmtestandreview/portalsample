@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import BodyText from "./index";
+import BodyText from "./index.tsx";
 
 /**
  * BodyText Component Storybook Configuration

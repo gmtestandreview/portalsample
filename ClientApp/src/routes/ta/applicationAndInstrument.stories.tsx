@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import ApplicationAndInstrument from "./applicationAndInstrument";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import ApplicationAndInstrument from "./applicationAndInstrument.tsx";
 
 /**
  * `ApplicationAndInstrument` is the application/instrument step of the type-approval

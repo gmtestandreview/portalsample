@@ -1,22 +1,22 @@
 import { useMemo } from "react";
 import { Alert, Col, Container, Row } from "react-bootstrap";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon";
-import InTextLink from "../../components/InTextLink";
-import QuoteStatusPill from "../../components/Pill/QuoteStatusPill";
-import DeliveryInstructions from "../../components/Utilities/deliveryInstructions";
-import type { MailingLabelProps } from "../../components/Utilities/mailingLabel";
-import MailingLabel from "../../components/Utilities/mailingLabel";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon.tsx";
+import InTextLink from "../../components/InTextLink/index.tsx";
+import QuoteStatusPill from "../../components/Pill/QuoteStatusPill.tsx";
+import DeliveryInstructions from "../../components/Utilities/deliveryInstructions.tsx";
+import type { MailingLabelProps } from "../../components/Utilities/mailingLabel.tsx";
+import MailingLabel from "../../components/Utilities/mailingLabel.tsx";
 import {
 	clearDashboardNotification,
 	getDashboardNotification,
-} from "../../storage/notification";
-import { formatCurrencyAmount, formatDateToString } from "../../utils";
-import { QuoteStatus } from "../common/enums";
-import { getMakeModelDetails } from "../common/helperFunctions";
-import { openInternalRouteInNewTab } from "../common/openWindow";
-import { validPillStatuses } from "../common/quoteStatus";
+} from "../../storage/notification.ts";
+import { formatCurrencyAmount, formatDateToString } from "../../utils/index.ts";
+import { QuoteStatus } from "../common/enums.ts";
+import { getMakeModelDetails } from "../common/helperFunctions.ts";
+import { openInternalRouteInNewTab } from "../common/openWindow.ts";
+import { validPillStatuses } from "../common/quoteStatus.ts";
 
 const QuoteDetails = (props: {
 	quotationData: RequestForQuoteDetails | undefined;
@@ -32,7 +32,7 @@ const QuoteDetails = (props: {
 		return dashboardNotification ? (
 			<NotificationMessage
 				id="notif-message-1"
-				canClose
+				canClose={true}
 				onClose={clearDashboardNotification}
 				{...dashboardNotification}
 			/>

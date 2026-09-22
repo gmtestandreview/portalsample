@@ -5,7 +5,7 @@ import type { Mock } from "vitest";
 import { vi } from "vitest";
 import type { AnySchema } from "yup";
 
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
 
 interface FormikWrapperProps<TValues> {
 	readonly initialValues: TValues;

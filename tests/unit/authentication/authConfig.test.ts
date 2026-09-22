@@ -15,7 +15,7 @@ vi.mock("@/env", () => ({
 
 describe("auth configuration", () => {
 	it("builds MSAL auth config from runtime env values", async () => {
-		const { configuration } = await import("@/authentication/authConfig");
+		const { configuration } = await import("@/authentication/authConfig.ts");
 
 		expect(configuration.auth).toMatchObject({
 			clientId: "test-client-id",
@@ -27,7 +27,7 @@ describe("auth configuration", () => {
 
 	it("exports scopes and request objects from runtime env values", async () => {
 		const { authRequest, redirectUri, scopes, tokenRequest } = await import(
-			"@/authentication/authConfig"
+			"@/authentication/authConfig.ts"
 		);
 
 		expect(scopes).toEqual(["read", "user_impersonation"]);
@@ -40,7 +40,7 @@ describe("auth configuration", () => {
 	});
 
 	it("bounds MSAL silent renewal frame timeouts to 6000ms", async () => {
-		const { configuration } = await import("@/authentication/authConfig");
+		const { configuration } = await import("@/authentication/authConfig.ts");
 
 		expect(configuration.system?.iframeHashTimeout).toBe(6000);
 		expect(configuration.system?.loadFrameTimeout).toBe(6000);
@@ -50,7 +50,7 @@ describe("auth configuration", () => {
 		const consoleError = vi
 			.spyOn(console, "error")
 			.mockImplementation(() => {});
-		const { configuration } = await import("@/authentication/authConfig");
+		const { configuration } = await import("@/authentication/authConfig.ts");
 
 		configuration.system?.loggerOptions?.loggerCallback?.(
 			LogLevel.Error,
@@ -66,7 +66,7 @@ describe("auth configuration", () => {
 		const consoleError = vi
 			.spyOn(console, "error")
 			.mockImplementation(() => {});
-		const { configuration } = await import("@/authentication/authConfig");
+		const { configuration } = await import("@/authentication/authConfig.ts");
 
 		configuration.system?.loggerOptions?.loggerCallback?.(
 			LogLevel.Error,
@@ -82,7 +82,7 @@ describe("auth configuration", () => {
 		const consoleError = vi
 			.spyOn(console, "error")
 			.mockImplementation(() => {});
-		const { configuration } = await import("@/authentication/authConfig");
+		const { configuration } = await import("@/authentication/authConfig.ts");
 
 		configuration.system?.loggerOptions?.loggerCallback?.(
 			LogLevel.Info,
@@ -109,7 +109,7 @@ describe("auth configuration", () => {
 		}));
 
 		const { authRequest, configuration, redirectUri, scopes, tokenRequest } =
-			await import("@/authentication/authConfig");
+			await import("@/authentication/authConfig.ts");
 
 		expect(configuration.auth.clientId).toBe("");
 		expect(configuration.auth.knownAuthorities).toEqual([""]);

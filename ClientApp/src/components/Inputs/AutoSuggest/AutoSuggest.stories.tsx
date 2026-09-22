@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, userEvent, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import AutoSuggestContainer from "./AutoSuggestContainer";
-import AutoSuggest from "./index";
-import type { AutoSuggestOption } from "./types";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import AutoSuggestContainer from "./AutoSuggestContainer.tsx";
+import AutoSuggest from "./index.tsx";
+import type { AutoSuggestOption } from "./types.ts";
 
 const noopAsync = async () => {};
 const noop = () => {};
@@ -58,7 +58,7 @@ export const WithSuggestions: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const user = userEvent.setup();
-		const input = canvas.getByRole("combobox", { name: /suburb/i });
+		const input = canvas.getByRole("combobox", { name: /suburb/iu });
 		await user.type(input, "syd");
 		const combobox = canvas.getByRole("combobox");
 		await expect(combobox).toBeVisible();
@@ -108,9 +108,9 @@ export const EmptyState: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const user = userEvent.setup();
-		const input = canvas.getByRole("combobox", { name: /suburb/i });
+		const input = canvas.getByRole("combobox", { name: /suburb/iu });
 		await user.type(input, "xyz");
-		const noResult = await canvas.findByText(/no matches found/i);
+		const noResult = await canvas.findByText(/no matches found/iu);
 		await expect(noResult).toBeVisible();
 	},
 };
@@ -144,7 +144,7 @@ export const Loading: Story = {
 	),
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const loadingText = canvas.getByText(/loading options/i);
+		const loadingText = canvas.getByText(/loading options/iu);
 		await expect(loadingText).toBeVisible();
 	},
 };

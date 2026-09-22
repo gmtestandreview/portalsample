@@ -2,11 +2,11 @@ import vm from "node:vm";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import BackToTopButton from "@/components/Utilities/backToTopButton";
-import ContactLink from "@/components/Utilities/ContactLink";
-import DeliveryInstructions from "@/components/Utilities/deliveryInstructions";
-import useBodyClass from "@/components/Utilities/useBodyClass";
-import useDebounce from "@/components/Utilities/useDebounce";
+import BackToTopButton from "@/components/Utilities/backToTopButton.tsx";
+import ContactLink from "@/components/Utilities/ContactLink.tsx";
+import DeliveryInstructions from "@/components/Utilities/deliveryInstructions.tsx";
+import useBodyClass from "@/components/Utilities/useBodyClass.tsx";
+import useDebounce from "@/components/Utilities/useDebounce.ts";
 
 const BodyClassHarness = ({ className }: { className: string | string[] }) => {
 	useBodyClass(className);

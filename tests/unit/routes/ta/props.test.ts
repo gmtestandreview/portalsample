@@ -3,7 +3,7 @@ import type {
 	IPublicClientApplication,
 } from "@azure/msal-browser";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	CRMLookupTypes,
 	type PatternApprovalOrgAndContact,
@@ -12,18 +12,18 @@ import {
 	type RequestForPatternApprovalSummary,
 	type SupportingDocumentsStep,
 	YesNo,
-} from "../../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import type { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
-import applicationAndInstrumentProps from "../../../../ClientApp/src/routes/ta/applicationAndInstrumentProps";
-import organisationAndContactProps from "../../../../ClientApp/src/routes/ta/organisationAndContactProps";
-import summaryAndSubmitProps from "../../../../ClientApp/src/routes/ta/summaryAndSubmitProps";
-import supportingDocumentsProps from "../../../../ClientApp/src/routes/ta/supportingDocumentsProps";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext.tsx";
+import type { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types.ts";
+import applicationAndInstrumentProps from "../../../../ClientApp/src/routes/ta/applicationAndInstrumentProps.ts";
+import organisationAndContactProps from "../../../../ClientApp/src/routes/ta/organisationAndContactProps.ts";
+import summaryAndSubmitProps from "../../../../ClientApp/src/routes/ta/summaryAndSubmitProps.ts";
+import supportingDocumentsProps from "../../../../ClientApp/src/routes/ta/supportingDocumentsProps.ts";
 import type {
 	ApplicationAndInstrumentStepDto,
 	RequestForPatternApprovalSummaryDto,
-} from "../../../../ClientApp/src/routes/ta/types";
-import { formikHelpers, stepStatuses } from "../testFixtures";
+} from "../../../../ClientApp/src/routes/ta/types.ts";
+import { formikHelpers, stepStatuses } from "../testFixtures.ts";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),

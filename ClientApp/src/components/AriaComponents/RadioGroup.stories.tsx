@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Radio, RadioGroup } from "./RadioGroup";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Radio, RadioGroup } from "./RadioGroup.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

@@ -1,9 +1,9 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import type { FileProgress } from "@/api/web-api-client";
-import ProgressFileList from "@/components/Progress/ProgressFileList";
-import { FileStatus } from "@/routes/ta/types";
+import type { FileProgress } from "@/api/web-api-client.ts";
+import ProgressFileList from "@/components/Progress/ProgressFileList.tsx";
+import { FileStatus } from "@/routes/ta/types.ts";
 
 const renderList = (
 	files: FileProgress[],

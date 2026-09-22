@@ -6,9 +6,9 @@ vi.mock("@storybook/addon-vitest/vitest-plugin", () => ({
 	storybookTest: vi.fn(() => ({ name: "storybook-test-mock" })),
 }));
 
-import rootConfig from "../../../vitest.config";
-import storybookConfig from "../../../vitest.storybook.config";
-import unitConfig from "../../../vitest.unit.config";
+import rootConfig from "../../../vitest.config.ts";
+import storybookConfig from "../../../vitest.storybook.config.ts";
+import unitConfig from "../../../vitest.unit.config.ts";
 
 /**
  * Characterization of the committed Vitest topology (fix `0d16927`).
@@ -117,7 +117,7 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
 		expect(storybook.api).toBeUndefined();
 		expect(storybook.browser?.api).toMatchObject({
 			host: "127.0.0.1",
-			port: 61005,
+			port: 61_005,
 		});
 	});
 
@@ -155,7 +155,7 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
 					return false;
 				}
 
-				const config = /--config(?:=|\s+)([^\s]+)/.exec(command)?.[1];
+				const config = /--config(?:=|\s+)([^\s]+)/u.exec(command)?.[1];
 
 				return config === undefined || !reviewedCoverageConfigs.has(config);
 			},

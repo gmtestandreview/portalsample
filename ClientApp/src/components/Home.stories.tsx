@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../storybook/storybookHarness";
-import Home from "./Home";
+import { withPortalProviders } from "../storybook/storybookHarness.tsx";
+import Home from "./Home.tsx";
 
 /**
  * `Home` is the root (`/`) landing surface. It is a thin wrapper that renders the

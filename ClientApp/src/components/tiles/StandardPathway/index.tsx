@@ -1,14 +1,14 @@
 import { Card } from "react-bootstrap";
 import { Link } from "react-router";
-import BodyText from "../../BodyText";
-import DigitalIdentityFooter from "./DigitalIdentityFooter";
-import StandardFooter from "./StandardFooter";
+import BodyText from "../../BodyText/index.tsx";
+import DigitalIdentityFooter from "./DigitalIdentityFooter.tsx";
+import StandardFooter from "./StandardFooter.tsx";
 import type {
 	StandardBasePathwayProps,
 	StandardExternalPathwayProps,
 	StandardInternalPathwayProps,
 	StandardPathwayProps,
-} from "./types";
+} from "./types.ts";
 
 const StandardPathwayBody = (props: StandardBasePathwayProps) => {
 	const { title, bodyText, linkDescription, digitalIdentity } = props;

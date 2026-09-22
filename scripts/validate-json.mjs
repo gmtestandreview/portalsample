@@ -110,7 +110,6 @@ const parsedFiles = await Promise.all(
 				failures.push(
 					`${toRelativePath(filePath)}: invalid JSON (${error.message})`,
 				);
-				return undefined;
 			}
 		}),
 );

@@ -8,14 +8,14 @@ import {
 	type OrganisationAndContact,
 	type RequestForQuoteSummary,
 	YesNo,
-} from "../../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
-import instrumentAndRequestProps from "../../../../ClientApp/src/routes/requestForQuote/instrumentAndRequestProps";
-import organisationAndContactProps from "../../../../ClientApp/src/routes/requestForQuote/organisationAndContactProps";
-import requestForQuoteSummaryProps from "../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummaryProps";
-import viewRequestForQuoteSummaryProps from "../../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummaryProps";
-import { formikHelpers, stepStatuses } from "../testFixtures";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext.tsx";
+import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types.ts";
+import instrumentAndRequestProps from "../../../../ClientApp/src/routes/requestForQuote/instrumentAndRequestProps.ts";
+import organisationAndContactProps from "../../../../ClientApp/src/routes/requestForQuote/organisationAndContactProps.ts";
+import requestForQuoteSummaryProps from "../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummaryProps.ts";
+import viewRequestForQuoteSummaryProps from "../../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummaryProps.ts";
+import { formikHelpers, stepStatuses } from "../testFixtures.ts";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),

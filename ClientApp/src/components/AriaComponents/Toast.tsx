@@ -6,11 +6,11 @@ import {
 	type ToastProps,
 	UNSTABLE_ToastRegion as ToastRegion,
 } from "react-aria-components/Toast";
-import { Button } from "../Buttons/AriaButton/Button";
-import { X } from "./NmiIcon";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { X } from "./NmiIcon.tsx";
 import "./Toast.css";
 import type { CSSProperties } from "react";
-import { type MyToastContent, queue } from "./ToastQueue";
+import { type MyToastContent, queue } from "./ToastQueue.ts";
 
 export function MyToastRegion() {
 	return (

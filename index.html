@@ -26,7 +26,7 @@
     NEVER use process.env in source code — these window.* globals are the
     only runtime config mechanism. See ClientApp/src/env.ts.
   -->
-  <script>
+  <script>"use strict";
     globalThis.REACT_APP_B2C_CLIENTID                = '<%= REACT_APP_B2C_CLIENTID %>';
     globalThis.REACT_APP_B2C_AUTHORITY               = '<%= REACT_APP_B2C_AUTHORITY %>';
     globalThis.REACT_APP_B2C_KNOWN_AUTHORITIES       = '<%= REACT_APP_B2C_KNOWN_AUTHORITIES %>';

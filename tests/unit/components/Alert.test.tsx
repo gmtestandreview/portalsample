@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { AlertSuccess } from "../../../ClientApp/src/components/Alert";
+import { AlertSuccess } from "../../../ClientApp/src/components/Alert/index.tsx";
 
 describe("Alert variants", () => {
 	it("falls back to polite aria-live when the prop is explicitly overridden to undefined", () => {

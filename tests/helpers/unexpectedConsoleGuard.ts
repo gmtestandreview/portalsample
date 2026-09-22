@@ -93,7 +93,7 @@ export const formatConsoleArguments = (args: readonly unknown[]): string => {
 	if (typeof first !== "string") return args.map(stringify).join(" ");
 
 	let consumedArgs = 0;
-	const formatted = first.replace(/%[sdifjoO%]/g, (token) => {
+	const formatted = first.replace(/%[sdifjoO%]/gu, (token) => {
 		if (token === "%%") return "%";
 		if (consumedArgs >= rest.length) return token;
 

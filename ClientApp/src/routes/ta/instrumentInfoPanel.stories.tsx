@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import InstrumentInfoPanel from "./instrumentInfoPanel";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import InstrumentInfoPanel from "./instrumentInfoPanel.tsx";
 
 /**
  * `InstrumentInfoPanel` is the contextual references sidebar shown while completing a
@@ -44,7 +44,7 @@ export const WithReferences: Story = {
 		// New customers also see the credit-check form link.
 		await expect(
 			canvas.getByRole("link", {
-				name: /download credit check application form/i,
+				name: /download credit check application form/iu,
 			}),
 		).toBeVisible();
 	},
@@ -54,7 +54,7 @@ export const NoSelection: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByText(/no references for this instrument type/i),
+			canvas.getByText(/no references for this instrument type/iu),
 		).toBeInTheDocument();
 	},
 };

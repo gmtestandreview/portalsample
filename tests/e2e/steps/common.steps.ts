@@ -1,11 +1,11 @@
 import type { Page } from "@playwright/test";
 import { expect } from "@playwright/test";
-import { Given, Then, When } from "../support/fixtures";
-import { installMockApi } from "../support/mock-api";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { installMockApi } from "../support/mock-api.ts";
 import {
 	disableMockAuthenticationReseed,
 	installMockAuthentication,
-} from "../support/mock-authentication";
+} from "../support/mock-authentication.ts";
 
 const rfqStepLocations = [
 	"organisation-and-contact",
@@ -143,7 +143,7 @@ When(
 When("the user confirms the dialog", async ({ page }) => {
 	const dialog = page.getByRole("dialog");
 	const preferred = dialog
-		.getByRole("button", { name: /yes|confirm|submit|discard/i })
+		.getByRole("button", { name: /yes|confirm|submit|discard/iu })
 		.last();
 	await preferred.click();
 });
@@ -151,13 +151,13 @@ When("the user confirms the dialog", async ({ page }) => {
 Then(
 	"the user should be redirected to the B2C sign-in page",
 	async ({ page }) => {
-		await expect(page).toHaveURL(/login\.microsoftonline\.com|b2clogin\.com/);
+		await expect(page).toHaveURL(/login\.microsoftonline\.com|b2clogin\.com/u);
 	},
 );
 
 Then("the user should see the dashboard heading", async ({ page }) => {
 	await expect(
-		page.getByRole("heading", { name: /currently managing/i }),
+		page.getByRole("heading", { name: /currently managing/iu }),
 	).toBeVisible();
 });
 
@@ -171,11 +171,11 @@ Then("the user should see their organisation name", async ({ page }) => {
 });
 
 Then("the sign-in button should be visible", async ({ page }) => {
-	await expect(page.getByRole("link", { name: /^Log in/ })).toBeVisible();
+	await expect(page.getByRole("link", { name: /^Log in/u })).toBeVisible();
 });
 
 Then("the user should be redirected to the home page", async ({ page }) => {
-	await expect(page).toHaveURL(/\/$/);
+	await expect(page).toHaveURL(/\/$/u);
 });
 
 Then(
@@ -200,7 +200,7 @@ Then(
 );
 
 Then("the user should be redirected to the dashboard", async ({ page }) => {
-	await expect(page).toHaveURL(/\/dashboard$/);
+	await expect(page).toHaveURL(/\/dashboard$/u);
 });
 
 Then("the dashboard should show a success notification", async ({ page }) => {
@@ -218,7 +218,7 @@ Then(
 	"a confirmation dialog should appear with {string}",
 	async ({ page }, title: string) => {
 		await expect(page.getByRole("dialog")).toContainText(
-			new RegExp(title, "i"),
+			new RegExp(title, "iu"),
 		);
 	},
 );
@@ -233,7 +233,7 @@ Then(
 );
 
 Then("the RFQ submitted page should be displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/request-for-quote-success\/RFQ-NEW-0001$/);
+	await expect(page).toHaveURL(/\/request-for-quote-success\/RFQ-NEW-0001$/u);
 	await expect(
 		page.getByRole("heading", {
 			name: "Your request has been submitted",

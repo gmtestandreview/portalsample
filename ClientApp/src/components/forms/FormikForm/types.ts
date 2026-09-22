@@ -1,7 +1,7 @@
 import type { FormikHelpers, FormikProps, FormikValues } from "formik";
 import type { ReactNode } from "react";
 import type { AnyObjectSchema } from "yup";
-import type { Hideable } from "../types";
+import type { Hideable } from "../types.ts";
 
 export interface DiscardProps {
 	locationOnDiscard?: string;

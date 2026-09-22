@@ -3,12 +3,12 @@ import { describe, expect, it, vi } from "vitest";
 import type {
 	AccountDispatchContext,
 	AccountStateContext,
-} from "@/authentication/accountContext";
+} from "@/authentication/accountContext.tsx";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "@/authentication/accountContext";
-import useUserServices from "@/hooks/useUserServices";
+} from "@/authentication/accountContext.tsx";
+import useUserServices from "@/hooks/useUserServices.tsx";
 
 const dispatchContext: AccountDispatchContext = {
 	setAgree: vi.fn(),

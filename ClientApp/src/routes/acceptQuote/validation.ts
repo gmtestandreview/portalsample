@@ -3,23 +3,23 @@ import {
 	contactSchema,
 	contactSchemaEmailOnly,
 	phoneSchema,
-} from "../../validationSchemas/contactValidation";
-import "../../validationSchemas/yupExtensions";
+} from "../../validationSchemas/contactValidation.ts";
+import "../../validationSchemas/yupExtensions/index.ts";
 import type {
 	DeliveryAndReturnStep,
 	PaymentDetailsStep,
 	ReportRecipientStep,
 	SummaryAndAcceptStep,
-} from "../../api/web-api-client";
+} from "../../api/web-api-client.ts";
 import {
 	InvoiceSentToValues,
 	ReturnAddressTypeValues,
 	ReturnContactTypeValues,
 	ReturnMethodValues,
 	YesNo,
-} from "../../api/web-api-client";
-import type { Validation } from "../../components/forms/FormikForm/types";
-import addressSchema from "../../validationSchemas/addressValidation";
+} from "../../api/web-api-client.ts";
+import type { Validation } from "../../components/forms/FormikForm/types.ts";
+import addressSchema from "../../validationSchemas/addressValidation.ts";
 
 export const reportRecipientSubmitValidation = yup.object<
 	Validation<ReportRecipientStep>

@@ -6,16 +6,16 @@ import type {
 	RequestForPatternApprovalMessageDetails,
 	RequestForQuoteDetails,
 	SupportingDocumentsStep,
-} from "../../../ClientApp/src/api/web-api-client";
+} from "../../../ClientApp/src/api/web-api-client.ts";
 import {
 	FormStepStatus,
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
 	State,
 	YesNo,
-} from "../../../ClientApp/src/api/web-api-client";
-import { QuoteStatus } from "../../../ClientApp/src/routes/common/enums";
-import type { MockFailure } from "./mock-failure";
+} from "../../../ClientApp/src/api/web-api-client.ts";
+import { QuoteStatus } from "../../../ClientApp/src/routes/common/enums.ts";
+import type { MockFailure } from "./mock-failure.ts";
 
 export interface ScenarioState {
 	authenticated: boolean;

@@ -1,10 +1,10 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { PatternApprovalDashboardDto } from "@/api/web-api-client";
-import { PatternApprovalStatusEnumDto } from "@/api/web-api-client";
-import PaFilterMenu from "@/components/SearchFilter/TypeApproval/paFilterMenu";
-import { DashboardTab } from "@/components/SearchFilter/types";
+import type { PatternApprovalDashboardDto } from "@/api/web-api-client.ts";
+import { PatternApprovalStatusEnumDto } from "@/api/web-api-client.ts";
+import PaFilterMenu from "@/components/SearchFilter/TypeApproval/paFilterMenu.tsx";
+import { DashboardTab } from "@/components/SearchFilter/types.ts";
 
 const mocks = vi.hoisted(() => ({
 	setUserProfile: vi.fn(),
@@ -73,7 +73,7 @@ const renderMenu = (
 
 const openMenu = async () => {
 	const user = userEvent.setup();
-	await user.click(screen.getByRole("button", { name: /Filters.*applied/i }));
+	await user.click(screen.getByRole("button", { name: /Filters.*applied/iu }));
 	return user;
 };
 
@@ -86,7 +86,7 @@ describe("PaFilterMenu", () => {
 	it("shows no applied filters when the initial filters are undefined", async () => {
 		renderMenu(undefined);
 
-		const toggle = screen.getByRole("button", { name: /Filters.*applied/i });
+		const toggle = screen.getByRole("button", { name: /Filters.*applied/iu });
 		expect(toggle).toHaveAttribute("title", "No filters applied");
 		expect(within(toggle).getByRole("status")).toHaveTextContent("");
 
@@ -107,7 +107,7 @@ describe("PaFilterMenu", () => {
 			filtersChanged: true,
 		});
 
-		const toggle = screen.getByRole("button", { name: /Filters.*applied/i });
+		const toggle = screen.getByRole("button", { name: /Filters.*applied/iu });
 		expect(toggle).toHaveAttribute("title", "3 filters have been applied");
 		expect(within(toggle).getByRole("status")).toHaveTextContent("3");
 	});
@@ -159,7 +159,7 @@ describe("PaFilterMenu", () => {
 			filtersChanged: true,
 		});
 
-		const toggle = screen.getByRole("button", { name: /Filters.*applied/i });
+		const toggle = screen.getByRole("button", { name: /Filters.*applied/iu });
 		expect(toggle).toHaveAttribute("title", "0 filters have been applied");
 		expect(within(toggle).getByRole("status")).toHaveTextContent("0");
 	});
@@ -247,7 +247,9 @@ describe("PaFilterMenu", () => {
 		});
 		const user = await openMenu();
 
-		await user.click(screen.getByRole("button", { name: /Filters.*applied/i }));
+		await user.click(
+			screen.getByRole("button", { name: /Filters.*applied/iu }),
+		);
 
 		expect(mocks.trackGAEvent).toHaveBeenCalledWith("CloseFilter");
 		expect(setInitialFilters).not.toHaveBeenCalled();

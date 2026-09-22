@@ -4,14 +4,14 @@ import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import HelpGuide from "../../../ClientApp/src/routes/help-guide";
-import FAQs from "../../../ClientApp/src/routes/help-guide/faqs";
-import HelpHowToSetupAccess from "../../../ClientApp/src/routes/help-guide/how-to-setup-access";
-import ServicesWeOffer from "../../../ClientApp/src/routes/services-we-offer";
-import SignIn from "../../../ClientApp/src/routes/sign-in";
-import Signout from "../../../ClientApp/src/routes/sign-out";
-import SignoutHelper from "../../../ClientApp/src/routes/sign-out-helper";
-import { clearTargetOrganisation } from "../../../ClientApp/src/storage/targetOrganisation";
+import FaQs from "../../../ClientApp/src/routes/help-guide/faqs.tsx";
+import HelpHowToSetupAccess from "../../../ClientApp/src/routes/help-guide/how-to-setup-access.tsx";
+import HelpGuide from "../../../ClientApp/src/routes/help-guide/index.tsx";
+import ServicesWeOffer from "../../../ClientApp/src/routes/services-we-offer/index.tsx";
+import SignIn from "../../../ClientApp/src/routes/sign-in/index.tsx";
+import Signout from "../../../ClientApp/src/routes/sign-out/index.tsx";
+import SignoutHelper from "../../../ClientApp/src/routes/sign-out-helper/index.tsx";
+import { clearTargetOrganisation } from "../../../ClientApp/src/storage/targetOrganisation.ts";
 
 const mocks = vi.hoisted(() => ({
 	useIsAuthenticated: vi.fn(),
@@ -91,18 +91,17 @@ describe("static route pages", () => {
 			screen.getByRole("heading", { name: "Help guide", level: 1 }),
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole("link", { name: /How to set up access/i }),
+			screen.getByRole("link", { name: /How to set up access/iu }),
 		).toHaveAttribute("href", "/help-guide/how-to-setup-access");
 		expect(
-			screen.getByRole("link", { name: /Frequently Asked Questions/i }),
+			screen.getByRole("link", { name: /Frequently Asked Questions/iu }),
 		).toHaveAttribute("href", "/help-guide/faqs");
 		expect(
-			screen.getByRole("link", { name: /Give us your feedback/i }),
+			screen.getByRole("link", { name: /Give us your feedback/iu }),
 		).toHaveAttribute("target", "_blank");
-		expect(screen.getByRole("link", { name: /Back to home/i })).toHaveAttribute(
-			"href",
-			"/",
-		);
+		expect(
+			screen.getByRole("link", { name: /Back to home/iu }),
+		).toHaveAttribute("href", "/");
 		expect(document.title).toBe("Help guide | NMI Services portal");
 		expect(document.body).toHaveClass("help-guide");
 	});
@@ -113,12 +112,12 @@ describe("static route pages", () => {
 		renderRoute(<HelpGuide />);
 
 		expect(
-			screen.getByRole("link", { name: /Back to dashboard/i }),
+			screen.getByRole("link", { name: /Back to dashboard/iu }),
 		).toHaveAttribute("href", "/dashboard");
 	});
 
 	it("renders FAQ and setup guide help pages with table-of-contents links", () => {
-		const { unmount } = renderRoute(<FAQs />);
+		const { unmount } = renderRoute(<FaQs />);
 
 		expect(
 			screen.getByRole("heading", {
@@ -133,7 +132,7 @@ describe("static route pages", () => {
 			screen.getByRole("link", { name: "Portal benefits" }),
 		).toHaveAttribute("href", "#faqs-01");
 		expect(
-			screen.getByRole("link", { name: /Back to help guide/i }),
+			screen.getByRole("link", { name: /Back to help guide/iu }),
 		).toHaveAttribute("href", "/help-guide");
 		unmount();
 
@@ -141,14 +140,14 @@ describe("static route pages", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				name: /How to set up access to the .*NMI Services portal/i,
+				name: /How to set up access to the .*NMI Services portal/iu,
 				level: 1,
 			}),
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("navigation", { name: "On this page" }),
 		).toBeInTheDocument();
-		expect(screen.getByRole("link", { name: /View FAQs/i })).toHaveAttribute(
+		expect(screen.getByRole("link", { name: /View FAQs/iu })).toHaveAttribute(
 			"href",
 			"/help-guide/faqs/",
 		);
@@ -162,7 +161,7 @@ describe("static route pages", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("group", {
-				name: /Set your default view and\/or add more NMI services/i,
+				name: /Set your default view and\/or add more NMI services/iu,
 			}),
 		).toBeInTheDocument();
 		expect(document.title).toBe("Services we offer | NMI Services portal");
@@ -177,7 +176,7 @@ describe("static route pages", () => {
 		unmount();
 		renderRoute(<SignoutHelper />);
 		expect(
-			screen.getByRole("heading", { name: /close your browser window/i }),
+			screen.getByRole("heading", { name: /close your browser window/iu }),
 		).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "Exit portal" })).toHaveAttribute(
 			"href",

@@ -3,10 +3,10 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
 	mockMsalAccount,
 	withPortalProviders,
-} from "../../storybook/storybookHarness";
-import SignOut from "../sign-out";
-import SignOutHelper from "../sign-out-helper";
-import SignIn from "./index";
+} from "../../storybook/storybookHarness.tsx";
+import SignOut from "../sign-out/index.tsx";
+import SignOutHelper from "../sign-out-helper/index.tsx";
+import SignIn from "./index.tsx";
 
 const meta = {
 	title: "Routes/Auth",

@@ -1,16 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { routeCoverage } from "../../e2e/route-coverage";
+import { routeCoverage } from "../../e2e/route-coverage.ts";
 
-const repoRoot = path.resolve(__dirname, "..", "..", "..");
+const repoRoot = path.resolve(import.meta.dirname, "..", "..", "..");
 const appSource = fs.readFileSync(
 	path.join(repoRoot, "ClientApp", "src", "App.tsx"),
 	"utf8",
 );
 
 const declaredPaths = Array.from(
-	appSource.matchAll(/<Route\s+path='([^']+)'/g),
+	appSource.matchAll(/<Route\s+path='([^']+)'/gu),
 	(match) => match[1],
 );
 
@@ -31,7 +31,7 @@ describe("Playwright-BDD route coverage manifest", () => {
 				expect(entry.reason.length).toBeGreaterThan(20);
 				expect(entry.feature).toBeUndefined();
 			} else {
-				expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
+				expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/u);
 				expect(entry.scenario).toBeTruthy();
 				const featurePath = path.join(repoRoot, ...entry.feature.split("/"));
 				expect(
@@ -40,7 +40,7 @@ describe("Playwright-BDD route coverage manifest", () => {
 				).toBe(true);
 				const featureSource = fs.readFileSync(featurePath, "utf8");
 				const escapedScenario = entry.scenario.replace(
-					/[.*+?^${}()|[\]\\]/g,
+					/[.*+?^${}()|[\]\\]/gu,
 					"\\$&",
 				);
 				expect(

@@ -3,12 +3,12 @@ import { Alert, Button } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import { PatternFormat } from "react-number-format";
 import { useLocation, useParams } from "react-router";
-import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
-import HidableField from "../../components/forms/HidableField";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import { useModalDispatch } from "../../components/modals/ModalContext";
-import { formatTradingBranchFromStrings } from "../common/helperFunctions";
-import type { OrganisationAndContactProps } from "./types";
+import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import { useModalDispatch } from "../../components/modals/ModalContext.tsx";
+import { formatTradingBranchFromStrings } from "../common/helperFunctions.ts";
+import type { OrganisationAndContactProps } from "./types.ts";
 
 const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
 	const [_field] = useField(fieldName);
@@ -28,7 +28,7 @@ const OrganisationAndContact = (props: OrganisationAndContactProps) => {
 	const modalDispatch = useModalDispatch();
 	const location = useLocation();
 	const { id } = useParams();
-	const rFQId = id || "";
+	const rFqId = id || "";
 
 	function getName(localName: string) {
 		return name ? `${name}.${localName}` : localName;
@@ -41,7 +41,7 @@ const OrganisationAndContact = (props: OrganisationAndContactProps) => {
 		e: React.MouseEvent<HTMLElement, MouseEvent>,
 	) => {
 		e.preventDefault();
-		modalDispatch?.setShowRFQSelectModal(true, rFQId, location.pathname);
+		modalDispatch?.setShowRFQSelectModal(true, rFqId, location.pathname);
 	};
 
 	const renderMyContactDetails = () => (

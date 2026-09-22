@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import ProgressBar from "./ProgressBar";
+import ProgressBar from "./ProgressBar.tsx";
 
 /**
  * `ProgressBar` is the single-file upload progress indicator: a labelled bar that
@@ -32,7 +32,7 @@ export const InProgress: Story = {
 		await expect(bar).toBeVisible();
 		await expect(bar).toHaveAttribute("aria-valuenow", "42");
 		await expect(canvas.getByText("Uploading")).toBeVisible();
-		await expect(canvas.getByText(/42%/)).toBeVisible();
+		await expect(canvas.getByText(/42%/u)).toBeVisible();
 	},
 };
 
@@ -43,7 +43,7 @@ export const JustStarted: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/0%/)).toBeVisible();
+		await expect(canvas.getByText(/0%/u)).toBeVisible();
 	},
 };
 
@@ -54,6 +54,6 @@ export const Complete: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/100%/)).toBeVisible();
+		await expect(canvas.getByText(/100%/u)).toBeVisible();
 	},
 };

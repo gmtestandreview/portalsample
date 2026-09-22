@@ -7,7 +7,7 @@ const importLoggerWithInsights = async (insights: unknown) => {
 	vi.doMock("@/instrumentation/AppInsightsService", () => ({
 		getAppInsights,
 	}));
-	const { default: AppLogger } = await import("@/instrumentation/AppLogger");
+	const { default: AppLogger } = await import("@/instrumentation/AppLogger.ts");
 	return { AppLogger, getAppInsights };
 };
 

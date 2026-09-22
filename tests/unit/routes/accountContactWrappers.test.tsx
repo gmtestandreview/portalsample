@@ -150,10 +150,10 @@ describe("account and contact route wrappers", () => {
 
 	it("renders create-account and add-branch workflows with merged account context", async () => {
 		const CreateAccount = (
-			await import("../../../ClientApp/src/routes/account/create")
+			await import("../../../ClientApp/src/routes/account/create/index.tsx")
 		).default;
 		const AddBranch = (
-			await import("../../../ClientApp/src/routes/account/addBranch")
+			await import("../../../ClientApp/src/routes/account/addBranch/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/account-create",
@@ -184,13 +184,13 @@ describe("account and contact route wrappers", () => {
 
 	it("renders valid update workflows and passes numeric route ids", async () => {
 		const UpdateAccount = (
-			await import("../../../ClientApp/src/routes/account/update")
+			await import("../../../ClientApp/src/routes/account/update/index.tsx")
 		).default;
 		const CreateContact = (
-			await import("../../../ClientApp/src/routes/contact/create")
+			await import("../../../ClientApp/src/routes/contact/create/index.tsx")
 		).default;
 		const UpdateContact = (
-			await import("../../../ClientApp/src/routes/contact/update")
+			await import("../../../ClientApp/src/routes/contact/update/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/account-update/42",
@@ -229,10 +229,10 @@ describe("account and contact route wrappers", () => {
 
 	it("redirects invalid account ids and supports unavailable account contexts", async () => {
 		const UpdateAccount = (
-			await import("../../../ClientApp/src/routes/account/update")
+			await import("../../../ClientApp/src/routes/account/update/index.tsx")
 		).default;
 		const CreateAccount = (
-			await import("../../../ClientApp/src/routes/account/create")
+			await import("../../../ClientApp/src/routes/account/create/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/account-update/not-a-number",
@@ -258,10 +258,10 @@ describe("account and contact route wrappers", () => {
 		mocks.useAccountState.mockReturnValue(undefined);
 		mocks.useModalDispatch.mockReturnValue(undefined);
 		const CreateAccount = (
-			await import("../../../ClientApp/src/routes/account/create")
+			await import("../../../ClientApp/src/routes/account/create/index.tsx")
 		).default;
 		const AddBranch = (
-			await import("../../../ClientApp/src/routes/account/addBranch")
+			await import("../../../ClientApp/src/routes/account/addBranch/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/account-create",
@@ -288,13 +288,13 @@ describe("account and contact route wrappers", () => {
 	it("passes null account context through update and contact wrappers", async () => {
 		mocks.useAccountDispatch.mockReturnValue(undefined);
 		const UpdateAccount = (
-			await import("../../../ClientApp/src/routes/account/update")
+			await import("../../../ClientApp/src/routes/account/update/index.tsx")
 		).default;
 		const CreateContact = (
-			await import("../../../ClientApp/src/routes/contact/create")
+			await import("../../../ClientApp/src/routes/contact/create/index.tsx")
 		).default;
 		const UpdateContact = (
-			await import("../../../ClientApp/src/routes/contact/update")
+			await import("../../../ClientApp/src/routes/contact/update/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/account-update/1",
@@ -333,10 +333,10 @@ describe("account and contact route wrappers", () => {
 
 	it("uses zero when contact route ids are omitted", async () => {
 		const CreateContact = (
-			await import("../../../ClientApp/src/routes/contact/create")
+			await import("../../../ClientApp/src/routes/contact/create/index.tsx")
 		).default;
 		const UpdateContact = (
-			await import("../../../ClientApp/src/routes/contact/update")
+			await import("../../../ClientApp/src/routes/contact/update/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/contact-create",

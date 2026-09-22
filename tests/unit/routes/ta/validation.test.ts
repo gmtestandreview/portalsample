@@ -4,8 +4,8 @@ import type { ValidationError } from "yup";
 import {
 	PatternApprovalRequiredValues,
 	YesNo,
-} from "../../../../ClientApp/src/api/web-api-client";
-import { ValidationMessages } from "../../../../ClientApp/src/routes/ta/types";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import { ValidationMessages } from "../../../../ClientApp/src/routes/ta/types.ts";
 import {
 	applicationAndInstrumentSaveValidation,
 	applicationAndInstrumentSubmitValidation,
@@ -17,7 +17,7 @@ import {
 	summaryAndSubmitValidation,
 	supportingDocsSaveValidation,
 	supportingDocsSubmitValidation,
-} from "../../../../ClientApp/src/routes/ta/validation";
+} from "../../../../ClientApp/src/routes/ta/validation.ts";
 
 /**
  * Structural schema type: the exported schemas carry different generic context

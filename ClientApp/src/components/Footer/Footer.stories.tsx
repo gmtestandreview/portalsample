@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, screen, userEvent, waitFor, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import Footer from "./index";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import Footer from "./index.tsx";
 
 const meta = {
 	title: "Components/Footer",
@@ -23,12 +23,12 @@ export const Default: Story = {
 		const footer =
 			canvasElement.querySelector("footer") ??
 			canvasElement.querySelector('[role="contentinfo"]');
-		await expect(footer).toBeTruthy();
+		expect(footer).toBeTruthy();
 		// All footer trigger buttons are accessible — they have visible text or aria-label
 		const footerBtns = canvas.getAllByRole("button");
 		for (const btn of footerBtns) {
 			const label = btn.getAttribute("aria-label") ?? btn.textContent?.trim();
-			await expect(label).toBeTruthy();
+			expect(label).toBeTruthy();
 		}
 	},
 };
@@ -39,13 +39,13 @@ export const TermsModalOpen: Story = {
 		const triggerBtn = screen.getByTestId("open-termsofuse-button");
 		await user.click(triggerBtn);
 		const modalTitle = await screen.findByRole("heading", {
-			name: /portal terms of use/i,
+			name: /portal terms of use/iu,
 		});
 		await waitFor(() => expect(modalTitle).toBeVisible());
 		await user.click(screen.getByTestId("close-button"));
 		await waitFor(() =>
 			expect(
-				screen.queryByRole("heading", { name: /portal terms of use/i }),
+				screen.queryByRole("heading", { name: /portal terms of use/iu }),
 			).not.toBeInTheDocument(),
 		);
 	},
@@ -56,14 +56,14 @@ export const PrivacyModalOpen: Story = {
 		const user = userEvent.setup();
 		await user.click(screen.getByTestId("open-privacy-button"));
 		const modalTitle = await screen.findByRole("heading", {
-			name: /privacy collection statement/i,
+			name: /privacy collection statement/iu,
 		});
 		await waitFor(() => expect(modalTitle).toBeVisible());
 		await user.click(screen.getByTestId("close-button"));
 		await waitFor(() =>
 			expect(
 				screen.queryByRole("heading", {
-					name: /privacy collection statement/i,
+					name: /privacy collection statement/iu,
 				}),
 			).not.toBeInTheDocument(),
 		);
@@ -75,13 +75,13 @@ export const AccessibilityModalOpen: Story = {
 		const user = userEvent.setup();
 		await user.click(screen.getByTestId("open-accessibility-button"));
 		const modalTitle = await screen.findByRole("heading", {
-			name: /accessibility/i,
+			name: /accessibility/iu,
 		});
 		await waitFor(() => expect(modalTitle).toBeVisible());
 		await user.click(screen.getByTestId("close-button"));
 		await waitFor(() =>
 			expect(
-				screen.queryByRole("heading", { name: /accessibility/i }),
+				screen.queryByRole("heading", { name: /accessibility/iu }),
 			).not.toBeInTheDocument(),
 		);
 	},

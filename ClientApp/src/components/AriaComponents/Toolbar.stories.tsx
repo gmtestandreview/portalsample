@@ -1,11 +1,11 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { Group } from "react-aria-components/Group";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Button } from "../Buttons/AriaButton/Button";
-import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox";
-import { Separator } from "./Separator";
-import { ToggleButton } from "./ToggleButton";
-import { Toolbar } from "./Toolbar";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox.tsx";
+import { Separator } from "./Separator.tsx";
+import { ToggleButton } from "./ToggleButton.tsx";
+import { Toolbar } from "./Toolbar.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

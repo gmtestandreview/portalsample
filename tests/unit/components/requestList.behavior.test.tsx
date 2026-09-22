@@ -1,13 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
-import { trackGAEvent } from "@/analytics/GoogleAnalytics";
-import type { DashboardItemDto } from "@/api/web-api-client";
-import { ModalDispatchCtx } from "@/components/modals/ModalContext";
-import InstrumentItem from "@/components/RequestList/instrumentItem";
-import NoRequests from "@/components/RequestList/noRequests";
-import RequestItem from "@/components/RequestList/requestItem";
-import { DashboardItemStatus, ReportStatus } from "@/routes/common/enums";
+import { trackGAEvent } from "@/analytics/GoogleAnalytics.tsx";
+import type { DashboardItemDto } from "@/api/web-api-client.ts";
+import { ModalDispatchCtx } from "@/components/modals/ModalContext.tsx";
+import InstrumentItem from "@/components/RequestList/instrumentItem.tsx";
+import NoRequests from "@/components/RequestList/noRequests.tsx";
+import RequestItem from "@/components/RequestList/requestItem.tsx";
+import { DashboardItemStatus, ReportStatus } from "@/routes/common/enums.ts";
 
 vi.mock("@/analytics/GoogleAnalytics", () => ({
 	trackGAEvent: vi.fn(),
@@ -107,7 +107,7 @@ describe("RequestList behavior", () => {
 		);
 
 		expect(
-			screen.getByText(/you currently have no requests/i),
+			screen.getByText(/you currently have no requests/iu),
 		).toBeInTheDocument();
 		expect(screen.getByRole("link", { name: "new request" })).toHaveAttribute(
 			"href",
@@ -121,7 +121,7 @@ describe("RequestList behavior", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				name: /mettler toledo xpe205 analytical balance/i,
+				name: /mettler toledo xpe205 analytical balance/iu,
 			}),
 		).toBeInTheDocument();
 		expect(screen.getByText("RFQ-2023-009012")).toBeInTheDocument();
@@ -182,7 +182,7 @@ describe("RequestList behavior", () => {
 		);
 
 		expect(
-			screen.getByRole("heading", { name: /mettler toledo xpe205/i }),
+			screen.getByRole("heading", { name: /mettler toledo xpe205/iu }),
 		).toBeInTheDocument();
 		expect(screen.getByText("Q-2023-007777")).toBeInTheDocument();
 
@@ -366,7 +366,7 @@ describe("RequestList behavior", () => {
 		);
 
 		expect(
-			screen.getByRole("heading", { name: /draft request for quote/i }),
+			screen.getByRole("heading", { name: /draft request for quote/iu }),
 		).toBeInTheDocument();
 		await user.click(screen.getByRole("button", { name: "Actions" }));
 		expect(
@@ -430,7 +430,7 @@ describe("RequestList behavior", () => {
 
 		expect(
 			screen.queryByRole("heading", {
-				name: /mettler toledo xpe205 analytical balance/i,
+				name: /mettler toledo xpe205 analytical balance/iu,
 			}),
 		).not.toBeInTheDocument();
 		expect(screen.queryByText("RFQ-2023-009012")).not.toBeInTheDocument();

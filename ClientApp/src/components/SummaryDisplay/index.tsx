@@ -1,5 +1,5 @@
-import { PatternFormatFixed } from "../Inputs/NumberInput/types";
-import type { SummaryDisplayProps } from "./types";
+import { PatternFormatFixed } from "../Inputs/NumberInput/types.ts";
+import type { SummaryDisplayProps } from "./types.ts";
 
 const renderEmptyValue = (className: string) => (
 	<span className={className}>

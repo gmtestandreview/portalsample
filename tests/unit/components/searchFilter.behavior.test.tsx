@@ -1,13 +1,13 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { StatusEnumDto } from "@/api/web-api-client";
-import SearchFilter from "@/components/SearchFilter";
-import FilterMenu from "@/components/SearchFilter/filterMenu";
-import SearchBox from "@/components/SearchFilter/searchBox";
+import { StatusEnumDto } from "@/api/web-api-client.ts";
+import FilterMenu from "@/components/SearchFilter/filterMenu.tsx";
+import SearchFilter from "@/components/SearchFilter/index.tsx";
+import SearchBox from "@/components/SearchFilter/searchBox.tsx";
 import {
 	DashboardTab,
 	type UserProfile,
-} from "@/components/SearchFilter/types";
+} from "@/components/SearchFilter/types.ts";
 
 const accountDispatchMock = vi.hoisted(() => ({
 	setUserProfile: vi.fn(),
@@ -86,7 +86,7 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: /filters/i }));
+		await user.click(screen.getByRole("button", { name: /filters/iu }));
 		const menu = screen.getByLabelText("Filter Menu");
 
 		await user.click(within(menu).getByLabelText("Quote offer is available"));
@@ -107,7 +107,7 @@ describe("SearchFilter behavior", () => {
 		expect(accountDispatchMock.setUserProfile).toHaveBeenCalledWith({
 			testingCalibrationDashboard: expectedProfile,
 		});
-		expect(screen.getByRole("button", { name: /filters/i })).toHaveAttribute(
+		expect(screen.getByRole("button", { name: /filters/iu })).toHaveAttribute(
 			"aria-expanded",
 			"false",
 		);
@@ -133,7 +133,7 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: /filters/i }));
+		await user.click(screen.getByRole("button", { name: /filters/iu }));
 		await user.click(screen.getByRole("button", { name: "Reset" }));
 
 		const expectedProfile = {
@@ -162,12 +162,12 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: /filters/i }));
+		await user.click(screen.getByRole("button", { name: /filters/iu }));
 		await user.click(screen.getByLabelText("Report is available"));
 		await user.click(screen.getByRole("button", { name: "Cancel" }));
 
 		expect(setInitialFilters).not.toHaveBeenCalled();
-		expect(screen.getByRole("button", { name: /filters/i })).toHaveAttribute(
+		expect(screen.getByRole("button", { name: /filters/iu })).toHaveAttribute(
 			"aria-expanded",
 			"false",
 		);
@@ -189,7 +189,7 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		const toggle = screen.getByRole("button", { name: /filters/i });
+		const toggle = screen.getByRole("button", { name: /filters/iu });
 		expect(toggle).toHaveAttribute("title", "3 filters have been applied");
 		await user.click(toggle);
 		await user.click(screen.getByTestId("close-filter-button"));
@@ -210,7 +210,7 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		const toggle = screen.getByRole("button", { name: /filters/i });
+		const toggle = screen.getByRole("button", { name: /filters/iu });
 		expect(toggle).toHaveAttribute("title", "1 filters have been applied");
 		await user.click(toggle);
 		await user.click(toggle);
@@ -228,7 +228,7 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: /filters/i }));
+		await user.click(screen.getByRole("button", { name: /filters/iu }));
 		await user.click(screen.getByRole("button", { name: "Show results" }));
 
 		expect(setInitialFilters).toHaveBeenCalledWith(
@@ -253,7 +253,7 @@ describe("SearchFilter behavior", () => {
 			/>,
 		);
 
-		await user.click(screen.getByRole("button", { name: /filters/i }));
+		await user.click(screen.getByRole("button", { name: /filters/iu }));
 
 		expect(screen.getByLabelText("Show all statuses")).toBeDisabled();
 		expect(screen.getByLabelText("Report is available")).toBeDisabled();

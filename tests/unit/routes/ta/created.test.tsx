@@ -2,8 +2,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DashboardTab } from "../../../../ClientApp/src/components/SearchFilter/types";
-import RequestForPatternApprovalCreated from "../../../../ClientApp/src/routes/ta/created";
+import { DashboardTab } from "../../../../ClientApp/src/components/SearchFilter/types.ts";
+import RequestForPatternApprovalCreated from "../../../../ClientApp/src/routes/ta/created/index.tsx";
 
 const mocks = vi.hoisted(() => ({
 	useHtmlTitle: vi.fn(),

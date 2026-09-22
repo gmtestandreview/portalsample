@@ -4,7 +4,7 @@ export const NO_OPENER_FEATURES = "noopener,noreferrer";
 const isSafeInternalRoute = (url: string): boolean =>
 	url.startsWith("/") &&
 	!url.startsWith("//") &&
-	!/^[a-z][a-z\d+\-.]*:/i.test(url);
+	!/^[a-z][a-z\d+\-.]*:/iu.test(url);
 
 export const openUrlInSecureNewTab = (url: string): void => {
 	const openedWindow = window.open(url, NEW_TAB_TARGET, NO_OPENER_FEATURES);

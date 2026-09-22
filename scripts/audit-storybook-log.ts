@@ -12,6 +12,7 @@
  * Usage: node scripts/audit-storybook-log.ts <path-to-log>
  */
 import { readFileSync } from "node:fs";
+import process from "node:process";
 import { pathToFileURL } from "node:url";
 
 export type TargetHit = { target: string; count: number };
@@ -40,7 +41,7 @@ const TRUNCATION_MARKERS: readonly string[] = [
 	"FATAL ERROR",
 ];
 
-const COMPLETION_MARKER = /^\s*Test Files\s+\d/m;
+const COMPLETION_MARKER = /^\s*Test Files\s+\d/mu;
 
 export const auditLog = (log: string): LogAudit => {
 	const completed = COMPLETION_MARKER.test(log);

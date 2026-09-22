@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
 import {
 	contactSchema,
 	contactSchemaEmailOnly,
@@ -12,7 +12,7 @@ import {
 	roleSchema,
 	titleOtherSchema,
 	titleSchema,
-} from "../../../ClientApp/src/validationSchemas/contactValidation";
+} from "../../../ClientApp/src/validationSchemas/contactValidation.ts";
 
 const validContact = {
 	title: "Dr",

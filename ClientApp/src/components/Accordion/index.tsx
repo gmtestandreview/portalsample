@@ -1,6 +1,9 @@
 import type { FunctionComponent, PropsWithChildren } from "react";
 import { Accordion } from "react-bootstrap";
-import type { CustomAccordionBodyProps, CustomAccordionProps } from "./types";
+import type {
+	CustomAccordionBodyProps,
+	CustomAccordionProps,
+} from "./types.ts";
 
 /**
  * CustomAccordion Component

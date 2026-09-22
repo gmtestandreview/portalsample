@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
 import { Formik, useFormikContext } from "formik";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import RouteLeavingGuard from "../../../ClientApp/src/components/RouteLeavingGuard";
+import RouteLeavingGuard from "../../../ClientApp/src/components/RouteLeavingGuard/index.tsx";
 
 const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
@@ -117,7 +117,7 @@ describe("RouteLeavingGuard", () => {
 		).toBeInTheDocument();
 		expect(screen.getByText("Your edits are not saved.")).toBeInTheDocument();
 
-		await user.click(screen.getByRole("button", { name: /stay here/i }));
+		await user.click(screen.getByRole("button", { name: /stay here/iu }));
 
 		expect(resetBlocker).toHaveBeenCalledTimes(1);
 		expect(proceedBlocker).not.toHaveBeenCalled();
@@ -137,7 +137,7 @@ describe("RouteLeavingGuard", () => {
 			'"name":"Required"',
 		);
 
-		await user.click(screen.getByRole("button", { name: /discard changes/i }));
+		await user.click(screen.getByRole("button", { name: /discard changes/iu }));
 
 		expect(proceedBlocker).toHaveBeenCalledTimes(1);
 		expect(resetBlocker).not.toHaveBeenCalled();

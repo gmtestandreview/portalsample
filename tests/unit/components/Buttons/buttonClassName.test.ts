@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getButtonClassName } from "@/components/Buttons/buttonClassName";
+import { getButtonClassName } from "@/components/Buttons/buttonClassName.ts";
 
 describe("getButtonClassName", () => {
 	it("builds the default primary Bootstrap button class without an extra class", () => {

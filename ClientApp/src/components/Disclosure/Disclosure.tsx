@@ -7,8 +7,8 @@ import {
 	type DisclosureProps,
 	type HeadingProps,
 } from "react-aria-components/Disclosure";
-import { Heading } from "../AriaComponents/Content";
-import { ChevronRight } from "../AriaComponents/NmiIcon";
+import { Heading } from "../AriaComponents/Content.tsx";
+import { ChevronRight } from "../AriaComponents/NmiIcon.tsx";
 import "./Disclosure.css";
 
 export function Disclosure(props: DisclosureProps) {

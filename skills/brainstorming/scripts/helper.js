@@ -1,7 +1,7 @@
 (() => {
-	const MIN_RECONNECT_MS = 500;
-	const MAX_RECONNECT_MS = 30000;
-	const TOMBSTONE_AFTER_MS = 15000; // show the "paused" overlay after this long disconnected
+	const MinReconnectMs = 500;
+	const MaxReconnectMs = 30_000;
+	const TombstoneAfterMs = 15_000; // show the "paused" overlay after this long disconnected
 
 	// Pure: next backoff delay (doubles, capped). Exported for unit tests.
 	function nextReconnectDelay(current, max) {
@@ -10,9 +10,9 @@
 	if (typeof module !== "undefined" && module.exports) {
 		module.exports = {
 			nextReconnectDelay,
-			MIN_RECONNECT_MS,
-			MAX_RECONNECT_MS,
-			TOMBSTONE_AFTER_MS,
+			MIN_RECONNECT_MS: MinReconnectMs,
+			MAX_RECONNECT_MS: MaxReconnectMs,
+			TOMBSTONE_AFTER_MS: TombstoneAfterMs,
 		};
 	}
 
@@ -21,7 +21,7 @@
 
 	let ws = null;
 	let eventQueue = [];
-	let reconnectDelay = MIN_RECONNECT_MS;
+	let reconnectDelay = MinReconnectMs;
 	let reconnectTimer = null;
 	let disconnectedSince = null;
 	let everConnected = false;
@@ -100,7 +100,7 @@
 			const recovered = tombstoneShown;
 			everConnected = true;
 			disconnectedSince = null;
-			reconnectDelay = MIN_RECONNECT_MS;
+			reconnectDelay = MinReconnectMs;
 			tombstoneShown = false;
 			setStatus("connected");
 			eventQueue.forEach((e) => ws.send(JSON.stringify(e)));
@@ -124,14 +124,14 @@
 		ws.onclose = () => {
 			ws = null;
 			if (disconnectedSince === null) disconnectedSince = Date.now();
-			if (Date.now() - disconnectedSince >= TOMBSTONE_AFTER_MS) {
+			if (Date.now() - disconnectedSince >= TombstoneAfterMs) {
 				setStatus("disconnected");
 				showTombstone();
 			} else {
 				setStatus("reconnecting");
 			}
 			reconnectTimer = setTimeout(connect, reconnectDelay);
-			reconnectDelay = nextReconnectDelay(reconnectDelay, MAX_RECONNECT_MS);
+			reconnectDelay = nextReconnectDelay(reconnectDelay, MaxReconnectMs);
 		};
 
 		// Let onclose own reconnection so we don't schedule it twice.

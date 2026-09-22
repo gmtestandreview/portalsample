@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { errorMessages } from "@/routes/common/commonMessages";
+import { errorMessages } from "@/routes/common/commonMessages.ts";
 
 describe("common error messages", () => {
 	it("exposes save failure messages for handled dashboard HTTP error outcomes", () => {

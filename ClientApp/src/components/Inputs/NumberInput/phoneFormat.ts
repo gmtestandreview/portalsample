@@ -7,7 +7,7 @@ export function getPhoneNumberFormat(value: string | null | undefined): string {
 		return DEFAULT_PHONE_NUMBER_FORMAT;
 	}
 
-	const digitsOnlyValue = value.replace(/\D/g, "");
+	const digitsOnlyValue = value.replace(/\D/gu, "");
 
 	if (
 		digitsOnlyValue.startsWith("04") ||

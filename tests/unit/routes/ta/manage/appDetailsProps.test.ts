@@ -3,14 +3,14 @@ import type {
 	IPublicClientApplication,
 } from "@azure/msal-browser";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClientModule from "../../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
 	type RequestForPatternApprovalAppDetails,
 	YesNo,
-} from "../../../../../ClientApp/src/api/web-api-client";
-import appDetailsProps from "../../../../../ClientApp/src/routes/ta/manage/appDetailsProps";
+} from "../../../../../ClientApp/src/api/web-api-client.ts";
+import appDetailsProps from "../../../../../ClientApp/src/routes/ta/manage/appDetailsProps.ts";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),

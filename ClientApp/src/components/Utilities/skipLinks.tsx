@@ -1,4 +1,4 @@
-import HashLink from "./hashLink";
+import HashLink from "./hashLink.tsx";
 
 const SkipLinks = () => (
 	<div id="page-top" tabIndex={-1}>

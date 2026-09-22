@@ -1,18 +1,18 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
-import { FilterMessages } from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client.ts";
+import { FilterMessages } from "../../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	ClientMethodMocks,
 	ClientMock,
-} from "../../helpers/mockApiClient";
+} from "../../helpers/mockApiClient.ts";
 import {
 	DEFAULT_ACCESS_TOKEN,
 	resetMsalMock,
 	signOut,
-} from "../../helpers/mockMsal";
-import { renderWithRouter } from "../../helpers/renderWithRouter";
+} from "../../helpers/mockMsal.ts";
+import { renderWithRouter } from "../../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	appLoggerError: vi.fn(),
@@ -35,7 +35,7 @@ const editor = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -44,7 +44,7 @@ vi.mock(
 	"../../../../ClientApp/src/api/web-api-client",
 	async (importOriginal) => {
 		const { createClientMockFor, webApiClientModuleMock } = await import(
-			"../../helpers/mockApiClient"
+			"../../helpers/mockApiClient.ts"
 		);
 		const original = await importOriginal<typeof WebApiClient>();
 
@@ -157,7 +157,7 @@ const renderRoute = async (
 	routePath = "/ta/manage/:id/messages",
 ) => {
 	const ApplicationMessages = (
-		await import("../../../../ClientApp/src/routes/ta/manage/appMessages")
+		await import("../../../../ClientApp/src/routes/ta/manage/appMessages.tsx")
 	).default;
 
 	const result = renderWithRouter(<ApplicationMessages />, {
@@ -174,7 +174,7 @@ const renderRoute = async (
 
 describe("application messages", () => {
 	beforeEach(async () => {
-		await import("../../../../ClientApp/src/api/web-api-client");
+		await import("../../../../ClientApp/src/api/web-api-client.ts");
 
 		resetMsalMock();
 		mocks.appLoggerError.mockReset();

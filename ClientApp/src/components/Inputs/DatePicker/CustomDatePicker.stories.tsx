@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import CustomDatePicker from "./CustomDatePicker";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import CustomDatePicker from "./CustomDatePicker.tsx";
 
 /**
  * `CustomDatePicker` composes `CustomDateInput` with react-datepicker to provide the

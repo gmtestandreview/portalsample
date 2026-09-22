@@ -8,10 +8,10 @@ import {
 	formatDateOnlyForDisplay,
 	parseApiDateOnlyInput,
 	parseDateOnlyInput,
-} from "../../../utils/dateOnly";
-import SummaryDisplay from "../../SummaryDisplay";
-import CustomDatePicker from "./CustomDatePicker";
-import type { DatePickerProps } from "./types";
+} from "../../../utils/dateOnly.ts";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import CustomDatePicker from "./CustomDatePicker.tsx";
+import type { DatePickerProps } from "./types.ts";
 
 const DatePicker = (datePickerProps: DatePickerProps) => {
 	const {

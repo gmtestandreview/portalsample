@@ -1,8 +1,8 @@
 import { Col, Row } from "react-bootstrap";
-import SelectInput from "../SelectInput";
-import TextInput from "../TextInput";
-import states from "./constants";
-import type { ManualAddressInputProps } from "./types";
+import SelectInput from "../SelectInput/index.tsx";
+import TextInput from "../TextInput/index.tsx";
+import states from "./constants.ts";
+import type { ManualAddressInputProps } from "./types.ts";
 
 const ManualAddressInput = (props: ManualAddressInputProps) => {
 	const { name, disabled, ...rest } = props;
@@ -52,7 +52,7 @@ const ManualAddressInput = (props: ManualAddressInputProps) => {
 						name={`${name}.state`}
 						label="State"
 						options={states}
-						addBlank
+						addBlank={true}
 						disabled={disabled}
 						{...rest}
 					/>

@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { PatternFormat } from "react-number-format";
 import { Link, Navigate, useNavigate } from "react-router";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
-import type { PatternApprovalStatusEnumDto } from "../../api/web-api-client";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
+import type { PatternApprovalStatusEnumDto } from "../../api/web-api-client.ts";
 import {
 	type PagedListOfPatternApprovalDashboardDetailsDto,
 	PatternApprovalClient,
@@ -14,38 +14,38 @@ import {
 	type ProblemDetails,
 	type ServicesOffered,
 	ServiceType,
-} from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import useAccountContext, {
 	useAccountDispatch,
-} from "../../authentication/hooks";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
-import CustomPagination from "../../components/Pagination";
-import CustomPaginationHeader from "../../components/PaginationHeader";
-import NoRequests from "../../components/RequestList/noRequests";
-import PaRequestItem from "../../components/RequestList/paRequestItem";
-import PaSearchFilter from "../../components/SearchFilter/TypeApproval/paSearchFilter";
-import { DashboardTab } from "../../components/SearchFilter/types";
-import StandardPathway from "../../components/tiles/StandardPathway";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import Welcome from "../../components/Welcome";
-import useUserServices from "../../hooks/useUserServices";
-import AppLogger from "../../instrumentation/AppLogger";
+} from "../../authentication/hooks.tsx";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums.ts";
+import CustomPagination from "../../components/Pagination/index.tsx";
+import CustomPaginationHeader from "../../components/PaginationHeader/index.tsx";
+import NoRequests from "../../components/RequestList/noRequests.tsx";
+import PaRequestItem from "../../components/RequestList/paRequestItem.tsx";
+import PaSearchFilter from "../../components/SearchFilter/TypeApproval/paSearchFilter.tsx";
+import { DashboardTab } from "../../components/SearchFilter/types.ts";
+import StandardPathway from "../../components/tiles/StandardPathway/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
+import Welcome from "../../components/Welcome/index.tsx";
+import useUserServices from "../../hooks/useUserServices.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 import {
 	clearDashboardInfoNotification,
 	clearDashboardNotification,
 	getDashboardInfoNotification,
 	getDashboardNotification,
 	setDashboardNotification,
-} from "../../storage/notification";
-import SessionStorageCache from "../../storage/sessionStorageCache";
-import { HttpStatusCode } from "../../types";
-import { defaultFilter } from "../common/constants";
-import { DashBoardNotifications } from "../common/dashboardNotifications";
-import getUnexpectedErrorRoute from "../common/errorRoutes";
+} from "../../storage/notification.ts";
+import SessionStorageCache from "../../storage/sessionStorageCache.ts";
+import { HttpStatusCode } from "../../types.ts";
+import { defaultFilter } from "../common/constants.ts";
+import { DashBoardNotifications } from "../common/dashboardNotifications.ts";
+import getUnexpectedErrorRoute from "../common/errorRoutes.ts";
 
 // TS Move this to a constants file if we need this setting app wide
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
@@ -68,7 +68,7 @@ const setNotification = () => {
 	return dashboardNotification ? (
 		<NotificationMessage
 			id="notif-message-1"
-			canClose
+			canClose={true}
 			onClose={clearDashboardNotification}
 			{...dashboardNotification}
 		/>
@@ -80,7 +80,7 @@ const setInfoNotification = () => {
 	return dashboardInfoNotification ? (
 		<NotificationMessage
 			id="notif-info-message-2"
-			canClose
+			canClose={true}
 			onClose={clearDashboardInfoNotification}
 			{...dashboardInfoNotification}
 		/>
@@ -535,9 +535,9 @@ const DashboardTA = () => {
 				aria-live={isModalOpen ? undefined : "polite"}
 			>
 				{!isModalOpen && isDataLoading ? (
-					<BlockUISpinner partial>
+					<BlockUiSpinner partial={true}>
 						<p>Loading data...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				) : (
 					<>
 						<div className="dashboard-items mb-5">
@@ -562,7 +562,7 @@ const DashboardTA = () => {
 		</Row>
 	);
 
-	const renderDashTASubView = () => (
+	const renderDashTaSubView = () => (
 		<Row className="mb-3">
 			<Col>
 				<Tab.Container
@@ -724,11 +724,11 @@ const DashboardTA = () => {
 					</Col>
 				</Row>
 				{renderDashTypeTitle()}
-				{renderDashTASubView()}
+				{renderDashTaSubView()}
 
 				<Row className="mb-5">
 					<h2 className="pt-md-4 mb-3">Quick links</h2>
-					<Col md>
+					<Col md={true}>
 						<StandardPathway
 							type="internal"
 							title="Add an NMI Service"
@@ -737,7 +737,7 @@ const DashboardTA = () => {
 							to="/services-we-offer?mode=manage"
 						/>
 					</Col>
-					<Col md>
+					<Col md={true}>
 						<StandardPathway
 							type="internal"
 							title="Help guide"
@@ -746,7 +746,7 @@ const DashboardTA = () => {
 							to="/help-guide"
 						/>
 					</Col>
-					<Col md>
+					<Col md={true}>
 						<StandardPathway
 							type="external"
 							title="Your feedback"

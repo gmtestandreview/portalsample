@@ -1,8 +1,8 @@
 import { expect } from "@playwright/test";
-import { QuoteStatus } from "../../../ClientApp/src/routes/common/enums";
-import { Given, Then, When } from "../support/fixtures";
-import { buildQuote } from "../support/scenario-state";
-import { waitForAppReady } from "./common.steps";
+import { QuoteStatus } from "../../../ClientApp/src/routes/common/enums.ts";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { buildQuote } from "../support/scenario-state.ts";
+import { waitForAppReady } from "./common.steps.ts";
 
 Given(
 	"quote {string} is available",
@@ -91,7 +91,7 @@ Then(
 	"the quote acceptance wizard for {string} is displayed",
 	async ({ page }, referenceId: string) => {
 		await expect(page).toHaveURL(
-			/\/accept-quote\/QA-RFQ-2024-000892\/report-recipient$/,
+			/\/accept-quote\/QA-RFQ-2024-000892\/report-recipient$/u,
 		);
 		await expect(
 			page.getByText(referenceId, { exact: false }).first(),
@@ -123,9 +123,9 @@ Then(
 );
 
 Then("the dashboard is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/dashboard$/);
+	await expect(page).toHaveURL(/\/dashboard$/u);
 	await expect(
-		page.getByRole("heading", { name: /currently managing/i }),
+		page.getByRole("heading", { name: /currently managing/iu }),
 	).toBeVisible();
 });
 
@@ -142,7 +142,7 @@ Then(
 		await expect(
 			page
 				.getByRole("heading", {
-					name: new RegExp(title.replace("/", String.raw`\/`), "i"),
+					name: new RegExp(title.replace("/", String.raw`\/`), "iu"),
 				})
 				.first(),
 		).toBeVisible();
@@ -207,10 +207,10 @@ When("the user accepts the quote terms", async ({ page }) => {
 });
 
 Then("the accepted quote success page is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/submitted-success\/QA-RFQ-2024-000892$/);
+	await expect(page).toHaveURL(/\/submitted-success\/QA-RFQ-2024-000892$/u);
 	await expect(
 		page.getByRole("heading", {
-			name: /accepted quote has been successfully submitted/i,
+			name: /accepted quote has been successfully submitted/iu,
 		}),
 	).toBeVisible();
 });

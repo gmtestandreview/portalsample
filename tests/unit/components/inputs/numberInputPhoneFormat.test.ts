@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getPhoneNumberFormat } from "@/components/Inputs/NumberInput/phoneFormat";
+import { getPhoneNumberFormat } from "@/components/Inputs/NumberInput/phoneFormat.ts";
 
 describe("getPhoneNumberFormat", () => {
 	it.each([

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import BackToDashboardButton from ".";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import BackToDashboardButton from "./index.tsx";
 
 /**
  * BackToDashboardButton Component Storybook Configuration
@@ -32,7 +32,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const link = canvas.getByRole("link", { name: /back to dashboard/i });
+		const link = canvas.getByRole("link", { name: /back to dashboard/iu });
 		await expect(link).toBeInTheDocument();
 		await expect(link).toHaveAttribute("href", "/dashboard");
 	},

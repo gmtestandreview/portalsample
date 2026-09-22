@@ -3,12 +3,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import GetStarted from "@/components/get-started/get-started";
+import GetStarted from "@/components/get-started/get-started.tsx";
 import {
 	clearGetStartedNotification,
 	setGetStartedNotification,
-} from "@/storage/notification";
-import { NotificationSeverity } from "@/storage/types";
+} from "@/storage/notification.ts";
+import { NotificationSeverity } from "@/storage/types.ts";
 
 vi.mock("@azure/msal-react", () => ({
 	useIsAuthenticated: vi.fn(),
@@ -41,21 +41,21 @@ describe("GetStarted", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				name: /National Measurement Institute .* Services portal/i,
+				name: /National Measurement Institute .* Services portal/iu,
 				level: 1,
 			}),
 		).toBeInTheDocument();
 		expect(
-			screen.getByText(/request, receive and accept quotes/i),
+			screen.getByText(/request, receive and accept quotes/iu),
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole("link", { name: /How to set up access/i }),
+			screen.getByRole("link", { name: /How to set up access/iu }),
 		).toHaveAttribute("href", "/help-guide/how-to-setup-access");
-		expect(screen.getByRole("link", { name: /Log in/i })).toHaveAttribute(
+		expect(screen.getByRole("link", { name: /Log in/iu })).toHaveAttribute(
 			"href",
 			"/dashboard",
 		);
-		expect(screen.getByRole("link", { name: /^Digital ID/i })).toHaveAttribute(
+		expect(screen.getByRole("link", { name: /^Digital ID/iu })).toHaveAttribute(
 			"href",
 			"https://www.digitalidsystem.gov.au",
 		);
@@ -76,7 +76,7 @@ describe("GetStarted", () => {
 			screen.getByText("Your session expired. Please sign in again."),
 		).toBeInTheDocument();
 
-		await user.click(screen.getByRole("button", { name: /close alert/i }));
+		await user.click(screen.getByRole("button", { name: /close alert/iu }));
 
 		await waitFor(() => {
 			expect(
@@ -93,7 +93,7 @@ describe("GetStarted", () => {
 		expect(screen.getByRole("main")).toHaveTextContent("Dashboard route");
 		expect(
 			screen.queryByRole("heading", {
-				name: /National Measurement Institute/i,
+				name: /National Measurement Institute/iu,
 			}),
 		).not.toBeInTheDocument();
 	});

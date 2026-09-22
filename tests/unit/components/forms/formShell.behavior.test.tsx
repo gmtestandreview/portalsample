@@ -9,10 +9,10 @@ import userEvent from "@testing-library/user-event";
 import { Form, useFormikContext } from "formik";
 import { MemoryRouter } from "react-router";
 import * as Yup from "yup";
-import ContactDetailsInput from "@/components/forms/CommonForms/ContactDetails";
-import ErrorSummary from "@/components/forms/ErrorSummary";
-import FormikForm from "@/components/forms/FormikForm";
-import { HttpStatusCode } from "@/types";
+import ContactDetailsInput from "@/components/forms/CommonForms/ContactDetails/index.tsx";
+import ErrorSummary from "@/components/forms/ErrorSummary/index.tsx";
+import FormikForm from "@/components/forms/FormikForm/index.tsx";
+import { HttpStatusCode } from "@/types.ts";
 
 vi.mock("@/components/forms/UnsavedFormPrompt", () => ({
 	default: () => <div data-testid="unsaved-form-prompt" />,
@@ -152,7 +152,7 @@ describe("form shell behavior slice", () => {
 				<FormikForm
 					initialValues={{}}
 					onSubmit={vi.fn()}
-					isLoading
+					isLoading={true}
 					banner={<div>Custom banner</div>}
 					promptPath="/loading"
 				>
@@ -241,7 +241,7 @@ describe("form shell behavior slice", () => {
 				<FormikForm
 					initialValues={{ value: "pending" }}
 					onSubmit={() => new Promise(() => {})}
-					showBanner
+					showBanner={true}
 					bannerTitle="Pending form"
 				>
 					{({ handleSubmit }) => (
@@ -269,7 +269,7 @@ describe("form shell behavior slice", () => {
 		);
 
 		expect(
-			screen.getByText(/Another person has already saved this page/i),
+			screen.getByText(/Another person has already saved this page/iu),
 		).toBeInTheDocument();
 
 		rerender(
@@ -280,7 +280,7 @@ describe("form shell behavior slice", () => {
 			</MemoryRouter>,
 		);
 
-		expect(screen.getByText(/Please contact support/i)).toBeInTheDocument();
+		expect(screen.getByText(/Please contact support/iu)).toBeInTheDocument();
 
 		rerender(
 			<MemoryRouter>
@@ -336,7 +336,7 @@ describe("form shell behavior slice", () => {
 				>
 					{({ handleSubmit }) => (
 						<Form onSubmit={handleSubmit}>
-							<ErrorSummary disableLinkedError />
+							<ErrorSummary disableLinkedError={true} />
 							<button type="submit">Validate empty group</button>
 						</Form>
 					)}
@@ -438,7 +438,7 @@ describe("form shell behavior slice", () => {
 				>
 					<ContactDetailsInput
 						name="organisationAndContact.contact"
-						isSummary
+						isSummary={true}
 					/>
 				</FormikForm>
 			</MemoryRouter>,
@@ -458,7 +458,7 @@ describe("form shell behavior slice", () => {
 				>
 					<ContactDetailsInput
 						name="organisationAndContact.contact"
-						isSummary
+						isSummary={true}
 					/>
 				</FormikForm>
 			</MemoryRouter>,

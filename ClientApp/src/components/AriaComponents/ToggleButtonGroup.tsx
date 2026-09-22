@@ -1,10 +1,10 @@
 "use client";
 import {
-	ToggleButtonGroup as RACToggleButtonGroup,
+	ToggleButtonGroup as RacToggleButtonGroup,
 	type ToggleButtonGroupProps,
 } from "react-aria-components/ToggleButtonGroup";
 import "./ToggleButtonGroup.css";
 
 export function ToggleButtonGroup(props: ToggleButtonGroupProps) {
-	return <RACToggleButtonGroup {...props} />;
+	return <RacToggleButtonGroup {...props} />;
 }

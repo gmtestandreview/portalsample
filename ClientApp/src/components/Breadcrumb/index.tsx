@@ -44,7 +44,7 @@ const CustomBreadcrumb = ({
 					const isLastItem = index === breadcrumbs.length - 1;
 					const key = `${breadcrumbItem.to ?? "current"}-${breadcrumbItem.text}-${index}`;
 
-					if (!isLastItem && !breadcrumbItem.to) {
+					if (!(isLastItem || breadcrumbItem.to)) {
 						throw new Error(
 							`Breadcrumb item "${breadcrumbItem.text}" must include "to" because it is not the current page.`,
 						);

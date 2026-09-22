@@ -2,16 +2,16 @@ import { useMsal } from "@azure/msal-react";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router";
-import type { AcceptQuotePreInfoDto } from "../../api/web-api-client";
-import { AcceptQuoteClient } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import FormBanner from "../../components/forms/FormBanner";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import AppLogger from "../../instrumentation/AppLogger";
-import { formatBannerTitle } from "../common/helperFunctions";
+import type { AcceptQuotePreInfoDto } from "../../api/web-api-client.ts";
+import { AcceptQuoteClient } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import FormBanner from "../../components/forms/FormBanner/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
 
 const SubmittedSuccess = () => {
 	const { id } = useParams<{ id?: string }>();
@@ -62,18 +62,24 @@ const SubmittedSuccess = () => {
 	return (
 		<>
 			{isLoading && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			<FormBanner
 				title="Testing and calibration service - Quotation"
 				showSaveAndExitButton={false}
 				refTitle={`Quotation ID: ${id}`}
 				subTitle={formatBannerTitle(accountDetails)}
-				showGoToDashboardButton
+				showGoToDashboardButton={true}
 			/>
-			<Container fluid id="main" role="main" className="px-0" tabIndex={-1}>
+			<Container
+				fluid={true}
+				id="main"
+				role="main"
+				className="px-0"
+				tabIndex={-1}
+			>
 				<Container className="py-5">
 					<Row className="mb-5">
 						<Col sm={12} md={10} lg={8} className="mx-auto">
@@ -104,7 +110,7 @@ const SubmittedSuccess = () => {
 								<Link
 									data-testid="go-to-dashboard-button"
 									to="/dashboard"
-									replace
+									replace={true}
 									className="btn btn-primary"
 								>
 									Go to dashboard

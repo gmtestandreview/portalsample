@@ -66,7 +66,7 @@ describe("application bootstrap", () => {
 		document.body.innerHTML = '<div id="root"></div>';
 		mocks.createRoot.mockReturnValue({ render: mocks.render });
 
-		await import("../../../ClientApp/src/index");
+		await import("../../../ClientApp/src/index.tsx");
 
 		expect(mocks.createRoot).toHaveBeenCalledWith(
 			document.getElementById("root"),
@@ -83,7 +83,7 @@ describe("application bootstrap", () => {
 		document.body.innerHTML = '<div id="root"></div>';
 		mocks.createRoot.mockReturnValue({ render: mocks.render });
 
-		await import("../../../ClientApp/src/index");
+		await import("../../../ClientApp/src/index.tsx");
 
 		expect(mocks.render).toHaveBeenCalledWith(
 			expect.objectContaining({ type: StrictMode }),

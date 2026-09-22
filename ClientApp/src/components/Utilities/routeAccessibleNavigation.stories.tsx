@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor, within } from "storybook/test";
-import RouteAccessibleNavigation from "./routeAccessibleNavigation";
+import RouteAccessibleNavigation from "./routeAccessibleNavigation.tsx";
 
 /**
  * `RouteAccessibleNavigation` is a non-visual accessibility helper. It renders a
@@ -36,7 +36,7 @@ export const LiveRegion: Story = {
 		// only assertion here that reaches the settled state - and the one that stops that
 		// timer firing after the story has ended.
 		await waitFor(() =>
-			expect(status).toHaveTextContent(/^Navigated to .* page\.$/),
+			expect(status).toHaveTextContent(/^Navigated to .* page\.$/u),
 		);
 	},
 };

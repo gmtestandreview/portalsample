@@ -4,24 +4,24 @@ import { Navigate, useLocation } from "react-router";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../authentication/hooks";
-import Layout from "../../components/Layout";
-import BranchSelectorModal from "../../components/modals/BranchSelectorModal";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
-import type { ModalState } from "../../components/modals/ModalContext";
+} from "../../authentication/hooks.tsx";
+import Layout from "../../components/Layout/index.tsx";
+import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums.ts";
+import BranchSelectorModal from "../../components/modals/BranchSelectorModal/index.tsx";
+import type { ModalState } from "../../components/modals/ModalContext.tsx";
 import {
 	ModalDispatchCtx,
 	ModalStateCtx,
-} from "../../components/modals/ModalContext";
-import RFQDeleteModal from "../../components/modals/RFQDeleteModal";
-import TermsAndConditionModal from "../../components/modals/TermsAndCondition";
-import BackToTopButton from "../../components/Utilities/backToTopButton";
-import RouteChangeScrollTop from "../../components/Utilities/routeChangeScrollTop";
-import { useRouteAccessibility } from "../../hooks/useRouteAccessibility";
+} from "../../components/modals/ModalContext.tsx";
+import RfqDeleteModal from "../../components/modals/RFQDeleteModal/index.tsx";
+import TermsAndConditionModal from "../../components/modals/TermsAndCondition/index.tsx";
+import BackToTopButton from "../../components/Utilities/backToTopButton.tsx";
+import RouteChangeScrollTop from "../../components/Utilities/routeChangeScrollTop.tsx";
+import { useRouteAccessibility } from "../../hooks/useRouteAccessibility.ts";
 import {
 	clearDashboardNotification,
 	getBranchModalNotification,
-} from "../../storage/notification";
+} from "../../storage/notification.ts";
 
 export interface PreConditionsProps {
 	children: any;
@@ -56,11 +56,11 @@ const PreConditions = (props: PreConditionsProps) => {
 		}));
 	}, []);
 
-	const setShowRFQDeleteModal = useCallback((show: boolean, rfqId: string) => {
+	const setShowRfqDeleteModal = useCallback((show: boolean, rfqId: string) => {
 		setModalState((prev) => ({ ...prev, showRFQDeleteModal: show, rfqId }));
 	}, []);
 
-	const setShowRFQSelectModal = useCallback(
+	const setShowRfqSelectModal = useCallback(
 		(show: boolean, rfqId: string, callingPath: string) => {
 			setModalState((prev) => ({
 				...prev,
@@ -76,10 +76,10 @@ const PreConditions = (props: PreConditionsProps) => {
 	const modalDispatch = useMemo(
 		() => ({
 			setShowBranchSelector,
-			setShowRFQDeleteModal,
-			setShowRFQSelectModal,
+			setShowRFQDeleteModal: setShowRfqDeleteModal,
+			setShowRFQSelectModal: setShowRfqSelectModal,
 		}),
-		[setShowBranchSelector, setShowRFQDeleteModal, setShowRFQSelectModal],
+		[setShowBranchSelector, setShowRfqDeleteModal, setShowRfqSelectModal],
 	);
 
 	// Loose `!= null` is deliberate: it means "an organisation exists", covering both
@@ -121,7 +121,7 @@ const PreConditions = (props: PreConditionsProps) => {
 
 	const showBranchSelector =
 		autoShowBranchSelector || modalState.showBranchSelector;
-	const showRFQDelete = modalState.showRFQDeleteModal;
+	const showRfqDelete = modalState.showRFQDeleteModal;
 
 	useEffect(() => {
 		if (autoShowBranchSelector && !modalState.showBranchSelector) {
@@ -141,16 +141,16 @@ const PreConditions = (props: PreConditionsProps) => {
 
 	useEffect(() => {
 		setIsModalOpen(
-			!!(showBranchSelector || showRFQDelete || showTermsAndConditions),
+			!!(showBranchSelector || showRfqDelete || showTermsAndConditions),
 		);
-	}, [showBranchSelector, showRFQDelete, showTermsAndConditions, isModalOpen]);
+	}, [showBranchSelector, showRfqDelete, showTermsAndConditions, isModalOpen]);
 
 	const renderWithLayout = () => (
 		<Layout>
 			{children}
 			{showTermsAndConditions ? <TermsAndConditionModal /> : null}
 			{showBranchSelector ? <BranchSelectorModal /> : null}
-			{showRFQDelete ? <RFQDeleteModal /> : null}
+			{showRfqDelete ? <RfqDeleteModal /> : null}
 		</Layout>
 	);
 

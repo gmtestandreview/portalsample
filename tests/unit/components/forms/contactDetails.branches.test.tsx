@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { Formik } from "formik";
-import ContactDetails from "@/components/forms/CommonForms/ContactDetails";
+import ContactDetails from "@/components/forms/CommonForms/ContactDetails/index.tsx";
 
 const customLabels = {
 	titleLabel: "Salutation",
@@ -60,7 +60,7 @@ describe("ContactDetails branch coverage", () => {
 				initialStatus={{ hidden: {} }}
 				onSubmit={vi.fn()}
 			>
-				<ContactDetails name="contact" isSummary {...customLabels} />
+				<ContactDetails name="contact" isSummary={true} {...customLabels} />
 			</Formik>,
 		);
 

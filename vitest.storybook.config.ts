@@ -3,13 +3,13 @@ import { fileURLToPath } from "node:url";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
-import { storybookCoverageConfig } from "./vitest.storybook.coverage";
-import { storybookVitestRuntimePlugin } from "./vitest.storybook.runtime";
+import { storybookCoverageConfig } from "./vitest.storybook.coverage.ts";
+import { storybookVitestRuntimePlugin } from "./vitest.storybook.runtime.ts";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const storybookBrowserApi = {
 	host: "127.0.0.1",
-	port: 61005,
+	port: 61_005,
 } as const;
 
 /**
@@ -35,7 +35,7 @@ export default defineConfig({
 		watch: false,
 		globals: true,
 		setupFiles: ["./vitest.storybook.setup.ts"],
-		testTimeout: 15000,
+		testTimeout: 15_000,
 		coverage: storybookCoverageConfig,
 		// The addon keeps this project alive for MCP-triggered runs. A single
 		// orchestrator prevents broad runs from exhausting the shared browser

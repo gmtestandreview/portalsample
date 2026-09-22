@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
-import type * as WebApiClientModule from "@/api/web-api-client";
-import InstrumentInfoPanel from "@/routes/ta/instrumentInfoPanel";
+import type * as WebApiClientModule from "@/api/web-api-client.ts";
+import InstrumentInfoPanel from "@/routes/ta/instrumentInfoPanel.tsx";
 
 const mocks = vi.hoisted(() => {
 	const acquireTokenSilent = vi.fn();
@@ -75,11 +75,11 @@ describe("InstrumentInfoPanel", () => {
 			screen.getByText("References for this instrument type"),
 		).toBeInTheDocument();
 		expect(
-			screen.getByText(/select an instrument category and type/i),
+			screen.getByText(/select an instrument category and type/iu),
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("link", {
-				name: /download credit check application form/i,
+				name: /download credit check application form/iu,
 			}),
 		).toHaveAttribute(
 			"href",
@@ -121,18 +121,18 @@ describe("InstrumentInfoPanel", () => {
 		});
 
 		const requirementsLink = await screen.findByRole("link", {
-			name: /pattern approval evidence checklist/i,
+			name: /pattern approval evidence checklist/iu,
 		});
 		expect(requirementsLink).toHaveAttribute(
 			"href",
 			"https://example.test/pattern-approval-requirements",
 		);
 		expect(
-			screen.queryByText(/select an instrument category and type/i),
+			screen.queryByText(/select an instrument category and type/iu),
 		).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole("link", {
-				name: /download credit check application form/i,
+				name: /download credit check application form/iu,
 			}),
 		).not.toBeInTheDocument();
 
@@ -153,7 +153,7 @@ describe("InstrumentInfoPanel", () => {
 
 		expect(screen.getByRole("alert")).toBeInTheDocument();
 		expect(
-			screen.getByText(/select an instrument category and type/i),
+			screen.getByText(/select an instrument category and type/iu),
 		).toBeInTheDocument();
 		expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
 
@@ -167,7 +167,7 @@ describe("InstrumentInfoPanel", () => {
 
 		expect(screen.getByRole("alert")).toBeInTheDocument();
 		expect(
-			screen.getByText(/select an instrument category and type/i),
+			screen.getByText(/select an instrument category and type/iu),
 		).toBeInTheDocument();
 		expect(mocks.getInfoPanelContent).not.toHaveBeenCalled();
 	});

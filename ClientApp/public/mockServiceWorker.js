@@ -23,7 +23,7 @@ addEventListener("activate", (event) => {
 addEventListener("message", async (event) => {
 	const clientId = Reflect.get(event.source || {}, "id");
 
-	if (!clientId || !self.clients) {
+	if (!(clientId && self.clients)) {
 		return;
 	}
 
@@ -74,9 +74,9 @@ addEventListener("message", async (event) => {
 		case "CLIENT_CLOSED": {
 			activeClientIds.delete(clientId);
 
-			const remainingClients = allClients.filter((client) => {
-				return client.id !== clientId;
-			});
+			const remainingClients = allClients.filter(
+				(client) => client.id !== clientId,
+			);
 
 			// Unregister itself when there are no more clients
 			if (remainingClients.length === 0) {

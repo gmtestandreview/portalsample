@@ -1,4 +1,4 @@
-import type { DetailsProps } from "./types";
+import type { DetailsProps } from "./types.ts";
 
 const Details = ({ id, title, inlineHelp }: DetailsProps) => (
 	<details id={id} className="details">

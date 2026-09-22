@@ -190,7 +190,7 @@ describe("unsupported compatibility deltas stay honest", () => {
 			// A tripwire, not a preference: if an upgrade adds a real replacement,
 			// this fails and the delta above should be adopted instead of documented.
 			const matches = pluginRuleNames.filter((name) =>
-				new RegExp(fragment.replace("-", ".?"), "i").test(name),
+				new RegExp(fragment.replace("-", ".?"), "iu").test(name),
 			);
 
 			expect(matches).toEqual([]);

@@ -1,5 +1,5 @@
 import { Col, Container, Row } from "react-bootstrap";
-import { useAccountState } from "../../authentication/hooks";
+import { useAccountState } from "../../authentication/hooks.tsx";
 
 const Welcome = () => {
 	const accountContext = useAccountState();
@@ -7,7 +7,7 @@ const Welcome = () => {
 
 	return (
 		<Container
-			fluid
+			fluid={true}
 			className="welcome-banner-background gs-wrapper mb-5"
 			data-testid="welcome-banner"
 		>

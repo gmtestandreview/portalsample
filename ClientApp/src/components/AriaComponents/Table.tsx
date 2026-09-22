@@ -23,9 +23,14 @@ import {
 	type TableProps,
 	useTableOptions,
 } from "react-aria-components/Table";
-import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox";
-import { ChevronDown, ChevronRight, ChevronUp, GripVertical } from "./NmiIcon";
-import { ProgressCircle } from "./ProgressCircle";
+import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox.tsx";
+import {
+	ChevronDown,
+	ChevronRight,
+	ChevronUp,
+	GripVertical,
+} from "./NmiIcon.tsx";
+import { ProgressCircle } from "./ProgressCircle.tsx";
 import "./Table.css";
 
 export function Table(props: TableProps) {
@@ -156,7 +161,7 @@ export function TableLoadMoreItem(props: TableLoadMoreItemProps) {
 					justifyContent: "center",
 				}}
 			>
-				<ProgressCircle isIndeterminate aria-label="Loading more..." />
+				<ProgressCircle isIndeterminate={true} aria-label="Loading more..." />
 			</div>
 		</AriaTableLoadMoreItem>
 	);

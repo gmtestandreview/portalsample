@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-const repoRoot = path.resolve(__dirname, "..", "..");
+const repoRoot = path.resolve(import.meta.dirname, "..", "..");
 
 const read = (...segments: string[]) =>
 	fs.readFileSync(path.join(repoRoot, ...segments), "utf8");
@@ -47,7 +47,7 @@ describe("Storybook migration inventory", () => {
 
 	it("documents every App route path in the route inventory page", () => {
 		const appSource = readSource("App.tsx");
-		const rawPaths = [...appSource.matchAll(/path='([^']+)'/g)].map(
+		const rawPaths = [...appSource.matchAll(/path='([^']+)'/gu)].map(
 			(match) => match[1],
 		);
 		// Child wildcard routes ('*') are documented as 'parent/*' in the inventory,

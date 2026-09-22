@@ -14,10 +14,10 @@ import {
 	setInteractionStatus,
 	signOut,
 	testAccount,
-} from "./mockMsal";
+} from "./mockMsal.ts";
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("./mockMsal");
+	const { msalReactModuleMock } = await import("./mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -33,7 +33,7 @@ const TokenProbe = () => {
 
 	useEffect(() => {
 		if (accounts.length === 0) {
-			return undefined;
+			return;
 		}
 
 		let isMounted = true;

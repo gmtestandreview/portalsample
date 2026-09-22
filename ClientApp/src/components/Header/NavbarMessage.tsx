@@ -23,7 +23,10 @@ const SiteLaunchMessage = () => (
 );
 
 const NavbarMessage = () => (
-	<Container fluid className="-bg-dark-gray -bg-light-blue bg-light-blue-tint">
+	<Container
+		fluid={true}
+		className="-bg-dark-gray -bg-light-blue bg-light-blue-tint"
+	>
 		<Container>
 			<SiteLaunchMessage />
 		</Container>

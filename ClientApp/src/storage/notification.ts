@@ -1,5 +1,5 @@
-import SessionStorageCache from "./sessionStorageCache";
-import type { Notification } from "./types";
+import SessionStorageCache from "./sessionStorageCache.ts";
+import type { Notification } from "./types.ts";
 
 const branchModalNotificationKey = "branchModalNotification";
 const dashboardNotificationKey = "dashboardNotification";

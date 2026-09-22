@@ -2,10 +2,10 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import type * as SlateModule from "slate";
 import { Editor, Transforms } from "slate";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { CustomElement } from "@/components/SlateEditor/SlateEditor";
+import type { CustomElement } from "@/components/SlateEditor/SlateEditor.tsx";
 import SlateEditor, {
 	serializeToHtml,
-} from "@/components/SlateEditor/SlateEditor";
+} from "@/components/SlateEditor/SlateEditor.tsx";
 
 /**
  * Slate builds its document as a plain JavaScript model and only mirrors it into the DOM. Driving

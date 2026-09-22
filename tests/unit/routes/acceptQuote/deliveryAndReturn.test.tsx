@@ -3,8 +3,8 @@ import { Form, Formik } from "formik";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AddressDetailsDto } from "../../../../ClientApp/src/api/web-api-client";
-import DeliveryAndReturn from "../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn";
+import type { AddressDetailsDto } from "../../../../ClientApp/src/api/web-api-client.ts";
+import DeliveryAndReturn from "../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx";
 
 // ─── hoisted mock refs ────────────────────────────────────────────────────────
 // vi.mock factories run before imports, so shared vi.fn() references must be
@@ -89,7 +89,7 @@ function makeTree(id: string, isSummary?: boolean): ReactNode {
 				initialStatus={{ hidden: {} }}
 				onSubmit={() => {}}
 			>
-				<Form noValidate>
+				<Form noValidate={true}>
 					<DeliveryAndReturn id={id} isSummary={isSummary} />
 				</Form>
 			</Formik>
@@ -152,12 +152,12 @@ describe("DeliveryAndReturn", () => {
 			renderComponent();
 			await waitFor(() =>
 				expect(
-					screen.getByText(/does not require the delivery or return/i),
+					screen.getByText(/does not require the delivery or return/iu),
 				).toBeInTheDocument(),
 			);
 			expect(
 				screen.queryByRole("heading", {
-					name: /Instrument\/artefact delivery/i,
+					name: /Instrument\/artefact delivery/iu,
 				}),
 			).not.toBeInTheDocument();
 			// Drain setIsLoading(false) and any Formik re-renders still in the
@@ -172,12 +172,12 @@ describe("DeliveryAndReturn", () => {
 			renderComponent({ isSummary: true });
 			await waitFor(() =>
 				expect(
-					screen.getByText(/does not require the delivery or return/i),
+					screen.getByText(/does not require the delivery or return/iu),
 				).toBeInTheDocument(),
 			);
 			expect(
 				screen.queryByRole("heading", {
-					name: /Instrument\/artefact delivery/i,
+					name: /Instrument\/artefact delivery/iu,
 				}),
 			).not.toBeInTheDocument();
 			await act(async () => {});
@@ -193,7 +193,7 @@ describe("DeliveryAndReturn", () => {
 			});
 			renderComponent({ isSummary: true });
 			await waitFor(() =>
-				expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
+				expect(screen.getByText(/Sydney NSW 2000/u)).toBeInTheDocument(),
 			);
 			await act(async () => {});
 		});
@@ -209,7 +209,7 @@ describe("DeliveryAndReturn", () => {
 			});
 			renderComponent({ isSummary: true });
 			await waitFor(() =>
-				expect(screen.getByText(/Sydney NSW 2000/)).toBeInTheDocument(),
+				expect(screen.getByText(/Sydney NSW 2000/u)).toBeInTheDocument(),
 			);
 			await act(async () => {});
 		});
@@ -221,7 +221,7 @@ describe("DeliveryAndReturn", () => {
 			});
 			renderComponent({ isSummary: true });
 			await waitFor(() =>
-				expect(screen.getByText(/Melbourne VIC 3000/)).toBeInTheDocument(),
+				expect(screen.getByText(/Melbourne VIC 3000/u)).toBeInTheDocument(),
 			);
 			await act(async () => {});
 		});
@@ -233,7 +233,7 @@ describe("DeliveryAndReturn", () => {
 			});
 			renderComponent({ isSummary: true });
 			await waitFor(() =>
-				expect(screen.getByText(/Brisbane QLD 4000/)).toBeInTheDocument(),
+				expect(screen.getByText(/Brisbane QLD 4000/u)).toBeInTheDocument(),
 			);
 			await act(async () => {});
 		});

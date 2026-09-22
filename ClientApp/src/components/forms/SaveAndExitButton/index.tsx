@@ -4,7 +4,7 @@ import type React from "react";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 
-import PrimaryButton from "../../Buttons/PrimaryButton";
+import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
 
 interface SaveAndExitButtonProps {
 	children?:

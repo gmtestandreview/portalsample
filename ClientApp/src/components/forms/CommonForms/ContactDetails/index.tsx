@@ -1,14 +1,14 @@
 import { useField } from "formik";
 import { forEach, keys } from "lodash";
 import { Col, Form, Row } from "react-bootstrap";
-import type { ContactDto } from "../../../../api/web-api-client";
-import { Title } from "../../../../api/web-api-client";
-import { prefixedPropertyOf } from "../../../../utils";
-import NumberInput from "../../../Inputs/NumberInput";
-import SelectInput from "../../../Inputs/SelectInput";
-import type { SelectInputOption } from "../../../Inputs/SelectInput/types";
-import TextInput from "../../../Inputs/TextInput";
-import HidableField from "../../HidableField";
+import type { ContactDto } from "../../../../api/web-api-client.ts";
+import { Title } from "../../../../api/web-api-client.ts";
+import { prefixedPropertyOf } from "../../../../utils/index.ts";
+import NumberInput from "../../../Inputs/NumberInput/index.tsx";
+import SelectInput from "../../../Inputs/SelectInput/index.tsx";
+import type { SelectInputOption } from "../../../Inputs/SelectInput/types.ts";
+import TextInput from "../../../Inputs/TextInput/index.tsx";
+import HidableField from "../../HidableField/index.tsx";
 
 export interface ContactDetailsProps {
 	name: string;
@@ -50,7 +50,7 @@ const ContactDetailsInput = ({
 		const options: SelectInputOption<string>[] = [];
 		forEach(keys(Title), (key) => {
 			options.push({
-				displayText: Title[key as Title].replace(/([A-Z])/g, " $1").trim(),
+				displayText: Title[key as Title].replace(/([A-Z])/gu, " $1").trim(),
 				value: key,
 			});
 		});
@@ -70,7 +70,7 @@ const ContactDetailsInput = ({
 					label={pTitleLabel}
 					options={getTitles()}
 					isSummary={isSummary}
-					addBlank
+					addBlank={true}
 				/>
 				{_title.value === "" ? (
 					<TextInput
@@ -133,7 +133,7 @@ const ContactDetailsInput = ({
 						name={`${getName("title")}`}
 						label={pTitleLabel}
 						options={getTitles()}
-						addBlank
+						addBlank={true}
 					/>
 				</Col>
 				<Col md={6}>

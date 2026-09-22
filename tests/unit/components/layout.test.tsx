@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi } from "vitest";
-import Layout from "@/components/Layout";
+import Layout from "@/components/Layout/index.tsx";
 
 vi.mock("@/components/Header", () => ({
 	default: () => <header>Mock header</header>,

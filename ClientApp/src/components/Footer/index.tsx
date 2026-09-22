@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Button, Container } from "react-bootstrap";
 import CoatOfArms from "../../assets/GovCrest.svg";
-import LinkButton from "../Buttons/LinkButton";
-import ContentModal from "../modals/ContentModal";
-import Accessibility from "./accessibility";
-import Privacy from "./privacy";
-import TermsOfUse from "./termsOfUse";
+import LinkButton from "../Buttons/LinkButton/index.tsx";
+import ContentModal from "../modals/ContentModal/index.tsx";
+import Accessibility from "./accessibility.tsx";
+import Privacy from "./privacy.tsx";
+import TermsOfUse from "./termsOfUse.tsx";
 
 const Footer = () => {
 	const [termsDialogOpen, setTermsDialogOpen] = useState(false);

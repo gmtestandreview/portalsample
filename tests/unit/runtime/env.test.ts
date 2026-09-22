@@ -48,7 +48,7 @@ async function importEnv(
 		}
 	});
 
-	return import("../../../ClientApp/src/env");
+	return import("../../../ClientApp/src/env.ts");
 }
 
 describe("runtime env", () => {
@@ -153,12 +153,12 @@ describe("runtime env", () => {
 			importEnv({
 				EXTERNAL_REDIRECT_URL: "https://evil.example/redirect",
 			}),
-		).rejects.toThrow(/not in the allowed domain list/);
+		).rejects.toThrow(/not in the allowed domain list/u);
 
 		await expect(
 			importEnv({
 				EXTERNAL_REDIRECT_URL: "not a url",
 			}),
-		).rejects.toThrow(/not in the allowed domain list/);
+		).rejects.toThrow(/not in the allowed domain list/u);
 	});
 });

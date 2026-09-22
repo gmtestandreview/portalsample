@@ -3,17 +3,17 @@ import userEvent from "@testing-library/user-event";
 import type { ComponentProps, ReactNode } from "react";
 import type * as ReactBootstrap from "react-bootstrap";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	ClientMethodMocks,
 	ClientMock,
-} from "../../helpers/mockApiClient";
+} from "../../helpers/mockApiClient.ts";
 import {
 	DEFAULT_ACCESS_TOKEN,
 	resetMsalMock,
 	signOut,
-} from "../../helpers/mockMsal";
-import { renderWithRouter } from "../../helpers/renderWithRouter";
+} from "../../helpers/mockMsal.ts";
+import { renderWithRouter } from "../../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	loadStepValues: vi.fn(),
@@ -36,7 +36,7 @@ const captured = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -45,7 +45,7 @@ vi.mock(
 	"../../../../ClientApp/src/api/web-api-client",
 	async (importOriginal) => {
 		const { createClientMockFor, webApiClientModuleMock } = await import(
-			"../../helpers/mockApiClient"
+			"../../helpers/mockApiClient.ts"
 		);
 		const original = await importOriginal<typeof WebApiClient>();
 
@@ -164,7 +164,7 @@ vi.mock("react-bootstrap", async (importOriginal) => {
 	};
 
 	// Tab is a component with statics, so its members are copied rather than spread.
-	return { ...actual, Tab: Object.assign({}, actual.Tab, { Container }) };
+	return { ...actual, Tab: { ...actual.Tab, Container } };
 });
 
 vi.mock("../../../../ClientApp/src/routes/ta/manage/appDocuments", () => ({
@@ -205,7 +205,7 @@ const stepValues = (details: Record<string, unknown> = {}) => ({
  */
 const renderDetails = async (search = "") => {
 	const ApplicationDetails = (
-		await import("../../../../ClientApp/src/routes/ta/manage/appDetails")
+		await import("../../../../ClientApp/src/routes/ta/manage/appDetails.tsx")
 	).default;
 
 	globalThis.history.pushState({}, "", `/ta/manage/APP-1${search}`);
@@ -224,7 +224,7 @@ const renderDetails = async (search = "") => {
 
 describe("application details", () => {
 	beforeEach(async () => {
-		await import("../../../../ClientApp/src/api/web-api-client");
+		await import("../../../../ClientApp/src/api/web-api-client.ts");
 
 		resetMsalMock();
 		mocks.loadStepValues.mockReset().mockResolvedValue(stepValues());
@@ -349,7 +349,7 @@ describe("application details", () => {
 				).toHaveBeenCalled(),
 			);
 			expect(
-				screen.getByRole("button", { name: /Messages/ }),
+				screen.getByRole("button", { name: /Messages/u }),
 			).toBeInTheDocument();
 			expect(screen.queryByText("unread")).not.toBeInTheDocument();
 		});
@@ -397,7 +397,9 @@ describe("application details", () => {
 
 		it("does not poll without an application id", async () => {
 			const ApplicationDetails = (
-				await import("../../../../ClientApp/src/routes/ta/manage/appDetails")
+				await import(
+					"../../../../ClientApp/src/routes/ta/manage/appDetails.tsx"
+				)
 			).default;
 
 			renderWithRouter(<ApplicationDetails />, {
@@ -489,7 +491,7 @@ describe("application details", () => {
 				expect(screen.getByText("With the assessor")).toBeInTheDocument(),
 			);
 
-			await user.click(screen.getByRole("button", { name: /Messages/ }));
+			await user.click(screen.getByRole("button", { name: /Messages/u }));
 
 			await waitFor(() =>
 				expect(screen.getByTestId("application-messages")).toBeInTheDocument(),

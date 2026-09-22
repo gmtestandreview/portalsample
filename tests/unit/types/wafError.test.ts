@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
 	AZURE_WAF_SERVER_PREFIX,
 	isWafError,
-} from "../../../ClientApp/src/types/wafError";
+} from "../../../ClientApp/src/types/wafError.ts";
 
 describe("isWafError", () => {
 	it("returns true for Azure WAF server headers", () => {
@@ -20,7 +20,7 @@ describe("isWafError", () => {
 
 	it.each([
 		{ headers: { server: "nginx/1.21.0" } },
-		{ headers: { server: 12345 } },
+		{ headers: { server: 12_345 } },
 		{ headers: { server: null } },
 		{ headers: "flat-string" },
 		{ headers: null },

@@ -1,7 +1,7 @@
 import type { FormikValues } from "formik";
 import React from "react";
 import { Link } from "react-router";
-import type { PreviousStepButtonProps, WizardStepProps } from "./types";
+import type { PreviousStepButtonProps, WizardStepProps } from "./types.ts";
 
 const PreviousStepButton = ({
 	steps,
@@ -22,7 +22,7 @@ const PreviousStepButton = ({
 		<Link
 			data-testid="back-button"
 			to={`${url}${previousChild.props.location}`}
-			replace
+			replace={true}
 			className={`btn btn-tertiary ${className}`}
 		>
 			<i className="icon-back me-1" aria-hidden="true" />

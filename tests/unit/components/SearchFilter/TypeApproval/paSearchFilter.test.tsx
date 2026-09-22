@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import type { PatternApprovalDashboardDto } from "@/api/web-api-client";
-import PaSearchFilter from "@/components/SearchFilter/TypeApproval/paSearchFilter";
+import type { PatternApprovalDashboardDto } from "@/api/web-api-client.ts";
+import PaSearchFilter from "@/components/SearchFilter/TypeApproval/paSearchFilter.tsx";
 
 vi.mock("@/components/SearchFilter/TypeApproval/paFilterMenu", () => ({
 	default: ({

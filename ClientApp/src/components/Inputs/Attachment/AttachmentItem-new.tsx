@@ -2,12 +2,12 @@ import { useField } from "formik";
 import type { ChangeEvent } from "react";
 import { useState } from "react";
 import { Button } from "react-bootstrap";
-import type { AttachmentDto } from "../../../api/web-api-client";
-import { getFileUrlFromBase64 } from "../../../routes/common/helperFunctions";
-import { formatBytes } from "../../../utils";
-import ConfirmationModal from "../../modals/ConfirmationModal";
-import SelectInput from "../SelectInput";
-import type { SelectInputOption } from "../SelectInput/types";
+import type { AttachmentDto } from "../../../api/web-api-client.ts";
+import { getFileUrlFromBase64 } from "../../../routes/common/helperFunctions.ts";
+import { formatBytes } from "../../../utils/index.ts";
+import ConfirmationModal from "../../modals/ConfirmationModal/index.tsx";
+import SelectInput from "../SelectInput/index.tsx";
+import type { SelectInputOption } from "../SelectInput/types.ts";
 
 interface AttachmentItemProps {
 	id?: string;
@@ -103,7 +103,7 @@ const AttachmentItemNew = ({
 						isSummary={isSummary}
 						containerClassName="me-4 pe-2"
 						className={`form-select-sm${!catField.value && catMeta.touched ? " is-invalid" : ""}`}
-						addBlank
+						addBlank={true}
 					/>
 				</div>
 				{/* Remove button (auto width, margin for spacing) */}

@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { PatternApprovalDashboardDto } from "../../../api/web-api-client";
+import type { PatternApprovalDashboardDto } from "../../../api/web-api-client.ts";
 
 export interface PaFilterMenuProps {
 	containerClassName?: string;

@@ -4,9 +4,9 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
 	lookupResponsesByType,
 	mswHandlers,
-} from "../../../.storybook/msw-handlers";
-import { CRMLookupTypes } from "../../../ClientApp/src/api/web-api-client";
-import { serviceResponses } from "../../../ClientApp/src/storybook/storybookFixtures";
+} from "../../../.storybook/msw-handlers.ts";
+import { CRMLookupTypes } from "../../../ClientApp/src/api/web-api-client.ts";
+import { serviceResponses } from "../../../ClientApp/src/storybook/storybookFixtures.ts";
 
 const server = setupServer(...mswHandlers);
 
@@ -25,7 +25,7 @@ const requestedLookupTypes = [
 			.flatMap((file) =>
 				[
 					...readFileSync(file, "utf8").matchAll(
-						/getLookup\(\s*CRMLookupTypes\.(\w+)/g,
+						/getLookup\(\s*CRMLookupTypes\.(\w+)/gu,
 					),
 				].map((match) => match[1]),
 			),

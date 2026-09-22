@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import ServicesWeOffer from "./index";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import ServicesWeOffer from "./index.tsx";
 
 const meta = {
 	title: "Routes/ServicesWeOffer",

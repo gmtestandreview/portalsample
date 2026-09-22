@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { expect, userEvent, within } from "storybook/test";
-import CustomPagination from "./index";
+import CustomPagination from "./index.tsx";
 
 const PaginationStory = ({
 	totalPages,
@@ -62,7 +62,7 @@ export const FirstPage: Story = {
 	render: () => <PaginationStory totalPages={12} startPage={1} />,
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const pageText = canvas.getByText(/page 1 of 12/i);
+		const pageText = canvas.getByText(/page 1 of 12/iu);
 		await expect(pageText).toBeVisible();
 		// First link hidden at page 1
 		const firstLink = canvasElement.querySelector(".firstpage");
@@ -79,7 +79,7 @@ export const LastPage: Story = {
 	render: () => <PaginationStory totalPages={12} startPage={12} />,
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const pageText = canvas.getByText(/page 12 of 12/i);
+		const pageText = canvas.getByText(/page 12 of 12/iu);
 		await expect(pageText).toBeVisible();
 		// Last link hidden at last page
 		const lastLink = canvasElement.querySelector(".lastpage");
@@ -96,11 +96,11 @@ export const CustomStyleVariant: Story = {
 	render: () => <PaginationStory totalPages={8} startPage={3} />,
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const pageText = canvas.getByText(/page 3 of 8/i);
+		const pageText = canvas.getByText(/page 3 of 8/iu);
 		await expect(pageText).toBeVisible();
 		const user = userEvent.setup();
-		const page4Btn = canvas.getByRole("button", { name: /page 4/i });
+		const page4Btn = canvas.getByRole("button", { name: /page 4/iu });
 		await user.click(page4Btn);
-		await expect(canvas.getByText(/page 4 of 8/i)).toBeVisible();
+		await expect(canvas.getByText(/page 4 of 8/iu)).toBeVisible();
 	},
 };

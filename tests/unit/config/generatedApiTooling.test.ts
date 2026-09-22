@@ -9,9 +9,10 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import process from "node:process";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
-const repoRoot = path.resolve(__dirname, "../../..");
+const repoRoot = path.resolve(import.meta.dirname, "../../..");
 const biomeCli = path.join(repoRoot, "node_modules/@biomejs/biome/bin/biome");
 let fixtureRoot: string;
 

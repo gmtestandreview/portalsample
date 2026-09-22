@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import QuoteStatusPill from "@/components/Pill/QuoteStatusPill";
-import { QuoteStatus } from "@/routes/common/enums";
+import QuoteStatusPill from "@/components/Pill/QuoteStatusPill.tsx";
+import { QuoteStatus } from "@/routes/common/enums.ts";
 
 describe("QuoteStatusPill", () => {
 	it.each([

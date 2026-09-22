@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import SecondaryButton from "./index";
+import SecondaryButton from "./index.tsx";
 
 /**
  * SecondaryButton Component Storybook Configuration

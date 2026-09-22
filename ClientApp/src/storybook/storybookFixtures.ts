@@ -4,8 +4,8 @@ import {
 	type RequestForQuoteDetails,
 	type ServiceDto,
 	ServiceType,
-} from "../api/web-api-client";
-import { DashboardItemStatus, QuoteStatus } from "../routes/common/enums";
+} from "../api/web-api-client.ts";
+import { DashboardItemStatus, QuoteStatus } from "../routes/common/enums.ts";
 
 export const dashboardItems: DashboardItemDto[] = [
 	{

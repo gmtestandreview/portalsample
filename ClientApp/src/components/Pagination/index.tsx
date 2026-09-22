@@ -1,6 +1,6 @@
 import Pagination from "react-bootstrap/Pagination";
-import type { CustomPaginationProps } from "./types";
-import useVisiblePageRange from "./useVisiblePageRange";
+import type { CustomPaginationProps } from "./types.ts";
+import useVisiblePageRange from "./useVisiblePageRange.tsx";
 
 const CustomPagination = (props: CustomPaginationProps) => {
 	const {

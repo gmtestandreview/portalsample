@@ -3,21 +3,21 @@ import type React from "react";
 import { useRef, useState } from "react";
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
 import {
 	ApplicationClient,
 	ApplicationType,
 	type PatternApprovalDashboardDetailsDto,
-} from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import AppLogger from "../../instrumentation/AppLogger";
-import { PaDashboardItemStatus } from "../../routes/common/enums";
-import { setDashboardNotification } from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import Actions, { type DropdownActionItem } from "../Actions";
-import ConfirmationModal from "../modals/ConfirmationModal";
-import StatusPill from "../Pill/StatusPill";
-import { DashboardTab } from "../SearchFilter/types";
+} from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { PaDashboardItemStatus } from "../../routes/common/enums.ts";
+import { setDashboardNotification } from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import Actions, { type DropdownActionItem } from "../Actions/index.tsx";
+import ConfirmationModal from "../modals/ConfirmationModal/index.tsx";
+import StatusPill from "../Pill/StatusPill.tsx";
+import { DashboardTab } from "../SearchFilter/types.ts";
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
 	dateToFormat
@@ -243,7 +243,7 @@ const PaRequestItem = ({
 						</Col>
 					</Row>
 					<Row className="-d-none">
-						<Col md className="text-center">
+						<Col md={true} className="text-center">
 							{isViewApplicationVisible ? (
 								<Button
 									variant="secondary"

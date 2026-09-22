@@ -10,12 +10,14 @@
  * Ensures proper module resolution by running from skill directory.
  */
 
+import process from "node:process";
+
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
 
 // Change to skill directory for proper module resolution
-process.chdir(__dirname);
+process.chdir(import.meta.dirname);
 
 /**
  * Check if Playwright is installed
@@ -35,16 +37,20 @@ function checkPlaywrightInstalled() {
 function installPlaywright() {
 	console.log("📦 Playwright not found. Installing...");
 	try {
-		execSync("npm install", { stdio: "inherit", cwd: __dirname });
+		execSync("npm install", { stdio: "inherit", cwd: import.meta.dirname });
 		execSync("npx playwright install chromium", {
 			stdio: "inherit",
-			cwd: __dirname,
+			cwd: import.meta.dirname,
 		});
 		console.log("✅ Playwright installed successfully");
 		return true;
 	} catch (e) {
 		console.error("❌ Failed to install Playwright:", e.message);
-		console.error("Please run manually: cd", __dirname, "&& npm run setup");
+		console.error(
+			"Please run manually: cd",
+			import.meta.dirname,
+			"&& npm run setup",
+		);
 		return false;
 	}
 }
@@ -88,14 +94,14 @@ function getCodeToExecute() {
  */
 function cleanupOldTempFiles() {
 	try {
-		const files = fs.readdirSync(__dirname);
+		const files = fs.readdirSync(import.meta.dirname);
 		const tempFiles = files.filter(
 			(f) => f.startsWith(".temp-execution-") && f.endsWith(".js"),
 		);
 
 		if (tempFiles.length > 0) {
 			tempFiles.forEach((file) => {
-				const filePath = path.join(__dirname, file);
+				const filePath = path.join(import.meta.dirname, file);
 				try {
 					fs.unlinkSync(filePath);
 				} catch (e) {
@@ -114,11 +120,11 @@ function cleanupOldTempFiles() {
 function wrapCodeIfNeeded(code) {
 	// Check if code already has require() and async structure
 	const hasRequire = code.includes("require(");
-	const hasAsyncIIFE =
+	const hasAsyncIife =
 		code.includes("(async () => {") || code.includes("(async()=>{");
 
 	// If it's already a complete script, return as-is
-	if (hasRequire && hasAsyncIIFE) {
+	if (hasRequire && hasAsyncIife) {
 		return code;
 	}
 
@@ -163,7 +169,7 @@ function getContextOptionsWithHeaders(options = {}) {
 	}
 
 	// If has require but no async wrapper
-	if (!hasAsyncIIFE) {
+	if (!hasAsyncIife) {
 		return `
 (async () => {
   try {
@@ -204,7 +210,10 @@ async function main() {
 	const code = wrapCodeIfNeeded(rawCode);
 
 	// Create temporary file for execution
-	const tempFile = path.join(__dirname, `.temp-execution-${Date.now()}.js`);
+	const tempFile = path.join(
+		import.meta.dirname,
+		`.temp-execution-${Date.now()}.js`,
+	);
 
 	try {
 		// Write code to temp file

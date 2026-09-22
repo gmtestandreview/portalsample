@@ -4,12 +4,12 @@ import type { ReactPlugin } from "@microsoft/applicationinsights-react-js";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { RouterProvider } from "react-router";
-import App from "./App";
-import AccountProvider from "./authentication/AccountProvider";
-import { configuration } from "./authentication/authConfig";
-import ErrorBoundary from "./components/ErrorBoundary";
-import { ai } from "./instrumentation/AppInsightsService";
-import { TrustedTypes } from "./trustedtypes";
+import App from "./App.tsx";
+import AccountProvider from "./authentication/AccountProvider.tsx";
+import { configuration } from "./authentication/authConfig.ts";
+import ErrorBoundary from "./components/ErrorBoundary/index.tsx";
+import { ai } from "./instrumentation/AppInsightsService.ts";
+import { TrustedTypes } from "./trustedtypes.ts";
 
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement!);

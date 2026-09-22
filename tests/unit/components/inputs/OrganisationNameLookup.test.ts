@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getFilteredSuggestions } from "@/components/Inputs/OrganisationNameLookup/suggestionUtils";
+import { getFilteredSuggestions } from "@/components/Inputs/OrganisationNameLookup/suggestionUtils.ts";
 
 describe("getFilteredSuggestions", () => {
 	it("sorts matching suggestions with a case-insensitive comparator and removes duplicates", () => {

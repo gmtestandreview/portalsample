@@ -3,16 +3,16 @@ import { Link, useParams } from "react-router";
 import {
 	CustomAccordion,
 	CustomAccordionBody,
-} from "../../components/Accordion";
-import EditButton from "../../components/Buttons/EditButton";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import Checkbox from "../../components/Inputs/Checkbox";
-import InTextLink from "../../components/InTextLink";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import ApplicationAndInstrument from "./applicationAndInstrument";
-import OrganisationAndContact from "./organisationAndContact";
-import SupportingDocuments from "./supportingDocuments";
-import type { TASummaryProps } from "./types";
+} from "../../components/Accordion/index.tsx";
+import EditButton from "../../components/Buttons/EditButton/index.tsx";
+import HeaderIntroText from "../../components/HeaderIntroText/index.tsx";
+import Checkbox from "../../components/Inputs/Checkbox/index.tsx";
+import InTextLink from "../../components/InTextLink/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import ApplicationAndInstrument from "./applicationAndInstrument.tsx";
+import OrganisationAndContact from "./organisationAndContact.tsx";
+import SupportingDocuments from "./supportingDocuments.tsx";
+import type { TASummaryProps } from "./types.ts";
 
 const SummaryAndSubmit = (props: TASummaryProps) => {
 	const { id } = useParams<{ id?: string }>();
@@ -37,10 +37,13 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
 						eventKey="0"
 						className="mb-4 py-2"
 					>
-						<OrganisationAndContact isSummary name="organisationAndContact" />
-						{!isSubmitted ? (
+						<OrganisationAndContact
+							isSummary={true}
+							name="organisationAndContact"
+						/>
+						{isSubmitted ? null : (
 							<EditButton link={`/ta/${id}/organisation-details`} />
-						) : null}
+						)}
 					</CustomAccordionBody>
 				</CustomAccordion>
 				<CustomAccordion id="applicationAndInstrument">
@@ -50,12 +53,12 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
 						className="mb-4 py-2"
 					>
 						<ApplicationAndInstrument
-							isSummary
+							isSummary={true}
 							name="applicationAndInstrument"
 						/>
-						{!isSubmitted ? (
+						{isSubmitted ? null : (
 							<EditButton link={`/ta/${id}/application-details`} />
-						) : null}
+						)}
 					</CustomAccordionBody>
 				</CustomAccordion>
 				<CustomAccordion id="supportingDocuments">
@@ -65,16 +68,16 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
 						className="mb-4 py-2"
 					>
 						<SupportingDocuments
-							isSummary
+							isSummary={true}
 							name="supportingDocuments.form.documents"
 							onUploadAttachment={() => Promise.resolve([])} // Not used
 							attachment={{
 								onUploadFiles: () => Promise.resolve([]), // Not used
 							}}
 						/>
-						{!isSubmitted ? (
+						{isSubmitted ? null : (
 							<EditButton link={`/ta/${id}/supporting-documents`} />
-						) : null}
+						)}
 					</CustomAccordionBody>
 				</CustomAccordion>
 				<CustomAccordion id="applicationTermsAndConditions">
@@ -138,7 +141,7 @@ const SummaryAndSubmit = (props: TASummaryProps) => {
 						<Link
 							data-testid="back-button"
 							to="/dashboard"
-							replace
+							replace={true}
 							className="btn btn-tertiary"
 						>
 							<i className="icon-back me-1" aria-hidden="true" />

@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { ProgressBar } from "./ProgressBar";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { ProgressBar } from "./ProgressBar.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

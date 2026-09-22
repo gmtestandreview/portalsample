@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
-import type { PatternApprovalDashboardDto } from "../../../api/web-api-client";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import PaFilterMenu from "./paFilterMenu";
+import type { PatternApprovalDashboardDto } from "../../../api/web-api-client.ts";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import PaFilterMenu from "./paFilterMenu.tsx";
 
 /**
  * `PaFilterMenu` is the pattern-approval dashboard filter dropdown. It mirrors the
@@ -44,7 +44,7 @@ export const Closed: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByRole("button", { name: /filters/i }),
+			canvas.getByRole("button", { name: /filters/iu }),
 		).toBeVisible();
 	},
 };
@@ -53,7 +53,7 @@ export const Opened: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const user = userEvent.setup();
-		await user.click(canvas.getByRole("button", { name: /filters/i }));
+		await user.click(canvas.getByRole("button", { name: /filters/iu }));
 		await expect(
 			await canvas.findByText("In progress - with NMI"),
 		).toBeVisible();

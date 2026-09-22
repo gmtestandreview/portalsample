@@ -1,7 +1,7 @@
 import {
 	getValidApplicationId,
 	getValidPositiveIntegerId,
-} from "../../../../ClientApp/src/routes/common/routeParams";
+} from "../../../../ClientApp/src/routes/common/routeParams.ts";
 
 describe("route param validation", () => {
 	it.each([
@@ -29,7 +29,7 @@ describe("route param validation", () => {
 	it.each([
 		["1", 1],
 		["42", 42],
-		["9007199254740991", 9007199254740991],
+		["9007199254740991", 9_007_199_254_740_991],
 	])("accepts positive integer id %s", (id, expected) => {
 		expect(getValidPositiveIntegerId(id)).toBe(expected);
 	});

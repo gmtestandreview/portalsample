@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as yup from "yup";
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
 import {
 	emailSchema,
 	IsEmpty,
@@ -15,7 +15,7 @@ import {
 	requiredNullableDate,
 	requiredNullableString,
 	websiteUrlSchema,
-} from "../../../ClientApp/src/validationSchemas/common";
+} from "../../../ClientApp/src/validationSchemas/common.ts";
 
 describe("common validation helpers", () => {
 	it.each([

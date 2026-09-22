@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import BackToTopButton from "./backToTopButton";
-import ContactLink from "./ContactLink";
-import SkipLinks from "./skipLinks";
-import ViewPdfButton from "./ViewPdfButton";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import BackToTopButton from "./backToTopButton.tsx";
+import ContactLink from "./ContactLink.tsx";
+import SkipLinks from "./skipLinks.tsx";
+import ViewPdfButton from "./ViewPdfButton.tsx";
 
 const meta = {
 	title: "Components/Utilities",
@@ -41,7 +41,7 @@ export const PdfActionLoaded: Story = {
 			<ViewPdfButton
 				text="View quotation PDF"
 				fileSize="1.4 MB"
-				isLoaded
+				isLoaded={true}
 				getPdf={fn()}
 				gaLabel="Quotation PDF"
 			/>

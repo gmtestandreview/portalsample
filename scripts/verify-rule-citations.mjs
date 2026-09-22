@@ -56,23 +56,23 @@ function extractAnchors(block) {
 	// the rarity filter downstream discards whatever turns out not to locate anything.
 	const hay = block;
 
-	for (const m of hay.matchAll(/'([^'\n]{8,})'|"([^"\n]{8,})"/g)) {
+	for (const m of hay.matchAll(/'([^'\n]{8,})'|"([^"\n]{8,})"/gu)) {
 		anchors.add(m[1] ?? m[2]);
 	}
-	for (const m of hay.matchAll(/\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+){1,})\b/g)) {
+	for (const m of hay.matchAll(/\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+){1,})\b/gu)) {
 		anchors.add(m[1]);
 	}
-	for (const m of hay.matchAll(/\b([a-z][a-zA-Z0-9]{7,})\b/g)) {
+	for (const m of hay.matchAll(/\b([a-z][a-zA-Z0-9]{7,})\b/gu)) {
 		anchors.add(m[1]);
 	}
 	for (const m of hay.matchAll(
-		/\b([A-Z][a-zA-Z0-9]{2,}\.[A-Za-z][a-zA-Z0-9]{2,})\b/g,
+		/\b([A-Z][a-zA-Z0-9]{2,}\.[A-Za-z][a-zA-Z0-9]{2,})\b/gu,
 	)) {
 		anchors.add(m[1]);
 	}
 
 	// Prose words that carry no locating power and would produce false matches everywhere.
-	const NOISE = new Set([
+	const Noise = new Set([
 		"Specification",
 		"Parameters",
 		"Confidence",
@@ -85,7 +85,7 @@ function extractAnchors(block) {
 		"validation",
 		"returning",
 	]);
-	return [...anchors].filter((a) => !NOISE.has(a));
+	return [...anchors].filter((a) => !Noise.has(a));
 }
 
 /**
@@ -151,7 +151,7 @@ function knownPathIndex() {
 	if (knownPaths) return knownPaths;
 	knownPaths = new Set();
 	const full =
-		/`((?:ClientApp|analysis|scripts|tests)\/[A-Za-z0-9_\-./]+\.(?:ts|tsx|json))[:`]/g;
+		/`((?:ClientApp|analysis|scripts|tests)\/[A-Za-z0-9_\-./]+\.(?:ts|tsx|json))[:`]/gu;
 	for (const m of register.matchAll(full)) knownPaths.add(m[1]);
 	return knownPaths;
 }
@@ -182,12 +182,12 @@ const register = readFileSync(REGISTER, "utf8");
 // Split on \r?\n deliberately. The register is CRLF, and in JavaScript `.` excludes line
 // terminators - \r among them - so a trailing \r stops `(.*)$` from ever matching a heading.
 // Left unhandled, every regex below silently matches nothing and the check reports a clean pass.
-const registerLines = register.split(/\r?\n/);
+const registerLines = register.split(/\r?\n/u);
 
 // Split the register into rule blocks.
 const blocks = [];
 registerLines.forEach((ln, i) => {
-	const m = /^### (RULE-\d+):\s*(.*)$/.exec(ln);
+	const m = /^### (RULE-\d+):\s*(.*)$/u.exec(ln);
 	if (m) blocks.push({ id: m[1], title: m[2], start: i });
 });
 blocks.forEach((b, i) => {
@@ -196,7 +196,7 @@ blocks.forEach((b, i) => {
 });
 
 const CITATION =
-	/`([A-Za-z0-9_\-./]+\.(?:ts|tsx|json))(?::(\d+)(?:-(\d+))?)?`/g;
+	/`([A-Za-z0-9_\-./]+\.(?:ts|tsx|json))(?::(\d+)(?:-(\d+))?)?`/gu;
 
 // A parser that matches nothing looks exactly like a clean pass. Refuse to report success unless
 // the register was actually understood - this is how the CRLF bug above hid on its first run.
@@ -235,7 +235,7 @@ for (const block of blocks) {
 	}
 }
 for (const ln of registerLines) {
-	const m = /^\|\s*(RULE-\d+)\s*\|/.exec(ln);
+	const m = /^\|\s*(RULE-\d+)\s*\|/u.exec(ln);
 	if (m && anchorsByRule.has(m[1])) {
 		citationSites.push({ id: m[1], text: ln, where: "table" });
 	}
@@ -271,7 +271,7 @@ for (const site of citationSites) {
 			continue;
 		}
 
-		const srcLines = readFileSync(abs, "utf8").split(/\r?\n/);
+		const srcLines = readFileSync(abs, "utf8").split(/\r?\n/u);
 		entry.fileLines = srcLines.length;
 
 		if (entry.cited > srcLines.length) {
@@ -349,7 +349,7 @@ if (FIX) {
 	let rewritten = 0;
 
 	for (const r of results) {
-		if (!r.suggested || !r.cited) continue;
+		if (!(r.suggested && r.cited)) continue;
 		const range =
 			r.suggested.start === r.suggested.end
 				? `${r.suggested.start}`
@@ -361,7 +361,7 @@ if (FIX) {
 		const base = r.path
 			.split("/")
 			.pop()
-			.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+			.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 		const pattern = new RegExp(
 			"`([A-Za-z0-9_\\-./]*" + base + "):" + r.cited + "(?![0-9-])`",
 			"g",

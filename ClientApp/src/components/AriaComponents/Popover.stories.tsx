@@ -1,9 +1,9 @@
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Button } from "../Buttons/AriaButton/Button";
-import { DialogTrigger } from "../Dialog/Dialog";
-import { Heading } from "./Content";
-import { HelpCircle } from "./NmiIcon";
-import { Popover } from "./Popover";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { DialogTrigger } from "../Dialog/Dialog.tsx";
+import { Heading } from "./Content.tsx";
+import { HelpCircle } from "./NmiIcon.tsx";
+import { Popover } from "./Popover.tsx";
 import "./styles.css";
 import type { Meta, StoryFn } from "@storybook/react-vite";
 

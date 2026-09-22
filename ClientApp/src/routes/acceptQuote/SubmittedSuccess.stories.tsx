@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HttpResponse, http } from "msw";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import SubmittedSuccess from "./submittedSuccess";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import SubmittedSuccess from "./submittedSuccess.tsx";
 
 const meta = {
 	title: "Routes/AcceptQuote/SubmittedSuccess",

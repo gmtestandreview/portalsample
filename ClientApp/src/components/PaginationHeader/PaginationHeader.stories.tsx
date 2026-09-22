@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import CustomPaginationHeader from "./index";
+import CustomPaginationHeader from "./index.tsx";
 
 const meta = {
 	title: "Components/PaginationHeader",

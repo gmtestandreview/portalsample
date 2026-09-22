@@ -1,4 +1,4 @@
-import HashLink from "./hashLink";
+import HashLink from "./hashLink.tsx";
 
 const BackToTopButton = ({ className = "", to = "#page-top" }) => (
 	<nav aria-labelledby="btt" className="position-fixed bottom-0 end-0">

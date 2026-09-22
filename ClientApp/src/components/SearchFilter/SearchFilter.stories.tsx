@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { expect, userEvent, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import SearchFilter from "./index";
-import type { UserProfile } from "./types";
-import { DashboardTab } from "./types";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import SearchFilter from "./index.tsx";
+import type { UserProfile } from "./types.ts";
+import { DashboardTab } from "./types.ts";
 
 const initialFilters: UserProfile = {
 	filterYearType: "",
@@ -93,7 +93,7 @@ export const DashboardFilters: Story = {
 		await user.type(searchInput, "Keysight");
 		await user.keyboard("{Enter}");
 		// The debug output below the component shows the current search text
-		const searchLabel = await canvas.findByText(/Keysight/i);
+		const searchLabel = await canvas.findByText(/Keysight/iu);
 		await expect(searchLabel).toBeVisible();
 	},
 };
@@ -115,6 +115,6 @@ export const WithSearchTerm: Story = {
 		const searchInput = canvas.getByRole("textbox");
 		await expect(searchInput).toHaveValue("Fluke");
 		// Status line reflects it
-		await expect(canvas.getByText(/Fluke/i)).toBeVisible();
+		await expect(canvas.getByText(/Fluke/iu)).toBeVisible();
 	},
 };

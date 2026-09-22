@@ -1,8 +1,8 @@
 import { Col, Container, Row } from "react-bootstrap";
-import { useAccountDispatch } from "../../authentication/hooks";
-import FilterMenu from "./filterMenu";
-import SearchBox from "./searchBox";
-import type { SearchFilterProps } from "./types";
+import { useAccountDispatch } from "../../authentication/hooks.tsx";
+import FilterMenu from "./filterMenu.tsx";
+import SearchBox from "./searchBox.tsx";
+import type { SearchFilterProps } from "./types.ts";
 
 const SearchFilter = (props: SearchFilterProps) => {
 	const {

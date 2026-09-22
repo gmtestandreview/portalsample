@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Given, Then, When } from "../support/fixtures";
-import { waitForAppReady } from "./common.steps";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { waitForAppReady } from "./common.steps.ts";
 
 Given(
 	"completed report {string} is available",
@@ -33,14 +33,16 @@ When(
 			.getByRole("tabpanel", { name: "Requests" })
 			.locator(`#RefId-${referenceId}`);
 		await expect(request).toBeVisible();
-		await request.getByRole("link", { name: /Request recalibration/i }).click();
+		await request
+			.getByRole("link", { name: /Request recalibration/iu })
+			.click();
 		await waitForAppReady(page);
 	},
 );
 
 Then("the copied RFQ organisation step is displayed", async ({ page }) => {
 	await expect(page).toHaveURL(
-		/\/request-for-quote\/RFQ-2023-009012-COPY\/organisation-and-contact$/,
+		/\/request-for-quote\/RFQ-2023-009012-COPY\/organisation-and-contact$/u,
 	);
 	await expect(
 		page.getByRole("heading", {
@@ -53,13 +55,13 @@ Then("the copied RFQ organisation step is displayed", async ({ page }) => {
 Then("the copied organisation details are pre-filled", async ({ page }) => {
 	await expect(
 		page.getByRole("heading", {
-			name: /Currently managing Test Organisation Pty Ltd - Main Branch/,
+			name: /Currently managing Test Organisation Pty Ltd - Main Branch/u,
 		}),
 	).toBeVisible();
 });
 
 Then("the copied RFQ instrument step is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/instrument-and-request$/);
+	await expect(page).toHaveURL(/\/instrument-and-request$/u);
 	await expect(
 		page.getByRole("heading", {
 			name: "Instrument and request",

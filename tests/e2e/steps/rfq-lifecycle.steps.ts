@@ -1,10 +1,10 @@
 import { expect } from "@playwright/test";
-import { FormStepStatus } from "../../../ClientApp/src/api/web-api-client";
-import { DashboardItemStatus } from "../../../ClientApp/src/routes/common/enums";
-import { Given, Then, When } from "../support/fixtures";
-import { buildRfqSummary } from "../support/mock-builders";
-import type { ScenarioState } from "../support/scenario-state";
-import { waitForAppReady } from "./common.steps";
+import { FormStepStatus } from "../../../ClientApp/src/api/web-api-client.ts";
+import { DashboardItemStatus } from "../../../ClientApp/src/routes/common/enums.ts";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { buildRfqSummary } from "../support/mock-builders.ts";
+import type { ScenarioState } from "../support/scenario-state.ts";
+import { waitForAppReady } from "./common.steps.ts";
 
 const prepareDraft = (scenarioState: ScenarioState, id: string) => {
 	scenarioState.activeReferenceId = id;
@@ -34,9 +34,9 @@ When(
 );
 
 Then("the submitted RFQ summary is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/view-summary$/);
+	await expect(page).toHaveURL(/\/view-summary$/u);
 	await expect(
-		page.getByRole("heading", { name: /Summary/i }).first(),
+		page.getByRole("heading", { name: /Summary/iu }).first(),
 	).toBeVisible();
 });
 
@@ -45,7 +45,7 @@ Then(
 	async ({ page }, value: string) => {
 		await page
 			.getByRole("button", {
-				name: /Instrument and request/i,
+				name: /Instrument and request/iu,
 			})
 			.click();
 		await expect(page.getByText(value, { exact: true })).toBeVisible();
@@ -66,7 +66,7 @@ Given(
 		await page.goto(`/request-for-quote/${id}/instrument-and-request`);
 		await expect(
 			page.getByRole("heading", {
-				name: /Instrument and request/i,
+				name: /Instrument and request/iu,
 			}),
 		).toBeVisible();
 	},
@@ -95,7 +95,7 @@ When("the user opens the draft RFQ", async ({ page, scenarioState }) => {
 	await editRequest.click();
 	await expect(
 		page.getByRole("heading", {
-			name: /Instrument and request/i,
+			name: /Instrument and request/iu,
 		}),
 	).toBeVisible();
 });
@@ -126,10 +126,10 @@ Then(
 );
 
 Then("the RFQ instrument step remains displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/instrument-and-request$/);
+	await expect(page).toHaveURL(/\/instrument-and-request$/u);
 	await expect(
 		page.getByRole("heading", {
-			name: /Instrument and request/i,
+			name: /Instrument and request/iu,
 		}),
 	).toBeVisible();
 });

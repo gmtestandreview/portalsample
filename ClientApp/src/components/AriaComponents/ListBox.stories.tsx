@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { Header } from "react-aria-components/Header";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { ListBox, ListBoxItem, ListBoxSection } from "./ListBox";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { ListBox, ListBoxItem, ListBoxSection } from "./ListBox.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

@@ -1,25 +1,25 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { FormStepStatusDto } from "../../api/web-api-client";
-import { AcceptQuoteClient, QuoteClient } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import WizardForm from "../../components/forms/WizardForm";
-import type { WizardFormProps } from "../../components/forms/WizardForm/types";
-import WizardStep from "../../components/forms/WizardForm/WizardStep";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import AppLogger from "../../instrumentation/AppLogger";
-import DeliveryAndReturn from "./deliveryAndReturn";
-import deliveryAndReturnProps from "./deliveryAndReturnProps";
-import PaymentDetails from "./paymentDetails";
-import paymentDetailsProps from "./paymentDetailsProps";
-import ReportRecipient from "./reportRecipient";
-import reportRecipientProps from "./reportRecipientProps";
-import SummaryAndAccept from "./summaryAndAccept";
-import summaryAndAcceptProps from "./summaryAndAcceptProps";
+import type { FormStepStatusDto } from "../../api/web-api-client.ts";
+import { AcceptQuoteClient, QuoteClient } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import WizardForm from "../../components/forms/WizardForm/index.tsx";
+import type { WizardFormProps } from "../../components/forms/WizardForm/types.ts";
+import WizardStep from "../../components/forms/WizardForm/WizardStep.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import DeliveryAndReturn from "./deliveryAndReturn.tsx";
+import deliveryAndReturnProps from "./deliveryAndReturnProps.ts";
+import PaymentDetails from "./paymentDetails.tsx";
+import paymentDetailsProps from "./paymentDetailsProps.ts";
+import ReportRecipient from "./reportRecipient.tsx";
+import reportRecipientProps from "./reportRecipientProps.ts";
+import SummaryAndAccept from "./summaryAndAccept.tsx";
+import summaryAndAcceptProps from "./summaryAndAcceptProps.ts";
 
 const bannerTitle = "Testing and calibration service - Quotation";
 
@@ -143,9 +143,9 @@ const AcceptQuote = () => {
 			</WizardStep>
 		</WizardForm>
 	) : (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

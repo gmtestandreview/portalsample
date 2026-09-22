@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import CustomBreadcrumb from "./index";
+import CustomBreadcrumb from "./index.tsx";
 
 /**
  * CustomBreadcrumb Component Storybook Configuration
@@ -33,9 +33,9 @@ export const ThreeLevels: Story = {
 	},
 	play: async ({ canvas }) => {
 		const navigation = await canvas.findByRole("navigation", {
-			name: /breadcrumb/i,
+			name: /breadcrumb/iu,
 		});
-		const lastBreadcrumb = await canvas.findByText(/request for quote/i);
+		const lastBreadcrumb = await canvas.findByText(/request for quote/iu);
 
 		await expect(navigation).toBeInTheDocument();
 		await expect(lastBreadcrumb).toHaveAttribute("aria-current", "page");
@@ -48,10 +48,10 @@ export const TwoLevels: Story = {
 	},
 	play: async ({ canvas }) => {
 		const navigation = await canvas.findByRole("navigation", {
-			name: /breadcrumb/i,
+			name: /breadcrumb/iu,
 		});
 		const homeLink = await canvas.findByRole("link", { name: "Home" });
-		const lastBreadcrumb = await canvas.findByText(/help guide/i);
+		const lastBreadcrumb = await canvas.findByText(/help guide/iu);
 
 		await expect(navigation).toBeInTheDocument();
 		await expect(homeLink).toHaveAttribute("href", "/");

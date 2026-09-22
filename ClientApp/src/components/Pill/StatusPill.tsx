@@ -5,7 +5,7 @@ import {
 	PaDashboardItemStatus,
 	QuoteStatus,
 	ReportStatus,
-} from "../../routes/common/enums";
+} from "../../routes/common/enums.ts";
 
 export interface StatusPillProps {
 	/** Workflow status whose label and semantic colour are displayed. Unknown strings use the informational treatment. */
@@ -140,7 +140,7 @@ const StatusPill = ({ status }: StatusPillProps) => {
 	}, [status]);
 
 	return (
-		<Badge pill bg={pillProps.bgColour} text={pillProps.textColour}>
+		<Badge pill={true} bg={pillProps.bgColour} text={pillProps.textColour}>
 			{pillProps.text}
 		</Badge>
 	);

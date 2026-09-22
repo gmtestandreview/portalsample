@@ -2,17 +2,17 @@ import { InteractionType } from "@azure/msal-browser";
 import { MsalAuthenticationTemplate, useMsal } from "@azure/msal-react";
 import type { ReactPlugin } from "@microsoft/applicationinsights-react-js";
 import { isRouteErrorResponse, Navigate, useRouteError } from "react-router";
-import BlockUISpinner from "../components/BlockUISpinner";
-import ErrorBoundary from "../components/ErrorBoundary";
-import { ai } from "../instrumentation/AppInsightsService";
-import PreConditions from "../routes/preConditions/PreConditions";
-import { authRequest } from "./authConfig";
-import type { AuthenticatedElementProps } from "./types";
+import BlockUiSpinner from "../components/BlockUISpinner/index.tsx";
+import ErrorBoundary from "../components/ErrorBoundary/index.tsx";
+import { ai } from "../instrumentation/AppInsightsService.ts";
+import PreConditions from "../routes/preConditions/PreConditions.tsx";
+import { authRequest } from "./authConfig.ts";
+import type { AuthenticatedElementProps } from "./types.ts";
 
 const Loading = () => (
-	<BlockUISpinner>
+	<BlockUiSpinner>
 		<p>Logging in...</p>
-	</BlockUISpinner>
+	</BlockUiSpinner>
 );
 
 const RedirectToHome = () => {

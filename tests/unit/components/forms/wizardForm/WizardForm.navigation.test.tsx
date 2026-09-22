@@ -6,13 +6,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	FormStepStatus,
 	type FormStepStatusDto,
-} from "../../../../../ClientApp/src/api/web-api-client";
+} from "../../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "../../../../../ClientApp/src/authentication/accountContext";
-import WizardForm from "../../../../../ClientApp/src/components/forms/WizardForm";
-import WizardStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardStep";
+} from "../../../../../ClientApp/src/authentication/accountContext.tsx";
+import WizardForm from "../../../../../ClientApp/src/components/forms/WizardForm/index.tsx";
+import WizardStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardStep.tsx";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 

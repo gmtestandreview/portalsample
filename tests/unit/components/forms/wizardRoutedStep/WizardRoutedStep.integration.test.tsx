@@ -7,14 +7,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	FormStepStatus,
 	type FormStepStatusDto,
-} from "../../../../../ClientApp/src/api/web-api-client";
+} from "../../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "../../../../../ClientApp/src/authentication/accountContext";
-import type { WizardRoutedStepProps } from "../../../../../ClientApp/src/components/forms/WizardForm/types";
-import WizardRoutedStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep";
-import WizardStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardStep";
+} from "../../../../../ClientApp/src/authentication/accountContext.tsx";
+import type { WizardRoutedStepProps } from "../../../../../ClientApp/src/components/forms/WizardForm/types.ts";
+import WizardRoutedStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx";
+import WizardStep from "../../../../../ClientApp/src/components/forms/WizardForm/WizardStep.tsx";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -500,7 +500,7 @@ describe("WizardRoutedStep — prop mutation fix", () => {
 
 		await user.click(screen.getByTestId("save-and-next-button"));
 		expect(
-			await screen.findByText(/form contains invalid characters/i),
+			await screen.findByText(/form contains invalid characters/iu),
 		).toBeInTheDocument();
 	});
 

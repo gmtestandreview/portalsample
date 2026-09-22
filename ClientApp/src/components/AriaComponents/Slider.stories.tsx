@@ -1,7 +1,7 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Slider } from "./Slider";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Slider } from "./Slider.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],
@@ -56,9 +56,9 @@ NamedThumbs.play = async ({ canvas }) => {
 	// accessible name is composed from the thumb label plus the group label and current output, so
 	// this matches on the thumb's own contribution.
 	await expect(
-		canvas.getByRole("slider", { name: /^Minimum/ }),
+		canvas.getByRole("slider", { name: /^Minimum/u }),
 	).toBeInTheDocument();
 	await expect(
-		canvas.getByRole("slider", { name: /^Maximum/ }),
+		canvas.getByRole("slider", { name: /^Maximum/u }),
 	).toBeInTheDocument();
 };

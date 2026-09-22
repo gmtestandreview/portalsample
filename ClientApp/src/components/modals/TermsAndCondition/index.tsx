@@ -4,16 +4,16 @@ import type { ReactElement } from "react";
 import { useState } from "react";
 import { Alert, Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
-import { UsersClient } from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
+import { UsersClient } from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../../authentication/hooks";
-import termsData from "../../../terms-config.json";
-import ButtonGroup from "../../Buttons/ButtonGroup";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import TermsOfUse from "../../Footer/termsOfUse";
+} from "../../../authentication/hooks.tsx";
+import termsData from "../../../terms-config.json" with { type: "json" };
+import ButtonGroup from "../../Buttons/ButtonGroup/index.tsx";
+import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
+import TermsOfUse from "../../Footer/termsOfUse.tsx";
 
 interface DefaultTermsAndConditionModalHeaderProps {
 	userName?: string;

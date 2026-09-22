@@ -9,21 +9,21 @@ import {
 	type FormStepStatusDto,
 	LookupClient,
 	RequestForPatternApprovalClient,
-} from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import type {
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import AppLogger from "../../instrumentation/AppLogger";
-import { discardChanges } from "../common/constants";
-import { formatBannerTitle } from "../common/helperFunctions";
-import { DisplayRules } from "./displayRules";
+} from "../../components/forms/WizardForm/types.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { discardChanges } from "../common/constants.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
+import { DisplayRules } from "./displayRules.ts";
 import {
 	applicationAndInstrumentSaveValidation,
 	applicationAndInstrumentSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadApplicationAndInstrument =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

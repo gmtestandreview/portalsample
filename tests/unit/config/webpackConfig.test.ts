@@ -1,4 +1,5 @@
 import { createRequire } from "node:module";
+import process from "node:process";
 
 interface SassImplementation {
 	info: string;
@@ -155,11 +156,11 @@ describe("webpack config", () => {
 
 		expect(copyPlugin?.patterns).toEqual([
 			{
-				from: expect.stringMatching(/ClientApp[\\/]public[\\/]favicon\.ico$/),
+				from: expect.stringMatching(/ClientApp[\\/]public[\\/]favicon\.ico$/u),
 				to: "favicon.ico",
 			},
 			{
-				from: expect.stringMatching(/ClientApp[\\/]public[\\/]NMI-tile\.png$/),
+				from: expect.stringMatching(/ClientApp[\\/]public[\\/]NMI-tile\.png$/u),
 				to: "NMI-tile.png",
 			},
 		]);

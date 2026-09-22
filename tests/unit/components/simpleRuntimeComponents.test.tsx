@@ -2,25 +2,28 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, useLocation } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { useAccountState } from "@/authentication/hooks";
-import { CustomAccordion, CustomAccordionBody } from "@/components/Accordion";
+import { useAccountState } from "@/authentication/hooks.tsx";
+import {
+	CustomAccordion,
+	CustomAccordionBody,
+} from "@/components/Accordion/index.tsx";
 import {
 	AlertError,
 	AlertInfo,
 	AlertSuccess,
 	AlertWarning,
-} from "@/components/Alert";
-import NotificationMessage from "@/components/Alert/NotificationMessage";
-import BlockUISpinner from "@/components/BlockUISpinner";
-import Breadcrumb from "@/components/Breadcrumb";
-import BackToDashboardButton from "@/components/Buttons/BackToDashboardButton";
-import EditButton from "@/components/Buttons/EditButton";
-import LinkButton from "@/components/Buttons/LinkButton";
-import Home from "@/components/Home";
-import InTextLink from "@/components/InTextLink";
-import PaginationHeader from "@/components/PaginationHeader";
-import Welcome from "@/components/Welcome";
-import { NotificationSeverity } from "@/storage/types";
+} from "@/components/Alert/index.tsx";
+import NotificationMessage from "@/components/Alert/NotificationMessage.tsx";
+import BlockUiSpinner from "@/components/BlockUISpinner/index.tsx";
+import Breadcrumb from "@/components/Breadcrumb/index.tsx";
+import BackToDashboardButton from "@/components/Buttons/BackToDashboardButton/index.tsx";
+import EditButton from "@/components/Buttons/EditButton/index.tsx";
+import LinkButton from "@/components/Buttons/LinkButton/index.tsx";
+import Home from "@/components/Home.tsx";
+import InTextLink from "@/components/InTextLink/index.tsx";
+import PaginationHeader from "@/components/PaginationHeader/index.tsx";
+import Welcome from "@/components/Welcome/index.tsx";
+import { NotificationSeverity } from "@/storage/types.ts";
 
 vi.mock("@/components/get-started/get-started", () => ({
 	default: () => <main>Get started content</main>,
@@ -67,7 +70,7 @@ describe("simple reusable runtime components", () => {
 		);
 		expect(
 			screen.getByRole("button", {
-				name: /Quote details\s*Required\s*Reference ABC-123/i,
+				name: /Quote details\s*Required\s*Reference ABC-123/iu,
 			}),
 		).toBeInTheDocument();
 		expect(screen.getByText("Required").parentElement).toHaveClass(
@@ -105,7 +108,7 @@ describe("simple reusable runtime components", () => {
 		const onClose = vi.fn();
 
 		render(
-			<AlertWarning canClose onClose={onClose}>
+			<AlertWarning canClose={true} onClose={onClose}>
 				Review this warning
 			</AlertWarning>,
 		);
@@ -116,11 +119,13 @@ describe("simple reusable runtime components", () => {
 
 	it("resets a dismissed alert when the message changes", async () => {
 		const user = userEvent.setup();
-		const { rerender } = render(<AlertInfo canClose>First message</AlertInfo>);
+		const { rerender } = render(
+			<AlertInfo canClose={true}>First message</AlertInfo>,
+		);
 
 		await user.click(screen.getByRole("button", { name: "Close alert" }));
 
-		rerender(<AlertInfo canClose>Second message</AlertInfo>);
+		rerender(<AlertInfo canClose={true}>Second message</AlertInfo>);
 		expect(screen.getByText("Second message")).toBeInTheDocument();
 	});
 
@@ -175,7 +180,7 @@ describe("simple reusable runtime components", () => {
 				<NotificationMessage
 					severity={severity}
 					message={<strong>{message}</strong>}
-					canClose
+					canClose={true}
 					onClose={onClose}
 					role="status"
 					ariaLive="assertive"
@@ -214,13 +219,15 @@ describe("simple reusable runtime components", () => {
 
 	it("renders full-page and partial block UI spinners with different announcement priority", () => {
 		const { rerender } = render(
-			<BlockUISpinner>Loading the page</BlockUISpinner>,
+			<BlockUiSpinner>Loading the page</BlockUiSpinner>,
 		);
 
 		expect(screen.getByRole("alert")).toHaveAttribute("aria-live", "assertive");
 		expect(screen.getByText("Loading the page")).toBeInTheDocument();
 
-		rerender(<BlockUISpinner partial>Loading this panel</BlockUISpinner>);
+		rerender(
+			<BlockUiSpinner partial={true}>Loading this panel</BlockUiSpinner>,
+		);
 		expect(screen.getByRole("alert")).toHaveAttribute("aria-live", "polite");
 		expect(screen.getByText("Loading this panel")).toBeInTheDocument();
 	});
@@ -273,7 +280,7 @@ describe("simple reusable runtime components", () => {
 
 		expect(container.firstElementChild).toHaveClass("mt-4");
 		expect(
-			screen.getByRole("link", { name: /Back to dashboard/i }),
+			screen.getByRole("link", { name: /Back to dashboard/iu }),
 		).toHaveAttribute("href", "/dashboard");
 		expect(screen.getByTestId("back-button")).toHaveClass("wide-link");
 	});
@@ -379,7 +386,7 @@ describe("simple reusable runtime components", () => {
 
 		expect(
 			screen.getByRole("link", {
-				name: /External resource\s*Opens in a new tab/i,
+				name: /External resource\s*Opens in a new tab/iu,
 			}),
 		).toHaveAttribute("rel", "nofollow noreferrer noopener");
 
@@ -400,7 +407,7 @@ describe("simple reusable runtime components", () => {
 		expect(screen.getByText("Results")).toHaveClass("visually-hidden");
 
 		rerender(<PaginationHeader totalCount={0} pageSize={10} currentPage={1} />);
-		expect(screen.getByText(/Displaying/i)).toHaveAttribute("hidden");
+		expect(screen.getByText(/Displaying/iu)).toHaveAttribute("hidden");
 	});
 
 	it("shows a full pagination range before the final page", () => {
@@ -420,7 +427,7 @@ describe("simple reusable runtime components", () => {
 
 		expect(screen.getByTestId("welcome-banner")).toBeInTheDocument();
 		expect(
-			screen.getByRole("heading", { name: /Welcome Alex/i }),
+			screen.getByRole("heading", { name: /Welcome Alex/iu }),
 		).toBeInTheDocument();
 	});
 

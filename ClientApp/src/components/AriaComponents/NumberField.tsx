@@ -6,9 +6,9 @@ import {
 	Input,
 	type ValidationResult,
 } from "react-aria-components/NumberField";
-import { Button } from "../Buttons/AriaButton/Button";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
-import { Minus, Plus } from "./NmiIcon";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form.tsx";
+import { Minus, Plus } from "./NmiIcon.tsx";
 import "./NumberField.css";
 
 export interface NumberFieldProps extends AriaNumberFieldProps {

@@ -2,13 +2,13 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { FormikConfig, FormikValues } from "formik";
 import { Form, Formik, useFormikContext } from "formik";
-import Checkbox from "@/components/Inputs/Checkbox";
-import RadioButton from "@/components/Inputs/RadioButton";
-import RadioButtonGroup from "@/components/Inputs/RadioButtonGroup";
-import SelectInput from "@/components/Inputs/SelectInput";
-import TextAreaInput from "@/components/Inputs/TextAreaInput";
-import TextInput from "@/components/Inputs/TextInput";
-import TextReadOnly from "@/components/Inputs/TextReadOnly";
+import Checkbox from "@/components/Inputs/Checkbox/index.tsx";
+import RadioButton from "@/components/Inputs/RadioButton/index.tsx";
+import RadioButtonGroup from "@/components/Inputs/RadioButtonGroup/index.tsx";
+import SelectInput from "@/components/Inputs/SelectInput/index.tsx";
+import TextAreaInput from "@/components/Inputs/TextAreaInput/index.tsx";
+import TextInput from "@/components/Inputs/TextInput/index.tsx";
+import TextReadOnly from "@/components/Inputs/TextReadOnly/index.tsx";
 
 interface FormikHarnessProps<TValues extends FormikValues> {
 	readonly initialValues: TValues;
@@ -27,7 +27,7 @@ function FormikHarness<TValues extends FormikValues>({
 }: FormikHarnessProps<TValues>) {
 	return (
 		<Formik
-			enableReinitialize
+			enableReinitialize={true}
 			initialValues={initialValues}
 			initialTouched={initialTouched}
 			initialErrors={initialErrors}
@@ -65,7 +65,7 @@ describe("simple Formik input components", () => {
 		);
 
 		const checkbox = screen.getByRole("checkbox", {
-			name: /I accept the terms/i,
+			name: /I accept the terms/iu,
 		});
 		expect(checkbox).toHaveAccessibleDescription(
 			"Confirm you have read the terms",
@@ -111,7 +111,7 @@ describe("simple Formik input components", () => {
 				<Checkbox
 					name="accepted"
 					label="Accept declaration"
-					supressFieldLevelMessages
+					supressFieldLevelMessages={true}
 				/>
 			</FormikHarness>,
 		);
@@ -125,7 +125,11 @@ describe("simple Formik input components", () => {
 	it("renders Checkbox summary and subform content branches", () => {
 		const { rerender } = render(
 			<FormikHarness initialValues={{ accepted: true }}>
-				<Checkbox name="accepted" label="Declaration accepted" isSummary />
+				<Checkbox
+					name="accepted"
+					label="Declaration accepted"
+					isSummary={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -164,7 +168,7 @@ describe("simple Formik input components", () => {
 			</FormikHarness>,
 		);
 
-		const radio = screen.getByRole("radio", { name: /No\s*Do not proceed/i });
+		const radio = screen.getByRole("radio", { name: /No\s*Do not proceed/iu });
 		expect(radio).not.toBeChecked();
 		expect(radio).toHaveAttribute("aria-controls", "pref-no-sub-field");
 		expect(screen.getByText("Reason details")).toBeInTheDocument();
@@ -211,7 +215,7 @@ describe("simple Formik input components", () => {
 		expect(group).not.toHaveAttribute("role");
 		expect(screen.getByText("Why we ask")).toBeInTheDocument();
 
-		await user.click(screen.getByRole("radio", { name: /Phone\s*Call me/i }));
+		await user.click(screen.getByRole("radio", { name: /Phone\s*Call me/iu }));
 
 		await waitFor(() =>
 			expect(screen.getByTestId("values")).toHaveTextContent(
@@ -225,7 +229,7 @@ describe("simple Formik input components", () => {
 					name="contactMethod"
 					legend="Preferred contact method"
 					options={options}
-					isSummary
+					isSummary={true}
 				/>
 			</FormikHarness>,
 		);
@@ -246,7 +250,7 @@ describe("simple Formik input components", () => {
 					legend="Delivery option"
 					inlineHelp="Choose how you want the report delivered"
 					options={options}
-					displayHorizontally
+					displayHorizontally={true}
 					containerClassName="delivery-container"
 				/>
 			</FormikHarness>,
@@ -263,7 +267,7 @@ describe("simple Formik input components", () => {
 					name="delivery"
 					legend="Delivery option"
 					options={options}
-					isSummary
+					isSummary={true}
 				/>
 			</FormikHarness>,
 		);
@@ -276,7 +280,7 @@ describe("simple Formik input components", () => {
 					name="delivery"
 					legend="Delivery option"
 					options={options}
-					isSummary
+					isSummary={true}
 					containerClassName="summary-container"
 					className="summary-value"
 				/>
@@ -291,7 +295,7 @@ describe("simple Formik input components", () => {
 					name="delivery"
 					legend="Delivery option"
 					options={options}
-					isSummary
+					isSummary={true}
 				/>
 			</FormikHarness>,
 		);
@@ -309,7 +313,7 @@ describe("simple Formik input components", () => {
 				<SelectInput
 					name="state"
 					label="State"
-					addBlank
+					addBlank={true}
 					defaultDisplayText="Select a state"
 					inlineHelp="Choose where the instrument is located"
 					options={[
@@ -359,8 +363,8 @@ describe("simple Formik input components", () => {
 					inlineHelpTitle="Service help"
 					inlineHelp="Pick the service type"
 					options={options}
-					addBlank
-					disabled
+					addBlank={true}
+					disabled={true}
 					containerClassName="service-container"
 					className="service-select"
 				/>
@@ -384,7 +388,7 @@ describe("simple Formik input components", () => {
 					name="service"
 					label="Service"
 					options={options}
-					isSummary
+					isSummary={true}
 				/>
 			</FormikHarness>,
 		);
@@ -407,7 +411,7 @@ describe("simple Formik input components", () => {
 					name="state"
 					label="State"
 					options={options}
-					displayHorizontally
+					displayHorizontally={true}
 				/>
 			</FormikHarness>,
 		);
@@ -418,7 +422,12 @@ describe("simple Formik input components", () => {
 
 		rerender(
 			<FormikHarness initialValues={{ state: "nsw" }}>
-				<SelectInput name="state" label="State" options={options} readOnly />
+				<SelectInput
+					name="state"
+					label="State"
+					options={options}
+					readOnly={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -429,7 +438,12 @@ describe("simple Formik input components", () => {
 
 		rerender(
 			<FormikHarness initialValues={{ state: "act" }}>
-				<SelectInput name="state" label="State" options={options} isSummary />
+				<SelectInput
+					name="state"
+					label="State"
+					options={options}
+					isSummary={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -450,7 +464,7 @@ describe("simple Formik input components", () => {
 					name="state"
 					label="State"
 					options={options}
-					displayHorizontally
+					displayHorizontally={true}
 					inlineHelpTitle="State help"
 					inlineHelp="Choose a state"
 				/>
@@ -469,7 +483,7 @@ describe("simple Formik input components", () => {
 					name="state"
 					label="State"
 					options={options}
-					readOnly
+					readOnly={true}
 					inlineHelpTitle="Read help"
 					inlineHelp="Read only"
 				/>
@@ -482,7 +496,12 @@ describe("simple Formik input components", () => {
 
 		rerender(
 			<FormikHarness initialValues={{ state: "unknown" }}>
-				<SelectInput name="state" label="State" options={options} isSummary />
+				<SelectInput
+					name="state"
+					label="State"
+					options={options}
+					isSummary={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -501,8 +520,8 @@ describe("simple Formik input components", () => {
 					name="state"
 					id="service-state"
 					label="State"
-					displayHorizontally
-					addBlank
+					displayHorizontally={true}
+					addBlank={true}
 					options={undefined}
 				/>
 			</FormikHarness>,
@@ -577,13 +596,13 @@ describe("simple Formik input components", () => {
 		);
 
 		const textarea = screen.getByRole("textbox", { name: "Notes" });
-		expect(textarea).toHaveAccessibleDescription(/Too long/i);
+		expect(textarea).toHaveAccessibleDescription(/Too long/iu);
 		expect(screen.getByText("Too long")).toHaveClass("form-validation-message");
-		expect(screen.getAllByText(/6 of 5 characters used/)).toHaveLength(2);
+		expect(screen.getAllByText(/6 of 5 characters used/u)).toHaveLength(2);
 
 		rerender(
 			<FormikHarness initialValues={{ notes: "Saved summary" }}>
-				<TextAreaInput name="notes" label="Notes" isSummary />
+				<TextAreaInput name="notes" label="Notes" isSummary={true} />
 			</FormikHarness>,
 		);
 
@@ -595,7 +614,7 @@ describe("simple Formik input components", () => {
 
 		render(
 			<FormikHarness initialValues={{ notes: null }}>
-				<TextAreaInput name="notes" label="Notes" rows={6} disabled />
+				<TextAreaInput name="notes" label="Notes" rows={6} disabled={true} />
 				<ValuesProbe />
 			</FormikHarness>,
 		);
@@ -603,7 +622,7 @@ describe("simple Formik input components", () => {
 		const textarea = screen.getByRole("textbox", { name: "Notes" });
 		expect(textarea).toBeDisabled();
 		expect(textarea).toHaveAttribute("rows", "6");
-		expect(screen.queryByText(/characters used/)).not.toBeInTheDocument();
+		expect(screen.queryByText(/characters used/u)).not.toBeInTheDocument();
 
 		await user.tab();
 		expect(screen.getByTestId("touched")).toHaveTextContent("{}");
@@ -664,7 +683,12 @@ describe("simple Formik input components", () => {
 
 		rerender(
 			<FormikHarness initialValues={{ dueDate: "2026-06-11T00:00:00.000Z" }}>
-				<TextInput name="dueDate" label="Due date" type="date" isSummary />
+				<TextInput
+					name="dueDate"
+					label="Due date"
+					type="date"
+					isSummary={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -678,7 +702,12 @@ describe("simple Formik input components", () => {
 				initialTouched={{ firstName: true }}
 				initialErrors={{ firstName: "First name is required" }}
 			>
-				<TextInput name="firstName" label="First name" disabled readonly />
+				<TextInput
+					name="firstName"
+					label="First name"
+					disabled={true}
+					readonly={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -720,7 +749,12 @@ describe("simple Formik input components", () => {
 
 		rerender(
 			<FormikHarness initialValues={{ dueDate: "" }}>
-				<TextInput name="dueDate" label="Due date" type="date" isSummary />
+				<TextInput
+					name="dueDate"
+					label="Due date"
+					type="date"
+					isSummary={true}
+				/>
 			</FormikHarness>,
 		);
 
@@ -759,7 +793,7 @@ describe("simple Formik input components", () => {
 				<TextReadOnly
 					name="reference"
 					label="Reference"
-					isSummary
+					isSummary={true}
 					format="##-##-##"
 				/>
 			</FormikHarness>,

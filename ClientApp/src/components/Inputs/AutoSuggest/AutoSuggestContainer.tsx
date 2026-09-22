@@ -9,8 +9,8 @@ import {
 	Popover,
 } from "react-aria-components/ComboBox";
 import { Group } from "react-aria-components/Group";
-import AutoSuggestOptions from "./AutoSuggestOptions";
-import type { AutoSuggestContainerProps, AutoSuggestOption } from "./types";
+import AutoSuggestOptions from "./AutoSuggestOptions.tsx";
+import type { AutoSuggestContainerProps, AutoSuggestOption } from "./types.ts";
 
 const keys = {
 	ESC: "Escape",
@@ -117,7 +117,7 @@ const AutoSuggestContainer = <T,>(
 								void onSelectOption(option);
 							});
 					}}
-					allowsCustomValue
+					allowsCustomValue={true}
 					menuTrigger="input"
 					onOpenChange={setIsOpen}
 				>
@@ -170,7 +170,7 @@ const AutoSuggestContainer = <T,>(
 						<Popover
 							className="suggestions-container"
 							aria-busy={loading}
-							isNonModal
+							isNonModal={true}
 							offset={0}
 						>
 							<AutoSuggestOptions<T> id={`${name}-options`} options={options} />

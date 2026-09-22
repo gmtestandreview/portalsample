@@ -3,8 +3,8 @@ import "@testing-library/jest-dom/vitest";
 import { StrictMode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
+import type * as WebApiClientModule from "../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext.tsx";
 
 const mocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn(),
@@ -314,7 +314,7 @@ describe("workflow route wrappers", () => {
 
 	it("renders the request-for-quote wizard after loading statuses", async () => {
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 
 		renderAt(
@@ -351,7 +351,7 @@ describe("workflow route wrappers", () => {
 		// in StrictMode, so it took a browser-driven e2e run to surface. Rendering the wizard the
 		// way index.tsx actually renders it keeps that gap closed here.
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 
 		renderAt(
@@ -370,7 +370,7 @@ describe("workflow route wrappers", () => {
 
 	it("redirects request-for-quote to not found for invalid ids and failed status loads", async () => {
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/request-for-quote/!bad/organisation-and-contact",
@@ -409,7 +409,7 @@ describe("workflow route wrappers", () => {
 		// and no way back. Statement coverage never caught it: the happy path
 		// executes the same line.
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 
 		mocks.acquireTokenSilent.mockRejectedValueOnce(
@@ -440,7 +440,7 @@ describe("workflow route wrappers", () => {
 		// navigated away must not push them to /not-found from a route they are
 		// no longer on, and must not write to unmounted state.
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 
 		let rejectToken: (reason: Error) => void = () => undefined;
@@ -471,7 +471,7 @@ describe("workflow route wrappers", () => {
 		// The success half of the same unmount guard: a status load that lands
 		// after the user has navigated away must not write to dead state.
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 
 		let resolveStatuses: (value: unknown) => void = () => undefined;
@@ -506,7 +506,7 @@ describe("workflow route wrappers", () => {
 	it("shows a loading state until request-for-quote account details are available", async () => {
 		mocks.useAccountState.mockReturnValue({ details: undefined });
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 
 		renderAt(
@@ -522,7 +522,7 @@ describe("workflow route wrappers", () => {
 	it("does not load workflow statuses until an MSAL account is available", async () => {
 		mocks.msalAccounts.length = 0;
 		const RequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote")
+			await import("../../../ClientApp/src/routes/requestForQuote/index.tsx")
 		).default;
 		const { unmount } = renderAt(
 			"/request-for-quote/APP-4/organisation-and-contact",
@@ -535,7 +535,7 @@ describe("workflow route wrappers", () => {
 		unmount();
 
 		const AcceptQuote = (
-			await import("../../../ClientApp/src/routes/acceptQuote")
+			await import("../../../ClientApp/src/routes/acceptQuote/index.tsx")
 		).default;
 		renderAt(
 			"/accept-quote/AQ-4/report-recipient",
@@ -550,10 +550,14 @@ describe("workflow route wrappers", () => {
 
 	it("creates and copies request-for-quote applications before navigating into the wizard", async () => {
 		const CreateRequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote/create")
+			await import(
+				"../../../ClientApp/src/routes/requestForQuote/create/index.tsx"
+			)
 		).default;
 		const CopyRequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote/copy")
+			await import(
+				"../../../ClientApp/src/routes/requestForQuote/copy/index.tsx"
+			)
 		).default;
 		const { unmount } = renderWithNavigationDestinations(
 			"/request-for-quote-create",
@@ -590,7 +594,9 @@ describe("workflow route wrappers", () => {
 	it("logs request-for-quote application creation failures", async () => {
 		mocks.createApplication.mockRejectedValueOnce(new Error("create failed"));
 		const CreateRequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote/create")
+			await import(
+				"../../../ClientApp/src/routes/requestForQuote/create/index.tsx"
+			)
 		).default;
 
 		renderWithNavigationDestinations(
@@ -611,7 +617,9 @@ describe("workflow route wrappers", () => {
 	it("logs request-for-quote application copy failures", async () => {
 		mocks.copyApplication.mockRejectedValueOnce(new Error("copy failed"));
 		const CopyRequestForQuote = (
-			await import("../../../ClientApp/src/routes/requestForQuote/copy")
+			await import(
+				"../../../ClientApp/src/routes/requestForQuote/copy/index.tsx"
+			)
 		).default;
 
 		renderWithNavigationDestinations(
@@ -631,7 +639,9 @@ describe("workflow route wrappers", () => {
 
 	it("renders request-for-quote submitted success content", async () => {
 		const RequestForQuoteCreated = (
-			await import("../../../ClientApp/src/routes/requestForQuote/created")
+			await import(
+				"../../../ClientApp/src/routes/requestForQuote/created/index.tsx"
+			)
 		).default;
 
 		renderAt(
@@ -660,13 +670,13 @@ describe("workflow route wrappers", () => {
 	it("renders the submitted request-for-quote summary view after loading statuses", async () => {
 		const ViewRequestForQuoteSummary = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary"
+				"../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary.tsx"
 			)
 		).default;
 
 		renderAt(
 			"/request-for-quote/RFQ-123/view-summary",
-			<ViewRequestForQuoteSummary isSubmitted />,
+			<ViewRequestForQuoteSummary isSubmitted={true} />,
 			"/request-for-quote/:id/*",
 		);
 
@@ -689,13 +699,13 @@ describe("workflow route wrappers", () => {
 		);
 		const ViewRequestForQuoteSummary = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary"
+				"../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary.tsx"
 			)
 		).default;
 
 		renderAt(
 			"/request-for-quote/RFQ-FAIL/view-summary",
-			<ViewRequestForQuoteSummary isSubmitted />,
+			<ViewRequestForQuoteSummary isSubmitted={true} />,
 			"/request-for-quote/:id/*",
 		);
 
@@ -713,14 +723,14 @@ describe("workflow route wrappers", () => {
 		mocks.msalAccounts.length = 0;
 		const ViewRequestForQuoteSummary = (
 			await import(
-				"../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary"
+				"../../../ClientApp/src/routes/requestForQuote/viewRequestForQuoteSummary.tsx"
 			)
 		).default;
 
 		renderAt(
 			"/request-for-quote/RFQ-NO-ACCOUNT/view-summary",
 			<StrictMode>
-				<ViewRequestForQuoteSummary isSubmitted />
+				<ViewRequestForQuoteSummary isSubmitted={true} />
 			</StrictMode>,
 			"/request-for-quote/:id/*",
 		);
@@ -732,7 +742,7 @@ describe("workflow route wrappers", () => {
 
 	it("renders the accept-quote wizard after loading quote and status details", async () => {
 		const AcceptQuote = (
-			await import("../../../ClientApp/src/routes/acceptQuote")
+			await import("../../../ClientApp/src/routes/acceptQuote/index.tsx")
 		).default;
 
 		renderAt(
@@ -763,7 +773,7 @@ describe("workflow route wrappers", () => {
 			new Error("load failed"),
 		);
 		const AcceptQuote = (
-			await import("../../../ClientApp/src/routes/acceptQuote")
+			await import("../../../ClientApp/src/routes/acceptQuote/index.tsx")
 		).default;
 
 		renderAt(
@@ -784,7 +794,7 @@ describe("workflow route wrappers", () => {
 
 	it("creates an accept-quote application from a quote reference before navigating into the wizard", async () => {
 		const CreateAcceptQuote = (
-			await import("../../../ClientApp/src/routes/acceptQuote/create")
+			await import("../../../ClientApp/src/routes/acceptQuote/create/index.tsx")
 		).default;
 
 		renderWithNavigationDestinations(
@@ -815,7 +825,7 @@ describe("workflow route wrappers", () => {
 			new Error("create failed"),
 		);
 		const CreateAcceptQuote = (
-			await import("../../../ClientApp/src/routes/acceptQuote/create")
+			await import("../../../ClientApp/src/routes/acceptQuote/create/index.tsx")
 		).default;
 
 		renderWithNavigationDestinations(
@@ -836,7 +846,9 @@ describe("workflow route wrappers", () => {
 
 	it("renders submitted-success prepaid payment copy", async () => {
 		const SubmittedSuccess = (
-			await import("../../../ClientApp/src/routes/acceptQuote/submittedSuccess")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/submittedSuccess.tsx"
+			)
 		).default;
 
 		renderAt(
@@ -860,7 +872,9 @@ describe("workflow route wrappers", () => {
 			acceptQuotePreInfo: { paymentTerms: "Postpaid" },
 		});
 		const SubmittedSuccess = (
-			await import("../../../ClientApp/src/routes/acceptQuote/submittedSuccess")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/submittedSuccess.tsx"
+			)
 		).default;
 
 		renderAt(
@@ -882,7 +896,9 @@ describe("workflow route wrappers", () => {
 	it("logs submitted-success payment detail failures", async () => {
 		mocks.getPaymentDetails.mockRejectedValueOnce(new Error("payment failed"));
 		const SubmittedSuccess = (
-			await import("../../../ClientApp/src/routes/acceptQuote/submittedSuccess")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/submittedSuccess.tsx"
+			)
 		).default;
 
 		renderAt(
@@ -905,7 +921,9 @@ describe("workflow route wrappers", () => {
 			quotationIdNum: "Q-500",
 		});
 		const QuotationSummary = (
-			await import("../../../ClientApp/src/routes/acceptQuote/quotationSummary")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/quotationSummary.tsx"
+			)
 		).default;
 
 		renderAt(
@@ -930,12 +948,14 @@ describe("workflow route wrappers", () => {
 			new Error("quote failed"),
 		);
 		const QuotationSummary = (
-			await import("../../../ClientApp/src/routes/acceptQuote/quotationSummary")
+			await import(
+				"../../../ClientApp/src/routes/acceptQuote/quotationSummary.tsx"
+			)
 		).default;
 
 		renderAt(
 			"/quotation-summary",
-			<QuotationSummary cRMQuoteRequestId="CRM-FAIL" isSummary />,
+			<QuotationSummary cRMQuoteRequestId="CRM-FAIL" isSummary={true} />,
 		);
 
 		await waitFor(() =>

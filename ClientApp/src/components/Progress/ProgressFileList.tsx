@@ -1,7 +1,7 @@
 import type React from "react";
 import { useState } from "react";
-import type { FileProgress } from "../../api/web-api-client";
-import { FileStatus } from "../../routes/ta/types";
+import type { FileProgress } from "../../api/web-api-client.ts";
+import { FileStatus } from "../../routes/ta/types.ts";
 
 interface FileListProps {
 	files: FileProgress[];

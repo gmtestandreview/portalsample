@@ -5,12 +5,16 @@ import { Field, Form, Formik, useFormikContext } from "formik";
 import { useEffect } from "react";
 import { MemoryRouter, useLocation } from "react-router";
 import * as Yup from "yup";
-import Details from "@/components/forms/Details";
-import FormBanner from "@/components/forms/FormBanner";
-import countOfErrors from "@/components/forms/FormikForm/formikHelpers";
-import HidableField from "@/components/forms/HidableField";
-import UnsavedFormPrompt from "@/components/forms/UnsavedFormPrompt";
-import { isHidden, removeHidden, validateForm } from "@/components/forms/utils";
+import Details from "@/components/forms/Details/index.tsx";
+import FormBanner from "@/components/forms/FormBanner/index.tsx";
+import countOfErrors from "@/components/forms/FormikForm/formikHelpers.ts";
+import HidableField from "@/components/forms/HidableField/index.tsx";
+import UnsavedFormPrompt from "@/components/forms/UnsavedFormPrompt/index.tsx";
+import {
+	isHidden,
+	removeHidden,
+	validateForm,
+} from "@/components/forms/utils.ts";
 
 vi.mock("@/components/RouteLeavingGuard", () => ({
 	default: ({
@@ -55,7 +59,7 @@ function FormikHarness<TValues extends FormikValues>({
 }: FormikHarnessProps<TValues>) {
 	return (
 		<Formik
-			enableReinitialize
+			enableReinitialize={true}
 			initialValues={initialValues}
 			initialStatus={initialStatus}
 			initialErrors={initialErrors}
@@ -118,7 +122,7 @@ describe("form helper components", () => {
 		expect(screen.getByText("RFQ-123")).toBeInTheDocument();
 		expect(screen.getByText("Acme Pty Ltd")).toBeInTheDocument();
 
-		await user.click(screen.getByRole("button", { name: /Discard draft/i }));
+		await user.click(screen.getByRole("button", { name: /Discard draft/iu }));
 
 		expect(onDiscard).toHaveBeenCalledTimes(1);
 		expect(screen.getByTestId("location")).toHaveTextContent("/dashboard");
@@ -132,14 +136,14 @@ describe("form helper components", () => {
 					title="Create account"
 					refTitle=""
 					subTitle={null}
-					showGoToDashboardButton
+					showGoToDashboardButton={true}
 				/>
 			</MemoryRouter>,
 		);
 
 		expect(screen.queryByText("RFQ-123")).not.toBeInTheDocument();
 		expect(
-			screen.getByRole("link", { name: /Go to dashboard/i }),
+			screen.getByRole("link", { name: /Go to dashboard/iu }),
 		).toHaveAttribute("href", "/dashboard");
 
 		rerender(
@@ -155,9 +159,9 @@ describe("form helper components", () => {
 		);
 
 		expect(
-			screen.getByRole("button", { name: /Discard changes/i }),
+			screen.getByRole("button", { name: /Discard changes/iu }),
 		).toBeInTheDocument();
-		await user.click(screen.getByRole("button", { name: /Discard changes/i }));
+		await user.click(screen.getByRole("button", { name: /Discard changes/iu }));
 		expect(screen.getByTestId("location")).toHaveTextContent("/dashboard");
 	});
 

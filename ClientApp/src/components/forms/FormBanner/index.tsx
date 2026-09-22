@@ -1,10 +1,10 @@
 import { Button, Container, Nav, Navbar } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import LinkButton from "../../Buttons/LinkButton";
-import NavbarMessage from "../../Header/NavbarMessage";
-import SkipLinks from "../../Utilities/skipLinks";
-import SaveAndExitButton from "../SaveAndExitButton";
-import type { FormBannerProps } from "./types";
+import LinkButton from "../../Buttons/LinkButton/index.tsx";
+import NavbarMessage from "../../Header/NavbarMessage.tsx";
+import SkipLinks from "../../Utilities/skipLinks.tsx";
+import SaveAndExitButton from "../SaveAndExitButton/index.tsx";
+import type { FormBannerProps } from "./types.ts";
 
 const FormBanner = ({
 	title,
@@ -36,11 +36,14 @@ const FormBanner = ({
 				<NavbarMessage />
 				<Navbar
 					bg="nmi-form-navbar"
-					collapseOnSelect
+					collapseOnSelect={true}
 					expand="lg"
 					aria-labelledby="form-banner"
 				>
-					<Container fluid className="container-lg align-items-stretch p-0">
+					<Container
+						fluid={true}
+						className="container-lg align-items-stretch p-0"
+					>
 						<Navbar.Brand
 							as="div"
 							id="form-banner"
@@ -67,7 +70,7 @@ const FormBanner = ({
 									<Nav
 										id="form-navbar"
 										role="toolbar"
-										navbar
+										navbar={true}
 										className="d-grid gap-3 d-lg-block ms-auto me-0 p-3 p-lg-0 text-nowrap"
 										aria-labelledby="form-navbar-title"
 									>
@@ -98,7 +101,7 @@ const FormBanner = ({
 									<Nav
 										id="form-navbar"
 										role="toolbar"
-										navbar
+										navbar={true}
 										className="d-grid gap-3 d-lg-block ms-auto me-0 p-3 p-lg-0"
 										aria-labelledby="form-navbar-title"
 									>

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import CustomDateInput from "./CustomDateInput";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import CustomDateInput from "./CustomDateInput.tsx";
 
 /**
  * `CustomDateInput` is the text-field + calendar-button control that
@@ -41,7 +41,7 @@ export const Default: Story = {
 		await expect(canvas.getByText("Date of test")).toBeVisible();
 		await expect(canvas.getByRole("textbox")).toBeVisible();
 		await expect(
-			canvas.getByRole("button", { name: /choose your test date/i }),
+			canvas.getByRole("button", { name: /choose your test date/iu }),
 		).toBeVisible();
 	},
 };
@@ -53,6 +53,6 @@ export const WithError: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/enter a valid date/i)).toBeVisible();
+		await expect(canvas.getByText(/enter a valid date/iu)).toBeVisible();
 	},
 };

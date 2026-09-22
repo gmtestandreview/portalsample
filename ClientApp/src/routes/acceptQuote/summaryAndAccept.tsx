@@ -6,42 +6,45 @@ import type {
 	AcceptQuotePreInfoDto,
 	OrganisationDto,
 	RequestForQuote,
-} from "../../api/web-api-client";
-import { AcceptQuoteClient, DashboardClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
+} from "../../api/web-api-client.ts";
+import {
+	AcceptQuoteClient,
+	DashboardClient,
+} from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
 import {
 	CustomAccordion,
 	CustomAccordionBody,
-} from "../../components/Accordion";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import EditButton from "../../components/Buttons/EditButton";
-import HidableField from "../../components/forms/HidableField";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon";
-import Checkbox from "../../components/Inputs/Checkbox";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import InTextLink from "../../components/InTextLink";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import AppLogger from "../../instrumentation/AppLogger";
+} from "../../components/Accordion/index.tsx";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import EditButton from "../../components/Buttons/EditButton/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import HeaderIntroText from "../../components/HeaderIntroText/index.tsx";
+import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon.tsx";
+import Checkbox from "../../components/Inputs/Checkbox/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import TextAreaInput from "../../components/Inputs/TextAreaInput/index.tsx";
+import InTextLink from "../../components/InTextLink/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 import {
 	clearDashboardInfoNotification,
 	clearDashboardNotification,
 	getDashboardNotification,
 	setDashboardNotification,
-} from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
+} from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
 import {
 	getFileUrlFromBase64,
 	openPdfPageInNewTab,
-} from "../common/helperFunctions";
-import DeliveryAndReturn from "./deliveryAndReturn";
-import PaymentDetails from "./paymentDetails";
-import QuotationSummary from "./quotationSummary";
-import ReportRecipient from "./reportRecipient";
-import type { SummaryAndAcceptProps } from "./types";
+} from "../common/helperFunctions.ts";
+import DeliveryAndReturn from "./deliveryAndReturn.tsx";
+import PaymentDetails from "./paymentDetails.tsx";
+import QuotationSummary from "./quotationSummary.tsx";
+import ReportRecipient from "./reportRecipient.tsx";
+import type { SummaryAndAcceptProps } from "./types.ts";
 
 const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 	const { id } = useParams<{ id?: string }>();
@@ -65,7 +68,7 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 		return dashboardNotification ? (
 			<NotificationMessage
 				id="notif-message-1"
-				canClose
+				canClose={true}
 				onClose={clearDashboardNotification}
 				{...dashboardNotification}
 			/>
@@ -171,9 +174,9 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 	return (
 		<>
 			{isLoading && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			{showDashboardMessage(dashboardMessage)}
 			<Row className="mb-4">
@@ -193,7 +196,7 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 						className="mb-4 py-2"
 					>
 						<QuotationSummary
-							isSummary
+							isSummary={true}
 							name="quotationSummary"
 							cRMQuoteRequestId={cRMQuoteRequestId}
 						/>
@@ -205,7 +208,7 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 						eventKey="1"
 						className="mb-4 py-2"
 					>
-						<ReportRecipient isSummary name="reportRecipient" id={id} />
+						<ReportRecipient isSummary={true} name="reportRecipient" id={id} />
 						{isSubmitted ? null : (
 							<EditButton link={`/accept-quote/${id}/report-recipient`} />
 						)}
@@ -217,7 +220,11 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 						eventKey="2"
 						className="mb-4 py-2"
 					>
-						<DeliveryAndReturn isSummary name="deliveryAndReturn" id={id} />
+						<DeliveryAndReturn
+							isSummary={true}
+							name="deliveryAndReturn"
+							id={id}
+						/>
 						{isSubmitted ? null : (
 							<EditButton link={`/accept-quote/${id}/delivery-and-return`} />
 						)}
@@ -229,7 +236,7 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 						eventKey="3"
 						className="mb-4 py-2"
 					>
-						<PaymentDetails isSummary name="paymentDetails" id={id} />
+						<PaymentDetails isSummary={true} name="paymentDetails" id={id} />
 						{isSubmitted ? null : (
 							<EditButton link={`/accept-quote/${id}/payment-details`} />
 						)}
@@ -470,7 +477,7 @@ const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
 						<Link
 							data-testid="back-button"
 							to={`/submitted-success/${id}`}
-							replace
+							replace={true}
 							className="btn btn-tertiary"
 						>
 							<i className="icon-back me-1" aria-hidden="true" /> Submit and

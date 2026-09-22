@@ -1,23 +1,23 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router";
-import type { FormStepStatusDto } from "../../api/web-api-client";
-import { RequestForQuoteClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import WizardForm from "../../components/forms/WizardForm";
-import type { WizardFormProps } from "../../components/forms/WizardForm/types";
-import WizardStep from "../../components/forms/WizardForm/WizardStep";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import AppLogger from "../../instrumentation/AppLogger";
-import { getValidApplicationId } from "../common/routeParams";
-import InstrumentAndRequest from "./instrumentAndRequest";
-import instrumentAndRequestProps from "./instrumentAndRequestProps";
-import OrganisationAndContact from "./organisationAndContact";
-import organisationAndContactProps from "./organisationAndContactProps";
-import RequestForQuoteSummary from "./requestForQuoteSummary";
-import requestForQuoteSummaryProps from "./requestForQuoteSummaryProps";
+import type { FormStepStatusDto } from "../../api/web-api-client.ts";
+import { RequestForQuoteClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import WizardForm from "../../components/forms/WizardForm/index.tsx";
+import type { WizardFormProps } from "../../components/forms/WizardForm/types.ts";
+import WizardStep from "../../components/forms/WizardForm/WizardStep.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { getValidApplicationId } from "../common/routeParams.ts";
+import InstrumentAndRequest from "./instrumentAndRequest.tsx";
+import instrumentAndRequestProps from "./instrumentAndRequestProps.ts";
+import OrganisationAndContact from "./organisationAndContact.tsx";
+import organisationAndContactProps from "./organisationAndContactProps.ts";
+import RequestForQuoteSummary from "./requestForQuoteSummary.tsx";
+import requestForQuoteSummaryProps from "./requestForQuoteSummaryProps.ts";
 
 const bannerTitle = "Testing and calibration service - Request for quote";
 
@@ -113,14 +113,14 @@ const RequestForQuote = () => {
 	]);
 
 	if (!applicationId) {
-		return <Navigate to="/not-found" replace />;
+		return <Navigate to="/not-found" replace={true} />;
 	}
 
 	if (!accountDetails) {
 		return (
-			<BlockUISpinner>
+			<BlockUiSpinner>
 				<p>Loading...</p>
-			</BlockUISpinner>
+			</BlockUiSpinner>
 		);
 	}
 
@@ -179,9 +179,9 @@ const RequestForQuote = () => {
 			</WizardStep>
 		</WizardForm>
 	) : (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

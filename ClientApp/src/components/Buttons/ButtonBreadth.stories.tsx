@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import ButtonGroup from "./ButtonGroup";
-import EditButton from "./EditButton";
-import LinkButton from "./LinkButton";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import ButtonGroup from "./ButtonGroup/index.tsx";
+import EditButton from "./EditButton/index.tsx";
+import LinkButton from "./LinkButton/index.tsx";
 
 /**
  * ButtonBreadth Component Storybook Configuration

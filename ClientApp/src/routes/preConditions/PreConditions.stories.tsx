@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import PreConditions from "./PreConditions";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import PreConditions from "./PreConditions.tsx";
 
 /**
  * `PreConditions` is the authenticated route gate. It wraps protected content in the
@@ -49,7 +49,7 @@ export const RendersProtectedContent: Story = {
 		// is what left PreConditions and Layout updating after the story had ended.
 		await waitFor(() =>
 			expect(canvas.getByRole("status")).toHaveTextContent(
-				/^Navigated to .* page\.$/,
+				/^Navigated to .* page\.$/u,
 			),
 		);
 	},

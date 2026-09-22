@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import SessionStorageCache from "../../../ClientApp/src/storage/sessionStorageCache";
+import SessionStorageCache from "../../../ClientApp/src/storage/sessionStorageCache.ts";
 
 describe("SessionStorageCache", () => {
 	beforeEach(() => {

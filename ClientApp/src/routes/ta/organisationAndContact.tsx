@@ -1,12 +1,12 @@
 import { useField } from "formik";
 import Row from "react-bootstrap/Row";
-import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
-import HidableField from "../../components/forms/HidableField";
-import AddressLookup from "../../components/Inputs/AddressLookup";
-import AuthorisedAgent from "../../components/Inputs/AuthorisedAgent";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import TextInput from "../../components/Inputs/TextInput";
-import type { TAOrganisationAndContactProps } from "./types";
+import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import AddressLookup from "../../components/Inputs/AddressLookup/index.tsx";
+import AuthorisedAgent from "../../components/Inputs/AuthorisedAgent/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
+import type { TAOrganisationAndContactProps } from "./types.ts";
 
 const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
 	const [_field] = useField(fieldName);
@@ -134,7 +134,7 @@ const OrganisationAndContact = (props: TAOrganisationAndContactProps) => {
 			<Row className="mb-4">
 				<h2 className={isSummary ? "h3 my-3" : ""}>
 					Contact
-					{!isSummary ? " information" : ""}
+					{isSummary ? "" : " information"}
 				</h2>
 				<RadioButtonGroup
 					legend="Who is the main contact person for this application?"

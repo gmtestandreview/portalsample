@@ -7,21 +7,21 @@ import {
 	type FormStepStatusDto,
 	RequestForPatternApprovalClient,
 	type SupportingDocumentsStep,
-} from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
-import type { DiscardProps } from "../../components/forms/FormikForm/types";
+} from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import type { DiscardProps } from "../../components/forms/FormikForm/types.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import AppLogger from "../../instrumentation/AppLogger";
-import { formatBannerTitle } from "../common/helperFunctions";
+} from "../../components/forms/WizardForm/types.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
 import {
 	supportingDocsSaveValidation,
 	supportingDocsSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadSummary =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

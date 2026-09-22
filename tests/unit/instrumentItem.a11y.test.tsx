@@ -2,17 +2,17 @@ import { render } from "@testing-library/react";
 import axe from "axe-core";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it } from "vitest";
-import type { DashboardItemDto } from "../../ClientApp/src/api/web-api-client";
+import type { DashboardItemDto } from "../../ClientApp/src/api/web-api-client.ts";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "../../ClientApp/src/authentication/accountContext";
+} from "../../ClientApp/src/authentication/accountContext.tsx";
 import {
 	ModalDispatchCtx,
 	ModalStateCtx,
-} from "../../ClientApp/src/components/modals/ModalContext";
-import InstrumentItem from "../../ClientApp/src/components/RequestList/instrumentItem";
-import { DashboardItemStatus } from "../../ClientApp/src/routes/common/enums";
+} from "../../ClientApp/src/components/modals/ModalContext.tsx";
+import InstrumentItem from "../../ClientApp/src/components/RequestList/instrumentItem.tsx";
+import { DashboardItemStatus } from "../../ClientApp/src/routes/common/enums.ts";
 
 const noop = () => {};
 

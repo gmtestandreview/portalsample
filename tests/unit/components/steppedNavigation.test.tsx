@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import SteppedNavigation from "@/components/SteppedNavigation";
+import SteppedNavigation from "@/components/SteppedNavigation/index.tsx";
 
 describe("SteppedNavigation", () => {
 	const steps = [
@@ -14,7 +14,7 @@ describe("SteppedNavigation", () => {
 				activeStep={2}
 				steps={steps}
 				id="stepper"
-				interactive
+				interactive={true}
 			/>,
 		);
 
@@ -37,7 +37,7 @@ describe("SteppedNavigation", () => {
 				activeStep={1}
 				steps={steps}
 				id="stepper"
-				interactive
+				interactive={true}
 			/>,
 		);
 
@@ -58,7 +58,7 @@ describe("SteppedNavigation", () => {
 				activeStep={0}
 				steps={steps}
 				id="stepper"
-				interactive
+				interactive={true}
 			/>,
 		);
 
@@ -96,7 +96,7 @@ describe("SteppedNavigation", () => {
 				activeStep={2}
 				steps={allCompleteSteps}
 				id="stepper"
-				interactive
+				interactive={true}
 			/>,
 		);
 

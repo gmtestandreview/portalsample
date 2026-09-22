@@ -12,8 +12,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	type ServicesOffered,
 	ServiceType,
-} from "../../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext.tsx";
 
 const {
 	mockAcquireTokenSilent,
@@ -326,7 +326,7 @@ const BASE_ACCOUNT: AccountDetails = {
 
 async function importDashboard() {
 	return (
-		await import("../../../../ClientApp/src/routes/dashboard/dashboard-ta")
+		await import("../../../../ClientApp/src/routes/dashboard/dashboard-ta.tsx")
 	).default;
 }
 
@@ -456,7 +456,7 @@ describe("Pattern/type approval dashboard", () => {
 						filterCurrentPage: 1,
 					}),
 				}),
-			{ timeout: 1_000 },
+			{ timeout: 1000 },
 		);
 		expect(mockTrackGAEvent).toHaveBeenCalledWith("requests");
 	});

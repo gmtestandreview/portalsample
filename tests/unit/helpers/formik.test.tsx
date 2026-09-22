@@ -4,8 +4,8 @@ import { ErrorMessage, Field } from "formik";
 import { describe, expect, it } from "vitest";
 import * as yup from "yup";
 
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
-import { createSubmitSpy, FormikWrapper } from "./formik";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import { createSubmitSpy, FormikWrapper } from "./formik.tsx";
 
 const schema = yup.object({
 	name: yup.string().label("Name").isRequired(),
@@ -29,7 +29,7 @@ describe("Formik harness", () => {
 			<FormikWrapper
 				initialValues={{ name: "" }}
 				validationSchema={schema}
-				initialTouched
+				initialTouched={true}
 			>
 				<Field name="name" data-testid="name" />
 				<ErrorMessage name="name" component="span" data-testid="name-error" />

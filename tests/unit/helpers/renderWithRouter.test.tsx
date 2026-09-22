@@ -7,7 +7,7 @@ import {
 	FALLBACK_TEST_ID,
 	NOT_FOUND_TEST_ID,
 	renderWithRouter,
-} from "./renderWithRouter";
+} from "./renderWithRouter.tsx";
 
 const ParamProbe = () => {
 	const { id } = useParams();

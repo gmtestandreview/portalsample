@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { TextField } from "./TextField";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { TextField } from "./TextField.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

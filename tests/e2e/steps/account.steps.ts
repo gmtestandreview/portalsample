@@ -1,13 +1,13 @@
 import { expect } from "@playwright/test";
-import { Given, Then, When } from "../support/fixtures";
-import { installMockApi } from "../support/mock-api";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { installMockApi } from "../support/mock-api.ts";
 import {
 	disableMockAuthenticationReseed,
 	expireMockAuthentication,
 	installMockAuthentication,
-} from "../support/mock-authentication";
-import { failureKey } from "../support/mock-failure";
-import { waitForAppReady } from "./common.steps";
+} from "../support/mock-authentication.ts";
+import { failureKey } from "../support/mock-failure.ts";
+import { waitForAppReady } from "./common.steps.ts";
 
 Given(
 	"a first-time user is signed in as {string}",
@@ -40,7 +40,7 @@ Given("the user has accepted the terms of use", async ({ page }) => {
 });
 
 Given("the organisation form is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/create-account/);
+	await expect(page).toHaveURL(/\/create-account/u);
 	await expect(
 		page.getByRole("heading", { name: "Organisation", exact: true }),
 	).toBeVisible();
@@ -90,7 +90,7 @@ When("the user refreshes the page", async ({ page }) => {
 });
 
 Then("the organisation form remains displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/create-account/);
+	await expect(page).toHaveURL(/\/create-account/u);
 	await expect(
 		page.getByRole("heading", { name: "Organisation", exact: true }),
 	).toBeVisible();
@@ -100,23 +100,23 @@ Then("the organisation form remains displayed", async ({ page }) => {
 });
 
 Then("the contact form is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/create-contact/);
+	await expect(page).toHaveURL(/\/create-contact/u);
 	await expect(
 		page.getByRole("heading", { name: "My contact details", exact: true }),
 	).toBeVisible();
 });
 
 Then("the completed account dashboard is displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/dashboard$/);
+	await expect(page).toHaveURL(/\/dashboard$/u);
 	await expect(
-		page.getByRole("heading", { name: /currently managing/i }),
+		page.getByRole("heading", { name: /currently managing/iu }),
 	).toBeVisible();
 });
 
 Then("the sign-in page is displayed", async ({ page }) => {
-	if (/login\.microsoftonline\.com|b2clogin\.com/.test(page.url())) {
+	if (/login\.microsoftonline\.com|b2clogin\.com/u.test(page.url())) {
 		return;
 	}
 	await expect(page).toHaveURL("http://localhost:3000/");
-	await expect(page.getByRole("link", { name: /^Log in/ })).toBeVisible();
+	await expect(page.getByRole("link", { name: /^Log in/u })).toBeVisible();
 });

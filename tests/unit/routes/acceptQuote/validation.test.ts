@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import "../../../../ClientApp/src/validationSchemas/yupExtensions";
+import "../../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
 import {
 	InvoiceSentToValues,
 	ReturnAddressTypeValues,
 	ReturnContactTypeValues,
 	ReturnMethodValues,
 	YesNo,
-} from "../../../../ClientApp/src/api/web-api-client";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	deliveryAndReturnSaveValidation,
 	deliveryAndReturnSubmitValidation,
@@ -16,7 +16,7 @@ import {
 	reportRecipientSubmitValidation,
 	summaryAndAcceptSaveValidation,
 	summaryAndAcceptSubmitValidation,
-} from "../../../../ClientApp/src/routes/acceptQuote/validation";
+} from "../../../../ClientApp/src/routes/acceptQuote/validation.ts";
 
 describe("report recipient validation", () => {
 	it("accepts valid submit and empty save objects", async () => {

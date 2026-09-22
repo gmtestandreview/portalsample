@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import type { PatternApprovalDashboardDto } from "../../../api/web-api-client";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import PaSearchFilter from "./paSearchFilter";
+import type { PatternApprovalDashboardDto } from "../../../api/web-api-client.ts";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import PaSearchFilter from "./paSearchFilter.tsx";
 
 /**
  * `PaSearchFilter` is the toolbar that composes the pattern-approval dashboard search
@@ -43,7 +43,7 @@ export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByRole("button", { name: /filters/i }),
+			canvas.getByRole("button", { name: /filters/iu }),
 		).toBeVisible();
 	},
 };

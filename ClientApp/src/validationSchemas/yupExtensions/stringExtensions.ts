@@ -1,7 +1,5 @@
-/* eslint-disable no-useless-escape */
-
 import * as Yup from "yup";
-import { NotEmpty } from "../common";
+import { NotEmpty } from "../common.ts";
 
 const buildErrMsg = (
 	label: string | undefined,
@@ -104,10 +102,10 @@ const YUP_REQUIREDWITHTRIM_METHOD = "isRequired";
 
 let yupStringExtensionsRegistered = false;
 
-const STANDARD_LANDLINE_PHONE_REGEX = /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}$/;
-const LONG_SERVICE_PHONE_REGEX = /^1[38]00 ?\d{3} ?\d{3}$/;
-const SHORT_SERVICE_PHONE_REGEX = /^13 ?\d{2} ?\d{2}$/;
-const MOBILE_PHONE_REGEX = /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/;
+const STANDARD_LANDLINE_PHONE_REGEX = /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}$/u;
+const LONG_SERVICE_PHONE_REGEX = /^1[38]00 ?\d{3} ?\d{3}$/u;
+const SHORT_SERVICE_PHONE_REGEX = /^13 ?\d{2} ?\d{2}$/u;
+const MOBILE_PHONE_REGEX = /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/u;
 const BUSINESS_PHONE_REGEXES = [
 	STANDARD_LANDLINE_PHONE_REGEX,
 	LONG_SERVICE_PHONE_REGEX,
@@ -177,7 +175,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} must only include numbers`,
-				`\${path} must only include numbers`,
+				"${path} must only include numbers",
 			);
 
 			return this.test(
@@ -195,7 +193,7 @@ export const registerYupStringExtensions = () => {
 							return true;
 						}
 
-						const regExStr = /^[\d\b]+$/;
+						const regExStr = /^[\d\b]+$/u;
 
 						return value.match(regExStr) !== null;
 					} catch {
@@ -238,7 +236,7 @@ export const registerYupStringExtensions = () => {
 							return true;
 						}
 
-						const regExStr = /^[\d\b]+$/;
+						const regExStr = /^[\d\b]+$/u;
 
 						if (value.match(regExStr) !== null) {
 							const inputValue = Number.parseInt(value, 10);
@@ -286,7 +284,7 @@ export const registerYupStringExtensions = () => {
 							return true;
 						}
 
-						const regExStr = /^[\d\b]+$/;
+						const regExStr = /^[\d\b]+$/u;
 
 						if (value.match(regExStr) !== null) {
 							const inputValue = Number.parseInt(value, 10);
@@ -312,7 +310,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} must only include numbers`,
-				`\${path} must only include numbers`,
+				"${path} must only include numbers",
 			);
 
 			return this.test(
@@ -330,7 +328,7 @@ export const registerYupStringExtensions = () => {
 							return true;
 						}
 
-						const regExStr = /^-?\d+\.?\d*$/;
+						const regExStr = /^-?\d+\.?\d*$/u;
 
 						return value.match(regExStr) !== null;
 					} catch {
@@ -351,7 +349,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} is not a valid Australian postcode`,
-				`\${path} is not a valid Australian postcode`,
+				"${path} is not a valid Australian postcode",
 			);
 
 			return this.test(
@@ -398,7 +396,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} contains invalid characters`,
-				`\${path} contains invalid characters`,
+				"${path} contains invalid characters",
 			);
 
 			return this.test(
@@ -416,8 +414,8 @@ export const registerYupStringExtensions = () => {
 							return true;
 						}
 
-						const regExStr = /^[\dA-Z '()/&,."-]*$/;
-						return value.match(new RegExp(regExStr, "i")) !== null;
+						const regExStr = /^[\dA-Z '()/&,."-]*$/u;
+						return value.match(new RegExp(regExStr, "iu")) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;
@@ -486,14 +484,14 @@ export const registerYupStringExtensions = () => {
 	 * class, so it is a hard separator - there is exactly one way to split the
 	 * input and the match is linear.
 	 */
-	const EMAIL_LOCAL_PART =
-		/^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~]+)*$/;
+	const EmailLocalPart =
+		/^[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_a-z`{|}~]+)*$/u;
 
 	/** A single DNS label, already split on `.`. One character class, so linear. */
-	const DNS_LABEL = /^[a-zA-Z0-9-]+$/;
+	const DnsLabel = /^[a-zA-Z0-9-]+$/u;
 
 	/** RFC 1035: labels are capped at 63 characters. */
-	const MAX_LABEL_LENGTH = 63;
+	const MaxLabelLength = 63;
 
 	/**
 	 * Validates an email address without regex backtracking.
@@ -514,7 +512,7 @@ export const registerYupStringExtensions = () => {
 			return false;
 		}
 
-		if (!EMAIL_LOCAL_PART.test(value.slice(0, at))) {
+		if (!EmailLocalPart.test(value.slice(0, at))) {
 			return false;
 		}
 
@@ -525,15 +523,15 @@ export const registerYupStringExtensions = () => {
 		}
 
 		const tld = labels.at(-1) ?? "";
-		if (tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
+		if (tld.length < 2 || !/^[a-zA-Z]/u.test(tld)) {
 			return false;
 		}
 
 		return labels.every(
 			(label) =>
 				label.length > 0 &&
-				label.length <= MAX_LABEL_LENGTH &&
-				DNS_LABEL.test(label) &&
+				label.length <= MaxLabelLength &&
+				DnsLabel.test(label) &&
 				!label.startsWith("-") &&
 				!label.endsWith("-"),
 		);
@@ -548,7 +546,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} is not a valid email address`,
-				`\${path} is not a valid email address`,
+				"${path} is not a valid email address",
 			);
 
 			return this.test(
@@ -586,7 +584,7 @@ export const registerYupStringExtensions = () => {
 				errorMessage,
 				(l) =>
 					`${l} must not contain consecutive apostrophe, hyphen or space characters`,
-				`\${path} must not contain consecutive apostrophe, hyphen or space characters`,
+				"${path} must not contain consecutive apostrophe, hyphen or space characters",
 			);
 
 			return this.test(
@@ -605,7 +603,7 @@ export const registerYupStringExtensions = () => {
 						}
 
 						const regExStr = "([ '\u2019\\-\u2013\u2014])\\1+";
-						return value.match(new RegExp(regExStr, "i")) === null;
+						return value.match(new RegExp(regExStr, "iu")) === null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;
@@ -623,7 +621,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} must contain at least one letter`,
-				`\${path} must contain at least one letter`,
+				"${path} must contain at least one letter",
 			);
 
 			return this.test(
@@ -642,7 +640,7 @@ export const registerYupStringExtensions = () => {
 						}
 
 						const regExStr = "(?=.*[a-z])";
-						return value.match(new RegExp(regExStr, "i")) !== null;
+						return value.match(new RegExp(regExStr, "iu")) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;
@@ -660,7 +658,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} is required`,
-				`\${path} is required`,
+				"${path} is required",
 			);
 
 			return this.test(
@@ -729,7 +727,9 @@ export const registerYupStringExtensions = () => {
 						}
 						numCharsTest -= 1;
 						const consecutiveCharsRegex = String.raw`([a-z])\1{${numCharsTest},}`;
-						return value.match(new RegExp(consecutiveCharsRegex, "i")) === null;
+						return (
+							value.match(new RegExp(consecutiveCharsRegex, "iu")) === null
+						);
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
 						return false;
@@ -752,7 +752,7 @@ export const registerYupStringExtensions = () => {
 				errorMessage,
 				(l) =>
 					`${l} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
-				`\${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters`,
+				"${path} has invalid characters. Please use only letters, periods, numbers, and keyboard characters",
 			);
 
 			return this.test(
@@ -772,8 +772,8 @@ export const registerYupStringExtensions = () => {
 						// /[0-9a-zA-Z$ :%,;*,"@&?'#=~/\\_\-|(){}]$/
 						const regExStr =
 							extended !== undefined && extended === false
-								? /^[-–—0-9A-Za-z ‘.&#,]*$/
-								: /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/;
+								? /^[-–—0-9A-Za-z ‘.&#,]*$/u
+								: /^[!-~\s\u2013\u2014\u2019\u2018\u201C\u201D]*$/u;
 
 						return value.match(new RegExp(regExStr)) !== null;
 					} catch {
@@ -798,7 +798,7 @@ export const registerYupStringExtensions = () => {
 				errorMessage,
 				(l) =>
 					`${l} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
-				`\${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen`,
+				"${path} has invalid characters. Please enter only valid characters, such as alphabet, space, apostrophe, or hyphen",
 			);
 
 			return this.test(
@@ -818,8 +818,8 @@ export const registerYupStringExtensions = () => {
 						// /[a-zA-Z '\-]$/
 						const regExStr =
 							extended !== undefined && extended === false
-								? /^[-–—A-Za-z ‘]*$/
-								: /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/;
+								? /^[-–—A-Za-z ‘]*$/u
+								: /[0-9a-zA-Z$ :%,;*\u2013\u2014\u2019\u201C\u201D"@&?'#=~/\\_\-|(){}]$/u;
 
 						return value.match(new RegExp(regExStr)) !== null;
 					} catch {
@@ -839,7 +839,7 @@ export const registerYupStringExtensions = () => {
 				label,
 				errorMessage,
 				(l) => `${l} contains invalid characters`,
-				`\${path} contains invalid characters`,
+				"${path} contains invalid characters",
 			);
 
 			return this.test(
@@ -861,7 +861,7 @@ export const registerYupStringExtensions = () => {
 						// OPEN-ITEMS-BACKLOG P2 item 16 asks whether business names may contain '&' and
 						// whether this ASIC-aligned charset is correct. The charset below does permit '&'.
 						// based on the CompanyName rule in https://download.asic.gov.au/media/jdchdnzn/message-implementation-guide-for-brs-v1-7.pdf
-						const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/.,'{}| "]+$/;
+						const regExStr = /^[A-Za-z0-9!@#$%^&*()?;:=_\-/.,'{}| "]+$/u;
 						return value.match(new RegExp(regExStr)) !== null;
 					} catch {
 						/* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */

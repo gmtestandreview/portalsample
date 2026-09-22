@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import type { PagedListOfInstrumentArtefactDto } from "../../api/web-api-client";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import { ReportStatus } from "../common/enums";
-import ReportList from "./reportList";
+import type { PagedListOfInstrumentArtefactDto } from "../../api/web-api-client.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import { ReportStatus } from "../common/enums.ts";
+import ReportList from "./reportList.tsx";
 
 /**
  * `ReportList` renders the measurement-reports table for a single instrument/artefact:
@@ -66,8 +66,8 @@ export const Populated: Story = {
 			canvas.getByRole("link", { name: "View report" }),
 		).toBeVisible();
 		// …and every row offers recalibration.
-		await expect(
-			canvas.getAllByRole("link", { name: /request recalibration/i }),
+		expect(
+			canvas.getAllByRole("link", { name: /request recalibration/iu }),
 		).toHaveLength(2);
 	},
 };
@@ -82,8 +82,6 @@ export const WithdrawnHidesView: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText("RPT-1002")).toBeVisible();
-		await expect(
-			canvas.queryByRole("link", { name: "View report" }),
-		).toBeNull();
+		expect(canvas.queryByRole("link", { name: "View report" })).toBeNull();
 	},
 };

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { requestForQuoteDetailsFixture } from "../../storybook/storybookFixtures";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import NMIContactDetails from "./nMIContactDetails";
-import ReportDetails from "./reportDetails";
+import { requestForQuoteDetailsFixture } from "../../storybook/storybookFixtures.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import NmiContactDetails from "./nMIContactDetails.tsx";
+import ReportDetails from "./reportDetails.tsx";
 
 const meta = {
 	title: "Routes/MeasurementReport",
@@ -27,7 +27,7 @@ export const ReportView: Story = {
 				reportData={requestForQuoteDetailsFixture}
 				fileError={false}
 			/>
-			<NMIContactDetails quotationData={requestForQuoteDetailsFixture} />
+			<NmiContactDetails quotationData={requestForQuoteDetailsFixture} />
 		</>
 	),
 };
@@ -40,7 +40,7 @@ export const FileError: Story = {
 	render: (args) => (
 		<>
 			<ReportDetails {...args} />
-			<NMIContactDetails quotationData={args.reportData} />
+			<NmiContactDetails quotationData={args.reportData} />
 		</>
 	),
 };

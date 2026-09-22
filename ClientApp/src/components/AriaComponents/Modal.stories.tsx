@@ -1,10 +1,10 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Button } from "../Buttons/AriaButton/Button";
-import { Dialog, DialogTrigger } from "../Dialog/Dialog";
-import { Heading } from "./Content";
-import { Modal } from "./Modal";
-import { TextField } from "./TextField";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { Dialog, DialogTrigger } from "../Dialog/Dialog.tsx";
+import { Heading } from "./Content.tsx";
+import { Modal } from "./Modal.tsx";
+import { TextField } from "./TextField.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],
@@ -26,7 +26,7 @@ export const Example: Story = (args) => (
 				<form>
 					<Heading slot="title">Sign up</Heading>
 					<TextField
-						autoFocus
+						autoFocus={true}
 						label="First Name"
 						placeholder="Enter your first name"
 					/>

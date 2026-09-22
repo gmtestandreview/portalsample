@@ -1,5 +1,5 @@
-import SessionStorageCache from "./sessionStorageCache";
-import type { TargetOrganisation } from "./types";
+import SessionStorageCache from "./sessionStorageCache.ts";
+import type { TargetOrganisation } from "./types.ts";
 
 const targetOrganisationKey = "targetOrganisation";
 

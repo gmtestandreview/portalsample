@@ -3,7 +3,7 @@ import type React from "react";
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
+import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext.tsx";
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
 
@@ -332,7 +332,7 @@ const BASE: AccountDetails = {
 
 // Dynamic import so each test gets a fresh module evaluation after vi.clearAllMocks
 async function importDashboard() {
-	const mod = await import("../../../ClientApp/src/routes/dashboard/index");
+	const mod = await import("../../../ClientApp/src/routes/dashboard/index.tsx");
 	return mod.default;
 }
 
@@ -771,8 +771,8 @@ describe("Dashboard", () => {
 
 		await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 		expect(screen.getAllByTestId("notification-message")).toHaveLength(2);
-		expect(screen.getByText(/Trading name/)).toBeInTheDocument();
-		expect(screen.getByText(/Sydney/)).toBeInTheDocument();
+		expect(screen.getByText(/Trading name/u)).toBeInTheDocument();
+		expect(screen.getByText(/Sydney/u)).toBeInTheDocument();
 		expect(screen.getByText("12345678901")).toBeInTheDocument();
 	});
 

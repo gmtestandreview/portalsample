@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HttpResponse, http } from "msw";
 import { expect, userEvent } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import ApplicationMessages from "./appMessages";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import ApplicationMessages from "./appMessages.tsx";
 
 /**
  * `ApplicationMessages` is the "Messages" tab of the type-approval management surface.
@@ -54,6 +54,6 @@ export const MessagesTab: Story = {
 		);
 		// The counter re-renders from Slate's onChange a tick after type() resolves;
 		// await the settled value rather than querying synchronously (see line above).
-		await expect(await canvas.findByText(/^9\s*\//)).toBeVisible();
+		await expect(await canvas.findByText(/^9\s*\//u)).toBeVisible();
 	},
 };

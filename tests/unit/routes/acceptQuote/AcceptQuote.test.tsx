@@ -3,8 +3,8 @@ import "@testing-library/jest-dom/vitest";
 import type * as ReactRouterModule from "react-router";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext.tsx";
 
 const mocks = vi.hoisted(() => {
 	const acquireTokenSilent = vi.fn();
@@ -169,7 +169,7 @@ describe("AcceptQuote container", () => {
 
 	const renderAcceptQuote = async () => {
 		const AcceptQuote = (
-			await import("../../../../ClientApp/src/routes/acceptQuote/index")
+			await import("../../../../ClientApp/src/routes/acceptQuote/index.tsx")
 		).default;
 		return render(
 			<MemoryRouter initialEntries={["/accept-quote/Q-42"]}>

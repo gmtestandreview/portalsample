@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { useId } from "react";
 import Modal from "react-bootstrap/Modal";
-import PrimaryButton from "../../Buttons/PrimaryButton";
+import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
 
 export interface ContentModalProps {
 	showModal: boolean;
@@ -26,7 +26,7 @@ const ContentModal = (props: ContentModalProps) => {
 			tabIndex={-1}
 			onHide={onCancelModal}
 		>
-			<Modal.Header closeButton>
+			<Modal.Header closeButton={true}>
 				<Modal.Title id={titleId} as="h3">
 					{modalTitle}
 				</Modal.Title>

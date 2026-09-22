@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as Yup from "yup";
 // Side-effect import registers all custom Yup string methods
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
 
 /** Synchronous validity helper — keeps test bodies concise */
 const valid = (schema: Yup.StringSchema, value: string | null | undefined) =>

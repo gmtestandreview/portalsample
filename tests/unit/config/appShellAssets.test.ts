@@ -1,7 +1,7 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
 
-const repositoryRoot = path.resolve(__dirname, "../../..");
+const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
 const publicDirectory = path.join(repositoryRoot, "ClientApp/public");
 
 const getPublicAsset = async (document: Document, selector: string) => {
@@ -19,7 +19,7 @@ const getPublicAsset = async (document: Document, selector: string) => {
 			? element.getAttribute("href")
 			: element?.getAttribute("content");
 
-	expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/);
+	expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/u);
 
 	const assetPath = path.join(publicDirectory, publicUrl!.slice(1));
 	const asset = await stat(assetPath);

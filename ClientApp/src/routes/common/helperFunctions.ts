@@ -1,5 +1,5 @@
-import DOMPurify from "dompurify";
-import ReactGA from "react-ga4";
+import DomPurify from "dompurify";
+import ReactGa from "react-ga4";
 import type {
 	AddressDetailsDto,
 	DownloadedFileResponse,
@@ -7,20 +7,23 @@ import type {
 	ProblemDetails,
 	RequestForQuoteDetails,
 	UserProfileDto,
-} from "../../api/web-api-client";
-import { DashboardClient } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
+} from "../../api/web-api-client.ts";
+import { DashboardClient } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import type { SelectInputOption } from "../../components/Inputs/SelectInput/types.ts";
 import type {
 	DashboardTab,
 	UserProfile,
-} from "../../components/SearchFilter/types";
-import { setDashboardNotification } from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import { base64toBlob } from "../../utils";
-import { DashBoardNotifications } from "./dashboardNotifications";
-import { Environment, QuoteStatus } from "./enums";
-import { openPdfPageInSecureNewTab, openUrlInSecureNewTab } from "./openWindow";
+} from "../../components/SearchFilter/types.ts";
+import { setDashboardNotification } from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { base64toBlob } from "../../utils/index.ts";
+import { DashBoardNotifications } from "./dashboardNotifications.ts";
+import { Environment, QuoteStatus } from "./enums.ts";
+import {
+	openPdfPageInSecureNewTab,
+	openUrlInSecureNewTab,
+} from "./openWindow.ts";
 
 /**
  * Gets downloadable files from CRM depending on status
@@ -389,14 +392,14 @@ export const contentLoaded = (sendPageView: boolean) => {
 		redactedData[key] = "[REDACTED]";
 
 		// Send redacted data to GA
-		ReactGA.send({
+		ReactGa.send({
 			hitType: "event",
 			category: "form_viewed_sanitized",
 			data: redactedData,
 		});
 	});
 	if (sendPageView)
-		ReactGA.send({ hitType: "pageview", page: globalThis.location.pathname });
+		ReactGa.send({ hitType: "pageview", page: globalThis.location.pathname });
 };
 
 export function sortList<T>(
@@ -444,7 +447,7 @@ export function sortList<T>(
 
 const EMPTY_GUID = "00000000-0000-0000-0000-000000000000";
 const GUID_REGEX =
-	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+	/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/iu;
 
 export const isEmptyGuid = (value: string | null | undefined): boolean =>
 	!value || value === EMPTY_GUID;
@@ -483,7 +486,7 @@ export const getFormattedAddress = (address: AddressDetailsDto | undefined) => {
 	return formattedAddress;
 };
 
-export const sanitiseHtml = (html: string): string => DOMPurify.sanitize(html);
+export const sanitiseHtml = (html: string): string => DomPurify.sanitize(html);
 
 export const downloadFileFromUrl = (
 	url: string,

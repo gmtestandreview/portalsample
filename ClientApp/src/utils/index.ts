@@ -8,7 +8,7 @@ import {
 	isString,
 	replace,
 } from "lodash";
-import type { FilterKeys } from "../types";
+import type { FilterKeys } from "../types.ts";
 
 const DATE_TIME_LOCALE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssxxx";
 const DATE_DDMMYYY_FORMAT = "dd/MM/yyyy";
@@ -22,11 +22,11 @@ const trimIfString = (value: unknown) =>
 	isString(value) ? value.trim() : value;
 
 export const removeAllWhitespaces = (value: string) => {
-	const noSpaceString = replace(value, /\s+/g, "");
-	return replace(noSpaceString, /\t+/g, "");
+	const noSpaceString = replace(value, /\s+/gu, "");
+	return replace(noSpaceString, /\t+/gu, "");
 };
 
-export const containsWhitespace = (value: string) => /\s/.test(value);
+export const containsWhitespace = (value: string) => /\s/u.test(value);
 
 export const removeEmptyKeys = <T extends Record<string, unknown>>(
 	obj: T,
@@ -189,7 +189,7 @@ export const formatDateToUTC = (value: Date | string | null): string | null => {
 };
 
 export const formatDateStringToUTC = (dateStr?: string | Date) => {
-	if (!dateStr) return undefined;
+	if (!dateStr) return;
 	const dt = new Date(dateStr);
 	return new Date(Date.UTC(dt.getFullYear(), dt.getMonth(), dt.getDate()));
 };
@@ -203,7 +203,7 @@ export const formatBytes = (bytes: number, decimalPoints = 2) => {
 	const sizes = ["bytes", "kb", "mb", "gb", "tb", "pb", "eb", "zb", "yb"];
 	const index = Math.floor(Math.log(bytes) / Math.log(k));
 
-	return `${parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes[index]}`;
+	return `${Number.parseFloat((bytes / k ** index).toFixed(decimals))} ${sizes[index]}`;
 };
 
 export const formatDate = (
@@ -268,22 +268,22 @@ export const formatReportingPeriod = (period: string) => {
 export type SplitCase = "sentence" | "lower" | "upper";
 
 export const splitPascalCase = (word: string, casing: SplitCase) => {
-	const wordRegex = /($[a-z])|[A-Z][^A-Z]+/g;
+	const wordRegex = /($[a-z])|[A-Z][^A-Z]+/gu;
 	const matches = word.match(wordRegex);
 
 	if (casing === "lower") {
-		return matches !== null
-			? matches.map((m) => m.toLowerCase()).join(" ")
-			: word;
+		return matches === null
+			? word
+			: matches.map((m) => m.toLowerCase()).join(" ");
 	}
 
 	if (casing === "sentence") {
-		return matches !== null
-			? matches.map((m, i) => (i === 0 ? m : m.toLowerCase())).join(" ")
-			: word;
+		return matches === null
+			? word
+			: matches.map((m, i) => (i === 0 ? m : m.toLowerCase())).join(" ");
 	}
 
-	return matches !== null ? matches.join(" ") : word;
+	return matches === null ? word : matches.join(" ");
 };
 
 export const base64toBlob = (

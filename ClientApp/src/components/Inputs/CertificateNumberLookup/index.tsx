@@ -5,9 +5,9 @@ import { Form, ListGroup } from "react-bootstrap";
 import type {
 	ApplicationAndInstrumentStepDto,
 	LookupResponse,
-} from "../../../api/web-api-client";
-import SummaryDisplay from "../../SummaryDisplay";
-import TextInput from "../TextInput";
+} from "../../../api/web-api-client.ts";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import TextInput from "../TextInput/index.tsx";
 
 export interface CertificateNumberLookupProps {
 	id?: string;
@@ -289,7 +289,7 @@ const CertificateNumberLookup = (props: CertificateNumberLookupProps) => {
 										role="option"
 										aria-label={`${item.lookupName} (${index + 1} of ${filteredSuggestions.length})`}
 										aria-selected={index === activeIndex}
-										action
+										action={true}
 										// active={index === activeIndex}
 										className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? "highlighted" : ""}`}
 										onClick={() => {

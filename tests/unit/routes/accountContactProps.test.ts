@@ -8,16 +8,16 @@ import {
 	type ContactFormStep,
 	type GetAccountValuesDto,
 	Title,
-} from "../../../ClientApp/src/api/web-api-client";
-import type { AccountContextState } from "../../../ClientApp/src/authentication/accountContext";
-import { ErrorType } from "../../../ClientApp/src/components/forms/WizardForm/types";
-import addBranchProps from "../../../ClientApp/src/routes/account/addBranch/addBranchProps";
-import createAccountProps from "../../../ClientApp/src/routes/account/create/createAccountProps";
-import updateAccountProps from "../../../ClientApp/src/routes/account/update/updateAccountProps";
-import createContactProps from "../../../ClientApp/src/routes/contact/create/createContactProps";
-import updateContactProps from "../../../ClientApp/src/routes/contact/update/updateContactProps";
-import { HttpStatusCode } from "../../../ClientApp/src/types";
-import { formikHelpers, stepStatuses } from "./testFixtures";
+} from "../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountContextState } from "../../../ClientApp/src/authentication/accountContext.tsx";
+import { ErrorType } from "../../../ClientApp/src/components/forms/WizardForm/types.ts";
+import addBranchProps from "../../../ClientApp/src/routes/account/addBranch/addBranchProps.ts";
+import createAccountProps from "../../../ClientApp/src/routes/account/create/createAccountProps.ts";
+import updateAccountProps from "../../../ClientApp/src/routes/account/update/updateAccountProps.ts";
+import createContactProps from "../../../ClientApp/src/routes/contact/create/createContactProps.ts";
+import updateContactProps from "../../../ClientApp/src/routes/contact/update/updateContactProps.ts";
+import { HttpStatusCode } from "../../../ClientApp/src/types.ts";
+import { formikHelpers, stepStatuses } from "./testFixtures.ts";
 
 const mocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn(),

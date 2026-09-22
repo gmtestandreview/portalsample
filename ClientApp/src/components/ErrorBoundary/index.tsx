@@ -3,9 +3,9 @@ import type { ReactPlugin } from "@microsoft/applicationinsights-react-js";
 import type { ReactNode } from "react";
 import type { FallbackProps } from "react-error-boundary";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
-import type { ProblemDetails } from "../../api/web-api-client";
-import { HttpStatusCode } from "../../types";
-import ErrorDisplay from "./ErrorDisplay";
+import type { ProblemDetails } from "../../api/web-api-client.ts";
+import { HttpStatusCode } from "../../types.ts";
+import ErrorDisplay from "./ErrorDisplay.tsx";
 
 export interface ErrorBoundaryProps {
 	// Nullable by contract: createTelemetryService returns a null reactPlugin

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import OrganisationDetails from "./organisationDetails";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import OrganisationDetails from "./organisationDetails.tsx";
 
 /**
  * `OrganisationDetails` is the organisation section of the account create/update flow.
@@ -45,6 +45,6 @@ export const Default: Story = {
 		await expect(
 			canvas.getByRole("heading", { name: "Business street address" }),
 		).toBeVisible();
-		await expect(canvas.getByLabelText(/entity name/i)).toBeInTheDocument();
+		await expect(canvas.getByLabelText(/entity name/iu)).toBeInTheDocument();
 	},
 };

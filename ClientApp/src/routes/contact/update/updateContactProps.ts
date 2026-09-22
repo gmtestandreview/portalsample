@@ -5,18 +5,18 @@ import type {
 import type {
 	ContactFormStep,
 	FormStepStatusDto,
-} from "../../../api/web-api-client";
-import type { AccountContextState } from "../../../authentication/accountContext";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types";
+} from "../../../api/web-api-client.ts";
+import type { AccountContextState } from "../../../authentication/accountContext.tsx";
+import type { DiscardProps } from "../../../components/forms/FormikForm/types.ts";
 import type {
 	ErrorType,
 	WizardStepProps,
-} from "../../../components/forms/WizardForm/types";
+} from "../../../components/forms/WizardForm/types.ts";
 import {
 	completeContactDetails,
 	loadContactDetails,
-} from "../contactWizardStepProps";
-import contactSubmitValidation from "../validation";
+} from "../contactWizardStepProps.ts";
+import contactSubmitValidation from "../validation.ts";
 
 const discardChanges: DiscardProps = {
 	cancelButtonTitle: "Cancel",
@@ -32,8 +32,6 @@ const getRedirectionLocationOnError = (
 	if (errorCode === 412) {
 		return "/";
 	}
-
-	return undefined;
 };
 
 const updateContactProps = (

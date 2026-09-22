@@ -1,6 +1,6 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import remarkGfm from "remark-gfm";
-import { onLog } from "./rollupOnLog";
+import { onLog } from "./rollupOnLog.ts";
 
 const sassDeprecationsToSilence = [
 	"import",
@@ -29,7 +29,7 @@ const config: StorybookConfig = {
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
 			propFilter: (prop) =>
-				prop.parent ? !/node_modules/.test(prop.parent.fileName) : true,
+				prop.parent ? !/node_modules/u.test(prop.parent.fileName) : true,
 		},
 	},
 

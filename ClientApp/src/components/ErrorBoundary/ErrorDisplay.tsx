@@ -1,9 +1,9 @@
 import { Container } from "react-bootstrap";
-import { HttpStatusCode } from "../../types";
-import HeaderIntroText from "../HeaderIntroText";
-import ContactLink from "../Utilities/ContactLink";
-import useBodyClass from "../Utilities/useBodyClass";
-import useHtmlTitle from "../Utilities/useHtmlTitle";
+import { HttpStatusCode } from "../../types.ts";
+import HeaderIntroText from "../HeaderIntroText/index.tsx";
+import ContactLink from "../Utilities/ContactLink.tsx";
+import useBodyClass from "../Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../Utilities/useHtmlTitle.tsx";
 
 interface ErrorContent {
 	body: string;

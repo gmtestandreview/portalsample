@@ -5,8 +5,8 @@ import {
 	type ApplicationAndInstrumentStepDto,
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
-} from "../../../../ClientApp/src/api/web-api-client";
-import { DisplayRules } from "../../../../ClientApp/src/routes/ta/displayRules";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import { DisplayRules } from "../../../../ClientApp/src/routes/ta/displayRules.ts";
 
 type InstrumentTypeContent = NonNullable<
 	ApplicationAndInstrumentStepDto["instrumentTypeContent"]

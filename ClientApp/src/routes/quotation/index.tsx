@@ -3,35 +3,35 @@ import { useMsal } from "@azure/msal-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { ApplicationType, QuoteClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import CustomBreadcrumb from "../../components/Breadcrumb";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import ConfirmationModal from "../../components/modals/ConfirmationModal";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote";
-import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms";
-import AppLogger from "../../instrumentation/AppLogger";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import { ApplicationType, QuoteClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import type { CustomBreadcrumbItem } from "../../components/Breadcrumb/index.tsx";
+import CustomBreadcrumb from "../../components/Breadcrumb/index.tsx";
+import HeaderIntroText from "../../components/HeaderIntroText/index.tsx";
+import ConfirmationModal from "../../components/modals/ConfirmationModal/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
+import ViewPdfQuote from "../../components/Utilities/ViewPdfQuote.tsx";
+import ViewPdfQuoteTerms from "../../components/Utilities/ViewPdfQuoteTerms.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 import {
 	clearDashboardInfoNotification,
 	clearDashboardNotification,
 	getDashboardInfoNotification,
 	getDashboardNotification,
 	setDashboardNotification,
-} from "../../storage/notification";
-import SessionStorageCache from "../../storage/sessionStorageCache";
-import { NotificationSeverity } from "../../storage/types";
-import { QuoteStatus } from "../common/enums";
-import { proceedDeclineValidStatuses } from "../common/quoteStatus";
-import NMIContactDetails from "./nMIContactDetails";
-import QuoteDetails from "./quoteDetails";
-import type { QuotationtProps } from "./types";
+} from "../../storage/notification.ts";
+import SessionStorageCache from "../../storage/sessionStorageCache.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { QuoteStatus } from "../common/enums.ts";
+import { proceedDeclineValidStatuses } from "../common/quoteStatus.ts";
+import NmiContactDetails from "./nMIContactDetails.tsx";
+import QuoteDetails from "./quoteDetails.tsx";
+import type { QuotationtProps } from "./types.ts";
 
 const showDashboardMessage = (message: JSX.Element | null) => (
 	<>
@@ -50,7 +50,7 @@ const setNotification = () => {
 	return dashboardNotification ? (
 		<NotificationMessage
 			id="notif-message-1"
-			canClose
+			canClose={true}
 			onClose={clearDashboardNotification}
 			{...dashboardNotification}
 		/>
@@ -62,7 +62,7 @@ const setInfoNotification = () => {
 	return dashboardInfoNotification ? (
 		<NotificationMessage
 			id="notif-info-message-2"
-			canClose
+			canClose={true}
 			onClose={clearDashboardInfoNotification}
 			{...dashboardInfoNotification}
 		/>
@@ -275,21 +275,21 @@ const Quotation = (props: QuotationtProps) => {
 						</Col>
 					</Row>
 				)}
-			<NMIContactDetails quotationData={quotationData} />
+			<NmiContactDetails quotationData={quotationData} />
 		</>
 	);
 
 	return (
 		<>
 			{isLoading && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			{!fileError && showDashboardMessage(dashboardMessage)}
 			{!fileError && showDashboardMessage(dashboardInfoMessage)}
 			<div aria-busy={isLoading} aria-live="polite">
-				<Container fluid className="default-banner-background mb-5">
+				<Container fluid={true} className="default-banner-background mb-5">
 					<Container>
 						<Row>
 							<Col>
@@ -319,7 +319,7 @@ const Quotation = (props: QuotationtProps) => {
 											<Link
 												data-testid="back-button"
 												to="/dashboard"
-												replace
+												replace={true}
 												className="btn btn-tertiary"
 											>
 												<i className="icon-back me-1" aria-hidden="true" />

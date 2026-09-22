@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { auditCoverageReport } from "../../../scripts/audit-coverage-report";
+import { auditCoverageReport } from "../../../scripts/audit-coverage-report.ts";
 
 const entry = (path: string): [string, { path: string }] => [path, { path }];
 

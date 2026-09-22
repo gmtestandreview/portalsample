@@ -2,8 +2,8 @@ import { useField } from "formik";
 import { trim } from "lodash";
 import type { ChangeEvent } from "react";
 import Form from "react-bootstrap/Form";
-import SummaryDisplay from "../../SummaryDisplay";
-import type { TextAreaInputProps } from "./types";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import type { TextAreaInputProps } from "./types.ts";
 
 const TextAreaInput = ({
 	label,

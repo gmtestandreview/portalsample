@@ -39,7 +39,7 @@ type McpEnvelope = {
 async function readMcpEvent(response: APIResponse): Promise<McpEnvelope> {
 	const body = await response.text();
 	const dataLine = body
-		.split(/\r?\n/)
+		.split(/\r?\n/u)
 		.find((line) => line.startsWith("data: "));
 
 	if (dataLine === undefined) {
@@ -350,14 +350,14 @@ Then("its Markdown table is rendered", async ({ page }) => {
 });
 
 Then(
-	/^Documentation (Getting Started|Component Documentation Guide|Style Guide) is available$/,
+	/^Documentation (Getting Started|Component Documentation Guide|Style Guide) is available$/u,
 	async ({ page }, guideName: string) => {
 		const guide = page.getByRole("link", { name: guideName, exact: true });
 
 		await expect(guide).toBeVisible();
 		await expect(guide).toHaveAttribute(
 			"href",
-			/documentation-.*--documentation/,
+			/documentation-.*--documentation/u,
 		);
 	},
 );
@@ -488,11 +488,11 @@ Then(
 	"the story iframe should not show pagination controls",
 	async ({ page }) => {
 		await expect(
-			page.getByRole("navigation", { name: /pagination/i }),
+			page.getByRole("navigation", { name: /pagination/iu }),
 		).toHaveCount(0);
 		await expect(
 			page.getByRole("button", {
-				name: /next page|previous page/i,
+				name: /next page|previous page/iu,
 			}),
 		).toHaveCount(0);
 	},
@@ -534,5 +534,5 @@ When(
 Then("the story should not throw a JavaScript error", async ({ page }) => {
 	// Check that #storybook-root is still present (not replaced by error UI)
 	const root = page.locator("#storybook-root");
-	await expect(root).toBeVisible({ timeout: 5_000 });
+	await expect(root).toBeVisible({ timeout: 5000 });
 });

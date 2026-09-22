@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useFormikContext } from "formik";
-import SaveAndExitButton from "@/components/forms/SaveAndExitButton";
-import SubmitFormButton from "@/components/forms/SubmitFormButton";
-import { FormikWrapper } from "../../helpers/formik";
+import SaveAndExitButton from "@/components/forms/SaveAndExitButton/index.tsx";
+import SubmitFormButton from "@/components/forms/SubmitFormButton/index.tsx";
+import { FormikWrapper } from "../../helpers/formik.tsx";
 
 function ValuesProbe() {
 	const { values } = useFormikContext<Record<string, unknown>>();

@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import RouteAccessibleNavigation from "@/components/Utilities/routeAccessibleNavigation";
+import RouteAccessibleNavigation from "@/components/Utilities/routeAccessibleNavigation.tsx";
 
 describe("RouteAccessibleNavigation", () => {
 	beforeEach(() => {

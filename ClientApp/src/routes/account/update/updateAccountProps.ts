@@ -8,20 +8,20 @@ import type {
 	FormStepStatusDto,
 	GetAccountValuesDto,
 	ValidationProblemDetails,
-} from "../../../api/web-api-client";
-import { AccountsClient } from "../../../api/web-api-client";
-import type { AccountContextState } from "../../../authentication/accountContext";
-import { tokenRequest } from "../../../authentication/authConfig";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types";
+} from "../../../api/web-api-client.ts";
+import { AccountsClient } from "../../../api/web-api-client.ts";
+import type { AccountContextState } from "../../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import type { DiscardProps } from "../../../components/forms/FormikForm/types.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../../components/forms/WizardForm/types";
-import { setDashboardNotification } from "../../../storage/notification";
-import { NotificationSeverity } from "../../../storage/types";
-import { HttpStatusCode } from "../../../types";
-import organisationSubmitValidation from "./validation";
+} from "../../../components/forms/WizardForm/types.ts";
+import { setDashboardNotification } from "../../../storage/notification.ts";
+import { NotificationSeverity } from "../../../storage/types.ts";
+import { HttpStatusCode } from "../../../types.ts";
+import organisationSubmitValidation from "./validation.ts";
 
 const loadAccountDetails =
 	(
@@ -134,8 +134,6 @@ const getRedirectionLocationOnError = (
 	if (errorCode === 412) {
 		return "/";
 	}
-
-	return undefined;
 };
 
 const updateAccountProps = (

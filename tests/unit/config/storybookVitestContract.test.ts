@@ -7,8 +7,8 @@ vi.mock("@storybook/addon-vitest/vitest-plugin", () => ({
 	storybookTest: vi.fn(() => ({ name: "storybook-test-mock" })),
 }));
 
-import storybookConfig from "../../../vitest.storybook.config";
-import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime";
+import storybookConfig from "../../../vitest.storybook.config.ts";
+import { storybookVitestRuntimePlugin } from "../../../vitest.storybook.runtime.ts";
 
 const requireFrom = createRequire(import.meta.url);
 
@@ -24,7 +24,7 @@ const readVitestClassSource = (): string => {
 
 	const bindingLine = shim
 		.split("\n")
-		.find((line) => /\bas Vitest\b/.test(line) && line.includes("./chunks/"));
+		.find((line) => /\bas Vitest\b/u.test(line) && line.includes("./chunks/"));
 
 	if (bindingLine === undefined) {
 		throw new Error(
@@ -32,7 +32,7 @@ const readVitestClassSource = (): string => {
 		);
 	}
 
-	const chunkSpecifier = /from\s*['"](\.\/chunks\/[^'"]+)['"]/.exec(
+	const chunkSpecifier = /from\s*['"](\.\/chunks\/[^'"]+)['"]/u.exec(
 		bindingLine,
 	)?.[1];
 
@@ -81,14 +81,14 @@ describe("Storybook/Vitest runtime bridge contract", () => {
 	});
 
 	it("bridges to an API that Vitest still exposes as the supported replacement", () => {
-		expect(vitestNodeSource).toMatch(/async standalone\(\)/);
+		expect(vitestNodeSource).toMatch(/async standalone\(\)/u);
 	});
 
 	it("bridges to an API that is behaviourally identical to the deprecated one", () => {
 		// Vitest's own init() is a deprecation log plus a delegation to standalone(),
 		// which is what makes the bridge a no-op in behaviour rather than a change.
 		expect(vitestNodeSource).toMatch(
-			/init\(\)\s*\{[^}]*deprecate[^}]*return this\.standalone\(\)/s,
+			/init\(\)\s*\{[^}]*deprecate[^}]*return this\.standalone\(\)/su,
 		);
 	});
 

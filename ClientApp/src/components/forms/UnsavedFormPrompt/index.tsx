@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import RouteLeavingGuard from "../../RouteLeavingGuard";
+import RouteLeavingGuard from "../../RouteLeavingGuard/index.tsx";
 
 // Browser refresh/close (onbeforeunload) is intentionally not covered — see RouteLeavingGuard stories.
 // In-app navigation is blocked via useBlocker inside RouteLeavingGuard.
@@ -9,7 +9,7 @@ const UnsavedFormPrompt = ({ path }: { path?: string }) => {
 	const isDirtyUnsaved =
 		formik.dirty && (formik.submitCount === 0 || !formik.isValid);
 	const isServerRejected =
-		!formik.dirty && !formik.isValid && formik.submitCount > 0;
+		!(formik.dirty || formik.isValid) && formik.submitCount > 0;
 
 	if (path === "/create-account/" || path === "/create-contact/") {
 		return (

@@ -1,9 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Form, Formik, useFormikContext } from "formik";
-import DatePicker from "@/components/Inputs/DatePicker";
-import type { CustomDatePickerProps } from "@/components/Inputs/DatePicker/types";
-import { parseDateOnlyInput } from "@/utils/dateOnly";
+import DatePicker from "@/components/Inputs/DatePicker/index.tsx";
+import type { CustomDatePickerProps } from "@/components/Inputs/DatePicker/types.ts";
+import { parseDateOnlyInput } from "@/utils/dateOnly.ts";
 
 vi.mock("@/components/Inputs/DatePicker/CustomDatePicker", () => ({
 	default: ({
@@ -64,7 +64,7 @@ function Harness({
 }: HarnessProps) {
 	return (
 		<Formik
-			enableReinitialize
+			enableReinitialize={true}
 			initialErrors={initialErrors}
 			initialTouched={initialTouched}
 			initialValues={initialValues}
@@ -220,7 +220,7 @@ describe("DatePicker wrapper", () => {
 	it("renders summary values for string, Date, and empty inputs", () => {
 		const { rerender } = render(
 			<Harness initialValues={{ dueDate: "2026-06-11T00:00:00+10:00" }}>
-				<DatePicker name="dueDate" label="Due date" isSummary />
+				<DatePicker name="dueDate" label="Due date" isSummary={true} />
 			</Harness>,
 		);
 
@@ -231,7 +231,7 @@ describe("DatePicker wrapper", () => {
 			<Harness
 				initialValues={{ dueDate: new Date("2026-06-12T00:00:00.000Z") }}
 			>
-				<DatePicker name="dueDate" label="Due date" isSummary />
+				<DatePicker name="dueDate" label="Due date" isSummary={true} />
 			</Harness>,
 		);
 
@@ -239,7 +239,7 @@ describe("DatePicker wrapper", () => {
 
 		rerender(
 			<Harness initialValues={{ dueDate: "" }}>
-				<DatePicker name="dueDate" label="Due date" isSummary />
+				<DatePicker name="dueDate" label="Due date" isSummary={true} />
 			</Harness>,
 		);
 

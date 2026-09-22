@@ -2,24 +2,24 @@ import * as yup from "yup";
 import {
 	contactSchema,
 	contactSchemaSoft,
-} from "../../validationSchemas/contactValidation";
-import "../../validationSchemas/yupExtensions";
+} from "../../validationSchemas/contactValidation.ts";
+import "../../validationSchemas/yupExtensions/index.ts";
 import type {
 	InstrumentAndRequestStep,
 	OrganisationAndContact,
-} from "../../api/web-api-client";
-import { YesNo } from "../../api/web-api-client";
-import type { Validation } from "../../components/forms/FormikForm/types";
+} from "../../api/web-api-client.ts";
+import { YesNo } from "../../api/web-api-client.ts";
+import type { Validation } from "../../components/forms/FormikForm/types.ts";
 import {
 	parseApiDateOnlyInput,
 	parseDateOnlyInput,
-} from "../../utils/dateOnly";
+} from "../../utils/dateOnly.ts";
 import {
 	extAlphaNumMultiLineMatchRegex,
 	nullableDate,
 	serialNumMatchRegEx,
 	websiteUrlSchema,
-} from "../../validationSchemas/common";
+} from "../../validationSchemas/common.ts";
 
 export const organisationAndContactSubmitValidation = yup.object<
 	Validation<OrganisationAndContact>

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
-import { State } from "../../../ClientApp/src/api/web-api-client";
-import addressSchema from "../../../ClientApp/src/validationSchemas/addressValidation";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import { State } from "../../../ClientApp/src/api/web-api-client.ts";
+import addressSchema from "../../../ClientApp/src/validationSchemas/addressValidation.ts";
 
 const manualAddress = {
 	isManuallyEntered: true,

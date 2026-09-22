@@ -12,7 +12,7 @@ import {
 	hasNullableTypedUseRef,
 	hasRenderPhaseNotificationWrites,
 	hasTimerUsage,
-} from "../support/verifierDetectors";
+} from "../support/verifierDetectors.ts";
 
 const currentFilePath = fileURLToPath(import.meta.url);
 const currentDir = path.dirname(currentFilePath);

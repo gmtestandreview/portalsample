@@ -47,7 +47,54 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"preset": "recommended"
+			"preset": "recommended",
+			"complexity": {
+				"noDivRegex": "error",
+				"noUselessReturn": "error",
+				"noUselessStringConcat": "error",
+				"noUselessUndefined": "error",
+				"useSimplifiedLogicExpression": "error",
+				"useWhile": "error"
+			},
+			"correctness": {
+				"noGlobalObjectCalls": "error",
+				"noGlobalDirnameFilename": "error",
+				"noProcessGlobal": "error",
+				"useImportExtensions": "error",
+				"useJsonImportAttributes": "error"
+			},
+			"nursery": {
+				"noPlaywrightUselessAwait": "error",
+				"noUnnecessaryTemplateExpression": "error",
+				"useConsistentTestIt": "error",
+				"useUnicodeRegex": "error",
+				"useValidTestTitle": "error"
+			},
+			"style": {
+				"noImplicitBoolean": "error",
+				"noInferrableTypes": "error",
+				"noNegationElse": "error",
+				"noRestrictedTypes": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"noYodaExpression": "error",
+				"useAsConstAssertion": "error",
+				"useCollapsedElseIf": "error",
+				"useConsistentArrowReturn": "error",
+				"useConsistentObjectDefinitions": "error",
+				"useEnumInitializers": "error",
+				"useNamingConvention": "error",
+				"useNodeAssertStrict": "error",
+				"useNumberNamespace": "error",
+				"useNumericSeparators": "error",
+				"useObjectSpread": "error",
+				"useSelfClosingElements": "error",
+				"useTrimStartEnd": "error"
+			},
+			"suspicious": {
+				"useNumberToFixedDigitsArgument": "error",
+				"useStrictMode": "error"
+			}
 		}
 	},
 	"javascript": {
@@ -76,23 +123,23 @@
 		}
 	},
 	"overrides": [
-	{
-		"includes": [
-			"ClientApp/src/routes/acceptQuote/validation.ts",
-			"ClientApp/src/routes/account/addBranch/validation.ts",
-			"ClientApp/src/routes/account/update/validation.ts",
-			"ClientApp/src/routes/account/validation.ts",
-			"ClientApp/src/routes/requestForQuote/validation.ts",
-			"ClientApp/src/routes/ta/validation.ts",
-			"ClientApp/src/validationSchemas/addressValidation.ts"
-		],
-		"linter": {
-			"rules": {
-				"suspicious": {
-					"noThenProperty": "off"
+		{
+			"includes": [
+				"ClientApp/src/routes/acceptQuote/validation.ts",
+				"ClientApp/src/routes/account/addBranch/validation.ts",
+				"ClientApp/src/routes/account/update/validation.ts",
+				"ClientApp/src/routes/account/validation.ts",
+				"ClientApp/src/routes/requestForQuote/validation.ts",
+				"ClientApp/src/routes/ta/validation.ts",
+				"ClientApp/src/validationSchemas/addressValidation.ts"
+			],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noThenProperty": "off"
+					}
 				}
 			}
 		}
-	}
-]
+	]
 }

@@ -1,5 +1,5 @@
 import type { Page } from "@playwright/test";
-import type { ScenarioState } from "./scenario-state";
+import type { ScenarioState } from "./scenario-state.ts";
 
 const AUTH_DISABLED_KEY = "e2e-auth-disabled";
 
@@ -20,7 +20,7 @@ const seedMsalCache = ({
 			btoa(JSON.stringify(value))
 				.replaceAll("+", "-")
 				.replaceAll("/", "_")
-				.replace(/=+$/, "");
+				.replace(/[=]+$/u, "");
 		return `${encode({ alg: "none", typ: "JWT" })}.${encode(claims)}.mock-signature`;
 	};
 	const mockAccount = {

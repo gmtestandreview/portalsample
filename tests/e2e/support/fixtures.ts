@@ -1,5 +1,5 @@
 import { test as base, createBdd } from "playwright-bdd";
-import { createScenarioState, type ScenarioState } from "./scenario-state";
+import { createScenarioState, type ScenarioState } from "./scenario-state.ts";
 
 export const test = base.extend<{ scenarioState: ScenarioState }>({
 	// playwright-bdd requires fixture callbacks to use an object destructuring parameter.

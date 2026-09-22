@@ -1,5 +1,5 @@
 import { SeverityLevel } from "@microsoft/applicationinsights-common";
-import { getAppInsights } from "./AppInsightsService";
+import { getAppInsights } from "./AppInsightsService.ts";
 
 class AppLogger {
 	static info(message: string, properties?: any) {

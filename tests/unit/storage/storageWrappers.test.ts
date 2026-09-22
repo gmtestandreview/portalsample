@@ -18,15 +18,15 @@ import {
 	setGetStartedNotification,
 	setManageAccessNotification,
 	setReportingNotification,
-} from "../../../ClientApp/src/storage/notification";
+} from "../../../ClientApp/src/storage/notification.ts";
 import setTargetOrganisation, {
 	clearTargetOrganisation,
 	getTargetOrganisation,
-} from "../../../ClientApp/src/storage/targetOrganisation";
+} from "../../../ClientApp/src/storage/targetOrganisation.ts";
 import {
 	type Notification,
 	NotificationSeverity,
-} from "../../../ClientApp/src/storage/types";
+} from "../../../ClientApp/src/storage/types.ts";
 
 describe("notification storage wrappers", () => {
 	const notification: Notification = {

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import FAQs from "./faqs";
-import HelpHowToSetupAccess from "./how-to-setup-access";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import FaQs from "./faqs.tsx";
+import HelpHowToSetupAccess from "./how-to-setup-access.tsx";
 
 const meta = {
 	title: "Routes/HelpGuide/Details",
@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 export const HowToSetupAccess: Story = {};
 
 export const FrequentlyAskedQuestions: Story = {
-	render: () => <FAQs />,
+	render: () => <FaQs />,
 	parameters: {
 		portal: {
 			authenticated: false,

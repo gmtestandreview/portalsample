@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Container } from "react-bootstrap";
 import { expect, screen, waitFor } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import Layout from "./index";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import Layout from "./index.tsx";
 
 const meta = {
 	title: "Components/Layout",

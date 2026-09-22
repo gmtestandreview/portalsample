@@ -1,14 +1,14 @@
 import { Alert, Col, Container, Row } from "react-bootstrap";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon";
-import InTextLink from "../../components/InTextLink";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import ExternalLinkIcon from "../../components/Icons/ExternalLinkIcon.tsx";
+import InTextLink from "../../components/InTextLink/index.tsx";
 import {
 	clearDashboardNotification,
 	getDashboardNotification,
-} from "../../storage/notification";
-import { formatDateToString } from "../../utils";
-import { openInternalRouteInNewTab } from "../common/openWindow";
+} from "../../storage/notification.ts";
+import { formatDateToString } from "../../utils/index.ts";
+import { openInternalRouteInNewTab } from "../common/openWindow.ts";
 
 const ReportDetails = (props: {
 	reportData: RequestForQuoteDetails | undefined;
@@ -20,7 +20,7 @@ const ReportDetails = (props: {
 		return dashboardNotification ? (
 			<NotificationMessage
 				id="notif-message-1"
-				canClose
+				canClose={true}
 				onClose={clearDashboardNotification}
 				{...dashboardNotification}
 			/>

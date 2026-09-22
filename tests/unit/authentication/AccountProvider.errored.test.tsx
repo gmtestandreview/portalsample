@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import AccountProvider from "../../../ClientApp/src/authentication/AccountProvider";
+import AccountProvider from "../../../ClientApp/src/authentication/AccountProvider.tsx";
 
 // ── Mock setup ────────────────────────────────────────────────────────────────
 
@@ -37,15 +37,13 @@ vi.mock("@azure/msal-browser", () => ({
 // signIn mock — created once and reused
 const mockSignIn = vi.fn().mockRejectedValue(new Error("Network error"));
 
-vi.mock("../../../ClientApp/src/api/web-api-client", () => {
-	return {
-		UsersClient: class {
-			setAuthToken = vi.fn();
-			signIn = mockSignIn;
-			setUserProfile = vi.fn();
-		},
-	};
-});
+vi.mock("../../../ClientApp/src/api/web-api-client", () => ({
+	UsersClient: class {
+		setAuthToken = vi.fn();
+		signIn = mockSignIn;
+		setUserProfile = vi.fn();
+	},
+}));
 
 vi.mock("../../../ClientApp/src/instrumentation/AppLogger", () => ({
 	default: { verbose: vi.fn(), error: vi.fn(), trace: vi.fn() },
@@ -123,7 +121,7 @@ describe("AccountProvider — errored state", () => {
 
 		// The error message should be displayed
 		expect(
-			screen.getByText(/Unable to load account details/i),
+			screen.getByText(/Unable to load account details/iu),
 		).toBeInTheDocument();
 
 		// Protected content must NOT be visible while errored

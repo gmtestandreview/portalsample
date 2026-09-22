@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
-import type { FileProgress } from "../../api/web-api-client";
-import { FileStatus } from "../../routes/ta/types";
-import ProgressFileList from "./ProgressFileList";
+import type { FileProgress } from "../../api/web-api-client.ts";
+import { FileStatus } from "../../routes/ta/types.ts";
+import ProgressFileList from "./ProgressFileList.tsx";
 
 /**
  * `ProgressFileList` renders the multi-file upload tray used by the type-approval
@@ -53,7 +53,7 @@ export const Uploading: Story = {
 		// A cancellable (Uploading) file exposes a cancel button.
 		await expect(
 			canvas.getByRole("button", {
-				name: /cancel uploading calibration-certificate\.pdf/i,
+				name: /cancel uploading calibration-certificate\.pdf/iu,
 			}),
 		).toBeVisible();
 		// Each row's progressbar has to name the file it belongs to and carry its value.
@@ -70,14 +70,14 @@ export const CancelInvokesCallback: Story = {
 		const canvas = within(canvasElement);
 		const user = userEvent.setup();
 		const cancel = canvas.getByRole("button", {
-			name: /cancel uploading calibration-certificate\.pdf/i,
+			name: /cancel uploading calibration-certificate\.pdf/iu,
 		});
 		await user.click(cancel);
 		await expect(args.onCancelFile).toHaveBeenCalledWith(
 			"calibration-certificate.pdf",
 		);
 		// Row switches to the "Cancelling..." state once clicked.
-		await expect(canvas.getByText(/cancelling/i)).toBeVisible();
+		await expect(canvas.getByText(/cancelling/iu)).toBeVisible();
 	},
 };
 
@@ -87,8 +87,8 @@ export const Empty: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(
-			canvas.queryByRole("button", { name: /cancel uploading/i }),
+		expect(
+			canvas.queryByRole("button", { name: /cancel uploading/iu }),
 		).toBeNull();
 	},
 };

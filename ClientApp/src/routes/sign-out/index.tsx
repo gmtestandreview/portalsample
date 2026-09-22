@@ -1,8 +1,8 @@
 import { BrowserUtils, InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useRef } from "react";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import { clearTargetOrganisation } from "../../storage/targetOrganisation";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import { clearTargetOrganisation } from "../../storage/targetOrganisation.ts";
 
 const Signout = () => {
 	const isUnmountedRef = useRef(false);
@@ -30,9 +30,9 @@ const Signout = () => {
 	}, [instance, inProgress]);
 
 	return (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Logging out...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

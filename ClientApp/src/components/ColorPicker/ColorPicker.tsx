@@ -4,12 +4,12 @@ import {
 	ColorPicker as AriaColorPicker,
 	type ColorPickerProps as AriaColorPickerProps,
 } from "react-aria-components/ColorPicker";
-import { Popover } from "../AriaComponents/Popover";
-import { ColorArea } from "../ColorArea/ColorArea";
-import { ColorField } from "../ColorField/ColorField";
-import { ColorSlider } from "../ColorSlider/ColorSlider";
-import { ColorSwatch } from "../ColorSwatch/ColorSwatch";
-import { DialogTrigger } from "../Dialog/Dialog";
+import { Popover } from "../AriaComponents/Popover.tsx";
+import { ColorArea } from "../ColorArea/ColorArea.tsx";
+import { ColorField } from "../ColorField/ColorField.tsx";
+import { ColorSlider } from "../ColorSlider/ColorSlider.tsx";
+import { ColorSwatch } from "../ColorSwatch/ColorSwatch.tsx";
+import { DialogTrigger } from "../Dialog/Dialog.tsx";
 import "./ColorPicker.css";
 
 export interface ColorPickerProps
@@ -27,7 +27,7 @@ export function ColorPicker({ label, children, ...props }: ColorPickerProps) {
 					<span>{label}</span>
 				</Button>
 				<Popover
-					hideArrow
+					hideArrow={true}
 					placement="bottom start"
 					className="color-picker-dialog"
 				>

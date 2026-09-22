@@ -1,21 +1,21 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	AttachmentDto,
 	FileParameter,
-} from "../../../../ClientApp/src/api/web-api-client";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	ClientMethodMocks,
 	ClientMock,
-} from "../../helpers/mockApiClient";
+} from "../../helpers/mockApiClient.ts";
 import {
 	DEFAULT_ACCESS_TOKEN,
 	resetMsalMock,
 	signOut,
-} from "../../helpers/mockMsal";
-import { renderWithRouter } from "../../helpers/renderWithRouter";
+} from "../../helpers/mockMsal.ts";
+import { renderWithRouter } from "../../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	appLoggerError: vi.fn(),
@@ -43,7 +43,7 @@ const documentsStep = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -52,7 +52,7 @@ vi.mock(
 	"../../../../ClientApp/src/api/web-api-client",
 	async (importOriginal) => {
 		const { createClientMockFor, webApiClientModuleMock } = await import(
-			"../../helpers/mockApiClient"
+			"../../helpers/mockApiClient.ts"
 		);
 		const original = await importOriginal<typeof WebApiClient>();
 
@@ -128,7 +128,7 @@ const renderRoute = async (
 	routePath = "/ta/manage/:id/documents",
 ) => {
 	const ApplicationDocuments = (
-		await import("../../../../ClientApp/src/routes/ta/manage/appDocuments")
+		await import("../../../../ClientApp/src/routes/ta/manage/appDocuments.tsx")
 	).default;
 
 	const result = renderWithRouter(<ApplicationDocuments />, {
@@ -154,7 +154,7 @@ const renderLoaded = async () => {
 
 describe("application documents", () => {
 	beforeEach(async () => {
-		await import("../../../../ClientApp/src/api/web-api-client");
+		await import("../../../../ClientApp/src/api/web-api-client.ts");
 
 		resetMsalMock();
 		mocks.appLoggerError.mockReset();
@@ -475,10 +475,10 @@ describe("application documents", () => {
 					expect(
 						clients.progress.methods.deleteProgressStatistics,
 					).toHaveBeenCalled(),
-				{ timeout: 10000 },
+				{ timeout: 10_000 },
 			);
 			expect(clients.progress.methods.getProgress).toHaveBeenCalledTimes(2);
-		}, 20000);
+		}, 20_000);
 
 		it("abandons polling when the component unmounts mid-flight", async () => {
 			const { unmount } = await renderLoaded();

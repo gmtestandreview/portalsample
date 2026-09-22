@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import ApplicationDocuments from "./appDocuments";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import ApplicationDocuments from "./appDocuments.tsx";
 
 /**
  * `ApplicationDocuments` is the "Documents" tab of the type-approval management surface.

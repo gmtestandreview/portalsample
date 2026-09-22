@@ -8,22 +8,22 @@ import Row from "react-bootstrap/Row";
 import type {
 	InstrumentAndRequestStep,
 	LookupResponse,
-} from "../../api/web-api-client";
-import { CRMLookupTypes, LookupClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import HidableField from "../../components/forms/HidableField";
-import DatePicker from "../../components/Inputs/DatePicker";
-import NumberInput from "../../components/Inputs/NumberInput";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import SelectInput from "../../components/Inputs/SelectInput";
-import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import TextInput from "../../components/Inputs/TextInput";
-import AppLogger from "../../instrumentation/AppLogger";
-import { prefixedPropertyOf } from "../../utils";
-import { sortList } from "../common/helperFunctions";
-import type { InstrumentAndRequestProps } from "./types";
+} from "../../api/web-api-client.ts";
+import { CRMLookupTypes, LookupClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import DatePicker from "../../components/Inputs/DatePicker/index.tsx";
+import NumberInput from "../../components/Inputs/NumberInput/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import SelectInput from "../../components/Inputs/SelectInput/index.tsx";
+import type { SelectInputOption } from "../../components/Inputs/SelectInput/types.ts";
+import TextAreaInput from "../../components/Inputs/TextAreaInput/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { prefixedPropertyOf } from "../../utils/index.ts";
+import { sortList } from "../common/helperFunctions.ts";
+import type { InstrumentAndRequestProps } from "./types.ts";
 
 const measurementReportInlineHelp = (
 	<div>
@@ -185,9 +185,9 @@ const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
 		measurementCategories === undefined || artefactTypesSelected === undefined;
 
 	return isLoading ? (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	) : (
 		<>
 			{isSummary ? null : (
@@ -318,7 +318,7 @@ const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
 					options={getMeasurementCategories()}
 					onChange={onMeasurementCategoryChange}
 					isSummary={isSummary}
-					addBlank
+					addBlank={true}
 				/>
 				<SelectInput<string>
 					name={getNameForUse("instrumentOrArtefactType")}
@@ -335,7 +335,7 @@ const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
 					options={artefactTypesSelected}
 					isSummary={isSummary}
 					readOnly={isInstrumentOrArtefactTypeDisabled}
-					addBlank
+					addBlank={true}
 				/>
 			</Row>
 			<Row className="mb-4">

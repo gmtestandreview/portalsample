@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import ReactGA from "react-ga4";
-import { env } from "../env";
-import type { GoogleAnalyticsProps } from "./types";
+import ReactGa from "react-ga4";
+import { env } from "../env.ts";
+import type { GoogleAnalyticsProps } from "./types.ts";
 
 const GoogleAnalytics = ({
 	children,
@@ -11,8 +11,8 @@ const GoogleAnalytics = ({
 }: GoogleAnalyticsProps) => {
 	useEffect(() => {
 		const trackId = env.REACT_APP_GA_TRACKINGID;
-		if (trackId && ReactGA.isInitialized === false) {
-			ReactGA.initialize([
+		if (trackId && ReactGa.isInitialized === false) {
+			ReactGa.initialize([
 				{
 					trackingId: trackId,
 					gaOptions: {
@@ -29,7 +29,7 @@ const GoogleAnalytics = ({
 };
 
 const trackGAEvent = (label: string, evtCategory = "dashboard") => {
-	ReactGA.event({ action: "Click", category: evtCategory, label });
+	ReactGa.event({ action: "Click", category: evtCategory, label });
 };
 
 const trackGAPii = () => {
@@ -51,7 +51,7 @@ const trackGAPii = () => {
 		console.table({ originalData });
 	}
 
-	ReactGA.send({
+	ReactGa.send({
 		hitType: "event",
 		category: "form_viewed_sanitized",
 		data: redactedData,
@@ -59,7 +59,7 @@ const trackGAPii = () => {
 };
 
 const trackGAPageView = () => {
-	ReactGA.send({ hitType: "pageview", page: globalThis.location.pathname });
+	ReactGa.send({ hitType: "pageview", page: globalThis.location.pathname });
 };
 
 export default GoogleAnalytics;

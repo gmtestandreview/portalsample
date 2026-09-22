@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import type { AttachmentDto } from "../../../api/web-api-client";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import AttachmentNew from "./index-new";
+import type { AttachmentDto } from "../../../api/web-api-client.ts";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import AttachmentNew from "./index-new.tsx";
 
 /**
  * `AttachmentNew` is the migration ("-new") variant of the multi-file upload control.
@@ -61,7 +61,9 @@ export const EmptyUploader: Story = {
 		await expect(
 			canvas.getByTestId("drag-upload-documents"),
 		).toBeInTheDocument();
-		await expect(canvas.getByText(/maximum size for each file/i)).toBeVisible();
+		await expect(
+			canvas.getByText(/maximum size for each file/iu),
+		).toBeVisible();
 	},
 };
 

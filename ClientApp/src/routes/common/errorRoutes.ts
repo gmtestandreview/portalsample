@@ -1,4 +1,4 @@
-import { HttpStatusCode } from "../../types";
+import { HttpStatusCode } from "../../types.ts";
 
 const getUnexpectedErrorRoute = (status: number | undefined) => {
 	switch (status) {

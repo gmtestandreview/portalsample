@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { Formik } from "formik";
-import RouteLeavingGuard from "@/components/RouteLeavingGuard";
+import RouteLeavingGuard from "@/components/RouteLeavingGuard/index.tsx";
 
 const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();

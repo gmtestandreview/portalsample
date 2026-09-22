@@ -3,7 +3,7 @@ import { vi } from "vitest";
 import {
 	FormStepStatus,
 	type FormStepStatusDto,
-} from "../../../ClientApp/src/api/web-api-client";
+} from "../../../ClientApp/src/api/web-api-client.ts";
 
 export const stepStatuses: FormStepStatusDto[] = [
 	{

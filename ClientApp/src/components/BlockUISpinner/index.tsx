@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Spinner } from "react-bootstrap";
 import "./index.scss";
 
-interface BlockUISpinnerProps {
+interface BlockUiSpinnerProps {
 	children: ReactNode;
 	partial?: boolean;
 }
@@ -19,7 +19,7 @@ interface BlockUISpinnerProps {
  *
  */
 
-const BlockUISpinner = ({ children, partial }: BlockUISpinnerProps) => {
+const BlockUISpinner = ({ children, partial }: BlockUiSpinnerProps) => {
 	const renderSpinner = () => (
 		<>
 			<Spinner animation="border" className="spinner" />

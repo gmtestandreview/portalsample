@@ -35,7 +35,7 @@ describe("account created route", () => {
 	it("renders the account holder name and dashboard action", async () => {
 		mocks.useAccountState.mockReturnValue({ details: { givenName: "Alex" } });
 		const AccountCreated = (
-			await import("../../../ClientApp/src/routes/account/created")
+			await import("../../../ClientApp/src/routes/account/created/index.tsx")
 		).default;
 
 		render(
@@ -61,7 +61,7 @@ describe("account created route", () => {
 	it("renders without a name when account details are unavailable", async () => {
 		mocks.useAccountState.mockReturnValue(undefined);
 		const AccountCreated = (
-			await import("../../../ClientApp/src/routes/account/created")
+			await import("../../../ClientApp/src/routes/account/created/index.tsx")
 		).default;
 
 		render(

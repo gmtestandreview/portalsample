@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { ComponentType } from "react";
-import type { DashboardItemDto } from "../../api/web-api-client";
-import type { AccountContextState } from "../../authentication/accountContext";
+import type { DashboardItemDto } from "../../api/web-api-client.ts";
+import type { AccountContextState } from "../../authentication/accountContext.tsx";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "../../authentication/accountContext";
-import { DashboardItemStatus } from "../../routes/common/enums";
-import RequestItem from "./requestItem";
+} from "../../authentication/accountContext.tsx";
+import { DashboardItemStatus } from "../../routes/common/enums.ts";
+import RequestItem from "./requestItem.tsx";
 
 const noop = () => {};
 

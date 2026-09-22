@@ -3,7 +3,7 @@ import type {
 	IPublicClientApplication,
 } from "@azure/msal-browser";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	type DeliveryAndReturnStep,
 	InvoiceSentToValues,
@@ -16,16 +16,16 @@ import {
 	type SummaryAndAcceptStep,
 	Title,
 	YesNo,
-} from "../../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
-import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types";
-import deliveryAndReturnProps from "../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps";
-import paymentDetailsProps from "../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps";
-import reportRecipientProps from "../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps";
-import summaryAndAcceptProps from "../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps";
-import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification";
-import { HttpStatusCode } from "../../../../ClientApp/src/types";
-import { formikHelpers, stepStatuses } from "../testFixtures";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext.tsx";
+import { ErrorType } from "../../../../ClientApp/src/components/forms/WizardForm/types.ts";
+import deliveryAndReturnProps from "../../../../ClientApp/src/routes/acceptQuote/deliveryAndReturnProps.ts";
+import paymentDetailsProps from "../../../../ClientApp/src/routes/acceptQuote/paymentDetailsProps.ts";
+import reportRecipientProps from "../../../../ClientApp/src/routes/acceptQuote/reportRecipientProps.ts";
+import summaryAndAcceptProps from "../../../../ClientApp/src/routes/acceptQuote/summaryAndAcceptProps.ts";
+import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification.ts";
+import { HttpStatusCode } from "../../../../ClientApp/src/types.ts";
+import { formikHelpers, stepStatuses } from "../testFixtures.ts";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),

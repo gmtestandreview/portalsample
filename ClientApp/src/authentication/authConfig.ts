@@ -1,6 +1,6 @@
 import type { Configuration, SilentRequest } from "@azure/msal-browser";
 import { LogLevel } from "@azure/msal-browser";
-import { env } from "../env";
+import { env } from "../env.ts";
 
 export const configuration: Configuration = {
 	auth: {
@@ -25,7 +25,7 @@ export const configuration: Configuration = {
 			},
 			piiLoggingEnabled: false,
 		},
-		windowHashTimeout: 60000,
+		windowHashTimeout: 60_000,
 		iframeHashTimeout: 6000,
 		loadFrameTimeout: 6000,
 		asyncPopups: false,

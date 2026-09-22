@@ -1,6 +1,10 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { Disclosure, DisclosureHeader, DisclosurePanel } from "./Disclosure";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import {
+	Disclosure,
+	DisclosureHeader,
+	DisclosurePanel,
+} from "./Disclosure.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

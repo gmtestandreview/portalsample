@@ -7,20 +7,20 @@ import type {
 	AccountDetails,
 	AccountDispatchContext,
 	AccountStateContext,
-} from "../authentication/accountContext";
+} from "../authentication/accountContext.tsx";
 import {
 	AccountDispatchCtx,
 	AccountStateCtx,
-} from "../authentication/accountContext";
+} from "../authentication/accountContext.tsx";
 import type {
 	ModalDispatch,
 	ModalState,
-} from "../components/modals/ModalContext";
+} from "../components/modals/ModalContext.tsx";
 import {
 	ModalDispatchCtx,
 	ModalStateCtx,
-} from "../components/modals/ModalContext";
-import type { UserProfile } from "../components/SearchFilter/types";
+} from "../components/modals/ModalContext.tsx";
+import type { UserProfile } from "../components/SearchFilter/types.ts";
 
 const noop = () => {};
 const noopAsync = async () => undefined;
@@ -188,7 +188,7 @@ const withOptionalFormik = (
 			validationSchema={formik.validationSchema}
 			onSubmit={noop}
 		>
-			<FormikForm noValidate>{children}</FormikForm>
+			<FormikForm noValidate={true}>{children}</FormikForm>
 		</Formik>
 	);
 };

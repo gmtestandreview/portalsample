@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import { MemoryRouter, Route, Routes } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import OrganisationAndContact from "../../../../ClientApp/src/routes/ta/organisationAndContact";
-import SummaryAndSubmit from "../../../../ClientApp/src/routes/ta/summaryAndSubmit";
+import OrganisationAndContact from "../../../../ClientApp/src/routes/ta/organisationAndContact.tsx";
+import SummaryAndSubmit from "../../../../ClientApp/src/routes/ta/summaryAndSubmit.tsx";
 
 const mocks = vi.hoisted(() => ({
 	useBodyClass: vi.fn(),
@@ -340,7 +340,7 @@ describe("OrganisationAndContact", () => {
 	});
 
 	it("renders the summary field names without a prefix when no name is supplied", () => {
-		renderWithFormik(<OrganisationAndContact isSummary name="" />);
+		renderWithFormik(<OrganisationAndContact isSummary={true} name="" />);
 
 		expect(screen.getByTestId("radio-isManufacturer")).toHaveAttribute(
 			"data-summary",
@@ -388,7 +388,7 @@ describe("SummaryAndSubmit", () => {
 
 		expect(mocks.useBodyClass).toHaveBeenCalledWith("summary");
 		expect(
-			screen.getByText(/Before you submit your request/),
+			screen.getByText(/Before you submit your request/u),
 		).toBeInTheDocument();
 		expect(screen.getByTestId("application-and-instrument")).toHaveAttribute(
 			"data-name",
@@ -419,7 +419,7 @@ describe("SummaryAndSubmit", () => {
 		expect(
 			within(
 				screen.getByTestId("accordion-applicationTermsAndConditions"),
-			).getByText(/You must read and accept the NMI P 106/),
+			).getByText(/You must read and accept the NMI P 106/u),
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("link", {
@@ -439,7 +439,7 @@ describe("SummaryAndSubmit", () => {
 		renderSummary(true);
 
 		expect(
-			screen.queryByText(/Before you submit your request/),
+			screen.queryByText(/Before you submit your request/u),
 		).not.toBeInTheDocument();
 		expect(screen.queryByTestId("edit-link")).not.toBeInTheDocument();
 		expect(screen.getByTestId("back-button")).toHaveAttribute(

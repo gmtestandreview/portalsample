@@ -1,12 +1,12 @@
 import { Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router";
-import type { AccountDetails } from "../../../authentication/accountContext";
-import { useAccountState } from "../../../authentication/hooks";
-import FormBanner from "../../../components/forms/FormBanner";
-import HeaderIntroText from "../../../components/HeaderIntroText";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import { formatBannerTitle } from "../../common/helperFunctions";
+import type { AccountDetails } from "../../../authentication/accountContext.tsx";
+import { useAccountState } from "../../../authentication/hooks.tsx";
+import FormBanner from "../../../components/forms/FormBanner/index.tsx";
+import HeaderIntroText from "../../../components/HeaderIntroText/index.tsx";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
+import { formatBannerTitle } from "../../common/helperFunctions.ts";
 
 const RequestForQuoteCreated = () => {
 	const account = useAccountState();
@@ -23,9 +23,15 @@ const RequestForQuoteCreated = () => {
 				showSaveAndExitButton={false}
 				refTitle={`Ref ID: ${id}`}
 				subTitle={formatBannerTitle(accountDetails)}
-				showGoToDashboardButton
+				showGoToDashboardButton={true}
 			/>
-			<Container fluid id="main" role="main" className="px-0" tabIndex={-1}>
+			<Container
+				fluid={true}
+				id="main"
+				role="main"
+				className="px-0"
+				tabIndex={-1}
+			>
 				<Container className="py-5">
 					<Row className="mb-5">
 						<Col sm={12} md={10} lg={8} className="mx-auto">

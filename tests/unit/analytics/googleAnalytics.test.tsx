@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { env } from "../../../ClientApp/src/env";
+import { env } from "../../../ClientApp/src/env.ts";
 
 const reactGaMock = vi.hoisted(() => ({
 	event: vi.fn(),
@@ -22,11 +22,11 @@ describe("GoogleAnalytics", () => {
 
 	it("initializes ReactGA with configured tracking options and renders children", async () => {
 		const { default: GoogleAnalytics } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		render(
-			<GoogleAnalytics anonymiseIp testMode>
+			<GoogleAnalytics anonymiseIp={true} testMode={true}>
 				<span>Analytics child</span>
 			</GoogleAnalytics>,
 		);
@@ -46,7 +46,7 @@ describe("GoogleAnalytics", () => {
 	it("does not initialize ReactGA when it is already initialized", async () => {
 		reactGaMock.isInitialized = true;
 		const { default: GoogleAnalytics } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		render(<GoogleAnalytics />);
@@ -58,7 +58,7 @@ describe("GoogleAnalytics", () => {
 		const originalTrackingId = env.REACT_APP_GA_TRACKINGID;
 		env.REACT_APP_GA_TRACKINGID = "";
 		const { default: GoogleAnalytics } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		try {
@@ -72,7 +72,7 @@ describe("GoogleAnalytics", () => {
 
 	it("tracks click events with the default dashboard category", async () => {
 		const { trackGAEvent } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		trackGAEvent("Open request");
@@ -86,7 +86,7 @@ describe("GoogleAnalytics", () => {
 
 	it("tracks click events with a custom category", async () => {
 		const { trackGAEvent } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		trackGAEvent("Submit quote", "quote");
@@ -101,7 +101,7 @@ describe("GoogleAnalytics", () => {
 	it("tracks the current page path", async () => {
 		globalThis.history.pushState({}, "", "/dashboard");
 		const { trackGAPageView } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		trackGAPageView();
@@ -114,7 +114,7 @@ describe("GoogleAnalytics", () => {
 
 	it("does not send sanitized PII event when no data-pii fields exist", async () => {
 		const { trackGAPii } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		trackGAPii();
@@ -135,7 +135,7 @@ describe("GoogleAnalytics", () => {
 		});
 
 		const { trackGAPii } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 
 		trackGAPii();
@@ -165,7 +165,7 @@ describe("GoogleAnalytics", () => {
 		});
 
 		const { trackGAPii } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 		trackGAPii();
 
@@ -191,7 +191,7 @@ describe("GoogleAnalytics", () => {
 		});
 
 		const { trackGAPii } = await import(
-			"../../../ClientApp/src/analytics/GoogleAnalytics"
+			"../../../ClientApp/src/analytics/GoogleAnalytics.tsx"
 		);
 		trackGAPii();
 

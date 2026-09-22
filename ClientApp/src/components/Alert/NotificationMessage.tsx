@@ -1,6 +1,6 @@
-import { NotificationSeverity } from "../../storage/types";
-import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from ".";
-import type { NotificationMessageProps } from "./types";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { AlertError, AlertInfo, AlertSuccess, AlertWarning } from "./index.tsx";
+import type { NotificationMessageProps } from "./types.ts";
 
 /**
  * NotificationMessage Component

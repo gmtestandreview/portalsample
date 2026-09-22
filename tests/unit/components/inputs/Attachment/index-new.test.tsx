@@ -10,9 +10,9 @@ import type { FormikConfig, FormikValues } from "formik";
 import { Form, Formik, useFormikContext } from "formik";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
-import type { AttachmentDto } from "@/api/web-api-client";
-import AttachmentNew from "@/components/Inputs/Attachment/index-new";
-import { FileStatus } from "@/routes/ta/types";
+import type { AttachmentDto } from "@/api/web-api-client.ts";
+import AttachmentNew from "@/components/Inputs/Attachment/index-new.tsx";
+import { FileStatus } from "@/routes/ta/types.ts";
 
 interface FormikHarnessProps<TValues extends FormikValues> {
 	readonly children: React.ReactNode;
@@ -45,7 +45,7 @@ function FormikHarness<TValues extends FormikValues>({
 }: FormikHarnessProps<TValues>) {
 	return (
 		<Formik
-			enableReinitialize
+			enableReinitialize={true}
 			initialValues={initialValues}
 			initialErrors={initialErrors}
 			initialTouched={initialTouched}
@@ -86,7 +86,7 @@ function AttachmentHarness({
 				ariaLabel="Upload supporting documents"
 				buttonTitle="Browse files"
 				inlineHelp="Upload files for assessment"
-				allowMultiple
+				allowMultiple={true}
 				maxFiles={3}
 				maxSizeInMB={1}
 				allowedTypes=".pdf, .jpg"
@@ -423,7 +423,7 @@ describe("AttachmentNew", () => {
 					ariaLabel="Upload supporting documents"
 					buttonTitle="Browse files"
 					inlineHelp="Upload files for assessment"
-					allowMultiple
+					allowMultiple={true}
 					maxFiles={3}
 					maxSizeInMB={1}
 					allowedTypes=".pdf, .jpg"

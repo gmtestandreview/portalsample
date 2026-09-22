@@ -1,4 +1,4 @@
-import { DashboardItemStatus, QuoteStatus } from "./enums";
+import { DashboardItemStatus, QuoteStatus } from "./enums.ts";
 
 export const validPillStatuses = [
 	QuoteStatus.QuoteAccepted,

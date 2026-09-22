@@ -12,7 +12,7 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
-			"@fixtures": path.resolve(__dirname, "./fixtures"),
+			"@fixtures": path.resolve(import.meta.dirname, "./fixtures"),
 		},
 	},
 });

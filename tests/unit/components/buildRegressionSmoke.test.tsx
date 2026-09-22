@@ -2,10 +2,10 @@ import * as yup from "yup";
 
 describe("build regression smoke coverage", () => {
 	it("imports App with the root stylesheet path resolved", async () => {
-		const module = await import("@/App");
+		const module = await import("@/App.tsx");
 
 		expect(module.default).toBeDefined();
-	}, 60000);
+	}, 60_000);
 
 	it.each([
 		"@/components/Utilities/ContactLink",

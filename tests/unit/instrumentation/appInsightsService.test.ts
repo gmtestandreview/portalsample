@@ -28,7 +28,7 @@ describe("AppInsightsService", () => {
 			},
 		}));
 
-		const module = await import("@/instrumentation/AppInsightsService");
+		const module = await import("@/instrumentation/AppInsightsService.ts");
 
 		expect(reactPluginCtor).toHaveBeenCalledTimes(1);
 		expect(applicationInsightsCtor).toHaveBeenCalledTimes(1);
@@ -68,7 +68,7 @@ describe("AppInsightsService", () => {
 			},
 		}));
 
-		const module = await import("@/instrumentation/AppInsightsService");
+		const module = await import("@/instrumentation/AppInsightsService.ts");
 
 		expect(applicationInsightsCtor).not.toHaveBeenCalled();
 		expect(module.ai.appInsights).toBeNull();
@@ -92,7 +92,7 @@ describe("AppInsightsService", () => {
 			},
 		}));
 
-		await import("@/instrumentation/AppInsightsService");
+		await import("@/instrumentation/AppInsightsService.ts");
 
 		expect(warn).toHaveBeenCalledWith(
 			"[AppInsights] Telemetry is DISABLED: missing connection string.",
@@ -118,7 +118,7 @@ describe("AppInsightsService", () => {
 			},
 		}));
 
-		const module = await import("@/instrumentation/AppInsightsService");
+		const module = await import("@/instrumentation/AppInsightsService.ts");
 
 		expect(warn).not.toHaveBeenCalled();
 		expect(module.ai.appInsights).toBeNull();
@@ -141,7 +141,7 @@ describe("AppInsightsService", () => {
 			},
 		}));
 
-		const module = await import("@/instrumentation/AppInsightsService");
+		const module = await import("@/instrumentation/AppInsightsService.ts");
 
 		expect(warn).not.toHaveBeenCalled();
 		expect(module.ai.appInsights).toBeNull();

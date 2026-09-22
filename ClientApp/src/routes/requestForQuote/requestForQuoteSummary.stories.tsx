@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import RequestForQuoteSummary from "./requestForQuoteSummary";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import RequestForQuoteSummary from "./requestForQuoteSummary.tsx";
 
 const expectInstrumentSectionReady = async (
 	canvas: ReturnType<typeof within>,
@@ -48,7 +48,7 @@ export const Editable: Story = {
 		await expectInstrumentSectionReady(canvas);
 		// Review guidance is shown while still editable.
 		await expect(
-			canvas.getByText(/before you submit your request/i),
+			canvas.getByText(/before you submit your request/iu),
 		).toBeVisible();
 	},
 };
@@ -62,8 +62,6 @@ export const Submitted: Story = {
 		await expectInstrumentSectionReady(canvas);
 		// Submitted view replaces guidance/edit with a back-to-dashboard link.
 		await expect(canvas.getByTestId("back-button")).toBeVisible();
-		await expect(
-			canvas.queryByText(/before you submit your request/i),
-		).toBeNull();
+		expect(canvas.queryByText(/before you submit your request/iu)).toBeNull();
 	},
 };

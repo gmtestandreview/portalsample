@@ -5,9 +5,9 @@ export type DateOnlyValue = string & {
 	readonly __dateOnlyValue: unique symbol;
 };
 
-const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/;
-const dateTimePrefixPattern = /^(\d{4})-(\d{2})-(\d{2})T/;
-const displayDatePattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+const dateOnlyPattern = /^(\d{4})-(\d{2})-(\d{2})$/u;
+const dateTimePrefixPattern = /^(\d{4})-(\d{2})-(\d{2})T/u;
+const displayDatePattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/u;
 
 const toDateOnlyValue = (
 	year: number,

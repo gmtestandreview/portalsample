@@ -1,16 +1,16 @@
 const findElementInTreeById = (
 	element: Element | null,
-	wrapperUUID: string,
+	wrapperUuid: string,
 ): boolean => {
 	if (!element) {
 		return false;
 	}
 
-	if (element.id === wrapperUUID) {
+	if (element.id === wrapperUuid) {
 		return true;
 	}
 
-	return findElementInTreeById(element.parentElement, wrapperUUID);
+	return findElementInTreeById(element.parentElement, wrapperUuid);
 };
 
 export default findElementInTreeById;

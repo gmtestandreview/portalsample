@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import InTextLink from "./index";
+import InTextLink from "./index.tsx";
 
 const meta = {
 	component: InTextLink,
@@ -17,7 +17,7 @@ export const External: Story = {
 		target: "_blank",
 	},
 	play: async ({ canvas }) => {
-		const link = canvas.getByRole("link", { name: /read external guidance/i });
+		const link = canvas.getByRole("link", { name: /read external guidance/iu });
 		await expect(link).toHaveAttribute("rel", "nofollow noreferrer noopener");
 		await expect(link).toHaveAttribute("target", "_blank");
 	},
@@ -31,7 +31,7 @@ export const SameTab: Story = {
 	},
 	play: async ({ canvas }) => {
 		const link = canvas.getByRole("link", {
-			name: /view terms and conditions/i,
+			name: /view terms and conditions/iu,
 		});
 		await expect(link).toHaveAttribute("target", "_self");
 	},
@@ -43,7 +43,7 @@ export const InlineText: Story = {
 		href: "https://www.measurement.gov.au/help",
 	},
 	play: async ({ canvas }) => {
-		const link = canvas.getByRole("link", { name: /open support content/i });
+		const link = canvas.getByRole("link", { name: /open support content/iu });
 		await expect(link).toBeVisible();
 	},
 };

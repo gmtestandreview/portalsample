@@ -1,4 +1,4 @@
-import type { DiscardProps } from "../FormikForm/types";
+import type { DiscardProps } from "../FormikForm/types.ts";
 
 export interface FormBannerProps {
 	title?: string;

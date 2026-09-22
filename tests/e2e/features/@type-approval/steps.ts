@@ -1,6 +1,6 @@
 import { expect, type Page } from "@playwright/test";
 import type { DataTable } from "playwright-bdd";
-import { Given, Then, When } from "../../support/fixtures";
+import { Given, Then, When } from "../../support/fixtures.ts";
 
 const stepLocations: Record<string, string> = {
 	"Organisation details": "organisation-details",
@@ -21,9 +21,9 @@ Given(
 	async ({ page }) => {
 		await page.goto("/dashboard-ta");
 		await waitForAppReady(page);
-		await expect(page).toHaveURL(/\/dashboard-ta$/);
+		await expect(page).toHaveURL(/\/dashboard-ta$/u);
 		await expect(
-			page.getByRole("heading", { name: /manage pattern\/type approval/i }),
+			page.getByRole("heading", { name: /manage pattern\/type approval/iu }),
 		).toBeVisible();
 	},
 );
@@ -40,7 +40,7 @@ When(
 Then(
 	"the pattern\\/type approval pre-application guidance is displayed",
 	async ({ page }) => {
-		await expect(page).toHaveURL(/\/ta\/type-approval-create-pre$/);
+		await expect(page).toHaveURL(/\/ta\/type-approval-create-pre$/u);
 		await expect(
 			page.getByRole("heading", {
 				name: "Application for Pattern/type approval",
@@ -66,7 +66,7 @@ Then(
 		await expect(page).toHaveURL(new RegExp(`/ta/[^/]+/${location}$`));
 		await expect(page.getByTestId("form")).toBeVisible();
 		await expect(
-			page.getByRole("heading", { level: 1, name: new RegExp(title, "i") }),
+			page.getByRole("heading", { level: 1, name: new RegExp(title, "iu") }),
 		).toBeVisible();
 	},
 );
@@ -135,7 +135,7 @@ Then(
 	"the type-approval submission success page is displayed",
 	async ({ page }) => {
 		await expect(page).toHaveURL(
-			/\/ta\/type-approval-success\/PA-2026-000002$/,
+			/\/ta\/type-approval-success\/PA-2026-000002$/u,
 		);
 		await expect(
 			page.getByRole("heading", {
@@ -158,7 +158,7 @@ When(
 Then(
 	"submitted type-approval application {string} appears",
 	async ({ page }, referenceId: string) => {
-		await expect(page).toHaveURL(/\/dashboard-ta$/);
+		await expect(page).toHaveURL(/\/dashboard-ta$/u);
 		await expect(
 			page
 				.getByRole("tabpanel", { name: "Applications" })
@@ -190,7 +190,7 @@ When(
 );
 
 Then("its application details are displayed", async ({ page }) => {
-	await expect(page).toHaveURL(/\/ta\/PA-2026-000001\/manage$/);
+	await expect(page).toHaveURL(/\/ta\/PA-2026-000001\/manage$/u);
 	await expect(
 		page.getByRole("heading", { name: "Record of application submitted" }),
 	).toBeVisible();

@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import AutoSuggest from "@/components/Inputs/AutoSuggest";
-import type { AutoSuggestOption } from "@/components/Inputs/AutoSuggest/types";
+import AutoSuggest from "@/components/Inputs/AutoSuggest/index.tsx";
+import type { AutoSuggestOption } from "@/components/Inputs/AutoSuggest/types.ts";
 
 const containerState = vi.hoisted(() => ({
 	props: undefined as any,

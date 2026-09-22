@@ -1,6 +1,6 @@
 import { Col, Row } from "react-bootstrap";
 import { Link } from "react-router";
-import HeaderIntroText from "../HeaderIntroText";
+import HeaderIntroText from "../HeaderIntroText/index.tsx";
 
 interface NoRequestsProps {
 	serviceType?: string;

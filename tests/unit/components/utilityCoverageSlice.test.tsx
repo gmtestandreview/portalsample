@@ -7,16 +7,16 @@ import {
 } from "@testing-library/react";
 import { Link, MemoryRouter, Route, Routes } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics";
-import { DashboardClient } from "../../../ClientApp/src/api/web-api-client";
-import findElementInTreeById from "../../../ClientApp/src/components/Utilities/findElementInTreeById";
-import HashLink from "../../../ClientApp/src/components/Utilities/hashLink";
-import MailingLabel from "../../../ClientApp/src/components/Utilities/mailingLabel";
-import RouteChangeScrollTop from "../../../ClientApp/src/components/Utilities/routeChangeScrollTop";
-import ViewMeasurementReport from "../../../ClientApp/src/components/Utilities/ViewMeasurementReport";
-import ViewPdfButton from "../../../ClientApp/src/components/Utilities/ViewPdfButton";
-import ViewPdfQuote from "../../../ClientApp/src/components/Utilities/ViewPdfQuote";
-import ViewPdfQuoteTerms from "../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms";
+import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics.tsx";
+import { DashboardClient } from "../../../ClientApp/src/api/web-api-client.ts";
+import findElementInTreeById from "../../../ClientApp/src/components/Utilities/findElementInTreeById.ts";
+import HashLink from "../../../ClientApp/src/components/Utilities/hashLink.tsx";
+import MailingLabel from "../../../ClientApp/src/components/Utilities/mailingLabel.tsx";
+import RouteChangeScrollTop from "../../../ClientApp/src/components/Utilities/routeChangeScrollTop.tsx";
+import ViewMeasurementReport from "../../../ClientApp/src/components/Utilities/ViewMeasurementReport.tsx";
+import ViewPdfButton from "../../../ClientApp/src/components/Utilities/ViewPdfButton.tsx";
+import ViewPdfQuote from "../../../ClientApp/src/components/Utilities/ViewPdfQuote.tsx";
+import ViewPdfQuoteTerms from "../../../ClientApp/src/components/Utilities/ViewPdfQuoteTerms.tsx";
 import {
 	getFileSize,
 	getFileUrlFromBase64,
@@ -25,15 +25,15 @@ import {
 	handleReportFileError,
 	openInNewTab,
 	openPdfPageInNewTab,
-} from "../../../ClientApp/src/routes/common/helperFunctions";
+} from "../../../ClientApp/src/routes/common/helperFunctions.ts";
 
 const mocks = vi.hoisted(() => {
 	const acquireTokenSilent = vi.fn();
-	const getQuoteReportPDFByID = vi.fn();
+	const getQuoteReportPdfById = vi.fn();
 
 	return {
 		acquireTokenSilent,
-		getQuoteReportPDFByID,
+		getQuoteReportPDFByID: getQuoteReportPdfById,
 	};
 });
 
@@ -204,7 +204,7 @@ describe("utility component coverage slice", () => {
 
 	it("scrolls to the top and focuses page title after route changes", () => {
 		vi.useFakeTimers();
-		render(<RouteHarness showTitle />);
+		render(<RouteHarness showTitle={true} />);
 		const title = document.querySelector("#page-title") as HTMLElement;
 		const focus = vi.spyOn(title, "focus");
 
@@ -255,13 +255,13 @@ describe("utility component coverage slice", () => {
 			},
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: /print/i }));
+		fireEvent.click(screen.getByRole("button", { name: /print/iu }));
 		expect(print).toHaveBeenCalled();
 
-		fireEvent.click(screen.getByRole("button", { name: /copy/i }));
+		fireEvent.click(screen.getByRole("button", { name: /copy/iu }));
 		await waitFor(() =>
 			expect(
-				screen.getByRole("button", { name: /copied/i }),
+				screen.getByRole("button", { name: /copied/iu }),
 			).toBeInTheDocument(),
 		);
 		expect(writeText).toHaveBeenCalledWith(
@@ -270,10 +270,10 @@ describe("utility component coverage slice", () => {
 
 		rerender(<MailingLabel showPrintOrCopy={false} />);
 		expect(
-			screen.queryByRole("button", { name: /print/i }),
+			screen.queryByRole("button", { name: /print/iu }),
 		).not.toBeInTheDocument();
 		expect(
-			screen.queryByRole("button", { name: /copy/i }),
+			screen.queryByRole("button", { name: /copy/iu }),
 		).not.toBeInTheDocument();
 	});
 
@@ -295,14 +295,14 @@ describe("utility component coverage slice", () => {
 			},
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: /copy/i }));
+		fireEvent.click(screen.getByRole("button", { name: /copy/iu }));
 
 		await waitFor(() =>
 			expect(writeText).toHaveBeenCalledWith("Quotation ID: Q-123"),
 		);
-		expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /copy/iu })).toBeInTheDocument();
 		expect(
-			screen.queryByRole("button", { name: /copied/i }),
+			screen.queryByRole("button", { name: /copied/iu }),
 		).not.toBeInTheDocument();
 	});
 
@@ -313,16 +313,16 @@ describe("utility component coverage slice", () => {
 			<ViewPdfButton
 				text="Download PDF"
 				fileSize="1.00Mb"
-				isLoaded
+				isLoaded={true}
 				getPdf={getPdf}
 				gaLabel="report"
 			/>,
 		);
-		fireEvent.click(screen.getByRole("button", { name: /download pdf/i }));
+		fireEvent.click(screen.getByRole("button", { name: /download pdf/iu }));
 
 		expect(getPdf).toHaveBeenCalledOnce();
 		expect(trackGAEvent).toHaveBeenCalledWith("report", "download");
-		expect(screen.getByText(/PDF file size 1.00Mb/i)).toBeInTheDocument();
+		expect(screen.getByText(/PDF file size 1.00Mb/iu)).toBeInTheDocument();
 	});
 
 	it("renders loading state before a PDF button is loaded", () => {
@@ -338,7 +338,7 @@ describe("utility component coverage slice", () => {
 
 		expect(screen.getByText("Loading data...")).toBeInTheDocument();
 		expect(
-			screen.queryByRole("button", { name: /download pdf/i }),
+			screen.queryByRole("button", { name: /download pdf/iu }),
 		).not.toBeInTheDocument();
 	});
 
@@ -367,8 +367,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view quote/i });
-		fireEvent.click(screen.getByRole("button", { name: /view quote/i }));
+		await screen.findByRole("button", { name: /view quote/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view quote/iu }));
 
 		await waitFor(() =>
 			expect(openInNewTab).toHaveBeenCalledWith("blob:quote-data"),
@@ -394,7 +394,7 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view quote/i });
+		await screen.findByRole("button", { name: /view quote/iu });
 		expect(setFileError).toHaveBeenCalledWith(true);
 	});
 
@@ -417,8 +417,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view quote/i });
-		fireEvent.click(screen.getByRole("button", { name: /view quote/i }));
+		await screen.findByRole("button", { name: /view quote/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view quote/iu }));
 
 		await waitFor(() => expect(setFileError).toHaveBeenLastCalledWith(true));
 		expect(setIsLoading).toHaveBeenLastCalledWith(false);
@@ -449,8 +449,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view report/i });
-		fireEvent.click(screen.getByRole("button", { name: /view report/i }));
+		await screen.findByRole("button", { name: /view report/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view report/iu }));
 
 		await waitFor(() =>
 			expect(openInNewTab).toHaveBeenCalledWith("blob:report-data"),
@@ -486,8 +486,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view report/i });
-		fireEvent.click(screen.getByRole("button", { name: /view report/i }));
+		await screen.findByRole("button", { name: /view report/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view report/iu }));
 
 		await waitFor(() => expect(handleReportFileError).toHaveBeenCalled());
 		expect(setFileError).toHaveBeenLastCalledWith(true);
@@ -507,7 +507,7 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view report/i });
+		await screen.findByRole("button", { name: /view report/iu });
 		expect(handleReportFileError).toHaveBeenCalled();
 		expect(setFileError).toHaveBeenCalledWith(true);
 	});
@@ -526,8 +526,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view report/i });
-		fireEvent.click(screen.getByRole("button", { name: /view report/i }));
+		await screen.findByRole("button", { name: /view report/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view report/iu }));
 		await waitFor(() =>
 			expect(mocks.getQuoteReportPDFByID).toHaveBeenCalledWith(
 				"crm-quote-1",
@@ -546,7 +546,7 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 		expect(
-			screen.getByRole("button", { name: /view report/i }),
+			screen.getByRole("button", { name: /view report/iu }),
 		).toBeInTheDocument();
 	});
 
@@ -563,8 +563,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view report/i });
-		fireEvent.click(screen.getByRole("button", { name: /view report/i }));
+		await screen.findByRole("button", { name: /view report/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view report/iu }));
 
 		expect(mocks.acquireTokenSilent).not.toHaveBeenCalled();
 		expect(mocks.getQuoteReportPDFByID).not.toHaveBeenCalled();
@@ -584,8 +584,8 @@ describe("utility component coverage slice", () => {
 			/>,
 		);
 
-		await screen.findByRole("button", { name: /view quote/i });
-		fireEvent.click(screen.getByRole("button", { name: /view quote/i }));
+		await screen.findByRole("button", { name: /view quote/iu });
+		fireEvent.click(screen.getByRole("button", { name: /view quote/iu }));
 		await waitFor(() =>
 			expect(getQuotationFileDetails).toHaveBeenCalledWith(
 				"token-1",

@@ -58,7 +58,7 @@ vi.mock(
 describe("account and contact display sections", () => {
 	it("renders account details fields", async () => {
 		const AccountDetails = (
-			await import("../../../ClientApp/src/routes/account/accountDetails")
+			await import("../../../ClientApp/src/routes/account/accountDetails.tsx")
 		).default;
 
 		render(<AccountDetails />);
@@ -76,7 +76,9 @@ describe("account and contact display sections", () => {
 
 	it("renders organisation details fields", async () => {
 		const OrganisationDetails = (
-			await import("../../../ClientApp/src/routes/account/organisationDetails")
+			await import(
+				"../../../ClientApp/src/routes/account/organisationDetails.tsx"
+			)
 		).default;
 
 		render(<OrganisationDetails />);
@@ -95,7 +97,7 @@ describe("account and contact display sections", () => {
 
 	it("renders contact information and the contact details form section", async () => {
 		const ContactDetails = (
-			await import("../../../ClientApp/src/routes/contact/contactDetails")
+			await import("../../../ClientApp/src/routes/contact/contactDetails.tsx")
 		).default;
 
 		render(<ContactDetails />);

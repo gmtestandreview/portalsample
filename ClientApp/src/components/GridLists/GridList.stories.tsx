@@ -4,8 +4,8 @@ import {
 	GridListSection,
 } from "react-aria-components/GridList";
 import { Text } from "react-aria-components/Text";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { GridList, GridListItem } from "./GridList";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { GridList, GridListItem } from "./GridList.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

@@ -3,19 +3,19 @@ import { useMsal } from "@azure/msal-react";
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { Link, useParams } from "react-router";
-import type { PagedListOfInstrumentArtefactDto } from "../../api/web-api-client";
-import { DashboardClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import type { CustomBreadcrumbItem } from "../../components/Breadcrumb";
-import CustomBreadcrumb from "../../components/Breadcrumb";
-import HeaderIntroText from "../../components/HeaderIntroText";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import AppLogger from "../../instrumentation/AppLogger";
-import { handleReportFileError } from "../common/helperFunctions";
-import ReportList from "./reportList";
+import type { PagedListOfInstrumentArtefactDto } from "../../api/web-api-client.ts";
+import { DashboardClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import type { CustomBreadcrumbItem } from "../../components/Breadcrumb/index.tsx";
+import CustomBreadcrumb from "../../components/Breadcrumb/index.tsx";
+import HeaderIntroText from "../../components/HeaderIntroText/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { handleReportFileError } from "../common/helperFunctions.ts";
+import ReportList from "./reportList.tsx";
 
 const InstrMeasurementReport = () => {
 	const { id } = useParams<{ id?: string }>();
@@ -107,13 +107,13 @@ const InstrMeasurementReport = () => {
 	return (
 		<>
 			{isLoading && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 
 			<div aria-busy={isLoading} aria-live="polite">
-				<Container fluid className="default-banner-background mb-5">
+				<Container fluid={true} className="default-banner-background mb-5">
 					<Container>
 						<Row>
 							<Col>
@@ -139,7 +139,7 @@ const InstrMeasurementReport = () => {
 							<Link
 								data-testid="go-to-dashboard-button"
 								to="/dashboard"
-								replace
+								replace={true}
 								className="btn btn-tertiary order-2 order-md-0"
 							>
 								<i className="icon-back me-1" aria-hidden="true" />

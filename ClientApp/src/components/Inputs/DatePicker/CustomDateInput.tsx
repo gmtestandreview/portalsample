@@ -2,11 +2,11 @@ import { useField } from "formik";
 import React, { useState } from "react";
 import { Form, InputGroup } from "react-bootstrap";
 
-import findElementInTreeById from "../../Utilities/findElementInTreeById";
+import findElementInTreeById from "../../Utilities/findElementInTreeById.ts";
 import type {
 	CustomInputControlRef,
 	CustomInputForwardRefProps,
-} from "./types";
+} from "./types.ts";
 
 /**
  * Formik-connected text input and calendar trigger used by `CustomDatePicker`.

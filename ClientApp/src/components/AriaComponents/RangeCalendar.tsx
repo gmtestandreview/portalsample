@@ -9,9 +9,9 @@ import {
 	type DateValue,
 	Text,
 } from "react-aria-components/RangeCalendar";
-import { Button } from "../Buttons/AriaButton/Button";
-import { CalendarGrid } from "../Calendar/Calendar";
-import { ChevronLeft, ChevronRight } from "./NmiIcon";
+import { Button } from "../Buttons/AriaButton/Button.tsx";
+import { CalendarGrid } from "../Calendar/Calendar.tsx";
+import { ChevronLeft, ChevronRight } from "./NmiIcon.tsx";
 import "./RangeCalendar.css";
 
 export interface RangeCalendarProps<T extends DateValue>

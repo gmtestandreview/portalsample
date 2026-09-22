@@ -2,22 +2,22 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { trackGAEvent } from "@/analytics/GoogleAnalytics";
-import { useAccountState } from "@/authentication/hooks";
-import Actions from "@/components/Actions";
-import BodyText from "@/components/BodyText";
-import Footer from "@/components/Footer";
-import Accessibility from "@/components/Footer/accessibility";
-import Privacy from "@/components/Footer/privacy";
-import TermsOfUse from "@/components/Footer/termsOfUse";
-import Header from "@/components/Header";
-import AuthenticatedNavbarItems from "@/components/Header/AuthenticatedNavbarItems";
-import NavbarEnvironment from "@/components/Header/NavbarEnvironment";
-import NavbarMessage from "@/components/Header/NavbarMessage";
-import HeaderIntroText from "@/components/HeaderIntroText";
-import ExternalLinkIcon from "@/components/Icons/ExternalLinkIcon";
-import { useModalDispatch } from "@/components/modals/ModalContext";
-import { getEnvironment } from "@/routes/common/helperFunctions";
+import { trackGAEvent } from "@/analytics/GoogleAnalytics.tsx";
+import { useAccountState } from "@/authentication/hooks.tsx";
+import Actions from "@/components/Actions/index.tsx";
+import BodyText from "@/components/BodyText/index.tsx";
+import Accessibility from "@/components/Footer/accessibility.tsx";
+import Footer from "@/components/Footer/index.tsx";
+import Privacy from "@/components/Footer/privacy.tsx";
+import TermsOfUse from "@/components/Footer/termsOfUse.tsx";
+import AuthenticatedNavbarItems from "@/components/Header/AuthenticatedNavbarItems.tsx";
+import Header from "@/components/Header/index.tsx";
+import NavbarEnvironment from "@/components/Header/NavbarEnvironment.tsx";
+import NavbarMessage from "@/components/Header/NavbarMessage.tsx";
+import HeaderIntroText from "@/components/HeaderIntroText/index.tsx";
+import ExternalLinkIcon from "@/components/Icons/ExternalLinkIcon.tsx";
+import { useModalDispatch } from "@/components/modals/ModalContext.tsx";
+import { getEnvironment } from "@/routes/common/helperFunctions.ts";
 
 const msalState = vi.hoisted(() => ({
 	authenticated: false,
@@ -63,7 +63,7 @@ vi.mock("@/components/modals/ContentModal", () => ({
 		modalTitle: string;
 	}) =>
 		showModal ? (
-			<dialog open aria-label={modalTitle}>
+			<dialog open={true} aria-label={modalTitle}>
 				<h2>{modalTitle}</h2>
 				<div>{modalBody}</div>
 				<button type="button" onClick={onCancelModal}>
@@ -114,12 +114,12 @@ describe("Header chrome", () => {
 			screen.getByRole("img", { name: "National Measurement Institute logo" }),
 		).toBeInTheDocument();
 		expect(
-			screen.getByRole("link", { name: /quick survey\s*Opens in a new tab/i }),
+			screen.getByRole("link", { name: /quick survey\s*Opens in a new tab/iu }),
 		).toHaveAttribute(
 			"href",
 			"https://industry.au1.qualtrics.com/jfe/form/SV_9X41DIbsi8FvCQu",
 		);
-		expect(screen.getByRole("link", { name: /Exit/i })).toHaveAttribute(
+		expect(screen.getByRole("link", { name: /Exit/iu })).toHaveAttribute(
 			"href",
 			"https://measurement.gov.au",
 		);
@@ -146,13 +146,13 @@ describe("Header chrome", () => {
 			"Environment:TEST",
 		);
 		expect(
-			screen.getByRole("button", { name: /Current user settings menu/i }),
+			screen.getByRole("button", { name: /Current user settings menu/iu }),
 		).toHaveTextContent("Alex Citizen");
 		expect(screen.getByText("Precision Labs - Canberra")).toBeInTheDocument();
 		expect(screen.getByText("Measurement Pty Ltd")).toBeInTheDocument();
 
 		await user.click(
-			screen.getByRole("button", { name: /Current user settings menu/i }),
+			screen.getByRole("button", { name: /Current user settings menu/iu }),
 		);
 
 		expect(
@@ -170,7 +170,7 @@ describe("Header chrome", () => {
 		expect(trackGAEvent).toHaveBeenCalledWith("Manage organisation");
 
 		await user.click(
-			screen.getByRole("button", { name: /Current user settings menu/i }),
+			screen.getByRole("button", { name: /Current user settings menu/iu }),
 		);
 		await user.click(
 			screen.getByRole("link", { name: "Add or manage branch/location" }),
@@ -180,13 +180,13 @@ describe("Header chrome", () => {
 		expect(trackGAEvent).toHaveBeenCalledWith("Manage branch/location");
 
 		await user.click(
-			screen.getByRole("button", { name: /Current user settings menu/i }),
+			screen.getByRole("button", { name: /Current user settings menu/iu }),
 		);
 		await user.click(screen.getByRole("link", { name: "My contact details" }));
 		expect(trackGAEvent).toHaveBeenCalledWith("Manage contact");
 
 		await user.click(
-			screen.getByRole("button", { name: /Current user settings menu/i }),
+			screen.getByRole("button", { name: /Current user settings menu/iu }),
 		);
 		await user.click(screen.getByRole("link", { name: "Log out" }));
 		expect(trackGAEvent).toHaveBeenCalledWith("sign out");
@@ -212,7 +212,7 @@ describe("Header chrome", () => {
 		render(<NavbarMessage />);
 
 		const survey = screen.getByRole("link", {
-			name: /quick survey\s*Opens in a new tab/i,
+			name: /quick survey\s*Opens in a new tab/iu,
 		});
 		expect(survey).toHaveAttribute("target", "_blank");
 		expect(survey).toHaveAttribute("rel", "external noopener noreferrer");
@@ -288,7 +288,7 @@ describe("Footer chrome", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("link", {
-				name: /Web Content Accessibility Guidelines.*Opens in a new tab/i,
+				name: /Web Content Accessibility Guidelines.*Opens in a new tab/iu,
 			}),
 		).toHaveAttribute("target", "_blank");
 	});

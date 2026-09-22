@@ -4,43 +4,43 @@ import {
 	createRoutesFromElements,
 	Route,
 } from "react-router";
-import AuthenticatedElement from "./authentication/AuthenticatedElement";
-import ErrorDisplay from "./components/ErrorBoundary/ErrorDisplay";
-import Home from "./components/Home";
-import Layout from "./components/Layout";
-import AcceptQuote from "./routes/acceptQuote";
-import CreateAcceptQuote from "./routes/acceptQuote/create";
-import SubmittedSuccess from "./routes/acceptQuote/submittedSuccess";
-import AddBranch from "./routes/account/addBranch";
-import CreateAccount from "./routes/account/create";
-import AccountCreated from "./routes/account/created";
-import UpdateAccount from "./routes/account/update";
-import CreateContact from "./routes/contact/create";
-import UpdateContact from "./routes/contact/update";
-import Dashboard from "./routes/dashboard";
-import DashboardTA from "./routes/dashboard/dashboard-ta";
-import HelpGuide from "./routes/help-guide";
-import FAQs from "./routes/help-guide/faqs";
-import HelpHowToSetupAccess from "./routes/help-guide/how-to-setup-access";
-import MeasurementReport from "./routes/measurementReport";
-import InstrMeasurementReport from "./routes/measurementReport/indexList";
-import PreConditions from "./routes/preConditions/PreConditions";
-import Quotation from "./routes/quotation";
-import RequestForQuote from "./routes/requestForQuote";
-import CopyRequestForQuote from "./routes/requestForQuote/copy";
-import CreateRequestForQuote from "./routes/requestForQuote/create";
-import RequestForQuoteCreated from "./routes/requestForQuote/created";
-import ViewRequestForQuoteSummary from "./routes/requestForQuote/viewRequestForQuoteSummary";
-import ServicesWeOffer from "./routes/services-we-offer";
-import SignIn from "./routes/sign-in";
-import SignOut from "./routes/sign-out";
-import SignOutHelper from "./routes/sign-out-helper";
-import ApplicationForTypeApproval from "./routes/ta";
-import CreateRequestForTypeApproval from "./routes/ta/create";
-import RequestForPatternApprovalCreated from "./routes/ta/created";
-import TAApplicationManage from "./routes/ta/manage";
-import PreApplication from "./routes/ta/preApplication";
-import { HttpStatusCode } from "./types";
+import AuthenticatedElement from "./authentication/AuthenticatedElement.tsx";
+import ErrorDisplay from "./components/ErrorBoundary/ErrorDisplay.tsx";
+import Home from "./components/Home.tsx";
+import Layout from "./components/Layout/index.tsx";
+import CreateAcceptQuote from "./routes/acceptQuote/create/index.tsx";
+import AcceptQuote from "./routes/acceptQuote/index.tsx";
+import SubmittedSuccess from "./routes/acceptQuote/submittedSuccess.tsx";
+import AddBranch from "./routes/account/addBranch/index.tsx";
+import CreateAccount from "./routes/account/create/index.tsx";
+import AccountCreated from "./routes/account/created/index.tsx";
+import UpdateAccount from "./routes/account/update/index.tsx";
+import CreateContact from "./routes/contact/create/index.tsx";
+import UpdateContact from "./routes/contact/update/index.tsx";
+import DashboardTa from "./routes/dashboard/dashboard-ta.tsx";
+import Dashboard from "./routes/dashboard/index.tsx";
+import FaQs from "./routes/help-guide/faqs.tsx";
+import HelpHowToSetupAccess from "./routes/help-guide/how-to-setup-access.tsx";
+import HelpGuide from "./routes/help-guide/index.tsx";
+import MeasurementReport from "./routes/measurementReport/index.tsx";
+import InstrMeasurementReport from "./routes/measurementReport/indexList.tsx";
+import PreConditions from "./routes/preConditions/PreConditions.tsx";
+import Quotation from "./routes/quotation/index.tsx";
+import CopyRequestForQuote from "./routes/requestForQuote/copy/index.tsx";
+import CreateRequestForQuote from "./routes/requestForQuote/create/index.tsx";
+import RequestForQuoteCreated from "./routes/requestForQuote/created/index.tsx";
+import RequestForQuote from "./routes/requestForQuote/index.tsx";
+import ViewRequestForQuoteSummary from "./routes/requestForQuote/viewRequestForQuoteSummary.tsx";
+import ServicesWeOffer from "./routes/services-we-offer/index.tsx";
+import SignIn from "./routes/sign-in/index.tsx";
+import SignOut from "./routes/sign-out/index.tsx";
+import SignOutHelper from "./routes/sign-out-helper/index.tsx";
+import CreateRequestForTypeApproval from "./routes/ta/create/index.tsx";
+import RequestForPatternApprovalCreated from "./routes/ta/created/index.tsx";
+import ApplicationForTypeApproval from "./routes/ta/index.tsx";
+import TaApplicationManage from "./routes/ta/manage/index.tsx";
+import PreApplication from "./routes/ta/preApplication.tsx";
+import { HttpStatusCode } from "./types.ts";
 
 const App = createBrowserRouter(
 	createRoutesFromElements(
@@ -65,7 +65,7 @@ const App = createBrowserRouter(
 				path="/dashboard-ta"
 				element={
 					<AuthenticatedElement>
-						<DashboardTA />
+						<DashboardTa />
 					</AuthenticatedElement>
 				}
 			/>
@@ -161,7 +161,7 @@ const App = createBrowserRouter(
 				path="/ta/:id/manage"
 				element={
 					<AuthenticatedElement>
-						<TAApplicationManage />
+						<TaApplicationManage />
 					</AuthenticatedElement>
 				}
 			/>
@@ -290,14 +290,14 @@ const App = createBrowserRouter(
 				path="/help-guide/faqs"
 				element={
 					<Layout>
-						<FAQs />
+						<FaQs />
 					</Layout>
 				}
 			/>
 			<Route
 				path="/server-error"
 				element={
-					<PreConditions displayHeaderAndFooter>
+					<PreConditions displayHeaderAndFooter={true}>
 						<ErrorDisplay status={HttpStatusCode.InternalServerError} />
 					</PreConditions>
 				}
@@ -353,7 +353,7 @@ const App = createBrowserRouter(
 			<Route
 				path="/not-found"
 				element={
-					<PreConditions displayHeaderAndFooter>
+					<PreConditions displayHeaderAndFooter={true}>
 						<ErrorDisplay status={HttpStatusCode.NotFound} />
 					</PreConditions>
 				}
@@ -361,7 +361,7 @@ const App = createBrowserRouter(
 			<Route
 				path="*"
 				element={
-					<PreConditions displayHeaderAndFooter>
+					<PreConditions displayHeaderAndFooter={true}>
 						<ErrorDisplay status={HttpStatusCode.NotFound} />
 					</PreConditions>
 				}

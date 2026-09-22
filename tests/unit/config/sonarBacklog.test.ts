@@ -2,9 +2,10 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import process from "node:process";
 import { describe, expect, it } from "vitest";
 
-const repoRoot = path.resolve(__dirname, "../../..");
+const repoRoot = path.resolve(import.meta.dirname, "../../..");
 const CHILD_TIMEOUT_MS = 30_000;
 const TEST_TIMEOUT_MS = 45_000;
 

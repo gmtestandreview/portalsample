@@ -1,3 +1,5 @@
+import process from "node:process";
+
 try {
 	const mod = require("./ClientApp/src/components/forms/WizardForm/errorState.ts");
 	process.stdout.write(

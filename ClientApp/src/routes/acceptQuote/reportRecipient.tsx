@@ -5,19 +5,19 @@ import Row from "react-bootstrap/Row";
 import type {
 	AddressDetailsDto,
 	ReportRecipientStep,
-} from "../../api/web-api-client";
-import { AcceptQuoteClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import { useAccountState } from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import HidableField from "../../components/forms/HidableField";
-import AddressLookup from "../../components/Inputs/AddressLookup";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import TextInput from "../../components/Inputs/TextInput";
-import AppLogger from "../../instrumentation/AppLogger";
-import { prefixedPropertyOf } from "../../utils";
-import { getFormattedAddress } from "../common/helperFunctions";
-import type { ReportRecipientProps } from "./types";
+} from "../../api/web-api-client.ts";
+import { AcceptQuoteClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import AddressLookup from "../../components/Inputs/AddressLookup/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { prefixedPropertyOf } from "../../utils/index.ts";
+import { getFormattedAddress } from "../common/helperFunctions.ts";
+import type { ReportRecipientProps } from "./types.ts";
 
 const getName = prefixedPropertyOf<ReportRecipientStep>("reportRecipient");
 
@@ -86,9 +86,9 @@ const ReportRecipient = (props: ReportRecipientProps) => {
 	return (
 		<>
 			{isLoading && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			{isSummary ? null : (
 				<Alert

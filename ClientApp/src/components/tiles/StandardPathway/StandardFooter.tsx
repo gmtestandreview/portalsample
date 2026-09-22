@@ -1,5 +1,5 @@
 import { Card } from "react-bootstrap";
-import type { StandardPathwayFooterProps } from "./types";
+import type { StandardPathwayFooterProps } from "./types.ts";
 
 const StandardPathwayFooter = (props: StandardPathwayFooterProps) => {
 	const { linkDescription } = props;

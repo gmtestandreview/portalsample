@@ -6,16 +6,16 @@ import {
 	Group,
 	type ValidationResult,
 } from "react-aria-components/DateRangePicker";
-import { ChevronDown } from "../../AriaComponents/NmiIcon";
-import { Popover } from "../../AriaComponents/Popover";
-import { RangeCalendar } from "../../AriaComponents/RangeCalendar";
+import { ChevronDown } from "../../AriaComponents/NmiIcon.tsx";
+import { Popover } from "../../AriaComponents/Popover.tsx";
+import { RangeCalendar } from "../../AriaComponents/RangeCalendar.tsx";
 import {
 	Description,
 	FieldButton,
 	FieldError,
 	Label,
-} from "../../forms/AriaForm/Form";
-import { DateInput, DateSegment } from "../AriaDateField/DateField";
+} from "../../forms/AriaForm/Form.tsx";
+import { DateInput, DateSegment } from "../AriaDateField/DateField.tsx";
 import "./DateRangePicker.css";
 
 export interface DateRangePickerProps<T extends DateValue>
@@ -50,7 +50,7 @@ export function DateRangePicker<T extends DateValue>({
 			</Group>
 			{description && <Description>{description}</Description>}
 			<FieldError>{errorMessage}</FieldError>
-			<Popover hideArrow>
+			<Popover hideArrow={true}>
 				<RangeCalendar />
 			</Popover>
 		</AriaDateRangePicker>

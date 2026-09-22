@@ -3,8 +3,8 @@ import { useField } from "formik";
 import { trim } from "lodash";
 import type { AriaAttributes, AriaRole, ReactNode } from "react";
 import Form from "react-bootstrap/Form";
-import Details from "../../forms/Details";
-import SummaryDisplay from "../../SummaryDisplay";
+import Details from "../../forms/Details/index.tsx";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
 
 export interface TextInputProps {
 	label: string;

@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import CustomBreadcrumb from "@/components/Breadcrumb";
+import CustomBreadcrumb from "@/components/Breadcrumb/index.tsx";
 
 const ariaLinkMockState = vi.hoisted(() => ({
 	includeHref: false,

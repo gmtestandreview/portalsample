@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-const repositoryRoot = path.resolve(__dirname, "../../..");
+const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
 const componentsRoot = path.join(repositoryRoot, "ClientApp/src/components");
 
 const evaluationDirectories = [
@@ -44,8 +44,8 @@ const storyFiles = evaluationFiles.filter((file) =>
 );
 const sourceFiles = evaluationFiles.filter(
 	(file) =>
-		/\.(?:css|ts|tsx)$/.test(file) &&
-		!/(?:\.stories copy\.tsx|\/main\.tsx|\\main\.tsx|setup(?:Browser)?Tests\.ts|testStyleMock\.ts)$/.test(
+		/\.(?:css|ts|tsx)$/u.test(file) &&
+		!/(?:\.stories copy\.tsx|\/main\.tsx|\\main\.tsx|setup(?:Browser)?Tests\.ts|testStyleMock\.ts)$/u.test(
 			file,
 		),
 );
@@ -53,9 +53,9 @@ const sourceFiles = evaluationFiles.filter(
 function findRelativeImports(file: string): string[] {
 	const source = readFileSync(file, "utf8");
 	const patterns = [
-		/\bfrom\s+['"](\.[^'"]+)['"]/g,
-		/\bimport\s+['"](\.[^'"]+)['"]/g,
-		/@import\s+['"](\.[^'"]+)['"]/g,
+		/\bfrom\s+['"](\.[^'"]+)['"]/gu,
+		/\bimport\s+['"](\.[^'"]+)['"]/gu,
+		/@import\s+['"](\.[^'"]+)['"]/gu,
 	];
 
 	return patterns.flatMap((pattern) =>
@@ -76,26 +76,26 @@ function importResolves(importer: string, specifier: string): boolean {
 }
 
 describe("React Aria Storybook evaluation contract", () => {
-	test("keeps all 48 reusable component stories discoverable and isolated", () => {
+	it("keeps all 48 reusable component stories discoverable and isolated", () => {
 		expect(storyFiles).toHaveLength(48);
 
 		for (const file of storyFiles) {
 			const source = readFileSync(file, "utf8");
 			expect(source, file).toContain("from '@storybook/react-vite'");
-			expect(source, file).toMatch(/title:\s*['"]Evaluation\/React Aria\//);
+			expect(source, file).toMatch(/title:\s*['"]Evaluation\/React Aria\//u);
 			expect(source, file).toContain("satisfies Meta");
 			expect(source, file).not.toContain("../src/");
 			expect(source, file).not.toContain("from '@storybook/react'");
 		}
 	});
 
-	test("uses NMI icons rather than Lucide in the first-instance evaluation", () => {
-		for (const file of sourceFiles.filter((file) => /\.tsx?$/.test(file))) {
+	it("uses NMI icons rather than Lucide in the first-instance evaluation", () => {
+		for (const file of sourceFiles.filter((file) => /\.tsx?$/u.test(file))) {
 			expect(readFileSync(file, "utf8"), file).not.toContain("lucide-react");
 		}
 	});
 
-	test("resolves every relative import in the reusable evaluation surface", () => {
+	it("resolves every relative import in the reusable evaluation surface", () => {
 		const unresolved = sourceFiles.flatMap((file) =>
 			findRelativeImports(file)
 				.filter((specifier) => !importResolves(file, specifier))
@@ -108,15 +108,15 @@ describe("React Aria Storybook evaluation contract", () => {
 		expect(unresolved).toEqual([]);
 	});
 
-	test("scopes React Aria theme variables to the evaluation surface", () => {
+	it("scopes React Aria theme variables to the evaluation surface", () => {
 		const themeFile = path.join(componentsRoot, "AriaComponents/theme.css");
 		const source = readFileSync(themeFile, "utf8");
 
 		expect(source).toContain(".react-aria-evaluation");
-		expect(source).not.toMatch(/(^|[\s,]):root\b/m);
+		expect(source).not.toMatch(/(^|[\s,]):root\b/mu);
 	});
 
-	test("type-checks the evaluation surface with no demo-only carve-outs", () => {
+	it("type-checks the evaluation surface with no demo-only carve-outs", () => {
 		// The three excludes that stood here carved live directories out of the
 		// TypeScript program to hide a broken scaffold. `components/App` never
 		// existed, `AriaComponents/main.tsx` imported an absent `App.tsx`, and
@@ -137,10 +137,10 @@ describe("React Aria Storybook evaluation contract", () => {
 		);
 	});
 
-	test("keeps the retained reactaria_components scaffold import-resolvable", () => {
+	it("keeps the retained reactaria_components scaffold import-resolvable", () => {
 		const scaffoldRoot = path.join(componentsRoot, "reactaria_components");
 		const scaffoldSources = collectFiles(scaffoldRoot).filter((file) =>
-			/\.tsx?$/.test(file),
+			/\.tsx?$/u.test(file),
 		);
 
 		expect(scaffoldSources.length).toBeGreaterThan(0);
@@ -157,7 +157,7 @@ describe("React Aria Storybook evaluation contract", () => {
 		expect(unresolved).toEqual([]);
 	});
 
-	test("removes the dead AriaComponents entry point", () => {
+	it("removes the dead AriaComponents entry point", () => {
 		expect(
 			existsSync(path.join(componentsRoot, "AriaComponents/main.tsx")),
 		).toBe(false);

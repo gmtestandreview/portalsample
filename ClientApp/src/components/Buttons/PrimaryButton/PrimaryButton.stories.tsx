@@ -1,7 +1,7 @@
 import { linkTo } from "@storybook/addon-links";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import PrimaryButton from "./index";
+import PrimaryButton from "./index.tsx";
 
 const meta = {
 	component: PrimaryButton,
@@ -57,7 +57,7 @@ export const CssCheck: Story = {
 		children: "Submit",
 	},
 	play: async ({ canvas }) => {
-		const button = canvas.getByRole("button", { name: /submit/i });
+		const button = canvas.getByRole("button", { name: /submit/iu });
 		// In jsdom, external CSS files don't affect computed styles.
 		// Instead, verify the button has the expected class and content.
 		// In Storybook browser, the CSS loads and applies the primary button styles.

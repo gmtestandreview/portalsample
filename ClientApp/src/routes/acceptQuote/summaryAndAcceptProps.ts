@@ -6,25 +6,25 @@ import type { FormikHelpers } from "formik";
 import type {
 	FormStepStatusDto,
 	SummaryAndAcceptStep,
-} from "../../api/web-api-client";
-import { AcceptQuoteClient } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { AcceptQuoteClient } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import type {
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import { ErrorType } from "../../components/forms/WizardForm/types";
-import { setDashboardNotification } from "../../storage/notification";
-import SessionStorageCache from "../../storage/sessionStorageCache";
-import { NotificationSeverity } from "../../storage/types";
-import { HttpStatusCode } from "../../types";
-import { discardChanges } from "../common/constants";
-import { formatBannerTitle } from "../common/helperFunctions";
+} from "../../components/forms/WizardForm/types.ts";
+import { ErrorType } from "../../components/forms/WizardForm/types.ts";
+import { setDashboardNotification } from "../../storage/notification.ts";
+import SessionStorageCache from "../../storage/sessionStorageCache.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { HttpStatusCode } from "../../types.ts";
+import { discardChanges } from "../common/constants.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
 import {
 	summaryAndAcceptSaveValidation,
 	summaryAndAcceptSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadSummary =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -106,8 +106,6 @@ const getRedirectionLocationOnError =
 			});
 			return "/";
 		}
-
-		return undefined;
 	};
 
 const summaryAndAcceptProps = (

@@ -11,9 +11,9 @@ import {
 	GridListSection,
 	Text,
 } from "react-aria-components/GridList";
-import { GripVertical } from "../AriaComponents/NmiIcon";
-import { ProgressCircle } from "../AriaComponents/ProgressCircle";
-import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox";
+import { GripVertical } from "../AriaComponents/NmiIcon.tsx";
+import { ProgressCircle } from "../AriaComponents/ProgressCircle.tsx";
+import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox.tsx";
 import "./GridList.css";
 
 export function GridList<T>({
@@ -58,7 +58,7 @@ export function GridListItem({
 export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
 	return (
 		<AriaGridListLoadMoreItem {...props}>
-			<ProgressCircle isIndeterminate aria-label="Loading more..." />
+			<ProgressCircle isIndeterminate={true} aria-label="Loading more..." />
 		</AriaGridListLoadMoreItem>
 	);
 }

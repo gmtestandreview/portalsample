@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import "../../styles/media-print.scss";
-import InTextLink from "../InTextLink";
+import InTextLink from "../InTextLink/index.tsx";
 
 /**
  * show the Terms link and open pdf in a new tab

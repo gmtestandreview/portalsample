@@ -4,24 +4,27 @@ import type { ChangeEvent, ReactElement } from "react";
 import { useEffect, useState } from "react";
 import { Alert, Button, Col, Modal, Row, Table } from "react-bootstrap";
 import { Link, useNavigate } from "react-router";
-import type { OrganisationDto } from "../../../api/web-api-client";
-import { OrganisationsClient, UsersClient } from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
+import type { OrganisationDto } from "../../../api/web-api-client.ts";
+import {
+	OrganisationsClient,
+	UsersClient,
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../../authentication/hooks";
-import AppLogger from "../../../instrumentation/AppLogger";
+} from "../../../authentication/hooks.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
 import {
 	clearBranchModalNotification,
 	getBranchModalNotification,
-} from "../../../storage/notification";
-import NotificationMessage from "../../Alert/NotificationMessage";
-import BlockUISpinner from "../../BlockUISpinner";
-import ButtonGroup from "../../Buttons/ButtonGroup";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import { useModalDispatch, useModalState } from "../ModalContext";
-import { BranchSelectionModalMode } from "./enums";
+} from "../../../storage/notification.ts";
+import NotificationMessage from "../../Alert/NotificationMessage.tsx";
+import BlockUiSpinner from "../../BlockUISpinner/index.tsx";
+import ButtonGroup from "../../Buttons/ButtonGroup/index.tsx";
+import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
+import { useModalDispatch, useModalState } from "../ModalContext.tsx";
+import { BranchSelectionModalMode } from "./enums.ts";
 
 interface SavingBranchSelectorErrorProps {
 	showError: boolean;
@@ -42,7 +45,7 @@ const setNotification = () => {
 	return branchModalNotification ? (
 		<NotificationMessage
 			id="notif-message-1"
-			canClose
+			canClose={true}
 			onClose={clearBranchModalNotification}
 			{...branchModalNotification}
 		/>
@@ -126,13 +129,13 @@ const toSortableText = (value: string | undefined) =>
 const applyAccountDispatchUpdates = (
 	accountDispatch: ReturnType<typeof useAccountDispatch>,
 	selectedBranch: number | undefined,
-	selectedCRMGuid: string | undefined,
+	selectedCrmGuid: string | undefined,
 	selectedOrganisation: string | undefined,
 	selectedTradingName: string | undefined,
 	selectedBranchName: string | undefined,
 ) => {
 	if (!accountDispatch) return;
-	accountDispatch.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
+	accountDispatch.setDefaultOrganisationId(selectedBranch, selectedCrmGuid);
 	if (selectedOrganisation !== undefined) {
 		accountDispatch.setOrganisationAndBranch(
 			selectedOrganisation,
@@ -147,16 +150,16 @@ const finaliseAccountCreation = (
 	accountState: ReturnType<typeof useAccountState>,
 	accountDispatch: ReturnType<typeof useAccountDispatch>,
 	selectedBranch: number | undefined,
-	selectedCRMGuid: string | undefined,
+	selectedCrmGuid: string | undefined,
 	selectedOrganisation: string | undefined,
-	selectedABN: string | undefined,
+	selectedAbn: string | undefined,
 ) => {
 	const accountCreationIncomplete =
 		!accountState?.details?.accountCreationCompleted;
 	if (accountCreationIncomplete) {
 		accountDispatch?.setCompleted();
-		accountDispatch?.setDefaultOrganisationId(selectedBranch, selectedCRMGuid);
-		accountDispatch?.setTargetOrganisation(selectedOrganisation!, selectedABN!);
+		accountDispatch?.setDefaultOrganisationId(selectedBranch, selectedCrmGuid);
+		accountDispatch?.setTargetOrganisation(selectedOrganisation!, selectedAbn!);
 	}
 };
 
@@ -176,8 +179,8 @@ const BranchSelectorModal = () => {
 	const [selectedBranchName, setSelectedBranchName] = useState<
 		string | undefined
 	>();
-	const [selectedABN, setSelectedABN] = useState<string | undefined>();
-	const [selectedCRMGuid, setSelectedCRMGuid] = useState<string | undefined>();
+	const [selectedAbn, setSelectedAbn] = useState<string | undefined>();
+	const [selectedCrmGuid, setSelectedCrmGuid] = useState<string | undefined>();
 	const [branches, setBranches] = useState<OrganisationDto[] | undefined>();
 	const branchModalMessage = setNotification();
 	const accountState = useAccountState();
@@ -225,7 +228,7 @@ const BranchSelectorModal = () => {
 				applyAccountDispatchUpdates(
 					accountDispatch,
 					selectedBranch,
-					selectedCRMGuid,
+					selectedCrmGuid,
 					selectedOrganisation,
 					selectedTradingName,
 					selectedBranchName,
@@ -235,9 +238,9 @@ const BranchSelectorModal = () => {
 					accountState,
 					accountDispatch,
 					selectedBranch,
-					selectedCRMGuid,
+					selectedCrmGuid,
 					selectedOrganisation,
-					selectedABN,
+					selectedAbn,
 				);
 				reloadAfterSave =
 					branchSelectionModalMode === BranchSelectionModalMode.RFQSelectOrg;
@@ -270,8 +273,8 @@ const BranchSelectorModal = () => {
 		setSelectedOrganisation(organisationName);
 		setSelectedTradingName(tradingName);
 		setSelectedBranchName(branchName);
-		setSelectedABN(abn);
-		setSelectedCRMGuid(crmGuid);
+		setSelectedAbn(abn);
+		setSelectedCrmGuid(crmGuid);
 	};
 
 	useEffect(() => {
@@ -302,15 +305,15 @@ const BranchSelectorModal = () => {
 						)
 					) {
 						setSelectedBranch(accountState.details?.defaultOrganisationId);
-						setSelectedCRMGuid(accountState.details?.organisationCRMGuid);
+						setSelectedCrmGuid(accountState.details?.organisationCRMGuid);
 						setSelectedTradingName(accountState.details?.trading);
 						setSelectedBranchName(accountState.details?.branch);
 					} else {
 						setSelectedBranch(result[0].organisationId);
 						setSelectedTradingName(result[0].businessOrTradingName);
 						setSelectedBranchName(result[0].branchOrLocationName);
-						setSelectedABN(result[0].abn);
-						setSelectedCRMGuid(result[0].crmGuid);
+						setSelectedAbn(result[0].abn);
+						setSelectedCrmGuid(result[0].crmGuid);
 					}
 					setSelectedOrganisation(result[0].name);
 				} catch (error) {
@@ -535,9 +538,9 @@ const BranchSelectorModal = () => {
 										<tbody key="tBodyKey">
 											<tr>
 												<td colSpan={3}>
-													<BlockUISpinner partial>
+													<BlockUiSpinner partial={true}>
 														<p>Loading data...</p>
-													</BlockUISpinner>
+													</BlockUiSpinner>
 												</td>
 											</tr>
 										</tbody>
@@ -646,9 +649,9 @@ const BranchSelectorModal = () => {
 					</Row>
 				)}
 				{isSaving && (
-					<BlockUISpinner>
+					<BlockUiSpinner>
 						<p>Saving...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				)}
 			</Modal.Body>
 			<Modal.Footer className="d-inline">

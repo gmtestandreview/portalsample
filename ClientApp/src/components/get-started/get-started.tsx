@@ -4,13 +4,13 @@ import { Navigate } from "react-router";
 import {
 	clearGetStartedNotification,
 	getGetStartedNotification,
-} from "../../storage/notification";
-import NotificationMessage from "../Alert/NotificationMessage";
-import HeaderIntroText from "../HeaderIntroText";
-import InTextLink from "../InTextLink";
-import StandardPathway from "../tiles/StandardPathway";
-import useBodyClass from "../Utilities/useBodyClass";
-import useHtmlTitle from "../Utilities/useHtmlTitle";
+} from "../../storage/notification.ts";
+import NotificationMessage from "../Alert/NotificationMessage.tsx";
+import HeaderIntroText from "../HeaderIntroText/index.tsx";
+import InTextLink from "../InTextLink/index.tsx";
+import StandardPathway from "../tiles/StandardPathway/index.tsx";
+import useBodyClass from "../Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../Utilities/useHtmlTitle.tsx";
 
 const GetStarted = () => {
 	const isAuthenticated = useIsAuthenticated();
@@ -19,7 +19,7 @@ const GetStarted = () => {
 	const getStartedNotification = getGetStartedNotification();
 	const getStartedMessage = getStartedNotification ? (
 		<NotificationMessage
-			canClose
+			canClose={true}
 			onClose={clearGetStartedNotification}
 			{...getStartedNotification}
 		/>
@@ -31,7 +31,10 @@ const GetStarted = () => {
 
 	return (
 		<>
-			<Container fluid className="default-banner-background gs-wrapper mb-5">
+			<Container
+				fluid={true}
+				className="default-banner-background gs-wrapper mb-5"
+			>
 				<Container>
 					<Row>
 						<Col md={12} lg={9}>
@@ -108,7 +111,7 @@ const GetStarted = () => {
 							bodyText="Already have a Digital ID? Log in"
 							linkDescription="Continue with Digital ID"
 							to="/dashboard"
-							digitalIdentity
+							digitalIdentity={true}
 						/>
 					</Col>
 				</Row>

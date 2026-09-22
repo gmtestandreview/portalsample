@@ -5,10 +5,10 @@ import {
 	ApplicationClient,
 	ApplicationType,
 	QuoteClient,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-import AppLogger from "../../../instrumentation/AppLogger";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
 
 const CreateAcceptQuote = () => {
 	const { id } = useParams<{ id?: string }>();
@@ -55,9 +55,9 @@ const CreateAcceptQuote = () => {
 	return applicationId ? (
 		<Navigate to={`/accept-quote/${applicationId}/report-recipient`} />
 	) : (
-		<BlockUISpinner>
+		<BlockUiSpinner>
 			<p>Loading...</p>
-		</BlockUISpinner>
+		</BlockUiSpinner>
 	);
 };
 

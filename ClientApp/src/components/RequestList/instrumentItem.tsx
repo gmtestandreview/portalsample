@@ -3,18 +3,21 @@ import { Button, Card, Col, Row, Tab, Table } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 import type { NavigateFunction } from "react-router";
 import { Link, useNavigate } from "react-router";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
 import type {
 	DashboardItemDto,
 	InstrumentArtefactDto,
 	RequestForQuoteDto,
-} from "../../api/web-api-client";
-import { DashboardItemStatus, ReportStatus } from "../../routes/common/enums";
-import { viewArtefactHeadingStatus } from "../../routes/common/quoteStatus";
-import type { DropdownActionItem } from "../Actions";
-import Actions from "../Actions";
-import { useModalDispatch } from "../modals/ModalContext";
-import ContactDetails from "../Utilities/contactDetails";
+} from "../../api/web-api-client.ts";
+import {
+	DashboardItemStatus,
+	ReportStatus,
+} from "../../routes/common/enums.ts";
+import { viewArtefactHeadingStatus } from "../../routes/common/quoteStatus.ts";
+import type { DropdownActionItem } from "../Actions/index.tsx";
+import Actions from "../Actions/index.tsx";
+import { useModalDispatch } from "../modals/ModalContext.tsx";
+import ContactDetails from "../Utilities/contactDetails.tsx";
 
 // TS Move this to a common location
 const formattedDate = (dateToFormat: Date | string | undefined) =>
@@ -144,7 +147,7 @@ const renderInstrumentReportsContent = (
 		<Table
 			id="instReports-table"
 			data-testid="instReports-table"
-			striped
+			striped={true}
 			className="table-sm table-striped table-responsive-stack small mb-4"
 			aria-live="off"
 		>
@@ -215,7 +218,7 @@ const renderInstrumentReportsContent = (
 		</Table>
 		<Row>
 			<Col />
-			<Col md className="text-center">
+			<Col md={true} className="text-center">
 				{artefact.tmasStatus !== ReportStatus.Withdrawn && (
 					<Button
 						variant="secondary"
@@ -227,7 +230,7 @@ const renderInstrumentReportsContent = (
 					</Button>
 				)}
 			</Col>
-			<Col md>
+			<Col md={true}>
 				<Link
 					data-testid="request-for-quote-copy-button"
 					to={`/request-for-quote-copy/${referenceId}`}
@@ -269,12 +272,12 @@ const InstrumentItem = (props: { request: DashboardItemDto }) => {
 
 	const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
 		e.preventDefault();
-		onShowRFQDeleteModalClick();
+		onShowRfqDeleteModalClick();
 	};
 
 	const navigate = useNavigate();
 
-	const onShowRFQDeleteModalClick = () => {
+	const onShowRfqDeleteModalClick = () => {
 		modalDispatch?.setShowRFQDeleteModal(true, referenceId!);
 	};
 
@@ -294,7 +297,7 @@ const InstrumentItem = (props: { request: DashboardItemDto }) => {
 						action: "Delete",
 						text: "Delete request",
 						onClick: () => {
-							onShowRFQDeleteModalClick();
+							onShowRfqDeleteModalClick();
 							trackGAEvent("Delete request");
 						},
 					},

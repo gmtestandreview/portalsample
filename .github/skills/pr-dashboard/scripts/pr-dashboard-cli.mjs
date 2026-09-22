@@ -7,6 +7,7 @@
 //   role:  one of "Authored by me" | "Requested reviews" | "Assigned to me" | "All"
 //          (default: "Authored by me")
 
+import process from "node:process";
 import { execFile, spawn } from "child_process";
 import fs from "fs";
 import os from "os";
@@ -19,7 +20,7 @@ const execFileP = promisify(execFile);
 
 function escapeHtml(s) {
 	return String(s).replace(
-		/[&<>"']/g,
+		/[&<>"']/gu,
 		(c) =>
 			({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
 				c
@@ -95,7 +96,7 @@ async function searchIssues(qstr) {
 async function getPrDetails(item) {
 	try {
 		const prHtml = item.html_url || item.pull_request?.html_url;
-		const m = /github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/.exec(prHtml);
+		const m = /github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/u.exec(prHtml);
 		if (!m) return null;
 		const [, owner, repo, number] = m;
 
@@ -112,7 +113,7 @@ async function getPrDetails(item) {
 			status: "OPEN",
 			review: "—",
 			ci: "—",
-			draft: pr.draft || false,
+			draft: pr.draft,
 			bodyHtml: null,
 			bodyMarkdown: pr.body || "",
 		};
@@ -162,9 +163,9 @@ async function getPrDetails(item) {
 		// Render first paragraph to HTML via GitHub Markdown API
 		try {
 			if (pr.body && String(pr.body).trim()) {
-				let firstPara = String(pr.body).split(/\r?\n\r?\n/)[0] || "";
+				let firstPara = String(pr.body).split(/\r?\n\r?\n/u)[0] || "";
 				firstPara = firstPara
-					.replace(/\s*\*{1,2}\s*([^*]+?)\s*\*{1,2}\s*:\s*$/, "")
+					.replace(/\s*\*{1,2}\s*([^*]+?)\s*\*{1,2}\s*:\s*$/u, "")
 					.trim();
 				if (firstPara) {
 					const { stdout } = await execFileP("gh", [
@@ -181,7 +182,7 @@ async function getPrDetails(item) {
 					]).catch((err) => ({ stdout: err?.stdout || "" }));
 					if (stdout && String(stdout).trim()) out.bodyHtml = stdout;
 					out.bodyMarkdown = firstPara;
-					out.summary = firstPara.replace(/\n+/g, " ").trim();
+					out.summary = firstPara.replace(/\n+/gu, " ").trim();
 				} else {
 					out.bodyHtml = null;
 					out.bodyMarkdown = "";
@@ -254,7 +255,7 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 
 	function escapeHtml(s) {
 		return String(s).replace(
-			/[&<>"']/g,
+			/[&<>"']/gu,
 			(c) =>
 				({
 					"&": "&amp;",
@@ -319,27 +320,27 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 
 	let replaced = template;
 	replaced = replaced.replace(
-		/<tbody id="tb">[\s\S]*?<\/tbody>/,
+		/<tbody id="tb">[\s\S]*?<\/tbody>/u,
 		`<tbody id="tb">\n${rows}\n</tbody>`,
 	);
 	replaced = replaced.replace(
-		/const __md = [\s\S]*?;/,
+		/const __md = [\s\S]*?;/u,
 		`const __md = ${JSON.stringify(md)};`,
 	);
 	replaced = replaced.replace(
-		/<span class="visible-count" id="vc">[^<]*<\/span>/,
-		`<span class="visible-count" id="vc">${prs.length} PR${prs.length !== 1 ? "s" : ""}</span>`,
+		/<span class="visible-count" id="vc">[^<]*<\/span>/u,
+		`<span class="visible-count" id="vc">${prs.length} PR${prs.length === 1 ? "" : "s"}</span>`,
 	);
 
 	try {
 		replaced = replaced.replace(
-			/<title>[^<]*<\/title>/,
+			/<title>[^<]*<\/title>/u,
 			`<title>PR Dashboard — ${escapeHtml(label)}</title>`,
 		);
 	} catch (e) {}
 	try {
 		replaced = replaced.replace(
-			/<h1[^>]*>[^<]*<\/h1>/,
+			/<h1[^>]*>[^<]*<\/h1>/u,
 			`<h1>🔀 PR Dashboard — ${escapeHtml(label)}</h1>`,
 		);
 	} catch (e) {}
@@ -347,7 +348,7 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 	try {
 		const nowStr = new Date().toLocaleString();
 		replaced = replaced.replace(
-			/<div class="meta">[^<]*<\/div>/,
+			/<div class="meta">[^<]*<\/div>/u,
 			`<div class="meta">Generated ${escapeHtml(nowStr)} · ${prs.length} pull requests</div>`,
 		);
 
@@ -376,9 +377,9 @@ async function renderHtml(md, label = "PR Dashboard", prs = []) {
 	} catch (e) {}
 
 	try {
-		const safe = String(label).replace(/[^a-z0-9]/gi, "_");
+		const safe = String(label).replace(/[^a-z0-9]/giu, "_");
 		replaced = replaced.replace(
-			/const filename = '[^']*';/,
+			/const filename = '[^']*';/u,
 			`const filename = 'pr-dashboard-${safe}.md';`,
 		);
 	} catch (e) {}

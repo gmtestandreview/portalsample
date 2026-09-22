@@ -1,12 +1,12 @@
 import type { FormikHelpers, FormikProps, FormikValues } from "formik";
 import { Formik, isEmptyChildren, isFunction } from "formik";
 import React from "react";
-import { removeEmptyKeys } from "../../../utils";
-import BlockUISpinner from "../../BlockUISpinner";
-import FormBanner from "../FormBanner";
-import UnsavedFormPrompt from "../UnsavedFormPrompt";
-import { removeHidden, validateForm } from "../utils";
-import type { FormikFormProps } from "./types";
+import { removeEmptyKeys } from "../../../utils/index.ts";
+import BlockUiSpinner from "../../BlockUISpinner/index.tsx";
+import FormBanner from "../FormBanner/index.tsx";
+import UnsavedFormPrompt from "../UnsavedFormPrompt/index.tsx";
+import { removeHidden, validateForm } from "../utils.ts";
+import type { FormikFormProps } from "./types.ts";
 
 const FormikForm = <Values extends FormikValues>(
 	props: FormikFormProps<Values>,
@@ -117,20 +117,20 @@ const FormikForm = <Values extends FormikValues>(
 			initialStatus={formStatus}
 			onSubmit={handleSubmit}
 			validate={validate}
-			enableReinitialize
+			enableReinitialize={true}
 		>
 			{(formik) => (
 				<>
 					{renderBanner()}
 					{formik.isSubmitting && (
-						<BlockUISpinner>
+						<BlockUiSpinner>
 							<p>Saving...</p>
-						</BlockUISpinner>
+						</BlockUiSpinner>
 					)}
 					{isLoading && (
-						<BlockUISpinner>
+						<BlockUiSpinner>
 							<p>Loading...</p>
-						</BlockUISpinner>
+						</BlockUiSpinner>
 					)}
 					<UnsavedFormPrompt path={promptPath} />
 					{renderChildren(formik)}

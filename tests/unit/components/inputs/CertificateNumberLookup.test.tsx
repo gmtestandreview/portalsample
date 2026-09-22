@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { Form, Formik } from "formik";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import CertificateNumberLookup from "@/components/Inputs/CertificateNumberLookup";
+import CertificateNumberLookup from "@/components/Inputs/CertificateNumberLookup/index.tsx";
 
 const DEBOUNCE_MS = 300;
 

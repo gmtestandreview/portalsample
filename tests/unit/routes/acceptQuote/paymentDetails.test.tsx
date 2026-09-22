@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "@/api/web-api-client";
-import type { AcceptQuotePreInfoDto } from "@/api/web-api-client";
-import PaymentDetails from "@/routes/acceptQuote/paymentDetails";
+import type * as WebApiClientModule from "@/api/web-api-client.ts";
+import type { AcceptQuotePreInfoDto } from "@/api/web-api-client.ts";
+import PaymentDetails from "@/routes/acceptQuote/paymentDetails.tsx";
 
 // ── Hoisted mocks ─────────────────────────────────────────────────────────────
 
@@ -42,12 +42,12 @@ vi.mock("@/instrumentation/AppLogger", () => ({
 // Stub form-input children — they require Formik context which is outside this component's scope
 vi.mock("@/components/Inputs/TextInput", () => ({
 	default: ({ name }: { name: string }) => (
-		<div data-testid={`text-input`} data-name={name} />
+		<div data-testid={"text-input"} data-name={name} />
 	),
 }));
 vi.mock("@/components/Inputs/RadioButtonGroup", () => ({
 	default: ({ name }: { name: string }) => (
-		<div data-testid={`radio-group`} data-name={name} />
+		<div data-testid={"radio-group"} data-name={name} />
 	),
 }));
 vi.mock("@/components/forms/HidableField", () => ({
@@ -93,7 +93,7 @@ describe("PaymentDetails", () => {
 
 		it("does not render the info Alert in summary mode", () => {
 			acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
-			render(<PaymentDetails {...defaultProps} isSummary />);
+			render(<PaymentDetails {...defaultProps} isSummary={true} />);
 			expect(screen.queryByTestId("info-summary")).not.toBeInTheDocument();
 		});
 	});
@@ -105,10 +105,12 @@ describe("PaymentDetails", () => {
 
 			await waitFor(() => {
 				expect(
-					screen.getByText(/30 days of NMI invoice date/),
+					screen.getByText(/30 days of NMI invoice date/u),
 				).toBeInTheDocument();
 			});
-			expect(screen.queryByText(/Prepayment required/)).not.toBeInTheDocument();
+			expect(
+				screen.queryByText(/Prepayment required/u),
+			).not.toBeInTheDocument();
 		});
 
 		it("shows the prepayment required notice when paymentTerms is Prepaid", async () => {
@@ -116,10 +118,10 @@ describe("PaymentDetails", () => {
 			render(<PaymentDetails {...defaultProps} />);
 
 			await waitFor(() => {
-				expect(screen.getByText(/Prepayment required/)).toBeInTheDocument();
+				expect(screen.getByText(/Prepayment required/u)).toBeInTheDocument();
 			});
 			expect(
-				screen.queryByText(/30 days of NMI invoice date/),
+				screen.queryByText(/30 days of NMI invoice date/u),
 			).not.toBeInTheDocument();
 		});
 	});
@@ -136,7 +138,7 @@ describe("PaymentDetails", () => {
 		it("does not show the spinner in summary mode even while loading", () => {
 			acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
 
-			render(<PaymentDetails {...defaultProps} isSummary />);
+			render(<PaymentDetails {...defaultProps} isSummary={true} />);
 
 			expect(screen.queryByTestId("spinner")).not.toBeInTheDocument();
 		});
@@ -162,7 +164,7 @@ describe("PaymentDetails", () => {
 
 		it("prefixes key names with paymentDetails. in summary mode", () => {
 			acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
-			render(<PaymentDetails {...defaultProps} isSummary />);
+			render(<PaymentDetails {...defaultProps} isSummary={true} />);
 
 			expect(screen.getByTestId("text-input")).toHaveAttribute(
 				"data-name",
@@ -177,7 +179,8 @@ describe("PaymentDetails", () => {
 
 	describe("API error handling", () => {
 		it("logs an error and remains rendered when the API call fails", async () => {
-			const AppLogger = (await import("@/instrumentation/AppLogger")).default;
+			const AppLogger = (await import("@/instrumentation/AppLogger.ts"))
+				.default;
 			acquireTokenSilentMock.mockRejectedValue(new Error("Token failed"));
 
 			render(<PaymentDetails {...defaultProps} />);

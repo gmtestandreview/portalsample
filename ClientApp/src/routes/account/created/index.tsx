@@ -1,10 +1,10 @@
 import { Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router";
-import { useAccountState } from "../../../authentication/hooks";
-import FormBanner from "../../../components/forms/FormBanner";
-import HeaderIntroText from "../../../components/HeaderIntroText";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
+import { useAccountState } from "../../../authentication/hooks.tsx";
+import FormBanner from "../../../components/forms/FormBanner/index.tsx";
+import HeaderIntroText from "../../../components/HeaderIntroText/index.tsx";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
 
 const AccountCreated = () => {
 	const account = useAccountState();
@@ -15,7 +15,13 @@ const AccountCreated = () => {
 	return (
 		<>
 			<FormBanner title="Create portal account" showSaveAndExitButton={false} />
-			<Container fluid id="main" role="main" className="px-0" tabIndex={-1}>
+			<Container
+				fluid={true}
+				id="main"
+				role="main"
+				className="px-0"
+				tabIndex={-1}
+			>
 				<Container className="py-5">
 					<Row className="mb-5">
 						<Col sm={12} md={10} lg={8} className="mx-auto">

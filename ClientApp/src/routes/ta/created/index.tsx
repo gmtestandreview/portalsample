@@ -1,13 +1,13 @@
 import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router";
-import type { AccountDetails } from "../../../authentication/accountContext";
-import useAccountContext from "../../../authentication/hooks";
-import FormBanner from "../../../components/forms/FormBanner";
-import { DashboardTab } from "../../../components/SearchFilter/types";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import SessionStorageCache from "../../../storage/sessionStorageCache";
-import { formatBannerTitle } from "../../common/helperFunctions";
+import type { AccountDetails } from "../../../authentication/accountContext.tsx";
+import useAccountContext from "../../../authentication/hooks.tsx";
+import FormBanner from "../../../components/forms/FormBanner/index.tsx";
+import { DashboardTab } from "../../../components/SearchFilter/types.ts";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
+import SessionStorageCache from "../../../storage/sessionStorageCache.ts";
+import { formatBannerTitle } from "../../common/helperFunctions.ts";
 
 const RequestForPatternApprovalCreated = () => {
 	const account = useAccountContext();
@@ -34,9 +34,15 @@ const RequestForPatternApprovalCreated = () => {
 				showSaveAndExitButton={false}
 				refTitle={`Ref ID: ${id}`}
 				subTitle={formatBannerTitle(accountDetails)}
-				showGoToDashboardButton
+				showGoToDashboardButton={true}
 			/>
-			<Container fluid id="main" role="main" className="px-0" tabIndex={-1}>
+			<Container
+				fluid={true}
+				id="main"
+				role="main"
+				className="px-0"
+				tabIndex={-1}
+			>
 				<Container className="py-5">
 					<Row className="mb-5">
 						<Col sm={12} md={10} lg={8} className="mx-auto">

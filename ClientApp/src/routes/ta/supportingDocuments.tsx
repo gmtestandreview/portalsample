@@ -10,21 +10,21 @@ import {
 	type ProblemDetails,
 	RequestForPatternApprovalClient,
 	type SupportingDocumentsStep,
-} from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import useAccountContext, {
 	useAccountDispatch,
-} from "../../authentication/hooks";
-import AttachmentNew from "../../components/Inputs/Attachment/index-new";
-import { setDashboardNotification } from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import { HttpStatusCode } from "../../types";
-import InstrumentInfoPanel from "./instrumentInfoPanel";
+} from "../../authentication/hooks.tsx";
+import AttachmentNew from "../../components/Inputs/Attachment/index-new.tsx";
+import { setDashboardNotification } from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { HttpStatusCode } from "../../types.ts";
+import InstrumentInfoPanel from "./instrumentInfoPanel.tsx";
 import {
 	FileStatus,
 	type TASupportingDocumentsProps,
 	ValidationMessages,
-} from "./types";
+} from "./types.ts";
 
 const handleAlertScroll = () => {
 	setTimeout(() => {
@@ -224,7 +224,7 @@ const SupportingDocuments = (
 	};
 
 	const onCategoryUpdate = async (docId: string, category: string) => {
-		if (!id || !category) return Promise.resolve();
+		if (!(id && category)) return Promise.resolve();
 		const client = new RequestForPatternApprovalClient();
 		const tokenResult = await instance.acquireTokenSilent({
 			...tokenRequest,
@@ -256,7 +256,7 @@ const SupportingDocuments = (
 					name="InstrumentInfo"
 					selectedInstrumentCategoryId={instrumentCategoryId}
 					selectedInstrumentTypeId={instrumentTypeId}
-					isNewCustomer
+					isNewCustomer={true}
 				/>
 			)
 		);
@@ -302,24 +302,24 @@ const SupportingDocuments = (
 					</div>
 				</Alert>
 			)}
-			{!isSummary
-				? // TO DO - This should be a component based on p2 Instrument Category and Type
-					renderInstrumentInfoPanel()
-				: null}
+			{isSummary
+				? null
+				: // TO DO - This should be a component based on p2 Instrument Category and Type
+					renderInstrumentInfoPanel()}
 
 			<Row className="mb-4">
 				<Col>
-					{!suppressDocChanges ? (
-						<p>
-							After your application has been submitted and assigned to a
-							Pattern Approval Engineer, you may be asked to provide additional
-							documents.
-						</p>
-					) : (
+					{suppressDocChanges ? (
 						<p>
 							You can use this section to upload additional documents or view
 							documents provided by NMI. Documents cannot be changed once
 							committed.
+						</p>
+					) : (
+						<p>
+							After your application has been submitted and assigned to a
+							Pattern Approval Engineer, you may be asked to provide additional
+							documents.
 						</p>
 					)}
 				</Col>
@@ -327,7 +327,7 @@ const SupportingDocuments = (
 
 			<Row className="mb-4">
 				<h2 className={isSummary ? "h4 my-3" : "h4 mb-0"}>
-					{!isSummary ? "Upload one or more" : "Uploaded"}
+					{isSummary ? "Uploaded" : "Upload one or more"}
 					{" supporting documents"}
 				</h2>
 			</Row>
@@ -339,7 +339,7 @@ const SupportingDocuments = (
 						ariaLabel="click browse files to choose uploads"
 						allowedTypes={allowedFileTypes}
 						inlineHelp=""
-						allowMultiple
+						allowMultiple={true}
 						className="drag-and-drop-target"
 						isSummary={isSummary}
 						maxFiles={50}

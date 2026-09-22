@@ -9,20 +9,20 @@ import type {
 	GetAccountValuesDto,
 	UserDto,
 	ValidationProblemDetails,
-} from "../../../api/web-api-client";
-import { AccountsClient, UsersClient } from "../../../api/web-api-client";
-import type { AccountContextState } from "../../../authentication/accountContext";
-import { tokenRequest } from "../../../authentication/authConfig";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types";
+} from "../../../api/web-api-client.ts";
+import { AccountsClient, UsersClient } from "../../../api/web-api-client.ts";
+import type { AccountContextState } from "../../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import type { DiscardProps } from "../../../components/forms/FormikForm/types.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../../components/forms/WizardForm/types";
-import { setBranchModalNotification } from "../../../storage/notification";
-import { NotificationSeverity } from "../../../storage/types";
-import { HttpStatusCode } from "../../../types";
-import branchSubmitValidation from "./validation";
+} from "../../../components/forms/WizardForm/types.ts";
+import { setBranchModalNotification } from "../../../storage/notification.ts";
+import { NotificationSeverity } from "../../../storage/types.ts";
+import { HttpStatusCode } from "../../../types.ts";
+import branchSubmitValidation from "./validation.ts";
 
 const loadAccountDetails =
 	(accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -159,8 +159,6 @@ const getRedirectionLocationOnError = (
 	if (errorCode === 412) {
 		return "/";
 	}
-
-	return undefined;
 };
 
 const addBranchProps = (

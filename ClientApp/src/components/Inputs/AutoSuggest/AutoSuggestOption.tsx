@@ -1,5 +1,5 @@
 import { ListBoxItem } from "react-aria-components/ListBox";
-import type { AutoSuggestOptionProps } from "./types";
+import type { AutoSuggestOptionProps } from "./types.ts";
 
 function AutoSuggestOption<T>(props: Readonly<AutoSuggestOptionProps<T>>) {
 	const { id, displayText, selected, ariaLabel } = props;

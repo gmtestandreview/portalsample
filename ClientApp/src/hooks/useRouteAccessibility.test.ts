@@ -2,7 +2,7 @@ import { act, renderHook } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useRouteAccessibility } from "./useRouteAccessibility";
+import { useRouteAccessibility } from "./useRouteAccessibility.ts";
 
 function wrapper({ children }: { children: React.ReactNode }) {
 	return React.createElement(

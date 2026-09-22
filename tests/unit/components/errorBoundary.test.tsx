@@ -2,9 +2,9 @@ import { SeverityLevel } from "@microsoft/applicationinsights-common";
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import ErrorBoundary from "@/components/ErrorBoundary";
-import ErrorDisplay from "@/components/ErrorBoundary/ErrorDisplay";
-import { HttpStatusCode } from "@/types";
+import ErrorDisplay from "@/components/ErrorBoundary/ErrorDisplay.tsx";
+import ErrorBoundary from "@/components/ErrorBoundary/index.tsx";
+import { HttpStatusCode } from "@/types.ts";
 
 const renderErrorDisplay = (status: HttpStatusCode | number) =>
 	render(
@@ -203,7 +203,7 @@ describe("ErrorBoundary", () => {
 		);
 
 		expect(
-			screen.getByRole("heading", { level: 1, name: /Oops - Conflict/i }),
+			screen.getByRole("heading", { level: 1, name: /Oops - Conflict/iu }),
 		).toBeInTheDocument();
 		expect(trackException).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -244,7 +244,7 @@ describe("ErrorBoundary", () => {
 		expect(
 			screen.getByRole("heading", {
 				level: 1,
-				name: /Oops - An unexpected error has occurred/i,
+				name: /Oops - An unexpected error has occurred/iu,
 			}),
 		).toBeInTheDocument();
 	});

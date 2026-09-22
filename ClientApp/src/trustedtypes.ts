@@ -1,4 +1,4 @@
-import DOMPurify from "dompurify";
+import DomPurify from "dompurify";
 
 export class TrustedTypes {
 	static readonly createTrustedTypePolicy = () => {
@@ -8,8 +8,8 @@ export class TrustedTypes {
 		if (trustedTypes) {
 			// Feature testing
 			trustedTypes.createPolicy("default", {
-				createScriptURL: (toEscape) => DOMPurify.sanitize(toEscape),
-				createHTML: (toEscape) => DOMPurify.sanitize(toEscape),
+				createScriptURL: (toEscape) => DomPurify.sanitize(toEscape),
+				createHTML: (toEscape) => DomPurify.sanitize(toEscape),
 				createScript: (): string => {
 					throw new Error(
 						"Inline script creation is not allowed by the NMI TrustedTypes policy.",

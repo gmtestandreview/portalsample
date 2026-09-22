@@ -1,15 +1,15 @@
-import ReactGA from "react-ga4";
+import ReactGa from "react-ga4";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client.ts";
 import {
 	DashboardClient,
 	State,
-} from "../../../../ClientApp/src/api/web-api-client";
-import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import type { AccountDetails } from "../../../../ClientApp/src/authentication/accountContext.tsx";
 import {
 	Environment,
 	QuoteStatus,
-} from "../../../../ClientApp/src/routes/common/enums";
+} from "../../../../ClientApp/src/routes/common/enums.ts";
 import {
 	contentLoaded,
 	downloadFileFromUrl,
@@ -36,13 +36,13 @@ import {
 	sanitiseHtml,
 	sortList,
 	triggerDownload,
-} from "../../../../ClientApp/src/routes/common/helperFunctions";
+} from "../../../../ClientApp/src/routes/common/helperFunctions.ts";
 import {
 	openPdfPageInSecureNewTab,
 	openUrlInSecureNewTab,
-} from "../../../../ClientApp/src/routes/common/openWindow";
-import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification";
-import { NotificationSeverity } from "../../../../ClientApp/src/storage/types";
+} from "../../../../ClientApp/src/routes/common/openWindow.ts";
+import { setDashboardNotification } from "../../../../ClientApp/src/storage/notification.ts";
+import { NotificationSeverity } from "../../../../ClientApp/src/storage/types.ts";
 
 const mocks = vi.hoisted(() => ({
 	setAuthToken: vi.fn(),
@@ -431,24 +431,24 @@ describe("route common helper functions", () => {
 
 		contentLoaded(true);
 
-		expect(ReactGA.send).toHaveBeenNthCalledWith(1, {
+		expect(ReactGa.send).toHaveBeenNthCalledWith(1, {
 			hitType: "event",
 			category: "form_viewed_sanitized",
 			data: { contactName: "[REDACTED]", email: "[REDACTED]" },
 		});
-		expect(ReactGA.send).toHaveBeenNthCalledWith(2, {
+		expect(ReactGa.send).toHaveBeenNthCalledWith(2, {
 			hitType: "event",
 			category: "form_viewed_sanitized",
 			data: { contactName: "[REDACTED]", email: "[REDACTED]" },
 		});
-		expect(ReactGA.send).toHaveBeenCalledWith({
+		expect(ReactGa.send).toHaveBeenCalledWith({
 			hitType: "pageview",
 			page: "/dashboard",
 		});
 
-		vi.mocked(ReactGA.send).mockClear();
+		vi.mocked(ReactGa.send).mockClear();
 		contentLoaded(false);
-		expect(ReactGA.send).not.toHaveBeenCalledWith(
+		expect(ReactGa.send).not.toHaveBeenCalledWith(
 			expect.objectContaining({ hitType: "pageview" }),
 		);
 	});

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { resolveErrorState } from "../../../../../ClientApp/src/components/forms/WizardForm/errorState";
-import { ErrorType } from "../../../../../ClientApp/src/components/forms/WizardForm/types";
-import { AZURE_WAF_SERVER_PREFIX } from "../../../../../ClientApp/src/types/wafError";
+import { resolveErrorState } from "../../../../../ClientApp/src/components/forms/WizardForm/errorState.ts";
+import { ErrorType } from "../../../../../ClientApp/src/components/forms/WizardForm/types.ts";
+import { AZURE_WAF_SERVER_PREFIX } from "../../../../../ClientApp/src/types/wafError.ts";
 
 function makeError(
 	status: number,

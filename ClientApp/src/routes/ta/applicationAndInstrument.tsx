@@ -9,21 +9,21 @@ import {
 	type LookupResponse,
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
-} from "../../api/web-api-client";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import HidableField from "../../components/forms/HidableField";
-import CertificateNumberLookup from "../../components/Inputs/CertificateNumberLookup";
-import CheckboxGroup from "../../components/Inputs/CheckboxGroup";
-import RadioButton from "../../components/Inputs/RadioButton";
-import SelectInput from "../../components/Inputs/SelectInput";
-import type { SelectInputOption } from "../../components/Inputs/SelectInput/types";
-import TextAreaInput from "../../components/Inputs/TextAreaInput";
-import TextInput from "../../components/Inputs/TextInput";
-import SummaryDisplay from "../../components/SummaryDisplay";
-import AppLogger from "../../instrumentation/AppLogger";
-import { sortList } from "../common/helperFunctions";
-import InstrumentInfoPanel from "./instrumentInfoPanel";
-import type { TAApplicationAndInstrumentProps } from "./types";
+} from "../../api/web-api-client.ts";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import CertificateNumberLookup from "../../components/Inputs/CertificateNumberLookup/index.tsx";
+import CheckboxGroup from "../../components/Inputs/CheckboxGroup/index.tsx";
+import RadioButton from "../../components/Inputs/RadioButton/index.tsx";
+import SelectInput from "../../components/Inputs/SelectInput/index.tsx";
+import type { SelectInputOption } from "../../components/Inputs/SelectInput/types.ts";
+import TextAreaInput from "../../components/Inputs/TextAreaInput/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
+import SummaryDisplay from "../../components/SummaryDisplay/index.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { sortList } from "../common/helperFunctions.ts";
+import InstrumentInfoPanel from "./instrumentInfoPanel.tsx";
+import type { TAApplicationAndInstrumentProps } from "./types.ts";
 
 export const applicationTypes = [
 	{
@@ -173,11 +173,11 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 		// Sync selectedApplication with initialKey, but only if initialKey is defined and different
 		if (!initialKey) {
 			setIsDataLoading(true);
-		} else if (initialKey !== selectedApplication) {
-			setIsDataLoading(true);
-			setSelectedApplication(initialKey);
+		} else if (initialKey === selectedApplication) {
 			setIsDataLoading(false);
 		} else {
+			setIsDataLoading(true);
+			setSelectedApplication(initialKey);
 			setIsDataLoading(false);
 		}
 	}, [initialKey, selectedApplication]);
@@ -365,9 +365,9 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 			return (
 				<Container>
 					<Row>
-						<BlockUISpinner partial>
+						<BlockUiSpinner partial={true}>
 							<p>Loading data...</p>
-						</BlockUISpinner>
+						</BlockUiSpinner>
 					</Row>
 				</Container>
 			);
@@ -426,7 +426,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 														legendClassName="visually-hidden"
 														className="checkbox-sm"
 														isSummary={isSummary}
-														supressFieldLevelMessages
+														supressFieldLevelMessages={true}
 														options={newCertificateSubOptions}
 													/>
 												</div>
@@ -450,7 +450,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 														legendClassName="visually-hidden"
 														className="checkbox-sm"
 														isSummary={isSummary}
-														supressFieldLevelMessages
+														supressFieldLevelMessages={true}
 														options={variationSubOptions}
 													/>
 												</div>
@@ -474,7 +474,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 														legendClassName="visually-hidden"
 														className="checkbox-sm"
 														isSummary={isSummary}
-														supressFieldLevelMessages
+														supressFieldLevelMessages={true}
 														options={otherApprovalSubOptions}
 													/>
 												</div>
@@ -545,7 +545,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 							);
 						}}
 						isSummary={isSummary}
-						addBlank
+						addBlank={true}
 					/>
 					<SelectInput<string>
 						name={getName("instrumentType")}
@@ -553,7 +553,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
 						options={instrumentTypesSelected ?? []}
 						isSummary={isSummary}
 						readOnly={isInstrumentTypeDisabled}
-						addBlank
+						addBlank={true}
 					/>
 				</Row>
 				{/*  TO DO - Info panel conditions */}

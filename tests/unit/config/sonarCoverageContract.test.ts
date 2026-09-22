@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import unitConfig from "../../../vitest.unit.config";
+import unitConfig from "../../../vitest.unit.config.ts";
 
 /**
  * Keeps SonarCloud and lcov measuring the same coverage denominator.
@@ -21,14 +21,14 @@ import unitConfig from "../../../vitest.unit.config";
  * the properties file claims it is for.
  */
 
-const repositoryRoot = path.resolve(__dirname, "../../..");
+const repositoryRoot = path.resolve(import.meta.dirname, "../../..");
 
 /**
  * Sonar path matchers are Ant-style and have no brace alternation, so a Vitest
  * pattern such as `*.test.{ts,tsx}` has to be carried across as two entries.
  */
 function expandBraces(pattern: string): string[] {
-	const match = /\{([^}]*)\}/.exec(pattern);
+	const match = /\{([^}]*)\}/u.exec(pattern);
 	if (!match) {
 		return [pattern];
 	}
@@ -50,9 +50,9 @@ function readSonarProperty(name: string): string[] {
 		"utf8",
 	);
 	// Property values continue across lines with a trailing backslash.
-	const unwrapped = source.replace(/\\r?\n\s*/g, "");
+	const unwrapped = source.replace(/\\r?\n\s*/gu, "");
 	const line = unwrapped
-		.split(/\r?\n/)
+		.split(/\r?\n/u)
 		.find((candidate) => candidate.startsWith(`${name}=`));
 
 	if (line === undefined) {

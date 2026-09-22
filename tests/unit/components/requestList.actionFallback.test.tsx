@@ -1,11 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router";
-import type { DashboardItemDto } from "@/api/web-api-client";
-import { ModalDispatchCtx } from "@/components/modals/ModalContext";
-import InstrumentItem from "@/components/RequestList/instrumentItem";
-import RequestItem from "@/components/RequestList/requestItem";
-import { DashboardItemStatus } from "@/routes/common/enums";
+import type { DashboardItemDto } from "@/api/web-api-client.ts";
+import { ModalDispatchCtx } from "@/components/modals/ModalContext.tsx";
+import InstrumentItem from "@/components/RequestList/instrumentItem.tsx";
+import RequestItem from "@/components/RequestList/requestItem.tsx";
+import { DashboardItemStatus } from "@/routes/common/enums.ts";
 
 vi.mock("@/components/Actions", () => ({
 	default: ({

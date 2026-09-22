@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-const repoRoot = path.resolve(__dirname, "..", "..", "..");
+const repoRoot = path.resolve(import.meta.dirname, "..", "..", "..");
 const steps = fs.readFileSync(
 	path.join(repoRoot, "tests", "e2e", "steps", "storybook.steps.ts"),
 	"utf8",
@@ -60,17 +60,17 @@ describe("Storybook Playwright step quality", () => {
 	});
 
 	it("does not convert failed visibility checks into false", () => {
-		expect(steps).not.toMatch(/isVisible\(\)\.catch\(\(\) => false\)/);
+		expect(steps).not.toMatch(/isVisible\(\)\.catch\(\(\) => false\)/u);
 	});
 
 	it("does not branch on locator counts for optional assertions", () => {
-		expect(steps).not.toMatch(/if \(count > 0\)/);
+		expect(steps).not.toMatch(/if \(count > 0\)/u);
 	});
 
 	it("interacts with controls when completing quote wizard steps", () => {
 		const completionSteps = extractSection(
 			quoteSteps,
-			/When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/,
+			/When\('the user completes[\s\S]+?(?=\nWhen\('the user accepts)/u,
 		);
 
 		expect(completionSteps).toBeTruthy();
@@ -82,11 +82,11 @@ describe("Storybook Playwright step quality", () => {
 	it("waits for the RFQ route and form before treating a wizard step as ready", () => {
 		const readinessHelper = extractSection(
 			commonSteps,
-			/const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/,
+			/const waitForRfqStep = async[\s\S]+?(?=\nGiven\()/u,
 		);
 		const numericStepAssertion = extractSection(
 			commonSteps,
-			/Then\('the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/,
+			/Then\('the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/u,
 		);
 
 		expect(readinessHelper).toBeTruthy();
@@ -103,18 +103,18 @@ describe("Storybook Playwright step quality", () => {
 	it("opens an existing RFQ draft through its visible dashboard action", () => {
 		const actionStep = extractSection(
 			rfqLifecycleSteps,
-			/When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/,
+			/When\('the user opens the draft RFQ'[\s\S]+?(?=\nWhen\()/u,
 		);
 
 		expect(actionStep).toBeTruthy();
 		expect(actionStep).toContain("page.goto('/dashboard')");
-		expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/);
-		expect(actionStep).toMatch(/getByRole\('link', \{\s+name: 'Edit request'/);
+		expect(actionStep).toMatch(/getByRole\('button', \{\s+name: 'Actions'/u);
+		expect(actionStep).toMatch(/getByRole\('link', \{\s+name: 'Edit request'/u);
 	});
 
 	it("asserts the accessible measurement report history table", () => {
 		expect(reportSteps).toMatch(
-			/getByRole\('table', \{\s+name: \/Measurement reports history\/i/,
+			/getByRole\('table', \{\s+name: \/Measurement reports history\/i/u,
 		);
 	});
 

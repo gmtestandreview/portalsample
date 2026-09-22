@@ -3,12 +3,12 @@ import {
 	ApplicationType,
 	CRMLookupTypes,
 	FormStepStatus,
-} from "../../../ClientApp/src/api/web-api-client";
+} from "../../../ClientApp/src/api/web-api-client.ts";
 import {
 	createDraftTypeApprovalApplication,
 	type ScenarioState,
 	type TypeApprovalApplicationState,
-} from "./scenario-state";
+} from "./scenario-state.ts";
 
 const json = (route: Route, body: unknown, status = 200) =>
 	route.fulfill({
@@ -23,7 +23,7 @@ const parseJsonBody = (route: Route): Record<string, any> => {
 };
 
 const multipartValue = (body: string, name: string): string | undefined => {
-	const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const escapedName = name.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 	return new RegExp(
 		`name="${escapedName}"[^\\r\\n]*\\r?\\n(?:[^\\r\\n]+\\r?\\n)*\\r?\\n([^\\r\\n]*)`,
 		"i",
@@ -31,7 +31,7 @@ const multipartValue = (body: string, name: string): string | undefined => {
 };
 
 const multipartFileName = (body: string): string | undefined =>
-	/filename="([^"]+)"/i.exec(body)?.[1];
+	/filename="([^"]+)"/iu.exec(body)?.[1];
 
 const getApplication = (
 	state: ScenarioState,
@@ -232,20 +232,20 @@ export async function installTypeApprovalMockApi(
 			return;
 		}
 		if (
-			/^\/api\/progress\/[^/]+\/delete$/.test(pathname) &&
+			/^\/api\/progress\/[^/]+\/delete$/u.test(pathname) &&
 			method === "DELETE"
 		) {
 			await json(route, true);
 			return;
 		}
 		if (
-			/^\/api\/progress\/[^/]+\/files\/[^/]+$/.test(pathname) &&
+			/^\/api\/progress\/[^/]+\/files\/[^/]+$/u.test(pathname) &&
 			method === "DELETE"
 		) {
 			await json(route, { cancelled: true });
 			return;
 		}
-		if (/^\/api\/progress\/[^/]+$/.test(pathname) && method === "GET") {
+		if (/^\/api\/progress\/[^/]+$/u.test(pathname) && method === "GET") {
 			const uploadId = pathname.split("/").at(-1)!;
 			await json(route, {
 				uploadId,
@@ -367,7 +367,7 @@ export async function installTypeApprovalMockApi(
 		}
 
 		const match =
-			/^\/api\/request-for-pattern-approval\/([^/]+)\/([^/]+)$/.exec(pathname);
+			/^\/api\/request-for-pattern-approval\/([^/]+)\/([^/]+)$/u.exec(pathname);
 		if (!match) {
 			await route.fallback();
 			return;

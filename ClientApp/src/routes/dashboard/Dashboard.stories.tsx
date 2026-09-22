@@ -3,17 +3,17 @@ import { HttpResponse, http } from "msw";
 import type { ComponentType } from "react";
 import { useEffect } from "react";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import { DashboardTab } from "../../components/SearchFilter/types";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import { DashboardTab } from "../../components/SearchFilter/types.ts";
 import {
 	clearDashboardNotification,
 	setDashboardNotification,
-} from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import { dashboardItems } from "../../storybook/storybookFixtures";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import { DashboardItemStatus } from "../common/enums";
-import Dashboard from "./index";
+} from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { dashboardItems } from "../../storybook/storybookFixtures.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import { DashboardItemStatus } from "../common/enums.ts";
+import Dashboard from "./index.tsx";
 
 const draftItems = dashboardItems.filter(
 	(item) => item.status === DashboardItemStatus.QuoteDrafted,
@@ -41,14 +41,12 @@ const NotificationDecorator = (Story: ComponentType) => {
 		severity: NotificationSeverity.Success,
 	});
 
-	useEffect(() => {
-		return () => clearDashboardNotification();
-	}, []);
+	useEffect(() => () => clearDashboardNotification(), []);
 
 	return (
 		<>
 			<NotificationMessage
-				canClose
+				canClose={true}
 				message="Quote request saved as draft."
 				severity={NotificationSeverity.Success}
 			/>
@@ -134,7 +132,7 @@ export const EmptyState: Story = {
 			expect(canvas.queryByText("Loading data...")).not.toBeInTheDocument(),
 		);
 		const noRequestsTexts = await canvas.findAllByText(
-			/you currently have no requests/i,
+			/you currently have no requests/iu,
 		);
 		await expect(noRequestsTexts[0]).toBeVisible();
 	},
@@ -164,17 +162,17 @@ export const RequestsTabWithNotification: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const notifications = await canvas.findAllByText(
-			/quote request saved as draft/i,
+			/quote request saved as draft/iu,
 		);
 		await waitFor(() =>
 			expect(
-				canvas.getByRole("heading", { name: /Keysight U1242C/ }),
+				canvas.getByRole("heading", { name: /Keysight U1242C/u }),
 			).toBeVisible(),
 		);
 		await expect(notifications[0]).toBeVisible();
 		// Dismiss button exists (NotificationMessage renders a close × button when dismissible)
 		const dismissButtons = canvas.queryAllByRole("button", {
-			name: /close|dismiss/i,
+			name: /close|dismiss/iu,
 		});
 		await expect(dismissButtons[0]).toBeInTheDocument();
 	},
@@ -194,13 +192,13 @@ export const TabNavigation: Story = {
 		await expect(tabList).toBeVisible();
 		// Three tabs are present
 		const tabs = within(tabList).getAllByRole("tab");
-		await expect(tabs.length).toBeGreaterThanOrEqual(2);
+		expect(tabs.length).toBeGreaterThanOrEqual(2);
 		// Click the second tab and assert it becomes selected
 		await user.click(tabs[1]);
 		await expect(tabs[1]).toHaveAttribute("aria-selected", "true");
 		await waitFor(() =>
 			expect(
-				canvas.getByRole("heading", { name: /Keysight U1242C/ }),
+				canvas.getByRole("heading", { name: /Keysight U1242C/u }),
 			).toBeVisible(),
 		);
 	},

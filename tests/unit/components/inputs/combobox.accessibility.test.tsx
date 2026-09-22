@@ -1,11 +1,11 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Formik } from "formik";
-import AutoSuggest from "@/components/Inputs/AutoSuggest";
-import AutoSuggestContainer from "@/components/Inputs/AutoSuggest/AutoSuggestContainer";
-import type { AutoSuggestContainerProps } from "@/components/Inputs/AutoSuggest/types";
-import OrganisationNameLookup from "@/components/Inputs/OrganisationNameLookup";
-import { installUnexpectedConsoleGuard } from "../../../helpers/unexpectedConsoleGuard";
+import AutoSuggestContainer from "@/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx";
+import AutoSuggest from "@/components/Inputs/AutoSuggest/index.tsx";
+import type { AutoSuggestContainerProps } from "@/components/Inputs/AutoSuggest/types.ts";
+import OrganisationNameLookup from "@/components/Inputs/OrganisationNameLookup/index.tsx";
+import { installUnexpectedConsoleGuard } from "../../../helpers/unexpectedConsoleGuard.ts";
 
 /**
  * Resolves the text React Aria's own label relationship points at.
@@ -124,7 +124,7 @@ describe("Combobox accessibility", () => {
 			"suburb-options-option-suburb-option-sydney",
 		);
 		expect(
-			screen.getByRole("option", { name: /Sydney NSW \(1 of 2\)/ }),
+			screen.getByRole("option", { name: /Sydney NSW \(1 of 2\)/u }),
 		).toHaveClass("highlighted");
 	});
 
@@ -165,7 +165,7 @@ describe("Combobox accessibility", () => {
 			);
 		});
 		expect(
-			screen.getByRole("option", { name: /ACME Calibration/ }),
+			screen.getByRole("option", { name: /ACME Calibration/u }),
 		).toHaveAttribute("aria-selected", "true");
 	});
 
@@ -249,7 +249,7 @@ describe("Combobox accessibility", () => {
 		const combobox = screen.getByRole("combobox", { name: "Suburb" });
 		expect(reactAriaLabelText(combobox)).toBe("Suburb");
 		expect(combobox).toHaveAttribute("aria-invalid", "true");
-		expect(combobox).toHaveAccessibleDescription(/Start typing a suburb/);
-		expect(combobox).toHaveAccessibleDescription(/Suburb is required/);
+		expect(combobox).toHaveAccessibleDescription(/Start typing a suburb/u);
+		expect(combobox).toHaveAccessibleDescription(/Suburb is required/u);
 	});
 });

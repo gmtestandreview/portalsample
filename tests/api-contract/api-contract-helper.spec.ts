@@ -1,8 +1,8 @@
 import { createServer, type Server, type ServerResponse } from "node:http";
 
-import { expect, test } from "@playwright/test";
+import { expect, test as it, test } from "@playwright/test";
 
-import { expectJsonResponseToMatchSchema } from "../e2e/support/api-contract";
+import { expectJsonResponseToMatchSchema } from "../e2e/support/api-contract.ts";
 
 const dashboardResponseSchema = {
 	$schema: "https://json-schema.org/draft/2020-12/schema",
@@ -56,11 +56,11 @@ const writeJson = (serverResponse: ServerResponse, body: unknown) => {
 	serverResponse.end(JSON.stringify(body));
 };
 
-test.describe("API contract helper", () => {
+it.describe("API contract helper", () => {
 	let server: Server;
 	let baseUrl: string;
 
-	test.beforeAll(async () => {
+	it.beforeAll(async () => {
 		server = createServer((request, response) => {
 			if (request.url === "/dashboard") {
 				writeJson(response, validDashboardResponse);
@@ -88,7 +88,7 @@ test.describe("API contract helper", () => {
 		baseUrl = `http://127.0.0.1:${address.port}`;
 	});
 
-	test.afterAll(async () => {
+	it.afterAll(async () => {
 		await new Promise<void>((resolve, reject) => {
 			server.close((error) => {
 				if (error) {
@@ -101,7 +101,7 @@ test.describe("API contract helper", () => {
 		});
 	});
 
-	test("validates JSON responses returned by the Playwright request fixture", async ({
+	it("validates JSON responses returned by the Playwright request fixture", async ({
 		request,
 	}) => {
 		const response = await request.get(`${baseUrl}/dashboard`);
@@ -111,7 +111,7 @@ test.describe("API contract helper", () => {
 		).resolves.toEqual(validDashboardResponse);
 	});
 
-	test("reports response contract mismatches with the failing JSON path", async ({
+	it("reports response contract mismatches with the failing JSON path", async ({
 		request,
 	}) => {
 		const response = await request.get(`${baseUrl}/dashboard-invalid`);

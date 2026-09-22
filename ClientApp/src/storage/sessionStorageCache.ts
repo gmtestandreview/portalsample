@@ -1,4 +1,4 @@
-import type { StorageCache } from "./types";
+import type { StorageCache } from "./types.ts";
 
 const getItemFromSessionStore = <T>(key: string) => {
 	const localStore = globalThis.sessionStorage;
@@ -10,11 +10,8 @@ const getItemFromSessionStore = <T>(key: string) => {
 		} catch {
 			// Malformed JSON — clear the invalid entry and return undefined
 			localStore.removeItem(key);
-			return undefined;
 		}
 	}
-
-	return undefined;
 };
 
 const setItemInSessionStore = <T>(item: T, key: string) => {

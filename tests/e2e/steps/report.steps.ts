@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { Given, Then, When } from "../support/fixtures";
-import { buildMeasurementReport } from "../support/mock-builders";
-import { failureKey } from "../support/mock-failure";
+import { Given, Then, When } from "../support/fixtures.ts";
+import { buildMeasurementReport } from "../support/mock-builders.ts";
+import { failureKey } from "../support/mock-failure.ts";
 
 Given(
 	"instrument {string} has an issued report",
@@ -32,7 +32,7 @@ Then("the instrument report history is displayed", async ({ page }) => {
 	).toBeVisible();
 	await expect(
 		page.getByRole("table", {
-			name: /Measurement reports history/i,
+			name: /Measurement reports history/iu,
 		}),
 	).toBeVisible();
 });
@@ -45,7 +45,7 @@ When(
 );
 
 Then("report {string} is displayed", async ({ page }, reportId: string) => {
-	await expect(page).toHaveURL(/\/report\/RFQ-REPORT-0001$/);
+	await expect(page).toHaveURL(/\/report\/RFQ-REPORT-0001$/u);
 	await expect(page.getByText(reportId, { exact: true })).toBeVisible();
 });
 
@@ -83,7 +83,8 @@ When(
 Then("the report file error notification is displayed", async ({ page }) => {
 	await expect(
 		page.getByRole("alert").filter({
-			hasText: /unexpected error has occurred with downloading the PDF report/i,
+			hasText:
+				/unexpected error has occurred with downloading the PDF report/iu,
 		}),
 	).toBeVisible();
 });

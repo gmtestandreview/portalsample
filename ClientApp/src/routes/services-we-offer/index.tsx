@@ -6,20 +6,20 @@ import {
 	LookupClient,
 	type ServiceDto,
 	ServiceType,
-} from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import useAccountContext, {
 	useAccountDispatch,
-} from "../../authentication/hooks";
-import BlockUISpinner from "../../components/BlockUISpinner";
+} from "../../authentication/hooks.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
 import CustomBreadcrumb, {
 	type CustomBreadcrumbItem,
-} from "../../components/Breadcrumb";
-import PrimaryButton from "../../components/Buttons/PrimaryButton";
-import Details from "../../components/forms/Details";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import AppLogger from "../../instrumentation/AppLogger";
+} from "../../components/Breadcrumb/index.tsx";
+import PrimaryButton from "../../components/Buttons/PrimaryButton/index.tsx";
+import Details from "../../components/forms/Details/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 
 const ServicesWeOffer = () => {
 	const { accounts, instance } = useMsal();
@@ -312,9 +312,9 @@ const ServicesWeOffer = () => {
 			</Row>
 			{isDataLoading ? (
 				<Row>
-					<BlockUISpinner partial>
+					<BlockUiSpinner partial={true}>
 						<p>Loading data...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				</Row>
 			) : (
 				<>
@@ -451,15 +451,17 @@ const ServicesWeOffer = () => {
 	);
 
 	if (
-		!isManageMode &&
-		(!accountDetails ||
-			!accountDetails.userProfile ||
-			!accountDetails.userProfile.services)
+		!(
+			isManageMode ||
+			(accountDetails &&
+				accountDetails.userProfile &&
+				accountDetails.userProfile.services)
+		)
 	) {
 		return (
-			<BlockUISpinner>
+			<BlockUiSpinner>
 				<p>Checking assigned services...</p>
-			</BlockUISpinner>
+			</BlockUiSpinner>
 		);
 	}
 
@@ -475,7 +477,7 @@ const ServicesWeOffer = () => {
                 </BlockUISpinner>
             )} */}
 			<div aria-busy={isLoading} aria-live="off">
-				<Container fluid className="default-banner-background mb-5">
+				<Container fluid={true} className="default-banner-background mb-5">
 					<Container>
 						<Row>
 							<Col hidden={!originalDefaultService}>

@@ -5,17 +5,17 @@ import Row from "react-bootstrap/Row";
 import type {
 	AcceptQuotePreInfoDto,
 	PaymentDetailsStep,
-} from "../../api/web-api-client";
-import { AcceptQuoteClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails";
-import HidableField from "../../components/forms/HidableField";
-import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup";
-import TextInput from "../../components/Inputs/TextInput";
-import AppLogger from "../../instrumentation/AppLogger";
-import { prefixedPropertyOf } from "../../utils";
-import type { PaymentDetailsProps } from "./types";
+} from "../../api/web-api-client.ts";
+import { AcceptQuoteClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import ContactDetailsInput from "../../components/forms/CommonForms/ContactDetails/index.tsx";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import RadioButtonGroup from "../../components/Inputs/RadioButtonGroup/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
+import { prefixedPropertyOf } from "../../utils/index.ts";
+import type { PaymentDetailsProps } from "./types.ts";
 
 const getName = prefixedPropertyOf<PaymentDetailsStep>("paymentDetails");
 
@@ -68,9 +68,9 @@ const PaymentDetails = (props: PaymentDetailsProps) => {
 	return (
 		<>
 			{isLoading && !isSummary && (
-				<BlockUISpinner>
+				<BlockUiSpinner>
 					<p>Loading...</p>
-				</BlockUISpinner>
+				</BlockUiSpinner>
 			)}
 			{isSummary ? null : (
 				<Alert

@@ -2,17 +2,17 @@
 import {
 	type DialogProps,
 	type DialogTriggerProps,
-	Dialog as RACDialog,
-	DialogTrigger as RACDialogTrigger,
+	Dialog as RacDialog,
+	DialogTrigger as RacDialogTrigger,
 } from "react-aria-components/Dialog";
 import "./Dialog.css";
 
 export function Dialog(props: Readonly<DialogProps>) {
-	return <RACDialog {...props} />;
+	return <RacDialog {...props} />;
 }
 
 export function DialogTrigger(props: Readonly<DialogTriggerProps>) {
-	return <RACDialogTrigger {...props} />;
+	return <RacDialogTrigger {...props} />;
 }
 
 export { Heading } from "react-aria-components/Dialog";

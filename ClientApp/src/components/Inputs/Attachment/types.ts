@@ -1,5 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
-import type { AttachmentDto, FileProgress } from "../../../api/web-api-client";
+import type {
+	AttachmentDto,
+	FileProgress,
+} from "../../../api/web-api-client.ts";
 
 export interface UploadProgress {
 	status?: string;

@@ -1,6 +1,6 @@
 import { act, render, screen } from "@testing-library/react";
 import { MemoryRouter, useNavigate } from "react-router";
-import { useRouteAccessibility } from "@/hooks/useRouteAccessibility";
+import { useRouteAccessibility } from "@/hooks/useRouteAccessibility.ts";
 
 function AccessibilityProbe() {
 	const { announcement } = useRouteAccessibility();

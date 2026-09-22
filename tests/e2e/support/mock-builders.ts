@@ -1,7 +1,7 @@
 import {
 	FormStepStatus,
 	YesNo,
-} from "../../../ClientApp/src/api/web-api-client";
+} from "../../../ClientApp/src/api/web-api-client.ts";
 
 export const buildAcceptQuoteStatuses = (crmQuoteRequestId: string) =>
 	[

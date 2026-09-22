@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import SupportingDocuments from "./supportingDocuments";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import SupportingDocuments from "./supportingDocuments.tsx";
 
 /**
  * `SupportingDocuments` is the document-upload step of the type-approval wizard. It
@@ -41,7 +41,7 @@ export const EditStep: Story = {
 		const canvas = within(canvasElement);
 		await expect(
 			canvas.getByRole("heading", {
-				name: /upload one or more supporting documents/i,
+				name: /upload one or more supporting documents/iu,
 			}),
 		).toBeVisible();
 	},

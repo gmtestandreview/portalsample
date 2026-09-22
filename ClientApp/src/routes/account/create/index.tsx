@@ -1,18 +1,18 @@
 import { useMsal } from "@azure/msal-react";
-import type { FormStepStatusDto } from "../../../api/web-api-client";
-import { FormStepStatus } from "../../../api/web-api-client";
-import type { AccountContextState } from "../../../authentication/accountContext";
+import type { FormStepStatusDto } from "../../../api/web-api-client.ts";
+import { FormStepStatus } from "../../../api/web-api-client.ts";
+import type { AccountContextState } from "../../../authentication/accountContext.tsx";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../../authentication/hooks";
-import WizardForm from "../../../components/forms/WizardForm";
-import type { WizardFormProps } from "../../../components/forms/WizardForm/types";
-import WizardStep from "../../../components/forms/WizardForm/WizardStep";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import AccountDetails from "../accountDetails";
-import createAccountProps from "./createAccountProps";
+} from "../../../authentication/hooks.tsx";
+import WizardForm from "../../../components/forms/WizardForm/index.tsx";
+import type { WizardFormProps } from "../../../components/forms/WizardForm/types.ts";
+import WizardStep from "../../../components/forms/WizardForm/WizardStep.tsx";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
+import AccountDetails from "../accountDetails.tsx";
+import createAccountProps from "./createAccountProps.ts";
 
 const createAccountWizardProps: WizardFormProps = {
 	locationOnCompletion: "/success-creating-account",

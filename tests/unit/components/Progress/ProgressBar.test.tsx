@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import ProgressBar from "@/components/Progress/ProgressBar";
+import ProgressBar from "@/components/Progress/ProgressBar.tsx";
 
 describe("ProgressBar", () => {
 	it("renders the status and percent as an accessible progress bar", () => {

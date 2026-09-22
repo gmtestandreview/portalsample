@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import FormBanner from ".";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import FormBanner from "./index.tsx";
 
 const meta = {
 	title: "Components/Forms/FormBanner",
@@ -34,7 +34,7 @@ export const SaveAndExit: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		// The form actions toolbar should render
-		const toolbar = canvas.getByRole("toolbar", { name: /form actions/i });
+		const toolbar = canvas.getByRole("toolbar", { name: /form actions/iu });
 		await expect(toolbar).toBeInTheDocument();
 	},
 };
@@ -54,7 +54,7 @@ export const GoToDashboard: Story = {
 			"form-go-to-dashboard-portal-button",
 		);
 		await expect(dashboardLink).toBeInTheDocument();
-		await expect(dashboardLink).toHaveTextContent(/go to dashboard/i);
+		await expect(dashboardLink).toHaveTextContent(/go to dashboard/iu);
 	},
 };
 
@@ -75,7 +75,7 @@ export const WithDiscard: Story = {
 		const canvas = within(canvasElement);
 		const discardButton = canvas.getByTestId("discard-changes-button");
 		await expect(discardButton).toBeInTheDocument();
-		await expect(discardButton).toHaveTextContent(/discard changes/i);
+		await expect(discardButton).toHaveTextContent(/discard changes/iu);
 	},
 };
 

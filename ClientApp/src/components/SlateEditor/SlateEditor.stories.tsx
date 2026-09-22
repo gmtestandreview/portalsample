@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useState } from "react";
 import { expect, fn, userEvent, within } from "storybook/test";
-import SlateEditor, { type CustomElement } from "./SlateEditor";
+import SlateEditor, { type CustomElement } from "./SlateEditor.tsx";
 
 /**
  * `SlateEditor` is the rich-text message composer used in the type-approval messaging
@@ -57,9 +57,9 @@ export const Default: Story = {
 		await expect(
 			canvas.getByRole("textbox", { name: "Type your message…" }),
 		).toBeVisible();
-		await expect(canvas.getByRole("button", { name: /send/i })).toBeVisible();
+		await expect(canvas.getByRole("button", { name: /send/iu })).toBeVisible();
 		// Formatting controls are present.
-		await expect(canvas.getByRole("button", { name: /bold/i })).toBeVisible();
+		await expect(canvas.getByRole("button", { name: /bold/iu })).toBeVisible();
 		// Typing is what drives Slate's Editable through act; the three assertions above are
 		// static chrome, so without an interaction the editor kept updating after the story
 		// had ended and the warning surfaced against whichever story ran next.
@@ -69,7 +69,7 @@ export const Default: Story = {
 		).toBeVisible();
 		// The counter measures serialised HTML length, not visible characters: the 48
 		// characters above plus the <p></p> wrapper.
-		await expect(canvas.getByText(/55\s*\/\s*500/)).toBeVisible();
+		await expect(canvas.getByText(/55\s*\/\s*500/u)).toBeVisible();
 	},
 };
 
@@ -80,13 +80,13 @@ export const Empty: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		// Live counter starts at zero out of the budget.
-		await expect(canvas.getByText(/0/)).toBeVisible();
-		await expect(canvas.getByText(/500/)).toBeVisible();
+		await expect(canvas.getByText(/0/u)).toBeVisible();
+		await expect(canvas.getByText(/500/u)).toBeVisible();
 		// Do not add a userEvent.click() before this line. user-event defaults to
 		// skipClick: false, so type() already clicks and focuses the target; a
 		// preceding click is a duplicate that settles nothing. See
 		// docs/change-record/2026-08-30-storybook-remediation-audit.md.
 		await userEvent.type(canvas.getByRole("textbox"), "Hi");
-		await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();
+		await expect(canvas.getByText(/9\s*\/\s*500/u)).toBeVisible();
 	},
 };

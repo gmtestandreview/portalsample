@@ -3,7 +3,7 @@ import {
 	expectConsoleMessage,
 	type GuardedConsoleLevel,
 	installUnexpectedConsoleGuard,
-} from "../../helpers/unexpectedConsoleGuard";
+} from "../../helpers/unexpectedConsoleGuard.ts";
 
 /**
  * Contract tests for the Task C1 unexpected-console guard.
@@ -213,7 +213,7 @@ describe("console argument formatting", () => {
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
 			await expectConsoleMessage(
 				"error",
-				/An update to ComboBoxInner/,
+				/An update to ComboBoxInner/u,
 				1,
 				() => {
 					console.error(
@@ -232,7 +232,7 @@ describe("console argument formatting", () => {
 describe("expectConsoleMessage", () => {
 	it("consumes a matching message so teardown passes", async () => {
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /not wrapped in act/, 1, () => {
+			await expectConsoleMessage("warn", /not wrapped in act/u, 1, () => {
 				console.warn("Warning: An update to Foo was not wrapped in act(...).");
 			});
 		});
@@ -243,7 +243,7 @@ describe("expectConsoleMessage", () => {
 
 	it("still re-emits a consumed message", async () => {
 		await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /not wrapped in act/, 1, () => {
+			await expectConsoleMessage("warn", /not wrapped in act/u, 1, () => {
 				console.warn("Warning: not wrapped in act(...).");
 			});
 		});
@@ -253,7 +253,7 @@ describe("expectConsoleMessage", () => {
 
 	it("awaits an asynchronous action before counting", async () => {
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /late/, 1, async () => {
+			await expectConsoleMessage("warn", /late/u, 1, async () => {
 				await Promise.resolve();
 				console.warn("a late warning");
 			});
@@ -265,7 +265,7 @@ describe("expectConsoleMessage", () => {
 
 	it("consumes only the requested level, leaving the other level unexpected", async () => {
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /shared text/, 1, () => {
+			await expectConsoleMessage("warn", /shared text/u, 1, () => {
 				console.error("shared text");
 			});
 		});
@@ -276,7 +276,7 @@ describe("expectConsoleMessage", () => {
 
 	it("consumes only the requested pattern, leaving other messages unexpected", async () => {
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /expected signature/, 1, () => {
+			await expectConsoleMessage("warn", /expected signature/u, 1, () => {
 				console.warn("expected signature");
 				console.warn("a different warning");
 			});
@@ -288,7 +288,7 @@ describe("expectConsoleMessage", () => {
 
 	it("rejects when fewer messages match than the exact count requested", async () => {
 		const { bodyError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /missing signature/, 1, () => {});
+			await expectConsoleMessage("warn", /missing signature/u, 1, () => {});
 		});
 
 		expect(messageOf(bodyError)).toContain("expected 1");
@@ -297,7 +297,7 @@ describe("expectConsoleMessage", () => {
 
 	it("rejects when more messages match than the exact count requested", async () => {
 		const { bodyError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /repeated signature/, 1, () => {
+			await expectConsoleMessage("warn", /repeated signature/u, 1, () => {
 				console.warn("repeated signature");
 				console.warn("repeated signature");
 			});
@@ -309,17 +309,17 @@ describe("expectConsoleMessage", () => {
 
 	it("rejects a nested expectation", async () => {
 		const { bodyError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /outer/, 1, async () => {
-				await expectConsoleMessage("warn", /inner/, 1, () => {});
+			await expectConsoleMessage("warn", /outer/u, 1, async () => {
+				await expectConsoleMessage("warn", /inner/u, 1, () => {});
 			});
 		});
 
-		expect(messageOf(bodyError)).toMatch(/nest/i);
+		expect(messageOf(bodyError)).toMatch(/nest/iu);
 	});
 
 	it("does not consume matching messages emitted after the action window", async () => {
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
-			await expectConsoleMessage("warn", /windowed signature/, 1, () => {
+			await expectConsoleMessage("warn", /windowed signature/u, 1, () => {
 				console.warn("windowed signature");
 			});
 
@@ -334,13 +334,13 @@ describe("expectConsoleMessage", () => {
 		const actionFailure = new Error("action blew up");
 		const { bodyError, teardownError } = await runGuardedTest(async () => {
 			await expect(
-				expectConsoleMessage("warn", /first/, 1, () => {
+				expectConsoleMessage("warn", /first/u, 1, () => {
 					console.warn("first signature");
 					throw actionFailure;
 				}),
 			).rejects.toBe(actionFailure);
 
-			await expectConsoleMessage("warn", /second/, 1, () => {
+			await expectConsoleMessage("warn", /second/u, 1, () => {
 				console.warn("second signature");
 			});
 		});
@@ -358,7 +358,7 @@ describe("expectConsoleMessage", () => {
 		const { teardownError } = await runGuardedTest(() => {
 			void expectConsoleMessage(
 				"warn",
-				/never settles/,
+				/never settles/u,
 				1,
 				() => pending,
 			).catch(() => {});
@@ -369,13 +369,13 @@ describe("expectConsoleMessage", () => {
 		release();
 
 		expect(messageOf(teardownError)).toMatch(
-			/open expectation|still open|leaked/i,
+			/open expectation|still open|leaked/iu,
 		);
 	});
 
 	it("rejects when the guard was never installed for the current test", async () => {
 		await expect(
-			expectConsoleMessage("warn", /orphan/, 1, () => {}),
-		).rejects.toThrow(/installUnexpectedConsoleGuard/);
+			expectConsoleMessage("warn", /orphan/u, 1, () => {}),
+		).rejects.toThrow(/installUnexpectedConsoleGuard/u);
 	});
 });

@@ -6,21 +6,21 @@ import type { FormikHelpers } from "formik";
 import type {
 	FormStepStatusDto,
 	OrganisationAndContact,
-} from "../../api/web-api-client";
-import { RequestForQuoteClient, YesNo } from "../../api/web-api-client";
-import type { AccountDetails } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { RequestForQuoteClient, YesNo } from "../../api/web-api-client.ts";
+import type { AccountDetails } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import type {
 	ErrorType,
 	WizardFormStepValues,
 	WizardStepProps,
-} from "../../components/forms/WizardForm/types";
-import { discardChanges } from "../common/constants";
-import { formatBannerTitle } from "../common/helperFunctions";
+} from "../../components/forms/WizardForm/types.ts";
+import { discardChanges } from "../common/constants.ts";
+import { formatBannerTitle } from "../common/helperFunctions.ts";
 import {
 	organisationAndContactSaveValidation,
 	organisationAndContactSubmitValidation,
-} from "./validation";
+} from "./validation.ts";
 
 const loadOrganisationAndContact =
 	(id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

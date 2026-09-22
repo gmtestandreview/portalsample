@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import SummaryAndSubmit from "./summaryAndSubmit";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import SummaryAndSubmit from "./summaryAndSubmit.tsx";
 
 /**
  * `SummaryAndSubmit` is the final step of the type-approval wizard. It presents the
@@ -46,7 +46,7 @@ export const Editable: Story = {
 		await expect(canvas.getByText("Organisation details")).toBeVisible();
 		await expect(canvas.getByText("Terms and conditions")).toBeVisible();
 		await expect(
-			canvas.getByText(/before you submit your request/i),
+			canvas.getByText(/before you submit your request/iu),
 		).toBeVisible();
 	},
 };
@@ -58,8 +58,6 @@ export const Submitted: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByTestId("back-button")).toBeVisible();
-		await expect(
-			canvas.queryByText(/before you submit your request/i),
-		).toBeNull();
+		expect(canvas.queryByText(/before you submit your request/iu)).toBeNull();
 	},
 };

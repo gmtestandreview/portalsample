@@ -2,14 +2,14 @@ import { HttpResponse, http } from "msw";
 import {
 	CRMLookupTypes,
 	type LookupResponse,
-} from "../ClientApp/src/api/web-api-client";
+} from "../ClientApp/src/api/web-api-client.ts";
 import {
 	artefactTypeResponses,
 	lookupResponses,
 	paCategoryResponses,
 	paInstrumentTypeResponses,
 	serviceResponses,
-} from "../ClientApp/src/storybook/storybookFixtures";
+} from "../ClientApp/src/storybook/storybookFixtures.ts";
 
 export const dashboardPageResponse = {
 	currentPage: 1,

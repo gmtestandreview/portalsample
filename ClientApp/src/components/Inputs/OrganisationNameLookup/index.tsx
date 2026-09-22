@@ -2,9 +2,9 @@ import { useField } from "formik";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Form, ListGroup } from "react-bootstrap";
-import type { GetAccountValuesDto } from "../../../api/web-api-client";
-import TextInput from "../TextInput";
-import { getFilteredSuggestions } from "./suggestionUtils";
+import type { GetAccountValuesDto } from "../../../api/web-api-client.ts";
+import TextInput from "../TextInput/index.tsx";
+import { getFilteredSuggestions } from "./suggestionUtils.ts";
 
 export interface OrganisationNameLookupProps {
 	id?: string;
@@ -248,7 +248,7 @@ const OrganisationNameLookup = (props: OrganisationNameLookupProps) => {
 										role="option"
 										aria-label={`${item} (${index + 1} of ${filteredSuggestions.length})`}
 										aria-selected={index === activeIndex}
-										action
+										action={true}
 										className={`suggestion-option auto-suggestions mt-0 border-0 ${index === activeIndex ? "highlighted" : ""}`}
 										onClick={() => {
 											handleSelect(item, () => setActiveIndex(index));

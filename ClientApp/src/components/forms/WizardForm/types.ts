@@ -4,9 +4,9 @@ import type {
 	FormStepStatusDto,
 	ProblemDetails,
 	ValidationProblemDetails,
-} from "../../../api/web-api-client";
-import type { InitialValue } from "../../../types";
-import type { DiscardProps, ModalProps } from "../FormikForm/types";
+} from "../../../api/web-api-client.ts";
+import type { InitialValue } from "../../../types.ts";
+import type { DiscardProps, ModalProps } from "../FormikForm/types.ts";
 
 export interface WizardFormStepValues<T extends FormikValues> {
 	stepValues: InitialValue<T>;
@@ -37,8 +37,8 @@ export type WizardRoutedStepProps<T extends FormikValues> = WizardStepProps<T> &
 	};
 
 export enum ErrorType {
-	Load,
-	Update,
+	Load = 0,
+	Update = 1,
 }
 
 export type WizardStepError =

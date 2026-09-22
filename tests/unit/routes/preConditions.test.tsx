@@ -3,11 +3,11 @@ import React from "react";
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext";
-import { ModalDispatchCtx } from "../../../ClientApp/src/components/modals/ModalContext";
-import PreConditions from "../../../ClientApp/src/routes/preConditions/PreConditions";
-import { getBranchModalNotification } from "../../../ClientApp/src/storage/notification";
-import { NotificationSeverity } from "../../../ClientApp/src/storage/types";
+import type { AccountDetails } from "../../../ClientApp/src/authentication/accountContext.tsx";
+import { ModalDispatchCtx } from "../../../ClientApp/src/components/modals/ModalContext.tsx";
+import PreConditions from "../../../ClientApp/src/routes/preConditions/PreConditions.tsx";
+import { getBranchModalNotification } from "../../../ClientApp/src/storage/notification.ts";
+import { NotificationSeverity } from "../../../ClientApp/src/storage/types.ts";
 
 // ── Mock factories ─────────────────────────────────────────────────────────────
 
@@ -229,7 +229,7 @@ function renderAtPathWithPlainRoot(initialPath: string) {
 				<Route
 					path="/wizard"
 					element={
-						<PreConditions displayHeaderAndFooter>
+						<PreConditions displayHeaderAndFooter={true}>
 							<div data-testid="child-content">Protected Content</div>
 						</PreConditions>
 					}
@@ -237,7 +237,7 @@ function renderAtPathWithPlainRoot(initialPath: string) {
 				<Route
 					path="/create-account"
 					element={
-						<PreConditions displayHeaderAndFooter>
+						<PreConditions displayHeaderAndFooter={true}>
 							<div data-testid="child-content">Protected Content</div>
 						</PreConditions>
 					}
@@ -245,7 +245,7 @@ function renderAtPathWithPlainRoot(initialPath: string) {
 				<Route
 					path="/create-contact"
 					element={
-						<PreConditions displayHeaderAndFooter>
+						<PreConditions displayHeaderAndFooter={true}>
 							<div data-testid="child-content">Protected Content</div>
 						</PreConditions>
 					}
@@ -644,7 +644,7 @@ describe("PreConditions state machine", () => {
 
 		render(
 			<MemoryRouter initialEntries={["/dashboard"]}>
-				<PreConditions displayHeaderAndFooter>
+				<PreConditions displayHeaderAndFooter={true}>
 					<ModalControls />
 				</PreConditions>
 			</MemoryRouter>,

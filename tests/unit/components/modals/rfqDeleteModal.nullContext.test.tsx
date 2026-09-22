@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import RFQDeleteModal from "@/components/modals/RFQDeleteModal";
+import RfqDeleteModal from "@/components/modals/RFQDeleteModal/index.tsx";
 
 const mocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn().mockResolvedValue({ accessToken: "token" }),
@@ -92,9 +92,9 @@ vi.mock("react-bootstrap", () => {
 
 describe("RFQDeleteModal null context", () => {
 	it("skips deletion and still closes and navigates", async () => {
-		render(<RFQDeleteModal />);
+		render(<RfqDeleteModal />);
 
-		fireEvent.click(screen.getByRole("button", { name: /yes, delete/i }));
+		fireEvent.click(screen.getByRole("button", { name: /yes, delete/iu }));
 
 		await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith("/"));
 		expect(mocks.deleteApplication).not.toHaveBeenCalled();

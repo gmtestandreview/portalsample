@@ -7,15 +7,15 @@ import {
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { Form, Formik } from "formik";
-import AutoSuggestContainer from "@/components/Inputs/AutoSuggest/AutoSuggestContainer";
-import Checkbox from "@/components/Inputs/Checkbox";
-import NumberInput from "@/components/Inputs/NumberInput";
-import OrganisationNameLookup from "@/components/Inputs/OrganisationNameLookup";
-import RadioButtonGroup from "@/components/Inputs/RadioButtonGroup";
-import SelectInput from "@/components/Inputs/SelectInput";
-import TextAreaInput from "@/components/Inputs/TextAreaInput";
-import TextInput from "@/components/Inputs/TextInput";
-import { installUnexpectedConsoleGuard } from "../../../helpers/unexpectedConsoleGuard";
+import AutoSuggestContainer from "@/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx";
+import Checkbox from "@/components/Inputs/Checkbox/index.tsx";
+import NumberInput from "@/components/Inputs/NumberInput/index.tsx";
+import OrganisationNameLookup from "@/components/Inputs/OrganisationNameLookup/index.tsx";
+import RadioButtonGroup from "@/components/Inputs/RadioButtonGroup/index.tsx";
+import SelectInput from "@/components/Inputs/SelectInput/index.tsx";
+import TextAreaInput from "@/components/Inputs/TextAreaInput/index.tsx";
+import TextInput from "@/components/Inputs/TextInput/index.tsx";
+import { installUnexpectedConsoleGuard } from "../../../helpers/unexpectedConsoleGuard.ts";
 
 interface HarnessProps {
 	readonly children: React.ReactNode;
@@ -60,7 +60,7 @@ describe("residual input branches", () => {
 				<SelectInput
 					name="state"
 					label="State"
-					displayHorizontally
+					displayHorizontally={true}
 					inlineHelp="Choose the service state"
 					options={[]}
 				/>
@@ -70,7 +70,7 @@ describe("residual input branches", () => {
 		expect(
 			screen.getByRole("combobox", { name: "State" }),
 		).toHaveAccessibleDescription("Choose the service state");
-		expect(screen.queryByText(/validation/i)).not.toBeInTheDocument();
+		expect(screen.queryByText(/validation/iu)).not.toBeInTheDocument();
 	});
 
 	it("covers SelectInput partial validation states in both layouts", () => {
@@ -93,7 +93,7 @@ describe("residual input branches", () => {
 				<SelectInput
 					name="state"
 					label="State"
-					displayHorizontally
+					displayHorizontally={true}
 					options={[]}
 				/>
 			</Harness>,
@@ -148,7 +148,7 @@ describe("residual input branches", () => {
 	it("renders the false Checkbox summary value", () => {
 		render(
 			<Harness initialValues={{ accepted: false }}>
-				<Checkbox name="accepted" label="Accepted" isSummary />
+				<Checkbox name="accepted" label="Accepted" isSummary={true} />
 			</Harness>,
 		);
 
@@ -161,7 +161,7 @@ describe("residual input branches", () => {
 				<SelectInput
 					name="priority"
 					label="Priority"
-					isSummary
+					isSummary={true}
 					options={[
 						{ displayText: "Zero priority", value: 0 },
 						{ displayText: "High priority", value: 1 },

@@ -2,12 +2,12 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Form, Formik } from "formik";
 import type { ReactNode } from "react";
 import { expect, userEvent, within } from "storybook/test";
-import Checkbox from "../Inputs/Checkbox";
-import DatePicker from "../Inputs/DatePicker";
-import RadioButtonGroup from "../Inputs/RadioButtonGroup";
-import SelectInput from "../Inputs/SelectInput";
-import TextAreaInput from "../Inputs/TextAreaInput";
-import TextInput from "../Inputs/TextInput";
+import Checkbox from "../Inputs/Checkbox/index.tsx";
+import DatePicker from "../Inputs/DatePicker/index.tsx";
+import RadioButtonGroup from "../Inputs/RadioButtonGroup/index.tsx";
+import SelectInput from "../Inputs/SelectInput/index.tsx";
+import TextAreaInput from "../Inputs/TextAreaInput/index.tsx";
+import TextInput from "../Inputs/TextInput/index.tsx";
 
 const stateOptions = [
 	{ value: "NSW", displayText: "New South Wales" },
@@ -73,14 +73,14 @@ export const AllInputsShowcase: Story = {
 				name="state"
 				label="State or territory"
 				options={stateOptions}
-				addBlank
+				addBlank={true}
 				defaultDisplayText="Please select a state"
 			/>
 			<RadioButtonGroup<string>
 				name="yesNo"
 				legend="Has this instrument been calibrated before?"
 				options={yesNoOptions}
-				displayHorizontally
+				displayHorizontally={true}
 			/>
 			<DatePicker
 				name="dateOfBirth"
@@ -136,7 +136,12 @@ export const TextInputWithExpandableHelp: Story = {
 export const TextInputDisabled: Story = {
 	render: () => (
 		<FormikWrapper initialValues={{ email: "user@example.com" }}>
-			<TextInput name="email" label="Email address" disabled type="email" />
+			<TextInput
+				name="email"
+				label="Email address"
+				disabled={true}
+				type="email"
+			/>
 		</FormikWrapper>
 	),
 };
@@ -144,7 +149,7 @@ export const TextInputDisabled: Story = {
 export const TextInputReadOnly: Story = {
 	render: () => (
 		<FormikWrapper initialValues={{ referenceId: "RFQ-2024-001234" }}>
-			<TextInput name="referenceId" label="Reference ID" readonly />
+			<TextInput name="referenceId" label="Reference ID" readonly={true} />
 		</FormikWrapper>
 	),
 };
@@ -156,7 +161,7 @@ export const SelectInputDefault: Story = {
 				name="state"
 				label="State or territory"
 				options={stateOptions}
-				addBlank
+				addBlank={true}
 				defaultDisplayText="Please select a state"
 			/>
 		</FormikWrapper>
@@ -170,7 +175,7 @@ export const SelectInputHorizontal: Story = {
 				name="state"
 				label="State or territory"
 				options={stateOptions}
-				displayHorizontally
+				displayHorizontally={true}
 			/>
 		</FormikWrapper>
 	),
@@ -195,7 +200,7 @@ export const RadioButtonGroupHorizontal: Story = {
 				name="hasInstrument"
 				legend="Are you submitting an instrument for calibration?"
 				options={yesNoOptions}
-				displayHorizontally
+				displayHorizontally={true}
 			/>
 		</FormikWrapper>
 	),

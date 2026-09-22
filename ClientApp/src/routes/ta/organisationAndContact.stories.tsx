@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import OrganisationAndContact from "./organisationAndContact";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import OrganisationAndContact from "./organisationAndContact.tsx";
 
 /**
  * `OrganisationAndContact` is the organisation/contact step of the type-approval wizard.
@@ -41,7 +41,8 @@ type Story = StoryObj<typeof meta>;
 export const EditStep: Story = {
 	play: async ({ canvas }) => {
 		const organisationType = await canvas.findByText("Organisation type");
-		const organisationName = await canvas.findByLabelText(/organisation name/i);
+		const organisationName =
+			await canvas.findByLabelText(/organisation name/iu);
 
 		await expect(organisationType).toBeInTheDocument();
 		await expect(organisationName).toBeInTheDocument();

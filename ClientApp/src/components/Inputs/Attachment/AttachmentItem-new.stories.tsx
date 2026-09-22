@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness";
-import AttachmentItemNew from "./AttachmentItem-new";
+import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
+import AttachmentItemNew from "./AttachmentItem-new.tsx";
 
 /**
  * `AttachmentItemNew` is the migration ("-new") variant of a single uploaded-document
@@ -50,7 +50,9 @@ export const Editable: Story = {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText("calibration-certificate.pdf")).toBeVisible();
 		await expect(canvas.getByLabelText("Category")).toBeInTheDocument();
-		await expect(canvas.getByRole("button", { name: /delete/i })).toBeVisible();
+		await expect(
+			canvas.getByRole("button", { name: /delete/iu }),
+		).toBeVisible();
 	},
 };
 
@@ -63,6 +65,6 @@ export const ReadOnlySummary: Story = {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByText("calibration-certificate.pdf")).toBeVisible();
 		// No delete affordance in the read-only summary presentation.
-		await expect(canvas.queryByRole("button", { name: /delete/i })).toBeNull();
+		expect(canvas.queryByRole("button", { name: /delete/iu })).toBeNull();
 	},
 };

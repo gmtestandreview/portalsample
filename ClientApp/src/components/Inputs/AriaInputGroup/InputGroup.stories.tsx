@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Input } from "react-aria-components/Input";
 import { expect } from "storybook/test";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { InputGroup } from "./InputGroup";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
+import { InputGroup } from "./InputGroup.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

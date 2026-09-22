@@ -10,14 +10,14 @@ import {
 	RequestForPatternApprovalClient,
 	type SupportingDocumentsStep,
 	type UploadProgress,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import BlockUISpinner from "../../../components/BlockUISpinner";
-import useBodyClass from "../../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle";
-import AppLogger from "../../../instrumentation/AppLogger";
-import SupportingDocuments from "../supportingDocuments";
-import { supportingDocsSubmitValidation } from "../validation";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
+import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
+import SupportingDocuments from "../supportingDocuments.tsx";
+import { supportingDocsSubmitValidation } from "../validation.ts";
 
 /**
  * Backoff between failed progress polls. Without it a persistently failing endpoint turns the
@@ -164,9 +164,9 @@ const ApplicationDocuments = () => {
 			if (uploadIdRef.current) {
 				startLongPolling(uploadIdRef.current);
 			}
-			const clientPA = new RequestForPatternApprovalClient();
-			clientPA.setAuthToken(token);
-			const result = await clientPA.addDocuments(
+			const clientPa = new RequestForPatternApprovalClient();
+			clientPa.setAuthToken(token);
+			const result = await clientPa.addDocuments(
 				id,
 				null,
 				uploadId,
@@ -207,14 +207,14 @@ const ApplicationDocuments = () => {
 		<Row className="mb-4" id="application-documents">
 			<Col aria-busy={isDataLoading} aria-live="polite">
 				{isDataLoading ? (
-					<BlockUISpinner>
+					<BlockUiSpinner>
 						<p>Loading...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				) : (
 					<div className="appl-items mb-5">
 						<h2 className="visually-hidden">Documents</h2>
 						<Formik
-							enableReinitialize
+							enableReinitialize={true}
 							initialValues={{
 								form: {
 									documents: filesUploaded?.form?.documents || [],
@@ -268,7 +268,7 @@ const ApplicationDocuments = () => {
 								<>
 									<SupportingDocuments
 										isSummary={false}
-										suppressDocChanges
+										suppressDocChanges={true}
 										name="form.documents"
 										onUploadAttachment={onUploadAttachments}
 										attachment={{
@@ -279,8 +279,7 @@ const ApplicationDocuments = () => {
 										uploading={uploading}
 										handleCancelFile={handleCancelFile}
 										disableUpload={
-											filesUploaded?.form?.applicationStatus === "Completed" ||
-											false
+											filesUploaded?.form?.applicationStatus === "Completed"
 										}
 										externalErrors={submitErrors}
 										setExternalErrors={setSubmitErrors}

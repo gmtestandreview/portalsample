@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect } from "storybook/test";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation";
-import { DropZone, Text } from "./DropZone";
+import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import { DropZone, Text } from "./DropZone.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

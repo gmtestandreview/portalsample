@@ -1,7 +1,7 @@
 import * as yup from "yup";
-import "./yupExtensions";
-import { State } from "../api/web-api-client";
-import { nullableString, requiredNullableString } from "./common";
+import "./yupExtensions/index.ts";
+import { State } from "../api/web-api-client.ts";
+import { nullableString, requiredNullableString } from "./common.ts";
 
 const addressSchema = (label: string) =>
 	yup.object().shape({

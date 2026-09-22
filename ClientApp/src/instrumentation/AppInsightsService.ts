@@ -1,6 +1,6 @@
 import { ReactPlugin } from "@microsoft/applicationinsights-react-js";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
-import { env } from "../env";
+import { env } from "../env.ts";
 
 let reactPlugin: ReactPlugin | null = null;
 let appInsights: ApplicationInsights | null = null;
@@ -31,10 +31,10 @@ const createTelemetryService = () => {
 	};
 	// Explicit opt-out sentinel. Storybook and local dev set this to disable
 	// telemetry deliberately, which is different from forgetting to configure it.
-	const DISABLED_CONN_STRING = "dummy-key";
+	const DisabledConnString = "dummy-key";
 
 	const connString = env.REACT_APP_APPINSIGHTS_CONN_STRING;
-	if (!connString || connString === DISABLED_CONN_STRING) {
+	if (!connString || connString === DisabledConnString) {
 		// Warn only when the string is absent - that may be a misconfiguration
 		// worth a developer's attention. The sentinel is a deliberate choice, so
 		// announcing it once per module instantiation is just noise that buries

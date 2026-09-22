@@ -130,7 +130,7 @@ async function fetchLiveIssues() {
 	const token = process.env.SONAR_TOKEN;
 	const projectKey = process.env.SONAR_PROJECT_KEY;
 
-	if (!host || !token || !projectKey) {
+	if (!(host && token && projectKey)) {
 		throw new Error(
 			"Set SONAR_HOST_URL, SONAR_TOKEN, and SONAR_PROJECT_KEY, or run with --fixture <dir>.",
 		);

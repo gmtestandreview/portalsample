@@ -8,17 +8,17 @@ import type {
 	AddressDetailsDto,
 	MatchedAddress,
 	ProblemDetails,
-} from "../../../api/web-api-client";
-import { AddressClient } from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import AppLogger from "../../../instrumentation/AppLogger";
-import { getFormattedAddress } from "../../../routes/common/helperFunctions";
-import { HttpStatusCode } from "../../../types";
-import SummaryDisplay from "../../SummaryDisplay";
-import AutoSuggest from "../AutoSuggest";
-import type { AutoSuggestOption } from "../AutoSuggest/types";
-import ManualAddressInput from "./ManualAddressInput";
-import type { AddressLookupProps } from "./types";
+} from "../../../api/web-api-client.ts";
+import { AddressClient } from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
+import { getFormattedAddress } from "../../../routes/common/helperFunctions.ts";
+import { HttpStatusCode } from "../../../types.ts";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import AutoSuggest from "../AutoSuggest/index.tsx";
+import type { AutoSuggestOption } from "../AutoSuggest/types.ts";
+import ManualAddressInput from "./ManualAddressInput.tsx";
+import type { AddressLookupProps } from "./types.ts";
 
 const noAddressFoundOption = {
 	displayText: "No matches found",

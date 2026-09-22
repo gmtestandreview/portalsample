@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import type { ComponentType } from "react";
 import { expect, userEvent, within } from "storybook/test";
-import type { DashboardItemDto } from "../../api/web-api-client";
-import { DashboardItemStatus } from "../../routes/common/enums";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import InstrumentItem from "./instrumentItem";
+import type { DashboardItemDto } from "../../api/web-api-client.ts";
+import { DashboardItemStatus } from "../../routes/common/enums.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import InstrumentItem from "./instrumentItem.tsx";
 
 const instrumentFixture: DashboardItemDto = {
 	referenceId: "RFQ-2023-009012",
@@ -109,7 +109,7 @@ export const DetailsTab: Story = {
 		await user.click(detailsTab);
 		// Details tab shows requestForQuote data — manufacturer appears in heading
 		// and manufacturer row; take the first match (card heading)
-		const manufacturers = await canvas.findAllByText(/mettler toledo/i);
+		const manufacturers = await canvas.findAllByText(/mettler toledo/iu);
 		await expect(manufacturers[0]).toBeVisible();
 	},
 };

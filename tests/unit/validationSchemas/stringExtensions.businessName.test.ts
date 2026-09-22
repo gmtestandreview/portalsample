@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import * as Yup from "yup";
 // Side-effect import registers all custom Yup methods including businessName
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
 
 describe("Yup stringExtensions — businessName", () => {
 	const schema = Yup.string().businessName("Business name");

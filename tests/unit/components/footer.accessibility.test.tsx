@@ -1,10 +1,11 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import process from "node:process";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Footer from "@/components/Footer";
-import Privacy from "@/components/Footer/privacy";
-import TermsOfUse from "@/components/Footer/termsOfUse";
+import Footer from "@/components/Footer/index.tsx";
+import Privacy from "@/components/Footer/privacy.tsx";
+import TermsOfUse from "@/components/Footer/termsOfUse.tsx";
 
 vi.mock("@/assets/GovCrest.svg", () => ({
 	default: "gov-crest.svg",

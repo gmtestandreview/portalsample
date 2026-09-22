@@ -1,8 +1,8 @@
 import type { FormikValues } from "formik";
 import { useFormikContext } from "formik";
 import type { PropsWithChildren } from "react";
-import { isHidden } from "../utils";
-import type { HidableFieldProps } from "./types";
+import { isHidden } from "../utils.ts";
+import type { HidableFieldProps } from "./types.ts";
 
 const HidableField = <T extends FormikValues>(
 	props: PropsWithChildren<HidableFieldProps>,

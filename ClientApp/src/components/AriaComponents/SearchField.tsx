@@ -6,8 +6,8 @@ import {
 	Input,
 	type ValidationResult,
 } from "react-aria-components/SearchField";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
-import { Search, X } from "./NmiIcon";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form.tsx";
+import { Search, X } from "./NmiIcon.tsx";
 import "./SearchField.css";
 
 export interface SearchFieldProps extends AriaSearchFieldProps {

@@ -1,12 +1,12 @@
 "use client";
 import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import {
-	ToggleButton as RACToggleButton,
-	type ToggleButtonProps as RACToggleButtonProps,
+	ToggleButton as RacToggleButton,
+	type ToggleButtonProps as RacToggleButtonProps,
 } from "react-aria-components/ToggleButton";
 import "./ToggleButton.css";
 
-interface ToggleButtonProps extends RACToggleButtonProps {
+interface ToggleButtonProps extends RacToggleButtonProps {
 	/**
 	 * The visual style of the button (Vanilla CSS implementation specific).
 	 *
@@ -17,7 +17,7 @@ interface ToggleButtonProps extends RACToggleButtonProps {
 
 export function ToggleButton(props: ToggleButtonProps) {
 	return (
-		<RACToggleButton
+		<RacToggleButton
 			{...props}
 			className="react-aria-ToggleButton button-base"
 			data-variant={props.variant || "primary"}
@@ -25,6 +25,6 @@ export function ToggleButton(props: ToggleButtonProps) {
 			{composeRenderProps(props.children, (children) => (
 				<span>{children}</span>
 			))}
-		</RACToggleButton>
+		</RacToggleButton>
 	);
 }

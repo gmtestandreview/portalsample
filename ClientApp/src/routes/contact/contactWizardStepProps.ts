@@ -6,13 +6,13 @@ import type { FormikHelpers } from "formik";
 import type {
 	ContactFormStep,
 	ValidationProblemDetails,
-} from "../../api/web-api-client";
-import { ContactClient } from "../../api/web-api-client";
-import type { AccountContextState } from "../../authentication/accountContext";
-import { tokenRequest } from "../../authentication/authConfig";
-import { setDashboardNotification } from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import { HttpStatusCode } from "../../types";
+} from "../../api/web-api-client.ts";
+import { ContactClient } from "../../api/web-api-client.ts";
+import type { AccountContextState } from "../../authentication/accountContext.tsx";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import { setDashboardNotification } from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { HttpStatusCode } from "../../types.ts";
 
 const getAccessToken = async (
 	accounts: AccountInfo[],

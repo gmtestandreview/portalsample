@@ -1,10 +1,10 @@
 import Row from "react-bootstrap/Row";
-import HidableField from "../../components/forms/HidableField";
-import AddressLookup from "../../components/Inputs/AddressLookup";
-import Checkbox from "../../components/Inputs/Checkbox";
-import NumberInput from "../../components/Inputs/NumberInput";
-import OrganisationNameLookup from "../../components/Inputs/OrganisationNameLookup";
-import TextInput from "../../components/Inputs/TextInput";
+import HidableField from "../../components/forms/HidableField/index.tsx";
+import AddressLookup from "../../components/Inputs/AddressLookup/index.tsx";
+import Checkbox from "../../components/Inputs/Checkbox/index.tsx";
+import NumberInput from "../../components/Inputs/NumberInput/index.tsx";
+import OrganisationNameLookup from "../../components/Inputs/OrganisationNameLookup/index.tsx";
+import TextInput from "../../components/Inputs/TextInput/index.tsx";
 
 const OrganisationDetails = () => (
 	<>
@@ -13,7 +13,7 @@ const OrganisationDetails = () => (
 			<TextInput
 				label="Entity name"
 				name="name"
-				readonly
+				readonly={true}
 				inlineHelp={
 					<>
 						Entity name is the name registered for your organisation and may be
@@ -26,8 +26,8 @@ const OrganisationDetails = () => (
 				label="ABN"
 				name="abn"
 				format="## ### ### ###"
-				readonly
-				allowLeadingZeros
+				readonly={true}
+				allowLeadingZeros={true}
 			/>
 			<OrganisationNameLookup
 				name="businessOrTradingName"

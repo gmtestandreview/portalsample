@@ -8,7 +8,7 @@ import {
 	parseApiDateOnlyInput,
 	parseDateOnlyInput,
 	parseDateOnlyValue,
-} from "../../../ClientApp/src/utils/dateOnly";
+} from "../../../ClientApp/src/utils/dateOnly.ts";
 
 describe("date-only utilities", () => {
 	it("validates strict date-only strings", () => {

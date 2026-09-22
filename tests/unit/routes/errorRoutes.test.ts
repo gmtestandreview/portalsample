@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import getUnexpectedErrorRoute from "../../../ClientApp/src/routes/common/errorRoutes";
-import { HttpStatusCode } from "../../../ClientApp/src/types";
+import getUnexpectedErrorRoute from "../../../ClientApp/src/routes/common/errorRoutes.ts";
+import { HttpStatusCode } from "../../../ClientApp/src/types.ts";
 
 describe("getUnexpectedErrorRoute", () => {
 	it("maps 403 Forbidden to /forbidden", () => {

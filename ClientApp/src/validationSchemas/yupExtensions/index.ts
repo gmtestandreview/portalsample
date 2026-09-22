@@ -1,3 +1,3 @@
-import { registerYupStringExtensions } from "./stringExtensions";
+import { registerYupStringExtensions } from "./stringExtensions.ts";
 
 registerYupStringExtensions();

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, waitFor, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import InstrumentAndRequest from "./instrumentAndRequest";
-import OrganisationAndContact from "./organisationAndContact";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import InstrumentAndRequest from "./instrumentAndRequest.tsx";
+import OrganisationAndContact from "./organisationAndContact.tsx";
 
 const meta = {
 	title: "Routes/RequestForQuote",

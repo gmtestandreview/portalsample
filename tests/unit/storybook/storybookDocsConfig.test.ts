@@ -1,5 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import process from "node:process";
 import ts from "typescript";
 import { describe, expect, it } from "vitest";
 
@@ -29,19 +30,19 @@ const allDependencies = {
 };
 
 const declaredVersion = (packageName: string) =>
-	allDependencies[packageName]?.replace(/^[~^]/, "");
+	allDependencies[packageName]?.replace(/^[~^]/u, "");
 
 const storyFiles = readdirSync(resolve(repoRoot, "ClientApp/src"), {
 	recursive: true,
 	withFileTypes: true,
 })
 	.filter(
-		(entry) => entry.isFile() && /\.stories\.[cm]?[jt]sx?$/.test(entry.name),
+		(entry) => entry.isFile() && /\.stories\.[cm]?[jt]sx?$/u.test(entry.name),
 	)
 	.map((entry) => resolve(entry.parentPath, entry.name));
 
 const toRepoPath = (absolutePath: string) =>
-	absolutePath.slice(repoRoot.length + 1).replace(/\\/g, "/");
+	absolutePath.slice(repoRoot.length + 1).replace(/\\/gu, "/");
 
 /**
  * Directories that record what the documentation architecture *was* — baselines,
@@ -82,32 +83,32 @@ const standingGuidanceDocuments = [
 const removedArchitecturePatterns: { label: string; pattern: RegExp }[] = [
 	{
 		label: "'docs' tag taught as the Autodocs trigger",
-		pattern: /add(?:ed|ing)?\s+(?:the\s+)?['"`]docs['"`]\s+tag/i,
+		pattern: /add(?:ed|ing)?\s+(?:the\s+)?['"`]docs['"`]\s+tag/iu,
 	},
 	{
 		label: "'docs' listed in a story tags array",
-		pattern: /tags:\s*\[[^\]]*['"]docs['"]/,
+		pattern: /tags:\s*\[[^\]]*['"]docs['"]/u,
 	},
 	{
 		label: "addon-level autodocs option",
-		pattern: /autodocs:\s*['"]tag['"]/,
+		pattern: /autodocs:\s*['"]tag['"]/u,
 	},
 	{
 		label: "removed canvas sourceState",
-		pattern: /sourceState:\s*['"]shown['"]/,
+		pattern: /sourceState:\s*['"]shown['"]/u,
 	},
 	{
 		label: "removed generic global component description",
 		pattern:
-			/Component documentation generated from JSDoc comments and Storybook autodocs/,
+			/Component documentation generated from JSDoc comments and Storybook autodocs/u,
 	},
 	{
 		label: "removed cloned Autodocs template",
-		pattern: /autoDocsTemplate/,
+		pattern: /autoDocsTemplate/u,
 	},
 	{
 		label: "removed Webpack-only styling addon",
-		pattern: /@storybook\/addon-styling-webpack/,
+		pattern: /@storybook\/addon-styling-webpack/u,
 	},
 ];
 
@@ -153,7 +154,7 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("uses React Vite without obsolete or unused Storybook addons", () => {
-		expect(main).toMatch(/framework:\s*["']@storybook\/react-vite["']/);
+		expect(main).toMatch(/framework:\s*["']@storybook\/react-vite["']/u);
 		expect(main).not.toContain("@storybook/addon-styling-webpack");
 		expect(allDependencies).not.toHaveProperty(
 			"@storybook/addon-styling-webpack",
@@ -163,8 +164,8 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("enables agentic review for direct Storybook MCP clients", () => {
-		expect(main).toMatch(/features:\s*\{[\s\S]*experimentalReview:\s*true/);
-		expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
+		expect(main).toMatch(/features:\s*\{[\s\S]*experimentalReview:\s*true/u);
+		expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/u);
 	});
 
 	it("keeps Vite customization limited to Sass compatibility and audited vendor build-noise suppression", () => {
@@ -178,16 +179,16 @@ describe("Storybook documentation architecture", () => {
 		// The chunk-size ceiling may be raised, but only to the one audited value:
 		// clear of Storybook's own framework bundles, still close enough that a
 		// runaway first-party story chunk keeps warning.
-		expect(main).toMatch(/chunkSizeWarningLimit:\s*1024\b/);
-		expect(main.match(/chunkSizeWarningLimit/g)).toHaveLength(1);
+		expect(main).toMatch(/chunkSizeWarningLimit:\s*1024\b/u);
+		expect(main.match(/chunkSizeWarningLimit/gu)).toHaveLength(1);
 
 		// The Rollup/Rolldown log filter is the extracted `onLog` from
 		// ./rollupOnLog — its behaviour (vendor noise dropped, everything else
 		// forwarded) is verified in rollupOnLog.test.ts, not textually here. main.ts
 		// must only wire it in, not re-inline a filter.
-		expect(main).toMatch(/import \{ onLog \} from ['"]\.\/rollupOnLog['"]/);
-		expect(main).toMatch(/rollupOptions:\s*\{\s*onLog\s*\}/);
-		expect(main).not.toMatch(/onLog\s*\(/); // no inline filter body
+		expect(main).toMatch(/import \{ onLog \} from ['"]\.\/rollupOnLog['"]/u);
+		expect(main).toMatch(/rollupOptions:\s*\{\s*onLog\s*\}/u);
+		expect(main).not.toMatch(/onLog\s*\(/u); // no inline filter body
 
 		// Still no hand-rolled code splitting or unaudited bundler-option surface.
 		expect(main).not.toContain("rolldownOptions");
@@ -197,10 +198,10 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("uses non-overlapping canonical story and MDX globs", () => {
-		expect(main).toMatch(/["']\.\.\/\.storybook\/\*\.mdx["']/);
-		expect(main).toMatch(/["']\.\.\/ClientApp\/src\/\*\*\/\*\.mdx["']/);
+		expect(main).toMatch(/["']\.\.\/\.storybook\/\*\.mdx["']/u);
+		expect(main).toMatch(/["']\.\.\/ClientApp\/src\/\*\*\/\*\.mdx["']/u);
 		expect(main).toMatch(
-			/["']\.\.\/ClientApp\/src\/\*\*\/\*\.stories\.@\(js\|jsx\|mjs\|ts\|tsx\)["']/,
+			/["']\.\.\/ClientApp\/src\/\*\*\/\*\.stories\.@\(js\|jsx\|mjs\|ts\|tsx\)["']/u,
 		);
 
 		expect(main).not.toContain("'../ClientApp/src/**/*.stories.@(ts|tsx)'");
@@ -209,41 +210,41 @@ describe("Storybook documentation architecture", () => {
 
 	it("owns generated docs naming and docs mode in main.ts", () => {
 		expect(main).toMatch(
-			/docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
+			/docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/u,
 		);
-		expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/);
-		expect(main.match(/defaultName:/g)).toHaveLength(1);
-		expect(main.match(/docsMode:/g)).toHaveLength(1);
-		expect(main).not.toMatch(/autodocs:\s*['"]tag['"]/);
-		expect(main).not.toMatch(/docsMode:\s*true/);
+		expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/u);
+		expect(main.match(/defaultName:/gu)).toHaveLength(1);
+		expect(main.match(/docsMode:/gu)).toHaveLength(1);
+		expect(main).not.toMatch(/autodocs:\s*['"]tag['"]/u);
+		expect(main).not.toMatch(/docsMode:\s*true/u);
 	});
 
 	it("does not use Webpack-only TypeScript checking in React Vite", () => {
-		expect(main).not.toMatch(/typescript:\s*\{[\s\S]{0,200}check:\s*true/);
+		expect(main).not.toMatch(/typescript:\s*\{[\s\S]{0,200}check:\s*true/u);
 	});
 
 	it("configures GFM support for MDX tables", () => {
 		expect(allDependencies).toHaveProperty("remark-gfm");
-		expect(main).toMatch(/import\s+remarkGfm\s+from\s+['"]remark-gfm['"]/);
-		expect(main).toMatch(/remarkPlugins:\s*\[\s*remarkGfm\s*\]/);
+		expect(main).toMatch(/import\s+remarkGfm\s+from\s+['"]remark-gfm['"]/u);
+		expect(main).toMatch(/remarkPlugins:\s*\[\s*remarkGfm\s*\]/u);
 	});
 
 	it("enables Autodocs once at project level", () => {
-		expect(preview).toMatch(/tags:\s*\[\s*['"]autodocs['"]\s*\]/);
+		expect(preview).toMatch(/tags:\s*\[\s*['"]autodocs['"]\s*\]/u);
 		expect(preview).not.toContain("expectedAddonDocsConfig");
-		expect(preview).not.toMatch(/docs:\s*\{[\s\S]{0,120}autodocs:/);
+		expect(preview).not.toMatch(/docs:\s*\{[\s\S]{0,120}autodocs:/u);
 	});
 
 	it("does not repeat inherited Autodocs or obsolete docs tags in stories", () => {
 		const invalidStoryTags = storyFiles.flatMap((path) => {
 			const matches = readFileSync(path, "utf8").matchAll(
-				/tags:\s*\[([^\]]*)\]/g,
+				/tags:\s*\[([^\]]*)\]/gu,
 			);
 
 			return [...matches]
 				.filter((match) => {
 					const tags = match[1] ?? "";
-					return /['"]autodocs['"]/.test(tags) || /['"]docs['"]/.test(tags);
+					return /['"]autodocs['"]/u.test(tags) || /['"]docs['"]/u.test(tags);
 				})
 				.map(() => path.replace(`${repoRoot}\\`, ""));
 		});
@@ -252,26 +253,26 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("enables Code Panel and shares automatic source configuration", () => {
-		expect(preview).toMatch(/codePanel:\s*true/);
-		expect(preview).toMatch(/excludeDecorators:\s*true/);
-		expect(preview).toMatch(/type:\s*['"]auto['"]/);
-		expect(preview).not.toMatch(/sourceState:\s*['"]shown['"]/);
+		expect(preview).toMatch(/codePanel:\s*true/u);
+		expect(preview).toMatch(/excludeDecorators:\s*true/u);
+		expect(preview).toMatch(/type:\s*['"]auto['"]/u);
+		expect(preview).not.toMatch(/sourceState:\s*['"]shown['"]/u);
 		expect(preview).not.toContain("hideNoControlsWarning");
 	});
 
 	it("uses the current MSW preview addon without legacy parameters", () => {
-		expect(main).not.toMatch(/['"]msw-storybook-addon['"]/);
+		expect(main).not.toMatch(/['"]msw-storybook-addon['"]/u);
 		expect(preview).toMatch(
-			/import\s+addonMsw\s+from\s+['"]msw-storybook-addon['"]/,
+			/import\s+addonMsw\s+from\s+['"]msw-storybook-addon['"]/u,
 		);
-		expect(preview).toMatch(/definePreview\s*\(/);
+		expect(preview).toMatch(/definePreview\s*\(/u);
 		expect(preview).not.toContain("mswLoader");
 		expect(tsconfigJson.compilerOptions?.types).toContain(
 			"msw-storybook-addon/types",
 		);
 
 		const legacyMswParameters = storyFiles.filter((path) =>
-			/parameters:\s*\{[\s\S]{0,800}?\bmsw\s*:/.test(
+			/parameters:\s*\{[\s\S]{0,800}?\bmsw\s*:/u.test(
 				readFileSync(path, "utf8"),
 			),
 		);
@@ -281,9 +282,9 @@ describe("Storybook documentation architecture", () => {
 
 	it("composes the Docs preview annotations required by definePreview", () => {
 		expect(preview).toMatch(
-			/import\s+addonDocs\s+from\s+['"]@storybook\/addon-docs['"]/,
+			/import\s+addonDocs\s+from\s+['"]@storybook\/addon-docs['"]/u,
 		);
-		expect(preview).toMatch(/addons:\s*\[[\s\S]*addonDocs\(\)/);
+		expect(preview).toMatch(/addons:\s*\[[\s\S]*addonDocs\(\)/u);
 	});
 
 	it("keeps preview mocks in the canonical portal harness", () => {
@@ -307,9 +308,9 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("teaches the correct Autodocs tag and opt-out mechanism", () => {
-		expect(componentDocsGuide).not.toMatch(/Adding the ['"]docs['"] Tag/i);
+		expect(componentDocsGuide).not.toMatch(/Adding the ['"]docs['"] Tag/iu);
 		expect(componentDocsGuide).not.toMatch(
-			/add(?:ing)? the ['"]docs['"] tag.*autodocs/i,
+			/add(?:ing)? the ['"]docs['"] tag.*autodocs/iu,
 		);
 
 		expect(componentDocsGuide).toContain("autodocs");
@@ -329,12 +330,12 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("documents the Storybook metadata responsibilities", () => {
-		expect(componentDocsGuide).toMatch(/\bArgs\b/);
-		expect(componentDocsGuide).toMatch(/\bArgTypes\b/);
-		expect(componentDocsGuide).toMatch(/\bParameters\b/);
-		expect(componentDocsGuide).toMatch(/\bCode Panel\b/);
-		expect(componentDocsGuide).toMatch(/\bDoc Blocks\b/);
-		expect(componentDocsGuide).toMatch(/\bMDX\b/);
+		expect(componentDocsGuide).toMatch(/\bArgs\b/u);
+		expect(componentDocsGuide).toMatch(/\bArgTypes\b/u);
+		expect(componentDocsGuide).toMatch(/\bParameters\b/u);
+		expect(componentDocsGuide).toMatch(/\bCode Panel\b/u);
+		expect(componentDocsGuide).toMatch(/\bDoc Blocks\b/u);
+		expect(componentDocsGuide).toMatch(/\bMDX\b/u);
 	});
 
 	it("documents configuration ownership, current MSW setup, and exact gates", () => {
@@ -358,13 +359,13 @@ describe("Storybook documentation architecture", () => {
 	});
 
 	it("keeps status guidance independent of transient test totals", () => {
-		expect(introduction).not.toMatch(/\b\d+\s+passed\b/i);
+		expect(introduction).not.toMatch(/\b\d+\s+passed\b/iu);
 		expect(introduction).toContain("npm run test:storybook");
 	});
 
 	it("keeps documented NMI brand colours aligned with SCSS tokens", () => {
 		for (const token of ["nmi-primary", "nmi-header-primary"]) {
-			const scssValue = new RegExp(`\\$${token}:\\s*(#[0-9a-f]{6})`, "i").exec(
+			const scssValue = new RegExp(`\\$${token}:\\s*(#[0-9a-f]{6})`, "iu").exec(
 				scssVariables,
 			)?.[1];
 			const documentedValue = new RegExp(

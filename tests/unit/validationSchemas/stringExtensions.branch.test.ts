@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import * as Yup from "yup";
-import "../../../ClientApp/src/validationSchemas/yupExtensions";
-import "../../../ClientApp/src/validationSchemas/yupExtensions/index";
-import { registerYupStringExtensions } from "../../../ClientApp/src/validationSchemas/yupExtensions/stringExtensions";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import "../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import { registerYupStringExtensions } from "../../../ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts";
 
 const valid = (schema: Yup.StringSchema, value: unknown) =>
 	schema.isValidSync(value);
@@ -78,7 +78,7 @@ describe("Yup string extension branch coverage", () => {
 	it("casts numbers before applying string extension tests", () => {
 		expect(valid(Yup.string().fixedDigits(2), 12)).toBe(true);
 		expect(valid(Yup.string().postcode(), 2600)).toBe(true);
-		expect(valid(Yup.string().phone(), 412345678)).toBe(false);
+		expect(valid(Yup.string().phone(), 412_345_678)).toBe(false);
 		expect(valid(Yup.string().email(), 12)).toBe(false);
 	});
 

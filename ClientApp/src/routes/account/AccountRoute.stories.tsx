@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, userEvent, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import AccountDetails from "./accountDetails";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import AccountDetails from "./accountDetails.tsx";
 
 const meta = {
 	title: "Routes/Account/CreateAccountStep",
@@ -56,7 +56,7 @@ export const OrganisationDetails: Story = {
 		// is what left OrganisationNameLookup updating outside act - twice, once per instance
 		// on this route.
 		await expect(
-			await canvas.findByRole("option", { name: /Precision Testing/ }),
+			await canvas.findByRole("option", { name: /Precision Testing/u }),
 		).toBeVisible();
 		// A listbox may only own `option` and `group` children. The "Did you mean?" heading
 		// row sits inside the list, so it has to stay out of the accessibility tree; if it
@@ -66,9 +66,7 @@ export const OrganisationDetails: Story = {
 		const suggestions = canvas.getByRole("listbox", {
 			name: "Suggested options",
 		});
-		await expect(within(suggestions).queryAllByRole("listitem")).toHaveLength(
-			0,
-		);
+		expect(within(suggestions).queryAllByRole("listitem")).toHaveLength(0);
 	},
 };
 

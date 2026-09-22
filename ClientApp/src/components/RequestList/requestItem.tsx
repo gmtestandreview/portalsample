@@ -4,24 +4,24 @@ import { Button, Card, Col, Row, Tab } from "react-bootstrap";
 import Nav from "react-bootstrap/Nav";
 import type { NavigateFunction } from "react-router";
 import { Link, useNavigate } from "react-router";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
 import type {
 	DashboardItemDto,
 	DashboardQuoteDto,
 	ReportDto,
 	RequestForQuoteDto,
-} from "../../api/web-api-client";
-import { DashboardItemStatus } from "../../routes/common/enums";
+} from "../../api/web-api-client.ts";
+import { DashboardItemStatus } from "../../routes/common/enums.ts";
 import {
 	validQuoteIdStatus,
 	viewArtefactHeadingStatus,
 	viewQuotationAcceptMenu,
-} from "../../routes/common/quoteStatus";
-import type { DropdownActionItem } from "../Actions";
-import Actions from "../Actions";
-import { useModalDispatch } from "../modals/ModalContext";
-import StatusPill from "../Pill/StatusPill";
-import ContactDetails from "../Utilities/contactDetails";
+} from "../../routes/common/quoteStatus.ts";
+import type { DropdownActionItem } from "../Actions/index.tsx";
+import Actions from "../Actions/index.tsx";
+import { useModalDispatch } from "../modals/ModalContext.tsx";
+import StatusPill from "../Pill/StatusPill.tsx";
+import ContactDetails from "../Utilities/contactDetails.tsx";
 
 const formattedDate = (dateToFormat: Date | string | undefined) =>
 	dateToFormat
@@ -229,7 +229,7 @@ const renderQuotationContent = (
 				</Col>
 			</Row>
 			<Row>
-				<Col md className="text-center">
+				<Col md={true} className="text-center">
 					<Button
 						variant="secondary"
 						data-testid={
@@ -339,7 +339,7 @@ const renderReportDtoContent = (
 		{status === DashboardItemStatus.ReportIssued && (
 			<Row>
 				<Col />
-				<Col md className="text-center">
+				<Col md={true} className="text-center">
 					<Button
 						variant="secondary"
 						data-testid={`RefId-${reportDto.reportId}-view-ReportDto-button`}
@@ -352,7 +352,7 @@ const renderReportDtoContent = (
 						View report
 					</Button>
 				</Col>
-				<Col md>
+				<Col md={true}>
 					<Link
 						data-testid="request-for-quote-copy-button"
 						to={`/request-for-quote-copy/${referenceId}`}
@@ -366,8 +366,8 @@ const renderReportDtoContent = (
 		{status === DashboardItemStatus.ReportWithdrawn && (
 			<Row>
 				<Col />
-				<Col md />
-				<Col md>
+				<Col md={true} />
+				<Col md={true}>
 					<Link
 						data-testid="request-for-quote-copy-button"
 						to={`/request-for-quote-copy/${referenceId}`}
@@ -408,12 +408,12 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
 
 	const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
 		e.preventDefault();
-		onShowRFQDeleteModalClick();
+		onShowRfqDeleteModalClick();
 	};
 
 	const navigate = useNavigate();
 
-	const onShowRFQDeleteModalClick = () => {
+	const onShowRfqDeleteModalClick = () => {
 		modalDispatch?.setShowRFQDeleteModal(true, referenceId!);
 	};
 
@@ -433,7 +433,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
 					action: "Delete",
 					text: "Delete request",
 					onClick: () => {
-						onShowRFQDeleteModalClick();
+						onShowRfqDeleteModalClick();
 						trackGAEvent("Deleterequest");
 					},
 				});

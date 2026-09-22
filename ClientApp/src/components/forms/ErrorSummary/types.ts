@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type {
 	ProblemDetails,
 	ValidationProblemDetails,
-} from "../../../api/web-api-client";
+} from "../../../api/web-api-client.ts";
 
 export interface FormikErrorsSummaryProps {
 	disableLinkedError?: boolean;

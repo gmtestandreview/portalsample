@@ -2,8 +2,8 @@ import type { FormikValues } from "formik";
 import type { FC } from "react";
 import React from "react";
 import { Navigate, Route, Routes, useResolvedPath } from "react-router";
-import type { WizardFormProps, WizardStepProps } from "./types";
-import WizardRoutedStep from "./WizardRoutedStep";
+import type { WizardFormProps, WizardStepProps } from "./types.ts";
+import WizardRoutedStep from "./WizardRoutedStep.tsx";
 
 const WizardForm: FC<WizardFormProps> = (props: WizardFormProps) => {
 	const {
@@ -106,7 +106,7 @@ const WizardForm: FC<WizardFormProps> = (props: WizardFormProps) => {
 				element={
 					<Navigate
 						to={`${url}${reactChildren.at(-1)?.props.location}`}
-						replace
+						replace={true}
 					/>
 				}
 			/>

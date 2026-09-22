@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-const repoRoot = path.resolve(__dirname, "..", "..", "..");
+const repoRoot = path.resolve(import.meta.dirname, "..", "..", "..");
 const sourceRoot = path.join(repoRoot, "ClientApp", "src");
 const coverageMatrixPath = path.join(
 	sourceRoot,

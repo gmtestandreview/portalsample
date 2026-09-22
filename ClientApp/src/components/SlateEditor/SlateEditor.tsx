@@ -1,9 +1,9 @@
-import DOMPurify from "dompurify";
+import DomPurify from "dompurify";
 import parse from "html-react-parser";
 import React, { useMemo } from "react";
 import { type BaseEditor, createEditor, type Descendant, Editor } from "slate";
 import { Editable, Slate, withReact } from "slate-react";
-import PrimaryButton from "../Buttons/PrimaryButton";
+import PrimaryButton from "../Buttons/PrimaryButton/index.tsx";
 
 // slate helpers
 export const serializeToHtml = (value: CustomElement[]): string =>
@@ -74,7 +74,7 @@ const toggleMark = (editor: Editor, format: keyof CustomText) => {
 };
 
 const renderHtmlBody = (html: string) => {
-	const safeHtml = DOMPurify.sanitize(html);
+	const safeHtml = DomPurify.sanitize(html);
 	return parse(safeHtml);
 };
 
@@ -120,7 +120,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
 
 		// Treat editor scaffolding as empty
 		const htmlWithoutEmptyBlocks = serializedHtml
-			.replace(/<p>(?:(?:&nbsp;|&#xfeff;|<br\s*\/?>)|\s)*<\/p>/gi, "")
+			.replace(/<p>(?:(?:&nbsp;|&#xfeff;|<br\s*\/?>)|\s)*<\/p>/giu, "")
 			.trim();
 
 		if (!htmlWithoutEmptyBlocks) return 0;
@@ -209,7 +209,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({
 						placeholder={placeholder || "Message NMI"}
 						className="form-control mb-0 border border-bottom-0"
 						style={{ minHeight: "4rem" }}
-						spellCheck
+						spellCheck={true}
 						renderLeaf={({ attributes, children, leaf }) => {
 							let rendered = children;
 							if ((leaf as CustomText).bold) {

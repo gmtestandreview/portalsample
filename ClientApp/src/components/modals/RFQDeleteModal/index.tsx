@@ -1,18 +1,18 @@
 import { useMsal } from "@azure/msal-react";
 import { Button, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router";
-import { trackGAEvent } from "../../../analytics/GoogleAnalytics";
+import { trackGAEvent } from "../../../analytics/GoogleAnalytics.tsx";
 import {
 	ApplicationClient,
 	ApplicationType,
-} from "../../../api/web-api-client";
-import { tokenRequest } from "../../../authentication/authConfig";
-import AppLogger from "../../../instrumentation/AppLogger";
-import { setDashboardNotification } from "../../../storage/notification";
-import { NotificationSeverity } from "../../../storage/types";
-import ButtonGroup from "../../Buttons/ButtonGroup";
-import PrimaryButton from "../../Buttons/PrimaryButton";
-import { useModalDispatch, useModalState } from "../ModalContext";
+} from "../../../api/web-api-client.ts";
+import { tokenRequest } from "../../../authentication/authConfig.ts";
+import AppLogger from "../../../instrumentation/AppLogger.ts";
+import { setDashboardNotification } from "../../../storage/notification.ts";
+import { NotificationSeverity } from "../../../storage/types.ts";
+import ButtonGroup from "../../Buttons/ButtonGroup/index.tsx";
+import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
+import { useModalDispatch, useModalState } from "../ModalContext.tsx";
 
 interface SaveButtonProps {
 	onClick: () => void;
@@ -31,12 +31,12 @@ const SaveButton = (props: SaveButtonProps): JSX.Element => {
 	);
 };
 
-interface RFQDeleteButtonsProps {
+interface RfqDeleteButtonsProps {
 	left: any;
 	right: any;
 }
 
-const RFQDeleteButtons = (props: RFQDeleteButtonsProps) => {
+const RfqDeleteButtons = (props: RfqDeleteButtonsProps) => {
 	const { left, right } = props;
 	return <ButtonGroup left={left} right={right} />;
 };
@@ -51,7 +51,7 @@ const RFQDeleteModal = () => {
 		modalDispatch?.setShowRFQDeleteModal(false, "");
 	};
 
-	const onContinueRFQDeleteModal = async () => {
+	const onContinueRfqDeleteModal = async () => {
 		try {
 			const client = new ApplicationClient();
 			const tokenResult = await instance.acquireTokenSilent({
@@ -84,7 +84,7 @@ const RFQDeleteModal = () => {
 	const saveButton = () => (
 		<SaveButton
 			onClick={() => {
-				onContinueRFQDeleteModal();
+				onContinueRfqDeleteModal();
 				trackGAEvent("Save RFQ Delete Modal");
 			}}
 		/>
@@ -119,7 +119,7 @@ const RFQDeleteModal = () => {
 			data-testid="prompt-rfqdelete-modal"
 			onHide={handleClose}
 		>
-			<Modal.Header closeButton>
+			<Modal.Header closeButton={true}>
 				<Modal.Title id="modal-delete-rfq" as="h3">
 					{"Confirm deletion"}
 				</Modal.Title>
@@ -132,7 +132,7 @@ const RFQDeleteModal = () => {
 				</p>
 			</Modal.Body>
 			<Modal.Footer className="d-inline">
-				<RFQDeleteButtons
+				<RfqDeleteButtons
 					left={() => closeButton()}
 					right={() => saveButton()}
 				/>

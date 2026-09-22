@@ -9,15 +9,15 @@ import {
 	type ValidationResult,
 } from "react-aria-components/ComboBox";
 import { Group } from "react-aria-components/Group";
-import { DropdownItem, DropdownListBox } from "../AriaComponents/ListBox";
-import { ChevronDown } from "../AriaComponents/NmiIcon";
-import { Popover } from "../AriaComponents/Popover";
+import { DropdownItem, DropdownListBox } from "../AriaComponents/ListBox.tsx";
+import { ChevronDown } from "../AriaComponents/NmiIcon.tsx";
+import { Popover } from "../AriaComponents/Popover.tsx";
 import {
 	Description,
 	FieldButton,
 	FieldError,
 	Label,
-} from "../forms/AriaForm/Form";
+} from "../forms/AriaForm/Form.tsx";
 import "./ComboBox.css";
 
 export interface ComboBoxProps<T, M extends "single" | "multiple">
@@ -60,7 +60,7 @@ export function ComboBox<T, M extends "single" | "multiple" = "single">({
 			)}
 			{description && <Description>{description}</Description>}
 			<FieldError>{errorMessage}</FieldError>
-			<Popover hideArrow className="combobox-popover">
+			<Popover hideArrow={true} className="combobox-popover">
 				<ComboBoxListBox>{children}</ComboBoxListBox>
 			</Popover>
 		</AriaComboBox>

@@ -2,7 +2,7 @@ import { render, waitFor } from "@testing-library/react";
 import { Form, Formik } from "formik";
 import type * as ReactRouterModule from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import SummaryAndAccept from "../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept";
+import SummaryAndAccept from "../../../../ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx";
 
 const mocks = vi.hoisted(() => {
 	const acquireTokenSilent = vi

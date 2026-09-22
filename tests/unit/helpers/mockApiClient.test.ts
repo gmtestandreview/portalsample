@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../ClientApp/src/api/web-api-client.ts";
 
 import {
 	createClientMock,
 	createClientMockFor,
 	resetClientMock,
 	webApiClientModuleMock,
-} from "./mockApiClient";
+} from "./mockApiClient.ts";
 
 describe("generated API client harness", () => {
 	it("returns one instance however many times the client is constructed", () => {

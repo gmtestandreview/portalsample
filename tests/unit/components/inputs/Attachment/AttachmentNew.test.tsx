@@ -3,8 +3,8 @@ import userEvent from "@testing-library/user-event";
 import type { FormikConfig, FormikValues } from "formik";
 import { Form, Formik } from "formik";
 import { describe, expect, it, vi } from "vitest";
-import type { AttachmentDto } from "@/api/web-api-client";
-import AttachmentNew from "@/components/Inputs/Attachment/index-new";
+import type { AttachmentDto } from "@/api/web-api-client.ts";
+import AttachmentNew from "@/components/Inputs/Attachment/index-new.tsx";
 
 /**
  * Direct tests for the attachment control.

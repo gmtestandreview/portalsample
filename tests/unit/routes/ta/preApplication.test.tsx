@@ -6,15 +6,15 @@ import {
 	msalInstance,
 	resetMsalMock,
 	testAccount,
-} from "../../helpers/mockMsal";
-import { renderWithRouter } from "../../helpers/renderWithRouter";
+} from "../../helpers/mockMsal.ts";
+import { renderWithRouter } from "../../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	downloadFileFromUrl: vi.fn(),
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -30,7 +30,7 @@ vi.mock(
 
 const renderPage = async () => {
 	const PreApplication = (
-		await import("../../../../ClientApp/src/routes/ta/preApplication")
+		await import("../../../../ClientApp/src/routes/ta/preApplication.tsx")
 	).default;
 
 	return renderWithRouter(<PreApplication />, {
@@ -69,12 +69,12 @@ describe("pattern approval pre-application", () => {
 	it("links out to the certification procedures", async () => {
 		await renderPage();
 
-		expect(screen.getByRole("link", { name: /NMI P 106/ })).toHaveAttribute(
+		expect(screen.getByRole("link", { name: /NMI P 106/u })).toHaveAttribute(
 			"href",
 			"https://www.industry.gov.au/sites/default/files/2026-03/nmi-p-106.pdf",
 		);
 		expect(
-			screen.getByRole("link", { name: /Pattern approval checklist/ }),
+			screen.getByRole("link", { name: /Pattern approval checklist/u }),
 		).toHaveAttribute(
 			"href",
 			expect.stringContaining("pattern-approval-requirements"),
@@ -87,7 +87,7 @@ describe("pattern approval pre-application", () => {
 
 		await user.click(
 			screen.getByRole("link", {
-				name: /Download credit check application form/,
+				name: /Download credit check application form/u,
 			}),
 		);
 
@@ -107,7 +107,7 @@ describe("pattern approval pre-application", () => {
 
 		await user.click(
 			screen.getByRole("link", {
-				name: /Download credit check application form/,
+				name: /Download credit check application form/u,
 			}),
 		);
 

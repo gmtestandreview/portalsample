@@ -7,9 +7,9 @@ import {
 } from "react-aria-components/Autocomplete";
 import { Dialog } from "react-aria-components/Dialog";
 import type { MenuProps as AriaMenuProps } from "react-aria-components/Menu";
-import { Menu } from "../AriaComponents/Menu";
-import { Modal } from "../AriaComponents/Modal";
-import { SearchField } from "../AriaComponents/SearchField";
+import { Menu } from "../AriaComponents/Menu.tsx";
+import { Modal } from "../AriaComponents/Modal.tsx";
+import { SearchField } from "../AriaComponents/SearchField.tsx";
 import "./CommandPalette.css";
 
 export interface CommandPaletteProps<T>
@@ -24,9 +24,9 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
 	const { contains } = useFilter({ sensitivity: "base" });
 
 	useEffect(() => {
-		const isMacUA = /mac(os|intosh)/i.test(navigator.userAgent);
+		const isMacUa = /mac(os|intosh)/iu.test(navigator.userAgent);
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === "j" && (isMacUA ? e.metaKey : e.ctrlKey)) {
+			if (e.key === "j" && (isMacUa ? e.metaKey : e.ctrlKey)) {
 				e.preventDefault();
 				onOpenChange(true);
 			} else if (e.key === "Escape") {
@@ -40,11 +40,11 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
 	}, [onOpenChange]);
 
 	return (
-		<Modal isDismissable isOpen={isOpen} onOpenChange={onOpenChange}>
+		<Modal isDismissable={true} isOpen={isOpen} onOpenChange={onOpenChange}>
 			<Dialog className="command-palette-dialog">
 				<AriaAutocomplete filter={contains} {...props}>
 					<SearchField
-						autoFocus
+						autoFocus={true}
 						aria-label="Search commands"
 						placeholder="Search commands"
 					/>

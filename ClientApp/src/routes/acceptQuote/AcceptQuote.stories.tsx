@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { HttpResponse, http } from "msw";
 import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import DeliveryAndReturn from "./deliveryAndReturn";
-import PaymentDetails from "./paymentDetails";
-import QuotationSummary from "./quotationSummary";
-import ReportRecipient from "./reportRecipient";
-import SummaryAndAccept from "./summaryAndAccept";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import DeliveryAndReturn from "./deliveryAndReturn.tsx";
+import PaymentDetails from "./paymentDetails.tsx";
+import QuotationSummary from "./quotationSummary.tsx";
+import ReportRecipient from "./reportRecipient.tsx";
+import SummaryAndAccept from "./summaryAndAccept.tsx";
 
 const reportRecipientHandler = http.get(
 	"/api/accept-quote/:id/report-recipient",
@@ -118,26 +118,27 @@ export const ReportRecipientStep: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByRole("heading", { name: /report recipient organisation/i }),
+			canvas.getByRole("heading", { name: /report recipient organisation/iu }),
 		).toBeVisible();
 		await expect(
-			canvas.getByLabelText(/organisation name for report/i),
+			canvas.getByLabelText(/organisation name for report/iu),
 		).toBeVisible();
 		await expect(
-			canvas.getByText(/organisation address for report/i),
+			canvas.getByText(/organisation address for report/iu),
 		).toBeVisible();
 		// The spinner here overlays the form rather than replacing it, so the headings above
 		// are present before the fetch resolves. The address descriptors are not: they are
 		// rendered from the loaded rfqOrganisation, so awaiting them is the settled-state
 		// contract for all three setters in the effect. Both the street and postal options
 		// carry it, because this fixture sets postalAddressSameAsStreetAddress.
-		const addressDescriptors = await canvas.findAllByText(/100 Example Street/);
-		await expect(addressDescriptors).toHaveLength(2);
+		const addressDescriptors =
+			await canvas.findAllByText(/100 Example Street/u);
+		expect(addressDescriptors).toHaveLength(2);
 	},
 };
 
 export const ReportRecipientSummaryOtherAddress: Story = {
-	render: () => <ReportRecipient id="123" isSummary />,
+	render: () => <ReportRecipient id="123" isSummary={true} />,
 	beforeEach({ msw }) {
 		msw.use(reportRecipientOtherAddressHandler);
 	},
@@ -162,16 +163,16 @@ export const ReportRecipientSummaryOtherAddress: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await expect(
-			canvas.getByText(/report recipient organisation/i),
+			canvas.getByText(/report recipient organisation/iu),
 		).toBeVisible();
 		await expect(
-			canvas.getByText(/organisation name for report/i),
+			canvas.getByText(/organisation name for report/iu),
 		).toBeVisible();
 		// Both assertions above are static summary chrome and pass before the fetch resolves.
 		// The "Other" address is the settled-state contract: its value comes from Formik and
 		// is available immediately, but it is only rendered once reportRecipientStep has
 		// loaded and reports reportAddressType 'Other'.
-		await expect(await canvas.findByText(/200 Custom Street/)).toBeVisible();
+		await expect(await canvas.findByText(/200 Custom Street/u)).toBeVisible();
 	},
 };
 
@@ -201,7 +202,7 @@ export const PaymentDetailsStep: Story = {
 		// reports paymentTerms 'Prepaid'. Its negative counterpart is not usable as a
 		// settlement anchor, because `paymentTerms !== 'Prepaid'` is already true while the
 		// value is undefined.
-		await expect(await canvas.findByText(/Prepayment required/)).toBeVisible();
+		await expect(await canvas.findByText(/Prepayment required/u)).toBeVisible();
 	},
 };
 
@@ -242,7 +243,7 @@ export const PaymentDetailsPostpaid: Story = {
 		// This story's handler returns paymentTerms 'Invoice', whose paragraph also renders
 		// pre-settlement, so the quotation id in the PO inline help is the anchor instead:
 		// it appears only when acceptQuotePreInfo has arrived.
-		await expect(await canvas.findByText(/Q-2024-000456/)).toBeVisible();
+		await expect(await canvas.findByText(/Q-2024-000456/u)).toBeVisible();
 	},
 };
 
@@ -300,7 +301,7 @@ export const DeliveryAndReturnStep: Story = {
 		// DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
 		// so this text is the settled-state contract for the four setters in the effect.
 		await expect(
-			await canvas.findByText(/loading dock at the rear of the building/),
+			await canvas.findByText(/loading dock at the rear of the building/u),
 		).toBeVisible();
 	},
 };
@@ -401,7 +402,7 @@ export const SummaryAndAcceptStep: Story = {
 	},
 	play: async ({ canvas }) => {
 		const heading = await canvas.findByText(
-			/Before you accept and submit our offer/i,
+			/Before you accept and submit our offer/iu,
 		);
 		await expect(heading).toBeVisible();
 		// The heading is static chrome and appears before the fetches resolve. The embedded

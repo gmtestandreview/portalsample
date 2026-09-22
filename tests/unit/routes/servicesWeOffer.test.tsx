@@ -1,13 +1,16 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as WebApiClient from "../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClient from "../../../ClientApp/src/api/web-api-client.ts";
 import type {
 	ServiceDto,
 	ServicesOffered,
-} from "../../../ClientApp/src/api/web-api-client";
-import { ServiceType } from "../../../ClientApp/src/api/web-api-client";
-import type { ClientMethodMocks, ClientMock } from "../helpers/mockApiClient";
+} from "../../../ClientApp/src/api/web-api-client.ts";
+import { ServiceType } from "../../../ClientApp/src/api/web-api-client.ts";
+import type {
+	ClientMethodMocks,
+	ClientMock,
+} from "../helpers/mockApiClient.ts";
 import {
 	DEFAULT_ACCESS_TOKEN,
 	msalMocks,
@@ -16,8 +19,8 @@ import {
 	resetMsalMock,
 	signOut,
 	testAccount,
-} from "../helpers/mockMsal";
-import { renderWithRouter } from "../helpers/renderWithRouter";
+} from "../helpers/mockMsal.ts";
+import { renderWithRouter } from "../helpers/renderWithRouter.tsx";
 
 const mocks = vi.hoisted(() => ({
 	accountContext: vi.fn(),
@@ -32,14 +35,14 @@ const clients = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
 
 vi.mock("../../../ClientApp/src/api/web-api-client", async (importOriginal) => {
 	const { createClientMockFor, webApiClientModuleMock } = await import(
-		"../helpers/mockApiClient"
+		"../helpers/mockApiClient.ts"
 	);
 	const original = await importOriginal<typeof WebApiClient>();
 
@@ -87,7 +90,7 @@ const accountWith = (services?: ServicesOffered[]) => ({
 
 const renderRoute = async (path = "/services-we-offer") => {
 	const ServicesWeOffer = (
-		await import("../../../ClientApp/src/routes/services-we-offer")
+		await import("../../../ClientApp/src/routes/services-we-offer/index.tsx")
 	).default;
 
 	const result = renderWithRouter(<ServicesWeOffer />, {

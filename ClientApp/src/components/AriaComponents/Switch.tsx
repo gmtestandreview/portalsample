@@ -7,7 +7,7 @@ import {
 } from "react-aria-components/Switch";
 import "./Switch.css";
 import type { ReactNode } from "react";
-import { Description, FieldError } from "../forms/AriaForm/Form";
+import { Description, FieldError } from "../forms/AriaForm/Form.tsx";
 
 export interface SwitchProps extends Omit<SwitchFieldProps, "children"> {
 	children: ReactNode;

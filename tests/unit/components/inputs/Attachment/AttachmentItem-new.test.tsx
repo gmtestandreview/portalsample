@@ -3,8 +3,8 @@ import userEvent from "@testing-library/user-event";
 import type { FormikConfig, FormikValues } from "formik";
 import { Form, Formik, useFormikContext } from "formik";
 import { describe, expect, it, vi } from "vitest";
-import type { AttachmentDto } from "@/api/web-api-client";
-import AttachmentItemNew from "@/components/Inputs/Attachment/AttachmentItem-new";
+import type { AttachmentDto } from "@/api/web-api-client.ts";
+import AttachmentItemNew from "@/components/Inputs/Attachment/AttachmentItem-new.tsx";
 
 interface FormikHarnessProps<TValues extends FormikValues> {
 	readonly children: React.ReactNode;
@@ -63,7 +63,7 @@ const renderItem = (
 			<AttachmentItemNew
 				name="attachments"
 				index={0}
-				canRemove
+				canRemove={true}
 				cancelButtonId="cancel-button-doc-1"
 				isSummary={false}
 				id="doc-1"
@@ -80,7 +80,7 @@ describe("AttachmentItemNew", () => {
 
 		const fileLink = screen.getByRole("link", { name: "manual.pdf" });
 		expect(fileLink).toHaveAttribute("download", "manual.pdf");
-		expect(fileLink.getAttribute("href")).toMatch(/^blob:/);
+		expect(fileLink.getAttribute("href")).toMatch(/^blob:/u);
 		expect(screen.getByText("2 kb")).toBeInTheDocument();
 		expect(screen.getByRole("combobox", { name: "Category" })).toHaveClass(
 			"is-invalid",

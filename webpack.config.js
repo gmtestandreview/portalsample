@@ -1,3 +1,5 @@
+import process from "node:process";
+
 const path = require("node:path");
 const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -55,7 +57,7 @@ module.exports = function webpackConfig(env, argv) {
 		entry: "./ClientApp/src/index.tsx",
 
 		output: {
-			path: path.resolve(__dirname, "dist"),
+			path: path.resolve(import.meta.dirname, "dist"),
 			filename: isProd ? "js/[name].[contenthash:8].js" : "js/bundle.js",
 			publicPath: "/",
 			clean: true,
@@ -79,7 +81,7 @@ module.exports = function webpackConfig(env, argv) {
 		module: {
 			rules: [
 				{
-					test: /\.tsx?$/,
+					test: /\.tsx?$/u,
 					use: [
 						{
 							loader: "ts-loader",
@@ -90,15 +92,15 @@ module.exports = function webpackConfig(env, argv) {
 						},
 					],
 					exclude: [
-						/node_modules/,
-						/ClientApp\/src\/parent/,
-						/ClientApp\/src\/external/,
-						/ClientApp\/webpack/,
-						/ClientApp\/source-map-http-downloads/,
+						/node_modules/u,
+						/ClientApp\/src\/parent/u,
+						/ClientApp\/src\/external/u,
+						/ClientApp\/webpack/u,
+						/ClientApp\/source-map-http-downloads/u,
 					],
 				},
 				{
-					test: /\.scss$/,
+					test: /\.scss$/u,
 					use: [
 						isProd ? MiniCssExtractPlugin.loader : "style-loader",
 						"css-loader",
@@ -109,7 +111,9 @@ module.exports = function webpackConfig(env, argv) {
 								api: "modern",
 								// Resolve ~ imports (e.g. @import '~bootstrap/scss/bootstrap')
 								sassOptions: {
-									includePaths: [path.resolve(__dirname, "node_modules")],
+									includePaths: [
+										path.resolve(import.meta.dirname, "node_modules"),
+									],
 									...sassCompatibilityOptions,
 								},
 							},
@@ -117,21 +121,21 @@ module.exports = function webpackConfig(env, argv) {
 					],
 				},
 				{
-					test: /\.css$/,
+					test: /\.css$/u,
 					use: [
 						isProd ? MiniCssExtractPlugin.loader : "style-loader",
 						"css-loader",
 					],
 				},
 				{
-					test: /\.(woff2?|eot|ttf|otf)$/i,
+					test: /\.(woff2?|eot|ttf|otf)$/iu,
 					type: "asset/resource",
 					generator: {
 						filename: "fonts/[name][ext]",
 					},
 				},
 				{
-					test: /\.svg$/i,
+					test: /\.svg$/iu,
 					type: "asset/resource",
 					generator: {
 						filename: "images/[name][ext]",
@@ -149,11 +153,17 @@ module.exports = function webpackConfig(env, argv) {
 			new CopyPlugin({
 				patterns: [
 					{
-						from: path.resolve(__dirname, "ClientApp/public/favicon.ico"),
+						from: path.resolve(
+							import.meta.dirname,
+							"ClientApp/public/favicon.ico",
+						),
 						to: "favicon.ico",
 					},
 					{
-						from: path.resolve(__dirname, "ClientApp/public/NMI-tile.png"),
+						from: path.resolve(
+							import.meta.dirname,
+							"ClientApp/public/NMI-tile.png",
+						),
 						to: "NMI-tile.png",
 					},
 				],
@@ -161,7 +171,7 @@ module.exports = function webpackConfig(env, argv) {
 
 			new ForkTsCheckerWebpackPlugin({
 				typescript: {
-					configFile: path.resolve(__dirname, "tsconfig.json"),
+					configFile: path.resolve(import.meta.dirname, "tsconfig.json"),
 				},
 			}),
 
@@ -181,7 +191,7 @@ module.exports = function webpackConfig(env, argv) {
 			// Required for React Router v6 client-side routing — all 404s serve index.html
 			historyApiFallback: true,
 			static: {
-				directory: path.resolve(__dirname, "ClientApp/public"),
+				directory: path.resolve(import.meta.dirname, "ClientApp/public"),
 			},
 		},
 
@@ -195,7 +205,7 @@ module.exports = function webpackConfig(env, argv) {
 						chunks: "all",
 						cacheGroups: {
 							vendor: {
-								test: /[\\/]node_modules[\\/]/,
+								test: /[\\/]node_modules[\\/]/u,
 								name: "vendors",
 								chunks: "all",
 							},

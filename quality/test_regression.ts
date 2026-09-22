@@ -1,10 +1,10 @@
 import { readFileSync } from "node:fs";
 import { render } from "@testing-library/react";
 import { createElement } from "react";
-import { afterEach, expect, test, vi } from "vitest";
-import getUnexpectedErrorRoute from "../ClientApp/src/routes/common/errorRoutes";
-import SessionStorageCache from "../ClientApp/src/storage/sessionStorageCache";
-import { HttpStatusCode } from "../ClientApp/src/types";
+import { afterEach, expect, test as it, test, vi } from "vitest";
+import getUnexpectedErrorRoute from "../ClientApp/src/routes/common/errorRoutes.ts";
+import SessionStorageCache from "../ClientApp/src/storage/sessionStorageCache.ts";
+import { HttpStatusCode } from "../ClientApp/src/types.ts";
 
 afterEach(() => {
 	vi.resetModules();
@@ -14,13 +14,13 @@ afterEach(() => {
 	document.body.innerHTML = "";
 });
 
-test("BUG-001: Gone status resolves to the router-owned error page", () => {
+it("BUG-001: Gone status resolves to the router-owned error page", () => {
 	expect(getUnexpectedErrorRoute(HttpStatusCode.Gone)).toBe(
 		"/no-longer-available",
 	);
 });
 
-test("BUG-002: malformed session storage values fail soft instead of throwing", () => {
+it("BUG-002: malformed session storage values fail soft instead of throwing", () => {
 	window.sessionStorage.setItem("accepted-quote-id", "not-json");
 
 	let value: string | undefined;
@@ -33,7 +33,7 @@ test("BUG-002: malformed session storage values fail soft instead of throwing", 
 	expect(window.sessionStorage.getItem("accepted-quote-id")).toBeNull();
 });
 
-test("BUG-003: missing App Insights config disables telemetry instead of loading dummy-key", async () => {
+it("BUG-003: missing App Insights config disables telemetry instead of loading dummy-key", async () => {
 	const loadAppInsights = vi.fn();
 	const applicationInsightsCtor = vi.fn(function ApplicationInsights(this: {
 		loadAppInsights: () => void;
@@ -57,7 +57,7 @@ test("BUG-003: missing App Insights config disables telemetry instead of loading
 	}));
 
 	const module = await import(
-		"../ClientApp/src/instrumentation/AppInsightsService"
+		"../ClientApp/src/instrumentation/AppInsightsService.ts"
 	);
 
 	expect(reactPluginCtor).not.toHaveBeenCalled();
@@ -66,7 +66,7 @@ test("BUG-003: missing App Insights config disables telemetry instead of loading
 	expect(module.getAppInsights()).toBeNull();
 });
 
-test("BUG-004: pristine valid create-account forms do not trigger route-leave confirmation", async () => {
+it("BUG-004: pristine valid create-account forms do not trigger route-leave confirmation", async () => {
 	let capturedWhen: boolean | undefined;
 
 	vi.doMock("formik", () => ({
@@ -86,7 +86,7 @@ test("BUG-004: pristine valid create-account forms do not trigger route-leave co
 	}));
 
 	const { default: UnsavedFormPrompt } = await import(
-		"../ClientApp/src/components/forms/UnsavedFormPrompt"
+		"../ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx"
 	);
 
 	render(createElement(UnsavedFormPrompt, { path: "/create-account/" }));
@@ -94,7 +94,7 @@ test("BUG-004: pristine valid create-account forms do not trigger route-leave co
 	expect(capturedWhen).toBe(false);
 });
 
-test("BUG-005: trackGAPii reads visible DOM content before redaction in localhost diagnostics", async () => {
+it("BUG-005: trackGAPii reads visible DOM content before redaction in localhost diagnostics", async () => {
 	const send = vi.fn();
 	const table = vi.spyOn(console, "table").mockImplementation(() => {});
 	const log = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -110,7 +110,7 @@ test("BUG-005: trackGAPii reads visible DOM content before redaction in localhos
 	}));
 
 	const { trackGAPii } = await import(
-		"../ClientApp/src/analytics/GoogleAnalytics"
+		"../ClientApp/src/analytics/GoogleAnalytics.tsx"
 	);
 
 	document.body.innerHTML = '<div data-pii="contactName">Visible Contact</div>';
@@ -125,7 +125,7 @@ test("BUG-005: trackGAPii reads visible DOM content before redaction in localhos
 	log.mockRestore();
 });
 
-test("BUG-006: AGENTS guidance does not deny the root package.json or npm validation scripts", () => {
+it("BUG-006: AGENTS guidance does not deny the root package.json or npm validation scripts", () => {
 	const agents = readFileSync("AGENTS.md", "utf8");
 	const pkg = JSON.parse(readFileSync("package.json", "utf8")) as {
 		scripts?: Record<string, string>;
@@ -139,7 +139,7 @@ test("BUG-006: AGENTS guidance does not deny the root package.json or npm valida
 	);
 });
 
-test("BUG-007: shared validation modules import yupExtensions locally", () => {
+it("BUG-007: shared validation modules import yupExtensions locally", () => {
 	const contactValidation = readFileSync(
 		"ClientApp/src/validationSchemas/contactValidation.ts",
 		"utf8",
@@ -149,11 +149,11 @@ test("BUG-007: shared validation modules import yupExtensions locally", () => {
 		"utf8",
 	);
 
-	expect(contactValidation).toMatch(/yupExtensions/);
-	expect(commonValidation).toMatch(/yupExtensions/);
+	expect(contactValidation).toMatch(/yupExtensions/u);
+	expect(commonValidation).toMatch(/yupExtensions/u);
 });
 
-test("BUG-008: dashboard alert selector matches the rendered notif-* IDs", () => {
+it("BUG-008: dashboard alert selector matches the rendered notif-* IDs", () => {
 	const dashboardSource = readFileSync(
 		"ClientApp/src/routes/dashboard/index.tsx",
 		"utf8",

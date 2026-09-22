@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { AZURE_WAF_SERVER_PREFIX, isWafError } from "./wafError";
+import { AZURE_WAF_SERVER_PREFIX, isWafError } from "./wafError.ts";
 
 describe("isWafError", () => {
 	it("returns true for an error shaped like an Azure WAF response", () => {
@@ -38,7 +38,7 @@ describe("isWafError", () => {
 	});
 
 	it("returns false when headers.server is not a string", () => {
-		expect(isWafError({ headers: { server: 12345 } })).toBe(false);
+		expect(isWafError({ headers: { server: 12_345 } })).toBe(false);
 		expect(isWafError({ headers: { server: null } })).toBe(false);
 	});
 

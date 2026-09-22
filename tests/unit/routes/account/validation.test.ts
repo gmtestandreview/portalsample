@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import "../../../../ClientApp/src/validationSchemas/yupExtensions";
-import { State } from "../../../../ClientApp/src/api/web-api-client";
-import branchSubmitValidation from "../../../../ClientApp/src/routes/account/addBranch/validation";
-import organisationSubmitValidation from "../../../../ClientApp/src/routes/account/update/validation";
-import accountSubmitValidation from "../../../../ClientApp/src/routes/account/validation";
+import "../../../../ClientApp/src/validationSchemas/yupExtensions/index.ts";
+import { State } from "../../../../ClientApp/src/api/web-api-client.ts";
+import branchSubmitValidation from "../../../../ClientApp/src/routes/account/addBranch/validation.ts";
+import organisationSubmitValidation from "../../../../ClientApp/src/routes/account/update/validation.ts";
+import accountSubmitValidation from "../../../../ClientApp/src/routes/account/validation.ts";
 
 const validAddress = {
 	isManuallyEntered: true,

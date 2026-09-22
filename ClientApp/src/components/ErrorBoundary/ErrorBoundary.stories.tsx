@@ -3,8 +3,8 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Component, useState } from "react";
 import { Alert, Button } from "react-bootstrap";
 import { expect, within } from "storybook/test";
-import { ai } from "../../instrumentation/AppInsightsService";
-import ErrorBoundary from "./index";
+import { ai } from "../../instrumentation/AppInsightsService.ts";
+import ErrorBoundary from "./index.tsx";
 
 const WorkingComponent = () => (
 	<Alert variant="success">
@@ -71,7 +71,7 @@ export const NoError: Story = {
 	),
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByText(/All good/)).toBeVisible();
+		await expect(canvas.getByText(/All good/u)).toBeVisible();
 	},
 };
 

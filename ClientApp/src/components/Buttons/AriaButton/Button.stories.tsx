@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn } from "storybook/test";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { Button } from "./Button";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
+import { Button } from "./Button.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],
@@ -46,6 +46,6 @@ export const CssCheck: Story = {
 	},
 	play: async ({ canvas }) => {
 		const button = canvas.getByRole("button", { name: "Styled button" });
-		await expect(getComputedStyle(button).borderRadius).toBe("4px");
+		expect(getComputedStyle(button).borderRadius).toBe("4px");
 	},
 };

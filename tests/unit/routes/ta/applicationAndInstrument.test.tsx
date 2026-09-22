@@ -6,9 +6,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
-} from "../../../../ClientApp/src/api/web-api-client";
-import { FormikWrapper } from "../../helpers/formik";
-import { resetMsalMock } from "../../helpers/mockMsal";
+} from "../../../../ClientApp/src/api/web-api-client.ts";
+import { FormikWrapper } from "../../helpers/formik.tsx";
+import { resetMsalMock } from "../../helpers/mockMsal.ts";
 
 const mocks = vi.hoisted(() => ({
 	appLoggerError: vi.fn(),
@@ -32,7 +32,7 @@ const captured = vi.hoisted(() => ({
 }));
 
 vi.mock("@azure/msal-react", async () => {
-	const { msalReactModuleMock } = await import("../../helpers/mockMsal");
+	const { msalReactModuleMock } = await import("../../helpers/mockMsal.ts");
 
 	return msalReactModuleMock();
 });
@@ -215,7 +215,9 @@ const renderStep = async ({
 	name?: string;
 } = {}) => {
 	const ApplicationAndInstrument = (
-		await import("../../../../ClientApp/src/routes/ta/applicationAndInstrument")
+		await import(
+			"../../../../ClientApp/src/routes/ta/applicationAndInstrument.tsx"
+		)
 	).default;
 
 	const result = render(

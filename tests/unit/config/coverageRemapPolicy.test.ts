@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import termsConfig from "../../../ClientApp/src/terms-config.json";
-import { storybookCoverageConfig } from "../../../vitest.storybook.coverage";
-import unitConfig from "../../../vitest.unit.config";
+import termsConfig from "../../../ClientApp/src/terms-config.json" with {
+	type: "json",
+};
+import { storybookCoverageConfig } from "../../../vitest.storybook.coverage.ts";
+import unitConfig from "../../../vitest.unit.config.ts";
 
 /**
  * Coverage denominator and remap policy for the unit leaf (Task A2).
@@ -27,7 +29,7 @@ if (coverage?.provider !== "v8") {
 
 /** Escapes a literal path so it can be embedded in a RegExp without its dots matching anything. */
 const escapeForRegExp = (value: string) =>
-	value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	value.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&");
 
 /**
  * React Aria evaluation components carved out because they are a spike, not shipped code.
@@ -97,21 +99,21 @@ const verifiedInStorybook = [
 
 /** Categories the reviewed policy allows to leave the denominator. */
 const allowedExclusionCategories = [
-	/\.d\.ts$/,
-	/types\.ts$/,
-	/Props\.ts$/,
-	/\/api\/web-api-client\.ts$/,
-	/\/external\/\*\*$/,
-	/\/parent\/\*\*$/,
-	/\/storybook\/\*\*$/,
-	/\/components\/App\/\*\*$/,
-	/\/components\/AriaComponents\/main\.tsx$/,
-	/\/components\/reactaria_components\/\*\*$/,
-	/source-map-http-downloads\/\*\*$/,
-	/\*\.test\.\{ts,tsx\}$/,
-	/\*\.spec\.\{ts,tsx\}$/,
-	/\*\.stories\.\{ts,tsx\}$/,
-	/\*\.docs\.mdx$/,
+	/\.d\.ts$/u,
+	/types\.ts$/u,
+	/Props\.ts$/u,
+	/\/api\/web-api-client\.ts$/u,
+	/\/external\/\*\*$/u,
+	/\/parent\/\*\*$/u,
+	/\/storybook\/\*\*$/u,
+	/\/components\/App\/\*\*$/u,
+	/\/components\/AriaComponents\/main\.tsx$/u,
+	/\/components\/reactaria_components\/\*\*$/u,
+	/source-map-http-downloads\/\*\*$/u,
+	/\*\.test\.\{ts,tsx\}$/u,
+	/\*\.spec\.\{ts,tsx\}$/u,
+	/\*\.stories\.\{ts,tsx\}$/u,
+	/\*\.docs\.mdx$/u,
 	// Only the exact paths verified above; no pattern that could admit an unmeasured file.
 	new RegExp(`^(${verifiedInStorybook.map(escapeForRegExp).join("|")})$`),
 	new RegExp(`^(${evaluationSpikeNotCovered.map(escapeForRegExp).join("|")})$`),

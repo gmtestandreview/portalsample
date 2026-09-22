@@ -1,8 +1,8 @@
-import type { ProblemDetails } from "../../../api/web-api-client";
-import { HttpStatusCode } from "../../../types";
-import { isWafError } from "../../../types/wafError";
-import type { WizardStepError } from "./types";
-import { ErrorType } from "./types";
+import type { ProblemDetails } from "../../../api/web-api-client.ts";
+import { isWafError } from "../../../types/wafError.ts";
+import { HttpStatusCode } from "../../../types.ts";
+import type { WizardStepError } from "./types.ts";
+import { ErrorType } from "./types.ts";
 
 /**
  * Classifies a 403 Forbidden error into the appropriate WizardStepError variant.

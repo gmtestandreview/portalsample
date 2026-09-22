@@ -7,13 +7,13 @@ import { Col, Form, Row } from "react-bootstrap";
 import type {
 	AttachmentDto,
 	ProblemDetails,
-} from "../../../api/web-api-client";
-import { formatBytes } from "../../../utils";
-import BlockUISpinner from "../../BlockUISpinner";
-import ProgressBar from "../../Progress/ProgressBar";
-import ProgressFileList from "../../Progress/ProgressFileList";
-import AttachmentItemNew from "./AttachmentItem-new";
-import type { AttachmentProps } from "./types";
+} from "../../../api/web-api-client.ts";
+import { formatBytes } from "../../../utils/index.ts";
+import BlockUiSpinner from "../../BlockUISpinner/index.tsx";
+import ProgressBar from "../../Progress/ProgressBar.tsx";
+import ProgressFileList from "../../Progress/ProgressFileList.tsx";
+import AttachmentItemNew from "./AttachmentItem-new.tsx";
+import type { AttachmentProps } from "./types.ts";
 
 const AttachmentNew = (
 	props: AttachmentProps & FieldHookConfig<AttachmentDto[]>,
@@ -83,8 +83,10 @@ const AttachmentNew = (
 				const currentFileExtension = `.${file.name.split(".").pop()!.toString()}`;
 
 				if (
-					!fileHasExtension ||
-					!fileUploadAllowedTypes.includes(currentFileExtension)
+					!(
+						fileHasExtension &&
+						fileUploadAllowedTypes.includes(currentFileExtension)
+					)
 				) {
 					const errorMessage =
 						`${hasMultipleFiles ? "Files" : "File"} must be` +
@@ -174,8 +176,8 @@ const AttachmentNew = (
 		setIsDeleting(false);
 	};
 
-	const renderAttachments = () => {
-		return attachments?.map((attachment, i) => {
+	const renderAttachments = () =>
+		attachments?.map((attachment, i) => {
 			let attachmentKey =
 				attachment.id ?? unidentifiedAttachmentKeys.current.get(attachment);
 			if (attachmentKey === undefined) {
@@ -187,7 +189,7 @@ const AttachmentNew = (
 					id={attachment.id}
 					name={name}
 					index={i}
-					canRemove={!isSummary && !attachment.documentLocked!}
+					canRemove={!(isSummary || attachment.documentLocked!)}
 					cancelButtonId={`cancel-button-${attachment.id}`}
 					onRemoveItem={onConfirmDeleteFile}
 					key={attachmentKey}
@@ -197,7 +199,6 @@ const AttachmentNew = (
 				/>
 			);
 		});
-	};
 	// ...existing code...
 
 	if (isSummary) {
@@ -223,9 +224,9 @@ const AttachmentNew = (
                     </BlockUISpinner>
                 )} */}
 				{isDeleting && (
-					<BlockUISpinner>
+					<BlockUiSpinner>
 						<p>Deleting...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				)}
 
 				<Row className="mb-4">
@@ -268,7 +269,7 @@ const AttachmentNew = (
 								type="file"
 								accept={allowedTypes}
 								multiple={allowMultiple === true ? true : undefined}
-								readOnly
+								readOnly={true}
 								tabIndex={0}
 								title={
 									disableUpload

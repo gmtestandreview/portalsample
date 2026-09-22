@@ -6,7 +6,7 @@ import {
 	ContactClient,
 	FileClient,
 	SwaggerException,
-} from "../../../ClientApp/src/api/web-api-client";
+} from "../../../ClientApp/src/api/web-api-client.ts";
 
 function transport(response: Response) {
 	return {

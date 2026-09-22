@@ -1,8 +1,8 @@
 import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
-import { useAccountState } from "../../authentication/hooks";
-import { useModalDispatch } from "../modals/ModalContext";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
+import { useAccountState } from "../../authentication/hooks.tsx";
+import { useModalDispatch } from "../modals/ModalContext.tsx";
 
 const DisplayUserAndOrgName = () => {
 	const account = useAccountState();

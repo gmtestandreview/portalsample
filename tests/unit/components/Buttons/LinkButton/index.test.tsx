@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import type React from "react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import LinkButton from "@/components/Buttons/LinkButton";
+import LinkButton from "@/components/Buttons/LinkButton/index.tsx";
 
 const ariaLinkMockState = vi.hoisted(() => ({
 	includeHref: false,

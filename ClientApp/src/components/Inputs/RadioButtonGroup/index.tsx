@@ -3,10 +3,10 @@ import { useField } from "formik";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import Details from "../../forms/Details";
-import SummaryDisplay from "../../SummaryDisplay";
-import RadioButton from "../RadioButton";
-import type { RadioButtonGroupProps } from "./types";
+import Details from "../../forms/Details/index.tsx";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import RadioButton from "../RadioButton/index.tsx";
+import type { RadioButtonGroupProps } from "./types.ts";
 
 const RadioButtonGroup = <T,>(
 	props: RadioButtonGroupProps<T> & FieldHookConfig<T>,

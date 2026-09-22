@@ -31,24 +31,24 @@ const FAMILIES = [
 		id: 2,
 		name: "Type Approval routes and guards",
 		matches: (f) =>
-			/^routes\/ta\//.test(f) || /^routes\/dashboard\/dashboard-ta/.test(f),
+			/^routes\/ta\//u.test(f) || /^routes\/dashboard\/dashboard-ta/u.test(f),
 	},
 	{
 		id: 3,
 		name: "Attachment and progress controls",
 		matches: (f) =>
-			/^components\/Inputs\/Attachment\//.test(f) || /progress/i.test(f),
+			/^components\/Inputs\/Attachment\//u.test(f) || /progress/iu.test(f),
 	},
 	{
 		id: 5,
 		name: "Slate editor",
-		matches: (f) => /^components\/SlateEditor\//.test(f),
+		matches: (f) => /^components\/SlateEditor\//u.test(f),
 	},
 	{
 		id: 4,
 		name: "Request-list items and workflow pages",
 		matches: (f) =>
-			/^routes\//.test(f) || /^components\/(RequestList|forms)\//.test(f),
+			/^routes\//u.test(f) || /^components\/(RequestList|forms)\//u.test(f),
 	},
 	{
 		id: 6,
@@ -62,14 +62,14 @@ const familyOf = (relativeFile) =>
 
 /** Mirror ClientApp/src/x/y.tsx to tests/unit/x/y.test.tsx. */
 const intendedTestFile = (relativeFile) => {
-	const withoutExtension = relativeFile.replace(/\.(tsx|ts)$/, "");
+	const withoutExtension = relativeFile.replace(/\.(tsx|ts)$/u, "");
 	const extension = relativeFile.endsWith(".tsx") ? ".test.tsx" : ".test.ts";
 
 	return `tests/unit/${withoutExtension}${extension}`;
 };
 
 const toRelative = (absolutePath) => {
-	const normalised = absolutePath.replace(/\\/g, "/");
+	const normalised = absolutePath.replace(/\\/gu, "/");
 	const index = normalised.indexOf(SOURCE_ROOT);
 
 	return index === -1

@@ -1,7 +1,7 @@
 "use client";
 import { composeRenderProps } from "react-aria-components/composeRenderProps";
 import {
-	ToggleButtonGroup as RACToggleButtonGroup,
+	ToggleButtonGroup as RacToggleButtonGroup,
 	SelectionIndicator,
 	ToggleButton,
 	type ToggleButtonGroupProps,
@@ -11,7 +11,7 @@ import "./SegmentedControl.css";
 
 export function SegmentedControl(props: ToggleButtonGroupProps) {
 	return (
-		<RACToggleButtonGroup
+		<RacToggleButtonGroup
 			{...props}
 			className="segmented-control button-base"
 			data-variant="secondary"
@@ -26,7 +26,7 @@ export function SegmentedControlItem(props: ToggleButtonProps) {
 				<>
 					<SelectionIndicator
 						className="react-aria-SelectionIndicator button-base"
-						data-selected
+						data-selected={true}
 					/>
 					<span>{children}</span>
 				</>

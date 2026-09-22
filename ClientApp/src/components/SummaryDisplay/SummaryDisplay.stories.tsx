@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, within } from "storybook/test";
-import SummaryDisplay from "./index";
+import SummaryDisplay from "./index.tsx";
 
 const meta = {
 	title: "Components/SummaryDisplay",
@@ -41,7 +41,7 @@ export const PhoneValue: Story = {
 		await expect(canvas.getByText("02 6213 6800")).toBeInTheDocument();
 		// A visually-hidden span is rendered for screen readers
 		const hidden = canvasElement.querySelector(".visually-hidden");
-		await expect(hidden).not.toBeNull();
+		expect(hidden).not.toBeNull();
 	},
 };
 

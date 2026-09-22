@@ -1,6 +1,6 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { Breadcrumb, Breadcrumbs } from "./Breadcrumbs";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
+import { Breadcrumb, Breadcrumbs } from "./Breadcrumbs.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],

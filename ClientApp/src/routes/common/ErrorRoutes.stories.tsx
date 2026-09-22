@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import ErrorDisplay from "../../components/ErrorBoundary/ErrorDisplay";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import { HttpStatusCode } from "../../types";
+import ErrorDisplay from "../../components/ErrorBoundary/ErrorDisplay.tsx";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import { HttpStatusCode } from "../../types.ts";
 
 const meta = {
 	title: "Routes/ErrorStates",

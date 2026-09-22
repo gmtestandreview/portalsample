@@ -1,15 +1,15 @@
 import { useMsal } from "@azure/msal-react";
 import { useEffect, useState } from "react";
-import type { RequestForQuoteDetails } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
-import AppLogger from "../../instrumentation/AppLogger";
+import type { RequestForQuoteDetails } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 import {
 	getFileSize,
 	getFileUrlFromBase64,
 	getQuotationFileDetails,
 	openInNewTab,
-} from "../../routes/common/helperFunctions";
-import ViewPdfButton from "./ViewPdfButton";
+} from "../../routes/common/helperFunctions.ts";
+import ViewPdfButton from "./ViewPdfButton.tsx";
 
 export interface ViewPdfQuoteProps {
 	text: string;

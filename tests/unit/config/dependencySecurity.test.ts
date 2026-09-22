@@ -270,11 +270,7 @@ describe("install-script approvals", () => {
 	 * packages. Once the lockfile carries `resolved` for every entry, these
 	 * should become pinned so that a version bump re-triggers review.
 	 */
-	const APPROVED_INSTALL_SCRIPTS = [
-		"@parcel/watcher",
-		"esbuild",
-		"msw",
-	] as const;
+	const ApprovedInstallScripts = ["@parcel/watcher", "esbuild", "msw"] as const;
 
 	const allowScripts = (
 		JSON.parse(readFileSync("package.json", "utf8")) as {
@@ -284,12 +280,12 @@ describe("install-script approvals", () => {
 
 	it("reviews every dependency that runs an install script", () => {
 		expect(Object.keys(allowScripts ?? {}).sort()).toEqual(
-			[...APPROVED_INSTALL_SCRIPTS].sort(),
+			[...ApprovedInstallScripts].sort(),
 		);
 	});
 
 	it("records each review as an explicit allow", () => {
-		for (const packageName of APPROVED_INSTALL_SCRIPTS) {
+		for (const packageName of ApprovedInstallScripts) {
 			expect(
 				allowScripts?.[packageName],
 				`${packageName} must be an explicit boolean allow, not a version string`,
@@ -298,7 +294,7 @@ describe("install-script approvals", () => {
 	});
 
 	it("keeps each approved package installed at exactly one version", () => {
-		for (const packageName of APPROVED_INSTALL_SCRIPTS) {
+		for (const packageName of ApprovedInstallScripts) {
 			expect(
 				installedVersions(packageName),
 				`${packageName} must resolve to a single version, so one name-only approval covers one reviewed build`,

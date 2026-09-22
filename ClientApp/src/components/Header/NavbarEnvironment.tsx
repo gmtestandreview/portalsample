@@ -1,4 +1,4 @@
-import { getEnvironment } from "../../routes/common/helperFunctions";
+import { getEnvironment } from "../../routes/common/helperFunctions.ts";
 
 const NavbarEnvironment = () => {
 	if (getEnvironment() !== "") {

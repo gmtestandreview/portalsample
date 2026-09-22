@@ -4,27 +4,27 @@ import {
 	type BreadcrumbsProps,
 	Link,
 	type LinkProps,
-	Breadcrumb as RACBreadcrumb,
-	Breadcrumbs as RACBreadcrumbs,
+	Breadcrumb as RacBreadcrumb,
+	Breadcrumbs as RacBreadcrumbs,
 } from "react-aria-components/Breadcrumbs";
-import { ChevronRight } from "../../AriaComponents/NmiIcon";
+import { ChevronRight } from "../../AriaComponents/NmiIcon.tsx";
 import "./Breadcrumbs.css";
 
 export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {
-	return <RACBreadcrumbs {...props} />;
+	return <RacBreadcrumbs {...props} />;
 }
 
 export function Breadcrumb(
 	props: BreadcrumbProps & Omit<LinkProps, "className">,
 ) {
 	return (
-		<RACBreadcrumb {...props}>
+		<RacBreadcrumb {...props}>
 			{({ isCurrent }) => (
 				<>
 					<Link {...props} />
 					{!isCurrent && <ChevronRight size={14} />}
 				</>
 			)}
-		</RACBreadcrumb>
+		</RacBreadcrumb>
 	);
 }

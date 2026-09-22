@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { SeparatorContext } from "react-aria-components/Separator";
 import { ToggleButtonGroupContext } from "react-aria-components/ToggleButtonGroup";
 import {
-	Toolbar as RACToolbar,
+	Toolbar as RacToolbar,
 	type ToolbarProps,
 } from "react-aria-components/Toolbar";
 import "./Toolbar.css";
@@ -24,7 +24,7 @@ export function Toolbar(props: Readonly<ToolbarProps>) {
 	return (
 		<ToggleButtonGroupContext.Provider value={toggleButtonGroupValue}>
 			<SeparatorContext.Provider value={separatorValue}>
-				<RACToolbar {...props} />
+				<RacToolbar {...props} />
 			</SeparatorContext.Provider>
 		</ToggleButtonGroupContext.Provider>
 	);

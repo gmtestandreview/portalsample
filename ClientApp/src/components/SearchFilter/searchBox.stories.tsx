@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, within } from "storybook/test";
-import SearchBox from "./searchBox";
+import SearchBox from "./searchBox.tsx";
 
 /**
  * `SearchBox` is the dashboard keyword search field. It keeps local input state,
@@ -28,7 +28,7 @@ export const Empty: Story = {
 		const canvas = within(canvasElement);
 		await expect(canvas.getByRole("textbox")).toBeVisible();
 		// No clear button until there is a value.
-		await expect(canvas.queryByTestId("clear-search-button")).toBeNull();
+		expect(canvas.queryByTestId("clear-search-button")).toBeNull();
 	},
 };
 

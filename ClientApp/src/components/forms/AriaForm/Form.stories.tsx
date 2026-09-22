@@ -1,8 +1,8 @@
 import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation";
-import { TextField } from "../../AriaComponents/TextField";
-import { Button } from "../../Buttons/AriaButton/Button";
-import { Form } from "./Form";
+import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
+import { TextField } from "../../AriaComponents/TextField.tsx";
+import { Button } from "../../Buttons/AriaButton/Button.tsx";
+import { Form } from "./Form.tsx";
 
 const meta = {
 	decorators: [withReactAriaEvaluation],
@@ -21,7 +21,7 @@ export const Example: Story = (args) => (
 		<TextField
 			name="email"
 			type="email"
-			isRequired
+			isRequired={true}
 			label="Email"
 			placeholder="Enter your email"
 		/>

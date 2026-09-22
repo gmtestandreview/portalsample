@@ -4,54 +4,54 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Col, Container, Nav, Row, Tab } from "react-bootstrap";
 import { PatternFormat } from "react-number-format";
 import { Link, Navigate } from "react-router";
-import { trackGAEvent } from "../../analytics/GoogleAnalytics";
+import { trackGAEvent } from "../../analytics/GoogleAnalytics.tsx";
 import type {
 	DashboardItemDto,
 	PagedListOfDashboardItemDto,
 	ProblemDetails,
 	StatusEnumDto,
-} from "../../api/web-api-client";
-import { DashboardClient } from "../../api/web-api-client";
-import { tokenRequest } from "../../authentication/authConfig";
+} from "../../api/web-api-client.ts";
+import { DashboardClient } from "../../api/web-api-client.ts";
+import { tokenRequest } from "../../authentication/authConfig.ts";
 import {
 	useAccountDispatch,
 	useAccountState,
-} from "../../authentication/hooks";
-import NotificationMessage from "../../components/Alert/NotificationMessage";
-import BlockUISpinner from "../../components/BlockUISpinner";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums";
+} from "../../authentication/hooks.tsx";
+import NotificationMessage from "../../components/Alert/NotificationMessage.tsx";
+import BlockUiSpinner from "../../components/BlockUISpinner/index.tsx";
+import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums.ts";
 import {
 	useModalDispatch,
 	useModalState,
-} from "../../components/modals/ModalContext";
-import CustomPagination from "../../components/Pagination";
-import CustomPaginationHeader from "../../components/PaginationHeader";
-import InstrumentItem from "../../components/RequestList/instrumentItem";
-import NoRequests from "../../components/RequestList/noRequests";
-import RequestItem from "../../components/RequestList/requestItem";
-import SearchFilter from "../../components/SearchFilter";
-import type { UserProfile } from "../../components/SearchFilter/types";
-import { DashboardTab } from "../../components/SearchFilter/types";
-import StandardPathway from "../../components/tiles/StandardPathway";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useDebounce from "../../components/Utilities/useDebounce";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import Welcome from "../../components/Welcome";
-import AppLogger from "../../instrumentation/AppLogger";
+} from "../../components/modals/ModalContext.tsx";
+import CustomPagination from "../../components/Pagination/index.tsx";
+import CustomPaginationHeader from "../../components/PaginationHeader/index.tsx";
+import InstrumentItem from "../../components/RequestList/instrumentItem.tsx";
+import NoRequests from "../../components/RequestList/noRequests.tsx";
+import RequestItem from "../../components/RequestList/requestItem.tsx";
+import SearchFilter from "../../components/SearchFilter/index.tsx";
+import type { UserProfile } from "../../components/SearchFilter/types.ts";
+import { DashboardTab } from "../../components/SearchFilter/types.ts";
+import StandardPathway from "../../components/tiles/StandardPathway/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useDebounce from "../../components/Utilities/useDebounce.ts";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
+import Welcome from "../../components/Welcome/index.tsx";
+import AppLogger from "../../instrumentation/AppLogger.ts";
 import {
 	clearDashboardInfoNotification,
 	clearDashboardNotification,
 	getDashboardInfoNotification,
 	getDashboardNotification,
 	setDashboardNotification,
-} from "../../storage/notification";
-import SessionStorageCache from "../../storage/sessionStorageCache";
-import { HttpStatusCode } from "../../types";
-import { defaultFilter } from "../common/constants";
-import { DashBoardNotifications } from "../common/dashboardNotifications";
-import { DashboardItemStatus } from "../common/enums";
-import getUnexpectedErrorRoute from "../common/errorRoutes";
-import { mapToUserProfile } from "../common/helperFunctions";
+} from "../../storage/notification.ts";
+import SessionStorageCache from "../../storage/sessionStorageCache.ts";
+import { HttpStatusCode } from "../../types.ts";
+import { defaultFilter } from "../common/constants.ts";
+import { DashBoardNotifications } from "../common/dashboardNotifications.ts";
+import { DashboardItemStatus } from "../common/enums.ts";
+import getUnexpectedErrorRoute from "../common/errorRoutes.ts";
+import { mapToUserProfile } from "../common/helperFunctions.ts";
 
 // TS Move this to a constants file if we need this setting app wide
 const DEFAULT_DASHBOARD_PAGESIZE = 10;
@@ -74,7 +74,7 @@ const setNotification = () => {
 	return dashboardNotification ? (
 		<NotificationMessage
 			id="notif-message-1"
-			canClose
+			canClose={true}
 			onClose={clearDashboardNotification}
 			{...dashboardNotification}
 		/>
@@ -86,7 +86,7 @@ const setInfoNotification = () => {
 	return dashboardInfoNotification ? (
 		<NotificationMessage
 			id="notif-info-message-2"
-			canClose
+			canClose={true}
 			onClose={clearDashboardInfoNotification}
 			{...dashboardInfoNotification}
 		/>
@@ -300,12 +300,12 @@ const Dashboard = () => {
 	const orgName =
 		accountState?.details?.targetOrganisation?.targetOrganisationName;
 	const savedUserProfile = accountDetails?.userProfile;
-	const organisationCRMGuid = accountDetails?.organisationCRMGuid;
+	const organisationCrmGuid = accountDetails?.organisationCRMGuid;
 	const userAcceptedTermsOfUse = accountDetails?.userAcceptedTermsOfUse;
 	const accountHomeAccountId = accountDetails?.homeAccountId;
 	const branchSelectionModalMode = modalState?.branchSelectionModalMode;
 	const showBranchSelector = !!modalState?.showBranchSelector;
-	const showRFQDeleteModal = !!modalState?.showRFQDeleteModal;
+	const showRfqDeleteModal = !!modalState?.showRFQDeleteModal;
 
 	// Paging
 	const [currentPage, setCurrentPage] = useState(
@@ -471,7 +471,7 @@ const Dashboard = () => {
 	useEffect(() => {
 		const controller = new AbortController();
 		const loadDataForDisplay = async () => {
-			if (!organisationCRMGuid || !stableFilters.filterActiveTab) {
+			if (!(organisationCrmGuid && stableFilters.filterActiveTab)) {
 				return;
 			}
 			if (inProgress !== InteractionStatus.None || accounts.length === 0) {
@@ -490,7 +490,7 @@ const Dashboard = () => {
 				client.setAuthToken(tokenResult.accessToken);
 				setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
 				setIsModalOpen(
-					showBranchSelector || showRFQDeleteModal || !userAcceptedTermsOfUse,
+					showBranchSelector || showRfqDeleteModal || !userAcceptedTermsOfUse,
 				);
 				setIsDataLoading(true);
 				const { actualYear, actualStatus } = resolveFilterParams(
@@ -506,7 +506,7 @@ const Dashboard = () => {
 					sortOrder: "descending",
 					currentPage: stableFilters.filterCurrentPage ?? 1,
 					pageSize: DEFAULT_DASHBOARD_PAGESIZE,
-					accountDetailsCrmGuid: organisationCRMGuid,
+					accountDetailsCrmGuid: organisationCrmGuid,
 					filterSearchText: stableFilters.filterSearchText,
 					actualYear,
 					actualStatus,
@@ -538,10 +538,10 @@ const Dashboard = () => {
 		accountHomeAccountId,
 		inProgress,
 		instance,
-		organisationCRMGuid,
+		organisationCrmGuid,
 		reload,
 		showBranchSelector,
-		showRFQDeleteModal,
+		showRfqDeleteModal,
 		stableFilters,
 		userAcceptedTermsOfUse,
 	]);
@@ -645,9 +645,9 @@ const Dashboard = () => {
 				aria-live={isModalOpen ? undefined : "polite"}
 			>
 				{!isModalOpen && isDataLoading ? (
-					<BlockUISpinner partial>
+					<BlockUiSpinner partial={true}>
 						<p>Loading data...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				) : (
 					<>
 						<div className="dashboard-items mb-5">
@@ -680,9 +680,9 @@ const Dashboard = () => {
 				aria-live={isModalOpen ? undefined : "polite"}
 			>
 				{!isModalOpen && isDataLoading ? (
-					<BlockUISpinner partial>
+					<BlockUiSpinner partial={true}>
 						<p>Loading data...</p>
-					</BlockUISpinner>
+					</BlockUiSpinner>
 				) : (
 					<>
 						<div className="dashboard-items mb-5">
@@ -707,7 +707,7 @@ const Dashboard = () => {
 		</Row>
 	);
 
-	const renderDashTCSubView = () => (
+	const renderDashTcSubView = () => (
 		<Row className="mb-3">
 			<Col>
 				<Tab.Container
@@ -856,11 +856,11 @@ const Dashboard = () => {
 					</Col>
 				</Row>
 				{renderDashTypeTitle()}
-				{renderDashTCSubView()}
+				{renderDashTcSubView()}
 
 				<Row className="mb-5">
 					<h2 className="pt-md-4 mb-3">Quick links</h2>
-					<Col md>
+					<Col md={true}>
 						<StandardPathway
 							type="internal"
 							title="Services we offer"
@@ -869,7 +869,7 @@ const Dashboard = () => {
 							to="/services-we-offer"
 						/>
 					</Col>
-					<Col md>
+					<Col md={true}>
 						<StandardPathway
 							type="internal"
 							title="Help guide"
@@ -878,7 +878,7 @@ const Dashboard = () => {
 							to="/help-guide"
 						/>
 					</Col>
-					<Col md>
+					<Col md={true}>
 						<StandardPathway
 							type="external"
 							title="Give us your feedback"

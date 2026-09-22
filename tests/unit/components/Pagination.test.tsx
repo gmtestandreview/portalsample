@@ -1,7 +1,7 @@
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import CustomPagination from "@/components/Pagination";
+import CustomPagination from "@/components/Pagination/index.tsx";
 
 const originalInnerWidth = Object.getOwnPropertyDescriptor(
 	globalThis,

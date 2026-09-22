@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import HeaderIntroText from "./index";
+import HeaderIntroText from "./index.tsx";
 
 const meta = {
 	component: HeaderIntroText,

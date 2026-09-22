@@ -2,14 +2,14 @@ import { Formik } from "formik";
 import type React from "react";
 import { useRef, useState } from "react";
 import { Button, Col, Container, Dropdown, Form, Row } from "react-bootstrap";
-import { trackGAEvent } from "../../../analytics/GoogleAnalytics";
-import { PatternApprovalStatusEnumDto } from "../../../api/web-api-client";
-import { useAccountDispatch } from "../../../authentication/hooks";
-import { defaultFilter } from "../../../routes/common/constants";
-import type { RadioButtonProps } from "../../Inputs/RadioButton/types";
-import RadioButtonGroup from "../../Inputs/RadioButtonGroup";
-import { DashboardTab } from "../types";
-import type { PaFilterMenuProps } from "./paFilterMenuProps";
+import { trackGAEvent } from "../../../analytics/GoogleAnalytics.tsx";
+import { PatternApprovalStatusEnumDto } from "../../../api/web-api-client.ts";
+import { useAccountDispatch } from "../../../authentication/hooks.tsx";
+import { defaultFilter } from "../../../routes/common/constants.ts";
+import type { RadioButtonProps } from "../../Inputs/RadioButton/types.ts";
+import RadioButtonGroup from "../../Inputs/RadioButtonGroup/index.tsx";
+import { DashboardTab } from "../types.ts";
+import type { PaFilterMenuProps } from "./paFilterMenuProps.ts";
 
 const PaFilterMenu = (props: PaFilterMenuProps) => {
 	const {
@@ -166,7 +166,7 @@ const PaFilterMenu = (props: PaFilterMenuProps) => {
 				aria-label="Filter Menu"
 			>
 				<Formik
-					enableReinitialize
+					enableReinitialize={true}
 					initialValues={initialFilters ?? defaultFilter}
 					onSubmit={async (values, { setSubmitting, setValues }) => {
 						const { filterYearType, filterStatusType, filterSortOrder } =

@@ -1,8 +1,8 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics";
-import ConfirmationModal from "../../../ClientApp/src/components/modals/ConfirmationModal";
+import { trackGAEvent } from "../../../ClientApp/src/analytics/GoogleAnalytics.tsx";
+import ConfirmationModal from "../../../ClientApp/src/components/modals/ConfirmationModal/index.tsx";
 import {
 	type ModalDispatch,
 	ModalDispatchCtx,
@@ -10,9 +10,9 @@ import {
 	ModalStateCtx,
 	useModalDispatch,
 	useModalState,
-} from "../../../ClientApp/src/components/modals/ModalContext";
-import RFQDeleteModal from "../../../ClientApp/src/components/modals/RFQDeleteModal";
-import { setDashboardNotification } from "../../../ClientApp/src/storage/notification";
+} from "../../../ClientApp/src/components/modals/ModalContext.tsx";
+import RfqDeleteModal from "../../../ClientApp/src/components/modals/RFQDeleteModal/index.tsx";
+import { setDashboardNotification } from "../../../ClientApp/src/storage/notification.ts";
 
 const mocks = vi.hoisted(() => ({
 	acquireTokenSilent: vi.fn(),
@@ -104,7 +104,7 @@ const defaultModalDispatch: ModalDispatch = {
 	setShowRFQSelectModal: vi.fn(),
 };
 
-const renderRFQDeleteModal = (
+const renderRfqDeleteModal = (
 	state: ModalState = defaultModalState,
 	dispatch: ModalDispatch = defaultModalDispatch,
 ) =>
@@ -112,7 +112,7 @@ const renderRFQDeleteModal = (
 		<MemoryRouter>
 			<ModalStateCtx.Provider value={state}>
 				<ModalDispatchCtx.Provider value={dispatch}>
-					<RFQDeleteModal />
+					<RfqDeleteModal />
 				</ModalDispatchCtx.Provider>
 			</ModalStateCtx.Provider>
 		</MemoryRouter>,
@@ -167,7 +167,7 @@ describe("modal coverage slice", () => {
 
 		render(
 			<ConfirmationModal
-				isOpen
+				isOpen={true}
 				closeModal={closeModal}
 				onModalYes={onModalYes}
 				onModalNo={onModalNo}
@@ -182,7 +182,7 @@ describe("modal coverage slice", () => {
 		expect(calls).toEqual(["close", "yes"]);
 
 		calls.length = 0;
-		fireEvent.click(screen.getByRole("button", { name: /no/i }));
+		fireEvent.click(screen.getByRole("button", { name: /no/iu }));
 		expect(calls).toEqual(["close", "no"]);
 	});
 
@@ -192,9 +192,9 @@ describe("modal coverage slice", () => {
 			setShowRFQDeleteModal: vi.fn(),
 			setShowRFQSelectModal: vi.fn(),
 		};
-		renderRFQDeleteModal(undefined, dispatch);
+		renderRfqDeleteModal(undefined, dispatch);
 
-		fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+		fireEvent.click(screen.getByRole("button", { name: /cancel/iu }));
 
 		expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, "");
 		expect(trackGAEvent).toHaveBeenCalledWith("Close RFQ Delete Modal");
@@ -207,9 +207,9 @@ describe("modal coverage slice", () => {
 			setShowRFQDeleteModal: vi.fn(),
 			setShowRFQSelectModal: vi.fn(),
 		};
-		renderRFQDeleteModal(undefined, dispatch);
+		renderRfqDeleteModal(undefined, dispatch);
 
-		fireEvent.click(screen.getByRole("button", { name: /yes, delete/i }));
+		fireEvent.click(screen.getByRole("button", { name: /yes, delete/iu }));
 
 		await waitFor(() =>
 			expect(mocks.deleteApplication).toHaveBeenCalledWith("RFQ-123", {
@@ -233,9 +233,9 @@ describe("modal coverage slice", () => {
 			setShowRFQDeleteModal: vi.fn(),
 			setShowRFQSelectModal: vi.fn(),
 		};
-		renderRFQDeleteModal(undefined, dispatch);
+		renderRfqDeleteModal(undefined, dispatch);
 
-		fireEvent.click(screen.getByRole("button", { name: /yes, delete/i }));
+		fireEvent.click(screen.getByRole("button", { name: /yes, delete/iu }));
 
 		await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith("/"));
 		expect(dispatch.setShowRFQDeleteModal).toHaveBeenCalledWith(false, "");
@@ -248,12 +248,12 @@ describe("modal coverage slice", () => {
 			setShowRFQDeleteModal: vi.fn(),
 			setShowRFQSelectModal: vi.fn(),
 		};
-		renderRFQDeleteModal(
+		renderRfqDeleteModal(
 			{ showBranchSelector: false, showRFQDeleteModal: true },
 			dispatch,
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: /yes, delete/i }));
+		fireEvent.click(screen.getByRole("button", { name: /yes, delete/iu }));
 
 		await waitFor(() => expect(mocks.navigate).toHaveBeenCalledWith("/"));
 		expect(mocks.deleteApplication).not.toHaveBeenCalled();

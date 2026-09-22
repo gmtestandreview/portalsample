@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { DashBoardNotifications } from "../../../../ClientApp/src/routes/common/dashboardNotifications";
-import { NotificationSeverity } from "../../../../ClientApp/src/storage/types";
-import { HttpStatusCode } from "../../../../ClientApp/src/types";
+import { DashBoardNotifications } from "../../../../ClientApp/src/routes/common/dashboardNotifications.ts";
+import { NotificationSeverity } from "../../../../ClientApp/src/storage/types.ts";
+import { HttpStatusCode } from "../../../../ClientApp/src/types.ts";
 
 const defaultError = {
 	message:

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom/vitest";
 import { MemoryRouter } from "react-router";
-import StandardPathway from "../../../ClientApp/src/components/tiles/StandardPathway";
+import StandardPathway from "../../../ClientApp/src/components/tiles/StandardPathway/index.tsx";
 
 describe("StandardPathway external links", () => {
 	it("uses explicit noopener noreferrer on new-tab external links", () => {
@@ -20,7 +20,7 @@ describe("StandardPathway external links", () => {
 		expect(link).toHaveAttribute("target", "_blank");
 		expect(link).toHaveAttribute("rel", expect.stringContaining("noopener"));
 		expect(link).toHaveAttribute("rel", expect.stringContaining("noreferrer"));
-		expect(link).toHaveAccessibleName(/opens in a new tab/i);
+		expect(link).toHaveAccessibleName(/opens in a new tab/iu);
 	});
 
 	it("renders same-tab external links without new-tab copy or rel", () => {
@@ -35,11 +35,11 @@ describe("StandardPathway external links", () => {
 		);
 
 		const link = screen.getByRole("link", {
-			name: /read the guide open guide/i,
+			name: /read the guide open guide/iu,
 		});
 		expect(link).toHaveAttribute("href", "https://example.test/guide");
 		expect(link).not.toHaveAttribute("rel");
-		expect(screen.queryByText(/opens in a new tab/i)).not.toBeInTheDocument();
+		expect(screen.queryByText(/opens in a new tab/iu)).not.toBeInTheDocument();
 	});
 
 	it("uses the digital identity footer when requested", () => {
@@ -51,7 +51,7 @@ describe("StandardPathway external links", () => {
 				linkDescription="Continue"
 				linkHref="https://example.test/digital-id"
 				target="_self"
-				digitalIdentity
+				digitalIdentity={true}
 			/>,
 		);
 
@@ -93,7 +93,7 @@ describe("StandardPathway external links", () => {
 		);
 
 		const link = screen.getByRole("link", {
-			name: /start a request start now/i,
+			name: /start a request start now/iu,
 		});
 		expect(link).toHaveAttribute("href", "/request");
 		expect(link).toHaveAttribute("data-pii", "login");

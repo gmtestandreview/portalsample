@@ -3,11 +3,11 @@ import { Alert, Button, Col, Container, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router";
 import CustomBreadcrumb, {
 	type CustomBreadcrumbItem,
-} from "../../components/Breadcrumb";
-import InTextLink from "../../components/InTextLink";
-import useBodyClass from "../../components/Utilities/useBodyClass";
-import useHtmlTitle from "../../components/Utilities/useHtmlTitle";
-import { downloadFileFromUrl } from "../common/helperFunctions";
+} from "../../components/Breadcrumb/index.tsx";
+import InTextLink from "../../components/InTextLink/index.tsx";
+import useBodyClass from "../../components/Utilities/useBodyClass.tsx";
+import useHtmlTitle from "../../components/Utilities/useHtmlTitle.tsx";
+import { downloadFileFromUrl } from "../common/helperFunctions.ts";
 
 const PreApplication = () => {
 	const { accounts, instance } = useMsal();
@@ -24,7 +24,7 @@ const PreApplication = () => {
 	return (
 		<>
 			<div aria-live="off">
-				<Container fluid className="default-banner-background mb-5">
+				<Container fluid={true} className="default-banner-background mb-5">
 					<Container>
 						<Row>
 							<Col>

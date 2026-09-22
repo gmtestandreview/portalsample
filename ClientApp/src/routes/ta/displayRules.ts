@@ -3,7 +3,7 @@ import {
 	type ApplicationAndInstrumentStepDto,
 	PatternApprovalRequiredValueOptions,
 	PatternApprovalRequiredValues,
-} from "../../api/web-api-client";
+} from "../../api/web-api-client.ts";
 
 export class DisplayRules {
 	static isOIMLHiddenP(x: Partial<ApplicationAndInstrumentStepDto>): boolean {
@@ -64,7 +64,7 @@ export class DisplayRules {
 		) {
 			return true;
 		}
-		if (!x.instrumentCategory && !x.instrumentType) {
+		if (!(x.instrumentCategory || x.instrumentType)) {
 			return true;
 		}
 		return false;

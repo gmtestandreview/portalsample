@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import ContentModal from "@/components/modals/ContentModal";
+import ContentModal from "@/components/modals/ContentModal/index.tsx";
 
 /**
  * `ContentModal` hardcodes `id='modal-content'` on its title and points every
@@ -24,13 +24,13 @@ const renderTwoOpenModals = () =>
 	render(
 		<>
 			<ContentModal
-				showModal
+				showModal={true}
 				onCancelModal={vi.fn()}
 				modalTitle={TERMS}
 				modalBody={<p>Terms body content.</p>}
 			/>
 			<ContentModal
-				showModal
+				showModal={true}
 				onCancelModal={vi.fn()}
 				modalTitle={PRIVACY}
 				modalBody={<p>Privacy body content.</p>}
@@ -42,7 +42,7 @@ describe("ContentModal accessibility", () => {
 	it("names the dialog from the visible modal title", () => {
 		render(
 			<ContentModal
-				showModal
+				showModal={true}
 				onCancelModal={vi.fn()}
 				modalTitle="Accessible modal title"
 				modalBody={<p>Modal body content.</p>}

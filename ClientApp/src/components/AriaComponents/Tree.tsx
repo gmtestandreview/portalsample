@@ -13,9 +13,9 @@ import {
 	type TreeLoadMoreItemProps,
 	type TreeProps,
 } from "react-aria-components/Tree";
-import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox";
-import { ChevronRight, GripVertical } from "./NmiIcon";
-import { ProgressCircle } from "./ProgressCircle";
+import { Checkbox } from "../Inputs/AriaCheckbox/Checkbox.tsx";
+import { ChevronRight, GripVertical } from "./NmiIcon.tsx";
+import { ProgressCircle } from "./ProgressCircle.tsx";
 import "./Tree.css";
 
 export function Tree<T>(props: TreeProps<T>) {
@@ -61,13 +61,13 @@ export function TreeItem(props: TreeItemProps) {
 	const textValue = typeof props.title === "string" ? props.title : "";
 	return (
 		<AriaTreeItem textValue={textValue} {...props}>
-			{props.title != null ? (
+			{props.title == null ? (
+				props.children
+			) : (
 				<>
 					<TreeItemContent>{props.title}</TreeItemContent>
 					{props.children}
 				</>
-			) : (
-				props.children
 			)}
 		</AriaTreeItem>
 	);
@@ -76,7 +76,7 @@ export function TreeItem(props: TreeItemProps) {
 export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
 	return (
 		<AriaTreeLoadMoreItem {...props}>
-			<ProgressCircle isIndeterminate aria-label="Loading more..." />
+			<ProgressCircle isIndeterminate={true} aria-label="Loading more..." />
 		</AriaTreeLoadMoreItem>
 	);
 }

@@ -1,6 +1,6 @@
-import type { Notification } from "../../storage/types";
-import { NotificationSeverity } from "../../storage/types";
-import { HttpStatusCode } from "../../types";
+import type { Notification } from "../../storage/types.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { HttpStatusCode } from "../../types.ts";
 
 export class DashBoardNotifications {
 	static readonly getForbiddenNotification = (): Notification => {

@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import {
 	clearGetStartedNotification,
 	setGetStartedNotification,
-} from "../../storage/notification";
-import { NotificationSeverity } from "../../storage/types";
-import { withPortalProviders } from "../../storybook/storybookHarness";
-import GetStarted from "./get-started";
+} from "../../storage/notification.ts";
+import { NotificationSeverity } from "../../storage/types.ts";
+import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
+import GetStarted from "./get-started.tsx";
 
 const NotificationDecorator = (Story: ComponentType) => {
 	setGetStartedNotification({
@@ -15,9 +15,7 @@ const NotificationDecorator = (Story: ComponentType) => {
 		severity: NotificationSeverity.Information,
 	});
 
-	useEffect(() => {
-		return () => clearGetStartedNotification();
-	}, []);
+	useEffect(() => () => clearGetStartedNotification(), []);
 
 	return <Story />;
 };

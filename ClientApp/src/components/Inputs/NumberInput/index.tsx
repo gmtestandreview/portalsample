@@ -3,10 +3,10 @@ import { useField } from "formik";
 import { useEffect, useRef } from "react";
 import { InputGroup } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import SummaryDisplay from "../../SummaryDisplay";
-import { getPhoneNumberFormat } from "./phoneFormat";
-import type { NumberInputProps } from "./types";
-import { NumericFormatFixed, PatternFormatFixed } from "./types";
+import SummaryDisplay from "../../SummaryDisplay/index.tsx";
+import { getPhoneNumberFormat } from "./phoneFormat.ts";
+import type { NumberInputProps } from "./types.ts";
+import { NumericFormatFixed, PatternFormatFixed } from "./types.ts";
 
 const NumberInput = ({
 	label,
@@ -24,7 +24,7 @@ const NumberInput = ({
 	append,
 	as = "span", // default props
 	displayType = "input", // default props
-	format = undefined, // default props
+	format, // default props
 	mask,
 	minLength,
 	maxLength,
@@ -197,8 +197,7 @@ const NumberInput = ({
 					)}
 				</InputGroup>
 			)}
-			{!prepend &&
-				!append &&
+			{!(prepend || append) &&
 				(format ? renderPatternFormat() : renderNumericFormat())}
 			{meta.touched && meta.error ? (
 				<Form.Control.Feedback

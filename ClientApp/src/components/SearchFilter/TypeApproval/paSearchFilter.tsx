@@ -1,6 +1,6 @@
 import { Col, Container, Row } from "react-bootstrap";
-import type { PaSearchFilterProps } from "../types";
-import PaFilterMenu from "./paFilterMenu";
+import type { PaSearchFilterProps } from "../types.ts";
+import PaFilterMenu from "./paFilterMenu.tsx";
 
 const PaSearchFilter = (props: PaSearchFilterProps) => {
 	const {

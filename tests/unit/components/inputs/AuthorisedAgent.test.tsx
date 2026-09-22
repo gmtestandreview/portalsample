@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import AuthorisedAgent from "@/components/Inputs/AuthorisedAgent";
+import AuthorisedAgent from "@/components/Inputs/AuthorisedAgent/index.tsx";
 
 vi.mock("@/components/Inputs/TextInput", () => ({
 	default: ({
@@ -120,7 +120,7 @@ describe("AuthorisedAgent", () => {
 	});
 
 	it("prefixes child field names and forwards summary mode", () => {
-		render(<AuthorisedAgent name="agent" isSummary />);
+		render(<AuthorisedAgent name="agent" isSummary={true} />);
 
 		expect(screen.getByTestId("text-input")).toHaveAttribute(
 			"data-name",

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Form, Formik } from "formik";
 import { Link, Route, Routes } from "react-router";
 import { expect, screen, userEvent, waitFor, within } from "storybook/test";
-import RouteLeavingGuard from "./index";
+import RouteLeavingGuard from "./index.tsx";
 
 const GuardHarness = ({
 	when = false,
@@ -76,17 +76,17 @@ export const InterceptedNavigation: Story = {
 	render: () => <GuardHarness when={true} />,
 	play: async ({ canvas }) => {
 		// Link is in the canvas (inside Routes); modal renders via Bootstrap portal into document.body
-		const link = canvas.getByRole("link", { name: /leave this page/i });
+		const link = canvas.getByRole("link", { name: /leave this page/iu });
 		await userEvent.click(link);
 		const dialog = await screen.findByRole("dialog", {
-			name: /unsaved changes/i,
+			name: /unsaved changes/iu,
 		});
 		await waitFor(() => expect(dialog).toBeVisible());
 		await expect(
-			within(dialog).getByRole("button", { name: /^cancel$/i }),
+			within(dialog).getByRole("button", { name: /^cancel$/iu }),
 		).toBeVisible();
 		await expect(
-			within(dialog).getByRole("button", { name: /discard changes/i }),
+			within(dialog).getByRole("button", { name: /discard changes/iu }),
 		).toBeVisible();
 	},
 };
@@ -103,17 +103,17 @@ export const CustomCopy: Story = {
 		/>
 	),
 	play: async ({ canvas }) => {
-		const link = canvas.getByRole("link", { name: /leave this page/i });
+		const link = canvas.getByRole("link", { name: /leave this page/iu });
 		await userEvent.click(link);
 		const dialog = await screen.findByRole("dialog", {
-			name: /are you sure you want to log out\?/i,
+			name: /are you sure you want to log out\?/iu,
 		});
 		await waitFor(() => expect(dialog).toBeVisible());
 		await expect(
-			within(dialog).getByText(/Any changes made will not be saved/),
+			within(dialog).getByText(/Any changes made will not be saved/u),
 		).toBeVisible();
 		await expect(
-			within(dialog).getByRole("button", { name: /yes, logout/i }),
+			within(dialog).getByRole("button", { name: /yes, logout/iu }),
 		).toBeVisible();
 	},
 };
@@ -122,13 +122,13 @@ export const ProceedAfterConfirm: Story = {
 	name: "Confirm navigation — modal clears and user proceeds",
 	render: () => <GuardHarness when={true} />,
 	play: async ({ canvas }) => {
-		const link = canvas.getByRole("link", { name: /leave this page/i });
+		const link = canvas.getByRole("link", { name: /leave this page/iu });
 		await userEvent.click(link);
 		const dialog = await screen.findByRole("dialog", {
-			name: /unsaved changes/i,
+			name: /unsaved changes/iu,
 		});
 		const leaveButton = within(dialog).getByRole("button", {
-			name: /discard changes/i,
+			name: /discard changes/iu,
 		});
 		await userEvent.click(leaveButton);
 		// After navigation the /other route replaces /form content in canvas

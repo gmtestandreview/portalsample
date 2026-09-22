@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { NotificationSeverity } from "../../storage/types";
+import type { NotificationSeverity } from "../../storage/types.ts";
 
 /**
  * types.ts

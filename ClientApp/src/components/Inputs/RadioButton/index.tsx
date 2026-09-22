@@ -1,6 +1,6 @@
 import type { FieldHookConfig } from "formik";
 import { Field, useField } from "formik";
-import type { RadioButtonProps } from "./types";
+import type { RadioButtonProps } from "./types.ts";
 
 const RadioButton = <T,>(props: RadioButtonProps<T> & FieldHookConfig<T>) => {
 	const {

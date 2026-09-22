@@ -6,7 +6,7 @@ import {
 	Input,
 	type ValidationResult,
 } from "react-aria-components/TextField";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
+import { Description, FieldError, Label } from "../forms/AriaForm/Form.tsx";
 import "./TextField.css";
 import type React from "react";
 
