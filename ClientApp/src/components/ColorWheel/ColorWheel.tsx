@@ -11,7 +11,7 @@ export type ColorWheelProps = Omit<
   'outerRadius' | 'innerRadius'
 >;
 
-export function ColorWheel(props: ColorWheelProps) {
+export function ColorWheel(props: Readonly<ColorWheelProps>) {
   return (
     <AriaColorWheel {...props} outerRadius={100} innerRadius={74}>
       <ColorWheelTrack />

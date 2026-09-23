@@ -53,7 +53,7 @@ const TextInput = ({
   onClick,
   onFocus,
   ...rest
-}: TextInputProps) => {
+}: Readonly<TextInputProps>) => {
   const [_field, _meta, _fieldHelper] = useField(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 

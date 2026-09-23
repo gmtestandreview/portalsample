@@ -13,7 +13,7 @@ const NoRequests = ({
   serviceName,
   serviceNameLinkTitle,
   serviceNameLinkUrl,
-}: NoRequestsProps = {}) => (
+}: Readonly<NoRequestsProps> = {}) => (
   <Row className='mb-3'>
     <Col>
       <HeaderIntroText className='p-4'>

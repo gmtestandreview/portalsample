@@ -53,7 +53,7 @@ const setNotification = () => {
 };
 
 const SavingBranchSelectorError = (
-  props: SavingBranchSelectorErrorProps
+  props: Readonly<SavingBranchSelectorErrorProps>
 ): ReactElement | null => {
   const { showError } = props;
   if (showError) {
@@ -88,7 +88,7 @@ interface SaveButtonProps {
   onClick: () => void;
 }
 
-const SaveButton = (props: SaveButtonProps): JSX.Element => {
+const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton
@@ -114,7 +114,7 @@ type SortableBranchKey =
   | 'crmGuid'
   | 'name';
 
-const BranchSelectorButtons = (props: BranchSelectorButtonsProps) => {
+const BranchSelectorButtons = (props: Readonly<BranchSelectorButtonsProps>) => {
   const { left, right } = props;
   return <ButtonGroup left={left} right={right} />;
 };

@@ -6,7 +6,7 @@ import {
 import { ColorThumb } from '../ColorThumb/ColorThumb.tsx';
 import './ColorArea.css';
 
-export function ColorArea(props: ColorAreaProps) {
+export function ColorArea(props: Readonly<ColorAreaProps>) {
   return (
     <AriaColorArea {...props}>
       <ColorThumb />

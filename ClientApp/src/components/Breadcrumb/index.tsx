@@ -32,7 +32,7 @@ const CustomBreadcrumb = ({
   breadcrumbs,
   containerClassName = '',
   ariaLabel = 'Breadcrumb',
-}: CustomBreadcrumbProps) => {
+}: Readonly<CustomBreadcrumbProps>) => {
   if (breadcrumbs.length === 0) {
     return null;
   }

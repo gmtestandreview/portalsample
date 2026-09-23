@@ -15,13 +15,16 @@ export interface ErrorBoundaryProps {
   children: ReactNode;
 }
 
-const ErrorFallback = ({ error }: FallbackProps) => {
+const ErrorFallback = ({ error }: Readonly<FallbackProps>) => {
   const details = error as ProblemDetails;
   const status = details.status ?? HttpStatusCode.InternalServerError;
   return <ErrorDisplay status={status} />;
 };
 
-const ErrorBoundary = ({ appInsights, children }: ErrorBoundaryProps) => (
+const ErrorBoundary = ({
+  appInsights,
+  children,
+}: Readonly<ErrorBoundaryProps>) => (
   <ReactErrorBoundary
     FallbackComponent={ErrorFallback}
     onError={(error, info) => {

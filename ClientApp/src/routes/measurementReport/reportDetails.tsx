@@ -10,10 +10,12 @@ import {
 import { formatDateToString } from '../../utils/index.ts';
 import { openInternalRouteInNewTab } from '../common/openWindow.ts';
 
-const ReportDetails = (props: {
-  reportData: RequestForQuoteDetails | undefined;
-  fileError: boolean | undefined;
-}) => {
+const ReportDetails = (
+  props: Readonly<{
+    reportData: RequestForQuoteDetails | undefined;
+    fileError: boolean | undefined;
+  }>
+) => {
   const { reportData, fileError } = props;
   const setNotification = () => {
     const dashboardNotification = getDashboardNotification();

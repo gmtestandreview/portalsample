@@ -9,7 +9,7 @@ import RadioButton from '../RadioButton/index.tsx';
 import type { RadioButtonGroupProps } from './types.ts';
 
 const RadioButtonGroup = <T,>(
-  props: RadioButtonGroupProps<T> & FieldHookConfig<T>
+  props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>
 ) => {
   const {
     displayHorizontally,

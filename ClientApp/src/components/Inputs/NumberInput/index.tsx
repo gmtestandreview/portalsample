@@ -41,7 +41,7 @@ const NumberInput = ({
   decimalScale,
   isSummary,
   defaultValue,
-}: NumberInputProps) => {
+}: Readonly<NumberInputProps>) => {
   const [field, meta, helpers] = useField(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
   const inputPrependId = prepend ? `input-prepend-${id || name}` : undefined;

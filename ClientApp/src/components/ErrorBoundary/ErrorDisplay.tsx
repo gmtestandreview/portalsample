@@ -80,7 +80,7 @@ const errorContentByStatus: Partial<Record<number, ErrorContent>> = {
   },
 };
 
-const ErrorDisplay = ({ status }: { status: number }) => {
+const ErrorDisplay = ({ status }: Readonly<{ status: number }>) => {
   const content = errorContentByStatus[status] ?? serverErrorContent;
 
   useHtmlTitle(content.title);

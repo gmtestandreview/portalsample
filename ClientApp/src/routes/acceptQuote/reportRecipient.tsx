@@ -28,7 +28,7 @@ function getNameForUse(
   return isSummary ? getName(name) : name;
 }
 
-const ReportRecipient = (props: ReportRecipientProps) => {
+const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);

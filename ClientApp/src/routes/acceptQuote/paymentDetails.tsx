@@ -26,7 +26,7 @@ function getNameForUse2(
   return isSummary ? getName(name) : name;
 }
 
-const PaymentDetails = (props: PaymentDetailsProps) => {
+const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);

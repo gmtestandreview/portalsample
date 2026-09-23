@@ -8,7 +8,9 @@ import type { CustomDatePickerProps } from './types.ts';
 
 const DATE_INPUT_FORMAT = 'dd/MM/yyyy';
 
-const CustomDatePicker = (customDatePickerProps: CustomDatePickerProps) => {
+const CustomDatePicker = (
+  customDatePickerProps: Readonly<CustomDatePickerProps>
+) => {
   const {
     calendarButtonTitle,
     containerClassName,

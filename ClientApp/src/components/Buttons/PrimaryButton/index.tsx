@@ -26,7 +26,7 @@ const PrimaryButton = ({
   className,
   disabled,
   ...props
-}: PrimaryButtonProps) => {
+}: Readonly<PrimaryButtonProps>) => {
   const buttonProps = props as ComponentProps<typeof AriaButton>;
 
   return (

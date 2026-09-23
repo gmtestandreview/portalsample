@@ -37,9 +37,11 @@ const handleAlertScroll = () => {
 };
 
 const SupportingDocuments = (
-  props: TASupportingDocumentsProps & {
-    onDeleteSuccess?: (success: boolean) => void;
-  }
+  props: Readonly<
+    TASupportingDocumentsProps & {
+      onDeleteSuccess?: (success: boolean) => void;
+    }
+  >
 ) => {
   const { accounts, instance } = useMsal();
   const [noThirdPartyAccess, setNoThirdPartyAccess] = useState(false);

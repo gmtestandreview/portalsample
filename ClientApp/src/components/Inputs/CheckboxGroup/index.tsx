@@ -9,7 +9,7 @@ import Checkbox from '../Checkbox/index.tsx';
 import type { CheckboxGroupProps } from './types.ts';
 
 const CheckboxGroup = <T,>(
-  props: CheckboxGroupProps<T> & FieldHookConfig<T>
+  props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>
 ) => {
   const {
     displayHorizontally,

@@ -21,7 +21,7 @@ export function ColorField({
   errorMessage,
   placeholder,
   ...props
-}: ColorFieldProps) {
+}: Readonly<ColorFieldProps>) {
   return (
     <AriaColorField {...props}>
       {label && <Label>{label}</Label>}

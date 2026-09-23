@@ -4,7 +4,7 @@ import TextInput from '../TextInput/index.tsx';
 import states from './constants.ts';
 import type { ManualAddressInputProps } from './types.ts';
 
-const ManualAddressInput = (props: ManualAddressInputProps) => {
+const ManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
   const { name, disabled, ...rest } = props;
   return (
     <>

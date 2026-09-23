@@ -107,7 +107,9 @@ export const otherApprovalSubOptions = [
   },
 ];
 
-const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
+const ApplicationAndInstrument = (
+  props: Readonly<TAApplicationAndInstrumentProps>
+) => {
   const { isSummary, name } = props;
   const getName = (localName: string) =>
     name ? `${name}.${localName}` : localName;

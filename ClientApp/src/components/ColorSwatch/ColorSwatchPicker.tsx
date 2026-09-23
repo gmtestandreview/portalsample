@@ -11,11 +11,13 @@ import './ColorSwatchPicker.css';
 export function ColorSwatchPicker({
   children,
   ...props
-}: ColorSwatchPickerProps) {
+}: Readonly<ColorSwatchPickerProps>) {
   return <AriaColorSwatchPicker {...props}>{children}</AriaColorSwatchPicker>;
 }
 
-export function ColorSwatchPickerItem(props: ColorSwatchPickerItemProps) {
+export function ColorSwatchPickerItem(
+  props: Readonly<ColorSwatchPickerItemProps>
+) {
   return (
     <AriaColorSwatchPickerItem {...props}>
       <ColorSwatch />

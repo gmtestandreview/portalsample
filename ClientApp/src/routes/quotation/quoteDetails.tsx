@@ -18,13 +18,15 @@ import { getMakeModelDetails } from '../common/helperFunctions.ts';
 import { openInternalRouteInNewTab } from '../common/openWindow.ts';
 import { validPillStatuses } from '../common/quoteStatus.ts';
 
-const QuoteDetails = (props: {
-  quotationData: RequestForQuoteDetails | undefined;
-  isSummary: boolean | undefined;
-  firstName: string | undefined;
-  lastName: string | undefined;
-  fileError: boolean | undefined;
-}) => {
+const QuoteDetails = (
+  props: Readonly<{
+    quotationData: RequestForQuoteDetails | undefined;
+    isSummary: boolean | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    fileError: boolean | undefined;
+  }>
+) => {
   const { quotationData, isSummary, fileError } = props;
 
   const setNotification = () => {

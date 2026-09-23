@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import AutoSuggestContainer from './AutoSuggestContainer.tsx';
 import type { AutoSuggestOption, AutoSuggestProps } from './types.ts';
 
-const AutoSuggest = <T,>(props: AutoSuggestProps<T>) => {
+const AutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
   const {
     name,
     getOptions,

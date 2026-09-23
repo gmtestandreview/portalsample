@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 import type { SearchBoxProps } from './searchBoxProps.ts';
 
-const SearchBox = (props: SearchBoxProps) => {
+const SearchBox = (props: Readonly<SearchBoxProps>) => {
   const {
     containerClassName = '', // default props
     className = '', // default props

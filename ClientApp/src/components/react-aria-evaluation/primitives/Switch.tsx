@@ -20,7 +20,7 @@ export function Switch({
   description,
   errorMessage,
   ...props
-}: SwitchProps) {
+}: Readonly<SwitchProps>) {
   return (
     <SwitchField {...props}>
       <SwitchButton>

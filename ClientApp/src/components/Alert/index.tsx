@@ -15,7 +15,7 @@ import type { AlertProps, BaseAlertProps } from './types.ts';
  *
  */
 
-const AlertMessage = (props: BaseAlertProps) => {
+const AlertMessage = (props: Readonly<BaseAlertProps>) => {
   const {
     id,
     testId,
@@ -81,7 +81,7 @@ const AlertMessage = (props: BaseAlertProps) => {
  *
  * @returns {JSX.Element} Green success alert
  */
-export const AlertSuccess = (props: AlertProps) => (
+export const AlertSuccess = (props: Readonly<AlertProps>) => (
   <AlertMessage variant='success' role='alert' ariaLive='polite' {...props} />
 );
 
@@ -106,7 +106,7 @@ export const AlertSuccess = (props: AlertProps) => (
  *
  * @returns {JSX.Element} Blue information alert
  */
-export const AlertInfo = (props: AlertProps) => (
+export const AlertInfo = (props: Readonly<AlertProps>) => (
   <AlertMessage variant='info' role='status' ariaLive='polite' {...props} />
 );
 
@@ -131,7 +131,7 @@ export const AlertInfo = (props: AlertProps) => (
  *
  * @returns {JSX.Element} Yellow warning alert
  */
-export const AlertWarning = (props: AlertProps) => (
+export const AlertWarning = (props: Readonly<AlertProps>) => (
   <AlertMessage variant='warning' role='alert' ariaLive='polite' {...props} />
 );
 
@@ -157,6 +157,6 @@ export const AlertWarning = (props: AlertProps) => (
  *
  * @returns {JSX.Element} Red error alert with assertive announcement
  */
-export const AlertError = (props: AlertProps) => (
+export const AlertError = (props: Readonly<AlertProps>) => (
   <AlertMessage variant='danger' role='alert' ariaLive='assertive' {...props} />
 );

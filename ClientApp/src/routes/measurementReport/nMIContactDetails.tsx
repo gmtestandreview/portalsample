@@ -1,9 +1,11 @@
 import { Col, Row } from 'react-bootstrap';
 import type { RequestForQuoteDetails } from '../../api/web-api-client.ts';
 
-const NMIContactDetails = (props: {
-  quotationData: RequestForQuoteDetails | undefined;
-}) => {
+const NMIContactDetails = (
+  props: Readonly<{
+    quotationData: RequestForQuoteDetails | undefined;
+  }>
+) => {
   const { quotationData } = props;
   const mailtoSubject = encodeURIComponent(
     `Reviewing Quotation ID: ${quotationData?.quotationIdNum ?? ''}`

@@ -2,7 +2,7 @@ import { Card } from 'react-bootstrap';
 import DiCoatOfArms from '../../../assets/DI_CoatOfArms.svg';
 import type { StandardPathwayFooterProps } from './types.ts';
 
-const DigitalIdentityFooter = (props: StandardPathwayFooterProps) => {
+const DigitalIdentityFooter = (props: Readonly<StandardPathwayFooterProps>) => {
   const { linkDescription } = props;
   return (
     <Card.Footer as='span' bsPrefix='standard-pathway-footer'>

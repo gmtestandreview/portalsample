@@ -2,7 +2,7 @@ import Pagination from 'react-bootstrap/Pagination';
 import type { CustomPaginationProps } from './types.ts';
 import useVisiblePageRange from './useVisiblePageRange.tsx';
 
-const CustomPagination = (props: CustomPaginationProps) => {
+const CustomPagination = (props: Readonly<CustomPaginationProps>) => {
   const {
     containerClassName = '', // default props
     className = '', // default props

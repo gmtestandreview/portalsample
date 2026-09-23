@@ -4,7 +4,7 @@ import RouteLeavingGuard from '../../RouteLeavingGuard/index.tsx';
 // Browser refresh/close (onbeforeunload) is intentionally not covered — see RouteLeavingGuard stories.
 // In-app navigation is blocked via useBlocker inside RouteLeavingGuard.
 
-const UnsavedFormPrompt = ({ path }: { path?: string }) => {
+const UnsavedFormPrompt = ({ path }: Readonly<{ path?: string }>) => {
   const formik = useFormikContext();
   const isDirtyUnsaved =
     formik.dirty && (formik.submitCount === 0 || !formik.isValid);

@@ -18,7 +18,7 @@ export interface BackToDashboardButtonProps {
   className?: string;
 }
 
-const BackToDashboardButton = (props: BackToDashboardButtonProps) => {
+const BackToDashboardButton = (props: Readonly<BackToDashboardButtonProps>) => {
   const {
     containerClassName = '', // default props
     className = '', // default props

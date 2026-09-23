@@ -12,7 +12,7 @@ export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {
   children: React.ReactNode;
 }
 
-export function Tooltip({ children, ...props }: TooltipProps) {
+export function Tooltip({ children, ...props }: Readonly<TooltipProps>) {
   return (
     <AriaTooltip {...props}>
       <OverlayArrow>
@@ -31,6 +31,6 @@ export function Tooltip({ children, ...props }: TooltipProps) {
   );
 }
 
-export function TooltipTrigger(props: TooltipTriggerComponentProps) {
+export function TooltipTrigger(props: Readonly<TooltipTriggerComponentProps>) {
   return <AriaTooltipTrigger {...props} />;
 }

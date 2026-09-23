@@ -18,14 +18,16 @@ import { ChevronRight, GripVertical } from './NmiIcon.tsx';
 import { ProgressCircle } from './ProgressCircle.tsx';
 import './Tree.css';
 
-export function Tree<T>(props: TreeProps<T>) {
+export function Tree<T>(props: Readonly<TreeProps<T>>) {
   return <AriaTree {...props} />;
 }
 
 export function TreeItemContent(
-  props: Omit<TreeItemContentProps, 'children'> & {
-    children?: React.ReactNode;
-  }
+  props: Readonly<
+    Omit<TreeItemContentProps, 'children'> & {
+      children?: React.ReactNode;
+    }
+  >
 ) {
   return (
     <AriaTreeItemContent>
@@ -57,7 +59,7 @@ export interface TreeItemProps extends Partial<AriaTreeItemProps> {
   title?: React.ReactNode;
 }
 
-export function TreeItem(props: TreeItemProps) {
+export function TreeItem(props: Readonly<TreeItemProps>) {
   const textValue = typeof props.title === 'string' ? props.title : '';
   return (
     <AriaTreeItem textValue={textValue} {...props}>
@@ -73,7 +75,7 @@ export function TreeItem(props: TreeItemProps) {
   );
 }
 
-export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
+export function TreeLoadMoreItem(props: Readonly<TreeLoadMoreItemProps>) {
   return (
     <AriaTreeLoadMoreItem {...props}>
       <ProgressCircle isIndeterminate={true} aria-label='Loading more...' />
@@ -82,11 +84,13 @@ export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
 }
 
 export function TreeSection(
-  props: React.ComponentProps<typeof AriaTreeSection>
+  props: Readonly<React.ComponentProps<typeof AriaTreeSection>>
 ) {
   return <AriaTreeSection {...props} />;
 }
 
-export function TreeHeader(props: React.ComponentProps<typeof AriaTreeHeader>) {
+export function TreeHeader(
+  props: Readonly<React.ComponentProps<typeof AriaTreeHeader>>
+) {
   return <AriaTreeHeader {...props} />;
 }

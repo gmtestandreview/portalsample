@@ -1,7 +1,7 @@
 import { Card } from 'react-bootstrap';
 import type { StandardPathwayFooterProps } from './types.ts';
 
-const StandardPathwayFooter = (props: StandardPathwayFooterProps) => {
+const StandardPathwayFooter = (props: Readonly<StandardPathwayFooterProps>) => {
   const { linkDescription } = props;
   return (
     <Card.Footer as='span' bsPrefix='standard-pathway-footer'>

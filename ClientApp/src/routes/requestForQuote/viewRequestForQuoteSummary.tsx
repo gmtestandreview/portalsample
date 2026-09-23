@@ -20,7 +20,7 @@ const bannerTitle = 'Testing and calibration service - Request for quote';
 
 const ViewRequestForQuoteSummary = ({
   isSubmitted: _isSubmitted,
-}: SummaryProps) => {
+}: Readonly<SummaryProps>) => {
   const { accounts, instance } = useMsal();
   const { id } = useParams();
   const account = useAccountState();

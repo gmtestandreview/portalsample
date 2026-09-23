@@ -13,7 +13,7 @@ const FormBanner = ({
   showSaveAndExitButton,
   showGoToDashboardButton,
   discard,
-}: FormBannerProps) => {
+}: Readonly<FormBannerProps>) => {
   const locationOnDiscard = discard?.locationOnDiscard ?? '/';
   const onDiscard = discard?.onDiscard;
   const discardButtonTitle = discard?.discardButtonTitle ?? 'Discard changes';

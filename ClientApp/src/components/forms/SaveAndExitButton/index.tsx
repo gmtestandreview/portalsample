@@ -12,7 +12,7 @@ interface SaveAndExitButtonProps {
     | ((onClick: React.MouseEventHandler<HTMLButtonElement>) => ReactNode);
 }
 
-const SaveAndExitButton = ({ children }: SaveAndExitButtonProps) => {
+const SaveAndExitButton = ({ children }: Readonly<SaveAndExitButtonProps>) => {
   const { submitForm } = useFormikContext();
   const [_field, _meta, saveAndExitHelper] = useField<boolean | undefined>(
     'saveAndExit'

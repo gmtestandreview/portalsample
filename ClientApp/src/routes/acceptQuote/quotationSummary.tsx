@@ -14,7 +14,7 @@ import NmiContactDetails from '../quotation/nMIContactDetails.tsx';
 import QuoteDetails from '../quotation/quoteDetails.tsx';
 import type { QuotationSummaryProps } from './types.ts';
 
-const QuotationSummary = (props: QuotationSummaryProps) => {
+const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
   const { isSummary, cRMQuoteRequestId } = props;
   const { accounts, instance } = useMsal();
   const accountContext = useAccountState();

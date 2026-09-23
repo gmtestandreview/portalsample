@@ -20,7 +20,7 @@ import { Check, ChevronRight, Dot } from './NmiIcon.tsx';
 import { Popover } from './Popover.tsx';
 import './Menu.css';
 
-export function MenuTrigger(props: MenuTriggerProps) {
+export function MenuTrigger(props: Readonly<MenuTriggerProps>) {
   const [trigger, menu] = props.children as unknown as [
     React.ReactElement,
     React.ReactElement,
@@ -33,12 +33,14 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-export function Menu<T>(props: MenuProps<T>) {
+export function Menu<T>(props: Readonly<MenuProps<T>>) {
   return <AriaMenu {...props}>{props.children}</AriaMenu>;
 }
 
 export function MenuItem(
-  props: Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }
+  props: Readonly<
+    Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }
+  >
 ) {
   const textValue =
     props.textValue ||
@@ -61,11 +63,11 @@ export function MenuItem(
   );
 }
 
-export function MenuSection<T>(props: MenuSectionProps<T>) {
+export function MenuSection<T>(props: Readonly<MenuSectionProps<T>>) {
   return <AriaMenuSection {...props} />;
 }
 
-export function SubmenuTrigger(props: SubmenuTriggerProps) {
+export function SubmenuTrigger(props: Readonly<SubmenuTriggerProps>) {
   const [trigger, menu] = props.children as unknown as [
     React.ReactElement,
     React.ReactElement,

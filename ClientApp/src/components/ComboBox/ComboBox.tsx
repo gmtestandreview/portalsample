@@ -41,7 +41,7 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   children,
   placeholder,
   ...props
-}: ComboBoxProps<T, M>) {
+}: Readonly<ComboBoxProps<T, M>>) {
   return (
     <AriaComboBox {...props}>
       {label && <Label>{label}</Label>}
@@ -72,10 +72,10 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
   );
 }
 
-export function ComboBoxListBox<T>(props: ListBoxProps<T>) {
+export function ComboBoxListBox<T>(props: Readonly<ListBoxProps<T>>) {
   return <DropdownListBox {...props} />;
 }
 
-export function ComboBoxItem(props: ListBoxItemProps) {
+export function ComboBoxItem(props: Readonly<ListBoxItemProps>) {
   return <DropdownItem {...props} />;
 }

@@ -50,7 +50,7 @@ const getPillProps = (itemStatus: string) => {
   }
 };
 
-const QuoteStatusPill = ({ status }: StatusPillProps) => {
+const QuoteStatusPill = ({ status }: Readonly<StatusPillProps>) => {
   const pillProps = getPillProps(status);
 
   return (

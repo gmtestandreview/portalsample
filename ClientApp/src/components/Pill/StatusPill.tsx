@@ -116,7 +116,7 @@ const getPillProps = (itemStatus: string) => {
   }
 };
 
-const StatusPill = ({ status }: StatusPillProps) => {
+const StatusPill = ({ status }: Readonly<StatusPillProps>) => {
   const pillProps = getPillProps(status);
 
   return (

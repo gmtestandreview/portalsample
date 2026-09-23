@@ -25,7 +25,7 @@ export function DateField<T extends DateValue>({
   description,
   errorMessage,
   ...props
-}: DateFieldProps<T>) {
+}: Readonly<DateFieldProps<T>>) {
   return (
     <AriaDateField {...props}>
       <Label>{label}</Label>
@@ -36,10 +36,10 @@ export function DateField<T extends DateValue>({
   );
 }
 
-export function DateSegment(props: DateSegmentProps) {
+export function DateSegment(props: Readonly<DateSegmentProps>) {
   return <AriaDateSegment {...props} />;
 }
 
-export function DateInput(props: DateInputProps) {
+export function DateInput(props: Readonly<DateInputProps>) {
   return <AriaDateInput {...props} className='react-aria-DateInput inset' />;
 }

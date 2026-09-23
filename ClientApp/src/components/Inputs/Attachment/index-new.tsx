@@ -16,7 +16,7 @@ import AttachmentItemNew from './AttachmentItem-new.tsx';
 import type { AttachmentProps } from './types.ts';
 
 const AttachmentNew = (
-  props: AttachmentProps & FieldHookConfig<AttachmentDto[]>
+  props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>
 ) => {
   const {
     id,

@@ -31,7 +31,7 @@ export function DateRangePicker<T extends DateValue>({
   description,
   errorMessage,
   ...props
-}: DateRangePickerProps<T>) {
+}: Readonly<DateRangePickerProps<T>>) {
   return (
     <AriaDateRangePicker {...props}>
       <Label>{label}</Label>

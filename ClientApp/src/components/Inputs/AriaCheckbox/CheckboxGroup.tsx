@@ -25,7 +25,7 @@ export function CheckboxGroup({
   children,
   orientation = 'vertical',
   ...props
-}: CheckboxGroupProps) {
+}: Readonly<CheckboxGroupProps>) {
   return (
     <AriaCheckboxGroup {...props} data-orientation={orientation}>
       {label && <Label>{label}</Label>}

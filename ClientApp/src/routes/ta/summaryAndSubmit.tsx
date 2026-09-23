@@ -14,7 +14,7 @@ import OrganisationAndContact from './organisationAndContact.tsx';
 import SupportingDocuments from './supportingDocuments.tsx';
 import type { TASummaryProps } from './types.ts';
 
-const SummaryAndSubmit = (props: TASummaryProps) => {
+const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted } = props;
 

@@ -7,7 +7,7 @@ export interface ProgressCircleProps extends ProgressBarProps {
   size?: number;
 }
 
-export function ProgressCircle(props: ProgressCircleProps) {
+export function ProgressCircle(props: Readonly<ProgressCircleProps>) {
   // SVG strokes are centered, so subtract half the stroke width from the radius to create an inner stroke.
   const strokeWidth = 4;
   const radius = `calc(50% - ${strokeWidth / 2}px)`;

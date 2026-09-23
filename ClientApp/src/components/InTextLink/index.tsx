@@ -17,7 +17,7 @@ const InTextLink = ({
   children,
   className,
   ...rest
-}: InTextLinkProps) => {
+}: Readonly<InTextLinkProps>) => {
   const rel = target === '_blank' ? 'nofollow noreferrer noopener' : undefined;
 
   return (

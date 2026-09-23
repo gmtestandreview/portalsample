@@ -19,7 +19,10 @@ interface BlockUiSpinnerProps {
  *
  */
 
-const BlockUISpinner = ({ children, partial }: BlockUiSpinnerProps) => {
+const BlockUISpinner = ({
+  children,
+  partial,
+}: Readonly<BlockUiSpinnerProps>) => {
   const renderSpinner = () => (
     <>
       <Spinner animation='border' className='spinner' />

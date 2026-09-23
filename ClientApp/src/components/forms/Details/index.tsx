@@ -1,6 +1,6 @@
 import type { DetailsProps } from './types.ts';
 
-const Details = ({ id, title, inlineHelp }: DetailsProps) => (
+const Details = ({ id, title, inlineHelp }: Readonly<DetailsProps>) => (
   <details id={id} className='details'>
     <summary className='details-summary'>
       <span className='details-summary-title'>

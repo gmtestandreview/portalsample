@@ -38,7 +38,7 @@ const PaRequestItem = ({
   request,
   tab,
   setDeleteSuccess,
-}: PaRequestItemProps) => {
+}: Readonly<PaRequestItemProps>) => {
   const {
     referenceId,
     portalReferenceId,

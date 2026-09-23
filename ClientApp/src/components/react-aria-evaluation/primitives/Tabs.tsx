@@ -15,15 +15,15 @@ import {
 } from 'react-aria-components/Tabs';
 import './Tabs.css';
 
-export function Tabs(props: TabsProps) {
+export function Tabs(props: Readonly<TabsProps>) {
   return <RacTabs {...props} />;
 }
 
-export function TabList<T>(props: TabListProps<T>) {
+export function TabList<T>(props: Readonly<TabListProps<T>>) {
   return <RacTabList {...props} />;
 }
 
-export function Tab(props: TabProps) {
+export function Tab(props: Readonly<TabProps>) {
   return (
     <RacTab {...props}>
       {composeRenderProps(props.children, (children) => (
@@ -36,10 +36,10 @@ export function Tab(props: TabProps) {
   );
 }
 
-export function TabPanels<T>(props: TabPanelsProps<T>) {
+export function TabPanels<T>(props: Readonly<TabPanelsProps<T>>) {
   return <RacTabPanels {...props} />;
 }
 
-export function TabPanel(props: TabPanelProps) {
+export function TabPanel(props: Readonly<TabPanelProps>) {
   return <RacTabPanel {...props} />;
 }

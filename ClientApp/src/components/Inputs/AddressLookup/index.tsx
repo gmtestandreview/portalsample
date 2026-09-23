@@ -40,7 +40,7 @@ const addressServiceUnavailableOption = {
 };
 
 const AddressLookup = (
-  props: AddressLookupProps & FieldHookConfig<AddressDetailsDto>
+  props: Readonly<AddressLookupProps & FieldHookConfig<AddressDetailsDto>>
 ) => {
   const {
     name,

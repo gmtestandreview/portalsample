@@ -46,7 +46,7 @@ import QuotationSummary from './quotationSummary.tsx';
 import ReportRecipient from './reportRecipient.tsx';
 import type { SummaryAndAcceptProps } from './types.ts';
 
-const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
+const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted, cRMQuoteRequestId } = props;
   const { accounts, instance } = useMsal();

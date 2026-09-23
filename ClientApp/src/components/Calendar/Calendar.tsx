@@ -26,7 +26,7 @@ export interface CalendarProps<
 export function Calendar<T extends DateValue>({
   errorMessage,
   ...props
-}: CalendarProps<T>) {
+}: Readonly<CalendarProps<T>>) {
   const months = props.visibleDuration?.months || 1;
   return (
     <AriaCalendar {...props}>
@@ -58,7 +58,7 @@ export function Calendar<T extends DateValue>({
   );
 }
 
-export function CalendarCell(props: CalendarCellProps) {
+export function CalendarCell(props: Readonly<CalendarCellProps>) {
   return (
     <AriaCalendarCell
       {...props}
@@ -68,6 +68,6 @@ export function CalendarCell(props: CalendarCellProps) {
   );
 }
 
-export function CalendarGrid(props: CalendarGridProps) {
+export function CalendarGrid(props: Readonly<CalendarGridProps>) {
   return <AriaCalendarGrid {...props} />;
 }

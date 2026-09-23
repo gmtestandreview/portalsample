@@ -30,7 +30,7 @@ export function TagGroup<T>({
   children,
   renderEmptyState,
   ...props
-}: TagGroupProps<T>) {
+}: Readonly<TagGroupProps<T>>) {
   return (
     <AriaTagGroup {...props}>
       {label && <Label>{label}</Label>}
@@ -46,9 +46,11 @@ export function TagGroup<T>({
 export function Tag({
   children,
   ...props
-}: Omit<TagProps, 'children'> & {
-  children?: React.ReactNode;
-}) {
+}: Readonly<
+  Omit<TagProps, 'children'> & {
+    children?: React.ReactNode;
+  }
+>) {
   const textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaTag

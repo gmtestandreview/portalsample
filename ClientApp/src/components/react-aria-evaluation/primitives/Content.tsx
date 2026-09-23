@@ -5,10 +5,10 @@ import {
 import { Text as AriaText, type TextProps } from 'react-aria-components/Text';
 import './Content.css';
 
-export function Heading(props: HeadingProps) {
+export function Heading(props: Readonly<HeadingProps>) {
   return <AriaHeading {...props} />;
 }
 
-export function Text(props: TextProps) {
+export function Text(props: Readonly<TextProps>) {
   return <AriaText {...props} />;
 }

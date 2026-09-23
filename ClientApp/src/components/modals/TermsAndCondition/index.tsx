@@ -20,7 +20,7 @@ interface DefaultTermsAndConditionModalHeaderProps {
 }
 
 const DefaultTermsAndConditionModalHeader = (
-  props: DefaultTermsAndConditionModalHeaderProps
+  props: Readonly<DefaultTermsAndConditionModalHeaderProps>
 ): ReactElement => {
   const { userName } = props;
 
@@ -48,7 +48,7 @@ interface SavingTermsAndConditionErrorProps {
 }
 
 const SavingTermsAndConditionError = (
-  props: SavingTermsAndConditionErrorProps
+  props: Readonly<SavingTermsAndConditionErrorProps>
 ): ReactElement | null => {
   const { showError } = props;
   if (showError) {
@@ -91,7 +91,7 @@ interface AgreeButtonProps {
   onClick: () => void;
 }
 
-const AgreeButton = (props: AgreeButtonProps): JSX.Element => {
+const AgreeButton = (props: Readonly<AgreeButtonProps>): JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton
@@ -109,7 +109,9 @@ interface TermAndConditionButtonsProps {
   right: any;
 }
 
-const TermAndConditionButtons = (props: TermAndConditionButtonsProps) => {
+const TermAndConditionButtons = (
+  props: Readonly<TermAndConditionButtonsProps>
+) => {
   const { left, right } = props;
   return <ButtonGroup left={left} right={right} />;
 };

@@ -53,7 +53,7 @@ interface ActionsProps {
   buttonAriaTitle?: string;
 }
 
-const Actions = (props: ActionsProps) => {
+const Actions = (props: Readonly<ActionsProps>) => {
   const {
     id,
     as,

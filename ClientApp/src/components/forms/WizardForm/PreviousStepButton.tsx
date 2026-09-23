@@ -9,7 +9,7 @@ const PreviousStepButton = ({
   title,
   url,
   className = '', // default props
-}: PreviousStepButtonProps) => {
+}: Readonly<PreviousStepButtonProps>) => {
   if (currentStepIndex < 1) {
     return null;
   }

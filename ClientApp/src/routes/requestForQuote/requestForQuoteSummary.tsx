@@ -11,7 +11,7 @@ import InstrumentAndRequest from './instrumentAndRequest.tsx';
 import OrganisationAndContact from './organisationAndContact.tsx';
 import type { SummaryProps } from './types.ts';
 
-const RequestForQuoteSummary = ({ isSubmitted }: SummaryProps) => {
+const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const isEditable = !isSubmitted;
   useBodyClass('summary');

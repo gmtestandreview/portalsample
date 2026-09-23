@@ -11,7 +11,7 @@ export interface MeterProps extends AriaMeterProps {
   label?: string;
 }
 
-export function Meter({ label, ...props }: MeterProps) {
+export function Meter({ label, ...props }: Readonly<MeterProps>) {
   const meterRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {

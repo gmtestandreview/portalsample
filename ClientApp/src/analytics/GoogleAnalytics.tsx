@@ -8,7 +8,7 @@ const GoogleAnalytics = ({
   anonymiseIp,
   testMode,
   sendPageView: _sendPageView,
-}: GoogleAnalyticsProps) => {
+}: Readonly<GoogleAnalyticsProps>) => {
   useEffect(() => {
     const trackId = env.REACT_APP_GA_TRACKINGID;
     if (trackId && ReactGa.isInitialized === false) {

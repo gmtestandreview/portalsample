@@ -17,7 +17,7 @@ export interface ViewPdfButtonProps {
  * @param props ViewPdfQuoteProps
  * @returns jsx
  */
-const ViewPdfButton = (props: ViewPdfButtonProps) => {
+const ViewPdfButton = (props: Readonly<ViewPdfButtonProps>) => {
   const { text, fileSize, isLoaded, getPdf, gaLabel } = props;
 
   return (

@@ -33,7 +33,7 @@ import {
 import { ProgressCircle } from './ProgressCircle.tsx';
 import './Table.css';
 
-export function Table(props: TableProps) {
+export function Table(props: Readonly<TableProps>) {
   return <AriaTable {...props} />;
 }
 
@@ -42,7 +42,9 @@ interface ColumnProps extends AriaColumnProps {
 }
 
 export function Column(
-  props: Omit<ColumnProps, 'children'> & { children?: React.ReactNode }
+  props: Readonly<
+    Omit<ColumnProps, 'children'> & { children?: React.ReactNode }
+  >
 ) {
   return (
     <AriaColumn {...props} className='react-aria-Column button-base'>
@@ -71,7 +73,7 @@ export function TableHeader<T>({
   columns,
   children,
   ...otherProps
-}: TableHeaderProps<T>) {
+}: Readonly<TableHeaderProps<T>>) {
   const { selectionBehavior, selectionMode, allowsDragging } =
     useTableOptions();
 
@@ -101,7 +103,12 @@ export function TableHeader<T>({
   );
 }
 
-export function Row<T>({ id, columns, children, ...otherProps }: RowProps<T>) {
+export function Row<T>({
+  id,
+  columns,
+  children,
+  ...otherProps
+}: Readonly<RowProps<T>>) {
   const { selectionBehavior, allowsDragging } = useTableOptions();
 
   return (
@@ -123,15 +130,15 @@ export function Row<T>({ id, columns, children, ...otherProps }: RowProps<T>) {
   );
 }
 
-export function TableBody<T>(props: TableBodyProps<T>) {
+export function TableBody<T>(props: Readonly<TableBodyProps<T>>) {
   return <AriaTableBody {...props} />;
 }
 
-export function TableFooter<T>(props: TableFooterProps<T>) {
+export function TableFooter<T>(props: Readonly<TableFooterProps<T>>) {
   return <AriaTableFooter {...props} />;
 }
 
-export function Cell(props: CellProps) {
+export function Cell(props: Readonly<CellProps>) {
   return (
     <AriaCell {...props}>
       {composeRenderProps(
@@ -151,7 +158,7 @@ export function Cell(props: CellProps) {
   );
 }
 
-export function TableLoadMoreItem(props: TableLoadMoreItemProps) {
+export function TableLoadMoreItem(props: Readonly<TableLoadMoreItemProps>) {
   return (
     <AriaTableLoadMoreItem {...props}>
       <div

@@ -8,7 +8,9 @@ type ReactAriaEvaluationFrameProps = Readonly<{
   children: ReactNode;
 }>;
 
-function ReactAriaEvaluationFrame({ children }: ReactAriaEvaluationFrameProps) {
+function ReactAriaEvaluationFrame({
+  children,
+}: Readonly<ReactAriaEvaluationFrameProps>) {
   useLayoutEffect(() => {
     mountedEvaluationStories += 1;
     globalThis.document.body.classList.add(evaluationClassName);

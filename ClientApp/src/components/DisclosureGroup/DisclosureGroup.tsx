@@ -5,6 +5,6 @@ import {
 } from 'react-aria-components/DisclosureGroup';
 import './DisclosureGroup.css';
 
-export function DisclosureGroup(props: DisclosureGroupProps) {
+export function DisclosureGroup(props: Readonly<DisclosureGroupProps>) {
   return <RacDisclosureGroup {...props} />;
 }

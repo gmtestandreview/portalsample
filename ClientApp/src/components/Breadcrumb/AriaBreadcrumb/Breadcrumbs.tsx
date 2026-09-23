@@ -10,12 +10,12 @@ import {
 import { ChevronRight } from '../../react-aria-evaluation/primitives/NmiIcon.tsx';
 import './Breadcrumbs.css';
 
-export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {
+export function Breadcrumbs<T>(props: Readonly<BreadcrumbsProps<T>>) {
   return <RacBreadcrumbs {...props} />;
 }
 
 export function Breadcrumb(
-  props: BreadcrumbProps & Omit<LinkProps, 'className'>
+  props: Readonly<BreadcrumbProps & Omit<LinkProps, 'className'>>
 ) {
   return (
     <RacBreadcrumb {...props}>

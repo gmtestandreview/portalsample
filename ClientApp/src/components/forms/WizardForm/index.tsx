@@ -5,7 +5,7 @@ import { Navigate, Route, Routes, useResolvedPath } from 'react-router';
 import type { WizardFormProps, WizardStepProps } from './types.ts';
 import WizardRoutedStep from './WizardRoutedStep.tsx';
 
-const WizardForm: FC<WizardFormProps> = (props: WizardFormProps) => {
+const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
   const {
     children,
     lastStepNextButtonTitle,

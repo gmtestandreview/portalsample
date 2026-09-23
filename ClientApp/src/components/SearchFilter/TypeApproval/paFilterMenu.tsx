@@ -11,7 +11,7 @@ import RadioButtonGroup from '../../Inputs/RadioButtonGroup/index.tsx';
 import { DashboardTab } from '../types.ts';
 import type { PaFilterMenuProps } from './paFilterMenuProps.ts';
 
-const PaFilterMenu = (props: PaFilterMenuProps) => {
+const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
   const {
     containerClassName = '', // default props
     initialFilters,

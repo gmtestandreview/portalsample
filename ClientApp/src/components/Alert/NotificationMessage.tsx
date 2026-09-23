@@ -13,7 +13,7 @@ import type { NotificationMessageProps } from './types.ts';
  *
  */
 
-const NotificationMessage = (props: NotificationMessageProps) => {
+const NotificationMessage = (props: Readonly<NotificationMessageProps>) => {
   const {
     id,
     message,

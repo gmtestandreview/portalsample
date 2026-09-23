@@ -8,7 +8,7 @@ import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup/index.tsx
 import TextInput from '../../components/Inputs/TextInput/index.tsx';
 import type { TAOrganisationAndContactProps } from './types.ts';
 
-const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
+const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
   const [_field] = useField(fieldName);
   return <>{_field.value}</>;
 };
@@ -18,7 +18,9 @@ const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
     return _field.value;
 }; */
 
-const OrganisationAndContact = (props: TAOrganisationAndContactProps) => {
+const OrganisationAndContact = (
+  props: Readonly<TAOrganisationAndContactProps>
+) => {
   const { isSummary, name } = props;
 
   // function getNameForUse(nameForUse: string | keyof DeliveryAndReturnStep): string { return getNameForUse2(nameForUse, isSummary); }

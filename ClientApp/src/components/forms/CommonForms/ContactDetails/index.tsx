@@ -33,7 +33,7 @@ const ContactDetailsInput = ({
   businessPhoneLabel,
   mobilePhoneLabel,
   emailAddressLabel,
-}: ContactDetailsProps) => {
+}: Readonly<ContactDetailsProps>) => {
   const getName = prefixedPropertyOf<ContactDto>(`${name}`);
   const [_contact] = useField(name);
   const [_title] = useField('organisationAndContact.contact.title');

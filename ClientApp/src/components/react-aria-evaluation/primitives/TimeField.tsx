@@ -25,7 +25,7 @@ export function TimeField<T extends TimeValue>({
   description,
   errorMessage,
   ...props
-}: TimeFieldProps<T>) {
+}: Readonly<TimeFieldProps<T>>) {
   return (
     <AriaTimeField {...props}>
       <Label>{label}</Label>

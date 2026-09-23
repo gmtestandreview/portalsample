@@ -9,7 +9,7 @@ import {
 import { Dialog } from '../../Dialog/Dialog.tsx';
 import './Sheet.css';
 
-export function Sheet(props: ModalOverlayProps) {
+export function Sheet(props: Readonly<ModalOverlayProps>) {
   return (
     <ModalOverlay className='sheet-overlay'>
       {composeRenderProps(props.children, (children) => (

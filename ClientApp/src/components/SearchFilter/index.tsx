@@ -4,7 +4,7 @@ import FilterMenu from './filterMenu.tsx';
 import SearchBox from './searchBox.tsx';
 import type { SearchFilterProps } from './types.ts';
 
-const SearchFilter = (props: SearchFilterProps) => {
+const SearchFilter = (props: Readonly<SearchFilterProps>) => {
   const {
     containerClassName = '', // default props
     className = '', // default props

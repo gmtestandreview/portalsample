@@ -5,6 +5,6 @@ import {
 } from 'react-aria-components/ToggleButtonGroup';
 import './ToggleButtonGroup.css';
 
-export function ToggleButtonGroup(props: ToggleButtonGroupProps) {
+export function ToggleButtonGroup(props: Readonly<ToggleButtonGroupProps>) {
   return <RacToggleButtonGroup {...props} />;
 }

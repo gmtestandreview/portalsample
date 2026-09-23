@@ -23,7 +23,7 @@ export function NumberField({
   description,
   errorMessage,
   ...props
-}: NumberFieldProps) {
+}: Readonly<NumberFieldProps>) {
   return (
     <AriaNumberField {...props}>
       <Label>{label}</Label>

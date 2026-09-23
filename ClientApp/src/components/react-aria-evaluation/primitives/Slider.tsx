@@ -28,7 +28,7 @@ export function Slider<T extends number | number[]>({
   thumbLabels,
   fillOffset,
   ...props
-}: SliderProps<T>) {
+}: Readonly<SliderProps<T>>) {
   return (
     <AriaSlider {...props}>
       {label && <Label>{label}</Label>}

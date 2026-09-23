@@ -9,7 +9,7 @@ import { removeHidden, validateForm } from '../utils.ts';
 import type { FormikFormProps } from './types.ts';
 
 const FormikForm = <Values extends FormikValues>(
-  props: FormikFormProps<Values>
+  props: Readonly<FormikFormProps<Values>>
 ) => {
   const {
     initialValues,

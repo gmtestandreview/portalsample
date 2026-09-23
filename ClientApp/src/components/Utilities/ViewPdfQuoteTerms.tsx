@@ -26,7 +26,7 @@ export interface ViewPdfQuoteTermsProps {
  * @param props MailingLabelProps
  * @returns jsx
  */
-const ViewPdfQuoteTerms = (props: ViewPdfQuoteTermsProps) => {
+const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
   const { prefixText, suffixText, quotationData, setFileError, setIsLoading } =
     props;
 

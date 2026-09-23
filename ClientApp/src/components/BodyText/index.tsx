@@ -19,6 +19,8 @@ export interface BodyTextProps {
 const BodyText = ({
   children,
   className = '', // default props
-}: BodyTextProps) => <p className={`body-text ${className}`}>{children}</p>;
+}: Readonly<BodyTextProps>) => (
+  <p className={`body-text ${className}`}>{children}</p>
+);
 
 export default BodyText;

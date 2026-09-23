@@ -20,7 +20,7 @@ export function GridList<T>({
   children,
   layout = 'grid',
   ...props
-}: GridListProps<T>) {
+}: Readonly<GridListProps<T>>) {
   return (
     <AriaGridList {...props} layout={layout}>
       {children}
@@ -31,9 +31,11 @@ export function GridList<T>({
 export function GridListItem({
   children,
   ...props
-}: Omit<GridListItemProps, 'children'> & {
-  children?: React.ReactNode;
-}) {
+}: Readonly<
+  Omit<GridListItemProps, 'children'> & {
+    children?: React.ReactNode;
+  }
+>) {
   const textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props}>
@@ -55,7 +57,9 @@ export function GridListItem({
   );
 }
 
-export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
+export function GridListLoadMoreItem(
+  props: Readonly<GridListLoadMoreItemProps>
+) {
   return (
     <AriaGridListLoadMoreItem {...props}>
       <ProgressCircle isIndeterminate={true} aria-label='Loading more...' />

@@ -201,7 +201,7 @@ const ErrorSummary = ({
   prefixToRemove,
   disableLinkedError,
   isWafViolation,
-}: ErrorSummaryProps) => {
+}: Readonly<ErrorSummaryProps>) => {
   useEffect(() => {
     if (serverErrors) {
       handleAlertScroll();

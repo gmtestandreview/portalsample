@@ -34,7 +34,7 @@ const RedirectToHome = () => {
 const AuthenticatedElement = ({
   children,
   displayHeaderAndFooter = true,
-}: AuthenticatedElementProps) => (
+}: Readonly<AuthenticatedElementProps>) => (
   <PreConditions displayHeaderAndFooter={displayHeaderAndFooter}>
     <MsalAuthenticationTemplate
       interactionType={InteractionType.Redirect}

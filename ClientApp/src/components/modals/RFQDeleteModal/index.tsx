@@ -18,7 +18,7 @@ interface SaveButtonProps {
   onClick: () => void;
 }
 
-const SaveButton = (props: SaveButtonProps): JSX.Element => {
+const SaveButton = (props: Readonly<SaveButtonProps>): JSX.Element => {
   const { onClick } = props;
   return (
     <PrimaryButton
@@ -36,7 +36,7 @@ interface RfqDeleteButtonsProps {
   right: any;
 }
 
-const RfqDeleteButtons = (props: RfqDeleteButtonsProps) => {
+const RfqDeleteButtons = (props: Readonly<RfqDeleteButtonsProps>) => {
   const { left, right } = props;
   return <ButtonGroup left={left} right={right} />;
 };

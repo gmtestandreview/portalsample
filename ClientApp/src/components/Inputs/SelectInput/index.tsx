@@ -37,7 +37,7 @@ const renderInlineHelp = (
 };
 
 const SelectInput = <T extends string | number>(
-  selectInputProps: SelectInputProps<T>
+  selectInputProps: Readonly<SelectInputProps<T>>
 ) => {
   const {
     displayHorizontally,

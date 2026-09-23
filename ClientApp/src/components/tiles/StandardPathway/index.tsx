@@ -10,7 +10,7 @@ import type {
   StandardPathwayProps,
 } from './types.ts';
 
-const StandardPathwayBody = (props: StandardBasePathwayProps) => {
+const StandardPathwayBody = (props: Readonly<StandardBasePathwayProps>) => {
   const { title, bodyText, linkDescription, digitalIdentity } = props;
   return (
     <>
@@ -33,7 +33,9 @@ const StandardPathwayBody = (props: StandardBasePathwayProps) => {
   );
 };
 
-const ExternalStandardPathway = (props: StandardExternalPathwayProps) => {
+const ExternalStandardPathway = (
+  props: Readonly<StandardExternalPathwayProps>
+) => {
   const { target, linkHref, ...rest } = props;
 
   const rel = target === '_blank' ? 'noopener noreferrer nofollow' : undefined;
@@ -54,7 +56,9 @@ const ExternalStandardPathway = (props: StandardExternalPathwayProps) => {
   );
 };
 
-const InternalStandardPathway = (props: StandardInternalPathwayProps) => {
+const InternalStandardPathway = (
+  props: Readonly<StandardInternalPathwayProps>
+) => {
   const { to, ...rest } = props;
   return (
     <Card as={Link} to={to} bsPrefix='standard-pathway' data-pii='login'>
@@ -63,7 +67,7 @@ const InternalStandardPathway = (props: StandardInternalPathwayProps) => {
   );
 };
 
-const StandardPathway = (props: StandardPathwayProps) => {
+const StandardPathway = (props: Readonly<StandardPathwayProps>) => {
   const { type } = props;
 
   if (type === 'external') {

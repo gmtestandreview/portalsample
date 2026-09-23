@@ -15,7 +15,7 @@ interface ToggleButtonProps extends RacToggleButtonProps {
   variant?: 'primary' | 'secondary' | 'quiet';
 }
 
-export function ToggleButton(props: ToggleButtonProps) {
+export function ToggleButton(props: Readonly<ToggleButtonProps>) {
   return (
     <RacToggleButton
       {...props}

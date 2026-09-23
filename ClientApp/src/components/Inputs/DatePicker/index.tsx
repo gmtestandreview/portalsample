@@ -13,7 +13,7 @@ import SummaryDisplay from '../../SummaryDisplay/index.tsx';
 import CustomDatePicker from './CustomDatePicker.tsx';
 import type { DatePickerProps } from './types.ts';
 
-const DatePicker = (datePickerProps: DatePickerProps) => {
+const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   const {
     calendarButtonTitle,
     containerClassName,
