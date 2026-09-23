@@ -22,7 +22,6 @@ const GoogleAnalytics = ({
         },
       ]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testMode, anonymiseIp]);
 
   return <>{children}</>;

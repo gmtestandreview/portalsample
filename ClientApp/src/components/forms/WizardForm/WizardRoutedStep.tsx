@@ -118,7 +118,6 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
     } finally {
       setIsLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadStepValues, getRedirectionLocationOnError, abortSignal]);
 
   useEffect(() => {
@@ -146,7 +145,6 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
         );
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     errorState.kind,
     accountState?.details?.organisation,

@@ -62,7 +62,6 @@ const PaymentDetails = (props: PaymentDetailsProps) => {
       setIsLoading(false);
     };
     loadDataForDisplay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getAcceptQuotePreInfo]);
 
   return (
