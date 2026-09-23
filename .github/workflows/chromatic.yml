@@ -41,7 +41,7 @@ jobs:
       # Publishing on every push gives pull requests a Chromatic status check
       # and enables visual-review badges when the GitHub integration is linked.
       - name: Publish Storybook to Chromatic
-        uses: chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7 # v18.5.0
+        uses: chromaui/action@259eda5f0e44c0c1eab38b672f1c4c967cc969b7 # v18.8.1
         with:
           # Store this token as the CHROMATIC_PROJECT_TOKEN repository secret.
           # Never commit a project token directly to the workflow or source.
