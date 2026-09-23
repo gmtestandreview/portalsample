@@ -1362,7 +1362,8 @@ references `AZURE_WAF_SERVER_PREFIX`) **Files changed:**
 - `ClientApp/src/components/forms/WizardForm/errorState.ts` — MODIFIED; added
   `import { isWafError } from '../../../types/wafError'`; replaced two-statement
   inline cast block in `resolveForbiddenState`
-  (`const server = (error as { headers?: { server?: string } }).headers?.server; if (server?.startsWith(...))`)
+  (`const server = (error as { headers?: { server?: string } }).headers?.server;
+  if (server?.startsWith(...))`)
   with single `isWafError(error)` predicate call — identical runtime behaviour,
   zero unsafe casts remain
 - `tests/unit/components/forms/wizardRoutedStep/errorState.test.ts` — MODIFIED;

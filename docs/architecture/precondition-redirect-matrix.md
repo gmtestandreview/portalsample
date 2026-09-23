@@ -125,7 +125,7 @@ that exclusion set. See **AN-5**.
 The three redirects are evaluated as an if/else-if chain and the **first match
 wins** (lines 152–162):
 
-```
+```text
 1. redirectToCreateAccount  →  <Navigate to='/create-account' />
 2. redirectToCreateContact  →  <Navigate to='/create-contact' />
 3. redirectToDashboard      →  <Navigate to='/' />

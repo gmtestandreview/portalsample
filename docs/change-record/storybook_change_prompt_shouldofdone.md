@@ -27,7 +27,7 @@ Do not broaden the task into fixing unrelated pre-existing warnings or
 repository issues. If unrelated diagnostics appear, record them separately
 unless your changes caused them.
 
-# Non-negotiable constraints
+## Non-negotiable constraints
 
 - Preserve all unrelated user changes.
 - Do not patch `node_modules`.
@@ -48,7 +48,7 @@ unless your changes caused them.
 If a safe root-cause fix cannot be established, stop that line of modification
 and report the blocker with evidence rather than concealing the symptom.
 
-# Phase 1 — Establish repository state
+## Phase 1 — Establish repository state
 
 Before editing:
 
@@ -94,7 +94,7 @@ Search the repository for at least:
 Search generated or installed dependency code only when necessary to establish
 ownership of a behaviour. Do not modify it.
 
-# Phase 2 — Establish root cause before editing
+## Phase 2 — Establish root cause before editing
 
 For each issue group, determine and record in working notes:
 
@@ -115,7 +115,7 @@ If external documentation is unavailable, inspect the installed package's
 exports, types, source, package metadata, or bundled changelog instead of
 guessing.
 
-# Issue 1 — Deprecated `vitest.init()`
+## Issue 1 — Deprecated `vitest.init()`
 
 Current warning:
 
@@ -152,7 +152,7 @@ update; explain them in the final report.
 Preserve Storybook browser/component-testing behaviour and confirm that all
 original Storybook tests are still discovered.
 
-# Issue 2 — Unhandled MSW requests
+## Issue 2 — Unhandled MSW requests
 
 Resolve all of these requests:
 
@@ -238,7 +238,7 @@ production behaviour.
 Success means the targeted request no longer leaks from module/global setup—not
 merely that the text `unknown test` disappears.
 
-# Issue 3 — `terms-config.json?import` coverage failure
+## Issue 3 — `terms-config.json?import` coverage failure
 
 Current failure:
 
@@ -301,7 +301,7 @@ Do not:
 If JSON exclusion is the correct policy, make it narrow and documented and prove
 that TypeScript/JavaScript application coverage is unaffected.
 
-# Regression coverage
+## Regression coverage
 
 Add or modify tests only when needed to make a changed behaviour observable and
 prevent regression.
@@ -328,7 +328,7 @@ intact. If new tests are added, report:
 - new tests added;
 - final total separately.
 
-# Verification
+## Verification
 
 First map each verification category below to an actual repository-supported
 command. Do not invent a command solely to satisfy this checklist.
@@ -376,7 +376,7 @@ Finally:
   or its regression tests;
 - verify that unrelated pre-existing user changes remain untouched.
 
-# Acceptance criteria
+## Acceptance criteria
 
 The task is complete only when all of the following are true:
 
@@ -402,7 +402,7 @@ The task is complete only when all of the following are true:
   targeted dependency update.
 - No unrelated repository files are modified.
 
-# Final response
+## Final response
 
 Report:
 

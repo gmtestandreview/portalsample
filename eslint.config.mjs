@@ -3,6 +3,7 @@ import js from '@eslint/js';
 import eslintReact from '@eslint-react/eslint-plugin';
 import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
@@ -216,15 +217,6 @@ export default defineConfig(
   },
 
   {
-    name: 'nmi/footer-jsx-spacing',
-    files: ['ClientApp/src/components/Footer/**/*.{ts,tsx}'],
-    rules: {
-      // Replaces react/jsx-child-element-spacing.
-      '@stylistic/jsx-child-element-spacing': 'error',
-    },
-  },
-
-  {
     name: 'nmi/node-config-files',
     files: ['*.config.{ts,js}', 'vitest*.ts', 'playwright.config.ts'],
     languageOptions: {
@@ -253,5 +245,7 @@ export default defineConfig(
         },
       ],
     },
-  }
+  },
+
+  eslintPluginPrettierRecommended
 );

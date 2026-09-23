@@ -138,7 +138,7 @@ how are the 8 heading-scale sizes remapped?
 **Current implementation detail:** `ClientApp/src/styles/_variables.scss` (lines
 111–120) establishes the font stack:
 
-```
+```scss
 $font-family-sans-serif: "Public Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, ...
 $font-size-base: 1rem  (assumed browser default 16px)
 ```
@@ -647,8 +647,15 @@ retired, verified and adopted, or replaced?
 **Current implementation detail:** `ClientApp/src/styles/media-print.scss` (25
 lines) contains a `@media print` block that:
 
-- Sets
-  `font-family: Arial, Helvetica, Sans-serif; font-size: 14pt; line-height: 165%; color: black`
+- Sets print typography:
+
+  ```scss
+  font-family: Arial, Helvetica, Sans-serif;
+  font-size: 14pt;
+  line-height: 165%;
+  color: black;
+  ```
+
 - Hides all content (`visibility: hidden; height: 0`) then selectively reveals
   `.printable-card` and `#printable-label` elements
 - Sizes `#printable-label` text to `font-size: 36pt` for large-format label

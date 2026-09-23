@@ -19,8 +19,11 @@ and coverage. I’ll preserve the existing dirty worktree and keep each fix
 narrowly scoped.
 
 Ran
+
+```powershell
 $files = @(   'C:\Users\gregm\\.codex\plugins\cache\openai-curated-remote\superpowers\6.3.0\skills\using-superpowers\references\codex-tools.md',   'C:\Users\gregm\\.codex\plugins\cache\openai-curated-remote\superpowers\6.3.0\skills\systematic-debugging\SKILL.md',   'C:\Users\gregm\\.codex\plugins\cache\openai-curated-remote\superpowers\6.3.0\skills\test-driven-development\SKILL.md',   'C:\Users\gregm\\.codex\plugins\cache\openai-curated-remote\superpowers\6.3.0\skills\writing-plans\SKILL.md',   'C:\Users\gregm\\.codex\plugins\cache\openai-curated-remote\build-web-apps\0.1.2\skills\frontend-testing-debugging\SKILL.md' ) foreach ($file
 in $files) {   "\`n--- $file ---\`n" Get-Content -Raw -LiteralPath $file }
+```
 
 I’m using the writing-plans skill to structure the implementation, but I’ll keep
 the plan in the task tracker rather than add a repository plan document because

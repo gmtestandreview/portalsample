@@ -9,7 +9,7 @@ Migration target: src/features/checkout/CheckoutForm.tsx Scope: migrate this
 form only. Do not edit unrelated forms. Start with Phase 1 only. Do not change
 files yet.
 
-### Phase 1: Inventory and impact analysis only
+## Phase 1: Inventory and impact analysis only
 
 Do not edit files in this phase.
 

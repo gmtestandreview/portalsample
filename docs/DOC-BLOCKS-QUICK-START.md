@@ -63,7 +63,7 @@ Here's what was delivered:
 
 ### Example URLs
 
-```
+```text
 Alert:         http://localhost:6009/?path=/docs/components-alert--docs
 Accordion:     http://localhost:6009/?path=/docs/components-accordion--docs
 PrimaryButton: http://localhost:6009/?path=/docs/components-buttons-primarybutton--docs
@@ -73,7 +73,7 @@ PrimaryButton: http://localhost:6009/?path=/docs/components-buttons-primarybutto
 
 ## 📂 File Structure
 
-```
+```text
 static/js/
 ├── components/
 │   ├── Alert/

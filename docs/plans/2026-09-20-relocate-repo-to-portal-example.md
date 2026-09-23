@@ -80,17 +80,22 @@ venv, Claude Code project memory, and the tokensave/claude-mem indexes.
       the worktree is clean.
 - [ ] `Test-Path C:\Users\gregm\source\portal-example` — Expected: `False` (was
       `False` at inspection).
-- [ ] `Get-ChildItem C:\Users\gregm\source\React19DesignSystem\apps\portal-spa -Recurse -File -ErrorAction SilentlyContinue | Select-String -Pattern 'offline-site-robots-off' -List`
-      — Expected: no hits; otherwise add the hits to Task 7.
+- [ ] Run the portal SPA relocation residue search:
+
+      ```powershell
+      Get-ChildItem C:\Users\gregm\source\React19DesignSystem\apps\portal-spa `
+        -Recurse -File -ErrorAction SilentlyContinue |
+        Select-String -Pattern 'offline-site-robots-off' -List
+      ```
+
+      Expected: no hits; otherwise add the hits to Task 7.
 - [ ] Close VS Code, Storybook, and all Claude Code sessions on this folder.
 
 ### Task 2: Move
 
 Run from a shell whose cwd is outside the repo:
 
-```powershell
-Move-Item -LiteralPath 'C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au' -Destination 'C:\Users\gregm\source\portal-example'
-```
+    Move-Item -LiteralPath 'C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au' -Destination 'C:\Users\gregm\source\portal-example'
 
 Expected: no output;
 `git -C C:\Users\gregm\source\portal-example log --oneline -1` prints the latest
@@ -98,10 +103,8 @@ commit.
 
 ### Task 3: Repair git worktree
 
-```powershell
-git -C C:\Users\gregm\source\portal-example worktree repair
-git -C C:\Users\gregm\source\portal-example worktree list
-```
+    git -C C:\Users\gregm\source\portal-example worktree repair
+    git -C C:\Users\gregm\source\portal-example worktree list
 
 Expected: both entries show `C:/Users/gregm/source/portal-example[...]`, and
 `Get-Content .worktrees\vscode-problems-remediation\.git` points at the new
@@ -113,11 +116,9 @@ Use PowerShell, not git-bash `ln` (which silently copies). Inspect the current
 target first with `(Get-Item .claude\skills\react-aria).Target`; keep the same
 destination folder but express it relatively (as the other 30 links do):
 
-```powershell
-cd C:\Users\gregm\source\portal-example
-Remove-Item .claude\skills\react-aria
-New-Item -ItemType SymbolicLink -Path .claude\skills\react-aria -Target <relative-target-matching-old-destination>
-```
+    cd C:\Users\gregm\source\portal-example
+    Remove-Item .claude\skills\react-aria
+    New-Item -ItemType SymbolicLink -Path .claude\skills\react-aria -Target <relative-target-matching-old-destination>
 
 If the old target pointed outside the repo, stop and confirm intent before
 relinking. Verify: `Test-Path .claude\skills\react-aria\SKILL.md` returns
@@ -125,14 +126,15 @@ relinking. Verify: `Test-Path .claude\skills\react-aria\SKILL.md` returns
 
 ### Task 4: Recreate `.venv`
 
-```powershell
-cd C:\Users\gregm\source\portal-example
-Remove-Item -Recurse -Force .venv
-c:\python314\python.exe -m venv .venv
-```
+    cd C:\Users\gregm\source\portal-example
+    Remove-Item -Recurse -Force .venv
+    c:\python314\python.exe -m venv .venv
 
-Then reinstall Python deps from the repo's requirements file. Locate it with
-`Get-ChildItem -Recurse -Filter requirements*.txt -Depth 3 | Where-Object FullName -notmatch node_modules`.
+Then reinstall Python deps from the repo's requirements file. Locate it with:
+
+    Get-ChildItem -Recurse -Filter requirements*.txt -Depth 3 |
+      Where-Object FullName -notmatch node_modules
+
 If none is found, stop and ask rather than guess. Verify:
 `.venv\Scripts\python.exe -c "import sys; print(sys.prefix)"` prints the new
 path.
@@ -142,11 +144,9 @@ path.
 - [ ] With Claude closed, copy (do not move) the old project folder into the new
       key:
 
-  ```powershell
-  $p='C:\Users\gregm\.claude\projects'
-  New-Item -ItemType Directory -Force "$p\C--Users-gregm-source-portal-example" | Out-Null
-  Copy-Item -Recurse -Force "$p\C--Users-gregm-offline-site-robots-off-portal-measurement-gov-au-source-map-capture-portal-measurement-gov-au\*" "$p\C--Users-gregm-source-portal-example\"
-  ```
+      $p='C:\Users\gregm\.claude\projects'
+      New-Item -ItemType Directory -Force "$p\C--Users-gregm-source-portal-example" | Out-Null
+      Copy-Item -Recurse -Force "$p\C--Users-gregm-offline-site-robots-off-portal-measurement-gov-au-source-map-capture-portal-measurement-gov-au\*" "$p\C--Users-gregm-source-portal-example\"
 
   Expected: `memory\MEMORY.md` exists under the new key.
 
@@ -159,13 +159,11 @@ path.
 
 ### Task 6: Verify
 
-```powershell
-cd C:\Users\gregm\source\portal-example
-npm run type-check
-npm run lint
-npm run test:unit
-git status --short
-```
+    cd C:\Users\gregm\source\portal-example
+    npm run type-check
+    npm run lint
+    npm run test:unit
+    git status --short
 
 Expected: type-check and lint exit 0; unit tests pass as before the move;
 `git status` shows only the pre-existing modifications.

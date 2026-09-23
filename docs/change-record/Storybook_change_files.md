@@ -1,8 +1,12 @@
+# Storybook Change Files
+
+<!-- markdownlint-disable MD013 -->
+
 14 files changed+235-66
 
 .storybook/msw-handlers.ts
 
-```
+```text
 svg
 ```
 
@@ -76,7 +80,7 @@ svg
 
 ClientApp/src/analytics/GoogleAnalytics.tsx
 
-```
+```text
     sendPageView: _sendPageView,
 ```
 
@@ -100,7 +104,7 @@ ClientApp/src/analytics/GoogleAnalytics.tsx
 
 ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx
 
-```
+```text
     },
 ```
 
@@ -138,7 +142,7 @@ ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx
 
 ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx
 
-```
+```text
 svg
 ```
 
@@ -208,7 +212,7 @@ svg
 
 ClientApp/src/storybook/storybookFixtures.ts
 
-```
+```text
 svg
 ```
 
@@ -282,7 +286,7 @@ svg
 
 tests/unit/analytics/googleAnalytics.test.tsx
 
-```
+```text
 svg
 ```
 
@@ -332,7 +336,7 @@ svg
 
 tests/unit/config/coverageRemapPolicy.test.ts
 
-```
+```text
 svg
 ```
 
@@ -448,7 +452,7 @@ svg
 
 tests/unit/config/vitestTopology.test.ts
 
-```
+```text
 svg
 ```
 
@@ -482,7 +486,7 @@ svg
 
 tests/unit/coverage/coverageConfig.test.ts
 
-```
+```text
 svg
 ```
 
@@ -660,7 +664,7 @@ svg
 
 tests/unit/storybook/mswHandlers.test.ts
 
-```
+```text
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 ```
 
@@ -726,7 +730,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 vitest.storybook.config.ts
 
-```
+```text
 svg
 ```
 
@@ -782,7 +786,7 @@ svg
 
 vitest.storybook.coverage.ts
 
-```
+```text
 import type { CoverageOptions } from 'vitest/node';
 ```
 
@@ -832,7 +836,7 @@ import type { CoverageOptions } from 'vitest/node';
 
 vitest.storybook.runtime.ts
 
-```
+```text
 import type { Vitest } from 'vitest/node';
 ```
 
@@ -890,7 +894,7 @@ import type { Vitest } from 'vitest/node';
 
 vitest.unit.config.ts
 
-```
+```text
 svg
 ```
 

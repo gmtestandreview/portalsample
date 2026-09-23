@@ -107,7 +107,7 @@ pre-flight review.
 Batches must execute in the following order. Do not begin a batch until the
 previous batch's verification command passes.
 
-```
+```text
 Batch A → Batch B → Batch C → Batch D → Batch E
 ```
 
@@ -147,7 +147,7 @@ are intentionally handled as migration gates or accepted debt:
 
 ### Files to Migrate
 
-```
+```text
 ClientApp/src/index.tsx
 ClientApp/src/App.tsx
 ClientApp/src/env.ts
@@ -213,7 +213,7 @@ Log batch completion in `docs/change-record/MASTER-CHANGE-RECORD.md`.
 
 ### Files to Migrate
 
-```
+```text
 ClientApp/src/components/**   (all component files)
 ```
 
@@ -263,7 +263,7 @@ Log batch completion in `docs/change-record/MASTER-CHANGE-RECORD.md`.
 
 ### Files to Migrate
 
-```
+```text
 ClientApp/src/storage/**
 ClientApp/src/analytics/**
 ClientApp/src/instrumentation/AppInsightsService.ts
@@ -305,7 +305,7 @@ Log batch completion in `docs/change-record/MASTER-CHANGE-RECORD.md`.
 
 **Migrate:**
 
-```
+```text
 ClientApp/src/validationSchemas/**
 tests/unit/**
 tests/e2e/**
@@ -404,7 +404,7 @@ provisioning:**
 
 ### Files to Migrate (when unblocked)
 
-```
+```text
 ClientApp/src/styles/**
 ClientApp/media/**
 ClientApp/public/fonts/**

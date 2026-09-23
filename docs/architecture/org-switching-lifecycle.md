@@ -9,7 +9,7 @@ read by every API client at request time.
 
 ## Data flow
 
-```
+```text
 User selects org in BranchSelectorModal
       ↓
 accountDispatch.setTargetOrganisation(abn, name)

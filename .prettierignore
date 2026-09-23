@@ -1,12 +1,22 @@
 # Ignore artifacts:
 build
 coverage
+dist
 node_modules
 storybook-static
 reports
+test-results
+playwright-report
 
 # Tool caches and generated metadata:
 .tokensave
 
-# Generated/package-manager outputs:
+# Captured, generated, and vendor source:
+ClientApp/media
+ClientApp/src/api/web-api-client.ts
+ClientApp/src/external
+ClientApp/source-map-http-downloads
+ClientApp/webpack
+
+# Package-manager outputs:
 package-lock.json
