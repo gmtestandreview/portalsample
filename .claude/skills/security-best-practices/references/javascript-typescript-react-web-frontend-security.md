@@ -1249,8 +1249,8 @@ Sanitizer reference:
   https://legacy.reactjs.org/docs/introducing-jsx.html
   'Introducing JSX – React'
 [15]: https://www.w3.org/TR/trusted-types/ 'Trusted Types'
-
 [16]: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-browser-based-apps
+
 "
 
                 draft-ietf-oauth-browser-based-apps-26

@@ -16,6 +16,7 @@ description:
 ${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|TypeScript|React|Angular|Python|Other"} <!-- Primary technology -->
 ${SCAN_DEPTH="Basic|Standard|Comprehensive"}
 <!-- How deeply to analyze the codebase -->
+
 ${INCLUDE_CODE_SNIPPETS=true|false} <!-- Include actual code snippets in addition to file references -->
 ${CATEGORIZATION="Pattern
 Type|Architecture Layer|File Type"} <!-- How to organize exemplars -->

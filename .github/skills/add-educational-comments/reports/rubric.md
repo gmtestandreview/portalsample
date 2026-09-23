@@ -16,5 +16,4 @@ Total: 100 points.
 | Fetch List handling          |      4 | Defines when to fetch, source priority, inaccessible references, and no source bloat.                                                                        | Fetches irrelevant sources or fabricates inaccessible content.        | Fetch List Handling section.                          |
 | Reporting and checklist      |      3 | Includes progress checklist and final report template.                                                                                                       | No trackable workflow or final status.                                | Agent Progress Checklist and Final Report Template.   |
 
-Pass threshold: 90/100.
-Production threshold: 95/100.
+Pass threshold: 90/100. Production threshold: 95/100.

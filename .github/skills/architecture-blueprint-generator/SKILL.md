@@ -17,12 +17,15 @@ ${PROJECT_TYPE="Auto-detect|.NET|Java|React|Angular|Python|Node.js|Flutter|Other
 ${ARCHITECTURE_PATTERN="Auto-detect|Clean
 Architecture|Microservices|Layered|MVVM|MVC|Hexagonal|Event-Driven|Serverless|Monolithic|Other"}
 <!-- Primary architectural pattern -->
+
 ${DIAGRAM_TYPE="C4|UML|Flow|Component|None"} <!-- Architecture diagram type -->
 ${DETAIL_LEVEL="High-level|Detailed|Comprehensive|Implementation-Ready"}
 <!-- Level of detail to include -->
+
 ${INCLUDES_CODE_EXAMPLES=true|false} <!-- Include sample code to illustrate patterns -->
 ${INCLUDES_IMPLEMENTATION_PATTERNS=true|false}
 <!-- Include detailed implementation patterns -->
+
 ${INCLUDES_DECISION_RECORDS=true|false} <!-- Include architectural decision records -->
 ${FOCUS_ON_EXTENSIBILITY=true|false}
 <!-- Emphasize extension points and patterns -->

@@ -21,12 +21,15 @@ validation, build, lint, and test commands.
 ${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|React.js|React Native|Angular|Python|Other"} <!-- Primary technology -->
 ${DEPTH_LEVEL="Basic|Standard|Comprehensive|Implementation-Ready"}
 <!-- Analysis depth -->
+
 ${INCLUDE_VERSIONS=true|false} <!-- Include version information -->
 ${INCLUDE_LICENSES=true|false}
 <!-- Include license information -->
+
 ${INCLUDE_DIAGRAMS=true|false} <!-- Generate architecture diagrams -->
 ${INCLUDE_USAGE_PATTERNS=true|false}
 <!-- Include code usage patterns -->
+
 ${INCLUDE_CONVENTIONS=true|false} <!-- Document coding conventions -->
 ${OUTPUT_FORMAT="Markdown|JSON|YAML|HTML"}
 <!-- Select output format --> ${CATEGORIZATION="Technology Type|Layer|Purpose"}

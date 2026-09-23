@@ -100,6 +100,7 @@ draft.
 
 **Verdict:** Approve | Approve with changes | Do not approve as proposed
 <!-- prefix "Conditional — " in description-only mode --> **One-line
+
 rationale:** ...
 
 ## Assumptions

@@ -14,9 +14,11 @@ description:
 ${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|TypeScript|React|Angular|Python|Multiple|Other"} <!-- Primary technology -->
 ${ARCHITECTURE_STYLE="Layered|Microservices|Monolithic|Domain-Driven|Event-Driven|Serverless|Mixed"}
 <!-- Architectural approach -->
+
 ${CODE_QUALITY_FOCUS="Maintainability|Performance|Security|Accessibility|Testability|All"} <!-- Quality priorities -->
 ${DOCUMENTATION_LEVEL="Minimal|Standard|Comprehensive"}
 <!-- Documentation requirements -->
+
 ${TESTING_REQUIREMENTS="Unit|Integration|E2E|TDD|BDD|All"} <!-- Testing approach -->
 ${VERSIONING="Semantic|CalVer|Custom"}
 <!-- Versioning approach -->
