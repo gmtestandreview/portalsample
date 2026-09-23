@@ -1,5 +1,9 @@
 # Ignore artifacts:
-
+build
+coverage
+node_modules
+storybook-static
+reports
 
 # Tool caches and generated metadata:
 .tokensave
