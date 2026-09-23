@@ -22,7 +22,8 @@ function Form() {
 }
 ```
 
-**Why it's bad**: Causes extra render pass with stale value, then re-renders with updated value.
+**Why it's bad**: Causes extra render pass with stale value, then re-renders
+with updated value.
 
 ---
 
@@ -71,7 +72,8 @@ function Profile({ userId }) {
 }
 ```
 
-**Why key works**: React treats components with different keys as different components, recreating state.
+**Why key works**: React treats components with different keys as different
+components, recreating state.
 
 ---
 
@@ -100,7 +102,8 @@ function ProductPage({ product, addToCart }) {
 }
 ```
 
-**Why it's bad**: Effect fires on page refresh (isInCart is true), showing notification unexpectedly.
+**Why it's bad**: Effect fires on page refresh (isInCart is true), showing
+notification unexpectedly.
 
 ---
 
@@ -115,12 +118,12 @@ function Game() {
   const [isGameOver, setIsGameOver] = useState(false);
 
   useEffect(() => {
-    if (card?.gold) setGoldCardCount(c => c + 1);
+    if (card?.gold) setGoldCardCount((c) => c + 1);
   }, [card]);
 
   useEffect(() => {
     if (goldCardCount > 3) {
-      setRound(r => r + 1);
+      setRound((r) => r + 1);
       setGoldCardCount(0);
     }
   }, [goldCardCount]);
@@ -154,7 +157,8 @@ function Game() {
 }
 ```
 
-**Why it's bad**: Multiple re-renders (setCard -> setGoldCardCount -> setRound -> setIsGameOver). Also fragile for features like history replay.
+**Why it's bad**: Multiple re-renders (setCard -> setGoldCardCount -> setRound
+-> setIsGameOver). Also fragile for features like history replay.
 
 ---
 
@@ -234,7 +238,7 @@ function SearchResults({ query }) {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    fetchResults(query).then(json => {
+    fetchResults(query).then((json) => {
       setResults(json); // "hello" response may arrive after "hell"
     });
   }, [query]);
@@ -247,11 +251,13 @@ function SearchResults({ query }) {
   useEffect(() => {
     let ignore = false;
 
-    fetchResults(query).then(json => {
+    fetchResults(query).then((json) => {
       if (!ignore) setResults(json);
     });
 
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [query]);
 }
 ```

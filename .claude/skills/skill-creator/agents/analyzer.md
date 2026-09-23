@@ -259,21 +259,15 @@ If schema validation tooling is available, validate before saving.
   "winner_strengths": [
     "The winner skill required validation before finalizing."
   ],
-  "loser_weaknesses": [
-    "The loser skill did not define output validation."
-  ],
+  "loser_weaknesses": ["The loser skill did not define output validation."],
   "instruction_following": {
     "winner": {
       "score": 9,
-      "issues": [
-        "Skipped one optional logging step."
-      ]
+      "issues": ["Skipped one optional logging step."]
     },
     "loser": {
       "score": 8,
-      "issues": [
-        "Did not apply the skill's required final naming convention."
-      ]
+      "issues": ["Did not apply the skill's required final naming convention."]
     }
   },
   "improvement_suggestions": [
@@ -393,8 +387,8 @@ Use bounded language:
 
 - `"did not differentiate in the observed runs"` rather than
   `"does not differentiate"`;
-- `"showed variable outcomes"` rather than `"is flaky"` unless repeated
-  evidence supports flakiness.
+- `"showed variable outcomes"` rather than `"is flaky"` unless repeated evidence
+  supports flakiness.
 
 #### Step 3: Analyze cross-eval patterns
 

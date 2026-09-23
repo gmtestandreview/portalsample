@@ -1,15 +1,21 @@
 ---
 applyTo: '**'
-description: 'Comprehensive web performance standards based on Core Web Vitals (LCP, INP, CLS), with 50+ anti-patterns, detection regex, framework-specific fixes for modern web frameworks, and modern API guidance.'
+description:
+  'Comprehensive web performance standards based on Core Web Vitals (LCP, INP,
+  CLS), with 50+ anti-patterns, detection regex, framework-specific fixes for
+  modern web frameworks, and modern API guidance.'
 ---
 
 # Performance Standards
 
-Comprehensive performance rules for web application development. Every anti-pattern includes a severity classification, detection method, Core Web Vitals metric impacted, and corrective code examples.
+Comprehensive performance rules for web application development. Every
+anti-pattern includes a severity classification, detection method, Core Web
+Vitals metric impacted, and corrective code examples.
 
 **Severity levels:**
 
-- **CRITICAL** — Directly degrades a Core Web Vital past the "poor" threshold. Must be fixed before merge.
+- **CRITICAL** — Directly degrades a Core Web Vital past the "poor" threshold.
+  Must be fixed before merge.
 - **IMPORTANT** — Measurably impacts user experience. Fix in same sprint.
 - **SUGGESTION** — Optimization opportunity. Plan for a future iteration.
 
@@ -21,14 +27,15 @@ Comprehensive performance rules for web application development. Every anti-patt
 
 **Good: < 2.5s | Needs Improvement: 2.5-4s | Poor: > 4s**
 
-Measures when the largest visible content element finishes rendering. Four sequential phases:
+Measures when the largest visible content element finishes rendering. Four
+sequential phases:
 
-| Phase | Target | What It Measures |
-|-------|--------|-----------------|
-| TTFB | ~40% of budget | Server response time |
-| Resource Load Delay | < 10% | Time between TTFB and LCP resource fetch start |
-| Resource Load Duration | ~40% | Download time for the LCP resource |
-| Element Render Delay | < 10% | Time between download and paint |
+| Phase                  | Target         | What It Measures                               |
+| ---------------------- | -------------- | ---------------------------------------------- |
+| TTFB                   | ~40% of budget | Server response time                           |
+| Resource Load Delay    | < 10%          | Time between TTFB and LCP resource fetch start |
+| Resource Load Duration | ~40%           | Download time for the LCP resource             |
+| Element Render Delay   | < 10%          | Time between download and paint                |
 
 ### INP (Interaction to Next Paint)
 
@@ -36,19 +43,23 @@ Measures when the largest visible content element finishes rendering. Four seque
 
 Measures latency of all user interactions, reports the worst. Three phases:
 
-| Phase | Optimization |
-|-------|-------------|
-| Input Delay | Break long tasks, yield to browser |
-| Processing Time | Keep handlers < 50ms |
+| Phase              | Optimization                           |
+| ------------------ | -------------------------------------- |
+| Input Delay        | Break long tasks, yield to browser     |
+| Processing Time    | Keep handlers < 50ms                   |
 | Presentation Delay | Minimize DOM size, avoid forced layout |
 
-> **Diagnostic tool:** Use the Long Animation Frames (LoAF) API (Chrome 123+) to debug INP issues. LoAF provides better attribution than the legacy Long Tasks API, including script source and rendering time.
+> **Diagnostic tool:** Use the Long Animation Frames (LoAF) API (Chrome 123+) to
+> debug INP issues. LoAF provides better attribution than the legacy Long Tasks
+> API, including script source and rendering time.
 
 ### CLS (Cumulative Layout Shift)
 
 **Good: < 0.1 | Needs Improvement: 0.1-0.25 | Poor: > 0.25**
 
-Layout shift sources: images without dimensions, dynamically injected content, web font FOUT, late-loading ads. Shifts within 500ms of user interaction are exempt.
+Layout shift sources: images without dimensions, dynamically injected content,
+web font FOUT, late-loading ads. Shifts within 500ms of user interaction are
+exempt.
 
 ---
 
@@ -65,12 +76,21 @@ Layout shift sources: images without dimensions, dynamically injected content, w
 <link rel="stylesheet" href="/styles/main.css" />
 
 <!-- GOOD — inline critical CSS (extracted at build time), preload the rest -->
-<style>/* critical above-fold CSS, inlined by a tool like Critters/Beasties */</style>
+<style>
+  /* critical above-fold CSS, inlined by a tool like Critters/Beasties */
+</style>
 <link rel="preload" href="/styles/main.css" as="style" />
 <link rel="stylesheet" href="/styles/main.css" />
 ```
 
-Prefer build-time critical CSS extraction (e.g., Critters, Beasties, Next.js `experimental.optimizeCss`) plus a normal `<link rel="stylesheet">`. Avoid the older `media="print" onload="this.media='all'"` trick: inline event handlers are blocked under a strict CSP (no `'unsafe-inline'` / no `script-src-attr 'unsafe-inline'`), which would prevent the stylesheet from ever activating and cause a styling regression. If non-critical CSS truly must be deferred, load it via an **external** script that swaps `media`, not an inline handler.
+Prefer build-time critical CSS extraction (e.g., Critters, Beasties, Next.js
+`experimental.optimizeCss`) plus a normal `<link rel="stylesheet">`. Avoid the
+older `media="print" onload="this.media='all'"` trick: inline event handlers are
+blocked under a strict CSP (no `'unsafe-inline'` / no
+`script-src-attr 'unsafe-inline'`), which would prevent the stylesheet from ever
+activating and cause a styling regression. If non-critical CSS truly must be
+deferred, load it via an **external** script that swaps `media`, not an inline
+handler.
 
 ### L2: Render-Blocking Synchronous Script
 
@@ -118,13 +138,19 @@ Prefer build-time critical CSS extraction (e.g., Critters, Beasties, Next.js `ex
 'use client';
 function Page() {
   const [data, setData] = useState(null);
-  useEffect(() => { fetch('/api/data').then(r => r.json()).then(setData); }, []);
+  useEffect(() => {
+    fetch('/api/data')
+      .then((r) => r.json())
+      .then(setData);
+  }, []);
   return <div>{data?.title}</div>;
 }
 
 // GOOD — Server Component fetches data before HTML is sent
 async function Page() {
-  const data = await fetch('https://api.example.com/data').then(r => r.json());
+  const data = await fetch('https://api.example.com/data').then((r) =>
+    r.json()
+  );
   return <div>{data.title}</div>;
 }
 ```
@@ -140,7 +166,8 @@ Each redirect adds 200-300ms. Maximum one redirect.
 ### L7: Missing fetchpriority on LCP Element
 
 - **Severity**: IMPORTANT
-- **Detection**: Above-fold hero image without `fetchpriority="high"` or `priority` prop
+- **Detection**: Above-fold hero image without `fetchpriority="high"` or
+  `priority` prop
 - **CWV**: LCP
 
 ```tsx
@@ -168,7 +195,8 @@ Defer non-essential scripts. Use facade pattern for chat widgets.
 - **Detection**: Server-rendered HTML larger than 14KB
 - **CWV**: LCP
 
-Reduce inline CSS/JS, remove whitespace, use streaming SSR with Suspense boundaries.
+Reduce inline CSS/JS, remove whitespace, use streaming SSR with Suspense
+boundaries.
 
 ### L10: Missing Compression
 
@@ -217,7 +245,8 @@ async function Page() {
 - **Detection**: `Date.now()|Math.random()|window\.innerWidth` in SSR components
 - **CWV**: CLS
 
-Use `useEffect` for client-only values, or `suppressHydrationWarning` for known differences.
+Use `useEffect` for client-only values, or `suppressHydrationWarning` for known
+differences.
 
 ### R4: Missing Streaming for Slow Data Sources
 
@@ -225,7 +254,8 @@ Use `useEffect` for client-only values, or `suppressHydrationWarning` for known 
 - **Detection**: Page awaiting all data before sending HTML
 - **CWV**: LCP (TTFB)
 
-Use streaming SSR with Suspense boundaries. Shell streams immediately; slow data fills in progressively.
+Use streaming SSR with Suspense boundaries. Shell streams immediately; slow data
+fills in progressively.
 
 ### R5: Unstable References Causing Re-renders
 
@@ -233,7 +263,9 @@ Use streaming SSR with Suspense boundaries. Shell streams immediately; slow data
 - **Detection**: `style=\{\{|onClick=\{\(\) =>` inline in JSX
 - **CWV**: INP
 
-React 19+ with React Compiler enabled (separate babel/SWC build plugin): auto-memoized. Without Compiler: extract or memoize with `useMemo`/`useCallback`. Angular: OnPush. Vue: `computed()`.
+React 19+ with React Compiler enabled (separate babel/SWC build plugin):
+auto-memoized. Without Compiler: extract or memoize with
+`useMemo`/`useCallback`. Angular: OnPush. Vue: `computed()`.
 
 ### R6: Missing Virtualization for Long Lists
 
@@ -241,7 +273,8 @@ React 19+ with React Compiler enabled (separate babel/SWC build plugin): auto-me
 - **Detection**: `.map(` rendering >100 items without virtual scrolling
 - **CWV**: INP
 
-Use TanStack Virtual, react-window, Angular CDK Virtual Scroll, or vue-virtual-scroller.
+Use TanStack Virtual, react-window, Angular CDK Virtual Scroll, or
+vue-virtual-scroller.
 
 ### R7: SSR of Immediately-Hidden Content
 
@@ -249,7 +282,8 @@ Use TanStack Virtual, react-window, Angular CDK Virtual Scroll, or vue-virtual-s
 - **Detection**: Server-rendering `display: none` components
 - **CWV**: LCP (TTFB)
 
-Use client-side rendering for modals, drawers, dropdowns. Angular: `@defer`. React: `React.lazy`.
+Use client-side rendering for modals, drawers, dropdowns. Angular: `@defer`.
+React: `React.lazy`.
 
 ### R8: Missing `key` Prop on List Items
 
@@ -259,7 +293,9 @@ Use client-side rendering for modals, drawers, dropdowns. Angular: `@defer`. Rea
 
 ```tsx
 // GOOD — stable unique key
-{items.map(item => <Row key={item.id} data={item} />)}
+{
+  items.map((item) => <Row key={item.id} data={item} />);
+}
 ```
 
 Never use array index as key if list can reorder.
@@ -278,7 +314,8 @@ Never use array index as key if list can reorder.
 // GOOD — yield to browser
 async function handleClick() {
   setLoading(true);
-  await (globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0)));
+  await (globalThis.scheduler?.yield?.() ??
+    new Promise((r) => setTimeout(r, 0)));
   const result = expensiveComputation(data);
   setResult(result);
 }
@@ -286,18 +323,23 @@ async function handleClick() {
 
 Move heavy work to Web Worker for best results.
 
-> **Note:** `scheduler.yield()` is supported in Chrome 129+, Firefox 129+, but NOT Safari as of April 2026. Fallback: `await (globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0)))`.
+> **Note:** `scheduler.yield()` is supported in Chrome 129+, Firefox 129+, but
+> NOT Safari as of April 2026. Fallback:
+> `await (globalThis.scheduler?.yield?.() ?? new Promise(r => setTimeout(r, 0)))`.
 
 ### J2: Layout Thrashing
 
 - **Severity**: CRITICAL
-- **Detection**: `offsetHeight|offsetWidth|getBoundingClientRect|clientHeight` in loops
+- **Detection**: `offsetHeight|offsetWidth|getBoundingClientRect|clientHeight`
+  in loops
 - **CWV**: INP
 
 ```typescript
 // GOOD — batch reads then batch writes
-const heights = elements.map(el => el.offsetHeight);
-elements.forEach((el, i) => { el.style.height = `${heights[i] + 10}px`; });
+const heights = elements.map((el) => el.offsetHeight);
+elements.forEach((el, i) => {
+  el.style.height = `${heights[i] + 10}px`;
+});
 ```
 
 ### J3: setInterval/setTimeout Without Cleanup
@@ -322,7 +364,9 @@ useEffect(() => {
 ```tsx
 useEffect(() => {
   const controller = new AbortController();
-  window.addEventListener('resize', handleResize, { signal: controller.signal });
+  window.addEventListener('resize', handleResize, {
+    signal: controller.signal,
+  });
   return () => controller.abort();
 }, []);
 ```
@@ -354,10 +398,12 @@ Move to Web Worker or break into chunks with `scheduler.yield()`.
 ### J8: Missing Effect Cleanup
 
 - **Severity**: IMPORTANT
-- **Detection**: `useEffect` without return cleanup; `subscribe` without unsubscribe
+- **Detection**: `useEffect` without return cleanup; `subscribe` without
+  unsubscribe
 - **Impact**: Memory
 
-React: return cleanup from `useEffect`. Angular: `takeUntilDestroyed()`. Vue: `onUnmounted`.
+React: return cleanup from `useEffect`. Angular: `takeUntilDestroyed()`. Vue:
+`onUnmounted`.
 
 ---
 
@@ -366,16 +412,27 @@ React: return cleanup from `useEffect`. Angular: `takeUntilDestroyed()`. Vue: `o
 ### C1: Animation Using Layout-Triggering Properties
 
 - **Severity**: CRITICAL
-- **Detection**: `animation:|transition:` with `top|left|width|height|margin|padding`
+- **Detection**: `animation:|transition:` with
+  `top|left|width|height|margin|padding`
 - **CWV**: INP
 
 ```css
 /* BAD — main thread, <60fps */
-.card { transition: width 0.3s, height 0.3s; }
+.card {
+  transition:
+    width 0.3s,
+    height 0.3s;
+}
 
 /* GOOD — GPU compositor, 60fps */
-.card { transition: transform 0.3s, opacity 0.3s; }
-.card:hover { transform: scale(1.05); }
+.card {
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
+}
+.card:hover {
+  transform: scale(1.05);
+}
 ```
 
 ### C2: Missing content-visibility for Off-Screen Sections
@@ -415,7 +472,9 @@ Use PurgeCSS, Tailwind purge, or critters. Code-split CSS per route.
 
 ```css
 /* GOOD — zero-specificity reset */
-:where(*, *::before, *::after) { box-sizing: border-box; }
+:where(*, *::before, *::after) {
+  box-sizing: border-box;
+}
 ```
 
 ### C6: Missing CSS Containment
@@ -425,7 +484,9 @@ Use PurgeCSS, Tailwind purge, or critters. Code-split CSS per route.
 - **CWV**: INP
 
 ```css
-.sidebar { contain: layout style paint; }
+.sidebar {
+  contain: layout style paint;
+}
 ```
 
 ### C7: Route Transitions Without View Transitions API
@@ -445,7 +506,9 @@ if (document.startViewTransition) {
 }
 ```
 
-Same-document transitions supported in all major browsers. Cross-document supported in Chrome/Edge 126+, Safari 18.5+. Always feature-check before calling — unsupported browsers will throw without the guard.
+Same-document transitions supported in all major browsers. Cross-document
+supported in Chrome/Edge 126+, Safari 18.5+. Always feature-check before calling
+— unsupported browsers will throw without the guard.
 
 ---
 
@@ -491,9 +554,12 @@ Always set `width` and `height` on images, or use `aspect-ratio` in CSS.
 - **CWV**: LCP
 
 ```html
-<img src="/hero-800.jpg" alt="Hero"
-     srcset="/hero-400.jpg 400w, /hero-800.jpg 800w, /hero-1200.jpg 1200w"
-     sizes="(max-width: 600px) 400px, (max-width: 1024px) 800px, 1200px" />
+<img
+  src="/hero-800.jpg"
+  alt="Hero"
+  srcset="/hero-400.jpg 400w, /hero-800.jpg 800w, /hero-1200.jpg 1200w"
+  sizes="(max-width: 600px) 400px, (max-width: 1024px) 800px, 1200px"
+/>
 ```
 
 ### I5: Font Without font-display
@@ -517,7 +583,13 @@ Always set `width` and `height` on images, or use `aspect-ratio` in CSS.
 - **CWV**: LCP + CLS
 
 ```html
-<link rel="preload" href="/fonts/main.woff2" as="font" type="font/woff2" crossorigin />
+<link
+  rel="preload"
+  href="/fonts/main.woff2"
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 ```
 
 ### I7: Full Font Loaded When Subset Suffices
@@ -526,7 +598,8 @@ Always set `width` and `height` on images, or use `aspect-ratio` in CSS.
 - **Detection**: Font files > 50KB WOFF2
 - **CWV**: LCP
 
-Use `unicode-range`, subset with glyphhanger, or `next/font` (auto-subsets Google Fonts).
+Use `unicode-range`, subset with glyphhanger, or `next/font` (auto-subsets
+Google Fonts).
 
 ### I8: Unoptimized SVGs
 
@@ -627,7 +700,7 @@ npm dedupe
 
 ```tsx
 import Image from 'next/image';
-<Image src="/hero.jpg" alt="Hero" width={1200} height={600} priority />
+<Image src='/hero.jpg' alt='Hero' width={1200} height={600} priority />;
 ```
 
 ### NX2: Not Using Cache Components for Partial Prerendering
@@ -652,7 +725,9 @@ export default async function Page() {
 }
 ```
 
-Enable in `next.config.ts` with `cacheComponents: true`. Use `"use cache"` at file, component, or function level. Static shell loads instantly; dynamic content streams via Suspense boundaries.
+Enable in `next.config.ts` with `cacheComponents: true`. Use `"use cache"` at
+file, component, or function level. Static shell loads instantly; dynamic
+content streams via Suspense boundaries.
 
 ### NX3: Unnecessary "use client" on Server-Renderable Component
 
@@ -684,7 +759,8 @@ const inter = Inter({ subsets: ['latin'] });
 ### NX6: Missing "use cache" for Cacheable Server Functions
 
 - **Severity**: IMPORTANT
-- **Detection**: Async server functions without `"use cache"` in Next.js 16+ with `cacheComponents: true`
+- **Detection**: Async server functions without `"use cache"` in Next.js 16+
+  with `cacheComponents: true`
 - **CWV**: LCP
 
 ```typescript
@@ -694,7 +770,7 @@ async function getProducts() {
 }
 
 // GOOD — cached with revalidation
-"use cache";
+('use cache');
 import { cacheLife } from 'next/cache';
 async function getProducts() {
   cacheLife('hours');
@@ -702,7 +778,8 @@ async function getProducts() {
 }
 ```
 
-`"use cache"` replaces the old `unstable_cache` and `fetch` cache options. Use `cacheLife()` and `cacheTag()` for fine-grained control.
+`"use cache"` replaces the old `unstable_cache` and `fetch` cache options. Use
+`cacheLife()` and `cacheTag()` for fine-grained control.
 
 ---
 
@@ -711,7 +788,8 @@ async function getProducts() {
 ### NG1: Default Change Detection on Presentational Components
 
 - **Severity**: IMPORTANT
-- **Detection**: Components without `ChangeDetectionStrategy.OnPush` (Angular <19) or without signals (Angular 19+)
+- **Detection**: Components without `ChangeDetectionStrategy.OnPush` (Angular
+  <19) or without signals (Angular 19+)
 - **CWV**: INP
 
 ```typescript
@@ -730,7 +808,9 @@ export class ProductCard {
 }
 ```
 
-Angular 19+: prefer zoneless change detection with signals. OnPush is unnecessary when using signal-based reactivity. Angular 20+ has stable zoneless support.
+Angular 19+: prefer zoneless change detection with signals. OnPush is
+unnecessary when using signal-based reactivity. Angular 20+ has stable zoneless
+support.
 
 ### NG2: Not Using NgOptimizedImage
 
@@ -750,9 +830,9 @@ Angular 19+: prefer zoneless change detection with signals. OnPush is unnecessar
 
 ```html
 @defer (on viewport) {
-  <app-heavy-chart [data]="chartData" />
+<app-heavy-chart [data]="chartData" />
 } @placeholder {
-  <div class="chart-skeleton"></div>
+<div class="chart-skeleton"></div>
 }
 ```
 
@@ -762,7 +842,8 @@ Angular 19+: prefer zoneless change detection with signals. OnPush is unnecessar
 - **Detection**: Class properties without signals in Angular 19+
 - **CWV**: INP
 
-Use `signal()` for reactive state, `computed()` for derived values. Signal APIs (`signal()`, `computed()`, `effect()`) are stable since Angular 20.
+Use `signal()` for reactive state, `computed()` for derived values. Signal APIs
+(`signal()`, `computed()`, `effect()`) are stable since Angular 20.
 
 ### NG5: Full Hydration Without Incremental Hydration
 
@@ -772,18 +853,20 @@ Use `signal()` for reactive state, `computed()` for derived values. Signal APIs 
 
 ```typescript
 // BAD — full hydration blocks interactivity
-provideClientHydration()
+provideClientHydration();
 
 // GOOD — incremental hydration with triggers
-provideClientHydration(withIncrementalHydration())
+provideClientHydration(withIncrementalHydration());
 ```
 
-Use `@defer` triggers (`on viewport`, `on interaction`) to hydrate components on demand. Reduces TTI by deferring non-critical component hydration.
+Use `@defer` triggers (`on viewport`, `on interaction`) to hydrate components on
+demand. Reduces TTI by deferring non-critical component hydration.
 
 ### NG6: Still Using zone.js in Angular 20+ Projects
 
 - **Severity**: SUGGESTION
-- **Detection**: `zone.js` in polyfills array, no `provideZonelessChangeDetection()` in Angular 20+
+- **Detection**: `zone.js` in polyfills array, no
+  `provideZonelessChangeDetection()` in Angular 20+
 - **CWV**: INP
 
 ```typescript
@@ -792,11 +875,12 @@ export const appConfig = {
   providers: [
     provideZonelessChangeDetection(), // removes ~15-30KB from bundle
     // ...
-  ]
+  ],
 };
 ```
 
-Zoneless change detection with signals reduces bundle size and improves runtime performance. Stable since Angular 20.
+Zoneless change detection with signals reduces bundle size and improves runtime
+performance. Stable since Angular 20.
 
 ---
 
@@ -813,7 +897,8 @@ Enable React Compiler (v19+) for auto-memoization. Remove manual wrappers.
 ### RX2: Missing useTransition for Expensive Updates
 
 - **Severity**: IMPORTANT
-- **Detection**: State updates causing expensive re-renders without `useTransition`
+- **Detection**: State updates causing expensive re-renders without
+  `useTransition`
 - **CWV**: INP
 
 ```tsx
@@ -884,52 +969,56 @@ const HeavyChart = defineAsyncComponent(() => import('./HeavyChart.vue'));
 - **Detection**: Performance-critical components using virtual DOM in Vue 3.6+
 - **CWV**: INP
 
-Vue 3.6+ Vapor Mode compiles templates to direct DOM operations, bypassing the virtual DOM. Use for performance-critical subtrees. Can be mixed with standard components.
+Vue 3.6+ Vapor Mode compiles templates to direct DOM operations, bypassing the
+virtual DOM. Use for performance-critical subtrees. Can be mixed with standard
+components.
 
 ---
 
 ## Resource Hints Quick Reference
 
-| Hint | Purpose | When to Use |
-|------|---------|-------------|
-| `preconnect` | DNS + TCP + TLS early | Critical third-party origins (API, CDN, fonts) |
-| `preload` | Fetch immediately, high priority | LCP image, critical font |
-| `prefetch` | Low priority for future navigation | Next-page assets |
-| `dns-prefetch` | DNS resolution only | Non-critical third-party origins |
-| `modulepreload` | Preload + parse ES module | Critical JS modules |
+| Hint                               | Purpose                            | When to Use                                              |
+| ---------------------------------- | ---------------------------------- | -------------------------------------------------------- |
+| `preconnect`                       | DNS + TCP + TLS early              | Critical third-party origins (API, CDN, fonts)           |
+| `preload`                          | Fetch immediately, high priority   | LCP image, critical font                                 |
+| `prefetch`                         | Low priority for future navigation | Next-page assets                                         |
+| `dns-prefetch`                     | DNS resolution only                | Non-critical third-party origins                         |
+| `modulepreload`                    | Preload + parse ES module          | Critical JS modules                                      |
 | `<script type="speculationrules">` | Prefetch/prerender next navigation | Likely next pages (Chrome 121+, progressive enhancement) |
 
 ---
 
 ## Image Optimization Quick Reference
 
-| Aspect | Recommendation |
-|--------|---------------|
-| Format | WebP (25-34% smaller), AVIF (50% smaller) |
-| LCP image | `fetchpriority="high"` or framework `priority` prop |
-| Below-fold | `loading="lazy"` |
-| Dimensions | Always set `width` + `height` |
-| Responsive | `srcset` + `sizes` or framework Image component |
-| Compression | Quality 75-85 for photos |
+| Aspect      | Recommendation                                      |
+| ----------- | --------------------------------------------------- |
+| Format      | WebP (25-34% smaller), AVIF (50% smaller)           |
+| LCP image   | `fetchpriority="high"` or framework `priority` prop |
+| Below-fold  | `loading="lazy"`                                    |
+| Dimensions  | Always set `width` + `height`                       |
+| Responsive  | `srcset` + `sizes` or framework Image component     |
+| Compression | Quality 75-85 for photos                            |
 
 ---
 
 ## Font Loading Quick Reference
 
-| Strategy | Best For | CLS Impact |
-|----------|---------|-----------|
-| `font-display: swap` | Body text | Slight FOUT, minimal CLS |
-| `font-display: optional` | All fonts (best CLS) | No FOUT, no CLS |
-| `next/font` | Next.js projects | Zero CLS |
-| Variable fonts | Multiple weights | Single file for all weights |
+| Strategy                 | Best For             | CLS Impact                  |
+| ------------------------ | -------------------- | --------------------------- |
+| `font-display: swap`     | Body text            | Slight FOUT, minimal CLS    |
+| `font-display: optional` | All fonts (best CLS) | No FOUT, no CLS             |
+| `next/font`              | Next.js projects     | Zero CLS                    |
+| Variable fonts           | Multiple weights     | Single file for all weights |
 
-Rules: preload 1-2 critical fonts only, use WOFF2, subset to needed characters, self-host when possible.
+Rules: preload 1-2 critical fonts only, use WOFF2, subset to needed characters,
+self-host when possible.
 
 ---
 
 ## Performance Checklist (CWV)
 
 ### LCP (< 2.5s)
+
 - [ ] LCP image has `fetchpriority="high"` or `priority` prop
 - [ ] LCP image preloaded if not in HTML source
 - [ ] No `loading="lazy"` on above-fold images
@@ -942,6 +1031,7 @@ Rules: preload 1-2 critical fonts only, use WOFF2, subset to needed characters, 
 - [ ] Fonts preloaded with `font-display: swap` or `optional`
 
 ### INP (< 200ms)
+
 - [ ] Event handlers complete in < 50ms
 - [ ] Long tasks broken into smaller chunks
 - [ ] Route-based code splitting implemented
@@ -954,6 +1044,7 @@ Rules: preload 1-2 critical fonts only, use WOFF2, subset to needed characters, 
 - [ ] Effect cleanup implemented (no leaking listeners/timers)
 
 ### CLS (< 0.1)
+
 - [ ] All images have `width` and `height` attributes
 - [ ] Fonts use `font-display: swap` or `optional`
 - [ ] No content injected above existing content dynamically

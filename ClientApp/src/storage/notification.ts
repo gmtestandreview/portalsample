@@ -1,75 +1,75 @@
-import SessionStorageCache from "./sessionStorageCache.ts";
-import type { Notification } from "./types.ts";
+import SessionStorageCache from './sessionStorageCache.ts';
+import type { Notification } from './types.ts';
 
-const branchModalNotificationKey = "branchModalNotification";
-const dashboardNotificationKey = "dashboardNotification";
-const manageAccessNotificationKey = "manageAccessNotification";
-const getStartedNotificationKey = "getStartedNotification";
-const reportingNotificationKey = "reportingNotification";
-const dashboardInfoNotificationKey = "dashboardInfoNotification";
+const branchModalNotificationKey = 'branchModalNotification';
+const dashboardNotificationKey = 'dashboardNotification';
+const manageAccessNotificationKey = 'manageAccessNotification';
+const getStartedNotificationKey = 'getStartedNotification';
+const reportingNotificationKey = 'reportingNotification';
+const dashboardInfoNotificationKey = 'dashboardInfoNotification';
 
 export const getBranchModalNotification = () =>
-	SessionStorageCache().getItem<Notification>(branchModalNotificationKey);
+  SessionStorageCache().getItem<Notification>(branchModalNotificationKey);
 
 export const getDashboardNotification = () =>
-	SessionStorageCache().getItem<Notification>(dashboardNotificationKey);
+  SessionStorageCache().getItem<Notification>(dashboardNotificationKey);
 
 export const getManageAccessNotification = () =>
-	SessionStorageCache().getItem<Notification>(manageAccessNotificationKey);
+  SessionStorageCache().getItem<Notification>(manageAccessNotificationKey);
 
 export const getReportingNotification = () =>
-	SessionStorageCache().getItem<Notification>(reportingNotificationKey);
+  SessionStorageCache().getItem<Notification>(reportingNotificationKey);
 
 export const getGetStartedNotification = () =>
-	SessionStorageCache().getItem<Notification>(getStartedNotificationKey);
+  SessionStorageCache().getItem<Notification>(getStartedNotificationKey);
 
 export const getDashboardInfoNotification = () =>
-	SessionStorageCache().getItem<Notification>(dashboardInfoNotificationKey);
+  SessionStorageCache().getItem<Notification>(dashboardInfoNotificationKey);
 
 export const setBranchModalNotification = (item: Notification) => {
-	SessionStorageCache().setItem(item, branchModalNotificationKey);
+  SessionStorageCache().setItem(item, branchModalNotificationKey);
 };
 
 export const setDashboardNotification = (item: Notification) => {
-	SessionStorageCache().setItem(item, dashboardNotificationKey);
+  SessionStorageCache().setItem(item, dashboardNotificationKey);
 };
 
 export const setManageAccessNotification = (item: Notification) => {
-	SessionStorageCache().setItem(item, manageAccessNotificationKey);
+  SessionStorageCache().setItem(item, manageAccessNotificationKey);
 };
 
 export const setReportingNotification = (item: Notification) => {
-	SessionStorageCache().setItem(item, reportingNotificationKey);
+  SessionStorageCache().setItem(item, reportingNotificationKey);
 };
 
 export const setGetStartedNotification = (item: Notification) => {
-	SessionStorageCache().setItem(item, getStartedNotificationKey);
+  SessionStorageCache().setItem(item, getStartedNotificationKey);
 };
 
 export const setDashboardInfoNotification = (item: Notification) => {
-	SessionStorageCache().setItem(item, dashboardInfoNotificationKey);
+  SessionStorageCache().setItem(item, dashboardInfoNotificationKey);
 };
 
 export const clearBranchModalNotification = () => {
-	SessionStorageCache().removeItem(branchModalNotificationKey);
+  SessionStorageCache().removeItem(branchModalNotificationKey);
 };
 
 export const clearDashboardNotification = () => {
-	SessionStorageCache().removeItem(dashboardNotificationKey);
+  SessionStorageCache().removeItem(dashboardNotificationKey);
 };
 
 export const clearManageAccessNotification = () => {
-	SessionStorageCache().removeItem(manageAccessNotificationKey);
+  SessionStorageCache().removeItem(manageAccessNotificationKey);
 };
 
 export const clearReportingNotification = () => {
-	SessionStorageCache().removeItem(reportingNotificationKey);
+  SessionStorageCache().removeItem(reportingNotificationKey);
 };
 
 export const clearGetStartedNotification = () => {
-	SessionStorageCache().removeItem(getStartedNotificationKey);
+  SessionStorageCache().removeItem(getStartedNotificationKey);
 };
 
 export const clearDashboardInfoNotification = () => {
-	SessionStorageCache().removeItem(dashboardInfoNotificationKey);
+  SessionStorageCache().removeItem(dashboardInfoNotificationKey);
 };

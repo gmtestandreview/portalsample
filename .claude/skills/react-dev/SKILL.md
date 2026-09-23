@@ -1,7 +1,12 @@
 ---
 name: react-dev
 version: 1.0.0
-description: This skill should be used when building React components with TypeScript, typing hooks, handling events, or when React TypeScript, React 19, Server Components are mentioned. Covers type-safe patterns for React 18-19 including generic components, proper event typing, and routing integration (TanStack Router, React Router).
+description:
+  This skill should be used when building React components with TypeScript,
+  typing hooks, handling events, or when React TypeScript, React 19, Server
+  Components are mentioned. Covers type-safe patterns for React 18-19 including
+  generic components, proper event typing, and routing integration (TanStack
+  Router, React Router).
 ---
 
 # React TypeScript
@@ -60,7 +65,8 @@ function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
 }
 ```
 
-See [react-19-patterns.md](references/react-19-patterns.md) for useOptimistic, useTransition, migration checklist.
+See [react-19-patterns.md](references/react-19-patterns.md) for useOptimistic,
+useTransition, migration checklist.
 
 </react_19_changes>
 
@@ -82,9 +88,9 @@ function Button({ variant, children, ...props }: ButtonProps) {
 
 ```typescript
 type Props = {
-  children: React.ReactNode;          // Anything renderable
-  icon: React.ReactElement;           // Single element
-  render: (data: T) => React.ReactNode;  // Render prop
+  children: React.ReactNode; // Anything renderable
+  icon: React.ReactElement; // Single element
+  render: (data: T) => React.ReactNode; // Render prop
 };
 ```
 
@@ -132,7 +138,8 @@ function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
 }
 ```
 
-See [event-handlers.md](references/event-handlers.md) for focus, drag, clipboard, touch, wheel events.
+See [event-handlers.md](references/event-handlers.md) for focus, drag,
+clipboard, touch, wheel events.
 
 </event_handlers>
 
@@ -148,21 +155,21 @@ const [status, setStatus] = useState<'idle' | 'loading'>('idle');
 **useRef** - null for DOM, value for mutable:
 
 ```typescript
-const inputRef = useRef<HTMLInputElement>(null);  // DOM - use ?.
-const countRef = useRef<number>(0);               // Mutable - direct access
+const inputRef = useRef<HTMLInputElement>(null); // DOM - use ?.
+const countRef = useRef<number>(0); // Mutable - direct access
 ```
 
 **useReducer** - discriminated unions for actions:
 
 ```typescript
-type Action =
-  | { type: 'increment' }
-  | { type: 'set'; payload: number };
+type Action = { type: 'increment' } | { type: 'set'; payload: number };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
-    case 'set': return { ...state, count: action.payload };
-    default: return state;
+    case 'set':
+      return { ...state, count: action.payload };
+    default:
+      return state;
   }
 }
 ```
@@ -172,7 +179,7 @@ function reducer(state: State, action: Action): State {
 ```typescript
 function useToggle(initial = false) {
   const [value, setValue] = useState(initial);
-  const toggle = () => setValue(v => !v);
+  const toggle = () => setValue((v) => !v);
   return [value, toggle] as const;
 }
 ```
@@ -189,7 +196,8 @@ function useUser() {
 }
 ```
 
-See [hooks.md](references/hooks.md) for useCallback, useMemo, useImperativeHandle, useSyncExternalStore.
+See [hooks.md](references/hooks.md) for useCallback, useMemo,
+useImperativeHandle, useSyncExternalStore.
 
 </hooks_typing>
 
@@ -244,7 +252,8 @@ function List<T extends HasId>({ items }: { items: T[] }) {
 }
 ```
 
-See [generic-components.md](examples/generic-components.md) for Select, List, Modal, FormField patterns.
+See [generic-components.md](examples/generic-components.md) for Select, List,
+Modal, FormField patterns.
 
 </generic_components>
 
@@ -305,7 +314,8 @@ function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
 }
 ```
 
-See [server-components.md](examples/server-components.md) for parallel fetching, streaming, error boundaries.
+See [server-components.md](examples/server-components.md) for parallel fetching,
+streaming, error boundaries.
 
 </server_components>
 
@@ -351,13 +361,15 @@ export default function UserPage({ loaderData }: Route.ComponentProps) {
 }
 ```
 
-See [tanstack-router.md](references/tanstack-router.md) for TanStack patterns and [react-router.md](references/react-router.md) for React Router patterns.
+See [tanstack-router.md](references/tanstack-router.md) for TanStack patterns
+and [react-router.md](references/react-router.md) for React Router patterns.
 
 </routing>
 
 <rules>
 
 ALWAYS:
+
 - Specific event types (MouseEvent, ChangeEvent, etc)
 - Explicit useState for unions/null
 - ComponentPropsWithoutRef for native element extension
@@ -368,6 +380,7 @@ ALWAYS:
 - Type-safe routing patterns (see routing section)
 
 NEVER:
+
 - any for event handlers
 - JSX.Element for children (use ReactNode)
 - forwardRef in React 19+
@@ -380,12 +393,19 @@ NEVER:
 
 <references>
 
-- [hooks.md](references/hooks.md) - useState, useRef, useReducer, useContext, custom hooks
-- [event-handlers.md](references/event-handlers.md) - all event types, generic handlers
-- [react-19-patterns.md](references/react-19-patterns.md) - useActionState, use(), useOptimistic, migration
-- [generic-components.md](examples/generic-components.md) - Table, Select, List, Modal patterns
-- [server-components.md](examples/server-components.md) - async components, Server Actions, streaming
-- [tanstack-router.md](references/tanstack-router.md) - TanStack Router typed routes, search params, navigation
-- [react-router.md](references/react-router.md) - React Router v7 loaders, actions, type generation, forms
+- [hooks.md](references/hooks.md) - useState, useRef, useReducer, useContext,
+  custom hooks
+- [event-handlers.md](references/event-handlers.md) - all event types, generic
+  handlers
+- [react-19-patterns.md](references/react-19-patterns.md) - useActionState,
+  use(), useOptimistic, migration
+- [generic-components.md](examples/generic-components.md) - Table, Select, List,
+  Modal patterns
+- [server-components.md](examples/server-components.md) - async components,
+  Server Actions, streaming
+- [tanstack-router.md](references/tanstack-router.md) - TanStack Router typed
+  routes, search params, navigation
+- [react-router.md](references/react-router.md) - React Router v7 loaders,
+  actions, type generation, forms
 
 </references>

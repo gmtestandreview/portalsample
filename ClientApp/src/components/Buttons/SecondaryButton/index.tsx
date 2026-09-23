@@ -1,6 +1,6 @@
-import type { ButtonHTMLAttributes, ComponentProps } from "react";
-import { Button as AriaButton } from "react-aria-components/Button";
-import { getButtonClassName } from "../buttonClassName.ts";
+import type { ButtonHTMLAttributes, ComponentProps } from 'react';
+import { Button as AriaButton } from 'react-aria-components/Button';
+import { getButtonClassName } from '../buttonClassName.ts';
 
 /**
  * SecondaryButtonProps
@@ -17,26 +17,26 @@ import { getButtonClassName } from "../buttonClassName.ts";
  */
 
 type SecondaryButtonProps = Omit<
-	ButtonHTMLAttributes<HTMLButtonElement>,
-	"className"
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'className'
 > & {
-	className?: string;
+  className?: string;
 };
 
 const SecondaryButton = ({
-	className,
-	disabled,
-	...props
+  className,
+  disabled,
+  ...props
 }: SecondaryButtonProps) => {
-	const buttonProps = props as ComponentProps<typeof AriaButton>;
+  const buttonProps = props as ComponentProps<typeof AriaButton>;
 
-	return (
-		<AriaButton
-			{...buttonProps}
-			isDisabled={disabled}
-			className={getButtonClassName("nmi-secondary", className)}
-		/>
-	);
+  return (
+    <AriaButton
+      {...buttonProps}
+      isDisabled={disabled}
+      className={getButtonClassName('nmi-secondary', className)}
+    />
+  );
 };
 
 export default SecondaryButton;

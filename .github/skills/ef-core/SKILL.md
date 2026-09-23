@@ -5,7 +5,8 @@ description: 'Get best practices for Entity Framework Core'
 
 # Entity Framework Core Best Practices
 
-Your goal is to help me follow best practices when working with Entity Framework Core.
+Your goal is to help me follow best practices when working with Entity Framework
+Core.
 
 ## Data Context Design
 
@@ -72,4 +73,5 @@ Your goal is to help me follow best practices when working with Entity Framework
 - Test migrations in isolated environments
 - Consider snapshot testing for model changes
 
-When reviewing my EF Core code, identify issues and suggest improvements that follow these best practices.
+When reviewing my EF Core code, identify issues and suggest improvements that
+follow these best practices.

@@ -1,10 +1,12 @@
 # XSS Prevention Guide
 
-Use this guide when reviewing HTML rendering, rich text, Markdown, templates, user-generated content, unsafe DOM APIs, CSP, or client-side routing.
+Use this guide when reviewing HTML rendering, rich text, Markdown, templates,
+user-generated content, unsafe DOM APIs, CSP, or client-side routing.
 
 ## Primary Rule
 
-Encode output for the context where it is used. Validation helps, but validation is not a substitute for output encoding or safe rendering.
+Encode output for the context where it is used. Validation helps, but validation
+is not a substitute for output encoding or safe rendering.
 
 ## Common XSS Sources
 
@@ -20,7 +22,8 @@ Encode output for the context where it is used. Validation helps, but validation
 - Prefer text rendering APIs such as `textContent`.
 - Keep framework auto-escaping enabled.
 - Sanitize trusted rich-text formats with an allowlist sanitizer.
-- Encode values for the correct context: HTML text, attribute, URL, CSS, or JavaScript string.
+- Encode values for the correct context: HTML text, attribute, URL, CSS, or
+  JavaScript string.
 - Use Content Security Policy as defense in depth.
 - Validate URL protocols and reject `javascript:` and other unsafe schemes.
 

@@ -1,194 +1,194 @@
-import { useIsAuthenticated } from "@azure/msal-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Navigate, useLocation } from "react-router";
+import { useIsAuthenticated } from '@azure/msal-react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Navigate, useLocation } from 'react-router';
 import {
-	useAccountDispatch,
-	useAccountState,
-} from "../../authentication/hooks.tsx";
-import Layout from "../../components/Layout/index.tsx";
-import { BranchSelectionModalMode } from "../../components/modals/BranchSelectorModal/enums.ts";
-import BranchSelectorModal from "../../components/modals/BranchSelectorModal/index.tsx";
-import type { ModalState } from "../../components/modals/ModalContext.tsx";
+  useAccountDispatch,
+  useAccountState,
+} from '../../authentication/hooks.tsx';
+import Layout from '../../components/Layout/index.tsx';
+import { BranchSelectionModalMode } from '../../components/modals/BranchSelectorModal/enums.ts';
+import BranchSelectorModal from '../../components/modals/BranchSelectorModal/index.tsx';
+import type { ModalState } from '../../components/modals/ModalContext.tsx';
 import {
-	ModalDispatchCtx,
-	ModalStateCtx,
-} from "../../components/modals/ModalContext.tsx";
-import RfqDeleteModal from "../../components/modals/RFQDeleteModal/index.tsx";
-import TermsAndConditionModal from "../../components/modals/TermsAndCondition/index.tsx";
-import BackToTopButton from "../../components/Utilities/backToTopButton.tsx";
-import RouteChangeScrollTop from "../../components/Utilities/routeChangeScrollTop.tsx";
-import { useRouteAccessibility } from "../../hooks/useRouteAccessibility.ts";
+  ModalDispatchCtx,
+  ModalStateCtx,
+} from '../../components/modals/ModalContext.tsx';
+import RfqDeleteModal from '../../components/modals/RFQDeleteModal/index.tsx';
+import TermsAndConditionModal from '../../components/modals/TermsAndCondition/index.tsx';
+import BackToTopButton from '../../components/Utilities/backToTopButton.tsx';
+import RouteChangeScrollTop from '../../components/Utilities/routeChangeScrollTop.tsx';
+import { useRouteAccessibility } from '../../hooks/useRouteAccessibility.ts';
 import {
-	clearDashboardNotification,
-	getBranchModalNotification,
-} from "../../storage/notification.ts";
+  clearDashboardNotification,
+  getBranchModalNotification,
+} from '../../storage/notification.ts';
 
 export interface PreConditionsProps {
-	children: any;
-	displayHeaderAndFooter?: boolean;
+  children: any;
+  displayHeaderAndFooter?: boolean;
 }
 
 const PreConditions = (props: PreConditionsProps) => {
-	const { children, displayHeaderAndFooter } = props;
-	const isAuthenticated = useIsAuthenticated();
-	const accountState = useAccountState();
-	const accountDispatch = useAccountDispatch();
-	const account =
-		accountState && accountDispatch
-			? { ...accountState, ...accountDispatch }
-			: null;
-	const location = useLocation();
-	const path = location.pathname;
-	const { announcement } = useRouteAccessibility();
-	const [isModalOpen, setIsModalOpen] = useState(false);
+  const { children, displayHeaderAndFooter } = props;
+  const isAuthenticated = useIsAuthenticated();
+  const accountState = useAccountState();
+  const accountDispatch = useAccountDispatch();
+  const account =
+    accountState && accountDispatch
+      ? { ...accountState, ...accountDispatch }
+      : null;
+  const location = useLocation();
+  const path = location.pathname;
+  const { announcement } = useRouteAccessibility();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-	const [modalState, setModalState] = useState<ModalState>(() => ({
-		showBranchSelector: !!getBranchModalNotification(),
-		showRFQDeleteModal: false,
-		branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
-	}));
+  const [modalState, setModalState] = useState<ModalState>(() => ({
+    showBranchSelector: !!getBranchModalNotification(),
+    showRFQDeleteModal: false,
+    branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
+  }));
 
-	const setShowBranchSelector = useCallback((show: boolean) => {
-		setModalState((prev) => ({
-			...prev,
-			showBranchSelector: show,
-			branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
-		}));
-	}, []);
+  const setShowBranchSelector = useCallback((show: boolean) => {
+    setModalState((prev) => ({
+      ...prev,
+      showBranchSelector: show,
+      branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
+    }));
+  }, []);
 
-	const setShowRfqDeleteModal = useCallback((show: boolean, rfqId: string) => {
-		setModalState((prev) => ({ ...prev, showRFQDeleteModal: show, rfqId }));
-	}, []);
+  const setShowRfqDeleteModal = useCallback((show: boolean, rfqId: string) => {
+    setModalState((prev) => ({ ...prev, showRFQDeleteModal: show, rfqId }));
+  }, []);
 
-	const setShowRfqSelectModal = useCallback(
-		(show: boolean, rfqId: string, callingPath: string) => {
-			setModalState((prev) => ({
-				...prev,
-				showBranchSelector: show,
-				branchSelectionModalMode: BranchSelectionModalMode.RFQSelectOrg,
-				rfqId,
-				callingPath,
-			}));
-		},
-		[],
-	);
+  const setShowRfqSelectModal = useCallback(
+    (show: boolean, rfqId: string, callingPath: string) => {
+      setModalState((prev) => ({
+        ...prev,
+        showBranchSelector: show,
+        branchSelectionModalMode: BranchSelectionModalMode.RFQSelectOrg,
+        rfqId,
+        callingPath,
+      }));
+    },
+    []
+  );
 
-	const modalDispatch = useMemo(
-		() => ({
-			setShowBranchSelector,
-			setShowRFQDeleteModal: setShowRfqDeleteModal,
-			setShowRFQSelectModal: setShowRfqSelectModal,
-		}),
-		[setShowBranchSelector, setShowRfqDeleteModal, setShowRfqSelectModal],
-	);
+  const modalDispatch = useMemo(
+    () => ({
+      setShowBranchSelector,
+      setShowRFQDeleteModal: setShowRfqDeleteModal,
+      setShowRFQSelectModal: setShowRfqSelectModal,
+    }),
+    [setShowBranchSelector, setShowRfqDeleteModal, setShowRfqSelectModal]
+  );
 
-	// Loose `!= null` is deliberate: it means "an organisation exists", covering both
-	// null and undefined. The API contract declares defaultOrganisationId as
-	// `number | undefined` and never emits null, so the previous strict `!== null`
-	// was always true and this guard never blocked - sending users with no
-	// organisation to /create-account instead of the intended /create-contact.
-	// Matches hasDefaultOrganisationId() in components/modals/BranchSelectorModal.
-	const redirectToCreateAccount =
-		isAuthenticated &&
-		account?.details?.defaultOrganisationId != null &&
-		account?.details?.accountCreationCompleted === false &&
-		!path?.includes("create-account");
+  // Loose `!= null` is deliberate: it means "an organisation exists", covering both
+  // null and undefined. The API contract declares defaultOrganisationId as
+  // `number | undefined` and never emits null, so the previous strict `!== null`
+  // was always true and this guard never blocked - sending users with no
+  // organisation to /create-account instead of the intended /create-contact.
+  // Matches hasDefaultOrganisationId() in components/modals/BranchSelectorModal.
+  const redirectToCreateAccount =
+    isAuthenticated &&
+    account?.details?.defaultOrganisationId != null &&
+    account?.details?.accountCreationCompleted === false &&
+    !path?.includes('create-account');
 
-	const redirectToCreateContact =
-		isAuthenticated &&
-		!redirectToCreateAccount &&
-		account?.details?.accountContactCompleted === false &&
-		!path?.includes("create-contact") &&
-		!path?.includes("create-account");
+  const redirectToCreateContact =
+    isAuthenticated &&
+    !redirectToCreateAccount &&
+    account?.details?.accountContactCompleted === false &&
+    !path?.includes('create-contact') &&
+    !path?.includes('create-account');
 
-	const redirectToDashboard =
-		isAuthenticated &&
-		account?.details?.accountCreationCompleted === true &&
-		account?.details?.accountContactCompleted === true &&
-		(path?.includes("create-account") === true ||
-			path?.includes("create-contact") === true);
+  const redirectToDashboard =
+    isAuthenticated &&
+    account?.details?.accountCreationCompleted === true &&
+    account?.details?.accountContactCompleted === true &&
+    (path?.includes('create-account') === true ||
+      path?.includes('create-contact') === true);
 
-	const showTermsAndConditions =
-		isAuthenticated && account?.details?.userAcceptedTermsOfUse === false;
+  const showTermsAndConditions =
+    isAuthenticated && account?.details?.userAcceptedTermsOfUse === false;
 
-	const autoShowBranchSelector = !!(
-		isAuthenticated &&
-		account?.details?.userAcceptedTermsOfUse === true &&
-		account?.details?.defaultOrganisationId === null &&
-		account?.details?.accountContactCompleted === true &&
-		!path?.includes("success-creating-account")
-	);
+  const autoShowBranchSelector = !!(
+    isAuthenticated &&
+    account?.details?.userAcceptedTermsOfUse === true &&
+    account?.details?.defaultOrganisationId === null &&
+    account?.details?.accountContactCompleted === true &&
+    !path?.includes('success-creating-account')
+  );
 
-	const showBranchSelector =
-		autoShowBranchSelector || modalState.showBranchSelector;
-	const showRfqDelete = modalState.showRFQDeleteModal;
+  const showBranchSelector =
+    autoShowBranchSelector || modalState.showBranchSelector;
+  const showRfqDelete = modalState.showRFQDeleteModal;
 
-	useEffect(() => {
-		if (autoShowBranchSelector && !modalState.showBranchSelector) {
-			setModalState((prev) => ({
-				...prev,
-				showBranchSelector: true,
-				branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
-			}));
-		}
-	}, [autoShowBranchSelector, modalState.showBranchSelector]);
+  useEffect(() => {
+    if (autoShowBranchSelector && !modalState.showBranchSelector) {
+      setModalState((prev) => ({
+        ...prev,
+        showBranchSelector: true,
+        branchSelectionModalMode: BranchSelectionModalMode.SelectAndEditOrg,
+      }));
+    }
+  }, [autoShowBranchSelector, modalState.showBranchSelector]);
 
-	useEffect(() => {
-		if (path && path !== "/" && !path.includes("dashboard")) {
-			clearDashboardNotification();
-		}
-	}, [path]);
+  useEffect(() => {
+    if (path && path !== '/' && !path.includes('dashboard')) {
+      clearDashboardNotification();
+    }
+  }, [path]);
 
-	useEffect(() => {
-		setIsModalOpen(
-			!!(showBranchSelector || showRfqDelete || showTermsAndConditions),
-		);
-	}, [showBranchSelector, showRfqDelete, showTermsAndConditions]);
+  useEffect(() => {
+    setIsModalOpen(
+      !!(showBranchSelector || showRfqDelete || showTermsAndConditions)
+    );
+  }, [showBranchSelector, showRfqDelete, showTermsAndConditions]);
 
-	const renderWithLayout = () => (
-		<Layout>
-			{children}
-			{showTermsAndConditions ? <TermsAndConditionModal /> : null}
-			{showBranchSelector ? <BranchSelectorModal /> : null}
-			{showRfqDelete ? <RfqDeleteModal /> : null}
-		</Layout>
-	);
+  const renderWithLayout = () => (
+    <Layout>
+      {children}
+      {showTermsAndConditions ? <TermsAndConditionModal /> : null}
+      {showBranchSelector ? <BranchSelectorModal /> : null}
+      {showRfqDelete ? <RfqDeleteModal /> : null}
+    </Layout>
+  );
 
-	const renderWithoutLayout = () => (
-		<>
-			{children}
-			{showTermsAndConditions ? <TermsAndConditionModal /> : null}
-			{showBranchSelector ? <BranchSelectorModal /> : null}
-			<BackToTopButton />
-			<span className="visually-hidden" role="status" aria-live="polite">
-				{announcement}
-			</span>
-			<RouteChangeScrollTop />
-		</>
-	);
+  const renderWithoutLayout = () => (
+    <>
+      {children}
+      {showTermsAndConditions ? <TermsAndConditionModal /> : null}
+      {showBranchSelector ? <BranchSelectorModal /> : null}
+      <BackToTopButton />
+      <span className='visually-hidden' role='status' aria-live='polite'>
+        {announcement}
+      </span>
+      <RouteChangeScrollTop />
+    </>
+  );
 
-	if (redirectToCreateAccount) {
-		return <Navigate to="/create-account" />;
-	}
+  if (redirectToCreateAccount) {
+    return <Navigate to='/create-account' />;
+  }
 
-	if (redirectToCreateContact) {
-		return <Navigate to="/create-contact" />;
-	}
+  if (redirectToCreateContact) {
+    return <Navigate to='/create-contact' />;
+  }
 
-	if (redirectToDashboard) {
-		return <Navigate to="/" />;
-	}
+  if (redirectToDashboard) {
+    return <Navigate to='/' />;
+  }
 
-	return (
-		<ModalStateCtx.Provider value={modalState}>
-			<ModalDispatchCtx.Provider value={modalDispatch}>
-				{/* For WCAG - DIV wrapper work around for HTML "inert" tag not yet included in ReactJS v18 */}
-				<div {...{ inert: isModalOpen ? "" : undefined }}>
-					{displayHeaderAndFooter ? renderWithLayout() : renderWithoutLayout()}
-				</div>
-			</ModalDispatchCtx.Provider>
-		</ModalStateCtx.Provider>
-	);
+  return (
+    <ModalStateCtx.Provider value={modalState}>
+      <ModalDispatchCtx.Provider value={modalDispatch}>
+        {/* For WCAG - DIV wrapper work around for HTML "inert" tag not yet included in ReactJS v18 */}
+        <div {...{ inert: isModalOpen ? '' : undefined }}>
+          {displayHeaderAndFooter ? renderWithLayout() : renderWithoutLayout()}
+        </div>
+      </ModalDispatchCtx.Provider>
+    </ModalStateCtx.Provider>
+  );
 };
 
 export default PreConditions;

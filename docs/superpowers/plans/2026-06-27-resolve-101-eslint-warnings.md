@@ -1,12 +1,23 @@
 # Resolve 101 ESLint Warnings Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use
+> superpowers:subagent-driven-development (recommended) or
+> superpowers:executing-plans to implement this plan task-by-task. Steps use
+> checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Reduce the current frontend ESLint baseline from 101 warnings to zero without weakening lint rules, adding suppressions, or editing generated/vendor files.
+**Goal:** Reduce the current frontend ESLint baseline from 101 warnings to zero
+without weakening lint rules, adding suppressions, or editing generated/vendor
+files.
 
-**Architecture:** Treat `npm run lint` as the failing static-analysis test, then remediate warnings in seven independently verifiable slices. Remove dead code and dead prop plumbing where behavior is provably absent; for React hooks, stabilize dependencies with `useCallback`/`useMemo` or complete dependency arrays, and guard the dashboard branch-reset effect against repeated profile writes.
+**Architecture:** Treat `npm run lint` as the failing static-analysis test, then
+remediate warnings in seven independently verifiable slices. Remove dead code
+and dead prop plumbing where behavior is provably absent; for React hooks,
+stabilize dependencies with `useCallback`/`useMemo` or complete dependency
+arrays, and guard the dashboard branch-reset effect against repeated profile
+writes.
 
-**Tech Stack:** React 18, TypeScript, Formik, React Router v7, MSAL, ESLint 8, `@typescript-eslint`, `eslint-plugin-react-hooks`, Vitest.
+**Tech Stack:** React 18, TypeScript, Formik, React Router v7, MSAL, ESLint 8,
+`@typescript-eslint`, `eslint-plugin-react-hooks`, Vitest.
 
 ---
 
@@ -26,75 +37,122 @@ The baseline was captured on 2026-06-27 with `npm run lint`:
 The 101 warnings occur in 28 files. Current validation status:
 
 - `npm run type-check`: passes.
-- The three warning-bearing test files plus `tests/unit/routes/staticPages.test.tsx`: 44 tests pass.
-- `npm run test:unit`: exceeded the execution harness's 124-second timeout, so the full-suite baseline is not known to be failing or passing.
-- The Storybook MCP required by the workspace instructions was searched for but is not installed/callable in this session. Use the checked-in stories plus `npm run test:storybook` and `npm run build-storybook` during implementation.
-- This snapshot has no `.git` directory. Commit steps below apply only when executing the plan in a Git-backed copy.
+- The three warning-bearing test files plus
+  `tests/unit/routes/staticPages.test.tsx`: 44 tests pass.
+- `npm run test:unit`: exceeded the execution harness's 124-second timeout, so
+  the full-suite baseline is not known to be failing or passing.
+- The Storybook MCP required by the workspace instructions was searched for but
+  is not installed/callable in this session. Use the checked-in stories plus
+  `npm run test:storybook` and `npm run build-storybook` during implementation.
+- This snapshot has no `.git` directory. Commit steps below apply only when
+  executing the plan in a Git-backed copy.
 
 ## Constraints
 
-- Do not edit `ClientApp/src/api/web-api-client.ts`, captured bundles, vendor mirrors, `ClientApp/source-map-http-downloads/**`, `ClientApp/src/external/**`, or `ClientApp/webpack/**`.
+- Do not edit `ClientApp/src/api/web-api-client.ts`, captured bundles, vendor
+  mirrors, `ClientApp/source-map-http-downloads/**`,
+  `ClientApp/src/external/**`, or `ClientApp/webpack/**`.
 - Do not add `eslint-disable` comments or change ESLint configuration.
 - Preserve runtime configuration access through `ClientApp/src/env.ts`.
 - Prefer `globalThis` in newly written global-object access.
 - Use the root `package.json` scripts for validation.
-- Keep the existing Yup extension imports intact; this plan does not change validation schemas.
+- Keep the existing Yup extension imports intact; this plan does not change
+  validation schemas.
 
 ## File Map
 
 ### Test mock typing
 
-- `tests/unit/components/modals/BranchSelectorModal.test.tsx`: replace inline `import()` typing with a namespace type import.
-- `tests/unit/routes/acceptQuote/paymentDetails.test.tsx`: replace inline API-module typing with a namespace type import.
-- `tests/unit/routes/acceptQuote/props.test.ts`: replace inline API-module typing with a namespace type import.
+- `tests/unit/components/modals/BranchSelectorModal.test.tsx`: replace inline
+  `import()` typing with a namespace type import.
+- `tests/unit/routes/acceptQuote/paymentDetails.test.tsx`: replace inline
+  API-module typing with a namespace type import.
+- `tests/unit/routes/acceptQuote/props.test.ts`: replace inline API-module
+  typing with a namespace type import.
 
 ### Shared input components
 
-- `ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.tsx`: remove unused Formik context and the unused `canUpload` prop.
-- `ClientApp/src/components/Inputs/Attachment/index-new.tsx`: remove unused Formik context and stop passing `canUpload`.
-- `ClientApp/src/components/Inputs/CertificateNumberLookup/index.tsx`: complete filtering-effect dependencies and remove the abandoned blur handler.
-- `ClientApp/src/components/Inputs/CheckboxGroup/index.tsx`: replace the `{}` generic constraint with TSX-safe unconstrained generic syntax.
-- `ClientApp/src/components/Progress/ProgressFileList.tsx`: remove the dead upload-status local.
-- `tests/unit/components/inputs/complexInputs.behavior.test.tsx`: add a regression test proving certificate suggestions refresh when Formik options change.
+- `ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.tsx`: remove
+  unused Formik context and the unused `canUpload` prop.
+- `ClientApp/src/components/Inputs/Attachment/index-new.tsx`: remove unused
+  Formik context and stop passing `canUpload`.
+- `ClientApp/src/components/Inputs/CertificateNumberLookup/index.tsx`: complete
+  filtering-effect dependencies and remove the abandoned blur handler.
+- `ClientApp/src/components/Inputs/CheckboxGroup/index.tsx`: replace the `{}`
+  generic constraint with TSX-safe unconstrained generic syntax.
+- `ClientApp/src/components/Progress/ProgressFileList.tsx`: remove the dead
+  upload-status local.
+- `tests/unit/components/inputs/complexInputs.behavior.test.tsx`: add a
+  regression test proving certificate suggestions refresh when Formik options
+  change.
 
 ### Pattern-approval list and filter UI
 
-- `ClientApp/src/components/RequestList/paRequestItem.tsx`: remove dead renderers, dead pagination props, and dead ARIA ID locals.
-- `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.tsx`: remove dead class plumbing, unused event parameters, and the duplicate unused year renderer.
-- `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts`: remove the unused `className` contract.
-- `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx`: remove the commented-out search handler path and its account-dispatch dependency.
-- `ClientApp/src/routes/services-we-offer/index.tsx`: remove an obsolete service-card renderer and imports used only by it.
-- `ClientApp/src/routes/dashboard/dashboard-ta.tsx`: stop passing the removed request-list pagination props.
+- `ClientApp/src/components/RequestList/paRequestItem.tsx`: remove dead
+  renderers, dead pagination props, and dead ARIA ID locals.
+- `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.tsx`: remove
+  dead class plumbing, unused event parameters, and the duplicate unused year
+  renderer.
+- `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts`:
+  remove the unused `className` contract.
+- `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx`:
+  remove the commented-out search handler path and its account-dispatch
+  dependency.
+- `ClientApp/src/routes/services-we-offer/index.tsx`: remove an obsolete
+  service-card renderer and imports used only by it.
+- `ClientApp/src/routes/dashboard/dashboard-ta.tsx`: stop passing the removed
+  request-list pagination props.
 
 ### Pattern-approval dashboard
 
-- `ClientApp/src/routes/dashboard/dashboard-ta.tsx`: remove constant-false loading/scroll/search state, console calls, and abandoned branch-link code; stabilize profile saving and branch reset.
-- `ClientApp/src/components/SearchFilter/types.ts`: remove the obsolete pattern-approval search placeholder prop.
+- `ClientApp/src/routes/dashboard/dashboard-ta.tsx`: remove constant-false
+  loading/scroll/search state, console calls, and abandoned branch-link code;
+  stabilize profile saving and branch reset.
+- `ClientApp/src/components/SearchFilter/types.ts`: remove the obsolete
+  pattern-approval search placeholder prop.
 
 ### Pattern-approval application flow
 
-- `ClientApp/src/routes/ta/applicationAndInstrument.tsx`: remove dead loading state and empty event handler; complete state-sync dependencies.
-- `ClientApp/src/routes/ta/index.tsx`: complete navigation and polling callback dependencies; remove an unused caught error.
-- `ClientApp/src/routes/ta/instrumentInfoPanel.tsx`: complete MSAL dependencies without a suppression.
-- `ClientApp/src/routes/ta/organisationAndContact.tsx`: remove abandoned branch-selection and help-renderer code.
+- `ClientApp/src/routes/ta/applicationAndInstrument.tsx`: remove dead loading
+  state and empty event handler; complete state-sync dependencies.
+- `ClientApp/src/routes/ta/index.tsx`: complete navigation and polling callback
+  dependencies; remove an unused caught error.
+- `ClientApp/src/routes/ta/instrumentInfoPanel.tsx`: complete MSAL dependencies
+  without a suppression.
+- `ClientApp/src/routes/ta/organisationAndContact.tsx`: remove abandoned
+  branch-selection and help-renderer code.
 
 ### Pattern-approval summary/helper cleanup
 
-- `ClientApp/src/routes/ta/organisationAndContactProps.ts`: mark callback-contract parameters intentionally unused.
-- `ClientApp/src/routes/ta/preApplication.tsx`: remove constant-false loading state.
-- `ClientApp/src/routes/ta/summaryAndSubmit.tsx`: remove unused MSAL/account/error state and constant-false spinner code.
-- `ClientApp/src/routes/ta/summaryAndSubmitProps.ts`: remove the unused `isComplete` factory argument and mark redirect callback parameters intentionally unused.
-- `ClientApp/src/routes/ta/supportingDocuments.tsx`: remove dead HTTP 410 state and allow the existing generic error handling to display the server title.
-- `ClientApp/src/routes/ta/supportingDocumentsProps.ts`: mark redirect callback parameters intentionally unused.
+- `ClientApp/src/routes/ta/organisationAndContactProps.ts`: mark
+  callback-contract parameters intentionally unused.
+- `ClientApp/src/routes/ta/preApplication.tsx`: remove constant-false loading
+  state.
+- `ClientApp/src/routes/ta/summaryAndSubmit.tsx`: remove unused
+  MSAL/account/error state and constant-false spinner code.
+- `ClientApp/src/routes/ta/summaryAndSubmitProps.ts`: remove the unused
+  `isComplete` factory argument and mark redirect callback parameters
+  intentionally unused.
+- `ClientApp/src/routes/ta/supportingDocuments.tsx`: remove dead HTTP 410 state
+  and allow the existing generic error handling to display the server title.
+- `ClientApp/src/routes/ta/supportingDocumentsProps.ts`: mark redirect callback
+  parameters intentionally unused.
 
 ### Pattern-approval management screens
 
-- `ClientApp/src/routes/ta/manage/index.tsx`: collapse the wrapper to its only live responsibility.
-- `ClientApp/src/routes/ta/manage/appDetails.tsx`: remove unused props/state/renderers, make tab parsing stable, and memoize the data-loader options.
-- `ClientApp/src/routes/ta/manage/appDetailsProps.ts`: remove unused account/banner arguments.
-- `ClientApp/src/routes/ta/manage/appDocuments.tsx`: remove dead navigation/modal/scroll/form callback plumbing.
-- `ClientApp/src/routes/ta/manage/appMessages.tsx`: remove dead navigation/modal/selection/index plumbing.
-- `ClientApp/src/routes/ta/types.ts`: remove the no-longer-used `TAApplicationDetailsProps` interface.
+- `ClientApp/src/routes/ta/manage/index.tsx`: collapse the wrapper to its only
+  live responsibility.
+- `ClientApp/src/routes/ta/manage/appDetails.tsx`: remove unused
+  props/state/renderers, make tab parsing stable, and memoize the data-loader
+  options.
+- `ClientApp/src/routes/ta/manage/appDetailsProps.ts`: remove unused
+  account/banner arguments.
+- `ClientApp/src/routes/ta/manage/appDocuments.tsx`: remove dead
+  navigation/modal/scroll/form callback plumbing.
+- `ClientApp/src/routes/ta/manage/appMessages.tsx`: remove dead
+  navigation/modal/selection/index plumbing.
+- `ClientApp/src/routes/ta/types.ts`: remove the no-longer-used
+  `TAApplicationDetailsProps` interface.
 
 ## Task 1: Replace Inline Module Type Imports
 
@@ -121,13 +179,13 @@ Expected: three `@typescript-eslint/consistent-type-imports` warnings.
 In `tests/unit/components/modals/BranchSelectorModal.test.tsx`, add:
 
 ```ts
-import type * as ReactRouterModule from "react-router";
+import type * as ReactRouterModule from 'react-router';
 ```
 
 Change the mock body to:
 
 ```ts
-vi.mock("react-router", async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof ReactRouterModule>();
   return { ...actual, useNavigate: () => mocks.navigate };
 });
@@ -138,13 +196,13 @@ vi.mock("react-router", async (importOriginal) => {
 In `tests/unit/routes/acceptQuote/paymentDetails.test.tsx`, add:
 
 ```ts
-import type * as WebApiClientModule from "@/api/web-api-client";
+import type * as WebApiClientModule from '@/api/web-api-client';
 ```
 
 Change the mock body to:
 
 ```ts
-vi.mock("@/api/web-api-client", async (importOriginal) => {
+vi.mock('@/api/web-api-client', async (importOriginal) => {
   const actual = await importOriginal<typeof WebApiClientModule>();
   return {
     ...actual,
@@ -161,7 +219,7 @@ vi.mock("@/api/web-api-client", async (importOriginal) => {
 In `tests/unit/routes/acceptQuote/props.test.ts`, add:
 
 ```ts
-import type * as WebApiClientModule from "../../../../ClientApp/src/api/web-api-client";
+import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
 ```
 
 Change the first line of the mock body to:
@@ -193,7 +251,8 @@ git commit -m "test: use consistent module type imports"
 
 ## Task 2: Clean Shared Input Components and Refresh Lookup Dependencies
 
-**Warnings removed:** 9 total: 7 unused bindings, 1 hook dependency warning, and 1 empty-object type warning.
+**Warnings removed:** 9 total: 7 unused bindings, 1 hook dependency warning, and
+1 empty-object type warning.
 
 **Files:**
 
@@ -206,64 +265,65 @@ git commit -m "test: use consistent module type imports"
 
 - [ ] **Step 1: Add a failing certificate-options refresh test**
 
-Add this import to `tests/unit/components/inputs/complexInputs.behavior.test.tsx`:
+Add this import to
+`tests/unit/components/inputs/complexInputs.behavior.test.tsx`:
 
 ```ts
-import CertificateNumberLookup from "@/components/Inputs/CertificateNumberLookup";
+import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
 ```
 
 Add this test inside `describe('complex input behavior slice', ...)`:
 
 ```tsx
-it("recomputes CertificateNumberLookup suggestions when Formik options change", async () => {
+it('recomputes CertificateNumberLookup suggestions when Formik options change', async () => {
   vi.useFakeTimers();
 
   const renderLookup = (
-    certNameOptions: Array<{ id: string; lookupName: string }>,
+    certNameOptions: Array<{ id: string; lookupName: string }>
   ) => (
     <FormikHarness
       initialValues={{
-        certificateNumber: "",
-        certificateNumberId: "",
+        certificateNumber: '',
+        certificateNumberId: '',
         certNameOptions,
       }}
     >
       <CertificateNumberLookup
-        name="certificateNumber"
-        idName="certificateNumberId"
-        label="Certificate number"
-        optionsFieldName="lookupName"
+        name='certificateNumber'
+        idName='certificateNumberId'
+        label='Certificate number'
+        optionsFieldName='lookupName'
       />
     </FormikHarness>
   );
 
   const { rerender } = render(
-    renderLookup([{ id: "cert-1", lookupName: "5/6A/91B" }]),
+    renderLookup([{ id: 'cert-1', lookupName: '5/6A/91B' }])
   );
 
   fireEvent.change(
-    screen.getByRole("combobox", { name: "Certificate number" }),
+    screen.getByRole('combobox', { name: 'Certificate number' }),
     {
-      target: { value: "5/6A" },
-    },
+      target: { value: '5/6A' },
+    }
   );
   await act(async () => {
     vi.advanceTimersByTime(300);
   });
   expect(
-    screen.getByRole("option", { name: /5\/6A\/91B/ }),
+    screen.getByRole('option', { name: /5\/6A\/91B/ })
   ).toBeInTheDocument();
 
-  rerender(renderLookup([{ id: "cert-2", lookupName: "5/6A/92C" }]));
+  rerender(renderLookup([{ id: 'cert-2', lookupName: '5/6A/92C' }]));
   await act(async () => {
     vi.advanceTimersByTime(300);
   });
 
   expect(
-    screen.queryByRole("option", { name: /5\/6A\/91B/ }),
+    screen.queryByRole('option', { name: /5\/6A\/91B/ })
   ).not.toBeInTheDocument();
   expect(
-    screen.getByRole("option", { name: /5\/6A\/92C/ }),
+    screen.getByRole('option', { name: /5\/6A\/92C/ })
   ).toBeInTheDocument();
 });
 ```
@@ -274,17 +334,20 @@ Run:
 npm run test:unit -- tests/unit/components/inputs/complexInputs.behavior.test.tsx
 ```
 
-Expected before the implementation: the new test fails because changing `certNameOptions` does not rerun the debounced filtering effect.
+Expected before the implementation: the new test fails because changing
+`certNameOptions` does not rerun the debounced filtering effect.
 
 - [ ] **Step 2: Remove unused attachment Formik context and prop plumbing**
 
-In `ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.tsx`, change the Formik import to:
+In `ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.tsx`, change
+the Formik import to:
 
 ```ts
-import { useField } from "formik";
+import { useField } from 'formik';
 ```
 
-Delete `canUpload` from `AttachmentItemProps`, remove it from the component parameter destructuring, and delete:
+Delete `canUpload` from `AttachmentItemProps`, remove it from the component
+parameter destructuring, and delete:
 
 ```ts
 const { errors, touched } = useFormikContext<any>();
@@ -301,13 +364,13 @@ const AttachmentItemNew = ({
 In `ClientApp/src/components/Inputs/Attachment/index-new.tsx`, change:
 
 ```ts
-import { useField, useFormikContext } from "formik";
+import { useField, useFormikContext } from 'formik';
 ```
 
 to:
 
 ```ts
-import { useField } from "formik";
+import { useField } from 'formik';
 ```
 
 Delete:
@@ -373,7 +436,8 @@ to:
 const CheckboxGroup = <T,>(props: CheckboxGroupProps<T> & FieldHookConfig<T>) => {
 ```
 
-The trailing comma is required so the TypeScript parser does not interpret `<T>` as JSX.
+The trailing comma is required so the TypeScript parser does not interpret `<T>`
+as JSX.
 
 - [ ] **Step 5: Remove the dead upload-status local**
 
@@ -395,7 +459,8 @@ npm run type-check
 npm run test:unit -- tests/unit/components/inputs/complexInputs.behavior.test.tsx
 ```
 
-Expected: no targeted lint problems, type-check passes, and the complete complex-input test file passes.
+Expected: no targeted lint problems, type-check passes, and the complete
+complex-input test file passes.
 
 - [ ] **Step 7: Commit in a Git-backed copy**
 
@@ -412,17 +477,20 @@ git commit -m "refactor: clean shared input component warnings"
 
 - Modify: `ClientApp/src/components/RequestList/paRequestItem.tsx`
 - Modify: `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.tsx`
-- Modify: `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts`
-- Modify: `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx`
+- Modify:
+  `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts`
+- Modify:
+  `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx`
 - Modify: `ClientApp/src/routes/dashboard/dashboard-ta.tsx`
 - Modify: `ClientApp/src/routes/services-we-offer/index.tsx`
 
 - [ ] **Step 1: Remove dead pattern-approval request renderers**
 
-In `ClientApp/src/components/RequestList/paRequestItem.tsx`, remove `RequestForQuoteDto` from the API import and remove:
+In `ClientApp/src/components/RequestList/paRequestItem.tsx`, remove
+`RequestForQuoteDto` from the API import and remove:
 
 ```ts
-import ContactDetails from "../Utilities/contactDetails";
+import ContactDetails from '../Utilities/contactDetails';
 ```
 
 Delete these three declarations in full:
@@ -439,7 +507,8 @@ const renderMultiLinkTooltip = (refIds: string[], isClonedFromRef: string): Reac
 const renderRequestContent = (requestForQuote: RequestForQuoteDto, sourceReferenceId: string | undefined) => {
 ```
 
-The next surviving declaration after those deletions must be the `PaRequestItemProps` interface below.
+The next surviving declaration after those deletions must be the
+`PaRequestItemProps` interface below.
 
 - [ ] **Step 2: Narrow the request-item prop contract**
 
@@ -469,10 +538,11 @@ const cardTabContentId = `card-tab-content-${portalReferenceId}`;
 Keep `cardSummaryId` and simplify `labelledBy` to:
 
 ```ts
-const labelledBy = isFocused ? "" : cardSummaryId;
+const labelledBy = isFocused ? '' : cardSummaryId;
 ```
 
-In `ClientApp/src/routes/dashboard/dashboard-ta.tsx`, remove these four props from `<PaRequestItem>`:
+In `ClientApp/src/routes/dashboard/dashboard-ta.tsx`, remove these four props
+from `<PaRequestItem>`:
 
 ```tsx
 page={initialFilters?.filterCurrentPage ?? 1}
@@ -481,9 +551,11 @@ pageSize={DEFAULT_DASHBOARD_PAGESIZE}
 totalCount={totalCount}
 ```
 
-- [ ] **Step 3: Simplify the filter-menu handlers and remove the duplicate renderer**
+- [ ] **Step 3: Simplify the filter-menu handlers and remove the duplicate
+      renderer**
 
-In `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.tsx`, remove `className` from the props destructuring.
+In `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.tsx`, remove
+`className` from the props destructuring.
 
 Replace the handlers with:
 
@@ -508,7 +580,8 @@ function handleResetFilters(): void {
 }
 ```
 
-Delete the unused `filterByYear` function in full. Keep `filterYear`, because the live Formik renderer uses it.
+Delete the unused `filterByYear` function in full. Keep `filterYear`, because
+the live Formik renderer uses it.
 
 Replace all three calls:
 
@@ -522,7 +595,8 @@ with:
 handleClose();
 ```
 
-For the close, cancel, and apply buttons, also change the enclosing callback from:
+For the close, cancel, and apply buttons, also change the enclosing callback
+from:
 
 ```tsx
 onClick={(e) => {
@@ -556,7 +630,8 @@ onClick={() => {
 }}
 ```
 
-In `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts`, remove:
+In `ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts`,
+remove:
 
 ```ts
 className?: string;
@@ -564,18 +639,21 @@ className?: string;
 
 - [ ] **Step 4: Remove the commented-out pattern-approval search path**
 
-In `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx`, remove:
+In `ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.tsx`,
+remove:
 
 ```ts
-import { useAccountDispatch } from "../../../authentication/hooks";
+import { useAccountDispatch } from '../../../authentication/hooks';
 ```
 
-Remove `placeholder` from the destructuring, delete `accountDispatch`, and delete the complete `handleSearchSubmit` function.
+Remove `placeholder` from the destructuring, delete `accountDispatch`, and
+delete the complete `handleSearchSubmit` function.
 
-Delete the commented `<SearchBox>` JSX block. The live return body should contain only:
+Delete the commented `<SearchBox>` JSX block. The live return body should
+contain only:
 
 ```tsx
-<Col className="d-flex justify-content-end">
+<Col className='d-flex justify-content-end'>
   <PaFilterMenu
     setCurrentPage={setCurrentPage}
     initialFilters={initialFilters}
@@ -584,14 +662,16 @@ Delete the commented `<SearchBox>` JSX block. The live return body should contai
 </Col>
 ```
 
-Keep the optional `placeholder` type temporarily; Task 4 removes the dashboard state and contract together.
+Keep the optional `placeholder` type temporarily; Task 4 removes the dashboard
+state and contract together.
 
 - [ ] **Step 5: Remove the obsolete services-card renderer**
 
 In `ClientApp/src/routes/services-we-offer/index.tsx`:
 
 - change the MSAL import to `import { useMsal } from '@azure/msal-react';`
-- change the React Router import to `import { useNavigate, useSearchParams } from 'react-router';`
+- change the React Router import to
+  `import { useNavigate, useSearchParams } from 'react-router';`
 - remove the `StandardPathway` and `HeaderIntroText` imports
 - delete `const isAuthenticated = useIsAuthenticated();`
 
@@ -619,7 +699,8 @@ npm run type-check
 npm run test:unit -- tests/unit/routes/staticPages.test.tsx
 ```
 
-Expected: the targeted warning count is seven, all remaining in `dashboard-ta.tsx`; type-check passes; the static-page tests pass.
+Expected: the targeted warning count is seven, all remaining in
+`dashboard-ta.tsx`; type-check passes; the static-page tests pass.
 
 - [ ] **Step 7: Commit in a Git-backed copy**
 
@@ -630,7 +711,8 @@ git commit -m "refactor: remove obsolete pattern approval list and filter code"
 
 ## Task 4: Stabilize the Pattern-Approval Dashboard
 
-**Warnings removed:** 7 total: 4 unused bindings, 2 console calls, and 1 hook dependency warning.
+**Warnings removed:** 7 total: 4 unused bindings, 2 console calls, and 1 hook
+dependency warning.
 
 **Files:**
 
@@ -652,13 +734,13 @@ Expected: seven warnings.
 Change the React import to:
 
 ```ts
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from 'react';
 ```
 
 Delete:
 
 ```ts
-const DEFAULT_SEARCH_PLACEHOLDER = "Search by manufacturer, model, serial...";
+const DEFAULT_SEARCH_PLACEHOLDER = 'Search by manufacturer, model, serial...';
 ```
 
 Remove these state declarations:
@@ -667,17 +749,21 @@ Remove these state declarations:
 const [isLoading, setIsLoading] = useState(false);
 const [scrollToTop, setScrollToTop] = useState(false);
 const [searchPlaceholder, setSearchPlaceholder] = useState(
-  DEFAULT_SEARCH_PLACEHOLDER,
+  DEFAULT_SEARCH_PLACEHOLDER
 );
 ```
 
-Delete the full `handleAlertScroll`, `onShowBranchSelectorClick`, and `changePlaceholderForSearchBox` functions.
+Delete the full `handleAlertScroll`, `onShowBranchSelectorClick`, and
+`changePlaceholderForSearchBox` functions.
 
-Delete the commented `<Link data-testid='open-manage-branch-division-button'>` block that referenced `onShowBranchSelectorClick`.
+Delete the commented `<Link data-testid='open-manage-branch-division-button'>`
+block that referenced `onShowBranchSelectorClick`.
 
-Remove `aria-busy={isLoading}` from the welcome wrapper and organisation `<Col>`. Keep their existing `aria-live` attributes.
+Remove `aria-busy={isLoading}` from the welcome wrapper and organisation
+`<Col>`. Keep their existing `aria-live` attributes.
 
-Delete the commented full-page `isLoading` spinner block above the welcome wrapper.
+Delete the commented full-page `isLoading` spinner block above the welcome
+wrapper.
 
 - [ ] **Step 3: Stabilize profile saving and remove the empty success callback**
 
@@ -699,16 +785,17 @@ const saveUserProfile = useCallback(
       ?.setUserProfile({ patternApprovalDashboard: profile })
       .catch((error) => {
         AppLogger.error(
-          "T & C Dashboard failed to save user profile.",
-          error as Error,
+          'T & C Dashboard failed to save user profile.',
+          error as Error
         );
       });
   },
-  [accountDispatch],
+  [accountDispatch]
 );
 ```
 
-This removes the empty `.then((success) => {})` callback and gives the branch-reset effect a stable dependency.
+This removes the empty `.then((success) => {})` callback and gives the
+branch-reset effect a stable dependency.
 
 - [ ] **Step 4: Remove development console output**
 
@@ -722,7 +809,7 @@ Delete:
 
 ```ts
 console.log(
-  `Changing to tab in useEffect branch check method ${profile.filterActiveTab!}`,
+  `Changing to tab in useEffect branch check method ${profile.filterActiveTab!}`
 );
 ```
 
@@ -780,7 +867,9 @@ useEffect(() => {
 ]);
 ```
 
-The ref guard is required because `saveUserProfile` updates `savedUserProfile`; without it, adding the complete dependency set can repeatedly persist the same profile.
+The ref guard is required because `saveUserProfile` updates `savedUserProfile`;
+without it, adding the complete dependency set can repeatedly persist the same
+profile.
 
 - [ ] **Step 6: Remove dead scroll and search-placeholder plumbing**
 
@@ -792,7 +881,9 @@ if (scrollToTop) {
 }
 ```
 
-Remove `scrollToTop` from that effect's dependency array. Keep the pre-existing suppression for that separate data-loading effect unchanged; this task must not add another suppression.
+Remove `scrollToTop` from that effect's dependency array. Keep the pre-existing
+suppression for that separate data-loading effect unchanged; this task must not
+add another suppression.
 
 Remove:
 
@@ -808,7 +899,8 @@ In `ClientApp/src/components/SearchFilter/types.ts`, remove:
 placeholder?: string;
 ```
 
-from `PaSearchFilterProps` only. Do not remove the property from `SearchFilterProps`, which belongs to the testing/calibration dashboard.
+from `PaSearchFilterProps` only. Do not remove the property from
+`SearchFilterProps`, which belongs to the testing/calibration dashboard.
 
 - [ ] **Step 7: Verify dashboard behavior statically**
 
@@ -830,7 +922,8 @@ git commit -m "refactor: stabilize pattern approval dashboard effects"
 
 ## Task 5: Complete Application-Flow Hook Dependencies and Remove Abandoned UI
 
-**Warnings removed:** 13 total: 9 unused bindings and 4 hook dependency warnings.
+**Warnings removed:** 13 total: 9 unused bindings and 4 hook dependency
+warnings.
 
 **Files:**
 
@@ -847,7 +940,8 @@ In `ClientApp/src/routes/ta/applicationAndInstrument.tsx`, delete:
 const [isLoading, setIsLoading] = useState(false);
 ```
 
-Remove all three `setIsLoading(...)` calls from the state-sync effect. The resulting effect must be:
+Remove all three `setIsLoading(...)` calls from the state-sync effect. The
+resulting effect must be:
 
 ```ts
 useEffect(() => {
@@ -874,7 +968,8 @@ onChange={(event) => {
 
 - [ ] **Step 2: Complete the application loader and poller dependencies**
 
-In `ClientApp/src/routes/ta/index.tsx`, change the application-step effect dependency array to:
+In `ClientApp/src/routes/ta/index.tsx`, change the application-step effect
+dependency array to:
 
 ```ts
 }, [accounts, id, instance, isLoading, navigate, statuses]);
@@ -931,20 +1026,24 @@ Change the effect dependency array to:
 
 In `ClientApp/src/routes/ta/organisationAndContact.tsx`:
 
-- delete the React Router import because neither `useLocation` nor `useParams` remains live
+- delete the React Router import because neither `useLocation` nor `useParams`
+  remains live
 - change the Formik import to `import { useField } from 'formik';`
 - remove `useAccountContext`
-- delete `values`, `sourceReferenceField`, `accountContext`, `location`, `id`, and `rFQId`
+- delete `values`, `sourceReferenceField`, `accountContext`, `location`, `id`,
+  and `rFQId`
 - delete `isCorrectBranchOrLocation`
 - delete the complete `onShowBranchSelectorClick` function
-- delete the complete `renderAgentForManufacturer`, `renderHelpBranch`, `renderHelpIsCorrectBranchOrLocation`, and `renderHelpOrganisationType` functions
+- delete the complete `renderAgentForManufacturer`, `renderHelpBranch`,
+  `renderHelpIsCorrectBranchOrLocation`, and `renderHelpOrganisationType`
+  functions
 - delete the commented `inlineHelp={renderHelpOrganisationType()}` prop
 
 The imports at the top must reduce to:
 
 ```ts
-import Row from "react-bootstrap/Row";
-import { useField } from "formik";
+import Row from 'react-bootstrap/Row';
+import { useField } from 'formik';
 ```
 
 plus the existing live component/type imports.
@@ -993,7 +1092,7 @@ replace:
 ```ts
 const getRedirectionLocationOnError =
   (id: string) => (errorCode: number, errorType: ErrorType) =>
-    "/not-found";
+    '/not-found';
 ```
 
 with:
@@ -1001,10 +1100,11 @@ with:
 ```ts
 const getRedirectionLocationOnError =
   (_id: string) => (_errorCode: number, _errorType: ErrorType) =>
-    "/not-found";
+    '/not-found';
 ```
 
-The parameters remain because the wizard contract calls this function with those arguments.
+The parameters remain because the wizard contract calls this function with those
+arguments.
 
 - [ ] **Step 2: Remove constant-false pre-application loading state**
 
@@ -1013,7 +1113,8 @@ In `ClientApp/src/routes/ta/preApplication.tsx`:
 - remove `useState`
 - delete `const [isLoading, setIsLoading] = useState(false);`
 - delete the commented `isLoading` spinner block
-- change `<div aria-busy={isLoading} aria-live='off'>` to `<div aria-live='off'>`
+- change `<div aria-busy={isLoading} aria-live='off'>` to
+  `<div aria-live='off'>`
 
 - [ ] **Step 3: Remove unused summary dependencies and state**
 
@@ -1070,7 +1171,8 @@ to:
 onSaveAndNext: submitForm(id, accounts, instance),
 ```
 
-Keep `isCompletingStep: true` in the submitted payload; that is the actual behavior.
+Keep `isCompletingStep: true` in the submitted payload; that is the actual
+behavior.
 
 - [ ] **Step 5: Remove dead HTTP 410 state**
 
@@ -1087,7 +1189,9 @@ Delete this special-case branch:
     setGone(true);
 ```
 
-After its removal, HTTP 410 responses with a title flow through the existing `uploadServerError.title` branch and become visible upload errors instead of updating unread state.
+After its removal, HTTP 410 responses with a title flow through the existing
+`uploadServerError.title` branch and become visible upload errors instead of
+updating unread state.
 
 - [ ] **Step 6: Verify the summary/helper slice**
 
@@ -1109,7 +1213,8 @@ git commit -m "refactor: clean pattern approval summary warnings"
 
 ## Task 7: Simplify Pattern-Approval Management Screens
 
-**Warnings removed:** 35 total: 32 unused bindings and 3 hook dependency warnings.
+**Warnings removed:** 35 total: 32 unused bindings and 3 hook dependency
+warnings.
 
 **Files:**
 
@@ -1125,7 +1230,7 @@ git commit -m "refactor: clean pattern approval summary warnings"
 Replace `ClientApp/src/routes/ta/manage/index.tsx` with:
 
 ```tsx
-import AppDetails from "./appDetails";
+import AppDetails from './appDetails';
 
 const TAApplicationManage = () => <AppDetails />;
 
@@ -1147,7 +1252,8 @@ In `ClientApp/src/routes/ta/manage/appDetailsProps.ts`:
 
 - remove the `AccountDetails` import
 - remove `accountDetails` and `bannerTitle` from the function parameters
-- delete the commented `bannerTitle` and `bannerSubTitle` lines that reference them
+- delete the commented `bannerTitle` and `bannerSubTitle` lines that reference
+  them
 
 The factory signature must be:
 
@@ -1170,11 +1276,11 @@ In `ClientApp/src/routes/ta/manage/appDetails.tsx`:
 Move these declarations above `ApplicationDetails`:
 
 ```ts
-const TAB_KEYS = ["details", "messages", "documents", "timeline"];
+const TAB_KEYS = ['details', 'messages', 'documents', 'timeline'];
 
 const getTabFromQuery = () => {
   const params = new URLSearchParams(globalThis.location.search);
-  const tab = params.get("tab");
+  const tab = params.get('tab');
   return tab && TAB_KEYS.includes(tab) ? tab : TAB_KEYS[0];
 };
 ```
@@ -1194,7 +1300,9 @@ const ApplicationDetails = () => {
     const { loadStepValues } = options;
 ```
 
-Delete the component-local `TAB_KEYS`, `getTabFromQuery`, `isLoading`, `isModalOpen`, `navigate`, account context, `hidingFields`, and `messagesRoute` declarations.
+Delete the component-local `TAB_KEYS`, `getTabFromQuery`, `isLoading`,
+`isModalOpen`, `navigate`, account context, `hidingFields`, and `messagesRoute`
+declarations.
 
 Change the popstate effect to:
 
@@ -1203,8 +1311,8 @@ useEffect(() => {
   const onPopState = () => {
     setActiveTab(getTabFromQuery());
   };
-  globalThis.addEventListener("popstate", onPopState);
-  return () => globalThis.removeEventListener("popstate", onPopState);
+  globalThis.addEventListener('popstate', onPopState);
+  return () => globalThis.removeEventListener('popstate', onPopState);
 }, []);
 ```
 
@@ -1214,9 +1322,11 @@ Change the fetch effect dependency array from `[]` to:
 }, [loadStepValues]);
 ```
 
-- [ ] **Step 4: Remove the unused messages renderer and constant-false modal branches**
+- [ ] **Step 4: Remove the unused messages renderer and constant-false modal
+      branches**
 
-Delete the complete `messagesTabContent` declaration from `appDetails.tsx`; the live messages tab already renders:
+Delete the complete `messagesTabContent` declaration from `appDetails.tsx`; the
+live messages tab already renders:
 
 ```tsx
 {
@@ -1231,7 +1341,9 @@ In both `detailsTabContent` and `timelineTabContent`:
 - use `aria-live='polite'`
 - change `!isModalOpen && isDataLoading` to `isDataLoading`
 
-Remove `isLoading={isLoading}` from `<FormikForm>`. Keep the existing child-level `isDataLoading` spinner, so loading output remains single and behaviorally unchanged.
+Remove `isLoading={isLoading}` from `<FormikForm>`. Keep the existing
+child-level `isDataLoading` spinner, so loading output remains single and
+behaviorally unchanged.
 
 - [ ] **Step 5: Remove dead document-screen plumbing**
 
@@ -1286,7 +1398,8 @@ In `ClientApp/src/routes/ta/manage/appMessages.tsx`:
 - remove `useNavigate`
 - remove `useAccountContext`
 - remove `CustomBreadcrumbItem`
-- delete `account`, `navigate`, `breadcrumbs`, `isModalOpen`, and `selectedMessage` state
+- delete `account`, `navigate`, `breadcrumbs`, `isModalOpen`, and
+  `selectedMessage` state
 - change `!isModalOpen && isDataLoading` to `isDataLoading`
 - change `.map((msg, index) => (` to `.map((msg) => (`
 
@@ -1299,7 +1412,7 @@ className={`border-0 border-bottom mb-1 shadow-sm ${selectedMessage === msg.rega
 with:
 
 ```tsx
-className = "border-0 border-bottom mb-1 shadow-sm";
+className = 'border-0 border-bottom mb-1 shadow-sm';
 ```
 
 Delete both commented `className` lines that reference `selectedMessage`.
@@ -1324,7 +1437,8 @@ git commit -m "refactor: simplify pattern approval management screens"
 
 ## Task 8: Run the Full Quality Gate
 
-**Files:** No planned source changes. Fix only regressions directly caused by Tasks 1-7.
+**Files:** No planned source changes. Fix only regressions directly caused by
+Tasks 1-7.
 
 - [ ] **Step 1: Confirm the warning count is zero**
 
@@ -1364,7 +1478,9 @@ Run:
 npm run test:unit
 ```
 
-Expected: all unit tests pass. Allocate at least 10 minutes in the execution harness; the planning-session run was terminated by a 124-second harness timeout rather than a reported test failure.
+Expected: all unit tests pass. Allocate at least 10 minutes in the execution
+harness; the planning-session run was terminated by a 124-second harness timeout
+rather than a reported test failure.
 
 - [ ] **Step 5: Run Storybook validation**
 
@@ -1375,7 +1491,8 @@ npm run test:storybook
 npm run build-storybook
 ```
 
-Expected: Storybook interaction tests pass and the static Storybook build completes.
+Expected: Storybook interaction tests pass and the static Storybook build
+completes.
 
 - [ ] **Step 6: Run the regression-quality suite**
 
@@ -1397,7 +1514,8 @@ git diff --stat
 git status --short
 ```
 
-Expected: no whitespace errors; changes are limited to the files listed in this plan; no generated/vendor paths appear.
+Expected: no whitespace errors; changes are limited to the files listed in this
+plan; no generated/vendor paths appear.
 
 - [ ] **Step 8: Commit final validation-only corrections if required**
 
@@ -1417,7 +1535,9 @@ If no correction was required, do not create an empty commit.
 - No new `eslint-disable` comment is added.
 - `npm run type-check` passes.
 - Targeted regression tests pass.
-- The full unit, Storybook, Storybook build, and regression-quality commands pass with adequate execution time.
+- The full unit, Storybook, Storybook build, and regression-quality commands
+  pass with adequate execution time.
 - Generated, vendor, captured bundle, and API-client files remain untouched.
-- The dashboard branch-reset effect writes once per organisation change rather than looping after its complete dependencies are added.
+- The dashboard branch-reset effect writes once per organisation change rather
+  than looping after its complete dependencies are added.
 - Certificate suggestions refresh when their Formik option data changes.

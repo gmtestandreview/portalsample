@@ -1,11 +1,15 @@
 ---
 name: incident-review
-description: Use when writing incident review reports for payment API outages, including timelines, customer impact, root-cause analysis, remediation owners, and evidence handling.
+description:
+  Use when writing incident review reports for payment API outages, including
+  timelines, customer impact, root-cause analysis, remediation owners, and
+  evidence handling.
 ---
 
 # Incident Review
 
-Use this skill when preparing or revising incident review reports for payment API outages.
+Use this skill when preparing or revising incident review reports for payment
+API outages.
 
 ## Required Outcome
 
@@ -31,8 +35,9 @@ Produce a concise incident review with:
 
 ## Domain Guidance
 
-Never treat a customer-impact estimate as confirmed unless the source system, query window, and
-deduplication method are recorded. If impact is inferred, label it as inferred.
+Never treat a customer-impact estimate as confirmed unless the source system,
+query window, and deduplication method are recorded. If impact is inferred,
+label it as inferred.
 
 ## References
 

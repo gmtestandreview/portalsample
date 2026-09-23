@@ -2,7 +2,9 @@
 
 ## Category A - this.state Read After Await (Silent Bug) {#category-a}
 
-The method reads `this.state` after an `await` to make a conditional decision. In React 18, the intermediate setState hasn't flushed yet - `this.state` still holds the pre-update value.
+The method reads `this.state` after an `await` to make a conditional decision.
+In React 18, the intermediate setState hasn't flushed yet - `this.state` still
+holds the pre-update value.
 
 **Before (broken in React 18):**
 
@@ -30,7 +32,9 @@ async handleLoadClick() {
 }
 ```
 
-**Pattern:** If the condition on `this.state` was always going to be true at that point (you just set it to true), remove the condition. The setState you called before `await` will eventually flush - you don't need to check it.
+**Pattern:** If the condition on `this.state` was always going to be true at
+that point (you just set it to true), remove the condition. The setState you
+called before `await` will eventually flush - you don't need to check it.
 
 ---
 
@@ -70,7 +74,8 @@ async initialize() {
 
 ## Category B - Independent setState Calls (Refactor, No flushSync) {#category-b}
 
-Multiple setState calls in a Promise chain where order matters but no intermediate state reading occurs. The calls just need to be restructured.
+Multiple setState calls in a Promise chain where order matters but no
+intermediate state reading occurs. The calls just need to be restructured.
 
 **Before:**
 
@@ -99,15 +104,19 @@ async handleSubmit() {
 }
 ```
 
-Rule: Multiple `setState` calls in the same async context already batch in React 18. Consolidating into fewer calls is cleaner but not strictly required.
+Rule: Multiple `setState` calls in the same async context already batch in
+React 18. Consolidating into fewer calls is cleaner but not strictly required.
 
 ---
 
 ## Category C - Intermediate Render Must Be Visible (flushSync) {#category-c}
 
-The user must see an intermediate UI state (loading spinner, progress step) BEFORE an async operation starts. This is the only case where `flushSync` is the right answer.
+The user must see an intermediate UI state (loading spinner, progress step)
+BEFORE an async operation starts. This is the only case where `flushSync` is the
+right answer.
 
-**Diagnostic question:** "If the loading spinner didn't appear until after the fetch returned, would the UX be wrong?"
+**Diagnostic question:** "If the loading spinner didn't appear until after the
+fetch returned, would the UX be wrong?"
 
 - YES → `flushSync`
 - NO → refactor (Category A or B)
@@ -202,7 +211,9 @@ it('shows saving indicator', () => {
 it('shows saving indicator', async () => {
   render(<AutoSaveForm />);
   fireEvent.change(input, { target: { value: 'new text' } });
-  await waitFor(() => expect(screen.getByText('Saving...')).toBeInTheDocument());
+  await waitFor(() =>
+    expect(screen.getByText('Saving...')).toBeInTheDocument()
+  );
   await waitFor(() => expect(screen.getByText('Saved')).toBeInTheDocument());
 });
 ```

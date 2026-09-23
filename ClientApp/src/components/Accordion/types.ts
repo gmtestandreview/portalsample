@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 /**
  * types.ts
@@ -14,20 +14,20 @@ import type { ReactNode } from "react";
  */
 
 export interface CustomAccordionProps {
-	id?: string;
-	containerClassName?: string;
-	children?: ReactNode;
+  id?: string;
+  containerClassName?: string;
+  children?: ReactNode;
 }
 
 export interface CustomAccordionBodyProps {
-	id?: string;
-	name: string;
-	namePartTwo?: ReactNode;
-	namePartTwoClassName?: string;
-	namePartThree?: ReactNode;
-	namePartThreeClassName?: string;
-	nameRHS?: ReactNode;
-	eventKey: string;
-	className?: string;
-	children?: ReactNode;
+  id?: string;
+  name: string;
+  namePartTwo?: ReactNode;
+  namePartTwoClassName?: string;
+  namePartThree?: ReactNode;
+  namePartThreeClassName?: string;
+  nameRHS?: ReactNode;
+  eventKey: string;
+  className?: string;
+  children?: ReactNode;
 }

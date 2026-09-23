@@ -1,20 +1,20 @@
-import { PublicClientApplication } from "@azure/msal-browser";
-import { MsalProvider } from "@azure/msal-react";
-import type { ReactPlugin } from "@microsoft/applicationinsights-react-js";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { RouterProvider } from "react-router";
-import App from "./App.tsx";
-import AccountProvider from "./authentication/AccountProvider.tsx";
-import { configuration } from "./authentication/authConfig.ts";
-import ErrorBoundary from "./components/ErrorBoundary/index.tsx";
-import { ai } from "./instrumentation/AppInsightsService.ts";
-import { TrustedTypes } from "./trustedtypes.ts";
+import { PublicClientApplication } from '@azure/msal-browser';
+import { MsalProvider } from '@azure/msal-react';
+import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router';
+import App from './App.tsx';
+import AccountProvider from './authentication/AccountProvider.tsx';
+import { configuration } from './authentication/authConfig.ts';
+import ErrorBoundary from './components/ErrorBoundary/index.tsx';
+import { ai } from './instrumentation/AppInsightsService.ts';
+import { TrustedTypes } from './trustedtypes.ts';
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 const root = createRoot(rootElement!);
 const pca =
-	await PublicClientApplication.createPublicClientApplication(configuration);
+  await PublicClientApplication.createPublicClientApplication(configuration);
 TrustedTypes.createTrustedTypePolicy();
 
 // StrictMode is outermost so its development-only checks cover the MSAL and
@@ -23,13 +23,13 @@ TrustedTypes.createTrustedTypePolicy();
 // a commit-phase lifecycle, so StrictMode's double-render cannot double-report an
 // exception. StrictMode emits nothing in a production build.
 root.render(
-	<StrictMode>
-		<ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
-			<MsalProvider instance={pca}>
-				<AccountProvider>
-					<RouterProvider router={App} />
-				</AccountProvider>
-			</MsalProvider>
-		</ErrorBoundary>
-	</StrictMode>,
+  <StrictMode>
+    <ErrorBoundary appInsights={ai.reactPlugin as ReactPlugin}>
+      <MsalProvider instance={pca}>
+        <AccountProvider>
+          <RouterProvider router={App} />
+        </AccountProvider>
+      </MsalProvider>
+    </ErrorBoundary>
+  </StrictMode>
 );

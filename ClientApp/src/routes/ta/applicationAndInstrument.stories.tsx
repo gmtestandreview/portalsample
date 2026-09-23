@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
-import ApplicationAndInstrument from "./applicationAndInstrument.tsx";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
+import { withPortalProviders } from '../../storybook/storybookHarness.tsx';
+import ApplicationAndInstrument from './applicationAndInstrument.tsx';
 
 /**
  * `ApplicationAndInstrument` is the application/instrument step of the type-approval
@@ -10,36 +10,36 @@ import ApplicationAndInstrument from "./applicationAndInstrument.tsx";
  * `patternApprovalType` initial value keeps the step out of its data-loading branch.
  */
 const meta = {
-	title: "Routes/TypeApproval/ApplicationAndInstrument",
-	component: ApplicationAndInstrument,
-	decorators: [withPortalProviders],
-	parameters: {
-		layout: "fullscreen",
-		portal: {
-			authenticated: true,
-			initialEntries: ["/ta/PA-1/application-details"],
-			formik: {
-				initialValues: {
-					patternApprovalType: "new",
-					applicationAndInstrument: {},
-				},
-			},
-		},
-	},
-	args: {
-		name: "applicationAndInstrument",
-		isSummary: false,
-	},
+  title: 'Routes/TypeApproval/ApplicationAndInstrument',
+  component: ApplicationAndInstrument,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'fullscreen',
+    portal: {
+      authenticated: true,
+      initialEntries: ['/ta/PA-1/application-details'],
+      formik: {
+        initialValues: {
+          patternApprovalType: 'new',
+          applicationAndInstrument: {},
+        },
+      },
+    },
+  },
+  args: {
+    name: 'applicationAndInstrument',
+    isSummary: false,
+  },
 } satisfies Meta<typeof ApplicationAndInstrument>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EditStep: Story = {
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(
-			await canvas.findByRole("heading", { name: "Instrument details" }),
-		).toBeInTheDocument();
-	},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      await canvas.findByRole('heading', { name: 'Instrument details' })
+    ).toBeInTheDocument();
+  },
 };

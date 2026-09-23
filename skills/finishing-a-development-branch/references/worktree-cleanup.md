@@ -16,16 +16,16 @@ GIT_COMMON=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd -P)
 WORKTREE_PATH=$(git rev-parse --show-toplevel)
 ```
 
-| State | Meaning | Cleanup |
-|---|---|---|
-| `GIT_DIR == GIT_COMMON` | Primary checkout, not a linked worktree | Nothing to remove |
-| `GIT_DIR != GIT_COMMON`, on a named branch | Linked worktree | Remove it after the branch is merged or the discard is confirmed |
-| `GIT_DIR != GIT_COMMON`, detached HEAD | Externally managed workspace | Leave it in place — the host owns it |
+| State                                      | Meaning                                 | Cleanup                                                          |
+| ------------------------------------------ | --------------------------------------- | ---------------------------------------------------------------- |
+| `GIT_DIR == GIT_COMMON`                    | Primary checkout, not a linked worktree | Nothing to remove                                                |
+| `GIT_DIR != GIT_COMMON`, on a named branch | Linked worktree                         | Remove it after the branch is merged or the discard is confirmed |
+| `GIT_DIR != GIT_COMMON`, detached HEAD     | Externally managed workspace            | Leave it in place — the host owns it                             |
 
 ## Remove the worktree
 
-Worktree removal must run from **outside** the worktree, so `cd` to the main repo
-root first and use the values captured above:
+Worktree removal must run from **outside** the worktree, so `cd` to the main
+repo root first and use the values captured above:
 
 ```bash
 git worktree remove "$WORKTREE_PATH"
@@ -33,15 +33,16 @@ git worktree prune   # clears any stale registrations
 ```
 
 Only remove a worktree you created for this task (typically under `.worktrees/`
-or `worktrees/`). A worktree the host environment set up is not yours to remove —
-leave it and, if your platform provides a workspace-exit tool, use that instead.
+or `worktrees/`). A worktree the host environment set up is not yours to remove
+— leave it and, if your platform provides a workspace-exit tool, use that
+instead.
 
 ## If removal is refused
 
 `contains modified or untracked files` means the worktree holds files that exist
 nowhere else — uncommitted plans, notes, or scratch work. **Never `--force` on
-your own initiative** (see the parent skill's "Common Rationalizations"). Show the
-user what is at stake and ask:
+your own initiative** (see the parent skill's "Common Rationalizations"). Show
+the user what is at stake and ask:
 
 ```bash
 git -C "$WORKTREE_PATH" status --porcelain -uall

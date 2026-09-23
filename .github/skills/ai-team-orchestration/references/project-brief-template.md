@@ -1,6 +1,7 @@
 # PROJECT_BRIEF.md Template
 
-Copy this template to your project root and fill in every section. **Do not abbreviate sections 12-14** — they are critical for cross-chat context survival.
+Copy this template to your project root and fill in every section. **Do not
+abbreviate sections 12-14** — they are critical for cross-chat context survival.
 
 ---
 
@@ -15,7 +16,8 @@ Copy this template to your project root and fill in every section. **Do not abbr
 
 ## 2. Concept / Product Description
 
-[Detailed description of the product — user flows, key features, narrative if applicable.]
+[Detailed description of the product — user flows, key features, narrative if
+applicable.]
 
 ## 3. Tech Stack
 
@@ -26,23 +28,16 @@ Copy this template to your project root and fill in every section. **Do not abbr
 - **CI/CD:** [pipeline tool]
 
 ## 4. Architecture
+```
 
-```
-┌─────────────────────────────────────────┐
-│              Frontend                    │
-│  [Main Component] → [Sub Components]    │
-└──────────────┬──────────────────────────┘
-               │ HTTPS
-┌──────────────▼──────────────────────────┐
-│              Backend API                 │
-│  [Endpoints and their purpose]          │
-└──────────────┬──────────────────────────┘
-               │
-┌──────────────▼──────────────────────────┐
-│              Storage / Database          │
-│  [Tables, collections, env vars]        │
-└─────────────────────────────────────────┘
-```
+┌─────────────────────────────────────────┐ │ Frontend │ │ [Main Component] →
+[Sub Components] │ └──────────────┬──────────────────────────┘ │ HTTPS
+┌──────────────▼──────────────────────────┐ │ Backend API │ │ [Endpoints and
+their purpose] │ └──────────────┬──────────────────────────┘ │
+┌──────────────▼──────────────────────────┐ │ Storage / Database │ │ [Tables,
+collections, env vars] │ └─────────────────────────────────────────┘
+
+````
 
 ## 5. Key Files Map
 
@@ -97,7 +92,7 @@ npm install
 cd api && npm install
 cp api/local.settings.json.example api/local.settings.json
 npm run dev:all
-```
+````
 
 ## 11. How to Deploy
 
@@ -107,19 +102,29 @@ npm run dev:all
 
 Every sprint chat must do these before finishing:
 
-1. Write `docs/sprint-N/done.md` — what was built, what's not done, what needs manual setup, files changed/created
-2. Update PROJECT_BRIEF.md: Section 7 (mark sprint done) + Section 8 (rewrite current state)
+1. Write `docs/sprint-N/done.md` — what was built, what's not done, what needs
+   manual setup, files changed/created
+2. Update PROJECT_BRIEF.md: Section 7 (mark sprint done) + Section 8 (rewrite
+   current state)
 3. Commit all changes with descriptive message: `sprint-N: <summary>`
 
-This is how context survives across chats. If skipped, the next chat starts blind and may overwrite or duplicate work. The repo is the shared memory — keep it accurate.
+This is how context survives across chats. If skipped, the next chat starts
+blind and may overwrite or duplicate work. The repo is the shared memory — keep
+it accurate.
 
 ## 13. Bug & Fix Tracking
 
-Bugs are tracked as GitHub Issues on the repo. Single source of truth for all teams.
+Bugs are tracked as GitHub Issues on the repo. Single source of truth for all
+teams.
 
-**For QA:** File bugs as GitHub Issues with labels (`bug`, `severity:blocker/major/minor`). Include: component, steps to reproduce, expected vs actual. When no blockers found: write `docs/qa/sprint-N-signoff.md` with test count, pass rate, explicit "no blockers" statement.
+**For QA:** File bugs as GitHub Issues with labels (`bug`,
+`severity:blocker/major/minor`). Include: component, steps to reproduce,
+expected vs actual. When no blockers found: write `docs/qa/sprint-N-signoff.md`
+with test count, pass rate, explicit "no blockers" statement.
 
-**For Dev Team:** Check GitHub Issues before starting work. Fix blockers and majors before polish. Use GitHub closing keywords in commits: `fix: description (Fixes #42)`. For reference-only, use `Refs #42`.
+**For Dev Team:** Check GitHub Issues before starting work. Fix blockers and
+majors before polish. Use GitHub closing keywords in commits:
+`fix: description (Fixes #42)`. For reference-only, use `Refs #42`.
 
 **For DevOps:** File infrastructure issues with label `infra`.
 
@@ -127,15 +132,18 @@ Bugs are tracked as GitHub Issues on the repo. Single source of truth for all te
 
 ## 14. Multi-Repo Setup
 
-Each team works in their own separate clone of the repo. No worktrees. Everyone works on their own branch, pushes to origin, creates PRs.
+Each team works in their own separate clone of the repo. No worktrees. Everyone
+works on their own branch, pushes to origin, creates PRs.
 
 **Teams:**
+
 - Producer on `main` (coordination hub)
 - Dev Team on `feature/sprint-N`
 - QA on `feature/qa-N`
 - DevOps on `feature/devops-N` (only when needed)
 
 **Setup:**
+
 ```bash
 git clone <repo> <folder-name>
 cd <folder-name>
@@ -143,5 +151,10 @@ git checkout -b <branch-name>
 npm install
 ```
 
-**Branch strategy:** Feature branches → PR → regular merge to main. Never push directly to main. Never squash. Never rebase feature branches (causes commit loss).
+**Branch strategy:** Feature branches → PR → regular merge to main. Never push
+directly to main. Never squash. Never rebase feature branches (causes commit
+loss).
+
+```
+
 ```

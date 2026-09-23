@@ -1,12 +1,18 @@
 # Reducing Entropy
 
-A manual-only skill for minimizing total codebase size by measuring success through final code amount, not effort. Biases toward deletion and aggressive simplification.
+A manual-only skill for minimizing total codebase size by measuring success
+through final code amount, not effort. Biases toward deletion and aggressive
+simplification.
 
 ## Purpose
 
-This skill exists to counter the natural tendency of codebases to grow over time. It provides a framework for evaluating changes based on whether they **reduce the total amount of code** in the final codebase, not just minimize the work required now.
+This skill exists to counter the natural tendency of codebases to grow over
+time. It provides a framework for evaluating changes based on whether they
+**reduce the total amount of code** in the final codebase, not just minimize the
+work required now.
 
-More code creates more entropy. More entropy means more bugs, more maintenance, more cognitive load. This skill fights that trend.
+More code creates more entropy. More entropy means more bugs, more maintenance,
+more cognitive load. This skill fights that trend.
 
 ## When to Use It
 
@@ -19,7 +25,8 @@ Use this skill when:
 - The user explicitly asks to "reduce entropy" or "minimize code"
 - You need to bias toward deletion over addition
 
-**Do NOT use automatically.** This is a manual-only skill that requires explicit user request.
+**Do NOT use automatically.** This is a manual-only skill that requires explicit
+user request.
 
 ## How It Works
 
@@ -36,7 +43,7 @@ Use this skill when:
 Every change must answer:
 
 1. **What's the smallest codebase that solves this?**
-   - Not "smallest change" but smallest *result*
+   - Not "smallest change" but smallest _result_
    - Could this be 2 functions instead of 14?
    - Could this be 0 functions (delete the feature)?
 
@@ -52,7 +59,8 @@ Every change must answer:
 
 ### Reference Mindsets
 
-Before starting, **you must load at least one mindset** from the `references/` directory. These provide philosophical grounding for radical simplification:
+Before starting, **you must load at least one mindset** from the `references/`
+directory. These provide philosophical grounding for radical simplification:
 
 1. List files in `references/`
 2. Read frontmatter to see which applies
@@ -73,13 +81,13 @@ Before starting, **you must load at least one mindset** from the `references/` d
 
 This skill actively rejects these common arguments:
 
-| Argument | Why It's Rejected |
-|----------|-------------------|
-| "Keep what exists" | Status quo bias. The question is total code, not churn. |
-| "This adds flexibility" | Flexibility for what? YAGNI. |
+| Argument                        | Why It's Rejected                                        |
+| ------------------------------- | -------------------------------------------------------- |
+| "Keep what exists"              | Status quo bias. The question is total code, not churn.  |
+| "This adds flexibility"         | Flexibility for what? YAGNI.                             |
 | "Better separation of concerns" | More files/functions = more code. Separation isn't free. |
-| "Type safety" | Worth how many lines? Sometimes runtime checks win. |
-| "Easier to understand" | 14 things are not easier than 2 things. |
+| "Type safety"                   | Worth how many lines? Sometimes runtime checks win.      |
+| "Easier to understand"          | 14 things are not easier than 2 things.                  |
 
 ## When This Doesn't Apply
 

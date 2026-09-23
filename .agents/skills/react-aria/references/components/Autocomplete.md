@@ -5,53 +5,64 @@ An autocomplete allows users to search or filter a list of suggestions.
 ## Vanilla CSS example
 
 ```tsx
-import {CommandPalette} from 'vanilla-starter/CommandPalette';
-import {MenuItem, Text} from 'vanilla-starter/Menu';
-import {Button} from 'vanilla-starter/Button';
-import {FilePlus2, FolderPlus, User, UserPen, CircleDotDashed, ChartPie, Tag} from 'lucide-react';
-import {DialogTrigger} from 'react-aria-components/Dialog';
-import {useState} from 'react';
+import { CommandPalette } from 'vanilla-starter/CommandPalette';
+import { MenuItem, Text } from 'vanilla-starter/Menu';
+import { Button } from 'vanilla-starter/Button';
+import {
+  FilePlus2,
+  FolderPlus,
+  User,
+  UserPen,
+  CircleDotDashed,
+  ChartPie,
+  Tag,
+} from 'lucide-react';
+import { DialogTrigger } from 'react-aria-components/Dialog';
+import { useState } from 'react';
 
 function Example(props) {
   let [isOpen, setOpen] = useState(false);
   return (
     <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
-      <Button>Open Command Palette <kbd>⌘ J</kbd></Button>
+      <Button>
+        Open Command Palette <kbd>⌘ J</kbd>
+      </Button>
       {/*- begin focus -*/}
       <CommandPalette
         {...props}
-        
+
         isOpen={isOpen}
-        onOpenChange={setOpen}>
-        <MenuItem textValue="Create new file...">
+        onOpenChange={setOpen}
+      >
+        <MenuItem textValue='Create new file...'>
           <FilePlus2 />
           <Text>Create new file...</Text>
         </MenuItem>
-        <MenuItem textValue="Create new folder...">
+        <MenuItem textValue='Create new folder...'>
           <FolderPlus />
           <Text>Create new folder...</Text>
         </MenuItem>
-        <MenuItem textValue="Assign to...">
+        <MenuItem textValue='Assign to...'>
           <UserPen />
           <Text>Assign to...</Text>
         </MenuItem>
-        <MenuItem textValue="Assign to me">
+        <MenuItem textValue='Assign to me'>
           <User />
           <Text>Assign to me</Text>
         </MenuItem>
-        <MenuItem textValue="Change status...">
+        <MenuItem textValue='Change status...'>
           <CircleDotDashed />
           <Text>Change status...</Text>
         </MenuItem>
-        <MenuItem textValue="Change priority...">
+        <MenuItem textValue='Change priority...'>
           <ChartPie />
           <Text>Change priority...</Text>
         </MenuItem>
-        <MenuItem textValue="Add label...">
+        <MenuItem textValue='Add label...'>
           <Tag />
           <Text>Add label...</Text>
         </MenuItem>
-        <MenuItem textValue="Remove label...">
+        <MenuItem textValue='Remove label...'>
           <Tag />
           <Text>Remove label...</Text>
         </MenuItem>
@@ -69,14 +80,14 @@ function Example(props) {
 import {
   Autocomplete as AriaAutocomplete,
   type AutocompleteProps as AriaAutocompleteProps,
-  useFilter
+  useFilter,
 } from 'react-aria-components/Autocomplete';
-import {type MenuProps as AriaMenuProps} from 'react-aria-components/Menu';
-import {Dialog} from 'react-aria-components/Dialog';
-import {Menu} from './Menu';
-import {SearchField} from './SearchField';
-import {Modal} from './Modal';
-import {useEffect} from 'react';
+import { type MenuProps as AriaMenuProps } from 'react-aria-components/Menu';
+import { Dialog } from 'react-aria-components/Dialog';
+import { Menu } from './Menu';
+import { SearchField } from './SearchField';
+import { Modal } from './Modal';
+import { useEffect } from 'react';
 import './CommandPalette.css';
 
 export interface CommandPaletteProps<T>
@@ -86,8 +97,8 @@ export interface CommandPaletteProps<T>
 }
 
 export function CommandPalette<T>(props: CommandPaletteProps<T>) {
-  let {isOpen, onOpenChange} = props;
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { isOpen, onOpenChange } = props;
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   useEffect(() => {
     let isMacUA = /mac(os|intosh)/i.test(navigator.userAgent);
@@ -107,16 +118,19 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
 
   return (
     <Modal isDismissable isOpen={isOpen} onOpenChange={onOpenChange}>
-      <Dialog className="command-palette-dialog">
+      <Dialog className='command-palette-dialog'>
         <AriaAutocomplete filter={contains} {...props}>
-          <SearchField autoFocus aria-label="Search commands" placeholder="Search commands" />
+          <SearchField
+            autoFocus
+            aria-label='Search commands'
+            placeholder='Search commands'
+          />
           <Menu {...props} renderEmptyState={() => 'No results found.'} />
         </AriaAutocomplete>
       </Dialog>
     </Modal>
   );
 }
-
 ```
 
 ### CommandPalette.css
@@ -142,29 +156,34 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
     flex: 1;
   }
 }
-
 ```
 
 ## Tailwind example
 
 ```tsx
-import {CommandPalette} from 'tailwind-starter/CommandPalette';
-import {MenuItem} from 'tailwind-starter/Menu';
-import {Button} from 'tailwind-starter/Button';
-import {DialogTrigger} from 'react-aria-components/Dialog';
-import {useState} from 'react';
+import { CommandPalette } from 'tailwind-starter/CommandPalette';
+import { MenuItem } from 'tailwind-starter/Menu';
+import { Button } from 'tailwind-starter/Button';
+import { DialogTrigger } from 'react-aria-components/Dialog';
+import { useState } from 'react';
 
 function Example(props) {
   let [isOpen, setOpen] = useState(false);
   return (
     <DialogTrigger isOpen={isOpen} onOpenChange={setOpen}>
-      <Button>Open Command Palette <kbd className="font-sans text-xs ml-4 px-1 rounded-sm border border-white/20 bg-white/10">⌘ J</kbd></Button>
+      <Button>
+        Open Command Palette{' '}
+        <kbd className='font-sans text-xs ml-4 px-1 rounded-sm border border-white/20 bg-white/10'>
+          ⌘ J
+        </kbd>
+      </Button>
       {/*- begin focus -*/}
       <CommandPalette
         {...props}
-        
+
         isOpen={isOpen}
-        onOpenChange={setOpen}>
+        onOpenChange={setOpen}
+      >
         <MenuItem>Create new file...</MenuItem>
         <MenuItem>Create new folder...</MenuItem>
         <MenuItem>Assign to...</MenuItem>
@@ -187,14 +206,14 @@ function Example(props) {
 import {
   Autocomplete as AriaAutocomplete,
   type AutocompleteProps as AriaAutocompleteProps,
-  useFilter
+  useFilter,
 } from 'react-aria-components/Autocomplete';
-import {type MenuProps as AriaMenuProps} from 'react-aria-components/Menu';
-import {Dialog} from 'react-aria-components/Dialog';
-import {Menu} from './Menu';
-import {SearchField} from './SearchField';
-import {Modal} from './Modal';
-import React, {useEffect} from 'react';
+import { type MenuProps as AriaMenuProps } from 'react-aria-components/Menu';
+import { Dialog } from 'react-aria-components/Dialog';
+import { Menu } from './Menu';
+import { SearchField } from './SearchField';
+import { Modal } from './Modal';
+import React, { useEffect } from 'react';
 
 export interface CommandPaletteProps<T>
   extends Omit<AriaAutocompleteProps, 'children'>, AriaMenuProps<T> {
@@ -203,8 +222,8 @@ export interface CommandPaletteProps<T>
 }
 
 export function CommandPalette<T>(props: CommandPaletteProps<T>) {
-  let {isOpen, onOpenChange} = props;
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { isOpen, onOpenChange } = props;
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   useEffect(() => {
     let isMacUA = /mac(os|intosh)/i.test(navigator.userAgent);
@@ -224,17 +243,17 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
 
   return (
     <Modal isDismissable isOpen={isOpen} onOpenChange={onOpenChange}>
-      <Dialog className="flex flex-col max-h-[inherit]">
+      <Dialog className='flex flex-col max-h-[inherit]'>
         <AriaAutocomplete filter={contains} {...props}>
           <SearchField
             autoFocus
-            aria-label="Search commands"
-            placeholder="Search commands"
-            className="m-2"
+            aria-label='Search commands'
+            placeholder='Search commands'
+            className='m-2'
           />
           <Menu
             {...props}
-            className="flex-1 min-h-0"
+            className='flex-1 min-h-0'
             renderEmptyState={() => 'No results found.'}
           />
         </AriaAutocomplete>
@@ -242,38 +261,48 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
     </Modal>
   );
 }
-
 ```
 
 ## Content
 
-Autocomplete filters a collection component using a [TextField](TextField.md) or [SearchField](SearchField.md). It can be used to build UI patterns such as command palettes, searchable menus, filterable selects, and more.
+Autocomplete filters a collection component using a [TextField](TextField.md) or
+[SearchField](SearchField.md). It can be used to build UI patterns such as
+command palettes, searchable menus, filterable selects, and more.
 
-[Menu](Menu.md) and [ListBox](ListBox.md) support **virtual focus**, which allows arrow key navigation within the list while the text input is focused. Use `disableVirtualFocus` to require the user to tab between the input and list.
+[Menu](Menu.md) and [ListBox](ListBox.md) support **virtual focus**, which
+allows arrow key navigation within the list while the text input is focused. Use
+`disableVirtualFocus` to require the user to tab between the input and list.
 
 ## Menu example
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {MenuTrigger, Menu, MenuItem} from 'vanilla-starter/Menu';
-import {Button} from 'vanilla-starter/Button';
-import {SearchField} from 'vanilla-starter/SearchField';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { MenuTrigger, Menu, MenuItem } from 'vanilla-starter/Menu';
+import { Button } from 'vanilla-starter/Button';
+import { SearchField } from 'vanilla-starter/SearchField';
 
 function Example(props) {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   return (
     <MenuTrigger>
       <Button>Add tag...</Button>
-      <div style={{display: 'flex', flexDirection: 'column', maxHeight: 'inherit'}}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          maxHeight: 'inherit',
+        }}
+      >
         {/*- begin highlight -*/}
         <Autocomplete {...props} filter={contains}>
           <SearchField
             autoFocus
-            aria-label="Search tags"
-            placeholder="Search tags"
-            style={{margin: 4}} />
-          <Menu style={{flex: 1}} renderEmptyState={() => 'No results.'}>
+            aria-label='Search tags'
+            placeholder='Search tags'
+            style={{ margin: 4 }}
+          />
+          <Menu style={{ flex: 1 }} renderEmptyState={() => 'No results.'}>
             {/*- end highlight -*/}
             <MenuItem>News</MenuItem>
             <MenuItem>Travel</MenuItem>
@@ -295,72 +324,72 @@ function Example(props) {
 ## Select example
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {Select, Label, SelectValue} from 'react-aria-components/Select';
-import {Button} from 'vanilla-starter/Button';
-import {SelectListBox, SelectItem} from 'vanilla-starter/Select';
-import {Popover} from 'vanilla-starter/Popover';
-import {SearchField} from 'vanilla-starter/SearchField';
-import {ChevronDown} from 'lucide-react';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { Select, Label, SelectValue } from 'react-aria-components/Select';
+import { Button } from 'vanilla-starter/Button';
+import { SelectListBox, SelectItem } from 'vanilla-starter/Select';
+import { Popover } from 'vanilla-starter/Popover';
+import { SearchField } from 'vanilla-starter/SearchField';
+import { ChevronDown } from 'lucide-react';
 
 /*- begin collapse -*/
 const states = [
-  {id: 'AL', name: 'Alabama'},
-  {id: 'AK', name: 'Alaska'},
-  {id: 'AZ', name: 'Arizona'},
-  {id: 'AR', name: 'Arkansas'},
-  {id: 'CA', name: 'California'},
-  {id: 'CO', name: 'Colorado'},
-  {id: 'CT', name: 'Connecticut'},
-  {id: 'DE', name: 'Delaware'},
-  {id: 'DC', name: 'District of Columbia'},
-  {id: 'FL', name: 'Florida'},
-  {id: 'GA', name: 'Georgia'},
-  {id: 'HI', name: 'Hawaii'},
-  {id: 'ID', name: 'Idaho'},
-  {id: 'IL', name: 'Illinois'},
-  {id: 'IN', name: 'Indiana'},
-  {id: 'IA', name: 'Iowa'},
-  {id: 'KS', name: 'Kansas'},
-  {id: 'KY', name: 'Kentucky'},
-  {id: 'LA', name: 'Louisiana'},
-  {id: 'ME', name: 'Maine'},
-  {id: 'MD', name: 'Maryland'},
-  {id: 'MA', name: 'Massachusetts'},
-  {id: 'MI', name: 'Michigan'},
-  {id: 'MN', name: 'Minnesota'},
-  {id: 'MS', name: 'Mississippi'},
-  {id: 'MO', name: 'Missouri'},
-  {id: 'MT', name: 'Montana'},
-  {id: 'NE', name: 'Nebraska'},
-  {id: 'NV', name: 'Nevada'},
-  {id: 'NH', name: 'New Hampshire'},
-  {id: 'NJ', name: 'New Jersey'},
-  {id: 'NM', name: 'New Mexico'},
-  {id: 'NY', name: 'New York'},
-  {id: 'NC', name: 'North Carolina'},
-  {id: 'ND', name: 'North Dakota'},
-  {id: 'OH', name: 'Ohio'},
-  {id: 'OK', name: 'Oklahoma'},
-  {id: 'OR', name: 'Oregon'},
-  {id: 'PA', name: 'Pennsylvania'},
-  {id: 'RI', name: 'Rhode Island'},
-  {id: 'SC', name: 'South Carolina'},
-  {id: 'SD', name: 'South Dakota'},
-  {id: 'TN', name: 'Tennessee'},
-  {id: 'TX', name: 'Texas'},
-  {id: 'UT', name: 'Utah'},
-  {id: 'VT', name: 'Vermont'},
-  {id: 'VA', name: 'Virginia'},
-  {id: 'WA', name: 'Washington'},
-  {id: 'WV', name: 'West Virginia'},
-  {id: 'WI', name: 'Wisconsin'},
-  {id: 'WY', name: 'Wyoming'}
+  { id: 'AL', name: 'Alabama' },
+  { id: 'AK', name: 'Alaska' },
+  { id: 'AZ', name: 'Arizona' },
+  { id: 'AR', name: 'Arkansas' },
+  { id: 'CA', name: 'California' },
+  { id: 'CO', name: 'Colorado' },
+  { id: 'CT', name: 'Connecticut' },
+  { id: 'DE', name: 'Delaware' },
+  { id: 'DC', name: 'District of Columbia' },
+  { id: 'FL', name: 'Florida' },
+  { id: 'GA', name: 'Georgia' },
+  { id: 'HI', name: 'Hawaii' },
+  { id: 'ID', name: 'Idaho' },
+  { id: 'IL', name: 'Illinois' },
+  { id: 'IN', name: 'Indiana' },
+  { id: 'IA', name: 'Iowa' },
+  { id: 'KS', name: 'Kansas' },
+  { id: 'KY', name: 'Kentucky' },
+  { id: 'LA', name: 'Louisiana' },
+  { id: 'ME', name: 'Maine' },
+  { id: 'MD', name: 'Maryland' },
+  { id: 'MA', name: 'Massachusetts' },
+  { id: 'MI', name: 'Michigan' },
+  { id: 'MN', name: 'Minnesota' },
+  { id: 'MS', name: 'Mississippi' },
+  { id: 'MO', name: 'Missouri' },
+  { id: 'MT', name: 'Montana' },
+  { id: 'NE', name: 'Nebraska' },
+  { id: 'NV', name: 'Nevada' },
+  { id: 'NH', name: 'New Hampshire' },
+  { id: 'NJ', name: 'New Jersey' },
+  { id: 'NM', name: 'New Mexico' },
+  { id: 'NY', name: 'New York' },
+  { id: 'NC', name: 'North Carolina' },
+  { id: 'ND', name: 'North Dakota' },
+  { id: 'OH', name: 'Ohio' },
+  { id: 'OK', name: 'Oklahoma' },
+  { id: 'OR', name: 'Oregon' },
+  { id: 'PA', name: 'Pennsylvania' },
+  { id: 'RI', name: 'Rhode Island' },
+  { id: 'SC', name: 'South Carolina' },
+  { id: 'SD', name: 'South Dakota' },
+  { id: 'TN', name: 'Tennessee' },
+  { id: 'TX', name: 'Texas' },
+  { id: 'UT', name: 'Utah' },
+  { id: 'VT', name: 'Vermont' },
+  { id: 'VA', name: 'Virginia' },
+  { id: 'WA', name: 'Washington' },
+  { id: 'WV', name: 'West Virginia' },
+  { id: 'WI', name: 'Wisconsin' },
+  { id: 'WY', name: 'Wyoming' },
 ];
 /*- end collapse -*/
 
 function Example(props) {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   return (
     <Select>
@@ -369,20 +398,26 @@ function Example(props) {
         <SelectValue />
         <ChevronDown size={18} />
       </Button>
-      <Popover hideArrow className="select-popover" style={{display: 'flex', flexDirection: 'column'}}>
+      <Popover
+        hideArrow
+        className='select-popover'
+        style={{ display: 'flex', flexDirection: 'column' }}
+      >
         {/*- begin highlight -*/}
         <Autocomplete {...props} filter={contains}>
           {/*- end highlight -*/}
           <SearchField
             autoFocus
-            aria-label="Search states"
-            placeholder="Search states"
-            style={{margin: 4}} />
+            aria-label='Search states'
+            placeholder='Search states'
+            style={{ margin: 4 }}
+          />
           <SelectListBox
             items={states}
             renderEmptyState={() => 'No results.'}
-            style={{flex: 1}}>
-            {state => <SelectItem>{state.name}</SelectItem>}
+            style={{ flex: 1 }}
+          >
+            {(state) => <SelectItem>{state.name}</SelectItem>}
           </SelectListBox>
         </Autocomplete>
       </Popover>
@@ -394,26 +429,28 @@ function Example(props) {
 ## ListBox example
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
-import {SearchField} from 'vanilla-starter/SearchField';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { ListBox, ListBoxItem } from 'vanilla-starter/ListBox';
+import { SearchField } from 'vanilla-starter/SearchField';
 
 function Example(props) {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   return (
     /*- begin highlight -*/
     <Autocomplete {...props} filter={contains}>
       {/*- end highlight -*/}
       <SearchField
-        aria-label="Search tags"
-        placeholder="Search tags"
-        style={{width: 250, marginBottom: 8}} />
+        aria-label='Search tags'
+        placeholder='Search tags'
+        style={{ width: 250, marginBottom: 8 }}
+      />
       <ListBox
-        aria-label="Tags"
-        selectionMode="multiple"
+        aria-label='Tags'
+        selectionMode='multiple'
         renderEmptyState={() => 'No results.'}
-        style={{height: 200}}>
+        style={{ height: 200 }}
+      >
         <ListBoxItem>News</ListBoxItem>
         <ListBoxItem>Travel</ListBoxItem>
         <ListBoxItem>Shopping</ListBoxItem>
@@ -432,26 +469,28 @@ function Example(props) {
 ## TagGroup example
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {TagGroup, Tag} from 'vanilla-starter/TagGroup';
-import {SearchField} from 'vanilla-starter/SearchField';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { TagGroup, Tag } from 'vanilla-starter/TagGroup';
+import { SearchField } from 'vanilla-starter/SearchField';
 
 function Example() {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   return (
     /*- begin highlight -*/
     <Autocomplete filter={contains}>
       {/*- end highlight -*/}
       <SearchField
-        label="Interests"
-        placeholder="Filter tags"
-        style={{width: 250, marginBottom: 16}} />
+        label='Interests'
+        placeholder='Filter tags'
+        style={{ width: 250, marginBottom: 16 }}
+      />
       <TagGroup
-        aria-label="Interest tags"
-        selectionMode="multiple"
+        aria-label='Interest tags'
+        selectionMode='multiple'
         renderEmptyState={() => 'No results.'}
-        style={{width: 250}}>
+        style={{ width: 250 }}
+      >
         <Tag>News</Tag>
         <Tag>Travel</Tag>
         <Tag>Shopping</Tag>
@@ -470,259 +509,293 @@ function Example() {
 ## GridList example
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {GridList, GridListItem, Text} from 'vanilla-starter/GridList';
-import {SearchField} from 'vanilla-starter/SearchField';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { GridList, GridListItem, Text } from 'vanilla-starter/GridList';
+import { SearchField } from 'vanilla-starter/SearchField';
 
 let images = [
   {
-    id: "8SXaMMWCTGc",
-    title: "A Ficus Lyrata Leaf",
-    user: "Clay Banks",
-    image: "https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: '8SXaMMWCTGc',
+    title: 'A Ficus Lyrata Leaf',
+    user: 'Clay Banks',
+    image:
+      'https://images.unsplash.com/photo-1580133318324-f2f76d987dd8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "pYjCqqDEOFo",
-    title: "Italian beach",
-    user: "Alan Bajura",
-    image: "https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'pYjCqqDEOFo',
+    title: 'Italian beach',
+    user: 'Alan Bajura',
+    image:
+      'https://images.unsplash.com/photo-1737100522891-e8946ac97fd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "CF-2tl6MQj0",
-    title: "Forest road",
-    user: "Artem Stoliar",
-    image: "https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'CF-2tl6MQj0',
+    title: 'Forest road',
+    user: 'Artem Stoliar',
+    image:
+      'https://images.unsplash.com/photo-1738249034651-1896f689be58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 300
+    height: 300,
   },
   {
-    id: "OW97sLU0cOw",
-    title: "Snowy Aurora",
-    user: "Janosch Diggelmann",
-    image: "https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'OW97sLU0cOw',
+    title: 'Snowy Aurora',
+    user: 'Janosch Diggelmann',
+    image:
+      'https://images.unsplash.com/photo-1738189669835-61808a9d5981?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "WfeLZ02IhkM",
-    title: "A blue and white firework is seen from above",
-    user: "Janosch Diggelmann",
-    image: "https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'WfeLZ02IhkM',
+    title: 'A blue and white firework is seen from above',
+    user: 'Janosch Diggelmann',
+    image:
+      'https://images.unsplash.com/photo-1738168601630-1c1f3ef5a95a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 300
+    height: 300,
   },
   {
-    id: "w1GpST72Bg8",
-    title: "Snowy Mountain",
-    user: "Daniil Silantev",
-    image: "https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'w1GpST72Bg8',
+    title: 'Snowy Mountain',
+    user: 'Daniil Silantev',
+    image:
+      'https://images.unsplash.com/photo-1738165170747-ecc6e3a4d97c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 267
+    height: 267,
   },
   {
-    id: "0iN0KIt6lYI",
-    title: "Pastel Sunset",
-    user: "Marek Piwnicki",
-    image: "https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: '0iN0KIt6lYI',
+    title: 'Pastel Sunset',
+    user: 'Marek Piwnicki',
+    image:
+      'https://images.unsplash.com/photo-1737917818689-f3b3708de5d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 640
+    height: 640,
   },
   {
-    id: "-mFKPfXXUG0",
-    title: "Snowy Birches",
-    user: "Simon Berger",
-    image: "https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: '-mFKPfXXUG0',
+    title: 'Snowy Birches',
+    user: 'Simon Berger',
+    image:
+      'https://images.unsplash.com/photo-1737972970322-cc2e255021bd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 400
+    height: 400,
   },
   {
-    id: "y36Nj_edtRE",
-    title: "Snowy Lake Reflections",
-    user: "Daniel Seßler",
-    image: "https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'y36Nj_edtRE',
+    title: 'Snowy Lake Reflections',
+    user: 'Daniel Seßler',
+    image:
+      'https://images.unsplash.com/photo-1736018545810-3de4c7ec25fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "NvBV-YwlgBw",
-    title: "Rocky night sky",
-    user: "Dennis Haug",
-    image: "https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'NvBV-YwlgBw',
+    title: 'Rocky night sky',
+    user: 'Dennis Haug',
+    image:
+      'https://images.unsplash.com/photo-1735528655501-cf671a3323c3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 400
+    height: 400,
   },
   {
-    id: "UthQdrPFxt0",
-    title: "A pine tree covered in snow in a forest",
-    user: "Anita Austvika",
-    image: "https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'UthQdrPFxt0',
+    title: 'A pine tree covered in snow in a forest',
+    user: 'Anita Austvika',
+    image:
+      'https://images.unsplash.com/photo-1737312905026-5dfdff1097bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "2k74xaf8dfc",
-    title: "The sun shines through the trees in the forest",
-    user: "Joyce G",
-    image: "https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: '2k74xaf8dfc',
+    title: 'The sun shines through the trees in the forest',
+    user: 'Joyce G',
+    image:
+      'https://images.unsplash.com/photo-1736185597807-371cae1c7e4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "Yje5kgfvCm0",
-    title: "A blurry photo of a field of flowers",
-    user: "Eugene Golovesov",
-    image: "https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'Yje5kgfvCm0',
+    title: 'A blurry photo of a field of flowers',
+    user: 'Eugene Golovesov',
+    image:
+      'https://images.unsplash.com/photo-1736483065204-e55e62092780?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "G2bsj2LVttI",
-    title: "A foggy road lined with trees and grass",
-    user: "Ingmar H",
-    image: "https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'G2bsj2LVttI',
+    title: 'A foggy road lined with trees and grass',
+    user: 'Ingmar H',
+    image:
+      'https://images.unsplash.com/photo-1737903071772-4d20348b4d81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 533
+    height: 533,
   },
   {
-    id: "ppyNBOkfiuY",
-    title: "A close up of a green palm tree",
-    user: "Junel Mujar",
-    image: "https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'ppyNBOkfiuY',
+    title: 'A close up of a green palm tree',
+    user: 'Junel Mujar',
+    image:
+      'https://images.unsplash.com/photo-1736849544918-6ddb5cfc2c42?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 533
+    height: 533,
   },
   {
-    id: "UcWUMqIsld8",
-    title: "A green leaf floating on top of a body of water",
-    user: "Allec Gomes",
-    image: "https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'UcWUMqIsld8',
+    title: 'A green leaf floating on top of a body of water',
+    user: 'Allec Gomes',
+    image:
+      'https://images.unsplash.com/photo-1737559217439-a5703e9b65cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "xHqOVq9w8OI",
-    title: "Leafy plants",
-    user: "Joshua Michaels",
-    image: "https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'xHqOVq9w8OI',
+    title: 'Leafy plants',
+    user: 'Joshua Michaels',
+    image:
+      'https://images.unsplash.com/photo-1563364664-399838d1394c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 266
+    height: 266,
   },
   {
-    id: "uWx3_XEc-Jw",
-    title: "A view of a mountain covered in fog",
-    user: "iuliu illes",
-    image: "https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'uWx3_XEc-Jw',
+    title: 'A view of a mountain covered in fog',
+    user: 'iuliu illes',
+    image:
+      'https://images.unsplash.com/photo-1737403428945-c584529b7b17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 298
+    height: 298,
   },
   {
-    id: "2_3lhGt8i-Y",
-    title: "A field with tall grass and fog in the background",
-    user: "Ingmar H",
-    image: "https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: '2_3lhGt8i-Y',
+    title: 'A field with tall grass and fog in the background',
+    user: 'Ingmar H',
+    image:
+      'https://images.unsplash.com/photo-1737439987404-a3ee9fb95351?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "FV-__IOxb08",
-    title: "A close up of a wave on a sandy beach",
-    user: "Jonathan Borba",
-    image: "https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'FV-__IOxb08',
+    title: 'A close up of a wave on a sandy beach',
+    user: 'Jonathan Borba',
+    image:
+      'https://images.unsplash.com/photo-1726502102472-2108ef2a5cae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "_BS-vK3boOU",
-    title: "Desert textures",
-    user: "Braden Jarvis",
-    image: "https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: '_BS-vK3boOU',
+    title: 'Desert textures',
+    user: 'Braden Jarvis',
+    image:
+      'https://images.unsplash.com/photo-1722359546494-8e3a00f88e95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 561
+    height: 561,
   },
   {
-    id: "LjAcS9lJdBg",
-    title: "Tew Falls, waterfall, in Hamilton, Canada.",
-    user: "Andre Portolesi",
-    image: "https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'LjAcS9lJdBg',
+    title: 'Tew Falls, waterfall, in Hamilton, Canada.',
+    user: 'Andre Portolesi',
+    image:
+      'https://images.unsplash.com/photo-1705021246536-aecfad654893?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 500
+    height: 500,
   },
   {
-    id: "hlj6xJG30FE",
-    title: "Cave light rays",
-    user: "Intricate Explorer",
-    image: "https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'hlj6xJG30FE',
+    title: 'Cave light rays',
+    user: 'Intricate Explorer',
+    image:
+      'https://images.unsplash.com/photo-1631641551473-fbe46919289d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 267
+    height: 267,
   },
   {
-    id: "vMoZvKeZOhw",
-    title: "Salt Marshes, Isle of Harris, Scotland",
-    user: "Nils Leonhardt",
-    image: "https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'vMoZvKeZOhw',
+    title: 'Salt Marshes, Isle of Harris, Scotland',
+    user: 'Nils Leonhardt',
+    image:
+      'https://images.unsplash.com/photo-1585951301678-8fd6f3b32c7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "wCLCK9LDDjI",
-    title: "An aerial view of a snow covered forest",
-    user: "Lukas Hädrich",
-    image: "https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'wCLCK9LDDjI',
+    title: 'An aerial view of a snow covered forest',
+    user: 'Lukas Hädrich',
+    image:
+      'https://images.unsplash.com/photo-1737405555489-78b3755eaa81?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 267
+    height: 267,
   },
   {
-    id: "OdDx3_NB-Wk",
-    title: "Tall grass",
-    user: "Ingmar H",
-    image: "https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'OdDx3_NB-Wk',
+    title: 'Tall grass',
+    user: 'Ingmar H',
+    image:
+      'https://images.unsplash.com/photo-1737301519296-062cd324dbfa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "Gn-FOw1geFc",
-    title: "Larches on Maple Pass, Washington",
-    user: "Noelle",
-    image: "https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'Gn-FOw1geFc',
+    title: 'Larches on Maple Pass, Washington',
+    user: 'Noelle',
+    image:
+      'https://images.unsplash.com/photo-1737496538329-a59d10148a08?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 600
+    height: 600,
   },
   {
-    id: "VhKJHOz2tJ8",
-    title: "Heart Nebula",
-    user: "Arnaud Girault",
-    image: "https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400",
+    id: 'VhKJHOz2tJ8',
+    title: 'Heart Nebula',
+    user: 'Arnaud Girault',
+    image:
+      'https://images.unsplash.com/photo-1737478598284-b9bc11cb1e9b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3wzNDA4NDh8MHwxfHRvcGljfHw2c01WalRMU2tlUXx8fHx8Mnx8MTczODM2NzE4M3w&ixlib=rb-4.0.3&q=80&w=400',
     width: 400,
-    height: 266
-  }
+    height: 266,
+  },
 ];
 
 function Example() {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   return (
     /*- begin highlight -*/
     <Autocomplete filter={contains}>
       {/*- end highlight -*/}
       <SearchField
-        aria-label="Search photos"
-        placeholder="Search photos"
-        style={{marginBottom: 8, marginInlineStart: 12, marginInlineEnd: 'auto'}} />
+        aria-label='Search photos'
+        placeholder='Search photos'
+        style={{
+          marginBottom: 8,
+          marginInlineStart: 12,
+          marginInlineEnd: 'auto',
+        }}
+      />
       <GridList
-        aria-label="Nature photos"
-        data-size="small"
-        selectionMode="multiple"
+        aria-label='Nature photos'
+        data-size='small'
+        selectionMode='multiple'
         renderEmptyState={() => 'No results.'}
-        items={images}>
+        items={images}
+      >
         {(image) => (
           <GridListItem textValue={image.title}>
             <img src={image.image} width={image.width} height={image.height} />
             <Text>{image.title}</Text>
-            <Text slot="description">By {image.user}</Text>
+            <Text slot='description'>By {image.user}</Text>
           </GridListItem>
         )}
       </GridList>
@@ -734,10 +807,17 @@ function Example() {
 ## Table example
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {ResizableTableContainer} from 'react-aria-components/Table';
-import {Table, TableHeader, TableBody, Column, Row, Cell} from 'vanilla-starter/Table';
-import {SearchField} from 'vanilla-starter/SearchField';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { ResizableTableContainer } from 'react-aria-components/Table';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  Column,
+  Row,
+  Cell,
+} from 'vanilla-starter/Table';
+import { SearchField } from 'vanilla-starter/SearchField';
 
 /*- begin collapse -*/
 const stocks = [
@@ -1145,41 +1225,40 @@ const stocks = [
 /*- end collapse -*/
 
 function Example() {
-  let {contains} = useFilter({sensitivity: 'base'});
+  let { contains } = useFilter({ sensitivity: 'base' });
 
   return (
     /*- begin highlight -*/
     <Autocomplete filter={contains}>
       {/*- end highlight -*/}
       <SearchField
-        aria-label="Search stocks"
-        placeholder="Search stocks"
-        style={{marginBottom: 16, marginInlineEnd: 'auto'}} />
-      <ResizableTableContainer style={{height: 400}}>
-        <Table aria-label="Stocks" selectionMode="multiple">
+        aria-label='Search stocks'
+        placeholder='Search stocks'
+        style={{ marginBottom: 16, marginInlineEnd: 'auto' }}
+      />
+      <ResizableTableContainer style={{ height: 400 }}>
+        <Table aria-label='Stocks' selectionMode='multiple'>
           <TableHeader>
-            <Column id="symbol" defaultWidth={85} allowsResizing>
+            <Column id='symbol' defaultWidth={85} allowsResizing>
               Symbol
             </Column>
-            <Column id="name" isRowHeader defaultWidth="2fr" allowsResizing>
+            <Column id='name' isRowHeader defaultWidth='2fr' allowsResizing>
               Name
             </Column>
-            <Column id="marketCap" allowsResizing>Market Cap</Column>
-            <Column id="industry">Industry</Column>
+            <Column id='marketCap' allowsResizing>
+              Market Cap
+            </Column>
+            <Column id='industry'>Industry</Column>
           </TableHeader>
           <TableBody items={stocks} renderEmptyState={() => 'No results.'}>
             {(item) => (
               <Row>
-                <Cell><code>${item.symbol}</code></Cell>
-                <Cell textValue={item.name}>
-                  {item.name}
+                <Cell>
+                  <code>${item.symbol}</code>
                 </Cell>
-                <Cell textValue={item.marketCap}>
-                  {item.marketCap}
-                </Cell>
-                <Cell textValue={item.industry}>
-                  {item.industry}
-                </Cell>
+                <Cell textValue={item.name}>{item.name}</Cell>
+                <Cell textValue={item.marketCap}>{item.marketCap}</Cell>
+                <Cell textValue={item.industry}>{item.industry}</Cell>
               </Row>
             )}
           </TableBody>
@@ -1192,44 +1271,49 @@ function Example() {
 
 ### Asynchronous loading
 
-When the `filter` prop is not set, the items are controlled. This example uses a backend API to perform searching instead of filtering a static list on the client.
+When the `filter` prop is not set, the items are controlled. This example uses a
+backend API to perform searching instead of filtering a static list on the
+client.
 
 ```tsx
-import {Autocomplete} from 'react-aria-components/Autocomplete';
-import {useAsyncList} from 'react-aria-components/useAsyncList';
-import {SearchField} from 'vanilla-starter/SearchField';
-import {ListBox, ListBoxItem} from 'vanilla-starter/ListBox';
+import { Autocomplete } from 'react-aria-components/Autocomplete';
+import { useAsyncList } from 'react-aria-components/useAsyncList';
+import { SearchField } from 'vanilla-starter/SearchField';
+import { ListBox, ListBoxItem } from 'vanilla-starter/ListBox';
 
 function AsyncLoadingExample() {
-  let list = useAsyncList<{name: string}>({
-    async load({signal, filterText}) {
+  let list = useAsyncList<{ name: string }>({
+    async load({ signal, filterText }) {
       let res = await fetch(
         `https://swapi.py4e.com/api/people/?search=${filterText}`,
-        {signal}
+        { signal }
       );
 
       let json = await res.json();
       return {
-        items: json.results
+        items: json.results,
       };
-    }
+    },
   });
 
   return (
     <Autocomplete
       /*- begin highlight -*/
       inputValue={list.filterText}
-      onInputChange={list.setFilterText}>
+      onInputChange={list.setFilterText}
+    >
       {/*- end highlight -*/}
       <SearchField
-        label="Search Star Wars Characters"
-        placeholder="Search"
-        style={{width: 250, margin: 8}} />
+        label='Search Star Wars Characters'
+        placeholder='Search'
+        style={{ width: 250, margin: 8 }}
+      />
       <ListBox
         items={list.items}
-        selectionMode="multiple"
+        selectionMode='multiple'
         renderEmptyState={() => 'No results found.'}
-        style={{height: 300}}>
+        style={{ height: 300 }}
+      >
         {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
       </ListBox>
     </Autocomplete>
@@ -1239,15 +1323,18 @@ function AsyncLoadingExample() {
 
 ## Inline completions
 
-Set the Autocomplete `inputValue` to a substring of the full input value to enable inline completions such as @mentions. Completions can be displayed in a popover by controlling its `isOpen` state. For inline suggestions, use the `getTargetRect` prop to position the popover relative to the anchor character.
+Set the Autocomplete `inputValue` to a substring of the full input value to
+enable inline completions such as @mentions. Completions can be displayed in a
+popover by controlling its `isOpen` state. For inline suggestions, use the
+`getTargetRect` prop to position the popover relative to the anchor character.
 
 ```tsx
-import {Autocomplete, useFilter} from 'react-aria-components/Autocomplete';
-import {TextArea} from 'vanilla-starter/TextField';
-import {Popover} from 'vanilla-starter/Popover';
-import {Menu, MenuItem} from 'vanilla-starter/Menu';
-import {useState, useRef} from 'react';
-import {flushSync} from 'react-dom';
+import { Autocomplete, useFilter } from 'react-aria-components/Autocomplete';
+import { TextArea } from 'vanilla-starter/TextField';
+import { Popover } from 'vanilla-starter/Popover';
+import { Menu, MenuItem } from 'vanilla-starter/Menu';
+import { useState, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import getCaretRect from 'textarea-caret';
 
 /*- begin collapse -*/
@@ -1276,27 +1363,30 @@ const usernames = [
   'sofiacox',
   'jackharris',
   'chloebaker',
-  'liamrodriguez'
+  'liamrodriguez',
 ];
 /*- end collapse -*/
 
 function Example() {
-  let {startsWith} = useFilter({sensitivity: 'base'});
+  let { startsWith } = useFilter({ sensitivity: 'base' });
   let [inputValue, setInputValue] = useState('');
   let [anchorIndex, setAnchorIndex] = useState(-1);
   let [filterValue, setFilterValue] = useState('');
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let updateFilter = () => {
-    let {selectionStart, selectionEnd, value} = inputRef.current!;
-    if (selectionStart === selectionEnd && document.activeElement === inputRef.current!) {
-      // The current filter value is the substring between 
+    let { selectionStart, selectionEnd, value } = inputRef.current!;
+    if (
+      selectionStart === selectionEnd &&
+      document.activeElement === inputRef.current!
+    ) {
+      // The current filter value is the substring between
       // the anchor character '@' and the caret position.
       let index = value.lastIndexOf('@', selectionStart);
       if (index >= 0) {
         let slice = value.slice(index + 1, selectionStart);
         // Spaces are not allowed in the filter value.
-        if (!slice.includes(' ')) { 
+        if (!slice.includes(' ')) {
           setAnchorIndex(index);
           setFilterValue(slice);
           return;
@@ -1304,31 +1394,32 @@ function Example() {
       }
     }
 
-    // Reset the anchor index, but not the filter value so 
+    // Reset the anchor index, but not the filter value so
     // that the menu does not flicker during the close animation.
     setAnchorIndex(-1);
   };
-  
+
   return (
     /*- begin highlight -*/
     // Pass the filter substring to Autocomplete.
     <Autocomplete inputValue={filterValue} filter={startsWith}>
-    {/*- end highlight -*/}
+      {/*- end highlight -*/}
       <TextArea
-        label="Comment"
-        placeholder="Type @ for autocomplete"
-        style={{width: '100%'}}
+        label='Comment'
+        placeholder='Type @ for autocomplete'
+        style={{ width: '100%' }}
         /*- begin highlight -*/
         // Pass the full input value to the TextArea.
         value={inputValue}
         /*- end highlight -*/
-        onChange={value => {
+        onChange={(value) => {
           setInputValue(value);
           updateFilter();
         }}
         onSelect={updateFilter}
         onBlur={updateFilter}
-        inputRef={inputRef} />
+        inputRef={inputRef}
+      />
       <Popover
         triggerRef={inputRef}
         /*- begin highlight -*/
@@ -1336,20 +1427,22 @@ function Example() {
         isOpen={anchorIndex >= 0}
         /*- end highlight -*/
         isNonModal
-        placement="bottom start"
-        trigger="MenuTrigger"
+        placement='bottom start'
+        trigger='MenuTrigger'
         /*- begin highlight -*/
         // Calculate the position of the popover relative to the anchor character.
-        getTargetRect={target => {
-          let {top, left} = getCaretRect(inputRef.current!, anchorIndex!);
-          let {top: targetTop, left: targetLeft} = target.getBoundingClientRect();
+        getTargetRect={(target) => {
+          let { top, left } = getCaretRect(inputRef.current!, anchorIndex!);
+          let { top: targetTop, left: targetLeft } =
+            target.getBoundingClientRect();
           return new DOMRect(targetLeft + left, targetTop + top, 1, 16);
-        }}>
+        }}
+      >
         {/*- end highlight -*/}
         <Menu
           items={usernames}
           renderEmptyState={() => 'No results found.'}
-          onAction={value => {
+          onAction={(value) => {
             /*- begin highlight -*/
             // Insert the completion at the anchor index and update the caret position.
             let prefix = inputValue.slice(0, anchorIndex!) + '@' + value + ' ';
@@ -1358,7 +1451,8 @@ function Example() {
             inputRef.current!.setSelectionRange(prefix.length, prefix.length);
             updateFilter();
             /*- end highlight -*/
-          }}>
+          }}
+        >
           {(item) => <MenuItem id={item}>{item}</MenuItem>}
         </Menu>
       </Popover>
@@ -1385,13 +1479,13 @@ function Example() {
 
 ### Autocomplete
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `React.ReactNode` | — | The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. |
-| `defaultInputValue` | `string | undefined` | — | The default value of the autocomplete input (uncontrolled). |
-| `disableAutoFocusFirst` | `boolean | undefined` | false | Whether or not to focus the first item in the collection after a filter is performed. Note this is only applicable if virtual focus behavior is not turned off via `disableVirtualFocus`. |
-| `disableVirtualFocus` | `boolean | undefined` | false | Whether the autocomplete should disable virtual focus, instead making the wrapped collection directly tabbable. |
-| `filter` | `((textValue: string, inputValue: string, node: Node<T>) => boolean) | undefined` | — | An optional filter function used to determine if a option should be included in the autocomplete list. Include this if the items you are providing to your wrapped collection aren't filtered by default. |
-| `inputValue` | `string | undefined` | — | The value of the autocomplete input (controlled). |
-| `onInputChange` | `((value: string) => void) | undefined` | — | Handler that is called when the autocomplete input value changes. |
-| `slot` | `string | null | undefined` | — | A slot name for the component. Slots allow the component to receive props from a parent component. An explicit `null` value indicates that the local props completely override all props received from a parent. |
+| Name                    | Type                                                                 | Default    | Description                                                                                                         |
+| ----------------------- | -------------------------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------- |
+| `children`              | `React.ReactNode`                                                    | —          | The children wrapped by the autocomplete. Consists of at least an input element and a collection element to filter. |
+| `defaultInputValue`     | `string                                                              | undefined` | —                                                                                                                   | The default value of the autocomplete input (uncontrolled).                                                                                                                                               |
+| `disableAutoFocusFirst` | `boolean                                                             | undefined` | false                                                                                                               | Whether or not to focus the first item in the collection after a filter is performed. Note this is only applicable if virtual focus behavior is not turned off via `disableVirtualFocus`.                 |
+| `disableVirtualFocus`   | `boolean                                                             | undefined` | false                                                                                                               | Whether the autocomplete should disable virtual focus, instead making the wrapped collection directly tabbable.                                                                                           |
+| `filter`                | `((textValue: string, inputValue: string, node: Node<T>) => boolean) | undefined` | —                                                                                                                   | An optional filter function used to determine if a option should be included in the autocomplete list. Include this if the items you are providing to your wrapped collection aren't filtered by default. |
+| `inputValue`            | `string                                                              | undefined` | —                                                                                                                   | The value of the autocomplete input (controlled).                                                                                                                                                         |
+| `onInputChange`         | `((value: string) => void)                                           | undefined` | —                                                                                                                   | Handler that is called when the autocomplete input value changes.                                                                                                                                         |
+| `slot`                  | `string                                                              | null       | undefined`                                                                                                          | —                                                                                                                                                                                                         | A slot name for the component. Slots allow the component to receive props from a parent component. An explicit `null` value indicates that the local props completely override all props received from a parent. |

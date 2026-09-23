@@ -1,6 +1,9 @@
 ---
 name: code-review
-description: Perform code reviews following Sentry engineering practices. Use when reviewing pull requests, examining code changes, or providing feedback on code quality. Covers security, performance, testing, and design review.
+description:
+  Perform code reviews following Sentry engineering practices. Use when
+  reviewing pull requests, examining code changes, or providing feedback on code
+  quality. Covers security, performance, testing, and design review.
 ---
 
 # Sentry Code Review
@@ -13,12 +16,15 @@ Follow these guidelines when reviewing code for Sentry projects.
 
 Look for these issues in code changes:
 
-- **Runtime errors**: Potential exceptions, null pointer issues, out-of-bounds access
-- **Performance**: Unbounded O(n²) operations, N+1 queries, unnecessary allocations
+- **Runtime errors**: Potential exceptions, null pointer issues, out-of-bounds
+  access
+- **Performance**: Unbounded O(n²) operations, N+1 queries, unnecessary
+  allocations
 - **Side effects**: Unintended behavioral changes affecting other components
 - **Backwards compatibility**: Breaking API changes without migration path
 - **ORM queries**: Complex Django ORM with unexpected query performance
-- **Security vulnerabilities**: Injection, XSS, access control gaps, secrets exposure
+- **Security vulnerabilities**: Injection, XSS, access control gaps, secrets
+  exposure
 
 ### Design Assessment
 
@@ -34,7 +40,8 @@ Every PR should have appropriate test coverage:
 - Integration tests for component interactions
 - End-to-end tests for critical user paths
 
-Verify tests cover actual requirements and edge cases. Avoid excessive branching or looping in test code.
+Verify tests cover actual requirements and edge cases. Avoid excessive branching
+or looping in test code.
 
 ### Long-Term Impact
 
@@ -79,7 +86,7 @@ users = User.objects.prefetch_related('profile')
 // Bad: Missing dependency in useEffect
 useEffect(() => {
   fetchData(userId);
-}, []);  // userId not in deps
+}, []); // userId not in deps
 
 // Good: Include all dependencies
 useEffect(() => {

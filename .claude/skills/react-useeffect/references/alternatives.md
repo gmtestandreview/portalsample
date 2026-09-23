@@ -57,7 +57,7 @@ function ProfilePage({ userId }) {
   return (
     <Profile
       userId={userId}
-      key={userId}  // Different userId = different component instance
+      key={userId} // Different userId = different component instance
     />
   );
 }
@@ -92,7 +92,7 @@ function List({ items }) {
   const [selectedId, setSelectedId] = useState(null);
 
   // Derived - no Effect needed
-  const selection = items.find(item => item.id === selectedId) ?? null;
+  const selection = items.find((item) => item.id === selectedId) ?? null;
 }
 ```
 
@@ -129,8 +129,13 @@ function buyProduct() {
   showNotification(`Added ${product.name}!`);
 }
 
-function handleBuyClick() { buyProduct(); }
-function handleCheckoutClick() { buyProduct(); navigateTo('/checkout'); }
+function handleBuyClick() {
+  buyProduct();
+}
+function handleCheckoutClick() {
+  buyProduct();
+  navigateTo('/checkout');
+}
 ```
 
 ---
@@ -145,7 +150,9 @@ function useOnlineStatus() {
   const [isOnline, setIsOnline] = useState(true);
 
   useEffect(() => {
-    function update() { setIsOnline(navigator.onLine); }
+    function update() {
+      setIsOnline(navigator.onLine);
+    }
     window.addEventListener('online', update);
     window.addEventListener('offline', update);
     return () => {
@@ -172,8 +179,8 @@ function subscribe(callback) {
 function useOnlineStatus() {
   return useSyncExternalStore(
     subscribe,
-    () => navigator.onLine,      // Client value
-    () => true                   // Server value (SSR)
+    () => navigator.onLine, // Client value
+    () => true // Server value (SSR)
   );
 }
 ```
@@ -215,21 +222,23 @@ function useData(url) {
     setLoading(true);
 
     fetch(url)
-      .then(res => res.json())
-      .then(json => {
+      .then((res) => res.json())
+      .then((json) => {
         if (!ignore) {
           setData(json);
           setError(null);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (!ignore) setError(err);
       })
       .finally(() => {
         if (!ignore) setLoading(false);
       });
 
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [url]);
 
   return { data, error, loading };
@@ -247,13 +256,13 @@ function SearchResults({ query }) {
 
 ## Summary: When to Use What
 
-| Need | Solution |
-| ------ | ---------- |
-| Value from props/state | Calculate during render |
-| Expensive calculation | `useMemo` |
-| Reset all state on prop change | `key` prop |
-| Respond to user action | Event handler |
-| Sync with external system | `useEffect` with cleanup |
-| Subscribe to external store | `useSyncExternalStore` |
-| Share state between components | Lift state up |
-| Fetch data | Custom hook with cleanup / framework |
+| Need                           | Solution                             |
+| ------------------------------ | ------------------------------------ |
+| Value from props/state         | Calculate during render              |
+| Expensive calculation          | `useMemo`                            |
+| Reset all state on prop change | `key` prop                           |
+| Respond to user action         | Event handler                        |
+| Sync with external system      | `useEffect` with cleanup             |
+| Subscribe to external store    | `useSyncExternalStore`               |
+| Share state between components | Lift state up                        |
+| Fetch data                     | Custom hook with cleanup / framework |

@@ -1,10 +1,16 @@
 # React useEffect Best Practices
 
-A comprehensive guide teaching when to use `useEffect` in React, and more importantly, when NOT to use it. This skill is based on official React documentation and provides practical alternatives to common useEffect anti-patterns.
+A comprehensive guide teaching when to use `useEffect` in React, and more
+importantly, when NOT to use it. This skill is based on official React
+documentation and provides practical alternatives to common useEffect
+anti-patterns.
 
 ## Purpose
 
-Effects are an **escape hatch** from React's reactive paradigm. They let you synchronize with external systems like browser APIs, third-party widgets, or network requests. However, many developers overuse Effects for tasks that React handles better through other means.
+Effects are an **escape hatch** from React's reactive paradigm. They let you
+synchronize with external systems like browser APIs, third-party widgets, or
+network requests. However, many developers overuse Effects for tasks that React
+handles better through other means.
 
 This skill helps you:
 
@@ -37,7 +43,8 @@ Use this skill when you're:
 
 This skill provides guidance through three key resources:
 
-1. **Quick Reference Table** - Fast lookup for common scenarios with DO/DON'T patterns
+1. **Quick Reference Table** - Fast lookup for common scenarios with DO/DON'T
+   patterns
 2. **Decision Tree** - Visual flowchart to determine the right approach
 3. **Detailed Anti-Patterns** - 9 common mistakes with explanations and fixes
 4. **Better Alternatives** - 8 proven patterns to replace unnecessary Effects
@@ -64,7 +71,8 @@ Visual table showing the DO/DON'T for common scenarios:
 
 ### 2. Decision Tree
 
-Clear flowchart that guides you from "Need to respond to something?" to the correct solution:
+Clear flowchart that guides you from "Need to respond to something?" to the
+correct solution:
 
 - User interaction → Event handler
 - Component appeared → Effect (for external sync/analytics)
@@ -167,7 +175,7 @@ function SearchResults({ query }) {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    fetchResults(query).then(json => {
+    fetchResults(query).then((json) => {
       setResults(json); // "hello" response may arrive after "hell"
     });
   }, [query]);
@@ -183,11 +191,13 @@ function SearchResults({ query }) {
   useEffect(() => {
     let ignore = false;
 
-    fetchResults(query).then(json => {
+    fetchResults(query).then((json) => {
       if (!ignore) setResults(json);
     });
 
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [query]);
 }
 ```
@@ -225,18 +235,23 @@ function ProductPage({ product, addToCart }) {
 
 Effects are appropriate for:
 
-- **Synchronizing with external systems** - Browser APIs, third-party widgets, non-React code
-- **Subscriptions** - WebSocket connections, global event listeners (prefer `useSyncExternalStore`)
+- **Synchronizing with external systems** - Browser APIs, third-party widgets,
+  non-React code
+- **Subscriptions** - WebSocket connections, global event listeners (prefer
+  `useSyncExternalStore`)
 - **Analytics/logging** - Code that needs to run because the component displayed
-- **Data fetching** - With proper cleanup (or use your framework's built-in mechanism)
+- **Data fetching** - With proper cleanup (or use your framework's built-in
+  mechanism)
 
 ## When You DON'T Need Effects
 
 Avoid Effects for:
 
 1. **Transforming data for rendering** - Calculate at the top level instead
-2. **Handling user events** - Use event handlers where you know exactly what happened
-3. **Deriving state** - Just compute it: `const fullName = firstName + ' ' + lastName`
+2. **Handling user events** - Use event handlers where you know exactly what
+   happened
+3. **Deriving state** - Just compute it:
+   `const fullName = firstName + ' ' + lastName`
 4. **Chaining state updates** - Calculate all next state in the event handler
 5. **Notifying parent components** - Call the callback in the same event handler
 6. **Resetting state** - Use the `key` prop to create a fresh component instance
@@ -245,11 +260,13 @@ Avoid Effects for:
 
 ### 1. Start Without an Effect
 
-Before adding an Effect, ask: "Is there an external system involved?" If no, you probably don't need an Effect.
+Before adding an Effect, ask: "Is there an external system involved?" If no, you
+probably don't need an Effect.
 
 ### 2. Prefer Derived State
 
-If you can calculate a value from props or state, don't store it in state with an Effect updating it.
+If you can calculate a value from props or state, don't store it in state with
+an Effect updating it.
 
 ### 3. Use the Right Tool
 
@@ -261,19 +278,24 @@ If you can calculate a value from props or state, don't store it in state with a
 
 ### 4. Always Clean Up
 
-If your Effect subscribes, fetches, or sets timers, return a cleanup function to prevent memory leaks and race conditions.
+If your Effect subscribes, fetches, or sets timers, return a cleanup function to
+prevent memory leaks and race conditions.
 
 ### 5. Avoid Effect Chains
 
-Multiple Effects triggering each other causes unnecessary re-renders and makes code hard to follow. Calculate everything in one place (usually an event handler).
+Multiple Effects triggering each other causes unnecessary re-renders and makes
+code hard to follow. Calculate everything in one place (usually an event
+handler).
 
 ### 6. Test in Strict Mode
 
-React 18+ Strict Mode mounts components twice in development to expose missing cleanup. If your Effect breaks, you need cleanup.
+React 18+ Strict Mode mounts components twice in development to expose missing
+cleanup. If your Effect breaks, you need cleanup.
 
 ### 7. Consider Framework Solutions
 
-For data fetching, prefer your framework's built-in solution (Next.js, Remix) or libraries (React Query, SWR) over manual Effects.
+For data fetching, prefer your framework's built-in solution (Next.js, Remix) or
+libraries (React Query, SWR) over manual Effects.
 
 ## Reference Files
 
@@ -313,9 +335,11 @@ This skill includes three detailed reference documents:
 
 **Symptom:** Effect runs twice on component mount in development.
 
-**Cause:** React 18 Strict Mode intentionally mounts components twice to expose bugs.
+**Cause:** React 18 Strict Mode intentionally mounts components twice to expose
+bugs.
 
-**Fix:** Add proper cleanup. If it's app initialization that shouldn't run twice, use a module-level guard.
+**Fix:** Add proper cleanup. If it's app initialization that shouldn't run
+twice, use a module-level guard.
 
 ## Resources
 
@@ -327,7 +351,8 @@ This skill is based on:
 
 ## Summary
 
-The golden rule: **Effects are an escape hatch from React.** If you're not synchronizing with an external system, you probably don't need an Effect.
+The golden rule: **Effects are an escape hatch from React.** If you're not
+synchronizing with an external system, you probably don't need an Effect.
 
 Before writing `useEffect`, ask yourself:
 
@@ -336,4 +361,5 @@ Before writing `useEffect`, ask yourself:
 3. Is this resetting state when a prop changes? → Use key prop
 4. Is this synchronizing with an external system? → Use Effect with cleanup
 
-Follow these patterns, and your React code will be more maintainable, performant, and bug-free.
+Follow these patterns, and your React code will be more maintainable,
+performant, and bug-free.

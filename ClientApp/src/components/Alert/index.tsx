@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Alert } from "react-bootstrap";
-import type { AlertProps, BaseAlertProps } from "./types.ts";
+import { useEffect, useState } from 'react';
+import { Alert } from 'react-bootstrap';
+import type { AlertProps, BaseAlertProps } from './types.ts';
 
 /**
  * Internal AlertMessage Component
@@ -16,48 +16,48 @@ import type { AlertProps, BaseAlertProps } from "./types.ts";
  */
 
 const AlertMessage = (props: BaseAlertProps) => {
-	const {
-		id,
-		testId,
-		children,
-		canClose,
-		onClose,
-		className = "", // default props
-		variant,
-		role,
-		ariaLive,
-	} = props;
+  const {
+    id,
+    testId,
+    children,
+    canClose,
+    onClose,
+    className = '', // default props
+    variant,
+    role,
+    ariaLive,
+  } = props;
 
-	const [show, setShow] = useState<boolean>(true);
+  const [show, setShow] = useState<boolean>(true);
 
-	const closeAlert = () => {
-		if (onClose) {
-			onClose();
-		}
+  const closeAlert = () => {
+    if (onClose) {
+      onClose();
+    }
 
-		setShow(false);
-	};
+    setShow(false);
+  };
 
-	useEffect(() => {
-		setShow(true);
-	}, []);
+  useEffect(() => {
+    setShow(true);
+  }, []);
 
-	return (
-		<Alert
-			id={id}
-			data-testid={testId}
-			role={role}
-			className={`d-flex ${className}`}
-			dismissible={canClose}
-			onClose={closeAlert}
-			show={show}
-			variant={variant}
-			aria-live={ariaLive || "polite"}
-			tabIndex={-1}
-		>
-			{children}
-		</Alert>
-	);
+  return (
+    <Alert
+      id={id}
+      data-testid={testId}
+      role={role}
+      className={`d-flex ${className}`}
+      dismissible={canClose}
+      onClose={closeAlert}
+      show={show}
+      variant={variant}
+      aria-live={ariaLive || 'polite'}
+      tabIndex={-1}
+    >
+      {children}
+    </Alert>
+  );
 };
 
 /**
@@ -82,7 +82,7 @@ const AlertMessage = (props: BaseAlertProps) => {
  * @returns {JSX.Element} Green success alert
  */
 export const AlertSuccess = (props: AlertProps) => (
-	<AlertMessage variant="success" role="alert" ariaLive="polite" {...props} />
+  <AlertMessage variant='success' role='alert' ariaLive='polite' {...props} />
 );
 
 /**
@@ -107,7 +107,7 @@ export const AlertSuccess = (props: AlertProps) => (
  * @returns {JSX.Element} Blue information alert
  */
 export const AlertInfo = (props: AlertProps) => (
-	<AlertMessage variant="info" role="status" ariaLive="polite" {...props} />
+  <AlertMessage variant='info' role='status' ariaLive='polite' {...props} />
 );
 
 /**
@@ -132,7 +132,7 @@ export const AlertInfo = (props: AlertProps) => (
  * @returns {JSX.Element} Yellow warning alert
  */
 export const AlertWarning = (props: AlertProps) => (
-	<AlertMessage variant="warning" role="alert" ariaLive="polite" {...props} />
+  <AlertMessage variant='warning' role='alert' ariaLive='polite' {...props} />
 );
 
 /**
@@ -158,5 +158,5 @@ export const AlertWarning = (props: AlertProps) => (
  * @returns {JSX.Element} Red error alert with assertive announcement
  */
 export const AlertError = (props: AlertProps) => (
-	<AlertMessage variant="danger" role="alert" ariaLive="assertive" {...props} />
+  <AlertMessage variant='danger' role='alert' ariaLive='assertive' {...props} />
 );

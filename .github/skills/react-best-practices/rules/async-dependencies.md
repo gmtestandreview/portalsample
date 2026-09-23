@@ -7,7 +7,8 @@ tags: async, parallelization, dependencies, better-all
 
 ## Dependency-Based Parallelization
 
-For operations with partial dependencies, use `better-all` to maximize parallelism. It automatically starts each task at the earliest possible moment.
+For operations with partial dependencies, use `better-all` to maximize
+parallelism. It automatically starts each task at the earliest possible moment.
 
 **Incorrect (profile waits for config unnecessarily):**
 
@@ -49,4 +50,5 @@ const [user, config, profile] = await Promise.all([
 ]);
 ```
 
-Reference: [https://github.com/shuding/better-all](https://github.com/shuding/better-all)
+Reference:
+[https://github.com/shuding/better-all](https://github.com/shuding/better-all)

@@ -1,15 +1,18 @@
 # Common C4 Model Mistakes to Avoid
 
-This guide documents frequent anti-patterns and errors when creating C4 architecture diagrams, with examples of what to do instead.
+This guide documents frequent anti-patterns and errors when creating C4
+architecture diagrams, with examples of what to do instead.
 
 ## Abstraction Level Mistakes
 
 ### 1. Confusing Containers and Components
 
-**The Problem:**
-Containers are **deployable units** (applications, services, databases). Components are **non-deployable elements inside a container** (modules, classes, packages).
+**The Problem:** Containers are **deployable units** (applications, services,
+databases). Components are **non-deployable elements inside a container**
+(modules, classes, packages).
 
 **Wrong - Java class shown as container:**
+
 ```mermaid
 C4Container
   title WRONG: Class as Container
@@ -23,6 +26,7 @@ C4Container
 ```
 
 **Correct - Classes as components inside a container:**
+
 ```mermaid
 C4Component
   title CORRECT: Classes as Components
@@ -42,28 +46,31 @@ C4Component
 
 ### 2. Adding Undefined Abstraction Levels
 
-**The Problem:**
-C4 defines exactly four levels. Don't invent "subcomponents", "modules", or other arbitrary levels.
+**The Problem:** C4 defines exactly four levels. Don't invent "subcomponents",
+"modules", or other arbitrary levels.
 
 **Wrong:**
+
 - Level 3.5: "Subcomponents"
 - Level 2.5: "Microservice groups"
 - Custom levels like "packages" or "modules"
 
-**Correct:**
-Stick to Person, Software System, Container, Component. If you need more detail, you're at Level 4 (Code) which should use UML class diagrams.
+**Correct:** Stick to Person, Software System, Container, Component. If you need
+more detail, you're at Level 4 (Code) which should use UML class diagrams.
 
 ### 3. Vague Subsystems
 
-**The Problem:**
-"Subsystem" is ambiguous. Is it a system, container, or component?
+**The Problem:** "Subsystem" is ambiguous. Is it a system, container, or
+component?
 
 **Wrong:**
+
 ```
 Subsystem(orders, "Order Subsystem", "Handles orders")
 ```
 
 **Correct - Be specific:**
+
 ```
 System(orderSystem, "Order System", "Handles order lifecycle")
 # OR
@@ -74,10 +81,12 @@ Component(orderProcessor, "Order Processor", "Spring Bean", "Order business logi
 
 ## Shared Libraries Mistake
 
-**The Problem:**
-Modeling a shared library as a container implies it's an independently running service. Libraries are copied into applications, not deployed separately.
+**The Problem:** Modeling a shared library as a container implies it's an
+independently running service. Libraries are copied into applications, not
+deployed separately.
 
 **Wrong - Library as separate container:**
+
 ```mermaid
 C4Container
   title WRONG: Library as Container
@@ -91,6 +100,7 @@ C4Container
 ```
 
 **Correct - Show library within each service:**
+
 ```mermaid
 C4Component
   title CORRECT: Library in Each Service
@@ -106,16 +116,18 @@ C4Component
   }
 ```
 
-Or simply omit the library from architecture diagrams since it's an implementation detail.
+Or simply omit the library from architecture diagrams since it's an
+implementation detail.
 
 ## Message Broker Mistakes
 
 ### Single Message Bus Anti-Pattern
 
-**The Problem:**
-Showing Kafka/RabbitMQ as a single container creates a misleading "hub and spoke" diagram that hides actual data flows.
+**The Problem:** Showing Kafka/RabbitMQ as a single container creates a
+misleading "hub and spoke" diagram that hides actual data flows.
 
 **Wrong - Central message bus:**
+
 ```mermaid
 C4Container
   title WRONG: Central Message Bus
@@ -131,6 +143,7 @@ C4Container
 ```
 
 **Correct - Individual topics:**
+
 ```mermaid
 C4Container
   title CORRECT: Individual Topics
@@ -152,6 +165,7 @@ C4Container
 ```
 
 **Alternative - Topics on relationship labels:**
+
 ```mermaid
 C4Container
   title ALTERNATIVE: Topics as Labels
@@ -169,10 +183,11 @@ C4Container
 
 ### Showing Internal Details of External Systems
 
-**The Problem:**
-You don't control external systems. Showing their internals creates coupling and becomes stale quickly.
+**The Problem:** You don't control external systems. Showing their internals
+creates coupling and becomes stale quickly.
 
 **Wrong - External system internals:**
+
 ```mermaid
 C4Container
   title WRONG: External System Internals
@@ -189,6 +204,7 @@ C4Container
 ```
 
 **Correct - External system as black box:**
+
 ```mermaid
 C4Context
   title CORRECT: External System Black Box
@@ -203,46 +219,52 @@ C4Context
 
 ### 1. Removing Type Labels
 
-**The Problem:**
-Removing element type labels (Container, Component, System) to "simplify" diagrams creates ambiguity.
+**The Problem:** Removing element type labels (Container, Component, System) to
+"simplify" diagrams creates ambiguity.
 
 **Wrong:**
+
 ```
 Box(api, "API")  # What is this? System? Container? Component?
 ```
 
 **Correct:**
+
 ```
 Container(api, "API Application", "Spring Boot", "REST API backend")
 ```
 
 ### 2. Missing Descriptions
 
-**The Problem:**
-Elements without descriptions force viewers to guess their purpose.
+**The Problem:** Elements without descriptions force viewers to guess their
+purpose.
 
 **Wrong:**
+
 ```
 Container(svc, "Service", "Java")
 ```
 
 **Correct:**
+
 ```
 Container(orderSvc, "Order Service", "Spring Boot", "Manages order lifecycle and fulfillment")
 ```
 
 ### 3. Generic Relationship Labels
 
-**The Problem:**
-Labels like "uses" or "communicates with" don't explain what data flows or why.
+**The Problem:** Labels like "uses" or "communicates with" don't explain what
+data flows or why.
 
 **Wrong:**
+
 ```
 Rel(frontend, api, "Uses")
 Rel(api, db, "Accesses")
 ```
 
 **Correct:**
+
 ```
 Rel(frontend, api, "Fetches products, submits orders", "JSON/HTTPS")
 Rel(api, db, "Reads/writes order data", "JDBC")
@@ -252,35 +274,37 @@ Rel(api, db, "Reads/writes order data", "JDBC")
 
 ### 1. Not Tailoring to Audience
 
-**The Problem:**
-Showing Level 4 code diagrams to executives, or only Level 1 to developers who need implementation details.
+**The Problem:** Showing Level 4 code diagrams to executives, or only Level 1 to
+developers who need implementation details.
 
-| Audience | Appropriate Levels |
-|----------|-------------------|
-| Executives | Level 1 (Context) only |
-| Product Managers | Levels 1-2 |
-| Architects | Levels 1-3 |
-| Developers | All levels as needed |
-| DevOps | Levels 2 + Deployment |
+| Audience         | Appropriate Levels     |
+| ---------------- | ---------------------- |
+| Executives       | Level 1 (Context) only |
+| Product Managers | Levels 1-2             |
+| Architects       | Levels 1-3             |
+| Developers       | All levels as needed   |
+| DevOps           | Levels 2 + Deployment  |
 
 ### 2. Creating All Four Levels by Default
 
-**The Problem:**
-Not every system needs all four levels. Level 3 (Component) and Level 4 (Code) often add no value.
+**The Problem:** Not every system needs all four levels. Level 3 (Component) and
+Level 4 (Code) often add no value.
 
 **Guidance:**
+
 - **Always create:** Context (L1) and Container (L2)
 - **Create if valuable:** Component (L3) for complex containers
 - **Rarely create:** Code (L4) - let IDEs generate these
 
 ### 3. Too Many Elements Per Diagram
 
-**The Problem:**
-Diagrams with 20+ elements become unreadable.
+**The Problem:** Diagrams with 20+ elements become unreadable.
 
-**Simon Brown's advice:** "If a diagram with a dozen boxes is hard to understand, don't draw a diagram with a dozen boxes!"
+**Simon Brown's advice:** "If a diagram with a dozen boxes is hard to
+understand, don't draw a diagram with a dozen boxes!"
 
 **Solutions:**
+
 - Split by bounded context or domain
 - Create separate diagrams per service
 - Show one service + its direct dependencies
@@ -290,36 +314,41 @@ Diagrams with 20+ elements become unreadable.
 
 ### 1. Bidirectional Arrows
 
-**The Problem:**
-Bidirectional arrows are ambiguous. Who initiates the call? What flows each direction?
+**The Problem:** Bidirectional arrows are ambiguous. Who initiates the call?
+What flows each direction?
 
 **Wrong:**
+
 ```
 BiRel(frontend, api, "Data")  # Ambiguous direction
 ```
 
 **Correct:**
+
 ```
 Rel(frontend, api, "Requests products", "JSON/HTTPS")
 Rel(api, frontend, "Returns product data", "JSON/HTTPS")
 ```
 
 Or show the initiator's perspective:
+
 ```
 Rel(frontend, api, "Fetches products", "JSON/HTTPS")
 ```
 
 ### 2. Unlabeled Arrows
 
-**The Problem:**
-Arrows without labels force readers to guess what flows between elements.
+**The Problem:** Arrows without labels force readers to guess what flows between
+elements.
 
 **Wrong:**
+
 ```
 Rel(orderSvc, paymentSvc)
 ```
 
 **Correct:**
+
 ```
 Rel(orderSvc, paymentSvc, "Requests payment authorization", "gRPC")
 ```
@@ -328,10 +357,11 @@ Rel(orderSvc, paymentSvc, "Requests payment authorization", "gRPC")
 
 ### 1. Deployment Details in Container Diagrams
 
-**The Problem:**
-Container diagrams should show logical architecture, not infrastructure details.
+**The Problem:** Container diagrams should show logical architecture, not
+infrastructure details.
 
 **Wrong - Infrastructure in container diagram:**
+
 ```mermaid
 C4Container
   title WRONG: Infrastructure in Container Diagram
@@ -345,6 +375,7 @@ C4Container
 ```
 
 **Correct - Use Deployment diagram for infrastructure:**
+
 ```mermaid
 C4Deployment
   title CORRECT: Deployment Diagram for Infrastructure
@@ -367,16 +398,18 @@ C4Deployment
 
 ### 2. Missing Environment Context
 
-**The Problem:**
-Deployment diagrams should specify which environment (production, staging, dev).
+**The Problem:** Deployment diagrams should specify which environment
+(production, staging, dev).
 
 **Wrong:**
+
 ```
 C4Deployment
   title Deployment Diagram  # Which environment?
 ```
 
 **Correct:**
+
 ```
 C4Deployment
   title Deployment Diagram - Production (AWS us-east-1)
@@ -386,36 +419,36 @@ C4Deployment
 
 ### 1. Inconsistent Notation Across Diagrams
 
-**The Problem:**
-Using different colors, shapes, or terminology for the same elements across diagrams.
+**The Problem:** Using different colors, shapes, or terminology for the same
+elements across diagrams.
 
 **Wrong:**
+
 - Context diagram: "Payment System" (blue)
 - Container diagram: "Payment Service" (green)
 - Component diagram: "Payment Module" (red)
 
-**Correct:**
-Use consistent naming, colors, and styling. Create a style guide for your team.
+**Correct:** Use consistent naming, colors, and styling. Create a style guide
+for your team.
 
 ### 2. No Legend/Key
 
-**The Problem:**
-Assuming viewers understand your notation without explanation.
+**The Problem:** Assuming viewers understand your notation without explanation.
 
-**Solution:**
-Always include a legend explaining colors, shapes, and line styles. Even for "obvious" elements.
+**Solution:** Always include a legend explaining colors, shapes, and line
+styles. Even for "obvious" elements.
 
 ## Decision Documentation Mistakes
 
 ### Showing Decision Process in Diagrams
 
-**The Problem:**
-Architecture diagrams show **outcomes** of decisions, not the decision-making process.
+**The Problem:** Architecture diagrams show **outcomes** of decisions, not the
+decision-making process.
 
-**Wrong approach:**
-Including "Option A vs Option B" annotations in diagrams.
+**Wrong approach:** Including "Option A vs Option B" annotations in diagrams.
 
 **Correct approach:**
+
 - Document decisions separately in Architecture Decision Records (ADRs)
 - Link ADRs to relevant diagrams
 - Diagrams show the chosen architecture, ADRs explain why

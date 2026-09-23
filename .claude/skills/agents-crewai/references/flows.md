@@ -2,18 +2,20 @@
 
 ## Overview
 
-Flows provide event-driven orchestration with precise control over execution paths, state management, and conditional branching. Use Flows when you need more control than Crews provide.
+Flows provide event-driven orchestration with precise control over execution
+paths, state management, and conditional branching. Use Flows when you need more
+control than Crews provide.
 
 ## When to Use Flows vs Crews
 
-| Scenario | Use Crews | Use Flows |
-|----------|-----------|-----------|
-| Simple multi-agent collaboration | ✅ | |
-| Sequential/hierarchical tasks | ✅ | |
-| Conditional branching | | ✅ |
-| Complex state management | | ✅ |
-| Event-driven workflows | | ✅ |
-| Hybrid (Crews inside Flow steps) | | ✅ |
+| Scenario                         | Use Crews | Use Flows |
+| -------------------------------- | --------- | --------- |
+| Simple multi-agent collaboration | ✅        |           |
+| Sequential/hierarchical tasks    | ✅        |           |
+| Conditional branching            |           | ✅        |
+| Complex state management         |           | ✅        |
+| Event-driven workflows           |           | ✅        |
+| Hybrid (Crews inside Flow steps) |           | ✅        |
 
 ## Flow Basics
 

@@ -1,14 +1,14 @@
-import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
-import { Radio, RadioGroup } from "./RadioGroup.tsx";
+import type { Meta, StoryFn } from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation.tsx';
+import { Radio, RadioGroup } from './RadioGroup.tsx';
 
 const meta = {
-	decorators: [withReactAriaEvaluation],
-	title: "Evaluation/React Aria/RadioGroup",
-	component: RadioGroup,
-	parameters: {
-		layout: "centered",
-	},
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/RadioGroup',
+  component: RadioGroup,
+  parameters: {
+    layout: 'centered',
+  },
 } satisfies Meta<typeof RadioGroup>;
 
 export default meta;
@@ -16,13 +16,13 @@ export default meta;
 type Story = StoryFn<typeof RadioGroup>;
 
 export const Example: Story = (args) => (
-	<RadioGroup {...args}>
-		<Radio value="soccer">Soccer</Radio>
-		<Radio value="baseball">Baseball</Radio>
-		<Radio value="basketball">Basketball</Radio>
-	</RadioGroup>
+  <RadioGroup {...args}>
+    <Radio value='soccer'>Soccer</Radio>
+    <Radio value='baseball'>Baseball</Radio>
+    <Radio value='basketball'>Basketball</Radio>
+  </RadioGroup>
 );
 
 Example.args = {
-	label: "Favorite sport",
+  label: 'Favorite sport',
 };

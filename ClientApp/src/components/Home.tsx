@@ -1,4 +1,4 @@
-import GetStarted from "./get-started/get-started.tsx";
+import GetStarted from './get-started/get-started.tsx';
 
 const Home = () => <GetStarted />;
 

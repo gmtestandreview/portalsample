@@ -1,20 +1,28 @@
 ---
 agent: 'agent'
-description: 'Run an opt-in Core Web Vitals and web performance audit for relevant routes, pages, components, assets, or diffs.'
-argument-hint: 'Performance issue, route, component, page, asset, metric, or diff to audit'
+description:
+  'Run an opt-in Core Web Vitals and web performance audit for relevant routes,
+  pages, components, assets, or diffs.'
+argument-hint:
+  'Performance issue, route, component, page, asset, metric, or diff to audit'
 ---
 
 # Performance Audit
 
-Use this prompt only when the user explicitly requests performance analysis, Core Web Vitals review, runtime-performance investigation, or performance optimization.
+Use this prompt only when the user explicitly requests performance analysis,
+Core Web Vitals review, runtime-performance investigation, or performance
+optimization.
 
-Do not use this prompt for ordinary feature work, refactors, documentation edits, styling changes, or repository maintenance unless the user explicitly asks for performance review.
+Do not use this prompt for ordinary feature work, refactors, documentation
+edits, styling changes, or repository maintenance unless the user explicitly
+asks for performance review.
 
 The performance request is: **$input**
 
 ## Goal
 
-Review the relevant route, page, component, asset, workflow, or diff for performance risks and improvement opportunities.
+Review the relevant route, page, component, asset, workflow, or diff for
+performance risks and improvement opportunities.
 
 Use Core Web Vitals as the main lens:
 
@@ -22,7 +30,8 @@ Use Core Web Vitals as the main lens:
 - INP: Interaction to Next Paint
 - CLS: Cumulative Layout Shift
 
-Prefer measurable evidence where available. Do not claim a performance improvement without evidence, a clear mechanism, or an explicit caveat.
+Prefer measurable evidence where available. Do not claim a performance
+improvement without evidence, a clear mechanism, or an explicit caveat.
 
 ## Repository rules
 
@@ -31,14 +40,18 @@ Follow these rules first:
 - Follow `AGENTS.md` as the canonical repository policy.
 - Keep changes minimal and focused on the requested performance issue.
 - Prefer AGDS-first and existing layout/component patterns.
-- Preserve the current routing architecture unless the task explicitly asks for migration.
-- Do not introduce App Router, Cache Components, new caching architecture, new dependencies, or build tooling unless explicitly required.
-- Do not change linting, formatting, CI, package scripts, or repository policy unless explicitly asked.
+- Preserve the current routing architecture unless the task explicitly asks for
+  migration.
+- Do not introduce App Router, Cache Components, new caching architecture, new
+  dependencies, or build tooling unless explicitly required.
+- Do not change linting, formatting, CI, package scripts, or repository policy
+  unless explicitly asked.
 - Do not widen the repository lint gate.
 
 ## Freshness rule
 
-Performance guidance can depend on current browser, React, Next.js, and framework behavior.
+Performance guidance can depend on current browser, React, Next.js, and
+framework behavior.
 
 When version-specific behavior matters:
 
@@ -51,8 +64,10 @@ When version-specific behavior matters:
 
 Review only the requested scope.
 
-- If the scope is missing or too broad, state the minimum scope assumptions before reviewing.
-- If the task is audit-only, do not modify files; report findings and recommended fixes only.
+- If the scope is missing or too broad, state the minimum scope assumptions
+  before reviewing.
+- If the task is audit-only, do not modify files; report findings and
+  recommended fixes only.
 
 Relevant scope may include:
 
@@ -116,12 +131,16 @@ Look for:
 
 When relevant:
 
-- use Server Components or server-side rendering patterns only when the repo and task support them
+- use Server Components or server-side rendering patterns only when the repo and
+  task support them
 - do not move large trees into Client Components unnecessarily
 - keep `'use client'` at the smallest necessary boundary
-- avoid client-side fetching for main above-the-fold content when a server-side pattern is available and appropriate
-- do not use App Router-only guidance for Pages Router work unless the task explicitly involves App Router
-- do not enable Next.js 16 caching features unless the task explicitly requires that behavior
+- avoid client-side fetching for main above-the-fold content when a server-side
+  pattern is available and appropriate
+- do not use App Router-only guidance for Pages Router work unless the task
+  explicitly involves App Router
+- do not enable Next.js 16 caching features unless the task explicitly requires
+  that behavior
 
 ### Assets
 
@@ -137,11 +156,13 @@ When relevant:
 
 Use these severity levels:
 
-- Critical: likely blocks a Core Web Vital target or causes a major user-visible regression
+- Critical: likely blocks a Core Web Vital target or causes a major user-visible
+  regression
 - Important: likely has measurable performance impact and should be fixed soon
 - Suggestion: possible improvement, but lower confidence or lower impact
 
-Do not mark an issue Critical based only on a static pattern unless the user impact is clear.
+Do not mark an issue Critical based only on a static pattern unless the user
+impact is clear.
 
 ## Review rules
 
@@ -149,9 +170,11 @@ Do not mark an issue Critical based only on a static pattern unless the user imp
 - Distinguish confirmed issues from hypotheses.
 - Explain the likely performance mechanism.
 - Prefer small fixes that preserve existing behavior.
-- Do not add dependencies or architecture just because they are common performance tools.
+- Do not add dependencies or architecture just because they are common
+  performance tools.
 - Do not optimize code that is outside the requested scope.
-- If no material issues are found, say so and list any remaining validation gaps.
+- If no material issues are found, say so and list any remaining validation
+  gaps.
 
 ## Output format
 
@@ -162,8 +185,7 @@ Return:
    - overall performance risk level
    - highest-priority findings
 
-2. Findings
-   For each finding include:
+2. Findings For each finding include:
    - severity: Critical / Important / Suggestion
    - status: Confirmed / Likely / Needs measurement
    - affected metric: LCP / INP / CLS / Bundle / Memory / Other
@@ -171,7 +193,8 @@ Return:
    - what is wrong
    - why it matters
    - recommended fix
-   - whether the fix requires measurement, code change, asset change, or configuration change
+   - whether the fix requires measurement, code change, asset change, or
+     configuration change
 
 3. Suggested fixes
    - minimal safe fix first
@@ -208,4 +231,5 @@ For runtime performance evidence, recommend appropriate tools when available:
 - browser network waterfall
 - interaction profiling
 
-If validation cannot be run, say so clearly and do not claim performance improvement was verified.
+If validation cannot be run, say so clearly and do not claim performance
+improvement was verified.

@@ -1,44 +1,83 @@
 # Storybook Autodocs Gold-Standard Refactor Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Use `superpowers:test-driven-development` for behavioural and governance changes, and `superpowers:verification-before-completion` before claiming completion. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use
+> `superpowers:subagent-driven-development` (recommended) or
+> `superpowers:executing-plans` to implement this plan task-by-task. Use
+> `superpowers:test-driven-development` for behavioural and governance changes,
+> and `superpowers:verification-before-completion` before claiming completion.
+> Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Target repository plan path:** `docs/superpowers/plans/2026-08-25-storybook-autodocs-gold-standard-refactor.md`
+**Target repository plan path:**
+`docs/superpowers/plans/2026-08-25-storybook-autodocs-gold-standard-refactor.md`
 
-**Goal:** Refactor the Storybook React/Vite documentation architecture so that Autodocs, MDX, Doc Blocks, Code Panel, source generation, metadata inference, documentation builds, and developer guidance form a clean, current, testable system that scores **at least 95/100**, with a design target of **99/100**, against the agreed Storybook Expert Review rubric.
+**Goal:** Refactor the Storybook React/Vite documentation architecture so that
+Autodocs, MDX, Doc Blocks, Code Panel, source generation, metadata inference,
+documentation builds, and developer guidance form a clean, current, testable
+system that scores **at least 95/100**, with a design target of **99/100**,
+against the agreed Storybook Expert Review rubric.
 
-**Architecture:** Use Storybook's native capabilities as the primary source of behaviour: global `autodocs` tagging, TypeScript/JSDoc metadata inference, CSF for executable examples, standard Autodocs for baseline API documentation, MDX for narrative content, Doc Blocks for composition, and `parameters.docs.*` for scoped customisation. Remove duplicated configuration and builder-incompatible infrastructure only after regression evidence proves the removal safe.
+**Architecture:** Use Storybook's native capabilities as the primary source of
+behaviour: global `autodocs` tagging, TypeScript/JSDoc metadata inference, CSF
+for executable examples, standard Autodocs for baseline API documentation, MDX
+for narrative content, Doc Blocks for composition, and `parameters.docs.*` for
+scoped customisation. Remove duplicated configuration and builder-incompatible
+infrastructure only after regression evidence proves the removal safe.
 
-**Tech Stack:** Storybook React/Vite, TypeScript, React, Vite, MDX 3, `@storybook/addon-docs`, `remark-gfm`, Vitest, Playwright/BDD, MSW, Chromatic, existing repository CI.
+**Tech Stack:** Storybook React/Vite, TypeScript, React, Vite, MDX 3,
+`@storybook/addon-docs`, `remark-gfm`, Vitest, Playwright/BDD, MSW, Chromatic,
+existing repository CI.
 
-**Spec:** `Storybook Autodocs and Documentation Expert Review` — the approved Expert Review immediately preceding this plan. If the repository maintains architecture/review documents, save that review as `docs/storybook/STORYBOOK-AUTODOCS-EXPERT-REVIEW.md` so the implementation plan and its governing specification travel together.
+**Spec:** `Storybook Autodocs and Documentation Expert Review` — the approved
+Expert Review immediately preceding this plan. If the repository maintains
+architecture/review documents, save that review as
+`docs/storybook/STORYBOOK-AUTODOCS-EXPERT-REVIEW.md` so the implementation plan
+and its governing specification travel together.
 
 ---
 
 # Global Constraints
 
-1. **Target Storybook API baseline:** official Storybook **10.5** documentation unless repository preflight proves a different installed version requires a controlled compatibility decision.
-2. **Do not silently upgrade Storybook.** Version upgrades are outside this refactor unless Task 1 proves the installed version cannot implement the target architecture.
+1. **Target Storybook API baseline:** official Storybook **10.5** documentation
+   unless repository preflight proves a different installed version requires a
+   controlled compatibility decision.
+2. **Do not silently upgrade Storybook.** Version upgrades are outside this
+   refactor unless Task 1 proves the installed version cannot implement the
+   target architecture.
 3. **Do not replace React/Vite with Webpack.**
 4. Preserve project-wide `tags: ['autodocs']`.
-5. Preserve existing MSW, router, environment, accessibility, Vitest, Chromatic, and BDD behaviour unless explicitly changed by this plan.
+5. Preserve existing MSW, router, environment, accessibility, Vitest, Chromatic,
+   and BDD behaviour unless explicitly changed by this plan.
 6. Do not manually duplicate TypeScript prop types in `argTypes`.
-7. Do not globally adopt `react-docgen-typescript` unless Task 9 proves the default parser materially insufficient.
-8. Do not add a custom Docs container or custom global Autodocs page unless a concrete requirement cannot be satisfied by standard Storybook configuration.
-9. Do not remove the explicit `@storybook/csf-plugin` workaround until Task 8 completes its A/B verification.
-10. Preserve `docs-table-styles.css` while Bootstrap's reset continues to require it.
-11. All configuration removals require either a failing governance test that becomes green or an explicit before/after regression check.
+7. Do not globally adopt `react-docgen-typescript` unless Task 9 proves the
+   default parser materially insufficient.
+8. Do not add a custom Docs container or custom global Autodocs page unless a
+   concrete requirement cannot be satisfied by standard Storybook configuration.
+9. Do not remove the explicit `@storybook/csf-plugin` workaround until Task 8
+   completes its A/B verification.
+10. Preserve `docs-table-styles.css` while Bootstrap's reset continues to
+    require it.
+11. All configuration removals require either a failing governance test that
+    becomes green or an explicit before/after regression check.
 12. No task is complete merely because TypeScript compiles.
-13. Final completion requires `storybook build --docs`, automated tests, documentation behaviour verification, and a rubric score of **95 or higher with no critical-error cap triggered**.
-14. Prefer DRY and YAGNI. Storybook defaults should remain defaults unless the project has a concrete reason to override them.
+13. Final completion requires `storybook build --docs`, automated tests,
+    documentation behaviour verification, and a rubric score of **95 or higher
+    with no critical-error cap triggered**.
+14. Prefer DRY and YAGNI. Storybook defaults should remain defaults unless the
+    project has a concrete reason to override them.
 15. Commit each independently reviewable task separately.
 
-Current official Storybook documentation confirms that Autodocs is tag-driven, that project-level `tags: ['autodocs']` is the supported global mechanism, and that `autodocs` is a built-in Storybook tag.
+Current official Storybook documentation confirms that Autodocs is tag-driven,
+that project-level `tags: ['autodocs']` is the supported global mechanism, and
+that `autodocs` is a built-in Storybook tag.
 
 ---
 
 # Current-State Evidence
 
-The existing `main.ts` uses `@storybook/react-vite` but currently contains overlapping story globs, addon-level Autodocs-like options, `typescript.check: true`, a manually injected CSF Vite plugin, and `@storybook/addon-styling-webpack`.
+The existing `main.ts` uses `@storybook/react-vite` but currently contains
+overlapping story globs, addon-level Autodocs-like options,
+`typescript.check: true`, a manually injected CSF Vite plugin, and
+`@storybook/addon-styling-webpack`.
 
 The current `preview.ts` correctly enables global Autodocs with:
 
@@ -46,15 +85,24 @@ The current `preview.ts` correctly enables global Autodocs with:
 tags: ['autodocs'],
 ```
 
-but also carries duplicate Docs state through `docs.enabled`, `docs.autodocs`, a generic global description and a custom page template.
+but also carries duplicate Docs state through `docs.enabled`, `docs.autodocs`, a
+generic global description and a custom page template.
 
-`preview-docs.ts` duplicates Storybook's default `Title → Subtitle → Description → Primary → Controls → Stories` Autodocs composition and maintains a second representation of Docs configuration.
+`preview-docs.ts` duplicates Storybook's default
+`Title → Subtitle → Description → Primary → Controls → Stories` Autodocs
+composition and maintains a second representation of Docs configuration.
 
-The developer guide incorrectly teaches developers to add a `'docs'` tag to activate Autodocs.
+The developer guide incorrectly teaches developers to add a `'docs'` tag to
+activate Autodocs.
 
-The Style Guide already makes good use of specialist MDX/Doc Blocks such as `Typeset`, `ColorPalette`, `IconGallery`, and `Stories`, and contains GFM-style Markdown tables that justify configuring `remark-gfm`.
+The Style Guide already makes good use of specialist MDX/Doc Blocks such as
+`Typeset`, `ColorPalette`, `IconGallery`, and `Stories`, and contains GFM-style
+Markdown tables that justify configuring `remark-gfm`.
 
-Storybook 10.5 explicitly documents the Code Panel as the Storysource replacement, enables it with `parameters.docs.codePanel: true`, and states that it shares the same Source configuration used by the Source Doc Block and Autodocs.
+Storybook 10.5 explicitly documents the Code Panel as the Storysource
+replacement, enables it with `parameters.docs.codePanel: true`, and states that
+it shares the same Source configuration used by the Source Doc Block and
+Autodocs.
 
 ---
 
@@ -114,6 +162,7 @@ There must be:
 # Task 1: Establish Repository, Version and Regression Baseline
 
 **Files:**
+
 - Read: `package.json`
 - Read: repository lockfile
 - Read: `.storybook/main.ts`
@@ -126,6 +175,7 @@ There must be:
 - Create: `docs/storybook/storybook-refactor-baseline.md`
 
 **Interfaces:**
+
 - Produces the exact installed Storybook version.
 - Produces the repository-native package manager.
 - Produces the existing Storybook scripts.
@@ -146,7 +196,8 @@ git branch --show-current
 git rev-parse HEAD
 ```
 
-If unrelated working-tree changes exist, **do not overwrite or revert them**. Record them in the baseline document and restrict edits to plan-owned files.
+If unrelated working-tree changes exist, **do not overwrite or revert them**.
+Record them in the baseline document and restrict edits to plan-owned files.
 
 - [ ] **Step 2: Detect the repository package manager**
 
@@ -166,7 +217,8 @@ $pm = if (Test-Path 'pnpm-lock.yaml') {
 Write-Host "PACKAGE_MANAGER=$pm"
 ```
 
-Use that package manager for the rest of this plan. Do not introduce or regenerate a different lockfile.
+Use that package manager for the rest of this plan. Do not introduce or
+regenerate a different lockfile.
 
 - [ ] **Step 3: Record installed Storybook packages**
 
@@ -238,7 +290,8 @@ Component B — union/enum-style props
 Component C — wrapper, forwardRef, inherited props, or other difficult inference
 ```
 
-Prefer already well-covered components rather than creating artificial components.
+Prefer already well-covered components rather than creating artificial
+components.
 
 Record their exact component and `.stories.tsx` paths.
 
@@ -293,12 +346,14 @@ Create:
 # Storybook Autodocs Refactor Baseline
 
 ## Repository
+
 - Branch:
 - Commit:
 - Package manager:
 - Storybook resolved version:
 
 ## Existing quality commands
+
 - Type check:
 - Unit:
 - Storybook tests:
@@ -307,25 +362,30 @@ Create:
 - Storybook build:
 
 ## Existing Storybook test paths
+
 - Feature directory:
 - Step definition:
 - CI pipeline/workflow:
 
 ## Representative components
+
 1. Simple props:
 2. Union/enum props:
 3. Difficult inference:
 
 ## Baseline results
+
 - Type check:
 - Unit:
 - Storybook BDD:
 - `storybook build --docs`:
 
 ## Known pre-existing failures
+
 Record exact command, exit code, and failure summary.
 
 ## Configuration findings
+
 Paste the relevant `rg` output captured before refactoring.
 ```
 
@@ -353,9 +413,11 @@ git commit -m "docs: capture Storybook autodocs refactor baseline"
 # Task 2: Add Storybook Documentation Governance Tests — RED
 
 **Files:**
+
 - Create: `tests/unit/storybook/storybookDocsConfig.test.ts`
 
 **Interfaces:**
+
 - Consumes the existing `.storybook` configuration.
 - Produces executable policy assertions that later tasks must make green.
 - This test intentionally fails against the current configuration.
@@ -374,8 +436,7 @@ import { describe, expect, it } from 'vitest';
 
 const repoRoot = resolve(fileURLToPath(new URL('../../../', import.meta.url)));
 
-const read = (path: string) =>
-  readFileSync(resolve(repoRoot, path), 'utf8');
+const read = (path: string) => readFileSync(resolve(repoRoot, path), 'utf8');
 
 const main = read('.storybook/main.ts');
 const preview = read('.storybook/preview.ts');
@@ -394,37 +455,31 @@ describe('Storybook documentation architecture', () => {
   it('uses React Vite without Webpack-only Storybook styling infrastructure', () => {
     expect(main).toContain("framework: '@storybook/react-vite'");
     expect(main).not.toContain('@storybook/addon-styling-webpack');
-    expect(allDependencies).not.toHaveProperty('@storybook/addon-styling-webpack');
+    expect(allDependencies).not.toHaveProperty(
+      '@storybook/addon-styling-webpack'
+    );
   });
 
   it('uses non-overlapping canonical story and MDX globs', () => {
     expect(main).toContain("'../.storybook/*.mdx'");
     expect(main).toContain("'../ClientApp/src/**/*.mdx'");
     expect(main).toContain(
-      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'",
+      "'../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)'"
     );
 
-    expect(main).not.toContain(
-      "'../ClientApp/src/**/*.stories.@(ts|tsx)'",
-    );
-    expect(main).not.toContain(
-      "'../ClientApp/src/**/*.{docs,Docs}.mdx'",
-    );
+    expect(main).not.toContain("'../ClientApp/src/**/*.stories.@(ts|tsx)'");
+    expect(main).not.toContain("'../ClientApp/src/**/*.{docs,Docs}.mdx'");
   });
 
   it('owns generated docs naming and docs mode in main.ts', () => {
     expect(main).toMatch(
-      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/,
+      /docs:\s*\{[\s\S]*defaultName:\s*['"]Documentation['"]/
     );
-    expect(main).toMatch(
-      /docs:\s*\{[\s\S]*docsMode:\s*false/,
-    );
+    expect(main).toMatch(/docs:\s*\{[\s\S]*docsMode:\s*false/);
   });
 
   it('does not use Webpack-only TypeScript checking in React Vite', () => {
-    expect(main).not.toMatch(
-      /typescript:\s*\{[\s\S]{0,200}check:\s*true/,
-    );
+    expect(main).not.toMatch(/typescript:\s*\{[\s\S]{0,200}check:\s*true/);
   });
 
   it('configures GFM support for MDX tables', () => {
@@ -434,9 +489,7 @@ describe('Storybook documentation architecture', () => {
   });
 
   it('enables Autodocs once at project level', () => {
-    expect(preview).toMatch(
-      /tags:\s*\[\s*['"]autodocs['"]\s*\]/,
-    );
+    expect(preview).toMatch(/tags:\s*\[\s*['"]autodocs['"]\s*\]/);
 
     expect(preview).not.toContain('expectedAddonDocsConfig');
     expect(preview).not.toMatch(/docs:\s*\{[\s\S]{0,120}autodocs:/);
@@ -450,23 +503,21 @@ describe('Storybook documentation architecture', () => {
 
   it('does not replace inferred component descriptions globally', () => {
     expect(preview).not.toContain(
-      'Component documentation generated from JSDoc comments and Storybook autodocs.',
+      'Component documentation generated from JSDoc comments and Storybook autodocs.'
     );
   });
 
   it('does not clone Storybook default Autodocs template', () => {
     expect(preview).not.toContain('autoDocsTemplate');
-    expect(
-      existsSync(resolve(repoRoot, '.storybook/preview-docs.ts')),
-    ).toBe(false);
+    expect(existsSync(resolve(repoRoot, '.storybook/preview-docs.ts'))).toBe(
+      false
+    );
   });
 
   it('teaches the correct Autodocs tag and opt-out mechanism', () => {
+    expect(componentDocsGuide).not.toMatch(/Adding the ['"]docs['"] Tag/i);
     expect(componentDocsGuide).not.toMatch(
-      /Adding the ['"]docs['"] Tag/i,
-    );
-    expect(componentDocsGuide).not.toMatch(
-      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i,
+      /add(?:ing)? the ['"]docs['"] tag.*autodocs/i
     );
 
     expect(componentDocsGuide).toContain('autodocs');
@@ -508,7 +559,8 @@ preview-docs.ts still exists
 component guide teaches 'docs' tag
 ```
 
-If the test unexpectedly passes, inspect whether the source files have already been changed before continuing.
+If the test unexpectedly passes, inspect whether the source files have already
+been changed before continuing.
 
 - [ ] **Step 3: Record RED evidence**
 
@@ -524,7 +576,8 @@ under:
 
 - [ ] **Step 4: Commit the failing test**
 
-A deliberate RED test commit is acceptable because it records the target contract:
+A deliberate RED test commit is acceptable because it records the target
+contract:
 
 ```bash
 git add tests/unit/storybook/storybookDocsConfig.test.ts docs/storybook/storybook-refactor-baseline.md
@@ -536,11 +589,13 @@ git commit -m "test: define Storybook docs architecture contract"
 # Task 3: Refactor `main.ts` Documentation Ownership and Vite Configuration
 
 **Files:**
+
 - Modify: `.storybook/main.ts`
 - Modify: `package.json`
 - Modify: repository lockfile
 
 **Interfaces:**
+
 - Retains current Sass and production chunking behaviour.
 - Retains the explicit CSF plugin temporarily.
 - Produces canonical story discovery.
@@ -548,9 +603,11 @@ git commit -m "test: define Storybook docs architecture contract"
 - Produces GFM-enabled MDX.
 - Removes Webpack-only configuration.
 
-Storybook's current TypeScript documentation explicitly says `typescript.check` uses a Webpack plugin and is available only with the Webpack builder.
+Storybook's current TypeScript documentation explicitly says `typescript.check`
+uses a Webpack plugin and is available only with the Webpack builder.
 
-Storybook's MDX documentation explicitly recommends `remark-gfm` for GFM features such as tables.
+Storybook's MDX documentation explicitly recommends `remark-gfm` for GFM
+features such as tables.
 
 ## Steps
 
@@ -594,7 +651,8 @@ import remarkGfm from 'remark-gfm';
 
 Do not remove the current CSF plugin import yet.
 
-- [ ] **Step 4: Replace story discovery with one canonical pattern per source type**
+- [ ] **Step 4: Replace story discovery with one canonical pattern per source
+      type**
 
 Replace the current overlapping globs with:
 
@@ -646,7 +704,7 @@ Autodocs activation remains in `preview.ts`, not here.
 Delete:
 
 ```ts
-'@storybook/addon-styling-webpack'
+'@storybook/addon-styling-webpack';
 ```
 
 from `addons`.
@@ -662,7 +720,8 @@ docs: {
 },
 ```
 
-Storybook currently documents `docs.defaultName` and `docs.docsMode`, with `docsMode` defaulting to false.
+Storybook currently documents `docs.defaultName` and `docs.docsMode`, with
+`docsMode` defaulting to false.
 
 - [ ] **Step 8: Remove Vite-inapplicable TypeScript checking**
 
@@ -685,7 +744,8 @@ Do **not** rewrite:
 - production chunk splitting;
 - `chunkSizeWarningLimit`;
 
-unless a compile failure proves the current logic incompatible with the Storybook changes.
+unless a compile failure proves the current logic incompatible with the
+Storybook changes.
 
 - [ ] **Step 10: Run targeted governance tests**
 
@@ -693,7 +753,8 @@ unless a compile failure proves the current logic incompatible with the Storyboo
 & $pm exec vitest run tests/unit/storybook/storybookDocsConfig.test.ts
 ```
 
-Expected: some tests remain RED because `preview.ts`, `preview-docs.ts`, and developer guidance have not yet been changed.
+Expected: some tests remain RED because `preview.ts`, `preview-docs.ts`, and
+developer guidance have not yet been changed.
 
 The `main.ts`-specific assertions must now pass.
 
@@ -738,10 +799,12 @@ Only stage the actual repository lockfile.
 # Task 4: Refactor `preview.ts`, Enable Code Panel and Remove Shadow Autodocs Configuration
 
 **Files:**
+
 - Modify: `.storybook/preview.ts`
 - Delete: `.storybook/preview-docs.ts`
 
 **Interfaces:**
+
 - Retains global Autodocs.
 - Retains router decorator.
 - Retains MSW.
@@ -796,19 +859,21 @@ docs: {
 },
 ```
 
-Storybook 10.5 documents global Code Panel configuration at `parameters.docs.codePanel`, and confirms that the panel reuses the Source Doc Block configuration.
+Storybook 10.5 documents global Code Panel configuration at
+`parameters.docs.codePanel`, and confirms that the panel reuses the Source Doc
+Block configuration.
 
 - [ ] **Step 4: Remove shadow or generic Docs configuration**
 
 Ensure all of these are absent:
 
 ```ts
-docs.enabled
-docs.autodocs
-expectedAddonDocsConfig
-docs.description.component
-docs.page
-autoDocsTemplate
+docs.enabled;
+docs.autodocs;
+expectedAddonDocsConfig;
+docs.description.component;
+docs.page;
+autoDocsTemplate;
 ```
 
 - [ ] **Step 5: Delete `preview-docs.ts`**
@@ -857,11 +922,13 @@ git commit -m "refactor: simplify Storybook autodocs preview policy"
 # Task 5: Rewrite the Component Documentation Guide as the Governance Contract
 
 **Files:**
+
 - Modify: `.storybook/component-docs-guide.mdx`
 - Modify: `.storybook/introduction.mdx`
 - Conditionally modify/delete: `ClientApp/src/storybook/DocsTable.*`
 
 **Interfaces:**
+
 - Produces authoritative developer guidance.
 - Makes governance tests GREEN.
 - Does not change component runtime behaviour.
@@ -893,14 +960,15 @@ Remove the current `'docs'` tag guidance. It is currently incorrect.
 
 Replace it with:
 
-```mdx
+````mdx
 ## Autodocs policy
 
 Autodocs is enabled globally by `.storybook/preview.ts`:
 
 ```ts
-tags: ['autodocs']
+tags: ['autodocs'];
 ```
+````
 
 Normal component story files do **not** need to repeat this tag.
 
@@ -938,7 +1006,8 @@ export const InternalState: Story = {
 ```
 
 Do not use `'docs'` as an Autodocs activation tag.
-```
+
+````
 
 - [ ] **Step 2: Add Args versus ArgTypes guidance**
 
@@ -958,7 +1027,7 @@ export const Primary: Story = {
     disabled: false,
   },
 };
-```
+````
 
 ### ArgTypes
 
@@ -980,11 +1049,12 @@ const meta = {
 } satisfies Meta<typeof PrimaryButton>;
 ```
 
-Prefer Storybook's inferred ArgTypes. Add manual ArgTypes only when they
-provide semantics that TypeScript/JSDoc cannot express clearly, such as
-control behaviour, options, mappings, conditional display, categories, or
-intentional hiding.
-```
+Prefer Storybook's inferred ArgTypes. Add manual ArgTypes only when they provide
+semantics that TypeScript/JSDoc cannot express clearly, such as control
+behaviour, options, mappings, conditional display, categories, or intentional
+hiding.
+
+````
 
 - [ ] **Step 3: Add parameter inheritance guidance**
 
@@ -1003,12 +1073,12 @@ project (`preview.ts`)
 component (`meta`)
         ↓
 story
-```
+````
 
 More specific configuration overrides inherited configuration.
 
-Put project-wide policy in `preview.ts`. Use component or story parameters
-only for deliberate exceptions.
+Put project-wide policy in `preview.ts`. Use component or story parameters only
+for deliberate exceptions.
 
 Example:
 
@@ -1023,7 +1093,8 @@ export const ComplexExample: Story = {
   },
 };
 ```
-```
+
+````
 
 Current Storybook documentation defines parameter scope exactly at project, meta, and story level, with more specific scopes overriding less specific ones.
 
@@ -1049,23 +1120,24 @@ Controls, Code Panel output, and regression coverage.
 
 A JSDoc `@example` may still be useful to IDE consumers, but it is not the
 project's canonical Storybook example mechanism.
-```
+````
 
 - [ ] **Step 5: Correct `@internal` guidance**
 
-Replace any implication that `@internal` is Storybook's reliable Autodocs exclusion mechanism with:
+Replace any implication that `@internal` is Storybook's reliable Autodocs
+exclusion mechanism with:
 
-```mdx
+````mdx
 ## Internal APIs
 
-`@internal` is a source-code documentation convention. Do not rely on it as
-the Storybook visibility control unless repository tooling explicitly
-implements that behaviour.
+`@internal` is a source-code documentation convention. Do not rely on it as the
+Storybook visibility control unless repository tooling explicitly implements
+that behaviour.
 
 For Storybook documentation visibility, use `!autodocs`.
 
-For a prop that should remain available to the component but not appear in
-the API table:
+For a prop that should remain available to the component but not appear in the
+API table:
 
 ```ts
 argTypes: {
@@ -1076,7 +1148,9 @@ argTypes: {
   },
 },
 ```
-```
+````
+
+````
 
 - [ ] **Step 6: Add Code Panel and Source guidance**
 
@@ -1093,7 +1167,7 @@ parameters: {
     codePanel: true,
   },
 },
-```
+````
 
 Storybook's Code Panel and Source Doc Block use the same source configuration:
 
@@ -1109,7 +1183,8 @@ parameters: {
 ```
 
 Override this only when a specific story needs different source behaviour.
-```
+
+````
 
 - [ ] **Step 7: Add MDX versus Autodocs guidance**
 
@@ -1153,11 +1228,12 @@ Use buttons to trigger actions.
 ## API
 
 <Controls />
-```
+````
 
 Always pass the full story-module exports to `<Meta of={...} />`, not the
 component itself.
-```
+
+````
 
 Storybook's current MDX documentation explicitly distinguishes CSF as the story format and MDX as the structured narrative format, and requires full story exports for `Meta of`.
 
@@ -1175,7 +1251,7 @@ Document:
 
 ### Structural and utility documentation
 `Title`, `Subtitle`, `TableOfContents`, `Markdown`, `Unstyled`
-```
+````
 
 State explicitly:
 
@@ -1193,8 +1269,8 @@ Because `remark-gfm` is now configured, change the policy to:
 
 Use standard Markdown tables for simple static documentation.
 
-`remark-gfm` is enabled by the Storybook Docs configuration to support GFM
-table syntax.
+`remark-gfm` is enabled by the Storybook Docs configuration to support GFM table
+syntax.
 
 Use the shared `DocsTable` component only when a table requires custom
 behaviour, semantics, or presentation beyond Markdown.
@@ -1219,7 +1295,7 @@ If other pages use it for genuine custom behaviour, retain it.
 
 Add to `.storybook/introduction.mdx`:
 
-```mdx
+````mdx
 ## Documentation mode
 
 Preview the documentation-focused Storybook:
@@ -1227,6 +1303,7 @@ Preview the documentation-focused Storybook:
 ```bash
 storybook dev --docs
 ```
+````
 
 Build publishable documentation:
 
@@ -1235,7 +1312,8 @@ storybook build --docs
 ```
 
 The static documentation build is emitted to `storybook-static/`.
-```
+
+````
 
 The official build documentation recommends both commands and documents the `storybook-static` output.
 
@@ -1243,7 +1321,7 @@ The official build documentation recommends both commands and documents the `sto
 
 ```powershell
 & $pm exec vitest run tests/unit/storybook/storybookDocsConfig.test.ts
-```
+````
 
 Expected:
 
@@ -1284,10 +1362,13 @@ git commit -m "docs: establish Storybook documentation contract"
 # Task 6: Verify Metadata Inference and Refine Representative Stories
 
 **Files:**
-- Inspect/conditionally modify the three representative component and story files chosen in Task 1.
+
+- Inspect/conditionally modify the three representative component and story
+  files chosen in Task 1.
 - Do not bulk-edit all stories.
 
 **Interfaces:**
+
 - Proves TypeScript/JSDoc-first metadata inference.
 - Produces evidence for Args/ArgTypes rubric scoring.
 - Produces the docgen decision input for Task 9.
@@ -1310,7 +1391,8 @@ If the story has no `component` reference, fix that before assessing inference.
 
 - [ ] **Step 2: Inspect component prop documentation**
 
-For each representative component, verify meaningful TypeScript/JSDoc exists for important public props.
+For each representative component, verify meaningful TypeScript/JSDoc exists for
+important public props.
 
 A good pattern:
 
@@ -1415,7 +1497,7 @@ with:
 ## Metadata inference verification
 
 | Component | Public props | Required state | Descriptions | Union/enum | Result |
-|---|---|---|---|---|---|
+| --------- | ------------ | -------------- | ------------ | ---------- | ------ |
 ```
 
 Fill actual results.
@@ -1438,17 +1520,20 @@ git add docs/storybook/storybook-refactor-baseline.md
 git commit -m "docs: improve Storybook metadata inference examples"
 ```
 
-The implementation agent must replace the staging expression with the exact changed paths shown by `git status`; do not stage unrelated files.
+The implementation agent must replace the staging expression with the exact
+changed paths shown by `git status`; do not stage unrelated files.
 
 ---
 
 # Task 7: Add Repeatable Docs Build Verification
 
 **Files:**
+
 - Modify: `package.json`
 - Create: `scripts/verify-storybook-docs.mjs`
 
 **Interfaces:**
+
 - Produces a stable documentation verification command for local and CI use.
 - Does not require browser automation.
 
@@ -1466,7 +1551,8 @@ Add if equivalent scripts do not already exist:
 }
 ```
 
-If repository naming conventions use `build-storybook:*`, follow the existing naming convention but preserve the commands.
+If repository naming conventions use `build-storybook:*`, follow the existing
+naming convention but preserve the commands.
 
 - [ ] **Step 2: Create static-output verification**
 
@@ -1479,18 +1565,14 @@ import { resolve } from 'node:path';
 const root = process.cwd();
 const staticDir = resolve(root, 'storybook-static');
 
-const requiredFiles = [
-  'index.html',
-  'iframe.html',
-  'index.json',
-];
+const requiredFiles = ['index.html', 'iframe.html', 'index.json'];
 
 for (const file of requiredFiles) {
   await access(resolve(staticDir, file));
 }
 
 const index = JSON.parse(
-  await readFile(resolve(staticDir, 'index.json'), 'utf8'),
+  await readFile(resolve(staticDir, 'index.json'), 'utf8')
 );
 
 const entries = Object.values(index.entries ?? {});
@@ -1511,12 +1593,12 @@ if (storyEntries.length === 0) {
 }
 
 const hasDocumentationSection = docsEntries.some((entry) =>
-  String(entry.title ?? '').startsWith('Documentation/'),
+  String(entry.title ?? '').startsWith('Documentation/')
 );
 
 if (!hasDocumentationSection) {
   throw new Error(
-    'Expected at least one standalone Documentation/* MDX entry.',
+    'Expected at least one standalone Documentation/* MDX entry.'
   );
 }
 
@@ -1529,8 +1611,8 @@ console.log(
       documentationSection: hasDocumentationSection,
     },
     null,
-    2,
-  ),
+    2
+  )
 );
 ```
 
@@ -1554,7 +1636,8 @@ Documentation/* standalone MDX exists.
 Exit code 0.
 ```
 
-- [ ] **Step 4: Clean generated static output unless CI intentionally retains it**
+- [ ] **Step 4: Clean generated static output unless CI intentionally retains
+      it**
 
 ```powershell
 Remove-Item -Recurse -Force storybook-static
@@ -1573,10 +1656,13 @@ git commit -m "test: add Storybook documentation build gate"
 # Task 8: Add Runtime Acceptance Coverage for Autodocs, MDX, Source and Code Panel
 
 **Files:**
+
 - Create: `tests/e2e/features/storybook/autodocs-documentation.feature`
-- Modify: the existing Storybook BDD step-definition file discovered and recorded in Task 1
+- Modify: the existing Storybook BDD step-definition file discovered and
+  recorded in Task 1
 
 **Interfaces:**
+
 - Uses the repository's existing BDD infrastructure.
 - Produces runtime evidence required before removing CSF plugin injection.
 
@@ -1626,11 +1712,13 @@ Feature: Storybook documentation architecture
 
 - [ ] **Step 2: Reuse existing Storybook navigation helpers**
 
-Do not create a second Storybook server or second navigation abstraction if the existing BDD steps already provide them.
+Do not create a second Storybook server or second navigation abstraction if the
+existing BDD steps already provide them.
 
 Extend the exact Storybook step-definition module recorded in Task 1.
 
-Use accessible roles and stable Storybook IDs/manifest data rather than brittle CSS selectors.
+Use accessible roles and stable Storybook IDs/manifest data rather than brittle
+CSS selectors.
 
 - [ ] **Step 3: Use the representative component selected in Task 1**
 
@@ -1678,13 +1766,17 @@ git commit -m "test: cover Storybook autodocs documentation runtime"
 # Task 9: A/B Test and Remove Explicit CSF Plugin Only if Proven Redundant
 
 **Files:**
+
 - Conditionally modify: `.storybook/main.ts`
 
 **Interfaces:**
-- Consumes runtime tests from Task 8.
-- Produces either a simpler configuration or documented proof that the workaround remains necessary.
 
-Current `main.ts` manually injects the CSF plugin because of an internal assumption about React/Vite source extraction.
+- Consumes runtime tests from Task 8.
+- Produces either a simpler configuration or documented proof that the
+  workaround remains necessary.
+
+Current `main.ts` manually injects the CSF plugin because of an internal
+assumption about React/Vite source extraction.
 
 This must be tested, not guessed.
 
@@ -1780,6 +1872,7 @@ Append:
 
 ```markdown
 ### B — explicit plugin removed
+
 - Governance tests:
 - Storybook BDD:
 - Code Panel:
@@ -1787,6 +1880,7 @@ Append:
 - Docs build:
 
 ### Decision
+
 - Removed / Retained:
 - Evidence:
 ```
@@ -1820,13 +1914,18 @@ git commit -m "docs: record required Storybook CSF plugin workaround"
 # Task 10: Make the React Docgen Decision Using Evidence
 
 **Files:**
+
 - Conditionally modify: `.storybook/main.ts`
 
 **Interfaces:**
-- Consumes Task 6 inference results.
-- Produces a documented decision to retain `react-docgen` defaults or opt into `react-docgen-typescript`.
 
-Storybook currently uses `react-docgen` by default for React and documents `react-docgen-typescript` as slower but potentially more accurate, including specific guidance for difficult inference and workspace components.
+- Consumes Task 6 inference results.
+- Produces a documented decision to retain `react-docgen` defaults or opt into
+  `react-docgen-typescript`.
+
+Storybook currently uses `react-docgen` by default for React and documents
+`react-docgen-typescript` as slower but potentially more accurate, including
+specific guidance for difficult inference and workspace components.
 
 ## Steps
 
@@ -1865,7 +1964,8 @@ typescript: {
 
 Start with no custom options.
 
-- [ ] **Step 4: If workspace source falls outside the parser program, add exact includes**
+- [ ] **Step 4: If workspace source falls outside the parser program, add exact
+      includes**
 
 Only if the repository is a workspace and evidence proves required:
 
@@ -1912,25 +2012,30 @@ git add .storybook/main.ts docs/storybook/storybook-refactor-baseline.md
 git commit -m "refactor: improve Storybook TypeScript metadata inference"
 ```
 
-If no change was required, record the decision in the evidence document and do not create an empty commit.
+If no change was required, record the decision in the evidence document and do
+not create an empty commit.
 
 ---
 
 # Task 11: Integrate Documentation Verification into CI
 
 **Files:**
+
 - Modify: existing frontend CI workflow/pipeline identified in Task 1
 - Modify if necessary: `package.json`
 
 **Interfaces:**
+
 - Consumes `storybook:verify:docs`.
 - Makes documentation breakage a normal CI failure.
 
 ## Steps
 
-- [ ] **Step 1: Add the documentation gate after dependency installation and before deployment**
+- [ ] **Step 1: Add the documentation gate after dependency installation and
+      before deployment**
 
-The CI job must invoke the repository script rather than reimplementing the command inline:
+The CI job must invoke the repository script rather than reimplementing the
+command inline:
 
 ```bash
 <package-manager> run storybook:verify:docs
@@ -1951,15 +2056,18 @@ npx playwright test --grep "@storybook" --reporter=list
 
 using repository-native command wrappers where already available.
 
-- [ ] **Step 3: Do not publish `storybook-static` from ordinary CI unless publishing is already intended**
+- [ ] **Step 3: Do not publish `storybook-static` from ordinary CI unless
+      publishing is already intended**
 
 Verification and publication are separate concerns.
 
-If the repository already publishes Storybook/Chromatic, preserve its existing mechanism.
+If the repository already publishes Storybook/Chromatic, preserve its existing
+mechanism.
 
 - [ ] **Step 4: Run the CI-equivalent command locally**
 
-Execute the same package script and Storybook test command the pipeline now uses.
+Execute the same package script and Storybook test command the pipeline now
+uses.
 
 - [ ] **Step 5: Commit**
 
@@ -1973,10 +2081,12 @@ git commit -m "ci: verify Storybook documentation build"
 # Task 12: Final Documentation Architecture Verification
 
 **Files:**
+
 - Modify: `docs/storybook/storybook-refactor-baseline.md`
 - Create: `docs/storybook/STORYBOOK-DOCS-QUALITY-GATE.md`
 
 **Interfaces:**
+
 - Produces completion evidence.
 - Produces an objective rubric score.
 - Blocks completion below 95.
@@ -1999,7 +2109,8 @@ Expected:
 No prohibited matches.
 ```
 
-Do not consider legitimate prose uses of the word “docs” a failure; evaluate exact matched context.
+Do not consider legitimate prose uses of the word “docs” a failure; evaluate
+exact matched context.
 
 - [ ] **Step 2: Run configuration tests**
 
@@ -2086,36 +2197,37 @@ Create `docs/storybook/STORYBOOK-DOCS-QUALITY-GATE.md`:
 ## Baseline
 
 Record:
+
 - Storybook version
 - branch
 - final commit
 
 ## Automated verification
 
-| Check | Command | Result |
-|---|---|---|
-| Governance | Storybook config Vitest | PASS |
-| TypeScript | repository type check | PASS |
-| Unit | repository unit suite | PASS |
-| BDD generation | bddgen | PASS |
-| Storybook runtime | Storybook Playwright/BDD | PASS |
-| Docs build | storybook:verify:docs | PASS |
+| Check             | Command                  | Result |
+| ----------------- | ------------------------ | ------ |
+| Governance        | Storybook config Vitest  | PASS   |
+| TypeScript        | repository type check    | PASS   |
+| Unit              | repository unit suite    | PASS   |
+| BDD generation    | bddgen                   | PASS   |
+| Storybook runtime | Storybook Playwright/BDD | PASS   |
+| Docs build        | storybook:verify:docs    | PASS   |
 
 ## Rubric
 
-| Category | Weight | Score | Evidence |
-|---|---:|---:|---|
-| Autodocs and tag model | 15 | 15 | |
-| MDX architecture | 10 | 10 | |
-| Doc Blocks | 12 | 12 | |
-| Code Panel and Source | 8 | 8 | |
-| Args, ArgTypes and inference | 13 | 13 | |
-| Parameters and inheritance | 10 | 10 | |
-| Docs build and publishing | 8 | 8 | |
-| main.ts, addons and TypeScript | 8 | 8 | |
-| Architecture and maintainability | 6 | 6 | |
-| Evidence, currency and actionability | 10 | 9 | |
-| **Total** | **100** | **99** | |
+| Category                             |  Weight |  Score | Evidence |
+| ------------------------------------ | ------: | -----: | -------- |
+| Autodocs and tag model               |      15 |     15 |          |
+| MDX architecture                     |      10 |     10 |          |
+| Doc Blocks                           |      12 |     12 |          |
+| Code Panel and Source                |       8 |      8 |          |
+| Args, ArgTypes and inference         |      13 |     13 |          |
+| Parameters and inheritance           |      10 |     10 |          |
+| Docs build and publishing            |       8 |      8 |          |
+| main.ts, addons and TypeScript       |       8 |      8 |          |
+| Architecture and maintainability     |       6 |      6 |          |
+| Evidence, currency and actionability |      10 |      9 |          |
+| **Total**                            | **100** | **99** |          |
 
 ## Critical-error caps
 
@@ -2129,13 +2241,11 @@ Record:
 
 ## Final result
 
-Target: >=95/100
-Actual:
-Critical cap triggered: No
-Status: PASS / FAIL
+Target: >=95/100 Actual: Critical cap triggered: No Status: PASS / FAIL
 ```
 
-Populate evidence and actual score. Do not pre-fill PASS where evidence is missing.
+Populate evidence and actual score. Do not pre-fill PASS where evidence is
+missing.
 
 - [ ] **Step 10: Apply the 95-point completion gate**
 
@@ -2244,7 +2354,8 @@ export default config;
 
 The explicit CSF plugin may remain only if Task 9 proves it required.
 
-A `typescript` block should remain absent unless Task 10 proves `react-docgen-typescript` necessary.
+A `typescript` block should remain absent unless Task 10 proves
+`react-docgen-typescript` necessary.
 
 ---
 
@@ -2329,7 +2440,8 @@ Do not revert the entire branch to solve a single-task regression.
 
 # Definition of Done
 
-The AI agent may state **“Storybook Autodocs refactor complete”** only when all of the following are true:
+The AI agent may state **“Storybook Autodocs refactor complete”** only when all
+of the following are true:
 
 - [ ] The actual installed Storybook version was identified and recorded.
 - [ ] Global `tags: ['autodocs']` remains the activation model.
@@ -2340,7 +2452,8 @@ The AI agent may state **“Storybook Autodocs refactor complete”** only when 
 - [ ] Global generic component description has been removed.
 - [ ] Default Autodocs template duplication has been removed.
 - [ ] Code Panel is globally enabled.
-- [ ] Source configuration is shared and uses `type: 'auto'` unless a documented exception exists.
+- [ ] Source configuration is shared and uses `type: 'auto'` unless a documented
+      exception exists.
 - [ ] TOC remains enabled.
 - [ ] Duplicate story globs are removed.
 - [ ] Webpack-only styling addon is removed from the Vite project.
@@ -2348,7 +2461,8 @@ The AI agent may state **“Storybook Autodocs refactor complete”** only when 
 - [ ] `remark-gfm` supports Markdown tables.
 - [ ] Bootstrap table styling remains where still required.
 - [ ] Args, ArgTypes, Parameters and inference responsibilities are documented.
-- [ ] JSDoc is treated as semantic documentation, not the executable Storybook example mechanism.
+- [ ] JSDoc is treated as semantic documentation, not the executable Storybook
+      example mechanism.
 - [ ] MDX and Doc Block usage guidance is current.
 - [ ] Three representative components have verified metadata inference.
 - [ ] Explicit CSF plugin has been A/B tested.
@@ -2369,23 +2483,26 @@ The AI agent may state **“Storybook Autodocs refactor complete”** only when 
 
 # Expected Rubric Result
 
-If this plan is implemented exactly and all evidence gates pass, the expected result is:
+If this plan is implemented exactly and all evidence gates pass, the expected
+result is:
 
-| Category | Target |
-|---|---:|
-| Autodocs and tag model | 15/15 |
-| MDX architecture | 10/10 |
-| Doc Blocks | 12/12 |
-| Code Panel and Source | 8/8 |
-| Args, ArgTypes and inference | 13/13 |
-| Parameters and inheritance | 10/10 |
-| Documentation build and publishing | 8/8 |
-| `main.ts`, addons and TypeScript | 8/8 |
-| Architecture and maintainability | 6/6 |
-| Evidence, currency and actionability | 9/10 |
-| **Expected total** | **99/100** |
+| Category                             |     Target |
+| ------------------------------------ | ---------: |
+| Autodocs and tag model               |      15/15 |
+| MDX architecture                     |      10/10 |
+| Doc Blocks                           |      12/12 |
+| Code Panel and Source                |        8/8 |
+| Args, ArgTypes and inference         |      13/13 |
+| Parameters and inheritance           |      10/10 |
+| Documentation build and publishing   |        8/8 |
+| `main.ts`, addons and TypeScript     |        8/8 |
+| Architecture and maintainability     |        6/6 |
+| Evidence, currency and actionability |       9/10 |
+| **Expected total**                   | **99/100** |
 
-The one-point reserve remains appropriate until the implementation proves its actual installed-version behaviour rather than merely matching the Storybook 10.5 reference architecture.
+The one-point reserve remains appropriate until the implementation proves its
+actual installed-version behaviour rather than merely matching the Storybook
+10.5 reference architecture.
 
 ---
 
@@ -2393,8 +2510,11 @@ The one-point reserve remains appropriate until the implementation proves its ac
 
 Recommended execution mode:
 
-**Subagent-Driven Development** — one fresh implementation agent per task, with review after each task and explicit RED/GREEN evidence retained in the branch.
+**Subagent-Driven Development** — one fresh implementation agent per task, with
+review after each task and explicit RED/GREEN evidence retained in the branch.
 
-For single-agent execution, use `superpowers:executing-plans` and execute in small batches with review checkpoints after Tasks 2, 5, 8, and 12.
+For single-agent execution, use `superpowers:executing-plans` and execute in
+small batches with review checkpoints after Tasks 2, 5, 8, and 12.
 
-Do not batch Tasks 8–10 together. The explicit CSF plugin and docgen decisions require independent evidence and must remain independently reversible.
+Do not batch Tasks 8–10 together. The explicit CSF plugin and docgen decisions
+require independent evidence and must remain independently reversible.

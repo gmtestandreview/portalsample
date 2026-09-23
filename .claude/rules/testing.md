@@ -3,8 +3,10 @@
 ## Minimum Test Coverage: 80%
 
 All three test types are required:
+
 1. **Unit Tests** — Individual functions, utilities, components in isolation
-2. **Integration Tests** — API endpoints, database operations, service interactions
+2. **Integration Tests** — API endpoints, database operations, service
+   interactions
 3. **E2E Tests** — Critical user flows (auth, payments, core CRUD)
 
 ## Test-Driven Development (MANDATORY)
@@ -21,14 +23,14 @@ All three test types are required:
 ```typescript
 test('description of expected behavior', () => {
   // Arrange — set up test data and state
-  const input = createTestInput()
+  const input = createTestInput();
 
   // Act — call the function being tested
-  const result = functionUnderTest(input)
+  const result = functionUnderTest(input);
 
   // Assert — verify the expected outcome
-  expect(result).toEqual(expectedOutput)
-})
+  expect(result).toEqual(expectedOutput);
+});
 ```
 
 ## Edge Cases to Always Test

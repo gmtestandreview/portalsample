@@ -1,9 +1,10 @@
 # Skeleton: 1.1-threatmodel.mmd
 
-> **⛔ This is a raw Mermaid file — NO markdown wrapper. Line 1 MUST start with `%%{init:`.**
-> **The init block, classDefs, and linkStyle are FIXED — never change colors/strokes.**
-> **Diagram direction is ALWAYS `flowchart LR` — NEVER `flowchart TB`.**
-> **⛔ The template below is shown inside a code fence for readability only — do NOT include the fence in the output file.**
+> **⛔ This is a raw Mermaid file — NO markdown wrapper. Line 1 MUST start with
+> `%%{init:`.** **The init block, classDefs, and linkStyle are FIXED — never
+> change colors/strokes.** **Diagram direction is ALWAYS `flowchart LR` — NEVER
+> `flowchart TB`.** **⛔ The template below is shown inside a code fence for
+> readability only — do NOT include the fence in the output file.**
 
 ---
 
@@ -43,15 +44,21 @@ flowchart LR
 ```
 
 **NEVER change these fixed elements:**
+
 - `%%{init:` themeVariables: only `background`, `primaryColor`, `lineColor`
 - `flowchart LR` — never TB
-- classDef colors: process=#6baed6/#2171b5, external=#fdae61/#d94701, datastore=#74c476/#238b45
-- Incremental classDefs (when applicable): newComponent=#d4edda/#28a745 (light green), removedComponent=#e9ecef/#6c757d (gray dashed)
-- New components MUST use `:::newComponent` (NOT `:::process`). Removed components MUST use `:::removedComponent`.
-- Trust boundary style: `fill:none,stroke:#e31a1c,stroke-width:3px,stroke-dasharray: 5 5`
+- classDef colors: process=#6baed6/#2171b5, external=#fdae61/#d94701,
+  datastore=#74c476/#238b45
+- Incremental classDefs (when applicable): newComponent=#d4edda/#28a745 (light
+  green), removedComponent=#e9ecef/#6c757d (gray dashed)
+- New components MUST use `:::newComponent` (NOT `:::process`). Removed
+  components MUST use `:::removedComponent`.
+- Trust boundary style:
+  `fill:none,stroke:#e31a1c,stroke-width:3px,stroke-dasharray: 5 5`
 - linkStyle: `stroke:#666666,stroke-width:2px`
 
 **DFD shapes:**
+
 - Process: `(("Name"))` (double parentheses = circle)
 - Data Store: `[("Name")]` (bracket-paren = cylinder)
 - External: `["Name"]` (brackets = rectangle)

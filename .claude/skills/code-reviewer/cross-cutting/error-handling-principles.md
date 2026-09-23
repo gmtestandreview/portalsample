@@ -1,13 +1,16 @@
 # Error Handling Principles
 
-Use this guide when reviewing exceptions, error return values, retries, fallbacks, logging, user-facing errors, or API error contracts.
+Use this guide when reviewing exceptions, error return values, retries,
+fallbacks, logging, user-facing errors, or API error contracts.
 
 ## Core Principles
 
 - Every error must be handled, propagated, or intentionally converted.
 - Error messages should include the operation and safe diagnostic context.
-- Callers should be able to distinguish expected domain failures from infrastructure failures.
-- Errors should be handled once at the right boundary; avoid logging and rethrowing at every layer.
+- Callers should be able to distinguish expected domain failures from
+  infrastructure failures.
+- Errors should be handled once at the right boundary; avoid logging and
+  rethrowing at every layer.
 - Preconditions should fail fast before expensive or irreversible work starts.
 - Cleanup should happen on failure, cancellation, timeout, and early return.
 
@@ -25,17 +28,25 @@ Use this guide when reviewing exceptions, error return values, retries, fallback
 
 Use different error layers:
 
-- **Infrastructure errors:** database, network, file system, queue, cache, third-party APIs.
-- **Domain errors:** validation failure, insufficient balance, invalid state transition, permission failure.
-- **Application errors:** API or UI-facing response shape, status code, support code, or user message.
+- **Infrastructure errors:** database, network, file system, queue, cache,
+  third-party APIs.
+- **Domain errors:** validation failure, insufficient balance, invalid state
+  transition, permission failure.
+- **Application errors:** API or UI-facing response shape, status code, support
+  code, or user message.
 
-Convert infrastructure errors to domain or application errors at module boundaries. Do not leak database driver messages, stack traces, or internal object names to users.
+Convert infrastructure errors to domain or application errors at module
+boundaries. Do not leak database driver messages, stack traces, or internal
+object names to users.
 
 ## Logging
 
-- Use structured fields for operation, resource id, actor id, correlation id, and safe failure category.
+- Use structured fields for operation, resource id, actor id, correlation id,
+  and safe failure category.
 - Avoid logging full request bodies unless the data is known safe.
-- Choose log level by actionability: `ERROR` for failures needing attention, `WARN` for degraded but recovered behavior, `INFO` for expected business events, and `DEBUG` for local diagnostics.
+- Choose log level by actionability: `ERROR` for failures needing attention,
+  `WARN` for degraded but recovered behavior, `INFO` for expected business
+  events, and `DEBUG` for local diagnostics.
 - Sanitize user-controlled text to prevent log injection.
 
 ## Retry and Fallback

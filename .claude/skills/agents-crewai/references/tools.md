@@ -416,14 +416,14 @@ selected_tools = mcp_adapter.get_tools(tool_names=["search", "translate"])
 
 ## Tool Categories Reference
 
-| Category | Tools | Use Case |
-|----------|-------|----------|
-| **Search** | Serper, Tavily, Brave, EXA | Web search, information retrieval |
-| **Scraping** | ScrapeWebsite, Firecrawl, Selenium | Extract web content |
-| **Files** | FileRead, FileWrite, DirectoryRead | Local file operations |
-| **Documents** | PDF, DOCX, CSV, JSON, XML | Document parsing |
-| **Databases** | MySQL, PostgreSQL, MongoDB, Qdrant | Data storage queries |
-| **AI Services** | DALL-E, Vision, OCR | AI-powered tools |
-| **Code** | CodeDocs, GitHub, CodeInterpreter | Development tools |
-| **Cloud** | Bedrock, Databricks, S3, Snowflake | Cloud platform integration |
-| **Integration** | MCP, Composio, Zapier | Third-party integrations |
+| Category        | Tools                              | Use Case                          |
+| --------------- | ---------------------------------- | --------------------------------- |
+| **Search**      | Serper, Tavily, Brave, EXA         | Web search, information retrieval |
+| **Scraping**    | ScrapeWebsite, Firecrawl, Selenium | Extract web content               |
+| **Files**       | FileRead, FileWrite, DirectoryRead | Local file operations             |
+| **Documents**   | PDF, DOCX, CSV, JSON, XML          | Document parsing                  |
+| **Databases**   | MySQL, PostgreSQL, MongoDB, Qdrant | Data storage queries              |
+| **AI Services** | DALL-E, Vision, OCR                | AI-powered tools                  |
+| **Code**        | CodeDocs, GitHub, CodeInterpreter  | Development tools                 |
+| **Cloud**       | Bedrock, Databricks, S3, Snowflake | Cloud platform integration        |
+| **Integration** | MCP, Composio, Zapier              | Third-party integrations          |

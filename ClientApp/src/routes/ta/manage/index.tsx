@@ -1,4 +1,4 @@
-import AppDetails from "./appDetails.tsx";
+import AppDetails from './appDetails.tsx';
 
 const TAApplicationManage = () => <AppDetails />;
 

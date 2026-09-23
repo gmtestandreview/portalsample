@@ -1,26 +1,24 @@
 # Tree
 
-A tree provides users with a way to navigate nested hierarchical information, with support for
-keyboard navigation and selection.
+A tree provides users with a way to navigate nested hierarchical information,
+with support for keyboard navigation and selection.
 
 ## Vanilla CSS example
 
 ```tsx
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import { Tree, TreeItem } from 'vanilla-starter/Tree';
 
-<Tree
-  
-  aria-label="Files">
-  <TreeItem title="Documents">
-    <TreeItem title="Project">
-      <TreeItem title="Weekly Report" />
+<Tree aria-label='Files'>
+  <TreeItem title='Documents'>
+    <TreeItem title='Project'>
+      <TreeItem title='Weekly Report' />
     </TreeItem>
   </TreeItem>
-  <TreeItem title="Photos">
-    <TreeItem title="Image 1" />
-    <TreeItem title="Image 2" />
+  <TreeItem title='Photos'>
+    <TreeItem title='Image 1' />
+    <TreeItem title='Image 2' />
   </TreeItem>
-</Tree>
+</Tree>;
 ```
 
 ### Tree.tsx
@@ -39,11 +37,11 @@ import {
   TreeLoadMoreItem as AriaTreeLoadMoreItem,
   type TreeLoadMoreItemProps,
   TreeSection as AriaTreeSection,
-  TreeHeader as AriaTreeHeader
+  TreeHeader as AriaTreeHeader,
 } from 'react-aria-components/Tree';
-import {ChevronRight, GripVertical} from 'lucide-react';
-import {Checkbox} from './Checkbox';
-import {ProgressCircle} from './ProgressCircle';
+import { ChevronRight, GripVertical } from 'lucide-react';
+import { Checkbox } from './Checkbox';
+import { ProgressCircle } from './ProgressCircle';
 import './Tree.css';
 
 export function Tree<T>(props: TreeProps<T>) {
@@ -51,21 +49,25 @@ export function Tree<T>(props: TreeProps<T>) {
 }
 
 export function TreeItemContent(
-  props: Omit<TreeItemContentProps, 'children'> & {children?: React.ReactNode}
+  props: Omit<TreeItemContentProps, 'children'> & { children?: React.ReactNode }
 ) {
   return (
     <AriaTreeItemContent>
-      {({selectionBehavior, selectionMode, allowsDragging}: TreeItemContentRenderProps) => (
+      {({
+        selectionBehavior,
+        selectionMode,
+        allowsDragging,
+      }: TreeItemContentRenderProps) => (
         <>
           {allowsDragging && (
-            <Button slot="drag">
+            <Button slot='drag'>
               <GripVertical size={16} />
             </Button>
           )}
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && (
-            <Checkbox slot="selection" />
+            <Checkbox slot='selection' />
           )}
-          <Button slot="chevron">
+          <Button slot='chevron'>
             <ChevronRight />
           </Button>
           {props.children}
@@ -98,19 +100,20 @@ export function TreeItem(props: TreeItemProps) {
 export function TreeLoadMoreItem(props: TreeLoadMoreItemProps) {
   return (
     <AriaTreeLoadMoreItem {...props}>
-      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+      <ProgressCircle isIndeterminate aria-label='Loading more...' />
     </AriaTreeLoadMoreItem>
   );
 }
 
-export function TreeSection(props: React.ComponentProps<typeof AriaTreeSection>) {
+export function TreeSection(
+  props: React.ComponentProps<typeof AriaTreeSection>
+) {
   return <AriaTreeSection {...props} />;
 }
 
 export function TreeHeader(props: React.ComponentProps<typeof AriaTreeHeader>) {
   return <AriaTreeHeader {...props} />;
 }
-
 ```
 
 ### Tree.css
@@ -175,8 +178,8 @@ export function TreeHeader(props: React.ComponentProps<typeof AriaTreeHeader>) {
     &[data-drop-target] {
       outline: 1px solid var(--highlight-background);
       margin-left: calc(
-        var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--spacing-5) +
-          (var(--tree-item-level) - 1) * var(--spacing-4)
+        var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) +
+          var(--spacing-5) + (var(--tree-item-level) - 1) * var(--spacing-4)
       );
     }
   }
@@ -213,8 +216,8 @@ export function TreeHeader(props: React.ComponentProps<typeof AriaTreeHeader>) {
     position: absolute;
     bottom: 0;
     inset-inline-start: calc(
-      var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) + var(--chevron-width) +
-        (var(--tree-item-level) - 1) * var(--padding)
+      var(--spacing-2) + var(--checkbox-width) + var(--drag-button-width) +
+        var(--chevron-width) + (var(--tree-item-level) - 1) * var(--padding)
     );
     inset-inline-end: var(--spacing-2);
     border-bottom: 0.5px solid var(--border-color);
@@ -335,27 +338,24 @@ export function TreeHeader(props: React.ComponentProps<typeof AriaTreeHeader>) {
   justify-content: center;
   height: 28px;
 }
-
 ```
 
 ## Tailwind example
 
 ```tsx
-import {Tree, TreeItem} from 'tailwind-starter/Tree';
+import { Tree, TreeItem } from 'tailwind-starter/Tree';
 
-<Tree
-  
-  aria-label="Files">
-  <TreeItem title="Documents">
-    <TreeItem title="Project">
-      <TreeItem title="Weekly Report" />
+<Tree aria-label='Files'>
+  <TreeItem title='Documents'>
+    <TreeItem title='Project'>
+      <TreeItem title='Weekly Report' />
     </TreeItem>
   </TreeItem>
-  <TreeItem title="Photos">
-    <TreeItem title="Image 1" />
-    <TreeItem title="Image 2" />
+  <TreeItem title='Photos'>
+    <TreeItem title='Image 1' />
+    <TreeItem title='Image 2' />
   </TreeItem>
-</Tree>
+</Tree>;
 ```
 
 ### Tree.tsx
@@ -369,12 +369,12 @@ import {
   TreeItemContent as AriaTreeItemContent,
   Button,
   type TreeItemProps as AriaTreeItemProps,
-  type TreeProps
+  type TreeProps,
 } from 'react-aria-components/Tree';
-import {ChevronRight} from 'lucide-react';
-import {tv} from 'tailwind-variants';
-import {Checkbox} from './Checkbox';
-import {composeTailwindRenderProps, focusRing} from './utils';
+import { ChevronRight } from 'lucide-react';
+import { tv } from 'tailwind-variants';
+import { Checkbox } from './Checkbox';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 const itemStyles = tv({
   extend: focusRing,
@@ -383,22 +383,23 @@ const itemStyles = tv({
     isSelected: {
       false:
         'hover:bg-neutral-100 pressed:bg-neutral-100 dark:hover:bg-neutral-800 dark:pressed:bg-neutral-800',
-      true: 'bg-blue-100 dark:bg-blue-700/30 hover:bg-blue-200 pressed:bg-blue-200 dark:hover:bg-blue-700/40 dark:pressed:bg-blue-700/40 border-y-blue-200 dark:border-y-blue-900 z-20'
+      true: 'bg-blue-100 dark:bg-blue-700/30 hover:bg-blue-200 pressed:bg-blue-200 dark:hover:bg-blue-700/40 dark:pressed:bg-blue-700/40 border-y-blue-200 dark:border-y-blue-900 z-20',
     },
     isDisabled: {
-      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText] z-10'
-    }
-  }
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText] z-10',
+    },
+  },
 });
 
-export function Tree<T>({children, ...props}: TreeProps<T>) {
+export function Tree<T>({ children, ...props }: TreeProps<T>) {
   return (
     <AriaTree
       {...props}
       className={composeTailwindRenderProps(
         props.className,
         'w-48 max-w-full overflow-auto relative border border-neutral-200 dark:border-neutral-700 rounded-lg'
-      )}>
+      )}
+    >
       {children}
     </AriaTree>
   );
@@ -409,21 +410,21 @@ const expandButton = tv({
   base: 'border-0 p-0 bg-transparent shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-start cursor-default [-webkit-tap-highlight-color:transparent]',
   variants: {
     isDisabled: {
-      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
-    }
-  }
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]',
+    },
+  },
 });
 
 const chevron = tv({
   base: 'w-4.5 h-4.5 text-neutral-500 dark:text-neutral-400 transition-transform duration-200 ease-in-out',
   variants: {
     isExpanded: {
-      true: 'transform rotate-90'
+      true: 'transform rotate-90',
     },
     isDisabled: {
-      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]'
-    }
-  }
+      true: 'text-neutral-300 dark:text-neutral-600 forced-colors:text-[GrayText]',
+    },
+  },
 });
 
 export interface TreeItemProps extends Partial<AriaTreeItemProps> {
@@ -434,18 +435,27 @@ export function TreeItem(props: TreeItemProps) {
   return (
     <AriaTreeItem className={itemStyles} textValue={props.title} {...props}>
       <AriaTreeItemContent {...props}>
-        {({selectionMode, selectionBehavior, hasChildItems, isExpanded, isDisabled}) => (
+        {({
+          selectionMode,
+          selectionBehavior,
+          hasChildItems,
+          isExpanded,
+          isDisabled,
+        }) => (
           <div className={`flex items-center`}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
-              <Checkbox slot="selection" />
+              <Checkbox slot='selection' />
             )}
-            <div className="shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]" />
+            <div className='shrink-0 w-[calc(calc(var(--tree-item-level)_-_1)_*_calc(var(--spacing)_*_3))]' />
             {hasChildItems ? (
-              <Button slot="chevron" className={expandButton({isDisabled})}>
-                <ChevronRight aria-hidden className={chevron({isExpanded, isDisabled})} />
+              <Button slot='chevron' className={expandButton({ isDisabled })}>
+                <ChevronRight
+                  aria-hidden
+                  className={chevron({ isExpanded, isDisabled })}
+                />
               </Button>
             ) : (
-              <div className="shrink-0 w-8 h-8" />
+              <div className='shrink-0 w-8 h-8' />
             )}
             {props.title}
           </div>
@@ -455,121 +465,145 @@ export function TreeItem(props: TreeItemProps) {
     </AriaTreeItem>
   );
 }
-
 ```
 
 ## Content
 
-`Tree` follows the [Collection Components API](collections.md?component=Tree), accepting both static and dynamic collections. This example shows a dynamic collection, passing a list of objects to the `items` prop, and a recursive function to render the children.
+`Tree` follows the [Collection Components API](collections.md?component=Tree),
+accepting both static and dynamic collections. This example shows a dynamic
+collection, passing a list of objects to the `items` prop, and a recursive
+function to render the children.
 
 ```tsx
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {Collection} from 'react-aria-components/Collection';
+import { Tree, TreeItem } from 'vanilla-starter/Tree';
+import { Collection } from 'react-aria-components/Collection';
 
 let items = [
-  {id: 1, title: 'Documents', type: 'directory', children: [
-    {id: 2, title: 'Project', type: 'directory', children: [
-      {id: 3, title: 'Weekly Report', type: 'file', children: []},
-      {id: 4, title: 'Budget', type: 'file', children: []}
-    ]}
-  ]},
-  {id: 5, title: 'Photos', type: 'directory', children: [
-    {id: 6, title: 'Image 1', type: 'file', children: []},
-    {id: 7, title: 'Image 2', type: 'file', children: []}
-  ]}
+  {
+    id: 1,
+    title: 'Documents',
+    type: 'directory',
+    children: [
+      {
+        id: 2,
+        title: 'Project',
+        type: 'directory',
+        children: [
+          { id: 3, title: 'Weekly Report', type: 'file', children: [] },
+          { id: 4, title: 'Budget', type: 'file', children: [] },
+        ],
+      },
+    ],
+  },
+  {
+    id: 5,
+    title: 'Photos',
+    type: 'directory',
+    children: [
+      { id: 6, title: 'Image 1', type: 'file', children: [] },
+      { id: 7, title: 'Image 2', type: 'file', children: [] },
+    ],
+  },
 ];
 
 <Tree
-  aria-label="Files"
+  aria-label='Files'
   defaultExpandedKeys={[1, 4]}
   items={items}
-  selectionMode="multiple">
+  selectionMode='multiple'
+>
   {function renderItem(item) {
     return (
       <TreeItem title={item.title}>
         {/*- begin highlight -*/}
         {/* recursively render children */}
-        <Collection items={item.children}>
-          {renderItem}
-        </Collection>
+        <Collection items={item.children}>{renderItem}</Collection>
         {/*- end highlight -*/}
       </TreeItem>
     );
   }}
-</Tree>
+</Tree>;
 ```
 
 ### Asynchronous loading
 
-Use [renderEmptyState](#empty-state) to display a spinner during initial load. To enable infinite scrolling, render a `<TreeLoadMoreItem>` at the end of each `<TreeItem>`. Use whatever data fetching library you prefer – this example uses `useAsyncList` from `react-stately`.
+Use [renderEmptyState](#empty-state) to display a spinner during initial load.
+To enable infinite scrolling, render a `<TreeLoadMoreItem>` at the end of each
+`<TreeItem>`. Use whatever data fetching library you prefer – this example uses
+`useAsyncList` from `react-stately`.
 
 ```tsx
-import {Tree, TreeItem, TreeLoadMoreItem} from 'vanilla-starter/Tree';
-import {ProgressCircle} from 'vanilla-starter/ProgressCircle';
-import {Collection} from 'react-aria-components/Collection';
-import {useAsyncList} from 'react-aria-components/useAsyncList';
+import { Tree, TreeItem, TreeLoadMoreItem } from 'vanilla-starter/Tree';
+import { ProgressCircle } from 'vanilla-starter/ProgressCircle';
+import { Collection } from 'react-aria-components/Collection';
+import { useAsyncList } from 'react-aria-components/useAsyncList';
 
 interface Character {
-  name: string
+  name: string;
 }
 
 function AsyncLoadingExample() {
   let starWarsList = useAsyncList<Character>({
-    async load({signal, cursor}) {
+    async load({ signal, cursor }) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
       }
 
-      let res = await fetch(cursor || 'https://swapi.py4e.com/api/people/?search=', {signal});
-      let json = await res.json();
-
-      return {
-        items: json.results,
-        cursor: json.next
-      };
-    }
-  });
-
-  let pokemonList = useAsyncList<Character>({
-    async load({signal, cursor, filterText}) {
       let res = await fetch(
-        cursor || `https://pokeapi.co/api/v2/pokemon`,
-        {signal}
+        cursor || 'https://swapi.py4e.com/api/people/?search=',
+        { signal }
       );
       let json = await res.json();
 
       return {
         items: json.results,
-        cursor: json.next
+        cursor: json.next,
       };
-    }
+    },
+  });
+
+  let pokemonList = useAsyncList<Character>({
+    async load({ signal, cursor, filterText }) {
+      let res = await fetch(cursor || `https://pokeapi.co/api/v2/pokemon`, {
+        signal,
+      });
+      let json = await res.json();
+
+      return {
+        items: json.results,
+        cursor: json.next,
+      };
+    },
   });
 
   return (
     <Tree
-      aria-label="Async loading tree"
-      style={{height: 300}}
+      aria-label='Async loading tree'
+      style={{ height: 300 }}
       renderEmptyState={() => (
-        <ProgressCircle isIndeterminate aria-label="Loading..." />
-      )}>
-      <TreeItem title="Pokemon">
+        <ProgressCircle isIndeterminate aria-label='Loading...' />
+      )}
+    >
+      <TreeItem title='Pokemon'>
         <Collection items={pokemonList.items}>
           {(item) => <TreeItem id={item.name} title={item.name} />}
         </Collection>
         {/*- begin highlight -*/}
         <TreeLoadMoreItem
           onLoadMore={pokemonList.loadMore}
-          isLoading={pokemonList.loadingState === 'loadingMore'} />
+          isLoading={pokemonList.loadingState === 'loadingMore'}
+        />
         {/*- end highlight -*/}
       </TreeItem>
-      <TreeItem title="Star Wars">
+      <TreeItem title='Star Wars'>
         <Collection items={starWarsList.items}>
           {(item) => <TreeItem id={item.name} title={item.name} />}
         </Collection>
         {/*- begin highlight -*/}
         <TreeLoadMoreItem
           onLoadMore={starWarsList.loadMore}
-          isLoading={starWarsList.loadingState === 'loadingMore'} />
+          isLoading={starWarsList.loadingState === 'loadingMore'}
+        />
         {/*- end highlight -*/}
       </TreeItem>
     </Tree>
@@ -579,98 +613,111 @@ function AsyncLoadingExample() {
 
 ### Links
 
-Use the `href` prop on a `<TreeItem>` to create a link. Link interactions vary depending on the selection behavior. See the [selection guide](selection.md?component=Tree#selection-behavior) for more details.
+Use the `href` prop on a `<TreeItem>` to create a link. Link interactions vary
+depending on the selection behavior. See the
+[selection guide](selection.md?component=Tree#selection-behavior) for more
+details.
 
 ```tsx
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
+import { Tree, TreeItem } from 'vanilla-starter/Tree';
 
 <Tree
-  
-  aria-label="Tree with links"
-  defaultExpandedKeys={['bulbasaur', 'ivysaur']}>
+  aria-label='Tree with links'
+  defaultExpandedKeys={['bulbasaur', 'ivysaur']}
+>
   <TreeItem
     /*- begin highlight -*/
-    href="https://pokemondb.net/pokedex/bulbasaur"
-    target="_blank"
+    href='https://pokemondb.net/pokedex/bulbasaur'
+    target='_blank'
     /*- end highlight -*/
-    id="bulbasaur"
-    title="Bulbasaur">
+    id='bulbasaur'
+    title='Bulbasaur'
+  >
     <TreeItem
-      id="ivysaur"
-      title="Ivysaur"
-      href="https://pokemondb.net/pokedex/ivysaur"
-      target="_blank">
+      id='ivysaur'
+      title='Ivysaur'
+      href='https://pokemondb.net/pokedex/ivysaur'
+      target='_blank'
+    >
       <TreeItem
-        id="venusaur"
-        title="Venusaur"
-        href="https://pokemondb.net/pokedex/venusaur"
-        target="_blank" />
+        id='venusaur'
+        title='Venusaur'
+        href='https://pokemondb.net/pokedex/venusaur'
+        target='_blank'
+      />
     </TreeItem>
   </TreeItem>
-</Tree>
+</Tree>;
 ```
 
-<InlineAlert
-  variant="notice"
-  UNSAFE_style={{marginTop: '2rem'}}
+<InlineAlert variant="notice" UNSAFE_style={{marginTop: '2rem'}}
+
 >
-  <Heading>Client-side routing</Heading>
-  <Content>Due to [HTML spec limitations](https://github.com/w3c/html-aria/issues/473), TreeItems cannot be rendered as `<a>` elements. React Aria handles link clicks with JavaScript and triggers native navigation. When using a client-side router, use the `onAction` event to programmatically trigger navigation instead of the `href` prop.</Content>
-</InlineAlert>
+
+<Heading>Client-side routing</Heading> <Content>Due to
+[HTML spec limitations](https://github.com/w3c/html-aria/issues/473), TreeItems
+cannot be rendered as `<a>` elements. React Aria handles link clicks with
+JavaScript and triggers native navigation. When using a client-side router, use
+the `onAction` event to programmatically trigger navigation instead of the
+`href` prop.</Content> </InlineAlert>
 
 ### Empty state
 
 ```tsx
-import {Tree} from 'vanilla-starter/Tree';
+import { Tree } from 'vanilla-starter/Tree';
 
-<Tree
-  aria-label="Search results"
-  renderEmptyState={() => 'No results found.'}>
+<Tree aria-label='Search results' renderEmptyState={() => 'No results found.'}>
   {[]}
-</Tree>
+</Tree>;
 ```
 
 ### Sections (alpha)
 
-Use the `<TreeSection>` component to group options. A `<TreeHeader>` element may also be included to label the section. Sections without a header must have an `aria-label`.
+Use the `<TreeSection>` component to group options. A `<TreeHeader>` element may
+also be included to label the section. Sections without a header must have an
+`aria-label`.
 
 ```tsx
-import {Tree, TreeHeader, TreeItem, TreeSection} from 'vanilla-starter/Tree';
+import { Tree, TreeHeader, TreeItem, TreeSection } from 'vanilla-starter/Tree';
 
-<Tree aria-label="Files">
+<Tree aria-label='Files'>
   <TreeSection>
     <TreeHeader>Photos</TreeHeader>
-    <TreeItem id="my-photos" title="My Photos">
-      <TreeItem id="photo-1" title="Photo 1" />
-      <TreeItem id="photo-2" title="Photo 2" />
+    <TreeItem id='my-photos' title='My Photos'>
+      <TreeItem id='photo-1' title='Photo 1' />
+      <TreeItem id='photo-2' title='Photo 2' />
     </TreeItem>
-    <TreeItem id="shared-photos" title="Shared Photos">
-      <TreeItem id="shared-photo-1" title="Shared Photo 1" />
-      <TreeItem id="shared-photo-2" title="Shared Photo 2" />
+    <TreeItem id='shared-photos' title='Shared Photos'>
+      <TreeItem id='shared-photo-1' title='Shared Photo 1' />
+      <TreeItem id='shared-photo-2' title='Shared Photo 2' />
     </TreeItem>
   </TreeSection>
   <TreeSection>
     <TreeHeader>Documents</TreeHeader>
-    <TreeItem id="my-documents" title="My Documents">
-      <TreeItem id="document-1" title="Document 1" />
-      <TreeItem id="document-2" title="Document 2" />
+    <TreeItem id='my-documents' title='My Documents'>
+      <TreeItem id='document-1' title='Document 1' />
+      <TreeItem id='document-2' title='Document 2' />
     </TreeItem>
-    <TreeItem id="shared-documents" title="Shared Documents">
-      <TreeItem id="shared-document-1" title="Shared Document 1" />
-      <TreeItem id="shared-document-2" title="Shared Document 2" />
+    <TreeItem id='shared-documents' title='Shared Documents'>
+      <TreeItem id='shared-document-1' title='Shared Document 1' />
+      <TreeItem id='shared-document-2' title='Shared Document 2' />
     </TreeItem>
   </TreeSection>
-</Tree>
+</Tree>;
 ```
 
 ## Selection and actions
 
-Use the `selectionMode` prop to enable single or multiple selection. The selected items can be controlled via the `selectedKeys` prop, matching the `id` prop of the items. The `onAction` event handles item actions. Items can be disabled with the `isDisabled` prop. See the [selection guide](selection.md?component=Tree) for more details.
+Use the `selectionMode` prop to enable single or multiple selection. The
+selected items can be controlled via the `selectedKeys` prop, matching the `id`
+prop of the items. The `onAction` event handles item actions. Items can be
+disabled with the `isDisabled` prop. See the
+[selection guide](selection.md?component=Tree) for more details.
 
 ```tsx
-import type {Selection} from 'react-aria-components/Tree';
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useState} from 'react';
+import type { Selection } from 'react-aria-components/Tree';
+import { Tree, TreeItem } from 'vanilla-starter/Tree';
+import { useState } from 'react';
 
 function Example(props) {
   let [selected, setSelected] = useState<Selection>(new Set());
@@ -679,31 +726,34 @@ function Example(props) {
     <div>
       <Tree
         {...props}
-        aria-label="Pokemon evolution"
-        style={{height: 250}}
+        aria-label='Pokemon evolution'
+        style={{ height: 250 }}
         defaultExpandedKeys={['bulbasaur', 'ivysaur']}
-        
+
         selectedKeys={selected}
         onSelectionChange={setSelected}
-        onAction={key => alert(`Clicked ${key}`)}
+        onAction={(key) => alert(`Clicked ${key}`)}
       >
-        <TreeItem id="bulbasaur" title="Bulbasaur">
-          <TreeItem id="ivysaur" title="Ivysaur">
-            <TreeItem id="venusaur" title="Venusaur" isDisabled />
+        <TreeItem id='bulbasaur' title='Bulbasaur'>
+          <TreeItem id='ivysaur' title='Ivysaur'>
+            <TreeItem id='venusaur' title='Venusaur' isDisabled />
           </TreeItem>
         </TreeItem>
-        <TreeItem id="charmander" title="Charmander">
-          <TreeItem id="charmeleon" title="Charmeleon">
-            <TreeItem id="charizard" title="Charizard" />
+        <TreeItem id='charmander' title='Charmander'>
+          <TreeItem id='charmeleon' title='Charmeleon'>
+            <TreeItem id='charizard' title='Charizard' />
           </TreeItem>
         </TreeItem>
-        <TreeItem id="squirtle" title="Squirtle">
-          <TreeItem id="wartortle" title="Wartortle">
-            <TreeItem id="blastoise" title="Blastoise" />
+        <TreeItem id='squirtle' title='Squirtle'>
+          <TreeItem id='wartortle' title='Wartortle'>
+            <TreeItem id='blastoise' title='Blastoise' />
           </TreeItem>
         </TreeItem>
       </Tree>
-      <p>Current selection: {selected === 'all' ? 'all' : [...selected].join(', ')}</p>
+      <p>
+        Current selection:{' '}
+        {selected === 'all' ? 'all' : [...selected].join(', ')}
+      </p>
     </div>
   );
 }
@@ -711,76 +761,101 @@ function Example(props) {
 
 ## Keyboard navigation
 
-By default, Tree uses arrow key navigation to move focus into rows. Set `keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus in and out of a row.
-Use this when rows contain interactive elements such as text fields, where arrow keys and typing in the field should not trigger grid navigation or selection.
+By default, Tree uses arrow key navigation to move focus into rows. Set
+`keyboardNavigationBehavior="tab"` to have <Keyboard>Tab</Keyboard> move focus
+in and out of a row. Use this when rows contain interactive elements such as
+text fields, where arrow keys and typing in the field should not trigger grid
+navigation or selection.
 
 ```tsx
-import {Tree, TreeItem, TreeItemContent} from 'vanilla-starter/Tree';
-import {TextField} from 'vanilla-starter/TextField';
+import { Tree, TreeItem, TreeItemContent } from 'vanilla-starter/Tree';
+import { TextField } from 'vanilla-starter/TextField';
 
 <Tree
   /*- begin highlight -*/
-  keyboardNavigationBehavior="tab"
+  keyboardNavigationBehavior='tab'
   /*- end highlight -*/
-  selectionMode="multiple"
+  selectionMode='multiple'
   defaultExpandedKeys={['documents', 'photos']}
-  aria-label="Shared files">
-  <TreeItem id="documents" textValue="Documents">
+  aria-label='Shared files'
+>
+  <TreeItem id='documents' textValue='Documents'>
     <TreeItemContent>
-      <TextField aria-label="title" defaultValue="Documents" />
+      <TextField aria-label='title' defaultValue='Documents' />
     </TreeItemContent>
-    <TreeItem id="weekly" textValue="Weekly Report.pdf">
+    <TreeItem id='weekly' textValue='Weekly Report.pdf'>
       <TreeItemContent>
-        <TextField aria-label="title" defaultValue="Weekly Report.pdf" />
+        <TextField aria-label='title' defaultValue='Weekly Report.pdf' />
       </TreeItemContent>
     </TreeItem>
-    <TreeItem id="budget" textValue="Budget.xlsx">
+    <TreeItem id='budget' textValue='Budget.xlsx'>
       <TreeItemContent>
-        <TextField aria-label="title" defaultValue="Budget.xlsx" />
+        <TextField aria-label='title' defaultValue='Budget.xlsx' />
       </TreeItemContent>
     </TreeItem>
   </TreeItem>
-  <TreeItem id="photos">
+  <TreeItem id='photos'>
     <TreeItemContent>
-      <TextField aria-label="title" defaultValue="Photos" />
+      <TextField aria-label='title' defaultValue='Photos' />
     </TreeItemContent>
-    <TreeItem id="sunset" textValue="Sunset.jpg">
+    <TreeItem id='sunset' textValue='Sunset.jpg'>
       <TreeItemContent>
-        <TextField aria-label="title" defaultValue="Sunset.jpg" />
+        <TextField aria-label='title' defaultValue='Sunset.jpg' />
       </TreeItemContent>
     </TreeItem>
   </TreeItem>
-</Tree>
+</Tree>;
 ```
 
 ## Drag and drop
 
-Tree supports drag and drop interactions when the `dragAndDropHooks` prop is provided using the `useDragAndDrop` hook. Users can drop data on the list as a whole, on individual items, insert new items between existing ones, or reorder items. React Aria supports drag and drop via mouse, touch, keyboard, and screen reader interactions. See the [drag and drop guide](dnd.md?component=Tree) to learn more.
+Tree supports drag and drop interactions when the `dragAndDropHooks` prop is
+provided using the `useDragAndDrop` hook. Users can drop data on the list as a
+whole, on individual items, insert new items between existing ones, or reorder
+items. React Aria supports drag and drop via mouse, touch, keyboard, and screen
+reader interactions. See the [drag and drop guide](dnd.md?component=Tree) to
+learn more.
 
 ```tsx
-import {Tree, TreeItem} from 'vanilla-starter/Tree';
-import {useDragAndDrop} from 'react-aria-components/useDragAndDrop';
-import {Collection} from 'react-aria-components/Collection';
-import {useTreeData} from 'react-aria-components/useTreeData';
+import { Tree, TreeItem } from 'vanilla-starter/Tree';
+import { useDragAndDrop } from 'react-aria-components/useDragAndDrop';
+import { Collection } from 'react-aria-components/Collection';
+import { useTreeData } from 'react-aria-components/useTreeData';
 
 function Example() {
   let tree = useTreeData({
     initialItems: [
-      {id: '1', title: 'Documents', type: 'directory', children: [
-        {id: '2', title: 'Project', type: 'directory', children: [
-          {id: '3', title: 'Weekly Report', type: 'file', children: []},
-          {id: '4', title: 'Budget', type: 'file', children: []}
-        ]}
-      ]},
-      {id: '5', title: 'Photos', type: 'directory', children: [
-        {id: '6', title: 'Image 1', type: 'file', children: []},
-        {id: '7', title: 'Image 2', type: 'file', children: []}
-      ]}
-    ]
+      {
+        id: '1',
+        title: 'Documents',
+        type: 'directory',
+        children: [
+          {
+            id: '2',
+            title: 'Project',
+            type: 'directory',
+            children: [
+              { id: '3', title: 'Weekly Report', type: 'file', children: [] },
+              { id: '4', title: 'Budget', type: 'file', children: [] },
+            ],
+          },
+        ],
+      },
+      {
+        id: '5',
+        title: 'Photos',
+        type: 'directory',
+        children: [
+          { id: '6', title: 'Image 1', type: 'file', children: [] },
+          { id: '7', title: 'Image 2', type: 'file', children: [] },
+        ],
+      },
+    ],
   });
 
-  let {dragAndDropHooks} = useDragAndDrop({
-    getItems: (keys, items: typeof tree.items) => items.map(item => ({'text/plain': item.value.title})),
+  let { dragAndDropHooks } = useDragAndDrop({
+    getItems: (keys, items: typeof tree.items) =>
+      items.map((item) => ({ 'text/plain': item.value.title })),
     onMove(e) {
       if (e.target.dropPosition === 'before') {
         tree.moveBefore(e.target.key, e.keys);
@@ -790,31 +865,33 @@ function Example() {
         // Move items to become children of the target
         let targetNode = tree.getItem(e.target.key);
         if (targetNode) {
-          let targetIndex = targetNode.children ? targetNode.children.length : 0;
+          let targetIndex = targetNode.children
+            ? targetNode.children.length
+            : 0;
           let keyArray = Array.from(e.keys);
           for (let i = 0; i < keyArray.length; i++) {
             tree.move(keyArray[i], e.target.key, targetIndex + i);
           }
         }
       }
-    }
+    },
   });
 
   return (
     <Tree
-      aria-label="Tree with hierarchical drag and drop"
-      selectionMode="multiple"
+      aria-label='Tree with hierarchical drag and drop'
+      selectionMode='multiple'
       items={tree.items}
       dragAndDropHooks={dragAndDropHooks}
     >
       {function renderItem(item) {
         return (
           <TreeItem title={item.value.title}>
-            {item.children && <Collection items={item.children}>
-              {renderItem}
-            </Collection>}
+            {item.children && (
+              <Collection items={item.children}>{renderItem}</Collection>
+            )}
           </TreeItem>
-        )
+        );
       }}
     </Tree>
   );
@@ -834,13 +911,11 @@ function Example() {
 <Tree>
   <TreeItem>
     <TreeItemContent>
-      <Button slot="chevron" />
-      <Checkbox slot="selection" /> or <SelectionIndicator />
-      <Button slot="drag" />
+      <Button slot='chevron' />
+      <Checkbox slot='selection' /> or <SelectionIndicator />
+      <Button slot='drag' />
     </TreeItemContent>
-    <TreeItem>
-      {/* ... */}
-    </TreeItem>
+    <TreeItem>{/* ... */}</TreeItem>
   </TreeItem>
   <TreeSection>
     <TreeHeader />
@@ -852,214 +927,214 @@ function Example() {
 
 ### Tree
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `aria-describedby` | `string | undefined` | — | Identifies the element (or elements) that describes the object. |
-| `aria-details` | `string | undefined` | — | Identifies the element (or elements) that provide a detailed, extended description for the object. |
-| `aria-label` | `string | undefined` | — | Defines a string value that labels the current element. |
-| `aria-labelledby` | `string | undefined` | — | Identifies the element (or elements) that labels the current element. |
-| `autoFocus` | `boolean | FocusStrategy | undefined` | — | Whether to auto focus the gridlist or an option. |
-| `children` | `((item: T) => ReactNode) | React.ReactNode` | — | The contents of the collection. |
-| `className` | `ClassNameOrFunction<TreeRenderProps> | undefined` | 'react-aria-Tree' | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. |
-| `defaultExpandedKeys` | `Iterable<Key> | undefined` | — | The initial expanded keys in the collection (uncontrolled). |
-| `defaultSelectedKeys` | `"all" | Iterable<Key> | undefined` | — | The initial selected keys in the collection (uncontrolled). |
-| `dependencies` | `readonly any[] | undefined` | — | Values that should invalidate the item cache when using dynamic collections. |
-| `dir` | `string | undefined` | — |  |
-| `disabledBehavior` | `DisabledBehavior | undefined` | 'all' | Whether `disabledKeys` applies to all interactions, or only selection. |
-| `disabledKeys` | `Iterable<Key> | undefined` | — | The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with. |
-| `disallowEmptySelection` | `boolean | undefined` | — | Whether the collection allows empty selection. |
-| `dragAndDropHooks` | `DragAndDropHooks<NoInfer<T>> | undefined` | — | The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree. |
-| `escapeKeyBehavior` | `"clearSelection" | "none" | undefined` | 'clearSelection' | Whether pressing the escape key should clear selection in the grid list or not. Most experiences should not modify this option as it eliminates a keyboard user's ability to easily clear selection. Only use if the escape key is being handled externally or should not trigger selection clearing contextually. |
-| `expandedKeys` | `Iterable<Key> | undefined` | — | The currently expanded keys in the collection (controlled). |
-| `hidden` | `boolean | undefined` | — |  |
-| `id` | `string | undefined` | — | The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id). |
-| `inert` | `boolean | undefined` | — |  |
-| `items` | `Iterable<T> | undefined` | — | Item objects in the collection. |
-| `keyboardNavigationBehavior` | `"arrow" | "tab" | undefined` | 'arrow' | Whether keyboard navigation to focusable elements within grid list items is via the left/right arrow keys or the tab key. |
-| `lang` | `string | undefined` | — |  |
-| `onAction` | `((key: Key) => void) | undefined` | — | Handler that is called when a user performs an action on an item. The exact user event depends on the collection's `selectionBehavior` prop and the interaction modality. |
-| `onAnimationEnd` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationEndCapture` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationIteration` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationIterationCapture` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationStart` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationStartCapture` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAuxClick` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAuxClickCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onClick` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onClickCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onContextMenu` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onContextMenuCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onDoubleClick` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onDoubleClickCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onExpandedChange` | `((keys: Set<Key>) => any) | undefined` | — | Handler that is called when items are expanded or collapsed. |
-| `onGotPointerCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onGotPointerCaptureCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onLostPointerCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onLostPointerCaptureCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseDown` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseDownCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseEnter` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseLeave` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseMove` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseMoveCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOut` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOutCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOver` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOverCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseUp` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseUpCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerCancel` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerCancelCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerDown` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerDownCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerEnter` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerLeave` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerMove` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerMoveCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOut` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOutCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOver` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOverCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerUp` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerUpCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onScroll` | `React.UIEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onScrollCapture` | `React.UIEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onSelectionChange` | `((keys: Selection) => void) | undefined` | — | Handler that is called when the selection changes. |
-| `onTouchCancel` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchCancelCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchEnd` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchEndCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchMove` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchMoveCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchStart` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchStartCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionCancel` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionCancelCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionEnd` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionEndCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionRun` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionRunCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionStart` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionStartCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onWheel` | `React.WheelEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onWheelCapture` | `React.WheelEventHandler<HTMLDivElement> | undefined` | — |  |
-| `render` | `DOMRenderFunction<"div", TreeRenderProps> | undefined` | — | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. Requirements: - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an   `<a>`). - Only a single root DOM element can be rendered (no fragments). - You must pass through props and ref to the underlying DOM element, merging with your own prop   as appropriate. |
-| `renderEmptyState` | `((props: TreeEmptyStateRenderProps) => ReactNode) | undefined` | — | Provides content to display when there are no items in the list. |
-| `selectedKeys` | `"all" | Iterable<Key> | undefined` | — | The currently selected keys in the collection (controlled). |
-| `selectionBehavior` | `SelectionBehavior | undefined` | 'toggle' | How multiple selection should behave in the tree. |
-| `selectionMode` | `SelectionMode | undefined` | — | The type of selection that is allowed in the collection. |
-| `shouldSelectOnPressUp` | `boolean | undefined` | — | Whether selection should occur on press up instead of press down. |
-| `slot` | `string | null | undefined` | — | A slot name for the component. Slots allow the component to receive props from a parent component. An explicit `null` value indicates that the local props completely override all props received from a parent. |
-| `style` | `(((values: TreeRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties | React.CSSProperties | undefined)) | undefined` | — | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |
-| `translate` | `"no" | "yes" | undefined` | — |  |
+| Name                          | Type                                                                                         | Default             | Description       |
+| ----------------------------- | -------------------------------------------------------------------------------------------- | ------------------- | ----------------- |
+| `aria-describedby`            | `string                                                                                      | undefined`          | —                 | Identifies the element (or elements) that describes the object.                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `aria-details`                | `string                                                                                      | undefined`          | —                 | Identifies the element (or elements) that provide a detailed, extended description for the object.                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `aria-label`                  | `string                                                                                      | undefined`          | —                 | Defines a string value that labels the current element.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `aria-labelledby`             | `string                                                                                      | undefined`          | —                 | Identifies the element (or elements) that labels the current element.                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `autoFocus`                   | `boolean                                                                                     | FocusStrategy       | undefined`        | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Whether to auto focus the gridlist or an option.                                                                                                                                                                                                                                                                   |
+| `children`                    | `((item: T) => ReactNode)                                                                    | React.ReactNode`    | —                 | The contents of the collection.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `className`                   | `ClassNameOrFunction<TreeRenderProps>                                                        | undefined`          | 'react-aria-Tree' | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.                                                                                                                                                                                                                                                                                                                                           |
+| `defaultExpandedKeys`         | `Iterable<Key>                                                                               | undefined`          | —                 | The initial expanded keys in the collection (uncontrolled).                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `defaultSelectedKeys`         | `"all"                                                                                       | Iterable<Key>       | undefined`        | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | The initial selected keys in the collection (uncontrolled).                                                                                                                                                                                                                                                        |
+| `dependencies`                | `readonly any[]                                                                              | undefined`          | —                 | Values that should invalidate the item cache when using dynamic collections.                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `dir`                         | `string                                                                                      | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `disabledBehavior`            | `DisabledBehavior                                                                            | undefined`          | 'all'             | Whether `disabledKeys` applies to all interactions, or only selection.                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `disabledKeys`                | `Iterable<Key>                                                                               | undefined`          | —                 | The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `disallowEmptySelection`      | `boolean                                                                                     | undefined`          | —                 | Whether the collection allows empty selection.                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `dragAndDropHooks`            | `DragAndDropHooks<NoInfer<T>>                                                                | undefined`          | —                 | The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Tree.                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `escapeKeyBehavior`           | `"clearSelection"                                                                            | "none"              | undefined`        | 'clearSelection'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Whether pressing the escape key should clear selection in the grid list or not. Most experiences should not modify this option as it eliminates a keyboard user's ability to easily clear selection. Only use if the escape key is being handled externally or should not trigger selection clearing contextually. |
+| `expandedKeys`                | `Iterable<Key>                                                                               | undefined`          | —                 | The currently expanded keys in the collection (controlled).                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| `hidden`                      | `boolean                                                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `id`                          | `string                                                                                      | undefined`          | —                 | The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `inert`                       | `boolean                                                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `items`                       | `Iterable<T>                                                                                 | undefined`          | —                 | Item objects in the collection.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `keyboardNavigationBehavior`  | `"arrow"                                                                                     | "tab"               | undefined`        | 'arrow'                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Whether keyboard navigation to focusable elements within grid list items is via the left/right arrow keys or the tab key.                                                                                                                                                                                          |
+| `lang`                        | `string                                                                                      | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAction`                    | `((key: Key) => void)                                                                        | undefined`          | —                 | Handler that is called when a user performs an action on an item. The exact user event depends on the collection's `selectionBehavior` prop and the interaction modality.                                                                                                                                                                                                                                                                                                                                                    |
+| `onAnimationEnd`              | `React.AnimationEventHandler<HTMLDivElement>                                                 | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationEndCapture`       | `React.AnimationEventHandler<HTMLDivElement>                                                 | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationIteration`        | `React.AnimationEventHandler<HTMLDivElement>                                                 | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationIterationCapture` | `React.AnimationEventHandler<HTMLDivElement>                                                 | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationStart`            | `React.AnimationEventHandler<HTMLDivElement>                                                 | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationStartCapture`     | `React.AnimationEventHandler<HTMLDivElement>                                                 | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAuxClick`                  | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAuxClickCapture`           | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onClick`                     | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onClickCapture`              | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onContextMenu`               | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onContextMenuCapture`        | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onDoubleClick`               | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onDoubleClickCapture`        | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onExpandedChange`            | `((keys: Set<Key>) => any)                                                                   | undefined`          | —                 | Handler that is called when items are expanded or collapsed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `onGotPointerCapture`         | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onGotPointerCaptureCapture`  | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onLostPointerCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onLostPointerCaptureCapture` | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseDown`                 | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseDownCapture`          | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseEnter`                | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseLeave`                | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseMove`                 | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseMoveCapture`          | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOut`                  | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOutCapture`           | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOver`                 | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOverCapture`          | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseUp`                   | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseUpCapture`            | `React.MouseEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerCancel`             | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerCancelCapture`      | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerDown`               | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerDownCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerEnter`              | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerLeave`              | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerMove`               | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerMoveCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOut`                | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOutCapture`         | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOver`               | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOverCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerUp`                 | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerUpCapture`          | `React.PointerEventHandler<HTMLDivElement>                                                   | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onScroll`                    | `React.UIEventHandler<HTMLDivElement>                                                        | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onScrollCapture`             | `React.UIEventHandler<HTMLDivElement>                                                        | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onSelectionChange`           | `((keys: Selection) => void)                                                                 | undefined`          | —                 | Handler that is called when the selection changes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `onTouchCancel`               | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchCancelCapture`        | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchEnd`                  | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchEndCapture`           | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchMove`                 | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchMoveCapture`          | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchStart`                | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchStartCapture`         | `React.TouchEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionCancel`          | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionCancelCapture`   | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionEnd`             | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionEndCapture`      | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionRun`             | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionRunCapture`      | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionStart`           | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionStartCapture`    | `React.TransitionEventHandler<HTMLDivElement>                                                | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onWheel`                     | `React.WheelEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onWheelCapture`              | `React.WheelEventHandler<HTMLDivElement>                                                     | undefined`          | —                 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `render`                      | `DOMRenderFunction<"div", TreeRenderProps>                                                   | undefined`          | —                 | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. Requirements: - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`). - Only a single root DOM element can be rendered (no fragments). - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate. |
+| `renderEmptyState`            | `((props: TreeEmptyStateRenderProps) => ReactNode)                                           | undefined`          | —                 | Provides content to display when there are no items in the list.                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `selectedKeys`                | `"all"                                                                                       | Iterable<Key>       | undefined`        | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | The currently selected keys in the collection (controlled).                                                                                                                                                                                                                                                        |
+| `selectionBehavior`           | `SelectionBehavior                                                                           | undefined`          | 'toggle'          | How multiple selection should behave in the tree.                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `selectionMode`               | `SelectionMode                                                                               | undefined`          | —                 | The type of selection that is allowed in the collection.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `shouldSelectOnPressUp`       | `boolean                                                                                     | undefined`          | —                 | Whether selection should occur on press up instead of press down.                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| `slot`                        | `string                                                                                      | null                | undefined`        | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | A slot name for the component. Slots allow the component to receive props from a parent component. An explicit `null` value indicates that the local props completely override all props received from a parent.                                                                                                   |
+| `style`                       | `(((values: TreeRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties | React.CSSProperties | undefined))       | undefined`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | —                                                                                                                                                                                                                                                                                                                  | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |
+| `translate`                   | `"no"                                                                                        | "yes"               | undefined`        | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                                                                                                                                                                    |
 
 ### TreeItem
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `aria-label` | `string | undefined` | — | An accessibility label for this tree item. |
-| `children` | `React.ReactNode` | — | The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. |
-| `className` | `ClassNameOrFunction<TreeItemRenderProps> | undefined` | 'react-aria-TreeItem' | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. |
-| `dir` | `string | undefined` | — |  |
-| `download` | `boolean | string | undefined` | — | Causes the browser to download the linked URL. A string may be provided to suggest a file name. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download). |
-| `hasChildItems` | `boolean | undefined` | — | Whether this item has children, even if not loaded yet. |
-| `hidden` | `boolean | undefined` | — |  |
-| `href` | `string | undefined` | — | A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href). |
-| `hrefLang` | `string | undefined` | — | Hints at the human language of the linked URL. See[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#hreflang). |
-| `id` | `Key | undefined` | — | The unique id of the tree row. |
-| `inert` | `boolean | undefined` | — |  |
-| `isDisabled` | `boolean | undefined` | — | Whether the item is disabled. |
-| `lang` | `string | undefined` | — |  |
-| `onAction` | `(() => void) | undefined` | — | Handler that is called when a user performs an action on this tree item. The exact user event depends on the collection's `selectionBehavior` prop and the interaction modality. |
-| `onAnimationEnd` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationEndCapture` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationIteration` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationIterationCapture` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationStart` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAnimationStartCapture` | `React.AnimationEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAuxClick` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onAuxClickCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onClick` | `((e: React.MouseEvent<FocusableElement>) => void) | undefined` | — | **Not recommended – use `onPress` instead.** `onClick` is an alias for `onPress` provided for compatibility with other libraries. `onPress` provides additional event details for non-mouse interactions. |
-| `onClickCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onContextMenu` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onContextMenuCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onDoubleClick` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onDoubleClickCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onGotPointerCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onGotPointerCaptureCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onHoverChange` | `((isHovering: boolean) => void) | undefined` | — | Handler that is called when the hover state changes. |
-| `onHoverEnd` | `((e: HoverEvent) => void) | undefined` | — | Handler that is called when a hover interaction ends. |
-| `onHoverStart` | `((e: HoverEvent) => void) | undefined` | — | Handler that is called when a hover interaction starts. |
-| `onLostPointerCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onLostPointerCaptureCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseDown` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseDownCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseEnter` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseLeave` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseMove` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseMoveCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOut` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOutCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOver` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseOverCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseUp` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onMouseUpCapture` | `React.MouseEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerCancel` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerCancelCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerDown` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerDownCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerEnter` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerLeave` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerMove` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerMoveCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOut` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOutCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOver` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerOverCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerUp` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPointerUpCapture` | `React.PointerEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onPress` | `((e: PressEvent) => void) | undefined` | — | Handler that is called when the press is released over the target. |
-| `onPressChange` | `((isPressed: boolean) => void) | undefined` | — | Handler that is called when the press state changes. |
-| `onPressEnd` | `((e: PressEvent) => void) | undefined` | — | Handler that is called when a press interaction ends, either over the target or when the pointer leaves the target. |
-| `onPressStart` | `((e: PressEvent) => void) | undefined` | — | Handler that is called when a press interaction starts. |
-| `onPressUp` | `((e: PressEvent) => void) | undefined` | — | Handler that is called when a press is released over the target, regardless of whether it started on the target or not. |
-| `onScroll` | `React.UIEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onScrollCapture` | `React.UIEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchCancel` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchCancelCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchEnd` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchEndCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchMove` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchMoveCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchStart` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTouchStartCapture` | `React.TouchEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionCancel` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionCancelCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionEnd` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionEndCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionRun` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionRunCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionStart` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onTransitionStartCapture` | `React.TransitionEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onWheel` | `React.WheelEventHandler<HTMLDivElement> | undefined` | — |  |
-| `onWheelCapture` | `React.WheelEventHandler<HTMLDivElement> | undefined` | — |  |
-| `ping` | `string | undefined` | — | A space-separated list of URLs to ping when the link is followed. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping). |
-| `referrerPolicy` | `React.HTMLAttributeReferrerPolicy | undefined` | — | How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy). |
-| `rel` | `string | undefined` | — | The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). |
-| `render` | `DOMRenderFunction<"div", TreeItemRenderProps> | undefined` | — | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. Requirements: - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an   `<a>`). - Only a single root DOM element can be rendered (no fragments). - You must pass through props and ref to the underlying DOM element, merging with your own prop   as appropriate. |
-| `routerOptions` | `undefined` | — | Options for the configured client side router. |
-| `style` | `(((values: TreeItemRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties | React.CSSProperties | undefined)) | undefined` | — | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |
-| `target` | `React.HTMLAttributeAnchorTarget | undefined` | — | The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target). |
-| `textValue` | `string` | — | A string representation of the tree item's contents, used for features like typeahead. |
-| `translate` | `"no" | "yes" | undefined` | — |  |
-| `value` | `T | undefined` | — | The object value that this tree item represents. When using dynamic collections, this is set automatically. |
+| Name                          | Type                                                                                             | Default             | Description                                                                                                                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `aria-label`                  | `string                                                                                          | undefined`          | —                                                                                                                                                              | An accessibility label for this tree item.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `children`                    | `React.ReactNode`                                                                                | —                   | The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. |
+| `className`                   | `ClassNameOrFunction<TreeItemRenderProps>                                                        | undefined`          | 'react-aria-TreeItem'                                                                                                                                          | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.                                                                                                                                                                                                                                                                                                                                           |
+| `dir`                         | `string                                                                                          | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `download`                    | `boolean                                                                                         | string              | undefined`                                                                                                                                                     | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Causes the browser to download the linked URL. A string may be provided to suggest a file name. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download). |
+| `hasChildItems`               | `boolean                                                                                         | undefined`          | —                                                                                                                                                              | Whether this item has children, even if not loaded yet.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `hidden`                      | `boolean                                                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `href`                        | `string                                                                                          | undefined`          | —                                                                                                                                                              | A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href).                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `hrefLang`                    | `string                                                                                          | undefined`          | —                                                                                                                                                              | Hints at the human language of the linked URL. See[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#hreflang).                                                                                                                                                                                                                                                                                                                                                                                               |
+| `id`                          | `Key                                                                                             | undefined`          | —                                                                                                                                                              | The unique id of the tree row.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `inert`                       | `boolean                                                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `isDisabled`                  | `boolean                                                                                         | undefined`          | —                                                                                                                                                              | Whether the item is disabled.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `lang`                        | `string                                                                                          | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAction`                    | `(() => void)                                                                                    | undefined`          | —                                                                                                                                                              | Handler that is called when a user performs an action on this tree item. The exact user event depends on the collection's `selectionBehavior` prop and the interaction modality.                                                                                                                                                                                                                                                                                                                                             |
+| `onAnimationEnd`              | `React.AnimationEventHandler<HTMLDivElement>                                                     | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationEndCapture`       | `React.AnimationEventHandler<HTMLDivElement>                                                     | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationIteration`        | `React.AnimationEventHandler<HTMLDivElement>                                                     | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationIterationCapture` | `React.AnimationEventHandler<HTMLDivElement>                                                     | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationStart`            | `React.AnimationEventHandler<HTMLDivElement>                                                     | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAnimationStartCapture`     | `React.AnimationEventHandler<HTMLDivElement>                                                     | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAuxClick`                  | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onAuxClickCapture`           | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onClick`                     | `((e: React.MouseEvent<FocusableElement>) => void)                                               | undefined`          | —                                                                                                                                                              | **Not recommended – use `onPress` instead.** `onClick` is an alias for `onPress` provided for compatibility with other libraries. `onPress` provides additional event details for non-mouse interactions.                                                                                                                                                                                                                                                                                                                    |
+| `onClickCapture`              | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onContextMenu`               | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onContextMenuCapture`        | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onDoubleClick`               | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onDoubleClickCapture`        | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onGotPointerCapture`         | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onGotPointerCaptureCapture`  | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onHoverChange`               | `((isHovering: boolean) => void)                                                                 | undefined`          | —                                                                                                                                                              | Handler that is called when the hover state changes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `onHoverEnd`                  | `((e: HoverEvent) => void)                                                                       | undefined`          | —                                                                                                                                                              | Handler that is called when a hover interaction ends.                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `onHoverStart`                | `((e: HoverEvent) => void)                                                                       | undefined`          | —                                                                                                                                                              | Handler that is called when a hover interaction starts.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `onLostPointerCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onLostPointerCaptureCapture` | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseDown`                 | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseDownCapture`          | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseEnter`                | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseLeave`                | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseMove`                 | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseMoveCapture`          | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOut`                  | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOutCapture`           | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOver`                 | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseOverCapture`          | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseUp`                   | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onMouseUpCapture`            | `React.MouseEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerCancel`             | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerCancelCapture`      | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerDown`               | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerDownCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerEnter`              | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerLeave`              | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerMove`               | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerMoveCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOut`                | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOutCapture`         | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOver`               | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerOverCapture`        | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerUp`                 | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPointerUpCapture`          | `React.PointerEventHandler<HTMLDivElement>                                                       | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onPress`                     | `((e: PressEvent) => void)                                                                       | undefined`          | —                                                                                                                                                              | Handler that is called when the press is released over the target.                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `onPressChange`               | `((isPressed: boolean) => void)                                                                  | undefined`          | —                                                                                                                                                              | Handler that is called when the press state changes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `onPressEnd`                  | `((e: PressEvent) => void)                                                                       | undefined`          | —                                                                                                                                                              | Handler that is called when a press interaction ends, either over the target or when the pointer leaves the target.                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `onPressStart`                | `((e: PressEvent) => void)                                                                       | undefined`          | —                                                                                                                                                              | Handler that is called when a press interaction starts.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `onPressUp`                   | `((e: PressEvent) => void)                                                                       | undefined`          | —                                                                                                                                                              | Handler that is called when a press is released over the target, regardless of whether it started on the target or not.                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `onScroll`                    | `React.UIEventHandler<HTMLDivElement>                                                            | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onScrollCapture`             | `React.UIEventHandler<HTMLDivElement>                                                            | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchCancel`               | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchCancelCapture`        | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchEnd`                  | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchEndCapture`           | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchMove`                 | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchMoveCapture`          | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchStart`                | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTouchStartCapture`         | `React.TouchEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionCancel`          | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionCancelCapture`   | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionEnd`             | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionEndCapture`      | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionRun`             | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionRunCapture`      | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionStart`           | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onTransitionStartCapture`    | `React.TransitionEventHandler<HTMLDivElement>                                                    | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onWheel`                     | `React.WheelEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `onWheelCapture`              | `React.WheelEventHandler<HTMLDivElement>                                                         | undefined`          | —                                                                                                                                                              |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `ping`                        | `string                                                                                          | undefined`          | —                                                                                                                                                              | A space-separated list of URLs to ping when the link is followed. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping).                                                                                                                                                                                                                                                                                                                                                                               |
+| `referrerPolicy`              | `React.HTMLAttributeReferrerPolicy                                                               | undefined`          | —                                                                                                                                                              | How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy).                                                                                                                                                                                                                                                                                                                                                                             |
+| `rel`                         | `string                                                                                          | undefined`          | —                                                                                                                                                              | The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel).                                                                                                                                                                                                                                                                                                                                                                              |
+| `render`                      | `DOMRenderFunction<"div", TreeItemRenderProps>                                                   | undefined`          | —                                                                                                                                                              | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. Requirements: - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`). - Only a single root DOM element can be rendered (no fragments). - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate. |
+| `routerOptions`               | `undefined`                                                                                      | —                   | Options for the configured client side router.                                                                                                                 |
+| `style`                       | `(((values: TreeItemRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties | React.CSSProperties | undefined))                                                                                                                                                    | undefined`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | —                                                                                                                                                                                | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |
+| `target`                      | `React.HTMLAttributeAnchorTarget                                                                 | undefined`          | —                                                                                                                                                              | The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target).                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `textValue`                   | `string`                                                                                         | —                   | A string representation of the tree item's contents, used for features like typeahead.                                                                         |
+| `translate`                   | `"no"                                                                                            | "yes"               | undefined`                                                                                                                                                     | —                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                                                                                                                                                                  |
+| `value`                       | `T                                                                                               | undefined`          | —                                                                                                                                                              | The object value that this tree item represents. When using dynamic collections, this is set automatically.                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
 ### TreeItemContent
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ChildrenOrFunction<TreeItemContentRenderProps>` | — | The children of the component. A function may be provided to alter the children based on component state. |
+| Name       | Type                                             | Default | Description                                                                                               |
+| ---------- | ------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------- |
+| `children` | `ChildrenOrFunction<TreeItemContentRenderProps>` | —       | The children of the component. A function may be provided to alter the children based on component state. |
 
 ### TreeSection
 
@@ -1069,15 +1144,15 @@ function Example() {
 
 ### TreeLoadMoreItem
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ChildrenOrFunction<TreeLoadMoreItemRenderProps>` | — | The load more spinner to render when loading additional items. |
-| `className` | `ClassNameOrFunction<TreeLoadMoreItemRenderProps> | undefined` | 'react-aria-TreeLoadMoreItem' | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. |
-| `isLoading` | `boolean | undefined` | — | Whether or not the loading spinner should be rendered or not. |
-| `onLoadMore` | `(() => any) | undefined` | — | Handler that is called when more items should be loaded, e.g. while scrolling near the bottom. |
-| `render` | `DOMRenderFunction<"div", TreeLoadMoreItemRenderProps> | undefined` | — | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. Requirements: - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an   `<a>`). - Only a single root DOM element can be rendered (no fragments). - You must pass through props and ref to the underlying DOM element, merging with your own prop   as appropriate. |
-| `scrollOffset` | `number | undefined` | 1 | The amount of offset from the bottom of your scrollable region that should trigger load more. Uses a percentage value relative to the scroll body's client height. Load more is then triggered when your current scroll position's distance from the bottom of the currently loaded list of items is less than or equal to the provided value. (e.g. 1 = 100% of the scroll region's height). |
-| `style` | `(((values: TreeLoadMoreItemRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties | React.CSSProperties | undefined)) | undefined` | — | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |
+| Name           | Type                                                                                                     | Default             | Description                                                    |
+| -------------- | -------------------------------------------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------- |
+| `children`     | `ChildrenOrFunction<TreeLoadMoreItemRenderProps>`                                                        | —                   | The load more spinner to render when loading additional items. |
+| `className`    | `ClassNameOrFunction<TreeLoadMoreItemRenderProps>                                                        | undefined`          | 'react-aria-TreeLoadMoreItem'                                  | The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state.                                                                                                                                                                                                                                                                                                                                           |
+| `isLoading`    | `boolean                                                                                                 | undefined`          | —                                                              | Whether or not the loading spinner should be rendered or not.                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| `onLoadMore`   | `(() => any)                                                                                             | undefined`          | —                                                              | Handler that is called when more items should be loaded, e.g. while scrolling near the bottom.                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `render`       | `DOMRenderFunction<"div", TreeLoadMoreItemRenderProps>                                                   | undefined`          | —                                                              | Overrides the default DOM element with a custom render function. This allows rendering existing components with built-in styles and behaviors such as router links, animation libraries, and pre-styled components. Requirements: - You must render the expected element type (e.g. if `<button>` is expected, you cannot render an `<a>`). - Only a single root DOM element can be rendered (no fragments). - You must pass through props and ref to the underlying DOM element, merging with your own prop as appropriate. |
+| `scrollOffset` | `number                                                                                                  | undefined`          | 1                                                              | The amount of offset from the bottom of your scrollable region that should trigger load more. Uses a percentage value relative to the scroll body's client height. Load more is then triggered when your current scroll position's distance from the bottom of the currently loaded list of items is less than or equal to the provided value. (e.g. 1 = 100% of the scroll region's height).                                                                                                                                |
+| `style`        | `(((values: TreeLoadMoreItemRenderProps & { defaultStyle: React.CSSProperties; }) => React.CSSProperties | React.CSSProperties | undefined))                                                    | undefined`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | —   | The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. |
 
 ## Related Types
 
@@ -1085,29 +1160,29 @@ function Example() {
 
 `useDragAndDrop(options: DragAndDropOptions<T>): DragAndDrop<T>`
 
-Provides the hooks required to enable drag and drop behavior for a drag and drop compatible
-collection component.
+Provides the hooks required to enable drag and drop behavior for a drag and drop
+compatible collection component.
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `acceptedDragTypes` | `"all" | (string | symbol)[] | undefined` | 'all' | The drag types that the droppable collection accepts. If the collection accepts directories, include `DIRECTORY_DRAG_TYPE` in your array of allowed types. |
-| `dropTargetDelegate` | `DropTargetDelegate | undefined` | — | A custom delegate object that provides drop targets for pointer coordinates within the collection. |
-| `getAllowedDropOperations` | `(() => DropOperation[]) | undefined` | — | Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. |
-| `getDropOperation` | `((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation) | undefined` | — | A function returning the drop operation to be performed when items matching the given types are dropped on the drop target. |
-| `getItems` | `((keys: Set<Key>, items: T[]) => DragItem[]) | undefined` | () => \[] | A function that returns the items being dragged. If not specified, we assume that the collection is not draggable. |
-| `isDisabled` | `boolean | undefined` | — | Whether the drag and drop events should be disabled. |
-| `onDragEnd` | `((e: DraggableCollectionEndEvent) => void) | undefined` | — | Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation. |
-| `onDragMove` | `((e: DraggableCollectionMoveEvent) => void) | undefined` | — | Handler that is called when the drag is moved. |
-| `onDragStart` | `((e: DraggableCollectionStartEvent) => void) | undefined` | — | Handler that is called when a drag operation is started. |
-| `onDrop` | `((e: DroppableCollectionDropEvent) => void) | undefined` | — | Handler that is called when a valid drag is dropped on a drop target. When defined, this overrides other drop handlers such as `onInsert`, and `onItemDrop`. |
-| `onDropActivate` | `((e: DroppableCollectionActivateEvent) => void) | undefined` | — | Handler that is called after a valid drag is held over a drop target for a period of time. |
-| `onDropEnter` | `((e: DroppableCollectionEnterEvent) => void) | undefined` | — | Handler that is called when a valid drag enters a drop target. |
-| `onDropExit` | `((e: DroppableCollectionExitEvent) => void) | undefined` | — | Handler that is called when a valid drag exits a drop target. |
-| `onInsert` | `((e: DroppableCollectionInsertDropEvent) => void) | undefined` | — | Handler that is called when external items are dropped "between" items. |
-| `onItemDrop` | `((e: DroppableCollectionOnItemDropEvent) => void) | undefined` | — | Handler that is called when items are dropped "on" an item. |
-| `onMove` | `((e: DroppableCollectionReorderEvent) => void) | undefined` | — | Handler that is called when items are moved within the source collection. This handler allows dropping both on or between items, and items may be moved to a different parent item within a tree. |
-| `onReorder` | `((e: DroppableCollectionReorderEvent) => void) | undefined` | — | Handler that is called when items are reordered within the collection. This handler only allows dropping between items, not on items. It does not allow moving items to a different parent item within a tree. |
-| `onRootDrop` | `((e: DroppableCollectionRootDropEvent) => void) | undefined` | — | Handler that is called when external items are dropped on the droppable collection's root. |
-| `renderDragPreview` | `((items: DragItem[]) => JSX.Element | { element: JSX.Element; x: number; y: number; }) | undefined` | — | A function that renders a drag preview, which is shown under the user's cursor while dragging. By default, a copy of the dragged element is rendered. |
-| `renderDropIndicator` | `((target: DropTarget) => JSX.Element) | undefined` | — | A function that renders a drop indicator element between two items in a collection. This should render a `<DropIndicator>` element. If this function is not provided, a default DropIndicator is provided. |
-| `shouldAcceptItemDrop` | `((target: ItemDropTarget, types: DragTypes) => boolean) | undefined` | — | A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types. |
+| Name                       | Type                                                                                           | Default                                          | Description |
+| -------------------------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------ | ----------- |
+| `acceptedDragTypes`        | `"all"                                                                                         | (string                                          | symbol)[]   | undefined`                                                                                                                                                                                                     | 'all'                                                                                                                                                 | The drag types that the droppable collection accepts. If the collection accepts directories, include `DIRECTORY_DRAG_TYPE` in your array of allowed types. |
+| `dropTargetDelegate`       | `DropTargetDelegate                                                                            | undefined`                                       | —           | A custom delegate object that provides drop targets for pointer coordinates within the collection.                                                                                                             |
+| `getAllowedDropOperations` | `(() => DropOperation[])                                                                       | undefined`                                       | —           | Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed.                                                                            |
+| `getDropOperation`         | `((target: DropTarget, types: DragTypes, allowedOperations: DropOperation[]) => DropOperation) | undefined`                                       | —           | A function returning the drop operation to be performed when items matching the given types are dropped on the drop target.                                                                                    |
+| `getItems`                 | `((keys: Set<Key>, items: T[]) => DragItem[])                                                  | undefined`                                       | () => \[]   | A function that returns the items being dragged. If not specified, we assume that the collection is not draggable.                                                                                             |
+| `isDisabled`               | `boolean                                                                                       | undefined`                                       | —           | Whether the drag and drop events should be disabled.                                                                                                                                                           |
+| `onDragEnd`                | `((e: DraggableCollectionEndEvent) => void)                                                    | undefined`                                       | —           | Handler that is called when the drag operation is ended, either as a result of a drop or a cancellation.                                                                                                       |
+| `onDragMove`               | `((e: DraggableCollectionMoveEvent) => void)                                                   | undefined`                                       | —           | Handler that is called when the drag is moved.                                                                                                                                                                 |
+| `onDragStart`              | `((e: DraggableCollectionStartEvent) => void)                                                  | undefined`                                       | —           | Handler that is called when a drag operation is started.                                                                                                                                                       |
+| `onDrop`                   | `((e: DroppableCollectionDropEvent) => void)                                                   | undefined`                                       | —           | Handler that is called when a valid drag is dropped on a drop target. When defined, this overrides other drop handlers such as `onInsert`, and `onItemDrop`.                                                   |
+| `onDropActivate`           | `((e: DroppableCollectionActivateEvent) => void)                                               | undefined`                                       | —           | Handler that is called after a valid drag is held over a drop target for a period of time.                                                                                                                     |
+| `onDropEnter`              | `((e: DroppableCollectionEnterEvent) => void)                                                  | undefined`                                       | —           | Handler that is called when a valid drag enters a drop target.                                                                                                                                                 |
+| `onDropExit`               | `((e: DroppableCollectionExitEvent) => void)                                                   | undefined`                                       | —           | Handler that is called when a valid drag exits a drop target.                                                                                                                                                  |
+| `onInsert`                 | `((e: DroppableCollectionInsertDropEvent) => void)                                             | undefined`                                       | —           | Handler that is called when external items are dropped "between" items.                                                                                                                                        |
+| `onItemDrop`               | `((e: DroppableCollectionOnItemDropEvent) => void)                                             | undefined`                                       | —           | Handler that is called when items are dropped "on" an item.                                                                                                                                                    |
+| `onMove`                   | `((e: DroppableCollectionReorderEvent) => void)                                                | undefined`                                       | —           | Handler that is called when items are moved within the source collection. This handler allows dropping both on or between items, and items may be moved to a different parent item within a tree.              |
+| `onReorder`                | `((e: DroppableCollectionReorderEvent) => void)                                                | undefined`                                       | —           | Handler that is called when items are reordered within the collection. This handler only allows dropping between items, not on items. It does not allow moving items to a different parent item within a tree. |
+| `onRootDrop`               | `((e: DroppableCollectionRootDropEvent) => void)                                               | undefined`                                       | —           | Handler that is called when external items are dropped on the droppable collection's root.                                                                                                                     |
+| `renderDragPreview`        | `((items: DragItem[]) => JSX.Element                                                           | { element: JSX.Element; x: number; y: number; }) | undefined`  | —                                                                                                                                                                                                              | A function that renders a drag preview, which is shown under the user's cursor while dragging. By default, a copy of the dragged element is rendered. |
+| `renderDropIndicator`      | `((target: DropTarget) => JSX.Element)                                                         | undefined`                                       | —           | A function that renders a drop indicator element between two items in a collection. This should render a `<DropIndicator>` element. If this function is not provided, a default DropIndicator is provided.     |
+| `shouldAcceptItemDrop`     | `((target: ItemDropTarget, types: DragTypes) => boolean)                                       | undefined`                                       | —           | A function returning whether a given target in the droppable collection is a valid "on" drop target for the current drag types.                                                                                |

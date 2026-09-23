@@ -1,11 +1,13 @@
 # draw-io Scripts
 
-Utility scripts for working with `.drawio` diagram files in the cxp-bu-order-ms project.
+Utility scripts for working with `.drawio` diagram files in the cxp-bu-order-ms
+project.
 
 ## Requirements
 
 - Python 3.8+
-- No external dependencies (uses standard library only: `xml.etree.ElementTree`, `argparse`, `json`, `sys`, `pathlib`)
+- No external dependencies (uses standard library only: `xml.etree.ElementTree`,
+  `argparse`, `json`, `sys`, `pathlib`)
 
 ## Scripts
 
@@ -31,14 +33,14 @@ for f in docs/**/*.drawio; do python scripts/validate-drawio.py "$f"; done
 
 **Checks performed**
 
-| Check | Description |
-|-------|-------------|
-| Root cells | Verifies id="0" and id="1" cells are present in every diagram page |
-| Unique IDs | All `mxCell` id values are unique within a diagram |
-| Edge connectivity | Every edge has valid `source` and `target` attributes pointing to existing cells |
-| Geometry | Every vertex cell has an `mxGeometry` child element |
-| Parent chain | Every cell's `parent` attribute references an existing cell id |
-| XML well-formedness | File is valid XML |
+| Check               | Description                                                                      |
+| ------------------- | -------------------------------------------------------------------------------- |
+| Root cells          | Verifies id="0" and id="1" cells are present in every diagram page               |
+| Unique IDs          | All `mxCell` id values are unique within a diagram                               |
+| Edge connectivity   | Every edge has valid `source` and `target` attributes pointing to existing cells |
+| Geometry            | Every vertex cell has an `mxGeometry` child element                              |
+| Parent chain        | Every cell's `parent` attribute references an existing cell id                   |
+| XML well-formedness | File is valid XML                                                                |
 
 **Exit codes**
 
@@ -59,22 +61,22 @@ python scripts/add-shape.py <diagram.drawio> <label> <x> <y> [options]
 
 **Arguments**
 
-| Argument | Required | Description |
-|----------|----------|-------------|
-| `diagram` | Yes | Path to the `.drawio` file |
-| `label` | Yes | Text label for the new shape |
-| `x` | Yes | X coordinate (pixels from top-left) |
-| `y` | Yes | Y coordinate (pixels from top-left) |
+| Argument  | Required | Description                         |
+| --------- | -------- | ----------------------------------- |
+| `diagram` | Yes      | Path to the `.drawio` file          |
+| `label`   | Yes      | Text label for the new shape        |
+| `x`       | Yes      | X coordinate (pixels from top-left) |
+| `y`       | Yes      | Y coordinate (pixels from top-left) |
 
 **Options**
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `--width` | `120` | Shape width in pixels |
-| `--height` | `60` | Shape height in pixels |
-| `--style` | `"rounded=1;whiteSpace=wrap;html=1;"` | draw.io style string |
-| `--diagram-index` | `0` | Index of the diagram page (0-based) |
-| `--dry-run` | false | Print the new cell XML without modifying the file |
+| Option            | Default                               | Description                                       |
+| ----------------- | ------------------------------------- | ------------------------------------------------- |
+| `--width`         | `120`                                 | Shape width in pixels                             |
+| `--height`        | `60`                                  | Shape height in pixels                            |
+| `--style`         | `"rounded=1;whiteSpace=wrap;html=1;"` | draw.io style string                              |
+| `--diagram-index` | `0`                                   | Index of the diagram page (0-based)               |
+| `--dry-run`       | false                                 | Print the new cell XML without modifying the file |
 
 **Examples**
 
@@ -94,6 +96,7 @@ python scripts/add-shape.py docs/architecture.drawio "Service X" 600 200 --dry-r
 **Output**
 
 Prints the new cell id on success:
+
 ```
 Added shape id="auto_abc123" to page 0 of docs/flowchart.drawio
 ```

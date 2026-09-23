@@ -7,7 +7,8 @@ tags: api-routes, server-actions, waterfalls, parallelization
 
 ## Prevent Waterfall Chains in API Routes
 
-In API routes and Server Actions, start independent operations immediately, even if you don't await them yet.
+In API routes and Server Actions, start independent operations immediately, even
+if you don't await them yet.
 
 **Incorrect (config waits for auth, data waits for both):**
 
@@ -35,4 +36,5 @@ export async function GET(request: Request) {
 }
 ```
 
-For operations with more complex dependency chains, use `better-all` to automatically maximize parallelism (see Dependency-Based Parallelization).
+For operations with more complex dependency chains, use `better-all` to
+automatically maximize parallelism (see Dependency-Based Parallelization).

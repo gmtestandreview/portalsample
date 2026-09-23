@@ -1,10 +1,12 @@
 # N+1 Query Review Guide
 
-Use this guide when reviewing ORM usage, database access in loops, GraphQL resolvers, API composition, or any code that loads related data.
+Use this guide when reviewing ORM usage, database access in loops, GraphQL
+resolvers, API composition, or any code that loads related data.
 
 ## Definition
 
-An N+1 query pattern performs one query to load a collection, then performs one additional query per item to load related data.
+An N+1 query pattern performs one query to load a collection, then performs one
+additional query per item to load related data.
 
 ```text
 1 query      load N parent rows
@@ -33,7 +35,8 @@ This is often invisible in development data and painful in production data.
 ## Preferred Fixes
 
 - Use eager loading for required relations.
-- Use batched `WHERE id IN (...)` queries for many-to-many or large related sets.
+- Use batched `WHERE id IN (...)` queries for many-to-many or large related
+  sets.
 - Use projection to fetch only needed fields.
 - Use DataLoader-style batching for GraphQL and graph-shaped access.
 - Add pagination or limits before loading related data.
@@ -46,7 +49,8 @@ This is often invisible in development data and painful in production data.
 - [ ] Large lists are paginated before relations are loaded.
 - [ ] Serializers and templates do not trigger lazy loads accidentally.
 - [ ] Query-count tests or traces cover the changed path when risk is high.
-- [ ] Projections avoid fetching entire entities when only a few fields are needed.
+- [ ] Projections avoid fetching entire entities when only a few fields are
+      needed.
 
 ## Common Finding
 

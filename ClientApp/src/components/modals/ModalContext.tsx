@@ -1,21 +1,21 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
 
 export interface ModalState {
-	showBranchSelector: boolean;
-	showRFQDeleteModal: boolean;
-	branchSelectionModalMode?: string;
-	callingPath?: string;
-	rfqId?: string;
+  showBranchSelector: boolean;
+  showRFQDeleteModal: boolean;
+  branchSelectionModalMode?: string;
+  callingPath?: string;
+  rfqId?: string;
 }
 
 export interface ModalDispatch {
-	setShowBranchSelector: (show: boolean) => void;
-	setShowRFQDeleteModal: (show: boolean, rfqId: string) => void;
-	setShowRFQSelectModal: (
-		show: boolean,
-		rfqId: string,
-		callingPath: string,
-	) => void;
+  setShowBranchSelector: (show: boolean) => void;
+  setShowRFQDeleteModal: (show: boolean, rfqId: string) => void;
+  setShowRFQSelectModal: (
+    show: boolean,
+    rfqId: string,
+    callingPath: string
+  ) => void;
 }
 
 export const ModalStateCtx = createContext<ModalState | null>(null);

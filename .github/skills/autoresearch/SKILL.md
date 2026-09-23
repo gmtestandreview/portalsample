@@ -1,8 +1,19 @@
 ---
 name: autoresearch
-description: 'Autonomous iterative experimentation loop for any programming task. Guides the user through defining goals, measurable metrics, and scope constraints, then runs an autonomous loop of code changes, testing, measuring, and keeping/discarding results. Inspired by Karpathy''s autoresearch. USE FOR: autonomous improvement, iterative optimization, experiment loop, auto research, performance tuning, automated experimentation, hill climbing, try things automatically, optimize code, run experiments, autonomous coding loop. DO NOT USE FOR: one-shot tasks, simple bug fixes, code review, or tasks without a measurable metric.'
+description:
+  "Autonomous iterative experimentation loop for any programming task. Guides
+  the user through defining goals, measurable metrics, and scope constraints,
+  then runs an autonomous loop of code changes, testing, measuring, and
+  keeping/discarding results. Inspired by Karpathy's autoresearch. USE FOR:
+  autonomous improvement, iterative optimization, experiment loop, auto
+  research, performance tuning, automated experimentation, hill climbing, try
+  things automatically, optimize code, run experiments, autonomous coding loop.
+  DO NOT USE FOR: one-shot tasks, simple bug fixes, code review, or tasks
+  without a measurable metric."
 license: MIT
-compatibility: Requires git. The project must be a git repository. Requires terminal access to run commands.
+compatibility:
+  Requires git. The project must be a git repository. Requires terminal access
+  to run commands.
 metadata:
   author: luiscantero
   inspired-by: https://github.com/karpathy/autoresearch
@@ -10,31 +21,42 @@ metadata:
 
 # Autoresearch: Autonomous Iterative Experimentation
 
-An autonomous experimentation loop for any programming task. You define the goal and how to measure it; the agent iterates autonomously -- modifying code, running experiments, measuring results, and keeping or discarding changes -- until interrupted.
+An autonomous experimentation loop for any programming task. You define the goal
+and how to measure it; the agent iterates autonomously -- modifying code,
+running experiments, measuring results, and keeping or discarding changes --
+until interrupted.
 
-This skill is inspired by [Karpathy's autoresearch](https://github.com/karpathy/autoresearch), generalized from ML training to **any programming task with a measurable outcome**.
+This skill is inspired by
+[Karpathy's autoresearch](https://github.com/karpathy/autoresearch), generalized
+from ML training to **any programming task with a measurable outcome**.
 
 ---
 
 ## Agent Behavior Rules
 
-1. **DO** guide the user through the Setup phase interactively before starting the loop.
+1. **DO** guide the user through the Setup phase interactively before starting
+   the loop.
 2. **DO** establish a baseline measurement before making any changes.
-3. **DO** commit every experiment attempt before running it (so it can be reverted cleanly).
+3. **DO** commit every experiment attempt before running it (so it can be
+   reverted cleanly).
 4. **DO** keep a results log (TSV) tracking every experiment.
-5. **DO** revert changes that do not improve the metric (git reset to last known good).
-6. **DO** run autonomously once the loop starts -- never pause to ask "should I continue?".
+5. **DO** revert changes that do not improve the metric (git reset to last known
+   good).
+6. **DO** run autonomously once the loop starts -- never pause to ask "should I
+   continue?".
 7. **DO NOT** modify files the user marked as out-of-scope.
 8. **DO NOT** skip the measurement step -- every experiment must be measured.
-9. **DO NOT** keep changes that regress the metric unless the user explicitly allowed trade-offs.
-10. **DO NOT** install new dependencies or make environment changes unless the user approved it.
+9. **DO NOT** keep changes that regress the metric unless the user explicitly
+   allowed trade-offs.
+10. **DO NOT** install new dependencies or make environment changes unless the
+    user approved it.
 
 ---
 
 ## Phase 1: Setup (Interactive)
 
-Before any experimentation begins, work with the user to establish these parameters.
-Ask the user directly for each item. Do not assume or skip any.
+Before any experimentation begins, work with the user to establish these
+parameters. Ask the user directly for each item. Do not assume or skip any.
 
 ### 1.1 Define the Goal
 
@@ -42,9 +64,9 @@ Ask the user:
 
 > **What are you trying to improve or optimize?**
 >
-> Examples: execution time, memory usage, binary size, test pass rate, code coverage,
-> API response latency, throughput, error rate, benchmark score, build time, bundle size,
-> lines of code, cyclomatic complexity, etc.
+> Examples: execution time, memory usage, binary size, test pass rate, code
+> coverage, API response latency, throughput, error rate, benchmark score, build
+> time, bundle size, lines of code, cyclomatic complexity, etc.
 
 Record the user's answer as the **goal**.
 
@@ -55,14 +77,19 @@ Ask the user:
 > **How do we measure success? What exact command produces the metric?**
 >
 > I need:
-> 1. **The command** to run (e.g., `dotnet test`, `npm run benchmark`, `time ./build.sh`, `pytest --tb=short`)
-> 2. **How to extract the metric** from the output (e.g., a regex pattern, a specific line, a JSON field)
+>
+> 1. **The command** to run (e.g., `dotnet test`, `npm run benchmark`,
+>    `time ./build.sh`, `pytest --tb=short`)
+> 2. **How to extract the metric** from the output (e.g., a regex pattern, a
+>    specific line, a JSON field)
 > 3. **Direction**: Is lower better or higher better?
 >
-> Example: "Run `dotnet test --logger trx`, count passing tests. Higher is better."
-> Example: "Run `hyperfine './my-program'`, extract mean time. Lower is better."
+> Example: "Run `dotnet test --logger trx`, count passing tests. Higher is
+> better." Example: "Run `hyperfine './my-program'`, extract mean time. Lower is
+> better."
 
 Record:
+
 - `METRIC_COMMAND`: the command to run
 - `METRIC_EXTRACTION`: how to extract the numeric metric from output
 - `METRIC_DIRECTION`: `lower_is_better` or `higher_is_better`
@@ -76,6 +103,7 @@ Ask the user:
 > And which files are OFF LIMITS (read-only)?
 
 Record:
+
 - `IN_SCOPE_FILES`: files/dirs the agent may edit
 - `OUT_OF_SCOPE_FILES`: files/dirs that must not be modified
 
@@ -86,6 +114,7 @@ Ask the user:
 > **Are there any constraints I should respect?**
 >
 > Examples:
+>
 > - Time budget per experiment (e.g., "each run should take < 2 minutes")
 > - No new dependencies
 > - Must keep all existing tests passing
@@ -100,9 +129,11 @@ Record as `CONSTRAINTS`.
 
 Ask the user:
 
-> **How many experiments should I run, or should I just keep going until you stop me?**
+> **How many experiments should I run, or should I just keep going until you
+> stop me?**
 >
-> You can say a number (e.g., "try 20 experiments") or "unlimited" (I'll run until you interrupt).
+> You can say a number (e.g., "try 20 experiments") or "unlimited" (I'll run
+> until you interrupt).
 
 Record as `MAX_EXPERIMENTS` (number or `unlimited`).
 
@@ -110,10 +141,11 @@ Record as `MAX_EXPERIMENTS` (number or `unlimited`).
 
 Inform the user of the default simplicity policy:
 
-> **Simplicity policy (default):** All else being equal, simpler is better. A small improvement
-> that adds ugly complexity is not worth it. Removing code while maintaining or improving
-> the metric is a great outcome. I'll weigh the complexity cost against the improvement
-> magnitude. Does this policy work for you, or do you want to adjust it?
+> **Simplicity policy (default):** All else being equal, simpler is better. A
+> small improvement that adds ugly complexity is not worth it. Removing code
+> while maintaining or improving the metric is a great outcome. I'll weigh the
+> complexity cost against the improvement magnitude. Does this policy work for
+> you, or do you want to adjust it?
 
 Record any adjustments as `SIMPLICITY_POLICY`.
 
@@ -141,29 +173,37 @@ Ask the user to confirm. Do not proceed until confirmed.
 
 Once the user confirms:
 
-1. **Create a branch**: Propose a tag based on today's date (e.g., `autoresearch/mar17`).
-   Create the branch: `git checkout -b autoresearch/<tag>`.
+1. **Create a branch**: Propose a tag based on today's date (e.g.,
+   `autoresearch/mar17`). Create the branch:
+   `git checkout -b autoresearch/<tag>`.
 
-2. **Read in-scope files**: Read all files that are in scope to build full context of the current state.
+2. **Read in-scope files**: Read all files that are in scope to build full
+   context of the current state.
 
-3. **Initialize results.tsv**: Create `results.tsv` in the repo root with the header row:
+3. **Initialize results.tsv**: Create `results.tsv` in the repo root with the
+   header row:
+
    ```
    experiment	commit	metric	status	description
    ```
-   Add `results.tsv` and `run.log` to `.git/info/exclude` (append if not already present) so they stay untracked without modifying any tracked files.
 
-4. **Run the baseline**: Execute the metric command on the current unmodified code.
-   Record the result as experiment `0` with status `baseline` in `results.tsv`.
+   Add `results.tsv` and `run.log` to `.git/info/exclude` (append if not already
+   present) so they stay untracked without modifying any tracked files.
+
+4. **Run the baseline**: Execute the metric command on the current unmodified
+   code. Record the result as experiment `0` with status `baseline` in
+   `results.tsv`.
 
 5. **Report baseline** to the user:
-   > Baseline established: **[metric_name] = [value]**
-   > Starting autonomous experimentation loop.
+   > Baseline established: **[metric_name] = [value]** Starting autonomous
+   > experimentation loop.
 
 ---
 
 ## Phase 3: Experiment Loop
 
 Run this loop continuously. Do not stop to ask the user. Run until:
+
 - `MAX_EXPERIMENTS` is reached, OR
 - The user manually interrupts
 
@@ -213,17 +253,25 @@ LOOP:
 When generating experiment ideas, follow this priority order:
 
 1. **Low-hanging fruit first**: Simple parameter tweaks, obvious inefficiencies.
-2. **Informed by results**: If a direction showed promise, explore further in that direction.
-3. **Diversify after plateaus**: If the last 3-5 experiments all failed, try a different approach entirely.
-4. **Combine winners**: If experiments A and B each improved independently, try combining them.
-5. **Simplification passes**: Periodically try removing code/complexity to see if the metric holds.
-6. **Radical changes**: After exhausting incremental ideas, try larger architectural changes.
+2. **Informed by results**: If a direction showed promise, explore further in
+   that direction.
+3. **Diversify after plateaus**: If the last 3-5 experiments all failed, try a
+   different approach entirely.
+4. **Combine winners**: If experiments A and B each improved independently, try
+   combining them.
+5. **Simplification passes**: Periodically try removing code/complexity to see
+   if the metric holds.
+6. **Radical changes**: After exhausting incremental ideas, try larger
+   architectural changes.
 
 ### Handling Constraints
 
-- **Time budget**: If a run exceeds 2x the expected duration, kill it and treat as a crash.
-- **Existing tests**: If constraints require tests to pass, run them before/after and revert if they break.
-- **Memory/resources**: Monitor and revert if resource usage exceeds stated limits.
+- **Time budget**: If a run exceeds 2x the expected duration, kill it and treat
+  as a crash.
+- **Existing tests**: If constraints require tests to pass, run them
+  before/after and revert if they break.
+- **Memory/resources**: Monitor and revert if resource usage exceeds stated
+  limits.
 
 ---
 
@@ -240,7 +288,9 @@ When the loop ends (budget reached or user interrupts):
    - Top 3 most impactful changes
 3. **Show the cumulative git log** of kept experiments:
    `git log --oneline <start_commit>..HEAD`
-4. **Recommend next steps**: Based on the results, suggest what a human researcher might try next (ideas that were too risky/complex for automated experimentation).
+4. **Recommend next steps**: Based on the results, suggest what a human
+   researcher might try next (ideas that were too risky/complex for automated
+   experimentation).
 
 ---
 

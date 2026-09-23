@@ -20,8 +20,8 @@ graders:
     name: no-audit-execution
     config:
       not_contains:
-        - "skill-duplication-audit complete."
-        - "Pairs evaluated:"
+        - 'skill-duplication-audit complete.'
+        - 'Pairs evaluated:'
   - type: behavior
     name: decline-brevity
     config:

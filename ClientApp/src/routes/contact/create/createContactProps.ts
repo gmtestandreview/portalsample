@@ -1,61 +1,61 @@
 import type {
-	AccountInfo,
-	IPublicClientApplication,
-} from "@azure/msal-browser";
+  AccountInfo,
+  IPublicClientApplication,
+} from '@azure/msal-browser';
 import type {
-	ContactFormStep,
-	FormStepStatusDto,
-} from "../../../api/web-api-client.ts";
-import type { AccountContextState } from "../../../authentication/accountContext.tsx";
-import type { DiscardProps } from "../../../components/forms/FormikForm/types.ts";
+  ContactFormStep,
+  FormStepStatusDto,
+} from '../../../api/web-api-client.ts';
+import type { AccountContextState } from '../../../authentication/accountContext.tsx';
+import type { DiscardProps } from '../../../components/forms/FormikForm/types.ts';
 import type {
-	ErrorType,
-	WizardStepProps,
-} from "../../../components/forms/WizardForm/types.ts";
+  ErrorType,
+  WizardStepProps,
+} from '../../../components/forms/WizardForm/types.ts';
 import {
-	completeContactDetails,
-	loadContactDetails,
-} from "../contactWizardStepProps.ts";
-import contactSubmitValidation from "../validation.ts";
+  completeContactDetails,
+  loadContactDetails,
+} from '../contactWizardStepProps.ts';
+import contactSubmitValidation from '../validation.ts';
 
 const discardChanges: DiscardProps = {
-	cancelButtonTitle: "Cancel",
-	discardButtonTitle: "Cancel",
-	showCancelButton: true,
-	locationOnDiscard: "/sign-out",
+  cancelButtonTitle: 'Cancel',
+  discardButtonTitle: 'Cancel',
+  showCancelButton: true,
+  locationOnDiscard: '/sign-out',
 };
 
 const getRedirectionLocationOnError = (
-	errorCode: number,
-	_errorType: ErrorType,
+  errorCode: number,
+  _errorType: ErrorType
 ) => {
-	if (errorCode === 412) {
-		return "/";
-	}
+  if (errorCode === 412) {
+    return '/';
+  }
 };
 
 const createContactProps = (
-	accounts: AccountInfo[],
-	instance: IPublicClientApplication,
-	statuses: FormStepStatusDto[],
-	accountContext: AccountContextState | null,
-	_contactId: number,
+  accounts: AccountInfo[],
+  instance: IPublicClientApplication,
+  statuses: FormStepStatusDto[],
+  accountContext: AccountContextState | null,
+  _contactId: number
 ): WizardStepProps<ContactFormStep> => ({
-	initialValues: {},
-	stepStatuses: statuses,
-	loadStepValues: loadContactDetails(accounts, instance),
-	location: "/",
-	title: "My contact details",
-	hidingFields: {
-		contact: {
-			titleOther: (x: ContactFormStep) => x.contact?.title !== "Other",
-		},
-	},
-	validateHard: contactSubmitValidation,
-	onSaveAndNext: completeContactDetails(accounts, instance, accountContext),
-	bannerTitle: "Create portal account",
-	discard: discardChanges,
-	getRedirectionLocationOnError,
+  initialValues: {},
+  stepStatuses: statuses,
+  loadStepValues: loadContactDetails(accounts, instance),
+  location: '/',
+  title: 'My contact details',
+  hidingFields: {
+    contact: {
+      titleOther: (x: ContactFormStep) => x.contact?.title !== 'Other',
+    },
+  },
+  validateHard: contactSubmitValidation,
+  onSaveAndNext: completeContactDetails(accounts, instance, accountContext),
+  bannerTitle: 'Create portal account',
+  discard: discardChanges,
+  getRedirectionLocationOnError,
 });
 
 export default createContactProps;

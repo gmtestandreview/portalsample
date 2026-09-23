@@ -1,12 +1,15 @@
 ---
-description: 'Color usage guidelines and styling rules for HTML elements to ensure accessible, professional designs.'
+description:
+  'Color usage guidelines and styling rules for HTML elements to ensure
+  accessible, professional designs.'
 applyTo: '**/*.html, **/*.css, **/*.js'
 ---
 
 # HTML CSS Style Color Guide
 
-Follow these guidelines when updating or creating HTML/CSS styles for browser rendering. Color names
-represent the full spectrum of their respective hue ranges (e.g., "blue" includes navy, sky blue, etc.).
+Follow these guidelines when updating or creating HTML/CSS styles for browser
+rendering. Color names represent the full spectrum of their respective hue
+ranges (e.g., "blue" includes navy, sky blue, etc.).
 
 ## Color Definitions
 
@@ -15,14 +18,14 @@ represent the full spectrum of their respective hue ranges (e.g., "blue" include
 - **Neutral Colors**: Grays and grayscale variations
 - **Binary Colors**: Black and white
 - **60-30-10 Rule**
-  - **Primary Color**: Use 60% of the time (*cool or light color*)
-  - **Secondary Color**: Use 30% of the time (*cool or light color*)
-  - **Accent**: Use 10% of the time (*complementary hot color*)
+  - **Primary Color**: Use 60% of the time (_cool or light color_)
+  - **Secondary Color**: Use 30% of the time (_cool or light color_)
+  - **Accent**: Use 10% of the time (_complementary hot color_)
 
 ## Color Usage Guidelines
 
-Balance the colors used by applying the **60-30-10 rule** to graphic design elements like backgrounds,
-buttons, cards, etc...
+Balance the colors used by applying the **60-30-10 rule** to graphic design
+elements like backgrounds, buttons, cards, etc...
 
 ### Background Colors
 
@@ -79,7 +82,8 @@ Unless explicitly required by design specifications or user request, avoid:
 
 ## Gradients
 
-Apply gradients with subtle color transitions to maintain professional aesthetics.
+Apply gradients with subtle color transitions to maintain professional
+aesthetics.
 
 ### Best Practices
 

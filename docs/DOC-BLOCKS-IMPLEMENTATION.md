@@ -2,7 +2,10 @@
 
 ## 📚 Overview
 
-Doc Blocks are reusable MDX components from `@storybook/addon-docs/blocks` that enable building rich, customizable component documentation pages. They provide a structured way to create professional documentation without manually writing HTML.
+Doc Blocks are reusable MDX components from `@storybook/addon-docs/blocks` that
+enable building rich, customizable component documentation pages. They provide a
+structured way to create professional documentation without manually writing
+HTML.
 
 ---
 
@@ -19,7 +22,8 @@ Three custom documentation pages using Doc Blocks:
 ### 2. **Configuration Updated** ✅
 
 - **`.storybook/main.ts`** — Added glob pattern to discover `.docs.mdx` files
-- Pattern: `'../static/js/**/*(docs|Docs).mdx'` — Finds component documentation files
+- Pattern: `'../static/js/**/*(docs|Docs).mdx'` — Finds component documentation
+  files
 
 ### 3. **Tests Validated** ✅
 
@@ -33,30 +37,30 @@ Three custom documentation pages using Doc Blocks:
 
 ### Core Blocks
 
-| Block | Purpose | Use Case |
-| ------- | --------- | ---------- |
-| **Meta** | Links MDX file to story file | Attach documentation to component |
-| **Title** | Main page heading | Component name |
-| **Subtitle** | Secondary heading | Component tagline |
-| **Description** | Component description from JSDoc | Auto-populated from comments |
-| **Primary** | Shows first/primary story | Main use case example |
-| **Canvas** | Story + preview + source code | Individual story with toolbar |
-| **Controls** | Interactive props table | Live editing of props |
-| **Stories** | Gallery of all stories | Show all component variants |
-| **Story** | Single story display | Specific variant showcase |
-| **Source** | Source code snippet | Code example display |
-| **ArgTypes** | Props documentation table | Component API reference |
+| Block           | Purpose                          | Use Case                          |
+| --------------- | -------------------------------- | --------------------------------- |
+| **Meta**        | Links MDX file to story file     | Attach documentation to component |
+| **Title**       | Main page heading                | Component name                    |
+| **Subtitle**    | Secondary heading                | Component tagline                 |
+| **Description** | Component description from JSDoc | Auto-populated from comments      |
+| **Primary**     | Shows first/primary story        | Main use case example             |
+| **Canvas**      | Story + preview + source code    | Individual story with toolbar     |
+| **Controls**    | Interactive props table          | Live editing of props             |
+| **Stories**     | Gallery of all stories           | Show all component variants       |
+| **Story**       | Single story display             | Specific variant showcase         |
+| **Source**      | Source code snippet              | Code example display              |
+| **ArgTypes**    | Props documentation table        | Component API reference           |
 
 ### Specialized Blocks
 
-| Block | Purpose |
-| ------- | --------- |
+| Block                        | Purpose                     |
+| ---------------------------- | --------------------------- |
 | **ColorPalette / ColorItem** | Design tokens documentation |
-| **IconGallery / IconItem** | Icon library documentation |
-| **TableOfContents** | Navigation sidebar |
-| **Typeset** | Font/typography showcase |
-| **Markdown** | Import external markdown |
-| **Unstyled** | Disable default styling |
+| **IconGallery / IconItem**   | Icon library documentation  |
+| **TableOfContents**          | Navigation sidebar          |
+| **Typeset**                  | Font/typography showcase    |
+| **Markdown**                 | Import external markdown    |
+| **Unstyled**                 | Disable default styling     |
 
 ---
 
@@ -65,7 +69,13 @@ Three custom documentation pages using Doc Blocks:
 ### Pattern 1: Basic Structure
 
 ```mdx
-import { Meta, Title, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import {
+  Meta,
+  Title,
+  Primary,
+  Controls,
+  Stories,
+} from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Component.stories';
 
 <Meta of={ComponentStories} />
@@ -110,7 +120,7 @@ import * as ComponentStories from './Component.stories';
 
 ### Pattern 3: Combining Text & Code
 
-```mdx
+````mdx
 import { Meta, Primary, Controls } from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Component.stories';
 
@@ -126,8 +136,9 @@ import * as ComponentStories from './Component.stories';
 ### Code Example
 
 ```tsx
-<Component prop1="value">Content</Component>
+<Component prop1='value'>Content</Component>
 ```
+````
 
 <Controls />
 ```
@@ -292,7 +303,13 @@ When you open Storybook at <http://localhost:6009/>, the sidebar shows:
 Create a new file in component directory: `Component.docs.mdx`
 
 ```mdx
-import { Meta, Title, Primary, Controls, Stories } from '@storybook/addon-docs/blocks';
+import {
+  Meta,
+  Title,
+  Primary,
+  Controls,
+  Stories,
+} from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Component.stories';
 
 <Meta of={ComponentStories} />
@@ -315,10 +332,18 @@ Description and content...
 Always import from `'@storybook/addon-docs/blocks'`:
 
 ```mdx
-import { 
-  Meta, Title, Subtitle, Description,
-  Primary, Controls, Canvas, Story, Stories,
-  Source, ArgTypes
+import {
+  Meta,
+  Title,
+  Subtitle,
+  Description,
+  Primary,
+  Controls,
+  Canvas,
+  Story,
+  Stories,
+  Source,
+  ArgTypes,
 } from '@storybook/addon-docs/blocks';
 ```
 
@@ -336,19 +361,19 @@ import * as ComponentStories from './Component.stories';
 Use any combination of Doc Blocks:
 
 ```mdx
-<Title />           {/* Component name */}
-<Primary />         {/* First story */}
-<Stories />         {/* All variants */}
-<Controls />        {/* Props editor */}
-<Canvas />          {/* Individual story */}
-<Source />          {/* Code snippet */}
+<Title /> {/* Component name */}
+<Primary /> {/* First story */}
+<Stories /> {/* All variants */}
+<Controls /> {/* Props editor */}
+<Canvas /> {/* Individual story */}
+<Source /> {/* Code snippet */}
 ```
 
 ### Step 5: Add Markdown Content
 
 Mix Doc Blocks with regular Markdown:
 
-```mdx
+````mdx
 # My Component
 
 Some description here.
@@ -365,8 +390,9 @@ Some description here.
 ### Code Example
 
 ```tsx
-<MyComponent prop="value" />
+<MyComponent prop='value' />
 ```
+````
 
 ```
 
@@ -377,7 +403,7 @@ The `.docs.mdx` file is automatically discovered by the pattern:
 
 ../static/js/**/*(docs|Docs).mdx
 
-```
+````
 
 No additional configuration needed!
 
@@ -415,7 +441,7 @@ parameters: {
     controls: { exclude: ['style', 'className'] }
   }
 }
-```
+````
 
 ### 5. **SEO & Accessibility**
 
@@ -428,14 +454,14 @@ parameters: {
 
 ## 🔗 Doc Blocks vs. Autodocs
 
-| Feature | Autodocs | Doc Blocks |
-| --------- | ---------- | ----------- |
-| **Generation** | Automatic | Manual MDX |
-| **Customization** | Limited | Extensive |
-| **Structure** | Fixed template | Flexible layout |
-| **Content** | JSDoc only | Text + code + blocks |
-| **Best For** | Quick setup | Rich documentation |
-| **Maintenance** | Low effort | Medium effort |
+| Feature           | Autodocs       | Doc Blocks           |
+| ----------------- | -------------- | -------------------- |
+| **Generation**    | Automatic      | Manual MDX           |
+| **Customization** | Limited        | Extensive            |
+| **Structure**     | Fixed template | Flexible layout      |
+| **Content**       | JSDoc only     | Text + code + blocks |
+| **Best For**      | Quick setup    | Rich documentation   |
+| **Maintenance**   | Low effort     | Medium effort        |
 
 **Recommendation:** Use both!
 
@@ -535,8 +561,8 @@ Create .docs.mdx files for:
 import { ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
 
 <ColorPalette>
-  <ColorItem title="Primary" colors={{ light: '#0066CC', dark: '#003D99' }} />
-  <ColorItem title="Success" colors={{ light: '#2E7D32' }} />
+  <ColorItem title='Primary' colors={{ light: '#0066CC', dark: '#003D99' }} />
+  <ColorItem title='Success' colors={{ light: '#2E7D32' }} />
 </ColorPalette>
 ```
 
@@ -546,8 +572,8 @@ import { ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
 import { IconGallery, IconItem } from '@storybook/addon-docs/blocks';
 
 <IconGallery>
-  <IconItem name="Check" />
-  <IconItem name="Alert" />
+  <IconItem name='Check' />
+  <IconItem name='Alert' />
 </IconGallery>
 ```
 
@@ -561,7 +587,8 @@ import { TableOfContents } from '@storybook/addon-docs/blocks';
 
 ### 5. **Custom Doc Blocks**
 
-Create reusable documentation components using Storybook's `useOf` hook for advanced use cases.
+Create reusable documentation components using Storybook's `useOf` hook for
+advanced use cases.
 
 ---
 
@@ -569,7 +596,10 @@ Create reusable documentation components using Storybook's `useOf` hook for adva
 
 **Status**: ✅ **FULLY OPERATIONAL**
 
-Doc Blocks have been successfully implemented for three key components (Alert, Accordion, PrimaryButton). The MDX documentation files use interactive Doc Block components to provide rich, customizable documentation with live previews, interactive controls, and code examples.
+Doc Blocks have been successfully implemented for three key components (Alert,
+Accordion, PrimaryButton). The MDX documentation files use interactive Doc Block
+components to provide rich, customizable documentation with live previews,
+interactive controls, and code examples.
 
 **Files Created:**
 
@@ -587,4 +617,5 @@ Doc Blocks have been successfully implemented for three key components (Alert, A
 - ✅ Tests: 39/39 passing
 - ✅ Storybook: Running at <http://localhost:6009/>
 
-You can now view the Doc Block documentation pages in Storybook by clicking the 📚 icon on Alert, Accordion, and PrimaryButton components!
+You can now view the Doc Block documentation pages in Storybook by clicking the
+📚 icon on Alert, Accordion, and PrimaryButton components!

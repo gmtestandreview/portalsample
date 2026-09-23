@@ -1,12 +1,12 @@
 # useMove
 
-Handles move interactions across mouse, touch, and keyboard, including dragging with
-the mouse or touch, and using the arrow keys. Normalizes behavior across browsers and
-platforms, and ignores emulated mouse events on touch devices.
+Handles move interactions across mouse, touch, and keyboard, including dragging
+with the mouse or touch, and using the arrow keys. Normalizes behavior across
+browsers and platforms, and ignores emulated mouse events on touch devices.
 
 ```tsx
 import React from 'react';
-import {useMove} from 'react-aria/useMove';
+import { useMove } from 'react-aria/useMove';
 
 function Example() {
   const CONTAINER_SIZE = 200;
@@ -16,17 +16,20 @@ function Example() {
   let [color, setColor] = React.useState('black');
   let [position, setPosition] = React.useState({
     x: 0,
-    y: 0
+    y: 0,
   });
 
-  let clamp = pos => Math.min(Math.max(pos, 0), CONTAINER_SIZE - BALL_SIZE);
-  let {moveProps} = useMove({
+  let clamp = (pos) => Math.min(Math.max(pos, 0), CONTAINER_SIZE - BALL_SIZE);
+  let { moveProps } = useMove({
     onMoveStart(e) {
       setColor('red');
-      setEvents(events => [`move start with pointerType = ${e.pointerType}`, ...events]);
+      setEvents((events) => [
+        `move start with pointerType = ${e.pointerType}`,
+        ...events,
+      ]);
     },
     onMove(e) {
-      setPosition(({x, y}) => {
+      setPosition(({ x, y }) => {
         // Normally, we want to allow the user to continue
         // dragging outside the box such that they need to
         // drag back over the ball again before it moves.
@@ -41,21 +44,27 @@ function Example() {
 
         x += e.deltaX;
         y += e.deltaY;
-        return {x, y};
+        return { x, y };
       });
 
-      setEvents(events => [`move with pointerType = ${e.pointerType}, deltaX = ${e.deltaX}, deltaY = ${e.deltaY}`, ...events]);
+      setEvents((events) => [
+        `move with pointerType = ${e.pointerType}, deltaX = ${e.deltaX}, deltaY = ${e.deltaY}`,
+        ...events,
+      ]);
     },
     onMoveEnd(e) {
-      setPosition(({x, y}) => {
+      setPosition(({ x, y }) => {
         // Clamp position on mouse up
         x = clamp(x);
         y = clamp(y);
-        return {x, y};
+        return { x, y };
       });
       setColor('black');
-      setEvents(events => [`move end with pointerType = ${e.pointerType}`, ...events]);
-    }
+      setEvents((events) => [
+        `move end with pointerType = ${e.pointerType}`,
+        ...events,
+      ]);
+    },
   });
 
   return (
@@ -67,8 +76,9 @@ function Example() {
           background: 'white',
           border: '1px solid black',
           position: 'relative',
-          touchAction: 'none'
-        }}>
+          touchAction: 'none',
+        }}
+      >
         <div
           {...moveProps}
           tabIndex={0}
@@ -79,15 +89,19 @@ function Example() {
             position: 'absolute',
             left: clamp(position.x),
             top: clamp(position.y),
-            background: color
-          }} />
+            background: color,
+          }}
+        />
       </div>
       <ul
         style={{
           maxHeight: '200px',
-          overflow: 'auto'
-        }}>
-        {events.map((e, i) => <li key={i}>{e}</li>)}
+          overflow: 'auto',
+        }}
+      >
+        {events.map((e, i) => (
+          <li key={i}>{e}</li>
+        ))}
       </ul>
     </>
   );
@@ -96,7 +110,10 @@ function Example() {
 
 ## Features
 
-Move events are emitted after the user presses down and then drags the pointer around. They specify the distance that the pointer traveled since the last event. In addition, after a user focuses the target element, move events are fired when the user presses the arrow keys.
+Move events are emitted after the user presses down and then drags the pointer
+around. They specify the distance that the pointer traveled since the last
+event. In addition, after a user focuses the target element, move events are
+fired when the user presses the arrow keys.
 
 - Handles mouse and touch events
 - Handles arrow key presses
@@ -113,8 +130,8 @@ Move events are emitted after the user presses down and then drags the pointer a
 
 ### MoveResult
 
-| Name | Type | Description |
-|------|------|-------------|
+| Name           | Type                              | Description                            |
+| -------------- | --------------------------------- | -------------------------------------- |
 | `moveProps` \* | `DOMAttributes<FocusableElement>` | Props to spread on the target element. |
 
 ### MoveEvent

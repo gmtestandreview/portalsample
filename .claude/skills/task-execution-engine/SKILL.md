@@ -1,11 +1,16 @@
 ---
 name: task-execution-engine
-description: Execute implementation tasks from design documents using markdown checkboxes. Use when (1) implementing features from feature-design-assistant output, (2) resuming interrupted work, (3) batch executing tasks. Triggers on 'start implementation', 'run tasks', 'resume'.
+description:
+  Execute implementation tasks from design documents using markdown checkboxes.
+  Use when (1) implementing features from feature-design-assistant output, (2)
+  resuming interrupted work, (3) batch executing tasks. Triggers on 'start
+  implementation', 'run tasks', 'resume'.
 ---
 
 # Feature Pipeline
 
-Execute implementation tasks directly from design documents. Tasks are managed as markdown checkboxes - no separate session files needed.
+Execute implementation tasks directly from design documents. Tasks are managed
+as markdown checkboxes - no separate session files needed.
 
 ## Quick Reference
 
@@ -41,13 +46,15 @@ Tasks are written as markdown checkboxes in the design document:
   - [ ] generate_token() creates valid JWT
   - [ ] verify_token() validates JWT
 
-- [ ] **Create auth API** `priority:3` `phase:api` `deps:Create User model,Implement JWT utils`
+- [ ] **Create auth API** `priority:3` `phase:api`
+      `deps:Create User model,Implement JWT utils`
   - files: src/api/auth.py
   - [ ] POST /register endpoint
   - [ ] POST /login endpoint
 ```
 
-See [references/task-format.md](references/task-format.md) for full format specification.
+See [references/task-format.md](references/task-format.md) for full format
+specification.
 
 ## Execution Loop
 
@@ -71,6 +78,7 @@ LOOP until no tasks remain:
 ## Status Updates
 
 Completed task:
+
 ```markdown
 - [x] **Create User model** `priority:1` `phase:model` ✅
   - files: src/models/user.py
@@ -79,6 +87,7 @@ Completed task:
 ```
 
 Failed task:
+
 ```markdown
 - [x] **Create User model** `priority:1` `phase:model` ❌
   - files: src/models/user.py

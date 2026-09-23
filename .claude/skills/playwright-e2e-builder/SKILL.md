@@ -1,6 +1,11 @@
 ---
 name: playwright-e2e-builder
-description: Plan and build comprehensive Playwright E2E test suites with Page Object Model, authentication state persistence, custom fixtures, visual regression, and CI integration. Uses interview-driven planning to clarify critical user flows, auth strategy, test data approach, and parallelization before writing any tests.
+description:
+  Plan and build comprehensive Playwright E2E test suites with Page Object
+  Model, authentication state persistence, custom fixtures, visual regression,
+  and CI integration. Uses interview-driven planning to clarify critical user
+  flows, auth strategy, test data approach, and parallelization before writing
+  any tests.
 tags: [playwright, e2e, testing, automation, typescript, ci, visual-regression]
 ---
 
@@ -22,22 +27,32 @@ Use this skill when you need to:
 Enter plan mode. Before writing any tests, explore the existing project:
 
 ### Project structure
-- Find the tech stack: is this React, Next.js, Vue, SvelteKit, or another framework?
-- Check if Playwright is already installed (`playwright.config.ts`, `@playwright/test` in package.json)
+
+- Find the tech stack: is this React, Next.js, Vue, SvelteKit, or another
+  framework?
+- Check if Playwright is already installed (`playwright.config.ts`,
+  `@playwright/test` in package.json)
 - Look for existing test directories (`e2e/`, `tests/`, `__tests__/`)
-- Check for existing E2E tests in Cypress, Selenium, or other frameworks (migration context)
+- Check for existing E2E tests in Cypress, Selenium, or other frameworks
+  (migration context)
 - Find the dev server command and port (`npm run dev`, `next dev`, etc.)
 
 ### Application structure
-- Identify the main routes/pages (look at router config, pages directory, or route files)
+
+- Identify the main routes/pages (look at router config, pages directory, or
+  route files)
 - Find authentication flow (login page URL, auth API endpoints, token storage)
-- Check for test IDs in components (`data-testid`, `data-test`, `data-cy` attributes)
+- Check for test IDs in components (`data-testid`, `data-test`, `data-cy`
+  attributes)
 - Look for API routes that tests might need to seed data through
 - Check `.env` files for test-specific environment variables
 
 ### CI/CD
-- Check for existing CI config (`.github/workflows/`, `.gitlab-ci.yml`, `Jenkinsfile`)
-- Look for Docker or docker-compose setup (useful for consistent test environments)
+
+- Check for existing CI config (`.github/workflows/`, `.gitlab-ci.yml`,
+  `Jenkinsfile`)
+- Look for Docker or docker-compose setup (useful for consistent test
+  environments)
 - Check if there's a staging/preview environment URL pattern
 
 ## Phase 2: Interview (AskUserQuestion)
@@ -218,8 +233,12 @@ setup('authenticate', async ({ page }) => {
   await page.goto('/login');
 
   // Fill login form
-  await page.getByLabel('Email').fill(process.env.TEST_USER_EMAIL || 'test@example.com');
-  await page.getByLabel('Password').fill(process.env.TEST_USER_PASSWORD || 'testpassword');
+  await page
+    .getByLabel('Email')
+    .fill(process.env.TEST_USER_EMAIL || 'test@example.com');
+  await page
+    .getByLabel('Password')
+    .fill(process.env.TEST_USER_PASSWORD || 'testpassword');
   await page.getByRole('button', { name: 'Sign in' }).click();
 
   // Wait for auth to complete — adjust selector to your app
@@ -241,7 +260,10 @@ import { DashboardPage } from './pages/dashboard-page';
 
 // API client for test data seeding
 class ApiClient {
-  constructor(private baseURL: string, private token?: string) {}
+  constructor(
+    private baseURL: string,
+    private token?: string
+  ) {}
 
   async createResource(data: Record<string, unknown>) {
     const response = await fetch(`${this.baseURL}/api/resources`, {
@@ -351,8 +373,8 @@ export class DashboardPage {
   async search(query: string) {
     await this.searchInput.fill(query);
     // Wait for debounced search to trigger
-    await this.page.waitForResponse(resp =>
-      resp.url().includes('/api/resources') && resp.status() === 200
+    await this.page.waitForResponse(
+      (resp) => resp.url().includes('/api/resources') && resp.status() === 200
     );
   }
 
@@ -376,7 +398,10 @@ test.describe('Authentication', () => {
   // These tests run WITHOUT storageState (unauthenticated)
   test.use({ storageState: { cookies: [], origins: [] } });
 
-  test('successful login redirects to dashboard', async ({ loginPage, page }) => {
+  test('successful login redirects to dashboard', async ({
+    loginPage,
+    page,
+  }) => {
     await loginPage.goto();
     await loginPage.login('test@example.com', 'testpassword');
     await expect(page).toHaveURL('/dashboard');
@@ -431,7 +456,10 @@ test.describe('Dashboard', () => {
     await dashboardPage.expectResourceVisible('Alpha Item');
   });
 
-  test('empty state shown when no resources', async ({ dashboardPage, page }) => {
+  test('empty state shown when no resources', async ({
+    dashboardPage,
+    page,
+  }) => {
     await dashboardPage.goto();
     await dashboardPage.search('nonexistent-query-xyz');
     await expect(page.getByText('No results found')).toBeVisible();
@@ -594,7 +622,10 @@ playwright.config.ts         # Playwright configuration
 ## Best practices
 
 ### Use role-based locators first
-Prefer `getByRole()`, `getByLabel()`, `getByText()` over CSS selectors or test IDs. These locators mirror how users interact with the page and catch accessibility issues:
+
+Prefer `getByRole()`, `getByLabel()`, `getByText()` over CSS selectors or test
+IDs. These locators mirror how users interact with the page and catch
+accessibility issues:
 
 ```typescript
 // Preferred — accessible and resilient
@@ -610,11 +641,12 @@ await page.locator('#email-input').fill('user@test.com');
 ```
 
 ### Wait for network, not timers
+
 Never use `page.waitForTimeout()`. Wait for specific conditions:
 
 ```typescript
 // Wait for API response
-await page.waitForResponse(resp => resp.url().includes('/api/data'));
+await page.waitForResponse((resp) => resp.url().includes('/api/data'));
 
 // Wait for element state
 await expect(page.getByText('Saved')).toBeVisible();
@@ -627,6 +659,7 @@ await expect(page.getByTestId('spinner')).toBeHidden();
 ```
 
 ### Isolate test data
+
 Each test should create its own data and clean up after:
 
 ```typescript
@@ -667,7 +700,8 @@ blob-report/
 
 - [ ] `playwright.config.ts` has webServer configured to start the dev server
 - [ ] Auth setup saves storageState and all test projects depend on it
-- [ ] Page objects use role-based locators (`getByRole`, `getByLabel`, `getByText`)
+- [ ] Page objects use role-based locators (`getByRole`, `getByLabel`,
+      `getByText`)
 - [ ] No `waitForTimeout()` calls — only wait for elements, URLs, or responses
 - [ ] Tests create and clean up their own data (no shared mutable state)
 - [ ] CI config has sharding for parallel execution

@@ -21,6 +21,7 @@
 ## Security Response Protocol
 
 If any security issue is found:
+
 1. STOP immediately — do not continue with unrelated work
 2. Use `security-reviewer` agent for full assessment
 3. Fix CRITICAL issues before any other merge
@@ -29,20 +30,21 @@ If any security issue is found:
 
 ## OWASP Top 10 — Quick Reference
 
-| Risk | Prevention |
-|------|-----------|
-| Injection | Parameterized queries, input sanitization |
-| Broken Auth | bcrypt/argon2, JWT validation, session security |
-| Sensitive Data | HTTPS, env vars, PII encryption, sanitized logs |
-| Broken Access Control | Auth check on every route, CORS configured |
-| Security Misconfiguration | Debug off in prod, security headers set |
-| XSS | Output escaping, CSP, DOMPurify |
-| Known Vulnerabilities | npm audit, govulncheck, cargo audit |
-| Insufficient Logging | Security events logged, alerts configured |
+| Risk                      | Prevention                                      |
+| ------------------------- | ----------------------------------------------- |
+| Injection                 | Parameterized queries, input sanitization       |
+| Broken Auth               | bcrypt/argon2, JWT validation, session security |
+| Sensitive Data            | HTTPS, env vars, PII encryption, sanitized logs |
+| Broken Access Control     | Auth check on every route, CORS configured      |
+| Security Misconfiguration | Debug off in prod, security headers set         |
+| XSS                       | Output escaping, CSP, DOMPurify                 |
+| Known Vulnerabilities     | npm audit, govulncheck, cargo audit             |
+| Insufficient Logging      | Security events logged, alerts configured       |
 
 ## Defense in Depth
 
 Apply multiple layers of security — never rely on a single control:
+
 1. Input validation at the boundary
 2. Parameterized queries in data access
 3. Output encoding in the view

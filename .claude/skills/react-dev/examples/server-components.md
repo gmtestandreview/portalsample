@@ -1,6 +1,7 @@
 # Server Components and Server Actions
 
-React 19 Server Components run on server, can be async, enable zero-bundle data fetching. Server Actions handle mutations with progressive enhancement.
+React 19 Server Components run on server, can be async, enable zero-bundle data
+fetching. Server Actions handle mutations with progressive enhancement.
 
 ## Async Server Component
 

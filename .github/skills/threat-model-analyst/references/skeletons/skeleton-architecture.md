@@ -1,9 +1,13 @@
 # Skeleton: 0.1-architecture.md
 
-> **⛔ Copy the template content below VERBATIM (excluding the outer code fence). Replace `[FILL]` placeholders. Do NOT add/rename/reorder sections.**
-> **⛔ Key Components table columns are EXACTLY: `Component | Type | Description`. DO NOT rename to `Role`, `Change`, `Function`.**
-> **⛔ Technology Stack table columns are EXACTLY: `Layer | Technologies` (2 columns). DO NOT add `Version` column or rename `Layer` to `Category`.**
-> **⛔ Security Infrastructure Inventory and Repository Structure sections are MANDATORY — do NOT omit them.**
+> **⛔ Copy the template content below VERBATIM (excluding the outer code
+> fence). Replace `[FILL]` placeholders. Do NOT add/rename/reorder sections.**
+> **⛔ Key Components table columns are EXACTLY:
+> `Component | Type | Description`. DO NOT rename to `Role`, `Change`,
+> `Function`.** **⛔ Technology Stack table columns are EXACTLY:
+> `Layer | Technologies` (2 columns). DO NOT add `Version` column or rename
+> `Layer` to `Category`.** **⛔ Security Infrastructure Inventory and Repository
+> Structure sections are MANDATORY — do NOT omit them.**
 
 ---
 
@@ -12,15 +16,16 @@
 
 ## System Purpose
 
-[FILL-PROSE: 2-4 sentences — what is this system, what problem does it solve, who are the users]
+[FILL-PROSE: 2-4 sentences — what is this system, what problem does it solve,
+who are the users]
 
 ## Key Components
 
-| Component | Type | Description |
-|-----------|------|-------------|
-[REPEAT: one row per component]
-| [FILL: PascalCase name] | [FILL: Process / Data Store / External Service / External Interactor] | [FILL: one-line description] |
-[END-REPEAT]
+| Component                       | Type                                                                  | Description                  |
+| ------------------------------- | --------------------------------------------------------------------- | ---------------------------- |
+| [REPEAT: one row per component] |
+| [FILL: PascalCase name]         | [FILL: Process / Data Store / External Service / External Interactor] | [FILL: one-line description] |
+| [END-REPEAT]                    |
 
 <!-- ⛔ POST-TABLE CHECK: Verify Key Components:
   1. Every component has PascalCase name (not kebab-case or snake_case)
@@ -57,21 +62,23 @@ sequenceDiagram
 
 ## Technology Stack
 
-| Layer | Technologies |
-|-------|--------------|
-| Languages | [FILL] |
-| Frameworks | [FILL] |
-| Data Stores | [FILL] |
-| Infrastructure | [FILL] |
-| Security | [FILL] |
+| Layer          | Technologies |
+| -------------- | ------------ |
+| Languages      | [FILL]       |
+| Frameworks     | [FILL]       |
+| Data Stores    | [FILL]       |
+| Infrastructure | [FILL]       |
+| Security       | [FILL]       |
 
 <!-- ⛔ POST-TABLE CHECK: Verify Technology Stack has all 5 rows filled. If Security row is empty, list security-relevant libraries/frameworks found in the code. -->
 
 ## Deployment Model
 
-[FILL-PROSE: deployment description — ports, protocols, bind addresses, network exposure, topology (single machine / cluster / multi-tier)]
+[FILL-PROSE: deployment description — ports, protocols, bind addresses, network
+exposure, topology (single machine / cluster / multi-tier)]
 
-**Deployment Classification:** `[FILL: one of LOCALHOST_DESKTOP | LOCALHOST_SERVICE | AIRGAPPED | K8S_SERVICE | NETWORK_SERVICE]`
+**Deployment Classification:**
+`[FILL: one of LOCALHOST_DESKTOP | LOCALHOST_SERVICE | AIRGAPPED | K8S_SERVICE | NETWORK_SERVICE]`
 
 <!-- ⛔ DEPLOYMENT CLASSIFICATION RULES:
   LOCALHOST_DESKTOP — Single-process console/GUI app, no network listeners (or localhost-only), single-user workstation. T1 FORBIDDEN.
@@ -83,11 +90,11 @@ sequenceDiagram
 
 ### Component Exposure Table
 
-| Component | Listens On | Auth Required | Reachability | Min Prerequisite | Derived Tier |
-|-----------|------------|---------------|--------------|------------------|-------------|
-[REPEAT: one row per component from Key Components table]
-| [FILL: component name] | [FILL: port/address or "N/A — no listener"] | [FILL: Yes (mechanism) / No] | [FILL: one of: External / Internal Only / Localhost Only / No Listener] | [FILL: one of closed enum — see rules below] | [FILL: T1 / T2 / T3] |
-[END-REPEAT]
+| Component                                                 | Listens On                                  | Auth Required                | Reachability                                                            | Min Prerequisite                             | Derived Tier         |
+| --------------------------------------------------------- | ------------------------------------------- | ---------------------------- | ----------------------------------------------------------------------- | -------------------------------------------- | -------------------- |
+| [REPEAT: one row per component from Key Components table] |
+| [FILL: component name]                                    | [FILL: port/address or "N/A — no listener"] | [FILL: Yes (mechanism) / No] | [FILL: one of: External / Internal Only / Localhost Only / No Listener] | [FILL: one of closed enum — see rules below] | [FILL: T1 / T2 / T3] |
+| [END-REPEAT]                                              |
 
 <!-- ⛔ EXPOSURE TABLE RULES:
   1. Every component from Key Components MUST have a row.
@@ -117,17 +124,17 @@ sequenceDiagram
 
 ## Security Infrastructure Inventory
 
-| Component | Security Role | Configuration | Notes |
-|-----------|---------------|---------------|-------|
-[REPEAT: one row per security-relevant component found in code]
-| [FILL] | [FILL] | [FILL] | [FILL] |
-[END-REPEAT]
+| Component                                                       | Security Role | Configuration | Notes  |
+| --------------------------------------------------------------- | ------------- | ------------- | ------ |
+| [REPEAT: one row per security-relevant component found in code] |
+| [FILL]                                                          | [FILL]        | [FILL]        | [FILL] |
+| [END-REPEAT]                                                    |
 
 ## Repository Structure
 
-| Directory | Purpose |
-|-----------|---------|
-[REPEAT: one row per key directory]
-| [FILL: path/] | [FILL] |
-[END-REPEAT]
+| Directory                           | Purpose |
+| ----------------------------------- | ------- |
+| [REPEAT: one row per key directory] |
+| [FILL: path/]                       | [FILL]  |
+| [END-REPEAT]                        |
 ````

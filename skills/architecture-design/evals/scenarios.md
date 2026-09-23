@@ -1,6 +1,7 @@
 # architecture-design — Eval Scenarios
 
-Format: `Input -> Expected behaviour -> Pass/Fail`. Fresh agent per row, skill available.
+Format: `Input -> Expected behaviour -> Pass/Fail`. Fresh agent per row, skill
+available.
 
 ## Green
 

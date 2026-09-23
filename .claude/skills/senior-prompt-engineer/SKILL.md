@@ -1,11 +1,18 @@
 ---
 name: senior-prompt-engineer
-description: World-class prompt engineering skill for LLM optimization, prompt patterns, structured outputs, and AI product development. Expertise in Claude, GPT-4, prompt design patterns, few-shot learning, chain-of-thought, and AI evaluation. Includes RAG optimization, agent design, and LLM system architecture. Use when building AI products, optimizing LLM performance, designing agentic systems, or implementing advanced prompting techniques.
+description:
+  World-class prompt engineering skill for LLM optimization, prompt patterns,
+  structured outputs, and AI product development. Expertise in Claude, GPT-4,
+  prompt design patterns, few-shot learning, chain-of-thought, and AI
+  evaluation. Includes RAG optimization, agent design, and LLM system
+  architecture. Use when building AI products, optimizing LLM performance,
+  designing agentic systems, or implementing advanced prompting techniques.
 ---
 
 # Senior Prompt Engineer
 
-World-class senior prompt engineer skill for production-grade AI/ML/Data systems.
+World-class senior prompt engineer skill for production-grade AI/ML/Data
+systems.
 
 ## Quick Start
 
@@ -15,7 +22,7 @@ World-class senior prompt engineer skill for production-grade AI/ML/Data systems
 # Core Tool 1
 python scripts/prompt_optimizer.py --input data/ --output results/
 
-# Core Tool 2  
+# Core Tool 2
 python scripts/rag_evaluator.py --target project/ --analyze
 
 # Core Tool 3
@@ -39,19 +46,18 @@ This skill covers world-class capabilities in:
 
 ## Tech Stack
 
-**Languages:** Python, SQL, R, Scala, Go
-**ML Frameworks:** PyTorch, TensorFlow, Scikit-learn, XGBoost
-**Data Tools:** Spark, Airflow, dbt, Kafka, Databricks
-**LLM Frameworks:** LangChain, LlamaIndex, DSPy
-**Deployment:** Docker, Kubernetes, AWS/GCP/Azure
-**Monitoring:** MLflow, Weights & Biases, Prometheus
+**Languages:** Python, SQL, R, Scala, Go **ML Frameworks:** PyTorch, TensorFlow,
+Scikit-learn, XGBoost **Data Tools:** Spark, Airflow, dbt, Kafka, Databricks
+**LLM Frameworks:** LangChain, LlamaIndex, DSPy **Deployment:** Docker,
+Kubernetes, AWS/GCP/Azure **Monitoring:** MLflow, Weights & Biases, Prometheus
 **Databases:** PostgreSQL, BigQuery, Snowflake, Pinecone
 
 ## Reference Documentation
 
 ### 1. Prompt Engineering Patterns
 
-Comprehensive guide available in `references/prompt_engineering_patterns.md` covering:
+Comprehensive guide available in `references/prompt_engineering_patterns.md`
+covering:
 
 - Advanced patterns and best practices
 - Production implementation strategies
@@ -62,7 +68,8 @@ Comprehensive guide available in `references/prompt_engineering_patterns.md` cov
 
 ### 2. Llm Evaluation Frameworks
 
-Complete workflow documentation in `references/llm_evaluation_frameworks.md` including:
+Complete workflow documentation in `references/llm_evaluation_frameworks.md`
+including:
 
 - Step-by-step processes
 - Architecture design patterns
@@ -141,15 +148,18 @@ High-throughput inference system:
 ## Performance Targets
 
 **Latency:**
+
 - P50: < 50ms
 - P95: < 100ms
 - P99: < 200ms
 
 **Throughput:**
+
 - Requests/second: > 1000
 - Concurrent users: > 10,000
 
 **Availability:**
+
 - Uptime: 99.9%
 - Error rate: < 0.1%
 

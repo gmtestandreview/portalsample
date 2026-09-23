@@ -7,6 +7,7 @@
 **Error**: `ModuleNotFoundError: No module named 'crewai_tools'`
 
 **Fix**:
+
 ```bash
 pip install 'crewai[tools]'
 ```
@@ -16,6 +17,7 @@ pip install 'crewai[tools]'
 **Error**: `Python version not supported`
 
 **Fix**: CrewAI requires Python 3.10-3.13:
+
 ```bash
 python --version  # Check current version
 
@@ -29,6 +31,7 @@ pyenv local 3.11
 **Error**: Poetry-related errors
 
 **Fix**: CrewAI migrated from Poetry to UV:
+
 ```bash
 crewai update
 
@@ -45,6 +48,7 @@ pip install uv
 **Solutions**:
 
 1. **Set max iterations**:
+
 ```python
 agent = Agent(
     role="...",
@@ -54,6 +58,7 @@ agent = Agent(
 ```
 
 2. **Clearer task description**:
+
 ```python
 task = Task(
     description="Research AI trends. Return EXACTLY 5 bullet points.",
@@ -62,6 +67,7 @@ task = Task(
 ```
 
 3. **Enable verbose to debug**:
+
 ```python
 agent = Agent(role="...", verbose=True)
 ```
@@ -73,6 +79,7 @@ agent = Agent(role="...", verbose=True)
 **Solutions**:
 
 1. **Better tool descriptions**:
+
 ```python
 class MyTool(BaseTool):
     name: str = "Calculator"
@@ -80,6 +87,7 @@ class MyTool(BaseTool):
 ```
 
 2. **Include tool in goal/backstory**:
+
 ```python
 agent = Agent(
     role="Data Analyst",
@@ -89,6 +97,7 @@ agent = Agent(
 ```
 
 3. **Limit tools** (3-5 max):
+
 ```python
 agent = Agent(
     role="...",
@@ -101,6 +110,7 @@ agent = Agent(
 **Problem**: Agent picks incorrect tool for task.
 
 **Fix**: Make descriptions distinct:
+
 ```python
 search_tool = SerperDevTool()
 search_tool.description = "Search the web for current news and information. Use for recent events."
@@ -116,6 +126,7 @@ pdf_tool.description = "Search within PDF documents. Use for document-specific q
 **Problem**: Task doesn't use output from previous task.
 
 **Fix**: Explicitly pass context:
+
 ```python
 task1 = Task(
     description="Research AI trends",
@@ -138,6 +149,7 @@ task2 = Task(
 **Solutions**:
 
 1. **Be specific in expected_output**:
+
 ```python
 task = Task(
     description="...",
@@ -151,6 +163,7 @@ task = Task(
 ```
 
 2. **Use output_pydantic for structure**:
+
 ```python
 from pydantic import BaseModel
 
@@ -171,6 +184,7 @@ task = Task(
 **Problem**: Task takes too long.
 
 **Fix**: Set timeouts and limits:
+
 ```python
 agent = Agent(
     role="...",
@@ -192,6 +206,7 @@ crew = Crew(
 **Problem**: Out of memory with local models.
 
 **Fix**: Use cloud LLM or smaller model:
+
 ```python
 from crewai import LLM
 
@@ -209,6 +224,7 @@ agent = Agent(role="...", llm=llm)
 **Problem**: API rate limit errors.
 
 **Fix**: Configure rate limits:
+
 ```python
 agent = Agent(
     role="...",
@@ -226,6 +242,7 @@ crew = Crew(
 **Problem**: Memory storage issues.
 
 **Fix**: Set storage directory:
+
 ```python
 import os
 os.environ["CREWAI_STORAGE_DIR"] = "./my_storage"
@@ -245,6 +262,7 @@ crew = Crew(
 **Problem**: Flow state resets between methods.
 
 **Fix**: Use self.state correctly:
+
 ```python
 class MyFlow(Flow[MyState]):
     @start()
@@ -262,6 +280,7 @@ class MyFlow(Flow[MyState]):
 **Problem**: Router returns string but listener not triggered.
 
 **Fix**: Match names exactly:
+
 ```python
 @router(analyze)
 def decide(self):
@@ -277,6 +296,7 @@ def handle_high(self):
 **Problem**: Confusion with multiple @start methods.
 
 **Note**: Multiple starts run in parallel:
+
 ```python
 @start()
 def start_a(self):
@@ -298,6 +318,7 @@ def after_both(self):  # Waits for both
 **Error**: `Tool 'X' not found`
 
 **Fix**: Verify tool installation:
+
 ```python
 # Check available tools
 from crewai_tools import *
@@ -315,6 +336,7 @@ pip install 'crewai-tools[firecrawl]'
 **Error**: `API key not found`
 
 **Fix**: Set environment variables:
+
 ```bash
 # .env file
 OPENAI_API_KEY=sk-...
@@ -336,6 +358,7 @@ search = SerperDevTool()
 **Problem**: Tool consistently fails.
 
 **Fix**: Test tool independently:
+
 ```python
 from crewai_tools import SerperDevTool
 
@@ -362,16 +385,19 @@ class SafeTool(BaseTool):
 **Solutions**:
 
 1. **Use faster model**:
+
 ```python
 llm = LLM(model="gpt-4o-mini")  # Faster than gpt-4o
 ```
 
 2. **Reduce iterations**:
+
 ```python
 agent = Agent(role="...", max_iter=10)
 ```
 
 3. **Enable caching**:
+
 ```python
 crew = Crew(
     agents=[...],
@@ -380,6 +406,7 @@ crew = Crew(
 ```
 
 4. **Parallel tasks** (where possible):
+
 ```python
 task1 = Task(..., async_execution=True)
 task2 = Task(..., async_execution=True)
@@ -392,6 +419,7 @@ task2 = Task(..., async_execution=True)
 **Solutions**:
 
 1. **Use smaller context**:
+
 ```python
 task = Task(
     description="Brief research on X",  # Keep descriptions short
@@ -400,12 +428,14 @@ task = Task(
 ```
 
 2. **Disable verbose in production**:
+
 ```python
 agent = Agent(role="...", verbose=False)
 crew = Crew(agents=[...], verbose=False)
 ```
 
 3. **Use cheaper models**:
+
 ```python
 llm = LLM(model="gpt-4o-mini")  # Cheaper than gpt-4o
 ```
@@ -473,6 +503,7 @@ logger.setLevel(logging.DEBUG)
 ### Reporting Issues
 
 Include:
+
 - CrewAI version: `pip show crewai`
 - Python version: `python --version`
 - Full error traceback

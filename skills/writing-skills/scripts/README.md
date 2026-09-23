@@ -2,8 +2,8 @@
 
 Reference library for Agent Skills.
 
-> [!IMPORTANT]
-> This library is intended for demonstration purposes only. It is not meant to be used in production.
+> [!IMPORTANT] This library is intended for demonstration purposes only. It is
+> not meant to be used in production.
 
 ## Installation
 
@@ -49,13 +49,18 @@ uv sync
 .venv\Scripts\Activate.ps1
 ```
 
-After installation, the `skills-ref` executable will be available on your `PATH` (within the activated virtual environment).
+After installation, the `skills-ref` executable will be available on your `PATH`
+(within the activated virtual environment).
 
 ## Running Tests
 
-Run commands from this `scripts/` directory so the local package and `pyproject.toml` settings resolve correctly.
+Run commands from this `scripts/` directory so the local package and
+`pyproject.toml` settings resolve correctly.
 
-These commands run deterministic parser, validator, prompt, and CLI tests. They do not execute behavioral skill-output evaluations. For output-quality evals, read and apply `../references/evaluating-skill-output.md`, then use `evals/README.md` for this skill's seeded evaluation suite.
+These commands run deterministic parser, validator, prompt, and CLI tests. They
+do not execute behavioral skill-output evaluations. For output-quality evals,
+read and apply `../references/evaluating-skill-output.md`, then use
+`evals/README.md` for this skill's seeded evaluation suite.
 
 Using `uv`:
 
@@ -127,7 +132,10 @@ print(prompt)
 
 ## Agent Prompt Integration
 
-Use `to-prompt` to generate the suggested `<available_skills>` XML block for your agent's system prompt. This format is recommended for Anthropic's models, but Skill Clients may choose to format it differently based on the model being used.
+Use `to-prompt` to generate the suggested `<available_skills>` XML block for
+your agent's system prompt. This format is recommended for Anthropic's models,
+but Skill Clients may choose to format it differently based on the model being
+used.
 
 ```xml
 <available_skills>
@@ -145,7 +153,8 @@ What this skill does and when to use it
 </available_skills>
 ```
 
-The `<location>` element tells the agent where to find the full skill instructions.
+The `<location>` element tells the agent where to find the full skill
+instructions.
 
 ## License
 

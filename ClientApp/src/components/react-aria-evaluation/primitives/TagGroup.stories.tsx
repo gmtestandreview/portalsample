@@ -1,14 +1,14 @@
-import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
-import { Tag, TagGroup } from "./TagGroup.tsx";
+import type { Meta, StoryFn } from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation.tsx';
+import { Tag, TagGroup } from './TagGroup.tsx';
 
 const meta = {
-	decorators: [withReactAriaEvaluation],
-	title: "Evaluation/React Aria/TagGroup",
-	component: TagGroup,
-	parameters: {
-		layout: "centered",
-	},
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/TagGroup',
+  component: TagGroup,
+  parameters: {
+    layout: 'centered',
+  },
 } satisfies Meta<typeof TagGroup>;
 
 export default meta;
@@ -16,15 +16,15 @@ export default meta;
 type Story = StoryFn<typeof TagGroup>;
 
 export const Example: Story = (args) => (
-	<TagGroup {...args}>
-		<Tag>Chocolate</Tag>
-		<Tag>Mint</Tag>
-		<Tag>Strawberry</Tag>
-		<Tag>Vanilla</Tag>
-	</TagGroup>
+  <TagGroup {...args}>
+    <Tag>Chocolate</Tag>
+    <Tag>Mint</Tag>
+    <Tag>Strawberry</Tag>
+    <Tag>Vanilla</Tag>
+  </TagGroup>
 );
 
 Example.args = {
-	label: "Ice cream flavor",
-	selectionMode: "single",
+  label: 'Ice cream flavor',
+  selectionMode: 'single',
 };

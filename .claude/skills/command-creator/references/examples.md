@@ -1,6 +1,7 @@
 # Command Examples
 
-This document provides complete, real-world examples of slash commands from the erk project. Use these as references when creating new commands.
+This document provides complete, real-world examples of slash commands from the
+erk project. Use these as references when creating new commands.
 
 ## Example 1: submit-stack (Workflow Automation Pattern)
 
@@ -16,14 +17,19 @@ argument-hint: <description>
 
 # Submit Stack
 
-Automatically create a git commit with a helpful summary message and submit the entire Graphite stack as pull requests.
+Automatically create a git commit with a helpful summary message and submit the
+entire Graphite stack as pull requests.
 
 ## What This Command Does
 
-1. **Analyze changes**: First checks for .PLAN.md file to understand context, otherwise reviews git status and diff
-2. **Create commit**: Generates a concise single-sentence commit message summarizing the changes
-3. **Restack**: Runs `gt restack` to ensure all branches in the stack are properly rebased
-4. **Submit stack**: Runs `gt submit --stack --publish --no-edit` to create/update PRs for the entire stack
+1. **Analyze changes**: First checks for .PLAN.md file to understand context,
+   otherwise reviews git status and diff
+2. **Create commit**: Generates a concise single-sentence commit message
+   summarizing the changes
+3. **Restack**: Runs `gt restack` to ensure all branches in the stack are
+   properly rebased
+4. **Submit stack**: Runs `gt submit --stack --publish --no-edit` to
+   create/update PRs for the entire stack
 5. **Report results**: Shows the submitted PRs and their URLs
 
 ## Usage
@@ -36,8 +42,7 @@ Automatically create a git commit with a helpful summary message and submit the 
 
 # Without argument (will analyze changes automatically)
 
-/submit-stack
-\`\`\`
+/submit-stack \`\`\`
 
 ## Implementation Steps
 
@@ -47,8 +52,7 @@ When this command is invoked:
 
 **FIRST**: Check if `.PLAN.md` exists in the repository root:
 
-\`\`\`bash
-if [ -f .PLAN.md ]; then
+\`\`\`bash if [ -f .PLAN.md ]; then
 
 # Use .PLAN.md for context
 
@@ -56,8 +60,7 @@ else
 
 # Fall back to git analysis
 
-fi
-\`\`\`
+fi \`\`\`
 
 If `.PLAN.md` exists:
 
@@ -75,30 +78,26 @@ Based on the analysis:
 
 - If user provided an argument, use it as the basis for the commit message
 - If `.PLAN.md` exists, summarize what was implemented from the plan
-- Otherwise, analyze the git changes and create a descriptive single-sentence summary
-- Ensure the commit message follows the repository's commit style (check `git log` for patterns)
+- Otherwise, analyze the git changes and create a descriptive single-sentence
+  summary
+- Ensure the commit message follows the repository's commit style (check
+  `git log` for patterns)
 - **DO NOT include any Claude Code footer or co-authorship attribution**
 
-\`\`\`bash
-git add .
-git commit -m "[Single sentence summary of what was done]"
+\`\`\`bash git add . git commit -m "[Single sentence summary of what was done]"
 \`\`\`
 
 ### 3. Restack the Stack
 
 Ensure all branches in the stack are properly rebased:
 
-\`\`\`bash
-gt restack
-\`\`\`
+\`\`\`bash gt restack \`\`\`
 
 ### 4. Submit Stack
 
 Submit all PRs in the stack without interactive prompts:
 
-\`\`\`bash
-gt submit --stack --publish --no-edit --restack
-\`\`\`
+\`\`\`bash gt submit --stack --publish --no-edit --restack \`\`\`
 
 Flags explained:
 
@@ -118,7 +117,8 @@ After submission, show:
 ## Important Notes
 
 - **Check for .PLAN.md FIRST** before analyzing git changes
-- **NEVER run additional exploration commands** beyond checking .PLAN.md, git status/diff/log
+- **NEVER run additional exploration commands** beyond checking .PLAN.md, git
+  status/diff/log
 - **Stage all changes** with `git add .` before committing
 - **Single sentence summary**: Keep commit message concise and focused
 - **Follow repo patterns**: Check recent commits with `git log` to match style
@@ -135,27 +135,20 @@ If any step fails:
 
 ## Example Output
 
-\`\`\`
-Analyzing changes...
-✓ Found .PLAN.md - using plan context
-✓ Found changes in 3 files
+\`\`\` Analyzing changes... ✓ Found .PLAN.md - using plan context ✓ Found
+changes in 3 files
 
 Creating commit: "Add dot-agent submit-stack command for automated PR workflow"
 ✓ Commit created
 
-Restacking branches...
-✓ Stack restacked successfully
+Restacking branches... ✓ Stack restacked successfully
 
-Submitting stack...
-✓ 2 PRs created/updated:
+Submitting stack... ✓ 2 PRs created/updated:
 
 - PR #123: dot-agent-claude-folder-support (new)
 - PR #122: base-branch (updated)
 
-Current stack:
-◯ dot-agent-claude-folder-support (current)
-◯ base-branch
-◉ main
+Current stack: ◯ dot-agent-claude-folder-support (current) ◯ base-branch ◉ main
 \`\`\`
 ```
 
@@ -179,11 +172,14 @@ Current stack:
 description: Run make all-ci and iteratively fix issues until all checks pass
 ---
 
-You are an implementation finalizer. Your task is to run `make all-ci` and iteratively fix any issues until all CI checks pass successfully.
+You are an implementation finalizer. Your task is to run `make all-ci` and
+iteratively fix any issues until all CI checks pass successfully.
 
 ## Your Mission
 
-Run the full CI pipeline (`make all-ci`) and automatically fix any failures. Keep iterating until all checks pass or you get stuck on an issue that requires human intervention.
+Run the full CI pipeline (`make all-ci`) and automatically fix any failures.
+Keep iterating until all checks pass or you get stuck on an issue that requires
+human intervention.
 
 ## CI Pipeline (make all-ci)
 
@@ -201,19 +197,19 @@ The `make all-ci` target runs these checks in order:
 
 Start by running `make all-ci` to see the current state:
 
-\`\`\`bash
-make all-ci
-\`\`\`
+\`\`\`bash make all-ci \`\`\`
 
 ### 2. Parse Failures
 
 Analyze the output to identify which check(s) failed. Common failure patterns:
 
 - **Ruff lint failures**: Look for "ruff check" errors
-- **Format failures**: Look for "ruff format --check" or files that would be reformatted
+- **Format failures**: Look for "ruff format --check" or files that would be
+  reformatted
 - **Prettier failures**: Look for markdown files that need formatting
 - **Pyright failures**: Look for type errors with file paths and line numbers
-- **Test failures**: Look for pytest failures with test names and assertion errors
+- **Test failures**: Look for pytest failures with test names and assertion
+  errors
 
 ### 3. Apply Targeted Fixes
 
@@ -221,27 +217,22 @@ Based on the failure type, apply appropriate fixes:
 
 #### Ruff Lint Failures
 
-\`\`\`bash
-make fix # Runs: uv run ruff check --fix --unsafe-fixes
-\`\`\`
+\`\`\`bash make fix # Runs: uv run ruff check --fix --unsafe-fixes \`\`\`
 
 #### Ruff Format Failures
 
-\`\`\`bash
-make format # Runs: uv run ruff format
-\`\`\`
+\`\`\`bash make format # Runs: uv run ruff format \`\`\`
 
 #### Prettier Failures
 
-\`\`\`bash
-make prettier # Runs: prettier --write '\*_/_.md'
-\`\`\`
+\`\`\`bash make prettier # Runs: prettier --write '\*_/_.md' \`\`\`
 
 #### Pyright Type Errors
 
 - Use Read tool to examine the file at the reported line number
 - Use Edit tool to fix type annotations, add type hints, or fix type mismatches
-- Follow the coding standards in AGENTS.md (use `list[...]` not `List[...]`, etc.)
+- Follow the coding standards in AGENTS.md (use `list[...]` not `List[...]`,
+  etc.)
 
 #### Test Failures
 
@@ -254,9 +245,7 @@ make prettier # Runs: prettier --write '\*_/_.md'
 
 After applying fixes, run `make all-ci` again to verify:
 
-\`\`\`bash
-make all-ci
-\`\`\`
+\`\`\`bash make all-ci \`\`\`
 
 ### 5. Repeat Until Success
 
@@ -274,12 +263,9 @@ Continue the cycle: run → identify failures → fix → verify
 
 Use TodoWrite to track your progress:
 
-\`\`\`
-Iteration 1: Fixing lint errors
-Iteration 2: Fixing format errors
-Iteration 3: Fixing type errors in src/erk/cli/commands/switch.py
-Iteration 4: All checks passed
-\`\`\`
+\`\`\` Iteration 1: Fixing lint errors Iteration 2: Fixing format errors
+Iteration 3: Fixing type errors in src/erk/cli/commands/switch.py Iteration 4:
+All checks passed \`\`\`
 
 Update the status as you work through each iteration.
 
@@ -305,8 +291,7 @@ I was unable to resolve the following issue after N attempts:
 
 **Check**: [lint/format/prettier/pyright/test]
 
-**Error**:
-[Exact error message]
+**Error**: [Exact error message]
 
 **File**: [file path if applicable]
 
@@ -316,9 +301,7 @@ I was unable to resolve the following issue after N attempts:
 2. [What you tried second]
 3. [What you tried third]
 
-**Next Steps**:
-[Suggest what needs to be done manually]
-\`\`\`
+**Next Steps**: [Suggest what needs to be done manually] \`\`\`
 
 ## Success Reporting Format
 
@@ -336,8 +319,7 @@ All CI checks passed after N iteration(s):
 - Pyright: PASSED
 - Tests: PASSED
 
-The code is ready for commit/PR.
-\`\`\`
+The code is ready for commit/PR. \`\`\`
 
 ## Important Guidelines
 
@@ -347,12 +329,12 @@ The code is ready for commit/PR.
 4. **Don't guess**: Read files before making changes
 5. **Follow standards**: Adhere to AGENTS.md coding standards
 6. **Fail gracefully**: Report clearly when stuck
-7. **Be efficient**: Use targeted fixes (don't reformat everything for one lint error)
+7. **Be efficient**: Use targeted fixes (don't reformat everything for one lint
+   error)
 
 ## Example Flow
 
-\`\`\`
-Iteration 1:
+\`\`\` Iteration 1:
 
 - Run make all-ci
 - Found: 5 lint errors, 2 files need formatting
@@ -373,12 +355,12 @@ Iteration 3:
 - Fix: Add type annotations
 - Result: All checks pass
 
-SUCCESS
-\`\`\`
+SUCCESS \`\`\`
 
 ## Begin Now
 
-Start by running `make all-ci` and begin the iterative fix process. Track your progress with TodoWrite and report your final status clearly.
+Start by running `make all-ci` and begin the iterative fix process. Track your
+progress with TodoWrite and report your final status clearly.
 ```
 
 **Key features of this example:**
@@ -403,7 +385,9 @@ description: Create an implementation plan using the subagent agent
 
 ## ⚠️ PLANNING-ONLY MODE ACTIVE
 
-I'll help you create an implementation plan using the specialized planning agent. This workflow is designed for **planning only** - no code will be written until the plan is finalized and saved to disk.
+I'll help you create an implementation plan using the specialized planning
+agent. This workflow is designed for **planning only** - no code will be written
+until the plan is finalized and saved to disk.
 
 ### How This Works
 
@@ -435,9 +419,13 @@ When invoking the subagent agent:
 2. **DO NOT use Edit, Write, or any modification tools**
 3. **ONLY output the plan to terminal for iterative review**
 4. **ONLY persist to disk after explicit user approval**
-5. The agent should remain in "Phase 1: Human-Readable Planning" mode until the user explicitly approves with signals like "looks good", "approved", or "ready to implement"
+5. The agent should remain in "Phase 1: Human-Readable Planning" mode until the
+   user explicitly approves with signals like "looks good", "approved", or
+   "ready to implement"
 
-The goal is to create a comprehensive implementation plan that will be saved as a `.md` file at the repository root, which can then guide future implementation work.
+The goal is to create a comprehensive implementation plan that will be saved as
+a `.md` file at the repository root, which can then guide future implementation
+work.
 ```
 
 **Key features of this example:**
@@ -457,13 +445,15 @@ The goal is to create a comprehensive implementation plan that will be saved as 
 
 ```markdown
 ---
-description: Perform a local code review using repository standards and best practices
+description:
+  Perform a local code review using repository standards and best practices
 argument-hint: [base-branch]
 ---
 
 # Codex Review
 
-Performs a thorough code review of changes between the current branch and the base branch.
+Performs a thorough code review of changes between the current branch and the
+base branch.
 
 ## What This Command Does
 
@@ -481,8 +471,7 @@ Performs a thorough code review of changes between the current branch and the ba
 
 # Without argument (auto-detects main/master)
 
-/codex-review
-\`\`\`
+/codex-review \`\`\`
 
 ## Implementation Steps
 
@@ -502,9 +491,7 @@ If no argument:
 
 Execute the review script with the determined base branch:
 
-\`\`\`bash
-scripts/codex-review.py [base-branch]
-\`\`\`
+\`\`\`bash scripts/codex-review.py [base-branch] \`\`\`
 
 ### 3. Display Results
 

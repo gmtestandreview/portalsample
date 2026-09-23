@@ -1,14 +1,14 @@
-import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../../storybook/withReactAriaEvaluation.tsx";
-import { Select, SelectItem } from "./Select.tsx";
+import type { Meta, StoryFn } from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../../storybook/withReactAriaEvaluation.tsx';
+import { Select, SelectItem } from './Select.tsx';
 
 const meta = {
-	decorators: [withReactAriaEvaluation],
-	title: "Evaluation/React Aria/Select",
-	component: Select,
-	parameters: {
-		layout: "centered",
-	},
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Select',
+  component: Select,
+  parameters: {
+    layout: 'centered',
+  },
 } satisfies Meta<typeof Select>;
 
 export default meta;
@@ -16,14 +16,14 @@ export default meta;
 type Story = StoryFn<typeof Select>;
 
 export const Example: Story = (args) => (
-	<Select {...args}>
-		<SelectItem>Chocolate</SelectItem>
-		<SelectItem>Mint</SelectItem>
-		<SelectItem>Strawberry</SelectItem>
-		<SelectItem>Vanilla</SelectItem>
-	</Select>
+  <Select {...args}>
+    <SelectItem>Chocolate</SelectItem>
+    <SelectItem>Mint</SelectItem>
+    <SelectItem>Strawberry</SelectItem>
+    <SelectItem>Vanilla</SelectItem>
+  </Select>
 );
 
 Example.args = {
-	label: "Ice cream flavor",
+  label: 'Ice cream flavor',
 };

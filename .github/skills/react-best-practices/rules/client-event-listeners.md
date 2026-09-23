@@ -7,7 +7,8 @@ tags: client, swr, event-listeners, subscription
 
 ## Deduplicate Global Event Listeners
 
-Use `useSWRSubscription()` to share global event listeners across component instances.
+Use `useSWRSubscription()` to share global event listeners across component
+instances.
 
 **Incorrect (N instances = N listeners):**
 
@@ -25,7 +26,8 @@ function useKeyboardShortcut(key: string, callback: () => void) {
 }
 ```
 
-When using the `useKeyboardShortcut` hook multiple times, each instance will register a new listener.
+When using the `useKeyboardShortcut` hook multiple times, each instance will
+register a new listener.
 
 **Correct (N instances = 1 listener):**
 

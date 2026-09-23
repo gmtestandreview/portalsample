@@ -1,6 +1,7 @@
 # Anti-Rationalization Guard
 
-These rationalizations are **never** valid justifications for skipping, omitting, or downgrading findings:
+These rationalizations are **never** valid justifications for skipping,
+omitting, or downgrading findings:
 
 ## Universal Rationalizations (All Agents)
 

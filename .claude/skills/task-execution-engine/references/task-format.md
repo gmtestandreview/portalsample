@@ -17,20 +17,20 @@
 - [ ] **Task Title** `priority:1` `phase:model` `deps:Other Task`
 ```
 
-| Component | Required | Description |
-|-----------|----------|-------------|
-| `- [ ]` | Yes | Checkbox (unchecked) |
-| `**Title**` | Yes | Task title in bold |
-| `priority:N` | No | Priority 1-10 (default: 5, lower = higher) |
-| `phase:X` | No | Phase: model, api, ui, test, docs |
-| `deps:A,B` | No | Comma-separated dependency task titles |
+| Component    | Required | Description                                |
+| ------------ | -------- | ------------------------------------------ |
+| `- [ ]`      | Yes      | Checkbox (unchecked)                       |
+| `**Title**`  | Yes      | Task title in bold                         |
+| `priority:N` | No       | Priority 1-10 (default: 5, lower = higher) |
+| `phase:X`    | No       | Phase: model, api, ui, test, docs          |
+| `deps:A,B`   | No       | Comma-separated dependency task titles     |
 
 ## Task Details (Indented)
 
 ### Files Line
 
 ```markdown
-  - files: src/models/user.py, tests/test_user.py
+- files: src/models/user.py, tests/test_user.py
 ```
 
 Comma-separated list of files to create/modify.
@@ -38,27 +38,28 @@ Comma-separated list of files to create/modify.
 ### Acceptance Criteria
 
 ```markdown
-  - [ ] User model has email field
-  - [ ] Password hashing uses bcrypt
+- [ ] User model has email field
+- [ ] Password hashing uses bcrypt
 ```
 
-Checkboxes for each acceptance criterion. All must be checked for task to be complete.
+Checkboxes for each acceptance criterion. All must be checked for task to be
+complete.
 
 ### Failure Reason (Auto-added)
 
 ```markdown
-  - reason: Database connection failed
+- reason: Database connection failed
 ```
 
 Added automatically when task is marked as failed.
 
 ## Status Markers
 
-| Status | Checkbox | Marker |
-|--------|----------|--------|
-| Pending | `- [ ]` | (none) |
-| Completed | `- [x]` | ✅ |
-| Failed | `- [x]` | ❌ |
+| Status    | Checkbox | Marker |
+| --------- | -------- | ------ |
+| Pending   | `- [ ]`  | (none) |
+| Completed | `- [x]`  | ✅     |
+| Failed    | `- [x]`  | ❌     |
 
 ## Priority Order
 
@@ -98,10 +99,12 @@ Added automatically when task is marked as failed.
 ### Task with Dependencies
 
 ```markdown
-- [ ] **Create auth API** `priority:3` `phase:api` `deps:Create User model,Implement JWT`
+- [ ] **Create auth API** `priority:3` `phase:api`
+      `deps:Create User model,Implement JWT`
   - files: src/api/auth.py
   - [ ] POST /register endpoint
   - [ ] POST /login endpoint
 ```
 
-This task will not be selected by `next` until both "Create User model" and "Implement JWT" are completed.
+This task will not be selected by `next` until both "Create User model" and
+"Implement JWT" are completed.

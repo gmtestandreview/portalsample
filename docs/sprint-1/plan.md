@@ -2,21 +2,26 @@
 
 ## Sprint Goal
 
-Remediate all critical and high-risk findings from the Storybook vs Source quality assessment and establish measurable closure criteria for the remaining medium-risk findings.
+Remediate all critical and high-risk findings from the Storybook vs Source
+quality assessment and establish measurable closure criteria for the remaining
+medium-risk findings.
 
 ## Scope Guardrail
 
-Any work item not traceable to docs/Storybook vs Source Quality Assessment Report.md is out of scope for this sprint.
+Any work item not traceable to docs/Storybook vs Source Quality Assessment
+Report.md is out of scope for this sprint.
 
 ## Prioritized Work
 
 ## P0 Blockers (must close for sprint pass)
 
 1. Fix status mapping bug in StatusPill switch logic.
-2. Fix dashboard fixture filter mismatches so Draft and Instrument tabs render correct data.
+2. Fix dashboard fixture filter mismatches so Draft and Instrument tabs render
+   correct data.
 3. Fix InTextLink target behavior to respect provided prop.
 4. Fix global MSW handler registration shape in Storybook preview.
-5. Resolve dual MSAL account inconsistency between preview and storybook harness.
+5. Resolve dual MSAL account inconsistency between preview and storybook
+   harness.
 
 ## P1 Critical Coverage Gaps
 
@@ -40,9 +45,11 @@ Any work item not traceable to docs/Storybook vs Source Quality Assessment Repor
 ## Acceptance Criteria
 
 1. Every P0 blocker is fixed and linked to a validating story or test assertion.
-2. Every P1 coverage target has at least one story that renders expected behavior.
+2. Every P1 coverage target has at least one story that renders expected
+   behavior.
 3. Storybook-tagged Playwright BDD run passes with no blocker defects.
-4. QA sign-off in docs/qa/sprint-1-signoff.md is PASS with zero open blocker issues.
+4. QA sign-off in docs/qa/sprint-1-signoff.md is PASS with zero open blocker
+   issues.
 
 ## Execution Sequence
 
@@ -68,7 +75,8 @@ Execute docs/sprint-1/remediation-backlog.md in priority order. For each item:
 
 ## QA Prompt (Ivy)
 
-Validate only against sprint acceptance criteria and backlog item IDs. For each item:
+Validate only against sprint acceptance criteria and backlog item IDs. For each
+item:
 
 1. Confirm reproduction before fix and expected behavior after fix.
 2. Record pass or fail with evidence in docs/qa/sprint-1-signoff.md.

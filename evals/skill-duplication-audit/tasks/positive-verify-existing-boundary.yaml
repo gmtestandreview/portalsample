@@ -3,9 +3,9 @@ id: positive-verify-existing-boundary
 name: Verify an existing boundary doc still holds
 description: >-
   "Verifying whether an existing skill-boundary document still matches current
-  skills" trigger (SKILL.md Use When bullet 5). Exercises Workflow step 2 - reuse
-  the boundary only if current and authoritative, otherwise continue the audit and
-  recommend updating it.
+  skills" trigger (SKILL.md Use When bullet 5). Exercises Workflow step 2 -
+  reuse the boundary only if current and authoritative, otherwise continue the
+  audit and recommend updating it.
 tags:
   - positive-trigger
   - execution-fidelity
@@ -22,7 +22,7 @@ graders:
     name: emits-completion-block
     config:
       contains:
-        - "skill-duplication-audit complete."
-        - "Skills analyzed:"
-        - "Pairs evaluated:"
-        - "Recommendation:"
+        - 'skill-duplication-audit complete.'
+        - 'Skills analyzed:'
+        - 'Pairs evaluated:'
+        - 'Recommendation:'

@@ -1,5 +1,8 @@
 ---
-description: 'Code Review Mode tailored for Electron app with Node.js backend (main), Angular frontend (render), and native integration layer (e.g., AppleScript, shell, or native tooling). Services in other repos are not reviewed here.'
+description:
+  'Code Review Mode tailored for Electron app with Node.js backend (main),
+  Angular frontend (render), and native integration layer (e.g., AppleScript,
+  shell, or native tooling). Services in other repos are not reviewed here.'
 name: 'Electron Code Review Mode Instructions'
 tools:
   [
@@ -22,7 +25,9 @@ tools:
   ]
 ---
 
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see
+[.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard
+validation, build, lint, and test commands.
 
 # Electron Code Review Mode Instructions
 
@@ -30,7 +35,8 @@ You're reviewing an Electron-based desktop app with:
 
 - **Main Process**: Node.js (Electron Main)
 - **Renderer Process**: Angular (Electron Renderer)
-- **Integration**: Native integration layer (e.g., AppleScript, shell, or other tooling)
+- **Integration**: Native integration layer (e.g., AppleScript, shell, or other
+  tooling)
 
 ---
 
@@ -48,7 +54,8 @@ You're reviewing an Electron-based desktop app with:
 
 ### Architecture & Separation of Concerns
 
-- Controller logic delegates to services — no business logic inside Electron IPC event listeners
+- Controller logic delegates to services — no business logic inside Electron IPC
+  event listeners
 - Use Dependency Injection (InversifyJS or similar)
 - One clear entry point — index.ts or main.ts
 
@@ -56,7 +63,8 @@ You're reviewing an Electron-based desktop app with:
 
 - No missing `await` on async calls
 - No unhandled promise rejections — always `.catch()` or `try/catch`
-- Wrap native calls (e.g., exiftool, AppleScript, shell commands) with robust error handling (timeout, invalid output, exit code checks)
+- Wrap native calls (e.g., exiftool, AppleScript, shell commands) with robust
+  error handling (timeout, invalid output, exit code checks)
 - Use safe wrappers (child_process with `spawn` not `exec` for large data)
 
 ### Exception Handling
@@ -217,10 +225,9 @@ You're reviewing an Electron-based desktop app with:
 
 ### Feature A
 
-📈 `docs/sequence-diagrams/feature-a-sequence.puml`
-📊 `docs/dataflow-diagrams/feature-a-dfd.puml`
-🔗 `docs/api-call-diagrams/feature-a-api.puml`
-📄 `docs/user-flow/feature-a.md`
+📈 `docs/sequence-diagrams/feature-a-sequence.puml` 📊
+`docs/dataflow-diagrams/feature-a-dfd.puml` 🔗
+`docs/api-call-diagrams/feature-a-api.puml` 📄 `docs/user-flow/feature-a.md`
 
 ### Feature B
 
@@ -237,10 +244,8 @@ You're reviewing an Electron-based desktop app with:
 ```markdown
 # Code Review Report
 
-**Review Date**: {Current Date}
-**Reviewer**: {Reviewer Name}
-**Branch/PR**: {Branch or PR info}
-**Files Reviewed**: {File count}
+**Review Date**: {Current Date} **Reviewer**: {Reviewer Name} **Branch/PR**:
+{Branch or PR info} **Files Reviewed**: {File count}
 
 ## Summary
 
@@ -300,7 +305,8 @@ General advice for improvement.
 
 ### Priority Classification
 
-- **🔴 HIGH**: Security, performance, critical functionality, crashing, blocking, exception handling
+- **🔴 HIGH**: Security, performance, critical functionality, crashing,
+  blocking, exception handling
 - **🟡 MEDIUM**: Maintainability, architecture, quality, error handling
 - **🟢 LOW**: Style, documentation, minor optimizations
 ```

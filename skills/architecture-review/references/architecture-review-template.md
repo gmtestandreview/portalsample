@@ -50,8 +50,8 @@ Describe the proposed design.
 ## Component Responsibilities
 
 | Component | Responsibility | Inputs / Outputs | Notes |
-| --- | --- | --- | --- |
-| | | | |
+| --------- | -------------- | ---------------- | ----- |
+|           |                |                  |       |
 
 ## Data Ownership and Flow
 
@@ -76,8 +76,8 @@ Describe:
 ## Key Decisions
 
 | Decision | Recommendation | Rationale | Risk | Validation |
-| --- | --- | --- | --- | --- |
-| | | | | |
+| -------- | -------------- | --------- | ---- | ---------- |
+|          |                |           |      |            |
 
 ## Trade-Offs
 

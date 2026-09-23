@@ -1,8 +1,8 @@
 # Shell Safety Policy
 
 Prompt-level instructions are not a security boundary. Enforce these rules with
-runtime controls where available. Architecture work is read-only: you inspect the
-system, you do not change it.
+runtime controls where available. Architecture work is read-only: you inspect
+the system, you do not change it.
 
 ## Preferred Runtime Controls
 
@@ -31,8 +31,8 @@ During an architecture review or design, shell use is limited to:
 - inspecting dependency / configuration metadata
 - running clearly read-only diagnostics
 
-`scripts/shell-safety-check.sh` in this skill is an optional pre-check helper for
-this intent. It is a defense-in-depth aid, not a sandbox.
+`scripts/shell-safety-check.sh` in this skill is an optional pre-check helper
+for this intent. It is a defense-in-depth aid, not a sandbox.
 
 ## Require Explicit Approval
 

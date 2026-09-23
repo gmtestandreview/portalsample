@@ -1,6 +1,7 @@
 # C4 Mermaid Diagram Syntax Reference
 
-Complete syntax reference for Mermaid C4 diagrams. Compatible with PlantUML C4 syntax.
+Complete syntax reference for Mermaid C4 diagrams. Compatible with PlantUML C4
+syntax.
 
 ## Table of Contents
 
@@ -21,23 +22,25 @@ Complete syntax reference for Mermaid C4 diagrams. Compatible with PlantUML C4 s
 
 Start each diagram with the appropriate type declaration:
 
-| Type | Declaration | Purpose |
-|------|-------------|---------|
-| System Context | `C4Context` | Shows system in context with users and external systems |
-| Container | `C4Container` | Shows high-level technical building blocks |
-| Component | `C4Component` | Shows internal components within a container |
-| Dynamic | `C4Dynamic` | Shows request flows with numbered sequence |
-| Deployment | `C4Deployment` | Shows infrastructure and deployment nodes |
+| Type           | Declaration    | Purpose                                                 |
+| -------------- | -------------- | ------------------------------------------------------- |
+| System Context | `C4Context`    | Shows system in context with users and external systems |
+| Container      | `C4Container`  | Shows high-level technical building blocks              |
+| Component      | `C4Component`  | Shows internal components within a container            |
+| Dynamic        | `C4Dynamic`    | Shows request flows with numbered sequence              |
+| Deployment     | `C4Deployment` | Shows infrastructure and deployment nodes               |
 
 ## System Context Elements
 
 ### Person
+
 ```
 Person(alias, label, ?descr)
 Person_Ext(alias, label, ?descr)    # External person
 ```
 
 ### System
+
 ```
 System(alias, label, ?descr)
 System_Ext(alias, label, ?descr)    # External system
@@ -50,6 +53,7 @@ SystemQueue_Ext(alias, label, ?descr)
 ## Container Elements
 
 ### Container
+
 ```
 Container(alias, label, ?techn, ?descr)
 Container_Ext(alias, label, ?techn, ?descr)
@@ -62,6 +66,7 @@ ContainerQueue_Ext(alias, label, ?techn, ?descr)
 ## Component Elements
 
 ### Component
+
 ```
 Component(alias, label, ?techn, ?descr)
 Component_Ext(alias, label, ?techn, ?descr)
@@ -74,6 +79,7 @@ ComponentQueue_Ext(alias, label, ?techn, ?descr)
 ## Deployment Elements
 
 ### Deployment Node
+
 ```
 Deployment_Node(alias, label, ?type, ?descr) { ... }
 Node(alias, label, ?type, ?descr) { ... }      # Shorthand
@@ -82,6 +88,7 @@ Node_R(alias, label, ?type, ?descr) { ... }    # Right-aligned
 ```
 
 Deployment nodes can be nested:
+
 ```mermaid
 C4Deployment
   title Nested Deployment Nodes
@@ -96,6 +103,7 @@ C4Deployment
 ## Relationship Types
 
 ### Basic Relationships
+
 ```
 Rel(from, to, label)
 Rel(from, to, label, ?techn)
@@ -103,12 +111,14 @@ Rel(from, to, label, ?techn, ?descr)
 ```
 
 ### Bidirectional
+
 ```
 BiRel(from, to, label)
 BiRel(from, to, label, ?techn)
 ```
 
 ### Directional Hints
+
 ```
 Rel_U(from, to, label)    # Upward
 Rel_Up(from, to, label)   # Upward (alias)
@@ -122,14 +132,17 @@ Rel_Back(from, to, label) # Reverse direction
 ```
 
 ### Dynamic Diagram Relationships
+
 ```
 RelIndex(index, from, to, label)
 ```
+
 Note: Index parameter is ignored; sequence determined by statement order.
 
 ## Boundaries
 
 ### Enterprise Boundary
+
 ```
 Enterprise_Boundary(alias, label) {
   # Systems and people go here
@@ -137,6 +150,7 @@ Enterprise_Boundary(alias, label) {
 ```
 
 ### System Boundary
+
 ```
 System_Boundary(alias, label) {
   # Containers go here
@@ -144,6 +158,7 @@ System_Boundary(alias, label) {
 ```
 
 ### Container Boundary
+
 ```
 Container_Boundary(alias, label) {
   # Components go here
@@ -151,6 +166,7 @@ Container_Boundary(alias, label) {
 ```
 
 ### Generic Boundary
+
 ```
 Boundary(alias, label, ?type) {
   # Elements go here
@@ -160,11 +176,13 @@ Boundary(alias, label, ?type) {
 ## Styling
 
 ### Update Element Style
+
 ```
 UpdateElementStyle(elementAlias, $bgColor, $fontColor, $borderColor, $shadowing, $shape)
 ```
 
 Available parameters (all optional, use `$name=value` syntax):
+
 - `$bgColor` - Background color
 - `$fontColor` - Text color
 - `$borderColor` - Border color
@@ -172,17 +190,20 @@ Available parameters (all optional, use `$name=value` syntax):
 - `$shape` - Element shape
 
 ### Update Relationship Style
+
 ```
 UpdateRelStyle(from, to, $textColor, $lineColor, $offsetX, $offsetY)
 ```
 
 Available parameters:
+
 - `$textColor` - Label text color
 - `$lineColor` - Line color
 - `$offsetX` - Horizontal label offset (pixels)
 - `$offsetY` - Vertical label offset (pixels)
 
 **Tip:** Use `$offsetX` and `$offsetY` to fix overlapping relationship labels:
+
 ```mermaid
 C4Context
   Person(user, "User")
@@ -202,6 +223,7 @@ UpdateLayoutConfig($c4ShapeInRow, $c4BoundaryInRow)
 - `$c4BoundaryInRow` - Number of boundaries per row (default: 2)
 
 **Example - Reduce crowding:**
+
 ```mermaid
 C4Context
   title Less Crowded Layout
@@ -218,12 +240,14 @@ C4Context
 Two ways to pass optional parameters:
 
 ### Positional (in order)
+
 ```
 Rel(customerA, bankA, "Uses", "HTTPS")
 UpdateRelStyle(customerA, bankA, "red", "blue", "-40", "60")
 ```
 
 ### Named (with $ prefix, any order)
+
 ```
 UpdateRelStyle(customerA, bankA, $offsetX="-40", $offsetY="60", $lineColor="blue")
 ```
@@ -231,6 +255,7 @@ UpdateRelStyle(customerA, bankA, $offsetX="-40", $offsetY="60", $lineColor="blue
 ## Complete Examples
 
 ### C4Context Example
+
 ```mermaid
 C4Context
   title System Context diagram for Internet Banking System
@@ -254,6 +279,7 @@ C4Context
 ```
 
 ### C4Container Example
+
 ```mermaid
 C4Container
   title Container diagram for Internet Banking System
@@ -279,6 +305,7 @@ C4Container
 ```
 
 ### C4Component Example
+
 ```mermaid
 C4Component
   title Component diagram for API Application
@@ -303,6 +330,7 @@ C4Component
 ```
 
 ### C4Dynamic Example
+
 ```mermaid
 C4Dynamic
   title Dynamic diagram - User Sign In Flow
@@ -321,6 +349,7 @@ C4Dynamic
 ```
 
 ### C4Deployment Example
+
 ```mermaid
 C4Deployment
   title Deployment Diagram - Production
@@ -348,6 +377,7 @@ C4Deployment
 ```
 
 ### E-commerce Microservices Example
+
 ```mermaid
 C4Container
   title E-commerce Platform - Container Diagram
@@ -394,6 +424,7 @@ C4Container
 ```
 
 ### Event-Driven Architecture Example
+
 ```mermaid
 C4Container
   title Event-Driven Order Processing
@@ -421,6 +452,7 @@ C4Container
 ```
 
 ### AWS Deployment Example
+
 ```mermaid
 C4Deployment
   title Production Deployment - AWS
@@ -461,6 +493,7 @@ C4Deployment
 The following PlantUML C4 features are not yet supported in Mermaid:
 
 ### Unsupported Features
+
 - `sprite` - Custom icons
 - `tags` - Element tagging
 - `link` - Clickable links
@@ -472,21 +505,22 @@ The following PlantUML C4 features are not yet supported in Mermaid:
 
 ### Workarounds
 
-**Layout Control:**
-Use `UpdateLayoutConfig` to control shape positioning instead of layout directives.
+**Layout Control:** Use `UpdateLayoutConfig` to control shape positioning
+instead of layout directives.
 
-**Overlapping Labels:**
-Use `UpdateRelStyle` with `$offsetX` and `$offsetY` to move relationship labels.
+**Overlapping Labels:** Use `UpdateRelStyle` with `$offsetX` and `$offsetY` to
+move relationship labels.
 
-**Complex Diagrams:**
-Keep diagrams under 15 elements. Split complex architectures into multiple focused diagrams.
+**Complex Diagrams:** Keep diagrams under 15 elements. Split complex
+architectures into multiple focused diagrams.
 
-**Element Ordering:**
-Elements appear in the order they are defined. Reorder statements to adjust layout.
+**Element Ordering:** Elements appear in the order they are defined. Reorder
+statements to adjust layout.
 
 ### Alternative Tools
 
 For features Mermaid doesn't support, consider:
+
 - **Structurizr DSL** - Full C4 support with model-based generation
 - **C4-PlantUML** - More mature C4 implementation
 - **IcePanel** - Visual C4 diagram editor

@@ -4,18 +4,18 @@ Quick reference for selecting the right Spring Boot test slice.
 
 ## Decision Matrix
 
-| Annotation | Use When | Loads | Speed |
-| ---------- | -------- | ----- | ----- |
-| **None** (plain JUnit) | Testing pure business logic | Nothing | Fastest |
-| `@WebMvcTest` | Controller + HTTP layer | Controllers, MVC, Jackson | Fast |
-| `@DataJpaTest` | Repository queries | Repositories, JPA, DataSource | Fast |
-| `@RestClientTest` | REST client code | RestTemplate/RestClient, Jackson | Fast |
-| `@JsonTest` | JSON serialization | ObjectMapper only | Fastest slice |
-| `@WebFluxTest` | Reactive controllers | Controllers, WebFlux | Fast |
-| `@DataJdbcTest` | JDBC repositories | Repositories, JDBC | Fast |
-| `@DataMongoTest` | MongoDB repositories | Repositories, MongoDB | Fast |
-| `@DataRedisTest` | Redis repositories | Repositories, Redis | Fast |
-| `@SpringBootTest` | Full integration | Entire application | Slow |
+| Annotation             | Use When                    | Loads                            | Speed         |
+| ---------------------- | --------------------------- | -------------------------------- | ------------- |
+| **None** (plain JUnit) | Testing pure business logic | Nothing                          | Fastest       |
+| `@WebMvcTest`          | Controller + HTTP layer     | Controllers, MVC, Jackson        | Fast          |
+| `@DataJpaTest`         | Repository queries          | Repositories, JPA, DataSource    | Fast          |
+| `@RestClientTest`      | REST client code            | RestTemplate/RestClient, Jackson | Fast          |
+| `@JsonTest`            | JSON serialization          | ObjectMapper only                | Fastest slice |
+| `@WebFluxTest`         | Reactive controllers        | Controllers, WebFlux             | Fast          |
+| `@DataJdbcTest`        | JDBC repositories           | Repositories, JDBC               | Fast          |
+| `@DataMongoTest`       | MongoDB repositories        | Repositories, MongoDB            | Fast          |
+| `@DataRedisTest`       | Redis repositories          | Repositories, Redis              | Fast          |
+| `@SpringBootTest`      | Full integration            | Entire application               | Slow          |
 
 ## Selection Guide
 
@@ -24,7 +24,7 @@ Quick reference for selecting the right Spring Boot test slice.
 ```java
 class PriceCalculatorTest {
   private PriceCalculator calculator = new PriceCalculator();
-  
+
   @Test
   void shouldApplyDiscount() {
     var result = calculator.applyDiscount(100, 0.1);
@@ -33,7 +33,8 @@ class PriceCalculatorTest {
 }
 ```
 
-**When**: Pure business logic, no dependencies or simple dependencies mockable via constructor injection.
+**When**: Pure business logic, no dependencies or simple dependencies mockable
+via constructor injection.
 
 ### Use @WebMvcTest
 
@@ -47,7 +48,8 @@ class OrderControllerTest {
 
 **When**: Testing request mapping, validation, JSON mapping, security, filters.
 
-**What you get**: MockMvc, ObjectMapper, Spring Security (if present), exception handlers.
+**What you get**: MockMvc, ObjectMapper, Spring Security (if present), exception
+handlers.
 
 ### Use @DataJpaTest
 
@@ -61,9 +63,11 @@ class OrderRepositoryTest {
 }
 ```
 
-**When**: Testing custom JPA queries, entity mappings, transaction behavior, cascade operations.
+**When**: Testing custom JPA queries, entity mappings, transaction behavior,
+cascade operations.
 
-**What you get**: Repository beans, EntityManager, TestEntityManager, transaction support.
+**What you get**: Repository beans, EntityManager, TestEntityManager,
+transaction support.
 
 ### Use @RestClientTest
 
@@ -100,15 +104,19 @@ class OrderIntegrationTest {
 }
 ```
 
-**When**: Testing full request flow, security filters, database interactions together.
+**When**: Testing full request flow, security filters, database interactions
+together.
 
-**What you get**: Full application context, embedded server (optional), real beans.
+**What you get**: Full application context, embedded server (optional), real
+beans.
 
 ## Common Mistakes
 
-1. **Using @SpringBootTest for everything** - Slows down your test suite unnecessarily
+1. **Using @SpringBootTest for everything** - Slows down your test suite
+   unnecessarily
 2. **@WebMvcTest without mocking services** - Causes context loading failures
-3. **@DataJpaTest with @MockBean** - Defeats the purpose (you want real repositories)
+3. **@DataJpaTest with @MockBean** - Defeats the purpose (you want real
+   repositories)
 4. **Multiple slices in one test** - Each slice is a separate test class
 
 ## Java 25 Features in Tests
@@ -126,7 +134,7 @@ record OrderResponse(Long id, String status, BigDecimal total) {}
 @Test
 void shouldHandleDifferentOrderTypes() {
   var order = orderService.create(new OrderRequest("Product", 2));
-  
+
   switch (order) {
     case PhysicalOrder po -> assertThat(po.getShippingAddress()).isNotNull();
     case DigitalOrder do_ -> assertThat(do_.getDownloadLink()).isNotNull();
@@ -150,7 +158,7 @@ void shouldParseComplexJson() {
       ]
     }
     """;
-  
+
   assertThat(mvc.post().uri("/orders")
     .contentType(APPLICATION_JSON)
     .content(json))
@@ -164,7 +172,7 @@ void shouldParseComplexJson() {
 @Test
 void shouldReturnOrdersInSequence() {
   var orders = orderRepository.findAll();
-  
+
   assertThat(orders.getFirst().getStatus()).isEqualTo("NEW");
   assertThat(orders.getLast().getStatus()).isEqualTo("COMPLETED");
   assertThat(orders.reversed().getFirst().getStatus()).isEqualTo("COMPLETED");

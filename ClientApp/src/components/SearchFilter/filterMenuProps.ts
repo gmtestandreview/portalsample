@@ -1,1 +1,1 @@
-export type { SearchFilterProps as FilterMenuProps } from "./types.ts";
+export type { SearchFilterProps as FilterMenuProps } from './types.ts';

@@ -4,7 +4,8 @@ This directory contains scripts for working with Excalidraw libraries.
 
 ## split-excalidraw-library.py
 
-Splits an Excalidraw library file (`*.excalidrawlib`) into individual icon JSON files for efficient token usage by AI assistants.
+Splits an Excalidraw library file (`*.excalidrawlib`) into individual icon JSON
+files for efficient token usage by AI assistants.
 
 ### Prerequisites
 
@@ -20,6 +21,7 @@ python split-excalidraw-library.py <path-to-library-directory>
 ### Step-by-Step Workflow
 
 1. **Create library directory**:
+
    ```bash
    mkdir -p skills/excalidraw-diagram-generator/libraries/aws-architecture-icons
    ```
@@ -27,7 +29,8 @@ python split-excalidraw-library.py <path-to-library-directory>
 2. **Download and place library file**:
    - Visit: https://libraries.excalidraw.com/
    - Search for "AWS Architecture Icons" and download the `.excalidrawlib` file
-   - Rename it to match the directory name: `aws-architecture-icons.excalidrawlib`
+   - Rename it to match the directory name:
+     `aws-architecture-icons.excalidrawlib`
    - Place it in the directory created in step 1
 
 3. **Run the script**:
@@ -55,13 +58,16 @@ skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/
 
 1. **Reads** the `.excalidrawlib` file
 2. **Extracts** each icon from the `libraryItems` array
-3. **Sanitizes** icon names to create valid filenames (spaces → hyphens, removes special characters)
+3. **Sanitizes** icon names to create valid filenames (spaces → hyphens, removes
+   special characters)
 4. **Saves** each icon as a separate JSON file in the `icons/` directory
-5. **Generates** a `reference.md` file with a table mapping icon names to filenames
+5. **Generates** a `reference.md` file with a table mapping icon names to
+   filenames
 
 ### Benefits
 
-- **Token Efficiency**: AI can first read the lightweight `reference.md` to find relevant icons, then load only the specific icon files needed
+- **Token Efficiency**: AI can first read the lightweight `reference.md` to find
+  relevant icons, then load only the specific icon files needed
 - **Organization**: Icons are organized in a clear directory structure
 - **Extensibility**: Users can add multiple library sets side-by-side
 
@@ -70,36 +76,45 @@ skills/excalidraw-diagram-generator/libraries/aws-architecture-icons/
 1. Download desired Excalidraw libraries from https://libraries.excalidraw.com/
 2. Run this script on each library file
 3. Move the generated folders to `../libraries/`
-4. The AI assistant will use `reference.md` files to locate and use icons efficiently
+4. The AI assistant will use `reference.md` files to locate and use icons
+   efficiently
 
 ### Library Sources (Examples — verify availability)
 
-- Examples found on https://libraries.excalidraw.com/ may include cloud/service icon sets.
-- Availability changes over time; verify the exact library names on the site before use.
+- Examples found on https://libraries.excalidraw.com/ may include cloud/service
+  icon sets.
+- Availability changes over time; verify the exact library names on the site
+  before use.
 - This script works with any valid `.excalidrawlib` file you provide.
 
 ### Troubleshooting
 
 **Error: File not found**
+
 - Check that the file path is correct
 - Make sure the file has a `.excalidrawlib` extension
 
 **Error: Invalid library file format**
+
 - Ensure the file is a valid Excalidraw library file
 - Check that it contains a `libraryItems` array
 
 ### License Considerations
 
 When using third-party icon libraries:
+
 - **AWS Architecture Icons**: Subject to AWS Content License
 - **GCP Icons**: Subject to Google's terms
 - **Other libraries**: Check each library's license
 
-This script is for personal/organizational use. Redistribution of split icon files should comply with the original library's license terms.
+This script is for personal/organizational use. Redistribution of split icon
+files should comply with the original library's license terms.
 
 ## add-icon-to-diagram.py
 
-Adds a specific icon from a split Excalidraw library into an existing `.excalidraw` diagram. The script handles coordinate translation and ID collision avoidance, and can optionally add a label under the icon.
+Adds a specific icon from a split Excalidraw library into an existing
+`.excalidraw` diagram. The script handles coordinate translation and ID
+collision avoidance, and can optionally add a label under the icon.
 
 ### Prerequisites
 
@@ -114,9 +129,12 @@ python add-icon-to-diagram.py <diagram-path> <icon-name> <x> <y> [OPTIONS]
 ```
 
 **Options**
-- `--library-path PATH` : Path to the icon library directory (default: `aws-architecture-icons`)
-- `--label TEXT` : Add a text label below the icon
--- `--use-edit-suffix` : Edit via `.excalidraw.edit` to avoid editor overwrite issues (enabled by default; pass `--no-use-edit-suffix` to disable)
+
+- `--library-path PATH` : Path to the icon library directory (default:
+  `aws-architecture-icons`)
+- `--label TEXT` : Add a text label below the icon -- `--use-edit-suffix` : Edit
+  via `.excalidraw.edit` to avoid editor overwrite issues (enabled by default;
+  pass `--no-use-edit-suffix` to disable)
 
 ### Examples
 
@@ -149,7 +167,8 @@ python add-icon-to-diagram.py diagram.excalidraw Compute-Engine 500 200 \
 
 ## add-arrow.py
 
-Adds a straight arrow between two points in an existing `.excalidraw` diagram. Supports optional labels and line styles.
+Adds a straight arrow between two points in an existing `.excalidraw` diagram.
+Supports optional labels and line styles.
 
 ### Prerequisites
 
@@ -163,10 +182,12 @@ python add-arrow.py <diagram-path> <from-x> <from-y> <to-x> <to-y> [OPTIONS]
 ```
 
 **Options**
+
 - `--style {solid|dashed|dotted}` : Line style (default: `solid`)
 - `--color HEX` : Arrow color (default: `#1e1e1e`)
-- `--label TEXT` : Add a text label on the arrow
--- `--use-edit-suffix` : Edit via `.excalidraw.edit` to avoid editor overwrite issues (enabled by default; pass `--no-use-edit-suffix` to disable)
+- `--label TEXT` : Add a text label on the arrow -- `--use-edit-suffix` : Edit
+  via `.excalidraw.edit` to avoid editor overwrite issues (enabled by default;
+  pass `--no-use-edit-suffix` to disable)
 
 ### Examples
 

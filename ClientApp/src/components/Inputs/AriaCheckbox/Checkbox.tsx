@@ -1,50 +1,50 @@
-"use client";
+'use client';
 import {
-	CheckboxButton,
-	CheckboxField,
-	type CheckboxFieldProps,
-	type ValidationResult,
-} from "react-aria-components/Checkbox";
-import "./Checkbox.css";
-import type { ReactNode } from "react";
-import { Description, FieldError } from "../../forms/AriaForm/Form.tsx";
+  CheckboxButton,
+  CheckboxField,
+  type CheckboxFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/Checkbox';
+import './Checkbox.css';
+import type { ReactNode } from 'react';
+import { Description, FieldError } from '../../forms/AriaForm/Form.tsx';
 
 interface CheckboxProps extends CheckboxFieldProps {
-	children?: ReactNode;
-	description?: string;
-	errorMessage?: string | ((validation: ValidationResult) => string);
+  children?: ReactNode;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
 export function Checkbox({
-	children,
-	description,
-	errorMessage,
-	...props
+  children,
+  description,
+  errorMessage,
+  ...props
 }: Readonly<CheckboxProps>) {
-	return (
-		<CheckboxField {...props}>
-			<CheckboxButton>
-				{({ isIndeterminate }) => (
-					<>
-						<div className="indicator">
-							<svg
-								viewBox="0 0 18 18"
-								aria-hidden="true"
-								key={isIndeterminate ? "indeterminate" : "check"}
-							>
-								{isIndeterminate ? (
-									<rect x={1} y={7.5} width={16} height={3} />
-								) : (
-									<polyline points="2 9 7 14 16 4" />
-								)}
-							</svg>
-						</div>
-						{children}
-					</>
-				)}
-			</CheckboxButton>
-			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
-		</CheckboxField>
-	);
+  return (
+    <CheckboxField {...props}>
+      <CheckboxButton>
+        {({ isIndeterminate }) => (
+          <>
+            <div className='indicator'>
+              <svg
+                viewBox='0 0 18 18'
+                aria-hidden='true'
+                key={isIndeterminate ? 'indeterminate' : 'check'}
+              >
+                {isIndeterminate ? (
+                  <rect x={1} y={7.5} width={16} height={3} />
+                ) : (
+                  <polyline points='2 9 7 14 16 4' />
+                )}
+              </svg>
+            </div>
+            {children}
+          </>
+        )}
+      </CheckboxButton>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </CheckboxField>
+  );
 }

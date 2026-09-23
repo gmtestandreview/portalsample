@@ -1,6 +1,13 @@
 ---
 name: senior-data-scientist
-description: World-class data science skill for statistical modeling, experimentation, causal inference, and advanced analytics. Expertise in Python (NumPy, Pandas, Scikit-learn), R, SQL, statistical methods, A/B testing, time series, and business intelligence. Includes experiment design, feature engineering, model evaluation, and stakeholder communication. Use when designing experiments, building predictive models, performing causal analysis, or driving data-driven decisions.
+description:
+  World-class data science skill for statistical modeling, experimentation,
+  causal inference, and advanced analytics. Expertise in Python (NumPy, Pandas,
+  Scikit-learn), R, SQL, statistical methods, A/B testing, time series, and
+  business intelligence. Includes experiment design, feature engineering, model
+  evaluation, and stakeholder communication. Use when designing experiments,
+  building predictive models, performing causal analysis, or driving data-driven
+  decisions.
 ---
 
 # Senior Data Scientist
@@ -15,7 +22,7 @@ World-class senior data scientist skill for production-grade AI/ML/Data systems.
 # Core Tool 1
 python scripts/experiment_designer.py --input data/ --output results/
 
-# Core Tool 2  
+# Core Tool 2
 python scripts/feature_engineering_pipeline.py --target project/ --analyze
 
 # Core Tool 3
@@ -39,19 +46,18 @@ This skill covers world-class capabilities in:
 
 ## Tech Stack
 
-**Languages:** Python, SQL, R, Scala, Go
-**ML Frameworks:** PyTorch, TensorFlow, Scikit-learn, XGBoost
-**Data Tools:** Spark, Airflow, dbt, Kafka, Databricks
-**LLM Frameworks:** LangChain, LlamaIndex, DSPy
-**Deployment:** Docker, Kubernetes, AWS/GCP/Azure
-**Monitoring:** MLflow, Weights & Biases, Prometheus
+**Languages:** Python, SQL, R, Scala, Go **ML Frameworks:** PyTorch, TensorFlow,
+Scikit-learn, XGBoost **Data Tools:** Spark, Airflow, dbt, Kafka, Databricks
+**LLM Frameworks:** LangChain, LlamaIndex, DSPy **Deployment:** Docker,
+Kubernetes, AWS/GCP/Azure **Monitoring:** MLflow, Weights & Biases, Prometheus
 **Databases:** PostgreSQL, BigQuery, Snowflake, Pinecone
 
 ## Reference Documentation
 
 ### 1. Statistical Methods Advanced
 
-Comprehensive guide available in `references/statistical_methods_advanced.md` covering:
+Comprehensive guide available in `references/statistical_methods_advanced.md`
+covering:
 
 - Advanced patterns and best practices
 - Production implementation strategies
@@ -62,7 +68,8 @@ Comprehensive guide available in `references/statistical_methods_advanced.md` co
 
 ### 2. Experiment Design Frameworks
 
-Complete workflow documentation in `references/experiment_design_frameworks.md` including:
+Complete workflow documentation in `references/experiment_design_frameworks.md`
+including:
 
 - Step-by-step processes
 - Architecture design patterns
@@ -141,15 +148,18 @@ High-throughput inference system:
 ## Performance Targets
 
 **Latency:**
+
 - P50: < 50ms
 - P95: < 100ms
 - P99: < 200ms
 
 **Throughput:**
+
 - Requests/second: > 1000
 - Concurrent users: > 10,000
 
 **Availability:**
+
 - Uptime: 99.9%
 - Error rate: < 0.1%
 

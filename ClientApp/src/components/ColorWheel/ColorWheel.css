@@ -1,7 +1,7 @@
 .react-aria-ColorWheel {
-	&[data-disabled] {
-		.react-aria-ColorWheelTrack {
-			background: gray;
-		}
-	}
+  &[data-disabled] {
+    .react-aria-ColorWheelTrack {
+      background: gray;
+    }
+  }
 }

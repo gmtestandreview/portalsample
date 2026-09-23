@@ -1,6 +1,7 @@
 # TypeScript and JavaScript Review Guide
 
-Use this guide for TypeScript, JavaScript, Node.js, browser code, type safety, async behavior, and package changes.
+Use this guide for TypeScript, JavaScript, Node.js, browser code, type safety,
+async behavior, and package changes.
 
 ## Type Safety
 
@@ -9,12 +10,12 @@ Use this guide for TypeScript, JavaScript, Node.js, browser code, type safety, a
 - [ ] Optional values are handled before use.
 - [ ] Type assertions are rare and justified.
 - [ ] Discriminated unions model state machines and variants.
-- [ ] Runtime validation exists for untrusted data; TypeScript types alone do not validate runtime input.
+- [ ] Runtime validation exists for untrusted data; TypeScript types alone do
+      not validate runtime input.
 
 ```ts
 type Result =
-  | { status: 'success'; value: string }
-  | { status: 'error'; message: string };
+  { status: 'success'; value: string } | { status: 'error'; message: string };
 ```
 
 ## Null and Undefined
@@ -31,7 +32,8 @@ const count = input.count ?? 10;
 ## Async and Promises
 
 - [ ] Promises are awaited or returned.
-- [ ] Parallel work uses `Promise.all` or a bounded concurrency pattern intentionally.
+- [ ] Parallel work uses `Promise.all` or a bounded concurrency pattern
+      intentionally.
 - [ ] Errors from async work are handled.
 - [ ] Cancellation or stale-result protection exists for user-driven requests.
 - [ ] Timers, intervals, and subscriptions are cleaned up.
@@ -42,7 +44,8 @@ await Promise.all(items.map((item) => save(item)));
 
 ## Runtime Validation
 
-- [ ] API, form, message, storage, and environment inputs are parsed and validated.
+- [ ] API, form, message, storage, and environment inputs are parsed and
+      validated.
 - [ ] Validation errors are surfaced consistently.
 - [ ] Unknown fields are rejected or ignored intentionally.
 - [ ] Backend and frontend validation do not contradict each other.
@@ -83,7 +86,8 @@ await Promise.all(items.map((item) => save(item)));
 
 ## Security
 
-- [ ] Input used in HTML, URLs, SQL, shell commands, or file paths is safely handled.
+- [ ] Input used in HTML, URLs, SQL, shell commands, or file paths is safely
+      handled.
 - [ ] Secrets are not exposed to browser bundles or logs.
 - [ ] CORS, cookies, and CSRF behavior are intentional.
 - [ ] Dependencies and install scripts are reviewed when changed.

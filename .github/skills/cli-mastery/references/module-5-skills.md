@@ -8,16 +8,17 @@
 
 ## Skill locations
 
-| Level | Location |
-|-------|----------|
-| User | `~/.copilot/skills/<name>/SKILL.md` |
-| Repo | `.github/skills/<name>/SKILL.md` |
-| Org | Shared via org-level config |
+| Level | Location                            |
+| ----- | ----------------------------------- |
+| User  | `~/.copilot/skills/<name>/SKILL.md` |
+| Repo  | `.github/skills/<name>/SKILL.md`    |
+| Org   | Shared via org-level config         |
 
 ## Creating a custom skill
 
 1. Create the directory: `mkdir -p ~/.copilot/skills/my-skill/`
-2. Create `SKILL.md` with YAML frontmatter (`name`, `description`, optional `tools`)
+2. Create `SKILL.md` with YAML frontmatter (`name`, `description`, optional
+   `tools`)
 3. Write detailed instructions for the AI's behavior
 4. Verify with `/skills`
 
@@ -30,4 +31,5 @@
 
 ## Auto-matching
 
-When you describe a task, the AI checks if any skill matches and suggests using it.
+When you describe a task, the AI checks if any skill matches and suggests using
+it.

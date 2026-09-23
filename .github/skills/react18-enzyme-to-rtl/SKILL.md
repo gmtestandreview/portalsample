@@ -1,11 +1,20 @@
 ---
 name: react18-enzyme-to-rtl
-description: 'Provides exact Enzyme → React Testing Library migration patterns for React 18 upgrades. Use this skill whenever Enzyme tests need to be rewritten - shallow, mount, wrapper.find(), wrapper.simulate(), wrapper.prop(), wrapper.state(), wrapper.instance(), Enzyme configure/Adapter calls, or any test file that imports from enzyme. This skill covers the full API mapping and the philosophy shift from implementation testing to behavior testing. Always read this skill before rewriting Enzyme tests - do not translate Enzyme APIs 1:1, that produces brittle RTL tests.'
+description:
+  'Provides exact Enzyme → React Testing Library migration patterns for React 18
+  upgrades. Use this skill whenever Enzyme tests need to be rewritten - shallow,
+  mount, wrapper.find(), wrapper.simulate(), wrapper.prop(), wrapper.state(),
+  wrapper.instance(), Enzyme configure/Adapter calls, or any test file that
+  imports from enzyme. This skill covers the full API mapping and the philosophy
+  shift from implementation testing to behavior testing. Always read this skill
+  before rewriting Enzyme tests - do not translate Enzyme APIs 1:1, that
+  produces brittle RTL tests.'
 ---
 
 # React 18 Enzyme → RTL Migration
 
-Enzyme has no React 18 adapter and no React 18 support path. All Enzyme tests must be rewritten using React Testing Library.
+Enzyme has no React 18 adapter and no React 18 support path. All Enzyme tests
+must be rewritten using React Testing Library.
 
 ## The Philosophy Shift (Read This First)
 
@@ -22,13 +31,18 @@ expect(screen.getByText('Count: 3')).toBeInTheDocument();
 expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled();
 ```
 
-This is not a 1:1 translation. Enzyme tests that verify internal state or instance methods don't have RTL equivalents - because RTL intentionally doesn't expose internals. **Rewrite the test to assert the visible outcome instead.**
+This is not a 1:1 translation. Enzyme tests that verify internal state or
+instance methods don't have RTL equivalents - because RTL intentionally doesn't
+expose internals. **Rewrite the test to assert the visible outcome instead.**
 
 ## API Map
 
 For complete before/after code for each Enzyme API, read:
-- **`references/enzyme-api-map.md`** - full mapping: shallow, mount, find, simulate, prop, state, instance, configure
-- **`references/async-patterns.md`** - waitFor, findBy, act(), Apollo MockedProvider, loading states, error states
+
+- **`references/enzyme-api-map.md`** - full mapping: shallow, mount, find,
+  simulate, prop, state, instance, configure
+- **`references/async-patterns.md`** - waitFor, findBy, act(), Apollo
+  MockedProvider, loading states, error states
 
 ## Core Rewrite Template
 
@@ -41,7 +55,7 @@ import MyComponent from './MyComponent';
 describe('MyComponent', () => {
   it('does the thing', async () => {
     // 1. Render (replaces shallow/mount)
-    render(<MyComponent prop="value" />);
+    render(<MyComponent prop='value' />);
 
     // 2. Query (replaces wrapper.find())
     const button = screen.getByRole('button', { name: /submit/i });
@@ -57,7 +71,8 @@ describe('MyComponent', () => {
 
 ## RTL Query Priority (use in this order)
 
-1. `getByRole` - matches accessible roles (button, textbox, heading, checkbox, etc.)
+1. `getByRole` - matches accessible roles (button, textbox, heading, checkbox,
+   etc.)
 2. `getByLabelText` - form fields linked to labels
 3. `getByPlaceholderText` - input placeholders
 4. `getByText` - visible text content

@@ -4,7 +4,8 @@
 
 ## Diagnostic Codes
 
-Aspire emits diagnostic codes for common issues. These appear in build warnings/errors and IDE diagnostics.
+Aspire emits diagnostic codes for common issues. These appear in build
+warnings/errors and IDE diagnostics.
 
 ### Standard diagnostics
 
@@ -21,7 +22,9 @@ Aspire emits diagnostic codes for common issues. These appear in build warnings/
 
 ### Experimental diagnostics (ASPIREHOSTINGX\*)
 
-These codes indicate usage of experimental/preview APIs. They may require `#pragma warning disable` or `<NoWarn>` if you intentionally use experimental features:
+These codes indicate usage of experimental/preview APIs. They may require
+`#pragma warning disable` or `<NoWarn>` if you intentionally use experimental
+features:
 
 | Code                      | Area                             |
 | ------------------------- | -------------------------------- |
@@ -155,19 +158,23 @@ var resource = builder.AddExperimentalResource("test");
 
 ### 1. Check the dashboard first
 
-The dashboard shows resource state, logs, traces, and metrics. Start here for any issue.
+The dashboard shows resource state, logs, traces, and metrics. Start here for
+any issue.
 
 ### 2. Check environment variables
 
-In the dashboard, click a resource to see all injected environment variables. Verify connection strings and service URLs are correct.
+In the dashboard, click a resource to see all injected environment variables.
+Verify connection strings and service URLs are correct.
 
 ### 3. Read console logs
 
-Dashboard → Console Logs → filter by the failing resource. Raw stdout/stderr often contains the root cause.
+Dashboard → Console Logs → filter by the failing resource. Raw stdout/stderr
+often contains the root cause.
 
 ### 4. Check the DAG
 
-If services fail to start, check the dependency order. A failed dependency blocks all downstream resources.
+If services fail to start, check the dependency order. A failed dependency
+blocks all downstream resources.
 
 ### 5. Use MCP for AI-assisted debugging
 
@@ -179,7 +186,8 @@ If MCP is configured (see [MCP Server](mcp-server.md)), ask your AI assistant:
 
 ### 6. Isolate the problem
 
-Run just the failing resource by commenting out others in the AppHost. This narrows whether the issue is the resource itself or a dependency.
+Run just the failing resource by commenting out others in the AppHost. This
+narrows whether the issue is the resource itself or a dependency.
 
 ---
 

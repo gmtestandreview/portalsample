@@ -2,10 +2,10 @@
 
 ## Scope and constraints
 
-This is the single consolidated final-review fix wave requested after the
-97/100 whole-plan review. Base was `eee6457a0e92c29189200d4a71652db171c1af8f`.
-The post-review Copilot commits `e2660f7` and `eee6457` are preserved. Their
-files (`scripts/clean-storybook-output.mjs`, `scripts/coverage-gap-queue.mjs`,
+This is the single consolidated final-review fix wave requested after the 97/100
+whole-plan review. Base was `eee6457a0e92c29189200d4a71652db171c1af8f`. The
+post-review Copilot commits `e2660f7` and `eee6457` are preserved. Their files
+(`scripts/clean-storybook-output.mjs`, `scripts/coverage-gap-queue.mjs`,
 `scripts/verify-storybook-docs.mjs`, and `.storybook/preview.ts`) are not
 modified.
 
@@ -14,10 +14,10 @@ modified.
 1. `auditLog()` considers a `Test Files` line sufficient for `completed`, and
    its verdict chooses `clean` whenever there are no target hits. A fatal marker
    after that summary is collected but not consulted by verdict selection.
-2. The MSW lookup fixture map is a normal object. Indexing it using the untrusted
-   URL value returns inherited `Object.prototype` members for `__proto__`,
-   `constructor`, and `toString`, so the `undefined`-only fail-closed check is
-   bypassed.
+2. The MSW lookup fixture map is a normal object. Indexing it using the
+   untrusted URL value returns inherited `Object.prototype` members for
+   `__proto__`, `constructor`, and `toString`, so the `undefined`-only
+   fail-closed check is bypassed.
 3. The Vitest topology guard only rejects coverage commands that omit
    `--config`; a command explicitly selecting `vitest.config.ts` therefore
    escapes it despite root-project coverage being inert.
@@ -29,11 +29,11 @@ modified.
 
 Before test bodies were written, the following mutations were named:
 
-1. Adding `FATAL ERROR` after a valid `Test Files` summary must turn a
-   zero-hit audit invalid, rather than clean.
+1. Adding `FATAL ERROR` after a valid `Test Files` summary must turn a zero-hit
+   audit invalid, rather than clean.
 2. Replacing an own-fixture lookup with an inherited normal-object member for
-   each of `__proto__`, `constructor`, and `toString` must still return HTTP
-   501.
+   each of `__proto__`, `constructor`, and `toString` must still return
+   HTTP 501.
 3. Adding `vitest run --coverage --config vitest.config.ts` to `package.json`
    must fail the topology invariant; the file is restored unchanged afterwards.
 4. Adding literal outside-repository, generated/vendor, test/story, or
@@ -67,8 +67,8 @@ It exited `1` with the expected six assertion failures:
   the whitespace matcher. That test correction was made before treating the
   coverage guard as green; it was test code, not a production change.
 
-The topology guard's exact unsafe form was then proved by temporarily adding
-the following script to `package.json` using `apply_patch`:
+The topology guard's exact unsafe form was then proved by temporarily adding the
+following script to `package.json` using `apply_patch`:
 
 ```text
 vitest run --coverage --config vitest.config.ts
@@ -76,12 +76,12 @@ vitest run --coverage --config vitest.config.ts
 
 `npm run test:unit -- --reporter=default tests/unit/config/vitestTopology.test.ts`
 exited `1`: its received unsafe-script array contained that exact command. The
-temporary script was immediately removed with `apply_patch`; `package.json`
-has no final delta.
+temporary script was immediately removed with `apply_patch`; `package.json` has
+no final delta.
 
 Final self-review added the sixth literal-path case above. Its focused RED run
-exited `1` because `C:/another-repository/ClientApp/src/unrelated.ts` raised
-the eligible count from 3 to 4. The auditor was then changed to anchor eligible
+exited `1` because `C:/another-repository/ClientApp/src/unrelated.ts` raised the
+eligible count from 3 to 4. The auditor was then changed to anchor eligible
 source under its repository-root argument (defaulting to the CLI working
 directory), and the focused GREEN run passed all 4 coverage-auditor tests.
 
@@ -113,9 +113,10 @@ npm run test:unit -- --reporter=default tests/unit/config/vitestTopology.test.ts
 
 It exited `0`: **5 test files, 43 tests passed**. The same run emits an existing
 `@chromatic-com/storybook` preset-load unhandled-rejection diagnostic while
-these config tests import the resolved Storybook config (`http://localhost:3000/preset.js` is not an absolute filename). Vitest still reports the suite as
-passed and exits zero; this final-review wave neither changes nor suppresses
-that unrelated environment diagnostic.
+these config tests import the resolved Storybook config
+(`http://localhost:3000/preset.js` is not an absolute filename). Vitest still
+reports the suite as passed and exits zero; this final-review wave neither
+changes nor suppresses that unrelated environment diagnostic.
 
 ## Evidence-artifact verification
 
@@ -153,9 +154,9 @@ policy, retry, or timeout changed.
 
 ## Documentation and self-review
 
-The final acceptance record now corrects the telemetry ownership list,
-including `previewEnvStubs.test.ts` exactly once, records the successful full
-Storybook MCP test gate and the focused resolution of the prior
+The final acceptance record now corrects the telemetry ownership list, including
+`previewEnvStubs.test.ts` exactly once, records the successful full Storybook
+MCP test gate and the focused resolution of the prior
 `SubmittedSuccess`/`ErrorSummary` timeouts, and limits the manager-memory claim
 to its observed OOM, plausible installed-source attribution, and unmeasured
 manager peak/worker comparison. The atomic status document now labels itself a

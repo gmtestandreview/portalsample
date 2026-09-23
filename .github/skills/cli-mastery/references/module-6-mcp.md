@@ -8,25 +8,26 @@
 
 ## Key commands
 
-| Command | What it does |
-|---------|-------------|
-| `/mcp` | List connected MCP servers |
-| `/mcp add <name> <command>` | Add a new MCP server |
+| Command                     | What it does               |
+| --------------------------- | -------------------------- |
+| `/mcp`                      | List connected MCP servers |
+| `/mcp add <name> <command>` | Add a new MCP server       |
 
 ## Popular MCP servers
 
 - `@modelcontextprotocol/server-postgres` — Query PostgreSQL databases
 - `@modelcontextprotocol/server-sqlite` — Query SQLite databases
-- `@modelcontextprotocol/server-filesystem` — Access local files with permissions
+- `@modelcontextprotocol/server-filesystem` — Access local files with
+  permissions
 - `@modelcontextprotocol/server-memory` — Persistent knowledge graph
 - `@modelcontextprotocol/server-puppeteer` — Browser automation
 
 ## Configuration
 
-| Level | File |
-|-------|------|
-| User | `~/.copilot/mcp-config.json` |
-| Project | `.github/mcp-config.json` |
+| Level   | File                         |
+| ------- | ---------------------------- |
+| User    | `~/.copilot/mcp-config.json` |
+| Project | `.github/mcp-config.json`    |
 
 ## Config file format
 

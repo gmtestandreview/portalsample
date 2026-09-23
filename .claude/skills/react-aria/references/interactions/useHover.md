@@ -1,21 +1,19 @@
 # useHover
 
-Handles pointer hover interactions for an element. Normalizes behavior
-across browsers and platforms, and ignores emulated mouse events on touch devices.
+Handles pointer hover interactions for an element. Normalizes behavior across
+browsers and platforms, and ignores emulated mouse events on touch devices.
 
 ```tsx
 import React from 'react';
-import {useHover} from 'react-aria/useHover';
+import { useHover } from 'react-aria/useHover';
 
 function Example() {
   let [events, setEvents] = React.useState<string[]>([]);
-  let {hoverProps, isHovered} = useHover({
-    onHoverStart: e => setEvents(
-      events => [...events, `hover start with ${e.pointerType}`]
-    ),
-    onHoverEnd: e => setEvents(
-      events => [...events, `hover end with ${e.pointerType}`]
-    )
+  let { hoverProps, isHovered } = useHover({
+    onHoverStart: (e) =>
+      setEvents((events) => [...events, `hover start with ${e.pointerType}`]),
+    onHoverEnd: (e) =>
+      setEvents((events) => [...events, `hover end with ${e.pointerType}`]),
   });
 
   return (
@@ -28,18 +26,22 @@ function Example() {
           display: 'inline-block',
           padding: '8px 12px',
           borderRadius: 8,
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
-        role="button"
-        tabIndex={0}>
+        role='button'
+        tabIndex={0}
+      >
         Hover me!
       </div>
       <ul
         style={{
           maxHeight: '200px',
-          overflow: 'auto'
-        }}>
-        {events.map((e, i) => <li key={i}>{e}</li>)}
+          overflow: 'auto',
+        }}
+      >
+        {events.map((e, i) => (
+          <li key={i}>{e}</li>
+        ))}
       </ul>
     </>
   );
@@ -48,7 +50,13 @@ function Example() {
 
 ## Features
 
-`useHover` is similar to the [:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) CSS pseudo class, but only applies on mouse interactions. `:hover` is sticky on touch devices, applying continuously until the user interacts with another element, and on devices with both mouse and touch support there is no CSS-only way to apply hover states only when interacting with a pointer. Read our [blog post](blog/building-a-button-part-2.md) to learn more.
+`useHover` is similar to the
+[:hover](https://developer.mozilla.org/en-US/docs/Web/CSS/:hover) CSS pseudo
+class, but only applies on mouse interactions. `:hover` is sticky on touch
+devices, applying continuously until the user interacts with another element,
+and on devices with both mouse and touch support there is no CSS-only way to
+apply hover states only when interacting with a pointer. Read our
+[blog post](blog/building-a-button-part-2.md) to learn more.
 
 <InlineAlert variant="notice">
   <Heading>Accessibility</Heading>
@@ -66,18 +74,18 @@ function Example() {
 
 ### HoverProps
 
-| Name | Type | Description |
-|------|------|-------------|
-| `isDisabled` | `boolean | undefined` | Whether the hover events should be disabled. |
-| `onHoverChange` | `((isHovering: boolean) => void) | undefined` | Handler that is called when the hover state changes. |
-| `onHoverEnd` | `((e: HoverEvent) => void) | undefined` | Handler that is called when a hover interaction ends. |
-| `onHoverStart` | `((e: HoverEvent) => void) | undefined` | Handler that is called when a hover interaction starts. |
+| Name            | Type                             | Description |
+| --------------- | -------------------------------- | ----------- |
+| `isDisabled`    | `boolean                         | undefined`  | Whether the hover events should be disabled.            |
+| `onHoverChange` | `((isHovering: boolean) => void) | undefined`  | Handler that is called when the hover state changes.    |
+| `onHoverEnd`    | `((e: HoverEvent) => void)       | undefined`  | Handler that is called when a hover interaction ends.   |
+| `onHoverStart`  | `((e: HoverEvent) => void)       | undefined`  | Handler that is called when a hover interaction starts. |
 
 ### HoverResult
 
-| Name | Type | Description |
-|------|------|-------------|
+| Name            | Type                              | Description                            |
+| --------------- | --------------------------------- | -------------------------------------- |
 | `hoverProps` \* | `DOMAttributes<FocusableElement>` | Props to spread on the target element. |
-| `isHovered` \* | `boolean` | — |
+| `isHovered` \*  | `boolean`                         | —                                      |
 
 ### HoverEvent

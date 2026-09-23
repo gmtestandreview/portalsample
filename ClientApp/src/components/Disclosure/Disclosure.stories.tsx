@@ -1,26 +1,26 @@
-import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import type { Meta, StoryFn } from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation.tsx';
 import {
-	Disclosure,
-	DisclosureHeader,
-	DisclosurePanel,
-} from "./Disclosure.tsx";
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
+} from './Disclosure.tsx';
 
 const meta = {
-	decorators: [withReactAriaEvaluation],
-	title: "Evaluation/React Aria/Disclosure",
-	component: Disclosure,
-	parameters: {
-		layout: "centered",
-	},
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/Disclosure',
+  component: Disclosure,
+  parameters: {
+    layout: 'centered',
+  },
 } satisfies Meta<typeof Disclosure>;
 
 export default meta;
 type Story = StoryFn<typeof Disclosure>;
 
 export const Example: Story = (args) => (
-	<Disclosure {...args}>
-		<DisclosureHeader>Manage your account</DisclosureHeader>
-		<DisclosurePanel>Details on managing your account</DisclosurePanel>
-	</Disclosure>
+  <Disclosure {...args}>
+    <DisclosureHeader>Manage your account</DisclosureHeader>
+    <DisclosurePanel>Details on managing your account</DisclosurePanel>
+  </Disclosure>
 );

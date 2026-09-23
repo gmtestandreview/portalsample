@@ -1,57 +1,57 @@
-"use client";
-import { composeRenderProps } from "react-aria-components/composeRenderProps";
+'use client';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import {
-	RadioGroup as AriaRadioGroup,
-	type RadioGroupProps as AriaRadioGroupProps,
-	RadioButton,
-	RadioField,
-	type RadioFieldProps,
-	type ValidationResult,
-} from "react-aria-components/RadioGroup";
-import { Description, FieldError, Label } from "../../forms/AriaForm/Form.tsx";
-import "./RadioGroup.css";
-import "./utilities.css";
+  RadioGroup as AriaRadioGroup,
+  type RadioGroupProps as AriaRadioGroupProps,
+  RadioButton,
+  RadioField,
+  type RadioFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/RadioGroup';
+import { Description, FieldError, Label } from '../../forms/AriaForm/Form.tsx';
+import './RadioGroup.css';
+import './utilities.css';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, "children"> {
-	children?: React.ReactNode;
-	label?: string;
-	description?: string;
-	errorMessage?: string | ((validation: ValidationResult) => string);
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children'> {
+  children?: React.ReactNode;
+  label?: string;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
 export function RadioGroup({
-	label,
-	description,
-	errorMessage,
-	children,
-	...props
+  label,
+  description,
+  errorMessage,
+  children,
+  ...props
 }: RadioGroupProps) {
-	return (
-		<AriaRadioGroup {...props}>
-			<Label>{label}</Label>
-			<div className="radio-items">{children}</div>
-			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
-		</AriaRadioGroup>
-	);
+  return (
+    <AriaRadioGroup {...props}>
+      <Label>{label}</Label>
+      <div className='radio-items'>{children}</div>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaRadioGroup>
+  );
 }
 
 export interface RadioProps extends RadioFieldProps {
-	description?: string;
+  description?: string;
 }
 
 export function Radio(props: RadioProps) {
-	return (
-		<RadioField {...props}>
-			<RadioButton>
-				{composeRenderProps(props.children, (children) => (
-					<>
-						<div className="indicator" />
-						{children}
-					</>
-				))}
-			</RadioButton>
-			{props.description && <Description>{props.description}</Description>}
-		</RadioField>
-	);
+  return (
+    <RadioField {...props}>
+      <RadioButton>
+        {composeRenderProps(props.children, (children) => (
+          <>
+            <div className='indicator' />
+            {children}
+          </>
+        ))}
+      </RadioButton>
+      {props.description && <Description>{props.description}</Description>}
+    </RadioField>
+  );
 }

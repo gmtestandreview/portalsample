@@ -2,10 +2,10 @@
 
 This reference is the human-readable index for skill-creator JSON contracts.
 
-The canonical machine-readable definitions live in `references/schemas/*.schema.json`.
-Do not duplicate full schema definitions in this document. Update the JSON Schema file first,
-then update this index only when semantics, locations, producers, consumers, or compatibility
-rules change.
+The canonical machine-readable definitions live in
+`references/schemas/*.schema.json`. Do not duplicate full schema definitions in
+this document. Update the JSON Schema file first, then update this index only
+when semantics, locations, producers, consumers, or compatibility rules change.
 
 All schema files use JSON Schema Draft 2020-12.
 
@@ -45,34 +45,37 @@ references/
 
 These rules apply across all artifacts.
 
-1. **Missing is not zero.** Omit an optional metric when it was not observed. A numeric `0`
-   means an actual observed zero.
-2. **Do not invent `null` as a generic missing-value convention.** Use `null` only where the
-   relevant schema explicitly permits it.
-3. **Observed metrics keep their original units.** Do not convert character counts into token
-   counts or infer timing from unrelated values.
-4. **Fields are independently recoverable.** Preserve a valid field even when another optional
-   field is absent.
-5. **Persisted evidence is immutable.** Do not rewrite old run artifacts to match a newer
-   contract. Create a new run or iteration when the evaluation contract changes materially.
-6. **Strict JSON only.** Reject non-finite numeric values such as `NaN` and `Infinity`.
-7. **Semantic validation still matters.** JSON Schema validates shape and local constraints;
-   cross-file and derived invariants listed below require application-level checks.
+1. **Missing is not zero.** Omit an optional metric when it was not observed. A
+   numeric `0` means an actual observed zero.
+2. **Do not invent `null` as a generic missing-value convention.** Use `null`
+   only where the relevant schema explicitly permits it.
+3. **Observed metrics keep their original units.** Do not convert character
+   counts into token counts or infer timing from unrelated values.
+4. **Fields are independently recoverable.** Preserve a valid field even when
+   another optional field is absent.
+5. **Persisted evidence is immutable.** Do not rewrite old run artifacts to
+   match a newer contract. Create a new run or iteration when the evaluation
+   contract changes materially.
+6. **Strict JSON only.** Reject non-finite numeric values such as `NaN` and
+   `Infinity`.
+7. **Semantic validation still matters.** JSON Schema validates shape and local
+   constraints; cross-file and derived invariants listed below require
+   application-level checks.
 
 ## Schema catalog
 
-| Persisted artifact | Canonical schema | Producer | Primary consumers |
-| --- | --- | --- | --- |
-| `evals/evals.json` | `schemas/evals.schema.json` | author/eval setup | executor, metadata setup |
-| `<eval-dir>/eval_metadata.json` | `schemas/eval-metadata.schema.json` | workspace setup | grader, viewer, benchmark |
-| `<workspace>/history.json` | `schemas/history.schema.json` | iteration controller | improve mode, reporting |
-| `<run-dir>/grading.json` | `schemas/grading.schema.json` | grader | benchmark, viewer |
-| `<run-dir>/outputs/metrics.json` | `schemas/metrics.schema.json` | executor | grader, benchmark |
-| `<run-dir>/timing.json` | `schemas/timing.schema.json` | runtime/executor | grader, benchmark |
-| `benchmark.json` | `schemas/benchmark.schema.json` | benchmark aggregator | viewer, analyzer |
-| `comparison-N.json` | `schemas/comparison.schema.json` | blind comparator | post-hoc analyzer |
-| `analysis.json` | `schemas/analysis.schema.json` | post-hoc analyzer | human review/iteration |
-| `feedback.json` | `schemas/feedback.schema.json` | review viewer | feedback interpretation |
+| Persisted artifact               | Canonical schema                    | Producer             | Primary consumers         |
+| -------------------------------- | ----------------------------------- | -------------------- | ------------------------- |
+| `evals/evals.json`               | `schemas/evals.schema.json`         | author/eval setup    | executor, metadata setup  |
+| `<eval-dir>/eval_metadata.json`  | `schemas/eval-metadata.schema.json` | workspace setup      | grader, viewer, benchmark |
+| `<workspace>/history.json`       | `schemas/history.schema.json`       | iteration controller | improve mode, reporting   |
+| `<run-dir>/grading.json`         | `schemas/grading.schema.json`       | grader               | benchmark, viewer         |
+| `<run-dir>/outputs/metrics.json` | `schemas/metrics.schema.json`       | executor             | grader, benchmark         |
+| `<run-dir>/timing.json`          | `schemas/timing.schema.json`        | runtime/executor     | grader, benchmark         |
+| `benchmark.json`                 | `schemas/benchmark.schema.json`     | benchmark aggregator | viewer, analyzer          |
+| `comparison-N.json`              | `schemas/comparison.schema.json`    | blind comparator     | post-hoc analyzer         |
+| `analysis.json`                  | `schemas/analysis.schema.json`      | post-hoc analyzer    | human review/iteration    |
+| `feedback.json`                  | `schemas/feedback.schema.json`      | review viewer        | feedback interpretation   |
 
 ## `evals.json`
 
@@ -85,13 +88,14 @@ Important semantic rules:
 
 - `skill_name` must match the skill frontmatter.
 - `evals[].id` must be unique across the file.
-- `files` are relative to the skill root unless another contract explicitly says otherwise.
+- `files` are relative to the skill root unless another contract explicitly says
+  otherwise.
 - `expectations` contain only objectively verifiable statements.
-- a materially revised prompt or expected outcome creates a revised eval contract; do not
-  silently reinterpret previously produced evidence.
+- a materially revised prompt or expected outcome creates a revised eval
+  contract; do not silently reinterpret previously produced evidence.
 
-The JSON Schema validates individual IDs but cannot enforce uniqueness of the `id` property
-across separate objects; validate that semantically.
+The JSON Schema validates individual IDs but cannot enforce uniqueness of the
+`id` property across separate objects; validate that semantically.
 
 ## `eval_metadata.json`
 
@@ -102,8 +106,10 @@ Binds workspace evidence to the exact eval contract.
 
 Rules:
 
-- copy `eval_id`, `prompt`, and `expectations` from the authoritative eval definition;
-- keep `eval_name` descriptive only; it must not become a second source of requirements;
+- copy `eval_id`, `prompt`, and `expectations` from the authoritative eval
+  definition;
+- keep `eval_name` descriptive only; it must not become a second source of
+  requirements;
 - never store grading decisions, timing, outputs, or inferred success here;
 - once run evidence exists, treat this metadata as immutable.
 
@@ -118,9 +124,12 @@ Rules:
 
 - `version` identifiers must be unique;
 - every non-null `parent` must identify a preserved predecessor;
-- `expectation_pass_rate` is optional because unavailable grading evidence is not zero;
-- `grading_result: "unavailable"` may be used when comparison evidence is unavailable;
-- exactly one iteration should be marked `is_current_best: true` when `current_best` is non-null;
+- `expectation_pass_rate` is optional because unavailable grading evidence is
+  not zero;
+- `grading_result: "unavailable"` may be used when comparison evidence is
+  unavailable;
+- exactly one iteration should be marked `is_current_best: true` when
+  `current_best` is non-null;
 - `current_best` must name that same version.
 
 Those lineage constraints require semantic validation.
@@ -149,9 +158,12 @@ Rules:
 - `summary.passed + summary.failed == summary.total`;
 - `summary.total == expectations.length`;
 - `pass_rate` must equal `passed / total` when `total > 0`;
-- optional `execution_metrics` and `timing` appear only when those observations exist;
-- claim `verified: null` means the claim could not be verified from available evidence;
-- eval-design criticism belongs in `eval_feedback`, not by rewriting frozen verdicts.
+- optional `execution_metrics` and `timing` appear only when those observations
+  exist;
+- claim `verified: null` means the claim could not be verified from available
+  evidence;
+- eval-design criticism belongs in `eval_feedback`, not by rewriting frozen
+  verdicts.
 
 The arithmetic relations require semantic validation.
 
@@ -162,8 +174,8 @@ The arithmetic relations require semantic validation.
 
 Contains only executor-observed counts and sizes.
 
-All fields are optional because runtimes expose different evidence. If the artifact is written,
-it must contain at least one observed metric.
+All fields are optional because runtimes expose different evidence. If the
+artifact is written, it must contain at least one observed metric.
 
 Rules:
 
@@ -181,16 +193,16 @@ Rules:
 
 Contains only runtime-observed token and timing data.
 
-Each field is independently optional. Write this artifact only when at least one timing/token
-observation exists.
+Each field is independently optional. Write this artifact only when at least one
+timing/token observation exists.
 
 Rules:
 
 - preserve milliseconds and seconds exactly as their names specify;
 - `total_tokens` is an observed token count, never a character estimate;
 - do not generate `0` when a runtime omitted a metric;
-- when start/end timestamps and a duration are all present, validate their consistency within
-  the runtime's measurement precision.
+- when start/end timestamps and a duration are all present, validate their
+  consistency within the runtime's measurement precision.
 
 ## `benchmark.json`
 
@@ -207,26 +219,29 @@ Important changes from the previous prose-only contract:
 - absent measurements stay absent;
 - a valid benchmark contains at least one run;
 - configuration names are restricted to the supported comparison identities;
-- `metadata.comparison_pair` is supported and recommended for explicit candidate/baseline identity;
+- `metadata.comparison_pair` is supported and recommended for explicit
+  candidate/baseline identity;
 - configuration summary metrics may be omitted when no observations exist;
-- `tokens: null` remains accepted in summaries for compatibility with the existing aggregator,
-  but new producers should prefer omission when a metric is unavailable.
+- `tokens: null` remains accepted in summaries for compatibility with the
+  existing aggregator, but new producers should prefer omission when a metric is
+  unavailable.
 
 Semantic checks required in code:
 
-- candidate/baseline must be one supported pair:
-  `with_skill`/`without_skill` or `new_skill`/`old_skill`;
+- candidate/baseline must be one supported pair: `with_skill`/`without_skill` or
+  `new_skill`/`old_skill`;
 - reject ambiguous mixed pairs;
 - every run's `passed + failed == total`;
 - run `pass_rate` must match its counts;
-- `runs_per_configuration` is an integer only when every expected configuration × eval
-  combination has the same positive run count; otherwise it is `null`;
+- `runs_per_configuration` is an integer only when every expected configuration
+  × eval combination has the same positive run count; otherwise it is `null`;
 - natural run order is numeric (`1`, `2`, `10`), not lexical (`1`, `10`, `2`);
 - summaries are calculated only from present observations;
 - do not synthesize an empty configuration summary;
-- do not emit a numeric delta when either side lacks the corresponding observed metric;
-- pass-rate display deltas must use a clearly documented unit and remain consistent across
-  JSON and Markdown.
+- do not emit a numeric delta when either side lacks the corresponding observed
+  metric;
+- pass-rate display deltas must use a clearly documented unit and remain
+  consistent across JSON and Markdown.
 
 ## `comparison.json`
 
@@ -239,11 +254,13 @@ Rules:
 
 - candidate identity must remain hidden while the comparison is performed;
 - `A` and `B` must map to fixed outputs for the entire comparison;
-- expectation results support the quality judgment but do not replace qualitative comparison;
-- scores describe the comparator's rubric result; they are not execution measurements.
+- expectation results support the quality judgment but do not replace
+  qualitative comparison;
+- scores describe the comparator's rubric result; they are not execution
+  measurements.
 
-If tie support is introduced later, update the comparator and schema together as a deliberate
-schema change rather than silently emitting a new winner value.
+If tie support is introduced later, update the comparator and schema together as
+a deliberate schema change rather than silently emitting a new winner value.
 
 ## `analysis.json`
 
@@ -256,8 +273,10 @@ Rules:
 
 - analysis must be grounded in the comparison result, skills, and transcripts;
 - distinguish observed execution differences from inferred causes;
-- suggestions are recommendations, not proof that a proposed change will improve future runs;
-- any retained revision must still pass the iteration workflow and regression checks.
+- suggestions are recommendations, not proof that a proposed change will improve
+  future runs;
+- any retained revision must still pass the iteration workflow and regression
+  checks.
 
 ## `feedback.json`
 
@@ -284,15 +303,16 @@ Current viewer-compatible shape:
 Rules:
 
 - empty or whitespace-only `feedback` means **no comment**, not approval;
-- `status: "complete"` means the review was submitted, not that blank entries passed;
+- `status: "complete"` means the review was submitted, not that blank entries
+  passed;
 - `run_id` must resolve to exactly one run;
 - current and previous-iteration feedback must remain distinguishable;
 - consumers should trim feedback before deciding whether it is substantive.
 
 ## Validation
 
-Validate artifacts at every external JSON boundary, before converting them into internal domain
-models.
+Validate artifacts at every external JSON boundary, before converting them into
+internal domain models.
 
 Example with Python's `jsonschema` package:
 
@@ -318,19 +338,20 @@ for path in schema_dir.glob("*.schema.json"):
 Draft202012Validator(schema, registry=registry).validate(instance)
 ```
 
-Validation failures are controlled input errors. Do not silently coerce malformed fields to
-defaults such as `0`, `false`, `{}`, or `[]` unless the artifact contract explicitly defines that
-fallback.
+Validation failures are controlled input errors. Do not silently coerce
+malformed fields to defaults such as `0`, `false`, `{}`, or `[]` unless the
+artifact contract explicitly defines that fallback.
 
 ## Versioning and compatibility
 
 Treat persisted JSON as an interface.
 
-- **Patch change:** wording/description change only; accepted payloads are unchanged.
-- **Minor change:** additive optional field or relaxed validation that preserves existing valid
-  payloads.
-- **Major change:** required field, renamed/removed field, changed meaning/unit, changed enum, or
-  incompatible structure.
+- **Patch change:** wording/description change only; accepted payloads are
+  unchanged.
+- **Minor change:** additive optional field or relaxed validation that preserves
+  existing valid payloads.
+- **Major change:** required field, renamed/removed field, changed meaning/unit,
+  changed enum, or incompatible structure.
 
 For a major change:
 
@@ -338,12 +359,13 @@ For a major change:
 2. identify all producers and consumers;
 3. preserve existing evidence rather than rewriting it in place;
 4. differential-test old and new readers/writers on representative fixtures;
-5. update `schemas.md`, schema tests, scripts, viewer, grader/analyzer agents, and examples
-   together.
+5. update `schemas.md`, schema tests, scripts, viewer, grader/analyzer agents,
+   and examples together.
 
 ## Required semantic validator coverage
 
-JSON Schema is intentionally not the only validation layer. Add regression tests for:
+JSON Schema is intentionally not the only validation layer. Add regression tests
+for:
 
 - duplicate eval IDs;
 - stale or mismatched eval metadata;

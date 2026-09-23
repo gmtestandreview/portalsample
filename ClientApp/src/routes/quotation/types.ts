@@ -1,4 +1,4 @@
 export interface QuotationtProps {
-	isSummary?: boolean;
-	[key: string]: unknown;
+  isSummary?: boolean;
+  [key: string]: unknown;
 }

@@ -17,10 +17,10 @@ npm run test:storybook -- --reporter=default > reports/stabilisation/c3-storyboo
 `--reporter=default` remains load-bearing; without it Vitest 4 writes no intercepted
 console output to a non-TTY stdout and the log reads as clean.
 
-| Run | Result |
-| --- | --- |
-| Unit | 126 files / 1488 tests, exit 0 |
-| Storybook | 87 files / 218 tests, exit 0 |
+| Run       | Result                         |
+| --------- | ------------------------------ |
+| Unit      | 126 files / 1488 tests, exit 0 |
+| Storybook | 87 files / 218 tests, exit 0   |
 
 ---
 
@@ -32,10 +32,10 @@ of W1 rather than an independent defect."
 
 Measured post-C2:
 
-| Signature | C1 census (2026-08-27) | C3 re-measure (2026-08-29) |
-| --- | ---: | ---: |
-| `not wrapped in act(...)` | 15 lines / 4 owner stacks | **0** |
-| React Aria missing visible label (W1) | 425 lines / 4 owner files | **0** |
+| Signature                             |    C1 census (2026-08-27) | C3 re-measure (2026-08-29) |
+| ------------------------------------- | ------------------------: | -------------------------: |
+| `not wrapped in act(...)`             | 15 lines / 4 owner stacks |                      **0** |
+| React Aria missing visible label (W1) | 425 lines / 4 owner files |                      **0** |
 
 Both W1 and W3 were closed by one change — C2's replacement of the native `<label>` with
 the `react-aria-components` `<Label>`, plus the five `element.focus()` to
@@ -45,10 +45,10 @@ independent defect.
 The unit surface now emits exactly two signatures, both already owned elsewhere and neither
 owned by C3:
 
-| Signature | Owner | Census row |
-| --- | --- | --- |
-| `SB_CORE-SERVER_0002 (CriticalPresetLoadError)` | `tests/unit/config/vitestTopology.test.ts` | W6, owned by C7 |
-| `Copied to clipboard:` (`console.log`) | `tests/unit/components/utilityCoverageSlice.test.tsx` | W7, no action |
+| Signature                                       | Owner                                                 | Census row      |
+| ----------------------------------------------- | ----------------------------------------------------- | --------------- |
+| `SB_CORE-SERVER_0002 (CriticalPresetLoadError)` | `tests/unit/config/vitestTopology.test.ts`            | W6, owned by C7 |
+| `Copied to clipboard:` (`console.log`)          | `tests/unit/components/utilityCoverageSlice.test.tsx` | W7, no action   |
 
 **Status: closed.** No unit test file is edited by C3.
 
@@ -64,22 +64,22 @@ remains C4's.
 
 Per-component counts against the C1 census:
 
-| Component | C1 (2026-08-27) | C3 (2026-08-29) | Change |
-| --- | ---: | ---: | --- |
-| `ReportRecipient` | 16 | 16 | — |
-| `QuotationSummary` | 10 | 10 | — |
-| `DeliveryAndReturn` | 10 | 10 | — |
-| `PaymentDetails` | 8 | 8 | — |
-| `InstrumentAndRequest` | 6 | 6 | — |
-| `InstrMeasurementReport` | 6 | 6 | — |
-| `ViewPdfQuote` | 4 | 4 | — |
-| `ServicesWeOffer` | 4 | 4 | — |
-| `OrganisationNameLookup` | 4 | 8 | **+4** |
-| `CertificateNumberLookup` | 4 | 8 | **+4** |
-| `RouteAccessibleNavigation` | 2 | 2 | — |
-| `$dbdc5e6e7ce01b4b$var$ComboBoxInner` | 0 | 6 | **new** |
-| `$542a13ca2fa5b484$var$PopoverInner` | 0 | 2 | **new** |
-| `$42ceafc619f9c3ba$export$bf788dd355e3a401` | 0 | 4 | **new** |
+| Component                                   | C1 (2026-08-27) | C3 (2026-08-29) | Change  |
+| ------------------------------------------- | --------------: | --------------: | ------- |
+| `ReportRecipient`                           |              16 |              16 | —       |
+| `QuotationSummary`                          |              10 |              10 | —       |
+| `DeliveryAndReturn`                         |              10 |              10 | —       |
+| `PaymentDetails`                            |               8 |               8 | —       |
+| `InstrumentAndRequest`                      |               6 |               6 | —       |
+| `InstrMeasurementReport`                    |               6 |               6 | —       |
+| `ViewPdfQuote`                              |               4 |               4 | —       |
+| `ServicesWeOffer`                           |               4 |               4 | —       |
+| `OrganisationNameLookup`                    |               4 |               8 | **+4**  |
+| `CertificateNumberLookup`                   |               4 |               8 | **+4**  |
+| `RouteAccessibleNavigation`                 |               2 |               2 | —       |
+| `$dbdc5e6e7ce01b4b$var$ComboBoxInner`       |               0 |               6 | **new** |
+| `$542a13ca2fa5b484$var$PopoverInner`        |               0 |               2 | **new** |
+| `$42ceafc619f9c3ba$export$bf788dd355e3a401` |               0 |               4 | **new** |
 
 Total 106 to 118. The four increased or new rows are all React Aria internals of the
 `ComboBox` that C2 repaired. Giving the combobox a real `LabelContext` provider puts it on
@@ -100,32 +100,32 @@ story file, mode 3 is the full sequential run. Logs are in
 
 ### Result: every owner is mode 1 or mode 2. No owner requires a mode-3 explanation.
 
-| Owner story | Mode 1 | Mode 2 | Mode 3 attribution | First owning stack |
-| --- | ---: | ---: | ---: | --- |
-| `RequestForQuote > Instrument And Request Step` | **24** | 24 | 0 | `InstrumentAndRequest`, `DatePicker`, `CustomDatePicker`, `HidableField`, `NumberFormatBase` |
-| `RequestForQuote > Instrument And Request Validation` | **14** | — | 0 | same |
-| `AcceptQuote > Delivery And Return Step` | **10** | 11 | 15 | `DeliveryAndReturn` |
-| `AcceptQuote > Quotation Summary Step` | **10** | 6 | 12 | `QuotationSummary`, `ViewPdfQuote` |
-| `AcceptQuote > Summary And Accept Step` | **10** | 13 | 7 | `QuotationSummary`, `ViewPdfQuote` |
-| `AcceptQuote > Report Recipient Step` | **8** | 5 | 4 | `ReportRecipient` |
-| `AcceptQuote > Payment Details Step` | **4** | 9 | 4 | `PaymentDetails` |
-| `indexList > Shell` | **8** | 8 | 4 | `InstrMeasurementReport` plus React Aria collection |
-| `ServicesWeOffer > Default` | **6** | 6 | 6 | `ServicesWeOffer` plus React Aria collection |
-| `PreConditions > Renders Protected Content` | **4** | 4 | 4 | `PreConditions`, `Layout` |
-| `routeAccessibleNavigation > Live Region` | **2** | 2 | 1 | `RouteAccessibleNavigation` |
-| `AccountRoute > Organisation Details Validation` | 0 | **4** | 2 | `ComboBoxInner`, scheduled by a preceding story in the same file |
-| `SlateEditor > Empty` | 0 | **2** | 1 | `ForwardRef(Editable)`, scheduled by a preceding story in the same file |
+| Owner story                                           | Mode 1 | Mode 2 | Mode 3 attribution | First owning stack                                                                           |
+| ----------------------------------------------------- | -----: | -----: | -----------------: | -------------------------------------------------------------------------------------------- |
+| `RequestForQuote > Instrument And Request Step`       | **24** |     24 |                  0 | `InstrumentAndRequest`, `DatePicker`, `CustomDatePicker`, `HidableField`, `NumberFormatBase` |
+| `RequestForQuote > Instrument And Request Validation` | **14** |      — |                  0 | same                                                                                         |
+| `AcceptQuote > Delivery And Return Step`              | **10** |     11 |                 15 | `DeliveryAndReturn`                                                                          |
+| `AcceptQuote > Quotation Summary Step`                | **10** |      6 |                 12 | `QuotationSummary`, `ViewPdfQuote`                                                           |
+| `AcceptQuote > Summary And Accept Step`               | **10** |     13 |                  7 | `QuotationSummary`, `ViewPdfQuote`                                                           |
+| `AcceptQuote > Report Recipient Step`                 |  **8** |      5 |                  4 | `ReportRecipient`                                                                            |
+| `AcceptQuote > Payment Details Step`                  |  **4** |      9 |                  4 | `PaymentDetails`                                                                             |
+| `indexList > Shell`                                   |  **8** |      8 |                  4 | `InstrMeasurementReport` plus React Aria collection                                          |
+| `ServicesWeOffer > Default`                           |  **6** |      6 |                  6 | `ServicesWeOffer` plus React Aria collection                                                 |
+| `PreConditions > Renders Protected Content`           |  **4** |      4 |                  4 | `PreConditions`, `Layout`                                                                    |
+| `routeAccessibleNavigation > Live Region`             |  **2** |      2 |                  1 | `RouteAccessibleNavigation`                                                                  |
+| `AccountRoute > Organisation Details Validation`      |      0 |  **4** |                  2 | `ComboBoxInner`, scheduled by a preceding story in the same file                             |
+| `SlateEditor > Empty`                                 |      0 |  **2** |                  1 | `ForwardRef(Editable)`, scheduled by a preceding story in the same file                      |
 
 ### Files that show a count only in the full run, and are not owners
 
-| File | Mode 2 | Mode 3 |
-| --- | ---: | ---: |
-| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx` | **0** | 9 |
-| `ClientApp/src/routes/ta/summaryAndSubmit.stories.tsx` | **0** | 4 |
-| `ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx` | **0** | 2 |
-| `ClientApp/src/routes/account/organisationDetails.stories.tsx` | **0** | 2 |
-| `ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx` | **0** | 1 |
-| `ClientApp/src/components/Layout/Layout.stories.tsx` | **0** | 0 (stderr only) |
+| File                                                                      | Mode 2 |          Mode 3 |
+| ------------------------------------------------------------------------- | -----: | --------------: |
+| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx`     |  **0** |               9 |
+| `ClientApp/src/routes/ta/summaryAndSubmit.stories.tsx`                    |  **0** |               4 |
+| `ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx`            |  **0** |               2 |
+| `ClientApp/src/routes/account/organisationDetails.stories.tsx`            |  **0** |               2 |
+| `ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx` |  **0** |               1 |
+| `ClientApp/src/components/Layout/Layout.stories.tsx`                      |  **0** | 0 (stderr only) |
 
 These six files are clean in isolation. They accumulate lines in the full run only because
 React attributes a late update to whichever test is currently active, not to the test that
@@ -136,11 +136,11 @@ scheduled it.
 `RequestForQuote.stories.tsx` demonstrates the mechanism unambiguously, because the file has
 **no `play` functions at all** — every story only renders.
 
-| Run | act lines | Attributed to |
-| --- | ---: | --- |
-| Mode 1, `Organisation And Contact Validation` | 0 | — |
-| Mode 1, `Instrument And Request Step` | 24 | `Instrument And Request Step` |
-| Mode 2, whole file | 24 | 21 to `Organisation And Contact Validation`, 3 to `unknown test` |
+| Run                                           | act lines | Attributed to                                                    |
+| --------------------------------------------- | --------: | ---------------------------------------------------------------- |
+| Mode 1, `Organisation And Contact Validation` |         0 | —                                                                |
+| Mode 1, `Instrument And Request Step`         |        24 | `Instrument And Request Step`                                    |
+| Mode 2, whole file                            |        24 | 21 to `Organisation And Contact Validation`, 3 to `unknown test` |
 
 `Organisation And Contact Validation` renders `OrganisationAndContact` and cannot produce a
 `DatePicker` or `NumberFormatBase` update. The 24 lines are `InstrumentAndRequest`'s, landing
@@ -181,24 +181,22 @@ exists once the lookup has resolved.
 
 ## Status
 
-| Row | Owner | Status |
-| --- | --- | --- |
-| W3 | C3 | **closed** by C2, verified by re-measurement, no edit |
-| W4 | C3 | **closed to 2 residual third-party lines**, see below |
-| W2 | C2 | closed, verified here (132 to 0) |
-| W5 | C4 | unchanged at 140 lines |
-
+| Row | Owner | Status                                                |
+| --- | ----- | ----------------------------------------------------- |
+| W3  | C3    | **closed** by C2, verified by re-measurement, no edit |
+| W4  | C3    | **closed to 2 residual third-party lines**, see below |
+| W2  | C2    | closed, verified here (132 to 0)                      |
+| W5  | C4    | unchanged at 140 lines                                |
 
 ---
 
 ## Steps 2-4 outcome
 
-Full suite after the repairs: **87 files / 218 tests, exit 0, 2 act lines** — down from
-118. Every owner in the Step 1 table is at zero.
+Full suite after the repairs: **87 files / 218 tests, exit 0, 2 act lines** — down from 118. Every owner in the Step 1 table is at zero.
 
 ### Two causes the owner table did not predict
 
-The Step 1 table located owners by story. Two of them turned out to be *component*
+The Step 1 table located owners by story. Two of them turned out to be _component_
 defects shared across every consumer, and fixing the component closed several stories at
 once:
 
@@ -220,10 +218,10 @@ once:
 `An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner`, attributed to
 `AutoSuggest.stories.tsx > Loading`.
 
-| Mode | act lines |
-| --- | ---: |
-| Each of the three AutoSuggest stories alone | 0 |
-| Whole file | 2 |
+| Mode                                        | act lines |
+| ------------------------------------------- | --------: |
+| Each of the three AutoSuggest stories alone |         0 |
+| Whole file                                  |         2 |
 
 React Aria commits this on unmount, as one story is torn down and the next mounted. It is
 not reachable from the story: closing the popover with Escape removed the accompanying

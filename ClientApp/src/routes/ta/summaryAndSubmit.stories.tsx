@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
-import SummaryAndSubmit from "./summaryAndSubmit.tsx";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
+import { withPortalProviders } from '../../storybook/storybookHarness.tsx';
+import SummaryAndSubmit from './summaryAndSubmit.tsx';
 
 /**
  * `SummaryAndSubmit` is the final step of the type-approval wizard. It presents the
@@ -11,53 +11,53 @@ import SummaryAndSubmit from "./summaryAndSubmit.tsx";
  * submitted it shows a back-to-dashboard link. All sections are Formik-bound.
  */
 const initialValues = {
-	organisationAndContact: {},
-	applicationAndInstrument: {},
-	supportingDocuments: { form: { documents: [] } },
-	acceptNMIP106: false,
-	acceptTermsAndConditions: false,
-	acceptDeclaration: false,
+  organisationAndContact: {},
+  applicationAndInstrument: {},
+  supportingDocuments: { form: { documents: [] } },
+  acceptNMIP106: false,
+  acceptTermsAndConditions: false,
+  acceptDeclaration: false,
 };
 
 const meta = {
-	title: "Routes/TypeApproval/SummaryAndSubmit",
-	component: SummaryAndSubmit,
-	decorators: [withPortalProviders],
-	parameters: {
-		layout: "fullscreen",
-		portal: {
-			authenticated: true,
-			initialEntries: ["/ta/PA-1/summary"],
-			formik: { initialValues },
-		},
-	},
-	args: {
-		name: "summaryAndSubmit",
-		isSubmitted: false,
-	},
+  title: 'Routes/TypeApproval/SummaryAndSubmit',
+  component: SummaryAndSubmit,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'fullscreen',
+    portal: {
+      authenticated: true,
+      initialEntries: ['/ta/PA-1/summary'],
+      formik: { initialValues },
+    },
+  },
+  args: {
+    name: 'summaryAndSubmit',
+    isSubmitted: false,
+  },
 } satisfies Meta<typeof SummaryAndSubmit>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Editable: Story = {
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByText("Organisation details")).toBeVisible();
-		await expect(canvas.getByText("Terms and conditions")).toBeVisible();
-		await expect(
-			canvas.getByText(/before you submit your request/iu),
-		).toBeVisible();
-	},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Organisation details')).toBeVisible();
+    await expect(canvas.getByText('Terms and conditions')).toBeVisible();
+    await expect(
+      canvas.getByText(/before you submit your request/iu)
+    ).toBeVisible();
+  },
 };
 
 export const Submitted: Story = {
-	args: {
-		isSubmitted: true,
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByTestId("back-button")).toBeVisible();
-		expect(canvas.queryByText(/before you submit your request/iu)).toBeNull();
-	},
+  args: {
+    isSubmitted: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByTestId('back-button')).toBeVisible();
+    expect(canvas.queryByText(/before you submit your request/iu)).toBeNull();
+  },
 };

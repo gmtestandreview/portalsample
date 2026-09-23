@@ -6,13 +6,13 @@
 $nmi-primary: #285576; //#000;
 $nmi-secondary: #58595b;
 $nmi-active: #007079; // TO DO - This is not in the style guide
-$nmi-dark-gray: #6D6E70;// #8e8e8e; 767676;
-$nmi-visited: #A44D8E; //#5b7a70;
+$nmi-dark-gray: #6d6e70; // #8e8e8e; 767676;
+$nmi-visited: #a44d8e; //#5b7a70;
 $nmi-blue: #285576;
 $nmi-blue-20: #d4dde4;
 $nmi-secondary-green: #71cc98;
 $nmi-light-grey: #d8d8d8;
-$nmi-header-primary: #7B0B15;
+$nmi-header-primary: #7b0b15;
 $dashboard-background: #f5f5f5;
 $nmi-environment-background: $dashboard-background;
 
@@ -30,21 +30,21 @@ $nmi-gray-800: #606060; // dense helper text
 $nmi-selection-bg: #036b90; // ::selection highlight
 
 // Semantic alert surface tints — success/danger/warning/info status backgrounds & borders
-$alert-success-border: #A6D5A6;
-$alert-success-bg: #E8F4E8;
-$alert-danger-interior: #E75755; // darker accent inside danger alert
-$alert-warning-border: #B14F1B;
-$alert-warning-bg: #FFF0E5;
-$alert-warning-interior: #B14F1B; // darker accent inside warning alert
-$alert-info-bg: #DDECEC;
+$alert-success-border: #a6d5a6;
+$alert-success-bg: #e8f4e8;
+$alert-danger-interior: #e75755; // darker accent inside danger alert
+$alert-warning-border: #b14f1b;
+$alert-warning-bg: #fff0e5;
+$alert-warning-interior: #b14f1b; // darker accent inside warning alert
+$alert-info-bg: #ddecec;
 
 // DISR shared colours
-$disr-light-blue: #9CD9E0;
+$disr-light-blue: #9cd9e0;
 $disr-light-blue-tint: #6ac5cf;
 
 $body-color: #3f3b3b;
-$interactive: rgba( $nmi-primary, 0.85); //#295244;
-$nmi-interactive: #B33C4D; //#a5283b;
+$interactive: rgba($nmi-primary, 0.85); //#295244;
+$nmi-interactive: #b33c4d; //#a5283b;
 
 // Bootstrap (BS) 5 colours - Map NMI to BS5
 $primary: $nmi-primary;
@@ -62,10 +62,10 @@ $info: rgba($nmi-blue, 0.85); //$nmi-site-coastline-bay-primary;
 $info-dark: #1f8383;
 $success: #1a7a1a; // was #219520 (3.90:1 on white ✗ AA) → 5.47:1 ✅ normal text
 $success-dark: #297e28;
-$danger: #D10000; //#d50501
+$danger: #d10000; //#d50501
 $danger-lighter: #f5b5b5; //#f5b5b5
-$danger-light: #FCE9E9;
-$warning: #FFECB5;
+$danger-light: #fce9e9;
+$warning: #ffecb5;
 
 // Color mapping NMI to BS5
 $theme-colors: (
@@ -77,7 +77,6 @@ $theme-colors: (
   'warning': $warning,
   'brand-red': $nmi-header-primary, // NMI corporate red #7B0B15 (~11:1 on white, white label only)
 );
-
 
 //////////////////////////////////////////////
 // Bootstrap 5 Updated utlity maps
@@ -94,7 +93,9 @@ $spacers: (
   6: $spacer * 2, // This is new NMI
 ) !default;
 
-$negative-spacers: if(sass($enable-negative-margins): negativify-map($spacers)) !default;
+$negative-spacers: if(
+  sass($enable-negative-margins): negativify-map($spacers)
+) !default;
 
 //////////////////////////////////////////////
 // Global var
@@ -124,17 +125,20 @@ $navbar-brand-padding-y: $navbar-padding-y;
 $navbar-brand-padding-x: $navbar-padding-x;
 
 // Tabs var
-$nav-link-font-weight:              bold;
-$nav-link-color:                    $text-muted;
-$nav-link-hover-color:              $nmi-blue;
+$nav-link-font-weight: bold;
+$nav-link-color: $text-muted;
+$nav-link-hover-color: $nmi-blue;
 
-$nav-underline-gap:                 0; //0.25rem;
-$nav-underline-border-width:        3px;
-$nav-underline-link-active-color:   $nmi-blue;
-$nav-underline-link-color:          $nmi-light-grey;
+$nav-underline-gap: 0; //0.25rem;
+$nav-underline-border-width: 3px;
+$nav-underline-link-active-color: $nmi-blue;
+$nav-underline-link-color: $nmi-light-grey;
 
 // Typography var
-$font-family-sans-serif: "Public Sans", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !default;
+$font-family-sans-serif:
+  'Public Sans', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+  sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+  'Noto Color Emoji' !default;
 $font-family-base: $font-family-sans-serif !default;
 $font-weight-base: 400 !default;
 $font-weight-medium: 500;
@@ -177,7 +181,7 @@ $line-height-sm: 1.2;
 $table-color: $body-color;
 $table-group-separator-color: $nmi-light-grey;
 $table-hover-bg: $link-hover-background;
-$table-striped-order:         even;
+$table-striped-order: even;
 
 // Tooltips var
 $tooltip-font-size: $font-size-base;
@@ -228,9 +232,9 @@ $form-select-indicator: url('../assets/icon-dropdown.png'); // Temp fix for CSP 
 $form-feedback-icon-valid: url('../assets/icon-valid.png'); // Temp fix for CSP issues
 $form-feedback-icon-invalid: url('../assets/icon-invalid.png'); // Temp fix for CSP issues
 
-$input-group-addon-color:               $body-color;
-$input-group-addon-bg:                  $dashboard-background;
-$input-group-addon-border-color:        $input-border-color;
+$input-group-addon-color: $body-color;
+$input-group-addon-bg: $dashboard-background;
+$input-group-addon-border-color: $input-border-color;
 
 // Buttons var
 $btn-font-size: $font-size-base;
@@ -256,7 +260,9 @@ $btn-disable-color: $nmi-dark-gray;
 $btn-close-height: auto;
 
 $btn-focus-width: 0;
-$btn-box-shadow: inset 0 1px 0 rgba($white, 0.15), 0 1px 1px rgba($black, 0.075);
+$btn-box-shadow:
+  inset 0 1px 0 rgba($white, 0.15),
+  0 1px 1px rgba($black, 0.075);
 $btn-focus-box-shadow: none;
 $btn-active-box-shadow: none;
 
@@ -272,27 +278,27 @@ $dropdown-dark-link-hover-bg: $nmi-active;
 $caret-spacing: 0.4rem;
 
 // Pagination
-$pagination-padding-y:              .15rem; //!default;
-$pagination-padding-x:              .75rem; //.75rem; //!default;
-$pagination-padding-y-sm:           .25rem !default;
-$pagination-padding-x-sm:           .5rem !default;
-$pagination-padding-y-lg:           .75rem !default;
-$pagination-padding-x-lg:           1.5rem !default;
+$pagination-padding-y: 0.15rem; //!default;
+$pagination-padding-x: 0.75rem; //.75rem; //!default;
+$pagination-padding-y-sm: 0.25rem !default;
+$pagination-padding-x-sm: 0.5rem !default;
+$pagination-padding-y-lg: 0.75rem !default;
+$pagination-padding-x-lg: 1.5rem !default;
 
-$pagination-item-gap-x:             0.75rem; // new custom var
+$pagination-item-gap-x: 0.75rem; // new custom var
 
-$pagination-color:                  $nmi-primary; //var(--#{$prefix}link-color) !default;
-$pagination-bg:                     transparent; //var(--#{$prefix}body-bg) !default;
-$pagination-border-width:           0; //var(--#{$prefix}border-width) !default;
-$pagination-border-color:           transparent; // var(--#{$prefix}border-color) !default;
+$pagination-color: $nmi-primary; //var(--#{$prefix}link-color) !default;
+$pagination-bg: transparent; //var(--#{$prefix}body-bg) !default;
+$pagination-border-width: 0; //var(--#{$prefix}border-width) !default;
+$pagination-border-color: transparent; // var(--#{$prefix}border-color) !default;
 
-$pagination-hover-color:            $white; //var(--#{$prefix}link-hover-color) !default;
-$pagination-hover-bg:               $nmi-primary; //$disr-light-blue; //var(--#{$prefix}tertiary-bg) !default;
-$pagination-hover-border-color:     transparent; //var(--#{$prefix}border-color) !default; // Todo in v6: remove this?
+$pagination-hover-color: $white; //var(--#{$prefix}link-hover-color) !default;
+$pagination-hover-bg: $nmi-primary; //$disr-light-blue; //var(--#{$prefix}tertiary-bg) !default;
+$pagination-hover-border-color: transparent; //var(--#{$prefix}border-color) !default; // Todo in v6: remove this?
 
-$pagination-active-color:           $nmi-primary;//$component-active-color !default;
-$pagination-active-bg:              $disr-light-blue; //$component-active-bg !default;
-$pagination-active-border-color:    transparent; //$component-active-bg !default;
+$pagination-active-color: $nmi-primary; //$component-active-color !default;
+$pagination-active-bg: $disr-light-blue; //$component-active-bg !default;
+$pagination-active-border-color: transparent; //$component-active-bg !default;
 
 // Modals var
 $modal-backdrop-opacity: 0.25;
@@ -321,7 +327,10 @@ $accordion-border-width: 0;
 $accordion-border-radius: $border-radius;
 
 $accordion-button-color: $nmi-primary;
-$accordion-button-active-color: rgba($nmi-primary, 0.8); //shade-color($accordion-icon-color, 10%);
+$accordion-button-active-color: rgba(
+  $nmi-primary,
+  0.8
+); //shade-color($accordion-icon-color, 10%);
 
 $accordion-icon-color: $nmi-primary;
 $accordion-icon-active-color: $accordion-button-active-color;
@@ -330,7 +339,7 @@ $accordion-button-icon: none; // Replacement icon in _replace-svgicons-csp.scss
 $accordion-button-active-icon: none; // Replacement icon in _replace-svgicons-csp.scss
 
 // Tab panes var
-$tabpane-padding-y: 1rem; //1.5rem; 
+$tabpane-padding-y: 1rem; //1.5rem;
 $tabpane-padding-x: 0;
 
 // Alerts var

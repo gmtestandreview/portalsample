@@ -1,5 +1,5 @@
-@import "../AriaComponents/theme.css";
+@import '../react-aria-evaluation/primitives/theme.css';
 
 .react-aria-DisclosureGroup {
-	width: 200px;
+  width: 200px;
 }

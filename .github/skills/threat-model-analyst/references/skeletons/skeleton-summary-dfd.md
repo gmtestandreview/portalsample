@@ -1,10 +1,15 @@
 # Skeleton: 1.2-threatmodel-summary.mmd
 
 > **⛔ ALWAYS evaluate this skeleton after creating `1.1-threatmodel.mmd`.**
-> Count elements (nodes with `(("..."))`, `[("...")]`, `["..."]`) and boundaries (`subgraph`) in the detailed DFD.
-> - If elements > 15 OR boundaries > 4 → this file is **REQUIRED**. Fill the template below.
-> - If elements ≤ 15 AND boundaries ≤ 4 → **SKIP** this file. Proceed to `1-threatmodel.md`.
-> **⛔ This is a raw Mermaid file. The template below is shown inside a code fence for readability only — do NOT include the fence in the output file. The `.mmd` file must start with `%%{init:` on line 1.**
+> Count elements (nodes with `(("..."))`, `[("...")]`, `["..."]`) and boundaries
+> (`subgraph`) in the detailed DFD.
+>
+> - If elements > 15 OR boundaries > 4 → this file is **REQUIRED**. Fill the
+>   template below.
+> - If elements ≤ 15 AND boundaries ≤ 4 → **SKIP** this file. Proceed to
+>   `1-threatmodel.md`. **⛔ This is a raw Mermaid file. The template below is
+>   shown inside a code fence for readability only — do NOT include the fence in
+>   the output file. The `.mmd` file must start with `%%{init:` on line 1.**
 
 ---
 
@@ -37,11 +42,15 @@ flowchart LR
 
 ## Aggregation Rules
 
-**Reference:** `diagram-conventions.md` → Summary Diagram Rules for full details.
+**Reference:** `diagram-conventions.md` → Summary Diagram Rules for full
+details.
 
-1. **ALL trust boundaries MUST be preserved** — never combine or omit boundaries.
-2. **Keep individually:** entry points, core flow components, security-critical services, primary data stores, all external actors.
-3. **Aggregate only:** supporting infrastructure, secondary caches, multiple externals at same trust level.
+1. **ALL trust boundaries MUST be preserved** — never combine or omit
+   boundaries.
+2. **Keep individually:** entry points, core flow components, security-critical
+   services, primary data stores, all external actors.
+3. **Aggregate only:** supporting infrastructure, secondary caches, multiple
+   externals at same trust level.
 4. **Aggregated element labels MUST list contents:**
    ```
    DataLayer[("Data Layer<br/>(UserDB, OrderDB, Redis)")]
@@ -52,11 +61,12 @@ flowchart LR
 ## Required in `1-threatmodel.md`
 
 When this file is generated, `1-threatmodel.md` MUST include:
+
 - A `## Summary View` section with this diagram in a ` ```mermaid ` fence
 - A `## Summary to Detailed Mapping` table:
 
 ```markdown
-| Summary Element | Contains | Summary Flows | Maps to Detailed Flows |
-|----------------|----------|---------------|------------------------|
-| [FILL] | [FILL: list of detailed elements] | [FILL: SDF##] | [FILL: DF## list] |
+| Summary Element | Contains                          | Summary Flows | Maps to Detailed Flows |
+| --------------- | --------------------------------- | ------------- | ---------------------- |
+| [FILL]          | [FILL: list of detailed elements] | [FILL: SDF##] | [FILL: DF## list]      |
 ```

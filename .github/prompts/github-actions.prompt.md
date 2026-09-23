@@ -1,18 +1,26 @@
 ---
 agent: 'agent'
-description: 'Review, design, or update GitHub Actions workflows for this repository with secure, minimal, repo-aligned CI/CD practices.'
-argument-hint: 'Workflow file, CI/CD issue, or GitHub Actions task to review or implement'
+description:
+  'Review, design, or update GitHub Actions workflows for this repository with
+  secure, minimal, repo-aligned CI/CD practices.'
+argument-hint:
+  'Workflow file, CI/CD issue, or GitHub Actions task to review or implement'
 ---
 
 # GitHub Actions CI/CD Review and Update
 
-Use this prompt only when the task explicitly involves GitHub Actions workflows, CI/CD behavior, workflow security, workflow performance, or deployment automation.
+Use this prompt only when the task explicitly involves GitHub Actions workflows,
+CI/CD behavior, workflow security, workflow performance, or deployment
+automation.
 
-Do not use this prompt for ordinary AGDS app code, Storybook, docs, tests, package maintenance, or unrelated repository work.
+Do not use this prompt for ordinary AGDS app code, Storybook, docs, tests,
+package maintenance, or unrelated repository work.
 
 ## Goal
 
-Review, design, or update GitHub Actions workflows in a way that is secure, minimal, maintainable, and aligned with this repository’s existing quality gates.
+Review, design, or update GitHub Actions workflows in a way that is secure,
+minimal, maintainable, and aligned with this repository’s existing quality
+gates.
 
 ## Repository rules
 
@@ -22,14 +30,18 @@ Follow these rules first:
 - Use `pnpm`, not `npm` or `yarn`.
 - Use Node `22` unless the task explicitly requires a justified change.
 - Prefer existing repository scripts over ad hoc shell commands.
-- Preserve the existing workflow architecture unless the task explicitly asks for a workflow redesign.
+- Preserve the existing workflow architecture unless the task explicitly asks
+  for a workflow redesign.
 - Keep workflow changes minimal and task-focused.
-- Do not change repository policy, linting, formatting, or quality-gate behavior unless explicitly asked.
-- If the task is only to diagnose a failing workflow, do not edit files until you have identified the likely failure cause and the smallest safe change.
+- Do not change repository policy, linting, formatting, or quality-gate behavior
+  unless explicitly asked.
+- If the task is only to diagnose a failing workflow, do not edit files until
+  you have identified the likely failure cause and the smallest safe change.
 
 ## Quality-gate protection
 
-Do not remove, weaken, bypass, reorder, or silently narrow checks that enforce repository quality.
+Do not remove, weaken, bypass, reorder, or silently narrow checks that enforce
+repository quality.
 
 Protect these checks unless the task explicitly requires a policy change:
 
@@ -46,7 +58,8 @@ Do not introduce:
 - weaker replacement commands
 - broad workflow exclusions that avoid real failures
 
-If a quality check fails, fix the underlying issue or report the failure honestly. Do not weaken the gate to make the workflow pass.
+If a quality check fails, fix the underlying issue or report the failure
+honestly. Do not weaken the gate to make the workflow pass.
 
 ## Security review
 
@@ -62,7 +75,9 @@ When reviewing or editing workflows, check for:
 - no unsafe deployment paths
 - no unreviewed escalation from CI to deployment
 
-If changing `uses:` actions, preserve the repo’s established pinning and update approach. Do not introduce mutable or untrusted action references unless the repo already permits that pattern and the task requires it.
+If changing `uses:` actions, preserve the repo’s established pinning and update
+approach. Do not introduce mutable or untrusted action references unless the
+repo already permits that pattern and the task requires it.
 
 ## Workflow design guidance
 
@@ -82,7 +97,9 @@ Use advanced CI/CD features only when they are justified by the task:
 - staging or production deployment
 - canary, blue/green, or rollback workflows
 
-Do not add deployment, release, matrix, cache, scan, artifact, environment, or observability complexity just because it is generally considered a best practice.
+Do not add deployment, release, matrix, cache, scan, artifact, environment, or
+observability complexity just because it is generally considered a best
+practice.
 
 ## Repository-aligned workflow defaults
 
@@ -146,7 +163,8 @@ When diagnosing workflow failures, prioritize:
 - flaky tests or environment differences
 - action version or pinning issues
 
-Do not “fix” workflow failures by weakening checks unless the task explicitly asks for a policy change.
+Do not “fix” workflow failures by weakening checks unless the task explicitly
+asks for a policy change.
 
 ## Output format
 

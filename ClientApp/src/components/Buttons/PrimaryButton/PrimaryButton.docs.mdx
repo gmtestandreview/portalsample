@@ -1,20 +1,31 @@
-import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
+import {
+  Meta,
+  Title,
+  Subtitle,
+  Primary,
+  Controls,
+  ArgTypes,
+  Stories,
+} from '@storybook/addon-docs/blocks';
 import * as PrimaryButtonStories from './PrimaryButton.stories';
 
 <Meta of={PrimaryButtonStories} />
 
 <Title />
 
-<Subtitle>A prominent call-to-action button following the NMI design system</Subtitle>
+<Subtitle>
+  A prominent call-to-action button following the NMI design system
+</Subtitle>
 
 ## Primary Button
 
-The primary button is used for the main action on a page or dialog. It draws attention and encourages user interaction.
+The primary button is used for the main action on a page or dialog. It draws
+attention and encourages user interaction.
 
 ### Use Cases
 
 - **Main form submissions** — "Submit", "Save", "Continue"
-- **Primary actions** — "Create", "Download", "Publish"  
+- **Primary actions** — "Create", "Download", "Publish"
 - **Call-to-action buttons** — Desktop and mobile CTAs
 
 ### Accessibility
@@ -47,9 +58,7 @@ import PrimaryButton from '@/components/Buttons/PrimaryButton';
 
 export function LightModeExample() {
   return (
-    <PrimaryButton onClick={() => alert('Clicked!')}>
-      Submit
-    </PrimaryButton>
+    <PrimaryButton onClick={() => alert('Clicked!')}>Submit</PrimaryButton>
   );
 }
 ```
@@ -61,7 +70,7 @@ import PrimaryButton from '@/components/Buttons/PrimaryButton';
 
 export function DarkModeExample() {
   return (
-    <PrimaryButton mode="dark" onClick={() => alert('Clicked!')}>
+    <PrimaryButton mode='dark' onClick={() => alert('Clicked!')}>
       Save Changes
     </PrimaryButton>
   );
@@ -74,11 +83,7 @@ export function DarkModeExample() {
 import PrimaryButton from '@/components/Buttons/PrimaryButton';
 
 export function DisabledExample() {
-  return (
-    <PrimaryButton disabled>
-      Processing...
-    </PrimaryButton>
-  );
+  return <PrimaryButton disabled>Processing...</PrimaryButton>;
 }
 ```
 
@@ -95,7 +100,8 @@ The Primary Button follows the NMI design system specifications:
 
 - **Light Mode**: Default NMI primary action treatment from `btn-primary`
 - **Dark Mode**: Alternate NMI primary treatment from `btn-primary-dark`
-- **Disabled**: Native disabled state forwarded through React Aria button behaviour
+- **Disabled**: Native disabled state forwarded through React Aria button
+  behaviour
 - **Hover**: Theme-owned hover treatment from the button SCSS
 - **Focus**: Visible focus ring for keyboard navigation
 
@@ -108,15 +114,18 @@ Colour values live in `ClientApp/src/styles/_variables.scss` and
 ✅ Use clear, action-oriented labels  
 ✅ Ensure sufficient contrast ratio  
 ✅ Provide visual feedback on hover/focus  
-✅ Test with keyboard navigation  
+✅ Test with keyboard navigation
 
 ❌ Don't use multiple primary buttons in one section  
 ❌ Don't use for secondary or tertiary actions  
 ❌ Don't disable without explanation  
-❌ Don't use overly long button text  
+❌ Don't use overly long button text
 
 ## Related Components
 
-- [SecondaryButton](/docs/components-buttons-secondarybutton--documentation) — For secondary actions
-- [Alert Component](/docs/components-alert--documentation) — For success/error messages
-- [Design Tokens](/docs/documentation-style-guide--documentation) — Color and spacing system
+- [SecondaryButton](/docs/components-buttons-secondarybutton--documentation) —
+  For secondary actions
+- [Alert Component](/docs/components-alert--documentation) — For success/error
+  messages
+- [Design Tokens](/docs/documentation-style-guide--documentation) — Color and
+  spacing system

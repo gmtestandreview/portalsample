@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
-import RequestForQuoteSummary from "./requestForQuoteSummary.tsx";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
+import { withPortalProviders } from '../../storybook/storybookHarness.tsx';
+import RequestForQuoteSummary from './requestForQuoteSummary.tsx';
 
 const expectInstrumentSectionReady = async (
-	canvas: ReturnType<typeof within>,
+  canvas: ReturnType<typeof within>
 ) => {
-	await expect(await canvas.findByText("Serial number")).toBeInTheDocument();
+  await expect(await canvas.findByText('Serial number')).toBeInTheDocument();
 };
 
 /**
@@ -17,51 +17,51 @@ const expectInstrumentSectionReady = async (
  * are Formik-bound, so the story supplies a matching context.
  */
 const meta = {
-	title: "Routes/RequestForQuote/RequestForQuoteSummary",
-	component: RequestForQuoteSummary,
-	decorators: [withPortalProviders],
-	parameters: {
-		layout: "fullscreen",
-		portal: {
-			initialEntries: ["/request-for-quote/QR-1/view-summary"],
-			formik: {
-				initialValues: {
-					organisationAndContact: {},
-					instrumentAndRequest: {},
-				},
-			},
-		},
-	},
-	args: {
-		isSubmitted: false,
-	},
+  title: 'Routes/RequestForQuote/RequestForQuoteSummary',
+  component: RequestForQuoteSummary,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'fullscreen',
+    portal: {
+      initialEntries: ['/request-for-quote/QR-1/view-summary'],
+      formik: {
+        initialValues: {
+          organisationAndContact: {},
+          instrumentAndRequest: {},
+        },
+      },
+    },
+  },
+  args: {
+    isSubmitted: false,
+  },
 } satisfies Meta<typeof RequestForQuoteSummary>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Editable: Story = {
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByText("Organisation and Contact")).toBeVisible();
-		await expect(canvas.getByText("Instrument and Request")).toBeVisible();
-		await expectInstrumentSectionReady(canvas);
-		// Review guidance is shown while still editable.
-		await expect(
-			canvas.getByText(/before you submit your request/iu),
-		).toBeVisible();
-	},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
+    await expect(canvas.getByText('Instrument and Request')).toBeVisible();
+    await expectInstrumentSectionReady(canvas);
+    // Review guidance is shown while still editable.
+    await expect(
+      canvas.getByText(/before you submit your request/iu)
+    ).toBeVisible();
+  },
 };
 
 export const Submitted: Story = {
-	args: {
-		isSubmitted: true,
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expectInstrumentSectionReady(canvas);
-		// Submitted view replaces guidance/edit with a back-to-dashboard link.
-		await expect(canvas.getByTestId("back-button")).toBeVisible();
-		expect(canvas.queryByText(/before you submit your request/iu)).toBeNull();
-	},
+  args: {
+    isSubmitted: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expectInstrumentSectionReady(canvas);
+    // Submitted view replaces guidance/edit with a back-to-dashboard link.
+    await expect(canvas.getByTestId('back-button')).toBeVisible();
+    expect(canvas.queryByText(/before you submit your request/iu)).toBeNull();
+  },
 };

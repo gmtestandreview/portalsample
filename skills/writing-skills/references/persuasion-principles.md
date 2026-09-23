@@ -2,9 +2,13 @@
 
 ## Overview
 
-LLMs respond to the same persuasion principles as humans. Understanding this psychology helps you design more effective skills - not to manipulate, but to ensure critical practices are followed even under pressure.
+LLMs respond to the same persuasion principles as humans. Understanding this
+psychology helps you design more effective skills - not to manipulate, but to
+ensure critical practices are followed even under pressure.
 
-**Research foundation:** Meincke et al. (2025) tested 7 persuasion principles with N=28,000 AI conversations. Persuasion techniques more than doubled compliance rates (33% → 72%, p < .001).
+**Research foundation:** Meincke et al. (2025) tested 7 persuasion principles
+with N=28,000 AI conversations. Persuasion techniques more than doubled
+compliance rates (33% → 72%, p < .001).
 
 ## The Seven Principles
 
@@ -27,13 +31,14 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 **Example:**
 
 ```markdown
-✅ Write code before test? Delete it. Start over. No exceptions.
-❌ Consider writing tests first when feasible.
+✅ Write code before test? Delete it. Start over. No exceptions. ❌ Consider
+writing tests first when feasible.
 ```
 
 ### 2. Commitment
 
-**What it is:** Consistency with prior actions, statements, or public declarations.
+**What it is:** Consistency with prior actions, statements, or public
+declarations.
 
 **How it works in skills:**
 
@@ -50,8 +55,8 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 **Example:**
 
 ```markdown
-✅ When you find a skill, you MUST announce: "I'm using [Skill Name]"
-❌ Consider letting your partner know which skill you're using.
+✅ When you find a skill, you MUST announce: "I'm using [Skill Name]" ❌
+Consider letting your partner know which skill you're using.
 ```
 
 ### 3. Scarcity
@@ -96,8 +101,8 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 **Example:**
 
 ```markdown
-✅ Checklists without TodoWrite tracking = steps get skipped. Every time.
-❌ Some people find TodoWrite helpful for checklists.
+✅ Checklists without TodoWrite tracking = steps get skipped. Every time. ❌
+Some people find TodoWrite helpful for checklists.
 ```
 
 ### 5. Unity
@@ -118,8 +123,8 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 **Example:**
 
 ```markdown
-✅ We're colleagues working together. I need your honest technical judgment.
-❌ You should probably tell me if I'm wrong.
+✅ We're colleagues working together. I need your honest technical judgment. ❌
+You should probably tell me if I'm wrong.
 ```
 
 ### 6. Reciprocity
@@ -151,12 +156,12 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 
 ## Principle Combinations by Skill Type
 
-| Skill Type | Use | Avoid |
-| ------------ | ----- | ------- |
+| Skill Type           | Use                                   | Avoid               |
+| -------------------- | ------------------------------------- | ------------------- |
 | Discipline-enforcing | Authority + Commitment + Social Proof | Liking, Reciprocity |
-| Guidance/technique | Moderate Authority + Unity | Heavy authority |
-| Collaborative | Unity + Commitment | Authority, Liking |
-| Reference | Clarity only | All persuasion |
+| Guidance/technique   | Moderate Authority + Unity            | Heavy authority     |
+| Collaborative        | Unity + Commitment                    | Authority, Liking   |
+| Reference            | Clarity only                          | All persuasion      |
 
 ## Why This Works: The Psychology
 
@@ -193,16 +198,20 @@ LLMs respond to the same persuasion principles as humans. Understanding this psy
 - Creating false urgency
 - Guilt-based compliance
 
-**The test:** Would this technique serve the user's genuine interests if they fully understood it?
+**The test:** Would this technique serve the user's genuine interests if they
+fully understood it?
 
 ## Research Citations
 
-**Cialdini, R. B. (2021).** *Influence: The Psychology of Persuasion (New and Expanded).* Harper Business.
+**Cialdini, R. B. (2021).** _Influence: The Psychology of Persuasion (New and
+Expanded)._ Harper Business.
 
 - Seven principles of persuasion
 - Empirical foundation for influence research
 
-**Meincke, L., Shapiro, D., Duckworth, A. L., Mollick, E., Mollick, L., & Cialdini, R. (2025).** Call Me A Jerk: Persuading AI to Comply with Objectionable Requests. University of Pennsylvania.
+**Meincke, L., Shapiro, D., Duckworth, A. L., Mollick, E., Mollick, L., &
+Cialdini, R. (2025).** Call Me A Jerk: Persuading AI to Comply with
+Objectionable Requests. University of Pennsylvania.
 
 - Tested 7 principles with N=28,000 LLM conversations
 - Compliance increased 33% → 72% with persuasion techniques

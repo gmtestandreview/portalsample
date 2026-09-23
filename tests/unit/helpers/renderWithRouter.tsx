@@ -1,8 +1,8 @@
-import type { RenderOptions, RenderResult } from "@testing-library/react";
-import { render } from "@testing-library/react";
-import type { ReactElement } from "react";
-import type { RouteObject } from "react-router";
-import { createMemoryRouter, RouterProvider } from "react-router";
+import type { RenderOptions, RenderResult } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import type { RouteObject } from 'react-router';
+import { createMemoryRouter, RouterProvider } from 'react-router';
 
 /**
  * Render a route component the way the application actually mounts it.
@@ -22,27 +22,29 @@ import { createMemoryRouter, RouterProvider } from "react-router";
  * function was called.
  */
 
-export interface RenderWithRouterOptions
-	extends Omit<RenderOptions, "wrapper"> {
-	/** Route pattern the element is mounted at, e.g. `/type-approval/:id`. Defaults to `initialPath`. */
-	readonly path?: string;
-	/** URL to start at, e.g. `/type-approval/APP-1`. */
-	readonly initialPath?: string;
-	/** Loader for the route under test. */
-	readonly loader?: RouteObject["loader"];
-	/** Extra destination routes, so a redirect lands somewhere assertable. */
-	readonly extraRoutes?: readonly RouteObject[];
+export interface RenderWithRouterOptions extends Omit<
+  RenderOptions,
+  'wrapper'
+> {
+  /** Route pattern the element is mounted at, e.g. `/type-approval/:id`. Defaults to `initialPath`. */
+  readonly path?: string;
+  /** URL to start at, e.g. `/type-approval/APP-1`. */
+  readonly initialPath?: string;
+  /** Loader for the route under test. */
+  readonly loader?: RouteObject['loader'];
+  /** Extra destination routes, so a redirect lands somewhere assertable. */
+  readonly extraRoutes?: readonly RouteObject[];
 }
 
 export interface RenderWithRouterResult extends RenderResult {
-	readonly router: ReturnType<typeof createMemoryRouter>;
-	/** Current pathname. Use instead of a navigate spy. */
-	readonly currentPath: () => string;
+  readonly router: ReturnType<typeof createMemoryRouter>;
+  /** Current pathname. Use instead of a navigate spy. */
+  readonly currentPath: () => string;
 }
 
-export const NOT_FOUND_TEST_ID = "router-not-found";
-export const FALLBACK_TEST_ID = "router-fallback";
-export const HYDRATING_TEST_ID = "router-hydrating";
+export const NOT_FOUND_TEST_ID = 'router-not-found';
+export const FALLBACK_TEST_ID = 'router-fallback';
+export const HYDRATING_TEST_ID = 'router-hydrating';
 
 /**
  * React Router warns on stderr when a route carries a loader but no `HydrateFallback`, because it
@@ -52,30 +54,30 @@ export const HYDRATING_TEST_ID = "router-hydrating";
 const HydrateFallback = () => <div data-testid={HYDRATING_TEST_ID} />;
 
 export const renderWithRouter = (
-	element: ReactElement,
-	{
-		path,
-		initialPath = "/",
-		loader,
-		extraRoutes = [],
-		...options
-	}: RenderWithRouterOptions = {},
+  element: ReactElement,
+  {
+    path,
+    initialPath = '/',
+    loader,
+    extraRoutes = [],
+    ...options
+  }: RenderWithRouterOptions = {}
 ): RenderWithRouterResult => {
-	const routes: RouteObject[] = [
-		{ path: path ?? initialPath, element, loader, HydrateFallback },
-		...extraRoutes,
-		// Redirect sinks. Without these a redirect falls through to the splat route and the test
-		// cannot tell "navigated to /not-found" from "matched nothing".
-		{ path: "/not-found", element: <div data-testid={NOT_FOUND_TEST_ID} /> },
-		{ path: "*", element: <div data-testid={FALLBACK_TEST_ID} /> },
-	];
+  const routes: RouteObject[] = [
+    { path: path ?? initialPath, element, loader, HydrateFallback },
+    ...extraRoutes,
+    // Redirect sinks. Without these a redirect falls through to the splat route and the test
+    // cannot tell "navigated to /not-found" from "matched nothing".
+    { path: '/not-found', element: <div data-testid={NOT_FOUND_TEST_ID} /> },
+    { path: '*', element: <div data-testid={FALLBACK_TEST_ID} /> },
+  ];
 
-	const router = createMemoryRouter(routes, { initialEntries: [initialPath] });
-	const result = render(<RouterProvider router={router} />, options);
+  const router = createMemoryRouter(routes, { initialEntries: [initialPath] });
+  const result = render(<RouterProvider router={router} />, options);
 
-	return {
-		...result,
-		router,
-		currentPath: () => router.state.location.pathname,
-	};
+  return {
+    ...result,
+    router,
+    currentPath: () => router.state.location.pathname,
+  };
 };

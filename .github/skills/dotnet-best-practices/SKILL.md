@@ -1,28 +1,36 @@
 ---
 name: dotnet-best-practices
-description: 'Ensure .NET/C# code meets best practices for the solution/project.'
+description:
+  'Ensure .NET/C# code meets best practices for the solution/project.'
 ---
 
 # .NET/C# Best Practices
 
-Your task is to ensure .NET/C# code in ${selection} meets the best practices specific to this solution/project. This includes:
+Your task is to ensure .NET/C# code in ${selection} meets the best practices
+specific to this solution/project. This includes:
 
 ## Documentation & Structure
 
-- Create comprehensive XML documentation comments for all public classes, interfaces, methods, and properties
+- Create comprehensive XML documentation comments for all public classes,
+  interfaces, methods, and properties
 - Include parameter descriptions and return value descriptions in XML comments
-- Follow the established namespace structure: {Core|Console|App|Service}.{Feature}
+- Follow the established namespace structure:
+  {Core|Console|App|Service}.{Feature}
 
 ## Design Patterns & Architecture
 
-- Use primary constructor syntax for dependency injection (e.g., `public class MyClass(IDependency dependency)`)
-- Implement the Command Handler pattern with generic base classes (e.g., `CommandHandler<TOptions>`)
-- Use interface segregation with clear naming conventions (prefix interfaces with 'I')
+- Use primary constructor syntax for dependency injection (e.g.,
+  `public class MyClass(IDependency dependency)`)
+- Implement the Command Handler pattern with generic base classes (e.g.,
+  `CommandHandler<TOptions>`)
+- Use interface segregation with clear naming conventions (prefix interfaces
+  with 'I')
 - Follow the Factory pattern for complex object creation.
 
 ## Dependency Injection & Services
 
-- Use constructor dependency injection with null checks via ArgumentNullException
+- Use constructor dependency injection with null checks via
+  ArgumentNullException
 - Register services with appropriate lifetimes (Singleton, Scoped, Transient)
 - Use Microsoft.Extensions.DependencyInjection patterns
 - Implement service interfaces for testability

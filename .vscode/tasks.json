@@ -1,72 +1,72 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "diagnostics: type-check",
-			"type": "npm",
-			"script": "type-check",
-			"problemMatcher": ["$tsc"],
-			"group": "build"
-		},
-		{
-			"label": "diagnostics: eslint",
-			"type": "npm",
-			"script": "lint",
-			"problemMatcher": ["$eslint-stylish"],
-			"group": "build"
-		},
-		{
-			"label": "diagnostics: rule citations",
-			"type": "process",
-			"command": "node",
-			"args": ["scripts/vscode-rule-citation-problems.mjs"],
-			"problemMatcher": {
-				"owner": "business-rule-citations",
-				"fileLocation": ["relative", "${workspaceFolder}"],
-				"pattern": {
-					"regexp": "^(.+)\\((\\d+),(\\d+)\\):\\s+(warning|error)\\s+(RULE-\\d+):\\s+(.*)$",
-					"file": 1,
-					"line": 2,
-					"column": 3,
-					"severity": 4,
-					"code": 5,
-					"message": 6
-				}
-			},
-			"group": "build"
-		},
-		{
-			"label": "diagnostics: sonar backlog",
-			"type": "npm",
-			"script": "sonar:backlog",
-			"problemMatcher": {
-				"owner": "sonar-backlog",
-				"fileLocation": ["relative", "${workspaceFolder}"],
-				"pattern": {
-					"regexp": "^(.+)\\((\\d+),(\\d+)\\):\\s+(warning|error)\\s+(SONAR-BACKLOG):\\s+(.*)$",
-					"file": 1,
-					"line": 2,
-					"column": 3,
-					"severity": 4,
-					"code": 5,
-					"message": 6
-				}
-			},
-			"group": "build"
-		},
-		{
-			"label": "diagnostics: all",
-			"dependsOn": [
-				"diagnostics: type-check",
-				"diagnostics: eslint",
-				"diagnostics: rule citations",
-				"diagnostics: sonar backlog"
-			],
-			"problemMatcher": [],
-			"group": {
-				"kind": "build",
-				"isDefault": true
-			}
-		}
-	]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "diagnostics: type-check",
+      "type": "npm",
+      "script": "type-check",
+      "problemMatcher": ["$tsc"],
+      "group": "build"
+    },
+    {
+      "label": "diagnostics: eslint",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": ["$eslint-stylish"],
+      "group": "build"
+    },
+    {
+      "label": "diagnostics: rule citations",
+      "type": "process",
+      "command": "node",
+      "args": ["scripts/vscode-rule-citation-problems.mjs"],
+      "problemMatcher": {
+        "owner": "business-rule-citations",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+)\\((\\d+),(\\d+)\\):\\s+(warning|error)\\s+(RULE-\\d+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        }
+      },
+      "group": "build"
+    },
+    {
+      "label": "diagnostics: sonar backlog",
+      "type": "npm",
+      "script": "sonar:backlog",
+      "problemMatcher": {
+        "owner": "sonar-backlog",
+        "fileLocation": ["relative", "${workspaceFolder}"],
+        "pattern": {
+          "regexp": "^(.+)\\((\\d+),(\\d+)\\):\\s+(warning|error)\\s+(SONAR-BACKLOG):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        }
+      },
+      "group": "build"
+    },
+    {
+      "label": "diagnostics: all",
+      "dependsOn": [
+        "diagnostics: type-check",
+        "diagnostics: eslint",
+        "diagnostics: rule citations",
+        "diagnostics: sonar backlog"
+      ],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
 }

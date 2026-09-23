@@ -1,14 +1,17 @@
 ---
 name: code-review-excellence
-description: "Transform code reviews from gatekeeping to knowledge sharing through constructive feedback, systematic analysis, and collaborative improvement."
+description:
+  'Transform code reviews from gatekeeping to knowledge sharing through
+  constructive feedback, systematic analysis, and collaborative improvement.'
 risk: safe
 source: community
-date_added: "2026-02-27"
+date_added: '2026-02-27'
 ---
 
 # Code Review Excellence
 
-Transform code reviews from gatekeeping to knowledge sharing through constructive feedback, systematic analysis, and collaborative improvement.
+Transform code reviews from gatekeeping to knowledge sharing through
+constructive feedback, systematic analysis, and collaborative improvement.
 
 ## Use this skill when
 
@@ -29,7 +32,8 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 - Review for correctness, security, performance, and maintainability.
 - Provide actionable feedback with severity and rationale.
 - Ask clarifying questions when intent is unclear.
-- If detailed checklists are required, open `resources/implementation-playbook.md`.
+- If detailed checklists are required, open
+  `resources/implementation-playbook.md`.
 
 ## Output Format
 
@@ -40,4 +44,5 @@ Transform code reviews from gatekeeping to knowledge sharing through constructiv
 
 ## Resources
 
-- `resources/implementation-playbook.md` for detailed review patterns and templates.
+- `resources/implementation-playbook.md` for detailed review patterns and
+  templates.

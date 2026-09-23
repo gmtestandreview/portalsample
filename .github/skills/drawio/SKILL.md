@@ -1,11 +1,14 @@
 ---
 name: drawio
-description: Generate draw.io diagrams as .drawio files and export to PNG/SVG/PDF with embedded XML
+description:
+  Generate draw.io diagrams as .drawio files and export to PNG/SVG/PDF with
+  embedded XML
 ---
 
 # Draw.io Diagram Skill
 
-Generate draw.io diagrams as native `.drawio` files and export them to PNG images that can be embedded in Word documents.
+Generate draw.io diagrams as native `.drawio` files and export them to PNG
+images that can be embedded in Word documents.
 
 ## How to Create a Diagram
 
@@ -15,10 +18,13 @@ Generate draw.io diagrams as native `.drawio` files and export them to PNG image
 
 ## Bundled Export Script
 
-This skill includes `drawio-to-png.mjs`, a Node.js export script with two rendering backends:
+This skill includes `drawio-to-png.mjs`, a Node.js export script with two
+rendering backends:
 
-1. **draw.io CLI** (pixel-perfect, fastest) — used automatically if draw.io desktop is installed
-2. **Official draw.io viewer in headless browser** (pixel-perfect, needs Chromium/Edge) — fallback when CLI is unavailable
+1. **draw.io CLI** (pixel-perfect, fastest) — used automatically if draw.io
+   desktop is installed
+2. **Official draw.io viewer in headless browser** (pixel-perfect, needs
+   Chromium/Edge) — fallback when CLI is unavailable
 
 ### Usage
 
@@ -38,19 +44,19 @@ node skills/drawio/scripts/drawio-to-png.mjs --renderer=cli|viewer|auto <input.d
 
 ### Skill Folder Contents
 
-| File | Purpose |
-|------|---------|
-| `SKILL.md` | This instruction file |
+| File                        | Purpose                                        |
+| --------------------------- | ---------------------------------------------- |
+| `SKILL.md`                  | This instruction file                          |
 | `scripts/drawio-to-png.mjs` | Node.js export script (CLI + browser fallback) |
-| `scripts/package.json` | Dependencies (`puppeteer-core`) |
+| `scripts/package.json`      | Dependencies (`puppeteer-core`)                |
 
 ## Supported Export Formats
 
-| Format | Embed XML | Notes |
-|--------|-----------|-------|
-| `png` | Yes | Viewable everywhere, editable in draw.io |
-| `svg` | Yes | Scalable, editable in draw.io |
-| `pdf` | Yes | Printable, editable in draw.io |
+| Format | Embed XML | Notes                                    |
+| ------ | --------- | ---------------------------------------- |
+| `png`  | Yes       | Viewable everywhere, editable in draw.io |
+| `svg`  | Yes       | Scalable, editable in draw.io            |
+| `pdf`  | Yes       | Printable, editable in draw.io           |
 
 ## Draw.io XML Style Conventions
 
@@ -93,4 +99,5 @@ Try `drawio` first (works if on PATH), then fall back:
 drawio -x -f png -e -b 10 -o <output.png> <input.drawio>
 ```
 
-Flags: `-x` (export), `-f` (format), `-e` (embed diagram XML), `-b` (border), `-o` (output path).
+Flags: `-x` (export), `-f` (format), `-e` (embed diagram XML), `-b` (border),
+`-o` (output path).

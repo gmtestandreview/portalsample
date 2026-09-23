@@ -1,238 +1,242 @@
-Chromatic: Chromatic CLI v18.5.0
+# Chromatic: Chromatic CLI v18.5.0
 
            https://www.chromatic.com/docs/cli
 
 Chromatic: Authenticating with Chromatic
 
-Chromatic:     → Connecting to <https://index.chromatic.com>
+Chromatic: → Connecting to <https://index.chromatic.com>
 
 Chromatic: Skipping update check
 
 Chromatic: Authenticated with Chromatic
 
-Chromatic:     → Using project ID 'Project:6a8d5f43778dc7546d559414' and user token
+Chromatic: → Using project ID 'Project:6a8d5f43778dc7546d559414' and user token
 
 Chromatic: Retrieving git information
 
 │
 
-│  storybook/test: stderr | ClientApp/src/components/modals/Modals.stories.tsx >
+│ storybook/test: stderr | ClientApp/src/components/modals/Modals.stories.tsx >
 
-│  Branch Selector RFQ Mode
+│ Branch Selector RFQ Mode
 
-│  Warning: An update to Transition inside a test was not wrapped in act(...).
+│ Warning: An update to Transition inside a test was not wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at BackdropTransition
+│ at BackdropTransition
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
+│ at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
+│ at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  stderr | ClientApp/src/components/modals/Modals.stories.tsx > Branch Selector
+│ stderr | ClientApp/src/components/modals/Modals.stories.tsx > Branch Selector
 
-│  RFQ Mode
+│ RFQ Mode
 
-│  Warning: An update to Transition inside a test was not wrapped in act(...).
+│ Warning: An update to Transition inside a test was not wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at DialogTransition
+│ at DialogTransition
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
+│ at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
+│ at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
 │
 
-│  storybook/test: stderr | ClientApp/src/components/modals/Modals.stories.tsx >
+│ storybook/test: stderr | ClientApp/src/components/modals/Modals.stories.tsx >
 
-│  RFQ Delete Confirmation
+│ RFQ Delete Confirmation
 
-│  Warning: An update to Transition inside a test was not wrapped in act(...).
+│ Warning: An update to Transition inside a test was not wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at BackdropTransition
+│ at BackdropTransition
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
+│ at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
+│ at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  stderr | ClientApp/src/components/modals/Modals.stories.tsx > RFQ Delete
+│ stderr | ClientApp/src/components/modals/Modals.stories.tsx > RFQ Delete
 
-│  Confirmation
+│ Confirmation
 
-│  Warning: An update to Transition inside a test was not wrapped in act(...).
+│ Warning: An update to Transition inside a test was not wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at DialogTransition
+│ at DialogTransition
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
+│ at BranchSelectorModal (<http://localhost:63315/ClientApp/src/components/m>...
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
+│ at PatchedFetch (<http://localhost:63315/ClientApp/src/storybook/storybook>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
 Chromatic: ‼ TurboSnap disabled due to rebuild
 
@@ -244,309 +248,329 @@ Chromatic: ‼ TurboSnap disabled due to rebuild
 
 Chromatic: Retrieved git information
 
-Chromatic:     → Commit '011afd8' on branch 'fix/dependency-vulnerability-remediation'; found 1 parent build; TurboSnap disabled
+Chromatic: → Commit '011afd8' on branch
+'fix/dependency-vulnerability-remediation'; found 1 parent build; TurboSnap
+disabled
 
 Chromatic: Collecting Storybook metadata
 
-Chromatic: No viewlayer package listed in dependencies. Checking transitive dependencies.
+Chromatic: No viewlayer package listed in dependencies. Checking transitive
+dependencies.
 
 Chromatic: Collected Storybook metadata
 
-Chromatic:     → Build metadata gathered
+Chromatic: → Build metadata gathered
 
 Chromatic: Initializing build
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/modals/Modals.stories.tsx (5 tests) 1164ms
+│ (chromium) ClientApp/src/components/modals/Modals.stories.tsx (5 tests) 1164ms
 
-│  ✓ Confirmation Open  532ms
+│ ✓ Confirmation Open 532ms
 
 Chromatic: Initialized build
 
-Chromatic:     → Build 28 initialized
+Chromatic: → Build 28 initialized
 
 Chromatic: Building your Storybook
 
-Chromatic:     → Running command: npm run build-storybook -- --output-dir=C:\Users\gregm\AppData\Local\Temp\chromatic--18496-v5jEmsaaYm4H
+Chromatic: → Running command: npm run build-storybook --
+--output-dir=C:\Users\gregm\AppData\Local\Temp\chromatic--18496-v5jEmsaaYm4H
 
-│  Vite page reload storybook-static/index.html
+│ Vite page reload storybook-static/index.html
 
-│  Vite page reload storybook-static/iframe.html
+│ Vite page reload storybook-static/iframe.html
 
-│  Vite page reload storybook-static/manifests/components.html
-
-│
-
-│  storybook/test: ✓
-
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
-
-│  (chromium)  ClientApp/src/components/forms/FormBanner/FormBanner.stories.tsx (4
-
-│  tests) 597ms
-
-│  ✓ Save And Exit  323ms
+│ Vite page reload storybook-static/manifests/components.html
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/RequestList/paRequestItem.stories.tsx (2
+│ (chromium) ClientApp/src/components/forms/FormBanner/FormBanner.stories.tsx (4
 
-│  tests) 409ms
+│ tests) 597ms
 
-│  ✓ Draft Application  345ms
+│ ✓ Save And Exit 323ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx (7 tests)
+│ (chromium) ClientApp/src/components/RequestList/paRequestItem.stories.tsx (2
 
-│  1133ms
+│ tests) 409ms
 
-│  ✓ Report Recipient Step  372ms
+│ ✓ Draft Application 345ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Footer/Footer.stories.tsx (4 tests) 1637ms
+│ (chromium) ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx (7 tests)
 
-│  ✓ Default  897ms
+│ 1133ms
+
+│ ✓ Report Recipient Step 372ms
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium) ClientApp/src/components/Footer/Footer.stories.tsx (4 tests) 1637ms
+
+│ ✓ Default 897ms
 
 Chromatic: Storybook built in 17 seconds
 
-Chromatic:     → View build log at C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\build-storybook.log
+Chromatic: → View build log at
+C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au\build-storybook.log
 
 Chromatic: Prepare your built Storybook
 
-Chromatic:     → Validating Storybook files
+Chromatic: → Validating Storybook files
 
-Chromatic:     → Calculating file hashes
+Chromatic: → Calculating file hashes
 
 Chromatic: Preparation complete
 
-Chromatic:     → Storybook files validated and prepared for upload
+Chromatic: → Storybook files validated and prepared for upload
 
 Chromatic: Publishing your built Storybook
 
-Chromatic:     → Starting publish
+Chromatic: → Starting publish
 
 │
 
-│  storybook/test: stderr | ClientApp/src/routes/account/AccountRoute.stories.tsx >
+│ storybook/test: stderr |
+ClientApp/src/routes/account/AccountRoute.stories.tsx >
 
-│  Organisation Details Validation
+│ Organisation Details Validation
 
-│  Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not
+│ Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was
+not
 
-│  wrapped in act(...).
+│ wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
+│ at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
 
-│  at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
+│ at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
 
-│  at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
+│ at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
 
-│  at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
+│ at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
 
-│  at div
+│ at div
 
-│  at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
+│ at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
 
-│  at AutoSuggest (<http://localhost:63315/ClientApp/src/components/Inputs/Au>...
+│ at AutoSuggest (<http://localhost:63315/ClientApp/src/components/Inputs/Au>...
 
-│  at div
+│ at div
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at fieldset
+│ at fieldset
 
-│  at AddressLookup (<http://localhost:63315/ClientApp/src/components/Inputs/>...
+│ at AddressLookup (<http://localhost:63315/ClientApp/src/components/Inputs/>...
 
-│  at div
+│ at div
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at AccountDetails
+│ at AccountDetails
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at form
+│ at form
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  stderr | ClientApp/src/routes/account/AccountRoute.stories.tsx > Organisation
+│ stderr | ClientApp/src/routes/account/AccountRoute.stories.tsx > Organisation
 
-│  Details Validation
+│ Details Validation
 
-│  Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not
+│ Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was
+not
 
-│  wrapped in act(...).
+│ wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
+│ at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
 
-│  at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
+│ at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
 
-│  at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
+│ at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
 
-│  at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
+│ at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
 
-│  at div
+│ at div
 
-│  at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
+│ at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
 
-│  at AutoSuggest (<http://localhost:63315/ClientApp/src/components/Inputs/Au>...
+│ at AutoSuggest (<http://localhost:63315/ClientApp/src/components/Inputs/Au>...
 
-│  at div
+│ at div
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at fieldset
+│ at fieldset
 
-│  at AddressLookup (<http://localhost:63315/ClientApp/src/components/Inputs/>...
+│ at AddressLookup (<http://localhost:63315/ClientApp/src/components/Inputs/>...
 
-│  at HidableField (<http://localhost:63315/ClientApp/src/components/forms/Hi>...
+│ at HidableField (<http://localhost:63315/ClientApp/src/components/forms/Hi>...
 
-│  at div
+│ at div
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at AccountDetails
+│ at AccountDetails
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at form
+│ at form
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/account/AccountRoute.stories.tsx (2 tests)
+│ (chromium) ClientApp/src/routes/account/AccountRoute.stories.tsx (2 tests)
 
-│  877ms
+│ 877ms
 
-│  ✓ Organisation Details  784ms
+│ ✓ Organisation Details 784ms
 
-Chromatic:     → 26%
+Chromatic: → 26%
 
-Chromatic:     → Finalizing upload
+Chromatic: → Finalizing upload
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Utilities/ViewMeasurementReport.stories.tsx
+│ (chromium)
+ClientApp/src/components/Utilities/ViewMeasurementReport.stories.tsx
 
-│  (1 test) 294ms
+│ (1 test) 294ms
 
 Chromatic: Publish complete in 6 seconds
 
-Chromatic:     → Uploaded 77 files (254.66 kB), skipped 197 files
+Chromatic: → Uploaded 77 files (254.66 kB), skipped 197 files
 
 Chromatic: Verifying your Storybook
 
-Chromatic:     → This may take a few minutes
+Chromatic: → This may take a few minutes
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/forms/Forms.stories.tsx (13 tests) 967ms
+│ (chromium) ClientApp/src/components/forms/Forms.stories.tsx (13 tests) 967ms
 
-│  ✓ All Inputs Showcase  379ms
+│ ✓ All Inputs Showcase 379ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx (3
+│ (chromium) ClientApp/src/components/forms/WizardForm/WizardForm.stories.tsx (3
 
-│  tests) 567ms
+│ tests) 567ms
 
-│  ✓ Step 1 Contact Details  365ms
+│ ✓ Step 1 Contact Details 365ms
 
 Chromatic: √ Storybook published
 
@@ -556,11 +580,12 @@ Chromatic: √ Storybook published
 
 Chromatic: Started build 28
 
-Chromatic:     → View build details at <https://www.chromatic.com/build?appId=6a8d5f43778dc7546d559414&number=28>
+Chromatic: → View build details at
+<https://www.chromatic.com/build?appId=6a8d5f43778dc7546d559414&number=28>
 
 Chromatic: Running 218 tests
 
-Chromatic:     → This may take a few minutes
+Chromatic: → This may take a few minutes
 
 Chromatic: i Speed up Continuous Integration
 
@@ -572,859 +597,913 @@ Chromatic: i Speed up Continuous Integration
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/Buttons/PrimaryButton/PrimaryButton.stories.tsx (5
+│ ClientApp/src/components/Buttons/PrimaryButton/PrimaryButton.stories.tsx (5
 
-│  tests) 492ms
+│ tests) 492ms
 
-│  ✓ Default  317ms
+│ ✓ Default 317ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/dashboard/Dashboard.stories.tsx (4 tests) 725ms
+│ (chromium) ClientApp/src/routes/dashboard/Dashboard.stories.tsx (4 tests)
+725ms
 
-│  ✓ Populated  374ms
+│ ✓ Populated 374ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx (4
+│ (chromium) ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx (4
 
-│  tests) 747ms
+│ tests) 747ms
 
-│  ✓ Organisation And Contact Step  382ms
+│ ✓ Organisation And Contact Step 382ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx (4
+│ ClientApp/src/components/RouteLeavingGuard/RouteLeavingGuard.stories.tsx (4
 
-│  tests) 657ms
+│ tests) 657ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx (1
+│ (chromium) ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx (1
 
-│  test) 430ms
+│ test) 430ms
 
-│  ✓ Edit Step  430ms
+│ ✓ Edit Step 430ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Pagination/Pagination.stories.tsx (5 tests)
+│ (chromium) ClientApp/src/components/Pagination/Pagination.stories.tsx (5
+tests)
 
-│  559ms
+│ 559ms
 
-│  ✓ Mid Range  307ms
+│ ✓ Mid Range 307ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/ta/organisationAndContact.stories.tsx (1 test)
+│ (chromium) ClientApp/src/routes/ta/organisationAndContact.stories.tsx (1 test)
 
-│  1013ms
+│ 1013ms
 
-│  ✓ Edit Step  1012ms
+│ ✓ Edit Step 1012ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/ta/summaryAndSubmit.stories.tsx (2 tests) 475ms
+│ (chromium) ClientApp/src/routes/ta/summaryAndSubmit.stories.tsx (2 tests)
+475ms
 
-│  ✓ Editable  351ms
+│ ✓ Editable 351ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/contact/ContactRoute.stories.tsx (2 tests)
+│ (chromium) ClientApp/src/routes/contact/ContactRoute.stories.tsx (2 tests)
 
-│  463ms
+│ 463ms
 
-│  ✓ Default  338ms
+│ ✓ Default 338ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/RequestList/Dashboard.stories.tsx (4 tests)
+│ (chromium) ClientApp/src/components/RequestList/Dashboard.stories.tsx (4
+tests)
 
-│  701ms
+│ 701ms
 
-│  ✓ Draft Request  358ms
+│ ✓ Draft Request 358ms
 
 │
 
-│  storybook/test: stderr |
+│ storybook/test: stderr |
 
-│  ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx > Loading
+│ ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx > Loading
 
-│  Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not
+│ Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was
+not
 
-│  wrapped in act(...).
+│ wrapped in act(...).
 
-│  When testing, code that causes React state updates should be wrapped into
+│ When testing, code that causes React state updates should be wrapped into
 
-│  act(...):
+│ act(...):
 
-│  act(() => {
+│ act(() => {
 
-│  /*fire events that update state*/
+│ /_fire events that update state_/
 
-│  });
+│ });
 
-│  /*assert on the output*/
+│ /_assert on the output_/
 
-│  This ensures that you're testing the behavior the user would see in the browser.
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│  at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
+│ at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
 
-│  at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
+│ at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
 
-│  at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
+│ at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
 
-│  at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
+│ at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
 
-│  at div
+│ at div
 
-│  at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
+│ at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
 
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-│  at form
+│ at form
 
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│
-
-│  storybook/test: ✓
-
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
-
-│  (chromium)  ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx
-
-│  (3 tests) 719ms
-
-│  ✓ With Suggestions  485ms
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/SearchFilter/searchBox.stories.tsx (3
+│ (chromium) ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx
 
-│  tests) 707ms
+│ (3 tests) 719ms
 
-│  ✓ Empty  422ms
+│ ✓ With Suggestions 485ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Alert/NotificationMessage.stories.tsx (5
+│ (chromium) ClientApp/src/components/SearchFilter/searchBox.stories.tsx (3
 
-│  tests) 560ms
+│ tests) 707ms
 
-│  ✓ Success  313ms
+│ ✓ Empty 422ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Alert/Alert.stories.tsx (4 tests) 452ms
+│ (chromium) ClientApp/src/components/Alert/NotificationMessage.stories.tsx (5
 
-│  ✓ Info  319ms
+│ tests) 560ms
+
+│ ✓ Success 313ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/common/ErrorRoutes.stories.tsx (8 tests) 1037ms
+│ (chromium) ClientApp/src/components/Alert/Alert.stories.tsx (4 tests) 452ms
 
-│  ✓ Not Found  471ms
+│ ✓ Info 319ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/SearchFilter/filterMenu.stories.tsx (3
+│ (chromium) ClientApp/src/routes/common/ErrorRoutes.stories.tsx (8 tests)
+1037ms
 
-│  tests) 469ms
-
-│  ✓ Closed  313ms
+│ ✓ Not Found 471ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium) ClientApp/src/components/SearchFilter/filterMenu.stories.tsx (3
 
-│  ClientApp/src/components/modals/ContentModal/ContentModal.stories.tsx (2 tests)
+│ tests) 469ms
 
-│  421ms
-
-│  ✓ Open With Content  384ms
+│ ✓ Closed 313ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx
+│ (chromium)
 
-│  (4 tests) 505ms
+│ ClientApp/src/components/modals/ContentModal/ContentModal.stories.tsx (2
+tests)
 
-│  ✓ Server Error  316ms
+│ 421ms
+
+│ ✓ Open With Content 384ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/SummaryDisplay/SummaryDisplay.stories.tsx
+│ (chromium)
+ClientApp/src/components/forms/ErrorSummary/ErrorSummary.stories.tsx
 
-│  (6 tests) 506ms
+│ (4 tests) 505ms
+
+│ ✓ Server Error 316ms
 
 │
 
-│  storybook/test: stderr |
+│ storybook/test: ✓
 
-│  ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx >
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  Editable
+│ (chromium) ClientApp/src/components/SummaryDisplay/SummaryDisplay.stories.tsx
 
-│  Warning: An update to InstrumentAndRequest inside a test was not wrapped in
-
-│  act(...).
-
-│  When testing, code that causes React state updates should be wrapped into
-
-│  act(...):
-
-│  act(() => {
-
-│  /*fire events that update state*/
-
-│  });
-
-│  /*assert on the output*/
-
-│  This ensures that you're testing the behavior the user would see in the browser.
-
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
-
-│  at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
-
-│  at div
-
-│  at div
-
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
-
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
-
-│  at form
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
-
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
-
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
-
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx
-
-│  > Editable
-
-│  Warning: An update to InstrumentAndRequest inside a test was not wrapped in
-
-│  act(...).
-
-│  When testing, code that causes React state updates should be wrapped into
-
-│  act(...):
-
-│  act(() => {
-
-│  /*fire events that update state*/
-
-│  });
-
-│  /*assert on the output*/
-
-│  This ensures that you're testing the behavior the user would see in the browser.
-
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
-
-│  at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
-
-│  at div
-
-│  at div
-
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
-
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
-
-│  at form
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
-
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
-
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
-
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx
-
-│  > Editable
-
-│  Warning: An update to InstrumentAndRequest inside a test was not wrapped in
-
-│  act(...).
-
-│  When testing, code that causes React state updates should be wrapped into
-
-│  act(...):
-
-│  act(() => {
-
-│  /*fire events that update state*/
-
-│  });
-
-│  /*assert on the output*/
-
-│  This ensures that you're testing the behavior the user would see in the browser.
-
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
-
-│  at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
-
-│  at div
-
-│  at div
-
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
-
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
-
-│  at form
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
-
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
-
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
-
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  stderr | ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx
-
-│  > Editable
-
-│  Warning: An update to HidableField inside a test was not wrapped in act(...).
-
-│  When testing, code that causes React state updates should be wrapped into
-
-│  act(...):
-
-│  act(() => {
-
-│  /*fire events that update state*/
-
-│  });
-
-│  /*assert on the output*/
-
-│  This ensures that you're testing the behavior the user would see in the browser.
-
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
-
-│  at HidableField (<http://localhost:63315/ClientApp/src/components/forms/Hi>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
-
-│  at div
-
-│  at div
-
-│  at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at div
-
-│  at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
-
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
-
-│  at form
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
-
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
-
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
-
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ (6 tests) 506ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: stderr |
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│ ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx >
 
-│  (chromium)
+│ Editable
 
-│  ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx (2
+│ Warning: An update to InstrumentAndRequest inside a test was not wrapped in
 
-│  tests) 437ms
+│ act(...).
 
-│  ✓ Editable  360ms
+│ When testing, code that causes React state updates should be wrapped into
+
+│ act(...):
+
+│ act(() => {
+
+│ /_fire events that update state_/
+
+│ });
+
+│ /_assert on the output_/
+
+│ This ensures that you're testing the behavior the user would see in the
+browser.
+
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+
+│ at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
+
+│ at div
+
+│ at div
+
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
+
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+
+│ at form
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ stderr |
+ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx
+
+│ > Editable
+
+│ Warning: An update to InstrumentAndRequest inside a test was not wrapped in
+
+│ act(...).
+
+│ When testing, code that causes React state updates should be wrapped into
+
+│ act(...):
+
+│ act(() => {
+
+│ /_fire events that update state_/
+
+│ });
+
+│ /_assert on the output_/
+
+│ This ensures that you're testing the behavior the user would see in the
+browser.
+
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+
+│ at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
+
+│ at div
+
+│ at div
+
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
+
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+
+│ at form
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ stderr |
+ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx
+
+│ > Editable
+
+│ Warning: An update to InstrumentAndRequest inside a test was not wrapped in
+
+│ act(...).
+
+│ When testing, code that causes React state updates should be wrapped into
+
+│ act(...):
+
+│ act(() => {
+
+│ /_fire events that update state_/
+
+│ });
+
+│ /_assert on the output_/
+
+│ This ensures that you're testing the behavior the user would see in the
+browser.
+
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+
+│ at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
+
+│ at div
+
+│ at div
+
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
+
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+
+│ at form
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ stderr |
+ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx
+
+│ > Editable
+
+│ Warning: An update to HidableField inside a test was not wrapped in act(...).
+
+│ When testing, code that causes React state updates should be wrapped into
+
+│ act(...):
+
+│ act(() => {
+
+│ /_fire events that update state_/
+
+│ });
+
+│ /_assert on the output_/
+
+│ This ensures that you're testing the behavior the user would see in the
+browser.
+
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
+
+│ at HidableField (<http://localhost:63315/ClientApp/src/components/forms/Hi>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at InstrumentAndRequest (<http://localhost:63315/ClientApp/src/routes/requ>...
+
+│ at div
+
+│ at div
+
+│ at Transition (<http://localhost:63315/node_modules/.cache/storybook/10.5>....
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at CustomAccordionBody (<http://localhost:63315/ClientApp/src/components/A>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at div
+
+│ at CustomAccordion (<http://localhost:63315/ClientApp/src/components/Accor>...
+
+│ at div
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at RequestForQuoteSummary (<http://localhost:63315/ClientApp/src/routes/re>...
+
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
+
+│ at form
+
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
+
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
+
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
+
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
+
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
+
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
+
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/quotation/Quotation.stories.tsx (2 tests) 774ms
+│ (chromium)
 
-│  ✓ Quote Summary  705ms
+│ ClientApp/src/routes/requestForQuote/requestForQuoteSummary.stories.tsx (2
 
-Chromatic:     → 1% 2/218
+│ tests) 437ms
+
+│ ✓ Editable 360ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Utilities/Utilities.stories.tsx (4 tests)
+│ (chromium) ClientApp/src/routes/quotation/Quotation.stories.tsx (2 tests)
+774ms
 
-│  482ms
+│ ✓ Quote Summary 705ms
 
-│  ✓ Contact Actions  306ms
+Chromatic: → 1% 2/218
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/ErrorBoundary/ErrorBoundary.stories.tsx (4
+│ (chromium) ClientApp/src/components/Utilities/Utilities.stories.tsx (4 tests)
 
-│  tests) 466ms
+│ 482ms
 
-│  ✓ No Error  310ms
+│ ✓ Contact Actions 306ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/help-guide/HelpGuideDetail.stories.tsx (2
+│ (chromium) ClientApp/src/components/ErrorBoundary/ErrorBoundary.stories.tsx (4
 
-│  tests) 677ms
+│ tests) 466ms
 
-│  ✓ How To Setup Access  425ms
-
-Chromatic:     → 20% 44/218
+│ ✓ No Error 310ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/ta/preApplication.stories.tsx (1 test) 327ms
+│ (chromium) ClientApp/src/routes/help-guide/HelpGuideDetail.stories.tsx (2
 
-│  ✓ Default  326ms
+│ tests) 677ms
+
+│ ✓ How To Setup Access 425ms
+
+Chromatic: → 20% 44/218
 
 │
 
-│  storybook/test: stderr |
+│ storybook/test: ✓
 
-│  ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx >
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  Default
+│ (chromium) ClientApp/src/routes/ta/preApplication.stories.tsx (1 test) 327ms
 
-│  Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was not
-
-│  wrapped in act(...).
-
-│  When testing, code that causes React state updates should be wrapped into
-
-│  act(...):
-
-│  act(() => {
-
-│  /*fire events that update state*/
-
-│  });
-
-│  /*assert on the output*/
-
-│  This ensures that you're testing the behavior the user would see in the browser.
-
-│  Learn more at <https://reactjs.org/link/wrap-tests-with-act>
-
-│  at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
-
-│  at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
-
-│  at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
-
-│  at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
-
-│  at div
-
-│  at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
-
-│  at AutoSuggest (<http://localhost:63315/ClientApp/src/components/Inputs/Au>...
-
-│  at div
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at fieldset
-
-│  at AddressLookup (<http://localhost:63315/ClientApp/src/components/Inputs/>...
-
-│  at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
-
-│  at form
-
-│  at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
-
-│  at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
-
-│  at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
-
-│  at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
-
-│  at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
-
-│  at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
-
-│  at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
+│ ✓ Default 326ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: stderr |
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│ ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx >
 
-│  (chromium)
+│ Default
 
-│  ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx (2
+│ Warning: An update to $dbdc5e6e7ce01b4b$var$ComboBoxInner inside a test was
+not
 
-│  tests) 362ms
+│ wrapped in act(...).
 
-│  ✓ Default  303ms
+│ When testing, code that causes React state updates should be wrapped into
 
-│
+│ act(...):
 
-│  storybook/test: ✓
+│ act(() => {
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│ /_fire events that update state_/
 
-│  (chromium)  ClientApp/src/routes/measurementReport/MeasurementReport.stories.tsx
+│ });
 
-│  (2 tests) 425ms
+│ /_assert on the output_/
 
-│  ✓ Report View  346ms
+│ This ensures that you're testing the behavior the user would see in the
+browser.
 
-Chromatic:     → 50% 109/218
+│ Learn more at <https://reactjs.org/link/wrap-tests-with-act>
 
-│
+│ at $dbdc5e6e7ce01b4b$var$ComboBoxInner (<http://localhost:63315/node_modul>...
 
-│  storybook/test: ✓
+│ at $42ceafc619f9c3ba$var$CollectionInner (<http://localhost:63315/node_mod>...
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│ at $42ceafc619f9c3ba$export$bf788dd355e3a401 (<http://localhost:63315/node>...
 
-│  (chromium)  ClientApp/src/routes/ta/manage/appDocuments.stories.tsx (1 test)
+│ at Wrapper (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/>...
 
-│  337ms
+│ at div
 
-│  ✓ Documents Tab  336ms
+│ at AutoSuggestContainer (<http://localhost:63315/ClientApp/src/components/>...
 
-│
+│ at AutoSuggest (<http://localhost:63315/ClientApp/src/components/Inputs/Au>...
 
-│  storybook/test: ✓
+│ at div
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  (chromium)  ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx (2
+│ at fieldset
 
-│  tests) 454ms
+│ at AddressLookup (<http://localhost:63315/ClientApp/src/components/Inputs/>...
 
-│  ✓ Default  372ms
+│ at hookified (<http://localhost:63315/node_modules/.cache/storybook/10.5.1>...
 
-Chromatic:     → 84% 183/218
+│ at form
 
-│
+│ at <http://localhost:63315/node_modules/.cache/storybook/10.5.10/d089ae206>...
 
-│  storybook/test: ✓
+│ at Formik (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│ at RenderedRoute (<http://localhost:63315/node_modules/.cache/storybook/10>...
 
-│  (chromium)  ClientApp/src/routes/ta/manage/appDetails.stories.tsx (1 test) 408ms
+│ at RenderErrorBoundary (<http://localhost:63315/node_modules/.cache/storyb>...
 
-│  ✓ Details Tab  407ms
+│ at DataRoutes2 (<http://localhost:63315/node_modules/.cache/storybook/10.5>...
 
-│
+│ at Router (<http://localhost:63315/node_modules/.cache/storybook/10.5.10/d>...
 
-│  storybook/test: ✓
+│ at RouterProvider (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
-
-│  (chromium)  ClientApp/src/components/SearchFilter/SearchFilter.stories.tsx (2
-
-│  tests) 477ms
-
-│  ✓ Dashboard Filters  413ms
+│ at unboundStoryFn (<http://localhost:63315/node_modules/.cache/storybook/1>...
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/account/organisationDetails.stories.tsx (1
+│ (chromium)
 
-│  test) 350ms
+│ ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx (2
 
-│  ✓ Default  349ms
+│ tests) 362ms
 
-Chromatic:     → 100% 218/218
+│ ✓ Default 303ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
+ClientApp/src/routes/measurementReport/MeasurementReport.stories.tsx
 
-│  ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.stories.tsx (2
+│ (2 tests) 425ms
 
-│  tests) 409ms
+│ ✓ Report View 346ms
 
-│  ✓ Editable  361ms
+Chromatic: → 50% 109/218
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium) ClientApp/src/routes/ta/manage/appDocuments.stories.tsx (1 test)
+
+│ 337ms
+
+│ ✓ Documents Tab 336ms
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium) ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx (2
+
+│ tests) 454ms
+
+│ ✓ Default 372ms
+
+Chromatic: → 84% 183/218
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium) ClientApp/src/routes/ta/manage/appDetails.stories.tsx (1 test)
+408ms
+
+│ ✓ Details Tab 407ms
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium) ClientApp/src/components/SearchFilter/SearchFilter.stories.tsx (2
+
+│ tests) 477ms
+
+│ ✓ Dashboard Filters 413ms
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium) ClientApp/src/routes/account/organisationDetails.stories.tsx (1
+
+│ test) 350ms
+
+│ ✓ Default 349ms
+
+Chromatic: → 100% 218/218
+
+│
+
+│ storybook/test: ✓
+
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+
+│ (chromium)
+
+│ ClientApp/src/components/Inputs/Attachment/AttachmentItem-new.stories.tsx (2
+
+│ tests) 409ms
+
+│ ✓ Editable 361ms
 
 Chromatic: √ Build 28 passed!
 
@@ -1434,13 +1513,15 @@ Chromatic: √ Build 28 passed!
 
 Chromatic: Build 28 passed!
 
-Chromatic:     → Tested 218 stories across 87 components; captured 218 snapshots in 2 minutes 9 seconds
+Chromatic: → Tested 218 stories across 87 components; captured 218 snapshots in
+2 minutes 9 seconds
 
 Chromatic: i Wrote Chromatic diagnostics report to chromatic-diagnostics.json
 
 Chromatic: Uploading metadata files automatically because TurboSnap was enabled
 
-Chromatic: i Uploading 6 metadata files to <https://6a8d5f43778dc7546d559414-hohwtyffwq.chromatic.com/.chromatic/>
+Chromatic: i Uploading 6 metadata files to
+<https://6a8d5f43778dc7546d559414-hohwtyffwq.chromatic.com/.chromatic/>
 
            - build-storybook.log
 
@@ -1456,258 +1537,286 @@ Chromatic: i Uploading 6 metadata files to <https://6a8d5f43778dc7546d559414-hoh
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/help-guide/HelpGuide.stories.tsx (2 tests)
+│ (chromium) ClientApp/src/routes/help-guide/HelpGuide.stories.tsx (2 tests)
 
-│  379ms
+│ 379ms
 
-│  ✓ Authenticated Journey  324ms
+│ ✓ Authenticated Journey 324ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/SteppedNavigation/SteppedNavigation.stories.tsx (1
+│ ClientApp/src/components/SteppedNavigation/SteppedNavigation.stories.tsx (1
 
-│  test) 333ms
+│ test) 333ms
 
-│  ✓ Current Step  333ms
+│ ✓ Current Step 333ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/BlockUISpinner/BlockUISpinner.stories.tsx
+│ (chromium) ClientApp/src/components/BlockUISpinner/BlockUISpinner.stories.tsx
 
-│  (2 tests) 389ms
+│ (2 tests) 389ms
 
-│  ✓ Full Page  352ms
+│ ✓ Full Page 352ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/preConditions/PreConditions.stories.tsx (1
+│ (chromium) ClientApp/src/routes/preConditions/PreConditions.stories.tsx (1
 
-│  test) 435ms
+│ test) 435ms
 
-│  ✓ Renders Protected Content  435ms
+│ ✓ Renders Protected Content 435ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Actions/Actions.stories.tsx (2 tests) 346ms
+│ (chromium) ClientApp/src/components/Actions/Actions.stories.tsx (2 tests)
+346ms
 
-│  ✓ Text Button  310ms
+│ ✓ Text Button 310ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Layout/Layout.stories.tsx (1 test) 491ms
+│ (chromium) ClientApp/src/components/Layout/Layout.stories.tsx (1 test) 491ms
 
-│  ✓ Portal Shell  491ms
+│ ✓ Portal Shell 491ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/ta/supportingDocuments.stories.tsx (1 test)
+│ (chromium) ClientApp/src/routes/ta/supportingDocuments.stories.tsx (1 test)
 
-│  343ms
+│ 343ms
 
-│  ✓ Edit Step  342ms
+│ ✓ Edit Step 342ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.stories.tsx (2
+│ ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenu.stories.tsx (2
 
-│  tests) 405ms
+│ tests) 405ms
 
-│  ✓ Closed  320ms
+│ ✓ Closed 320ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/Inputs/DatePicker/CustomDatePicker.stories.tsx (2
+│ ClientApp/src/components/Inputs/DatePicker/CustomDatePicker.stories.tsx (2
 
-│  tests) 357ms
+│ tests) 357ms
 
-│  ✓ Collapsed  310ms
+│ ✓ Collapsed 310ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/sign-in/AuthRoutes.stories.tsx (3 tests) 505ms
+│ (chromium) ClientApp/src/routes/sign-in/AuthRoutes.stories.tsx (3 tests) 505ms
 
-│  ✓ Sign In Loading  400ms
+│ ✓ Sign In Loading 400ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/routes/ta/instrumentInfoPanel.stories.tsx (2 tests)
+│ (chromium) ClientApp/src/routes/ta/instrumentInfoPanel.stories.tsx (2 tests)
 
-│  438ms
+│ 438ms
 
-│  ✓ With References  391ms
+│ ✓ With References 391ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/Utilities/routeAccessibleNavigation.stories.tsx (1
+│ ClientApp/src/components/Utilities/routeAccessibleNavigation.stories.tsx (1
 
-│  test) 416ms
+│ test) 416ms
 
-│  ✓ Live Region  415ms
+│ ✓ Live Region 415ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/Progress/ProgressFileList.stories.tsx (3
+│ (chromium) ClientApp/src/components/Progress/ProgressFileList.stories.tsx (3
 
-│  tests) 459ms
+│ tests) 459ms
 
-│  ✓ Uploading  302ms
+│ ✓ Uploading 302ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/get-started/GetStarted.stories.tsx (2
+│ (chromium) ClientApp/src/components/get-started/GetStarted.stories.tsx (2
 
-│  tests) 480ms
+│ tests) 480ms
 
-│  ✓ Public Landing  408ms
+│ ✓ Public Landing 408ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.stories.tsx (1
+│ ClientApp/src/components/SearchFilter/TypeApproval/paSearchFilter.stories.tsx
+(1
 
-│  test) 355ms
+│ test) 355ms
 
-│  ✓ Default  354ms
+│ ✓ Default 354ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/PaginationHeader/PaginationHeader.stories.tsx (2 tests)
+│ ClientApp/src/components/PaginationHeader/PaginationHeader.stories.tsx (2
+tests)
 
-│  367ms
+│ 367ms
 
-│  ✓ Mid Page  332ms
+│ ✓ Mid Page 332ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)
+│ (chromium)
 
-│  ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestOption.stories.tsx (2
+│ ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestOption.stories.tsx (2
 
-│  tests) 407ms
+│ tests) 407ms
 
-│  ✓ Default  358ms
+│ ✓ Default 358ms
 
 │
 
-│  storybook/test: ✓
+│ storybook/test: ✓
 
-│  storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
+│
+storybook:C:/Users/gregm/offline-site-robots-off/portal.measurement.gov.au/source-map-capture/portal.measurement.gov.au/.storybook
 
-│  (chromium)  ClientApp/src/components/RequestList/InstrumentItem.stories.tsx (2
+│ (chromium) ClientApp/src/components/RequestList/InstrumentItem.stories.tsx (2
 
-│  tests) 500ms
+│ tests) 500ms
 
-│  ✓ Reports Tab  413ms
+│ ✓ Reports Tab 413ms
 
 <--- Last few GCs --->
 
-[18496:00000287DA100000]  6594826 ms: Scavenge (interleaved) 4062.5 (4091.7) -> 4062.1 (4111.5) MB, pooled: 0 MB, 15.54 / 0.00 ms  (average mu = 0.201, current mu = 0.120) allocation failure;
+[18496:00000287DA100000] 6594826 ms: Scavenge (interleaved) 4062.5 (4091.7) ->
+4062.1 (4111.5) MB, pooled: 0 MB, 15.54 / 0.00 ms (average mu = 0.201, current
+mu = 0.120) allocation failure;
 
-[18496:00000287DA100000]  6595711 ms: Mark-Compact (reduce) 4075.0 (4113.5) -> 4070.7 (4092.0) MB, pooled: 0 MB, 40.77 / 0.00 ms  (+ 614.2 ms in 176 steps since start of marking, biggest step 6.0 ms, walltime since start of marking 692 ms) (average mu = 0
+[18496:00000287DA100000] 6595711 ms: Mark-Compact (reduce) 4075.0 (4113.5) ->
+4070.7 (4092.0) MB, pooled: 0 MB, 40.77 / 0.00 ms (+ 614.2 ms in 176 steps since
+start of marking, biggest step 6.0 ms, walltime since start of marking 692 ms)
+(average mu = 0
 
-FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed -
+JavaScript heap out of memory
 
 ----- Native stack trace -----
 
- 1: 00007FF63CA51E1F node::OnFatalError+1343
+1: 00007FF63CA51E1F node::OnFatalError+1343
 
- 2: 00007FF63B663617 v8::Function::NewInstance+423
+2: 00007FF63B663617 v8::Function::NewInstance+423
 
- 3: 00007FF63B463E57 X509_STORE_get_lookup_certs+54423
+3: 00007FF63B463E57 X509_STORE_get_lookup_certs+54423
 
- 4: 00007FF63B467B64 X509_STORE_get_lookup_certs+70052
+4: 00007FF63B467B64 X509_STORE_get_lookup_certs+70052
 
- 5: 00007FF63B476ACC v8::internal::StrongRootAllocatorBase::deallocate_impl+16604
+5: 00007FF63B476ACC v8::internal::StrongRootAllocatorBase::deallocate_impl+16604
 
- 6: 00007FF63B47630B v8::internal::StrongRootAllocatorBase::deallocate_impl+14619
+6: 00007FF63B47630B v8::internal::StrongRootAllocatorBase::deallocate_impl+14619
 
- 7: 00007FF63CD7492D node::AsyncResource::CallbackScope::CallbackScope+2124541
+7: 00007FF63CD7492D node::AsyncResource::CallbackScope::CallbackScope+2124541
 
- 8: 00007FF63B461920 X509_STORE_get_lookup_certs+44896
+8: 00007FF63B461920 X509_STORE_get_lookup_certs+44896
 
- 9: 00007FF63B4E5709 v8::Unlocker::~Unlocker+9273
+9: 00007FF63B4E5709 v8::Unlocker::~Unlocker+9273
 
 10: 00007FF63B058F48 v8::CodeEvent::GetFunctionName+131144
 
 11: 000002879FE775FA
 
-PS C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au>
+PS
+C:\Users\gregm\offline-site-robots-off\portal.measurement.gov.au\source-map-capture\portal.measurement.gov.au>

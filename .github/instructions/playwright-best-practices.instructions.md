@@ -1,5 +1,7 @@
 ---
-description: 'Playwright best-practice guardrails for this repository. Use these rules when editing Playwright tests, Playwright config, and e2e wrappers.'
+description:
+  'Playwright best-practice guardrails for this repository. Use these rules when
+  editing Playwright tests, Playwright config, and e2e wrappers.'
 applyTo: 'e2e/**/*.spec.ts,e2e/bdd/**/*.ts,playwright.config.ts,scripts/e2e.mjs,scripts/e2e-lib.mjs'
 ---
 
@@ -17,17 +19,23 @@ Use these rules when working on Playwright in this repository.
 ## Test authoring
 
 - Test user-visible behavior, not implementation details.
-- Prefer resilient user-facing locators (`getByRole`, `getByLabel`, `getByText`) over DOM-shape selectors.
-- Use Playwright web-first assertions (`await expect(...)`) rather than manual `isVisible()`-style checks.
+- Prefer resilient user-facing locators (`getByRole`, `getByLabel`, `getByText`)
+  over DOM-shape selectors.
+- Use Playwright web-first assertions (`await expect(...)`) rather than manual
+  `isVisible()`-style checks.
 - Keep tests isolated and deterministic.
-- Do not add hard waits (`waitForTimeout`) unless the task explicitly requires and justifies them.
-- Avoid testing third-party systems you do not control; use routing/mocking when needed.
+- Do not add hard waits (`waitForTimeout`) unless the task explicitly requires
+  and justifies them.
+- Avoid testing third-party systems you do not control; use routing/mocking when
+  needed.
 
 ## Configuration and stability
 
 - Preserve CI stability defaults unless the task explicitly changes policy.
-- Keep trace capture focused (`on-first-retry`) rather than always-on for normal CI runs.
-- Keep failure diagnostics (`video`, `screenshot`, report artifacts) available for CI triage.
+- Keep trace capture focused (`on-first-retry`) rather than always-on for normal
+  CI runs.
+- Keep failure diagnostics (`video`, `screenshot`, report artifacts) available
+  for CI triage.
 - Use explicit retries in CI where needed to reduce transient flake noise.
 
 ## Validation

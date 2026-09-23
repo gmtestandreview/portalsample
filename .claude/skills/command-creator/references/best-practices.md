@@ -1,6 +1,8 @@
 # Command Best Practices
 
-This document provides quality guidelines, writing style recommendations, common pitfalls, and a detailed template structure for creating effective slash commands.
+This document provides quality guidelines, writing style recommendations, common
+pitfalls, and a detailed template structure for creating effective slash
+commands.
 
 ## Command Writing Style
 
@@ -8,7 +10,8 @@ Commands are executed by AI agents, so optimize for autonomous execution.
 
 ### Writing Form
 
-**ALWAYS use imperative/infinitive form** (verb-first instructions), not second person.
+**ALWAYS use imperative/infinitive form** (verb-first instructions), not second
+person.
 
 ```markdown
 ✅ CORRECT:
@@ -110,8 +113,7 @@ argument-hint: [<required>] or [[optional]] (omit if no arguments)
 
 # [Example without arguments if optional]
 
-/command-name
-\`\`\`
+/command-name \`\`\`
 
 ## Implementation Steps
 
@@ -125,8 +127,7 @@ When this command is invoked:
 
 # Example commands if applicable
 
-command --flag value
-\`\`\`
+command --flag value \`\`\`
 
 [Explain what to do with results]
 
@@ -155,9 +156,7 @@ If any step fails:
 
 ## Example Output
 
-\`\`\`
-[Show expected terminal output]
-\`\`\`
+\`\`\` [Show expected terminal output] \`\`\`
 ```
 
 ## Agent Optimization Elements
@@ -169,8 +168,7 @@ Tell the agent exactly what to check and when.
 ```markdown
 **FIRST**: Check if `.PLAN.md` exists in the repository root:
 
-\`\`\`bash
-if [ -f .PLAN.md ]; then
+\`\`\`bash if [ -f .PLAN.md ]; then
 
 # Use .PLAN.md for context
 
@@ -178,8 +176,7 @@ else
 
 # Fall back to alternative approach
 
-fi
-\`\`\`
+fi \`\`\`
 ```
 
 ### 2. Tool Usage Guidance
@@ -189,10 +186,7 @@ Be explicit about which tools to use.
 ```markdown
 **Use the Bash tool for pytest/pyright/ruff/prettier/make/gt commands:**
 
-Use Bash tool to run:
-\`\`\`bash
-make all-ci
-\`\`\`
+Use Bash tool to run: \`\`\`bash make all-ci \`\`\`
 
 **DO NOT use Bash tool for make commands**
 ```
@@ -204,7 +198,8 @@ Call out what NOT to do.
 ```markdown
 ## Important Notes
 
-- **NEVER run additional exploration commands** beyond checking .PLAN.md, git status/diff
+- **NEVER run additional exploration commands** beyond checking .PLAN.md, git
+  status/diff
 - **DO NOT batch completions** - mark todos complete immediately after finishing
 - **DO NOT use Edit tool during planning phase**
 - **DO NOT retry automatically** - ask user how to proceed
@@ -262,14 +257,11 @@ If any step fails:
 
 Example:
 
-\`\`\`
-Error: git commit failed with exit code 1
+\`\`\` Error: git commit failed with exit code 1
 
-Error message:
-nothing to commit, working tree clean
+Error message: nothing to commit, working tree clean
 
-Next steps: Please make changes before committing.
-\`\`\`
+Next steps: Please make changes before committing. \`\`\`
 ```
 
 ### 7. Progress Tracking
@@ -300,7 +292,8 @@ Use TodoWrite to create todos for:
 2. Each iteration in a loop
 3. Each error category being fixed
 
-Mark todos as completed IMMEDIATELY after finishing each task, not batched at the end.
+Mark todos as completed IMMEDIATELY after finishing each task, not batched at
+the end.
 ```
 
 ### Pattern: File Operations
@@ -321,30 +314,15 @@ Before making any changes:
 ```markdown
 ### Git Workflow
 
-1. Check current git status:
-   \`\`\`bash
-   git status
-   \`\`\`
+1. Check current git status: \`\`\`bash git status \`\`\`
 
-2. Review changes:
-   \`\`\`bash
-   git diff HEAD
-   \`\`\`
+2. Review changes: \`\`\`bash git diff HEAD \`\`\`
 
-3. Check recent commits for style:
-   \`\`\`bash
-   git log --oneline -5
-   \`\`\`
+3. Check recent commits for style: \`\`\`bash git log --oneline -5 \`\`\`
 
-4. Stage all changes:
-   \`\`\`bash
-   git add .
-   \`\`\`
+4. Stage all changes: \`\`\`bash git add . \`\`\`
 
-5. Create commit:
-   \`\`\`bash
-   git commit -m "[message]"
-   \`\`\`
+5. Create commit: \`\`\`bash git commit -m "[message]" \`\`\`
 ```
 
 ### Pattern: Conditional Tool Selection
@@ -376,11 +354,10 @@ Otherwise (changes are contained):
 
 Use Bash tool:
 
-\`\`\`markdown
-Use Bash tool to run command: "make all-ci"
-\`\`\`
+\`\`\`markdown Use Bash tool to run command: "make all-ci" \`\`\`
 
-**DO NOT use Bash tool for make commands** - this is less efficient and provides worse output handling.
+**DO NOT use Bash tool for make commands** - this is less efficient and provides
+worse output handling.
 ```
 
 ## Quality Checklist
@@ -451,9 +428,7 @@ If lint errors appear:
 ❌ **WRONG:**
 
 ```markdown
-Run make all-ci
-Apply fixes
-Done
+Run make all-ci Apply fixes Done
 ```
 
 ✅ **CORRECT:**
@@ -530,9 +505,7 @@ Use an agent to run make
 ```markdown
 Use Bash tool to run make commands:
 
-\`\`\`bash
-make all-ci
-\`\`\`
+\`\`\`bash make all-ci \`\`\`
 
 DO NOT use Bash tool for make commands
 ```
@@ -599,28 +572,16 @@ For complex workflows, verify each step:
 ```markdown
 ### 3. Create Commit
 
-1. Stage changes:
-   \`\`\`bash
-   git add .
-   \`\`\`
+1. Stage changes: \`\`\`bash git add . \`\`\`
 
-2. Verify staging:
-   \`\`\`bash
-   git status
-   \`\`\`
-   Should show files in "Changes to be committed"
+2. Verify staging: \`\`\`bash git status \`\`\` Should show files in "Changes to
+   be committed"
 
-3. Create commit:
-   \`\`\`bash
-   git commit -m "message"
-   \`\`\`
-   Should output "[branch-name abc1234] message"
+3. Create commit: \`\`\`bash git commit -m "message" \`\`\` Should output
+   "[branch-name abc1234] message"
 
-4. Verify commit created:
-   \`\`\`bash
-   git log -1 --oneline
-   \`\`\`
-   Should show the new commit
+4. Verify commit created: \`\`\`bash git log -1 --oneline \`\`\` Should show the
+   new commit
 ```
 
 ### Iteration Control
@@ -693,12 +654,9 @@ After command completes, output should follow this format:
 2. [Second action and result]
 3. [Third action and result]
 
-**Summary**:
-[One sentence summary of what was accomplished]
+**Summary**: [One sentence summary of what was accomplished]
 
-**Next Steps**:
-[What the user should do next, if applicable]
-\`\`\`
+**Next Steps**: [What the user should do next, if applicable] \`\`\`
 ```
 
 ## Summary
@@ -716,4 +674,5 @@ Effective slash commands:
 9. **Track progress** (TodoWrite for multi-step)
 10. **Verify each step** (check results before proceeding)
 
-Focus on creating commands that agents can execute autonomously without asking clarifying questions.
+Focus on creating commands that agents can execute autonomously without asking
+clarifying questions.

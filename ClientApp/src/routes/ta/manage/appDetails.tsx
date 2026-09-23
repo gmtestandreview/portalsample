@@ -1,479 +1,478 @@
-import { useMsal } from "@azure/msal-react";
-import type { FormikValues } from "formik";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Button, Col, Container, Nav, Row, Tab } from "react-bootstrap";
-import { useParams } from "react-router";
+import { useMsal } from '@azure/msal-react';
+import type { FormikValues } from 'formik';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
+import { useParams } from 'react-router';
 import {
-	type ApplicationDetailsDto,
-	type RequestForPatternApprovalAppDetails,
-	RequestForPatternApprovalClient,
-} from "../../../api/web-api-client.ts";
-import { tokenRequest } from "../../../authentication/authConfig.ts";
+  type ApplicationDetailsDto,
+  type RequestForPatternApprovalAppDetails,
+  RequestForPatternApprovalClient,
+} from '../../../api/web-api-client.ts';
+import { tokenRequest } from '../../../authentication/authConfig.ts';
 import {
-	CustomAccordion,
-	CustomAccordionBody,
-} from "../../../components/Accordion/index.tsx";
-import BlockUiSpinner from "../../../components/BlockUISpinner/index.tsx";
+  CustomAccordion,
+  CustomAccordionBody,
+} from '../../../components/Accordion/index.tsx';
+import BlockUiSpinner from '../../../components/BlockUISpinner/index.tsx';
 import CustomBreadcrumb, {
-	type CustomBreadcrumbItem,
-} from "../../../components/Breadcrumb/index.tsx";
-import BackToDashboardButton from "../../../components/Buttons/BackToDashboardButton/index.tsx";
-import FormikForm from "../../../components/forms/FormikForm/index.tsx";
-import StatusPill from "../../../components/Pill/StatusPill.tsx";
-import useBodyClass from "../../../components/Utilities/useBodyClass.tsx";
-import useHtmlTitle from "../../../components/Utilities/useHtmlTitle.tsx";
-import AppLogger from "../../../instrumentation/AppLogger.ts";
-import type { PaDashboardItemStatus } from "../../common/enums.ts";
-import ApplicationAndInstrument from "../applicationAndInstrument.tsx";
-import OrganisationAndContact from "../organisationAndContact.tsx";
-import SupportingDocuments from "../supportingDocuments.tsx";
-import appDetailsProps from "./appDetailsProps.ts";
-import ApplicationDocuments from "./appDocuments.tsx";
-import ApplicationMessages from "./appMessages.tsx";
+  type CustomBreadcrumbItem,
+} from '../../../components/Breadcrumb/index.tsx';
+import BackToDashboardButton from '../../../components/Buttons/BackToDashboardButton/index.tsx';
+import FormikForm from '../../../components/forms/FormikForm/index.tsx';
+import StatusPill from '../../../components/Pill/StatusPill.tsx';
+import useBodyClass from '../../../components/Utilities/useBodyClass.tsx';
+import useHtmlTitle from '../../../components/Utilities/useHtmlTitle.tsx';
+import AppLogger from '../../../instrumentation/AppLogger.ts';
+import type { PaDashboardItemStatus } from '../../common/enums.ts';
+import ApplicationAndInstrument from '../applicationAndInstrument.tsx';
+import OrganisationAndContact from '../organisationAndContact.tsx';
+import SupportingDocuments from '../supportingDocuments.tsx';
+import appDetailsProps from './appDetailsProps.ts';
+import ApplicationDocuments from './appDocuments.tsx';
+import ApplicationMessages from './appMessages.tsx';
 
 const POLL_MS = 5000;
 
-const TAB_KEYS = ["details", "messages", "documents", "timeline"];
+const TAB_KEYS = ['details', 'messages', 'documents', 'timeline'];
 
 const getTabFromQuery = () => {
-	const params = new URLSearchParams(globalThis.location.search);
-	const tab = params.get("tab");
-	return tab && TAB_KEYS.includes(tab) ? tab : TAB_KEYS[0];
+  const params = new URLSearchParams(globalThis.location.search);
+  const tab = params.get('tab');
+  return tab && TAB_KEYS.includes(tab) ? tab : TAB_KEYS[0];
 };
 
 const ApplicationDetails = () => {
-	const [isDataLoading, setIsDataLoading] = useState(false);
-	const [appDetails, setAppDetails] = useState<FormikValues | null>(null);
-	const { id } = useParams();
-	const { accounts, instance } = useMsal();
-	const options = useMemo(
-		() => appDetailsProps(id!, accounts, instance),
-		[accounts, id, instance],
-	);
-	const { loadStepValues } = options;
-	const [applicationType, setApplicationType] = useState<string | null>(null);
-	const [messageCount, setMessageCount] = useState<number>(0);
-	const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const disposedRef = useRef(false);
+  const [isDataLoading, setIsDataLoading] = useState(false);
+  const [appDetails, setAppDetails] = useState<FormikValues | null>(null);
+  const { id } = useParams();
+  const { accounts, instance } = useMsal();
+  const options = useMemo(
+    () => appDetailsProps(id!, accounts, instance),
+    [accounts, id, instance]
+  );
+  const { loadStepValues } = options;
+  const [applicationType, setApplicationType] = useState<string | null>(null);
+  const [messageCount, setMessageCount] = useState<number>(0);
+  const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const disposedRef = useRef(false);
 
-	const clearPollTimeout = useCallback(() => {
-		if (pollTimeoutRef.current) {
-			clearTimeout(pollTimeoutRef.current);
-			pollTimeoutRef.current = null;
-		}
-	}, []);
+  const clearPollTimeout = useCallback(() => {
+    if (pollTimeoutRef.current) {
+      clearTimeout(pollTimeoutRef.current);
+      pollTimeoutRef.current = null;
+    }
+  }, []);
 
-	const fetchMessageCountData = useCallback(async () => {
-		if (!id || accounts.length === 0) return;
+  const fetchMessageCountData = useCallback(async () => {
+    if (!id || accounts.length === 0) return;
 
-		try {
-			const client = new RequestForPatternApprovalClient();
-			const tokenResult = await instance.acquireTokenSilent({
-				...tokenRequest,
-				account: accounts[0],
-			});
-			client.setAuthToken(tokenResult.accessToken);
-			const count = await client.getAppMessageCount(id, id, undefined);
+    try {
+      const client = new RequestForPatternApprovalClient();
+      const tokenResult = await instance.acquireTokenSilent({
+        ...tokenRequest,
+        account: accounts[0],
+      });
+      client.setAuthToken(tokenResult.accessToken);
+      const count = await client.getAppMessageCount(id, id, undefined);
 
-			if (disposedRef.current) return;
-			setMessageCount(count || 0);
-		} catch {
-			// optional: log
-		}
-	}, [accounts, id, instance]);
+      if (disposedRef.current) return;
+      setMessageCount(count || 0);
+    } catch {
+      // optional: log
+    }
+  }, [accounts, id, instance]);
 
-	const breadcrumbs: CustomBreadcrumbItem[] = [
-		{ to: "/", text: "Dashboard" },
-		{ to: "", text: `${applicationType} (${id})` },
-	];
+  const breadcrumbs: CustomBreadcrumbItem[] = [
+    { to: '/', text: 'Dashboard' },
+    { to: '', text: `${applicationType} (${id})` },
+  ];
 
-	useHtmlTitle(`${applicationType} (${id}) manage | NMI Services portal`);
-	useBodyClass("pa-application-manage");
+  useHtmlTitle(`${applicationType} (${id}) manage | NMI Services portal`);
+  useBodyClass('pa-application-manage');
 
-	const formattedDate = (dateToFormat: Date | string | undefined) =>
-		dateToFormat
-			? new Date(dateToFormat).toLocaleDateString("en-AU", {
-					day: "2-digit",
-					month: "short",
-					year: "numeric",
-				})
-			: "";
+  const formattedDate = (dateToFormat: Date | string | undefined) =>
+    dateToFormat
+      ? new Date(dateToFormat).toLocaleDateString('en-AU', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })
+      : '';
 
-	const [activeTab, setActiveTab] = useState(getTabFromQuery);
-	const [loadMessagesTab, setLoadMessagesTab] = useState(
-		() => getTabFromQuery() === "messages",
-	);
-	const [messagesRefreshKey, setMessagesRefreshKey] = useState(0);
+  const [activeTab, setActiveTab] = useState(getTabFromQuery);
+  const [loadMessagesTab, setLoadMessagesTab] = useState(
+    () => getTabFromQuery() === 'messages'
+  );
+  const [messagesRefreshKey, setMessagesRefreshKey] = useState(0);
 
-	useEffect(() => {
-		const onPopState = () => {
-			setActiveTab(getTabFromQuery());
-		};
-		globalThis.addEventListener("popstate", onPopState);
-		return () => globalThis.removeEventListener("popstate", onPopState);
-	}, []);
+  useEffect(() => {
+    const onPopState = () => {
+      setActiveTab(getTabFromQuery());
+    };
+    globalThis.addEventListener('popstate', onPopState);
+    return () => globalThis.removeEventListener('popstate', onPopState);
+  }, []);
 
-	useEffect(() => {
-		disposedRef.current = false;
+  useEffect(() => {
+    disposedRef.current = false;
 
-		const poll = async () => {
-			await fetchMessageCountData();
-			if (!disposedRef.current) {
-				// The rule cannot trace the clear through clearPollTimeout(),
-				// which this effect's cleanup calls and which does invoke
-				// clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
-				// eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
-				pollTimeoutRef.current = setTimeout(poll, POLL_MS);
-			}
-		};
+    const poll = async () => {
+      await fetchMessageCountData();
+      if (!disposedRef.current) {
+        // The rule cannot trace the clear through clearPollTimeout(),
+        // which this effect's cleanup calls and which does invoke
+        // clearTimeout(pollTimeoutRef.current). See clearPollTimeout above.
+        // eslint-disable-next-line @eslint-react/web-api-no-leaked-timeout
+        pollTimeoutRef.current = setTimeout(poll, POLL_MS);
+      }
+    };
 
-		poll();
+    poll();
 
-		return () => {
-			clearPollTimeout();
-		};
-	}, [fetchMessageCountData, clearPollTimeout]);
+    return () => {
+      clearPollTimeout();
+    };
+  }, [fetchMessageCountData, clearPollTimeout]);
 
-	useEffect(
-		() => () => {
-			disposedRef.current = true;
-			clearPollTimeout();
-		},
-		[clearPollTimeout],
-	);
+  useEffect(
+    () => () => {
+      disposedRef.current = true;
+      clearPollTimeout();
+    },
+    [clearPollTimeout]
+  );
 
-	const refreshMessagesTab = () => {
-		setLoadMessagesTab(true);
-		setMessagesRefreshKey((prev) => prev + 1);
-	};
+  const refreshMessagesTab = () => {
+    setLoadMessagesTab(true);
+    setMessagesRefreshKey((prev) => prev + 1);
+  };
 
-	const handleTabSelect = (key: string | null) => {
-		if (key && TAB_KEYS.includes(key)) {
-			const params = new URLSearchParams(window.location.search);
-			params.set("tab", key);
-			const newUrl = `${window.location.pathname}?${params.toString()}`;
-			window.history.pushState({}, "", newUrl);
-			setActiveTab(key);
+  const handleTabSelect = (key: string | null) => {
+    if (key && TAB_KEYS.includes(key)) {
+      const params = new URLSearchParams(window.location.search);
+      params.set('tab', key);
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.pushState({}, '', newUrl);
+      setActiveTab(key);
 
-			if (key === "messages") {
-				refreshMessagesTab(); // mount only after user opens Messages
-			}
-		}
-	};
+      if (key === 'messages') {
+        refreshMessagesTab(); // mount only after user opens Messages
+      }
+    }
+  };
 
-	useEffect(() => {
-		const fetchData = async () => {
-			setIsDataLoading(true);
-			try {
-				const result = await loadStepValues();
-				setAppDetails(result.formValues);
-				const appType = result.formValues?.applicationDetails as
-					| ApplicationDetailsDto
-					| undefined;
-				setApplicationType(appType?.patternApprovalType || null);
-				setMessageCount(appType?.messageCount || 0);
-			} catch (error) {
-				// Previously unguarded: a rejected load became an unhandled rejection, and because
-				// setIsDataLoading(false) sat only on the success path the page stayed on its
-				// spinner for good. Reading applicationDetails without a guard threw for the same
-				// reason - which is the only way the `|| {}` further down was ever reachable.
-				AppLogger.error("Failed to load application details", error as Error, {
-					Id: id,
-				});
-			} finally {
-				setIsDataLoading(false);
-			}
-		};
-		fetchData();
-	}, [id, loadStepValues]);
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsDataLoading(true);
+      try {
+        const result = await loadStepValues();
+        setAppDetails(result.formValues);
+        const appType = result.formValues?.applicationDetails as
+          ApplicationDetailsDto | undefined;
+        setApplicationType(appType?.patternApprovalType || null);
+        setMessageCount(appType?.messageCount || 0);
+      } catch (error) {
+        // Previously unguarded: a rejected load became an unhandled rejection, and because
+        // setIsDataLoading(false) sat only on the success path the page stayed on its
+        // spinner for good. Reading applicationDetails without a guard threw for the same
+        // reason - which is the only way the `|| {}` further down was ever reachable.
+        AppLogger.error('Failed to load application details', error as Error, {
+          Id: id,
+        });
+      } finally {
+        setIsDataLoading(false);
+      }
+    };
+    fetchData();
+  }, [id, loadStepValues]);
 
-	function routeToMessages() {
-		handleTabSelect("messages");
-	}
+  function routeToMessages() {
+    handleTabSelect('messages');
+  }
 
-	const detailsTabContent = (details: RequestForPatternApprovalAppDetails) => {
-		const {
-			referenceId,
-			lastUpdated,
-			assessedAs,
-			status,
-			statusDetail,
-			title,
-			submittedDate,
-		} = details.applicationDetails || {};
-		return (
-			<Row className="mb-4">
-				<Col aria-busy={isDataLoading} aria-live="polite">
-					{isDataLoading ? (
-						<BlockUiSpinner partial={true}>
-							<p>Loading data...</p>
-						</BlockUiSpinner>
-					) : (
-						<div className="appl-items mb-5">
-							<h2 className="visually-hidden">Details</h2>
-							<Row className="mb-5">
-								<Col>
-									<h3 id="applStatus" className="h2 mb-3">
-										Application status
-									</h3>
-									<CustomAccordion
-										id="applicationStatus"
-										containerClassName="mb-3"
-									>
-										<CustomAccordionBody
-											name={`${title}`}
-											eventKey="0"
-											className="mb-4 py-2"
-											nameRHS={
-												<StatusPill status={status as PaDashboardItemStatus} />
-											}
-										>
-											{/* Application Status content body */}
-											<Row>
-												<Col md={12}>
-													<p className="fw-bold small pb-0 mb-0">
-														Reference ID
-													</p>
-													<p className="small">{referenceId}</p>
-												</Col>
-												<Col md={12}>
-													<p className="fw-bold small pb-0 mb-0">
-														Last Updated
-													</p>
-													<p className="small">{formattedDate(lastUpdated)}</p>
-												</Col>
-												<Col md={12}>
-													<p className="fw-bold small pb-0 mb-0">
-														Application submitted
-													</p>
-													<p className="small">
-														{formattedDate(submittedDate)}
-													</p>
-												</Col>
-												<Col md={12}>
-													<p className="fw-bold small pb-0 mb-0">
-														Assessed by NMI as
-													</p>
-													<p className="small">{assessedAs}</p>
-												</Col>
-												<Col md={12}>
-													<p className="fw-bold small pb-0 mb-0">
-														Status detail
-													</p>
-													<p className="small">
-														<StatusPill
-															status={status as PaDashboardItemStatus}
-															className="visually-hidden -me-2"
-														/>
-														{statusDetail}
-													</p>
-												</Col>
-											</Row>
-											<Row>
-												<Col md={12}>
-													<Button
-														onClick={() => routeToMessages()}
-														type="button"
-														className="btn btn-secondary"
-														title={`${messageCount} unread messages`}
-													>
-														<span>
-															<span className="d-none d-md-inline-block">
-																{"Messages "}
-															</span>
-															{messageCount > 0 && (
-																<>
-																	<span className="-me-md-2">
-																		<span
-																			className="badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white"
-																			style={{
-																				fontFamily: "monospace",
-																				top: "-10px",
-																			}}
-																			role="status"
-																		>
-																			{messageCount}
-																		</span>
-																	</span>
-																	<span className="visually-hidden">
-																		{" unread"}
-																	</span>
-																</>
-															)}
-														</span>
-													</Button>
-												</Col>
-											</Row>
-											<Row>
-												<Col md={12}>
-													{/* <Button variant='link'>Withdraw application</Button> */}
-												</Col>
-											</Row>
-										</CustomAccordionBody>
-									</CustomAccordion>
-								</Col>
-							</Row>
-							<Row className="mb-5">
-								<Col>
-									<h3 id="recordOfSubmittedAppl" className="h2 mb-3">
-										Record of application submitted
-									</h3>
-									<CustomAccordion
-										id="organisationAndContact"
-										containerClassName="mb-3"
-									>
-										<CustomAccordionBody
-											name="Organisation details"
-											eventKey="1"
-											className="mb-4 py-2"
-										>
-											<OrganisationAndContact
-												isSummary={true}
-												name="organisationAndContact"
-											/>
-											{/* {!isSubmitted ? <EditButton link={`/ta/${id}/organisation-details`} /> : null} */}
-										</CustomAccordionBody>
-									</CustomAccordion>
-									<CustomAccordion
-										id="applicationAndInstrument"
-										containerClassName="mb-3"
-									>
-										<CustomAccordionBody
-											name="Application details"
-											eventKey="2"
-											className="mb-4 py-2"
-										>
-											<ApplicationAndInstrument
-												isSummary={true}
-												name="applicationAndInstrument"
-											/>
-											{/* {!isSubmitted ? <EditButton link={`/ta/${id}/application-details`} /> : null} */}
-										</CustomAccordionBody>
-									</CustomAccordion>
-									<CustomAccordion
-										id="supportingDocuments"
-										containerClassName="mb-3"
-									>
-										<CustomAccordionBody
-											name="Supporting documents"
-											eventKey="3"
-											className="mb-4 py-2"
-											nameRHS={
-												<button
-													type="button"
-													className="btn btn-link text-nowrap"
-													title="Jump to the documents tab"
-													onClick={(e) => {
-														e.stopPropagation();
-														const params = new URLSearchParams(
-															window.location.search,
-														);
-														params.set("tab", "documents");
-														const newUrl = `${window.location.pathname}?${params.toString()}`;
-														window.history.pushState({}, "", newUrl);
-														window.scrollTo(0, 0);
-														setActiveTab("documents");
-													}}
-												>
-													View documents
-												</button>
-											}
-										>
-											<SupportingDocuments
-												isSummary={true}
-												suppressDocChanges={true}
-												name="supportingDocuments.form.documents"
-												onUploadAttachment={() => Promise.resolve([])} // Not used
-												attachment={{
-													onUploadFiles: () => Promise.resolve([]), // Not used
-												}}
-											/>
-											{/*  {!isSubmitted ? <EditButton link={`/ta/${id}/supporting-documents`} /> : null} */}
-										</CustomAccordionBody>
-									</CustomAccordion>
-								</Col>
-							</Row>
-						</div>
-					)}
-				</Col>
-			</Row>
-		);
-	};
+  const detailsTabContent = (details: RequestForPatternApprovalAppDetails) => {
+    const {
+      referenceId,
+      lastUpdated,
+      assessedAs,
+      status,
+      statusDetail,
+      title,
+      submittedDate,
+    } = details.applicationDetails || {};
+    return (
+      <Row className='mb-4'>
+        <Col aria-busy={isDataLoading} aria-live='polite'>
+          {isDataLoading ? (
+            <BlockUiSpinner partial={true}>
+              <p>Loading data...</p>
+            </BlockUiSpinner>
+          ) : (
+            <div className='appl-items mb-5'>
+              <h2 className='visually-hidden'>Details</h2>
+              <Row className='mb-5'>
+                <Col>
+                  <h3 id='applStatus' className='h2 mb-3'>
+                    Application status
+                  </h3>
+                  <CustomAccordion
+                    id='applicationStatus'
+                    containerClassName='mb-3'
+                  >
+                    <CustomAccordionBody
+                      name={`${title}`}
+                      eventKey='0'
+                      className='mb-4 py-2'
+                      nameRHS={
+                        <StatusPill status={status as PaDashboardItemStatus} />
+                      }
+                    >
+                      {/* Application Status content body */}
+                      <Row>
+                        <Col md={12}>
+                          <p className='fw-bold small pb-0 mb-0'>
+                            Reference ID
+                          </p>
+                          <p className='small'>{referenceId}</p>
+                        </Col>
+                        <Col md={12}>
+                          <p className='fw-bold small pb-0 mb-0'>
+                            Last Updated
+                          </p>
+                          <p className='small'>{formattedDate(lastUpdated)}</p>
+                        </Col>
+                        <Col md={12}>
+                          <p className='fw-bold small pb-0 mb-0'>
+                            Application submitted
+                          </p>
+                          <p className='small'>
+                            {formattedDate(submittedDate)}
+                          </p>
+                        </Col>
+                        <Col md={12}>
+                          <p className='fw-bold small pb-0 mb-0'>
+                            Assessed by NMI as
+                          </p>
+                          <p className='small'>{assessedAs}</p>
+                        </Col>
+                        <Col md={12}>
+                          <p className='fw-bold small pb-0 mb-0'>
+                            Status detail
+                          </p>
+                          <p className='small'>
+                            <StatusPill
+                              status={status as PaDashboardItemStatus}
+                              className='visually-hidden -me-2'
+                            />
+                            {statusDetail}
+                          </p>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={12}>
+                          <Button
+                            onClick={() => routeToMessages()}
+                            type='button'
+                            className='btn btn-secondary'
+                            title={`${messageCount} unread messages`}
+                          >
+                            <span>
+                              <span className='d-none d-md-inline-block'>
+                                {'Messages '}
+                              </span>
+                              {messageCount > 0 && (
+                                <>
+                                  <span className='-me-md-2'>
+                                    <span
+                                      className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
+                                      style={{
+                                        fontFamily: 'monospace',
+                                        top: '-10px',
+                                      }}
+                                      role='status'
+                                    >
+                                      {messageCount}
+                                    </span>
+                                  </span>
+                                  <span className='visually-hidden'>
+                                    {' unread'}
+                                  </span>
+                                </>
+                              )}
+                            </span>
+                          </Button>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={12}>
+                          {/* <Button variant='link'>Withdraw application</Button> */}
+                        </Col>
+                      </Row>
+                    </CustomAccordionBody>
+                  </CustomAccordion>
+                </Col>
+              </Row>
+              <Row className='mb-5'>
+                <Col>
+                  <h3 id='recordOfSubmittedAppl' className='h2 mb-3'>
+                    Record of application submitted
+                  </h3>
+                  <CustomAccordion
+                    id='organisationAndContact'
+                    containerClassName='mb-3'
+                  >
+                    <CustomAccordionBody
+                      name='Organisation details'
+                      eventKey='1'
+                      className='mb-4 py-2'
+                    >
+                      <OrganisationAndContact
+                        isSummary={true}
+                        name='organisationAndContact'
+                      />
+                      {/* {!isSubmitted ? <EditButton link={`/ta/${id}/organisation-details`} /> : null} */}
+                    </CustomAccordionBody>
+                  </CustomAccordion>
+                  <CustomAccordion
+                    id='applicationAndInstrument'
+                    containerClassName='mb-3'
+                  >
+                    <CustomAccordionBody
+                      name='Application details'
+                      eventKey='2'
+                      className='mb-4 py-2'
+                    >
+                      <ApplicationAndInstrument
+                        isSummary={true}
+                        name='applicationAndInstrument'
+                      />
+                      {/* {!isSubmitted ? <EditButton link={`/ta/${id}/application-details`} /> : null} */}
+                    </CustomAccordionBody>
+                  </CustomAccordion>
+                  <CustomAccordion
+                    id='supportingDocuments'
+                    containerClassName='mb-3'
+                  >
+                    <CustomAccordionBody
+                      name='Supporting documents'
+                      eventKey='3'
+                      className='mb-4 py-2'
+                      nameRHS={
+                        <button
+                          type='button'
+                          className='btn btn-link text-nowrap'
+                          title='Jump to the documents tab'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const params = new URLSearchParams(
+                              window.location.search
+                            );
+                            params.set('tab', 'documents');
+                            const newUrl = `${window.location.pathname}?${params.toString()}`;
+                            window.history.pushState({}, '', newUrl);
+                            window.scrollTo(0, 0);
+                            setActiveTab('documents');
+                          }}
+                        >
+                          View documents
+                        </button>
+                      }
+                    >
+                      <SupportingDocuments
+                        isSummary={true}
+                        suppressDocChanges={true}
+                        name='supportingDocuments.form.documents'
+                        onUploadAttachment={() => Promise.resolve([])} // Not used
+                        attachment={{
+                          onUploadFiles: () => Promise.resolve([]), // Not used
+                        }}
+                      />
+                      {/*  {!isSubmitted ? <EditButton link={`/ta/${id}/supporting-documents`} /> : null} */}
+                    </CustomAccordionBody>
+                  </CustomAccordion>
+                </Col>
+              </Row>
+            </div>
+          )}
+        </Col>
+      </Row>
+    );
+  };
 
-	const timelineTabContent = (
-		<Row className="mb-4">
-			<Col aria-busy={isDataLoading} aria-live="polite">
-				{isDataLoading ? (
-					<BlockUiSpinner partial={true}>
-						<p>Loading data...</p>
-					</BlockUiSpinner>
-				) : (
-					<div className="appl-items mb-5">
-						<h2 className="visually-hidden">Timeline</h2>
-						<h3 className="mb-2">Timeline tab content</h3>
-					</div>
-				)}
-			</Col>
-		</Row>
-	);
+  const timelineTabContent = (
+    <Row className='mb-4'>
+      <Col aria-busy={isDataLoading} aria-live='polite'>
+        {isDataLoading ? (
+          <BlockUiSpinner partial={true}>
+            <p>Loading data...</p>
+          </BlockUiSpinner>
+        ) : (
+          <div className='appl-items mb-5'>
+            <h2 className='visually-hidden'>Timeline</h2>
+            <h3 className='mb-2'>Timeline tab content</h3>
+          </div>
+        )}
+      </Col>
+    </Row>
+  );
 
-	const renderTabSubView = (data: RequestForPatternApprovalAppDetails) => (
-		<Row className="mb-0">
-			<Col className="px-0">
-				<Tab.Container
-					id="appl-manage-tabs"
-					activeKey={activeTab}
-					onSelect={handleTabSelect}
-				>
-					<Nav
-						as="ul"
-						variant="underline"
-						className="align-items-center overflow-x-auto no-scrollbars -mb-md-3"
-						aria-label="Select your dashboard view"
-					>
-						<span className="d-flex flex-nowrap">
-							<Nav.Item as="li" role="presentation">
-								<Nav.Link
-									id="details-tab"
-									eventKey="details"
-									className="px-3"
-									// onClick={() => {
-									//     changeTab(DashboardTab.Drafts);
-									//     trackGAEvent(DashboardTab.Drafts);
-									// }}
-								>
-									Details
-								</Nav.Link>
-							</Nav.Item>
-							<Nav.Item as="li" role="presentation">
-								<Nav.Link
-									id="messages-tab"
-									eventKey="messages"
-									className="px-3"
-									onClick={() => {
-										// when already on Messages, force another refresh
-										if (activeTab === "messages") {
-											refreshMessagesTab();
-										}
-									}}
-								>
-									Messages
-								</Nav.Link>
-							</Nav.Item>
-							<Nav.Item as="li" role="presentation">
-								<Nav.Link
-									id="documents-tab"
-									eventKey="documents"
-									className="px-3"
-									// onClick={() => {
-									//     changeTab(DashboardTab.Requests);
-									//     trackGAEvent(DashboardTab.Requests);
-									// }}
-								>
-									Documents
-								</Nav.Link>
-							</Nav.Item>
-							{/* Temp hide Timeline tab
+  const renderTabSubView = (data: RequestForPatternApprovalAppDetails) => (
+    <Row className='mb-0'>
+      <Col className='px-0'>
+        <Tab.Container
+          id='appl-manage-tabs'
+          activeKey={activeTab}
+          onSelect={handleTabSelect}
+        >
+          <Nav
+            as='ul'
+            variant='underline'
+            className='align-items-center overflow-x-auto no-scrollbars -mb-md-3'
+            aria-label='Select your dashboard view'
+          >
+            <span className='d-flex flex-nowrap'>
+              <Nav.Item as='li' role='presentation'>
+                <Nav.Link
+                  id='details-tab'
+                  eventKey='details'
+                  className='px-3'
+                  // onClick={() => {
+                  //     changeTab(DashboardTab.Drafts);
+                  //     trackGAEvent(DashboardTab.Drafts);
+                  // }}
+                >
+                  Details
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item as='li' role='presentation'>
+                <Nav.Link
+                  id='messages-tab'
+                  eventKey='messages'
+                  className='px-3'
+                  onClick={() => {
+                    // when already on Messages, force another refresh
+                    if (activeTab === 'messages') {
+                      refreshMessagesTab();
+                    }
+                  }}
+                >
+                  Messages
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item as='li' role='presentation'>
+                <Nav.Link
+                  id='documents-tab'
+                  eventKey='documents'
+                  className='px-3'
+                  // onClick={() => {
+                  //     changeTab(DashboardTab.Requests);
+                  //     trackGAEvent(DashboardTab.Requests);
+                  // }}
+                >
+                  Documents
+                </Nav.Link>
+              </Nav.Item>
+              {/* Temp hide Timeline tab
                             <Nav.Item
                                 as='li'
                                 role='presentation'
@@ -490,80 +489,80 @@ const ApplicationDetails = () => {
                                     Timeline
                                 </Nav.Link>
                             </Nav.Item> */}
-						</span>
-					</Nav>
-					<Tab.Content className="tab-content-border -bg-white py-3">
-						<Tab.Pane eventKey="details" tabIndex={0}>
-							{data ? detailsTabContent(data) : null}
-						</Tab.Pane>
-						<Tab.Pane eventKey="messages" tabIndex={0}>
-							{loadMessagesTab ? (
-								<ApplicationMessages key={messagesRefreshKey} />
-							) : null}
-						</Tab.Pane>
-						<Tab.Pane eventKey="documents" tabIndex={0}>
-							<ApplicationDocuments />
-						</Tab.Pane>
-						<Tab.Pane eventKey="timeline" tabIndex={0}>
-							{timelineTabContent}
-						</Tab.Pane>
-					</Tab.Content>
-				</Tab.Container>
-			</Col>
-		</Row>
-	);
+            </span>
+          </Nav>
+          <Tab.Content className='tab-content-border -bg-white py-3'>
+            <Tab.Pane eventKey='details' tabIndex={0}>
+              {data ? detailsTabContent(data) : null}
+            </Tab.Pane>
+            <Tab.Pane eventKey='messages' tabIndex={0}>
+              {loadMessagesTab ? (
+                <ApplicationMessages key={messagesRefreshKey} />
+              ) : null}
+            </Tab.Pane>
+            <Tab.Pane eventKey='documents' tabIndex={0}>
+              <ApplicationDocuments />
+            </Tab.Pane>
+            <Tab.Pane eventKey='timeline' tabIndex={0}>
+              {timelineTabContent}
+            </Tab.Pane>
+          </Tab.Content>
+        </Tab.Container>
+      </Col>
+    </Row>
+  );
 
-	const renderTitle = (data: RequestForPatternApprovalAppDetails) => (
-		<>
-			<Row>
-				<Col>
-					<CustomBreadcrumb breadcrumbs={breadcrumbs} />
-				</Col>
-			</Row>
-			<Row className="gs-wrapper-sm -mb-5">
-				<Col md={12} lg={9}>
-					<h1 id="page-title" tabIndex={-1} className="h2 banner-title mb-5">
-						<span className="visually-hidden">Pattern/type approval:</span>
-						{data?.applicationDetails?.title || "Application details"}
-						<span className="visually-hidden"> manage</span>
-					</h1>
-					{/* <HeaderIntroText className='mb-4'>
+  const renderTitle = (data: RequestForPatternApprovalAppDetails) => (
+    <>
+      <Row>
+        <Col>
+          <CustomBreadcrumb breadcrumbs={breadcrumbs} />
+        </Col>
+      </Row>
+      <Row className='gs-wrapper-sm -mb-5'>
+        <Col md={12} lg={9}>
+          <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
+            <span className='visually-hidden'>Pattern/type approval:</span>
+            {data?.applicationDetails?.title || 'Application details'}
+            <span className='visually-hidden'> manage</span>
+          </h1>
+          {/* <HeaderIntroText className='mb-4'>
                                     <strong>
                                         Pattern/type approval
                                     </strong>
                                 </HeaderIntroText> */}
-				</Col>
-			</Row>
-		</>
-	);
+        </Col>
+      </Row>
+    </>
+  );
 
-	return (
-		<FormikForm<RequestForPatternApprovalAppDetails>
-			initialValues={appDetails as RequestForPatternApprovalAppDetails}
-			isSummaryPage={true}
-			onSubmit={() => Promise.resolve()}
-			promptPath=""
-			bannerTitle=""
-			hidingFields={options.hidingFields}
-		>
-			{(formik) => (
-				<>
-					{isDataLoading && (
-						<BlockUiSpinner>
-							<p>Loading...</p>
-						</BlockUiSpinner>
-					)}
-					<div aria-busy={isDataLoading} aria-live="off">
-						<Container fluid={true} className="default-banner-background mb-5">
-							<Container>{renderTitle(formik.values)}</Container>
-						</Container>
-						<Container style={{ marginTop: "-6.2rem" }}>
-							<Container>{renderTabSubView(formik.values)}</Container>
-						</Container>
-					</div>
-					<Container>
-						<Row className="mb-4">
-							{/* <div className='d-grid d-md-block'>
+  return (
+    <FormikForm<RequestForPatternApprovalAppDetails>
+      initialValues={appDetails as RequestForPatternApprovalAppDetails}
+      isSummaryPage={true}
+      onSubmit={() => Promise.resolve()}
+      promptPath=''
+      bannerTitle=''
+      hidingFields={options.hidingFields}
+    >
+      {(formik) => (
+        <>
+          {isDataLoading && (
+            <BlockUiSpinner>
+              <p>Loading...</p>
+            </BlockUiSpinner>
+          )}
+          <div aria-busy={isDataLoading} aria-live='off'>
+            <Container fluid={true} className='default-banner-background mb-5'>
+              <Container>{renderTitle(formik.values)}</Container>
+            </Container>
+            <Container style={{ marginTop: '-6.2rem' }}>
+              <Container>{renderTabSubView(formik.values)}</Container>
+            </Container>
+          </div>
+          <Container>
+            <Row className='mb-4'>
+              {/* <div className='d-grid d-md-block'>
                         <Link
                             data-testid='go-to-dashboard-button'
                             to='/dashboard'
@@ -574,13 +573,13 @@ const ApplicationDetails = () => {
                             Back to dashboard
                         </Link>
                     </div> */}
-							<BackToDashboardButton />
-						</Row>
-					</Container>
-				</>
-			)}
-		</FormikForm>
-	);
+              <BackToDashboardButton />
+            </Row>
+          </Container>
+        </>
+      )}
+    </FormikForm>
+  );
 };
 
 export default ApplicationDetails;

@@ -1,66 +1,77 @@
 # Forms
 
-Learn how to integrate with HTML forms, validate and submit data, and use React Aria with form libraries.
+Learn how to integrate with HTML forms, validate and submit data, and use React
+Aria with form libraries.
 
 ## Labels and help text
 
-Accessible forms start with clear, descriptive labels for each field. Rendering a `<Label>` within a field automatically associates it with the input. Additional context can also be added via a secondary `description` slot. The label and description are announced by screen readers when the field is focused.
+Accessible forms start with clear, descriptive labels for each field. Rendering
+a `<Label>` within a field automatically associates it with the input.
+Additional context can also be added via a secondary `description` slot. The
+label and description are announced by screen readers when the field is focused.
 
 ```tsx
-import {TextField, Label, Input, Text} from 'react-aria-components/TextField';
+import { TextField, Label, Input, Text } from 'react-aria-components/TextField';
 
-<TextField type="password">
+<TextField type='password'>
   {/*- begin highlight -*/}
   <Label>Password</Label>
   {/*- end highlight -*/}
-  <Input className="react-aria-Input inset" placeholder="Choose a password" />
+  <Input className='react-aria-Input inset' placeholder='Choose a password' />
   {/*- begin highlight -*/}
-  <Text slot="description" className="field-description">
+  <Text slot='description' className='field-description'>
     Password must be at least 8 characters.
   </Text>
   {/*- end highlight -*/}
-</TextField>
+</TextField>;
 ```
 
-Most fields should have a visible label. In rare exceptions, the `aria-label` or `aria-labelledby` attribute must be provided for assistive technologies.
+Most fields should have a visible label. In rare exceptions, the `aria-label` or
+`aria-labelledby` attribute must be provided for assistive technologies.
 
 ## Submitting data
 
-How you submit form data depends on your framework, application, and server. By default, HTML forms are submitted by the browser using a full page refresh. You can take control of form submission using the `action` prop or `onSubmit` event.
+How you submit form data depends on your framework, application, and server. By
+default, HTML forms are submitted by the browser using a full page refresh. You
+can take control of form submission using the `action` prop or `onSubmit` event.
 
 ### Uncontrolled forms
 
-When using React 19, use the `action` prop to handle form submission. This receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData) object containing the values for each form field. In React 18 or earlier, use the `onSubmit` event instead.
+When using React 19, use the `action` prop to handle form submission. This
+receives a [FormData](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
+object containing the values for each form field. In React 18 or earlier, use
+the `onSubmit` event instead.
 
 ## React 19 example
 
 ```tsx
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
 
 <Form
   /*- begin highlight -*/
-  action={formData => {
+  action={(formData) => {
     let name = formData.get('name');
     alert(`Hello, ${name}!`);
-  }}>
+  }}
+>
   {/*- end highlight -*/}
-  <TextField name="name" label="Name" placeholder="Enter your full name" />
-  <Button type="submit">Submit</Button>
-</Form>
+  <TextField name='name' label='Name' placeholder='Enter your full name' />
+  <Button type='submit'>Submit</Button>
+</Form>;
 ```
 
 ## React 18 example
 
 ```tsx
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
 
 <Form
   /*- begin highlight -*/
-  onSubmit={event => {
+  onSubmit={(event) => {
     // Prevent default browser page refresh.
     event.preventDefault();
 
@@ -72,23 +83,27 @@ import {Button} from 'vanilla-starter/Button';
 
     // Reset form after submission.
     form.reset();
-  }}>
+  }}
+>
   {/*- end highlight -*/}
-  <TextField name="name" label="Name" placeholder="Enter your full name" />
-  <Button type="submit">Submit</Button>
-</Form>
+  <TextField name='name' label='Name' placeholder='Enter your full name' />
+  <Button type='submit'>Submit</Button>
+</Form>;
 ```
 
 ### Controlled forms
 
-By default, all React Aria components are uncontrolled, which means that the state is stored internally on your behalf. To synchronize the value with another part of the UI as the user edits, use the `value` and `onChange` props with the [useState](https://react.dev/reference/react/useState) hook.
+By default, all React Aria components are uncontrolled, which means that the
+state is stored internally on your behalf. To synchronize the value with another
+part of the UI as the user edits, use the `value` and `onChange` props with the
+[useState](https://react.dev/reference/react/useState) hook.
 
 ```tsx
 'use client';
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
-import {useState} from 'react';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
+import { useState } from 'react';
 
 function Example() {
   /*- begin highlight -*/
@@ -99,17 +114,19 @@ function Example() {
     <Form
       action={() => {
         // Submit data to your backend API...
-        alert(name)
-      }}>
+        alert(name);
+      }}
+    >
       <TextField
-        label="Name"
-        placeholder="Enter your name"
+        label='Name'
+        placeholder='Enter your name'
         /*- begin highlight -*/
         value={name}
-        onChange={setName} />
+        onChange={setName}
+      />
       {/*- end highlight -*/}
       <div>You entered: {name}</div>
-      <Button type="submit">Submit</Button>
+      <Button type='submit'>Submit</Button>
     </Form>
   );
 }
@@ -117,66 +134,98 @@ function Example() {
 
 ## Validation
 
-Well-designed form validation assists the user with specific, helpful error messages without confusing them with unnecessary errors for partial input. React Aria supports native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and integration with server-side validation errors.
+Well-designed form validation assists the user with specific, helpful error
+messages without confusing them with unnecessary errors for partial input. React
+Aria supports native HTML constraint validation with customizable UI, custom
+validation functions, realtime validation, and integration with server-side
+validation errors.
 
 ### Constraint validation
 
-All React Aria form components integrate with HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation). This allows you to define constraints on each field such as required, minimum and maximum values, text formats such as email addresses, and custom regular expression patterns. These constraints are checked by the browser when the user commits changes to the value (e.g. on blur) or submits the form.
+All React Aria form components integrate with HTML
+[constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation).
+This allows you to define constraints on each field such as required, minimum
+and maximum values, text formats such as email addresses, and custom regular
+expression patterns. These constraints are checked by the browser when the user
+commits changes to the value (e.g. on blur) or submits the form.
 
-Use the `FieldError` component to display validation errors with custom styles rather than the browser's default UI.
+Use the `FieldError` component to display validation errors with custom styles
+rather than the browser's default UI.
 
 ```tsx
-import {TextField, Label, Input, FieldError} from 'react-aria-components/TextField';
-import {Form} from 'vanilla-starter/Form';
-import {Button} from 'vanilla-starter/Button';
+import {
+  TextField,
+  Label,
+  Input,
+  FieldError,
+} from 'react-aria-components/TextField';
+import { Form } from 'vanilla-starter/Form';
+import { Button } from 'vanilla-starter/Button';
 
 <Form>
   {/*- begin highlight -*/}
-  <TextField name="email" type="email" isRequired>
-  {/*- end highlight -*/}
+  <TextField name='email' type='email' isRequired>
+    {/*- end highlight -*/}
     <Label>Email</Label>
-    <Input className="react-aria-Input inset" placeholder="Enter your email" />
+    <Input className='react-aria-Input inset' placeholder='Enter your email' />
     {/*- begin highlight -*/}
     <FieldError />
     {/*- end highlight -*/}
   </TextField>
-  <Button type="submit">Submit</Button>
-</Form>
+  <Button type='submit'>Submit</Button>
+</Form>;
 ```
 
 Supported constraints include:
 
-- `isRequired` indicates that a field must have a value before the form can be submitted.
-- `minValue` and `maxValue` specify the minimum and maximum value in a date picker or number field.
-- `minLength` and `maxLength` specify the minimum and maximum length of text input.
-- `pattern` provides a custom [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions) that a text input must conform to.
-- `type="email"` and `type="url"` provide builtin validation for email addresses and URLs.
+- `isRequired` indicates that a field must have a value before the form can be
+  submitted.
+- `minValue` and `maxValue` specify the minimum and maximum value in a date
+  picker or number field.
+- `minLength` and `maxLength` specify the minimum and maximum length of text
+  input.
+- `pattern` provides a custom
+  [regular expression](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions)
+  that a text input must conform to.
+- `type="email"` and `type="url"` provide builtin validation for email addresses
+  and URLs.
 
-See each component's documentation for more details on the supported validation props.
+See each component's documentation for more details on the supported validation
+props.
 
 ### Customizing error messages
 
-By default, the `FieldError` component displays the error message provided by the browser, which is localized in the user's preferred language. You can customize these messages by providing a render prop function to `FieldError`. This receives a list of error strings along with a [ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState) object describing why the field is invalid.
+By default, the `FieldError` component displays the error message provided by
+the browser, which is localized in the user's preferred language. You can
+customize these messages by providing a render prop function to `FieldError`.
+This receives a list of error strings along with a
+[ValidityState](https://developer.mozilla.org/en-US/docs/Web/API/ValidityState)
+object describing why the field is invalid.
 
 ```tsx
-import {TextField, Label, Input, FieldError} from 'react-aria-components/TextField';
-import {Form} from 'vanilla-starter/Form';
-import {Button} from 'vanilla-starter/Button';
+import {
+  TextField,
+  Label,
+  Input,
+  FieldError,
+} from 'react-aria-components/TextField';
+import { Form } from 'vanilla-starter/Form';
+import { Button } from 'vanilla-starter/Button';
 
 <Form>
-  <TextField name="name" isRequired>
+  <TextField name='name' isRequired>
     <Label>Name</Label>
-    <Input className="react-aria-Input inset" placeholder="Enter your name" />
+    <Input className='react-aria-Input inset' placeholder='Enter your name' />
     {/*- begin highlight -*/}
     <FieldError>
-      {({validationDetails}) => (
+      {({ validationDetails }) =>
         validationDetails.valueMissing ? 'Please enter a name.' : ''
-      )}
+      }
     </FieldError>
     {/*- end highlight -*/}
   </TextField>
-  <Button type="submit">Submit</Button>
-</Form>
+  <Button type='submit'>Submit</Button>
+</Form>;
 ```
 
 <InlineAlert variant="informative">
@@ -186,34 +235,43 @@ import {Button} from 'vanilla-starter/Button';
 
 ### Custom validation
 
-To implement custom validation rules, pass a function to the `validate` prop. This receives the current field value, and can return one or more error messages. These are displayed to the user after the value is committed (e.g. on blur) to avoid distracting them on each keystroke.
+To implement custom validation rules, pass a function to the `validate` prop.
+This receives the current field value, and can return one or more error
+messages. These are displayed to the user after the value is committed (e.g. on
+blur) to avoid distracting them on each keystroke.
 
 ```tsx
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
 
 <Form>
   <TextField
-    label="Username"
-    placeholder="Choose a username"
+    label='Username'
+    placeholder='Choose a username'
     /*- begin highlight -*/
-    validate={value => value === 'admin' ? 'Nice try!' : null} />
-    {/*- end highlight -*/}
-  <Button type="submit">Submit</Button>
-</Form>
+    validate={(value) => (value === 'admin' ? 'Nice try!' : null)}
+  />
+  {/*- end highlight -*/}
+  <Button type='submit'>Submit</Button>
+</Form>;
 ```
 
 ### Realtime validation
 
-By default, validation errors are displayed after the value is committed (e.g. on blur), or when the form is submitted. This avoids confusing the user with irrelevant errors while they are still entering a value.
+By default, validation errors are displayed after the value is committed (e.g.
+on blur), or when the form is submitted. This avoids confusing the user with
+irrelevant errors while they are still entering a value.
 
-In some cases, validating in realtime can be helpful, such as when meeting password requirements. To implement this, make the field value [controlled](#controlled-forms), and set the `isInvalid` prop and error message appropriately.
+In some cases, validating in realtime can be helpful, such as when meeting
+password requirements. To implement this, make the field value
+[controlled](#controlled-forms), and set the `isInvalid` prop and error message
+appropriately.
 
 ```tsx
 'use client';
-import {TextField} from 'vanilla-starter/TextField';
-import {useState} from 'react';
+import { TextField } from 'vanilla-starter/TextField';
+import { useState } from 'react';
 
 function Example() {
   let [password, setPassword] = useState('');
@@ -222,72 +280,87 @@ function Example() {
     error = 'Password must be 8 characters or more.';
   } else if ((password.match(/[A-Z]/g) ?? []).length < 2) {
     error = 'Password must include at least 2 upper case letters';
-  } else if ((password.match(/[^a-z]/ig) ?? []).length < 2) {
+  } else if ((password.match(/[^a-z]/gi) ?? []).length < 2) {
     error = 'Password must include at least 2 symbols.';
   }
 
   return (
     <TextField
-      label="Password"
-      placeholder="Choose a password"
+      label='Password'
+      placeholder='Choose a password'
       /*- begin highlight -*/
       isInvalid={!!error}
       errorMessage={error}
       /*- end highlight -*/
       value={password}
-      onChange={setPassword} />
+      onChange={setPassword}
+    />
   );
 }
 ```
 
-By default, invalid fields block forms from being submitted. To avoid this, use `validationBehavior="aria"`, which will only mark the field as required and invalid for assistive technologies, and will not prevent form submission.
+By default, invalid fields block forms from being submitted. To avoid this, use
+`validationBehavior="aria"`, which will only mark the field as required and
+invalid for assistive technologies, and will not prevent form submission.
 
 ### Server validation
 
-Client side validation is useful to give the user immediate feedback, but data should always be validated on the backend for security and reliability. Your business logic may also include rules which cannot be validated on the frontend.
+Client side validation is useful to give the user immediate feedback, but data
+should always be validated on the backend for security and reliability. Your
+business logic may also include rules which cannot be validated on the frontend.
 
-To display server validation errors, set the `validationErrors` prop on the [Form](Form.md) component. This accepts an object that maps each field's `name` prop to one or more error messages. These are displayed as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
+To display server validation errors, set the `validationErrors` prop on the
+[Form](Form.md) component. This accepts an object that maps each field's `name`
+prop to one or more error messages. These are displayed as soon as the
+`validationErrors` prop is set, and cleared after the user modifies each field's
+value.
 
 ```tsx
 'use client';
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
-import {useActionState} from 'react';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
+import { useActionState } from 'react';
 
 function action(prevState, formData: FormData) {
   return {
     values: Object.fromEntries(formData) as Record<string, string>,
     errors: {
-      username: 'Sorry, this username is taken.'
-    }
+      username: 'Sorry, this username is taken.',
+    },
   };
 }
 
 function Example() {
-  let [{values, errors}, formAction] = useActionState<{values?: Record<string, string>, errors?: Record<string, string>}, FormData>(action, {});
+  let [{ values, errors }, formAction] = useActionState<
+    { values?: Record<string, string>; errors?: Record<string, string> },
+    FormData
+  >(action, {});
 
   return (
     <Form
-      validationBehavior="native"
+      validationBehavior='native'
       action={formAction}
       /*- begin highlight -*/
-      validationErrors={errors}>
+      validationErrors={errors}
+    >
       {/*- end highlight -*/}
       <TextField
-        label="Username"
-        name="username"
-        placeholder="Enter your username"
+        label='Username'
+        name='username'
+        placeholder='Enter your username'
         defaultValue={values?.username}
-        isRequired />
+        isRequired
+      />
       <TextField
-        label="Password"
-        name="password"
-        placeholder="Enter your password"
+        label='Password'
+        name='password'
+        placeholder='Enter your password'
         defaultValue={values?.password}
-        type="password"
-        isRequired />
-      <Button type="submit">Submit</Button>
+        type='password'
+        isRequired
+      />
+      <Button type='submit'>Submit</Button>
     </Form>
   );
 }
@@ -295,15 +368,19 @@ function Example() {
 
 #### Schema validation
 
-React Aria is compatible with errors returned from schema validation libraries like [Zod](https://zod.dev/), which are often used for server-side form validation. Use the [flatten](https://zod.dev/ERROR_HANDLING?id=flattening-errors) method to get a list of errors for each field and return this as part of your HTTP response.
+React Aria is compatible with errors returned from schema validation libraries
+like [Zod](https://zod.dev/), which are often used for server-side form
+validation. Use the
+[flatten](https://zod.dev/ERROR_HANDLING?id=flattening-errors) method to get a
+list of errors for each field and return this as part of your HTTP response.
 
 ```tsx
 // In your server...
-import {z} from 'zod';
+import { z } from 'zod';
 
 const schema = z.object({
   name: z.string().min(1),
-  age: z.coerce.number().positive()
+  age: z.coerce.number().positive(),
 });
 
 function handleRequest(formData: FormData) {
@@ -311,7 +388,7 @@ function handleRequest(formData: FormData) {
   if (!result.success) {
     return {
       /*- begin highlight -*/
-      errors: result.error.flatten().fieldErrors
+      errors: result.error.flatten().fieldErrors,
       /*- end highlight -*/
     };
   }
@@ -319,7 +396,7 @@ function handleRequest(formData: FormData) {
   // Do stuff...
 
   return {
-    errors: {}
+    errors: {},
   };
 }
 ```
@@ -331,7 +408,9 @@ function handleRequest(formData: FormData) {
 
 #### React Server Functions
 
-[Server Functions](https://react.dev/reference/rsc/server-functions), marked with the `"use server"` directive, allow client components to call async functions executed on the server in supported frameworks (e.g. Next.js).
+[Server Functions](https://react.dev/reference/rsc/server-functions), marked
+with the `"use server"` directive, allow client components to call async
+functions executed on the server in supported frameworks (e.g. Next.js).
 
 ```tsx
 // app/actions.ts
@@ -345,36 +424,39 @@ export async function createTodo(prevState: any, formData: FormData) {
   } catch (err) {
     return {
       errors: {
-        todo: 'Invalid todo.'
-      }
+        todo: 'Invalid todo.',
+      },
     };
   }
 }
 ```
 
-Server functions can be imported into client components and passed to the Form `action` prop. Use the [useActionState](https://react.dev/reference/react/useActionState) hook to access the return value, which may include validation errors.
+Server functions can be imported into client components and passed to the Form
+`action` prop. Use the
+[useActionState](https://react.dev/reference/react/useActionState) hook to
+access the return value, which may include validation errors.
 
 ```tsx
 // app/add-form.tsx
 'use client';
 
-import {useActionState} from 'react';
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
-import {createTodo} from './actions';
+import { useActionState } from 'react';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
+import { createTodo } from './actions';
 
 export function AddForm() {
   /*- begin highlight -*/
-  let [{errors}, formAction] = useActionState(createTodo, {errors: {}});
+  let [{ errors }, formAction] = useActionState(createTodo, { errors: {} });
   /*- end highlight -*/
 
   return (
     /*- begin highlight -*/
     <Form action={formAction} validationErrors={errors}>
-    {/*- end highlight -*/}
-      <TextField label="Task" name="todo" />
-      <Button type="submit">Add</Button>
+      {/*- end highlight -*/}
+      <TextField label='Task' name='todo' />
+      <Button type='submit'>Add</Button>
     </Form>
   );
 }
@@ -382,45 +464,50 @@ export function AddForm() {
 
 #### React Router actions
 
-[React Router actions](https://reactrouter.com/start/framework/actions) handle form submissions. Use the [useSubmit](https://remix.run/docs/en/main/hooks/use-submit) hook to submit data to the server. An action may return data such as validation errors via the `actionData` route component prop.
+[React Router actions](https://reactrouter.com/start/framework/actions) handle
+form submissions. Use the
+[useSubmit](https://remix.run/docs/en/main/hooks/use-submit) hook to submit data
+to the server. An action may return data such as validation errors via the
+`actionData` route component prop.
 
 ```tsx
 // app/routes/signup.tsx
-import {useSubmit} from 'react-router';
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
+import { useSubmit } from 'react-router';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
 
-export default function SignupForm({actionData}: Route.ComponentProps) {
+export default function SignupForm({ actionData }: Route.ComponentProps) {
   let submit = useSubmit();
 
   return (
     <Form
       /*- begin highlight -*/
-      method="post"
-      onSubmit={e => {
+      method='post'
+      onSubmit={(e) => {
         e.preventDefault();
         submit(e.currentTarget);
       }}
-      validationErrors={actionData?.errors}>
+      validationErrors={actionData?.errors}
+    >
       {/*- end highlight -*/}
-      <TextField label="Username" name="username" isRequired />
-      <TextField label="Password" name="password" type="password" isRequired />
-      <Button type="submit">Submit</Button>
+      <TextField label='Username' name='username' isRequired />
+      <TextField label='Password' name='password' type='password' isRequired />
+      <Button type='submit'>Submit</Button>
     </Form>
   );
 }
 
-export async function action({request}: Route.ActionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   try {
     // Validate data and perform action...
   } catch (err) {
     return {
       errors: {
         /*- begin highlight -*/
-        username: 'Sorry, this username is taken.'
+        username: 'Sorry, this username is taken.',
         /*- end highlight -*/
-      }
+      },
     };
   }
 }
@@ -428,22 +515,31 @@ export async function action({request}: Route.ActionArgs) {
 
 ## Form libraries
 
-In most cases, uncontrolled forms with the builtin validation features are sufficient. However, if you are building a truly complex form, or integrating React Aria components into an existing form, a separate form library such as [React Hook Form](https://react-hook-form.com/) or [Formik](https://formik.org/) may be helpful.
+In most cases, uncontrolled forms with the builtin validation features are
+sufficient. However, if you are building a truly complex form, or integrating
+React Aria components into an existing form, a separate form library such as
+[React Hook Form](https://react-hook-form.com/) or [Formik](https://formik.org/)
+may be helpful.
 
 ### React Hook Form
 
-[React Hook Form](https://react-hook-form.com/) is a popular form library for React. It is primarily designed to work directly with plain HTML input elements, but supports custom form components like the ones in React Aria as well.
+[React Hook Form](https://react-hook-form.com/) is a popular form library for
+React. It is primarily designed to work directly with plain HTML input elements,
+but supports custom form components like the ones in React Aria as well.
 
-Use the [Controller](https://react-hook-form.com/docs/usecontroller/controller) component from React Hook Form to integrate React Aria components. Pass the props for the `field` render prop through to the React Aria component you're using, and use the `fieldState` to get validation errors to display.
+Use the [Controller](https://react-hook-form.com/docs/usecontroller/controller)
+component from React Hook Form to integrate React Aria components. Pass the
+props for the `field` render prop through to the React Aria component you're
+using, and use the `fieldState` to get validation errors to display.
 
 ```tsx
-import {useForm, Controller} from 'react-hook-form';
-import {Form} from 'vanilla-starter/Form';
-import {TextField} from 'vanilla-starter/TextField';
-import {Button} from 'vanilla-starter/Button';
+import { useForm, Controller } from 'react-hook-form';
+import { Form } from 'vanilla-starter/Form';
+import { TextField } from 'vanilla-starter/TextField';
+import { Button } from 'vanilla-starter/Button';
 
 function App() {
-  let {handleSubmit, control} = useForm({
+  let { handleSubmit, control } = useForm({
     defaultValues: {
       name: '',
     },
@@ -456,14 +552,14 @@ function App() {
     <Form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
-        name="name"
+        name='name'
         rules={{ required: 'Name is required.' }}
         render={({
           field: { name, value, onChange, onBlur, ref },
           fieldState: { invalid, error },
         }) => (
           <TextField
-            label="Name"
+            label='Name'
             name={name}
             value={value}
             onChange={onChange}
@@ -471,11 +567,13 @@ function App() {
             ref={ref}
             isRequired
             // Let React Hook Form handle validation instead of the browser.
-            validationBehavior="aria"
+            validationBehavior='aria'
             isInvalid={invalid}
-            errorMessage={error?.message} />
-        )} />
-      <Button type="submit">Submit</Button>
+            errorMessage={error?.message}
+          />
+        )}
+      />
+      <Button type='submit'>Submit</Button>
     </Form>
   );
 }

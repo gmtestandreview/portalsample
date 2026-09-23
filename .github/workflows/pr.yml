@@ -50,11 +50,13 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci 2>&1 | tee reports/ci/static-quality/install.log
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       - name: Type-check
-        run: npm run type-check 2>&1 | tee reports/ci/static-quality/type-check.log
+        run:
+          npm run type-check 2>&1 | tee reports/ci/static-quality/type-check.log
 
       - name: Lint
         run: npm run lint 2>&1 | tee reports/ci/static-quality/lint.log
@@ -67,7 +69,8 @@ jobs:
       # numbers decay on every edit above them. Fails only on citations that are provably wrong or
       # unreachable; weakly-anchored ones are reported without failing the build.
       - name: Verify business rule citations
-        run: npm run lint:rules 2>&1 | tee reports/ci/static-quality/lint-rules.log
+        run:
+          npm run lint:rules 2>&1 | tee reports/ci/static-quality/lint-rules.log
 
       - name: Upload static quality logs
         if: always()
@@ -145,21 +148,27 @@ jobs:
 
       # compileall is the cheap syntax floor; the two suites below cover behaviour.
       - name: Python tooling syntax
-        run: python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee reports/ci/agent-tooling/python-compile.log
+        run:
+          python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee
+          reports/ci/agent-tooling/python-compile.log
 
       # Exercises scripts/pre_tool_use.py the way Claude Code invokes it - a JSON
       # tool call on stdin, an exit code out - across both what must be blocked
       # and the ordinary commands that must still be allowed. A guard that blocks
       # real work gets switched off, so the false-positive half is load-bearing.
       - name: Hook guard behaviour
-        run: python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee reports/ci/agent-tooling/hook-guard.log
+        run:
+          python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee
+          reports/ci/agent-tooling/hook-guard.log
 
       # os.kill(pid, 0) is the POSIX liveness idiom and is destructive on Windows,
       # where it terminates the process it is probing. scripts/watcher.py was
       # fixed; the templates/ copy that ships downstream was not. This keeps the
       # two from drifting apart again.
       - name: Watcher pid handling
-        run: python3 tests/hooks/test_watcher_pid.py 2>&1 | tee reports/ci/agent-tooling/watcher-pid.log
+        run:
+          python3 tests/hooks/test_watcher_pid.py 2>&1 | tee
+          reports/ci/agent-tooling/watcher-pid.log
 
       - name: Upload agent-tooling logs
         if: always()
@@ -206,7 +215,8 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       # A fresh runner has no browser binaries; dependency install does not
@@ -262,14 +272,17 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci 2>&1 | tee reports/ci/build/install.log
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       - name: Build app
         run: npm run build 2>&1 | tee reports/ci/build/app-build.log
 
       - name: Verify Storybook documentation
-        run: npm run storybook:verify:docs 2>&1 | tee reports/ci/build/storybook-build.log
+        run:
+          npm run storybook:verify:docs 2>&1 | tee
+          reports/ci/build/storybook-build.log
 
       - name: Upload build logs
         if: always()
@@ -309,7 +322,8 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       - name: Run focused date suite under Australia/Sydney
@@ -318,8 +332,7 @@ jobs:
           tests/unit/components/inputs/datePickerWrapper.test.tsx
           tests/unit/routes/requestForQuote/props.test.ts
           tests/unit/routes/requestForQuote/validation.test.ts
-          tests/unit/utils/dateOnly.test.ts
-          --reporter=default --reporter=junit
+          tests/unit/utils/dateOnly.test.ts --reporter=default --reporter=junit
           --outputFile.junit=reports/vitest/date-sydney-junit.xml
 
       - name: Upload Australia/Sydney JUnit report
@@ -354,7 +367,8 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       # Both Playwright projects start their own web server (app on :3000,
@@ -407,18 +421,20 @@ jobs:
         run: mkdir -p reports/ci/lower-bound
 
       - name: Install on the exact floor with strict peers
-        run: npm ci --strict-peer-deps 2>&1 | tee reports/ci/lower-bound/install.log
+        run:
+          npm ci --strict-peer-deps 2>&1 | tee
+          reports/ci/lower-bound/install.log
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       - name: Run dependency security policy tests
         run: >-
-          npm run test:unit --
-          tests/unit/config/dependencySecurity.test.ts
+          npm run test:unit -- tests/unit/config/dependencySecurity.test.ts
           tests/unit/security/dompurify.regression.test.ts
-          tests/unit/runtime/trustedtypes.test.ts
-          2>&1 | tee reports/ci/lower-bound/policy.log
+          tests/unit/runtime/trustedtypes.test.ts 2>&1 | tee
+          reports/ci/lower-bound/policy.log
 
       - name: Lint
         run: npm run lint 2>&1 | tee reports/ci/lower-bound/lint.log
@@ -474,7 +490,8 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci 2>&1 | tee reports/ci/sonarcloud/install.log
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
       # Must precede the scan: sonar.javascript.lcov.reportPaths points at

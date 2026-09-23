@@ -1,5 +1,5 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import BlockUiSpinner from "./index.tsx";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import BlockUiSpinner from './index.tsx';
 
 /**
  * BlockUISpinner Component Storybook Configuration
@@ -16,14 +16,14 @@ import BlockUiSpinner from "./index.tsx";
  */
 
 const meta = {
-	title: "Components/BlockUISpinner",
-	component: BlockUiSpinner,
-	parameters: {
-		layout: "fullscreen",
-	},
-	args: {
-		children: <p>Loading data...</p>,
-	},
+  title: 'Components/BlockUISpinner',
+  component: BlockUiSpinner,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  args: {
+    children: <p>Loading data...</p>,
+  },
 } satisfies Meta<typeof BlockUiSpinner>;
 
 export default meta;
@@ -32,13 +32,13 @@ type Story = StoryObj<typeof meta>;
 export const FullPage: Story = {};
 
 export const Inline: Story = {
-	args: {
-		partial: true,
-		children: <p>Refreshing results...</p>,
-	},
-	render: (args) => (
-		<div className="p-5" style={{ minHeight: 240, maxWidth: 640 }}>
-			<BlockUiSpinner {...args} />
-		</div>
-	),
+  args: {
+    partial: true,
+    children: <p>Refreshing results...</p>,
+  },
+  render: (args) => (
+    <div className='p-5' style={{ minHeight: 240, maxWidth: 640 }}>
+      <BlockUiSpinner {...args} />
+    </div>
+  ),
 };

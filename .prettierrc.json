@@ -1,18 +1,81 @@
 {
-	"printWidth": 140,
-	"tabWidth": 4,
-	"useTabs": false,
-	"semi": true,
-	"singleQuote": true,
-	"jsxSingleQuote": true,
-	"trailingComma": "all",
-	"endOfLine": "auto",
-	"overrides": [
-		{
-			"files": ["*.yml", "*.yaml"],
-			"options": {
-				"tabWidth": 2
-			}
-		}
-	]
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": true,
+  "jsxSingleQuote": true,
+  "trailingComma": "es5",
+  "quoteProps": "as-needed",
+  "bracketSpacing": true,
+  "bracketSameLine": false,
+  "endOfLine": "lf",
+  "proseWrap": "always",
+  "arrowParens": "always",
+  "htmlWhitespaceSensitivity": "css",
+  "embeddedLanguageFormatting": "auto",
+  "singleAttributePerLine": false,
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx", "*.mjs", "*.cjs"],
+      "options": {
+        "parser": "babel"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "options": {
+        "parser": "typescript"
+      }
+    },
+    {
+      "files": ["*.scss"],
+      "options": {
+        "parser": "scss"
+      }
+    },
+    {
+      "files": ["*.css"],
+      "options": {
+        "parser": "css"
+      }
+    },
+    {
+      "files": ["*.graphql", "*.gql"],
+      "options": {
+        "parser": "graphql"
+      }
+    },
+    {
+      "files": ["*.md", "*.markdown"],
+      "options": {
+        "parser": "markdown"
+      }
+    },
+    {
+      "files": ["*.mdx"],
+      "options": {
+        "parser": "mdx"
+      }
+    },
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "parser": "yaml",
+        "tabWidth": 2
+      }
+    },
+    {
+      "files": ["*.html", "*.htm"],
+      "options": {
+        "parser": "html"
+      }
+    },
+    {
+      "files": ["*.json", ".prettierrc"],
+      "options": {
+        "parser": "json"
+      }
+    }
+  ]
 }

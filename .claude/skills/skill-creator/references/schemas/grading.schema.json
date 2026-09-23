@@ -1,137 +1,137 @@
 {
-	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "grading.schema.json",
-	"title": "Skill Creator Grading Result",
-	"type": "object",
-	"required": ["expectations", "summary"],
-	"properties": {
-		"expectations": {
-			"type": "array",
-			"items": {
-				"$ref": "common.schema.json#/$defs/expectationResult"
-			}
-		},
-		"summary": {
-			"type": "object",
-			"required": ["passed", "failed", "total", "pass_rate"],
-			"properties": {
-				"passed": {
-					"type": "integer",
-					"minimum": 0
-				},
-				"failed": {
-					"type": "integer",
-					"minimum": 0
-				},
-				"total": {
-					"type": "integer",
-					"minimum": 0
-				},
-				"pass_rate": {
-					"type": "number",
-					"minimum": 0,
-					"maximum": 1
-				}
-			},
-			"additionalProperties": false
-		},
-		"execution_metrics": {
-			"$ref": "metrics.schema.json"
-		},
-		"timing": {
-			"type": "object",
-			"minProperties": 1,
-			"properties": {
-				"executor_duration_seconds": {
-					"type": "number",
-					"minimum": 0
-				},
-				"grader_duration_seconds": {
-					"type": "number",
-					"minimum": 0
-				},
-				"total_duration_seconds": {
-					"type": "number",
-					"minimum": 0
-				}
-			},
-			"additionalProperties": false
-		},
-		"claims": {
-			"type": "array",
-			"items": {
-				"type": "object",
-				"required": ["claim", "type", "verified", "evidence"],
-				"properties": {
-					"claim": {
-						"type": "string",
-						"minLength": 1
-					},
-					"type": {
-						"type": "string",
-						"enum": ["factual", "process", "quality"]
-					},
-					"verified": {
-						"type": ["boolean", "null"]
-					},
-					"evidence": {
-						"type": "string"
-					}
-				},
-				"additionalProperties": false
-			}
-		},
-		"user_notes_summary": {
-			"type": "object",
-			"properties": {
-				"uncertainties": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"needs_review": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				},
-				"workarounds": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					}
-				}
-			},
-			"additionalProperties": false
-		},
-		"eval_feedback": {
-			"type": "object",
-			"properties": {
-				"suggestions": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"required": ["assertion", "reason"],
-						"properties": {
-							"assertion": {
-								"type": "string",
-								"minLength": 1
-							},
-							"reason": {
-								"type": "string",
-								"minLength": 1
-							}
-						},
-						"additionalProperties": false
-					}
-				},
-				"overall": {
-					"type": "string"
-				}
-			},
-			"additionalProperties": false
-		}
-	},
-	"additionalProperties": false
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "grading.schema.json",
+  "title": "Skill Creator Grading Result",
+  "type": "object",
+  "required": ["expectations", "summary"],
+  "properties": {
+    "expectations": {
+      "type": "array",
+      "items": {
+        "$ref": "common.schema.json#/$defs/expectationResult"
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["passed", "failed", "total", "pass_rate"],
+      "properties": {
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution_metrics": {
+      "$ref": "metrics.schema.json"
+    },
+    "timing": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "executor_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "grader_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "total_duration_seconds": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "type", "verified", "evidence"],
+        "properties": {
+          "claim": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": ["factual", "process", "quality"]
+          },
+          "verified": {
+            "type": ["boolean", "null"]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "user_notes_summary": {
+      "type": "object",
+      "properties": {
+        "uncertainties": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "needs_review": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workarounds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "eval_feedback": {
+      "type": "object",
+      "properties": {
+        "suggestions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["assertion", "reason"],
+            "properties": {
+              "assertion": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "overall": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
 }

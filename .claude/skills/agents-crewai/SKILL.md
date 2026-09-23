@@ -1,10 +1,27 @@
 ---
 name: crewai-multi-agent
-description: Multi-agent orchestration framework for autonomous AI collaboration. Use when building teams of specialized agents working together on complex tasks, when you need role-based agent collaboration with memory, or for production workflows requiring sequential/hierarchical execution. Built without LangChain dependencies for lean, fast execution.
+description:
+  Multi-agent orchestration framework for autonomous AI collaboration. Use when
+  building teams of specialized agents working together on complex tasks, when
+  you need role-based agent collaboration with memory, or for production
+  workflows requiring sequential/hierarchical execution. Built without LangChain
+  dependencies for lean, fast execution.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-tags: [Agents, CrewAI, Multi-Agent, Orchestration, Collaboration, Role-Based, Autonomous, Workflows, Memory, Production]
+tags:
+  [
+    Agents,
+    CrewAI,
+    Multi-Agent,
+    Orchestration,
+    Collaboration,
+    Role-Based,
+    Autonomous,
+    Workflows,
+    Memory,
+    Production,
+  ]
 dependencies: [crewai>=1.2.0, crewai-tools>=1.2.0]
 ---
 
@@ -15,6 +32,7 @@ Build teams of autonomous AI agents that collaborate to solve complex tasks.
 ## When to use CrewAI
 
 **Use CrewAI when:**
+
 - Building multi-agent systems with specialized roles
 - Need autonomous collaboration between agents
 - Want role-based task delegation (researcher, writer, analyst)
@@ -23,6 +41,7 @@ Build teams of autonomous AI agents that collaborate to solve complex tasks.
 - Need simpler setup than LangChain/LangGraph
 
 **Key features:**
+
 - **Standalone**: No LangChain dependencies, lean footprint
 - **Role-based**: Agents have roles, goals, and backstories
 - **Dual paradigm**: Crews (autonomous) + Flows (event-driven)
@@ -31,6 +50,7 @@ Build teams of autonomous AI agents that collaborate to solve complex tasks.
 - **Production-ready**: Tracing, enterprise features
 
 **Use alternatives instead:**
+
 - **LangChain**: General-purpose LLM apps, RAG pipelines
 - **LangGraph**: Complex stateful workflows with cycles
 - **AutoGen**: Microsoft ecosystem, multi-agent conversations
@@ -270,19 +290,19 @@ my_project/
 
 ```yaml
 researcher:
-  role: "{topic} Senior Data Researcher"
-  goal: "Uncover cutting-edge developments in {topic}"
+  role: '{topic} Senior Data Researcher'
+  goal: 'Uncover cutting-edge developments in {topic}'
   backstory: >
-    You're a seasoned researcher with a knack for uncovering
-    the latest developments in {topic}. Known for your ability
-    to find relevant information and present it clearly.
+    You're a seasoned researcher with a knack for uncovering the latest
+    developments in {topic}. Known for your ability to find relevant information
+    and present it clearly.
 
 reporting_analyst:
-  role: "Reporting Analyst"
-  goal: "Create detailed reports based on research data"
+  role: 'Reporting Analyst'
+  goal: 'Create detailed reports based on research data'
   backstory: >
-    You're a meticulous analyst who transforms raw data into
-    actionable insights through well-structured reports.
+    You're a meticulous analyst who transforms raw data into actionable insights
+    through well-structured reports.
 ```
 
 ### tasks.yaml
@@ -290,20 +310,19 @@ reporting_analyst:
 ```yaml
 research_task:
   description: >
-    Conduct thorough research about {topic}.
-    Find the most relevant information for {year}.
+    Conduct thorough research about {topic}. Find the most relevant information
+    for {year}.
   expected_output: >
-    A list with 10 bullet points of the most relevant
-    information about {topic}.
+    A list with 10 bullet points of the most relevant information about {topic}.
   agent: researcher
 
 reporting_task:
   description: >
-    Review the research and create a comprehensive report.
-    Focus on key findings and recommendations.
+    Review the research and create a comprehensive report. Focus on key findings
+    and recommendations.
   expected_output: >
-    A detailed report in markdown format with executive
-    summary, findings, and recommendations.
+    A detailed report in markdown format with executive summary, findings, and
+    recommendations.
   agent: reporting_analyst
   output_file: report.md
 ```
@@ -439,12 +458,12 @@ agent = Agent(role="Analyst", goal="Analyze data", llm=llm)
 
 ## CrewAI vs alternatives
 
-| Feature | CrewAI | LangChain | LangGraph |
-|---------|--------|-----------|-----------|
-| **Best for** | Multi-agent teams | General LLM apps | Stateful workflows |
-| **Learning curve** | Low | Medium | Higher |
-| **Agent paradigm** | Role-based | Tool-based | Graph-based |
-| **Memory** | Built-in | Plugin-based | Custom |
+| Feature            | CrewAI            | LangChain        | LangGraph          |
+| ------------------ | ----------------- | ---------------- | ------------------ |
+| **Best for**       | Multi-agent teams | General LLM apps | Stateful workflows |
+| **Learning curve** | Low               | Medium           | Higher             |
+| **Agent paradigm** | Role-based        | Tool-based       | Graph-based        |
+| **Memory**         | Built-in          | Plugin-based     | Custom             |
 
 ## Best practices
 
@@ -458,6 +477,7 @@ agent = Agent(role="Analyst", goal="Analyze data", llm=llm)
 ## Common issues
 
 **Agent stuck in loop:**
+
 ```python
 agent = Agent(
     role="...",
@@ -467,6 +487,7 @@ agent = Agent(
 ```
 
 **Task not using context:**
+
 ```python
 task2 = Task(
     description="...",
@@ -476,6 +497,7 @@ task2 = Task(
 ```
 
 **Memory errors:**
+
 ```python
 # Use environment variable for storage
 import os
@@ -484,9 +506,11 @@ os.environ["CREWAI_STORAGE_DIR"] = "./my_storage"
 
 ## References
 
-- **[Flows Guide](references/flows.md)** - Event-driven workflows, state management
+- **[Flows Guide](references/flows.md)** - Event-driven workflows, state
+  management
 - **[Tools Guide](references/tools.md)** - Built-in tools, custom tools, MCP
-- **[Troubleshooting](references/troubleshooting.md)** - Common issues, debugging
+- **[Troubleshooting](references/troubleshooting.md)** - Common issues,
+  debugging
 
 ## Resources
 

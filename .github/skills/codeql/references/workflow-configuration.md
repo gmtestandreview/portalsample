@@ -1,6 +1,7 @@
 # CodeQL Workflow Configuration Reference
 
-Detailed reference for configuring CodeQL analysis via GitHub Actions workflows. This supplements the procedural guidance in SKILL.md.
+Detailed reference for configuring CodeQL analysis via GitHub Actions workflows.
+This supplements the procedural guidance in SKILL.md.
 
 ## Trigger Configuration
 
@@ -30,7 +31,8 @@ on:
 ```
 
 - Scans the PR's merge commit (not the head commit) for more accurate results
-- For private fork PRs, enable "Run workflows from fork pull requests" in repository settings
+- For private fork PRs, enable "Run workflows from fork pull requests" in
+  repository settings
 - Results appear as PR check annotations
 
 ### Schedule Trigger
@@ -40,7 +42,7 @@ Periodic scans on the default branch:
 ```yaml
 on:
   schedule:
-    - cron: '20 14 * * 1'  # Monday 14:20 UTC
+    - cron: '20 14 * * 1' # Monday 14:20 UTC
 ```
 
 - Only triggers if the workflow file exists on the default branch
@@ -82,7 +84,10 @@ on:
       - 'apps/**'
 ```
 
-> **Important:** `paths-ignore` and `paths` control whether the workflow runs. When the workflow does run, it analyzes ALL changed files in the PR (including those matched by `paths-ignore`), unless files are excluded via the CodeQL configuration file's `paths-ignore`.
+> **Important:** `paths-ignore` and `paths` control whether the workflow runs.
+> When the workflow does run, it analyzes ALL changed files in the PR (including
+> those matched by `paths-ignore`), unless files are excluded via the CodeQL
+> configuration file's `paths-ignore`.
 
 ### Workflow Dispatch (Manual Trigger)
 
@@ -103,7 +108,7 @@ on:
 ```yaml
 jobs:
   analyze:
-    runs-on: ubuntu-latest    # Also: windows-latest, macos-latest
+    runs-on: ubuntu-latest # Also: windows-latest, macos-latest
 ```
 
 - `ubuntu-latest` — most common, recommended for most languages
@@ -119,6 +124,7 @@ jobs:
 ```
 
 Requirements for self-hosted runners:
+
 - Git must be in the PATH
 - SSD with ≥14 GB disk space recommended
 - See hardware requirements table in SKILL.md
@@ -169,19 +175,19 @@ strategy:
 
 ### Build Mode Summary
 
-| Language | `none` | `autobuild` | `manual` | Default Setup Mode |
-|---|:---:|:---:|:---:|---|
-| C/C++ | ✅ | ✅ | ✅ | `none` |
-| C# | ✅ | ✅ | ✅ | `none` |
-| Go | ❌ | ✅ | ✅ | `autobuild` |
-| Java | ✅ | ✅ | ✅ | `none` |
-| Kotlin | ❌ | ✅ | ✅ | `autobuild` |
-| Python | ✅ | ❌ | ❌ | `none` |
-| Ruby | ✅ | ❌ | ❌ | `none` |
-| Rust | ✅ | ✅ | ✅ | `none` |
-| Swift | ❌ | ✅ | ✅ | `autobuild` |
-| JavaScript/TypeScript | ✅ | ❌ | ❌ | `none` |
-| GitHub Actions | ✅ | ❌ | ❌ | `none` |
+| Language              | `none` | `autobuild` | `manual` | Default Setup Mode |
+| --------------------- | :----: | :---------: | :------: | ------------------ |
+| C/C++                 |   ✅   |     ✅      |    ✅    | `none`             |
+| C#                    |   ✅   |     ✅      |    ✅    | `none`             |
+| Go                    |   ❌   |     ✅      |    ✅    | `autobuild`        |
+| Java                  |   ✅   |     ✅      |    ✅    | `none`             |
+| Kotlin                |   ❌   |     ✅      |    ✅    | `autobuild`        |
+| Python                |   ✅   |     ❌      |    ❌    | `none`             |
+| Ruby                  |   ✅   |     ❌      |    ❌    | `none`             |
+| Rust                  |   ✅   |     ✅      |    ✅    | `none`             |
+| Swift                 |   ❌   |     ✅      |    ✅    | `autobuild`        |
+| JavaScript/TypeScript |   ✅   |     ❌      |    ❌    | `none`             |
+| GitHub Actions        |   ✅   |     ❌      |    ❌    | `none`             |
 
 ## CodeQL Database Location
 
@@ -208,8 +214,10 @@ Override the default database location:
 ```
 
 Options:
+
 - (default) — standard security queries
-- `security-extended` — additional security queries with slightly higher false-positive rate
+- `security-extended` — additional security queries with slightly higher
+  false-positive rate
 - `security-and-quality` — security plus code quality queries
 
 ### Custom Query Packs
@@ -240,30 +248,32 @@ Distinguish between multiple analyses for the same commit:
 ```yaml
 - uses: github/codeql-action/analyze@v4
   with:
-    category: "/language:${{ matrix.language }}"
+    category: '/language:${{ matrix.language }}'
 ```
 
 ### Monorepo Category Patterns
 
 ```yaml
 # Per language (default auto-generated pattern)
-category: "/language:${{ matrix.language }}"
+category: '/language:${{ matrix.language }}'
 
 # Per component
-category: "/language:${{ matrix.language }}/component:frontend"
+category: '/language:${{ matrix.language }}/component:frontend'
 
 # Per app in monorepo
-category: "/language:javascript-typescript/app:blog"
+category: '/language:javascript-typescript/app:blog'
 ```
 
-The `category` value appears as `<run>.automationDetails.id` in the SARIF output.
+The `category` value appears as `<run>.automationDetails.id` in the SARIF
+output.
 
 ## CodeQL Configuration File
 
-Create `.github/codeql/codeql-config.yml` for advanced path and query configuration:
+Create `.github/codeql/codeql-config.yml` for advanced path and query
+configuration:
 
 ```yaml
-name: "CodeQL Configuration"
+name: 'CodeQL Configuration'
 
 # Directories to scan
 paths:
@@ -310,6 +320,7 @@ Enable caching to speed up dependency resolution:
 ```
 
 Values:
+
 - `false` / `none` / `off` — disabled (default for advanced setup)
 - `restore` — only restore existing caches
 - `store` — only store new caches
@@ -340,7 +351,7 @@ concurrency:
 ## Complete Workflow Example
 
 ```yaml
-name: "CodeQL Analysis"
+name: 'CodeQL Analysis'
 
 on:
   push:
@@ -362,7 +373,8 @@ concurrency:
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    runs-on: ${{ matrix.language == 'swift' && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on:
+      ${{ matrix.language == 'swift' && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 120
     strategy:
       fail-fast: false
@@ -394,5 +406,5 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
         with:
-          category: "/language:${{ matrix.language }}"
+          category: '/language:${{ matrix.language }}'
 ```

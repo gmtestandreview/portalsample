@@ -1,6 +1,7 @@
 # scalability-review — Eval Scenarios
 
-Format: `Input -> Expected behaviour -> Pass/Fail`. Fresh agent per row, skill available.
+Format: `Input -> Expected behaviour -> Pass/Fail`. Fresh agent per row, skill
+available.
 
 ## Green
 
@@ -14,10 +15,11 @@ scale?"
 synchronous DB write as the pivotal unknown); current-state capacity table with
 headroom multiples; bottlenecks in the order they break, with SPOFs called out
 at 1x; 10x/100x/1000x; fixes classified config / project / re-architecture, each
-with a trigger; the "wall" named. Never asserts "it will scale" without evidence.
+with a trigger; the "wall" named. Never asserts "it will scale" without
+evidence.
 
-_Baseline (no skill): produced all of this. Skill's job = the repeatable contract
-and the config/project/re-architecture classification._
+_Baseline (no skill): produced all of this. Skill's job = the repeatable
+contract and the config/project/re-architecture classification._
 
 ### G2 — Design-stage check
 

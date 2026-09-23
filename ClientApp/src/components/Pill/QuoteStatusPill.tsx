@@ -1,9 +1,9 @@
-import Badge from "react-bootstrap/Badge";
-import type { DashboardItemStatus } from "../../routes/common/enums.ts";
-import { QuoteStatus } from "../../routes/common/enums.ts";
+import Badge from 'react-bootstrap/Badge';
+import type { DashboardItemStatus } from '../../routes/common/enums.ts';
+import { QuoteStatus } from '../../routes/common/enums.ts';
 
 export interface StatusPillProps {
-	status: DashboardItemStatus | QuoteStatus;
+  status: DashboardItemStatus | QuoteStatus;
 }
 
 /**
@@ -12,52 +12,52 @@ export interface StatusPillProps {
  * @returns jsx
  */
 const getPillProps = (itemStatus: string) => {
-	switch (itemStatus) {
-		case QuoteStatus.ReportInProgress:
-		case QuoteStatus.ReportIssued:
-		case QuoteStatus.ReportWithdrawn:
-		case QuoteStatus.ArtifactReceived:
-		case QuoteStatus.QuoteAccepted:
-			return {
-				bgColour: "success-dark",
-				textColour: "light",
-				text: "Quotation accepted",
-			};
-		case QuoteStatus.QuoteDeclined:
-			return {
-				bgColour: "danger",
-				textColour: "light",
-				text: "Quotation declined",
-			};
-		case QuoteStatus.QuoteExpired:
-			return {
-				bgColour: "danger-light",
-				textColour: "dark",
-				text: "Quotation expired",
-			};
-		case QuoteStatus.QuoteClosed:
-			return {
-				bgColour: "dark-gray",
-				textColour: "light",
-				text: "Quotation closed",
-			};
-		default:
-			return {
-				bgColour: "info",
-				textColour: "light",
-				text: itemStatus,
-			};
-	}
+  switch (itemStatus) {
+    case QuoteStatus.ReportInProgress:
+    case QuoteStatus.ReportIssued:
+    case QuoteStatus.ReportWithdrawn:
+    case QuoteStatus.ArtifactReceived:
+    case QuoteStatus.QuoteAccepted:
+      return {
+        bgColour: 'success-dark',
+        textColour: 'light',
+        text: 'Quotation accepted',
+      };
+    case QuoteStatus.QuoteDeclined:
+      return {
+        bgColour: 'danger',
+        textColour: 'light',
+        text: 'Quotation declined',
+      };
+    case QuoteStatus.QuoteExpired:
+      return {
+        bgColour: 'danger-light',
+        textColour: 'dark',
+        text: 'Quotation expired',
+      };
+    case QuoteStatus.QuoteClosed:
+      return {
+        bgColour: 'dark-gray',
+        textColour: 'light',
+        text: 'Quotation closed',
+      };
+    default:
+      return {
+        bgColour: 'info',
+        textColour: 'light',
+        text: itemStatus,
+      };
+  }
 };
 
 const QuoteStatusPill = ({ status }: StatusPillProps) => {
-	const pillProps = getPillProps(status);
+  const pillProps = getPillProps(status);
 
-	return (
-		<Badge pill={true} bg={pillProps.bgColour} text={pillProps.textColour}>
-			{pillProps.text}
-		</Badge>
-	);
+  return (
+    <Badge pill={true} bg={pillProps.bgColour} text={pillProps.textColour}>
+      {pillProps.text}
+    </Badge>
+  );
 };
 
 export default QuoteStatusPill;

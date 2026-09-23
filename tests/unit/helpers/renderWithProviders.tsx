@@ -1,23 +1,23 @@
-import { type RenderOptions, render } from "@testing-library/react";
-import type { PropsWithChildren, ReactElement } from "react";
-import { MemoryRouter } from "react-router";
+import { type RenderOptions, render } from '@testing-library/react';
+import type { PropsWithChildren, ReactElement } from 'react';
+import { MemoryRouter } from 'react-router';
 
-type RenderWithProvidersOptions = Omit<RenderOptions, "wrapper"> & {
-	route?: string;
+type RenderWithProvidersOptions = Omit<RenderOptions, 'wrapper'> & {
+  route?: string;
 };
 
 const Providers = ({
-	children,
-	route = "/",
+  children,
+  route = '/',
 }: PropsWithChildren<{ route?: string }>) => (
-	<MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
+  <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
 );
 
 export const renderWithProviders = (
-	ui: ReactElement,
-	{ route = "/", ...options }: RenderWithProvidersOptions = {},
+  ui: ReactElement,
+  { route = '/', ...options }: RenderWithProvidersOptions = {}
 ) =>
-	render(ui, {
-		...options,
-		wrapper: ({ children }) => <Providers route={route}>{children}</Providers>,
-	});
+  render(ui, {
+    ...options,
+    wrapper: ({ children }) => <Providers route={route}>{children}</Providers>,
+  });

@@ -1,5 +1,9 @@
 ---
-description: 'This file describes the rules for creating and maintaining instruction files in this repository. Follow these guidelines to ensure that `.github/instructions/*.instructions.md` files are well-structured, focused, and aligned with repository policy without becoming unwieldy or duplicative.'
+description:
+  'This file describes the rules for creating and maintaining instruction files
+  in this repository. Follow these guidelines to ensure that
+  `.github/instructions/*.instructions.md` files are well-structured, focused,
+  and aligned with repository policy without becoming unwieldy or duplicative.'
 applyTo: '.github/instructions/*.instructions.md'
 ---
 
@@ -45,8 +49,8 @@ Use the right artifact instead:
 - Follow `.github/copilot-instructions.md` as the short repo-wide Copilot
   overlay.
 - This file governs instruction-file shape and quality only.
-- A path-specific instruction may add stricter or more specific guidance, but
-  it must not weaken or contradict `AGENTS.md`.
+- A path-specific instruction may add stricter or more specific guidance, but it
+  must not weaken or contradict `AGENTS.md`.
 - If an instruction conflicts with `AGENTS.md`, fix the instruction file.
 
 ## Required frontmatter
@@ -57,7 +61,8 @@ Required fields:
 
 ```yaml
 ---
-description: 'Short action-focused description of what this instruction file governs.'
+description:
+  'Short action-focused description of what this instruction file governs.'
 applyTo: 'path/or/glob/pattern'
 ---
 ```
@@ -67,8 +72,8 @@ Rules:
 - `description` must be precise enough for discovery.
 - `applyTo` must target the narrowest useful file set.
 - Do not use dynamic placeholders such as `${input:file}` in `applyTo`.
-- Do not use `applyTo: "**/*"` unless the rule is genuinely safe and useful
-  for the whole repo.
+- Do not use `applyTo: "**/*"` unless the rule is genuinely safe and useful for
+  the whole repo.
 - Prefer explicit repo paths over broad language globs where practical.
 - Avoid matching generated output, dependency folders, build artifacts, and
   `.copilot-tracking/**` unless the instruction is specifically about those
@@ -143,7 +148,9 @@ Use docs instead when the content is mainly:
 - a runbook
 - a long reference
 
-Do not put full gold workflow phase procedures in instruction files unless the file is a narrow phase contract and its `applyTo` matches the artifact it governs.
+Do not put full gold workflow phase procedures in instruction files unless the
+file is a narrow phase contract and its `applyTo` matches the artifact it
+governs.
 
 ## Repo alignment
 
@@ -197,7 +204,8 @@ Before finishing an instruction-file change, check:
 - no unsupported metadata, fake tools, stale references, or placeholder text
   remains
 
-If `applyTo` matches broad source paths or more than one artifact family, red-team the scope before accepting the instruction.
+If `applyTo` matches broad source paths or more than one artifact family,
+red-team the scope before accepting the instruction.
 
 If the instruction changes repo governance, recommend a red-team review before
 treating it as final.

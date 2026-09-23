@@ -6,8 +6,9 @@
 - Branch: `refactor/storybook-autodocs`
 - Final implementation commit verified: `4c0738d`
 - Verification date: 2026-08-26
-- Runtime: Node `24.16.0` (the repository's `devEngines.runtime` floor is `>=24.0.0`
-  with `onFail: error`, so every `npm` invocation aborts under Node 22)
+- Runtime: Node `24.16.0` (the repository's `devEngines.runtime` floor is
+  `>=24.0.0` with `onFail: error`, so every `npm` invocation aborts under
+  Node 22)
 
 ## Automated verification
 
@@ -57,7 +58,8 @@ documentation behaviour.
 - [x] Style Guide story references render through the `Stories` Doc Block.
 - [x] `storybook build --docs` succeeds.
 - [x] `storybook-static` contains both docs and stories.
-- [x] Chromatic-hosted timing differences are handled with semantic condition waits.
+- [x] Chromatic-hosted timing differences are handled with semantic condition
+      waits.
 - [x] Every standing guidance document is free of the removed architecture.
 
 ## Post-certification corrections
@@ -69,15 +71,15 @@ configuration. The Task 12 static search covers `.storybook`, `ClientApp`,
 `docs/AUTODOCS.md` and `docs/STORYBOOK-AUTODOCS-IMPLEMENTATION.md`, the latter
 linked from `docs/DOC-BLOCKS-QUICK-START.md` as the autodocs reference — still
 taught the non-existent `docs` tag as the Autodocs trigger and documented
-addon-level `autodocs` options, the superseded `canvas.sourceState` value, and the
-generic global component description. `storybook-refactor-baseline.md` records the
-exact removed values.
+addon-level `autodocs` options, the superseded `canvas.sourceState` value, and
+the generic global component description. `storybook-refactor-baseline.md`
+records the exact removed values.
 
 The governance test now checks every standing guidance document (`docs/**/*.md`
 plus `.storybook/*.mdx`), excluding the directories that record history —
 `docs/change-record/`, `docs/migration/`, `docs/qa/`, `docs/sprint-1/`,
-`docs/superpowers/` — and `docs/storybook/storybook-refactor-baseline.md`, all of
-which quote the removed configuration as evidence of the prior state. The new
+`docs/superpowers/` — and `docs/storybook/storybook-refactor-baseline.md`, all
+of which quote the removed configuration as evidence of the prior state. The new
 assertion failed with ten offences across exactly those two files before they
 were rewritten, and passes now.
 

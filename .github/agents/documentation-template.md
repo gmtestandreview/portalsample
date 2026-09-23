@@ -26,7 +26,8 @@ tags: [Optional list of relevant tags]
 - ARC-002: List internal and external dependencies with their purpose
 - ARC-003: Describe component interactions and relationships
 - ARC-004: Include visual diagrams where they clarify structure or behavior
-- ARC-005: Provide a Mermaid diagram showing structure, relationships, and dependencies
+- ARC-005: Provide a Mermaid diagram showing structure, relationships, and
+  dependencies
 
 ### Component Structure and Dependencies Diagram
 
@@ -50,9 +51,9 @@ graph TD
 - INT-002: Provide a method or property reference table
 - INT-003: Cover events, callbacks, or notification mechanisms when applicable
 
-| Method/Property | Purpose | Parameters | Return Type | Usage Notes |
-|-----------------|---------|------------|-------------|-------------|
-| [Name] | [Purpose] | [Parameters] | [Type] | [Notes] |
+| Method/Property | Purpose   | Parameters   | Return Type | Usage Notes |
+| --------------- | --------- | ------------ | ----------- | ----------- |
+| [Name]          | [Purpose] | [Parameters] | [Type]      | [Notes]     |
 
 ## 4. Implementation Details
 

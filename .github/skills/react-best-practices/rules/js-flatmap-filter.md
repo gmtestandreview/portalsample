@@ -9,7 +9,8 @@ tags: javascript, arrays, flatMap, filter, performance
 
 **Impact: LOW-MEDIUM (eliminates intermediate array)**
 
-Chaining `.map().filter(Boolean)` creates an intermediate array and iterates twice. Use `.flatMap()` to transform and filter in a single pass.
+Chaining `.map().filter(Boolean)` creates an intermediate array and iterates
+twice. Use `.flatMap()` to transform and filter in a single pass.
 
 **Incorrect (2 iterations, intermediate array):**
 

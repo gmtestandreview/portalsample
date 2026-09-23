@@ -1,6 +1,10 @@
 ---
 name: refactor
-description: 'Surgical code refactoring to improve maintainability without changing behavior. Covers extracting functions, renaming variables, breaking down god functions, improving type safety, eliminating code smells, and applying design patterns. Less drastic than repo-rebuilder; use for gradual improvements.'
+description:
+  'Surgical code refactoring to improve maintainability without changing
+  behavior. Covers extracting functions, renaming variables, breaking down god
+  functions, improving type safety, eliminating code smells, and applying design
+  patterns. Less drastic than repo-rebuilder; use for gradual improvements.'
 license: MIT
 ---
 
@@ -8,7 +12,9 @@ license: MIT
 
 ## Overview
 
-Improve code structure and readability without changing external behavior. Refactoring is gradual evolution, not revolution. Use this for improving existing code, not rewriting from scratch.
+Improve code structure and readability without changing external behavior.
+Refactoring is gradual evolution, not revolution. Use this for improving
+existing code, not rewriting from scratch.
 
 ## When to Use
 
@@ -26,10 +32,12 @@ Use this skill when:
 
 ### The Golden Rules
 
-1. **Behavior is preserved** - Refactoring doesn't change what the code does, only how
+1. **Behavior is preserved** - Refactoring doesn't change what the code does,
+   only how
 2. **Small steps** - Make tiny changes, test after each
 3. **Version control is your friend** - Commit before and after each safe state
-4. **Tests are essential** - Without tests, you're not refactoring, you're editing
+4. **Tests are essential** - Without tests, you're not refactoring, you're
+   editing
 5. **One thing at a time** - Don't mix refactoring with feature changes
 
 ### When NOT to Refactor

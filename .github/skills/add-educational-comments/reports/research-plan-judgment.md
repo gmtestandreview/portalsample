@@ -23,13 +23,13 @@
 
 ## Judgment Criteria
 
-| Criterion | Pass Standard |
-|---|---|
-| SKILL.md size | Fewer than 500 lines. |
-| Progressive disclosure | Examples, extended validation, regression details, and long gotchas live outside `SKILL.md`. |
-| Explicit load triggers | `SKILL.md` says exactly when to read each reference or asset. |
-| Validation safety | Uses strict static-first hierarchy and blocks unsafe commands by default. |
-| Evals | Includes regression evals, trigger evals, grading, and old-vs-new benchmark results. |
-| Trigger coverage | Includes positive triggers and near-miss negatives: review comments, write docs, explain in chat, TODO comments, format code. |
-| Compatibility | Includes a short `compatibility` frontmatter field. |
-| Final report asset | Template lives in `assets/final-report-template.md`. |
+| Criterion              | Pass Standard                                                                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| SKILL.md size          | Fewer than 500 lines.                                                                                                         |
+| Progressive disclosure | Examples, extended validation, regression details, and long gotchas live outside `SKILL.md`.                                  |
+| Explicit load triggers | `SKILL.md` says exactly when to read each reference or asset.                                                                 |
+| Validation safety      | Uses strict static-first hierarchy and blocks unsafe commands by default.                                                     |
+| Evals                  | Includes regression evals, trigger evals, grading, and old-vs-new benchmark results.                                          |
+| Trigger coverage       | Includes positive triggers and near-miss negatives: review comments, write docs, explain in chat, TODO comments, format code. |
+| Compatibility          | Includes a short `compatibility` frontmatter field.                                                                           |
+| Final report asset     | Template lives in `assets/final-report-template.md`.                                                                          |

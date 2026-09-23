@@ -1,12 +1,22 @@
 # Test Folder Optimisation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use
+> superpowers:subagent-driven-development (recommended) or
+> superpowers:executing-plans to implement this plan task-by-task. Steps use
+> checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Consolidate all test source under `tests/`, all test output artifacts under `reports/`, and fix a stale lint script left over from the `static/js/` rename.
+**Goal:** Consolidate all test source under `tests/`, all test output artifacts
+under `reports/`, and fix a stale lint script left over from the `static/js/`
+rename.
 
-**Architecture:** Two independent concerns tackled together because they share `playwright.config.ts`. Test sources move from scattered root locations into a structured `tests/` tree. Test artifacts (currently four separate root-level directories) merge under an expanded `reports/` directory that already exists. No test logic changes — only paths.
+**Architecture:** Two independent concerns tackled together because they share
+`playwright.config.ts`. Test sources move from scattered root locations into a
+structured `tests/` tree. Test artifacts (currently four separate root-level
+directories) merge under an expanded `reports/` directory that already exists.
+No test logic changes — only paths.
 
-**Tech Stack:** Vitest · Playwright · playwright-bdd · V8 coverage · JUnit XML reporting
+**Tech Stack:** Vitest · Playwright · playwright-bdd · V8 coverage · JUnit XML
+reporting
 
 ---
 
@@ -39,54 +49,55 @@ BEFORE                              AFTER
 
 ## Files Changed (content edits)
 
-| File | What changes |
-|------|-------------|
-| `playwright.config.ts` | `features` glob, `steps` glob, `outputDir`, HTML reporter `outputFolder` |
-| `vitest.config.ts` | `coverage.reportsDirectory` |
-| `package.json` | `lint` script stale path (`static/js/` → `ClientApp/src/`) |
-| `.gitignore` | Add `reports/coverage/`, `reports/playwright/`, `reports/test-results/`, `reports/vitest/` |
+| File                   | What changes                                                                               |
+| ---------------------- | ------------------------------------------------------------------------------------------ |
+| `playwright.config.ts` | `features` glob, `steps` glob, `outputDir`, HTML reporter `outputFolder`                   |
+| `vitest.config.ts`     | `coverage.reportsDirectory`                                                                |
+| `package.json`         | `lint` script stale path (`static/js/` → `ClientApp/src/`)                                 |
+| `.gitignore`           | Add `reports/coverage/`, `reports/playwright/`, `reports/test-results/`, `reports/vitest/` |
 
 ## Files Deleted (stale artifacts)
 
-| Path | Why |
-|------|-----|
-| `test-results/` (entire folder) | Stale Playwright run output; regenerated on next `npm run test:e2e` |
-| `playwright-report/` (entire folder) | Stale HTML report; regenerated on next `npm run test:e2e` |
-| `coverage/` (entire folder) | Stale coverage data; regenerated on next `npm run test:unit:coverage` |
+| Path                                 | Why                                                                   |
+| ------------------------------------ | --------------------------------------------------------------------- |
+| `test-results/` (entire folder)      | Stale Playwright run output; regenerated on next `npm run test:e2e`   |
+| `playwright-report/` (entire folder) | Stale HTML report; regenerated on next `npm run test:e2e`             |
+| `coverage/` (entire folder)          | Stale coverage data; regenerated on next `npm run test:unit:coverage` |
 
 ## Files Moved (no content changes)
 
-| From | To |
-|------|----|
-| `features/account/` | `tests/e2e/features/account/` |
-| `features/auth/` | `tests/e2e/features/auth/` |
-| `features/quote/` | `tests/e2e/features/quote/` |
-| `features/rfq/` | `tests/e2e/features/rfq/` |
+| From                  | To                              |
+| --------------------- | ------------------------------- |
+| `features/account/`   | `tests/e2e/features/account/`   |
+| `features/auth/`      | `tests/e2e/features/auth/`      |
+| `features/quote/`     | `tests/e2e/features/quote/`     |
+| `features/rfq/`       | `tests/e2e/features/rfq/`       |
 | `features/storybook/` | `tests/e2e/features/storybook/` |
-| `features/steps/` | `tests/e2e/steps/` |
+| `features/steps/`     | `tests/e2e/steps/`              |
 
 ---
 
 ## Rubric
 
-| # | Criterion | Verification |
-|---|-----------|-------------|
-| R1 | `features/` no longer exists at project root | `Test-Path "features"` → False |
-| R2 | All `.feature` files accessible under `tests/e2e/features/` | `(Get-ChildItem -Recurse -Filter "*.feature" "tests\e2e\features").Count` = 25 |
-| R3 | Step definitions accessible at `tests/e2e/steps/` | `Test-Path "tests\e2e\steps\common.steps.ts"` → True |
-| R4 | `playwright.config.ts` references new paths | `grep "tests/e2e" playwright.config.ts` → 2 matches (features + steps) |
-| R5 | `playwright.config.ts` outputs to `reports/` | `grep "reports/" playwright.config.ts` → 2 matches (outputDir + outputFolder) |
-| R6 | `vitest.config.ts` coverage points to `reports/coverage/unit` | `grep "reports/coverage" vitest.config.ts` → 1 match |
-| R7 | Stale artifact directories removed | `test-results/`, `playwright-report/`, `coverage/` all do not exist at root |
-| R8 | lint script fixed | `grep "ClientApp/src" package.json` includes the lint entry |
-| R9 | `.gitignore` covers all report outputs | `grep "reports/" .gitignore` → 4 entries |
-| R10 | TypeScript compiles | `npm run type-check` exits 0 |
+| #   | Criterion                                                     | Verification                                                                   |
+| --- | ------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| R1  | `features/` no longer exists at project root                  | `Test-Path "features"` → False                                                 |
+| R2  | All `.feature` files accessible under `tests/e2e/features/`   | `(Get-ChildItem -Recurse -Filter "*.feature" "tests\e2e\features").Count` = 25 |
+| R3  | Step definitions accessible at `tests/e2e/steps/`             | `Test-Path "tests\e2e\steps\common.steps.ts"` → True                           |
+| R4  | `playwright.config.ts` references new paths                   | `grep "tests/e2e" playwright.config.ts` → 2 matches (features + steps)         |
+| R5  | `playwright.config.ts` outputs to `reports/`                  | `grep "reports/" playwright.config.ts` → 2 matches (outputDir + outputFolder)  |
+| R6  | `vitest.config.ts` coverage points to `reports/coverage/unit` | `grep "reports/coverage" vitest.config.ts` → 1 match                           |
+| R7  | Stale artifact directories removed                            | `test-results/`, `playwright-report/`, `coverage/` all do not exist at root    |
+| R8  | lint script fixed                                             | `grep "ClientApp/src" package.json` includes the lint entry                    |
+| R9  | `.gitignore` covers all report outputs                        | `grep "reports/" .gitignore` → 4 entries                                       |
+| R10 | TypeScript compiles                                           | `npm run type-check` exits 0                                                   |
 
 ---
 
 ## Test Plan
 
 ### Gate 1 — After folder moves (Task 1)
+
 ```powershell
 # Feature file count should be 25 (5 business + 20 storybook)
 (Get-ChildItem -Recurse -Filter "*.feature" "tests\e2e\features").Count
@@ -102,6 +113,7 @@ Test-Path "features"
 ```
 
 ### Gate 2 — After config updates (Tasks 2–4)
+
 ```bash
 # No stale feature/ or static/js/ references in configs
 grep -n "features/" playwright.config.ts | grep -v "tests/e2e"
@@ -115,6 +127,7 @@ grep -n "coverage/unit" vitest.config.ts | grep -v "reports/"
 ```
 
 ### Gate 3 — After cleanup + .gitignore update (Tasks 5–6)
+
 ```powershell
 # Stale output dirs gone
 Test-Path "test-results"; Test-Path "playwright-report"; Test-Path "coverage"
@@ -126,6 +139,7 @@ Test-Path "reports\vitest\junit.xml"
 ```
 
 ### Gate 4 — Final
+
 ```bash
 npm run type-check
 # Expected: exits 0, zero errors
@@ -136,10 +150,12 @@ npm run type-check
 ## Task 1: Move features/ to tests/e2e/
 
 **Files:**
+
 - Move: `features/steps/` → `tests/e2e/steps/`
 - Move: `features/` → `tests/e2e/features/`
 
-The steps are moved first to avoid nesting them under `tests/e2e/features/steps/`.
+The steps are moved first to avoid nesting them under
+`tests/e2e/features/steps/`.
 
 - [ ] **Step 1: Verify source exists**
 
@@ -193,6 +209,7 @@ Test-Path "features"
 ## Task 2: Update playwright.config.ts
 
 **Files:**
+
 - Modify: `playwright.config.ts`
 
 Read the file first. Then make exactly these 4 changes:
@@ -200,24 +217,27 @@ Read the file first. Then make exactly these 4 changes:
 - [ ] **Step 1: Update the defineBddConfig paths**
 
 Find:
+
 ```ts
 const testDir = defineBddConfig({
-    features: 'features/**/*.feature',
-    steps: 'features/steps/**/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'features/steps/**/*.ts',
 });
 ```
 
 Replace with:
+
 ```ts
 const testDir = defineBddConfig({
-    features: 'tests/e2e/features/**/*.feature',
-    steps: 'tests/e2e/steps/**/*.ts',
+  features: 'tests/e2e/features/**/*.feature',
+  steps: 'tests/e2e/steps/**/*.ts',
 });
 ```
 
 - [ ] **Step 2: Add outputDir for Playwright test results**
 
-Find the `export default defineConfig({` block opening and the `testDir,` line. Add `outputDir` immediately after `testDir`:
+Find the `export default defineConfig({` block opening and the `testDir,` line.
+Add `outputDir` immediately after `testDir`:
 
 ```ts
 export default defineConfig({
@@ -229,11 +249,13 @@ export default defineConfig({
 - [ ] **Step 3: Update the HTML reporter output folder**
 
 Find:
+
 ```ts
     reporter: [['html', { open: 'never' }], ['list']],
 ```
 
 Replace with:
+
 ```ts
     reporter: [['html', { open: 'never', outputFolder: 'reports/playwright' }], ['list']],
 ```
@@ -256,16 +278,19 @@ grep -n "features/" playwright.config.ts | grep -v "tests/e2e"
 ## Task 3: Update vitest.config.ts coverage output path
 
 **Files:**
+
 - Modify: `vitest.config.ts`
 
 - [ ] **Step 1: Update reportsDirectory**
 
 Find:
+
 ```ts
         reportsDirectory: './coverage/unit',
 ```
 
 Replace with:
+
 ```ts
         reportsDirectory: './reports/coverage/unit',
 ```
@@ -285,13 +310,16 @@ grep -n "coverage/unit" vitest.config.ts | grep -v "reports/"
 ## Task 4: Fix stale lint script in package.json
 
 **Files:**
+
 - Modify: `package.json`
 
-The `lint` script still references `static/js/` — the old path before the folder restructure renamed it to `ClientApp/src/`.
+The `lint` script still references `static/js/` — the old path before the folder
+restructure renamed it to `ClientApp/src/`.
 
 - [ ] **Step 1: Read the scripts block to confirm the stale path**
 
 The current lint script is:
+
 ```json
 "lint": "eslint \"static/js/**/*.{ts,tsx}\"",
 ```
@@ -299,11 +327,13 @@ The current lint script is:
 - [ ] **Step 2: Fix it**
 
 Replace:
+
 ```json
 "lint": "eslint \"static/js/**/*.{ts,tsx}\"",
 ```
 
 With:
+
 ```json
 "lint": "eslint \"ClientApp/src/**/*.{ts,tsx}\"",
 ```
@@ -323,11 +353,14 @@ grep -n "lint" package.json
 ## Task 5: Delete stale artifact directories
 
 **Files:**
+
 - Delete: `test-results/` (16 Playwright run directories)
 - Delete: `playwright-report/` (stale HTML report + data/)
-- Delete: `coverage/` (stale coverage HTML — actual coverage is in `coverage/unit/`)
+- Delete: `coverage/` (stale coverage HTML — actual coverage is in
+  `coverage/unit/`)
 
-These are all test run outputs, not source files. They will be regenerated in the correct location (`reports/`) on the next test run.
+These are all test run outputs, not source files. They will be regenerated in
+the correct location (`reports/`) on the next test run.
 
 - [ ] **Step 1: Confirm these are output artifacts, not source**
 
@@ -374,13 +407,18 @@ Test-Path "reports\vitest\junit.xml"
 ## Task 6: Update .gitignore
 
 **Files:**
+
 - Modify: `.gitignore`
 
-Current `.gitignore` already ignores `dist/`, `storybook-static/`, and stale compiled CSS/JS artifacts. It needs entries for the new consolidated `reports/` output subdirectories. The `reports/vitest/junit.xml` is a CI output artefact and should also be gitignored.
+Current `.gitignore` already ignores `dist/`, `storybook-static/`, and stale
+compiled CSS/JS artifacts. It needs entries for the new consolidated `reports/`
+output subdirectories. The `reports/vitest/junit.xml` is a CI output artefact
+and should also be gitignored.
 
 - [ ] **Step 1: Read current .gitignore to confirm state**
 
 Current content (for reference — read the file to confirm):
+
 ```
 # Dependencies
 node_modules/
@@ -414,6 +452,7 @@ npm-debug.log*
 - [ ] **Step 2: Replace the Test output section**
 
 Find:
+
 ```
 # Test output
 coverage/
@@ -422,6 +461,7 @@ playwright-report/
 ```
 
 Replace with:
+
 ```
 # Test output (all artifacts consolidated under reports/)
 reports/coverage/
@@ -445,6 +485,7 @@ grep -n "^coverage/\|^test-results/\|^playwright-report/" .gitignore
 ## Task 7: Final verification (Gate 4)
 
 **Files:**
+
 - No file changes — verification only
 
 - [ ] **Step 1: Run all rubric checks**
@@ -483,7 +524,8 @@ Expected: exits 0 with zero TypeScript errors.
 npm run lint -- --max-warnings 0
 ```
 
-Expected: lints `ClientApp/src/**/*.{ts,tsx}` without "no files found" errors. (Some lint warnings may exist — that's pre-existing.)
+Expected: lints `ClientApp/src/**/*.{ts,tsx}` without "no files found" errors.
+(Some lint warnings may exist — that's pre-existing.)
 
 ---
 
@@ -491,33 +533,38 @@ Expected: lints `ClientApp/src/**/*.{ts,tsx}` without "no files found" errors. (
 
 **Spec coverage:**
 
-| Spec requirement | Task |
-|----------------|------|
-| Optimise `tests\unit` location | `tests/unit/` stays; `features/` joins it under `tests/e2e/` (Task 1) |
-| Consolidate `test-results` | → `reports/test-results/` via playwright.config.ts `outputDir` (Tasks 2 + 5) |
-| Consolidate `reports\vitest` | Already under `reports/`; gitignored (Task 6) |
+| Spec requirement                | Task                                                                          |
+| ------------------------------- | ----------------------------------------------------------------------------- |
+| Optimise `tests\unit` location  | `tests/unit/` stays; `features/` joins it under `tests/e2e/` (Task 1)         |
+| Consolidate `test-results`      | → `reports/test-results/` via playwright.config.ts `outputDir` (Tasks 2 + 5)  |
+| Consolidate `reports\vitest`    | Already under `reports/`; gitignored (Task 6)                                 |
 | Consolidate `playwright-report` | → `reports/playwright/` via playwright.config.ts `outputFolder` (Tasks 2 + 5) |
-| Consolidate `coverage` | → `reports/coverage/unit/` via vitest.config.ts (Tasks 3 + 5) |
-| Lint script stale path | Fixed in package.json (Task 4) |
+| Consolidate `coverage`          | → `reports/coverage/unit/` via vitest.config.ts (Tasks 3 + 5)                 |
+| Lint script stale path          | Fixed in package.json (Task 4)                                                |
 
-**Placeholder scan:** All steps contain exact file paths, exact commands, and exact code. No TBDs.
+**Placeholder scan:** All steps contain exact file paths, exact commands, and
+exact code. No TBDs.
 
 **Path arithmetic (verified):**
 
-| Config | Old path | New path | Resolves to |
-|--------|---------|---------|-------------|
-| `playwright.config.ts` features | `features/**/*.feature` | `tests/e2e/features/**/*.feature` | `tests/e2e/features/account/create-account.feature` etc. ✓ |
-| `playwright.config.ts` steps | `features/steps/**/*.ts` | `tests/e2e/steps/**/*.ts` | `tests/e2e/steps/common.steps.ts` ✓ |
-| `playwright.config.ts` outputDir | (default: `test-results`) | `reports/test-results` | `reports/test-results/` ✓ |
-| `playwright.config.ts` outputFolder | (default: `playwright-report`) | `reports/playwright` | `reports/playwright/` ✓ |
-| `vitest.config.ts` reportsDirectory | `./coverage/unit` | `./reports/coverage/unit` | `reports/coverage/unit/` ✓ |
+| Config                              | Old path                       | New path                          | Resolves to                                                |
+| ----------------------------------- | ------------------------------ | --------------------------------- | ---------------------------------------------------------- |
+| `playwright.config.ts` features     | `features/**/*.feature`        | `tests/e2e/features/**/*.feature` | `tests/e2e/features/account/create-account.feature` etc. ✓ |
+| `playwright.config.ts` steps        | `features/steps/**/*.ts`       | `tests/e2e/steps/**/*.ts`         | `tests/e2e/steps/common.steps.ts` ✓                        |
+| `playwright.config.ts` outputDir    | (default: `test-results`)      | `reports/test-results`            | `reports/test-results/` ✓                                  |
+| `playwright.config.ts` outputFolder | (default: `playwright-report`) | `reports/playwright`              | `reports/playwright/` ✓                                    |
+| `vitest.config.ts` reportsDirectory | `./coverage/unit`              | `./reports/coverage/unit`         | `reports/coverage/unit/` ✓                                 |
 
 ---
 
-**Plan complete and saved to `docs/superpowers/plans/2026-05-29-test-folder-optimisation.md`. Two execution options:**
+**Plan complete and saved to
+`docs/superpowers/plans/2026-05-29-test-folder-optimisation.md`. Two execution
+options:**
 
-**1. Subagent-Driven (recommended)** — Fresh subagent per task, review between tasks, fast iteration
+**1. Subagent-Driven (recommended)** — Fresh subagent per task, review between
+tasks, fast iteration
 
-**2. Inline Execution** — Execute tasks in this session using executing-plans, batch execution with checkpoints
+**2. Inline Execution** — Execute tasks in this session using executing-plans,
+batch execution with checkpoints
 
 **Which approach?**

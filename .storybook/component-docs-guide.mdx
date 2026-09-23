@@ -1,6 +1,6 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Documentation/Component Documentation Guide" />
+<Meta title='Documentation/Component Documentation Guide' />
 
 # Writing component documentation
 
@@ -164,9 +164,9 @@ component (meta)
 story
 ```
 
-More specific configuration overrides inherited configuration. Put
-project-wide policy in `preview.ts`; use component or story Parameters only for
-deliberate exceptions.
+More specific configuration overrides inherited configuration. Put project-wide
+policy in `preview.ts`; use component or story Parameters only for deliberate
+exceptions.
 
 ```ts
 export const ComplexExample: Story = {
@@ -195,13 +195,13 @@ const preview = definePreview({
 });
 ```
 
-Storybook's CSF Next documentation says addons listed in `definePreview`
-provide addon annotations and addon-owned types to story metadata. Local package
+Storybook's CSF Next documentation says addons listed in `definePreview` provide
+addon annotations and addon-owned types to story metadata. Local package
 inspection for Storybook `10.5.10` confirmed that `@storybook/addon-a11y`
 exports preview decorators, parameters, and globals, and that
 `@storybook/addon-vitest` exports a preview addon entrypoint. The project keeps
-both addons in `main.ts` for manager and preset registration and in
-`preview.ts` for CSF Next composition.
+both addons in `main.ts` for manager and preset registration and in `preview.ts`
+for CSF Next composition.
 
 The project also supplies a custom MSW worker setup in `preview.ts` so shared
 handlers and the same-origin request policy have one owner. Story-specific
@@ -316,7 +316,15 @@ tables, literal colour values, or static examples that are already owned by
 TypeScript, JSDoc, Controls, ArgTypes, stories, or SCSS tokens.
 
 ```mdx
-import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
+import {
+  Meta,
+  Title,
+  Subtitle,
+  Primary,
+  Controls,
+  ArgTypes,
+  Stories,
+} from '@storybook/addon-docs/blocks';
 import * as ComponentStories from './Component.stories';
 
 <Meta of={ComponentStories} />
@@ -356,9 +364,9 @@ Label, helper text, empty-state, validation, and tone guidance.
 
 ## Accessibility
 
-Keyboard, focus, role, label, announcement, and reduced-motion expectations.
-Use React Aria component guidance where the implementation builds on React Aria
-or mirrors one of its interaction patterns.
+Keyboard, focus, role, label, announcement, and reduced-motion expectations. Use
+React Aria component guidance where the implementation builds on React Aria or
+mirrors one of its interaction patterns.
 
 ## Responsive behaviour
 
@@ -372,7 +380,8 @@ instead of duplicating story source by hand.
 
 ## Related components
 
-- [SecondaryButton](/docs/components-buttons-secondarybutton--documentation) - Why it is related
+- [SecondaryButton](/docs/components-buttons-secondarybutton--documentation) -
+  Why it is related
 ```
 
 ### Feature showcase MDX template
@@ -384,7 +393,7 @@ becoming a second implementation spec.
 ```mdx
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Showcases/Feature name" />
+<Meta title='Showcases/Feature name' />
 
 # Feature name
 

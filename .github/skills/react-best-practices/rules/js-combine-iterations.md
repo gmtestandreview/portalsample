@@ -7,7 +7,8 @@ tags: javascript, arrays, loops, performance
 
 ## Combine Multiple Array Iterations
 
-Multiple `.filter()` or `.map()` calls iterate the array multiple times. Combine into one loop.
+Multiple `.filter()` or `.map()` calls iterate the array multiple times. Combine
+into one loop.
 
 **Incorrect (3 iterations):**
 

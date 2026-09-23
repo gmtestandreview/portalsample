@@ -2,9 +2,9 @@
 id: negative-write-a-skill-routing
 name: About skills, but routes to writing-skills
 description: >-
-  Sibling-skill confusion. Mentions "skill", "SKILL.md", and "trigger conditions"
-  but the task is authoring a new skill - writing-skills territory. Must not fire
-  skill-duplication-audit.
+  Sibling-skill confusion. Mentions "skill", "SKILL.md", and "trigger
+  conditions" but the task is authoring a new skill - writing-skills territory.
+  Must not fire skill-duplication-audit.
 tags:
   - negative-trigger
   - near-miss
@@ -21,8 +21,8 @@ graders:
     name: no-audit-execution
     config:
       not_contains:
-        - "skill-duplication-audit complete."
-        - "Pairs evaluated:"
+        - 'skill-duplication-audit complete.'
+        - 'Pairs evaluated:'
   - type: behavior
     name: decline-brevity
     config:

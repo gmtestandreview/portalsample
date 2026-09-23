@@ -10,32 +10,36 @@ Cross-check baseline:
 
 ## Purpose
 
-This is a devil's-advocate test plan for the migration verification checklist. Its job is to prove that the checklist:
+This is a devil's-advocate test plan for the migration verification checklist.
+Its job is to prove that the checklist:
 
 - passes when the migration is actually correct (`Green`)
 - fails when known migration defects are present (`Red`)
 - fails when a superficial or partial fix tries to sneak through (`Edge`)
 
-This test plan treats the checklist as a verifier specification. The recommended implementation is a checklist-verifier test harness that runs against synthetic fixture repos and selected real-source snapshots.
+This test plan treats the checklist as a verifier specification. The recommended
+implementation is a checklist-verifier test harness that runs against synthetic
+fixture repos and selected real-source snapshots.
 
 ## Cross-Check Summary
 
 Audit finding to checklist coverage:
 
-| Audit Finding | Checklist Coverage | Status |
-| --- | --- | --- |
-| Render-phase side effects in `dashboard` | Phase 1.3 | Covered |
-| Render-phase side effects in `quotation` | Phase 1.3 | Covered |
-| Broken notification selector | Phase 2.1 | Covered |
-| `quotation` loading-state churn | Phase 2.2 | Covered |
-| `useRef()` without initializer | Phase 1.2 | Covered |
-| Timeout-driven flows | Phase 2.3 | Covered |
-| Class component compatibility | Phase 1.3 | Added during cross-check |
-| StrictMode listener duplication / cleanup | Phase 2.3 | Added during cross-check |
-| .NET 10 hosting model | Phase 6 | Added during cross-check |
-| SSR / prerender integration | Phase 6 | Added during cross-check |
+| Audit Finding                             | Checklist Coverage | Status                   |
+| ----------------------------------------- | ------------------ | ------------------------ |
+| Render-phase side effects in `dashboard`  | Phase 1.3          | Covered                  |
+| Render-phase side effects in `quotation`  | Phase 1.3          | Covered                  |
+| Broken notification selector              | Phase 2.1          | Covered                  |
+| `quotation` loading-state churn           | Phase 2.2          | Covered                  |
+| `useRef()` without initializer            | Phase 1.2          | Covered                  |
+| Timeout-driven flows                      | Phase 2.3          | Covered                  |
+| Class component compatibility             | Phase 1.3          | Added during cross-check |
+| StrictMode listener duplication / cleanup | Phase 2.3          | Added during cross-check |
+| .NET 10 hosting model                     | Phase 6            | Added during cross-check |
+| SSR / prerender integration               | Phase 6            | Added during cross-check |
 
-No merged-audit blocker is currently uncovered by the checklist after the checklist update.
+No merged-audit blocker is currently uncovered by the checklist after the
+checklist update.
 
 ## Test Harness Strategy
 
@@ -86,7 +90,8 @@ These prove the checklist does not over-report when the migration is correct.
 
 - Goal: Phase 2.3 passes when behavior is correct.
 - Fixture:
-  - debounced input, resize listener, route announcement, and scroll/focus utilities
+  - debounced input, resize listener, route announcement, and scroll/focus
+    utilities
   - listener cleanup on unmount
 - Expected:
   - no duplicated listener effects
@@ -116,7 +121,8 @@ These prove the checklist does not over-report when the migration is correct.
 
 ## Red Tests
 
-These prove the checklist catches the exact blocker classes from the merged audit.
+These prove the checklist catches the exact blocker classes from the merged
+audit.
 
 ### R01 — Render-time side effect in `dashboard`
 
@@ -186,7 +192,8 @@ These prove the checklist catches the exact blocker classes from the merged audi
 
 ## Edge / Devil's Advocate Tests
 
-These are the important ones. They simulate fixes that look correct at a glance but should still fail.
+These are the important ones. They simulate fixes that look correct at a glance
+but should still fail.
 
 ### E01 — Selector fixed in one route only
 
@@ -243,7 +250,8 @@ These are the important ones. They simulate fixes that look correct at a glance 
 - Inject:
   - test repo compiles after turning off strictness
 - Expected:
-  - Phase 3 fails because strict-nullability and type hygiene gates are not satisfied
+  - Phase 3 fails because strict-nullability and type hygiene gates are not
+    satisfied
 
 ### E09 — .NET 10 works locally but publish output is wrong
 
@@ -263,16 +271,16 @@ These are the important ones. They simulate fixes that look correct at a glance 
 
 ## Coverage Matrix
 
-| Checklist Area | Green | Red | Edge |
-| --- | --- | --- | --- |
-| Phase 1.1 legacy API removal | G01 | R07 | E07 |
-| Phase 1.2 ref/component shape | G01 | R04 | E03 |
-| Phase 1.3 render purity | G01 | R01, R02 | E02 |
-| Phase 2.1 selector/accessibility | G02 | R03 | E01 |
-| Phase 2.2 loading/async state | G02 | R05 | E04 |
-| Phase 2.3 timeout/listener flows | G03 | R06 | E05, E06 |
-| Phase 3 TS6 gates | G04 | R08 | E08 |
-| Phase 6 .NET 10 host gates | G05 | R09 | E09, E10 |
+| Checklist Area                   | Green | Red      | Edge     |
+| -------------------------------- | ----- | -------- | -------- |
+| Phase 1.1 legacy API removal     | G01   | R07      | E07      |
+| Phase 1.2 ref/component shape    | G01   | R04      | E03      |
+| Phase 1.3 render purity          | G01   | R01, R02 | E02      |
+| Phase 2.1 selector/accessibility | G02   | R03      | E01      |
+| Phase 2.2 loading/async state    | G02   | R05      | E04      |
+| Phase 2.3 timeout/listener flows | G03   | R06      | E05, E06 |
+| Phase 3 TS6 gates                | G04   | R08      | E08      |
+| Phase 6 .NET 10 host gates       | G05   | R09      | E09, E10 |
 
 ## Minimum Acceptance Criteria For The Verifier
 
@@ -280,7 +288,8 @@ These are the important ones. They simulate fixes that look correct at a glance 
 - Every green test must pass without manual exception handling.
 - Every edge test must fail unless the verifier is intentionally weakened.
 - At least one test must run each runtime-sensitive path under `StrictMode`.
-- At least one test must run the host validation in publish-like conditions, not only local debug.
+- At least one test must run the host validation in publish-like conditions, not
+  only local debug.
 
 ## Recommended First Implementation Order
 
@@ -291,4 +300,7 @@ These are the important ones. They simulate fixes that look correct at a glance 
 
 ## Outcome
 
-If this plan is implemented and all tests behave as expected, the checklist is strong enough to serve as the basis for the migration plan. If any edge case passes unexpectedly, the checklist or verifier needs to be tightened before migration execution starts.
+If this plan is implemented and all tests behave as expected, the checklist is
+strong enough to serve as the basis for the migration plan. If any edge case
+passes unexpectedly, the checklist or verifier needs to be tightened before
+migration execution starts.

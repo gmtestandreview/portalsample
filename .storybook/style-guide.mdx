@@ -9,20 +9,25 @@ import {
 } from '@storybook/addon-docs/blocks';
 import * as AlertStories from '../ClientApp/src/components/Alert/Alert.stories';
 
-<Meta title="Documentation/Style Guide" />
+<Meta title='Documentation/Style Guide' />
 
 # Style Guide
 
 **NMI Portal visual language, content style, and UI usage patterns**
 
-This style guide defines the baseline visual and content standards for the NMI customer portal. It is intended to keep components consistent, accessible, and predictable across all user flows.
+This style guide defines the baseline visual and content standards for the NMI
+customer portal. It is intended to keep components consistent, accessible, and
+predictable across all user flows.
 
 ## Design Principles
 
 - **Clarity first**: users should understand what to do in under 5 seconds.
-- **Consistency over novelty**: reuse established patterns before inventing new ones.
-- **Accessibility by default**: every UI decision must support keyboard and assistive technology use.
-- **Government-grade trust**: plain language, transparent feedback, and stable interactions.
+- **Consistency over novelty**: reuse established patterns before inventing new
+  ones.
+- **Accessibility by default**: every UI decision must support keyboard and
+  assistive technology use.
+- **Government-grade trust**: plain language, transparent feedback, and stable
+  interactions.
 
 ## Typography
 
@@ -32,36 +37,38 @@ Use these families and scales to maintain consistent hierarchy and readability.
   fontFamily="'Public Sans', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
   fontSizes={['14px', '16px', '19px', '21px', '32px', '44px']}
   fontWeight={400}
-  sampleText="National Measurement Institute - trusted measurement services"
+  sampleText='National Measurement Institute - trusted measurement services'
 />
 
 ### Type Scale
 
-Mirrors the heading tokens in `ClientApp/src/styles/_variables.scss` (desktop sizes; mobile down-scales `h1`/`h2` via `math.div`).
+Mirrors the heading tokens in `ClientApp/src/styles/_variables.scss` (desktop
+sizes; mobile down-scales `h1`/`h2` via `math.div`).
 
-| Token | Size | Weight |
-| --- | --- | --- |
-| `$h1-font-size` | 2.75rem / 44px | 700 |
-| `$h2-font-size` | 2rem / 32px | 700 |
-| `$h3-font-size` | 1.3125rem / 21px | 700 |
-| `$h4-font-size` | 1.1875rem / 19px | 700 |
-| `$h5-font-size` | 1rem / 16px | 700 |
-| `$h6-font-size` | 0.875rem / 14px | 700 |
-| `$font-size-base` (body) | 1rem / 16px | 400 |
+| Token                    | Size             | Weight |
+| ------------------------ | ---------------- | ------ |
+| `$h1-font-size`          | 2.75rem / 44px   | 700    |
+| `$h2-font-size`          | 2rem / 32px      | 700    |
+| `$h3-font-size`          | 1.3125rem / 21px | 700    |
+| `$h4-font-size`          | 1.1875rem / 19px | 700    |
+| `$h5-font-size`          | 1rem / 16px      | 700    |
+| `$h6-font-size`          | 0.875rem / 14px  | 700    |
+| `$font-size-base` (body) | 1rem / 16px      | 400    |
 
 ### Type Rules
 
 - Use sentence case for headings and labels.
 - Keep body copy concise and action-oriented.
-- Prefer explicit verbs in buttons and links (for example: "Save changes", "Continue", "Download certificate").
+- Prefer explicit verbs in buttons and links (for example: "Save changes",
+  "Continue", "Download certificate").
 - Avoid ambiguous microcopy such as "Submit" when a specific action is known.
 
 ## Color System
 
 <ColorPalette>
   <ColorItem
-    title="Brand"
-    subtitle="Core NMI identity ($nmi-* in _variables.scss)"
+    title='Brand'
+    subtitle='Core NMI identity ($nmi-* in _variables.scss)'
     colors={{
       'Primary / NMI Blue ($nmi-primary)': '#285576',
       'Secondary ($nmi-secondary)': '#58595b',
@@ -71,20 +78,20 @@ Mirrors the heading tokens in `ClientApp/src/styles/_variables.scss` (desktop si
     }}
   />
   <ColorItem
-    title="Neutral"
-    subtitle="Text and surface neutrals"
+    title='Neutral'
+    subtitle='Text and surface neutrals'
     colors={{
       'Body Ink ($body-color)': '#3f3b3b',
       'Text Muted ($text-muted)': '#666666',
       'Placeholder / Dark Grey ($nmi-dark-gray)': '#767676',
       'Border ($nmi-light-grey)': '#d8d8d8',
       'Surface / Light ($dashboard-background)': '#f5f5f5',
-      'White': '#ffffff',
+      White: '#ffffff',
     }}
   />
   <ColorItem
-    title="Semantic"
-    subtitle="Status and feedback ($theme-colors)"
+    title='Semantic'
+    subtitle='Status and feedback ($theme-colors)'
     colors={{
       'Success ($success)': '#1a7a1a',
       'Success text ($success-dark)': '#297e28',
@@ -98,9 +105,14 @@ Mirrors the heading tokens in `ClientApp/src/styles/_variables.scss` (desktop si
   />
 </ColorPalette>
 
-> **Source of truth:** these swatches mirror `ClientApp/src/styles/_variables.scss`. Update them whenever a token changes so the guide cannot drift from the compiled theme.
+> **Source of truth:** these swatches mirror
+> `ClientApp/src/styles/_variables.scss`. Update them whenever a token changes
+> so the guide cannot drift from the compiled theme.
 >
-> **Contrast:** `$success` is `#1a7a1a` (5.47:1 on white — passes WCAG 2.1 AA for normal text). `$success-dark` (`#297e28`) remains available for denser text contexts. `brand-red` (`#7B0B15`, ~11:1) is for white-label surfaces only.
+> **Contrast:** `$success` is `#1a7a1a` (5.47:1 on white — passes WCAG 2.1 AA
+> for normal text). `$success-dark` (`#297e28`) remains available for denser
+> text contexts. `brand-red` (`#7B0B15`, ~11:1) is for white-label surfaces
+> only.
 
 ### Color Usage Rules
 
@@ -114,20 +126,40 @@ Mirrors the heading tokens in `ClientApp/src/styles/_variables.scss` (desktop si
 Use simple, recognisable shapes with text labels for meaning.
 
 <IconGallery>
-  <IconItem name="Search">
-    <span aria-hidden="true" className="icon-search" style={{ fontSize: '1.5rem' }} />
+  <IconItem name='Search'>
+    <span
+      aria-hidden='true'
+      className='icon-search'
+      style={{ fontSize: '1.5rem' }}
+    />
   </IconItem>
-  <IconItem name="Calendar">
-    <span aria-hidden="true" className="icon-calendar" style={{ fontSize: '1.5rem' }} />
+  <IconItem name='Calendar'>
+    <span
+      aria-hidden='true'
+      className='icon-calendar'
+      style={{ fontSize: '1.5rem' }}
+    />
   </IconItem>
-  <IconItem name="Tick">
-    <span aria-hidden="true" className="icon-tick" style={{ fontSize: '1.5rem' }} />
+  <IconItem name='Tick'>
+    <span
+      aria-hidden='true'
+      className='icon-tick'
+      style={{ fontSize: '1.5rem' }}
+    />
   </IconItem>
-  <IconItem name="Warning">
-    <span aria-hidden="true" className="icon-warning" style={{ fontSize: '1.5rem' }} />
+  <IconItem name='Warning'>
+    <span
+      aria-hidden='true'
+      className='icon-warning'
+      style={{ fontSize: '1.5rem' }}
+    />
   </IconItem>
-  <IconItem name="Settings">
-    <span aria-hidden="true" className="icon-settings" style={{ fontSize: '1.5rem' }} />
+  <IconItem name='Settings'>
+    <span
+      aria-hidden='true'
+      className='icon-settings'
+      style={{ fontSize: '1.5rem' }}
+    />
   </IconItem>
 </IconGallery>
 
@@ -186,4 +218,5 @@ Before shipping any new UI:
 3. Validate screen reader announcements for alerts and errors.
 4. Confirm story variants exist for default, edge, and error states.
 5. Ensure copy tone matches the rest of the portal.
-6. If Storybook BDD coverage exists for changed stories, run `npx bddgen` then `npx playwright test --grep "@storybook" --reporter=list`.
+6. If Storybook BDD coverage exists for changed stories, run `npx bddgen` then
+   `npx playwright test --grep "@storybook" --reporter=list`.

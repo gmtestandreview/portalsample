@@ -2,7 +2,8 @@
 
 ## Full Example: ThemeContext
 
-This covers the most common pattern - one context with one provider and multiple consumers.
+This covers the most common pattern - one context with one provider and multiple
+consumers.
 
 ---
 
@@ -22,7 +23,7 @@ class ThemeProvider extends React.Component {
   state = { theme: 'light' };
 
   toggleTheme = () => {
-    this.setState(s => ({ theme: s.theme === 'light' ? 'dark' : 'light' }));
+    this.setState((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' }));
   };
 
   getChildContext() {
@@ -99,7 +100,7 @@ class ThemeProvider extends React.Component {
   state = { theme: 'light' };
 
   toggleTheme = () => {
-    this.setState(s => ({ theme: s.theme === 'light' ? 'dark' : 'light' }));
+    this.setState((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' }));
   };
 
   render() {
@@ -121,7 +122,9 @@ class ThemeProvider extends React.Component {
 export default ThemeProvider;
 ```
 
-> **React 19 note:** In React 19 you can write `<ThemeContext value={...}>` directly (no `.Provider`). For React 18.3.1 use `<ThemeContext.Provider value={...}>`.
+> **React 19 note:** In React 19 you can write `<ThemeContext value={...}>`
+> directly (no `.Provider`). For React 18.3.1 use
+> `<ThemeContext.Provider value={...}>`.
 
 ---
 
@@ -154,8 +157,10 @@ export default ThemedButton;
 
 - `static contextType` (singular) not `contextTypes` (plural)
 - No PropTypes declaration needed
-- `this.context` is the full value object (not a partial - whatever you passed to `value`)
-- Only ONE context per class component via `contextType` - use `Context.Consumer` render prop for multiple
+- `this.context` is the full value object (not a partial - whatever you passed
+  to `value`)
+- Only ONE context per class component via `contextType` - use
+  `Context.Consumer` render prop for multiple
 
 ---
 
@@ -177,7 +182,9 @@ function ThemedHeader({ title }) {
 
 ### Step 6 - Multiple Contexts in One Class Component
 
-If a class component consumed more than one legacy context, it gets complex. Class components can only have one `static contextType`. For multiple contexts, use the render prop form:
+If a class component consumed more than one legacy context, it gets complex.
+Class components can only have one `static contextType`. For multiple contexts,
+use the render prop form:
 
 ```jsx
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -190,9 +197,7 @@ class Dashboard extends React.Component {
         {({ theme }) => (
           <AuthContext.Consumer>
             {({ user }) => (
-              <div className={`dashboard-${theme}`}>
-                Welcome, {user.name}
-              </div>
+              <div className={`dashboard-${theme}`}>Welcome, {user.name}</div>
             )}
           </AuthContext.Consumer>
         )}
@@ -202,7 +207,8 @@ class Dashboard extends React.Component {
 }
 ```
 
-Or consider migrating the class component to a function component to use `useContext` cleanly.
+Or consider migrating the class component to a function component to use
+`useContext` cleanly.
 
 ---
 

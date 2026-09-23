@@ -14,25 +14,31 @@ January 2026
 
 ## Abstract
 
-Composition patterns for building flexible, maintainable React components.
-Avoid boolean prop proliferation by using compound components, lifting state,
-and composing internals. These patterns make codebases easier for both humans
-and AI agents to work with as they scale.
+Composition patterns for building flexible, maintainable React components. Avoid
+boolean prop proliferation by using compound components, lifting state, and
+composing internals. These patterns make codebases easier for both humans and AI
+agents to work with as they scale.
 
 ---
 
 ## Table of Contents
 
 1. [Component Architecture](#1-component-architecture) — **HIGH**
-   - 1.1 [Avoid Boolean Prop Proliferation](#11-avoid-boolean-prop-proliferation)
+   - 1.1
+     [Avoid Boolean Prop Proliferation](#11-avoid-boolean-prop-proliferation)
    - 1.2 [Use Compound Components](#12-use-compound-components)
 2. [State Management](#2-state-management) — **MEDIUM**
-   - 2.1 [Decouple State Management from UI](#21-decouple-state-management-from-ui)
-   - 2.2 [Define Generic Context Interfaces for Dependency Injection](#22-define-generic-context-interfaces-for-dependency-injection)
-   - 2.3 [Lift State into Provider Components](#23-lift-state-into-provider-components)
+   - 2.1
+     [Decouple State Management from UI](#21-decouple-state-management-from-ui)
+   - 2.2
+     [Define Generic Context Interfaces for Dependency Injection](#22-define-generic-context-interfaces-for-dependency-injection)
+   - 2.3
+     [Lift State into Provider Components](#23-lift-state-into-provider-components)
 3. [Implementation Patterns](#3-implementation-patterns) — **MEDIUM**
-   - 3.1 [Create Explicit Component Variants](#31-create-explicit-component-variants)
-   - 3.2 [Prefer Composing Children Over Render Props](#32-prefer-composing-children-over-render-props)
+   - 3.1
+     [Create Explicit Component Variants](#31-create-explicit-component-variants)
+   - 3.2
+     [Prefer Composing Children Over Render Props](#32-prefer-composing-children-over-render-props)
 4. [React 19 APIs](#4-react-19-apis) — **MEDIUM**
    - 4.1 [React 19 API Changes](#41-react-19-api-changes)
 
@@ -42,8 +48,8 @@ and AI agents to work with as they scale.
 
 **Impact:** HIGH
 
-Fundamental patterns for structuring components to avoid prop
-proliferation and enable flexible composition.
+Fundamental patterns for structuring components to avoid prop proliferation and
+enable flexible composition.
 
 ### 1.1 Avoid Boolean Prop Proliferation
 
@@ -252,8 +258,8 @@ const Composer = {
 </Composer.Provider>
 ```
 
-Consumers explicitly compose exactly what they need. No hidden conditionals.
-And the state, actions and meta are dependency-injected by a parent provider,
+Consumers explicitly compose exactly what they need. No hidden conditionals. And
+the state, actions and meta are dependency-injected by a parent provider,
 allowing multiple usages of the same component structure.
 
 ---
@@ -262,8 +268,8 @@ allowing multiple usages of the same component structure.
 
 **Impact:** MEDIUM
 
-Patterns for lifting state and managing shared context across
-composed components.
+Patterns for lifting state and managing shared context across composed
+components.
 
 ### 2.1 Decouple State Management from UI
 
@@ -708,8 +714,7 @@ nested inside each other—they just need to be within the same provider.
 
 **Impact:** MEDIUM
 
-Specific techniques for implementing compound components and
-context providers.
+Specific techniques for implementing compound components and context providers.
 
 ### 3.1 Create Explicit Component Variants
 
@@ -728,7 +733,7 @@ itself.
 <Composer
   isThread
   isEditing={false}
-  channelId="abc"
+  channelId='abc'
   showAttachments
   showFormatting={false}
 />
@@ -867,7 +872,7 @@ function ComposerFrame({ children }: { children: React.ReactNode }) {
 }
 
 function ComposerFooter({ children }: { children: React.ReactNode }) {
-  return <footer className="flex">{children}</footer>;
+  return <footer className='flex'>{children}</footer>;
 }
 
 // Usage is flexible
@@ -912,8 +917,8 @@ React 19+ only. Don't use `forwardRef`; use `use()` instead of `useContext()`.
 
 > **⚠️ React 19+ only.** Skip this if you're on React 18 or earlier.
 
-In React 19, `ref` is now a regular prop (no `forwardRef` wrapper needed),
-and `use()` replaces `useContext()`.
+In React 19, `ref` is now a regular prop (no `forwardRef` wrapper needed), and
+`use()` replaces `useContext()`.
 
 #### Incorrect: forwardRef in React 19
 

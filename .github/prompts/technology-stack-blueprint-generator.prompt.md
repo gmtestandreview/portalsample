@@ -1,40 +1,59 @@
 ---
-description: 'Comprehensive technology stack blueprint generator that analyzes codebases to create detailed architectural documentation. Automatically detects technology stacks, programming languages, and implementation patterns across multiple platforms (.NET, Java, JavaScript, React, Python). Generates configurable blueprints with version information, licensing details, usage patterns, coding conventions, and visual diagrams. Provides implementation-ready templates and maintains architectural consistency for guided development.'
+description:
+  'Comprehensive technology stack blueprint generator that analyzes codebases to
+  create detailed architectural documentation. Automatically detects technology
+  stacks, programming languages, and implementation patterns across multiple
+  platforms (.NET, Java, JavaScript, React, Python). Generates configurable
+  blueprints with version information, licensing details, usage patterns, coding
+  conventions, and visual diagrams. Provides implementation-ready templates and
+  maintains architectural consistency for guided development.'
 agent: 'agent'
 ---
 
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see
+[.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard
+validation, build, lint, and test commands.
 
 # Comprehensive Technology Stack Blueprint Generator
 
 ## Configuration Variables
 
 ${PROJECT_TYPE="Auto-detect|.NET|Java|JavaScript|React.js|React Native|Angular|Python|Other"} <!-- Primary technology -->
-${DEPTH_LEVEL="Basic|Standard|Comprehensive|Implementation-Ready"} <!-- Analysis depth -->
+${DEPTH_LEVEL="Basic|Standard|Comprehensive|Implementation-Ready"}
+<!-- Analysis depth -->
 ${INCLUDE_VERSIONS=true|false} <!-- Include version information -->
-${INCLUDE_LICENSES=true|false} <!-- Include license information -->
+${INCLUDE_LICENSES=true|false}
+<!-- Include license information -->
 ${INCLUDE_DIAGRAMS=true|false} <!-- Generate architecture diagrams -->
-${INCLUDE_USAGE_PATTERNS=true|false} <!-- Include code usage patterns -->
+${INCLUDE_USAGE_PATTERNS=true|false}
+<!-- Include code usage patterns -->
 ${INCLUDE_CONVENTIONS=true|false} <!-- Document coding conventions -->
-${OUTPUT_FORMAT="Markdown|JSON|YAML|HTML"} <!-- Select output format -->
-${CATEGORIZATION="Technology Type|Layer|Purpose"} <!-- Organization method -->
+${OUTPUT_FORMAT="Markdown|JSON|YAML|HTML"}
+<!-- Select output format --> ${CATEGORIZATION="Technology Type|Layer|Purpose"}
+<!-- Organization method -->
 
 ## Generated Prompt
 
-"Analyze the codebase and generate a ${DEPTH_LEVEL} technology stack blueprint that thoroughly documents technologies and implementation patterns to facilitate consistent code generation. Use the following approach:
+"Analyze the codebase and generate a ${DEPTH_LEVEL} technology stack blueprint
+that thoroughly documents technologies and implementation patterns to facilitate
+consistent code generation. Use the following approach:
 
 ### 1. Technology Identification Phase
 
-- ${PROJECT_TYPE == "Auto-detect" ? "Scan the codebase for project files, configuration files, and dependencies to determine all technology stacks in use" : "Focus on ${PROJECT_TYPE} technologies"}
+- ${PROJECT_TYPE == "Auto-detect" ? "Scan the codebase for project files, configuration files, and dependencies to determine all technology stacks in use" : "Focus on ${PROJECT_TYPE}
+  technologies"}
 - Identify all programming languages by examining file extensions and content
-- Analyze configuration files (package.json, .csproj, pom.xml, etc.) to extract dependencies
+- Analyze configuration files (package.json, .csproj, pom.xml, etc.) to extract
+  dependencies
 - Examine build scripts and pipeline definitions for tooling information
-- ${INCLUDE_VERSIONS ? "Extract precise version information from package files and configuration" : "Skip version details"}
+- ${INCLUDE_VERSIONS ? "Extract precise version information from package files
+  and configuration" : "Skip version details"}
 - ${INCLUDE_LICENSES ? "Document license information for all dependencies" : ""}
 
 ### 2. Core Technologies Analysis
 
-${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ? "#### .NET Stack Analysis (if detected)
+${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ? "#### .NET Stack
+Analysis (if detected)
 
 - Target frameworks and language versions (detect from project files)
 - All NuGet package references with versions and purpose comments
@@ -46,7 +65,8 @@ ${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ? "#### .NET Stack Ana
 - Dependency injection patterns
 - Middleware pipeline components" : ""}
 
-${PROJECT_TYPE == "Java" || PROJECT_TYPE == "Auto-detect" ? "#### Java Stack Analysis (if detected)
+${PROJECT_TYPE == "Java" || PROJECT_TYPE == "Auto-detect" ? "#### Java Stack
+Analysis (if detected)
 
 - JDK version and core frameworks
 - All Maven/Gradle dependencies with versions and purpose
@@ -57,7 +77,8 @@ ${PROJECT_TYPE == "Java" || PROJECT_TYPE == "Auto-detect" ? "#### Java Stack Ana
 - Data access technologies (JPA, JDBC, etc.)
 - API design (Spring MVC, JAX-RS, etc.)" : ""}
 
-${PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "Auto-detect" ? "#### JavaScript Stack Analysis (if detected)
+${PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "Auto-detect" ? "####
+JavaScript Stack Analysis (if detected)
 
 - ECMAScript version and transpiler settings
 - All npm dependencies categorized by purpose
@@ -66,7 +87,8 @@ ${PROJECT_TYPE == "JavaScript" || PROJECT_TYPE == "Auto-detect" ? "#### JavaScri
 - TypeScript usage and configuration
 - Testing frameworks and patterns" : ""}
 
-${PROJECT_TYPE == "React.js" || PROJECT_TYPE == "Auto-detect" ? "#### React Analysis (if detected)
+${PROJECT_TYPE == "React.js" || PROJECT_TYPE == "Auto-detect" ? "#### React
+Analysis (if detected)
 
 - React version and key patterns (hooks vs class components)
 - State management approach (Context, Redux, Zustand, etc.)
@@ -76,7 +98,8 @@ ${PROJECT_TYPE == "React.js" || PROJECT_TYPE == "Auto-detect" ? "#### React Anal
 - API integration patterns
 - Testing approach for components" : ""}
 
-${PROJECT_TYPE == "Python" || PROJECT_TYPE == "Auto-detect" ? "#### Python Analysis (if detected)
+${PROJECT_TYPE == "Python" || PROJECT_TYPE == "Auto-detect" ? "#### Python
+Analysis (if detected)
 
 - Python version and key language features used
 - Package dependencies and virtual environment setup
@@ -87,8 +110,8 @@ ${PROJECT_TYPE == "Python" || PROJECT_TYPE == "Auto-detect" ? "#### Python Analy
 
 ### 3. Implementation Patterns & Conventions
 
-${INCLUDE_CONVENTIONS ?
-"Document coding conventions and patterns for each technology area:
+${INCLUDE_CONVENTIONS ? "Document coding conventions and patterns for each
+technology area:
 
 #### Naming Conventions
 
@@ -116,8 +139,8 @@ ${INCLUDE_CONVENTIONS ?
 
 ### 4. Usage Examples
 
-${INCLUDE_USAGE_PATTERNS ?
-"Extract representative code examples showing standard implementation patterns:
+${INCLUDE_USAGE_PATTERNS ? "Extract representative code examples showing
+standard implementation patterns:
 
 #### API Implementation Examples
 
@@ -183,8 +206,8 @@ ${DEPTH_LEVEL == "Comprehensive" || DEPTH_LEVEL == "Implementation-Ready" ?
 
 ### 6. Technology-Specific Implementation Details
 
-${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ?
-"#### .NET Implementation Details (if detected)
+${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ? "#### .NET
+Implementation Details (if detected)
 
 - **Dependency Injection Pattern**:
   - Service registration approach (Scoped/Singleton/Transient patterns)
@@ -208,8 +231,8 @@ ${PROJECT_TYPE == ".NET" || PROJECT_TYPE == "Auto-detect" ?
   - Identify common patterns and idioms
   - Note any specific version-dependent features" : ""}
 
-${PROJECT_TYPE == "React.js" || PROJECT_TYPE == "Auto-detect" ?
-"#### React Implementation Details (if detected)
+${PROJECT_TYPE == "React.js" || PROJECT_TYPE == "Auto-detect" ? "#### React
+Implementation Details (if detected)
 
 - **Component Structure**:
   - Function vs class components
@@ -232,18 +255,18 @@ ${PROJECT_TYPE == "React.js" || PROJECT_TYPE == "Auto-detect" ?
 
 ### 7. Blueprint for New Code Implementation
 
-${DEPTH_LEVEL == "Implementation-Ready" ?
-"Based on the analysis, provide a detailed blueprint for implementing new features:
+${DEPTH_LEVEL == "Implementation-Ready" ? "Based on the analysis, provide a
+detailed blueprint for implementing new features:
 
 - **File/Class Templates**: Standard structure for common component types
 - **Code Snippets**: Ready-to-use code patterns for common operations
-- **Implementation Checklist**: Standard steps for implementing features end-to-end
+- **Implementation Checklist**: Standard steps for implementing features
+  end-to-end
 - **Integration Points**: How to connect new code with existing systems
 - **Testing Requirements**: Standard test patterns for different component types
 - **Documentation Requirements**: Standard doc patterns for new features" : ""}
 
-${INCLUDE_DIAGRAMS ?
-"### 8. Technology Relationship Diagrams
+${INCLUDE_DIAGRAMS ? "### 8. Technology Relationship Diagrams
 
 - **Stack Diagram**: Visual representation of the complete technology stack
 - **Dependency Flow**: How different technologies interact
@@ -257,7 +280,8 @@ ${INCLUDE_DIAGRAMS ?
 - Identify technology constraints and boundaries
 - Document technology upgrade paths and compatibility considerations
 
-Format the output as ${OUTPUT_FORMAT} and categorize technologies by ${CATEGORIZATION}.
+Format the output as
+${OUTPUT_FORMAT} and categorize technologies by ${CATEGORIZATION}.
 
-Save the output as 'Technology_Stack_Blueprint.${OUTPUT_FORMAT == "Markdown" ? "md" : OUTPUT_FORMAT.toLowerCase()}'
-"
+Save the output as 'Technology_Stack_Blueprint.${OUTPUT_FORMAT == "Markdown" ?
+"md" : OUTPUT_FORMAT.toLowerCase()}' "

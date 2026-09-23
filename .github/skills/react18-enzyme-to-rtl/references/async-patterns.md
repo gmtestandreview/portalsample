@@ -1,6 +1,7 @@
 # Async Test Patterns - Enzyme → RTL Migration
 
-Reference for rewriting Enzyme async tests to React Testing Library with React 18 compatible patterns.
+Reference for rewriting Enzyme async tests to React Testing Library with React
+18 compatible patterns.
 
 ## The Core Problem
 
@@ -17,14 +18,15 @@ None of these work in RTL. RTL provides `waitFor`, `findBy*`, and `act` instead.
 
 ## Pattern 1 - wrapper.update() After State Change
 
-Enzyme required `wrapper.update()` to force a re-render after async state changes.
+Enzyme required `wrapper.update()` to force a re-render after async state
+changes.
 
 ```jsx
 // Enzyme:
 it('loads data', async () => {
   const wrapper = mount(<UserList />);
   await Promise.resolve(); // flush microtasks
-  wrapper.update();        // force Enzyme to sync with DOM
+  wrapper.update(); // force Enzyme to sync with DOM
   expect(wrapper.find('li')).toHaveLength(3);
 });
 ```
@@ -50,7 +52,7 @@ it('loads data', async () => {
 it('fetches user on button click', async () => {
   const wrapper = mount(<UserCard />);
   wrapper.find('button').simulate('click');
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise((resolve) => setTimeout(resolve, 0));
   wrapper.update();
   expect(wrapper.find('.user-name').text()).toBe('John Doe');
 });
@@ -76,9 +78,9 @@ it('fetches user on button click', async () => {
 ```jsx
 // Enzyme - asserted loading state synchronously then final state after flush:
 it('shows loading then result', async () => {
-  const wrapper = mount(<SearchResults query="react" />);
+  const wrapper = mount(<SearchResults query='react' />);
   expect(wrapper.find('.spinner').exists()).toBe(true);
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
   wrapper.update();
   expect(wrapper.find('.spinner').exists()).toBe(false);
   expect(wrapper.find('.result')).toHaveLength(5);
@@ -88,7 +90,7 @@ it('shows loading then result', async () => {
 ```jsx
 // RTL:
 it('shows loading then result', async () => {
-  render(<SearchResults query="react" />);
+  render(<SearchResults query='react' />);
   // Loading state - check it appears
   expect(screen.getByRole('progressbar')).toBeInTheDocument();
   // Or if loading is text:
@@ -111,10 +113,10 @@ it('shows loading then result', async () => {
 it('renders user from query', async () => {
   const wrapper = mount(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <UserProfile id="1" />
+      <UserProfile id='1' />
     </MockedProvider>
   );
-  await new Promise(resolve => setTimeout(resolve, 0)); // flush Apollo queue
+  await new Promise((resolve) => setTimeout(resolve, 0)); // flush Apollo queue
   wrapper.update();
   expect(wrapper.find('.username').text()).toBe('Alice');
 });
@@ -128,7 +130,7 @@ import { MockedProvider } from '@apollo/client/testing';
 it('renders user from query', async () => {
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <UserProfile id="1" />
+      <UserProfile id='1' />
     </MockedProvider>
   );
 
@@ -147,7 +149,7 @@ it('renders user from query', async () => {
 it('shows loading then data', async () => {
   render(
     <MockedProvider mocks={mocks} addTypename={false}>
-      <UserProfile id="1" />
+      <UserProfile id='1' />
     </MockedProvider>
   );
   // Apollo loading state - check immediately after render
@@ -167,9 +169,11 @@ it('shows error on failed fetch', async () => {
   server.use(rest.get('/api/user', (req, res, ctx) => res(ctx.status(500))));
   const wrapper = mount(<UserCard />);
   wrapper.find('button').simulate('click');
-  await new Promise(resolve => setTimeout(resolve, 0));
+  await new Promise((resolve) => setTimeout(resolve, 0));
   wrapper.update();
-  expect(wrapper.find('.error-message').text()).toContain('Something went wrong');
+  expect(wrapper.find('.error-message').text()).toContain(
+    'Something went wrong'
+  );
 });
 ```
 
@@ -187,7 +191,8 @@ it('shows error on failed fetch', async () => {
 
 ## Pattern 6 - act() for Manual Async Control
 
-When you need explicit control over async timing (rare with RTL but occasionally needed for class component tests):
+When you need explicit control over async timing (rare with RTL but occasionally
+needed for class component tests):
 
 ```jsx
 // RTL with act() for fine-grained async control:
@@ -209,16 +214,16 @@ it('handles sequential state updates', async () => {
 
 ## RTL Async Query Guide
 
-| Method | Behavior | Use when |
-|---|---|---|
-| `getBy*` | Synchronous - throws if not found | Element is always present immediately |
-| `queryBy*` | Synchronous - returns null if not found | Checking element does NOT exist |
-| `findBy*` | Async - waits up to 1000ms, rejects if not found | Element appears asynchronously |
-| `getAllBy*` | Synchronous - throws if 0 found | Multiple elements always present |
-| `queryAllBy*` | Synchronous - returns [] if none found | Checking count or non-existence |
-| `findAllBy*` | Async - waits for elements to appear | Multiple elements appear asynchronously |
-| `waitFor(fn)` | Retries fn until no error or timeout | Custom assertion that needs polling |
-| `waitForElementToBeRemoved(el)` | Waits until element disappears | Loading states, removals |
+| Method                          | Behavior                                         | Use when                                |
+| ------------------------------- | ------------------------------------------------ | --------------------------------------- |
+| `getBy*`                        | Synchronous - throws if not found                | Element is always present immediately   |
+| `queryBy*`                      | Synchronous - returns null if not found          | Checking element does NOT exist         |
+| `findBy*`                       | Async - waits up to 1000ms, rejects if not found | Element appears asynchronously          |
+| `getAllBy*`                     | Synchronous - throws if 0 found                  | Multiple elements always present        |
+| `queryAllBy*`                   | Synchronous - returns [] if none found           | Checking count or non-existence         |
+| `findAllBy*`                    | Async - waits for elements to appear             | Multiple elements appear asynchronously |
+| `waitFor(fn)`                   | Retries fn until no error or timeout             | Custom assertion that needs polling     |
+| `waitForElementToBeRemoved(el)` | Waits until element disappears                   | Loading states, removals                |
 
 **Default timeout:** 1000ms. Configure globally in `jest.config.js`:
 

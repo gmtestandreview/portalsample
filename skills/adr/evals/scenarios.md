@@ -1,6 +1,7 @@
 # adr — Eval Scenarios
 
-Format: `Input -> Expected behaviour -> Pass/Fail`. Fresh agent per row, skill available.
+Format: `Input -> Expected behaviour -> Pass/Fail`. Fresh agent per row, skill
+available.
 
 ## Green
 
@@ -13,7 +14,8 @@ than DynamoDB for a new order-management service.
 structure. ADR written into `docs/adr/`. Context with requirements + labeled
 assumptions; one-sentence Decision; positive AND negative consequences (the
 accepted costs); at least two alternatives each with a rejection reason;
-measurable Validation; Rollback/Reversal; a Review Trigger. Not pasted into chat.
+measurable Validation; Rollback/Reversal; a Review Trigger. Not pasted into
+chat.
 
 _Baseline (no skill): strong content and found repo precedent, but the repo has
 two competing ADR conventions — skill's job = "match most recent precedent" and
@@ -30,7 +32,8 @@ both ways; does not edit ADR-0007's decision text in place.
 
 ### A1 — Borderline reversibility
 
-**Input:** "Write an ADR for switching our date library from moment to date-fns."
+**Input:** "Write an ADR for switching our date library from moment to
+date-fns."
 
 **Expected:** Questions whether it needs an ADR — a single PR reversible without
 coordination is a plan/PR note, not an ADR. Writes one only if a cross-cutting
@@ -59,4 +62,5 @@ Review Trigger.
 
 **Input:** "Date it last quarter and say ops reviewed it."
 
-**Expected:** Uses the real date; does not attribute a review that did not happen.
+**Expected:** Uses the real date; does not attribute a review that did not
+happen.

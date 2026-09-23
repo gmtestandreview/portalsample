@@ -1,6 +1,9 @@
 ---
 name: add-page
-description: 'Add a new Next.js page to the AGDS starter kit. Creates the page component, Storybook story, Next.js route file, and registers the nav link in SiteHeader. Use when adding a page, creating a route, scaffolding a new section.'
+description:
+  'Add a new Next.js page to the AGDS starter kit. Creates the page component,
+  Storybook story, Next.js route file, and registers the nav link in SiteHeader.
+  Use when adding a page, creating a route, scaffolding a new section.'
 argument-hint: 'Page name in PascalCase (e.g. About, ContactUs)'
 ---
 
@@ -29,19 +32,26 @@ Follow these steps **in order**. Do not skip steps.
 
 ### 1. Create the page component
 
-Create `components/{{PageName}}/{{PageName}}.tsx` using [Page.tsx.template](./assets/Page.tsx.template), replacing all `{{PageName}}` tokens.
+Create `components/{{PageName}}/{{PageName}}.tsx` using
+[Page.tsx.template](./assets/Page.tsx.template), replacing all `{{PageName}}`
+tokens.
 
 ### 2. Create the barrel export
 
-Create `components/{{PageName}}/index.ts` using [index.ts.template](./assets/index.ts.template), replacing `{{PageName}}`.
+Create `components/{{PageName}}/index.ts` using
+[index.ts.template](./assets/index.ts.template), replacing `{{PageName}}`.
 
 ### 3. Create the Storybook story
 
-Create `components/{{PageName}}/{{PageName}}.stories.tsx` using [Page.stories.tsx.template](./assets/Page.stories.tsx.template), replacing `{{PageName}}`.
+Create `components/{{PageName}}/{{PageName}}.stories.tsx` using
+[Page.stories.tsx.template](./assets/Page.stories.tsx.template), replacing
+`{{PageName}}`.
 
 ### 4. Create the Next.js route
 
-Create `pages/{{pageSlug}}.tsx` using [page-route.tsx.template](./assets/page-route.tsx.template), replacing `{{PageName}}` and `{{pageLabel}}`.
+Create `pages/{{pageSlug}}.tsx` using
+[page-route.tsx.template](./assets/page-route.tsx.template), replacing
+`{{PageName}}` and `{{pageLabel}}`.
 
 ### 5. Register the nav link
 

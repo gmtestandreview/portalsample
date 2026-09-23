@@ -1,6 +1,10 @@
 # Advanced Topics & Future Enhancements
 
-Proposal-only ideas for future improvements to the project-local skill system. **Nothing in this file is part of the current `skill-rules.json` schema or runtime contract unless the target implementation is inspected and confirms it.** Do not copy proposed fields into production configuration without implementation and validation.
+Proposal-only ideas for future improvements to the project-local skill system.
+**Nothing in this file is part of the current `skill-rules.json` schema or
+runtime contract unless the target implementation is inspected and confirms
+it.** Do not copy proposed fields into production configuration without
+implementation and validation.
 
 ## Table of Contents
 
@@ -17,9 +21,13 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 
 ## Dynamic Rule Updates
 
-**Documented current behavior:** `HOOK_MECHANISMS.md` says each UserPromptSubmit/PreToolUse execution loads `skill-rules.json`. This reference therefore does not assert that a Claude Code restart is required. If another layer caches rules, verify that behavior in the target project.
+**Documented current behavior:** `HOOK_MECHANISMS.md` says each
+UserPromptSubmit/PreToolUse execution loads `skill-rules.json`. This reference
+therefore does not assert that a Claude Code restart is required. If another
+layer caches rules, verify that behavior in the target project.
 
-**Future Enhancement:** If rule loading is later cached, add explicit invalidation/reload behavior
+**Future Enhancement:** If rule loading is later cached, add explicit
+invalidation/reload behavior
 
 **Implementation Ideas:**
 
@@ -200,9 +208,9 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 describe('database-verification', () => {
   it('triggers on Prisma imports', () => {
     const result = testSkill({
-      prompt: "add user tracking",
-      file: "services/user.ts",
-      content: "import { PrismaService } from './prisma'"
+      prompt: 'add user tracking',
+      file: 'services/user.ts',
+      content: "import { PrismaService } from './prisma'",
     });
 
     expect(result.triggered).toBe(true);

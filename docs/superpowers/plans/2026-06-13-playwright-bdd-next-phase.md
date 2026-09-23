@@ -1,12 +1,27 @@
 # Playwright BDD Next Phase Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use
+> superpowers:subagent-driven-development (recommended) or
+> superpowers:executing-plans to implement this plan task-by-task. Steps use
+> checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Expand Playwright-BDD from representative route rendering into reliable coverage of the portal's critical quote, account, RFQ, report, and failure workflows, with enforceable route traceability and faster app-versus-Storybook execution.
+**Goal:** Expand Playwright-BDD from representative route rendering into
+reliable coverage of the portal's critical quote, account, RFQ, report, and
+failure workflows, with enforceable route traceability and faster
+app-versus-Storybook execution.
 
-**Architecture:** Keep the existing scenario-local `ScenarioState`, MSAL cache mock, and generated-client-compatible API interception. Add focused domain state/builders and step modules, split application and Storybook Playwright execution into independent named projects, and make an explicit route coverage manifest the machine-checked source of truth. New scenarios must drive visible controls after initial setup navigation, assert exact outcomes, and avoid broad body assertions, optional checks, hard waits, and test-only navigation shortcuts.
+**Architecture:** Keep the existing scenario-local `ScenarioState`, MSAL cache
+mock, and generated-client-compatible API interception. Add focused domain
+state/builders and step modules, split application and Storybook Playwright
+execution into independent named projects, and make an explicit route coverage
+manifest the machine-checked source of truth. New scenarios must drive visible
+controls after initial setup navigation, assert exact outcomes, and avoid broad
+body assertions, optional checks, hard waits, and test-only navigation
+shortcuts.
 
-**Tech Stack:** React 18, TypeScript, React Router, Playwright Test 1.60, playwright-bdd 9, Gherkin, MSAL browser mocks, generated NSwag API contracts, Vitest
+**Tech Stack:** React 18, TypeScript, React Router, Playwright Test 1.60,
+playwright-bdd 9, Gherkin, MSAL browser mocks, generated NSwag API contracts,
+Vitest
 
 ## Completion Verification
 
@@ -14,10 +29,10 @@ Verified complete on 2026-06-14 in the source snapshot:
 
 - `npm run type-check` passes.
 - `npm run lint` passes.
-- Focused route, Playwright-quality, notification, and RequestItem unit tests pass
-  (`71` tests).
-- `npm run test:e2e` passes with `28` application scenarios and `129`
-  Storybook scenarios.
+- Focused route, Playwright-quality, notification, and RequestItem unit tests
+  pass (`71` tests).
+- `npm run test:e2e` passes with `28` application scenarios and `129` Storybook
+  scenarios.
 - The account-creation stability run passes `20/20`.
 - All `115` Storybook IDs referenced by BDD features exist in the generated
   `storybook-static/index.json`.
@@ -46,38 +61,60 @@ This plan covers all eight recommendations:
 7. Add meaningful failure-path coverage.
 8. Remove permissive Playwright patterns.
 
-Infrastructure and traceability land first. Each workflow then lands as a separately runnable feature. Failure scenarios reuse the same state and mock contracts rather than introducing a second test harness.
+Infrastructure and traceability land first. Each workflow then lands as a
+separately runnable feature. Failure scenarios reuse the same state and mock
+contracts rather than introducing a second test harness.
 
 ## File Structure
 
 ### Create
 
-- `playwright.storybook.config.ts`: Storybook-only Playwright project and web server.
-- `tests/e2e/route-coverage.ts`: explicit router-path-to-BDD traceability manifest.
-- `tests/unit/e2e/routeCoverage.test.ts`: parses `App.tsx` and enforces complete manifest registration.
+- `playwright.storybook.config.ts`: Storybook-only Playwright project and web
+  server.
+- `tests/e2e/route-coverage.ts`: explicit router-path-to-BDD traceability
+  manifest.
+- `tests/unit/e2e/routeCoverage.test.ts`: parses `App.tsx` and enforces complete
+  manifest registration.
 - `tests/e2e/support/mock-failure.ts`: typed one-shot API failure configuration.
-- `tests/e2e/support/mock-builders.ts`: generated-contract-compatible account, quote acceptance, RFQ summary, and report payload builders.
-- `tests/e2e/steps/account-maintenance.steps.ts`: update organisation, update contact, and add-branch steps.
-- `tests/e2e/steps/rfq-lifecycle.steps.ts`: submitted summary, draft edit, delete, and validation steps.
-- `tests/e2e/steps/report.steps.ts`: instrument report list, report detail, and PDF failure steps.
-- `tests/e2e/steps/failure.steps.ts`: reusable API-failure and retained-form-state assertions.
-- `tests/e2e/features/account/manage-account.feature`: account maintenance workflows.
-- `tests/e2e/features/rfq/manage-rfq.feature`: remaining RFQ lifecycle workflows.
-- `tests/e2e/features/reports/measurement-reports.feature`: report list/detail workflows.
-- `tests/e2e/features/resilience/workflow-errors.feature`: mutation, auth-expiry, and unsaved-change failures.
+- `tests/e2e/support/mock-builders.ts`: generated-contract-compatible account,
+  quote acceptance, RFQ summary, and report payload builders.
+- `tests/e2e/steps/account-maintenance.steps.ts`: update organisation, update
+  contact, and add-branch steps.
+- `tests/e2e/steps/rfq-lifecycle.steps.ts`: submitted summary, draft edit,
+  delete, and validation steps.
+- `tests/e2e/steps/report.steps.ts`: instrument report list, report detail, and
+  PDF failure steps.
+- `tests/e2e/steps/failure.steps.ts`: reusable API-failure and
+  retained-form-state assertions.
+- `tests/e2e/features/account/manage-account.feature`: account maintenance
+  workflows.
+- `tests/e2e/features/rfq/manage-rfq.feature`: remaining RFQ lifecycle
+  workflows.
+- `tests/e2e/features/reports/measurement-reports.feature`: report list/detail
+  workflows.
+- `tests/e2e/features/resilience/workflow-errors.feature`: mutation,
+  auth-expiry, and unsaved-change failures.
 
 ### Modify
 
-- `playwright.config.ts`: application-only `app-bdd` project and application web server.
+- `playwright.config.ts`: application-only `app-bdd` project and application web
+  server.
 - `package.json`: separate app, Storybook, and combined BDD commands.
-- `.github/workflows/pr.yml`: run the source-snapshot BDD projects and upload the actual report directories when this workflow is used in this checkout.
-- `tests/e2e/support/scenario-state.ts`: add domain state, persisted values, and failure configuration.
-- `tests/e2e/support/mock-api.ts`: install exact endpoint handlers for new workflows and delegate configured failures.
-- `tests/e2e/steps/quote.steps.ts`: complete the acceptance wizard through submission.
+- `.github/workflows/pr.yml`: run the source-snapshot BDD projects and upload
+  the actual report directories when this workflow is used in this checkout.
+- `tests/e2e/support/scenario-state.ts`: add domain state, persisted values, and
+  failure configuration.
+- `tests/e2e/support/mock-api.ts`: install exact endpoint handlers for new
+  workflows and delegate configured failures.
+- `tests/e2e/steps/quote.steps.ts`: complete the acceptance wizard through
+  submission.
 - `tests/e2e/steps/storybook.steps.ts`: remove broad and optional assertions.
-- `tests/e2e/features/quote/accept-quote.feature`: add complete acceptance and save-failure scenarios.
-- `tests/e2e/features/storybook/**/*.feature`: replace generic visibility assertions where a user-visible semantic assertion is available.
-- `ClientApp/src/storybook/CoverageMatrix.docs.mdx`: align claims with the machine-checked BDD route manifest.
+- `tests/e2e/features/quote/accept-quote.feature`: add complete acceptance and
+  save-failure scenarios.
+- `tests/e2e/features/storybook/**/*.feature`: replace generic visibility
+  assertions where a user-visible semantic assertion is available.
+- `ClientApp/src/storybook/CoverageMatrix.docs.mdx`: align claims with the
+  machine-checked BDD route manifest.
 - `docs/TESTING.md`: document project-specific commands and coverage semantics.
 
 ### Never Edit
@@ -108,7 +145,8 @@ npx bddgen
 npx playwright test tests/e2e/features/auth/login.feature --project=chromium --list
 ```
 
-Expected: the application feature is listed, but the current root configuration still declares both the application and Storybook web servers.
+Expected: the application feature is listed, but the current root configuration
+still declares both the application and Storybook web servers.
 
 - [ ] **Step 2: Make the root config application-only**
 
@@ -119,47 +157,49 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-    outputDir: '.features-gen/app',
-    features: [
-        'tests/e2e/features/account/**/*.feature',
-        'tests/e2e/features/auth/**/*.feature',
-        'tests/e2e/features/quote/**/*.feature',
-        'tests/e2e/features/reports/**/*.feature',
-        'tests/e2e/features/resilience/**/*.feature',
-        'tests/e2e/features/rfq/**/*.feature',
-    ],
-    steps: [
-        'tests/e2e/steps/{account,account-maintenance,common,copy-rfq,failure,quote,report,rfq-lifecycle}.steps.ts',
-        'tests/e2e/support/fixtures.ts',
-    ],
+  outputDir: '.features-gen/app',
+  features: [
+    'tests/e2e/features/account/**/*.feature',
+    'tests/e2e/features/auth/**/*.feature',
+    'tests/e2e/features/quote/**/*.feature',
+    'tests/e2e/features/reports/**/*.feature',
+    'tests/e2e/features/resilience/**/*.feature',
+    'tests/e2e/features/rfq/**/*.feature',
+  ],
+  steps: [
+    'tests/e2e/steps/{account,account-maintenance,common,copy-rfq,failure,quote,report,rfq-lifecycle}.steps.ts',
+    'tests/e2e/support/fixtures.ts',
+  ],
 });
 
 export default defineConfig({
-    testDir,
-    outputDir: 'reports/test-results/app',
-    fullyParallel: true,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
-    reporter: [
-        ['html', { open: 'never', outputFolder: 'reports/playwright/app' }],
-        ['list'],
-    ],
-    use: {
-        baseURL: 'http://localhost:3000',
-        trace: 'on-first-retry',
-        screenshot: 'only-on-failure',
+  testDir,
+  outputDir: 'reports/test-results/app',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: [
+    ['html', { open: 'never', outputFolder: 'reports/playwright/app' }],
+    ['list'],
+  ],
+  use: {
+    baseURL: 'http://localhost:3000',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    {
+      name: 'app-bdd',
+      use: { ...devices['Desktop Chrome'] },
     },
-    projects: [{
-        name: 'app-bdd',
-        use: { ...devices['Desktop Chrome'] },
-    }],
-    webServer: {
-        command: 'npm start',
-        url: 'http://localhost:3000',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-    },
+  ],
+  webServer: {
+    command: 'npm start',
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
 });
 ```
 
@@ -172,37 +212,39 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-    outputDir: '.features-gen/storybook',
-    features: 'tests/e2e/features/storybook/**/*.feature',
-    steps: ['tests/e2e/steps/storybook.steps.ts'],
+  outputDir: '.features-gen/storybook',
+  features: 'tests/e2e/features/storybook/**/*.feature',
+  steps: ['tests/e2e/steps/storybook.steps.ts'],
 });
 
 export default defineConfig({
-    testDir,
-    outputDir: 'reports/test-results/storybook',
-    fullyParallel: true,
-    forbidOnly: !!process.env.CI,
-    retries: process.env.CI ? 2 : 0,
-    workers: process.env.CI ? 1 : undefined,
-    reporter: [
-        ['html', { open: 'never', outputFolder: 'reports/playwright/storybook' }],
-        ['list'],
-    ],
-    use: {
-        baseURL: 'http://localhost:6006',
-        trace: 'on-first-retry',
-        screenshot: 'only-on-failure',
+  testDir,
+  outputDir: 'reports/test-results/storybook',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: process.env.CI ? 2 : 0,
+  workers: process.env.CI ? 1 : undefined,
+  reporter: [
+    ['html', { open: 'never', outputFolder: 'reports/playwright/storybook' }],
+    ['list'],
+  ],
+  use: {
+    baseURL: 'http://localhost:6006',
+    trace: 'on-first-retry',
+    screenshot: 'only-on-failure',
+  },
+  projects: [
+    {
+      name: 'storybook-bdd',
+      use: { ...devices['Desktop Chrome'] },
     },
-    projects: [{
-        name: 'storybook-bdd',
-        use: { ...devices['Desktop Chrome'] },
-    }],
-    webServer: {
-        command: 'npm run storybook',
-        url: 'http://localhost:6006',
-        reuseExistingServer: !process.env.CI,
-        timeout: 120_000,
-    },
+  ],
+  webServer: {
+    command: 'npm run storybook',
+    url: 'http://localhost:6006',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
 });
 ```
 
@@ -226,11 +268,11 @@ Replace the BDD script block in `package.json` with:
 Add this command table to `docs/TESTING.md`:
 
 ```markdown
-| Command | Scope |
-| --- | --- |
-| `npm run test:e2e:app` | Real portal workflows using the `app-bdd` project |
+| Command                      | Scope                                                 |
+| ---------------------------- | ----------------------------------------------------- |
+| `npm run test:e2e:app`       | Real portal workflows using the `app-bdd` project     |
 | `npm run test:e2e:storybook` | Storybook scenarios using the `storybook-bdd` project |
-| `npm run test:e2e` | Both BDD projects, run sequentially |
+| `npm run test:e2e`           | Both BDD projects, run sequentially                   |
 
 `app-bdd` starts only Webpack on port 3000. `storybook-bdd` starts only
 Storybook on port 6006. A passing suite is scenario coverage, not JavaScript
@@ -246,7 +288,9 @@ npm run test:e2e:app -- --list
 npm run test:e2e:storybook -- --list
 ```
 
-Expected: the first command lists only non-Storybook scenarios under project `app-bdd`; the second lists only `@storybook` scenarios under project `storybook-bdd`.
+Expected: the first command lists only non-Storybook scenarios under project
+`app-bdd`; the second lists only `@storybook` scenarios under project
+`storybook-bdd`.
 
 - [ ] **Step 7: Commit**
 
@@ -276,34 +320,33 @@ import { routeCoverage } from '../../e2e/route-coverage';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const appSource = fs.readFileSync(
-    path.join(repoRoot, 'ClientApp', 'src', 'App.tsx'),
-    'utf8',
+  path.join(repoRoot, 'ClientApp', 'src', 'App.tsx'),
+  'utf8'
 );
 
 const routerPaths = Array.from(
-    appSource.matchAll(/<Route\s+path='([^']+)'/g),
-    (match) => match[1],
+  appSource.matchAll(/<Route\s+path='([^']+)'/g),
+  (match) => match[1]
 );
 
 describe('Playwright-BDD route coverage manifest', () => {
-    it('registers every static route declared in App.tsx exactly once', () => {
-        const registered = routeCoverage.map(({ path: routePath }) => routePath);
-        expect(new Set(registered).size).toBe(registered.length);
-        expect(registered.sort()).toEqual(routerPaths.sort());
-    });
+  it('registers every static route declared in App.tsx exactly once', () => {
+    const registered = routeCoverage.map(({ path: routePath }) => routePath);
+    expect(new Set(registered).size).toBe(registered.length);
+    expect(registered.sort()).toEqual(routerPaths.sort());
+  });
 
-    it('uses a feature reference or an explicit durable exclusion', () => {
-        for (const entry of routeCoverage) {
-            if (entry.status === 'excluded') {
-                expect(entry.reason.length).toBeGreaterThan(20);
-                expect(entry.feature).toBeUndefined();
-            } else {
-                expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
-                expect(entry.scenario).toBeTruthy();
-            }
-        }
-    });
-
+  it('uses a feature reference or an explicit durable exclusion', () => {
+    for (const entry of routeCoverage) {
+      if (entry.status === 'excluded') {
+        expect(entry.reason.length).toBeGreaterThan(20);
+        expect(entry.feature).toBeUndefined();
+      } else {
+        expect(entry.feature).toMatch(/^tests\/e2e\/features\/.+\.feature$/);
+        expect(entry.scenario).toBeTruthy();
+      }
+    }
+  });
 });
 ```
 
@@ -323,71 +366,252 @@ Create `tests/e2e/route-coverage.ts`:
 
 ```ts
 type CoveredRoute = {
-    path: string;
-    status: 'app-bdd' | 'storybook-bdd';
-    feature: string;
-    scenario: string;
-    reason?: never;
+  path: string;
+  status: 'app-bdd' | 'storybook-bdd';
+  feature: string;
+  scenario: string;
+  reason?: never;
 };
 
 type ExcludedRoute = {
-    path: string;
-    status: 'excluded';
-    reason: string;
-    feature?: never;
-    scenario?: never;
+  path: string;
+  status: 'excluded';
+  reason: string;
+  feature?: never;
+  scenario?: never;
 };
 
 type PlannedRoute = {
-    path: string;
-    status: 'planned';
-    feature: string;
-    scenario: string;
-    reason?: never;
+  path: string;
+  status: 'planned';
+  feature: string;
+  scenario: string;
+  reason?: never;
 };
 
 export type RouteCoverageEntry = CoveredRoute | ExcludedRoute | PlannedRoute;
 
 export const routeCoverage: RouteCoverageEntry[] = [
-    { path: '/', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Get started public landing story renders the welcome banner' },
-    { path: '/dashboard', status: 'app-bdd', feature: 'tests/e2e/features/auth/login.feature', scenario: 'Authenticated user lands on the dashboard' },
-    { path: '/create-account/*', status: 'app-bdd', feature: 'tests/e2e/features/account/create-account.feature', scenario: 'User creates organisation and contact details' },
-    { path: '/update-organisation/:id', status: 'planned', feature: 'tests/e2e/features/account/manage-account.feature', scenario: 'User updates organisation details' },
-    { path: '/create-contact', status: 'app-bdd', feature: 'tests/e2e/features/account/create-account.feature', scenario: 'User creates organisation and contact details' },
-    { path: '/update-contact', status: 'planned', feature: 'tests/e2e/features/account/manage-account.feature', scenario: 'User updates contact details' },
-    { path: '/success-creating-account', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Account created story renders the success heading' },
-    { path: '/add-branch', status: 'planned', feature: 'tests/e2e/features/account/manage-account.feature', scenario: 'User adds a branch or location' },
-    { path: '/request-for-quote-create', status: 'app-bdd', feature: 'tests/e2e/features/rfq/create-rfq.feature', scenario: 'User completes a new RFQ through all steps' },
-    { path: '/request-for-quote-copy/:id/*', status: 'app-bdd', feature: 'tests/e2e/features/rfq/copy-rfq.feature', scenario: 'User copies a completed RFQ from the dashboard' },
-    { path: '/request-for-quote/:id/view-summary', status: 'planned', feature: 'tests/e2e/features/rfq/manage-rfq.feature', scenario: 'User views a submitted RFQ summary' },
-    { path: '/request-for-quote/:id/*', status: 'app-bdd', feature: 'tests/e2e/features/rfq/create-rfq.feature', scenario: 'User completes a new RFQ through all steps' },
-    { path: '/request-for-quote-success/:id/*', status: 'app-bdd', feature: 'tests/e2e/features/rfq/create-rfq.feature', scenario: 'User completes a new RFQ through all steps' },
-    { path: '/submitted-success/:id', status: 'planned', feature: 'tests/e2e/features/quote/accept-quote.feature', scenario: 'User accepts an available quote through every step' },
-    { path: '/accept-quote-create/:id/*', status: 'app-bdd', feature: 'tests/e2e/features/quote/accept-quote.feature', scenario: 'User starts the quote acceptance wizard' },
-    { path: '/accept-quote/:id/*', status: 'planned', feature: 'tests/e2e/features/quote/accept-quote.feature', scenario: 'User accepts an available quote through every step' },
-    { path: '/quotation/:id/*', status: 'app-bdd', feature: 'tests/e2e/features/quote/accept-quote.feature', scenario: 'User opens an available quote from the dashboard' },
-    { path: '/instrument-reports/:id', status: 'planned', feature: 'tests/e2e/features/reports/measurement-reports.feature', scenario: 'User opens a report from an instrument report history' },
-    { path: '/report/:id', status: 'planned', feature: 'tests/e2e/features/reports/measurement-reports.feature', scenario: 'User opens a report from an instrument report history' },
-    { path: '/services-we-offer', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Services we offer story renders the page heading' },
-    { path: '/sign-in', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Auth sign-in loading story renders the loading message' },
-    { path: '/sign-out', status: 'app-bdd', feature: 'tests/e2e/features/auth/login.feature', scenario: 'User signs out successfully' },
-    { path: '/sign-out-helper', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Auth sign-out completion story renders the close-browser warning' },
-    { path: '/help-guide', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Help guide public journey story renders the back to home action' },
-    { path: '/help-guide/how-to-setup-access', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Help guide access article story renders the heading' },
-    { path: '/help-guide/faqs', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Help guide FAQs story renders the FAQ heading' },
-    { path: '/server-error', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Server error story renders the server error heading' },
-    { path: '/conflict', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Conflict error story renders the conflict heading' },
-    { path: '/forbidden', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Forbidden error story renders the forbidden heading' },
-    { path: '/no-longer-available', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'No longer available error story renders the not available heading' },
-    { path: '/unprocessable', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Unprocessable error story renders the unprocessable heading' },
-    { path: '/precondition-failed', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Precondition failed error story renders the precondition heading' },
-    { path: '/service-unavailable', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Service unavailable error story renders the service unavailable heading' },
-    { path: '/not-found', status: 'storybook-bdd', feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature', scenario: 'Not found error story renders the not found heading' },
-    { path: '*', status: 'excluded', reason: 'The wildcard renders the same NotFound ErrorDisplay already exercised by the explicit /not-found Storybook-BDD scenario.' },
+  {
+    path: '/',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Get started public landing story renders the welcome banner',
+  },
+  {
+    path: '/dashboard',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/auth/login.feature',
+    scenario: 'Authenticated user lands on the dashboard',
+  },
+  {
+    path: '/create-account/*',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/account/create-account.feature',
+    scenario: 'User creates organisation and contact details',
+  },
+  {
+    path: '/update-organisation/:id',
+    status: 'planned',
+    feature: 'tests/e2e/features/account/manage-account.feature',
+    scenario: 'User updates organisation details',
+  },
+  {
+    path: '/create-contact',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/account/create-account.feature',
+    scenario: 'User creates organisation and contact details',
+  },
+  {
+    path: '/update-contact',
+    status: 'planned',
+    feature: 'tests/e2e/features/account/manage-account.feature',
+    scenario: 'User updates contact details',
+  },
+  {
+    path: '/success-creating-account',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Account created story renders the success heading',
+  },
+  {
+    path: '/add-branch',
+    status: 'planned',
+    feature: 'tests/e2e/features/account/manage-account.feature',
+    scenario: 'User adds a branch or location',
+  },
+  {
+    path: '/request-for-quote-create',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/rfq/create-rfq.feature',
+    scenario: 'User completes a new RFQ through all steps',
+  },
+  {
+    path: '/request-for-quote-copy/:id/*',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/rfq/copy-rfq.feature',
+    scenario: 'User copies a completed RFQ from the dashboard',
+  },
+  {
+    path: '/request-for-quote/:id/view-summary',
+    status: 'planned',
+    feature: 'tests/e2e/features/rfq/manage-rfq.feature',
+    scenario: 'User views a submitted RFQ summary',
+  },
+  {
+    path: '/request-for-quote/:id/*',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/rfq/create-rfq.feature',
+    scenario: 'User completes a new RFQ through all steps',
+  },
+  {
+    path: '/request-for-quote-success/:id/*',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/rfq/create-rfq.feature',
+    scenario: 'User completes a new RFQ through all steps',
+  },
+  {
+    path: '/submitted-success/:id',
+    status: 'planned',
+    feature: 'tests/e2e/features/quote/accept-quote.feature',
+    scenario: 'User accepts an available quote through every step',
+  },
+  {
+    path: '/accept-quote-create/:id/*',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/quote/accept-quote.feature',
+    scenario: 'User starts the quote acceptance wizard',
+  },
+  {
+    path: '/accept-quote/:id/*',
+    status: 'planned',
+    feature: 'tests/e2e/features/quote/accept-quote.feature',
+    scenario: 'User accepts an available quote through every step',
+  },
+  {
+    path: '/quotation/:id/*',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/quote/accept-quote.feature',
+    scenario: 'User opens an available quote from the dashboard',
+  },
+  {
+    path: '/instrument-reports/:id',
+    status: 'planned',
+    feature: 'tests/e2e/features/reports/measurement-reports.feature',
+    scenario: 'User opens a report from an instrument report history',
+  },
+  {
+    path: '/report/:id',
+    status: 'planned',
+    feature: 'tests/e2e/features/reports/measurement-reports.feature',
+    scenario: 'User opens a report from an instrument report history',
+  },
+  {
+    path: '/services-we-offer',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Services we offer story renders the page heading',
+  },
+  {
+    path: '/sign-in',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Auth sign-in loading story renders the loading message',
+  },
+  {
+    path: '/sign-out',
+    status: 'app-bdd',
+    feature: 'tests/e2e/features/auth/login.feature',
+    scenario: 'User signs out successfully',
+  },
+  {
+    path: '/sign-out-helper',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario:
+      'Auth sign-out completion story renders the close-browser warning',
+  },
+  {
+    path: '/help-guide',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Help guide public journey story renders the back to home action',
+  },
+  {
+    path: '/help-guide/how-to-setup-access',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Help guide access article story renders the heading',
+  },
+  {
+    path: '/help-guide/faqs',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Help guide FAQs story renders the FAQ heading',
+  },
+  {
+    path: '/server-error',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Server error story renders the server error heading',
+  },
+  {
+    path: '/conflict',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Conflict error story renders the conflict heading',
+  },
+  {
+    path: '/forbidden',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Forbidden error story renders the forbidden heading',
+  },
+  {
+    path: '/no-longer-available',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario:
+      'No longer available error story renders the not available heading',
+  },
+  {
+    path: '/unprocessable',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Unprocessable error story renders the unprocessable heading',
+  },
+  {
+    path: '/precondition-failed',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario:
+      'Precondition failed error story renders the precondition heading',
+  },
+  {
+    path: '/service-unavailable',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario:
+      'Service unavailable error story renders the service unavailable heading',
+  },
+  {
+    path: '/not-found',
+    status: 'storybook-bdd',
+    feature: 'tests/e2e/features/storybook/routes/routes-coverage.feature',
+    scenario: 'Not found error story renders the not found heading',
+  },
+  {
+    path: '*',
+    status: 'excluded',
+    reason:
+      'The wildcard renders the same NotFound ErrorDisplay already exercised by the explicit /not-found Storybook-BDD scenario.',
+  },
 ];
 ```
 
-The `planned` entries keep the uncovered work explicit until Tasks 3-6 convert each one to `app-bdd`. The no-planned-entry closure gate is added in Task 9 after the scenarios exist.
+The `planned` entries keep the uncovered work explicit until Tasks 3-6 convert
+each one to `app-bdd`. The no-planned-entry closure gate is added in Task 9
+after the scenarios exist.
 
 - [ ] **Step 4: Run the test and confirm the registered baseline passes**
 
@@ -397,7 +621,8 @@ Run:
 npm run test:unit -- tests/unit/e2e/routeCoverage.test.ts
 ```
 
-Expected: PASS. All 35 router paths are represented exactly once, including eight explicitly planned routes and the durable wildcard exclusion.
+Expected: PASS. All 35 router paths are represented exactly once, including
+eight explicitly planned routes and the durable wildcard exclusion.
 
 - [ ] **Step 5: Update the coverage matrix wording**
 
@@ -412,7 +637,8 @@ Storybook coverage remains valid for isolated rendering states, while critical
 mutating workflows require `app-bdd` scenarios.
 ```
 
-Do not mark route closure complete while any manifest entry has `status: 'planned'`.
+Do not mark route closure complete while any manifest entry has
+`status: 'planned'`.
 
 - [ ] **Step 6: Commit the traceability baseline**
 
@@ -478,9 +704,9 @@ Add to `ScenarioState`:
 
 ```ts
 export interface ScenarioState {
-    // existing fields
-    acceptedQuoteApplicationId: string;
-    completedAcceptQuoteSteps: Set<string>;
+  // existing fields
+  acceptedQuoteApplicationId: string;
+  completedAcceptQuoteSteps: Set<string>;
 }
 ```
 
@@ -497,76 +723,79 @@ Create `tests/e2e/support/mock-builders.ts` with:
 
 ```ts
 import {
-    FormStepStatus,
-    YesNo,
+  FormStepStatus,
+  YesNo,
 } from '../../../ClientApp/src/api/web-api-client';
 
-export const buildAcceptQuoteStatuses = (crmQuoteRequestId: string) => (
-    ['report-recipient', 'delivery-and-return', 'payment-details', 'summary-and-accept']
-        .map(() => ({
-            status: FormStepStatus.NotStarted,
-            crmQuoteRequestId,
-        }))
-);
+export const buildAcceptQuoteStatuses = (crmQuoteRequestId: string) =>
+  [
+    'report-recipient',
+    'delivery-and-return',
+    'payment-details',
+    'summary-and-accept',
+  ].map(() => ({
+    status: FormStepStatus.NotStarted,
+    crmQuoteRequestId,
+  }));
 
 export const buildReportRecipient = () => ({
-    organisationDifferent: YesNo.No,
-    reportAddressType: 'BusinessStreetAddress',
-    isRecipientMailingAddressSame: true,
-    organisationName: 'Test Organisation',
-    contact: {
-        title: 'Mr',
-        firstName: 'Test',
-        lastName: 'User',
-        email: 'test@example.com',
-        phone: '0200000000',
-        mobile: '0400000000',
-    },
-    businessStreetAddress: {
-        line1: '1 Test Street',
-        suburb: 'Sydney',
-        state: 'NSW',
-        postcode: '2000',
-    },
-    recipientMailingAddress: {},
-    formStepStatus: FormStepStatus.NotStarted,
+  organisationDifferent: YesNo.No,
+  reportAddressType: 'BusinessStreetAddress',
+  isRecipientMailingAddressSame: true,
+  organisationName: 'Test Organisation',
+  contact: {
+    title: 'Mr',
+    firstName: 'Test',
+    lastName: 'User',
+    email: 'test@example.com',
+    phone: '0200000000',
+    mobile: '0400000000',
+  },
+  businessStreetAddress: {
+    line1: '1 Test Street',
+    suburb: 'Sydney',
+    state: 'NSW',
+    postcode: '2000',
+  },
+  recipientMailingAddress: {},
+  formStepStatus: FormStepStatus.NotStarted,
 });
 
 export const buildDeliveryAndReturn = () => ({
-    returnContactType: 'SamePerson',
-    returnAddressType: 'BusinessStreetAddress',
-    returnMethod: 'ClientWillCollect',
-    returnAddress: {
-        line1: '1 Test Street',
-        suburb: 'Sydney',
-        state: 'NSW',
-        postcode: '2000',
-    },
-    formStepStatus: FormStepStatus.NotStarted,
+  returnContactType: 'SamePerson',
+  returnAddressType: 'BusinessStreetAddress',
+  returnMethod: 'ClientWillCollect',
+  returnAddress: {
+    line1: '1 Test Street',
+    suburb: 'Sydney',
+    state: 'NSW',
+    postcode: '2000',
+  },
+  formStepStatus: FormStepStatus.NotStarted,
 });
 
 export const buildPaymentDetails = () => ({
-    invoiceSentTo: 'SamePerson',
-    purchaseOrderNumber: 'PO-12345',
-    formStepStatus: FormStepStatus.NotStarted,
+  invoiceSentTo: 'SamePerson',
+  purchaseOrderNumber: 'PO-12345',
+  formStepStatus: FormStepStatus.NotStarted,
 });
 
 export const buildAcceptQuoteSummary = () => ({
-    associatedDisputes: YesNo.No,
-    acceptTermsAndConditions: false,
-    acceptQuotePreInfo: {
-        quoteRequestIdNum: 'RFQ-2024-000892',
-        crmQuoteId: 'crm-quote-892',
-    },
-    reportRecipient: buildReportRecipient(),
-    deliveryAndReturn: buildDeliveryAndReturn(),
-    paymentDetails: buildPaymentDetails(),
-    requestForQuote: {
-        manufacturer: 'Original Manufacturer',
-        model: 'Original Model',
-        serialNumber: 'SN123456',
-    },
-    formStepStatus: FormStepStatus.NotStarted,
+  associatedDisputes: YesNo.No,
+  acceptTermsAndConditions: false,
+  acceptQuotePreInfo: {
+    quoteRequestIdNum: 'RFQ-2024-000892',
+    crmQuoteId: 'crm-quote-892',
+  },
+  reportRecipient: buildReportRecipient(),
+  deliveryAndReturn: buildDeliveryAndReturn(),
+  paymentDetails: buildPaymentDetails(),
+  requestForQuote: {
+    manufacturer: 'Original Manufacturer',
+    model: 'Original Model',
+    serialNumber: 'SN123456',
+  },
+  formStepStatus: FormStepStatus.NotStarted,
 });
 ```
 
@@ -575,32 +804,43 @@ export const buildAcceptQuoteSummary = () => ({
 In `installMockApi`, add GET/PUT handling for:
 
 ```ts
-await page.route('**/api/accept-quote/*/report-recipient', acceptQuoteStepHandler(buildReportRecipient));
-await page.route('**/api/accept-quote/*/delivery-and-return', acceptQuoteStepHandler(buildDeliveryAndReturn));
-await page.route('**/api/accept-quote/*/payment-details', acceptQuoteStepHandler(buildPaymentDetails));
-await page.route('**/api/accept-quote/*/summary-and-accept', acceptQuoteStepHandler(buildAcceptQuoteSummary));
+await page.route(
+  '**/api/accept-quote/*/report-recipient',
+  acceptQuoteStepHandler(buildReportRecipient)
+);
+await page.route(
+  '**/api/accept-quote/*/delivery-and-return',
+  acceptQuoteStepHandler(buildDeliveryAndReturn)
+);
+await page.route(
+  '**/api/accept-quote/*/payment-details',
+  acceptQuoteStepHandler(buildPaymentDetails)
+);
+await page.route(
+  '**/api/accept-quote/*/summary-and-accept',
+  acceptQuoteStepHandler(buildAcceptQuoteSummary)
+);
 await page.route('**/api/accept-quote/*/submit', async (route) => {
-    scenarioState.requests.set('RFQ-2024-000892', 'Quote accepted');
-    await json(route, {});
+  scenarioState.requests.set('RFQ-2024-000892', 'Quote accepted');
+  await json(route, {});
 });
 ```
 
 Define the handler in the same file:
 
 ```ts
-const acceptQuoteStepHandler = (
-    state: ScenarioState,
-    buildResponse: () => Record<string, unknown>,
-) => async (route: Route) => {
+const acceptQuoteStepHandler =
+  (state: ScenarioState, buildResponse: () => Record<string, unknown>) =>
+  async (route: Route) => {
     if (route.request().method() === 'GET') {
-        await json(route, buildResponse());
-        return;
+      await json(route, buildResponse());
+      return;
     }
 
     const step = new URL(route.request().url()).pathname.split('/').at(-1)!;
     state.completedAcceptQuoteSteps.add(step);
     await json(route, {});
-};
+  };
 ```
 
 Register each route with `acceptQuoteStepHandler(state, builder)`.
@@ -610,42 +850,57 @@ Register each route with `acceptQuoteStepHandler(state, builder)`.
 Add to `tests/e2e/steps/quote.steps.ts`:
 
 ```ts
-Then('the quote acceptance step {string} is displayed', async ({ page }, title: string) => {
-    await expect(page.getByRole('heading', { name: new RegExp(title, 'i') })).toBeVisible();
-});
+Then(
+  'the quote acceptance step {string} is displayed',
+  async ({ page }, title: string) => {
+    await expect(
+      page.getByRole('heading', { name: new RegExp(title, 'i') })
+    ).toBeVisible();
+  }
+);
 
 When('the user completes the report recipient step', async ({ page }) => {
-    await page.getByLabel('Business street address', { exact: true }).check();
+  await page.getByLabel('Business street address', { exact: true }).check();
 });
 
 When('the user completes the delivery and return step', async ({ page }) => {
-    await page.getByLabel('The main contact person for this request', { exact: true }).check();
-    await page.getByLabel('Business street address', { exact: true }).check();
-    await page.getByLabel('Client will collect/pickup when completed', { exact: true }).check();
+  await page
+    .getByLabel('The main contact person for this request', { exact: true })
+    .check();
+  await page.getByLabel('Business street address', { exact: true }).check();
+  await page
+    .getByLabel('Client will collect/pickup when completed', { exact: true })
+    .check();
 });
 
 When('the user completes the payment details step', async ({ page }) => {
-    await page.getByLabel('The main contact person for this request', { exact: true }).check();
+  await page
+    .getByLabel('The main contact person for this request', { exact: true })
+    .check();
 });
 
 When('the user accepts the quote terms', async ({ page }) => {
-    await page.getByLabel(
-        'Yes, on behalf of my organisation, I accept the quotation',
-        { exact: true },
-    ).check();
+  await page
+    .getByLabel('Yes, on behalf of my organisation, I accept the quotation', {
+      exact: true,
+    })
+    .check();
 });
 
 Then('the accepted quote success page is displayed', async ({ page }) => {
-    await expect(page).toHaveURL(/\/submitted-success\/QA-RFQ-2024-000892$/);
-    await expect(page.getByRole('heading', {
-        name: /accepted quote has been successfully submitted/i,
-    })).toBeVisible();
+  await expect(page).toHaveURL(/\/submitted-success\/QA-RFQ-2024-000892$/);
+  await expect(
+    page.getByRole('heading', {
+      name: /accepted quote has been successfully submitted/i,
+    })
+  ).toBeVisible();
 });
 ```
 
 - [ ] **Step 8: Convert quote routes from planned to covered**
 
-In `tests/e2e/route-coverage.ts`, change `/accept-quote/:id/*` and `/submitted-success/:id` to `status: 'app-bdd'`.
+In `tests/e2e/route-coverage.ts`, change `/accept-quote/:id/*` and
+`/submitted-success/:id` to `status: 'app-bdd'`.
 
 - [ ] **Step 9: Verify**
 
@@ -729,33 +984,33 @@ Add to `mock-builders.ts`:
 
 ```ts
 export const buildAccountForm = (branchName = 'Main Branch') => ({
-    id: 1,
-    abn: '00000000000',
-    name: 'Test Organisation',
-    businessOrTradingName: 'Test Organisation Pty Ltd',
-    branchOrLocationName: branchName,
-    businessWebsiteAddress: 'https://example.gov.au',
-    isDefaultOrganisation: true,
-    streetAddress: {
-        line1: '1 Test Street',
-        suburb: 'Sydney',
-        state: 'NSW',
-        postcode: '2000',
-        isManuallyEntered: true,
-    },
-    postalAddressSameAsStreetAddress: true,
-    contact: {},
-    status: FormStepStatus.NotStarted,
+  id: 1,
+  abn: '00000000000',
+  name: 'Test Organisation',
+  businessOrTradingName: 'Test Organisation Pty Ltd',
+  branchOrLocationName: branchName,
+  businessWebsiteAddress: 'https://example.gov.au',
+  isDefaultOrganisation: true,
+  streetAddress: {
+    line1: '1 Test Street',
+    suburb: 'Sydney',
+    state: 'NSW',
+    postcode: '2000',
+    isManuallyEntered: true,
+  },
+  postalAddressSameAsStreetAddress: true,
+  contact: {},
+  status: FormStepStatus.NotStarted,
 });
 
 export const buildContactForm = () => ({
-    title: 'Mr',
-    firstName: 'Test',
-    lastName: 'User',
-    phone: '0200000000',
-    mobile: '0400000000',
-    email: 'test@example.com',
-    formStepStatus: FormStepStatus.NotStarted,
+  title: 'Mr',
+  firstName: 'Test',
+  lastName: 'User',
+  phone: '0200000000',
+  mobile: '0400000000',
+  email: 'test@example.com',
+  formStepStatus: FormStepStatus.NotStarted,
 });
 ```
 
@@ -765,20 +1020,21 @@ Add handlers for:
 
 ```ts
 await page.route('**/api/forms/accounts/1', async (route) => {
-    await json(route, { id: 1, stepValues: buildAccountForm() });
+  await json(route, { id: 1, stepValues: buildAccountForm() });
 });
 await page.route('**/api/forms/accounts/branch', async (route) => {
-    await json(route, { id: 1, stepValues: buildAccountForm('') });
+  await json(route, { id: 1, stepValues: buildAccountForm('') });
 });
 await page.route('**/api/forms/accounts/branch-add/complete', async (route) => {
-    await json(route, {});
+  await json(route, {});
 });
 await page.route('**/api/contact/usercontact**', async (route) => {
-    await json(route, buildContactForm());
+  await json(route, buildContactForm());
 });
 ```
 
-Keep the existing PUT handlers for `/api/forms/accounts/create-account/complete` and `/api/contact/save-contact`, but record submitted bodies in `ScenarioState`:
+Keep the existing PUT handlers for `/api/forms/accounts/create-account/complete`
+and `/api/contact/save-contact`, but record submitted bodies in `ScenarioState`:
 
 ```ts
 lastAccountSubmission?: Record<string, unknown>;
@@ -794,51 +1050,82 @@ import { expect } from '@playwright/test';
 import { Given, Then, When } from '../support/fixtures';
 import { waitForAppReady } from './common.steps';
 
-Given('the user opens organisation {int} for editing', async ({ page }, id: number) => {
+Given(
+  'the user opens organisation {int} for editing',
+  async ({ page }, id: number) => {
     await page.goto(`/update-organisation/${id}`);
-    await expect(page.getByRole('heading', { name: 'Organisation', exact: true })).toBeVisible();
-});
+    await expect(
+      page.getByRole('heading', { name: 'Organisation', exact: true })
+    ).toBeVisible();
+  }
+);
 
 Given('the user opens their contact details for editing', async ({ page }) => {
-    await page.goto('/update-contact/1');
-    await expect(page.getByRole('heading', { name: 'My contact details', exact: true })).toBeVisible();
+  await page.goto('/update-contact/1');
+  await expect(
+    page.getByRole('heading', { name: 'My contact details', exact: true })
+  ).toBeVisible();
 });
 
 Given('the user opens the add branch form', async ({ page }) => {
-    await page.goto('/add-branch');
-    await expect(page.getByText('Add branch or location', { exact: true })).toBeVisible();
+  await page.goto('/add-branch');
+  await expect(
+    page.getByText('Add branch or location', { exact: true })
+  ).toBeVisible();
 });
 
-When('the user changes the business website to {string}', async ({ page }, value: string) => {
-    await page.getByLabel('Business website address (optional)', { exact: true }).fill(value);
-});
+When(
+  'the user changes the business website to {string}',
+  async ({ page }, value: string) => {
+    await page
+      .getByLabel('Business website address (optional)', { exact: true })
+      .fill(value);
+  }
+);
 
-When('the user changes the business phone to {string}', async ({ page }, value: string) => {
+When(
+  'the user changes the business phone to {string}',
+  async ({ page }, value: string) => {
     await page.getByLabel('Business phone', { exact: true }).fill(value);
-});
+  }
+);
 
-When('the user enters branch name {string}', async ({ page }, value: string) => {
-    await page.getByLabel('Branch or Location name (optional)', { exact: true }).fill(value);
-});
+When(
+  'the user enters branch name {string}',
+  async ({ page }, value: string) => {
+    await page
+      .getByLabel('Branch or Location name (optional)', { exact: true })
+      .fill(value);
+  }
+);
 
 When('the user submits the account maintenance form', async ({ page }) => {
-    await page.getByRole('button', { name: 'Save and close', exact: true }).click();
-    await page.getByRole('dialog').getByRole('button', { name: 'Yes, submit', exact: true }).click();
-    await waitForAppReady(page);
+  await page
+    .getByRole('button', { name: 'Save and close', exact: true })
+    .click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Yes, submit', exact: true })
+    .click();
+  await waitForAppReady(page);
 });
 
-Then('the success notification {string} is displayed', async ({ page }, message: string) => {
+Then(
+  'the success notification {string} is displayed',
+  async ({ page }, message: string) => {
     await expect(page.getByRole('alert')).toContainText(message);
-});
+  }
+);
 
 Then('the branch selector is displayed', async ({ page }) => {
-    await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('dialog')).toBeVisible();
 });
 ```
 
 - [ ] **Step 7: Convert account maintenance routes to covered**
 
-Change `/update-organisation/:id`, `/update-contact`, and `/add-branch` to `status: 'app-bdd'`.
+Change `/update-organisation/:id`, `/update-contact`, and `/add-branch` to
+`status: 'app-bdd'`.
 
 - [ ] **Step 8: Verify**
 
@@ -968,41 +1255,61 @@ Use this summary payload:
 
 - [ ] **Step 6: Implement RFQ lifecycle steps**
 
-Create `tests/e2e/steps/rfq-lifecycle.steps.ts` with exact URL and heading assertions:
+Create `tests/e2e/steps/rfq-lifecycle.steps.ts` with exact URL and heading
+assertions:
 
 ```ts
-Given('submitted RFQ {string} is available', async ({ scenarioState }, id: string) => {
+Given(
+  'submitted RFQ {string} is available',
+  async ({ scenarioState }, id: string) => {
     scenarioState.activeReferenceId = id;
     scenarioState.rfqSummaries.set(id, buildRfqSummary());
-});
+  }
+);
 
-When('the user opens the submitted RFQ summary', async ({ page, scenarioState }) => {
-    await page.goto(`/request-for-quote/${scenarioState.activeReferenceId}/view-summary`);
-});
+When(
+  'the user opens the submitted RFQ summary',
+  async ({ page, scenarioState }) => {
+    await page.goto(
+      `/request-for-quote/${scenarioState.activeReferenceId}/view-summary`
+    );
+  }
+);
 
 Then('the submitted RFQ summary is displayed', async ({ page }) => {
-    await expect(page).toHaveURL(/\/view-summary$/);
-    await expect(page.getByRole('heading', { name: /Summary/i })).toBeVisible();
+  await expect(page).toHaveURL(/\/view-summary$/);
+  await expect(page.getByRole('heading', { name: /Summary/i })).toBeVisible();
 });
 
-Then('the summary contains manufacturer {string}', async ({ page }, value: string) => {
+Then(
+  'the summary contains manufacturer {string}',
+  async ({ page }, value: string) => {
     await expect(page.getByText(value, { exact: true })).toBeVisible();
-});
+  }
+);
 
-When('the user changes the manufacturer to {string}', async ({ page }, value: string) => {
+When(
+  'the user changes the manufacturer to {string}',
+  async ({ page }, value: string) => {
     await page.getByLabel('Manufacturer', { exact: true }).fill(value);
-});
+  }
+);
 
 When('the user clears the manufacturer', async ({ page }) => {
-    await page.getByLabel('Manufacturer', { exact: true }).clear();
+  await page.getByLabel('Manufacturer', { exact: true }).clear();
 });
 
-Then('the validation message {string} is displayed', async ({ page }, message: string) => {
+Then(
+  'the validation message {string} is displayed',
+  async ({ page }, message: string) => {
     await expect(page.getByText(message, { exact: true })).toBeVisible();
-});
+  }
+);
 ```
 
-Implement draft setup by setting step statuses to `Saved`, navigating to the real `/request-for-quote/{id}/instrument-and-request` route, and asserting persisted state from `ScenarioState`; do not navigate directly in action steps.
+Implement draft setup by setting step statuses to `Saved`, navigating to the
+real `/request-for-quote/{id}/instrument-and-request` route, and asserting
+persisted state from `ScenarioState`; do not navigate directly in action steps.
 
 - [ ] **Step 7: Convert the submitted-summary route to covered**
 
@@ -1081,34 +1388,36 @@ Add:
 
 ```ts
 export const buildInstrumentReports = () => ({
-    items: [{
-        tmasTcReportName: 'MR-2024-001',
-        tmasTcReportDate: new Date('2026-06-01T00:00:00Z'),
-        tmasMeasurementReportCertificateRequired: 'Measurement report',
-        tmasMeasurementCategoryName: 'Mass',
-        tmasStatus: 'Report issued',
-        tmasTcQuoteName: 'RFQ-REPORT-0001',
-        tmasPortalRequestId: 'RFQ-2024-000321',
-    }],
-    currentPage: 1,
-    totalPages: 1,
-    totalCount: 1,
+  items: [
+    {
+      tmasTcReportName: 'MR-2024-001',
+      tmasTcReportDate: new Date('2026-06-01T00:00:00Z'),
+      tmasMeasurementReportCertificateRequired: 'Measurement report',
+      tmasMeasurementCategoryName: 'Mass',
+      tmasStatus: 'Report issued',
+      tmasTcQuoteName: 'RFQ-REPORT-0001',
+      tmasPortalRequestId: 'RFQ-2024-000321',
+    },
+  ],
+  currentPage: 1,
+  totalPages: 1,
+  totalCount: 1,
 });
 
 export const buildMeasurementReport = (referenceId: string) => ({
-    quoteRequestIdNum: referenceId,
-    manufacturer: 'Original Manufacturer',
-    model: 'Original Model',
-    serialNumber: 'SN123456',
-    instrumentArtefactToBeCalibrated: 'Precision Balance',
-    servicesOffered: 'Calibration service',
-    measurementReportCertificateRequired: 'Measurement report',
-    nmiTestOfficerName: 'NMI Test Officer',
-    report: {
-        reportId: 'MR-2024-001',
-        dateIssued: new Date('2026-06-01T00:00:00Z'),
-        invoiceNumber: 'INV-001',
-    },
+  quoteRequestIdNum: referenceId,
+  manufacturer: 'Original Manufacturer',
+  model: 'Original Model',
+  serialNumber: 'SN123456',
+  instrumentArtefactToBeCalibrated: 'Precision Balance',
+  servicesOffered: 'Calibration service',
+  measurementReportCertificateRequired: 'Measurement report',
+  nmiTestOfficerName: 'NMI Test Officer',
+  report: {
+    reportId: 'MR-2024-001',
+    dateIssued: new Date('2026-06-01T00:00:00Z'),
+    invoiceNumber: 'INV-001',
+  },
 });
 ```
 
@@ -1117,54 +1426,82 @@ export const buildMeasurementReport = (referenceId: string) => ({
 Add:
 
 ```ts
-await page.route('**/api/dashboard/get-dashboard-instrument-artefact-reports?**', async (route) => {
+await page.route(
+  '**/api/dashboard/get-dashboard-instrument-artefact-reports?**',
+  async (route) => {
     await json(route, buildInstrumentReports());
-});
+  }
+);
 
 await page.route('**/api/dashboard/get-quote-report-pdf?**', async (route) => {
-    if (state.failures.has('report-pdf')) {
-        await route.fulfill({ status: 503, contentType: 'application/json', body: '{}' });
-        return;
-    }
-    await json(route, { fileName: 'MR-2024-001.pdf', fileData: 'JVBERi0xLjQ=' });
+  if (state.failures.has('report-pdf')) {
+    await route.fulfill({
+      status: 503,
+      contentType: 'application/json',
+      body: '{}',
+    });
+    return;
+  }
+  await json(route, { fileName: 'MR-2024-001.pdf', fileData: 'JVBERi0xLjQ=' });
 });
 ```
 
-Use the existing quote-details-by-reference handler to return `buildMeasurementReport(referenceId)` for report IDs.
+Use the existing quote-details-by-reference handler to return
+`buildMeasurementReport(referenceId)` for report IDs.
 
 - [ ] **Step 6: Implement report steps**
 
 Create `tests/e2e/steps/report.steps.ts`:
 
 ```ts
-Given('instrument {string} has an issued report', async ({ scenarioState }, name: string) => {
+Given(
+  'instrument {string} has an issued report',
+  async ({ scenarioState }, name: string) => {
     scenarioState.activeReferenceId = name;
-});
+  }
+);
 
-When('the user opens the instrument report history', async ({ page, scenarioState }) => {
-    await page.goto(`/instrument-reports/${encodeURIComponent(scenarioState.activeReferenceId!)}`);
-});
+When(
+  'the user opens the instrument report history',
+  async ({ page, scenarioState }) => {
+    await page.goto(
+      `/instrument-reports/${encodeURIComponent(scenarioState.activeReferenceId!)}`
+    );
+  }
+);
 
 Then('the instrument report history is displayed', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'Measurement reports', exact: true }).first()).toBeVisible();
-    await expect(page.getByRole('table', { name: /Measurement reports history/i })).toBeVisible();
+  await expect(
+    page
+      .getByRole('heading', { name: 'Measurement reports', exact: true })
+      .first()
+  ).toBeVisible();
+  await expect(
+    page.getByRole('table', { name: /Measurement reports history/i })
+  ).toBeVisible();
 });
 
-When('the user follows the report link {string}', async ({ page }, name: string) => {
+When(
+  'the user follows the report link {string}',
+  async ({ page }, name: string) => {
     await page.getByRole('link', { name, exact: true }).click();
-});
+  }
+);
 
 Then('report {string} is displayed', async ({ page }, reportId: string) => {
-    await expect(page).toHaveURL(/\/report\/RFQ-REPORT-0001$/);
-    await expect(page.getByText(reportId, { exact: true })).toBeVisible();
+  await expect(page).toHaveURL(/\/report\/RFQ-REPORT-0001$/);
+  await expect(page.getByText(reportId, { exact: true })).toBeVisible();
 });
 
-Given('report PDF retrieval will fail with status {int}', async ({ scenarioState }, status: number) => {
+Given(
+  'report PDF retrieval will fail with status {int}',
+  async ({ scenarioState }, status: number) => {
     scenarioState.failures.set('report-pdf', { status });
-});
+  }
+);
 
 Then('the report file error notification is displayed', async ({ page }) => {
-    await expect(page.getByRole('alert')).toBeVisible();
+  await expect(page.getByRole('alert')).toBeVisible();
 });
 ```
 
@@ -1250,14 +1587,13 @@ Create `tests/e2e/support/mock-failure.ts`:
 
 ```ts
 export interface MockFailure {
-    status: number;
-    body?: Record<string, unknown>;
-    once?: boolean;
+  status: number;
+  body?: Record<string, unknown>;
+  once?: boolean;
 }
 
-export const failureKey = (method: string, pathname: string) => (
-    `${method.toUpperCase()} ${pathname}`
-);
+export const failureKey = (method: string, pathname: string) =>
+  `${method.toUpperCase()} ${pathname}`;
 ```
 
 Change `ScenarioState.failures` to:
@@ -1271,21 +1607,26 @@ failures: Map<string, MockFailure>;
 At the start of each mutable route handler:
 
 ```ts
-const key = failureKey(route.request().method(), new URL(route.request().url()).pathname);
+const key = failureKey(
+  route.request().method(),
+  new URL(route.request().url()).pathname
+);
 const failure = state.failures.get(key);
 if (failure) {
-    if (failure.once !== false) {
-        state.failures.delete(key);
-    }
-    await route.fulfill({
+  if (failure.once !== false) {
+    state.failures.delete(key);
+  }
+  await route.fulfill({
+    status: failure.status,
+    contentType: 'application/json',
+    body: JSON.stringify(
+      failure.body ?? {
         status: failure.status,
-        contentType: 'application/json',
-        body: JSON.stringify(failure.body ?? {
-            status: failure.status,
-            title: 'Configured E2E failure',
-        }),
-    });
-    return;
+        title: 'Configured E2E failure',
+      }
+    ),
+  });
+  return;
 }
 ```
 
@@ -1294,40 +1635,50 @@ if (failure) {
 Create `tests/e2e/steps/failure.steps.ts`:
 
 ```ts
-Given('saving the RFQ instrument step will fail with status {int}', async ({
-    scenarioState,
-}, status: number) => {
+Given(
+  'saving the RFQ instrument step will fail with status {int}',
+  async ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
-        failureKey('PUT', '/api/request-for-quote/RFQ-DRAFT-FAIL/instrument-and-request'),
-        { status },
+      failureKey(
+        'PUT',
+        '/api/request-for-quote/RFQ-DRAFT-FAIL/instrument-and-request'
+      ),
+      { status }
     );
-});
+  }
+);
 
-Given('saving the organisation will fail with status {int}', async ({
-    scenarioState,
-}, status: number) => {
+Given(
+  'saving the organisation will fail with status {int}',
+  async ({ scenarioState }, status: number) => {
     scenarioState.failures.set(
-        failureKey('PUT', '/api/forms/accounts/create-account/complete'),
-        {
-            status,
-            body: { status, title: 'Precondition Failed' },
-        },
+      failureKey('PUT', '/api/forms/accounts/create-account/complete'),
+      {
+        status,
+        body: { status, title: 'Precondition Failed' },
+      }
     );
-});
+  }
+);
 
 Then('the manufacturer remains {string}', async ({ page }, value: string) => {
-    await expect(page.getByLabel('Manufacturer', { exact: true })).toHaveValue(value);
+  await expect(page.getByLabel('Manufacturer', { exact: true })).toHaveValue(
+    value
+  );
 });
 
 Then('an unsaved changes dialog is displayed', async ({ page }) => {
-    await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByRole('dialog')).toBeVisible();
 });
 
 When('the user cancels leaving the form', async ({ page }) => {
-    await page.getByRole('dialog').getByRole('button', {
-        name: 'Cancel',
-        exact: true,
-    }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', {
+      name: 'Cancel',
+      exact: true,
+    })
+    .click();
 });
 ```
 
@@ -1340,7 +1691,8 @@ npx bddgen -c playwright.config.ts
 npx playwright test -c playwright.config.ts --project=app-bdd tests/e2e/features/resilience/workflow-errors.feature
 ```
 
-Expected: 4 scenarios pass and entered values remain visible after failed mutations.
+Expected: 4 scenarios pass and entered values remain visible after failed
+mutations.
 
 - [ ] **Step 7: Commit**
 
@@ -1368,22 +1720,22 @@ import { describe, expect, it } from 'vitest';
 
 const repoRoot = path.resolve(__dirname, '..', '..', '..');
 const steps = fs.readFileSync(
-    path.join(repoRoot, 'tests', 'e2e', 'steps', 'storybook.steps.ts'),
-    'utf8',
+  path.join(repoRoot, 'tests', 'e2e', 'steps', 'storybook.steps.ts'),
+  'utf8'
 );
 
 describe('Storybook Playwright step quality', () => {
-    it('does not use body-wide text assertions', () => {
-        expect(steps).not.toContain("page.locator('body')");
-    });
+  it('does not use body-wide text assertions', () => {
+    expect(steps).not.toContain("page.locator('body')");
+  });
 
-    it('does not convert failed visibility checks into false', () => {
-        expect(steps).not.toMatch(/isVisible\(\)\.catch\(\(\) => false\)/);
-    });
+  it('does not convert failed visibility checks into false', () => {
+    expect(steps).not.toMatch(/isVisible\(\)\.catch\(\(\) => false\)/);
+  });
 
-    it('does not branch on locator counts for optional assertions', () => {
-        expect(steps).not.toMatch(/if \(count > 0\)/);
-    });
+  it('does not branch on locator counts for optional assertions', () => {
+    expect(steps).not.toMatch(/if \(count > 0\)/);
+  });
 });
 ```
 
@@ -1410,7 +1762,7 @@ with:
 ```ts
 const portalContent = page.locator('.modal, [role="dialog"], [role="alert"]');
 await expect(portalContent.filter({ hasText: text }).first()).toBeVisible({
-    timeout: 10_000,
+  timeout: 10_000,
 });
 ```
 
@@ -1428,8 +1780,12 @@ Replace the optional check with:
 
 ```ts
 Then('the story iframe should be visible', async ({ page }) => {
-    await expect(page.locator('#storybook-root')).toBeVisible({ timeout: 10_000 });
-    await expect(page.getByText('Something went wrong', { exact: false })).toHaveCount(0);
+  await expect(page.locator('#storybook-root')).toBeVisible({
+    timeout: 10_000,
+  });
+  await expect(
+    page.getByText('Something went wrong', { exact: false })
+  ).toHaveCount(0);
 });
 ```
 
@@ -1438,10 +1794,17 @@ Then('the story iframe should be visible', async ({ page }) => {
 Replace count branching with:
 
 ```ts
-Then('the story iframe should not show pagination controls', async ({ page }) => {
-    await expect(page.getByRole('navigation', { name: /pagination/i })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /next page|previous page/i })).toHaveCount(0);
-});
+Then(
+  'the story iframe should not show pagination controls',
+  async ({ page }) => {
+    await expect(
+      page.getByRole('navigation', { name: /pagination/i })
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole('button', { name: /next page|previous page/i })
+    ).toHaveCount(0);
+  }
+);
 ```
 
 - [ ] **Step 6: Replace generic route-story visibility**
@@ -1452,13 +1815,15 @@ For every route scenario that currently ends only with:
 Then the story iframe should be visible
 ```
 
-replace it with a route-specific heading, status, or action assertion. For example:
+replace it with a route-specific heading, status, or action assertion. For
+example:
 
 ```gherkin
 Then the story iframe should contain "Currently managing"
 ```
 
-Do not change component smoke scenarios where visibility is itself the behavior under test.
+Do not change component smoke scenarios where visibility is itself the behavior
+under test.
 
 - [ ] **Step 7: Verify**
 
@@ -1495,7 +1860,9 @@ Add this test to `tests/unit/e2e/routeCoverage.test.ts`:
 
 ```ts
 it('does not retain temporary planned entries', () => {
-    expect(routeCoverage.filter((entry) => entry.status === 'planned')).toEqual([]);
+  expect(routeCoverage.filter((entry) => entry.status === 'planned')).toEqual(
+    []
+  );
 });
 ```
 
@@ -1505,7 +1872,9 @@ Run:
 npm run test:unit -- tests/unit/e2e/routeCoverage.test.ts
 ```
 
-Expected: PASS. If it fails, convert only routes backed by an implemented scenario to `app-bdd`; otherwise retain an explicit durable exclusion with a concrete reason.
+Expected: PASS. If it fails, convert only routes backed by an implemented
+scenario to `app-bdd`; otherwise retain an explicit durable exclusion with a
+concrete reason.
 
 - [ ] **Step 2: Correct CI commands and artifact paths for this checkout**
 
@@ -1539,7 +1908,10 @@ Where `.github/workflows/pr.yml` targets this repository root, use:
     retention-days: 14
 ```
 
-Do not overwrite target-repository monorepo jobs that intentionally run under `apps/portal-spa`; if this workflow belongs to the target monorepo rather than the snapshot, document the mismatch in `docs/TESTING.md` and leave the workflow unchanged.
+Do not overwrite target-repository monorepo jobs that intentionally run under
+`apps/portal-spa`; if this workflow belongs to the target monorepo rather than
+the snapshot, document the mismatch in `docs/TESTING.md` and leave the workflow
+unchanged.
 
 - [ ] **Step 3: Update coverage documentation**
 
@@ -1558,7 +1930,8 @@ This is behavioral route traceability. It is not JavaScript line, function, or
 branch coverage.
 ```
 
-Update scenario counts using fresh command output rather than preserving historical values.
+Update scenario counts using fresh command output rather than preserving
+historical values.
 
 - [ ] **Step 4: Close the process backlog item**
 
@@ -1590,7 +1963,8 @@ npm run test:e2e:app
 npm run test:e2e:storybook
 ```
 
-Expected: all scenarios pass without `@only`, `@skip`, `@fixme`, or unexpected retries.
+Expected: all scenarios pass without `@only`, `@skip`, `@fixme`, or unexpected
+retries.
 
 - [ ] **Step 7: Run the combined command**
 
@@ -1629,16 +2003,16 @@ git commit -m "test: enforce complete playwright bdd traceability"
 
 ### Spec Coverage
 
-| Recommendation | Implemented by |
-| --- | --- |
-| Complete quote acceptance | Task 3 |
-| Cover account maintenance | Task 4 |
-| Complete RFQ lifecycle | Task 5 |
-| Cover measurement reports | Task 6 |
-| Add route coverage enforcement | Tasks 2 and 9 |
-| Separate Playwright projects | Task 1 |
-| Strengthen failure coverage | Task 7 |
-| Remove permissive patterns | Task 8 |
+| Recommendation                 | Implemented by |
+| ------------------------------ | -------------- |
+| Complete quote acceptance      | Task 3         |
+| Cover account maintenance      | Task 4         |
+| Complete RFQ lifecycle         | Task 5         |
+| Cover measurement reports      | Task 6         |
+| Add route coverage enforcement | Tasks 2 and 9  |
+| Separate Playwright projects   | Task 1         |
+| Strengthen failure coverage    | Task 7         |
+| Remove permissive patterns     | Task 8         |
 
 ### Placeholder Scan
 
@@ -1652,18 +2026,19 @@ git commit -m "test: enforce complete playwright bdd traceability"
 
 - `ScenarioState.failures` consistently uses `Map<string, MockFailure>`.
 - API paths match `ClientApp/src/api/web-api-client.ts`.
-- Quote acceptance uses the four current wizard locations:
-  `/report-recipient`, `/delivery-and-return`, `/payment-details`, and
-  `/summary-and-accept`.
+- Quote acceptance uses the four current wizard locations: `/report-recipient`,
+  `/delivery-and-return`, `/payment-details`, and `/summary-and-accept`.
 - Account maintenance uses the current generated-client endpoints:
   `/api/forms/accounts/{OrganisationId}`,
-  `/api/forms/accounts/create-account/complete`,
-  `/api/forms/accounts/branch`,
-  `/api/forms/accounts/branch-add/complete`,
-  `/api/contact/usercontact`, and `/api/contact/save-contact`.
+  `/api/forms/accounts/create-account/complete`, `/api/forms/accounts/branch`,
+  `/api/forms/accounts/branch-add/complete`, `/api/contact/usercontact`, and
+  `/api/contact/save-contact`.
 - RFQ and report route paths match `ClientApp/src/App.tsx`.
 
 ### Residual Risks
 
-- The checked-in `.github/workflows/pr.yml` appears to describe a target monorepo rather than this source snapshot. Task 9 explicitly prevents overwriting intentional target-repository jobs.
-- API mocks validate frontend behavior against captured generated-client contracts, not a live NMI backend or Azure AD B2C tenant.
+- The checked-in `.github/workflows/pr.yml` appears to describe a target
+  monorepo rather than this source snapshot. Task 9 explicitly prevents
+  overwriting intentional target-repository jobs.
+- API mocks validate frontend behavior against captured generated-client
+  contracts, not a live NMI backend or Azure AD B2C tenant.

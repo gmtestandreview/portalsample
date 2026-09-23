@@ -8,8 +8,8 @@ specification. It must **never be edited manually** — all changes will be
 overwritten on the next regeneration.
 
 The hand-authored `AuthorizedApiBase` class (lines 10–35) is placed **above**
-the auto-generated block. Verify after every regeneration that it is still present
-and unmodified.
+the auto-generated block. Verify after every regeneration that it is still
+present and unmodified.
 
 ## When to regenerate
 
@@ -112,9 +112,9 @@ generated client via dependency injection.
 
 ## Files involved
 
-| File | Role |
-| --- | --- |
-| `ClientApp/src/api/web-api-client.ts` | Generated output — do not edit manually |
-| `AuthorizedApiBase` (lines 10–35) | Hand-authored base class — must survive every regeneration |
-| `.storybook/msw-handlers.ts` | Update when new endpoints are added |
+| File                                                      | Role                                                                                                 |
+| --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `ClientApp/src/api/web-api-client.ts`                     | Generated output — do not edit manually                                                              |
+| `AuthorizedApiBase` (lines 10–35)                         | Hand-authored base class — must survive every regeneration                                           |
+| `.storybook/msw-handlers.ts`                              | Update when new endpoints are added                                                                  |
 | `docs/adr/2026-05-30-acquire-token-silent-interceptor.md` | ADR for centralising token acquisition; relevant when redesigning `AuthorizedApiBase` in the rebuild |

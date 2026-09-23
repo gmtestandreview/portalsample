@@ -1,36 +1,60 @@
 # useClipboard
 
-Handles clipboard interactions for a focusable element. Supports items of multiple
-data types, and integrates with the operating system native clipboard.
+Handles clipboard interactions for a focusable element. Supports items of
+multiple data types, and integrates with the operating system native clipboard.
 
 ## Introduction
 
-Copy and paste is a common way to transfer data between locations, either within or between apps. Browsers support copy and paste of selected text content by default, but rich objects with custom data can also be copied and pasted using the [clipboard events](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent) API. For example, an app could support copying and pasting a selected card representing a rich object to a new location, or allow a user to paste files from their device to upload them. This can provide a keyboard accessible alternative to drag and drop.
+Copy and paste is a common way to transfer data between locations, either within
+or between apps. Browsers support copy and paste of selected text content by
+default, but rich objects with custom data can also be copied and pasted using
+the
+[clipboard events](https://developer.mozilla.org/en-US/docs/Web/API/ClipboardEvent)
+API. For example, an app could support copying and pasting a selected card
+representing a rich object to a new location, or allow a user to paste files
+from their device to upload them. This can provide a keyboard accessible
+alternative to drag and drop.
 
-The `useClipboard` hook provides a simple way to implement copy and paste for a focusable element. When focused, users can press keyboard shortcuts like <Keyboard>⌘C</Keyboard> and <Keyboard>⌘V</Keyboard>, or even use the browser's "Copy" and "Paste" menu commands, to trigger clipboard events. Multiple items can be copied and pasted at once, each represented in one or more different data formats. Because it uses native browser APIs under the hood, copy and paste uses the operating system clipboard, which means it works between applications (e.g. Finder, Windows Explorer, a native email app, etc.) in addition to within the app.
+The `useClipboard` hook provides a simple way to implement copy and paste for a
+focusable element. When focused, users can press keyboard shortcuts like
+<Keyboard>⌘C</Keyboard> and <Keyboard>⌘V</Keyboard>, or even use the browser's
+"Copy" and "Paste" menu commands, to trigger clipboard events. Multiple items
+can be copied and pasted at once, each represented in one or more different data
+formats. Because it uses native browser APIs under the hood, copy and paste uses
+the operating system clipboard, which means it works between applications (e.g.
+Finder, Windows Explorer, a native email app, etc.) in addition to within the
+app.
 
 ## Example
 
-This example shows a simple focusable element which supports copying a string when focused, and another element which supports pasting plain text.
+This example shows a simple focusable element which supports copying a string
+when focused, and another element which supports pasting plain text.
 
 ```tsx
 'use client';
 import React from 'react';
-import {useClipboard, type TextDropItem} from 'react-aria/useClipboard';
+import { useClipboard, type TextDropItem } from 'react-aria/useClipboard';
 import './useClipboardExample.css';
 import 'vanilla-starter/theme.css';
 
 function Copyable() {
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'Hello world'
-      }];
-    }
+      return [
+        {
+          'text/plain': 'Hello world',
+        },
+      ];
+    },
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Copyable text">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Copyable text'
+    >
       Hello world
       <kbd>⌘C</kbd>
     </div>
@@ -39,19 +63,27 @@ function Copyable() {
 
 function Pasteable() {
   let [pasted, setPasted] = React.useState<any[] | string | null>(null);
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter((item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain'))
+          .filter(
+            (item): item is TextDropItem =>
+              item.kind === 'text' && item.types.has('text/plain')
+          )
           .map((item) => item.getText('text/plain'))
       );
       setPasted(pasted.join('\n'));
-    }
+    },
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Paste target">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Paste target'
+    >
       {pasted || 'Paste here'}
       <kbd>⌘V</kbd>
     </div>
@@ -61,50 +93,72 @@ function Pasteable() {
 <div>
   <Copyable />
   <Pasteable />
-</div>
+</div>;
 ```
 
 ## Copy data
 
-Data to copy can be provided in multiple formats at once. This allows the destination where the user pastes to choose the data that it understands.  For example, you could serialize a complex object as JSON in a custom format for use within your own application, and also provide plain text and/or rich HTML fallbacks that can be used when a user pastes in an external application (e.g. an email message).
+Data to copy can be provided in multiple formats at once. This allows the
+destination where the user pastes to choose the data that it understands. For
+example, you could serialize a complex object as JSON in a custom format for use
+within your own application, and also provide plain text and/or rich HTML
+fallbacks that can be used when a user pastes in an external application (e.g.
+an email message).
 
-This can be done by returning multiple keys for an item from the `getItems` function. Types can either be a standard [mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) for interoperability with external applications, or a custom string for use within your own app.
+This can be done by returning multiple keys for an item from the `getItems`
+function. Types can either be a standard
+[mime type](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
+for interoperability with external applications, or a custom string for use
+within your own app.
 
-In addition to providing items in multiple formats, you can also return multiple drag items from `getItems` to transfer multiple objects in a single copy and paste operation.
+In addition to providing items in multiple formats, you can also return multiple
+drag items from `getItems` to transfer multiple objects in a single copy and
+paste operation.
 
-This example copies two items, each of which contains representations as plain text, HTML, and a custom app-specific data format. Pasting on the target will use the custom data format to render formatted items. If you paste in an external application supporting rich text, the HTML representation will be used. Dropping in a text editor will use the plain text format.
+This example copies two items, each of which contains representations as plain
+text, HTML, and a custom app-specific data format. Pasting on the target will
+use the custom data format to render formatted items. If you paste in an
+external application supporting rich text, the HTML representation will be used.
+Dropping in a text editor will use the plain text format.
 
 ```tsx
 'use client';
 import React from 'react';
-import {useClipboard, type TextDropItem} from 'react-aria/useClipboard';
+import { useClipboard, type TextDropItem } from 'react-aria/useClipboard';
 
 function Copyable() {
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'hello world',
-        'text/html': '<strong>hello world</strong>',
-        'my-app-custom-type': JSON.stringify({
-          message: 'hello world',
-          style: 'bold'
-        })
-      }, {
-        'text/plain': 'foo bar',
-        'text/html': '<em>foo bar</em>',
-        'my-app-custom-type': JSON.stringify({
-          message: 'foo bar',
-          style: 'italic'
-        })
-      }];
-    }
+      return [
+        {
+          'text/plain': 'hello world',
+          'text/html': '<strong>hello world</strong>',
+          'my-app-custom-type': JSON.stringify({
+            message: 'hello world',
+            style: 'bold',
+          }),
+        },
+        {
+          'text/plain': 'foo bar',
+          'text/html': '<em>foo bar</em>',
+          'my-app-custom-type': JSON.stringify({
+            message: 'foo bar',
+            style: 'italic',
+          }),
+        },
+      ];
+    },
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps}>
+    <div role='textbox' tabIndex={0} {...clipboardProps}>
       <div>
-        <div><strong>hello world</strong></div>
-        <div><em>foo bar</em></div>
+        <div>
+          <strong>hello world</strong>
+        </div>
+        <div>
+          <em>foo bar</em>
+        </div>
       </div>
       <kbd>⌘C</kbd>
     </div>
@@ -113,24 +167,29 @@ function Copyable() {
 
 function Pasteable() {
   let [pasted, setPasted] = React.useState<any[] | string | null>(null);
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter((item): item is TextDropItem => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
+          .filter(
+            (item): item is TextDropItem =>
+              item.kind === 'text' &&
+              (item.types.has('text/plain') ||
+                item.types.has('my-app-custom-type'))
+          )
           .map(async (item) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
-              return {message: await item.getText('text/plain')};
+              return { message: await item.getText('text/plain') };
             }
           })
       );
       setPasted(pasted);
-    }
+    },
   });
 
-  let message: React.ReactElement[] = [<div key="placeholder">Paste here</div>];
+  let message: React.ReactElement[] = [<div key='placeholder'>Paste here</div>];
   if (pasted && Array.isArray(pasted)) {
     message = pasted.map((d, i) => {
       let message = d.message;
@@ -144,7 +203,12 @@ function Pasteable() {
   }
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Rich text paste target">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Rich text paste target'
+    >
       <div>{message || 'Paste here'}</div>
       <kbd>⌘V</kbd>
     </div>
@@ -154,12 +218,13 @@ function Pasteable() {
 <div>
   <Copyable />
   <Pasteable />
-</div>
+</div>;
 ```
 
 ## Paste data
 
-`useClipboard` allows users to paste one or more items, each of which contains data to be pasted. There are three kinds of items:
+`useClipboard` allows users to paste one or more items, each of which contains
+data to be pasted. There are three kinds of items:
 
 - `text` – represents data inline as a string in one or more formats
 - `file` – references a file on the user's device
@@ -167,41 +232,62 @@ function Pasteable() {
 
 ### Text
 
-A `TextDropItem` represents textual data in one or more different formats. These may be either standard [mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types) or custom app-specific formats. Representing data in multiple formats allows drop targets both within and outside an application to choose data in a format that they understand. For example, a complex object may be serialized in a custom format for use within an application, with fallbacks in plain text and/or rich HTML that can be used when a user drops data from an external application.
+A `TextDropItem` represents textual data in one or more different formats. These
+may be either standard
+[mime types](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types)
+or custom app-specific formats. Representing data in multiple formats allows
+drop targets both within and outside an application to choose data in a format
+that they understand. For example, a complex object may be serialized in a
+custom format for use within an application, with fallbacks in plain text and/or
+rich HTML that can be used when a user drops data from an external application.
 
-The example below works with the above `Copyable` example using a custom app-specific data format to transfer rich data. If no such data is available, it falls back to pasting plain text data.
+The example below works with the above `Copyable` example using a custom
+app-specific data format to transfer rich data. If no such data is available, it
+falls back to pasting plain text data.
 
 ```tsx
 'use client';
 import React from 'react';
-import {useClipboard, type TextDropItem} from 'react-aria/useClipboard';
+import { useClipboard, type TextDropItem } from 'react-aria/useClipboard';
 
 function Copyable() {
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'hello world',
-        'text/html': '<strong>hello world</strong>',
-        'my-app-custom-type': JSON.stringify({
-          message: 'hello world',
-          style: 'bold'
-        })
-      }, {
-        'text/plain': 'foo bar',
-        'text/html': '<em>foo bar</em>',
-        'my-app-custom-type': JSON.stringify({
-          message: 'foo bar',
-          style: 'italic'
-        })
-      }];
-    }
+      return [
+        {
+          'text/plain': 'hello world',
+          'text/html': '<strong>hello world</strong>',
+          'my-app-custom-type': JSON.stringify({
+            message: 'hello world',
+            style: 'bold',
+          }),
+        },
+        {
+          'text/plain': 'foo bar',
+          'text/html': '<em>foo bar</em>',
+          'my-app-custom-type': JSON.stringify({
+            message: 'foo bar',
+            style: 'italic',
+          }),
+        },
+      ];
+    },
   });
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Rich text to copy">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Rich text to copy'
+    >
       <div>
-        <div><strong>hello world</strong></div>
-        <div><em>foo bar</em></div>
+        <div>
+          <strong>hello world</strong>
+        </div>
+        <div>
+          <em>foo bar</em>
+        </div>
       </div>
       <kbd>⌘C</kbd>
     </div>
@@ -210,24 +296,29 @@ function Copyable() {
 
 function Pasteable() {
   let [pasted, setPasted] = React.useState<any[] | string | null>(null);
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter((item): item is TextDropItem => item.kind === 'text' && (item.types.has('text/plain') || item.types.has('my-app-custom-type')))
+          .filter(
+            (item): item is TextDropItem =>
+              item.kind === 'text' &&
+              (item.types.has('text/plain') ||
+                item.types.has('my-app-custom-type'))
+          )
           .map(async (item) => {
             if (item.types.has('my-app-custom-type')) {
               return JSON.parse(await item.getText('my-app-custom-type'));
             } else {
-              return {message: await item.getText('text/plain')};
+              return { message: await item.getText('text/plain') };
             }
           })
       );
       setPasted(pasted);
-    }
+    },
   });
 
-  let message: React.ReactElement[] = [<div key="placeholder">Paste here</div>];
+  let message: React.ReactElement[] = [<div key='placeholder'>Paste here</div>];
   if (pasted && Array.isArray(pasted)) {
     message = pasted.map((d, i) => {
       let message = d.message;
@@ -241,7 +332,12 @@ function Pasteable() {
   }
 
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Rich text paste target">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Rich text paste target'
+    >
       <div>{message || 'Paste here'}</div>
       <kbd>⌘V</kbd>
     </div>
@@ -251,32 +347,54 @@ function Pasteable() {
 <div>
   <Copyable />
   <Pasteable />
-</div>
+</div>;
 ```
 
 ### Files
 
-A `FileDropItem` references a file on the user's device. It includes the name and mime type of the file, and methods to read the contents as plain text, or retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File) object which can be attached to form data for uploading.
-This example accepts JPEG and PNG image files, and renders them by creating a local [object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
+A `FileDropItem` references a file on the user's device. It includes the name
+and mime type of the file, and methods to read the contents as plain text, or
+retrieve a native [File](https://developer.mozilla.org/en-US/docs/Web/API/File)
+object which can be attached to form data for uploading. This example accepts
+JPEG and PNG image files, and renders them by creating a local
+[object URL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL).
 
 ```tsx
 'use client';
 import React from 'react';
-import {useClipboard, type FileDropItem} from 'react-aria/useClipboard';
+import { useClipboard, type FileDropItem } from 'react-aria/useClipboard';
 
 function Pasteable() {
   let [file, setFile] = React.useState<string | null>(null);
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     async onPaste(items) {
-      let item = items.find(item => item.kind === 'file' && (item.type === 'image/jpeg' || item.type === 'image/png')) as FileDropItem;
+      let item = items.find(
+        (item) =>
+          item.kind === 'file' &&
+          (item.type === 'image/jpeg' || item.type === 'image/png')
+      ) as FileDropItem;
       if (item) {
         setFile(URL.createObjectURL(await item.getFile()));
       }
-    }
+    },
   });
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} style={{width: 150, height: 100}} aria-label="Image paste target">
-      {file ? <img src={file} alt="Pasted image" style={{width: '100%', height: '100%', objectFit: 'contain'}} /> : 'Paste image here'}
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      style={{ width: 150, height: 100 }}
+      aria-label='Image paste target'
+    >
+      {file ? (
+        <img
+          src={file}
+          alt='Pasted image'
+          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+        />
+      ) : (
+        'Paste image here'
+      )}
     </div>
   );
 }
@@ -284,42 +402,54 @@ function Pasteable() {
 
 ### Directories
 
-A `DirectoryDropItem` references the contents of a directory on the user's device. It includes the name of the directory, as well as a method to iterate through the files and folders within the directory. The contents of any folders within the directory can be accessed recursively.
-The `getEntries` method returns an [async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of) object, which can be used in a `for await...of` loop. This provides each item in the directory as either a `FileDropItem` or `DirectoryDropItem`, and you can access the contents of each file as discussed above.
-This example renders the file names within a dropped directory in a grid.
+A `DirectoryDropItem` references the contents of a directory on the user's
+device. It includes the name of the directory, as well as a method to iterate
+through the files and folders within the directory. The contents of any folders
+within the directory can be accessed recursively. The `getEntries` method
+returns an
+[async iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for-await...of)
+object, which can be used in a `for await...of` loop. This provides each item in
+the directory as either a `FileDropItem` or `DirectoryDropItem`, and you can
+access the contents of each file as discussed above. This example renders the
+file names within a dropped directory in a grid.
 
 ```tsx
 'use client';
 import React from 'react';
-import {useClipboard, type DirectoryDropItem} from 'react-aria/useClipboard';
+import { useClipboard, type DirectoryDropItem } from 'react-aria/useClipboard';
 import File from '@react-spectrum/s2/icons/File';
 import Folder from '@react-spectrum/s2/icons/Folder';
 import './useClipboardGrid.css';
 
 function Pasteable() {
-  let [files, setFiles] = React.useState<Array<{name: string, kind: 'file' | 'directory'}> | null>(null);
-  let {clipboardProps} = useClipboard({
+  let [files, setFiles] = React.useState<Array<{
+    name: string;
+    kind: 'file' | 'directory';
+  }> | null>(null);
+  let { clipboardProps } = useClipboard({
     async onPaste(items) {
       // Find the first dropped item that is a directory.
-      let dir = items.find(item => item.kind === 'directory') as DirectoryDropItem;
+      let dir = items.find(
+        (item) => item.kind === 'directory'
+      ) as DirectoryDropItem;
       if (dir) {
         // Read entries in directory and update state with relevant info.
-        let files: Array<{name: string, kind: 'file' | 'directory'}> = [];
+        let files: Array<{ name: string; kind: 'file' | 'directory' }> = [];
         for await (let entry of dir.getEntries()) {
           files.push({
             name: entry.name,
-            kind: entry.kind
+            kind: entry.kind,
           });
         }
         setFiles(files);
       }
-    }
+    },
   });
   let contents = <>Paste directory here</>;
   if (files) {
     contents = (
       <ul>
-        {files.map(f => (
+        {files.map((f) => (
           <li key={f.name}>
             {f.kind === 'directory' ? <Folder /> : <File />}
             <span>{f.name}</span>
@@ -329,7 +459,13 @@ function Pasteable() {
     );
   }
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} className="grid" aria-label="Directory paste target">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      className='grid'
+      aria-label='Directory paste target'
+    >
       {contents}
     </div>
   );
@@ -338,26 +474,35 @@ function Pasteable() {
 
 ## Disabling copy and paste
 
-If you need to temporarily disable copying and pasting, you can pass the `isDisabled` option to `useClipboard`. This will prevent copying and pasting on the element until it is re-enabled.
+If you need to temporarily disable copying and pasting, you can pass the
+`isDisabled` option to `useClipboard`. This will prevent copying and pasting on
+the element until it is re-enabled.
 
 ```tsx
 'use client';
 import React from 'react';
-import {useClipboard, type TextDropItem} from 'react-aria/useClipboard';
+import { useClipboard, type TextDropItem } from 'react-aria/useClipboard';
 
 function Copyable() {
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     getItems() {
-      return [{
-        'text/plain': 'Hello world'
-      }];
+      return [
+        {
+          'text/plain': 'Hello world',
+        },
+      ];
     },
     /*- begin highlight -*/
-    isDisabled: true
+    isDisabled: true,
     /*- end highlight -*/
   });
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Disabled copyable text">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Disabled copyable text'
+    >
       Hello world
       <kbd>⌘C</kbd>
     </div>
@@ -365,21 +510,29 @@ function Copyable() {
 }
 function Pasteable() {
   let [pasted, setPasted] = React.useState<any[] | string | null>(null);
-  let {clipboardProps} = useClipboard({
+  let { clipboardProps } = useClipboard({
     async onPaste(items) {
       let pasted = await Promise.all(
         items
-          .filter((item): item is TextDropItem => item.kind === 'text' && item.types.has('text/plain'))
+          .filter(
+            (item): item is TextDropItem =>
+              item.kind === 'text' && item.types.has('text/plain')
+          )
           .map((item) => item.getText('text/plain'))
       );
       setPasted(pasted.join('\n'));
     },
     /*- begin highlight -*/
-    isDisabled: true
+    isDisabled: true,
     /*- end highlight -*/
   });
   return (
-    <div role="textbox" tabIndex={0} {...clipboardProps} aria-label="Disabled paste target">
+    <div
+      role='textbox'
+      tabIndex={0}
+      {...clipboardProps}
+      aria-label='Disabled paste target'
+    >
       {pasted || 'Paste here'}
       <kbd>⌘V</kbd>
     </div>
@@ -389,7 +542,7 @@ function Pasteable() {
 <div>
   <Copyable />
   <Pasteable />
-</div>
+</div>;
 ```
 
 ## API
@@ -401,18 +554,18 @@ function Pasteable() {
 
 ### ClipboardProps
 
-| Name | Type | Description |
-|------|------|-------------|
-| `getItems` | `((details: { action: "cut" | "copy"; }) => DragItem[]) | undefined` | A function that returns the items to copy. |
-| `isDisabled` | `boolean | undefined` | Whether the clipboard is disabled. |
-| `onCopy` | `(() => void) | undefined` | Handler that is called when the user triggers a copy interaction. |
-| `onCut` | `(() => void) | undefined` | Handler that is called when the user triggers a cut interaction. |
-| `onPaste` | `((items: DropItem[]) => void) | undefined` | Handler that is called when the user triggers a paste interaction. |
+| Name         | Type                           | Description               |
+| ------------ | ------------------------------ | ------------------------- |
+| `getItems`   | `((details: { action: "cut"    | "copy"; }) => DragItem[]) | undefined`                                                         | A function that returns the items to copy. |
+| `isDisabled` | `boolean                       | undefined`                | Whether the clipboard is disabled.                                 |
+| `onCopy`     | `(() => void)                  | undefined`                | Handler that is called when the user triggers a copy interaction.  |
+| `onCut`      | `(() => void)                  | undefined`                | Handler that is called when the user triggers a cut interaction.   |
+| `onPaste`    | `((items: DropItem[]) => void) | undefined`                | Handler that is called when the user triggers a paste interaction. |
 
 ### ClipboardResult
 
-| Name | Type | Description |
-|------|------|-------------|
+| Name                | Type                              | Description                                              |
+| ------------------- | --------------------------------- | -------------------------------------------------------- |
 | `clipboardProps` \* | `DOMAttributes<FocusableElement>` | Props for the element that will handle clipboard events. |
 
 ## Related Types
@@ -421,24 +574,24 @@ function Pasteable() {
 
 `useClipboard(options: ClipboardProps): ClipboardResult`
 
-Handles clipboard interactions for a focusable element. Supports items of multiple
-data types, and integrates with the operating system native clipboard.
+Handles clipboard interactions for a focusable element. Supports items of
+multiple data types, and integrates with the operating system native clipboard.
 
-| Name | Type | Description |
-|------|------|-------------|
-| `getItems` | `((details: { action: "cut" | "copy"; }) => DragItem[]) | undefined` | A function that returns the items to copy. |
-| `isDisabled` | `boolean | undefined` | Whether the clipboard is disabled. |
-| `onCopy` | `(() => void) | undefined` | Handler that is called when the user triggers a copy interaction. |
-| `onCut` | `(() => void) | undefined` | Handler that is called when the user triggers a cut interaction. |
-| `onPaste` | `((items: DropItem[]) => void) | undefined` | Handler that is called when the user triggers a paste interaction. |
+| Name         | Type                           | Description               |
+| ------------ | ------------------------------ | ------------------------- |
+| `getItems`   | `((details: { action: "cut"    | "copy"; }) => DragItem[]) | undefined`                                                         | A function that returns the items to copy. |
+| `isDisabled` | `boolean                       | undefined`                | Whether the clipboard is disabled.                                 |
+| `onCopy`     | `(() => void)                  | undefined`                | Handler that is called when the user triggers a copy interaction.  |
+| `onCut`      | `(() => void)                  | undefined`                | Handler that is called when the user triggers a cut interaction.   |
+| `onPaste`    | `((items: DropItem[]) => void) | undefined`                | Handler that is called when the user triggers a paste interaction. |
 
 ### TextDropItem
 
 ### Properties
 
-| Name | Type | Description |
-|------|------|-------------|
-| `kind` \* | `"text"` | The item kind. |
+| Name       | Type          | Description                                                                                               |
+| ---------- | ------------- | --------------------------------------------------------------------------------------------------------- |
+| `kind` \*  | `"text"`      | The item kind.                                                                                            |
 | `types` \* | `Set<string>` | The drag types available for this item. These are often mime types, but may be custom app-specific types. |
 
 ### Methods
@@ -451,10 +604,10 @@ Returns the data for the given type as a string.
 
 ### Properties
 
-| Name | Type | Description |
-|------|------|-------------|
-| `kind` \* | `"file"` | The item kind. |
-| `name` \* | `string` | The file name. |
+| Name      | Type     | Description                          |
+| --------- | -------- | ------------------------------------ |
+| `kind` \* | `"file"` | The item kind.                       |
+| `name` \* | `string` | The file name.                       |
 | `type` \* | `string` | The file type (usually a mime type). |
 
 ### Methods
@@ -471,10 +624,10 @@ Returns the contents of the file as a string.
 
 ### Properties
 
-| Name | Type | Description |
-|------|------|-------------|
-| `kind` \* | `"directory"` | The item kind. |
-| `name` \* | `string` | The directory name. |
+| Name      | Type          | Description         |
+| --------- | ------------- | ------------------- |
+| `kind` \* | `"directory"` | The item kind.      |
+| `name` \* | `string`      | The directory name. |
 
 ### Methods
 

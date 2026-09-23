@@ -1,13 +1,18 @@
 ---
 name: worktree-guide
-description: Interactive guide for parallel development with Ghostty, git worktrees, and Lazygit. Use when setting up multi-task workflows or learning the worktree system.
+description:
+  Interactive guide for parallel development with Ghostty, git worktrees, and
+  Lazygit. Use when setting up multi-task workflows or learning the worktree
+  system.
 license: MIT
 metadata:
   author: claude-code-templates
-  version: "1.0"
+  version: '1.0'
 ---
 
-Guide the user through parallel development workflows using Ghostty terminal panels, git worktrees, and Lazygit. This is both a teaching experience and a practical reference.
+Guide the user through parallel development workflows using Ghostty terminal
+panels, git worktrees, and Lazygit. This is both a teaching experience and a
+practical reference.
 
 ---
 
@@ -20,9 +25,12 @@ git rev-parse --is-inside-work-tree 2>&1 && echo "GIT_OK" || echo "NOT_GIT"
 ```
 
 **If not a git repo:**
-> This isn't a git repository. Navigate to a git project first, then come back to `/worktree-guide`.
+
+> This isn't a git repository. Navigate to a git project first, then come back
+> to `/worktree-guide`.
 
 Check if we're in a worktree or main repo:
+
 ```bash
 git worktree list
 pwd
@@ -37,6 +45,7 @@ Note the context for later guidance.
 Display based on environment:
 
 **If in main repo:**
+
 ```
 ## Worktree Parallel Development Guide
 
@@ -65,12 +74,14 @@ What would you like to do?
 ```
 
 Use AskUserQuestion:
+
 - "Learn the full workflow" — Start from Phase 2
 - "Just show keybindings" — Jump to Quick Reference
 - "Create worktrees now" — Suggest `/worktree-init`
 - "Something else" — Ask what they need
 
 **If already in a worktree:**
+
 ```
 ## Worktree Status
 
@@ -84,6 +95,7 @@ Then run the equivalent of `/worktree-check` and provide contextual guidance.
 ## Phase 2: Ghostty Essentials
 
 **EXPLAIN:**
+
 ```
 ## Ghostty Panel Management
 
@@ -91,6 +103,7 @@ Ghostty's panel system is perfect for parallel development. Here are the essenti
 ```
 
 **SHOW:**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    GHOSTTY KEYBINDINGS                      │
@@ -127,6 +140,7 @@ Ghostty's panel system is perfect for parallel development. Here are the essenti
 ## Phase 3: Lazygit Essentials
 
 **EXPLAIN:**
+
 ```
 ## Lazygit for Monitoring Worktrees
 
@@ -134,6 +148,7 @@ Lazygit gives you a visual overview of all your worktrees and their changes. Run
 ```
 
 **SHOW:**
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    LAZYGIT KEYBINDINGS                      │
@@ -186,6 +201,7 @@ Lazygit gives you a visual overview of all your worktrees and their changes. Run
 ## Phase 4: Complete Workflow (Guided)
 
 **EXPLAIN:**
+
 ```
 ## Full Parallel Development Workflow
 
@@ -195,6 +211,7 @@ Let me walk you through the complete cycle. We'll go step by step.
 ### Step 4.1: Create Worktrees
 
 **EXPLAIN:**
+
 ```
 ### Step 1: Create Worktrees
 
@@ -202,6 +219,7 @@ First, define the tasks you want to work on in parallel. The `/worktree-init` co
 ```
 
 **DO:** Show example command:
+
 ```
 Example usage:
 
@@ -216,6 +234,7 @@ This creates:
 ### Step 4.2: Open Ghostty Panels
 
 **EXPLAIN:**
+
 ```
 ### Step 2: Open Ghostty Panels
 
@@ -223,6 +242,7 @@ Now split your terminal into panels—one for each task, plus optionally one for
 ```
 
 **DO:**
+
 ```
 1. Press Cmd+D to split right (first worktree)
 2. Press Cmd+D again (second worktree)
@@ -240,6 +260,7 @@ Resulting layout:
 ### Step 4.3: Work in Each Panel
 
 **EXPLAIN:**
+
 ```
 ### Step 3: Work Independently
 
@@ -253,6 +274,7 @@ In each panel:
 ### Step 4.4: Deliver Completed Work
 
 **EXPLAIN:**
+
 ```
 ### Step 4: Deliver When Done
 
@@ -266,6 +288,7 @@ When you finish a task in any panel, use `/worktree-deliver` to:
 ### Step 4.5: Clean Up
 
 **EXPLAIN:**
+
 ```
 ### Step 5: Clean Up After Merging
 
@@ -280,6 +303,7 @@ After your PRs are merged on GitHub:
 ## Phase 5: Troubleshooting
 
 **SHOW:**
+
 ```
 ## Troubleshooting
 
@@ -356,6 +380,7 @@ $ git worktree prune
 ## Phase 6: Quick Reference Card
 
 **SHOW:**
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                         WORKTREE QUICK REFERENCE                            │
@@ -403,10 +428,12 @@ $ git worktree prune
 
 ## Guardrails
 
-- **Never execute destructive commands** without confirmation (worktree remove, branch delete)
+- **Never execute destructive commands** without confirmation (worktree remove,
+  branch delete)
 - **Always verify location** before suggesting worktree operations
 - **If user seems lost**, offer `/worktree-check` first
 - **Never force-delete** branches that aren't merged
-- **Don't assume tools are installed** — check for lazygit availability if suggesting it
+- **Don't assume tools are installed** — check for lazygit availability if
+  suggesting it
 - **Respect user's pace** — don't rush through sections if they want to practice
 - **Keep the reference card available** — offer to show it whenever relevant

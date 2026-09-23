@@ -8,8 +8,7 @@ Copy and use this template for your code reviews.
 
 [Brief overview of what was reviewed - 1-2 sentences]
 
-**PR Size:** [Small/Medium/Large] (~X lines)
-**Review Time:** [X minutes]
+**PR Size:** [Small/Medium/Large] (~X lines) **Review Time:** [X minutes]
 
 ## Strengths
 
@@ -26,7 +25,8 @@ Copy and use this template for your code reviews.
 - [ ] Dependency direction — do dependencies flow toward stability?
 - [ ] Consistent with existing patterns and conventions
 
-> See [Architecture Review Guide](../references/architecture-review-guide.md) for detailed SOLID, anti-pattern, and coupling analysis.
+> See [Architecture Review Guide](../references/architecture-review-guide.md)
+> for detailed SOLID, anti-pattern, and coupling analysis.
 
 **Performance Assessment**
 
@@ -35,22 +35,24 @@ Copy and use this template for your code reviews.
 - [ ] I/O impact — excessive API calls, unbatched writes, missing caching?
 - [ ] Database queries — N+1 risks, missing indexes, unoptimized joins?
 
-> See [Performance Review Guide](../references/performance-review-guide.md) for comprehensive Web Vitals, N+1, and caching guidance.
+> See [Performance Review Guide](../references/performance-review-guide.md) for
+> comprehensive Web Vitals, N+1, and caching guidance.
 
 ## Required Changes
 
 🔴 **[blocking]** [Issue description]
-> [Code location or example]
-> [Suggested fix or explanation]
+
+> [Code location or example] [Suggested fix or explanation]
 
 🔴 **[blocking]** [Issue description]
+
 > [Details]
 
 ## Important Suggestions
 
 🟡 **[important]** [Issue description]
-> [Why this matters]
-> [Suggested approach]
+
+> [Why this matters] [Suggested approach]
 
 ## Minor Suggestions
 
@@ -74,7 +76,8 @@ Copy and use this template for your code reviews.
 - [ ] Sensitive data not leaked in logs/errors
 - [ ] Dependency vulnerabilities checked (npm audit / pip audit / cargo audit)
 
-> See [Security Review Guide](../references/security-review-guide.md) for comprehensive injection, XSS, CSRF, secrets, and auth checklist.
+> See [Security Review Guide](../references/security-review-guide.md) for
+> comprehensive injection, XSS, CSRF, secrets, and auth checklist.
 
 ## Test Coverage
 
@@ -84,9 +87,8 @@ Copy and use this template for your code reviews.
 
 ## Verdict
 
-**[ ] ✅ Approve** - Ready to merge
-**[ ] 💬 Comment** - Minor suggestions, can merge
-**[ ] 🔄 Request Changes** - Must address blocking issues
+**[ ] ✅ Approve** - Ready to merge **[ ] 💬 Comment** - Minor suggestions, can
+merge **[ ] 🔄 Request Changes** - Must address blocking issues
 
 ---
 

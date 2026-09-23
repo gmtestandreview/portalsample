@@ -1,13 +1,15 @@
 # Module 7: Advanced Techniques
 
-1. **`@` file mentions** — Always give precise context, don't rely on the AI finding files
+1. **`@` file mentions** — Always give precise context, don't rely on the AI
+   finding files
    - `@src/auth.ts` — single file
    - `@src/components/` — directory listing
    - "Fix @src/auth.ts to match @tests/auth.test.ts" — multi-file context
 
 2. **`! shell bypass`** — `!git log --oneline -5` runs instantly, no AI overhead
 
-3. **`/research`** — Run a deep research investigation using GitHub search and web sources
+3. **`/research`** — Run a deep research investigation using GitHub search and
+   web sources
 
 4. **`/resume` + `--continue`** — Session continuity across CLI launches
 

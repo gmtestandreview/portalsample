@@ -1,4 +1,4 @@
-import type { CoverageOptions } from "vitest/node";
+import type { CoverageOptions } from 'vitest/node';
 
 /**
  * Storybook coverage measures handwritten executable application source only.
@@ -6,22 +6,22 @@ import type { CoverageOptions } from "vitest/node";
  * remap Vite's `?import` JSON module as JavaScript while retaining TS/TSX data.
  */
 export const storybookCoverageConfig: CoverageOptions = {
-	provider: "v8",
-	reportsDirectory: "./reports/coverage/storybook",
-	include: ["ClientApp/src/**/*.{ts,tsx}"],
-	exclude: [
-		"**/*.d.ts",
-		"ClientApp/src/api/web-api-client.ts",
-		"ClientApp/src/external/**",
-		"ClientApp/src/parent/**",
-		"ClientApp/src/storybook/**",
-		"ClientApp/src/components/App/**",
-		"ClientApp/src/components/AriaComponents/main.tsx",
-		"ClientApp/src/components/reactaria_components/**",
-		"ClientApp/source-map-http-downloads/**",
-		"ClientApp/src/**/*.test.{ts,tsx}",
-		"ClientApp/src/**/*.spec.{ts,tsx}",
-		"ClientApp/src/**/*.stories.{ts,tsx}",
-		"ClientApp/src/**/*.docs.mdx",
-	],
+  provider: 'v8',
+  reportsDirectory: './reports/coverage/storybook',
+  include: ['ClientApp/src/**/*.{ts,tsx}'],
+  exclude: [
+    '**/*.d.ts',
+    'ClientApp/src/api/web-api-client.ts',
+    'ClientApp/src/external/**',
+    'ClientApp/src/parent/**',
+    'ClientApp/src/storybook/**',
+    'ClientApp/src/components/App/**',
+    'ClientApp/src/components/react-aria-evaluation/primitives/main.tsx',
+    'ClientApp/src/components/reactaria_components/**',
+    'ClientApp/source-map-http-downloads/**',
+    'ClientApp/src/**/*.test.{ts,tsx}',
+    'ClientApp/src/**/*.spec.{ts,tsx}',
+    'ClientApp/src/**/*.stories.{ts,tsx}',
+    'ClientApp/src/**/*.docs.mdx',
+  ],
 };

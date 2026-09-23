@@ -9,11 +9,14 @@
 
 ## What Was Done (Producer Scope)
 
-As Producer in the ai-team workflow, I created the governance, coordination, and tracking artifacts for the remediation sprint. **No application code was modified.**
+As Producer in the ai-team workflow, I created the governance, coordination, and
+tracking artifacts for the remediation sprint. **No application code was
+modified.**
 
 ### 1. Quality Assessment → Prioritized Issues
 
-**Input:** [Storybook vs Source Quality Assessment Report](docs/Storybook%20vs%20Source%20Quality%20Assessment%20Report.md)
+**Input:**
+[Storybook vs Source Quality Assessment Report](docs/Storybook%20vs%20Source%20Quality%20Assessment%20Report.md)
 
 **Output:** [docs/sprint-1/github-issues.md](docs/sprint-1/github-issues.md)
 
@@ -21,7 +24,8 @@ As Producer in the ai-team workflow, I created the governance, coordination, and
 - Assigned severity: 4 critical, 6 high, 5 medium
 - Defined Definition of Done per issue
 - Identified blocking relationships
-- Sequence-suggested Phase 1 (infrastructure), Phase 2 (stories), Phase 3 (coverage), Phase 4 (refinement)
+- Sequence-suggested Phase 1 (infrastructure), Phase 2 (stories), Phase 3
+  (coverage), Phase 4 (refinement)
 
 ### 2. Dev Agent Handoff
 
@@ -29,7 +33,8 @@ As Producer in the ai-team workflow, I created the governance, coordination, and
 
 - Clear scope: 15 issues across 4 phases
 - Recommended sequence (by priority + dependencies)
-- Technical constraints: withPortalProviders pattern, MSW shape, play function requirements, console error policy
+- Technical constraints: withPortalProviders pattern, MSW shape, play function
+  requirements, console error policy
 - Story structure template
 - Tools & commands reference
 - Communication protocol
@@ -47,9 +52,12 @@ As Producer in the ai-team workflow, I created the governance, coordination, and
 
 ### 4. Workflow State Tracking
 
-**Document:** [docs/sprint-1/workflow-state-log.md](docs/sprint-1/workflow-state-log.md)
+**Document:**
+[docs/sprint-1/workflow-state-log.md](docs/sprint-1/workflow-state-log.md)
 
-- State machine (NEW → INTAKE → TRIAGE → PLAN → DESIGN_REVIEW → AWAITING_APPROVAL → IMPLEMENTING → VERIFYING → REMEDIATING → FINAL_REVIEW → CLOSED_SUCCESS)
+- State machine (NEW → INTAKE → TRIAGE → PLAN → DESIGN_REVIEW →
+  AWAITING_APPROVAL → IMPLEMENTING → VERIFYING → REMEDIATING → FINAL_REVIEW →
+  CLOSED_SUCCESS)
 - Phase timeline with target dates
 - Phase dependencies
 - Issue state tracking (currently all INTAKE)
@@ -62,7 +70,8 @@ As Producer in the ai-team workflow, I created the governance, coordination, and
 **Document:** [PROJECT_BRIEF.md](PROJECT_BRIEF.md) — Sections 6–9 updated
 
 - Linked all new artifacts as source of truth
-- Clarified current state: all 15 issues identified, handoffs ready, Dev/QA in standby
+- Clarified current state: all 15 issues identified, handoffs ready, Dev/QA in
+  standby
 - Defined next steps for each agent
 - Restated success criteria and timeline
 
@@ -106,14 +115,14 @@ PROJECT_BRIEF.md (single source of truth)
 
 ## Execution Timeline (Planned)
 
-| Phase | Focus | Dev Days | QA Days | Total | Completion |
-| ------- | ------- | ---------- | --------- | ------- | ------------ |
-| 1 | Critical Infrastructure (Issues #1–4, #9) | 2 | 1 | 3 | 2026-05-22 |
-| 2 | Critical Story Coverage (Issues #4–6) | 2 | 1 | 3 | 2026-05-24 |
-| 3 | High-Priority Coverage (Issues #7–12) | 2 | 1 | 3 | 2026-05-27 |
-| 4 | Medium-Priority Coverage (Issues #13–15) | 2 | 1 | 3 | 2026-05-29 |
-| QA Final + Merge | Full test run + sign-off | — | 4 | 4 | 2026-06-02 |
-| **Total** | | 8 | 5 | 13 | **2026-06-02** |
+| Phase            | Focus                                     | Dev Days | QA Days | Total | Completion     |
+| ---------------- | ----------------------------------------- | -------- | ------- | ----- | -------------- |
+| 1                | Critical Infrastructure (Issues #1–4, #9) | 2        | 1       | 3     | 2026-05-22     |
+| 2                | Critical Story Coverage (Issues #4–6)     | 2        | 1       | 3     | 2026-05-24     |
+| 3                | High-Priority Coverage (Issues #7–12)     | 2        | 1       | 3     | 2026-05-27     |
+| 4                | Medium-Priority Coverage (Issues #13–15)  | 2        | 1       | 3     | 2026-05-29     |
+| QA Final + Merge | Full test run + sign-off                  | —        | 4       | 4     | 2026-06-02     |
+| **Total**        |                                           | 8        | 5       | 13    | **2026-06-02** |
 
 ---
 
@@ -186,27 +195,27 @@ PROJECT_BRIEF.md (single source of truth)
 
 ## Critical Success Factors
 
-| Factor | Responsibility | How |
-| -------- | ----------------- | ----- |
-| **Issue Clarity** | Producer | 15 issues pre-triaged with DoD; Dev shouldn't need to ask "what does done look like?" |
-| **Phase Sequencing** | Dev | Don't skip phases; #2 depends on #1 infrastructure fixes; #4 depends on #5 infrastructure work |
-| **Daily Communication** | Dev + QA | Update `progress.md` daily; escalate blockers immediately |
-| **100% Pass Gate** | QA | No "good enough"; 100% test pass or no merge |
-| **No Regressions** | QA | Compare test results to baseline; new console errors block merge |
-| **Producer Coordination** | Producer | Monitor daily, unblock quickly, enforce process |
+| Factor                    | Responsibility | How                                                                                            |
+| ------------------------- | -------------- | ---------------------------------------------------------------------------------------------- |
+| **Issue Clarity**         | Producer       | 15 issues pre-triaged with DoD; Dev shouldn't need to ask "what does done look like?"          |
+| **Phase Sequencing**      | Dev            | Don't skip phases; #2 depends on #1 infrastructure fixes; #4 depends on #5 infrastructure work |
+| **Daily Communication**   | Dev + QA       | Update `progress.md` daily; escalate blockers immediately                                      |
+| **100% Pass Gate**        | QA             | No "good enough"; 100% test pass or no merge                                                   |
+| **No Regressions**        | QA             | Compare test results to baseline; new console errors block merge                               |
+| **Producer Coordination** | Producer       | Monitor daily, unblock quickly, enforce process                                                |
 
 ---
 
 ## Risk Mitigation
 
-| Risk | Severity | Mitigation |
-| ------ | ---------- | ----------- |
-| **MSW handler shape unfamiliar** | Medium | Dev handoff includes specific pattern + code example |
-| **AcceptQuote wizard complex (5 steps)** | High | Phase 2 dedicated; 2 days allocated; break into per-step stories |
-| **Play functions new to team** | Medium | QA handoff includes examples; QA validates patterns first |
-| **Breaking changes in core components** | High | Phase 1 includes regression checkpoint before phase 2 |
-| **Time overrun on async inputs** | Medium | AutoSuggest/AddressLookup (Issue #14) allocated 1.5 days; can descope to minimal if needed |
-| **Merge approved with test failures** | Critical | Producer enforces: 100% pass or hold for remediation |
+| Risk                                     | Severity | Mitigation                                                                                 |
+| ---------------------------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| **MSW handler shape unfamiliar**         | Medium   | Dev handoff includes specific pattern + code example                                       |
+| **AcceptQuote wizard complex (5 steps)** | High     | Phase 2 dedicated; 2 days allocated; break into per-step stories                           |
+| **Play functions new to team**           | Medium   | QA handoff includes examples; QA validates patterns first                                  |
+| **Breaking changes in core components**  | High     | Phase 1 includes regression checkpoint before phase 2                                      |
+| **Time overrun on async inputs**         | Medium   | AutoSuggest/AddressLookup (Issue #14) allocated 1.5 days; can descope to minimal if needed |
+| **Merge approved with test failures**    | Critical | Producer enforces: 100% pass or hold for remediation                                       |
 
 ---
 
@@ -237,25 +246,33 @@ PROJECT_BRIEF.md (single source of truth)
 3. **Producer**: Monitor `progress.md` and `workflow-state-log.md` daily
 4. **2026-05-21 (Day 1)**: Dev starts Phase 1 (Issues #3, #1, #2, #9)
 5. **2026-05-22 (End of Day 1)**: Phase 1 ready for QA → QA validation begins
-6. **2026-06-02 (Target)**: All phases complete, full test run passed, merge approved
+6. **2026-06-02 (Target)**: All phases complete, full test run passed, merge
+   approved
 
 ---
 
 ## Key Documents (Bookmark These)
 
 - [PROJECT_BRIEF.md](PROJECT_BRIEF.md) — single source of truth
-- [docs/sprint-1/github-issues.md](docs/sprint-1/github-issues.md) — 15 issues with severity + DoD
-- [docs/sprint-1/dev-handoff.md](docs/sprint-1/dev-handoff.md) — Dev scope, sequence, patterns
-- [docs/sprint-1/qa-handoff.md](docs/sprint-1/qa-handoff.md) — QA validation protocol, DoD checklists
-- [docs/sprint-1/progress.md](docs/sprint-1/progress.md) — daily updates (created by Dev)
-- [docs/sprint-1/workflow-state-log.md](docs/sprint-1/workflow-state-log.md) — state machine, timeline, risks
-- [docs/sprint-1/qa-signoff.md](docs/sprint-1/qa-signoff.md) — final sign-off (created by QA)
+- [docs/sprint-1/github-issues.md](docs/sprint-1/github-issues.md) — 15 issues
+  with severity + DoD
+- [docs/sprint-1/dev-handoff.md](docs/sprint-1/dev-handoff.md) — Dev scope,
+  sequence, patterns
+- [docs/sprint-1/qa-handoff.md](docs/sprint-1/qa-handoff.md) — QA validation
+  protocol, DoD checklists
+- [docs/sprint-1/progress.md](docs/sprint-1/progress.md) — daily updates
+  (created by Dev)
+- [docs/sprint-1/workflow-state-log.md](docs/sprint-1/workflow-state-log.md) —
+  state machine, timeline, risks
+- [docs/sprint-1/qa-signoff.md](docs/sprint-1/qa-signoff.md) — final sign-off
+  (created by QA)
 
 ---
 
 ## Closing Note
 
-This sprint is **scope-locked** on 15 specific issues from the assessment. The Producer role ensures:
+This sprint is **scope-locked** on 15 specific issues from the assessment. The
+Producer role ensures:
 
 - Clear handoffs (no ambiguity)
 - Sequence discipline (no out-of-order work)
@@ -263,7 +280,8 @@ This sprint is **scope-locked** on 15 specific issues from the assessment. The P
 - Daily visibility (blockers surfaced fast)
 - Producer does NOT write code (enforces clean separation of roles)
 
-The Dev and QA agents have all the information they need. The path is clear. Ready to execute.
+The Dev and QA agents have all the information they need. The path is clear.
+Ready to execute.
 
 ---
 

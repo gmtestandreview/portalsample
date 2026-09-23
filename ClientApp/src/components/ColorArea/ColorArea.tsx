@@ -1,15 +1,15 @@
-"use client";
+'use client';
 import {
-	ColorArea as AriaColorArea,
-	type ColorAreaProps,
-} from "react-aria-components/ColorArea";
-import { ColorThumb } from "../ColorThumb/ColorThumb.tsx";
-import "./ColorArea.css";
+  ColorArea as AriaColorArea,
+  type ColorAreaProps,
+} from 'react-aria-components/ColorArea';
+import { ColorThumb } from '../ColorThumb/ColorThumb.tsx';
+import './ColorArea.css';
 
 export function ColorArea(props: ColorAreaProps) {
-	return (
-		<AriaColorArea {...props}>
-			<ColorThumb />
-		</AriaColorArea>
-	);
+  return (
+    <AriaColorArea {...props}>
+      <ColorThumb />
+    </AriaColorArea>
+  );
 }

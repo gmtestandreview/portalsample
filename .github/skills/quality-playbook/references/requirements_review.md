@@ -2,7 +2,9 @@
 
 ## Overview
 
-This is the template for `quality/REVIEW_REQUIREMENTS.md`. The playbook generates this file alongside the requirements pipeline output. It provides three modes for reviewing requirements interactively after generation.
+This is the template for `quality/REVIEW_REQUIREMENTS.md`. The playbook
+generates this file alongside the requirements pipeline output. It provides
+three modes for reviewing requirements interactively after generation.
 
 ## Generated file template
 
@@ -15,17 +17,26 @@ The playbook should generate the following as `quality/REVIEW_REQUIREMENTS.md`:
 
 ## How to use
 
-This protocol helps you review the generated requirements for completeness and accuracy. Run it with any AI model — the review is self-contained and reads from the files in `quality/`.
+This protocol helps you review the generated requirements for completeness and
+accuracy. Run it with any AI model — the review is self-contained and reads from
+the files in `quality/`.
 
-**Before starting:** Make sure `quality/REQUIREMENTS.md` exists (from the pipeline) and that you've read the Project Overview and Use Cases sections at the top.
+**Before starting:** Make sure `quality/REQUIREMENTS.md` exists (from the
+pipeline) and that you've read the Project Overview and Use Cases sections at
+the top.
 
 ### Choose a review mode
 
-**Mode 1 — Self-guided review.** You pick which use cases to examine. Best when you already know which areas of the project need the most scrutiny.
+**Mode 1 — Self-guided review.** You pick which use cases to examine. Best when
+you already know which areas of the project need the most scrutiny.
 
-**Mode 2 — Fully guided review.** The AI walks you through every use case in order, drilling into each linked requirement. Best for a thorough first review.
+**Mode 2 — Fully guided review.** The AI walks you through every use case in
+order, drilling into each linked requirement. Best for a thorough first review.
 
-**Mode 3 — Cross-model audit.** A different AI model fact-checks the completeness report by verifying that every domain marked COVERED actually has requirements addressing the checklist item. Best run with a different model than the one that generated the requirements.
+**Mode 3 — Cross-model audit.** A different AI model fact-checks the
+completeness report by verifying that every domain marked COVERED actually has
+requirements addressing the checklist item. Best run with a different model than
+the one that generated the requirements.
 
 All three modes track progress in `quality/REFINEMENT_HINTS.md`.
 
@@ -33,14 +44,16 @@ All three modes track progress in `quality/REFINEMENT_HINTS.md`.
 
 ## Mode 1: Self-guided review
 
-Read `quality/REQUIREMENTS.md` and present the user with a numbered list of use cases:
-
+Read `quality/REQUIREMENTS.md` and present the user with a numbered list of use
+cases:
 ```
+
 Use cases in REQUIREMENTS.md:
+
 1. [x] Use Case 1: [name] (reviewed)
 2. [ ] Use Case 2: [name]
-3. [ ] Use Case 3: [name]
-...
+3. [ ] Use Case 3: [name] ...
+
 ```
 
 Check `quality/REFINEMENT_HINTS.md` for review progress — use cases marked `[x]` have already been reviewed. Present the list and ask the user which use case to examine.
@@ -98,23 +111,28 @@ Also check:
 Write findings to `quality/REFINEMENT_HINTS.md` under a `## Cross-Model Audit` heading:
 
 ```
+
 ## Cross-Model Audit
-Date: [date]
-Model: [model name]
+
+Date: [date] Model: [model name]
 
 ### Verified domains
+
 - Null handling: CONFIRMED (REQ-054, REQ-055 correctly address null semantics)
 - ...
 
 ### Gaps found
+
 - Entry points: COMPLETENESS_REPORT cites REQ-100, REQ-101 but these are about
   pretty printing, not entry point contracts. JsonStreamParser has no coverage.
 - ...
 
 ### Orphaned requirements
+
 - REQ-NNN is not linked to any use case
 - ...
-```
+
+````
 
 Present findings to the user and ask which gaps should be addressed in a refinement pass.
 
@@ -152,7 +170,11 @@ The review protocol creates and maintains this file:
 
 ## Additional hints
 [freeform feedback from the user, not tied to a specific use case]
+````
+
+This file serves dual purpose: it tracks review progress (so the user can resume
+across sessions) AND accumulates feedback that the refinement pass reads.
+
 ```
 
-This file serves dual purpose: it tracks review progress (so the user can resume across sessions) AND accumulates feedback that the refinement pass reads.
 ```

@@ -1,11 +1,14 @@
 ---
-description: 'Fixes compilation errors in source or test files. Analyzes error messages and applies corrections.'
+description:
+  'Fixes compilation errors in source or test files. Analyzes error messages and
+  applies corrections.'
 name: 'Polyglot Test Fixer'
 ---
 
 # Fixer Agent
 
-You fix compilation errors in code files. You are polyglot - you work with any programming language.
+You fix compilation errors in code files. You are polyglot - you work with any
+programming language.
 
 ## Your Mission
 

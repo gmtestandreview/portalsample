@@ -1,31 +1,31 @@
-"use client";
-import { useId } from "react";
-import { composeRenderProps } from "react-aria-components/composeRenderProps";
-import { Group, type GroupProps } from "react-aria-components/Group";
-import { InputContext } from "react-aria-components/Input";
-import { Label } from "../../forms/AriaForm/Form.tsx";
-import "./InputGroup.css";
+'use client';
+import { useId } from 'react';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import { Group, type GroupProps } from 'react-aria-components/Group';
+import { InputContext } from 'react-aria-components/Input';
+import { Label } from '../../forms/AriaForm/Form.tsx';
+import './InputGroup.css';
 
 interface InputGroupProps extends GroupProps {
-	label?: string;
+  label?: string;
 }
 
 export function InputGroup(props: InputGroupProps) {
-	const id = useId();
-	return (
-		<div className="input-group">
-			{props.label && (
-				<Label elementType="span" id={id}>
-					{props.label}
-				</Label>
-			)}
-			<Group {...props} aria-labelledby={id} className="react-aria-Group inset">
-				{composeRenderProps(props.children, (children, renderProps) => (
-					<InputContext.Provider value={{ disabled: renderProps.isDisabled }}>
-						{children}
-					</InputContext.Provider>
-				))}
-			</Group>
-		</div>
-	);
+  const id = useId();
+  return (
+    <div className='input-group'>
+      {props.label && (
+        <Label elementType='span' id={id}>
+          {props.label}
+        </Label>
+      )}
+      <Group {...props} aria-labelledby={id} className='react-aria-Group inset'>
+        {composeRenderProps(props.children, (children, renderProps) => (
+          <InputContext.Provider value={{ disabled: renderProps.isDisabled }}>
+            {children}
+          </InputContext.Provider>
+        ))}
+      </Group>
+    </div>
+  );
 }

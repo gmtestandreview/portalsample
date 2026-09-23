@@ -1,17 +1,26 @@
 ---
-description: 'Create or update README.md using the repository workflow. Follow evidence-first planning, lessons review, controller-gated execution when required, README best practice, disciplined validation, and truthful tracking.'
+description:
+  'Create or update README.md using the repository workflow. Follow
+  evidence-first planning, lessons review, controller-gated execution when
+  required, README best practice, disciplined validation, and truthful tracking.'
 agent: 'agent'
 ---
 
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see
+[.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard
+validation, build, lint, and test commands.
 
 # README Workflow Prompt
 
-Use this prompt when the task is to create or update `README.md` for a repository and the work must follow the repository workflow rather than being handled as one large free-form request.
+Use this prompt when the task is to create or update `README.md` for a
+repository and the work must follow the repository workflow rather than being
+handled as one large free-form request.
 
 ## Objective
 
-Complete the README task using the repository workflow with evidence-first planning, controller-gated execution when needed, regression-aware validation, disciplined tracking, and lessons-learned reuse.
+Complete the README task using the repository workflow with evidence-first
+planning, controller-gated execution when needed, regression-aware validation,
+disciplined tracking, and lessons-learned reuse.
 
 ## Task
 
@@ -20,7 +29,8 @@ Task objective:
 
 Optional context:
 
-- scope: `Prioritize a user-first, contributor-useful README grounded in actual repository behavior and supported documentation.`
+- scope:
+  `Prioritize a user-first, contributor-useful README grounded in actual repository behavior and supported documentation.`
 
 ## README-specific goal
 
@@ -36,18 +46,21 @@ Prioritize clarity, accuracy, quick-start usefulness, and scannability.
 
 ## Core workflow rule
 
-Use `scripts/copilot-workflow-controller.mjs` to inspect workflow state and gates when the task is large enough to require controller-gated execution.
+Use `scripts/copilot-workflow-controller.mjs` to inspect workflow state and
+gates when the task is large enough to require controller-gated execution.
 
 The controller is status-only:
 
 - it reports artifact and gate status
 - it checks for structural blockers
 - it reads validation outcomes
-- it does not create research, planning, rubric, validation, changes, release, or lessons artifacts
+- it does not create research, planning, rubric, validation, changes, release,
+  or lessons artifacts
 - it does not bypass validation
 - it does not approve release
 
-Create or update required artifacts separately, then use the controller to verify gate status.
+Create or update required artifacts separately, then use the controller to
+verify gate status.
 
 ## 1. Frame the task
 
@@ -59,11 +72,10 @@ Before substantial work:
   - a small local fix
   - a dependency/configuration remediation
   - a documentation-only update
-- for README work, prefer `documentation-only update` unless the task is broad enough to require controller gating
+- for README work, prefer `documentation-only update` unless the task is broad
+  enough to require controller gating
 - if controller-gated, choose a normalized slug in the format:
-  `YYYYMMDD-readme-update`
-  or
-  `YYYYMMDD-readme-<short-description>`
+  `YYYYMMDD-readme-update` or `YYYYMMDD-readme-<short-description>`
 - list affected surfaces before editing, such as:
   - `README.md`
   - docs referenced from README
@@ -93,9 +105,11 @@ Before editing:
 
 - inspect the current `README.md` if it exists
 - inspect the current repository structure and relevant source-of-truth files
-- if README already contains setup, usage, test, or build commands, run those exact commands before editing the docs
+- if README already contains setup, usage, test, or build commands, run those
+  exact commands before editing the docs
 - distinguish current repo state from historical or stale documentation
-- if a previous slug appears complete, verify it still matches the current workspace before relying on it
+- if a previous slug appears complete, verify it still matches the current
+  workspace before relying on it
 - do not plan from assumptions when current evidence can be collected directly
 
 ## 4. Controller intake
@@ -189,7 +203,8 @@ Challenge whether the plan could fail because of:
 - old docs masking current behavior
 - a documentation gap being mistaken for a code gap
 - historical artifacts being mistaken for current validation evidence
-- unsupported assumptions about setup, environment variables, versions, badges, or license
+- unsupported assumptions about setup, environment variables, versions, badges,
+  or license
 
 Record:
 
@@ -208,7 +223,8 @@ Use repository-correct tooling and shell behavior.
 Rules:
 
 - use `pnpm`, not `npm` or `yarn`, when the repository uses pnpm
-- make command examples valid for the active shell or provide explicit alternatives
+- make command examples valid for the active shell or provide explicit
+  alternatives
 - prefer first-class repo scripts over ad hoc shell sequences
 - check whether active processes can invalidate results, including:
   - `pnpm dev`
@@ -233,9 +249,11 @@ README rules:
   - CI badges
   - license details
   - deployment instructions
-- if important information is missing, omit it or add a brief visible TODO only when necessary
+- if important information is missing, omit it or add a brief visible TODO only
+  when necessary
 - prefer concise summaries in README and link to deeper docs when appropriate
-- do not expose sensitive or internal-only information that does not belong in a README
+- do not expose sensitive or internal-only information that does not belong in a
+  README
 
 ## 10. Recommended README structure
 
@@ -311,7 +329,8 @@ Include sections only when supported and useful:
 - avoid marketing language
 - avoid low-value inventories
 - do not force sections that lack evidence
-- if architecture, workflow, coding standards, or testing are too detailed for README, summarize briefly and link out
+- if architecture, workflow, coding standards, or testing are too detailed for
+  README, summarize briefly and link out
 
 ## 12. Validation
 
@@ -335,8 +354,10 @@ Choose from relevant repo commands such as:
 
 Additional README rules:
 
-- do not include a setup, usage, test, or build command in README unless it was verified or clearly sourced from current working documentation
-- if validation fails, revise the README to reflect current truth instead of aspirational behavior
+- do not include a setup, usage, test, or build command in README unless it was
+  verified or clearly sourced from current working documentation
+- if validation fails, revise the README to reflect current truth instead of
+  aspirational behavior
 
 ## 13. Regression guard
 
@@ -344,7 +365,8 @@ When the issue could recur:
 
 - add the smallest useful guard
 - prefer a focused documentation or workflow check over unnecessary code churn
-- if repeated confusion comes from discoverability, improve README or contributor guidance instead of inventing product changes
+- if repeated confusion comes from discoverability, improve README or
+  contributor guidance instead of inventing product changes
 
 ## 14. Tracking
 
@@ -360,7 +382,8 @@ Rules:
   - risk
   - validation evidence
 - record TaskSync usage or non-use
-- if something cannot be completed safely, defer it with evidence instead of hiding it
+- if something cannot be completed safely, defer it with evidence instead of
+  hiding it
 
 ## 15. Documentation updates
 
@@ -397,7 +420,8 @@ Before closing:
 - if the task is gated, run the relevant implementation and closure checks
 - confirm closure is based on current validation, not historical artifacts
 - treat release approval as external when the controller reports it as required
-- if a TODO cannot be closed safely, leave it visible with reason, evidence, owner, and next step
+- if a TODO cannot be closed safely, leave it visible with reason, evidence,
+  owner, and next step
 
 Run closure when required:
 
@@ -430,7 +454,8 @@ Return progress using this structure:
 19. `Next Required Action`
 20. `Release and Closure Status`
 
-When the task is complete, include the final `README.md` content after the workflow status output, or clearly state why the README was not yet produced.
+When the task is complete, include the final `README.md` content after the
+workflow status output, or clearly state why the README was not yet produced.
 
 ## Atomic self-check
 
@@ -448,17 +473,20 @@ Before calling the task complete, answer yes to all applicable questions:
 - Did I update the changes trail as work progressed?
 - Did I record what I deferred and why?
 - Did I avoid implementing while the validation gate was closed?
-- Did I base closure on current evidence rather than historical completion state?
+- Did I base closure on current evidence rather than historical completion
+  state?
 - Did I update lessons learned when the outcome produced a reusable lesson?
 
 ## Guardrails
 
-- Do not invent repository state, approvals, validation results, or artifact contents.
+- Do not invent repository state, approvals, validation results, or artifact
+  contents.
 - Do not bypass controller gating.
 - Do not mark a phase complete without evidence.
 - Do not silently expand scope.
 - Do not force code-specific checks onto documentation-only tasks.
-- Do not rewrite broad standards or instruction files when a focused README alignment is sufficient.
+- Do not rewrite broad standards or instruction files when a focused README
+  alignment is sufficient.
 - Do not hide unresolved blockers, warnings, or deferred work.
 
 ## Success criteria
@@ -470,8 +498,10 @@ The task is complete only if:
 - baseline reality was established before edits
 - controller-gated tasks followed the first missing or blocked phase
 - the README reflects actual repository behavior and supported documentation
-- every included command was validated or explicitly grounded in current evidence
-- the impacted validation set passed or remaining failures were explicitly evidenced
+- every included command was validated or explicitly grounded in current
+  evidence
+- the impacted validation set passed or remaining failures were explicitly
+  evidenced
 - regressions were guarded where appropriate
 - tracking, documentation, lessons, and closure were handled truthfully
 - unresolved items were either solved or explicitly deferred with evidence

@@ -11,8 +11,8 @@ complete, accurate API page for it. Tested against Storybook **10.5.10**.
 ## What you get for free
 
 Autodocs is enabled project-wide by `tags: ['autodocs']` in
-`.storybook/preview.ts`. Every component that has a story therefore already has a
-generated **Documentation** page containing:
+`.storybook/preview.ts`. Every component that has a story therefore already has
+a generated **Documentation** page containing:
 
 - the component title and description, taken from the component's own JSDoc;
 - a props table inferred from the component's TypeScript types;
@@ -20,8 +20,8 @@ generated **Documentation** page containing:
 - every other story in the file;
 - a Code Panel showing the source of the story currently in view.
 
-You do not add a tag, register an addon, or write a template to get this. The work
-is making the *inputs* good: types, JSDoc, and story args.
+You do not add a tag, register an addon, or write a template to get this. The
+work is making the _inputs_ good: types, JSDoc, and story args.
 
 ---
 
@@ -32,8 +32,8 @@ props table.
 
 ```ts
 export interface BodyTextProps {
-    children: ReactNode;
-    className?: string;
+  children: ReactNode;
+  className?: string;
 }
 ```
 
@@ -41,13 +41,14 @@ Union types document themselves — `mode?: 'dark' | 'light'` renders as a selec
 control with both options listed, with no `argTypes` entry needed.
 
 Components whose props are an unexported intersection over a DOM element type
-(for example `Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & { ... }`)
-infer less completely. Prefer a named, exported props type where practical.
+(for example
+`Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & { ... }`) infer
+less completely. Prefer a named, exported props type where practical.
 
 ## Step 2 — write JSDoc on the component
 
-The description block above the component becomes the page description. Prop-level
-JSDoc becomes the description column of the props table.
+The description block above the component becomes the page description.
+Prop-level JSDoc becomes the description column of the props table.
 
 ```ts
 /**
@@ -60,9 +61,9 @@ JSDoc becomes the description column of the props table.
  */
 ```
 
-`@example` blocks render on the generated page. They are documentation, not tests —
-a runnable example belongs in a story. Mark genuinely internal components with
-`@internal` and point readers at the supported export.
+`@example` blocks render on the generated page. They are documentation, not
+tests — a runnable example belongs in a story. Mark genuinely internal
+components with `@internal` and point readers at the supported export.
 
 ## Step 3 — write stories with `args`
 
@@ -71,16 +72,16 @@ controls, the generated source snippet, and the Code Panel.
 
 ```ts
 const meta = {
-    component: BodyText,
+  component: BodyText,
 } satisfies Meta<typeof BodyText>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    args: {
-        children: 'This service helps organisations manage calibration requests.',
-    },
+  args: {
+    children: 'This service helps organisations manage calibration requests.',
+  },
 };
 ```
 
@@ -96,7 +97,7 @@ tags: ['!autodocs'],
 
 ## Step 4 — add `argTypes` only where inference falls short
 
-`argTypes` exist to *improve on* inference, not to restate it. Legitimate uses:
+`argTypes` exist to _improve on_ inference, not to restate it. Legitimate uses:
 grouping or relabelling a control, constraining a control type, documenting a
 callback's contract, or excluding a passthrough prop. Copying a TypeScript type
 into `argTypes` creates a second source of truth that silently goes stale.
@@ -137,14 +138,14 @@ tables work in MDX — `remark-gfm` is configured in `.storybook/main.ts`.
 
 ## Verification
 
-| Check | Command |
-| --- | --- |
-| Configuration governance | `npx vitest run --config vitest.unit.config.ts tests/unit/storybook/storybookDocsConfig.test.ts` |
-| Type check | `npm run type-check` |
-| Lint (including MDX) | `npm run lint` and `npm run lint:mdx` |
-| Story interactions | `npm run test:storybook` |
-| Docs build and structure | `npm run storybook:verify:docs` |
-| Documentation runtime behaviour | `npm run test:e2e:storybook` |
+| Check                           | Command                                                                                          |
+| ------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Configuration governance        | `npx vitest run --config vitest.unit.config.ts tests/unit/storybook/storybookDocsConfig.test.ts` |
+| Type check                      | `npm run type-check`                                                                             |
+| Lint (including MDX)            | `npm run lint` and `npm run lint:mdx`                                                            |
+| Story interactions              | `npm run test:storybook`                                                                         |
+| Docs build and structure        | `npm run storybook:verify:docs`                                                                  |
+| Documentation runtime behaviour | `npm run test:e2e:storybook`                                                                     |
 
 Review the rendered result locally with `npm run storybook` (or
 `npm run storybook:docs` for the docs-only view) and confirm the description,
@@ -157,4 +158,5 @@ props table, controls, stories and Code Panel all populate.
 - Storybook Autodocs — <https://storybook.js.org/docs/writing-docs/autodocs>
 - Doc Blocks — <https://storybook.js.org/docs/writing-docs/doc-blocks>
 - MDX — <https://storybook.js.org/docs/writing-docs/mdx>
-- Code Panel — <https://storybook.js.org/docs/writing-stories/stories-code-panel>
+- Code Panel —
+  <https://storybook.js.org/docs/writing-stories/stories-code-panel>

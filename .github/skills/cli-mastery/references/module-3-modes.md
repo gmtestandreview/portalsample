@@ -22,12 +22,12 @@
 
 ## Mode Comparison
 
-| Feature | Interactive | Plan | Autopilot |
-|---------|------------|------|-----------|
-| Speed | Fast | Slower | Fastest |
-| Safety | Medium | Highest | Lowest |
-| Control | You approve each action | You approve the plan | Full AI autonomy |
-| Best for | Daily tasks | Complex changes | Repetitive/trusted work |
-| Switch | Default | Shift+Tab or /plan | /experimental (enables), then Shift+Tab |
+| Feature  | Interactive             | Plan                 | Autopilot                               |
+| -------- | ----------------------- | -------------------- | --------------------------------------- |
+| Speed    | Fast                    | Slower               | Fastest                                 |
+| Safety   | Medium                  | Highest              | Lowest                                  |
+| Control  | You approve each action | You approve the plan | Full AI autonomy                        |
+| Best for | Daily tasks             | Complex changes      | Repetitive/trusted work                 |
+| Switch   | Default                 | Shift+Tab or /plan   | /experimental (enables), then Shift+Tab |
 
 Teaching point: The right mode at the right time = 10x productivity.

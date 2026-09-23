@@ -1,12 +1,12 @@
 {
-	"folders": [
-		{
-			"path": "../.."
-		}
-	],
-	"settings": {
-		"files.associations": {
-			"docs/.next/**/*.html": "plaintext"
-		}
-	}
+  "folders": [
+    {
+      "path": "../..",
+    },
+  ],
+  "settings": {
+    "files.associations": {
+      "docs/.next/**/*.html": "plaintext",
+    },
+  },
 }

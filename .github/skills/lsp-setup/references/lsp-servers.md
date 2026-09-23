@@ -1,20 +1,25 @@
 # Known LSP Servers for Copilot CLI
 
-Reference data for the `lsp-setup` skill. Each section contains install commands per OS and a ready-to-use config snippet.
+Reference data for the `lsp-setup` skill. Each section contains install commands
+per OS and a ready-to-use config snippet.
 
-> **Config snippet format**: Each snippet below shows the object to insert as a value under the top-level `lspServers` key. A complete config file looks like: `{ "lspServers": { <snippet here> } }`. When adding multiple languages, merge their snippets as sibling keys under `lspServers`.
+> **Config snippet format**: Each snippet below shows the object to insert as a
+> value under the top-level `lspServers` key. A complete config file looks like:
+> `{ "lspServers": { <snippet here> } }`. When adding multiple languages, merge
+> their snippets as sibling keys under `lspServers`.
 
 ---
 
 ## TypeScript / JavaScript
 
-**Server**: [typescript-language-server](https://github.com/typescript-language-server/typescript-language-server)
+**Server**:
+[typescript-language-server](https://github.com/typescript-language-server/typescript-language-server)
 
 ### Install
 
-| OS      | Command                                               |
-|---------|-------------------------------------------------------|
-| Any     | `npm install -g typescript typescript-language-server` |
+| OS  | Command                                                |
+| --- | ------------------------------------------------------ |
+| Any | `npm install -g typescript typescript-language-server` |
 
 ### Config snippet
 
@@ -37,17 +42,18 @@ Reference data for the `lsp-setup` skill. Each section contains install commands
 
 ## Java
 
-**Server**: [Eclipse JDT Language Server (jdtls)](https://github.com/eclipse-jdtls/eclipse.jdt.ls)
+**Server**:
+[Eclipse JDT Language Server (jdtls)](https://github.com/eclipse-jdtls/eclipse.jdt.ls)
 
 Requires **Java 21+** on `JAVA_HOME` or `$PATH`.
 
 ### Install
 
-| OS      | Command                           |
-|---------|-----------------------------------|
-| macOS   | `brew install jdtls`              |
+| OS      | Command                                                                                                                        |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| macOS   | `brew install jdtls`                                                                                                           |
 | Linux   | Check distro repos for `jdtls` or `eclipse.jdt.ls`; alternatively download from https://download.eclipse.org/jdtls/milestones/ |
-| Windows | Download from https://download.eclipse.org/jdtls/milestones/ and add `bin/` to `PATH` |
+| Windows | Download from https://download.eclipse.org/jdtls/milestones/ and add `bin/` to `PATH`                                          |
 
 On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
@@ -65,7 +71,11 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 }
 ```
 
-> **Note**: The `jdtls` wrapper script handles `--stdio` mode internally. If using a manual install, you may need to invoke the launcher jar directly — see the [jdtls README](https://github.com/eclipse-jdtls/eclipse.jdt.ls#running-from-command-line-with-wrapper-script) for details.
+> **Note**: The `jdtls` wrapper script handles `--stdio` mode internally. If
+> using a manual install, you may need to invoke the launcher jar directly — see
+> the
+> [jdtls README](https://github.com/eclipse-jdtls/eclipse.jdt.ls#running-from-command-line-with-wrapper-script)
+> for details.
 
 ---
 
@@ -75,10 +85,10 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                    |
-|---------|----------------------------|
-| Any     | `npm install -g pyright`   |
-| Any     | `pip install pyright`      |
+| OS  | Command                  |
+| --- | ------------------------ |
+| Any | `npm install -g pyright` |
+| Any | `pip install pyright`    |
 
 ### Config snippet
 
@@ -102,10 +112,10 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                                    |
-|---------|--------------------------------------------|
-| Any     | `go install golang.org/x/tools/gopls@latest` |
-| macOS   | `brew install gopls`                       |
+| OS    | Command                                      |
+| ----- | -------------------------------------------- |
+| Any   | `go install golang.org/x/tools/gopls@latest` |
+| macOS | `brew install gopls`                         |
 
 ### Config snippet
 
@@ -129,11 +139,11 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                        |
-|---------|--------------------------------|
-| Any     | `rustup component add rust-analyzer` |
-| macOS   | `brew install rust-analyzer`   |
-| Linux   | Distribution package or `rustup` |
+| OS      | Command                                                               |
+| ------- | --------------------------------------------------------------------- |
+| Any     | `rustup component add rust-analyzer`                                  |
+| macOS   | `brew install rust-analyzer`                                          |
+| Linux   | Distribution package or `rustup`                                      |
 | Windows | `rustup component add rust-analyzer` or download from GitHub releases |
 
 ### Config snippet
@@ -158,11 +168,11 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                                |
-|---------|----------------------------------------|
+| OS      | Command                                                           |
+| ------- | ----------------------------------------------------------------- |
 | macOS   | `brew install llvm` (clangd included) or Xcode command line tools |
-| Linux   | `apt install clangd` / `dnf install clang-tools-extra` |
-| Windows | Download LLVM from https://releases.llvm.org/ |
+| Linux   | `apt install clangd` / `dnf install clang-tools-extra`            |
+| Windows | Download LLVM from https://releases.llvm.org/                     |
 
 ### Config snippet
 
@@ -188,13 +198,14 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ## C# (.NET)
 
-**Server**: [Roslyn Language Server](https://github.com/dotnet/roslyn) (via `dotnet dnx`)
+**Server**: [Roslyn Language Server](https://github.com/dotnet/roslyn) (via
+`dotnet dnx`)
 
 ### Install
 
-| OS      | Command                                                        |
-|---------|----------------------------------------------------------------|
-| Any     | Requires the [.NET SDK](https://dot.net/download) installed    |
+| OS  | Command                                                     |
+| --- | ----------------------------------------------------------- |
+| Any | Requires the [.NET SDK](https://dot.net/download) installed |
 
 ### Config snippet
 
@@ -202,7 +213,15 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 {
   "csharp": {
     "command": "dotnet",
-    "args": ["dnx", "roslyn-language-server", "--yes", "--prerelease", "--", "--stdio", "--autoLoadProjects"],
+    "args": [
+      "dnx",
+      "roslyn-language-server",
+      "--yes",
+      "--prerelease",
+      "--",
+      "--stdio",
+      "--autoLoadProjects"
+    ],
     "fileExtensions": {
       ".cs": "csharp"
     }
@@ -218,9 +237,9 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                   |
-|---------|---------------------------|
-| Any     | `gem install solargraph`  |
+| OS  | Command                  |
+| --- | ------------------------ |
+| Any | `gem install solargraph` |
 
 ### Config snippet
 
@@ -246,9 +265,9 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                                    |
-|---------|--------------------------------------------|
-| Any     | `npm install -g intelephense`              |
+| OS  | Command                       |
+| --- | ----------------------------- |
+| Any | `npm install -g intelephense` |
 
 ### Config snippet
 
@@ -268,14 +287,15 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ## Kotlin
 
-**Server**: [kotlin-language-server](https://github.com/fwcd/kotlin-language-server)
+**Server**:
+[kotlin-language-server](https://github.com/fwcd/kotlin-language-server)
 
 ### Install
 
-| OS      | Command                                           |
-|---------|---------------------------------------------------|
-| macOS   | `brew install kotlin-language-server`             |
-| Any     | Download from GitHub releases and add to `PATH`   |
+| OS    | Command                                         |
+| ----- | ----------------------------------------------- |
+| macOS | `brew install kotlin-language-server`           |
+| Any   | Download from GitHub releases and add to `PATH` |
 
 ### Config snippet
 
@@ -296,14 +316,15 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ## Swift
 
-**Server**: [sourcekit-lsp](https://github.com/swiftlang/sourcekit-lsp) (bundled with Swift toolchain)
+**Server**: [sourcekit-lsp](https://github.com/swiftlang/sourcekit-lsp) (bundled
+with Swift toolchain)
 
 ### Install
 
-| OS      | Command                                                        |
-|---------|----------------------------------------------------------------|
-| macOS   | Included with Xcode; binary at `xcrun sourcekit-lsp`          |
-| Linux   | Included with Swift toolchain; install from https://swift.org  |
+| OS    | Command                                                       |
+| ----- | ------------------------------------------------------------- |
+| macOS | Included with Xcode; binary at `xcrun sourcekit-lsp`          |
+| Linux | Included with Swift toolchain; install from https://swift.org |
 
 ### Config snippet
 
@@ -319,7 +340,8 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 }
 ```
 
-> On macOS you may need to use the full path: `/usr/bin/sourcekit-lsp` or set `command` to `xcrun` with `args: ["sourcekit-lsp"]`.
+> On macOS you may need to use the full path: `/usr/bin/sourcekit-lsp` or set
+> `command` to `xcrun` with `args: ["sourcekit-lsp"]`.
 
 ---
 
@@ -329,11 +351,11 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ### Install
 
-| OS      | Command                              |
-|---------|--------------------------------------|
-| macOS   | `brew install lua-language-server`   |
-| Linux   | Download from GitHub releases        |
-| Windows | Download from GitHub releases        |
+| OS      | Command                            |
+| ------- | ---------------------------------- |
+| macOS   | `brew install lua-language-server` |
+| Linux   | Download from GitHub releases      |
+| Windows | Download from GitHub releases      |
 
 ### Config snippet
 
@@ -353,13 +375,14 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ## YAML
 
-**Server**: [yaml-language-server](https://github.com/redhat-developer/yaml-language-server)
+**Server**:
+[yaml-language-server](https://github.com/redhat-developer/yaml-language-server)
 
 ### Install
 
-| OS      | Command                                      |
-|---------|----------------------------------------------|
-| Any     | `npm install -g yaml-language-server`        |
+| OS  | Command                               |
+| --- | ------------------------------------- |
+| Any | `npm install -g yaml-language-server` |
 
 ### Config snippet
 
@@ -380,13 +403,14 @@ On macOS with Homebrew, the binary is installed as `jdtls` on `$PATH`.
 
 ## Bash / Shell
 
-**Server**: [bash-language-server](https://github.com/bash-lsp/bash-language-server)
+**Server**:
+[bash-language-server](https://github.com/bash-lsp/bash-language-server)
 
 ### Install
 
-| OS      | Command                                       |
-|---------|-----------------------------------------------|
-| Any     | `npm install -g bash-language-server`         |
+| OS  | Command                               |
+| --- | ------------------------------------- |
+| Any | `npm install -g bash-language-server` |
 
 ### Config snippet
 

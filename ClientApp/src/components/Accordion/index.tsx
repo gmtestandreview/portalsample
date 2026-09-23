@@ -1,9 +1,9 @@
-import type { FunctionComponent, PropsWithChildren } from "react";
-import { Accordion } from "react-bootstrap";
+import type { FunctionComponent, PropsWithChildren } from 'react';
+import { Accordion } from 'react-bootstrap';
 import type {
-	CustomAccordionBodyProps,
-	CustomAccordionProps,
-} from "./types.ts";
+  CustomAccordionBodyProps,
+  CustomAccordionProps,
+} from './types.ts';
 
 /**
  * CustomAccordion Component
@@ -32,17 +32,17 @@ import type {
  */
 
 export const CustomAccordion: FunctionComponent<CustomAccordionProps> = (
-	props: PropsWithChildren<CustomAccordionProps>,
+  props: PropsWithChildren<CustomAccordionProps>
 ) => {
-	const { id, containerClassName, children } = props;
+  const { id, containerClassName, children } = props;
 
-	return (
-		<div id={id} className={`${containerClassName ?? ""}`}>
-			<Accordion defaultActiveKey="0" bsPrefix="wizard-accordion">
-				{children}
-			</Accordion>
-		</div>
-	);
+  return (
+    <div id={id} className={`${containerClassName ?? ''}`}>
+      <Accordion defaultActiveKey='0' bsPrefix='wizard-accordion'>
+        {children}
+      </Accordion>
+    </div>
+  );
 };
 
 /**
@@ -88,40 +88,40 @@ export const CustomAccordion: FunctionComponent<CustomAccordionProps> = (
  */
 
 export const CustomAccordionBody: FunctionComponent<
-	CustomAccordionBodyProps
+  CustomAccordionBodyProps
 > = (props: PropsWithChildren<CustomAccordionBodyProps>) => {
-	const {
-		id,
-		name,
-		namePartTwo,
-		namePartTwoClassName,
-		namePartThree,
-		namePartThreeClassName,
-		eventKey,
-		children,
-		className,
-	} = props;
+  const {
+    id,
+    name,
+    namePartTwo,
+    namePartTwoClassName,
+    namePartThree,
+    namePartThreeClassName,
+    eventKey,
+    children,
+    className,
+  } = props;
 
-	return (
-		<Accordion.Item eventKey={eventKey} className="open">
-			<Accordion.Header id={id}>
-				<span className="d-block lh-lg">
-					<span className="d-block acd-title">{name}</span>
-					{namePartTwo ? (
-						<span className={`d-block ${namePartTwoClassName}`}>
-							{namePartTwo}
-						</span>
-					) : null}
-					{namePartThree ? (
-						<span
-							className={`d-block fw-normal text-truncate pre-wrap ${namePartThreeClassName}`}
-						>
-							{namePartThree}
-						</span>
-					) : null}
-				</span>
-			</Accordion.Header>
-			<Accordion.Body className={className}>{children}</Accordion.Body>
-		</Accordion.Item>
-	);
+  return (
+    <Accordion.Item eventKey={eventKey} className='open'>
+      <Accordion.Header id={id}>
+        <span className='d-block lh-lg'>
+          <span className='d-block acd-title'>{name}</span>
+          {namePartTwo ? (
+            <span className={`d-block ${namePartTwoClassName}`}>
+              {namePartTwo}
+            </span>
+          ) : null}
+          {namePartThree ? (
+            <span
+              className={`d-block fw-normal text-truncate pre-wrap ${namePartThreeClassName}`}
+            >
+              {namePartThree}
+            </span>
+          ) : null}
+        </span>
+      </Accordion.Header>
+      <Accordion.Body className={className}>{children}</Accordion.Body>
+    </Accordion.Item>
+  );
 };

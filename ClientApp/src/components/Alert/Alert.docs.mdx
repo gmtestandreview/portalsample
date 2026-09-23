@@ -1,4 +1,12 @@
-import { Meta, Title, Subtitle, Primary, Controls, ArgTypes, Stories } from '@storybook/addon-docs/blocks';
+import {
+  Meta,
+  Title,
+  Subtitle,
+  Primary,
+  Controls,
+  ArgTypes,
+  Stories,
+} from '@storybook/addon-docs/blocks';
 import * as AlertStories from './Alert.stories';
 
 <Meta of={AlertStories} />
@@ -9,7 +17,10 @@ import * as AlertStories from './Alert.stories';
 
 ## Alert Components
 
-The Alert component system provides visual feedback and important information to users through four distinct variants: Success, Info, Warning, and Error. Each variant uses appropriate colors, icons, and ARIA announcements for accessibility.
+The Alert component system provides visual feedback and important information to
+users through four distinct variants: Success, Info, Warning, and Error. Each
+variant uses appropriate colors, icons, and ARIA announcements for
+accessibility.
 
 ### Use Cases
 
@@ -21,7 +32,7 @@ The Alert component system provides visual feedback and important information to
 ### Accessibility Features
 
 - **ARIA Live Regions** — Automatically announce alerts to screen readers
-- **Semantic HTML** — Proper heading and paragraph structure  
+- **Semantic HTML** — Proper heading and paragraph structure
 - **Color + Icons** — Not reliant on color alone to convey meaning
 - **Dismissible Options** — Close button with proper focus management
 
@@ -48,9 +59,7 @@ import { AlertSuccess } from '@/components/Alert';
 
 export function SuccessExample() {
   return (
-    <AlertSuccess>
-      Your changes have been saved successfully!
-    </AlertSuccess>
+    <AlertSuccess>Your changes have been saved successfully!</AlertSuccess>
   );
 }
 ```
@@ -77,8 +86,8 @@ import { AlertWarning } from '@/components/Alert';
 export function WarningExample() {
   return (
     <AlertWarning>
-      <strong>Notice:</strong> Your session will expire in 5 minutes due to inactivity. 
-      Please save your work to avoid losing data.
+      <strong>Notice:</strong> Your session will expire in 5 minutes due to
+      inactivity. Please save your work to avoid losing data.
     </AlertWarning>
   );
 }
@@ -105,12 +114,12 @@ export function DismissibleErrorExample() {
 
 ## Component Variants
 
-| Type | ARIA live behaviour | Use for |
-| --- | --- | --- |
-| Success | Polite | Successful actions |
-| Info | Polite status messaging | Information messages |
-| Warning | Polite alert messaging | Cautions and tips |
-| Error | Assertive alert messaging | Errors and failures |
+| Type    | ARIA live behaviour       | Use for              |
+| ------- | ------------------------- | -------------------- |
+| Success | Polite                    | Successful actions   |
+| Info    | Polite status messaging   | Information messages |
+| Warning | Polite alert messaging    | Cautions and tips    |
+| Error   | Assertive alert messaging | Errors and failures  |
 
 ## Dismissible Alerts
 
@@ -137,8 +146,8 @@ dismiss action when the close button is used.
 
 Each alert variant uses Bootstrap alert variants and the NMI theme tokens from
 `ClientApp/src/styles/_variables.scss` and `ClientApp/src/styles/_alert.scss`.
-Keep colour values in SCSS and the Style Guide swatches rather than copying
-hex values into component MDX.
+Keep colour values in SCSS and the Style Guide swatches rather than copying hex
+values into component MDX.
 
 ## Best Practices
 
@@ -158,11 +167,14 @@ hex values into component MDX.
 ## Alert Props
 
 All variants accept the same props. Use the generated Controls and ArgTypes on
-this page as the source of truth instead of maintaining a duplicate API table
-in MDX.
+this page as the source of truth instead of maintaining a duplicate API table in
+MDX.
 
 ## Related Documentation
 
-- [Form Validation](/docs/migration-validation--documentation) — Using alerts in validation flows
-- [Accessibility Guidelines](/docs/documentation-style-guide--documentation) — Announcement and interaction standards
-- [Design Tokens](/docs/documentation-style-guide--documentation) — Colors and spacing
+- [Form Validation](/docs/migration-validation--documentation) — Using alerts in
+  validation flows
+- [Accessibility Guidelines](/docs/documentation-style-guide--documentation) —
+  Announcement and interaction standards
+- [Design Tokens](/docs/documentation-style-guide--documentation) — Colors and
+  spacing

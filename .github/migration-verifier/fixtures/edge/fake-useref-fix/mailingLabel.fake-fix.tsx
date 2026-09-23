@@ -1,3 +1,3 @@
 const printAreaRef = useRef(
-	null,
+  null
 ) as unknown as MutableRefObject<HTMLDivElement>;

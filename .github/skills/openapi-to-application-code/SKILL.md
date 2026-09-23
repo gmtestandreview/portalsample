@@ -1,11 +1,14 @@
 ---
 name: openapi-to-application-code
-description: 'Generate a complete, production-ready application from an OpenAPI specification'
+description:
+  'Generate a complete, production-ready application from an OpenAPI
+  specification'
 ---
 
 # Generate Application from OpenAPI Spec
 
-Your goal is to generate a complete, working application from an OpenAPI specification using the active framework's conventions and best practices.
+Your goal is to generate a complete, working application from an OpenAPI
+specification using the active framework's conventions and best practices.
 
 ## Input Requirements
 
@@ -23,6 +26,7 @@ Your goal is to generate a complete, working application from an OpenAPI specifi
 ## Generation Process
 
 ### Step 1: Analyze the OpenAPI Specification
+
 - Validate the OpenAPI spec for completeness and correctness
 - Identify all endpoints, HTTP methods, request/response schemas
 - Extract authentication requirements and security schemes
@@ -30,6 +34,7 @@ Your goal is to generate a complete, working application from an OpenAPI specifi
 - Flag any ambiguities or incomplete definitions
 
 ### Step 2: Design Application Architecture
+
 - Plan directory structure appropriate for the framework
 - Identify controller/handler grouping by resource or domain
 - Design service layer organization for business logic
@@ -37,6 +42,7 @@ Your goal is to generate a complete, working application from an OpenAPI specifi
 - Design configuration and initialization strategy
 
 ### Step 3: Generate Application Code
+
 - Create project structure with build/package configuration files
 - Generate models/DTOs from OpenAPI schemas
 - Generate controllers/handlers with route mappings
@@ -46,6 +52,7 @@ Your goal is to generate a complete, working application from an OpenAPI specifi
 - Generate configuration and startup code
 
 ### Step 4: Add Supporting Files
+
 - Generate appropriate unit tests for services and controllers
 - Create README with setup and running instructions
 - Add .gitignore and environment configuration templates
@@ -81,8 +88,10 @@ project-name/
 
 ## Best Practices Applied
 
-- **Framework Conventions**: Follows framework-specific naming, structure, and patterns
-- **Separation of Concerns**: Clear layers with controllers, services, and repositories
+- **Framework Conventions**: Follows framework-specific naming, structure, and
+  patterns
+- **Separation of Concerns**: Clear layers with controllers, services, and
+  repositories
 - **Error Handling**: Comprehensive error handling with meaningful responses
 - **Validation**: Input validation and schema validation throughout
 - **Logging**: Structured logging for debugging and monitoring
@@ -104,7 +113,8 @@ After generation:
 
 ## Questions to Ask if Needed
 
-- Should the application include database/ORM setup, or just in-memory/mock data?
+- Should the application include database/ORM setup, or just in-memory/mock
+  data?
 - Do you want Docker configuration for containerization?
 - Should authentication be JWT, OAuth2, API keys, or basic auth?
 - Do you need integration tests or just unit tests?

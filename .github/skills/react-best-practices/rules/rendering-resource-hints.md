@@ -9,11 +9,14 @@ tags: rendering, preload, preconnect, prefetch, resource-hints
 
 **Impact: HIGH (reduces load time for critical resources)**
 
-React DOM provides APIs to hint the browser about resources it will need. These are especially useful in server components to start loading resources before the client even receives the HTML.
+React DOM provides APIs to hint the browser about resources it will need. These
+are especially useful in server components to start loading resources before the
+client even receives the HTML.
 
 - **`prefetchDNS(href)`**: Resolve DNS for a domain you expect to connect to
 - **`preconnect(href)`**: Establish connection (DNS + TCP + TLS) to a server
-- **`preload(href, options)`**: Fetch a resource (stylesheet, font, script, image) you'll use soon
+- **`preload(href, options)`**: Fetch a resource (stylesheet, font, script,
+  image) you'll use soon
 - **`preloadModule(href)`**: Fetch an ES module you'll use soon
 - **`preinit(href, options)`**: Fetch and evaluate a stylesheet or script
 - **`preinitModule(href)`**: Fetch and evaluate an ES module
@@ -67,7 +70,7 @@ function Navigation() {
 
   return (
     <nav>
-      <a href="/dashboard" onMouseEnter={preloadDashboard}>
+      <a href='/dashboard' onMouseEnter={preloadDashboard}>
         Dashboard
       </a>
     </nav>
@@ -86,4 +89,5 @@ function Navigation() {
 | `preinit`       | Stylesheets/scripts that must execute early |
 | `preinitModule` | ES modules that must execute early          |
 
-Reference: [React DOM Resource Preloading APIs](https://react.dev/reference/react-dom#resource-preloading-apis)
+Reference:
+[React DOM Resource Preloading APIs](https://react.dev/reference/react-dom#resource-preloading-apis)

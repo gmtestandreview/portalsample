@@ -1,9 +1,13 @@
 ---
 name: progressive-web-app
-description: "Build Progressive Web Apps (PWAs) with offline support, installability, and caching strategies. Trigger whenever the user mentions PWA, service workers, web app manifests, Workbox, 'add to home screen', or wants their web app to work offline, feel native, or be installable."
+description:
+  "Build Progressive Web Apps (PWAs) with offline support, installability, and
+  caching strategies. Trigger whenever the user mentions PWA, service workers,
+  web app manifests, Workbox, 'add to home screen', or wants their web app to
+  work offline, feel native, or be installable."
 risk: safe
 source: community
-date_added: "2026-03-17"
+date_added: '2026-03-17'
 tags: [pwa, web-dev, service-worker, frontend, offline, caching]
 tools: [gemini, cursor, claude]
 ---
@@ -12,19 +16,29 @@ tools: [gemini, cursor, claude]
 
 ## Overview
 
-A Progressive Web App is a web application that uses modern browser capabilities to deliver a fast, reliable, and installable experience — even on unreliable networks. The three required pillars are:
+A Progressive Web App is a web application that uses modern browser capabilities
+to deliver a fast, reliable, and installable experience — even on unreliable
+networks. The three required pillars are:
 
-1. **HTTPS** — Required in production for service workers to register (localhost is exempt for development).
-2. **Web App Manifest** (`manifest.json`) — Makes the app installable and defines its appearance on device home screens.
-3. **Service Worker** (`sw.js`) — A background script that intercepts network requests, manages caches, and enables offline functionality.
+1. **HTTPS** — Required in production for service workers to register (localhost
+   is exempt for development).
+2. **Web App Manifest** (`manifest.json`) — Makes the app installable and
+   defines its appearance on device home screens.
+3. **Service Worker** (`sw.js`) — A background script that intercepts network
+   requests, manages caches, and enables offline functionality.
 
 ## When to Use This Skill
 
-- Use when the user wants their web app to work offline or on unreliable networks.
-- Use when building a mobile-first web project where users should be able to install the app to their home screen.
-- Use when the user asks about caching strategies, service workers, or improving web app performance and resilience.
-- Use when the user mentions Workbox, web app manifests, background sync, or push notifications for the web.
-- Use when the user asks "can my website be installed like an app?" or "how do I make my site work offline?" — even if they don't use the word PWA.
+- Use when the user wants their web app to work offline or on unreliable
+  networks.
+- Use when building a mobile-first web project where users should be able to
+  install the app to their home screen.
+- Use when the user asks about caching strategies, service workers, or improving
+  web app performance and resilience.
+- Use when the user mentions Workbox, web app manifests, background sync, or
+  push notifications for the web.
+- Use when the user asks "can my website be installed like an app?" or "how do I
+  make my site work offline?" — even if they don't use the word PWA.
 
 ## Deliverables Checklist
 
@@ -34,13 +48,15 @@ Every PWA implementation must include these files at minimum:
 - [ ] `manifest.json` — Full app metadata and icon set
 - [ ] `sw.js` — Service worker with install, activate, and fetch handlers
 - [ ] `app.js` — Main app logic with SW registration and install prompt handling
-- [ ] `offline.html` — Fallback page shown when navigation fails offline (required — missing file will cause install to fail)
+- [ ] `offline.html` — Fallback page shown when navigation fails offline
+      (required — missing file will cause install to fail)
 
 ---
 
 ## Step 1: Web App Manifest (`manifest.json`)
 
-Defines how the app appears when installed. Must be linked from `<head>` via `<link rel="manifest">`.
+Defines how the app appears when installed. Must be linked from `<head>` via
+`<link rel="manifest">`.
 
 ```json
 {
@@ -79,9 +95,13 @@ Defines how the app appears when installed. Must be linked from `<head>` via `<l
 ```
 
 **Key fields:**
-- `display`: `standalone` hides browser UI; `minimal-ui` shows minimal controls; `browser` is standard tab.
-- `purpose: "maskable"` on icons enables adaptive icons on Android (safe zone matters — keep content in center 80%).
-- `screenshots` is optional but required for Chrome's enhanced install dialog on desktop.
+
+- `display`: `standalone` hides browser UI; `minimal-ui` shows minimal controls;
+  `browser` is standard tab.
+- `purpose: "maskable"` on icons enables adaptive icons on Android (safe zone
+  matters — keep content in center 80%).
+- `screenshots` is optional but required for Chrome's enhanced install dialog on
+  desktop.
 
 ---
 
@@ -90,34 +110,34 @@ Defines how the app appears when installed. Must be linked from `<head>` via `<l
 ```html
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Awesome PWA</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Awesome PWA</title>
 
-  <!-- PWA manifest -->
-  <link rel="manifest" href="/manifest.json">
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json" />
 
-  <!-- Theme color for browser chrome -->
-  <meta name="theme-color" content="#0055ff">
+    <!-- Theme color for browser chrome -->
+    <meta name="theme-color" content="#0055ff" />
 
-  <!-- iOS-specific (Safari doesn't fully use manifest) -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="MyPWA">
-  <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png">
+    <!-- iOS-specific (Safari doesn't fully use manifest) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MyPWA" />
+    <link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png" />
 
-  <link rel="stylesheet" href="/styles.css">
-</head>
-<body>
-  <div id="app">
-    <header><h1>My PWA</h1></header>
-    <main id="content">Loading...</main>
-    <!-- Optional: install button, hidden by default -->
-    <button id="install-btn" hidden>Install App</button>
-  </div>
-  <script src="/app.js"></script>
-</body>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header><h1>My PWA</h1></header>
+      <main id="content">Loading...</main>
+      <!-- Optional: install button, hidden by default -->
+      <button id="install-btn" hidden>Install App</button>
+    </div>
+    <script src="/app.js"></script>
+  </body>
 </html>
 ```
 
@@ -301,31 +321,51 @@ async function staleWhileRevalidate(request) {
 ## Edge Cases & Platform Notes
 
 ### iOS / Safari Quirks
-- Safari supports manifests and service workers but **does not support `beforeinstallprompt`** — users must install via the Share → "Add to Home Screen" menu manually.
-- Use the `apple-mobile-web-app-*` meta tags (shown in `index.html` above) for proper iOS integration.
-- Safari may clear service worker caches after ~7 days of inactivity (Intelligent Tracking Prevention).
+
+- Safari supports manifests and service workers but **does not support
+  `beforeinstallprompt`** — users must install via the Share → "Add to Home
+  Screen" menu manually.
+- Use the `apple-mobile-web-app-*` meta tags (shown in `index.html` above) for
+  proper iOS integration.
+- Safari may clear service worker caches after ~7 days of inactivity
+  (Intelligent Tracking Prevention).
 
 ### HTTPS Requirement
-- Service workers only register on `https://` origins. `http://localhost` is the only exception for development.
-- Use a tool like `mkcert` or `ngrok` if you need HTTPS locally with a custom hostname.
+
+- Service workers only register on `https://` origins. `http://localhost` is the
+  only exception for development.
+- Use a tool like `mkcert` or `ngrok` if you need HTTPS locally with a custom
+  hostname.
 
 ### Cache-Busting on Deploy
-- Always increment `CACHE_VERSION` in `sw.js` when deploying new assets. This ensures activate clears old caches and users get fresh files.
-- A common pattern is to inject the version automatically via your build tool (e.g., Vite, Webpack).
+
+- Always increment `CACHE_VERSION` in `sw.js` when deploying new assets. This
+  ensures activate clears old caches and users get fresh files.
+- A common pattern is to inject the version automatically via your build tool
+  (e.g., Vite, Webpack).
 
 ### Opaque Responses (cross-origin requests)
-- Requests to external origins (e.g., CDN fonts, third-party APIs) return "opaque" responses that cannot be inspected. Cache them with caution — a failed opaque response still gets a `200` status.
-- Prefer `staleWhileRevalidate` for cross-origin resources, or use a library like Workbox which handles this safely.
+
+- Requests to external origins (e.g., CDN fonts, third-party APIs) return
+  "opaque" responses that cannot be inspected. Cache them with caution — a
+  failed opaque response still gets a `200` status.
+- Prefer `staleWhileRevalidate` for cross-origin resources, or use a library
+  like Workbox which handles this safely.
 
 ---
 
 ## Workbox (Optional: Production Shortcut)
 
-For production apps, consider [Workbox](https://developer.chrome.com/docs/workbox) (Google's PWA library) instead of hand-rolling strategies. It handles edge cases, cache expiry, and versioning automatically.
+For production apps, consider
+[Workbox](https://developer.chrome.com/docs/workbox) (Google's PWA library)
+instead of hand-rolling strategies. It handles edge cases, cache expiry, and
+versioning automatically.
 
 ```javascript
 // With Workbox (via CDN for simplicity — use npm + bundler in production)
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js');
+importScripts(
+  'https://storage.googleapis.com/workbox-cdn/releases/7.0.0/workbox-sw.js'
+);
 
 const { registerRoute } = workbox.routing;
 const { CacheFirst, NetworkFirst, StaleWhileRevalidate } = workbox.strategies;
@@ -333,9 +373,15 @@ const { precacheAndRoute } = workbox.precaching;
 
 precacheAndRoute(self.__WB_MANIFEST || []); // Injected by build plugin
 
-registerRoute(({ request }) => request.destination === 'image', new CacheFirst());
+registerRoute(
+  ({ request }) => request.destination === 'image',
+  new CacheFirst()
+);
 registerRoute(({ request }) => request.mode === 'navigate', new NetworkFirst());
-registerRoute(({ request }) => request.destination === 'script', new StaleWhileRevalidate());
+registerRoute(
+  ({ request }) => request.destination === 'script',
+  new StaleWhileRevalidate()
+);
 ```
 
 ---
@@ -343,10 +389,14 @@ registerRoute(({ request }) => request.destination === 'script', new StaleWhileR
 ## Checklist Before Shipping
 
 - [ ] Site is served over HTTPS
-- [ ] `manifest.json` has `name`, `short_name`, `start_url`, `display`, `icons` (192 + 512)
+- [ ] `manifest.json` has `name`, `short_name`, `start_url`, `display`, `icons`
+      (192 + 512)
 - [ ] Icons have `purpose: "any maskable"`
-- [ ] `sw.js` registers without errors in DevTools → Application → Service Workers
-- [ ] App shell loads from cache when network is throttled to "Offline" in DevTools
+- [ ] `sw.js` registers without errors in DevTools → Application → Service
+      Workers
+- [ ] App shell loads from cache when network is throttled to "Offline" in
+      DevTools
 - [ ] `offline.html` fallback is cached and served when navigation fails offline
 - [ ] Lighthouse PWA audit passes (Chrome DevTools → Lighthouse tab)
-- [ ] Tested on iOS Safari (manual install flow) and Android Chrome (install prompt)
+- [ ] Tested on iOS Safari (manual install flow) and Android Chrome (install
+      prompt)

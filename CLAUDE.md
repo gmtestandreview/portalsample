@@ -1,10 +1,14 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with
+code in this repository.
 
 ## What this workspace is
 
-This is a **source-map capture snapshot** of `portal.measurement.gov.au` — the Australian Government National Measurement Institute (NMI) customer portal. A root `package.json` is present with validation and test scripts; run them from the workspace root.
+This is a **source-map capture snapshot** of `portal.measurement.gov.au` — the
+Australian Government National Measurement Institute (NMI) customer portal. A
+root `package.json` is present with validation and test scripts; run them from
+the workspace root.
 
 **Key validation commands:**
 
@@ -14,46 +18,73 @@ This is a **source-map capture snapshot** of `portal.measurement.gov.au` — the
 - `npm run test:ci` — Full CI gate (type-check + tests + regression)
 - `npm run test:e2e:app` — App Playwright-BDD suite
 - `npm run test:e2e:storybook` — Storybook Playwright-BDD suite
-- `npm run migration-check` — Pre-migration gate (type-check + tests + storybook build)
+- `npm run migration-check` — Pre-migration gate (type-check + tests + storybook
+  build)
 
 See `package.json` for the full script list.
 
-**Playwright-BDD Fix with AI:** both BDD configs enable `aiFix.promptAttachment`. To generate an AI-fix prompt, run a failing BDD suite with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the corresponding HTML report in `reports/playwright/app` or `reports/playwright/storybook` and copy the AI prompt attachment into Claude, Codex, Copilot, or another coding assistant.
+**Playwright-BDD Fix with AI:** both BDD configs enable
+`aiFix.promptAttachment`. To generate an AI-fix prompt, run a failing BDD suite
+with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the
+corresponding HTML report in `reports/playwright/app` or
+`reports/playwright/storybook` and copy the AI prompt attachment into Claude,
+Codex, Copilot, or another coding assistant.
 
 ## Technology stack
 
-| Layer | Technology |
-| --- | --- |
-| UI framework | React 18 (functional components, hooks) |
-| Language | TypeScript |
-| Routing | React Router v7 (`createBrowserRouter`) |
-| Auth | Azure AD B2C via `@azure/msal-browser` / `@azure/msal-react` |
-| Forms | Formik + Yup with custom string extensions |
-| CSS | Bootstrap 5 (custom NMI theme) + SCSS partials |
-| API client | Auto-generated `web-api-client.ts` (NSwag/OpenAPI) |
-| Analytics | Azure Application Insights + Google Analytics |
-| Bundler | Webpack 5 (config lives in `webpack.config.js`) |
-| CSP | Trusted Types policy via `trustedtypes.ts` + DOMPurify |
+| Layer        | Technology                                                   |
+| ------------ | ------------------------------------------------------------ |
+| UI framework | React 18 (functional components, hooks)                      |
+| Language     | TypeScript                                                   |
+| Routing      | React Router v7 (`createBrowserRouter`)                      |
+| Auth         | Azure AD B2C via `@azure/msal-browser` / `@azure/msal-react` |
+| Forms        | Formik + Yup with custom string extensions                   |
+| CSS          | Bootstrap 5 (custom NMI theme) + SCSS partials               |
+| API client   | Auto-generated `web-api-client.ts` (NSwag/OpenAPI)           |
+| Analytics    | Azure Application Insights + Google Analytics                |
+| Bundler      | Webpack 5 (config lives in `webpack.config.js`)              |
+| CSP          | Trusted Types policy via `trustedtypes.ts` + DOMPurify       |
 
 ## Storybook
 
-When working on UI components, always use the `my-storybook-mcp-server` MCP tools to access Storybook's component and documentation knowledge before answering or taking any action.
+When working on UI components, always use the `my-storybook-mcp-server` MCP
+tools to access Storybook's component and documentation knowledge before
+answering or taking any action.
 
 ### Storybook async/render hygiene
 
-Do not suppress React `act(...)` warnings in Storybook stories or setup. Treat them as ownership signals. For Formik, lookup-driven, or route stories, make component state either synchronously derived from props/context or explicitly await the user-visible settled state in the story play function with `canvas.findBy...` or `waitFor`. Do not put purely derived visibility/state behind `useEffect` + `setState`; it creates post-render updates outside the Storybook test interaction boundary.
+Do not suppress React `act(...)` warnings in Storybook stories or setup. Treat
+them as ownership signals. For Formik, lookup-driven, or route stories, make
+component state either synchronously derived from props/context or explicitly
+await the user-visible settled state in the story play function with
+`canvas.findBy...` or `waitFor`. Do not put purely derived visibility/state
+behind `useEffect` + `setState`; it creates post-render updates outside the
+Storybook test interaction boundary.
 
-Before the first Storybook MCP call, ensure `npm run storybook` is running and `http://localhost:6006/mcp` responds successfully. Confirm the configured `my-storybook-mcp-server` points to that endpoint. If the agent client started before Storybook was ready and the tools are absent, restart the client after the endpoint is healthy; do not bypass the MCP requirement.
+Before the first Storybook MCP call, ensure `npm run storybook` is running and
+`http://localhost:6006/mcp` responds successfully. Confirm the configured
+`my-storybook-mcp-server` points to that endpoint. If the agent client started
+before Storybook was ready and the tools are absent, restart the client after
+the endpoint is healthy; do not bypass the MCP requirement.
 
-- **CRITICAL: Never hallucinate component properties!** Before using ANY property on a component from a design system (including common-sounding ones like `shadow`, etc.), you MUST use the MCP tools to check if the property is actually documented for that component.
+- **CRITICAL: Never hallucinate component properties!** Before using ANY
+  property on a component from a design system (including common-sounding ones
+  like `shadow`, etc.), you MUST use the MCP tools to check if the property is
+  actually documented for that component.
 - Query `list-all-documentation` to get a list of all components
-- Query `get-documentation` for that component to see all available properties and examples
+- Query `get-documentation` for that component to see all available properties
+  and examples
 - Only use properties that are explicitly documented or shown in example stories
-- If a property isn't documented, do not assume properties based on naming conventions or common patterns from other libraries. Check back with the user in these cases.
-- Use the `get-storybook-story-instructions` tool to fetch the latest instructions for creating or updating stories. This will ensure you follow current conventions and recommendations.
+- If a property isn't documented, do not assume properties based on naming
+  conventions or common patterns from other libraries. Check back with the user
+  in these cases.
+- Use the `get-storybook-story-instructions` tool to fetch the latest
+  instructions for creating or updating stories. This will ensure you follow
+  current conventions and recommendations.
 - Check your work by running `run-story-tests`.
 
-Remember: A story name might not reflect the property name correctly, so always verify properties through documentation or example stories before using them.
+Remember: A story name might not reflect the property name correctly, so always
+verify properties through documentation or example stories before using them.
 
 ## Edit boundaries
 
@@ -72,49 +103,56 @@ Remember: A story name might not reflect the property name correctly, so always 
 - `ClientApp/src/external/**`
 - `ClientApp/webpack/**`
 
-If a file you are asked to edit falls outside the safe targets, pause and confirm with the user before proceeding.
+If a file you are asked to edit falls outside the safe targets, pause and
+confirm with the user before proceeding.
 
 ## Architecture
 
-| Concern | Path |
-| --- | --- |
-| App bootstrap | `ClientApp/src/index.tsx` |
-| Router | `ClientApp/src/App.tsx` |
-| Route modules | `ClientApp/src/routes/**` |
-| Reusable UI | `ClientApp/src/components/**` |
-| Auth config (MSAL) | `ClientApp/src/authentication/authConfig.ts` |
-| Auth context / hooks | `ClientApp/src/authentication/accountContext.tsx`, `hooks.tsx` |
-| Auth guard | `ClientApp/src/authentication/AuthenticatedElement.tsx` |
-| Runtime env vars | `ClientApp/src/env.ts` |
-| API client | `ClientApp/src/api/web-api-client.ts` |
-| Shared types | `ClientApp/src/types.ts` |
-| Validation schemas | `ClientApp/src/validationSchemas/**` |
-| Yup custom methods | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` |
-| App Insights | `ClientApp/src/instrumentation/AppInsightsService.ts` |
-| Session storage | `ClientApp/src/storage/**` |
-| Utilities | `ClientApp/src/utils/index.ts` |
+| Concern              | Path                                                                |
+| -------------------- | ------------------------------------------------------------------- |
+| App bootstrap        | `ClientApp/src/index.tsx`                                           |
+| Router               | `ClientApp/src/App.tsx`                                             |
+| Route modules        | `ClientApp/src/routes/**`                                           |
+| Reusable UI          | `ClientApp/src/components/**`                                       |
+| Auth config (MSAL)   | `ClientApp/src/authentication/authConfig.ts`                        |
+| Auth context / hooks | `ClientApp/src/authentication/accountContext.tsx`, `hooks.tsx`      |
+| Auth guard           | `ClientApp/src/authentication/AuthenticatedElement.tsx`             |
+| Runtime env vars     | `ClientApp/src/env.ts`                                              |
+| API client           | `ClientApp/src/api/web-api-client.ts`                               |
+| Shared types         | `ClientApp/src/types.ts`                                            |
+| Validation schemas   | `ClientApp/src/validationSchemas/**`                                |
+| Yup custom methods   | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` |
+| App Insights         | `ClientApp/src/instrumentation/AppInsightsService.ts`               |
+| Session storage      | `ClientApp/src/storage/**`                                          |
+| Utilities            | `ClientApp/src/utils/index.ts`                                      |
 
 ## Critical patterns
 
 ### Environment variables
 
-Config is injected at runtime into `window.*` — **not** `process.env`. Always use the `env` object from `ClientApp/src/env.ts`:
+Config is injected at runtime into `window.*` — **not** `process.env`. Always
+use the `env` object from `ClientApp/src/env.ts`:
 
 ```ts
 import { env } from '../env';
-env.REACT_APP_B2C_CLIENTID  // correct
-process.env.REACT_APP_B2C_CLIENTID  // wrong — undefined at runtime
+env.REACT_APP_B2C_CLIENTID; // correct
+process.env.REACT_APP_B2C_CLIENTID; // wrong — undefined at runtime
 ```
 
 ### Global object usage
 
-Prefer `globalThis` over `window` in handwritten app code, tests, and mocks. This avoids SonarLint `typescript:S7764` findings and keeps shared runtime access working across browser-like test environments.
+Prefer `globalThis` over `window` in handwritten app code, tests, and mocks.
+This avoids SonarLint `typescript:S7764` findings and keeps shared runtime
+access working across browser-like test environments.
 
-Use `window` only where browser-specific typing or the runtime config contract requires it, such as the `window.*` injection consumed by `ClientApp/src/env.ts`.
+Use `window` only where browser-specific typing or the runtime config contract
+requires it, such as the `window.*` injection consumed by
+`ClientApp/src/env.ts`.
 
 ### Authentication guard
 
-Wrap protected routes with `<AuthenticatedElement>`. Multi-step form routes pass `displayHeaderAndFooter={false}` to suppress the main chrome:
+Wrap protected routes with `<AuthenticatedElement>`. Multi-step form routes pass
+`displayHeaderAndFooter={false}` to suppress the main chrome:
 
 ```tsx
 <AuthenticatedElement displayHeaderAndFooter={false}>
@@ -122,31 +160,48 @@ Wrap protected routes with `<AuthenticatedElement>`. Multi-step form routes pass
 </AuthenticatedElement>
 ```
 
-Access authenticated user state via hooks in `ClientApp/src/authentication/hooks.tsx`, not by importing `AccountContext` directly.
+Access authenticated user state via hooks in
+`ClientApp/src/authentication/hooks.tsx`, not by importing `AccountContext`
+directly.
 
 ### Yup validation — custom string methods
 
-`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` adds `.allowedFormat()`, `.nameAllowedFormat()`, `.businessName()`, `.maxLength()`, `.isRequired()`, `.minEntered()`, `.fixedDigits()`, `.phone()`, `.email()`, `.postcode()`, `.numbersOnly()`, `.decimalNumbersOnly()`, `.addressFormat()`, `.minValue()`, `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`, `.noConsecutivePuncuation()`, `.numberWithinRange()` to `Yup.StringSchema` (19 methods total).
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` adds
+`.allowedFormat()`, `.nameAllowedFormat()`, `.businessName()`, `.maxLength()`,
+`.isRequired()`, `.minEntered()`, `.fixedDigits()`, `.phone()`, `.email()`,
+`.postcode()`, `.numbersOnly()`, `.decimalNumbersOnly()`, `.addressFormat()`,
+`.minValue()`, `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`,
+`.noConsecutivePuncuation()`, `.numberWithinRange()` to `Yup.StringSchema` (19
+methods total).
 
-Any schema file that calls one of these methods **must** import the side-effect module:
+Any schema file that calls one of these methods **must** import the side-effect
+module:
 
 ```ts
 import '../../validationSchemas/yupExtensions';
 ```
 
-Omitting this import causes silent runtime failures (`schema.method is not a function`) with no build-time error.
+Omitting this import causes silent runtime failures
+(`schema.method is not a function`) with no build-time error.
 
 ### Forms
 
-Forms use Formik. Use `<UnsavedFormPrompt>` (wraps `RouteLeavingGuard` via `useFormikContext`) for unsaved-change detection. Do not re-implement navigation guards.
+Forms use Formik. Use `<UnsavedFormPrompt>` (wraps `RouteLeavingGuard` via
+`useFormikContext`) for unsaved-change detection. Do not re-implement navigation
+guards.
 
 ### SCSS module system
 
-All new SCSS files must use `@use` / `@forward`, not `@import`. The `@import` rule is deprecated in Dart Sass and will be removed in Sass 3.
+All new SCSS files must use `@use` / `@forward`, not `@import`. The `@import`
+rule is deprecated in Dart Sass and will be removed in Sass 3.
 
-**Bootstrap shim**: `ClientApp/src/styles/_bootstrap-import.scss` isolates the Bootstrap `@import` to a single file. `index.scss` imports the shim (`@import './bootstrap-import'`) rather than Bootstrap directly. Do not add `@import 'bootstrap/scss/bootstrap'` anywhere else.
+**Bootstrap shim**: `ClientApp/src/styles/_bootstrap-import.scss` isolates the
+Bootstrap `@import` to a single file. `index.scss` imports the shim
+(`@import './bootstrap-import'`) rather than Bootstrap directly. Do not add
+`@import 'bootstrap/scss/bootstrap'` anywhere else.
 
-**Division**: All Sass division must use `math.div()`. Any file that uses `math.div()` must declare `@use 'sass:math';` as its first `@use` statement:
+**Division**: All Sass division must use `math.div()`. Any file that uses
+`math.div()` must declare `@use 'sass:math';` as its first `@use` statement:
 
 ```scss
 @use 'sass:math';
@@ -154,55 +209,64 @@ All new SCSS files must use `@use` / `@forward`, not `@import`. The `@import` ru
 font-size: math.div($h1-font-size, 1.375);
 ```
 
-**Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a Bootstrap 5 internal function available only via the global `@import` cascade. Full `@use`-based module migration for our partials is deferred until Bootstrap 6 (which supports `@use` natively). Until then, `silenceDeprecations: ['import']` in both `webpack.config.js` and `.storybook/main.ts` suppresses the remaining `@import` deprecations from our own partials, and `quietDeps: true` suppresses Bootstrap's internal deprecations.
+**Module migration blocker**: `_variables.scss:68` calls `negativify-map()`, a
+Bootstrap 5 internal function available only via the global `@import` cascade.
+Full `@use`-based module migration for our partials is deferred until Bootstrap
+6 (which supports `@use` natively). Until then,
+`silenceDeprecations: ['import']` in both `webpack.config.js` and
+`.storybook/main.ts` suppresses the remaining `@import` deprecations from our
+own partials, and `quietDeps: true` suppresses Bootstrap's internal
+deprecations.
 
 ## Skills
 
-A Team skills live in `skills/**`. Each is mandatory when its trigger applies — see `skills/using-a-team/SKILL.md` for the enforced trigger tables. Invoke via the `Skill` tool.
+A Team skills live in `skills/**`. Each is mandatory when its trigger applies —
+see `skills/using-a-team/SKILL.md` for the enforced trigger tables. Invoke via
+the `Skill` tool.
 
-| Skill | Use when |
-| --- | --- |
-| `adr` | Recording or revisiting a consequential, hard-to-reverse decision — datastore/stack choice, service or module boundary, data-ownership shift, integration pattern, major dependency, or superseding a past ADR. |
-| `api-contract-first` | Before implementing or changing any externally consumed boundary — REST/OpenAPI, gRPC, GraphQL, webhooks, inter-service. Write and review the contract first. |
-| `architecture-audit` | Before major work on an unfamiliar or inherited codebase, before a scaling milestone, or as a periodic health check. |
-| `architecture-design` | Producing an architecture or technical design for a new feature, capability, or system from requirements. Follows `brainstorming`; prefers the simplest reversible design. |
-| `architecture-review` | Assessing a design, RFC, proposal, or PR-level structural decision someone brings you, before it is built. |
-| `brainstorming` | Before any creative work — new feature, component, or capability. Explore intent and design before code. |
-| `dispatching-parallel-agents` | Two or more independent tasks with no shared state or sequential dependency. |
-| `executing-plans` | You have a written implementation plan to execute in the current session. |
-| `finishing-a-development-branch` | A branch is ready for pre-merge verification, cleanup, and pull-request preparation. |
-| `five-whys` | A bug persists despite surface fixes, or a failure or process keeps recurring — target the root, not the symptom. |
-| `incident-response` | Production is degraded or down — use immediately. |
-| `managing-github-actions` | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`. |
-| `mcp2cli` | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell — especially from Codex or Copilot, which lack native MCP tool-calling — or generating a new skill from an API. |
-| `performance-audit` | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features. |
-| `qdrant-clients-sdk` | Vendored (skills.qdrant.tech). Integrating the Qdrant client SDK for the semantic-memory-layer tooling — install commands, REST vs gRPC, curated snippets. |
-| `qdrant-deployment-options` | Vendored. Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) for the semantic-memory layer; feeds an `adr`, does not replace one. |
-| `qdrant-model-migration` | Vendored. Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes, zero downtime. |
-| `qdrant-search-quality` | Vendored. Qdrant retrieval returns bad/irrelevant/missing results, or choosing embedding model / hybrid search / reranking / recall@k evaluation. Routes to `diagnosis` + `search-strategies` sub-skills. Reviewing a whole RAG pipeline for sign-off is the `rag-pipeline-reviewer` agent instead. |
-| `receiving-code-review` | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent. |
-| `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |
-| `skill-creator` | Creating, evaluating, benchmarking, packaging, or fixing activation for an Agent Skill, or running a skill release-readiness review. Complements `writing-skills` (authoring workflow and gates); `skill-creator` owns eval/benchmark/package tooling and Claude Code runtime activation. |
-| `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
-| `smart-init` | `INIT.md` is missing and the project needs conversational onboarding. |
-| `subagent-driven-development` | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review. |
-| `systematic-debugging` | Any bug, failing or flaky test, regression, crash, or incorrect output whose cause is not established. |
-| `test-driven-development` | Implementing or changing observable behavior — new feature, bug fix, or refactor. RED before GREEN. |
-| `using-a-team` | The meta-skill, injected at every session start — defines which skills and agents are mandatory. |
-| `using-git-worktrees` | Before a feature, bug fix, or repository change that needs isolation from the current workspace. |
-| `verification-before-completion` | Before claiming any objectively verifiable work succeeded — edits, fixes, tests, builds, generated artifacts. Evidence before assertions. |
-| `writing-plans` | Turn a chosen or approved engineering direction into a repository-grounded implementation plan before coding. |
-| `writing-skills` | Creating, editing, optimizing, testing, validating, or deploying a `SKILL.md`. |
+| Skill                            | Use when                                                                                                                                                                                                                                                                                            |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `adr`                            | Recording or revisiting a consequential, hard-to-reverse decision — datastore/stack choice, service or module boundary, data-ownership shift, integration pattern, major dependency, or superseding a past ADR.                                                                                     |
+| `api-contract-first`             | Before implementing or changing any externally consumed boundary — REST/OpenAPI, gRPC, GraphQL, webhooks, inter-service. Write and review the contract first.                                                                                                                                       |
+| `architecture-audit`             | Before major work on an unfamiliar or inherited codebase, before a scaling milestone, or as a periodic health check.                                                                                                                                                                                |
+| `architecture-design`            | Producing an architecture or technical design for a new feature, capability, or system from requirements. Follows `brainstorming`; prefers the simplest reversible design.                                                                                                                          |
+| `architecture-review`            | Assessing a design, RFC, proposal, or PR-level structural decision someone brings you, before it is built.                                                                                                                                                                                          |
+| `brainstorming`                  | Before any creative work — new feature, component, or capability. Explore intent and design before code.                                                                                                                                                                                            |
+| `dispatching-parallel-agents`    | Two or more independent tasks with no shared state or sequential dependency.                                                                                                                                                                                                                        |
+| `executing-plans`                | You have a written implementation plan to execute in the current session.                                                                                                                                                                                                                           |
+| `finishing-a-development-branch` | A branch is ready for pre-merge verification, cleanup, and pull-request preparation.                                                                                                                                                                                                                |
+| `five-whys`                      | A bug persists despite surface fixes, or a failure or process keeps recurring — target the root, not the symptom.                                                                                                                                                                                   |
+| `incident-response`              | Production is degraded or down — use immediately.                                                                                                                                                                                                                                                   |
+| `managing-github-actions`        | Reviewing, diagnosing, securing, or changing `.github/workflows/**` or `.github/actions/**`, or changing `packageManager` / `engines` / `devEngines` / `allowScripts` / root `postinstall`.                                                                                                         |
+| `mcp2cli`                        | Calling an MCP server, OpenAPI/REST API, or GraphQL API from a shell — especially from Codex or Copilot, which lack native MCP tool-calling — or generating a new skill from an API.                                                                                                                |
+| `performance-audit`              | A performance regression is suspected, before and after optimisation, or as a pre-release gate for performance-critical features.                                                                                                                                                                   |
+| `qdrant-clients-sdk`             | Vendored (skills.qdrant.tech). Integrating the Qdrant client SDK for the semantic-memory-layer tooling — install commands, REST vs gRPC, curated snippets.                                                                                                                                          |
+| `qdrant-deployment-options`      | Vendored. Choosing a Qdrant deployment (local / Docker / Cloud / Hybrid / EDGE) for the semantic-memory layer; feeds an `adr`, does not replace one.                                                                                                                                                |
+| `qdrant-model-migration`         | Vendored. Switching or A/B-testing the embedding model behind Qdrant — re-embedding, named vectors vs alias swap, dimension changes, zero downtime.                                                                                                                                                 |
+| `qdrant-search-quality`          | Vendored. Qdrant retrieval returns bad/irrelevant/missing results, or choosing embedding model / hybrid search / reranking / recall@k evaluation. Routes to `diagnosis` + `search-strategies` sub-skills. Reviewing a whole RAG pipeline for sign-off is the `rag-pipeline-reviewer` agent instead. |
+| `receiving-code-review`          | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent.                                                                                                                                        |
+| `scalability-review`             | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone.                                                                                                                                                 |
+| `skill-creator`                  | Creating, evaluating, benchmarking, packaging, or fixing activation for an Agent Skill, or running a skill release-readiness review. Complements `writing-skills` (authoring workflow and gates); `skill-creator` owns eval/benchmark/package tooling and Claude Code runtime activation.           |
+| `skill-duplication-audit`        | Two or more skills appear to overlap in scope and need classification.                                                                                                                                                                                                                              |
+| `smart-init`                     | `INIT.md` is missing and the project needs conversational onboarding.                                                                                                                                                                                                                               |
+| `subagent-driven-development`    | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review.                                                                                                                                                                                         |
+| `systematic-debugging`           | Any bug, failing or flaky test, regression, crash, or incorrect output whose cause is not established.                                                                                                                                                                                              |
+| `test-driven-development`        | Implementing or changing observable behavior — new feature, bug fix, or refactor. RED before GREEN.                                                                                                                                                                                                 |
+| `using-a-team`                   | The meta-skill, injected at every session start — defines which skills and agents are mandatory.                                                                                                                                                                                                    |
+| `using-git-worktrees`            | Before a feature, bug fix, or repository change that needs isolation from the current workspace.                                                                                                                                                                                                    |
+| `verification-before-completion` | Before claiming any objectively verifiable work succeeded — edits, fixes, tests, builds, generated artifacts. Evidence before assertions.                                                                                                                                                           |
+| `writing-plans`                  | Turn a chosen or approved engineering direction into a repository-grounded implementation plan before coding.                                                                                                                                                                                       |
+| `writing-skills`                 | Creating, editing, optimizing, testing, validating, or deploying a `SKILL.md`.                                                                                                                                                                                                                      |
 
 ## Instruction files
 
 Additional per-concern guidance lives in `.github/instructions/`:
 
-| Topic | File |
-| --- | --- |
-| Snapshot edit boundaries | `.github/instructions/snapshot-boundaries.instructions.md` |
-| Yup extension import guard | `.github/instructions/yup-extension-guard.instructions.md` |
-| Route security review | `.github/instructions/Route-security-review.instructions.md` |
-| Policy-sensitive files | `.github/instructions/config-policy.instructions.md` |
-| JS/TS change discipline | `.github/instructions/code-change-discipline.instructions.md` |
+| Topic                        | File                                                                    |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| Snapshot edit boundaries     | `.github/instructions/snapshot-boundaries.instructions.md`              |
+| Yup extension import guard   | `.github/instructions/yup-extension-guard.instructions.md`              |
+| Route security review        | `.github/instructions/Route-security-review.instructions.md`            |
+| Policy-sensitive files       | `.github/instructions/config-policy.instructions.md`                    |
+| JS/TS change discipline      | `.github/instructions/code-change-discipline.instructions.md`           |
 | Generated/tracked boundaries | `.github/instructions/generated-and-tracked-boundaries.instructions.md` |

@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 export interface GoogleAnalyticsProps {
-	children?: ReactNode;
-	anonymiseIp?: boolean;
-	testMode?: boolean;
-	sendPageView?: boolean;
+  children?: ReactNode;
+  anonymiseIp?: boolean;
+  testMode?: boolean;
+  sendPageView?: boolean;
 }

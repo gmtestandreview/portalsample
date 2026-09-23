@@ -1,12 +1,22 @@
 # 100 Percent Test Coverage Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use
+> superpowers:subagent-driven-development (recommended) or
+> superpowers:executing-plans to implement this plan task-by-task. Steps use
+> checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make unit test coverage reach and enforce 100% for editable handwritten application source in `ClientApp/src`.
+**Goal:** Make unit test coverage reach and enforce 100% for editable
+handwritten application source in `ClientApp/src`.
 
-**Architecture:** First repair Vitest coverage configuration so the project measures the intended source set and fails below 100%. Then add focused tests by source family, using existing React Testing Library, Vitest, Formik, jsdom, and module mocks. Generated, vendor, source-map mirror, Storybook docs/stories, declaration files, and type-only files stay excluded because they are not editable runtime source.
+**Architecture:** First repair Vitest coverage configuration so the project
+measures the intended source set and fails below 100%. Then add focused tests by
+source family, using existing React Testing Library, Vitest, Formik, jsdom, and
+module mocks. Generated, vendor, source-map mirror, Storybook docs/stories,
+declaration files, and type-only files stay excluded because they are not
+editable runtime source.
 
-**Tech Stack:** React 18, TypeScript, Vitest 4, V8 coverage, React Testing Library, Formik, Yup, jsdom, MSW-style mocks where already present.
+**Tech Stack:** React 18, TypeScript, Vitest 4, V8 coverage, React Testing
+Library, Formik, Yup, jsdom, MSW-style mocks where already present.
 
 ---
 
@@ -29,7 +39,10 @@ Functions  22.48%
 Lines      29.14%
 ```
 
-Important finding: `vitest.unit.config.ts` currently declares `coverage` at the config root, not inside `test`. Vitest writes to the default `coverage/` directory instead of `reports/coverage/unit`, so the intended coverage include list and report directory are not being applied.
+Important finding: `vitest.unit.config.ts` currently declares `coverage` at the
+config root, not inside `test`. Vitest writes to the default `coverage/`
+directory instead of `reports/coverage/unit`, so the intended coverage include
+list and report directory are not being applied.
 
 ## Coverage Scope
 
@@ -58,29 +71,45 @@ ClientApp/src/assets/**
 
 Rationale:
 
-- `ClientApp/src/api/web-api-client.ts` is generated NSwag/OpenAPI output and AGENTS.md says not to edit it.
-- `ClientApp/src/external/**`, `ClientApp/source-map-http-downloads/**`, and `ClientApp/webpack/**` are vendor/captured artifacts.
-- Stories and MDX docs are covered by Storybook tests and docs drift tests, not unit coverage.
-- Type declarations and type-only files do not contain runtime behavior to execute.
+- `ClientApp/src/api/web-api-client.ts` is generated NSwag/OpenAPI output and
+  AGENTS.md says not to edit it.
+- `ClientApp/src/external/**`, `ClientApp/source-map-http-downloads/**`, and
+  `ClientApp/webpack/**` are vendor/captured artifacts.
+- Stories and MDX docs are covered by Storybook tests and docs drift tests, not
+  unit coverage.
+- Type declarations and type-only files do not contain runtime behavior to
+  execute.
 
 ## File Structure
 
 Modify:
 
-- `vitest.unit.config.ts` - move coverage config under `test.coverage`, widen include scope to editable source, exclude generated/vendor/docs/story/type-only files, add 100% thresholds, and set `all: true`.
-- `vitest.setup.ts` - add shared browser API mocks needed by broader component tests.
-- `package.json` - add `test:unit:coverage:watch-gap` helper if useful for local iteration.
+- `vitest.unit.config.ts` - move coverage config under `test.coverage`, widen
+  include scope to editable source, exclude
+  generated/vendor/docs/story/type-only files, add 100% thresholds, and set
+  `all: true`.
+- `vitest.setup.ts` - add shared browser API mocks needed by broader component
+  tests.
+- `package.json` - add `test:unit:coverage:watch-gap` helper if useful for local
+  iteration.
 
 Create:
 
-- `tests/unit/helpers/renderWithProviders.tsx` - shared render helper for router, account context, modal context, and Formik-heavy components.
-- `tests/unit/helpers/moduleMocks.ts` - shared mock builders for MSAL, API clients, analytics, window navigation, and file/blob interactions.
-- `tests/unit/coverage/coverageConfig.test.ts` - regression tests proving coverage configuration is scoped and enforced.
-- `tests/unit/components/**/*.test.tsx` - component family tests for uncovered component branches.
-- `tests/unit/routes/**/*.test.tsx` - route and wizard tests for uncovered route branches.
-- `tests/unit/validationSchemas/**/*.test.ts` - validation branch tests for all Yup schema paths.
+- `tests/unit/helpers/renderWithProviders.tsx` - shared render helper for
+  router, account context, modal context, and Formik-heavy components.
+- `tests/unit/helpers/moduleMocks.ts` - shared mock builders for MSAL, API
+  clients, analytics, window navigation, and file/blob interactions.
+- `tests/unit/coverage/coverageConfig.test.ts` - regression tests proving
+  coverage configuration is scoped and enforced.
+- `tests/unit/components/**/*.test.tsx` - component family tests for uncovered
+  component branches.
+- `tests/unit/routes/**/*.test.tsx` - route and wizard tests for uncovered route
+  branches.
+- `tests/unit/validationSchemas/**/*.test.ts` - validation branch tests for all
+  Yup schema paths.
 - `tests/unit/storage/**/*.test.ts` - storage branch tests.
-- `tests/unit/authentication/**/*.test.tsx` - auth provider, guard, and config tests.
+- `tests/unit/authentication/**/*.test.tsx` - auth provider, guard, and config
+  tests.
 - `tests/unit/analytics/**/*.test.tsx` - Google Analytics tests.
 - `tests/unit/instrumentation/**/*.test.ts` - logger and App Insights tests.
 - `tests/unit/utils/**/*.test.ts` - utility function branch tests.
@@ -109,31 +138,44 @@ Create `tests/unit/coverage/coverageConfig.test.ts`:
 import config from '../../../vitest.unit.config';
 import { describe, expect, it } from 'vitest';
 
-const resolved = typeof config === 'function' ? config({ command: 'serve', mode: 'test' }) : config;
+const resolved =
+  typeof config === 'function'
+    ? config({ command: 'serve', mode: 'test' })
+    : config;
 const testConfig = Array.isArray(resolved) ? resolved[0].test : resolved.test;
 
 describe('unit coverage configuration', () => {
-    it('keeps coverage config under test so Vitest applies it', () => {
-        expect(testConfig?.coverage).toBeDefined();
-        expect(testConfig?.coverage?.reportsDirectory).toBe('./reports/coverage/unit');
-    });
+  it('keeps coverage config under test so Vitest applies it', () => {
+    expect(testConfig?.coverage).toBeDefined();
+    expect(testConfig?.coverage?.reportsDirectory).toBe(
+      './reports/coverage/unit'
+    );
+  });
 
-    it('measures editable handwritten source and excludes generated/vendor artifacts', () => {
-        expect(testConfig?.coverage?.all).toBe(true);
-        expect(testConfig?.coverage?.include).toContain('ClientApp/src/**/*.{ts,tsx}');
-        expect(testConfig?.coverage?.exclude).toContain('ClientApp/src/api/web-api-client.ts');
-        expect(testConfig?.coverage?.exclude).toContain('ClientApp/src/external/**');
-        expect(testConfig?.coverage?.exclude).toContain('ClientApp/source-map-http-downloads/**');
-    });
+  it('measures editable handwritten source and excludes generated/vendor artifacts', () => {
+    expect(testConfig?.coverage?.all).toBe(true);
+    expect(testConfig?.coverage?.include).toContain(
+      'ClientApp/src/**/*.{ts,tsx}'
+    );
+    expect(testConfig?.coverage?.exclude).toContain(
+      'ClientApp/src/api/web-api-client.ts'
+    );
+    expect(testConfig?.coverage?.exclude).toContain(
+      'ClientApp/src/external/**'
+    );
+    expect(testConfig?.coverage?.exclude).toContain(
+      'ClientApp/source-map-http-downloads/**'
+    );
+  });
 
-    it('fails the unit coverage gate below 100 percent', () => {
-        expect(testConfig?.coverage?.thresholds).toEqual({
-            statements: 100,
-            branches: 100,
-            functions: 100,
-            lines: 100,
-        });
+  it('fails the unit coverage gate below 100 percent', () => {
+    expect(testConfig?.coverage?.thresholds).toEqual({
+      statements: 100,
+      branches: 100,
+      functions: 100,
+      lines: 100,
     });
+  });
 });
 ```
 
@@ -164,55 +206,52 @@ import { defineConfig } from 'vitest/config';
  *   npm run test:unit:coverage (with coverage)
  */
 export default defineConfig({
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, 'ClientApp/src'),
-        },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'ClientApp/src'),
     },
-    poolOptions: {
-        forks: {
-            execArgv: ['--max-old-space-size=8192'],
-        },
+  },
+  poolOptions: {
+    forks: {
+      execArgv: ['--max-old-space-size=8192'],
     },
-    test: {
-        name: 'unit',
-        environment: 'jsdom',
-        pool: 'forks',
-        maxWorkers: 1,
-        minWorkers: 1,
-        globals: true,
-        setupFiles: ['./vitest.setup.ts'],
-        include: ['tests/unit/**/*.test.{ts,tsx}'],
-        css: false,
-        coverage: {
-            provider: 'v8',
-            all: true,
-            reporter: ['text', 'html', 'json-summary'],
-            reportsDirectory: './reports/coverage/unit',
-            include: [
-                'ClientApp/src/**/*.{ts,tsx}',
-                'webpack.config.js',
-            ],
-            exclude: [
-                '**/*.d.ts',
-                'ClientApp/src/api/web-api-client.ts',
-                'ClientApp/src/external/**',
-                'ClientApp/source-map-http-downloads/**',
-                'ClientApp/src/**/*.stories.{ts,tsx}',
-                'ClientApp/src/**/*.docs.mdx',
-                'ClientApp/src/**/types.ts',
-                'ClientApp/src/**/types.tsx',
-                'ClientApp/src/styles/**',
-                'ClientApp/src/assets/**',
-            ],
-            thresholds: {
-                statements: 100,
-                branches: 100,
-                functions: 100,
-                lines: 100,
-            },
-        },
+  },
+  test: {
+    name: 'unit',
+    environment: 'jsdom',
+    pool: 'forks',
+    maxWorkers: 1,
+    minWorkers: 1,
+    globals: true,
+    setupFiles: ['./vitest.setup.ts'],
+    include: ['tests/unit/**/*.test.{ts,tsx}'],
+    css: false,
+    coverage: {
+      provider: 'v8',
+      all: true,
+      reporter: ['text', 'html', 'json-summary'],
+      reportsDirectory: './reports/coverage/unit',
+      include: ['ClientApp/src/**/*.{ts,tsx}', 'webpack.config.js'],
+      exclude: [
+        '**/*.d.ts',
+        'ClientApp/src/api/web-api-client.ts',
+        'ClientApp/src/external/**',
+        'ClientApp/source-map-http-downloads/**',
+        'ClientApp/src/**/*.stories.{ts,tsx}',
+        'ClientApp/src/**/*.docs.mdx',
+        'ClientApp/src/**/types.ts',
+        'ClientApp/src/**/types.tsx',
+        'ClientApp/src/styles/**',
+        'ClientApp/src/assets/**',
+      ],
+      thresholds: {
+        statements: 100,
+        branches: 100,
+        functions: 100,
+        lines: 100,
+      },
     },
+  },
 });
 ```
 
@@ -234,7 +273,8 @@ Run:
 npm run test:unit:coverage
 ```
 
-Expected: FAIL on thresholds. Confirm `reports/coverage/unit/coverage-summary.json` exists.
+Expected: FAIL on thresholds. Confirm
+`reports/coverage/unit/coverage-summary.json` exists.
 
 - [ ] **Step 6: Commit**
 
@@ -265,23 +305,26 @@ import { Link, useLocation } from 'react-router';
 import { renderWithProviders } from './renderWithProviders';
 
 const LocationProbe = () => {
-    const location = useLocation();
+  const location = useLocation();
 
-    return (
-        <>
-            <span data-testid="pathname">{location.pathname}</span>
-            <Link to="/next">Next</Link>
-        </>
-    );
+  return (
+    <>
+      <span data-testid='pathname'>{location.pathname}</span>
+      <Link to='/next'>Next</Link>
+    </>
+  );
 };
 
 describe('renderWithProviders', () => {
-    it('renders components inside a memory router', () => {
-        renderWithProviders(<LocationProbe />, { route: '/start' });
+  it('renders components inside a memory router', () => {
+    renderWithProviders(<LocationProbe />, { route: '/start' });
 
-        expect(screen.getByTestId('pathname')).toHaveTextContent('/start');
-        expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute('href', '/next');
-    });
+    expect(screen.getByTestId('pathname')).toHaveTextContent('/start');
+    expect(screen.getByRole('link', { name: 'Next' })).toHaveAttribute(
+      'href',
+      '/next'
+    );
+  });
 });
 ```
 
@@ -305,22 +348,24 @@ import { PropsWithChildren, ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
 
 type RenderWithProvidersOptions = RenderOptions & {
-    route?: string;
+  route?: string;
 };
 
-const Providers = ({ children, route = '/' }: PropsWithChildren<{ route?: string }>) => (
-    <MemoryRouter initialEntries={[route]}>
-        {children}
-    </MemoryRouter>
+const Providers = ({
+  children,
+  route = '/',
+}: PropsWithChildren<{ route?: string }>) => (
+  <MemoryRouter initialEntries={[route]}>{children}</MemoryRouter>
 );
 
 export const renderWithProviders = (
-    ui: ReactElement,
-    { route = '/', ...options }: RenderWithProvidersOptions = {},
-) => render(ui, {
+  ui: ReactElement,
+  { route = '/', ...options }: RenderWithProvidersOptions = {}
+) =>
+  render(ui, {
     wrapper: ({ children }) => <Providers route={route}>{children}</Providers>,
     ...options,
-});
+  });
 ```
 
 - [ ] **Step 4: Add shared browser mocks**
@@ -329,22 +374,22 @@ Append to `vitest.setup.ts`:
 
 ```ts
 if (!window.URL.createObjectURL) {
-    Object.defineProperty(window.URL, 'createObjectURL', {
-        writable: true,
-        value: vi.fn(() => 'blob:unit-test'),
-    });
+  Object.defineProperty(window.URL, 'createObjectURL', {
+    writable: true,
+    value: vi.fn(() => 'blob:unit-test'),
+  });
 }
 
 if (!window.URL.revokeObjectURL) {
-    Object.defineProperty(window.URL, 'revokeObjectURL', {
-        writable: true,
-        value: vi.fn(),
-    });
+  Object.defineProperty(window.URL, 'revokeObjectURL', {
+    writable: true,
+    value: vi.fn(),
+  });
 }
 
 Object.defineProperty(window, 'scrollTo', {
-    writable: true,
-    value: vi.fn(),
+  writable: true,
+  value: vi.fn(),
 });
 ```
 
@@ -354,32 +399,33 @@ Create `tests/unit/helpers/moduleMocks.ts`:
 import { vi } from 'vitest';
 
 export const mockOpen = () => {
-    const open = vi.fn();
-    Object.defineProperty(window, 'open', {
-        writable: true,
-        value: open,
-    });
-    return open;
+  const open = vi.fn();
+  Object.defineProperty(window, 'open', {
+    writable: true,
+    value: open,
+  });
+  return open;
 };
 
 export const mockLocationAssign = () => {
-    const assign = vi.fn();
-    const location = {
-        ...window.location,
-        assign,
-    } as Location;
+  const assign = vi.fn();
+  const location = {
+    ...window.location,
+    assign,
+  } as Location;
 
-    Object.defineProperty(window, 'location', {
-        configurable: true,
-        value: location,
-    });
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: location,
+  });
 
-    return assign;
+  return assign;
 };
 
-export const flushPromises = () => new Promise<void>((resolve) => {
+export const flushPromises = () =>
+  new Promise<void>((resolve) => {
     window.setTimeout(resolve, 0);
-});
+  });
 ```
 
 - [ ] **Step 5: Run helper tests**
@@ -407,7 +453,9 @@ git commit -m "test: add shared unit test harness"
 
 - Modify or create tests under: `tests/unit/authentication/**/*.test.tsx`
 - Create: `tests/unit/analytics/googleAnalytics.test.tsx`
-- Cover source: `ClientApp/src/authentication/*.tsx`, `ClientApp/src/authentication/*.ts`, `ClientApp/src/analytics/GoogleAnalytics.tsx`
+- Cover source: `ClientApp/src/authentication/*.tsx`,
+  `ClientApp/src/authentication/*.ts`,
+  `ClientApp/src/analytics/GoogleAnalytics.tsx`
 
 - [ ] **Step 1: Add analytics tests**
 
@@ -421,38 +469,40 @@ const send = vi.fn();
 const initialize = vi.fn();
 
 vi.mock('react-ga4', () => ({
-    default: {
-        initialize,
-        send,
-    },
+  default: {
+    initialize,
+    send,
+  },
 }));
 
 describe('GoogleAnalytics', () => {
-    afterEach(() => {
-        vi.resetModules();
-        initialize.mockClear();
-        send.mockClear();
-    });
+  afterEach(() => {
+    vi.resetModules();
+    initialize.mockClear();
+    send.mockClear();
+  });
 
-    it('initializes GA and sends page views when tracking id is configured', async () => {
-        const { GoogleAnalytics } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+  it('initializes GA and sends page views when tracking id is configured', async () => {
+    const { GoogleAnalytics } =
+      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
-        render(<GoogleAnalytics />);
+    render(<GoogleAnalytics />);
 
-        expect(initialize).toHaveBeenCalledWith('test-ga-id');
-        expect(send).toHaveBeenCalledWith({ hitType: 'pageview', page: '/' });
-    });
+    expect(initialize).toHaveBeenCalledWith('test-ga-id');
+    expect(send).toHaveBeenCalledWith({ hitType: 'pageview', page: '/' });
+  });
 
-    it('does not initialize GA when tracking id is empty', async () => {
-        Object.assign(window, { REACT_APP_GA_TRACKINGID: '' });
-        const { GoogleAnalytics } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');
+  it('does not initialize GA when tracking id is empty', async () => {
+    Object.assign(window, { REACT_APP_GA_TRACKINGID: '' });
+    const { GoogleAnalytics } =
+      await import('../../../ClientApp/src/analytics/GoogleAnalytics');
 
-        render(<GoogleAnalytics />);
+    render(<GoogleAnalytics />);
 
-        expect(initialize).not.toHaveBeenCalled();
-        expect(send).not.toHaveBeenCalled();
-        Object.assign(window, { REACT_APP_GA_TRACKINGID: 'test-ga-id' });
-    });
+    expect(initialize).not.toHaveBeenCalled();
+    expect(send).not.toHaveBeenCalled();
+    Object.assign(window, { REACT_APP_GA_TRACKINGID: 'test-ga-id' });
+  });
 });
 ```
 
@@ -476,42 +526,44 @@ import { describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../helpers/renderWithProviders';
 
 vi.mock('@azure/msal-react', () => ({
-    useIsAuthenticated: vi.fn(),
-    useMsal: () => ({
-        instance: {
-            loginRedirect: vi.fn(),
-        },
-    }),
+  useIsAuthenticated: vi.fn(),
+  useMsal: () => ({
+    instance: {
+      loginRedirect: vi.fn(),
+    },
+  }),
 }));
 
 describe('AuthenticatedElement', () => {
-    it('renders children when the user is authenticated', async () => {
-        const msalReact = await import('@azure/msal-react');
-        vi.mocked(msalReact.useIsAuthenticated).mockReturnValue(true);
-        const { default: AuthenticatedElement } = await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+  it('renders children when the user is authenticated', async () => {
+    const msalReact = await import('@azure/msal-react');
+    vi.mocked(msalReact.useIsAuthenticated).mockReturnValue(true);
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
 
-        renderWithProviders(
-            <AuthenticatedElement>
-                <span>Secure content</span>
-            </AuthenticatedElement>,
-        );
+    renderWithProviders(
+      <AuthenticatedElement>
+        <span>Secure content</span>
+      </AuthenticatedElement>
+    );
 
-        expect(screen.getByText('Secure content')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Secure content')).toBeInTheDocument();
+  });
 
-    it('does not render children when the user is not authenticated', async () => {
-        const msalReact = await import('@azure/msal-react');
-        vi.mocked(msalReact.useIsAuthenticated).mockReturnValue(false);
-        const { default: AuthenticatedElement } = await import('../../../ClientApp/src/authentication/AuthenticatedElement');
+  it('does not render children when the user is not authenticated', async () => {
+    const msalReact = await import('@azure/msal-react');
+    vi.mocked(msalReact.useIsAuthenticated).mockReturnValue(false);
+    const { default: AuthenticatedElement } =
+      await import('../../../ClientApp/src/authentication/AuthenticatedElement');
 
-        renderWithProviders(
-            <AuthenticatedElement>
-                <span>Secure content</span>
-            </AuthenticatedElement>,
-        );
+    renderWithProviders(
+      <AuthenticatedElement>
+        <span>Secure content</span>
+      </AuthenticatedElement>
+    );
 
-        expect(screen.queryByText('Secure content')).not.toBeInTheDocument();
-    });
+    expect(screen.queryByText('Secure content')).not.toBeInTheDocument();
+  });
 });
 ```
 
@@ -533,7 +585,9 @@ Run:
 npm run test:unit:coverage
 ```
 
-Expected: FAIL until every auth and analytics file reports 100%. Use the `Uncovered Line #s` rows for only `ClientApp/src/authentication` and `ClientApp/src/analytics` to add missing branch cases.
+Expected: FAIL until every auth and analytics file reports 100%. Use the
+`Uncovered Line #s` rows for only `ClientApp/src/authentication` and
+`ClientApp/src/analytics` to add missing branch cases.
 
 - [ ] **Step 6: Commit**
 
@@ -551,11 +605,15 @@ git commit -m "test: cover authentication and analytics"
 - Modify or create tests under: `tests/unit/storage/**/*.test.ts`
 - Create: `tests/unit/utils/index.test.ts`
 - Create: `tests/unit/instrumentation/appLogger.test.ts`
-- Cover source: `ClientApp/src/storage/**/*.ts`, `ClientApp/src/utils/index.ts`, `ClientApp/src/instrumentation/**/*.ts`
+- Cover source: `ClientApp/src/storage/**/*.ts`, `ClientApp/src/utils/index.ts`,
+  `ClientApp/src/instrumentation/**/*.ts`
 
 - [ ] **Step 1: Add utility branch tests**
 
-Create `tests/unit/utils/index.test.ts` and import named utility functions from `ClientApp/src/utils/index.ts`. For each exported function, add one test for normal input, one for empty or undefined input if the function accepts it, and one for boundary formatting or matching behavior.
+Create `tests/unit/utils/index.test.ts` and import named utility functions from
+`ClientApp/src/utils/index.ts`. For each exported function, add one test for
+normal input, one for empty or undefined input if the function accepts it, and
+one for boundary formatting or matching behavior.
 
 Use this structure:
 
@@ -564,13 +622,16 @@ import { describe, expect, it } from 'vitest';
 import * as utils from '../../../ClientApp/src/utils';
 
 describe('utils exports', () => {
-    it('exports runtime utility functions', () => {
-        expect(Object.keys(utils).sort()).toMatchSnapshot();
-    });
+  it('exports runtime utility functions', () => {
+    expect(Object.keys(utils).sort()).toMatchSnapshot();
+  });
 });
 ```
 
-Then run the test once to create the export inventory, replace the snapshot-style assertion with explicit `expect(typeof utils.exportName).toBe('function')` assertions for every exported function, and add behavior tests for each export.
+Then run the test once to create the export inventory, replace the
+snapshot-style assertion with explicit
+`expect(typeof utils.exportName).toBe('function')` assertions for every exported
+function, and add behavior tests for each export.
 
 - [ ] **Step 2: Run utility tests**
 
@@ -591,35 +652,37 @@ import { describe, expect, it, vi } from 'vitest';
 import { AppLogger } from '../../../ClientApp/src/instrumentation/AppLogger';
 
 describe('AppLogger', () => {
-    it('tracks info messages through the configured telemetry client', () => {
-        const trackTrace = vi.fn();
-        const logger = new AppLogger({ trackTrace } as never);
+  it('tracks info messages through the configured telemetry client', () => {
+    const trackTrace = vi.fn();
+    const logger = new AppLogger({ trackTrace } as never);
 
-        logger.info('Saved', { requestId: '123' });
+    logger.info('Saved', { requestId: '123' });
 
-        expect(trackTrace).toHaveBeenCalledWith({
-            message: 'Saved',
-            severityLevel: 1,
-            properties: { requestId: '123' },
-        });
+    expect(trackTrace).toHaveBeenCalledWith({
+      message: 'Saved',
+      severityLevel: 1,
+      properties: { requestId: '123' },
     });
+  });
 
-    it('tracks errors through the configured telemetry client', () => {
-        const trackException = vi.fn();
-        const logger = new AppLogger({ trackException } as never);
-        const error = new Error('Failed');
+  it('tracks errors through the configured telemetry client', () => {
+    const trackException = vi.fn();
+    const logger = new AppLogger({ trackException } as never);
+    const error = new Error('Failed');
 
-        logger.error(error, { requestId: '123' });
+    logger.error(error, { requestId: '123' });
 
-        expect(trackException).toHaveBeenCalledWith({
-            exception: error,
-            properties: { requestId: '123' },
-        });
+    expect(trackException).toHaveBeenCalledWith({
+      exception: error,
+      properties: { requestId: '123' },
     });
+  });
 });
 ```
 
-If constructor or method names differ, inspect `ClientApp/src/instrumentation/AppLogger.ts` and update only the test names and assertions to the actual public API.
+If constructor or method names differ, inspect
+`ClientApp/src/instrumentation/AppLogger.ts` and update only the test names and
+assertions to the actual public API.
 
 - [ ] **Step 4: Run storage, utility, and instrumentation tests**
 
@@ -639,7 +702,8 @@ Run:
 npm run test:unit:coverage
 ```
 
-Expected: FAIL until `ClientApp/src/storage`, `ClientApp/src/utils`, and `ClientApp/src/instrumentation` all report 100%.
+Expected: FAIL until `ClientApp/src/storage`, `ClientApp/src/utils`, and
+`ClientApp/src/instrumentation` all report 100%.
 
 - [ ] **Step 6: Commit**
 
@@ -655,33 +719,47 @@ git commit -m "test: cover storage utilities and instrumentation"
 **Files:**
 
 - Modify or create tests under: `tests/unit/validationSchemas/**/*.test.ts`
-- Cover source: `ClientApp/src/validationSchemas/**/*.ts`, `ClientApp/src/routes/**/validation.ts`
+- Cover source: `ClientApp/src/validationSchemas/**/*.ts`,
+  `ClientApp/src/routes/**/validation.ts`
 
 - [ ] **Step 1: Add custom Yup extension branch tests**
 
-Extend `tests/unit/validationSchemas/stringExtensions.test.ts` to cover each custom string method in `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts`:
+Extend `tests/unit/validationSchemas/stringExtensions.test.ts` to cover each
+custom string method in
+`ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts`:
 
 ```ts
 import * as Yup from 'yup';
 import '../../../ClientApp/src/validationSchemas/yupExtensions';
 
 describe('custom Yup string extensions complete branch coverage', () => {
-    it.each([
-        ['letters', Yup.string().allowedFormat(/^[A-Z]+$/, 'Only uppercase letters'), 'ABC', true],
-        ['letters invalid', Yup.string().allowedFormat(/^[A-Z]+$/, 'Only uppercase letters'), 'abc', false],
-        ['fixed digits valid', Yup.string().fixedDigits(4), '1234', true],
-        ['fixed digits invalid', Yup.string().fixedDigits(4), '123', false],
-        ['phone valid', Yup.string().phone(), '02 1234 5678', true],
-        ['phone invalid', Yup.string().phone(), 'not a phone', false],
-        ['postcode valid', Yup.string().postcode(), '2600', true],
-        ['postcode invalid', Yup.string().postcode(), 'ABCDE', false],
-    ])('%s', async (_name, schema, value, valid) => {
-        await expect(schema.isValid(value)).resolves.toBe(valid);
-    });
+  it.each([
+    [
+      'letters',
+      Yup.string().allowedFormat(/^[A-Z]+$/, 'Only uppercase letters'),
+      'ABC',
+      true,
+    ],
+    [
+      'letters invalid',
+      Yup.string().allowedFormat(/^[A-Z]+$/, 'Only uppercase letters'),
+      'abc',
+      false,
+    ],
+    ['fixed digits valid', Yup.string().fixedDigits(4), '1234', true],
+    ['fixed digits invalid', Yup.string().fixedDigits(4), '123', false],
+    ['phone valid', Yup.string().phone(), '02 1234 5678', true],
+    ['phone invalid', Yup.string().phone(), 'not a phone', false],
+    ['postcode valid', Yup.string().postcode(), '2600', true],
+    ['postcode invalid', Yup.string().postcode(), 'ABCDE', false],
+  ])('%s', async (_name, schema, value, valid) => {
+    await expect(schema.isValid(value)).resolves.toBe(valid);
+  });
 });
 ```
 
-Add cases for every extension exported by the module. Use the exact method names from `stringExtensions.ts`.
+Add cases for every extension exported by the module. Use the exact method names
+from `stringExtensions.ts`.
 
 - [ ] **Step 2: Add route validation tests**
 
@@ -786,25 +864,26 @@ import { renderWithProviders } from '../helpers/renderWithProviders';
 import Component from '../../../ClientApp/src/components/ComponentName';
 
 describe('ComponentName', () => {
-    it('renders default content', () => {
-        renderWithProviders(<Component />);
+  it('renders default content', () => {
+    renderWithProviders(<Component />);
 
-        expect(screen.getByRole('region')).toBeInTheDocument();
-    });
+    expect(screen.getByRole('region')).toBeInTheDocument();
+  });
 
-    it('calls the click handler', async () => {
-        const user = userEvent.setup();
-        const onClick = vi.fn();
+  it('calls the click handler', async () => {
+    const user = userEvent.setup();
+    const onClick = vi.fn();
 
-        renderWithProviders(<Component onClick={onClick} />);
-        await user.click(screen.getByRole('button'));
+    renderWithProviders(<Component onClick={onClick} />);
+    await user.click(screen.getByRole('button'));
 
-        expect(onClick).toHaveBeenCalledTimes(1);
-    });
+    expect(onClick).toHaveBeenCalledTimes(1);
+  });
 });
 ```
 
-Replace `ComponentName`, imports, roles, and props with the actual component API in each file.
+Replace `ComponentName`, imports, roles, and props with the actual component API
+in each file.
 
 - [ ] **Step 2: Add tests for form components**
 
@@ -990,7 +1069,8 @@ git commit -m "test: cover routes and workflows"
 
 - Modify or create: `tests/unit/app.test.tsx`
 - Modify: `tests/unit/config/webpackConfig.test.ts`
-- Cover source: `ClientApp/src/App.tsx`, `ClientApp/src/env.ts`, `webpack.config.js`
+- Cover source: `ClientApp/src/App.tsx`, `ClientApp/src/env.ts`,
+  `webpack.config.js`
 
 - [ ] **Step 1: Add app router tests**
 
@@ -1003,27 +1083,30 @@ import { screen } from '@testing-library/react';
 import { render } from '@testing-library/react';
 
 vi.mock('@azure/msal-react', () => ({
-    useIsAuthenticated: () => true,
-    useMsal: () => ({
-        instance: {
-            loginRedirect: vi.fn(),
-            logoutRedirect: vi.fn(),
-        },
-    }),
+  useIsAuthenticated: () => true,
+  useMsal: () => ({
+    instance: {
+      loginRedirect: vi.fn(),
+      logoutRedirect: vi.fn(),
+    },
+  }),
 }));
 
 describe('App router', () => {
-    it('creates a browser router with public routes', async () => {
-        const { router } = await import('../../ClientApp/src/App');
+  it('creates a browser router with public routes', async () => {
+    const { router } = await import('../../ClientApp/src/App');
 
-        render(<RouterProvider router={router} />);
+    render(<RouterProvider router={router} />);
 
-        expect(screen.getByText(/National Measurement Institute/i)).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText(/National Measurement Institute/i)
+    ).toBeInTheDocument();
+  });
 });
 ```
 
-Align the exported router name with the actual export from `ClientApp/src/App.tsx`.
+Align the exported router name with the actual export from
+`ClientApp/src/App.tsx`.
 
 - [ ] **Step 2: Add env branch tests**
 
@@ -1033,12 +1116,12 @@ Create or extend `tests/unit/env.test.ts`:
 import { describe, expect, it } from 'vitest';
 
 describe('env', () => {
-    it('reads runtime values from window', async () => {
-        const { env } = await import('../../ClientApp/src/env');
+  it('reads runtime values from window', async () => {
+    const { env } = await import('../../ClientApp/src/env');
 
-        expect(env.REACT_APP_B2C_CLIENTID).toBe('test-client-id');
-        expect(env.REACT_APP_GA_TRACKINGID).toBe('test-ga-id');
-    });
+    expect(env.REACT_APP_B2C_CLIENTID).toBe('test-client-id');
+    expect(env.REACT_APP_GA_TRACKINGID).toBe('test-ga-id');
+  });
 });
 ```
 
@@ -1076,7 +1159,8 @@ Run:
 npm run test:unit:coverage
 ```
 
-Expected: FAIL until `ClientApp/src/App.tsx`, `ClientApp/src/env.ts`, and `webpack.config.js` all report 100%.
+Expected: FAIL until `ClientApp/src/App.tsx`, `ClientApp/src/env.ts`, and
+`webpack.config.js` all report 100%.
 
 - [ ] **Step 6: Commit**
 
@@ -1091,7 +1175,8 @@ git commit -m "test: cover app and build configuration"
 
 **Files:**
 
-- Modify: any remaining `tests/unit/**/*.test.{ts,tsx}` needed by the coverage report
+- Modify: any remaining `tests/unit/**/*.test.{ts,tsx}` needed by the coverage
+  report
 - Do not modify generated/vendor/captured files
 
 - [ ] **Step 1: Generate the final coverage gap report**
@@ -1116,7 +1201,8 @@ Expected: JSON containing `total` and per-file coverage data.
 
 - [ ] **Step 3: Close files one at a time**
 
-For each file below 100%, add the smallest behavior test that executes the listed uncovered lines or branch. After each file:
+For each file below 100%, add the smallest behavior test that executes the
+listed uncovered lines or branch. After each file:
 
 ```powershell
 npm run test:unit:coverage
@@ -1155,17 +1241,26 @@ git commit -m "test: reach 100 percent unit coverage"
 
 Spec coverage:
 
-- The plan directly targets 100% test coverage by making Vitest enforce 100% thresholds.
-- The plan fixes the current misconfiguration where coverage settings are not applied.
-- The plan respects AGENTS.md edit boundaries by excluding generated, vendor, and source-map capture files.
-- The plan covers app source by family: auth, analytics, instrumentation, storage, utilities, validation, components, routes, app bootstrap, and build config.
+- The plan directly targets 100% test coverage by making Vitest enforce 100%
+  thresholds.
+- The plan fixes the current misconfiguration where coverage settings are not
+  applied.
+- The plan respects AGENTS.md edit boundaries by excluding generated, vendor,
+  and source-map capture files.
+- The plan covers app source by family: auth, analytics, instrumentation,
+  storage, utilities, validation, components, routes, app bootstrap, and build
+  config.
 
 Placeholder scan:
 
 - No step uses `TBD`, `TODO`, `implement later`, or an undefined future task.
-- Some tasks require inspecting actual component APIs before writing assertions. The plan constrains those steps to exact folders, exact test categories, exact commands, and exact expected results.
+- Some tasks require inspecting actual component APIs before writing assertions.
+  The plan constrains those steps to exact folders, exact test categories, exact
+  commands, and exact expected results.
 
 Type consistency:
 
-- Test helpers use React 18, React Router v7 package imports already present in `package.json`, Vitest globals, and React Testing Library.
-- Coverage config uses Vitest 4 `test.coverage` placement and V8 coverage thresholds.
+- Test helpers use React 18, React Router v7 package imports already present in
+  `package.json`, Vitest globals, and React Testing Library.
+- Coverage config uses Vitest 4 `test.coverage` placement and V8 coverage
+  thresholds.

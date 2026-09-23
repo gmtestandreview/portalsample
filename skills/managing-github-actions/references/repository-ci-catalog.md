@@ -1,8 +1,11 @@
 # Repository CI catalog
 
-Load this when you need the full npm script list, the exact `test:ci` composition, the advanced-feature constraints, or the current workflow inventory.
+Load this when you need the full npm script list, the exact `test:ci`
+composition, the advanced-feature constraints, or the current workflow
+inventory.
 
-The live `package.json` and `.github/workflows/` files override anything here if they have diverged. Report the drift when they do.
+The live `package.json` and `.github/workflows/` files override anything here if
+they have diverged. Report the drift when they do.
 
 ## npm scripts relevant to CI
 
@@ -24,7 +27,8 @@ npm run build-storybook           clean + storybook build -o storybook-static
 npm run storybook:verify:docs     storybook build --docs + verify-storybook-docs.mjs
 ```
 
-Prefer these scripts over copying the underlying Vitest, tsc, Storybook, Playwright, or webpack command into workflow YAML.
+Prefer these scripts over copying the underlying Vitest, tsc, Storybook,
+Playwright, or webpack command into workflow YAML.
 
 ## test:ci composition
 
@@ -36,7 +40,8 @@ npm run test:ci
   -> npm run test:ci:quality     Vitest quality / regression + junit
 ```
 
-Do not replace `npm run test:ci` with a subset unless a workflow intentionally has narrower scope and repository policy supports the distinction.
+Do not replace `npm run test:ci` with a subset unless a workflow intentionally
+has narrower scope and repository policy supports the distinction.
 
 ## migration-check composition
 
@@ -75,16 +80,17 @@ npm run migration-check        pre-migration validation
 Conventions in `pr.yml` / `release.yml`:
 
 - `permissions: contents: read` at file level.
-- `actions/checkout`, `actions/setup-node`, `actions/upload-artifact`, `actions/download-artifact`, and
-  `SonarSource/sonarqube-scan-action` pinned to a full commit SHA with a `# vN` comment.
+- `actions/checkout`, `actions/setup-node`, `actions/upload-artifact`,
+  `actions/download-artifact`, and `SonarSource/sonarqube-scan-action` pinned to
+  a full commit SHA with a `# vN` comment.
 - `corepack enable` before `npm ci` in every job.
 - `COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'` in workflow `env`.
 - Node pinned per job (`'24'`, with `'24.0.0'` in the lower-bound job).
 
 Known drift to correct rather than copy:
 
-- `chromatic.yml` pins `actions/checkout` and `actions/setup-node` by tag, not SHA, and runs `npm ci`
-  without a preceding `corepack enable`.
+- `chromatic.yml` pins `actions/checkout` and `actions/setup-node` by tag, not
+  SHA, and runs `npm ci` without a preceding `corepack enable`.
 
 Re-derive this list from `.github/workflows/` if it looks stale.
 

@@ -1,67 +1,68 @@
-"use client";
+'use client';
 import {
-	TextArea as AriaTextArea,
-	TextField as AriaTextField,
-	type TextFieldProps as AriaTextFieldProps,
-	Input,
-	type ValidationResult,
-} from "react-aria-components/TextField";
-import { Description, FieldError, Label } from "../../forms/AriaForm/Form.tsx";
-import "./TextField.css";
-import type React from "react";
+  TextArea as AriaTextArea,
+  TextField as AriaTextField,
+  type TextFieldProps as AriaTextFieldProps,
+  Input,
+  type ValidationResult,
+} from 'react-aria-components/TextField';
+import { Description, FieldError, Label } from '../../forms/AriaForm/Form.tsx';
+import './TextField.css';
+import type React from 'react';
 
-export interface TextFieldProps<T = HTMLInputElement>
-	extends AriaTextFieldProps {
-	label?: string;
-	description?: string;
-	errorMessage?: string | ((validation: ValidationResult) => string);
-	placeholder?: string;
-	inputRef?: React.Ref<T>;
-	rows?: number;
+export interface TextFieldProps<
+  T = HTMLInputElement,
+> extends AriaTextFieldProps {
+  label?: string;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string;
+  inputRef?: React.Ref<T>;
+  rows?: number;
 }
 
 export function TextField({
-	label,
-	description,
-	errorMessage,
-	placeholder,
-	inputRef,
-	...props
+  label,
+  description,
+  errorMessage,
+  placeholder,
+  inputRef,
+  ...props
 }: Readonly<TextFieldProps>) {
-	return (
-		<AriaTextField {...props}>
-			{label && <Label>{label}</Label>}
-			<Input
-				ref={inputRef}
-				className="react-aria-Input inset"
-				placeholder={placeholder}
-			/>
-			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
-		</AriaTextField>
-	);
+  return (
+    <AriaTextField {...props}>
+      {label && <Label>{label}</Label>}
+      <Input
+        ref={inputRef}
+        className='react-aria-Input inset'
+        placeholder={placeholder}
+      />
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaTextField>
+  );
 }
 
 export function TextArea({
-	label,
-	description,
-	errorMessage,
-	placeholder,
-	inputRef,
-	rows,
-	...props
+  label,
+  description,
+  errorMessage,
+  placeholder,
+  inputRef,
+  rows,
+  ...props
 }: Readonly<TextFieldProps<HTMLTextAreaElement>>) {
-	return (
-		<AriaTextField {...props}>
-			<Label>{label}</Label>
-			<AriaTextArea
-				ref={inputRef}
-				className="react-aria-TextArea inset"
-				placeholder={placeholder}
-				rows={rows}
-			/>
-			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
-		</AriaTextField>
-	);
+  return (
+    <AriaTextField {...props}>
+      <Label>{label}</Label>
+      <AriaTextArea
+        ref={inputRef}
+        className='react-aria-TextArea inset'
+        placeholder={placeholder}
+        rows={rows}
+      />
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaTextField>
+  );
 }

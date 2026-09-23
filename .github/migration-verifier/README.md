@@ -1,11 +1,14 @@
 # Migration Verifier Scaffold
 
-This folder turns the migration checklist and test plan into a concrete, portable verifier layout for the real application repository.
+This folder turns the migration checklist and test plan into a concrete,
+portable verifier layout for the real application repository.
 
-It is **not runnable in this snapshot** because this workspace has no root `package.json`, no test runner, and no .NET host project. The intent is:
+It is **not runnable in this snapshot** because this workspace has no root
+`package.json`, no test runner, and no .NET host project. The intent is:
 
 1. Copy this folder into the real repo
-2. Promote the config files to repo root or wire them into the existing test harness
+2. Promote the config files to repo root or wire them into the existing test
+   harness
 3. Implement the fixture apps and route/page smoke flows
 4. Run the verifier against React 19, TypeScript 6, and .NET 10 migrations
 
@@ -95,7 +98,8 @@ Devil's-advocate partial fixes or deceptive fixes. These should also fail.
 
 ## Integration Guidance
 
-- If the real repo already has Vitest, Playwright, or Jest conventions, merge these files into existing root config instead of duplicating runners.
+- If the real repo already has Vitest, Playwright, or Jest conventions, merge
+  these files into existing root config instead of duplicating runners.
 - Keep the verifier tests isolated from feature tests.
 - Prefer AST-based static assertions over regex-only checks when practical.
 
@@ -104,4 +108,5 @@ Devil's-advocate partial fixes or deceptive fixes. These should also fail.
 - All green fixtures pass
 - All red fixtures fail for the intended reason
 - All edge fixtures fail until the verifier is intentionally weakened
-- Host script validates `dotnet build`, `dotnet publish`, auth wiring, and SSR/prerender if used
+- Host script validates `dotnet build`, `dotnet publish`, auth wiring, and
+  SSR/prerender if used

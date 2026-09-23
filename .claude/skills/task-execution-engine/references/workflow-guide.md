@@ -94,6 +94,7 @@ Claude: 正在恢复...
 # User Auth Design
 
 ## Overview
+
 ...
 
 ## Implementation Tasks
@@ -108,7 +109,8 @@ Claude: 正在恢复...
   - [ ] generate_token() works
   - [ ] verify_token() works
 
-- [ ] **Create auth API** `priority:3` `phase:api` `deps:Create User model,Implement JWT utils`
+- [ ] **Create auth API** `priority:3` `phase:api`
+      `deps:Create User model,Implement JWT utils`
   - files: src/api/auth.py
   - [ ] POST /login endpoint
   - [ ] POST /register endpoint
@@ -122,8 +124,7 @@ Claude: 正在恢复...
   - [x] User model has email field
   - [x] Password hashing implemented
 
-- [x] **Implement JWT utils** `priority:2` `phase:model` ✅
-  ...
+- [x] **Implement JWT utils** `priority:2` `phase:model` ✅ ...
 ```
 
 ## 优势

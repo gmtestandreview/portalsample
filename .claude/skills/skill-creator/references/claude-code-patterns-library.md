@@ -152,18 +152,11 @@ useState|useEffect              # React hooks
 {
   "my-skill": {
     "promptTriggers": {
-      "intentPatterns": [
-        "(create|add|build).*?(component|UI|page)"
-      ]
+      "intentPatterns": ["(create|add|build).*?(component|UI|page)"]
     },
     "fileTriggers": {
-      "pathPatterns": [
-        "frontend/src/**/*.tsx"
-      ],
-      "contentPatterns": [
-        "export.*React\\.FC",
-        "useState|useEffect"
-      ]
+      "pathPatterns": ["frontend/src/**/*.tsx"],
+      "contentPatterns": ["export.*React\\.FC", "useState|useEffect"]
     }
   }
 }

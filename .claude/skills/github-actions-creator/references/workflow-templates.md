@@ -1,6 +1,7 @@
 # Workflow Templates
 
-Complete, production-ready templates for the most common GitHub Actions use cases. Use these as starting points and adapt to the user's project.
+Complete, production-ready templates for the most common GitHub Actions use
+cases. Use these as starting points and adapt to the user's project.
 
 ---
 
@@ -533,7 +534,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 9 * * 1'  # Monday 9am UTC
+    - cron: '0 9 * * 1' # Monday 9am UTC
   workflow_dispatch:
 
 permissions:
@@ -669,7 +670,7 @@ jobs:
       - uses: googleapis/release-please-action@v4
         id: release
         with:
-          release-type: node  # or python, go, etc.
+          release-type: node # or python, go, etc.
 
   publish:
     needs: release
@@ -727,7 +728,9 @@ jobs:
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: ${{ github.ref == 'refs/heads/main' && 'deploy' || 'deploy --dry-run' }}
+          command:
+            ${{ github.ref == 'refs/heads/main' && 'deploy' || 'deploy
+            --dry-run' }}
 ```
 
 ---
@@ -743,7 +746,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 6 * * *'  # Daily at 6am UTC
+    - cron: '0 6 * * *' # Daily at 6am UTC
 
 permissions:
   contents: read
@@ -795,7 +798,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '0 0 * * 1'  # Weekly on Monday
+    - cron: '0 0 * * 1' # Weekly on Monday
 
 permissions:
   contents: read
@@ -810,7 +813,7 @@ jobs:
 
       - uses: github/codeql-action/init@v3
         with:
-          languages: javascript-typescript  # or python, go, java, etc.
+          languages: javascript-typescript # or python, go, java, etc.
 
       - uses: github/codeql-action/analyze@v3
 

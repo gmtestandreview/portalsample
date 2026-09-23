@@ -2,22 +2,25 @@
 
 ## 1) Current State
 
-This source-map workspace has a broad unit, Storybook interaction, quality-regression, and Playwright-BDD stack. The route manifest provides executable traceability for all 41 registered paths, including reviewed exclusions.
+This source-map workspace has a broad unit, Storybook interaction,
+quality-regression, and Playwright-BDD stack. The route manifest provides
+executable traceability for all 41 registered paths, including reviewed
+exclusions.
 
 Current tooling:
 
-| Layer | Tooling | Status |
-| --- | --- | --- |
-| Type safety | `tsc --noEmit` | Configured |
-| Unit tests | Vitest + jsdom | Configured |
-| Component tests | React Testing Library + Vitest | Configured |
-| DOM assertions | `@testing-library/jest-dom` | Configured |
-| User interaction tests | `@testing-library/user-event` | Configured |
-| Coverage | Vitest V8 coverage | Configured |
-| CI-style unit run | Vitest + coverage + JUnit output | Configured |
-| Storybook interaction | Vitest browser/Storybook project | Configured |
-| Quality regression | Vitest (`BUG-001` to `BUG-008`) | Configured |
-| End-to-end | Playwright 1.61 + playwright-bdd 9.2 | Configured |
+| Layer                  | Tooling                              | Status     |
+| ---------------------- | ------------------------------------ | ---------- |
+| Type safety            | `tsc --noEmit`                       | Configured |
+| Unit tests             | Vitest + jsdom                       | Configured |
+| Component tests        | React Testing Library + Vitest       | Configured |
+| DOM assertions         | `@testing-library/jest-dom`          | Configured |
+| User interaction tests | `@testing-library/user-event`        | Configured |
+| Coverage               | Vitest V8 coverage                   | Configured |
+| CI-style unit run      | Vitest + coverage + JUnit output     | Configured |
+| Storybook interaction  | Vitest browser/Storybook project     | Configured |
+| Quality regression     | Vitest (`BUG-001` to `BUG-008`)      | Configured |
+| End-to-end             | Playwright 1.61 + playwright-bdd 9.2 | Configured |
 
 Relevant files:
 
@@ -41,9 +44,9 @@ reports/playwright/                 # generated
 reports/test-results/               # generated
 ```
 
-> The quality regression project is **not** part of `vitest.config.ts`; it is only reachable via
-> `npm run test:quality:regression` or `npm run test:ci:quality`. `npm run test:all` therefore does
-> not run it.
+> The quality regression project is **not** part of `vitest.config.ts`; it is
+> only reachable via `npm run test:quality:regression` or
+> `npm run test:ci:quality`. `npm run test:all` therefore does not run it.
 
 ---
 
@@ -51,26 +54,26 @@ reports/test-results/               # generated
 
 Use the existing scripts in `package.json`:
 
-| Command | Purpose |
-| --- | --- |
-| `npm run type-check` | Compile-time validation for TS/TSX changes |
-| `npm run test:unit` | Run the unit test suite |
-| `npm run test:unit:watch` | Run unit tests in watch mode |
-| `npm run test:unit:coverage` | Run unit tests with coverage reports |
-| `npm run test:storybook` | Run Storybook interaction tests |
-| `npm run test:all` | Run all Vitest projects |
-| `npm run test:ci` | Run `type-check`, then the unit, Storybook and quality partitions in sequence (`test:ci:unit`, `test:ci:storybook`, `test:ci:quality`), each emitting JUnit |
-| `npm run test:quality:regression` | Run quality regression suite (`BUG-001` to `BUG-008`) |
-| `npm run test:e2e` | Run Playwright E2E tests |
-| `npm run migration-check` | Run type-check, all Vitest projects, and a static Storybook build |
+| Command                           | Purpose                                                                                                                                                     |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run type-check`              | Compile-time validation for TS/TSX changes                                                                                                                  |
+| `npm run test:unit`               | Run the unit test suite                                                                                                                                     |
+| `npm run test:unit:watch`         | Run unit tests in watch mode                                                                                                                                |
+| `npm run test:unit:coverage`      | Run unit tests with coverage reports                                                                                                                        |
+| `npm run test:storybook`          | Run Storybook interaction tests                                                                                                                             |
+| `npm run test:all`                | Run all Vitest projects                                                                                                                                     |
+| `npm run test:ci`                 | Run `type-check`, then the unit, Storybook and quality partitions in sequence (`test:ci:unit`, `test:ci:storybook`, `test:ci:quality`), each emitting JUnit |
+| `npm run test:quality:regression` | Run quality regression suite (`BUG-001` to `BUG-008`)                                                                                                       |
+| `npm run test:e2e`                | Run Playwright E2E tests                                                                                                                                    |
+| `npm run migration-check`         | Run type-check, all Vitest projects, and a static Storybook build                                                                                           |
 
 Playwright-BDD project commands:
 
-| Command | Scope |
-| --- | --- |
-| `npm run test:e2e:app` | Real portal workflows using the `app-bdd` project |
+| Command                      | Scope                                                 |
+| ---------------------------- | ----------------------------------------------------- |
+| `npm run test:e2e:app`       | Real portal workflows using the `app-bdd` project     |
 | `npm run test:e2e:storybook` | Storybook scenarios using the `storybook-bdd` project |
-| `npm run test:e2e` | Both BDD projects, run sequentially |
+| `npm run test:e2e`           | Both BDD projects, run sequentially                   |
 
 `app-bdd` starts only Webpack on port 3000. `storybook-bdd` starts only
 Storybook on port 6006. A passing suite is scenario coverage, not JavaScript
@@ -80,7 +83,11 @@ Current executable scenario inventory (counted 2026-09-01):
 
 - `31` application workflow scenarios
 - `135` Storybook scenarios
-- `0` reviewed exclusions. `tests/e2e/route-coverage.ts` holds **41 entries — 25 `app-bdd`, 16 `storybook-bdd`**. The six pattern/type approval paths that were previously excluded now have `app-bdd` coverage via `tests/e2e/features/@type-approval/type-approval.feature`. The `excluded` variant remains in the type union but is unused.
+- `0` reviewed exclusions. `tests/e2e/route-coverage.ts` holds **41 entries — 25
+  `app-bdd`, 16 `storybook-bdd`**. The six pattern/type approval paths that were
+  previously excluded now have `app-bdd` coverage via
+  `tests/e2e/features/@type-approval/type-approval.feature`. The `excluded`
+  variant remains in the type union but is unused.
 
 ### Playwright-BDD Coverage Definition
 
@@ -93,71 +100,81 @@ Route coverage means every static route in `ClientApp/src/App.tsx` has either:
 This is behavioral route traceability. It is not JavaScript line, function, or
 branch coverage.
 
-> **Corrected 2026-09-01 — this paragraph previously said the opposite.** The earlier revision
-> claimed `.github/workflows/pr.yml` "belongs to the target monorepo", used `apps/portal-spa` and
-> backend jobs, and should be ignored. **That is false and was actively misleading:** the workflow
-> contains no reference to `apps/portal-spa` and no backend job, and every script it invokes exists
-> in this snapshot's `package.json`. It is this repository's authoritative CI gate.
+> **Corrected 2026-09-01 — this paragraph previously said the opposite.** The
+> earlier revision claimed `.github/workflows/pr.yml` "belongs to the target
+> monorepo", used `apps/portal-spa` and backend jobs, and should be ignored.
+> **That is false and was actively misleading:** the workflow contains no
+> reference to `apps/portal-spa` and no backend job, and every script it invokes
+> exists in this snapshot's `package.json`. It is this repository's
+> authoritative CI gate.
 
-`.github/workflows/pr.yml` runs eight independently-reporting jobs on every pull request into
-`main`, with `fail-fast: false` on each matrix so one red leg never hides another:
+`.github/workflows/pr.yml` runs eight independently-reporting jobs on every pull
+request into `main`, with `fail-fast: false` on each matrix so one red leg never
+hides another:
 
-| Job | Covers |
-| --- | --- |
-| `static-quality-node24` | `type-check`, `lint`, `lint:mdx` |
-| `vitest` × 3 | `unit`, `storybook`, `quality` partitions — each its own required status |
-| `build-node24` | production webpack build + `storybook:verify:docs` |
-| `date-timezone` × 3 | the focused date suite under UTC, Australia/Sydney, America/Los_Angeles |
-| `e2e-node24` | both BDD suites (`npm run test:e2e`) |
-| `lower-bound-node24` | install on the exact Node 24.0.0 floor with `--strict-peer-deps`, plus dependency-security policy tests |
-| `sonarcloud` | SonarCloud scan; `sonar.qualitygate.wait=true` makes a red gate block the merge |
+| Job                     | Covers                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| `static-quality-node24` | `type-check`, `lint`, `lint:mdx`                                                                        |
+| `vitest` × 3            | `unit`, `storybook`, `quality` partitions — each its own required status                                |
+| `build-node24`          | production webpack build + `storybook:verify:docs`                                                      |
+| `date-timezone` × 3     | the focused date suite under UTC, Australia/Sydney, America/Los_Angeles                                 |
+| `e2e-node24`            | both BDD suites (`npm run test:e2e`)                                                                    |
+| `lower-bound-node24`    | install on the exact Node 24.0.0 floor with `--strict-peer-deps`, plus dependency-security policy tests |
+| `sonarcloud`            | SonarCloud scan; `sonar.qualitygate.wait=true` makes a red gate block the merge                         |
 
-E2E artifacts are uploaded from `reports/playwright/**` and `reports/test-results/**` with
-`if: always()`.
+E2E artifacts are uploaded from `reports/playwright/**` and
+`reports/test-results/**` with `if: always()`.
 
-`release.yml` re-runs the same partitioned commands on push to `main`, deliberately, so a release
-cannot pass through a coarser gate than the PR that produced it.
+`release.yml` re-runs the same partitioned commands on push to `main`,
+deliberately, so a release cannot pass through a coarser gate than the PR that
+produced it.
 
 Storybook BDD support commands:
 
-| Command | Purpose |
-| --- | --- |
-| `npx bddgen` | Regenerate Playwright-BDD specs from `.feature` files |
-| `npx playwright test --grep "@storybook" --reporter=list` | Run all Storybook-tagged BDD scenarios |
+| Command                                                   | Purpose                                               |
+| --------------------------------------------------------- | ----------------------------------------------------- |
+| `npx bddgen`                                              | Regenerate Playwright-BDD specs from `.feature` files |
+| `npx playwright test --grep "@storybook" --reporter=list` | Run all Storybook-tagged BDD scenarios                |
 
 Generated outputs:
 
-| Output | Location |
-| --- | --- |
-| HTML coverage report | `reports/coverage/unit/index.html` |
-| JSON coverage summary | `reports/coverage/unit/coverage-summary.json` |
-| JUnit report | `reports/vitest/junit.xml` |
-| Application Playwright HTML report | `reports/playwright/app/index.html` |
-| Storybook Playwright HTML report | `reports/playwright/storybook/index.html` |
-| Application Playwright test artifacts | `reports/test-results/app/` |
-| Storybook Playwright test artifacts | `reports/test-results/storybook/` |
+| Output                                | Location                                      |
+| ------------------------------------- | --------------------------------------------- |
+| HTML coverage report                  | `reports/coverage/unit/index.html`            |
+| JSON coverage summary                 | `reports/coverage/unit/coverage-summary.json` |
+| JUnit report                          | `reports/vitest/junit.xml`                    |
+| Application Playwright HTML report    | `reports/playwright/app/index.html`           |
+| Storybook Playwright HTML report      | `reports/playwright/storybook/index.html`     |
+| Application Playwright test artifacts | `reports/test-results/app/`                   |
+| Storybook Playwright test artifacts   | `reports/test-results/storybook/`             |
 
 ---
 
 ## 3) Unit Test Scope
 
-The current unit suite spans **163 files / 1,734 tests**, all passing (verified 2026-09-01; the previous figure of 114 files / 1,169 tests predates the Type Approval and component test expansion).
+The current unit suite spans **163 files / 1,734 tests**, all passing (verified
+2026-09-01; the previous figure of 114 files / 1,169 tests predates the Type
+Approval and component test expansion).
 
-> **`npm run type-check` is currently red on this branch** — two pre-existing failures in
-> `tests/unit/components/RequestList/paRequestItem.test.tsx` and
-> `tests/unit/components/inputs/AutoSuggest.index.test.tsx`. Neither blocks the unit run (Vitest does
-> not type-check), but `static-quality-node24` gates on it, so CI will fail until they are fixed. It covers authentication, generated-client boundaries, validation, storage, utilities, reusable components, route workflows, configuration, coverage enforcement, and route/Storybook drift checks.
+> **`npm run type-check` is currently red on this branch** — two pre-existing
+> failures in `tests/unit/components/RequestList/paRequestItem.test.tsx` and
+> `tests/unit/components/inputs/AutoSuggest.index.test.tsx`. Neither blocks the
+> unit run (Vitest does not type-check), but `static-quality-node24` gates on
+> it, so CI will fail until they are fixed. It covers authentication,
+> generated-client boundaries, validation, storage, utilities, reusable
+> components, route workflows, configuration, coverage enforcement, and
+> route/Storybook drift checks.
 
 Covered areas:
 
-| Area | Examples |
-| --- | --- |
-| Authentication and account state | `AccountProvider`, `AuthenticatedElement`, `authConfig` |
-| Form and wizard behavior | `WizardForm`, `WizardRoutedStep`, buttons, banners, error summaries |
-| Inputs and accessibility | autosuggest, date picker, lookups, simple/complex inputs |
-| Routes | account, RFQ, quote acceptance, dashboard, reports, Type Approval support modules |
-| Runtime services | App Insights, analytics, storage, generated-client base behavior |
-| Migration enforcement | route coverage, Storybook coverage drift, coverage configuration, Playwright step quality |
+| Area                             | Examples                                                                                  |
+| -------------------------------- | ----------------------------------------------------------------------------------------- |
+| Authentication and account state | `AccountProvider`, `AuthenticatedElement`, `authConfig`                                   |
+| Form and wizard behavior         | `WizardForm`, `WizardRoutedStep`, buttons, banners, error summaries                       |
+| Inputs and accessibility         | autosuggest, date picker, lookups, simple/complex inputs                                  |
+| Routes                           | account, RFQ, quote acceptance, dashboard, reports, Type Approval support modules         |
+| Runtime services                 | App Insights, analytics, storage, generated-client base behavior                          |
+| Migration enforcement            | route coverage, Storybook coverage drift, coverage configuration, Playwright step quality |
 
 Current tests live under:
 
@@ -208,7 +225,8 @@ Prefer integration or Playwright coverage for:
 
 ## 5) Test Organization
 
-Use `tests/unit/` for Vitest-based tests and `tests/e2e/` for Playwright BDD tests.
+Use `tests/unit/` for Vitest-based tests and `tests/e2e/` for Playwright BDD
+tests.
 
 Recommended structure:
 
@@ -243,15 +261,15 @@ Guidelines:
 
 ## 6) Mocking Strategy
 
-| Concern | Approach |
-| --- | --- |
-| Formik context | Wrap components with a tiny helper Formik wrapper |
-| React Router | Use `MemoryRouter` or `createMemoryRouter` in tests |
-| App Insights | Mock constructors and assert initialization config |
-| Date picker internals | Mock `react-datepicker` at the component boundary |
-| Network/API clients | Prefer MSW for integration tests; use targeted mocks for bootstrap modules |
-| Session storage | Use jsdom-provided `sessionStorage` directly |
-| `window.*` env vars | Set through test mocks or test setup when needed |
+| Concern               | Approach                                                                   |
+| --------------------- | -------------------------------------------------------------------------- |
+| Formik context        | Wrap components with a tiny helper Formik wrapper                          |
+| React Router          | Use `MemoryRouter` or `createMemoryRouter` in tests                        |
+| App Insights          | Mock constructors and assert initialization config                         |
+| Date picker internals | Mock `react-datepicker` at the component boundary                          |
+| Network/API clients   | Prefer MSW for integration tests; use targeted mocks for bootstrap modules |
+| Session storage       | Use jsdom-provided `sessionStorage` directly                               |
+| `window.*` env vars   | Set through test mocks or test setup when needed                           |
 
 Practical rule:
 
@@ -263,17 +281,21 @@ Practical rule:
 
 ## 7) React Router Test Guidance
 
-The application is on React Router v7. Prefer `createMemoryRouter` + `RouterProvider` when a test needs data-router behavior, route errors, or nested route matching. `MemoryRouter` remains suitable for simple link and navigation context.
+The application is on React Router v7. Prefer `createMemoryRouter` +
+`RouterProvider` when a test needs data-router behavior, route errors, or nested
+route matching. `MemoryRouter` remains suitable for simple link and navigation
+context.
 
 Use this pattern:
 
 ```tsx
 <MemoryRouter>
-    <ComponentUnderTest />
+  <ComponentUnderTest />
 </MemoryRouter>
 ```
 
-Do not add obsolete React Router v6 future flags or suppress router warnings globally. Match the router helper to the behavior under test.
+Do not add obsolete React Router v6 future flags or suppress router warnings
+globally. Match the router helper to the behavior under test.
 
 ---
 
@@ -287,16 +309,18 @@ Current reporting:
 - `html`
 - `json-summary`
 
-Coverage includes handwritten `ClientApp/src/**/*.{ts,tsx}` plus `webpack.config.js`. Thresholds are set to 100% for statements, branches, functions, and lines.
+Coverage includes handwritten `ClientApp/src/**/*.{ts,tsx}` plus
+`webpack.config.js`. Thresholds are set to 100% for statements, branches,
+functions, and lines.
 
 The 2026-06-28 coverage run is currently red even though all 1,169 tests pass:
 
-| Metric | Current | Required |
-| --- | ---: | ---: |
-| Statements | 74.43% | 100% |
-| Branches | 75.51% | 100% |
-| Functions | 72.56% | 100% |
-| Lines | 74.92% | 100% |
+| Metric     | Current | Required |
+| ---------- | ------: | -------: |
+| Statements |  74.43% |     100% |
+| Branches   |  75.51% |     100% |
+| Functions  |  72.56% |     100% |
+| Lines      |  74.92% |     100% |
 
 This is tracked as `COVERAGE-GATE-001`. The largest newly visible gaps are in
 Type Approval routes and supporting attachment, progress, filter, request-item,
@@ -305,7 +329,8 @@ and rich-text components.
 Current exclusions:
 
 - `**/*.d.ts`
-- the generated NSwag client, vendor mirrors, Storybook stories/docs, and compile-time-only type modules
+- the generated NSwag client, vendor mirrors, Storybook stories/docs, and
+  compile-time-only type modules
 
 Why `types.ts` is excluded:
 
@@ -314,15 +339,19 @@ Why `types.ts` is excluded:
 
 Interpret the gate precisely:
 
-- New handwritten runtime branches must have tests or an explicit, reviewed scope decision in the coverage config.
-- Do not add declaration-only files or generated/vendor output to the measured runtime surface.
-- Do not describe the CI gate as green until `npm run test:unit:coverage` exits zero.
+- New handwritten runtime branches must have tests or an explicit, reviewed
+  scope decision in the coverage config.
+- Do not add declaration-only files or generated/vendor output to the measured
+  runtime surface.
+- Do not describe the CI gate as green until `npm run test:unit:coverage` exits
+  zero.
 
 ---
 
 ## 9) Validation Expectations for Changes
 
-When making non-trivial JS/TS changes in this workspace, the minimum expected validation is:
+When making non-trivial JS/TS changes in this workspace, the minimum expected
+validation is:
 
 1. `npm run type-check`
 2. `npm run test:unit`
@@ -332,7 +361,8 @@ For broader changes or before handoff:
 1. `npm run test:unit:coverage`
 2. `npm run test:ci`
 
-If the change affects routed UI, auth, or complex flows, consider adding or updating Playwright coverage as well.
+If the change affects routed UI, auth, or complex flows, consider adding or
+updating Playwright coverage as well.
 
 ---
 
@@ -340,12 +370,18 @@ If the change affects routed UI, auth, or complex flows, consider adding or upda
 
 The current testing strategy should preserve these lessons:
 
-- This workspace is not a normal upstream repo clone, so testing guidance must reflect the actual local tooling, not assumed project defaults.
-- Compile-time restoration of missing local `types.ts` files is best validated through `type-check`, not forced runtime tests.
-- Compatibility fixes around third-party libraries should be tested at the wrapper boundary, not by re-testing the library.
-- Small form controls are worth direct unit tests because subtle click and submit-state regressions are easy to introduce.
-- Router warnings in tests should be fixed by configuring the test router correctly, not by muting console output.
-- CI-oriented scripts should emit machine-readable artifacts when possible, especially JUnit and coverage summaries.
+- This workspace is not a normal upstream repo clone, so testing guidance must
+  reflect the actual local tooling, not assumed project defaults.
+- Compile-time restoration of missing local `types.ts` files is best validated
+  through `type-check`, not forced runtime tests.
+- Compatibility fixes around third-party libraries should be tested at the
+  wrapper boundary, not by re-testing the library.
+- Small form controls are worth direct unit tests because subtle click and
+  submit-state regressions are easy to introduce.
+- Router warnings in tests should be fixed by configuring the test router
+  correctly, not by muting console output.
+- CI-oriented scripts should emit machine-readable artifacts when possible,
+  especially JUnit and coverage summaries.
 
 ---
 
@@ -355,7 +391,8 @@ Current Storybook executable inventory in this workspace snapshot:
 
 - `129` scenarios under `tests/e2e/features/storybook/`
 - `87` source story files
-- `315` entries in the latest static Storybook index: `218` stories and `97` docs entries
+- `315` entries in the latest static Storybook index: `218` stories and `97`
+  docs entries
 - `npm run test:storybook` passes `87` files / `218` tests
 - Generate and run them with `npm run test:e2e:storybook`
 
@@ -373,7 +410,8 @@ Practical rule when maintaining Storybook BDD:
 3. Run `npm run test:e2e:storybook`.
 4. Only treat coverage as complete when the full `@storybook` run is green.
 
-For the next-cycle process and prevention checklist, see `docs/PLAYWRIGHT-STORYBOOK-BDD-IMPROVEMENT-PLAN.md`.
+For the next-cycle process and prevention checklist, see
+`docs/PLAYWRIGHT-STORYBOOK-BDD-IMPROVEMENT-PLAN.md`.
 
 ---
 
@@ -382,15 +420,19 @@ For the next-cycle process and prevention checklist, see `docs/PLAYWRIGHT-STORYB
 High-value next targets:
 
 1. Deterministic authenticated fixtures for the six pattern/type approval paths
-2. Application-BDD coverage for the Type Approval dashboard, wizard submission, uploads, and management tabs
-3. Additional upload failure/cancellation coverage for `Attachment` and `Progress`
+2. Application-BDD coverage for the Type Approval dashboard, wizard submission,
+   uploads, and management tabs
+3. Additional upload failure/cancellation coverage for `Attachment` and
+   `Progress`
 4. Rich-text management-message interaction and service-error coverage
 
 ---
 
 ## 13) Quality Playbook Test Suites
 
-The `quality/` directory contains two additional test files produced by the Quality Playbook review process. These are not picked up by the default vitest config and must be run with their own dedicated configs.
+The `quality/` directory contains two additional test files produced by the
+Quality Playbook review process. These are not picked up by the default vitest
+config and must be run with their own dedicated configs.
 
 ### Functional tests
 
@@ -411,7 +453,8 @@ Covers:
 - REQ-005: `UnsavedFormPrompt` guard is inactive on pristine forms
 - REQ-006: dashboard alert selector targets rendered `notif-*` IDs correctly
 - REQ-007: `trackGAPii()` reads `value`/`textContent` not `nodeValue`
-- REQ-008: `AGENTS.md` and `docs/TESTING.md` reference the live validation scripts
+- REQ-008: `AGENTS.md` and `docs/TESTING.md` reference the live validation
+  scripts
 
 ### Regression tests
 
@@ -423,7 +466,9 @@ npx vitest run --config quality/vitest.regression.config.ts
 
 File: `quality/test_regression.ts`
 
-All eight tests (`BUG-001` through `BUG-008`) are normal `test()` cases and are expected to pass. A failure indicates a regression against a previously fixed defect.
+All eight tests (`BUG-001` through `BUG-008`) are normal `test()` cases and are
+expected to pass. A failure indicates a regression against a previously fixed
+defect.
 
 CI expectation:
 
@@ -444,8 +489,11 @@ Run both quality suites before merging any change that touches:
 
 ### Writeup/report maintenance trigger
 
-When adding any new regression ID (for example `BUG-009`) to `quality/test_regression.ts`:
+When adding any new regression ID (for example `BUG-009`) to
+`quality/test_regression.ts`:
 
 1. Add or update the corresponding `quality/writeups/BUG-###.md`.
-2. Refresh `quality/writeups/BUG-CONSOLIDATED-REPORT.html` so stakeholder counts and status tables stay accurate.
-3. If historical fix patch artifacts are stale, archive them under `quality/patches/archive/<date>/` with an index file.
+2. Refresh `quality/writeups/BUG-CONSOLIDATED-REPORT.html` so stakeholder counts
+   and status tables stay accurate.
+3. If historical fix patch artifacts are stale, archive them under
+   `quality/patches/archive/<date>/` with an index file.

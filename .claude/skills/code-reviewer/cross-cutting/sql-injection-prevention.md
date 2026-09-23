@@ -1,17 +1,20 @@
 # SQL Injection Prevention Guide
 
-Use this guide when reviewing database queries, ORM escape hatches, dynamic filters, reporting queries, migrations, search endpoints, or admin tools.
+Use this guide when reviewing database queries, ORM escape hatches, dynamic
+filters, reporting queries, migrations, search endpoints, or admin tools.
 
 ## Primary Rule
 
-Never build SQL by concatenating untrusted input. Use parameterized queries, safe ORM APIs, or query builders that bind values separately from SQL text.
+Never build SQL by concatenating untrusted input. Use parameterized queries,
+safe ORM APIs, or query builders that bind values separately from SQL text.
 
 ## Safe Patterns
 
 - Parameterized SQL with placeholders.
 - ORM query APIs that bind values automatically.
 - Query builders that separate identifiers from values.
-- Allowlisted dynamic identifiers for table names, column names, and sort directions.
+- Allowlisted dynamic identifiers for table names, column names, and sort
+  directions.
 - Least-privilege database accounts.
 
 ```python
@@ -21,7 +24,7 @@ cursor.execute("select * from users where email = %s", [email])
 
 ```ts
 // Safe: parameterized query.
-await db.query("select * from users where email = $1", [email]);
+await db.query('select * from users where email = $1', [email]);
 ```
 
 ## Dangerous Patterns
@@ -40,15 +43,16 @@ await db.query(`select * from users where email = '${email}'`);
 
 ## Dynamic Identifiers
 
-Placeholders usually bind values, not identifiers. For identifiers, map user choices to constants.
+Placeholders usually bind values, not identifiers. For identifiers, map user
+choices to constants.
 
 ```ts
 const sortColumns = {
-  name: "name",
-  created: "created_at",
+  name: 'name',
+  created: 'created_at',
 } as const;
 
-const sortColumn = sortColumns[input.sort] ?? "created_at";
+const sortColumn = sortColumns[input.sort] ?? 'created_at';
 await db.query(`select * from users order by ${sortColumn} limit $1`, [limit]);
 ```
 

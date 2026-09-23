@@ -1,44 +1,44 @@
-import type { ReactElement } from "react";
-import { useId } from "react";
-import Modal from "react-bootstrap/Modal";
-import PrimaryButton from "../../Buttons/PrimaryButton/index.tsx";
+import type { ReactElement } from 'react';
+import { useId } from 'react';
+import Modal from 'react-bootstrap/Modal';
+import PrimaryButton from '../../Buttons/PrimaryButton/index.tsx';
 
 export interface ContentModalProps {
-	showModal: boolean;
-	onCancelModal: () => void;
-	modalBody: ReactElement;
-	modalTitle: string;
+  showModal: boolean;
+  onCancelModal: () => void;
+  modalBody: ReactElement;
+  modalTitle: string;
 }
 
 const ContentModal = (props: ContentModalProps) => {
-	const { showModal, onCancelModal, modalBody, modalTitle } = props;
+  const { showModal, onCancelModal, modalBody, modalTitle } = props;
 
-	// Per-instance so concurrently mounted modals cannot collide. Footer renders
-	// three, and a shared literal id made every dialog resolve its accessible
-	// name to whichever title came first in document order.
-	const titleId = useId();
+  // Per-instance so concurrently mounted modals cannot collide. Footer renders
+  // three, and a shared literal id made every dialog resolve its accessible
+  // name to whichever title came first in document order.
+  const titleId = useId();
 
-	return (
-		<Modal
-			size="lg"
-			show={showModal}
-			aria-labelledby={titleId}
-			tabIndex={-1}
-			onHide={onCancelModal}
-		>
-			<Modal.Header closeButton={true}>
-				<Modal.Title id={titleId} as="h3">
-					{modalTitle}
-				</Modal.Title>
-			</Modal.Header>
-			<Modal.Body>{modalBody}</Modal.Body>
-			<Modal.Footer className="justify-content-end">
-				<PrimaryButton data-testid="close-button" onClick={onCancelModal}>
-					Close
-				</PrimaryButton>
-			</Modal.Footer>
-		</Modal>
-	);
+  return (
+    <Modal
+      size='lg'
+      show={showModal}
+      aria-labelledby={titleId}
+      tabIndex={-1}
+      onHide={onCancelModal}
+    >
+      <Modal.Header closeButton={true}>
+        <Modal.Title id={titleId} as='h3'>
+          {modalTitle}
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{modalBody}</Modal.Body>
+      <Modal.Footer className='justify-content-end'>
+        <PrimaryButton data-testid='close-button' onClick={onCancelModal}>
+          Close
+        </PrimaryButton>
+      </Modal.Footer>
+    </Modal>
+  );
 };
 
 export default ContentModal;

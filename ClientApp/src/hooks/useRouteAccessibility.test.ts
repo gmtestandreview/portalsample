@@ -1,61 +1,61 @@
-import { act, renderHook } from "@testing-library/react";
-import React from "react";
-import { MemoryRouter } from "react-router";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { useRouteAccessibility } from "./useRouteAccessibility.ts";
+import { act, renderHook } from '@testing-library/react';
+import React from 'react';
+import { MemoryRouter } from 'react-router';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { useRouteAccessibility } from './useRouteAccessibility.ts';
 
 function wrapper({ children }: { children: React.ReactNode }) {
-	return React.createElement(
-		MemoryRouter,
-		{ initialEntries: ["/test"] },
-		children,
-	);
+  return React.createElement(
+    MemoryRouter,
+    { initialEntries: ['/test'] },
+    children
+  );
 }
 
-describe("useRouteAccessibility", () => {
-	beforeEach(() => {
-		vi.useFakeTimers();
-		document.title = "Test Page | NMI Portal";
-		const main = document.createElement("div");
-		main.id = "main";
-		main.tabIndex = -1;
-		document.body.appendChild(main);
-	});
+describe('useRouteAccessibility', () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    document.title = 'Test Page | NMI Portal';
+    const main = document.createElement('div');
+    main.id = 'main';
+    main.tabIndex = -1;
+    document.body.appendChild(main);
+  });
 
-	afterEach(() => {
-		vi.useRealTimers();
-		document.getElementById("main")?.remove();
-	});
+  afterEach(() => {
+    vi.useRealTimers();
+    document.getElementById('main')?.remove();
+  });
 
-	it("returns empty announcement before first route effect fires", () => {
-		const { result } = renderHook(() => useRouteAccessibility(), { wrapper });
-		expect(result.current.announcement).toBe("");
-	});
+  it('returns empty announcement before first route effect fires', () => {
+    const { result } = renderHook(() => useRouteAccessibility(), { wrapper });
+    expect(result.current.announcement).toBe('');
+  });
 
-	it("sets announcement to page title after 100 ms debounce on initial path", () => {
-		const { result } = renderHook(() => useRouteAccessibility(), { wrapper });
-		act(() => {
-			vi.advanceTimersByTime(100);
-		});
-		expect(result.current.announcement).toBe(
-			"Navigated to Test Page | NMI Portal page.",
-		);
-	});
+  it('sets announcement to page title after 100 ms debounce on initial path', () => {
+    const { result } = renderHook(() => useRouteAccessibility(), { wrapper });
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    expect(result.current.announcement).toBe(
+      'Navigated to Test Page | NMI Portal page.'
+    );
+  });
 
-	it("clears the timeout on unmount", () => {
-		const { unmount } = renderHook(() => useRouteAccessibility(), { wrapper });
-		const clearSpy = vi.spyOn(globalThis, "clearTimeout");
-		unmount();
-		expect(clearSpy).toHaveBeenCalled();
-	});
+  it('clears the timeout on unmount', () => {
+    const { unmount } = renderHook(() => useRouteAccessibility(), { wrapper });
+    const clearSpy = vi.spyOn(globalThis, 'clearTimeout');
+    unmount();
+    expect(clearSpy).toHaveBeenCalled();
+  });
 
-	it("focuses #main element after debounce fires", () => {
-		const main = document.getElementById("main")!;
-		const focusSpy = vi.spyOn(main, "focus");
-		renderHook(() => useRouteAccessibility(), { wrapper });
-		act(() => {
-			vi.advanceTimersByTime(100);
-		});
-		expect(focusSpy).toHaveBeenCalledTimes(1);
-	});
+  it('focuses #main element after debounce fires', () => {
+    const main = document.getElementById('main')!;
+    const focusSpy = vi.spyOn(main, 'focus');
+    renderHook(() => useRouteAccessibility(), { wrapper });
+    act(() => {
+      vi.advanceTimersByTime(100);
+    });
+    expect(focusSpy).toHaveBeenCalledTimes(1);
+  });
 });

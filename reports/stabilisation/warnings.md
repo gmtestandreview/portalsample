@@ -26,24 +26,24 @@ absence but never had the ability to observe.
 
 ### Evidence files
 
-| File | Contents |
-| --- | --- |
-| `c1-unit-census.log` | Full unit run, 124 files / 1450 tests, exit 0 |
-| `c1-storybook-census.log` | Full Storybook browser-mode run, 87 files / 218 tests, exit 0 |
+| File                       | Contents                                                       |
+| -------------------------- | -------------------------------------------------------------- |
+| `c1-unit-census.log`       | Full unit run, 124 files / 1450 tests, exit 0                  |
+| `c1-storybook-census.log`  | Full Storybook browser-mode run, 87 files / 218 tests, exit 0  |
 | `c1-modal-repetitions.log` | Three focused repetitions of `ClientApp/src/components/modals` |
 
 ## Summary
 
-| ID | Signature | Surface | Blocks | Lines | Owner files | Classification | Task |
-| --- | --- | --- | ---: | ---: | ---: | --- | --- |
-| W1 | React Aria missing visible label | unit | 200 | 425 | 4 | production accessibility contract | C2 |
-| W2 | React Aria missing visible label | storybook | 69 | 132 | 7 | production accessibility contract (same owner as W1) | C2 |
-| W3 | React `not wrapped in act(...)` | unit | — | 15 | 2 | unit-test synchronization | C3 |
-| W4 | React `not wrapped in act(...)` | storybook | 55 | 106 | 11 | story synchronization/effect cleanup | C3 |
-| W5 | `[env] Missing required runtime variable` | storybook | 66 | 140 | setup | Storybook runtime fixture | C4 |
-| W6 | `SB_CORE-SERVER_0002 CriticalPresetLoadError` | unit | 1 | 1 | 1 | unit-test fixture side effect | C7 |
-| W7 | `Copied to clipboard:` | unit | 1 | 1 | 1 | out of guard scope (`console.log`) | none |
-| W8 | MSW startup banner | storybook | 7 | — | setup | out of guard scope (`console.log`) | none |
+| ID  | Signature                                     | Surface   | Blocks | Lines | Owner files | Classification                                       | Task |
+| --- | --------------------------------------------- | --------- | -----: | ----: | ----------: | ---------------------------------------------------- | ---- |
+| W1  | React Aria missing visible label              | unit      |    200 |   425 |           4 | production accessibility contract                    | C2   |
+| W2  | React Aria missing visible label              | storybook |     69 |   132 |           7 | production accessibility contract (same owner as W1) | C2   |
+| W3  | React `not wrapped in act(...)`               | unit      |      — |    15 |           2 | unit-test synchronization                            | C3   |
+| W4  | React `not wrapped in act(...)`               | storybook |     55 |   106 |          11 | story synchronization/effect cleanup                 | C3   |
+| W5  | `[env] Missing required runtime variable`     | storybook |     66 |   140 |       setup | Storybook runtime fixture                            | C4   |
+| W6  | `SB_CORE-SERVER_0002 CriticalPresetLoadError` | unit      |      1 |     1 |           1 | unit-test fixture side effect                        | C7   |
+| W7  | `Copied to clipboard:`                        | unit      |      1 |     1 |           1 | out of guard scope (`console.log`)                   | none |
+| W8  | MSW startup banner                            | storybook |      7 |     — |       setup | out of guard scope (`console.log`)                   | none |
 
 No `console.warn`/`console.error` signature outside W1–W6 was emitted by either run. In
 particular there is **no** third-party warning requiring a bounded exception, which matches
@@ -77,28 +77,28 @@ is unlabelled and warns — once per render pass, which is why the counts are la
 
 **This is not fixture noise.** The `htmlFor`/`id` pair does give the `<input>` an accessible
 name, so an axe check on the input passes. What is missing is the ARIA wiring React Aria
-derives from the same context for the *listbox and popover* it renders, which are left
+derives from the same context for the _listbox and popover_ it renders, which are left
 unnamed. `combobox.accessibility.test.tsx` — the nominal, correctly-labelled case — emits
 the warning too, confirming the owner is the component and not any one test's fixture.
 
 **Affected tests**
 
-| Owner file | Blocks | Notes |
-| --- | ---: | --- |
-| `tests/unit/components/inputs/complexInputs.behavior.test.tsx` | 188 | 13 tests; worst is `uses AddressLookup fallbacks for missing labels and address fields` at 79 lines |
-| `tests/unit/components/inputs/residualBranches.test.tsx` | 5 | `keeps AutoSuggest keyboard movement inert while closed and uses fallback ids` |
-| `tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx` | 4 | route consumer, regression surface only |
-| `tests/unit/components/inputs/combobox.accessibility.test.tsx` | 3 | nominal labelled combobox |
+| Owner file                                                     | Blocks | Notes                                                                                               |
+| -------------------------------------------------------------- | -----: | --------------------------------------------------------------------------------------------------- |
+| `tests/unit/components/inputs/complexInputs.behavior.test.tsx` |    188 | 13 tests; worst is `uses AddressLookup fallbacks for missing labels and address fields` at 79 lines |
+| `tests/unit/components/inputs/residualBranches.test.tsx`       |      5 | `keeps AutoSuggest keyboard movement inert while closed and uses fallback ids`                      |
+| `tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx`     |      4 | route consumer, regression surface only                                                             |
+| `tests/unit/components/inputs/combobox.accessibility.test.tsx` |      3 | nominal labelled combobox                                                                           |
 
 **Reproduction**
 
-| Mode | Command | Result |
-| --- | --- | --- |
-| single test | `npm run test:unit -- …/complexInputs.behavior.test.tsx --reporter=default -t "drives AutoSuggest search and selection through the public input"` | reproduces, 23 lines |
-| file-scoped | `npm run test:unit -- …/combobox.accessibility.test.tsx --reporter=default` | reproduces, 6 lines |
-| file-scoped | `npm run test:unit -- …/residualBranches.test.tsx --reporter=default` | reproduces, 13 lines |
-| file-scoped | `npm run test:unit -- …/deliveryAndReturn.test.tsx --reporter=default` | reproduces, 7 lines |
-| sequential | full run | reproduces, 425 lines |
+| Mode        | Command                                                                                                                                           | Result                |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| single test | `npm run test:unit -- …/complexInputs.behavior.test.tsx --reporter=default -t "drives AutoSuggest search and selection through the public input"` | reproduces, 23 lines  |
+| file-scoped | `npm run test:unit -- …/combobox.accessibility.test.tsx --reporter=default`                                                                       | reproduces, 6 lines   |
+| file-scoped | `npm run test:unit -- …/residualBranches.test.tsx --reporter=default`                                                                             | reproduces, 13 lines  |
+| file-scoped | `npm run test:unit -- …/deliveryAndReturn.test.tsx --reporter=default`                                                                            | reproduces, 7 lines   |
+| sequential  | full run                                                                                                                                          | reproduces, 425 lines |
 
 Reproduces identically in every isolation mode, so the cause is local to each render and
 **not** cross-test lifecycle leakage. This closes the plan's secondary leakage hypothesis
@@ -118,15 +118,15 @@ lines for this signature; see `reports/stabilisation/warning-settlement.md`.
 
 Same signature and same first owner as W1, measured through the story surface.
 
-| Owner story | Blocks |
-| --- | ---: |
-| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx` | 31 |
-| `ClientApp/src/routes/account/AccountRoute.stories.tsx` | 13 |
-| `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx` | 9 |
-| `ClientApp/src/routes/account/organisationDetails.stories.tsx` | 6 |
-| `ClientApp/src/routes/ta/organisationAndContact.stories.tsx` | 6 |
-| `ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx` | 3 |
-| setup-time (`unknown test`) | 1 |
+| Owner story                                                               | Blocks |
+| ------------------------------------------------------------------------- | -----: |
+| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx`     |     31 |
+| `ClientApp/src/routes/account/AccountRoute.stories.tsx`                   |     13 |
+| `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx`                |      9 |
+| `ClientApp/src/routes/account/organisationDetails.stories.tsx`            |      6 |
+| `ClientApp/src/routes/ta/organisationAndContact.stories.tsx`              |      6 |
+| `ClientApp/src/components/Inputs/AddressLookup/AddressLookup.stories.tsx` |      3 |
+| setup-time (`unknown test`)                                               |      1 |
 
 **Reproduction:** sequential full run, 132 lines. Not re-run in isolation — the owner is
 already proven local by W1, and story-level isolation adds no new information about a
@@ -153,12 +153,12 @@ ships Parcel scope-hoisted bundles, so one component name arrives build-hashed
 
 **First owning stacks**
 
-| Component | Owner file | Lines |
-| --- | --- | ---: |
-| `ForwardRef(Input)` | `tests/unit/components/inputs/complexInputs.behavior.test.tsx` | 6 |
-| `ForwardRef(Input)` | `tests/unit/components/inputs/residualBranches.test.tsx` | 4 |
-| `ComboBoxInner` (hashed) | `tests/unit/components/inputs/complexInputs.behavior.test.tsx` | 3 |
-| `ComboBoxInner` (hashed) | `tests/unit/components/inputs/residualBranches.test.tsx` | 2 |
+| Component                | Owner file                                                     | Lines |
+| ------------------------ | -------------------------------------------------------------- | ----: |
+| `ForwardRef(Input)`      | `tests/unit/components/inputs/complexInputs.behavior.test.tsx` |     6 |
+| `ForwardRef(Input)`      | `tests/unit/components/inputs/residualBranches.test.tsx`       |     4 |
+| `ComboBoxInner` (hashed) | `tests/unit/components/inputs/complexInputs.behavior.test.tsx` |     3 |
+| `ComboBoxInner` (hashed) | `tests/unit/components/inputs/residualBranches.test.tsx`       |     2 |
 
 Both owners are React Aria internals of the same `ComboBox` as W1, and every occurrence is
 co-emitted in a stderr block that also carries the W1 signature.
@@ -181,20 +181,20 @@ defect. C3 edits no unit test file. See `reports/stabilisation/warning-settlemen
 
 Same signature, story surface. 55 blocks / 106 lines across 11 story files plus setup.
 
-| Owner story | Lines |
-| --- | ---: |
-| `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx` | 44 |
-| `ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx` | 24 |
-| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx` | 6 |
-| `ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx` | 6 |
-| setup-time (`unknown test`) | 6 |
-| `ClientApp/src/routes/ta/manage/appMessages.stories.tsx` | 5 |
-| `ClientApp/src/routes/preConditions/PreConditions.stories.tsx` | 4 |
-| `ClientApp/src/routes/measurementReport/indexList.stories.tsx` | 4 |
-| `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx` | 2 |
-| `ClientApp/src/routes/account/AccountRoute.stories.tsx` | 2 |
-| `ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx` | 2 |
-| `ClientApp/src/components/Utilities/routeAccessibleNavigation.stories.tsx` | 1 |
+| Owner story                                                                | Lines |
+| -------------------------------------------------------------------------- | ----: |
+| `ClientApp/src/routes/acceptQuote/AcceptQuote.stories.tsx`                 |    44 |
+| `ClientApp/src/routes/requestForQuote/RequestForQuote.stories.tsx`         |    24 |
+| `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggest.stories.tsx`      |     6 |
+| `ClientApp/src/routes/services-we-offer/ServicesWeOffer.stories.tsx`       |     6 |
+| setup-time (`unknown test`)                                                |     6 |
+| `ClientApp/src/routes/ta/manage/appMessages.stories.tsx`                   |     5 |
+| `ClientApp/src/routes/preConditions/PreConditions.stories.tsx`             |     4 |
+| `ClientApp/src/routes/measurementReport/indexList.stories.tsx`             |     4 |
+| `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx`             |     2 |
+| `ClientApp/src/routes/account/AccountRoute.stories.tsx`                    |     2 |
+| `ClientApp/src/routes/ta/applicationAndInstrument.stories.tsx`             |     2 |
+| `ClientApp/src/components/Utilities/routeAccessibleNavigation.stories.tsx` |     1 |
 
 Component-level owners across those files, most frequent first: `ReportRecipient` (16),
 `QuotationSummary` (10), `DeliveryAndReturn` (10), `PaymentDetails` (8),
@@ -314,12 +314,12 @@ visibility assertion.
 
 Measured now:
 
-| Run | Result |
-| --- | --- |
+| Run                   | Result                                                                                                                       |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | Full Storybook census | 87 files / 218 tests, **exit 0**; `Modals.stories.tsx` 5/5 in 2589 ms; `ContentModal/ContentModal.stories.tsx` 2/2 in 988 ms |
-| Focused repetition 1 | 2 files / 7 tests passed, 5.65 s |
-| Focused repetition 2 | 2 files / 7 tests passed, 5.58 s |
-| Focused repetition 3 | 2 files / 7 tests passed, 5.42 s |
+| Focused repetition 1  | 2 files / 7 tests passed, 5.65 s                                                                                             |
+| Focused repetition 2  | 2 files / 7 tests passed, 5.58 s                                                                                             |
+| Focused repetition 3  | 2 files / 7 tests passed, 5.42 s                                                                                             |
 
 The 152 ms fast-fail signature is gone; the stories now take the time a real transition
 takes. The most likely cause is the Storybook autodocs work merged from the declared
@@ -334,12 +334,12 @@ it against recurrence. C6 should be re-scoped accordingly rather than started as
 
 Owner-for-owner and count-for-count against `a1-unit.log`:
 
-| Owner file | `a1-unit.log` (2026-08-24) | This census |
-| --- | ---: | ---: |
-| `complexInputs.behavior.test.tsx` | 188 | 188 |
-| `residualBranches.test.tsx` | 5 | 5 |
-| `deliveryAndReturn.test.tsx` | 4 | 4 |
-| `combobox.accessibility.test.tsx` | 3 | 3 |
+| Owner file                        | `a1-unit.log` (2026-08-24) | This census |
+| --------------------------------- | -------------------------: | ----------: |
+| `complexInputs.behavior.test.tsx` |                        188 |         188 |
+| `residualBranches.test.tsx`       |                          5 |           5 |
+| `deliveryAndReturn.test.tsx`      |                          4 |           4 |
+| `combobox.accessibility.test.tsx` |                          3 |           3 |
 
 This is direct evidence for the corrected form of finding B3. The audit's original claim was
 that hoisting `StrictMode` in `ClientApp/src/index.tsx` would invalidate any census taken

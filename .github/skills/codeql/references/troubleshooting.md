@@ -1,16 +1,20 @@
 # CodeQL Troubleshooting Reference
 
-Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF upload issues, and common configuration problems.
+Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF
+upload issues, and common configuration problems.
 
 ## Build and Analysis Errors
 
 ### "No source code was seen during the build"
 
-**Cause:** CodeQL extractor did not find any source files during database creation.
+**Cause:** CodeQL extractor did not find any source files during database
+creation.
 
 **Solutions:**
+
 - Verify the `--source-root` points to the correct directory
-- For compiled languages, ensure the build command actually compiles source files
+- For compiled languages, ensure the build command actually compiles source
+  files
 - Check that `autobuild` is detecting the correct build system
 - Switch from `autobuild` to `manual` build mode with explicit build commands
 - Verify the language specified matches the actual source code language
@@ -20,6 +24,7 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** `autobuild` could not detect or run the project's build system.
 
 **Solutions:**
+
 - Switch to `build-mode: manual` and provide explicit build commands
 - Ensure all build dependencies are installed on the runner
 - For C/C++: verify `gcc`, `make`, `cmake`, or `msbuild` are available
@@ -29,14 +34,19 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 
 ### C# Compiler Unexpectedly Failing
 
-**Cause:** The CodeQL tracer injects compiler flags that may conflict with project configuration.
+**Cause:** The CodeQL tracer injects compiler flags that may conflict with
+project configuration.
 
-**Details:** CodeQL injects `/p:EmitCompilerGeneratedFiles=true` which can cause issues with:
+**Details:** CodeQL injects `/p:EmitCompilerGeneratedFiles=true` which can cause
+issues with:
+
 - Legacy .NET Framework projects
 - Projects using `.sqlproj` files
 
 **Solutions:**
-- Add `<EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>` to problematic project files
+
+- Add `<EmitCompilerGeneratedFiles>false</EmitCompilerGeneratedFiles>` to
+  problematic project files
 - Use `build-mode: none` for C# if build accuracy is acceptable
 - Exclude problematic projects from the CodeQL analysis
 
@@ -45,6 +55,7 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** Large codebase, complex queries, or insufficient resources.
 
 **Solutions:**
+
 - Use `build-mode: none` where accuracy is acceptable (significantly faster)
 - Enable dependency caching: `dependency-caching: true`
 - Set `timeout-minutes` on the job to prevent hung workflows
@@ -59,9 +70,11 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 
 ### CodeQL Scanned Fewer Lines Than Expected
 
-**Cause:** Build command didn't compile all source files, or `build-mode: none` missed generated code.
+**Cause:** Build command didn't compile all source files, or `build-mode: none`
+missed generated code.
 
 **Solutions:**
+
 - Switch from `none` to `autobuild` or `manual` build mode
 - Ensure the build command compiles the full codebase (not just a subset)
 - Check the code scanning logs for extraction metrics:
@@ -72,9 +85,11 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 
 ### Kotlin Detected in No-Build Mode
 
-**Cause:** Repository uses `build-mode: none` (Java only) but also contains Kotlin code.
+**Cause:** Repository uses `build-mode: none` (Java only) but also contains
+Kotlin code.
 
 **Solutions:**
+
 - Disable default setup and re-enable it (switches to `autobuild`)
 - Or switch to advanced setup with `build-mode: autobuild` for `java-kotlin`
 - Kotlin requires a build to be analyzed; `none` mode only works for Java
@@ -86,6 +101,7 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** `GITHUB_TOKEN` lacks required permissions.
 
 **Solutions:**
+
 - Add explicit permissions to the workflow:
   ```yaml
   permissions:
@@ -100,13 +116,16 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 
 **Cause:** GitHub Code Security is not enabled.
 
-**Solution:** Enable GitHub Code Security in repository Settings → Advanced Security.
+**Solution:** Enable GitHub Code Security in repository Settings → Advanced
+Security.
 
 ### Error: "GitHub Code Security or Advanced Security must be enabled"
 
-**Cause:** Attempting to use code scanning on a private repo without the required license.
+**Cause:** Attempting to use code scanning on a private repo without the
+required license.
 
 **Solutions:**
+
 - Enable GitHub Code Security for the repository
 - Contact organization admin to enable Advanced Security
 
@@ -114,9 +133,11 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 
 ### Two CodeQL Workflows Running
 
-**Cause:** Both default setup and a pre-existing `codeql.yml` workflow are active.
+**Cause:** Both default setup and a pre-existing `codeql.yml` workflow are
+active.
 
 **Solutions:**
+
 - Disable default setup if using advanced setup, or
 - Delete the old workflow file if using default setup
 - Check repository Settings → Advanced Security for active configurations
@@ -126,13 +147,16 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** Matrix configuration doesn't include all languages.
 
 **Solutions:**
+
 - Add missing languages to the `matrix.include` array
-- Verify language identifiers are correct (e.g., `javascript-typescript` not just `javascript`)
+- Verify language identifiers are correct (e.g., `javascript-typescript` not
+  just `javascript`)
 - Check that each language has an appropriate `build-mode`
 
 ### Unclear What Triggered a Workflow Run
 
 **Solutions:**
+
 - Check the tool status page in repository Settings → Advanced Security
 - Review workflow run logs for trigger event details
 - Look at the `on:` triggers in the workflow file
@@ -142,8 +166,10 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** Invalid query or pack reference in the workflow.
 
 **Solutions:**
+
 - Verify query pack names and versions exist
-- Use correct format: `owner/pack-name@version` or `owner/pack-name:path/to/query.ql`
+- Use correct format: `owner/pack-name@version` or
+  `owner/pack-name:path/to/query.ql`
 - Run `codeql resolve packs` to verify available packs
 
 ## Resource Errors
@@ -153,6 +179,7 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** Runner lacks sufficient resources for the analysis.
 
 **Solutions:**
+
 - Use larger GitHub-hosted runners (if available)
 - For self-hosted runners, increase RAM and disk (SSD with ≥14 GB)
 - Reduce analysis scope with `paths` configuration
@@ -164,6 +191,7 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 **Cause:** Some source files couldn't be processed by the CodeQL extractor.
 
 **Solutions:**
+
 - Check extraction metrics in workflow logs for error counts
 - Enable debug logging for detailed extraction diagnostics
 - Verify source files are syntactically valid
@@ -176,10 +204,12 @@ Comprehensive guide for diagnosing and resolving CodeQL analysis errors, SARIF u
 To get more detailed diagnostic information:
 
 **GitHub Actions:**
+
 1. Re-run the workflow with debug logging enabled
 2. In the workflow run, click "Re-run jobs" → "Enable debug logging"
 
 **CodeQL CLI:**
+
 ```bash
 codeql database create my-db \
   --language=javascript-typescript \
@@ -187,11 +217,13 @@ codeql database create my-db \
   --logdir=codeql-logs
 ```
 
-**Verbosity levels:** `errors`, `warnings`, `progress`, `progress+`, `progress++`, `progress+++`
+**Verbosity levels:** `errors`, `warnings`, `progress`, `progress+`,
+`progress++`, `progress+++`
 
 ### Code Scanning Log Metrics
 
 Workflow logs include summary metrics:
+
 - **Lines of code in codebase** — baseline before extraction
 - **Lines of code in CodeQL database** — extracted including external libraries
 - **Lines excluding auto-generated files** — net analyzed code
@@ -200,6 +232,7 @@ Workflow logs include summary metrics:
 ### Private Registry Diagnostics
 
 For `build-mode: none` with private package registries:
+
 - Check the "Setup proxy for registries" step in workflow logs
 - Look for `Credentials loaded for the following registries:` message
 - Verify organization-level private registry configuration
@@ -212,7 +245,9 @@ For `build-mode: none` with private package registries:
 **Limit:** 10 MB maximum (gzip-compressed).
 
 **Solutions:**
-- Focus on the most important query suites (use `default` instead of `security-and-quality`)
+
+- Focus on the most important query suites (use `default` instead of
+  `security-and-quality`)
 - Reduce the number of queries via configuration
 - Split analysis into multiple jobs with separate SARIF uploads
 - Remove `--sarif-add-file-contents` flag
@@ -221,17 +256,18 @@ For `build-mode: none` with private package registries:
 
 GitHub enforces limits on SARIF data objects:
 
-| Object | Maximum |
-|---|---|
-| Runs per file | 20 |
-| Results per run | 25,000 |
-| Rules per run | 25,000 |
-| Tool extensions per run | 100 |
-| Thread flow locations per result | 10,000 |
-| Location per result | 1,000 |
-| Tags per rule | 20 |
+| Object                           | Maximum |
+| -------------------------------- | ------- |
+| Runs per file                    | 20      |
+| Results per run                  | 25,000  |
+| Rules per run                    | 25,000  |
+| Tool extensions per run          | 100     |
+| Thread flow locations per result | 10,000  |
+| Location per result              | 1,000   |
+| Tags per rule                    | 20      |
 
 **Solutions:**
+
 - Reduce query scope to focus on high-impact rules
 - Split analysis across multiple SARIF uploads with different `--sarif-category`
 - Disable noisy queries that produce many results
@@ -239,7 +275,9 @@ GitHub enforces limits on SARIF data objects:
 ### SARIF File Invalid
 
 **Solutions:**
-- Validate against the [Microsoft SARIF validator](https://sarifweb.azurewebsites.net/)
+
+- Validate against the
+  [Microsoft SARIF validator](https://sarifweb.azurewebsites.net/)
 - Ensure `version` is `"2.1.0"` and `$schema` points to the correct schema
 - Verify required properties (`runs`, `tool.driver`, `results`) are present
 
@@ -248,12 +286,15 @@ GitHub enforces limits on SARIF data objects:
 **Cause:** Cannot upload CodeQL-generated SARIF when default setup is active.
 
 **Solutions:**
+
 - Disable default setup before uploading via CLI/API
 - Or switch to using default setup exclusively (no manual uploads)
 
 ### Missing Authentication Token
 
 **Solutions:**
+
 - Set `GITHUB_TOKEN` environment variable with `security-events: write` scope
 - Or use `--github-auth-stdin` to pipe the token
-- For GitHub Actions: the token is automatically available via `${{ secrets.GITHUB_TOKEN }}`
+- For GitHub Actions: the token is automatically available via
+  `${{ secrets.GITHUB_TOKEN }}`

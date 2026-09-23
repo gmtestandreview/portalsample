@@ -1,91 +1,91 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { withPortalProviders } from "../../storybook/storybookHarness.tsx";
-import Checkbox from "./Checkbox/index.tsx";
-import NumberInput from "./NumberInput/index.tsx";
-import RadioButtonGroup from "./RadioButtonGroup/index.tsx";
-import SelectInput from "./SelectInput/index.tsx";
-import TextAreaInput from "./TextAreaInput/index.tsx";
-import TextInput from "./TextInput/index.tsx";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { withPortalProviders } from '../../storybook/storybookHarness.tsx';
+import Checkbox from './Checkbox/index.tsx';
+import NumberInput from './NumberInput/index.tsx';
+import RadioButtonGroup from './RadioButtonGroup/index.tsx';
+import SelectInput from './SelectInput/index.tsx';
+import TextAreaInput from './TextAreaInput/index.tsx';
+import TextInput from './TextInput/index.tsx';
 
 const meta = {
-	title: "Components/Inputs",
-	component: TextInput,
-	decorators: [withPortalProviders],
-	parameters: {
-		layout: "padded",
-		portal: {
-			formik: {
-				initialValues: {
-					organisationName: "Storybook Organisation",
-					measurementCategory: "electrical",
-					includeCertificate: true,
-					quantity: "3",
-					requirements:
-						"Calibrate at standard operating points and return with certificate.",
-					contactOption: "same",
-				},
-			},
-		},
-	},
+  title: 'Components/Inputs',
+  component: TextInput,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'padded',
+    portal: {
+      formik: {
+        initialValues: {
+          organisationName: 'Storybook Organisation',
+          measurementCategory: 'electrical',
+          includeCertificate: true,
+          quantity: '3',
+          requirements:
+            'Calibrate at standard operating points and return with certificate.',
+          contactOption: 'same',
+        },
+      },
+    },
+  },
 } satisfies Meta<typeof TextInput>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const CommonFieldSet: Story = {
-	args: {
-		label: "Organisation name",
-		name: "organisationName",
-	},
-	render: () => (
-		<div style={{ minWidth: 720 }}>
-			<TextInput
-				label="Organisation name"
-				name="organisationName"
-				inlineHelp="Used on quotations and measurement reports."
-			/>
-			<SelectInput
-				name="measurementCategory"
-				label="Measurement category"
-				options={[
-					{ displayText: "Electrical", value: "electrical" },
-					{ displayText: "Mass", value: "mass" },
-					{ displayText: "Temperature", value: "temperature" },
-				]}
-			/>
-			<RadioButtonGroup
-				legend="Invoice contact"
-				name="contactOption"
-				id="invoice-contact-option"
-				options={[
-					{
-						id: "contact-same",
-						label: "Use the request contact",
-						value: "same",
-					},
-					{
-						id: "contact-different",
-						label: "Use a different contact",
-						value: "different",
-					},
-				]}
-			/>
-			<Checkbox
-				label="Include measurement certificate"
-				name="includeCertificate"
-			/>
-			<NumberInput
-				label="Number of items"
-				name="quantity"
-				decimalScale={0}
-				allowNegative={false}
-			/>
-			<TextAreaInput
-				label="Testing/calibration requirements"
-				name="requirements"
-				rows={4}
-				maxCharacters={2000}
-			/>
-		</div>
-	),
+  args: {
+    label: 'Organisation name',
+    name: 'organisationName',
+  },
+  render: () => (
+    <div style={{ minWidth: 720 }}>
+      <TextInput
+        label='Organisation name'
+        name='organisationName'
+        inlineHelp='Used on quotations and measurement reports.'
+      />
+      <SelectInput
+        name='measurementCategory'
+        label='Measurement category'
+        options={[
+          { displayText: 'Electrical', value: 'electrical' },
+          { displayText: 'Mass', value: 'mass' },
+          { displayText: 'Temperature', value: 'temperature' },
+        ]}
+      />
+      <RadioButtonGroup
+        legend='Invoice contact'
+        name='contactOption'
+        id='invoice-contact-option'
+        options={[
+          {
+            id: 'contact-same',
+            label: 'Use the request contact',
+            value: 'same',
+          },
+          {
+            id: 'contact-different',
+            label: 'Use a different contact',
+            value: 'different',
+          },
+        ]}
+      />
+      <Checkbox
+        label='Include measurement certificate'
+        name='includeCertificate'
+      />
+      <NumberInput
+        label='Number of items'
+        name='quantity'
+        decimalScale={0}
+        allowNegative={false}
+      />
+      <TextAreaInput
+        label='Testing/calibration requirements'
+        name='requirements'
+        rows={4}
+        maxCharacters={2000}
+      />
+    </div>
+  ),
 };

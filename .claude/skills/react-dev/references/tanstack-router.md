@@ -1,6 +1,7 @@
 # TanStack Router TypeScript Patterns
 
-TanStack Router provides full type safety for routes, params, search params, and loader data.
+TanStack Router provides full type safety for routes, params, search params, and
+loader data.
 
 ## Basic Route Definition
 

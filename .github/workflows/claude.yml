@@ -24,7 +24,8 @@ permissions:
 # instead of spawning parallel 30-minute runners. Not cancel-in-progress: a
 # mid-flight Claude run may hold an un-pushed commit.
 concurrency:
-  group: claude-${{ github.event.issue.number || github.event.pull_request.number }}
+  group:
+    claude-${{ github.event.issue.number || github.event.pull_request.number }}
   cancel-in-progress: false
 
 jobs:
@@ -35,9 +36,9 @@ jobs:
     # at all for bots and non-privileged commenters, and makes the trust
     # boundary explicit in-repo rather than only inside the action.
     if: >-
-      contains(github.event.comment.body, '@claude')
-      && github.event.comment.user.type != 'Bot'
-      && contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+      contains(github.event.comment.body, '@claude') &&
+      github.event.comment.user.type != 'Bot' && contains(fromJSON('["OWNER",
+      "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:

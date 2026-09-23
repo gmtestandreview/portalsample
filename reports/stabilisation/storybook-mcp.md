@@ -19,15 +19,15 @@ successfully in a refreshed session. UI component and `*.stories.*` changes are 
 permitted. The original NOT PASSED record from 2026-08-27 22:57 is retained below, because
 the reason it failed is a repeatable trap worth keeping.
 
-| Field | Value |
-| --- | --- |
-| Server name | `my-storybook-mcp-server` |
-| Endpoint | `http://localhost:6006/mcp` |
-| Transport | streamable HTTP (`"type": "http"` in `.mcp.json`) |
-| Server | `@storybook/addon-mcp` 0.7.0 |
+| Field        | Value                                               |
+| ------------ | --------------------------------------------------- |
+| Server name  | `my-storybook-mcp-server`                           |
+| Endpoint     | `http://localhost:6006/mcp`                         |
+| Transport    | streamable HTTP (`"type": "http"` in `.mcp.json`)   |
+| Server       | `@storybook/addon-mcp` 0.7.0                        |
 | Agent client | Claude Code (VS Code extension), session `44fb1e2e` |
-| Measured at | 2026-08-27 22:57 AEST |
-| Commit | `ea0f1c6` |
+| Measured at  | 2026-08-27 22:57 AEST                               |
+| Commit       | `ea0f1c6`                                           |
 
 ## Step 1 — Storybook running
 
@@ -93,12 +93,12 @@ registered under `my-storybook-mcp-server`: `list-all-documentation`, `get-docum
 `get-documentation-for-story`, `get-storybook-story-instructions`, `get-changed-stories`,
 `get-stories-by-component`, `preview-stories`, `run-story-tests`.
 
-| Required tool | Result |
-| --- | --- |
+| Required tool                      | Result                                                                                                                                                                                               |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `get-storybook-story-instructions` | Returned the Storybook 9 story conventions, including the `@storybook/react-vite` and `storybook/test` import rules and the requirement to use `run-story-tests` rather than any package.json script |
-| `list-all-documentation` | Returned 88 component entries and 10 docs entries |
-| `get-documentation` | Called with `components-inputs-autosuggest`, an id returned by the list tool; returned three stories and the full prop table |
-| `run-story-tests` | Registered and schema-loaded |
+| `list-all-documentation`           | Returned 88 component entries and 10 docs entries                                                                                                                                                    |
+| `get-documentation`                | Called with `components-inputs-autosuggest`, an id returned by the list tool; returned three stories and the full prop table                                                                         |
+| `run-story-tests`                  | Registered and schema-loaded                                                                                                                                                                         |
 
 ### What resolved it
 
@@ -130,10 +130,10 @@ This is precisely the check the gate exists for.
 
 ## Work waiting on this gate
 
-| Item | State |
-| --- | --- |
-| C6 — `ContentModal` unique title id | **Done.** Landed at `4cc43f5` using `useId()` per instance on both `aria-labelledby` and the title `id`. The RED written under this gate drove it. |
-| C2 — shared-input label repair | **Unblocked.** Owner is `AutoSuggestContainer.tsx:110`, which renders a native `<label htmlFor>` inside React Aria's `<ComboBox>`; RAC reads its label from `LabelContext`, which only its own `<Label>` populates. |
+| Item                                | State                                                                                                                                                                                                               |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C6 — `ContentModal` unique title id | **Done.** Landed at `4cc43f5` using `useId()` per instance on both `aria-labelledby` and the title `id`. The RED written under this gate drove it.                                                                  |
+| C2 — shared-input label repair      | **Unblocked.** Owner is `AutoSuggestContainer.tsx:110`, which renders a native `<label htmlFor>` inside React Aria's `<ComboBox>`; RAC reads its label from `LabelContext`, which only its own `<Label>` populates. |
 
 The earlier note in this file that C6's RED was uncommitted and its fix pending is
 superseded: the fix and its test are both committed and the tree is green.
@@ -142,13 +142,13 @@ superseded: the fix and its test are both committed and the tree is green.
 
 ## 2026-08-29 record — the gate regressed, and how not to regress it again
 
-| Field | Value |
-| --- | --- |
-| Measured at | 2026-08-29 10:55 AEST |
-| Commit | `430820c` |
-| Agent client | Claude Code (VS Code extension), session `f6307217` |
-| Storybook endpoint | healthy — `POST /mcp` `initialize` returns HTTP 200, `mcp-session-id`, `@storybook/addon-mcp` 0.7.0 |
-| Tool registry | **empty for this server** — startup reported `ConnectionRefused`; `list-all-documentation`, `get-documentation`, `get-storybook-story-instructions` and `run-story-tests` are all absent |
+| Field              | Value                                                                                                                                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Measured at        | 2026-08-29 10:55 AEST                                                                                                                                                                    |
+| Commit             | `430820c`                                                                                                                                                                                |
+| Agent client       | Claude Code (VS Code extension), session `f6307217`                                                                                                                                      |
+| Storybook endpoint | healthy — `POST /mcp` `initialize` returns HTTP 200, `mcp-session-id`, `@storybook/addon-mcp` 0.7.0                                                                                      |
+| Tool registry      | **empty for this server** — startup reported `ConnectionRefused`; `list-all-documentation`, `get-documentation`, `get-storybook-story-instructions` and `run-story-tests` are all absent |
 
 ### Why it regressed
 
@@ -191,27 +191,26 @@ prefix.
 
 ### Work waiting on this gate as at 2026-08-29
 
-| Item | State |
-| --- | --- |
-| C3 Step 1 — three-mode settlement experiment | **Done.** Read-only evidence, explicitly permitted before the gate. See `warning-settlement.md`. |
-| C3 — W3 (unit `act` warnings) | **Closed with no edit.** Re-measurement only; no UI or story file touched. |
-| C3 Steps 2-4 — W4 story settlement | **Blocked.** Every remaining repair adds a `play` function to a `*.stories.tsx` file, which is squarely inside this gate. |
-
+| Item                                         | State                                                                                                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| C3 Step 1 — three-mode settlement experiment | **Done.** Read-only evidence, explicitly permitted before the gate. See `warning-settlement.md`.                          |
+| C3 — W3 (unit `act` warnings)                | **Closed with no edit.** Re-measurement only; no UI or story file touched.                                                |
+| C3 Steps 2-4 — W4 story settlement           | **Blocked.** Every remaining repair adds a `play` function to a `*.stories.tsx` file, which is squarely inside this gate. |
 
 ## 2026-08-29 11:20 AEST — gate re-proven
 
-| Field | Value |
-| --- | --- |
-| Agent client | Claude Code (VS Code extension), session `f6307217` after relaunch |
-| Commit | `d1fd81f` |
+| Field            | Value                                                                                                                                                                                                     |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Agent client     | Claude Code (VS Code extension), session `f6307217` after relaunch                                                                                                                                        |
+| Commit           | `d1fd81f`                                                                                                                                                                                                 |
 | Registered tools | `list-all-documentation`, `get-documentation`, `get-documentation-for-story`, `get-storybook-story-instructions`, `get-changed-stories`, `get-stories-by-component`, `preview-stories`, `run-story-tests` |
 
-| Required tool | Result |
-| --- | --- |
+| Required tool                      | Result                                                                                                                                                                                                                                                                         |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `get-storybook-story-instructions` | Returned the Storybook 9 conventions: `Meta`/`StoryObj` from `@storybook/react-vite`, test helpers from `storybook/test`, `canvas` used directly or `within(canvasElement)` but never `within(canvas)`, and the rule that `run-story-tests` is the only way to run story tests |
-| `list-all-documentation` | 88 component entries and 10 docs entries, with story IDs |
-| `get-documentation` | Called with `routes-requestforquote`, an id returned by the list tool; returned all four stories and the `Props` type |
-| `run-story-tests` | Registered and schema-loaded |
+| `list-all-documentation`           | 88 component entries and 10 docs entries, with story IDs                                                                                                                                                                                                                       |
+| `get-documentation`                | Called with `routes-requestforquote`, an id returned by the list tool; returned all four stories and the `Props` type                                                                                                                                                          |
+| `run-story-tests`                  | Registered and schema-loaded                                                                                                                                                                                                                                                   |
 
 Resolved exactly as the 10:55 entry prescribed: Storybook started from a terminal outside
 VS Code, then a full VS Code relaunch. The recorded remedy worked first time.
@@ -220,7 +219,7 @@ VS Code, then a full VS Code relaunch. The recorded remedy worked first time.
 
 The server instructs that `run-story-tests` replaces any package.json test script. That
 holds for pass/fail and a11y validation, and C3 uses it for exactly that. It does **not**
-replace `npm run test:storybook -- --reporter=default` for this task's *warning census*:
+replace `npm run test:storybook -- --reporter=default` for this task's _warning census_:
 C3's acceptance is a console-warning count, and only the reporter-flagged Vitest run emits
 the intercepted `console.error` lines the count is derived from. Both are run for every
 owner. This is the same `--reporter=default` dependency recorded in `warnings.md`.

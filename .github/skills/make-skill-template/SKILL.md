@@ -1,11 +1,18 @@
 ---
 name: make-skill-template
-description: 'Create new Agent Skills for GitHub Copilot from prompts or by duplicating this template. Use when asked to "create a skill", "make a new skill", "scaffold a skill", or when building specialized AI capabilities with bundled resources. Generates SKILL.md files with proper frontmatter, directory structure, and optional scripts/references/assets folders.'
+description:
+  'Create new Agent Skills for GitHub Copilot from prompts or by duplicating
+  this template. Use when asked to "create a skill", "make a new skill",
+  "scaffold a skill", or when building specialized AI capabilities with bundled
+  resources. Generates SKILL.md files with proper frontmatter, directory
+  structure, and optional scripts/references/assets folders.'
 ---
 
 # Make Skill Template
 
-A meta-skill for creating new Agent Skills. Use this skill when you need to scaffold a new skill folder, generate a SKILL.md file, or help users understand the Agent Skills specification.
+A meta-skill for creating new Agent Skills. Use this skill when you need to
+scaffold a new skill folder, generate a SKILL.md file, or help users understand
+the Agent Skills specification.
 
 ## When to Use This Skill
 
@@ -18,7 +25,8 @@ A meta-skill for creating new Agent Skills. Use this skill when you need to scaf
 
 - Understanding of what the skill should accomplish
 - A clear, keyword-rich description of capabilities and triggers
-- Knowledge of any bundled resources needed (scripts, references, assets, templates)
+- Knowledge of any bundled resources needed (scripts, references, assets,
+  templates)
 
 ## Creating a New Skill
 
@@ -38,24 +46,27 @@ Every skill requires YAML frontmatter with `name` and `description`:
 ```yaml
 ---
 name: <skill-name>
-description: '<What it does>. Use when <specific triggers, scenarios, keywords users might say>.'
+description:
+  '<What it does>. Use when <specific triggers, scenarios, keywords users might
+  say>.'
 ---
 ```
 
 #### Frontmatter Field Requirements
 
-| Field | Required | Constraints |
-|-------|----------|-------------|
-| `name` | **Yes** | 1-64 chars, lowercase letters/numbers/hyphens only, must match folder name |
-| `description` | **Yes** | 1-1024 chars, must describe WHAT it does AND WHEN to use it |
-| `license` | No | License name or reference to bundled LICENSE.txt |
-| `compatibility` | No | 1-500 chars, environment requirements if needed |
-| `metadata` | No | Key-value pairs for additional properties |
-| `allowed-tools` | No | Space-delimited list of pre-approved tools (experimental) |
+| Field           | Required | Constraints                                                                |
+| --------------- | -------- | -------------------------------------------------------------------------- |
+| `name`          | **Yes**  | 1-64 chars, lowercase letters/numbers/hyphens only, must match folder name |
+| `description`   | **Yes**  | 1-1024 chars, must describe WHAT it does AND WHEN to use it                |
+| `license`       | No       | License name or reference to bundled LICENSE.txt                           |
+| `compatibility` | No       | 1-500 chars, environment requirements if needed                            |
+| `metadata`      | No       | Key-value pairs for additional properties                                  |
+| `allowed-tools` | No       | Space-delimited list of pre-approved tools (experimental)                  |
 
 #### Description Best Practices
 
-**CRITICAL**: The `description` is the PRIMARY mechanism for automatic skill discovery. Include:
+**CRITICAL**: The `description` is the PRIMARY mechanism for automatic skill
+discovery. Include:
 
 1. **WHAT** the skill does (capabilities)
 2. **WHEN** to use it (triggers, scenarios, file types)
@@ -64,7 +75,11 @@ description: '<What it does>. Use when <specific triggers, scenarios, keywords u
 **Good example:**
 
 ```yaml
-description: 'Toolkit for testing local web applications using Playwright. Use when asked to verify frontend functionality, debug UI behavior, capture browser screenshots, or view browser console logs. Supports Chrome, Firefox, and WebKit.'
+description:
+  'Toolkit for testing local web applications using Playwright. Use when asked
+  to verify frontend functionality, debug UI behavior, capture browser
+  screenshots, or view browser console logs. Supports Chrome, Firefox, and
+  WebKit.'
 ```
 
 **Poor example:**
@@ -77,23 +92,23 @@ description: 'Web testing helpers'
 
 After the frontmatter, add markdown instructions. Recommended sections:
 
-| Section | Purpose |
-|---------|---------|
-| `# Title` | Brief overview |
+| Section                     | Purpose                         |
+| --------------------------- | ------------------------------- |
+| `# Title`                   | Brief overview                  |
 | `## When to Use This Skill` | Reinforces description triggers |
-| `## Prerequisites` | Required tools, dependencies |
-| `## Step-by-Step Workflows` | Numbered steps for tasks |
-| `## Troubleshooting` | Common issues and solutions |
-| `## References` | Links to bundled docs |
+| `## Prerequisites`          | Required tools, dependencies    |
+| `## Step-by-Step Workflows` | Numbered steps for tasks        |
+| `## Troubleshooting`        | Common issues and solutions     |
+| `## References`             | Links to bundled docs           |
 
 ### Step 4: Add Optional Directories (If Needed)
 
-| Folder | Purpose | When to Use |
-|--------|---------|-------------|
-| `scripts/` | Executable code (Python, Bash, JS) | Automation that performs operations |
-| `references/` | Documentation agent reads | API references, schemas, guides |
-| `assets/` | Static files used AS-IS | Images, fonts, templates |
-| `templates/` | Starter code agent modifies | Scaffolds to extend |
+| Folder        | Purpose                            | When to Use                         |
+| ------------- | ---------------------------------- | ----------------------------------- |
+| `scripts/`    | Executable code (Python, Bash, JS) | Automation that performs operations |
+| `references/` | Documentation agent reads          | API references, schemas, guides     |
+| `assets/`     | Static files used AS-IS            | Images, fonts, templates            |
+| `templates/`  | Starter code agent modifies        | Scaffolds to extend                 |
 
 ## Example: Complete Skill Structure
 
@@ -135,12 +150,12 @@ skill/
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| Skill not discovered | Improve description with more keywords and triggers |
+| Issue                    | Solution                                                 |
+| ------------------------ | -------------------------------------------------------- |
+| Skill not discovered     | Improve description with more keywords and triggers      |
 | Validation fails on name | Ensure lowercase, no consecutive hyphens, matches folder |
-| Description too short | Add capabilities, triggers, and keywords |
-| Assets not found | Use relative paths from skill root |
+| Description too short    | Add capabilities, triggers, and keywords                 |
+| Assets not found         | Use relative paths from skill root                       |
 
 ## References
 

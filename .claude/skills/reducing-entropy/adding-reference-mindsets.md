@@ -1,6 +1,8 @@
 # Adding Reference Mindsets
 
-Reference mindsets are philosophical foundations for simplicity. They explain *why* less is more, giving agents deeper calibration beyond the mechanical checkpoints.
+Reference mindsets are philosophical foundations for simplicity. They explain
+_why_ less is more, giving agents deeper calibration beyond the mechanical
+checkpoints.
 
 ## Where They Live
 
@@ -48,30 +50,34 @@ Before adding a mindset:
 
 Ideas that would make strong mindsets:
 
-| Concept | Core Insight |
-|---------|--------------|
-| `worse-is-better` | Shipping a simple thing beats perfecting a complex one |
-| `essential-vs-accidental` | Most complexity is accidental and can be eliminated |
-| `locality-of-behavior` | Code should be understandable without jumping around |
-| `boring-technology` | Innovation tokens are limited; use boring tech by default |
-| `separation-of-concerns` | Each piece should have one reason to change |
-| `rule-of-three` | Don't abstract until you've seen the pattern three times |
+| Concept                   | Core Insight                                              |
+| ------------------------- | --------------------------------------------------------- |
+| `worse-is-better`         | Shipping a simple thing beats perfecting a complex one    |
+| `essential-vs-accidental` | Most complexity is accidental and can be eliminated       |
+| `locality-of-behavior`    | Code should be understandable without jumping around      |
+| `boring-technology`       | Innovation tokens are limited; use boring tech by default |
+| `separation-of-concerns`  | Each piece should have one reason to change               |
+| `rule-of-three`           | Don't abstract until you've seen the pattern three times  |
 
 ## What NOT to Add
 
 **Technology-specific advice** → Belongs in project docs or tech-specific skills
-- "React components should..." 
+
+- "React components should..."
 - "In Rust, prefer..."
 
 **Process/workflow rules** → Belongs in skills, not mindsets
+
 - "Always run tests before..."
 - "Use TDD when..."
 
 **Vague platitudes** → If there's no actionable insight, skip it
+
 - "Write clean code"
 - "Think before you code"
 
 **Anything requiring context** → Mindsets should be universal
+
 - "In microservices architectures..."
 - "When working with legacy code..."
 
@@ -79,18 +85,27 @@ Ideas that would make strong mindsets:
 
 A good mindset should help an agent answer: "Should I add this abstraction?"
 
-If the mindset doesn't directly inform that question, it probably belongs somewhere else.
+If the mindset doesn't directly inform that question, it probably belongs
+somewhere else.
 
 ## Source Material
 
-Primary sources for simplicity thinking. Draw from these when creating new mindsets:
+Primary sources for simplicity thinking. Draw from these when creating new
+mindsets:
 
-- [Simple Made Easy](https://www.infoq.com/presentations/Simple-Made-Easy/) - Rich Hickey
-- [Hammock Driven Development](https://www.youtube.com/watch?v=f84n5oFoZBc) - Rich Hickey
-- [The Value of Values](https://www.infoq.com/presentations/Value-Values/) - Rich Hickey
-- [Out of the Tar Pit](https://curtclifton.net/papers/MosesleyMarks06a.pdf) - Moseley & Marks
-- [No Silver Bullet](https://www.cs.unc.edu/techreports/86-020.pdf) - Fred Brooks
+- [Simple Made Easy](https://www.infoq.com/presentations/Simple-Made-Easy/) -
+  Rich Hickey
+- [Hammock Driven Development](https://www.youtube.com/watch?v=f84n5oFoZBc) -
+  Rich Hickey
+- [The Value of Values](https://www.infoq.com/presentations/Value-Values/) -
+  Rich Hickey
+- [Out of the Tar Pit](https://curtclifton.net/papers/MosesleyMarks06a.pdf) -
+  Moseley & Marks
+- [No Silver Bullet](https://www.cs.unc.edu/techreports/86-020.pdf) - Fred
+  Brooks
 - [The Grug Brained Developer](https://grugbrain.dev/) - grugbrain.dev
-- [Worse Is Better](https://www.dreamsongs.com/WorseIsBetter.html) - Richard Gabriel
-- [A Philosophy of Software Design](https://www.amazon.com/dp/173210221X) - John Ousterhout
+- [Worse Is Better](https://www.dreamsongs.com/WorseIsBetter.html) - Richard
+  Gabriel
+- [A Philosophy of Software Design](https://www.amazon.com/dp/173210221X) - John
+  Ousterhout
 - [The Zen of Python](https://peps.python.org/pep-0020/) - Tim Peters

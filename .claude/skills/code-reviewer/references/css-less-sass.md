@@ -1,11 +1,13 @@
 # CSS, Less, and Sass Review Guide
 
-Use this guide for styling changes, design-system work, responsive layout, accessibility, and CSS architecture.
+Use this guide for styling changes, design-system work, responsive layout,
+accessibility, and CSS architecture.
 
 ## Layout and Responsiveness
 
 - [ ] Layout works at small, medium, large, and wide viewports.
-- [ ] Content does not overlap, clip unexpectedly, or require horizontal scrolling.
+- [ ] Content does not overlap, clip unexpectedly, or require horizontal
+      scrolling.
 - [ ] Fixed dimensions are justified and paired with responsive constraints.
 - [ ] Grid and flex behavior is explicit for wrapping, gaps, and alignment.
 - [ ] Long words, dynamic labels, and translated text have room to fit.
@@ -37,14 +39,17 @@ Use this guide for styling changes, design-system work, responsive layout, acces
 
 ## Design System Fit
 
-- [ ] Spacing, color, typography, radius, and shadows use existing tokens or conventions.
+- [ ] Spacing, color, typography, radius, and shadows use existing tokens or
+      conventions.
 - [ ] New variants are justified by product need.
 - [ ] Components remain visually consistent across states.
-- [ ] Disabled, loading, empty, error, hover, focus, active, and selected states are covered where relevant.
+- [ ] Disabled, loading, empty, error, hover, focus, active, and selected states
+      are covered where relevant.
 
 ## Sass and Less
 
-- [ ] Sass uses `@use` and `@forward` for new files unless local policy says otherwise.
+- [ ] Sass uses `@use` and `@forward` for new files unless local policy says
+      otherwise.
 - [ ] Avoid deep variable chains that hide the final value.
 - [ ] Mixins generate predictable CSS and are worth their abstraction cost.
 - [ ] Nested selectors stay shallow enough to understand.

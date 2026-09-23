@@ -203,13 +203,13 @@ Use the following mapping after all required cases are resolved:
 
 <!-- markdownlint-disable MD013 -->
 
-| Evidence state | Recommendation |
-| --- | --- |
-| All required cases PASS | `deploy` may be recommended if non-behavioral gates also pass |
-| Any required case AMBER | `revise` or `hold` |
-| Any required case FAIL | `revise` or `hold` |
-| Any required case NHR | `hold`, unless the governing checklist explicitly allows the item to be non-blocking |
-| Only optional cases AMBER/NHR | Document limitation; apply campaign-specific risk judgement |
+| Evidence state                | Recommendation                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| All required cases PASS       | `deploy` may be recommended if non-behavioral gates also pass                        |
+| Any required case AMBER       | `revise` or `hold`                                                                   |
+| Any required case FAIL        | `revise` or `hold`                                                                   |
+| Any required case NHR         | `hold`, unless the governing checklist explicitly allows the item to be non-blocking |
+| Only optional cases AMBER/NHR | Document limitation; apply campaign-specific risk judgement                          |
 
 <!-- markdownlint-enable MD013 -->
 

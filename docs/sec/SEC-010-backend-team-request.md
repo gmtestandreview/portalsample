@@ -1,9 +1,7 @@
 # SEC-010 — Action Required: Dashboard API Org-Scoping Verification
 
-**To:** Backend / API Team
-**From:** Migration Team — Backend Architect
-**Date:** 2026-06-04
-**Priority:** HIGH — blocks dashboard route migration
+**To:** Backend / API Team **From:** Migration Team — Backend Architect
+**Date:** 2026-06-04 **Priority:** HIGH — blocks dashboard route migration
 **Response needed by:** before Batch E migration window opens
 
 ---
@@ -14,7 +12,8 @@ We need you to check three API endpoints, run one test, and record the result in
 `docs/sec/SEC-010-idor-backend-verification.md`. That is the only thing blocking
 the dashboard route from being migrated to the new platform.
 
-The whole task should take under two hours if the enforcement is already in place.
+The whole task should take under two hours if the enforcement is already in
+place.
 
 ---
 
@@ -34,8 +33,8 @@ The GUID originates from your sign-in response and is stored in the browser.
 That means any logged-in user can open DevTools, find the request, copy the URL,
 substitute a different organisation's GUID, and replay it. If the backend uses
 the `PortalId` query value as the sole filter for the database query — without
-also checking it against the user's JWT — then User A could read Organisation B's
-drafts, quotes, and artefacts.
+also checking it against the user's JWT — then User A could read Organisation
+B's drafts, quotes, and artefacts.
 
 The bearer token is always present on these requests, so the correct fix is
 straightforward: read the org identity from the token, not (or not solely) from
@@ -49,7 +48,8 @@ check.
 
 ## Step 1 — Find the three endpoint handlers (15 minutes)
 
-Locate the handlers in your .NET project (`Nmi.Portal.Api`) for these exact routes:
+Locate the handlers in your .NET project (`Nmi.Portal.Api`) for these exact
+routes:
 
 | Route                                             | Method |
 | ------------------------------------------------- | ------ |
@@ -66,9 +66,9 @@ client confirms these exact URL paths — they are not speculative.
 
 For each handler, answer this question:
 
-> **Does the handler read the organisation identity from the validated JWT claims
-> before executing the database query, or does it use the `PortalId` query
-> parameter directly?**
+> **Does the handler read the organisation identity from the validated JWT
+> claims before executing the database query, or does it use the `PortalId`
+> query parameter directly?**
 
 **What you want to see (PASS):**
 
@@ -101,8 +101,8 @@ layer with no JWT comparison — please follow the remediation steps in the
 [Fix](#fix-if-the-handler-fails) section below before recording the verdict.
 
 Also confirm each handler has `.RequireAuthorization()` or the equivalent policy
-applied. If any of the three endpoints is unauthenticated, that is a separate
-P1 blocker that must be fixed regardless of the IDOR result.
+applied. If any of the three endpoints is unauthenticated, that is a separate P1
+blocker that must be fixed regardless of the IDOR result.
 
 ---
 
@@ -113,8 +113,8 @@ sufficient — we need a test result.
 
 **Setup:**
 
-- Two test organisations: Org A and Org B, both with existing draft/quote/artefact
-  records in the test environment.
+- Two test organisations: Org A and Org B, both with existing
+  draft/quote/artefact records in the test environment.
 - A valid access token for a user belonging to Org A.
 
 **Test:**
@@ -141,12 +141,14 @@ retest before recording the verdict.
 Open `docs/sec/SEC-010-idor-backend-verification.md` and:
 
 1. Tick all three checklist items.
-2. Change the **Status** field to `Closed — PASS` (or `Closed — FAIL, remediated`).
+2. Change the **Status** field to `Closed — PASS` (or
+   `Closed — FAIL, remediated`).
 3. Add a verdict section with:
    - Reviewer name
    - Date
    - Which JWT claim was confirmed as the org-scoping authority
-   - Cross-org test result: HTTP status returned, test environment name, date run
+   - Cross-org test result: HTTP status returned, test environment name, date
+     run
    - Commit reference if a fix was applied
 
 4. Update the inline comment in the frontend source at
@@ -206,9 +208,9 @@ app.MapGet("/api/dashboard/get-filtered-dashboard-drafts", async (
 }).RequireAuthorization();
 ```
 
-Replace `"extension_OrganisationId"` with your actual B2C claim name. Apply
-the same change to the quotes and artefacts endpoints. After applying the fix,
-rerun the cross-org test in Step 3 before recording the verdict.
+Replace `"extension_OrganisationId"` with your actual B2C claim name. Apply the
+same change to the quotes and artefacts endpoints. After applying the fix, rerun
+the cross-org test in Step 3 before recording the verdict.
 
 ---
 

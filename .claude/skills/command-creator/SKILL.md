@@ -1,15 +1,23 @@
 ---
 name: command-creator
-description: This skill should be used when creating a Claude Code slash command. Use when users ask to "create a command", "make a slash command", "add a command", or want to document a workflow as a reusable command. Essential for creating optimized, agent-executable slash commands with proper structure and best practices.
+description:
+  This skill should be used when creating a Claude Code slash command. Use when
+  users ask to "create a command", "make a slash command", "add a command", or
+  want to document a workflow as a reusable command. Essential for creating
+  optimized, agent-executable slash commands with proper structure and best
+  practices.
 ---
 
 # Command Creator
 
-This skill guides the creation of Claude Code slash commands - reusable workflows that can be invoked with `/command-name` in Claude Code conversations.
+This skill guides the creation of Claude Code slash commands - reusable
+workflows that can be invoked with `/command-name` in Claude Code conversations.
 
 ## About Slash Commands
 
-Slash commands are markdown files stored in `.claude/commands/` (project-level) or `~/.claude/commands/` (global/user-level) that get expanded into prompts when invoked. They're ideal for:
+Slash commands are markdown files stored in `.claude/commands/` (project-level)
+or `~/.claude/commands/` (global/user-level) that get expanded into prompts when
+invoked. They're ideal for:
 
 - Repetitive workflows (code review, PR submission, CI fixing)
 - Multi-step processes that need consistency
@@ -30,11 +38,15 @@ Invoke this skill when users:
 
 This skill includes reference documentation for detailed guidance:
 
-- **references/patterns.md** - Command patterns (workflow automation, iterative fixing, agent delegation, simple execution)
-- **references/examples.md** - Real command examples with full source (submit-stack, ensure-ci, create-implementation-plan)
-- **references/best-practices.md** - Quality checklist, common pitfalls, writing guidelines, template structure
+- **references/patterns.md** - Command patterns (workflow automation, iterative
+  fixing, agent delegation, simple execution)
+- **references/examples.md** - Real command examples with full source
+  (submit-stack, ensure-ci, create-implementation-plan)
+- **references/best-practices.md** - Quality checklist, common pitfalls, writing
+  guidelines, template structure
 
-Load these references as needed when creating commands to understand patterns, see examples, or ensure quality.
+Load these references as needed when creating commands to understand patterns,
+see examples, or ensure quality.
 
 ## Command Structure Overview
 
@@ -57,26 +69,32 @@ argument-hint: <placeholder> (optional, if command takes arguments)
 
 **Auto-detect the appropriate location:**
 
-1. Check git repository status: `git rev-parse --is-inside-work-tree 2>/dev/null`
+1. Check git repository status:
+   `git rev-parse --is-inside-work-tree 2>/dev/null`
 2. Default location:
    - If in git repo → Project-level: `.claude/commands/`
    - If not in git repo → Global: `~/.claude/commands/`
 3. Allow user override:
-   - If user explicitly mentions "global" or "user-level" → Use `~/.claude/commands/`
-   - If user explicitly mentions "project" or "project-level" → Use `.claude/commands/`
+   - If user explicitly mentions "global" or "user-level" → Use
+     `~/.claude/commands/`
+   - If user explicitly mentions "project" or "project-level" → Use
+     `.claude/commands/`
 
 Report the chosen location to the user before proceeding.
 
 ### Step 2: Show Command Patterns
 
-Help the user understand different command types. Load **references/patterns.md** to see available patterns:
+Help the user understand different command types. Load
+**references/patterns.md** to see available patterns:
 
 - **Workflow Automation** - Analyze → Act → Report (e.g., submit-stack)
 - **Iterative Fixing** - Run → Parse → Fix → Repeat (e.g., ensure-ci)
-- **Agent Delegation** - Context → Delegate → Iterate (e.g., create-implementation-plan)
+- **Agent Delegation** - Context → Delegate → Iterate (e.g.,
+  create-implementation-plan)
 - **Simple Execution** - Run command with args (e.g., codex-review)
 
-Ask the user: "Which pattern is closest to what you want to create?" This helps frame the conversation.
+Ask the user: "Which pattern is closest to what you want to create?" This helps
+frame the conversation.
 
 ### Step 3: Gather Command Information
 
@@ -137,7 +155,8 @@ Ask:
 
 ### Step 4: Generate Optimized Command
 
-Create the command file with agent-optimized instructions. Load **references/best-practices.md** for:
+Create the command file with agent-optimized instructions. Load
+**references/best-practices.md** for:
 
 - Template structure
 - Best practices for agent execution
@@ -175,7 +194,8 @@ Key principles:
 
 If the user wants to test:
 
-1. Suggest testing: `You can test this command by running: /command-name [arguments]`
+1. Suggest testing:
+   `You can test this command by running: /command-name [arguments]`
 2. Be ready to iterate based on feedback
 3. Update the file with improvements as needed
 
@@ -189,7 +209,8 @@ If the user wants to test:
 
 **Common patterns to remember:**
 
-- Use Bash tool for `pytest`, `pyright`, `ruff`, `prettier`, `make`, `gt` commands
+- Use Bash tool for `pytest`, `pyright`, `ruff`, `prettier`, `make`, `gt`
+  commands
 - Use Task tool to invoke subagents for specialized tasks
 - Check for specific files first (e.g., `.PLAN.md`) before proceeding
 - Mark todos complete immediately, not in batches
@@ -207,4 +228,5 @@ When creating a command:
 5. **Create file** at appropriate location
 6. **Confirm and iterate** as needed
 
-Focus on creating commands that agents can execute autonomously, with clear steps, explicit tool usage, and proper error handling.
+Focus on creating commands that agents can execute autonomously, with clear
+steps, explicit tool usage, and proper error handling.

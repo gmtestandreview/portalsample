@@ -11,6 +11,7 @@
 Types: `feat`, `fix`, `refactor`, `docs`, `test`, `chore`, `perf`, `ci`
 
 Examples:
+
 ```
 feat: add Stripe subscription billing with three tiers
 fix: resolve N+1 query in user posts endpoint
@@ -30,9 +31,11 @@ test: add integration tests for checkout webhook handler
 
 ```markdown
 ## Summary
+
 - What changed and why
 
 ## Test plan
+
 - [ ] Verify happy path works
 - [ ] Verify error handling works
 - [ ] Run E2E tests on staging

@@ -2,7 +2,9 @@
 
 ## What is an ADR?
 
-Architecture Decision Records capture important architectural decisions made along with their context and consequences. They help maintain institutional knowledge and explain why systems are built the way they are.
+Architecture Decision Records capture important architectural decisions made
+along with their context and consequences. They help maintain institutional
+knowledge and explain why systems are built the way they are.
 
 ## ADR Template
 
@@ -15,7 +17,8 @@ Architecture Decision Records capture important architectural decisions made alo
 
 #### Context and Problem Statement
 
-[Describe the context and problem that needs to be solved. What are we trying to achieve?]
+[Describe the context and problem that needs to be solved. What are we trying to
+achieve?]
 
 #### Decision Drivers
 
@@ -35,16 +38,19 @@ Architecture Decision Records capture important architectural decisions made alo
 **Chosen option**: "[Option Name]", because [justification]
 
 ##### Positive Consequences
+
 - [Consequence 1]
 - [Consequence 2]
 
 ##### Negative Consequences
+
 - [Risk 1 and mitigation]
 - [Risk 2 and mitigation]
 
 #### Pros and Cons of Options
 
 ##### Option 1: [Name]
+
 - **Pros**:
   - [Advantage 1]
   - [Advantage 2]
@@ -53,9 +59,11 @@ Architecture Decision Records capture important architectural decisions made alo
   - [Disadvantage 2]
 
 ##### Option 2: [Name]
+
 [Repeat structure]
 
 #### Links
+
 - [Related ADRs]
 - [Documentation]
 - [Research/PoCs]
@@ -73,7 +81,9 @@ Architecture Decision Records capture important architectural decisions made alo
 
 #### Context and Problem Statement
 
-Our monolithic application is becoming difficult to scale and deploy. Different teams are stepping on each other's toes, and deployment cycles are getting longer. We need to decide on our architectural approach for the next 3-5 years.
+Our monolithic application is becoming difficult to scale and deploy. Different
+teams are stepping on each other's toes, and deployment cycles are getting
+longer. We need to decide on our architectural approach for the next 3-5 years.
 
 #### Decision Drivers
 
@@ -92,15 +102,18 @@ Our monolithic application is becoming difficult to scale and deploy. Different 
 
 #### Decision Outcome
 
-**Chosen option**: "Microservices", because it best supports our team autonomy needs and scaling requirements, despite added complexity.
+**Chosen option**: "Microservices", because it best supports our team autonomy
+needs and scaling requirements, despite added complexity.
 
 ##### Positive Consequences
+
 - Teams can deploy independently
 - Services can scale based on individual needs
 - Technology diversity is possible
 - Fault isolation improved
 
 ##### Negative Consequences
+
 - Increased operational complexity - Mitigated by investing in DevOps
 - Network latency between services - Mitigated by careful service boundaries
 - Data consistency challenges - Mitigated by event sourcing patterns
@@ -116,7 +129,9 @@ Our monolithic application is becoming difficult to scale and deploy. Different 
 
 #### Context and Problem Statement
 
-With the move to microservices (ADR-001), we need a container orchestration platform to manage deployment, scaling, and operations of application containers.
+With the move to microservices (ADR-001), we need a container orchestration
+platform to manage deployment, scaling, and operations of application
+containers.
 
 #### Decision Drivers
 
@@ -135,15 +150,18 @@ With the move to microservices (ADR-001), we need a container orchestration plat
 
 #### Decision Outcome
 
-**Chosen option**: "Kubernetes", because of its maturity, ecosystem, and multi-cloud support.
+**Chosen option**: "Kubernetes", because of its maturity, ecosystem, and
+multi-cloud support.
 
 ##### Positive Consequences
+
 - Industry standard with huge ecosystem
 - Multi-cloud compatible
 - Strong community support
 - Extensive tooling available
 
 ##### Negative Consequences
+
 - Steep learning curve - Mitigated by training and hiring
 - Operational complexity - Mitigated by managed Kubernetes (EKS/GKE)
 
@@ -158,7 +176,9 @@ With the move to microservices (ADR-001), we need a container orchestration plat
 
 #### Context and Problem Statement
 
-With multiple microservices, we need a unified entry point for external clients that handles cross-cutting concerns like authentication, rate limiting, and monitoring.
+With multiple microservices, we need a unified entry point for external clients
+that handles cross-cutting concerns like authentication, rate limiting, and
+monitoring.
 
 #### Decision Drivers
 
@@ -177,37 +197,44 @@ With multiple microservices, we need a unified entry point for external clients 
 
 #### Decision Outcome
 
-**Chosen option**: "Kong", because of its flexibility and plugin ecosystem while avoiding vendor lock-in.
+**Chosen option**: "Kong", because of its flexibility and plugin ecosystem while
+avoiding vendor lock-in.
 
 ---
 
 ## Common Architecture Decisions
 
 ### 1. Frontend Architecture
-- **Single Page Application (SPA)** vs **Server-Side Rendering (SSR)** vs **Static Site Generation (SSG)**
+
+- **Single Page Application (SPA)** vs **Server-Side Rendering (SSR)** vs
+  **Static Site Generation (SSG)**
 - **React** vs **Vue** vs **Angular** vs **Svelte**
 - **Monorepo** vs **Polyrepo**
 - **Micro-frontends** vs **Monolithic frontend**
 
 ### 2. Backend Architecture
+
 - **Monolith** vs **Microservices** vs **Serverless**
 - **REST** vs **GraphQL** vs **gRPC**
 - **Synchronous** vs **Asynchronous** communication
 - **Event-driven** vs **Request-response**
 
 ### 3. Data Architecture
+
 - **SQL** vs **NoSQL** vs **NewSQL**
 - **Single database** vs **Database per service**
 - **CQRS** vs **Traditional CRUD**
 - **Event Sourcing** vs **State-based storage**
 
 ### 4. Infrastructure Decisions
+
 - **Cloud provider**: AWS vs Azure vs GCP vs Multi-cloud
 - **Containers** vs **VMs** vs **Serverless**
 - **Kubernetes** vs **ECS** vs **Cloud Run**
 - **Self-hosted** vs **Managed services**
 
 ### 5. Development Practices
+
 - **Continuous Deployment** vs **Continuous Delivery**
 - **Feature flags** vs **Branch-based deployment**
 - **Blue-green** vs **Canary** vs **Rolling deployment**
@@ -226,6 +253,7 @@ With multiple microservices, we need a unified entry point for external clients 
 ### When to Write ADRs
 
 Write an ADR when:
+
 - The decision has significant impact
 - Multiple options were seriously considered
 - The decision is hard to reverse
@@ -250,6 +278,7 @@ Write an ADR when:
 ## Decision Evaluation Framework
 
 ### Technical Factors (40%)
+
 - Performance impact
 - Scalability potential
 - Security implications
@@ -257,6 +286,7 @@ Write an ADR when:
 - Technical debt
 
 ### Business Factors (30%)
+
 - Time to market
 - Cost (initial and ongoing)
 - Revenue impact
@@ -264,6 +294,7 @@ Write an ADR when:
 - Regulatory compliance
 
 ### Team Factors (30%)
+
 - Current expertise
 - Learning curve
 - Hiring availability
@@ -272,7 +303,8 @@ Write an ADR when:
 
 ## Anti-patterns to Avoid
 
-1. **Decision by Committee**: Too many stakeholders leading to compromise solutions
+1. **Decision by Committee**: Too many stakeholders leading to compromise
+   solutions
 2. **Analysis Paralysis**: Over-analyzing instead of deciding
 3. **Resume-Driven Development**: Choosing tech for personal goals
 4. **Hype-Driven Development**: Choosing the newest/coolest tech
@@ -284,6 +316,7 @@ Write an ADR when:
 ## Review Checklist
 
 Before finalizing an ADR, ensure:
+
 - [ ] Problem is clearly stated
 - [ ] All realistic options are considered
 - [ ] Trade-offs are honestly evaluated

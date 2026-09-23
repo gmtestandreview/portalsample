@@ -2,7 +2,8 @@
 
 ## Case A - Initializes State {#case-a}
 
-The method only calls `this.setState()` with static or computed values that do not depend on async operations.
+The method only calls `this.setState()` with static or computed values that do
+not depend on async operations.
 
 **Before:**
 
@@ -35,7 +36,7 @@ class UserList extends React.Component {
     super(props);
     // Existing state merged with componentWillMount state:
     this.state = {
-      ...this.existingState,  // whatever was already here
+      ...this.existingState, // whatever was already here
       items: [],
       loading: false,
       page: 1,
@@ -48,7 +49,8 @@ class UserList extends React.Component {
 
 ## Case B - Runs a Side Effect {#case-b}
 
-The method fetches data, sets up subscriptions, interacts with external APIs, or touches the DOM.
+The method fetches data, sets up subscriptions, interacts with external APIs, or
+touches the DOM.
 
 **Before:**
 
@@ -57,8 +59,8 @@ class UserDashboard extends React.Component {
   componentWillMount() {
     this.subscription = this.props.eventBus.subscribe(this.handleEvent);
     fetch(`/api/users/${this.props.userId}`)
-      .then(r => r.json())
-      .then(user => this.setState({ user, loading: false }));
+      .then((r) => r.json())
+      .then((user) => this.setState({ user, loading: false }));
     this.setState({ loading: true });
   }
 }
@@ -77,8 +79,8 @@ class UserDashboard extends React.Component {
     // All side effects move here - runs after first render
     this.subscription = this.props.eventBus.subscribe(this.handleEvent);
     fetch(`/api/users/${this.props.userId}`)
-      .then(r => r.json())
-      .then(user => this.setState({ user, loading: false }));
+      .then((r) => r.json())
+      .then((user) => this.setState({ user, loading: false }));
   }
 
   componentWillUnmount() {
@@ -88,7 +90,9 @@ class UserDashboard extends React.Component {
 }
 ```
 
-**Why this is safe:** In React 18 concurrent mode, `componentWillMount` can be called multiple times before mounting. Side effects inside it can fire multiple times. `componentDidMount` is guaranteed to fire exactly once after mount.
+**Why this is safe:** In React 18 concurrent mode, `componentWillMount` can be
+called multiple times before mounting. Side effects inside it can fire multiple
+times. `componentDidMount` is guaranteed to fire exactly once after mount.
 
 ---
 
@@ -123,7 +127,8 @@ class PriceDisplay extends React.Component {
 }
 ```
 
-**Note:** If this initial state needs to UPDATE when props change later, that's a `getDerivedStateFromProps` case - see `componentWillReceiveProps.md` Case B.
+**Note:** If this initial state needs to UPDATE when props change later, that's
+a `getDerivedStateFromProps` case - see `componentWillReceiveProps.md` Case B.
 
 ---
 

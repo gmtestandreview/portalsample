@@ -6,7 +6,7 @@
   padding: 1.5rem;
   margin-bottom: 1rem;
 
-  @include media-breakpoint-up(sm) {  
+  @include media-breakpoint-up(sm) {
     flex-direction: row;
   }
 
@@ -15,8 +15,8 @@
   }
 
   .bgCircle,
-  [class^="bgCircle-"],
-  [class*=" bgCircle-"] {
+  [class^='bgCircle-'],
+  [class*=' bgCircle-'] {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -29,7 +29,9 @@
 
   &.alert-dismissible .btn-close {
     padding: 1rem;
-    &:hover, &:focus, &:active {
+    &:hover,
+    &:focus,
+    &:active {
       background-color: transparent;
     }
   }
@@ -40,8 +42,8 @@
     color: $body-color;
 
     .bgCircle,
-    [class^="bgCircle-"],
-    [class*=" bgCircle-"] {
+    [class^='bgCircle-'],
+    [class*=' bgCircle-'] {
       background-color: $success;
       color: $white;
     }
@@ -51,7 +53,6 @@
         font-size: 1.5rem;
       }
     }
-
   }
 
   &.alert-danger {
@@ -60,14 +61,14 @@
     color: $body-color;
 
     .bgCircle,
-    [class^="bgCircle-"],
-    [class*=" bgCircle-"] {
+    [class^='bgCircle-'],
+    [class*=' bgCircle-'] {
       color: $white;
       background-color: $alert-danger-interior;
     }
 
     .icon-warning {
-      font-size: 1.250rem;
+      font-size: 1.25rem;
       padding-left: 1px;
       padding-bottom: 3px;
 
@@ -85,14 +86,14 @@
     color: $body-color;
 
     .bgCircle,
-    [class^="bgCircle-"],
-    [class*=" bgCircle-"] {
+    [class^='bgCircle-'],
+    [class*=' bgCircle-'] {
       color: $white;
       background-color: $alert-warning-interior;
     }
 
     .icon-warning {
-      font-size: 1.250rem;
+      font-size: 1.25rem;
       padding-left: 1px;
       padding-bottom: 3px;
 
@@ -110,18 +111,20 @@
     color: $body-color;
 
     .bgCircle,
-    [class^="bgCircle-"],
-    [class*=" bgCircle-"] {
-      background-color: rgba( $nmi-primary, 0.85); //$nmi-site-coastline-bay-primary;
+    [class^='bgCircle-'],
+    [class*=' bgCircle-'] {
+      background-color: rgba(
+        $nmi-primary,
+        0.85
+      ); //$nmi-site-coastline-bay-primary;
       color: $white;
     }
 
     .icon-info {
       @include media-breakpoint-up(sm) {
-        font-size: 1.750rem;
+        font-size: 1.75rem;
       }
     }
-
   }
   &.alert-basic {
     border-top-color: $disr-light-blue !important; //#88BEBE
@@ -129,4 +132,3 @@
     color: $body-color;
   }
 }
-

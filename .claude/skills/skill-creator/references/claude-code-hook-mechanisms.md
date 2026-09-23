@@ -176,12 +176,12 @@ retrying the edit.
 
 ### Exit Code Reference Table
 
-| Exit Code | stdout | stderr | Tool Execution | Claude Sees |
-| ----------- | -------- | -------- | ---------------- | ------------- |
-| 0 (UserPromptSubmit) | → Context | → User only | N/A | stdout content |
-| 0 (PreToolUse) | → User only | → User only | **Proceeds** | Nothing |
-| 2 (PreToolUse) | → User only | → **CLAUDE** | **BLOCKED** | stderr content |
-| Other | → User only | → User only | Blocked | Nothing |
+| Exit Code            | stdout      | stderr       | Tool Execution | Claude Sees    |
+| -------------------- | ----------- | ------------ | -------------- | -------------- |
+| 0 (UserPromptSubmit) | → Context   | → User only  | N/A            | stdout content |
+| 0 (PreToolUse)       | → User only | → User only  | **Proceeds**   | Nothing        |
+| 2 (PreToolUse)       | → User only | → **CLAUDE** | **BLOCKED**    | stderr content |
+| Other                | → User only | → User only  | Blocked        | Nothing        |
 
 ### Why Exit Code 2 Matters
 
@@ -228,10 +228,7 @@ block again.
 
 ```json
 {
-  "skills_used": [
-    "database-verification",
-    "error-tracking"
-  ],
+  "skills_used": ["database-verification", "error-tracking"],
   "files_verified": []
 }
 ```
@@ -255,8 +252,8 @@ block again.
 
 ### Limitation
 
-The hook cannot detect when the skill is *actually* invoked. It just blocks
-once per session per skill. This means:
+The hook cannot detect when the skill is _actually_ invoked. It just blocks once
+per session per skill. This means:
 
 - If Claude doesn't use the skill but makes a different edit, it won't block
   again

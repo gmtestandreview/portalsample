@@ -1,15 +1,15 @@
 # useFocusRing
 
 Determines whether a focus ring should be shown to indicate keyboard focus.
-Focus rings are visible only when the user is interacting with a keyboard,
-not with a mouse, touch, or other input methods.
+Focus rings are visible only when the user is interacting with a keyboard, not
+with a mouse, touch, or other input methods.
 
 ```tsx
 'use client';
-import {useFocusRing} from 'react-aria/useFocusRing';
+import { useFocusRing } from 'react-aria/useFocusRing';
 
 function Example() {
-  let {isFocusVisible, focusProps} = useFocusRing();
+  let { isFocusVisible, focusProps } = useFocusRing();
 
   return (
     <button
@@ -24,8 +24,9 @@ function Example() {
         padding: '8px 12px',
         borderRadius: 8,
         outline: isFocusVisible ? '2px solid dodgerblue' : 'none',
-        outlineOffset: 2
-      }}>
+        outlineOffset: 2,
+      }}
+    >
       Test
     </button>
   );
@@ -34,12 +35,14 @@ function Example() {
 
 ## Features
 
-The `useFocusRing` hook returns whether a focus ring should be displayed to indicate keyboard focus for a component.
-This helps keyboard users determine which element on a page or in an application has keyboard focus as they
-navigate around. Focus rings are only visible when interacting with a keyboard so as not to distract mouse
-and touch screen users.
+The `useFocusRing` hook returns whether a focus ring should be displayed to
+indicate keyboard focus for a component. This helps keyboard users determine
+which element on a page or in an application has keyboard focus as they navigate
+around. Focus rings are only visible when interacting with a keyboard so as not
+to distract mouse and touch screen users.
 
-If CSS classes are being used for styling, see the [FocusRing](FocusRing.md) component for a shortcut.
+If CSS classes are being used for styling, see the [FocusRing](FocusRing.md)
+component for a shortcut.
 
 ## API
 
@@ -50,16 +53,16 @@ If CSS classes are being used for styling, see the [FocusRing](FocusRing.md) com
 
 ### AriaFocusRingProps
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `autoFocus` | `boolean | undefined` | — | Whether the element will be auto focused. |
-| `isTextInput` | `boolean | undefined` | — | Whether the element is a text input. |
-| `within` | `boolean | undefined` | 'false' | Whether to show the focus ring when something inside the container element has focus (true), or only if the container itself has focus (false). |
+| Name          | Type     | Default    | Description |
+| ------------- | -------- | ---------- | ----------- |
+| `autoFocus`   | `boolean | undefined` | —           | Whether the element will be auto focused.                                                                                                       |
+| `isTextInput` | `boolean | undefined` | —           | Whether the element is a text input.                                                                                                            |
+| `within`      | `boolean | undefined` | 'false'     | Whether to show the focus ring when something inside the container element has focus (true), or only if the container itself has focus (false). |
 
 ### FocusRingAria
 
-| Name | Type | Description |
-|------|------|-------------|
-| `focusProps` \* | `DOMAttributes<FocusableElement>` | Props to apply to the container element with the focus ring. |
-| `isFocused` \* | `boolean` | Whether the element is currently focused. |
-| `isFocusVisible` \* | `boolean` | Whether keyboard focus should be visible. |
+| Name                | Type                              | Description                                                  |
+| ------------------- | --------------------------------- | ------------------------------------------------------------ |
+| `focusProps` \*     | `DOMAttributes<FocusableElement>` | Props to apply to the container element with the focus ring. |
+| `isFocused` \*      | `boolean`                         | Whether the element is currently focused.                    |
+| `isFocusVisible` \* | `boolean`                         | Whether keyboard focus should be visible.                    |

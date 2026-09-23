@@ -1,7 +1,8 @@
 # SSRProvider
 
-When using SSR with React Aria in React 16 or 17, applications must be wrapped in an SSRProvider.
-This ensures that auto generated ids are consistent between the client and server.
+When using SSR with React Aria in React 16 or 17, applications must be wrapped
+in an SSRProvider. This ensures that auto generated ids are consistent between
+the client and server.
 
 <InlineAlert variant="notice">
   <Heading>React 16 or 17 only</Heading>
@@ -9,23 +10,24 @@ This ensures that auto generated ids are consistent between the client and serve
 </InlineAlert>
 
 ```tsx
-import {SSRProvider} from '@react-aria/ssr';
+import { SSRProvider } from '@react-aria/ssr';
 
 <SSRProvider>
   <YourApp />
-</SSRProvider>
+</SSRProvider>;
 ```
 
 ## Introduction
 
-If you're using React 16 or 17, `SSRProvider` should be used as a wrapper for the entire application during server side rendering.
-It works together with the [useId](useId.md) hook to ensure that auto generated ids are consistent
-between the client and server by resetting the id internal counter on each request.
+If you're using React 16 or 17, `SSRProvider` should be used as a wrapper for
+the entire application during server side rendering. It works together with the
+[useId](useId.md) hook to ensure that auto generated ids are consistent between
+the client and server by resetting the id internal counter on each request.
 
 ## API
 
 ### SSRProvider
 
-| Name | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `React.ReactNode` | — | Your application here. |
+| Name       | Type              | Default | Description            |
+| ---------- | ----------------- | ------- | ---------------------- |
+| `children` | `React.ReactNode` | —       | Your application here. |

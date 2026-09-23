@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { AccountDispatchCtx, AccountStateCtx } from "./accountContext.tsx";
+import { useContext } from 'react';
+import { AccountDispatchCtx, AccountStateCtx } from './accountContext.tsx';
 
 export const useAccountState = () => useContext(AccountStateCtx);
 export const useAccountDispatch = () => useContext(AccountDispatchCtx);
 
 const useAccountContext = () => {
-	const state = useContext(AccountStateCtx);
-	const dispatch = useContext(AccountDispatchCtx);
-	if (!(state || dispatch)) return null;
-	return { ...state, ...dispatch };
+  const state = useContext(AccountStateCtx);
+  const dispatch = useContext(AccountDispatchCtx);
+  if (!(state || dispatch)) return null;
+  return { ...state, ...dispatch };
 };
 
 export default useAccountContext;

@@ -2,23 +2,35 @@
 
 ## Purpose
 
-The `react-dev` skill provides comprehensive TypeScript patterns and best practices for building type-safe React applications. It serves as a complete reference for modern React development with TypeScript, covering React 18-19 features, including Server Components, type-safe routing, and proper event handling.
+The `react-dev` skill provides comprehensive TypeScript patterns and best
+practices for building type-safe React applications. It serves as a complete
+reference for modern React development with TypeScript, covering React 18-19
+features, including Server Components, type-safe routing, and proper event
+handling.
 
-This skill exists to eliminate TypeScript guesswork in React development by providing compile-time guarantees, confident refactoring, and production-ready patterns that catch bugs before runtime.
+This skill exists to eliminate TypeScript guesswork in React development by
+providing compile-time guarantees, confident refactoring, and production-ready
+patterns that catch bugs before runtime.
 
 ## When to Use
 
 Activate this skill when working on:
 
-- **Building typed React components** - Creating new components with proper TypeScript types
-- **Implementing generic components** - Tables, lists, modals, form fields that work with any data type
-- **Typing event handlers and forms** - Mouse events, form submissions, input changes, keyboard events
-- **Using React 19 features** - Actions, Server Components, `use()` hook, `useActionState`
+- **Building typed React components** - Creating new components with proper
+  TypeScript types
+- **Implementing generic components** - Tables, lists, modals, form fields that
+  work with any data type
+- **Typing event handlers and forms** - Mouse events, form submissions, input
+  changes, keyboard events
+- **Using React 19 features** - Actions, Server Components, `use()` hook,
+  `useActionState`
 - **Router integration** - TanStack Router or React Router v7 with type safety
-- **Custom hooks with proper typing** - Creating reusable hooks with correct return types
+- **Custom hooks with proper typing** - Creating reusable hooks with correct
+  return types
 - **Migrating to React 19** - Understanding breaking changes and new patterns
 
 **Trigger phrases:**
+
 - "Build a typed React component"
 - "Type this event handler"
 - "Create a generic Table/List/Modal"
@@ -28,6 +40,7 @@ Activate this skill when working on:
 - "React TypeScript best practices"
 
 **Not for:**
+
 - Non-React TypeScript projects
 - Vanilla JavaScript React (without TypeScript)
 - React Native-specific patterns
@@ -36,12 +49,17 @@ Activate this skill when working on:
 
 The skill provides progressive disclosure of React TypeScript knowledge:
 
-1. **Core patterns loaded immediately** - Component props, event handlers, hooks typing
-2. **Advanced patterns referenced on-demand** - Generic components, Server Components, routing
-3. **Reference files for deep dives** - Detailed examples and edge cases only loaded when needed
-4. **React 19 migration guidance** - Breaking changes and new APIs clearly marked
+1. **Core patterns loaded immediately** - Component props, event handlers, hooks
+   typing
+2. **Advanced patterns referenced on-demand** - Generic components, Server
+   Components, routing
+3. **Reference files for deep dives** - Detailed examples and edge cases only
+   loaded when needed
+4. **React 19 migration guidance** - Breaking changes and new APIs clearly
+   marked
 
 The skill is structured around:
+
 - **Quick reference sections** - Common patterns you can copy immediately
 - **Detailed reference files** - In-depth examples and explanations
 - **Rules and anti-patterns** - What to always do and what to never do
@@ -62,7 +80,8 @@ Covers all major breaking changes in React 19:
 
 Type-safe patterns for common component scenarios:
 
-- **Props typing** - Extending native HTML elements with `ComponentPropsWithoutRef`
+- **Props typing** - Extending native HTML elements with
+  `ComponentPropsWithoutRef`
 - **Children typing** - `ReactNode`, `ReactElement`, render props
 - **Discriminated unions** - Type-safe variant props (e.g., button vs link)
 - **Generic components** - Reusable components that infer types from data
@@ -118,7 +137,8 @@ Reusable components that work with any data type:
 
 - **React 18 or 19** - Patterns are optimized for modern React
 - **TypeScript 5.0+** - Uses latest TypeScript features
-- **Router (optional)** - TanStack Router or React Router v7 for routing patterns
+- **Router (optional)** - TanStack Router or React Router v7 for routing
+  patterns
 - **Zod (optional)** - For TanStack Router search param validation
 
 ## Usage Examples
@@ -273,7 +293,7 @@ function Form() {
 ```typescript
 function useToggle(initial = false) {
   const [value, setValue] = useState(initial);
-  const toggle = () => setValue(v => !v);
+  const toggle = () => setValue((v) => !v);
   return [value, toggle] as const; // Tuple type preserved!
 }
 
@@ -324,24 +344,23 @@ The skill provides:
 
 ### Always Do
 
-✅ **Use specific event types** - `MouseEvent<HTMLButtonElement>` not `React.MouseEvent`
-✅ **Explicit `useState` for unions/null** - `useState<User | null>(null)`
-✅ **Extend native elements** - `ComponentPropsWithoutRef<'button'>`
-✅ **Discriminated unions for variants** - Type-safe props based on variant
-✅ **`as const` for tuple returns** - Preserve tuple types in custom hooks
-✅ **`ref` as prop in React 19** - No `forwardRef` needed
-✅ **`useActionState` for forms** - Not deprecated `useFormState`
-✅ **Type-safe routing patterns** - Use provided router patterns
+✅ **Use specific event types** - `MouseEvent<HTMLButtonElement>` not
+`React.MouseEvent` ✅ **Explicit `useState` for unions/null** -
+`useState<User | null>(null)` ✅ **Extend native elements** -
+`ComponentPropsWithoutRef<'button'>` ✅ **Discriminated unions for variants** -
+Type-safe props based on variant ✅ **`as const` for tuple returns** - Preserve
+tuple types in custom hooks ✅ **`ref` as prop in React 19** - No `forwardRef`
+needed ✅ **`useActionState` for forms** - Not deprecated `useFormState` ✅
+**Type-safe routing patterns** - Use provided router patterns
 
 ### Never Do
 
-❌ **Use `any` for event handlers** - Defeats TypeScript's purpose
-❌ **Use `JSX.Element` for children** - Use `ReactNode` instead
-❌ **Use `forwardRef` in React 19+** - It's deprecated
-❌ **Use `useFormState`** - Deprecated in React 19
-❌ **Forget null handling for DOM refs** - Always use `ref?.current`
-❌ **Mix Server/Client in same file** - Will cause hydration errors
-❌ **Await promises before `use()`** - Defeats streaming/Suspense
+❌ **Use `any` for event handlers** - Defeats TypeScript's purpose ❌ **Use
+`JSX.Element` for children** - Use `ReactNode` instead ❌ **Use `forwardRef` in
+React 19+** - It's deprecated ❌ **Use `useFormState`** - Deprecated in React 19
+❌ **Forget null handling for DOM refs** - Always use `ref?.current` ❌ **Mix
+Server/Client in same file** - Will cause hydration errors ❌ **Await promises
+before `use()`** - Defeats streaming/Suspense
 
 ### Progressive Enhancement
 
@@ -356,13 +375,16 @@ The skill includes detailed reference files:
 
 - **hooks.md** - `useState`, `useRef`, `useReducer`, `useContext`, custom hooks
 - **event-handlers.md** - All event types, generic handlers, edge cases
-- **react-19-patterns.md** - `useActionState`, `use()`, `useOptimistic`, migration
+- **react-19-patterns.md** - `useActionState`, `use()`, `useOptimistic`,
+  migration
 - **generic-components.md** - Table, Select, List, Modal, FormField patterns
 - **server-components.md** - Async components, Server Actions, streaming
-- **tanstack-router.md** - TanStack Router typed routes, search params, navigation
+- **tanstack-router.md** - TanStack Router typed routes, search params,
+  navigation
 - **react-router.md** - React Router v7 loaders, actions, type generation
 
-These files are loaded on-demand to keep context efficient. The skill will reference them when deeper knowledge is needed.
+These files are loaded on-demand to keep context efficient. The skill will
+reference them when deeper knowledge is needed.
 
 ## Context Efficiency
 
@@ -373,12 +395,14 @@ This skill follows progressive disclosure principles:
 - **Script-free design** - Pure knowledge, no executable scripts needed
 - **Single-level references** - Direct links, no nested includes
 
-This keeps the skill's context footprint minimal while providing comprehensive coverage when needed.
+This keeps the skill's context footprint minimal while providing comprehensive
+coverage when needed.
 
 ## Version Compatibility
 
 - **React 18** - All patterns work, ignore React 19-specific sections
-- **React 19** - Full support including Server Components, `use()`, `useActionState`
+- **React 19** - Full support including Server Components, `use()`,
+  `useActionState`
 - **TypeScript 5.0+** - Recommended for best type inference
 - **TanStack Router** - Any version supporting `createRoute`
 - **React Router v7+** - Framework Mode for auto-generated types
@@ -399,6 +423,5 @@ This keeps the skill's context footprint minimal while providing comprehensive c
 
 ---
 
-**Version:** 1.0.0
-**Last Updated:** 2026-01-20
-**Maintained by:** Softaworks Agent Skills
+**Version:** 1.0.0 **Last Updated:** 2026-01-20 **Maintained by:** Softaworks
+Agent Skills

@@ -1,55 +1,61 @@
 # AI-Native Specification — NMI Customer Portal
-**Produced by:** `/modernize-reimagine` Phase A
-**Date:** 2026-06-02
-**Source documents:** `BUSINESS_RULES.md` (53 rules), `DATA_OBJECTS.md`, interface catalog (19 interfaces)
-**This spec is the source of truth for the reimagined system. The legacy codebase is reference only.**
+
+**Produced by:** `/modernize-reimagine` Phase A **Date:** 2026-06-02 **Source
+documents:** `BUSINESS_RULES.md` (53 rules), `DATA_OBJECTS.md`, interface
+catalog (19 interfaces) **This spec is the source of truth for the reimagined
+system. The legacy codebase is reference only.**
 
 ---
 
 ## 0. Alignment Baseline
 
-- Canonical open security set for migration tracking is: **SEC-001, SEC-008, SEC-009, SEC-010, SEC-011, SEC-012**.
-- **SEC-010** remains the sole P0 go-live gate and requires backend ownership verification or explicit written risk acceptance.
-- Phase 1 code remediation scope remains SEC-001, SEC-009, and SEC-011, while SEC-008 and SEC-012 remain tracked architectural/back-end boundary items.
+- Canonical open security set for migration tracking is: **SEC-001, SEC-008,
+  SEC-009, SEC-010, SEC-011, SEC-012**.
+- **SEC-010** remains the sole P0 go-live gate and requires backend ownership
+  verification or explicit written risk acceptance.
+- Phase 1 code remediation scope remains SEC-001, SEC-009, and SEC-011, while
+  SEC-008 and SEC-012 remain tracked architectural/back-end boundary items.
 
 ---
 
 ## 1. Capabilities
 
-The following capabilities are derived from the extracted business rules + interface contracts. Each is tagged with a priority heuristic (see Phase B for confirmed P0/P1/P2).
+The following capabilities are derived from the extracted business rules +
+interface contracts. Each is tagged with a priority heuristic (see Phase B for
+confirmed P0/P1/P2).
 
-| ID | Capability | Description | Candidate Priority |
-|---|---|---|---|
-| CAP-01 | Authentication & Session Init | OIDC/PKCE sign-in via Azure AD B2C; silent token acquisition before every API call; server-side session handshake (`UsersClient.signIn`) on every authenticated page load | P0 |
-| CAP-02 | Terms of Use Acceptance | Version-matched T&C gate; blocks all dashboard access until accepted; forced re-acceptance on version bump | P0 |
-| CAP-03 | Account Onboarding — Organisation | Create or update a customer organisation account (ABN, business name, ASIC-validated, address) | P0 |
-| CAP-04 | Account Onboarding — Contact | Create or update the primary contact for an organisation; at-least-one-phone rule | P0 |
-| CAP-05 | Branch / Organisation Selection | Force selection of default org branch when multiple exist; block all dashboard access until selected | P0 |
-| CAP-06 | Dashboard — Requests Tab | Paginated, filtered, searchable list of submitted RFQs with status pills and action menus; status-gated actions | P0 |
-| CAP-07 | Dashboard — Drafts Tab | Paginated list of saved RFQ drafts; Edit and Delete actions only | P0 |
-| CAP-08 | Dashboard — Instruments Tab | Paginated list of customer's physical instruments/artefacts currently with NMI | P0 |
-| CAP-09 | Request for Quote — Create | Three-step wizard (Organisation & Contact → Instrument & Request → Summary & Submit); draft-save between steps; submission is irreversible | P0 |
-| CAP-10 | Request for Quote — Edit | Edit an existing draft RFQ (re-enters wizard at last incomplete step) | P0 |
-| CAP-11 | Request for Quote — Copy (Recalibration) | Copy a completed/withdrawn RFQ as a new recalibration request; pre-populates instrument data | P1 |
-| CAP-12 | Request for Quote — View Summary | Read-only view of a submitted RFQ (opens in new tab) | P1 |
-| CAP-13 | Quotation — View & PDF Download | Read-only quotation detail view; status-dependent PDF download (offer / accepted / declined); status-specific initial page number | P0 |
-| CAP-14 | Quotation — Decline | Irreversible decline of a quote offer; confirmation modal with explicit warning | P0 |
-| CAP-15 | Accept Quote Wizard | Four-step wizard (Report Recipient → Delivery & Return → Payment → Summary & Accept); draft-save; acceptance is irreversible; T&C checkbox required | P0 |
-| CAP-16 | Payment Terms Display | Prepaid vs 30-day invoice copy based on `paymentTerms` field; 30-day default for all non-Prepaid values | P0 |
-| CAP-17 | Measurement Reports — List | Paginated list of measurement reports for a given instrument | P1 |
-| CAP-18 | Measurement Reports — Detail & PDF | View report detail; download report PDF; suppress view link for Withdrawn reports | P1 |
-| CAP-19 | Optimistic UI — Post-Acceptance Status | Override dashboard item status to Accepted immediately after accept-quote submission; clear stale token on next load | P1 |
-| CAP-20 | ABN Validation | ATO weighted checksum (mod-89, 11-digit); applied at account creation | P0 |
-| CAP-21 | Australian Address Validation | Postcode range check (200–299 ACT, 800–9999 other); state enum; manual vs. autocomplete mode | P0 |
-| CAP-22 | Contact Validation | Email, phone (AU landline/mobile/1800/1300), name charset (no accented chars); at-least-one-phone rule | P0 |
-| CAP-23 | RFQ Field Validation | Serial number, manufacturer, model, description (400 chars), testing requirements (2000 chars), item count (1–100), preferred date not-in-past | P0 |
-| CAP-24 | Accept Quote Validation | Carrier details when client provides shipping; invoice contact when sent to different person; acceptance T&C boolean required | P0 |
-| CAP-25 | Dashboard Filter Persistence | Persist filter/sort/page state server-side via `UsersClient.setUserProfile`; restore on next login | P2 |
-| CAP-26 | External Link (EXTERNAL_REDIRECT_URL) | Hard navigation back to the main NMI website from within a wizard form; domain-allowlisted | P1 |
-| CAP-27 | Telemetry — App Insights | Auto-collected page views, API dependencies, unhandled exceptions; no PII | P1 |
-| CAP-28 | Analytics — Google Analytics 4 | Page views and click events on key interactions; anonymised; PII tracking disabled | P2 |
-| CAP-29 | Notification System | One-shot success/error banners surfaced via sessionStorage tokens after redirect | P1 |
-| CAP-30 | Error Boundary & Error Routes | Unhandled errors caught by React Error Boundary and App Insights; standard error pages (not-found, server-error, forbidden, conflict, etc.) | P0 |
+| ID     | Capability                               | Description                                                                                                                                                               | Candidate Priority |
+| ------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ |
+| CAP-01 | Authentication & Session Init            | OIDC/PKCE sign-in via Azure AD B2C; silent token acquisition before every API call; server-side session handshake (`UsersClient.signIn`) on every authenticated page load | P0                 |
+| CAP-02 | Terms of Use Acceptance                  | Version-matched T&C gate; blocks all dashboard access until accepted; forced re-acceptance on version bump                                                                | P0                 |
+| CAP-03 | Account Onboarding — Organisation        | Create or update a customer organisation account (ABN, business name, ASIC-validated, address)                                                                            | P0                 |
+| CAP-04 | Account Onboarding — Contact             | Create or update the primary contact for an organisation; at-least-one-phone rule                                                                                         | P0                 |
+| CAP-05 | Branch / Organisation Selection          | Force selection of default org branch when multiple exist; block all dashboard access until selected                                                                      | P0                 |
+| CAP-06 | Dashboard — Requests Tab                 | Paginated, filtered, searchable list of submitted RFQs with status pills and action menus; status-gated actions                                                           | P0                 |
+| CAP-07 | Dashboard — Drafts Tab                   | Paginated list of saved RFQ drafts; Edit and Delete actions only                                                                                                          | P0                 |
+| CAP-08 | Dashboard — Instruments Tab              | Paginated list of customer's physical instruments/artefacts currently with NMI                                                                                            | P0                 |
+| CAP-09 | Request for Quote — Create               | Three-step wizard (Organisation & Contact → Instrument & Request → Summary & Submit); draft-save between steps; submission is irreversible                                | P0                 |
+| CAP-10 | Request for Quote — Edit                 | Edit an existing draft RFQ (re-enters wizard at last incomplete step)                                                                                                     | P0                 |
+| CAP-11 | Request for Quote — Copy (Recalibration) | Copy a completed/withdrawn RFQ as a new recalibration request; pre-populates instrument data                                                                              | P1                 |
+| CAP-12 | Request for Quote — View Summary         | Read-only view of a submitted RFQ (opens in new tab)                                                                                                                      | P1                 |
+| CAP-13 | Quotation — View & PDF Download          | Read-only quotation detail view; status-dependent PDF download (offer / accepted / declined); status-specific initial page number                                         | P0                 |
+| CAP-14 | Quotation — Decline                      | Irreversible decline of a quote offer; confirmation modal with explicit warning                                                                                           | P0                 |
+| CAP-15 | Accept Quote Wizard                      | Four-step wizard (Report Recipient → Delivery & Return → Payment → Summary & Accept); draft-save; acceptance is irreversible; T&C checkbox required                       | P0                 |
+| CAP-16 | Payment Terms Display                    | Prepaid vs 30-day invoice copy based on `paymentTerms` field; 30-day default for all non-Prepaid values                                                                   | P0                 |
+| CAP-17 | Measurement Reports — List               | Paginated list of measurement reports for a given instrument                                                                                                              | P1                 |
+| CAP-18 | Measurement Reports — Detail & PDF       | View report detail; download report PDF; suppress view link for Withdrawn reports                                                                                         | P1                 |
+| CAP-19 | Optimistic UI — Post-Acceptance Status   | Override dashboard item status to Accepted immediately after accept-quote submission; clear stale token on next load                                                      | P1                 |
+| CAP-20 | ABN Validation                           | ATO weighted checksum (mod-89, 11-digit); applied at account creation                                                                                                     | P0                 |
+| CAP-21 | Australian Address Validation            | Postcode range check (200–299 ACT, 800–9999 other); state enum; manual vs. autocomplete mode                                                                              | P0                 |
+| CAP-22 | Contact Validation                       | Email, phone (AU landline/mobile/1800/1300), name charset (no accented chars); at-least-one-phone rule                                                                    | P0                 |
+| CAP-23 | RFQ Field Validation                     | Serial number, manufacturer, model, description (400 chars), testing requirements (2000 chars), item count (1–100), preferred date not-in-past                            | P0                 |
+| CAP-24 | Accept Quote Validation                  | Carrier details when client provides shipping; invoice contact when sent to different person; acceptance T&C boolean required                                             | P0                 |
+| CAP-25 | Dashboard Filter Persistence             | Persist filter/sort/page state server-side via `UsersClient.setUserProfile`; restore on next login                                                                        | P2                 |
+| CAP-26 | External Link (EXTERNAL_REDIRECT_URL)    | Hard navigation back to the main NMI website from within a wizard form; domain-allowlisted                                                                                | P1                 |
+| CAP-27 | Telemetry — App Insights                 | Auto-collected page views, API dependencies, unhandled exceptions; no PII                                                                                                 | P1                 |
+| CAP-28 | Analytics — Google Analytics 4           | Page views and click events on key interactions; anonymised; PII tracking disabled                                                                                        | P2                 |
+| CAP-29 | Notification System                      | One-shot success/error banners surfaced via sessionStorage tokens after redirect                                                                                          | P1                 |
+| CAP-30 | Error Boundary & Error Routes            | Unhandled errors caught by React Error Boundary and App Insights; standard error pages (not-found, server-error, forbidden, conflict, etc.)                               | P0                 |
 
 ---
 
@@ -57,21 +63,21 @@ The following capabilities are derived from the extracted business rules + inter
 
 ### Entity List
 
-| Entity | Description | Key Rules |
-|---|---|---|
-| **User** | Authenticated NMI portal user; linked to a B2C identity | RULE-004 (T&C gate), CAP-01 |
-| **Organisation** | A registered NMI customer organisation (company + branches); identified by ABN | RULE-022 (ABN checksum), RULE-035 (ASIC charset), CAP-03 |
-| **Branch** | A location of an Organisation; a user may be linked to multiple | RULE-005 (branch gate), CAP-05 |
-| **Contact** | A person associated with an Organisation; at-least-one-phone | RULE-038, CAP-04, CAP-22 |
-| **Application** | An in-progress or completed workflow instance (RFQ or Accept Quote type) | CAP-09, CAP-15 |
-| **RequestForQuote** | A calibration service request with instrument details and testing requirements | RULE-013 (irreversible on submit), CAP-09, CAP-23 |
-| **Quote** | An NMI-produced calibration quotation derived from an RFQ; customer accepts or declines | RULE-006 (12 status lifecycle), RULE-007 (document mapping), RULE-012/014 |
-| **AcceptQuoteApplication** | The multi-step acceptance wizard data: report recipient, delivery, payment, summary | RULE-017 (payment terms), RULE-040 (T&C checkbox), CAP-15 |
-| **MeasurementReport** | An NMI-issued calibration report for a physical instrument/artefact | RULE-019 (withdrawn suppression), CAP-17/18 |
-| **InstrumentArtefact** | A physical instrument currently at NMI facilities | CAP-08 |
-| **Address** | Street or postal address (Australian only) | RULE-031 (postcode), CAP-21 |
-| **Notification** | Short-lived sessionStorage success/error token written before a redirect | CAP-29 |
-| **UserProfile** | Persisted dashboard filter preferences (tab, year, status, sort, page, search) | CAP-25 |
+| Entity                     | Description                                                                             | Key Rules                                                                 |
+| -------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| **User**                   | Authenticated NMI portal user; linked to a B2C identity                                 | RULE-004 (T&C gate), CAP-01                                               |
+| **Organisation**           | A registered NMI customer organisation (company + branches); identified by ABN          | RULE-022 (ABN checksum), RULE-035 (ASIC charset), CAP-03                  |
+| **Branch**                 | A location of an Organisation; a user may be linked to multiple                         | RULE-005 (branch gate), CAP-05                                            |
+| **Contact**                | A person associated with an Organisation; at-least-one-phone                            | RULE-038, CAP-04, CAP-22                                                  |
+| **Application**            | An in-progress or completed workflow instance (RFQ or Accept Quote type)                | CAP-09, CAP-15                                                            |
+| **RequestForQuote**        | A calibration service request with instrument details and testing requirements          | RULE-013 (irreversible on submit), CAP-09, CAP-23                         |
+| **Quote**                  | An NMI-produced calibration quotation derived from an RFQ; customer accepts or declines | RULE-006 (12 status lifecycle), RULE-007 (document mapping), RULE-012/014 |
+| **AcceptQuoteApplication** | The multi-step acceptance wizard data: report recipient, delivery, payment, summary     | RULE-017 (payment terms), RULE-040 (T&C checkbox), CAP-15                 |
+| **MeasurementReport**      | An NMI-issued calibration report for a physical instrument/artefact                     | RULE-019 (withdrawn suppression), CAP-17/18                               |
+| **InstrumentArtefact**     | A physical instrument currently at NMI facilities                                       | CAP-08                                                                    |
+| **Address**                | Street or postal address (Australian only)                                              | RULE-031 (postcode), CAP-21                                               |
+| **Notification**           | Short-lived sessionStorage success/error token written before a redirect                | CAP-29                                                                    |
+| **UserProfile**            | Persisted dashboard filter preferences (tab, year, status, sort, page, search)          | CAP-25                                                                    |
 
 ### Entity Relationship Diagram
 
@@ -162,7 +168,7 @@ erDiagram
 
 ```yaml
 # Inbound to portal (callback after B2C redirect)
-openapi: "3.0.0"
+openapi: '3.0.0'
 info:
   title: Azure AD B2C Auth Callback
 paths:
@@ -177,8 +183,9 @@ paths:
           in: query
           schema: { type: string }
       responses:
-        "302":
-          description: MSAL exchanges code for tokens; redirects to original route
+        '302':
+          description:
+            MSAL exchanges code for tokens; redirects to original route
 
 # Runtime env vars required:
 # REACT_APP_B2C_CLIENTID, REACT_APP_B2C_AUTHORITY, REACT_APP_B2C_REDIRECT_URL
@@ -189,6 +196,7 @@ paths:
 ### 3.2 NMI Backend REST API — Core Contracts
 
 All endpoints share:
+
 - `Authorization: Bearer <access_token>` (required)
 - `TargetOrganisationAbn: <abn>` (custom header — org context)
 - Base URL: runtime-injected via `REACT_APP_API_BASE_URL` (inferred)
@@ -313,7 +321,7 @@ piiEvents: disabled (trackGAPii commented out)
 ```typescript
 // sessionStorage — targetOrganisation
 interface TargetOrganisation {
-  targetOrganisationAbn: string;   // 11-digit string, no spaces
+  targetOrganisationAbn: string; // 11-digit string, no spaces
   targetOrganisationName: string;
 }
 // key: 'targetOrganisation' | Written by AccountProvider | Read by AuthorizedApiBase
@@ -344,33 +352,38 @@ direction: outbound (user leaves SPA, cannot return via back button)
 Inferred from legacy behavior and known gaps:
 
 Must-address observations from interface catalog analysis:
-- **OBS-001**: No retry logic exists in legacy clients; every API failure propagates to UI components.
-- **OBS-002**: `UsersClient.signIn` is a per-authenticated-page-load session-init handshake, not a login-only call.
-- **OBS-003**: Dashboard filter changes are coupled to backend persistence through `UsersClient.setUserProfile` on each filter change.
 
-| ID | Requirement | Source | Legacy behavior | Gap in legacy |
-|---|---|---|---|---|
-| NFR-01 | Auth PKCE/OIDC via Azure AD B2C | CAP-01, authConfig.ts | MSAL v3, redirect-only | loadFrameTimeout=0 (no iframe timeout) — fix in target |
-| NFR-02 | No unauthenticated access to any route | RULE-001–005 | AuthenticatedElement wraps all protected routes | String-based path guards in PreConditions — brittle |
-| NFR-03 | All API calls must carry Bearer token + TargetOrganisationAbn header | Interface catalog | AuthorizedApiBase injects both | ABN read at construction time, not per-request (SEC-001) |
-| NFR-04 | API calls must handle 412 (precondition failed) gracefully | AcceptQuoteClient, AccountsClient | WizardRoutedStep redirects to /not-found or /server-error | No user-friendly retry or recovery path |
-| NFR-05 | No retry logic exists in legacy; target must implement deterministic retry policy for idempotent requests | All 11 API clients, OBS-001 | Throws on non-200/204 | Add capped exponential back-off + jitter for idempotent GETs; keep non-idempotent mutations single-attempt unless endpoint contract supports idempotency keys |
-| NFR-06 | Page size 10 for all paginated lists | CAP-06/07/08, dashboard/index.tsx:51 | Hardcoded | Should be configurable per environment |
-| NFR-07 | Australian-only address validation | RULE-031 | Postcode range 200–299, 800–9999 | None |
-| NFR-08 | T&C version control via config file | RULE-004, RULE-052 | terms-config.json:1 | NMI ABN/address and PDF page numbers also hardcoded — externalise all |
-| NFR-09 | No PII in telemetry | SEC-005 (closed) | PII scrubbed | Re-verify in target repo: AppInsights piiLoggingEnabled:false |
-| NFR-10 | sessionStorage (not localStorage) for token/org storage | CAP-01, storage/* | Session-scoped, cleared on tab close | MSAL cache location not explicitly set — confirm defaults |
-| NFR-11 | WCAG 2.1 AA accessibility | Storybook a11y addon, skip-links, ARIA | Partial (skip-links, aria-busy on spinner) | No explicit a11y test suite |
-| NFR-12 | CSP Trusted Types policy | trustedtypes.ts | Closed (SEC-004 fixed) | Verify policy survives Vite build |
-| NFR-13 | Domain allowlist for external redirects | EXTERNAL_REDIRECT_URL | measurement.gov.au or localhost | Verified at startup — maintain in target |
-| NFR-14 | Session-init handshake must execute on every authenticated page load | CAP-01, OBS-002 | `UsersClient.signIn` called by authenticated route flows, not only during interactive sign-in | Easy to regress by moving call into login callback only |
-| NFR-15 | Dashboard filter state persistence coupling must be preserved or explicitly replaced with an approved alternative | CAP-25, OBS-003 | Filter/sort/page state persisted server-side and restored after sign-in | Coupling is non-obvious; removing it silently changes user experience and cross-device continuity |
+- **OBS-001**: No retry logic exists in legacy clients; every API failure
+  propagates to UI components.
+- **OBS-002**: `UsersClient.signIn` is a per-authenticated-page-load
+  session-init handshake, not a login-only call.
+- **OBS-003**: Dashboard filter changes are coupled to backend persistence
+  through `UsersClient.setUserProfile` on each filter change.
+
+| ID     | Requirement                                                                                                       | Source                                 | Legacy behavior                                                                               | Gap in legacy                                                                                                                                                 |
+| ------ | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| NFR-01 | Auth PKCE/OIDC via Azure AD B2C                                                                                   | CAP-01, authConfig.ts                  | MSAL v3, redirect-only                                                                        | loadFrameTimeout=0 (no iframe timeout) — fix in target                                                                                                        |
+| NFR-02 | No unauthenticated access to any route                                                                            | RULE-001–005                           | AuthenticatedElement wraps all protected routes                                               | String-based path guards in PreConditions — brittle                                                                                                           |
+| NFR-03 | All API calls must carry Bearer token + TargetOrganisationAbn header                                              | Interface catalog                      | AuthorizedApiBase injects both                                                                | ABN read at construction time, not per-request (SEC-001)                                                                                                      |
+| NFR-04 | API calls must handle 412 (precondition failed) gracefully                                                        | AcceptQuoteClient, AccountsClient      | WizardRoutedStep redirects to /not-found or /server-error                                     | No user-friendly retry or recovery path                                                                                                                       |
+| NFR-05 | No retry logic exists in legacy; target must implement deterministic retry policy for idempotent requests         | All 11 API clients, OBS-001            | Throws on non-200/204                                                                         | Add capped exponential back-off + jitter for idempotent GETs; keep non-idempotent mutations single-attempt unless endpoint contract supports idempotency keys |
+| NFR-06 | Page size 10 for all paginated lists                                                                              | CAP-06/07/08, dashboard/index.tsx:51   | Hardcoded                                                                                     | Should be configurable per environment                                                                                                                        |
+| NFR-07 | Australian-only address validation                                                                                | RULE-031                               | Postcode range 200–299, 800–9999                                                              | None                                                                                                                                                          |
+| NFR-08 | T&C version control via config file                                                                               | RULE-004, RULE-052                     | terms-config.json:1                                                                           | NMI ABN/address and PDF page numbers also hardcoded — externalise all                                                                                         |
+| NFR-09 | No PII in telemetry                                                                                               | SEC-005 (closed)                       | PII scrubbed                                                                                  | Re-verify in target repo: AppInsights piiLoggingEnabled:false                                                                                                 |
+| NFR-10 | sessionStorage (not localStorage) for token/org storage                                                           | CAP-01, storage/*                      | Session-scoped, cleared on tab close                                                          | MSAL cache location not explicitly set — confirm defaults                                                                                                     |
+| NFR-11 | WCAG 2.1 AA accessibility                                                                                         | Storybook a11y addon, skip-links, ARIA | Partial (skip-links, aria-busy on spinner)                                                    | No explicit a11y test suite                                                                                                                                   |
+| NFR-12 | CSP Trusted Types policy                                                                                          | trustedtypes.ts                        | Closed (SEC-004 fixed)                                                                        | Verify policy survives Vite build                                                                                                                             |
+| NFR-13 | Domain allowlist for external redirects                                                                           | EXTERNAL_REDIRECT_URL                  | measurement.gov.au or localhost                                                               | Verified at startup — maintain in target                                                                                                                      |
+| NFR-14 | Session-init handshake must execute on every authenticated page load                                              | CAP-01, OBS-002                        | `UsersClient.signIn` called by authenticated route flows, not only during interactive sign-in | Easy to regress by moving call into login callback only                                                                                                       |
+| NFR-15 | Dashboard filter state persistence coupling must be preserved or explicitly replaced with an approved alternative | CAP-25, OBS-003                        | Filter/sort/page state persisted server-side and restored after sign-in                       | Coupling is non-obvious; removing it silently changes user experience and cross-device continuity                                                             |
 
 ---
 
 ## 5. Behavior Contract (P0 Given/When/Then Rules)
 
-These are the acceptance tests. Every reimagined capability must implement these exactly.
+These are the acceptance tests. Every reimagined capability must implement these
+exactly.
 
 ### Authentication & Onboarding
 
@@ -518,19 +531,20 @@ Then   submit is blocked: "You must accept our terms before accepting this quota
 
 ## 6. Capabilities Pending P0 Confirmation (Phase B)
 
-The following capabilities have no clear regulatory/financial mandate and are candidates for deferral or drop in the reimagined system:
+The following capabilities have no clear regulatory/financial mandate and are
+candidates for deferral or drop in the reimagined system:
 
-| CAP | Capability | Why it might be dropped/deferred |
-|---|---|---|
+| CAP    | Capability                                 | Why it might be dropped/deferred                                                                                                                                 |
+| ------ | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | CAP-25 | Dashboard filter persistence (server-side) | High coupling between UI state and backend; only replace with a documented alternative if explicit cross-device/session continuity requirements are re-baselined |
-| CAP-19 | Optimistic UI post-acceptance | Workaround for CRM propagation latency — if CRM is faster in target environment, may not be needed |
-| CAP-28 | Google Analytics 4 | No regulatory requirement; optional for government portal analytics policy |
-| CAP-11 | RFQ Copy (Recalibration) | P1 convenience; could launch post-MVP |
-| CAP-12 | RFQ View Summary (new tab) | P1 convenience; inline view is simpler |
-| CAP-26 | EXTERNAL_REDIRECT_URL navigation | Tight coupling to current sibling site structure; may change in new portal architecture |
+| CAP-19 | Optimistic UI post-acceptance              | Workaround for CRM propagation latency — if CRM is faster in target environment, may not be needed                                                               |
+| CAP-28 | Google Analytics 4                         | No regulatory requirement; optional for government portal analytics policy                                                                                       |
+| CAP-11 | RFQ Copy (Recalibration)                   | P1 convenience; could launch post-MVP                                                                                                                            |
+| CAP-12 | RFQ View Summary (new tab)                 | P1 convenience; inline view is simpler                                                                                                                           |
+| CAP-26 | EXTERNAL_REDIRECT_URL navigation           | Tight coupling to current sibling site structure; may change in new portal architecture                                                                          |
 
 ---
 
-*Source artifacts:*
-*`analysis/BUSINESS_RULES.md` · `analysis/DATA_OBJECTS.md` · interface catalog from legacy-analyst subagent*
-*Full business rules with detailed edge-cases: see BUSINESS_RULES.md*
+_Source artifacts:_ _`analysis/BUSINESS_RULES.md` · `analysis/DATA_OBJECTS.md` ·
+interface catalog from legacy-analyst subagent_ _Full business rules with
+detailed edge-cases: see BUSINESS_RULES.md_

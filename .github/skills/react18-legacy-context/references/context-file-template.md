@@ -89,11 +89,13 @@ src/context/          ← singular is also fine
 src/store/contexts/   ← if co-located with state management
 ```
 
-Do NOT put context files inside a component folder - contexts are cross-cutting and shouldn't be owned by any one component.
+Do NOT put context files inside a component folder - contexts are cross-cutting
+and shouldn't be owned by any one component.
 
 ## Provider Placement in the App
 
-Context providers wrap the components that need access. Place as low in the tree as possible, not always at root:
+Context providers wrap the components that need access. Place as low in the tree
+as possible, not always at root:
 
 ```jsx
 // App.js

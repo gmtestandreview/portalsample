@@ -1,41 +1,41 @@
-import type { Meta, StoryFn } from "@storybook/react-vite";
-import { withReactAriaEvaluation } from "../../storybook/withReactAriaEvaluation.tsx";
+import type { Meta, StoryFn } from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation.tsx';
 import {
-	Disclosure,
-	DisclosureHeader,
-	DisclosurePanel,
-} from "../Disclosure/Disclosure.tsx";
-import { DisclosureGroup } from "./DisclosureGroup.tsx";
+  Disclosure,
+  DisclosureHeader,
+  DisclosurePanel,
+} from '../Disclosure/Disclosure.tsx';
+import { DisclosureGroup } from './DisclosureGroup.tsx';
 
 const meta = {
-	decorators: [withReactAriaEvaluation],
-	title: "Evaluation/React Aria/DisclosureGroup",
-	component: DisclosureGroup,
-	parameters: {
-		layout: "centered",
-	},
+  decorators: [withReactAriaEvaluation],
+  title: 'Evaluation/React Aria/DisclosureGroup',
+  component: DisclosureGroup,
+  parameters: {
+    layout: 'centered',
+  },
 } satisfies Meta<typeof DisclosureGroup>;
 
 export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
 export const Example: Story = (args) => (
-	<DisclosureGroup {...args}>
-		<Disclosure id="personal">
-			<DisclosureHeader>Personal Information</DisclosureHeader>
-			<DisclosurePanel>
-				<p>Personal information form here.</p>
-			</DisclosurePanel>
-		</Disclosure>
-		<Disclosure id="billing">
-			<DisclosureHeader>Billing Address</DisclosureHeader>
-			<DisclosurePanel>
-				<p>Billing address form here.</p>
-			</DisclosurePanel>
-		</Disclosure>
-	</DisclosureGroup>
+  <DisclosureGroup {...args}>
+    <Disclosure id='personal'>
+      <DisclosureHeader>Personal Information</DisclosureHeader>
+      <DisclosurePanel>
+        <p>Personal information form here.</p>
+      </DisclosurePanel>
+    </Disclosure>
+    <Disclosure id='billing'>
+      <DisclosureHeader>Billing Address</DisclosureHeader>
+      <DisclosurePanel>
+        <p>Billing address form here.</p>
+      </DisclosurePanel>
+    </Disclosure>
+  </DisclosureGroup>
 );
 
 Example.args = {
-	defaultExpandedKeys: ["personal"],
+  defaultExpandedKeys: ['personal'],
 };

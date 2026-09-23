@@ -38,7 +38,8 @@ html {
   font-family: $font-family-sans-serif;
 }
 
-:focus, :focus-visible {
+:focus,
+:focus-visible {
   outline: 3px solid $link-focus;
   outline-offset: 2px;
   &#header,
@@ -50,17 +51,25 @@ html {
   }
 }
 
-a:link {word-wrap: break-word;}
+a:link {
+  word-wrap: break-word;
+}
 
 body {
   min-width: 320px;
   background-color: inherit;
   // Custom sections
-  &.home, &.login, &.dashboard {
+  &.home,
+  &.login,
+  &.dashboard {
     background-color: $dashboard-background;
   }
-  &.reporting-checklist, &.reporting-index,
-  &.wizard, &.wizrd-index, &.wizard-list, &.summary {
+  &.reporting-checklist,
+  &.reporting-index,
+  &.wizard,
+  &.wizrd-index,
+  &.wizard-list,
+  &.summary {
     background-color: $white;
   }
   // Custom pages

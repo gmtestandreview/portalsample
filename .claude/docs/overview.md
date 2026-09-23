@@ -1,12 +1,17 @@
 # A Team — Overview
 
-> Drop this folder into any project. Get an immediately operational team of specialists with zero configuration drift.
+> Drop this folder into any project. Get an immediately operational team of
+> specialists with zero configuration drift.
 
 ---
 
 ## What A Team is
 
-A Team is a **portable multi-agent infrastructure** for AI coding assistants. It works with any model — Claude, GPT-4o, Gemini, or others — through any supported platform. It turns a single general-purpose model into a coordinated team of specialists — each with a defined role, tool access, and quality gate — that enforces the same engineering standards on every project it's deployed to.
+A Team is a **portable multi-agent infrastructure** for AI coding assistants. It
+works with any model — Claude, GPT-4o, Gemini, or others — through any supported
+platform. It turns a single general-purpose model into a coordinated team of
+specialists — each with a defined role, tool access, and quality gate — that
+enforces the same engineering standards on every project it's deployed to.
 
 ```
 Without A Team                        With A Team
@@ -200,21 +205,22 @@ cp "A Team/INIT_TEMPLATE.md" your-project/INIT.md
 /orchestrate init
 ```
 
-After init: `.agent-sync/TEAM.md` lists what's active. Everything else is pruned.
+After init: `.agent-sync/TEAM.md` lists what's active. Everything else is
+pruned.
 
 ---
 
 ## Key Design Principles
 
-| Principle | How A Team implements it |
-|-----------|-------------------------|
-| **Stateless** | Every agent reads from files; no memory between sessions |
-| **Prunable** | Orchestrator removes irrelevant agents at init; lean by default |
-| **Portable** | Works on Claude Code, Codex, Cursor, OpenCode — same files |
-| **Enforceable** | Hard gates via hooks; skills injected every session |
-| **Auditable** | DAILY.md, Veto Buffer, AUDIT.md — full trail of decisions |
-| **Surgical** | Every agent has a single responsibility; no scope creep |
-| **Parallel** | Independent tasks dispatched simultaneously; worktrees prevent collision |
+| Principle       | How A Team implements it                                                 |
+| --------------- | ------------------------------------------------------------------------ |
+| **Stateless**   | Every agent reads from files; no memory between sessions                 |
+| **Prunable**    | Orchestrator removes irrelevant agents at init; lean by default          |
+| **Portable**    | Works on Claude Code, Codex, Cursor, OpenCode — same files               |
+| **Enforceable** | Hard gates via hooks; skills injected every session                      |
+| **Auditable**   | DAILY.md, Veto Buffer, AUDIT.md — full trail of decisions                |
+| **Surgical**    | Every agent has a single responsibility; no scope creep                  |
+| **Parallel**    | Independent tasks dispatched simultaneously; worktrees prevent collision |
 
 ---
 

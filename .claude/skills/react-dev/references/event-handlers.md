@@ -1,6 +1,7 @@
 # Event Handler TypeScript Patterns
 
-Proper event typing ensures type-safe access to event properties and target elements.
+Proper event typing ensures type-safe access to event properties and target
+elements.
 
 ## Mouse Events
 
@@ -299,11 +300,15 @@ function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
 
 ```typescript
 // For international input methods (Chinese, Japanese, etc.)
-function handleCompositionStart(event: React.CompositionEvent<HTMLInputElement>) {
+function handleCompositionStart(
+  event: React.CompositionEvent<HTMLInputElement>
+) {
   console.log('Composition started');
 }
 
-function handleCompositionUpdate(event: React.CompositionEvent<HTMLInputElement>) {
+function handleCompositionUpdate(
+  event: React.CompositionEvent<HTMLInputElement>
+) {
   console.log('Composing:', event.data);
 }
 
@@ -410,10 +415,13 @@ function createClickHandler<T extends HTMLElement>(
 }
 
 // Usage
-const handleItemClick = createClickHandler<HTMLLIElement>('li[data-id]', (item) => {
-  const id = item.dataset.id;
-  console.log('Clicked item:', id);
-});
+const handleItemClick = createClickHandler<HTMLLIElement>(
+  'li[data-id]',
+  (item) => {
+    const id = item.dataset.id;
+    console.log('Clicked item:', id);
+  }
+);
 ```
 
 ## Event Handler Type Aliases
@@ -443,9 +451,10 @@ type EventHandler<E extends HTMLElement, Evt extends React.SyntheticEvent> = (
 ) => void;
 
 // Usage
-const handleInput: EventHandler<HTMLInputElement, React.ChangeEvent<HTMLInputElement>> = (
-  event
-) => {
+const handleInput: EventHandler<
+  HTMLInputElement,
+  React.ChangeEvent<HTMLInputElement>
+> = (event) => {
   console.log(event.currentTarget.value);
 };
 ```

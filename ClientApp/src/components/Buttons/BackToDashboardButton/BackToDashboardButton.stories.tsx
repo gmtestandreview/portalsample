@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react-vite";
-import { expect, within } from "storybook/test";
-import { withPortalProviders } from "../../../storybook/storybookHarness.tsx";
-import BackToDashboardButton from "./index.tsx";
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
+import { withPortalProviders } from '../../../storybook/storybookHarness.tsx';
+import BackToDashboardButton from './index.tsx';
 
 /**
  * BackToDashboardButton Component Storybook Configuration
@@ -17,9 +17,9 @@ import BackToDashboardButton from "./index.tsx";
  */
 
 const meta = {
-	title: "Components/Buttons/BackToDashboardButton",
-	component: BackToDashboardButton,
-	decorators: [withPortalProviders],
+  title: 'Components/Buttons/BackToDashboardButton',
+  component: BackToDashboardButton,
+  decorators: [withPortalProviders],
 } satisfies Meta<typeof BackToDashboardButton>;
 
 export default meta;
@@ -30,28 +30,28 @@ type Story = StoryObj<typeof meta>;
  * Requires router context (Link) provided by withPortalProviders.
  */
 export const Default: Story = {
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const link = canvas.getByRole("link", { name: /back to dashboard/iu });
-		await expect(link).toBeInTheDocument();
-		await expect(link).toHaveAttribute("href", "/dashboard");
-	},
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const link = canvas.getByRole('link', { name: /back to dashboard/iu });
+    await expect(link).toBeInTheDocument();
+    await expect(link).toHaveAttribute('href', '/dashboard');
+  },
 };
 
 /**
  * CustomContainer — applies extra margin to the wrapping div via containerClassName.
  */
 export const CustomContainer: Story = {
-	args: {
-		containerClassName: "mt-4",
-	},
+  args: {
+    containerClassName: 'mt-4',
+  },
 };
 
 /**
  * CustomClass — applies additional CSS classes directly to the link element.
  */
 export const CustomClass: Story = {
-	args: {
-		className: "fw-bold",
-	},
+  args: {
+    className: 'fw-bold',
+  },
 };

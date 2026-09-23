@@ -10,7 +10,8 @@
 
 ## Overview
 
-You will validate the **15 Storybook remediation issues** that the Dev Agent is fixing. Your role:
+You will validate the **15 Storybook remediation issues** that the Dev Agent is
+fixing. Your role:
 
 1. **Verify each issue closure** against its Definition of Done
 2. **Run the full Storybook test suite** (`npm run test:storybook`)
@@ -18,7 +19,8 @@ You will validate the **15 Storybook remediation issues** that the Dev Agent is 
 4. **Sign off with evidence** before merge
 
 **When to Start:** After Dev Agent reaches VERIFYING state  
-**Success Criteria:** 100% pass rate on all Storybook tests + no new console errors
+**Success Criteria:** 100% pass rate on all Storybook tests + no new console
+errors
 
 ---
 
@@ -224,13 +226,10 @@ npm run type-check       # No TypeScript errors
 
 ## Acceptance Criteria for QA Sign-Off
 
-✅ **All 15 issues have Definition of Done verified**
-✅ **All Storybook tests pass (100%)**
-✅ **All unit tests pass (0 failures)**
-✅ **No new console errors or warnings**
-✅ **No TypeScript errors**
-✅ **No regressions vs baseline**
-✅ **Evidence captured in `docs/sprint-1/qa-signoff.md`**
+✅ **All 15 issues have Definition of Done verified** ✅ **All Storybook tests
+pass (100%)** ✅ **All unit tests pass (0 failures)** ✅ **No new console errors
+or warnings** ✅ **No TypeScript errors** ✅ **No regressions vs baseline** ✅
+**Evidence captured in `docs/sprint-1/qa-signoff.md`**
 
 ---
 
@@ -241,7 +240,8 @@ npm run type-check       # No TypeScript errors
 - Read their progress.md update
 - Check issue against DoD checklist
 - Run targeted tests for that issue
-- Update `docs/sprint-1/progress.md` with QA status (VERIFYING → VERIFIED or BLOCKED)
+- Update `docs/sprint-1/progress.md` with QA status (VERIFYING → VERIFIED or
+  BLOCKED)
 - If blocked, post error details and escalate to Producer
 
 **Before Final Merge:**
@@ -289,14 +289,14 @@ npm run test:unit -- --grep="StatusPill"
 
 ## Timeline & Milestones
 
-| Phase | Dev Duration | QA Duration | Total |
-| ------- | ------------- | ------------ | ------- |
-| Phase 1 (Critical Infrastructure) | 2 days | 1 day | 3 days |
-| Phase 2 (Critical Stories) | 2 days | 1 day | 3 days |
-| Phase 3 (High Priority) | 2 days | 1 day | 3 days |
-| Phase 4 (Medium Priority) | 2 days | 1 day | 3 days |
-| **Final Verification** | — | 1 day | 1 day |
-| **Total** | 8 days | 5 days | **~13 days** |
+| Phase                             | Dev Duration | QA Duration | Total        |
+| --------------------------------- | ------------ | ----------- | ------------ |
+| Phase 1 (Critical Infrastructure) | 2 days       | 1 day       | 3 days       |
+| Phase 2 (Critical Stories)        | 2 days       | 1 day       | 3 days       |
+| Phase 3 (High Priority)           | 2 days       | 1 day       | 3 days       |
+| Phase 4 (Medium Priority)         | 2 days       | 1 day       | 3 days       |
+| **Final Verification**            | —            | 1 day       | 1 day        |
+| **Total**                         | 8 days       | 5 days      | **~13 days** |
 
 ---
 
@@ -304,7 +304,8 @@ npm run test:unit -- --grep="StatusPill"
 
 1. **Review this handoff** — understand scope, DoD criteria, validation process
 2. **Familiarize yourself with Storybook build/test commands**
-3. **Set up workspace** — clone repo, install deps, verify `npm run build-storybook` works
+3. **Set up workspace** — clone repo, install deps, verify
+   `npm run build-storybook` works
 4. **Prepare test environment** — verify node version, npm/pnpm setup
 5. **Wait for Dev Agent to reach VERIFYING state** — Producer will notify you
 

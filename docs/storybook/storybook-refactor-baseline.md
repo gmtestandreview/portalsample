@@ -103,8 +103,8 @@ silently attributed to the Storybook upgrade.
 ### Full unit runner
 
 The full unit command remained active without result output for more than four
-minutes and was terminated. The three existing Storybook-focused unit files
-were then run directly and passed all 16 tests.
+minutes and was terminated. The three existing Storybook-focused unit files were
+then run directly and passed all 16 tests.
 
 ### Docs build warnings
 
@@ -166,8 +166,8 @@ duplicate Autodocs state, missing Code Panel configuration, the cloned default
 template, the global generic description, and outdated developer guidance.
 
 The obsolete `tests/unit/storybook-autodocs.test.ts` was removed because it
-asserted hard-coded local constants rather than repository behaviour and
-encoded the architecture this executable governance contract replaces.
+asserted hard-coded local constants rather than repository behaviour and encoded
+the architecture this executable governance contract replaces.
 
 ## Metadata inference verification
 
@@ -180,18 +180,19 @@ Storybook 10.5.10 produced the following default `react-docgen` evidence:
 | StatusPill      | `status` and `className` appear                                                                                      | `status` is required and `className` is optional                                            | Component and prop JSDoc appear                      | The workflow enum union and string fallback are visible                                 | Pass                                                          |
 | CustomDateInput | All 22 public integration props appear                                                                               | Required calendar, Formik, handler, and wrapper props are distinguished from optional props | Meaningful descriptions appear for every public prop | No public union/enum prop requires manual augmentation                                  | Pass                                                          |
 
-The representative Default stories use args, and all three focused component
-and accessibility checks passed through the Storybook MCP. The default parser
-is sufficient for the complex Formik wrapper and enum-union sample. Task 10
-will use the PrimaryButton inherited-prop limitation as the explicit decision
-input rather than switching parsers pre-emptively.
+The representative Default stories use args, and all three focused component and
+accessibility checks passed through the Storybook MCP. The default parser is
+sufficient for the complex Formik wrapper and enum-union sample. Task 10 will
+use the PrimaryButton inherited-prop limitation as the explicit decision input
+rather than switching parsers pre-emptively.
 
 ## Explicit CSF plugin A/B test
 
 ### A — explicit plugin present
 
 - Governance tests: PASS, 13 assertions.
-- Storybook BDD: PASS, 135 scenarios, including all five documentation scenarios.
+- Storybook BDD: PASS, 135 scenarios, including all five documentation
+  scenarios.
 - Code Panel: PASS; the representative story source was visible.
 - Source: PASS; generated docs exposed source without preview decorators.
 - Docs build: PASS, 315 entries (97 docs and 218 stories) in 10.80 seconds.
@@ -199,7 +200,8 @@ input rather than switching parsers pre-emptively.
 ### B — explicit plugin removed
 
 - Governance tests: PASS, 13 assertions.
-- Storybook BDD: PASS, 135 scenarios, including all five documentation scenarios.
+- Storybook BDD: PASS, 135 scenarios, including all five documentation
+  scenarios.
 - Code Panel: PASS; the representative story source remained visible.
 - Source: PASS; generated docs retained decorator-free source.
 - Docs build: PASS, 315 entries (97 docs and 218 stories) in 10.97 seconds.
@@ -231,43 +233,44 @@ input rather than switching parsers pre-emptively.
 ### Correction — the three-component sample was not representative
 
 The evidence above sampled three components. A full survey of the generated
-components manifest (`storybook-static/manifests/components.json`, also served at
-`/manifests/components.json` in dev) shows **22 of 87 components produce no
+components manifest (`storybook-static/manifests/components.json`, also served
+at `/manifests/components.json` in dev) shows **22 of 87 components produce no
 docgen output at all**:
 
-| Cause | Count | Components |
-| --- | ---: | --- |
-| `No component definition found` — `"." is not exported under no conditions from package node_modules/@azure/msal-react` | 20 | AddressLookup, ApplicationAndInstrument, ApplicationDetails, ApplicationDocuments, ApplicationMessages, Dashboard, DashboardTa, GetStarted, HelpGuide, InstrMeasurementReport, InstrumentInfoPanel, PaRequestItem, PreApplication, PreConditions, ReportRecipient, ServicesWeOffer, SubmittedSuccess, SupportingDocuments, ViewMeasurementReport, ViewRequestForQuoteSummary |
-| `Component file in node_modules` | 1 | Inputs |
-| `No component found` — `meta.component` not specified | 1 | Modals |
+| Cause                                                                                                                   | Count | Components                                                                                                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------------------------------------- | ----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `No component definition found` — `"." is not exported under no conditions from package node_modules/@azure/msal-react` |    20 | AddressLookup, ApplicationAndInstrument, ApplicationDetails, ApplicationDocuments, ApplicationMessages, Dashboard, DashboardTa, GetStarted, HelpGuide, InstrMeasurementReport, InstrumentInfoPanel, PaRequestItem, PreApplication, PreConditions, ReportRecipient, ServicesWeOffer, SubmittedSuccess, SupportingDocuments, ViewMeasurementReport, ViewRequestForQuoteSummary |
+| `Component file in node_modules`                                                                                        |     1 | Inputs                                                                                                                                                                                                                                                                                                                                                                       |
+| `No component found` — `meta.component` not specified                                                                   |     1 | Modals                                                                                                                                                                                                                                                                                                                                                                       |
 
-None of PrimaryButton, StatusPill or CustomDateInput imports `@azure/msal-react`,
-so the original sample could not have detected the dominant failure.
+None of PrimaryButton, StatusPill or CustomDateInput imports
+`@azure/msal-react`, so the original sample could not have detected the dominant
+failure.
 
 **Root cause of the 20:** `@azure/msal-react@2.2.0` exposes `"."` only under the
 `import` and `require` export conditions. react-docgen's resolver requests it
-under no condition and the resolution fails, so the component definition is never
-found. This is a **module-resolution** failure, not a limitation of the parser's
-type inference.
+under no condition and the resolution fails, so the component definition is
+never found. This is a **module-resolution** failure, not a limitation of the
+parser's type inference.
 
 ### A/B evidence — `react-docgen-typescript` is worse here
 
 Tested by adding `typescript: { reactDocgen: 'react-docgen-typescript' }` to
 `.storybook/main.ts` and rebuilding, with no other change:
 
-| Parser | Build | Components with errors | Components with at least one prop |
-| --- | --- | ---: | ---: |
-| `react-docgen` (default, current) | PASS | 22 | 65 |
-| `react-docgen-typescript` | PASS, 17s | 25 | **0** |
+| Parser                            | Build     | Components with errors | Components with at least one prop |
+| --------------------------------- | --------- | ---------------------: | --------------------------------: |
+| `react-docgen` (default, current) | PASS      |                     22 |                                65 |
+| `react-docgen-typescript`         | PASS, 17s |                     25 |                             **0** |
 
 Under `react-docgen-typescript` every component lost its props, because the
-workspace source falls outside the parser's default TypeScript program — the case
-Task 10 Step 4 anticipates. Adopting it would require explicit `include`
+workspace source falls outside the parser's default TypeScript program — the
+case Task 10 Step 4 anticipates. Adopting it would require explicit `include`
 configuration and would still not address the msal-react resolution failure.
 
-**Decision stands: retain `react-docgen`.** The recorded justification is now the
-measured one — the default parser documents 65 components, the TypeScript parser
-documents none without further configuration, and the 22 failures are a
+**Decision stands: retain `react-docgen`.** The recorded justification is now
+the measured one — the default parser documents 65 components, the TypeScript
+parser documents none without further configuration, and the 22 failures are a
 resolution defect to be fixed at the resolver rather than by swapping parsers.
 
 ### Resolution
@@ -281,8 +284,8 @@ The fix is applied at the package that omits the condition. Two dependencies
 declare `exports["."]` with only `import` and `require` and no `default`, so a
 resolver that requests no condition fails:
 
-| Package | Added condition |
-| --- | --- |
+| Package                   | Added condition                |
+| ------------------------- | ------------------------------ |
 | `@azure/msal-react@2.2.0` | `"default": "./dist/index.js"` |
 | `html-react-parser@6.1.4` | `"default": "./esm/index.mjs"` |
 
@@ -295,9 +298,9 @@ Result: components without prop metadata fell from **22 to 2**. Verified by
 `npm run test:unit` (1,342), `npm run test:storybook` (218), `npm run build`
 (webpack production), and `npm run test:e2e:storybook` (135), all passing.
 
-`scripts/verify-storybook-docs.mjs` now fails the build if any component loses its
-prop metadata, so this cannot silently regress. Two components remain accepted
-exceptions, listed there with reasons:
+`scripts/verify-storybook-docs.mjs` now fails the build if any component loses
+its prop metadata, so this cannot silently regress. Two components remain
+accepted exceptions, listed there with reasons:
 
 - `forms-inputs` — `meta.component` resolves into `node_modules` (formik).
 - `modals` — a multi-component gallery. Every story renders a local wrapper or a

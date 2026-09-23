@@ -1,6 +1,8 @@
 # Brainstorm Format
 
-Use this format to produce real creative debate — not generic "the team agrees" output. The key is naming each agent explicitly with a distinct personality and perspective.
+Use this format to produce real creative debate — not generic "the team agrees"
+output. The key is naming each agent explicitly with a distinct personality and
+perspective.
 
 ## Prompt Template
 
@@ -61,9 +63,11 @@ Output all phases as separate files:
 
 - **Name each agent** — "you are the full team" produces bland consensus
 - **Define tendencies** — gives the LLM permission to disagree
-- **Require disagreements** — "at least 2 genuine disagreements" prevents groupthink
+- **Require disagreements** — "at least 2 genuine disagreements" prevents
+  groupthink
 - **Separate files** — forces structured output, makes it reviewable
-- **Customize personas** — adjust for your domain (e.g., replace Kira with a Data Scientist for ML projects)
+- **Customize personas** — adjust for your domain (e.g., replace Kira with a
+  Data Scientist for ML projects)
 
 ## Mini-Brainstorm (Quick Version)
 

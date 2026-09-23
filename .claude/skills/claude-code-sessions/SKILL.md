@@ -1,33 +1,44 @@
 ---
 name: claude-code-sessions
-description: Search, analyze, and manage Claude Code session history. Use when the user wants to find past sessions, check token usage, review tool breakdowns, resume previous work, or manage tasks across sessions. Provides 11 skills and a web dashboard.
+description:
+  Search, analyze, and manage Claude Code session history. Use when the user
+  wants to find past sessions, check token usage, review tool breakdowns, resume
+  previous work, or manage tasks across sessions. Provides 11 skills and a web
+  dashboard.
 ---
 
 # Claude Code Sessions
 
-Session intelligence plugin for Claude Code. Reads the JSONL session files that Claude Code writes to `~/.claude/projects/` and makes them searchable and analyzable.
+Session intelligence plugin for Claude Code. Reads the JSONL session files that
+Claude Code writes to `~/.claude/projects/` and makes them searchable and
+analyzable.
 
 ## What It Does
 
-Claude Code records every session as a JSONL file — messages, tool calls, token counts, diffs, tasks. This plugin reads those files and provides two interfaces. Most operations are read-only; delete and cleanup skills can remove session files when explicitly invoked.
+Claude Code records every session as a JSONL file — messages, tool calls, token
+counts, diffs, tasks. This plugin reads those files and provides two interfaces.
+Most operations are read-only; delete and cleanup skills can remove session
+files when explicitly invoked.
 
 **11 skills** usable directly in Claude Code:
 
-| Skill | Purpose |
-|-------|---------|
-| `/session-search "query"` | Full-text search across every session |
-| `/session-stats` | Token usage, model distribution, tool breakdown |
-| `/session-list` | List sessions sorted by recency, size, or duration |
-| `/session-detail` | Deep dive into a specific session |
-| `/session-diff` | Compare two sessions — files, tools, topics |
-| `/session-timeline` | Chronological view of sessions on a project |
-| `/session-resume` | Generate a context recovery prompt from any session |
-| `/session-tasks` | Find pending and orphaned tasks across sessions |
-| `/session-export` | Export a session as clean markdown |
-| `/session-cleanup` | Find empty, tiny, or stale sessions |
-| `/session-delete` | Delete sessions and their associated tasks |
+| Skill                     | Purpose                                             |
+| ------------------------- | --------------------------------------------------- |
+| `/session-search "query"` | Full-text search across every session               |
+| `/session-stats`          | Token usage, model distribution, tool breakdown     |
+| `/session-list`           | List sessions sorted by recency, size, or duration  |
+| `/session-detail`         | Deep dive into a specific session                   |
+| `/session-diff`           | Compare two sessions — files, tools, topics         |
+| `/session-timeline`       | Chronological view of sessions on a project         |
+| `/session-resume`         | Generate a context recovery prompt from any session |
+| `/session-tasks`          | Find pending and orphaned tasks across sessions     |
+| `/session-export`         | Export a session as clean markdown                  |
+| `/session-cleanup`        | Find empty, tiny, or stale sessions                 |
+| `/session-delete`         | Delete sessions and their associated tasks          |
 
-**Web dashboard** at `localhost:3000` with four views: Dashboard (summary stats), Sessions (sortable table with bulk operations), Search (full-text with context snippets), Tasks (grouped by status with orphan detection).
+**Web dashboard** at `localhost:3000` with four views: Dashboard (summary
+stats), Sessions (sortable table with bulk operations), Search (full-text with
+context snippets), Tasks (grouped by status with orphan detection).
 
 ## Install
 
@@ -36,7 +47,8 @@ Claude Code records every session as a JSONL file — messages, tool calls, toke
 /plugin install claude-code-sessions@claude-code-sessions
 ```
 
-No API keys. No config. No runtime dependencies. It reads what's already on disk.
+No API keys. No config. No runtime dependencies. It reads what's already on
+disk.
 
 For the dashboard:
 
@@ -75,5 +87,6 @@ bun run lib/session-parser.ts stats path/to/session.jsonl
 
 ## Links
 
-- **GitHub**: [github.com/apappascs/claude-code-sessions](https://github.com/apappascs/claude-code-sessions)
+- **GitHub**:
+  [github.com/apappascs/claude-code-sessions](https://github.com/apappascs/claude-code-sessions)
 - **License**: MIT

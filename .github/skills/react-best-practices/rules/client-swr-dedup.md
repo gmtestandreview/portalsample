@@ -7,7 +7,8 @@ tags: client, swr, deduplication, data-fetching
 
 ## Use SWR for Automatic Deduplication
 
-SWR enables request deduplication, caching, and revalidation across component instances.
+SWR enables request deduplication, caching, and revalidation across component
+instances.
 
 **Incorrect (no deduplication, each instance fetches):**
 

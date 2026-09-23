@@ -23,9 +23,14 @@ jobs:
     timeout-minutes: 60
     env:
       VITE_APP_ENVIRONMENT: production
-      VITE_ENTRA_CLIENT_ID: ${{ secrets.VITE_ENTRA_CLIENT_ID || '12345678-1234-4321-a432-123456789abc' }}
-      VITE_ENTRA_TENANT_ID: ${{ secrets.VITE_ENTRA_TENANT_ID || '87654321-4321-4321-b432-cba987654321' }}
-      VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5085' }}
+      VITE_ENTRA_CLIENT_ID:
+        ${{ secrets.VITE_ENTRA_CLIENT_ID ||
+        '12345678-1234-4321-a432-123456789abc' }}
+      VITE_ENTRA_TENANT_ID:
+        ${{ secrets.VITE_ENTRA_TENANT_ID ||
+        '87654321-4321-4321-b432-cba987654321' }}
+      VITE_API_BASE_URL:
+        ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5085' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -40,10 +45,12 @@ jobs:
       - name: Install dependencies with declared npm
         run: npm ci
 
-      - name: Verify optional native bindings installed (npm/cli#4828 workaround)
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
         uses: ./.github/actions/verify-rolldown-binding
 
-      - name: Install Playwright Chromium (required by Storybook Browser Mode tests)
+      - name:
+          Install Playwright Chromium (required by Storybook Browser Mode tests)
         run: ./node_modules/.bin/playwright install --with-deps chromium
 
       - name: Type-check

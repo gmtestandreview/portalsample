@@ -4,9 +4,12 @@ Review staged and recent code changes for quality, security, and correctness.
 
 **Invokes:** `code-reviewer` agent
 
-**Reception protocol:** when acting on the findings, follow the `receiving-code-review` skill — verify before implementing, technical pushback over performative agreement.
+**Reception protocol:** when acting on the findings, follow the
+`receiving-code-review` skill — verify before implementing, technical pushback
+over performative agreement.
 
 **Usage:**
+
 ```
 /code-review
 /code-review --staged-only
@@ -14,6 +17,7 @@ Review staged and recent code changes for quality, security, and correctness.
 ```
 
 **What it checks:**
+
 - CRITICAL: Hardcoded secrets, SQL injection, XSS, auth bypasses
 - HIGH: Large functions, deep nesting, missing error handling, mutation patterns
 - HIGH: React/Next.js: stale closures, missing deps, wrong keys
@@ -22,6 +26,7 @@ Review staged and recent code changes for quality, security, and correctness.
 - LOW: TODOs without tickets, poor naming, magic numbers
 
 **Approval Criteria:**
+
 - Approve: No CRITICAL or HIGH issues
 - Warning: HIGH issues only (can merge with caution)
 - Block: CRITICAL issues found

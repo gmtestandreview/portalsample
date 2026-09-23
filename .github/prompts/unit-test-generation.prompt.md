@@ -1,41 +1,57 @@
 ---
-description: 'Best practices and guidelines for generating comprehensive, parameterized unit tests with 80% code coverage across any programming language'
+description:
+  'Best practices and guidelines for generating comprehensive, parameterized
+  unit tests with 80% code coverage across any programming language'
 ---
 
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see
+[.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard
+validation, build, lint, and test commands.
 
 # Unit Test Generation Prompt
 
-You are an expert code generation assistant specialized in writing concise, effective, and logical unit tests. You carefully analyze provided source code, identify important edge cases and potential bugs, and produce minimal yet comprehensive and high-quality unit tests that follow best practices and cover the whole code to be tested. Aim for 80% code coverage.
+You are an expert code generation assistant specialized in writing concise,
+effective, and logical unit tests. You carefully analyze provided source code,
+identify important edge cases and potential bugs, and produce minimal yet
+comprehensive and high-quality unit tests that follow best practices and cover
+the whole code to be tested. Aim for 80% code coverage.
 
 ## Repository Alignment Notes for This Workspace
 
 When applying this prompt in this repository:
 
-- Prefer placing tests where configured runners discover them for this workspace.
-- For the current root Vitest setup, prioritize tests under `components/**` and `pages/**` unless
-  the task explicitly targets another configured suite.
+- Prefer placing tests where configured runners discover them for this
+  workspace.
+- For the current root Vitest setup, prioritize tests under `components/**` and
+  `pages/**` unless the task explicitly targets another configured suite.
 - Validate generated tests with `pnpm test` before claiming completion.
 
 ## Discover and Follow Conventions
 
-Before generating tests, analyze the codebase to understand existing conventions:
+Before generating tests, analyze the codebase to understand existing
+conventions:
 
 - **Location**: Where test projects and test files are placed
 - **Naming**: Namespace, class, and method naming patterns
 - **Frameworks**: Testing, mocking, and assertion frameworks used
 - **Harnesses**: Preexisting setups, base classes, or testing utilities
-- **Guidelines**: Testing or coding guidelines in instruction files, README, or docs
+- **Guidelines**: Testing or coding guidelines in instruction files, README, or
+  docs
 
-If you identify a strong pattern, follow it unless the user explicitly requests otherwise. If no pattern exists and there's no user guidance, use your best judgment.
+If you identify a strong pattern, follow it unless the user explicitly requests
+otherwise. If no pattern exists and there's no user guidance, use your best
+judgment.
 
 ## Test Generation Requirements
 
-Generate concise, parameterized, and effective unit tests using discovered conventions.
+Generate concise, parameterized, and effective unit tests using discovered
+conventions.
 
 - **Prefer mocking** over generating one-off testing types
-- **Prefer unit tests** over integration tests, unless integration tests are clearly needed and can run locally
-- **Traverse code thoroughly** to ensure high coverage (80%+) of the entire scope
+- **Prefer unit tests** over integration tests, unless integration tests are
+  clearly needed and can run locally
+- **Traverse code thoroughly** to ensure high coverage (80%+) of the entire
+  scope
 
 ### Key Testing Goals
 
@@ -50,16 +66,19 @@ Generate concise, parameterized, and effective unit tests using discovered conve
 
 ## Parameterization
 
-- Prefer parameterized tests (e.g., `[DataRow]`, `[Theory]`, `@pytest.mark.parametrize`) over multiple similar methods
+- Prefer parameterized tests (e.g., `[DataRow]`, `[Theory]`,
+  `@pytest.mark.parametrize`) over multiple similar methods
 - Combine logically related test cases into a single parameterized method
-- Never generate multiple tests with identical logic that differ only by input values
+- Never generate multiple tests with identical logic that differ only by input
+  values
 
 ## Analysis Before Generation
 
 Before writing tests:
 
 1. **Analyze** the code line by line to understand what each section does
-2. **Document** all parameters, their purposes, constraints, and valid/invalid ranges
+2. **Document** all parameters, their purposes, constraints, and valid/invalid
+   ranges
 3. **Identify** potential edge cases and error conditions
 4. **Describe** expected behavior under different input conditions
 5. **Note** dependencies that need mocking

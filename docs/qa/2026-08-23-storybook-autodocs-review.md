@@ -2,9 +2,17 @@
 
 ## Executive assessment
 
-The current Storybook documentation architecture has a **strong foundation**, particularly in its use of global Autodocs, MDX-based project documentation, specialised Doc Blocks, MSW integration, accessibility tooling, and Storybook-driven testing. However, the implementation contains several configuration and documentation-governance inconsistencies that prevent it from being considered a gold-standard Storybook setup.
+The current Storybook documentation architecture has a **strong foundation**,
+particularly in its use of global Autodocs, MDX-based project documentation,
+specialised Doc Blocks, MSW integration, accessibility tooling, and
+Storybook-driven testing. However, the implementation contains several
+configuration and documentation-governance inconsistencies that prevent it from
+being considered a gold-standard Storybook setup.
 
-This review is benchmarked against the **current official Storybook 10.5 documentation**. The exact installed Storybook version was not supplied in a `package.json`, so version-sensitive changes should be validated against the repository's actual installed package versions before implementation.
+This review is benchmarked against the **current official Storybook 10.5
+documentation**. The exact installed Storybook version was not supplied in a
+`package.json`, so version-sensitive changes should be validated against the
+repository's actual installed package versions before implementation.
 
 ### Overall verdict
 
@@ -12,21 +20,44 @@ This review is benchmarked against the **current official Storybook 10.5 documen
 
 **Target state after recommendations: 99/100 against the agreed rubric**
 
-The largest issues are not with Autodocs itself—the global `tags: ['autodocs']` configuration is correct—but with the surrounding configuration and developer guidance:
+The largest issues are not with Autodocs itself—the global `tags: ['autodocs']`
+configuration is correct—but with the surrounding configuration and developer
+guidance:
 
-1. The project's own `component-docs-guide.mdx` incorrectly instructs developers to use the built-in `'docs'` tag to enable Autodocs. The current Storybook tag is `'autodocs'`.
-2. `main.ts` places `autodocs`, `defaultName`, and `docsMode` inside `@storybook/addon-docs` options even though current Storybook documents `defaultName` and `docsMode` under the top-level `docs` configuration and Autodocs activation through tags.
-3. `preview.ts` duplicates this configuration through `docs.enabled`, `docs.autodocs`, and a project-owned `expectedAddonDocsConfig`, none of which should be necessary for the documented Autodocs activation model.
-4. A global `parameters.docs.description.component` risks replacing useful component-specific JSDoc descriptions with the same generic description for every component.
-5. The project recreates Storybook's standard Autodocs template almost exactly in `preview-docs.ts`, adding code ownership without adding meaningful documentation capability.
-6. The Code Panel is not globally enabled even though it is now Storybook's supported replacement for the discontinued Storysource addon.
-7. `typescript.check: true` is documented as a **Webpack-specific** Storybook option, yet this project uses `@storybook/react-vite`.
-8. `@storybook/addon-styling-webpack` is registered despite the project using Storybook's Vite framework.
-9. Story and MDX globs overlap substantially, unnecessarily increasing configuration complexity.
-10. MDX documentation uses Markdown pipe tables while the current addon-docs configuration contains an empty `mdxPluginOptions` object. Storybook specifically recommends `remark-gfm` when Markdown tables are required. The existing Bootstrap table CSS addresses styling, not Markdown parsing.\
+1. The project's own `component-docs-guide.mdx` incorrectly instructs developers
+   to use the built-in `'docs'` tag to enable Autodocs. The current Storybook
+   tag is `'autodocs'`.
+2. `main.ts` places `autodocs`, `defaultName`, and `docsMode` inside
+   `@storybook/addon-docs` options even though current Storybook documents
+   `defaultName` and `docsMode` under the top-level `docs` configuration and
+   Autodocs activation through tags.
+3. `preview.ts` duplicates this configuration through `docs.enabled`,
+   `docs.autodocs`, and a project-owned `expectedAddonDocsConfig`, none of which
+   should be necessary for the documented Autodocs activation model.
+4. A global `parameters.docs.description.component` risks replacing useful
+   component-specific JSDoc descriptions with the same generic description for
+   every component.
+5. The project recreates Storybook's standard Autodocs template almost exactly
+   in `preview-docs.ts`, adding code ownership without adding meaningful
+   documentation capability.
+6. The Code Panel is not globally enabled even though it is now Storybook's
+   supported replacement for the discontinued Storysource addon.
+7. `typescript.check: true` is documented as a **Webpack-specific** Storybook
+   option, yet this project uses `@storybook/react-vite`.
+8. `@storybook/addon-styling-webpack` is registered despite the project using
+   Storybook's Vite framework.
+9. Story and MDX globs overlap substantially, unnecessarily increasing
+   configuration complexity.
+10. MDX documentation uses Markdown pipe tables while the current addon-docs
+    configuration contains an empty `mdxPluginOptions` object. Storybook
+    specifically recommends `remark-gfm` when Markdown tables are required. The
+    existing Bootstrap table CSS addresses styling, not Markdown parsing.\
     The target architecture should be:
 
-**Autodocs first → inference first → CSF for executable states → MDX for narrative → Doc Blocks for composition → parameters for scoped customisation → Code Panel for source inspection → minimal project-owned Storybook infrastructure.**
+**Autodocs first → inference first → CSF for executable states → MDX for
+narrative → Doc Blocks for composition → parameters for scoped customisation →
+Code Panel for source inspection → minimal project-owned Storybook
+infrastructure.**
 
 ---
 
@@ -43,7 +74,8 @@ This assessment covers:
 - `docs-table-styles.css`
 - supporting Storybook mocks/MSW configuration
 
-The authoritative external baseline is the current Storybook documentation covering:
+The authoritative external baseline is the current Storybook documentation
+covering:
 
 - Autodocs
 - MDX
@@ -57,7 +89,10 @@ The authoritative external baseline is the current Storybook documentation cover
 - styling
 - Docs containers and theming
 
-Storybook 10.5 describes Autodocs as **tag-driven**. A CSF file receives an automatically generated documentation page when at least one effective story has the `autodocs` tag. Project-wide activation is normally achieved in `preview.ts` with `tags: ['autodocs']`.
+Storybook 10.5 describes Autodocs as **tag-driven**. A CSF file receives an
+automatically generated documentation page when at least one effective story has
+the `autodocs` tag. Project-wide activation is normally achieved in `preview.ts`
+with `tags: ['autodocs']`.
 
 Your `preview.ts` already does exactly that:
 
@@ -68,7 +103,8 @@ export default {
 } satisfies Preview;
 ```
 
-**Assessment: correct and should remain the primary Autodocs activation mechanism.**
+**Assessment: correct and should remain the primary Autodocs activation
+mechanism.**
 
 ---
 
@@ -76,7 +112,8 @@ export default {
 
 ## P0 — Documentation governance defect: `'docs'` versus `'autodocs'`
 
-The most serious problem is not in the runtime configuration. It is in the developer documentation that teaches people how to extend the system.
+The most serious problem is not in the runtime configuration. It is in the
+developer documentation that teaches people how to extend the system.
 
 `component-docs-guide.mdx` currently states:
 
@@ -85,7 +122,7 @@ The most serious problem is not in the runtime configuration. It is in the devel
 and shows:
 
 ```ts
-tags: ['ai-generated', 'needs-work', 'docs']
+tags: ['ai-generated', 'needs-work', 'docs'];
 ```
 
 It then repeats that adding `'docs'` creates an Autodocs page.
@@ -95,20 +132,21 @@ That is incorrect against the current documented API.
 The built-in tag is:
 
 ```ts
-tags: ['autodocs']
+tags: ['autodocs'];
 ```
 
 and an inherited Autodocs tag can be removed with:
 
 ```ts
-tags: ['!autodocs']
+tags: ['!autodocs'];
 ```
 
 Storybook explicitly documents `autodocs` as the activation mechanism.
 
 ### Required correction
 
-Because Autodocs is already globally enabled, normal components require **no local tag at all**.
+Because Autodocs is already globally enabled, normal components require **no
+local tag at all**.
 
 Recommended developer guidance:
 
@@ -135,11 +173,13 @@ export const InternalState: Story = {
 };
 ```
 
-If another story in the same CSF file still effectively has `autodocs`, the component's generated documentation page can still exist.
+If another story in the same CSF file still effectively has `autodocs`, the
+component's generated documentation page can still exist.
 
 ### Acceptance criterion
 
-Repository search should return **zero developer instructions claiming ****`'docs'`**** enables Autodocs**.
+Repository search should return **zero developer instructions claiming
+****`'docs'`**** enables Autodocs**.
 
 ---
 
@@ -148,12 +188,13 @@ Repository search should return **zero developer instructions claiming ****`'doc
 ## 3.1 Framework choice — correct
 
 ```ts
-framework: '@storybook/react-vite'
+framework: '@storybook/react-vite';
 ```
 
 is the correct Storybook framework for the project's React/Vite architecture.
 
-Storybook currently identifies the Vite builder as the recommended default for most projects and automatically merges relevant Vite configuration.
+Storybook currently identifies the Vite builder as the recommended default for
+most projects and automatically merges relevant Vite configuration.
 
 **Status: retain.**
 
@@ -184,7 +225,8 @@ stories: [
 ],
 ```
 
-This is easier to reason about and closely follows the Storybook configuration pattern documented in the official examples.
+This is easier to reason about and closely follows the Storybook configuration
+pattern documented in the official examples.
 
 **Priority: P1.**
 
@@ -248,9 +290,11 @@ This Storybook is not merely a documentation website. It contains:
 - Chromatic
 - BDD alignment
 
-The introduction explicitly describes component and route stories and an executable BDD workflow.
+The introduction explicitly describes component and route stories and an
+executable BDD workflow.
 
-Therefore the normal Storybook should retain both Canvas/story and Docs navigation.
+Therefore the normal Storybook should retain both Canvas/story and Docs
+navigation.
 
 For a documentation-only view, use the official CLI mode:
 
@@ -284,10 +328,11 @@ docs: {
 The current documented Autodocs activation is already:
 
 ```ts
-tags: ['autodocs']
+tags: ['autodocs'];
 ```
 
-There is no need for a second project-owned configuration model mirroring that state.
+There is no need for a second project-owned configuration model mirroring that
+state.
 
 `expectedAddonDocsConfig` similarly duplicates Storybook configuration:
 
@@ -306,9 +351,9 @@ export const expectedAddonDocsConfig = {
 Remove:
 
 ```ts
-docs.enabled
-docs.autodocs
-expectedAddonDocsConfig
+docs.enabled;
+docs.autodocs;
+expectedAddonDocsConfig;
 ```
 
 unless some demonstrable custom addon in this repository consumes those fields.
@@ -332,14 +377,15 @@ Configuration should have one source of truth.
 
 This is effectively Storybook's documented default Autodocs template.
 
-Maintaining an exact copy provides no architectural value and creates an upgrade liability.
+Maintaining an exact copy provides no architectural value and creates an upgrade
+liability.
 
 ### Recommendation
 
 Delete:
 
 ```ts
-autoDocsTemplate
+autoDocsTemplate;
 ```
 
 and remove:
@@ -354,9 +400,11 @@ from `preview.ts`.
 
 Use Storybook's default page.
 
-Create a custom page only when the organisation actually needs a materially different global information architecture.
+Create a custom page only when the organisation actually needs a materially
+different global information architecture.
 
-For a single component that requires richer documentation, Storybook recommends attached MDX rather than changing every component's global page.
+For a single component that requires richer documentation, Storybook recommends
+attached MDX rather than changing every component's global page.
 
 **Priority: P1.**
 
@@ -373,9 +421,13 @@ description: {
 },
 ```
 
-This works against the project's stated goal of deriving meaningful descriptions from component documentation.
+This works against the project's stated goal of deriving meaningful descriptions
+from component documentation.
 
-Storybook's `Description` block is designed to obtain descriptions from component/meta/story JSDoc or explicit documentation parameters. Storybook recommends JSDoc comments for normal component descriptions and parameter overrides when a deliberate Storybook-specific override is necessary.
+Storybook's `Description` block is designed to obtain descriptions from
+component/meta/story JSDoc or explicit documentation parameters. Storybook
+recommends JSDoc comments for normal component descriptions and parameter
+overrides when a deliberate Storybook-specific override is necessary.
 
 ### Recommendation
 
@@ -402,7 +454,8 @@ const meta = {
 } satisfies Meta<typeof DatePicker>;
 ```
 
-Storybook can then infer the description rather than displaying identical boilerplate for every component.
+Storybook can then infer the description rather than displaying identical
+boilerplate for every component.
 
 **Priority: P0/P1 because it directly reduces generated documentation quality.**
 
@@ -417,10 +470,12 @@ Storybook infers ArgTypes from the component referenced by:
 ```ts
 const meta = {
   component: Component,
-}
+};
 ```
 
-For React, the default parser is currently `react-docgen`, with `react-docgen-typescript` available where more detailed TypeScript extraction is required. Manually specified ArgTypes override inferred metadata.
+For React, the default parser is currently `react-docgen`, with
+`react-docgen-typescript` available where more detailed TypeScript extraction is
+required. Manually specified ArgTypes override inferred metadata.
 
 ## Recommended policy
 
@@ -512,9 +567,12 @@ argTypes: {
 }
 ```
 
-ArgTypes drive documentation and Controls behaviour; args represent an actual component state.
+ArgTypes drive documentation and Controls behaviour; args represent an actual
+component state.
 
-The `ArgTypes` Doc Block presents a static component API table, whereas the `Controls` Doc Block represents current story args and supports interaction. Storybook explicitly distinguishes these two purposes.\
+The `ArgTypes` Doc Block presents a static component API table, whereas the
+`Controls` Doc Block represents current story args and supports interaction.
+Storybook explicitly distinguishes these two purposes.\
 This distinction should be added to `component-docs-guide.mdx`.
 
 ---
@@ -529,12 +587,13 @@ typescript: {
 },
 ```
 
-Storybook's current TypeScript integration documentation identifies `typescript.check` as available for **Webpack-based projects**.
+Storybook's current TypeScript integration documentation identifies
+`typescript.check` as available for **Webpack-based projects**.
 
 This project uses:
 
 ```ts
-framework: '@storybook/react-vite'
+framework: '@storybook/react-vite';
 ```
 
 ### Recommendation
@@ -547,7 +606,8 @@ typescript: {
 }
 ```
 
-and enforce TypeScript correctness through the repository's normal type-checking pipeline, for example:
+and enforce TypeScript correctness through the repository's normal type-checking
+pipeline, for example:
 
 ```bash
 tsc --noEmit
@@ -580,7 +640,8 @@ Consider `react-docgen-typescript` when:
 - `forwardRef`-style components lose useful metadata;
 - richer documentation/MCP component metadata is a priority.
 
-Storybook's Vite integration uses `react-docgen` by default and documents `react-docgen-typescript` as the fallback for inference issues.
+Storybook's Vite integration uses `react-docgen` by default and documents
+`react-docgen-typescript` as the fallback for inference issues.
 
 ---
 
@@ -589,12 +650,15 @@ Storybook's Vite integration uses `react-docgen` by default and documents `react
 Current:
 
 ```ts
-'@storybook/addon-styling-webpack'
+'@storybook/addon-styling-webpack';
 ```
 
 The package exists to configure CSS tooling in **Webpack** Storybook builds.
 
-Storybook's current styling documentation states that Vite already supports CSS modules, PostCSS, Sass, Less and Stylus through Vite configuration, whereas `@storybook/addon-styling-webpack` is recommended for corresponding Webpack scenarios.
+Storybook's current styling documentation states that Vite already supports CSS
+modules, PostCSS, Sass, Less and Stylus through Vite configuration, whereas
+`@storybook/addon-styling-webpack` is recommended for corresponding Webpack
+scenarios.
 
 Your project already imports the global SCSS directly through `preview.ts`.
 
@@ -603,10 +667,11 @@ Your project already imports the global SCSS directly through `preview.ts`.
 Remove:
 
 ```ts
-'@storybook/addon-styling-webpack'
+'@storybook/addon-styling-webpack';
 ```
 
-from a React-Vite Storybook unless a verified dependency unexpectedly requires it.
+from a React-Vite Storybook unless a verified dependency unexpectedly requires
+it.
 
 **Priority: P1.**
 
@@ -623,28 +688,36 @@ import { vite as csfPlugin } from '@storybook/csf-plugin';
 and then:
 
 ```ts
-plugins: [csfPlugin({})]
+plugins: [csfPlugin({})];
 ```
 
-because the local comment states this is necessary for static source extraction under React-Vite.
+because the local comment states this is necessary for static source extraction
+under React-Vite.
 
-`@storybook/csf-plugin` is real and does provide source snippet extraction, including Vite support. However, Storybook's Vite builder already depends on the CSF plugin, and the normal official React-Vite setup does not require users to manually add it.
+`@storybook/csf-plugin` is real and does provide source snippet extraction,
+including Vite support. However, Storybook's Vite builder already depends on the
+CSF plugin, and the normal official React-Vite setup does not require users to
+manually add it.
 
 ### Recommendation
 
-Treat the explicit plugin registration as **suspected redundancy**, not automatically as an error.
+Treat the explicit plugin registration as **suspected redundancy**, not
+automatically as an error.
 
 Run the acceptance tests described later.
 
-If static and dynamic source output continue to work without the explicit plugin:
+If static and dynamic source output continue to work without the explicit
+plugin:
 
 **remove it.**
 
 If a repository-specific regression demonstrates that it is required:
 
-**retain it and document the exact Storybook/version defect it compensates for.**
+**retain it and document the exact Storybook/version defect it compensates
+for.**
 
-That is preferable to institutionalising a workaround based only on an old assumption.
+That is preferable to institutionalising a workaround based only on an old
+assumption.
 
 **Priority: P2.**
 
@@ -654,7 +727,8 @@ That is preferable to institutionalising a workaround based only on an old assum
 
 This was the largest omission in the previous Expert Review.
 
-Storybook 10.5 documents the **Code Panel** as the supported replacement for the Storysource addon, which was discontinued in Storybook 9.
+Storybook 10.5 documents the **Code Panel** as the supported replacement for the
+Storysource addon, which was discontinued in Storybook 9.
 
 Enable it globally:
 
@@ -666,16 +740,18 @@ parameters: {
 },
 ```
 
-The Code Panel appears when viewing an individual story in Canvas and displays a usable source representation with story args substituted.
+The Code Panel appears when viewing an individual story in Canvas and displays a
+usable source representation with story args substituted.
 
 ### Critical architectural point
 
 The Code Panel does **not** represent a separate source-generation subsystem.
 
-Storybook states that it renders the same snippet as the `Source` Doc Block and reuses:
+Storybook states that it renders the same snippet as the `Source` Doc Block and
+reuses:
 
 ```ts
-parameters.docs.source
+parameters.docs.source;
 ```
 
 Therefore your documentation architecture becomes:
@@ -717,7 +793,7 @@ Both settings are valid.
 Storybook currently supports:
 
 ```ts
-type: 'auto' | 'code' | 'dynamic'
+type: 'auto' | 'code' | 'dynamic';
 ```
 
 and `excludeDecorators`.
@@ -735,7 +811,8 @@ source: {
 
 unless the project deliberately requires dynamic source everywhere.
 
-`auto` is more resilient because it selects dynamic generation where the framework/story supports it and falls back to static code otherwise.
+`auto` is more resilient because it selects dynamic generation where the
+framework/story supports it and falls back to static code otherwise.
 
 `dynamic` specifically depends on a compatible arg-driven story setup.
 
@@ -789,7 +866,8 @@ canvas: {
 
 is a cleaner general default.
 
-Source remains available in the Canvas Doc Block, while the Code Panel provides easy access from individual stories.
+Source remains available in the Canvas Doc Block, while the Code Panel provides
+easy access from individual stories.
 
 For developer-training pages where implementation code is central:
 
@@ -819,7 +897,8 @@ controls: {
 
 under `parameters.docs` is valid.
 
-Storybook documents `parameters.docs.controls.exclude` and supports project-, component-, and story-level configuration.
+Storybook documents `parameters.docs.controls.exclude` and supports project-,
+component-, and story-level configuration.
 
 I recommend adding:
 
@@ -854,7 +933,8 @@ Story
 
 More specific parameter values override less specific ones.
 
-Storybook deep-merges parameter objects, while arrays and other non-object values are replaced.
+Storybook deep-merges parameter objects, while arrays and other non-object
+values are replaced.
 
 This means a project policy such as:
 
@@ -894,7 +974,8 @@ That inheritance model should be documented explicitly in the project guide.
 
 # 18. MDX strategy
 
-Your current project already uses MDX appropriately for high-level documentation.
+Your current project already uses MDX appropriately for high-level
+documentation.
 
 `introduction.mdx` is a standalone project guide located under:
 
@@ -911,7 +992,8 @@ Documentation/Getting Started
 - `IconItem`
 - `Stories`
 
-This is an excellent use of MDX: it contains material that cannot be adequately expressed by automatic component metadata alone.
+This is an excellent use of MDX: it contains material that cannot be adequately
+expressed by automatic component metadata alone.
 
 ### Recommended MDX policy
 
@@ -948,7 +1030,8 @@ Use **MDX** when developers need:
 
 # 19. Attached MDX for exceptional components
 
-When a component needs more than standard Autodocs, do not change the global template.
+When a component needs more than standard Autodocs, do not change the global
+template.
 
 Create:
 
@@ -991,7 +1074,8 @@ Use destructive styling only when the result cannot be easily reversed.
 <Canvas of={ButtonStories.Destructive} />
 ```
 
-When using `<Meta of={...} />`, Storybook specifically requires the full set of CSF exports, not the component itself.
+When using `<Meta of={...} />`, Storybook specifically requires the full set of
+CSF exports, not the component itself.
 
 This should become the project's recommended escape hatch from generic Autodocs.
 
@@ -1002,13 +1086,13 @@ This should become the project's recommended escape hatch from generic Autodocs.
 Your current:
 
 ```mdx
-<Meta title="Documentation/Getting Started" />
+<Meta title='Documentation/Getting Started' />
 ```
 
 and:
 
 ```mdx
-<Meta title="Documentation/Style Guide" />
+<Meta title='Documentation/Style Guide' />
 ```
 
 are appropriate patterns for standalone documentation.\
@@ -1079,7 +1163,8 @@ Use when appropriate:
 - `Markdown`
 - `Unstyled`
 
-Storybook documents these blocks as part of the current available Doc Block catalogue.
+Storybook documents these blocks as part of the current available Doc Block
+catalogue.
 
 The aim is **not to use every block**.
 
@@ -1091,9 +1176,11 @@ The aim is to know which block solves which documentation problem.
 
 `style-guide.mdx` currently contains Markdown pipe tables.
 
-Meanwhile, `component-docs-guide.mdx` recommends a custom `DocsTable` specifically to avoid Markdown table issues.
+Meanwhile, `component-docs-guide.mdx` recommends a custom `DocsTable`
+specifically to avoid Markdown table issues.
 
-Current Storybook documentation states that GitHub Flavored Markdown features such as tables should be enabled with `remark-gfm` when required.
+Current Storybook documentation states that GitHub Flavored Markdown features
+such as tables should be enabled with `remark-gfm` when required.
 
 ### Gold-standard approach
 
@@ -1136,7 +1223,9 @@ The CSS workaround should **not automatically be removed**.
 
 Its purpose is different from `remark-gfm`.
 
-The stylesheet explains that Bootstrap 5's reboot removes borders and padding from classless tables and scopes the fix specifically to Storybook docs and classless Markdown tables.
+The stylesheet explains that Bootstrap 5's reboot removes borders and padding
+from classless tables and scopes the fix specifically to Storybook docs and
+classless Markdown tables.
 
 That is a reasonable and carefully scoped compatibility fix.
 
@@ -1158,13 +1247,16 @@ Keep the CSS while Bootstrap produces the reset that necessitates it.
 
 # 24. Correct misleading JSDoc guidance
 
-The documentation guide currently implies that a JSDoc `@example` produces an example code snippet in generated Autodocs.
+The documentation guide currently implies that a JSDoc `@example` produces an
+example code snippet in generated Autodocs.
 
-It subsequently says that the Alert JSDoc example results in an Autodocs example code snippet.
+It subsequently says that the Alert JSDoc example results in an Autodocs example
+code snippet.
 
 That should not be taught as a guaranteed Storybook behaviour.
 
-The reliable Storybook source-code examples are based on **stories** and the `Source`/Code Panel mechanisms.
+The reliable Storybook source-code examples are based on **stories** and the
+`Source`/Code Panel mechanisms.
 
 ### Rewrite the guidance
 
@@ -1221,12 +1313,14 @@ The guide currently recommends:
 
 for private APIs.
 
-That may be a useful source-code convention, but it should not be presented as the project's reliable Storybook exclusion control unless repository tooling explicitly implements that behaviour.
+That may be a useful source-code convention, but it should not be presented as
+the project's reliable Storybook exclusion control unless repository tooling
+explicitly implements that behaviour.
 
 For Storybook documentation visibility, use documented mechanisms such as:
 
 ```ts
-tags: ['!autodocs']
+tags: ['!autodocs'];
 ```
 
 for a component/story.
@@ -1243,7 +1337,8 @@ argTypes: {
 },
 ```
 
-The developer guide should distinguish source documentation conventions from Storybook documentation controls.
+The developer guide should distinguish source documentation conventions from
+Storybook documentation controls.
 
 ---
 
@@ -1252,7 +1347,7 @@ The developer guide should distinguish source documentation conventions from Sto
 Current:
 
 ```ts
-toc: true
+toc: true;
 ```
 
 is a good project-level setting.
@@ -1261,13 +1356,15 @@ Storybook explicitly supports project-level TOCs and local customisation.
 
 Retain it.
 
-Components with minimal documentation can disable it locally when necessary rather than weakening the global policy.
+Components with minimal documentation can disable it locally when necessary
+rather than weakening the global policy.
 
 ---
 
 # 27. Docs theming and custom containers
 
-Do **not** introduce a custom Docs container merely because Storybook supports one.
+Do **not** introduce a custom Docs container merely because Storybook supports
+one.
 
 Storybook already provides:
 
@@ -1316,23 +1413,30 @@ const meta = {
 };
 ```
 
-when a tabbed API representation is useful, or MDX when the components require a richer combined explanation.
+when a tabbed API representation is useful, or MDX when the components require a
+richer combined explanation.
 
-Storybook specifically recommends MDX when component groups require a more tailored documentation structure.
+Storybook specifically recommends MDX when component groups require a more
+tailored documentation structure.
 
-The Style Guide already demonstrates useful cross-component documentation by referencing Alert stories from a standalone MDX page.
+The Style Guide already demonstrates useful cross-component documentation by
+referencing Alert stories from a standalone MDX page.
 
 ---
 
 # 29. Monorepo guidance
 
-If the design system becomes a pnpm/npm/yarn workspace, do not immediately centralise all Storybook knowledge into one huge configuration.
+If the design system becomes a pnpm/npm/yarn workspace, do not immediately
+centralise all Storybook knowledge into one huge configuration.
 
-Use direct component imports when Autodocs/docgen has trouble following package barrel exports.
+Use direct component imports when Autodocs/docgen has trouble following package
+barrel exports.
 
-If independent packages develop separate Storybooks or release cycles, consider Storybook Composition rather than forcing all domains into one runtime.
+If independent packages develop separate Storybooks or release cycles, consider
+Storybook Composition rather than forcing all domains into one runtime.
 
-Docgen should be validated against workspace package boundaries before selecting `react-docgen-typescript` globally.
+Docgen should be validated against workspace package boundaries before selecting
+`react-docgen-typescript` globally.
 
 The goal remains:
 
@@ -1352,7 +1456,9 @@ rather than duplicated documentation repositories.
 
 # 30. Recommended `main.ts`
 
-The following represents the preferred **documentation-related baseline**. Existing production chunking/Sass logic can remain separately where it is demonstrably required.
+The following represents the preferred **documentation-related baseline**.
+Existing production chunking/Sass logic can remain separately where it is
+demonstrably required.
 
 ```ts
 import type { StorybookConfig } from '@storybook/react-vite';
@@ -1448,14 +1554,14 @@ empty mdxPluginOptions
 Move:
 
 ```ts
-defaultName
-docsMode
+defaultName;
+docsMode;
 ```
 
 to:
 
 ```ts
-config.docs
+config.docs;
 ```
 
 ---
@@ -1507,15 +1613,16 @@ export default preview;
 ### Remove
 
 ```ts
-docs.enabled
-docs.autodocs
-docs.description.component
-docs.page
-expectedAddonDocsConfig
-autoDocsTemplate
+docs.enabled;
+docs.autodocs;
+docs.description.component;
+docs.page;
+expectedAddonDocsConfig;
+autoDocsTemplate;
 ```
 
-This significantly reduces configuration ownership while increasing documentation functionality.
+This significantly reduces configuration ownership while increasing
+documentation functionality.
 
 ---
 
@@ -1561,7 +1668,8 @@ export const Disabled: Story = {
 };
 ```
 
-No local `autodocs` tag is necessary because the project already enables it globally.
+No local `autodocs` tag is necessary because the project already enables it
+globally.
 
 Manual metadata should exist only where it adds value beyond inference.
 
@@ -1580,7 +1688,8 @@ Add explicit package scripts if equivalent scripts do not already exist:
 }
 ```
 
-Storybook officially recommends both patterns. A documentation build is written to `storybook-static`.
+Storybook officially recommends both patterns. A documentation build is written
+to `storybook-static`.
 
 ## CI documentation gate
 
@@ -1606,13 +1715,15 @@ It should confirm:
 16. `storybook-static` is produced.
 17. deployed deep links resolve correctly.
 
-A command that returns zero without these behaviours is not sufficient proof that the documentation architecture works.
+A command that returns zero without these behaviours is not sufficient proof
+that the documentation architecture works.
 
 ---
 
 # 34. Regression tests for configuration cleanup
 
-Before removing the explicit CSF plugin, cloned docs template or shadow configuration, capture a baseline representative component.
+Before removing the explicit CSF plugin, cloned docs template or shadow
+configuration, capture a baseline representative component.
 
 Test:
 
@@ -1680,7 +1791,8 @@ storybook-static/
 
 output.
 
-Only retain a workaround when one of these acceptance tests demonstrates why it is required.
+Only retain a workaround when one of these acceptance tests demonstrates why it
+is required.
 
 ---
 
@@ -1695,7 +1807,7 @@ Its key rules should be:
 Do not add tags to every component.
 
 ```ts
-tags: ['autodocs']
+tags: ['autodocs'];
 ```
 
 already exists globally.
@@ -1703,7 +1815,7 @@ already exists globally.
 ### Rule 2 — Opt out explicitly
 
 ```ts
-tags: ['!autodocs']
+tags: ['!autodocs'];
 ```
 
 when automatic documentation is inappropriate.
@@ -1744,19 +1856,21 @@ Use it when automatic documentation cannot communicate the concept well.
 
 ### Rule 10 — Doc Blocks compose MDX
 
-Choose blocks for a purpose rather than reproducing the default Autodocs template.
+Choose blocks for a purpose rather than reproducing the default Autodocs
+template.
 
 ### Rule 11 — Source and Code Panel share configuration
 
 Manage source snippets once through:
 
 ```ts
-parameters.docs.source
+parameters.docs.source;
 ```
 
 ### Rule 12 — Documentation must build in CI
 
-A component is not fully documented until its Storybook documentation can be built reproducibly.
+A component is not fully documented until its Storybook documentation can be
+built reproducibly.
 
 ---
 
@@ -1769,7 +1883,7 @@ Several existing choices are good and should not be lost during cleanup.
 Correct:
 
 ```ts
-tags: ['autodocs']
+tags: ['autodocs'];
 ```
 
 ## TOC
@@ -1777,7 +1891,7 @@ tags: ['autodocs']
 Correct and useful:
 
 ```ts
-toc: true
+toc: true;
 ```
 
 ## Source decorator exclusion
@@ -1785,20 +1899,23 @@ toc: true
 Reasonable:
 
 ```ts
-excludeDecorators: true
+excludeDecorators: true;
 ```
 
 ## MSW Storybook support
 
-The Storybook setup provides project-wide API handlers and service worker integration, creating realistic isolated component environments.
+The Storybook setup provides project-wide API handlers and service worker
+integration, creating realistic isolated component environments.
 
 ## Runtime environment isolation
 
-The existing setup deliberately provides Storybook-safe environment values rather than relying on unavailable browser-side Node globals.
+The existing setup deliberately provides Storybook-safe environment values
+rather than relying on unavailable browser-side Node globals.
 
 ## Design-system MDX
 
-The Style Guide's use of Typeset, ColorPalette and IconGallery is exactly the type of specialist documentation that justifies MDX.
+The Style Guide's use of Typeset, ColorPalette and IconGallery is exactly the
+type of specialist documentation that justifies MDX.
 
 ## Bootstrap table CSS workaround
 
@@ -1806,7 +1923,8 @@ The rule is narrowly scoped and technically justified.
 
 ## BDD alignment
 
-The Getting Started page already connects stories with executable regression coverage, which is a strong documentation-as-code characteristic.
+The Getting Started page already connects stories with executable regression
+coverage, which is a strong documentation-as-code characteristic.
 
 ---
 
@@ -1825,32 +1943,35 @@ The Getting Started page already connects stories with executable regression cov
 ## Phase 2 — Simplification
 
 1. Remove duplicate story/MDX globs.
-2. Remove `preview-docs.ts` if nothing remains after deleting the duplicated default template.
+2. Remove `preview-docs.ts` if nothing remains after deleting the duplicated
+   default template.
 3. Remove `expectedAddonDocsConfig`.
 4. Test removal of explicit `@storybook/csf-plugin`.
-5. Remove explicit `changeDetection: true` if no project policy requires declaring the default explicitly; Storybook currently documents `true` as the default.
+5. Remove explicit `changeDetection: true` if no project policy requires
+   declaring the default explicitly; Storybook currently documents `true` as the
+   default.
 
 ## Phase 3 — Documentation quality
 
- 1. Add `remark-gfm`.
- 2. Rewrite the component documentation guide.
- 3. Add Args versus ArgTypes guidance.
- 4. Add parameter inheritance guidance.
- 5. Add Code Panel guidance.
- 6. Add attached MDX examples.
- 7. Document the Doc Block capability model.
- 8. Add docs build scripts.
+1.  Add `remark-gfm`.
+2.  Rewrite the component documentation guide.
+3.  Add Args versus ArgTypes guidance.
+4.  Add parameter inheritance guidance.
+5.  Add Code Panel guidance.
+6.  Add attached MDX examples.
+7.  Document the Doc Block capability model.
+8.  Add docs build scripts.
 
 ## Phase 4 — Verification
 
- 1. Run representative inference tests.
- 2. Run source/Code Panel tests.
- 3. Validate MDX tables.
- 4. Validate standalone MDX.
- 5. Validate attached MDX.
- 6. Build documentation.
- 7. Verify `storybook-static`.
- 8. Verify deployed documentation.
+1.  Run representative inference tests.
+2.  Run source/Code Panel tests.
+3.  Validate MDX tables.
+4.  Validate standalone MDX.
+5.  Validate attached MDX.
+6.  Build documentation.
+7.  Verify `storybook-static`.
+8.  Verify deployed documentation.
 
 ---
 
@@ -1897,13 +2018,16 @@ Optional extension:
    Doc Blocks
 ```
 
-There should be no second internal configuration system attempting to describe whether Docs are enabled.
+There should be no second internal configuration system attempting to describe
+whether Docs are enabled.
 
 There should be no cloned Storybook default template without a reason.
 
-There should be no manually duplicated prop documentation where inference already provides it.
+There should be no manually duplicated prop documentation where inference
+already provides it.
 
-There should be no Webpack-specific tooling in a Vite Storybook without an explicit technical requirement.
+There should be no Webpack-specific tooling in a Vite Storybook without an
+explicit technical requirement.
 
 That simplicity is what makes Autodocs maintainable at scale.
 
@@ -1925,9 +2049,14 @@ That simplicity is what makes Autodocs maintainable at scale.
 | Evidence, currency and actionability |      10 |          **9** |
 | **Total**                            | **100** |     **99/100** |
 
-The one-point reservation is deliberate: the repository's actual `package.json` and runtime Storybook version were not supplied, so this review benchmarks the implementation against the **current official Storybook 10.5 documentation** rather than confirming that every recommendation matches the exact installed dependency graph.
+The one-point reservation is deliberate: the repository's actual `package.json`
+and runtime Storybook version were not supplied, so this review benchmarks the
+implementation against the **current official Storybook 10.5 documentation**
+rather than confirming that every recommendation matches the exact installed
+dependency graph.
 
-That is preferable to claiming certainty that the available evidence cannot establish.
+That is preferable to claiming certainty that the available evidence cannot
+establish.
 
 ## Final recommendation
 
@@ -1935,6 +2064,13 @@ Adopt the proposed simplified architecture.
 
 The highest-value changes are:
 
-**correct the developer guide → eliminate duplicate Autodocs configuration → remove the global description override → enable Code Panel → remove Webpack-specific configuration from React-Vite → restore proper ****`main.ts → docs`**** ownership → use inference as the default → use MDX only when it adds narrative value → validate the result with a real docs build.**
+**correct the developer guide → eliminate duplicate Autodocs configuration →
+remove the global description override → enable Code Panel → remove
+Webpack-specific configuration from React-Vite → restore proper
+****`main.ts → docs`**** ownership → use inference as the default → use MDX only
+when it adds narrative value → validate the result with a real docs build.**
 
-After those changes, the Storybook setup would be substantially closer to a modern, low-maintenance documentation platform rather than a Storybook configuration carrying historical workarounds and duplicated documentation infrastructure.
+After those changes, the Storybook setup would be substantially closer to a
+modern, low-maintenance documentation platform rather than a Storybook
+configuration carrying historical workarounds and duplicated documentation
+infrastructure.

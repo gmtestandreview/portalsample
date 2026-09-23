@@ -3,7 +3,9 @@
 ## Repository Pattern
 
 Encapsulate data access behind a consistent interface:
-- Define standard operations: `findAll`, `findById`, `create`, `update`, `delete`
+
+- Define standard operations: `findAll`, `findById`, `create`, `update`,
+  `delete`
 - Concrete implementations handle storage details (database, API, file, etc.)
 - Business logic depends on the abstract interface, not the storage mechanism
 - Enables easy swapping of data sources and simplifies testing with mocks
@@ -11,6 +13,7 @@ Encapsulate data access behind a consistent interface:
 ## API Response Envelope
 
 Use a consistent envelope for all API responses:
+
 ```typescript
 {
   success: boolean
@@ -23,6 +26,7 @@ Use a consistent envelope for all API responses:
 ## Skeleton Projects
 
 When implementing new functionality:
+
 1. Search for battle-tested skeleton projects first
 2. Evaluate options on: security, extensibility, relevance, maintenance activity
 3. Clone best match as foundation
@@ -32,14 +36,14 @@ When implementing new functionality:
 
 ```typescript
 // Wrap external operations in Result types
-type Result<T> = { ok: true; data: T } | { ok: false; error: string }
+type Result<T> = { ok: true; data: T } | { ok: false; error: string };
 
 async function fetchUser(id: string): Promise<Result<User>> {
   try {
-    const user = await db.users.findById(id)
-    return { ok: true, data: user }
+    const user = await db.users.findById(id);
+    return { ok: true, data: user };
   } catch (err) {
-    return { ok: false, error: err.message }
+    return { ok: false, error: err.message };
   }
 }
 ```
@@ -54,11 +58,12 @@ async function fetchUser(id: string): Promise<Result<User>> {
 
 ## A Team Primitive Responsibilities
 
-| Primitive | Owns | Does NOT |
-|---|---|---|
-| **Skill** (`skills/**`) | Reusable methodology, decision structure, gates. Model-invoked via `Skill` tool; user-invocable as `/<name>`. | Persona, tool restriction, model tier. |
-| **Agent** (`.claude/agents/**`) | A persona that *executes* a methodology under a fixed tool + model-tier budget (e.g. `debugger` runs `systematic-debugging`). Dispatched via `Agent`/`Task`. | Define the methodology itself — it cites the skill. |
-| **Command** (`.claude/commands/**`) | A user entry point that composes skills + agents into a workflow (`/feature`, `/quality-gate`) or is a thin alias to one skill/agent (`/debug`, `/adr`). | Contain methodology — it points at skills/agents. |
-| **Rule** (`.claude/rules/**`) | Always-on, non-negotiable policy (coding style, security checklist, git workflow, orchestration, model tiers). | Task-specific workflow. |
+| Primitive                           | Owns                                                                                                                                                         | Does NOT                                            |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------- |
+| **Skill** (`skills/**`)             | Reusable methodology, decision structure, gates. Model-invoked via `Skill` tool; user-invocable as `/<name>`.                                                | Persona, tool restriction, model tier.              |
+| **Agent** (`.claude/agents/**`)     | A persona that _executes_ a methodology under a fixed tool + model-tier budget (e.g. `debugger` runs `systematic-debugging`). Dispatched via `Agent`/`Task`. | Define the methodology itself — it cites the skill. |
+| **Command** (`.claude/commands/**`) | A user entry point that composes skills + agents into a workflow (`/feature`, `/quality-gate`) or is a thin alias to one skill/agent (`/debug`, `/adr`).     | Contain methodology — it points at skills/agents.   |
+| **Rule** (`.claude/rules/**`)       | Always-on, non-negotiable policy (coding style, security checklist, git workflow, orchestration, model tiers).                                               | Task-specific workflow.                             |
 
-All 25 skills resolve by bare name via `.claude/skills/` symlinks. See `.claude/docs/traceability.md`.
+All 25 skills resolve by bare name via `.claude/skills/` symlinks. See
+`.claude/docs/traceability.md`.

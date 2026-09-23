@@ -86,13 +86,13 @@ Classify the candidate before selecting cases.
 
 <!-- markdownlint-disable MD013 -->
 
-| Skill class | Primary behavioral evidence |
-| --- | --- |
-| **Discipline** | Activation, RED/GREEN, rationalization, conflicting goals, pressure, safety, escalation, regression |
-| **Technique** | Activation, RED/GREEN, correct/incorrect inputs, sequencing, partial environments, reproducibility, edge cases, regression |
-| **Pattern** | Activation, RED/GREEN, recognition, lookalikes, counterexamples, branch selection, false positives/negatives, regression |
-| **Reference** | Activation where relevant, retrieval/application baseline, resource discovery, retrieval accuracy, unsupported-query handling, coverage gaps, regression |
-| **Hybrid** | Combine only the case families needed for the actual behaviors present |
+| Skill class    | Primary behavioral evidence                                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Discipline** | Activation, RED/GREEN, rationalization, conflicting goals, pressure, safety, escalation, regression                                                      |
+| **Technique**  | Activation, RED/GREEN, correct/incorrect inputs, sequencing, partial environments, reproducibility, edge cases, regression                               |
+| **Pattern**    | Activation, RED/GREEN, recognition, lookalikes, counterexamples, branch selection, false positives/negatives, regression                                 |
+| **Reference**  | Activation where relevant, retrieval/application baseline, resource discovery, retrieval accuracy, unsupported-query handling, coverage gaps, regression |
+| **Hybrid**     | Combine only the case families needed for the actual behaviors present                                                                                   |
 
 <!-- markdownlint-enable MD013 -->
 

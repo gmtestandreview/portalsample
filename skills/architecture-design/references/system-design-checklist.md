@@ -12,7 +12,8 @@ item is either a gap to close or a conscious "not applicable" you can defend.
 
 ## Current State
 
-- [ ] Existing architecture inspected (code, config, schemas, deploy files, prior ADRs)
+- [ ] Existing architecture inspected (code, config, schemas, deploy files,
+      prior ADRs)
 - [ ] Key modules / services identified
 - [ ] Dependencies understood
 - [ ] Existing conventions considered

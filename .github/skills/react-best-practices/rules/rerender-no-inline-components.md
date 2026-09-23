@@ -9,9 +9,12 @@ tags: rerender, components, remount, performance
 
 **Impact: HIGH (prevents remount on every render)**
 
-Defining a component inside another component creates a new component type on every render. React sees a different component each time and fully remounts it, destroying all state and DOM.
+Defining a component inside another component creates a new component type on
+every render. React sees a different component each time and fully remounts it,
+destroying all state and DOM.
 
-A common reason developers do this is to access parent variables without passing props. Always pass props instead.
+A common reason developers do this is to access parent variables without passing
+props. Always pass props instead.
 
 **Incorrect (remounts on every render):**
 
@@ -42,7 +45,9 @@ function UserProfile({ user, theme }) {
 }
 ```
 
-Every time `UserProfile` renders, `Avatar` and `Stats` are new component types. React unmounts the old instances and mounts new ones, losing any internal state, running effects again, and recreating DOM nodes.
+Every time `UserProfile` renders, `Avatar` and `Stats` are new component types.
+React unmounts the old instances and mounts new ones, losing any internal state,
+running effects again, and recreating DOM nodes.
 
 **Correct (pass props instead):**
 

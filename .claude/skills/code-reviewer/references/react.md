@@ -1,6 +1,7 @@
 # React Review Guide
 
-Use this guide for React components, hooks, state management, forms, routing, accessibility, and rendering performance.
+Use this guide for React components, hooks, state management, forms, routing,
+accessibility, and rendering performance.
 
 ## Component Boundaries
 
@@ -13,7 +14,8 @@ Use this guide for React components, hooks, state management, forms, routing, ac
 ## Hooks
 
 - [ ] Hook dependency arrays are correct.
-- [ ] Effects synchronize with external systems; they do not duplicate derived state.
+- [ ] Effects synchronize with external systems; they do not duplicate derived
+      state.
 - [ ] Cleanup functions remove subscriptions, timers, observers, and listeners.
 - [ ] Custom hooks return stable, documented values.
 - [ ] Hooks are not called conditionally.
@@ -49,10 +51,12 @@ const visibleItems = items.filter((item) => item.visible);
 
 ## Rendering Performance
 
-- [ ] Expensive computations are memoized only when there is evidence or clear cost.
+- [ ] Expensive computations are memoized only when there is evidence or clear
+      cost.
 - [ ] Large lists are virtualized or paginated.
 - [ ] Props passed to memoized children are stable where needed.
-- [ ] Context providers do not force broad rerenders for frequently changing values.
+- [ ] Context providers do not force broad rerenders for frequently changing
+      values.
 - [ ] Effects do not create rerender loops.
 
 ## Common Bugs
@@ -71,5 +75,6 @@ const visibleItems = items.filter((item) => item.visible);
 - [ ] Tests assert user-visible behavior.
 - [ ] Tests use accessible queries where possible.
 - [ ] Async tests await settled UI states.
-- [ ] Mocks are used for network or browser APIs, not for the component under review.
+- [ ] Mocks are used for network or browser APIs, not for the component under
+      review.
 - [ ] Important keyboard and error flows are covered.

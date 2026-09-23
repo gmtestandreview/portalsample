@@ -1,6 +1,9 @@
 ---
 name: prd
-description: 'Generate high-quality Product Requirements Documents (PRDs) for software systems and AI-powered features. Includes executive summaries, user stories, technical specifications, and risk analysis.'
+description:
+  'Generate high-quality Product Requirements Documents (PRDs) for software
+  systems and AI-powered features. Includes executive summaries, user stories,
+  technical specifications, and risk analysis.'
 license: MIT
 ---
 
@@ -8,7 +11,10 @@ license: MIT
 
 ## Overview
 
-Design comprehensive, production-grade Product Requirements Documents (PRDs) that bridge the gap between business vision and technical execution. This skill works for modern software systems, ensuring that requirements are clearly defined.
+Design comprehensive, production-grade Product Requirements Documents (PRDs)
+that bridge the gap between business vision and technical execution. This skill
+works for modern software systems, ensuring that requirements are clearly
+defined.
 
 ## When to Use
 
@@ -26,7 +32,8 @@ Use this skill when:
 
 ### Phase 1: Discovery (The Interview)
 
-Before writing a single line of the PRD, you **MUST** interrogate the user to fill knowledge gaps. Do not assume context.
+Before writing a single line of the PRD, you **MUST** interrogate the user to
+fill knowledge gaps. Do not assume context.
 
 **Ask about:**
 
@@ -105,13 +112,16 @@ You **MUST** follow this exact structure for the output:
 
 ### DO (Always)
 
-- **Define Testing**: For AI systems, specify how to test and validate output quality.
+- **Define Testing**: For AI systems, specify how to test and validate output
+  quality.
 - **Iterate**: Present a draft and ask for feedback on specific sections.
 
 ### DON'T (Avoid)
 
-- **Skip Discovery**: Never write a PRD without asking at least 2 clarifying questions first.
-- **Hallucinate Constraints**: If the user didn't specify a tech stack, ask or label it as `TBD`.
+- **Skip Discovery**: Never write a PRD without asking at least 2 clarifying
+  questions first.
+- **Hallucinate Constraints**: If the user didn't specify a tech stack, ask or
+  label it as `TBD`.
 
 ---
 
@@ -119,16 +129,17 @@ You **MUST** follow this exact structure for the output:
 
 ### 1. Executive Summary
 
-**Problem**: Users struggle to find specific documentation snippets in massive repositories.
-**Solution**: An intelligent search system that provides direct answers with source citations.
-**Success**:
+**Problem**: Users struggle to find specific documentation snippets in massive
+repositories. **Solution**: An intelligent search system that provides direct
+answers with source citations. **Success**:
 
 - Reduce search time by 50%.
 - Citation accuracy >= 95%.
 
 ### 2. User Stories
 
-- **Story**: As a developer, I want to ask natural language questions so I don't have to guess keywords.
+- **Story**: As a developer, I want to ask natural language questions so I don't
+  have to guess keywords.
 - **AC**:
   - Supports multi-turn clarification.
   - Returns code blocks with "Copy" button.

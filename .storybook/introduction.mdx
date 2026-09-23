@@ -1,12 +1,14 @@
 import { Meta } from '@storybook/addon-docs/blocks';
 
-<Meta title="Documentation/Getting Started" />
+<Meta title='Documentation/Getting Started' />
 
 # NMI Portal Storybook
 
 **Component and route documentation for the NMI customer portal**
 
-Welcome to Storybook for the NMI Services Portal. This workspace documents reusable components and route-level stories used by the React frontend in `ClientApp/src/**`.
+Welcome to Storybook for the NMI Services Portal. This workspace documents
+reusable components and route-level stories used by the React frontend in
+`ClientApp/src/**`.
 
 ## What This Storybook Covers
 
@@ -19,15 +21,29 @@ Welcome to Storybook for the NMI Services Portal. This workspace documents reusa
 
 ### For developers
 
-Start with [Component Documentation Guide](/docs/documentation-component-documentation-guide--documentation), then open the component you plan to change and compare the generated Controls, ArgTypes, story source, and interaction tests. Use [Migration/Coverage Matrix](/docs/migration-coverage-matrix--documentation) when you need to confirm whether a route or component family already has Storybook coverage.
+Start with
+[Component Documentation Guide](/docs/documentation-component-documentation-guide--documentation),
+then open the component you plan to change and compare the generated Controls,
+ArgTypes, story source, and interaction tests. Use
+[Migration/Coverage Matrix](/docs/migration-coverage-matrix--documentation) when
+you need to confirm whether a route or component family already has Storybook
+coverage.
 
 ### For design and CX
 
-Start with [Style Guide](/docs/documentation-style-guide--documentation), then review the relevant component states in the sidebar. Use component MDX pages for design rationale, content guidance, accessibility expectations, responsive behaviour, and links to related components. Treat SCSS tokens and generated story output as source-backed evidence.
+Start with [Style Guide](/docs/documentation-style-guide--documentation), then
+review the relevant component states in the sidebar. Use component MDX pages for
+design rationale, content guidance, accessibility expectations, responsive
+behaviour, and links to related components. Treat SCSS tokens and generated
+story output as source-backed evidence.
 
 ### For business and showcases
 
-Start with route stories under `Routes/**` and the feature-level documentation listed in [Migration/Overview](/docs/migration-overview--documentation). Use stories to confirm actors, outcomes, business rules, acceptance criteria, happy paths, edge states, and presenter-safe demo sequences before a stakeholder review.
+Start with route stories under `Routes/**` and the feature-level documentation
+listed in [Migration/Overview](/docs/migration-overview--documentation). Use
+stories to confirm actors, outcomes, business rules, acceptance criteria, happy
+paths, edge states, and presenter-safe demo sequences before a stakeholder
+review.
 
 ## Clean-machine first story in 15 minutes
 
@@ -35,7 +51,8 @@ Start with route stories under `Routes/**` and the feature-level documentation l
 2. Run `npm ci` from the repository root.
 3. Run `npm run storybook`.
 4. Open `http://localhost:6006`.
-5. In the sidebar, open [PrimaryButton](/docs/components-buttons-primarybutton--documentation).
+5. In the sidebar, open
+   [PrimaryButton](/docs/components-buttons-primarybutton--documentation).
 6. Confirm the Default, Dark Mode, and Disabled stories render.
 7. Run `npm run test:storybook` for executable story checks.
 8. Run `npm run storybook:verify:docs` before sharing documentation.
@@ -77,8 +94,8 @@ the documentation:
 npm run test:storybook
 ```
 
-CI validates the generated documentation with `npm run build-storybook-docs`
-and `npm run storybook:verify:docs`.
+CI validates the generated documentation with `npm run build-storybook-docs` and
+`npm run storybook:verify:docs`.
 
 ## Chromatic review workflow
 
@@ -117,4 +134,6 @@ When adding or updating stories:
 - [Coverage Matrix](/docs/migration-coverage-matrix--documentation)
 - [Testing and Validation](/docs/migration-validation--documentation)
 
-Use the sidebar to browse component stories, route stories, and migration docs. Keep this documentation aligned with real story behavior and the Storybook BDD suite.
+Use the sidebar to browse component stories, route stories, and migration docs.
+Keep this documentation aligned with real story behavior and the Storybook BDD
+suite.

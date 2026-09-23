@@ -224,7 +224,8 @@ cat .claude/hooks/state/skills-used-{session-id}.json
 
 If the skill is in `skills_used`, it won't block again in this session.
 
-**Fix:** Reset only the affected session state, preserving a rollback copy first:
+**Fix:** Reset only the affected session state, preserving a rollback copy
+first:
 
 ```bash
 cp .claude/hooks/state/skills-used-{session-id}.json \
@@ -387,7 +388,7 @@ Expected:
 
 ```json
 {
-  "enforcement": "block"  // Change to "suggest"
+  "enforcement": "block" // Change to "suggest"
 }
 ```
 
