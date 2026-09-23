@@ -23,7 +23,7 @@ The customer portal dashboard makes three API calls to load an organisation's
 data. Each call sends the organisation's CRM GUID as a query string parameter
 called `PortalId`:
 
-```
+```http
 GET /api/dashboard/get-filtered-dashboard-drafts?PortalId=<guid>&PageNumber=1&PageSize=10
 GET /api/dashboard/get-filtered-dashboard-quotes?PortalId=<guid>&...
 GET /api/dashboard/get-filtered-dashboard-artefacts?PortalId=<guid>&...
@@ -172,7 +172,7 @@ migration will be unblocked immediately.
 
 ---
 
-## Fix — if the handler fails the check
+## Fix if the handler fails
 
 If a handler uses the `PortalId` query value directly as the data-layer filter
 with no JWT comparison, apply this pattern to all three endpoints:

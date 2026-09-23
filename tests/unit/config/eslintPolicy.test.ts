@@ -17,16 +17,25 @@ import { beforeAll, describe, expect, it } from 'vitest';
  */
 
 const PROBE_FILE = 'ClientApp/src/App.tsx';
+const FOOTER_PROBE_FILE = 'ClientApp/src/components/Footer/Footer.tsx';
 const LOAD_TIMEOUT_MS = 60_000;
 
-let appRules: Record<string, unknown> = {};
+let appRules: Readonly<Record<string, unknown>> = {};
+let footerRules: Readonly<Record<string, unknown>> = {};
 let pluginRuleNames: string[] = [];
 
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
 type Severity = 0 | 1 | 2 | 'absent';
+type CompatibilityDelta = Readonly<{
+  coveredBy: string;
+  outgoing: string;
+}>;
 
-const severityOf = (ruleId: string): Severity => {
-  const entry = appRules[ruleId];
+const severityOf = (
+  ruleId: string,
+  rules: Readonly<Record<string, unknown>> = appRules
+): Severity => {
+  const entry = rules[ruleId];
 
   if (entry === undefined) return 'absent';
 
@@ -38,8 +47,10 @@ const severityOf = (ruleId: string): Severity => {
 beforeAll(async () => {
   const eslint = new ESLint();
   const config = await eslint.calculateConfigForFile(PROBE_FILE);
+  const footerConfig = await eslint.calculateConfigForFile(FOOTER_PROBE_FILE);
 
   appRules = (config.rules ?? {}) as Record<string, unknown>;
+  footerRules = (footerConfig.rules ?? {}) as Record<string, unknown>;
 
   const imported = (await import('@eslint-react/eslint-plugin')) as {
     default?: { rules?: Record<string, unknown> };
@@ -130,11 +141,25 @@ describe('deliberate convention deviations stay disabled', () => {
   );
 });
 
+describe('Prettier owns formatting rules', () => {
+  it('runs Prettier as an ESLint error for application files', () => {
+    expect(severityOf('prettier/prettier')).toBe(2);
+  });
+
+  it('does not keep JSX spacing rules that conflict with Prettier', () => {
+    expect(
+      severityOf('@stylistic/jsx-child-element-spacing', footerRules)
+    ).not.toBe(2);
+  });
+});
+
 describe('the outgoing plugin is fully retired', () => {
-  it('resolves no eslint-plugin-react rule for application files', () => {
+  it('enables no eslint-plugin-react rule for application files', () => {
     const legacyRules = Object.keys(appRules).filter(
       (ruleId) =>
-        ruleId.startsWith('react/') && !ruleId.startsWith('react-hooks/')
+        ruleId.startsWith('react/') &&
+        !ruleId.startsWith('react-hooks/') &&
+        severityOf(ruleId) !== 0
     );
 
     expect(legacyRules).toEqual([]);
@@ -151,7 +176,7 @@ describe('unsupported compatibility deltas stay honest', () => {
    * "exist and should be probed as direct replacements". Measured against the
    * installed plugin, they do not exist under any name - hence the last two rows.
    */
-  const deltas = [
+  const deltas: readonly CompatibilityDelta[] = [
     {
       outgoing: 'react/no-is-mounted',
       coveredBy: 'no replacement; isMounted is absent from this codebase',
@@ -179,7 +204,7 @@ describe('unsupported compatibility deltas stay honest', () => {
 
   it.each(deltas)(
     'records $outgoing as unsupported rather than silently dropped',
-    ({ coveredBy }) => {
+    ({ coveredBy }: CompatibilityDelta) => {
       expect(coveredBy.length).toBeGreaterThan(0);
     }
   );

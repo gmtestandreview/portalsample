@@ -129,7 +129,7 @@ InTextLink Stories: External, InlineText
 SOURCE CODE BUG — Exposed by story but not asserted:
 
 InTextLink/index.tsx:23: target is destructured from props (removed from spread)
-but the rendered <a> always has target='_blank' hardcoded. The InlineText story
+but the rendered `<a>` always has `target='_blank'` hardcoded. The InlineText story
 passes no target prop, yet the link will render target='_blank' (new tab). The
 story has no play assertion to catch this. A rebuild from the story would
 produce a link that always opens in a new tab, regardless of intent.
@@ -212,7 +212,7 @@ Case Covered Year filter options ❌ Status filter options ❌ Sort order filter
 ❌ containerClassName, className ❌ setUserProfile side effect asserted ❌
 SteppedNavigation Stories: CurrentStep
 
-Case Covered interactive={false} mode (renders <div> not <a>) ❌ All steps
+Case Covered interactive={false} mode (renders `<div>` not `<a>`) ❌ All steps
 completed ❌ Step 0 active (first step) ❌ Last step active ❌ No completed
 steps (fresh wizard) ❌ SummaryDisplay Stories: TextValue (as='p'), PhoneValue
 (as='span'), FormattedNumber (as='number')

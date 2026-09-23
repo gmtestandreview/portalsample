@@ -79,7 +79,7 @@ modified.**
 
 ## Sprint Architecture
 
-```
+```text
 PROJECT_BRIEF.md (single source of truth)
   ↓
   ├─ docs/Storybook vs Source Quality Assessment Report.md (findings)

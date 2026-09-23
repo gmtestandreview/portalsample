@@ -156,7 +156,7 @@ the 3 files; the table omits that prefix for readability.
 
 ### Task 0: Isolate pre-existing unrelated changes from move targets
 
-**Files**
+#### Files
 
 - None moved or modified — this task only stages/commits or stashes what is
   _already_ dirty inside Task 1–4's target directories, separately from any
@@ -165,7 +165,11 @@ the 3 files; the table omits that prefix for readability.
 - [ ] **Step 1: Identify pre-existing dirty files inside every move target**
 
 Run:
-`git status --short ClientApp/src/components/AriaComponents ClientApp/src/components/Buttons/AriaButton ClientApp/src/components/forms/AriaForm ClientApp/src/components/Breadcrumb ClientApp/src/components/Calendar ClientApp/src/components/Color* ClientApp/src/components/ComboBox ClientApp/src/components/CommandPalette ClientApp/src/components/Dialog ClientApp/src/components/Disclosure* ClientApp/src/components/DropZone ClientApp/src/components/GridLists ClientApp/src/components/Inputs ClientApp/src/components/reactaria_components`
+
+```bash
+git status --short ClientApp/src/components/AriaComponents ClientApp/src/components/Buttons/AriaButton ClientApp/src/components/forms/AriaForm ClientApp/src/components/Breadcrumb ClientApp/src/components/Calendar ClientApp/src/components/Color* ClientApp/src/components/ComboBox ClientApp/src/components/CommandPalette ClientApp/src/components/Dialog ClientApp/src/components/Disclosure* ClientApp/src/components/DropZone ClientApp/src/components/GridLists ClientApp/src/components/Inputs ClientApp/src/components/reactaria_components
+```
+
 Expected (confirmed at plan-authoring time): 6 modified files —
 `AriaComponents/Meter.tsx`, `Popover.tsx`, `ProgressBar.tsx`,
 `ProgressCircle.tsx`, `RangeCalendar.tsx`, `Tooltip.tsx`. Re-run this at
@@ -192,7 +196,7 @@ commit conflation.
 
 ### Task 1: Move primitives (`AriaComponents/*` → `react-aria-evaluation/primitives/*`)
 
-**Files**
+#### Files
 
 - Move: `ClientApp/src/components/AriaComponents/*` (88 files: `.tsx`, `.css`,
   `.ts`) → `ClientApp/src/components/react-aria-evaluation/primitives/*`
@@ -206,7 +210,11 @@ commit conflation.
 - [ ] **Step 1: Establish baseline**
 
 Run:
-`npm run type-check && npm run test:unit -- tests/unit/storybook/reactAriaEvaluationContract.test.ts tests/unit/components/AriaComponents.test.tsx`
+
+```bash
+npm run type-check && npm run test:unit -- tests/unit/storybook/reactAriaEvaluationContract.test.ts tests/unit/components/AriaComponents.test.tsx
+```
+
 Expected: both pass on current (pre-move) tree — confirms a clean starting point
 before any move.
 
@@ -279,7 +287,7 @@ git commit -m "refactor: move AriaComponents primitives into react-aria-evaluati
 
 ### Task 2: Move hub composites (`AriaButton`, `AriaForm`)
 
-**Files**
+#### Files
 
 - Move: `ClientApp/src/components/Buttons/AriaButton/*` →
   `ClientApp/src/components/react-aria-evaluation/button/AriaButton/*`
@@ -333,7 +341,7 @@ git commit -m "refactor: move AriaButton and AriaForm hub composites into react-
 
 ### Task 3: Move remaining composite folders
 
-**Files**
+#### Files
 
 - Move (15 folders, no cross-dependencies beyond the two Task 2 hubs):
   `Breadcrumb/AriaBreadcrumb`, `Calendar`, `ColorArea`, `ColorField`,
@@ -395,7 +403,11 @@ Per the Coverage-Exclusion Path Map, update all 19 Task-3-tagged rows in
 - [ ] **Step 4: Verify, including coverage**
 
 Run:
-`npm run type-check && npm run test:unit && npm run test:unit:coverage && npm run build-storybook`
+
+```bash
+npm run type-check && npm run test:unit && npm run test:unit:coverage && npm run build-storybook
+```
+
 Expected: zero errors, zero failures, coverage still at threshold, Storybook
 build succeeds (confirms no broken story imports).
 
@@ -411,7 +423,7 @@ git commit -m "refactor: move remaining React Aria composite folders into react-
 
 ### Task 4: Move retained-scaffold prototypes
 
-**Files**
+#### Files
 
 - Move: `ClientApp/src/components/reactaria_components/AlertMessage.tsx` →
   `react-aria-evaluation/alert-message/AlertMessage.tsx`
@@ -500,7 +512,7 @@ Ant-style matcher has no brace alternation (per
 `sonarCoverageContract.test.ts`'s own comment), so replace that one line with 3
 explicit lines in **both** files:
 
-```
+```text
 ClientApp/src/components/react-aria-evaluation/alert-message/AlertMessage.tsx,\
 ClientApp/src/components/react-aria-evaluation/status-pill/StatusPill.tsx,\
 ClientApp/src/components/react-aria-evaluation/page-header/PageHeader.tsx,\
@@ -551,7 +563,7 @@ git commit -m "refactor: move retained-scaffold prototypes into react-aria-evalu
 
 ### Task 5: Contract-test finalisation
 
-**Files**
+#### Files
 
 - Modify: `tests/unit/storybook/reactAriaEvaluationContract.test.ts` (final
   `evaluationDirectories` array, full path audit)
@@ -570,7 +582,11 @@ string changed in any task above.
 - [ ] **Step 3: Confirm no stray coverage-exclusion path survived**
 
 Run:
-`grep -rn "AriaComponents\|Buttons/AriaButton\|forms/AriaForm\|reactaria_components" vitest.unit.config.ts sonar-project.properties tests/unit/config/coverageRemapPolicy.test.ts`
+
+```bash
+grep -rn "AriaComponents\|Buttons/AriaButton\|forms/AriaForm\|reactaria_components" vitest.unit.config.ts sonar-project.properties tests/unit/config/coverageRemapPolicy.test.ts
+```
+
 (or the tokensave-preferred equivalent). Expected: no output — every old path in
 all 3 coverage-exclusion files was replaced across Tasks 1–4. Any hit here is a
 live gap: it means a moved file is now double-counted as both present at its new

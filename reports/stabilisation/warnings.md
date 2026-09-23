@@ -56,13 +56,14 @@ justify a blanket third-party exception.
 
 ## W1 — React Aria missing visible label (unit)
 
-**Signature**
+### Signature
 
-```
+```text
 If you do not provide a visible label, you must specify an aria-label or aria-labelledby attribute for accessibility
 ```
 
-**First owning stack.**
+### First owning stack
+
 `ClientApp/src/components/Inputs/AutoSuggest/AutoSuggestContainer.tsx:110`
 renders a native `<label htmlFor={controlId}>` as a child of React Aria's
 `<ComboBox>`:
@@ -87,7 +88,7 @@ popover_ it renders, which are left unnamed. `combobox.accessibility.test.tsx` �
 the nominal, correctly-labelled case — emits the warning too, confirming the
 owner is the component and not any one test's fixture.
 
-**Affected tests**
+### Affected tests
 
 | Owner file                                                     | Blocks | Notes                                                                                               |
 | -------------------------------------------------------------- | -----: | --------------------------------------------------------------------------------------------------- |
@@ -96,7 +97,7 @@ owner is the component and not any one test's fixture.
 | `tests/unit/routes/acceptQuote/deliveryAndReturn.test.tsx`     |      4 | route consumer, regression surface only                                                             |
 | `tests/unit/components/inputs/combobox.accessibility.test.tsx` |      3 | nominal labelled combobox                                                                           |
 
-**Reproduction**
+### Reproduction
 
 | Mode        | Command                                                                                                                                           | Result                |
 | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------- |
@@ -150,9 +151,9 @@ C-MCP surface and must not precede that gate.
 
 ## W3 — React `not wrapped in act(...)` (unit)
 
-**Signature**
+### Signature
 
-```
+```text
 Warning: An update to %s inside a test was not wrapped in act(...).
 ```
 
@@ -161,7 +162,7 @@ React Aria ships Parcel scope-hoisted bundles, so one component name arrives
 build-hashed (`$dbdc5e6e7ce01b4b$var$ComboBoxInner`). Expectations must not
 anchor on that hash.
 
-**First owning stacks**
+### First owning stacks
 
 | Component                | Owner file                                                     | Lines |
 | ------------------------ | -------------------------------------------------------------- | ----: |
@@ -235,9 +236,9 @@ three-mode settlement evidence in `reports/stabilisation/warning-settlement.md`.
 
 ## W5 — `[env] Missing required runtime variable` (Storybook)
 
-**Signature**
+### Signature
 
-```
+```text
 [env] Missing required runtime variable: REACT_APP_APPINSIGHTS_INSTRUMENTATIONKEY
 [env] Missing required runtime variable: REACT_APP_GA_TRACKINGID
 ```
@@ -269,9 +270,9 @@ validation in `env.ts` is not to change.
 
 ## W6 — Storybook `CriticalPresetLoadError` unhandled rejection (unit)
 
-**Signature**
+### Signature
 
-```
+```text
 Unhandled promise rejection: SB_CORE-SERVER_0002 (CriticalPresetLoadError): Storybook failed to load the following preset: …/.storybook/main.ts.
 ```
 
@@ -302,7 +303,8 @@ evaluating the plugin's side effect. Fallback: an exact local expectation via
 
 ## W7 — `Copied to clipboard:` (unit)
 
-`tests/unit/components/utilityCoverageSlice.test.tsx > utility component coverage slice > prints, copies and can hide mailing label actions`
+`tests/unit/components/utilityCoverageSlice.test.tsx > utility component
+coverage slice > prints, copies and can hide mailing label actions`
 emits a multi-line `console.log` on stdout carrying the rendered mailing label.
 
 The guard covers `warn` and `error` only, so this is out of scope and needs no
