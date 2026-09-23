@@ -230,6 +230,29 @@ requirement.
 Remember: A story name might not reflect the property name correctly, so always
 verify properties through documentation or example stories before using them.
 
+## TokenSave (code intelligence)
+
+This repo has a TokenSave code graph initialized (`.tokensave/`), exposed as
+the `tokensave` MCP server. Before reading source files or grepping the tree
+to answer a "where is X" / "what calls Y" / "how does this feature work"
+question, use the TokenSave MCP tools instead of raw file reads:
+
+- `tokensave_context` — first call for any exploration or "how does X work"
+  task; returns relevant symbols, relationships, and code snippets.
+- `tokensave_search` — find a symbol by name.
+- `tokensave_callers` / `tokensave_callees` / `tokensave_impact` — trace call
+  graphs and blast radius.
+- `tokensave_read` — read any file (indexed or not); slice with
+  `mode: "lines"` or map its symbols with `mode: "map"` instead of pulling the
+  whole body.
+- `tokensave_status` — check index freshness before relying on results; if
+  the current git branch isn't tracked, run `tokensave branch add <branch>`
+  (this requires an MCP server restart / new session to take effect — the
+  running server keeps serving the previously tracked branch until then).
+
+Skip TokenSave only for non-code tasks, or when it is confirmed unavailable
+via `tokensave_status`.
+
 ## Edit Boundaries
 
 **Edit freely:**

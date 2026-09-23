@@ -48,6 +48,15 @@ Codex, Claude, or another coding assistant.
 - **Unsaved form prompts**: use `<UnsavedFormPrompt>` — do not re-implement
   `RouteLeavingGuard`.
 
+## TokenSave (code intelligence)
+
+Before reading files or searching the tree to find where something lives or
+how it's called, use the `tokensave` MCP tools: `tokensave_context` for "how
+does X work" questions, `tokensave_search` for a known symbol,
+`tokensave_callers`/`tokensave_callees` for call graphs, and `tokensave_read`
+for reading a file without pulling its whole body. Check `tokensave_status`
+first if results look stale.
+
 ## Key architecture
 
 See [AGENTS.md](../AGENTS.md) for the full architecture map, tech-stack table,

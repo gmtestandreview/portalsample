@@ -1,20 +1,20 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
 import { execFileSync, spawnSync } from 'node:child_process';
 import {
-  mkdtempSync,
   mkdirSync,
+  mkdtempSync,
   readFileSync,
-  writeFileSync,
   rmSync,
+  writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
+import { it } from 'node:test';
 import ts from 'typescript';
-import { transformProps, isEligible } from './readonly-props.mjs';
+import { isEligible, transformProps } from './readonly-props.mjs';
 
-test('wraps named, destructured, generic, memo and default component props only', () => {
+it('wraps named, destructured, generic, memo and default component props only', () => {
   const source = `interface Props { name: string }
 function Welcome(props: Props) { return <div>{props.name}</div>; }
 const Card = ({ name }: Props) => <div>{name}</div>;
@@ -26,11 +26,11 @@ function Factory(props: Props) { return () => <div />; }
 `;
   const result = transformProps(source, 'example.tsx');
   assert.equal(result.changes.length, 5);
-  assert.match(result.source, /Welcome\(props: Readonly<Props>\)/);
-  assert.match(result.source, /\{ name \}: Readonly<Props>/);
-  assert.match(result.source, /Readonly<Props & \{ value: T \}>/);
-  assert.match(result.source, /helper\(props: Props\)/);
-  assert.match(result.source, /Factory\(props: Props\)/);
+  assert.match(result.source, /Welcome\(props: Readonly<Props>\)/u);
+  assert.match(result.source, /\{ name \}: Readonly<Props>/u);
+  assert.match(result.source, /Readonly<Props & \{ value: T \}>/u);
+  assert.match(result.source, /helper\(props: Props\)/u);
+  assert.match(result.source, /Factory\(props: Props\)/u);
   assert.equal(transformProps(result.source, 'example.tsx').changes.length, 0);
   const emit = (text) =>
     ts.transpileModule(text, {
@@ -42,7 +42,7 @@ function Factory(props: Props) { return () => <div />; }
   assert.equal(emit(result.source), emit(source));
 });
 
-test('does not change helpers merely containing JSX or shadowed Readonly types', () => {
+it('does not change helpers merely containing JSX or shadowed Readonly types', () => {
   assert.equal(
     transformProps(
       'function Helper(props: Props) { const element = <div />; return 1; }'
@@ -56,7 +56,7 @@ test('does not change helpers merely containing JSX or shadowed Readonly types',
   assert.equal(result.skipped.length, 1);
 });
 
-test('limits edits to handwritten production TSX', () => {
+it('limits edits to handwritten production TSX', () => {
   assert.equal(isEligible('ClientApp/src/components/Card.tsx'), true);
   for (const filename of [
     'ClientApp/src/external/Card.tsx',
@@ -125,21 +125,21 @@ input.name = 'after';
   };
 }
 
-test('CLI previews without writing, checks, applies after validation and is idempotent', (context) => {
+it('CLI previews without writing, checks, applies after validation and is idempotent', (context) => {
   const { filename, run } = fixture(context);
   const original = readFileSync(filename, 'utf8');
   const preview = run();
   assert.equal(preview.status, 0, preview.stderr);
-  assert.match(preview.stdout, /1 proposed props fixes/);
+  assert.match(preview.stdout, /1 proposed props fixes/u);
   assert.equal(readFileSync(filename, 'utf8'), original);
   assert.equal(run('--check').status, 1);
   const write = run('--write');
   assert.equal(write.status, 0, write.stderr);
-  assert.match(readFileSync(filename, 'utf8'), /props: Readonly<Props>/);
+  assert.match(readFileSync(filename, 'utf8'), /props: Readonly<Props>/u);
   assert.equal(run('--check').status, 0);
 });
 
-test('CLI rejects mutations revealed by readonly without touching source', (context) => {
+it('CLI rejects mutations revealed by readonly without touching source', (context) => {
   const { filename, run } = fixture(
     context,
     "props.name = 'changed'; return <div />;"
@@ -147,31 +147,31 @@ test('CLI rejects mutations revealed by readonly without touching source', (cont
   const original = readFileSync(filename, 'utf8');
   const result = run('--write');
   assert.equal(result.status, 2);
-  assert.match(result.stderr, /read-only property/);
+  assert.match(result.stderr, /read-only property/u);
   assert.equal(readFileSync(filename, 'utf8'), original);
 });
 
-test('CLI refuses baseline errors and dirty target files', (context) => {
+it('CLI refuses baseline errors and dirty target files', (context) => {
   const broken = fixture(context, 'missingSymbol(); return <div />;');
   const result = broken.run('--write');
   assert.equal(result.status, 2);
-  assert.match(result.stderr, /Baseline has/);
-  assert.doesNotMatch(readFileSync(broken.filename, 'utf8'), /Readonly</);
+  assert.match(result.stderr, /Baseline has/u);
+  assert.doesNotMatch(readFileSync(broken.filename, 'utf8'), /Readonly</u);
   const dirty = fixture(context);
   writeFileSync(
     dirty.filename,
-    readFileSync(dirty.filename, 'utf8') + '// user change\n'
+    `${readFileSync(dirty.filename, 'utf8')}// user change\n`
   );
   const changed = dirty.run('--write');
   assert.equal(changed.status, 2);
-  assert.match(changed.stderr, /staged or unstaged/);
-  assert.match(readFileSync(dirty.filename, 'utf8'), /user change/);
+  assert.match(changed.stderr, /staged or unstaged/u);
+  assert.match(readFileSync(dirty.filename, 'utf8'), /user change/u);
   assert.equal(dirty.run('--unknown').status, 2);
   assert.equal(dirty.run('--write', '--check').status, 2);
   assert.equal(dirty.run('../outside').status, 2);
 });
 
-test('CLI refuses edits to files outside the compiler project', (context) => {
+it('CLI refuses edits to files outside the compiler project', (context) => {
   const { root, filename, run } = fixture(
     context,
     "props.name = 'changed'; return <div />;"
@@ -184,11 +184,11 @@ test('CLI refuses edits to files outside the compiler project', (context) => {
   const original = readFileSync(filename, 'utf8');
   const result = run('--write');
   assert.equal(result.status, 2, result.stdout);
-  assert.match(result.stderr, /not included in the TypeScript project/);
+  assert.match(result.stderr, /not included in the TypeScript project/u);
   assert.equal(readFileSync(filename, 'utf8'), original);
 });
 
-test(
+it(
   'CLI validates replacements when tsconfig path casing differs on Windows',
   { skip: process.platform !== 'win32' },
   (context) => {
@@ -206,12 +206,12 @@ test(
     const original = readFileSync(filename, 'utf8');
     const result = run('--write');
     assert.equal(result.status, 2, result.stdout);
-    assert.match(result.stderr, /read-only property/);
+    assert.match(result.stderr, /read-only property/u);
     assert.equal(readFileSync(filename, 'utf8'), original);
   }
 );
 
-test('preserves comments, CRLF, defaults, nested types and callbacks', () => {
+it('preserves comments, CRLF, defaults, nested types and callbacks', () => {
   const source =
     'const Card = (props: /* keep */ { items: string[]; onSave: (value: string[]) => void } = defaults) => <div />;\r\n';
   const result = transformProps(source, 'example.tsx');
@@ -221,7 +221,7 @@ test('preserves comments, CRLF, defaults, nested types and callbacks', () => {
   );
 });
 
-test('reports inferred, any and rest props without guessing their types', () => {
+it('reports inferred, any and rest props without guessing their types', () => {
   const result = transformProps(
     `
 const Inferred: FC<Props> = (props) => <div />;

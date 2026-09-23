@@ -409,6 +409,7 @@ workflow-state-log + Readiness Assessment Section 13
 - [ ] **Step 3: Confirm** Priority 2 items map 1:1 to Section 11 of the
       readiness assessment
 - [ ] **Commit:**
+
   ```bash
   git add docs/change-record/MASTER-CHANGE-RECORD.md docs/change-record/OPEN-ITEMS-BACKLOG.md
   git commit -m "docs: add master change record and open-items backlog for migration preparation"
@@ -525,6 +526,7 @@ and confirm the fix is present, then complete the remaining DoD items.
   - [ ] `npm run build-storybook` passes
 
 - [ ] **Commit after all four B1 issues verified/fixed:**
+
   ```bash
   git add static/js/components/Pill/StatusPill.tsx \
           static/js/components/Pill/StatusPill.stories.tsx \
@@ -583,6 +585,7 @@ Follow the sequence and DoD from `docs/sprint-1/dev-handoff.md` Phase 2.
   Expected: build succeeds, no TypeScript errors, no console errors.
 
 - [ ] **Commit:**
+
   ```bash
   git commit -m "feat(storybook): close Sprint 1 Batch B2 — AcceptQuote steps, NotificationMessage, ErrorSummary"
   ```
@@ -664,6 +667,7 @@ authoritative acceptance criterion.
   `VERIFYING` state.
 
 - [ ] **Commit:**
+
   ```bash
   git commit -m "feat(storybook): close Sprint 1 Batches B2/B3 — Issues #7–#15 high and medium priority"
   ```
@@ -729,6 +733,7 @@ acceptance criteria.
   `CLOSED_SUCCESS`.
 
 - [ ] **Commit:**
+
   ```bash
   git add docs/sprint-1/qa-signoff.md docs/sprint-1/done.md docs/sprint-1/workflow-state-log.md
   git commit -m "docs: Sprint 1 QA sign-off — all 15 Storybook issues CLOSED_SUCCESS"
@@ -788,6 +793,7 @@ When the backend team returns their verdict:
 - [ ] **Step 3: Update `docs/change-record/OPEN-ITEMS-BACKLOG.md`** — move
       `OPEN-001` to a `RESOLVED` section.
 - [ ] **Commit:**
+
   ```bash
   git add docs/sec/SEC-010-idor-backend-verification.md \
           docs/change-record/MASTER-CHANGE-RECORD.md \
@@ -847,6 +853,7 @@ design-platform dependency and may proceed in parallel as Phase 5 Batches A–D.
       layer) are unblocked.
 
 - [ ] **Commit:**
+
   ```bash
   git add docs/design-platform/DESIGN-PLATFORM-INPUTS.md
   git commit -m "docs: create design-platform input register for SCSS/UI migration decisions"
@@ -911,11 +918,13 @@ Section 10 are the checklist.
 
 - [ ] **Step 3: Run baseline in target environment (before any files are
       migrated)**
+
   ```bash
   npm run type-check
   npm run test:unit
   npm run build-storybook
   ```
+
   Record pass counts as the pre-migration baseline. Any pre-existing failures
   must be documented.
 
@@ -1008,6 +1017,7 @@ After all batches complete:
 ```
 
 - [ ] **Commit:**
+
   ```bash
   git add docs/migration/PRE-FLIGHT-CHECKLIST.md docs/migration/MIGRATION-RUNBOOK.md
   git commit -m "docs: add migration pre-flight checklist and runbook"
@@ -1050,6 +1060,7 @@ Migrate in order per Assessment Section 9:
   Expected: same pass count as pre-migration baseline; no new errors.
 
 - [ ] **Commit Batch A:**
+
   ```bash
   git commit -m "feat(migration): Batch A — logic layer core (index, App, env, auth, routes, utils)"
   ```
@@ -1065,11 +1076,14 @@ completed 2026-05-30. Confirm `WizardStepError` discriminated union is present
 in `types.ts`; confirm `errorState.ts` helper is present.
 
 - [ ] **After migration:**
+
   ```bash
   npm run type-check
   npm run test:unit
   ```
+
 - [ ] **Commit Batch B:**
+
   ```bash
   git commit -m "feat(migration): Batch B — shared components"
   ```
@@ -1085,10 +1099,13 @@ Critical: confirm `GoogleAnalytics.tsx` has no `console.log` debug block
 (removed 2026-05-29). Confirm `AppLogger.ts` has no PII-bearing call sites.
 
 - [ ] **After migration:**
+
   ```bash
   npm run test:unit
   ```
+
 - [ ] **Commit Batch C:**
+
   ```bash
   git commit -m "feat(migration): Batch C — storage, analytics, instrumentation"
   ```
@@ -1122,6 +1139,7 @@ Critical items:
   errors.
 
 - [ ] **Commit Batch D:**
+
   ```bash
   git commit -m "feat(migration): Batch D — validation schemas, unit tests, BDD specs"
   ```
@@ -1156,6 +1174,7 @@ npm run build:prod
 Expected: Storybook 100% pass; production build succeeds; no asset 404 errors.
 
 - [ ] **Commit Batch E:**
+
   ```bash
   git commit -m "feat(migration): Batch E — SCSS, assets, Storybook (design-platform aligned)"
   ```
@@ -1173,6 +1192,7 @@ After regeneration: confirm `AuthorizedApiBase` extension is manually patched if
 needed; run `npm run type-check`.
 
 - [ ] **Commit:**
+
   ```bash
   git commit -m "feat(migration): regenerate NSwag web-api-client.ts from OpenAPI spec"
   ```
@@ -1212,6 +1232,7 @@ needed; run `npm run type-check`.
 - [ ] **Update Master Change Record** with final migration entries.
 
 - [ ] **Final commit:**
+
   ```bash
   git add docs/change-record/MASTER-CHANGE-RECORD.md
   git commit -m "docs: record post-migration verification — all batches complete"

@@ -277,7 +277,9 @@ const DashboardTA = () => {
         };
         setActiveTab(tabFromSession as DashboardTab);
         // changePlaceholderForSearchBox(p!.filterActiveTab! as DashboardTab);
-        setCurrentPage(updatedP.filterCurrentPage);
+        setCurrentPage(
+          updatedP.filterCurrentPage ?? defaultFilter.filterCurrentPage
+        );
         SessionStorageCache().removeItem('set-tabop-after-save');
 
         // Only need to do this on first load`
@@ -444,7 +446,7 @@ const DashboardTA = () => {
     accounts[0],
     accountDetails?.userProfile,
     accountDetails,
-    accountContext.details,
+    accountContext?.details,
     accountContext,
   ]);
 

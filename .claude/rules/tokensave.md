@@ -43,6 +43,13 @@ Run `tokensave_status` to see when the index was last synced. Run
 index update or the task already involves modifying this repository; otherwise
 disclose the staleness and fall back to read-only source inspection.
 
+After `tokensave branch add <branch>` completes, the running MCP server keeps
+serving the previously tracked branch (usually `main`) until it is restarted —
+the next graph tool call fails with `MCP error -32600: refusing: MCP server
+serves branch 'X' while the working tree is on 'Y'`. Tell the user a restart
+(or new session) is needed before the newly tracked branch's data is queryable;
+do not silently retry against the stale branch.
+
 ### Cross-project and cross-branch queries
 
 Pass an absolute `graph_root` to query a different initialized project, adding

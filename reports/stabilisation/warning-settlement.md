@@ -99,7 +99,7 @@ For every owner, mode 1 is the story alone (`-t "<Story Name>"`), mode 2 is its
 complete story file, mode 3 is the full sequential run. Logs are in
 `reports/stabilisation/c3-settlement/`.
 
-### Result: every owner is mode 1 or mode 2. No owner requires a mode-3 explanation.
+### Result: every owner is mode 1 or mode 2. No owner requires a mode-3 explanation
 
 | Owner story                                           | Mode 1 | Mode 2 | Mode 3 attribution | First owning stack                                                                           |
 | ----------------------------------------------------- | -----: | -----: | -----------------: | -------------------------------------------------------------------------------------------- |

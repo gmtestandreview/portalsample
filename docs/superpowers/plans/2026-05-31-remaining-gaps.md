@@ -433,7 +433,7 @@ Content must document:
   1. **Obtain the OpenAPI spec** — either run the backend locally and fetch:
   ```
 
-  curl http://localhost:5000/swagger/v1/swagger.json -o api-spec.json
+  curl <http://localhost:5000/swagger/v1/swagger.json> -o api-spec.json
 
   ````
   or use the published spec URL from the NMI portal backend.
@@ -458,6 +458,8 @@ Content must document:
   nswag run nswag.json
   ```
 
+  <!-- markdownlint-disable MD029 -- continues Steps numbering above -->
+
   3. **Verify `AuthorizedApiBase` is preserved** — confirm lines 10–35 of the
      regenerated file contain the `AuthorizedApiBase` class with `authToken`,
      `targetOrganisation`, `setAuthToken()`, and `transformOptions()`. If NSwag
@@ -476,6 +478,8 @@ Content must document:
 
   5. **Update the Storybook MSW handlers** (`.storybook/msw-handlers.ts`) if any
      new API endpoints were added that need mock responses for stories.
+
+  <!-- markdownlint-enable MD029 -->
 
   ## Rebuild note
 

@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict';
 import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 
@@ -20,8 +21,9 @@ const getPublicAsset = async (document: Document, selector: string) => {
       : element?.getAttribute('content');
 
   expect(publicUrl).toMatch(/^\/[A-Za-z0-9.-]+$/u);
+  assert(publicUrl);
 
-  const assetPath = path.join(publicDirectory, publicUrl?.slice(1));
+  const assetPath = path.join(publicDirectory, publicUrl.slice(1));
   const asset = await stat(assetPath);
 
   expect(asset.isFile()).toBe(true);

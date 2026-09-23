@@ -1,6 +1,6 @@
 # Vendored Qdrant Skills — Provenance
 
-**Source:** https://skills.qdrant.tech/ (`llms.txt` index) **Vendored:**
+**Source:** <https://skills.qdrant.tech/> (`llms.txt` index) **Vendored:**
 2026-09-10, on branch `feat/a-team-agents-commands-docs` **License:** the skills
 site declares no explicit license. Presumed to follow the Qdrant org default
 (Apache-2.0, as used by `github.com/qdrant/mcp-server-qdrant`). Vendored for
@@ -54,7 +54,7 @@ links point back to the live site and require network access.
 
 ## Related
 
-- MCP server: https://github.com/qdrant/mcp-server-qdrant (Apache-2.0) —
+- MCP server: <https://github.com/qdrant/mcp-server-qdrant> (Apache-2.0) —
   `qdrant-store` / `qdrant-find`, FastEmbed
   `sentence-transformers/all-MiniLM-L6-v2` default, no hybrid / rerank out of
   the box.

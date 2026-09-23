@@ -148,7 +148,7 @@ const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
   }, [
     errorState.kind,
     accountState?.details?.organisation,
-    accountDispatch.setTargetOrganisation,
+    accountDispatch?.setTargetOrganisation,
     accountState?.details?.targetOrganisation?.targetOrganisationName,
     accountState?.details?.abn,
     accountDispatch,

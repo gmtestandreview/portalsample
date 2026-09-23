@@ -75,7 +75,7 @@ Repository constraints that also bind (from `CLAUDE.md`):
 Each finding is stated with the artifact that proves it. These are the reasons
 this plan exists; every task below traces to one.
 
-### F1 — The "clean" verification is a false negative. The run never finished.
+### F1 — The "clean" verification is a false negative. The run never finished
 
 `docs/change-record/storybbok_change_remaining_errors.md` contains **zero**
 occurrences of every target string (`DEPRECATED`, `vitest.init`,
@@ -95,7 +95,7 @@ scan over a truncated log cannot distinguish "the warning is gone" from "the
 code that emits the warning never ran". Rubric item _No False Negatives by Log
 Scan Alone_ (10 pts) scores 0.
 
-### F2 — The process that died is not `npm run test:storybook`.
+### F2 — The process that died is not `npm run test:storybook`
 
 `test:storybook` runs `node --max-old-space-size=8192 ...`. The OOM shows a
 ceiling of ~4092 MB — Node's default, not 8192. The log interleaves `Chromatic:`
@@ -115,7 +115,7 @@ The previous attempt's final verification ran through exactly this path (see
 `storybook_changed_output.md`: "The clean-server MCP run is underway"). The
 verification path is the path that dies.
 
-### F3 — `vitest.storybook.coverage.ts` is inert on two of three run paths.
+### F3 — `vitest.storybook.coverage.ts` is inert on two of three run paths
 
 Vitest 4 resolves coverage from the **root** config only:
 
@@ -140,7 +140,7 @@ monkey-patch. It never noticed the second.
 `tests/unit/config/coverageRemapPolicy.test.ts` assert the exported config
 _literal_, so they pass in all three cases and detect none of this.
 
-### F4 — The `vitest.init` bridge is semantically correct but its regression test is tautological.
+### F4 — The `vitest.init` bridge is semantically correct but its regression test is tautological
 
 The bridge is faithful. Vitest's `init()` is literally a deprecation log plus a
 delegation:
@@ -168,7 +168,7 @@ asserts the plugin did what the plugin does. It cannot fail if Storybook renames
 the call site, moves to `standalone()`, or stops calling `configureVitest`. The
 one change that is a dependency-contract bridge has no contract test.
 
-### F5 — The MSW handler set is keyed to one log, not to the code.
+### F5 — The MSW handler set is keyed to one log, not to the code
 
 `.storybook/msw-handlers.ts` mocks two lookup types. Application code requests
 **four**:
@@ -185,7 +185,7 @@ Additionally, both `/api/lookup` handlers return `undefined` on a non-match, so
 an unmapped type falls through **both** to the unhandled-request warning —
 silently, at the exact place the fix was supposed to close.
 
-### F6 — `package-lock.json` moved in the same commit, including the package that owns the remap.
+### F6 — `package-lock.json` moved in the same commit, including the package that owns the remap
 
 `git show --stat 23f0a2f -- package-lock.json` → `+72 / -6`. Transitive versions
 changed:
@@ -205,7 +205,7 @@ consistent with the known deferred lockfile-corruption defect (1272 packages
 missing `resolved`). This violates _No unrelated files or dependencies changed_
 (5 pts).
 
-### F7 — The commit conflates the user's in-flight telemetry work with the Storybook fix.
+### F7 — The commit conflates the user's in-flight telemetry work with the Storybook fix
 
 `23f0a2f` contains, alongside the Storybook changes: `ClientApp/src/env.ts`,
 `ClientApp/src/instrumentation/AppInsightsService.ts`,
@@ -217,7 +217,7 @@ missing `resolved`). This violates _No unrelated files or dependencies changed_
 uncommitted telemetry work. The content was preserved, but the Storybook change
 can no longer be reverted or bisected without also reverting the telemetry fix.
 
-### F8 — An existing guard test was rewritten to bless the new behaviour.
+### F8 — An existing guard test was rewritten to bless the new behaviour
 
 `git show 23f0a2f -- tests/unit/config/vitestTopology.test.ts`:
 
@@ -231,7 +231,7 @@ can no longer be reverted or bisected without also reverting the telemetry fix.
 A guard that fails is evidence. Editing it to pass is not a fix. Given F3, the
 retired invariant was closer to correct than its replacement.
 
-### F9 — A story test was edited to settle a flake without root cause.
+### F9 — A story test was edited to settle a flake without root cause
 
 `ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx` gained
 `await userEvent.click(textbox)` because the story went red **under coverage
@@ -239,7 +239,7 @@ only** (`storybook_changed_output.md`: "one existing SlateEditor interaction
 test flaked under coverage (217/218)"). The spec required preserving the
 behaviour and assertions of all 218 tests.
 
-### F10 — The 36 `act(...)` warnings are out of scope and already owned. Do not re-open them.
+### F10 — The 36 `act(...)` warnings are out of scope and already owned. Do not re-open them
 
 `reports/stabilisation/warning-settlement.md` (Task C3, commit `430820c`)
 documents 118 lines across 13 owner stories, with a three-mode settlement
@@ -1407,7 +1407,7 @@ Record in the change record:
 - Whether `maxWorkers: 1` in `vitest.storybook.config.ts` measurably changes the
   peak. Re-run Step 1 with `maxWorkers: 2` temporarily; revert either way.
 
-* [ ] **Step 4: Write the open item; do not change the `storybook` script**
+- [ ] **Step 4: Write the open item; do not change the `storybook` script**
 
 Add to `docs/change-record/2026-08-30-storybook-remediation-audit.md`:
 
