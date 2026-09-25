@@ -276,7 +276,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
   Run:
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -288,7 +288,7 @@ that uniquely identifies the session in logs without disclosing personal data.
 
 - [ ] **Step 9 — Commit**
 
-  ```
+  ```bash
   git add ClientApp/src/authentication/AccountProvider.tsx
   git add ClientApp/src/routes/dashboard/index.tsx
   git add ClientApp/src/routes/acceptQuote/deliveryAndReturn.tsx
@@ -388,7 +388,7 @@ The dev default in `webpack.config.js` is `http://localhost:3000` — hostname
 
 - [ ] **Step 2 — Verify type-check**
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -396,7 +396,7 @@ The dev default in `webpack.config.js` is `http://localhost:3000` — hostname
 
 - [ ] **Step 3 — Commit**
 
-  ```
+  ```bash
   git add ClientApp/src/env.ts
   git commit -m "security: validate EXTERNAL_REDIRECT_URL against domain allowlist at startup (SEC-006)"
   ```
@@ -452,7 +452,7 @@ must be percent-encoded.
 
 - [ ] **Step 3 — Verify type-check**
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -460,7 +460,7 @@ must be percent-encoded.
 
 - [ ] **Step 4 — Commit**
 
-  ```
+  ```bash
   git add ClientApp/src/routes/quotation/nMIContactDetails.tsx
   git add ClientApp/src/routes/measurementReport/nMIContactDetails.tsx
   git commit -m "security: encodeURIComponent subject value in mailto hrefs (SEC-007)"
@@ -552,7 +552,7 @@ inline script creation should be permitted.
 
 - [ ] **Step 2 — Verify type-check**
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -571,7 +571,7 @@ inline script creation should be permitted.
 
 - [ ] **Step 3 — Commit**
 
-  ```
+  ```bash
   git add ClientApp/src/trustedtypes.ts
   git commit -m "security: implement TrustedTypes createHTML (DOMPurify) and createScript (throw) (SEC-009)"
   ```
@@ -657,7 +657,7 @@ exact same pattern already used in `AuthenticatedElement.tsx`.
 
 - [ ] **Step 3 — Verify type-check**
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -665,7 +665,7 @@ exact same pattern already used in `AuthenticatedElement.tsx`.
 
 - [ ] **Step 4 — Commit**
 
-  ```
+  ```bash
   git add ClientApp/src/index.tsx
   git commit -m "arch: add provider-level ErrorBoundary to catch uncaught exceptions above MsalProvider"
   ```
@@ -721,7 +721,7 @@ Router's `navigate()` does not validate the path.
 
 - [ ] **Step 2 — Verify type-check**
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -729,7 +729,7 @@ Router's `navigate()` does not validate the path.
 
 - [ ] **Step 3 — Commit**
 
-  ```
+  ```bash
   git add ClientApp/src/components/modals/BranchSelectorModal/index.tsx
   git commit -m "security: validate callingPath is a relative path before navigate() (SEC-011)"
   ```
@@ -754,7 +754,7 @@ references 17 in two places.
 
   Find the row:
 
-  ```
+  ```text
   | `validationSchemas/` | Yup schema definitions + 17 custom string validators | ...
   ```
 
@@ -764,7 +764,7 @@ references 17 in two places.
 
   Find the sentence:
 
-  ```
+  ```text
   | **Module augmentation** | `yupExtensions/stringExtensions.ts` — `declare module 'yup'` | Adds 17 custom validators to `Yup.StringSchema` without forking the library. ...
   ```
 
@@ -779,13 +779,13 @@ session fully resolves this risk. The doc still says "Partially resolved".
 
   Find:
 
-  ```
+  ```text
   3. **`AccountContext` re-renders** — **Partially resolved (Phase 5.1)**: Context has been split into `AccountStateCtx` (read) and `AccountDispatchCtx` (mutations). Components that subscribe only to state no longer re-render on dispatch mutations. Remaining risk: components that subscribe to both contexts will still re-render on either change.
   ```
 
   Replace with:
 
-  ```
+  ```text
   3. ~~**`AccountContext` re-renders**~~ — **RESOLVED (Phase 5.1)**: Context split into `AccountStateCtx` / `AccountDispatchCtx`. All 7 dispatch callbacks converted to functional updater form (`setAccountDetails(prev => ...)`) with `[]` dep arrays — `dispatchValue` is permanently stable after mount. Components subscribing only to dispatch never re-render due to state changes.
   ```
 
@@ -800,7 +800,7 @@ resolved if present.
   Search `docs/ARCHITECTURE.md` for `targetOrganisation` or `SEC-012`. If an
   open finding entry exists, update it to:
 
-  ```
+  ```text
   ~~**SEC-012**~~ — **Already resolved**: `sign-out/index.tsx:22` calls `clearTargetOrganisation()`.
   ```
 
@@ -817,13 +817,13 @@ This is correct as a rule but misleading — it implies the app is compliant, wh
 
   Find:
 
-  ```
+  ```text
   - **PII**: MSAL logging has `piiLoggingEnabled: false`. Never log user-identifiable data.
   ```
 
   Replace with:
 
-  ```
+  ```text
   - **PII**: MSAL logging has `piiLoggingEnabled: false`. Never log user-identifiable data. **Important:** this flag only governs MSAL's own internal logging — `AppLogger.verbose` / `AppLogger.error` route their `properties` argument directly to `insights.trackTrace` / `insights.trackException`. Always pass a scrubbed projection (e.g., `{ homeAccountId: account.homeAccountId }`) rather than a raw `AccountInfo` or `AccountDetails` object.
   ```
 
@@ -838,13 +838,13 @@ import when calling them.
 
   Find the code block in the "Yup validation — custom string methods" section:
 
-  ```
+  ```text
   `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` adds `.allowedFormat()`, `.maxLength()`, `.minEntered()`, `.fixedDigits()`, `.phone()`, `.postcode()`, `.numbersOnly()`, `.decimalNumbersOnly()`, `.addressFormat()`, `.minValue()`, `.maxValue()` to `Yup.StringSchema`.
   ```
 
   Replace with:
 
-  ```
+  ```text
   `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts` adds `.allowedFormat()`, `.nameAllowedFormat()`, `.businessName()`, `.maxLength()`, `.isRequired()`, `.minEntered()`, `.fixedDigits()`, `.phone()`, `.postcode()`, `.numbersOnly()`, `.decimalNumbersOnly()`, `.addressFormat()`, `.minValue()`, `.maxValue()`, `.noConsecutiveChars()`, `.atLeastOneChar()`, `.noConsecutivePuncuation()`, `.numberWithinRange()` to `Yup.StringSchema` (19 methods total).
   ```
 
@@ -860,19 +860,19 @@ is not visible from the gate line.
 
   Find:
 
-  ```
+  ```text
   Current release gate position: `CLOSED_SUCCESS` for Storybook migration readiness verification in this workspace snapshot.
   ```
 
   Replace with:
 
-  ```
+  ```text
   Current release gate position: `CLOSED_SUCCESS` for Storybook migration readiness verification in this workspace snapshot. **Scope caveat:** API-heavy flows (dashboard data loading, acceptQuote multi-step wizard, branch selector) are not covered by the existing story set — structural documentation or MSW-based integration tests are needed before these flows can be called Storybook-complete.
   ```
 
 - [ ] **Step 8 — Verify type-check (doc-only changes, but run for hygiene)**
 
-  ```
+  ```bash
   npm run type-check
   ```
 
@@ -880,7 +880,7 @@ is not visible from the gate line.
 
 - [ ] **Step 9 — Commit**
 
-  ```
+  ```bash
   git add docs/ARCHITECTURE.md
   git add docs/CONVENTIONS.md
   git add CLAUDE.md

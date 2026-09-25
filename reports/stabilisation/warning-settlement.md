@@ -168,7 +168,7 @@ effect that awaits `instance.acquireTokenSilent(...)` and then
 `Promise.all([getLookup(...), getLookup(...)])` against the MSW `/api/lookup`
 handler, and on resolution calls four setters:
 
-```
+```text
 setMeasurementCategories(sorted);
 setArtefactTypes(artefactTypeResult);
 setArtefactTypesSelected(getArtefactTypes(...));   // or setArtefactTypesSelected([])

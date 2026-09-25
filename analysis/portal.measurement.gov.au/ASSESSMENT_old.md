@@ -75,7 +75,7 @@ expansion, not a rebuild.
 
 ### COCOMO-II Effort Estimate
 
-```
+```text
 PM = 2.94 × (KSLOC)^1.10
 PM = 2.94 × (2.4)^1.10
 PM = 2.94 × 2.65

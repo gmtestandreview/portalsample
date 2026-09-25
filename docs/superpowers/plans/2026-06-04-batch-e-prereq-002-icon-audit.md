@@ -307,7 +307,7 @@ report.
   | Design Lead   |      |      |          |
   | Frontend Lead |      |      |          |
 
-  ```
+  ```text
 
   ```
 

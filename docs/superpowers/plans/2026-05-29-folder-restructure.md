@@ -248,7 +248,7 @@ project. Make sure a developer with the real repo runs Gates 1–4 before mergin
 
 ## File Structure (Before → After)
 
-```
+```text
 BEFORE                              AFTER
 ─────────────────────────────────── ──────────────────────────────────────
 <project-root>/                     <project-root>/
@@ -301,7 +301,7 @@ echo "=== public files ===" && ls public/
 
 Expected output (approximate — record actual values):
 
-```
+```text
 === TSX count ===
 ~150+
 === TS count ===
@@ -343,7 +343,7 @@ git status --short | head -20
 
 Expected: Lines starting with `R` (renamed) for files inside `static/`. Example:
 
-```
+```text
 R  static/css/styles/index.scss -> ClientApp/css/styles/index.scss
 R  static/js/App.tsx -> ClientApp/js/App.tsx
 ...

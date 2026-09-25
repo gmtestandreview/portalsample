@@ -2,7 +2,7 @@
 
 ## 1) Directory Layout
 
-```
+```text
 portal.measurement.gov.au/           ← workspace root
 ├── AGENTS.md                         ← AI coding agent context (first stop)
 ├── CLAUDE.md                         ← Claude Code instructions

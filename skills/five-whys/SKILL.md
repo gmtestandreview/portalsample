@@ -10,7 +10,7 @@ description:
 
 ## The Rule
 
-```
+```text
 DO NOT FIX THE SYMPTOM. FIND THE CAUSE.
 ```
 
@@ -34,7 +34,7 @@ For each answer, ask: **"Why does that happen?"**
 Don't stop until you reach something you control — a decision, a process, a line
 of code, a missing configuration.
 
-```
+```text
 Problem: Users see another user's data
   Why 1: Cache returns the wrong entry
   Why 2: Cache key does not include user_id
@@ -67,7 +67,7 @@ technical debt with a concrete TODO.
 A root cause can have multiple branches — explore all before choosing where to
 fix.
 
-```
+```text
 Problem: Deploy fails in prod but not in staging
   Branch A: different configuration (env vars, secrets)
   Branch B: prod data has different volume or format

@@ -184,7 +184,7 @@ task can be committed, linted, and type-checked in isolation.
 
   In `tests/e2e/steps/storybook.steps.ts` at line 22, ESLint reports:
 
-  ```
+  ```text
   `import()` type annotations are forbidden  @typescript-eslint/consistent-type-imports
   ```
 

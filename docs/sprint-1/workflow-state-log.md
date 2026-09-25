@@ -89,7 +89,7 @@ passed; QA sign-off issued 2026-06-01
 
 ## Phase State Machine
 
-```
+```text
 NEW
   ↓
 INTAKE              ← current state

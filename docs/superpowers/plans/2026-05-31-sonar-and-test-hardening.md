@@ -219,7 +219,7 @@ the code review demanded.
 
 - [ ] **Step 6: Verify tests pass**
 
-  ```
+  ```bash
   npx vitest run tests/unit/routes/dashboard.test.tsx --reporter=verbose
   ```
 
@@ -227,7 +227,7 @@ the code review demanded.
 
   Also run the full routes suite:
 
-  ```
+  ```bash
   npx vitest run tests/unit/routes/ --reporter=verbose
   ```
 
@@ -309,7 +309,7 @@ noise. The codebase convention is explicit vitest imports (see
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/routes/preConditions.test.tsx --reporter=verbose
   npx vitest run tests/unit/authentication/AccountProvider.errored.test.tsx --reporter=verbose
   ```
@@ -431,7 +431,7 @@ editing.
 
 - [ ] **Step 6: Validate by running related tests**
 
-  ```
+  ```bash
   npx vitest run tests/unit/ --reporter=verbose 2>&1 | grep -E "PASS|FAIL|Tests"
   ```
 
@@ -459,7 +459,7 @@ editing.
 
 - [ ] **Step 3: Verify no tests break**
 
-  ```
+  ```bash
   npx vitest run tests/unit/instrumentation/ --reporter=verbose
   ```
 
@@ -603,7 +603,7 @@ editing.
 
 - [ ] **Step 3: Verify PreConditions tests still pass**
 
-  ```
+  ```bash
   npx vitest run tests/unit/routes/preConditions.test.tsx --reporter=verbose
   ```
 
@@ -761,7 +761,7 @@ making changes. Run the dashboard tests after each change.
 
 - [ ] **Step 4: Verify dashboard tests pass**
 
-  ```
+  ```bash
   npx vitest run tests/unit/routes/dashboard.test.tsx --reporter=verbose
   ```
 
@@ -772,7 +772,7 @@ making changes. Run the dashboard tests after each change.
 
 - [ ] **Step 5: Run full regression**
 
-  ```
+  ```bash
   npx vitest run tests/unit/ --reporter=verbose 2>&1 | tail -10
   ```
 

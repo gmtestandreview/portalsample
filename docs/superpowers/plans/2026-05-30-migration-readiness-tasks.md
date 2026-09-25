@@ -129,7 +129,7 @@ causing `preview.ts` to throw, which cascades to 56 story failures.
 
   Confirm no `fonts/` directory exists at the workspace root:
 
-  ```
+  ```bash
   ls fonts/   # expected: directory not found
   ls ClientApp/public/fonts/   # expected: fonts.css  nmi-iconfonts.css  ...
   ```
@@ -161,7 +161,7 @@ causing `preview.ts` to throw, which cascades to 56 story failures.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run build-storybook -- --quiet 2>&1 | tail -20
   ```
 
@@ -433,7 +433,7 @@ error messages surface.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit -- tests/unit/validation/stringExtensions.test.ts --reporter=verbose 2>&1 | head -5
   ```
 
@@ -448,7 +448,7 @@ error messages surface.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit -- tests/unit/validation/stringExtensions.test.ts --reporter=verbose
   ```
 
@@ -458,7 +458,7 @@ error messages surface.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit
   ```
 
@@ -545,7 +545,7 @@ the finding.
 
   Confirm file exists and contains the three required checklist items:
 
-  ```
+  ```bash
   grep -c "\- \[ \]" docs/sec/SEC-010-idor-backend-verification.md
   ```
 
@@ -890,7 +890,7 @@ for all child components and MSAL hooks to isolate the routing logic.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit -- tests/unit/routes/preConditions.test.tsx --reporter=verbose
   ```
 
@@ -901,7 +901,7 @@ for all child components and MSAL hooks to isolate the routing logic.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit
   ```
 
@@ -1311,7 +1311,7 @@ call.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit -- tests/unit/routes/dashboard.test.tsx --reporter=verbose
   ```
 
@@ -1322,7 +1322,7 @@ call.
 
   From `quality/_phase5_seed/`:
 
-  ```
+  ```bash
   npm run test:unit
   ```
 

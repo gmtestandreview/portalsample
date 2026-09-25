@@ -48,7 +48,7 @@ the user what is at stake and ask:
 git -C "$WORKTREE_PATH" status --porcelain -uall
 ```
 
-```
+```text
 Worktree removal refused — these files were never committed:
 
 <file list>
