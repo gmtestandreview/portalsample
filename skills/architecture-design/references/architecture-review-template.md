@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-next-line MD033 -->
 # Architecture Recommendation: <Title>
 
 Use this full template only for the **Full** response mode — a consequential

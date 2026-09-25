@@ -1,5 +1,7 @@
 # Storybook Doc Blocks - Implementation Guide
 
+<!-- markdownlint-disable MD033 -->
+
 ## 📚 Overview
 
 Doc Blocks are reusable MDX components from `@storybook/addon-docs/blocks` that

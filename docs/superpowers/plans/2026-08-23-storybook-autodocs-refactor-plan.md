@@ -1008,12 +1008,11 @@ export const InternalState: Story = {
 Do not use `'docs'` as an Autodocs activation tag.
 
 ````mdx
-
 - [ ] **Step 2: Add Args versus ArgTypes guidance**
 
 Add:
 
-```mdx
+````mdx
 ### Args and ArgTypes
 
 #### Args
@@ -1027,7 +1026,10 @@ export const Primary: Story = {
     disabled: false,
   },
 };
+```
 ````
+
+````text
 
 #### ArgTypes
 
@@ -1055,12 +1057,11 @@ behaviour, options, mappings, conditional display, categories, or intentional
 hiding.
 
 ````mdx
-
 - [ ] **Step 3: Add parameter inheritance guidance**
 
 Add:
 
-```mdx
+````mdx
 ### Parameters and configuration scope
 
 Storybook parameters are static metadata used by stories and addons.
@@ -1073,7 +1074,10 @@ project (`preview.ts`)
 component (`meta`)
         ↓
 story
+```
 ````
+
+````text
 
 More specific configuration overrides inherited configuration.
 
@@ -1095,12 +1099,13 @@ export const ComplexExample: Story = {
 ```
 
 ````mdx
-
-Current Storybook documentation defines parameter scope exactly at project, meta, and story level, with more specific scopes overriding less specific ones.
+Current Storybook documentation defines parameter scope exactly at project,
+meta, and story level, with more specific scopes overriding less specific ones.
 
 - [ ] **Step 4: Correct the JSDoc example guidance**
 
-Replace claims that JSDoc `@example` automatically becomes the canonical Storybook source example.
+Replace claims that JSDoc `@example` automatically becomes the canonical
+Storybook source example.
 
 Use:
 
@@ -1120,6 +1125,7 @@ Controls, Code Panel output, and regression coverage.
 
 A JSDoc `@example` may still be useful to IDE consumers, but it is not the
 project's canonical Storybook example mechanism.
+```
 ````
 
 - [ ] **Step 5: Correct `@internal` guidance**
@@ -1151,12 +1157,11 @@ argTypes: {
 ````
 
 ````mdx
-
 - [ ] **Step 6: Add Code Panel and Source guidance**
 
 Add:
 
-```mdx
+````mdx
 ### Source and Code Panel
 
 The project enables the Code Panel globally:
@@ -1167,7 +1172,10 @@ parameters: {
     codePanel: true,
   },
 },
+```
 ````
+
+````text
 
 Storybook's Code Panel and Source Doc Block use the same source configuration:
 
@@ -1185,12 +1193,11 @@ parameters: {
 Override this only when a specific story needs different source behaviour.
 
 ````mdx
-
 - [ ] **Step 7: Add MDX versus Autodocs guidance**
 
 Add:
 
-```mdx
+````mdx
 ### When to use Autodocs and when to use MDX
 
 Use Autodocs for the normal component baseline:
@@ -1201,8 +1208,8 @@ Use Autodocs for the normal component baseline:
 - stories;
 - source examples.
 
-Use MDX when documentation requires narrative material that cannot be
-derived cleanly from component metadata:
+Use MDX when documentation requires narrative material that cannot be derived
+cleanly from component metadata:
 
 - design guidance;
 - accessibility guidance;
@@ -1228,14 +1235,18 @@ Use buttons to trigger actions.
 ### API
 
 <Controls />
+```
 ````
+
+````text
 
 Always pass the full story-module exports to `<Meta of={...} />`, not the
 component itself.
 
 ````mdx
-
-Storybook's current MDX documentation explicitly distinguishes CSF as the story format and MDX as the structured narrative format, and requires full story exports for `Meta of`.
+Storybook's current MDX documentation explicitly distinguishes CSF as the story
+format and MDX as the structured narrative format, and requires full story
+exports for `Meta of`.
 
 - [ ] **Step 8: Add a Doc Blocks capability section**
 
@@ -1243,14 +1254,18 @@ Document:
 
 ```md
 #### Core component documentation
+
 `Meta`, `Description`, `Primary`, `Story`, `Stories`, `Canvas`, `Source`,
 `Controls`, `ArgTypes`
 
 #### Design-system documentation
+
 `ColorPalette`, `Typeset`, `IconGallery`
 
 #### Structural and utility documentation
+
 `Title`, `Subtitle`, `TableOfContents`, `Markdown`, `Unstyled`
+```
 ````
 
 State explicitly:
@@ -1314,13 +1329,14 @@ storybook build --docs
 The static documentation build is emitted to `storybook-static/`.
 
 ````mdx
-
-The official build documentation recommends both commands and documents the `storybook-static` output.
+The official build documentation recommends both commands and documents the
+`storybook-static` output.
 
 - [ ] **Step 12: Verify governance tests become GREEN**
 
 ```powershell
 & $pm exec vitest run tests/unit/storybook/storybookDocsConfig.test.ts
+```
 ````
 
 Expected:
