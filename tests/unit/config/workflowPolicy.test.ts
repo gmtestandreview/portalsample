@@ -90,7 +90,7 @@ const SETUP_NODE_PIN =
 const UPLOAD_ARTIFACT_PIN =
   "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a";
 const DOWNLOAD_ARTIFACT_PIN =
-  "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53";
+  "actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c";
 const CHROMATIC_ACTION_PIN =
   "chromaui/action@259eda5f0e44c0c1eab38b672f1c4c967cc969b7";
 
@@ -447,7 +447,7 @@ describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
 
   it("restores coverage before the scan rather than scanning bare", () => {
     const download = block.indexOf(DOWNLOAD_ARTIFACT_PIN);
-    const scan = block.indexOf("@sonar/scan");
+    const scan = block.indexOf("uses: SonarSource/sonarqube-scan-action@");
 
     expect(download).toBeGreaterThan(-1);
     expect(scan).toBeGreaterThan(download);
