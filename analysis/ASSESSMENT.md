@@ -281,7 +281,7 @@ Top 5 undocumented behaviors that would block a new engineer:
 
 ## Recommended Modernization Pattern
 
-**Pattern: Refactor**
+### Pattern: Refactor
 
 The NMI portal codebase does not warrant a Rebuild or Rearchitect. Its domain
 model is clear, its dependencies are current (all packages on recent major

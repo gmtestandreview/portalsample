@@ -4,6 +4,7 @@ description:
   'How to write skills that are well-scoped and calibrated to the task.'
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Best practices for skill creators
 
 > How to write skills that are well-scoped and calibrated to the task.

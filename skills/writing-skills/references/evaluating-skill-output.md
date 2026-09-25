@@ -6,6 +6,7 @@ description:
   iteration.'
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Evaluating skill output quality
 
 You wrote a skill, tried it on a prompt, and it seemed to work. But does it work

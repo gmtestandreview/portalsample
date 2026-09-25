@@ -71,7 +71,7 @@ Run the benchmark **before any changes**. Record:
 
 Use the appropriate tool for the stack. Read the output. Don't guess.
 
-**Web APIs**
+#### Web APIs
 
 ```bash
 # Node.js — CPU profile
@@ -90,7 +90,7 @@ go tool pprof http://localhost:6060/debug/pprof/profile?seconds=30
 EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) SELECT ...;
 ```
 
-**Frontend**
+#### Frontend
 
 ```bash
 # Bundle analysis
@@ -104,7 +104,7 @@ npx source-map-explorer dist/main.js
 npx lhci autorun
 ```
 
-**Mobile**
+#### Mobile
 
 - Android: Android Studio → Profiler → CPU/Memory/Network
 - iOS: Xcode → Instruments → Time Profiler

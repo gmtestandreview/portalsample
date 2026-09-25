@@ -5,6 +5,7 @@ description:
   prompts."
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Optimizing Skill Descriptions
 
 ## Purpose

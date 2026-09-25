@@ -18,7 +18,7 @@ gate.
 
 ---
 
-### Task 1: Restore Shared Theme Tokens
+## Task 1: Restore Shared Theme Tokens
 
 **Files:**
 
@@ -60,7 +60,7 @@ html {
 Check that header, footer, focus styles, and shared typography still inherit
 from the same tokens without requiring component-level overrides.
 
-### Task 2: Verify The Rollback
+## Task 2: Verify The Rollback
 
 **Files:**
 
