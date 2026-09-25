@@ -128,13 +128,13 @@ describe('Storybook documentation architecture', () => {
             '@storybook/addon-docs',
             '@storybook/addon-links',
             '@storybook/addon-vitest',
+            'eslint-plugin-storybook',
         ];
 
         for (const packageName of storybookPackages) {
             expect(declaredVersion(packageName), packageName).toBe('10.6.0');
         }
 
-        expect(declaredVersion('eslint-plugin-storybook')).toBe('10.5.10');
         expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.0');
         expect(declaredVersion('@chromatic-com/storybook')).toBe('5.3.1');
         expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
