@@ -3,6 +3,8 @@ title: "Specification"
 description: "The complete format specification for Agent Skills."
 ---
 
+<!-- markdownlint-disable MD033 -->
+
 ## Directory structure
 
 A skill is a directory containing, at minimum, a `SKILL.md` file:

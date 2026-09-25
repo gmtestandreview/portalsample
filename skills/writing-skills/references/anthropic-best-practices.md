@@ -1,5 +1,7 @@
 # Skill authoring best practices
 
+<!-- markdownlint-disable MD033 -->
+
 > Learn how to write effective Skills that Claude can discover and use
 > successfully.
 
@@ -991,6 +993,7 @@ For scanned PDFs requiring OCR, use pdf2image with pytesseract instead."
 
 The sections below focus on Skills that include executable scripts. If your
 Skill uses only markdown instructions, skip to
+<!-- markdownlint-disable-next-line MD051 -->
 [Checklist for effective Skills](#checklist-for-effective-skills).
 
 ### Solve, don't punt
