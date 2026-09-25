@@ -439,7 +439,7 @@ config and must be run with their own dedicated configs.
 Verify that each requirement scenario passes against the current source:
 
 ```sh
-npx vitest run --config quality/vitest.functional.config.ts
+npx vitest run --config quality/functional.config.local.ts
 ```
 
 File: `quality/test_functional.ts`
