@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "file-organizer-manifest-v1.schema.json",
+  "title": "file-organizer-manifest/v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "analysis_scope",
+    "execution_scope",
+    "exclusions",
+    "snapshot_time",
+    "collision_policy",
+    "overwrite_policy",
+    "actions",
+    "review_items",
+    "declared_counts",
+    "approval_expiry"
+  ],
+  "properties": {
+    "schema": {
+      "const": "file-organizer-manifest/v1"
+    },
+    "analysis_scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "execution_scope": {
+      "type": "string",
+      "minLength": 1
+    },
+    "exclusions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "snapshot_time": {
+      "type": "string",
+      "minLength": 1
+    },
+    "collision_policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "seq",
+          "op",
+          "destination",
+          "collision_policy",
+          "rollback"
+        ],
+        "properties": {
+          "seq": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "op": {
+            "enum": [
+              "CREATE_DIRECTORY",
+              "MOVE",
+              "RENAME",
+              "DELETE"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "destination": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_identity": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "value"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "enum": [
+                      "file_id_volume_guid",
+                      "file_id_volume_serial",
+                      "path_state_hash",
+                      "path_state"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            ]
+          },
+          "size": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "mtime": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "classification": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confidence": {
+            "enum": [
+              "High",
+              "Medium",
+              "Low",
+              null
+            ]
+          },
+          "confidence_evidence_classes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "duplicate_state": {
+            "enum": [
+              "none",
+              "approved-duplicate-action",
+              null
+            ]
+          },
+          "collision_policy": {
+            "type": "string",
+            "minLength": 1
+          },
+          "rollback": {
+            "type": "object",
+            "required": [
+              "op",
+              "preconditions"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "op": {
+                "type": "string",
+                "minLength": 1
+              },
+              "preconditions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "op": {
+                  "const": "CREATE_DIRECTORY"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "source": {
+                  "type": "null"
+                },
+                "destination": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "required": [
+                "source",
+                "destination"
+              ]
+            },
+            "else": {
+              "if": {
+                "properties": {
+                  "op": {
+                    "enum": [
+                      "MOVE",
+                      "RENAME"
+                    ]
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "source": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "destination": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "source",
+                  "destination"
+                ]
+              },
+              "else": {
+                "if": {
+                  "properties": {
+                    "op": {
+                      "const": "DELETE"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "source": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "destination": {
+                      "type": "null"
+                    }
+                  },
+                  "required": [
+                    "source",
+                    "destination"
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "review_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "properties": {
+          "state": {
+            "const": "HOLD_FOR_REVIEW"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "overwrite_policy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "declared_counts": {
+      "type": "object",
+      "required": [
+        "actions",
+        "review_items"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "actions": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "review_items": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "approval_expiry": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}
