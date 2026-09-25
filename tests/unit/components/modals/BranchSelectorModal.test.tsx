@@ -10,6 +10,7 @@ import {
 import type * as ReactRouterModule from 'react-router';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type * as WebApiClientModule from '@/api/web-api-client.ts';
 import type { AccountDispatchContext } from '@/authentication/accountContext.tsx';
 import {
   AccountDispatchCtx,
@@ -39,20 +40,24 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByAbn = vi.fn();
 
-vi.mock('@/api/web-api-client', () => ({
-  OrganisationsClient() {
-    return {
-      setAuthToken: vi.fn(),
-      getOrganisationsByABN: getOrganisationsByAbn,
-    };
-  },
-  UsersClient() {
-    return {
-      setAuthToken: vi.fn(),
-      setDefaultOrganisation: mocks.setDefaultOrganisation,
-    };
-  },
-}));
+vi.mock('@/api/web-api-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof WebApiClientModule>();
+  return {
+    ...actual,
+    OrganisationsClient: vi.fn(function OrganisationsClientMock() {
+      return {
+        setAuthToken: vi.fn(),
+        getOrganisationsByABN: getOrganisationsByAbn,
+      };
+    }),
+    UsersClient: vi.fn(function UsersClientMock() {
+      return {
+        setAuthToken: vi.fn(),
+        setDefaultOrganisation: mocks.setDefaultOrganisation,
+      };
+    }),
+  };
+});
 
 vi.mock('@/storage/notification', () => ({
   getBranchModalNotification: () => mocks.getBranchModalNotification(),

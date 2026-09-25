@@ -1,6 +1,6 @@
 import type { FormikErrors, FormikValues } from 'formik';
 import { useFormikContext } from 'formik';
-import { capitalize, map, startCase } from 'lodash';
+import { capitalize, startCase } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router';
@@ -19,7 +19,7 @@ const isValidationProblemDetails = (
   value?: ProblemDetails | ValidationProblemDetails
 ): value is ValidationProblemDetails => value != null && 'errors' in value;
 
-const handleAlertScroll = () => {
+const handleAlertScroll = (): ReturnType<typeof setTimeout> =>
   setTimeout(() => {
     const summaryRef: HTMLElement = document.querySelector(
       '#form-error-summary'
@@ -29,7 +29,6 @@ const handleAlertScroll = () => {
     }
     summaryRef?.focus();
   }, 100);
-};
 
 const renderErrorListItem = (
   key: string,
@@ -37,7 +36,6 @@ const renderErrorListItem = (
   disableLinkedError?: boolean
 ): JSX.Element => {
   if (disableLinkedError) {
-    handleAlertScroll();
     return (
       <li key={key}>
         <span className='text-danger fw-bold'>{text}</span>
@@ -57,7 +55,7 @@ const renderErrorListItem = (
 const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
   const keyParts = key.split(separator);
   let sentenceBuilder = '';
-  map(keyParts, (keyPart, i) => {
+  keyParts.forEach((keyPart, i) => {
     if (Number.isNaN(+keyPart)) {
       if ((depth && i < depth) || !depth) {
         sentenceBuilder = sentenceBuilder.concat(
@@ -91,7 +89,7 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
         The following issue(s) must be corrected before you can continue:
       </Alert.Heading>
       <ul>
-        {map(Object.keys(errors), (key) =>
+        {Object.keys(errors).map((key) =>
           renderErrorListItem(
             key,
             `${keyToSentenceCase(key, 1)}${errors[key]}`,
@@ -160,10 +158,10 @@ const formatServerErrorKeys = (
       }
 
       keyBuilder = keyBuilder.replaceAll('[', '.').replaceAll(']', ''); // remove array braces
-      keyBuilder = map(
-        keyBuilder.split('.'),
-        (part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}` // lowercase first letter of each subkey
-      ).join('.');
+      keyBuilder = keyBuilder
+        .split('.')
+        .map((part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}`) // lowercase first letter of each subkey
+        .join('.');
       result[keyBuilder] = message;
       return result;
     },
@@ -186,7 +184,8 @@ const FormikErrorsSummary = ({
       setErrorSummary(errors);
     }
     if (isSubmitting && !isValidating && hasErrors) {
-      handleAlertScroll();
+      const timeoutId = handleAlertScroll();
+      return () => clearTimeout(timeoutId);
     }
   }, [errors, submitCount, isValidating, isSubmitting, hasErrors]);
 
@@ -204,7 +203,8 @@ const ErrorSummary = ({
 }: Readonly<ErrorSummaryProps>) => {
   useEffect(() => {
     if (serverErrors) {
-      handleAlertScroll();
+      const timeoutId = handleAlertScroll();
+      return () => clearTimeout(timeoutId);
     }
   }, [serverErrors]);
   if (isValidationProblemDetails(serverErrors)) {
