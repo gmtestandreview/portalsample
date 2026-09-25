@@ -71,7 +71,7 @@ Interactive, step-by-step walkthroughs of the NMI Portal codebase. Open these in
 
 ## Tour Series Progression
 
-```
+```text
 New Joiner Onboarding
         ↓
   Vibecoder Quickstart  ──→  Architect Overview

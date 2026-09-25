@@ -353,7 +353,7 @@
 
   Add the following line to `docs/change-record/OPEN-ITEMS-BACKLOG.md` in the "Closed" section:
 
-  ```
+  ```text
   | WAF-TYPE-001 | Typed guard for WAF error shape | CLOSED 2026-06-05 | `isWafError` predicate in `ClientApp/src/types/wafError.ts` |
   ```
 

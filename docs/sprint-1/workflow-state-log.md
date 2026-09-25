@@ -88,7 +88,7 @@
 
 ## Phase State Machine
 
-```
+```text
 NEW
   ↓
 INTAKE              ← current state

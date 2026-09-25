@@ -29,7 +29,7 @@ The SonarLint report includes findings from two model snapshots of `WizardRouted
 
 ## Validation commands
 
-```
+```bash
 npm run type-check          # tsc --noEmit
 npm run test:unit           # vitest run — must have 27 tests passing, 0 failing
 ```
@@ -151,7 +151,7 @@ Note: `React.ReactNode` is a superset that includes `ReactElement`, `ReactFragme
 
 - [ ] **Step 4: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -159,7 +159,7 @@ Expected: no errors.
 
 - [ ] **Step 5: Run tests (regression check)**
 
-```
+```bash
 npm run test:unit
 ```
 
@@ -181,7 +181,7 @@ Extracting the Forbidden branch into a private helper reduces `resolveErrorState
 
 - [ ] **Step 1: Verify the 14 unit tests currently pass (baseline)**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
 ```
 
@@ -254,7 +254,7 @@ export function resolveErrorState(
 
 - [ ] **Step 3: Run the unit tests**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
 ```
 
@@ -262,7 +262,7 @@ Expected: 14 tests PASS. Same result as baseline.
 
 - [ ] **Step 4: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -359,7 +359,7 @@ Behavior is identical — `showSaveAndNextButton !== false` is true when the pro
 
 - [ ] **Step 6: Run integration tests (regression check)**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx
 ```
 
@@ -367,7 +367,7 @@ Expected: 5 tests PASS.
 
 - [ ] **Step 7: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -466,7 +466,7 @@ Line 163:
 
 - [ ] **Step 6: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -474,7 +474,7 @@ Expected: no errors.
 
 - [ ] **Step 7: Run full test suite (regression check)**
 
-```
+```bash
 npm run test:unit
 ```
 
@@ -505,7 +505,7 @@ This opts the project in to acknowledging the 6.0 deprecation warnings (includin
 
 - [ ] **Step 2: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 

@@ -239,7 +239,7 @@ This is a hard requirement of the agent execution environment. Agents operate in
 
 Accept all input via command-line flags, environment variables, or stdin:
 
-```
+```text
 # Bad: hangs waiting for input
 $ python scripts/deploy.py
 Target environment: _
@@ -254,7 +254,7 @@ Usage: python scripts/deploy.py --env staging --tag v1.2.3
 
 `--help` output is the primary way an agent learns your script's interface. Include a brief description, available flags, and usage examples:
 
-```
+```text
 Usage: scripts/process.py [OPTIONS] INPUT_FILE
 
 Process input data and produce a summary report.
@@ -275,7 +275,7 @@ Keep it concise - the output enters the agent's context window alongside everyth
 
 When an agent gets an error, the message directly shapes its next attempt. An opaque "Error: invalid input" wastes a turn. Instead, say what went wrong, what was expected, and what to try:
 
-```
+```text
 Error: --format must be one of: json, csv, table.
        Received: "xml"
 ```
@@ -284,7 +284,7 @@ Error: --format must be one of: json, csv, table.
 
 Prefer structured formats - JSON, CSV, TSV - over free-form text. Structured formats can be consumed by both the agent and standard tools (`jq`, `cut`, `awk`), making your script composable in pipelines.
 
-```
+```text
 # Whitespace-aligned - hard to parse programmatically
 NAME          STATUS    CREATED
 my-service    running   2025-01-15

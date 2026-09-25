@@ -7,7 +7,7 @@ description: "Use when producing an architecture or technical design for a new f
 
 ## The Rule
 
-```
+```text
 SIMPLEST REVERSIBLE DESIGN THAT MEETS THE STATED REQUIREMENTS.
 Every component — a service, a queue, a cache, a new datastore, a new language —
 must trace to a requirement in the brief. No requirement, no component.

@@ -7,7 +7,7 @@ description: Systematic architecture review workflow. Use before major feature w
 
 ## The Law
 
-```
+```text
 AN ARCHITECTURE CLAIM WITHOUT A FILE REFERENCE IS AN OPINION.
 "The service layer is tightly coupled" is not a finding.
 "OrderService imports 14 concrete classes from 6 modules (src/services/order.ts:1-22),

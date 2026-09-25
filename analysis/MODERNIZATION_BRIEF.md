@@ -446,7 +446,7 @@ This document represents Phase 1 through Phase 6 of the NMI Customer Portal mode
 
 All open questions in Section 6 must be resolved before the relevant phase starts. P0 SME blockers (RULE-035, RULE-050) must be resolved before Phase 2 starts.
 
-```
+```text
 Approved by: ________________  Title: ________________  Date: __________
 
 Approval covers:  [ ] Phase 1 only (Security verification — 1–2 person-weeks)

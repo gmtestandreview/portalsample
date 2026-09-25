@@ -7,7 +7,7 @@ description: "Use when asked whether a system or design will scale, will handle 
 
 ## The Rule
 
-```
+```text
 NO SCALE CLAIM WITHOUT EVIDENCE OR A LABELED ASSUMPTION.
 "It will scale" is not an assessment. "The single Postgres primary caps sustained
 writes near 50x current load (single-writer, no partitioning) — evidence: one

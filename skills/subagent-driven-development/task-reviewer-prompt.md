@@ -7,7 +7,7 @@ code quality.
 **Purpose:** Verify one task's implementation matches its requirements (nothing
 more, nothing less) and is well-built (clean, tested, maintainable)
 
-```
+```text
 Subagent (general-purpose):
   description: "Review Task N (spec + quality)"
   model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted

@@ -12,7 +12,7 @@
 
 ## Validation commands
 
-```
+```bash
 npm run type-check          # tsc --noEmit — authoritative type check
 npm run test:unit           # vitest run — runs tests/unit/**/*.test.{ts,tsx}
 ```
@@ -151,7 +151,7 @@ describe('resolveErrorState', () => {
 
 - [ ] **Step 2: Run the test to confirm it fails (module not found)**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
 ```
 
@@ -243,7 +243,7 @@ export function resolveErrorState(
 
 - [ ] **Step 5: Run the test to confirm it passes**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
 ```
 
@@ -251,7 +251,7 @@ Expected: all 13 tests PASS. Zero failures.
 
 - [ ] **Step 6: Run the type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -259,7 +259,7 @@ Expected: no errors on the new files.
 
 - [ ] **Step 7: Commit**
 
-```
+```bash
 git add ClientApp/src/components/forms/WizardForm/types.ts \
         ClientApp/src/components/forms/WizardForm/errorState.ts \
         tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
@@ -471,7 +471,7 @@ describe('WizardRoutedStep — prop mutation fix', () => {
 
 - [ ] **Step 2: Run the tests to confirm they fail**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx
 ```
 
@@ -713,7 +713,7 @@ With:
 
 - [ ] **Step 10: Run the integration tests**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx
 ```
 
@@ -721,7 +721,7 @@ Expected: all 4 tests PASS.
 
 - [ ] **Step 11: Run all unit tests to check for regressions**
 
-```
+```bash
 npm run test:unit
 ```
 
@@ -729,7 +729,7 @@ Expected: the tests that were passing before this task continue to pass. Tests i
 
 - [ ] **Step 12: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -737,7 +737,7 @@ Expected: no errors. In particular, TypeScript exhaustiveness checking on `error
 
 - [ ] **Step 13: Commit**
 
-```
+```bash
 git add ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx \
         tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx
 git commit -m "refactor(wizard): consolidate error state into WizardStepError union; fix prop mutation and silent load failure"
@@ -905,7 +905,7 @@ export type WizardRoutedStepProps<T extends FormikValues> = WizardStepProps<T> &
 
 - [ ] **Step 4: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -913,7 +913,7 @@ Expected: no errors. The JSDoc comments are purely decorative to TypeScript.
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add ClientApp/src/components/forms/WizardForm/types.ts
 git commit -m "docs(wizard): document 29-prop contract on WizardRoutedStepProps, WizardStepProps, WizardFormProps"
 ```
