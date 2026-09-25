@@ -33,6 +33,11 @@ jobs:
         ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5085' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # SonarCloud derives new code from SCM blame dates. The default
+          # shallow clone gives it no history to read, which silently breaks
+          # new-code attribution and every gate condition resting on it.
+          fetch-depth: 0
 
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
@@ -67,6 +72,18 @@ jobs:
       - name: Vitest unit partition
         run: npm run test:ci:unit
 
+      # Consumed by the sonarcloud job below. Uploaded here rather than
+      # re-running the unit suite there - same reason pr.yml's test partitions
+      # each run exactly once: duplicating minutes and risking a different
+      # result than the run that owns this status.
+      - name: Upload unit coverage
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: release-unit-coverage
+          path: reports/coverage/unit
+          if-no-files-found: error
+          retention-days: 1
+
       - name: Vitest Storybook partition
         run: npm run test:ci:storybook
 
@@ -81,3 +98,86 @@ jobs:
 
       - name: Verify Storybook documentation
         run: npm run storybook:verify:docs
+
+  # Its own job so a scanner or gate failure is attributable on its own
+  # status rather than folded into quality-gate. Runs on `push: main`, a
+  # trusted context where secrets are always available - unlike
+  # `pull_request`, which withholds them from fork-originated runs (this
+  # repo's PRs, opened by GitHub Copilot's coding agent, are treated as
+  # fork-originated). See sonar-project.properties for scan config.
+  sonarcloud:
+    name: sonarcloud
+    runs-on: ubuntu-latest
+    needs: quality-gate
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
+      - name: Prepare evidence directory
+        run: mkdir -p reports/ci/sonarcloud
+
+      # The analyzer resolves TypeScript types against installed dependencies;
+      # without them type inference degrades and findings change.
+      - name: Install dependencies with declared npm
+        run: npm ci 2>&1 | tee reports/ci/sonarcloud/install.log
+
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
+        uses: ./.github/actions/verify-rolldown-binding
+
+      # Must precede the scan: sonar.javascript.lcov.reportPaths points at
+      # reports/coverage/unit/lcov.info, and a missing report is imported as
+      # zero coverage rather than raising an error.
+      - name: Restore unit coverage from quality-gate
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          name: release-unit-coverage
+          path: reports/coverage/unit
+
+      # The official action, not `npx --yes @sonar/scan`. npx resolves and installs the package at
+      # CI time and runs its lifecycle scripts, and it does so in a step that holds SONAR_TOKEN -
+      # an install-time code execution path this job never needed. The action instead downloads a
+      # prebuilt Scanner CLI and verifies its GPG signature (skipSignatureVerification defaults to
+      # false), so nothing from npm executes during scanner setup.
+      #
+      # Pinned by commit SHA, which is refs/tags/v8.1.0. scannerVersion is deliberately left at the
+      # action's own default (8.1.0.6389) so the CLI moves only when this SHA moves - the same
+      # reason npm is pinned above, an unpinned scanner can shift analysis results between runs
+      # with no commit to explain it.
+      #
+      # sonar.qualitygate.wait makes a red gate fail this job.
+      - name: SonarQube scan
+        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: -Dsonar.qualitygate.wait=true
+
+      - name: Capture scanner report task
+        if: always()
+        run: |
+          if [ -f .scannerwork/report-task.txt ]; then
+            cp .scannerwork/report-task.txt reports/ci/sonarcloud/
+          else
+            echo "No .scannerwork/report-task.txt: the scan did not reach the point of submitting an analysis." \
+              > reports/ci/sonarcloud/scan-note.txt
+          fi
+
+      - name: Upload SonarCloud evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: sonarcloud-${{ github.run_attempt }}
+          path: reports/ci/sonarcloud/**
+          if-no-files-found: error
+          retention-days: 14

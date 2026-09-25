@@ -29,6 +29,17 @@
   ],
   "sonarlint.focusOnNewCode": true,
   "sonarlint.analysisExcludesStandalone": "**/ClientApp/src/api/web-api-client.ts",
+  // Mirrors the sonar-project.properties suppression of the same rule for
+  // .github/**/*.yml: this repo uses an allowScripts allow-list instead of
+  // --ignore-scripts on npm ci, since --ignore-scripts would also disable
+  // patch-package's postinstall and the permitted native builds. Server-side
+  // issue.ignore rules aren't guaranteed to reach standalone/local SonarLint
+  // analysis, so the rule is turned off here too rather than relying on sync.
+  "sonarlint.rules": {
+    "githubactions:S6505": {
+      "level": "off"
+    }
+  },
   "i18n-ally.disabled": true,
   "stylelint.enable": false,
   "sonarlint.connectedMode.project": {
