@@ -4,10 +4,18 @@
 name: Chromatic
 
 # Chromatic recommends running on push so it can associate each persistent Git
-# commit with the correct branch and visual baseline. Pull requests can then use
-# the linked Chromatic status check and badge without testing an ephemeral merge.
+# commit with the correct branch and visual baseline.
+#
+# Restricted to main (matches release.yml's trigger) instead of every push,
+# including every PR feature-branch push: the free-tier snapshot/build
+# allowance was running out from PR-time builds. Chromatic's own docs warn
+# that baselines won't persist through branching and merging unless main
+# itself is tested, which this still satisfies. Trade-off accepted knowingly:
+# PRs no longer get a live Chromatic status check or visual-review badge
+# during review - visual diffs are only visible after merge to main.
 on:
   push:
+    branches: [main]
 
 permissions:
   contents: read
@@ -38,8 +46,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # Publishing on every push gives pull requests a Chromatic status check
-      # and enables visual-review badges when the GitHub integration is linked.
       - name: Publish Storybook to Chromatic
         uses: chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7 # v18.5.0
         with:
@@ -50,8 +56,8 @@ jobs:
           # can finish as soon as the Storybook bundle has uploaded.
           exitOnceUploaded: true
           # TurboSnap: snapshot only stories affected by files that changed
-          # since the baseline, instead of the whole Storybook, on every push.
-          # Keeps the PR status check and visual review working while cutting
-          # snapshot/credit usage on typical small PRs. Requires the full git
-          # history from checkout's fetch-depth: 0 above to locate the baseline.
+          # since the baseline, instead of the whole Storybook, on every merge
+          # to main. Cuts snapshot/credit usage further on top of the
+          # main-only trigger above. Requires the full git history from
+          # checkout's fetch-depth: 0 above to locate the baseline.
           onlyChanged: true
