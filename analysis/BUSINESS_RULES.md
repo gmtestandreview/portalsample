@@ -1055,10 +1055,11 @@ CRD-044 - previously cited 88-93 and documented only one of the two sites)_
 between 1 and 100. **Specification:**
 
 ```typescript
-numberOfItems: yup.number()
+numberOfItems: yup
+  .number()
   .min(1, 'Number of items cannot be less than 1')
   .max(100, 'Number of items cannot be greater than 100')
-  .required()
+  .required();
 ```
 
 **Parameters:** Min: `1`, Max: `100` (hardcoded)

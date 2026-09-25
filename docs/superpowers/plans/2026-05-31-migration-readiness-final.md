@@ -1176,7 +1176,10 @@ before each edit to confirm exact surrounding text. Each edit targets the row
   From (the existing status text):
 
   ```html
-  <strong>Status as of 2026-05-31:</strong> All client-side security findings resolved. WizardRoutedStep refactored and tested. SonarLint findings cleaned across two phases (47 findings) plus Sprint 2 hardening (6 additional files)...218+ unit tests now passing.
+  <strong>Status as of 2026-05-31:</strong> All client-side security findings
+  resolved. WizardRoutedStep refactored and tested. SonarLint findings cleaned
+  across two phases (47 findings) plus Sprint 2 hardening (6 additional
+  files)...218+ unit tests now passing.
   ```
 
   Replace the `<strong>Status as of 2026-05-31:</strong>` line content with:

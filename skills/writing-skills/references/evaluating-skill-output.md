@@ -9,6 +9,8 @@ description:
 <!-- markdownlint-disable-next-line MD025 -->
 # Evaluating skill output quality
 
+<!-- markdownlint-disable MD033 -->
+
 You wrote a skill, tried it on a prompt, and it seemed to work. But does it work
 reliably - across varied prompts, in edge cases, better than no skill at all?
 Running structured evaluations (evals) answers these questions and gives you a

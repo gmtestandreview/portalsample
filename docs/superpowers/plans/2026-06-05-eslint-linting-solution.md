@@ -519,20 +519,23 @@ Do not add new warnings. When editing a file listed in this baseline, reduce or
 remove warnings in that file as part of the same change.
 
 ````markdown
-
-Replace `PASTE THE EXACT WARNING OUTPUT FROM THE FINAL LINT RUN HERE` with the actual warning lines from the final lint run before committing. If this file is created, it must contain concrete output.
+Replace `PASTE THE EXACT WARNING OUTPUT FROM THE FINAL LINT RUN HERE` with the
+actual warning lines from the final lint run before committing. If this file is
+created, it must contain concrete output.
 
 - [ ] **Step 2: Document commands in the main repo instructions**
 
-If `README.md` exists, add this section to it. If `README.md` does not exist, add it under the validation guidance in `AGENTS.md`:
+If `README.md` exists, add this section to it. If `README.md` does not exist,
+add it under the validation guidance in `AGENTS.md`:
 
-```markdown
+````markdown
 ### ESLint
 
 Run ESLint from the repository root:
 
 ```bash
 npm run lint
+```
 ````
 
 Apply safe automatic fixes:

@@ -459,7 +459,6 @@ Content must document:
   ```
 
   <!-- markdownlint-disable MD029 -- continues Steps numbering above -->
-
   3. **Verify `AuthorizedApiBase` is preserved** — confirm lines 10–35 of the
      regenerated file contain the `AuthorizedApiBase` class with `authToken`,
      `targetOrganisation`, `setAuthToken()`, and `transformOptions()`. If NSwag

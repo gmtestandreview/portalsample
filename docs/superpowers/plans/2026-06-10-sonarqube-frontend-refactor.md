@@ -427,12 +427,11 @@ where loading state was planned but never wired up.
   the `<strong>` tags. The S6772 fires for the text between/after the `<strong>`
   closing tag.
   <!-- markdownlint-disable-next-line MD038 -->
-  The pattern `, ` is already in `{', '}` but the text before the
-  `<strong>` at L126 ends with the preceding element. Fix: ensure whitespace is
-  explicit around `<strong>` elements. This is already handled via `{', '}`
-  between elements — the issue is likely the text node after the closing
-  `</strong>` tag at L126. Inspect the surrounding structure and add `{' '}`
-  where needed.
+  The pattern `, ` is already in `{', '}` but the text before the `<strong>` at
+  L126 ends with the preceding element. Fix: ensure whitespace is explicit
+  around `<strong>` elements. This is already handled via `{', '}` between
+  elements — the issue is likely the text node after the closing `</strong>` tag
+  at L126. Inspect the surrounding structure and add `{' '}` where needed.
 
   L201 — `<i>personal</i>` followed by text:
 

@@ -683,7 +683,7 @@ Atomic audit finding.
 | `finding_id`      | string/UUID                         |
 | `audit_id`        | FK → Audit                          |
 | `severity`        | `Critical`, `High`, `Medium`, `Low` |
-| `criterion_id`    | FK → RubricCriterion / Requirement  | no  |
+| `criterion_id`    | FK → RubricCriterion / Requirement  |
 | `statement`       | text                                |
 | `evidence_ref`    | reference                           |
 | `deduction`       | decimal/null                        |

@@ -17,6 +17,7 @@ Start by classifying how much process the request needs, then work through your
 path: understand the context, refine the idea, present a design, and get the
 user's approval.
 
+<!-- markdownlint-disable-next-line MD033 -->
 <HARD-GATE>
 Do NOT invoke any implementation skill, write any code, scaffold any
 project, or take any implementation action until you have told the

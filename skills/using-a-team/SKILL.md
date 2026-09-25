@@ -11,6 +11,7 @@ description:
 This skill is injected at every session start. It defines mandatory skill and
 agent usage.
 
+<!-- markdownlint-disable-next-line MD033 -->
 <HARD-GATE>
 IF A SKILL OR AGENT IN THIS DOCUMENT APPLIES TO YOUR CURRENT TASK,
 YOU DO NOT HAVE A CHOICE. YOU MUST USE IT.
