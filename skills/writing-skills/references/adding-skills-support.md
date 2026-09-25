@@ -3,6 +3,7 @@ title: "Adding skills support"
 description: "A guide for adding Agent Skills support to an AI agent or development tool."
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Adding skills support
 
 This guide walks through how to add Agent Skills support to an AI agent or development tool. It covers the full lifecycle: discovering skills, telling the model about them, loading their content into context, and keeping that content effective over time.

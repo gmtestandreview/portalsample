@@ -20,7 +20,7 @@ It is designed so the same logical model can be implemented as Markdown/YAML evi
 
 ---
 
-# 1. Conceptual model
+## 1. Conceptual model
 
 ```text
 Skill
@@ -48,7 +48,7 @@ Environment ──< DeterministicSuiteRun
 Environment ──< Audit
 ```
 
-## Core flow
+### Core flow
 
 ```text
 Specification / BP / LOCAL rules
@@ -66,9 +66,9 @@ DeploymentDecision
 
 ---
 
-# 2. Core entities
+## 2. Core entities
 
-## 2.1 Skill
+### 2.1 Skill
 
 Stable identity for a logical Agent Skill across revisions.
 
@@ -84,7 +84,7 @@ Stable identity for a logical Agent Skill across revisions.
 
 ---
 
-## 2.2 SkillRevision
+### 2.2 SkillRevision
 
 Immutable or snapshot identity for the exact candidate being evaluated.
 
@@ -113,7 +113,7 @@ Immutable or snapshot identity for the exact candidate being evaluated.
 
 ---
 
-## 2.3 SkillMetadata
+### 2.3 SkillMetadata
 
 Normalized representation of the specification `metadata` mapping.
 
@@ -127,7 +127,7 @@ Normalized representation of the specification `metadata` mapping.
 
 ---
 
-## 2.4 Resource
+### 2.4 Resource
 
 A supporting file packaged with or referenced by a skill revision.
 
@@ -150,7 +150,7 @@ A supporting file packaged with or referenced by a skill revision.
 
 ---
 
-## 2.5 SkillClassification
+### 2.5 SkillClassification
 
 Classification of one revision as a testing/execution model.
 
@@ -176,9 +176,9 @@ For normalized implementations, classification evidence may be stored separately
 
 ---
 
-# 3. Authority and requirement model
+## 3. Authority and requirement model
 
-## 3.1 Requirement
+### 3.1 Requirement
 
 Atomic rule or quality condition against which a revision can be assessed.
 
@@ -200,7 +200,7 @@ Authority is intrinsic to the rule. Assessment, scoring, or repetition in anothe
 
 ---
 
-## 3.2 RequirementAssessment
+### 3.2 RequirementAssessment
 
 Assessment of a requirement against one revision/environment.
 
@@ -233,9 +233,9 @@ This evidence state is deliberately separate from behavioral evaluation outcomes
 
 ---
 
-# 4. Environment model
+## 4. Environment model
 
-## 4.1 Environment
+### 4.1 Environment
 
 Captures the context in which behavior or deterministic validation is meaningful.
 
@@ -255,9 +255,9 @@ Environment-specific/local rules should reference this entity rather than being 
 
 ---
 
-# 5. Behavioral evaluation model
+## 5. Behavioral evaluation model
 
-## 5.1 EvaluationCampaign
+### 5.1 EvaluationCampaign
 
 One coordinated behavioral test campaign for a specific revision and environment.
 
@@ -284,7 +284,7 @@ Available tools/capabilities may be normalized through `CampaignCapability` or r
 
 ---
 
-## 5.2 EvaluationCase
+### 5.2 EvaluationCase
 
 Reusable scenario definition. It describes what to test, not what happened in a particular execution.
 
@@ -327,7 +327,7 @@ Many-to-many mapping when a case applies to multiple classes.
 
 ---
 
-## 5.3 CaseParameter
+### 5.3 CaseParameter
 
 Campaign-supplied values inserted into a reusable case.
 
@@ -341,7 +341,7 @@ Examples: `representative_request`, input file, pressure context, target resourc
 
 ---
 
-## 5.4 ExpectedBehavior
+### 5.4 ExpectedBehavior
 
 Atomic observable behaviors for a case.
 
@@ -354,7 +354,7 @@ Atomic observable behaviors for a case.
 
 ---
 
-## 5.5 SuccessCriterion
+### 5.5 SuccessCriterion
 
 Falsifiable criteria used to decide the case result.
 
@@ -368,7 +368,7 @@ Falsifiable criteria used to decide the case result.
 
 ---
 
-## 5.6 EvaluationRun
+### 5.6 EvaluationRun
 
 One execution of one case. Repeated runs create new rows rather than overwriting evidence.
 
@@ -421,7 +421,7 @@ One execution of one case. Repeated runs create new rows rather than overwriting
 
 ---
 
-## 5.7 EvidenceArtifact
+### 5.7 EvidenceArtifact
 
 Evidence attached to an executed behavioral or deterministic run.
 
@@ -453,7 +453,7 @@ Exactly one parent family (`run_id` or `deterministic_run_id`) should normally b
 
 ---
 
-## 5.8 RedGreenComparison
+### 5.8 RedGreenComparison
 
 Formal comparability record for a GREEN run linked to its RED baseline.
 
@@ -476,7 +476,7 @@ If `same_task=false`, every preservation flag must be true and `equivalence_rati
 
 ---
 
-## 5.9 RegressionLink
+### 5.9 RegressionLink
 
 Graph edge connecting failures/fixes to regression cases.
 
@@ -490,9 +490,9 @@ Regression completion requires the fixed case plus relevant positive and near-mi
 
 ---
 
-# 6. Deterministic testing model
+## 6. Deterministic testing model
 
-## 6.1 DeterministicTestCase
+### 6.1 DeterministicTestCase
 
 One parser/validator/prompt/CLI test definition.
 
@@ -519,7 +519,7 @@ One parser/validator/prompt/CLI test definition.
 
 ---
 
-## 6.2 DeterministicSuiteRun
+### 6.2 DeterministicSuiteRun
 
 Execution of the deterministic suite against a revision/environment.
 
@@ -551,7 +551,7 @@ A compatibility-shim pass must not be represented as a native dependency-backed 
 
 ---
 
-## 6.3 DeterministicTestResult
+### 6.3 DeterministicTestResult
 
 One test result within one suite run.
 
@@ -567,9 +567,9 @@ One test result within one suite run.
 
 ---
 
-# 7. Audit and scoring model
+## 7. Audit and scoring model
 
-## 7.1 Audit
+### 7.1 Audit
 
 One formal quick triage or full audit for a revision.
 
@@ -595,7 +595,7 @@ A quick triage should not be treated as definitive production-readiness scoring.
 
 ---
 
-## 7.2 RubricCriterion
+### 7.2 RubricCriterion
 
 Canonical 100-point scoring dimensions.
 
@@ -611,7 +611,7 @@ The current criterion weights sum to 100 before N/A normalization.
 
 ---
 
-## 7.3 AuditCriterionScore
+### 7.3 AuditCriterionScore
 
 Score for one criterion in one audit.
 
@@ -629,7 +629,7 @@ N/A removes the criterion from both numerator and denominator. Missing evidence 
 
 ---
 
-## 7.4 Finding
+### 7.4 Finding
 
 Atomic audit finding.
 
@@ -647,7 +647,7 @@ Atomic audit finding.
 
 ---
 
-## 7.5 QAQRMIResult
+### 7.5 QAQRMIResult
 
 Bidirectional mapping evidence for a critical instruction, trigger, branch, or load condition.
 
@@ -667,9 +667,9 @@ Bidirectional mapping evidence for a critical instruction, trigger, branch, or l
 
 ---
 
-# 8. Deployment decision model
+## 8. Deployment decision model
 
-## 8.1 DeploymentDecision
+### 8.1 DeploymentDecision
 
 Final readiness decision. This is deliberately separate from the numeric score.
 
@@ -692,7 +692,7 @@ Final readiness decision. This is deliberately separate from the numeric score.
 - `deprecate`
 - `hold`
 
-## 8.2 DeploymentBlocker
+### 8.2 DeploymentBlocker
 
 One reason deployment is prohibited.
 
@@ -727,11 +727,11 @@ A high numeric score cannot set `deployment_eligible=true` while an unresolved b
 
 ---
 
-# 9. Derived rules
+## 9. Derived rules
 
 These are calculated rules, not independent mutable facts.
 
-## 9.1 Behavioral blocker derivation
+### 9.1 Behavioral blocker derivation
 
 ```text
 IF EvaluationCase.required = true
@@ -739,7 +739,7 @@ AND latest applicable EvaluationRun.result IN (AMBER, FAIL, NHR)
 THEN create/retain DeploymentBlocker
 ```
 
-## 9.2 Reference baseline rule
+### 9.2 Reference baseline rule
 
 ```text
 IF SkillClassification.skill_class = Reference
@@ -748,7 +748,7 @@ THEN a retrieval/application baseline MAY satisfy the RED evidence role
 PROVIDED required discovery/retrieval/application/coverage cases are resolved.
 ```
 
-## 9.3 RED/GREEN validity rule
+### 9.3 RED/GREEN validity rule
 
 ```text
 IF GREEN.same_task = false
@@ -756,7 +756,7 @@ AND any preservation flag = false
 THEN GREEN cannot be PASS.
 ```
 
-## 9.4 Evidence freshness rule
+### 9.4 Evidence freshness rule
 
 ```text
 IF evidence was produced against revision A
@@ -764,7 +764,7 @@ AND a relevant behavior/contract changed in revision B
 THEN evidence from A cannot satisfy B's fresh-validation gate without explicit justification.
 ```
 
-## 9.5 Score normalization
+### 9.5 Score normalization
 
 ```text
 normalized_score =
@@ -775,7 +775,7 @@ Round only the final normalized result. N/A removes points from the denominator;
 
 ---
 
-# 10. Recommended identifiers
+## 10. Recommended identifiers
 
 Use stable prefixes to make evidence human-readable:
 
@@ -798,7 +798,7 @@ Use stable prefixes to make evidence human-readable:
 
 ---
 
-# 11. Canonical integrated record example
+## 11. Canonical integrated record example
 
 ```yaml
 skill:
@@ -866,7 +866,7 @@ decision:
 
 ---
 
-# 12. Minimum viable implementation
+## 12. Minimum viable implementation
 
 If this model is implemented initially as files rather than a database, the minimum useful persistence structure is:
 
@@ -897,7 +897,7 @@ The existing `scripts/evals/activation`, `scripts/evals/red-green`, `scripts/eva
 
 ---
 
-# 13. Source-to-model traceability
+## 13. Source-to-model traceability
 
 | Source contract | Model area |
 | --- | --- |
@@ -912,7 +912,7 @@ The existing `scripts/evals/activation`, `scripts/evals/red-green`, `scripts/eva
 
 ---
 
-# 14. Recommended ownership boundaries
+## 14. Recommended ownership boundaries
 
 - **Specification owns:** structural validity and frontmatter/resource contracts.
 - **Best-practice evaluation owns:** quality criteria.

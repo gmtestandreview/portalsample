@@ -4,6 +4,7 @@ sidebarTitle: "Evaluating skills"
 description: "How to test whether your skill produces good outputs using eval-driven iteration."
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Evaluating skill output quality
 
 You wrote a skill, tried it on a prompt, and it seemed to work. But does it work reliably - across varied prompts, in edge cases, better than no skill at all? Running structured evaluations (evals) answers these questions and gives you a feedback loop for improving the skill systematically.

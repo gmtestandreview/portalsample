@@ -10,7 +10,7 @@
 
 ---
 
-### Task 1: Restore Shared Theme Tokens
+## Task 1: Restore Shared Theme Tokens
 
 **Files:**
 - Modify: `ClientApp/src/styles/_variables.scss`
@@ -50,7 +50,7 @@ html {
 
 Check that header, footer, focus styles, and shared typography still inherit from the same tokens without requiring component-level overrides.
 
-### Task 2: Verify The Rollback
+## Task 2: Verify The Rollback
 
 **Files:**
 - Verify: `docs/superpowers/specs/2026-06-19-align-live-theme-design.md`

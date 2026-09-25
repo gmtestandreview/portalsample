@@ -3,6 +3,7 @@ title: "Optimizing skill descriptions"
 description: "How to improve your skill's description so it triggers reliably on relevant prompts."
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Optimizing Skill Descriptions
 
 ## Purpose

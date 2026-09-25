@@ -4,6 +4,7 @@ sidebarTitle: "Using scripts"
 description: "How to run commands and bundle executable scripts in your skills."
 ---
 
+<!-- markdownlint-disable-next-line MD025 -->
 # Using Scripts
 
 Skills can instruct agents to run shell commands and bundle reusable scripts in a `scripts/` directory. This guide covers one-off commands, self-contained scripts with their own dependencies, and how to design script interfaces for agentic use.
