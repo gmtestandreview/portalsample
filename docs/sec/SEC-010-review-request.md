@@ -37,6 +37,7 @@ The backend team must return one of:
 ## Response Format
 
 Update `docs/sec/SEC-010-idor-backend-verification.md` with:
+
 - Verdict: PASS or FAIL
 - Reviewer name and role
 - Date reviewed

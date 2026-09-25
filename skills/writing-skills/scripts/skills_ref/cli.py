@@ -17,15 +17,20 @@ def _is_skill_md_file(path: Path) -> bool:
     return path.is_file() and path.name == "SKILL.md"
 
 
+def _skill_directory(path: Path) -> Path:
+    """Normalize a SKILL.md path to its containing skill directory."""
+    return path.parent if _is_skill_md_file(path) else path
+
+
 @click.group()
 @click.version_option()
-def main():
+def main() -> None:
     """Reference library for Agent Skills."""
 
 
 @main.command("validate")
 @click.argument("skill_path", type=click.Path(exists=True, path_type=Path))
-def validate_cmd(skill_path: Path):
+def validate_cmd(skill_path: Path) -> None:
     """Validate a skill directory.
 
     Checks that the skill has a valid SKILL.md with proper frontmatter,
@@ -35,9 +40,7 @@ def validate_cmd(skill_path: Path):
         0: Valid skill
         1: Validation errors found
     """
-    if _is_skill_md_file(skill_path):
-        skill_path = skill_path.parent
-
+    skill_path = _skill_directory(skill_path)
     errors = validate(skill_path)
 
     if errors:
@@ -45,13 +48,13 @@ def validate_cmd(skill_path: Path):
         for error in errors:
             click.echo(f"  - {error}", err=True)
         sys.exit(1)
-    else:
-        click.echo(f"Valid skill: {skill_path}")
+
+    click.echo(f"Valid skill: {skill_path}")
 
 
 @main.command("read-properties")
 @click.argument("skill_path", type=click.Path(exists=True, path_type=Path))
-def read_properties_cmd(skill_path: Path):
+def read_properties_cmd(skill_path: Path) -> None:
     """Read and print skill properties as JSON.
 
     Parses the YAML frontmatter from SKILL.md and outputs the
@@ -62,9 +65,7 @@ def read_properties_cmd(skill_path: Path):
         1: Parse error
     """
     try:
-        if _is_skill_md_file(skill_path):
-            skill_path = skill_path.parent
-
+        skill_path = _skill_directory(skill_path)
         props = read_properties(skill_path)
         click.echo(json.dumps(props.to_dict(), indent=2))
     except SkillError as e:
@@ -76,7 +77,7 @@ def read_properties_cmd(skill_path: Path):
 @click.argument(
     "skill_paths", type=click.Path(exists=True, path_type=Path), nargs=-1, required=True
 )
-def to_prompt_cmd(skill_paths: tuple[Path, ...]):
+def to_prompt_cmd(skill_paths: tuple[Path, ...]) -> None:
     """Generate <available_skills> XML for agent prompts.
 
     Accepts one or more skill directories.
@@ -86,13 +87,9 @@ def to_prompt_cmd(skill_paths: tuple[Path, ...]):
         1: Error
     """
     try:
-        resolved_paths = []
-        for skill_path in skill_paths:
-            if _is_skill_md_file(skill_path):
-                resolved_paths.append(skill_path.parent)
-            else:
-                resolved_paths.append(skill_path)
-
+        resolved_paths: list[Path] = [
+            _skill_directory(skill_path) for skill_path in skill_paths
+        ]
         output = to_prompt(resolved_paths)
         click.echo(output)
     except SkillError as e:

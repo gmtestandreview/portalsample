@@ -24,7 +24,7 @@
 ## Findings Table
 
 | Icon variable | Unicode | Active SCSS consumer(s) | Context | React component | Migration path | Batch E blocker? |
-|---|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- | --- |
 | `$icon-arrow-right` | `\e903` | `_card.scss:57` | `.standard-pathway-footer .icon::after` â€” internal card link indicator | None needed | CSS data: URI in `_card.scss` | No |
 | `$icon-back` | `\e906` | **Unused** | Defined but not consumed in any SCSS file | None needed | Remove variable | No |
 | `$icon-calendar` | `\e907` | `_replace-svgicons-csp.scss:198` | `.date-picker::before` â€” date picker label decoration | None needed | CSS data: URI | No |
@@ -70,7 +70,7 @@ This means no JSX component changes are needed as part of icon font retirement â
 ## Decision Required from Design Lead
 
 | # | Question | Needed before |
-|---|---|---|
+| --- | --- | --- |
 | D-1 | Please supply SVG source files (or confirm data: URI values) for the 10 active icons listed above. Priority order: `close`, `menu`, `chevron-down`, `chevron-right`, `settings`, `arrow-right`, `external`, `calendar`, `radio-checked`, `radio-unchecked`. | Batch E SCSS migration begins |
 | D-2 | Confirm whether `packages/icons` should be a standalone package or whether SVG data: URIs should be embedded directly in the SCSS partials. | Batch E scope finalised |
 | D-3 | Confirm that `$icon-back`, `$icon-radio-whitebg-checked`, and `$icon-radio-whitebg-unchecked` are safe to delete (not used in any unreleased branch or variant). | Batch E dead-code removal |
@@ -80,7 +80,7 @@ This means no JSX component changes are needed as part of icon font retirement â
 ## Sign-Off
 
 | Role | Name | Date | Decision |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Design Lead | | | |
 | Frontend Lead | | | |
 

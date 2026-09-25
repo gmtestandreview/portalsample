@@ -54,6 +54,7 @@ npm run type-check        # Verify no TS errors
 ### Critical Issues (1–4)
 
 **Issue #1: StatusPill Switch-Case Bug**
+
 - [ ] Switch cases use correct pattern (separate cases or type guard)
 - [ ] Unit test exists covering every DashboardItemStatus AND QuoteStatus
 - [ ] Storybook story renders both enums across all status variants
@@ -62,6 +63,7 @@ npm run type-check        # Verify no TS errors
 - [ ] No console errors or warnings
 
 **Issue #2: Dashboard Filter Strings**
+
 - [ ] Filter strings match exact enum values
 - [ ] Drafts tab shows at least one item in story
 - [ ] Instruments tab shows at least one item in story
@@ -70,12 +72,14 @@ npm run type-check        # Verify no TS errors
 - [ ] Dashboard story snapshot updated (if applicable)
 
 **Issue #3: MSW Global Handlers**
+
 - [ ] mswHandlers exports correct shape (flat array or { handlers: [...] })
 - [ ] No MSW "unhandled request" warnings in stories
 - [ ] Create test story that omits MSW config and verify fallback kicks in
 - [ ] `npm run build-storybook` succeeds with no errors
 
 **Issue #4: AcceptQuote Missing Steps**
+
 - [ ] DeliveryAndReturn story created with all delivery/return variants
 - [ ] QuotationSummary story created
 - [ ] SummaryAndAccept story created (final acceptance visible)
@@ -89,6 +93,7 @@ npm run type-check        # Verify no TS errors
 ### High-Priority Issues (5–12)
 
 **Issue #5: NotificationMessage Story**
+
 - [ ] Story covers all NotificationSeverity enum variants
 - [ ] Icon-circle rendering visible
 - [ ] Message text renders correctly
@@ -98,6 +103,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #6: ErrorSummary Story**
+
 - [ ] Server error variant created and renders
 - [ ] WAF violation variant renders
 - [ ] Conflict (409) variant renders
@@ -107,6 +113,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #7: InTextLink target Bug**
+
 - [ ] target prop is honored (not hardcoded '_blank')
 - [ ] InlineText story renders with target='_self' and asserts it
 - [ ] External story still asserts target='_blank'
@@ -114,6 +121,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #8: BackToDashboardButton Story**
+
 - [ ] Story created with default styling
 - [ ] Variant with custom containerClassName
 - [ ] Variant with custom className
@@ -122,6 +130,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #9: MSAL Account Inconsistency**
+
 - [ ] Account name/username unified across preview.ts and storybookHarness.tsx
 - [ ] Canonical mock account chosen (recommend Taylor Nguyen)
 - [ ] All related stories use consistent account
@@ -129,6 +138,7 @@ npm run type-check        # Verify no TS errors
 - [ ] `npm run build-storybook` succeeds
 
 **Issue #10: Footer Modal Stories**
+
 - [ ] TermsOfUse modal story shows open state
 - [ ] Privacy modal story shows open state
 - [ ] Accessibility modal story shows open state
@@ -138,6 +148,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #11: WizardForm Context Pattern**
+
 - [ ] Story refactored to use withPortalProviders decorator
 - [ ] All WizardForm scenarios still render correctly
 - [ ] Duplicate MockAccountProvider removed
@@ -146,6 +157,7 @@ npm run type-check        # Verify no TS errors
 - [ ] `npm run build-storybook` succeeds
 
 **Issue #12: Pagination Edge Cases**
+
 - [ ] FirstPage story created (prev/first buttons hidden)
 - [ ] LastPage story created (next/last buttons hidden)
 - [ ] CustomStyleVariant with containerClassName/className
@@ -159,6 +171,7 @@ npm run type-check        # Verify no TS errors
 ### Medium-Priority Issues (13–15)
 
 **Issue #13: FormBanner Story**
+
 - [ ] SaveAndExit variant story created
 - [ ] Discard variant story created
 - [ ] GoToDashboard variant story created
@@ -167,6 +180,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #14: AutoSuggest + AddressLookup Stories**
+
 - [ ] AutoSuggest story with loading state created
 - [ ] AutoSuggest story with suggestions displayed
 - [ ] AutoSuggest story with empty state
@@ -177,6 +191,7 @@ npm run type-check        # Verify no TS errors
 - [ ] All stories pass
 
 **Issue #15: InstrumentItem Story**
+
 - [ ] InstrumentItem story shows report details
 - [ ] Variant showing details tab active
 - [ ] Variant showing reports tab active
@@ -199,6 +214,7 @@ npm run type-check       # No TypeScript errors
 ```
 
 **If any test fails:**
+
 1. Identify which issue(s) caused regression
 2. File a new issue with "REGRESSION" tag
 3. Route back to Dev Agent for remediation
@@ -221,6 +237,7 @@ npm run type-check       # No TypeScript errors
 ## Communication Protocol
 
 **When Dev Agent Says Issue is Ready:**
+
 - Read their progress.md update
 - Check issue against DoD checklist
 - Run targeted tests for that issue
@@ -228,6 +245,7 @@ npm run type-check       # No TypeScript errors
 - If blocked, post error details and escalate to Producer
 
 **Before Final Merge:**
+
 - Run full test suite
 - Generate final QA sign-off report
 - Post to `docs/sprint-1/qa-signoff.md`
@@ -238,26 +256,31 @@ npm run type-check       # No TypeScript errors
 ## Tools & Commands
 
 **Build Storybook (verbose output):**
+
 ```bash
 npm run build-storybook
 ```
 
 **Run Storybook in browser:**
+
 ```bash
 npm run storybook
 ```
 
 **Run all tests:**
+
 ```bash
 npm run test:unit
 ```
 
 **Type check:**
+
 ```bash
 npm run type-check
 ```
 
 **Filter test run by pattern:**
+
 ```bash
 npm run test:unit -- --grep="StatusPill"
 ```
@@ -267,7 +290,7 @@ npm run test:unit -- --grep="StatusPill"
 ## Timeline & Milestones
 
 | Phase | Dev Duration | QA Duration | Total |
-|-------|-------------|------------|-------|
+| ------- | ------------- | ------------ | ------- |
 | Phase 1 (Critical Infrastructure) | 2 days | 1 day | 3 days |
 | Phase 2 (Critical Stories) | 2 days | 1 day | 3 days |
 | Phase 3 (High Priority) | 2 days | 1 day | 3 days |

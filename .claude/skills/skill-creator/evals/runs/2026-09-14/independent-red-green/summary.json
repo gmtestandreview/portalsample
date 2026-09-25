@@ -1,0 +1,40 @@
+{
+  "red": {
+    "label": "red",
+    "exit_code": 0,
+    "duration_seconds": 53.39,
+    "skill_used": false,
+    "stale_reference_remaining": false,
+    "evaluation_reference_linked": true,
+    "mentions_nhr": false,
+    "mentions_production_ready": false,
+    "package_check_mentioned": true,
+    "inventory": [
+      "SKILL.md",
+      "references/evaluation.md",
+      "references/examples.md",
+      "references/schema.json",
+      "scripts/package_skill.py"
+    ],
+    "final_result": "All checks pass. Here's the release-readiness verdict:\n\n---\n\n## Release-Readiness Verdict\n\n**Changes made:**\n\n| Issue | Fix |\n|---|---|\n| Stale reference to `references/missing-eval.md` | Replaced with pointer to existing `references/evaluation.md` |\n| Duplicated \"Evaluation Guidance\" / \"Duplicated Evaluation Guidance\" sections | Removed both inline copies; `references/evaluation.md` (which has more detail) is the single source |\n| \"Verbose Example Library\" bloating SKILL.md | Moved to `references/examples.md` |\n| JSON Schema inline in SKILL.md | Extracted to `references/schema.json` |\n| \"Release Readiness Note\" pointing to missing file | Replaced by a clean References section with valid backtick links |\n\n**Observed evidence \u2014 PASS:**\n- `scripts/package_skill.py` exits 0: all three backtick references in SKILL.md (`references/evaluation.md`, `references/examples.md`, `references/schema.json`) resolve to real files.\n- No duplicate sections remain.\n- No stale paths remain.\n- SKILL.md is 37 lines (down from 76); all unique domain guidance is preserved.\n\n**Unavailable evidence \u2014 cannot verify:**\n- Functional evaluation against real incident data (requires a live model run with and without the skill).\n- Whether `references/evaluation.md`'s criteria are complete for all payment-API outage patterns (domain SME review needed).\n- CI/CD pipeline or publishing step \u2014 no pipeline config is present in the repository."
+  },
+  "green": {
+    "label": "green",
+    "exit_code": 0,
+    "duration_seconds": 141.87,
+    "skill_used": true,
+    "stale_reference_remaining": false,
+    "evaluation_reference_linked": false,
+    "mentions_nhr": false,
+    "mentions_production_ready": false,
+    "package_check_mentioned": true,
+    "inventory": [
+      "SKILL.md",
+      "references/evaluation.md",
+      "references/examples.md",
+      "references/schema.md",
+      "scripts/package_skill.py"
+    ],
+    "final_result": "Good. Here is the release-readiness verdict.\n\n---\n\n## Release-Readiness Verdict\n\n### What was fixed\n\n| Issue | Action |\n|---|---|\n| Stale reference `references/missing-eval.md` | Removed the \"Release Readiness Note\" section (development artifact, not runtime guidance). The stale backtick reference was the only packaging failure. |\n| Duplicated evaluation guidance (identical sections in SKILL.md) | Both inline copies removed. |\n| Evaluation guidance in SKILL.md (already lived in `references/evaluation.md`) | Removed from SKILL.md; the `run baseline` step that was only in SKILL.md was merged into `references/evaluation.md` so nothing was lost. |\n| Redundant opening line (\"Use this skill when\u2026\") | Removed; the description is the activation contract. |\n| Bulk example library in SKILL.md (~180 tokens) | Extracted to `references/examples.md` with light annotation. |\n| JSON schema inline in SKILL.md | Extracted to `references/schema.md` with a note about the `remediations` entry format. |\n\nSKILL.md went from 76 lines to 38 and is now under 500 lines comfortably. All three reference files are one level deep from SKILL.md as required.\n\n### Observed evidence\n\n- **Packaging check passed** (`scripts/package_skill.py`) \u2014 all backtick-quoted `references/` paths in SKILL.md resolve to existing files.\n- **Static content review** \u2014 no remaining duplication, no broken references, no development artifacts in the runtime body.\n\n### Unavailable evidence\n\n- **Behavioral/trigger evidence** \u2014 whether the description activates the skill correctly (true positive rate, false-positive rate on near-miss requests like \"write a postmortem\" or \"review our SLA\") cannot be verified without a running Claude Code instance and a trigger evaluator. This is the highest-confidence gap before production use.\n- **Output-quality benchmark** \u2014 no without-skill / with-skill run comparison has been performed. `references/evaluation.md` describes exactly what to run, but the runs themselves are outstanding.\n- **Runtime environment** \u2014 no `.claude/settings.json` or `skill-rules.json` was present in the project; Claude Code registration and enforcement behavior are unverified.\n\n**Bottom line:** The skill is structurally clean and passes the deterministic packaging check. It is ready for behavioral testing against the criteria in `references/evaluation.md`. Do not claim production readiness until at least one baseline/with-skill comparison is recorded."
+  }
+}

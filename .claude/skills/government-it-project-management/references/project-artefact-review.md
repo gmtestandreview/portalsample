@@ -5,6 +5,7 @@ Load only when reviewing or drafting a project artefact. Apply the general crite
 ## General criteria
 
 Check:
+
 - clarity and executive readability;
 - natural, human language;
 - grammatical and semantic quality;
@@ -48,6 +49,7 @@ Challenge false precision where uncertainty is high.
 ## Investment proposals and business cases
 
 Check:
+
 - problem/opportunity and public-value outcome;
 - strategic/policy alignment supported by evidence;
 - credible options, including do-minimum/do-nothing where appropriate;
@@ -71,6 +73,7 @@ Do not validate a threshold, exemption, panel requirement, tender method, or com
 ## Operational readiness / go-live
 
 Check:
+
 - acceptance and unresolved defects;
 - operational ownership/support model;
 - service monitoring and service levels;
@@ -100,6 +103,7 @@ For detailed user-story checks load `references/user-story-quality.md`. For acce
 ## Review output
 
 Report:
+
 1. decision-relevant strengths;
 2. defects/gaps with evidence from the artefact;
 3. consequence of each material gap;

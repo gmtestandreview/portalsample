@@ -40,6 +40,9 @@ const testOptions = (config: ViteUserConfig, label: string): TestOptions => {
 const root = testOptions(rootConfig, "vitest.config.ts");
 const storybook = testOptions(storybookConfig, "vitest.storybook.config.ts");
 const unit = testOptions(unitConfig, "vitest.unit.config.ts");
+const packageScripts = (): Record<string, string> => (
+  (JSON.parse(readFileSync("package.json", "utf8")) as PackageScripts).scripts
+);
 
 /** Paths that belong to Playwright, never to a Vitest leaf. */
 const foreignTestPaths = [
@@ -68,6 +71,29 @@ describe("root Vitest config is composition only", () => {
   });
 });
 
+describe("Vitest config loading stays explicit and shim-free", () => {
+  it("pins every package script that invokes Vitest to the runner config loader", () => {
+    const vitestScripts = Object.entries(packageScripts()).filter(([, command]) =>
+      command.includes("./node_modules/vitest/vitest.mjs"),
+    );
+
+    expect(vitestScripts.length).toBeGreaterThan(0);
+
+    for (const [name, command] of vitestScripts) {
+      expect(command, `${name} must not rely on Vite's default config loader`).toContain(
+        "--configLoader runner",
+      );
+    }
+  });
+
+  it.each(["vitest.config.ts", "vitest.unit.config.ts"])(
+    "does not rely on the bundled config loader's __dirname shim in %s",
+    (configFile) => {
+      expect(readFileSync(configFile, "utf8")).not.toContain("__dirname");
+    },
+  );
+});
+
 describe("Storybook leaf is a directly runnable Browser Mode project", () => {
   it("is a leaf rather than another nested project container", () => {
     expect(storybook.projects).toBeUndefined();
@@ -86,6 +112,14 @@ describe("Storybook leaf is a directly runnable Browser Mode project", () => {
   it("owns its own name and setup file", () => {
     expect(storybook.name).toBe("storybook");
     expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);
+  });
+
+  it("pins Browser Mode API binding away from Vitest's Windows-reserved default port", () => {
+    expect(storybook.api).toBeUndefined();
+    expect(storybook.browser?.api).toMatchObject({
+      host: "127.0.0.1",
+      port: 61005,
+    });
   });
 
   it("owns the Storybook coverage policy for the one path that applies it", () => {

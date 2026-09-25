@@ -32,7 +32,7 @@ This document is the working form for the 13 design-platform and infrastructure 
 ## Status Summary Table
 
 | # | Input | Owner | Gate | Status |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | 1 | Design-platform colour tokens | Design Lead | Batch E — SCSS migration | **RESOLVED 2026-06-04** — Replace `_variables.scss` with `var(--nmi-*)` CSS custom properties |
 | 2 | Typography tokens and font stack | Design Lead | Batch E — SCSS migration | **RESOLVED 2026-06-04** — Retain Public Sans; already in design system |
 | 3 | Spacing, grid, and breakpoint rules | Design Lead | Batch E — SCSS migration | **RESOLVED 2026-06-04** — Drop Bootstrap grid; CSS Grid/Flexbox + design token spacing |
@@ -72,6 +72,7 @@ This document is the working form for the 13 design-platform and infrastructure 
 These are mapped into Bootstrap 5's `$theme-colors` map (`primary`, `secondary`, `info`, `danger`, `success`). The mapping is one-to-one and the NMI vars are the authoritative source. Any target-platform token system that does not accept these hex values verbatim will require a manual translation pass.
 
 **Decision options:**
+
 - **Option A — Adapt:** Extract the 25 NMI variables into a target-platform token file (e.g., a design token JSON or CSS custom properties file) preserving the same hex values and semantic names. SCSS references are rewritten to consume the new tokens. Lowest disruption; NMI brand fidelity maintained.
 - **Option B — Audit and consolidate:** Map the 25 variables to the target platform's existing token set. Where target-platform tokens match NMI intent (e.g., primary brand colour), use the platform token. Where there is no match, add NMI-specific overrides. Reduces token proliferation; may require Figma token sync.
 - **Option C — Replace entirely:** Retire all `$nmi-*` variables and rebuild the colour palette from the target platform's design system. All component SCSS files referencing NMI vars must be audited for visual regression. Highest disruption; highest long-term consistency with the target platform.
@@ -99,7 +100,7 @@ $font-size-base: 1rem  (assumed browser default 16px)
 `ClientApp/src/styles/_typography.scss` defines 8 responsive heading sizes using `math.div()` for mobile and `rfs-value()` for fluid scaling at 14 call sites:
 
 | Heading | Mobile size | Desktop size |
-|---------|-------------|--------------|
+| --------- | ------------- | -------------- |
 | h1 | `$h1-font-size / 1.375` ≈ 32px | `$h1-font-size` (Bootstrap default 44px) |
 | h2 | `$h2-font-size / 1.333` ≈ 24px | `$h2-font-size` (Bootstrap default 35px) |
 | h3–h6 | `$h3`–`$h6-font-size` (Bootstrap scale) | same Bootstrap scale |
@@ -109,6 +110,7 @@ Custom utility classes: `.fs-7` (14px), `.fs-75` (13px), `.fs-8` (12px), `.fs-9`
 The "Public Sans" font is currently served as TTF files only (no woff2). If the target platform requires woff2 or uses a CDN font delivery, the font files must be converted or sourced anew.
 
 **Decision options:**
+
 - **Option A — Retain "Public Sans" with current scale:** Port the font files (or source woff2 equivalents) to the target platform. Keep the 8-heading scale and `rfs-value()` fluid sizing. Requires `sass:math` module usage and `rfs` dependency to be available in the target build.
 - **Option B — Retain "Public Sans", replace the scale:** Keep the typeface but replace the Bootstrap-derived heading scale with the target platform's typographic rhythm. Requires a visual audit of all 20+ route pages for text hierarchy consistency.
 - **Option C — Replace typeface and scale:** Adopt the target platform's typeface (e.g. a GOV.AU design system font if applicable) and its heading scale. Requires visual regression testing across all pages and Storybook story updates for all components with heading elements.
@@ -145,6 +147,7 @@ Bootstrap 5's standard breakpoints (`xs`/`sm`/`md`/`lg`/`xl`/`xxl`) are used thr
 The `negativify-map()` blocker at `_variables.scss:68` (a Bootstrap 5 internal function) means full `@use`-based SCSS module migration is deferred until Bootstrap 6. This constraint is inherited by the target platform unless Bootstrap is retired.
 
 **Decision options:**
+
 - **Option A — Retain Bootstrap 5 grid and spacers:** Migrate all Bootstrap grid classes and utilities into the target platform. The custom spacer 6 (`$spacer * 2 = 32px`) is preserved. The `negativify-map()` blocker remains deferred until Bootstrap 6.
 - **Option B — Adopt target platform grid, keep Bootstrap breakpoints:** Replace Bootstrap grid columns with the target platform's grid system but preserve breakpoint names and widths (`sm: 576px`, `md: 768px`, `lg: 992px`, `xl: 1200px`) to minimise the impact on responsive layout code in route components.
 - **Option C — Full grid replacement:** Adopt the target platform's native grid and breakpoint system. All `media-breakpoint-up/down` mixins and Bootstrap grid class names in ~50 SCSS partials and React components must be audited and replaced.
@@ -163,6 +166,7 @@ The `negativify-map()` blocker at `_variables.scss:68` (a Bootstrap 5 internal f
 
 **Current implementation detail:**
 `ClientApp/src/styles/_forms.scss` (692 lines) provides extensive Bootstrap form overrides including:
+
 - Custom `.form-control` and `.form-field` padding using `$input-padding-y` and `$input-padding-x` variables
 - Focus ring: `outline: solid 3px $input-focus-border-color; outline-offset: -3px`
 - Invalid state: `outline-color: #f5b5b5; outline-width: 6px` (pink glow)
@@ -175,6 +179,7 @@ The React component set in `ClientApp/src/components/Inputs/` includes: `TextInp
 All form components use Formik's `useField` or `useFormikContext`; replacing them requires maintaining Formik integration or migrating away from Formik.
 
 **Decision options:**
+
 - **Option A — Adapt existing components:** Port the 11 Input components and `_forms.scss` to the target platform. Retain Formik. The custom checkbox/radio implementations (icon-font-based) are kept with CSP-safe PNG icon fallback approach preserved.
 - **Option B — Replace with target-platform form primitives:** Substitute target-platform form components for each NMI Input component. Requires a mapping table (NMI component → target component), verification that each replacement supports WCAG 2.1 AA, and Formik integration testing for each substitution.
 - **Option C — Hybrid:** Replace standard controls (text, textarea, select) with target-platform equivalents; retain custom controls (AutoSuggest, AddressLookup, DatePicker) where no target-platform equivalent exists.
@@ -193,6 +198,7 @@ All form components use Formik's `useField` or `useFormikContext`; replacing the
 
 **Current implementation detail:**
 `ClientApp/src/styles/_forms.scss` defines the invalid-field visual pattern:
+
 - Invalid border: `border: solid 1px $danger` (`#d50501`)
 - Invalid focus glow: `outline-color: #f5b5b5; outline-width: 6px` (pink, 6px)
 - Invalid select: dual `background-image` layering of `$form-select-indicator` + `$form-feedback-icon-invalid` (comment: "temp fix for BS5.3+")
@@ -205,6 +211,7 @@ At the field level, Formik's `meta.error` and `meta.touched` drive the `is-inval
 The PNG icon fallbacks for form validation icons exist because Bootstrap 5 embeds SVGs inline in its form feedback CSS, which violates the active Trusted Types CSP policy. These PNG fallbacks (`_variables.scss` sets `$form-feedback-icon-valid` and `$form-feedback-icon-invalid`) are a permanent workaround for the current CSP configuration, not a temporary measure.
 
 **Decision options:**
+
 - **Option A — Adopt current pattern in target platform:** Port the Bootstrap `is-invalid`/`is-valid` approach, the danger/success colour tokens, and the PNG icon fallback strategy. The CSP constraint is inherited — SVG-embedding form feedback icons from Bootstrap must be replaced or suppressed in the target platform as well.
 - **Option B — Replace with target-platform error display:** Implement the target platform's error pattern (e.g., a design system `ErrorMessage` primitive, an inline alert component). This requires updating Formik integration at every field site and replacing `ErrorSummary` with a target-platform summary component. PNG workarounds can be retired if the target platform uses non-inline SVGs or icon fonts.
 - **Option C — Retain field-level errors, replace summary:** Keep the Bootstrap `is-invalid` field pattern; replace only the form-level `ErrorSummary` with a target-platform notification/alert component (see also Item 7 — Modals/Dialogs).
@@ -223,6 +230,7 @@ The PNG icon fallbacks for form validation icons exist because Bootstrap 5 embed
 
 **Current implementation detail:**
 The wizard engine comprises:
+
 - `ClientApp/src/components/forms/WizardForm/index.tsx` — orchestrator
 - `ClientApp/src/components/forms/WizardForm/WizardRoutedStep.tsx` — 45-decision-branch stateful step engine (the highest-risk single component in the codebase); handles `validateHard`/`validateSoft`/`loadStepValues`/`onSaveAndNext`/`onSaveAndExit` callbacks with implicit ordering contracts
 - `ClientApp/src/components/forms/WizardForm/WizardStep.tsx` — individual step wrapper
@@ -233,6 +241,7 @@ The wizard engine comprises:
 The compound component is used in 6 wizard flows: RFQ creation, RFQ copy, quote acceptance, account creation, account update, and contact management. A planned refactor of `WizardRoutedStep.tsx` into a `useWizardStep()` hook is documented at `docs/superpowers/plans/2026-05-30-wizard-routed-step-refactor.md` — this refactor is compatible with either adaptation or rebuild.
 
 **Decision options:**
+
 - **Option A — Adapt the existing engine:** Port `WizardForm` and `SteppedNavigation` to the target platform. Replace `_step-nav.scss` styles with target-platform equivalents. The `useWizardStep()` refactor (planned but not yet executed) should be completed first to reduce porting risk.
 - **Option B — Rebuild from target-platform primitives:** If the target platform provides a stepper or multi-step form component, rewrite the 6 wizard flows to use it. Requires establishing behavioral equivalence for all callback contracts (`validateHard`, `validateSoft`, etc.) before migration. Higher risk due to `WizardRoutedStep.tsx`'s complexity and zero current test coverage.
 - **Option C — Adapt engine, replace visual layer only:** Keep the `WizardRoutedStep` state machine and callback contracts; replace only `_step-nav.scss` and `SteppedNavigation/index.tsx` visual rendering with target-platform step indicator components. Lower risk than Option B; cleanest separation between behaviour and presentation.
@@ -261,6 +270,7 @@ The compound component is used in 6 wizard flows: RFQ creation, RFQ copy, quote 
 All modals use react-bootstrap's `<Modal>`, `<Modal.Header>`, `<Modal.Body>`, `<Modal.Footer>` components. The `ModalContext` uses a React context + `useReducer` pattern to manage which modal is open. `PreConditions.tsx` (mounted on every authenticated route) is the provider.
 
 **Decision options:**
+
 - **Option A — Retain react-bootstrap Modal:** Keep the react-bootstrap dependency and the existing modal architecture. Replace only `_modals.scss` visual styles with target-platform tokens. Lowest disruption; `BranchSelectorModal` (highest complexity) is unchanged.
 - **Option B — Replace with target-platform dialog primitives:** Substitute each modal with the target platform's dialog component. Requires remapping `ModalContext` dispatch actions to the target platform's open/close API. `BranchSelectorModal` (22 decision branches) must be regression-tested against the full org-switching lifecycle (documented at `docs/architecture/org-switching-lifecycle.md`).
 - **Option C — Replace only simple modals, retain complex ones:** Migrate `ConfirmationModal` and `ContentModal` to target-platform dialogs; retain `BranchSelectorModal` and `TermsAndCondition` in react-bootstrap due to their complexity and session-storage side effects.
@@ -293,6 +303,7 @@ These 13 icons are used in SCSS pseudo-elements (`::before`/`::after`) to replac
 The icon font is only available in woff format (not woff2). The `_replace-svgicons-csp.scss` file exists solely because Bootstrap 5 embeds SVGs as data URIs in CSS, which violates the `trusted-types` CSP policy active in this application (see `ClientApp/src/trustedtypes.ts`). If the target platform does not embed SVG data URIs in CSS, this entire workaround layer can be retired.
 
 **Decision options:**
+
 - **Option A — Retire icon font, adopt target-platform icons:** Replace all 13 icon usages with target-platform icons (SVG sprites, inline SVGs via React components, or a target design system icon set). `_replace-svgicons-csp.scss` is deleted. Requires audit of every component and SCSS pseudo-element that references `font-family: 'nmi-iconfont'`.
 - **Option B — Convert icon font to woff2 and retain:** Convert the existing font file to woff2 format for performance; retain the icon font approach and `_replace-svgicons-csp.scss`. Only viable if the target platform's CSS does not introduce new inline-SVG CSP violations.
 - **Option C — Replace pseudo-element icons with React icon components:** Convert the 13 icon usages from CSS pseudo-elements to React `<svg>` or icon library components (e.g., `<ChevronDownIcon />`). This eliminates icon-font dependency and allows tree-shaking but requires touching every component that currently uses icon-font pseudo-elements via SCSS.
@@ -313,7 +324,7 @@ The icon font is only available in woff format (not woff2). The `_replace-svgico
 The following accessibility utilities exist in the codebase:
 
 | Component/Hook | File | Role |
-|---|---|---|
+| --- | --- | --- |
 | `skipLinks` | `ClientApp/src/components/Utilities/skipLinks.tsx` | Skip-to-main-content link rendered at top of DOM; targets `#main` |
 | `useRouteAccessibility` | `ClientApp/src/hooks/useRouteAccessibility.ts` — **CREATED 2026-06-05 (CRD-037)**; replaces deleted `routeAccessibleNavigation.tsx` | Hook that announces navigation via `aria-live` and moves focus to `#main` on route change (WCAG 2.4.2/2.4.3) |
 | `useHtmlTitle` | `ClientApp/src/components/Utilities/useHtmlTitle.tsx` | Hook that sets `document.title` per page for screen reader page announcements |
@@ -326,6 +337,7 @@ The following accessibility utilities exist in the codebase:
 `useRouteAccessibility` (the hook that replaced the deleted `routeAccessibleNavigation.tsx`) uses React Router v7's `useLocation` hook. It must survive any router change in the target platform. The hook is already wired into both `Layout` and `PreConditions` as of CRD-037.
 
 **Decision options:**
+
 - **Option A — Preserve all six utilities as-is:** Port the utilities unchanged. Confirm WCAG 2.1 AA compliance is maintained. `useBodyClass` retains its `index.scss` coupling; the target platform inherits the same body-class-driven layout pattern.
 - **Option B — Audit and selectively replace:** Audit each utility against the target platform's accessibility infrastructure. Where the target platform provides an equivalent (e.g., built-in skip-link component, route change focus management), retire the NMI implementation. Where no equivalent exists, port the NMI utility.
 - **Option C — Replace with Australian Government Design System (AGDS) accessibility components:** If the target platform adopts the AGDS, its accessibility primitives may cover all six utilities. Requires a gap analysis against AGDS component inventory before any retirement of NMI utilities.
@@ -344,6 +356,7 @@ The following accessibility utilities exist in the codebase:
 
 **Current implementation detail:**
 `ClientApp/src/styles/media-print.scss` (25 lines) contains a `@media print` block that:
+
 - Sets `font-family: Arial, Helvetica, Sans-serif; font-size: 14pt; line-height: 165%; color: black`
 - Hides all content (`visibility: hidden; height: 0`) then selectively reveals `.printable-card` and `#printable-label` elements
 - Sizes `#printable-label` text to `font-size: 36pt` for large-format label printing
@@ -353,6 +366,7 @@ The following accessibility utilities exist in the codebase:
 The `#printable-label` selector suggests a print-to-label flow exists or was planned, likely in the measurement report domain (`routes/measurementReport/`). No corresponding React component with `id="printable-label"` was found in the current snapshot.
 
 **Decision options:**
+
 - **Option A — Investigate then adopt:** Before migration, confirm whether `media-print.scss` is loaded by any mechanism other than `index.scss` (e.g., a separate `<link>` in `public/index.html`, or a dynamic import in `reportDetails.tsx`). If it is actively used, import it into `index.scss` and include it in Batch E. If it is confirmed orphaned, proceed to Option B.
 - **Option B — Retire the file:** If confirmed orphaned and no print requirement exists in scope, delete `media-print.scss`. Document the decision in the Master Change Record.
 - **Option C — Replace with a target-platform print strategy:** If a print requirement exists for measurement reports or labels, implement it using the target platform's print stylesheet approach. The NMI `media-print.scss` content may serve as a reference for the visual intent.
@@ -384,6 +398,7 @@ The `#printable-label` selector suggests a print-to-label flow exists or was pla
 The regeneration procedure requires: `curl http://<backend-host>/swagger/v1/swagger.json`, then NSwag CLI invocation with TypeScript client flags matching the existing file's style.
 
 **Decision options:**
+
 - **Option A — Provide spec URL from target backend:** Backend team provides the OpenAPI spec URL for the target environment. The frontend team runs the NSwag regeneration procedure before Batch E API client migration. If the spec has changed, component usages of renamed/removed client methods must be updated.
 - **Option B — Provide spec file directly:** Backend team exports `swagger.json` and provides it as a file artefact. Useful if the target backend is not yet publicly accessible during migration.
 - **Option C — Defer and use existing client:** Accept that `web-api-client.ts` may be slightly out-of-date for the duration of the migration. Regenerate only when a breaking API change is confirmed. Lowest effort; carries risk if the backend has already drifted.
@@ -408,12 +423,14 @@ The current test pipeline (per assessment and `docs/TESTING.md`) consists of thr
 3. **Storybook story tests** — Play function tests within Storybook stories; run via `@storybook/test-runner`. Currently blocked on Sprint 1 story remediation (issues #1–#15 in Open Items Backlog).
 
 CI compatibility concerns:
+
 - Playwright requires a browser binary (Chromium/Firefox/WebKit); CI must have either pre-installed browsers or Playwright's `--with-deps` install step.
 - `bddgen` is a code-generation step that must run before Playwright; the pipeline order is `bddgen → playwright`.
 - The Storybook test runner requires a running Storybook server; CI must start Storybook as a background service before running tests.
 - Node ≥ 20.0.0 is required (package.json engine constraint).
 
 **Decision options:**
+
 - **Option A — Reproduce pipeline in target CI as-is:** Target CI (e.g., Azure DevOps, GitHub Actions, other) configures the same three-phase pipeline: Vitest, bddgen + Playwright, Storybook test runner. No changes to test code; only CI YAML configuration differs.
 - **Option B — Adapt pipeline for target CI constraints:** If the target CI system has restrictions (e.g., no GUI browser support, different Node version policy, restricted npm registry), adapt individual steps. Document which constraints require test code changes versus CI configuration changes only.
 - **Option C — Phase the pipeline:** Initially configure only Vitest unit tests in CI (lowest dependency). Add Playwright BDD and Storybook test runner stages after the target environment's browser support and service startup patterns are confirmed.
@@ -434,7 +451,7 @@ CI compatibility concerns:
 The current snapshot has a split build configuration:
 
 | Concern | Adapter | Config file |
-|---|---|---|
+| --- | --- | --- |
 | Production bundle | webpack 5 | `ClientApp/webpack/webpack.config.js` |
 | Storybook (dev/test) | Vite via `@storybook/react-vite` | `.storybook/main.ts` |
 

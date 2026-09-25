@@ -31,6 +31,7 @@ Load when creating, refining, or reviewing agile user stories.
 ## Extended checks
 
 Where relevant, confirm:
+
 - feasibility and architecture fit;
 - security, privacy, and compliance constraints;
 - usability, performance, maintainability, reliability, and other NFRs;

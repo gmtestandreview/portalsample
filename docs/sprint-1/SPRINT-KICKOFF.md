@@ -22,6 +22,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ## ✅ Pre-Sprint Checklist
 
 ### Producer
+
 - [x] GitHub Issues created: 15 issues, severity-triaged, DoD defined
 - [x] Dev handoff created: scope, 4-phase sequence, technical patterns
 - [x] QA handoff created: validation protocol, DoD checklists
@@ -30,6 +31,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 - [x] Producer summary created: quick reference guide
 
 ### Dev Agent (NOW — Phase 1 ACTIVE)
+
 - [x] Read [docs/sprint-1/dev-handoff.md](dev-handoff.md) — assumed complete
 - [x] Review all 15 issues in [docs/sprint-1/github-issues.md](github-issues.md) — assumed complete
 - [x] Phase 1 work COMMENCED (Issues #3, #1, #2, #9)
@@ -37,6 +39,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 - [ ] Target Phase 1 completion: 2026-05-22 EOD
 
 ### QA Agent (Standby Mode)
+
 - [ ] Read [docs/sprint-1/qa-handoff.md](qa-handoff.md) completely
 - [ ] Verify test environment: `npm run build-storybook` succeeds
 - [ ] Review per-issue DoD checklists
@@ -47,7 +50,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ## 📋 Phase Timeline
 
 | Phase | Issues | Start | End | Dev Days | QA Days | Milestone |
-|-------|--------|-------|-----|----------|---------|-----------|
+| ------- | -------- | ------- | ----- | ---------- | --------- | ----------- |
 | **1** | #3, #1, #2, #9 | 2026-05-21 | 2026-05-22 | 2 | 1 | Infrastructure stable |
 | **2** | #4, #5, #6 | 2026-05-22 | 2026-05-24 | 2 | 1 | Critical stories done |
 | **3** | #7, #8, #10, #11, #12 | 2026-05-24 | 2026-05-27 | 2 | 1 | High-priority coverage |
@@ -61,12 +64,14 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 **Goal:** Fix critical infrastructure blockers
 
 **Issues:**
+
 1. **#3:** MSW Global Handlers — shape bug, fallback registration
 2. **#1:** StatusPill Switch-Case Bug — QuoteStatus never matched
 3. **#2:** Dashboard Filter Strings — enum mismatch, tabs always empty
 4. **#9:** MSAL Account Inconsistency — Test User vs Taylor Nguyen conflict
 
 **Success Criteria for Phase 1:**
+
 - ✅ No MSW unhandled request warnings in any story
 - ✅ StatusPill renders both DashboardItemStatus and QuoteStatus correctly
 - ✅ Dashboard Drafts and Instruments tabs show items in story
@@ -79,6 +84,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ## 📊 Daily Communication
 
 **Dev Agent Daily Update (EOD):**
+
 - Update [docs/sprint-1/progress.md](progress.md) with:
   - What was completed today
   - What's next
@@ -86,11 +92,13 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
   - ETA for phase completion
 
 **Producer Daily Monitoring:**
+
 - Check `progress.md` for blockers
 - Update `workflow-state-log.md` with state transitions
 - Escalate blockers if needed
 
 **Phase Completion Handoff:**
+
 - Dev: "Phase N ready for QA"
 - Producer: Route to QA Agent
 - QA: Perform validation, post results
@@ -101,12 +109,14 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ## 🛡️ Quality Gates
 
 ### Before Each Phase Ends
+
 - [ ] All issues in phase moved to VERIFYING state
 - [ ] All DoD items checked
 - [ ] No console errors in Storybook build
 - [ ] QA validation complete
 
 ### Before Final Merge
+
 - [ ] All 15 issues in CLOSED_SUCCESS
 - [ ] 100% Storybook test pass (`npm run test:storybook`)
 - [ ] 0 new console errors
@@ -118,7 +128,7 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 ## 📞 Escalation Path
 
 | Issue Type | Route | Contact |
-|-----------|-------|---------|
+| ----------- | ------- | --------- |
 | Technical blocker | Dev → Producer → QA | Remy |
 | Test failure | QA → Producer → Dev | Remy |
 | Resource constraint | Any → Producer | Remy |
@@ -140,16 +150,19 @@ All governance, handoff, and tracking artifacts are **ready**. Development work 
 
 ## ⚡ First Standup (NOW)
 
-**Dev Agent:** 
+**Dev Agent:**
+
 - Confirm Phase 1 commenced on Issues #3, #1, #2, #9
 - Flag any blockers immediately
 - Begin with Issue #3 (MSW handlers) — highest priority
 
 **QA Agent:**
+
 - Confirm standby readiness
 - Verify test environment setup
 
 **Producer:**
+
 - Confirm Phase 1 work commenced
 - Monitor daily progress.md updates
 - Set checkpoint for Phase 1 completion (2026-05-22 EOD)

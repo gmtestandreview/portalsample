@@ -170,7 +170,7 @@ Map this repository into a migration-ready structure so it can be merged into an
 ## 8) Quick File/Folder Classification Table
 
 | Area | Status | Action |
-|---|---|---|
+| --- | --- | --- |
 | `ClientApp/src/**` | Canonical source | Migrate |
 | `ClientApp/src/styles/**` | Canonical source | Migrate |
 | `tests/**` | Validation assets (unit + e2e) | Migrate |

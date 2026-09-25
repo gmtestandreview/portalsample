@@ -229,6 +229,7 @@ Log batch completion in `docs/change-record/MASTER-CHANGE-RECORD.md`.
 ### Files to Migrate Selectively
 
 **Migrate:**
+
 ```
 ClientApp/src/validationSchemas/**
 tests/unit/**
@@ -407,17 +408,23 @@ If any batch produces failures that cannot be resolved within the migration wind
 
 1. Identify the batch that introduced the failure (use git history in the target repo).
 2. Revert all files introduced in that batch:
+
    ```bash
    git revert --no-commit <commit-range>
    ```
+
    Or restore individual files from the previous commit:
+
    ```bash
    git checkout HEAD~1 -- <file-path>
    ```
+
 3. Run the verification command to confirm a clean revert:
+
    ```bash
    npm run type-check && npm run test:unit
    ```
+
 4. Confirm the pass count returns to the pre-batch baseline.
 5. Log the regression in `docs/change-record/MASTER-CHANGE-RECORD.md`:
    - Batch reverted
@@ -440,7 +447,7 @@ After full migration is complete and all verification steps pass, update `docs/c
 For each batch, add a row:
 
 | Date | Ref | Change | Files | Outcome | Engineer |
-| --- | --- | --- | --- | --- |---|
+| --- | --- | --- | --- | --- | --- |
 | | MIG-A | Batch A migration complete | `index.tsx`, `App.tsx`, `env.ts`, `authentication/**`, `routes/**`, `utils/**`, `types.ts` | All tests pass | |
 | | MIG-B | Batch B migration complete | `components/**` | All tests pass | |
 | | MIG-C | Batch C migration complete | `storage/**`, `analytics/**`, `instrumentation/**` | All tests pass | |

@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "comparison.schema.json",
+  "title": "Skill Creator Blind Comparison",
+  "type": "object",
+  "required": [
+    "winner",
+    "reasoning",
+    "rubric",
+    "output_quality",
+    "expectation_results"
+  ],
+  "properties": {
+    "winner": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B"
+      ]
+    },
+    "reasoning": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rubric": {
+      "type": "object",
+      "required": [
+        "A",
+        "B"
+      ],
+      "properties": {
+        "A": {
+          "$ref": "#/$defs/rubricSide"
+        },
+        "B": {
+          "$ref": "#/$defs/rubricSide"
+        }
+      },
+      "additionalProperties": false
+    },
+    "output_quality": {
+      "type": "object",
+      "required": [
+        "A",
+        "B"
+      ],
+      "properties": {
+        "A": {
+          "$ref": "#/$defs/qualitySide"
+        },
+        "B": {
+          "$ref": "#/$defs/qualitySide"
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectation_results": {
+      "type": "object",
+      "required": [
+        "A",
+        "B"
+      ],
+      "properties": {
+        "A": {
+          "$ref": "#/$defs/expectationSide"
+        },
+        "B": {
+          "$ref": "#/$defs/expectationSide"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "scoreMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 1,
+        "maximum": 5
+      }
+    },
+    "rubricSide": {
+      "type": "object",
+      "required": [
+        "content",
+        "structure",
+        "content_score",
+        "structure_score",
+        "overall_score"
+      ],
+      "properties": {
+        "content": {
+          "$ref": "#/$defs/scoreMap"
+        },
+        "structure": {
+          "$ref": "#/$defs/scoreMap"
+        },
+        "content_score": {
+          "type": "number",
+          "minimum": 0
+        },
+        "structure_score": {
+          "type": "number",
+          "minimum": 0
+        },
+        "overall_score": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "qualitySide": {
+      "type": "object",
+      "required": [
+        "score",
+        "strengths",
+        "weaknesses"
+      ],
+      "properties": {
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "strengths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weaknesses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "expectationSide": {
+      "type": "object",
+      "required": [
+        "passed",
+        "total",
+        "pass_rate",
+        "details"
+      ],
+      "properties": {
+        "passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "text",
+              "passed"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "passed": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

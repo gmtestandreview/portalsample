@@ -23,7 +23,7 @@ production packaging in the source-map snapshot.
 ## What this means for migration
 
 | Concern | Storybook (Vite) | Production (webpack 5) |
-|---|---|---|
+| --- | --- | --- |
 | CSS/SCSS processing | Vite native (fast) | `css-loader` + `sass-loader` |
 | Module aliases | Vite `resolve.alias` | webpack `resolve.alias` |
 | Static assets | Vite asset handling | `file-loader` / `asset/resource` |
@@ -78,7 +78,7 @@ If the rebuild uses Vite for production, the Storybook adapter should remain
 ## Files involved
 
 | File | Role |
-|---|---|
+| --- | --- |
 | `.storybook/main.ts` | Configures Storybook adapter (vite adapter confirmed) |
 | `.storybook/preview.ts` | Global decorators — font paths resolved here |
 | `ClientApp/webpack/` | Production webpack config — do not edit |

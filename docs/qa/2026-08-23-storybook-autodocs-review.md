@@ -68,8 +68,6 @@ export default {
 } satisfies Preview;
 ```
 
-
-
 **Assessment: correct and should remain the primary Autodocs activation mechanism.**
 
 ---
@@ -172,8 +170,6 @@ Current configuration includes:
 '../ClientApp/src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
 ```
 
-
-
 Both pairs overlap.
 
 The broader patterns already include the narrower ones.
@@ -209,8 +205,6 @@ Current `main.ts` configures:
   },
 }
 ```
-
-
 
 This combines different configuration responsibilities.
 
@@ -287,8 +281,6 @@ docs: {
 }
 ```
 
-
-
 The current documented Autodocs activation is already:
 
 ```ts
@@ -308,8 +300,6 @@ export const expectedAddonDocsConfig = {
   },
 };
 ```
-
-
 
 ### Recommendation
 
@@ -339,8 +329,6 @@ Configuration should have one source of truth.
 <Controls />
 <Stories />
 ```
-
-
 
 This is effectively Storybook's documented default Autodocs template.
 
@@ -384,8 +372,6 @@ description: {
     'Component documentation generated from JSDoc comments and Storybook autodocs.',
 },
 ```
-
-
 
 This works against the project's stated goal of deriving meaningful descriptions from component documentation.
 
@@ -543,8 +529,6 @@ typescript: {
 },
 ```
 
-
-
 Storybook's current TypeScript integration documentation identifies `typescript.check` as available for **Webpack-based projects**.
 
 This project uses:
@@ -607,8 +591,6 @@ Current:
 ```ts
 '@storybook/addon-styling-webpack'
 ```
-
-
 
 The package exists to configure CSS tooling in **Webpack** Storybook builds.
 
@@ -696,8 +678,6 @@ Storybook states that it renders the same snippet as the `Source` Doc Block and 
 parameters.docs.source
 ```
 
-
-
 Therefore your documentation architecture becomes:
 
 ```text
@@ -731,8 +711,6 @@ source: {
   type: 'dynamic',
 },
 ```
-
-
 
 Both settings are valid.
 
@@ -924,8 +902,6 @@ Your current project already uses MDX appropriately for high-level documentation
 Documentation/Getting Started
 ```
 
-
-
 `style-guide.mdx` uses specialist Storybook blocks including:
 
 - `Typeset`
@@ -934,8 +910,6 @@ Documentation/Getting Started
 - `IconGallery`
 - `IconItem`
 - `Stories`
-
-
 
 This is an excellent use of MDX: it contains material that cannot be adequately expressed by automatic component metadata alone.
 
@@ -1798,8 +1772,6 @@ Correct:
 tags: ['autodocs']
 ```
 
-
-
 ## TOC
 
 Correct and useful:
@@ -1852,33 +1824,33 @@ The Getting Started page already connects stories with executable regression cov
 
 ## Phase 2 — Simplification
 
-8. Remove duplicate story/MDX globs.
-9. Remove `preview-docs.ts` if nothing remains after deleting the duplicated default template.
-10. Remove `expectedAddonDocsConfig`.
-11. Test removal of explicit `@storybook/csf-plugin`.
-12. Remove explicit `changeDetection: true` if no project policy requires declaring the default explicitly; Storybook currently documents `true` as the default.
+1. Remove duplicate story/MDX globs.
+2. Remove `preview-docs.ts` if nothing remains after deleting the duplicated default template.
+3. Remove `expectedAddonDocsConfig`.
+4. Test removal of explicit `@storybook/csf-plugin`.
+5. Remove explicit `changeDetection: true` if no project policy requires declaring the default explicitly; Storybook currently documents `true` as the default.
 
 ## Phase 3 — Documentation quality
 
-13. Add `remark-gfm`.
-14. Rewrite the component documentation guide.
-15. Add Args versus ArgTypes guidance.
-16. Add parameter inheritance guidance.
-17. Add Code Panel guidance.
-18. Add attached MDX examples.
-19. Document the Doc Block capability model.
-20. Add docs build scripts.
+ 1. Add `remark-gfm`.
+ 2. Rewrite the component documentation guide.
+ 3. Add Args versus ArgTypes guidance.
+ 4. Add parameter inheritance guidance.
+ 5. Add Code Panel guidance.
+ 6. Add attached MDX examples.
+ 7. Document the Doc Block capability model.
+ 8. Add docs build scripts.
 
 ## Phase 4 — Verification
 
-21. Run representative inference tests.
-22. Run source/Code Panel tests.
-23. Validate MDX tables.
-24. Validate standalone MDX.
-25. Validate attached MDX.
-26. Build documentation.
-27. Verify `storybook-static`.
-28. Verify deployed documentation.
+ 1. Run representative inference tests.
+ 2. Run source/Code Panel tests.
+ 3. Validate MDX tables.
+ 4. Validate standalone MDX.
+ 5. Validate attached MDX.
+ 6. Build documentation.
+ 7. Verify `storybook-static`.
+ 8. Verify deployed documentation.
 
 ---
 

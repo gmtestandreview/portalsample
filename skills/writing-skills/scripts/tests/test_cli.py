@@ -42,7 +42,13 @@ def test_validate_lowercase_skill_file_is_not_treated_as_skill_file(tmp_path):
 def test_validate_invalid_skill_returns_exit_one(tmp_path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
-    (skill_dir / "SKILL.md").write_text("---\nname: INVALID\ndescription: A test skill\n---\nBody\n")
+    (skill_dir / "SKILL.md").write_text(
+        "---\n"
+        "name: INVALID\n"
+        "description: A test skill\n"
+        "---\n"
+        "Body\n"
+    )
     result = CliRunner().invoke(main, ["validate", str(skill_dir)])
     assert result.exit_code == 1
     assert "Validation failed" in result.output

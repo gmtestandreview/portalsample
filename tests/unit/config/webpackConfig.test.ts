@@ -9,6 +9,8 @@ interface SassLoaderOptions {
     api: string;
     sassOptions: {
         includePaths: string[];
+        quietDeps: boolean;
+        silenceDeprecations: string[];
     };
 }
 
@@ -160,6 +162,13 @@ describe('webpack config', () => {
         expect(sassLoader?.options.api).toBe('modern');
         expect(sassLoader?.options.sassOptions.includePaths).toEqual([
             expect.stringContaining('node_modules'),
+        ]);
+        expect(sassLoader?.options.sassOptions.quietDeps).toBe(true);
+        expect(sassLoader?.options.sassOptions.silenceDeprecations).toEqual([
+            'import',
+            'global-builtin',
+            'color-functions',
+            'if-function',
         ]);
     });
 });

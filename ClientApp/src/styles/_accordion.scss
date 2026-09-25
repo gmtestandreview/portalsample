@@ -13,10 +13,7 @@
           // For multi line accordion headers
           line-height: rfs-value(21px); //1.3;
           .text-truncate {
-            display: -webkit-box !important;
-            -webkit-line-clamp: 1; // About 1 text lines on mobile
-            -webkit-box-orient: vertical;
-            white-space: normal;
+            @include textTruncateBase;
             max-width: 90vw;
           }
         }
@@ -115,14 +112,12 @@
         }
         .h3 {
           &.text-truncate {
-            display: -webkit-box !important;
-            -webkit-line-clamp: 3; // About 3 text lines on mobile
-            -webkit-box-orient: vertical;
-            white-space: normal;
+            @include textTruncateBase;
+            @include lineClamp(3);
             max-width: 90vw;
             @include media-breakpoint-up(lg) {
               display: inherit !important;
-              -webkit-line-clamp: 1; // About 1 text line on desktop
+              @include lineClamp(1);
               -webkit-box-orient: horizontal;
               white-space: nowrap;
             }

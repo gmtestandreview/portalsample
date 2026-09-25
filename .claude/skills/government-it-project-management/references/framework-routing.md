@@ -32,6 +32,7 @@ Use adaptive delivery where learning, changing needs, and frequent feedback mate
 Use hybrid delivery where governance, funding, assurance, or approval points need plan-driven control while solution discovery and implementation benefit from iteration.
 
 Always record:
+
 - the uncertainty being managed;
 - the governance constraint being respected;
 - the value of feedback or staged delivery;
@@ -43,6 +44,7 @@ Always record:
 Do not mechanically stack ceremonies, roles, or artefacts from multiple frameworks.
 
 When combining guidance:
+
 1. Start with the organisation's governance model and required decision rights.
 2. Add only practices that solve a stated delivery or assurance need.
 3. Remove duplicate ceremonies, reports, and approval layers.

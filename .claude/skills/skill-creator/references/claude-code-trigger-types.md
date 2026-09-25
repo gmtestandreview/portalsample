@@ -1,6 +1,8 @@
 # Trigger Types - Complete Guide
 
-Complete reference for configuring triggers in this project's Claude Code auto-activation system. These fields and hook semantics are project-local; do not assume another Agent Skills environment implements them.
+Complete reference for configuring triggers in this project's Claude Code
+auto-activation system. These fields and hook semantics are project-local; do
+not assume another Agent Skills environment implements them.
 
 ## Table of Contents
 
@@ -14,15 +16,15 @@ Complete reference for configuring triggers in this project's Claude Code auto-a
 
 ## Keyword Triggers (Explicit)
 
-### How It Works
+### Keyword Matching
 
 Case-insensitive substring matching in user's prompt.
 
-### Use For
+### Keyword Use Cases
 
 Topic-based activation where user explicitly mentions the subject.
 
-### Configuration
+### Keyword Configuration
 
 ```json
 "promptTriggers": {
@@ -30,13 +32,13 @@ Topic-based activation where user explicitly mentions the subject.
 }
 ```
 
-### Example
+### Keyword Example
 
 - User prompt: "how does the **layout** system work?"
 - Matches: "layout" keyword
 - Activates: `project-catalog-developer`
 
-### Best Practices
+### Keyword Best Practices
 
 - Use specific, unambiguous terms
 - Include common variations ("layout", "layout system", "grid layout")
@@ -47,15 +49,17 @@ Topic-based activation where user explicitly mentions the subject.
 
 ## Intent Pattern Triggers (Implicit)
 
-### How It Works
+### Intent Matching
 
-Regex pattern matching to detect user's intent even when they don't mention the topic explicitly.
+Regex pattern matching to detect user's intent even when they don't mention the
+topic explicitly.
 
-### Use For
+### Intent Use Cases
 
-Action-based activation where user describes what they want to do rather than the specific topic.
+Action-based activation where user describes what they want to do rather than
+the specific topic.
 
-### Configuration
+### Intent Configuration
 
 ```json
 "promptTriggers": {
@@ -66,24 +70,26 @@ Action-based activation where user describes what they want to do rather than th
 }
 ```
 
-### Examples
+### Intent Examples
 
 **Database Work:**
+
 - User prompt: "add user tracking feature"
 - Matches: `(add).*?(feature)`
 - Activates: `database-verification`, `error-tracking`
 
 **Component Creation:**
+
 - User prompt: "create a dashboard widget"
 - Matches: `(create).*?(component)` (if component in pattern)
 - Activates: `frontend-dev-guidelines`
 
-### Best Practices
+### Intent Best Practices
 
 - Capture common action verbs: `(create|add|modify|build|implement)`
 - Include domain-specific nouns: `(feature|endpoint|component|workflow)`
 - Use non-greedy matching: `.*?` instead of `.*`
-- Test patterns thoroughly with regex tester (https://regex101.com/)
+- Test patterns thoroughly with regex tester (<https://regex101.com/>)
 - Don't make patterns too broad (causes false positives)
 - Don't make patterns too specific (causes false negatives)
 
@@ -110,15 +116,15 @@ Action-based activation where user describes what they want to do rather than th
 
 ## File Path Triggers
 
-### How It Works
+### Path Matching
 
 Glob pattern matching against the file path being edited.
 
-### Use For
+### Path Use Cases
 
 Domain/area-specific activation based on file location in the project.
 
-### Configuration
+### Path Configuration
 
 ```json
 "fileTriggers": {
@@ -142,13 +148,13 @@ Domain/area-specific activation based on file location in the project.
   - `**/schema.prisma` = schema.prisma anywhere in project
   - `form/src/**/*.ts` = All .ts files in form/src subdirs
 
-### Example
+### Path Example
 
 - File being edited: `frontend/src/components/Dashboard.tsx`
 - Matches: `frontend/src/**/*.tsx`
 - Activates: `frontend-dev-guidelines`
 
-### Best Practices
+### Path Best Practices
 
 - Be specific to avoid false positives
 - Use exclusions for test files: `**/*.test.ts`
@@ -188,15 +194,16 @@ form/src/workflow-definitions/**/*.json # Workflow definitions
 
 ## Content Pattern Triggers
 
-### How It Works
+### Content Matching
 
 Regex pattern matching against the file's actual content (what's inside the file).
 
-### Use For
+### Content Use Cases
 
-Technology-specific activation based on what the code imports or uses (Prisma, controllers, specific libraries).
+Technology-specific activation based on what the code imports or uses (Prisma,
+controllers, specific libraries).
 
-### Configuration
+### Content Configuration
 
 ```json
 "fileTriggers": {
@@ -209,19 +216,21 @@ Technology-specific activation based on what the code imports or uses (Prisma, c
 }
 ```
 
-### Examples
+### Content Examples
 
 **Prisma Detection:**
+
 - File contains: `import { PrismaService } from '@project/database'`
 - Matches: `import.*[Pp]risma`
 - Activates: `database-verification`
 
 **Controller Detection:**
+
 - File contains: `export class UserController {`
 - Matches: `export class.*Controller`
 - Activates: `error-tracking`
 
-### Best Practices
+### Content Best Practices
 
 - Match imports: `import.*[Pp]risma` (case-insensitive with [Pp])
 - Escape special regex chars: `\\.findMany\\(` not `.findMany(`
@@ -261,7 +270,8 @@ useState|useEffect              # React hooks
 
 ## Best Practices Summary
 
-### DO:
+### DO
+
 ✅ Use specific, unambiguous keywords
 ✅ Test all patterns with real examples
 ✅ Include common variations
@@ -270,23 +280,26 @@ useState|useEffect              # React hooks
 ✅ Add exclusions for test files
 ✅ Make file path patterns narrow and specific
 
-### DON'T:
+### DON'T
+
 ❌ Use overly generic keywords ("system", "work")
 ❌ Make intent patterns too broad (false positives)
 ❌ Make patterns too specific (false negatives)
-❌ Forget to test with regex tester (https://regex101.com/)
+❌ Forget to test with regex tester (<https://regex101.com/>)
 ❌ Use greedy regex: `.*` instead of `.*?`
 ❌ Match too broadly in file paths
 
 ### Testing Your Triggers
 
 **Test keyword/intent triggers:**
+
 ```bash
 echo '{"session_id":"test","prompt":"your test prompt"}' | \
   npx tsx .claude/hooks/skill-activation-prompt.ts
 ```
 
 **Test file path/content triggers:**
+
 ```bash
 cat <<'EOF' | npx tsx .claude/hooks/skill-verification-guard.ts
 {
@@ -300,6 +313,8 @@ EOF
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md) - Main skill guide
-- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Complete skill-rules.json schema
+- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Complete
+  skill-rules.json schema
 - [PATTERNS_LIBRARY.md](PATTERNS_LIBRARY.md) - Ready-to-use pattern library

@@ -3,12 +3,22 @@
 from __future__ import annotations
 
 import ast
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import patch
 
-from scripts import run_eval
+if TYPE_CHECKING or __package__:
+    from . import aggregate_benchmark, run_eval, run_red_green_eval
+    from .utils import parse_skill_md
+else:
+    import aggregate_benchmark
+    import run_eval
+    import run_red_green_eval
+    from utils import parse_skill_md
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
 
@@ -28,12 +38,88 @@ class CompatibilityTests(unittest.TestCase):
         self.assertIn("timezone", datetime_imports)
 
 
+class ScriptEntrypointTests(unittest.TestCase):
+    def test_scripts_with_shebangs_are_directly_executable_for_help(self) -> None:
+        scripts = [
+            "run_eval.py",
+            "package_skill.py",
+            "run_loop.py",
+            "improve_description.py",
+            "run_readiness_pressure_eval.py",
+            "test_regressions.py",
+        ]
+
+        for script in scripts:
+            with self.subTest(script=script):
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPTS_DIR / script), "--help"],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+
+                self.assertEqual(result.returncode, 0, result.stderr)
+
+
+class SkillMdParserTests(unittest.TestCase):
+    def test_empty_skill_md_reports_frontmatter_error(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            skill_dir = Path(tmp)
+            (skill_dir / "SKILL.md").write_text("", encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "frontmatter"):
+                parse_skill_md(skill_dir)
+
+
+class AggregateBenchmarkTests(unittest.TestCase):
+    def test_malformed_run_directory_is_skipped(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            benchmark_dir = Path(tmp)
+            run_dir = benchmark_dir / "eval-1" / "with_skill" / "run-latest"
+            run_dir.mkdir(parents=True)
+            (run_dir / "grading.json").write_text(
+                '{"summary": {"pass_rate": 1.0, "passed": 1, "failed": 0, "total": 1}}',
+                encoding="utf-8",
+            )
+
+            results = aggregate_benchmark.load_run_results(benchmark_dir)
+
+            self.assertEqual(results.get("with_skill"), [])
+
+    def test_explicit_zero_duration_is_not_replaced_by_timing_file(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            benchmark_dir = Path(tmp)
+            run_dir = benchmark_dir / "eval-1" / "with_skill" / "run-1"
+            run_dir.mkdir(parents=True)
+            (run_dir / "grading.json").write_text(
+                (
+                    '{"summary": {"pass_rate": 1.0, "passed": 1, "failed": 0, "total": 1}, '
+                    '"timing": {"total_duration_seconds": 0.0}}'
+                ),
+                encoding="utf-8",
+            )
+            (run_dir / "timing.json").write_text(
+                '{"total_duration_seconds": 12.5, "total_tokens": 100}',
+                encoding="utf-8",
+            )
+
+            results = aggregate_benchmark.load_run_results(benchmark_dir)
+
+            result = results["with_skill"][0]
+            self.assertIn("time_seconds", result)
+            self.assertEqual(result.get("time_seconds"), 0.0)
+
+
 class RunEvalValidationTests(unittest.TestCase):
     def test_invalid_should_trigger_is_reported_as_value_error(self) -> None:
         eval_set = [{"query": "Create a useful skill", "should_trigger": "yes"}]
 
         with self.assertRaises(ValueError):
-            run_eval._validate_eval_set(eval_set, runs_per_query=1, trigger_threshold=0.5)
+            run_eval._validate_eval_set(  # pyright: ignore[reportPrivateUsage]
+                eval_set,
+                runs_per_query=1,
+                trigger_threshold=0.5,
+            )
 
 
 class RunEvalRegistrationTests(unittest.TestCase):
@@ -50,6 +136,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -61,9 +148,15 @@ class RunEvalRegistrationTests(unittest.TestCase):
             def wait(self) -> int:
                 return 0
 
-        def fake_popen(*_args, **kwargs) -> FakeProcess:
-            cmd = _args[0]
-            root = Path(kwargs["cwd"])
+        def fake_popen(
+            cmd: list[str],
+            *_args: object,
+            **kwargs: object,
+        ) -> FakeProcess:
+            cwd = kwargs.get("cwd")
+            if not isinstance(cwd, (str, Path)):
+                raise AssertionError("expected subprocess cwd to be a path")
+            root = Path(cwd)
             skill_md = root / ".claude" / "skills" / "example-skill-12345678" / "SKILL.md"
             command_file = root / ".claude" / "commands" / "example-skill-12345678.md"
             self.assertNotEqual(root, project_root)
@@ -112,6 +205,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -159,6 +253,7 @@ class RunEvalRegistrationTests(unittest.TestCase):
 
         class FakeProcess:
             stdout = FakeStdout()
+            stderr = None
             returncode = 0
 
             def poll(self) -> int:
@@ -176,15 +271,189 @@ class RunEvalRegistrationTests(unittest.TestCase):
             with (
                 patch.object(run_eval.uuid, "uuid4", return_value=FakeUuid()),
                 patch.object(run_eval.subprocess, "Popen", return_value=FakeProcess()),
+                self.assertRaisesRegex(RuntimeError, "429: You have hit your limit"),
             ):
-                with self.assertRaisesRegex(RuntimeError, "429: You have hit your limit"):
-                    run_eval.run_single_query(
-                        query="Create an Agent Skill",
-                        skill_name="example",
-                        skill_description="Use when creating Agent Skills.",
-                        timeout=5,
-                        project_root=str(project_root),
-                    )
+                run_eval.run_single_query(
+                    query="Create an Agent Skill",
+                    skill_name="example",
+                    skill_description="Use when creating Agent Skills.",
+                    timeout=5,
+                    project_root=str(project_root),
+                )
+
+    def test_run_single_query_detects_top_level_stream_events(self) -> None:
+        class FakeUuid:
+            hex = "1234567890abcdef"
+
+        class FakeStdout:
+            def __init__(self) -> None:
+                self._lines = [
+                    (
+                        b'{"type":"content_block_start","content_block":'
+                        b'{"type":"tool_use","name":"Skill","input":{}}}\n'
+                    ),
+                    (
+                        b'{"type":"content_block_delta","delta":{"type":"input_json_delta",'
+                        b'"partial_json":"{\\"skill\\": \\"example-skill-12345678\\"}"}}\n'
+                    ),
+                    b'{"type":"content_block_stop"}\n',
+                    b"",
+                ]
+
+            def readline(self) -> bytes:
+                return self._lines.pop(0)
+
+        class FakeProcess:
+            stdout = FakeStdout()
+            stderr = None
+            returncode = 0
+
+            def poll(self) -> int:
+                return 0
+
+            def kill(self) -> None:
+                raise AssertionError("process should not need to be killed")
+
+            def wait(self, timeout: int | None = None) -> int:
+                return 0
+
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            (project_root / ".claude").mkdir()
+            with (
+                patch.object(run_eval.uuid, "uuid4", return_value=FakeUuid()),
+                patch.object(run_eval.subprocess, "Popen", return_value=FakeProcess()),
+            ):
+                triggered = run_eval.run_single_query(
+                    query="Create an Agent Skill",
+                    skill_name="example",
+                    skill_description="Use when creating Agent Skills.",
+                    timeout=5,
+                    project_root=str(project_root),
+                )
+
+            self.assertTrue(triggered)
+
+    def test_run_single_query_waits_after_unrelated_tool_message_stop(self) -> None:
+        class FakeUuid:
+            hex = "1234567890abcdef"
+
+        class FakeStdout:
+            def __init__(self) -> None:
+                self._lines = [
+                    (
+                        b'{"type":"assistant","message":{"content":[{"type":"tool_use",'
+                        b'"name":"Glob","input":{"pattern":"**/SKILL.md"}}]}}\n'
+                    ),
+                    b'{"type":"message_stop"}\n',
+                    (
+                        b'{"type":"assistant","message":{"content":[{"type":"tool_use",'
+                        b'"name":"Read","input":{"file_path":'
+                        b'"C:/tmp/.claude/skills/example-skill-12345678/SKILL.md"}}]}}\n'
+                    ),
+                    b"",
+                ]
+
+            def readline(self) -> bytes:
+                return self._lines.pop(0)
+
+        class FakeProcess:
+            stdout = FakeStdout()
+            stderr = None
+            returncode = 0
+
+            def poll(self) -> int:
+                return 0
+
+            def kill(self) -> None:
+                raise AssertionError("process should not need to be killed")
+
+            def wait(self, timeout: int | None = None) -> int:
+                return 0
+
+        with tempfile.TemporaryDirectory() as tmp:
+            project_root = Path(tmp)
+            (project_root / ".claude").mkdir()
+            with (
+                patch.object(run_eval.uuid, "uuid4", return_value=FakeUuid()),
+                patch.object(run_eval.subprocess, "Popen", return_value=FakeProcess()),
+            ):
+                triggered = run_eval.run_single_query(
+                    query="Refactor this SKILL.md",
+                    skill_name="example",
+                    skill_description="Use when creating Agent Skills.",
+                    timeout=5,
+                    project_root=str(project_root),
+                )
+
+            self.assertTrue(triggered)
+
+
+class RedGreenEvalTests(unittest.TestCase):
+    def test_main_returns_nonzero_when_eval_runs_fail(self) -> None:
+        failed_run: run_red_green_eval.RunData = {
+            "exit_code": 1,
+            "duration_seconds": 0.1,
+            "events": [{"type": "result", "result": "rate limited"}],
+            "stderr": "",
+        }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate = root / "candidate-skill"
+            candidate.mkdir()
+            (candidate / "SKILL.md").write_text(
+                "---\nname: skill-creator\ndescription: Test fixture.\n---\n",
+                encoding="utf-8",
+            )
+            output_dir = root / "out"
+
+            with (
+                patch.object(sys, "argv", [
+                    "run_red_green_eval.py",
+                    "--candidate-skill",
+                    str(candidate),
+                    "--output-dir",
+                    str(output_dir),
+                ]),
+                patch.object(run_red_green_eval, "run_claude", return_value=failed_run),
+                patch("builtins.print"),
+            ):
+                status = run_red_green_eval.main()
+
+        self.assertEqual(status, 1)
+
+    def test_run_claude_terminates_process_tree_on_timeout(self) -> None:
+        class FakeProcess:
+            returncode = None
+
+            def __init__(self) -> None:
+                self.communicate_calls = 0
+
+            def communicate(self, timeout: int | None = None) -> tuple[str, str]:
+                self.communicate_calls += 1
+                if self.communicate_calls == 1:
+                    raise subprocess.TimeoutExpired(["claude"], timeout or 0)
+                return "", "timed out"
+
+        fake_process = FakeProcess()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            transcript_path = root / "transcript.jsonl"
+            stderr_path = root / "stderr.txt"
+            with (
+                patch.object(run_red_green_eval.subprocess, "Popen", return_value=fake_process),
+                patch.object(run_red_green_eval, "_terminate_process_tree") as terminate,
+                self.assertRaisesRegex(TimeoutError, "exceeded 360s"),
+            ):
+                run_red_green_eval.run_claude(  # pyright: ignore[reportUnknownMemberType]
+                    root,
+                    transcript_path,
+                    stderr_path,
+                )
+
+        terminate.assert_called_once_with(fake_process)
 
 
 def _find_subprocess_call(filename: str, func_name: str) -> ast.Call:
@@ -202,14 +471,36 @@ def _find_subprocess_call(filename: str, func_name: str) -> ast.Call:
 
 
 class WindowsClaudeCliInvocationTests(unittest.TestCase):
-    """npm installs `claude` as claude.cmd/.ps1 on Windows. CreateProcess
-    cannot launch those directly, so subprocess.Popen(["claude", ...]) fails
-    with WinError 2 even though shutil.which("claude") finds it. Both call
-    sites must pass shell= so cmd.exe resolves the shim."""
+    """Windows npm shims need explicit launch handling."""
 
-    def test_run_eval_popen_passes_shell_kwarg(self) -> None:
-        call = _find_subprocess_call("run_eval.py", "Popen")
-        self.assertIn("shell", {kw.arg for kw in call.keywords})
+    def test_run_eval_resolves_windows_npm_shim_without_shell(self) -> None:
+        shim_path = r"C:\Users\test\AppData\Roaming\npm\claude.cmd"
+
+        class FakeProcess:
+            stdout = None
+            stderr = None
+
+        def fake_popen(
+            cmd: list[str],
+            *_args: object,
+            **kwargs: object,
+        ) -> FakeProcess:
+            self.assertEqual(cmd[0], shim_path)
+            self.assertIs(kwargs.get("shell"), False)
+            return FakeProcess()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            with (
+                patch.object(run_eval.os, "name", "nt"),
+                patch.object(run_eval.shutil, "which", return_value=shim_path),
+                patch.object(run_eval.subprocess, "Popen", side_effect=fake_popen),
+            ):
+                run_eval._launch_claude(  # pyright: ignore[reportPrivateUsage]
+                    query="Create an Agent Skill",
+                    model=None,
+                    eval_project_root=root,
+                )
 
     def test_improve_description_run_passes_shell_kwarg(self) -> None:
         call = _find_subprocess_call("improve_description.py", "run")

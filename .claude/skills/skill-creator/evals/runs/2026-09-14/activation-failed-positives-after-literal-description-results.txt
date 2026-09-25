@@ -1,0 +1,4 @@
+False | This SKILL.md has ballooned to nearly 500 lines. Refactor it so detailed example
+True | The skill keeps firing on unrelated requests. Tighten its frontmatter descriptio
+False | Organize these scripts, references, and assets around the existing SKILL.md with
+True | Turn the workflow we just developed into a reusable SKILL.md, including a bounde

@@ -14,63 +14,63 @@ svg
 
 `import {`
 
-`    artefactTypeResponses,`
+`artefactTypeResponses,`
 
-`    lookupResponses,`
+`lookupResponses,`
 
-`    serviceResponses,`
+`serviceResponses,`
 
 `} from '../ClientApp/src/storybook/storybookFixtures';`
 
 `export const mswHandlers = [`
 
-`    http.get('/api/dashboard/*', () =>`
+`http.get('/api/dashboard/*', () =>`
 
-`        HttpResponse.json({`
+`HttpResponse.json({`
 
-`    http.get('/api/dashboard/*', () =>`
+`http.get('/api/dashboard/*', () =>`
 
-`        HttpResponse.json({`
+`HttpResponse.json({`
 
-`            items: [],`
+`items: [],`
 
-`            currentPage: 1,`
+`currentPage: 1,`
 
-`            totalPages: 0,`
+`totalPages: 0,`
 
-`            totalCount: 0,`
+`totalCount: 0,`
 
-`        })`
+`})`
 
-`    ),`
+`),`
 
 `];`
 
-`        })`
+`})`
 
-`    ),`
+`),`
 
-`    http.get('/api/lookup/services', () => HttpResponse.json(serviceResponses)),`
+`http.get('/api/lookup/services', () => HttpResponse.json(serviceResponses)),`
 
-`    http.get('/api/lookup', ({ request }) => {`
+`http.get('/api/lookup', ({ request }) => {`
 
-`        const lookupType = new URL(request.url).searchParams.get('LookupType');`
+`const lookupType = new URL(request.url).searchParams.get('LookupType');`
 
-`        if (lookupType !== CRMLookupTypes.TCPortalMeasurementCategory) return;`
+`if (lookupType !== CRMLookupTypes.TCPortalMeasurementCategory) return;`
 
-`        return HttpResponse.json(lookupResponses);`
+`return HttpResponse.json(lookupResponses);`
 
-`    }),`
+`}),`
 
-`    http.get('/api/lookup', ({ request }) => {`
+`http.get('/api/lookup', ({ request }) => {`
 
-`        const lookupType = new URL(request.url).searchParams.get('LookupType');`
+`const lookupType = new URL(request.url).searchParams.get('LookupType');`
 
-`        if (lookupType !== CRMLookupTypes.TCArtefactTypePortalCategory) return;`
+`if (lookupType !== CRMLookupTypes.TCArtefactTypePortalCategory) return;`
 
-`        return HttpResponse.json(artefactTypeResponses);`
+`return HttpResponse.json(artefactTypeResponses);`
 
-`    }),`
+`}),`
 
 `];`
 
@@ -82,21 +82,21 @@ ClientApp/src/analytics/GoogleAnalytics.tsx
 
 `}: GoogleAnalyticsProps) => {`
 
-`    useEffect(() => {`
+`useEffect(() => {`
 
-`        if (ReactGA.isInitialized === false) {`
+`if (ReactGA.isInitialized === false) {`
 
-`            const trackId = env.REACT_APP_GA_TRACKINGID;`
+`const trackId = env.REACT_APP_GA_TRACKINGID;`
 
-`        const trackId = env.REACT_APP_GA_TRACKINGID;`
+`const trackId = env.REACT_APP_GA_TRACKINGID;`
 
-`        if (trackId && ReactGA.isInitialized === false) {`
+`if (trackId && ReactGA.isInitialized === false) {`
 
-`            ReactGA.initialize([{`
+`ReactGA.initialize([{`
 
-`                trackingId: trackId,`
+`trackingId: trackId,`
 
-`                gaOptions: {`
+`gaOptions: {`
 
 ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx
 
@@ -104,35 +104,35 @@ ClientApp/src/components/SlateEditor/SlateEditor.stories.tsx
     },
 ```
 
-`    play: async ({ canvasElement }) => {`
+`play: async ({ canvasElement }) => {`
 
-`        const canvas = within(canvasElement);`
+`const canvas = within(canvasElement);`
 
-`        // Live counter starts at zero out of the budget.`
+`// Live counter starts at zero out of the budget.`
 
-`        await expect(canvas.getByText(/0/)).toBeVisible();`
+`await expect(canvas.getByText(/0/)).toBeVisible();`
 
-`        await expect(canvas.getByText(/500/)).toBeVisible();`
+`await expect(canvas.getByText(/500/)).toBeVisible();`
 
-`        await userEvent.type(canvas.getByRole('textbox'), 'Hi');`
+`await userEvent.type(canvas.getByRole('textbox'), 'Hi');`
 
-`        await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();`
+`await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();`
 
-`        // Live counter starts at zero out of the budget.`
+`// Live counter starts at zero out of the budget.`
 
-`        await expect(canvas.getByText(/0/)).toBeVisible();`
+`await expect(canvas.getByText(/0/)).toBeVisible();`
 
-`        await expect(canvas.getByText(/500/)).toBeVisible();`
+`await expect(canvas.getByText(/500/)).toBeVisible();`
 
-`        const textbox = canvas.getByRole('textbox');`
+`const textbox = canvas.getByRole('textbox');`
 
-`        await userEvent.click(textbox);`
+`await userEvent.click(textbox);`
 
-`        await userEvent.type(textbox, 'Hi');`
+`await userEvent.type(textbox, 'Hi');`
 
-`        await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();`
+`await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();`
 
-`    },`
+`},`
 
 `};`
 
@@ -164,45 +164,45 @@ svg
 
 `const lookupHandlers = [`
 
-`    http.get('/api/lookup', ({ request }) => {`
+`http.get('/api/lookup', ({ request }) => {`
 
-`        const lookupType = new URL(request.url).searchParams.get('LookupType');`
+`const lookupType = new URL(request.url).searchParams.get('LookupType');`
 
-`        return HttpResponse.json(`
+`return HttpResponse.json(`
 
-`            lookupType === CRMLookupTypes.TCArtefactTypePortalCategory`
+`lookupType === CRMLookupTypes.TCArtefactTypePortalCategory`
 
-`                ? artefactTypeResponses`
+`? artefactTypeResponses`
 
-`                : lookupResponses,`
+`: lookupResponses,`
 
-`        );`
+`);`
 
-`    }),`
+`}),`
 
 `];`
 
 `const meta = {`
 
-`    title: 'Routes/RequestForQuote',`
+`title: 'Routes/RequestForQuote',`
 
-`    component: OrganisationAndContact,`
+`component: OrganisationAndContact,`
 
-`                    measurementReportAndCertificateRequired: 'MeasurementReportOnly',`
+`measurementReportAndCertificateRequired: 'MeasurementReportOnly',`
 
-`                },`
+`},`
 
-`            },`
+`},`
 
-`        },`
+`},`
 
-`        msw: {`
+`msw: {`
 
-`            handlers: lookupHandlers,`
+`handlers: lookupHandlers,`
 
-`        },`
+`},`
 
-`    },`
+`},`
 
 `} satisfies Meta<typeof OrganisationAndContact>;`
 
@@ -222,63 +222,63 @@ svg
 
 `import {`
 
-`    ServiceType,`
+`ServiceType,`
 
-`    type DashboardItemDto,`
+`type DashboardItemDto,`
 
-`    type LookupResponse,`
+`type LookupResponse,`
 
-`    type RequestForQuoteDetails,`
+`type RequestForQuoteDetails,`
 
-`    type ServiceDto,`
+`type ServiceDto,`
 
 `} from '../api/web-api-client';`
 
 `export const dashboardItems: DashboardItemDto[] = [`
 
-`    {`
+`{`
 
-`    { id: 'no-instrument', label: 'No instrument/artefact type available', parentId: 'no-measurement' },`
+`{ id: 'no-instrument', label: 'No instrument/artefact type available', parentId: 'no-measurement' },`
 
 `];`
 
 `export const serviceResponses: ServiceDto[] = [`
 
-`    {`
+`{`
 
-`        serviceType: ServiceType.TestingCalibration,`
+`serviceType: ServiceType.TestingCalibration,`
 
-`        title: 'Testing and calibration',`
+`title: 'Testing and calibration',`
 
-`        description: 'Testing and calibration services for measurement instruments and artefacts.',`
+`description: 'Testing and calibration services for measurement instruments and artefacts.',`
 
-`        icon: 'icon-test-tube',`
+`icon: 'icon-test-tube',`
 
-`        meta: 'Request a quote, review quotations and access measurement reports.',`
+`meta: 'Request a quote, review quotations and access measurement reports.',`
 
-`    },`
+`},`
 
-`    {`
+`{`
 
-`        serviceType: ServiceType.PatternApproval,`
+`serviceType: ServiceType.PatternApproval,`
 
-`        title: 'Pattern approval',`
+`title: 'Pattern approval',`
 
-`        description: 'Pattern approval services for trade measurement instruments.',`
+`description: 'Pattern approval services for trade measurement instruments.',`
 
-`        icon: 'icon-certificate',`
+`icon: 'icon-certificate',`
 
-`        meta: 'Create and manage pattern approval applications.',`
+`meta: 'Create and manage pattern approval applications.',`
 
-`    },`
+`},`
 
 `];`
 
 `export const requestForQuoteDetailsFixture = {`
 
-`    quoteRequestIdNum: 'RFQ-2024-000892',`
+`quoteRequestIdNum: 'RFQ-2024-000892',`
 
-`    quotationIdNum: 'Q-2024-000456',`
+`quotationIdNum: 'Q-2024-000456',`
 
 tests/unit/analytics/googleAnalytics.test.tsx
 
@@ -298,37 +298,37 @@ svg
 
 `const reactGaMock = vi.hoisted(() => ({`
 
-`    event: vi.fn(),`
+`event: vi.fn(),`
 
-`        expect(reactGaMock.initialize).not.toHaveBeenCalled();`
+`expect(reactGaMock.initialize).not.toHaveBeenCalled();`
 
-`    });`
+`});`
 
-`    it('does not initialize ReactGA when no tracking ID is configured', async () => {`
+`it('does not initialize ReactGA when no tracking ID is configured', async () => {`
 
-`        const originalTrackingId = env.REACT_APP_GA_TRACKINGID;`
+`const originalTrackingId = env.REACT_APP_GA_TRACKINGID;`
 
-`        env.REACT_APP_GA_TRACKINGID = '';`
+`env.REACT_APP_GA_TRACKINGID = '';`
 
-`        const { default: GoogleAnalytics } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');`
+`const { default: GoogleAnalytics } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');`
 
-`        try {`
+`try {`
 
-`            render(<GoogleAnalytics />);`
+`render(<GoogleAnalytics />);`
 
-`            expect(reactGaMock.initialize).not.toHaveBeenCalled();`
+`expect(reactGaMock.initialize).not.toHaveBeenCalled();`
 
-`        } finally {`
+`} finally {`
 
-`            env.REACT_APP_GA_TRACKINGID = originalTrackingId;`
+`env.REACT_APP_GA_TRACKINGID = originalTrackingId;`
 
-`        }`
+`}`
 
-`    });`
+`});`
 
-`    it('tracks click events with the default dashboard category', async () => {`
+`it('tracks click events with the default dashboard category', async () => {`
 
-`        const { trackGAEvent } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');`
+`const { trackGAEvent } = await import('../../../ClientApp/src/analytics/GoogleAnalytics');`
 
 tests/unit/config/coverageRemapPolicy.test.ts
 
@@ -356,7 +356,7 @@ svg
 
 `/**`
 
-` */`
+`*/`
 
 `const coverage = unitConfig.test?.coverage;`
 
@@ -364,11 +364,11 @@ svg
 
 `if (coverage === undefined) {`
 
-`  throw new Error("vitest.unit.config.ts must declare unit coverage");`
+`throw new Error("vitest.unit.config.ts must declare unit coverage");`
 
 `if (coverage?.provider !== "v8") {`
 
-`  throw new Error("vitest.unit.config.ts must declare V8 unit coverage");`
+`throw new Error("vitest.unit.config.ts must declare V8 unit coverage");`
 
 `}`
 
@@ -378,71 +378,71 @@ svg
 
 `describe("remap inputs", () => {`
 
-`  it("loads the terms configuration as data", () => {`
+`it("loads the terms configuration as data", () => {`
 
-`    expect(termsConfig).toEqual({ TermsVersion: "1" });`
+`expect(termsConfig).toEqual({ TermsVersion: "1" });`
 
-`  });`
+`});`
 
-`  it("carries no removed Vitest 3 coverage.all option", () => {`
+`it("carries no removed Vitest 3 coverage.all option", () => {`
 
-``    // `all` was removed in Vitest 4; asserting it through a type escape claims``
+``// `all` was removed in Vitest 4; asserting it through a type escape claims``
 
-`    // behaviour the runtime does not provide and reintroduces the JSON remap`
+`// behaviour the runtime does not provide and reintroduces the JSON remap`
 
-`    expect(coverage.provider).toBe("v8");`
+`expect(coverage.provider).toBe("v8");`
 
-`    expect(coverage.reportsDirectory).toBe("./reports/coverage/unit");`
+`expect(coverage.reportsDirectory).toBe("./reports/coverage/unit");`
 
-`  });`
+`});`
 
-`  it("limits Storybook coverage remapping to executable application source", () => {`
+`it("limits Storybook coverage remapping to executable application source", () => {`
 
-`    expect(storybookCoverage.provider).toBe("v8");`
+`expect(storybookCoverage.provider).toBe("v8");`
 
-`    expect(storybookCoverage.include).toEqual(["ClientApp/src/**/*.{ts,tsx}"]);`
+`expect(storybookCoverage.include).toEqual(["ClientApp/src/**/*.{ts,tsx}"]);`
 
-`    expect(storybookCoverage.exclude).toEqual(expect.arrayContaining([`
+`expect(storybookCoverage.exclude).toEqual(expect.arrayContaining([`
 
-`      "ClientApp/src/api/web-api-client.ts",`
+`"ClientApp/src/api/web-api-client.ts",`
 
-`      "ClientApp/src/external/**",`
+`"ClientApp/src/external/**",`
 
-`      "ClientApp/src/storybook/**",`
+`"ClientApp/src/storybook/**",`
 
-`      "ClientApp/src/**/*.stories.{ts,tsx}",`
+`"ClientApp/src/**/*.stories.{ts,tsx}",`
 
-`    ]));`
+`]));`
 
-`  });`
+`});`
 
-`  it("adapts Storybook manager runs to supported Vitest and JSON coverage APIs", async () => {`
+`it("adapts Storybook manager runs to supported Vitest and JSON coverage APIs", async () => {`
 
-`    const standalone = vi.fn();`
+`const standalone = vi.fn();`
 
-`    const legacyInit = vi.fn();`
+`const legacyInit = vi.fn();`
 
-`    const vitest = {`
+`const vitest = {`
 
-`      config: { coverage: { exclude: [] as string[] } },`
+`config: { coverage: { exclude: [] as string[] } },`
 
-`      init: legacyInit,`
+`init: legacyInit,`
 
-`      standalone,`
+`standalone,`
 
-`    };`
+`};`
 
-`    storybookVitestRuntimePlugin.configureVitest({ vitest });`
+`storybookVitestRuntimePlugin.configureVitest({ vitest });`
 
-`    await vitest.init();`
+`await vitest.init();`
 
-`    expect(standalone).toHaveBeenCalledOnce();`
+`expect(standalone).toHaveBeenCalledOnce();`
 
-`    expect(legacyInit).not.toHaveBeenCalled();`
+`expect(legacyInit).not.toHaveBeenCalled();`
 
-`    expect(vitest.config.coverage.exclude).toContain("ClientApp/src/**/*.json");`
+`expect(vitest.config.coverage.exclude).toContain("ClientApp/src/**/*.json");`
 
-`  });`
+`});`
 
 `});`
 
@@ -454,29 +454,29 @@ svg
 
 `svg`
 
-`    expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);`
+`expect(storybook.setupFiles).toEqual(["./vitest.storybook.setup.ts"]);`
 
-`  });`
+`});`
 
-`  it("does not own unit coverage", () => {`
+`it("does not own unit coverage", () => {`
 
-`    expect(storybook.coverage).toBeUndefined();`
+`expect(storybook.coverage).toBeUndefined();`
 
-`  it("owns only the Storybook executable-source coverage policy", () => {`
+`it("owns only the Storybook executable-source coverage policy", () => {`
 
-`    expect(storybook.coverage?.reportsDirectory).toBe(`
+`expect(storybook.coverage?.reportsDirectory).toBe(`
 
-`      "./reports/coverage/storybook",`
+`"./reports/coverage/storybook",`
 
-`    );`
+`);`
 
-`    expect(storybook.coverage?.include).toEqual([`
+`expect(storybook.coverage?.include).toEqual([`
 
-`      "ClientApp/src/**/*.{ts,tsx}",`
+`"ClientApp/src/**/*.{ts,tsx}",`
 
-`    ]);`
+`]);`
 
-`  });`
+`});`
 
 `});`
 
@@ -496,7 +496,7 @@ svg
 
 `const resolveConfig = async () => {`
 
-`    return config.test;`
+`return config.test;`
 
 `};`
 
@@ -504,159 +504,159 @@ svg
 
 `describe('unit coverage configuration', () => {`
 
-`    it('keeps coverage config under test so Vitest applies it', async () => {`
+`it('keeps coverage config under test so Vitest applies it', async () => {`
 
-`        const testConfig = await resolveConfig();`
+`const testConfig = await resolveConfig();`
 
 `if (coverageConfig?.provider !== 'v8') {`
 
-`    throw new Error('vitest.unit.config.ts must declare V8 unit coverage');`
+`throw new Error('vitest.unit.config.ts must declare V8 unit coverage');`
 
 `}`
 
 `describe('unit coverage configuration', () => {`
 
-`    it('keeps coverage config under test so Vitest applies it', () => {`
+`it('keeps coverage config under test so Vitest applies it', () => {`
 
-`        expect(testConfig?.coverage).toBeDefined();`
+`expect(testConfig?.coverage).toBeDefined();`
 
-`        expect(testConfig?.coverage?.provider).toBe('v8');`
+`expect(testConfig?.coverage?.provider).toBe('v8');`
 
-`        expect(coverageConfig).toBeDefined();`
+`expect(coverageConfig).toBeDefined();`
 
-`        expect(coverageConfig.provider).toBe('v8');`
+`expect(coverageConfig.provider).toBe('v8');`
 
-``        // `json` emits coverage-final.json, which retains the statement,``
+``// `json` emits coverage-final.json, which retains the statement,``
 
-``        // function and branch maps. `json-summary` carries only per-file``
+``// function and branch maps. `json-summary` carries only per-file``
 
-`        // totals, so Task A3's gap queue could rank work but not locate it.`
+`// totals, so Task A3's gap queue could rank work but not locate it.`
 
-`        // Both are required; see scripts/coverage-gap-queue.mjs.`
+`// Both are required; see scripts/coverage-gap-queue.mjs.`
 
-``        // `lcov` is the only format SonarQube imports for TypeScript; dropping``
+``// `lcov` is the only format SonarQube imports for TypeScript; dropping``
 
-`        // it silently reports 0% coverage on SonarCloud, which reads as a real`
+`// it silently reports 0% coverage on SonarCloud, which reads as a real`
 
-`        // regression rather than a missing file. See sonar-project.properties.`
+`// regression rather than a missing file. See sonar-project.properties.`
 
-`        expect(testConfig?.coverage?.reporter).toEqual([`
+`expect(testConfig?.coverage?.reporter).toEqual([`
 
-`        expect(coverageConfig.reporter).toEqual([`
+`expect(coverageConfig.reporter).toEqual([`
 
-`            'text',`
+`'text',`
 
-`            'html',`
+`'html',`
 
-`            'json-summary',`
+`'json-summary',`
 
-`            'json',`
+`'json',`
 
-`            'lcov',`
+`'lcov',`
 
-`        ]);`
+`]);`
 
-`        expect(testConfig?.coverage?.reportsDirectory).toBe('./reports/coverage/unit');`
+`expect(testConfig?.coverage?.reportsDirectory).toBe('./reports/coverage/unit');`
 
-`        expect(coverageConfig.reportsDirectory).toBe('./reports/coverage/unit');`
+`expect(coverageConfig.reportsDirectory).toBe('./reports/coverage/unit');`
 
-`    });`
+`});`
 
-`    it('still writes coverage evidence when the run is red', async () => {`
+`it('still writes coverage evidence when the run is red', async () => {`
 
-`        const testConfig = await resolveConfig();`
+`const testConfig = await resolveConfig();`
 
-`    it('still writes coverage evidence when the run is red', () => {`
+`it('still writes coverage evidence when the run is red', () => {`
 
-`        // Vitest defaults reportOnFailure to false, which writes no report at`
+`// Vitest defaults reportOnFailure to false, which writes no report at`
 
-`        // all when any test fails - and it cleans the output directory first, so`
+`// all when any test fails - and it cleans the output directory first, so`
 
-`        // a red run leaves nothing behind. The PR workflow uploads`
+`// a red run leaves nothing behind. The PR workflow uploads`
 
-``        // reports/coverage/unit/** with `if: always()` and``
+``// reports/coverage/unit/** with `if: always()` and``
 
-``        // `if-no-files-found: error`, so the upload would fail with "no files``
+``// `if-no-files-found: error`, so the upload would fail with "no files``
 
-`        // found" and mask the real failure. A red vitest-unit is the expected`
+`// found" and mask the real failure. A red vitest-unit is the expected`
 
-`        // state until Child Plan B1 lands, so this must stay true.`
+`// state until Child Plan B1 lands, so this must stay true.`
 
-`        expect(testConfig?.coverage?.reportOnFailure).toBe(true);`
+`expect(testConfig?.coverage?.reportOnFailure).toBe(true);`
 
-`        expect(coverageConfig.reportOnFailure).toBe(true);`
+`expect(coverageConfig.reportOnFailure).toBe(true);`
 
-`    });`
+`});`
 
-`    it('measures editable handwritten source and excludes generated/vendor artifacts', async () => {`
+`it('measures editable handwritten source and excludes generated/vendor artifacts', async () => {`
 
-`        const testConfig = await resolveConfig();`
+`const testConfig = await resolveConfig();`
 
-`    it('measures editable handwritten source and excludes generated/vendor artifacts', () => {`
+`it('measures editable handwritten source and excludes generated/vendor artifacts', () => {`
 
-``        // Vitest 4 removed `coverage.all`; the explicit include below is what``
+``// Vitest 4 removed `coverage.all`; the explicit include below is what``
 
-`        // brings uncovered files into the report. See`
+`// brings uncovered files into the report. See`
 
-`        // tests/unit/config/coverageRemapPolicy.test.ts for the remap policy.`
+`// tests/unit/config/coverageRemapPolicy.test.ts for the remap policy.`
 
-`        expect(testConfig?.coverage?.include).toEqual([`
+`expect(testConfig?.coverage?.include).toEqual([`
 
-`        expect(coverageConfig.include).toEqual([`
+`expect(coverageConfig.include).toEqual([`
 
-`            'ClientApp/src/**/*.{ts,tsx}',`
+`'ClientApp/src/**/*.{ts,tsx}',`
 
-`            'webpack.config.js',`
+`'webpack.config.js',`
 
-`        ]);`
+`]);`
 
-`        expect(testConfig?.coverage?.exclude).toEqual(expect.arrayContaining([`
+`expect(testConfig?.coverage?.exclude).toEqual(expect.arrayContaining([`
 
-`        expect(coverageConfig.exclude).toEqual(expect.arrayContaining([`
+`expect(coverageConfig.exclude).toEqual(expect.arrayContaining([`
 
-`            '**/*.d.ts',`
+`'**/*.d.ts',`
 
-`            'ClientApp/src/api/web-api-client.ts',`
+`'ClientApp/src/api/web-api-client.ts',`
 
-`            'ClientApp/src/external/**',`
+`'ClientApp/src/external/**',`
 
-`            'ClientApp/src/components/forms/HidableField/types.ts',`
+`'ClientApp/src/components/forms/HidableField/types.ts',`
 
-`            'ClientApp/src/components/tiles/StandardPathway/types.ts',`
+`'ClientApp/src/components/tiles/StandardPathway/types.ts',`
 
-`        ]));`
+`]));`
 
-`        expect(testConfig?.coverage?.exclude).not.toEqual(expect.arrayContaining([`
+`expect(testConfig?.coverage?.exclude).not.toEqual(expect.arrayContaining([`
 
-`        expect(coverageConfig.exclude).not.toEqual(expect.arrayContaining([`
+`expect(coverageConfig.exclude).not.toEqual(expect.arrayContaining([`
 
-`            'ClientApp/src/**/types.ts',`
+`'ClientApp/src/**/types.ts',`
 
-`            'ClientApp/src/**/*Props.ts',`
+`'ClientApp/src/**/*Props.ts',`
 
-`            'ClientApp/src/components/Inputs/NumberInput/types.ts',`
+`'ClientApp/src/components/Inputs/NumberInput/types.ts',`
 
-`            'ClientApp/src/routes/account/addBranch/addBranchProps.ts',`
+`'ClientApp/src/routes/account/addBranch/addBranchProps.ts',`
 
-`        ]));`
+`]));`
 
-`    });`
+`});`
 
-`    it('fails the unit coverage gate below 100 percent', async () => {`
+`it('fails the unit coverage gate below 100 percent', async () => {`
 
-`        const testConfig = await resolveConfig();`
+`const testConfig = await resolveConfig();`
 
-`        expect(testConfig?.coverage?.thresholds).toEqual({`
+`expect(testConfig?.coverage?.thresholds).toEqual({`
 
-`    it('fails the unit coverage gate below 100 percent', () => {`
+`it('fails the unit coverage gate below 100 percent', () => {`
 
-`        expect(coverageConfig.thresholds).toEqual({`
+`expect(coverageConfig.thresholds).toEqual({`
 
-`            statements: 100,`
+`statements: 100,`
 
-`            branches: 100,`
+`branches: 100,`
 
-`            functions: 100,`
+`functions: 100,`
 
 tests/unit/storybook/mswHandlers.test.ts
 
@@ -668,11 +668,11 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 `import {`
 
-`    artefactTypeResponses,`
+`artefactTypeResponses,`
 
-`    lookupResponses,`
+`lookupResponses,`
 
-`    serviceResponses,`
+`serviceResponses,`
 
 `} from '../../../ClientApp/src/storybook/storybookFixtures';`
 
@@ -692,35 +692,35 @@ import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 `describe('Storybook MSW handlers', () => {`
 
-`    it('returns the shared services fixture', async () => {`
+`it('returns the shared services fixture', async () => {`
 
-`        const response = await fetch(apiUrl('/api/lookup/services'));`
+`const response = await fetch(apiUrl('/api/lookup/services'));`
 
-`        expect(response.ok).toBe(true);`
+`expect(response.ok).toBe(true);`
 
-`        await expect(response.json()).resolves.toEqual(serviceResponses);`
+`await expect(response.json()).resolves.toEqual(serviceResponses);`
 
-`    });`
+`});`
 
-`    it.each([`
+`it.each([`
 
-`        [CRMLookupTypes.TCPortalMeasurementCategory, lookupResponses],`
+`[CRMLookupTypes.TCPortalMeasurementCategory, lookupResponses],`
 
-`        [CRMLookupTypes.TCArtefactTypePortalCategory, artefactTypeResponses],`
+`[CRMLookupTypes.TCArtefactTypePortalCategory, artefactTypeResponses],`
 
-`    ])('returns the deterministic %s lookup fixture', async (lookupType, expectedResponse) => {`
+`])('returns the deterministic %s lookup fixture', async (lookupType, expectedResponse) => {`
 
-`        const url = apiUrl('/api/lookup');`
+`const url = apiUrl('/api/lookup');`
 
-`        url.searchParams.set('LookupType', lookupType);`
+`url.searchParams.set('LookupType', lookupType);`
 
-`        const response = await fetch(url);`
+`const response = await fetch(url);`
 
-`        expect(response.ok).toBe(true);`
+`expect(response.ok).toBe(true);`
 
-`        await expect(response.json()).resolves.toEqual(expectedResponse);`
+`await expect(response.json()).resolves.toEqual(expectedResponse);`
 
-`    });`
+`});`
 
 `});`
 
@@ -746,39 +746,39 @@ svg
 
 `const dirname = path.dirname(fileURLToPath(import.meta.url));`
 
-` * executes their play() functions in Chromium through Vitest Browser Mode.`
+`* executes their play() functions in Chromium through Vitest Browser Mode.`
 
-` */`
+`*/`
 
 `export default defineConfig({`
 
-`    plugins: [storybookTest({ configDir: path.join(dirname, '.storybook') })],`
+`plugins: [storybookTest({ configDir: path.join(dirname, '.storybook') })],`
 
-`    plugins: [`
+`plugins: [`
 
-`        storybookTest({ configDir: path.join(dirname, '.storybook') }),`
+`storybookTest({ configDir: path.join(dirname, '.storybook') }),`
 
-`        storybookVitestRuntimePlugin,`
+`storybookVitestRuntimePlugin,`
 
-`    ],`
+`],`
 
-`    test: {`
+`test: {`
 
-`        name: 'storybook',`
+`name: 'storybook',`
 
-`        globals: true,`
+`globals: true,`
 
-`        setupFiles: ['./vitest.storybook.setup.ts'],`
+`setupFiles: ['./vitest.storybook.setup.ts'],`
 
-`        testTimeout: 15000,`
+`testTimeout: 15000,`
 
-`        coverage: storybookCoverageConfig,`
+`coverage: storybookCoverageConfig,`
 
-`        // The addon keeps this project alive for MCP-triggered runs. A single`
+`// The addon keeps this project alive for MCP-triggered runs. A single`
 
-`        // orchestrator prevents broad runs from exhausting the shared browser`
+`// orchestrator prevents broad runs from exhausting the shared browser`
 
-`        // and leaving a ready session whose orchestrator has disconnected.`
+`// and leaving a ready session whose orchestrator has disconnected.`
 
 vitest.storybook.coverage.ts
 
@@ -788,45 +788,45 @@ import type { CoverageOptions } from 'vitest/node';
 
 `/**`
 
-` * Storybook coverage measures handwritten executable application source only.`
+`* Storybook coverage measures handwritten executable application source only.`
 
-` * Keeping JSON assets outside this boundary prevents V8 from attempting to`
+`* Keeping JSON assets outside this boundary prevents V8 from attempting to`
 
-`` * remap Vite's `?import` JSON module as JavaScript while retaining TS/TSX data.``
+``* remap Vite's `?import` JSON module as JavaScript while retaining TS/TSX data.``
 
-` */`
+`*/`
 
 `export const storybookCoverageConfig: CoverageOptions = {`
 
-`    provider: 'v8',`
+`provider: 'v8',`
 
-`    reportsDirectory: './reports/coverage/storybook',`
+`reportsDirectory: './reports/coverage/storybook',`
 
-`    include: ['ClientApp/src/**/*.{ts,tsx}'],`
+`include: ['ClientApp/src/**/*.{ts,tsx}'],`
 
-`    exclude: [`
+`exclude: [`
 
-`        '**/*.d.ts',`
+`'**/*.d.ts',`
 
-`        'ClientApp/src/api/web-api-client.ts',`
+`'ClientApp/src/api/web-api-client.ts',`
 
-`        'ClientApp/src/external/**',`
+`'ClientApp/src/external/**',`
 
-`        'ClientApp/src/parent/**',`
+`'ClientApp/src/parent/**',`
 
-`        'ClientApp/src/storybook/**',`
+`'ClientApp/src/storybook/**',`
 
-`        'ClientApp/source-map-http-downloads/**',`
+`'ClientApp/source-map-http-downloads/**',`
 
-`        'ClientApp/src/**/*.test.{ts,tsx}',`
+`'ClientApp/src/**/*.test.{ts,tsx}',`
 
-`        'ClientApp/src/**/*.spec.{ts,tsx}',`
+`'ClientApp/src/**/*.spec.{ts,tsx}',`
 
-`        'ClientApp/src/**/*.stories.{ts,tsx}',`
+`'ClientApp/src/**/*.stories.{ts,tsx}',`
 
-`        'ClientApp/src/**/*.docs.mdx',`
+`'ClientApp/src/**/*.docs.mdx',`
 
-`    ],`
+`],`
 
 `};`
 
@@ -840,51 +840,51 @@ import type { Vitest } from 'vitest/node';
 
 `type StorybookVitest = Pick<Vitest, 'init' | 'standalone'> & {`
 
-`    config: {`
+`config: {`
 
-`        coverage: {`
+`coverage: {`
 
-`            exclude: string[];`
+`exclude: string[];`
 
-`        };`
+`};`
 
-`    };`
+`};`
 
 `};`
 
 `type StorybookVitestPlugin = Plugin & {`
 
-`    configureVitest: (context: { vitest: StorybookVitest }) => void;`
+`configureVitest: (context: { vitest: StorybookVitest }) => void;`
 
 `};`
 
 `/**`
 
-` * Compatibility policy for Test-panel runs owned by @storybook/addon-vitest.`
+`* Compatibility policy for Test-panel runs owned by @storybook/addon-vitest.`
 
-` *`
+`*`
 
-`` * Storybook 10.5.10 calls Vitest's deprecated `init()` alias and replaces the``
+``* Storybook 10.5.10 calls Vitest's deprecated `init()` alias and replaces the``
 
-` * project's coverage options when its coverage toggle is enabled. Route the`
+`* project's coverage options when its coverage toggle is enabled. Route the`
 
-` * dependency call to the supported API and keep JSON data out of V8 remapping.`
+`* dependency call to the supported API and keep JSON data out of V8 remapping.`
 
-`` * Remove the init bridge after Storybook switches to `standalone()` upstream.``
+``* Remove the init bridge after Storybook switches to `standalone()` upstream.``
 
-` */`
+`*/`
 
 `export const storybookVitestRuntimePlugin: StorybookVitestPlugin = {`
 
-`    name: 'nmi:storybook-vitest-runtime-policy',`
+`name: 'nmi:storybook-vitest-runtime-policy',`
 
-`    configureVitest({ vitest }) {`
+`configureVitest({ vitest }) {`
 
-`        vitest.config.coverage.exclude.push('ClientApp/src/**/*.json');`
+`vitest.config.coverage.exclude.push('ClientApp/src/**/*.json');`
 
-`        vitest.init = vitest.standalone.bind(vitest);`
+`vitest.init = vitest.standalone.bind(vitest);`
 
-`    },`
+`},`
 
 `};`
 
@@ -904,10 +904,10 @@ svg
 
 `type CoverageOptions = NonNullable<`
 
-`    NonNullable<ViteUserConfig['test']>['coverage']`
+`NonNullable<ViteUserConfig['test']>['coverage']`
 
 `>;`
 
 `/**`
 
-`` * Vitest 4 removed `coverage.all`. The explicit `include` below already brings``
+``* Vitest 4 removed `coverage.all`. The explicit `include` below already brings``

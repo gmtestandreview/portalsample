@@ -5,6 +5,15 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const sass = require('sass');
 
+const sassDeprecationsToSilence = ['import', 'global-builtin', 'color-functions', 'if-function'];
+
+const sassCompatibilityOptions = {
+    // quietDeps suppresses deprecations from Bootstrap (a load-path dependency).
+    // Remove this compatibility layer when Bootstrap 6 enables a complete @use migration.
+    quietDeps: true,
+    silenceDeprecations: sassDeprecationsToSilence,
+};
+
 // ---------------------------------------------------------------------------
 // Development env vars — these are injected into index.html at build time so
 // the bundle reads them from window.* (see ClientApp/src/env.ts).
@@ -86,11 +95,7 @@ module.exports = function webpackConfig(env, argv) {
                                 // Resolve ~ imports (e.g. @import '~bootstrap/scss/bootstrap')
                                 sassOptions: {
                                     includePaths: [path.resolve(__dirname, 'node_modules')],
-                                    // quietDeps suppresses all deprecations from Bootstrap (a load-path dependency).
-                                    // Remove quietDeps and the import/global-builtin/color-functions entries
-                                    // when upgrading to Bootstrap 6 with @use support.
-                                    quietDeps: true,
-                                    silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
+                                    ...sassCompatibilityOptions,
                                 },
                             },
                         },

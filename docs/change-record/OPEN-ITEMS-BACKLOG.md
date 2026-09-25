@@ -72,6 +72,7 @@ All items in this section are hard blockers unless explicitly marked `CLEARED`. 
 
 **RULES-REGISTER-001 detail (OPEN 2026-09-02):** Raised by the verification pass the operator requested
 after `DEC-002`. The register is not unusable - RULE-022's algorithm is specified precisely and correctly
+
 - but it cannot currently support a signature, because a reviewer following a citation mostly does not
 arrive at the rule.
 
@@ -92,7 +93,6 @@ Ordered remediation:
 **Gate impact:** P2 items 16, 17, 18 and 21 all await BA or Legal sign-off against entries in this
 register. Seeking those signatures before steps 1 and 2 risks a repeat of the RULE-035 outcome, where the
 question put to the BA rested on a false premise.
-
 
 **RULES-REGISTER-001 progress (2026-09-02, CRD-045):**
 
@@ -176,11 +176,11 @@ These items were referenced by the modernisation or rebuild-readiness HTML asses
 | ID | Title | Severity | State | Owner | Migration Gate | Reference |
 | --- | --- | --- | --- | --- | --- | --- |
 | SEC-MOD-003 | `window.open()` without explicit `noopener` / URL encoding review | High | CLOSED — verified 2026-06-01; secure helper added, direct first-party call sites removed, and PDF page fragments encoded | Frontend Lead | Migration of quote, report, and PDF-opening routes — CLEARED | `ClientApp/src/routes/common/openWindow.ts`; `ClientApp/src/routes/quotation/quoteDetails.tsx`; `ClientApp/src/routes/measurementReport/reportDetails.tsx`; `ClientApp/src/routes/common/helperFunctions.ts`; `tests/unit/routes/common/openWindow.test.ts`; `npm run type-check`; `npm run test:unit`; `rg -n "window\.open\(" ClientApp/src -g "*.ts" -g "*.tsx"` |
-| SEC-MOD-009 | External Qualtrics links missing explicit `noopener noreferrer` | Low | CLOSED — verified 2026-06-01; survey links and external pathway cards use explicit `noopener noreferrer`, with no named feedback target remaining | Frontend Lead | Migration of feedback/survey links — CLEARED | `ClientApp/src/components/Header/NavbarMessage.tsx`; `ClientApp/src/routes/requestForQuote/created/index.tsx`; `ClientApp/src/components/tiles/StandardPathway/index.tsx`; `ClientApp/src/routes/dashboard/index.tsx`; `tests/unit/components/standardPathway.test.tsx`; `npm run type-check`; `npm run test:unit`; `rg -n "target='NMI-Feedback'|rel='external'" ClientApp/src -g "*.tsx"` |
+| SEC-MOD-009 | External Qualtrics links missing explicit `noopener noreferrer` | Low | CLOSED — verified 2026-06-01; survey links and external pathway cards use explicit `noopener noreferrer`, with no named feedback target remaining | Frontend Lead | Migration of feedback/survey links — CLEARED | `ClientApp/src/components/Header/NavbarMessage.tsx`; `ClientApp/src/routes/requestForQuote/created/index.tsx`; `ClientApp/src/components/tiles/StandardPathway/index.tsx`; `ClientApp/src/routes/dashboard/index.tsx`; `tests/unit/components/standardPathway.test.tsx`; `npm run type-check`; `npm run test:unit`; `rg -n "target='NMI-Feedback' | rel='external'" ClientApp/src -g "*.tsx"` |
 | RUNTIME-ENV-001 | `process.env.NODE_ENV` usage in first-party runtime code | Medium | CLOSED — verified 2026-06-01; first-party telemetry guard now uses runtime `env.REACT_APP_ENVIRONMENT` | Frontend Lead | Runtime configuration migration; telemetry initialisation — CLEARED | `ClientApp/src/instrumentation/AppInsightsService.ts`; `tests/unit/instrumentation/appInsightsService.test.ts`; `npm run type-check`; `npm run test:unit`; `rg -n "process\.env\.NODE_ENV" ClientApp/src -g "*.ts" -g "*.tsx"` |
 | BRIEF-SEC-001 | Fresh `TargetOrganisationAbn` read per API request | Medium | CLOSED — verified 2026-06-01 and revalidated 2026-06-02; `TargetOrganisationAbn` is read inside `transformOptions` per request, malformed cached state is ignored, and retry/handshake persistence behavior is locked by focused regression tests | Frontend Lead / Backend Team | API client migration and Phase 1 security verification — CLEARED | `ClientApp/src/api/web-api-client.ts`; `tests/unit/api/authorizedApiBase.test.ts`; `tests/unit/authentication/AccountProvider.errored.test.tsx`; `tests/unit/routes/dashboard.test.tsx`; `npm run type-check`; focused run: `28` tests / `0` failures; CRD-031 |
-| BRIEF-SEC-009 | MSAL silent-renewal iframe timeout bound | Low | CLOSED — verified 2026-06-01; MSAL iframe and load-frame timeouts are bounded at 6000ms | Frontend Lead | Auth configuration migration and Phase 1 security verification — CLEARED | `ClientApp/src/authentication/authConfig.ts`; `tests/unit/authentication/authConfig.test.ts`; `npm run type-check`; `npm run test:unit`; `rg -n "loadFrameTimeout: 0|targetOrganisation = sessionStorage|getStepStatuses\(id!?|Number\(id\)" ClientApp/src -g "*.ts" -g "*.tsx"` |
-| BRIEF-SEC-011 | URL ID parameter validation before API calls | Medium | CLOSED — verified 2026-06-01; scoped RFQ/account route IDs are validated before API calls or numeric conversion and invalid IDs redirect to `/not-found` | Frontend Lead | RFQ/account route migration and Phase 1 security verification — CLEARED | `ClientApp/src/routes/common/routeParams.ts`; `ClientApp/src/routes/requestForQuote/index.tsx`; `ClientApp/src/routes/account/update/index.tsx`; `tests/unit/routes/common/routeParams.test.ts`; `npm run type-check`; `npm run test:unit`; `rg -n "loadFrameTimeout: 0|targetOrganisation = sessionStorage|getStepStatuses\(id!?|Number\(id\)" ClientApp/src -g "*.ts" -g "*.tsx"` |
+| BRIEF-SEC-009 | MSAL silent-renewal iframe timeout bound | Low | CLOSED — verified 2026-06-01; MSAL iframe and load-frame timeouts are bounded at 6000ms | Frontend Lead | Auth configuration migration and Phase 1 security verification — CLEARED | `ClientApp/src/authentication/authConfig.ts`; `tests/unit/authentication/authConfig.test.ts`; `npm run type-check`; `npm run test:unit`; `rg -n "loadFrameTimeout: 0 | targetOrganisation = sessionStorage | getStepStatuses\(id!? | Number\(id\)" ClientApp/src -g "*.ts" -g "*.tsx"` |
+| BRIEF-SEC-011 | URL ID parameter validation before API calls | Medium | CLOSED — verified 2026-06-01; scoped RFQ/account route IDs are validated before API calls or numeric conversion and invalid IDs redirect to `/not-found` | Frontend Lead | RFQ/account route migration and Phase 1 security verification — CLEARED | `ClientApp/src/routes/common/routeParams.ts`; `ClientApp/src/routes/requestForQuote/index.tsx`; `ClientApp/src/routes/account/update/index.tsx`; `tests/unit/routes/common/routeParams.test.ts`; `npm run type-check`; `npm run test:unit`; `rg -n "loadFrameTimeout: 0 | targetOrganisation = sessionStorage | getStepStatuses\(id!? | Number\(id\)" ClientApp/src -g "*.ts" -g "*.tsx"` |
 
 **Validation caveat for the six closed frontend blockers:** Closure is based on source/test/search evidence (`npm run type-check`, `npm run test:unit`, and blocker-specific `rg` searches). CRD-041 reconfirms direct TypeScript and lint are clean; `npm run lint` reports zero diagnostics.
 
@@ -248,7 +248,6 @@ decision, not a delegation of that role.
 **Recommended compensating control** (not a gate, not actioned): before cutover, run one manual
 authenticated pass over wizard submission and document upload and attach the result here. It costs far
 less than fixture automation and covers the two paths carrying most of the accepted risk.
-
 
 ---
 

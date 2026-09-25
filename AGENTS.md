@@ -229,6 +229,7 @@ A Team skills live in `skills/**`. Each is mandatory when its trigger applies �
 | `qdrant-search-quality` | Vendored. Qdrant retrieval returns bad/irrelevant/missing results, or choosing embedding model / hybrid search / reranking / recall@k evaluation. Routes to `diagnosis` + `search-strategies` sub-skills. Reviewing a whole RAG pipeline for sign-off is the `rag-pipeline-reviewer` agent instead. |
 | `receiving-code-review` | Evaluating incoming code-review feedback — verify before implementing, technical pushback over performative agreement. Pairs with the `code-reviewer` agent. |
 | `scalability-review` | Asked whether a system or design will scale, will handle projected growth, or needs a capacity/headroom assessment for a traffic or data milestone. |
+| `skill-creator` | Creating, evaluating, benchmarking, packaging, or fixing activation for an Agent Skill, or running a skill release-readiness review. Complements `writing-skills` (authoring workflow and gates); `skill-creator` owns eval/benchmark/package tooling and Claude Code runtime activation. |
 | `skill-duplication-audit` | Two or more skills appear to overlap in scope and need classification. |
 | `smart-init` | `INIT.md` is missing and the project needs conversational onboarding. |
 | `subagent-driven-development` | Executing a plan with independent tasks in the current session — fresh subagent per task, two-stage review. |

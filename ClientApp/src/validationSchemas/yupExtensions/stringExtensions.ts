@@ -130,6 +130,21 @@ const YUP_REQUIREDWITHTRIM_METHOD = 'isRequired';
 
 let yupStringExtensionsRegistered = false;
 
+const STANDARD_LANDLINE_PHONE_REGEX = /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}$/;
+const LONG_SERVICE_PHONE_REGEX = /^1[38]00 ?\d{3} ?\d{3}$/;
+const SHORT_SERVICE_PHONE_REGEX = /^13 ?\d{2} ?\d{2}$/;
+const MOBILE_PHONE_REGEX = /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/;
+const BUSINESS_PHONE_REGEXES = [
+    STANDARD_LANDLINE_PHONE_REGEX,
+    LONG_SERVICE_PHONE_REGEX,
+    SHORT_SERVICE_PHONE_REGEX,
+    MOBILE_PHONE_REGEX,
+] as const;
+
+const matchesAnyPhonePattern = (value: string, patterns: readonly RegExp[]) => (
+    patterns.some((pattern) => pattern.test(value))
+);
+
 export const registerYupStringExtensions = () => {
     if (yupStringExtensionsRegistered) {
         return;
@@ -415,14 +430,16 @@ Yup.addMethod(
                         return true;
                     }
 
-                    const landlineRegex = /^(?:(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}|1[38]00 ?\d{3} ?\d{3}|13 ?\d{2} ?\d{2})$/;
-                    const mobileRegex = /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/;
-
-                    if (mobileOnly === undefined || mobileOnly === false) {
-                        return value.match(landlineRegex) !== null || value.match(mobileRegex) !== null;
+                    /* c8 ignore next -- Yup casts or rejects non-string values before custom string tests run */
+                    if (typeof value !== 'string') {
+                        return false;
                     }
 
-                    return value.match(mobileRegex) !== null;
+                    if (mobileOnly === undefined || mobileOnly === false) {
+                        return matchesAnyPhonePattern(value, BUSINESS_PHONE_REGEXES);
+                    }
+
+                    return MOBILE_PHONE_REGEX.test(value);
                 } catch {
                     /* c8 ignore next -- defensive fallback for malformed Yup internals; public Yup validation cannot construct this state */
                     return false;
@@ -460,7 +477,7 @@ const MAX_LABEL_LENGTH = 63;
 const isValidEmailAddress = (value: string): boolean => {
     const at = value.indexOf('@');
     // Need exactly one `@`, and a non-empty local part before it.
-    if (at < 1 || value.indexOf('@', at + 1) !== -1) {
+    if (at < 1 || value.includes('@', at + 1)) {
         return false;
     }
 
@@ -474,8 +491,8 @@ const isValidEmailAddress = (value: string): boolean => {
         return false;
     }
 
-    const tld = labels[labels.length - 1];
-    if (tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
+    const tld = labels.at(-1);
+    if (!tld || tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
         return false;
     }
 

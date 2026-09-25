@@ -9,7 +9,7 @@ Every `Given` / `When` / `Then` phrase in every real-flow feature file has a mat
 ## Real-flow feature files
 
 | Feature file | Scenario count | Step file | Status |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `tests/e2e/features/auth/login.feature` | 3 | `common.steps.ts` | All steps implemented |
 | `tests/e2e/features/rfq/create-rfq.feature` | 3 | `common.steps.ts` | All steps implemented |
 | `tests/e2e/features/rfq/copy-rfq.feature` | 3 | `common.steps.ts` | All steps implemented |
@@ -124,9 +124,11 @@ To carry the real-flow E2E suite into the rebuilt portal repository:
 1. Copy the entire `tests/e2e/` directory (features, steps, fixtures, playwright config) into the target repo.
 2. Install `playwright-bdd` and `@playwright/test` as dev dependencies.
 3. Add a `bddgen` pre-step to the test script in `package.json`:
+
    ```json
    "test:e2e": "bddgen && playwright test"
    ```
+
 4. Configure `playwright.config.ts` with the correct `baseURL` pointing to the dev server or staging environment (e.g. `http://localhost:3000`).
 5. Add environment-specific API mock overrides if the new backend's endpoint paths differ from those intercepted in `common.steps.ts`.
 6. Add the `test:e2e` script to the CI pipeline after the build step.

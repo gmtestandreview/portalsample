@@ -5,7 +5,7 @@
 ## Migration Reconciliation Summary
 
 | Concern group | Current disposition | Migration target |
-|---|---|---|
+| --- | --- | --- |
 | ErrorBoundary class component, `React.Children.toArray`, `env.ts` config typing, dashboard debounce | CLOSED | Master Change Record |
 | Provider-level ErrorBoundary and Trusted Types gaps | CLOSED | Master Change Record CRD-006 and CRD-007 |
 | `checkAcceptedQuoteStatus` client-side workaround | OPEN, non-blocking | Open Items Backlog `API-WORKAROUND-001` |
@@ -18,7 +18,7 @@
 ## 1) Top Risks (Prioritised)
 
 | Severity | Concern | Evidence | Impact | Suggested action |
-|----------|---------|----------|--------|------------------|
+| ---------- | --------- | ---------- | -------- | ------------------ |
 | **✅ RESOLVED** | `ErrorBoundary` was a class component | `ClientApp/src/components/ErrorBoundary/index.tsx` | ~~Hard blocker for React 19 adoption~~ — replaced with functional component using `react-error-boundary` (Phase 4.1) | Done |
 | **✅ RESOLVED** | `React.Children.toArray` was a Legacy API | `ClientApp/src/components/forms/WizardForm/index.tsx` | ~~High migration risk~~ — replaced with `React.Children.forEach` + array accumulator (Phase 4.2) | Done |
 | **✅ RESOLVED** | `any` casts in `env.ts` hid config failures | `ClientApp/src/env.ts` | ~~Silent undefined on injection failure~~ — `declare global` + `globalThis` + `console.error` startup guard added (Phase 4.3) | Done |
@@ -32,7 +32,7 @@
 ## 2) Technical Debt
 
 | Debt item | Why it exists | Where | Risk if ignored | Suggested fix |
-|-----------|---------------|-------|-----------------|---------------|
+| ----------- | --------------- | ------- | ----------------- | --------------- |
 | Inline `// TS` deferred-engineering comments | Time-boxed feature development | `ClientApp/src/routes/dashboard/index.tsx` (4+ instances) | Signals deferred decisions that can become bugs | Review and action each comment; move to issue tracker |
 | `window.onbeforeunload` commented out in `UnsavedFormPrompt` | `// stopped working correctly and we couldn't find the culprit` | `ClientApp/src/components/forms/UnsavedFormPrompt/index.tsx:7-12` | Users can lose form data on browser refresh/tab close | Investigate root cause; re-enable or use `beforeunload` event listener |
 | Magic strings for session storage keys | Ad-hoc implementation | `ClientApp/src/routes/dashboard/index.tsx` — `'accepted-quote-id'`, `'view-quote-id'` | Key collisions; hard to audit cross-page state | Extract to a `SessionKeys` enum in `storage/` |
@@ -42,7 +42,7 @@
 ## 3) Security Concerns
 
 | Risk | OWASP category | Evidence | Current mitigation | Gap |
-|------|---------------|----------|--------------------|-----|
+| ------ | --------------- | ---------- | -------------------- | ----- |
 | XSS via unmitigated HTML injection | A03 Injection | `ClientApp/src/trustedtypes.ts:11-17` | TrustedTypes `createScriptURL` uses DOMPurify | `createHTML` + `createScript` callbacks commented out with TODO |
 | MSAL auth events not logged | A09 Security Logging | `ClientApp/src/authentication/authConfig.ts:22-30` | Error-level MSAL logs active | Info/verbose/warning MSAL logs commented out; auth events are invisible below error threshold |
 | Phone validator accepts inconsistent spacing | A03 Injection (input validation) | `ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts:432-443` | Regex validates AU phone format | Regex matches spaced variants but does not normalise before regex; `'0400000000'` and `'0400 000 000'` both pass; `' 0400 000 000'` (leading space) may fail unexpectedly |
@@ -54,7 +54,7 @@
 ## 4) Performance and Scaling Concerns
 
 | Concern | Evidence | Current symptom | Scaling risk | Suggested improvement |
-|---------|----------|-----------------|--------------|----------------------|
+| --------- | ---------- | ----------------- | -------------- | ---------------------- |
 | ~~Dashboard refetches on every `initialFilters` change — including every search keystroke~~ | `ClientApp/src/routes/dashboard/index.tsx` | ~~Every filter change and every typed character triggered a full API call~~ — **RESOLVED (Phase 4.4)**: `useDebounce` (300ms) + `AbortController` cleanup added | — | Done |
 | `DashboardClient` instantiated inside `useEffect` | `ClientApp/src/routes/dashboard/index.tsx:349` | New client object per request | Minor per-call object allocation overhead | Move client creation outside the effect or memoize with `useMemo` |
 | `AccountContext` mutators on one context — partially resolved | `ClientApp/src/authentication/accountContext.tsx` | Any state mutation re-renders all consumers | With React 19 concurrent rendering, contention increases | Partially resolved — `AccountStateCtx`/`AccountDispatchCtx` split implemented (Phase 5.1); modal flags extracted to `ModalContext` (Phase 5.2). Remaining dispatch mutators (7) are still on one dispatch context. |
@@ -66,7 +66,7 @@
 ## 5) Fragile / High-Churn Areas
 
 | Area | Why fragile | Churn signal | Safe change strategy |
-|------|-------------|-------------|----------------------|
+| ------ | ------------- | ------------- | ---------------------- |
 | `ClientApp/src/api/web-api-client.ts` | Auto-generated; hand-editing is immediately overwritten on next regeneration | Backend OpenAPI schema changes | Never edit manually; track schema version; run NSwag codegen in CI |
 | `ClientApp/src/routes/dashboard/index.tsx` | 776-line monolith with 10+ concerns: API, state, UI, notifications, modals | 4+ inline `// TS` TODOs | Extract tab content, API calls, and notification logic into dedicated hooks and sub-components |
 | `ClientApp/src/components/forms/WizardForm/` | Central form engine; changes affect all wizard flows (account, RFQ, accept-quote) | `WizardRoutedStepProps` has 20+ fields | Add targeted unit tests around navigation and submit contracts before any change; document the `allSteps` + `currentStepIndex` contract |

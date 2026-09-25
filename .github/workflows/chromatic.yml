@@ -23,14 +23,14 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Checkout code
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           # Full history lets Chromatic identify branches and select the correct
           # baseline commit for visual comparisons.
           fetch-depth: 0
 
       - name: Set up Node
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: "24.20.0"
           cache: "npm"
@@ -41,7 +41,7 @@ jobs:
       # Publishing on every push gives pull requests a Chromatic status check
       # and enables visual-review badges when the GitHub integration is linked.
       - name: Publish Storybook to Chromatic
-        uses: chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7 # v18.5.0
+        uses: chromaui/action@259eda5f0e44c0c1eab38b672f1c4c967cc969b7 # v18.8.1
         with:
           # Store this token as the CHROMATIC_PROJECT_TOKEN repository secret.
           # Never commit a project token directly to the workflow or source.

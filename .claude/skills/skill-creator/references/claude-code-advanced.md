@@ -22,12 +22,14 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** If rule loading is later cached, add explicit invalidation/reload behavior
 
 **Implementation Ideas:**
+
 - Watch skill-rules.json for changes
 - Reload on file modification
 - Invalidate cached compiled regexes
 - Notify user of reload
 
 **Benefits:**
+
 - Faster iteration during skill development
 - No need to restart Claude Code
 - Better developer experience
@@ -41,6 +43,7 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** Specify skill dependencies and load order
 
 **Configuration Idea:**
+
 ```json
 {
   "my-advanced-skill": {
@@ -52,11 +55,13 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 ```
 
 **Use Cases:**
+
 - Advanced skill builds on base skill knowledge
 - Ensure foundational skills loaded first
 - Chain skills for complex workflows
 
 **Benefits:**
+
 - Better skill composition
 - Clearer skill relationships
 - Progressive disclosure
@@ -70,6 +75,7 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** Enforce based on context or environment
 
 **Configuration Idea:**
+
 ```json
 {
   "enforcement": {
@@ -84,11 +90,13 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 ```
 
 **Use Cases:**
+
 - Stricter enforcement in production
 - Relaxed rules during development
 - CI/CD pipeline requirements
 
 **Benefits:**
+
 - Environment-appropriate enforcement
 - Flexible rule application
 - Context-aware guardrails
@@ -102,6 +110,7 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** Track skill usage patterns and effectiveness
 
 **Metrics to Collect:**
+
 - Skill trigger frequency
 - False positive rate
 - False negative rate
@@ -110,12 +119,14 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 - Performance metrics (execution time)
 
 **Dashboard Ideas:**
+
 - Most/least used skills
 - Skills with highest false positive rate
 - Performance bottlenecks
 - Skill effectiveness scores
 
 **Benefits:**
+
 - Data-driven skill improvement
 - Identify problems early
 - Optimize patterns based on real usage
@@ -129,6 +140,7 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** Version skills and track compatibility
 
 **Configuration Idea:**
+
 ```json
 {
   "my-skill": {
@@ -141,6 +153,7 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 ```
 
 **Benefits:**
+
 - Track skill evolution
 - Ensure compatibility
 - Document changes
@@ -155,11 +168,13 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** Support multiple languages for skill content
 
 **Implementation Ideas:**
+
 - Language-specific SKILL.md variants
 - Automatic language detection
 - Fallback to English
 
 **Use Cases:**
+
 - International teams
 - Localized documentation
 - Multi-language projects
@@ -173,12 +188,14 @@ Proposal-only ideas for future improvements to the project-local skill system. *
 **Future Enhancement:** Automated skill testing
 
 **Features:**
+
 - Test cases for trigger patterns
 - Assertion framework
 - CI/CD integration
 - Coverage reports
 
 **Example Test:**
+
 ```typescript
 describe('database-verification', () => {
   it('triggers on Prisma imports', () => {
@@ -195,6 +212,7 @@ describe('database-verification', () => {
 ```
 
 **Benefits:**
+
 - Prevent regressions
 - Validate patterns before deployment
 - Confidence in changes

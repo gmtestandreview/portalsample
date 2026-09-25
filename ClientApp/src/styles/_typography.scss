@@ -181,19 +181,15 @@ ol {
 // Truncate text with ellipsis
 .text-truncate-1 {
   @include textTruncateBase;
-  line-clamp: 1;
-  -webkit-line-clamp: 1; // About 1 text lines on mobile
 }
 
 .text-truncate-2 {
  @include textTruncateBase;
-  line-clamp: 2;
-  -webkit-line-clamp: 2; // About 2 text lines on mobile
+  @include lineClamp(2);
 }
 .text-truncate-3 {
   @include textTruncateBase;
-  line-clamp: 3;
-  -webkit-line-clamp: 3; // About 3 text lines on mobile
+  @include lineClamp(3);
 }
 
 // Desktop (larger than 768px wide)

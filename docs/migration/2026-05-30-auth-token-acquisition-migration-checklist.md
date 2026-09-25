@@ -77,7 +77,7 @@ export function useAuthenticatedClient<T extends { setAuthToken(token: string): 
 Each row represents one `acquireTokenSilent` invocation. Files with two calls have two rows.
 
 | # | File | Line | Client Class / Token Usage | Done |
-|---|------|------|---------------------------|------|
+| --- | ------ | ------ | --------------------------- | ------ |
 | 1 | `ClientApp/src/authentication/AccountProvider.tsx` | 136 | `UsersClient` | [ ] |
 | 2 | `ClientApp/src/authentication/AccountProvider.tsx` | 166 | `UsersClient` | [ ] |
 | 3 | `ClientApp/src/routes/dashboard/index.tsx` | 385 | `DashboardClient` | [ ] |

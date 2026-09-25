@@ -1245,7 +1245,8 @@ Two design decisions worth recording, both learned from getting them wrong first
   because a gate nobody can turn green gets disabled.
 
 The script also refuses to report success if it parses fewer than 40 rules. Its first run reported a
-clean "0 citations checked" - the register is CRLF, and in JavaScript `.` excludes ``, so `(.*)$`
+clean "0 citations checked" - the register is CRLF, and in JavaScript `.` excludes `
+`, so `(.*)$`
 matched no heading at all. A parser that matches nothing is indistinguishable from a clean pass.
 
 **Negative-tested before shipping:** a wrong line number fails the build (exit 1) and `--fix` repairs it;
@@ -1277,7 +1278,6 @@ item 17.
 **Still open on `RULES-REGISTER-001`:** 5 missing detail sections (RULE-023/024/025/029/030, all P2),
 22 weakly-anchored citations, the RULE-022 dead-code question for the Backend Team, and 50 unverified
 specifications.
-
 
 ---
 
@@ -1337,7 +1337,6 @@ defect being reported. They are listed with evidence for mechanical re-derivatio
 **Explicitly not verified:** 50 of 53 specifications; citations for the ~37 rules outside the detailed
 sample beyond file-exists and line-in-range; and whether the register omits rules present in code.
 
-
 ---
 
 ### [Business Rule Register Reconciliation] — 2026-09-02 — RULE-042 Annotated, RULE-035 Register Defect Corrected
@@ -1391,7 +1390,6 @@ was demonstrably wrong about the code it cites. The other P0/P1 entries carrying
 been re-verified against source. A verification pass over the P0 rules before BA sign-off would be
 proportionate - a signature obtained against a wrong premise is worse than no signature.
 
-
 ---
 
 ### [Orchestrated Backlog Intake] — 2026-09-02 — Rule Annotations, Type Approval Acceptance, Coverage Scope Finding
@@ -1441,7 +1439,6 @@ session holds `in-progress` File Claims on the coverage surface.
 
 **Also recorded:** the `COVERAGE-GATE-001` percentages are stale — measured 2026-06-28 against 114 test
 files, versus 163 files / 1,734 tests today. Re-measure before planning that item.
-
 
 ---
 

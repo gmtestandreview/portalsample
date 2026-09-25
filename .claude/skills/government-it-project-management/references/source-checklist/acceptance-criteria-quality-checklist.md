@@ -121,7 +121,7 @@ This **Acceptance Criteria Checklist** is a comprehensive, evidence-based tool f
 
 * **Traceable Quality Requirements:** Acceptance criteria for non-functional aspects should be traceable to higher-level quality requirements or SLAs. If the project has a Quality Attributes document (for performance, security, etc.), tie your wording to it. This fulfills traceability (one of our foundations), showing each quality target is verified somewhere. For instance, if the architecture mandates support for 10k users, ensure some story (or set of tests) includes that. By writing it as AC, you link the user story to that architectural requirement in a testable way.
 
-*(Note: Non-functional criteria might not apply to every user story. Use this section where appropriate – typically for stories introducing new pages, major processing tasks, or critical user flows. Keep them concise to avoid turning every story into a performance test plan, but never ignore an essential quality requirement.)*
+`Note: Non-functional criteria might not apply to every user story. Use this section where appropriate – typically for stories introducing new pages, major processing tasks, or critical user flows. Keep them concise to avoid turning every story into a performance test plan, but never ignore an essential quality requirement.`
 
 ## Traceability and Maintainability
 

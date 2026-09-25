@@ -16,6 +16,7 @@ import { describe, expect, it } from "vitest";
 
 const workflow = readFileSync(".github/workflows/pr.yml", "utf8");
 const releaseWorkflow = readFileSync(".github/workflows/release.yml", "utf8");
+const claudeWorkflow = readFileSync(".github/workflows/claude.yml", "utf8");
 const dependabot = readFileSync(".github/dependabot.yml", "utf8");
 const chromaticWorkflowPath = ".github/workflows/chromatic.yml";
 const chromaticWorkflow = existsSync(chromaticWorkflowPath)
@@ -87,11 +88,11 @@ const CHECKOUT_PIN = "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"
 const SETUP_NODE_PIN =
   "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020";
 const UPLOAD_ARTIFACT_PIN =
-  "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f";
+  "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a";
 const DOWNLOAD_ARTIFACT_PIN =
   "actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53";
 const CHROMATIC_ACTION_PIN =
-  "chromaui/action@534eebfc19023579541d106f7b61d5ad70ed65c7";
+  "chromaui/action@259eda5f0e44c0c1eab38b672f1c4c967cc969b7";
 
 const partitions = [
   { name: "unit", command: "npm run test:ci:unit" },
@@ -239,29 +240,41 @@ describe("path-gated jobs stay off the critical path until their tree changes", 
 });
 
 describe("workflows pin every action to an immutable commit", () => {
-  const pinnedWorkflows = [
+  const nodeWorkflows = [
     ["pull request", workflow],
     ["release", releaseWorkflow],
+    ["Chromatic", chromaticWorkflow],
+  ] as const;
+  const allWorkflows = [
+    ...nodeWorkflows,
+    ["Claude", claudeWorkflow],
   ] as const;
 
-  it.each(pinnedWorkflows)(
+  it.each(allWorkflows)(
     "pins checkout in the %s workflow",
     (_name, contents) => {
       expect(contents).toContain(`uses: ${CHECKOUT_PIN} # v7`);
     },
   );
 
-  it.each(pinnedWorkflows)(
+  it.each(nodeWorkflows)(
     "pins setup-node in the %s workflow",
     (_name, contents) => {
       expect(contents).toContain(`uses: ${SETUP_NODE_PIN} # v7`);
     },
   );
 
-  it.each(pinnedWorkflows)(
-    "leaves no floating actions/* tag in the %s workflow",
+  it.each(allWorkflows)(
+    "pins every remote action in the %s workflow to a full commit SHA",
     (_name, contents) => {
-      expect(contents).not.toMatch(/uses:\s*actions\/[\w-]+@v\d/);
+      const actionRefs = [...contents.matchAll(/uses:\s*[^\s#]+@([^\s#]+)/g)].map(
+        (match) => match[1],
+      );
+
+      expect(actionRefs.length).toBeGreaterThan(0);
+      expect(actionRefs.every((reference) => /^[0-9a-f]{40}$/.test(reference))).toBe(
+        true,
+      );
     },
   );
 
@@ -451,7 +464,7 @@ describe("the sonarcloud job analyses what SonarCloud actually needs", () => {
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toEqual([
-      "7006c4492b2e0ee0f816d36501671557c97f5995",
+      "22918119ff8e1ca75a623e15c8296b6ea4fbe28f",
     ]);
     expect(scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))).toBe(true);
   });

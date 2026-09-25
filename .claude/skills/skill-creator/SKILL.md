@@ -1,6 +1,6 @@
 ---
 name: skill-creator
-description: Use when creating, revising, evaluating, benchmarking, packaging, or improving activation of an Agent Skill (`SKILL.md`), including turning a proven workflow into a reusable skill, checking skill-folder resource consistency before sharing, and Claude Code skill rules, hooks, guardrails, and activation failures. Covers portable authoring, resource organization, output evals, candidate-vs-baseline comparison, trigger testing, and deployment readiness. Do not use for ordinary code, document editing, generic packaging, or generic A/B testing unrelated to Agent Skills.
+description: Use when the request mentions Agent Skills, `SKILL.md`, a skill folder, a skill release review/readiness verdict, or turning a workflow into a reusable skill, and asks to create, revise, refactor, organize resources for, evaluate, benchmark, validate, package, release-check, or fix activation for that skill. Covers Claude Code skill rules, hooks, guardrails, activation descriptions/boundaries, resource consistency, output evals, candidate-vs-baseline comparison, trigger testing, deployment readiness, and production-ready claims. Do not use for ordinary code, document editing, generic packaging, generic A/B testing, or activation/trigger rules for non-skill software (browser extensions, CI workflows, webhooks) unrelated to Agent Skills.
 compatibility: Agent Skills authoring is spec-based. Bundled evaluation tooling targets Claude Code/Cowork workflows; Python 3.10+ and PyYAML are required for validation/packaging, and the `claude` CLI is required only for trigger-description evaluation.
 ---
 
@@ -33,6 +33,20 @@ Choose the narrowest applicable branch:
 - **Troubleshoot Claude Code activation or enforcement** → inspect the target `.claude/settings.json`, `.claude/skills/skill-rules.json`, and registered hook sources before relying on local runtime guidance.
 
 If the user wants only a lightweight edit, do not force a full benchmark. If they ask for production readiness, require evidence for the applicable gates rather than treating prose quality as proof.
+
+## Production-readiness claims
+
+Do not call an Agent Skill production-ready when required activation, near-miss, or
+without-skill/with-skill behavioral evidence is missing. Owner risk acceptance, schedule pressure,
+or post-release follow-up tracking may justify a scoped release decision, but it does not convert
+missing evidence into production-readiness evidence.
+
+If asked to mark a skill production-ready while required evidence is missing:
+
+1. Keep or set the readiness verdict to `HOLD`, `AMBER`, or `Needs Human Review (NHR)`.
+2. Name the missing evidence explicitly.
+3. Separate any risk-accepted shipping decision from the production-readiness claim.
+4. Offer the smallest next validation step instead of removing blocking language.
 
 ## Evidence and change control
 
@@ -121,9 +135,9 @@ or performance. Change the smallest responsible rule, branch, or instruction.
 ## Claude Code runtime branch
 
 Use this branch only when the target project actually contains the documented
-Claude Code runtime files. Read the applicable references directly from the
-`skill-developer` reference set; they document project-local behavior and are not
-part of the universal Agent Skills specification.
+Claude Code runtime files. Read the applicable `references/claude-code-*.md`
+files listed under "Runtime references"; they document project-local behavior and
+are not part of the universal Agent Skills specification.
 
 ### Runtime inspection
 
@@ -185,7 +199,12 @@ For this skill's own helper scripts, also run its regression suite:
 
 ```bash
 python -m unittest scripts.test_regressions
+python -m pytest "scripts/Regression tests" -q
 ```
+
+The `unittest` command covers only the cross-script smoke cases. The `pytest` suite
+(directory name contains a space, so it is not importable) is the full script gate
+and requires `pytest`.
 
 If any required deterministic check fails, stop, fix the defect or report it, and do not package or claim validation success.
 

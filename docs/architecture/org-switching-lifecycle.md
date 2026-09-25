@@ -83,7 +83,7 @@ explicit, traceable, and unit-testable.
 ## Files involved
 
 | File | Role |
-|---|---|
+| --- | --- |
 | `ClientApp/src/api/web-api-client.ts:10–35` | `AuthorizedApiBase` — construction-time sessionStorage read + header injection |
 | `ClientApp/src/authentication/accountContext.tsx` | `setTargetOrganisation` dispatch — writes to React state AND sessionStorage |
 | `ClientApp/src/storage/sessionStorageCache.ts` | Low-level sessionStorage wrapper used for other keys |

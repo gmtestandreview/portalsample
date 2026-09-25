@@ -25,9 +25,9 @@
 ## Requirements Traceability
 
 | Spec requirement | Task(s) | Validation |
-|---|---|---|
+| --- | --- | --- |
 | §9.1 spike gate | 0.2 | `Skill(verification-before-completion)` returns A Team body post-reload |
-| §3.1 audit table committed | (in spec) | `grep -c '| True duplicate |'` = 11 |
+| §3.1 audit table committed | (in spec) | `grep -c ' | True duplicate | '` = 11 |
 | §3.2 #2,3,8,9 additive text merges | 1.1 | provenance + no `superpowers:` in the 4 files |
 | §3.2 #4 finishing-a-development-branch + worktree-cleanup.md | 1.2 | file exists; body links it |
 | §3.2 #6 systematic-debugging + 4 support files | 1.3 | files exist; body refs resolve |
@@ -72,14 +72,14 @@
 **Created:**
 
 | Path | Responsibility |
-|---|---|
+| --- | --- |
 | `.claude/docs/plans/_sp-6.3.0-snapshot/` | Frozen copy of `superpowers/6.3.0/skills/` — the merge source of truth |
 | `.claude/docs/plans/_red-baselines/*.md` | RED + after behavioural transcripts for Tasks 2.1, 2.2 |
 | `skills/finishing-a-development-branch/references/worktree-cleanup.md` | SP git-worktree detection + cleanup bash |
 | `skills/systematic-debugging/references/{root-cause-tracing,condition-based-waiting,defense-in-depth}.md` + `condition-based-waiting-example.ts` + `scripts/find-polluter.sh` | SP debugging technique set |
 | `skills/test-driven-development/references/writing-good-tests.md` | rules that keep tests honest |
 | `skills/writing-plans/references/plan-document-reviewer-prompt.md` | reviewer prompt for plan docs |
-| `skills/writing-skills/references/{anthropic-best-practices.md,graphviz-conventions.dot}` + `scripts/render-graphs.js` | SP skill-authoring support |
+| `skills/writing-skills/references/anthropic-best-practices.md` + `scripts/{graphviz-conventions.dot,render-graphs.js}` | SP skill-authoring support |
 | `skills/brainstorming/visual-companion.md`, `spec-document-reviewer-prompt.md`, `scripts/*` | SP brainstorming support set |
 | `skills/subagent-driven-development/scripts/{sdd-workspace,task-brief,review-package}` + `implementer-prompt.md`, `task-reviewer-prompt.md`, `re-review-prompt.md` | SP SDD support set |
 | `skills/receiving-code-review/SKILL.md` | how to evaluate incoming review feedback |
@@ -90,7 +90,7 @@
 **Modified:**
 
 | Path | Change |
-|---|---|
+| --- | --- |
 | `skills/{dispatching-parallel-agents,executing-plans,using-git-worktrees,verification-before-completion}/SKILL.md` | additive text merge + provenance + prefix strip |
 | `skills/{finishing-a-development-branch,systematic-debugging,test-driven-development,writing-plans,writing-skills}/SKILL.md` | additive merge + reference new support files + provenance |
 | `skills/{brainstorming,subagent-driven-development}/SKILL.md` | full-body replacement (§3.3) |
@@ -149,16 +149,19 @@ Main session: tell the user to restart / reload so the new `.claude/skills/` ent
 - [x] **Step 3: Check resolution**
 
 Invoke `Skill(verification-before-completion)`. Inspect the loaded body.
+
 - **PASS:** body is the A Team version (108-line rewrite; "Claim-matched evidence" table) and the skill list no longer shows a separate `superpowers:verification-before-completion`, OR shows both but the bare name resolved local.
 - **FAIL:** body is the `superpowers` version, or an error, or the bare name still routes to the plugin.
 
 - [x] **Step 4: Decide**
 
 - PASS → commit the spike symlink, proceed to Phase 1.
+
   ```bash
   git add .claude/skills/verification-before-completion
   git commit -m "spike: confirm project skill symlink shadows superpowers plugin skill"
   ```
+
 - FAIL → **STOP.** Write the observed behaviour into `.claude/docs/plans/_red-baselines/spike-result.md`, revert the symlink, and escalate to the user with Plan B options (spec §5). Do not run Phase 1.
 
 #### Task 0.3: RED baselines for the two full adoptions
@@ -239,6 +242,7 @@ cp root-cause-tracing.md condition-based-waiting.md condition-based-waiting-exam
 cp find-polluter.sh "$OLDPWD/skills/systematic-debugging/scripts/"
 cd "$OLDPWD"
 ```
+
 Do NOT copy `test-*.md` or `CREATION-LOG.md`.
 
 - [x] **Step 2:** In the 4 `.md` files, rewrite `superpowers:<name>` → bare, and sibling refs → `references/<file>`. `grep -rn 'superpowers:' skills/systematic-debugging/references/ || echo clean`
@@ -291,16 +295,17 @@ grep -n 'superpowers:' skills/writing-plans/SKILL.md || echo no prefix OK
 
 #### Task 1.6: writing-skills  *(critical path — finish before Phase 2)*
 
-**Files:** Modify `skills/writing-skills/SKILL.md`, `skills/writing-skills/references/index.md`; Create `references/{anthropic-best-practices.md,graphviz-conventions.dot}`, `scripts/render-graphs.js`
+**Files:** Modify `skills/writing-skills/SKILL.md`, `skills/writing-skills/references/index.md`; Create `references/anthropic-best-practices.md`, `scripts/{graphviz-conventions.dot,render-graphs.js}`
 
 - [x] **Step 1:** Copy the 3 not-already-present files:
 
 ```bash
 mkdir -p skills/writing-skills/scripts
 cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-skills/anthropic-best-practices.md skills/writing-skills/references/
-cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-skills/graphviz-conventions.dot    skills/writing-skills/references/
+cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-skills/graphviz-conventions.dot    skills/writing-skills/scripts/
 cp .claude/docs/plans/_sp-6.3.0-snapshot/writing-skills/render-graphs.js            skills/writing-skills/scripts/
 ```
+
 Do NOT copy `persuasion-principles.md`, `testing-skills-with-subagents.md`, `CLAUDE_MD_TESTING.md`.
 
 - [x] **Step 2:** Insert the snapshot's `## Match the Form to the Failure` section (4-row failure→form table + "why prohibitions backfire" + "no nuance clauses") after the existing `### 7. Match instruction form to failure` step; reconcile so the two don't contradict (SP table = the detailed version of the existing step).
@@ -308,7 +313,7 @@ Do NOT copy `persuasion-principles.md`, `testing-skills-with-subagents.md`, `CLA
 - [x] **Step 4:** Provenance comment. Verify:
 
 ```bash
-for f in references/anthropic-best-practices.md references/graphviz-conventions.dot scripts/render-graphs.js; do
+for f in references/anthropic-best-practices.md scripts/graphviz-conventions.dot scripts/render-graphs.js; do
   test -f "skills/writing-skills/$f" && echo "OK $f" || echo "MISSING $f"
 done
 grep -qi 'Match the Form to the Failure' skills/writing-skills/SKILL.md && echo section OK
@@ -356,6 +361,7 @@ done
 grep -n 'superpowers:\|docs/superpowers\|elements-of-style' skills/brainstorming/SKILL.md || echo "clean OK"
 grep -q 'Merged from superpowers 6.3.0' skills/brainstorming/SKILL.md && echo provenance OK
 ```
+
 Plus read-through: description matches scope; positive trigger ("let's build X") fires; near-miss ("what does this error mean?") does not.
 
 - [x] **Step 5: Commit** — `git add skills/brainstorming .claude/docs/plans/_red-baselines/brainstorming-after.md && git commit -m "feat: adopt superpowers brainstorming body, preserve A Team description + spec path"`
@@ -449,6 +455,7 @@ git add .claude/skills
 git ls-files -s .claude/skills | grep -c '^120000'   # expect: 25 (13 pre-existing + Task 0.2 spike + 11 new; react-aria is a dir of blobs, not counted)
 git ls-files -s .claude/skills | grep -v '^120000' | grep -v react-aria && echo "NON-SYMLINK ENTRY" || echo "all symlinks OK"
 ```
+
 If any new entry is not `120000`, redo it via `git update-index --add --cacheinfo 120000,$(printf '../../skills/<name>' | git hash-object -w --stdin),.claude/skills/<name>` then `git checkout -- .claude/skills/<name>`.
 
 - [x] **Step 3: Count**
@@ -552,7 +559,7 @@ done
 
 **Files:** Create the 3 command files (plain `# /name` style, no frontmatter).
 
-- [ ] **Step 1:** Write each — `**Invokes:** \`<skill>\` skill`, a one-line purpose, a `**Usage:**` block with 1–2 examples, and one line on when NOT to use / which sibling skill to prefer. (`/adr` → `adr`; `/incident-response` → `incident-response`; `/architecture-review` → `architecture-review` via the `architect` agent.)
+- [ ] **Step 1:** Write each — `**Invokes:** \`<skill>\` skill`, a one-line purpose, a`**Usage:**`block with 1–2 examples, and one line on when NOT to use / which sibling skill to prefer. (`/adr` → `adr`;`/incident-response` → `incident-response`;`/architecture-review` → `architecture-review` via the `architect` agent.)
 - [ ] **Step 2:** `for c in adr incident-response architecture-review; do test -f ".claude/commands/$c.md" && head -1 ".claude/commands/$c.md"; done`
 - [ ] **Step 3: Commit** — `git commit -m "feat: add /adr, /incident-response, /architecture-review thin alias commands"`
 
@@ -709,7 +716,7 @@ echo "no DANGLING = refs OK"
 ## Risks and Rollback
 
 | Risk | Mitigation | Rollback |
-|---|---|---|
+| --- | --- | --- |
 | Project symlink does not shadow the plugin skill | **Task 0.2 gate** — one symlink, reload, check, before any merge | Task 0.2 FAIL → escalate; nothing else done |
 | Symlinks/allow-list not live in the running session | Task 4.3 reload gate; 4.4 + 8.1 run post-reload; main session (not a subagent) owns Phase 4 | n/a |
 | `writing-skills` merge (1.6) breaks before it governs Phase 2 | 1.6 verified before Phase 2; additive-only merge | `git revert` 1.6; Phase 2 uses pre-merge `writing-skills` |

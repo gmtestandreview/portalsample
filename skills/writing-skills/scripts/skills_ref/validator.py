@@ -1,10 +1,12 @@
 """Skill validation logic."""
 
 import unicodedata
+from collections.abc import Mapping
 from pathlib import Path
+from typing import cast
 
 from .errors import ParseError
-from .parser import find_skill_md, parse_frontmatter
+from .parser import find_skill_md, parse_frontmatter, read_skill_text
 
 MAX_SKILL_NAME_LENGTH = 64
 MAX_DESCRIPTION_LENGTH = 1024
@@ -21,13 +23,13 @@ ALLOWED_FIELDS = {
 }
 
 
-def _validate_name(name: str, skill_dir: Path) -> list[str]:
+def _validate_name(name: object, skill_dir: Path | None) -> list[str]:
     """Validate skill name format and directory match.
 
     Skill names support i18n characters (Unicode letters) plus hyphens.
     Names must be lowercase and cannot start/end with hyphens.
     """
-    errors = []
+    errors: list[str] = []
 
     if not name or not isinstance(name, str) or not name.strip():
         errors.append("Field 'name' must be a non-empty string")
@@ -66,9 +68,9 @@ def _validate_name(name: str, skill_dir: Path) -> list[str]:
     return errors
 
 
-def _validate_description(description: str) -> list[str]:
+def _validate_description(description: object) -> list[str]:
     """Validate description format."""
-    errors = []
+    errors: list[str] = []
 
     if not description or not isinstance(description, str) or not description.strip():
         errors.append("Field 'description' must be a non-empty string")
@@ -83,9 +85,9 @@ def _validate_description(description: str) -> list[str]:
     return errors
 
 
-def _validate_compatibility(compatibility: str) -> list[str]:
+def _validate_compatibility(compatibility: object) -> list[str]:
     """Validate compatibility format."""
-    errors = []
+    errors: list[str] = []
 
     if not isinstance(compatibility, str):
         errors.append("Field 'compatibility' must be a string")
@@ -100,20 +102,21 @@ def _validate_compatibility(compatibility: str) -> list[str]:
     return errors
 
 
-def _validate_license(license_value: str) -> list[str]:
+def _validate_license(license_value: object) -> list[str]:
     """Validate license as a string when present."""
     if not isinstance(license_value, str):
         return ["Field 'license' must be a string"]
     return []
 
 
-def _validate_metadata_value(metadata_value: dict) -> list[str]:
+def _validate_metadata_value(metadata_value: object) -> list[str]:
     """Validate metadata as a string-to-string mapping when present."""
     if not isinstance(metadata_value, dict):
         return ["Field 'metadata' must be a mapping"]
 
-    errors = []
-    for key, value in metadata_value.items():
+    errors: list[str] = []
+    metadata = cast(Mapping[object, object], metadata_value)
+    for key, value in metadata.items():
         if not isinstance(key, str):
             errors.append("Field 'metadata' keys must be strings")
         if not isinstance(value, str):
@@ -121,9 +124,9 @@ def _validate_metadata_value(metadata_value: dict) -> list[str]:
     return errors
 
 
-def _validate_allowed_tools(allowed_tools: str) -> list[str]:
+def _validate_allowed_tools(allowed_tools: object) -> list[str]:
     """Validate allowed-tools as a non-empty specification string."""
-    errors = []
+    errors: list[str] = []
 
     if not isinstance(allowed_tools, str) or not allowed_tools.strip():
         errors.append("Field 'allowed-tools' must be a non-empty string")
@@ -131,9 +134,9 @@ def _validate_allowed_tools(allowed_tools: str) -> list[str]:
     return errors
 
 
-def _validate_metadata_fields(metadata: dict) -> list[str]:
+def _validate_metadata_fields(metadata: Mapping[str, object]) -> list[str]:
     """Validate that only allowed fields are present."""
-    errors = []
+    errors: list[str] = []
 
     extra_fields = set(metadata.keys()) - ALLOWED_FIELDS
     if extra_fields:
@@ -145,7 +148,9 @@ def _validate_metadata_fields(metadata: dict) -> list[str]:
     return errors
 
 
-def validate_metadata(metadata: dict, skill_dir: Path | None = None) -> list[str]:
+def validate_metadata(
+    metadata: Mapping[str, object], skill_dir: Path | None = None
+) -> list[str]:
     """Validate parsed skill metadata.
 
     This is the core validation function that works on already-parsed metadata,
@@ -158,7 +163,7 @@ def validate_metadata(metadata: dict, skill_dir: Path | None = None) -> list[str
     Returns:
         List of validation error messages. Empty list means valid.
     """
-    errors = []
+    errors: list[str] = []
     errors.extend(_validate_metadata_fields(metadata))
 
     if "name" not in metadata:
@@ -210,8 +215,7 @@ def validate(skill_dir: Path) -> list[str]:
         return ["Missing required file: SKILL.md"]
 
     try:
-        content = skill_md.read_text()
-        metadata, body = parse_frontmatter(content)
+        metadata, body = parse_frontmatter(read_skill_text(skill_md))
     except ParseError as e:
         return [str(e)]
 

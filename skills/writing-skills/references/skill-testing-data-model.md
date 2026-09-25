@@ -73,7 +73,7 @@ DeploymentDecision
 Stable identity for a logical Agent Skill across revisions.
 
 | Field | Type | Required | Rules |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | `skill_id` | string/UUID | yes | Stable primary key; independent of path or revision. |
 | `canonical_name` | string | yes | Current logical skill name for human navigation. |
 | `repository_scope` | string | no | Repository/library/organization scope when relevant. |
@@ -89,7 +89,7 @@ Stable identity for a logical Agent Skill across revisions.
 Immutable or snapshot identity for the exact candidate being evaluated.
 
 | Field | Type | Required | Rules |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | `revision_id` | string/UUID | yes | Primary key. |
 | `skill_id` | FK → Skill | yes | Parent skill. |
 | `revision_ref` | string | yes | Commit hash, version, content hash, or snapshot identifier. |
@@ -118,7 +118,7 @@ Immutable or snapshot identity for the exact candidate being evaluated.
 Normalized representation of the specification `metadata` mapping.
 
 | Field | Type | Required | Rules |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | `revision_id` | FK → SkillRevision | yes | Composite PK part. |
 | `metadata_key` | string | yes | Composite PK part. |
 | `metadata_value` | string | yes | String values only. |
@@ -132,7 +132,7 @@ Normalized representation of the specification `metadata` mapping.
 A supporting file packaged with or referenced by a skill revision.
 
 | Field | Type | Required | Rules |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | `resource_id` | string/UUID | yes | Primary key. |
 | `revision_id` | FK → SkillRevision | yes | Owning revision. |
 | `path` | string | yes | Relative path preferred for packaged skill resources. |
@@ -155,7 +155,7 @@ A supporting file packaged with or referenced by a skill revision.
 Classification of one revision as a testing/execution model.
 
 | Field | Type | Required | Rules |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | `classification_id` | string/UUID | yes | Primary key. |
 | `revision_id` | FK → SkillRevision | yes | Normally one current classification per revision. |
 | `skill_class` | enum | yes | `Discipline`, `Technique`, `Pattern`, `Reference`, `Hybrid`. |
@@ -169,7 +169,7 @@ Classification of one revision as a testing/execution model.
 For normalized implementations, classification evidence may be stored separately:
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `classification_id` | FK → SkillClassification |
 | `evidence_id` | FK → EvidenceArtifact or source reference |
 | `evidence_role` | `supporting`, `rejected_alternative`, `boundary` |
@@ -183,7 +183,7 @@ For normalized implementations, classification evidence may be stored separately
 Atomic rule or quality condition against which a revision can be assessed.
 
 | Field | Type | Required | Rules |
-|---|---|---:|---|
+| --- | --- | ---: | --- |
 | `requirement_id` | string | yes | Stable identifier, e.g. `SPEC-NAME-001`. |
 | `authority` | enum | yes | `SPEC`, `BP`, `COND`, `LOCAL`. |
 | `source_document` | string | yes | Owning reference/specification. |
@@ -205,7 +205,7 @@ Authority is intrinsic to the rule. Assessment, scoring, or repetition in anothe
 Assessment of a requirement against one revision/environment.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `assessment_id` | string/UUID | yes |
 | `revision_id` | FK → SkillRevision | yes |
 | `requirement_id` | FK → Requirement | yes |
@@ -240,7 +240,7 @@ This evidence state is deliberately separate from behavioral evaluation outcomes
 Captures the context in which behavior or deterministic validation is meaningful.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `environment_id` | string/UUID | yes |
 | `client` | string | no |
 | `repository` | string | no |
@@ -262,7 +262,7 @@ Environment-specific/local rules should reference this entity rather than being 
 One coordinated behavioral test campaign for a specific revision and environment.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `campaign_id` | string | yes |
 | `revision_id` | FK → SkillRevision | yes |
 | `classification_id` | FK → SkillClassification | yes |
@@ -289,7 +289,7 @@ Available tools/capabilities may be normalized through `CampaignCapability` or r
 Reusable scenario definition. It describes what to test, not what happened in a particular execution.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `case_id` | string | yes |
 | `campaign_id` | FK → EvaluationCampaign | yes |
 | `case_title` | string | yes |
@@ -321,7 +321,7 @@ Reusable scenario definition. It describes what to test, not what happened in a 
 Many-to-many mapping when a case applies to multiple classes.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `case_id` | FK → EvaluationCase |
 | `skill_class` | Discipline / Technique / Pattern / Reference / Hybrid |
 
@@ -332,7 +332,7 @@ Many-to-many mapping when a case applies to multiple classes.
 Campaign-supplied values inserted into a reusable case.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `case_id` | FK → EvaluationCase |
 | `parameter_name` | string |
 | `parameter_value` | text/JSON |
@@ -346,7 +346,7 @@ Examples: `representative_request`, input file, pressure context, target resourc
 Atomic observable behaviors for a case.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `expected_behavior_id` | string/UUID |
 | `case_id` | FK → EvaluationCase |
 | `statement` | text |
@@ -359,7 +359,7 @@ Atomic observable behaviors for a case.
 Falsifiable criteria used to decide the case result.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `criterion_id` | string/UUID |
 | `case_id` | FK → EvaluationCase |
 | `statement` | text |
@@ -373,7 +373,7 @@ Falsifiable criteria used to decide the case result.
 One execution of one case. Repeated runs create new rows rather than overwriting evidence.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `run_id` | string/UUID | yes |
 | `case_id` | FK → EvaluationCase | yes |
 | `revision_id` | FK → SkillRevision | yes |
@@ -426,7 +426,7 @@ One execution of one case. Repeated runs create new rows rather than overwriting
 Evidence attached to an executed behavioral or deterministic run.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `evidence_id` | string/UUID | yes |
 | `run_id` | FK → EvaluationRun | no |
 | `deterministic_run_id` | FK → DeterministicSuiteRun | no |
@@ -458,7 +458,7 @@ Exactly one parent family (`run_id` or `deterministic_run_id`) should normally b
 Formal comparability record for a GREEN run linked to its RED baseline.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `comparison_id` | string/UUID | yes |
 | `red_run_id` | FK → EvaluationRun | yes |
 | `green_run_id` | FK → EvaluationRun | yes |
@@ -481,7 +481,7 @@ If `same_task=false`, every preservation flag must be true and `equivalence_rati
 Graph edge connecting failures/fixes to regression cases.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `source_case_id` | FK → EvaluationCase |
 | `regression_case_id` | FK → EvaluationCase |
 | `relationship` | `guards_fix`, `positive_control`, `near_miss_control`, `prior_failure` |
@@ -497,7 +497,7 @@ Regression completion requires the fixed case plus relevant positive and near-mi
 One parser/validator/prompt/CLI test definition.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `test_id` | string | yes |
 | `module` | string | yes |
 | `test_name` | string | yes |
@@ -524,7 +524,7 @@ One parser/validator/prompt/CLI test definition.
 Execution of the deterministic suite against a revision/environment.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `deterministic_run_id` | string/UUID | yes |
 | `revision_id` | FK → SkillRevision | yes |
 | `environment_id` | FK → Environment | yes |
@@ -556,7 +556,7 @@ A compatibility-shim pass must not be represented as a native dependency-backed 
 One test result within one suite run.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `deterministic_run_id` | FK → DeterministicSuiteRun |
 | `test_id` | FK → DeterministicTestCase |
 | `result` | `PASS`, `FAIL`, `SKIP`, `NHR` |
@@ -574,7 +574,7 @@ One test result within one suite run.
 One formal quick triage or full audit for a revision.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `audit_id` | string/UUID | yes |
 | `revision_id` | FK → SkillRevision | yes |
 | `environment_id` | FK → Environment | no |
@@ -600,7 +600,7 @@ A quick triage should not be treated as definitive production-readiness scoring.
 Canonical 100-point scoring dimensions.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `rubric_criterion_id` | string |
 | `name` | string |
 | `weight` | integer |
@@ -616,7 +616,7 @@ The current criterion weights sum to 100 before N/A normalization.
 Score for one criterion in one audit.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `audit_id` | FK → Audit |
 | `rubric_criterion_id` | FK → RubricCriterion |
 | `applicable` | boolean |
@@ -634,7 +634,7 @@ N/A removes the criterion from both numerator and denominator. Missing evidence 
 Atomic audit finding.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `finding_id` | string/UUID |
 | `audit_id` | FK → Audit |
 | `severity` | `Critical`, `High`, `Medium`, `Low` |
@@ -652,7 +652,7 @@ Atomic audit finding.
 Bidirectional mapping evidence for a critical instruction, trigger, branch, or load condition.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `qaq_rmi_id` | string/UUID |
 | `audit_id` | FK → Audit |
 | `subject_type` | `instruction`, `trigger`, `branch`, `load_condition`, `classification` |
@@ -674,7 +674,7 @@ Bidirectional mapping evidence for a critical instruction, trigger, branch, or l
 Final readiness decision. This is deliberately separate from the numeric score.
 
 | Field | Type | Required |
-|---|---|---:|
+| --- | --- | ---: |
 | `decision_id` | string/UUID | yes |
 | `revision_id` | FK → SkillRevision | yes |
 | `audit_id` | FK → Audit | no |
@@ -697,7 +697,7 @@ Final readiness decision. This is deliberately separate from the numeric score.
 One reason deployment is prohibited.
 
 | Field | Type |
-|---|---|
+| --- | --- |
 | `blocker_id` | string/UUID |
 | `decision_id` | FK → DeploymentDecision |
 | `blocker_type` | enum |
@@ -780,7 +780,7 @@ Round only the final normalized result. N/A removes points from the denominator;
 Use stable prefixes to make evidence human-readable:
 
 | Entity | Example |
-|---|---|
+| --- | --- |
 | Skill | `SKL-writing-skills` |
 | Revision | `REV-20260912-a1b2c3d` |
 | Requirement | `SPEC-NAME-001` |
@@ -900,7 +900,7 @@ The existing `scripts/evals/activation`, `scripts/evals/red-green`, `scripts/eva
 # 13. Source-to-model traceability
 
 | Source contract | Model area |
-|---|---|
+| --- | --- |
 | `specification.md` | SkillRevision, SkillMetadata, Resource |
 | `skill-classification.md` | SkillClassification |
 | `best-practices-evaluations.md` | Requirement / BP criteria |

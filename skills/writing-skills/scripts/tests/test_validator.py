@@ -2,10 +2,12 @@
 
 from pathlib import Path
 
+import pytest
+
 from skills_ref.validator import validate, validate_metadata
 
 
-def test_valid_skill(tmp_path):
+def test_valid_skill(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -18,13 +20,13 @@ description: A test skill
     assert errors == []
 
 
-def test_nonexistent_path(tmp_path):
+def test_nonexistent_path(tmp_path: Path):
     errors = validate(tmp_path / "nonexistent")
     assert len(errors) == 1
     assert "does not exist" in errors[0]
 
 
-def test_not_a_directory(tmp_path):
+def test_not_a_directory(tmp_path: Path):
     file_path = tmp_path / "file.txt"
     file_path.write_text("test")
     errors = validate(file_path)
@@ -32,7 +34,7 @@ def test_not_a_directory(tmp_path):
     assert "Not a directory" in errors[0]
 
 
-def test_missing_skill_md(tmp_path):
+def test_missing_skill_md(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     errors = validate(skill_dir)
@@ -40,7 +42,7 @@ def test_missing_skill_md(tmp_path):
     assert "Missing required file: SKILL.md" in errors[0]
 
 
-def test_invalid_name_uppercase(tmp_path):
+def test_invalid_name_uppercase(tmp_path: Path):
     skill_dir = tmp_path / "MySkill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -53,7 +55,7 @@ Body
     assert any("lowercase" in e for e in errors)
 
 
-def test_name_too_long(tmp_path):
+def test_name_too_long(tmp_path: Path):
     long_name = "a" * 70  # Exceeds 64 char limit
     skill_dir = tmp_path / long_name
     skill_dir.mkdir()
@@ -67,7 +69,7 @@ Body
     assert any("exceeds" in e and "character limit" in e for e in errors)
 
 
-def test_name_leading_hyphen(tmp_path):
+def test_name_leading_hyphen(tmp_path: Path):
     skill_dir = tmp_path / "-my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -80,7 +82,7 @@ Body
     assert any("cannot start or end with a hyphen" in e for e in errors)
 
 
-def test_name_consecutive_hyphens(tmp_path):
+def test_name_consecutive_hyphens(tmp_path: Path):
     skill_dir = tmp_path / "my--skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -93,7 +95,7 @@ Body
     assert any("consecutive hyphens" in e for e in errors)
 
 
-def test_name_invalid_characters(tmp_path):
+def test_name_invalid_characters(tmp_path: Path):
     skill_dir = tmp_path / "my_skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -106,7 +108,7 @@ Body
     assert any("invalid characters" in e for e in errors)
 
 
-def test_name_directory_mismatch(tmp_path):
+def test_name_directory_mismatch(tmp_path: Path):
     skill_dir = tmp_path / "wrong-name"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -119,7 +121,7 @@ Body
     assert any("must match skill name" in e for e in errors)
 
 
-def test_unexpected_fields(tmp_path):
+def test_unexpected_fields(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -133,7 +135,7 @@ Body
     assert any("Unexpected fields" in e for e in errors)
 
 
-def test_valid_with_all_fields(tmp_path):
+def test_valid_with_all_fields(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -149,7 +151,7 @@ Body
     assert errors == []
 
 
-def test_allowed_tools_accepted(tmp_path):
+def test_allowed_tools_accepted(tmp_path: Path):
     """allowed-tools is accepted as a supported optional frontmatter field."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -164,7 +166,7 @@ Body
     assert errors == []
 
 
-def test_i18n_chinese_name(tmp_path):
+def test_i18n_chinese_name(tmp_path: Path):
     """Chinese characters are allowed in skill names."""
     skill_dir = tmp_path / "技能"
     skill_dir.mkdir()
@@ -178,7 +180,7 @@ Body
     assert errors == []
 
 
-def test_i18n_russian_name_with_hyphens(tmp_path):
+def test_i18n_russian_name_with_hyphens(tmp_path: Path):
     """Russian names with hyphens are allowed."""
     skill_dir = tmp_path / "мой-навык"
     skill_dir.mkdir()
@@ -192,7 +194,7 @@ Body
     assert errors == []
 
 
-def test_i18n_russian_lowercase_valid(tmp_path):
+def test_i18n_russian_lowercase_valid(tmp_path: Path):
     """Russian lowercase names should be accepted."""
     skill_dir = tmp_path / "навык"
     skill_dir.mkdir()
@@ -206,7 +208,7 @@ Body
     assert errors == []
 
 
-def test_i18n_russian_uppercase_rejected(tmp_path):
+def test_i18n_russian_uppercase_rejected(tmp_path: Path):
     """Russian uppercase names should be rejected."""
     skill_dir = tmp_path / "НАВЫК"
     skill_dir.mkdir()
@@ -220,7 +222,7 @@ Body
     assert any("lowercase" in e for e in errors)
 
 
-def test_description_too_long(tmp_path):
+def test_description_too_long(tmp_path: Path):
     """Description exceeding 1024 chars should fail."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -235,7 +237,7 @@ Body
     assert any("exceeds" in e and "1024" in e for e in errors)
 
 
-def test_valid_compatibility(tmp_path):
+def test_valid_compatibility(tmp_path: Path):
     """Valid compatibility field should be accepted."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -250,7 +252,7 @@ Body
     assert errors == []
 
 
-def test_compatibility_too_long(tmp_path):
+def test_compatibility_too_long(tmp_path: Path):
     """Compatibility exceeding 500 chars should fail."""
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
@@ -266,7 +268,7 @@ Body
     assert any("exceeds" in e and "500" in e for e in errors)
 
 
-def test_nfkc_normalization(tmp_path):
+def test_nfkc_normalization(tmp_path: Path):
     """Skill names are NFKC normalized before validation.
 
     The name 'café' can be represented two ways:
@@ -291,7 +293,7 @@ Body
     errors = validate(skill_dir)
     assert errors == [], f"Expected no errors, got: {errors}"
 
-def test_name_trailing_hyphen(tmp_path):
+def test_name_trailing_hyphen(tmp_path: Path):
     skill_dir = tmp_path / "my-skill-"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -304,7 +306,7 @@ Body
     assert any("cannot start or end with a hyphen" in e for e in errors)
 
 
-def test_empty_name(tmp_path):
+def test_empty_name(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -317,7 +319,7 @@ Body
     assert any("name" in e and "non-empty string" in e for e in errors)
 
 
-def test_non_string_name(tmp_path):
+def test_non_string_name(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -331,7 +333,7 @@ Body
     assert any("name" in e and "non-empty string" in e for e in errors)
 
 
-def test_empty_description(tmp_path):
+def test_empty_description(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -344,7 +346,7 @@ Body
     assert any("description" in e and "non-empty string" in e for e in errors)
 
 
-def test_non_string_description(tmp_path):
+def test_non_string_description(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -358,7 +360,7 @@ Body
     assert any("description" in e and "non-empty string" in e for e in errors)
 
 
-def test_non_string_compatibility(tmp_path):
+def test_non_string_compatibility(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -373,7 +375,7 @@ Body
     assert any("compatibility" in e and "must be a string" in e for e in errors)
 
 
-def test_empty_allowed_tools_rejected(tmp_path):
+def test_empty_allowed_tools_rejected(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -387,7 +389,7 @@ Body
     assert any("allowed-tools" in e and "non-empty string" in e for e in errors)
 
 
-def test_non_string_allowed_tools_rejected(tmp_path):
+def test_non_string_allowed_tools_rejected(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -402,7 +404,7 @@ Body
     assert any("allowed-tools" in e and "non-empty string" in e for e in errors)
 
 
-def test_lowercase_skill_md_does_not_satisfy_required_file(tmp_path):
+def test_lowercase_skill_md_does_not_satisfy_required_file(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "skill.md").write_text("""---
@@ -415,7 +417,9 @@ Body
     assert errors == ["Missing required file: SKILL.md"]
 
 
-def test_validate_relative_parent_path_resolves_directory_name(tmp_path, monkeypatch):
+def test_validate_relative_parent_path_resolves_directory_name(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
     skill_dir = tmp_path / "my-skill"
     work_dir = skill_dir / "work"
     work_dir.mkdir(parents=True)
@@ -431,7 +435,7 @@ Body
     assert validate(Path("..")) == []
 
 
-def test_empty_markdown_body_rejected(tmp_path):
+def test_empty_markdown_body_rejected(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -443,7 +447,7 @@ description: A test skill
     assert any("Markdown content" in e for e in errors)
 
 
-def test_non_string_license_rejected(tmp_path):
+def test_non_string_license_rejected(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -458,7 +462,7 @@ Body
     assert any("license" in e and "must be a string" in e for e in errors)
 
 
-def test_non_mapping_metadata_rejected(tmp_path):
+def test_non_mapping_metadata_rejected(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---
@@ -494,7 +498,7 @@ def test_metadata_non_string_key_rejected():
     assert any("metadata" in e and "keys must be strings" in e for e in errors)
 
 
-def test_metadata_nested_sequence_value_rejected(tmp_path):
+def test_metadata_nested_sequence_value_rejected(tmp_path: Path):
     skill_dir = tmp_path / "my-skill"
     skill_dir.mkdir()
     (skill_dir / "SKILL.md").write_text("""---

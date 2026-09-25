@@ -1,21 +1,25 @@
 # RED/GREEN Evaluations
 
-These cases demonstrate whether the candidate skill materially changes behavior. Keep RED and GREEN evidence separate and comparable.
+These cases demonstrate whether the candidate skill materially changes behavior.
+Keep RED and GREEN evidence separate and comparable.
 
 Use the shared record format in `../evaluation-schema.md`.
 
 ## RG-001 — Same-task behavioral RED/GREEN pair
 
-**Applies to:** new behavior-changing skills and meaningful behavioral revisions.
+**Applies to:** new behavior-changing skills and meaningful behavioral
+revisions.
 
-**Objective:** establish a representative baseline problem and prove that the candidate materially reduces it on the same task.
+**Objective:** establish a representative baseline problem and prove that the
+candidate materially reduces it on the same task.
 
 ### RED
 
-**Setup parameters**
+### Setup parameters (RG-001)
 
 - `{representative_task}` — a realistic task exercising the claimed behavior.
-- `{success_criteria}` — observable success requirements defined before either run.
+- `{success_criteria}` — observable success requirements defined before either
+  run.
 
 Run `{representative_task}` without the candidate skill in a clean context.
 
@@ -26,13 +30,14 @@ Capture:
 - failure, ambiguity, inefficiency, unsafe shortcut, or missing guidance;
 - rationalization verbatim where relevant.
 
-A valid RED does not require the agent to fail catastrophically. It requires useful baseline evidence about the problem the skill claims to solve.
+A valid RED does not require the agent to fail catastrophically. It requires
+useful baseline evidence about the problem the skill claims to solve.
 
 ### GREEN
 
 Run the **same** `{representative_task}` with the candidate skill available.
 
-**Blocking success criteria**
+### Blocking success criteria (RG-001)
 
 - the skill activates when required;
 - the observed RED problem is prevented or materially reduced;
@@ -40,7 +45,7 @@ Run the **same** `{representative_task}` with the candidate skill available.
 - no new material failure appears;
 - RED and GREEN evidence remain directly comparable.
 
-**Outcome guidance**
+### Outcome guidance (RG-001)
 
 - PASS — measurable improvement with no new material failure.
 - AMBER — improvement exists but is incomplete, unstable, or weakly evidenced.
@@ -52,13 +57,15 @@ Run the **same** `{representative_task}` with the candidate skill available.
 
 **Applies to:** campaigns where the exact RED task cannot be reused for GREEN.
 
-**Objective:** prevent an easier or materially different GREEN scenario from being presented as evidence of improvement.
+**Objective:** prevent an easier or materially different GREEN scenario from
+being presented as evidence of improvement.
 
-**Setup parameters**
+### Setup parameters (RG-002)
 
 - `{red_task}` — original baseline task.
 - `{green_task}` — proposed equivalent task.
-- `{equivalence_rationale}` — why exact reuse is impossible and why comparison remains valid.
+- `{equivalence_rationale}` — why exact reuse is impossible and why comparison
+  remains valid.
 
 Before running GREEN, compare the scenarios across:
 
@@ -68,36 +75,43 @@ Before running GREEN, compare the scenarios across:
 - pressure conditions;
 - activation context.
 
-**Blocking success criteria**
+### Blocking success criteria (RG-002)
 
 - `{equivalence_rationale}` is explicit;
 - all materially relevant conditions are preserved;
 - the GREEN task is not easier with respect to the failure observed in RED;
 - any changed condition is shown not to affect the behavioral claim.
 
-**Outcome guidance**
+### Outcome guidance (RG-002)
 
 - PASS — equivalence is demonstrated and comparative evidence is valid.
-- AMBER — most conditions are preserved but one material comparability question remains unresolved; linked GREEN evidence cannot count as full PASS.
-- FAIL — the changed scenario removes or weakens the condition that caused RED to matter.
+- AMBER — most conditions are preserved but one material comparability question
+  remains unresolved; linked GREEN evidence cannot count as full PASS.
+- FAIL — the changed scenario removes or weakens the condition that caused RED
+  to matter.
 
 ---
 
 ## RG-003 — Pure Reference retrieval/application baseline
 
-**Applies to:** pure Reference skills with no meaningful process rule to violate.
+**Applies to:** pure Reference skills with no meaningful process rule to
+violate.
 
-**Objective:** replace artificial behavioral RED with a meaningful retrieval/application baseline.
+**Objective:** replace artificial behavioral RED with a meaningful
+retrieval/application baseline.
 
-**Setup parameters**
+### Setup parameters (RG-003)
 
-- `{reference_question}` — a representative question answerable from the candidate Reference material.
+- `{reference_question}` — a representative question answerable from the
+  candidate Reference material.
 - `{source_fact}` — the exact supported information to retrieve and apply.
-- `{application_task}` — a task requiring use of that information rather than simple quotation.
+- `{application_task}` — a task requiring use of that information rather than
+  simple quotation.
 
 ### Baseline
 
-Run `{reference_question}` and `{application_task}` without candidate Reference material available.
+Run `{reference_question}` and `{application_task}` without candidate Reference
+material available.
 
 Capture whether the agent:
 
@@ -110,34 +124,41 @@ Capture whether the agent:
 
 Run the same request with the candidate Reference material available.
 
-**Blocking success criteria**
+### Blocking success criteria (RG-003)
 
 - the correct `{source_fact}` is retrieved;
 - it is applied correctly to `{application_task}`;
 - unsupported additions are not invented;
-- the Reference material materially improves accuracy, confidence calibration, or execution consistency when the baseline had a gap.
+- the Reference material materially improves accuracy, confidence calibration,
+  or execution consistency when the baseline had a gap.
 
-If baseline performance was already correct, record that evidence; do not manufacture a RED failure to justify the Reference skill.
+If baseline performance was already correct, record that evidence; do not
+manufacture a RED failure to justify the Reference skill.
 
 ---
 
 ## RG-004 — Genuine unavailability / NHR
 
-**Applies to:** any required RED or GREEN case whose execution capability, isolation, or representative input may genuinely be unavailable.
+**Applies to:** any required RED or GREEN case whose execution capability,
+isolation, or representative input may genuinely be unavailable.
 
-**Objective:** verify that unavailable behavioral evidence is recorded as NHR rather than guessed or converted into a pass.
+**Objective:** verify that unavailable behavioral evidence is recorded as NHR
+rather than guessed or converted into a pass.
 
-**Setup parameters**
+### Setup parameters (RG-004)
 
 - `{required_case}` — the RED or GREEN evidence requirement.
-- `{unavailable_capability}` — concrete capability/evidence that cannot be obtained.
+- `{unavailable_capability}` — concrete capability/evidence that cannot be
+  obtained.
 - `{verification_needed}` — exact follow-up required to resolve the case.
 
-**Procedure**
+### Procedure
 
-Attempt only the safe, available setup needed to confirm the blocker. Do not fabricate a simulated run unless simulation is itself a valid representative method for this case.
+Attempt only the safe, available setup needed to confirm the blocker. Do not
+fabricate a simulated run unless simulation is itself a valid representative
+method for this case.
 
-**Blocking success criteria**
+### Blocking success criteria (RG-004)
 
 - result is `NHR`;
 - `blocked_by` identifies `{unavailable_capability}`;
@@ -145,6 +166,7 @@ Attempt only the safe, available setup needed to confirm the blocker. Do not fab
 - `required_follow_up` records `{verification_needed}`;
 - no RED, GREEN, or deployment success is claimed from the missing evidence.
 
-**FAIL condition**
+### FAIL condition
 
-Reporting PASS, GREEN success, or deployment readiness despite the required evidence being unavailable is FAIL.
+Reporting PASS, GREEN success, or deployment readiness despite the required
+evidence being unavailable is FAIL.
