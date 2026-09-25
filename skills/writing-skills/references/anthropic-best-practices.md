@@ -297,7 +297,7 @@ when needed:
 
 The complete Skill directory structure might look like this:
 
-```
+```text
 pdf/
 ├── SKILL.md              # Main instructions (loaded when triggered)
 ├── FORMS.md              # Form-filling guide (loaded as needed)
@@ -348,7 +348,7 @@ irrelevant context. When a user asks about sales metrics, Claude only needs to
 read sales-related schemas, not finance or marketing data. This keeps token
 usage low and context focused.
 
-```
+```text
 bigquery-skill/
 ├── SKILL.md (overview and navigation)
 └── reference/
@@ -1219,7 +1219,7 @@ in the overview.
 
 **Example:**
 
-```
+```text
 bigquery-skill/
 ├── SKILL.md (overview, points to reference files)
 └── reference/
@@ -1281,7 +1281,7 @@ reader = PdfReader("file.pdf")
 ````
 `````
 
-```
+```text
 
 ## Technical notes
 

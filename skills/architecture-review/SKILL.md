@@ -15,7 +15,7 @@ description:
 
 ## The Rule
 
-```
+```text
 AN ASSESSMENT WITHOUT EVIDENCE IS AN OPINION.
 Ground every claim in a file/line, a config value, a schema, a stated
 requirement, or a labeled assumption. If evidence is missing, say what must be

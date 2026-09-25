@@ -7,7 +7,7 @@ implementation planning.
 
 **Dispatch after:** Spec document is written to .claude/docs/specs/
 
-```
+```text
 Subagent (general-purpose):
   description: "Review spec document"
   prompt: |

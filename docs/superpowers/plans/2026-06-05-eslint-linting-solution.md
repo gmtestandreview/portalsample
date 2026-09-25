@@ -518,7 +518,7 @@ PASTE THE EXACT WARNING OUTPUT FROM THE FINAL LINT RUN HERE
 Do not add new warnings. When editing a file listed in this baseline, reduce or
 remove warnings in that file as part of the same change.
 
-````
+````markdown
 
 Replace `PASTE THE EXACT WARNING OUTPUT FROM THE FINAL LINT RUN HERE` with the actual warning lines from the final lint run before committing. If this file is created, it must contain concrete output.
 
@@ -545,7 +545,7 @@ The lint gate covers handwritten React/TypeScript app source, Storybook/test
 files, and root config files. Generated NSwag API output, vendor mirrors, build
 output, and source-map capture directories are excluded.
 
-````
+````text
 
 - [ ] **Step 3: Run markdown-safe validation**
 

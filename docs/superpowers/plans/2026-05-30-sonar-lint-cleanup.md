@@ -43,7 +43,7 @@ WizardRoutedStep discriminated-union refactor:
 
 ## Validation commands
 
-```
+```bash
 npm run type-check          # tsc --noEmit
 npm run test:unit           # vitest run — must have 27 tests passing, 0 failing
 ```
@@ -195,7 +195,7 @@ any type so this is a safe broadening.
 
 - [ ] **Step 4: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -203,7 +203,7 @@ Expected: no errors.
 
 - [ ] **Step 5: Run tests (regression check)**
 
-```
+```bash
 npm run test:unit
 ```
 
@@ -231,7 +231,7 @@ Extracting the Forbidden branch into a private helper reduces
 
 - [ ] **Step 1: Verify the 14 unit tests currently pass (baseline)**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
 ```
 
@@ -315,7 +315,7 @@ export function resolveErrorState(
 
 - [ ] **Step 3: Run the unit tests**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/errorState.test.ts
 ```
 
@@ -323,7 +323,7 @@ Expected: 14 tests PASS. Same result as baseline.
 
 - [ ] **Step 4: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -443,7 +443,7 @@ set to false, hide; otherwise show."
 
 - [ ] **Step 6: Run integration tests (regression check)**
 
-```
+```bash
 npm run test:unit -- tests/unit/components/forms/wizardRoutedStep/WizardRoutedStep.integration.test.tsx
 ```
 
@@ -451,7 +451,7 @@ Expected: 5 tests PASS.
 
 - [ ] **Step 7: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -582,7 +582,7 @@ single-character patterns. ES2021+, compatible with the ES2022 target.
 
 - [ ] **Step 6: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 
@@ -590,7 +590,7 @@ Expected: no errors.
 
 - [ ] **Step 7: Run full test suite (regression check)**
 
-```
+```bash
 npm run test:unit
 ```
 
@@ -629,7 +629,7 @@ This opts the project in to acknowledging the 6.0 deprecation warnings
 
 - [ ] **Step 2: Type-check**
 
-```
+```bash
 npm run type-check
 ```
 

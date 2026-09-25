@@ -11,7 +11,7 @@ description:
 
 ## The Law
 
-```
+```text
 A PERFORMANCE CLAIM WITHOUT NUMBERS IS AN OPINION.
 "I think it's faster" is not a result.
 "p95 latency dropped from 480ms to 42ms on a 1000-item dataset" is a result.

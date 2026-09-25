@@ -163,7 +163,7 @@ One HTML update.
 
 - [ ] **Step 2: Verify the tests pass**
 
-  ```
+  ```bash
   npx vitest run tests/unit/storage/sessionStorageCache.test.ts --reporter=verbose
   ```
 
@@ -241,7 +241,7 @@ One HTML update.
 
 - [ ] **Step 2: Verify the tests pass**
 
-  ```
+  ```bash
   npx vitest run tests/unit/routes/errorRoutes.test.ts --reporter=verbose
   ```
 
@@ -301,7 +301,7 @@ Content must document:
   transformOptions() injects header on every request:
   headers.TargetOrganisationAbn = targetOrganisationJson.targetOrganisationAbn
 
-  ````
+  ````text
 
   ## Why the construction-time read is safe in the current codebase
 
@@ -363,13 +363,13 @@ Content must document:
   | `ClientApp/src/storage/sessionStorageCache.ts`    | Low-level sessionStorage wrapper                                           |
   | All `*Client` classes in `web-api-client.ts`      | Extend `AuthorizedApiBase` (DashboardClient, QuoteClient, etc.)            |
 
-  ```
+  ```text
 
   ```
 
 - [ ] **Step 3: Verify file was created**
 
-  ```
+  ```bash
   ls docs/architecture/org-switching-lifecycle.md
   ```
 
@@ -435,7 +435,7 @@ Content must document:
 
   curl <http://localhost:5000/swagger/v1/swagger.json> -o api-spec.json
 
-  ````
+  ````text
   or use the published spec URL from the NMI portal backend.
 
   2. **Run NSwag generation:**
@@ -495,13 +495,13 @@ Content must document:
   | `AuthorizedApiBase` (lines 10–35)     | Hand-authored base class — must be preserved after regeneration |
   | `.storybook/msw-handlers.ts`          | Must be updated when new endpoints are added                    |
 
-  ```
+  ```text
 
   ```
 
 - [ ] **Step 3: Verify file was created**
 
-  ```
+  ```bash
   ls docs/architecture/nswag-regeneration.md
   ```
 
@@ -551,7 +551,7 @@ Content must document:
 
 - [ ] **Step 6: Verify section count unchanged**
 
-  ```
+  ```bash
   grep -c "</section>" docs/nmi-portal-rebuild-readiness-assessment-2026-05-29.html
   ```
 

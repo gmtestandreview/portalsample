@@ -118,7 +118,7 @@ A newly authenticated user who has not completed account creation is always
 redirected to `/create-account`, overriding any other navigation target.
 **Specification:**
 
-```
+```text
 Given  an authenticated user
 When   accountCreationCompleted === false
   AND  the current path does NOT include 'create-account'
@@ -142,7 +142,7 @@ paths are renamed; should use React Router `useMatch` with route constants from
 Once account creation is complete, a user without a completed contact record is
 redirected to `/create-contact`. **Specification:**
 
-```
+```text
 Given  an authenticated user where accountCreationCompleted === true
 When   accountContactCompleted === false
   AND  path does NOT include 'create-contact' or 'create-account'
@@ -162,7 +162,7 @@ be done first — `!redirectToCreateAccount` condition) **Confidence:** High
 A fully onboarded user who somehow navigates to the setup routes is bounced back
 to the dashboard. **Specification:**
 
-```
+```text
 Given  accountCreationCompleted === true AND accountContactCompleted === true
 When   user navigates to any path containing 'create-account' or 'create-contact'
 Then   redirect to / (dashboard root)
@@ -180,7 +180,7 @@ Then   redirect to / (dashboard root)
 dashboard content, a user must have accepted the current version of the Terms of
 Use. Accepting an earlier version counts as not accepted. **Specification:**
 
-```
+```text
 Given  an authenticated user
 When   user.acceptedTerms !== true
   OR   user.termsVersion.toString() !== currentTermsVersion
@@ -207,7 +207,7 @@ English:** After accepting T&C, if the user has no default organisation
 selected, a blocking branch-selector modal is shown. The user cannot dismiss it
 without selecting an organisation. **Specification:**
 
-```
+```text
 Given  userAcceptedTermsOfUse === true AND accountContactCompleted === true
   AND  defaultOrganisationId === null
   AND  path does NOT include 'success-creating-account'
@@ -232,7 +232,7 @@ quote request moves through a defined set of statuses controlled by the NMI CRM.
 The portal can only trigger two transitions (Accept, Decline); all others are
 server-side. **Specification:**
 
-```
+```text
 Given  a RequestForQuoteDto with field quoteRequestStatus
 Then   valid status values are:
   QuoteStatus.QuoteSubmitted    = 'Submitted'
@@ -269,7 +269,7 @@ PDF document served to a customer for a given record depends entirely on its
 current status. Different statuses serve fundamentally different documents
 (offer vs acceptance vs report). **Specification:**
 
-```
+```text
 Given  a QuoteStatus and a calling context (quotation-tab or not)
 
 When   status is QuoteAccepted OR ArtifactReceived
@@ -309,7 +309,7 @@ PDF viewer opens to a specific page depending on the quote's status, reflecting
 which section of the document is most relevant to the customer's current
 situation. **Specification:**
 
-```
+```text
 Given  a QuoteStatus value
 When   the PDF viewer is opened
 Then:
@@ -335,7 +335,7 @@ analysis
 outcome has been recorded; only a "Back to dashboard" button remains.
 **Specification:**
 
-```
+```text
 Given  a user on the Quotation detail page
 When   status is NOT in [QuoteDeclined, QuoteAccepted, QuoteExpired, QuoteClosed,
                           ReportIssued, ReportWithdrawn, ReportInProgress, ArtifactReceived]
@@ -362,7 +362,7 @@ English:** Each dashboard card exposes a specific subset of actions depending on
 the record's status. This is the master gating table for all customer-initiated
 workflow actions. **Specification:**
 
-```
+```text
 Draft (QuoteDrafted):
   → Edit request (/request-for-quote/:id)
   → Delete request
@@ -406,7 +406,7 @@ Immediately after a customer accepts a quote and returns to the dashboard, the
 portal optimistically shows the record as accepted before CRM has propagated the
 status change. **Specification:**
 
-```
+```text
 Given  'accepted-quote-id' token is present in sessionStorage (written by summaryAndAcceptProps.ts)
 When   Dashboard loads and finds item with referenceId === stored token
   AND  item.quoteRequestStatus === QuoteAvailable
@@ -440,7 +440,7 @@ CRD-045 - previous citation was past end of file)_ - the `declineQuote` handler
 **Plain English:** Declining a quotation permanently ends that quote
 opportunity; the action cannot be undone from the portal. **Specification:**
 
-```
+```text
 Given  a user who clicks "Decline quote" and confirms the modal
 When   QuoteClient.declineQuote is called and succeeds
 Then   status transitions to QuoteDeclined (server-side)
@@ -459,7 +459,7 @@ Then   status transitions to QuoteDeclined (server-side)
 Request for Quote has been submitted, the customer cannot make further changes
 through the portal. **Specification:**
 
-```
+```text
 Given  a user on the RFQ Summary step who confirms submission
 When   RequestForQuoteClient.submitApplication succeeds
 Then   status transitions to QuoteSubmitted
@@ -479,7 +479,7 @@ Then   status transitions to QuoteSubmitted
 customer accepts a quote, no further changes can be made through the portal.
 **Specification:**
 
-```
+```text
 Given  a user on the Accept Quote Summary step who confirms acceptance
 When   AcceptQuoteClient submission succeeds
 Then   status transitions to QuoteAccepted (optimistically shown immediately)
@@ -501,7 +501,7 @@ English:** A customer can copy a completed or withdrawn RFQ as a recalibration
 request only when the original has reached specific end states.
 **Specification:**
 
-```
+```text
 Given  a dashboard item
 
 For requestItem:
@@ -527,7 +527,7 @@ is complete.
 RFQ record with `hideFromDashboard = true` is completely hidden from the
 customer's view, even if it exists in CRM. **Specification:**
 
-```
+```text
 Given  a DashboardItemDto where requestForQuote.hideFromDashboard === true
 When   the RequestItem component renders
 Then   the entire card element is not rendered (return null)
@@ -549,7 +549,7 @@ After accepting a quote, customers on "Prepaid" terms must pay before
 calibration commences. All other customers receive standard 30-day invoice
 terms. **Specification:**
 
-```
+```text
 Given  a customer has completed the Accept Quote wizard
 
 When   acceptQuotePreInfo.paymentTerms === 'Prepaid'   (exact case-sensitive string)
@@ -583,7 +583,7 @@ Then   display: "Invoices must be paid within 30 days of NMI invoice date.
 workflows (RFQ, Accept Quote) support saving progress as a draft. Single-step
 onboarding workflows (Create Account, Create Contact) do not. **Specification:**
 
-```
+```text
 Request for Quote:  canSaveDraft = true  → WizardRoutedStep shows "Save and exit" button
 Accept Quote:       canSaveDraft = true  → WizardRoutedStep shows "Save and exit" button
 Create Account:     canSaveDraft = false → no "Save and exit" button
@@ -604,7 +604,7 @@ accidental navigation for all wizards regardless of `canSaveDraft`
 A withdrawn measurement report cannot be viewed or downloaded.
 **Specification:**
 
-```
+```text
 Given  an instrument artefact record
 When   artefact.tmasStatus === ReportStatus.Withdrawn ('Withdrawn')
 Then   "View report" link is hidden
@@ -625,7 +625,7 @@ English:** Once NMI receives the physical instrument, the dashboard card heading
 switches from the customer's make/model entry to NMI's formal artefact name.
 **Specification:**
 
-```
+```text
 Given  a dashboard card item
 
 When   status is in [ArtifactReceived, ReportInProgress, QuoteAccepted, ReportWithdrawn, ReportIssued]
@@ -649,7 +649,7 @@ Then   heading = requestForQuote.manufacturer + " " + requestForQuote.model
 English:** After acceptance, quotation links use the CRM Quote ID rather than
 the original RFQ reference ID. **Specification:**
 
-```
+```text
 Given  a dashboard item with a "View quotation" action
 
 When   status is in [ArtifactReceived, ReportInProgress, QuoteAccepted, ReportIssued]
@@ -673,7 +673,7 @@ Then   navigate to /quotation/{referenceId}                     (RFQ reference I
 Australian Business Numbers are validated using the official Australian Taxation
 Office weighted checksum algorithm. **Specification:**
 
-```
+```text
 Given  an 11-digit string (no whitespace)
 When   ABN checksum validation runs
 Then:
@@ -706,7 +706,7 @@ Example: "51824753556"
 are displayed in Australian dollars with locale-correct symbol, thousands
 separators, and two decimal places. **Specification:**
 
-```
+```text
 Given  a numeric amount
 When   formatCurrencyAmount(amount) runs
 Then   result = amount.toLocaleString('en-AU', { style: 'currency', currency: 'AUD' })
@@ -726,7 +726,7 @@ Example: 12500.5 → "$12,500.50"
 dates in two formats — Australian short form (dd/MM/yyyy) and ISO 8601 — and
 selects the parser based on string length. **Specification:**
 
-```
+```text
 Given  a date string value
 When   parseDate(value) runs
 Then:
@@ -748,7 +748,7 @@ parseDateUTC always uses ISO format regardless of length
 `ClientApp/src/utils/index.ts:197-204` **Plain English:** Financial year strings
 are shortened to a compact form for display. **Specification:**
 
-```
+```text
 Given  a period string
 When   abbreviateReportingPeriod(period) runs
 Then:
@@ -770,7 +770,7 @@ malformed strings **Confidence:** High
 **Plain English:** Postcodes must be exactly 4 digits and fall within valid
 Australian ranges. **Specification:**
 
-```
+```text
 Given  a postcode string value
 When   postcode() validation runs
 Then:
@@ -797,7 +797,7 @@ are accepted. Is this intentional for postal addresses?
 landline, mobile, 1800/1300 freecall, or 13-series short number.
 **Specification:**
 
-```
+```text
 Landline regex: /^(?:\+61 ?|0)[2-47-8] ?\d{4} ?\d{4}|1[38]00 ?\d{3} ?\d{3}|13 ?\d{2} ?\d{2}$/
 Mobile regex:   /^(?:\+61 ?|0)4\d{2} ?\d{3} ?\d{3}$/
 
@@ -822,7 +822,7 @@ intentionally exclude some `+61`-prefixed variants with spaces?
 English:** Email addresses must match a custom RFC 5321-aligned regex and cannot
 exceed 100 characters. **Specification:**
 
-```
+```text
 Regex: /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9-]){0,62}\.[a-zA-Z](-?[a-zA-Z0-9])+$/
 Max length: 100 chars (common.ts:131)
 
@@ -843,7 +843,7 @@ Max length: 100 chars (common.ts:131)
 ASCII letters, hyphen, space, and apostrophe — accented characters are rejected.
 **Specification:**
 
-```
+```text
 nameAllowedFormat(extended=false) regex: /^[-–—A-Za-z ']*$/
   Allows: ASCII hyphen, en-dash (U+2013), em-dash (U+2014), A–Z, a–z, space, apostrophe
 
@@ -869,7 +869,7 @@ different validator)_ **Plain English:** Business and trading names must conform
 to the character set defined in the ASIC CompanyName Business Rules message
 implementation guide (v1.7). **Specification:**
 
-```
+```text
 businessName() regex: /^[A-Za-z0-9!@#$%^&*()?;:=_\-/\.,'{}| "]+$/
 
 "Smith & Sons Pty Ltd" → VALID    (& IS in the charset — corrected 2026-09-02, CRD-043)
@@ -922,7 +922,7 @@ guide v1.7 (comment in source) **Confidence:** High _(raised from Medium
 than the threshold number of times (default: 3 in a row is rejected).
 **Specification:**
 
-```
+```text
 Given  threshold = 3 (default)
 Then   regex = /([a-z])\1{2,}/i  (matches 3+ consecutive identical letters)
 
@@ -944,7 +944,7 @@ only applies to letters, not digits or punctuation **Confidence:** High
 English:** Adjacent apostrophes, hyphens, or spaces (including Unicode variants)
 are rejected in name and text fields. **Specification:**
 
-```
+```text
 Characters covered: space, ASCII apostrophe ', U+2019 ', ASCII hyphen -, U+2013 –, U+2014 —
 Regex: /([ '’\-–—])\1+/
 
@@ -965,7 +965,7 @@ Regex: /([ '’\-–—])\1+/
 A contact record must have at least one phone number (landline or mobile); both
 cannot be blank simultaneously. **Specification:**
 
-```
+```text
 Given  a contact form with required=true
 When   both phone AND mobile are empty/blank
 Then   error shown on both fields: "[field] is required"
@@ -985,7 +985,7 @@ When a customer has more than one registered branch, they must explicitly
 confirm they have selected the correct branch before an RFQ can proceed.
 **Specification:**
 
-```
+```text
 Given  organisationCount > 1 (multiple branches registered)
 When   the Organisation & Contact step is submitted
 Then   isCorrectBranchOrLocation is required
@@ -1008,7 +1008,7 @@ customer must explicitly tick the acceptance-of-terms checkbox before their
 quote acceptance can be submitted. This is a legal acknowledgement.
 **Specification:**
 
-```
+```text
 Given  the Summary and Accept step of the Accept Quote wizard
 When   acceptanceOfQuote === false (checkbox not ticked)
 Then   submit is blocked with: "You must accept our terms before accepting this quotation"
@@ -1027,7 +1027,7 @@ Then   submit proceeds
 If a customer specifies a preferred instrument availability date on an RFQ, it
 must be today or a future date. **Specification:**
 
-```
+```text
 Given  preferredInstrumentOrArtefactAvailabilityDate is provided (field is optional)
 When   validation runs
 Then:
@@ -1054,7 +1054,7 @@ CRD-044 - previously cited 88-93 and documented only one of the two sites)_
 **Plain English:** The number of instruments/artefacts on a single RFQ must be
 between 1 and 100. **Specification:**
 
-```
+```typescript
 numberOfItems: yup.number()
   .min(1, 'Number of items cannot be less than 1')
   .max(100, 'Number of items cannot be greater than 100')
@@ -1083,7 +1083,7 @@ numberOfItems: yup.number()
 the customer selects "client will provide courier" as the return method, carrier
 name and account number become mandatory. **Specification:**
 
-```
+```text
 Given  returnMethod === 'ClientWillProvide'
 Then:
   carrierName: required, min 2, max 100 chars
@@ -1109,7 +1109,7 @@ Then   all carrier fields are not required
 the customer directs the invoice to someone other than themselves, that person's
 contact details (at minimum email) become required. **Specification:**
 
-```
+```text
 Given  invoiceSentTo === InvoiceSentToValues.DifferentPerson
 Then   contactSchemaEmailOnly() applies: email required, phone/mobile optional
 
@@ -1128,7 +1128,7 @@ Then   contact fields not required
 English:** All date inputs must be in DD/MM/YYYY format and cannot exceed
 year 9999. **Specification:**
 
-```
+```text
 Date format: DD/MM/YYYY only
 Year ceiling: parsedDate <= new Date(9999, 12, 31)
 
@@ -1151,7 +1151,7 @@ different "must be a future date" validators exist with different semantics —
 one allows today, the other requires strictly tomorrow or later.
 **Specification:**
 
-```
+```text
 common.ts isFutureDate():
   Uses isAfter(dateValue, startOfDay(new Date()))
   Today → FAILS (not strictly after today's start)
@@ -1213,7 +1213,7 @@ most cases minimum) character length. **Specification:**
 website URLs may omit the protocol but must have a valid domain with a 2–6
 character TLD. **Specification:**
 
-```
+```text
 Regex: /^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)(?<!\.)$/
 
 "measurement.gov.au" → VALID (protocol optional)
@@ -1233,7 +1233,7 @@ Regex: /^(?!\.)(http(s)?:\/\/)?(www\.)?[a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\
 "postal address same as street address" is checked, the postal address fields
 are suppressed and require no input. **Specification:**
 
-```
+```text
 Given  postalAddressSameAsStreetAddress === true
 Then   postalAddress fields: not validated, not required
 
@@ -1255,7 +1255,7 @@ Then   postalAddress: addressSchema applies (all required fields enforced)
 **Plain English:** NMI's Australian Business Number is hardcoded in the Accept
 Quote summary page as part of the legal contract display. **Specification:**
 
-```
+```text
 NMI ABN displayed: "74 599 608 295"
 NMI address displayed:
   "36 Bradfield Road"
@@ -1285,7 +1285,7 @@ stated. See `RULES-REGISTER-001`._
 
 **Specification:**
 
-```
+```text
 Rendered verbatim in the accept-quote summary, one <span> per line:
 
   National Measurement Institute        (line 372)
@@ -1336,7 +1336,7 @@ _unverified_ is whether they are current, which is Legal's call.
 version number is stored in a JSON config file. Incrementing it forces all
 existing users to re-accept the updated terms on next login. **Specification:**
 
-```
+```json
 { "TermsVersion": "1" }
 
 To trigger re-acceptance for all users:
@@ -1355,7 +1355,7 @@ To trigger re-acceptance for all users:
 `ClientApp/src/routes/measurementReport/indexList.tsx:36` **Plain English:** All
 paginated lists in the portal show 10 items per page. **Specification:**
 
-```
+```text
 Dashboard (all 3 tabs): DEFAULT_DASHBOARD_PAGESIZE = 10 (dashboard/index.tsx:51)
 Measurement report list: pageSize = 10 (measurementReport/indexList.tsx:36)
 These are separate constants — changing one does NOT change the other.

@@ -275,7 +275,7 @@ that must be fixed before the code is migrated.
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/components/modals/TermsAndConditionModal.test.tsx --reporter=verbose
   ```
 
@@ -344,7 +344,7 @@ that must be fixed before the code is migrated.
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/components/modals/TermsAndConditionModal.test.tsx --reporter=verbose
   ```
 
@@ -354,7 +354,7 @@ that must be fixed before the code is migrated.
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/ --reporter=verbose 2>&1 | tail -10
   ```
 
@@ -445,7 +445,7 @@ that must be fixed before the code is migrated.
 
 - [ ] **Step 2: Verify file was created**
 
-  ```
+  ```bash
   ls docs/architecture/storybook-vs-webpack-runtime.md
   ```
 
@@ -529,13 +529,13 @@ that must be fixed before the code is migrated.
   | `.storybook/msw-handlers.ts`  | Present — uses MSW v2 `http.*` / `HttpResponse` API                |
   | `package.json`                | Must contain `"msw": { "workerDirectory": ["public"] }` after init |
 
-  ```
+  ```text
 
   ```
 
 - [ ] **Step 2: Verify file was created**
 
-  ```
+  ```bash
   ls docs/migration/msw-init-checklist.md
   ```
 
@@ -658,7 +658,7 @@ exist but step implementations unconfirmed." Inspection of
 
 - [ ] **Step 3: Verify file was created**
 
-  ```
+  ```bash
   ls docs/architecture/bdd-e2e-step-coverage.md
   ```
 
@@ -731,7 +731,7 @@ validation silently fails at runtime.
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/validationSchemas/transitiveYupImports.test.ts --reporter=verbose
   ```
 
@@ -778,7 +778,7 @@ validation silently fails at runtime.
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/validationSchemas/transitiveYupImports.test.ts --reporter=verbose
   ```
 
@@ -788,7 +788,7 @@ validation silently fails at runtime.
 
   Run:
 
-  ```
+  ```bash
   npx vitest run tests/unit/ --reporter=verbose 2>&1 | tail -10
   ```
 
@@ -909,7 +909,7 @@ Gap 8 is therefore already resolved by existing documentation.
 
 - [ ] **Step 2: Verify file was created**
 
-  ```
+  ```bash
   ls docs/architecture/target-repo-storybook-placement.md
   ```
 
@@ -1175,7 +1175,7 @@ before each edit to confirm exact surrounding text. Each edit targets the row
 
   From (the existing status text):
 
-  ```
+  ```html
   <strong>Status as of 2026-05-31:</strong> All client-side security findings resolved. WizardRoutedStep refactored and tested. SonarLint findings cleaned across two phases (47 findings) plus Sprint 2 hardening (6 additional files)...218+ unit tests now passing.
   ```
 
@@ -1195,7 +1195,7 @@ before each edit to confirm exact surrounding text. Each edit targets the row
 
 - [ ] **Step 10: Verify section count unchanged**
 
-  ```
+  ```bash
   grep -c "</section>" docs/nmi-portal-rebuild-readiness-assessment-2026-05-29.html
   ```
 

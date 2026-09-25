@@ -87,7 +87,7 @@ casts → Dashboard useEffect dep array → migration checklist
 
 ## Tour Series Progression
 
-```
+```text
 New Joiner Onboarding
         ↓
   Vibecoder Quickstart  ──→  Architect Overview

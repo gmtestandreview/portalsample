@@ -7,7 +7,7 @@ cleanup/helper methods for tests.
 
 A test exists to catch a specific break. Two principles govern everything here:
 
-```
+```text
 1. Every test names the break it catches
 2. Every test exercises the real thing
 ```
@@ -62,7 +62,7 @@ on them.
 
 ### Gate Function
 
-```
+```text
 BEFORE writing the test body:
   Name the production change that would make this test fail.
 
@@ -130,7 +130,7 @@ question:** "Do we need to be using a mock here?"
 
 ### Gate Function
 
-```
+```text
 BEFORE adding a mock or test helper:
   List the real method's side effects; keep the ones the test
   depends on real — mock the slow/external level below them.

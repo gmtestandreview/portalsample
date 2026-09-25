@@ -1007,7 +1007,7 @@ export const InternalState: Story = {
 
 Do not use `'docs'` as an Autodocs activation tag.
 
-````
+````mdx
 
 - [ ] **Step 2: Add Args versus ArgTypes guidance**
 
@@ -1054,7 +1054,7 @@ semantics that TypeScript/JSDoc cannot express clearly, such as control
 behaviour, options, mappings, conditional display, categories, or intentional
 hiding.
 
-````
+````mdx
 
 - [ ] **Step 3: Add parameter inheritance guidance**
 
@@ -1094,7 +1094,7 @@ export const ComplexExample: Story = {
 };
 ```
 
-````
+````mdx
 
 Current Storybook documentation defines parameter scope exactly at project, meta, and story level, with more specific scopes overriding less specific ones.
 
@@ -1150,7 +1150,7 @@ argTypes: {
 ```
 ````
 
-````
+````mdx
 
 - [ ] **Step 6: Add Code Panel and Source guidance**
 
@@ -1184,7 +1184,7 @@ parameters: {
 
 Override this only when a specific story needs different source behaviour.
 
-````
+````mdx
 
 - [ ] **Step 7: Add MDX versus Autodocs guidance**
 
@@ -1233,7 +1233,7 @@ Use buttons to trigger actions.
 Always pass the full story-module exports to `<Meta of={...} />`, not the
 component itself.
 
-````
+````mdx
 
 Storybook's current MDX documentation explicitly distinguishes CSF as the story format and MDX as the structured narrative format, and requires full story exports for `Meta of`.
 
@@ -1313,7 +1313,7 @@ storybook build --docs
 
 The static documentation build is emitted to `storybook-static/`.
 
-````
+````mdx
 
 The official build documentation recommends both commands and documents the `storybook-static` output.
 

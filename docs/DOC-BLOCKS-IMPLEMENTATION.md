@@ -147,7 +147,7 @@ import * as ComponentStories from './Component.stories';
 
 ## 📁 File Organization
 
-```
+```text
 static/js/
 ├── components/
 │   ├── Alert/
@@ -204,7 +204,7 @@ The glob pattern `'../static/js/**/*(docs|Docs).mdx'` discovers:
 
 When you open Storybook at <http://localhost:6009/>, the sidebar shows:
 
-```
+```text
 📚 Documentation
 ├── Getting Started (introduction.mdx)
 ├── Component Documentation Guide (component-docs-guide.mdx)
@@ -394,7 +394,7 @@ Some description here.
 ```
 ````
 
-```
+```text
 
 ### Step 6: File Discovery
 
@@ -403,7 +403,7 @@ The `.docs.mdx` file is automatically discovered by the pattern:
 
 ../static/js/**/*(docs|Docs).mdx
 
-````
+````text
 
 No additional configuration needed!
 
@@ -524,7 +524,7 @@ parameters: {
 
 ### Direct URLs
 
-```
+```text
 http://localhost:6009/?path=/docs/components-alert--docs
 http://localhost:6009/?path=/docs/components-accordion--docs
 http://localhost:6009/?path=/docs/components-buttons-primarybutton--docs
@@ -546,7 +546,7 @@ http://localhost:6009/?path=/docs/components-buttons-primarybutton--docs
 
 ### 1. **Expand Doc Block Coverage**
 
-```
+```text
 Create .docs.mdx files for:
 - SecondaryButton
 - Breadcrumb

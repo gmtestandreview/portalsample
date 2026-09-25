@@ -84,7 +84,7 @@ never cached.
 
 ## `bake` subcommands
 
-```
+```text
 mcp2cli bake create NAME [source flags] [--include GLOB] [--exclude GLOB] [--methods GET,POST] [--description TEXT] [--force]
 mcp2cli bake list
 mcp2cli bake show NAME       # secrets masked in output; underlying ~/.config/mcp2cli/baked.json is plaintext

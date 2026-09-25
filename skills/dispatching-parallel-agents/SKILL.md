@@ -73,7 +73,7 @@ Each agent gets:
 
 ### 3. Dispatch in Parallel
 
-```
+```text
 Task("Fix auth-flow.test.ts failures — timing issues in login flow")
 Task("Fix payment-webhook.test.ts failures — missing mock for Stripe")
 Task("Fix user-profile.test.ts failures — stale closure in useEffect")
@@ -94,7 +94,7 @@ Good prompts are:
 2. **Self-contained** — all context to understand the problem included
 3. **Specific about output** — what should the agent return?
 
-```
+```text
 Fix the 3 failing tests in src/auth/auth-flow.test.ts:
 1. "should redirect after login" - expects /dashboard but gets /
 2. "should persist session" - session expires immediately

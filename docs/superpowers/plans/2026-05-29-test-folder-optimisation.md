@@ -22,7 +22,7 @@ reporting
 
 ## Current vs Target Structure
 
-```
+```text
 BEFORE                              AFTER
 ─────────────────────────────────── ──────────────────────────────────────────
 <root>/                             <root>/
@@ -419,7 +419,7 @@ and should also be gitignored.
 
 Current content (for reference — read the file to confirm):
 
-```
+```text
 # Dependencies
 node_modules/
 
@@ -453,7 +453,7 @@ npm-debug.log*
 
 Find:
 
-```
+```text
 # Test output
 coverage/
 test-results/
@@ -462,7 +462,7 @@ playwright-report/
 
 Replace with:
 
-```
+```text
 # Test output (all artifacts consolidated under reports/)
 reports/coverage/
 reports/playwright/

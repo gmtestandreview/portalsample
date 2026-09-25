@@ -129,7 +129,7 @@ describe('Yup stringExtensions — businessName', () => {
 
 - [ ] **Step 3: Run the test — expect PASS (nothing to fix)**
 
-```
+```bash
 npx vitest run tests/unit/validationSchemas/stringExtensions.businessName.test.ts --reporter=verbose
 ```
 
@@ -138,7 +138,7 @@ proceeding.
 
 - [ ] **Step 4: Commit**
 
-```
+```bash
 git add tests/unit/validationSchemas/stringExtensions.businessName.test.ts
 git commit -m "test: add regression coverage for Yup businessName declaration (false-positive finding closed)"
 ```
@@ -214,7 +214,7 @@ describe('emailSchema — post-consolidation (sourced from common.ts)', () => {
 
 - [ ] **Step 2: Run the test before making any code changes**
 
-```
+```bash
 npx vitest run tests/unit/validationSchemas/emailSchema.consolidation.test.ts --reporter=verbose
 ```
 
@@ -282,7 +282,7 @@ export { emailSchema };
 
 - [ ] **Step 4: Run the characterisation test after the change**
 
-```
+```bash
 npx vitest run tests/unit/validationSchemas/emailSchema.consolidation.test.ts --reporter=verbose
 ```
 
@@ -290,7 +290,7 @@ Expected: all 5 tests still PASS.
 
 - [ ] **Step 5: Run the full test suite to check for regressions**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -298,7 +298,7 @@ Expected: all tests PASS (currently 27 + the new tests from Task 1 and 2).
 
 - [ ] **Step 6: Commit**
 
-```
+```bash
 git add ClientApp/src/validationSchemas/contactValidation.ts tests/unit/validationSchemas/emailSchema.consolidation.test.ts
 git commit -m "refactor: consolidate duplicate emailSchema — contactValidation now re-exports from common"
 ```
@@ -408,7 +408,7 @@ describe('AccountProvider — errored state', () => {
 
 - [ ] **Step 2: Run the test — expect FAIL (error message not shown)**
 
-```
+```bash
 npx vitest run tests/unit/authentication/AccountProvider.errored.test.tsx --reporter=verbose
 ```
 
@@ -461,7 +461,7 @@ return (
 
 - [ ] **Step 4: Run the test — expect PASS**
 
-```
+```bash
 npx vitest run tests/unit/authentication/AccountProvider.errored.test.tsx --reporter=verbose
 ```
 
@@ -469,7 +469,7 @@ Expected: PASS.
 
 - [ ] **Step 5: Run the full suite — expect no regressions**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -477,7 +477,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 6: Commit**
 
-```
+```bash
 git add ClientApp/src/authentication/AccountProvider.tsx tests/unit/authentication/AccountProvider.errored.test.tsx
 git commit -m "fix: surface AccountProvider.errored state — show error UI and suppress children on account-load failure"
 ```
@@ -745,7 +745,7 @@ describe('WizardForm — step navigation', () => {
 - [ ] **Step 2: Run the tests — expect PASS (the navigation logic already
       exists; we are covering it, not building it)**
 
-```
+```bash
 npx vitest run tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx --reporter=verbose
 ```
 
@@ -766,7 +766,7 @@ Expected: all 5 tests PASS. If any fail:
 
 - [ ] **Step 3: Run the full suite**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -774,7 +774,7 @@ Expected: all tests PASS (prior 27 + new 5 from this task).
 
 - [ ] **Step 4: Commit**
 
-```
+```bash
 git add tests/unit/components/forms/wizardForm/WizardForm.navigation.test.tsx
 git commit -m "test: add WizardForm navigation integration tests — forward, back, linear guard, locationOnCompletion"
 ```
@@ -825,7 +825,7 @@ arguments are unchanged. The only addition is the comment block above it.
 
 - [ ] **Step 4: Run the full suite to confirm no regressions**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -833,7 +833,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 5: Commit**
 
-```
+```bash
 git add ClientApp/src/routes/dashboard/index.tsx
 git commit -m "docs(security): add SEC-010 IDOR comment at dashboard fetchRequestsByTab — backend org scoping verification required"
 ```
@@ -916,7 +916,7 @@ export function useAuthenticatedClient<
   snapshot repo would be high-churn and high-risk without full test coverage of
   each flow.
 
-```
+```text
 
 - [ ] **Step 2: Commit**
 
@@ -925,7 +925,7 @@ export function useAuthenticatedClient<
 git add docs/adr/2026-05-30-acquire-token-silent-interceptor.md git commit -m
 "docs(adr): capture acquireTokenSilent interceptor design for migration sprint"
 
-```
+```text
 
 ---
 
@@ -937,7 +937,7 @@ git add docs/adr/2026-05-30-acquire-token-silent-interceptor.md git commit -m
 
 npx vitest run --reporter=verbose
 
-````
+````text
 
 Expected output: all tests pass. Count should be ≥ 32 (prior 27 + 5 businessName + 5 emailSchema + 1 AccountProvider + 5 WizardForm navigation = 43 new tests across 4 new files).
 
@@ -973,7 +973,7 @@ Expected output: all tests pass. Count should be ≥ 32 (prior 27 + 5 businessNa
 
 - [ ] **Step 2: Run the full suite to verify no regressions**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -981,7 +981,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 3: Commit**
 
-```
+```bash
 git add ClientApp/src/components/forms/WizardForm/NextStepButton.tsx
 git commit -m "style: remove commented code from NextStepButton (S125)"
 ```
@@ -1215,7 +1215,7 @@ export const numberToText = (digits: number): string =>
 
 - [ ] **Step 8: Run the full suite to verify no regressions**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -1224,7 +1224,7 @@ also covers `common.ts` — it will catch any regression in the validation logic
 
 - [ ] **Step 9: Commit**
 
-```
+```bash
 git add ClientApp/src/validationSchemas/common.ts
 git commit -m "refactor: clean up common.ts — remove dead commented code, fix regex, remove as-any casts, use Number.parseInt, replace nested ternary in numberToText"
 ```
@@ -1279,7 +1279,7 @@ typed more broadly), restore the assertion and note that it IS necessary. With
 
 - [ ] **Step 3: Run the full suite**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -1287,7 +1287,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 4: Commit**
 
-```
+```bash
 git add ClientApp/src/authentication/AccountProvider.tsx
 git commit -m "refactor: AccountProvider.tsx — use optional chain in toAccountDetails, remove unnecessary assertion (S6582, S4325)"
 ```
@@ -1627,7 +1627,7 @@ some AT implementations.
 
 - [ ] **Step 8: Run the full suite**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -1635,7 +1635,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 9: Commit**
 
-```
+```bash
 git add ClientApp/src/routes/dashboard/index.tsx
 git commit -m "refactor: dashboard/index.tsx — extract helpers for complexity, options-bag for fetchRequestsByTab, remove dead assertions, optional chain, Number.parseInt, accessibility"
 ```
@@ -1754,7 +1754,7 @@ return (
 
 - [ ] **Step 3: Run the full suite**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -1762,7 +1762,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 4: Commit**
 
-```
+```bash
 git add ClientApp/src/routes/requestForQuote/create/index.tsx ClientApp/src/routes/requestForQuote/index.tsx
 git commit -m "refactor: requestForQuote — remove unnecessary assertions and invert negated ternary (S4325, S7735)"
 ```
@@ -2182,7 +2182,7 @@ accepted/won't-fix for this regex.
 - [ ] **Step 8: Run the Task 1 regression test to verify businessName still
       works**
 
-```
+```bash
 npx vitest run tests/unit/validationSchemas/stringExtensions.businessName.test.ts --reporter=verbose
 ```
 
@@ -2191,7 +2191,7 @@ businessName).
 
 - [ ] **Step 9: Run the full suite**
 
-```
+```bash
 npx vitest run --reporter=verbose
 ```
 
@@ -2199,7 +2199,7 @@ Expected: all tests PASS.
 
 - [ ] **Step 10: Commit**
 
-```
+```bash
 git add ClientApp/src/validationSchemas/yupExtensions/stringExtensions.ts
 git commit -m "refactor: stringExtensions.ts — extract buildErrMsg helper, use String.raw, Number.parseInt, simplify regex classes (S3358, S7780, S7773, S6353, S5869)"
 ```

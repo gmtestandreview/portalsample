@@ -11,7 +11,7 @@ description:
 
 ## The Law
 
-```
+```text
 CALM IS A SKILL. PANIC IS A CHOICE.
 An incident is a system behaving unexpectedly. It is solved by evidence, not speed.
 Fast wrong fixes extend incidents. Slow correct fixes end them.
@@ -146,7 +146,7 @@ Apply the fix with the minimum blast radius.
 
 **Declare resolved:**
 
-```
+```text
 RESOLVED — [time]
 Service restored. Root cause: [one sentence].
 Follow-up actions tracked in post-mortem.
@@ -211,14 +211,14 @@ resolved HH:MM) **Impact:** [who was affected and how]
 
 **Status page update (during incident):**
 
-```
+```json
 [INVESTIGATING] We are investigating reports of [issue] affecting [scope].
 Our team is actively working on a resolution. Next update in 30 minutes.
 ```
 
 **Resolution notice:**
 
-```
+```json
 [RESOLVED] The issue affecting [scope] has been resolved as of [time].
 Root cause was [brief explanation]. A full post-mortem will be published within 48 hours.
 We apologise for the inconvenience.

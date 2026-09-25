@@ -835,7 +835,7 @@ npm audit --audit-level=high
 - Existing Playwright HTML/list reports remain unchanged.
 - No generated/vendor/captured application files were edited.
 
-````
+````text
 
 - [ ] **Step 2: Commit evidence**
 
