@@ -430,6 +430,7 @@ Yup.addMethod(
                         return true;
                     }
 
+                    /* c8 ignore next -- Yup casts or rejects non-string values before custom string tests run */
                     if (typeof value !== 'string') {
                         return false;
                     }
@@ -490,8 +491,8 @@ const isValidEmailAddress = (value: string): boolean => {
         return false;
     }
 
-    const tld = labels.at(-1) ?? '';
-    if (tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
+    const tld = labels.at(-1);
+    if (!tld || tld.length < 2 || !/^[a-zA-Z]/.test(tld)) {
         return false;
     }
 

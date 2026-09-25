@@ -305,6 +305,10 @@ describe('email', () => {
         expect(valid(schema, 'user@example')).toBe(false);
     });
 
+    it('rejects an email with an empty TLD', () => {
+        expect(valid(schema, 'user@example.')).toBe(false);
+    });
+
     it('rejects an email with spaces', () => {
         expect(valid(schema, 'user @example.com')).toBe(false);
     });

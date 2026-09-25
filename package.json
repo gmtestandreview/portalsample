@@ -143,7 +143,7 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "8.67.0",
     "typescript-language-server": "^6.0.0",
-    "vite": "^8.2.2",
+    "vite": "^8.3.0",
     "vitest": "4.1.11",
     "webpack": "^5.110.3",
     "webpack-cli": "^5.1.4",
@@ -172,7 +172,7 @@
     "fast-uri": "3.1.7",
     "js-yaml": "4.3.1",
     "nanoid": "3.3.18",
-    "postcss": "8.5.26",
+    "postcss": "8.5.28",
     "qs": "6.16.0",
     "undici": "7.29.0",
     "unified-engine": {
