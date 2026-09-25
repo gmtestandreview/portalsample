@@ -99,6 +99,20 @@ Activity resumes Aug 23–25 on `fix/dependency-vulnerability-remediation`:
   executed Aug 25 (Node ≥24.0.0 raised, ESLint 8 deps removed, 13 ESLint 10
   findings fixed). D2 (3 `glob@10.5.0` overrides under remark-cli) was
   scoped but blocked by session rate limit at end-of-day Aug 25; the
-  Sep 1–7 archive entry ("dependency remediation phases 1-3 complete") 
+  Sep 1–7 archive entry ("dependency remediation phases 1-3 complete")
   indicates this was finished shortly after — not currently outstanding,
   included for completeness of the search window.
+
+## Part 3 — 2026-07-01 to 2026-07-31
+
+**Only one recorded session for the entire month: Jul 12.** No claude-mem
+observations and no other REMEMBER daily logs exist for July. The Jul 12
+session (branches `unknown` then `main`) covered:
+
+- NMI brand styling refactor (red/maroon palette, ADA §402.4 compliance,
+  Public Sans fonts) — closed out, no follow-ups noted.
+- TypeScript error cleanup (auth dispatch split, `UserProfileDto` nesting,
+  `Hideable<T>` + `NonNullable`, 30 files) — ended with **type-check exit
+  0**, no deferred or blocked items logged.
+
+No outstanding actions found for July.

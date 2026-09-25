@@ -25,7 +25,7 @@ Qdrant has the following officially supported client SDKs:
 - .NET — [qdrant-dotnet](https://github.com/qdrant/qdrant-dotnet) ·
   Installation: `dotnet add package Qdrant.Client`
 - Java — [java-client](https://github.com/qdrant/java-client) · Available on
-  Maven Central: <https://central.sonatype.com/artifact/io.qdrant/client>
+  Maven Central: https://central.sonatype.com/artifact/io.qdrant/client
 
 ## API Reference
 

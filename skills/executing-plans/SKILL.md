@@ -28,6 +28,7 @@ plan."
 
 ### Step 2: Execute Batch
 
+<!-- markdownlint-disable-next-line MD036 -->
 **Default: First 3 tasks**
 
 For each task:

@@ -35,9 +35,9 @@ guessing.
 
 ---
 
-# 1. Discipline
+## 1. Discipline
 
-## Definition
+### Definition
 
 A **Discipline** skill governs a broad, repeatable area of professional practice
 containing multiple related decisions, procedures, quality gates, and failure
@@ -46,7 +46,7 @@ modes.
 It usually coordinates several techniques or patterns under one coherent
 operational objective.
 
-## Typical characteristics
+### Typical characteristics
 
 - Covers a substantial end-to-end workflow.
 - Contains multiple decision points or phases.
@@ -55,7 +55,7 @@ operational objective.
 - Requires judgment rather than one fixed method.
 - Often includes escalation, validation, rollback, or completion criteria.
 
-## Examples
+### Examples
 
 - API contract design and review.
 - Security review.
@@ -64,21 +64,21 @@ operational objective.
 - Incident response.
 - Accessibility audit.
 
-## Positive test
+### Positive test
 
 > "Audit this skill library, identify structural and activation problems, score
 > the skills, and recommend remediation."
 
 Expected: activates a lifecycle/audit Discipline skill.
 
-## Near-miss
+### Near-miss
 
 > "Rewrite this one description so it is shorter."
 
 Expected: a narrow editing technique is sufficient; the full Discipline workflow
 should not activate unless broader review is requested.
 
-## Test emphasis
+### Test emphasis
 
 Use **pressure tests**:
 
@@ -97,16 +97,16 @@ only isolated happy-path prompts.
 
 ---
 
-# 2. Technique
+## 2. Technique
 
-## Definition
+### Definition
 
 A **Technique** skill teaches a bounded method for performing a specific task or
 transformation.
 
 Its value is primarily **how to execute one class of operation well**.
 
-## Typical characteristics
+### Typical characteristics
 
 - Narrower than a Discipline.
 - Has a recognizable start and finish.
@@ -115,7 +115,7 @@ Its value is primarily **how to execute one class of operation well**.
 - May have a preferred tool or algorithm.
 - Often produces a predictable output.
 
-## Examples
+### Examples
 
 - Optimize a skill description.
 - Convert CSV to JSON.
@@ -123,21 +123,21 @@ Its value is primarily **how to execute one class of operation well**.
 - Extract text from PDFs.
 - Normalize API error responses.
 
-## Positive test
+### Positive test
 
 > "Improve this skill description so it triggers for relevant prompts without
 > false positives."
 
 Expected: activates the description-optimization Technique.
 
-## Near-miss
+### Near-miss
 
 > "Audit the entire skill for specification compliance, safety, scripts, and
 > activation."
 
 Expected: requires a broader Discipline, not only the description Technique.
 
-## Test emphasis
+### Test emphasis
 
 Test:
 
@@ -155,9 +155,9 @@ A Technique should not silently expand into unrelated lifecycle work.
 
 ---
 
-# 3. Pattern
+## 3. Pattern
 
-## Definition
+### Definition
 
 A **Pattern** skill provides a reusable decision, architecture, interaction, or
 workflow structure that can be applied across multiple domains.
@@ -165,7 +165,7 @@ workflow structure that can be applied across multiple domains.
 Its value is primarily **the shape of the solution**, not domain-specific
 subject matter.
 
-## Typical characteristics
+### Typical characteristics
 
 - Encodes a reusable arrangement or decision rule.
 - Applies across multiple task instances or domains.
@@ -173,7 +173,7 @@ subject matter.
 - May provide templates, sequences, or structural conventions.
 - Usually requires contextual adaptation.
 
-## Examples
+### Examples
 
 - Plan → validate → execute.
 - Retry with bounded exponential backoff.
@@ -181,21 +181,21 @@ subject matter.
 - Evidence → finding → recommendation reporting.
 - Progressive-disclosure structuring.
 
-## Positive test
+### Positive test
 
 > "Design a safe workflow where changes are planned, checked against source
 > data, then executed."
 
 Expected: activates a plan-validate-execute Pattern.
 
-## Near-miss
+### Near-miss
 
 > "Run this project's database migration command."
 
 Expected: execution may use the pattern, but the request itself is a concrete
 Technique or project procedure.
 
-## Test emphasis
+### Test emphasis
 
 Test:
 
@@ -212,9 +212,9 @@ intended boundary.
 
 ---
 
-# 4. Reference
+## 4. Reference
 
-## Definition
+### Definition
 
 A **Reference** skill primarily supplies authoritative, domain-specific, or
 project-specific facts, constraints, schemas, conventions, mappings, or lookup
@@ -223,7 +223,7 @@ material.
 Its value is mainly **what the agent must know**, rather than a multi-step
 execution procedure.
 
-## Typical characteristics
+### Typical characteristics
 
 - Fact- or rule-dense.
 - Low procedural content.
@@ -231,7 +231,7 @@ execution procedure.
 - May define schemas, enums, terminology, mappings, standards, or constraints.
 - Frequently suitable for on-demand loading.
 
-## Examples
+### Examples
 
 - API schema conventions.
 - Organization-specific terminology.
@@ -240,20 +240,20 @@ execution procedure.
 - Regulatory checklist.
 - Test-data field definitions.
 
-## Positive test
+### Positive test
 
 > "What statuses are permitted by this project's workflow policy?"
 
 Expected: load the relevant Reference and answer from it.
 
-## Near-miss
+### Near-miss
 
 > "Redesign the workflow and implement the changes."
 
 Expected: the Reference may support the work but should not govern the whole
 implementation workflow.
 
-## Test emphasis
+### Test emphasis
 
 Test:
 
@@ -271,9 +271,9 @@ contains knowledge.
 
 ---
 
-# 5. Hybrid
+## 5. Hybrid
 
-## Definition
+### Definition
 
 A **Hybrid** combines two or more classifications when the combination is
 necessary to preserve the skill's core execution value.
@@ -282,7 +282,7 @@ Do not use Hybrid merely because a skill contains a few rules, examples, or
 references. Most good skills contain mixed content while still having one
 dominant classification.
 
-## Hybrid threshold
+### Hybrid threshold
 
 Classify as Hybrid only when all are true:
 
@@ -296,7 +296,7 @@ Classify as Hybrid only when all are true:
 Otherwise choose the dominant type and move secondary material to references or
 separate skills.
 
-## Common hybrids
+### Common hybrids
 
 - **Discipline + Reference**: a governed workflow inseparable from specialized
   rules.
@@ -309,7 +309,7 @@ separate skills.
 
 Avoid hybrids that combine unrelated purposes.
 
-## Test emphasis
+### Test emphasis
 
 Run the tests for each load-bearing classification plus:
 
@@ -322,7 +322,7 @@ Run the tests for each load-bearing classification plus:
 
 ---
 
-# Decision Guide
+## Decision Guide
 
 Use the first statement that best describes the skill's **primary value**:
 
@@ -347,7 +347,7 @@ quality.
 
 ---
 
-# QAQ/RMI Classification Check
+## QAQ/RMI Classification Check
 
 For the chosen classification:
 
@@ -363,12 +363,12 @@ For the chosen classification:
 
 ---
 
-# Classification Output
+## Classification Output
 
 Report:
 
 ```markdown
-## Skill Classification
+### Skill Classification
 
 **Classification:** Discipline | Technique | Pattern | Reference | Hybrid
 **Confidence:** High | Medium | Low
@@ -395,7 +395,7 @@ Report:
 
 ---
 
-# Anti-Patterns
+## Anti-Patterns
 
 Do not:
 

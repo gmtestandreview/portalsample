@@ -487,7 +487,7 @@ Content must document:
   package or using a dedicated `api/` workspace so regeneration does not require
   manually managing the `AuthorizedApiBase` preservation step.
 
-  ## Files involved
+  ## Files involved (NSwag regeneration)
 
   | File                                  | Role                                                            |
   | ------------------------------------- | --------------------------------------------------------------- |
