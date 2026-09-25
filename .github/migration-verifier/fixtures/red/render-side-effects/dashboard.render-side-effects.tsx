@@ -1,11 +1,9 @@
 if (errorStatus.forbidden) {
-	setDashboardNotification(DashBoardNotifications.getForbiddenNotification());
+    setDashboardNotification(DashBoardNotifications.getForbiddenNotification());
 }
 
 if (showInfo) {
-	setDashboardInfoNotification(
-		DashBoardNotifications.getReportFormsGeneratedNotification(),
-	);
+    setDashboardInfoNotification(DashBoardNotifications.getReportFormsGeneratedNotification());
 } else {
-	clearDashboardInfoNotification();
+    clearDashboardInfoNotification();
 }

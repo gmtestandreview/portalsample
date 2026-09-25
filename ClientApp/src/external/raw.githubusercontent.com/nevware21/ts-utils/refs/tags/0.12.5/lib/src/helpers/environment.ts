@@ -8,13 +8,8 @@
 
 import { NULL_VALUE, UNDEF_VALUE } from "../internal/constants";
 import { _getGlobalValue } from "../internal/global";
-import { createCachedValue, type ICachedValue } from "./cache";
-import {
-	_globalLazyTestHooks,
-	_initTestHooks,
-	getLazy,
-	type ILazyValue,
-} from "./lazy";
+import { ILazyValue, _globalLazyTestHooks, _initTestHooks, getLazy } from "./lazy";
+import { ICachedValue, createCachedValue } from "./cache";
 import { safe } from "./safe";
 
 const WINDOW = "window";
@@ -32,19 +27,16 @@ let _cachedGlobal: ICachedValue<Window>;
  * @param instName - The name of the global object to get, may be any valid PropertyKey (string, number or symbol)
  * @returns A function which will return the named global object if available, the funcion will return `null` if the object is not available.
  */
-export function _getGlobalInstFn<T>(
-	getFn: (...args: unknown[]) => T,
-	theArgs?: unknown[],
-): () => T | null | undefined {
-	let cachedValue: ICachedValue<T>;
-	return () => {
-		!_globalLazyTestHooks && _initTestHooks();
-		if (!cachedValue || _globalLazyTestHooks.lzy) {
-			cachedValue = createCachedValue(safe(getFn, theArgs).v);
-		}
-
-		return cachedValue.v;
-	};
+export function _getGlobalInstFn<T>(getFn: (...args: unknown[]) => T, theArgs?: unknown[]): () => T | null | undefined {
+    let cachedValue: ICachedValue<T>;
+    return function() {
+        !_globalLazyTestHooks && _initTestHooks();
+        if (!cachedValue || _globalLazyTestHooks.lzy) {
+            cachedValue = createCachedValue(safe(getFn, theArgs).v);
+        }
+        
+        return cachedValue.v;
+    }
 }
 
 /**
@@ -76,10 +68,8 @@ export function _getGlobalInstFn<T>(
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function lazySafeGetInst<T>(
-	name: string | number | symbol,
-): ILazyValue<T> {
-	return getLazy(() => safe(getInst<T>, [name]).v || UNDEF_VALUE);
+export function lazySafeGetInst<T>(name: string | number | symbol) : ILazyValue<T> {
+    return getLazy(() => safe(getInst<T>, [name]).v || UNDEF_VALUE);
 }
 
 /**
@@ -99,12 +89,12 @@ export function lazySafeGetInst<T>(
  * cause the cached global to be reset.
  */
 export function getGlobal(useCached?: boolean): Window {
-	!_globalLazyTestHooks && _initTestHooks();
-	if (!_cachedGlobal || useCached === false || _globalLazyTestHooks.lzy) {
-		_cachedGlobal = createCachedValue(safe(_getGlobalValue).v || NULL_VALUE);
-	}
+    !_globalLazyTestHooks && _initTestHooks();
+    if (!_cachedGlobal || useCached === false || _globalLazyTestHooks.lzy) {
+        _cachedGlobal = createCachedValue(safe(_getGlobalValue).v || NULL_VALUE);
+    }
 
-	return _cachedGlobal.v;
+    return _cachedGlobal.v;
 }
 
 /**
@@ -129,32 +119,29 @@ export function getGlobal(useCached?: boolean): Window {
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getInst<T>(
-	name: string | number | symbol,
-	useCached?: boolean,
-): T | null {
-	let gbl: any;
-	if (!_cachedGlobal || useCached === false) {
-		gbl = getGlobal(useCached);
-	} else {
-		gbl = _cachedGlobal.v;
-	}
+export function getInst<T>(name: string | number | symbol, useCached?: boolean): T | null {
+    let gbl: any;
+    if (!_cachedGlobal || useCached === false) {
+        gbl = getGlobal(useCached);
+    } else {
+        gbl = _cachedGlobal.v;
+    }
 
-	if (gbl && gbl[name]) {
-		return gbl[name] as T;
-	}
+    if (gbl && gbl[name]) {
+        return gbl[name] as T;
+    }
 
-	// Test workaround, for environments where <global>.window (when global == window) doesn't return the base window
-	if (name === WINDOW) {
-		// tslint:disable-next-line: no-angle-bracket-type-assertion
-		try {
-			return window as T;
-		} catch (e) {
-			// Ignore
-		}
-	}
+    // Test workaround, for environments where <global>.window (when global == window) doesn't return the base window
+    if (name === WINDOW) {
+        // tslint:disable-next-line: no-angle-bracket-type-assertion
+        try {
+            return window as T;
+        } catch (e) {
+            // Ignore
+        }
+    }
 
-	return NULL_VALUE;
+    return NULL_VALUE;
 }
 
 /**
@@ -164,7 +151,7 @@ export function getInst<T>(
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function hasDocument(): boolean {
-	return !!(/*#__PURE__*/ getDocument());
+    return !!( /*#__PURE__*/getDocument());
 }
 
 /**
@@ -173,9 +160,7 @@ export function hasDocument(): boolean {
  * @group Environment
  * @returns
  */
-export const getDocument = /*#__PURE__*/ _getGlobalInstFn<Document>(getInst, [
-	"document",
-]);
+export const getDocument = (/*#__PURE__*/_getGlobalInstFn<Document>(getInst, ["document"]));
 
 /**
  * Identify whether the runtime contains a `window` object
@@ -184,7 +169,7 @@ export const getDocument = /*#__PURE__*/ _getGlobalInstFn<Document>(getInst, [
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function hasWindow(): boolean {
-	return !!(/*#__PURE__*/ getWindow());
+    return !!( /*#__PURE__*/getWindow());
 }
 
 /**
@@ -193,9 +178,7 @@ export function hasWindow(): boolean {
  * @group Environment
  * @returns
  */
-export const getWindow = /*#__PURE__*/ _getGlobalInstFn<Window>(getInst, [
-	WINDOW,
-]);
+export const getWindow = (/*#__PURE__*/_getGlobalInstFn<Window>(getInst, [WINDOW]));
 
 /**
  * Identify whether the runtimne contains a `navigator` object
@@ -204,7 +187,7 @@ export const getWindow = /*#__PURE__*/ _getGlobalInstFn<Window>(getInst, [
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function hasNavigator(): boolean {
-	return !!(/*#__PURE__*/ getNavigator());
+    return !!( /*#__PURE__*/getNavigator());
 }
 
 /**
@@ -213,9 +196,7 @@ export function hasNavigator(): boolean {
  * @group Environment
  * @returns
  */
-export const getNavigator = /*#__PURE__*/ _getGlobalInstFn<Navigator>(getInst, [
-	"navigator",
-]);
+export const getNavigator = (/*#__PURE__*/_getGlobalInstFn<Navigator>(getInst, ["navigator"]));
 
 /**
  * Identifies whether the runtime contains a `history` object
@@ -224,7 +205,7 @@ export const getNavigator = /*#__PURE__*/ _getGlobalInstFn<Navigator>(getInst, [
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function hasHistory(): boolean {
-	return !!(/*#__PURE__*/ getHistory());
+    return !!( /*#__PURE__*/getHistory());
 }
 
 /**
@@ -233,9 +214,7 @@ export function hasHistory(): boolean {
  * @group Environment
  * @returns
  */
-export const getHistory = /*#__PURE__*/ _getGlobalInstFn<History>(getInst, [
-	"history",
-]);
+export const getHistory = (/*#__PURE__*/_getGlobalInstFn<History>(getInst, ["history"]));
 
 /**
  * Simple method to determine if we are running in a node environment
@@ -243,11 +222,9 @@ export const getHistory = /*#__PURE__*/ _getGlobalInstFn<History>(getInst, [
  * @group Environment
  * @returns True if you are
  */
-export const isNode = /*#__PURE__*/ _getGlobalInstFn<boolean>(() => {
-	return !!(
-		/*#__PURE__*/ safe(() => process && (process.versions || {}).node).v
-	);
-});
+export const isNode = (/*#__PURE__*/_getGlobalInstFn<boolean>(() => {
+    return !!( /*#__PURE__*/safe(() => (process && (process.versions||{}).node)).v);
+}));
 
 /**
  * Helper to identify if you are running as a Dedicated, Shared or Service worker
@@ -255,8 +232,6 @@ export const isNode = /*#__PURE__*/ _getGlobalInstFn<boolean>(() => {
  * @group Environment
  * @returns True if the environment you are in looks like a Web Worker
  */
-export const isWebWorker = /*#__PURE__*/ _getGlobalInstFn<boolean>(() => {
-	return !!(
-		/*#__PURE__*/ safe(() => self && self instanceof WorkerGlobalScope).v
-	);
-});
+export const isWebWorker = (/*#__PURE__*/_getGlobalInstFn<boolean>(() => {
+    return !!( /*#__PURE__*/safe(() => self && self instanceof WorkerGlobalScope).v);
+}));

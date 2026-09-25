@@ -18,10 +18,10 @@ import { throwTypeError } from "../helpers/throw";
  * @since 0.12.0
  */
 export function _throwIfNullOrUndefined(obj: any): void {
-	// Ensure we're working with an object
-	if (isStrictNullOrUndefined(obj)) {
-		throwTypeError("Cannot convert undefined or null to object");
-	}
+    // Ensure we're working with an object
+    if (isStrictNullOrUndefined(obj)) {
+        throwTypeError("Cannot convert undefined or null to object");
+    }
 }
 
 /**
@@ -32,7 +32,7 @@ export function _throwIfNullOrUndefined(obj: any): void {
  * @since 0.12.0
  */
 export function _throwIfNotString(value: any): void {
-	if (!isString(value)) {
-		throwTypeError("'" + dumpObj(value) + "' is not a string");
-	}
+    if (!isString(value)) {
+        throwTypeError("'" + dumpObj(value) + "' is not a string");
+    }
 }

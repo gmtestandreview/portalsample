@@ -19,17 +19,17 @@ export type RollupLogHandler = (level: string, log: RollupLog) => void;
  * asserted textually against the config source.
  */
 export function onLog(
-	level: string,
-	log: RollupLog,
-	handler: RollupLogHandler,
+  level: string,
+  log: RollupLog,
+  handler: RollupLogHandler,
 ): void {
-	const isVendorPureNoise =
-		log.code === "INVALID_ANNOTATION" &&
-		(log.message ?? "").includes("node_modules");
+  const isVendorPureNoise =
+    log.code === 'INVALID_ANNOTATION' &&
+    (log.message ?? '').includes('node_modules');
 
-	if (isVendorPureNoise || log.code === "PLUGIN_TIMINGS") {
-		return;
-	}
+  if (isVendorPureNoise || log.code === 'PLUGIN_TIMINGS') {
+    return;
+  }
 
-	handler(level, log);
+  handler(level, log);
 }

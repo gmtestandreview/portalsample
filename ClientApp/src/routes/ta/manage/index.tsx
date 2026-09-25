@@ -1,4 +1,4 @@
-import AppDetails from "./appDetails";
+import AppDetails from './appDetails';
 
 const TAApplicationManage = () => <AppDetails />;
 

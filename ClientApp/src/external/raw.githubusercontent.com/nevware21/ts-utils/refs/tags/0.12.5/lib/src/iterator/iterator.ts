@@ -6,9 +6,9 @@
  * Licensed under the MIT license.
  */
 
-import { isFunction, isStrictNullOrUndefined } from "../helpers/base";
 import { getKnownSymbol } from "../symbol/symbol";
 import { WellKnownSymbols } from "../symbol/well_known";
+import { isFunction, isStrictNullOrUndefined } from "../helpers/base";
 
 /**
  * Checks if the type of value looks like an iterator instance (contains a next function).
@@ -32,7 +32,7 @@ import { WellKnownSymbols } from "../symbol/well_known";
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function isIterator<T = any>(value: any): value is Iterator<T> {
-	return !!value && isFunction(value.next);
+    return !!value && isFunction(value.next);
 }
 
 /**
@@ -54,8 +54,5 @@ export function isIterator<T = any>(value: any): value is Iterator<T> {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function isIterable<T = any>(value: any): value is Iterable<T> {
-	return (
-		!isStrictNullOrUndefined(value) &&
-		isFunction(value[getKnownSymbol(WellKnownSymbols.iterator)])
-	);
+    return !isStrictNullOrUndefined(value) && isFunction(value[getKnownSymbol(WellKnownSymbols.iterator)]);
 }

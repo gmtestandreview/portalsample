@@ -1,45 +1,45 @@
-"use client";
-import { composeRenderProps } from "react-aria-components/composeRenderProps";
+'use client';
 import {
-	Tab as RACTab,
-	TabList as RACTabList,
-	TabPanel as RACTabPanel,
-	TabPanels as RACTabPanels,
-	Tabs as RACTabs,
-	SelectionIndicator,
-	type TabListProps,
-	type TabPanelProps,
-	type TabPanelsProps,
-	type TabProps,
-	type TabsProps,
-} from "react-aria-components/Tabs";
-import "./Tabs.css";
+  Tabs as RACTabs,
+  TabList as RACTabList,
+  type TabListProps,
+  type TabProps,
+  Tab as RACTab,
+  type TabsProps,
+  TabPanels as RACTabPanels,
+  type TabPanelProps,
+  TabPanel as RACTabPanel,
+  SelectionIndicator,
+  type TabPanelsProps,
+} from 'react-aria-components/Tabs';
+import { composeRenderProps } from 'react-aria-components/composeRenderProps';
+import './Tabs.css';
 
 export function Tabs(props: TabsProps) {
-	return <RACTabs {...props} />;
+  return <RACTabs {...props} />;
 }
 
 export function TabList<T>(props: TabListProps<T>) {
-	return <RACTabList {...props} />;
+  return <RACTabList {...props} />;
 }
 
 export function Tab(props: TabProps) {
-	return (
-		<RACTab {...props}>
-			{composeRenderProps(props.children, (children) => (
-				<>
-					{children}
-					<SelectionIndicator />
-				</>
-			))}
-		</RACTab>
-	);
+  return (
+    <RACTab {...props}>
+      {composeRenderProps(props.children, (children) => (
+        <>
+          {children}
+          <SelectionIndicator />
+        </>
+      ))}
+    </RACTab>
+  );
 }
 
 export function TabPanels<T>(props: TabPanelsProps<T>) {
-	return <RACTabPanels {...props} />;
+  return <RACTabPanels {...props} />;
 }
 
 export function TabPanel(props: TabPanelProps) {
-	return <RACTabPanel {...props} />;
+  return <RACTabPanel {...props} />;
 }

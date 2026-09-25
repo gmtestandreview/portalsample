@@ -113,7 +113,9 @@
 			"tdd-red"
 		],
 		"specialists": {
-			"education": ["educational-code-commenting-agent"]
+			"education": [
+				"educational-code-commenting-agent"
+			]
 		},
 		"frameworks": {
 			"react": [

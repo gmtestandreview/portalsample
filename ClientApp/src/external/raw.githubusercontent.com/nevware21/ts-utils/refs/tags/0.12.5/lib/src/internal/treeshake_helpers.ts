@@ -18,7 +18,7 @@
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function _pureAssign<F>(func1: F, func2?: F): F {
-	return func1 || func2;
+    return func1 || func2;
 }
 
 /**
@@ -32,9 +32,6 @@ export function _pureAssign<F>(func1: F, func2?: F): F {
  * @returns The value of the named property from the provided object
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function _pureRef<R extends T[keyof T], T = any>(
-	value: T,
-	name: keyof T,
-): R {
-	return value[name] as R;
+export function _pureRef<R extends T[keyof T], T = any>(value: T, name: keyof T): R {
+    return value[name] as R;
 }

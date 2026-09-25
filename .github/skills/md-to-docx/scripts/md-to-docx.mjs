@@ -4,25 +4,25 @@
  * Usage: node md-to-docx.mjs <input.md> [output.docx]
  */
 
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { dirname, join, resolve } from 'path';
+import { marked } from 'marked';
 import {
-	AlignmentType,
-	BorderStyle,
 	Document,
+	Packer,
+	Paragraph,
+	TextRun,
 	HeadingLevel,
 	ImageRun,
-	Packer,
-	PageBreak,
-	Paragraph,
-	ShadingType,
-	Table,
-	TableCell,
 	TableRow,
-	TextRun,
+	TableCell,
+	Table,
 	WidthType,
-} from "docx";
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import { marked } from "marked";
-import { dirname, join, resolve } from "path";
+	BorderStyle,
+	AlignmentType,
+	ShadingType,
+	PageBreak,
+} from 'docx';
 
 // --- Image dimensions from PNG header ---
 function pngDimensions(buffer) {
@@ -39,20 +39,20 @@ function pngDimensions(buffer) {
 // --- CLI argument parsing ---
 const inputPath = process.argv[2];
 if (!inputPath) {
-	console.error("Usage: node md-to-docx.mjs <input.md> [output.docx]");
+	console.error('Usage: node md-to-docx.mjs <input.md> [output.docx]');
 	process.exit(1);
 }
-const outputPath = process.argv[3] || inputPath.replace(/\.md$/i, ".docx");
+const outputPath = process.argv[3] || inputPath.replace(/\.md$/i, '.docx');
 const inputDir = dirname(resolve(inputPath));
 
-const mdSource = readFileSync(inputPath, "utf-8");
+const mdSource = readFileSync(inputPath, 'utf-8');
 
 // --- Extract YAML front-matter metadata ---
-let title = "Document";
-let subtitle = "";
+let title = 'Document';
+let subtitle = '';
 let date = new Date().toISOString().slice(0, 10);
-let version = "1.0";
-let audience = "";
+let version = '1.0';
+let audience = '';
 
 const fmMatch = mdSource.match(/^---\n([\s\S]*?)\n---/m);
 if (fmMatch) {
@@ -61,26 +61,26 @@ if (fmMatch) {
 		fm
 			.match(/^title:\s*(.+)$/m)?.[1]
 			?.trim()
-			.replace(/^["']|["']$/g, "") || title;
+			.replace(/^["']|["']$/g, '') || title;
 	date = fm.match(/^date:\s*(.+)$/m)?.[1]?.trim() || date;
 	version = fm.match(/^version:\s*(.+)$/m)?.[1]?.trim() || version;
-	audience = fm.match(/^audience:\s*(.+)$/m)?.[1]?.trim() || "";
+	audience = fm.match(/^audience:\s*(.+)$/m)?.[1]?.trim() || '';
 }
 
 // Strip front-matter from markdown content
-const md = mdSource.replace(/^---[\s\S]*?---\n*/m, "");
+const md = mdSource.replace(/^---[\s\S]*?---\n*/m, '');
 
 // Derive title / subtitle from front-matter title or first H1
 const titleParts = title.split(/\s*[—–]\s*/);
 const mainTitle = titleParts[0] || title;
-subtitle = titleParts[1] || "";
+subtitle = titleParts[1] || '';
 if (!subtitle) {
 	const h1Match = md.match(/^#\s+(.+)$/m);
 	if (h1Match) {
 		const h1Parts = h1Match[1].split(/\s*[—–]\s*/);
 		if (h1Parts.length > 1) {
 			subtitle = h1Parts[1];
-			if (!mainTitle || mainTitle === "Document") title = h1Parts[0];
+			if (!mainTitle || mainTitle === 'Document') title = h1Parts[0];
 		}
 	}
 }
@@ -89,14 +89,14 @@ if (!subtitle) {
 const tokens = marked.lexer(md);
 
 // --- Style constants ---
-const FONT = "Calibri";
-const HEADER_COLOR = "1F3864";
-const ACCENT_COLOR = "2E75B6";
-const TABLE_HEADER_BG = "D6E4F0";
-const TABLE_ALT_BG = "F2F7FB";
-const CODE_BG = "F5F5F5";
-const CODE_FONT = "Consolas";
-const BORDER_COLOR = "B4C6E7";
+const FONT = 'Calibri';
+const HEADER_COLOR = '1F3864';
+const ACCENT_COLOR = '2E75B6';
+const TABLE_HEADER_BG = 'D6E4F0';
+const TABLE_ALT_BG = 'F2F7FB';
+const CODE_BG = 'F5F5F5';
+const CODE_FONT = 'Consolas';
+const BORDER_COLOR = 'B4C6E7';
 
 const tableBorder = { style: BorderStyle.SINGLE, size: 1, color: BORDER_COLOR };
 const tableBorders = {
@@ -113,11 +113,11 @@ function decodeEntities(str) {
 	// &amp; must be unescaped last, otherwise an already-escaped entity like
 	// "&amp;lt;" gets unescaped to "&lt;" and then to "<" in a later step.
 	return str
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
+		.replace(/&lt;/g, '<')
+		.replace(/&gt;/g, '>')
 		.replace(/&quot;/g, '"')
 		.replace(/&#39;/g, "'")
-		.replace(/&amp;/g, "&");
+		.replace(/&amp;/g, '&');
 }
 
 // --- Inline tokens to TextRun[] ---
@@ -126,24 +126,24 @@ function inlineToRuns(inlineTokens, parentBold = false, parentItalic = false) {
 	if (!inlineTokens) return runs;
 	for (const t of inlineTokens) {
 		switch (t.type) {
-			case "text":
+			case 'text':
 				runs.push(
 					new TextRun({
-						text: decodeEntities(t.text || t.raw || ""),
+						text: decodeEntities(t.text || t.raw || ''),
 						bold: parentBold,
 						italics: parentItalic,
 						font: FONT,
 						size: 22,
-					}),
+					})
 				);
 				break;
-			case "strong":
+			case 'strong':
 				runs.push(...inlineToRuns(t.tokens, true, parentItalic));
 				break;
-			case "em":
+			case 'em':
 				runs.push(...inlineToRuns(t.tokens, parentBold, true));
 				break;
-			case "codespan":
+			case 'codespan':
 				runs.push(
 					new TextRun({
 						text: t.text,
@@ -151,10 +151,10 @@ function inlineToRuns(inlineTokens, parentBold = false, parentItalic = false) {
 						size: 20,
 						bold: parentBold,
 						shading: { type: ShadingType.SOLID, color: CODE_BG, fill: CODE_BG },
-					}),
+					})
 				);
 				break;
-			case "link":
+			case 'link':
 				runs.push(
 					new TextRun({
 						text: t.text || t.href,
@@ -164,13 +164,13 @@ function inlineToRuns(inlineTokens, parentBold = false, parentItalic = false) {
 						size: 22,
 						color: ACCENT_COLOR,
 						underline: {},
-					}),
+					})
 				);
 				break;
-			case "image":
+			case 'image':
 				// Images handled at paragraph level; skip inline
 				break;
-			case "br":
+			case 'br':
 				runs.push(new TextRun({ break: 1, font: FONT }));
 				break;
 			default:
@@ -182,7 +182,7 @@ function inlineToRuns(inlineTokens, parentBold = false, parentItalic = false) {
 							italics: parentItalic,
 							font: FONT,
 							size: 22,
-						}),
+						})
 					);
 				}
 				break;
@@ -195,7 +195,7 @@ function inlineToRuns(inlineTokens, parentBold = false, parentItalic = false) {
 function paragraphRuns(token) {
 	if (token.tokens) return inlineToRuns(token.tokens);
 	return [
-		new TextRun({ text: token.text || token.raw || "", font: FONT, size: 22 }),
+		new TextRun({ text: token.text || token.raw || '', font: FONT, size: 22 }),
 	];
 }
 
@@ -220,9 +220,9 @@ function buildTable(token) {
 									spacing: { before: 40, after: 40 },
 								}),
 							],
-						}),
+						})
 				),
-			}),
+			})
 		);
 	}
 	if (token.rows) {
@@ -246,9 +246,9 @@ function buildTable(token) {
 										spacing: { before: 30, after: 30 },
 									}),
 								],
-							}),
+							})
 					),
-				}),
+				})
 			);
 		});
 	}
@@ -261,17 +261,17 @@ function buildTable(token) {
 
 // --- Code block builder ---
 function buildCodeBlock(token) {
-	const lines = (token.text || "").split("\n");
+	const lines = (token.text || '').split('\n');
 	return lines.map(
 		(line) =>
 			new Paragraph({
 				children: [
-					new TextRun({ text: line || " ", font: CODE_FONT, size: 18 }),
+					new TextRun({ text: line || ' ', font: CODE_FONT, size: 18 }),
 				],
 				spacing: { before: 20, after: 20 },
 				shading: { type: ShadingType.SOLID, color: CODE_BG, fill: CODE_BG },
 				indent: { left: 360 },
-			}),
+			})
 	);
 }
 
@@ -279,10 +279,10 @@ function buildCodeBlock(token) {
 function buildList(token, level = 0) {
 	const items = [];
 	for (const item of token.items) {
-		const textTokens = item.tokens?.find((t) => t.type === "text");
+		const textTokens = item.tokens?.find((t) => t.type === 'text');
 		const bullet = token.ordered
-			? `${item.raw?.match(/^\d+/)?.[0] || "1"}.`
-			: "\u2022";
+			? `${item.raw?.match(/^\d+/)?.[0] || '1'}.`
+			: '\u2022';
 		const indent = 720 + level * 360;
 		items.push(
 			new Paragraph({
@@ -292,7 +292,7 @@ function buildList(token, level = 0) {
 						? inlineToRuns(textTokens.tokens)
 						: [
 								new TextRun({
-									text: decodeEntities(item.text || ""),
+									text: decodeEntities(item.text || ''),
 									font: FONT,
 									size: 22,
 								}),
@@ -300,9 +300,9 @@ function buildList(token, level = 0) {
 				],
 				spacing: { before: 40, after: 40 },
 				indent: { left: indent },
-			}),
+			})
 		);
-		const nestedList = item.tokens?.find((t) => t.type === "list");
+		const nestedList = item.tokens?.find((t) => t.type === 'list');
 		if (nestedList) items.push(...buildList(nestedList, level + 1));
 	}
 	return items;
@@ -325,7 +325,7 @@ children.push(
 			}),
 		],
 		alignment: AlignmentType.CENTER,
-	}),
+	})
 );
 if (subtitle) {
 	children.push(
@@ -340,7 +340,7 @@ if (subtitle) {
 			],
 			alignment: AlignmentType.CENTER,
 			spacing: { after: 400 },
-		}),
+		})
 	);
 }
 children.push(
@@ -350,11 +350,11 @@ children.push(
 				text: `Date: ${date}  |  Version: ${version}`,
 				font: FONT,
 				size: 22,
-				color: "666666",
+				color: '666666',
 			}),
 		],
 		alignment: AlignmentType.CENTER,
-	}),
+	})
 );
 if (audience) {
 	children.push(
@@ -364,12 +364,12 @@ if (audience) {
 					text: `Audience: ${audience}`,
 					font: FONT,
 					size: 22,
-					color: "666666",
+					color: '666666',
 				}),
 			],
 			alignment: AlignmentType.CENTER,
 			spacing: { after: 600 },
-		}),
+		})
 	);
 }
 children.push(new Paragraph({ children: [new PageBreak()] }));
@@ -379,7 +379,7 @@ children.push(
 	new Paragraph({
 		children: [
 			new TextRun({
-				text: "Table of Contents",
+				text: 'Table of Contents',
 				font: FONT,
 				size: 32,
 				bold: true,
@@ -387,20 +387,20 @@ children.push(
 			}),
 		],
 		spacing: { before: 200, after: 400 },
-	}),
+	})
 );
 
 // Pre-scan tokens for headings to build the TOC
 for (const tok of tokens) {
-	if (tok.type !== "heading" || tok.depth > 3) continue;
+	if (tok.type !== 'heading' || tok.depth > 3) continue;
 	// Skip the first H1 title and the TOC heading itself
 	if (
 		tok.depth === 1 &&
-		mainTitle !== "Document" &&
-		decodeEntities(tok.text || "").includes(mainTitle)
+		mainTitle !== 'Document' &&
+		decodeEntities(tok.text || '').includes(mainTitle)
 	)
 		continue;
-	if (tok.text === "Table of Contents") continue;
+	if (tok.text === 'Table of Contents') continue;
 
 	const indent = (tok.depth - 1) * 360;
 	const tocSize = tok.depth === 1 ? 24 : tok.depth === 2 ? 22 : 20;
@@ -420,7 +420,7 @@ for (const tok of tokens) {
 			],
 			spacing: { before: tok.depth === 2 ? 80 : 40, after: 40 },
 			indent: { left: indent },
-		}),
+		})
 	);
 }
 
@@ -431,17 +431,17 @@ let skipToc = false;
 
 for (const token of tokens) {
 	switch (token.type) {
-		case "heading": {
+		case 'heading': {
 			// Skip first H1 if it matches the front-matter title (already on title page)
 			if (
 				token.depth === 1 &&
-				mainTitle !== "Document" &&
-				decodeEntities(token.text || "").includes(mainTitle)
+				mainTitle !== 'Document' &&
+				decodeEntities(token.text || '').includes(mainTitle)
 			) {
 				continue;
 			}
 			// Skip markdown TOC section
-			if (token.text === "Table of Contents") {
+			if (token.text === 'Table of Contents') {
 				skipToc = true;
 				continue;
 			}
@@ -467,21 +467,21 @@ for (const token of tokens) {
 						}),
 					],
 					spacing: { before: token.depth === 2 ? 360 : 240, after: 120 },
-				}),
+				})
 			);
 			break;
 		}
-		case "paragraph": {
+		case 'paragraph': {
 			if (skipToc) continue;
 			// Check if the paragraph is a standalone image
 			const imgToken =
 				token.tokens &&
 				token.tokens.length === 1 &&
-				token.tokens[0].type === "image"
+				token.tokens[0].type === 'image'
 					? token.tokens[0]
 					: null;
 			if (imgToken) {
-				const href = imgToken.href || "";
+				const href = imgToken.href || '';
 				const imgPath = resolve(inputDir, href);
 				if (existsSync(imgPath)) {
 					const imgBuf = readFileSync(imgPath);
@@ -496,12 +496,12 @@ for (const token of tokens) {
 								new ImageRun({
 									data: imgBuf,
 									transformation: { width: w, height: h },
-									type: "png",
+									type: 'png',
 								}),
 							],
 							alignment: AlignmentType.CENTER,
 							spacing: { before: 120, after: 40 },
-						}),
+						})
 					);
 					// Add caption if alt text exists
 					if (imgToken.text) {
@@ -513,12 +513,12 @@ for (const token of tokens) {
 										font: FONT,
 										size: 18,
 										italics: true,
-										color: "666666",
+										color: '666666',
 									}),
 								],
 								alignment: AlignmentType.CENTER,
 								spacing: { before: 0, after: 120 },
-							}),
+							})
 						);
 					}
 				} else {
@@ -530,11 +530,11 @@ for (const token of tokens) {
 									font: FONT,
 									size: 20,
 									italics: true,
-									color: "888888",
+									color: '888888',
 								}),
 							],
 							spacing: { before: 80, after: 80 },
-						}),
+						})
 					);
 				}
 			} else {
@@ -542,45 +542,45 @@ for (const token of tokens) {
 					new Paragraph({
 						children: paragraphRuns(token),
 						spacing: { before: 80, after: 80 },
-					}),
+					})
 				);
 			}
 			break;
 		}
-		case "table":
+		case 'table':
 			if (skipToc) continue;
 			children.push(buildTable(token));
 			children.push(new Paragraph({ spacing: { after: 120 } }));
 			break;
-		case "code":
+		case 'code':
 			if (skipToc) continue;
-			if (token.lang === "mermaid") {
+			if (token.lang === 'mermaid') {
 				children.push(
 					new Paragraph({
 						children: [
 							new TextRun({
-								text: "[Diagram: See source .md file for interactive Mermaid diagram]",
+								text: '[Diagram: See source .md file for interactive Mermaid diagram]',
 								font: FONT,
 								size: 20,
 								italics: true,
-								color: "888888",
+								color: '888888',
 							}),
 						],
 						spacing: { before: 80, after: 80 },
 						shading: { type: ShadingType.SOLID, color: CODE_BG, fill: CODE_BG },
 						indent: { left: 360 },
-					}),
+					})
 				);
 			} else {
 				children.push(...buildCodeBlock(token));
 			}
 			children.push(new Paragraph({ spacing: { after: 80 } }));
 			break;
-		case "list":
+		case 'list':
 			if (skipToc) continue;
 			children.push(...buildList(token));
 			break;
-		case "hr":
+		case 'hr':
 			skipToc = false;
 			children.push(
 				new Paragraph({
@@ -588,10 +588,10 @@ for (const token of tokens) {
 					border: {
 						bottom: { style: BorderStyle.SINGLE, size: 1, color: BORDER_COLOR },
 					},
-				}),
+				})
 			);
 			break;
-		case "space":
+		case 'space':
 			break;
 		default:
 			if (token.raw && !skipToc) {
@@ -605,7 +605,7 @@ for (const token of tokens) {
 							}),
 						],
 						spacing: { before: 80, after: 80 },
-					}),
+					})
 				);
 			}
 			break;
@@ -645,5 +645,5 @@ const doc = new Document({
 const buffer = await Packer.toBuffer(doc);
 writeFileSync(outputPath, buffer);
 console.log(
-	`Generated: ${outputPath} (${(buffer.length / 1024).toFixed(0)} KB)`,
+	`Generated: ${outputPath} (${(buffer.length / 1024).toFixed(0)} KB)`
 );

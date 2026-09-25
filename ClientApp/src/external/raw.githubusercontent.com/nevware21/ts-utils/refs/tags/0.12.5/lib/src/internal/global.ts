@@ -7,7 +7,7 @@
  */
 
 import { safe } from "../helpers/safe";
-import type { TimeoutOverrideFuncs } from "../timer/timeout";
+import { TimeoutOverrideFuncs } from "../timer/timeout";
 import { UNDEFINED } from "./constants";
 
 const GLOBAL_CONFIG_KEY = "__tsUtils$gblCfg";
@@ -22,8 +22,8 @@ declare let self: any;
  * Internal interface for holding the global polyfill symbols
  */
 export interface _GlobalPolySymbols {
-	k: { [key: string]: symbol };
-	s: { [sym: symbol]: string };
+    k: { [key: string ]: symbol },
+    s: { [sym: symbol ]: string },
 }
 
 /**
@@ -32,15 +32,15 @@ export interface _GlobalPolySymbols {
  * Internal interface for defining global test hooks
  */
 export interface _GlobalTestHooks {
-	lzy?: boolean;
+    lzy?: boolean;
 }
 
 export interface TsUtilsGlobalConfig extends _GlobalTestHooks {
-	gblSym?: _GlobalPolySymbols;
-	tmOut?: TimeoutOverrideFuncs;
+    gblSym?: _GlobalPolySymbols,
+    tmOut?: TimeoutOverrideFuncs,
 }
 
-let _globalCfg: { [key: string]: any };
+let _globalCfg: { [key: string ]: any };
 
 /**
  * @internal
@@ -50,25 +50,25 @@ let _globalCfg: { [key: string]: any };
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function _getGlobalValue(): Window {
-	var result: Window;
+    var result: Window;
 
-	if (typeof globalThis !== UNDEFINED) {
-		result = globalThis;
-	}
+    if (typeof globalThis !== UNDEFINED) {
+        result = globalThis;
+    }
 
-	if (!result && typeof self !== UNDEFINED) {
-		result = self;
-	}
+    if (!result && typeof self !== UNDEFINED) {
+        result = self;
+    }
 
-	if (!result && typeof window !== UNDEFINED) {
-		result = window;
-	}
+    if (!result && typeof window !== UNDEFINED) {
+        result = window;
+    }
 
-	if (!result && typeof global !== UNDEFINED) {
-		result = global;
-	}
+    if (!result && typeof global !== UNDEFINED) {
+        result = global;
+    }
 
-	return result;
+    return result;
 }
 
 /**
@@ -80,10 +80,10 @@ export function _getGlobalValue(): Window {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function _getGlobalConfig(): TsUtilsGlobalConfig {
-	if (!_globalCfg) {
-		const gbl: any = safe(_getGlobalValue).v || {};
-		_globalCfg = gbl[GLOBAL_CONFIG_KEY] = gbl[GLOBAL_CONFIG_KEY] || {};
-	}
+    if (!_globalCfg) {
+        let gbl: any = safe(_getGlobalValue).v || {};
+        _globalCfg = gbl[GLOBAL_CONFIG_KEY] = gbl[GLOBAL_CONFIG_KEY] || {};
+    }
 
-	return _globalCfg;
+    return _globalCfg;
 }

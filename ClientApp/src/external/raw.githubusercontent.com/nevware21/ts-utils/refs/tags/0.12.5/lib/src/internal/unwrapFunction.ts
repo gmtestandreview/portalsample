@@ -22,9 +22,7 @@ import { ArrSlice, CALL, NULL_VALUE } from "./constants";
  * @param funcName - The function name to call on the first argument passed to the wrapped function
  * @returns A function which will call the funcName against the first passed argument and pass on the remaining arguments
  */
-export const _unwrapInstFunction: <R, T>(
-	funcName: keyof T,
-) => <T>(this: T, ..._args: any) => R = /*#__PURE__*/ _unwrapFunctionWithPoly;
+export const _unwrapInstFunction:<R, T>(funcName: keyof T) => <T>(this: T, ..._args:any) => R = (/*#__PURE__*/_unwrapFunctionWithPoly);
 
 /**
  * @function
@@ -35,10 +33,7 @@ export const _unwrapInstFunction: <R, T>(
  * @param clsProto - The Class or class prototype to fallback to if the instance doesn't have the function.
  * @returns A function which will call the funcName against the first passed argument and pass on the remaining arguments
  */
-export const _unwrapFunction: <R, T>(
-	funcName: keyof T,
-	clsProto: T,
-) => <T>(this: T, ..._args: any) => R = /*#__PURE__*/ _unwrapFunctionWithPoly;
+export const _unwrapFunction:<R, T>(funcName: keyof T, clsProto: T) => <T>(this: T, ..._args:any) => R = (/*#__PURE__*/_unwrapFunctionWithPoly);
 
 /**
  * @internal
@@ -50,27 +45,18 @@ export const _unwrapFunction: <R, T>(
  * @returns A function which will call the funcName against the first passed argument and pass on the remaining arguments
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function _unwrapFunctionWithPoly<T, P extends (...args: any) => any>(
-	funcName: keyof T,
-	clsProto?: T,
-	polyFunc?: P,
-) {
-	const clsFn = clsProto ? clsProto[funcName] : NULL_VALUE;
+export function _unwrapFunctionWithPoly<T, P extends (...args: any) => any>(funcName: keyof T, clsProto?: T, polyFunc?: P) {
+    let clsFn = clsProto ? clsProto[funcName] : NULL_VALUE;
 
-	return function (thisArg: any): ReturnType<P> {
-		const theFunc = (thisArg ? thisArg[funcName] : NULL_VALUE) || clsFn;
-		if (theFunc || polyFunc) {
-			const theArgs = arguments;
-			return ((theFunc || polyFunc) as Function).apply(
-				thisArg,
-				theFunc ? ArrSlice[CALL](theArgs, 1) : theArgs,
-			);
-		}
+    return function(thisArg: any): ReturnType<P> {
+        let theFunc = (thisArg ? thisArg[funcName] : NULL_VALUE) || clsFn;
+        if (theFunc || polyFunc) {
+            let theArgs = arguments;
+            return ((theFunc || polyFunc) as Function).apply(thisArg, theFunc ? ArrSlice[CALL](theArgs, 1) : theArgs);
+        }
 
-		throwTypeError(
-			'"' + asString(funcName) + '" not defined for ' + dumpObj(thisArg),
-		);
-	};
+        throwTypeError("\"" + asString(funcName) + "\" not defined for " + dumpObj(thisArg));
+    };
 }
 
 /**
@@ -85,5 +71,7 @@ export function _unwrapFunctionWithPoly<T, P extends (...args: any) => any>(
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function _unwrapProp<T>(propName: keyof T) {
-	return (thisArg: T) => thisArg[propName];
+    return function (thisArg: T) {
+        return thisArg[propName];
+    };
 }

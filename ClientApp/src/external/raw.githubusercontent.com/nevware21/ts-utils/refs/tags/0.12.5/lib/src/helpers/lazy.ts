@@ -7,9 +7,9 @@
  */
 
 import { fnApply } from "../funcs/funcs";
-import { type _GlobalTestHooks, _getGlobalConfig } from "../internal/global";
+import { _GlobalTestHooks, _getGlobalConfig } from "../internal/global";
 import { objDefineProp } from "../object/define";
-import type { ICachedValue } from "./cache";
+import { ICachedValue } from "./cache";
 
 /**
  * @internal
@@ -18,7 +18,7 @@ import type { ICachedValue } from "./cache";
 export let _globalLazyTestHooks: _GlobalTestHooks;
 
 export function _initTestHooks() {
-	_globalLazyTestHooks = _getGlobalConfig();
+    _globalLazyTestHooks = _getGlobalConfig();
 }
 
 /**
@@ -27,16 +27,16 @@ export function _initTestHooks() {
  * @group Lazy
  */
 export interface ILazyValue<T> extends ICachedValue<T> {
-	/**
-	 * Returns the current cached value from the lazy lookup, if the callback function has not yet occurred
-	 * accessing the value will cause the lazy evaluation to occur and the result will be returned.
-	 */
-	v: T;
+    /**
+     * Returns the current cached value from the lazy lookup, if the callback function has not yet occurred
+     * accessing the value will cause the lazy evaluation to occur and the result will be returned.
+     */
+    v: T,
 
-	/**
-	 * Identifies if this instance is bypassing the internal caching mechanism which is used for testing
-	 */
-	b?: boolean;
+    /**
+     * Identifies if this instance is bypassing the internal caching mechanism which is used for testing
+     */
+    b?: boolean
 }
 
 /**
@@ -74,32 +74,29 @@ export interface ILazyValue<T> extends ICachedValue<T> {
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function getLazy<T, F extends (...args: any[]) => T = () => T>(
-	cb: F,
-	argArray?: Parameters<F>,
-): ILazyValue<T> {
-	const lazyValue = {} as ILazyValue<T>;
-	!_globalLazyTestHooks && _initTestHooks();
-	lazyValue.b = _globalLazyTestHooks.lzy;
+export function getLazy<T, F extends (...args: any[]) => T = () => T>(cb: F, argArray?: Parameters<F>): ILazyValue<T> {
+    let lazyValue = { } as ILazyValue<T>;
+    !_globalLazyTestHooks && _initTestHooks();
+    lazyValue.b = _globalLazyTestHooks.lzy;
 
-	objDefineProp(lazyValue, "v", {
-		configurable: true,
-		get: () => {
-			const result = fnApply(cb, null, argArray);
-			if (!_globalLazyTestHooks.lzy) {
-				// Just replace the value
-				objDefineProp(lazyValue, "v", {
-					value: result,
-				});
-			}
+    objDefineProp(lazyValue, "v", {
+        configurable: true,
+        get: function () {
+            let result = fnApply(cb, null, argArray);
+            if (!_globalLazyTestHooks.lzy) {
+                // Just replace the value
+                objDefineProp(lazyValue, "v", {
+                    value: result
+                });
+            }
 
-			lazyValue.b = _globalLazyTestHooks.lzy;
+            lazyValue.b = _globalLazyTestHooks.lzy;
 
-			return result;
-		},
-	});
+            return result;
+        }
+    });
 
-	return lazyValue;
+    return lazyValue;
 }
 
 /**
@@ -111,8 +108,8 @@ export function getLazy<T, F extends (...args: any[]) => T = () => T>(
  * @param newValue - When `true` will cause all new lazy implementations to bypass the cached lookup.
  */
 export function setBypassLazyCache(newValue: boolean) {
-	!_globalLazyTestHooks && _initTestHooks();
-	_globalLazyTestHooks.lzy = newValue;
+    !_globalLazyTestHooks && _initTestHooks();
+    _globalLazyTestHooks.lzy = newValue;
 }
 
 /**
@@ -164,46 +161,40 @@ export function setBypassLazyCache(newValue: boolean) {
  * theValue === cachedValue.v;  // true
  * ```
  */
-export function getWritableLazy<T, F extends (...args: any[]) => T = () => T>(
-	cb: F,
-	argArray?: Parameters<F>,
-): ILazyValue<T> {
-	const lazyValue = {} as ILazyValue<T>;
-	!_globalLazyTestHooks && _initTestHooks();
-	lazyValue.b = _globalLazyTestHooks.lzy;
+export function getWritableLazy<T, F extends (...args: any[]) => T = () => T>(cb: F, argArray?: Parameters<F>): ILazyValue<T> {
+    let lazyValue = { } as ILazyValue<T>;
+    !_globalLazyTestHooks && _initTestHooks();
+    lazyValue.b = _globalLazyTestHooks.lzy;
 
-	const _setValue = (newValue: T) => {
-		// Just replace the value
-		objDefineProp(lazyValue, "v", {
-			value: newValue,
-			writable: true,
-		});
+    let _setValue = (newValue: T) => {
+        // Just replace the value
+        objDefineProp(lazyValue, "v", {
+            value: newValue,
+            writable: true
+        });
 
-		if (lazyValue.b) {
-			delete lazyValue.b;
-		}
-	};
+        if (lazyValue.b) {
+            delete lazyValue.b;
+        }
+    };
 
-	objDefineProp(lazyValue, "v", {
-		configurable: true,
-		get: () => {
-			const result = fnApply(cb, null, argArray);
-			if (!_globalLazyTestHooks.lzy) {
-				// Just replace the value
-				_setValue(result);
-			}
+    objDefineProp(lazyValue, "v", {
+        configurable: true,
+        get: function () {
+            let result = fnApply(cb, null, argArray);
+            if (!_globalLazyTestHooks.lzy) {
+                // Just replace the value
+                _setValue(result);
+            }
+            
+            if (_globalLazyTestHooks.lzy && lazyValue.b !== _globalLazyTestHooks.lzy) {
+                lazyValue.b = _globalLazyTestHooks.lzy;
+            }
 
-			if (
-				_globalLazyTestHooks.lzy &&
-				lazyValue.b !== _globalLazyTestHooks.lzy
-			) {
-				lazyValue.b = _globalLazyTestHooks.lzy;
-			}
+            return result;
+        },
+        set: _setValue
+    });
 
-			return result;
-		},
-		set: _setValue,
-	});
-
-	return lazyValue;
+    return lazyValue;
 }

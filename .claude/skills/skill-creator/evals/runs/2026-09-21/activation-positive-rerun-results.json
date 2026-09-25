@@ -1,22 +1,22 @@
 {
-	"skill_name": "skill-creator",
-	"description": "Use when the request mentions Agent Skills, `SKILL.md`, a skill folder, a skill release review/readiness verdict, or turning a workflow into a reusable skill, and asks to create, revise, refactor, organize resources for, evaluate, benchmark, validate, package, release-check, or fix activation for that skill. Covers Claude Code skill rules, hooks, guardrails, activation descriptions/boundaries, resource consistency, output evals, candidate-vs-baseline comparison, trigger testing, deployment readiness, and production-ready claims. Do not use for ordinary code, document editing, generic packaging, or generic A/B testing unrelated to Agent Skills.",
-	"results": [
-		{
-			"query": "Turn the workflow we just developed into a reusable SKILL.md, including a bounded activation description and a small validation path.",
-			"should_trigger": true,
-			"trigger_rate": 1.0,
-			"triggers": 3,
-			"runs": 3,
-			"completed_runs": 3,
-			"execution_errors": 0,
-			"error_messages": [],
-			"pass": true
-		}
-	],
-	"summary": {
-		"total": 1,
-		"passed": 1,
-		"failed": 0
-	}
+  "skill_name": "skill-creator",
+  "description": "Use when the request mentions Agent Skills, `SKILL.md`, a skill folder, a skill release review/readiness verdict, or turning a workflow into a reusable skill, and asks to create, revise, refactor, organize resources for, evaluate, benchmark, validate, package, release-check, or fix activation for that skill. Covers Claude Code skill rules, hooks, guardrails, activation descriptions/boundaries, resource consistency, output evals, candidate-vs-baseline comparison, trigger testing, deployment readiness, and production-ready claims. Do not use for ordinary code, document editing, generic packaging, or generic A/B testing unrelated to Agent Skills.",
+  "results": [
+    {
+      "query": "Turn the workflow we just developed into a reusable SKILL.md, including a bounded activation description and a small validation path.",
+      "should_trigger": true,
+      "trigger_rate": 1.0,
+      "triggers": 3,
+      "runs": 3,
+      "completed_runs": 3,
+      "execution_errors": 0,
+      "error_messages": [],
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0
+  }
 }

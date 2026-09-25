@@ -1,7 +1,7 @@
 useEffect(() => {
-	const onResize = () => {
-		window.setTimeout(updateVisiblePageRange, 500);
-	};
+    const onResize = () => {
+        window.setTimeout(updateVisiblePageRange, 500);
+    };
 
-	window.addEventListener("resize", onResize);
+    window.addEventListener('resize', onResize);
 }, []);

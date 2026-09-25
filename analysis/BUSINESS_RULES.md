@@ -514,7 +514,7 @@ Create Contact:     canSaveDraft = false → no "Save and exit" button
 ### RULE-019: Report Link Hidden for Withdrawn Status
 **Category:** Lifecycle
 **Priority:** P1
-**Source:** `ClientApp/src/routes/measurementReport/reportList.tsx:95`, `ClientApp/src/components/RequestList/instrumentItem.tsx:362`
+**Source:** `ClientApp/src/routes/measurementReport/reportList.tsx:95`, `ClientApp/src/components/RequestList/instrumentItem.tsx:174`
 **Plain English:** A withdrawn measurement report cannot be viewed or downloaded.
 **Specification:**
 ```

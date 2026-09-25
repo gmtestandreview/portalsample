@@ -1,12 +1,9 @@
-"use client";
-import {
-	type DropZoneProps,
-	DropZone as RACDropZone,
-} from "react-aria-components/DropZone";
-import "./DropZone.css";
+'use client';
+import { type DropZoneProps, DropZone as RACDropZone } from 'react-aria-components/DropZone';
+import './DropZone.css';
 
 export function DropZone(props: Readonly<DropZoneProps>) {
-	return <RACDropZone {...props} />;
+  return <RACDropZone {...props} />;
 }
 
-export { Text } from "react-aria-components/DropZone";
+export { Text } from 'react-aria-components/DropZone';

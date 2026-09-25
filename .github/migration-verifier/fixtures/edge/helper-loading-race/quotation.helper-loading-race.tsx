@@ -1,11 +1,11 @@
 const finishLoading = () => setIsLoading(false);
 
 useEffect(() => {
-	const loadQuoteDetails = async () => {
-		setIsLoading(true);
-		finishLoading();
-		await getQuotationDetails();
-	};
+    const loadQuoteDetails = async () => {
+        setIsLoading(true);
+        finishLoading();
+        await getQuotationDetails();
+    };
 
-	void loadQuoteDetails();
+    void loadQuoteDetails();
 }, [id]);

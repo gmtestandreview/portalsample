@@ -6,7 +6,7 @@
  * Licensed under the MIT license.
  */
 
-import { createCachedValue, type ICachedValue } from "../helpers/cache";
+import { ICachedValue, createCachedValue } from "../helpers/cache";
 import { CALL, NULL_VALUE, UNDEF_VALUE } from "../internal/constants";
 import { getKnownSymbol } from "../symbol/symbol";
 import { WellKnownSymbols } from "../symbol/well_known";
@@ -55,55 +55,43 @@ let _iterSymbol: ICachedValue<symbol>;
  * });
  * ```
  */
-export function iterForOf<T>(
-	iter: Iterator<T> | Iterable<T>,
-	callbackfn: (value: T, count?: number, iter?: Iterator<T>) => void | number,
-	thisArg?: any,
-): void {
-	if (iter) {
-		if (!isIterator(iter)) {
-			!_iterSymbol &&
-				(_iterSymbol = createCachedValue(
-					getKnownSymbol(WellKnownSymbols.iterator),
-				));
-			iter = (iter as any)[_iterSymbol.v]
-				? (iter as any)[_iterSymbol.v]()
-				: NULL_VALUE;
-		}
-
-		if (isIterator(iter)) {
-			let err: { e: any } = UNDEF_VALUE;
-			let iterResult: IteratorResult<T> = UNDEF_VALUE;
-			try {
-				let count = 0;
-				while (!(iterResult = iter.next()).done) {
-					if (
-						callbackfn[CALL](thisArg || iter, iterResult.value, count, iter) ===
-						-1
-					) {
-						break;
-					}
-
-					count++;
-				}
-			} catch (failed) {
-				err = { e: failed };
-				if (iter.throw) {
-					iterResult = NULL_VALUE;
-					iter.throw(err);
-				}
-			} finally {
-				try {
-					if (iterResult && !iterResult.done) {
-						iter.return && iter.return(iterResult);
-					}
-				} finally {
-					if (err) {
-						// eslint-disable-next-line no-unsafe-finally
-						throw err.e;
-					}
-				}
-			}
-		}
-	}
+export function iterForOf<T>(iter: Iterator<T> | Iterable<T>, callbackfn: (value: T, count?: number, iter?: Iterator<T>) => void | number, thisArg?: any): void {
+    if (iter) {
+        if (!isIterator(iter)) {
+            !_iterSymbol && (_iterSymbol = createCachedValue(getKnownSymbol(WellKnownSymbols.iterator)));
+            iter = (iter as any)[_iterSymbol.v] ? (iter as any)[_iterSymbol.v]() : NULL_VALUE;
+        }
+        
+        if (isIterator(iter)) {
+            let err: { e: any } = UNDEF_VALUE;
+            let iterResult: IteratorResult<T> = UNDEF_VALUE;
+            try {
+                let count = 0;
+                while(!(iterResult = iter.next()).done) {
+                    if (callbackfn[CALL](thisArg || iter, iterResult.value, count, iter) === -1) {
+                        break;
+                    }
+        
+                    count++;
+                }
+            } catch (failed) {
+                err = { e: failed };
+                if (iter.throw) {
+                    iterResult = NULL_VALUE;
+                    iter.throw(err);
+                }
+            } finally {
+                try {
+                    if (iterResult && !iterResult.done) {
+                        iter.return && iter.return(iterResult);
+                    }
+                } finally {
+                    if (err) {
+                        // eslint-disable-next-line no-unsafe-finally
+                        throw err.e;
+                    }
+                }
+            }
+        }
+    }
 }

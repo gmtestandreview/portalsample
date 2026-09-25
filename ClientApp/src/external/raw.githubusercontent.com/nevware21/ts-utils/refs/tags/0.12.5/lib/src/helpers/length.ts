@@ -19,10 +19,11 @@ import { _unwrapProp } from "../internal/unwrapFunction";
  * @group Object
  */
 export interface IGetLength {
-	/**
-	 * Identifies the property that returns the length of the instance
-	 */
-	length: unknown;
+
+    /**
+     * Identifies the property that returns the length of the instance
+     */
+    length: unknown;
 }
 
 /**
@@ -47,5 +48,4 @@ export interface IGetLength {
  * getLength({ length: () => 53; }); // returns the function that if called would return 53
  * ```
  */
-export const getLength: <T extends IGetLength>(value: T) => T["length"] =
-	/*#__PURE__*/ _unwrapProp<IGetLength>(LENGTH);
+export const getLength: <T extends IGetLength>(value: T) => T["length"] = (/*#__PURE__*/_unwrapProp<IGetLength>(LENGTH));

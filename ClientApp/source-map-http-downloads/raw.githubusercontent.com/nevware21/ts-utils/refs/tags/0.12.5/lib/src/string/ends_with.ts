@@ -21,15 +21,7 @@ import { strSubstring } from "./substring";
  * @param searchString - The characters to be searched for at the end of `value` string.
  * @param length - If provided, it is used as the length of `value`. Defaults to value.length.
  */
-export const strEndsWith: (
-	value: string,
-	searchString: string,
-	length?: number,
-) => boolean = /*#__PURE__*/ _unwrapFunctionWithPoly(
-	"endsWith",
-	StrProto,
-	polyStrEndsWith,
-);
+export const strEndsWith: (value: string, searchString: string, length?: number) => boolean = (/*#__PURE__*/_unwrapFunctionWithPoly("endsWith", StrProto, polyStrEndsWith));
 
 /**
  * This method lets you determine whether or not a string ends with another string. This method is case-sensitive.
@@ -40,18 +32,11 @@ export const strEndsWith: (
  * @param length - If provided, it is used as the length of `value`. Defaults to value.length.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function polyStrEndsWith(
-	value: string,
-	searchString: string,
-	length?: number,
-): boolean {
-	_throwIfNotString(value);
+export function polyStrEndsWith(value: string, searchString: string, length?: number): boolean {
+    _throwIfNotString(value);
 
-	const searchValue = isString(searchString)
-		? searchString
-		: asString(searchString);
-	const end =
-		!isUndefined(length) && length < value[LENGTH] ? length : value[LENGTH];
+    let searchValue = isString(searchString) ? searchString : asString(searchString);
+    let end = (!isUndefined(length) && length < value[LENGTH]) ? length : value[LENGTH];
 
-	return strSubstring(value, end - searchValue[LENGTH], end) === searchValue;
+    return strSubstring(value, end - searchValue[LENGTH], end) === searchValue;
 }

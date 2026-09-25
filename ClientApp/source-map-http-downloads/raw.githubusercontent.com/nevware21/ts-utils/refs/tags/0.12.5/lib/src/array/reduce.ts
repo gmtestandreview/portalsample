@@ -23,12 +23,7 @@ import { _unwrapFunction } from "../internal/unwrapFunction";
  * specified, otherwise 1.
  * @param array -The array being traversed.
  */
-export type ArrReduceCallbackFn<T, R = T> = (
-	previousValue: T | R,
-	currentValue: T,
-	currentIndex: number,
-	array: T[],
-) => R;
+export type ArrReduceCallbackFn<T, R = T> = (previousValue: T | R, currentValue: T, currentIndex: number, array: T[]) => R;
 
 /**
  * The arrReduce() method executes a user-supplied "reducer" callback function on each element of the array,
@@ -73,10 +68,6 @@ export type ArrReduceCallbackFn<T, R = T> = (
  * // callback is not invoked
  * arrReduce({ length: 1, 0: 50 }, getMax);     // 50
  * arrReduce({ length: 0 }, getMax, 1);  // 1
- * ```
+  * ```
  */
-export const arrReduce: <T, R = T>(
-	theArray: ArrayLike<T>,
-	callbackfn: ArrReduceCallbackFn<T, R>,
-	initialValue?: T | R,
-) => R = /*#__PURE__*/ _unwrapFunction("reduce", ArrProto);
+export const arrReduce: <T, R = T>(theArray: ArrayLike<T>, callbackfn: ArrReduceCallbackFn<T, R>, initialValue?: T | R) => R = (/*#__PURE__*/_unwrapFunction("reduce", ArrProto));

@@ -34,57 +34,46 @@ export const GET_OWN_PROPERTY_SYMBOLS = "getOwnPropertySymbols";
 /**
  * @ignore
  */
-export const ObjClass = /*#__PURE__*/ _pureAssign(Object);
+export const ObjClass = (/*#__PURE__*/_pureAssign(Object));
 
 /**
  * @ignore
  */
-export const ObjProto = /*#__PURE__*/ _pureRef<typeof Object.prototype>(
-	ObjClass,
-	PROTOTYPE,
-);
+export const ObjProto = (/*#__PURE__*/_pureRef<typeof Object.prototype>(ObjClass, PROTOTYPE));
 
 /**
  * @ignore
  */
-export const StrCls = /*#__PURE__*/ _pureAssign(String);
+export const StrCls = (/*#__PURE__*/_pureAssign(String));
 
 /**
  * @ignore
  */
-export const StrProto = /*#__PURE__*/ _pureRef<typeof String.prototype>(
-	StrCls,
-	PROTOTYPE,
-) as string;
+export const StrProto = (/*#__PURE__*/_pureRef<typeof String.prototype>(StrCls, PROTOTYPE)) as String;
 
 /**
  * @ignore
  */
-export const MathCls = /*#__PURE__*/ _pureAssign(Math) as Math;
+export const MathCls = (/*#__PURE__*/_pureAssign(Math)) as Math;
 
 /**
  * @ignore
  */
-export const ArrCls = /*#__PURE__*/ _pureAssign(Array);
+export const ArrCls = (/*#__PURE__*/_pureAssign(Array));
 
 /**
  * @ignore
  */
-export const ArrProto = /*#__PURE__*/ _pureRef<typeof ArrCls.prototype>(
-	ArrCls,
-	PROTOTYPE,
-);
+export const ArrProto = (/*#__PURE__*/_pureRef<typeof ArrCls.prototype>(ArrCls, PROTOTYPE));
 
 /**
  * @ignore
  *
  */
-export const ArrSlice = /*#__PURE__*/ _pureRef<typeof ArrProto.slice>(
-	ArrProto,
-	"slice",
-);
+export const ArrSlice = (/*#__PURE__*/_pureRef<typeof ArrProto.slice>(ArrProto, "slice"));
 
 /**
  * @ignore
  */
-export const NumberCls = /*#__PURE__*/ _pureAssign(Number);
+export const NumberCls = (/*#__PURE__*/_pureAssign(Number));
+

@@ -9,10 +9,7 @@
 import { isUndefined } from "../helpers/base";
 import { EMPTY, LENGTH, StrProto } from "../internal/constants";
 import { _throwIfNullOrUndefined } from "../internal/throwIf";
-import {
-	_unwrapFunction,
-	_unwrapFunctionWithPoly,
-} from "../internal/unwrapFunction";
+import { _unwrapFunction, _unwrapFunctionWithPoly } from "../internal/unwrapFunction";
 import { mathMax } from "../math/min_max";
 import { strSlice } from "./slice";
 
@@ -59,11 +56,7 @@ import { strSlice } from "./slice";
  * console.log(strSubstring(anyString, 0, 10));
  * ```
  */
-export const strSubstring: (
-	value: string,
-	indexStart: number,
-	indexEnd?: number,
-) => string = /*#__PURE__*/ _unwrapFunction("substring", StrProto);
+export const strSubstring: (value: string, indexStart: number, indexEnd?: number) => string = (/*#__PURE__*/_unwrapFunction("substring", StrProto));
 
 /**
  * The strSubstr() method returns a portion of the string, starting at the specified index and extending for a given
@@ -77,15 +70,7 @@ export const strSubstring: (
  * @param length - The number of characters to extract.
  * @returns A new string containing the specified part of the given string.
  */
-export const strSubstr: (
-	value: string,
-	start: number,
-	length?: number,
-) => string = /*#__PURE__*/ _unwrapFunctionWithPoly(
-	"substr",
-	StrProto,
-	polyStrSubstr,
-);
+export const strSubstr: (value: string, start: number, length?: number) => string = (/*#__PURE__*/_unwrapFunctionWithPoly("substr", StrProto, polyStrSubstr));
 
 /**
  * The polyStrSubstr() method returns a portion of the string, starting at the specified index and extending for a given
@@ -100,29 +85,25 @@ export const strSubstr: (
  * @returns A new string containing the specified part of the given string.
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function polyStrSubstr(
-	value: string,
-	start: number,
-	length?: number,
-): string {
-	_throwIfNullOrUndefined(value);
+export function polyStrSubstr(value: string, start: number, length?: number): string {
+    _throwIfNullOrUndefined(value);
 
-	if (length < 0) {
-		return EMPTY;
-	}
+    if (length < 0) {
+        return EMPTY;
+    }
 
-	// If start is omitted or undefined, its treated as zero
-	start = start || 0;
+    // If start is omitted or undefined, its treated as zero
+    start = start || 0;
 
-	if (start < 0) {
-		start = mathMax(start + value[LENGTH], 0);
-	}
+    if (start < 0) {
+        start = mathMax(start + value[LENGTH], 0);
+    }
 
-	if (isUndefined(length)) {
-		return strSlice(value, start);
-	}
+    if (isUndefined(length)) {
+        return strSlice(value, start);
+    }
 
-	return strSlice(value, start, start + length);
+    return strSlice(value, start, start + length);
 }
 
 /**
@@ -151,7 +132,7 @@ export function polyStrSubstr(
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function strLeft(value: string, count: number): string {
-	return strSubstring(value, 0, count);
+    return strSubstring(value, 0, count);
 }
 
 /**
@@ -180,9 +161,5 @@ export function strLeft(value: string, count: number): string {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function strRight(value: string, count: number): string {
-	return count <= 0
-		? EMPTY
-		: value[LENGTH] > count
-			? strSlice(value, -count)
-			: value;
+    return count <= 0 ? EMPTY : (value[LENGTH] > count ? strSlice(value, -count) : value);
 }

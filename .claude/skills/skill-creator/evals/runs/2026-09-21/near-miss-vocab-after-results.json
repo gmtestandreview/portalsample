@@ -1,90 +1,90 @@
 {
-	"skill_name": "skill-creator",
-	"description": "Use when the request mentions Agent Skills, `SKILL.md`, a skill folder, a skill release review/readiness verdict, or turning a workflow into a reusable skill, and asks to create, revise, refactor, organize resources for, evaluate, benchmark, validate, package, release-check, or fix activation for that skill. Covers Claude Code skill rules, hooks, guardrails, activation descriptions/boundaries, resource consistency, output evals, candidate-vs-baseline comparison, trigger testing, deployment readiness, and production-ready claims. Do not use for ordinary code, document editing, generic packaging, generic A/B testing, or activation/trigger rules for non-skill software (browser extensions, CI workflows, webhooks) unrelated to Agent Skills.",
-	"results": [
-		{
-			"query": "Optimize the activation conditions for my browser extension's content script.",
-			"should_trigger": false,
-			"trigger_rate": 0.0,
-			"triggers": 0,
-			"runs": 4,
-			"completed_runs": 1,
-			"execution_errors": 3,
-			"error_messages": [
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
-			],
-			"pass": false
-		},
-		{
-			"query": "Tune the trigger conditions for my GitHub Actions workflow so it only runs on release tags.",
-			"should_trigger": false,
-			"trigger_rate": null,
-			"triggers": 0,
-			"runs": 4,
-			"completed_runs": 0,
-			"execution_errors": 4,
-			"error_messages": [
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
-			],
-			"pass": false
-		},
-		{
-			"query": "Improve the activation rules for my Chrome extension so the popup only opens on checkout pages.",
-			"should_trigger": false,
-			"trigger_rate": null,
-			"triggers": 0,
-			"runs": 4,
-			"completed_runs": 0,
-			"execution_errors": 4,
-			"error_messages": [
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
-			],
-			"pass": false
-		},
-		{
-			"query": "Write regression tests for the guardrails in my API rate limiter and validate the trigger thresholds.",
-			"should_trigger": false,
-			"trigger_rate": null,
-			"triggers": 0,
-			"runs": 4,
-			"completed_runs": 0,
-			"execution_errors": 4,
-			"error_messages": [
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
-			],
-			"pass": false
-		},
-		{
-			"query": "Benchmark the trigger latency of my webhook handler and report the p95.",
-			"should_trigger": false,
-			"trigger_rate": null,
-			"triggers": 0,
-			"runs": 4,
-			"completed_runs": 0,
-			"execution_errors": 4,
-			"error_messages": [
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
-				"claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
-			],
-			"pass": false
-		}
-	],
-	"summary": {
-		"total": 5,
-		"passed": 0,
-		"failed": 5
-	}
+  "skill_name": "skill-creator",
+  "description": "Use when the request mentions Agent Skills, `SKILL.md`, a skill folder, a skill release review/readiness verdict, or turning a workflow into a reusable skill, and asks to create, revise, refactor, organize resources for, evaluate, benchmark, validate, package, release-check, or fix activation for that skill. Covers Claude Code skill rules, hooks, guardrails, activation descriptions/boundaries, resource consistency, output evals, candidate-vs-baseline comparison, trigger testing, deployment readiness, and production-ready claims. Do not use for ordinary code, document editing, generic packaging, generic A/B testing, or activation/trigger rules for non-skill software (browser extensions, CI workflows, webhooks) unrelated to Agent Skills.",
+  "results": [
+    {
+      "query": "Optimize the activation conditions for my browser extension's content script.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 4,
+      "completed_runs": 1,
+      "execution_errors": 3,
+      "error_messages": [
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
+      ],
+      "pass": false
+    },
+    {
+      "query": "Tune the trigger conditions for my GitHub Actions workflow so it only runs on release tags.",
+      "should_trigger": false,
+      "trigger_rate": null,
+      "triggers": 0,
+      "runs": 4,
+      "completed_runs": 0,
+      "execution_errors": 4,
+      "error_messages": [
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
+      ],
+      "pass": false
+    },
+    {
+      "query": "Improve the activation rules for my Chrome extension so the popup only opens on checkout pages.",
+      "should_trigger": false,
+      "trigger_rate": null,
+      "triggers": 0,
+      "runs": 4,
+      "completed_runs": 0,
+      "execution_errors": 4,
+      "error_messages": [
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
+      ],
+      "pass": false
+    },
+    {
+      "query": "Write regression tests for the guardrails in my API rate limiter and validate the trigger thresholds.",
+      "should_trigger": false,
+      "trigger_rate": null,
+      "triggers": 0,
+      "runs": 4,
+      "completed_runs": 0,
+      "execution_errors": 4,
+      "error_messages": [
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
+      ],
+      "pass": false
+    },
+    {
+      "query": "Benchmark the trigger latency of my webhook handler and report the p95.",
+      "should_trigger": false,
+      "trigger_rate": null,
+      "triggers": 0,
+      "runs": 4,
+      "completed_runs": 0,
+      "execution_errors": 4,
+      "error_messages": [
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)",
+        "claude CLI error 429: You've hit your limit \u00b7 resets 9:20pm (Australia/Sydney)"
+      ],
+      "pass": false
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 0,
+    "failed": 5
+  }
 }

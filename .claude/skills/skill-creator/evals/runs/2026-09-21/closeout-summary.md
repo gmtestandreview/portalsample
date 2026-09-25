@@ -26,37 +26,6 @@ The `_rerun-*.json` files are the one-query eval sets used for the reruns.
 - Single-run evidence at 1 run/query is noisy; this supersedes the NHR rows for the current
   description but is not a multi-run trigger-rate study.
 
-## Near-miss vocabulary investigation
-
-Set: `evals/activation-near-miss-vocab.json` (5 non-skill "activation/trigger" prompts, 4 runs each).
-
-Upstream: the description and body share vocabulary with the prompts ("activation", "trigger",
-"hooks", "guardrails"). The eval harness loads exactly one skill, so the model has no competing
-skill; this likely overstates false triggers relative to the real repo (hundreds of skills).
-Downstream: a false trigger loads a ~260-line skill; `CLAUDE.md` treats triggered skills as
-mandatory. No destructive path.
-
-| Variant | Near-miss set | Train (1 run) | Hold-out (2 runs) | Files |
-| --- | --- | --- | --- | --- |
-| Baseline | 4/5; Chrome-extension prompt 2/4 (FAIL), original prompt 0/4 | n/a | n/a | `near-miss-vocab-baseline-results.json` |
-| Iter 1: exclusion clause for non-skill activation rules | 4/5; Chrome 2/4, original 1/4 | 20/20 | 8/8 | `*-after-rerun-results.json`, `*-after-exclusion-rerun-results.json` |
-| Iter 2: skill-anchored vocabulary | 4/5; Chrome 2/4, original 1/4 | 19/20 (positive miss) | 7/8 (near-miss timeout) | `*-iter2-results.json` |
-
-`*-after-results.json` / `*-after-exclusion-results.json` / hold-out equivalents are all
-`429` rate-limit errors (0 completed runs): NHR, not evidence.
-
-Iter 2 reverted (no gain, one positive miss). Stopped at 2 iterations: no improvement.
-
-## Mitigation
-
-Description kept at Iter 1 (745 chars; no positive regression). The trigger rate for the Chrome
-prompt was not reduced. Instead the downstream cost is bounded: `SKILL.md` now opens with an
-early-exit ("if the request is not about an Agent Skill ... stop here ... handle the request
-normally"). That instruction was not behaviorally tested (run_eval measures triggering only).
-
 ## Verdict
 
-Activation evidence for the current description: PASS on train/hold-out. Residual risk narrowed
-but not eliminated: "activation rules for a non-skill browser extension"-style prompts trigger
-~50% in the single-skill harness. Accepted risk, mitigated by the body early-exit (unverified).
-Open follow-up: a harness variant with distractor skills, or a behavioral test of the early-exit.
+Activation evidence for the current description: PASS with the residual risk above.

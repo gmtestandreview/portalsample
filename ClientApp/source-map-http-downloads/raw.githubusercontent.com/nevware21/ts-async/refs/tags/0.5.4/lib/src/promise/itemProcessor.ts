@@ -6,21 +6,13 @@
  * Licensed under the MIT license.
  */
 
-import {
-	arrForEach,
-	isNumber,
-	scheduleIdleCallback,
-	scheduleTimeout,
-} from "@nevware21/ts-utils";
-import type { IPromise } from "../interfaces/IPromise";
-import type { PromiseExecutor } from "../interfaces/types";
+import { arrForEach, isNumber, scheduleIdleCallback, scheduleTimeout } from "@nevware21/ts-utils";
+import { IPromise } from "../interfaces/IPromise";
+import { PromiseExecutor } from "../interfaces/types";
 
 export type PromisePendingProcessor = (pending: PromisePendingFn[]) => void;
 export type PromisePendingFn = () => void;
-export type PromiseCreatorFn = <T, TResult2 = never>(
-	newExecutor: PromiseExecutor<T>,
-	...extraArgs: any
-) => IPromise<T | TResult2>;
+export type PromiseCreatorFn = <T, TResult2 = never>(newExecutor: PromiseExecutor<T>, ...extraArgs: any) => IPromise<T | TResult2>;
 
 /**
  * @internal
@@ -29,14 +21,14 @@ export type PromiseCreatorFn = <T, TResult2 = never>(
  * @return An item processor
  */
 export function syncItemProcessor(pending: PromisePendingFn[]): void {
-	arrForEach(pending, (fn: PromisePendingFn) => {
-		try {
-			fn();
-		} catch (e) {
-			// Don't let 1 failing handler break all others
-			// TODO: Add some form of error reporting (i.e. Call any registered JS error handler so the error is reported)
-		}
-	});
+    arrForEach(pending, (fn: PromisePendingFn) => {
+        try {
+            fn();
+        } catch (e) {
+            // Don't let 1 failing handler break all others
+            // TODO: Add some form of error reporting (i.e. Call any registered JS error handler so the error is reported)
+        }
+    });
 }
 
 /**
@@ -46,16 +38,14 @@ export function syncItemProcessor(pending: PromisePendingFn[]): void {
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  * @return An item processor
  */
-export function timeoutItemProcessor(
-	timeout?: number,
-): (pending: PromisePendingFn[]) => void {
-	const callbackTimeout = isNumber(timeout) ? timeout : 0;
+export function timeoutItemProcessor(timeout?: number): (pending: PromisePendingFn[]) => void {
+    let callbackTimeout = isNumber(timeout) ? timeout : 0;
 
-	return (pending: PromisePendingFn[]) => {
-		scheduleTimeout(() => {
-			syncItemProcessor(pending);
-		}, callbackTimeout);
-	};
+    return (pending: PromisePendingFn[]) => {
+        scheduleTimeout(() => {
+            syncItemProcessor(pending);
+        }, callbackTimeout);
+    }
 }
 
 /**
@@ -66,19 +56,17 @@ export function timeoutItemProcessor(
  * @param timeout - Optional timeout to wait before processing the items, defaults to zero.
  * @return An item processor
  */
-export function idleItemProcessor(
-	timeout?: number,
-): (pending: PromisePendingFn[]) => void {
-	let options: any;
-	if (timeout >= 0) {
-		options = {
-			timeout: +timeout,
-		};
-	}
+export function idleItemProcessor(timeout?: number): (pending: PromisePendingFn[]) => void {
+    let options: any;
+    if (timeout >= 0) {
+        options = {
+            timeout: +timeout
+        };
+    }
 
-	return (pending: PromisePendingFn[]) => {
-		scheduleIdleCallback((deadline: IdleDeadline) => {
-			syncItemProcessor(pending);
-		}, options);
-	};
+    return (pending: PromisePendingFn[]) => {
+        scheduleIdleCallback((deadline: IdleDeadline) => {
+            syncItemProcessor(pending);
+        }, options);
+    };
 }

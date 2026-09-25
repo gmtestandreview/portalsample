@@ -7,14 +7,7 @@
  */
 
 import { fnApply } from "../funcs/funcs";
-import {
-	ArrSlice,
-	CALL,
-	CONSTRUCTOR,
-	NAME,
-	NULL_VALUE,
-	PROTOTYPE,
-} from "../internal/constants";
+import { ArrSlice, CALL, CONSTRUCTOR, NAME, NULL_VALUE, PROTOTYPE } from "../internal/constants";
 import { objCreate } from "../object/create";
 import { objDefine } from "../object/define";
 import { objGetPrototypeOf } from "../object/object";
@@ -26,11 +19,10 @@ import { safe } from "./safe";
  * Used by: {@link createCustomError}
  * @group Error
  */
-export interface CustomErrorConstructor<T extends Error = Error>
-	extends ErrorConstructor {
-	new (message?: string): T;
-	(message?: string): T;
-	readonly prototype: T;
+export interface CustomErrorConstructor<T extends Error = Error> extends ErrorConstructor {
+    new(message?: string): T;
+    (message?: string): T;
+    readonly prototype: T;
 }
 
 /**
@@ -39,24 +31,21 @@ export interface CustomErrorConstructor<T extends Error = Error>
  */
 /*#__NO_SIDE_EFFECTS__*/
 function _createCustomError<T>(name: string, d: any, b: any): T {
-	safe(objDefine, [d, NAME, { v: name, c: true, e: false }]);
-	d = objSetPrototypeOf(d, b);
-	function __() {
-		this[CONSTRUCTOR] = d;
-		safe(objDefine, [this, NAME, { v: name, c: true, e: false }]);
-	}
+    safe(objDefine, [ d, NAME, { v: name, c: true, e: false }]);
+    d = objSetPrototypeOf(d, b);
+    function __() {
+        this[CONSTRUCTOR] = d;
+        safe(objDefine, [this, NAME, { v: name, c: true, e: false }]);
+    }
 
-	d[PROTOTYPE] =
-		b === NULL_VALUE
-			? objCreate(b)
-			: (((__ as any)[PROTOTYPE] = b[PROTOTYPE]), new (__ as any)());
+    d[PROTOTYPE] = b === NULL_VALUE ? objCreate(b) : ((__ as any)[PROTOTYPE] = b[PROTOTYPE], new (__ as any)());
 
-	return d;
+    return d;
 }
 
-function _setName(baseClass: any, name: string) {
-	name && (baseClass[NAME] = name);
-	//name && (baseClass[PROTOTYPE][NAME] = name);
+function  _setName(baseClass: any, name: string) {
+    name && (baseClass[NAME] = name);
+    //name && (baseClass[PROTOTYPE][NAME] = name);
 }
 
 /**
@@ -129,46 +118,39 @@ function _setName(baseClass: any, name: string) {
  * ```
  */
 /*#__NO_SIDE_EFFECTS__*/
-export function createCustomError<
-	T extends ErrorConstructor = CustomErrorConstructor,
-	B extends ErrorConstructor = ErrorConstructor,
->(
-	name: string,
-	constructCb?: ((self: any, args: IArguments) => void) | null,
-	errorBase?: B,
-): T {
-	const theBaseClass = errorBase || Error;
-	const orgName = theBaseClass[PROTOTYPE][NAME];
-	const captureFn = Error.captureStackTrace;
-	return _createCustomError<T>(
-		name,
-		function (this: any) {
-			const theArgs = arguments;
-			try {
-				safe(_setName, [theBaseClass, name]);
-				const _self =
-					fnApply(theBaseClass, this, ArrSlice[CALL](theArgs)) || this;
-				if (_self !== this) {
-					// Looks like runtime error constructor reset the prototype chain, so restore it
-					const orgProto = objGetPrototypeOf(this);
-					if (orgProto !== objGetPrototypeOf(_self)) {
-						objSetPrototypeOf(_self, orgProto);
-					}
-				}
+export function createCustomError<T extends ErrorConstructor = CustomErrorConstructor, B extends ErrorConstructor = ErrorConstructor>(
+    name: string,
+    constructCb?: ((self: any, args: IArguments) => void) | null,
+    errorBase?: B): T {
 
-				// Make sure we only capture our stack details
-				captureFn && captureFn(_self, this[CONSTRUCTOR]);
+    let theBaseClass = errorBase || Error;
+    let orgName = theBaseClass[PROTOTYPE][NAME];
+    let captureFn = Error.captureStackTrace;
+    return _createCustomError<T>(name, function (this: any) {
+        let _this = this;
+        let theArgs = arguments;
+        try {
+            safe(_setName, [theBaseClass, name]);
+            let _self = fnApply(theBaseClass, _this, ArrSlice[CALL](theArgs)) || _this;
+            if (_self !== _this) {
+                // Looks like runtime error constructor reset the prototype chain, so restore it
+                let orgProto = objGetPrototypeOf(_this);
+                if (orgProto !== objGetPrototypeOf(_self)) {
+                    objSetPrototypeOf(_self, orgProto);
+                }
+            }
 
-				// Run the provided construction function
-				constructCb && constructCb(_self, theArgs);
-
-				return _self;
-			} finally {
-				safe(_setName, [theBaseClass, orgName]);
-			}
-		},
-		theBaseClass,
-	);
+            // Make sure we only capture our stack details
+            captureFn && captureFn(_self, _this[CONSTRUCTOR]);
+    
+            // Run the provided construction function
+            constructCb && constructCb(_self, theArgs);
+    
+            return _self;
+        } finally {
+            safe(_setName, [theBaseClass, orgName]);
+        }
+    }, theBaseClass);
 }
 
 /**
@@ -191,10 +173,10 @@ let _unsupportedError: CustomErrorConstructor;
  * ```
  */
 export function throwUnsupported(message?: string): never {
-	if (!_unsupportedError) {
-		// Lazily create the class
-		_unsupportedError = createCustomError("UnsupportedError");
-	}
+    if (!_unsupportedError) {
+        // Lazily create the class
+        _unsupportedError = createCustomError("UnsupportedError");
+    }
 
-	throw new _unsupportedError(message);
+    throw new _unsupportedError(message);
 }

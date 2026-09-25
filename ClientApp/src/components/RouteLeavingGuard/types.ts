@@ -1,9 +1,9 @@
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 export interface RouteLeavingGuardProps {
-	when?: boolean;
-	title?: ReactNode;
-	body?: ReactNode;
-	cancelBtn?: ReactNode;
-	confirmBtn?: ReactNode;
+    when?: boolean;
+    title?: ReactNode;
+    body?: ReactNode;
+    cancelBtn?: ReactNode;
+    confirmBtn?: ReactNode;
 }

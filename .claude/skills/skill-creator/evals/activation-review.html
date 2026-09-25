@@ -257,7 +257,7 @@
             document.getElementById('skill-name').textContent = REVIEW_DATA.skill_name || '';
             document.getElementById('skill-desc').textContent = REVIEW_DATA.skill_description || '';
 
-            const evalItems = [...EVAL_DATA];
+            let evalItems = [...EVAL_DATA];
 
             function render() {
                 const tbody = document.getElementById('eval-body');

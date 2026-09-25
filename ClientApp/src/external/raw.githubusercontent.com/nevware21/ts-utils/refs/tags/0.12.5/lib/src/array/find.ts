@@ -8,16 +8,8 @@
 
 import { ArrProto } from "../internal/constants";
 import { _unwrapFunctionWithPoly } from "../internal/unwrapFunction";
-import {
-	polyArrFind,
-	polyArrFindIndex,
-	polyArrFindLast,
-	polyArrFindLastIndex,
-} from "../polyfills/array";
-import type {
-	ArrPredicateCallbackFn,
-	ArrPredicateCallbackFn2,
-} from "./callbacks";
+import { polyArrFind, polyArrFindIndex, polyArrFindLast, polyArrFindLastIndex } from "../polyfills/array";
+import { ArrPredicateCallbackFn, ArrPredicateCallbackFn2 } from "./callbacks";
 
 /**
  * The arrFind() method returns the first element in the provided array that satisfies
@@ -91,15 +83,7 @@ import type {
  * console.log(arrFind({ length: 4:, 0: 4, 1: 5, 2: 8, 3: 12 }, isPrime)); // 5
  * ```
  */
-export const arrFind = /*#__PURE__*/ _unwrapFunctionWithPoly(
-	"find",
-	ArrProto,
-	polyArrFind,
-) as <T, E extends T>(
-	theArray: ArrayLike<T>,
-	callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>,
-	thisArg?: any,
-) => T | E | undefined;
+export const arrFind =  (/*#__PURE__*/_unwrapFunctionWithPoly("find", ArrProto, polyArrFind) as <T, E extends T>(theArray: ArrayLike<T>, callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>, thisArg?: any) => T | E | undefined);
 
 /**
  * The arrFindIndex() method returns the index of the first element in an array that satisfies the provided testing
@@ -166,15 +150,7 @@ export const arrFind = /*#__PURE__*/ _unwrapFunctionWithPoly(
  * arrFindIndex({ length: 5:, 0: 4, 1: 6, 2: 7, 3: 9, 4: 12 }, isPrime) // 2
  * ```
  */
-export const arrFindIndex = /*#__PURE__*/ _unwrapFunctionWithPoly(
-	"findIndex",
-	ArrProto,
-	polyArrFindIndex,
-) as <T, E extends T>(
-	theArray: ArrayLike<T>,
-	callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>,
-	thisArg?: any,
-) => number;
+export const arrFindIndex = (/*#__PURE__*/_unwrapFunctionWithPoly("findIndex", ArrProto, polyArrFindIndex) as <T, E extends T>(theArray: ArrayLike<T>, callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>, thisArg?: any) => number);
 
 /**
  * The arrFindLast() method iterates the array in reverse order and returns the value of the first element that
@@ -246,15 +222,7 @@ export const arrFindIndex = /*#__PURE__*/ _unwrapFunctionWithPoly(
  * console.log(arrFindLast({ length: 4, 0: 4, 1: 5, 2: 7, 3: 12 }, isPrime)); // 7
  * ```
  */
-export const arrFindLast = /*#__PURE__*/ _unwrapFunctionWithPoly(
-	"findLast",
-	ArrProto as any,
-	polyArrFindLast,
-) as <T, E extends T>(
-	theArray: ArrayLike<T>,
-	callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>,
-	thisArg?: any,
-) => T | E | undefined;
+export const arrFindLast = (/*#__PURE__*/_unwrapFunctionWithPoly("findLast", ArrProto as any, polyArrFindLast) as <T, E extends T>(theArray: ArrayLike<T>, callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>, thisArg?: any) => T | E | undefined);
 
 /**
  * The arrFindLastIndex() method iterates the array in reverse order and returns the index of the first element that
@@ -335,12 +303,4 @@ export const arrFindLast = /*#__PURE__*/ _unwrapFunctionWithPoly(
 
  * ```
  */
-export const arrFindLastIndex = /*#__PURE__*/ _unwrapFunctionWithPoly(
-	"findLastIndex",
-	ArrProto as any,
-	polyArrFindLastIndex,
-) as <T, E extends T>(
-	theArray: ArrayLike<T>,
-	callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>,
-	thisArg?: any,
-) => number;
+export const arrFindLastIndex = (/*#__PURE__*/_unwrapFunctionWithPoly("findLastIndex", ArrProto as any, polyArrFindLastIndex) as <T, E extends T>(theArray: ArrayLike<T>, callbackFn: ArrPredicateCallbackFn<T, E> | ArrPredicateCallbackFn2<T>, thisArg?: any) => number);

@@ -33,20 +33,14 @@ import { objHasOwn } from "./has_own";
  * }
  * ```
  */
-export function objForEachKey<T>(
-	theObject: T,
-	callbackfn: (key: string, value: T[keyof T]) => void | number,
-	thisArg?: any,
-): void {
-	if (theObject && (isObject(theObject) || isFunction(theObject))) {
-		for (const prop in theObject) {
-			if (objHasOwn(theObject, prop)) {
-				if (
-					callbackfn[CALL](thisArg || theObject, prop, theObject[prop]) === -1
-				) {
-					break;
-				}
-			}
-		}
-	}
+export function objForEachKey<T>(theObject: T, callbackfn: (key: string, value: T[keyof T]) => void | number, thisArg?: any): void {
+    if (theObject && (isObject(theObject) || isFunction(theObject))) {
+        for (const prop in theObject) {
+            if (objHasOwn(theObject, prop)) {
+                if (callbackfn[CALL](thisArg || theObject, prop, theObject[prop]) === -1) {
+                    break;
+                }
+            }
+        }
+    }
 }

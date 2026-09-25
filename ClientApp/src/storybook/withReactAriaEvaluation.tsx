@@ -1,31 +1,31 @@
-import type { Decorator } from "@storybook/react-vite";
-import { type ReactNode, useLayoutEffect } from "react";
+import {useLayoutEffect, type ReactNode} from 'react';
+import type {Decorator} from '@storybook/react-vite';
 
-const evaluationClassName = "react-aria-evaluation";
+const evaluationClassName = 'react-aria-evaluation';
 let mountedEvaluationStories = 0;
 
 type ReactAriaEvaluationFrameProps = Readonly<{
-	children: ReactNode;
+    children: ReactNode;
 }>;
 
-function ReactAriaEvaluationFrame({ children }: ReactAriaEvaluationFrameProps) {
-	useLayoutEffect(() => {
-		mountedEvaluationStories += 1;
-		globalThis.document.body.classList.add(evaluationClassName);
+function ReactAriaEvaluationFrame({children}: ReactAriaEvaluationFrameProps) {
+    useLayoutEffect(() => {
+        mountedEvaluationStories += 1;
+        globalThis.document.body.classList.add(evaluationClassName);
 
-		return () => {
-			mountedEvaluationStories -= 1;
-			if (mountedEvaluationStories === 0) {
-				globalThis.document.body.classList.remove(evaluationClassName);
-			}
-		};
-	}, []);
+        return () => {
+            mountedEvaluationStories -= 1;
+            if (mountedEvaluationStories === 0) {
+                globalThis.document.body.classList.remove(evaluationClassName);
+            }
+        };
+    }, []);
 
-	return <div className={evaluationClassName}>{children}</div>;
+    return <div className={evaluationClassName}>{children}</div>;
 }
 
 export const withReactAriaEvaluation: Decorator = (Story) => (
-	<ReactAriaEvaluationFrame>
-		<Story />
-	</ReactAriaEvaluationFrame>
+    <ReactAriaEvaluationFrame>
+        <Story />
+    </ReactAriaEvaluationFrame>
 );

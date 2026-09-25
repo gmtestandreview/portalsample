@@ -1,43 +1,38 @@
-"use client";
+'use client';
 import {
-	NumberField as AriaNumberField,
-	type NumberFieldProps as AriaNumberFieldProps,
-	Group,
-	Input,
-	type ValidationResult,
-} from "react-aria-components/NumberField";
-import { Button } from "../Buttons/AriaButton/Button";
-import { Description, FieldError, Label } from "../forms/AriaForm/Form";
-import { Minus, Plus } from "./NmiIcon";
-import "./NumberField.css";
+  Group,
+  Input,
+  NumberField as AriaNumberField,
+  type NumberFieldProps as AriaNumberFieldProps,
+  type ValidationResult,
+} from 'react-aria-components/NumberField';
+import { Button } from '../Buttons/AriaButton/Button';
+import { Plus, Minus } from './NmiIcon';
+import { Label, FieldError, Description } from '../forms/AriaForm/Form';
+import './NumberField.css';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {
-	label?: string;
-	description?: string;
-	errorMessage?: string | ((validation: ValidationResult) => string);
-	placeholder?: string;
+  label?: string;
+  description?: string;
+  errorMessage?: string | ((validation: ValidationResult) => string);
+  placeholder?: string;
 }
 
-export function NumberField({
-	label,
-	description,
-	errorMessage,
-	...props
-}: NumberFieldProps) {
-	return (
-		<AriaNumberField {...props}>
-			<Label>{label}</Label>
-			<Group>
-				<Input className="react-aria-Input inset" />
-				<Button slot="decrement" variant="secondary">
-					<Minus />
-				</Button>
-				<Button slot="increment" variant="secondary">
-					<Plus />
-				</Button>
-			</Group>
-			{description && <Description>{description}</Description>}
-			<FieldError>{errorMessage}</FieldError>
-		</AriaNumberField>
-	);
+export function NumberField({ label, description, errorMessage, ...props }: NumberFieldProps) {
+  return (
+    <AriaNumberField {...props}>
+      <Label>{label}</Label>
+      <Group>
+        <Input className="react-aria-Input inset" />
+        <Button slot="decrement" variant="secondary">
+          <Minus />
+        </Button>
+        <Button slot="increment" variant="secondary">
+          <Plus />
+        </Button>
+      </Group>
+      {description && <Description>{description}</Description>}
+      <FieldError>{errorMessage}</FieldError>
+    </AriaNumberField>
+  );
 }

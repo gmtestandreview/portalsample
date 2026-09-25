@@ -8,7 +8,7 @@
 
 import { ArrProto } from "../internal/constants";
 import { _unwrapFunction } from "../internal/unwrapFunction";
-import type { ArrMapCallbackFn } from "./callbacks";
+import { ArrMapCallbackFn } from "./callbacks";
 
 /**
  * The arrMap() method creates a new array populated with the results of calling a provided function on every
@@ -61,8 +61,4 @@ import type { ArrMapCallbackFn } from "./callbacks";
  * };
  * ```
  */
-export const arrMap: <T, R = T>(
-	theArray: ArrayLike<T>,
-	callbackFn: ArrMapCallbackFn<T, R>,
-	thisArg?: any,
-) => R[] = /*#__PURE__*/ _unwrapFunction("map", ArrProto);
+export const arrMap: <T, R = T>(theArray: ArrayLike<T>, callbackFn: ArrMapCallbackFn<T, R>, thisArg?: any) => R[] = (/*#__PURE__*/_unwrapFunction("map", ArrProto));

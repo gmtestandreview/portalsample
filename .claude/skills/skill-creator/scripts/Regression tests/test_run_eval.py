@@ -282,44 +282,6 @@ def _write_stub_claude(directory: Path) -> Path:
     return stub
 
 
-class RunEvalDistractorTests(unittest.TestCase):
-    def _make_distractors(self, base: Path) -> None:
-        for name in ("alpha", "beta", "example-skill"):
-            skill = base / name
-            (skill / "references").mkdir(parents=True)
-            (skill / "SKILL.md").write_text(
-                f"---\nname: {name}\ndescription: {name} desc\n---\n\nbody\n",
-                encoding="utf-8",
-            )
-            (skill / "references" / "extra.md").write_text("x", encoding="utf-8")
-        (base / "no-skill-md").mkdir()
-
-    def test_distractor_skill_md_files_are_copied_alone(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            distractors = Path(tmp) / "distractors"
-            self._make_distractors(distractors)
-
-            root, clean = run_eval._create_eval_project(
-                "example-skill", "candidate desc", distractor_dir=distractors
-            )
-            try:
-                skills = root / ".claude" / "skills"
-                self.assertEqual(
-                    sorted(path.name for path in skills.iterdir()),
-                    sorted(["alpha", "beta", clean]),
-                )
-                self.assertTrue((skills / "alpha" / "SKILL.md").is_file())
-                self.assertFalse((skills / "alpha" / "references").exists())
-                candidate_text = (skills / clean / "SKILL.md").read_text(encoding="utf-8")
-                self.assertIn("candidate desc", candidate_text)
-            finally:
-                run_eval._remove_temp_tree(root)
-
-    def test_missing_distractor_directory_is_rejected(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp, self.assertRaises(ValueError):
-            run_eval._create_eval_project("example", "desc", distractor_dir=Path(tmp) / "missing")
-
-
 class RunEvalBoundaryTests(unittest.TestCase):
     def test_hostile_query_is_delivered_on_stdin_without_shell_execution(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

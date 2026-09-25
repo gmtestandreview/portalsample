@@ -16,10 +16,7 @@ import { _pureRef } from "../internal/treeshake_helpers";
  * @param x - A number
  * @returns A number representing the largest integer less than or equal to the specified number.
  */
-export const mathFloor = /*#__PURE__*/ _pureRef<typeof Math.floor>(
-	MathCls,
-	"floor",
-);
+export const mathFloor = (/*#__PURE__*/_pureRef<typeof Math.floor>(MathCls, "floor"));
 
 /**
  * The `mathCeil()` function always rounds a number up to the next largest integer.
@@ -28,7 +25,4 @@ export const mathFloor = /*#__PURE__*/ _pureRef<typeof Math.floor>(
  * @param x - A number
  * @returns The smallest integer greater than or equal to the given number.
  */
-export const mathCeil = /*#__PURE__*/ _pureRef<typeof Math.ceil>(
-	MathCls,
-	"ceil",
-);
+export const mathCeil = (/*#__PURE__*/_pureRef<typeof Math.ceil>(MathCls, "ceil"));

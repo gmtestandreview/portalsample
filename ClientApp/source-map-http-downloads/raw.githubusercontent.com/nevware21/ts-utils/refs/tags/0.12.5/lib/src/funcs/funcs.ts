@@ -66,12 +66,8 @@ import { ArrSlice, CALL } from "../internal/constants";
  * fnApply(module1.log, module2, [ "friend" ]); // my friend : 42
  * ```
  */
-export function fnApply<F extends (...args: any) => any, T>(
-	fn: F,
-	thisArg: T,
-	argArray?: ArrayLike<any>,
-): ReturnType<F> {
-	return fn.apply(thisArg, argArray);
+export function fnApply<F extends (...args: any) => any, T>(fn: F, thisArg: T, argArray?: ArrayLike<any>): ReturnType<F> {
+    return fn.apply(thisArg, argArray);
 }
 
 /**
@@ -129,11 +125,7 @@ export function fnApply<F extends (...args: any) => any, T>(
  * fnCall(module1.log, module2, "friend"); // my friend : 42
  * ```
  */
-export function fnCall<F extends (...args: any) => any, T>(
-	fn: F,
-	thisArg: T,
-	...args: Parameters<F>
-): ReturnType<F>;
+export function fnCall<F extends (...args: any) => any, T>(fn: F, thisArg: T, ...args: Parameters<F>): ReturnType<F>;
 
 /**
  * The `fnCall` function calls the function with the given `thisArg` as the `this` value and with
@@ -183,11 +175,8 @@ export function fnCall<F extends (...args: any) => any, T>(
  * fnCall(module1.log, module2, "friend"); // my friend : 42
  * ```
  */
-export function fnCall<F extends (...args: any) => any, T>(
-	fn: F,
-	thisArg: T,
-): ReturnType<F> {
-	return fn.apply(thisArg, ArrSlice[CALL](arguments, 2));
+export function fnCall<F extends (...args: any) => any, T>(fn: F, thisArg: T): ReturnType<F> {
+    return fn.apply(thisArg, ArrSlice[CALL](arguments, 2));
 }
 
 /**
@@ -224,11 +213,7 @@ export function fnCall<F extends (...args: any) => any, T>(
  * module2.getX(); // 21
  * ```
  */
-export function fnBind<F extends Function, T>(
-	fn: F,
-	thisArg: T,
-	...argArray: any[]
-): F;
+export function fnBind<F extends Function, T>(fn: F, thisArg: T, ...argArray: any[]): F;
 
 /**
  * Creates a new function that when called will set the value of `thisArg` as the `this` keyword
@@ -265,5 +250,5 @@ export function fnBind<F extends Function, T>(
  * ```
  */
 export function fnBind<F extends Function, T>(fn: F, thisArg: T): F {
-	return fn.bind.apply(fn, ArrSlice[CALL](arguments, 1));
+    return fn.bind.apply(fn, ArrSlice[CALL](arguments, 1));
 }

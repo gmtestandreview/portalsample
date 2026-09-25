@@ -6,10 +6,10 @@
  * Licensed under the MIT license.
  */
 
-import { fnApply } from "../funcs/funcs";
 import { isArray, isUndefined } from "../helpers/base";
-import { iterForOf } from "../iterator/forOf";
 import { isIterable, isIterator } from "../iterator/iterator";
+import { iterForOf } from "../iterator/forOf";
+import { fnApply } from "../funcs/funcs";
 
 /**
  * Appends the `elms` to the `target` where the elms may be an array, a single object
@@ -49,18 +49,18 @@ import { isIterable, isIterator } from "../iterator/iterator";
  * ```
  */
 export function arrAppend<T>(target: T[], elms: T | T[] | Iterator<T>): T[] {
-	if (!isUndefined(elms) && target) {
-		if (isArray(elms)) {
-			// This is not just "target.push(elms)" but becomes effectively "target.push(elms[0], elms[1], ...)"
-			fnApply(target.push, target, elms);
-		} else if (isIterator<T>(elms) || isIterable<T>(elms)) {
-			iterForOf(elms, (elm) => {
-				target.push(elm);
-			});
-		} else {
-			target.push(elms);
-		}
-	}
+    if (!isUndefined(elms) && target) {
+        if (isArray(elms)) {
+            // This is not just "target.push(elms)" but becomes effectively "target.push(elms[0], elms[1], ...)"
+            fnApply(target.push, target, elms);
+        } else if (isIterator<T>(elms) || isIterable<T>(elms)) {
+            iterForOf(elms, (elm) => {
+                target.push(elm);
+            });
+        } else {
+            target.push(elms);
+        }
+    }
 
-	return target;
+    return target;
 }

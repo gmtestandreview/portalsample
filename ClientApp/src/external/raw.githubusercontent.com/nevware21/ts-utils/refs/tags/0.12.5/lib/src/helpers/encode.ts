@@ -14,9 +14,9 @@ import { strUpper } from "../string/upper_lower";
 import { isNumber, isString, isUndefined } from "./base";
 import { dumpObj } from "./diagnostics";
 
-const DBL_QUOTE = '"';
+const DBL_QUOTE = "\"";
 const INVALID_JS_NAME = /([^\w\d_$])/g;
-let _htmlEntityCache: { [key: string]: string };
+let _htmlEntityCache: { [key: string]: string};
 
 /**
  * Validates that the string name conforms to the JS IdentifierName specification and if not
@@ -70,9 +70,9 @@ let _htmlEntityCache: { [key: string]: string };
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function normalizeJsName(jsName: string, camelCase?: boolean): string {
-	const result = asString(jsName).replace(INVALID_JS_NAME, "_");
+    let result = asString(jsName).replace(INVALID_JS_NAME, "_");
 
-	return !isUndefined(camelCase) ? strCamelCase(result, !camelCase) : result;
+    return !isUndefined(camelCase) ? strCamelCase(result, !camelCase) : result;
 }
 
 /**
@@ -116,35 +116,28 @@ export function normalizeJsName(jsName: string, camelCase?: boolean): string {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function encodeAsJson<T>(value: T, format?: boolean | number): string {
-	let result: string;
+    let result: string;
 
-	if (isString(value)) {
-		// encode if a character is not an alpha, numeric, space or some special characters
-		result =
-			DBL_QUOTE +
-			value.replace(/[^\w .,\-!@#$%^&*()_+={}[\]:;|<>?]/g, (match) => {
-				if (match === DBL_QUOTE || match === "\\") {
-					return "\\" + match;
-				}
+    if (isString(value)) {
+        // encode if a character is not an alpha, numeric, space or some special characters
+        result = DBL_QUOTE + value.replace(/[^\w .,\-!@#$%\^&*\(\)_+={}\[\]:;|<>?]/g, (match) => {
+            if(match === DBL_QUOTE || match === "\\") {
+                return "\\" + match;
+            }
 
-				var hex = match.charCodeAt(0)[TO_STRING](16);
-				return "\\u" + strPadStart(strUpper(hex), 4, "0");
-			}) +
-			DBL_QUOTE;
-	} else {
-		try {
-			result = JSON.stringify(
-				value,
-				NULL_VALUE,
-				format ? (isNumber(format) ? format : 4) : UNDEF_VALUE,
-			);
-		} catch (e) {
-			// Unable to convert to JSON
-			result = DBL_QUOTE + dumpObj(e) + DBL_QUOTE;
-		}
-	}
+            var hex = match.charCodeAt(0)[TO_STRING](16);
+            return "\\u" + strPadStart(strUpper(hex), 4, "0");
+        }) + DBL_QUOTE;
+    } else {
+        try {
+            result = JSON.stringify(value, NULL_VALUE, format ? (isNumber(format) ? format : 4) : UNDEF_VALUE);
+        } catch (e) {
+            // Unable to convert to JSON
+            result = DBL_QUOTE + dumpObj(e) + DBL_QUOTE;
+        }
+    }
 
-	return result;
+    return result;
 }
 
 /**
@@ -174,17 +167,13 @@ export function encodeAsJson<T>(value: T, format?: boolean | number): string {
  */
 /*#__NO_SIDE_EFFECTS__*/
 export function encodeAsHtml(value: string) {
-	!_htmlEntityCache &&
-		(_htmlEntityCache = {
-			"&": "amp",
-			"<": "lt",
-			">": "gt",
-			'"': "quot",
-			"'": "#39",
-		});
-
-	return asString(value).replace(
-		/[&<>"']/g,
-		(match) => "&" + _htmlEntityCache[match] + ";",
-	);
+    !_htmlEntityCache && (_htmlEntityCache = {
+        "&": "amp",
+        "<": "lt",
+        ">": "gt",
+        "\"": "quot",
+        "'": "#39"
+    });
+    
+    return asString(value).replace(/[&<>"']/g, match => "&" + _htmlEntityCache[match] + ";");
 }

@@ -51,12 +51,6 @@ import { ArrSlice, CALL, NULL_VALUE } from "../internal/constants";
  * arrSlice(lyrics, 2, -1); // [ "my", "old", "friend.", "I've", "come", "to" ]
  * ```
  */
-export function arrSlice<T>(
-	theArray: ArrayLike<T>,
-	start?: number,
-	end?: number,
-): T[] {
-	return (
-		(theArray ? (theArray as any)["slice"] : NULL_VALUE) || ArrSlice
-	).apply(theArray, ArrSlice[CALL](arguments, 1));
+export function arrSlice<T>(theArray: ArrayLike<T>, start?: number, end?: number): T[] {
+    return ((theArray ? (theArray as any)["slice"] : NULL_VALUE) || ArrSlice).apply(theArray, ArrSlice[CALL](arguments, 1));
 }

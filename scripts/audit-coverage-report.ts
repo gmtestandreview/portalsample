@@ -8,76 +8,60 @@
  *
  * Usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>
  */
-import { readFileSync } from "node:fs";
-import { pathToFileURL } from "node:url";
+import { readFileSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 
 export type CoverageReportAudit = {
-	nonExecutableEntries: string[];
-	ineligibleExecutableEntries: string[];
-	executableEntryCount: number;
-	verdict: "clean" | "dirty";
+    nonExecutableEntries: string[];
+    ineligibleExecutableEntries: string[];
+    executableEntryCount: number;
+    verdict: 'clean' | 'dirty';
 };
 
-const EXECUTABLE_EXTENSIONS = [".ts", ".tsx", ".js", ".jsx", ".mts", ".cts"];
+const EXECUTABLE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts'];
 
-const withoutQuery = (id: string): string => id.split("?")[0];
+const withoutQuery = (id: string): string => id.split('?')[0];
 
-const normalizedPath = (id: string): string =>
-	withoutQuery(id).replaceAll("\\", "/");
+const normalizedPath = (id: string): string => withoutQuery(id).replaceAll('\\', '/');
 
-const normalizedDirectory = (path: string): string =>
-	normalizedPath(path).replace(/\/+$/, "");
+const normalizedDirectory = (path: string): string => normalizedPath(path).replace(/\/+$/, '');
 
 const isExecutable = (id: string): boolean =>
-	EXECUTABLE_EXTENSIONS.some((extension) =>
-		withoutQuery(id).endsWith(extension),
-	);
+    EXECUTABLE_EXTENSIONS.some((extension) => withoutQuery(id).endsWith(extension));
 
-const isIntendedApplicationSource = (
-	id: string,
-	repositoryRoot: string,
-): boolean => {
-	const path = normalizedPath(id);
-	const sourceRoot = `${normalizedDirectory(repositoryRoot)}/ClientApp/src/`;
+const isIntendedApplicationSource = (id: string, repositoryRoot: string): boolean => {
+    const path = normalizedPath(id);
+    const sourceRoot = `${normalizedDirectory(repositoryRoot)}/ClientApp/src/`;
 
-	return (
-		path.startsWith(sourceRoot) &&
-		!path.startsWith(`${sourceRoot}api/web-api-client.ts`) &&
-		!path.startsWith(`${sourceRoot}external/`) &&
-		!path.startsWith(`${sourceRoot}storybook/`) &&
-		!/\.(?:test|spec|stories)\.[cm]?[jt]sx?$/.test(path)
-	);
+    return (
+        path.startsWith(sourceRoot) &&
+        !path.startsWith(`${sourceRoot}api/web-api-client.ts`) &&
+        !path.startsWith(`${sourceRoot}external/`) &&
+        !path.startsWith(`${sourceRoot}storybook/`) &&
+        !/\.(?:test|spec|stories)\.[cm]?[jt]sx?$/.test(path)
+    );
 };
 
 export const auditCoverageReport = (
-	report: Record<string, unknown>,
-	minimumExecutableEntries: number,
-	repositoryRoot = process.cwd(),
+    report: Record<string, unknown>,
+    minimumExecutableEntries: number,
+    repositoryRoot = process.cwd(),
 ): CoverageReportAudit => {
-	const ids = Object.keys(report);
-	const nonExecutableEntries = ids.filter((id) => !isExecutable(id));
-	const ineligibleExecutableEntries = ids.filter(
-		(id) =>
-			isExecutable(id) && !isIntendedApplicationSource(id, repositoryRoot),
-	);
-	const executableEntryCount =
-		ids.length -
-		nonExecutableEntries.length -
-		ineligibleExecutableEntries.length;
+    const ids = Object.keys(report);
+    const nonExecutableEntries = ids.filter((id) => !isExecutable(id));
+    const ineligibleExecutableEntries = ids.filter(
+        (id) => isExecutable(id) && !isIntendedApplicationSource(id, repositoryRoot),
+    );
+    const executableEntryCount = ids.length - nonExecutableEntries.length - ineligibleExecutableEntries.length;
 
-	const verdict =
-		nonExecutableEntries.length === 0 &&
-		ineligibleExecutableEntries.length === 0 &&
-		executableEntryCount >= minimumExecutableEntries
-			? "clean"
-			: "dirty";
+    const verdict =
+        nonExecutableEntries.length === 0 &&
+        ineligibleExecutableEntries.length === 0 &&
+        executableEntryCount >= minimumExecutableEntries
+            ? 'clean'
+            : 'dirty';
 
-	return {
-		nonExecutableEntries,
-		ineligibleExecutableEntries,
-		executableEntryCount,
-		verdict,
-	};
+    return { nonExecutableEntries, ineligibleExecutableEntries, executableEntryCount, verdict };
 };
 
 /**
@@ -86,36 +70,29 @@ export const auditCoverageReport = (
  * the runner's own arguments, and parse an arbitrary path at import time.
  */
 const isEntryPoint = (): boolean => {
-	const entry = process.argv[1];
+    const entry = process.argv[1];
 
-	return entry !== undefined && pathToFileURL(entry).href === import.meta.url;
+    return entry !== undefined && pathToFileURL(entry).href === import.meta.url;
 };
 
 if (isEntryPoint()) {
-	const [, , reportPath, minimum] = process.argv;
+    const [, , reportPath, minimum] = process.argv;
 
-	if (reportPath === undefined) {
-		process.stdout.write(
-			"usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>\n",
-		);
-		process.exitCode = 2;
-	} else {
-		const report = JSON.parse(readFileSync(reportPath, "utf8")) as Record<
-			string,
-			unknown
-		>;
-		const audit = auditCoverageReport(report, Number(minimum ?? 1));
+    if (reportPath === undefined) {
+        process.stdout.write(
+            'usage: node scripts/audit-coverage-report.ts <coverage-final.json> <min-entries>\n',
+        );
+        process.exitCode = 2;
+    } else {
+        const report = JSON.parse(readFileSync(reportPath, 'utf8')) as Record<string, unknown>;
+        const audit = auditCoverageReport(report, Number(minimum ?? 1));
 
-		process.stdout.write(
-			`${audit.verdict.toUpperCase()}  ${reportPath}\n` +
-				`  executable entries: ${audit.executableEntryCount}\n` +
-				audit.nonExecutableEntries
-					.map((id) => `  non-executable: ${id}\n`)
-					.join("") +
-				audit.ineligibleExecutableEntries
-					.map((id) => `  ineligible executable: ${id}\n`)
-					.join(""),
-		);
-		process.exitCode = audit.verdict === "clean" ? 0 : 1;
-	}
+        process.stdout.write(
+            `${audit.verdict.toUpperCase()}  ${reportPath}\n` +
+                `  executable entries: ${audit.executableEntryCount}\n` +
+                audit.nonExecutableEntries.map((id) => `  non-executable: ${id}\n`).join('') +
+                audit.ineligibleExecutableEntries.map((id) => `  ineligible executable: ${id}\n`).join(''),
+        );
+        process.exitCode = audit.verdict === 'clean' ? 0 : 1;
+    }
 }

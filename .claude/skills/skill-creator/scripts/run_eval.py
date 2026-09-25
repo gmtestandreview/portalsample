@@ -430,51 +430,17 @@ def _yaml_double_quoted(value: str) -> str:
     return _YAML_ESCAPE_RE.sub(lambda match: f"\\u{ord(match.group()):04x}", quoted)
 
 
-def _copy_distractor_skills(
-    distractor_dir: Path,
-    skills_root: Path,
-    excluded_names: frozenset[str],
-) -> None:
-    """Copy only each distractor skill's SKILL.md beside the candidate skill.
-
-    Distractors give the model competing skills to choose from, so trigger
-    rates are not inflated by the candidate being the only skill available.
-    ``excluded_names`` keeps the candidate itself (by original or generated
-    name) from appearing as its own competitor.
-    """
-    for source in sorted(distractor_dir.iterdir()):
-        skill_file = source / SKILL_FILENAME
-        if source.name in excluded_names or not skill_file.is_file():
-            continue
-        target = skills_root / source.name
-        target.mkdir()
-        shutil.copyfile(skill_file, target / SKILL_FILENAME)
-
-
 def _create_eval_project(
     skill_name: str,
     skill_description: str,
-    distractor_dir: Path | None = None,
 ) -> tuple[Path, str]:
-    """Create an isolated temporary Claude project containing one valid skill.
-
-    When ``distractor_dir`` is given, other skills found there are copied in
-    (SKILL.md only) as competing skills.
-    """
+    """Create an isolated temporary Claude project containing one valid skill."""
     validated_name = _validate_skill_name(skill_name)
     validated_description = _validate_description(skill_description)
-    if distractor_dir is not None and not distractor_dir.is_dir():
-        raise ValueError(f"distractor skills directory not found: {distractor_dir}")
     clean_name = _generated_skill_name(validated_name)
     eval_project_root = Path(tempfile.mkdtemp(prefix="skill-activation-eval-"))
     skill_dir = eval_project_root / ".claude" / "skills" / clean_name
     skill_dir.mkdir(parents=True, exist_ok=False)
-    if distractor_dir is not None:
-        _copy_distractor_skills(
-            distractor_dir,
-            skill_dir.parent,
-            frozenset({validated_name, clean_name}),
-        )
 
     skill_content = (
         "---\n"
@@ -786,7 +752,6 @@ def run_single_query(
     project_root: str,
     model: str | None = None,
     claude_executable: str = "claude",
-    distractor_dir: str | None = None,
 ) -> bool:
     """Run one query and return whether the isolated skill was triggered.
 
@@ -804,7 +769,6 @@ def run_single_query(
     eval_project_root, clean_name = _create_eval_project(
         skill_name,
         skill_description,
-        Path(distractor_dir) if distractor_dir is not None else None,
     )
     try:
         process = _launch_claude(
@@ -1044,7 +1008,6 @@ def run_eval(
     runs_per_query: int = 1,
     trigger_threshold: float = 0.5,
     model: str | None = None,
-    distractor_dir: Path | None = None,
 ) -> EvalOutput:
     """Run the full eval set and return deterministic, evidence-safe results."""
     _validate_run_eval_inputs(
@@ -1057,8 +1020,6 @@ def run_eval(
         model,
     )
     items = _validate_eval_set(eval_set, runs_per_query, trigger_threshold)
-    if distractor_dir is not None and not distractor_dir.is_dir():
-        raise ValueError(f"distractor skills directory not found: {distractor_dir}")
     claude_executable = _require_claude_cli()
 
     outcomes: list[list[bool | None]] = [
@@ -1082,7 +1043,6 @@ def run_eval(
                     str(project_root),
                     model,
                     claude_executable,
-                    str(distractor_dir) if distractor_dir is not None else None,
                 )
                 future_to_attempt[future] = _Attempt(item_index, run_index)
 
@@ -1225,14 +1185,6 @@ def _build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Model to use for claude -p (default: user's configured model)",
     )
-    parser.add_argument(
-        "--distractor-skills",
-        default=None,
-        help=(
-            "Directory of other skills; each SKILL.md is copied into the eval project "
-            "as a competing skill so trigger rates reflect a multi-skill environment"
-        ),
-    )
     parser.add_argument("--verbose", action="store_true", help="Print progress to stderr")
     return parser
 
@@ -1291,11 +1243,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             runs_per_query=cast(int, args.runs_per_query),
             trigger_threshold=cast(float, args.trigger_threshold),
             model=cast(str | None, args.model),
-            distractor_dir=(
-                Path(cast(str, args.distractor_skills))
-                if args.distractor_skills is not None
-                else None
-            ),
         )
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
