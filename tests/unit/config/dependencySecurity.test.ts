@@ -137,7 +137,7 @@ describe('lint cohort', () => {
     const cohort = new Map([
         ['eslint', '10.9.0'],
         ['@eslint/js', '10.0.1'],
-        ['typescript-eslint', '8.67.0'],
+        ['typescript-eslint', '8.70.1'],
         ['@eslint-react/eslint-plugin', '5.18.6'],
         ['eslint-plugin-react-hooks', '7.1.1'],
         ['@stylistic/eslint-plugin', '5.10.0'],

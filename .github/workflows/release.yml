@@ -70,7 +70,7 @@ jobs:
       # each run exactly once: duplicating minutes and risking a different
       # result than the run that owns this status.
       - name: Upload unit coverage
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-unit-coverage
           path: reports/coverage/unit
@@ -132,7 +132,7 @@ jobs:
       # reports/coverage/unit/lcov.info, and a missing report is imported as
       # zero coverage rather than raising an error.
       - name: Restore unit coverage from quality-gate
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: release-unit-coverage
           path: reports/coverage/unit
@@ -143,14 +143,14 @@ jobs:
       # prebuilt Scanner CLI and verifies its GPG signature (skipSignatureVerification defaults to
       # false), so nothing from npm executes during scanner setup.
       #
-      # Pinned by commit SHA, which is refs/tags/v8.1.0. scannerVersion is deliberately left at the
-      # action's own default (8.1.0.6389) so the CLI moves only when this SHA moves - the same
-      # reason npm is pinned above, an unpinned scanner can shift analysis results between runs
-      # with no commit to explain it.
+      # Pinned by commit SHA, which is refs/tags/v8.2.1. scannerVersion is deliberately left at the
+      # action's own default so the CLI moves only when this SHA moves - the same reason npm is
+      # pinned above, an unpinned scanner can shift analysis results between runs with no commit
+      # to explain it.
       #
       # sonar.qualitygate.wait makes a red gate fail this job.
       - name: SonarQube scan
-        uses: SonarSource/sonarqube-scan-action@7006c4492b2e0ee0f816d36501671557c97f5995 # v8.1.0
+        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
@@ -168,7 +168,7 @@ jobs:
 
       - name: Upload SonarCloud evidence
         if: always()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: sonarcloud-${{ github.run_attempt }}
           path: reports/ci/sonarcloud/**

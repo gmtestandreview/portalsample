@@ -89,7 +89,7 @@ const partitions = [
  * matrix into the three `vitest-*` statuses, so six job keys expose the eight
  * required statuses.
  */
-const declaredJobs = ['static-quality-node24', 'vitest', 'build-node24', 'date-timezone', 'e2e-node24', 'lower-bound-node24', 'sonarcloud'];
+const declaredJobs = ['static-quality-node24', 'vitest', 'build-node24', 'date-timezone', 'e2e-node24', 'lower-bound-node24'];
 
 /**
  * Helper jobs that gate the narrowly-scoped checks (agent-tooling, date-timezone)
@@ -344,7 +344,10 @@ describe('the lower-bound job proves the declared Node floor', () => {
 });
 
 describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
-    const block = jobBlock(workflow, 'sonarcloud');
+    // Lives in release.yml, not pr.yml: pull_request withholds secrets
+    // (including SONAR_TOKEN) from fork-originated runs, which is how this
+    // repo's PRs are treated, so the scan runs on push: main instead.
+    const block = jobBlock(releaseWorkflow, 'sonarcloud');
 
     it('checks out full history so blame can attribute new code', () => {
         // SonarCloud decides what counts as new code from SCM blame dates. A
@@ -358,7 +361,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
         // the unit suite here would duplicate several minutes per PR and could
         // report a different result than the partition that owns that status.
         expect(block).toContain(`uses: ${DOWNLOAD_ARTIFACT_PIN}`);
-        expect(block).toContain('vitest-unit-coverage-');
+        expect(block).toContain('release-unit-coverage');
         expect(block).not.toContain('npm run test:ci:unit');
     });
 
@@ -371,7 +374,11 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
     });
 
     it('waits for the partition that produces the coverage it consumes', () => {
-        expect(block).toContain('needs: vitest');
+        expect(block).toContain('needs: quality-gate');
+    });
+
+    it('uploads its evidence via the shared upload-artifact pin', () => {
+        expect(block).toContain(`uses: ${UPLOAD_ARTIFACT_PIN}`);
     });
 
     it('uses the official scanner action at the intended immutable commit', () => {
@@ -424,8 +431,9 @@ describe('no partition may mask a failure', () => {
             expect(contents).toContain('run: corepack enable');
             expect(contents).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
         }
-        // One corepack activation per job that installs dependencies.
-        expect(occurrences('run: corepack enable')).toBe(7);
+        // One corepack activation per job that installs dependencies. The
+        // sonarcloud job's activation now lives in release.yml, not here.
+        expect(occurrences('run: corepack enable')).toBe(6);
     });
 
     it('invokes the installed Playwright binary directly, not via npx', () => {
