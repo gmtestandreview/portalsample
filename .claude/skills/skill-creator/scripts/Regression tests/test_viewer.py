@@ -52,7 +52,7 @@ class ViewerOptimizedTests(unittest.TestCase):
         node = shutil.which("node")
         if node is None:
             self.skipTest("node unavailable")
-        scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script>", self.text, flags=re.S | re.I)
+        scripts = re.findall(r"<script(?:\s[^>]*)?>(.*?)</script\b[^>]*>", self.text, flags=re.S | re.I)
         self.assertTrue(scripts)
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "viewer.js"
