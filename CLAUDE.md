@@ -46,12 +46,12 @@ Do not suppress React `act(...)` warnings in Storybook stories or setup. Treat t
 Before the first Storybook MCP call, ensure `npm run storybook` is running and `http://localhost:6006/mcp` responds successfully. Confirm the configured `my-storybook-mcp-server` points to that endpoint. If the agent client started before Storybook was ready and the tools are absent, restart the client after the endpoint is healthy; do not bypass the MCP requirement.
 
 - **CRITICAL: Never hallucinate component properties!** Before using ANY property on a component from a design system (including common-sounding ones like `shadow`, etc.), you MUST use the MCP tools to check if the property is actually documented for that component.
-- Query `list-all-documentation` to get a list of all components
-- Query `get-documentation` for that component to see all available properties and examples
+- Query `docs-list` to get a list of all components
+- Query `docs-show` for that component to see all available properties and examples
 - Only use properties that are explicitly documented or shown in example stories
 - If a property isn't documented, do not assume properties based on naming conventions or common patterns from other libraries. Check back with the user in these cases.
 - Use the `get-storybook-story-instructions` tool to fetch the latest instructions for creating or updating stories. This will ensure you follow current conventions and recommendations.
-- Check your work by running `run-story-tests`.
+- Check your work by running `test-run`.
 
 Remember: A story name might not reflect the property name correctly, so always verify properties through documentation or example stories before using them.
 

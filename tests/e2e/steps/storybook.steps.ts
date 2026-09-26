@@ -38,9 +38,7 @@ type McpEnvelope = {
 
 async function readMcpEvent(response: APIResponse): Promise<McpEnvelope> {
     const body = await response.text();
-    const dataLine = body
-        .split(/\r?\n/)
-        .find((line) => line.startsWith('data: '));
+    const dataLine = body.split(/\r?\n/).find((line) => line.startsWith('data: '));
 
     if (dataLine === undefined) {
         throw new Error(`MCP response did not contain an SSE data event: ${body}`);
@@ -59,13 +57,14 @@ async function loadStoryIframe(page: Page, storyId: string) {
     // on failure) — a portal-safe signal, unlike #storybook-root content which
     // stays empty for modal/toast stories. Best-effort: the step's own assertion
     // keeps its own timeout and remains the source of truth for a broken story.
-    await page.waitForFunction(
-        () => document.body.classList.contains('sb-show-main'),
-        undefined,
-        { timeout: STORY_RENDER_TIMEOUT_MS, polling: 100 },
-    ).catch(() => {
-        // Slow cold compile — fall through to the assertion's own wait.
-    });
+    await page
+        .waitForFunction(() => document.body.classList.contains('sb-show-main'), undefined, {
+            timeout: STORY_RENDER_TIMEOUT_MS,
+            polling: 100,
+        })
+        .catch(() => {
+            // Slow cold compile — fall through to the assertion's own wait.
+        });
     // Let late XHRs (MSW handlers, lazy assets) settle; best-effort as before.
     await page.waitForLoadState('networkidle', { timeout: 15_000 }).catch(() => {
         // networkidle can be flaky with MSW; continue after domcontentloaded
@@ -92,67 +91,52 @@ Given('the Storybook MCP server is running', async ({ request }) => {
     });
 
     expect(response.status()).toBe(200);
-    expect(await response.text()).toContain(
-        'Storybook MCP server successfully running',
-    );
+    expect(await response.text()).toContain('Storybook MCP server successfully running');
 });
 
-Then(
-    'the Storybook MCP endpoint should initialize and list configured tools',
-    async ({ request }) => {
-        const initialize = await request.post(`${STORYBOOK_BASE}/mcp`, {
-            headers: MCP_HEADERS,
-            data: {
-                jsonrpc: '2.0',
-                id: 1,
-                method: 'initialize',
-                params: {
-                    protocolVersion: '2025-03-26',
-                    capabilities: {},
-                    clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
-                },
+Then('the Storybook MCP endpoint should initialize and list configured tools', async ({ request }) => {
+    const initialize = await request.post(`${STORYBOOK_BASE}/mcp`, {
+        headers: MCP_HEADERS,
+        data: {
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'initialize',
+            params: {
+                protocolVersion: '2025-03-26',
+                capabilities: {},
+                clientInfo: { name: 'dependency-security-test', version: '1.0.0' },
             },
-        });
+        },
+    });
 
-        expect(initialize.status()).toBe(200);
-        const sessionId = initialize.headers()['mcp-session-id'];
-        if (sessionId === undefined) {
-            throw new Error('MCP initialize response did not provide a session ID');
-        }
-        const initializeEnvelope = await readMcpEvent(initialize);
-        expect(initializeEnvelope.result?.serverInfo?.name).toBe(
-            '@storybook/addon-mcp',
-        );
+    expect(initialize.status()).toBe(200);
+    const sessionId = initialize.headers()['mcp-session-id'];
+    if (sessionId === undefined) {
+        throw new Error('MCP initialize response did not provide a session ID');
+    }
+    const initializeEnvelope = await readMcpEvent(initialize);
+    expect(initializeEnvelope.result?.serverInfo?.name).toBe('@storybook/addon-mcp');
 
-        const sessionHeaders = {
-            ...MCP_HEADERS,
-            'mcp-session-id': sessionId,
-        };
-        const initialized = await request.post(`${STORYBOOK_BASE}/mcp`, {
-            headers: sessionHeaders,
-            data: { jsonrpc: '2.0', method: 'notifications/initialized' },
-        });
-        expect(initialized.status()).toBe(202);
+    const sessionHeaders = {
+        ...MCP_HEADERS,
+        'mcp-session-id': sessionId,
+    };
+    const initialized = await request.post(`${STORYBOOK_BASE}/mcp`, {
+        headers: sessionHeaders,
+        data: { jsonrpc: '2.0', method: 'notifications/initialized' },
+    });
+    expect(initialized.status()).toBe(202);
 
-        const toolsList = await request.post(`${STORYBOOK_BASE}/mcp`, {
-            headers: sessionHeaders,
-            data: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
-        });
-        expect(toolsList.status()).toBe(200);
-        const toolsEnvelope = await readMcpEvent(toolsList);
-        const toolNames =
-            toolsEnvelope.result?.tools?.map(({ name }) => name) ?? [];
+    const toolsList = await request.post(`${STORYBOOK_BASE}/mcp`, {
+        headers: sessionHeaders,
+        data: { jsonrpc: '2.0', id: 2, method: 'tools/list', params: {} },
+    });
+    expect(toolsList.status()).toBe(200);
+    const toolsEnvelope = await readMcpEvent(toolsList);
+    const toolNames = toolsEnvelope.result?.tools?.map(({ name }) => name) ?? [];
 
-        expect(toolNames).toEqual(
-            expect.arrayContaining([
-                'list-all-documentation',
-                'preview-stories',
-                'display-review',
-                'run-story-tests',
-            ]),
-        );
-    },
-);
+    expect(toolNames).toEqual(expect.arrayContaining(['docs-list', 'stories-preview', 'review-create', 'test-run']));
+});
 
 // ---------------------------------------------------------------------------
 // Background steps
@@ -192,12 +176,9 @@ Given('I am viewing Storybook stories for modals', async () => {});
 // Navigation
 // ---------------------------------------------------------------------------
 
-When(
-    'I open a representative component documentation page',
-    async ({ page }) => {
-        await loadDocsIframe(page, REPRESENTATIVE_DOCS_ID);
-    },
-);
+When('I open a representative component documentation page', async ({ page }) => {
+    await loadDocsIframe(page, REPRESENTATIVE_DOCS_ID);
+});
 
 When('I open a representative component story', async ({ page }) => {
     await page.goto(`${STORYBOOK_BASE}/?path=/story/${REPRESENTATIVE_STORY_ID}`);
@@ -207,33 +188,27 @@ When('I open a representative component story', async ({ page }) => {
     // The manager chrome (Addon panel) is present before the preview bundle has
     // compiled. Warm the story: wait for the preview iframe to render real content
     // so the Code addon has a source to display.
-    await expect(
-        page.frameLocator('#storybook-preview-iframe').locator('#storybook-root'),
-    ).not.toBeEmpty({ timeout: STORY_RENDER_TIMEOUT_MS });
+    await expect(page.frameLocator('#storybook-preview-iframe').locator('#storybook-root')).not.toBeEmpty({
+        timeout: STORY_RENDER_TIMEOUT_MS,
+    });
 });
 
 When('I open the Documentation Style Guide', async ({ page }) => {
     await loadDocsIframe(page, STYLE_GUIDE_DOCS_ID);
 });
 
-When(
-    'I load the Storybook story {string}',
-    async ({ page }, storyId: string) => {
-        await loadStoryIframe(page, storyId);
-    },
-);
+When('I load the Storybook story {string}', async ({ page }, storyId: string) => {
+    await loadStoryIframe(page, storyId);
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — text content
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should contain {string}',
-    async ({ page }, text: string) => {
-        const root = page.locator('#storybook-root');
-        await expect(root).toContainText(text, { timeout: 10_000 });
-    },
-);
+Then('the story iframe should contain {string}', async ({ page }, text: string) => {
+    const root = page.locator('#storybook-root');
+    await expect(root).toContainText(text, { timeout: 10_000 });
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — Storybook documentation architecture
@@ -241,10 +216,7 @@ Then(
 
 Then('the component documentation page is visible', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'Pill', exact: true })).toBeVisible();
-    await expect(page.getByText(
-        'Presents a compact, colour-coded label',
-        { exact: false },
-    )).toBeVisible();
+    await expect(page.getByText('Presents a compact, colour-coded label', { exact: false })).toBeVisible();
 });
 
 Then('the component API documentation is visible', async ({ page }) => {
@@ -270,15 +242,12 @@ Then('a Storybook source example is available', async ({ page }) => {
     await expect(visibleSource(page)).toContainText('StatusPill');
 });
 
-Then(
-    'Storybook decorators are not included in the displayed source',
-    async ({ page }) => {
-        const source = visibleSource(page);
+Then('Storybook decorators are not included in the displayed source', async ({ page }) => {
+    const source = visibleSource(page);
 
-        await expect(source).not.toContainText('RouterProvider');
-        await expect(source).not.toContainText('createMemoryRouter');
-    },
-);
+    await expect(source).not.toContainText('RouterProvider');
+    await expect(source).not.toContainText('createMemoryRouter');
+});
 
 Then('the Storybook Code Panel is available', async ({ page }) => {
     const codeTab = page.getByRole('tab', { name: 'Code' });
@@ -320,185 +289,131 @@ Then('its Markdown table is rendered', async ({ page }) => {
     await expect(typeScaleTable.getByRole('columnheader', { name: 'Token' })).toBeVisible();
 });
 
-Then(
-    /^Documentation (Getting Started|Component Documentation Guide|Style Guide) is available$/,
-    async ({ page }, guideName: string) => {
-        const guide = page.getByRole('link', { name: guideName, exact: true });
+Then(/^Documentation (Getting Started|Component Documentation Guide|Style Guide) is available$/, async ({ page }, guideName: string) => {
+    const guide = page.getByRole('link', { name: guideName, exact: true });
 
-        await expect(guide).toBeVisible();
-        await expect(guide).toHaveAttribute('href', /documentation-.*--documentation/);
-    },
-);
+    await expect(guide).toBeVisible();
+    await expect(guide).toHaveAttribute('href', /documentation-.*--documentation/);
+});
 
-Then(
-    'the Storybook portal should contain {string}',
-    async ({ page }, text: string) => {
-        const portalContent = page.locator(
-            '.modal, [role="dialog"], [role="alert"], [id^="notif-"]',
-        );
-        await expect(portalContent.filter({ hasText: text }).first()).toBeVisible({
-            timeout: 10_000,
-        });
-    },
-);
+Then('the Storybook portal should contain {string}', async ({ page }, text: string) => {
+    const portalContent = page.locator('.modal, [role="dialog"], [role="alert"], [id^="notif-"]');
+    await expect(portalContent.filter({ hasText: text }).first()).toBeVisible({
+        timeout: 10_000,
+    });
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — buttons
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should have a button with accessible name {string}',
-    async ({ page }, name: string) => {
-        const btn = page.getByRole('button', { name });
-        await expect(btn.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a button with accessible name {string}', async ({ page }, name: string) => {
+    const btn = page.getByRole('button', { name });
+    await expect(btn.first()).toBeVisible({ timeout: 10_000 });
+});
 
-Then(
-    'the story iframe should have a link with accessible name {string}',
-    async ({ page }, name: string) => {
-        const link = page.getByRole('link', { name });
-        await expect(link.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a link with accessible name {string}', async ({ page }, name: string) => {
+    const link = page.getByRole('link', { name });
+    await expect(link.first()).toBeVisible({ timeout: 10_000 });
+});
 
-Then(
-    'the story iframe should have a dialog with accessible name {string}',
-    async ({ page }, name: string) => {
-        const dialog = page.getByRole('dialog', { name });
-        await expect(dialog.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a dialog with accessible name {string}', async ({ page }, name: string) => {
+    const dialog = page.getByRole('dialog', { name });
+    await expect(dialog.first()).toBeVisible({ timeout: 10_000 });
+});
 
-Then(
-    'the story iframe should have a disabled button with accessible name {string}',
-    async ({ page }, name: string) => {
-        const btn = page.getByRole('button', { name });
-        await expect(btn.first()).toBeDisabled({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a disabled button with accessible name {string}', async ({ page }, name: string) => {
+    const btn = page.getByRole('button', { name });
+    await expect(btn.first()).toBeDisabled({ timeout: 10_000 });
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — landmarks
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should have a navigation landmark',
-    async ({ page }) => {
-        const nav = page.getByRole('navigation');
-        await expect(nav.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a navigation landmark', async ({ page }) => {
+    const nav = page.getByRole('navigation');
+    await expect(nav.first()).toBeVisible({ timeout: 10_000 });
+});
 
-Then(
-    'the story iframe should have a contentinfo landmark',
-    async ({ page }) => {
-        const footer = page.getByRole('contentinfo');
-        await expect(footer.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a contentinfo landmark', async ({ page }) => {
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.first()).toBeVisible({ timeout: 10_000 });
+});
 
-Then(
-    'the story iframe should have a content info landmark',
-    async ({ page }) => {
-        const footer = page.getByRole('contentinfo');
-        await expect(footer.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a content info landmark', async ({ page }) => {
+    const footer = page.getByRole('contentinfo');
+    await expect(footer.first()).toBeVisible({ timeout: 10_000 });
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — form elements
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should have a text input for searching',
-    async ({ page }) => {
-        // SearchFilter uses a search input or text input with a placeholder
-        const searchInput = page.locator('input[type="search"], input[type="text"]');
-        await expect(searchInput.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should have a text input for searching', async ({ page }) => {
+    // SearchFilter uses a search input or text input with a placeholder
+    const searchInput = page.locator('input[type="search"], input[type="text"]');
+    await expect(searchInput.first()).toBeVisible({ timeout: 10_000 });
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — pill / status badges
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should contain text matching a dashboard status label',
-    async ({ page }) => {
-        // The pill renders status text; assert at least one span/badge is visible
-        const root = page.locator('#storybook-root');
-        await expect(root).toBeVisible({ timeout: 10_000 });
-        // At least one pill should be rendered
-        const pills = root.locator('span, .badge, [class*="pill"], [class*="status"]');
-        await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should contain text matching a dashboard status label', async ({ page }) => {
+    // The pill renders status text; assert at least one span/badge is visible
+    const root = page.locator('#storybook-root');
+    await expect(root).toBeVisible({ timeout: 10_000 });
+    // At least one pill should be rendered
+    const pills = root.locator('span, .badge, [class*="pill"], [class*="status"]');
+    await expect(pills.first()).toBeVisible({ timeout: 10_000 });
+});
 
-Then(
-    'the story iframe should contain text matching a quote status label',
-    async ({ page }) => {
-        const root = page.locator('#storybook-root');
-        await expect(root).toBeVisible({ timeout: 10_000 });
-        const pills = root.locator('span, .badge, [class*="pill"], [class*="status"]');
-        await expect(pills.first()).toBeVisible({ timeout: 10_000 });
-    },
-);
+Then('the story iframe should contain text matching a quote status label', async ({ page }) => {
+    const root = page.locator('#storybook-root');
+    await expect(root).toBeVisible({ timeout: 10_000 });
+    const pills = root.locator('span, .badge, [class*="pill"], [class*="status"]');
+    await expect(pills.first()).toBeVisible({ timeout: 10_000 });
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — pagination
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should not show pagination controls',
-    async ({ page }) => {
-        await expect(page.getByRole('navigation', { name: /pagination/i })).toHaveCount(0);
-        await expect(page.getByRole('button', {
+Then('the story iframe should not show pagination controls', async ({ page }) => {
+    await expect(page.getByRole('navigation', { name: /pagination/i })).toHaveCount(0);
+    await expect(
+        page.getByRole('button', {
             name: /next page|previous page/i,
-        })).toHaveCount(0);
-    },
-);
+        }),
+    ).toHaveCount(0);
+});
 
 // ---------------------------------------------------------------------------
 // Assertions — generic visibility
 // ---------------------------------------------------------------------------
 
-Then(
-    'the story iframe should be visible',
-    async ({ page }) => {
-        await expect(page.locator('#storybook-root')).toBeVisible({ timeout: 10_000 });
-        await expect(page.getByText(
-            'Something went wrong',
-            { exact: false },
-        )).toHaveCount(0);
-    },
-);
+Then('the story iframe should be visible', async ({ page }) => {
+    await expect(page.locator('#storybook-root')).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('Something went wrong', { exact: false })).toHaveCount(0);
+});
 
 // ---------------------------------------------------------------------------
 // Interactions
 // ---------------------------------------------------------------------------
 
-When(
-    'I click the button with accessible name {string} in the story iframe',
-    async ({ page }, name: string) => {
-        const btn = page.getByRole('button', { name });
-        await btn.first().click();
-    },
-);
+When('I click the button with accessible name {string} in the story iframe', async ({ page }, name: string) => {
+    const btn = page.getByRole('button', { name });
+    await btn.first().click();
+});
 
-When(
-    'I click the link with accessible name {string} in the story iframe',
-    async ({ page }, name: string) => {
-        const link = page.getByRole('link', { name });
-        await link.first().click();
-    },
-);
+When('I click the link with accessible name {string} in the story iframe', async ({ page }, name: string) => {
+    const link = page.getByRole('link', { name });
+    await link.first().click();
+});
 
-Then(
-    'the story should not throw a JavaScript error',
-    async ({ page }) => {
-        // Check that #storybook-root is still present (not replaced by error UI)
-        const root = page.locator('#storybook-root');
-        await expect(root).toBeVisible({ timeout: 5_000 });
-    },
-);
+Then('the story should not throw a JavaScript error', async ({ page }) => {
+    // Check that #storybook-root is still present (not replaced by error UI)
+    const root = page.locator('#storybook-root');
+    await expect(root).toBeVisible({ timeout: 5_000 });
+});

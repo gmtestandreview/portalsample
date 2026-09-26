@@ -9,11 +9,7 @@ afterEach(() => {
     vi.useRealTimers();
 });
 
-const TestRouter = ({ children }: { children: React.ReactNode }) => (
-    <MemoryRouter>
-        {children}
-    </MemoryRouter>
-);
+const TestRouter = ({ children }: { children: React.ReactNode }) => <MemoryRouter>{children}</MemoryRouter>;
 
 describe('ErrorSummary', () => {
     beforeEach(() => {
@@ -24,11 +20,13 @@ describe('ErrorSummary', () => {
         render(
             <TestRouter>
                 <ErrorSummary
-                    serverErrors={{
-                        errors: {
-                            'formStep.Contact[0].FirstName': ['Required'],
-                        },
-                    } as any}
+                    serverErrors={
+                        {
+                            errors: {
+                                'formStep.Contact[0].FirstName': ['Required'],
+                            },
+                        } as any
+                    }
                     prefixToRemove='formStep.'
                 />
             </TestRouter>,
@@ -42,11 +40,13 @@ describe('ErrorSummary', () => {
         render(
             <TestRouter>
                 <ErrorSummary
-                    serverErrors={{
-                        errors: {
-                            'formStep.Contact[0].FirstName': ['Required'],
-                        },
-                    } as any}
+                    serverErrors={
+                        {
+                            errors: {
+                                'formStep.Contact[0].FirstName': ['Required'],
+                            },
+                        } as any
+                    }
                     prefixToRemove='formStep.'
                     disableLinkedError
                 />
@@ -71,9 +71,7 @@ describe('ErrorSummary', () => {
     it('renders the unprocessable entity server error branch', () => {
         render(
             <TestRouter>
-                <ErrorSummary
-                    serverErrors={{ status: HttpStatusCode.UnprocessableEntity } as any}
-                />
+                <ErrorSummary serverErrors={{ status: HttpStatusCode.UnprocessableEntity } as any} />
             </TestRouter>,
         );
 
@@ -85,12 +83,14 @@ describe('ErrorSummary', () => {
         render(
             <TestRouter>
                 <ErrorSummary
-                    serverErrors={{
-                        errors: {
-                            Contact: [],
-                            FirstName: ['Required'],
-                        },
-                    } as any}
+                    serverErrors={
+                        {
+                            errors: {
+                                Contact: [],
+                                FirstName: ['Required'],
+                            },
+                        } as any
+                    }
                 />
             </TestRouter>,
         );
@@ -117,19 +117,40 @@ describe('ErrorSummary', () => {
         // the rendered Alert has id="form-error-summary" so the querySelector finds it.
         render(
             <TestRouter>
-                <ErrorSummary
-                    serverErrors={{ errors: { FirstName: ['Required'] } } as any}
-                    disableLinkedError
-                />
+                <ErrorSummary serverErrors={{ errors: { FirstName: ['Required'] } } as any} disableLinkedError />
             </TestRouter>,
         );
 
         const summaryEl = document.querySelector('#form-error-summary') as HTMLElement;
         expect(summaryEl).not.toBeNull();
 
-        act(() => { vi.advanceTimersByTime(150); });
+        act(() => {
+            vi.advanceTimersByTime(150);
+        });
 
         expect(summaryEl.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+    });
+
+    it('does not call scrollIntoView when the error summary element cannot be found when handleAlertScroll fires', () => {
+        vi.useFakeTimers();
+        render(
+            <TestRouter>
+                <ErrorSummary serverErrors={{ errors: { FirstName: ['Required'] } } as any} />
+            </TestRouter>,
+        );
+
+        // Simulate document.querySelector('#form-error-summary') finding nothing when the
+        // scheduled timeout fires, without touching the real DOM tree (which would desync
+        // React's fiber tree from the document and break the render's own cleanup).
+        const querySelectorSpy = vi.spyOn(document, 'querySelector').mockReturnValue(null);
+
+        act(() => {
+            vi.advanceTimersByTime(150);
+        });
+
+        expect(HTMLElement.prototype.scrollIntoView).not.toHaveBeenCalled();
+
+        querySelectorSpy.mockRestore();
     });
 
     it('skips undefined error entries in sanitizeErrorData (line 140 else-if false branch)', async () => {
@@ -141,7 +162,9 @@ describe('ErrorSummary', () => {
                     initialValues={{ name: '' }}
                     validate={() => ({ name: undefined as any, extra: 'Shown' as any })}
                     onSubmit={vi.fn()}
-                    innerRef={(instance) => { formikInstance = instance; }}
+                    innerRef={(instance) => {
+                        formikInstance = instance;
+                    }}
                 >
                     <Form>
                         <ErrorSummary />
@@ -170,7 +193,9 @@ describe('ErrorSummary', () => {
                     initialValues={{ name: '' }}
                     validate={(values) => (values.name ? {} : { name: 'Required' })}
                     onSubmit={vi.fn()}
-                    innerRef={(instance) => { formikInstance = instance; }}
+                    innerRef={(instance) => {
+                        formikInstance = instance;
+                    }}
                 >
                     <Form>
                         <ErrorSummary />
@@ -192,9 +217,10 @@ describe('ErrorSummary', () => {
             formikInstance!.setSubmitting(true);
         });
 
-        act(() => { vi.advanceTimersByTime(200); });
+        act(() => {
+            vi.advanceTimersByTime(200);
+        });
 
         expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
     });
-
 });

@@ -36,7 +36,6 @@
     "projectKey": "gmtestandreview_portalsample"
   },
   "vitest.configSearchPatternExclude": "{**/node_modules/**,**/vendor/**,**/.*/**,**/*.d.ts,**/quality/_phase5_lab/**,**/quality/_phase5_seed/**}",
-  "biome.configurationPath": "biome.json",
   "ruff.nativeServer": "on",
   "ruff.lineLength": 100,
   "[typescript]": {

@@ -1,8 +1,6 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
-import {
-    map, startCase, capitalize,
-} from 'lodash';
+import { startCase, capitalize } from 'lodash';
 import { useEffect, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router';
@@ -14,12 +12,10 @@ import { HttpStatusCode } from '../../../types';
 type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;
 
-const isValidationProblemDetails = (
-    value?: ProblemDetails | ValidationProblemDetails,
-)
-: value is ValidationProblemDetails => value != null && 'errors' in value;
+const isValidationProblemDetails = (value?: ProblemDetails | ValidationProblemDetails): value is ValidationProblemDetails =>
+    value != null && 'errors' in value;
 
-const handleAlertScroll = () => {
+const handleAlertScroll = (): ReturnType<typeof setTimeout> =>
     setTimeout(() => {
         const summaryRef: HTMLElement = document.querySelector('#form-error-summary') as HTMLElement;
         if (summaryRef && typeof summaryRef.scrollIntoView === 'function') {
@@ -27,15 +23,9 @@ const handleAlertScroll = () => {
         }
         summaryRef?.focus();
     }, 100);
-};
 
-const renderErrorListItem = (
-    key: string,
-    text: string,
-    disableLinkedError?: boolean,
-): JSX.Element => {
+const renderErrorListItem = (key: string, text: string, disableLinkedError?: boolean): JSX.Element => {
     if (disableLinkedError) {
-        handleAlertScroll();
         return (
             <li key={key}>
                 <span className='text-danger fw-bold'>{text}</span>
@@ -45,10 +35,7 @@ const renderErrorListItem = (
 
     return (
         <li key={key}>
-            <HashLink
-                to={`#${key}`}
-                className='text-danger fw-bold'
-            >
+            <HashLink to={`#${key}`} className='text-danger fw-bold'>
                 {text}
             </HashLink>
         </li>
@@ -58,7 +45,7 @@ const renderErrorListItem = (
 const keyToSentenceCase = (key: string, depth?: number, separator = '.') => {
     const keyParts = key.split(separator);
     let sentenceBuilder = '';
-    map(keyParts, (keyPart, i) => {
+    keyParts.forEach((keyPart, i) => {
         if (Number.isNaN(+keyPart)) {
             if ((depth && i < depth) || !depth) {
                 sentenceBuilder = sentenceBuilder.concat(`${capitalize(startCase(keyPart))}: `);
@@ -90,11 +77,9 @@ const renderErrors = (errors: FlatErrorData, disableLinkedError?: boolean) => (
                 The following issue(s) must be corrected before you can continue:
             </Alert.Heading>
             <ul>
-                {
-                    map(Object.keys(errors), (key) => (
-                        renderErrorListItem(key, `${keyToSentenceCase(key, 1)}${errors[key]}`, disableLinkedError)
-                    ))
-                }
+                {Object.keys(errors).map((key) =>
+                    renderErrorListItem(key, `${keyToSentenceCase(key, 1)}${errors[key]}`, disableLinkedError),
+                )}
             </ul>
         </div>
     </Alert>
@@ -116,9 +101,7 @@ const renderServerError = (error: string | JSX.Element) => (
             </div>
         </div>
         <div>
-            <span className='text-danger fw-bold'>
-                {error}
-            </span>
+            <span className='text-danger fw-bold'>{error}</span>
         </div>
     </Alert>
 );
@@ -130,9 +113,7 @@ const sanitizeErrorData = (
 ): FlatErrorData => {
     const result: FlatErrorData = resultBuilder ?? {};
 
-    const prefix = prefixToAdd === false
-        ? ''
-        : `${prefixToAdd}.`;
+    const prefix = prefixToAdd === false ? '' : `${prefixToAdd}.`;
 
     Object.entries(errorData).forEach(([key, value]) => {
         if (typeof value === 'object' && value !== null) {
@@ -144,11 +125,8 @@ const sanitizeErrorData = (
     return result;
 };
 
-const formatServerErrorKeys = (
-    validationErrors: Record<string, string[]>,
-    prefixToRemove?: string,
-): FlatErrorData => Object.entries(validationErrors).reduce<FlatErrorData>(
-    (result, [key, messages]) => {
+const formatServerErrorKeys = (validationErrors: Record<string, string[]>, prefixToRemove?: string): FlatErrorData =>
+    Object.entries(validationErrors).reduce<FlatErrorData>((result, [key, messages]) => {
         const message = messages[0];
         if (message === undefined) {
             return result;
@@ -160,20 +138,16 @@ const formatServerErrorKeys = (
         }
 
         keyBuilder = keyBuilder.replaceAll('[', '.').replaceAll(']', ''); // remove array braces
-        keyBuilder = map(
-            keyBuilder.split('.'),
-            (part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}`, // lowercase first letter of each subkey
-        ).join('.');
+        keyBuilder = keyBuilder
+            .split('.')
+            .map((part) => `${part.charAt(0).toLowerCase()}${part.slice(1)}`) // lowercase first letter of each subkey
+            .join('.');
         result[keyBuilder] = message;
         return result;
-    },
-    {},
-);
+    }, {});
 
 const FormikErrorsSummary = ({ disableLinkedError }: FormikErrorsSummaryProps) => {
-    const {
-        errors, submitCount, isValidating, isSubmitting,
-    } = useFormikContext<FormikValues>();
+    const { errors, submitCount, isValidating, isSubmitting } = useFormikContext<FormikValues>();
     const [errorSummary, setErrorSummary] = useState<FormikErrors<FormikValues>>({});
     const sanitizedErrorSummary = sanitizeErrorData(errorSummary);
     const hasErrors = Object.keys(sanitizedErrorSummary).length > 0;
@@ -183,7 +157,8 @@ const FormikErrorsSummary = ({ disableLinkedError }: FormikErrorsSummaryProps) =
             setErrorSummary(errors);
         }
         if (isSubmitting && !isValidating && hasErrors) {
-            handleAlertScroll();
+            const timeoutId = handleAlertScroll();
+            return () => clearTimeout(timeoutId);
         }
     }, [errors, submitCount, isValidating, isSubmitting, hasErrors]);
 
@@ -193,23 +168,17 @@ const FormikErrorsSummary = ({ disableLinkedError }: FormikErrorsSummaryProps) =
     return renderErrors(sanitizedErrorSummary, disableLinkedError);
 };
 
-const ErrorSummary = ({
-    serverErrors, prefixToRemove, disableLinkedError, isWafViolation,
-}: ErrorSummaryProps) => {
+const ErrorSummary = ({ serverErrors, prefixToRemove, disableLinkedError, isWafViolation }: ErrorSummaryProps) => {
     useEffect(() => {
         if (serverErrors) {
-            handleAlertScroll();
+            const timeoutId = handleAlertScroll();
+            return () => clearTimeout(timeoutId);
         }
     }, [serverErrors]);
     if (isValidationProblemDetails(serverErrors)) {
         const { errors: validationErrors } = serverErrors;
         if (validationErrors) {
-            return renderErrors(
-                sanitizeErrorData(
-                    formatServerErrorKeys(validationErrors, prefixToRemove),
-                ),
-                disableLinkedError,
-            );
+            return renderErrors(sanitizeErrorData(formatServerErrorKeys(validationErrors, prefixToRemove)), disableLinkedError);
         }
     }
 
@@ -217,11 +186,10 @@ const ErrorSummary = ({
     if (isWafViolation) {
         const error = (
             <>
-                <p className='fw-bold'>
-                    An error has occurred. This form contains invalid characters.
-                </p>
+                <p className='fw-bold'>An error has occurred. This form contains invalid characters.</p>
                 <p className='mb-0'>
-                    Please avoid special characters and where possible use only letters, numbers, comma and period separators before trying again.
+                    Please avoid special characters and where possible use only letters, numbers, comma and period separators before trying
+                    again.
                 </p>
             </>
         );
@@ -232,12 +200,7 @@ const ErrorSummary = ({
         let error;
         switch (serverErrors.status) {
             case HttpStatusCode.Conflict:
-                error = (
-                    <p className='fw-bold'>
-                        Another person has already saved this page.
-                        Your changes have not been saved.
-                    </p>
-                );
+                error = <p className='fw-bold'>Another person has already saved this page. Your changes have not been saved.</p>;
                 break;
             case HttpStatusCode.UnprocessableEntity:
                 error = (
@@ -256,11 +219,7 @@ const ErrorSummary = ({
                 );
                 break;
             default:
-                error = (
-                    <p className='fw-bold'>
-                        Server error
-                    </p>
-                );
+                error = <p className='fw-bold'>Server error</p>;
                 break;
         }
 
