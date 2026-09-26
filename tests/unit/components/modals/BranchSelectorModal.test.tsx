@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import type * as ReactRouterModule from 'react-router';
+import type * as WebApiClientModule from '@/api/web-api-client';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MsalContext, type IMsalContext } from '@azure/msal-react';
 import { InteractionStatus, Logger } from '@azure/msal-browser';
@@ -9,7 +10,6 @@ import { BranchSelectionModalMode } from '@/components/modals/BranchSelectorModa
 import { AccountDispatchCtx, AccountStateCtx } from '@/authentication/accountContext';
 import type { AccountDispatchContext } from '@/authentication/accountContext';
 import { ModalDispatchCtx, ModalStateCtx } from '@/components/modals/ModalContext';
-
 
 // ─── hoisted mocks ────────────────────────────────────────────────────────────
 
@@ -28,14 +28,18 @@ const mocks = vi.hoisted(() => ({
 
 const getOrganisationsByABN = vi.fn();
 
-vi.mock('@/api/web-api-client', () => ({
-    OrganisationsClient: function OrganisationsClient() {
-        return { setAuthToken: vi.fn(), getOrganisationsByABN };
-    },
-    UsersClient: function UsersClient() {
-        return { setAuthToken: vi.fn(), setDefaultOrganisation: mocks.setDefaultOrganisation };
-    },
-}));
+vi.mock('@/api/web-api-client', async (importOriginal) => {
+    const actual = await importOriginal<typeof WebApiClientModule>();
+    return {
+        ...actual,
+        OrganisationsClient: vi.fn(function OrganisationsClientMock() {
+            return { setAuthToken: vi.fn(), getOrganisationsByABN };
+        }),
+        UsersClient: vi.fn(function UsersClientMock() {
+            return { setAuthToken: vi.fn(), setDefaultOrganisation: mocks.setDefaultOrganisation };
+        }),
+    };
+});
 
 vi.mock('@/storage/notification', () => ({
     getBranchModalNotification: () => mocks.getBranchModalNotification(),
@@ -105,7 +109,7 @@ const mockMsalAccount = {
 
 const mockMsalContext: IMsalContext = {
     instance: {
-        acquireTokenSilent: async () => ({ accessToken: 'mock-access-token' } as any),
+        acquireTokenSilent: async () => ({ accessToken: 'mock-access-token' }) as any,
     } as unknown as IMsalContext['instance'],
     inProgress: InteractionStatus.None,
     accounts: [mockMsalAccount],
@@ -262,13 +266,17 @@ describe('BranchSelectorModal', () => {
     it('ignores branch load result after the component unmounts (covers !isActive return in try)', async () => {
         let resolveLoad!: (v: any) => void;
         getOrganisationsByABN.mockReturnValueOnce(
-            new Promise((resolve) => { resolveLoad = resolve; }),
+            new Promise((resolve) => {
+                resolveLoad = resolve;
+            }),
         );
 
         const { unmount } = renderModal();
         unmount();
 
-        await act(async () => { resolveLoad(mockBranches); });
+        await act(async () => {
+            resolveLoad(mockBranches);
+        });
         await Promise.resolve();
 
         expect(mocks.appLoggerError).not.toHaveBeenCalled();
@@ -277,13 +285,17 @@ describe('BranchSelectorModal', () => {
     it('ignores branch load error after the component unmounts (covers !isActive return in catch)', async () => {
         let rejectLoad!: (e: any) => void;
         getOrganisationsByABN.mockReturnValueOnce(
-            new Promise((_, reject) => { rejectLoad = reject; }),
+            new Promise((_, reject) => {
+                rejectLoad = reject;
+            }),
         );
 
         const { unmount } = renderModal();
         unmount();
 
-        await act(async () => { rejectLoad(new Error('stale error')); });
+        await act(async () => {
+            rejectLoad(new Error('stale error'));
+        });
         await Promise.resolve();
 
         // isActive was false when catch executed — error not logged
@@ -395,9 +407,7 @@ describe('BranchSelectorModal', () => {
         fireEvent.click(screen.getByRole('button', { name: /save and continue/i }));
 
         await waitFor(() => {
-            expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(
-                expect.objectContaining({ defaultOrganisationId: 1 }),
-            );
+            expect(mocks.setDefaultOrganisation).toHaveBeenCalledWith(expect.objectContaining({ defaultOrganisationId: 1 }));
         });
         expect(mocks.navigate).toHaveBeenCalledWith('/');
         expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(false);
@@ -446,10 +456,7 @@ describe('BranchSelectorModal', () => {
         await waitFor(() => {
             expect(screen.getByText(/Error trying to save default branch\/location/i)).toBeInTheDocument();
         });
-        expect(mocks.appLoggerError).toHaveBeenCalledWith(
-            'Failed to select organisation',
-            expect.any(Error),
-        );
+        expect(mocks.appLoggerError).toHaveBeenCalledWith('Failed to select organisation', expect.any(Error));
     });
 
     // ── dispatch helpers ────────────────────────────────────────────────────
@@ -509,16 +516,18 @@ describe('BranchSelectorModal', () => {
     });
 
     it('passes empty-string fallbacks when tradingName and branchName are undefined on save', async () => {
-        getOrganisationsByABN.mockResolvedValueOnce([{
-            organisationId: 5,
-            name: 'No-Name Corp',
-            businessListName: 'No-Name WA Office',
-            businessOrTradingName: undefined as unknown as string,
-            branchOrLocationName: undefined as unknown as string,
-            abn: '00000000001',
-            crmGuid: 'guid-005',
-            streetAddress: { suburb: 'Perth', state: 'WA' },
-        }]);
+        getOrganisationsByABN.mockResolvedValueOnce([
+            {
+                organisationId: 5,
+                name: 'No-Name Corp',
+                businessListName: 'No-Name WA Office',
+                businessOrTradingName: undefined as unknown as string,
+                branchOrLocationName: undefined as unknown as string,
+                abn: '00000000001',
+                crmGuid: 'guid-005',
+                streetAddress: { suburb: 'Perth', state: 'WA' },
+            },
+        ]);
 
         renderModal();
 
