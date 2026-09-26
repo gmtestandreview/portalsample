@@ -29,10 +29,7 @@ const coverageConfig: CoverageOptions = {
     // state until Child Plan B1 lands, so coverage evidence has to survive it.
     reportOnFailure: true,
     reportsDirectory: './reports/coverage/unit',
-    include: [
-        'ClientApp/src/**/*.{ts,tsx}',
-        'webpack.config.js',
-    ],
+    include: ['ClientApp/src/**/*.{ts,tsx}', 'webpack.config.js'],
     exclude: [
         '**/*.d.ts',
         'ClientApp/src/api/web-api-client.ts',
@@ -103,7 +100,9 @@ const coverageConfig: CoverageOptions = {
         'ClientApp/src/components/Alert/types.ts',
         'ClientApp/src/components/Inputs/AddressLookup/types.ts',
         'ClientApp/src/components/Inputs/AutoSuggest/types.ts',
+        'ClientApp/src/components/Inputs/Attachment/types.ts',
         'ClientApp/src/components/Inputs/Checkbox/types.ts',
+        'ClientApp/src/components/Inputs/CheckboxGroup/types.ts',
         'ClientApp/src/components/Inputs/DatePicker/types.ts',
         'ClientApp/src/components/Inputs/RadioButton/types.ts',
         'ClientApp/src/components/Inputs/RadioButtonGroup/types.ts',
@@ -113,6 +112,7 @@ const coverageConfig: CoverageOptions = {
         'ClientApp/src/components/RouteLeavingGuard/types.ts',
         'ClientApp/src/components/SearchFilter/filterMenuProps.ts',
         'ClientApp/src/components/SearchFilter/searchBoxProps.ts',
+        'ClientApp/src/components/SearchFilter/TypeApproval/paFilterMenuProps.ts',
         'ClientApp/src/components/SteppedNavigation/types.ts',
         'ClientApp/src/components/SummaryDisplay/types.ts',
         'ClientApp/src/components/forms/types.ts',
