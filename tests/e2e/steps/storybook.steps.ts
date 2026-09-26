@@ -152,10 +152,10 @@ Then(
 
     expect(toolNames).toEqual(
       expect.arrayContaining([
-        'list-all-documentation',
-        'preview-stories',
-        'display-review',
-        'run-story-tests',
+        'docs-list',
+        'stories-preview',
+        'review-create',
+        'test-run',
       ])
     );
   }
