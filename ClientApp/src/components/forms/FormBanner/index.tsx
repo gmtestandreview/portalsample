@@ -106,6 +106,7 @@ const FormBanner = ({
                                         >
                                             <h2 id='form-navbar-title' className='visually-hidden'>Form actions</h2>
                                             <div className='d-grid d-lg-block'>
+                                                {/* eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag */}
                                                 <LinkButton
                                                     data-testid='form-go-to-dashboard-portal-button'
                                                     to='/dashboard'
