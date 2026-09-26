@@ -1,0 +1,36 @@
+{
+  "iteration": 3,
+  "static_checks": {
+    "parent_directory_matches_name": true,
+    "frontmatter_present": true,
+    "name_valid": true,
+    "description_what_when": true,
+    "body_under_200_lines": true,
+    "body_under_2000_words": true,
+    "reference_resolves": true,
+    "dry_run_evidence_retained": true,
+    "regression_cases_present": true,
+    "formal_dry_run_contract": true,
+    "action_scope_first": true,
+    "complete_manifest_required": true,
+    "stale_hash_detection": true,
+    "plan_binding": true,
+    "logical_vs_physical": true,
+    "pre_execution_revalidation": true
+  },
+  "all_static_checks_passed": true,
+  "skill_body_lines": 173,
+  "skill_body_words": 1695,
+  "evidence": {
+    "dry_run": "User-supplied evidence retained",
+    "actual_execution": "Not authorized/tested; analysis-only evidence does not authorize execution",
+    "classification_approval": "NHR",
+    "pre_execution_revalidation": "N/A for dry run; must be demonstrated before execution"
+  },
+  "scores": {
+    "devils_advocate_before": 81,
+    "devils_advocate_after_static_remediation": 97,
+    "note": "97 is a design/static remediation score. It does not convert untested execution gates into PASS."
+  },
+  "recommendation": "hold"
+}
