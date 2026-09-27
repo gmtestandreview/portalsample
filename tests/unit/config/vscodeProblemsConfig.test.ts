@@ -69,6 +69,27 @@ describe('VS Code Problems configuration', () => {
         );
     });
 
+    it('keeps formatted detail citations visible in machine-readable output', () => {
+        const result = spawnSync(
+            process.execPath,
+            ['scripts/verify-rule-citations.mjs', '--json'],
+            {
+                cwd: repoRoot,
+                encoding: 'utf8',
+            },
+        );
+
+        expect(result.status).toBe(0);
+        const report = JSON.parse(result.stdout) as {
+            results: Array<{ where: string; cited: number | null }>;
+        };
+        expect(report.results).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({ where: 'detail', cited: expect.any(Number) }),
+            ]),
+        );
+    });
+
     it('defines VS Code tasks that feed diagnostics into Problems', () => {
         const tasks = readJson<{
             version: string;

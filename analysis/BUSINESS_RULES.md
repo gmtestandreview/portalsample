@@ -576,7 +576,7 @@ Then   display: "Invoices must be paid within 30 days of NMI invoice date.
 ### RULE-018: Draft-Save Capability by Wizard
 
 **Category:** Policy **Priority:** P1 **Source:**
-`ClientApp/src/routes/requestForQuote/index.tsx:132`,
+`ClientApp/src/routes/requestForQuote/index.tsx:117`,
 `ClientApp/src/routes/acceptQuote/index.tsx:39`,
 `ClientApp/src/routes/account/create/index.tsx:18`,
 `ClientApp/src/routes/contact/create/index.tsx:18` **Plain English:** Multi-step
@@ -600,7 +600,7 @@ accidental navigation for all wizards regardless of `canSaveDraft`
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
 `ClientApp/src/routes/measurementReport/reportList.tsx:95`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:362` **Plain English:**
+`ClientApp/src/components/RequestList/instrumentItem.tsx:174` **Plain English:**
 A withdrawn measurement report cannot be viewed or downloaded.
 **Specification:**
 
