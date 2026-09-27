@@ -7,9 +7,8 @@ import {
   type ValidationResult,
 } from 'react-aria-components/DateRangePicker';
 import { DateInput, DateSegment } from '../AriaDateField/DateField';
-import { Description, FieldButton } from '../../forms/AriaForm/Form';
+import { Description, FieldButton , Label, FieldError } from '../../forms/AriaForm/Form';
 import { Popover } from '../../AriaComponents/Popover';
-import { Label, FieldError } from '../../forms/AriaForm/Form';
 import { RangeCalendar } from '../../AriaComponents/RangeCalendar';
 import { ChevronDown } from '../../AriaComponents/NmiIcon';
 import './DateRangePicker.css';
@@ -25,7 +24,7 @@ export function DateRangePicker<T extends DateValue>({
   description,
   errorMessage,
   ...props
-}: DateRangePickerProps<T>) {
+}: Readonly<DateRangePickerProps<T>>) {
   return (
     <AriaDateRangePicker {...props}>
       <Label>{label}</Label>

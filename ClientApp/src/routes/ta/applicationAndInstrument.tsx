@@ -221,7 +221,7 @@ const ApplicationAndInstrument = (props: TAApplicationAndInstrumentProps) => {
         context.setFieldValue('instrumentType', '');
         context.setFieldTouched('instrumentType', false);
         if (event.target.value !== null && instrumentTypes !== undefined) {
-            await setInstrumentTypesSelected(getInstrumentTypes(instrumentTypes, event.target.value));
+            setInstrumentTypesSelected(getInstrumentTypes(instrumentTypes, event.target.value));
             if (event.target.value === noInstrumentCategoriestId.current) {
                 context.setFieldValue('instrumentType', noInstrumentTypeId.current);
                 setIsInstrumentTypeDisabled(true);

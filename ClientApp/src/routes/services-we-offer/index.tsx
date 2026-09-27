@@ -61,7 +61,7 @@ const ServicesWeOffer = () => {
     useEffect(() => {
         const loadServices = async () => {
             try {
-                if (!services.length && accounts.length > 0 && accountDetails && accountDetails.userProfile) {
+                if (!services.length && accounts.length > 0 && accountDetails?.userProfile) {
                     // Raised before the token round trip, not after it. Acquiring the token is
                     // itself a network call, and while it was in flight the selector rendered with
                     // an empty service list and no spinner - which reads as "you have no services"
@@ -305,7 +305,7 @@ const ServicesWeOffer = () => {
                                 <legend className='h5 visually-hidden'>
                                     Set your default view and/or add more NMI services to your account
                                 </legend>
-                                {services && services.map((service) => (
+                                {services?.map((service) => (
                                     <Card
                                         key={service.serviceType}
                                         className={`mb-4 border border-3 border-light ${
@@ -393,7 +393,7 @@ const ServicesWeOffer = () => {
         </Container>
     );
 
-    if (!isManageMode && (!accountDetails || !accountDetails.userProfile || !accountDetails.userProfile.services)) {
+    if (!isManageMode && (!accountDetails?.userProfile?.services)) {
         return (
             <BlockUISpinner>
                 <p>Checking assigned services...</p>

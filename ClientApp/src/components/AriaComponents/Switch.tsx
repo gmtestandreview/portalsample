@@ -15,7 +15,7 @@ export interface SwitchProps extends Omit<SwitchFieldProps, 'children'> {
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function Switch({ children, description, errorMessage, ...props }: SwitchProps) {
+export function Switch({ children, description, errorMessage, ...props }: Readonly<SwitchProps>) {
   return (
     <SwitchField {...props}>
       <SwitchButton>

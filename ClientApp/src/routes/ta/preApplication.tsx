@@ -24,8 +24,7 @@ const PreApplication = () => {
     useBodyClass('pa-pre-application');
 
     return (
-        <>
-            <div aria-live='off'>
+        <div aria-live='off'>
                 <Container fluid className='default-banner-background mb-5'>
                     <Container>
                         <Row>
@@ -166,7 +165,6 @@ const PreApplication = () => {
                     </Row>
                 </Container>
             </div>
-        </>
     );
 };
 

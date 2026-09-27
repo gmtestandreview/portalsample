@@ -18,7 +18,7 @@ export interface CommandPaletteProps<T>
   onOpenChange: (isOpen?: boolean) => void;
 }
 
-export function CommandPalette<T>(props: CommandPaletteProps<T>) {
+export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
   const { isOpen, onOpenChange } = props;
   const { contains } = useFilter({ sensitivity: 'base' });
 

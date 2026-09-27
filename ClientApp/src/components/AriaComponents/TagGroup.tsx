@@ -30,7 +30,7 @@ export function TagGroup<T>({
   children,
   renderEmptyState,
   ...props
-}: TagGroupProps<T>) {
+}: Readonly<TagGroupProps<T>>) {
   return (
     <AriaTagGroup {...props}>
       {label && <Label>{label}</Label>}

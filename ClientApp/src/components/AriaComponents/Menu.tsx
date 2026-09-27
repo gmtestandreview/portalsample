@@ -6,9 +6,9 @@ import {
   MenuSection as AriaMenuSection,
   MenuTrigger as AriaMenuTrigger,
   SubmenuTrigger as AriaSubmenuTrigger,
-  Header,
-  Separator,
-  Keyboard,
+  
+  
+  
   type MenuItemProps,
   type MenuProps,
   type MenuSectionProps,
@@ -20,7 +20,7 @@ import { Text } from './Content';
 import React from 'react';
 import './Menu.css';
 
-export function MenuTrigger(props: MenuTriggerProps) {
+export function MenuTrigger(props: Readonly<MenuTriggerProps>) {
   const [trigger, menu] = props.children as unknown as [
     React.ReactElement,
     React.ReactElement,
@@ -33,7 +33,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-export function Menu<T>(props: MenuProps<T>) {
+export function Menu<T>(props: Readonly<MenuProps<T>>) {
   return <AriaMenu {...props}>{props.children}</AriaMenu>;
 }
 
@@ -58,11 +58,11 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & { children?: R
   );
 }
 
-export function MenuSection<T>(props: MenuSectionProps<T>) {
+export function MenuSection<T>(props: Readonly<MenuSectionProps<T>>) {
   return <AriaMenuSection {...props} />;
 }
 
-export function SubmenuTrigger(props: SubmenuTriggerProps) {
+export function SubmenuTrigger(props: Readonly<SubmenuTriggerProps>) {
   const [trigger, menu] = props.children as unknown as [
     React.ReactElement,
     React.ReactElement,
@@ -77,4 +77,6 @@ export function SubmenuTrigger(props: SubmenuTriggerProps) {
   );
 }
 
-export { Text, Header, Separator, Keyboard };
+export { Text,    };
+
+export {Header, Separator, Keyboard} from 'react-aria-components/Menu';

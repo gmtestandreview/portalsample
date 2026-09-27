@@ -329,6 +329,8 @@ the missing detail would materially change the implementation.
 Use these mappings unless repository-specific constraints require a justified
 alternative:
 
+<!-- markdownlint-disable MD013 -->
+
 | Formik pattern         | React Hook Form replacement                                                                          |
 | ---------------------- | ---------------------------------------------------------------------------------------------------- |
 | `<Formik />`           | `useForm()`                                                                                          |
@@ -359,6 +361,8 @@ alternative:
 | `resetForm`            | `reset()`                                                                                            |
 | `submitForm`           | `handleSubmit()` or preserved imperative wrapper                                                     |
 | `validateForm`         | `trigger()` or preserved imperative wrapper                                                          |
+
+<!-- markdownlint-enable MD013 -->
 
 ## Package and resolver rules
 

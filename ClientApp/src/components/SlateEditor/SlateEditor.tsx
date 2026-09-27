@@ -212,7 +212,7 @@ const SlateEditor: React.FC<SlateEditorProps> = ({ value, setValue, placeholder,
                     </div>
                     <div className='d-flex justify-content-between'>
                         <div className='text-start mt-1'>
-                            {errors.length > 0 && <span className='text-danger ms-2'>{errors[errors.length - 1]}</span>}
+                            {errors.length > 0 && <span className='text-danger ms-2'>{errors.at(-1)}</span>}
                         </div>
                         <div className='text-end mt-1'>
                             <span className='me-2 small text-muted'>

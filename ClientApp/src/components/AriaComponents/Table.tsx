@@ -28,7 +28,7 @@ import { ProgressCircle } from './ProgressCircle';
 import { ChevronUp, ChevronDown, GripVertical, ChevronRight } from './NmiIcon';
 import './Table.css';
 
-export function Table(props: TableProps) {
+export function Table(props: Readonly<TableProps>) {
   return <AriaTable {...props} />;
 }
 
@@ -56,7 +56,7 @@ export function Column(props: Omit<ColumnProps, 'children'> & { children?: React
   );
 }
 
-export function TableHeader<T>({ columns, children, ...otherProps }: TableHeaderProps<T>) {
+export function TableHeader<T>({ columns, children, ...otherProps }: Readonly<TableHeaderProps<T>>) {
   const { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
 
   return (
@@ -85,7 +85,7 @@ export function TableHeader<T>({ columns, children, ...otherProps }: TableHeader
   );
 }
 
-export function Row<T>({ id, columns, children, ...otherProps }: RowProps<T>) {
+export function Row<T>({ id, columns, children, ...otherProps }: Readonly<RowProps<T>>) {
   const { selectionBehavior, allowsDragging } = useTableOptions();
 
   return (
@@ -107,15 +107,15 @@ export function Row<T>({ id, columns, children, ...otherProps }: RowProps<T>) {
   );
 }
 
-export function TableBody<T>(props: TableBodyProps<T>) {
+export function TableBody<T>(props: Readonly<TableBodyProps<T>>) {
   return <AriaTableBody {...props} />;
 }
 
-export function TableFooter<T>(props: TableFooterProps<T>) {
+export function TableFooter<T>(props: Readonly<TableFooterProps<T>>) {
   return <AriaTableFooter {...props} />;
 }
 
-export function Cell(props: CellProps) {
+export function Cell(props: Readonly<CellProps>) {
   return (
     <AriaCell {...props}>
       {composeRenderProps(props.children, (children, { hasChildItems, isTreeColumn }) => (
@@ -132,7 +132,7 @@ export function Cell(props: CellProps) {
   );
 }
 
-export function TableLoadMoreItem(props: TableLoadMoreItemProps) {
+export function TableLoadMoreItem(props: Readonly<TableLoadMoreItemProps>) {
   return (
     <AriaTableLoadMoreItem {...props}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

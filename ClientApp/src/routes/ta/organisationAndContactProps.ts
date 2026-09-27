@@ -37,7 +37,7 @@ const loadOrganisationAndContact = (id: string, accounts: AccountInfo[], instanc
         }
     } else {
         AppLogger.verbose('There are no accounts available to load PA organisation and contact details', { Id: id, Accounts: accounts });
-        throw Error(`There are no accounts available to load PA organisation and contact details. Id: ${id}`);
+        throw new Error(`There are no accounts available to load PA organisation and contact details. Id: ${id}`);
     }
 };
 
@@ -75,7 +75,7 @@ const saveStep = (
         }
     } else {
         AppLogger.verbose('There are no accounts available to save PA organisation and contact details', { Id: id, Accounts: accounts });
-        throw Error(`There are no accounts available to save PA organisation and contact details. Id: ${id}`);
+        throw new Error(`There are no accounts available to save PA organisation and contact details. Id: ${id}`);
     }
 };
 

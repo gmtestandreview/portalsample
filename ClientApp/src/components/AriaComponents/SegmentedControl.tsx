@@ -9,7 +9,7 @@ import {
 import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import './SegmentedControl.css';
 
-export function SegmentedControl(props: ToggleButtonGroupProps) {
+export function SegmentedControl(props: Readonly<ToggleButtonGroupProps>) {
   return (
     <RACToggleButtonGroup
       {...props}
@@ -19,7 +19,7 @@ export function SegmentedControl(props: ToggleButtonGroupProps) {
   );
 }
 
-export function SegmentedControlItem(props: ToggleButtonProps) {
+export function SegmentedControlItem(props: Readonly<ToggleButtonProps>) {
   return (
     <ToggleButton {...props} className="segmented-control-item">
       {composeRenderProps(props.children, (children) => (

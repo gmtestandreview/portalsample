@@ -8,7 +8,7 @@ import { ColorThumb } from '../ColorThumb/ColorThumb';
 import './ColorWheel.css';
 export type ColorWheelProps = Omit<AriaColorWheelProps, 'outerRadius' | 'innerRadius'>;
 
-export function ColorWheel(props: ColorWheelProps) {
+export function ColorWheel(props: Readonly<ColorWheelProps>) {
   return (
     <AriaColorWheel {...props} outerRadius={100} innerRadius={74}>
       <ColorWheelTrack />

@@ -24,11 +24,10 @@ import useHtmlTitle from '../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import useAccountContext, { useAccountDispatch } from '../../authentication/hooks';
 import StandardPathway from '../../components/tiles/StandardPathway';
-import type {
-    PatternApprovalStatusEnumDto} from '../../api/web-api-client';
 import {
-    type PagedListOfPatternApprovalDashboardDetailsDto,
     PatternApprovalClient,
+    type PatternApprovalStatusEnumDto,
+    type PagedListOfPatternApprovalDashboardDetailsDto,
     ServiceType,
     type PatternApprovalDashboardDetailsDto,
     type PatternApprovalDashboardDto,
@@ -327,7 +326,6 @@ const DashboardTA = () => {
         setIsDataLoading(true); // Dashboard data
         const loadDataForDisplay = async () => {
             if (accountContext
-                && accountDetails
                 && accountDetails?.organisationCRMGuid
                 && initialFilters) {
                 if (inProgress === InteractionStatus.None && accounts.length > 0) {
@@ -363,7 +361,6 @@ const DashboardTA = () => {
                             initialFilters.filterSearchText,
                             actualYear,
                             actualStatus,
-                            undefined,
                         );
                         setRequests(requestsResponse.items!);
                         setCurrentPage(requestsResponse.currentPage!);
@@ -375,8 +372,7 @@ const DashboardTA = () => {
                         const problemDetails = error as ProblemDetails;
                         if (problemDetails.status! > 0) setErrorStatus((prevState) => ({ ...prevState, status: problemDetails.status! }));
                         if (problemDetails.status === HttpStatusCode.Forbidden
-                            && problemDetails.title
-                            && problemDetails.title.includes('No third-party access')) {
+                            && problemDetails.title?.includes('No third-party access')) {
                             setErrorStatus((prevState) => ({ ...prevState, noThirdPartyAccess: true }));
                         } else if (problemDetails.status === HttpStatusCode.Forbidden) {
                             setErrorStatus((prevState) => ({ ...prevState, forbidden: true }));

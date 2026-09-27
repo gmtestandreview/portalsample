@@ -18,7 +18,7 @@ export interface NumberFieldProps extends AriaNumberFieldProps {
   placeholder?: string;
 }
 
-export function NumberField({ label, description, errorMessage, ...props }: NumberFieldProps) {
+export function NumberField({ label, description, errorMessage, ...props }: Readonly<NumberFieldProps>) {
   return (
     <AriaNumberField {...props}>
       <Label>{label}</Label>

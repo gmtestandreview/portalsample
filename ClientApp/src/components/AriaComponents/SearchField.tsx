@@ -23,7 +23,7 @@ export function SearchField({
   errorMessage,
   placeholder,
   ...props
-}: SearchFieldProps) {
+}: Readonly<SearchFieldProps>) {
   return (
     <AriaSearchField {...props}>
       {label && <Label>{label}</Label>}

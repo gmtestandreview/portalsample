@@ -17,6 +17,12 @@ import StatusPill from '../Pill/StatusPill';
 import ContactDetails from '../Utilities/contactDetails';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 
+enum RequestAction {
+    Delete = 'Delete',
+    Edit = 'Edit',
+    View = 'View',
+}
+
 const formattedDate = (dateToFormat : Date | string | undefined) => (dateToFormat ? new Date(dateToFormat).toLocaleDateString('en-AU', {
     day: '2-digit', month: 'short', year: 'numeric',
 }) : '');
@@ -150,7 +156,7 @@ const renderRequestContent = (requestForQuote: RequestForQuoteDto, sourceReferen
 const renderQuotationContent = (dashboardQuoteDto: DashboardQuoteDto, quoteStatus: string | undefined, referenceId: string | undefined, navigate: NavigateFunction) => {
     // Quotation tab content placeholder (3 col pairs)
     const nmiOfficer = dashboardQuoteDto.nmiContactDetails;
-    const useQuoteId = validQuoteIdStatus.some((x) => x === quoteStatus);
+    const useQuoteId = validQuoteIdStatus.includes(quoteStatus);
     return (
         <>
             <Row className='mb-3'>
@@ -365,7 +371,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
         referenceId, status, requestedFor, lastUpdated, quote, report, requestForQuote, sourceReferenceId,
     } = request;
 
-    const showArtefactHeading = useMemo(() => viewArtefactHeadingStatus.some((x) => x === status), [status]);
+    const showArtefactHeading = useMemo(() => viewArtefactHeadingStatus.includes(status), [status]);
     const headingNoArtefact = requestForQuote?.manufacturer
         ? `${requestForQuote?.manufacturer} ${requestForQuote?.model || ''}` // If Model null display empty string
         : 'Draft Request For Quote';
@@ -385,17 +391,15 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
     const getActions = (): DropdownActionItem[] => {
         const actions: DropdownActionItem[] = [];
 
-        // TODO: Move this to an enum? refactor this...
         switch (status) {
             case DashboardItemStatus.QuoteDrafted:
                 actions.push({
-                    action: 'Edit',
+                    action: RequestAction.Edit,
                     text: 'Edit request',
                     route: `/request-for-quote/${referenceId}/instrument-and-request`,
                     onClick: () => trackGAEvent('Editrequest'),
-                });
-                actions.push({
-                    action: 'Delete',
+                }, {
+                    action: RequestAction.Delete,
                     text: 'Delete request',
                     onClick: () => {
                         onShowRFQDeleteModalClick();
@@ -405,7 +409,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
                 break;
             case DashboardItemStatus.ReportIssued:
                 actions.push({
-                    action: 'View',
+                    action: RequestAction.View,
                     text: 'View report',
                     route: `/report/${requestForQuoteId}`,
                     onClick: () => trackGAEvent('Viewreport'),
@@ -413,7 +417,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
                 break;
             case DashboardItemStatus.QuoteAvailable:
                 actions.push({
-                    action: 'View',
+                    action: RequestAction.View,
                     text: 'View/accept quotation',
                     route: `/quotation/${referenceId}`,
                     onClick: () => trackGAEvent('View/acceptquotation'),
@@ -423,9 +427,9 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
                 break;
         }
 
-        if (viewQuotationAcceptMenu.some((x) => status === x)) {
+        if (viewQuotationAcceptMenu.includes(status)) {
             actions.push({
-                action: 'View',
+                action: RequestAction.View,
                 text: 'View quotation',
                 route: `/quotation/${requestForQuoteId}`,
                 onClick: () => trackGAEvent('Viewquotation'),
@@ -435,7 +439,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
         // We want 'view request' in every case other than draft.
         if (status !== DashboardItemStatus.QuoteDrafted) {
             actions.push({
-                action: 'View',
+                action: RequestAction.View,
                 text: 'View request',
                 route: `/request-for-quote/${referenceId}/view-summary`,
                 onClick: () => trackGAEvent('Viewrequest'),
@@ -444,7 +448,7 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
 
         if (status === DashboardItemStatus.ReportIssued) {
             actions.push({
-                action: 'View',
+                action: RequestAction.View,
                 text: 'Request recalibration',
                 route: `/request-for-quote-copy/${referenceId}`,
                 onClick: () => trackGAEvent('Requestrecalibration'),
@@ -453,13 +457,12 @@ const RequestItem = (props: { request: DashboardItemDto }) => {
 
         if (status === DashboardItemStatus.ReportWithdrawn) {
             actions.push({
-                action: 'View',
+                action: RequestAction.View,
                 text: 'Request recalibration',
                 route: `/request-for-quote-copy/${referenceId}`,
                 onClick: () => trackGAEvent('Requestrecalibration'),
-            });
-            actions.push({
-                action: 'View',
+            }, {
+                action: RequestAction.View,
                 text: 'View quotation',
                 route: `/quotation/${requestForQuoteId}`,
                 onClick: () => trackGAEvent('Viewquotation'),

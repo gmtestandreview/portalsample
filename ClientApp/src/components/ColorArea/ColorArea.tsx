@@ -3,7 +3,7 @@ import { ColorArea as AriaColorArea, type ColorAreaProps } from 'react-aria-comp
 import { ColorThumb } from '../ColorThumb/ColorThumb';
 import './ColorArea.css';
 
-export function ColorArea(props: ColorAreaProps) {
+export function ColorArea(props: Readonly<ColorAreaProps>) {
   return (
     <AriaColorArea {...props}>
       <ColorThumb />

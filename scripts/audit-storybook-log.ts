@@ -69,8 +69,7 @@ export const formatReport = (audit: LogAudit, source: string): string => {
   if (!audit.completed) {
     lines.push(
       '  no `Test Files` summary: the run did not reach its end-of-run phases,'
-    );
-    lines.push(
+    , 
       '  so a zero-hit scan is not evidence that the diagnostics are gone.'
     );
   }

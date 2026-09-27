@@ -55,7 +55,7 @@ const loadApplicationAndInstrument = (id: string, accounts: AccountInfo[], insta
         }
     } else {
         AppLogger.verbose('There are no accounts available to load PA application and instrument details', { Id: id, Accounts: accounts });
-        throw Error(`There are no accounts available to load PA application and instrument details. Id: ${id}`);
+        throw new Error(`There are no accounts available to load PA application and instrument details. Id: ${id}`);
     }
 };
 
@@ -101,7 +101,7 @@ const saveStep = (
         }
     } else {
         AppLogger.verbose('There are no accounts available to save PA application and instrument details', { Id: id, Accounts: accounts });
-        throw Error(`There are no accounts available to save PA application and instrument details. Id: ${id}`);
+        throw new Error(`There are no accounts available to save PA application and instrument details. Id: ${id}`);
     }
 };
 

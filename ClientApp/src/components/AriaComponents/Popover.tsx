@@ -12,7 +12,7 @@ export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
   hideArrow?: boolean;
 }
 
-export function Popover({ children, hideArrow, ...props }: PopoverProps) {
+export function Popover({ children, hideArrow, ...props }: Readonly<PopoverProps>) {
   return (
     <AriaPopover {...props} className={clsx('react-aria-Popover', props.className)}>
       {({ trigger }) => (

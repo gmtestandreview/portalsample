@@ -30,7 +30,7 @@ const loadAppDetails = (id: string, accounts: AccountInfo[], instance: IPublicCl
         }
     } else {
         AppLogger.verbose('There are no accounts available to load app details', { Id: id, Accounts: accounts });
-        throw Error(`There are no accounts available to load app details. Id: ${id}`);
+        throw new Error(`There are no accounts available to load app details. Id: ${id}`);
     }
 };
 

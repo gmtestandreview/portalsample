@@ -4,9 +4,9 @@ import {
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
   GridListLoadMoreItem as AriaGridListLoadMoreItem,
-  Text,
-  GridListSection,
-  GridListHeader,
+  
+  
+  
   type GridListItemProps,
   type GridListProps,
   type GridListLoadMoreItemProps,
@@ -16,7 +16,7 @@ import { GripVertical } from '../AriaComponents/NmiIcon';
 import { ProgressCircle } from '../AriaComponents/ProgressCircle';
 import './GridList.css';
 
-export function GridList<T>({ children, layout = 'grid', ...props }: GridListProps<T>) {
+export function GridList<T>({ children, layout = 'grid', ...props }: Readonly<GridListProps<T>>) {
   return (
     <AriaGridList {...props} layout={layout}>
       {children}
@@ -51,7 +51,7 @@ export function GridListItem({
   );
 }
 
-export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
+export function GridListLoadMoreItem(props: Readonly<GridListLoadMoreItemProps>) {
   return (
     <AriaGridListLoadMoreItem {...props}>
       <ProgressCircle isIndeterminate aria-label="Loading more..." />
@@ -59,4 +59,6 @@ export function GridListLoadMoreItem(props: GridListLoadMoreItemProps) {
   );
 }
 
-export { GridListSection, GridListHeader, Text };
+
+
+export {GridListSection, GridListHeader, Text} from 'react-aria-components/GridList';

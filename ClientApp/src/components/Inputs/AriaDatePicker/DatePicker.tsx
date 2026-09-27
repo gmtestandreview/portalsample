@@ -7,8 +7,7 @@ import {
   type ValidationResult,
 } from 'react-aria-components/DatePicker';
 import { DateInput, DateSegment } from '../AriaDateField/DateField';
-import { Label, FieldError, Description } from '../../forms/AriaForm/Form';
-import { FieldButton } from '../../forms/AriaForm/Form';
+import { Label, FieldError, Description , FieldButton } from '../../forms/AriaForm/Form';
 import { Calendar } from '../../Calendar/Calendar';
 import { Popover } from '../../AriaComponents/Popover';
 import { ChevronDown } from '../../AriaComponents/NmiIcon';
@@ -25,7 +24,7 @@ export function DatePicker<T extends DateValue>({
   description,
   errorMessage,
   ...props
-}: DatePickerProps<T>) {
+}: Readonly<DatePickerProps<T>>) {
   return (
     <AriaDatePicker {...props}>
       <Label>{label}</Label>

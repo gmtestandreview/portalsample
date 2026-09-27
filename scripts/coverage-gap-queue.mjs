@@ -31,24 +31,24 @@ const FAMILIES = [
     id: 2,
     name: 'Type Approval routes and guards',
     matches: (f) =>
-      /^routes\/ta\//u.test(f) || /^routes\/dashboard\/dashboard-ta/u.test(f),
+      f.startsWith("routes/ta/") || f.startsWith("routes/dashboard/dashboard-ta"),
   },
   {
     id: 3,
     name: 'Attachment and progress controls',
     matches: (f) =>
-      /^components\/Inputs\/Attachment\//u.test(f) || /progress/iu.test(f),
+      f.startsWith("components/Inputs/Attachment/") || /progress/iu.test(f),
   },
   {
     id: 5,
     name: 'Slate editor',
-    matches: (f) => /^components\/SlateEditor\//u.test(f),
+    matches: (f) => f.startsWith("components/SlateEditor/"),
   },
   {
     id: 4,
     name: 'Request-list items and workflow pages',
     matches: (f) =>
-      /^routes\//u.test(f) || /^components\/(RequestList|forms)\//u.test(f),
+      f.startsWith("routes/") || /^components\/(RequestList|forms)\//u.test(f),
   },
   {
     id: 6,
@@ -69,7 +69,7 @@ const intendedTestFile = (relativeFile) => {
 };
 
 const toRelative = (absolutePath) => {
-  const normalised = absolutePath.replace(/\\/gu, '/');
+  const normalised = absolutePath.replaceAll('\\', '/');
   const index = normalised.indexOf(SOURCE_ROOT);
 
   return index === -1
