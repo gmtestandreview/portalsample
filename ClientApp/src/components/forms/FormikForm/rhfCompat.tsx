@@ -1,7 +1,10 @@
+import { set } from 'lodash';
 import type { ChangeEvent, InputHTMLAttributes } from 'react';
 import { createContext, useContext } from 'react';
-import type { FieldErrors, FieldValues } from 'react-hook-form';
+import type { FieldErrors, FieldValues, Resolver } from 'react-hook-form';
 import { useController, useFormContext } from 'react-hook-form';
+import type { ValidationError } from 'yup';
+import type { ValidationSchema } from './types';
 
 type FieldChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
 
@@ -159,4 +162,67 @@ export function Field({ name, type, value, checked, onChange, onBlur, ...rest }:
             onBlur={onBlur ?? field.onBlur}
         />
     );
+}
+
+type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
+
+/**
+ * Converts a Yup `ValidationError` into react-hook-form's nested `FieldErrors`
+ * shape. Mirrors `toFormErrors` in `../utils.ts`, but targets RHF's
+ * `{ type, message }` per-field shape instead of Formik's plain message
+ * string, and builds real nested objects (via lodash `set`) rather than
+ * dot-path string keys, matching RHF's `FieldErrors` type.
+ */
+function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
+    error: ValidationError,
+): FieldErrors<TFieldValues> {
+    const fieldErrors = {};
+    const innerErrors = error.inner ?? [];
+
+    if (innerErrors.length > 0) {
+        innerErrors.forEach((innerError) => {
+            if (innerError.path) {
+                set(fieldErrors, innerError.path, { type: 'validation', message: innerError.message });
+            }
+        });
+    } else if (error.path) {
+        set(fieldErrors, error.path, { type: 'validation', message: error.message });
+    }
+
+    return fieldErrors as FieldErrors<TFieldValues>;
+}
+
+/**
+ * Builds an RHF `useForm({ resolver })` function that mirrors FormikForm's
+ * save-aware `validate()` closure (see `index.tsx`'s `validate` and
+ * `validateForm` in `../utils.ts`): soft-schema validation when
+ * `values.saveAndExit === true`, hard-schema validation otherwise.
+ *
+ * Calls `schema.validate(values, { abortEarly: false, context: values })` on
+ * whichever schema the caller passes in — the same call shape the Formik path
+ * uses — so `.when()` conditionals keyed on sibling fields, and any
+ * side-effect-registered custom Yup string extensions, resolve identically.
+ * No fresh Yup schema is constructed here.
+ */
+export function createSaveAwareYupResolver<TFieldValues extends SaveAwareFieldValues>(
+    softSchema: ValidationSchema | undefined,
+    hardSchema: ValidationSchema | undefined,
+): Resolver<TFieldValues> {
+    return async (values) => {
+        const schema = values.saveAndExit === true ? softSchema : hardSchema;
+
+        if (!schema) {
+            return { values, errors: {} };
+        }
+
+        try {
+            await schema.validate(values, { abortEarly: false, context: values });
+            return { values, errors: {} };
+        } catch (error) {
+            if ((error as Error).name !== 'ValidationError') {
+                throw error;
+            }
+            return { values: {}, errors: yupErrorToFieldErrors<TFieldValues>(error as ValidationError) };
+        }
+    };
 }
