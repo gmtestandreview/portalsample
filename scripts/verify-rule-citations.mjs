@@ -206,9 +206,12 @@ const anchorsByRule = new Map(
 
 const citationSites = [];
 for (const block of blocks) {
-    const sourceLine = block.text.split('\n').find((l) => l.startsWith('**Source:**'));
-    if (sourceLine) {
-        citationSites.push({ id: block.id, text: sourceLine, where: 'detail' });
+    const sourceField =
+        /\*\*Source:\*\*([\s\S]*?)(?=\s+\*\*(?:Plain English|Specification|Parameters|Edge cases handled|Suspected defect|Confidence):\*\*|$)/.exec(
+            block.text,
+        );
+    if (sourceField) {
+        citationSites.push({ id: block.id, text: sourceField[1], where: 'detail' });
     }
 }
 for (const ln of registerLines) {
@@ -337,7 +340,7 @@ if (FIX) {
     }
 
     if (rewritten > 0) writeFileSync(REGISTER, updated, 'utf8');
-    console.log(`re-derived ${rewritten} citation(s)`);
+    (JSON_OUT ? console.error : console.log)(`re-derived ${rewritten} citation(s)`);
 }
 
 if (JSON_OUT) {
@@ -385,9 +388,10 @@ if (!FIX && unresolved > UNRESOLVED_BASELINE) {
     console.error('Anchor them, or raise UNRESOLVED_BASELINE with a written rationale.');
     exitCode = 1;
 } else if (!FIX && unresolved < UNRESOLVED_BASELINE) {
-    console.log('');
-    console.log(`NOTE: UNRESOLVED is ${unresolved}, below the baseline of ${UNRESOLVED_BASELINE}.`);
-    console.log('Lower UNRESOLVED_BASELINE in scripts/verify-rule-citations.mjs to lock the gain in.');
+    const logNote = JSON_OUT ? console.error : console.log;
+    logNote('');
+    logNote(`NOTE: UNRESOLVED is ${unresolved}, below the baseline of ${UNRESOLVED_BASELINE}.`);
+    logNote('Lower UNRESOLVED_BASELINE in scripts/verify-rule-citations.mjs to lock the gain in.');
 }
 
 if (exitCode !== 0) {
