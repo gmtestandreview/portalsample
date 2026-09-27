@@ -156,9 +156,7 @@
     "webpack-dev-server": "^5.2.6"
   },
   "msw": {
-    "workerDirectory": [
-      "ClientApp/public"
-    ]
+    "workerDirectory": ["ClientApp/public"]
   },
   "overrides": {
     "@mizchi/lsmcp": {
