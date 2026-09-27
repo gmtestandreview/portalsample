@@ -18,18 +18,20 @@ type Story = StoryObj<typeof meta>;
 export const Example: Story = {
   render: (args) => (
     <DropZone {...args}>
-      <Text slot="label">Drop supporting documents here</Text>
+      <Text slot='label'>Drop supporting documents here</Text>
     </DropZone>
   ),
   play: async ({ canvas }) => {
-    await expect(canvas.getByText('Drop supporting documents here')).toBeVisible();
+    await expect(
+      canvas.getByText('Drop supporting documents here')
+    ).toBeVisible();
   },
 };
 
 export const Disabled: Story = {
   render: (args) => (
     <DropZone {...args}>
-      <Text slot="label">Uploads are closed for this application</Text>
+      <Text slot='label'>Uploads are closed for this application</Text>
     </DropZone>
   ),
   args: {
@@ -37,6 +39,8 @@ export const Disabled: Story = {
   },
   play: async ({ canvas }) => {
     // A closed application still explains why, rather than showing an inert target.
-    await expect(canvas.getByText('Uploads are closed for this application')).toBeVisible();
+    await expect(
+      canvas.getByText('Uploads are closed for this application')
+    ).toBeVisible();
   },
 };

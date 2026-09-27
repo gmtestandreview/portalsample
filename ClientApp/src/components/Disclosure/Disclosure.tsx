@@ -18,7 +18,7 @@ export function Disclosure(props: DisclosureProps) {
 export function DisclosureHeader({ children, ...props }: HeadingProps) {
   return (
     <Heading {...props}>
-      <Button slot="trigger" className="disclosure-button">
+      <Button slot='trigger' className='disclosure-button'>
         <ChevronRight size={16} />
         <span>{children}</span>
       </Button>

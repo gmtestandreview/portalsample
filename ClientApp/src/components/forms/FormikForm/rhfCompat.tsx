@@ -6,31 +6,33 @@ import { useController, useFormContext } from 'react-hook-form';
 import type { ValidationError } from 'yup';
 import type { ValidationSchema } from './types';
 
-type FieldChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
+type FieldChangeEvent = ChangeEvent<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+>;
 
 interface FieldShim {
-    name: string;
-    value: unknown;
-    onChange: (event: FieldChangeEvent) => void;
-    onBlur: () => void;
+  name: string;
+  value: unknown;
+  onChange: (event: FieldChangeEvent) => void;
+  onBlur: () => void;
 }
 
 interface FieldMetaShim {
-    touched: boolean;
-    error: string | undefined;
+  touched: boolean;
+  error: string | undefined;
 }
 
 interface FieldHelpersShim {
-    setValue: (value: unknown) => void;
-    setTouched: (touched?: boolean) => void;
+  setValue: (value: unknown) => void;
+  setTouched: (touched?: boolean) => void;
 }
 
 function extractEventValue(event: FieldChangeEvent): unknown {
-    const target = event.target;
-    if (target instanceof HTMLInputElement && target.type === 'checkbox') {
-        return target.checked;
-    }
-    return target.value;
+  const target = event.target;
+  if (target instanceof HTMLInputElement && target.type === 'checkbox') {
+    return target.checked;
+  }
+  return target.value;
 }
 
 /**
@@ -45,27 +47,29 @@ function extractEventValue(event: FieldChangeEvent): unknown {
  * untouched. `setTouched(false)` is a no-op — `setValue`'s `shouldTouch`
  * option only ever sets touched to `true`, never clears it.
  */
-export function useField(name: string): [FieldShim, FieldMetaShim, FieldHelpersShim] {
-    const { control, setValue, getValues } = useFormContext();
-    const { field, fieldState } = useController({ name, control });
+export function useField(
+  name: string
+): [FieldShim, FieldMetaShim, FieldHelpersShim] {
+  const { control, setValue, getValues } = useFormContext();
+  const { field, fieldState } = useController({ name, control });
 
-    const onChange = (event: FieldChangeEvent): void => {
-        field.onChange(extractEventValue(event));
-    };
+  const onChange = (event: FieldChangeEvent): void => {
+    field.onChange(extractEventValue(event));
+  };
 
-    const setTouched = (touched = true): void => {
-        setValue(name, getValues(name), { shouldTouch: touched });
-    };
+  const setTouched = (touched = true): void => {
+    setValue(name, getValues(name), { shouldTouch: touched });
+  };
 
-    return [
-        { name: field.name, value: field.value, onChange, onBlur: field.onBlur },
-        { touched: fieldState.isTouched, error: fieldState.error?.message },
-        { setValue: (value: unknown) => field.onChange(value), setTouched },
-    ];
+  return [
+    { name: field.name, value: field.value, onChange, onBlur: field.onBlur },
+    { touched: fieldState.isTouched, error: fieldState.error?.message },
+    { setValue: (value: unknown) => field.onChange(value), setTouched },
+  ];
 }
 
 interface RhfCompatStatus {
-    hidden: unknown;
+  hidden: unknown;
 }
 
 /**
@@ -75,20 +79,22 @@ interface RhfCompatStatus {
  * supply on its own. A later task provides this from `FormikForm`; until
  * then, `useFormikContext().status.hidden` reads as `undefined`.
  */
-export const RhfCompatStatusContext = createContext<RhfCompatStatus>({ hidden: undefined });
+export const RhfCompatStatusContext = createContext<RhfCompatStatus>({
+  hidden: undefined,
+});
 
 interface FormikContextShim<T extends FieldValues> {
-    values: T;
-    errors: FieldErrors<T>;
-    touched: Partial<Record<keyof T, boolean>>;
-    dirty: boolean;
-    isValid: boolean;
-    isSubmitting: boolean;
-    submitCount: number;
-    status: RhfCompatStatus;
-    handleSubmit: ReturnType<typeof useFormContext>['handleSubmit'];
-    setFieldValue: (field: string, value: unknown) => void;
-    setFieldTouched: (field: string, touched?: boolean) => void;
+  values: T;
+  errors: FieldErrors<T>;
+  touched: Partial<Record<keyof T, boolean>>;
+  dirty: boolean;
+  isValid: boolean;
+  isSubmitting: boolean;
+  submitCount: number;
+  status: RhfCompatStatus;
+  handleSubmit: ReturnType<typeof useFormContext>['handleSubmit'];
+  setFieldValue: (field: string, value: unknown) => void;
+  setFieldTouched: (field: string, touched?: boolean) => void;
 }
 
 /**
@@ -98,40 +104,46 @@ interface FormikContextShim<T extends FieldValues> {
  * Limitation: same as `useField`'s `setTouched` — `setFieldTouched(field,
  * false)` cannot un-touch a field, react-hook-form has no primitive for it.
  */
-export function useFormikContext<T extends FieldValues = FieldValues>(): FormikContextShim<T> {
-    const { watch, formState, setValue, getValues, handleSubmit } = useFormContext();
-    const status = useContext(RhfCompatStatusContext);
+export function useFormikContext<
+  T extends FieldValues = FieldValues,
+>(): FormikContextShim<T> {
+  const { watch, formState, setValue, getValues, handleSubmit } =
+    useFormContext();
+  const status = useContext(RhfCompatStatusContext);
 
-    const setFieldValue = (field: string, value: unknown): void => {
-        setValue(field, value, { shouldDirty: true, shouldValidate: true });
-    };
+  const setFieldValue = (field: string, value: unknown): void => {
+    setValue(field, value, { shouldDirty: true, shouldValidate: true });
+  };
 
-    const setFieldTouched = (field: string, touched = true): void => {
-        setValue(field, getValues(field), { shouldTouch: touched });
-    };
+  const setFieldTouched = (field: string, touched = true): void => {
+    setValue(field, getValues(field), { shouldTouch: touched });
+  };
 
-    return {
-        values: watch() as T,
-        errors: formState.errors as FieldErrors<T>,
-        touched: formState.touchedFields as Partial<Record<keyof T, boolean>>,
-        dirty: formState.isDirty,
-        isValid: formState.isValid,
-        isSubmitting: formState.isSubmitting,
-        submitCount: formState.submitCount,
-        status,
-        handleSubmit,
-        setFieldValue,
-        setFieldTouched,
-    };
+  return {
+    values: watch() as T,
+    errors: formState.errors as FieldErrors<T>,
+    touched: formState.touchedFields as Partial<Record<keyof T, boolean>>,
+    dirty: formState.isDirty,
+    isValid: formState.isValid,
+    isSubmitting: formState.isSubmitting,
+    submitCount: formState.submitCount,
+    status,
+    handleSubmit,
+    setFieldValue,
+    setFieldTouched,
+  };
 }
 
-interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'checked' | 'onChange' | 'onBlur'> {
-    name: string;
-    type: 'checkbox' | 'radio';
-    value?: unknown;
-    checked?: boolean;
-    onChange?: (event: FieldChangeEvent) => void;
-    onBlur?: () => void;
+interface FieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'value' | 'checked' | 'onChange' | 'onBlur'
+> {
+  name: string;
+  type: 'checkbox' | 'radio';
+  value?: unknown;
+  checked?: boolean;
+  onChange?: (event: FieldChangeEvent) => void;
+  onBlur?: () => void;
 }
 
 /**
@@ -146,22 +158,31 @@ interface FieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value'
  * `value` prop. Callers that already compute `checked` themselves (as
  * `RadioButton` does) can pass it straight through — it takes precedence.
  */
-export function Field({ name, type, value, checked, onChange, onBlur, ...rest }: Readonly<FieldProps>): JSX.Element {
-    const [field] = useField(name);
+export function Field({
+  name,
+  type,
+  value,
+  checked,
+  onChange,
+  onBlur,
+  ...rest
+}: Readonly<FieldProps>): JSX.Element {
+  const [field] = useField(name);
 
-    const resolvedChecked = checked ?? (type === 'checkbox' ? !!field.value : field.value === value);
+  const resolvedChecked =
+    checked ?? (type === 'checkbox' ? !!field.value : field.value === value);
 
-    return (
-        <input
-            {...rest}
-            name={name}
-            type={type}
-            value={value as string | number | readonly string[] | undefined}
-            checked={resolvedChecked}
-            onChange={onChange ?? field.onChange}
-            onBlur={onBlur ?? field.onBlur}
-        />
-    );
+  return (
+    <input
+      {...rest}
+      name={name}
+      type={type}
+      value={value as string | number | readonly string[] | undefined}
+      checked={resolvedChecked}
+      onChange={onChange ?? field.onChange}
+      onBlur={onBlur ?? field.onBlur}
+    />
+  );
 }
 
 type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
@@ -173,21 +194,29 @@ type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
  * string, and builds real nested objects (via lodash `set`) rather than
  * dot-path string keys, matching RHF's `FieldErrors` type.
  */
-function yupErrorToFieldErrors<TFieldValues extends FieldValues>(error: ValidationError): FieldErrors<TFieldValues> {
-    const fieldErrors = {};
-    const innerErrors = error.inner ?? [];
+function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
+  error: ValidationError
+): FieldErrors<TFieldValues> {
+  const fieldErrors = {};
+  const innerErrors = error.inner ?? [];
 
-    if (innerErrors.length > 0) {
-        innerErrors.forEach((innerError) => {
-            if (innerError.path) {
-                set(fieldErrors, innerError.path, { type: 'validation', message: innerError.message });
-            }
+  if (innerErrors.length > 0) {
+    innerErrors.forEach((innerError) => {
+      if (innerError.path) {
+        set(fieldErrors, innerError.path, {
+          type: 'validation',
+          message: innerError.message,
         });
-    } else if (error.path) {
-        set(fieldErrors, error.path, { type: 'validation', message: error.message });
-    }
+      }
+    });
+  } else if (error.path) {
+    set(fieldErrors, error.path, {
+      type: 'validation',
+      message: error.message,
+    });
+  }
 
-    return fieldErrors as FieldErrors<TFieldValues>;
+  return fieldErrors as FieldErrors<TFieldValues>;
 }
 
 /**
@@ -202,25 +231,30 @@ function yupErrorToFieldErrors<TFieldValues extends FieldValues>(error: Validati
  * side-effect-registered custom Yup string extensions, resolve identically.
  * No fresh Yup schema is constructed here.
  */
-export function createSaveAwareYupResolver<TFieldValues extends SaveAwareFieldValues>(
-    softSchema: ValidationSchema | undefined,
-    hardSchema: ValidationSchema | undefined,
+export function createSaveAwareYupResolver<
+  TFieldValues extends SaveAwareFieldValues,
+>(
+  softSchema: ValidationSchema | undefined,
+  hardSchema: ValidationSchema | undefined
 ): Resolver<TFieldValues> {
-    return async (values) => {
-        const schema = values.saveAndExit === true ? softSchema : hardSchema;
+  return async (values) => {
+    const schema = values.saveAndExit === true ? softSchema : hardSchema;
 
-        if (!schema) {
-            return { values, errors: {} };
-        }
+    if (!schema) {
+      return { values, errors: {} };
+    }
 
-        try {
-            await schema.validate(values, { abortEarly: false, context: values });
-            return { values, errors: {} };
-        } catch (error) {
-            if ((error as Error).name !== 'ValidationError') {
-                throw error;
-            }
-            return { values: {}, errors: yupErrorToFieldErrors<TFieldValues>(error as ValidationError) };
-        }
-    };
+    try {
+      await schema.validate(values, { abortEarly: false, context: values });
+      return { values, errors: {} };
+    } catch (error) {
+      if ((error as Error).name !== 'ValidationError') {
+        throw error;
+      }
+      return {
+        values: {},
+        errors: yupErrorToFieldErrors<TFieldValues>(error as ValidationError),
+      };
+    }
+  };
 }

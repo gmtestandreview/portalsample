@@ -18,64 +18,76 @@ import AppLogger from '../../instrumentation/AppLogger';
 
 const bannerTitle = 'Testing and calibration service - Request for quote';
 
-const ViewRequestForQuoteSummary = ({ isSubmitted: _isSubmitted }: SummaryProps) => {
-    const { accounts, instance } = useMsal();
-    const { id } = useParams();
-    const account = useAccountState();
+const ViewRequestForQuoteSummary = ({
+  isSubmitted: _isSubmitted,
+}: SummaryProps) => {
+  const { accounts, instance } = useMsal();
+  const { id } = useParams();
+  const account = useAccountState();
 
-    useBodyClass('summary');
+  useBodyClass('summary');
 
-    const requestForQuoteWizardProps: WizardFormProps = {
-        locationOnCompletion: '/dashboard',
-        previousButtonTitle: 'Back to dashboard',
-        canSaveDraft: false,
-        showSaveAndNextButton: false,
-        showGoToDashboardButton: true,
-        locationAfterExit: '/dashboard',
-    };
+  const requestForQuoteWizardProps: WizardFormProps = {
+    locationOnCompletion: '/dashboard',
+    previousButtonTitle: 'Back to dashboard',
+    canSaveDraft: false,
+    showSaveAndNextButton: false,
+    showGoToDashboardButton: true,
+    locationAfterExit: '/dashboard',
+  };
 
-    const isLoading = useRef(false);
-    const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
+  const isLoading = useRef(false);
+  const [statuses, setStatuses] = useState<FormStepStatusDto[]>();
 
-    useEffect(() => {
-        const loadApplicationSteps = async () => {
-            try {
-                if (accounts.length > 0) {
-                    const client = new RequestForQuoteClient();
-                    const tokenResult = await instance.acquireTokenSilent({
-                        ...tokenRequest,
-                        account: accounts[0],
-                    });
-                    client.setAuthToken(tokenResult.accessToken);
-                    const result = await client.getStepStatuses(id!);
-                    setStatuses(result);
-                }
-            } catch (e) {
-                AppLogger.error('Failed to retrieve step statuses', e as Error, { Id: id });
-            }
-        };
-        if (!isLoading.current) {
-            loadApplicationSteps();
+  useEffect(() => {
+    const loadApplicationSteps = async () => {
+      try {
+        if (accounts.length > 0) {
+          const client = new RequestForQuoteClient();
+          const tokenResult = await instance.acquireTokenSilent({
+            ...tokenRequest,
+            account: accounts[0],
+          });
+          client.setAuthToken(tokenResult.accessToken);
+          const result = await client.getStepStatuses(id!);
+          setStatuses(result);
         }
-        return () => { isLoading.current = true; };
-    }, [accounts, id, instance, isLoading]);
+      } catch (e) {
+        AppLogger.error('Failed to retrieve step statuses', e as Error, {
+          Id: id,
+        });
+      }
+    };
+    if (!isLoading.current) {
+      loadApplicationSteps();
+    }
+    return () => {
+      isLoading.current = true;
+    };
+  }, [accounts, id, instance, isLoading]);
 
-    const accountDetails : AccountDetails = account!.details!;
-    const hasStatuses = statuses !== undefined;
-    return (
-        hasStatuses
-            ? (
-                <WizardForm {...requestForQuoteWizardProps}>
-                    <WizardStep {...viewRequestForQuoteSummaryProps(id!, accounts, instance, accountDetails, statuses, bannerTitle)}>
-                        <RequestForQuoteSummary name='' isSubmitted />
-                    </WizardStep>
-                </WizardForm>
-            )
-            : (
-                <BlockUISpinner>
-                    <p>Loading...</p>
-                </BlockUISpinner>
-            ));
+  const accountDetails: AccountDetails = account!.details!;
+  const hasStatuses = statuses !== undefined;
+  return hasStatuses ? (
+    <WizardForm {...requestForQuoteWizardProps}>
+      <WizardStep
+        {...viewRequestForQuoteSummaryProps(
+          id!,
+          accounts,
+          instance,
+          accountDetails,
+          statuses,
+          bannerTitle
+        )}
+      >
+        <RequestForQuoteSummary name='' isSubmitted />
+      </WizardStep>
+    </WizardForm>
+  ) : (
+    <BlockUISpinner>
+      <p>Loading...</p>
+    </BlockUISpinner>
+  );
 };
 
 export default ViewRequestForQuoteSummary;

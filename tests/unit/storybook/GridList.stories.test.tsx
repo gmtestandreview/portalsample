@@ -1,7 +1,7 @@
-import {render, screen} from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import {
-    Example,
-    Sections,
+  Example,
+  Sections,
 } from '../../../ClientApp/src/components/GridLists/GridList.stories';
 
 describe('GridList stories', () => {

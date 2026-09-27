@@ -12,7 +12,9 @@ import {
 import { Label, FieldError, Description } from '../../forms/AriaForm/Form';
 import './DateField.css';
 
-export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {
+export interface DateFieldProps<
+  T extends DateValue,
+> extends AriaDateFieldProps<T> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
@@ -39,5 +41,5 @@ export function DateSegment(props: Readonly<DateSegmentProps>) {
 }
 
 export function DateInput(props: Readonly<DateInputProps>) {
-  return <AriaDateInput {...props} className="react-aria-DateInput inset" />;
+  return <AriaDateInput {...props} className='react-aria-DateInput inset' />;
 }

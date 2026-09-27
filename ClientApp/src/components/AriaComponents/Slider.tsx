@@ -36,20 +36,25 @@ export function Slider<T extends number | number[]>({
       <SliderTrack>
         {({ state, isDisabled }) => (
           <>
-            <div className="track inset" data-disabled={isDisabled || undefined}>
+            <div
+              className='track inset'
+              data-disabled={isDisabled || undefined}
+            >
               <SliderFill offset={fillOffset} />
             </div>
-            {state.values.map((_, index) => ({
-              id: thumbLabels?.[index] ?? `thumb-${index}`,
-              index,
-            })).map((thumb) => (
-              <SliderThumb
-                key={thumb.id}
-                index={thumb.index}
-                aria-label={thumbLabels?.[thumb.index]}
-                className="react-aria-SliderThumb indicator"
-              />
-            ))}
+            {state.values
+              .map((_, index) => ({
+                id: thumbLabels?.[index] ?? `thumb-${index}`,
+                index,
+              }))
+              .map((thumb) => (
+                <SliderThumb
+                  key={thumb.id}
+                  index={thumb.index}
+                  aria-label={thumbLabels?.[thumb.index]}
+                  className='react-aria-SliderThumb indicator'
+                />
+              ))}
           </>
         )}
       </SliderTrack>

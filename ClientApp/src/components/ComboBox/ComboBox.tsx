@@ -9,7 +9,12 @@ import {
   type ValidationResult,
 } from 'react-aria-components/ComboBox';
 import { Group } from 'react-aria-components/Group';
-import { Label, FieldError, FieldButton, Description } from '../forms/AriaForm/Form';
+import {
+  Label,
+  FieldError,
+  FieldButton,
+  Description,
+} from '../forms/AriaForm/Form';
 import { DropdownItem, DropdownListBox } from '../AriaComponents/ListBox';
 import { Popover } from '../AriaComponents/Popover';
 import { ChevronDown } from '../AriaComponents/NmiIcon';
@@ -46,16 +51,18 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
         act(...)" warning. With the Group present the popover sizes off the
         group and no post-mount state update happens.
       */}
-      <Group className="combobox-field">
-        <Input className="react-aria-Input inset" placeholder={placeholder} />
+      <Group className='combobox-field'>
+        <Input className='react-aria-Input inset' placeholder={placeholder} />
         <FieldButton>
           <ChevronDown />
         </FieldButton>
       </Group>
-      {props.selectionMode === 'multiple' && <ComboBoxValue placeholder="No items selected" />}
+      {props.selectionMode === 'multiple' && (
+        <ComboBoxValue placeholder='No items selected' />
+      )}
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <Popover hideArrow className="combobox-popover">
+      <Popover hideArrow className='combobox-popover'>
         <ComboBoxListBox>{children}</ComboBoxListBox>
       </Popover>
     </AriaComboBox>

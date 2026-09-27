@@ -19,7 +19,7 @@ type Story = StoryObj<typeof meta>;
 export const WithLabel: Story = {
   render: (args) => (
     <InputGroup {...args}>
-      <Input aria-label="Certificate number" placeholder="5/6A/91B" />
+      <Input aria-label='Certificate number' placeholder='5/6A/91B' />
     </InputGroup>
   ),
   args: {
@@ -29,26 +29,30 @@ export const WithLabel: Story = {
     // The label is rendered as a span and wired to the group by aria-labelledby, so the group is
     // announced by name rather than as an anonymous container.
     await expect(canvas.getByText('Certificate number')).toBeVisible();
-    await expect(canvas.getByRole('group', { name: 'Certificate number' })).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('group', { name: 'Certificate number' })
+    ).toBeInTheDocument();
   },
 };
 
 export const WithoutLabel: Story = {
   render: (args) => (
     <InputGroup {...args}>
-      <Input aria-label="Search" placeholder="Search applications" />
+      <Input aria-label='Search' placeholder='Search applications' />
     </InputGroup>
   ),
   play: async ({ canvas }) => {
     // No label prop means no label element at all - the group still renders its children.
-    await expect(canvas.getByPlaceholderText('Search applications')).toBeVisible();
+    await expect(
+      canvas.getByPlaceholderText('Search applications')
+    ).toBeVisible();
   },
 };
 
 export const Disabled: Story = {
   render: (args) => (
     <InputGroup {...args}>
-      <Input aria-label="Certificate number" placeholder="5/6A/91B" />
+      <Input aria-label='Certificate number' placeholder='5/6A/91B' />
     </InputGroup>
   ),
   args: {

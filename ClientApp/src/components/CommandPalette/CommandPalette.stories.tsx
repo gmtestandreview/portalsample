@@ -1,23 +1,23 @@
-import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
-import {Button} from '../Buttons/AriaButton/Button';
-import {CommandPalette} from './CommandPalette';
-import {DialogTrigger} from '../Dialog/Dialog';
-import {MenuItem} from '../AriaComponents/Menu';
-import type {Meta, StoryFn} from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation';
+import { Button } from '../Buttons/AriaButton/Button';
+import { CommandPalette } from './CommandPalette';
+import { DialogTrigger } from '../Dialog/Dialog';
+import { MenuItem } from '../AriaComponents/Menu';
+import type { Meta, StoryFn } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/CommandPalette',
   component: CommandPalette,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
   },
 } satisfies Meta<typeof CommandPalette>;
 
 export default meta;
 type Story = StoryFn<typeof CommandPalette>;
 
-export const Example: Story = args => (
+export const Example: Story = (args) => (
   <DialogTrigger>
     <Button>
       Open Command Palette <kbd>⌘ J</kbd>

@@ -4,60 +4,64 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RouteAccessibleNavigation from '@/components/Utilities/routeAccessibleNavigation';
 
 describe('RouteAccessibleNavigation', () => {
-    beforeEach(() => {
-        vi.useFakeTimers();
-        document.title = 'Dashboard';
+  beforeEach(() => {
+    vi.useFakeTimers();
+    document.title = 'Dashboard';
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
+  });
+
+  it('announces a non-root route after the navigation delay and clears the pending timer on unmount', () => {
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/dashboard']}>
+        <RouteAccessibleNavigation />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByRole('status')).toHaveTextContent('Dashboard');
+
+    act(() => {
+      vi.advanceTimersByTime(100);
     });
 
-    afterEach(() => {
-        vi.useRealTimers();
-        vi.restoreAllMocks();
-    });
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Navigated to Dashboard page.'
+    );
 
-    it('announces a non-root route after the navigation delay and clears the pending timer on unmount', () => {
-        const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+    unmount();
+    expect(clearTimeoutSpy).toHaveBeenCalled();
+  });
 
-        const { unmount } = render(
-            <MemoryRouter initialEntries={['/dashboard']}>
-                <RouteAccessibleNavigation />
-            </MemoryRouter>,
-        );
+  it('announces the root route immediately with the current document title', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <RouteAccessibleNavigation />
+      </MemoryRouter>
+    );
 
-        expect(screen.getByRole('status')).toHaveTextContent('Dashboard');
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Navigated to Dashboard page.'
+    );
+  });
 
-        act(() => {
-            vi.advanceTimersByTime(100);
-        });
+  it('announces the root route when document title is empty without scheduling a timer', () => {
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+    document.title = '';
 
-        expect(screen.getByRole('status')).toHaveTextContent('Navigated to Dashboard page.');
+    const { unmount } = render(
+      <MemoryRouter initialEntries={['/']}>
+        <RouteAccessibleNavigation />
+      </MemoryRouter>
+    );
 
-        unmount();
-        expect(clearTimeoutSpy).toHaveBeenCalled();
-    });
+    expect(screen.getByRole('status').textContent).toBe('Navigated to  page.');
 
-    it('announces the root route immediately with the current document title', () => {
-        render(
-            <MemoryRouter initialEntries={['/']}>
-                <RouteAccessibleNavigation />
-            </MemoryRouter>,
-        );
-
-        expect(screen.getByRole('status')).toHaveTextContent('Navigated to Dashboard page.');
-    });
-
-    it('announces the root route when document title is empty without scheduling a timer', () => {
-        const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
-        document.title = '';
-
-        const { unmount } = render(
-            <MemoryRouter initialEntries={['/']}>
-                <RouteAccessibleNavigation />
-            </MemoryRouter>,
-        );
-
-        expect(screen.getByRole('status').textContent).toBe('Navigated to  page.');
-
-        unmount();
-        expect(clearTimeoutSpy).not.toHaveBeenCalled();
-    });
+    unmount();
+    expect(clearTimeoutSpy).not.toHaveBeenCalled();
+  });
 });

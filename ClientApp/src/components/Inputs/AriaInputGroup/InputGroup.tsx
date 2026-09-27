@@ -13,13 +13,13 @@ interface InputGroupProps extends GroupProps {
 export function InputGroup(props: Readonly<InputGroupProps>) {
   const id = useId();
   return (
-    <div className="input-group">
+    <div className='input-group'>
       {props.label && (
-        <Label elementType="span" id={id}>
+        <Label elementType='span' id={id}>
           {props.label}
         </Label>
       )}
-      <Group {...props} aria-labelledby={id} className="react-aria-Group inset">
+      <Group {...props} aria-labelledby={id} className='react-aria-Group inset'>
         {composeRenderProps(props.children, (children, renderProps) => (
           <InputContext.Provider value={{ disabled: renderProps.isDisabled }}>
             {children}

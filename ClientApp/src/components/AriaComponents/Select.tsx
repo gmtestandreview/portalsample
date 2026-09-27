@@ -44,7 +44,7 @@ export function Select<T, M extends 'single' | 'multiple' = 'single'>({
       </Button>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
-      <Popover hideArrow className="select-popover">
+      <Popover hideArrow className='select-popover'>
         <SelectListBox items={items}>{children}</SelectListBox>
       </Popover>
     </AriaSelect>

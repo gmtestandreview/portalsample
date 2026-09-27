@@ -18,8 +18,8 @@ type Story = StoryObj<typeof meta>;
 
 const services = (
   <>
-    <Checkbox value="testing">Testing and calibration</Checkbox>
-    <Checkbox value="pattern">Pattern approval</Checkbox>
+    <Checkbox value='testing'>Testing and calibration</Checkbox>
+    <Checkbox value='pattern'>Pattern approval</Checkbox>
   </>
 );
 
@@ -31,12 +31,20 @@ export const WithLabelAndDescription: Story = {
   },
   play: async ({ canvas }) => {
     await expect(canvas.getByText('NMI services')).toBeVisible();
-    await expect(canvas.getByText('Choose every service that applies to your business.')).toBeVisible();
+    await expect(
+      canvas.getByText('Choose every service that applies to your business.')
+    ).toBeVisible();
 
-    await userEvent.click(canvas.getByRole('checkbox', { name: 'Pattern approval' }));
+    await userEvent.click(
+      canvas.getByRole('checkbox', { name: 'Pattern approval' })
+    );
 
-    await expect(canvas.getByRole('checkbox', { name: 'Pattern approval' })).toBeChecked();
-    await expect(canvas.getByRole('checkbox', { name: 'Testing and calibration' })).not.toBeChecked();
+    await expect(
+      canvas.getByRole('checkbox', { name: 'Pattern approval' })
+    ).toBeChecked();
+    await expect(
+      canvas.getByRole('checkbox', { name: 'Testing and calibration' })
+    ).not.toBeChecked();
   },
 };
 
@@ -50,9 +58,13 @@ export const Bare: Story = {
     'aria-label': 'NMI services',
   },
   play: async ({ canvas }) => {
-    await expect(canvas.getByRole('checkbox', { name: 'Testing and calibration' })).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('checkbox', { name: 'Testing and calibration' })
+    ).toBeInTheDocument();
     // Named for assistive tech, but with no on-screen label text.
-    await expect(canvas.getByRole('group', { name: 'NMI services' })).toBeInTheDocument();
+    await expect(
+      canvas.getByRole('group', { name: 'NMI services' })
+    ).toBeInTheDocument();
     await expect(canvas.queryByText('NMI services')).not.toBeInTheDocument();
   },
 };
@@ -78,6 +90,8 @@ export const Invalid: Story = {
     errorMessage: 'Select at least one service before continuing.',
   },
   play: async ({ canvas }) => {
-    await expect(canvas.getByText('Select at least one service before continuing.')).toBeVisible();
+    await expect(
+      canvas.getByText('Select at least one service before continuing.')
+    ).toBeVisible();
   },
 };

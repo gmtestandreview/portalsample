@@ -14,26 +14,31 @@ import { ChevronLeft, ChevronRight } from '../AriaComponents/NmiIcon';
 import { Button } from '../Buttons/AriaButton/Button';
 import './Calendar.css';
 
-export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T> {
+export interface CalendarProps<
+  T extends DateValue,
+> extends AriaCalendarProps<T> {
   errorMessage?: string;
 }
 
-export function Calendar<T extends DateValue>({ errorMessage, ...props }: Readonly<CalendarProps<T>>) {
+export function Calendar<T extends DateValue>({
+  errorMessage,
+  ...props
+}: Readonly<CalendarProps<T>>) {
   const months = props.visibleDuration?.months || 1;
   return (
     <AriaCalendar {...props}>
-      <div className="months">
+      <div className='months'>
         {Array.from({ length: months }, (_, i) => (
-          <div key={i} className="month">
-            <div className="calendar-header">
+          <div key={i} className='month'>
+            <div className='calendar-header'>
               {i === 0 && (
-                <Button slot="previous" variant="quiet">
+                <Button slot='previous' variant='quiet'>
                   <ChevronLeft />
                 </Button>
               )}
               <CalendarHeading offset={{ months: i }} />
               {i === months - 1 && (
-                <Button slot="next" variant="quiet">
+                <Button slot='next' variant='quiet'>
                   <ChevronRight />
                 </Button>
               )}
@@ -44,7 +49,7 @@ export function Calendar<T extends DateValue>({ errorMessage, ...props }: Readon
           </div>
         ))}
       </div>
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      {errorMessage && <Text slot='errorMessage'>{errorMessage}</Text>}
     </AriaCalendar>
   );
 }
@@ -53,8 +58,8 @@ export function CalendarCell(props: Readonly<CalendarCellProps>) {
   return (
     <AriaCalendarCell
       {...props}
-      className="react-aria-CalendarCell button-base"
-      data-variant="quiet"
+      className='react-aria-CalendarCell button-base'
+      data-variant='quiet'
     />
   );
 }

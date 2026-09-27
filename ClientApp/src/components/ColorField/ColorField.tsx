@@ -25,7 +25,7 @@ export function ColorField({
   return (
     <AriaColorField {...props}>
       {label && <Label>{label}</Label>}
-      <Input className="react-aria-Input inset" placeholder={placeholder} />
+      <Input className='react-aria-Input inset' placeholder={placeholder} />
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaColorField>

@@ -18,16 +18,21 @@ export interface NumberFieldProps extends AriaNumberFieldProps {
   placeholder?: string;
 }
 
-export function NumberField({ label, description, errorMessage, ...props }: Readonly<NumberFieldProps>) {
+export function NumberField({
+  label,
+  description,
+  errorMessage,
+  ...props
+}: Readonly<NumberFieldProps>) {
   return (
     <AriaNumberField {...props}>
       <Label>{label}</Label>
       <Group>
-        <Input className="react-aria-Input inset" />
-        <Button slot="decrement" variant="secondary">
+        <Input className='react-aria-Input inset' />
+        <Button slot='decrement' variant='secondary'>
           <Minus />
         </Button>
-        <Button slot="increment" variant="secondary">
+        <Button slot='increment' variant='secondary'>
           <Plus />
         </Button>
       </Group>

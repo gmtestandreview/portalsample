@@ -7,13 +7,20 @@ import {
   type ValidationResult,
 } from 'react-aria-components/DateRangePicker';
 import { DateInput, DateSegment } from '../AriaDateField/DateField';
-import { Description, FieldButton , Label, FieldError } from '../../forms/AriaForm/Form';
+import {
+  Description,
+  FieldButton,
+  Label,
+  FieldError,
+} from '../../forms/AriaForm/Form';
 import { Popover } from '../../AriaComponents/Popover';
 import { RangeCalendar } from '../../AriaComponents/RangeCalendar';
 import { ChevronDown } from '../../AriaComponents/NmiIcon';
 import './DateRangePicker.css';
 
-export interface DateRangePickerProps<T extends DateValue> extends AriaDateRangePickerProps<T> {
+export interface DateRangePickerProps<
+  T extends DateValue,
+> extends AriaDateRangePickerProps<T> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
@@ -28,11 +35,15 @@ export function DateRangePicker<T extends DateValue>({
   return (
     <AriaDateRangePicker {...props}>
       <Label>{label}</Label>
-      <Group className="react-aria-Group inset">
-        <div className="date-fields">
-          <DateInput slot="start">{(segment) => <DateSegment segment={segment} />}</DateInput>
-          <span aria-hidden="true">–</span>
-          <DateInput slot="end">{(segment) => <DateSegment segment={segment} />}</DateInput>
+      <Group className='react-aria-Group inset'>
+        <div className='date-fields'>
+          <DateInput slot='start'>
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
+          <span aria-hidden='true'>–</span>
+          <DateInput slot='end'>
+            {(segment) => <DateSegment segment={segment} />}
+          </DateInput>
         </div>
         <FieldButton>
           <ChevronDown />

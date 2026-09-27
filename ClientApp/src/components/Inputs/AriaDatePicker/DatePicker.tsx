@@ -7,13 +7,20 @@ import {
   type ValidationResult,
 } from 'react-aria-components/DatePicker';
 import { DateInput, DateSegment } from '../AriaDateField/DateField';
-import { Label, FieldError, Description , FieldButton } from '../../forms/AriaForm/Form';
+import {
+  Label,
+  FieldError,
+  Description,
+  FieldButton,
+} from '../../forms/AriaForm/Form';
 import { Calendar } from '../../Calendar/Calendar';
 import { Popover } from '../../AriaComponents/Popover';
 import { ChevronDown } from '../../AriaComponents/NmiIcon';
 import './DatePicker.css';
 
-export interface DatePickerProps<T extends DateValue> extends AriaDatePickerProps<T> {
+export interface DatePickerProps<
+  T extends DateValue,
+> extends AriaDatePickerProps<T> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);

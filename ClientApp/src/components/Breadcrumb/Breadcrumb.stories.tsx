@@ -7,7 +7,7 @@ import CustomBreadcrumb from './index';
  *
  * This file defines the Storybook stories for the CustomBreadcrumb component, which provides a breadcrumb navigation UI element.
  * The stories demonstrate different levels of breadcrumb navigation, allowing developers to visualize its behavior in various contexts.
- * 
+ *
  * @module Breadcrumb.stories
  * @prop {Meta} meta - Storybook metadata for the CustomBreadcrumb component.
  * @prop {StoryObj} ThreeLevels - Story demonstrating a three-level breadcrumb navigation.
@@ -16,8 +16,8 @@ import CustomBreadcrumb from './index';
  */
 
 const meta = {
-    component: CustomBreadcrumb,
-    tags: ['ai-generated', 'needs-work'],
+  component: CustomBreadcrumb,
+  tags: ['ai-generated', 'needs-work'],
 } satisfies Meta<typeof CustomBreadcrumb>;
 
 export default meta;
@@ -32,7 +32,9 @@ export const ThreeLevels: Story = {
     ],
   },
   play: async ({ canvas }) => {
-    const navigation = await canvas.findByRole('navigation', { name: /breadcrumb/i });
+    const navigation = await canvas.findByRole('navigation', {
+      name: /breadcrumb/i,
+    });
     const lastBreadcrumb = await canvas.findByText(/request for quote/i);
 
     await expect(navigation).toBeInTheDocument();
@@ -42,13 +44,12 @@ export const ThreeLevels: Story = {
 
 export const TwoLevels: Story = {
   args: {
-    breadcrumbs: [
-      { to: '/', text: 'Home' },
-      { text: 'Help guide' },
-    ],
+    breadcrumbs: [{ to: '/', text: 'Home' }, { text: 'Help guide' }],
   },
   play: async ({ canvas }) => {
-    const navigation = await canvas.findByRole('navigation', { name: /breadcrumb/i });
+    const navigation = await canvas.findByRole('navigation', {
+      name: /breadcrumb/i,
+    });
     const homeLink = await canvas.findByRole('link', { name: 'Home' });
     const lastBreadcrumb = await canvas.findByText(/help guide/i);
 

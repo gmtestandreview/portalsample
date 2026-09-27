@@ -38,7 +38,7 @@ export function TagGroup<T>({
         {children}
       </TagList>
       {description && <Description>{description}</Description>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      {errorMessage && <Text slot='errorMessage'>{errorMessage}</Text>}
     </AriaTagGroup>
   );
 }
@@ -51,12 +51,16 @@ export function Tag({
 }) {
   const textValue = typeof children === 'string' ? children : undefined;
   return (
-    <AriaTag textValue={textValue} {...props} className="react-aria-Tag button-base">
+    <AriaTag
+      textValue={textValue}
+      {...props}
+      className='react-aria-Tag button-base'
+    >
       {({ allowsRemoving }) => (
         <>
           {children}
           {allowsRemoving && (
-            <Button slot="remove" className="remove-button">
+            <Button slot='remove' className='remove-button'>
               <X />
             </Button>
           )}

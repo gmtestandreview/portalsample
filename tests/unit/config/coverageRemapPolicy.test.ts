@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
-import termsConfig from "../../../ClientApp/src/terms-config.json";
-import { storybookCoverageConfig } from "../../../vitest.storybook.coverage";
-import unitConfig from "../../../vitest.unit.config";
+import termsConfig from '../../../ClientApp/src/terms-config.json';
+import { storybookCoverageConfig } from '../../../vitest.storybook.coverage';
+import unitConfig from '../../../vitest.unit.config';
 
 /**
  * Coverage denominator and remap policy for the unit leaf (Task A2).
@@ -21,12 +21,13 @@ import unitConfig from "../../../vitest.unit.config";
 const coverage = unitConfig.test?.coverage;
 const storybookCoverage = storybookCoverageConfig;
 
-if (coverage?.provider !== "v8") {
-  throw new Error("vitest.unit.config.ts must declare V8 unit coverage");
+if (coverage?.provider !== 'v8') {
+  throw new Error('vitest.unit.config.ts must declare V8 unit coverage');
 }
 
 /** Escapes a literal path so it can be embedded in a RegExp without its dots matching anything. */
-const escapeForRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeForRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * React Aria evaluation components carved out because they are a spike, not shipped code.
@@ -116,15 +117,15 @@ const allowedExclusionCategories = [
   new RegExp(`^(${evaluationSpikeNotCovered.map(escapeForRegExp).join('|')})$`),
 ];
 
-describe("unit coverage denominator", () => {
-  it("measures handwritten runtime source and the webpack config", () => {
+describe('unit coverage denominator', () => {
+  it('measures handwritten runtime source and the webpack config', () => {
     expect(coverage.include).toEqual([
-      "ClientApp/src/**/*.{ts,tsx}",
-      "webpack.config.js",
+      'ClientApp/src/**/*.{ts,tsx}',
+      'webpack.config.js',
     ]);
   });
 
-  it("retains the 100% policy on all four metrics", () => {
+  it('retains the 100% policy on all four metrics', () => {
     expect(coverage.thresholds).toMatchObject({
       statements: 100,
       branches: 100,
@@ -133,58 +134,60 @@ describe("unit coverage denominator", () => {
     });
   });
 
-  it("excludes only reviewed generated, vendor, story, declaration and type-only files", () => {
+  it('excludes only reviewed generated, vendor, story, declaration and type-only files', () => {
     for (const pattern of coverage.exclude ?? []) {
       expect(
         allowedExclusionCategories.some((category) => category.test(pattern)),
-        `coverage exclude "${pattern}" is outside the reviewed policy — narrowing the denominator is not an acceptable way to reach 100%`,
+        `coverage exclude "${pattern}" is outside the reviewed policy — narrowing the denominator is not an acceptable way to reach 100%`
       ).toBe(true);
     }
   });
 });
 
-describe("remap inputs", () => {
-  it("loads the terms configuration as data", () => {
-    expect(termsConfig).toEqual({ TermsVersion: "1" });
+describe('remap inputs', () => {
+  it('loads the terms configuration as data', () => {
+    expect(termsConfig).toEqual({ TermsVersion: '1' });
   });
 
-  it("carries no removed Vitest 3 coverage.all option", () => {
+  it('carries no removed Vitest 3 coverage.all option', () => {
     // `all` was removed in Vitest 4; asserting it through a type escape claims
     // behaviour the runtime does not provide and reintroduces the JSON remap
     // path if it is ever honoured again.
     expect(JSON.stringify(coverage)).not.toContain('"all":true');
-    expect(coverage).not.toHaveProperty("all");
+    expect(coverage).not.toHaveProperty('all');
   });
 
-  it("never admits JSON or other non-source assets to the denominator", () => {
+  it('never admits JSON or other non-source assets to the denominator', () => {
     // terms-config.json is imported by AccountProvider.tsx and
     // TermsAndCondition/index.tsx, so it is an executed module. It must still
     // never be measured or remapped.
     for (const pattern of coverage.include ?? []) {
       expect(
-        pattern.endsWith(".json") || pattern.includes(".json"),
-        `coverage include "${pattern}" must not admit JSON assets`,
+        pattern.endsWith('.json') || pattern.includes('.json'),
+        `coverage include "${pattern}" must not admit JSON assets`
       ).toBe(false);
     }
   });
 
-  it("reports through providers that do not require an all-files sweep", () => {
-    expect(coverage.provider).toBe("v8");
-    expect(coverage.reportsDirectory).toBe("./reports/coverage/unit");
+  it('reports through providers that do not require an all-files sweep', () => {
+    expect(coverage.provider).toBe('v8');
+    expect(coverage.reportsDirectory).toBe('./reports/coverage/unit');
   });
 
-  it("limits Storybook coverage remapping to executable application source", () => {
-    expect(storybookCoverage.provider).toBe("v8");
-    expect(storybookCoverage.include).toEqual(["ClientApp/src/**/*.{ts,tsx}"]);
-    expect(storybookCoverage.exclude).toEqual(expect.arrayContaining([
-      "ClientApp/src/api/web-api-client.ts",
-      "ClientApp/src/external/**",
-      "ClientApp/src/storybook/**",
-      "ClientApp/src/components/App/**",
-      "ClientApp/src/components/AriaComponents/main.tsx",
-      "ClientApp/src/components/reactaria_components/**",
-      "ClientApp/src/**/*.stories.{ts,tsx}",
-    ]));
+  it('limits Storybook coverage remapping to executable application source', () => {
+    expect(storybookCoverage.provider).toBe('v8');
+    expect(storybookCoverage.include).toEqual(['ClientApp/src/**/*.{ts,tsx}']);
+    expect(storybookCoverage.exclude).toEqual(
+      expect.arrayContaining([
+        'ClientApp/src/api/web-api-client.ts',
+        'ClientApp/src/external/**',
+        'ClientApp/src/storybook/**',
+        'ClientApp/src/components/App/**',
+        'ClientApp/src/components/AriaComponents/main.tsx',
+        'ClientApp/src/components/reactaria_components/**',
+        'ClientApp/src/**/*.stories.{ts,tsx}',
+      ])
+    );
   });
 
   // The Storybook/Vitest runtime bridge is proven in

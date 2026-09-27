@@ -9,7 +9,7 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
  *
  * This file defines the Storybook stories for the ButtonBreadth component, which displays a group of buttons arranged in a breadth layout.
  * The stories demonstrate different configurations of the ButtonBreadth component, including grouped actions and an edit section.
- * 
+ *
  * @module ButtonBreadth.stories
  * @prop {Meta} meta - Storybook metadata for the ButtonBreadth component.
  * @prop {StoryObj} GroupedActions - Story demonstrating a group of buttons with different actions.
@@ -18,37 +18,44 @@ import { withPortalProviders } from '../../storybook/storybookHarness';
  */
 
 const meta = {
-    title: 'Components/Buttons/Breadth',
-    component: ButtonGroup,
-    decorators: [withPortalProviders],
-    parameters: {
-        layout: 'centered',
-    },
+  title: 'Components/Buttons/Breadth',
+  component: ButtonGroup,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'centered',
+  },
 } satisfies Meta<typeof ButtonGroup>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const GroupedActions: Story = {
-    args: {
-        left: () => (
-            // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
-            <LinkButton as='Link' to='/dashboard' variant='tertiary'>
-                Cancel
-            </LinkButton>
-        ),
-        right: () => (
-            <LinkButton as='a' href='https://measurement.gov.au' target='_blank' variant='secondary'>
-                External reference
-            </LinkButton>
-        ),
-    },
+  args: {
+    left: () => (
+      // eslint-disable-next-line @eslint-react/dom-no-void-elements-with-children -- LinkButton's `as` prop is component-specific and never becomes the rendered host element; eslint-react 5.20.2 lowercases 'Link' and mistakes it for the void <link> tag
+      <LinkButton as='Link' to='/dashboard' variant='tertiary'>
+        Cancel
+      </LinkButton>
+    ),
+    right: () => (
+      <LinkButton
+        as='a'
+        href='https://measurement.gov.au'
+        target='_blank'
+        variant='secondary'
+      >
+        External reference
+      </LinkButton>
+    ),
+  },
 };
 
 export const EditSection: Story = {
-    args: {
-        left: () => <></>,
-        right: () => <></>,
-    },
-    render: () => <EditButton link='/request-for-quote/123/organisation-and-contact' />,
+  args: {
+    left: () => <></>,
+    right: () => <></>,
+  },
+  render: () => (
+    <EditButton link='/request-for-quote/123/organisation-and-contact' />
+  ),
 };

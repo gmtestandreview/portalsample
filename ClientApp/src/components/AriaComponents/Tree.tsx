@@ -27,17 +27,21 @@ export function TreeItemContent(
 ) {
   return (
     <AriaTreeItemContent>
-      {({ selectionBehavior, selectionMode, allowsDragging }: TreeItemContentRenderProps) => (
+      {({
+        selectionBehavior,
+        selectionMode,
+        allowsDragging,
+      }: TreeItemContentRenderProps) => (
         <>
           {allowsDragging && (
-            <Button slot="drag">
+            <Button slot='drag'>
               <GripVertical size={16} />
             </Button>
           )}
           {selectionBehavior === 'toggle' && selectionMode !== 'none' && (
-            <Checkbox slot="selection" />
+            <Checkbox slot='selection' />
           )}
-          <Button slot="chevron">
+          <Button slot='chevron'>
             <ChevronRight />
           </Button>
           {props.children}
@@ -70,15 +74,19 @@ export function TreeItem(props: Readonly<TreeItemProps>) {
 export function TreeLoadMoreItem(props: Readonly<TreeLoadMoreItemProps>) {
   return (
     <AriaTreeLoadMoreItem {...props}>
-      <ProgressCircle isIndeterminate aria-label="Loading more..." />
+      <ProgressCircle isIndeterminate aria-label='Loading more...' />
     </AriaTreeLoadMoreItem>
   );
 }
 
-export function TreeSection(props: React.ComponentProps<typeof AriaTreeSection>) {
+export function TreeSection(
+  props: React.ComponentProps<typeof AriaTreeSection>
+) {
   return <AriaTreeSection {...props} />;
 }
 
-export function TreeHeader(props: Readonly<React.ComponentProps<typeof AriaTreeHeader>>) {
+export function TreeHeader(
+  props: Readonly<React.ComponentProps<typeof AriaTreeHeader>>
+) {
   return <AriaTreeHeader {...props} />;
 }

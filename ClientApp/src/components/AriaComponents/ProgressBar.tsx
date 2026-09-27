@@ -16,11 +16,15 @@ export function ProgressBar({ label, ...props }: Readonly<ProgressBarProps>) {
       {({ percentage, valueText, isIndeterminate }) => (
         <>
           <Label>{label}</Label>
-          <span className="value">{valueText}</span>
-          <div className="track inset">
+          <span className='value'>{valueText}</span>
+          <div className='track inset'>
             <div
-              className="fill"
-              style={{ '--percent': (isIndeterminate ? 100 : percentage) + '%' } as any}
+              className='fill'
+              style={
+                {
+                  '--percent': (isIndeterminate ? 100 : percentage) + '%',
+                } as any
+              }
             />
           </div>
         </>

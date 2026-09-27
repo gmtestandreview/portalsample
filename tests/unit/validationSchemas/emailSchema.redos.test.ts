@@ -22,69 +22,71 @@ const BACKTRACKING_BAIT = `a@a${'-'.repeat(30)}!`;
 const BUDGET_MS = 250;
 
 describe('emailSchema - ReDoS resistance', () => {
-    it('rejects a backtracking-bait address without catastrophic slowdown', () => {
-        const schema = emailSchema('Email address');
+  it('rejects a backtracking-bait address without catastrophic slowdown', () => {
+    const schema = emailSchema('Email address');
 
-        const start = performance.now();
-        const isValid = schema.isValidSync(BACKTRACKING_BAIT);
-        const elapsed = performance.now() - start;
+    const start = performance.now();
+    const isValid = schema.isValidSync(BACKTRACKING_BAIT);
+    const elapsed = performance.now() - start;
 
-        expect(isValid).toBe(false);
-        expect(elapsed).toBeLessThan(BUDGET_MS);
-    });
+    expect(isValid).toBe(false);
+    expect(elapsed).toBeLessThan(BUDGET_MS);
+  });
 
-    it('rejects a long unbroken domain without catastrophic slowdown', () => {
-        // No hyphens at all - the old regex still backtracked here, because the
-        // domain cannot fit the bounded {0,62} group and every split is tried.
-        const schema = emailSchema('Email address');
+  it('rejects a long unbroken domain without catastrophic slowdown', () => {
+    // No hyphens at all - the old regex still backtracked here, because the
+    // domain cannot fit the bounded {0,62} group and every split is tried.
+    const schema = emailSchema('Email address');
 
-        const start = performance.now();
-        schema.isValidSync(`a@${'y'.repeat(70)}.com`);
-        const elapsed = performance.now() - start;
+    const start = performance.now();
+    schema.isValidSync(`a@${'y'.repeat(70)}.com`);
+    const elapsed = performance.now() - start;
 
-        expect(elapsed).toBeLessThan(BUDGET_MS);
-    });
+    expect(elapsed).toBeLessThan(BUDGET_MS);
+  });
 });
 
 describe('emailSchema - accepted addresses', () => {
-    it.each([
-        ['a@b.co', 'shortest valid form'],
-        ['first.last@example.com', 'dotted local part'],
-        ['user+tag@example.com', 'plus addressing'],
-        ["o'brien@example.com", 'apostrophe in local part'],
-        ['user@sub.example.gov.au', 'multi-level domain'],
-        ['user@national-measurement.gov.au', 'hyphen inside a label'],
-        ['user@xn--80ak6aa92e.com', 'punycode, consecutive hyphens'],
-    ])('accepts %s (%s)', (address) => {
-        expect(emailSchema('Email address').isValidSync(address)).toBe(true);
-    });
+  it.each([
+    ['a@b.co', 'shortest valid form'],
+    ['first.last@example.com', 'dotted local part'],
+    ['user+tag@example.com', 'plus addressing'],
+    ["o'brien@example.com", 'apostrophe in local part'],
+    ['user@sub.example.gov.au', 'multi-level domain'],
+    ['user@national-measurement.gov.au', 'hyphen inside a label'],
+    ['user@xn--80ak6aa92e.com', 'punycode, consecutive hyphens'],
+  ])('accepts %s (%s)', (address) => {
+    expect(emailSchema('Email address').isValidSync(address)).toBe(true);
+  });
 });
 
 describe('emailSchema - rejected addresses', () => {
-    it.each([
-        ['plainaddress', 'no @ at all'],
-        ['@example.com', 'empty local part'],
-        ['a@b', 'no dot in domain'],
-        ['a@.com', 'empty label'],
-        ['a@b.', 'empty TLD'],
-        ['a@-lead.com', 'label starts with a hyphen'],
-        ['a@example.1com', 'TLD does not start with a letter'],
-        ['a@b@c.com', 'two @ characters'],
-    ])('rejects %s (%s)', (address) => {
-        expect(emailSchema('Email address').isValidSync(address)).toBe(false);
-    });
+  it.each([
+    ['plainaddress', 'no @ at all'],
+    ['@example.com', 'empty local part'],
+    ['a@b', 'no dot in domain'],
+    ['a@.com', 'empty label'],
+    ['a@b.', 'empty TLD'],
+    ['a@-lead.com', 'label starts with a hyphen'],
+    ['a@example.1com', 'TLD does not start with a letter'],
+    ['a@b@c.com', 'two @ characters'],
+  ])('rejects %s (%s)', (address) => {
+    expect(emailSchema('Email address').isValidSync(address)).toBe(false);
+  });
 
-    it('rejects a domain label that ends with a hyphen', () => {
-        // Behaviour change, deliberate. The previous regex accepted this; a
-        // trailing hyphen is not a legal DNS label (RFC 1035), and the old
-        // pattern only allowed it because its ambiguous domain group could
-        // absorb the hyphen. Nothing resolvable is lost.
-        expect(emailSchema('Email address').isValidSync('a@trail-.com')).toBe(false);
-    });
+  it('rejects a domain label that ends with a hyphen', () => {
+    // Behaviour change, deliberate. The previous regex accepted this; a
+    // trailing hyphen is not a legal DNS label (RFC 1035), and the old
+    // pattern only allowed it because its ambiguous domain group could
+    // absorb the hyphen. Nothing resolvable is lost.
+    expect(emailSchema('Email address').isValidSync('a@trail-.com')).toBe(
+      false
+    );
+  });
 
-    it('rejects a domain label longer than the 63-character DNS limit', () => {
-        const tooLong = `a@${'y'.repeat(64)}.com`;
+  it('rejects a domain label longer than the 63-character DNS limit', () => {
+    const tooLong = `a@${'y'.repeat(64)}.com`;
 
-        expect(emailSchema('Email address').isValidSync(tooLong)).toBe(false);
-    });
+    expect(emailSchema('Email address').isValidSync(tooLong)).toBe(false);
+  });
 });

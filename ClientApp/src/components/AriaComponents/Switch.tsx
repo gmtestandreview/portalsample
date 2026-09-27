@@ -15,13 +15,18 @@ export interface SwitchProps extends Omit<SwitchFieldProps, 'children'> {
   errorMessage?: string | ((validation: ValidationResult) => string);
 }
 
-export function Switch({ children, description, errorMessage, ...props }: Readonly<SwitchProps>) {
+export function Switch({
+  children,
+  description,
+  errorMessage,
+  ...props
+}: Readonly<SwitchProps>) {
   return (
     <SwitchField {...props}>
       <SwitchButton>
         {({ isSelected, isDisabled }) => (
           <>
-            <div className="track indicator">
+            <div className='track indicator'>
               <div
                 data-disabled={isDisabled || undefined}
                 className={isSelected ? 'handle' : 'handle indicator'}

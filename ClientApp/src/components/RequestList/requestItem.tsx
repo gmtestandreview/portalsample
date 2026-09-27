@@ -257,7 +257,7 @@ const renderQuotationContent = (
             className='ms-md-auto'
             onClick={() => {
               trackGAEvent('Request item/quotation tab');
-              // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+
               useQuoteId
                 ? navigate(`/quotation/${dashboardQuoteDto.quotationId}`)
                 : navigate(`/quotation/${referenceId}`);

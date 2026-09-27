@@ -16,14 +16,17 @@ export function MyToastRegion() {
   return (
     <ToastRegion queue={queue}>
       {({ toast }) => (
-        <MyToast toast={toast} style={{ viewTransitionName: toast.key } as CSSProperties}>
+        <MyToast
+          toast={toast}
+          style={{ viewTransitionName: toast.key } as CSSProperties}
+        >
           <ToastContent>
-            <Text slot="title">{toast.content.title}</Text>
+            <Text slot='title'>{toast.content.title}</Text>
             {toast.content.description && (
-              <Text slot="description">{toast.content.description}</Text>
+              <Text slot='description'>{toast.content.description}</Text>
             )}
           </ToastContent>
-          <Button slot="close" aria-label="Close" variant="quiet">
+          <Button slot='close' aria-label='Close' variant='quiet'>
             <X size={16} />
           </Button>
         </MyToast>

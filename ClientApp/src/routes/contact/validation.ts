@@ -3,7 +3,7 @@ import { contactSchema } from '../../validationSchemas/contactValidation';
 import '../../validationSchemas/yupExtensions';
 
 const contactSubmitValidation = yup.object({
-    contact: contactSchema(),
+  contact: contactSchema(),
 });
 
 export default contactSubmitValidation;

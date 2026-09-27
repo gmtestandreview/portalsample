@@ -1,33 +1,33 @@
-import type {ComponentPropsWithoutRef, CSSProperties} from 'react';
+import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
 
 type NmiIconProps = Omit<ComponentPropsWithoutRef<'i'>, 'children'> & {
-    size?: number | string;
-    strokeWidth?: number;
+  size?: number | string;
+  strokeWidth?: number;
 };
 
 function createNmiIcon(icon: string) {
-    return function NmiIcon({
-        className,
-        size,
-        strokeWidth: _strokeWidth,
-        style,
-        ...props
-    }: NmiIconProps) {
-        const iconStyle: CSSProperties = {
-            ...style,
-            ...(size === undefined ? {} : {fontSize: size}),
-        };
-
-        return (
-            <i
-                {...props}
-                aria-hidden={props['aria-label'] ? undefined : true}
-                className={`nmi-react-aria-icon icon-${icon}${className ? ` ${className}` : ''}`}
-                data-nmi-icon={icon}
-                style={iconStyle}
-            />
-        );
+  return function NmiIcon({
+    className,
+    size,
+    strokeWidth: _strokeWidth,
+    style,
+    ...props
+  }: NmiIconProps) {
+    const iconStyle: CSSProperties = {
+      ...style,
+      ...(size === undefined ? {} : { fontSize: size }),
     };
+
+    return (
+      <i
+        {...props}
+        aria-hidden={props['aria-label'] ? undefined : true}
+        className={`nmi-react-aria-icon icon-${icon}${className ? ` ${className}` : ''}`}
+        data-nmi-icon={icon}
+        style={iconStyle}
+      />
+    );
+  };
 }
 
 export const Check = createNmiIcon('tick');

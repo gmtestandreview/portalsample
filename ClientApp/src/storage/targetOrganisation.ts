@@ -3,14 +3,15 @@ import type { TargetOrganisation } from './types';
 
 const targetOrganisationKey = 'targetOrganisation';
 
-export const getTargetOrganisation = () => SessionStorageCache().getItem<TargetOrganisation>(targetOrganisationKey);
+export const getTargetOrganisation = () =>
+  SessionStorageCache().getItem<TargetOrganisation>(targetOrganisationKey);
 
 const setTargetOrganisation = (item: TargetOrganisation) => {
-    SessionStorageCache().setItem(item, targetOrganisationKey);
+  SessionStorageCache().setItem(item, targetOrganisationKey);
 };
 
 export const clearTargetOrganisation = () => {
-    SessionStorageCache().removeItem(targetOrganisationKey);
+  SessionStorageCache().removeItem(targetOrganisationKey);
 };
 
 export default setTargetOrganisation;

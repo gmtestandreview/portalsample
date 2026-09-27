@@ -29,7 +29,7 @@ export function RadioGroup({
   return (
     <AriaRadioGroup {...props}>
       <Label>{label}</Label>
-      <div className="radio-items">{children}</div>
+      <div className='radio-items'>{children}</div>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaRadioGroup>
@@ -46,7 +46,7 @@ export function Radio(props: Readonly<RadioProps>) {
       <RadioButton>
         {composeRenderProps(props.children, (children) => (
           <>
-            <div className="indicator" />
+            <div className='indicator' />
             {children}
           </>
         ))}

@@ -1,9 +1,9 @@
-import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
-import {MyToastRegion} from './Toast';
-import {queue} from './ToastQueue';
-import {Button} from '../Buttons/AriaButton/Button';
-import {expect, waitFor, within} from 'storybook/test';
-import type {Meta, StoryObj} from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation';
+import { MyToastRegion } from './Toast';
+import { queue } from './ToastQueue';
+import { Button } from '../Buttons/AriaButton/Button';
+import { expect, waitFor, within } from 'storybook/test';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 
 interface ToastStoryArgs {
   title: string;
@@ -16,48 +16,49 @@ const meta = {
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Toast',
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
   },
   tags: ['interaction-test'],
   argTypes: {
     title: {
       control: 'text',
-      description: 'The title of the toast.'
+      description: 'The title of the toast.',
     },
     description: {
       control: 'text',
-      description: 'Optional description text.'
+      description: 'Optional description text.',
     },
     timeout: {
       control: 'number',
-      description: 'Auto-dismiss timeout in milliseconds.'
+      description: 'Auto-dismiss timeout in milliseconds.',
     },
     buttonLabel: {
       control: 'text',
-      description: 'Label for the trigger button.'
-    }
+      description: 'Label for the trigger button.',
+    },
   },
   args: {
     title: 'Files uploaded',
     description: '3 files uploaded successfully.',
-    buttonLabel: 'Show toast'
-  }
+    buttonLabel: 'Show toast',
+  },
 } satisfies Meta<ToastStoryArgs>;
 
 export default meta;
 type Story = StoryObj<ToastStoryArgs>;
 
 export const Example: Story = {
-  render: args => (
+  render: (args) => (
     <>
       <MyToastRegion />
       <Button
         onPress={() =>
           queue.add(
-            {title: args.title, description: args.description},
-            args.timeout ? {timeout: args.timeout} : undefined
+            { title: args.title, description: args.description },
+            args.timeout ? { timeout: args.timeout } : undefined
           )
-        }>
+        }
+      >
         {args.buttonLabel}
       </Button>
     </>
@@ -102,14 +103,16 @@ function MyToastRegion() {
     {args.buttonLabel}
   </Button>
 </>`;
-        }
-      }
-    }
+        },
+      },
+    },
   },
-  play: async ({args, canvas, canvasElement, userEvent}) => {
+  play: async ({ args, canvas, canvasElement, userEvent }) => {
     const page = within(canvasElement.ownerDocument.body);
 
-    await userEvent.click(canvas.getByRole('button', {name: args.buttonLabel}));
+    await userEvent.click(
+      canvas.getByRole('button', { name: args.buttonLabel })
+    );
 
     const title = await page.findByText(args.title);
     await expect(title).toBeVisible();
@@ -118,10 +121,10 @@ function MyToastRegion() {
       await expect(page.getByText(args.description)).toBeVisible();
     }
 
-    await userEvent.click(page.getByRole('button', {name: 'Close'}));
+    await userEvent.click(page.getByRole('button', { name: 'Close' }));
 
     await waitFor(() => {
       expect(page.queryByText(args.title)).not.toBeInTheDocument();
     });
-  }
+  },
 };
