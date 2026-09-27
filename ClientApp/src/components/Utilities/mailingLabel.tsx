@@ -21,7 +21,7 @@ const MailingLabel = ({
   nmiFacilityName,
   nmiFacilityAddress,
   showPrintOrCopy = true,
-}: MailingLabelProps) => {
+}: Readonly<MailingLabelProps>) => {
   const printAreaRef = useRef<HTMLDivElement | null>(null);
 
   const [isCopyClipboard, setIsCopyClipboard] = useState(false);

@@ -29,7 +29,7 @@ import type { CustomAccordionBodyProps, CustomAccordionProps } from './types';
  */
 
 export const CustomAccordion: FunctionComponent<CustomAccordionProps> = (
-  props: PropsWithChildren<CustomAccordionProps>
+  props: Readonly<PropsWithChildren<CustomAccordionProps>>
 ) => {
   const { id, containerClassName, children } = props;
 
@@ -86,7 +86,7 @@ export const CustomAccordion: FunctionComponent<CustomAccordionProps> = (
 
 export const CustomAccordionBody: FunctionComponent<
   CustomAccordionBodyProps
-> = (props: PropsWithChildren<CustomAccordionBodyProps>) => {
+> = (props: Readonly<PropsWithChildren<CustomAccordionBodyProps>>) => {
   const {
     id,
     name,

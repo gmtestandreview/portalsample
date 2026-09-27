@@ -26,7 +26,7 @@ const formattedDate = (dateToFormat: Date | string | undefined) =>
       })
     : '';
 
-const DateColumn = (props: { date: Date | string | undefined }) => {
+const DateColumn = (props: Readonly<{ date: Date | string | undefined }>) => {
   const { date } = props;
   return <Col className='small'>{formattedDate(date)}</Col>;
 };
@@ -240,7 +240,7 @@ const renderInstrumentReportsContent = (
   </>
 );
 
-const InstrumentItem = (props: { request: DashboardItemDto }) => {
+const InstrumentItem = (props: Readonly<{ request: DashboardItemDto }>) => {
   const { request } = props;
 
   const {

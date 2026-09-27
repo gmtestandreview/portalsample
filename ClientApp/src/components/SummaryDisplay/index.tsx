@@ -89,7 +89,7 @@ const renderTextValue = (
   return <span className={`text-break ${className}`}>{value}</span>;
 };
 
-const SummaryDisplay = (props: SummaryDisplayProps) => {
+const SummaryDisplay = (props: Readonly<SummaryDisplayProps>) => {
   const {
     label,
     value,

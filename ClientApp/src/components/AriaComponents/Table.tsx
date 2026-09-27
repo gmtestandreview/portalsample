@@ -37,7 +37,9 @@ interface ColumnProps extends AriaColumnProps {
 }
 
 export function Column(
-  props: Omit<ColumnProps, 'children'> & { children?: React.ReactNode }
+  props: Readonly<
+    Omit<ColumnProps, 'children'> & { children?: React.ReactNode }
+  >
 ) {
   return (
     <AriaColumn {...props} className='react-aria-Column button-base'>

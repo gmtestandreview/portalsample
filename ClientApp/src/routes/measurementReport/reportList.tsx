@@ -17,10 +17,12 @@ const formattedDate = (dateToFormat: Date | string | undefined) =>
       })
     : '';
 
-const ReportList = (props: {
-  pagedListArtefactData: PagedListOfInstrumentArtefactDto;
-  setCurrentPage: (page: number) => void;
-}) => {
+const ReportList = (
+  props: Readonly<{
+    pagedListArtefactData: PagedListOfInstrumentArtefactDto;
+    setCurrentPage: (page: number) => void;
+  }>
+) => {
   const { pagedListArtefactData, setCurrentPage } = props;
 
   return (

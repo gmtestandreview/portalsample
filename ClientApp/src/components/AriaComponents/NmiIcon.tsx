@@ -12,7 +12,7 @@ function createNmiIcon(icon: string) {
     strokeWidth: _strokeWidth,
     style,
     ...props
-  }: NmiIconProps) {
+  }: Readonly<NmiIconProps>) {
     const iconStyle: CSSProperties = {
       ...style,
       ...(size === undefined ? {} : { fontSize: size }),

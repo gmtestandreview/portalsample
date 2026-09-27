@@ -15,7 +15,7 @@ export function Breadcrumbs<T>(props: Readonly<BreadcrumbsProps<T>>) {
 }
 
 export function Breadcrumb(
-  props: BreadcrumbProps & Omit<LinkProps, 'className'>
+  props: Readonly<BreadcrumbProps & Omit<LinkProps, 'className'>>
 ) {
   return (
     <RACBreadcrumb {...props}>

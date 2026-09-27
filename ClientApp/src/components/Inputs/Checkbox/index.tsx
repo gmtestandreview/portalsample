@@ -4,7 +4,9 @@ import Form from 'react-bootstrap/Form';
 import SummaryDisplay from '../../SummaryDisplay';
 import type { CheckboxProps } from './types';
 
-const Checkbox = <T,>(props: CheckboxProps<T> & FieldHookConfig<T>) => {
+const Checkbox = <T,>(
+  props: Readonly<CheckboxProps<T> & FieldHookConfig<T>>
+) => {
   const {
     label,
     name,

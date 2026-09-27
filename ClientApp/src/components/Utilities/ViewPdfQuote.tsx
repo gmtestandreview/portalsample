@@ -23,7 +23,7 @@ export interface ViewPdfQuoteProps {
  * @param props ViewPdfQuoteProps
  * @returns jsx
  */
-const ViewPdfQuote = (props: ViewPdfQuoteProps) => {
+const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
   const { text, quotationData, setFileError, setIsLoading } = props;
   const { accounts, instance } = useMsal();
   const [fileSize, setFileSize] = useState<string>();

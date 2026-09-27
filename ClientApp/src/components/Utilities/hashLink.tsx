@@ -42,7 +42,7 @@ interface HashLinkProps {
   scrollToBlock?: 'center' | 'start';
 }
 
-const HashLink = (props: PropsWithChildren<HashLinkProps>) => {
+const HashLink = (props: Readonly<PropsWithChildren<HashLinkProps>>) => {
   const { to: href, className, aria, children, scrollToBlock } = props;
   return (
     <a

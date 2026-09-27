@@ -16,7 +16,7 @@ import ProgressBar from '../../Progress/ProgressBar';
 import ProgressFileList from '../../Progress/ProgressFileList';
 
 const AttachmentNew = (
-  props: AttachmentProps & FieldHookConfig<AttachmentDto[]>
+  props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>
 ) => {
   const {
     id,

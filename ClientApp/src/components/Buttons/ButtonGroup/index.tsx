@@ -16,7 +16,7 @@ export interface ButtonGroupProps {
   right: () => JSX.Element;
 }
 
-const ButtonGroup = (props: ButtonGroupProps) => {
+const ButtonGroup = (props: Readonly<ButtonGroupProps>) => {
   const { left, right } = props;
   return (
     <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>

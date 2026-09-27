@@ -9,7 +9,7 @@ import { removeHidden, validateForm } from '../utils';
 import { removeEmptyKeys } from '../../../utils';
 
 const FormikForm = <Values extends FormikValues>(
-  props: FormikFormProps<Values>
+  props: Readonly<FormikFormProps<Values>>
 ) => {
   const {
     initialValues,

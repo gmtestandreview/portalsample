@@ -4,7 +4,7 @@ import SearchBox from './searchBox';
 import type { SearchFilterProps } from './types';
 import { useAccountDispatch } from '../../authentication/hooks';
 
-const SearchFilter = (props: SearchFilterProps) => {
+const SearchFilter = (props: Readonly<SearchFilterProps>) => {
   const {
     containerClassName = '', // default props
     className = '', // default props

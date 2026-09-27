@@ -5,7 +5,7 @@ export interface DocsTableProps {
   rows: ReactNode[][];
 }
 
-const DocsTable = ({ headers, rows }: DocsTableProps) => (
+const DocsTable = ({ headers, rows }: Readonly<DocsTableProps>) => (
   <table>
     <thead>
       <tr>

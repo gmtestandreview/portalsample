@@ -15,7 +15,7 @@ function getNameForUse(arg0: string): string {
   return arg0;
 }
 
-const FilterMenu = (props: FilterMenuProps) => {
+const FilterMenu = (props: Readonly<FilterMenuProps>) => {
   const {
     containerClassName = '', // default props
     className: _className = '', // default props

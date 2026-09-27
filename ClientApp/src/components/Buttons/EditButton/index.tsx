@@ -17,7 +17,7 @@ export interface EditButtonProps {
   link?: string;
 }
 
-const EditButton = (props: EditButtonProps) => {
+const EditButton = (props: Readonly<EditButtonProps>) => {
   const { link } = props;
   const navigate = useNavigate();
 

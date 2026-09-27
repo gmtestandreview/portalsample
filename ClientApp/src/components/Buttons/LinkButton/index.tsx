@@ -35,7 +35,7 @@ type LinkButtonProps = Omit<
   target?: React.HTMLAttributeAnchorTarget;
 };
 
-const LinkButton = (props: LinkButtonProps) => {
+const LinkButton = (props: Readonly<LinkButtonProps>) => {
   const { target, variant, className, href, to, as, onClick, ...rest } = props;
 
   const hrefValue = as === 'a' ? href : to;

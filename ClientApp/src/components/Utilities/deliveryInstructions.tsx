@@ -4,7 +4,7 @@ interface Props {
   deliveryInstructions?: string;
 }
 
-const DeliveryInstructions = ({ deliveryInstructions }: Props) => (
+const DeliveryInstructions = ({ deliveryInstructions }: Readonly<Props>) => (
   <Col md={12}>
     {deliveryInstructions && (
       <div className='mb-4 p-4 bg-light d-print-block'>

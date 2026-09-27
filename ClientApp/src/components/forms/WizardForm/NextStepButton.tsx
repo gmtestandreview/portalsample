@@ -14,7 +14,7 @@ const NextStepButton = ({
   finalStepTitle,
   finalStepConfirmation,
   className = '', // default props
-}: NextStepButtonProps) => {
+}: Readonly<NextStepButtonProps>) => {
   const [showModal, setShowModal] = useState(false);
   const { errors, submitForm, validateForm } = useFormikContext<FormikValues>();
   const finalStep = currentStepIndex === steps.length - 1;

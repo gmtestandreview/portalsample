@@ -49,7 +49,7 @@ const getName = prefixedPropertyOf<InstrumentAndRequestStep>(
   'instrumentAndRequest'
 );
 
-const InstrumentAndRequest = (props: InstrumentAndRequestProps) => {
+const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
   const { isSummary } = props;
   const isEditable = !isSummary;
   const { accounts, instance } = useMsal();

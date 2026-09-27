@@ -25,7 +25,9 @@ export interface CertificateNumberLookupProps {
   isSummary?: boolean;
 }
 
-const CertificateNumberLookup = (props: CertificateNumberLookupProps) => {
+const CertificateNumberLookup = (
+  props: Readonly<CertificateNumberLookupProps>
+) => {
   const {
     id,
     name,

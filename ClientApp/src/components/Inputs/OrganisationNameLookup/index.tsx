@@ -20,7 +20,9 @@ export interface OrganisationNameLookupProps {
   maxResults?: number;
 }
 
-const OrganisationNameLookup = (props: OrganisationNameLookupProps) => {
+const OrganisationNameLookup = (
+  props: Readonly<OrganisationNameLookupProps>
+) => {
   const {
     id,
     name,

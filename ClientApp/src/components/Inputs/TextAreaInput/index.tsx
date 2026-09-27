@@ -17,7 +17,7 @@ const TextAreaInput = ({
   containerClassName = '', // default props
   className = '', // default props
   isSummary,
-}: TextAreaInputProps) => {
+}: Readonly<TextAreaInputProps>) => {
   const [_field, _meta, _fieldHelper] = useField(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 

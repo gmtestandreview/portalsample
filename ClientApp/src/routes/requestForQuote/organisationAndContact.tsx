@@ -10,7 +10,7 @@ import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
 import { formatTradingBranchFromStrings } from '../common/helperFunctions';
 import { useModalDispatch } from '../../components/modals/ModalContext';
 
-const GetFieldValue = ({ fieldName }: { fieldName: string }) => {
+const GetFieldValue = ({ fieldName }: Readonly<{ fieldName: string }>) => {
   const [_field] = useField(fieldName);
   return <>{_field.value}</>;
 };
@@ -20,7 +20,9 @@ const GetFieldValueString = ({ fieldName }: { fieldName: string }) => {
   return _field.value;
 };
 
-const OrganisationAndContact = (props: OrganisationAndContactProps) => {
+const OrganisationAndContact = (
+  props: Readonly<OrganisationAndContactProps>
+) => {
   const { isSummary, name } = props;
   const isEditable = !isSummary;
   const { values } = useFormikContext<any>();

@@ -9,7 +9,7 @@ import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 
 const CheckboxGroup = <T,>(
-  props: CheckboxGroupProps<T> & FieldHookConfig<T>
+  props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>
 ) => {
   const {
     displayHorizontally,

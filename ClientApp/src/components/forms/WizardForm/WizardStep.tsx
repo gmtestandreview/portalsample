@@ -5,7 +5,9 @@ import ErrorBoundary from '../../ErrorBoundary';
 import { ai } from '../../../instrumentation/AppInsightsService';
 import GoogleAnalytics from '../../../analytics/GoogleAnalytics';
 
-const WizardStep = <T extends FormikValues>(props: WizardStepProps<T>) => {
+const WizardStep = <T extends FormikValues>(
+  props: Readonly<WizardStepProps<T>>
+) => {
   const { children } = props;
 
   return (

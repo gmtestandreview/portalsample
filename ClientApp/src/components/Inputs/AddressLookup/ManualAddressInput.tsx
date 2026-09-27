@@ -4,7 +4,7 @@ import TextInput from '../TextInput';
 import states from './constants';
 import type { ManualAddressInputProps } from './types';
 
-const ManualAddressInput = (props: ManualAddressInputProps) => {
+const ManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
   const { name, disabled, ...rest } = props;
   return (
     <>

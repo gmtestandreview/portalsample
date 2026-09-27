@@ -35,7 +35,9 @@ export function Menu<T>(props: Readonly<MenuProps<T>>) {
 }
 
 export function MenuItem(
-  props: Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }
+  props: Readonly<
+    Omit<MenuItemProps, 'children'> & { children?: React.ReactNode }
+  >
 ) {
   const textValue =
     props.textValue ||

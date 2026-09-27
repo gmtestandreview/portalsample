@@ -43,7 +43,7 @@ import {
 } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
-const SummaryAndAccept = (props: SummaryAndAcceptProps) => {
+const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted, cRMQuoteRequestId } = props;
   const { accounts, instance } = useMsal();

@@ -10,10 +10,12 @@ import ExternalLinkIcon from '../../components/Icons/ExternalLinkIcon';
 import { formatDateToString } from '../../utils';
 import { openInternalRouteInNewTab } from '../common/openWindow';
 
-const ReportDetails = (props: {
-  reportData: RequestForQuoteDetails | undefined;
-  fileError: boolean | undefined;
-}) => {
+const ReportDetails = (
+  props: Readonly<{
+    reportData: RequestForQuoteDetails | undefined;
+    fileError: boolean | undefined;
+  }>
+) => {
   const { reportData, fileError } = props;
   const setNotification = () => {
     const dashboardNotification = getDashboardNotification();

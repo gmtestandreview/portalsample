@@ -2,7 +2,7 @@ import { Container } from 'react-bootstrap';
 import type { SteppedNavigationProps } from './types';
 import stepIcon from '../../assets/Stepper.svg';
 
-const SteppedNavigation = (props: SteppedNavigationProps) => {
+const SteppedNavigation = (props: Readonly<SteppedNavigationProps>) => {
   const { activeStep, steps, id, interactive } = props;
 
   const firstNotCompleted = steps.findIndex((x) => !x.completed);

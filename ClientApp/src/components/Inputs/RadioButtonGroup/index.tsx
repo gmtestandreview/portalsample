@@ -9,7 +9,7 @@ import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 
 const RadioButtonGroup = <T,>(
-  props: RadioButtonGroupProps<T> & FieldHookConfig<T>
+  props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>
 ) => {
   const {
     displayHorizontally,

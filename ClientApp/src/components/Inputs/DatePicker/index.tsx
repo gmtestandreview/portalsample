@@ -13,7 +13,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
 
-const DatePicker = (datePickerProps: DatePickerProps) => {
+const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   const {
     calendarButtonTitle,
     containerClassName,

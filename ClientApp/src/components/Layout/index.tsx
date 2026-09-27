@@ -12,7 +12,7 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-const Layout = ({ children }: LayoutProps) => {
+const Layout = ({ children }: Readonly<LayoutProps>) => {
   const { announcement } = useRouteAccessibility();
   return (
     <>

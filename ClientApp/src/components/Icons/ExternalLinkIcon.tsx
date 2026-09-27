@@ -2,7 +2,7 @@ interface ClassName {
   className?: string;
 }
 
-const ExternalLinkIcon = ({ className }: ClassName) => (
+const ExternalLinkIcon = ({ className }: Readonly<ClassName>) => (
   <svg
     className={className}
     aria-hidden='true'

@@ -8,7 +8,7 @@ export interface HeaderIntroTextProps {
 const HeaderIntroText = ({
   children,
   className = '', // default props
-}: HeaderIntroTextProps) => (
+}: Readonly<HeaderIntroTextProps>) => (
   <p className={`header-intro-text ${className}`}>{children}</p>
 );
 

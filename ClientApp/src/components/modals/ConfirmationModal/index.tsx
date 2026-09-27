@@ -14,7 +14,7 @@ export interface ConfirmationModalProps {
   yesButtonTitle: string;
 }
 
-const ConfirmationModal = (props: ConfirmationModalProps) => {
+const ConfirmationModal = (props: Readonly<ConfirmationModalProps>) => {
   const {
     isOpen,
     closeModal,

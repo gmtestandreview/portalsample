@@ -38,7 +38,9 @@ interface StepState<T extends FormikValues> {
   values: InitialValue<T>;
 }
 
-const WizardRoutedStep = (props: WizardRoutedStepProps<FormikValues>) => {
+const WizardRoutedStep = (
+  props: Readonly<WizardRoutedStepProps<FormikValues>>
+) => {
   const {
     initialValues,
     location,

@@ -23,7 +23,7 @@ export interface StatusPillProps {
  * Presents a compact, colour-coded label for request, quote, report, and
  * pattern-approval workflow states.
  */
-const StatusPill = ({ status }: StatusPillProps) => {
+const StatusPill = ({ status }: Readonly<StatusPillProps>) => {
   const [pillProps, setPillProps] = useState({
     bgColour: 'info',
     textColour: 'light',

@@ -12,7 +12,7 @@ export interface StatusPillProps {
  * @param props StatusPillProps
  * @returns jsx
  */
-const QuoteStatusPill = ({ status }: StatusPillProps) => {
+const QuoteStatusPill = ({ status }: Readonly<StatusPillProps>) => {
   const [pillProps, setPillProps] = useState({
     bgColour: 'info',
     textColour: 'light',

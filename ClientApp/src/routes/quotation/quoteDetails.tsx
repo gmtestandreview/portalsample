@@ -18,13 +18,15 @@ import type { MailingLabelProps } from '../../components/Utilities/mailingLabel'
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
 import { openInternalRouteInNewTab } from '../common/openWindow';
 
-const QuoteDetails = (props: {
-  quotationData: RequestForQuoteDetails | undefined;
-  isSummary: boolean | undefined;
-  firstName: string | undefined;
-  lastName: string | undefined;
-  fileError: boolean | undefined;
-}) => {
+const QuoteDetails = (
+  props: Readonly<{
+    quotationData: RequestForQuoteDetails | undefined;
+    isSummary: boolean | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    fileError: boolean | undefined;
+  }>
+) => {
   const { quotationData, isSummary, fileError } = props;
 
   const setNotification = () => {

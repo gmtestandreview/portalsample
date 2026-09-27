@@ -28,9 +28,11 @@ export function GridList<T>({
 export function GridListItem({
   children,
   ...props
-}: Omit<GridListItemProps, 'children'> & {
-  children?: React.ReactNode;
-}) {
+}: Readonly<
+  Omit<GridListItemProps, 'children'> & {
+    children?: React.ReactNode;
+  }
+>) {
   const textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props}>

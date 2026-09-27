@@ -2,7 +2,9 @@ import { Field, useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
 import type { RadioButtonProps } from './types';
 
-const RadioButton = <T,>(props: RadioButtonProps<T> & FieldHookConfig<T>) => {
+const RadioButton = <T,>(
+  props: Readonly<RadioButtonProps<T> & FieldHookConfig<T>>
+) => {
   const {
     label,
     value,

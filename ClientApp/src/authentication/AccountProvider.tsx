@@ -64,7 +64,7 @@ const toAccountDetails = (
   };
 };
 
-const AccountProvider = ({ children }: AccountProviderProps) => {
+const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   const [accountDetails, setAccountDetails] = useState<AccountDetails | null>(
     null
   );

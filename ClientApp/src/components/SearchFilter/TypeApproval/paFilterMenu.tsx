@@ -11,7 +11,7 @@ import { defaultFilter } from '../../../routes/common/constants';
 import { trackGAEvent } from '../../../analytics/GoogleAnalytics';
 import type { PaFilterMenuProps } from './paFilterMenuProps';
 
-const PaFilterMenu = (props: PaFilterMenuProps) => {
+const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
   const {
     containerClassName = '', // default props
     initialFilters,

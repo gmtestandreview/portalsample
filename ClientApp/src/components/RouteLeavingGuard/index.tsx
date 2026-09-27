@@ -11,7 +11,7 @@ const RouteLeavingGuard = ({
   body = 'You have made changes to this form. You can discard your changes, or cancel to stay on the page.',
   cancelBtn = 'Cancel',
   confirmBtn = 'Discard changes',
-}: RouteLeavingGuardProps) => {
+}: Readonly<RouteLeavingGuardProps>) => {
   const formik = useFormikContext();
 
   const blocker = useBlocker(

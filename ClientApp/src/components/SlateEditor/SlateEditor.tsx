@@ -83,12 +83,12 @@ const ToolbarButton = ({
   icon,
   label,
   editor,
-}: {
+}: Readonly<{
   format: keyof CustomText;
   icon: string;
   label: string;
   editor: Editor;
-}) => (
+}>) => (
   <button
     type='button'
     className='btn btn-light btn-sm me-2'

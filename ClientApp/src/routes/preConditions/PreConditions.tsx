@@ -28,7 +28,7 @@ export interface PreConditionsProps {
   displayHeaderAndFooter?: boolean;
 }
 
-const PreConditions = (props: PreConditionsProps) => {
+const PreConditions = (props: Readonly<PreConditionsProps>) => {
   const { children, displayHeaderAndFooter } = props;
   const isAuthenticated = useIsAuthenticated();
   const accountState = useAccountState();

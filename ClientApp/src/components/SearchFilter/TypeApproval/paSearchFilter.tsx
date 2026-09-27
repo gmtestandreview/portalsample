@@ -2,7 +2,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import type { PaSearchFilterProps } from '../types';
 import PaFilterMenu from './paFilterMenu';
 
-const PaSearchFilter = (props: PaSearchFilterProps) => {
+const PaSearchFilter = (props: Readonly<PaSearchFilterProps>) => {
   const {
     containerClassName = '', // default props
     className = '', // default props

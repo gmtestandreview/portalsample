@@ -14,7 +14,7 @@ import useBodyClass from '../../components/Utilities/useBodyClass';
 import Checkbox from '../../components/Inputs/Checkbox';
 import InTextLink from '../../components/InTextLink';
 
-const SummaryAndSubmit = (props: TASummaryProps) => {
+const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted } = props;
 

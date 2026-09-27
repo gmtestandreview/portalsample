@@ -31,7 +31,7 @@ const AttachmentItemNew = ({
   fileBytes,
   onCategoryUpdate,
   id,
-}: AttachmentItemProps) => {
+}: Readonly<AttachmentItemProps>) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const [catField, catMeta, { setValue, setTouched }] = useField({
     name: `${name}[${index}].attachmentCategory`,

@@ -81,7 +81,7 @@ const handleAlertScroll = () => {
   }, 100);
 };
 
-const Quotation = (props: QuotationtProps) => {
+const Quotation = (props: Readonly<QuotationtProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSummary } = props;
   const { inProgress, accounts, instance } = useMsal();

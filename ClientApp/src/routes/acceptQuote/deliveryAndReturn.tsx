@@ -35,7 +35,7 @@ function getNameForUse2(
   return fullname;
 }
 
-const DeliveryAndReturn = (props: DeliveryAndReturnProps) => {
+const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
   const [isLoading, setIsLoading] = useState(false);

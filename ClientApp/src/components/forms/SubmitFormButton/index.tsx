@@ -9,7 +9,7 @@ interface SubmitFormButtonProps {
     | ((onClick: React.MouseEventHandler<HTMLButtonElement>) => ReactNode);
 }
 
-const SubmitFormButton = ({ children }: SubmitFormButtonProps) => {
+const SubmitFormButton = ({ children }: Readonly<SubmitFormButtonProps>) => {
   const { submitForm } = useFormikContext();
   const [_field, _meta, saveAndExitHelper] = useField<boolean | undefined>(
     'saveAndExit'

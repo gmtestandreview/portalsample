@@ -8,7 +8,7 @@ const CustomPaginationHeader = ({
   totalCount,
   pageSize,
   currentPage,
-}: CustomPaginationHeaderProps) => {
+}: Readonly<CustomPaginationHeaderProps>) => {
   const firstVisibleResult = (currentPage - 1) * pageSize + 1;
   const lastVisibleResult = Math.min(currentPage * pageSize, totalCount);
 

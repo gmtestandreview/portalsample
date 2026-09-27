@@ -25,7 +25,7 @@ export interface ViewMeasurementReportProps {
  * @param props ViewPdfQuoteProps
  * @returns jsx
  */
-const ViewMeasurementReport = (props: ViewMeasurementReportProps) => {
+const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
   const { text, quotationData, setFileError, setIsLoading } = props;
   const { accounts, instance } = useMsal();
   const reportId = quotationData?.crmQuoteRequestId;

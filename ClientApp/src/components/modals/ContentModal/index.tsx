@@ -10,7 +10,7 @@ export interface ContentModalProps {
   modalTitle: string;
 }
 
-const ContentModal = (props: ContentModalProps) => {
+const ContentModal = (props: Readonly<ContentModalProps>) => {
   const { showModal, onCancelModal, modalBody, modalTitle } = props;
 
   // Per-instance so concurrently mounted modals cannot collide. Footer renders

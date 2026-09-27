@@ -14,7 +14,7 @@ import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
 import { tokenRequest } from '../../authentication/authConfig';
 import AppLogger from '../../instrumentation/AppLogger';
 
-const QuotationSummary = (props: QuotationSummaryProps) => {
+const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
   const { isSummary, cRMQuoteRequestId } = props;
   const { accounts, instance } = useMsal();
   const accountContext = useAccountState();

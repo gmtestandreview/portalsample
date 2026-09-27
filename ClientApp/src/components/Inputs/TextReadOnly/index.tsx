@@ -54,7 +54,7 @@ const TextReadOnly = ({
   isSummary,
   inlineHelp,
   inlineHelpTitle,
-}: TextReadOnlyProps) => {
+}: Readonly<TextReadOnlyProps>) => {
   const [_field, _meta] = useField(name);
   const helpId = inlineHelp ? `help-${id || name}` : undefined;
 
