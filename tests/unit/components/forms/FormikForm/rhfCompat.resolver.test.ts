@@ -1,9 +1,6 @@
 import { ReturnMethodValues } from '@/api/web-api-client';
 import { createSaveAwareYupResolver } from '@/components/forms/FormikForm/rhfCompat';
-import {
-    deliveryAndReturnSaveValidation,
-    deliveryAndReturnSubmitValidation,
-} from '@/routes/acceptQuote/validation';
+import { deliveryAndReturnSaveValidation, deliveryAndReturnSubmitValidation } from '@/routes/acceptQuote/validation';
 
 describe('createSaveAwareYupResolver', () => {
     const resolver = createSaveAwareYupResolver(deliveryAndReturnSaveValidation, deliveryAndReturnSubmitValidation);
@@ -23,27 +20,15 @@ describe('createSaveAwareYupResolver', () => {
     });
 
     it('resolves both branches of a .when() conditional keyed on a sibling field', async () => {
-        const conditionTrue = await resolver(
-            { returnMethod: ReturnMethodValues.ClientWillProvide },
-            undefined,
-            {} as never,
-        );
-        const conditionFalse = await resolver(
-            { returnMethod: ReturnMethodValues.ClientToArrange },
-            undefined,
-            {} as never,
-        );
+        const conditionTrue = await resolver({ returnMethod: ReturnMethodValues.ClientWillProvide }, undefined, {} as never);
+        const conditionFalse = await resolver({ returnMethod: ReturnMethodValues.ClientToArrange }, undefined, {} as never);
 
         expect(conditionTrue.errors).toHaveProperty('carrierName');
         expect(conditionFalse.errors).not.toHaveProperty('carrierName');
     });
 
     it('surfaces multiple simultaneous errors under abortEarly: false', async () => {
-        const result = await resolver(
-            { returnMethod: ReturnMethodValues.ClientWillProvide },
-            undefined,
-            {} as never,
-        );
+        const result = await resolver({ returnMethod: ReturnMethodValues.ClientWillProvide }, undefined, {} as never);
 
         expect(result.errors).toHaveProperty('carrierName');
         expect(result.errors).toHaveProperty('carrierAccountNumber');

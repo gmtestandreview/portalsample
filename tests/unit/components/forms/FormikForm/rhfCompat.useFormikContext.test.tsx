@@ -8,12 +8,12 @@ interface FormValues {
 }
 
 function TestContextConsumer(): JSX.Element {
-    const {
-        values, dirty, isValid, isSubmitting, submitCount, status, handleSubmit, setFieldValue,
-    } = useFormikContext<FormValues>();
+    const { values, dirty, isValid, isSubmitting, submitCount, status, handleSubmit, setFieldValue } = useFormikContext<FormValues>();
 
     const onValid = async (): Promise<void> => {
-        await new Promise((resolve) => { setTimeout(resolve, 10); });
+        await new Promise((resolve) => {
+            setTimeout(resolve, 10);
+        });
     };
 
     return (
@@ -24,14 +24,12 @@ function TestContextConsumer(): JSX.Element {
             <span data-testid='is-submitting'>{String(isSubmitting)}</span>
             <span data-testid='submit-count'>{submitCount}</span>
             <span data-testid='hidden-status'>{String(status.hidden)}</span>
-            <button
-                type='button'
-                data-testid='set-value'
-                onClick={() => setFieldValue('email', 'set@by.helper')}
-            >
+            <button type='button' data-testid='set-value' onClick={() => setFieldValue('email', 'set@by.helper')}>
                 setFieldValue
             </button>
-            <button type='submit' data-testid='submit'>submit</button>
+            <button type='submit' data-testid='submit'>
+                submit
+            </button>
         </form>
     );
 }

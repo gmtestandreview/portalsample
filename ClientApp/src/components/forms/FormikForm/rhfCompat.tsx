@@ -173,9 +173,7 @@ type SaveAwareFieldValues = FieldValues & { saveAndExit?: boolean };
  * string, and builds real nested objects (via lodash `set`) rather than
  * dot-path string keys, matching RHF's `FieldErrors` type.
  */
-function yupErrorToFieldErrors<TFieldValues extends FieldValues>(
-    error: ValidationError,
-): FieldErrors<TFieldValues> {
+function yupErrorToFieldErrors<TFieldValues extends FieldValues>(error: ValidationError): FieldErrors<TFieldValues> {
     const fieldErrors = {};
     const innerErrors = error.inner ?? [];
 
