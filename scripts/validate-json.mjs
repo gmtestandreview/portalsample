@@ -1,9 +1,9 @@
-import Ajv from 'ajv';
-import Ajv2020 from 'ajv/dist/2020.js';
-import addFormats from 'ajv-formats';
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
+import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 
 const root = process.cwd();
 const ignoredDirectories = new Set([
@@ -30,13 +30,13 @@ const ajvDraft7 = addFormats(
   new Ajv({
     allErrors: true,
     strict: true,
-  }),
+  })
 );
 const ajvDraft2020 = addFormats(
   new Ajv2020({
     allErrors: true,
     strict: true,
-  }),
+  })
 );
 
 const toRelativePath = (filePath) => path.relative(root, filePath);
@@ -44,7 +44,9 @@ const toRelativePath = (filePath) => path.relative(root, filePath);
 const shouldIgnorePath = (filePath) => {
   const relativePath = toRelativePath(filePath);
 
-  return ignoredPathParts.some((ignoredPathPart) => relativePath.startsWith(ignoredPathPart));
+  return ignoredPathParts.some((ignoredPathPart) =>
+    relativePath.startsWith(ignoredPathPart)
+  );
 };
 
 const collectJsonFiles = async (directory) => {
@@ -72,7 +74,7 @@ const collectJsonFiles = async (directory) => {
 
         jsonFiles.push(path.join(directory, entry.name));
       }
-    }),
+    })
   );
 };
 
@@ -83,7 +85,10 @@ const isSchemaFile = (filePath) => {
 };
 
 const getAjvForSchema = (schema) => {
-  if (typeof schema.$schema === 'string' && schema.$schema.includes('2020-12')) {
+  if (
+    typeof schema.$schema === 'string' &&
+    schema.$schema.includes('2020-12')
+  ) {
     return ajvDraft2020;
   }
 
@@ -93,17 +98,20 @@ const getAjvForSchema = (schema) => {
 await collectJsonFiles(root);
 
 const parsedFiles = await Promise.all(
-  jsonFiles.toSorted((left, right) => left.localeCompare(right)).map(async (filePath) => {
-    try {
-      const content = await readFile(filePath, 'utf8');
-      const parsed = JSON.parse(content);
+  jsonFiles
+    .toSorted((left, right) => left.localeCompare(right))
+    .map(async (filePath) => {
+      try {
+        const content = await readFile(filePath, 'utf8');
+        const parsed = JSON.parse(content);
 
-      return { filePath, parsed };
-    } catch (error) {
-      failures.push(`${toRelativePath(filePath)}: invalid JSON (${error.message})`);
-      return undefined;
-    }
-  }),
+        return { filePath, parsed };
+      } catch (error) {
+        failures.push(
+          `${toRelativePath(filePath)}: invalid JSON (${error.message})`
+        );
+      }
+    })
 );
 
 const schemaFiles = parsedFiles
@@ -114,13 +122,17 @@ for (const { filePath, parsed } of schemaFiles) {
   try {
     getAjvForSchema(parsed).compile(parsed);
   } catch (error) {
-    failures.push(`${toRelativePath(filePath)}: invalid JSON Schema (${error.message})`);
+    failures.push(
+      `${toRelativePath(filePath)}: invalid JSON Schema (${error.message})`
+    );
   }
 }
 
 if (failures.length > 0) {
   console.error('JSON validation failed:');
-  failures.forEach((failure) => console.error(`- ${failure}`));
+  failures.forEach((failure) => {
+    console.error(`- ${failure}`);
+  });
   process.exitCode = 1;
 } else {
   process.stdout.write(`Validated JSON syntax in ${jsonFiles.length} files.\n`);

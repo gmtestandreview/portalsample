@@ -51,12 +51,18 @@ const jsonResponse = (body: unknown, init?: ResponseInit) => new Response(
     },
 );
 
+const resolveFetchUrl = (input: RequestInfo | URL): string => {
+    if (typeof input === 'string') {
+        return input;
+    }
+    if (input instanceof URL) {
+        return input.toString();
+    }
+    return input.url;
+};
+
 const createBranchSelectorFetch = (branches = mockBranches): typeof globalThis.fetch => async (input) => {
-    const url = typeof input === 'string'
-        ? input
-        : input instanceof URL
-            ? input.toString()
-            : input.url;
+    const url = resolveFetchUrl(input);
 
     if (url.includes('/api/organisations/')) {
         return jsonResponse(branches);
