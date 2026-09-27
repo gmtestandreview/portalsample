@@ -15,11 +15,11 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Checkbox>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Checkbox {...args}>Unsubscribe</Checkbox>
 );
 
-export const Indeterminate: Story = (args) => (
+export const Indeterminate: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Checkbox {...args}>Unsubscribe</Checkbox>
 );
 
@@ -34,9 +34,9 @@ Indeterminate.play = async ({ canvas }) => {
   ).toBePartiallyChecked();
 };
 
-export const WithDescription: Story = (args) => (
-  <Checkbox {...args}>Unsubscribe</Checkbox>
-);
+export const WithDescription: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <Checkbox {...args}>Unsubscribe</Checkbox>;
 
 WithDescription.args = {
   description: 'You can resubscribe at any time.',

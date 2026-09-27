@@ -23,7 +23,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const InProgress: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // A progressbar has to carry its own name and value: the visible caption and
     // percentage sit inside the role, so a screen reader announces "progress bar" and
@@ -41,7 +43,9 @@ export const JustStarted: Story = {
     percent: 0,
     status: 'Preparing upload',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText(/0%/)).toBeVisible();
   },
@@ -52,7 +56,9 @@ export const Complete: Story = {
     percent: 100,
     status: 'Upload complete',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText(/100%/)).toBeVisible();
   },

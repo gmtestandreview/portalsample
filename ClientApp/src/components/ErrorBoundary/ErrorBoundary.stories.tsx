@@ -69,7 +69,9 @@ export const NoError: Story = {
       <WorkingComponent />
     </ErrorBoundary>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText(/All good/)).toBeVisible();
   },

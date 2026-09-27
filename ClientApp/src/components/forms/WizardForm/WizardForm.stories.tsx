@@ -81,7 +81,9 @@ export const Step1ContactDetails: Story = {
       </WizardStep>
     </WizardForm>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Progress is announced once, by the stepper. The h1 used to repeat it as a
     // visually-hidden "Step 1 of 2", which duplicated the same information for screen

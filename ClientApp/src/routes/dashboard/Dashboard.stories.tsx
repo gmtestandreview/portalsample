@@ -99,7 +99,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Populated: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const tabList = await canvas.findByRole('tablist', {
       name: 'Select your dashboard view',
@@ -126,7 +128,9 @@ export const EmptyState: Story = {
       )
     );
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The empty message also exists before loading starts, so first wait for the request.
     await waitFor(() => expect(emptyDraftsResponse).toHaveBeenCalled());
@@ -161,7 +165,9 @@ export const RequestsTabWithNotification: Story = {
     },
   },
   // SB-016: notification renders and dismiss button is present
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const notifications = await canvas.findAllByText(
       /quote request saved as draft/i
@@ -182,7 +188,9 @@ export const RequestsTabWithNotification: Story = {
 
 // SB-016: clicking a tab changes the visible tab panel
 export const TabNavigation: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await expect(

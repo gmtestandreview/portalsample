@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryFn<typeof Select>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Select {...args}>
     <SelectItem>Chocolate</SelectItem>
     <SelectItem>Mint</SelectItem>

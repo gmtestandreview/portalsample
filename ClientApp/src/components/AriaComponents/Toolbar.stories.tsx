@@ -20,7 +20,7 @@ export default meta;
 
 type Story = StoryFn<typeof Toolbar>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Toolbar aria-label='Text formatting' {...args}>
     <Group aria-label='Style'>
       <ToggleButton aria-label='Bold'>

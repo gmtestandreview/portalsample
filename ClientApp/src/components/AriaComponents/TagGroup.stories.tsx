@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryFn<typeof TagGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <TagGroup {...args}>
     <Tag>Chocolate</Tag>
     <Tag>Mint</Tag>

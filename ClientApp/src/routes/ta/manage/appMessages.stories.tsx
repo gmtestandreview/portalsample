@@ -41,7 +41,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MessagesTab: Story = {
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await expect(
       await canvas.findByText('No messages to display')
     ).toBeVisible();

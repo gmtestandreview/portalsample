@@ -31,7 +31,9 @@ export const SaveAndExit: Story = {
     refTitle: 'RFQ-2024-001',
     showSaveAndExitButton: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The form actions toolbar should render
     const toolbar = canvas.getByRole('toolbar', { name: /form actions/i });
@@ -48,7 +50,9 @@ export const GoToDashboard: Story = {
     refTitle: 'SQ-2024-042',
     showGoToDashboardButton: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const dashboardLink = canvas.getByTestId(
       'form-go-to-dashboard-portal-button'
@@ -71,7 +75,9 @@ export const WithDiscard: Story = {
       discardButtonTitle: 'Discard changes',
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const discardButton = canvas.getByTestId('discard-changes-button');
     await expect(discardButton).toBeInTheDocument();

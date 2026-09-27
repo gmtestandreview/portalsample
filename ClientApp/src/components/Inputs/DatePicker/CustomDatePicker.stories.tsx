@@ -36,7 +36,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Collapsed: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Date of test')).toBeVisible();
     await expect(canvas.getByRole('textbox')).toBeVisible();
@@ -47,7 +49,9 @@ export const Prefilled: Story = {
   args: {
     currentDate: new Date('2024-04-01T00:00:00'),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('textbox')).toHaveValue('01/04/2024');
   },

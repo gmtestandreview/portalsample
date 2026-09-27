@@ -57,7 +57,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Populated: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('instReports-table')).toBeVisible();
     await expect(canvas.getByText('RPT-1001')).toBeVisible();
@@ -79,7 +81,9 @@ export const WithdrawnHidesView: Story = {
       items: pagedListArtefactData.items?.slice(1),
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('RPT-1002')).toBeVisible();
     await expect(

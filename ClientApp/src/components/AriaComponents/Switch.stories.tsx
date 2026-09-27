@@ -15,9 +15,13 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Switch>;
 
-export const Example: Story = (args) => <Switch {...args}>Wi-Fi</Switch>;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <Switch {...args}>Wi-Fi</Switch>
+);
 
-export const Selected: Story = (args) => <Switch {...args}>Wi-Fi</Switch>;
+export const Selected: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <Switch {...args}>Wi-Fi</Switch>
+);
 
 Selected.args = {
   defaultSelected: true,
@@ -28,9 +32,9 @@ Selected.play = async ({ canvas }) => {
   await expect(canvas.getByRole('switch', { name: 'Wi-Fi' })).toBeChecked();
 };
 
-export const WithDescription: Story = (args) => (
-  <Switch {...args}>Wi-Fi</Switch>
-);
+export const WithDescription: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <Switch {...args}>Wi-Fi</Switch>;
 
 WithDescription.args = {
   description: 'Turn off to save battery.',
@@ -40,7 +44,9 @@ WithDescription.play = async ({ canvas }) => {
   await expect(canvas.getByText('Turn off to save battery.')).toBeVisible();
 };
 
-export const Toggles: Story = (args) => <Switch {...args}>Wi-Fi</Switch>;
+export const Toggles: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <Switch {...args}>Wi-Fi</Switch>
+);
 
 Toggles.play = async ({ canvas }) => {
   const control = canvas.getByRole('switch', { name: 'Wi-Fi' });

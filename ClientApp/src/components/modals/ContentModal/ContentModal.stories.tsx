@@ -42,8 +42,12 @@ export const OpenWithContent: Story = {
     modalTitle: 'Example Modal Title',
     modalBody: <p>Modal body content for Storybook preview.</p>,
   },
-  render: (args) => <DismissibleContentModalDemo {...args} />,
-  play: async ({ args }) => {
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+    <DismissibleContentModalDemo {...args} />
+  ),
+  play: async ({
+    args,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const dialog = await screen.findByRole('dialog', {
       name: /example modal title/i,
     });

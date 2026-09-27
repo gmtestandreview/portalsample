@@ -41,7 +41,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Editable: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Organisation details')).toBeVisible();
     await expect(canvas.getByText('Terms and conditions')).toBeVisible();
@@ -55,7 +57,9 @@ export const Submitted: Story = {
   args: {
     isSubmitted: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('back-button')).toBeVisible();
     await expect(

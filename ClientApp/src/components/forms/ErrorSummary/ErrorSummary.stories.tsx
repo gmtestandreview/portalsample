@@ -30,7 +30,9 @@ export const ServerError: Story = {
       status: 500,
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
     await expect(alert).toBeInTheDocument();
@@ -55,7 +57,9 @@ export const ValidationErrors: Story = {
     },
     prefixToRemove: 'ContactDetails.',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
     await expect(alert).toBeInTheDocument();
@@ -78,7 +82,9 @@ export const WAFViolation: Story = {
     },
     isWafViolation: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
     await expect(alert).toBeInTheDocument();
@@ -98,7 +104,9 @@ export const ConflictError: Story = {
       status: 409,
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const alert = canvas.getByTestId('form-error-summary');
     await expect(alert).toBeInTheDocument();

@@ -33,7 +33,9 @@ export const Success: Story = {
     ariaLive: 'polite',
     role: 'status',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const status = canvas.getByRole('status');
     await expect(status).toHaveAttribute('aria-live', 'polite');
   },
@@ -77,7 +79,9 @@ export const DismissibleError: Story = {
     canClose: true,
     onClose: fn(),
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const closeButton = canvas.getByRole('button', { name: /close/i });
     await expect(closeButton).toBeVisible();
   },

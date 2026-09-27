@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryFn<typeof Table>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Table aria-label='Files' {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>

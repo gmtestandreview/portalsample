@@ -33,7 +33,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Closed: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('button', { name: /filters/i })
@@ -42,7 +44,9 @@ export const Closed: Story = {
 };
 
 export const Opened: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     await user.click(canvas.getByRole('button', { name: /filters/i }));
@@ -60,7 +64,9 @@ export const WithAppliedFilters: Story = {
       filtersChanged: true,
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Applied-filter count badge surfaces a non-zero value.
     await expect(canvas.getByText('1')).toBeVisible();

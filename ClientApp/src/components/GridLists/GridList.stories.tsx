@@ -19,7 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof GridList>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <GridList
     {...args}
     style={{ width: 800, maxWidth: 'calc(100vw - 80px)' }}
@@ -134,7 +134,7 @@ Example.args = {
   layout: 'grid',
 };
 
-export const Sections: Story = (args) => (
+export const Sections: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <GridList
     {...args}
     style={{ width: 800, maxWidth: 'calc(100vw - 80px)' }}

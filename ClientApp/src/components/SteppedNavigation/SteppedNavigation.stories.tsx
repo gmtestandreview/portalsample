@@ -38,7 +38,9 @@ export const CurrentStep: Story = {
     interactive: true,
     steps,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The stepper carries focusable step links, so it must not be hidden from assistive
     // technology: axe reports aria-hidden-focus for an aria-hidden subtree that can be

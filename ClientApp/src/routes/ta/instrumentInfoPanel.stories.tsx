@@ -33,7 +33,9 @@ export const WithReferences: Story = {
   args: {
     selectedInstrumentCategoryId: 'category-area-measurement',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByText('References for this instrument type')
@@ -51,7 +53,9 @@ export const WithReferences: Story = {
 };
 
 export const NoSelection: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByText(/no references for this instrument type/i)

@@ -15,13 +15,17 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof DateField>;
 
-export const Example: Story = (args) => <DateField {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <DateField {...args} />
+);
 
 Example.args = {
   label: 'Event date',
 };
 
-export const WithDescription: Story = (args) => <DateField {...args} />;
+export const WithDescription: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <DateField {...args} />;
 
 WithDescription.args = {
   label: 'Event date',
@@ -34,7 +38,9 @@ WithDescription.play = async ({ canvas }) => {
   ).toBeVisible();
 };
 
-export const Invalid: Story = (args) => <DateField {...args} />;
+export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <DateField {...args} />
+);
 
 Invalid.args = {
   label: 'Event date',

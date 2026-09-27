@@ -46,7 +46,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Uploading: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     await expect(canvas.getByText('instrument-photo.jpg')).toBeVisible();
@@ -66,7 +68,10 @@ export const Uploading: Story = {
 };
 
 export const CancelInvokesCallback: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({
+    canvasElement,
+    args,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const cancel = canvas.getByRole('button', {
@@ -85,7 +90,9 @@ export const Empty: Story = {
   args: {
     files: [],
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.queryByRole('button', { name: /cancel uploading/i })

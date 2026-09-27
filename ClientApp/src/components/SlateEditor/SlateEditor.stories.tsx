@@ -49,7 +49,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The Slate Editable surface is exposed as a textbox. Slate renders a contenteditable
     // div, which takes no accessible name from its placeholder the way a native input
@@ -77,7 +79,9 @@ export const Empty: Story = {
   args: {
     value: [{ type: 'paragraph', children: [{ text: '' }] }],
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Live counter starts at zero out of the budget.
     await expect(canvas.getByText(/0/)).toBeVisible();

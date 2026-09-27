@@ -74,7 +74,9 @@ export const Idle: Story = {
 export const InterceptedNavigation: Story = {
   name: 'Active — confirmation modal on navigation',
   render: () => <GuardHarness when={true} />,
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     // Link is in the canvas (inside Routes); modal renders via Bootstrap portal into document.body
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
@@ -102,7 +104,9 @@ export const CustomCopy: Story = {
       confirmBtn='Yes, logout'
     />
   ),
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {
@@ -121,7 +125,9 @@ export const CustomCopy: Story = {
 export const ProceedAfterConfirm: Story = {
   name: 'Confirm navigation — modal clears and user proceeds',
   render: () => <GuardHarness when={true} />,
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', { name: /leave this page/i });
     await userEvent.click(link);
     const dialog = await screen.findByRole('dialog', {

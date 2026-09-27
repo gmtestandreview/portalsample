@@ -125,7 +125,9 @@ const SaveAndExitDemo = () => {
 
 export const ConfirmationOpen: Story = {
   render: () => <DeleteConfirmationDemo />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Modal renders via React Bootstrap portal into document.body — use screen
     const dialog = await screen.findByRole('dialog', {
@@ -156,7 +158,9 @@ export const ConfirmationOpen: Story = {
 
 export const ConfirmationClosed: Story = {
   render: () => <SaveAndExitDemo />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const openButton = await canvas.findByRole('button', {
       name: 'Open confirmation modal',

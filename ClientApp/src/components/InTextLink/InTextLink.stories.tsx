@@ -16,7 +16,9 @@ export const External: Story = {
     href: 'https://www.measurement.gov.au/',
     target: '_blank',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', { name: /read external guidance/i });
     await expect(link).toHaveAttribute('rel', 'nofollow noreferrer noopener');
     await expect(link).toHaveAttribute('target', '_blank');
@@ -29,7 +31,9 @@ export const SameTab: Story = {
     href: 'https://www.measurement.gov.au/terms',
     target: '_self',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', {
       name: /view terms and conditions/i,
     });
@@ -42,7 +46,9 @@ export const InlineText: Story = {
     children: 'Open support content',
     href: 'https://www.measurement.gov.au/help',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const link = canvas.getByRole('link', { name: /open support content/i });
     await expect(link).toBeVisible();
   },

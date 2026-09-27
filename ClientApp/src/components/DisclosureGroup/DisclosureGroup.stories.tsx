@@ -19,7 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof DisclosureGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <DisclosureGroup {...args}>
     <Disclosure id='personal'>
       <DisclosureHeader>Personal Information</DisclosureHeader>

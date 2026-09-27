@@ -22,7 +22,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     // The services lookup is not served here, so the route reaches its settled state
     // through the effect's finally rather than through rendered data. aria-busy is the
     // route's own contract for that: true while the lookup is in flight, false once it

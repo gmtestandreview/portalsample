@@ -82,7 +82,9 @@ export const DashboardFilters: Story = {
   },
   render: () => <SearchFilterStory />,
   // SB-020: search input is accessible and submits correctly
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     // Search box renders with a text input
@@ -109,7 +111,9 @@ export const WithSearchTerm: Story = {
     setCurrentPage: () => undefined,
   },
   render: () => <SearchFilterWithSearchTermStory />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Pre-populated value appears in the search box
     const searchInput = canvas.getByRole('textbox');

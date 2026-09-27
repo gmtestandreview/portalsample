@@ -25,7 +25,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const LiveRegion: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The announcer is a polite live region exposed to assistive technology only.
     const status = canvas.getByRole('status');

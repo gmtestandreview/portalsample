@@ -17,7 +17,7 @@ export default meta;
 
 type Story = StoryFn<typeof Tooltip>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <TooltipTrigger>
     <Button aria-label='Save'>
       <Save size={18} />

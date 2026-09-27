@@ -17,7 +17,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const WithLabel: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <InputGroup {...args}>
       <Input aria-label='Certificate number' placeholder='5/6A/91B' />
     </InputGroup>
@@ -25,7 +25,9 @@ export const WithLabel: Story = {
   args: {
     label: 'Certificate number',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     // The label is rendered as a span and wired to the group by aria-labelledby, so the group is
     // announced by name rather than as an anonymous container.
     await expect(canvas.getByText('Certificate number')).toBeVisible();
@@ -36,12 +38,14 @@ export const WithLabel: Story = {
 };
 
 export const WithoutLabel: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <InputGroup {...args}>
       <Input aria-label='Search' placeholder='Search applications' />
     </InputGroup>
   ),
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     // No label prop means no label element at all - the group still renders its children.
     await expect(
       canvas.getByPlaceholderText('Search applications')
@@ -50,7 +54,7 @@ export const WithoutLabel: Story = {
 };
 
 export const Disabled: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <InputGroup {...args}>
       <Input aria-label='Certificate number' placeholder='5/6A/91B' />
     </InputGroup>
@@ -59,7 +63,9 @@ export const Disabled: Story = {
     label: 'Certificate number',
     isDisabled: true,
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     // The group pushes its disabled state down through InputContext, so the input inside is
     // disabled without being told separately.
     await expect(canvas.getByPlaceholderText('5/6A/91B')).toBeDisabled();

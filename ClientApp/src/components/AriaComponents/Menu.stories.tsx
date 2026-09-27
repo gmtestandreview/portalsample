@@ -15,7 +15,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Menu>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <MenuTrigger>
     <Button>Edit</Button>
     <Menu {...args}>

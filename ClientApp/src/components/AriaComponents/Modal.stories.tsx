@@ -18,7 +18,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Modal>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <DialogTrigger>
     <Button>Sign up…</Button>
     <Modal {...args}>

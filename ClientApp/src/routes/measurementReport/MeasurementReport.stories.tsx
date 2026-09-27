@@ -37,7 +37,7 @@ export const FileError: Story = {
     reportData: requestForQuoteDetailsFixture,
     fileError: true,
   },
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <>
       <ReportDetails {...args} />
       <NMIContactDetails quotationData={args.reportData} />

@@ -17,7 +17,9 @@ type Story = StoryObj<typeof meta>;
 
 // SB-023: authenticated header — banner landmark, navigation, and sign-out link accessible
 export const Authenticated: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Header renders a banner landmark (role=banner or <header>)
     const banner =

@@ -39,7 +39,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EditStep: Story = {
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const organisationType = await canvas.findByText('Organisation type');
     const organisationName = await canvas.findByLabelText(/organisation name/i);
 

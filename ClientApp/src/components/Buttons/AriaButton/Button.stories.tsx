@@ -20,7 +20,11 @@ export const Primary: Story = {
   args: {
     children: 'Save changes',
   },
-  play: async ({ args, canvas, userEvent }) => {
+  play: async ({
+    args,
+    canvas,
+    userEvent,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await userEvent.click(canvas.getByRole('button', { name: 'Save changes' }));
     await expect(args.onPress).toHaveBeenCalledOnce();
   },
@@ -44,7 +48,9 @@ export const CssCheck: Story = {
   args: {
     children: 'Styled button',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const button = canvas.getByRole('button', { name: 'Styled button' });
     await expect(getComputedStyle(button).borderRadius).toBe('4px');
   },

@@ -27,7 +27,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Shell: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The banner title renders the :id route param. It was empty in every story,
     // because the preview decorator used to mount everything under `path: '*'`.

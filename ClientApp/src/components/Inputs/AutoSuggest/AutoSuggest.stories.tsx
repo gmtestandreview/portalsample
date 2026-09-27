@@ -55,7 +55,9 @@ export const WithSuggestions: Story = {
       placeholder='Type to search...'
     />
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
@@ -105,7 +107,9 @@ export const EmptyState: Story = {
       placeholder='Type to search...'
     />
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('combobox', { name: /suburb/i });
@@ -142,7 +146,9 @@ export const Loading: Story = {
       placeholder='Loading...'
     />
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const loadingText = canvas.getByText(/loading options/i);
     await expect(loadingText).toBeVisible();

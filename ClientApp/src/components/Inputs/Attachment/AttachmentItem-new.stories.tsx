@@ -46,7 +46,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Editable: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     await expect(canvas.getByLabelText('Category')).toBeInTheDocument();
@@ -59,7 +61,9 @@ export const ReadOnlySummary: Story = {
     canRemove: false,
     isSummary: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('calibration-certificate.pdf')).toBeVisible();
     // No delete affordance in the read-only summary presentation.

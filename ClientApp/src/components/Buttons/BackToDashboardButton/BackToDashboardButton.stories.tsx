@@ -30,7 +30,9 @@ type Story = StoryObj<typeof meta>;
  * Requires router context (Link) provided by withPortalProviders.
  */
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: /back to dashboard/i });
     await expect(link).toBeInTheDocument();

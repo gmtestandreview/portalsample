@@ -29,26 +29,34 @@ export const Info: Story = {
 };
 
 export const Success: Story = {
-  render: (args) => <AlertSuccess {...args} />,
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+    <AlertSuccess {...args} />
+  ),
   args: {
     children: 'Saved successfully.',
   },
 };
 
 export const Warning: Story = {
-  render: (args) => <AlertWarning {...args} />,
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+    <AlertWarning {...args} />
+  ),
   args: {
     children: 'Please review this warning before you continue.',
   },
 };
 
 export const ErrorDismissible: Story = {
-  render: (args) => <AlertError {...args} />,
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
+    <AlertError {...args} />
+  ),
   args: {
     children: 'Something went wrong. Try again shortly.',
     canClose: true,
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const closeButton = canvas.getByRole('button', { name: /close/i });
     await expect(closeButton).toBeVisible();
   },

@@ -21,7 +21,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <Tabs {...args}>
       <TabList aria-label='History of Ancient Rome'>
         <Tab id='FoR'>Founding of Rome</Tab>
@@ -51,7 +51,11 @@ export const Example: Story = {
       </TabPanels>
     </Tabs>
   ),
-  play: async ({ args, canvas, userEvent }) => {
+  play: async ({
+    args,
+    canvas,
+    userEvent,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const empireTab = canvas.getByRole('tab', { name: 'Empire' });
 
     await userEvent.click(empireTab);

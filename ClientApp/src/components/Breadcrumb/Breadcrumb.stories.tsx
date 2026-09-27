@@ -31,7 +31,9 @@ export const ThreeLevels: Story = {
       { text: 'Request for quote' },
     ],
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const navigation = await canvas.findByRole('navigation', {
       name: /breadcrumb/i,
     });
@@ -46,7 +48,9 @@ export const TwoLevels: Story = {
   args: {
     breadcrumbs: [{ to: '/', text: 'Home' }, { text: 'Help guide' }],
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const navigation = await canvas.findByRole('navigation', {
       name: /breadcrumb/i,
     });

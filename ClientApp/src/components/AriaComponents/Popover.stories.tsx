@@ -19,7 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Popover>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <DialogTrigger>
     <Button aria-label='Help'>
       <HelpCircle size={18} />

@@ -20,7 +20,9 @@ export const TextValue: Story = {
     as: 'p',
   },
   // SB-021: label and value both render
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Organisation name')).toBeVisible();
     await expect(canvas.getByText('Storybook Organisation')).toBeVisible();
@@ -34,7 +36,9 @@ export const PhoneValue: Story = {
     as: 'span',
   },
   // SB-021: phone label triggers WCAG screen-reader split — visually-hidden node present
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Business phone')).toBeVisible();
     // Visible value rendered (aria-hidden span is still in the DOM)
@@ -53,7 +57,9 @@ export const FormattedNumber: Story = {
     format: '## ### ### ###',
   },
   // SB-021: formatted number renders a visually-hidden spaced version for screen readers
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('ABN')).toBeVisible();
   },
@@ -66,7 +72,9 @@ export const EmptyValue: Story = {
     value: undefined,
     as: 'span',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Visible dash
     await expect(canvas.getByText('-', { exact: false })).toBeInTheDocument();
@@ -83,7 +91,9 @@ export const WithDescriptor: Story = {
     as: 'span',
     descriptor: 'Certificate valid for 12 months from this date.',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('15 March 2024')).toBeVisible();
     await expect(
@@ -100,7 +110,9 @@ export const CustomBody: Story = {
     as: 'custom',
     bodyText: <em data-testid='custom-body'>Special formatted content</em>,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('custom-body')).toBeVisible();
   },

@@ -33,7 +33,10 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({
+    canvasElement,
+    args,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
       name: /view measurement report/i,

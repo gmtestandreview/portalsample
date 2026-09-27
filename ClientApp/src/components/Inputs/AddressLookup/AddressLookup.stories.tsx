@@ -64,7 +64,9 @@ export const Default: Story = {
       placeholder='Start typing an address...'
     />
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const combobox = canvas.getByRole('combobox');
     await expect(combobox).toBeVisible();
@@ -97,7 +99,9 @@ export const ManualEntry: Story = {
     // TextInput via {...rest}, which would override their individual field labels.
     <ManualAddressInput name='streetAddress' />
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const line1 = canvas.getByLabelText(/address line 1/i);
     await expect(line1).toBeVisible();

@@ -15,7 +15,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ListBox>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ListBox aria-label='Ice cream flavor' {...args}>
     <ListBoxItem>Chocolate</ListBoxItem>
     <ListBoxItem>Mint</ListBoxItem>

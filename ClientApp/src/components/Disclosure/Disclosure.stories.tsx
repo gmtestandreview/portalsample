@@ -14,7 +14,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Disclosure>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Disclosure {...args}>
     <DisclosureHeader>Manage your account</DisclosureHeader>
     <DisclosurePanel>Details on managing your account</DisclosurePanel>

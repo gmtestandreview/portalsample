@@ -24,7 +24,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Empty: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('textbox')).toBeVisible();
     // No clear button until there is a value.
@@ -33,7 +35,10 @@ export const Empty: Story = {
 };
 
 export const TypeAndSubmit: Story = {
-  play: async ({ canvasElement, args }) => {
+  play: async ({
+    canvasElement,
+    args,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     const input = canvas.getByRole('textbox');
@@ -49,7 +54,9 @@ export const Prefilled: Story = {
   args: {
     initialSearchValue: 'Fluke',
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('textbox')).toHaveValue('Fluke');
     await expect(canvas.getByTestId('clear-search-button')).toBeVisible();

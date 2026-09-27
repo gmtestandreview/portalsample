@@ -48,7 +48,7 @@ export default meta;
 type Story = StoryObj<ToastStoryArgs>;
 
 export const Example: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <>
       <MyToastRegion />
       <Button
@@ -107,7 +107,12 @@ function MyToastRegion() {
       },
     },
   },
-  play: async ({ args, canvas, canvasElement, userEvent }) => {
+  play: async ({
+    args,
+    canvas,
+    canvasElement,
+    userEvent,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const page = within(canvasElement.ownerDocument.body);
 
     await userEvent.click(

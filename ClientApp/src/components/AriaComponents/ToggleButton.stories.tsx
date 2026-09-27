@@ -15,6 +15,6 @@ export default meta;
 
 type Story = StoryFn<typeof ToggleButton>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ToggleButton {...args}>Pin</ToggleButton>
 );

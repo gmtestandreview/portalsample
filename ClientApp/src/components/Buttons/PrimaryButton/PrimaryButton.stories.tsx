@@ -44,7 +44,7 @@ export const StoryLinkDemo: Story = {
   args: {
     children: 'Go to Disabled story',
   },
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <PrimaryButton
       {...args}
       onClick={linkTo('Components/Buttons/PrimaryButton', 'Disabled')}
@@ -56,7 +56,9 @@ export const CssCheck: Story = {
   args: {
     children: 'Submit',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const button = canvas.getByRole('button', { name: /submit/i });
     // In jsdom, external CSS files don't affect computed styles.
     // Instead, verify the button has the expected class and content.

@@ -16,7 +16,7 @@ export default meta;
 
 type Story = StoryFn<typeof ToggleButtonGroup>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ToggleButtonGroup {...args}>
     <ToggleButton id='left'>Left</ToggleButton>
     <ToggleButton id='center'>Center</ToggleButton>

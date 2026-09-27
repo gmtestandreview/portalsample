@@ -231,7 +231,9 @@ export const CheckboxDefault: Story = {
       />
     </FormikWrapper>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const checkbox = canvas.getByRole('checkbox');
     await expect(checkbox).not.toBeChecked();

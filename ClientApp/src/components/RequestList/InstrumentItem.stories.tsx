@@ -85,7 +85,9 @@ export const ReportsTab: Story = {
   args: {
     request: instrumentFixture,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Default tab is 'reports' — report table is rendered
     const reportsTable = await canvas.findByTestId('instReports-table');
@@ -100,7 +102,9 @@ export const DetailsTab: Story = {
   args: {
     request: instrumentFixture,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const user = userEvent.setup();
     // Click the Details tab — react-bootstrap Tab.Container may not expose

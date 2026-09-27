@@ -16,7 +16,7 @@ export default meta;
 
 type Story = StoryFn<typeof Slider>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Slider {...args} style={{ width: 200 }} />
 );
 
@@ -26,7 +26,7 @@ Example.args = {
   thumbLabels: ['start', 'end'],
 };
 
-export const Unlabelled: Story = (args) => (
+export const Unlabelled: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Slider {...args} aria-label='Range' style={{ width: 200 }} />
 );
 
@@ -41,7 +41,7 @@ Unlabelled.play = async ({ canvas }) => {
   ).toBeInTheDocument();
 };
 
-export const NamedThumbs: Story = (args) => (
+export const NamedThumbs: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Slider {...args} style={{ width: 200 }} />
 );
 

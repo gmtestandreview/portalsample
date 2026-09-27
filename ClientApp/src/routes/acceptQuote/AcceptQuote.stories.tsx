@@ -115,7 +115,9 @@ type Story = StoryObj<typeof meta>;
 
 export const ReportRecipientStep: Story = {
   render: () => <ReportRecipient id='123' />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('heading', { name: /report recipient organisation/i })
@@ -159,7 +161,9 @@ export const ReportRecipientSummaryOtherAddress: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByText(/report recipient organisation/i)
@@ -195,7 +199,9 @@ export const PaymentDetailsStep: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The Prepaid paragraph is rendered only once acceptQuotePreInfo has loaded and
     // reports paymentTerms 'Prepaid'. Its negative counterpart is not usable as a
@@ -237,7 +243,9 @@ export const PaymentDetailsPostpaid: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // This story's handler returns paymentTerms 'Invoice', whose paragraph also renders
     // pre-settlement, so the quotation id in the PO inline help is the anchor instead:
@@ -295,7 +303,9 @@ export const DeliveryAndReturnStep: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // DeliveryInstructions renders acceptQuotePreInfo.nmiFacilityDeliveryInstructions,
     // so this text is the settled-state contract for the four setters in the effect.
@@ -334,7 +344,9 @@ export const QuotationSummaryStep: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // QuoteDetails renders the quotation id only when quotationData has arrived, so this
     // is the settled-state contract for the QuotationSummary and ViewPdfQuote subtree.
@@ -399,7 +411,9 @@ export const SummaryAndAcceptStep: Story = {
       },
     },
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const heading = await canvas.findByText(
       /Before you accept and submit our offer/i
     );

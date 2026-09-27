@@ -41,7 +41,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Editable: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Organisation and Contact')).toBeVisible();
     await expect(canvas.getByText('Instrument and Request')).toBeVisible();
@@ -57,7 +59,9 @@ export const Submitted: Story = {
   args: {
     isSubmitted: true,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expectInstrumentSectionReady(canvas);
     // Submitted view replaces guidance/edit with a back-to-dashboard link.

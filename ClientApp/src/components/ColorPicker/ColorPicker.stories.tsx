@@ -14,7 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ColorPicker>;
 
-export const Example: Story = (args) => <ColorPicker {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <ColorPicker {...args} />
+);
 
 Example.args = {
   label: 'Fill color',

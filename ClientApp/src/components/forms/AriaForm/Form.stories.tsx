@@ -16,7 +16,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Form>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Form {...args}>
     <TextField
       name='email'

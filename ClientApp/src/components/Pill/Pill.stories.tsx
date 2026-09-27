@@ -28,7 +28,9 @@ export const DashboardStatuses: Story = {
       <StatusPill status={DashboardItemStatus.QuoteExpired} />
     </div>
   ),
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
 
     // Wait for useEffect to flush and badges to become visible

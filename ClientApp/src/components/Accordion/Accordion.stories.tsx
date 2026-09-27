@@ -11,7 +11,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const SingleSection: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <CustomAccordion {...args}>
       <CustomAccordionBody
         id='quote-step'
@@ -25,13 +25,15 @@ export const SingleSection: Story = {
   args: {
     id: 'wizard-accordion-single',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await expect(canvas.getByText(/quote request details/i)).toBeVisible();
   },
 };
 
 export const WithSubHeading: Story = {
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <CustomAccordion {...args}>
       <CustomAccordionBody
         id='contact-step'

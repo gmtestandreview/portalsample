@@ -14,7 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ColorSwatch>;
 
-export const Example: Story = (args) => <ColorSwatch {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <ColorSwatch {...args} />
+);
 
 Example.args = {
   color: '#f00a',

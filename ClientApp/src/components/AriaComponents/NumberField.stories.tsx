@@ -14,7 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof NumberField>;
 
-export const Example: Story = (args) => <NumberField {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <NumberField {...args} />
+);
 
 Example.args = {
   label: 'Cookies',

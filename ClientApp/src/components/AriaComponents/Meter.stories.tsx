@@ -14,7 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Meter>;
 
-export const Example: Story = (args) => <Meter {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <Meter {...args} />
+);
 
 Example.args = {
   label: 'Storage space',

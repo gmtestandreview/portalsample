@@ -50,7 +50,7 @@ export const ExpiredNoDelivery: Story = {
     lastName: 'Nguyen',
     fileError: false,
   },
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <>
       <QuoteDetails {...args} />
       <NMIContactDetails quotationData={args.quotationData} />

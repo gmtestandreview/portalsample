@@ -19,7 +19,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const MidPage: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await expect(canvasElement).toHaveTextContent(
       'Displaying 21 - 30 of 56 Results'
     );
@@ -32,7 +34,9 @@ export const LastPage: Story = {
     pageSize: 10,
     currentPage: 6,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await expect(canvasElement).toHaveTextContent(
       'Displaying 51 - 56 of 56 Results'
     );

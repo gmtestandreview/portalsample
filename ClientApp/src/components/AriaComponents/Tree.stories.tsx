@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryFn<typeof Tree>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Tree aria-label='Files' {...args}>
     <TreeItem title='Documents'>
       <TreeItem title='Project'>

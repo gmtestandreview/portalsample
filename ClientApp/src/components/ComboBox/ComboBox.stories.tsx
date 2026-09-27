@@ -18,7 +18,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ComboBox>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ComboBox {...args}>
     <ComboBoxItem>Chocolate</ComboBoxItem>
     <ComboBoxItem>Mint</ComboBoxItem>
@@ -40,9 +40,9 @@ const flavours = (
   </>
 );
 
-export const WithDescription: Story = (args) => (
-  <ComboBox {...args}>{flavours}</ComboBox>
-);
+export const WithDescription: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <ComboBox {...args}>{flavours}</ComboBox>;
 
 WithDescription.args = {
   label: 'Ice cream flavor',
@@ -55,7 +55,7 @@ WithDescription.play = async ({ canvas }) => {
   ).toBeVisible();
 };
 
-export const Unlabelled: Story = (args) => (
+export const Unlabelled: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ComboBox {...args} aria-label='Ice cream flavor'>
     {flavours}
   </ComboBox>
@@ -68,7 +68,7 @@ Unlabelled.play = async ({ canvas }) => {
   ).toBeInTheDocument();
 };
 
-export const Invalid: Story = (args) => (
+export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ComboBox {...args}>{flavours}</ComboBox>
 );
 
@@ -84,9 +84,9 @@ Invalid.play = async ({ canvas }) => {
   ).toBeVisible();
 };
 
-export const SelectsAFlavour: Story = (args) => (
-  <ComboBox {...args}>{flavours}</ComboBox>
-);
+export const SelectsAFlavour: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <ComboBox {...args}>{flavours}</ComboBox>;
 
 SelectsAFlavour.args = {
   label: 'Ice cream flavor',
@@ -101,9 +101,9 @@ SelectsAFlavour.play = async ({ canvas }) => {
   await expect(input).toHaveValue('Mint');
 };
 
-export const MultipleSelection: Story = (args) => (
-  <ComboBox {...args}>{flavours}</ComboBox>
-);
+export const MultipleSelection: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <ComboBox {...args}>{flavours}</ComboBox>;
 
 MultipleSelection.args = {
   label: 'Ice cream flavor',

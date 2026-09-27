@@ -14,7 +14,9 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ProgressBar>;
 
-export const Example: Story = (args) => <ProgressBar {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <ProgressBar {...args} />
+);
 
 Example.args = {
   label: 'Loading…',

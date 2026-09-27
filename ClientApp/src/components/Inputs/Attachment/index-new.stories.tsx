@@ -53,7 +53,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EmptyUploader: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Drag and drop files here')).toBeVisible();
     // The browse control and the file input are both present.
@@ -87,7 +89,9 @@ export const DocumentsWithoutIds: Story = {
       },
     },
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await expect(canvas.getByText('manual.pdf')).toBeVisible();
     await expect(canvas.getByText('certificate.pdf')).toBeVisible();
   },

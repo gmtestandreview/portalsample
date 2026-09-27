@@ -15,7 +15,9 @@ export default meta;
 
 type Story = StoryFn<typeof SearchField>;
 
-export const Example: Story = (args) => <SearchField {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <SearchField {...args} />
+);
 
 Example.args = {
   label: 'Search',

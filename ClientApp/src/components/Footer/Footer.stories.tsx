@@ -17,7 +17,9 @@ type Story = StoryObj<typeof meta>;
 
 // SB-023: Footer Default — landmark and link a11y assertions
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Footer renders a contentinfo (footer) landmark
     const footer =

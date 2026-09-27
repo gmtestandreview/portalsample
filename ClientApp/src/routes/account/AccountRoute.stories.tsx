@@ -44,7 +44,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const OrganisationDetails: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const tradingName = canvas.getByLabelText(
       'Business or Trading name (optional)'

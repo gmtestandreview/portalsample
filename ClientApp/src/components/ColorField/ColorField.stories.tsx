@@ -18,13 +18,17 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ColorField>;
 
-export const Example: Story = (args) => <ColorField {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <ColorField {...args} />
+);
 
 Example.args = {
   label: 'Color',
 };
 
-export const WithDescription: Story = (args) => <ColorField {...args} />;
+export const WithDescription: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <ColorField {...args} />;
 
 WithDescription.args = {
   label: 'Color',
@@ -37,7 +41,7 @@ WithDescription.play = async ({ canvas }) => {
   ).toBeVisible();
 };
 
-export const Unlabelled: Story = (args) => (
+export const Unlabelled: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ColorField {...args} aria-label='Color' />
 );
 

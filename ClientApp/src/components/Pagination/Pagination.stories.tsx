@@ -60,7 +60,9 @@ export const FirstPage: Story = {
     onPageChange: () => {},
   },
   render: () => <PaginationStory totalPages={12} startPage={1} />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 1 of 12/i);
     await expect(pageText).toBeVisible();
@@ -77,7 +79,9 @@ export const LastPage: Story = {
     onPageChange: () => {},
   },
   render: () => <PaginationStory totalPages={12} startPage={12} />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 12 of 12/i);
     await expect(pageText).toBeVisible();
@@ -94,7 +98,9 @@ export const CustomStyleVariant: Story = {
     onPageChange: () => {},
   },
   render: () => <PaginationStory totalPages={8} startPage={3} />,
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const pageText = canvas.getByText(/page 3 of 8/i);
     await expect(pageText).toBeVisible();

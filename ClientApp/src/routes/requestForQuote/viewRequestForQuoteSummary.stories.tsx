@@ -30,7 +30,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Loading: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByText('Loading...')).toBeVisible();
   },

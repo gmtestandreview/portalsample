@@ -37,7 +37,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EditStep: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('heading', {

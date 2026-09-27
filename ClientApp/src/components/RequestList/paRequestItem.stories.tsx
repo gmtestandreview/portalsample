@@ -57,7 +57,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const DraftApplication: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('heading', {
@@ -74,7 +76,9 @@ export const SubmittedApplication: Story = {
     request: submittedRequest,
     tab: DashboardTab.Requests,
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(
       canvas.getByRole('heading', { name: /fuel dispenser flow meter/i })

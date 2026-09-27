@@ -85,7 +85,9 @@ export const InstrumentAndRequestStep: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // The component renders a BlockUISpinner until both lookup setters have run, so
     // awaiting this heading is the settled-state contract: it cannot appear before
@@ -202,7 +204,9 @@ export const InstrumentAndRequestValidation: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Same settled-state contract as Instrument And Request Step: the heading is behind
     // the component's BlockUISpinner branch and appears only once /api/lookup resolves.

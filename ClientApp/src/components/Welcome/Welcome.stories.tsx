@@ -19,7 +19,9 @@ type Story = StoryObj<typeof meta>;
 
 // Default: Taylor Nguyen — given name renders after "Welcome"
 export const Default: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
     await expect(banner).toBeVisible();
@@ -39,7 +41,9 @@ export const NoGivenName: Story = {
       },
     },
   },
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
     await expect(banner).toBeVisible();
@@ -60,7 +64,9 @@ const LoadingDecorator = (Story: ComponentType) => (
 
 export const Loading: Story = {
   decorators: [LoadingDecorator],
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     const banner = canvas.getByTestId('welcome-banner');
     await expect(banner).toBeVisible();

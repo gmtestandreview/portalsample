@@ -67,7 +67,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const DetailsTab: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     // Once the application loads, the status section and reference render.
     await expect(

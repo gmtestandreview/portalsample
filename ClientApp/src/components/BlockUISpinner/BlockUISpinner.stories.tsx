@@ -36,7 +36,7 @@ export const Inline: Story = {
     partial: true,
     children: <p>Refreshing results...</p>,
   },
-  render: (args) => (
+  render: (args: Readonly<Parameters<NonNullable<Story['render']>>[0]>) => (
     <div className='p-5' style={{ minHeight: 240, maxWidth: 640 }}>
       <BlockUISpinner {...args} />
     </div>

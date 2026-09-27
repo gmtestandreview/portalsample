@@ -40,7 +40,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const RendersProtectedContent: Story = {
-  play: async ({ canvasElement }) => {
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
     await expect(canvas.getByTestId('protected-content')).toBeVisible();
     await expect(canvas.getByText('Protected dashboard content')).toBeVisible();

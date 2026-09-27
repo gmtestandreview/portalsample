@@ -14,7 +14,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ColorSwatchPicker>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ColorSwatchPicker {...args}>
     <ColorSwatchPickerItem color='#A00' />
     <ColorSwatchPickerItem color='#f80' />

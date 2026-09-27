@@ -15,13 +15,17 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof DateRangePicker>;
 
-export const Example: Story = (args) => <DateRangePicker {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <DateRangePicker {...args} />
+);
 
 Example.args = {
   label: 'Event date',
 };
 
-export const WithDescription: Story = (args) => <DateRangePicker {...args} />;
+export const WithDescription: Story = (
+  args: Readonly<Parameters<Story>[0]>
+) => <DateRangePicker {...args} />;
 
 WithDescription.args = {
   label: 'Event date',
@@ -34,7 +38,9 @@ WithDescription.play = async ({ canvas }) => {
   ).toBeVisible();
 };
 
-export const Invalid: Story = (args) => <DateRangePicker {...args} />;
+export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <DateRangePicker {...args} />
+);
 
 Invalid.args = {
   label: 'Event date',

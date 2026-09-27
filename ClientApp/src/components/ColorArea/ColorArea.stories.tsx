@@ -14,7 +14,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof ColorArea>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <ColorArea {...args} style={{ width: 200 }} />
 );
 

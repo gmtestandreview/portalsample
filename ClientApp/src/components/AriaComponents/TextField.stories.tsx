@@ -18,7 +18,9 @@ export default meta;
 
 type Story = StoryFn<typeof TextField>;
 
-export const Example: Story = (args) => <TextField {...args} />;
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <TextField {...args} />
+);
 
 Example.args = {
   label: 'Name',

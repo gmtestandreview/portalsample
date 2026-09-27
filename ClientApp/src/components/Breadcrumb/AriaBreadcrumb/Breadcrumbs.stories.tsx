@@ -14,7 +14,7 @@ const meta = {
 export default meta;
 type Story = StoryFn<typeof Breadcrumbs>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <Breadcrumbs {...args}>
     <Breadcrumb href='/'>Home</Breadcrumb>
     <Breadcrumb href='/react-aria/'>React Aria</Breadcrumb>

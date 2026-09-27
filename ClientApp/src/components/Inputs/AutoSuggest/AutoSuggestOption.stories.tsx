@@ -33,7 +33,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });
@@ -45,7 +47,9 @@ export const Highlighted: Story = {
   args: {
     selected: 'opt-1',
   },
-  play: async ({ canvas }) => {
+  play: async ({
+    canvas,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const option = await canvas.findByRole('option', {
       name: 'National Measurement Institute',
     });

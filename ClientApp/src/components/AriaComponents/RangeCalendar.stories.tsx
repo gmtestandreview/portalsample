@@ -16,11 +16,11 @@ export default meta;
 
 type Story = StoryFn<typeof RangeCalendar>;
 
-export const Example: Story = (args) => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <RangeCalendar aria-label='Trip dates' {...args} />
 );
 
-export const Invalid: Story = (args) => (
+export const Invalid: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <RangeCalendar aria-label='Trip dates' {...args} />
 );
 
