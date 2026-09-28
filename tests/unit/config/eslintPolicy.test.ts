@@ -20,6 +20,7 @@ const PROBE_FILE = 'ClientApp/src/App.tsx';
 const LOAD_TIMEOUT_MS = 60_000;
 
 let appRules: Record<string, unknown> = {};
+let appPluginNames: string[] = [];
 let pluginRuleNames: string[] = [];
 
 /** ESLint severities: 0 off, 1 warn, 2 error. `absent` means no owner at all. */
@@ -40,6 +41,7 @@ beforeAll(async () => {
   const config = await eslint.calculateConfigForFile(PROBE_FILE);
 
   appRules = (config.rules ?? {}) as Record<string, unknown>;
+  appPluginNames = Object.keys(config.plugins ?? {});
 
   const imported = (await import('@eslint-react/eslint-plugin')) as {
     default?: { rules?: Record<string, unknown> };
@@ -131,13 +133,19 @@ describe('deliberate convention deviations stay disabled', () => {
 });
 
 describe('the outgoing plugin is fully retired', () => {
-  it('resolves no eslint-plugin-react rule for application files', () => {
-    const legacyRules = Object.keys(appRules).filter(
+  it('does not load eslint-plugin-react for application files', () => {
+    expect(appPluginNames).not.toContain('react');
+  });
+
+  it('enables no eslint-plugin-react rule for application files', () => {
+    const enabledLegacyRules = Object.keys(appRules).filter(
       (ruleId) =>
-        ruleId.startsWith('react/') && !ruleId.startsWith('react-hooks/')
+        ruleId.startsWith('react/') &&
+        !ruleId.startsWith('react-hooks/') &&
+        severityOf(ruleId) !== 0
     );
 
-    expect(legacyRules).toEqual([]);
+    expect(enabledLegacyRules).toEqual([]);
   });
 });
 

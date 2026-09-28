@@ -227,11 +227,16 @@ const anchorsByRule = new Map(
 
 const citationSites = [];
 for (const block of blocks) {
-  const sourceLine = block.text
-    .split('\n')
-    .find((l) => l.startsWith('**Source:**'));
-  if (sourceLine) {
-    citationSites.push({ id: block.id, text: sourceLine, where: 'detail' });
+  const sourceField =
+    /\*\*Source:\*\*([\s\S]*?)(?=\s+\*\*(?:Plain English|Specification|Parameters|Edge cases handled|Suspected defect|Confidence):\*\*|$)/u.exec(
+      block.text
+    );
+  if (sourceField) {
+    citationSites.push({
+      id: block.id,
+      text: sourceField[1],
+      where: 'detail',
+    });
   }
 }
 for (const ln of registerLines) {
@@ -376,7 +381,9 @@ if (FIX) {
   }
 
   if (rewritten > 0) writeFileSync(REGISTER, updated, 'utf8');
-  console.log(`re-derived ${rewritten} citation(s)`);
+  (JSON_OUT ? console.error : console.log)(
+    `re-derived ${rewritten} citation(s)`
+  );
 }
 
 if (JSON_OUT) {
@@ -410,7 +417,7 @@ const failing = results.filter((r) =>
  * automatically would mean the ceiling is always whatever today happens to be, which catches
  * nothing — lowering it is a deliberate edit that records the gain.
  */
-const UNRESOLVED_BASELINE = 23;
+const UNRESOLVED_BASELINE = 22;
 const unresolved = counts.UNRESOLVED ?? 0;
 
 let exitCode = 0;
@@ -437,11 +444,12 @@ if (!FIX && unresolved > UNRESOLVED_BASELINE) {
   );
   exitCode = 1;
 } else if (!FIX && unresolved < UNRESOLVED_BASELINE) {
-  console.log('');
-  console.log(
+  const logNote = JSON_OUT ? console.error : console.log;
+  logNote('');
+  logNote(
     `NOTE: UNRESOLVED is ${unresolved}, below the baseline of ${UNRESOLVED_BASELINE}.`
   );
-  console.log(
+  logNote(
     'Lower UNRESOLVED_BASELINE in scripts/verify-rule-citations.mjs to lock the gain in.'
   );
 }

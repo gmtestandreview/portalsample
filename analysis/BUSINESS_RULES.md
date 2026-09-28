@@ -138,7 +138,7 @@ paths are renamed; should use React Router `useMatch` with route constants from
 ### RULE-002: Contact Creation Gate
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/preConditions/PreConditions.tsx:69-73` **Plain English:**
+`ClientApp/src/routes/preConditions/PreConditions.tsx:97-102` **Plain English:**
 Once account creation is complete, a user without a completed contact record is
 redirected to `/create-contact`. **Specification:**
 
@@ -158,9 +158,9 @@ be done first — `!redirectToCreateAccount` condition) **Confidence:** High
 ### RULE-003: Post-Onboarding Dashboard Redirect
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/preConditions/PreConditions.tsx:75-79` **Plain English:**
-A fully onboarded user who somehow navigates to the setup routes is bounced back
-to the dashboard. **Specification:**
+`ClientApp/src/routes/preConditions/PreConditions.tsx:104-109` **Plain
+English:** A fully onboarded user who somehow navigates to the setup routes is
+bounced back to the dashboard. **Specification:**
 
 ```text
 Given  accountCreationCompleted === true AND accountContactCompleted === true
@@ -264,7 +264,7 @@ never been submitted to CRM and have no `QuoteStatus` value **Confidence:** High
 ### RULE-007: Status → Downloadable Document Mapping
 
 **Category:** Lifecycle **Priority:** P0 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:22-74` **Plain English:** The
+`ClientApp/src/routes/common/helperFunctions.ts:39-74` **Plain English:** The
 PDF document served to a customer for a given record depends entirely on its
 current status. Different statuses serve fundamentally different documents
 (offer vs acceptance vs report). **Specification:**
@@ -304,7 +304,7 @@ indefinitely. See Debt #8 in ASSESSMENT.md. **Confidence:** High
 ### RULE-008: PDF Initial Page Number by Status
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/common/helperFunctions.ts:123-134` **Plain English:** The
+`ClientApp/src/routes/common/helperFunctions.ts:156-168` **Plain English:** The
 PDF viewer opens to a specific page depending on the quote's status, reflecting
 which section of the document is most relevant to the customer's current
 situation. **Specification:**
@@ -313,8 +313,8 @@ situation. **Specification:**
 Given  a QuoteStatus value
 When   the PDF viewer is opened
 Then:
-  status === QuoteDeclined              → open page 3
-  status in [QuoteAccepted, ArtifactReceived, ReportIssued, ReportInProgress] → open page 5
+  status === 'QuoteDeclined'              → open page 3
+  status in ['QuoteAccepted', 'ArtifactReceived', 'ReportIssued', 'ReportInProgress'] → open page 5
   any other status                      → open page 2
 ```
 
@@ -330,7 +330,7 @@ analysis
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
 `ClientApp/src/routes/common/quoteStatus.ts:14-22`,
-`ClientApp/src/routes/quotation/index.tsx:124-127` **Plain English:** The
+`ClientApp/src/routes/quotation/index.tsx:109-116` **Plain English:** The
 "Proceed with quote" and "Decline quote" buttons are hidden once any final
 outcome has been recorded; only a "Back to dashboard" button remains.
 **Specification:**
@@ -495,7 +495,7 @@ Then   status transitions to QuoteAccepted (optimistically shown immediately)
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
 `ClientApp/src/components/RequestList/requestItem.tsx:454-469`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:296-301` _(corrected
+`ClientApp/src/components/RequestList/instrumentItem.tsx:303-330` _(corrected
 2026-09-02, CRD-045 - previous citation was past end of file)_ **Plain
 English:** A customer can copy a completed or withdrawn RFQ as a recalibration
 request only when the original has reached specific end states.
@@ -505,11 +505,11 @@ request only when the original has reached specific end states.
 Given  a dashboard item
 
 For requestItem:
-When   status is ReportIssued OR ReportWithdrawn
+When   status is 'ReportIssued' OR 'ReportWithdrawn'
 Then   "Request recalibration" action is available → /request-for-quote-copy/:referenceId
 
 For instrumentItem:
-When   status is ReportIssued OR ReportInProgress OR ReportWithdrawn
+When   status is 'ReportIssued' OR 'ReportInProgress' OR 'ReportWithdrawn'
 Then   "Request recalibration" is available
 ```
 
@@ -576,7 +576,7 @@ Then   display: "Invoices must be paid within 30 days of NMI invoice date.
 ### RULE-018: Draft-Save Capability by Wizard
 
 **Category:** Policy **Priority:** P1 **Source:**
-`ClientApp/src/routes/requestForQuote/index.tsx:117`,
+`ClientApp/src/routes/requestForQuote/index.tsx:132`,
 `ClientApp/src/routes/acceptQuote/index.tsx:39`,
 `ClientApp/src/routes/account/create/index.tsx:18`,
 `ClientApp/src/routes/contact/create/index.tsx:18` **Plain English:** Multi-step
@@ -599,9 +599,9 @@ accidental navigation for all wizards regardless of `canSaveDraft`
 ### RULE-019: Report Link Hidden for Withdrawn Status
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
-`ClientApp/src/routes/measurementReport/reportList.tsx:95`,
-`ClientApp/src/components/RequestList/instrumentItem.tsx:174` **Plain English:**
-A withdrawn measurement report cannot be viewed or downloaded.
+`ClientApp/src/routes/measurementReport/reportList.tsx:116`,
+`ClientApp/src/components/RequestList/instrumentItem.tsx:193-228` **Plain
+English:** A withdrawn measurement report cannot be viewed or downloaded.
 **Specification:**
 
 ```text
@@ -620,7 +620,7 @@ Then   "View report" link is hidden
 
 **Category:** Lifecycle **Priority:** P2 **Source:**
 `ClientApp/src/routes/common/quoteStatus.ts:35-40`,
-`ClientApp/src/components/RequestList/requestItem.tsx:371-375` **Plain
+`ClientApp/src/components/RequestList/requestItem.tsx:415-422` **Plain
 English:** Once NMI receives the physical instrument, the dashboard card heading
 switches from the customer's make/model entry to NMI's formal artefact name.
 **Specification:**
@@ -645,7 +645,7 @@ Then   heading = requestForQuote.manufacturer + " " + requestForQuote.model
 
 **Category:** Lifecycle **Priority:** P1 **Source:**
 `ClientApp/src/routes/common/quoteStatus.ts:24-28`,
-`ClientApp/src/components/RequestList/requestItem.tsx:152-153` **Plain
+`ClientApp/src/components/RequestList/requestItem.tsx:190-192` **Plain
 English:** After acceptance, quotation links use the CRM Quote ID rather than
 the original RFQ reference ID. **Specification:**
 
@@ -980,7 +980,7 @@ Then   the empty one is accepted (optional)
 ### RULE-039: RFQ Multi-Branch Confirmation Gate
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/routes/requestForQuote/validation.ts:23-28` **Plain English:**
+`ClientApp/src/routes/requestForQuote/validation.ts:38-47` **Plain English:**
 When a customer has more than one registered branch, they must explicitly
 confirm they have selected the correct branch before an RFQ can proceed.
 **Specification:**
@@ -1003,7 +1003,7 @@ Then   isCorrectBranchOrLocation is not required
 ### RULE-040: Quote Acceptance T&C Checkbox Mandatory
 
 **Category:** Validation **Priority:** P0 **Source:**
-`ClientApp/src/routes/acceptQuote/validation.ts:136-137` **Plain English:** A
+`ClientApp/src/routes/acceptQuote/validation.ts:178-180` **Plain English:** A
 customer must explicitly tick the acceptance-of-terms checkbox before their
 quote acceptance can be submitted. This is a legal acknowledgement.
 **Specification:**
@@ -1023,7 +1023,7 @@ Then   submit proceeds
 ### RULE-041: Preferred Availability Date Must Not Be in the Past
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/routes/requestForQuote/validation.ts:123-136` **Plain English:**
+`ClientApp/src/routes/requestForQuote/validation.ts:159-173` **Plain English:**
 If a customer specifies a preferred instrument availability date on an RFQ, it
 must be today or a future date. **Specification:**
 
@@ -1047,8 +1047,8 @@ Then   passes (no date is valid)
 ### RULE-042: Number of Items Range (1–100)
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/routes/requestForQuote/validation.ts:91-96`
-(`instrumentAndRequestSubmitValidation`) **and `:189-195`**
+`ClientApp/src/routes/requestForQuote/validation.ts:121-127`
+(`instrumentAndRequestSubmitValidation`) **and `:226-232`**
 (`instrumentAndRequestSaveValidation`) _(corrected and completed 2026-09-02,
 CRD-044 - previously cited 88-93 and documented only one of the two sites)_
 **Plain English:** The number of instruments/artefacts on a single RFQ must be
@@ -1065,8 +1065,8 @@ numberOfItems: yup
 **Parameters:** Min: `1`, Max: `100` (hardcoded)
 
 > **Completed 2026-09-02 (CRD-044) — the rule is implemented twice, not once.**
-> `instrumentAndRequestSubmitValidation` (`:91-96`) makes `numberOfItems`
-> **required**; `instrumentAndRequestSaveValidation` (`:189-195`) makes it
+> `instrumentAndRequestSubmitValidation` (`:121-127`) makes `numberOfItems`
+> **required**; `instrumentAndRequestSaveValidation` (`:226-232`) makes it
 > **nullable**, so a draft can be saved incomplete, while still enforcing the
 > same 1-100 bounds when a value is present (consistent with RULE-018
 > draft-save). The register previously documented only the submit site. Both are
@@ -1080,7 +1080,7 @@ numberOfItems: yup
 ### RULE-043: Carrier Details Required When Client Provides Shipping
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/routes/acceptQuote/validation.ts:47-73` **Plain English:** When
+`ClientApp/src/routes/acceptQuote/validation.ts:66-120` **Plain English:** When
 the customer selects "client will provide courier" as the return method, carrier
 name and account number become mandatory. **Specification:**
 
@@ -1106,7 +1106,7 @@ Then   all carrier fields are not required
 ### RULE-044: Invoice Contact Required for Different Person
 
 **Category:** Validation **Priority:** P1 **Source:**
-`ClientApp/src/routes/acceptQuote/validation.ts:114-118` **Plain English:** When
+`ClientApp/src/routes/acceptQuote/validation.ts:152-157` **Plain English:** When
 the customer directs the invoice to someone other than themselves, that person's
 contact details (at minimum email) become required. **Specification:**
 
@@ -1251,7 +1251,7 @@ Then   postalAddress: addressSchema applies (all required fields enforced)
 ### RULE-050: NMI ABN Hardcoded in Contract Display
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:374` _(corrected
+`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:435` _(corrected
 2026-09-02, CRD-044 - previously cited 382, which is a different element)_
 **Plain English:** NMI's Australian Business Number is hardcoded in the Accept
 Quote summary page as part of the legal contract display. **Specification:**
@@ -1266,7 +1266,7 @@ Any change to NMI's registered ABN or address requires a code deployment.
 ```
 
 **Parameters:** Both values are string literals in
-`summaryAndAccept.tsx:374-380` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
+`summaryAndAccept.tsx:435-441` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
 High
 
 ---

@@ -44,11 +44,13 @@ const mockApi = fs.readFileSync(
 );
 
 const routeHandler = (routePattern: string) => {
-  const start = mockApi.indexOf(`await page.route('${routePattern}'`);
-  const end = mockApi.indexOf('\n    await page.route(', start + 1);
+  const escapedPattern = routePattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const handler = new RegExp(
+    `await page\\.route\\(\\s*'${escapedPattern}'\\s*,[\\s\\S]+?(?=\\n\\s*await page\\.route\\(|\\n}\\s*$)`
+  ).exec(mockApi)?.[0];
 
-  expect(start).toBeGreaterThanOrEqual(0);
-  return mockApi.slice(start, end === -1 ? undefined : end);
+  expect(handler).toBeTruthy();
+  return handler ?? '';
 };
 
 const extractSection = (source: string, pattern: RegExp) =>
@@ -86,7 +88,7 @@ describe('Storybook Playwright step quality', () => {
     );
     const numericStepAssertion = extractSection(
       commonSteps,
-      /Then\('the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/
+      /Then\(\s*'the user should be on the RFQ wizard step \{int\}'[\s\S]+?(?=\nThen\()/
     );
 
     expect(readinessHelper).toBeTruthy();
