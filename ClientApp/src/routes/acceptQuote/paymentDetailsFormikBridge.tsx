@@ -83,6 +83,7 @@ const PaymentDetailsFormikBridge = ({
 
   useEffect(() => {
     if (submitCount <= previousSubmitCount.current) {
+      previousSubmitCount.current = submitCount;
       return;
     }
 

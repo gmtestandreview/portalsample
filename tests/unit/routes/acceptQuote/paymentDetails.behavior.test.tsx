@@ -42,10 +42,8 @@ vi.mock('@/instrumentation/AppLogger', () => ({
 
 const hidingFields = {
   contactHide: (values: PaymentDetailsStep) =>
-    values.invoiceSentTo !== InvoiceSentToValues.DifferentPerson,
+    values.invoiceSentTo === InvoiceSentToValues.SamePerson,
   contact: {
-    this: (values: PaymentDetailsStep) =>
-      values.invoiceSentTo !== InvoiceSentToValues.DifferentPerson,
     titleOther: (values: PaymentDetailsStep) =>
       values.contact?.title !== 'Other',
   },
@@ -171,6 +169,44 @@ describe('PaymentDetails form behavior', () => {
     );
   });
 
+  it('shows validation errors after reinitializing following an invalid submit', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <Harness
+        values={{
+          ...initialValues,
+          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+        }}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(
+      await screen.findByText('Email address is required')
+    ).toBeInTheDocument();
+
+    rerender(
+      <Harness
+        values={{
+          ...initialValues,
+          purchaseOrderNo: 'PO-RELOADED',
+          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+        }}
+      />
+    );
+
+    await waitFor(() =>
+      expect(
+        screen.queryByText('Email address is required')
+      ).not.toBeInTheDocument()
+    );
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(
+      await screen.findByText('Email address is required')
+    ).toBeInTheDocument();
+  });
+
   it('formats a loaded business phone without crashing the contact form', async () => {
     render(
       <Harness
@@ -190,7 +226,7 @@ describe('PaymentDetails form behavior', () => {
     ).toHaveValue('02 1234 5678');
   });
 
-  it('removes entered contact PII after switching back to the main contact', async () => {
+  it('preserves entered contact values after switching back to the main contact', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(<Harness onSubmit={onSubmit} />);
@@ -208,10 +244,13 @@ describe('PaymentDetails form behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('contact');
+    expect(onSubmit.mock.calls[0][0]).toHaveProperty(
+      'contact.email',
+      'private@example.com'
+    );
   });
 
-  it('removes hidden contact PII when no invoice contact is selected', async () => {
+  it('shows and preserves loaded contact values when no invoice contact is selected', async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(
@@ -228,10 +267,15 @@ describe('PaymentDetails form behavior', () => {
       />
     );
 
-    expect(screen.queryByLabelText('Email address')).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Email address')).toHaveValue(
+      'private@example.com'
+    );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('contact');
+    expect(onSubmit.mock.calls[0][0]).toHaveProperty(
+      'contact.email',
+      'private@example.com'
+    );
   });
 });

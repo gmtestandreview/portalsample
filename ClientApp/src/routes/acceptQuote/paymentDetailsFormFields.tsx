@@ -315,7 +315,7 @@ const PaymentDetailsFormFields = ({
         />
         <RhfInvoiceContactChoice />
       </Row>
-      {invoiceSentTo === InvoiceSentToValues.DifferentPerson && (
+      {invoiceSentTo !== InvoiceSentToValues.SamePerson && (
         <Row className='mb-4'>
           <h2>Invoice contact person</h2>
           <RhfInvoiceContact />
