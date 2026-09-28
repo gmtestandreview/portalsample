@@ -50,6 +50,7 @@ const MailingLabel = ({
         setIsCopyClipboard(true);
         // eslint-disable-next-line no-console
         console.log('Copied to clipboard:');
+        // eslint-disable-next-line no-console
         console.log(textToCopy);
       })
       .catch((err) => {
@@ -99,7 +100,7 @@ const MailingLabel = ({
                   onClick={handlePrint}
                   title='Print shipping address label (opens in new window)'
                 >
-                  <i className='icon-printer me-1' aria-hidden='true' /> Print
+                  <i className='icon-printer me-1' aria-hidden='true' /> Print{' '}
                   <span className='visually-hidden'>
                     shipping address label
                   </span>
