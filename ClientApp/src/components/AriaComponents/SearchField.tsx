@@ -23,13 +23,13 @@ export function SearchField({
   errorMessage,
   placeholder,
   ...props
-}: SearchFieldProps) {
+}: Readonly<SearchFieldProps>) {
   return (
     <AriaSearchField {...props}>
       {label && <Label>{label}</Label>}
       <Search size={18} />
-      <Input placeholder={placeholder} className="react-aria-Input inset" />
-      <Button className="clear-button">
+      <Input placeholder={placeholder} className='react-aria-Input inset' />
+      <Button className='clear-button'>
         <X size={14} />
       </Button>
       {description && <Description>{description}</Description>}

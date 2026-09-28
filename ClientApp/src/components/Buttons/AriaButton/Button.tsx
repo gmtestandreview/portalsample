@@ -20,13 +20,15 @@ export function Button(props: Readonly<ButtonProps>) {
   return (
     <RACButton
       {...props}
-      className="react-aria-Button button-base"
+      className='react-aria-Button button-base'
       data-variant={props.variant || 'primary'}
     >
       {composeRenderProps(props.children, (children, { isPending }) => (
         <>
           {!isPending && children}
-          {isPending && <ProgressCircle aria-label="Saving..." isIndeterminate />}
+          {isPending && (
+            <ProgressCircle aria-label='Saving...' isIndeterminate />
+          )}
         </>
       ))}
     </RACButton>

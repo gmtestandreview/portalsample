@@ -9,7 +9,9 @@ import { Label, FieldError, Description } from '../forms/AriaForm/Form';
 import { DateInput, DateSegment } from '../Inputs/AriaDateField/DateField';
 import './TimeField.css';
 
-export interface TimeFieldProps<T extends TimeValue> extends AriaTimeFieldProps<T> {
+export interface TimeFieldProps<
+  T extends TimeValue,
+> extends AriaTimeFieldProps<T> {
   label?: string;
   description?: string;
   errorMessage?: string | ((validation: ValidationResult) => string);
@@ -20,7 +22,7 @@ export function TimeField<T extends TimeValue>({
   description,
   errorMessage,
   ...props
-}: TimeFieldProps<T>) {
+}: Readonly<TimeFieldProps<T>>) {
   return (
     <AriaTimeField {...props}>
       <Label>{label}</Label>

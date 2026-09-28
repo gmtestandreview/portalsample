@@ -21,7 +21,7 @@ export type RollupLogHandler = (level: string, log: RollupLog) => void;
 export function onLog(
   level: string,
   log: RollupLog,
-  handler: RollupLogHandler,
+  handler: RollupLogHandler
 ): void {
   const isVendorPureNoise =
     log.code === 'INVALID_ANNOTATION' &&

@@ -18,7 +18,7 @@ export interface CommandPaletteProps<T>
   onOpenChange: (isOpen?: boolean) => void;
 }
 
-export function CommandPalette<T>(props: CommandPaletteProps<T>) {
+export function CommandPalette<T>(props: Readonly<CommandPaletteProps<T>>) {
   const { isOpen, onOpenChange } = props;
   const { contains } = useFilter({ sensitivity: 'base' });
 
@@ -40,9 +40,13 @@ export function CommandPalette<T>(props: CommandPaletteProps<T>) {
 
   return (
     <Modal isDismissable isOpen={isOpen} onOpenChange={onOpenChange}>
-      <Dialog className="command-palette-dialog">
+      <Dialog className='command-palette-dialog'>
         <AriaAutocomplete filter={contains} {...props}>
-          <SearchField autoFocus aria-label="Search commands" placeholder="Search commands" />
+          <SearchField
+            autoFocus
+            aria-label='Search commands'
+            placeholder='Search commands'
+          />
           <Menu {...props} renderEmptyState={() => 'No results found.'} />
         </AriaAutocomplete>
       </Dialog>

@@ -10,11 +10,13 @@ import {
 import { ChevronRight } from '../../AriaComponents/NmiIcon';
 import './Breadcrumbs.css';
 
-export function Breadcrumbs<T>(props: BreadcrumbsProps<T>) {
+export function Breadcrumbs<T>(props: Readonly<BreadcrumbsProps<T>>) {
   return <RACBreadcrumbs {...props} />;
 }
 
-export function Breadcrumb(props: BreadcrumbProps & Omit<LinkProps, 'className'>) {
+export function Breadcrumb(
+  props: Readonly<BreadcrumbProps & Omit<LinkProps, 'className'>>
+) {
   return (
     <RACBreadcrumb {...props}>
       {({ isCurrent }) => (

@@ -7,7 +7,10 @@ import {
 import { Label, FieldError, Description } from '../../forms/AriaForm/Form';
 import './CheckboxGroup.css';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'> {
+export interface CheckboxGroupProps extends Omit<
+  AriaCheckboxGroupProps,
+  'children'
+> {
   children?: React.ReactNode;
   label?: string;
   description?: string;
@@ -22,11 +25,11 @@ export function CheckboxGroup({
   children,
   orientation = 'vertical',
   ...props
-}: CheckboxGroupProps) {
+}: Readonly<CheckboxGroupProps>) {
   return (
     <AriaCheckboxGroup {...props} data-orientation={orientation}>
       {label && <Label>{label}</Label>}
-      <div className="checkbox-items">{children}</div>
+      <div className='checkbox-items'>{children}</div>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaCheckboxGroup>

@@ -1,21 +1,21 @@
-import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
-import {Menu, MenuTrigger, MenuItem, SubmenuTrigger} from './Menu';
-import {Button} from '../Buttons/AriaButton/Button';
-import type {Meta, StoryFn} from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation';
+import { Menu, MenuTrigger, MenuItem, SubmenuTrigger } from './Menu';
+import { Button } from '../Buttons/AriaButton/Button';
+import type { Meta, StoryFn } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Menu',
   component: Menu,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
   },
 } satisfies Meta<typeof Menu>;
 
 export default meta;
 type Story = StoryFn<typeof Menu>;
 
-export const Example: Story = args => (
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
   <MenuTrigger>
     <Button>Edit</Button>
     <Menu {...args}>

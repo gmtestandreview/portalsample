@@ -11,47 +11,55 @@ import PaFilterMenu from './paFilterMenu';
  * the user profile.
  */
 const initialFilters: PatternApprovalDashboardDto = {
-    filterStatusType: 'allStatuses',
-    filterYearType: 'allYears',
-    filterSortOrder: 'descending',
-    filtersChanged: false,
-    filterCurrentPage: 1,
-    filterActiveTab: 'requests',
-    filterSearchText: '',
+  filterStatusType: 'allStatuses',
+  filterYearType: 'allYears',
+  filterSortOrder: 'descending',
+  filtersChanged: false,
+  filterCurrentPage: 1,
+  filterActiveTab: 'requests',
+  filterSearchText: '',
 };
 
 const meta = {
-    title: 'Components/SearchFilter/TypeApproval/PaFilterMenu',
-    component: PaFilterMenu,
-    decorators: [withPortalProviders],
-    parameters: {
-        layout: 'padded',
-        portal: {
-            authenticated: true,
-        },
+  title: 'Components/SearchFilter/TypeApproval/PaFilterMenu',
+  component: PaFilterMenu,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'padded',
+    portal: {
+      authenticated: true,
     },
-    args: {
-        initialFilters,
-        setInitialFilters: fn(),
-        setCurrentPage: fn(),
-    },
+  },
+  args: {
+    initialFilters,
+    setInitialFilters: fn(),
+    setCurrentPage: fn(),
+  },
 } satisfies Meta<typeof PaFilterMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Closed: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        await expect(canvas.getByRole('button', { name: /filters/i })).toBeVisible();
-    },
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('button', { name: /filters/i })
+    ).toBeVisible();
+  },
 };
 
 export const Opened: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        const user = userEvent.setup();
-        await user.click(canvas.getByRole('button', { name: /filters/i }));
-        await expect(await canvas.findByText('In progress - with NMI')).toBeVisible();
-    },
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    const canvas = within(canvasElement);
+    const user = userEvent.setup();
+    await user.click(canvas.getByRole('button', { name: /filters/i }));
+    await expect(
+      await canvas.findByText('In progress - with NMI')
+    ).toBeVisible();
+  },
 };

@@ -10,35 +10,41 @@ import SupportingDocuments from './supportingDocuments';
  * by `name`; the story provides that context plus stub upload callbacks.
  */
 const meta = {
-    title: 'Routes/TypeApproval/SupportingDocuments',
-    component: SupportingDocuments,
-    decorators: [withPortalProviders],
-    parameters: {
-        layout: 'fullscreen',
-        portal: {
-            authenticated: true,
-            initialEntries: ['/ta/PA-1/supporting-documents'],
-            formik: {
-                initialValues: {
-                    supportingDocuments: { form: { documents: [] } },
-                },
-            },
+  title: 'Routes/TypeApproval/SupportingDocuments',
+  component: SupportingDocuments,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'fullscreen',
+    portal: {
+      authenticated: true,
+      initialEntries: ['/ta/PA-1/supporting-documents'],
+      formik: {
+        initialValues: {
+          supportingDocuments: { form: { documents: [] } },
         },
+      },
     },
-    args: {
-        name: 'supportingDocuments.form.documents',
-        isSummary: false,
-        attachment: { onUploadFiles: fn(async () => []) },
-        onUploadAttachment: fn(async () => []),
-    },
+  },
+  args: {
+    name: 'supportingDocuments.form.documents',
+    isSummary: false,
+    attachment: { onUploadFiles: fn(async () => []) },
+    onUploadAttachment: fn(async () => []),
+  },
 } satisfies Meta<typeof SupportingDocuments>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const EditStep: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        await expect(canvas.getByRole('heading', { name: /upload one or more supporting documents/i })).toBeVisible();
-    },
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('heading', {
+        name: /upload one or more supporting documents/i,
+      })
+    ).toBeVisible();
+  },
 };

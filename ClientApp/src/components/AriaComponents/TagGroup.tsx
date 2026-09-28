@@ -30,7 +30,7 @@ export function TagGroup<T>({
   children,
   renderEmptyState,
   ...props
-}: TagGroupProps<T>) {
+}: Readonly<TagGroupProps<T>>) {
   return (
     <AriaTagGroup {...props}>
       {label && <Label>{label}</Label>}
@@ -38,7 +38,7 @@ export function TagGroup<T>({
         {children}
       </TagList>
       {description && <Description>{description}</Description>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      {errorMessage && <Text slot='errorMessage'>{errorMessage}</Text>}
     </AriaTagGroup>
   );
 }
@@ -46,17 +46,23 @@ export function TagGroup<T>({
 export function Tag({
   children,
   ...props
-}: Omit<TagProps, 'children'> & {
-  children?: React.ReactNode;
-}) {
+}: Readonly<
+  Omit<TagProps, 'children'> & {
+    children?: React.ReactNode;
+  }
+>) {
   const textValue = typeof children === 'string' ? children : undefined;
   return (
-    <AriaTag textValue={textValue} {...props} className="react-aria-Tag button-base">
+    <AriaTag
+      textValue={textValue}
+      {...props}
+      className='react-aria-Tag button-base'
+    >
       {({ allowsRemoving }) => (
         <>
           {children}
           {allowsRemoving && (
-            <Button slot="remove" className="remove-button">
+            <Button slot='remove' className='remove-button'>
               <X />
             </Button>
           )}

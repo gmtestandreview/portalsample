@@ -10,38 +10,42 @@ import PaSearchFilter from './paSearchFilter';
  * box is staged behind it) and wires both to the pattern-approval user-profile slice.
  */
 const initialFilters: PatternApprovalDashboardDto = {
-    filterStatusType: 'allStatuses',
-    filterYearType: 'allYears',
-    filterSortOrder: 'descending',
-    filtersChanged: false,
-    filterCurrentPage: 1,
-    filterActiveTab: 'requests',
-    filterSearchText: '',
+  filterStatusType: 'allStatuses',
+  filterYearType: 'allYears',
+  filterSortOrder: 'descending',
+  filtersChanged: false,
+  filterCurrentPage: 1,
+  filterActiveTab: 'requests',
+  filterSearchText: '',
 };
 
 const meta = {
-    title: 'Components/SearchFilter/TypeApproval/PaSearchFilter',
-    component: PaSearchFilter,
-    decorators: [withPortalProviders],
-    parameters: {
-        layout: 'padded',
-        portal: {
-            authenticated: true,
-        },
+  title: 'Components/SearchFilter/TypeApproval/PaSearchFilter',
+  component: PaSearchFilter,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'padded',
+    portal: {
+      authenticated: true,
     },
-    args: {
-        initialFilters,
-        setInitialFilters: fn(),
-        setCurrentPage: fn(),
-    },
+  },
+  args: {
+    initialFilters,
+    setInitialFilters: fn(),
+    setCurrentPage: fn(),
+  },
 } satisfies Meta<typeof PaSearchFilter>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        await expect(canvas.getByRole('button', { name: /filters/i })).toBeVisible();
-    },
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('button', { name: /filters/i })
+    ).toBeVisible();
+  },
 };

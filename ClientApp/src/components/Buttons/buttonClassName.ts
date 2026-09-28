@@ -1,7 +1,4 @@
-export const getButtonClassName = (
-  variant = 'primary',
-  className?: string,
-) => {
+export const getButtonClassName = (variant = 'primary', className?: string) => {
   const variantClassName = variant.startsWith('btn')
     ? variant
     : `btn btn-${variant}`;

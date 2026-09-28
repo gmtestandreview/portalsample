@@ -1,13 +1,13 @@
-import {withReactAriaEvaluation} from '../../storybook/withReactAriaEvaluation';
-import {Column, Row, Table, TableHeader, TableBody, Cell} from './Table';
-import type {Meta, StoryFn} from '@storybook/react-vite';
+import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation';
+import { Column, Row, Table, TableHeader, TableBody, Cell } from './Table';
+import type { Meta, StoryFn } from '@storybook/react-vite';
 
 const meta = {
   decorators: [withReactAriaEvaluation],
   title: 'Evaluation/React Aria/Table',
   component: Table,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
   },
 } satisfies Meta<typeof Table>;
 
@@ -15,8 +15,8 @@ export default meta;
 
 type Story = StoryFn<typeof Table>;
 
-export const Example: Story = args => (
-  <Table aria-label="Files" {...args}>
+export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
+  <Table aria-label='Files' {...args}>
     <TableHeader>
       <Column isRowHeader>Name</Column>
       <Column>Type</Column>
@@ -44,5 +44,5 @@ export const Example: Story = args => (
 
 Example.args = {
   onRowAction: undefined,
-  selectionMode: 'multiple'
+  selectionMode: 'multiple',
 };

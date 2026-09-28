@@ -13,7 +13,7 @@ export interface ColorSliderProps extends AriaColorSliderProps {
   label?: string;
 }
 
-export function ColorSlider({ label, ...props }: ColorSliderProps) {
+export function ColorSlider({ label, ...props }: Readonly<ColorSliderProps>) {
   return (
     <AriaColorSlider {...props}>
       <Label>{label}</Label>

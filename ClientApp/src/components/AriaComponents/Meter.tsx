@@ -1,6 +1,9 @@
 'use client';
 import { useLayoutEffect, useRef } from 'react';
-import { Meter as AriaMeter, type MeterProps as AriaMeterProps } from 'react-aria-components/Meter';
+import {
+  Meter as AriaMeter,
+  type MeterProps as AriaMeterProps,
+} from 'react-aria-components/Meter';
 import { Label } from '../forms/AriaForm/Form';
 import './Meter.css';
 
@@ -8,7 +11,7 @@ export interface MeterProps extends AriaMeterProps {
   label?: string;
 }
 
-export function Meter({ label, ...props }: MeterProps) {
+export function Meter({ label, ...props }: Readonly<MeterProps>) {
   const meterRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -22,10 +25,10 @@ export function Meter({ label, ...props }: MeterProps) {
       {({ percentage, valueText }) => (
         <>
           <Label>{label}</Label>
-          <span className="value">{valueText}</span>
-          <div className="track inset">
+          <span className='value'>{valueText}</span>
+          <div className='track inset'>
             <div
-              className="fill"
+              className='fill'
               style={
                 {
                   width: percentage + '%',

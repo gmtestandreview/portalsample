@@ -25,11 +25,11 @@ export function RadioGroup({
   errorMessage,
   children,
   ...props
-}: RadioGroupProps) {
+}: Readonly<RadioGroupProps>) {
   return (
     <AriaRadioGroup {...props}>
       <Label>{label}</Label>
-      <div className="radio-items">{children}</div>
+      <div className='radio-items'>{children}</div>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaRadioGroup>
@@ -40,13 +40,13 @@ export interface RadioProps extends RadioFieldProps {
   description?: string;
 }
 
-export function Radio(props: RadioProps) {
+export function Radio(props: Readonly<RadioProps>) {
   return (
     <RadioField {...props}>
       <RadioButton>
         {composeRenderProps(props.children, (children) => (
           <>
-            <div className="indicator" />
+            <div className='indicator' />
             {children}
           </>
         ))}

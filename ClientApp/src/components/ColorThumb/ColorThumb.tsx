@@ -4,6 +4,6 @@ import {
 } from 'react-aria-components/ColorThumb';
 import './ColorThumb.css';
 
-export function ColorThumb(props: ColorThumbProps) {
+export function ColorThumb(props: Readonly<ColorThumbProps>) {
   return <AriaColorThumb {...props} />;
 }

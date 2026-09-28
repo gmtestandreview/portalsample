@@ -20,63 +20,68 @@ import ContentModal from '@/components/modals/ContentModal';
 const TERMS = 'Portal Terms of Use';
 const PRIVACY = 'Privacy collection statement';
 
-const renderTwoOpenModals = () => render(
+const renderTwoOpenModals = () =>
+  render(
     <>
-        <ContentModal
-            showModal
-            onCancelModal={vi.fn()}
-            modalTitle={TERMS}
-            modalBody={<p>Terms body content.</p>}
-        />
-        <ContentModal
-            showModal
-            onCancelModal={vi.fn()}
-            modalTitle={PRIVACY}
-            modalBody={<p>Privacy body content.</p>}
-        />
-    </>,
-);
+      <ContentModal
+        showModal
+        onCancelModal={vi.fn()}
+        modalTitle={TERMS}
+        modalBody={<p>Terms body content.</p>}
+      />
+      <ContentModal
+        showModal
+        onCancelModal={vi.fn()}
+        modalTitle={PRIVACY}
+        modalBody={<p>Privacy body content.</p>}
+      />
+    </>
+  );
 
 describe('ContentModal accessibility', () => {
-    it('names the dialog from the visible modal title', () => {
-        render(
-            <ContentModal
-                showModal
-                onCancelModal={vi.fn()}
-                modalTitle='Accessible modal title'
-                modalBody={<p>Modal body content.</p>}
-            />,
-        );
+  it('names the dialog from the visible modal title', () => {
+    render(
+      <ContentModal
+        showModal
+        onCancelModal={vi.fn()}
+        modalTitle='Accessible modal title'
+        modalBody={<p>Modal body content.</p>}
+      />
+    );
 
-        const dialog = screen.getByRole('dialog', { name: 'Accessible modal title' });
-        const title = screen.getByRole('heading', { name: 'Accessible modal title' });
-
-        expect(dialog).toHaveAttribute('aria-labelledby', title.id);
+    const dialog = screen.getByRole('dialog', {
+      name: 'Accessible modal title',
+    });
+    const title = screen.getByRole('heading', {
+      name: 'Accessible modal title',
     });
 
-    it('gives each instance a distinct title id', () => {
-        renderTwoOpenModals();
+    expect(dialog).toHaveAttribute('aria-labelledby', title.id);
+  });
 
-        const termsTitle = screen.getByRole('heading', { name: TERMS });
-        const privacyTitle = screen.getByRole('heading', { name: PRIVACY });
+  it('gives each instance a distinct title id', () => {
+    renderTwoOpenModals();
 
-        expect(privacyTitle.id).not.toBe(termsTitle.id);
-    });
+    const termsTitle = screen.getByRole('heading', { name: TERMS });
+    const privacyTitle = screen.getByRole('heading', { name: PRIVACY });
 
-    it('leaves no duplicate label id across concurrently open dialogs', () => {
-        renderTwoOpenModals();
+    expect(privacyTitle.id).not.toBe(termsTitle.id);
+  });
 
-        const labelIds = screen
-            .getAllByRole('dialog')
-            .map((dialog) => dialog.getAttribute('aria-labelledby'));
+  it('leaves no duplicate label id across concurrently open dialogs', () => {
+    renderTwoOpenModals();
 
-        expect(new Set(labelIds).size).toBe(labelIds.length);
-    });
+    const labelIds = screen
+      .getAllByRole('dialog')
+      .map((dialog) => dialog.getAttribute('aria-labelledby'));
 
-    it('names each concurrently open dialog from its own title', () => {
-        renderTwoOpenModals();
+    expect(new Set(labelIds).size).toBe(labelIds.length);
+  });
 
-        expect(screen.getByRole('dialog', { name: TERMS })).toBeInTheDocument();
-        expect(screen.getByRole('dialog', { name: PRIVACY })).toBeInTheDocument();
-    });
+  it('names each concurrently open dialog from its own title', () => {
+    renderTwoOpenModals();
+
+    expect(screen.getByRole('dialog', { name: TERMS })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: PRIVACY })).toBeInTheDocument();
+  });
 });

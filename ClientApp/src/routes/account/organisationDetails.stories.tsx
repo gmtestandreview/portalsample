@@ -10,37 +10,43 @@ import OrganisationDetails from './organisationDetails';
  * initial-values context matching the field names.
  */
 const meta = {
-    title: 'Routes/Account/OrganisationDetails',
-    component: OrganisationDetails,
-    decorators: [withPortalProviders],
-    parameters: {
-        layout: 'padded',
-        portal: {
-            formik: {
-                initialValues: {
-                    name: 'Acme Metrology Pty Ltd',
-                    abn: '00000000000',
-                    businessOrTradingName: 'Acme Metrology',
-                    branchOrLocationName: '',
-                    isDefaultOrganisation: false,
-                    businessWebsiteAddress: '',
-                    streetAddress: '',
-                    postalAddressSameAsStreetAddress: true,
-                    postalAddress: '',
-                },
-            },
+  title: 'Routes/Account/OrganisationDetails',
+  component: OrganisationDetails,
+  decorators: [withPortalProviders],
+  parameters: {
+    layout: 'padded',
+    portal: {
+      formik: {
+        initialValues: {
+          name: 'Acme Metrology Pty Ltd',
+          abn: '00000000000',
+          businessOrTradingName: 'Acme Metrology',
+          branchOrLocationName: '',
+          isDefaultOrganisation: false,
+          businessWebsiteAddress: '',
+          streetAddress: '',
+          postalAddressSameAsStreetAddress: true,
+          postalAddress: '',
         },
+      },
     },
+  },
 } satisfies Meta<typeof OrganisationDetails>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-    play: async ({ canvasElement }) => {
-        const canvas = within(canvasElement);
-        await expect(canvas.getByRole('heading', { name: 'Organisation details' })).toBeVisible();
-        await expect(canvas.getByRole('heading', { name: 'Business street address' })).toBeVisible();
-        await expect(canvas.getByLabelText(/entity name/i)).toBeInTheDocument();
-    },
+  play: async ({
+    canvasElement,
+  }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('heading', { name: 'Organisation details' })
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole('heading', { name: 'Business street address' })
+    ).toBeVisible();
+    await expect(canvas.getByLabelText(/entity name/i)).toBeInTheDocument();
+  },
 };

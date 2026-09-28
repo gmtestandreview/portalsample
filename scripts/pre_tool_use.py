@@ -21,8 +21,12 @@ _COMMAND_TOOLS = ("Bash", "PowerShell")
 # ---------------------------------------------------------------------------
 
 _RM_POSIX = [
-    r"\brm\s+.*-[a-z]*r[a-z]*f",       # rm -rf, rm -Rf, rm -fr, etc.
-    r"\brm\s+.*-[a-z]*f[a-z]*r",        # rm -fr variations
+    # (?<!\S) requires the flag's leading '-' to sit at a token boundary
+    # (start of string or preceded by whitespace) rather than mid-word, so a
+    # path segment like "...-formik-..." (hyphen, then a word that happens to
+    # spell out r-then-f letters) is never mistaken for a combined -rf flag.
+    r"\brm\s+.*(?<!\S)-[a-z]*r[a-z]*f\b",       # rm -rf, rm -Rf, rm -fr, etc.
+    r"\brm\s+.*(?<!\S)-[a-z]*f[a-z]*r\b",        # rm -fr variations
     r"\brm\s+--recursive\s+--force",
     r"\brm\s+--force\s+--recursive",
     r"\brm\s+-r\b.*-f\b",
@@ -72,7 +76,7 @@ def _is_destructive(command: str) -> bool:
             return True
 
     # Recursive POSIX rm against dangerous paths
-    if re.search(r"\brm\s+.*-[a-z]*r", normalized):
+    if re.search(r"\brm\s+.*(?<!\S)-[a-z]*r\b", normalized):
         if _DANGEROUS_PATHS_RE.search(normalized):
             return True
 
