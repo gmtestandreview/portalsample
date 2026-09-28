@@ -8,7 +8,7 @@
 ## Revision log
 
 | Rev | Change |
-|---|---|
+| --- | --- |
 | r1 | Initial draft (26 skills: port both review skills). |
 | r2 | Governed the two full-body adoptions under `writing-skills` (§3.3). |
 | r3 | Devil's-advocate review: **port `receiving-code-review` only** → canonical set **25**. Added Phase-0 symlink-shadow spike with abort criteria (§6, §9). Session-reload gate before invocation checks. Delivery split into **PR1 (skills + wiring)** and **PR2 (agents + commands + docs)** (§9). superpowers merge source pinned to an in-repo snapshot. `.superpowers/` SDD scratch remapped to `.agent-sync/sdd/`. |
@@ -31,7 +31,7 @@ skill set with full command/agent traceability.
 ### 1.1 As-built findings
 
 | Area | Finding |
-|---|---|
+| --- | --- |
 | **Skills on disk** | 24 in `skills/**`, each with a `SKILL.md`. |
 | **Skill resolution** | Only 13 are symlinked into `.claude/skills/`, so they resolve by bare name to the A Team version. The other **11** (`brainstorming`, `dispatching-parallel-agents`, `executing-plans`, `finishing-a-development-branch`, `subagent-driven-development`, `systematic-debugging`, `test-driven-development`, `using-git-worktrees`, `verification-before-completion`, `writing-plans`, `writing-skills`) are **not** symlinked, so `Skill(<name>)` resolves to `superpowers:<name>`. The customised A Team bodies of those 11 never load. |
 | **Stripped forks** | All 11 A Team forks differ from `superpowers` 6.3.0 and are missing supporting files the bodies assume (`visual-companion.md`, `root-cause-tracing.md`, `writing-good-tests.md`, sub-agent prompt templates, `scripts/`). |
@@ -92,7 +92,7 @@ to preserve**.
 ### 3.1 Classification table
 
 | # | Pair | Classification | Activation evidence | Outcome / specialization evidence | Recommendation |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 1 | brainstorming (local ↔ superpowers) | True duplicate | Identical `name`; both "before any creative work" | Same outcome (spec + approval gate). SP carries a materially larger decision structure. | Merge SP → local |
 | 2 | dispatching-parallel-agents | True duplicate | Identical `name`; both "2+ independent tasks" | Same outcome. SP adds isolated-context framing + decision digraph. | Merge SP additions → local |
 | 3 | executing-plans | True duplicate | Identical `name`; both "execute a written plan" | Same outcome. Local is cleaner (no `superpowers:` coupling); SP adds a "return to review" path. | Local is base; fold SP path |
@@ -116,7 +116,7 @@ eval-tested) and drops any `superpowers:` name prefixes in cross-references
 (replace with bare skill names or agent names that exist in this repo).
 
 | # | Skill | Body action | Files to add under `skills/<name>/` |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 1 | `brainstorming` | Replace body with SP's three-path model (spike / bounded / architectural), one-way ratchet, "too simple to need approval" anti-pattern, Red Flags table, process-flow digraph, decomposition guidance. Change spec path from `docs/superpowers/specs/` → `.claude/docs/specs/`. Keep A Team frontmatter. | `visual-companion.md`, `spec-document-reviewer-prompt.md`, `scripts/` (server.cjs, helper.js, frame-template.html, start/stop-server.sh) |
 | 2 | `dispatching-parallel-agents` | Prepend SP "Overview" (isolated-context framing); add SP when-to-use digraph and "Verification" section; keep A Team's concrete examples. | none |
 | 3 | `executing-plans` | Keep A Team body; add SP's "When to Revisit Earlier Steps"; add explicit "ensure worktree isolation" as step 1; ensure references say `using-git-worktrees` / `subagent-driven-development` / `finishing-a-development-branch` (bare). | none |
@@ -178,7 +178,7 @@ here.
 ### 4.1 Primitive responsibility model (to be documented in `.claude/rules/`)
 
 | Primitive | Owns | Does NOT |
-|---|---|---|
+| --- | --- | --- |
 | **Skill** (`skills/**`) | Reusable methodology, decision structure, gates. Model-invoked via `Skill` tool; user-invocable as `/<name>`. | Persona, tool restriction, model tier. |
 | **Agent** (`.claude/agents/**`) | A persona that *executes* a methodology under a fixed tool + model-tier budget (e.g. `debugger` runs `systematic-debugging`). Dispatched via `Agent`/`Task`. | Define the methodology itself — it cites the skill. |
 | **Command** (`.claude/commands/**`) | A user entry point that composes skills + agents into a workflow (`/feature`, `/quality-gate`) or is a thin alias to one skill/agent (`/debug`, `/adr`). | Contain methodology — it points at skills/agents. |
@@ -203,7 +203,7 @@ gap surfaces during use, port it then.
 **Keep all 10 existing commands.** Add:
 
 | New command | Type | Composes |
-|---|---|---|
+| --- | --- | --- |
 | `/skills` | Dispatcher / index | Lists all 25 skills: exact invoke token, one-line trigger, executing agent(s), related command(s). Body instructs: "to run one, invoke `Skill(<name>)`". |
 | `/adr` | Thin alias | `adr` skill |
 | `/incident-response` | Thin alias | `incident-response` skill |
@@ -223,7 +223,7 @@ from argument hints and a visible slash command.
 ### 4.4 Agent roster changes (Workstream C)
 
 | Action | Detail |
-|---|---|
+| --- | --- |
 | **Delete** | `.claude/agents/chief-of-staff.md` — unrelated (multi-channel comms triage). Remove any reference. |
 | **Remove phantom refs** | In `using-a-team/SKILL.md` "Language & Domain Reviews", delete rows for `go-reviewer`, `rust-reviewer`, `kotlin-reviewer`, `swift-reviewer`, `flutter-reviewer`, `database-reviewer`, `ai-reviewer`. Keep `typescript-reviewer`, `python-reviewer`, `infra-reviewer`, `compliance-reviewer`. Add a note: "Other language reviewers are added on demand when that stack enters the repo." |
 | **Resolve `data-migration`** | Remove the "Any `ALTER TABLE` / `DROP` / backfill" row (no such skill; this is a client SPA). `api-contract-first` + `adr` cover schema-contract decisions. |
@@ -269,7 +269,7 @@ model tier) and a command table (command → skills + agents it composes).
 ## 5. Alternatives considered
 
 | Option | Why rejected |
-|---|---|
+| --- | --- |
 | **Defer to `superpowers` for the 11, delete local forks** | Loses eval-tested A Team refinements (`writing-plans`, `systematic-debugging`, `verification-before-completion` are stronger locally); hard runtime dependency on the plugin staying installed and version-pinned. (Remains the **Plan B** if the Phase-0 spike fails — decided at the gate.) |
 | **Symlink the 11 stripped forks as-is** | Bodies reference files that would 404 (`visual-companion.md`, `writing-good-tests.md`, prompt templates). Latent breakage. |
 | **One command file per skill (25 files)** | Redundant with harness `/<name>` skill invocation; near-identical shims to maintain; `/skills` index is more discoverable. |
@@ -281,7 +281,7 @@ model tier) and a command table (command → skills + agents it composes).
 ## 6. Risks and rollback
 
 | Risk | Mitigation | Rollback |
-|---|---|---|
+| --- | --- | --- |
 | **A project `.claude/skills/<name>` symlink does not actually shadow the plugin's `superpowers:<name>`** — the load-bearing assumption is unverified | **Phase-0 spike** (§9): symlink one skill, reload, check resolution before any merge work. Abort criteria explicit. | n/a — the spike gates everything after it; Plan B decided at the gate (§5). |
 | Symlinks / allow-list don't take effect in the running session | Explicit **reload gate** after Phase 4 (§4.5 step 3); invocation checks run only post-reload. Execution mode accounts for a controller not being able to self-restart (§9). | n/a |
 | A merged body changes behaviour of a skill mid-workflow | Merge is additive (SP material into A Team base) except `brainstorming` and `subagent-driven-development`, which are full SP adoptions under `writing-skills` RED→GREEN→REFACTOR (§3.3) with before/after behavioural baselines. | `git revert` the skill commit; symlink removal restores `superpowers:` resolution. |
@@ -350,7 +350,7 @@ The plan's phases are **not** independently mergeable as one unit, so the work
 ships as two branches:
 
 | PR | Branch | Phases | Delivers | Independently verifiable |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | **PR1** | `feat/a-team-skills-canonical` (this branch, continued) | 0–4 | 25/25 skills resolve to the A Team version, unshadowed, unprompted; merged bodies + support files; `receiving-code-review` ported | Yes — spike + resolution spot-checks + reference-integrity + `settings.json` valid |
 | **PR2** | `feat/a-team-agents-commands-docs` (from PR1 tip or `main` after PR1 merges) | 5–7 | `chief-of-staff` removed; phantom refs purged; real agents listed; `/skills` + 3 alias commands; `traceability.md`; `CLAUDE.md` / `AGENTS.md` / `using-a-team` / `.claude/rules` / `.codex` reconciled | Yes — grep sweeps + doc cross-reference resolution |
 
