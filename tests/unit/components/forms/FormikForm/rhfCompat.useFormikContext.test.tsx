@@ -20,6 +20,7 @@ function TestContextConsumer(): JSX.Element {
     status,
     handleSubmit,
     setFieldValue,
+    setFieldTouched,
   } = useFormikContext<FormValues>();
 
   const onValid = async (): Promise<void> => {
@@ -43,6 +44,13 @@ function TestContextConsumer(): JSX.Element {
       >
         setFieldValue
       </button>
+      <button
+        type='button'
+        data-testid='set-touched'
+        onClick={() => setFieldTouched('email', true)}
+      >
+        setFieldTouched
+      </button>
       <button type='submit' data-testid='submit'>
         submit
       </button>
@@ -52,10 +60,14 @@ function TestContextConsumer(): JSX.Element {
 
 function Harness(): JSX.Element {
   const methods = useForm<FormValues>({ defaultValues: { email: '' } });
+  const { formState } = methods;
 
   return (
     <FormProvider {...methods}>
       <TestContextConsumer />
+      <span data-testid='is-touched-form'>
+        {String(formState.touchedFields.email ?? false)}
+      </span>
     </FormProvider>
   );
 }
@@ -114,5 +126,17 @@ describe('rhfCompat useFormikContext', () => {
     expect(await screen.findByTestId('hidden-status')).toHaveTextContent(
       '[object Object]'
     );
+  });
+
+  it('marks the field touched in form state when setFieldTouched is called', async () => {
+    render(<Harness />);
+
+    expect(await screen.findByTestId('is-touched-form')).toHaveTextContent(
+      'false'
+    );
+
+    await userEvent.click(screen.getByTestId('set-touched'));
+
+    expect(screen.getByTestId('is-touched-form')).toHaveTextContent('true');
   });
 });

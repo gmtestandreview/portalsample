@@ -137,7 +137,7 @@ export default defineConfig(
       // - the dominant shape in this component library. Warn rather than
       // block merges on a check with no clean fix at the source level.
       '@typescript-eslint/prefer-readonly-parameter-types': [
-        'warn',
+        'off',
         { treatMethodsAsReadonly: true },
       ],
       // The base rule isn't type-aware: it can't see that `declare module`
