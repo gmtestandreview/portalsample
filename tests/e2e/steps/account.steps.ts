@@ -114,9 +114,16 @@ Then('the completed account dashboard is displayed', async ({ page }) => {
 });
 
 Then('the sign-in page is displayed', async ({ page }) => {
-  if (/login\.microsoftonline\.com|b2clogin\.com/.test(page.url())) {
-    return;
-  }
-  await expect(page).toHaveURL('http://localhost:3000/');
-  await expect(page.getByRole('link', { name: /^Log in/ })).toBeVisible();
+  await expect
+    .poll(async () => {
+      if (/login\.microsoftonline\.com|b2clogin\.com/.test(page.url())) {
+        return true;
+      }
+
+      return (
+        page.url() === 'http://localhost:3000/' &&
+        (await page.getByRole('link', { name: /^Log in/ }).isVisible())
+      );
+    })
+    .toBe(true);
 });
