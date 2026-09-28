@@ -131,7 +131,15 @@ export default defineConfig(
       ],
       '@typescript-eslint/no-empty-object-type': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/prefer-readonly-parameter-types': 'error',
+      // Callback-typed properties (onSave, setCurrentPage, ...) can never
+      // satisfy this rule even wrapped in Readonly<>, since it only treats
+      // method-shorthand signatures as safe, not function-valued properties
+      // - the dominant shape in this component library. Warn rather than
+      // block merges on a check with no clean fix at the source level.
+      '@typescript-eslint/prefer-readonly-parameter-types': [
+        'warn',
+        { treatMethodsAsReadonly: true },
+      ],
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -170,8 +178,12 @@ export default defineConfig(
     languageOptions: {
       globals: { ...globals.browser, ...globals.node },
     },
+    rules: {
+      // Fixture/harness code, not a public API contract: Storybook/Playwright/
+      // Vitest dictate these callback shapes, not this team's design.
+      '@typescript-eslint/prefer-readonly-parameter-types': 'off',
+    },
   },
-
   {
     // Deliberate deviations from @eslint-react's stylistic conventions.
     // Each is a naming/API preference with no defect behind it, and each
