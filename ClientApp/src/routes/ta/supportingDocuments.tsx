@@ -79,10 +79,10 @@ const SupportingDocuments = (
   );
 
   const errorNames = name.split('.'); // e.g. 'supportingDocuments.form.documents' => ['supportingDocuments', 'form', 'documents']
-  const errorName = errorNames[errorNames.length - 1]; // e.g. 'documents'
+  const errorName = errorNames.at(-1); // e.g. 'documents'
   // Get Formik field errors for this field
   let formikFieldErrors: string[] = [];
-  if (formikErrors && formikErrors[errorNames[0]]) {
+  if (formikErrors?.[errorNames[0]]) {
     const fieldError = formikErrors[errorNames[0]];
     if (typeof fieldError === 'string') {
       formikFieldErrors = [fieldError];
@@ -98,7 +98,7 @@ const SupportingDocuments = (
   }
 
   const fileErrors: string[] = [];
-  if (progress && progress.percent === 100 && Array.isArray(progress.files)) {
+  if (progress?.percent === 100 && Array.isArray(progress.files)) {
     const failedFileErrors = progress.files
       .filter(
         (f) =>
@@ -178,8 +178,7 @@ const SupportingDocuments = (
       const uploadServerError = error as ProblemDetails;
       if (
         uploadServerError.status === HttpStatusCode.Forbidden &&
-        uploadServerError.title &&
-        uploadServerError.title.includes('No third-party access')
+        uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
       } else if (uploadServerError.errors) {
@@ -222,11 +221,10 @@ const SupportingDocuments = (
     client.setAuthToken(tokenResult.accessToken);
     await client.deleteDocument(id, docId);
     if (onDeleteSuccess) onDeleteSuccess(true);
-    return Promise.resolve();
   };
 
   const onCategoryUpdate = async (docId: string, category: string) => {
-    if (!id || !category) return Promise.resolve();
+    if (!id || !category) return;
     const client = new RequestForPatternApprovalClient();
     const tokenResult = await instance.acquireTokenSilent({
       ...tokenRequest,
@@ -234,7 +232,6 @@ const SupportingDocuments = (
     });
     client.setAuthToken(tokenResult.accessToken);
     await client.updateCategory(id, docId, category);
-    return Promise.resolve();
   };
 
   const renderInstrumentInfoPanel = () => {
