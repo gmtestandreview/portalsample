@@ -16,9 +16,9 @@ import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetai
 import { tokenRequest } from '../../authentication/authConfig';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
+import PaymentDetailsFormikBridge from './paymentDetailsFormikBridge';
 
 const getName = prefixedPropertyOf<PaymentDetailsStep>('paymentDetails');
-
 function getNameForUse2(
   name: keyof PaymentDetailsStep,
   isSummary: boolean | undefined
@@ -113,68 +113,74 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
           </div>
         </Alert>
       )}
-      <Row className='mb-4'>
-        <TextInput
-          label='Purchase Order (PO) number (optional)'
-          name={getNameForUse('purchaseOrderNo')}
-          placeholder='Enter purchase order number'
-          inlineHelp={
-            <>
-              {'Purchase order can be provided at a later date.'}
-              <span className='d-block pt-1'>
-                Your NMI Quotation ID
-                {acceptQuotePreInfo?.quotationIdNum &&
-                  ` ${acceptQuotePreInfo?.quotationIdNum}`}
-              </span>
-            </>
-          }
-          isSummary={isSummary}
-        />
-        <RadioButtonGroup
-          legend='The invoice will be sent to the following contact'
-          name={getNameForUse('invoiceSentTo')}
-          id='q-invoiceSentTo'
-          isSummary={isSummary}
-          options={[
-            {
-              label: 'The main contact person for this request',
-              value: 'SamePerson',
-              id: 'invoiceSentTo-SamePerson',
-            },
-            {
-              label: 'A different invoice contact person',
-              value: 'DifferentPerson',
-              id: 'invoiceSentTo-DifferentPerson',
-            },
-          ]}
-        />
-      </Row>
-      {isSummary && (
-        <HidableField name={getNameForUse('rfqHide')}>
+      {isSummary ? (
+        <>
           <Row className='mb-4'>
-            <h2 className='h4 my-3'>Invoice contact person</h2>
-            <ContactDetailsInput
-              key='contact'
-              name='requestForQuote.contact'
-              isSummary={isSummary}
+            <TextInput
+              label='Purchase Order (PO) number (optional)'
+              name={getNameForUse('purchaseOrderNo')}
+              placeholder='Enter purchase order number'
+              inlineHelp={
+                <>
+                  {'Purchase order can be provided at a later date.'}
+                  <span className='d-block pt-1'>
+                    Your NMI Quotation ID
+                    {acceptQuotePreInfo?.quotationIdNum &&
+                      ` ${acceptQuotePreInfo?.quotationIdNum}`}
+                  </span>
+                </>
+              }
+              isSummary
+            />
+            <RadioButtonGroup
+              legend='The invoice will be sent to the following contact'
+              name={getNameForUse('invoiceSentTo')}
+              id='q-invoiceSentTo'
+              isSummary
+              options={[
+                {
+                  label: 'The main contact person for this request',
+                  value: 'SamePerson',
+                  id: 'invoiceSentTo-SamePerson',
+                },
+                {
+                  label: 'A different invoice contact person',
+                  value: 'DifferentPerson',
+                  id: 'invoiceSentTo-DifferentPerson',
+                },
+              ]}
             />
           </Row>
-        </HidableField>
+          <HidableField name={getNameForUse('rfqHide')}>
+            <Row className='mb-4'>
+              <h2 className='h4 my-3'>Invoice contact person</h2>
+              <ContactDetailsInput
+                key='contact'
+                name='requestForQuote.contact'
+                isSummary
+              />
+            </Row>
+          </HidableField>
+          <HidableField name={getNameForUse('contactHide')}>
+            <Row className='mb-4'>
+              <h2 className='h4 my-3'>Invoice contact person</h2>
+              <ContactDetailsInput
+                key='contact'
+                name={getNameForUse('contact')}
+                isSummary
+                firstNameLabel='First name (optional)'
+                lastNameLabel='Last name (optional)'
+                businessPhoneLabel='Business phone (optional)'
+                mobilePhoneLabel='Mobile phone (optional)'
+              />
+            </Row>
+          </HidableField>
+        </>
+      ) : (
+        <PaymentDetailsFormikBridge
+          quotationId={acceptQuotePreInfo?.quotationIdNum}
+        />
       )}
-      <HidableField name={getNameForUse('contactHide')}>
-        <Row className='mb-4'>
-          <h2 className={isSummary ? 'h4 my-3' : ''}>Invoice contact person</h2>
-          <ContactDetailsInput
-            key='contact'
-            name={getNameForUse('contact')}
-            isSummary={isSummary}
-            firstNameLabel='First name (optional)'
-            lastNameLabel='Last name (optional)'
-            businessPhoneLabel='Business phone (optional)'
-            mobilePhoneLabel='Mobile phone (optional)'
-          />
-        </Row>
-      </HidableField>
     </>
   );
 };

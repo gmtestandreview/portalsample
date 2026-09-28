@@ -79,7 +79,7 @@ const SupportingDocuments = (
   );
 
   const errorNames = name.split('.'); // e.g. 'supportingDocuments.form.documents' => ['supportingDocuments', 'form', 'documents']
-  const errorName = errorNames.at(-1); // e.g. 'documents'
+  const errorName = errorNames[errorNames.length - 1]; // e.g. 'documents'
   // Get Formik field errors for this field
   let formikFieldErrors: string[] = [];
   if (formikErrors?.[errorNames[0]]) {
