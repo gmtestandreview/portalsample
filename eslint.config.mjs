@@ -141,8 +141,10 @@ export default defineConfig(
         { treatMethodsAsReadonly: true },
       ],
       // The base rule isn't type-aware: it can't see that `declare module`
-      // interface method params and `enum` members are declarations, not      // unused locals, and misreports hundreds of them. The TS-aware rule
+      // interface method params and `enum` members are declarations, not
+      // unused locals, and misreports hundreds of them. The TS-aware rule
       // below is the sole owner for .ts/.tsx files.
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
