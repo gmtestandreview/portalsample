@@ -69,7 +69,7 @@ the evaluation surface rather than deleted.
 
 ## Target structure
 
-```
+```text
 ClientApp/src/components/
   react-aria-evaluation/
     primitives/          # current AriaComponents/*.tsx, *.ts, *.css (31 files + theme/styles/utilities.css)
