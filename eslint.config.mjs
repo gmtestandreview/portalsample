@@ -140,6 +140,9 @@ export default defineConfig(
         'warn',
         { treatMethodsAsReadonly: true },
       ],
+      // The base rule isn't type-aware: it can't see that `declare module`
+      // interface method params and `enum` members are declarations, not      // unused locals, and misreports hundreds of them. The TS-aware rule
+      // below is the sole owner for .ts/.tsx files.
       '@typescript-eslint/no-unused-vars': [
         'error',
         {
@@ -150,7 +153,6 @@ export default defineConfig(
       ],
     },
   },
-
   {
     name: 'nmi/commonjs-and-scripts',
     files: ['**/*.cjs', '**/*.js', 'webpack.config.js'],
