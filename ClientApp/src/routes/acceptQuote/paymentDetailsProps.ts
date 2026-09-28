@@ -3,7 +3,10 @@ import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import { AcceptQuoteClient } from '../../api/web-api-client';
+import {
+  AcceptQuoteClient,
+  InvoiceSentToValues,
+} from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   PaymentDetailsStep,
@@ -129,8 +132,11 @@ const paymentDetailsProps = (
   location: '/payment-details',
   title: 'Payment details',
   hidingFields: {
-    contactHide: (x: PaymentDetailsStep) => x.invoiceSentTo === 'SamePerson',
+    contactHide: (x: PaymentDetailsStep) =>
+      x.invoiceSentTo !== InvoiceSentToValues.DifferentPerson,
     contact: {
+      this: (x: PaymentDetailsStep) =>
+        x.invoiceSentTo !== InvoiceSentToValues.DifferentPerson,
       titleOther: (x: PaymentDetailsStep) => x.contact?.title !== 'Other',
     },
   },
