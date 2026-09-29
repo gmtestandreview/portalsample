@@ -147,9 +147,7 @@ const ApplicationMessages = () => {
   );
 
   const messageCount =
-    message &&
-    message.requestForPatternApprovalMessageDetails &&
-    message!.requestForPatternApprovalMessageDetails!.items!.length;
+    message?.requestForPatternApprovalMessageDetails?.items!.length;
 
   const renderToolbar = () => (
     <>

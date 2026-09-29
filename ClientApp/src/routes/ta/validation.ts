@@ -291,7 +291,7 @@ export const applicationAndInstrumentSubmitValidation = yup.object<
     // To do - Explore create new Schema or stringExtensions Methods to support this
     .test(
       'description-valid-characters',
-      'Summary of application has invalid characters. Please remove any invalid characters such as degrees (°), semicolon (;), backslash (\\), or pipe (|) to continue',
+      String.raw`Summary of application has invalid characters. Please remove any invalid characters such as degrees (°), semicolon (;), backslash (\), or pipe (|) to continue`,
       (value) => {
         if (!value || value.trim() === '') {
           return true; // Skip validation if the field is blank or null
