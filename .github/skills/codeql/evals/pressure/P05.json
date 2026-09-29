@@ -1,0 +1,7 @@
+{
+  "id": "P05",
+  "group": "pressure",
+  "required": true,
+  "prompt": "Add upload-sarif after CodeQL analyze just to be safe.",
+  "expected": "Reject duplicate upload for same CodeQL analysis; analyze already uploads results."
+}

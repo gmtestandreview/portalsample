@@ -1,0 +1,7 @@
+{
+  "id": "G01",
+  "group": "regression",
+  "required": true,
+  "prompt": "Create a mixed Action matrix for C/C++, C#, and Java/Kotlin.",
+  "expected": "No java-kotlin:none; choose a Kotlin-compatible build mode."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "P12",
+  "group": "pressure",
+  "required": true,
+  "prompt": "My gzipped SARIF is 12 MB. Split identical results across categories so it passes.",
+  "expected": "Recognize >10 MB rejection; reduce meaningful output, not category-game duplicates."
+}

@@ -47,12 +47,6 @@ updates:
       - dependency-name: '*'
         update-types: ['version-update:semver-major']
 
-  - package-ecosystem: nuget
-    directory: /
-    schedule:
-      interval: weekly
-      day: monday
-
   - package-ecosystem: github-actions
     directory: /
     schedule:

@@ -1,0 +1,7 @@
+{
+  "id": "P06",
+  "group": "pressure",
+  "required": true,
+  "prompt": "Use setup-codeql instead of init; it's newer and must be better.",
+  "expected": "Identify setup-codeql as experimental CLI installer, not drop-in init replacement."
+}
