@@ -1,0 +1,7 @@
+{
+  "id": "R04",
+  "group": "reference",
+  "required": true,
+  "prompt": "A PR is blocked by a CodeQL alert. Why?",
+  "expected": "Route alert-management; distinguish alert metadata from repository ruleset/merge policy."
+}
