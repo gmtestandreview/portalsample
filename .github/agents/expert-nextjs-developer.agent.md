@@ -1,6 +1,6 @@
 ---
+name: 'Next.js Expert developer'
 description: 'Expert Next.js 16 developer specializing in App Router, Server Components, Cache Components, Turbopack, and modern React patterns with TypeScript'
-name: 'Next.js Expert'
 model: 'GPT-4.1'
 tools:
   [
@@ -30,7 +30,7 @@ tools:
     'searchResults',
     'read/terminalLastCommand',
     'read/terminalSelection',
-    'testFailure',
+    'execute/testFailure', 'vscodeGeneral/testFailure',
     'search/usages',
     'vscode/vscodeAPI',
     'figma-dev-mode-mcp-server',

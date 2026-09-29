@@ -4,15 +4,15 @@ name: 'Sensei - Junior Mentor'
 model: 'gpt-4.1'
 tools:
   [
-    "codebase",
-    "editFiles",
-    "fetch",
-    "problems",
-    "runCommands",
+    "search/codebase",
+    "edit/editFiles",
+    "web/fetch",
+    "read/problems", "vscodeTasks/problems",
+    "execute/getTerminalOutput", "execute/runInTerminal", "read/terminalLastCommand", "read/terminalSelection",
     "search",
-    "terminalLastCommand",
-    "terminalSelection",
-    "usages"
+    "read/terminalLastCommand",
+    "read/terminalSelection",
+    "search/usages","vscodeGeneral/usages"
   ]
 ---
 
