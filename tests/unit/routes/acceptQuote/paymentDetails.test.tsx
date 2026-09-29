@@ -45,8 +45,16 @@ vi.mock('@/instrumentation/AppLogger', () => ({
 
 // Stub form-input children — they require Formik context which is outside this component's scope
 vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid={`text-input`} data-name={name} />
+  default: ({
+    inlineHelp,
+    name,
+  }: {
+    inlineHelp?: React.ReactNode;
+    name: string;
+  }) => (
+    <div data-testid={`text-input`} data-name={name}>
+      {inlineHelp}
+    </div>
   ),
 }));
 vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
@@ -68,11 +76,17 @@ vi.mock('@/components/BlockUISpinner', () => ({
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function makePreInfo(paymentTerms: string): {
+function makePreInfo(
+  paymentTerms: string,
+  quotationIdNum?: string
+): {
   acceptQuotePreInfo: AcceptQuotePreInfoDto;
 } {
   return {
-    acceptQuotePreInfo: { paymentTerms } as AcceptQuotePreInfoDto,
+    acceptQuotePreInfo: {
+      paymentTerms,
+      quotationIdNum,
+    } as AcceptQuotePreInfoDto,
   };
 }
 
@@ -183,14 +197,17 @@ describe('PaymentDetails', () => {
       ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
-    it('prefixes key names with paymentDetails. in summary mode', () => {
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+    it('prefixes key names with paymentDetails. in summary mode', async () => {
+      mockGetPaymentDetails.mockResolvedValue(
+        makePreInfo('Standard', 'Q-SUMMARY-001')
+      );
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.getByTestId('text-input')).toHaveAttribute(
         'data-name',
         'paymentDetails.purchaseOrderNo'
       );
+      expect(await screen.findByText(/Q-SUMMARY-001/)).toBeInTheDocument();
       expect(screen.getByTestId('radio-group')).toHaveAttribute(
         'data-name',
         'paymentDetails.invoiceSentTo'

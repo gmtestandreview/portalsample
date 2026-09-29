@@ -4,6 +4,7 @@ import { Form, Formik } from 'formik';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
+  Title,
   type PaymentDetailsStep,
 } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
@@ -97,7 +98,10 @@ describe('PaymentDetails form behavior', () => {
     acquireTokenSilentMock.mockResolvedValue({ accessToken: 'test-token' });
     msalContext.instance.acquireTokenSilent = acquireTokenSilentMock;
     mockGetPaymentDetails.mockResolvedValue({
-      acceptQuotePreInfo: { paymentTerms: 'Standard' },
+      acceptQuotePreInfo: {
+        paymentTerms: 'Standard',
+        quotationIdNum: 'Q-TEST-001',
+      },
     });
   });
 
@@ -148,6 +152,93 @@ describe('PaymentDetails form behavior', () => {
       await screen.findByText('Email address is required')
     ).toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('shows the quotation id and preserves an Other title contact', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(
+      <Harness
+        values={{
+          ...initialValues,
+          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+          contact: {
+            ...initialValues.contact,
+            title: Title.Other,
+            titleOther: 'Mx',
+            email: 'billing@nmi.gov.au',
+          },
+        }}
+        onSubmit={onSubmit}
+      />
+    );
+
+    expect(await screen.findByText(/Q-TEST-001/)).toBeInTheDocument();
+    expect(screen.getByLabelText('If "Other"')).toHaveValue('Mx');
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(onSubmit.mock.calls[0][0]).toEqual(
+      expect.objectContaining({
+        contact: expect.objectContaining({
+          title: Title.Other,
+          titleOther: 'Mx',
+          email: 'billing@nmi.gov.au',
+        }),
+      })
+    );
+  });
+
+  it('shows validation state for invalid loaded title and phone values', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        values={{
+          ...initialValues,
+          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+          contact: {
+            ...initialValues.contact,
+            title: 'D' as unknown as Title,
+            phone: '123',
+            mobile: undefined,
+            email: 'billing@nmi.gov.au',
+          },
+        }}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(
+      await screen.findByText('Title cannot be less than 2 characters')
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('Business phone cannot be less than 6 characters')
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Mobile phone (optional)')).toHaveValue('');
+  });
+
+  it('treats an unloaded purchase order number as an empty field', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        values={{
+          ...initialValues,
+          purchaseOrderNo: undefined,
+        }}
+      />
+    );
+
+    const purchaseOrder = await screen.findByLabelText(
+      'Purchase Order (PO) number (optional)'
+    );
+    expect(purchaseOrder).toHaveValue('');
+
+    await user.click(purchaseOrder);
+    await user.tab();
+
+    expect(purchaseOrder).toHaveValue('');
   });
 
   it('reinitializes displayed values when the wizard loads new step data', async () => {
@@ -224,6 +315,37 @@ describe('PaymentDetails form behavior', () => {
     expect(
       await screen.findByLabelText('Business phone (optional)')
     ).toHaveValue('02 1234 5678');
+  });
+
+  it('registers invoice phone fields through input refs without React warnings', async () => {
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    try {
+      render(
+        <Harness
+          values={{
+            ...initialValues,
+            invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+          }}
+        />
+      );
+
+      expect(
+        await screen.findByLabelText('Business phone (optional)')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText('Mobile phone (optional)')
+      ).toBeInTheDocument();
+      expect(
+        consoleError.mock.calls.filter(([message]) =>
+          String(message).includes('Function components cannot be given refs')
+        )
+      ).toHaveLength(0);
+    } finally {
+      consoleError.mockRestore();
+    }
   });
 
   it('preserves entered contact values after switching back to the main contact', async () => {

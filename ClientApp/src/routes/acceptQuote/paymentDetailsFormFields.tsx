@@ -195,12 +195,14 @@ const RhfPhoneField = ({ name, label, format }: Readonly<PhoneFieldProps>) => {
   const showError = fieldState.isTouched && fieldState.error?.message;
   const resolvedFormat =
     typeof format === 'function' ? format(field.value) : format;
+  const { ref, ...fieldProps } = field;
 
   return (
     <Form.Group className='form-field-container' controlId={name}>
       <Form.Label>{label}</Form.Label>
       <PatternFormatFixed
-        {...field}
+        {...fieldProps}
+        getInputRef={ref}
         customInput={Form.Control}
         type='text'
         className='form-field form-text-input mb-0'
