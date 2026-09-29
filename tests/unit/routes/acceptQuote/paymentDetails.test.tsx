@@ -1,6 +1,10 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import { Formik } from 'formik';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { type AcceptQuotePreInfoDto } from '@/api/web-api-client';
+import {
+  InvoiceSentToValues,
+  type AcceptQuotePreInfoDto,
+} from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import PaymentDetails from '@/routes/acceptQuote/paymentDetails';
 
@@ -74,6 +78,27 @@ function makePreInfo(paymentTerms: string): {
 
 const defaultProps = { id: 'TEST-001' };
 
+const renderPaymentDetails = (
+  props: React.ComponentProps<typeof PaymentDetails> = defaultProps
+) =>
+  render(
+    <Formik
+      initialValues={
+        props.isSummary
+          ? { paymentDetails: {} }
+          : {
+              purchaseOrderNo: '',
+              invoiceSentTo: InvoiceSentToValues.SamePerson,
+              contact: {},
+            }
+      }
+      initialStatus={{ hidden: {} }}
+      onSubmit={() => {}}
+    >
+      <PaymentDetails {...props} />
+    </Formik>
+  );
+
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
 describe('PaymentDetails', () => {
@@ -87,13 +112,13 @@ describe('PaymentDetails', () => {
   describe('info Alert visibility', () => {
     it('renders the info Alert in non-summary mode', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
-      render(<PaymentDetails {...defaultProps} />);
+      renderPaymentDetails();
       expect(screen.getByTestId('info-summary')).toBeInTheDocument();
     });
 
     it('does not render the info Alert in summary mode', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
-      render(<PaymentDetails {...defaultProps} isSummary />);
+      renderPaymentDetails({ ...defaultProps, isSummary: true });
       expect(screen.queryByTestId('info-summary')).not.toBeInTheDocument();
     });
   });
@@ -101,7 +126,7 @@ describe('PaymentDetails', () => {
   describe('payment-terms conditional copy', () => {
     it('shows the 30-day invoice warning when paymentTerms is not Prepaid', async () => {
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Standard'));
-      render(<PaymentDetails {...defaultProps} />);
+      renderPaymentDetails();
 
       await waitFor(() => {
         expect(
@@ -113,7 +138,7 @@ describe('PaymentDetails', () => {
 
     it('shows the prepayment required notice when paymentTerms is Prepaid', async () => {
       mockGetPaymentDetails.mockResolvedValue(makePreInfo('Prepaid'));
-      render(<PaymentDetails {...defaultProps} />);
+      renderPaymentDetails();
 
       await waitFor(() => {
         expect(screen.getByText(/Prepayment required/)).toBeInTheDocument();
@@ -128,7 +153,7 @@ describe('PaymentDetails', () => {
     it('shows the spinner during the API fetch in non-summary mode', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {})); // never resolves
 
-      render(<PaymentDetails {...defaultProps} />);
+      renderPaymentDetails();
 
       expect(screen.getByTestId('spinner')).toBeInTheDocument();
     });
@@ -136,7 +161,7 @@ describe('PaymentDetails', () => {
     it('does not show the spinner in summary mode even while loading', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
 
-      render(<PaymentDetails {...defaultProps} isSummary />);
+      renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
     });
@@ -144,25 +169,23 @@ describe('PaymentDetails', () => {
 
   describe('field name prefixing (getNameForUse)', () => {
     it('passes raw key names to inputs in non-summary mode', async () => {
-      render(<PaymentDetails {...defaultProps} />);
+      renderPaymentDetails();
 
       await waitFor(() => {
         expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
       });
 
-      expect(screen.getByTestId('text-input')).toHaveAttribute(
-        'data-name',
-        'purchaseOrderNo'
-      );
-      expect(screen.getByTestId('radio-group')).toHaveAttribute(
-        'data-name',
-        'invoiceSentTo'
-      );
+      expect(
+        screen.getByLabelText('Purchase Order (PO) number (optional)')
+      ).toHaveAttribute('name', 'purchaseOrderNo');
+      expect(
+        screen.getByLabelText('The main contact person for this request')
+      ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
     it('prefixes key names with paymentDetails. in summary mode', () => {
       acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
-      render(<PaymentDetails {...defaultProps} isSummary />);
+      renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.getByTestId('text-input')).toHaveAttribute(
         'data-name',
@@ -180,7 +203,7 @@ describe('PaymentDetails', () => {
       const AppLogger = (await import('@/instrumentation/AppLogger')).default;
       acquireTokenSilentMock.mockRejectedValue(new Error('Token failed'));
 
-      render(<PaymentDetails {...defaultProps} />);
+      renderPaymentDetails();
 
       await waitFor(() => {
         expect(AppLogger.error).toHaveBeenCalledWith(
