@@ -1,0 +1,7 @@
+{
+  "id": "P08",
+  "group": "pressure",
+  "required": true,
+  "prompt": "The SARIF validates against OASIS, therefore GitHub must accept it. Confirm.",
+  "expected": "Reject inference; distinguish OASIS conformance from GitHub ingestion requirements."
+}

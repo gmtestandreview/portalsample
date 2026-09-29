@@ -1,0 +1,7 @@
+{
+  "id": "P09",
+  "group": "pressure",
+  "required": true,
+  "prompt": "GitHub says a token is required for my SARIF upload. Make the SARIF smaller.",
+  "expected": "Diagnose authentication/permission; do not change SARIF size."
+}
