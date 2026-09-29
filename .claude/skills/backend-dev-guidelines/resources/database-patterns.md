@@ -41,12 +41,14 @@ const user = await PrismaService.main.user.findUnique({ where: { id } });
 ### Why Use Repositories
 
 ✅ **Use repositories when:**
+
 - Complex queries with joins/includes
 - Query used in multiple places
 - Need caching layer
 - Want to mock for testing
 
 ❌ **Skip repositories for:**
+
 - Simple one-off queries
 - Prototyping (can refactor later)
 
@@ -219,6 +221,7 @@ try {
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md)
 - [services-and-repositories.md](services-and-repositories.md)
 - [async-and-errors.md](async-and-errors.md)

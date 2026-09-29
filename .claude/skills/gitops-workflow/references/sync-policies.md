@@ -3,6 +3,7 @@
 ## ArgoCD Sync Policies
 
 ### Automated Sync
+
 ```yaml
 syncPolicy:
   automated:
@@ -12,6 +13,7 @@ syncPolicy:
 ```
 
 ### Manual Sync
+
 ```yaml
 syncPolicy:
   syncOptions:
@@ -20,6 +22,7 @@ syncPolicy:
 ```
 
 ### Sync Windows
+
 ```yaml
 syncWindows:
 - kind: allow
@@ -35,6 +38,7 @@ syncWindows:
 ```
 
 ### Retry Policy
+
 ```yaml
 syncPolicy:
   retry:
@@ -48,6 +52,7 @@ syncPolicy:
 ## Flux Sync Policies
 
 ### Kustomization Sync
+
 ```yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -63,6 +68,7 @@ spec:
 ```
 
 ### Source Sync Interval
+
 ```yaml
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
@@ -76,6 +82,7 @@ spec:
 ## Health Assessment
 
 ### Custom Health Checks
+
 ```yaml
 # ArgoCD
 apiVersion: v1
@@ -110,6 +117,7 @@ data:
 ## Sync Options
 
 ### Common Sync Options
+
 - `PrunePropagationPolicy=foreground` - Wait for pruned resources to be deleted
 - `CreateNamespace=true` - Auto-create namespace
 - `Validate=false` - Skip kubectl validation
