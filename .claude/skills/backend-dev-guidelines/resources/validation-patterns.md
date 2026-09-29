@@ -20,16 +20,19 @@ Complete guide to input validation using Zod schemas for type-safe validation.
 ### Benefits Over Joi/Other Libraries
 
 **Type Safety:**
+
 - ✅ Full TypeScript inference
 - ✅ Runtime + compile-time validation
 - ✅ Automatic type generation
 
 **Developer Experience:**
+
 - ✅ Intuitive API
 - ✅ Composable schemas
 - ✅ Excellent error messages
 
 **Performance:**
+
 - ✅ Fast validation
 - ✅ Small bundle size
 - ✅ Tree-shakeable
@@ -335,10 +338,12 @@ router.post(
 ```
 
 **Pros:**
+
 - Quick and simple
 - Good for simple routes
 
 **Cons:**
+
 - Validation logic in routes
 - Harder to test
 - Not reusable
@@ -425,12 +430,14 @@ export class UserController extends BaseController {
 ```
 
 **Pros:**
+
 - Clean separation
 - Reusable schemas
 - Easy to test
 - Type-safe DTOs
 
 **Cons:**
+
 - More files to manage
 
 ---
@@ -748,6 +755,7 @@ router.post('/users',
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md) - Main guide
 - [routing-and-controllers.md](routing-and-controllers.md) - Using validation in controllers
 - [services-and-repositories.md](services-and-repositories.md) - Using DTOs in services

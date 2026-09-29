@@ -7,6 +7,7 @@ TanStack Router implementation with folder-based routing and lazy loading patter
 ## TanStack Router Overview
 
 **TanStack Router** with file-based routing:
+
 - Folder structure defines routes
 - Lazy loading for code splitting
 - Type-safe routing
@@ -32,6 +33,7 @@ routes/
 ```
 
 **Pattern**:
+
 - `index.tsx` = Route at that path
 - `$param.tsx` = Dynamic parameter
 - Nested folders = Nested routes
@@ -79,6 +81,7 @@ export default PostsPage;
 ```
 
 **Key Points:**
+
 - Lazy load heavy components
 - `createFileRoute` with route path
 - `loader` for breadcrumb data
@@ -350,6 +353,7 @@ export default UserPage;
 ## Summary
 
 **Routing Checklist:**
+
 - ✅ Folder-based: `routes/my-route/index.tsx`
 - ✅ Lazy load components: `React.lazy(() => import())`
 - ✅ Use `createFileRoute` with route path
@@ -359,6 +363,7 @@ export default UserPage;
 - ✅ Use `useNavigate()` for programmatic navigation
 
 **See Also:**
+
 - [component-patterns.md](component-patterns.md) - Lazy loading patterns
 - [loading-and-error-states.md](loading-and-error-states.md) - SuspenseLoader usage
 - [complete-examples.md](complete-examples.md) - Full route examples
