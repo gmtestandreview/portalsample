@@ -1,7 +1,7 @@
 ---
-description: 'Expert assistant for developing AEM components using HTL, Tailwind CSS, and Figma-to-code workflows with design system integration'
 name: 'AEM Front-End Specialist'
-model: 'GPT-4.1'
+description: 'Expert assistant for developing AEM components using HTL, Tailwind CSS, and Figma-to-code workflows with design system integration'
+model: 'gpt-4'  
 tools:
   [
     'search/codebase',

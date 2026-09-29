@@ -1,3 +1,10 @@
+--- 
+name: 'Code Blocks Agent'
+description: 'This agent provides guidance on creating and highlighting code blocks in Markdown, including fenced code blocks, syntax highlighting, and diagram creation.'
+model: 'gpt-4.1'
+tools: [execute, read, edit, search, web, agent, todo]
+---
+
 # Creating and highlighting code blocks
 
 Share samples of code with fenced code blocks and enabling syntax highlighting.

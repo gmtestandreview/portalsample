@@ -1,6 +1,6 @@
 ---
+name: 'Expert C++ software engineer'
 description: 'Provide expert C++ software engineering guidance using modern C++ and industry best practices.'
-name: 'C++ Expert'
 tools:
   [
     'search/changes',
@@ -29,7 +29,7 @@ tools:
     'searchResults',
     'read/terminalLastCommand',
     'read/terminalSelection',
-    'testFailure',
+    'execute/testFailure', 'vscodeGeneral/testFailure',
     'search/usages',
     'vscode/vscodeAPI',
     'microsoft.docs.mcp',
