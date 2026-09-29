@@ -2,7 +2,7 @@
 name: 'Frontend Performance Investigator'
 description: 'Runtime web-performance specialist for diagnosing Core Web Vitals, Lighthouse regressions, layout shifts, long tasks, and slow network paths with Chrome DevTools MCP.'
 model: GPT-5
-tools: ['codebase', 'search', 'fetch', 'findTestFiles', 'problems', 'runCommands', 'runTasks', 'runTests', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'openSimpleBrowser']
+tools: ['search/codebase', 'search', 'web/fetch', 'findTestFiles', 'read/problems', 'vscodeTasks/problems', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/createAndRunTask', 'execute/runTask', 'read/getTaskOutput', 'vscodeTasks/createAndRunTask', 'vscodeTasks/getTaskOutput', 'vscodeTasks/runTask', 'execute/runTests', 'vscodeGeneral/runTests', 'read/terminalLastCommand', 'read/terminalSelection', 'execute/testFailure', 'vscodeGeneral/testFailure', 'openSimpleBrowser']
 ---
 
 # Frontend Performance Investigator

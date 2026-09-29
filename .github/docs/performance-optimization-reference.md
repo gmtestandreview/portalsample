@@ -13,6 +13,7 @@ Measures loading performance - when largest content element becomes visible.
 **Target**: < 2.5 seconds
 
 **Optimization**:
+
 - Reduce server response time
 - Optimize images
 - Remove render-blocking resources
@@ -31,6 +32,7 @@ FID (deprecated) measured input responsiveness. INP is the new metric.
 **INP Target**: < 200ms
 
 **Optimization**:
+
 - Minimize JavaScript execution time
 - Break up long tasks
 - Use web workers
@@ -44,6 +46,7 @@ Measures visual stability - unexpected layout shifts.
 **Target**: < 0.1
 
 **Optimization**:
+
 - Specify image/video dimensions
 - Avoid inserting content above existing content
 - Use CSS aspect-ratio
@@ -62,22 +65,27 @@ Measures visual stability - unexpected layout shifts.
 ## Other Performance Metrics
 
 ### First Contentful Paint (FCP)
+
 Time when first content element renders.  
 **Target**: < 1.8s
 
 ### Time to First Byte (TTFB)
+
 Time for browser to receive first byte of response.  
 **Target**: < 600ms
 
 ### Time to Interactive (TTI)
+
 When page becomes fully interactive.  
 **Target**: < 3.8s
 
 ### Speed Index
+
 How quickly content is visually displayed.  
 **Target**: < 3.4s
 
 ### Total Blocking Time (TBT)
+
 Sum of blocking time for all long tasks.  
 **Target**: < 200ms
 
@@ -86,7 +94,7 @@ Sum of blocking time for all long tasks.
 ### Format Selection
 
 | Format | Best For | Pros | Cons |
-|--------|----------|------|------|
+| -------- | ---------- | ------ | ------ |
 | JPEG | Photos | Small size, widely supported | Lossy, no transparency |
 | PNG | Graphics, transparency | Lossless, transparency | Larger size |
 | WebP | Modern browsers | Small size, transparency | Limited old browser support |
@@ -452,12 +460,14 @@ getCLS(console.log);
 Distribute content across global servers for faster delivery.
 
 **Benefits**:
+
 - Reduced latency
 - Improved load times
 - Better availability
 - Reduced bandwidth costs
 
 **Popular CDNs**:
+
 - Cloudflare
 - Amazon CloudFront
 - Fastly
@@ -466,6 +476,7 @@ Distribute content across global servers for faster delivery.
 ## Best Practices
 
 ### Do's
+
 - ✅ Optimize images (format, compression, size)
 - ✅ Minify and compress code
 - ✅ Implement caching strategies
@@ -478,6 +489,7 @@ Distribute content across global servers for faster delivery.
 - ✅ Set performance budgets
 
 ### Don'ts
+
 - ❌ Serve unoptimized images
 - ❌ Block rendering with scripts
 - ❌ Cause layout shifts
@@ -490,6 +502,7 @@ Distribute content across global servers for faster delivery.
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - bfcache
 - Bandwidth
 - Brotli compression

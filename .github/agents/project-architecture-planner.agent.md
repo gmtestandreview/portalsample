@@ -2,7 +2,7 @@
 name: 'Project Architecture Planner'
 description: 'Holistic software architecture planner that evaluates tech stacks, designs scalability roadmaps, performs cloud-agnostic cost analysis, reviews existing codebases, and delivers interactive Mermaid diagrams with HTML preview and draw.io export'
 model: GPT-5
-tools: ['codebase', 'search', 'web/fetch', 'edit/editFiles', 'new', 'renderMermaidDiagram', 'openSimpleBrowser', 'runCommands', 'problems', 'usages', 'todo']
+tools: ['search/codebase', 'search', 'web/fetch', 'edit/editFiles', 'vscode/installExtension', 'vscode/newWorkspace', 'vscode/runCommand', 'renderMermaidDiagram', 'openSimpleBrowser', 'execute/getTerminalOutput', 'execute/runInTerminal', 'read/terminalLastCommand', 'read/terminalSelection', 'read/problems', 'vscodeTasks/problems', 'search/usages', 'vscodeGeneral/usages', 'todo']
 ---
 
 # Project Architecture Planner
