@@ -94,7 +94,7 @@ const UPLOAD_ARTIFACT_PIN =
 const DOWNLOAD_ARTIFACT_PIN =
   'actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c';
 const CHROMATIC_ACTION_PIN =
-  'chromaui/action@259eda5f0e44c0c1eab38b672f1c4c967cc969b7';
+  'chromaui/action@6b3c2820222d23bad770d57a4ad5e2d1c91f92e9';
 const CODEQL_ACTION_PIN =
   'github/codeql-action/(?:init|analyze)@7999b86c43a865dc79d8923397f35af22de63401';
 
