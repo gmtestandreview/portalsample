@@ -2,19 +2,13 @@
   "mcpServers": {
     "my-storybook-mcp-server": {
       "type": "http",
-      "url": "http://localhost:6006/mcp",
-      "tools": [
-        "*"
-      ]
+      "url": "http://localhost:6006/mcp"
     },
     "playwright": {
       "type": "stdio",
       "command": "npx",
       "args": [
         "@playwright/mcp@latest"
-      ],
-      "tools": [
-        "*"
       ]
     },
     "typescript-mcp": {
@@ -23,9 +17,6 @@
       "args": [
         "/c",
         "scripts\\lsmcp-typescript-mcp.cmd"
-      ],
-      "tools": [
-        "*"
       ]
     },
     "github": {
@@ -34,9 +25,6 @@
       "args": [
         "/c",
         "scripts\\github-mcp-server.cmd"
-      ],
-      "tools": [
-        "*"
       ]
     },
     "react-aria": {
@@ -44,9 +32,6 @@
       "command": "npx",
       "args": [
         "@react-aria/mcp@latest"
-      ],
-      "tools": [
-        "*"
       ]
     },
     "sonarqube": {
@@ -57,9 +42,6 @@
         "mcp",
         "--project",
         "gmtestandreview_portalsample"
-      ],
-      "tools": [
-        "*"
       ]
     },
     "tokensave": {
