@@ -80,7 +80,7 @@ const loadSummary =
         Id: id,
         Accounts: accounts,
       });
-      throw Error(
+      throw new Error(
         `There are no accounts available to load PA summary. Id: ${id}`
       );
     }
@@ -131,7 +131,7 @@ const submitForm =
         'There are no accounts available to submit PA summary',
         { Id: id, Accounts: accounts }
       );
-      throw Error(
+      throw new Error(
         `There are no accounts available to submit PA summary. Id: ${id}`
       );
     }

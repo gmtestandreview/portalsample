@@ -44,15 +44,17 @@ const AttachmentItemNew = ({
   /* TO DO - Add in Category select input */
   const getCategories = () => {
     const options: SelectInputOption<string>[] = [];
-    options.push({ displayText: 'Test Report', value: 'Test Report' });
-    options.push({ displayText: 'Certificate', value: 'Certificate' });
-    options.push({ displayText: 'Specifications', value: 'Specifications' });
-    options.push({ displayText: 'Manuals', value: 'Manuals' });
-    options.push({
-      displayText: 'Photos or diagrams',
-      value: 'Photos or diagrams',
-    });
-    options.push({ displayText: 'Other', value: 'Other' });
+    options.push(
+      { displayText: 'Test Report', value: 'Test Report' },
+      { displayText: 'Certificate', value: 'Certificate' },
+      { displayText: 'Specifications', value: 'Specifications' },
+      { displayText: 'Manuals', value: 'Manuals' },
+      {
+        displayText: 'Photos or diagrams',
+        value: 'Photos or diagrams',
+      },
+      { displayText: 'Other', value: 'Other' }
+    );
     return options;
   };
 
@@ -131,7 +133,7 @@ const AttachmentItemNew = ({
             titleText='Confirm deletion'
             bodyText='Are you sure you want to remove this file?'
             onModalNo={closeModal}
-            onModalYes={() => onRemoveItem && onRemoveItem(contentField.value)}
+            onModalYes={() => onRemoveItem?.(contentField.value)}
             noButtonTitle='Cancel'
             yesButtonTitle='Yes, delete'
           />
