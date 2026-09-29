@@ -1,0 +1,7 @@
+{
+  "id": "A01",
+  "group": "activation",
+  "required": true,
+  "prompt": "Configure CodeQL advanced setup for a Java/Kotlin Gradle repository with explicit build control.",
+  "expected": "Activate CodeQL skill; route workflow + compiled-language references; Kotlin must be built."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "A02",
+  "group": "activation",
+  "required": true,
+  "prompt": "My CodeQL SARIF upload is rejected. Help diagnose it.",
+  "expected": "Activate; route SARIF and troubleshooting references."
+}
