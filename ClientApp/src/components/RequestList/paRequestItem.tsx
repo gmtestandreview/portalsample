@@ -120,36 +120,40 @@ const PaRequestItem = ({
     // TODO: Move this to an enum? refactor this...
     switch (status) {
       case PaDashboardItemStatus.PaDraft:
-        actions.push({
-          action: 'Edit',
-          text: 'Resume application',
-          route: editRoute,
-          onClick: () => trackGAEvent('Editapplication'),
-        });
-        actions.push({
-          action: 'Delete',
-          text: 'Delete application',
-          onClick: (e) => {
-            onDelete()(e);
-            trackGAEvent('Deleteapplication');
+        actions.push(
+          {
+            action: 'Edit',
+            text: 'Resume application',
+            route: editRoute,
+            onClick: () => trackGAEvent('Editapplication'),
           },
-        });
+          {
+            action: 'Delete',
+            text: 'Delete application',
+            onClick: (e) => {
+              onDelete()(e);
+              trackGAEvent('Deleteapplication');
+            },
+          }
+        );
         break;
       case PaDashboardItemStatus.PaSubmitted:
       case PaDashboardItemStatus.PaInProgress:
       case PaDashboardItemStatus.PaOnHold:
       case PaDashboardItemStatus.PaCompleted:
-        actions.push({
-          action: 'Edit',
-          text: 'View application details',
-          route: editRoute,
-          onClick: () => trackGAEvent('Viewapplicationdetails'),
-        });
-        actions.push({
-          action: 'Messages',
-          text: 'View messages',
-          onClick: routeToMessages,
-        });
+        actions.push(
+          {
+            action: 'Edit',
+            text: 'View application details',
+            route: editRoute,
+            onClick: () => trackGAEvent('Viewapplicationdetails'),
+          },
+          {
+            action: 'Messages',
+            text: 'View messages',
+            onClick: routeToMessages,
+          }
+        );
         break;
       default:
         break;
@@ -312,7 +316,7 @@ const PaRequestItem = ({
           </p>
         }
         onModalNo={closeModal}
-        onModalYes={() => onRemoveItem && onRemoveItem()}
+        onModalYes={() => onRemoveItem?.()}
         noButtonTitle='Cancel'
         yesButtonTitle='Yes, delete application'
       />

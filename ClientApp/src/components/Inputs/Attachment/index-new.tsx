@@ -140,9 +140,9 @@ const AttachmentNew = (
 
             setValue([...(result as AttachmentDto[])]);
           }
-        } catch (errorMessage) {
+        } catch (error_) {
           const serverErrors = map(
-            (errorMessage as ProblemDetails).errors,
+            (error_ as ProblemDetails).errors,
             (error) => error
           );
           setErrors((newErrors) => [...newErrors, ...serverErrors]);
@@ -166,8 +166,8 @@ const AttachmentNew = (
           inputRef.current.files = null;
         }
       }
-    } catch (errorMessage) {
-      setErrors((newErrors) => [...newErrors, `${errorMessage}`]);
+    } catch (error_) {
+      setErrors((newErrors) => [...newErrors, `${error_}`]);
     }
     setIsDeleting(false);
   };
