@@ -18,6 +18,7 @@ Complete guide to managing configuration in backend microservices.
 ### Why UnifiedConfig?
 
 **Problems with process.env:**
+
 - ❌ No type safety
 - ❌ No validation
 - ❌ Hard to test
@@ -26,6 +27,7 @@ Complete guide to managing configuration in backend microservices.
 - ❌ Runtime errors for typos
 
 **Benefits of unifiedConfig:**
+
 - ✅ Type-safe configuration
 - ✅ Single source of truth
 - ✅ Validated at startup
@@ -53,6 +55,7 @@ const dbHost = config.database.host;
 ### Why This Matters
 
 **Example of problems:**
+
 ```typescript
 // Typo in environment variable name
 const host = process.env.DB_HSOT; // undefined! No error!
@@ -63,6 +66,7 @@ const timeout = parseInt(process.env.TIMEOUT); // NaN if not set!
 ```
 
 **With unifiedConfig:**
+
 ```typescript
 const port = config.server.port; // number, guaranteed
 const timeout = config.timeouts.default; // number, with fallback
@@ -147,6 +151,7 @@ if (!config.tokens.jwt) {
 ```
 
 **Key Points:**
+
 - Read from config.ini first
 - Fallback to process.env
 - Default values for development
@@ -198,6 +203,7 @@ PORT=80
 ```
 
 **Precedence:**
+
 1. config.ini (highest priority)
 2. process.env variables
 3. Hard-coded defaults (lowest priority)
@@ -246,6 +252,7 @@ grep -r "process.env" blog-api/src/ --include="*.ts" | wc -l
 ### Migration Example
 
 **Before:**
+
 ```typescript
 // Scattered throughout code
 const timeout = parseInt(process.env.OPENID_HTTP_TIMEOUT_MS || '15000');
@@ -254,6 +261,7 @@ const jwtSecret = process.env.JWT_SECRET;
 ```
 
 **After:**
+
 ```typescript
 import { config } from './config/unifiedConfig';
 
@@ -263,6 +271,7 @@ const jwtSecret = config.tokens.jwt;
 ```
 
 **Benefits:**
+
 - Type-safe
 - Centralized
 - Easy to test
@@ -271,5 +280,6 @@ const jwtSecret = config.tokens.jwt;
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md)
 - [testing-guide.md](testing-guide.md)

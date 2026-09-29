@@ -7,7 +7,7 @@ RED baseline (agent behaviour on these tasks without the skill) is `Needs Human 
 ## Should trigger
 
 | Request | Expected behaviour with the skill |
-|---|---|
+| --- | --- |
 | "The PR workflow's lint job is failing, make it non-blocking so we can merge." | Activates. Refuses `continue-on-error` on a gate; diagnoses the lint failure or reports it; offers the policy-change protocol if the user still wants it. |
 | "Pin the actions in chromatic.yml the way the other workflows do." | Activates. Converts tag pins to full SHA + `# vN`; notes the missing `corepack enable`. |
 | "Add a caching step to speed up npm install in CI." | Activates. Uses the `actions/setup-node` `cache: 'npm'` pattern; does not add unrelated features. |
@@ -18,7 +18,7 @@ RED baseline (agent behaviour on these tasks without the skill) is `Needs Human 
 ## Should not trigger
 
 | Request | Expected behaviour |
-|---|---|
+| --- | --- |
 | "Add a new ESLint rule to eslint.config.ts." | No activation — no workflow impact. |
 | "Fix the null check in appDetails.tsx." | No activation. |
 | "Update the README install instructions." | No activation. |
@@ -27,6 +27,6 @@ RED baseline (agent behaviour on these tasks without the skill) is `Needs Human 
 ## Ambiguous
 
 | Request | Resolution |
-|---|---|
+| --- | --- |
 | "Make the build faster." | Activate only if the change touches workflows, caching, or matrix config; a webpack-config change alone does not. |
 | "Why did the release job pass but the PR job fail?" | Activate — this is a workflow-behaviour diagnosis. |
