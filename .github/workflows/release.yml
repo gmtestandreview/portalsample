@@ -19,7 +19,7 @@ defaults:
 jobs:
   quality-gate:
     name: Quality gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:
       VITE_APP_ENVIRONMENT: production
@@ -107,7 +107,7 @@ jobs:
   # fork-originated). See sonar-project.properties for scan config.
   sonarcloud:
     name: sonarcloud
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: quality-gate
     timeout-minutes: 25
     steps:
