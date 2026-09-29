@@ -74,7 +74,7 @@ const ApplicationDetails = () => {
         account: accounts[0],
       });
       client.setAuthToken(tokenResult.accessToken);
-      const count = await client.getAppMessageCount(id, id, undefined);
+      const count = await client.getAppMessageCount(id, id);
 
       if (disposedRef.current) return;
       setMessageCount(count || 0);
@@ -538,7 +538,7 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {(data && data.applicationDetails?.title) || 'Application details'}
+            {data?.applicationDetails?.title || 'Application details'}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>
