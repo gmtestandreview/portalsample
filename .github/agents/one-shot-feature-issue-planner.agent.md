@@ -2,7 +2,7 @@
 description: "Cloud Agent to Turn a single new-feature request into a complete, issue-ready implementation plan without follow-up questions."
 name: "one-shot-feature-issue-planner"
 agent: agent
-tools: ["codebase", "githubRepo", "search", "usages", "web/fetch", "findTestFiles"]
+tools: ["search/codebase", "web/githubRepo", "search", "search/usages", "vscodeGeneral/usages", "web/fetch", "findTestFiles"]
 ---
 
 # One-Shot Feature Issue Planner
