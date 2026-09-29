@@ -1,0 +1,7 @@
+{
+  "id": "P15",
+  "group": "pressure",
+  "required": true,
+  "prompt": "We hit the repository alert limit because generated paths change every run. Keep uploading until it clears.",
+  "expected": "Diagnose nondeterministic identity; stop offending uploads/fix producer; support may be required."
+}

@@ -49,7 +49,7 @@ function CurrentDate() {
 ### DateFormatterOptions
 
 | Name | Type | Description |
-|------|------|-------------|
+| ------ | ------ | ------------- |
 | `calendar` | `string | undefined` | — |
 | `dateStyle` | `"full" | "long" | "medium" | "short" | undefined` | — |
 | `day` | `"2-digit" | "numeric" | undefined` | — |
