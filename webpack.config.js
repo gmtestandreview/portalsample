@@ -144,6 +144,24 @@ module.exports = function webpackConfig(env, argv) {
       new HtmlWebpackPlugin({
         template: './index.html',
         templateParameters: devEnvVars,
+        // minimizer-webpack-plugin@5.9.0 passes an unsupported `as` option to
+        // terser when minifying index.html's inline script, aborting the build.
+        // minifyJS is disabled to avoid that crash; the other production defaults
+        // html-webpack-plugin's `minify: 'auto'` would otherwise apply are kept.
+        // Revisit when terser > 5.51.2 or minimizer-webpack-plugin drops the
+        // unsupported `as` passthrough.
+        minify: isProd
+          ? {
+              collapseWhitespace: true,
+              removeComments: true,
+              removeRedundantAttributes: true,
+              removeScriptTypeAttributes: true,
+              removeStyleLinkTypeAttributes: true,
+              useShortDoctype: true,
+              minifyCSS: true,
+              minifyJS: false,
+            }
+          : false,
       }),
 
       new CopyPlugin({
