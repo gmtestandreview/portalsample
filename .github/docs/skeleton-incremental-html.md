@@ -1,3 +1,8 @@
+---
+name: 'skeleton incremental html'
+description: 'This is a skeleton template for generating an incremental comparison HTML report. It provides a structured format for documenting the comparison between a baseline and target state, including metrics, status summaries, component grids, threat/finding breakdowns, STRIDE heatmaps, and verification needs.'
+
+---
 # Skeleton: incremental-comparison.html
 
 > **⛔ Self-contained HTML — ALL CSS inline. No CDN links. Follow this exact 8-section structure.**

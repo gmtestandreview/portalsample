@@ -1,6 +1,6 @@
 ---
-description: 'Expert guidance for Azure Logic Apps development focusing on workflow design, integration patterns, and JSON-based Workflow Definition Language.'
 name: 'Azure Logic Apps Expert Mode'
+description: 'Expert guidance for Azure Logic Apps development focusing on workflow design, integration patterns, and JSON-based Workflow Definition Language.'
 model: 'gpt-4'
 tools:
   [

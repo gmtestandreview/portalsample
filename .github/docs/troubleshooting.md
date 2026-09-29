@@ -187,8 +187,8 @@ Run just the failing resource by commenting out others in the AppHost. This narr
 
 | Channel                 | URL                                            |
 | ----------------------- | ---------------------------------------------- |
-| GitHub Issues (runtime) | https://github.com/dotnet/aspire/issues        |
-| GitHub Issues (docs)    | https://github.com/microsoft/aspire.dev/issues |
-| Discord                 | https://aka.ms/aspire/discord                  |
+| GitHub Issues (runtime) | <https://github.com/dotnet/aspire/issues>        |
+| GitHub Issues (docs)    | <https://github.com/microsoft/aspire.dev/issues> |
+| Discord                 | <https://aka.ms/aspire/discord>                  |
 | Stack Overflow          | Tag: `dotnet-aspire`                           |
-| Reddit                  | https://www.reddit.com/r/aspiredotdev/         |
+| Reddit                  | <https://www.reddit.com/r/aspiredotdev/>         |
