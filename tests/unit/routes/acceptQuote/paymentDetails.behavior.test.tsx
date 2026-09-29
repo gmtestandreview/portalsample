@@ -1,6 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useEffect } from 'react';
 import { Form, Formik } from 'formik';
+import { FormProvider, useForm, type FieldPath } from 'react-hook-form';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   InvoiceSentToValues,
@@ -9,6 +11,9 @@ import {
 } from '@/api/web-api-client';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import PaymentDetails from '@/routes/acceptQuote/paymentDetails';
+import PaymentDetailsFormFields, {
+  type PaymentDetailsFormValues,
+} from '@/routes/acceptQuote/paymentDetailsFormFields';
 import { paymentDetailsSubmitValidation } from '@/routes/acceptQuote/validation';
 import { removeHidden } from '@/components/forms/utils';
 
@@ -89,6 +94,37 @@ function Harness({ values = initialValues, onSubmit = vi.fn() }: HarnessProps) {
         <button type='submit'>Continue</button>
       </Form>
     </Formik>
+  );
+}
+
+interface DirectFieldsHarnessProps {
+  errors?: Array<{
+    message: string;
+    name: FieldPath<PaymentDetailsFormValues>;
+  }>;
+}
+
+function DirectFieldsHarness({ errors = [] }: DirectFieldsHarnessProps) {
+  const methods = useForm<PaymentDetailsFormValues>({
+    defaultValues: {
+      invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+      contact: {
+        title: Title.Mr,
+      },
+    },
+  });
+
+  useEffect(() => {
+    errors.forEach(({ message, name }) => {
+      methods.setValue(name, methods.getValues(name), { shouldTouch: true });
+      methods.setError(name, { message, type: 'manual' });
+    });
+  }, [errors, methods]);
+
+  return (
+    <FormProvider {...methods}>
+      <PaymentDetailsFormFields quotationId='RFQ-DIRECT' />
+    </FormProvider>
   );
 }
 
@@ -346,6 +382,79 @@ describe('PaymentDetails form behavior', () => {
     } finally {
       consoleError.mockRestore();
     }
+  });
+
+  it('shows the loaded quotation ID in the purchase-order help copy', async () => {
+    mockGetPaymentDetails.mockResolvedValue({
+      acceptQuotePreInfo: {
+        paymentTerms: 'Standard',
+        quotationIdNum: 'RFQ-2026-042',
+      },
+    });
+
+    render(<Harness />);
+
+    expect(
+      await screen.findByText('Your NMI Quotation ID RFQ-2026-042')
+    ).toBeInTheDocument();
+  });
+
+  it('shows the other-title field and validates optional invoice contact formats', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        values={{
+          ...initialValues,
+          invoiceSentTo: InvoiceSentToValues.DifferentPerson,
+        }}
+      />
+    );
+
+    await user.selectOptions(screen.getByLabelText('Title (optional)'), [
+      Title.Other,
+    ]);
+
+    expect(screen.getByLabelText('If "Other"')).toBeInTheDocument();
+    await user.type(screen.getByLabelText('If "Other"'), '@@@');
+    await user.type(screen.getByLabelText('Business phone (optional)'), '123');
+    await user.type(screen.getByLabelText('Mobile phone (optional)'), '123');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(
+      await screen.findByText(/Title other has invalid characters/)
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('Business phone cannot be less than 6 characters')
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('Mobile phone cannot be less than 10 characters')
+    ).toBeInTheDocument();
+  });
+
+  it('renders RHF adapter feedback for touched field-level errors', async () => {
+    const user = userEvent.setup();
+    render(
+      <DirectFieldsHarness
+        errors={[
+          {
+            name: 'invoiceSentTo',
+            message: 'Choose where the invoice should be sent',
+          },
+          { name: 'contact.title', message: 'Select a title' },
+        ]}
+      />
+    );
+
+    await user.click(
+      screen.getByLabelText('Purchase Order (PO) number (optional)')
+    );
+    await user.tab();
+
+    expect(
+      await screen.findByText('Choose where the invoice should be sent')
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Select a title')).toBeInTheDocument();
+    expect(screen.getByLabelText('Business phone (optional)')).toHaveValue('');
   });
 
   it('preserves entered contact values after switching back to the main contact', async () => {

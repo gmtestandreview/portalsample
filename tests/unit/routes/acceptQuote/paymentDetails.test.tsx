@@ -183,7 +183,7 @@ describe('PaymentDetails', () => {
 
   describe('field name prefixing (getNameForUse)', () => {
     it('passes raw key names to inputs in non-summary mode', async () => {
-      renderPaymentDetails();
+      renderPaymentDetails({ ...defaultProps, isSummary: false });
 
       await waitFor(() => {
         expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
@@ -212,6 +212,18 @@ describe('PaymentDetails', () => {
         'data-name',
         'paymentDetails.invoiceSentTo'
       );
+    });
+
+    it('includes the loaded quotation ID in summary help copy', async () => {
+      mockGetPaymentDetails.mockResolvedValue(
+        makePreInfo('Standard', 'RFQ-2026-042')
+      );
+
+      renderPaymentDetails({ ...defaultProps, isSummary: true });
+
+      expect(
+        await screen.findByText('Your NMI Quotation ID RFQ-2026-042')
+      ).toBeInTheDocument();
     });
   });
 
