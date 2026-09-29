@@ -332,7 +332,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.getAppMessageCount
-        ).toHaveBeenCalledWith('APP-1', 'APP-1', undefined)
+        ).toHaveBeenCalledWith('APP-1', 'APP-1')
       );
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
         DEFAULT_ACCESS_TOKEN
