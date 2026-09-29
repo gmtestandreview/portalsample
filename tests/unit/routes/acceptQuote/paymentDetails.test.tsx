@@ -45,8 +45,16 @@ vi.mock('@/instrumentation/AppLogger', () => ({
 
 // Stub form-input children — they require Formik context which is outside this component's scope
 vi.mock('@/components/Inputs/TextInput', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid={`text-input`} data-name={name} />
+  default: ({
+    inlineHelp,
+    name,
+  }: {
+    inlineHelp?: React.ReactNode;
+    name: string;
+  }) => (
+    <div data-testid={`text-input`} data-name={name}>
+      {inlineHelp}
+    </div>
   ),
 }));
 vi.mock('@/components/Inputs/RadioButtonGroup', () => ({
@@ -68,11 +76,17 @@ vi.mock('@/components/BlockUISpinner', () => ({
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function makePreInfo(paymentTerms: string): {
+function makePreInfo(
+  paymentTerms: string,
+  quotationIdNum?: string
+): {
   acceptQuotePreInfo: AcceptQuotePreInfoDto;
 } {
   return {
-    acceptQuotePreInfo: { paymentTerms } as AcceptQuotePreInfoDto,
+    acceptQuotePreInfo: {
+      paymentTerms,
+      quotationIdNum,
+    } as AcceptQuotePreInfoDto,
   };
 }
 
@@ -169,7 +183,7 @@ describe('PaymentDetails', () => {
 
   describe('field name prefixing (getNameForUse)', () => {
     it('passes raw key names to inputs in non-summary mode', async () => {
-      renderPaymentDetails();
+      renderPaymentDetails({ ...defaultProps, isSummary: false });
 
       await waitFor(() => {
         expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
@@ -191,10 +205,23 @@ describe('PaymentDetails', () => {
         'data-name',
         'paymentDetails.purchaseOrderNo'
       );
+      expect(screen.getByText('Your NMI Quotation ID')).toBeInTheDocument();
       expect(screen.getByTestId('radio-group')).toHaveAttribute(
         'data-name',
         'paymentDetails.invoiceSentTo'
       );
+    });
+
+    it('includes the loaded quotation ID in summary help copy', async () => {
+      mockGetPaymentDetails.mockResolvedValue(
+        makePreInfo('Standard', 'RFQ-2026-042')
+      );
+
+      renderPaymentDetails({ ...defaultProps, isSummary: true });
+
+      expect(
+        await screen.findByText('Your NMI Quotation ID RFQ-2026-042')
+      ).toBeInTheDocument();
     });
   });
 

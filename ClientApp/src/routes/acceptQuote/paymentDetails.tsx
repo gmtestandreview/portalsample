@@ -19,12 +19,6 @@ import AppLogger from '../../instrumentation/AppLogger';
 import PaymentDetailsFormikBridge from './paymentDetailsFormikBridge';
 
 const getName = prefixedPropertyOf<PaymentDetailsStep>('paymentDetails');
-function getNameForUse2(
-  name: keyof PaymentDetailsStep,
-  isSummary: boolean | undefined
-) {
-  return isSummary ? getName(name) : name;
-}
 
 const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   const { isSummary, id } = props;
@@ -35,7 +29,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   >();
 
   function getNameForUse(name: keyof PaymentDetailsStep): string {
-    return getNameForUse2(name, isSummary);
+    return getName(name);
   }
 
   const getAcceptQuotePreInfo = async () => {
