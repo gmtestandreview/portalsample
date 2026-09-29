@@ -5,6 +5,7 @@ The question bank used to actually walk routine steps 1–9 from SKILL.md. Start
 > How to use: read the document, detect the domain, then at each step 1–9 ask both (a) the neutral question and (b) the detected module's question for that step. A question the document fails to answer is a finding candidate. Write each finding in the scenario-enforced form from SKILL.md ("when the user does X during Y, Z is undefined").
 
 ## Table of contents
+
 - [Neutral layer (steps 1–9, all documents)](#neutral-layer)
 - [Domain module A — Mobile app](#module-a--mobile-app)
 - [Domain module B — Web front-end](#module-b--web-front-end)
@@ -19,7 +20,7 @@ The question bank used to actually walk routine steps 1–9 from SKILL.md. Start
 The floor questions for documents where no domain is detected (pure policy/process docs, etc.). For detected documents, make these concrete with the module questions.
 
 | # | Step | Neutral question |
-|---|------|------------------|
+| --- | ------ | ------------------ |
 | 1 | Empty state | What shows when the target data is 0 records? What does a first-time user see? Does the empty state have guidance / a call to action? |
 | 2 | Max / overload | What if there are very many items (10k+)? What if a single value is very long (200-char title)? Is there a cap / truncation / split policy? |
 | 3 | Failure / exception | What if required data can't be fetched? What if processing fails? How does the user learn of the failure and recover? |
@@ -37,7 +38,7 @@ The floor questions for documents where no domain is detected (pure policy/proce
 **Detection signals**: screen·tab·bottom sheet·push notification·deep link·app kill/background·permission dialog·app store·offline·device rotation·iOS/Android mentions.
 
 | # | Step | Concrete question |
-|---|------|-------------------|
+| --- | ------ | ------------------- |
 | 1 | Empty state | When the list is 0 items, is an empty-screen illustration/CTA defined? Entering this screen right after first install (before onboarding)? |
 | 2 | Max / overload | What's the infinite-scroll/paging unit? For hundreds of images, preload/placeholder? Truncation line count for long text? |
 | 3 | Failure / exception | Offline entry → show cache vs error screen? UI for each of API 5xx / timeout? Retry button / auto-retry policy? |
@@ -55,7 +56,7 @@ The floor questions for documents where no domain is detected (pure policy/proce
 **Detection signals**: page·URL·routing·browser·responsive·modal·form validation·SEO·refresh·back button·duplicate tabs·cookie/session mentions.
 
 | # | Step | Concrete question |
-|---|------|-------------------|
+| --- | ------ | ------------------- |
 | 1 | Empty state | Copy for 0 search results vs 0 filter results (each)? Empty dashboard before/after login? |
 | 2 | Max / overload | Virtual scroll / server paging for thousands of table rows? Wrapping/tooltip for long cell values? File-upload size cap? |
 | 3 | Failure / exception | Preserve inputs on form-submit failure? Partial failure (only some items)? Auto-save conflict during a dropped network? |
@@ -73,7 +74,7 @@ The floor questions for documents where no domain is detected (pure policy/proce
 **Detection signals**: endpoint·request/response·batch·queue·consistency·transaction·idempotency·settlement·aggregation·webhook·migration·SLA·policy-calculation-logic mentions.
 
 | # | Step | Concrete question |
-|---|------|-------------------|
+| --- | ------ | ------------------- |
 | 1 | Empty state | Response when 0 target records (empty array vs 404)? Default value when there's no baseline for the first calculation? |
 | 2 | Max / overload | Pagination cap/default? Rate limit for bulk requests? Split when batch size is exceeded? Cap on large payloads? |
 | 3 | Failure / exception | Partial-commit prevention (transaction boundary) when an external dependency (payment, other service) fails? Idempotency guarantee for retry after timeout? Failure response code/message convention? |
@@ -91,7 +92,7 @@ The floor questions for documents where no domain is detected (pure policy/proce
 **Detection signals**: admin·operations·dashboard·permission tier·audit log·org/tenant·bulk processing·CSV upload/download·settings·approval-workflow mentions.
 
 | # | Step | Concrete question |
-|---|------|-------------------|
+| --- | ------ | ------------------- |
 | 1 | Empty state | First screen of a new org / a tenant with no data? Distinguishing "0 filter results" from "genuinely 0"? |
 | 2 | Max / overload | Handling large lists (tens of thousands of rows) / Excel-export cap? Progress / partial failure for bulk actions (approving thousands)? |
 | 3 | Failure / exception | Full rollback vs partial commit when some rows error during CSV upload? Failed-row report? Resume after failure mid-bulk-action? |
@@ -109,7 +110,7 @@ The floor questions for documents where no domain is detected (pure policy/proce
 Quick-reference. When multiple match, activate **all** matching modules.
 
 | Module | Strong signals |
-|--------|----------------|
+| -------- | ---------------- |
 | A Mobile | screen·tab·push·deep link·app kill/background·OS permission·offline·iOS/Android |
 | B Web front-end | page·URL·routing·responsive·form·refresh·back button·browser tabs |
 | C Backend | endpoint·transaction·idempotency·batch·queue·consistency·settlement·aggregation·webhook·SLA |

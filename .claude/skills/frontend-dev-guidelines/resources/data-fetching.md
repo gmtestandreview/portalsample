@@ -11,6 +11,7 @@ Modern data fetching using TanStack Query with Suspense boundaries, cache-first 
 For **all new components**, use `useSuspenseQuery` instead of regular `useQuery`:
 
 **Benefits:**
+
 - No `isLoading` checks needed
 - Integrates with Suspense boundaries
 - Cleaner component code
@@ -43,7 +44,7 @@ export const MyComponent: React.FC<Props> = ({ id }) => {
 ### useSuspenseQuery vs useQuery
 
 | Feature | useSuspenseQuery | useQuery |
-|---------|------------------|----------|
+| --------- | ------------------ | ---------- |
 | Loading state | Handled by Suspense | Manual `isLoading` check |
 | Data type | Always defined | `Data \| undefined` |
 | Use with | Suspense boundaries | Traditional components |
@@ -51,6 +52,7 @@ export const MyComponent: React.FC<Props> = ({ id }) => {
 | Error handling | Error boundaries | Manual error state |
 
 **When to use regular useQuery:**
+
 - Maintaining legacy code
 - Very simple cases without Suspense
 - Polling with background updates
@@ -102,6 +104,7 @@ export function useSuspensePost(postId: number) {
 ```
 
 **Key Points:**
+
 - Check grid/list cache before API call
 - Avoids redundant requests
 - `staleTime`: How long data is considered fresh
@@ -147,6 +150,7 @@ export const MyComponent: React.FC = () => {
 ```
 
 **Benefits:**
+
 - All queries in parallel
 - Single Suspense boundary
 - Type-safe results
@@ -176,6 +180,7 @@ export const MyComponent: React.FC = () => {
 ```
 
 **Rules:**
+
 - Start with entity name (plural for lists, singular for one)
 - Include IDs for specificity
 - Add view mode / relationship at end
@@ -265,6 +270,7 @@ export const myFeatureApi = {
 ```
 
 **Key Points:**
+
 - Export single object with methods
 - Use `apiClient` (axios instance from `@/lib/apiClient`)
 - Type-safe parameters and returns
@@ -290,6 +296,7 @@ await apiClient.post('/api/projects/create', data); // WRONG!
 ```
 
 **Microservice Routing:**
+
 - Form service: `/blog/*`
 - Projects service: `/projects/*`
 - Email service: `/email/*`
@@ -583,6 +590,7 @@ export function useSuspensePost(blogId: number, postId: number) {
 ```
 
 **Benefits:**
+
 - Avoids duplicate API calls
 - Instant data if already loaded
 - Falls back to API if not cached
@@ -762,6 +770,7 @@ useSuspenseQuery({
 8. **Type Safety**: Type all parameters and returns
 
 **See Also:**
+
 - [component-patterns.md](component-patterns.md) - Suspense integration
 - [loading-and-error-states.md](loading-and-error-states.md) - SuspenseLoader usage
 - [complete-examples.md](complete-examples.md) - Full working examples

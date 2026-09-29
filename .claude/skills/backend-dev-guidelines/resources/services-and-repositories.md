@@ -27,6 +27,7 @@ Repository executes: "Here's the data you requested"
 ```
 
 **Services are responsible for:**
+
 - ✅ Business rules enforcement
 - ✅ Orchestrating multiple repositories
 - ✅ Transaction management
@@ -35,6 +36,7 @@ Repository executes: "Here's the data you requested"
 - ✅ Business validations
 
 **Services should NOT:**
+
 - ❌ Know about HTTP (Request/Response)
 - ❌ Direct Prisma access (use repositories)
 - ❌ Handle route-specific logic
@@ -47,6 +49,7 @@ Repository executes: "Here's the data you requested"
 ### Why Dependency Injection?
 
 **Benefits:**
+
 - Easy to test (inject mocks)
 - Clear dependencies
 - Flexible configuration
@@ -218,6 +221,7 @@ const notification = await notificationService.createNotification({
 ```
 
 **Key Takeaways:**
+
 - Dependencies passed via constructor
 - Clear interface defines required dependencies
 - Easy to test (inject mocks)
@@ -231,6 +235,7 @@ const notification = await notificationService.createNotification({
 ### When to Use Singletons
 
 **Use for:**
+
 - Services with expensive initialization
 - Services with shared state (caching)
 - Services accessed from many places
@@ -359,6 +364,7 @@ Repository: "Here's the Prisma query that does that"
 ```
 
 **Repositories are responsible for:**
+
 - ✅ All Prisma operations
 - ✅ Query construction
 - ✅ Query optimization (select, include)
@@ -366,6 +372,7 @@ Repository: "Here's the Prisma query that does that"
 - ✅ Caching database results
 
 **Repositories should NOT:**
+
 - ❌ Contain business logic
 - ❌ Know about HTTP
 - ❌ Make decisions (that's service layer)
@@ -783,6 +790,7 @@ describe('UserService', () => {
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md) - Main guide
 - [routing-and-controllers.md](routing-and-controllers.md) - Controllers that use services
 - [database-patterns.md](database-patterns.md) - Prisma and repository patterns
