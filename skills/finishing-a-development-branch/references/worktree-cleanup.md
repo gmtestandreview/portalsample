@@ -17,7 +17,7 @@ WORKTREE_PATH=$(git rev-parse --show-toplevel)
 ```
 
 | State | Meaning | Cleanup |
-|---|---|---|
+| --- | --- | --- |
 | `GIT_DIR == GIT_COMMON` | Primary checkout, not a linked worktree | Nothing to remove |
 | `GIT_DIR != GIT_COMMON`, on a named branch | Linked worktree | Remove it after the branch is merged or the discard is confirmed |
 | `GIT_DIR != GIT_COMMON`, detached HEAD | Externally managed workspace | Leave it in place — the host owns it |

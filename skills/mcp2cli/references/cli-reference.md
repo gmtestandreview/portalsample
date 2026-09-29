@@ -5,7 +5,7 @@ Captured from `uvx mcp2cli --help`, `uvx mcp2cli bake --help`, `uvx mcp2cli bake
 ## Source (mutually exclusive, one required)
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--spec SPEC` | OpenAPI spec URL or file path |
 | `--mcp MCP` | MCP server URL (HTTP/SSE) |
 | `--mcp-stdio CMD` | MCP server command (stdio) |
@@ -14,7 +14,7 @@ Captured from `uvx mcp2cli --help`, `uvx mcp2cli bake --help`, `uvx mcp2cli bake
 ## Discovery / output
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--list` | List available subcommands |
 | `--search PATTERN` | Case-insensitive substring match on name/description |
 | `--verbose` | Full tool descriptions in `--list`, wrapped to terminal width |
@@ -31,14 +31,14 @@ Captured from `uvx mcp2cli --help`, `uvx mcp2cli bake --help`, `uvx mcp2cli bake
 ## Auth
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--auth-header NAME:VALUE` | Repeatable. Value supports `env:VAR` and `file:/path` prefixes — never pass a literal secret |
 | `--base-url URL` | Override base URL from spec |
 
 ## OAuth (MCP HTTP only)
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--oauth` | Authorization code + PKCE flow |
 | `--oauth-client-id` / `--oauth-client-secret` | Support `env:VAR` / `file:/path` prefixes |
 | `--oauth-client-name` | Client name sent during Dynamic Client Registration (default `mcp2cli`); some servers require a specific name |
@@ -52,7 +52,7 @@ Tokens cache in `~/.cache/mcp2cli/oauth/` and refresh automatically.
 ## MCP-specific
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--transport {auto,sse,streamable}` | `auto` tries streamable then SSE; `sse`/`streamable` skip the fallback |
 | `--env KEY=VALUE` | Env var for the stdio server process (repeatable) |
 | `--root PATH\|FILE_URI` | Expose a filesystem path/URI to the server (repeatable); workspace-scoped servers request these via `roots/list` |
@@ -63,7 +63,7 @@ Tokens cache in `~/.cache/mcp2cli/oauth/` and refresh automatically.
 ## Sessions (persistent stdio connections)
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--session-start NAME` | Start a persistent daemon (requires `--mcp` or `--mcp-stdio`) |
 | `--session NAME` | Route a command through an existing session |
 | `--session-stop NAME` | Stop a named session |
@@ -72,7 +72,7 @@ Tokens cache in `~/.cache/mcp2cli/oauth/` and refresh automatically.
 ## Caching
 
 | Flag | Meaning |
-|---|---|
+| --- | --- |
 | `--cache-key KEY` | Custom cache key |
 | `--cache-ttl SECONDS` | Cache TTL (default 3600) |
 | `--refresh` | Bypass cache |

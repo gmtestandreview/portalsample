@@ -105,6 +105,7 @@ Sentry.setContext('runtime', {
 ```
 
 **Critical Points:**
+
 - PII protection built-in (beforeSend)
 - Filter non-critical errors
 - Comprehensive integrations
@@ -331,6 +332,7 @@ async function good() {
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md)
 - [routing-and-controllers.md](routing-and-controllers.md)
 - [async-and-errors.md](async-and-errors.md)

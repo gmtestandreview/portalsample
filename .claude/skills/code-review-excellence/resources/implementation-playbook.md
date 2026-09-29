@@ -1,6 +1,7 @@
 # Code Review Excellence Implementation Playbook
 
-This file contains detailed patterns, checklists, and code samples referenced by the skill.
+This file contains detailed patterns, checklists, and code samples referenced
+ by the skill.
 
 ## When to Use This Skill
 
@@ -18,6 +19,7 @@ This file contains detailed patterns, checklists, and code samples referenced by
 ### 1. The Review Mindset
 
 **Goals of Code Review:**
+
 - Catch bugs and edge cases
 - Ensure code maintainability
 - Share knowledge across team
@@ -26,6 +28,7 @@ This file contains detailed patterns, checklists, and code samples referenced by
 - Build team culture
 
 **Not the Goals:**
+
 - Show off knowledge
 - Nitpick formatting (use linters)
 - Block progress unnecessarily
@@ -34,6 +37,7 @@ This file contains detailed patterns, checklists, and code samples referenced by
 ### 2. Effective Feedback
 
 **Good Feedback is:**
+
 - Specific and actionable
 - Educational, not judgmental
 - Focused on the code, not the person
@@ -57,6 +61,7 @@ This file contains detailed patterns, checklists, and code samples referenced by
 ### 3. Review Scope
 
 **What to Review:**
+
 - Logic correctness and edge cases
 - Security vulnerabilities
 - Performance implications
@@ -67,6 +72,7 @@ This file contains detailed patterns, checklists, and code samples referenced by
 - Architectural fit
 
 **What Not to Review Manually:**
+
 - Code formatting (use Prettier, Black, etc.)
 - Import organization
 - Linting violations

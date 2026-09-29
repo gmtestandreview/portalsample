@@ -19,11 +19,13 @@ Complete guide to clean route definitions and controller patterns.
 ### The Golden Rule
 
 **Routes should ONLY:**
+
 - ✅ Define route paths
 - ✅ Register middleware
 - ✅ Delegate to controllers
 
 **Routes should NEVER:**
+
 - ❌ Contain business logic
 - ❌ Access database directly
 - ❌ Implement validation logic (use Zod + controller)
@@ -65,6 +67,7 @@ export default router;
 ```
 
 **Key Points:**
+
 - Each route: method, path, middleware chain, controller delegation
 - No try-catch needed (controller handles errors)
 - Clean, readable, maintainable
@@ -77,6 +80,7 @@ export default router;
 ### Why BaseController?
 
 **Benefits:**
+
 - Consistent error handling across all controllers
 - Automatic Sentry integration
 - Standardized response formats
@@ -294,6 +298,7 @@ export class UserController extends BaseController {
 ```
 
 **Benefits:**
+
 - Consistent error handling
 - Automatic Sentry integration
 - Performance tracking
@@ -336,6 +341,7 @@ export default router;
 ```
 
 **What Makes This Excellent:**
+
 - Zero business logic in routes
 - Clear middleware chain
 - Consistent pattern
@@ -370,12 +376,14 @@ router.post('/',
 ```
 
 **What Makes This Good:**
+
 - Zod validation
 - Delegates to service
 - Proper HTTP status codes
 - Error handling
 
 **Could Be Better:**
+
 - Move validation to controller
 - Use BaseController
 
@@ -440,6 +448,7 @@ router.post('/:formID/submit', async (req: Request, res: Response) => {
 ```
 
 **Why This Is Terrible:**
+
 - 200+ lines of business logic
 - Hard to test (requires HTTP mocking)
 - Hard to reuse (tied to route)
@@ -542,6 +551,7 @@ router.post('/',
 ```
 
 **Result:**
+
 - Route: 8 lines (was 200+)
 - Controller: 25 lines (request handling)
 - Service: 50 lines (business logic)
@@ -617,7 +627,7 @@ async createUser(req: Request, res: Response): Promise<void> {
 ### Standard Codes
 
 | Code | Use Case | Example |
-|------|----------|---------|
+| ------ | ---------- | --------- |
 | 200 | Success (GET, PUT) | User retrieved, Updated |
 | 201 | Created (POST) | User created |
 | 204 | No Content (DELETE) | User deleted |
@@ -655,6 +665,7 @@ this.handleError(new ForbiddenError('No permission'), res, 'operation', 403);
 ### Identify Routes Needing Refactoring
 
 **Red Flags:**
+
 - Route file > 100 lines
 - Multiple try-catch blocks in one route
 - Direct database access (Prisma calls)
@@ -662,6 +673,7 @@ this.handleError(new ForbiddenError('No permission'), res, 'operation', 403);
 - Permission checks in routes
 
 **Check your routes:**
+
 ```bash
 # Find large route files
 wc -l form/src/routes/*.ts | sort -n
@@ -673,6 +685,7 @@ grep -r "PrismaService" form/src/routes/
 ### Refactoring Process
 
 **1. Extract to Controller:**
+
 ```typescript
 // Before: Route with logic
 router.post('/action', async (req, res) => {
@@ -698,6 +711,7 @@ async performAction(req: Request, res: Response): Promise<void> {
 ```
 
 **2. Extract to Service:**
+
 ```typescript
 // Controller stays thin
 async performAction(req: Request, res: Response): Promise<void> {
@@ -723,6 +737,7 @@ export class ActionService {
 ```
 
 **3. Add Repository (if needed):**
+
 ```typescript
 // Service calls repository
 export class ActionService {
@@ -751,6 +766,7 @@ export class ActionRepository {
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md) - Main guide
 - [services-and-repositories.md](services-and-repositories.md) - Service layer details
 - [complete-examples.md](complete-examples.md) - Full refactoring examples
