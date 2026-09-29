@@ -63,7 +63,7 @@
     "@azure/msal-react": "^2.2.0",
     "@microsoft/applicationinsights-common": "^3.4.3",
     "@microsoft/applicationinsights-react-js": "^3.4.3",
-    "@microsoft/applicationinsights-web": "^3.4.3",
+    "@microsoft/applicationinsights-web": "^3.4.4",
     "@popperjs/core": "^2.11.8",
     "@react-aria/optimize-locales-plugin": "^2.0.2",
     "bootstrap": "^5.3.8",
