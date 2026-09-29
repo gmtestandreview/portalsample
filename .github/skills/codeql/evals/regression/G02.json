@@ -1,0 +1,7 @@
+{
+  "id": "G02",
+  "group": "regression",
+  "required": true,
+  "prompt": "Give me the CodeQL CLI database command for compiled code.",
+  "expected": "Do not state every compiled language requires --command; choose interface/language-specific strategy."
+}
