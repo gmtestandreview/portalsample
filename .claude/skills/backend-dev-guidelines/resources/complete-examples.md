@@ -361,6 +361,7 @@ router.post('/posts', async (req, res) => {
 ### AFTER: Clean Separation ✅
 
 **1. Clean Route:**
+
 ```typescript
 // routes/postRoutes.ts
 import { PostController } from '../controllers/PostController';
@@ -379,6 +380,7 @@ export default router;
 ```
 
 **2. Controller:**
+
 ```typescript
 // controllers/PostController.ts
 export class PostController extends BaseController {
@@ -409,6 +411,7 @@ export class PostController extends BaseController {
 ```
 
 **3. Service:**
+
 ```typescript
 // services/postService.ts
 export class PostService {
@@ -453,6 +456,7 @@ export class PostService {
 ```
 
 **Result:**
+
 - Route: 8 lines (was 200+)
 - Controller: 25 lines
 - Service: 40 lines
@@ -465,6 +469,7 @@ export class PostService {
 ### Complete User Management Feature
 
 **1. Types:**
+
 ```typescript
 // types/user.types.ts
 export interface User {
@@ -489,6 +494,7 @@ export interface UpdateUserDTO {
 ```
 
 **2. Validators:**
+
 ```typescript
 // validators/userSchemas.ts
 import { z } from 'zod';
@@ -508,6 +514,7 @@ export const updateUserSchema = z.object({
 ```
 
 **3. Repository:**
+
 ```typescript
 // repositories/UserRepository.ts
 export class UserRepository {
@@ -528,6 +535,7 @@ export class UserRepository {
 ```
 
 **4. Service:**
+
 ```typescript
 // services/userService.ts
 export class UserService {
@@ -558,6 +566,7 @@ export class UserService {
 ```
 
 **5. Controller:**
+
 ```typescript
 // controllers/UserController.ts
 export class UserController extends BaseController {
@@ -581,6 +590,7 @@ export class UserController extends BaseController {
 ```
 
 **6. Routes:**
+
 ```typescript
 // routes/userRoutes.ts
 const router = Router();
@@ -595,6 +605,7 @@ export default router;
 ```
 
 **7. Register in app.ts:**
+
 ```typescript
 // app.ts
 import userRoutes from './routes/userRoutes';
@@ -603,7 +614,8 @@ app.use('/api/users', userRoutes);
 ```
 
 **Complete Request Flow:**
-```
+
+```text
 POST /api/users
   ↓
 userRoutes matches /
@@ -632,6 +644,7 @@ Controller formats response
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md)
 - [routing-and-controllers.md](routing-and-controllers.md)
 - [services-and-repositories.md](services-and-repositories.md)

@@ -414,6 +414,7 @@ const styles = {
 ## Summary
 
 **Styling Checklist:**
+
 - ✅ Use `sx` prop for MUI styling
 - ✅ Type-safe with `SxProps<Theme>`
 - ✅ <100 lines: inline; >100 lines: separate file
@@ -424,5 +425,6 @@ const styles = {
 - ❌ No makeStyles or styled()
 
 **See Also:**
+
 - [component-patterns.md](component-patterns.md) - Component structure
 - [complete-examples.md](complete-examples.md) - Full styling examples

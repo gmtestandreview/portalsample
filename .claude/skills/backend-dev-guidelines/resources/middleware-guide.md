@@ -83,12 +83,14 @@ export function getAuditContext(): AuditContext | null {
 ```
 
 **Benefits:**
+
 - Context propagates through entire request
 - No need to pass context through every function
 - Automatically available in services, repositories
 - Type-safe context access
 
 **Usage in Services:**
+
 ```typescript
 import { getAuditContext } from '../middleware/auditMiddleware';
 
@@ -208,6 +210,7 @@ app.use(Sentry.Handlers.errorHandler());
 ---
 
 **Related Files:**
+
 - [SKILL.md](SKILL.md)
 - [routing-and-controllers.md](routing-and-controllers.md)
 - [async-and-errors.md](async-and-errors.md)

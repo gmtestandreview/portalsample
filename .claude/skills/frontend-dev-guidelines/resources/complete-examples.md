@@ -146,6 +146,7 @@ export default UserProfile;
 ```
 
 **Usage:**
+
 ```typescript
 <SuspenseLoader>
     <UserProfile userId='123' onUpdate={() => console.log('Updated')} />
@@ -533,6 +534,7 @@ export default UserDashboard;
 ```
 
 **Benefits:**
+
 - Each section loads independently
 - User sees partial content sooner
 - Better perceived perblogance
@@ -590,6 +592,7 @@ export function useSuspensePost(blogId: number, postId: number) {
 ```
 
 **Why this pattern:**
+
 - Checks grid cache before API
 - Instant data if user came from grid
 - Falls back to API if not cached
