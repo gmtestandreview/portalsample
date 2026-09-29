@@ -72,6 +72,7 @@ export interface INumericFormatProps {
   renderText?: (formattedValue: string) => ReactNode;
   allowedDecimalSeparators?: string[];
   decimalScale?: number;
+  getInputRef?: React.Ref<HTMLInputElement>;
   role?: string;
   children?: React.ReactNode;
 }
