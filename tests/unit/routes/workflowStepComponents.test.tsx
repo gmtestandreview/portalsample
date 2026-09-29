@@ -139,7 +139,9 @@ vi.mock('formik', () => {
 
   return {
     useFormikContext: () => ({
+      initialValues: mocks.formikValues,
       values: mocks.formikValues,
+      submitCount: 0,
       setFieldValue: mocks.setFieldValue,
       setFieldTouched: mocks.setFieldTouched,
       getFieldMeta: (name: string) => ({ initialValue: getPath(name) }),
@@ -408,6 +410,7 @@ vi.mock('../../../ClientApp/src/instrumentation/AppLogger', () => ({
 }));
 
 vi.mock('react-number-format', () => ({
+  NumericFormat: ({ value }: { value?: string }) => <span>{value}</span>,
   PatternFormat: ({ value }: { value?: string }) => <span>{value}</span>,
 }));
 

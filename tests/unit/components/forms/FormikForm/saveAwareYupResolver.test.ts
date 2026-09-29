@@ -1,5 +1,5 @@
 import { ReturnMethodValues } from '@/api/web-api-client';
-import { createSaveAwareYupResolver } from '@/components/forms/FormikForm/rhfCompat';
+import { createSaveAwareYupResolver } from '@/components/forms/FormikForm/saveAwareYupResolver';
 import type { ValidationSchema } from '@/components/forms/FormikForm/types';
 import {
   deliveryAndReturnSaveValidation,
@@ -59,6 +59,34 @@ describe('createSaveAwareYupResolver', () => {
     expect(
       (result.errors as Record<string, { type: string }>).carrierName
     ).toMatchObject({ type: 'validation' });
+  });
+
+  it('keeps the first Yup error when one field fails multiple rules', async () => {
+    const values = { saveAndExit: false, carrierName: '!' };
+    const firstError = new Yup.ValidationError(
+      'carrierName is too short',
+      values.carrierName,
+      'carrierName'
+    );
+    const secondError = new Yup.ValidationError(
+      'carrierName contains invalid characters',
+      values.carrierName,
+      'carrierName'
+    );
+    const schema: ValidationSchema = {
+      validate: () =>
+        Promise.reject(new Yup.ValidationError([firstError, secondError])),
+    };
+    const duplicatePathResolver = createSaveAwareYupResolver(undefined, schema);
+
+    const result = await duplicatePathResolver(values, undefined, {} as never);
+
+    expect(result.errors).toEqual({
+      carrierName: {
+        type: 'validation',
+        message: 'carrierName is too short',
+      },
+    });
   });
 
   it('returns empty errors and passes the values through for a fully valid object', async () => {

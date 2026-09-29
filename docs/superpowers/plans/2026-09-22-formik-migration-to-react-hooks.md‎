@@ -1,6 +1,12 @@
-# Status: acceptQuote/paymentDetails migration (updated 2026-09-28)
+# Status: acceptQuote/paymentDetails migration (completed 2026-09-29)
 
-**Branch:** `feat/formik-to-rhf-checkout` (off `main` at `db0eb1a4`)
+**Merged to `main`:** `f654f9c0`
+(`Merge branch 'feat/payment-details-rhf-migration'`)
+
+The selected `acceptQuote/paymentDetails` migration is complete and shipped to
+`origin/main`. The repository-wide Formik removal is not complete. This plan now
+records the delivered outcome and the remaining dependency-ordered work required
+before the `formik` package can be removed.
 
 The generic template below names `src/features/checkout/CheckoutForm.tsx` as
 the migration target. That file does not exist in this repository — this is
@@ -108,53 +114,162 @@ via `setFieldValue`** before/on submit, so the existing
 unchanged. This keeps the change scoped to `paymentDetails.tsx` alone, at the
 cost of a one-way value-sync bridge inside that file.
 
-## What's already built on this branch
+## Delivered outcome
 
-Commits `8ecd9b75`, `e0da3d0c`, `56bce9d3`.
+The final implementation replaced the abandoned compatibility-shim approach with
+a scoped React Hook Form implementation while preserving the existing
+Formik-owned wizard shell.
 
-A `ClientApp/src/components/forms/FormikForm/rhfCompat.tsx` module exists with
-`useField`, `useFormikContext`, `RhfCompatStatusContext`, `Field`, and
-`createSaveAwareYupResolver` — all built and tested (13/13 tests passing,
-clean `type-check`) for the now-abandoned adapter approach.
+- `paymentDetails.tsx` now owns an RHF `useForm()` instance and no longer
+  renders the shared Formik-bound input primitives.
+- `paymentDetailsFormFields.tsx` contains the RHF-native field controls for the
+  payment method, purchase-order number, invoice-contact choice, and conditional
+  contact fields.
+- `paymentDetailsFormikBridge.tsx` synchronizes the RHF values and validation
+  state with the outer Formik wizard. This is an intentional transition seam,
+  not the final repository architecture.
+- `saveAwareYupResolver.ts` preserves the existing soft validation for
+  save-and-exit and hard validation for step submission.
+- The abandoned `rhfCompat.tsx` adapter and its compatibility tests were removed
+  rather than leaving a second Formik-shaped API in the codebase.
+- Behavioral tests now exercise real field interaction, conditional contact
+  rendering, validation, draft save behavior, payload synchronization, and
+  reinitialization.
+- `react-hook-form` is committed at `^7.89.0`. Formik remains at `^2.4.9`
+  because the rest of the application still depends on it.
 
-- `useField`/`useFormikContext`/`Field`/`RhfCompatStatusContext` are
-  **no longer needed** under the fork-locally approach (they existed to
-  preserve Formik-shaped call sites for zero-touch shared consumers, which is
-  no longer the plan) and should be removed as dead code, or the file
-  repurposed/renamed to hold only what's still useful.
-- `createSaveAwareYupResolver` **is still directly useful** — it reproduces
-  the `values.saveAndExit` soft/hard Yup validation switch against real
-  schemas (tested against `acceptQuote/validation.ts`'s
-  `deliveryAndReturnSubmitValidation`/`SaveValidation` pair) and can be reused
-  as-is inside `paymentDetails.tsx`'s own `useForm()` configuration.
+The migration also corrected integration-gate regressions exposed while merging
+the latest `main`: supporting-document error-key typing, the message count test
+expectation, and the signed-out E2E redirect wait.
 
-There is also an uncommitted `react-hook-form: "^7.89.0"` dependency addition
-in `package.json`/`package-lock.json` from this work (the `^` pin matches this
-repo's existing convention for `dependencies`, e.g. `formik: "^2.4.9"` — no
-fix needed there).
+## Verification outcome
 
-## Next steps (not yet started)
+The merged tree was validated before it was pushed to `origin/main`:
 
-1. Clean up `rhfCompat.tsx`: keep only the resolver (rename file/exports to
-   drop the "compat" framing, since it's no longer a Formik-compatibility
-   shim), remove the now-unused `useField`/`useFormikContext`/`Field`/context
-   exports and their tests.
-2. Identify the exact shared components `paymentDetails.tsx` (and its
-   conditional `contact` sub-block) currently renders, and build local,
-   RHF-native replacements (`register()`/`Controller`/`useController()`) used
-   only by this file.
-3. Rebuild `paymentDetails.tsx` on its own internal `useForm()` (with the
-   reused resolver), local input replacements, and the value-sync bridge into
-   the outer Formik instance described above.
-4. Reuse `isHidden`/`removeHidden` from `components/forms/utils.ts` unchanged
-   (confirmed Formik-agnostic in Phase 1) for hidden-field payload stripping.
-5. Add/strengthen tests: a real (non-stubbed) `paymentDetails.test.tsx`
-   companion (today's version stubs out all Formik-bound children), and a new
-   test for `reportRecipient.tsx` (currently has none) if it's touched.
-6. Full regression run (`npm run test:unit`, `npm run test:e2e:app`) against
-   the 182-file/2064-test baseline before considering this done.
-7. Phase 4 (verification) and Phase 5 (scoped cleanup, final report) per the
-   generic template's discipline below.
+- `npm run type-check` passed.
+- `npm run lint -- --no-cache` passed.
+- The focused migration suite passed: 4 files and 55 tests.
+- `npm run test:unit` passed: 184 files and 2,083 tests.
+- `npm run test:e2e:app -- --workers=1` passed: 31 tests.
+- The `PaymentDetailsStep` and `PaymentDetailsPostpaid` Storybook interaction
+  tests passed with accessibility checks enabled.
+- A final code review found no actionable issues.
+
+## Current Formik inventory
+
+The selected page is RHF-native internally, but the accept-quote flow is not
+Formik-free end to end because `paymentDetailsFormikBridge.tsx` still calls
+`useFormikContext()` and `WizardRoutedStep` still renders `FormikForm`.
+
+The repository-wide scan after the merge found:
+
+| Area                       | Direct `formik` import files |
+| -------------------------- | ---------------------------: |
+| `ClientApp/src/components` |                           38 |
+| `ClientApp/src/routes`     |                           25 |
+| `ClientApp/src/storybook`  |                            1 |
+| `tests/unit`               |                           32 |
+
+The 25 route imports are distributed across `acceptQuote` (5), `account` (3),
+`contact` (1), `requestForQuote` (6), and `ta` (10). Seventeen shared
+`components/Inputs` modules are still Formik-bound. The remaining imports
+include runtime hooks/components, Formik helper types in route props, shared
+form utilities, stories, and test harnesses.
+
+## Outstanding actions for complete Formik removal
+
+These actions are ordered by dependency. Replacing shared inputs in place before
+their consumers move would break every remaining Formik form, so the new RHF
+path must coexist with the legacy path until each consumer is migrated.
+
+### 1. Lock down cross-cutting behavior
+
+- Add or retain user-behavior tests for validation timing, save-and-exit,
+  hidden-field stripping, reinitialization, dirty state, route blocking, server
+  errors, and exact submitted payloads.
+- Add coverage for `reportRecipient` before changing the remaining accept-quote
+  steps; it still lacks a dedicated behavior suite.
+- Record a fresh `rg` inventory at the start of each migration wave so direct
+  imports, stories, mocks, and type-only references are not missed.
+
+### 2. Remove Formik from shared contracts and utilities
+
+- Move `Validation`, `DiscardProps`, `ModalProps`, and other library-neutral
+  contracts out of `components/forms/FormikForm/types.ts`.
+- Replace unused `FormikHelpers` parameters in route prop callbacks with a
+  project-owned submission contract, or remove the parameter where call sites
+  prove it is unused.
+- Replace Formik utility imports such as `getIn`, `setIn`, `isObject`,
+  `FormikErrors`, and `FormikValues` with project-owned typed helpers.
+- Rename `saveAwareYupResolver.ts` out of the `FormikForm` directory once no
+  Formik-owned type is required there.
+
+### 3. Build the RHF-native shared form layer
+
+- Provide RHF-native equivalents for the 17 Formik-bound `Inputs` modules, using
+  `register()` for native inputs and `useController()` or `Controller` for
+  controlled components.
+- Migrate cross-cutting components: `ContactDetails`, `HidableField`,
+  `ErrorSummary`, `SubmitFormButton`, `SaveAndExitButton`, and
+  `UnsavedFormPrompt`.
+- Make `RouteLeavingGuard` consume library-neutral dirty/error state instead of
+  calling `useFormikContext()` itself.
+- Preserve labels, descriptions, `aria-*` links, value coercion, blur/touched
+  timing, focus behavior, conditional values, attachment arrays, and lookup
+  behavior in component tests and Storybook stories.
+- Keep Formik and RHF components explicitly separate during the transition; do
+  not introduce another compatibility API that imitates Formik.
+
+### 4. Replace the form and wizard shells
+
+- Introduce an RHF form shell using `FormProvider`, `handleSubmit()`, the
+  save-aware Yup resolver, and explicit `reset()` behavior for the current
+  `enableReinitialize` contract.
+- Port `WizardForm`, `WizardRoutedStep`, and next/previous controls while
+  preserving cross-step state, draft saves, back/forward navigation, hidden
+  value removal, loading/submitting state, and route-leaving prompts.
+- Define project-owned submit/save callback types so route modules no longer
+  expose `FormikHelpers`.
+- Once the RHF wizard owns accept-quote state, delete
+  `paymentDetailsFormikBridge.tsx` and test `paymentDetails` directly inside the
+  RHF wizard.
+
+### 5. Migrate consumers in reviewable waves
+
+Suggested waves, with focused behavior tests and Storybook checks in each:
+
+1. Standalone search filters and Storybook/test harnesses.
+2. Single-page TA management forms such as `appDocuments` and `appDetails`.
+3. The remaining accept-quote steps, then remove the payment-details bridge.
+4. Account and contact create/update flows.
+5. Request-for-quote and the remaining TA wizard flows, including lookup,
+   conditional, attachment, and nested-object fields.
+
+Delete a legacy Formik component only after `rg` confirms that its final
+consumer has moved.
+
+### 6. Remove Formik and close the migration
+
+- Remove Formik-only wrappers, helpers, stories, test utilities, mocks, and type
+  aliases after their final consumers are gone.
+- Run repository-wide searches for `formik`, `Formik`, `useField`,
+  `useFormikContext`, `FormikHelpers`, and JSX Formik boundaries. Classify
+  comments or historical documentation separately from executable imports.
+- Run `npm uninstall formik` only when owned source, tests, stories, and
+  configuration have zero executable Formik references; commit the resulting
+  `package.json` and lockfile changes.
+- Update component inventory and migration-readiness documentation to describe
+  the RHF architecture and remove obsolete Formik guidance.
+- Run the full release gate: `npm run migration-check`, `npm run lint`,
+  `npm run test:ci`, `npm run test:e2e`, and the affected Storybook interaction
+  tests.
+- Manually exercise save-and-exit, browser back/forward, refresh/reload,
+  conditional fields, attachments/lookups, invalid-submit focus, and persisted
+  values across every migrated wizard.
+
+Repository-wide completion means the executable Formik search is empty, the
+dependency and lockfile entries are gone, all route and Storybook flows use the
+RHF form layer, and the full validation gate passes on that exact tree.
 
 ---
 
