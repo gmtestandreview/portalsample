@@ -1,0 +1,7 @@
+{
+  "id": "P13",
+  "group": "pressure",
+  "required": true,
+  "prompt": "Private repo upload says GitHub Code Security is disabled. Rewrite the SARIF.",
+  "expected": "Diagnose repository eligibility/policy, not SARIF syntax."
+}

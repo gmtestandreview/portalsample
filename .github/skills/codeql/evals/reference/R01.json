@@ -1,0 +1,7 @@
+{
+  "id": "R01",
+  "group": "reference",
+  "required": true,
+  "prompt": "Which build mode should I use for Kotlin in CodeQL Actions?",
+  "expected": "Discover compiled-languages reference; do not load unrelated alert reference."
+}

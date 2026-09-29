@@ -1,265 +1,139 @@
-# CodeQL SARIF Output Reference
+# CodeQL and GitHub SARIF
 
-Detailed reference for the SARIF v2.1.0 output produced by CodeQL analysis. Use this when interpreting or processing CodeQL scan results.
+Load this reference when generating, validating, interpreting, or uploading SARIF for GitHub code scanning.
 
-## About SARIF
+## Keep three authorities separate
 
-SARIF (Static Analysis Results Interchange Format) is a standardized JSON format for representing static analysis tool output. CodeQL produces SARIF v2.1.0 (specification: `sarifv2.1.0`).
+1. **OASIS SARIF 2.1.0 + Errata 01** defines SARIF syntax and semantics.
+2. **GitHub SARIF support** defines the SARIF 2.1.0 subset/properties and ingestion limits used by code scanning.
+3. **The analysis producer** (CodeQL or a third-party tool) determines which supported properties it emits.
 
-- Specification: [OASIS SARIF v2.1.0](https://docs.oasis-open.org/sarif/sarif/v2.1.0/sarif-v2.1.0.html)
-- Schema: [sarif-schema-2.1.0.json](https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json)
-- Format type: `sarifv2.1.0` (passed to `--format` flag)
+A schema-valid SARIF file can still be rejected by GitHub. Conversely, GitHub may ignore/truncate unsupported or excess information without changing the OASIS standard.
 
-## Top-Level Structure
+## OASIS conformance baseline
 
-### `sarifLog` Object
+A top-level `sarifLog` must contain `version` with value `"2.1.0"` and `runs`. `$schema` is optional; when present it must identify a schema for the same SARIF version.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `$schema` | ✅ | Link to the SARIF schema |
-| `version` | ✅ | SARIF specification version (`"2.1.0"`) |
-| `runs` | ✅ | Array containing a single `run` object per language |
+Use the OASIS Errata 01 JSON schema when structural conformance is in question. Do not treat schema validation as proof of GitHub compatibility.
 
-### `run` Object
+## GitHub compatibility
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `tool` | ✅ | Tool information (`toolComponent`) |
-| `artifacts` | ✅ | Array of artifact objects for every file referenced in a result |
-| `results` | ✅ | Array of `result` objects |
-| `newLineSequences` | ✅ | Newline character sequences |
-| `columnKind` | ✅ | Column counting method |
-| `properties` | ✅ | Contains `semmle.formatSpecifier` identifying the format |
+GitHub code scanning accepts SARIF 2.1.0 and uses a documented subset of SARIF properties. Required supported properties must have explicit non-empty values.
 
-## Tool Information
+For third-party SARIF, validate both:
 
-### `tool` Object
+- SARIF structure/conformance; and
+- GitHub code-scanning compatibility/supported properties.
 
-Contains a single `driver` property.
+CodeQL-generated SARIF is less likely to be syntactically invalid; do not assume that makes every upload acceptable.
 
-### `toolComponent` Object (Driver)
+## Current GitHub ingestion limits
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `name` | ✅ | `"CodeQL command-line toolchain"` |
-| `organization` | ✅ | `"GitHub"` |
-| `version` | ✅ | CodeQL release version (e.g., `"2.19.0"`) |
-| `rules` | ✅ | Array of `reportingDescriptor` objects for available/run rules |
+Treat these as GitHub service limits and verify the current SARIF-support page before encoding them into external automation.
 
-## Rules
+| SARIF data | Hard maximum | Stored/displayed subset |
+| --- | ---: | ---: |
+| Runs per file | 20 | no separate truncation |
+| Results per run | 25,000 | top 5,000 |
+| Rules per run | 25,000 | no separate truncation |
+| Tool extensions per run | 100 | no separate truncation |
+| Thread-flow locations per result | 10,000 | top 1,000 |
+| Locations per result | 1,000 | 100 |
+| Tags per rule | 20 | 10 |
+| Repository alert limit | 1,000,000 | no separate truncation |
 
-### `reportingDescriptor` Object (Rule)
+Each gzip-compressed SARIF upload must be at most 10 MB.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `id` | ✅ | Rule identifier from `@id` query property (e.g., `cpp/unsafe-format-string`). Uses `@opaqueid` if defined. |
-| `name` | ✅ | Same as `@id` property from the query |
-| `shortDescription` | ✅ | From `@name` query property |
-| `fullDescription` | ✅ | From `@description` query property |
-| `defaultConfiguration` | ❌ | `reportingConfiguration` with `enabled` (true/false) and `level` based on `@severity`. Omitted if no `@severity` specified. |
+GitHub distinguishes soft/display limits from hard acceptance limits. Do not describe every limit exceedance as a rejected upload: some excess data is truncated/prioritized, while hard-limit violations are rejected.
 
-### Severity Mapping
+## Categories, correlation, and fingerprints
 
-| CodeQL `@severity` | SARIF `level` |
-|---|---|
-| `error` | `error` |
-| `warning` | `warning` |
-| `recommendation` | `note` |
+Use a stable `category` when multiple analyses for the same commit need distinct result sets. When a directory is uploaded, each SARIF file needs a unique `runAutomationDetails.id`.
 
-## Results
+If `partialFingerprints` are absent, `github/codeql-action/upload-sarif` can calculate them when the repository contains the SARIF file and analyzed source. This is GitHub upload behavior, not an OASIS requirement.
 
-### `result` Object
+Unstable rule names or `artifactLocation.uri` values can create ever-growing sets of apparently unique alerts. Avoid temporary paths, commit hashes, image SHAs, or other nondeterministic identifiers in alert identity.
 
-By default, results are grouped by unique message format string and primary location. Two results at the same location with the same message appear as a single result. Disable grouping with `--ungroup-results`.
+## Failure-specific diagnosis
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `ruleId` | ✅ | Rule identifier (matches `reportingDescriptor.id`) |
-| `ruleIndex` | ✅ | Index into the `rules` array |
-| `message` | ✅ | Problem description. May contain SARIF "Message with placeholder" linking to `relatedLocations`. |
-| `locations` | ✅ | Array containing a single `location` object |
-| `partialFingerprints` | ✅ | Dictionary with at least `primaryLocationLineHash` for deduplication |
-| `codeFlows` | ❌ | Populated for `@kind path-problem` queries with one or more `codeFlow` objects |
-| `relatedLocations` | ❌ | Populated when message has placeholder options; each unique location included once |
-| `suppressions` | ❌ | If suppressed: single `suppression` object with `@kind: IN_SOURCE`. If not suppressed but other results are: empty array. Otherwise: not set. |
+### Missing token
 
-### Fingerprints
+Error family: a GitHub token is required or the authentication method lacks permission.
 
-`partialFingerprints` contains:
-- `primaryLocationLineHash` — fingerprint based on the context of the primary location
+For direct/API-style authentication, current GitHub guidance distinguishes:
 
-Used by GitHub to track alerts across commits and avoid duplicate notifications.
+- fine-grained PAT: repository `write`;
+- classic PAT: `security_events` for private/internal repositories, or `public_repo` for public repositories;
+- GitHub App: repository `security_events`.
 
-## Locations
+For GitHub Actions, prefer `GITHUB_TOKEN` with least-privilege workflow permissions appropriate to the upload. Never print or embed a token.
 
-### `location` Object
+### Invalid SARIF
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `physicalLocation` | ✅ | Physical file location |
-| `id` | ❌ | Present in `relatedLocations` array |
-| `message` | ❌ | Present in `relatedLocations` and `threadFlowLocation.location` |
+If GitHub cannot parse the file:
 
-### `physicalLocation` Object
+1. inspect the upload/workflow log;
+2. validate the file;
+3. compare it with GitHub's supported SARIF format/properties;
+4. correct the producer or file;
+5. retry after the cause is understood.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `artifactLocation` | ✅ | File reference |
-| `region` | ❌ | Present for text file locations |
-| `contextRegion` | ❌ | Present when location has an associated snippet |
+Do not respond to a syntax error by changing repository permissions.
 
-### `region` Object
+### Results exceed limits
 
-Two types of regions may be produced:
+Identify the exact object/limit from the error before changing analysis.
 
-**Line/Column Offset Regions:**
+For soft-limit warnings, GitHub may retain/display only prioritized values; a configuration change may not be required.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `startLine` | ✅ | Starting line number |
-| `startColumn` | ❌ | Omitted if equal to default value of 1 |
-| `endLine` | ❌ | Omitted if identical to `startLine` |
-| `endColumn` | ✅ | Ending column number |
-| `snippet` | ❌ | Source code snippet |
+For hard-limit failures, reduce the responsible dimension. Examples include reducing noisy queries/results, splitting runs/rules into separately categorized uploads where GitHub recommends it, or reducing dataflow paths. Do not arbitrarily split identical noisy results merely to bypass limits.
 
-**Character Offset Regions:**
+If CodeQL itself produces an extension-limit error that GitHub says CodeQL should not generate, preserve evidence and escalate to GitHub Support rather than inventing a workaround.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `charOffset` | ✅ | Character offset from start of file |
-| `charLength` | ✅ | Length in characters |
-| `snippet` | ❌ | Source code snippet |
+For repository alert-limit failures, investigate nondeterministic result identity. If all analysis uploads are blocked by the repository alert limit, GitHub documents a support-assisted recovery after fixing the offending configuration; there is no self-service alert deletion path for that condition.
 
-> Consumers should handle both region types robustly.
+### File too large
 
-## Artifacts
+GitHub rejects SARIF uploads larger than 10 MB after gzip compression.
 
-### `artifact` Object
+First determine whether the file was gzip-compressed and whether the compressed file remains over 10 MB. If still too large, reduce analysis output based on evidence: exclude genuinely lower-value analyzed code where appropriate, avoid redundant build variants, reduce unnecessary query volume/noisy queries, or omit excessive dataflow paths.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `location` | ✅ | `artifactLocation` object |
-| `index` | ✅ | Index of the artifact |
-| `contents` | ❌ | Populated with `artifactContent` when using `--sarif-add-file-contents` |
+Do not indiscriminately exclude production code or security queries solely to make an upload fit.
 
-### `artifactLocation` Object
+### GitHub Code Security disabled
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `uri` | ✅ | File path (relative or absolute) |
-| `index` | ✅ | Index reference |
-| `uriBaseId` | ❌ | Set when file is relative to a known abstract location (e.g., source root) |
+For private/internal repositories, CodeQL SARIF upload can fail when GitHub Code Security is disabled or blocked by policy. Public repositories have Code Security enabled by default.
 
-## Code Flows (Path Problems)
+Treat this as repository eligibility/policy, not SARIF syntax. Do not tell the user to rewrite a valid SARIF file to solve it.
 
-For queries of `@kind path-problem`, results include code flow information showing the data flow path.
+### CodeQL default setup enabled
 
-### `codeFlow` Object
+GitHub blocks uploads of **CodeQL-generated** SARIF from the CodeQL Action, CLI, or API while CodeQL default setup is enabled. This restriction is specific to CodeQL results.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `threadFlows` | ✅ | Array of `threadFlow` objects |
+Present the actual configuration choice:
 
-### `threadFlow` Object
+- keep default setup and disable the competing CodeQL SARIF upload; or
+- intentionally disable default CodeQL setup and use the advanced/external upload path.
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `locations` | ✅ | Array of `threadFlowLocation` objects |
+Do not silently disable default setup merely to make an upload succeed. Preserve rollback/configuration context because switching setup affects security configuration.
 
-### `threadFlowLocation` Object
+## Validation sequence
 
-| Property | Always Generated | Description |
-|---|:---:|---|
-| `location` | ✅ | A `location` object for this step in the flow |
+When a SARIF upload fails:
 
-## Automation Details
+1. capture the exact error and upload method;
+2. identify whether results came from CodeQL or a third-party tool;
+3. check authentication/permissions;
+4. check repository eligibility and CodeQL default-setup conflict where applicable;
+5. validate SARIF syntax/conformance if indicated;
+6. check GitHub-supported properties;
+7. check the specific size/object limit named by GitHub;
+8. verify repository/ref/commit/category identity;
+9. apply the smallest causal correction;
+10. retry and confirm ingestion.
 
-The `category` value from `github/codeql-action/analyze` appears as `<run>.automationDetails.id` in the SARIF output.
+Do not collapse authentication, syntax, eligibility, setup conflict, size, and object-limit failures into one generic “SARIF upload failed” remedy.
 
-Example:
-```json
-{
-  "automationDetails": {
-    "id": "/language:javascript-typescript"
-  }
-}
-```
+## Security
 
-## Key CLI Flags for SARIF
-
-| Flag | Effect |
-|---|---|
-| `--format=sarif-latest` | Produce SARIF v2.1.0 output |
-| `--sarif-category=<cat>` | Set `automationDetails.id` for result categorization |
-| `--sarif-add-file-contents` | Include source file content in `artifact.contents` |
-| `--ungroup-results` | Report every occurrence separately (no deduplication by location + message) |
-| `--output=<file>` | Write SARIF to specified file |
-
-## Third-Party SARIF Support
-
-When uploading SARIF from non-CodeQL tools, ensure these properties are populated for best results on GitHub.
-
-### Recommended `reportingDescriptor` Properties
-
-| Property | Required | Description |
-|---|:---:|---|
-| `id` | ✅ | Unique rule identifier |
-| `name` | ❌ | Rule name (max 255 chars) |
-| `shortDescription.text` | ✅ | Concise description (max 1024 chars) |
-| `fullDescription.text` | ✅ | Full description (max 1024 chars) |
-| `defaultConfiguration.level` | ❌ | Default severity: `note`, `warning`, `error` |
-| `help.text` | ✅ | Documentation in text format |
-| `help.markdown` | ❌ | Documentation in Markdown (displayed if available) |
-| `properties.tags[]` | ❌ | Tags for filtering (e.g., `security`) |
-| `properties.precision` | ❌ | `very-high`, `high`, `medium`, `low` — affects display ordering |
-| `properties.problem.severity` | ❌ | Non-security severity: `error`, `warning`, `recommendation` |
-| `properties.security-severity` | ❌ | Score 0.0–10.0 for security queries. Maps to: >9.0=critical, 7.0–8.9=high, 4.0–6.9=medium, 0.1–3.9=low |
-
-### Source File Location Requirements
-
-- Use relative paths (relative to repository root) when possible
-- Absolute URIs are converted to relative using the source root
-- Source root can be set via:
-  - `checkout_path` input to `github/codeql-action/analyze`
-  - `checkout_uri` parameter to SARIF upload API
-  - `invocations[0].workingDirectory.uri` in the SARIF file
-- Consistent file paths are required across runs for fingerprint stability
-- Symlinked files must use resolved (non-symlink) URIs
-
-### Fingerprint Requirements
-
-- `partialFingerprints` with `primaryLocationLineHash` prevents duplicate alerts across commits
-- CodeQL SARIF automatically includes fingerprints
-- Third-party SARIF: the `upload-sarif` action computes fingerprints if missing
-- API uploads without fingerprints may produce duplicate alerts
-
-## Upload Limits
-
-### File Size
-- Maximum: **10 MB** (gzip-compressed)
-- If too large: reduce query scope, remove `--sarif-add-file-contents`, or split into multiple uploads
-
-### Object Count Limits
-
-| Object | Maximum |
-|---|---|
-| Runs per file | 20 |
-| Results per run | 25,000 |
-| Rules per run | 25,000 |
-| Tool extensions per run | 100 |
-| Thread flow locations per result | 10,000 |
-| Locations per result | 1,000 |
-| Tags per rule | 20 |
-
-Files exceeding these limits are rejected. Split analysis across multiple SARIF uploads with different `--sarif-category` values.
-
-### Validation
-
-Validate SARIF files before upload using the [Microsoft SARIF validator](https://sarifweb.azurewebsites.net/).
-
-## Backwards Compatibility
-
-- Fields marked "always generated" will never be removed in future versions
-- Fields not always generated may change circumstances under which they appear
-- New fields may be added without breaking changes
-- Consumers should be robust to both presence and absence of optional fields
+SARIF can contain repository paths, snippets, messages, code flows, and analysis metadata. Treat it as potentially sensitive build output. Do not publish or transmit it outside the intended destination without authorization.
