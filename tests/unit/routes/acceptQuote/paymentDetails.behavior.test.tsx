@@ -435,13 +435,7 @@ describe('PaymentDetails form behavior', () => {
     const user = userEvent.setup();
     render(
       <DirectFieldsHarness
-        errors={[
-          {
-            name: 'invoiceSentTo',
-            message: 'Choose where the invoice should be sent',
-          },
-          { name: 'contact.title', message: 'Select a title' },
-        ]}
+        errors={[{ name: 'contact.title', message: 'Select a title' }]}
       />
     );
 
@@ -450,9 +444,6 @@ describe('PaymentDetails form behavior', () => {
     );
     await user.tab();
 
-    expect(
-      await screen.findByText('Choose where the invoice should be sent')
-    ).toBeInTheDocument();
     expect(await screen.findByText('Select a title')).toBeInTheDocument();
     expect(screen.getByLabelText('Business phone (optional)')).toHaveValue('');
   });

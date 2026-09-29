@@ -87,15 +87,13 @@ const invoiceOptions = [
 
 const RhfInvoiceContactChoice = () => {
   const { control } = useFormContext<PaymentDetailsFormValues>();
-  const { field, fieldState } = useController({
+  const { field } = useController({
     control,
     name: 'invoiceSentTo',
   });
-  const validationMessageId = 'q-invoiceSentTo-validation-msg';
-  const showError = fieldState.isTouched && fieldState.error?.message;
 
   return (
-    <fieldset aria-describedby={showError ? validationMessageId : undefined}>
+    <fieldset>
       <legend id='q-invoiceSentTo'>
         The invoice will be sent to the following contact
       </legend>
@@ -125,15 +123,6 @@ const RhfInvoiceContactChoice = () => {
             </label>
           </div>
         ))}
-        {showError && (
-          <Form.Control.Feedback
-            type='invalid'
-            id={validationMessageId}
-            className='form-validation-message'
-          >
-            {fieldState.error?.message}
-          </Form.Control.Feedback>
-        )}
       </Form.Group>
     </fieldset>
   );

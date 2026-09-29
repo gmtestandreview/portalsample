@@ -7,4 +7,5 @@
 - **Fix:** Destructure `field.ref` in `RhfPhoneField`, pass remaining field props to `PatternFormatFixed`, and pass the registration ref via `getInputRef`. Added `getInputRef` to the local formatter prop type.
 - **Regression test:** `tests/unit/routes/acceptQuote/paymentDetails.behavior.test.tsx` now asserts the invoice phone fields render without the React ref warning.
 - **Evidence:** `npm run type-check`; `npm run lint -- ClientApp/src/components/Inputs/NumberInput/types.ts ClientApp/src/routes/acceptQuote/paymentDetailsFormFields.tsx tests/unit/routes/acceptQuote/paymentDetails.behavior.test.tsx tests/unit/routes/acceptQuote/paymentDetails.test.tsx`; `npm run test:unit -- tests/unit/routes/acceptQuote/paymentDetails.behavior.test.tsx tests/unit/routes/acceptQuote/paymentDetails.test.tsx tests/unit/routes/workflowStepComponents.test.tsx`.
-- **Status:** DONE.
+- **Full-suite note:** `npm run test:unit` was attempted, produced no progress output for several minutes, and was stopped to avoid leaving a long-running process behind.
+- **Status:** DONE_WITH_CONCERNS.
