@@ -22,6 +22,7 @@ TypeScript strict mode is **enabled** in the project:
 ```
 
 **This means:**
+
 - No implicit `any` types
 - Null/undefined must be handled explicitly
 - Type safety enforced
@@ -56,6 +57,7 @@ function handleUnknown(data: unknown) {
 ```
 
 **If you truly don't know the type:**
+
 - Use `unknown` (forces type checking)
 - Use type guards to narrow
 - Document why type is unknown
@@ -116,6 +118,7 @@ import { User } from '~types/user';  // Unclear if type or value
 ```
 
 **Benefits:**
+
 - Clearly separates types from values
 - Better tree-shaking
 - Prevents circular dependencies
@@ -156,6 +159,7 @@ export const MyComponent: React.FC<MyComponentProps> = ({
 ```
 
 **Key Points:**
+
 - Separate interface for props
 - JSDoc comments for each prop
 - Optional props use `?`
@@ -403,6 +407,7 @@ if (data) {
 ## Summary
 
 **TypeScript Checklist:**
+
 - ✅ Strict mode enabled
 - ✅ No `any` type (use `unknown` if needed)
 - ✅ Explicit return types on functions
@@ -414,5 +419,6 @@ if (data) {
 - ❌ Avoid type assertions unless necessary
 
 **See Also:**
+
 - [component-patterns.md](component-patterns.md) - Component typing
 - [data-fetching.md](data-fetching.md) - API typing
