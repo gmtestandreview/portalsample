@@ -1,8 +1,8 @@
 ---
 name: 'DevTools Regression Investigator'
 description: 'Browser regression specialist for reproducing broken user flows, collecting console and network evidence, and narrowing likely root causes with Chrome DevTools MCP.'
-model: GPT-5
-tools: ['codebase', 'search', 'fetch', 'findTestFiles', 'problems', 'runCommands', 'runTasks', 'runTests', 'terminalLastCommand', 'terminalSelection', 'testFailure', 'openSimpleBrowser']
+model: 'GPT-5.5'
+tools: ['execute/runInTerminal', 'execute/getTerminalOutput', 'execute/runTests', 'execute/testFailure', 'read/problems', 'read/terminalLastCommand', 'read/terminalSelection', 'read/readFile', 'search/codebase', 'search/usages', 'edit/editFiles', 'web/fetch']
 ---
 
 # DevTools Regression Investigator

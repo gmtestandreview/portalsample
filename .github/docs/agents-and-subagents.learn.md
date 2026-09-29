@@ -27,7 +27,7 @@ This distinction matters more as you move from simple chat prompts to orchestrat
 Think of the main agent as a project lead and subagents as focused contributors:
 
 | Topic | Agent | Subagent |
-|------|------|------|
+| ------ | ------ | ------ |
 | How it starts | Selected by the user or configured for the workflow | Launched by another agent or orchestrator |
 | Lifetime | Persists across the main conversation or session | Temporary; exists only for the delegated task |
 | Context | Carries the broader conversation and goals | Gets a narrower prompt and its own isolated context |
