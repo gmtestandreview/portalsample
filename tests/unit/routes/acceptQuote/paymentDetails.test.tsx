@@ -197,15 +197,17 @@ describe('PaymentDetails', () => {
       ).toHaveAttribute('name', 'invoiceSentTo');
     });
 
-    it('prefixes key names with paymentDetails. in summary mode', () => {
-      acquireTokenSilentMock.mockReturnValue(new Promise(() => {}));
+    it('prefixes key names with paymentDetails. in summary mode', async () => {
+      mockGetPaymentDetails.mockResolvedValue(
+        makePreInfo('Standard', 'Q-SUMMARY-001')
+      );
       renderPaymentDetails({ ...defaultProps, isSummary: true });
 
       expect(screen.getByTestId('text-input')).toHaveAttribute(
         'data-name',
         'paymentDetails.purchaseOrderNo'
       );
-      expect(screen.getByText('Your NMI Quotation ID')).toBeInTheDocument();
+      expect(await screen.findByText(/Q-SUMMARY-001/)).toBeInTheDocument();
       expect(screen.getByTestId('radio-group')).toHaveAttribute(
         'data-name',
         'paymentDetails.invoiceSentTo'
