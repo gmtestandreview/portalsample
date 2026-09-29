@@ -1,0 +1,7 @@
+{
+  "id": "R02",
+  "group": "reference",
+  "required": true,
+  "prompt": "Why are two SARIF uploads replacing each other's results?",
+  "expected": "Discover SARIF reference; reason about category/runAutomationDetails identity."
+}

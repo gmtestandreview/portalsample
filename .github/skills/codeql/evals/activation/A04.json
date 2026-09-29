@@ -1,0 +1,7 @@
+{
+  "id": "A04",
+  "group": "activation",
+  "required": true,
+  "prompt": "Explain the SARIF standard independent of GitHub or CodeQL.",
+  "expected": "Near-miss: generic SARIF request should not require CodeQL skill."
+}

@@ -1,0 +1,7 @@
+{
+  "id": "A03",
+  "group": "activation",
+  "required": true,
+  "prompt": "Write a generic GitHub Actions workflow that runs unit tests.",
+  "expected": "Near-miss: do not activate CodeQL skill unless CodeQL/code scanning becomes material."
+}

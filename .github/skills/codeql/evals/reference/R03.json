@@ -1,0 +1,7 @@
+{
+  "id": "R03",
+  "group": "reference",
+  "required": true,
+  "prompt": "Can CodeQL tell me whether this dependency license is GPL-compatible?",
+  "expected": "Unsupported-query handling: do not fabricate CodeQL capability; explain scope boundary."
+}
