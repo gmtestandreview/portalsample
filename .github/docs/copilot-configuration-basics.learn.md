@@ -27,6 +27,7 @@ GitHub Copilot uses a hierarchical configuration system where settings at differ
 User settings apply globally across all your projects and represent your personal preferences. These are stored in your IDE's user configuration and travel with your IDE profile.
 
 **Common user-level settings**:
+
 - Enable/disable inline suggestions globally
 - Commit message style preferences
 - Default language preferences
@@ -38,6 +39,7 @@ User settings apply globally across all your projects and represent your persona
 Repository settings live in your codebase (typically in `.github/` although some editors allow customising the paths that Copilot will use) and are shared with everyone working on the project. These provide the highest level of customization and override both user and workspace settings.
 
 **Common repository-level customizations**:
+
 - Custom instructions for coding conventions
 - Reusable skills for common tasks
 - Specialized agents for project workflows
@@ -70,6 +72,7 @@ These settings control GitHub Copilot's core behavior across all IDEs:
 Control whether Copilot automatically suggests code completions as you type.
 
 **VS Code example**:
+
 ```json
 {
   "github.copilot.enable": {
@@ -87,6 +90,7 @@ Control whether Copilot automatically suggests code completions as you type.
 Control access to GitHub Copilot Chat in your IDE.
 
 **VS Code example**:
+
 ```json
 {
   "github.copilot.chat.enabled": true
@@ -100,6 +104,7 @@ Control access to GitHub Copilot Chat in your IDE.
 Configure how and when Copilot generates suggestions.
 
 **VS Code example**:
+
 ```json
 {
   "editor.inlineSuggest.enabled": true,
@@ -114,6 +119,7 @@ Configure how and when Copilot generates suggestions.
 Enable or disable Copilot for specific programming languages.
 
 **VS Code example**:
+
 ```json
 {
   "github.copilot.enable": {
@@ -132,6 +138,7 @@ Enable or disable Copilot for specific programming languages.
 Prevent Copilot from accessing specific files or directories.
 
 **VS Code example**:
+
 ```json
 {
   "github.copilot.advanced": {
@@ -212,6 +219,7 @@ This personal directory aligns with the VS Code GitHub Copilot for Azure extensi
 Agents are specialized assistants for specific workflows. Place agent definition files in `.github/agents/`.
 
 **Example agent** (`terraform-expert.agent.md`):
+
 ```markdown
 ---
 description: 'Terraform infrastructure-as-code specialist'
@@ -230,6 +238,7 @@ Guide users through creating, reviewing, and deploying infrastructure code.
 Skills are self-contained folders that package reusable capabilities. Store them in `.github/skills/`.
 
 **Example skill** (`generate-tests/SKILL.md`):
+
 ```markdown
 ---
 name: generate-tests
@@ -255,6 +264,7 @@ Skills can also bundle reference files, templates, and scripts in their folder, 
 Instructions provide persistent context that applies automatically when working in specific files or directories. Store them in `.github/instructions/`.
 
 **Example instruction** (`typescript-conventions.instructions.md`):
+
 ```markdown
 ---
 description: 'TypeScript coding conventions for this project'
@@ -384,7 +394,7 @@ Configuration file: `~/.copilot-cli/config.json`
 CLI settings use **camelCase** naming. Key settings added in recent releases:
 
 | Setting | Description |
-|---------|-------------|
+| --------- | ------------- |
 | `includeCoAuthoredBy` | Include Co-authored-by trailer in commits |
 | `effortLevel` | Default reasoning effort level (`low`, `medium`, `high`) |
 | `autoUpdatesChannel` | Update channel (`stable`, `preview`) |
