@@ -32,6 +32,7 @@ GitHub Copilot  ←→  MCP Server  ←→  External System
 ```
 
 **Key characteristics**:
+
 - MCP is an open protocol, not specific to GitHub Copilot—it works across AI tools
 - Servers run locally on your machine or in a container
 - Each server exposes one or more tools with defined inputs and outputs
@@ -42,7 +43,7 @@ GitHub Copilot  ←→  MCP Server  ←→  External System
 GitHub Copilot provides several **built-in tools** that are always available:
 
 | Built-in Tool | What It Does |
-|--------------|--------------|
+| -------------- | -------------- |
 | `codebase` | Search and analyze code across the repository |
 | `terminal` | Run shell commands in the integrated terminal |
 | `edit` | Create and modify files in the workspace |
@@ -53,7 +54,7 @@ GitHub Copilot provides several **built-in tools** that are always available:
 **MCP tools** extend this with external capabilities:
 
 | MCP Server Example | What It Adds |
-|-------------------|--------------|
+| ------------------- | -------------- |
 | PostgreSQL server | Query databases, inspect schemas, analyze query plans |
 | Docker server | Manage containers, inspect logs, deploy services |
 | Sentry server | Fetch error reports, analyze crash data |
@@ -64,7 +65,7 @@ GitHub Copilot provides several **built-in tools** that are always available:
 MCP servers are configured per-workspace. GitHub Copilot CLI discovers server definitions from several locations (loaded in order):
 
 | File | Scope | Notes |
-|------|-------|-------|
+| ------ | ------- | ------- |
 | `.mcp.json` | Repository root | Preferred for repo-shared configuration |
 | `.vscode/mcp.json` | VS Code workspace | VS Code–compatible workspace config |
 | `devcontainer.json` | Dev container | Available when running inside a container |
@@ -126,7 +127,7 @@ In addition to file-based configuration, GitHub Copilot CLI exposes **server RPC
 The available RPCs are:
 
 | RPC | Description |
-|-----|-------------|
+| ----- | ------------- |
 | `mcp.config.list` | List all currently registered persistent MCP servers |
 | `mcp.config.add` | Add a new MCP server to the persistent configuration |
 | `mcp.config.update` | Update an existing registered server |
@@ -137,6 +138,7 @@ These are especially useful for plugins and installer scripts that need to self-
 ### Common MCP Server Configurations
 
 **PostgreSQL** — Query databases and inspect schemas:
+
 ```json
 {
   "postgres": {
@@ -150,6 +152,7 @@ These are especially useful for plugins and installer scripts that need to self-
 ```
 
 **GitHub** — Extended GitHub API access:
+
 ```json
 {
   "github": {
@@ -163,6 +166,7 @@ These are especially useful for plugins and installer scripts that need to self-
 ```
 
 **Filesystem** — Controlled access to specific directories:
+
 ```json
 {
   "filesystem": {
@@ -201,6 +205,7 @@ tools: ['codebase', 'terminal', 'postgres']
 ```
 
 With this configuration, the agent can:
+
 - Run SQL queries to inspect table structures
 - Analyze query execution plans
 - Suggest index optimizations based on actual data
@@ -232,6 +237,7 @@ Without the MCP server, the agent would have to guess at database structure and 
 Some advanced MCP servers can request **LLM inference** from the Copilot model — a capability defined in the MCP specification as *sampling*. Instead of only receiving tool calls from the AI, these servers can ask Copilot to generate text or make decisions as part of their own logic.
 
 **How it works**:
+
 1. An MCP server sends a `sampling/createMessage` request to Copilot.
 2. Copilot shows a **review prompt** to the user, explaining what the server is requesting.
 3. The user approves or rejects the request.
@@ -254,7 +260,7 @@ The MCP ecosystem is growing rapidly. Here are key resources:
 If your team has internal tools or proprietary APIs, you can build custom MCP servers. The protocol supports three main capability types:
 
 | Capability | Description | Example |
-|-----------|-------------|---------|
+| ----------- | ------------- | --------- |
 | **Tools** | Functions the AI can invoke | `query_database`, `deploy_service` |
 | **Resources** | Data the AI can read | Database schemas, API docs |
 | **Prompts** | Pre-built conversation templates | Common troubleshooting flows |
@@ -285,7 +291,7 @@ For example, a PostgreSQL server that can't connect because `DATABASE_URL` is no
 **Common causes and fixes**:
 
 | Symptom | Likely Cause | Fix |
-|---------|--------------|-----|
+| --------- | -------------- | ----- |
 | `ENOENT` on startup | Missing `npx` / `python` / command | Verify the executable is installed and in your PATH |
 | Auth errors / 401 | Expired or missing API key | Update the `env` field in your config; check `/mcp auth` |
 | Server starts then exits | Server crash | Check stderr output in the warning for the root cause |

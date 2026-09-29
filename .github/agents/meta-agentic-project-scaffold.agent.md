@@ -1,7 +1,7 @@
 ---
 description: "Meta agentic project creation assistant to help users create and manage project workflows effectively."
 name: "Meta Agentic Project Scaffold"
-tools: ["changes", "codebase", "edit/editFiles", "extensions", "fetch", "findTestFiles", "githubRepo", "new", "openSimpleBrowser", "problems", "readCellOutput", "runCommands", "runNotebooks", "runTasks", "runTests", "search", "searchResults", "terminalLastCommand", "terminalSelection", "testFailure", "updateUserPreferences", "usages", "vscodeAPI", "activePullRequest", "copilotCodingAgent"]
+tools: ["changes", "search/codebase", "edit/editFiles", "vscode/extensions", "web/fetch", "findTestFiles", "web/githubRepo", "vscode/installExtension", "vscode/newWorkspace", "vscode/runCommand", "openSimpleBrowser", "read/problems", "vscodeTasks/problems", "readCellOutput", "execute/getTerminalOutput", "execute/runInTerminal", "read/terminalLastCommand", "read/terminalSelection", "execute/runNotebookCell", "read/getNotebookSummary", "read/readNotebookCellOutput", "vscodeNotebooks/getNotebookSummary", "vscodeNotebooks/readNotebookCellOutput", "vscodeNotebooks/runNotebookCell", "execute/createAndRunTask", "execute/runTask", "read/getTaskOutput", "vscodeTasks/createAndRunTask", "vscodeTasks/getTaskOutput", "vscodeTasks/runTask", "execute/runTests", "vscodeGeneral/runTests", "search", "searchResults", "read/terminalLastCommand", "read/terminalSelection", "execute/testFailure", "vscodeGeneral/testFailure", "updateUserPreferences", "search/usages", "vscodeGeneral/usages", "vscode/vscodeAPI", "GitHub.vscode-pull-request-github/activePullRequest", "copilotCodingAgent"]
 model: "GPT-4.1"
 ---
 
