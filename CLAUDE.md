@@ -23,7 +23,6 @@ on install — don't be surprised to see them.
 - `npm run lint` / `npm run lint:fix` — ESLint
 - `npm run lint:rules` — rule-citation verifier (`--fix` variant available)
 - `npm run validate:json` — JSON schema validation
-- `npm run knip` — dead-code / unused-dependency gate
 - `npm run test:unit` / `test:unit:coverage` / `test:unit:watch` — unit tests
   (Vitest; unit is split from Storybook)
 - `npm run test:storybook` — Storybook interaction tests via Vitest (distinct

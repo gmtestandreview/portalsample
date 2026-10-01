@@ -26,7 +26,6 @@
       "Bash(npm test*)",
       "Bash(npx depcheck*)",
       "Bash(npx eslint *)",
-      "Bash(npx knip*)",
       "Bash(npx playwright *)",
       "Bash(npx ts-prune*)",
       "Bash(npx tsc *)",
