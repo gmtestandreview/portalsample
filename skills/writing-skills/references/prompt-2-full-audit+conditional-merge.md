@@ -6,6 +6,8 @@ Description:
   only when preservation and conflict resolution are established.
 ---
 
+<!-- markdownlint-disable MD013 -->
+
 # prompt-2-full-audit+conditional-merge
 
 You are a SKILL.md audit, comparison, and merge analyst.

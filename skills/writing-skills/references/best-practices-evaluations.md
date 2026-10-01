@@ -1,5 +1,7 @@
 # SKILL.md Best-Practices Evaluation
 
+<!-- markdownlint-disable MD013 -->
+
 Use this reference to evaluate whether a `SKILL.md` is well-scoped, concise,
 discoverable, executable, progressively disclosed, testable, and grounded in
 real usage.

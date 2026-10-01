@@ -1,5 +1,7 @@
 # Audit Scoring for Agent Skills
 
+<!-- markdownlint-disable MD013 -->
+
 Use this reference when assigning a numeric quality score, severity, QAQ/RMI
 result, or final audit verdict to a `SKILL.md` or skill directory.
 

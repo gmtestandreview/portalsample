@@ -168,6 +168,15 @@ export default defineConfig(
       '@typescript-eslint/no-var-requires': 'off',
     },
   },
+  {
+    // This standalone script uses native ESM syntax while the rest of the
+    // repository's .js surface remains CommonJS-compatible by default.
+    name: 'nmi/esm-script',
+    files: ['skills/writing-skills/scripts/render-graphs.js'],
+    languageOptions: {
+      sourceType: 'module',
+    },
+  },
 
   {
     name: 'nmi/browser-and-node-surfaces',

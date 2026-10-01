@@ -3,6 +3,8 @@ title: 'Specification'
 description: 'The complete format specification for Agent Skills.'
 ---
 
+<!-- markdownlint-disable MD013 -->
+
 <!-- markdownlint-disable MD033 -->
 
 ## Directory structure

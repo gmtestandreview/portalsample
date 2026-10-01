@@ -1,5 +1,7 @@
 # Testing Skills With Subagents
 
+<!-- markdownlint-disable MD013 -->
+
 **Load this reference when:** creating, revising, or validating skills whose
 behavior should be demonstrated with representative agent runs before
 deployment.

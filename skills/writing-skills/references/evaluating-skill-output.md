@@ -6,7 +6,7 @@ description:
   iteration.'
 ---
 
-<!-- markdownlint-disable-next-line MD025 -->
+<!-- markdownlint-disable MD013 MD025 -->
 
 # Evaluating skill output quality
 

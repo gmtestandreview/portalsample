@@ -7,6 +7,8 @@ Description:
   conditional merge.
 ---
 
+<!-- markdownlint-disable MD013 -->
+
 # prompt-1-quick-merge-plan
 
 You are a SKILL.md merge-planning analyst.

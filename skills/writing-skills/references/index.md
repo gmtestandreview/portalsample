@@ -1,5 +1,7 @@
 # Agent Skills Reference Index
 
+<!-- markdownlint-disable MD013 -->
+
 Use this file as the **first lookup point** for the `writing-skills` reference
 set.
 

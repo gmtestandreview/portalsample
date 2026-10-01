@@ -1002,7 +1002,7 @@ The sections below focus on Skills that include executable scripts. If your
 Skill uses only markdown instructions, skip to
 <!-- markdownlint-disable-next-line MD051 -->
 
-[Checklist for effective Skills](#checklist-for-effective-skills).
+[SKILL-testing-checklist.md](./SKILL-testing-checklist.md).
 
 ### Solve, don't punt
 

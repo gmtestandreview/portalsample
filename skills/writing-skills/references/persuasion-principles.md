@@ -1,5 +1,7 @@
 # Persuasion Principles for Skill Design
 
+<!-- markdownlint-disable MD013 -->
+
 ## Overview
 
 LLMs respond to the same persuasion principles as humans. Understanding this

@@ -4,7 +4,7 @@ description:
   'A guide for adding Agent Skills support to an AI agent or development tool.'
 ---
 
-<!-- markdownlint-disable-next-line MD025 -->
+<!-- markdownlint-disable MD013 MD025 -->
 
 # Adding skills support
 
