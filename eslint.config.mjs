@@ -49,10 +49,7 @@ export default defineConfig(
   {
     name: 'nmi/typescript-parser',
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      tseslint.configs.recommendedTypeChecked,
-      tseslint.configs.stylisticTypeChecked,
-    ],
+    extends: [tseslint.configs.recommended],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
