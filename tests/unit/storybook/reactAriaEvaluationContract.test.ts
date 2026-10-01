@@ -59,7 +59,9 @@ function findRelativeImports(file: string): string[] {
   ];
 
   return patterns.flatMap((pattern) =>
-    [...source.matchAll(pattern)].map((match) => match[1])
+    [...source.matchAll(pattern)]
+      .map((match) => match[1])
+      .filter((specifier): specifier is string => specifier !== undefined)
   );
 }
 
