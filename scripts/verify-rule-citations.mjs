@@ -365,7 +365,7 @@ if (FIX) {
     const base = r.path
       .split('/')
       .pop()
-      .replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+      .replace(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`);
     const pattern = new RegExp(
       `\`([A-Za-z0-9_\\-./]*${base}):${r.cited}(?![0-9-])\``,
       'gu'
