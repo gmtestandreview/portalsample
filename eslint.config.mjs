@@ -4,7 +4,7 @@ import eslintReact from '@eslint-react/eslint-plugin';
 import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import reactHooks from 'eslint-plugin-react-hooks';
+import reactHooks, { rules } from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -49,14 +49,15 @@ export default defineConfig(
   {
     name: 'nmi/typescript-parser',
     files: ['**/*.{ts,tsx}'],
-    extends: [tseslint.configs.base, tseslint.configs.eslintRecommended],
+    extends: [tseslint.configs.recommended],
     languageOptions: {
+      parser: tseslint.parser,
       parserOptions: {
         projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
-
   {
     name: 'nmi/react',
     files: ['**/*.{ts,tsx}'],

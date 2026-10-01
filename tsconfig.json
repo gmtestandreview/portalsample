@@ -1,29 +1,56 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Bundler",
     "jsx": "react-jsx",
+
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+
     "noEmit": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noUncheckedSideEffectImports": true,
+
+    "allowImportingTsExtensions": true,
+    "allowArbitraryExtensions": true,
     "resolveJsonModule": true,
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true,
+    "customConditions": ["module", "browser"],
+    "esModuleInterop": true,
+
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "skipLibCheck": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/typescript/tsconfig.tsbuildinfo",
+
     "paths": {
-      "@/*": ["ClientApp/src/*"]
+      "@/*": ["./ClientApp/src/*"],
+      "@tests/*": ["./tests/*"]
     },
+
     "types": [
+      "node",
+      "vite/client",
       "vitest/globals",
       "trusted-types",
       "msw-storybook-addon/types"
-    ],
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "moduleDetection": "force", // auto-detects modules without imports
-    "verbatimModuleSyntax": true, // preserves exact import/export syntax
-    "noUncheckedSideEffectImports": true
+    ]
+    
   },
   "include": [
     "*.ts",
@@ -33,7 +60,7 @@
     "tests/**/*"
   ],
   "exclude": [
-    "ClientApp/src/main.*.js",
+    "ClientApp/src/api/web-api-client.ts",
     "ClientApp/src/parent/node_modules",
     "ClientApp/src/parent/packages",
     "ClientApp/src/external",

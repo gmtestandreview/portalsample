@@ -3,6 +3,7 @@
 //     Generated using the NSwag toolchain v14.5.0.0 (NJsonSchema v11.4.0.0 (Newtonsoft.Json v13.0.0.0)) (http://NSwag.org)
 // </auto-generated>
 //----------------------
+// @ts-nocheck
 
 export class AuthorizedApiBase {
     authToken = '';

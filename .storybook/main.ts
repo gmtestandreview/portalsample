@@ -1,6 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
-import { onLog } from './rollupOnLog';
+import { onLog } from './rollupOnLog.ts';
 
 const sassDeprecationsToSilence = [
   'import',
