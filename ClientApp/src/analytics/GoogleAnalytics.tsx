@@ -40,7 +40,7 @@ const trackGAPii = () => {
   const redactedData: Record<string, string> = {};
 
   piiFields.forEach((field) => {
-    const key = field.dataset.pii as string; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
+    const key = field.dataset['pii'] as string; // dataset.pii is always defined — querySelectorAll('[data-pii]') guarantees the attribute exists
     /* v8 ignore next */
     originalData[key] = field.textContent ?? '';
     redactedData[key] = '[REDACTED]';

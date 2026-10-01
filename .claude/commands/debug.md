@@ -1,12 +1,13 @@
 # /debug
 
-Systematic root-cause debugging. Enforces the Iron Law — no fixes without investigation first.
+Systematic root-cause debugging. Enforces the Iron Law — no fixes without
+investigation first.
 
 **Invokes:** `debugger` agent
 
 **Usage:**
 
-```
+```text
 /debug                       Debug current failing tests or reported bug
 /debug "TypeError: cannot read property of undefined in UserService:42"
 ```

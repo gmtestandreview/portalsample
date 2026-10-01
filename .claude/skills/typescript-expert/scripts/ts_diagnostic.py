@@ -1,203 +1,810 @@
 #!/usr/bin/env python3
-"""
-TypeScript Project Diagnostic Script
-Analyzes TypeScript projects for configuration, performance, and common issues.
+"""Production diagnostics for a TypeScript 5.9.x project.
+
+The script never downloads tools. It prefers project-local binaries, then an
+explicit workspace tool root, then PATH.
+It resolves JSONC/extended TSConfig through `tsc --showConfig` instead of parsing
+tsconfig files as strict JSON.
+
+Exit codes:
+  0: all requested required checks passed
+  1: one or more requested required checks failed
+  2: invalid invocation or an internal diagnostic error
 """
 
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shutil
 import subprocess
 import sys
-import os
-import json
+import tempfile
+import time
+from dataclasses import asdict, dataclass
 from pathlib import Path
+from typing import Sequence
 
-def run_cmd(cmd: str) -> str:
-    """Run shell command and return output."""
+
+PASS = "PASS"
+WARN = "WARN"
+FAIL = "FAIL"
+SKIP = "SKIP"
+
+STRICT_TRUE = (
+    "strict",
+    "noUncheckedIndexedAccess",
+    "noImplicitOverride",
+    "noPropertyAccessFromIndexSignature",
+    "exactOptionalPropertyTypes",
+    "noFallthroughCasesInSwitch",
+    "forceConsistentCasingInFileNames",
+    "noUncheckedSideEffectImports",
+)
+
+ALLOWABLE_STRICT_EXCEPTIONS = tuple(name for name in STRICT_TRUE if name != "strict")
+RECOMMENDED_TRUE = ("skipLibCheck", "incremental")
+
+
+@dataclass(frozen=True)
+class Result:
+    name: str
+    status: str
+    detail: str
+    command: list[str] | None = None
+    duration_s: float | None = None
+    output: str | None = None
+
+
+def trim_output(text: str, limit: int = 8000) -> str:
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    return text[:limit] + f"\n... <truncated {len(text) - limit} chars>"
+
+
+def run_command(
+    command: Sequence[str],
+    *,
+    cwd: Path,
+    timeout: int,
+) -> tuple[int, str, float]:
+    env = os.environ.copy()
+    env.setdefault("NO_COLOR", "1")
+    started = time.monotonic()
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-        return result.stdout + result.stderr
-    except Exception as e:
-        return str(e)
+        proc = subprocess.run(
+            list(command),
+            cwd=cwd,
+            env=env,
+            text=True,
+            capture_output=True,
+            timeout=timeout,
+            shell=False,
+            check=False,
+        )
+    except subprocess.TimeoutExpired as exc:
+        elapsed = time.monotonic() - started
+        partial = "\n".join(
+            part for part in (exc.stdout or "", exc.stderr or "") if part
+        )
+        return 124, trim_output(partial or f"Timed out after {timeout}s"), elapsed
+    elapsed = time.monotonic() - started
+    output = "\n".join(part for part in (proc.stdout, proc.stderr) if part)
+    return proc.returncode, trim_output(output), elapsed
 
-def check_versions():
-    """Check TypeScript and Node versions."""
-    print("\n📦 Versions:")
-    print("-" * 40)
-    
-    ts_version = run_cmd("npx tsc --version 2>/dev/null").strip()
-    node_version = run_cmd("node -v 2>/dev/null").strip()
-    
-    print(f"  TypeScript: {ts_version or 'Not found'}")
-    print(f"  Node.js: {node_version or 'Not found'}")
 
-def check_tsconfig():
-    """Analyze tsconfig.json settings."""
-    print("\n⚙️ TSConfig Analysis:")
-    print("-" * 40)
-    
-    tsconfig_path = Path("tsconfig.json")
-    if not tsconfig_path.exists():
-        print("⚠️ tsconfig.json not found")
-        return
-    
+def local_binary(
+    root: Path,
+    name: str,
+    *,
+    tool_root: Path | None = None,
+) -> str | None:
+    suffixes = (".cmd", ".exe", "") if os.name == "nt" else ("",)
+    roots = [root]
+    if tool_root is not None and tool_root != root:
+        roots.append(tool_root)
+    for base in roots:
+        bindir = base / "node_modules" / ".bin"
+        for suffix in suffixes:
+            candidate = bindir / f"{name}{suffix}"
+            if candidate.is_file():
+                return str(candidate)
+    return shutil.which(name)
+
+
+def read_package_json(root: Path) -> dict[str, object]:
+    path = root / "package.json"
+    if not path.is_file():
+        return {}
     try:
-        with open(tsconfig_path) as f:
-            config = json.load(f)
-        
-        compiler_opts = config.get("compilerOptions", {})
-        
-        # Check strict mode
-        if compiler_opts.get("strict"):
-            print("✅ Strict mode enabled")
-        else:
-            print("⚠️ Strict mode NOT enabled")
-        
-        # Check important flags
-        flags = {
-            "noUncheckedIndexedAccess": "Unchecked index access protection",
-            "noImplicitOverride": "Implicit override protection",
-            "skipLibCheck": "Skip lib check (performance)",
-            "incremental": "Incremental compilation"
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"Cannot read {path}: {exc}") from exc
+    if not isinstance(value, dict):
+        raise ValueError(f"{path} must contain a JSON object")
+    return value
+
+
+def package_manager(
+    root: Path,
+    package: dict[str, object],
+    *,
+    tool_root: Path | None = None,
+    tool_package: dict[str, object] | None = None,
+) -> str | None:
+    packages = [package]
+    if tool_package is not None and tool_package is not package:
+        packages.append(tool_package)
+    for candidate_package in packages:
+        declared = candidate_package.get("packageManager")
+        if isinstance(declared, str) and declared:
+            name = declared.split("@", 1)[0]
+            if name in {"npm", "pnpm", "yarn", "bun"}:
+                return name
+
+    indicators = (
+        ("pnpm-lock.yaml", "pnpm"),
+        ("yarn.lock", "yarn"),
+        ("bun.lockb", "bun"),
+        ("bun.lock", "bun"),
+        ("package-lock.json", "npm"),
+        ("npm-shrinkwrap.json", "npm"),
+    )
+    roots = [root]
+    if tool_root is not None and tool_root != root:
+        roots.append(tool_root)
+    for base in roots:
+        for filename, name in indicators:
+            if (base / filename).exists():
+                return name
+    return "npm" if shutil.which("npm") else None
+
+
+def script_command(pm: str, script_name: str) -> list[str]:
+    if pm == "npm":
+        return ["npm", "run", "-s", script_name]
+    if pm == "pnpm":
+        return ["pnpm", "run", script_name]
+    if pm == "yarn":
+        return ["yarn", script_name]
+    if pm == "bun":
+        return ["bun", "run", script_name]
+    raise ValueError(f"Unsupported package manager: {pm}")
+
+
+def package_scripts(package: dict[str, object]) -> dict[str, str]:
+    scripts = package.get("scripts")
+    if not isinstance(scripts, dict):
+        return {}
+    return {str(k): str(v) for k, v in scripts.items() if isinstance(v, str)}
+
+
+def parse_ts_version(output: str) -> str | None:
+    match = re.search(r"\bVersion\s+(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?)", output)
+    return match.group(1) if match else None
+
+
+def check_version(
+    tsc: str,
+    *,
+    root: Path,
+    timeout: int,
+    expected: str,
+) -> tuple[Result, str | None]:
+    code, output, elapsed = run_command([tsc, "--version"], cwd=root, timeout=timeout)
+    if code != 0:
+        return Result(
+            "typescript-version",
+            FAIL,
+            "Unable to execute the TypeScript compiler.",
+            [tsc, "--version"],
+            elapsed,
+            output,
+        ), None
+    found = parse_ts_version(output)
+    if found is None:
+        return Result(
+            "typescript-version",
+            FAIL,
+            "Could not parse the TypeScript compiler version.",
+            [tsc, "--version"],
+            elapsed,
+            output,
+        ), None
+    if found != expected:
+        return Result(
+            "typescript-version",
+            FAIL,
+            f"Expected TypeScript {expected}; found {found}.",
+            [tsc, "--version"],
+            elapsed,
+            output,
+        ), found
+    return Result(
+        "typescript-version",
+        PASS,
+        f"TypeScript {found}.",
+        [tsc, "--version"],
+        elapsed,
+        output,
+    ), found
+
+
+def show_config(
+    tsc: str,
+    *,
+    root: Path,
+    tsconfig: Path,
+    timeout: int,
+) -> tuple[Result, dict[str, object] | None]:
+    command = [tsc, "-p", str(tsconfig), "--showConfig"]
+    code, output, elapsed = run_command(command, cwd=root, timeout=timeout)
+    if code != 0:
+        return Result(
+            "tsconfig-resolution",
+            FAIL,
+            "TypeScript could not resolve the configured project.",
+            command,
+            elapsed,
+            output,
+        ), None
+    try:
+        config = json.loads(output)
+    except json.JSONDecodeError as exc:
+        return Result(
+            "tsconfig-resolution",
+            FAIL,
+            f"`tsc --showConfig` returned non-JSON output: {exc}.",
+            command,
+            elapsed,
+            output,
+        ), None
+    if not isinstance(config, dict):
+        return Result(
+            "tsconfig-resolution",
+            FAIL,
+            "Resolved TSConfig was not a JSON object.",
+            command,
+            elapsed,
+            output,
+        ), None
+    return Result(
+        "tsconfig-resolution",
+        PASS,
+        f"Resolved {tsconfig.name} through TypeScript (JSONC/extends aware).",
+        command,
+        elapsed,
+        None,
+    ), config
+
+
+def check_strict(
+    config: dict[str, object],
+    *,
+    allowed_exceptions: set[str] | None = None,
+) -> list[Result]:
+    compiler = config.get("compilerOptions")
+    if not isinstance(compiler, dict):
+        return [Result("strict-profile", FAIL, "Resolved TSConfig has no compilerOptions.")]
+
+    allowed = allowed_exceptions or set()
+    results: list[Result] = []
+    missing = [name for name in STRICT_TRUE if compiler.get(name) is not True]
+    unapproved = [name for name in missing if name not in allowed]
+    approved = [name for name in missing if name in allowed]
+    if unapproved:
+        results.append(
+            Result(
+                "strict-profile",
+                FAIL,
+                "Required strict baseline flags are not all true: "
+                + ", ".join(unapproved)
+                + (
+                    ". Documented exceptions: " + ", ".join(approved)
+                    if approved
+                    else ""
+                ),
+            )
+        )
+    elif approved:
+        results.append(
+            Result(
+                "strict-profile",
+                WARN,
+                "Documented project exception(s) differ from the strict baseline: "
+                + ", ".join(approved)
+                + ". This is not a full-baseline PASS.",
+            )
+        )
+    else:
+        results.append(
+            Result(
+                "strict-profile",
+                PASS,
+                "All required strict baseline flags are enabled.",
+            )
+        )
+
+    recommended = [name for name in RECOMMENDED_TRUE if compiler.get(name) is not True]
+    if recommended:
+        results.append(
+            Result(
+                "strict-performance",
+                WARN,
+                "Recommended project defaults are not enabled: "
+                + ", ".join(recommended),
+            )
+        )
+    else:
+        results.append(
+            Result(
+                "strict-performance",
+                PASS,
+                "Recommended skipLibCheck/incremental defaults are enabled.",
+            )
+        )
+    return results
+
+
+def compiler_gate(
+    name: str,
+    command: list[str],
+    *,
+    root: Path,
+    timeout: int,
+    success_detail: str,
+) -> Result:
+    code, output, elapsed = run_command(command, cwd=root, timeout=timeout)
+    status = PASS if code == 0 else FAIL
+    detail = success_detail if code == 0 else f"{name} failed with exit code {code}."
+    return Result(name, status, detail, command, elapsed, output or None)
+
+
+def typecheck_gate(
+    tsc: str,
+    *,
+    root: Path,
+    tsconfig: Path,
+    timeout: int,
+) -> Result:
+    command = [tsc, "-p", str(tsconfig), "--noEmit", "--pretty", "false"]
+    return compiler_gate(
+        "tsc-typecheck",
+        command,
+        root=root,
+        timeout=timeout,
+        success_detail="TypeScript type check passed.",
+    )
+
+
+def emit_gate(
+    tsc: str,
+    *,
+    root: Path,
+    tsconfig: Path,
+    config: dict[str, object],
+    timeout: int,
+) -> Result:
+    references = config.get("references")
+    if isinstance(references, list) and references:
+        return Result(
+            "tsc-emit",
+            FAIL,
+            "Project references detected. A temporary single-project emit would "
+            "not validate the reference graph safely; run the repository build "
+            "gate or an existing `tsc --build` workflow instead.",
+        )
+
+    with tempfile.TemporaryDirectory(prefix="ts-diagnostic-emit-") as tmp:
+        tmp_path = Path(tmp)
+        override = tmp_path / "tsconfig.emit.json"
+        compiler = config.get("compilerOptions")
+        compiler_options = compiler if isinstance(compiler, dict) else {}
+        emit_options: dict[str, object] = {
+            "noEmit": False,
+            "emitDeclarationOnly": False,
+            "outDir": str(tmp_path / "out"),
+            "tsBuildInfoFile": str(tmp_path / "cache.tsbuildinfo"),
         }
-        
-        for flag, desc in flags.items():
-            status = "✅" if compiler_opts.get(flag) else "⚪"
-            print(f"  {status} {desc}: {compiler_opts.get(flag, 'not set')}")
-        
-        # Check module settings
-        print(f"\n  Module: {compiler_opts.get('module', 'not set')}")
-        print(f"  Module Resolution: {compiler_opts.get('moduleResolution', 'not set')}")
-        print(f"  Target: {compiler_opts.get('target', 'not set')}")
-        
-    except json.JSONDecodeError:
-        print("❌ Invalid JSON in tsconfig.json")
+        if (
+            compiler_options.get("declaration") is True
+            or compiler_options.get("composite") is True
+        ):
+            emit_options["declarationDir"] = str(tmp_path / "types")
 
-def check_tooling():
-    """Detect TypeScript tooling ecosystem."""
-    print("\n🛠️ Tooling Detection:")
-    print("-" * 40)
-    
-    pkg_path = Path("package.json")
-    if not pkg_path.exists():
-        print("⚠️ package.json not found")
-        return
-    
-    try:
-        with open(pkg_path) as f:
-            pkg = json.load(f)
-        
-        all_deps = {**pkg.get("dependencies", {}), **pkg.get("devDependencies", {})}
-        
-        tools = {
-            "biome": "Biome (linter/formatter)",
-            "eslint": "ESLint",
-            "prettier": "Prettier",
-            "vitest": "Vitest (testing)",
-            "jest": "Jest (testing)",
-            "turborepo": "Turborepo (monorepo)",
-            "turbo": "Turbo (monorepo)",
-            "nx": "Nx (monorepo)",
-            "lerna": "Lerna (monorepo)"
-        }
-        
-        for tool, desc in tools.items():
-            for dep in all_deps:
-                if tool in dep.lower():
-                    print(f"  ✅ {desc}")
-                    break
-                    
-    except json.JSONDecodeError:
-        print("❌ Invalid JSON in package.json")
+        override.write_text(
+            json.dumps(
+                {
+                    "extends": str(tsconfig),
+                    "compilerOptions": emit_options,
+                },
+                indent=2,
+            ),
+            encoding="utf-8",
+        )
+        command = [tsc, "-p", str(override), "--pretty", "false"]
+        return compiler_gate(
+            "tsc-emit",
+            command,
+            root=root,
+            timeout=timeout,
+            success_detail="TypeScript emit completed successfully into a temporary directory.",
+        )
 
-def check_monorepo():
-    """Check for monorepo configuration."""
-    print("\n📦 Monorepo Check:")
-    print("-" * 40)
-    
-    indicators = [
-        ("pnpm-workspace.yaml", "PNPM Workspace"),
-        ("lerna.json", "Lerna"),
-        ("nx.json", "Nx"),
-        ("turbo.json", "Turborepo")
+
+def run_script_gate(
+    gate_name: str,
+    script_name: str,
+    *,
+    root: Path,
+    package: dict[str, object],
+    pm: str | None,
+    timeout: int,
+) -> Result:
+    scripts = package_scripts(package)
+    if script_name not in scripts:
+        return Result(
+            gate_name,
+            FAIL,
+            f"Required package script `{script_name}` is not configured.",
+        )
+    if pm is None or shutil.which(pm) is None:
+        return Result(
+            gate_name,
+            FAIL,
+            f"Package manager for `{script_name}` is unavailable.",
+        )
+    command = script_command(pm, script_name)
+    return compiler_gate(
+        gate_name,
+        command,
+        root=root,
+        timeout=timeout,
+        success_detail=f"`{script_name}` script passed.",
+    )
+
+
+def lint_gate(
+    *,
+    root: Path,
+    package: dict[str, object],
+    pm: str | None,
+    timeout: int,
+    tool_root: Path | None = None,
+) -> Result:
+    scripts = package_scripts(package)
+    if "lint" in scripts:
+        return run_script_gate(
+            "eslint",
+            "lint",
+            root=root,
+            package=package,
+            pm=pm,
+            timeout=timeout,
+        )
+
+    eslint = local_binary(root, "eslint", tool_root=tool_root)
+    if eslint is None:
+        return Result(
+            "eslint",
+            FAIL,
+            "No `lint` package script or ESLint executable is available.",
+        )
+
+    command = [eslint, ".", "--max-warnings=0"]
+    return compiler_gate(
+        "eslint",
+        command,
+        root=root,
+        timeout=timeout,
+        success_detail="ESLint passed with zero warnings.",
+    )
+
+
+def sonar_gate(
+    *,
+    root: Path,
+    package: dict[str, object],
+    pm: str | None,
+    timeout: int,
+    tool_root: Path | None = None,
+) -> Result:
+    scripts = package_scripts(package)
+    sonar_scripts = [
+        (name, command)
+        for name, command in scripts.items()
+        if "sonar" in name.lower() or "sonar" in command.lower()
     ]
-    
-    found = False
-    for file, name in indicators:
-        if Path(file).exists():
-            print(f"  ✅ {name} detected")
-            found = True
-    
-    if not found:
-        print("  ⚪ No monorepo configuration detected")
 
-def check_type_errors():
-    """Run quick type check."""
-    print("\n🔍 Type Check:")
-    print("-" * 40)
-    
-    result = run_cmd("npx tsc --noEmit 2>&1 | head -20")
-    if "error TS" in result:
-        errors = result.count("error TS")
-        print(f"  ❌ {errors}+ type errors found")
-        print(result[:500])
+    for name, body in sonar_scripts:
+        if "sonar.qualitygate.wait=true" in body.replace(" ", ""):
+            if pm is None or shutil.which(pm) is None:
+                return Result(
+                    "sonarqube",
+                    FAIL,
+                    f"Sonar script `{name}` exists but its package manager is unavailable.",
+                )
+            command = script_command(pm, name)
+            return compiler_gate(
+                "sonarqube",
+                command,
+                root=root,
+                timeout=max(timeout, 300),
+                success_detail=(
+                    f"Sonar script `{name}` completed with quality-gate waiting enabled; server-side quality-profile assignment was not verified by this check."
+                ),
+            )
+
+    scanner = local_binary(root, "sonar-scanner", tool_root=tool_root)
+    if scanner is not None:
+        command = [
+            scanner,
+            "-Dsonar.qualitygate.wait=true",
+            f"-Dsonar.qualitygate.timeout={max(timeout, 300)}",
+        ]
+        return compiler_gate(
+            "sonarqube",
+            command,
+            root=root,
+            timeout=max(timeout, 330),
+            success_detail="Sonar analysis and waited quality gate passed; server-side quality-profile assignment was not verified by this check.",
+        )
+
+    if sonar_scripts:
+        names = ", ".join(name for name, _ in sonar_scripts)
+        return Result(
+            "sonarqube",
+            FAIL,
+            "Sonar script(s) exist but do not prove a waited quality gate "
+            f"(`sonar.qualitygate.wait=true`): {names}.",
+        )
+
+    return Result(
+        "sonarqube",
+        FAIL,
+        "No Sonar scanner or Sonar package script is configured.",
+    )
+
+
+def print_results(results: list[Result]) -> None:
+    print("\nTypeScript diagnostic gates")
+    print("=" * 78)
+    for result in results:
+        print(f"{result.status:4}  {result.name:22}  {result.detail}")
+        if result.command:
+            print("      command:", " ".join(result.command))
+        if result.output and result.status != PASS:
+            for line in result.output.splitlines()[:20]:
+                print(f"      {line}")
+    print("=" * 78)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=(
+            "Examples:\n"
+            "  python scripts/ts_diagnostic.py --strict --typecheck --emit --lint\n"
+            "  python scripts/ts_diagnostic.py --root packages/api --tool-root . --typecheck\n"
+            "  python scripts/ts_diagnostic.py --strict --allow-strict-exception noUncheckedIndexedAccess\n"
+            "  python scripts/ts_diagnostic.py --all --format json\n"
+            "  python scripts/ts_diagnostic.py --sonar --timeout 300\n"
+        ),
+    )
+    parser.add_argument("--root", default=".", help="Project/package root (default: .)")
+    parser.add_argument(
+        "--tool-root",
+        help="Optional workspace root for hoisted node_modules/package-manager metadata.",
+    )
+    parser.add_argument("--tsconfig", default="tsconfig.json")
+    parser.add_argument("--expect-ts", default="5.9.3")
+    parser.add_argument("--timeout", type=int, default=180)
+    parser.add_argument("--strict", action="store_true")
+    parser.add_argument(
+        "--allow-strict-exception",
+        action="append",
+        default=[],
+        choices=ALLOWABLE_STRICT_EXCEPTIONS,
+        metavar="FLAG",
+        help=(
+            "Documented project exception to the strict baseline; repeatable. "
+            "Produces WARN, never a full-baseline PASS."
+        ),
+    )
+    parser.add_argument("--typecheck", action="store_true")
+    parser.add_argument("--emit", action="store_true")
+    parser.add_argument("--lint", action="store_true")
+    parser.add_argument("--build", action="store_true")
+    parser.add_argument("--test", action="store_true")
+    parser.add_argument("--sonar", action="store_true")
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Run strict, typecheck, emit, lint, build, test, and Sonar gates.",
+    )
+    parser.add_argument(
+        "--format",
+        choices=("text", "json"),
+        default="text",
+        help="Output format for stdout (default: text).",
+    )
+    parser.add_argument(
+        "--json-report",
+        help="Also write the full result list to this JSON path.",
+    )
+    return parser
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    args = build_parser().parse_args(argv)
+    root = Path(args.root).resolve()
+    tool_root = Path(args.tool_root).resolve() if args.tool_root else root
+    tsconfig = Path(args.tsconfig)
+    if not tsconfig.is_absolute():
+        tsconfig = root / tsconfig
+
+    if not root.is_dir():
+        print(f"error: project root does not exist: {root}", file=sys.stderr)
+        return 2
+    if not tool_root.is_dir():
+        print(f"error: tool root does not exist: {tool_root}", file=sys.stderr)
+        return 2
+    if not tsconfig.is_file():
+        print(f"error: TSConfig does not exist: {tsconfig}", file=sys.stderr)
+        return 2
+    if args.timeout < 1:
+        print("error: --timeout must be positive", file=sys.stderr)
+        return 2
+
+    if args.all:
+        args.strict = args.typecheck = args.emit = args.lint = True
+        args.build = args.test = args.sonar = True
+    if args.allow_strict_exception and not args.strict:
+        print(
+            "error: --allow-strict-exception requires --strict or --all",
+            file=sys.stderr,
+        )
+        return 2
+
+    results: list[Result] = []
+    internal_error = False
+    try:
+        package = read_package_json(root)
+        tool_package = package if tool_root == root else read_package_json(tool_root)
+        pm = package_manager(
+            root,
+            package,
+            tool_root=tool_root,
+            tool_package=tool_package,
+        )
+        tsc = local_binary(root, "tsc", tool_root=tool_root)
+        if tsc is None:
+            results.append(
+                Result(
+                    "typescript-version",
+                    FAIL,
+                    "No project-local or PATH `tsc` executable is available. "
+                    "The diagnostic will not download one.",
+                )
+            )
+        else:
+            version_result, _ = check_version(
+                tsc,
+                root=root,
+                timeout=args.timeout,
+                expected=args.expect_ts,
+            )
+            results.append(version_result)
+
+            config_result, config = show_config(
+                tsc,
+                root=root,
+                tsconfig=tsconfig,
+                timeout=args.timeout,
+            )
+            results.append(config_result)
+
+            if config is not None:
+                if args.strict:
+                    results.extend(
+                        check_strict(
+                            config,
+                            allowed_exceptions=set(args.allow_strict_exception),
+                        )
+                    )
+                if args.typecheck:
+                    results.append(
+                        typecheck_gate(
+                            tsc,
+                            root=root,
+                            tsconfig=tsconfig,
+                            timeout=args.timeout,
+                        )
+                    )
+                if args.emit:
+                    results.append(
+                        emit_gate(
+                            tsc,
+                            root=root,
+                            tsconfig=tsconfig,
+                            config=config,
+                            timeout=args.timeout,
+                        )
+                    )
+
+        if args.lint:
+            results.append(
+                lint_gate(
+                    root=root,
+                    package=package,
+                    pm=pm,
+                    timeout=args.timeout,
+                    tool_root=tool_root,
+                )
+            )
+        if args.build:
+            results.append(
+                run_script_gate(
+                    "build",
+                    "build",
+                    root=root,
+                    package=package,
+                    pm=pm,
+                    timeout=args.timeout,
+                )
+            )
+        if args.test:
+            results.append(
+                run_script_gate(
+                    "test",
+                    "test",
+                    root=root,
+                    package=package,
+                    pm=pm,
+                    timeout=args.timeout,
+                )
+            )
+        if args.sonar:
+            results.append(
+                sonar_gate(
+                    root=root,
+                    package=package,
+                    pm=pm,
+                    timeout=args.timeout,
+                    tool_root=tool_root,
+                )
+            )
+    except (OSError, ValueError) as exc:
+        internal_error = True
+        results.append(Result("diagnostic-internal", FAIL, str(exc)))
+
+    if args.format == "json":
+        print(json.dumps([asdict(result) for result in results], indent=2))
     else:
-        print("  ✅ No type errors")
+        print_results(results)
 
-def check_any_usage():
-    """Check for any type usage."""
-    print("\n⚠️ 'any' Type Usage:")
-    print("-" * 40)
-    
-    result = run_cmd("grep -r ': any' --include='*.ts' --include='*.tsx' src/ 2>/dev/null | wc -l")
-    count = result.strip()
-    if count and count != "0":
-        print(f"  ⚠️ Found {count} occurrences of ': any'")
-        sample = run_cmd("grep -rn ': any' --include='*.ts' --include='*.tsx' src/ 2>/dev/null | head -5")
-        if sample:
-            print(sample)
-    else:
-        print("  ✅ No explicit 'any' types found")
+    if args.json_report:
+        report = Path(args.json_report)
+        if not report.is_absolute():
+            report = root / report
+        try:
+            report.parent.mkdir(parents=True, exist_ok=True)
+            report.write_text(
+                json.dumps([asdict(result) for result in results], indent=2),
+                encoding="utf-8",
+            )
+        except OSError as exc:
+            print(f"error: cannot write JSON report {report}: {exc}", file=sys.stderr)
+            return 2
 
-def check_type_assertions():
-    """Check for type assertions."""
-    print("\n⚠️ Type Assertions (as):")
-    print("-" * 40)
-    
-    result = run_cmd("grep -r ' as ' --include='*.ts' --include='*.tsx' src/ 2>/dev/null | grep -v 'import' | wc -l")
-    count = result.strip()
-    if count and count != "0":
-        print(f"  ⚠️ Found {count} type assertions")
-    else:
-        print("  ✅ No type assertions found")
+    if internal_error:
+        return 2
+    return 1 if any(result.status == FAIL for result in results) else 0
 
-def check_performance():
-    """Check type checking performance."""
-    print("\n⏱️ Type Check Performance:")
-    print("-" * 40)
-    
-    result = run_cmd("npx tsc --extendedDiagnostics --noEmit 2>&1 | grep -E 'Check time|Files:|Lines:|Nodes:'")
-    if result.strip():
-        for line in result.strip().split('\n'):
-            print(f"  {line}")
-    else:
-        print("  ⚠️ Could not measure performance")
-
-def main():
-    print("=" * 50)
-    print("🔍 TypeScript Project Diagnostic Report")
-    print("=" * 50)
-    
-    check_versions()
-    check_tsconfig()
-    check_tooling()
-    check_monorepo()
-    check_any_usage()
-    check_type_assertions()
-    check_type_errors()
-    check_performance()
-    
-    print("\n" + "=" * 50)
-    print("✅ Diagnostic Complete")
-    print("=" * 50)
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
