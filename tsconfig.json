@@ -41,6 +41,7 @@
     "tests/**/*"
   ],
   "exclude": [
+    "clientApp/src/api/web-api-client.ts",
     "ClientApp/src/main.*.js",
     "ClientApp/src/parent/node_modules",
     "ClientApp/src/parent/packages",
