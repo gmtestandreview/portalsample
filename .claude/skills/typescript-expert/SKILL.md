@@ -3,8 +3,8 @@ name: typescript-expert
 description: >-
   Use when writing, reviewing, debugging, refactoring, migrating, or hardening
   TypeScript projects targeting 5.9.3 strict mode, including compiler or emit
-  failures, ESLint or SonarQube findings, module resolution, declaration/public
-  typing, advanced types, project references, monorepos, or type-check
+  failures, ESLint or SonarQube findings or gate/profile evidence behind a
+  TypeScript completion claim, module resolution, declaration/public typing, advanced types, project references, monorepos, or type-check
   performance. Do not use for unrelated JavaScript-only or UI/UX tasks.
 compatibility: >-
   Claude Code project skill. Requires Python 3.10+ for scripts/ts_diagnostic.py
@@ -29,7 +29,16 @@ reviews, refactors, debugging, declaration files, advanced types, modules,
 monorepos, and performance. Use it for JavaScript only for a TypeScript
 migration, `checkJs` hardening, or TypeScript/JavaScript interop.
 
-Do not use it for UI/UX design or unrelated JavaScript-only work.
+Do not use it for UI/UX design or unrelated JavaScript-only work. Running or
+administering Sonar (scans, quality gates, profiles) belongs to the `sonarqube:*`
+skills and project CI; this skill only governs which Sonar claims a TypeScript
+task may make, and still requires authorization before any external scan.
+
+Composition: this skill owns TypeScript-specific diagnosis and gates. Its steps
+4–5 narrow, and do not replace, `systematic-debugging` (cause not yet
+established) and `verification-before-completion` (completion claims); apply
+those too. After edits, the `typescript-reviewer` agent still reviews the
+change; this skill does not substitute for it.
 
 ## Non-negotiable rules
 
@@ -48,6 +57,10 @@ Do not use it for UI/UX design or unrelated JavaScript-only work.
 6. Do not invent passing results. Missing tools, credentials, network access,
    configuration, or execution evidence remain unresolved.
 7. Do not install or download replacement tooling just to satisfy this skill.
+8. Change only what the request names. Report unrelated errors or config
+   problems (a separate type error, a mismatched module pair) instead of fixing
+   them. Edits that alter the public surface, such as a package `exports` map or
+   an exported signature, need the request or user confirmation.
 
 ## Change safety
 
@@ -79,14 +92,19 @@ directory.
 
 For a broad or unclear failure set, run:
 
+Run the bundled script by its path inside this skill directory (it is not in the
+project); `--root` is the project being diagnosed:
+
 ```bash
-python scripts/ts_diagnostic.py \
-  --root . --expect-ts 5.9.3 --strict --typecheck --lint
+python <skill-dir>/scripts/ts_diagnostic.py \
+  --root <project> --expect-ts 5.9.3 --strict --typecheck --lint
 ```
 
 Add `--emit` only for a single-project emit check. If project references are
 present, prefer the repository build or an existing `tsc --build` workflow.
-Add `--build`, `--test`, or `--sonar` only when those gates apply.
+Add `--build` or `--test` only when those gates apply. `--sonar`, and `--all`
+(which includes it), run external analysis: add them only when Sonar is
+configured and authorized. Use `--format json` for machine-readable output.
 
 ### 2. Establish the compiler contract
 
@@ -149,7 +167,8 @@ based on evidence rather than fixed thresholds.
 ### 5. Validate before completion
 
 For code changes, run the project's applicable gates and keep fixing until they
-pass:
+pass. If the same gate still fails after three distinct fix attempts, or the
+fix would require weakening a rule, stop and report that gate as unresolved:
 
 - TypeScript 5.9.3 version check and strict-profile check;
 - `tsc` type checking;
@@ -178,21 +197,14 @@ package-export mismatches; runtime-broken aliases; stale declarations; circular
 dependency/barrel amplification; suppressed diagnostics; and duplicated
 source-of-truth types.
 
-## Bundled resources
-
-- Execute `scripts/ts_diagnostic.py` for broad diagnostics or deterministic
-  gates; use `--format json` for machine-readable output.
-- Load `references/typescript-5.9.3-practices.md` for compiler/module, ESLint,
-  SonarQube, or project-reference decisions.
-- Inspect `references/tsconfig-strict.json` only when establishing or comparing
-  strictness; do not copy runtime/module settings from another environment.
-- Load `references/utility-types.ts` only for reusable advanced type patterns
-  and copy only the pattern needed.
-
 ## Completion report
 
 State what changed and why; which compiler/lint/build/test/Sonar commands
 actually ran; the actual status of each required gate; and any remaining
-blocker, suppression, assumption, or unverified external gate.
+blocker, suppression, assumption, or unverified external gate. List unrelated
+problems you found but did not fix.
 
-Never convert an unavailable check into a pass.
+Report a result only for a command that ran. For a plan or dry run, write "not
+run" for every gate: no bracketed placeholders such as `[result]`, and no "fixed"
+or "done" opening before evidence supports it. Never convert an unavailable
+check into a pass.

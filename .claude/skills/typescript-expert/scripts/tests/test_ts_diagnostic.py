@@ -2,10 +2,13 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import subprocess
 import tempfile
 import unittest
 import sys
 from pathlib import Path
+from unittest import mock
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "ts_diagnostic.py"
 SPEC = importlib.util.spec_from_file_location("ts_diagnostic", MODULE_PATH)
@@ -71,6 +74,39 @@ class WorkspaceResolutionTests(unittest.TestCase):
                 tsd.local_binary(project, "tsc", tool_root=base),
                 str(project_tsc),
             )
+
+
+class RealProjectRegressionTests(unittest.TestCase):
+    """Defects found by running the diagnostic on the real portal project."""
+
+    def test_large_show_config_output_is_parsed_not_truncated(self) -> None:
+        files = [f"src/file{i}.ts" for i in range(1000)]
+        payload = json.dumps({"compilerOptions": {"strict": True}, "files": files})
+        self.assertGreater(len(payload), 8000)
+        completed = subprocess.CompletedProcess([], 0, stdout=payload, stderr="")
+        with tempfile.TemporaryDirectory() as td:
+            with mock.patch.object(tsd.subprocess, "run", return_value=completed):
+                result, config = tsd.show_config(
+                    "tsc",
+                    root=Path(td),
+                    tsconfig=Path(td) / "tsconfig.json",
+                    timeout=1,
+                )
+        self.assertEqual(result.status, tsd.PASS)
+        self.assertIsNotNone(config)
+
+    @unittest.skipUnless(tsd.os.name == "nt", "Windows .cmd shim resolution")
+    def test_run_command_resolves_cmd_shim_on_windows(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            (base / "fakepm.cmd").write_text("@echo shim-ok\r\n")
+            path = f"{base}{tsd.os.pathsep}{tsd.os.environ['PATH']}"
+            with mock.patch.dict(tsd.os.environ, {"PATH": path}):
+                code, output, _ = tsd.run_command(
+                    ["fakepm", "run", "lint"], cwd=base, timeout=10
+                )
+        self.assertEqual(code, 0)
+        self.assertIn("shim-ok", output)
 
 
 class SonarEvidenceTests(unittest.TestCase):

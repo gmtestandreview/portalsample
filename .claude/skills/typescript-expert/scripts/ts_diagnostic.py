@@ -70,13 +70,18 @@ def run_command(
     *,
     cwd: Path,
     timeout: int,
+    limit: int | None = 8000,
 ) -> tuple[int, str, float]:
     env = os.environ.copy()
     env.setdefault("NO_COLOR", "1")
+    argv = list(command)
+    if os.name == "nt":
+        # CreateProcess cannot resolve `.cmd` shims such as npm/pnpm by bare name.
+        argv[0] = shutil.which(argv[0]) or argv[0]
     started = time.monotonic()
     try:
         proc = subprocess.run(
-            list(command),
+            argv,
             cwd=cwd,
             env=env,
             text=True,
@@ -93,7 +98,7 @@ def run_command(
         return 124, trim_output(partial or f"Timed out after {timeout}s"), elapsed
     elapsed = time.monotonic() - started
     output = "\n".join(part for part in (proc.stdout, proc.stderr) if part)
-    return proc.returncode, trim_output(output), elapsed
+    return proc.returncode, trim_output(output, limit) if limit else output, elapsed
 
 
 def local_binary(
@@ -241,7 +246,10 @@ def show_config(
     timeout: int,
 ) -> tuple[Result, dict[str, object] | None]:
     command = [tsc, "-p", str(tsconfig), "--showConfig"]
-    code, output, elapsed = run_command(command, cwd=root, timeout=timeout)
+    # Parse the full output: a truncated resolved config is never valid JSON.
+    code, output, elapsed = run_command(
+        command, cwd=root, timeout=timeout, limit=None
+    )
     if code != 0:
         return Result(
             "tsconfig-resolution",
@@ -249,7 +257,7 @@ def show_config(
             "TypeScript could not resolve the configured project.",
             command,
             elapsed,
-            output,
+            trim_output(output),
         ), None
     try:
         config = json.loads(output)
@@ -260,7 +268,7 @@ def show_config(
             f"`tsc --showConfig` returned non-JSON output: {exc}.",
             command,
             elapsed,
-            output,
+            trim_output(output),
         ), None
     if not isinstance(config, dict):
         return Result(

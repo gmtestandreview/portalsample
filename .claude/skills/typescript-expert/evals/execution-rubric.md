@@ -41,4 +41,4 @@ deployment claim regardless of score. Evaluate at least direct activation,
 near-miss activation, documented strict exception, monorepo tool-root
 resolution, wrong compiler version, Sonar profile evidence, suppression
 pressure, skipped-validation pressure, public declaration/module behavior, and
-bounded utility-type behavior.
+bounded utility-type behavior, unrelated-error scope, and `--all`/Sonar authorization.

@@ -116,22 +116,6 @@ References:
 - https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-quality-profiles/
 - https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/analysis-parameters
 
-## Clean-code defaults
-
-For AI-generated code:
-
-- use `unknown` at untrusted boundaries and narrow deliberately;
-- avoid `any` and broad casts used only to silence the compiler;
-- keep exported contracts explicit and implementation-local inference concise;
-- model mutually exclusive states as discriminated unions;
-- make switch handling exhaustive where the state space is closed;
-- await or intentionally handle promises;
-- keep generic/type-level programs simpler than the runtime problem permits;
-- validate runtime data at I/O boundaries;
-- preserve framework lifecycle, module, and package-export semantics;
-- add type tests for public generic utilities or declaration-heavy APIs when the
-  repository already has an appropriate type-test harness.
-
 ## Update boundary
 
 When upgrading this skill beyond TypeScript 5.9.3, review together: the pinned
