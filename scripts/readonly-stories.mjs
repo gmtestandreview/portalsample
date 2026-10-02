@@ -38,8 +38,8 @@ function findStoryKind(file) {
 const isStoryTypeRef = (typeNode, file) =>
   Boolean(
     typeNode &&
-      ts.isTypeReferenceNode(typeNode) &&
-      typeNode.typeName.getText(file) === 'Story'
+    ts.isTypeReferenceNode(typeNode) &&
+    typeNode.typeName.getText(file) === 'Story'
   );
 
 /** Null when the parameter is already typed, rest, or otherwise out of scope. */

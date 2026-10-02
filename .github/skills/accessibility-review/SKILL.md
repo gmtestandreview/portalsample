@@ -1,9 +1,9 @@
 ---
-agent: 'agent'
-description: 'Run a focused WCAG 2.2 AA accessibility review for relevant web UI changes in this repository, using AGDS-first patterns and practical engineering fixes.'
+name: accessibility-review
+description: Run a focused WCAG 2.2 AA accessibility review for relevant web UI changes in this repository, using AGDS-first patterns and practical engineering fixes.
+disable-model-invocation: true
 ---
-
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see [.github/docs/COMMAND_CANON.md](../../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
 
 # Accessibility Review
 

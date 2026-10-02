@@ -1,9 +1,9 @@
 ---
-description: 'Create or update README.md using the repository workflow. Follow evidence-first planning, lessons review, controller-gated execution when required, README best practice, disciplined validation, and truthful tracking.'
-agent: 'agent'
+name: readme-blueprint-generator-2
+description: Create or update README.md using the repository workflow. Follow evidence-first planning, lessons review, controller-gated execution when required, README best practice, disciplined validation, and truthful tracking.
+disable-model-invocation: true
 ---
-
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see [.github/docs/COMMAND_CANON.md](../../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
 
 # README Workflow Prompt
 

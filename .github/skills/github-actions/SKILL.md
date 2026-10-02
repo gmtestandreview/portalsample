@@ -1,9 +1,9 @@
 ---
-agent: 'agent'
-description: 'Review, design, or update GitHub Actions workflows for this repository with secure, minimal, repo-aligned CI/CD practices.'
+name: github-actions
+description: Review, design, or update GitHub Actions workflows for this repository with secure, minimal, repo-aligned CI/CD practices.
+disable-model-invocation: true
 argument-hint: 'Workflow file, CI/CD issue, or GitHub Actions task to review or implement'
 ---
-
 # GitHub Actions CI/CD Review and Update
 
 Use this prompt only when the task explicitly involves GitHub Actions workflows, CI/CD behavior, workflow security, workflow performance, or deployment automation.

@@ -1,8 +1,9 @@
 ---
-description: 'Best practices and guidelines for generating comprehensive, parameterized unit tests with 80% code coverage across any programming language'
+name: unit-test-generation
+description: Best practices and guidelines for generating comprehensive, parameterized unit tests with 80% code coverage across any programming language
+disable-model-invocation: true
 ---
-
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see [.github/docs/COMMAND_CANON.md](../../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
 
 # Unit Test Generation Prompt
 

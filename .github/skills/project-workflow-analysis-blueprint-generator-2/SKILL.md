@@ -1,10 +1,9 @@
 ---
-description: 'Repository-aware workflow-analysis blueprint generator for the AGDS starter-kit workspace. Detects actual repo workflow surfaces such as Next.js Pages Router routes, AGDS layout composition, Storybook rendering, local package aliasing, API routes, and validation workflows, then generates a truthful root-level workflow blueprint while marking unsupported stacks as not applicable.'
-
-agent: 'agent'
+name: project-workflow-analysis-blueprint-generator-2
+description: Repository-aware workflow-analysis blueprint generator for the AGDS starter-kit workspace. Detects actual repo workflow surfaces such as Next.js Pages Router routes, AGDS layout composition, Storybook rendering, local package aliasing, API routes, and validation workflows, then generates a truthful root-level workflow blueprint while marking unsupported stacks as not applicable.
+disable-model-invocation: true
 ---
-
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see [.github/docs/COMMAND_CANON.md](../../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
 
 # Project Workflow Analysis Blueprint Generator
 

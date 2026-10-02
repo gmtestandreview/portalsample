@@ -1,9 +1,9 @@
 ---
-agent: 'agent'
-description: 'Run an opt-in Core Web Vitals and web performance audit for relevant routes, pages, components, assets, or diffs.'
+name: performance-audit
+description: Run an opt-in Core Web Vitals and web performance audit for relevant routes, pages, components, assets, or diffs.
+disable-model-invocation: true
 argument-hint: 'Performance issue, route, component, page, asset, metric, or diff to audit'
 ---
-
 # Performance Audit
 
 Use this prompt only when the user explicitly requests performance analysis, Core Web Vitals review, runtime-performance investigation, or performance optimization.

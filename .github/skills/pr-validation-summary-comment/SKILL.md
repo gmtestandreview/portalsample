@@ -1,15 +1,14 @@
 ---
-name: PR Validation Summary Comment
-description: 'Convert pre-pr-validation results into a standardized PR checklist comment aligned to this repository template.'
+name: pr-validation-summary-comment
+description: Convert pre-pr-validation results into a standardized PR checklist comment aligned to this repository template.
+disable-model-invocation: true
 argument-hint: 'Paste pre-pr-validation output and optional PR context'
-agent: 'agent'
 ---
-
 Create a PR comment from the provided pre-pr-validation output.
 
 Use this repository checklist as the canonical structure:
 
-- [PR template](../pull_request_template.md)
+- [PR template](../../pull_request_template.md)
 
 ## Requirements
 
