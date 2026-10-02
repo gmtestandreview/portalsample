@@ -4,7 +4,7 @@ import eslintReact from '@eslint-react/eslint-plugin';
 import stylistic from '@stylistic/eslint-plugin';
 import { defineConfig } from 'eslint/config';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import reactHooks, { rules } from 'eslint-plugin-react-hooks';
+import reactHooks from 'eslint-plugin-react-hooks';
 import storybook from 'eslint-plugin-storybook';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -53,7 +53,11 @@ export default defineConfig(
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: [
+            '.claude/skills/typescript-expert/scripts/tests/utility-types.test.ts',
+          ],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -166,6 +170,15 @@ export default defineConfig(
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
+  {
+    // This standalone script uses native ESM syntax while the rest of the
+    // repository's .js surface remains CommonJS-compatible by default.
+    name: 'nmi/esm-script',
+    files: ['skills/writing-skills/scripts/render-graphs.js'],
+    languageOptions: {
+      sourceType: 'module',
     },
   },
 

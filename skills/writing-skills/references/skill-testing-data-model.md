@@ -1,5 +1,7 @@
 # Agent Skill Testing Data Model
 
+<!-- markdownlint-disable MD013 -->
+
 ## Purpose
 
 This data model represents the Agent Skill authoring, validation,

@@ -99,7 +99,7 @@ const saveStep =
   ) =>
   async (
     values: ApplicationAndInstrumentStepDto,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<ApplicationAndInstrumentStepDto>,
     abortSignal?: AbortSignal
   ) => {
@@ -114,10 +114,10 @@ const saveStep =
 
         const valuesToSave = { ...values };
 
-        valuesToSave.certNameOptions = undefined;
-        valuesToSave.instrumentCategoryLookup = undefined;
-        valuesToSave.instrumentTypeLookup = undefined;
-        valuesToSave.instrumentTypeContent = undefined;
+        delete valuesToSave.certNameOptions;
+        delete valuesToSave.instrumentCategoryLookup;
+        delete valuesToSave.instrumentTypeLookup;
+        delete valuesToSave.instrumentTypeContent;
 
         await client.saveApplicationAndInstrument(
           id,

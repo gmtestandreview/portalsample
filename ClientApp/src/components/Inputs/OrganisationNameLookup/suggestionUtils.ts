@@ -10,8 +10,8 @@ interface GetFilteredSuggestionsArgs {
   maxResults?: number;
   options: SuggestionOption[];
   optionsFieldName: string;
-  parentOptionsName?: string;
-  parentValue?: string;
+  parentOptionsName?: string | undefined;
+  parentValue?: string | undefined;
 }
 
 const suggestionCollator = new Intl.Collator(undefined, {

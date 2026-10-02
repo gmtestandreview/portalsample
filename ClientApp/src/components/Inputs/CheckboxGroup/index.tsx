@@ -7,6 +7,7 @@ import Checkbox from '../Checkbox';
 import type { CheckboxGroupProps } from './types';
 import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const CheckboxGroup = <T,>(
   props: Readonly<CheckboxGroupProps<T> & FieldHookConfig<T>>
@@ -39,7 +40,9 @@ const CheckboxGroup = <T,>(
         (x) => x.value === _field.value
       );
       const summaryLabel =
-        currentFieldIndex !== -1 ? options[currentFieldIndex].label : '';
+        currentFieldIndex !== -1
+          ? (options[currentFieldIndex]?.label ?? '')
+          : '';
 
       if (currentFieldIndex < 0) {
         return null;
@@ -83,7 +86,7 @@ const CheckboxGroup = <T,>(
         )}
         {inlineHelp && inlineHelpTitle && (
           <Details
-            id={helpId}
+            {...omitUndefined({ id: helpId })}
             title={inlineHelpTitle}
             inlineHelp={inlineHelp}
           />

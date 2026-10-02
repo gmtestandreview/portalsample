@@ -102,7 +102,10 @@ const Actions = (props: Readonly<ActionsProps>) => {
   };
 
   return (
-    <Dropdown align={align} className={`actions-menu ${containerClassName}`}>
+    <Dropdown
+      {...(align && { align })}
+      className={`actions-menu ${containerClassName}`}
+    >
       <Dropdown.Toggle
         id={`actions-dropdown-button-${id}`}
         variant={variant}

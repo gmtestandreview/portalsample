@@ -21,6 +21,7 @@ import {
   ModalStateCtx,
 } from '../components/modals/ModalContext';
 import type { UserProfile } from '../components/SearchFilter/types';
+import { omitUndefined } from '../utils/omitUndefined';
 
 const noop = () => {};
 const noopAsync = async () => undefined;
@@ -58,7 +59,9 @@ export const defaultAccountDetails: AccountDetails = {
     targetOrganisationAbn: '00000000000',
     targetOrganisationName: 'Storybook Organisation',
   },
-  userProfile: { testingCalibrationDashboard: defaultUserProfile },
+  userProfile: {
+    testingCalibrationDashboard: omitUndefined(defaultUserProfile),
+  },
 };
 
 export const defaultAccountState: AccountStateContext = {
@@ -151,7 +154,7 @@ export interface PortalStoryParameters {
 }
 
 const getPortalParameters = (context: StoryContext): PortalStoryParameters =>
-  (context.parameters.portal ?? {}) as PortalStoryParameters;
+  (context.parameters['portal'] ?? {}) as PortalStoryParameters;
 
 const createMsalContext = (
   authenticated: boolean,

@@ -22,7 +22,7 @@ export interface SelectInputProps<T = string | number> {
   id?: string;
   disabled?: boolean;
   onChange?: ChangeEventHandler<HTMLInputElement | HTMLSelectElement>;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   readOnly?: boolean;
   addBlank?: boolean;
   [key: string]: unknown;

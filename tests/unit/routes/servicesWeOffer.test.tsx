@@ -17,8 +17,9 @@ import {
   signOut,
   testAccount,
 } from '../helpers/mockMsal';
-import type { ClientMock, ClientMethodMocks } from '../helpers/mockApiClient';
+import type { ClientMockOf } from '../helpers/mockApiClient';
 import { renderWithRouter } from '../helpers/renderWithRouter';
+import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   accountContext: vi.fn(),
@@ -29,7 +30,7 @@ const mocks = vi.hoisted(() => ({
 
 /** Filled in by the module-mock factory below, so the test can drive the same client instance. */
 const clients = vi.hoisted(() => ({
-  lookup: undefined as unknown as ClientMock<ClientMethodMocks>,
+  lookup: undefined as unknown as ClientMockOf<'getServices'>,
 }));
 
 vi.mock('@azure/msal-react', async () => {
@@ -420,7 +421,7 @@ describe('services we offer', () => {
 
       expect(patternCheckbox).not.toBeChecked();
 
-      await user.click(patternRadio);
+      await user.click(defined(patternRadio));
 
       expect(patternRadio).toBeChecked();
       // Choosing a default implies adding the service - the radio must not leave the account
@@ -440,10 +441,10 @@ describe('services we offer', () => {
         hidden: true,
       });
 
-      await user.click(patternRadio);
+      await user.click(defined(patternRadio));
       expect(patternRadio).toBeChecked();
 
-      await user.click(patternCheckbox);
+      await user.click(defined(patternCheckbox));
 
       expect(patternCheckbox).not.toBeChecked();
       expect(patternRadio).not.toBeChecked();
@@ -466,7 +467,7 @@ describe('services we offer', () => {
       expect(testingCheckbox).toBeChecked();
       expect(testingRadio).not.toBeChecked();
 
-      await user.click(testingCheckbox);
+      await user.click(defined(testingCheckbox));
 
       expect(testingCheckbox).not.toBeChecked();
       expect(testingRadio).not.toBeChecked();
@@ -527,7 +528,7 @@ describe('services we offer', () => {
       );
       const [testingRadio] = screen.getAllByRole('radio', { hidden: true });
 
-      await user.click(testingRadio);
+      await user.click(defined(testingRadio));
       await user.click(screen.getByTestId('save-button'));
 
       await waitFor(() =>
@@ -563,7 +564,7 @@ describe('services we offer', () => {
       );
       const [, patternRadio] = screen.getAllByRole('radio', { hidden: true });
 
-      await user.click(patternRadio);
+      await user.click(defined(patternRadio));
       await user.click(screen.getByTestId('save-button'));
 
       await waitFor(() =>

@@ -65,12 +65,15 @@ const AcceptQuote = () => {
         quoteClient.setAuthToken(tokenResult.accessToken);
         try {
           const result = await client.getStepStatuses(id!);
-          const quoteData = await quoteClient.getQuoteRequestDetails(
-            result[0].crmQuoteRequestId!
-          );
+          const crmQuoteRequestId = result[0]?.crmQuoteRequestId;
+          if (!crmQuoteRequestId) {
+            throw new Error('Quote request has no step statuses');
+          }
+          const quoteData =
+            await quoteClient.getQuoteRequestDetails(crmQuoteRequestId);
           setReferenceId(quoteData.quoteRequestIdNum!);
           setStatuses(result);
-          setCrmQuoteRequestId(result[0].crmQuoteRequestId!);
+          setCrmQuoteRequestId(crmQuoteRequestId);
         } catch (error) {
           AppLogger.error(
             'Failed to load quote request details',

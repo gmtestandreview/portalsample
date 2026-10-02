@@ -133,7 +133,7 @@ export const isValidAbn = (value: string) => {
   }
 
   for (let index = 0; index < abnWeights.length; index++) {
-    const weight = abnWeights[index];
+    const weight = abnWeights[index] ?? 0;
     const digit =
       Number.parseInt(value.substring(index, index + 1), 10) -
       (index === 0 ? 1 : 0);

@@ -11,6 +11,7 @@ import {
 import { Description, Label } from '../forms/AriaForm/Form';
 import { Text } from './Content';
 import { X } from './NmiIcon';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './TagGroup.css';
 
 export interface TagGroupProps<T>
@@ -34,7 +35,7 @@ export function TagGroup<T>({
   return (
     <AriaTagGroup {...props}>
       {label && <Label>{label}</Label>}
-      <TagList items={items} renderEmptyState={renderEmptyState}>
+      <TagList {...omitUndefined({ items, renderEmptyState })}>
         {children}
       </TagList>
       {description && <Description>{description}</Description>}
@@ -54,7 +55,7 @@ export function Tag({
   const textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaTag
-      textValue={textValue}
+      {...omitUndefined({ textValue })}
       {...props}
       className='react-aria-Tag button-base'
     >

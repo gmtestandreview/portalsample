@@ -224,13 +224,14 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
 
   useEffect(() => {
     const loadAccountDetails = async () => {
-      setIsLoading(true);
       const account = accounts[0];
+      if (!account) return;
+      setIsLoading(true);
       try {
         const client = new UsersClient();
         const tokenResult = await instance.acquireTokenSilent({
           ...tokenRequest,
-          account: accounts[0],
+          account,
         });
         client.setAuthToken(tokenResult.accessToken);
         AppLogger.verbose('AccountProvider.loadAccountDetails', {

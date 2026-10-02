@@ -12,6 +12,7 @@ import { tokenRequest } from '../../authentication/authConfig';
 import ViewPdfButton from './ViewPdfButton';
 import { clearDashboardNotification } from '../../storage/notification';
 import AppLogger from '../../instrumentation/AppLogger';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 export interface ViewMeasurementReportProps {
   text?: string;
@@ -104,12 +105,12 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
       }
     };
 
-    getReportPdfFileSize();
+    void getReportPdfFileSize();
   }, [accounts, instance, reportId, setFileError]);
 
   return (
     <ViewPdfButton
-      text={text}
+      {...omitUndefined({ text })}
       fileSize={fileSize}
       isLoaded={pdfSizeLoaded}
       getPdf={viewReportPdf}

@@ -4,6 +4,7 @@ import { Col, Row, Container, Tab, Nav } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { PatternFormat } from 'react-number-format';
+import { omitUndefined } from '../../utils/omitUndefined';
 import Welcome from '../../components/Welcome';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
@@ -185,7 +186,7 @@ const DashboardTA = () => {
         filterSearchText: userProfile.filterSearchText,
       };
       accountDispatch
-        ?.setUserProfile({ patternApprovalDashboard: profile })
+        ?.setUserProfile({ patternApprovalDashboard: omitUndefined(profile) })
         .catch((error) => {
           AppLogger.error(
             'T & C Dashboard failed to save user profile.',

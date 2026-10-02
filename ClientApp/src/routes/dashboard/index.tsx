@@ -4,6 +4,7 @@ import { Col, Row, Container, Tab, Nav } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { PatternFormat } from 'react-number-format';
+import { omitUndefined } from '../../utils/omitUndefined';
 import Welcome from '../../components/Welcome';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
@@ -110,11 +111,11 @@ interface FetchRequestsParams {
   sortOrder: string;
   currentPage: number;
   pageSize: number;
-  accountDetailsCrmGuid?: string;
-  filterSearchText?: string;
-  actualYear?: string;
-  actualStatus?: StatusEnumDto;
-  signal?: AbortSignal;
+  accountDetailsCrmGuid?: string | undefined;
+  filterSearchText?: string | undefined;
+  actualYear?: string | undefined;
+  actualStatus?: StatusEnumDto | undefined;
+  signal?: AbortSignal | undefined;
 }
 
 const fetchRequestsByTab = async ({
@@ -192,7 +193,9 @@ const checkAcceptedQuoteStatus = (
         (x) => x.referenceId === newlyAcceptedQuoteId
       );
       const [updatedItem] = items.splice(index, 1);
-      items.unshift(updatedItem);
+      if (updatedItem) {
+        items.unshift(updatedItem);
+      }
 
       // Non-null assertion required: property is typed nullable but guaranteed non-null here
       SessionStorageCache().setItem(
@@ -340,7 +343,7 @@ const Dashboard = () => {
 
   const saveUserProfile = (userProfile: UserProfile) => {
     accountDispatch?.setUserProfile({
-      testingCalibrationDashboard: userProfile,
+      testingCalibrationDashboard: omitUndefined(userProfile),
     });
   };
 
@@ -421,7 +424,9 @@ const Dashboard = () => {
       // profile.filterCurrentPage is assigned defaultFilter.filterCurrentPage a few lines
       // above, so it can never be nullish and the fallback here was unreachable.
       setCurrentPage(profile.filterCurrentPage);
-      accountDispatch?.setUserProfile({ testingCalibrationDashboard: profile });
+      accountDispatch?.setUserProfile({
+        testingCalibrationDashboard: omitUndefined(profile),
+      });
       setInitialFilters(profile);
     }
   }, [

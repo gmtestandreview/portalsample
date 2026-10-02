@@ -13,6 +13,7 @@ import { setDashboardNotification } from '../../../storage/notification';
 import { NotificationSeverity } from '../../../storage/types';
 import AppLogger from '../../../instrumentation/AppLogger';
 import { trackGAEvent } from '../../../analytics/GoogleAnalytics';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 interface SaveButtonProps {
   onClick: () => void;
@@ -77,14 +78,14 @@ const RFQDeleteModal = () => {
       );
     } finally {
       modalDispatch?.setShowRFQDeleteModal(false, '');
-      navigate('/');
+      void navigate('/');
     }
   };
 
   const saveButton = () => (
     <SaveButton
       onClick={() => {
-        onContinueRFQDeleteModal();
+        void onContinueRFQDeleteModal();
         trackGAEvent('Save RFQ Delete Modal');
       }}
     />
@@ -108,9 +109,11 @@ const RFQDeleteModal = () => {
   return (
     <Modal
       size='lg'
-      show={modalState?.showRFQDeleteModal}
+      {...omitUndefined({
+        show: modalState?.showRFQDeleteModal,
+        enforceFocus: modalState?.showRFQDeleteModal,
+      })}
       aria-labelledby='modal-delete-rfq'
-      enforceFocus={modalState?.showRFQDeleteModal}
       tabIndex={-1}
       backdrop='static'
       keyboard={false}

@@ -5,6 +5,7 @@ Converts the session transcript (.jsonl) to a readable JSON array in
 .agent-sync/logs/chat-YYYY-MM-DD-{session_id[:8]}.json for post-session debugging.
 Always exits 0 — never blocks the Stop hook.
 """
+import contextlib
 import json
 import sys
 from datetime import date
@@ -32,10 +33,8 @@ def main() -> None:
         for line in src.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if line:
-                try:
+                with contextlib.suppress(json.JSONDecodeError):
                     entries.append(json.loads(line))
-                except json.JSONDecodeError:
-                    pass
 
         log_dir = Path.cwd() / ".agent-sync" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)

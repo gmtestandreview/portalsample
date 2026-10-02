@@ -258,9 +258,11 @@ const renderQuotationContent = (
             onClick={() => {
               trackGAEvent('Request item/quotation tab');
 
-              useQuoteId
-                ? navigate(`/quotation/${dashboardQuoteDto.quotationId}`)
-                : navigate(`/quotation/${referenceId}`);
+              navigate(
+                useQuoteId
+                  ? `/quotation/${dashboardQuoteDto.quotationId}`
+                  : `/quotation/${referenceId}`
+              );
             }}
           >
             View quotation
