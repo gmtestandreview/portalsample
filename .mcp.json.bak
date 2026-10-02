@@ -44,6 +44,12 @@
         "gmtestandreview_portalsample"
       ]
     },
+    "tokensave": {
+      "command": "C:/Users/gregm/.local/bin/tokensave.exe",
+      "args": [
+        "serve"
+      ]
+    },
     "DeepGraph React MCP": {
       "command": "npx",
       "args": [
