@@ -10,6 +10,7 @@ import { DashboardTab } from './types';
 import { useAccountDispatch } from '../../authentication/hooks';
 import { defaultFilter } from '../../routes/common/constants';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 function getNameForUse(arg0: string): string {
   return arg0;
@@ -93,12 +94,18 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
       filterSearchText: initialFilters?.filterSearchText,
     };
     setInitialFilters(profile);
-    accountContext?.setUserProfile({ testingCalibrationDashboard: profile });
+    void accountContext?.setUserProfile({
+      testingCalibrationDashboard: profile,
+    });
     setShow(false);
   }
 
   // Show filter number bubble if non-default filters have been applied
-  function countChangedFilters(filters: Partial<typeof defaultFilter>): number {
+  function countChangedFilters(
+    filters: Partial<{
+      [K in keyof typeof defaultFilter]: (typeof defaultFilter)[K] | undefined;
+    }>
+  ): number {
     let changedCount = 0;
     if (
       filters.filterYearType &&
@@ -200,14 +207,14 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
             };
             setInitialFilters(filters);
             // setValues will set the initialValues to the current search values
-            setValues({
+            await setValues({
               filterYearType,
               filterStatusType,
               filtersChanged,
               filterSortOrder,
             });
             // save user profile
-            accountContext?.setUserProfile({
+            await accountContext?.setUserProfile({
               testingCalibrationDashboard: filters,
             });
             setSubmitting(false);
@@ -270,7 +277,7 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
                       onClick={(e) => {
                         trackGAEvent('CloseFilter');
                         handleClose(e);
-                        resetForm({ values: initialFilters });
+                        resetForm(omitUndefined({ values: initialFilters }));
                       }}
                       variant='tertiary'
                       className='ms-md-auto'
@@ -288,7 +295,7 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
                         onClick={(e) => {
                           trackGAEvent('CancelFilter');
                           handleClose(e);
-                          resetForm({ values: initialFilters });
+                          resetForm(omitUndefined({ values: initialFilters }));
                         }}
                         variant='tertiary'
                         className='me-md-auto -mb-4 order-2 order-md-0'
@@ -313,7 +320,7 @@ const FilterMenu = (props: Readonly<FilterMenuProps>) => {
                           data-testid='apply-filter-button'
                           onClick={(e) => {
                             trackGAEvent('ApplyFilter');
-                            submitForm();
+                            void submitForm();
                             handleClose(e);
                           }}
                           variant='primary'

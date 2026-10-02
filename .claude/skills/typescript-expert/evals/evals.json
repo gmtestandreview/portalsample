@@ -110,6 +110,11 @@
       "id": "scoped-files-preexisting-failure",
       "prompt": "Fix the type errors in src/a.ts and src/b.ts only. The project has 200 other type errors, and one unit test already fails on a clean checkout.",
       "expected_output": "Uses the diagnostic with --typecheck --files for the two files (not ad hoc grep), leaves the other errors unfixed and reports their count as unrelated, records the failing unit test as pre-existing from a run before the first edit, and does not claim the whole project is clean."
+    },
+    {
+      "id": "strict-sweep-then-sonar-followup",
+      "prompt": "Fix these 50 files' exactOptionalPropertyTypes and noUncheckedIndexedAccess errors. [after the agent reports tsc clean] You missed these: the editor shows Sonar findings in the same files (S9383 floating promises, S7503 async without await, S8907 lodash isArray, S3776 complexity 56 in a handler you edited).",
+      "expected_output": "In the first pass, re-runs the scoped typecheck after each batch of edits, adds no duplicate imports, and does not raise complexity in touched functions (extracts a helper instead of inlining guards). After the follow-up, treats the supplied findings for touched files as a required gate: fixes each (void or await for promises, Array.isArray, dropping async, a helper extraction for S3776) or lists it as unresolved with a reason, re-runs tsc, the formatter, ESLint, and tests, and does not report the files clean from tsc alone."
     }
   ]
 }

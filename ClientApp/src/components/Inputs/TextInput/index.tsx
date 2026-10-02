@@ -5,6 +5,7 @@ import { trim } from 'lodash';
 import { format, parseISO } from 'date-fns';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 export interface TextInputProps {
   label: string;
@@ -90,8 +91,8 @@ const TextInput = ({
         ? format(getDate(_meta.value), 'yyyy-MM-dd')
         : _meta.value;
     newValue = trim(newValue as string);
-    _fieldHelper.setValue(newValue);
-    _fieldHelper.setTouched(true);
+    void _fieldHelper.setValue(newValue);
+    void _fieldHelper.setTouched(true);
   };
 
   const handleOnChange = (e: any) => {
@@ -131,24 +132,29 @@ const TextInput = ({
         </Form.Text>
       )}
       {inlineHelp && inlineHelpTitle && (
-        <Details id={helpId} title={inlineHelpTitle} inlineHelp={inlineHelp} />
+        <Details
+          {...omitUndefined({ id: helpId })}
+          title={inlineHelpTitle}
+          inlineHelp={inlineHelp}
+        />
       )}
       <Form.Control
         className={`form-field form-text-input ${className}`}
         type={type || 'text'}
         {..._field}
         isInvalid={!!(_meta.touched && _meta.error)}
-        disabled={disabled}
-        readOnly={readonly}
-        aria-describedby={
-          _meta.touched && _meta.error
-            ? `${id || name}-validation-msg`
-            : helpId || undefined
-        }
+        {...omitUndefined({
+          disabled,
+          readOnly: readonly,
+          'aria-describedby':
+            _meta.touched && _meta.error
+              ? `${id || name}-validation-msg`
+              : helpId || undefined,
+          autoComplete,
+          placeholder: type === 'date' ? 'dd/mm/yyyy' : placeholder,
+        })}
         value={formattedValue || ''}
-        autoComplete={autoComplete}
         onBlur={handleOnBlur}
-        placeholder={type === 'date' ? 'dd/mm/yyyy' : placeholder}
         onChange={handleOnChange}
         onKeyDown={handleOnKeyDown}
         onClick={handleOnClick}

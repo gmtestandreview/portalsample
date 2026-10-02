@@ -4,6 +4,7 @@ import type { FC } from 'react';
 import { Navigate, Route, Routes, useResolvedPath } from 'react-router';
 import type { WizardFormProps, WizardStepProps } from './types';
 import WizardRoutedStep from './WizardRoutedStep';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
   const {
@@ -70,31 +71,33 @@ const WizardForm: FC<WizardFormProps> = (props: Readonly<WizardFormProps>) => {
                 currentStepIndex={index}
                 initialValues={initialValues}
                 location={location}
-                isSummaryPage={isSummaryPage}
-                locationAfterExit={locationAfterExit}
                 locationOnCompletion={locationOnCompletion}
-                onSaveAndExit={onSaveAndExit}
-                onSaveAndNext={onSaveAndNext}
                 title={title}
-                lastStepNextButtonTitle={lastStepNextButtonTitle}
                 stepStatuses={stepStatuses}
                 loadStepValues={loadStepValues}
-                nextButtonTitle={nextButtonTitle}
-                previousButtonTitle={previousButtonTitle}
-                validateHard={validateHard}
-                validateSoft={validateSoft}
                 url={url}
-                hidingFields={hidingFields}
-                bannerTitle={bannerTitle}
-                bannerRefTitle={bannerRefTitle}
-                bannerSubTitle={bannerSubTitle}
-                canSaveDraft={canSaveDraft}
-                showSaveAndNextButton={showSaveAndNextButton}
-                showGoToDashboardButton={showGoToDashboardButton}
-                discard={discard}
-                getRedirectionLocationOnError={getRedirectionLocationOnError}
-                showBanner={showBanner}
-                confirmationOnSubmission={confirmationOnSubmission}
+                {...omitUndefined({
+                  isSummaryPage,
+                  locationAfterExit,
+                  onSaveAndExit,
+                  onSaveAndNext,
+                  lastStepNextButtonTitle,
+                  nextButtonTitle,
+                  previousButtonTitle,
+                  validateHard,
+                  validateSoft,
+                  hidingFields,
+                  bannerTitle,
+                  bannerRefTitle,
+                  bannerSubTitle,
+                  canSaveDraft,
+                  showSaveAndNextButton,
+                  showGoToDashboardButton,
+                  discard,
+                  getRedirectionLocationOnError,
+                  showBanner,
+                  confirmationOnSubmission,
+                })}
               />
             }
           />

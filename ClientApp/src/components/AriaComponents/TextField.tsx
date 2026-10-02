@@ -7,6 +7,7 @@ import {
   type ValidationResult,
 } from 'react-aria-components/TextField';
 import { Label, FieldError, Description } from '../forms/AriaForm/Form';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './TextField.css';
 import type React from 'react';
 
@@ -33,9 +34,8 @@ export function TextField({
     <AriaTextField {...props}>
       {label && <Label>{label}</Label>}
       <Input
-        ref={inputRef}
+        {...omitUndefined({ ref: inputRef, placeholder })}
         className='react-aria-Input inset'
-        placeholder={placeholder}
       />
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

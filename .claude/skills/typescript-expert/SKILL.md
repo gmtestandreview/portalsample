@@ -12,7 +12,7 @@ compatibility: >-
   gates depend on project tools. Sonar also requires configured network access
   and credentials.
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   typescript: "5.9.3"
 ---
 
@@ -33,6 +33,8 @@ Do not use it for UI/UX design or unrelated JavaScript-only work. Running or
 administering Sonar (scans, quality gates, profiles) belongs to the `sonarqube:*`
 skills and project CI; this skill only governs which Sonar claims a TypeScript
 task may make, and still requires authorization before any external scan.
+Reading Sonar findings the user or editor supplies needs no scan and is covered
+by the editor-diagnostics gate in step 5.
 
 Composition: this skill owns TypeScript-specific diagnosis and gates. Its steps
 4–5 narrow, and do not replace, `systematic-debugging` (cause not yet
@@ -159,6 +161,16 @@ For errors from `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, or
 `noPropertyAccessFromIndexSignature`, load the strict-flag fallout section of
 `references/typescript-5.9.3-practices.md` before choosing a fix.
 
+Do not raise lint or Sonar findings in code you touch. When a fix would add
+branches or guards to an already complex function (for example, an
+index-access guard inside a long handler), extract a helper instead of
+inlining. For a floating promise, use `await` where the caller is async and
+`void` otherwise.
+
+After each batch of edits, re-run the scoped typecheck (`--typecheck --files`)
+before the next batch. Before adding an import, confirm it is not already
+present, and re-read any JSX element whose opening or closing tag you changed.
+
 Choose `interface` or `type` for semantics and composition needs rather than a
 blanket preference. Add decorators/metadata only when the framework and compiler
 configuration require them.
@@ -202,6 +214,12 @@ fix would require weakening a rule, stop and report that gate as unresolved:
   authorized. Use the project's assigned quality profile. If the requirement
   specifically says **Sonar way**, verify that server-side assignment from
   project/server evidence when accessible.
+
+If the user supplies editor or Sonar diagnostics, or says the code is judged
+on them, treat the findings for every file you touched as a required gate:
+fix them or list each as unresolved with the reason. This needs no scan. A
+clean `tsc`, ESLint, and test run does not satisfy it. State when no
+diagnostics were available to you, instead of reporting the files clean.
 
 Use `scripts/ts_diagnostic.py` as orchestration/inspection, not as a substitute
 for project CI. A successful waited scanner proves the quality-gate result, not
