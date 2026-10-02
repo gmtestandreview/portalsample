@@ -643,6 +643,10 @@ describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
     expect(codeqlWorkflow).toContain('build-mode: none');
   });
 
+  it('does not enable dependency caching for the configured CodeQL matrix', () => {
+    expect(codeqlWorkflow).not.toContain('dependency-caching');
+  });
+
   it('grants CodeQL only the permissions required to upload code scanning results', () => {
     expect(codeqlWorkflow).toContain('contents: read');
     expect(codeqlWorkflow).toContain('actions: read');
