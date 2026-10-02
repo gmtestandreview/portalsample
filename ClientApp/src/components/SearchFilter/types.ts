@@ -16,13 +16,13 @@ export interface InitialFilters {
   filtersChanged: boolean;
 }
 export interface UserProfile {
-  filterYearType?: string;
-  filterStatusType?: string;
-  filterSortOrder?: string;
-  filtersChanged?: boolean;
-  filterCurrentPage?: number;
-  filterActiveTab?: DashboardTab;
-  filterSearchText?: string;
+  filterYearType?: string | undefined;
+  filterStatusType?: string | undefined;
+  filterSortOrder?: string | undefined;
+  filtersChanged?: boolean | undefined;
+  filterCurrentPage?: number | undefined;
+  filterActiveTab?: DashboardTab | undefined;
+  filterSearchText?: string | undefined;
 }
 
 export interface SearchFilterProps {

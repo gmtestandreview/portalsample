@@ -60,7 +60,11 @@ change; this skill does not substitute for it.
 8. Change only what the request names. Report unrelated errors or config
    problems (a separate type error, a mismatched module pair) instead of fixing
    them. Edits that alter the public surface, such as a package `exports` map or
-   an exported signature, need the request or user confirmation.
+   an exported signature, need the request or user confirmation. Widening an
+   optional property to `| undefined` to satisfy `exactOptionalPropertyTypes` is
+   type-only and allowed on the type that owns the error, including shared types
+   outside the named files; narrowing, renaming, or removing is not. Name every
+   widened shared type in the completion report.
 
 ## Change safety
 
@@ -73,7 +77,10 @@ APIs, migrations, or shared build settings:
 - stage the smallest justified change and validate it before widening scope;
 - do not revert unrelated user changes;
 - run networked Sonar analysis only when the project already configures it and
-  external analysis is authorized; otherwise report that gate as unresolved.
+  external analysis is authorized; otherwise report that gate as unresolved;
+- keep each file's line endings when scripting edits (open with `newline=''`),
+  and run the project formatter on changed files before ESLint, so formatting
+  never masquerades as a lint failure.
 
 ## Workflow
 
@@ -90,6 +97,10 @@ lockfile and hoisted `node_modules`). Pass `--root <project>` and
 `--tool-root <workspace>` when they differ; do not guess from the current
 directory.
 
+Before the first edit, run the project's unit/test gate once and note failures
+that already exist, so they are reported as pre-existing instead of attributed
+to your change.
+
 For a broad or unclear failure set, run:
 
 Run the bundled script by its path inside this skill directory (it is not in the
@@ -105,6 +116,12 @@ present, prefer the repository build or an existing `tsc --build` workflow.
 Add `--build` or `--test` only when those gates apply. `--sonar`, and `--all`
 (which includes it), run external analysis: add them only when Sonar is
 configured and authorized. Use `--format json` for machine-readable output.
+
+When the request names files, add `--files <path-fragment>` (repeatable, needs
+`--typecheck`): the gate fails only on errors in those files and reports the
+count outside them, which are listed as unrelated, not fixed. Do not hand-roll
+`grep` filters over `tsc` output. Fix an owning shared type or test helper
+outside the named files only when it is the root cause, and report it.
 
 ### 2. Establish the compiler contract
 
@@ -138,6 +155,10 @@ exhaustive `never` checks for closed states; `satisfies` when validation should
 preserve inference; type-only imports where module semantics require them; and
 runtime validation for external data.
 
+For errors from `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, or
+`noPropertyAccessFromIndexSignature`, load the strict-flag fallout section of
+`references/typescript-5.9.3-practices.md` before choosing a fix.
+
 Choose `interface` or `type` for semantics and composition needs rather than a
 blanket preference. Add decorators/metadata only when the framework and compiler
 configuration require them.
@@ -157,7 +178,8 @@ Resolve failures in this order unless evidence requires otherwise:
 3. TypeScript emit/build failures;
 4. ESLint failures, including type-aware rules;
 5. behavior/test failures caused by the change;
-6. SonarQube findings and quality-gate failures.
+6. SonarQube findings and quality-gate failures, when Sonar is configured and
+   authorized.
 
 For slow type checking, use `--extendedDiagnostics` or a compiler trace before
 rewriting types. Reduce avoidable union/intersection recursion, unnecessary
@@ -173,7 +195,8 @@ fix would require weakening a rule, stop and report that gate as unresolved:
 - TypeScript 5.9.3 version check and strict-profile check;
 - `tsc` type checking;
 - `tsc` emit when the project is required to emit with `tsc`;
-- ESLint using the project's configured rules;
+- ESLint using the project's configured rules, and the project formatter's
+  check on changed files;
 - project build/tests when behavior or generated output can change;
 - SonarQube with quality-gate waiting when Sonar is configured and
   authorized. Use the project's assigned quality profile. If the requirement
@@ -202,7 +225,9 @@ source-of-truth types.
 State what changed and why; which compiler/lint/build/test/Sonar commands
 actually ran; the actual status of each required gate; and any remaining
 blocker, suppression, assumption, or unverified external gate. List unrelated
-problems you found but did not fix.
+problems you found but did not fix, any gate failure that already existed
+before your first edit, and each shared type you widened outside the named
+files.
 
 Report a result only for a command that ran. For a plan or dry run, write "not
 run" for every gate: no bracketed placeholders such as `[result]`, and no "fixed"

@@ -9,10 +9,7 @@ import {
   signOut,
   DEFAULT_ACCESS_TOKEN,
 } from '../../helpers/mockMsal';
-import type {
-  ClientMock,
-  ClientMethodMocks,
-} from '../../helpers/mockApiClient';
+import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 
 const mocks = vi.hoisted(() => ({
@@ -21,7 +18,9 @@ const mocks = vi.hoisted(() => ({
 }));
 
 const clients = vi.hoisted(() => ({
-  patternApproval: undefined as unknown as ClientMock<ClientMethodMocks>,
+  patternApproval: undefined as unknown as ClientMockOf<
+    'getAppMessages' | 'addAppMessage'
+  >,
 }));
 
 /** Captures the editor's callbacks so a submission can be driven without Slate's DOM. */

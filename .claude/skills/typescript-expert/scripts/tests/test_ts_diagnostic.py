@@ -12,7 +12,8 @@ from unittest import mock
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "ts_diagnostic.py"
 SPEC = importlib.util.spec_from_file_location("ts_diagnostic", MODULE_PATH)
-assert SPEC is not None and SPEC.loader is not None
+assert SPEC is not None
+assert SPEC.loader is not None
 tsd = importlib.util.module_from_spec(SPEC)
 sys.modules[SPEC.name] = tsd
 SPEC.loader.exec_module(tsd)
@@ -20,7 +21,7 @@ SPEC.loader.exec_module(tsd)
 
 class StrictProfileTests(unittest.TestCase):
     def config(self, **overrides: object) -> dict[str, object]:
-        compiler = {name: True for name in tsd.STRICT_TRUE}
+        compiler: dict[str, object] = {name: True for name in tsd.STRICT_TRUE}
         compiler.update({name: True for name in tsd.RECOMMENDED_TRUE})
         compiler.update(overrides)
         return {"compilerOptions": compiler}
@@ -131,6 +132,131 @@ class SonarEvidenceTests(unittest.TestCase):
             )
             self.assertEqual(result.status, tsd.PASS)
             self.assertIn("not verified", result.detail)
+
+class TimeoutOutputTests(unittest.TestCase):
+    """`TimeoutExpired.stdout/stderr` are bytes even when `text=True` was requested."""
+
+    def run_with_timeout(self, exc: subprocess.TimeoutExpired):
+        with (
+            tempfile.TemporaryDirectory() as td,
+            mock.patch.object(tsd.subprocess, "run", side_effect=exc),
+        ):
+            return tsd.run_command(["tool"], cwd=Path(td), timeout=1)
+
+    def test_bytes_partial_output_is_decoded(self) -> None:
+        exc = subprocess.TimeoutExpired(
+            cmd=["tool"], timeout=1, output=b"partial out", stderr=b"partial err"
+        )
+        code, output, _ = self.run_with_timeout(exc)
+        self.assertEqual(code, 124)
+        self.assertIn("partial out", output)
+        self.assertIn("partial err", output)
+
+    def test_text_partial_output_is_kept(self) -> None:
+        exc = subprocess.TimeoutExpired(
+            cmd=["tool"], timeout=1, output="text out", stderr=None
+        )
+        code, output, _ = self.run_with_timeout(exc)
+        self.assertEqual(code, 124)
+        self.assertEqual(output, "text out")
+
+    def test_no_output_reports_the_timeout(self) -> None:
+        code, output, _ = self.run_with_timeout(
+            subprocess.TimeoutExpired(cmd=["tool"], timeout=1)
+        )
+        self.assertEqual(code, 124)
+        self.assertEqual(output, "Timed out after 1s")
+
+
+class JsonObjectTests(unittest.TestCase):
+    def test_object_is_returned_and_other_values_are_none(self) -> None:
+        self.assertEqual(tsd.as_json_object({"a": 1}), {"a": 1})
+        self.assertEqual(tsd.as_json_object({}), {})
+        not_objects: tuple[object, ...] = (None, [], "text", 3)
+        for value in not_objects:
+            self.assertIsNone(tsd.as_json_object(value))
+
+    def test_package_scripts_keeps_only_string_commands(self) -> None:
+        package: dict[str, object] = {"scripts": {"a": "x", "b": 2}}
+        self.assertEqual(tsd.package_scripts(package), {"a": "x"})
+        self.assertEqual(tsd.package_scripts({"scripts": []}), {})
+
+
+class ArgumentValidationTests(unittest.TestCase):
+    def parse(self, *argv: str):
+        return tsd.build_parser().parse_args(list(argv))
+
+    def test_files_requires_typecheck(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            (Path(td) / "tsconfig.json").write_text("{}")
+            args = self.parse("--root", td, "--files", "src/a.ts")
+            message = tsd.argument_error(
+                args, Path(td), Path(td), Path(td) / "tsconfig.json"
+            )
+        self.assertIn("--files requires --typecheck", message or "")
+
+    def test_all_satisfies_files_and_exception_requirements(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            (Path(td) / "tsconfig.json").write_text("{}")
+            args = self.parse(
+                "--all", "--files", "src/a.ts",
+                "--allow-strict-exception", "noUncheckedIndexedAccess",
+            )
+            tsd.expand_all(args)
+            message = tsd.argument_error(
+                args, Path(td), Path(td), Path(td) / "tsconfig.json"
+            )
+        self.assertIsNone(message)
+
+    def test_missing_root_is_reported_before_flag_errors(self) -> None:
+        args = self.parse("--files", "src/a.ts")
+        message = tsd.argument_error(
+            args, Path("missing-root"), Path("missing-root"), Path("x.json")
+        )
+        self.assertIn("project root does not exist", message or "")
+
+    def test_non_positive_timeout_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            (Path(td) / "tsconfig.json").write_text("{}")
+            args = self.parse("--timeout", "0")
+            message = tsd.argument_error(
+                args, Path(td), Path(td), Path(td) / "tsconfig.json"
+            )
+        self.assertIn("--timeout must be positive", message or "")
+
+
+class ScopedTypecheckTests(unittest.TestCase):
+    OUTPUT = "\n".join(
+        [
+            "src/a.ts(1,1): error TS2345: bad arg",
+            "  continuation line",
+            "src\\b.ts(2,2): error TS18048: maybe undefined",
+            "src/other.ts(3,3): error TS2375: elsewhere",
+        ]
+    )
+
+    def scoped(self, code: int, output: str, scope: list[str]):
+        return tsd.scoped_typecheck_result(["tsc"], code, output, 0.1, scope)
+
+    def test_errors_in_scope_fail_and_outside_errors_are_only_counted(self) -> None:
+        result = self.scoped(2, self.OUTPUT, ["src/a.ts"])
+        self.assertEqual(result.status, tsd.FAIL)
+        self.assertIn("1 error(s) in scope; 2 outside scope", result.detail)
+        self.assertNotIn("other.ts", result.output or "")
+
+    def test_windows_separators_match_scope(self) -> None:
+        result = self.scoped(2, self.OUTPUT, ["src/b.ts"])
+        self.assertEqual(result.status, tsd.FAIL)
+
+    def test_clean_scope_passes_even_when_project_fails(self) -> None:
+        result = self.scoped(2, self.OUTPUT, ["src/clean.ts"])
+        self.assertEqual(result.status, tsd.PASS)
+        self.assertIn("3 outside scope", result.detail)
+
+    def test_unparseable_failure_is_never_clean(self) -> None:
+        result = self.scoped(1, "error TS5083: Cannot read file", ["src/a.ts"])
+        self.assertEqual(result.status, tsd.FAIL)
+
 
 if __name__ == "__main__":
     unittest.main()

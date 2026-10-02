@@ -204,8 +204,10 @@ export const TabNavigation: Story = {
     const tabs = within(tabList).getAllByRole('tab');
     await expect(tabs.length).toBeGreaterThanOrEqual(2);
     // Click the second tab and assert it becomes selected
-    await user.click(tabs[1]);
-    await expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+    const secondTab = tabs[1];
+    if (!secondTab) throw new Error('Expected a second dashboard tab');
+    await user.click(secondTab);
+    await expect(secondTab).toHaveAttribute('aria-selected', 'true');
     await waitFor(() =>
       expect(
         canvas.getByRole('heading', { name: /Keysight U1242C/ })

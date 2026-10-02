@@ -13,11 +13,11 @@ that a globally installed compiler matches the project.
 Official references:
 
 - TypeScript 5.9 release notes:
-  https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-9.html
+  <https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-9.html>
 - TypeScript 5.9.3 release:
-  https://github.com/microsoft/TypeScript/releases/tag/v5.9.3
+  <https://github.com/microsoft/TypeScript/releases/tag/v5.9.3>
 - TSConfig reference:
-  https://www.typescriptlang.org/tsconfig/
+  <https://www.typescriptlang.org/tsconfig/>
 
 ## Strictness baseline
 
@@ -34,6 +34,40 @@ or document an intentional project exception. The diagnostic baseline may
 accept a documented per-flag exception only when it is named explicitly; that
 result is a deviation warning, not proof that the full baseline is enabled.
 `strict` itself is not an allowable exception for this strict-mode skill.
+
+## Strict-flag fallout: fix patterns
+
+Turning on `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, and
+`noPropertyAccessFromIndexSignature` produces large, repetitive error sets. Fix
+the owner, not each call site, and never reach for casts or `!`.
+
+- TS2375 / TS2379 / TS2412 (`string | undefined` into optional `x?: string`):
+  widen the owning prop or interface member to `x?: string | undefined`. It is
+  type-only with no runtime change. Not `as string`, and not `x ?? ''` where
+  that changes behavior.
+- Same error, but the target is third-party or generated and cannot be
+  widened: spread only when set, `{...(v !== undefined && { x: v })}`, or drop
+  undefined keys once at the boundary with a small helper. Never edit
+  generated code.
+- TS2532 / TS18048 on `arr[0]` or `record[key]`: narrow with
+  `const [first] = arr; if (!first) return` (or throw), use `arr[0]?.x`, or a
+  default such as `?? 0` when a fallback is meaningful. Not `arr[0]!`.
+- Destructured or indexed values in tests: use a throwing narrower such as
+  `defined(value, 'what')`, so a bad fixture fails at its source. Not `!` or an
+  unchecked `as`.
+- TS4111 (property comes from an index signature): use bracket access
+  `obj['name']`; when the names are known, type the object by its keys instead
+  of `Record<string, T>`. Never loosen the flag.
+- TS6133 on a positional parameter you must keep: prefix it with `_`
+  (`_isDirty`). Do not delete a parameter other callers pass.
+
+Test mocks: a hoisted slot typed `Record<string, Mock>` forgets the method
+names, so every `mock.methods.x` access raises TS4111 and TS18048 together. Type
+the slot by name union instead (for example `ClientMockOf<'getA' | 'getB'>`)
+and fix it once in the mock factory.
+
+When one widened type feeds a generated DTO that is not widened, convert once at
+that boundary (omit undefined keys) instead of widening the DTO's consumers.
 
 ## TypeScript 5.9 configuration guidance
 
@@ -53,8 +87,8 @@ Treat module/transpilation options as environment-dependent:
 
 References:
 
-- https://www.typescriptlang.org/tsconfig/moduleResolution.html
-- https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options
+- <https://www.typescriptlang.org/tsconfig/moduleResolution.html>
+- <https://www.typescriptlang.org/docs/handbook/modules/guides/choosing-compiler-options>
 
 ## Project references and workspace roots
 
@@ -70,7 +104,7 @@ workspace only when those boundaries genuinely differ. This prevents PATH or a
 sibling package from silently supplying the compiler.
 
 Reference:
-https://www.typescriptlang.org/docs/handbook/project-references.html
+<https://www.typescriptlang.org/docs/handbook/project-references.html>
 
 ## ESLint and typescript-eslint
 
@@ -86,8 +120,8 @@ rules, not to swap presets without a requirement.
 
 References:
 
-- https://typescript-eslint.io/getting-started/typed-linting/
-- https://typescript-eslint.io/users/configs/
+- <https://typescript-eslint.io/getting-started/typed-linting/>
+- <https://typescript-eslint.io/users/configs/>
 
 ## SonarQube / Sonar way
 
@@ -112,9 +146,9 @@ consistent with the source scope; use the project's existing
 
 References:
 
-- https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/languages/javascript-typescript-css
-- https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-quality-profiles/
-- https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/analysis-parameters
+- <https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/languages/javascript-typescript-css>
+- <https://docs.sonarsource.com/sonarqube-server/quality-standards-administration/managing-quality-profiles/>
+- <https://docs.sonarsource.com/sonarqube-server/analyzing-source-code/analysis-parameters>
 
 ## Update boundary
 

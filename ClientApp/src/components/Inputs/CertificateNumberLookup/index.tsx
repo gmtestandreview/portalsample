@@ -22,7 +22,7 @@ export interface CertificateNumberLookupProps {
   parentOptionsName?: string;
   matchType?: 'startsWith' | 'includes' | 'endsWith';
   maxResults?: number;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
 }
 
 const CertificateNumberLookup = (

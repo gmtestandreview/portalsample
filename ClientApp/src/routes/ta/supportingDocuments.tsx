@@ -79,11 +79,12 @@ const SupportingDocuments = (
   );
 
   const errorNames = name.split('.'); // e.g. 'supportingDocuments.form.documents' => ['supportingDocuments', 'form', 'documents']
-  const errorName = errorNames[errorNames.length - 1]; // e.g. 'documents'
+  const errorName = errorNames.at(-1) ?? name; // e.g. 'documents'
+  const rootErrorName = errorNames[0] ?? name;
   // Get Formik field errors for this field
   let formikFieldErrors: string[] = [];
-  if (formikErrors?.[errorNames[0]]) {
-    const fieldError = formikErrors[errorNames[0]];
+  if (formikErrors?.[rootErrorName]) {
+    const fieldError = formikErrors[rootErrorName];
     if (typeof fieldError === 'string') {
       formikFieldErrors = [fieldError];
     } else if (Array.isArray(fieldError)) {
@@ -181,9 +182,9 @@ const SupportingDocuments = (
         uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
-      } else if (uploadServerError.errors) {
+      } else if (uploadServerError['errors']) {
         // If server returns error messages, set as upload errors (strings only)
-        const flatErrors = Object.values(uploadServerError.errors).flat();
+        const flatErrors = Object.values(uploadServerError['errors']).flat();
         setUploadErrors(
           flatErrors.filter((e): e is string => typeof e === 'string')
         );

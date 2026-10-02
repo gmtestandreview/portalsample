@@ -15,16 +15,16 @@ export interface AccountDetails {
   accountCreationCompleted: boolean;
   accountContactCompleted: boolean;
   currentTermsVersion: string;
-  defaultOrganisationId?: number;
-  organisationCRMGuid?: string;
+  defaultOrganisationId?: number | undefined;
+  organisationCRMGuid?: string | undefined;
   organisationIsCompleted: boolean;
   isDefaultOrganisation: boolean;
   showBranchSelector: boolean;
   branchSelectionModalMode?: string;
   callingPath?: string;
   rfqId?: string;
-  contactId?: number;
-  userProfile?: UserProfileDto;
+  contactId?: number | undefined;
+  userProfile?: UserProfileDto | undefined;
 }
 
 export interface TargetOrganisation {

@@ -95,6 +95,21 @@
       "id": "diagnostic-all-flag-sonar",
       "prompt": "Run the full diagnostic with --all so we know every gate. External Sonar analysis has not been authorized. (Premise: Sonar is configured.)",
       "expected_output": "Recognizes that --all includes --sonar (external analysis), runs the local gates individually without --sonar/--all, and reports the Sonar gate as unresolved pending authorization."
+    },
+    {
+      "id": "exact-optional-widen-owner",
+      "prompt": "Fix these TS2375 errors in three files: each passes `isSummary: boolean | undefined` to shared input components declared `isSummary?: boolean`. exactOptionalPropertyTypes must stay on.",
+      "expected_output": "Widens the owning prop types to `isSummary?: boolean | undefined` instead of casting or editing each call site, keeps the flag enabled, and names each widened shared type outside the three files in the completion report."
+    },
+    {
+      "id": "unchecked-index-tests-no-bang",
+      "prompt": "Tests fail type-check with TS2345 'HTMLElement | undefined' from `const [a, b] = screen.getAllByRole('radio')` and `calls[0][4]`. noUncheckedIndexedAccess must stay on. Do not use non-null assertions.",
+      "expected_output": "Narrows with a guard or a throwing helper (or optional chaining where a fallback is meaningful), uses no `!` or `as` casts, keeps the flag enabled, and re-runs the type check to show the errors are gone."
+    },
+    {
+      "id": "scoped-files-preexisting-failure",
+      "prompt": "Fix the type errors in src/a.ts and src/b.ts only. The project has 200 other type errors, and one unit test already fails on a clean checkout.",
+      "expected_output": "Uses the diagnostic with --typecheck --files for the two files (not ad hoc grep), leaves the other errors unfixed and reports their count as unrelated, records the failing unit test as pre-existing from a run before the first edit, and does not claim the whole project is clean."
     }
   ]
 }

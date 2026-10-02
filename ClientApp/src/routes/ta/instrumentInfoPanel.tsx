@@ -56,8 +56,8 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
         selectedInstrumentTypeId,
         selectedInstrumentCategoryId
       );
-      setResourceLinks(infoPanelContent[0].requirementsLink);
-      setResourceText(infoPanelContent[0].requirements);
+      setResourceLinks(infoPanelContent[0]?.requirementsLink);
+      setResourceText(infoPanelContent[0]?.requirements);
       setIsDataLoading(false);
     };
 

@@ -24,7 +24,7 @@ export interface TextReadOnlyProps {
   allowLeadingZeros?: boolean;
   renderText?: (formattedValue: string) => React.ReactNode;
   allowedDecimalSeparators?: Array<string>;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   inlineHelpTitle?: string;
   inlineHelp?: string | ReactNode;
 }

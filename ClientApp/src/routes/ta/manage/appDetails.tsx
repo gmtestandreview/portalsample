@@ -436,7 +436,7 @@ const ApplicationDetails = () => {
       <Col className='px-0'>
         <Tab.Container
           id='appl-manage-tabs'
-          activeKey={activeTab}
+          {...(activeTab !== undefined && { activeKey: activeTab })}
           onSelect={handleTabSelect}
         >
           <Nav

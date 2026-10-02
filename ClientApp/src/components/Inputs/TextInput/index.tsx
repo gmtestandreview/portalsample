@@ -19,7 +19,7 @@ export interface TextInputProps {
   placeholder?: string;
   containerClassName?: string;
   className?: string;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   onChange?: (e: unknown) => void;
   onBlur?: (e: unknown) => void;
   onKeyDown?: (e: React.KeyboardEvent) => void;

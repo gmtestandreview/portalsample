@@ -14,7 +14,7 @@ export interface DatePickerProps {
   hasError?: boolean;
   id?: string;
   inlineHelp?: ReactNode;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   label?: string;
   maxDate?: Date;
   minDate?: Date;

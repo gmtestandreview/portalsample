@@ -10,7 +10,7 @@ export interface RadioButtonGroupProps<T = unknown> {
   legend: string;
   id?: string;
   onChange?: ChangeEventHandler<any>;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   containerClassName?: string;
   className?: string;
   subFormField?: ReactNode;
