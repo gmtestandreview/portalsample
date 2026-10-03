@@ -8,7 +8,13 @@ import { FileStatus } from '@/routes/ta/types';
 const renderList = (
   files: FileProgress[],
   onCancelFile?: (fileName: string) => void
-) => render(<ProgressFileList files={files} onCancelFile={onCancelFile} />);
+) =>
+  render(
+    <ProgressFileList
+      files={files}
+      {...(onCancelFile === undefined ? {} : { onCancelFile })}
+    />
+  );
 
 describe('ProgressFileList', () => {
   it('renders byte, kilobyte, and megabyte upload progress rows', () => {

@@ -26,6 +26,7 @@ import OrganisationNameLookup from '@/components/Inputs/OrganisationNameLookup';
 import CertificateNumberLookup from '@/components/Inputs/CertificateNumberLookup';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import { installUnexpectedConsoleGuard } from '../../../helpers/unexpectedConsoleGuard';
+import { defined } from '../../helpers/defined';
 
 type MockAccount = { homeAccountId: string } | null;
 
@@ -87,8 +88,8 @@ function FormikHarness({
       <Formik
         enableReinitialize
         initialValues={initialValues}
-        initialTouched={initialTouched}
-        initialErrors={initialErrors}
+        {...(initialTouched === undefined ? {} : { initialTouched })}
+        {...(initialErrors === undefined ? {} : { initialErrors })}
         onSubmit={vi.fn()}
       >
         <Form>{children}</Form>
@@ -325,7 +326,7 @@ describe('complex input behavior slice', () => {
     const search = screen.getByRole('combobox', { name: 'Address' });
     await user.type(search, 'missing fields');
     const options = await screen.findAllByRole('option');
-    await user.click(options[0]);
+    await user.click(defined(options[0], 'first address option'));
 
     await waitFor(() => {
       expect(screen.getByTestId('values')).toHaveTextContent('"line1":""');

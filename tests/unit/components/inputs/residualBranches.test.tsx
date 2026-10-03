@@ -33,8 +33,8 @@ function Harness({
   return (
     <Formik
       initialValues={initialValues}
-      initialErrors={initialErrors}
-      initialTouched={initialTouched}
+      {...(initialErrors === undefined ? {} : { initialErrors })}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
       onSubmit={vi.fn()}
     >
       <Form>{children}</Form>

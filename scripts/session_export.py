@@ -29,7 +29,7 @@ def main() -> None:
         sys.exit(0)
 
     try:
-        entries = []
+        entries: list[object] = []
         for line in src.read_text(encoding="utf-8").splitlines():
             line = line.strip()
             if line:

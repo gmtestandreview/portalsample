@@ -21,7 +21,7 @@ export type CoverageReportAudit = {
 
 const EXECUTABLE_EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mts', '.cts'];
 
-const withoutQuery = (id: string): string => id.split('?')[0];
+const withoutQuery = (id: string): string => id.split('?', 1)[0] ?? id;
 
 const normalizedPath = (id: string): string =>
   withoutQuery(id).replaceAll('\\', '/');

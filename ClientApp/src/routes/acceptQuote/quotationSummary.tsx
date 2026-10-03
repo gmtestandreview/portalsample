@@ -11,7 +11,7 @@ import NMIContactDetails from '../quotation/nMIContactDetails';
 import { useAccountState } from '../../authentication/hooks';
 import ViewPdfQuoteTerms from '../../components/Utilities/ViewPdfQuoteTerms';
 import ViewPdfQuote from '../../components/Utilities/ViewPdfQuote';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 
 const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
@@ -31,10 +31,9 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
           CrmQuoteRequestId: cRMQuoteRequestId,
         });
         const client = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const result = await client.getQuoteRequestDetails(cRMQuoteRequestId);
         setQuotationData(result);
@@ -52,7 +51,7 @@ const QuotationSummary = (props: Readonly<QuotationSummaryProps>) => {
       await getQuoteDetails();
       setIsLoading(false);
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
   }, [accounts, cRMQuoteRequestId, instance]);
 
   const renderQuotationSummary = () => (
