@@ -18,6 +18,10 @@ class _YamlApi(Protocol):
 _YAML_API = cast(_YamlApi, yaml)
 
 
+def normalized_text(text: str) -> str:
+    return " ".join(text.split()).casefold()
+
+
 def parse_skill() -> tuple[str, dict[str, object], str]:
     text = SKILL.read_text(encoding="utf-8")
     assert text.startswith("---\n")
@@ -59,6 +63,7 @@ def test_activation_contract_has_positive_and_near_miss_boundary():
 
 def test_workflow_contract_is_falsifiable():
     _, _, body = parse_skill()
+    normalized_body = normalized_text(body)
     required = [
         "old → new",
         "Resolve ambiguous mappings before bulk edits",
@@ -73,7 +78,7 @@ def test_workflow_contract_is_falsifiable():
         "Do not report the refactor complete unless",
     ]
     for phrase in required:
-        assert phrase in body, phrase
+        assert normalized_text(phrase) in normalized_body, phrase
 
 def test_technique_eval_coverage():
     data = json.loads(EVALS.read_text(encoding="utf-8"))
@@ -104,9 +109,11 @@ def test_eval_readme_preserves_evidence_boundary():
         assert state in text
 
 def test_test_resource_usage_is_documented():
-    text = (ROOT / "tests" / "README.md").read_text(encoding="utf-8")
-    assert "python -m pytest -q tests/test_skill_contract.py" in text
-    assert "pytest" in text
-    assert "PyYAML" in text
-    assert "not runtime dependencies" in text
-    assert "does not establish behavioral RED/GREEN evidence" in text
+    text = normalized_text(
+        (ROOT / "tests" / "README.md").read_text(encoding="utf-8")
+    )
+    assert normalized_text("python -m pytest -q tests/test_skill_contract.py") in text
+    assert normalized_text("pytest") in text
+    assert normalized_text("PyYAML") in text
+    assert normalized_text("not runtime dependencies") in text
+    assert normalized_text("does not establish behavioral RED/GREEN evidence") in text
