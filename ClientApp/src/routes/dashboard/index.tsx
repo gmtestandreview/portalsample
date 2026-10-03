@@ -714,7 +714,11 @@ const Dashboard = () => {
         <Tab.Container
           id='dashboard-type'
           activeKey={activeTab}
-          onSelect={(key) => changeTab(key as DashboardTab)}
+          onSelect={(key) => {
+            const tab = key as DashboardTab;
+            changeTab(tab);
+            trackGAEvent(tab);
+          }}
         >
           <Nav
             as='ul'
@@ -728,10 +732,6 @@ const Dashboard = () => {
                   id={DashboardTab.Drafts}
                   eventKey={DashboardTab.Drafts}
                   className='px-3'
-                  onClick={() => {
-                    changeTab(DashboardTab.Drafts);
-                    trackGAEvent(DashboardTab.Drafts);
-                  }}
                 >
                   Drafts
                 </Nav.Link>
@@ -741,10 +741,6 @@ const Dashboard = () => {
                   id={DashboardTab.Requests}
                   eventKey={DashboardTab.Requests}
                   className='px-3'
-                  onClick={() => {
-                    changeTab(DashboardTab.Requests);
-                    trackGAEvent(DashboardTab.Requests);
-                  }}
                 >
                   Requests
                 </Nav.Link>
@@ -754,10 +750,6 @@ const Dashboard = () => {
                   id={DashboardTab.Instruments}
                   eventKey={DashboardTab.Instruments}
                   className='px-3'
-                  onClick={() => {
-                    changeTab(DashboardTab.Instruments);
-                    trackGAEvent(DashboardTab.Instruments);
-                  }}
                 >
                   Instrument/artefacts
                 </Nav.Link>

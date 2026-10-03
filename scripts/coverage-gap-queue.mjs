@@ -31,24 +31,25 @@ const FAMILIES = [
     id: 2,
     name: 'Type Approval routes and guards',
     matches: (f) =>
-      f.startsWith("routes/ta/") || f.startsWith("routes/dashboard/dashboard-ta"),
+      f.startsWith('routes/ta/') ||
+      f.startsWith('routes/dashboard/dashboard-ta'),
   },
   {
     id: 3,
     name: 'Attachment and progress controls',
     matches: (f) =>
-      f.startsWith("components/Inputs/Attachment/") || /progress/iu.test(f),
+      f.startsWith('components/Inputs/Attachment/') || /progress/iu.test(f),
   },
   {
     id: 5,
     name: 'Slate editor',
-    matches: (f) => f.startsWith("components/SlateEditor/"),
+    matches: (f) => f.startsWith('components/SlateEditor/'),
   },
   {
     id: 4,
     name: 'Request-list items and workflow pages',
     matches: (f) =>
-      f.startsWith("routes/") || /^components\/(RequestList|forms)\//u.test(f),
+      f.startsWith('routes/') || /^components\/(RequestList|forms)\//u.test(f),
   },
   {
     id: 6,
@@ -196,7 +197,13 @@ console.warn(`Uncovered branches:  ${totals.branches}`);
 console.warn(`Uncovered functions: ${totals.functions}`);
 console.warn(`Uncovered statements:${totals.statements}`);
 console.warn('\nBy family:');
-for (const [id, family] of Object.entries(byFamily).sort()) {
+for (const [id, family] of Object.entries(byFamily).sort(
+  ([leftId], [rightId]) => {
+    if (leftId < rightId) return -1;
+    if (leftId > rightId) return 1;
+    return 0;
+  }
+)) {
   console.warn(
     `  ${id}. ${family.name.padEnd(62)} ${String(family.files).padStart(3)} files  ${String(family.branches).padStart(5)}b ${String(family.functions).padStart(4)}f ${String(family.statements).padStart(5)}s`
   );

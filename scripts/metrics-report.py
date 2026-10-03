@@ -3,6 +3,7 @@
 A Team metrics report CLI.
 Usage: python metrics-report.py [--days 7]
 """
+
 import argparse
 import gzip
 import shutil
@@ -10,6 +11,7 @@ import sys
 from contextlib import suppress
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from typing import Protocol, TypedDict, cast
 
 sys.path.insert(0, str(Path(__file__).parent))
 from metrics import read_events
@@ -46,11 +48,33 @@ def _record_task_completion(
         pass
 
 
+class EventStats(TypedDict):
+    sessions: int
+    dispatched: int
+    complete: int
+    failed: int
+    interventions: int
+
+
+class MetricsReport(TypedDict):
+    sessions: int
+    dispatched: int
+    complete: int
+    failed: int
+    interventions: int
+    avg_time: str
+    success_rate: int
+
+
+class ReconfigurableStream(Protocol):
+    def reconfigure(self, *, encoding: str, errors: str) -> None: ...
+
+
 def _record_event(
     timestamp: str,
     event_type: str,
     rest: str,
-    stats: dict[str, int],
+    stats: EventStats,
     active_tasks: dict[str, str],
     task_durations: list[float],
 ) -> None:
@@ -74,7 +98,7 @@ def _record_event(
         stats["interventions"] += 1
 
 
-def parse_events(days: int, base_dir: Path = None) -> dict:
+def parse_events(days: int, base_dir: Path | None = None) -> MetricsReport:
     """Parse log events and return summary statistics.
 
     Returns dict with keys: sessions, dispatched, complete, failed,
@@ -84,7 +108,7 @@ def parse_events(days: int, base_dir: Path = None) -> dict:
         base_dir = DEFAULT_BASE_DIR
     events = read_events(days, base_dir=base_dir)
 
-    stats = {
+    stats: EventStats = {
         "sessions": 0,
         "dispatched": 0,
         "complete": 0,
@@ -97,7 +121,15 @@ def parse_events(days: int, base_dir: Path = None) -> dict:
     for line in events:
         event = _parse_event_line(line)
         if event is not None:
-            _record_event(*event, stats, active_tasks, task_durations)
+            timestamp, event_type, rest = event
+            _record_event(
+                timestamp,
+                event_type,
+                rest,
+                stats,
+                active_tasks,
+                task_durations,
+            )
 
     avg_time = ""
     if task_durations:
@@ -105,17 +137,14 @@ def parse_events(days: int, base_dir: Path = None) -> dict:
         mins, secs = divmod(int(avg_sec), 60)
         avg_time = f"{mins}m {secs:02d}s"
 
-    success_rate = (
-        int(stats["complete"] / stats["dispatched"] * 100)
-        if stats["dispatched"]
-        else 0
-    )
+    success_rate = int(stats["complete"] / stats["dispatched"] * 100) if stats["dispatched"] else 0
 
-    return {
+    report: MetricsReport = {
         **stats,
         "avg_time": avg_time,
         "success_rate": success_rate,
     }
+    return report
 
 
 def _compress_old_logs(metrics_dir: Path, cutoff: date) -> None:
@@ -145,7 +174,7 @@ def _remove_stale_queue_files(stale_dir: Path, cutoff: date) -> None:
             pass
 
 
-def rotate_logs(base_dir: Path = None) -> None:
+def rotate_logs(base_dir: Path | None = None) -> None:
     """Compress logs older than 30 days. Clean stale queue files older than 30 days."""
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
@@ -156,7 +185,7 @@ def rotate_logs(base_dir: Path = None) -> None:
 
 def main() -> None:
     with suppress(AttributeError):
-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        cast(ReconfigurableStream, sys.stdout).reconfigure(encoding="utf-8", errors="replace")
 
     parser = argparse.ArgumentParser(description="A Team metrics report")
     parser.add_argument("--days", type=int, default=7, help="Number of days to report")

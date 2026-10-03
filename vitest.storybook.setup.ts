@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterAll, afterEach, vi } from 'vitest';
+import { afterAll, vi } from 'vitest';
 
 // ---------------------------------------------------------------------------
 // Runtime environment variables (same as vitest.setup.ts and preview.ts)
@@ -126,10 +125,6 @@ const handleExpectedErrorBoundaryStoryError = (event: ErrorEvent) => {
 };
 
 globalThis.addEventListener('error', handleExpectedErrorBoundaryStoryError);
-
-// Storybook's browser preview owns MSW through mswLoader and the service worker.
-// This setup file must remain browser-safe and must not import `msw/node`.
-afterEach(() => cleanup());
 
 // Restore the global interception installed above so the spy and listener do not
 // leak past this setup's test file.
