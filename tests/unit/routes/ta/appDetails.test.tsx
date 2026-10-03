@@ -10,11 +10,9 @@ import {
   signOut,
   DEFAULT_ACCESS_TOKEN,
 } from '../../helpers/mockMsal';
-import type {
-  ClientMock,
-  ClientMethodMocks,
-} from '../../helpers/mockApiClient';
+import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
+import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   loadStepValues: vi.fn(),
@@ -23,7 +21,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 const clients = vi.hoisted(() => ({
-  patternApproval: undefined as unknown as ClientMock<ClientMethodMocks>,
+  patternApproval: undefined as unknown as ClientMockOf<'getAppMessageCount'>,
 }));
 
 /** Captures the inert callbacks the page hands its children, so they can be proven inert. */
@@ -775,7 +773,9 @@ describe('application details', () => {
         expect(screen.getAllByTestId('status-pill').length).toBeGreaterThan(0)
       );
       expect(
-        within(screen.getAllByTestId('status-pill')[0]).getByText('InProgress')
+        within(defined(screen.getAllByTestId('status-pill')[0])).getByText(
+          'InProgress'
+        )
       ).toBeInTheDocument();
     });
   });

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Form, InputGroup } from 'react-bootstrap';
 
 import findElementInTreeById from '../../Utilities/findElementInTreeById';
+import { omitUndefined } from '../../../utils/omitUndefined';
 import type {
   CustomInputControlRef,
   CustomInputForwardRefProps,
@@ -127,18 +128,20 @@ const CustomDateInput = React.forwardRef<
       <InputGroup className={`w-md-50 ${focused ? 'custom-focus' : ''}`}>
         <Form.Control
           {...theRest}
-          aria-describedby={
-            hasError ? `${name}-validation-msg` : helpId || undefined
-          }
-          disabled={disabled}
+          {...omitUndefined({
+            'aria-describedby': hasError
+              ? `${name}-validation-msg`
+              : helpId || undefined,
+            disabled,
+            placeholder,
+            readOnly,
+            onChange,
+            onKeyDown,
+          })}
           className={`form-field form-text-input ${className || ''}`}
           isInvalid={!!(_meta.touched && _meta.error)}
-          onChange={onChange}
           onBlur={handleCustomBlur}
           onFocus={handleCustomFocus}
-          onKeyDown={onKeyDown}
-          placeholder={placeholder}
-          readOnly={readOnly}
           ref={forwardedControlRef}
           type='text'
         />

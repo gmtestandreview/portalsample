@@ -109,12 +109,14 @@ export const parseApiDateOnlyInput = (
 };
 
 export const dateOnlyToPickerDate = (dateOnlyValue: DateOnlyValue): Date => {
-  const [year, month, day] = dateOnlyValue.split('-').map(Number);
+  const [year = Number.NaN, month = Number.NaN, day = Number.NaN] =
+    dateOnlyValue.split('-').map(Number);
   return new Date(year, month - 1, day, 12);
 };
 
 export const dateOnlyToApiDate = (dateOnlyValue: DateOnlyValue): Date => {
-  const [year, month, day] = dateOnlyValue.split('-').map(Number);
+  const [year = Number.NaN, month = Number.NaN, day = Number.NaN] =
+    dateOnlyValue.split('-').map(Number);
   return new Date(Date.UTC(year, month - 1, day));
 };
 

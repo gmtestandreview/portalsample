@@ -78,7 +78,7 @@ export const WithdrawnHidesView: Story = {
   args: {
     pagedListArtefactData: {
       ...pagedListArtefactData,
-      items: pagedListArtefactData.items?.slice(1),
+      items: pagedListArtefactData.items?.slice(1) ?? [],
     },
   },
   play: async ({

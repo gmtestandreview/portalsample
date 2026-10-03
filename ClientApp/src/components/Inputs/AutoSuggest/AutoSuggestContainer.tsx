@@ -11,6 +11,7 @@ import {
 import { Group } from 'react-aria-components/Group';
 import AutoSuggestOptions from './AutoSuggestOptions';
 import type { AutoSuggestOption, AutoSuggestContainerProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const keys = {
   ESC: 'Escape',
@@ -66,13 +67,9 @@ const AutoSuggestContainer = <T,>(
     await onSelectedOption(value);
   };
 
-  const onKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
-    switch (event.key) {
-      case keys.ESC:
-        onCancel();
-        break;
-      default:
-        break;
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === keys.ESC) {
+      onCancel();
     }
   };
   const describedBy =
@@ -96,10 +93,10 @@ const AutoSuggestContainer = <T,>(
           items={options}
           inputValue={searchTerm ?? ''}
           onInputChange={(value) => {
-            setTouched(true);
+            void setTouched(true);
             void onSearchTermChange(value);
           }}
-          onSelectionChange={(key) => {
+          onChange={(key) => {
             if (key == null) {
               return;
             }
@@ -161,7 +158,7 @@ const AutoSuggestContainer = <T,>(
               spellCheck={false}
               onKeyDown={onKeyDown}
               className='search-box form-field'
-              placeholder={placeholder}
+              {...omitUndefined({ placeholder })}
               aria-describedby={describedBy}
               aria-invalid={_meta.touched && _meta.error ? 'true' : undefined}
             />

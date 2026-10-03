@@ -38,7 +38,7 @@ export interface NumberInputProps {
   renderText?: (formattedValue: string) => React.ReactNode;
   allowedDecimalSeparators?: Array<string>;
   decimalScale?: number;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   defaultValue?: number;
   role?: string;
   children?: React.ReactNode;

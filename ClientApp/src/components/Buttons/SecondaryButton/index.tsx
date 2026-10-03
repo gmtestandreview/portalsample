@@ -1,6 +1,7 @@
 import { Button as AriaButton } from 'react-aria-components/Button';
 import type { ButtonHTMLAttributes, ComponentProps } from 'react';
 import { getButtonClassName } from '../buttonClassName';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 /**
  * SecondaryButtonProps
@@ -33,7 +34,7 @@ const SecondaryButton = ({
   return (
     <AriaButton
       {...buttonProps}
-      isDisabled={disabled}
+      {...omitUndefined({ isDisabled: disabled })}
       className={getButtonClassName('nmi-secondary', className)}
     />
   );

@@ -35,7 +35,7 @@ class ResetableErrorBoundaryWrapper extends Component<
     this.state = { key: 0 };
   }
 
-  render() {
+  override render() {
     const { children } = this.props;
     const { key } = this.state;
     return (

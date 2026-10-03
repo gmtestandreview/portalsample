@@ -12,6 +12,7 @@ import process from 'node:process';
 
 const DEFAULT_OUT = 'analysis/sonar-issues-backlog.md';
 const PAGE_SIZE = 500;
+const MARKDOWN_PIPE_ESCAPE = String.raw`\|`;
 
 function argValue(name) {
   const index = process.argv.indexOf(name);
@@ -106,7 +107,7 @@ function formatMarkdown(issues) {
 
   for (const issue of rows) {
     lines.push(
-      `| ${issue.priority} | ${issue.key} | ${issue.status} | ${issue.severity} | ${issue.quality} | ${issue.rule} | ${issue.path}:${issue.line} | ${issue.effort} | ${issue.message.replaceAll('|', '\\|')} |`
+      `| ${issue.priority} | ${issue.key} | ${issue.status} | ${issue.severity} | ${issue.quality} | ${issue.rule} | ${issue.path}:${issue.line} | ${issue.effort} | ${issue.message.replaceAll('|', MARKDOWN_PIPE_ESCAPE)} |`
     );
   }
 
@@ -177,8 +178,10 @@ if (!existsSync(outputDirectory))
 writeFileSync(outputPath, markdown, 'utf8');
 
 if (issues.some((issue) => rankIssue(issue) === 'Needs triage')) {
-  console.log(
-    'analysis/sonar-issues-backlog.md(1,1): warning SONAR-BACKLOG: [AMBER] backlog contains Sonar issues with unknown severity/quality fields; triage them manually.'
+  process.stdout.write(
+    'analysis/sonar-issues-backlog.md(1,1): warning SONAR-BACKLOG: [AMBER] backlog contains Sonar issues with unknown severity/quality fields; triage them manually.\n'
   );
 }
-console.log(`Captured ${issues.length} Sonar issue(s) in ${outputPath}.`);
+process.stdout.write(
+  `Captured ${issues.length} Sonar issue(s) in ${outputPath}.\n`
+);

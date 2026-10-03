@@ -14,6 +14,7 @@ import {
   ServiceType,
   type ServicesOffered,
 } from '../../../../ClientApp/src/api/web-api-client';
+import { defined } from '../../helpers/defined';
 
 const {
   mockAcquireTokenSilent,
@@ -75,9 +76,9 @@ vi.mock('../../../../ClientApp/src/api/web-api-client', () => ({
   PatternApprovalClient: vi.fn().mockImplementation(function (
     this: Record<string, unknown>
   ) {
-    this.setAuthToken = mockSetAuthToken;
-    this.getPatternApprovalApplicationDrafts = mockGetDrafts;
-    this.getPatternApprovalApplications = mockGetApplications;
+    this['setAuthToken'] = mockSetAuthToken;
+    this['getPatternApprovalApplicationDrafts'] = mockGetDrafts;
+    this['getPatternApprovalApplications'] = mockGetApplications;
   }),
   ServiceType: {
     TestingCalibration: 'TestingCalibration',
@@ -393,7 +394,7 @@ describe('Pattern/type approval dashboard', () => {
     expect((await screen.findAllByText('TA-1001')).length).toBeGreaterThan(0);
     expect(mockSetAuthToken).toHaveBeenCalledWith('mock-token');
     expect(mockSetAuthToken.mock.invocationCallOrder[0]).toBeLessThan(
-      mockGetDrafts.mock.invocationCallOrder[0]
+      defined(mockGetDrafts.mock.invocationCallOrder[0])
     );
     expect(mockGetDrafts).toHaveBeenCalledWith(
       'crm-guid-001',
@@ -495,7 +496,7 @@ describe('Pattern/type approval dashboard', () => {
     renderDashboard(Dashboard);
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
-    fireEvent.click(screen.getAllByTestId('pagination')[0]);
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
     await waitFor(() =>
       expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -570,7 +571,7 @@ describe('Pattern/type approval dashboard', () => {
     renderDashboard(Dashboard);
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
 
-    fireEvent.click(screen.getAllByTestId('pagination')[0]);
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
     await waitFor(() =>
       expect(mockAppLoggerError).toHaveBeenCalledWith(
@@ -802,7 +803,7 @@ describe('Pattern/type approval dashboard', () => {
       name: 'Delete',
     });
 
-    fireEvent.click(deleteButton);
+    fireEvent.click(defined(deleteButton));
 
     await waitFor(() =>
       expect(mockGetDrafts.mock.calls.length).toBeGreaterThanOrEqual(2)

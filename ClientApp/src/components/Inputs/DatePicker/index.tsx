@@ -12,6 +12,7 @@ import {
 import SummaryDisplay from '../../SummaryDisplay';
 import CustomDatePicker from './CustomDatePicker';
 import type { DatePickerProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   const {
@@ -74,7 +75,7 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
       await dateOnChange(dateUpdateValue || null);
     }
 
-    setFieldTouched(_field.name);
+    await setFieldTouched(_field.name);
   };
 
   if (isSummary) {
@@ -96,17 +97,19 @@ const DatePicker = (datePickerProps: Readonly<DatePickerProps>) => {
   return (
     <CustomDatePicker
       {...theRest}
-      calendarButtonTitle={calendarButtonTitle}
+      {...omitUndefined({
+        calendarButtonTitle,
+        errorMessage: _meta.error,
+        id,
+        inlineHelp,
+        label,
+      })}
       containerClassName={`custom-date-picker-div ${containerClassName || ''}`}
       currentDate={currentDate}
       dateOnBlur={dateOnBlur}
       dateOnChange={dateOnChange}
-      errorMessage={_meta.error}
       hasError={!!(_meta.touched && _meta.error)}
-      id={id}
-      inlineHelp={inlineHelp}
       name={name}
-      label={label}
       placeholder={placeholder || 'dd/mm/yyyy'}
     />
   );

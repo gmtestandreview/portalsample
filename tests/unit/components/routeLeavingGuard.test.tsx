@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/vitest';
 import { Formik, useFormikContext } from 'formik';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import RouteLeavingGuard from '../../../ClientApp/src/components/RouteLeavingGuard';
+import { defined } from '../helpers/defined';
 
 const resetBlocker = vi.fn();
 const proceedBlocker = vi.fn();
@@ -64,7 +65,10 @@ describe('RouteLeavingGuard', () => {
 
     renderGuard({ when: true });
 
-    const blockerPredicate = useBlockerMock.mock.calls[0][0] as (args: {
+    const blockerPredicate = defined(
+      useBlockerMock.mock.calls[0],
+      'enabled blocker call'
+    )[0] as (args: {
       currentLocation: { pathname: string };
       nextLocation: { pathname: string };
     }) => boolean;
@@ -84,8 +88,10 @@ describe('RouteLeavingGuard', () => {
 
     useBlockerMock.mockClear();
     renderGuard({ when: false });
-    const disabledPredicate = useBlockerMock.mock
-      .calls[0][0] as typeof blockerPredicate;
+    const disabledPredicate = defined(
+      useBlockerMock.mock.calls[0],
+      'disabled blocker call'
+    )[0] as typeof blockerPredicate;
 
     expect(
       disabledPredicate({

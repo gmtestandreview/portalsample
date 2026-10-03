@@ -3,6 +3,7 @@ import { useField } from 'formik';
 import type { ReactNode } from 'react';
 import SummaryDisplay from '../../SummaryDisplay';
 import Details from '../../forms/Details';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 export interface TextReadOnlyProps {
   label: string;
@@ -24,7 +25,7 @@ export interface TextReadOnlyProps {
   allowLeadingZeros?: boolean;
   renderText?: (formattedValue: string) => React.ReactNode;
   allowedDecimalSeparators?: Array<string>;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   inlineHelpTitle?: string;
   inlineHelp?: string | ReactNode;
 }
@@ -91,7 +92,11 @@ const TextReadOnly = ({
         </Form.Text>
       )}
       {inlineHelp && inlineHelpTitle && (
-        <Details id={helpId} title={inlineHelpTitle} inlineHelp={inlineHelp} />
+        <Details
+          {...omitUndefined({ id: helpId })}
+          title={inlineHelpTitle}
+          inlineHelp={inlineHelp}
+        />
       )}
       <Form.Control
         className={`form-field form-text-input-read ${className}`}
