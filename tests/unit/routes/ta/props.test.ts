@@ -386,8 +386,8 @@ describe('pattern approval wizard prop factories', () => {
       '/not-found'
     );
     expect(props.isSummaryPage).toBe(true);
-    expect(props.suppressErrorSummary).toBe(true);
-    expect(props.suppressErrorSummaryPath).toBe(true);
+    expect(props['suppressErrorSummary']).toBe(true);
+    expect(props['suppressErrorSummaryPath']).toBe(true);
 
     const documents: SupportingDocumentsStep = {
       form: {
@@ -580,8 +580,8 @@ describe('pattern approval wizard prop factories', () => {
     expect(props.getRedirectionLocationOnError?.(404, {} as ErrorType)).toBe(
       '/not-found'
     );
-    expect(props.disableLinkedError).toBe(false);
-    expect(props.suppressErrorSummaryPath).toBe(true);
+    expect(props['disableLinkedError']).toBe(false);
+    expect(props['suppressErrorSummaryPath']).toBe(true);
 
     const summary: RequestForPatternApprovalSummaryDto = {
       referenceId: 'PA-4',

@@ -95,10 +95,13 @@ const originalConsoleError = console.error;
 // occurred in…" prefix). Matching with `startsWith` instead of `includes` keeps
 // every intended suppression while refusing to swallow a genuine application
 // error that merely contains one of these substrings mid-message.
-const isExpectedErrorBoundaryStoryError = (message: string) =>
-  expectedErrorBoundaryStoryMessages.some((expected) =>
-    message.startsWith(expected)
+const isExpectedErrorBoundaryStoryError = (message: string) => {
+  // The browser test runner re-reports a render error as "Uncaught Error: <message>".
+  const unwrapped = message.replace(/^Uncaught (?:Error: )?/, '');
+  return expectedErrorBoundaryStoryMessages.some((expected) =>
+    unwrapped.startsWith(expected)
   );
+};
 
 const consoleErrorSpy = vi
   .spyOn(console, 'error')

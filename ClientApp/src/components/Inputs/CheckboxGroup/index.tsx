@@ -36,21 +36,15 @@ const CheckboxGroup = <T,>(
 
   if (isSummary) {
     if (_field?.value) {
-      const currentFieldIndex = options.findIndex(
-        (x) => x.value === _field.value
-      );
-      const summaryLabel =
-        currentFieldIndex !== -1
-          ? (options[currentFieldIndex]?.label ?? '')
-          : '';
+      const selectedOption = options.find((x) => x.value === _field.value);
 
-      if (currentFieldIndex < 0) {
+      if (!selectedOption) {
         return null;
       }
       return (
         <SummaryDisplay
           label={legend}
-          value={summaryLabel}
+          value={selectedOption.label}
           id={id || name}
           as='span'
           containerClassName={containerClassName}

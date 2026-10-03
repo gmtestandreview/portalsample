@@ -16,6 +16,7 @@ import PaymentDetailsFormFields, {
 } from '@/routes/acceptQuote/paymentDetailsFormFields';
 import { paymentDetailsSubmitValidation } from '@/routes/acceptQuote/validation';
 import { removeHidden } from '@/components/forms/utils';
+import { defined } from '../../helpers/defined';
 
 const { acquireTokenSilentMock, msalContext } = vi.hoisted(() => ({
   acquireTokenSilentMock: vi.fn(),
@@ -36,8 +37,8 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   return {
     ...actual,
     AcceptQuoteClient: vi.fn(function (this: Record<string, unknown>) {
-      this.setAuthToken = vi.fn();
-      this.getPaymentDetails = mockGetPaymentDetails;
+      this['setAuthToken'] = vi.fn();
+      this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   };
 });
@@ -215,7 +216,7 @@ describe('PaymentDetails form behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(onSubmit.mock.calls[0][0]).toEqual(
+    expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toEqual(
       expect.objectContaining({
         contact: expect.objectContaining({
           title: Title.Other,
@@ -466,7 +467,7 @@ describe('PaymentDetails form behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(onSubmit.mock.calls[0][0]).toHaveProperty(
+    expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',
       'private@example.com'
     );
@@ -495,7 +496,7 @@ describe('PaymentDetails form behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(onSubmit.mock.calls[0][0]).toHaveProperty(
+    expect(defined(onSubmit.mock.calls[0], 'onSubmit call')[0]).toHaveProperty(
       'contact.email',
       'private@example.com'
     );

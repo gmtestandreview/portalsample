@@ -12,7 +12,7 @@ import { useAccountState } from '../../authentication/hooks';
 import { RequestForQuoteClient } from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
 import type { AccountDetails } from '../../authentication/accountContext';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -44,10 +44,9 @@ const ViewRequestForQuoteSummary = ({
       try {
         if (accounts.length > 0) {
           const client = new RequestForQuoteClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const result = await client.getStepStatuses(id!);
           setStatuses(result);
@@ -59,7 +58,7 @@ const ViewRequestForQuoteSummary = ({
       }
     };
     if (!isLoading.current) {
-      loadApplicationSteps();
+      void loadApplicationSteps();
     }
     return () => {
       isLoading.current = true;

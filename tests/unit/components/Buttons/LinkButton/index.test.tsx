@@ -27,8 +27,15 @@ vi.mock('react-aria-components/Link', () => ({
     renderLink ? (
       renderLink(
         ariaLinkMockState.includeHref
-          ? { children, className, href }
-          : { children, className }
+          ? {
+              children,
+              ...(className === undefined ? {} : { className }),
+              ...(href === undefined ? {} : { href }),
+            }
+          : {
+              children,
+              ...(className === undefined ? {} : { className }),
+            }
       )
     ) : (
       <a className={className} href={href}>

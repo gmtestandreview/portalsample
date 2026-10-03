@@ -34,7 +34,7 @@ import type {
   ProblemDetails,
   StatusEnumDto,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import getUnexpectedErrorRoute from '../common/errorRoutes';
 import { HttpStatusCode } from '../../types';
@@ -192,10 +192,7 @@ const checkAcceptedQuoteStatus = (
       const index = items.findIndex(
         (x) => x.referenceId === newlyAcceptedQuoteId
       );
-      const [updatedItem] = items.splice(index, 1);
-      if (updatedItem) {
-        items.unshift(updatedItem);
-      }
+      items.unshift(...items.splice(index, 1));
 
       // Non-null assertion required: property is typed nullable but guaranteed non-null here
       SessionStorageCache().setItem(
@@ -342,7 +339,7 @@ const Dashboard = () => {
   }, []);
 
   const saveUserProfile = (userProfile: UserProfile) => {
-    accountDispatch?.setUserProfile({
+    void accountDispatch?.setUserProfile({
       testingCalibrationDashboard: omitUndefined(userProfile),
     });
   };
@@ -424,7 +421,7 @@ const Dashboard = () => {
       // profile.filterCurrentPage is assigned defaultFilter.filterCurrentPage a few lines
       // above, so it can never be nullish and the fallback here was unreachable.
       setCurrentPage(profile.filterCurrentPage);
-      accountDispatch?.setUserProfile({
+      void accountDispatch?.setUserProfile({
         testingCalibrationDashboard: omitUndefined(profile),
       });
       setInitialFilters(profile);
@@ -488,10 +485,9 @@ const Dashboard = () => {
           homeAccountId: accountHomeAccountId,
         });
         const client = new DashboardClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
@@ -535,7 +531,7 @@ const Dashboard = () => {
         setReload(false);
       }
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
 
     return () => controller.abort();
   }, [

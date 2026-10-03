@@ -14,7 +14,7 @@ import PrimaryButton from '../../Buttons/PrimaryButton';
 import ButtonGroup from '../../Buttons/ButtonGroup';
 import { OrganisationsClient, UsersClient } from '../../../api/web-api-client';
 import type { OrganisationDto } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import NotificationMessage from '../../Alert/NotificationMessage';
 import {
   clearBranchModalNotification,
@@ -202,10 +202,9 @@ const BranchSelectorModal = () => {
       setIsSaving(true);
       let reloadAfterSave = false;
       const client = new UsersClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       try {
         if (
@@ -284,10 +283,9 @@ const BranchSelectorModal = () => {
       // Fix 5 — S6582: Optional chain collapse
       if (accountState?.details?.abn) {
         const client = new OrganisationsClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         try {

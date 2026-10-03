@@ -146,7 +146,7 @@ const buildTypeApprovalApplication = (
       ? FormStepStatus.Completed
       : FormStepStatus.NotStarted,
   },
-  stepStatuses: Array<FormStepStatus>(4).fill(
+  stepStatuses: new Array<FormStepStatus>(4).fill(
     submitted ? FormStepStatus.Completed : FormStepStatus.NotStarted
   ),
   messages: submitted
@@ -190,7 +190,6 @@ export const createScenarioState = (): ScenarioState => {
     typeApprovalApplications: new Map([
       [submittedTypeApproval.referenceId, submittedTypeApproval],
     ]),
-    activeTypeApprovalReferenceId: undefined,
     nextTypeApprovalApplicationNumber: 2,
     nextTypeApprovalUploadNumber: 1,
     nextTypeApprovalDocumentNumber: 2,

@@ -1,0 +1,47 @@
+{
+  "skill_name": "import-refactor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I moved src/utils/date.ts to src/shared/date.ts. Update every affected TypeScript import, package export, test reference, and documentation path, then verify the project.",
+      "expected_output": "The skill should activate. It should map old to new paths/specifiers, inventory and classify references before editing, update confirmed source/test/config/docs hits, verify the new target resolves, re-search for stale old references, run available project-native checks, review the diff, and report any unverified items.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Sort and deduplicate the imports in src/shared/date.ts. Do not move or rename any files or modules.",
+      "expected_output": "The skill should not activate for style-only import cleanup because no path or module identity changed.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Move app/utils/format.py into app/shared/format.py and fix affected Python references. The package uses relative imports and tests import the public module path.",
+      "expected_output": "The skill should account for Python package boundaries and relative-import depth, preserve public compatibility surfaces when intentional, update confirmed references, verify imports resolve, and run focused available tests/checks.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "We consolidated legacy/cache.py, but there are now two possible targets: core/cache.py and adapters/cache.py. Update all old cache references automatically.",
+      "expected_output": "The skill should not guess. It should identify the ambiguous old-to-new mapping, stop that branch before bulk edits, leave unresolved references unchanged, and report the decision required.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "A rename left stale paths in source config and also in generated dist output. Fix the project references.",
+      "expected_output": "The skill should treat generated/build output as non-authoritative by default, update the authoritative source or generator/config, avoid hand-editing generated output unless the project explicitly makes it authoritative, and document any exception.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Rename src/Parser.ts to src/parser.ts on a repository used on both macOS and Linux, and update affected references.",
+      "expected_output": "The skill should handle a case-only rename carefully, verify the final on-disk casing and reference casing, and validate that stale casing is gone.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Move lib/net/client.js to lib/http/client.js. The repository has no documented test command and the local type checker is unavailable.",
+      "expected_output": "The skill should perform available target and residual-reference checks, use only project-native tooling that exists, avoid inventing a generic unavailable command, report unavailable required checks as unverified, and not claim the refactor fully verified.",
+      "files": []
+    }
+  ]
+}

@@ -12,7 +12,7 @@ import PrimaryButton from '../../Buttons/PrimaryButton';
 import ButtonGroup from '../../Buttons/ButtonGroup';
 import TermsOfUse from '../../Footer/termsOfUse';
 import { UsersClient } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import termsData from '../../../terms-config.json';
 
 interface DefaultTermsAndConditionModalHeaderProps {
@@ -126,10 +126,9 @@ const TermsAndConditionModal = () => {
   const onContinueTermsAndConditionModal = async () => {
     if (inProgress === InteractionStatus.None && accounts.length > 0) {
       const client = new UsersClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
       try {

@@ -10,7 +10,7 @@ import {
   CRMLookupTypes,
   LookupClient,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   WizardFormStepValues,
   WizardStepProps,
@@ -32,10 +32,9 @@ const loadApplicationAndInstrument =
       try {
         const client = new RequestForPatternApprovalClient();
         const lookupClient = new LookupClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         lookupClient.setAuthToken(tokenResult.accessToken);
 
@@ -106,10 +105,9 @@ const saveStep =
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         const valuesToSave = { ...values };
