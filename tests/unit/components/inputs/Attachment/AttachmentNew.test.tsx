@@ -36,8 +36,20 @@ function Harness<TValues extends FormikValues>({
   return (
     <Formik
       initialValues={initialValues}
-      initialTouched={initialTouched as FormikConfig<TValues>['initialTouched']}
-      initialErrors={initialErrors as FormikConfig<TValues>['initialErrors']}
+      {...(initialTouched === undefined
+        ? {}
+        : {
+            initialTouched: initialTouched as NonNullable<
+              FormikConfig<TValues>['initialTouched']
+            >,
+          })}
+      {...(initialErrors === undefined
+        ? {}
+        : {
+            initialErrors: initialErrors as NonNullable<
+              FormikConfig<TValues>['initialErrors']
+            >,
+          })}
       onSubmit={async () => {}}
     >
       <Form>{children}</Form>

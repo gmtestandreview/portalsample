@@ -48,12 +48,12 @@ export function FormikWrapper<TValues extends Record<string, unknown>>({
     <Formik
       initialValues={initialValues}
       onSubmit={onSubmit}
-      validationSchema={validationSchema}
-      initialTouched={
-        initialTouched ? touchEveryField(initialValues) : undefined
-      }
+      {...(validationSchema === undefined ? {} : { validationSchema })}
+      {...(initialTouched
+        ? { initialTouched: touchEveryField(initialValues) }
+        : {})}
       validateOnMount={initialTouched}
-      innerRef={innerRef as never}
+      {...(innerRef === undefined ? {} : { innerRef: innerRef as never })}
     >
       <Form>{children}</Form>
     </Formik>
@@ -82,7 +82,7 @@ export const createSubmitSpy = <
   const calls: TValues[] = [];
 
   const onSubmit = vi.fn(
-    async (values: TValues, helpers?: FormikHelpers<TValues>) => {
+    (values: TValues, helpers?: FormikHelpers<TValues>) => {
       calls.push(values);
       helpers?.setSubmitting(false);
     }

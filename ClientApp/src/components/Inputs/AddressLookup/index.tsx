@@ -15,7 +15,7 @@ import AutoSuggest from '../AutoSuggest';
 import type { AutoSuggestOption } from '../AutoSuggest/types';
 import ManualAddressInput from './ManualAddressInput';
 import type { AddressLookupProps } from './types';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import { HttpStatusCode } from '../../../types';
 import SummaryDisplay from '../../SummaryDisplay';
 import AppLogger from '../../../instrumentation/AppLogger';
@@ -101,10 +101,7 @@ const AddressLookup = (
   ): Promise<AutoSuggestOption<MatchedAddress>[]> => {
     if (inProgress !== 'none' || accounts.length === 0 || !account) return [];
 
-    const result = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account,
-    });
+    const result = await instance.acquireTokenSilent(silentRequestFor(account));
     const addressClient = new AddressClient('');
     addressClient.setAuthToken(result.accessToken);
 

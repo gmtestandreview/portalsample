@@ -208,6 +208,14 @@ export const TabNavigation: Story = {
     if (!secondTab) throw new Error('Expected a second dashboard tab');
     await user.click(secondTab);
     await expect(secondTab).toHaveAttribute('aria-selected', 'true');
+    // react-bootstrap's Tabs fade the panels with a <Transition>; wait for it to
+    // finish (one active panel, fully shown) so its state updates settle inside
+    // the play function rather than leaking out as act() warnings.
+    await waitFor(async () => {
+      const activePanels = canvasElement.querySelectorAll('.tab-pane.active');
+      await expect(activePanels).toHaveLength(1);
+      await expect(activePanels[0]).toHaveClass('show');
+    });
     await waitFor(() =>
       expect(
         canvas.getByRole('heading', { name: /Keysight U1242C/ })

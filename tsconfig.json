@@ -50,10 +50,12 @@
       "trusted-types",
       "msw-storybook-addon/types"
     ]
-    
   },
   "include": [
     "*.ts",
+    "*.tsx",
+    "scripts/**/*",
+    "scripts/**/*.tsx",
     "scripts/**/*.ts",
     "ClientApp/src/**/*",
     ".storybook/**/*",

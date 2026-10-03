@@ -29,7 +29,7 @@ import OrganisationAndContact from '../organisationAndContact';
 import SupportingDocuments from '../supportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import ApplicationMessages from './appMessages';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
 
 const POLL_MS = 5000;
@@ -69,10 +69,9 @@ const ApplicationDetails = () => {
 
     try {
       const client = new RequestForPatternApprovalClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const count = await client.getAppMessageCount(id, id);
 
@@ -128,7 +127,7 @@ const ApplicationDetails = () => {
       }
     };
 
-    poll();
+    void poll();
 
     return () => {
       clearPollTimeout();
@@ -184,7 +183,7 @@ const ApplicationDetails = () => {
         setIsDataLoading(false);
       }
     };
-    fetchData();
+    void fetchData();
   }, [id, loadStepValues]);
 
   function routeToMessages() {
@@ -284,16 +283,15 @@ const ApplicationDetails = () => {
                               {messageCount > 0 && (
                                 <>
                                   <span className='-me-md-2'>
-                                    <span
+                                    <output
                                       className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
                                       style={{
                                         fontFamily: 'monospace',
                                         top: '-10px',
                                       }}
-                                      role='status'
                                     >
                                       {messageCount}
-                                    </span>
+                                    </output>
                                   </span>
                                   <span className='visually-hidden'>
                                     {' unread'}
@@ -359,9 +357,8 @@ const ApplicationDetails = () => {
                       eventKey='3'
                       className='mb-4 py-2'
                       nameRHS={
-                        <span
-                          role='button'
-                          tabIndex={0}
+                        <button
+                          type='button'
                           className='btn btn-link text-nowrap'
                           title='Jump to the documents tab'
                           onClick={(e) => {
@@ -375,22 +372,9 @@ const ApplicationDetails = () => {
                             window.scrollTo(0, 0);
                             setActiveTab('documents');
                           }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.stopPropagation();
-                              const params = new URLSearchParams(
-                                window.location.search
-                              );
-                              params.set('tab', 'documents');
-                              const newUrl = `${window.location.pathname}?${params.toString()}`;
-                              window.history.pushState({}, '', newUrl);
-                              window.scrollTo(0, 0);
-                              setActiveTab('documents');
-                            }
-                          }}
                         >
                           View documents
-                        </span>
+                        </button>
                       }
                     >
                       <SupportingDocuments

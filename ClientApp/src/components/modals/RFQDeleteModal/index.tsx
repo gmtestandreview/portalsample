@@ -8,7 +8,7 @@ import {
   ApplicationClient,
   ApplicationType,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import { setDashboardNotification } from '../../../storage/notification';
 import { NotificationSeverity } from '../../../storage/types';
 import AppLogger from '../../../instrumentation/AppLogger';
@@ -55,10 +55,9 @@ const RFQDeleteModal = () => {
   const onContinueRFQDeleteModal = async () => {
     try {
       const client = new ApplicationClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const { rfqId } = modalState ?? {};
       if (rfqId !== undefined) {

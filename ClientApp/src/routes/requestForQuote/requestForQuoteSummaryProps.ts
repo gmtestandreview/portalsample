@@ -8,7 +8,7 @@ import type {
   FormStepStatusDto,
   RequestForQuoteSummary,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -24,10 +24,9 @@ const loadSummary =
     try {
       if (accounts.length > 0) {
         const client = new RequestForQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const summaryStep = await client.getSummary(id, abortSignal);
         const wizardStepValues: WizardFormStepValues<RequestForQuoteSummary> = {
@@ -62,10 +61,9 @@ const submitForm =
     if (accounts.length > 0) {
       try {
         const client = new RequestForQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.submit(
           id,

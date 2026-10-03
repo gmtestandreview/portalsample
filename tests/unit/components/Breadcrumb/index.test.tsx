@@ -40,7 +40,9 @@ vi.mock('react-aria-components/Link', () => ({
   }) =>
     renderLink ? (
       renderLink(
-        ariaLinkMockState.includeHref ? { children, href } : { children }
+        ariaLinkMockState.includeHref && href !== undefined
+          ? { children, href }
+          : { children }
       )
     ) : (
       <a>{children}</a>

@@ -1,6 +1,6 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FilterMessages } from '../../../../ClientApp/src/api/web-api-client';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 
@@ -11,6 +11,7 @@ import {
 } from '../../helpers/mockMsal';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
+import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn(),
@@ -195,10 +196,6 @@ describe('application messages', () => {
     clients.patternApproval.methods.addAppMessage
       .mockReset()
       .mockResolvedValue(undefined);
-  });
-
-  afterEach(() => {
-    document.getElementById('dash-type-title')?.remove();
   });
 
   describe('loading messages', () => {
@@ -466,8 +463,10 @@ describe('application messages', () => {
       await waitFor(() =>
         expect(clients.patternApproval.methods.addAppMessage).toHaveBeenCalled()
       );
-      const [applicationId, html] =
-        clients.patternApproval.methods.addAppMessage.mock.calls[0];
+      const [applicationId, html] = defined(
+        clients.patternApproval.methods.addAppMessage.mock.calls[0],
+        'addAppMessage call'
+      );
       expect(applicationId).toBe('APP-1');
       expect(mocks.sanitiseHtml).toHaveBeenCalledWith(html);
       // A changed key remounts Slate, which is how the composer is cleared.
@@ -613,15 +612,16 @@ describe('application messages', () => {
     it('fetches the requested page and scrolls back to the heading', async () => {
       const user = userEvent.setup();
       const scrollIntoView = vi.fn();
-      const heading = document.createElement('div');
-      heading.id = 'dash-type-title';
-      heading.scrollIntoView = scrollIntoView;
-      document.body.append(heading);
 
       await renderRoute();
       await waitFor(() =>
         expect(screen.getByTestId('pagination')).toBeInTheDocument()
       );
+      const messagesSection = document.getElementById('application-messages');
+      if (!messagesSection) {
+        throw new Error('Expected application messages section to be rendered');
+      }
+      messagesSection.scrollIntoView = scrollIntoView;
 
       await user.click(screen.getByTestId('pagination'));
 
@@ -642,15 +642,24 @@ describe('application messages', () => {
       });
     });
 
-    it('still pages when the scroll target is absent', async () => {
+    it('still pages when the messages section is absent', async () => {
       const user = userEvent.setup();
-      // No #dash-type-title in the document - the optional chain must absorb it.
       await renderRoute();
       await waitFor(() =>
         expect(screen.getByTestId('pagination')).toBeInTheDocument()
       );
+      const getElementById = document.getElementById.bind(document);
+      const getElementByIdSpy = vi
+        .spyOn(document, 'getElementById')
+        .mockImplementation((id) =>
+          id === 'application-messages' ? null : getElementById(id)
+        );
 
-      await user.click(screen.getByTestId('pagination'));
+      try {
+        await user.click(screen.getByTestId('pagination'));
+      } finally {
+        getElementByIdSpy.mockRestore();
+      }
 
       await waitFor(() =>
         expect(

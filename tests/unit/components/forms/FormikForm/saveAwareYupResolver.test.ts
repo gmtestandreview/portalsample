@@ -57,7 +57,7 @@ describe('createSaveAwareYupResolver', () => {
     expect(result.errors).toHaveProperty('carrierName');
     expect(result.errors).toHaveProperty('carrierAccountNumber');
     expect(
-      (result.errors as Record<string, { type: string }>).carrierName
+      (result.errors as Record<string, { type: string }>)['carrierName']
     ).toMatchObject({ type: 'validation' });
   });
 

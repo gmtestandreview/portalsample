@@ -32,8 +32,10 @@ import signal
 import subprocess
 import sys
 import time
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+from types import FrameType
+from typing import TypedDict, cast
 
 from process_utils import pid_is_running
 
@@ -58,7 +60,18 @@ LOG      = BASE / "watcher.log"
 PID_FILE = BASE / "watcher.pid"
 
 
-def log(msg):
+class Task(TypedDict):
+    id: str
+
+
+class OptionalTaskFields(Task, total=False):
+    agent: str
+    description: str
+    context_files: list[str]
+    branch: str
+
+
+def log(msg: str) -> None:
     line = f"[{datetime.now().isoformat(timespec='seconds')}] {msg}\n"
     with LOG.open("a", encoding="utf-8") as f:
         f.write(line)
@@ -85,13 +98,13 @@ def write_pid():
     PID_FILE.write_text(str(os.getpid()))
 
 
-def cleanup(signum=None, frame=None):
+def cleanup(signum: int | None = None, frame: FrameType | None = None) -> None:
     PID_FILE.unlink(missing_ok=True)
     log("=== Watcher stopped ===")
     sys.exit(0)
 
 
-def build_prompt(task):
+def build_prompt(task: OptionalTaskFields) -> str:
     agent       = task.get("agent", "assistant")
     description = task.get("description", "")
     context     = " ".join(f"@{f}" for f in task.get("context_files", []))
@@ -105,22 +118,25 @@ def build_prompt(task):
     )
 
 
-def invoke_cli(task):
+def invoke_cli(task: OptionalTaskFields) -> subprocess.CompletedProcess[str]:
     cmd = [SECONDARY_CLI] + CLI_FLAGS + [build_prompt(task)]
     return subprocess.run(cmd, capture_output=True, text=True)
 
 
-def extract_structured(stdout):
+def extract_structured(stdout: str) -> dict[str, object] | None:
     if "```json" not in stdout:
         return None
     try:
         raw = stdout.split("```json")[1].split("```")[0].strip()
-        return json.loads(raw)
+        parsed = json.loads(raw)
+        if not isinstance(parsed, dict):
+            return None
+        return cast(dict[str, object], parsed)
     except Exception:
         return None
 
 
-def notify_orchestrator(task_id):
+def notify_orchestrator(task_id: str) -> None:
     subprocess.Popen(
         ["claude", "-c", "/orchestrate tick"],
         stdout=subprocess.DEVNULL,
@@ -129,17 +145,17 @@ def notify_orchestrator(task_id):
     log(f"NOTIFY  orchestrator tick → {task_id}")
 
 
-def run_task(task_file):
+def run_task(task_file: Path) -> None:
     proc_file = PROC / task_file.name
     task_file.rename(proc_file)
-    task = json.loads(proc_file.read_text())
+    task = cast(OptionalTaskFields, json.loads(proc_file.read_text(encoding="utf-8")))
     log(f"START   {task['id']} → {task.get('agent', '?')} (branch: {task.get('branch', 'main')})")
 
     result  = invoke_cli(task)
     success = result.returncode == 0
     parsed  = extract_structured(result.stdout) if success else None
 
-    receipt = {
+    receipt: dict[str, object] = {
         "id":             task["id"],
         "status":         "complete" if success else "failed",
         "branch":         task.get("branch", "main"),
@@ -159,13 +175,15 @@ def run_task(task_file):
     else:
         receipt["blockers"] = [result.stderr[-2000:]]
 
-    (RESULTS / f"{task['id']}-result.json").write_text(json.dumps(receipt, indent=2))
+    (RESULTS / f"{task['id']}-result.json").write_text(
+        json.dumps(receipt, indent=2), encoding="utf-8"
+    )
     proc_file.unlink()
     log(f"DONE    {task['id']} — {receipt['status']}")
     notify_orchestrator(task["id"])
 
 
-def recover_stale_queue_files():
+def recover_stale_queue_files() -> None:
     """On restart, move any stale tasks stuck in processing/ back to queue/.
 
     If the watcher crashed mid-task the file was already renamed to PROC/.
@@ -180,7 +198,7 @@ def recover_stale_queue_files():
             log(f"WARN    could not recover stale queue file {stale.name}: {e}")
 
 
-def watch():
+def watch() -> None:
     for d in [QUEUE, PROC, RESULTS]:
         d.mkdir(parents=True, exist_ok=True)
 
