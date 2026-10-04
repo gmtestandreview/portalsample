@@ -194,7 +194,7 @@ describe('lint cohort', () => {
     ['eslint', '10.11.0'],
     ['@eslint/js', '10.0.1'],
     ['typescript-eslint', '8.70.1'],
-    ['@eslint-react/eslint-plugin', '5.20.5'],
+    ['@eslint-react/eslint-plugin', '5.20.8'],
     ['eslint-plugin-react-hooks', '7.1.1'],
     ['@stylistic/eslint-plugin', '5.10.0'],
     ['globals', '17.12.0'],
