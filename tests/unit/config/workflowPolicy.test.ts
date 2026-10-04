@@ -491,7 +491,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toEqual([
-      '22918119ff8e1ca75a623e15c8296b6ea4fbe28f',
+      'ba9859eae8dd6bd29e412f25ddbbef3d032000f4',
     ]);
     expect(
       scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))
@@ -641,6 +641,10 @@ describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
     expect(codeqlWorkflow).toContain('language: javascript-typescript');
     expect(codeqlWorkflow).toContain('language: python');
     expect(codeqlWorkflow).toContain('build-mode: none');
+  });
+
+  it('does not enable dependency caching for the configured CodeQL matrix', () => {
+    expect(codeqlWorkflow).not.toContain('dependency-caching');
   });
 
   it('grants CodeQL only the permissions required to upload code scanning results', () => {
