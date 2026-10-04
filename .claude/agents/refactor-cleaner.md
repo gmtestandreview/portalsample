@@ -1,6 +1,6 @@
 ---
 name: refactor-cleaner
-description: Dead code cleanup and consolidation specialist. Use PROACTIVELY for removing unused code, duplicates, and refactoring. Runs analysis tools (knip, depcheck, ts-prune) to identify dead code and safely removes it.
+description: Dead code cleanup and consolidation specialist. Use PROACTIVELY for removing unused code, duplicates, and refactoring. Runs analysis tools (depcheck, ts-prune) to identify dead code and safely removes it.
 allowedTools:
   - read
   - write
@@ -22,7 +22,6 @@ You are an expert refactoring specialist focused on code cleanup and consolidati
 ## Detection Commands
 
 ```bash
-npx knip                                    # Unused files, exports, dependencies
 npx depcheck                                # Unused npm dependencies
 npx ts-prune                                # Unused TypeScript exports
 npx eslint . --report-unused-disable-directives

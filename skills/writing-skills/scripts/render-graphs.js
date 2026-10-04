@@ -22,15 +22,15 @@ const defaultDotPaths = {
   win32: [
     String.raw`C:\Program Files\Graphviz\bin\dot.exe`,
     String.raw`C:\Program Files (x86)\Graphviz\bin\dot.exe`,
-    String.raw`C:\ProgramData\chocolatey\bin\dot.exe`
+    String.raw`C:\ProgramData\chocolatey\bin\dot.exe`,
   ],
   darwin: [
     '/opt/homebrew/bin/dot',
     '/usr/local/bin/dot',
     '/opt/local/bin/dot',
-    '/usr/bin/dot'
+    '/usr/bin/dot',
   ],
-  linux: ['/usr/bin/dot', '/usr/local/bin/dot', '/snap/bin/dot']
+  linux: ['/usr/bin/dot', '/usr/local/bin/dot', '/snap/bin/dot'],
 };
 
 function writeLine(message) {
@@ -79,7 +79,7 @@ function extractGraphBody(dotContent) {
   const rankdirLine = /^rankdir\s*=\s*\w+\s*;?$/;
   body = body
     .split('\n')
-    .filter(line => !rankdirLine.test(line.trim()))
+    .filter((line) => !rankdirLine.test(line.trim()))
     .join('\n');
 
   return body.trim();
@@ -91,7 +91,10 @@ function combineGraphs(blocks, skillName) {
     // Wrap each subgraph in a cluster for visual grouping
     return `  subgraph cluster_${i} {
     label="${block.name}";
-    ${body.split('\n').map(line => '  ' + line).join('\n')}
+    ${body
+      .split('\n')
+      .map((line) => '  ' + line)
+      .join('\n')}
   }`;
   });
 
@@ -106,24 +109,25 @@ ${bodies.join('\n\n')}
 
 function resolveDotExecutable() {
   const configuredDot = process.env.GRAPHVIZ_DOT;
-  const platformPaths = defaultDotPaths[process.platform] ?? defaultDotPaths.linux;
+  const platformPaths =
+    defaultDotPaths[process.platform] ?? defaultDotPaths.linux;
   const configuredCandidate = path.isAbsolute(configuredDot ?? '')
     ? resolveExistingPath(configuredDot)
     : null;
   const trustedDefaults = platformPaths
     .map(resolveExistingPath)
-    .filter(candidate => candidate !== null);
+    .filter((candidate) => candidate !== null);
   const candidates = [configuredCandidate, ...trustedDefaults].filter(
-    candidate => candidate !== null
+    (candidate) => candidate !== null
   );
 
-  return [...new Set(candidates)].find(candidate => {
+  return [...new Set(candidates)].find((candidate) => {
     try {
       const output = execFileSync(candidate, ['-Tsvg'], {
         input: 'digraph probe {}',
         encoding: 'utf-8',
         maxBuffer: 1024 * 1024,
-        stdio: ['pipe', 'pipe', 'ignore']
+        stdio: ['pipe', 'pipe', 'ignore'],
       });
       return output.includes('<svg');
     } catch {
@@ -137,7 +141,7 @@ function renderToSvg(dotExecutable, dotContent) {
     return execFileSync(dotExecutable, ['-Tsvg'], {
       input: dotContent,
       encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024
+      maxBuffer: 10 * 1024 * 1024,
     });
   } catch (err) {
     console.error('Error running dot:', err.message);
@@ -149,7 +153,7 @@ function renderToSvg(dotExecutable, dotContent) {
 function main() {
   const args = process.argv.slice(2);
   const combine = args.includes('--combine');
-  const skillDirArg = args.find(a => !a.startsWith('--'));
+  const skillDirArg = args.find((a) => !a.startsWith('--'));
 
   if (!skillDirArg) {
     console.error('Usage: render-graphs.js <skill-directory> [--combine]');
@@ -159,7 +163,9 @@ function main() {
     console.error('');
     console.error('Example:');
     console.error('  ./render-graphs.js ../subagent-driven-development');
-    console.error('  ./render-graphs.js ../subagent-driven-development --combine');
+    console.error(
+      '  ./render-graphs.js ../subagent-driven-development --combine'
+    );
     process.exit(1);
   }
 
@@ -189,7 +195,9 @@ function main() {
     process.exit(0);
   }
 
-  writeLine(`Found ${blocks.length} diagram(s) in ${path.basename(skillDir)}/SKILL.md`);
+  writeLine(
+    `Found ${blocks.length} diagram(s) in ${path.basename(skillDir)}/SKILL.md`
+  );
 
   const outputDir = path.join(skillDir, 'diagrams');
   fs.mkdirSync(outputDir, { recursive: true });

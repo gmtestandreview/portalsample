@@ -1,7 +1,8 @@
 import type { Vitest } from 'vitest/node';
 import type { Plugin } from 'vite';
 
-type StorybookVitest = Pick<Vitest, 'init' | 'standalone'> & {
+type StorybookVitest = Pick<Vitest, 'standalone'> & {
+  init: Vitest['standalone'];
   config: {
     coverage: {
       exclude: string[];
@@ -12,6 +13,8 @@ type StorybookVitest = Pick<Vitest, 'init' | 'standalone'> & {
 type StorybookVitestPlugin = Plugin & {
   configureVitest: (context: { vitest: StorybookVitest }) => void;
 };
+
+export const jsonCoverageExclusion = 'ClientApp/src/**/*.json';
 
 /**
  * Compatibility policy for Test-panel runs owned by @storybook/addon-vitest.
@@ -24,7 +27,9 @@ type StorybookVitestPlugin = Plugin & {
 export const storybookVitestRuntimePlugin: StorybookVitestPlugin = {
   name: 'nmi:storybook-vitest-runtime-policy',
   configureVitest({ vitest }) {
-    vitest.config.coverage.exclude.push('ClientApp/src/**/*.json');
+    if (!vitest.config.coverage.exclude.includes(jsonCoverageExclusion)) {
+      vitest.config.coverage.exclude.push(jsonCoverageExclusion);
+    }
     vitest.init = vitest.standalone.bind(vitest);
   },
 };

@@ -14,7 +14,7 @@ import PrimaryButton from '../../Buttons/PrimaryButton';
 import ButtonGroup from '../../Buttons/ButtonGroup';
 import { OrganisationsClient, UsersClient } from '../../../api/web-api-client';
 import type { OrganisationDto } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import NotificationMessage from '../../Alert/NotificationMessage';
 import {
   clearBranchModalNotification,
@@ -22,6 +22,7 @@ import {
 } from '../../../storage/notification';
 import AppLogger from '../../../instrumentation/AppLogger';
 import { BranchSelectionModalMode } from './enums';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 interface SavingBranchSelectorErrorProps {
   showError: boolean;
@@ -201,25 +202,26 @@ const BranchSelectorModal = () => {
       setIsSaving(true);
       let reloadAfterSave = false;
       const client = new UsersClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       try {
         if (
           branchSelectionModalMode === BranchSelectionModalMode.RFQSelectOrg
         ) {
-          await client.setDefaultOrganisation({
-            defaultOrganisationId: selectedBranch,
-            rfqId: modalState?.rfqId,
-          });
+          await client.setDefaultOrganisation(
+            omitUndefined({
+              defaultOrganisationId: selectedBranch,
+              rfqId: modalState?.rfqId,
+            })
+          );
         } else if (
           branchSelectionModalMode === BranchSelectionModalMode.SelectAndEditOrg
         ) {
-          await client.setDefaultOrganisation({
-            defaultOrganisationId: selectedBranch,
-          });
+          await client.setDefaultOrganisation(
+            omitUndefined({ defaultOrganisationId: selectedBranch })
+          );
         }
         // Fix 11 — S3776: replaced inline accountDispatch guard with helper (Fix 4 absorbed)
         applyAccountDispatchUpdates(
@@ -251,14 +253,14 @@ const BranchSelectorModal = () => {
         if (reloadAfterSave) {
           globalThis.location.reload();
         } else {
-          navigate('/');
+          void navigate('/');
         }
       }
     }
   };
 
   const handleChange = (
-    event: ChangeEvent<HTMLInputElement>,
+    _event: ChangeEvent<HTMLInputElement>,
     branchId: number | undefined,
     organisationName: string | undefined,
     tradingName: string | undefined,
@@ -281,10 +283,9 @@ const BranchSelectorModal = () => {
       // Fix 5 — S6582: Optional chain collapse
       if (accountState?.details?.abn) {
         const client = new OrganisationsClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         try {
@@ -296,6 +297,10 @@ const BranchSelectorModal = () => {
           if (!isActive) return;
 
           setBranches(result);
+          const firstBranch = result[0];
+          if (!firstBranch) {
+            throw new Error('No branches returned for organisation');
+          }
           if (
             hasDefaultOrganisationId(
               accountState.details?.defaultOrganisationId
@@ -306,13 +311,13 @@ const BranchSelectorModal = () => {
             setSelectedTradingName(accountState.details?.trading);
             setSelectedBranchName(accountState.details?.branch);
           } else {
-            setSelectedBranch(result[0].organisationId);
-            setSelectedTradingName(result[0].businessOrTradingName);
-            setSelectedBranchName(result[0].branchOrLocationName);
-            setSelectedABN(result[0].abn);
-            setSelectedCRMGuid(result[0].crmGuid);
+            setSelectedBranch(firstBranch.organisationId);
+            setSelectedTradingName(firstBranch.businessOrTradingName);
+            setSelectedBranchName(firstBranch.branchOrLocationName);
+            setSelectedABN(firstBranch.abn);
+            setSelectedCRMGuid(firstBranch.crmGuid);
           }
-          setSelectedOrganisation(result[0].name);
+          setSelectedOrganisation(firstBranch.name);
         } catch (error) {
           if (!isActive) return;
 
@@ -396,9 +401,11 @@ const BranchSelectorModal = () => {
   return (
     <Modal
       size='lg'
-      show={modalState?.showBranchSelector}
+      {...omitUndefined({
+        show: modalState?.showBranchSelector,
+        enforceFocus: modalState?.showBranchSelector,
+      })}
       aria-labelledby='modal-select-branch'
-      enforceFocus={modalState?.showBranchSelector}
       aria-live='assertive'
       // aria-atomic='true'
       tabIndex={-1}

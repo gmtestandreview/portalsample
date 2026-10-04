@@ -38,8 +38,8 @@ function findStoryKind(file) {
 const isStoryTypeRef = (typeNode, file) =>
   Boolean(
     typeNode &&
-      ts.isTypeReferenceNode(typeNode) &&
-      typeNode.typeName.getText(file) === 'Story'
+    ts.isTypeReferenceNode(typeNode) &&
+    typeNode.typeName.getText(file) === 'Story'
   );
 
 /** Null when the parameter is already typed, rest, or otherwise out of scope. */
@@ -49,6 +49,15 @@ function paramChange(parameter, index, typeExprText) {
     ? parameter.questionToken.end
     : parameter.name.end;
   return { at: insertAt, text: `: Readonly<${typeExprText(index)}>` };
+}
+
+function parameterChanges(parameters, name, typeExprText) {
+  const changes = [];
+  for (const [index, parameter] of parameters.entries()) {
+    const change = paramChange(parameter, index, typeExprText);
+    if (change) changes.push({ name, ...change });
+  }
+  return changes;
 }
 
 function storyExports(file) {
@@ -73,6 +82,62 @@ function storyExports(file) {
   return exports;
 }
 
+function functionStoryChanges(name, initializer) {
+  if (!isFunctionLike(initializer)) {
+    return {
+      changes: [],
+      skipped: [{ name, reason: 'story value is not an inline function' }],
+    };
+  }
+  return {
+    changes: parameterChanges(
+      initializer.parameters,
+      name,
+      (index) => `Parameters<Story>[${index}]`
+    ),
+    skipped: [],
+  };
+}
+
+function objectStoryChanges(name, initializer) {
+  if (!ts.isObjectLiteralExpression(initializer)) {
+    return {
+      changes: [],
+      skipped: [{ name, reason: 'story value is not an object literal' }],
+    };
+  }
+
+  const changes = [];
+  const skipped = [];
+  for (const property of initializer.properties) {
+    if (!ts.isPropertyAssignment(property) || !ts.isIdentifier(property.name))
+      continue;
+    const propName = property.name.text;
+    if (propName !== 'render' && propName !== 'play') continue;
+    if (!isFunctionLike(property.initializer)) {
+      skipped.push({
+        name: `${name}.${propName}`,
+        reason: 'value is not an inline function',
+      });
+      continue;
+    }
+    changes.push(
+      ...parameterChanges(
+        property.initializer.parameters,
+        `${name}.${propName}`,
+        (index) => `Parameters<NonNullable<Story['${propName}']>>[${index}]`
+      )
+    );
+  }
+  return { changes, skipped };
+}
+
+function storyChanges(kind, name, initializer) {
+  return kind === 'StoryFn'
+    ? functionStoryChanges(name, initializer)
+    : objectStoryChanges(name, initializer);
+}
+
 /** Conservative syntax codemod for CSF `render`/`play` parameter types. */
 export function transformStory(source, filename = 'component.stories.tsx') {
   const file = ts.createSourceFile(
@@ -90,48 +155,9 @@ export function transformStory(source, filename = 'component.stories.tsx') {
   if (!kind) return { source, changes, skipped };
 
   for (const { name, initializer } of storyExports(file)) {
-    if (kind === 'StoryFn') {
-      if (!isFunctionLike(initializer)) {
-        skipped.push({ name, reason: 'story value is not an inline function' });
-        continue;
-      }
-      for (const [i, parameter] of initializer.parameters.entries()) {
-        const change = paramChange(
-          parameter,
-          i,
-          (index) => `Parameters<Story>[${index}]`
-        );
-        if (change) changes.push({ name, ...change });
-      }
-      continue;
-    }
-
-    // kind === 'StoryObj'
-    if (!ts.isObjectLiteralExpression(initializer)) {
-      skipped.push({ name, reason: 'story value is not an object literal' });
-      continue;
-    }
-    for (const property of initializer.properties) {
-      if (!ts.isPropertyAssignment(property) || !ts.isIdentifier(property.name))
-        continue;
-      const propName = property.name.text;
-      if (propName !== 'render' && propName !== 'play') continue;
-      if (!isFunctionLike(property.initializer)) {
-        skipped.push({
-          name: `${name}.${propName}`,
-          reason: 'value is not an inline function',
-        });
-        continue;
-      }
-      for (const [i, parameter] of property.initializer.parameters.entries()) {
-        const change = paramChange(
-          parameter,
-          i,
-          (index) => `Parameters<NonNullable<Story['${propName}']>>[${index}]`
-        );
-        if (change) changes.push({ name: `${name}.${propName}`, ...change });
-      }
-    }
+    const result = storyChanges(kind, name, initializer);
+    changes.push(...result.changes);
+    skipped.push(...result.skipped);
   }
 
   let output = source;

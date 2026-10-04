@@ -6,6 +6,7 @@ import {
   useAccountDispatch,
   useAccountState,
 } from '../../../ClientApp/src/authentication/hooks';
+import { defined } from '../helpers/defined';
 
 const providerMocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn(),
@@ -344,7 +345,10 @@ describe('AccountProvider dispatch callbacks', () => {
     await waitFor(() =>
       expect(providerMocks.logoutRedirect).toHaveBeenCalled()
     );
-    const logoutOptions = providerMocks.logoutRedirect.mock.calls[0][0] as {
+    const logoutOptions = defined(
+      providerMocks.logoutRedirect.mock.calls[0],
+      'logoutRedirect call'
+    )[0] as {
       onRedirectNavigate: () => boolean;
     };
 

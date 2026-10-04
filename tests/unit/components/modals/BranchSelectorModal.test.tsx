@@ -157,9 +157,9 @@ const defaultAccountDispatch: AccountDispatchContext = {
 interface RenderOptions {
   defaultOrganisationId?: number;
   mode?: string;
-  rfqId?: string;
+  rfqId?: string | undefined;
   accountCreationCompleted?: boolean;
-  abn?: string;
+  abn?: string | undefined;
   accountDispatch?: AccountDispatchContext | null;
   msalInProgress?: InteractionStatus;
 }
@@ -189,7 +189,7 @@ const renderModal = (opts: RenderOptions = {}) => {
               trading: 'ACME Corporation',
               branch: 'Sydney Office',
               homeAccountId: 'mock-id',
-              abn,
+              ...(abn === undefined ? {} : { abn }),
               userAcceptedTermsOfUse: true,
               accountCreationCompleted,
               accountContactCompleted: true,
@@ -209,7 +209,7 @@ const renderModal = (opts: RenderOptions = {}) => {
                 showBranchSelector: true,
                 showRFQDeleteModal: false,
                 branchSelectionModalMode: mode,
-                rfqId,
+                ...(rfqId === undefined ? {} : { rfqId }),
               }}
             >
               <ModalDispatchCtx.Provider

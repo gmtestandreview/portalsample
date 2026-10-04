@@ -33,7 +33,15 @@ vi.mock('slate', async (importOriginal) => {
 });
 
 /** The editor belonging to the most recently rendered SlateEditor. */
-const currentEditor = () => captured.editors[captured.editors.length - 1];
+const currentEditor = () => {
+  const editor = captured.editors.at(-1);
+
+  if (!editor) {
+    throw new Error('No SlateEditor has been rendered');
+  }
+
+  return editor;
+};
 
 /** Places a collapsed caret in the first text node. Slate ignores marks while there is no selection. */
 const placeCaret = async (editor: Editor, offset = 0) => {
@@ -273,8 +281,8 @@ describe('SlateEditor document changes', () => {
       Transforms.insertText(editor, ' there');
     });
 
-    const lastCall = setValue.mock.calls[setValue.mock.calls.length - 1];
-    expect(serializeToHtml(lastCall[0])).toBe('<p>Hello there</p>');
+    const [lastValue] = setValue.mock.calls.at(-1) ?? [];
+    expect(serializeToHtml(lastValue)).toBe('<p>Hello there</p>');
     // Counted over the serialized HTML, not the visible text: the limit exists to bound what
     // gets sent, and the markup travels with it.
     expect(document.querySelector('.text-muted')).toHaveTextContent('18 /1000');

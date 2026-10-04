@@ -187,7 +187,9 @@ describe('Storybook documentation architecture', () => {
     // ./rollupOnLog — its behaviour (vendor noise dropped, everything else
     // forwarded) is verified in rollupOnLog.test.ts, not textually here. main.ts
     // must only wire it in, not re-inline a filter.
-    expect(main).toMatch(/import \{ onLog \} from ['"]\.\/rollupOnLog['"]/);
+    expect(main).toMatch(
+      /import \{ onLog \} from ['"]\.\/rollupOnLog(?:\.ts)?['"]/u
+    );
     expect(main).toMatch(/rollupOptions:\s*\{\s*onLog\s*\}/);
     expect(main).not.toMatch(/onLog\s*\(/); // no inline filter body
 

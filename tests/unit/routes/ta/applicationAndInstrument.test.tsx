@@ -10,6 +10,7 @@ import {
 
 import { resetMsalMock } from '../../helpers/mockMsal';
 import { FormikWrapper } from '../../helpers/formik';
+import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn(),
@@ -21,16 +22,27 @@ const captured = vi.hoisted(() => ({
     string,
     {
       options: { displayText: string; value: string }[];
-      readOnly?: boolean;
-      onChange?: (event: unknown) => void;
+      readOnly?: boolean | undefined;
+      onChange?: ((event: unknown) => void) | undefined;
     }
   >,
   checkboxGroups: {} as Record<
     string,
     { options: { label: string; value: string }[] }
   >,
-  infoPanel: undefined as unknown as { category?: string; type?: string },
+  infoPanel: undefined as unknown as {
+    category?: string | undefined;
+    type?: string | undefined;
+  },
 }));
+
+/** The select the step rendered under `name`; fails the test if the step never rendered it. */
+const selectNamed = (name: string) =>
+  defined(captured.selects[name], `select "${name}"`);
+
+/** The checkbox group the step rendered under `name`; fails the test if it was never rendered. */
+const checkboxGroupNamed = (name: string) =>
+  defined(captured.checkboxGroups[name], `checkbox group "${name}"`);
 
 vi.mock('@azure/msal-react', async () => {
   const { msalReactModuleMock } = await import('../../helpers/mockMsal');
@@ -343,12 +355,12 @@ describe('application and instrument step', () => {
     it('offers the sub-options belonging to each application type', async () => {
       await renderStep();
 
-      expect(captured.checkboxGroups.newSubOptions.options).toHaveLength(3);
+      expect(checkboxGroupNamed('newSubOptions').options).toHaveLength(3);
       expect(
-        captured.checkboxGroups.varSubOptions.options.length
+        checkboxGroupNamed('varSubOptions').options.length
       ).toBeGreaterThan(0);
       expect(
-        captured.checkboxGroups.othSubOptions.options.length
+        checkboxGroupNamed('othSubOptions').options.length
       ).toBeGreaterThan(0);
     });
   });
@@ -358,9 +370,9 @@ describe('application and instrument step', () => {
       await renderStep();
 
       await waitFor(() =>
-        expect(captured.selects.instrumentCategory).toBeDefined()
+        expect(captured.selects['instrumentCategory']).toBeDefined()
       );
-      const labels = captured.selects.instrumentCategory.options.map(
+      const labels = selectNamed('instrumentCategory').options.map(
         (o) => o.displayText
       );
       expect(labels).toEqual([
@@ -374,9 +386,9 @@ describe('application and instrument step', () => {
       await renderStep();
 
       await waitFor(() =>
-        expect(captured.selects.instrumentType).toBeDefined()
+        expect(captured.selects['instrumentType']).toBeDefined()
       );
-      expect(captured.selects.instrumentType.options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toEqual([]);
     });
 
     it('narrows the types to the chosen category', async () => {
@@ -388,12 +400,10 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(captured.selects.instrumentType.options.length).toBeGreaterThan(
-          0
-        )
+        expect(selectNamed('instrumentType').options.length).toBeGreaterThan(0)
       );
       expect(
-        captured.selects.instrumentType.options.map((o) => o.displayText)
+        selectNamed('instrumentType').options.map((o) => o.displayText)
       ).toEqual(['Automatic scale', 'Beam balance']);
     });
 
@@ -404,10 +414,10 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(captured.selects.instrumentType).toBeDefined()
+        expect(captured.selects['instrumentType']).toBeDefined()
       );
       // Summary is a record of what was chosen, so it must resolve any stored id to a label.
-      expect(captured.selects.instrumentType.options.length).toBe(
+      expect(selectNamed('instrumentType').options.length).toBe(
         typeLookup().length
       );
     });
@@ -421,24 +431,24 @@ describe('application and instrument step', () => {
       });
 
       await waitFor(() =>
-        expect(captured.selects.instrumentType).toBeDefined()
+        expect(captured.selects['instrumentType']).toBeDefined()
       );
-      expect(captured.selects.instrumentType.options).toEqual([]);
-      expect(captured.selects.instrumentCategory.options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toEqual([]);
+      expect(selectNamed('instrumentCategory').options).toEqual([]);
     });
 
     it('offers no types when the instrument field has never been set', async () => {
       // Distinct from an empty string: a step whose values omit instrumentType entirely has
       // nothing to resolve against, so the type list starts empty rather than unfiltered.
       const values = baseValues();
-      delete (values as Record<string, unknown>).instrumentType;
+      delete (values as Record<string, unknown>)['instrumentType'];
 
       await renderStep({ values });
 
       await waitFor(() =>
-        expect(captured.selects.instrumentType).toBeDefined()
+        expect(captured.selects['instrumentType']).toBeDefined()
       );
-      expect(captured.selects.instrumentType.options).toEqual([]);
+      expect(selectNamed('instrumentType').options).toEqual([]);
     });
 
     it('ignores a category change before the type lookup has arrived', async () => {
@@ -449,18 +459,18 @@ describe('application and instrument step', () => {
         }),
       });
       await waitFor(() =>
-        expect(captured.selects.instrumentCategory).toBeDefined()
+        expect(captured.selects['instrumentCategory']).toBeDefined()
       );
 
       await act(async () => {
-        captured.selects.instrumentCategory.onChange?.({
+        selectNamed('instrumentCategory').onChange?.({
           target: { value: 'cat-weighing' },
         });
       });
 
       // No lookup means no options to narrow; the field is still cleared for re-entry.
-      expect(captured.selects.instrumentType.options).toEqual([]);
-      await waitFor(() => expect(formik?.values.instrumentType).toBe(''));
+      expect(selectNamed('instrumentType').options).toEqual([]);
+      await waitFor(() => expect(formik?.values['instrumentType']).toBe(''));
     });
 
     it('logs a failure while shaping the lookups', async () => {
@@ -487,7 +497,7 @@ describe('application and instrument step', () => {
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
-        expect(captured.selects.instrumentCategory).toBeDefined()
+        expect(captured.selects['instrumentCategory']).toBeDefined()
       );
 
       await user.selectOptions(
@@ -497,17 +507,17 @@ describe('application and instrument step', () => {
 
       await waitFor(() =>
         expect(
-          captured.selects.instrumentType.options.map((o) => o.displayText)
+          selectNamed('instrumentType').options.map((o) => o.displayText)
         ).toEqual(['Tape measure'])
       );
-      expect(formik?.values.instrumentType).toBe('');
+      expect(formik?.values['instrumentType']).toBe('');
     });
 
     it('picks the none instrument and locks the type when no measurement applies', async () => {
       const user = userEvent.setup();
       await renderStep();
       await waitFor(() =>
-        expect(captured.selects.instrumentCategory).toBeDefined()
+        expect(captured.selects['instrumentCategory']).toBeDefined()
       );
 
       await user.selectOptions(
@@ -518,7 +528,7 @@ describe('application and instrument step', () => {
       // Choosing "no measurement instrument" has exactly one valid type, so it is chosen for
       // the user and the field is locked rather than left as an empty required box.
       await waitFor(() =>
-        expect(formik?.values.instrumentType).toBe('type-none')
+        expect(formik?.values['instrumentType']).toBe('type-none')
       );
       expect(screen.getByTestId('select-instrumentType')).toHaveAttribute(
         'data-readonly',
@@ -715,8 +725,8 @@ describe('application and instrument step', () => {
     it('addresses fields at the root when given no prefix', async () => {
       await renderStep();
 
-      expect(captured.selects.instrumentCategory).toBeDefined();
-      expect(captured.checkboxGroups.newSubOptions).toBeDefined();
+      expect(captured.selects['instrumentCategory']).toBeDefined();
+      expect(captured.checkboxGroups['newSubOptions']).toBeDefined();
     });
 
     it('prefixes every field when nested under a name', async () => {

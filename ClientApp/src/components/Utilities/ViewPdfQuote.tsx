@@ -7,7 +7,7 @@ import {
   openInNewTab,
 } from '../../routes/common/helperFunctions';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import ViewPdfButton from './ViewPdfButton';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -36,10 +36,9 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
       AppLogger.verbose('ViewPdfQuote.viewOfferedQuotePdf', {
         crmQuoteRequestId: quotationData?.crmQuoteRequestId,
       });
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
         quotationData!,
@@ -69,10 +68,9 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
           crmQuoteRequestId: quotationData?.crmQuoteRequestId,
         });
         setPdfSizeLoaded(false);
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         const fileResponse = await getQuotationFileDetails(
           tokenResult.accessToken,
           quotationData!,
@@ -94,7 +92,7 @@ const ViewPdfQuote = (props: Readonly<ViewPdfQuoteProps>) => {
       }
     };
 
-    getPdfFileSize();
+    void getPdfFileSize();
   }, [accounts, instance, quotationData, setFileError]);
 
   return (

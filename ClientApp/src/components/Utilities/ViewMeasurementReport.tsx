@@ -8,10 +8,11 @@ import {
 } from '../../routes/common/helperFunctions';
 import { DashboardClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import ViewPdfButton from './ViewPdfButton';
 import { clearDashboardNotification } from '../../storage/notification';
 import AppLogger from '../../instrumentation/AppLogger';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 export interface ViewMeasurementReportProps {
   text?: string;
@@ -44,10 +45,9 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
         return;
       }
       const client = new DashboardClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const fileResponse = await client.getQuoteReportPDFByID(reportId, true);
       if (
@@ -82,10 +82,9 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
         }
         setPdfSizeLoaded(false);
         const client = new DashboardClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const fileResponse = await client.getQuoteReportPDFByID(
           reportId,
@@ -104,12 +103,12 @@ const ViewMeasurementReport = (props: Readonly<ViewMeasurementReportProps>) => {
       }
     };
 
-    getReportPdfFileSize();
+    void getReportPdfFileSize();
   }, [accounts, instance, reportId, setFileError]);
 
   return (
     <ViewPdfButton
-      text={text}
+      {...omitUndefined({ text })}
       fileSize={fileSize}
       isLoaded={pdfSizeLoaded}
       getPdf={viewReportPdf}

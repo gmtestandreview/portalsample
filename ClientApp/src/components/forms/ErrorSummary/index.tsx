@@ -11,6 +11,7 @@ import type {
 import type { ErrorSummaryProps, FormikErrorsSummaryProps } from './types';
 import HashLink from '../../Utilities/hashLink';
 import { HttpStatusCode } from '../../../types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 type ErrorData = Record<string, unknown> | readonly unknown[];
 type FlatErrorData = Record<string, string>;
@@ -187,6 +188,7 @@ const FormikErrorsSummary = ({
       const timeoutId = handleAlertScroll();
       return () => clearTimeout(timeoutId);
     }
+    return undefined;
   }, [errors, submitCount, isValidating, isSubmitting, hasErrors]);
 
   if (!hasErrors) {
@@ -206,6 +208,7 @@ const ErrorSummary = ({
       const timeoutId = handleAlertScroll();
       return () => clearTimeout(timeoutId);
     }
+    return undefined;
   }, [serverErrors]);
   if (isValidationProblemDetails(serverErrors)) {
     const { errors: validationErrors } = serverErrors;
@@ -271,7 +274,7 @@ const ErrorSummary = ({
     return renderServerError(error);
   }
 
-  return <FormikErrorsSummary disableLinkedError={disableLinkedError} />;
+  return <FormikErrorsSummary {...omitUndefined({ disableLinkedError })} />;
 };
 
 export default ErrorSummary;

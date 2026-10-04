@@ -35,7 +35,7 @@ const renderAutoSuggest = (
       label='Suburb'
       getOptions={getOptions}
       onSelectedOption={onSelectedOption}
-      selectedOption={selectedOption}
+      {...(selectedOption === undefined ? {} : { selectedOption })}
     />
   );
 

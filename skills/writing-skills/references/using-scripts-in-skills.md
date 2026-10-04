@@ -4,7 +4,8 @@ sidebarTitle: 'Using scripts'
 description: 'How to run commands and bundle executable scripts in your skills.'
 ---
 
-<!-- markdownlint-disable-next-line MD025 -->
+<!-- markdownlint-disable MD013 MD025 -->
+
 # Using Scripts
 
 <!-- markdownlint-disable MD033 -->
@@ -116,7 +117,9 @@ Then instruct the agent to run them:
 ````
 
 <Note>
-The same relative-path convention works in support files like `references/*.md` - script execution paths (in code blocks) are relative to the **skill directory root**, because the agent runs commands from there.
+The same relative-path convention works in support files like `references/*.md`
+- script execution paths (in code blocks) are relative to the
+**skill directory root**, because the agent runs commands from there.
 </Note>
 
 ## Self-contained scripts

@@ -1,5 +1,6 @@
 import { PatternFormatFixed } from '../Inputs/NumberInput/types';
 import type { SummaryDisplayProps } from './types';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const renderEmptyValue = (className: string) => (
   <span className={className}>
@@ -27,16 +28,29 @@ const renderHiddenSpacedValue = (value: string) => (
   <span className='visually-hidden'>{value.split('').join(' ')}</span>
 );
 
+type FormattedValueOptions = Pick<
+  SummaryDisplayProps,
+  | 'format'
+  | 'mask'
+  | 'prefix'
+  | 'suffix'
+  | 'valueIsNumericString'
+  | 'allowemptyformatting'
+  | 'renderText'
+>;
+
 const renderFormattedValue = (
   value: string,
   className: string,
-  format: SummaryDisplayProps['format'],
-  mask: SummaryDisplayProps['mask'],
-  prefix: SummaryDisplayProps['prefix'],
-  suffix: SummaryDisplayProps['suffix'],
-  valueIsNumericString: SummaryDisplayProps['valueIsNumericString'],
-  allowemptyformatting: SummaryDisplayProps['allowemptyformatting'],
-  renderText: SummaryDisplayProps['renderText']
+  {
+    format,
+    mask,
+    prefix,
+    suffix,
+    valueIsNumericString,
+    allowemptyformatting,
+    renderText,
+  }: FormattedValueOptions
 ) => (
   <>
     {format ? (
@@ -45,21 +59,15 @@ const renderFormattedValue = (
         displayType='text'
         value={value}
         format={format}
-        mask={mask}
-        prefix={prefix}
-        suffix={suffix}
-        valueIsNumericString={valueIsNumericString}
-        allowemptyformatting={allowemptyformatting}
-        renderText={renderText}
+        {...omitUndefined({
+          mask,
+          prefix,
+          suffix,
+          valueIsNumericString,
+          allowemptyformatting,
+          renderText,
+        })}
         aria-hidden='true'
-        autoComplete={undefined}
-        customInput={undefined}
-        disabled={undefined}
-        maxLength={undefined}
-        minLength={undefined}
-        placeholder={undefined}
-        readOnly={undefined}
-        type={undefined}
       >
         {value}
       </PatternFormatFixed>
@@ -116,17 +124,15 @@ const SummaryDisplay = (props: Readonly<SummaryDisplayProps>) => {
     }
 
     if (as === 'number' || format) {
-      return renderFormattedValue(
-        value,
-        className,
+      return renderFormattedValue(value, className, {
         format,
         mask,
         prefix,
         suffix,
         valueIsNumericString,
         allowemptyformatting,
-        renderText
-      );
+        renderText,
+      });
     }
 
     if (as === 'custom') {

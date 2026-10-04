@@ -1,4 +1,3 @@
-import type React from 'react';
 import {
   fireEvent,
   render,
@@ -128,7 +127,7 @@ describe('PaRequestItem', () => {
     expect(screen.getByTitle('2 unread messages')).toBeInTheDocument();
     expect(
       within(screen.getByTitle('2 unread messages')).getByText('2')
-    ).toHaveAttribute('role', 'status');
+    ).toHaveRole('status');
 
     await user.click(
       screen.getByRole('button', { name: 'View application details' })
@@ -187,14 +186,17 @@ describe('PaRequestItem', () => {
   it('resumes draft applications and deletes them after confirmation', async () => {
     const user = userEvent.setup();
     const setDeleteSuccess = vi.fn();
+    const {
+      title: _title,
+      lastUpdated: _lastUpdated,
+      unreadMessageCount: _unreadMessageCount,
+      ...draftRequest
+    } = baseRequest;
 
     renderPaRequestItem(
       {
-        ...baseRequest,
+        ...draftRequest,
         status: PaDashboardItemStatus.PaDraft,
-        title: undefined,
-        lastUpdated: undefined,
-        unreadMessageCount: undefined,
       },
       DashboardTab.Drafts,
       setDeleteSuccess
@@ -295,6 +297,37 @@ describe('PaRequestItem', () => {
       ).not.toBeInTheDocument()
     );
   });
+
+  it.each([undefined, ''])(
+    'does not open draft deletion confirmation without a reference ID (%s)',
+    async (portalReferenceId) => {
+      const user = userEvent.setup();
+      const {
+        portalReferenceId: _basePortalReferenceId,
+        ...requestWithoutPortalReferenceId
+      } = baseRequest;
+      const request =
+        portalReferenceId === undefined
+          ? requestWithoutPortalReferenceId
+          : { ...baseRequest, portalReferenceId };
+
+      renderPaRequestItem({
+        ...request,
+        status: PaDashboardItemStatus.PaDraft,
+      });
+
+      await user.click(screen.getByRole('button', { name: 'Actions' }));
+      await user.click(
+        screen.getByRole('button', { name: 'Delete application' })
+      );
+
+      expect(
+        screen.queryByRole('dialog', { name: 'Confirm deletion' })
+      ).not.toBeInTheDocument();
+      expect(mocks.acquireTokenSilent).not.toHaveBeenCalled();
+      expect(mocks.deleteApplication).not.toHaveBeenCalled();
+    }
+  );
 
   it('uses the manage route and zero-message state for unrecognised non-draft statuses', async () => {
     const user = userEvent.setup();

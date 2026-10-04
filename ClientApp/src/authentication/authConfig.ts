@@ -1,5 +1,5 @@
 import { LogLevel } from '@azure/msal-browser';
-import type { Configuration, SilentRequest } from '@azure/msal-browser';
+import type { Configuration, RedirectRequest } from '@azure/msal-browser';
 import { env } from '../env';
 
 export const configuration: Configuration = {
@@ -39,7 +39,7 @@ export const scopes: string[] = [
 
 export const redirectUri = env.REACT_APP_B2C_REDIRECT_URL || '';
 
-export const authRequest: SilentRequest = {
+export const authRequest: RedirectRequest = {
   redirectUri,
   scopes,
 };

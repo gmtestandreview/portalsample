@@ -10,6 +10,7 @@ import { useAccountDispatch } from '../../../authentication/hooks';
 import { defaultFilter } from '../../../routes/common/constants';
 import { trackGAEvent } from '../../../analytics/GoogleAnalytics';
 import type { PaFilterMenuProps } from './paFilterMenuProps';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
   const {
@@ -79,12 +80,18 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
       filterSearchText: initialFilters?.filterSearchText,
     };
     setInitialFilters(profile);
-    accountDispatch?.setUserProfile({ patternApprovalDashboard: profile });
+    void accountDispatch?.setUserProfile({
+      patternApprovalDashboard: profile,
+    });
     setShow(false);
   }
 
   // Show filter number bubble if non-default filters have been applied
-  function countChangedFilters(filters: Partial<typeof defaultFilter>): number {
+  function countChangedFilters(
+    filters: Partial<{
+      [K in keyof typeof defaultFilter]: (typeof defaultFilter)[K] | undefined;
+    }>
+  ): number {
     let changedCount = 0;
     if (
       filters.filterYearType &&
@@ -127,24 +134,23 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
         aria-haspopup='true'
         aria-expanded={show}
         className='btn btn-secondary'
-        title={`${initialFilters?.filtersChanged ? `${countChangedFilters(initialFilters)} filters have been applied` : 'No filters applied'}`}
+        title={
+          initialFilters?.filtersChanged
+            ? `${countChangedFilters(initialFilters)} filters have been applied`
+            : 'No filters applied'
+        }
       >
-        <i
-          className='icon-article ms-md-1 me-md-2'
-          aria-hidden='true'
-          role='presentation'
-        />
+        <i className='icon-article ms-md-1 me-md-2' aria-hidden='true' />
         <span>
           <span className='d-none d-md-inline-block'>{'Filters '}</span>
           <span className='me-md-2'>
-            <span
+            <output
               className={`badge badge-sm rounded-pill d-inline fade show ${
                 initialFilters?.filtersChanged
                   ? 'bg-dark-red text-white'
                   : 'bg-transparent text-dark'
               }`}
               style={{ fontFamily: 'monospace', top: '-10px' }}
-              role='status'
             >
               {initialFilters?.filtersChanged ? (
                 `${countChangedFilters(initialFilters)}`
@@ -155,7 +161,7 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
                   {/* <span className='visually-hidden text-invert'>none</span> */}
                 </>
               )}
-            </span>
+            </output>
           </span>
           <span className='visually-hidden'>{' applied'}</span>
         </span>
@@ -188,14 +194,14 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
             };
             setInitialFilters(filters);
             // setValues will set the initialValues to the current search values
-            setValues({
+            await setValues({
               filterYearType,
               filterStatusType,
               filtersChanged,
               filterSortOrder,
             });
             // save user profile
-            accountDispatch?.setUserProfile({
+            await accountDispatch?.setUserProfile({
               patternApprovalDashboard: filters,
             });
             setSubmitting(false);
@@ -256,7 +262,7 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
                       onClick={() => {
                         trackGAEvent('CloseFilter');
                         handleClose();
-                        resetForm({ values: initialFilters });
+                        resetForm(omitUndefined({ values: initialFilters }));
                       }}
                       variant='tertiary'
                       className='ms-md-auto'
@@ -274,13 +280,13 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
                         onClick={() => {
                           trackGAEvent('CancelFilter');
                           handleClose();
-                          resetForm({ values: initialFilters });
+                          resetForm(omitUndefined({ values: initialFilters }));
                         }}
                         variant='tertiary'
                         className='me-md-auto -mb-4 order-2 order-md-0'
                       >
                         <i className='icon-close me-1' aria-hidden='true' />
-                        Cancel
+                        {' Cancel'}
                       </Button>
                       <div className='d-grid gap-4 d-md-flex'>
                         <Button
@@ -299,7 +305,7 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
                           data-testid='apply-filter-button'
                           onClick={() => {
                             trackGAEvent('ApplyFilter');
-                            submitForm();
+                            void submitForm();
                             handleClose();
                           }}
                           variant='primary'

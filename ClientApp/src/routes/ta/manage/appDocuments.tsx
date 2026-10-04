@@ -17,16 +17,11 @@ import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
 import SupportingDocuments from '../supportingDocuments';
 import { supportingDocsSubmitValidation } from '../validation';
-
-/**
- * Backoff between failed progress polls. Without it a persistently failing endpoint turns the
- * retry path into a tight loop that pegs a core and hammers the failing service.
- */
-const PROGRESS_RETRY_DELAY_MS = 2000;
+import { pollUploadProgress } from '../pollUploadProgress';
 
 const ApplicationDocuments = () => {
   const { accounts, instance } = useMsal();
@@ -57,10 +52,9 @@ const ApplicationDocuments = () => {
       try {
         if (accounts.length > 0 && id) {
           const client = new RequestForPatternApprovalClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppDocuments(id);
           setFilesUploaded(response);
@@ -78,12 +72,11 @@ const ApplicationDocuments = () => {
         setCommitSuccess(false);
       }
     };
-    fetchDocs();
+    void fetchDocs();
   }, [accounts, id, instance, commitSuccess]);
 
-  // Without this the controller stored below is never aborted, so the progress loop's
-  // `while (!controller.signal.aborted)` can never exit and its `if (aborted) break` never fires.
-  // The poll then outlives the component, and against a failing endpoint spins with no delay.
+  // Without this the controller stored below is never aborted, so the progress poll never sees
+  // `signal.aborted`, outlives the component, and against a failing endpoint keeps retrying.
   useEffect(
     () => () => {
       if (abortRef.current) {
@@ -97,44 +90,18 @@ const ApplicationDocuments = () => {
     async (uploadId: string) => {
       const controller = new AbortController();
       abortRef.current = controller;
-      let lastPercent = -1;
       const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
+      client.setAuthToken(tokenResult.accessToken);
+      await pollUploadProgress({
+        client,
+        uploadId,
+        signal: controller.signal,
+        onProgress: setProgress,
+        onFinished: () => setUploading(false),
       });
-      while (!controller.signal.aborted) {
-        try {
-          client.setAuthToken(tokenResult.accessToken);
-          const data = await client.getProgress(
-            uploadId,
-            lastPercent,
-            controller.signal
-          );
-          setProgress(data);
-          lastPercent = data.percent!;
-
-          if (
-            data.status === 'Completed' ||
-            data.status === 'CompletedWithErrors'
-          ) {
-            setUploading(false);
-            client.deleteProgressStatistics(uploadId).catch((error) => {
-              AppLogger.error(
-                'Failed to delete progress statistics',
-                error as Error,
-                { uploadId }
-              );
-            });
-            break;
-          }
-        } catch {
-          if (controller.signal.aborted) break;
-          await new Promise((resolve) => {
-            setTimeout(resolve, PROGRESS_RETRY_DELAY_MS);
-          });
-        }
-      }
     },
     [accounts, instance]
   );
@@ -143,10 +110,9 @@ const ApplicationDocuments = () => {
     if (!uploadIdRef.current) return;
     try {
       const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.cancelFile(uploadIdRef.current, fileName);
     } catch {
@@ -165,7 +131,7 @@ const ApplicationDocuments = () => {
       const uploadId = await clientProgress.getProgressUploadId();
       uploadIdRef.current = uploadId;
       if (uploadIdRef.current) {
-        startLongPolling(uploadIdRef.current);
+        void startLongPolling(uploadIdRef.current);
       }
       const clientPA = new RequestForPatternApprovalClient();
       clientPA.setAuthToken(token);
@@ -232,10 +198,9 @@ const ApplicationDocuments = () => {
                 try {
                   setIsDataLoading(true);
                   const client = new RequestForPatternApprovalClient();
-                  const tokenResult = await instance.acquireTokenSilent({
-                    ...tokenRequest,
-                    account: accounts[0],
-                  });
+                  const tokenResult = await instance.acquireTokenSilent(
+                    silentRequestFor(accounts[0])
+                  );
                   client.setAuthToken(tokenResult.accessToken);
                   values.form.documents.forEach((doc) => {
                     doc.documentBytes = undefined; // Clear out bytes to avoid unnecessarily large payloads
@@ -295,7 +260,7 @@ const ApplicationDocuments = () => {
                           variant='primary'
                           onClick={(e) => {
                             e.preventDefault();
-                            submitForm();
+                            void submitForm();
                           }}
                         >
                           Commit

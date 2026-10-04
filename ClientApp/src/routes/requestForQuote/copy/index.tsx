@@ -5,7 +5,7 @@ import {
   ApplicationClient,
   ApplicationType,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import AppLogger from '../../../instrumentation/AppLogger';
 
@@ -20,10 +20,9 @@ const CopyRequestForQuote = () => {
       isSaving.current = true;
       try {
         const client = new ApplicationClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const application = await client.copyApplication(id!, {
           applicationType: ApplicationType.QuoteRequest,
@@ -35,7 +34,7 @@ const CopyRequestForQuote = () => {
       }
     };
     if (accounts.length > 0 && !isSaving.current) {
-      copyApplication();
+      void copyApplication();
     }
   }, [accounts, id, instance, isSaving]);
 

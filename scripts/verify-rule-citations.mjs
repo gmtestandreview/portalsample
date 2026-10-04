@@ -59,7 +59,7 @@ function extractAnchors(block) {
   for (const m of hay.matchAll(/'([^'\n]{8,})'|"([^"\n]{8,})"/gu)) {
     anchors.add(m[1] ?? m[2]);
   }
-  for (const m of hay.matchAll(/\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+){1,})\b/gu)) {
+  for (const m of hay.matchAll(/\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+)\b/gu)) {
     anchors.add(m[1]);
   }
   for (const m of hay.matchAll(/\b([a-z][a-zA-Z0-9]{7,})\b/gu)) {
@@ -187,8 +187,14 @@ const registerLines = register.split(/\r?\n/u);
 // Split the register into rule blocks.
 const blocks = [];
 registerLines.forEach((ln, i) => {
-  const m = /^### (RULE-\d+):\s*(.*)$/u.exec(ln);
-  if (m) blocks.push({ id: m[1], title: m[2], start: i });
+  const m = /^### (RULE-\d+):/u.exec(ln);
+  if (m) {
+    blocks.push({
+      id: m[1],
+      title: ln.slice(m[0].length).trimStart(),
+      start: i,
+    });
+  }
 });
 blocks.forEach((b, i) => {
   b.end = i + 1 < blocks.length ? blocks[i + 1].start : registerLines.length;
@@ -226,15 +232,35 @@ const anchorsByRule = new Map(
 );
 
 const citationSites = [];
+const sourceFieldLabels = [
+  'Plain English',
+  'Specification',
+  'Parameters',
+  'Edge cases handled',
+  'Suspected defect',
+  'Confidence',
+];
 for (const block of blocks) {
-  const sourceField =
-    /\*\*Source:\*\*([\s\S]*?)(?=\s+\*\*(?:Plain English|Specification|Parameters|Edge cases handled|Suspected defect|Confidence):\*\*|$)/u.exec(
-      block.text
-    );
-  if (sourceField) {
+  const sourceMarker = '**Source:**';
+  const sourceStart = block.text.indexOf(sourceMarker);
+  if (sourceStart !== -1) {
+    const sourceTextStart = sourceStart + sourceMarker.length;
+    let sourceTextEnd = block.text.length;
+
+    for (const label of sourceFieldLabels) {
+      const fieldMarker = `**${label}:**`;
+      let fieldStart = block.text.indexOf(fieldMarker, sourceTextStart);
+      while (fieldStart !== -1 && !/\s/u.test(block.text[fieldStart - 1])) {
+        fieldStart = block.text.indexOf(fieldMarker, fieldStart + 1);
+      }
+      if (fieldStart !== -1) {
+        sourceTextEnd = Math.min(sourceTextEnd, fieldStart);
+      }
+    }
+
     citationSites.push({
       id: block.id,
-      text: sourceField[1],
+      text: block.text.slice(sourceTextStart, sourceTextEnd),
       where: 'detail',
     });
   }
@@ -397,7 +423,9 @@ if (JSON_OUT) {
   }
   console.log('');
   console.log(`citations checked: ${results.length}`);
-  for (const [k, v] of Object.entries(counts).sort())
+  for (const [k, v] of Object.entries(counts).sort(([a], [b]) =>
+    a.localeCompare(b)
+  ))
     console.log(`  ${k.padEnd(12)} ${v}`);
 }
 

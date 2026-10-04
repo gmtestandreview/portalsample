@@ -12,7 +12,7 @@ import {
   type RequestForPatternApprovalSummary,
   YesNo,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -35,10 +35,9 @@ const loadSummary =
       try {
         const client = new RequestForPatternApprovalClient();
         const lookupClient = new LookupClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         lookupClient.setAuthToken(tokenResult.accessToken);
 
@@ -94,17 +93,16 @@ const submitForm =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
   async (
     values: RequestForPatternApprovalSummaryDto,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<RequestForPatternApprovalSummaryDto>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         const valuesToSave: RequestForPatternApprovalSummary = { ...values };

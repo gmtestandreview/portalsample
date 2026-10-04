@@ -65,8 +65,8 @@ function Harness({
   return (
     <Formik
       enableReinitialize
-      initialErrors={initialErrors}
-      initialTouched={initialTouched}
+      {...(initialErrors === undefined ? {} : { initialErrors })}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
       initialValues={initialValues}
       onSubmit={vi.fn()}
     >
