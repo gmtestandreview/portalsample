@@ -431,6 +431,21 @@ describe('RhfAttachment', () => {
     );
   });
 
+  it('shows the missing-category message on every row after a submit attempt', async () => {
+    renderAttachment([{ ...uploadedAttachment, attachmentCategory: '' }]);
+    expect(
+      screen.queryByText('Select a category that best describes this document.')
+    ).not.toBeInTheDocument();
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(
+      screen.getByText('Select a category that best describes this document.')
+    ).toBeInTheDocument();
+  });
+
   it('keeps describing the control with its help text when the form is valid', async () => {
     renderAttachment([]);
 
@@ -526,7 +541,7 @@ describe('RhfAttachment', () => {
     const onDeleteFile = vi.fn().mockResolvedValue(undefined);
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
-    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onDeleteFile).toHaveBeenCalledWith('doc-1');
@@ -550,7 +565,7 @@ describe('RhfAttachment', () => {
         { onDeleteFile }
       );
 
-      await user.click(screen.getByRole('button', { name: 'Delete' }));
+      await user.click(screen.getByRole('button', { name: /^Delete / }));
       await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
       expect(onDeleteFile).not.toHaveBeenCalled();
@@ -568,7 +583,7 @@ describe('RhfAttachment', () => {
     const onDeleteFile = vi.fn().mockRejectedValue('Delete failed');
     renderAttachment([uploadedAttachment], { onDeleteFile });
 
-    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(await screen.findByText('Delete failed')).toBeInTheDocument();
@@ -591,7 +606,7 @@ describe('RhfAttachment', () => {
     expect(attachmentRegion).not.toBeNull();
     expect(
       within(attachmentRegion as HTMLElement).queryByRole('button', {
-        name: 'Delete',
+        name: /^Delete /,
       })
     ).not.toBeInTheDocument();
   });

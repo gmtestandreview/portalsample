@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { useController } from 'react-hook-form';
 import type { AttachmentDto } from '../../../api/web-api-client';
@@ -41,13 +41,26 @@ const RhfAttachmentItem = ({
 }: Readonly<RhfAttachmentItemProps>) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const categoryName = `${name}.${index}.attachmentCategory`;
-  const { field, fieldState } = useController({ name: categoryName });
+  const { field, fieldState, formState } = useController({
+    name: categoryName,
+  });
   const closeModal = () => setDeleteDialogOpen(false);
   const showModal = () => setDeleteDialogOpen(true);
-  const fileUrl = attachment.documentBytes
-    ? getFileUrlFromBase64(attachment.documentBytes)
-    : undefined;
-  const showCategoryError = !field.value && fieldState.isTouched;
+  const { documentBytes } = attachment;
+  // One object URL per document, not per render, released when it changes or the row goes.
+  const fileUrl = useMemo(
+    () => (documentBytes ? getFileUrlFromBase64(documentBytes) : undefined),
+    [documentBytes]
+  );
+  useEffect(
+    () => () => {
+      if (fileUrl) URL.revokeObjectURL(fileUrl);
+    },
+    [fileUrl]
+  );
+  // A submit attempt does not touch fields in RHF, so it counts as touched here.
+  const showCategoryError =
+    !field.value && (fieldState.isTouched || formState.isSubmitted);
 
   const onCategoryChange = (category: string) => {
     field.onBlur();
@@ -102,7 +115,7 @@ const RhfAttachmentItem = ({
               id={cancelButtonId}
               name={cancelButtonId}
               title='Delete'
-              aria-label='Delete'
+              aria-label={`Delete ${attachment.attachmentName}`}
               className='p-0 fs-7 d-flex align-self-center'
               onClick={showModal}
             >

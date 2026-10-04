@@ -140,7 +140,7 @@ describe('RhfAttachmentItem', () => {
       'href'
     );
     expect(
-      screen.queryByRole('button', { name: 'Delete' })
+      screen.queryByRole('button', { name: /^Delete / })
     ).not.toBeInTheDocument();
     expect(screen.getByText('manual.pdf').closest('.attachment')).toHaveClass(
       'p-1'
@@ -152,7 +152,7 @@ describe('RhfAttachmentItem', () => {
     const onRemoveItem = vi.fn();
     renderItem({ onRemoveItem });
 
-    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: /^Delete / }));
     expect(
       screen.getByRole('heading', { name: 'Confirm deletion' })
     ).toBeInTheDocument();
@@ -172,7 +172,7 @@ describe('RhfAttachmentItem', () => {
     const onRemoveItem = vi.fn().mockResolvedValue(undefined);
     renderItem({ onRemoveItem });
 
-    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: /^Delete / }));
     await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
 
     expect(onRemoveItem).toHaveBeenCalledWith(attachment);
@@ -181,5 +181,42 @@ describe('RhfAttachmentItem', () => {
         screen.queryByRole('heading', { name: 'Confirm deletion' })
       ).not.toBeInTheDocument()
     );
+  });
+
+  it('names each delete button after its file', () => {
+    renderItem();
+
+    expect(
+      screen.getByRole('button', { name: 'Delete manual.pdf' })
+    ).toBeInTheDocument();
+  });
+
+  it('creates one object URL per document and revokes it when the row goes', () => {
+    const create = vi.spyOn(URL, 'createObjectURL');
+    const revoke = vi.spyOn(URL, 'revokeObjectURL');
+    const { rerender, unmount } = renderItem();
+    const created = create.mock.calls.length;
+
+    rerender(
+      <FormHarness initialValues={{ attachments: [attachment] }}>
+        <RhfAttachmentItem
+          attachment={attachment}
+          name='attachments'
+          index={0}
+          canRemove
+          cancelButtonId='cancel-button-doc-1'
+          isSummary={false}
+        />
+        <ValuesProbe />
+      </FormHarness>
+    );
+
+    expect(create.mock.calls.length).toBe(created);
+
+    unmount();
+
+    expect(revoke).toHaveBeenCalled();
+    create.mockRestore();
+    revoke.mockRestore();
   });
 });

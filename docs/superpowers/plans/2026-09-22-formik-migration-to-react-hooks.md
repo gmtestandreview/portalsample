@@ -27,9 +27,9 @@ Branch `refactor/formik-removal-steps-1-2`. Not yet merged to `main`.
 | Outstanding action 2: `FormikHelpers` removed from callbacks  | Done                 | `b14e037f` |
 | Wave 1: standalone search filters (`filterMenu`, `paFilter`)  | Done                 | `5ac231da` |
 | Wave 1: Storybook/test harnesses                              | Deferred (see below) | —          |
-| Wave 2: `appDocuments`                                        | Done, uncommitted    | —          |
-| Wave 2: `appDetails` (form-free summary)                      | Done, uncommitted    | —          |
-| Wave 2: `summaryAndSubmit` org/application summaries          | Done, uncommitted    | —          |
+| Wave 2: `appDocuments`                                        | Done                 | `c5714509` |
+| Wave 2: `appDetails` (form-free summary)                      | Done                 | `c5714509` |
+| Wave 2: `summaryAndSubmit` org/application summaries          | Done                 | `c5714509` |
 | Wave 2: wizard documents summary (still Formik)               | Deferred to Wave 5   | —          |
 | Waves 3-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
 
@@ -85,14 +85,23 @@ of in-repo components were used.
 
 ### Next
 
-1. **Close out Wave 2 (before the next wave).**
-   - Run `npm run test:e2e:app` and `npm run test:e2e:storybook`; E2E has not
-     run since Wave 1.
-   - Check the wizard's summary step and `appDetails` on a real application:
-     the "Applying for" sub-options now show, and the wizard's last step is the
-     one place both summaries and live checkboxes meet.
-   - Run `code-reviewer` and `typescript-reviewer` on the Wave 2 diff, then
-     commit and open the PR for this branch.
+1. **Close out Wave 2.** Wave 2 is committed (`c5714509`) and reviewed
+   (`typescript-reviewer` and `code-reviewer`: no critical findings). Fixed from
+   the reviews: object URLs are created once per document and revoked, the
+   missing-category message shows after a failed submit, and each delete button
+   names its file. Still to do:
+   - Run `npm run test:e2e:app` and `npm run test:e2e:storybook` on an idle
+     machine; the first app run failed every test on dev-server cold start.
+   - Check `appDetails` and the wizard's last step on a real application: the
+     "Applying for" sub-options now show.
+   - Open the PR for this branch.
+   - Review follow-ups, not blocking: a failed upload replaces the whole list
+     with `[]` (same as the Formik twin); `onCategoryUpdate` rejections are
+     unhandled; each row's select is labelled only "Category"; the document
+     link hardcodes `application/pdf`; the per-row error state is index-keyed,
+     so after a delete the row that moves up inherits it (consider
+     `useFieldArray`); the details tab renders empty summaries for one frame
+     before the load.
 2. **Wave 3: remaining accept-quote steps, then delete the payment-details
    bridge.** Build only the shared pieces those steps need, each beside its
    Formik twin: `RhfTextInput` (first real consumer), `RhfCheckbox`, an RHF
