@@ -7,6 +7,21 @@ description: 'The complete format specification for Agent Skills.'
 
 <!-- markdownlint-disable MD033 -->
 
+# Agent Skills specification reference
+
+Load for format-compliance questions or validation of a complete skill package.
+Input: the skill directory and its `SKILL.md`; output: specification findings
+with local/provider policy clearly separated. Adapted from
+[the Agent Skills specification](https://agentskills.io/specification), checked
+on 2026-10-04. Recheck upstream when its fields or validation library change.
+Examples here illustrate files in a hypothetical package; they are not bundled
+resources. A passed format validator does not establish activation, behavior,
+authorization, or deployment readiness.
+
+Navigate: [Structure](#directory-structure), [Frontmatter](#frontmatter),
+[Resources](#optional-directories), [Disclosure](#progressive-disclosure),
+[Paths](#file-references), [Validation](#validation).
+
 ## Directory structure
 
 A skill is a directory containing, at minimum, a `SKILL.md` file:
@@ -33,9 +48,8 @@ The `SKILL.md` file must contain YAML frontmatter followed by Markdown content.
 | `license`       | No       | License name or reference to a bundled license file.                                                                |
 | `compatibility` | No       | Max 500 characters. Indicates environment requirements (intended product, system packages, network access, etc.).   |
 | `metadata`      | No       | Arbitrary key-value mapping for additional metadata (a map from string keys to string values).                      |
-| `allowed-tools` | No       | Space-separated string of pre-approved tools the skill may use.                                                     |
+| `allowed-tools` | No       | Experimental space-separated tool allowlist; support varies by client and never grants host permissions.            |
 
-<Card>
 **Minimal example:**
 
 ```markdown SKILL.md
@@ -58,8 +72,6 @@ metadata:
 ---
 ```
 
-</Card>
-
 #### `name` field
 
 The required `name` field:
@@ -71,14 +83,21 @@ The required `name` field:
 - Must not contain consecutive hyphens (`--`)
 - Must match the parent directory name
 
-<Card>
+The upstream name wording combines Unicode terminology with ASCII examples.
+Validators and clients may enforce a narrower character set; record that as a
+compatibility constraint and verify the target implementation before using a
+non-ASCII name. Do not silently label a local restriction universal.
+
 **Valid examples:**
+
 ```yaml
 name: pdf-processing
 ```
+
 ```yaml
 name: data-analysis
 ```
+
 ```yaml
 name: code-review
 ```
@@ -97,8 +116,6 @@ name: -pdf # cannot start with hyphen
 name: pdf--processing # consecutive hyphens not allowed
 ```
 
-</Card>
-
 #### `description` field
 
 The required `description` field:
@@ -107,12 +124,13 @@ The required `description` field:
 - Should describe both what the skill does and when to use it
 - Should include specific keywords that help agents identify relevant tasks
 
-<Card>
 **Good example:**
+
 ```yaml
-description: Extracts text and tables from PDF files, fills PDF forms,
-and merges multiple PDFs. Use when working with PDF documents or
-when the user mentions PDFs, forms, or document extraction.
+description: >-
+  Extracts text and tables from PDF files, fills PDF forms, and merges multiple
+  PDFs. Use when working with PDF documents or when the user mentions PDFs,
+  forms, or document extraction.
 ```
 
 **Poor example:**
@@ -120,8 +138,6 @@ when the user mentions PDFs, forms, or document extraction.
 ```yaml
 description: Helps with PDFs.
 ```
-
-</Card>
 
 #### `license` field
 
@@ -131,12 +147,11 @@ The optional `license` field:
 - We recommend keeping it short (either the name of a license or the name of a
   bundled license file)
 
-<Card>
 **Example:**
+
 ```yaml
 license: Proprietary. LICENSE.txt has complete terms
 ```
-</Card>
 
 #### `compatibility` field
 
@@ -147,22 +162,21 @@ The optional `compatibility` field:
 - Can indicate intended product, required system packages, network access needs,
   etc.
 
-<Card>
 **Examples:**
+
 ```yaml
 compatibility: Designed for Claude Code (or similar products)
 ```
+
 ```yaml
 compatibility: Requires git, docker, jq, and access to the internet
 ```
+
 ```yaml
 compatibility: Requires Python 3.14+ and uv
 ```
-</Card>
 
-<Note>
 Most skills do not need the `compatibility` field.
-</Note>
 
 #### `metadata` field
 
@@ -174,27 +188,27 @@ The optional `metadata` field:
 - We recommend making your key names reasonably unique to avoid accidental
   conflicts
 
-<Card>
 **Example:**
+
 ```yaml
 metadata:
   author: example-org
-  version: "1.0"
+  version: '1.0'
 ```
-</Card>
 
 #### `allowed-tools` field
 
 The optional `allowed-tools` field:
 
 - A space-separated string of tools that are pre-approved to run
+- Experimental; implementation support varies. The host instruction hierarchy
+  and permission policy remain authoritative.
 
-<Card>
 **Example:**
+
 ```yaml
 allowed-tools: Bash(git:*) Bash(jq:*) Read
 ```
-</Card>
 
 ### Body content
 
@@ -259,8 +273,8 @@ for it. Skills should be structured to take advantage of this:
 3. **Resources** (as needed): Files (e.g. those in `scripts/`, `references/`, or
    `assets/`) are loaded only when required
 
-Keep your main `SKILL.md` under 500 lines. Move detailed reference material to
-separate files.
+As authoring guidance, keep your main `SKILL.md` under 500 lines. This is not a
+format-validity cutoff. Move detailed reference material to separate files.
 
 ## File references
 
@@ -288,3 +302,11 @@ skills-ref validate ./my-skill
 
 This checks that your `SKILL.md` frontmatter is valid and follows all naming
 conventions.
+
+Verify the installed validator version/interface before running the example.
+Record the command, artifact revision, diagnostics, and actual result. For
+malformed/missing frontmatter, return a concrete correction; for an unavailable
+validator, report `NHR` for the unrun check and distinguish manual inspection.
+Confirm relative resources exist and parse representative YAML examples after
+adapting them. Runtime activation and behavior need separate evidence via
+[the testing checklist](SKILL-testing-checklist.md).

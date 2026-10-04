@@ -1,7 +1,8 @@
 # Behavioral Evaluation Schema
 
-This file defines the common record format and scoring semantics for every case
-in `evals/`.
+This file defines the common record format and outcome semantics for every case
+in this package's `scripts/evals/` library. Evaluators consume the definitions
+and produce campaign records; this schema is not an executable validator.
 
 Parameters shown in braces, such as `{candidate_skill}` or
 `{representative_request}`, are evaluator-supplied campaign values. They are
@@ -33,8 +34,9 @@ Use this structure for every executed case:
 
 ```yaml
 case_id: ACT-001
-case_title: Direct positive activation
+case_title: Direct positive boundary
 required: true
+measurement_target: selection | behavioral_application | runtime_activation
 phase: activation | RED | GREEN | pressure | reference | regression
 skill_classes:
   - Discipline
@@ -53,6 +55,8 @@ evidence_required:
   - exact prompt/task
   - observed output or sufficient excerpt
 observed:
+  selection: selected | not_selected | unclear | not_applicable
+  behavior: applied | not_applied | unclear | not_applicable
   activation: activated | not_activated | unclear | not_applicable
   behavior_summary: concise factual observation
   evidence_ref: transcript/file/run identifier
@@ -158,17 +162,28 @@ If `same_task: false`, every preservation field must be true and
 `equivalence_rationale` must explain why the changed task remains a valid
 comparison. Otherwise the GREEN evidence is AMBER at best and may be invalid.
 
-## Activation interpretation
+## Measurement and activation interpretation
 
-Activation cases evaluate two distinct questions:
+Declare `measurement_target` before executing a case:
 
-1. **Did the skill activate when intended?**
-2. **Did it remain inactive for near-misses?**
+- **selection**: an agent chooses the candidate from a supplied description or
+  catalog. Its decision can establish a boundary result, not actual loading.
+- **behavioral_application**: the candidate guidance is supplied or loaded and
+  the agent performs the task. Output and tool traces establish application.
+- **runtime_activation**: the target client's trace establishes which skill was
+  selected and loaded for the natural request. Record the event and client
+  identity; final-answer similarity alone cannot establish this result.
 
-Do not infer activation correctness only from final-answer quality. Capture
-activation/load evidence where the harness exposes it; otherwise use the
-strongest available behavioral evidence and mark uncertainty AMBER or NHR rather
-than inventing activation telemetry.
+Each target has positive and near-miss cases. Record only observed fields; leave
+unrelated fields `not_applicable`. A proxy may PASS its declared target while a
+separate required runtime-activation case remains `NHR`. Never count a selection
+or application PASS as runtime activation. If a runtime case lacks required load
+evidence, record `NHR`; if available evidence is partial or inconsistent, use
+`AMBER`. These outcomes retain their deployment impact.
+
+For older records without `measurement_target`, identify what their retained
+evidence actually establishes in a separate annotation. Preserve original
+results as history; do not retroactively invent events or rerun outcomes.
 
 ## Reference interpretation
 
@@ -203,13 +218,13 @@ Use the following mapping after all required cases are resolved:
 
 <!-- markdownlint-disable MD013 -->
 
-| Evidence state | Recommendation |
-| --- | --- |
-| All required cases PASS | `deploy` may be recommended if non-behavioral gates also pass |
-| Any required case AMBER | `revise` or `hold` |
-| Any required case FAIL | `revise` or `hold` |
-| Any required case NHR | `hold`, unless the governing checklist explicitly allows the item to be non-blocking |
-| Only optional cases AMBER/NHR | Document limitation; apply campaign-specific risk judgement |
+| Evidence state                | Recommendation                                                |
+| ----------------------------- | ------------------------------------------------------------- |
+| All required cases PASS       | `deploy` may be recommended if non-behavioral gates also pass |
+| Any required case AMBER       | `revise` or `hold`                                            |
+| Any required case FAIL        | `revise` or `hold`                                            |
+| Any required case NHR         | `hold` until the missing evidence is resolved                 |
+| Only optional cases AMBER/NHR | Document limitation; apply campaign-specific risk judgement   |
 
 <!-- markdownlint-enable MD013 -->
 

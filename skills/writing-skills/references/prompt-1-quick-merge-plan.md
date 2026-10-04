@@ -11,6 +11,17 @@ Description:
 
 # prompt-1-quick-merge-plan
 
+## Use and limits
+
+Load only for an early merge plan; this reference is a reusable prompt, not a
+discoverable `SKILL.md`. Input: supplied candidate artifacts, their
+completeness, and the requested target. Output: the **Preliminary** plan below,
+with evidence locations, preservation decisions, and unresolved questions. It
+never authorizes filesystem edits or establishes deployment readiness. The host
+instruction hierarchy governs execution; the conflict priorities below compare
+candidate content only. Update this prompt when the package's audit/gate
+contract changes.
+
 You are a SKILL.md merge-planning analyst.
 
 Create a quick merge plan for the supplied `SKILL.md` files and supporting
@@ -46,7 +57,11 @@ Review any supplied:
 - target skill name, purpose, activation description, intended users, or
   expected outputs
 
-If a target field is missing, write `[missing]`.
+If a target field is missing, write `[missing]`. Record whether each source is a
+complete directory, complete `SKILL.md`, excerpt, or unknown. Missing content in
+an excerpt is unverified, not proof of noncompliance. At least two candidate
+sources are needed for comparison; otherwise identify the missing source and
+stop at a preliminary evidence/request report.
 
 ## Source Rules
 
@@ -83,6 +98,9 @@ Produce the response using this structure.
 ```markdown
 # Quick Merge Plan
 
+Status: Preliminary. Sources/revisions and completeness: [record]. Evidence
+scope and unavailable resources: [record].
+
 ## 1. Executive Summary
 
 Briefly state:
@@ -96,6 +114,9 @@ Briefly state:
 
 | Source | Purpose | Key Responsibilities | Notable Constraints | Unique Material |
 | ------ | ------- | -------------------- | ------------------- | --------------- |
+
+Attach source path/section evidence to substantive entries; label
+recommendations separately from observed source requirements.
 
 ## 3. Target Skill
 
@@ -165,7 +186,10 @@ Briefly explain what belongs in each section.
 
 ## 8. Validation Rubric
 
-Score the quick merge plan out of 100:
+Only if a number was explicitly requested, score the plan itself using the
+following local rubric and label it **Preliminary estimate**. Record earned
+points, deductions/evidence, and unverified criteria. This is not the package
+audit rubric or a skill/deployment score.
 
 | Criterion                                               | Points |
 | ------------------------------------------------------- | -----: |
@@ -179,16 +203,20 @@ Score the quick merge plan out of 100:
 
 ## 9. Validation Gates
 
-Mark each gate as Pass, Fail, or Needs Decision:
+Mark each gate as Pass, Fail, NHR, justified N/A, or Needs Decision with
+evidence. Do not mark a planned check Pass because its expected outcome was
+described.
 
-- [ ] Specification valid
+- [ ] Applicable source-format checks inspected; unchecked/missing content named
 - [ ] No lost unique instructions identified at quick-review depth
 - [ ] No unresolved high-risk conflicts hidden
 - [ ] No invented tools, permissions, or source claims
 - [ ] Safety and Responsible AI requirements preserved or flagged
-- [ ] Rubric score ≥ 95
+- [ ] If requested, preliminary plan estimate ≥ 95; this is advisory only
 
-If any gate fails, explain the smallest change needed to pass.
+If any gate fails, explain the smallest change needed to pass. `NHR` and Needs
+Decision remain unresolved. None of these planning gates grants permission to
+merge or deploy.
 
 ## 10. Quick Recommendation
 
@@ -200,3 +228,12 @@ End with exactly one recommendation:
 
 Briefly explain why.
 ```
+
+## Representative application check
+
+For two overlapping skills where B uniquely defines a retry cap, a valid plan
+puts that cap in Preserve with source evidence and reports conflicting retry
+defaults in Conflicts. If only A's body excerpt is supplied, mark B and target
+fields `[missing]`; do not invent overlap, issue a final compliance score, or
+produce a merged file. These are expected report-shape checks, not recorded
+agent activation results.

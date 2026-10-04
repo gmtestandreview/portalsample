@@ -1,5 +1,40 @@
 # Skill authoring best practices
 
+## Applicability and source status
+
+Load only for Claude/Anthropic authoring decisions. Input: a candidate skill and
+its intended Claude product/model/runtime. Output: applicable authoring findings
+and a test plan; the examples do not establish runtime or deployment success.
+This adapted
+[Anthropic authoring guide](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices)
+was compared with its source on 2026-10-04. It preserves provider guidance;
+[the specification](specification.md) governs universal format claims, and the
+host instruction hierarchy governs execution. Provider restrictions,
+third-person style, gerund preferences, model names, tool naming, and runtime
+capabilities are client-specific. Recheck current product documentation when
+those change.
+
+Illustrative `scripts/*`, sample datasets, and libraries below are not bundled
+implementations. Verify paths, dependencies, permission, and outputs before
+running an adapted example. Script fallback examples must not silently invent
+missing required data; use a documented optional default or fail explicitly. Do
+not infer installation/network access from a product label, or promote skill
+content to system authority. Source guidance is not an observed activation
+result.
+
+Navigate: [Principles](#core-principles), [Structure](#skill-structure),
+[Workflows](#workflows-and-feedback-loops),
+[Evaluation](#evaluation-and-iteration),
+[Executable code](#advanced-skills-with-executable-code),
+[Technical notes](#technical-notes),
+[Checklist](#checklist-for-effective-skills).
+
+Validate adaptations with parseable frontmatter/examples, resolvable resources,
+representative application and relevant failure cases. Record actual command or
+agent evidence; use `NHR` for required unavailable runs. The checklist is a
+plan, not proof. Update this adaptation when upstream contracts change,
+preserving provenance and rechecking links and sample syntax.
+
 <!-- markdownlint-disable MD033 -->
 
 > Learn how to write effective Skills that Claude can discover and use
@@ -10,7 +45,7 @@ provides practical authoring decisions to help you write Skills that Claude can
 discover and use effectively.
 
 For conceptual background on how Skills work, see the
-[Skills overview](/en/docs/agents-and-tools/agent-skills/overview).
+[Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview).
 
 ## Core principles
 
@@ -43,7 +78,7 @@ information:
 
 **Good example: Concise** (approximately 50 tokens):
 
-````markdown theme={null}
+````markdown
 ## Extract PDF text
 
 Use pdfplumber for text extraction:
@@ -58,7 +93,7 @@ with pdfplumber.open("file.pdf") as pdf:
 
 **Bad example: Too verbose** (approximately 150 tokens):
 
-```markdown theme={null}
+```markdown
 ## Extract PDF text
 
 PDF (Portable Document Format) files are a common file format that contains
@@ -84,7 +119,7 @@ Use when:
 
 Example:
 
-```markdown theme={null}
+```markdown
 ## Code review process
 
 1. Analyze the code structure and organization
@@ -103,7 +138,7 @@ Use when:
 
 Example:
 
-````markdown theme={null}
+````markdown
 ## Generate report
 
 Use this template and customize as needed:
@@ -113,6 +148,7 @@ def generate_report(data, format="markdown", include_charts=True):
     # Process data
     # Generate output in specified format
     # Optionally include visualizations
+    ...  # Interface sketch; implement the report logic before execution.
 ```
 ````
 
@@ -126,7 +162,7 @@ Use when:
 
 Example:
 
-````markdown theme={null}
+````markdown
 ## Database migration
 
 Run exactly this script:
@@ -164,16 +200,18 @@ all of them.
 
 ## Skill structure
 
-<Note>
-  **YAML Frontmatter**: The SKILL.md frontmatter supports two fields:
+**YAML Frontmatter**: The SKILL.md frontmatter requires two fields:
 
-- `name` - Human-readable name of the Skill (64 characters maximum)
+- `name` - Lowercase letters, numbers, and hyphens (64 characters maximum).
+  Claude-specific restrictions also exclude XML tags and reserved names.
 - `description` - One-line description of what the Skill does and when to use it
   (1024 characters maximum)
 
-  For complete Skill structure details, see the
-  [Skills overview](/en/docs/agents-and-tools/agent-skills/overview#skill-structure).
-  </Note>
+These are required fields, not an exhaustive list of universally supported
+fields. Check the specification and the target client's optional-field support.
+
+For complete Skill structure details, see the
+[Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#skill-structure).
 
 ### Naming conventions
 
@@ -183,16 +221,16 @@ clearly describes the activity or capability the Skill provides.
 
 **Good naming examples (gerund form)**:
 
-- "Processing PDFs"
-- "Analyzing spreadsheets"
-- "Managing databases"
-- "Testing code"
-- "Writing documentation"
+- `processing-pdfs`
+- `analyzing-spreadsheets`
+- `managing-databases`
+- `testing-code`
+- `writing-documentation`
 
 **Acceptable alternatives**:
 
-- Noun phrases: "PDF Processing", "Spreadsheet Analysis"
-- Action-oriented: "Process PDFs", "Analyze Spreadsheets"
+- Noun phrases: `pdf-processing`, `spreadsheet-analysis`
+- Action-oriented: `process-pdfs`, `analyze-spreadsheets`
 
 **Avoid**:
 
@@ -212,14 +250,12 @@ Consistent naming makes it easier to:
 The `description` field enables Skill discovery and should include both what the
 Skill does and when to use it.
 
-<Warning>
-  **Always write in third person**. The description is injected into the system
-  prompt, and inconsistent point-of-view can cause discovery problems.
+**Always write in third person**. The description is injected into the system
+prompt, and inconsistent point-of-view can cause discovery problems.
 
 - **Good:** "Processes Excel files and generates reports"
 - **Avoid:** "I can help you process Excel files"
 - **Avoid:** "You can use this to process Excel files"
-</Warning>
 
 **Be specific and include key terms**. Include both what the Skill does and
 specific triggers/contexts for when to use it.
@@ -234,7 +270,7 @@ Effective examples:
 
 **PDF Processing skill:**
 
-```yaml theme={null}
+```yaml
 description:
   Extract text and tables from PDF files, fill forms, merge documents. Use when
   working with PDF files or when the user mentions PDFs, forms, or document
@@ -243,7 +279,7 @@ description:
 
 **Excel Analysis skill:**
 
-```yaml theme={null}
+```yaml
 description:
   Analyze Excel spreadsheets, create pivot tables, generate charts. Use when
   analyzing Excel files, spreadsheets, tabular data, or .xlsx files.
@@ -251,7 +287,7 @@ description:
 
 **Git Commit Helper skill:**
 
-```yaml theme={null}
+```yaml
 description:
   Generate descriptive commit messages by analyzing git diffs. Use when the user
   asks for help writing commit messages or reviewing staged changes.
@@ -259,15 +295,15 @@ description:
 
 Avoid vague descriptions like these:
 
-```yaml theme={null}
+```yaml
 description: Helps with documents
 ```
 
-```yaml theme={null}
+```yaml
 description: Processes data
 ```
 
-```yaml theme={null}
+```yaml
 description: Does stuff with files
 ```
 
@@ -276,7 +312,7 @@ description: Does stuff with files
 SKILL.md serves as an overview that points Claude to detailed materials as
 needed, like a table of contents in an onboarding guide. For an explanation of
 how progressive disclosure works, see
-[How Skills work](/en/docs/agents-and-tools/agent-skills/overview#how-skills-work)
+[How Skills work](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#how-skills-work)
 in the overview.
 
 **Practical guidance:**
@@ -310,9 +346,9 @@ pdf/
 
 #### Pattern 1: High-level guide with references
 
-````markdown theme={null}
+````markdown
 ---
-name: PDF Processing
+name: pdf-processing
 description:
   Extracts text and tables from PDF files, fills forms, and merges documents.
   Use when working with PDF files or when the user mentions PDFs, forms, or
@@ -357,7 +393,7 @@ bigquery-skill/
     └── marketing.md (campaigns, attribution)
 ```
 
-````markdown SKILL.md theme={null}
+````markdown SKILL.md
 # BigQuery Data Analysis
 
 ## Available datasets
@@ -384,7 +420,7 @@ grep -i "api usage" reference/product.md
 
 Show basic content, link to advanced content:
 
-```markdown theme={null}
+```markdown
 # DOCX Processing
 
 ## Creating documents
@@ -413,7 +449,7 @@ link directly from SKILL.md to ensure Claude reads complete files when needed.
 
 **Bad example: Too deep**:
 
-```markdown theme={null}
+```markdown
 # SKILL.md
 
 See [advanced.md](advanced.md)...
@@ -429,7 +465,7 @@ Here's the actual information...
 
 **Good example: One level deep**:
 
-```markdown theme={null}
+```markdown
 # SKILL.md
 
 **Basic usage**: [instructions in SKILL.md] **Advanced features**: See
@@ -445,7 +481,7 @@ when previewing with partial reads.
 
 **Example**:
 
-```markdown theme={null}
+```markdown
 # API Reference
 
 ## Contents
@@ -481,12 +517,12 @@ off as it progresses.
 
 **Example 1: Research synthesis workflow** (for Skills without code):
 
-````markdown theme={null}
+````markdown
 ## Research synthesis workflow
 
 Copy this checklist and track your progress:
 
-```
+```text
 Research Progress:
 - [ ] Step 1: Read all source documents
 - [ ] Step 2: Identify key themes
@@ -529,12 +565,12 @@ code. The checklist pattern works for any complex, multi-step process.
 
 **Example 2: PDF form filling workflow** (for Skills with code):
 
-````markdown theme={null}
+````markdown
 ## PDF form filling workflow
 
 Copy this checklist and check off items as you complete them:
 
-```
+```text
 Task Progress:
 - [ ] Step 1: Analyze the form (run analyze_form.py)
 - [ ] Step 2: Create field mapping (edit fields.json)
@@ -581,7 +617,7 @@ This pattern greatly improves output quality.
 
 **Example 1: Style guide compliance** (for Skills without code):
 
-```markdown theme={null}
+```markdown
 ## Content review process
 
 1. Draft your content following the guidelines in STYLE_GUIDE.md
@@ -603,7 +639,7 @@ reading and comparing.
 
 **Example 2: Document editing process** (for Skills with code):
 
-```markdown theme={null}
+```markdown
 ## Document editing process
 
 1. Make your edits to `word/document.xml`
@@ -627,14 +663,14 @@ Don't include information that will become outdated:
 
 **Bad example: Time-sensitive** (will become wrong):
 
-```markdown theme={null}
+```markdown
 If you're doing this before August 2025, use the old API. After August 2025, use
 the new API.
 ```
 
 **Good example** (use "old patterns" section):
 
-```markdown theme={null}
+```markdown
 ## Current method
 
 Use the v2 API endpoint: `api.example.com/v2/messages`
@@ -680,7 +716,7 @@ needs.
 
 **For strict requirements** (like API responses or data formats):
 
-````markdown theme={null}
+````markdown
 ## Report structure
 
 ALWAYS use this exact template structure:
@@ -707,7 +743,7 @@ ALWAYS use this exact template structure:
 
 **For flexible guidance** (when adaptation is useful):
 
-````markdown theme={null}
+````markdown
 ## Report structure
 
 Here is a sensible default format, but use your best judgment based on the
@@ -737,14 +773,14 @@ Adjust sections as needed for the specific analysis type.
 For Skills where output quality depends on seeing examples, provide input/output
 pairs just like in regular prompting:
 
-````markdown theme={null}
+````markdown
 ## Commit message format
 
 Generate commit messages following these examples:
 
 **Example 1:** Input: Added user authentication with JWT tokens Output:
 
-```
+```text
 feat(auth): implement JWT-based authentication
 
 Add login endpoint and token validation middleware
@@ -753,7 +789,7 @@ Add login endpoint and token validation middleware
 **Example 2:** Input: Fixed bug where dates displayed incorrectly in reports
 Output:
 
-```
+```text
 fix(reports): correct date formatting in timezone conversion
 
 Use UTC timestamps consistently across report generation
@@ -761,7 +797,7 @@ Use UTC timestamps consistently across report generation
 
 **Example 3:** Input: Updated dependencies and refactored error handling Output:
 
-```
+```text
 chore: update dependencies and refactor error handling
 
 - Upgrade lodash to 4.17.21
@@ -778,7 +814,7 @@ clearly than descriptions alone.
 
 Guide Claude through decision points:
 
-```markdown theme={null}
+```markdown
 ## Document modification workflow
 
 1. Determine the modification type:
@@ -798,11 +834,9 @@ Guide Claude through decision points:
    - Repack when complete
 ```
 
-<Tip>
-  If workflows become large or complicated with many steps, consider pushing
-  them into separate files and tell Claude to read the appropriate file based on
-  the task at hand.
-</Tip>
+If workflows become large or complicated with many steps, consider pushing them
+into separate files and tell Claude to read the appropriate file based on the
+task at hand.
 
 ## Evaluation and iteration
 
@@ -826,26 +860,23 @@ requirements that may never materialize.
 
 **Evaluation structure**:
 
-```json theme={null}
+```json
 {
   "skills": ["pdf-processing"],
   "query": "Extract all text from this PDF file and save it to output.txt",
   "files": ["test-files/document.pdf"],
   "expected_behavior": [
-    "Successfully reads the PDF file using an appropriate PDF processing library
-    or command-line tool",
+    "Successfully reads the PDF file using an appropriate library or command-line tool",
     "Extracts text content from all pages in the document without missing any pages",
     "Saves the extracted text to a file named output.txt in a clear, readable format"
   ]
 }
 ```
 
-<Note>
-  This example demonstrates a data-driven evaluation with a simple testing
-  rubric. We do not currently provide a built-in way to run these evaluations.
-  Users can create their own evaluation system. Evaluations are your source of
-  truth for measuring Skill effectiveness.
-</Note>
+This example demonstrates a data-driven evaluation with a simple testing rubric.
+We do not currently provide a built-in way to run these evaluations. Users can
+create their own evaluation system. Evaluations are your source of truth for
+measuring Skill effectiveness.
 
 ### Develop Skills iteratively with Claude
 
@@ -873,13 +904,11 @@ both how to write effective agent instructions and what information agents need.
    BigQuery analysis pattern we just used. Include the table schemas, naming
    conventions, and the rule about filtering test accounts."
 
-   <Tip>
-     Claude models understand the Skill format and structure natively. You don't
-     need special system prompts or a "writing skills" skill to get Claude to
-     help create Skills. Simply ask Claude to create a Skill and it will
-     generate properly structured SKILL.md content with appropriate frontmatter
-     and body content.
-   </Tip>
+   Claude models understand the Skill format and structure natively. You don't
+   need special system prompts or a "writing skills" skill to get Claude to help
+   create Skills. Simply ask Claude to create a Skill and it will generate
+   properly structured SKILL.md content with appropriate frontmatter and body
+   content.
 
 4. **Review for conciseness**: Check that Claude A hasn't added unnecessary
    explanations. Ask: "Remove the explanation about what win rate means - Claude
@@ -982,7 +1011,7 @@ errors on Unix systems.
 
 Don't present multiple approaches unless necessary:
 
-````markdown theme={null}
+````markdown
 **Bad example: Too many choices** (confusing): "You can use pypdf, or
 pdfplumber, or PyMuPDF, or pdf2image, or..."
 
@@ -1009,9 +1038,13 @@ Skill uses only markdown instructions, skip to
 When writing scripts for Skills, handle error conditions rather than punting to
 Claude.
 
-**Good example: Handle errors explicitly**:
+**Optional-input example: Handle errors explicitly**:
 
-```python theme={null}
+This fallback applies only when a documented empty-file default and creation are
+authorized. For required source input, missing/denied files must produce a clear
+error; never convert them into apparent success with fabricated data.
+
+```python
 def process_file(path):
     """Process a file, creating it if it doesn't exist."""
     try:
@@ -1031,7 +1064,7 @@ def process_file(path):
 
 **Bad example: Punt to Claude**:
 
-```python theme={null}
+```python
 def process_file(path):
     # Just fail and let Claude figure it out
     return open(path).read()
@@ -1043,7 +1076,7 @@ will Claude determine it?
 
 **Good example: Self-documenting**:
 
-```python theme={null}
+```python
 # HTTP requests typically complete within 30 seconds
 # Longer timeout accounts for slow connections
 REQUEST_TIMEOUT = 30
@@ -1055,7 +1088,7 @@ MAX_RETRIES = 3
 
 **Bad example: Magic numbers**:
 
-```python theme={null}
+```python
 TIMEOUT = 47  # Why 47?
 RETRIES = 5   # Why 5?
 ```
@@ -1071,9 +1104,9 @@ Even if Claude could write a script, pre-made scripts offer advantages:
 - Save time (no code generation required)
 - Ensure consistency across uses
 
-The diagram above shows how executable scripts work alongside instruction files.
-The instruction file (forms.md) references the script, and Claude can execute it
-without loading its contents into context.
+The directory example above shows executable scripts alongside instruction
+files. An instruction file (forms.md) can reference the script, and Claude can
+execute it without loading its contents into context.
 
 **Important distinction**: Make clear in your instructions whether Claude
 should:
@@ -1089,7 +1122,7 @@ details on how script execution works.
 
 **Example**:
 
-````markdown theme={null}
+````markdown
 ## Utility scripts
 
 **analyze_form.py**: Extract all form fields from PDF
@@ -1125,7 +1158,7 @@ python scripts/fill_form.py input.pdf fields.json output.pdf
 
 When inputs can be rendered as images, have Claude analyze them:
 
-````markdown theme={null}
+````markdown
 ## Form layout analysis
 
 1. Convert PDF to images:
@@ -1138,9 +1171,7 @@ When inputs can be rendered as images, have Claude analyze them:
 3. Claude can see field locations and types visually
 ````
 
-<Note>
-  In this example, you'd need to write the `pdf_to_images.py` script.
-</Note>
+In this example, you'd need to write the `pdf_to_images.py` script.
 
 Claude's vision capabilities help understand layouts and structures.
 
@@ -1185,14 +1216,14 @@ Skills run in the code execution environment with platform-specific limitations:
 - **Anthropic API**: Has no network access and no runtime package installation
 
 List required packages in your SKILL.md and verify they're available in the
-[code execution tool documentation](/en/docs/agents-and-tools/tool-use/code-execution-tool).
+[code execution tool documentation](https://platform.claude.com/docs/en/agents-and-tools/tool-use/code-execution-tool).
 
 ### Runtime environment
 
 Skills run in a code execution environment with filesystem access, bash
 commands, and code execution capabilities. For the conceptual explanation of
 this architecture, see
-[The Skills architecture](/en/docs/agents-and-tools/agent-skills/overview#the-skills-architecture)
+[The Skills architecture](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#the-skills-architecture)
 in the overview.
 
 **How this affects your authoring:**
@@ -1245,7 +1276,7 @@ disclosure. Claude can navigate and selectively load exactly what each task
 requires.
 
 For complete details on the technical architecture, see
-[How Skills work](/en/docs/agents-and-tools/agent-skills/overview#how-skills-work)
+[How Skills work](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#how-skills-work)
 in the Skills overview.
 
 ### MCP tool references
@@ -1257,7 +1288,7 @@ qualified tool names to avoid "tool not found" errors.
 
 **Example**:
 
-```markdown theme={null}
+```markdown
 Use the BigQuery:bigquery_schema tool to retrieve table schemas. Use the
 GitHub:create_issue tool to create issues.
 ```
@@ -1274,7 +1305,7 @@ multiple MCP servers are available.
 
 Don't assume packages are available:
 
-`````markdown theme={null}
+````markdown
 **Bad example: Assumes installation**: "Use the pdf library to process the
 file."
 
@@ -1283,29 +1314,34 @@ file."
 
 Then use it:
 
-````python
+```python
 from pypdf import PdfReader
 reader = PdfReader("file.pdf")
-```"
-````
-`````
+```
+
+Then inspect the resulting text.
 
 ```text
+
+```
+````
 
 ## Technical notes
 
 ### YAML frontmatter requirements
 
-The SKILL.md frontmatter includes only `name` (64 characters max) and
-`description` (1024 characters max) fields. See the
-[Skills overview](/en/docs/agents-and-tools/agent-skills/overview#skill-structure)
+The SKILL.md frontmatter requires `name` (64 characters max) and `description`
+(1024 characters max); optional-field support depends on the specification and
+target client. See the
+[Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#skill-structure)
 for complete structure details.
 
 ### Token budgets
 
 Keep SKILL.md body under 500 lines for optimal performance. If your content
 exceeds this, split it into separate files using the progressive disclosure
-patterns described earlier. For architectural details, see the [Skills overview](/en/docs/agents-and-tools/agent-skills/overview#how-skills-work).
+patterns described earlier. For architectural details, see the
+[Skills overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#how-skills-work).
 
 ## Checklist for effective Skills
 
@@ -1344,17 +1380,6 @@ Before sharing a Skill, verify:
 
 ## Next steps
 
-<CardGroup cols={2}>
-  <Card title="Get started with Agent Skills" icon="rocket" href="/en/docs/agents-and-tools/agent-skills/quickstart">
-    Create your first Skill
-  </Card>
-
-  <Card title="Use Skills in Claude Code" icon="terminal" href="/en/docs/claude-code/skills">
-    Create and manage Skills in Claude Code
-  </Card>
-
-  <Card title="Use Skills with the API" icon="code" href="/en/api/skills-guide">
-    Upload and use Skills programmatically
-  </Card>
-</CardGroup>
-```
+- [Get started with Agent Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/quickstart)
+- [Use Skills in Claude Code](https://code.claude.com/docs/en/skills)
+- [Use Skills with the API](https://platform.claude.com/docs/en/build-with-claude/skills-guide)

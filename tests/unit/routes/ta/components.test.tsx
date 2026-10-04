@@ -85,16 +85,6 @@ vi.mock('../../../../ClientApp/src/components/Inputs/Checkbox', () => ({
   ),
 }));
 
-vi.mock('../../../../ClientApp/src/routes/ta/applicationAndInstrument', () => ({
-  default: ({ isSummary, name }: { isSummary?: boolean; name: string }) => (
-    <div
-      data-testid='application-and-instrument'
-      data-name={name}
-      data-summary={String(isSummary)}
-    />
-  ),
-}));
-
 vi.mock('../../../../ClientApp/src/routes/ta/supportingDocuments', () => ({
   default: ({
     isSummary,
@@ -380,6 +370,25 @@ describe('SummaryAndSubmit', () => {
     mocks.supportingDocumentsUploadFiles.mockClear();
   });
 
+  it('renders the summaries when the form carries no hiding rules', () => {
+    render(
+      <MemoryRouter initialEntries={['/ta/PA-300/summary']}>
+        <Formik initialValues={formValues} onSubmit={() => {}}>
+          <Form>
+            <Routes>
+              <Route
+                path='/ta/:id/summary'
+                element={<SummaryAndSubmit name='summaryAndSubmit' />}
+              />
+            </Routes>
+          </Form>
+        </Formik>
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Application type')).toBeInTheDocument();
+  });
+
   it('renders editable summary sections with edit links and declaration fields', async () => {
     renderSummary();
 
@@ -387,10 +396,9 @@ describe('SummaryAndSubmit', () => {
     expect(
       screen.getByText(/Before you submit your request/)
     ).toBeInTheDocument();
-    expect(screen.getByTestId('application-and-instrument')).toHaveAttribute(
-      'data-name',
-      'applicationAndInstrument'
-    );
+    // Organisation and application read from the wizard's Formik values.
+    expect(screen.getByText('Organisation name')).toBeInTheDocument();
+    expect(screen.getByText('Application type')).toBeInTheDocument();
     expect(screen.getByTestId('supporting-documents')).toHaveAttribute(
       'data-name',
       'supportingDocuments.form.documents'

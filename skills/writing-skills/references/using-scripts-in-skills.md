@@ -8,6 +8,34 @@ description: 'How to run commands and bundle executable scripts in your skills.'
 
 # Using Scripts
 
+## Applicability and validation boundary
+
+Load when designing or reviewing shell commands or bundled scripts in a skill.
+Input: task, runtime/dependencies, script interface, and permission/side-effect
+constraints. Output: explicit invocation, output/error contract, and an executed
+validation record or `NHR` for required unavailable runs. Adapted from
+[Agent Skills script guidance](https://agentskills.io/skill-creation/using-scripts),
+checked on 2026-10-04. Runtime behavior is provider/version-specific; recheck
+the linked runtime documentation when versions or installation policy change.
+Examples illustrate scripts to create in a candidate package; they are not
+bundled here. They print `This is a test.` for the supplied HTML; missing
+`p.info` is outside that toy example and must receive explicit handling in
+production.
+
+Run examples in an isolated scratch directory after checking the executable and
+dependency policy. Package runners may download/execute third-party code;
+formatters/scaffolders may write files. These examples do not authorize those
+effects on a user's project. Pin exact versions where repeatability matters;
+major versions, ranges, and `latest` are not exact pins. Respect host
+permissions and established task authorization. Check stdout, stderr, exit
+status, and expected changes; include missing input/dependency and denied-access
+cases.
+
+Navigate: [Commands](#one-off-commands),
+[Paths](#referencing-scripts-from-skillmd),
+[Dependencies](#self-contained-scripts),
+[Interfaces](#designing-scripts-for-agentic-use).
+
 <!-- markdownlint-disable MD033 -->
 
 Skills can instruct agents to run shell commands and bundle reusable scripts in
@@ -21,56 +49,58 @@ When an existing package already does what you need, you can reference it
 directly in your `SKILL.md` instructions without a `scripts/` directory. Many
 ecosystems provide tools that auto-resolve dependencies at runtime.
 
-````html
-<Tabs sync="{false}">
-  <Tab title="uvx">
-    [uvx](https://docs.astral.sh/uv/guides/tools/) runs Python packages in
-    isolated environments with aggressive caching. It ships with
-    [uv](https://docs.astral.sh/uv/). ```bash uvx ruff@0.8.0 check . uvx
-    black@24.10.0 . ``` - Not bundled with Python - requires a separate install.
-    - Fast. Caches aggressively so repeat runs are near-instant.
-  </Tab>
-  <Tab title="pipx">
-    [pipx](https://pipx.pypa.io/) runs Python packages in isolated environments.
-    Available via OS package managers (`apt install pipx`, `brew install pipx`).
-    ```bash pipx run 'black==24.10.0' . pipx run 'ruff==0.8.0' check . ``` - Not
-    bundled with Python - requires a separate install. - A mature alternative to
-    `uvx`. While `uvx` has become the standard recommendation, `pipx` remains a
-    reliable option with broader OS package manager availability.
-  </Tab>
-  <Tab title="npx">
-    [npx](https://docs.npmjs.com/cli/commands/npx) runs npm packages,
-    downloading them on demand. It ships with npm (which ships with Node.js).
-    ```bash npx eslint@9 --fix . npx create-vite@6 my-app ``` - Bundled with
-    Node.js - no extra install needed. - Downloads the package, runs it, and
-    caches it for future use. - Pin versions with `npx package@version` for
-    reproducibility.
-  </Tab>
-  <Tab title="bunx">
-    [bunx](https://bun.sh/docs/cli/bunx) is Bun's equivalent of `npx`. It ships
-    with [Bun](https://bun.sh/). ```bash bunx eslint@9 --fix . bunx
-    create-vite@6 my-app ``` - Drop-in replacement for `npx` in Bun-based
-    environments. - Only appropriate when the user's environment has Bun rather
-    than Node.js.
-  </Tab>
-  <Tab title="deno run">
-    [deno run](https://docs.deno.com/runtime/reference/cli/run/) runs scripts
-    directly from URLs or specifiers. It ships with [Deno](https://deno.com/).
-    ```bash deno run npm:create-vite@6 my-app deno run --allow-read npm:eslint@9
-    -- --fix . ``` - Permission flags (`--allow-read`, etc.) are required for
-    filesystem/network access. - Use `--` to separate Deno flags from the tool's
-    own flags.
-  </Tab>
-  <Tab title="go run">
-    [go run](https://pkg.go.dev/cmd/go#hdr-Compile_and_run_Go_program) compiles
-    and runs Go packages directly. It is built into the `go` command. ```bash go
-    run golang.org/x/tools/cmd/goimports@v0.28.0 . go run
-    github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.0 run ``` - Built
-    into Go - no extra tooling needed. - Pin versions or use `@latest` to make
-    the command explicit.
-  </Tab>
-</Tabs>
-````
+### Python runners: uvx and pipx
+
+[uvx](https://docs.astral.sh/uv/guides/tools/) ships with separately installed
+[uv](https://docs.astral.sh/uv/); [pipx](https://pipx.pypa.io/) is another
+isolated Python tool runner. Both need installation and may download packages.
+
+```bash
+uvx ruff@0.8.0 check .
+uvx black@24.10.0 .
+pipx run 'black==24.10.0' .
+pipx run 'ruff==0.8.0' check .
+```
+
+### JavaScript runners: npx and bunx
+
+[npx](https://docs.npmjs.com/cli/commands/npx) requires npm;
+[bunx](https://bun.sh/docs/cli/bunx) requires Bun. Choose the runner matching an
+existing environment, rather than requiring another runtime for this example.
+These illustrative major-version selections permit updates; use an exact tested
+version in a production workflow. `--fix` writes files and scaffolding creates
+`my-app`; execute only within the authorized target.
+
+```bash
+npx eslint@9 --fix .
+npx create-vite@6 my-app
+bunx eslint@9 --fix .
+bunx create-vite@6 my-app
+```
+
+### Deno
+
+[deno run](https://docs.deno.com/runtime/reference/cli/run/) requires Deno.
+Permissions before the script name belong to Deno; arguments after the script
+name belong to the script. Grant only the capabilities that the chosen tool
+actually needs. A formatter using `--fix` needs write access as well as read
+access; a read-only flag alone is insufficient.
+
+```bash
+# Read-only illustrative lint invocation; verify tool/config compatibility.
+deno run --allow-read npm:eslint@9 .
+```
+
+### Go
+
+[go run](https://pkg.go.dev/cmd/go#hdr-Compile_and_run_Go_program) requires Go.
+Its package version can be pinned; downloads and compilation may occur.
+`@latest` is an explicit moving selection rather than a reproducibility pin.
+
+```bash
+go run golang.org/x/tools/cmd/goimports@v0.28.0 .
+go run github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.0 run
+```
 
 **Tips for one-off commands in skills:**
 
@@ -79,7 +109,7 @@ ecosystems provide tools that auto-resolve dependencies at runtime.
 - **State prerequisites** in your `SKILL.md` (e.g., "Requires Node.js 18+")
   rather than assuming the agent's environment has them. For runtime-level
   requirements, use the
-  [`compatibility` frontmatter field](/specification#compatibility-field).
+  [`compatibility` frontmatter field](specification.md#compatibility-field).
 - **Move complex commands into scripts.** A one-off command works well when
   you're invoking a tool with a few flags. When a command grows complex enough
   that it's hard to get right on the first try, a tested script in `scripts/` is
@@ -87,8 +117,11 @@ ecosystems provide tools that auto-resolve dependencies at runtime.
 
 ## Referencing scripts from `SKILL.md`
 
-Use **relative paths from the skill directory root** to reference bundled files.
-The agent resolves these paths automatically - no absolute paths needed.
+Use **relative paths from the skill directory root** to describe bundled files.
+Before execution, establish that working directory explicitly or invoke the
+resolved absolute script path. Do not assume the host changes directory or
+resolves script paths automatically. Markdown links in references resolve from
+the containing document, separately from command working directories.
 
 List available scripts in your `SKILL.md` so the agent knows they exist:
 
@@ -116,11 +149,8 @@ Then instruct the agent to run them:
    ```
 ````
 
-<Note>
-The same relative-path convention works in support files like `references/*.md`
-- script execution paths (in code blocks) are relative to the
-**skill directory root**, because the agent runs commands from there.
-</Note>
+The same command-path convention works in `references/*.md` when the workflow
+explicitly establishes the **skill directory root** as its working directory.
 
 ## Self-contained scripts
 
@@ -130,81 +160,106 @@ separate manifest file or install step required.
 
 Several languages support inline dependency declarations:
 
-````html
-<Tabs sync="{false}">
-  <Tab title="Python">
-    [PEP 723](https://peps.python.org/pep-0723/) defines a standard format for
-    inline script metadata. Declare dependencies in a TOML block inside `# ///`
-    markers: ```python scripts/extract.py # /// script # dependencies = [ #
-    "beautifulsoup4", # ] # /// from bs4 import BeautifulSoup html = '
-    <html>
-      <body>
-        <h1>Welcome</h1>
-        <p class="info">This is a test.</p>
-      </body>
-    </html>
-    ' print(BeautifulSoup(html, "html.parser").select_one("p.info").get_text())
-    ``` Run with [uv](https://docs.astral.sh/uv/) (recommended): ```bash uv run
-    scripts/extract.py ``` `uv run` creates an isolated environment, installs
-    the declared dependencies, and runs the script.
-    [pipx](https://pipx.pypa.io/) (`pipx run scripts/extract.py`) also supports
-    PEP 723. - Pin versions with [PEP 508](https://peps.python.org/pep-0508/)
-    specifiers: `"beautifulsoup4>=4.12,<5"`. - Use `requires-python` to
-    constrain the Python version. - Use `uv lock --script` to create a lockfile
-    for full reproducibility.
-  </Tab>
-  <Tab title="Deno">
-    Deno's `npm:` and `jsr:` import specifiers make every script self-contained
-    by default: ```typescript scripts/extract.ts #!/usr/bin/env -S deno run
-    import * as cheerio from "npm:cheerio@1.0.0"; const html = `
-    <html>
-      <body>
-        <h1>Welcome</h1>
-        <p class="info">This is a test.</p>
-      </body>
-    </html>
-    `; const $ = cheerio.load(html); console.log($("p.info").text()); ```
-    ```bash deno run scripts/extract.ts ``` - Use `npm:` for npm packages,
-    `jsr:` for Deno-native packages. - Version specifiers follow semver:
-    `@1.0.0` (exact), `@^1.0.0` (compatible). - Dependencies are cached
-    globally. Use `--reload` to force re-fetch. - Packages with native addons
-    (node-gyp) may not work - packages that ship pre-built binaries work best.
-  </Tab>
-  <Tab title="Bun">
-    Bun auto-installs missing packages at runtime when no `node_modules`
-    directory is found. Pin versions directly in the import path: ```typescript
-    scripts/extract.ts #!/usr/bin/env bun import * as cheerio from
-    "cheerio@1.0.0"; const html = `
-    <html>
-      <body>
-        <h1>Welcome</h1>
-        <p class="info">This is a test.</p>
-      </body>
-    </html>
-    `; const $ = cheerio.load(html); console.log($("p.info").text()); ```
-    ```bash bun run scripts/extract.ts ``` - No `package.json` or `node_modules`
-    needed. TypeScript works natively. - Packages are cached globally. First run
-    downloads; subsequent runs are near-instant. - If a `node_modules` directory
-    exists anywhere up the directory tree, auto-install is disabled and Bun
-    falls back to standard Node.js resolution.
-  </Tab>
-  <Tab title="Ruby">
-    Bundler ships with Ruby since 2.6. Use `bundler/inline` to declare gems
-    directly in the script: ```ruby scripts/extract.rb require 'bundler/inline'
-    gemfile do source 'https://rubygems.org' gem 'nokogiri' end html = '
-    <html>
-      <body>
-        <h1>Welcome</h1>
-        <p class="info">This is a test.</p>
-      </body>
-    </html>
-    ' doc = Nokogiri::HTML(html) puts doc.at_css('p.info').text ``` ```bash ruby
-    scripts/extract.rb ``` - Pin versions explicitly (`gem 'nokogiri', '~>
-    1.16'`) - there is no lockfile. - An existing `Gemfile` or `BUNDLE_GEMFILE`
-    env var in the working directory can interfere.
-  </Tab>
-</Tabs>
-````
+### Python: PEP 723
+
+[PEP 723](https://peps.python.org/pep-0723/) uses TOML metadata in comment
+markers. Save this illustrative file as `scripts/extract.py` in a scratch skill:
+
+```python
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["beautifulsoup4==4.12.3"]
+# ///
+from bs4 import BeautifulSoup
+
+html = '<html><body><p class="info">This is a test.</p></body></html>'
+paragraph = BeautifulSoup(html, "html.parser").select_one("p.info")
+if paragraph is None:
+    raise ValueError("Expected a p.info element")
+print(paragraph.get_text())
+```
+
+```bash
+uv run scripts/extract.py
+# Or, when the installed pipx version supports script metadata:
+pipx run scripts/extract.py
+```
+
+[uv script support](https://docs.astral.sh/uv/guides/scripts/) creates an
+isolated dependency environment; use `uv lock --script scripts/extract.py` when
+a resolved lock is needed. [PEP 508](https://peps.python.org/pep-0508/) ranges
+such as `beautifulsoup4>=4.12,<5` constrain compatibility without locking the
+precise version.
+
+### Deno: URL/specifier dependencies
+
+Deno supports versioned `npm:`/`jsr:` imports. Save as `scripts/extract.ts`:
+
+```typescript
+import * as cheerio from 'npm:cheerio@1.0.0';
+
+const html = '<html><body><p class="info">This is a test.</p></body></html>';
+const paragraph = cheerio.load(html)('p.info');
+if (paragraph.length === 0) throw new Error('Expected a p.info element');
+console.log(paragraph.text());
+```
+
+```bash
+deno run scripts/extract.ts
+```
+
+Exact `@1.0.0` and compatible `@^1.0.0` specifiers differ. Cache/network and
+native-addon requirements depend on the package/runtime; do not describe every
+imported script as universally self-contained. `--reload` refreshes cached
+imports when permitted.
+
+### Bun: auto-install
+
+[Bun auto-install](https://bun.sh/docs/runtime/auto-install) can resolve missing
+packages for standalone scripts. An existing ancestor `node_modules` changes
+resolution behavior. Save the following as `scripts/extract.ts` in an isolated
+scratch directory, then run `bun run scripts/extract.ts`:
+
+```typescript
+import * as cheerio from 'cheerio@1.0.0';
+
+const html = '<html><body><p class="info">This is a test.</p></body></html>';
+const paragraph = cheerio.load(html)('p.info');
+if (paragraph.length === 0) throw new Error('Expected a p.info element');
+console.log(paragraph.text());
+```
+
+Bun handles TypeScript and caches packages; first resolution may download them.
+Verify auto-install configuration and native dependencies for the actual
+package.
+
+### Ruby: Bundler inline
+
+[Bundler inline](https://bundler.io/guides/bundler_in_a_single_file_ruby_script.html)
+allows dependency declarations in a Ruby script. Save as `scripts/extract.rb`:
+
+```ruby
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'nokogiri', '= 1.16.8'
+end
+
+html = '<html><body><p class="info">This is a test.</p></body></html>'
+paragraph = Nokogiri::HTML(html).at_css('p.info')
+raise 'Expected a p.info element' unless paragraph
+puts paragraph.text
+```
+
+```bash
+ruby scripts/extract.rb
+```
+
+Confirm Ruby/Bundler availability and gem compatibility. Inline declarations do
+not supply a lockfile; an existing `Gemfile`/`BUNDLE_GEMFILE` may affect
+execution. A version range such as `~> 1.16` is a compatibility constraint, not
+an exact pin.
 
 ## Designing scripts for agentic use
 
@@ -213,10 +268,9 @@ next. A few design choices make scripts dramatically easier for agents to use.
 
 ### Avoid interactive prompts
 
-This is a hard requirement of the agent execution environment. Agents operate in
-non-interactive shells - they cannot respond to TTY prompts, password dialogs,
-or confirmation menus. A script that blocks on interactive input will hang
-indefinitely.
+Default skill scripts to non-interactive execution. Some hosts support a TTY,
+but that does not make unattended prompts reliable. Reject missing input with a
+bounded error instead of hanging; do not use `--force` to bypass authorization.
 
 Accept all input via command-line flags, environment variables, or stdin:
 

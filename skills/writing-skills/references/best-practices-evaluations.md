@@ -10,7 +10,28 @@ Evaluate only applicable criteria. Apply Anthropic-specific checks only when the
 target environment is Claude or Anthropic Agent Skills.
 
 This file defines **what good looks like**. Keep scoring, severity, QAQ/RMI, and
-final verdict rules in the audit-scoring reference.
+final verdict rules in [audit scoring](audit-scoring.md).
+
+Inputs: candidate revision and resources, intended task boundary, target client,
+applicable source requirements, and available run evidence. Output: criterion
+assessments with source locations, evidence states, counterexamples, and narrow
+corrections. Unchecked boxes are not failures or passes: record `Verified`,
+`Supported`, `Failed`, or `NHR`, plus applicability and its reason.
+
+This is local authoring-quality guidance, not a complete specification validator
+or deployment decision. Use [specification](specification.md) for mandatory
+rules and the [final checklist](SKILL-testing-checklist.md) for readiness.
+Follow the host instruction hierarchy; examples and provider conventions confer
+no extra permissions. Review source-dependent items when the
+specification/client changes.
+
+Navigation: [value](#1-domain-value-and-expertise),
+[discovery](#3-metadata-and-discovery), [context](#4-context-efficiency),
+[workflow](#10-workflows-and-decision-points),
+[validation](#12-validation-and-feedback-loops),
+[scripts](#14-scripts-and-deterministic-operations),
+[execution evidence](#16-evaluation-and-real-usage-testing),
+[provider checks](#18-anthropic--claude-specific-checks).
 
 ## 1. Domain Value and Expertise
 
@@ -115,8 +136,12 @@ specification.
 Apply the current Agent Skills specification requirements regardless of
 provider-specific style guidance:
 
-- [ ] `name` is no more than 64 characters.
-- [ ] `description` is no more than 1024 characters.
+- [ ] Required fields have the current specification's types, non-empty values,
+      character rules, and limits; maximum lengths alone are not conformance.
+- [ ] `name` is 1–64 characters and matches the skill-directory name.
+- [ ] `description` is 1–1024 characters.
+- [ ] Optional metadata and other fields meet the specification's mapping,
+      string, and length contracts when present.
 
 ### Provider/client-specific metadata style
 
@@ -500,7 +525,9 @@ Apply this section only when the target is Claude or Anthropic Agent Skills.
 
 When MCP tools are referenced:
 
-- [ ] Fully qualified tool names use `ServerName:tool_name`.
+- [ ] Tool references use the exact identifier exposed by the target client's
+      MCP configuration (for example, a documented `ServerName:tool_name`
+      convention); a naming example does not prove the tool exists.
 - [ ] Server and tool names match the intended MCP configuration.
 - [ ] Tool names are not left ambiguous when multiple MCP servers may expose
       similar capabilities.

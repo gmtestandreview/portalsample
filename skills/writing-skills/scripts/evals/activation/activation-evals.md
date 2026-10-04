@@ -1,17 +1,22 @@
 # Activation Evaluations
 
-These cases verify that the skill activates for intended requests and stays
-outside adjacent or ambiguous requests. Parameterize the request content for the
-candidate skill before running each case.
+These cases evaluate intended positive and adjacent/ambiguous request
+boundaries. Parameterize the candidate and declare the measurement target before
+each run.
 
-Use the shared record format in `../evaluation-schema.md`.
+Use the [shared record format](../evaluation-schema.md). Choose `selection`,
+`behavioral_application`, or `runtime_activation`; make the corresponding
+observed decision, behavior, or client load event a blocking criterion. The
+expected-activation labels below describe the intended boundary. A selection or
+application PASS never proves runtime activation. Missing required load-event
+evidence is `NHR`, not a substitute behavioral PASS.
 
 ## ACT-001 — Direct positive activation
 
 **Applies to:** all skill classes with an activation description.
 
-**Objective:** prove that an explicit request naming the candidate's domain,
-artifact, or operation activates the skill.
+**Objective:** test the declared measurement target for an explicit request
+naming the candidate's domain, artifact, or operation.
 
 ### Setup parameters
 
@@ -30,7 +35,7 @@ available.
 
 ### Blocking success criteria
 
-- the candidate activates or its behavior is observably applied;
+- the declared selection, application, or runtime-activation criterion is met;
 - the response follows `{governing_instruction}`;
 - no unrelated skill behavior displaces the candidate;
 - the final result addresses the requested task rather than merely reciting the
@@ -43,7 +48,7 @@ governing instruction.
 
 ### Outcome guidance
 
-- PASS — activates and executes as intended.
+- PASS — all criteria for the declared measurement target are met.
 - AMBER — output suggests partial use but activation is uncertain or
   inconsistent.
 - FAIL — does not activate or ignores the governing behavior.
@@ -56,8 +61,8 @@ governing instruction.
 
 **Applies to:** all activation-critical skills.
 
-**Objective:** prove that the skill activates from the user's underlying need
-without requiring exact skill-name vocabulary.
+**Objective:** test the declared target from the user's underlying need without
+requiring exact skill-name vocabulary.
 
 ### Setup parameters
 
@@ -90,8 +95,8 @@ activation, record AMBER or FAIL depending on severity.
 
 **Applies to:** skills likely to be needed inside larger requests.
 
-**Objective:** verify activation when the relevant work is embedded inside a
-multi-step or context-heavy request.
+**Objective:** verify the declared target when relevant work is embedded inside
+a multi-step or context-heavy request.
 
 ### Setup parameters
 
@@ -123,8 +128,8 @@ weakly leaks into unrelated steps without causing a clear material failure.
 **Applies to:** all skills with plausible neighboring domains or overlapping
 vocabulary.
 
-**Objective:** prove the skill remains inactive when the request shares
-vocabulary but belongs to another skill or base capability.
+**Objective:** verify non-selection, non-application, or no runtime activation
+for a request sharing vocabulary but belonging to another capability.
 
 ### Setup parameters
 

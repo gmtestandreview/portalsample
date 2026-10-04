@@ -11,6 +11,16 @@ description:
 
 ## Purpose
 
+This is a local evaluation procedure adapted from
+[Agent Skills description guidance](https://agentskills.io/skill-creation/optimizing-descriptions),
+reviewed on 2026-10-04. Input: the candidate description/body, target runtime,
+neighboring skill boundaries, and labeled queries. Output: a parseable candidate
+plus per-query loading evidence and a bounded readiness decision. Sample counts,
+imperative wording, split ratios, and stopping limits are recommendations, not
+universal specification requirements. Follow a target provider's applicable
+style and the host instruction hierarchy; recheck the source when changing
+runtime or evaluation policy.
+
 Use this reference when creating, reviewing, or refining the `description` field
 in `SKILL.md` frontmatter so an Agent Skill triggers reliably for relevant
 requests and stays inactive for irrelevant ones.
@@ -36,8 +46,8 @@ coverage, domain clarity, and realistic trigger behavior.
 
 A production-ready skill description should:
 
-- Use imperative phrasing, normally beginning with `Use when...` or
-  `Use this skill when...`.
+- Prefer imperative phrasing locally, normally `Use when...`; a provider's
+  documented third-person style is also valid when targeting that provider.
 - Describe **what the user is trying to achieve**, not how the skill internally
   performs the work.
 - Name the relevant domain, artifact, or workflow boundary.
@@ -47,7 +57,7 @@ A production-ready skill description should:
 - Cover indirect requests where the skill is clearly useful even if the user
   does not use the exact domain term.
 - Remain concise and valid as a YAML scalar.
-- Stay under the `1024`-character description limit.
+- Stay at or below the `1024`-character description limit.
 - Avoid step-by-step instructions, long rationale, validation procedures, tool
   commands, or test methodology that belongs in the body or supporting
   references.
@@ -63,24 +73,27 @@ A production-ready skill description should:
 Use this structure as the default:
 
 ```yaml
-description: Use when [task verbs + target artifact/domain], especially when
-[specific contexts, symptoms, boundaries, or indirect user wording].
+description: >-
+  Use when [task verbs + target artifact/domain], especially when [specific
+  contexts, symptoms, boundaries, or indirect user wording].
 ```
 
 Example:
 
 ```yaml
-description: Use when creating, editing, auditing, optimizing, testing, or
-validating Agent Skills/SKILL.md files, especially frontmatter, descriptions,
-activation triggers, supporting references, evals, or trigger behavior.
+description: >-
+  Use when creating, editing, auditing, optimizing, testing, or validating Agent
+  Skills/SKILL.md files, especially frontmatter, descriptions, activation
+  triggers, supporting references, evals, or trigger behavior.
 ```
 
 For narrowly scoped skills:
 
 ```yaml
-description: Use when troubleshooting Agent Skill activation, refining SKILL.md
-description wording, reducing false positives or false negatives, or designing
-trigger evals.
+description: >-
+  Use when troubleshooting Agent Skill activation, refining SKILL.md description
+  wording, reducing false positives or false negatives, or designing trigger
+  evals.
 ```
 
 ---
@@ -145,9 +158,10 @@ Lead with the task or outcome the user wants.
 Prefer:
 
 ```yaml
-description: Use when improving Agent Skill descriptions in SKILL.md frontmatter
-so activation is accurate, specific, and resistant to false positives and
-false negatives.
+description: >-
+  Use when improving Agent Skill descriptions in SKILL.md frontmatter so
+  activation is accurate, specific, and resistant to false positives and false
+  negatives.
 ```
 
 Avoid:
@@ -159,8 +173,9 @@ description: Helps with skills.
 Avoid implementation-heavy descriptions such as:
 
 ```yaml
-description: Use when writing skills by first creating failing tests,
-then editing the file, running three passes, and refactoring until the tests pass.
+description: >-
+  Use when writing skills by first creating failing tests, then editing the
+  file, running three passes, and refactoring until the tests pass.
 ```
 
 The description should decide **whether the skill should load**. The body should
@@ -376,9 +391,9 @@ Both sets should contain a representative mix of:
 
 Keep the split fixed during an optimization cycle.
 
-Do not revise the description based on validation failures during the same
-cycle. Otherwise the validation set becomes part of training and stops measuring
-generalization.
+Use the fixed validation set to compare candidates, without adding its wording
+to revisions. Repeated selection still tunes to that set; keep the fresh final
+holdout below separate, and do not claim validation is untouched test evidence.
 
 ---
 
@@ -391,7 +406,8 @@ generalization.
 4. Revise the description.
 5. Keep the description below `1024` characters.
 6. Re-run train and validation tests.
-7. Repeat until:
+7. Repeat within the entrypoint's authorized iteration limit (at most three
+   remediation iterations for this package) until:
    - train performance is acceptable,
    - validation performance stops improving, or
    - further changes only add complexity.
@@ -400,9 +416,10 @@ generalization.
 9. Run **5-10 fresh, previously unseen holdout prompts** before deployment, with
    a mix of should-trigger and should-not-trigger cases.
 
-Five iterations is usually enough to expose whether the description can be
-improved structurally. If progress stalls, reassess the eval labels, boundary
-definition, or description structure instead of continuing to add wording.
+For a standalone exploratory campaign, up to five iterations can be a declared
+budget; this does not override the entrypoint's three-iteration remediation
+limit. If progress stalls, reassess labels, boundary, or structure rather than
+continuing to add wording.
 
 ---
 
@@ -454,9 +471,10 @@ description: Helps write better documentation.
 Better:
 
 ```yaml
-description: Use when creating, editing, or validating Agent Skills/SKILL.md
-files, especially descriptions, activation triggers, frontmatter,
-supporting references, scripts, or evals.
+description: >-
+  Use when creating, editing, or validating Agent Skills/SKILL.md files,
+  especially descriptions, activation triggers, frontmatter, supporting
+  references, scripts, or evals.
 ```
 
 ### Too broad
@@ -468,23 +486,27 @@ description: Use when improving prompts, descriptions, and instructions.
 Better:
 
 ```yaml
-description: Use when improving Agent Skill descriptions in SKILL.md frontmatter
-so skill activation is accurate, specific, and resistant to false positives or
-false negatives.
+description: >-
+  Use when improving Agent Skill descriptions in SKILL.md frontmatter so skill
+  activation is accurate, specific, and resistant to false positives or false
+  negatives.
 ```
 
 ### Too implementation-heavy
 
 ```yaml
-description: Use when writing skills by creating failing pressure tests,
-revising the skill, and repeatedly refactoring until tests pass.
+description: >-
+  Use when writing skills by creating failing pressure tests, revising the
+  skill, and repeatedly refactoring until tests pass.
 ```
 
 Better:
 
 ```yaml
-description: Use when creating or testing Agent Skills that require activation
-evals, pressure scenarios, trigger-behavior review, or deployment-readiness validation.
+description: >-
+  Use when creating or testing Agent Skills that require activation evals,
+  pressure scenarios, trigger-behavior review, or deployment-readiness
+  validation.
 ```
 
 ---
@@ -495,7 +517,7 @@ Before accepting a description:
 
 - [ ] Valid YAML scalar.
 - [ ] Under `1024` characters.
-- [ ] Uses imperative activation phrasing.
+- [ ] Uses the declared local or target-provider activation style.
 - [ ] Names the relevant artifact, domain, or responsibility.
 - [ ] Includes likely user verbs and meaningful synonyms.
 - [ ] Covers at least one indirect context or failure symptom when relevant.

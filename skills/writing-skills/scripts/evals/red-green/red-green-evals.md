@@ -3,7 +3,10 @@
 These cases demonstrate whether the candidate skill materially changes behavior.
 Keep RED and GREEN evidence separate and comparable.
 
-Use the shared record format in `../evaluation-schema.md`.
+Use the [shared record format](../evaluation-schema.md). Declare the measurement
+target, requiredness, and success criteria before either run. These cases test
+application/improvement; separately required runtime activation still needs
+client load-event evidence.
 
 ## RG-001 — Same-task behavioral RED/GREEN pair
 
@@ -33,13 +36,18 @@ Capture:
 A valid RED does not require the agent to fail catastrophically. It requires
 useful baseline evidence about the problem the skill claims to solve.
 
+If the baseline already meets every criterion, retain that result. RG-001 cannot
+prove improvement without a gap; reassess the claimed value or use a separately
+declared preservation case. Do not manufacture failure or lower the baseline.
+
 ### GREEN
 
 Run the **same** `{representative_task}` with the candidate skill available.
 
 ### Blocking success criteria (RG-001)
 
-- the skill activates when required;
+- the supplied/loaded guidance is applied, with runtime activation verified
+  separately when required by the campaign;
 - the observed RED problem is prevented or materially reduced;
 - all predeclared `{success_criteria}` are met;
 - no new material failure appears;

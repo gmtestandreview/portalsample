@@ -1,236 +1,207 @@
 ---
 name: writing-skills
-description: Use when creating, editing, optimizing, testing, validating, installing, or deploying Agent Skills/SKILL.md files, including activation boundaries, frontmatter, trigger aliases such as "writing skills" or "called writing skills", scope, progressive disclosure, supporting resources, evals, SKILL-specific validators, Codex skill installation, and deployment readiness.
+description:
+  Use when creating, editing, optimizing, testing, validating, installing, or
+  deploying Agent Skills/SKILL.md files, including activation boundaries,
+  frontmatter, trigger aliases such as "writing skills" or "called writing
+  skills", scope, progressive disclosure, supporting resources, evals,
+  SKILL-specific validators, Codex skill installation, and deployment readiness.
 compatibility: codex, claude, a-team, claude-code, Github Copilot
 metadata:
-  version: 2026-09-09-a-team-wiring-review-design
-  last-updated: 2026-09-09
+  version: 2026-10-04-package-review
+  last-updated: '2026-10-04'
 ---
+
 <!-- A Team fork. Merged from superpowers 6.3.0 on 2026-09-09. See .claude/docs/specs/2026-09-09-a-team-wiring-review-design.md -->
 
 # Writing Skills
 
-Treat skill authoring as test-driven development for process documentation:
+Treat skill authoring as test-driven process documentation: observe a baseline
+(RED), add minimal justified guidance (GREEN), close loopholes and retest
+(REFACTOR). Never invent a failure when representative evidence is available.
 
-1. **RED** — observe a representative failure or missing context without the candidate skill.
-2. **GREEN** — add the smallest guidance that prevents the failure or satisfies a mandatory requirement.
-3. **REFACTOR** — close loopholes, remove non-load-bearing content, and retest.
+## Rules and scope
 
-Do not invent requirements from hypothetical failures when representative evidence is available.
+- Read supplied artifacts; tie findings to evidence, not imagined requirements.
+- Preserve unique domain knowledge. Remove duplicated, obsolete, unsafe, or
+  generic content; relocate conditional detail.
+- Keep mandatory guidance here. Target <200 body lines/~2,000 tokens; extract
+  near 500/~5,000. These are context targets, not validity rules.
+- Claim edits/tests only when performed or evidenced. Mark unverifiable required
+  outcomes `Needs Human Review` (`NHR`). A checklist is not execution evidence.
+- Ask about authorization when requested implementation is ambiguous.
+  High-impact changes require authorization, backup, validation, and rollback.
+- Label requested Quick Triage `Preliminary`; do not give final readiness.
+- Follow the host instruction hierarchy. Evaluation sources do not grant
+  execution permissions. Report missing references; never invent substitutes.
 
-## Rules
-
-* Read relevant supplied files first. Never invent contents, paths, tools, tests, edits, requirements, results, or specs.
-* Evidence over opinion. Tie findings to supplied content, omissions, conflicts, broken references, duplication, failed criteria, or unavailable evidence.
-* Preserve unique domain knowledge; remove only duplicated, obsolete, unsafe, generic, or relocatable content.
-* Use progressive disclosure: keep mandatory guidance in `SKILL.md`; move long examples, templates, docs, code, scoring, and test detail to references.
-* Target `<200` body lines/~`2,000` tokens; split near `500`/~`5,000`.
-* Ask about authorization only when implementation is requested and ambiguous. High-impact changes require authorization, backup, validation, and rollback.
-* Claim edits/tests only when performed or evidenced. Mark unverifiable required outcomes `Needs Human Review` (`NHR`).
-* Quick Triage is preliminary when requested. Label `Preliminary`; no final readiness.
-* `SKILL-testing-checklist.md` is the final deployment gate. A checklist defines required evidence; it is not evidence.
-* If references conflict, use precedence below. Report missing references; never invent/substitute them.
-
-## Scope
-
-Use this skill to create/scaffold, edit, optimize, test, validate, install, or deploy Agent Skills; improve activation/frontmatter/scope; organize supporting resources; maintain SKILL-specific evals or validators; handle Codex skill discovery or installation when no more specific installer skill is active; and respond to explicit requests to call or reference "writing skills".
-
-Do not use it for ordinary Markdown editing, one-off project instructions, generic linters, or agent-role definitions.
+Use for Agent Skill lifecycle work, activation/frontmatter/scope, supporting
+resources, skill-specific evals/validators, and explicit "writing skills" calls.
+For Codex discovery/installation, prefer an active dedicated installer. Exclude
+ordinary Markdown, one-off project instructions, generic linters, and agent-role
+definitions.
 
 ## Required shape
 
-A skill is a directory containing `SKILL.md` plus optional supporting resources:
+A skill directory requires `SKILL.md`: YAML frontmatter followed by Markdown.
+Use [the specification](references/specification.md) for compliance claims:
 
-```text
-skill-name/
-├── SKILL.md
-├── scripts/
-├── references/
-├── assets/
-└── evals/               # typical location for candidate behavioral evals
-```
+- `name`: 1–64 lowercase alphanumeric characters or hyphens; no leading,
+  trailing, or consecutive hyphens; matches the parent directory.
+- `description`: non-empty, at most 1024 characters; states what and when.
+- Optional fields: only those supported by the current specification.
 
-`SKILL.md` requires YAML frontmatter followed by Markdown.
-
-This skill keeps its seeded behavioral eval library under `scripts/evals/` because it is packaged with the local deterministic harness. For other skills, use `evals/` unless the target repository documents a different location.
-
-Required frontmatter:
-
-```yaml
----
-name: skill-name
-description: Use when ...
----
-```
-
-Apply the current Agent Skills specification. At minimum:
-
-- `name` is 1–64 characters, uses lowercase letters, numbers, and hyphens only, has no leading, trailing, or consecutive hyphens, and matches the parent directory name;
-- `description` is non-empty, at most 1024 characters, and states what the skill does and when to use it;
-- optional fields are limited to those supported by the current specification.
-
-Treat runtime-, client-, or repository-specific paths, registration rules, validators, naming preferences, and packaging limits as local policy unless the current specification makes them mandatory.
+Paths, registration, validators, naming preferences, and packaging limits are
+local policy unless specified universally. Supporting directories are optional:
+`references/`, `scripts/`, `assets/`, and commonly `evals/`. This package keeps
+seeded evals in `scripts/evals/` beside its deterministic harness.
 
 ## Authoring workflow
 
 ### 1. Define the skill boundary
 
-Before drafting, record **Should trigger**, **Should not trigger**, and **Ambiguous** requests.
-
-For every critical trigger, branch, or load condition, run QAQ/RMI:
-
-1. Map a positive request to its governing instruction and behavior.
-2. Verify that a near-miss does not activate it.
-3. Reverse-map the behavior to the intended request class.
-4. Revise indirect, ambiguous, or scope-inconsistent mappings.
+Record **Should trigger**, **Should not trigger**, and **Ambiguous** requests.
+For each critical trigger, branch, or load condition, run QAQ/RMI: map a
+positive request to its instruction and behavior; check a near-miss; reverse-map
+behavior to the intended request class; revise ambiguous or inconsistent
+mappings.
 
 ### 2. Decide whether a skill is justified
 
-Create a skill when it captures reusable domain knowledge, a repeatable technique, a meaningful workflow, a decision pattern, or authoritative reference material the agent would not reliably reproduce unaided.
-
-Do not create a skill for:
-
-- solutions intended for a single use only;
-- project-only conventions better kept in project instructions;
-- generic background knowledge;
-- purely mechanical rules better enforced deterministically.
+Keep reusable domain knowledge, techniques, workflows, decision patterns, or
+reference material the agent would not reliably reproduce unaided. Single-use
+solutions, project-only conventions, generic knowledge, and purely mechanical
+rules belong in other artifacts or deterministic enforcement.
 
 ### 3. Classify the skill
 
-Choose the narrowest type that explains its primary reusable value:
+Choose the narrowest type explaining its primary reusable value:
 
-- **Discipline** — broad practice with multiple decisions/gates; pressure-test it.
-- **Technique** — bounded repeatable method; test application and edges.
-- **Pattern** — reusable decision structure; test recognition and counterexamples.
-- **Reference** — authoritative knowledge; test retrieval, coverage, and application.
-- **Hybrid** — use only when one category would materially misrepresent the skill.
+- **Discipline**: broad practice with decisions/gates; pressure-test it.
+- **Technique**: bounded method; test application and edges.
+- **Pattern**: decision structure; test recognition and counterexamples.
+- **Reference**: authoritative knowledge; test retrieval, coverage, application.
+- **Hybrid**: only when one type materially misrepresents its value.
 
 ### 4. Establish RED evidence
 
-For a new skill or meaningful behavioral change, run a representative task without the candidate when possible; capture the failure/ambiguity/inefficiency; record rationalizations when relevant; and map each failure to a missing or weak instruction.
-
-For Discipline skills, combine pressures such as time, sunk cost, authority, fatigue, confidence, or speed bias. If baseline execution is unavailable, mark RED evidence `Needs Human Review`.
+For new skills or meaningful behavior changes, run a representative task without
+the candidate, or with the preserved previous version when revising. Record the
+actual failure, ambiguity, inefficiency, or rationalization; map it to the weak
+instruction. For Discipline skills, combine relevant time, sunk-cost, authority,
+fatigue, confidence, or speed pressures. If execution is genuinely unavailable,
+mark RED `NHR`; inconvenience is not missing capability.
 
 ### 5. Write minimal GREEN guidance
 
-Add only guidance required to prevent observed failures or satisfy mandatory requirements. Prefer explicit triggers/non-triggers, atomic actions, observable criteria, one clear default, failure→correction pairs, and measurable completion criteria. Avoid generic advice.
-
-For mechanically decidable SKILL-specific checks, prefer deterministic validation; align rules with the current specification or explicit local policy; separate spec failures from local-policy failures; run the validator when available or mark `Needs Human Review`.
+Add only guidance preventing observed failures or satisfying mandatory rules.
+Use explicit boundaries, atomic actions, observable conditions, one clear
+default, failure→correction pairs, and measurable completion criteria. For
+mechanically decidable skill checks, prefer deterministic validation; separate
+specification failures from local-policy failures. Run available validators;
+mark unavailable required checks `NHR`.
 
 ### 6. Apply progressive disclosure
 
-Keep activation-time guidance in `SKILL.md`. Move detailed methods/docs/examples to `references/`, deterministic operations to `scripts/`, static templates/assets to `assets/`, and evaluation cases/fixtures to `evals/` or a documented local eval location.
-
-For this skill, the documented local eval location is `scripts/evals/` because those fixtures live beside the parser, validator, CLI, and test harness.
-
-Use relative paths, state each resource's load/run condition, avoid deep reference chains, and split or extract material when `SKILL.md` approaches roughly 500 lines or 5,000 tokens.
+Keep core constraints here. Move detailed methods/examples to `references/`,
+operations to `scripts/`, templates/assets to `assets/`, and cases/fixtures to
+`evals/` or the documented local location. Use relative paths, explicit load/run
+conditions, and shallow reference chains. Extract detail as context grows.
 
 ### 7. Match instruction form to failure
 
-Use the form that fits the observed failure:
+- **Rule skipped under pressure** → prohibition, red flag, rationalization
+  counter.
+- **Wrong output shape** → positive output contract or template.
+- **Required element omitted** → required structural field or slot.
+- **Conditional behavior** → conditional keyed to an observable predicate.
 
-- **Rule skipped under pressure** → explicit prohibition, red flag, or rationalization counter.
-- **Output has the wrong shape** → positive output contract or template.
-- **Required element is omitted** → required structural field or slot.
-- **Behavior depends on a condition** → explicit conditional keyed to an observable predicate.
-
-Do not add stronger wording by default; use test evidence.
-
-#### Match the form to the failure — evidence and rules
-
-The four bullets above are the summary; the rest of this step is the evidence behind each pairing and the rules that hold whichever form you pick. It does not override the bullets — still lead with test evidence, and still do not escalate wording by default.
-
-Before writing guidance, classify the baseline failure. The form that bulletproofs one failure type measurably backfires on another.
-
-| Baseline failure | Right form | Wrong form |
-|---|---|---|
-| Skips/violates a rule under pressure (knows better, does it anyway) | Prohibition + rationalization table + red flags | Soft guidance ("prefer...", "consider...") |
-| Complies, but output has the wrong shape (bloated prompt, buried verdict, restated spec) | Positive recipe or contract: state what the output IS — its parts, in order | Prohibition list ("don't restate", "never narrate") |
-| Omits a required element from something they already produce | Structural: REQUIRED field or slot in the template they fill in | Prose reminders near the template |
-| Behavior should depend on a condition | Conditional keyed to an observable predicate ("if the brief exists, reference it") | Unconditional rule + exemption clauses |
-
-**Why prohibitions backfire on shaping problems:** under a competing incentive ("make the prompt self-contained"), agents negotiate with "don't X". In head-to-head wording tests on dispatch-prompt guidance, the prohibition arm produced clearly more of the unwanted content than the recipe arm (fully separated distributions), and trended worse than even the no-guidance control — micro-test your own case rather than assuming, but never reach for the prohibition by default. A recipe leaves nothing to negotiate: the output matches the stated shape or it doesn't.
-
-**Rules for whichever form you pick:**
-
-- **No nuance clauses.** "Don't X unless it matters" reopens the negotiation — appending a single nuance clause to a winning recipe degraded it from consistent to noisy in the same wording tests. Express a real exception as its own conditional on an observable predicate.
-- **Exemption clauses don't scope.** "This limit doesn't apply to code blocks" still suppresses code blocks. If part of the output must be exempt, restructure so the rule can't reach it.
+Do not strengthen wording by default. Express exceptions as observable
+conditions; scope limits to the affected field. For shaping failures, exemption
+wording, or experiment claims, load
+[instruction-form guidance](references/instruction-form.md). Findings from other
+agents/tasks are hypotheses to test locally.
 
 ### 8. Test
 
-Select tests according to skill type and risk.
+Cover activation positives, realistic near-misses, edges, regressions, resource
+paths, scripts/tools, and applicable safety/destructive operations. Use multiple
+realistic phrasings for trigger optimization. Select tests by class and risk:
 
-At minimum, cover positive activation, realistic near-misses, edge cases, regressions, referenced paths/files, scripts/tools when present, and safety/destructive operations when applicable.
-
-For output-quality and behavioral eval design, load `references/evaluating-skill-output.md`. For Discipline pressure tests, classification-specific RED/GREEN/REFACTOR suites, reference retrieval/application checks, resource discovery, or regression evidence, load `references/testing-skills-with-subagents.md`. For this skill's deterministic parser, validator, prompt, and CLI tests, use `scripts/README.md`.
-
-For trigger optimization, test multiple realistic phrasings.
+- Output-quality/behavioral eval design: load
+  [evaluating skill output](references/evaluating-skill-output.md).
+- Class-specific RED/GREEN/REFACTOR, pressure/edge, retrieval/application,
+  resource discovery, or regression: load
+  [testing skills with subagents](references/testing-skills-with-subagents.md).
+- This package's deterministic parser/validator/prompt/CLI tests: execute via
+  [scripts/README.md](scripts/README.md). They do not prove agent behavior.
 
 ### 9. Validate
 
-Before deployment, verify:
+Apply [the testing checklist](references/SKILL-testing-checklist.md) as the
+final deployment gate. Verify frontmatter/specification, scope/description
+alignment, activation boundaries, prevention of evidenced RED failures,
+regressions, resource paths, fresh command results, and proportionate
+authorization, backup, validation, and rollback controls. State limitations and
+unvalidated commands.
 
-- YAML frontmatter parses;
-- mandatory specification constraints pass;
-- description matches actual scope;
-- positive and near-miss activation cases are tested;
-- the original RED failure is prevented when RED evidence exists;
-- fixed failures do not regress;
-- referenced files and paths exist;
-- scripts/commands were run in a representative environment or are marked unvalidated;
-- destructive or high-impact changes require authorization, backup/snapshot where practical, validation, and rollback;
-- known limitations and `Needs Human Review` items are explicit.
-
-Run `SKILL-testing-checklist.md` for final validation. Treat checklist-only requirements as local policy when they exceed the current specification.
+Record behavioral results as `PASS`, `AMBER`, `FAIL`, `NHR`, or justified `N/A`.
+Required unresolved `AMBER`, `FAIL`, or `NHR` blocks `deploy`. Checklist
+additions beyond the specification are local policy, not universal format
+constraints.
 
 ### 10. Auto-optimize
 
-Only for requested optimization/remediation/revision/implementation. Audit-only requests report fixes without silent revision. If score <96 or any blocking gate remains, apply the smallest justified fixes, rerun supported checks, then rescore and re-evaluate blockers. Stop after at most 3 iterations or earlier for no improvement, repeated failure, missing authorization/context/tooling/evidence, unsafe/conflicting requirements, unresolved spec conflict, or required human judgment.
+Run only for requested optimization/remediation/revision/implementation.
+Audit-only requests report fixes without silent revision. Before scoring, load
+[quality criteria](references/best-practices-evaluations.md) and
+[audit scoring](references/audit-scoring.md); record applicability, evidence,
+deductions, and normalized score. The 96-point threshold is local audit policy.
+For a requested per-file package review, also use the
+[file review rubric](references/file-review-rubric.md): inventory every owned
+resource, apply its role-specific contract, and report each score separately.
+Honor a stricter user threshold; “over 96” requires at least 97 per file.
 
-## Merge Rules
+If score <96 or a blocker remains, apply minimal justified fixes, rerun checks,
+then rescore and re-evaluate blockers. Stop after at most 3 iterations, or
+earlier for no improvement, repeated failure, missing authorization, context,
+tooling, or evidence; unsafe/conflicting requirements, unresolved specification
+conflict, or required human judgment. A high score never clears a blocker.
+Finish with one recommendation (`deploy`, `revise`, `split`, `merge`,
+`deprecate`, or `hold`) and supporting evidence/limitations.
 
-Same purpose+scope -> merge. Same purpose+different domain -> separate/shared base. Partial overlap -> extract shared content/preserve specialized value. Deprecate only after preserving unique content. Resolve contradictions first. Different tools -> justified default plus useful alternatives. Different triggers -> preserve boundaries or split. Retain narrow skills when domain-specific value remains.
+## Creating and merging
 
-Precedence: `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable skill/project/domain requirements > audit policy > best-practice defaults > examples/legacy material`
+For new skills, use a matching lowercase hyphenated directory and concise
+intent/trigger description. Add only needed resources and representative evals
+before expanding documentation. Validate structure and a real activation task.
+In A Team repositories, register in `CLAUDE.md`, `AGENTS.md`, and
+`skills/using-a-team/SKILL.md`; elsewhere follow documented runtime
+registration. Do not assume paths, quoting conventions, asset-size limits, or
+validator commands.
 
-Tested behavior is evidence, never authority over mandatory requirements. Users may customize optional behavior, never safety/spec. Never merge unresolved contradictions, silently change activation scope, or claim safety without evidence.
+Merge same purpose+scope. Separate distinct domains or extract a shared base.
+For partial overlap, preserve specialized value while extracting shared content.
+Resolve contradictions before merging; preserve unique content before
+deprecating. Choose a justified tool default with useful conditional
+alternatives. Preserve trigger boundaries or split; retain narrow skills with
+domain-specific value.
 
-## Scaffolding a new skill
+For evaluation claims: specification governs compliance; user requirements
+govern requested scope; project/domain rules govern local policy; audit policy
+governs scoring. Defaults/examples cannot override these sources. Follow the
+host instruction hierarchy during execution. Tested behavior is evidence, not
+permission to waive requirements or label a specification deviation compliant.
+Never silently expand activation or claim safety without evidence.
 
-When creating a new skill:
+## References and common failures
 
-1. Choose a lowercase hyphenated directory name that matches `name`.
-2. Create `SKILL.md`.
-3. Write a concise description focused on user intent and trigger conditions.
-4. Add only supporting directories the skill actually needs.
-5. Add representative evals before expanding documentation.
-6. Validate structure and behavior before deployment.
-7. If the target repository uses A Team skill registration, add it to `CLAUDE.md`, `AGENTS.md`, and `skills/using-a-team/SKILL.md`.
-8. If the target runtime has another documented registration mechanism, follow that local policy instead.
-9. Test it: give an agent a task that should trigger the skill, verify they use it correctly.
+Use [references/index.md](references/index.md) first; it owns detailed routing.
+For Codex listing/installation without a dedicated installer, load
+[Codex skill installation](references/codex-skill-installation.md). Load only
+task-relevant specialist references.
 
-Do not assume a particular repository path, runtime registration mechanism, quoting style, asset-size limit, or validator command unless the target environment documents it.
-
-## Common failures
-
-Correct these patterns:
-
-- vague or workflow-stuffed descriptions → focus on concrete intent, artifacts, and boundaries;
-- generic-knowledge drafts → ground them in real tasks, artifacts, or observed failures;
-- bloated activation context → relocate optional detail behind explicit load conditions;
-- prose-only mechanical rules → use deterministic SKILL-specific validation;
-- client conventions presented as universal → label them local policy;
-- unrun tests, assumed paths, or assumed tools → mark `Needs Human Review` or unvalidated.
-
-## References
-
-Use `references/index.md` as the **first lookup point** for the `writing-skills` reference set.
-
-Keep detailed routing rules in `references/index.md`; it is the source of truth for reference load conditions and conflict handling.
-
-At minimum:
-
-- use `references/specification.md` for mandatory Agent Skills format/compliance claims;
-- use `references/SKILL-testing-checklist.md` as the final validation/deployment gate;
-- use `references/codex-skill-installation.md` for Codex skill listing or installation requests when a dedicated installer skill/tool is not active;
-- load only the specialist references selected by `references/index.md`.
+Correct vague/workflow-stuffed descriptions with concrete intent and boundaries;
+ground generic drafts in observed tasks; relocate bloated context; validate
+mechanical checks deterministically; label client conventions local; mark unrun
+tests or unavailable paths/tools `NHR` or unvalidated.

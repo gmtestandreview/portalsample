@@ -6,15 +6,17 @@ relevant pressure or edge cases, retrieves reference material accurately, and
 preserves prior behavior after revision.
 
 Before planning or running output-quality evals, read and apply
-`../../references/evaluating-skill-output.md`. This suite provides the seeded
-case library and outcome conventions for the writing-skills package;
-`evaluating-skill-output.md` governs the broader workflow for designing prompts,
-running with-skill/without-skill comparisons, writing assertions, grading
-outputs, aggregating results, reviewing with a human, and iterating.
+[evaluating skill output](../../references/evaluating-skill-output.md). This
+suite provides the seeded case library and outcome conventions for the
+writing-skills package; `evaluating-skill-output.md` governs the broader
+workflow for designing prompts, running with-skill/without-skill comparisons,
+writing assertions, grading outputs, aggregating results, reviewing with a
+human, and iterating.
 
 This suite is deliberately separate from deterministic parser, validator,
 prompt, and CLI tests. Those tests prove implementation contracts. These evals
-prove agent behavior.
+test the behavior declared by each case when executed; these definitions alone
+prove no outcome.
 
 Executed campaign evidence belongs under `campaigns/`. Keep the activation,
 RED/GREEN, pressure, reference, and regression folders as reusable
@@ -43,6 +45,12 @@ evals/
 ## Two independent axes: lifecycle and outcome
 
 Do not confuse the evaluation lifecycle with the evaluation result.
+
+Also declare the independent measurement target from
+[the schema](evaluation-schema.md): selection, behavioral application, or
+runtime activation. Decision/output proxies cannot prove a client load event.
+Specify required cases and success criteria before execution; a failed run is
+not a reason to weaken a gate or make its case optional after the fact.
 
 ### Lifecycle
 
@@ -86,13 +94,13 @@ Classify the candidate before selecting cases.
 
 <!-- markdownlint-disable MD013 -->
 
-| Skill class | Primary behavioral evidence |
-| --- | --- |
-| **Discipline** | Activation, RED/GREEN, rationalization, conflicting goals, pressure, safety, escalation, regression |
-| **Technique** | Activation, RED/GREEN, correct/incorrect inputs, sequencing, partial environments, reproducibility, edge cases, regression |
-| **Pattern** | Activation, RED/GREEN, recognition, lookalikes, counterexamples, branch selection, false positives/negatives, regression |
-| **Reference** | Activation where relevant, retrieval/application baseline, resource discovery, retrieval accuracy, unsupported-query handling, coverage gaps, regression |
-| **Hybrid** | Combine only the case families needed for the actual behaviors present |
+| Skill class    | Primary behavioral evidence                                                                                                                              |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Discipline** | Activation, RED/GREEN, rationalization, conflicting goals, pressure, safety, escalation, regression                                                      |
+| **Technique**  | Activation, RED/GREEN, correct/incorrect inputs, sequencing, partial environments, reproducibility, edge cases, regression                               |
+| **Pattern**    | Activation, RED/GREEN, recognition, lookalikes, counterexamples, branch selection, false positives/negatives, regression                                 |
+| **Reference**  | Activation where relevant, retrieval/application baseline, resource discovery, retrieval accuracy, unsupported-query handling, coverage gaps, regression |
+| **Hybrid**     | Combine only the case families needed for the actual behaviors present                                                                                   |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -124,6 +132,7 @@ the decision. At minimum record:
 
 - the exact candidate version or revision;
 - the exact scenario/task presented to the agent;
+- the measurement target and evidence that can establish that target;
 - whether the candidate skill was available;
 - whether a supporting resource/file was named explicitly or had to be
   discovered from load conditions;

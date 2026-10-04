@@ -3,7 +3,9 @@
 Run these after every substantive behavioral fix. Passing the newly fixed case
 alone is not sufficient.
 
-Use the shared record format in `../evaluation-schema.md`.
+Use the [shared record format](../evaluation-schema.md). Preserve the failed
+case's predeclared measurement target and success criteria. Selection or
+application regressions do not establish a separate runtime-activation gate.
 
 ## REG-001 — Failed-case rerun after smallest-defect fix
 

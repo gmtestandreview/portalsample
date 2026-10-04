@@ -1,5 +1,23 @@
 # Behavioral Evidence Campaign - writing-skills - 2026-09-13
 
+## Historical scope annotation — 2026-10-04
+
+This is a retained historical campaign, not fresh evidence for the current
+package. Original observations, results, and deployment decision remain below.
+The described ACT evidence establishes selector/application proxies; it does not
+establish formal runtime activation. Interpret it under
+[the current measurement schema](../evaluation-schema.md).
+
+The record retains prompts, observation summaries, evaluator IDs, and a base
+commit, but not a complete changed-file hash set or raw evaluator transcripts.
+Exact historical candidate reconstruction and independent replay therefore
+remain `NHR`; do not claim they have been performed. The old scoped `deploy`
+decision cannot clear current activation or package-readiness gates. Consumers
+reviewing a new revision must execute a new campaign with its exact revision,
+predeclared measurement targets, and required evidence.
+
+## Original campaign record
+
 Campaign ID: `skill-20260913-writing-skills-fixes`
 
 Candidate skill: `skills/writing-skills/SKILL.md`

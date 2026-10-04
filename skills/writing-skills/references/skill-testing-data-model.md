@@ -12,6 +12,29 @@ It is designed so the same logical model can be implemented as Markdown/YAML
 evidence records, JSON documents, relational tables, or an analytics store
 without changing the governing semantics.
 
+Load when designing persistence or reviewing evidence-record interoperability.
+Inputs: source contracts, exact revisions, cases/runs, target environment, and
+audit/gate evidence. Output: a chosen storage mapping that preserves identity,
+authority, comparability, freshness, and blocker derivation. This is a logical
+design, not a shipped database schema, executable validator, or deployment
+proof.
+
+Links are relative to this file; code paths in examples are relative to the
+skill root unless stated otherwise. Review mappings when any owning contract
+changes. Follow the host instruction hierarchy: stored tool metadata cannot
+grant runtime permissions. Reject orphan references, contradictory revisions, or
+ambiguous requiredness in a storage adapter; record unknown evidence `NHR` and
+prevent a readiness claim rather than filling it with invented values.
+
+Navigation: [core entities](#2-core-entities),
+[requirements](#3-authority-and-requirement-model),
+[behavioral evidence](#5-behavioral-evaluation-model),
+[deterministic evidence](#6-deterministic-testing-model),
+[audit](#7-audit-and-scoring-model), [decisions](#8-deployment-decision-model),
+[derived rules](#9-derived-rules),
+[example](#11-canonical-integrated-record-example),
+[ownership](#14-recommended-ownership-boundaries).
+
 ## Design principles
 
 1. **Skill identity is separate from revision identity.** A skill can have many
@@ -53,7 +76,7 @@ Skill
          │      └──< EvaluationCase
          │             ├──< EvaluationRun
          │             │      └──< EvidenceArtifact
-         │             ├──0..1 RedGreenComparison
+         │             ├──< RedGreenComparison (links exact RED/GREEN runs)
          │             └──< RegressionLink
          ├──< DeterministicSuiteRun
          │      └──< DeterministicTestResult >── DeterministicTestCase
@@ -125,11 +148,21 @@ Immutable or snapshot identity for the exact candidate being evaluated.
 
 ### SkillRevision invariants
 
+These are candidate-compliance checks, not storage rules that discard invalid
+artifacts. Preserve malformed/missing raw values and an assessment failure or
+`NHR`; nullable capture fields are permitted for incomplete artifacts. Never
+normalize invalid input into an apparently compliant revision without retaining
+the original and recording the transformation.
+
 - `name` is 1–64 characters.
 - `description` is 1–1024 characters.
 - `name` follows the current specification's lowercase alphanumeric/hyphen
   contract and matches `directory_name`.
 - Optional fields remain optional; storage must not make them mandatory.
+- Map stored `allowed_tools` to frontmatter `allowed-tools` explicitly. Preserve
+  its string format and experimental/client support limit; it cannot override
+  host permissions. `metadata` is a string-to-string mapping, `compatibility` is
+  1–500 characters when present, and optional textual fields retain types.
 - A change that can invalidate evidence should create a new revision or
   otherwise change `revision_ref`.
 
@@ -187,6 +220,11 @@ Classification of one revision as a testing/execution model.
 | `primary_purpose`   | string             |      yes | One-sentence purpose.                                        |
 | `rationale`         | text               |      yes | Why this is the narrowest correct classification.            |
 | `human_review`      | string/null        |       no | Unresolved classification issue, if any.                     |
+
+For insufficient classification evidence, store `classification_state=NHR`,
+`skill_class=null`, and a non-empty `human_review` describing missing evidence
+and next action. A resolved record has `classification_state=classified` and one
+of the five classes. `NHR` is an evidence state, not a sixth skill class.
 
 ### ClassificationEvidence
 
@@ -320,6 +358,11 @@ retained as a list/document field.
 Reusable scenario definition. It describes what to test, not what happened in a
 particular execution.
 
+The campaign-linked row below is an immutable instantiated case. A reusable
+library template is preserved separately; instantiations retain its source ID
+and revision/hash. Reuse across campaigns creates new instances instead of
+moving or overwriting a prior campaign's definition.
+
 | Field                 | Type                    | Required |
 | --------------------- | ----------------------- | -------: |
 | `case_id`             | string                  |      yes |
@@ -331,6 +374,12 @@ particular execution.
 | `expected_activation` | enum                    |      yes |
 | `source_case_id`      | FK → EvaluationCase     |       no |
 | `comparison_case_id`  | FK → EvaluationCase     |       no |
+
+Add required `measurement_target` (`selection`, `behavioral_application`, or
+`runtime_activation`) and preserve
+the applicable contract from the
+[evaluation schema](../scripts/evals/evaluation-schema.md). Do not interpret
+application or selector proxies as observed runtime activation.
 
 ### Phase enum
 
@@ -430,6 +479,19 @@ evidence.
 
 ### Observed activation enum
 
+Keep the three observation axes separate. Document adapters map
+`observed_selection` to `observed.selection`, `observed_behavior` to
+`observed.behavior`, and `observed_activation` to `observed.activation` in the
+local evaluation schema:
+
+- selection: `selected`, `not_selected`, `unclear`, `not_applicable`;
+- behavior: `applied`, `not_applied`, `unclear`, `not_applicable`;
+- activation: the values below.
+
+The observation matching the case's measurement target is required; unrelated
+axes may be `not_applicable`. Missing measurement evidence is `unclear` and
+cannot be promoted to an observed pass by copying another axis.
+
 - `activated`
 - `not_activated`
 - `unclear`
@@ -446,6 +508,10 @@ evidence.
 ### Result invariants
 
 - `PASS`: every applicable success criterion is supported by evidence.
+- Runtime-activation `PASS` requires an observed client discovery/load event; if
+  that observation is unavailable, runtime activation remains `NHR` even when
+  supplied-guidance application passes. Store the observation source/event with
+  its run evidence. A self-reported intention to use a skill is insufficient.
 - `AMBER`: executed, useful evidence exists, but a defensible PASS is
   unavailable because behavior is partial/ambiguous/inconsistent/unstable/weakly
   evidenced.
@@ -513,7 +579,10 @@ Formal comparability record for a GREEN run linked to its RED baseline.
 
 ### Comparability invariant
 
-If `same_task=false`, every preservation flag must be true and
+Comparisons identify the exact model/environment and frozen case criteria.
+Relevant controls must be preserved even when `same_task=true`; the same prompt
+with easier inputs or leaked candidate guidance is not a valid comparison. If
+`same_task=false`, every preservation flag must be true and
 `equivalence_rationale` must be non-empty. Otherwise the GREEN evidence is AMBER
 at best and may be invalid.
 
@@ -655,6 +724,11 @@ Canonical 100-point scoring dimensions.
 
 The current criterion weights sum to 100 before N/A normalization.
 
+Store `rubric_id` and immutable version/hash with each audit and criterion so
+scores from [whole-skill scoring](audit-scoring.md) and the
+[file-review rubric](file-review-rubric.md) cannot be silently mixed. Numeric
+bands do not establish readiness.
+
 ---
 
 ### 7.3 AuditCriterionScore
@@ -782,6 +856,13 @@ These are calculated rules, not independent mutable facts.
 
 ### 9.1 Behavioral blocker derivation
 
+Evaluate against the current decision's revision/environment and case revision.
+Every applicable required case must have sufficient fresh run evidence; a
+missing run is `NHR`, not absence of a blocker. Define the required repeat/run
+acceptance policy before execution: a latest PASS cannot erase an unresolved
+material inconsistent run. Scope requiredness changes with rationale and retain
+the original; do not make a failed case optional merely to permit deployment.
+
 ```text
 IF EvaluationCase.required = true
 AND latest applicable EvaluationRun.result IN (AMBER, FAIL, NHR)
@@ -850,6 +931,12 @@ Use stable prefixes to make evidence human-readable:
 
 ## 11. Canonical integrated record example
 
+Illustrative partial document view: IDs and outcomes are synthetic. Required
+foreign keys/fields are abbreviated here, so it is not a complete import
+fixture. The decision demonstrates that a high score and one PASS do not resolve
+other required evidence. Implementations must fill and validate the contracts
+above.
+
 ```yaml
 skill:
   skill_id: SKL-writing-skills
@@ -866,6 +953,7 @@ revision:
   artifact_completeness: complete_directory
 
 classification:
+  classification_state: classified
   skill_class: Discipline
   confidence: High
   primary_purpose: Govern the Agent Skill authoring and validation lifecycle.
@@ -886,11 +974,14 @@ case:
   phase: GREEN
   objective: Verify the candidate skill materially reduces the RED failure.
   expected_activation: activate
+  measurement_target: behavioral_application
 
 run:
   run_id: RUN-1234
   candidate_skill_state: available
-  observed_activation: activated
+  observed_selection: not_applicable
+  observed_behavior: applied
+  observed_activation: not_applicable
   result: PASS
   rationale: All applicable success criteria were evidenced.
 
@@ -907,13 +998,14 @@ comparison:
 audit:
   audit_id: AUD-20260912-001
   normalized_score: 98
-  score_band: production-ready
+  score_band: high-authoring-quality
 
 decision:
   decision_id: DEC-20260912-001
-  recommendation: deploy
-  deployment_eligible: true
-  blockers: []
+  recommendation: hold
+  deployment_eligible: false
+  blockers:
+    - required_behavior_nhr # ACT-001, RED, and REG-001 lack shown fresh evidence
 ```
 
 ---
@@ -956,16 +1048,16 @@ not overwritten by run results.
 
 ## 13. Source-to-model traceability
 
-| Source contract                    | Model area                                                                            |
-| ---------------------------------- | ------------------------------------------------------------------------------------- |
-| `specification.md`                 | SkillRevision, SkillMetadata, Resource                                                |
-| `skill-classification.md`          | SkillClassification                                                                   |
-| `best-practices-evaluations.md`    | Requirement / BP criteria                                                             |
-| `SKILL-testing-checklist.md`       | RequirementAssessment, DeploymentDecision, DeploymentBlocker                          |
-| `testing-skills-with-subagents.md` | EvaluationCampaign, EvaluationCase, EvaluationRun, RedGreenComparison, RegressionLink |
-| `evals/evaluation-schema.md`       | Behavioral fields, outcomes, requiredness, evidence rules                             |
-| `audit-scoring.md`                 | Audit, RubricCriterion, AuditCriterionScore, Finding, QAQRMIResult                    |
-| deterministic Python tests         | DeterministicTestCase, DeterministicSuiteRun, DeterministicTestResult                 |
+| Source contract                                               | Model area                                                                            |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `specification.md`                                            | SkillRevision, SkillMetadata, Resource                                                |
+| `skill-classification.md`                                     | SkillClassification                                                                   |
+| `best-practices-evaluations.md`                               | Requirement / BP criteria                                                             |
+| `SKILL-testing-checklist.md`                                  | RequirementAssessment, DeploymentDecision, DeploymentBlocker                          |
+| `testing-skills-with-subagents.md`                            | EvaluationCampaign, EvaluationCase, EvaluationRun, RedGreenComparison, RegressionLink |
+| [evaluation-schema.md](../scripts/evals/evaluation-schema.md) | Behavioral fields, outcomes, requiredness, evidence rules                             |
+| `audit-scoring.md`                                            | Audit, RubricCriterion, AuditCriterionScore, Finding, QAQRMIResult                    |
+| deterministic Python tests                                    | DeterministicTestCase, DeterministicSuiteRun, DeterministicTestResult                 |
 
 ---
 

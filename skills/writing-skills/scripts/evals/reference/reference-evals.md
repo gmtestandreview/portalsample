@@ -4,7 +4,9 @@ These cases test retrieval accuracy, application, coverage honesty, and conflict
 handling. They are suitable for pure Reference skills and Reference branches
 inside Hybrid skills.
 
-Use the shared record format in `../evaluation-schema.md`.
+Use the [shared record format](../evaluation-schema.md). Declare requiredness
+and success criteria before execution. Observe retrieval/application and, where
+required, resource-access traces; these are not client activation telemetry.
 
 ## REF-001 — Supported retrieval plus application
 
@@ -92,7 +94,8 @@ evidence.
 If `{precedence_rule}` exists:
 
 - the agent identifies the conflict;
-- applies the documented precedence rule;
+- applies the documented precedence rule within the host instruction hierarchy,
+  distinguishing specification compliance from local policy and source advice;
 - preserves any material caveat.
 
 If no precedence rule exists:
@@ -110,8 +113,7 @@ Silently merging contradictory entries into a false statement is FAIL.
 
 ## REF-004 — Supporting-resource discovery without filename prompting
 
-**Applies to:** Reference and Hybrid skills that choose among supporting
-resources.
+**Applies to:** any skill class that chooses among supporting resources.
 
 **Objective:** verify that the agent can discover and load the correct
 supporting resource from the user task, skill instructions, and documented load
