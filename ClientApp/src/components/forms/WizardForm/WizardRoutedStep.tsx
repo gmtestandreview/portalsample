@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
-import type { FormikHelpers, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { isEqual } from 'lodash';
 import { SeverityLevel } from '@microsoft/applicationinsights-common';
@@ -178,10 +178,7 @@ const WizardRoutedStep = (
       ? navigate(`${baseUrl}${step.props.location}`, { replace: true })
       : navigate(`${url}${step.props.location}`);
 
-  const onSubmitStep = async (
-    values: FormikValues,
-    formikHelpers: FormikHelpers<FormikValues>
-  ) => {
+  const onSubmitStep = async (values: FormikValues) => {
     if (onSaveAndNext) {
       abortSignal();
       setErrorState({ kind: 'none' });
@@ -190,7 +187,6 @@ const WizardRoutedStep = (
         const result = await onSaveAndNext(
           values,
           isDirty,
-          formikHelpers,
           controllerRef.current?.signal
         );
         // Immutable update: replace the DTO at currentStepIndex with a new
@@ -227,21 +223,13 @@ const WizardRoutedStep = (
     }
   };
 
-  const onSaveAndExitStep = async (
-    values: FormikValues,
-    formikHelpers: FormikHelpers<FormikValues>
-  ) => {
+  const onSaveAndExitStep = async (values: FormikValues) => {
     if (onSaveAndExit) {
       abortSignal();
       setErrorState({ kind: 'none' });
       try {
         const isDirty = !isEqual(stepState.values, values);
-        await onSaveAndExit(
-          values,
-          isDirty,
-          formikHelpers,
-          controllerRef.current?.signal
-        );
+        await onSaveAndExit(values, isDirty, controllerRef.current?.signal);
         void navigate(locationAfterExit || '/');
       } catch (error) {
         const err = error as Error;

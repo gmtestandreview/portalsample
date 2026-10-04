@@ -17,7 +17,7 @@ import {
   type ContactFormStep,
   type GetAccountValuesDto,
 } from '../../../ClientApp/src/api/web-api-client';
-import { formikHelpers, stepStatuses } from './testFixtures';
+import { stepStatuses } from './testFixtures';
 
 const mocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn(),
@@ -155,12 +155,7 @@ describe('account and contact wizard prop factories', () => {
       )
     ).toBeUndefined();
 
-    await props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(values, true, abortSignal);
 
     expect(mocks.completeAccountDetails).toHaveBeenCalledWith(
       { formStep: values },
@@ -222,12 +217,7 @@ describe('account and contact wizard prop factories', () => {
       )
     ).toBeUndefined();
 
-    await props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(values, true, abortSignal);
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
       'Updated org',
       '',
@@ -242,12 +232,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.completeAccountDetails.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,
     });
-    await props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
@@ -257,12 +242,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.completeAccountDetails.mockRejectedValueOnce({
       status: HttpStatusCode.InternalServerError,
     });
-    await props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your organisation.',
@@ -314,12 +294,7 @@ describe('account and contact wizard prop factories', () => {
       )
     ).toBeUndefined();
 
-    const saveResult = props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    const saveResult = props.onSaveAndNext?.(values, true, abortSignal);
     expect(saveResult).toBeInstanceOf(Promise);
     await saveResult;
 
@@ -347,12 +322,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.completeBranchAdd.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,
     });
-    await props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: expect.stringContaining('already exists'),
@@ -362,12 +332,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.completeBranchAdd.mockRejectedValueOnce({
       status: HttpStatusCode.InternalServerError,
     });
-    await props.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<GetAccountValuesDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setBranchModalNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your branch/location details.',
@@ -430,18 +395,8 @@ describe('account and contact wizard prop factories', () => {
       )
     ).toBeUndefined();
 
-    await createProps.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<ContactFormStep>(),
-      abortSignal
-    );
-    await updateProps.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<ContactFormStep>(),
-      abortSignal
-    );
+    await createProps.onSaveAndNext?.(values, true, abortSignal);
+    await updateProps.onSaveAndNext?.(values, true, abortSignal);
 
     expect(accountContext.setContactCompleted).toHaveBeenCalledTimes(2);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
@@ -453,12 +408,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.saveContactDetails.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,
     });
-    await createProps.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<ContactFormStep>(),
-      abortSignal
-    );
+    await createProps.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message:
@@ -469,12 +419,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.saveContactDetails.mockRejectedValueOnce({
       status: HttpStatusCode.InternalServerError,
     });
-    await updateProps.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<ContactFormStep>(),
-      abortSignal
-    );
+    await updateProps.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
@@ -484,12 +429,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.saveContactDetails.mockRejectedValueOnce({
       status: HttpStatusCode.InternalServerError,
     });
-    await createProps.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<ContactFormStep>(),
-      abortSignal
-    );
+    await createProps.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message: 'There was an error saving your contact details.',
@@ -499,12 +439,7 @@ describe('account and contact wizard prop factories', () => {
     mocks.saveContactDetails.mockRejectedValueOnce({
       status: HttpStatusCode.PreconditionFailed,
     });
-    await updateProps.onSaveAndNext?.(
-      values,
-      true,
-      formikHelpers<ContactFormStep>(),
-      abortSignal
-    );
+    await updateProps.onSaveAndNext?.(values, true, abortSignal);
     expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
       expect.objectContaining({
         message:
@@ -552,45 +487,33 @@ describe('account and contact wizard prop factories', () => {
     await expect(createAccount.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your organisation and contact details.'
     );
-    await expect(
-      createAccount.onSaveAndNext?.(
-        {},
-        false,
-        formikHelpers<GetAccountValuesDto>()
-      )
-    ).rejects.toThrow(
+    await expect(createAccount.onSaveAndNext?.({}, false)).rejects.toThrow(
       'There was an error saving your organisation and contact details.'
     );
     await expect(updateAccount.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your organisation details.'
     );
-    await expect(
-      updateAccount.onSaveAndNext?.(
-        {},
-        false,
-        formikHelpers<GetAccountValuesDto>()
-      )
-    ).rejects.toThrow('There was an error saving your organisation details.');
+    await expect(updateAccount.onSaveAndNext?.({}, false)).rejects.toThrow(
+      'There was an error saving your organisation details.'
+    );
     await expect(branch.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your organisation and contact details.'
     );
-    await expect(
-      branch.onSaveAndNext?.({}, false, formikHelpers<GetAccountValuesDto>())
-    ).rejects.toThrow(
+    await expect(branch.onSaveAndNext?.({}, false)).rejects.toThrow(
       'There was an error saving your branch/location details.'
     );
     await expect(createContact.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your contact details.'
     );
-    await expect(
-      createContact.onSaveAndNext?.({}, false, formikHelpers<ContactFormStep>())
-    ).rejects.toThrow('There was an error saving your contact details.');
+    await expect(createContact.onSaveAndNext?.({}, false)).rejects.toThrow(
+      'There was an error saving your contact details.'
+    );
     await expect(updateContact.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your contact details.'
     );
-    await expect(
-      updateContact.onSaveAndNext?.({}, false, formikHelpers<ContactFormStep>())
-    ).rejects.toThrow('There was an error saving your contact details.');
+    await expect(updateContact.onSaveAndNext?.({}, false)).rejects.toThrow(
+      'There was an error saving your contact details.'
+    );
   });
 
   it('handles optional account context and organisation values', async () => {
@@ -609,7 +532,6 @@ describe('account and contact wizard prop factories', () => {
       accountContext,
       vi.fn()
     );
-    const helpers = formikHelpers<GetAccountValuesDto>();
 
     await expect(
       createProps.onSaveAndNext?.(
@@ -618,8 +540,7 @@ describe('account and contact wizard prop factories', () => {
           businessOrTradingName: undefined,
           branchOrLocationName: undefined,
         },
-        true,
-        helpers
+        true
       )
     ).resolves.toBeUndefined();
 
@@ -629,8 +550,7 @@ describe('account and contact wizard prop factories', () => {
           id: 99,
           name: undefined,
         },
-        true,
-        helpers
+        true
       )
     ).resolves.toBeUndefined();
     expect(accountContext.setOrganisationAndBranch).not.toHaveBeenCalled();
@@ -641,8 +561,7 @@ describe('account and contact wizard prop factories', () => {
           name: 'Non-default branch',
           isDefaultOrganisation: false,
         },
-        true,
-        helpers
+        true
       )
     ).resolves.toBeUndefined();
     expect(accountContext.setDefaultOrganisationId).not.toHaveBeenCalled();
@@ -655,8 +574,7 @@ describe('account and contact wizard prop factories', () => {
           businessOrTradingName: undefined,
           branchOrLocationName: undefined,
         },
-        true,
-        helpers
+        true
       )
     ).resolves.toBeUndefined();
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
@@ -680,7 +598,6 @@ describe('account and contact wizard prop factories', () => {
       accountContext,
       1
     );
-    const helpers = formikHelpers<GetAccountValuesDto>();
 
     await createProps.onSaveAndNext?.(
       {
@@ -688,8 +605,7 @@ describe('account and contact wizard prop factories', () => {
         businessOrTradingName: undefined,
         branchOrLocationName: undefined,
       },
-      true,
-      helpers
+      true
     );
     await updateProps.onSaveAndNext?.(
       {
@@ -698,8 +614,7 @@ describe('account and contact wizard prop factories', () => {
         businessOrTradingName: 'Updated trading name',
         branchOrLocationName: 'Updated branch',
       },
-      true,
-      helpers
+      true
     );
 
     expect(accountContext.setOrganisationAndBranch).toHaveBeenCalledWith(
@@ -739,29 +654,17 @@ describe('account and contact wizard prop factories', () => {
 
     mocks.completeAccountDetails.mockRejectedValueOnce(null);
     await expect(
-      updateProps.onSaveAndNext?.(
-        { id: 1, name: 'Organisation' },
-        true,
-        formikHelpers<GetAccountValuesDto>()
-      )
+      updateProps.onSaveAndNext?.({ id: 1, name: 'Organisation' }, true)
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
     await expect(
-      createContact.onSaveAndNext?.(
-        { contact: {} },
-        true,
-        formikHelpers<ContactFormStep>()
-      )
+      createContact.onSaveAndNext?.({ contact: {} }, true)
     ).resolves.toBeUndefined();
 
     mocks.saveContactDetails.mockRejectedValueOnce(null);
     await expect(
-      updateContact.onSaveAndNext?.(
-        { contact: {} },
-        true,
-        formikHelpers<ContactFormStep>()
-      )
+      updateContact.onSaveAndNext?.({ contact: {} }, true)
     ).resolves.toBeUndefined();
   });
 });

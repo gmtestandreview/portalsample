@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -96,12 +95,7 @@ const completeAccountDetails =
     accountContext: AccountContextState | null,
     onShowBranchSelector: () => void
   ) =>
-  async (
-    values: AccountDto,
-    _isDirty: boolean,
-    _: FormikHelpers<AccountDto>,
-    abortSignal?: AbortSignal
-  ) => {
+  async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();

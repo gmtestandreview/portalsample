@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -54,7 +53,6 @@ const saveStep =
   async (
     values: InstrumentAndRequestStep,
     _isDirty: boolean,
-    _: FormikHelpers<InstrumentAndRequestStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {

@@ -11,11 +11,9 @@ import { ErrorType } from '../../../../ClientApp/src/components/forms/WizardForm
 import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
 import {
   YesNo,
-  type InstrumentAndRequestStep,
-  type OrganisationAndContact,
   type RequestForQuoteSummary,
 } from '../../../../ClientApp/src/api/web-api-client';
-import { formikHelpers, stepStatuses } from '../testFixtures';
+import { stepStatuses } from '../testFixtures';
 
 const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn(),
@@ -127,7 +125,6 @@ describe('request for quote wizard prop factories', () => {
         ),
       },
       true,
-      formikHelpers<InstrumentAndRequestStep>(),
       abortSignal
     );
 
@@ -148,7 +145,6 @@ describe('request for quote wizard prop factories', () => {
     await props.onSaveAndExit?.(
       { hasSerialNumber: YesNo.No },
       false,
-      formikHelpers<InstrumentAndRequestStep>(),
       abortSignal
     );
     expect(mocks.saveInstrumentAndRequest).toHaveBeenLastCalledWith(
@@ -182,7 +178,6 @@ describe('request for quote wizard prop factories', () => {
           'not a date' as unknown as Date,
       },
       true,
-      formikHelpers<InstrumentAndRequestStep>(),
       abortSignal
     );
 
@@ -242,7 +237,6 @@ describe('request for quote wizard prop factories', () => {
     await props.onSaveAndExit?.(
       { isPrincipalContact: YesNo.No },
       true,
-      formikHelpers<OrganisationAndContact>(),
       abortSignal
     );
 
@@ -294,12 +288,7 @@ describe('request for quote wizard prop factories', () => {
       '/not-found'
     );
 
-    await props.onSaveAndNext?.(
-      summary,
-      true,
-      formikHelpers<RequestForQuoteSummary>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(summary, true, abortSignal);
     expect(mocks.submit).toHaveBeenCalledWith(
       'APP-3',
       {
@@ -312,12 +301,7 @@ describe('request for quote wizard prop factories', () => {
 
     mocks.submit.mockRejectedValueOnce(new Error('submit failed'));
     await expect(
-      props.onSaveAndNext?.(
-        summary,
-        true,
-        formikHelpers<RequestForQuoteSummary>(),
-        abortSignal
-      )
+      props.onSaveAndNext?.(summary, true, abortSignal)
     ).resolves.toBeUndefined();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'failoed to submit form',
@@ -372,12 +356,7 @@ describe('request for quote wizard prop factories', () => {
       '/not-found'
     );
 
-    await props.onSaveAndNext?.(
-      summary,
-      false,
-      formikHelpers<RequestForQuoteSummary>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(summary, false, abortSignal);
     expect(mocks.submit).toHaveBeenCalledWith(
       'APP-4',
       {
@@ -426,42 +405,26 @@ describe('request for quote wizard prop factories', () => {
     await expect(instrumentProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      instrumentProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<InstrumentAndRequestStep>()
-      )
-    ).rejects.toThrow('error');
+    await expect(instrumentProps.onSaveAndExit?.({}, false)).rejects.toThrow(
+      'error'
+    );
     await expect(organisationProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      organisationProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<OrganisationAndContact>()
-      )
-    ).rejects.toThrow('error');
+    await expect(organisationProps.onSaveAndExit?.({}, false)).rejects.toThrow(
+      'error'
+    );
     await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      summaryProps.onSaveAndNext?.(
-        {},
-        false,
-        formikHelpers<RequestForQuoteSummary>()
-      )
-    ).rejects.toThrow('error');
+    await expect(summaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
+      'error'
+    );
     await expect(viewSummaryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      viewSummaryProps.onSaveAndNext?.(
-        {},
-        false,
-        formikHelpers<RequestForQuoteSummary>()
-      )
-    ).rejects.toThrow('error');
+    await expect(viewSummaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
+      'error'
+    );
   });
 });
