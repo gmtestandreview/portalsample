@@ -7,6 +7,7 @@ import RadioButton from '../RadioButton';
 import type { RadioButtonGroupProps } from './types';
 import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const RadioButtonGroup = <T,>(
   props: Readonly<RadioButtonGroupProps<T> & FieldHookConfig<T>>
@@ -73,7 +74,7 @@ const RadioButtonGroup = <T,>(
         )}
         {inlineHelp && inlineHelpTitle && (
           <Details
-            id={helpId}
+            {...omitUndefined({ id: helpId })}
             title={inlineHelpTitle}
             inlineHelp={inlineHelp}
           />
@@ -84,8 +85,7 @@ const RadioButtonGroup = <T,>(
               <Col key={`${option.value}`}>
                 <RadioButton
                   name={name}
-                  onChange={onChange}
-                  subFormField={subFormField}
+                  {...omitUndefined({ onChange, subFormField })}
                   {...option}
                   {...rest}
                 />
@@ -97,8 +97,7 @@ const RadioButtonGroup = <T,>(
             <RadioButton
               key={`${option.value}`}
               name={name}
-              onChange={onChange}
-              subFormField={subFormField}
+              {...omitUndefined({ onChange, subFormField })}
               {...option}
               {...rest}
             />

@@ -3,11 +3,11 @@ import '../../styles/media-print.scss';
 import { Button, Card, Col, Row } from 'react-bootstrap';
 
 export interface MailingLabelProps {
-  quotationIdNum?: string;
-  nmiTestOfficerName?: string;
-  nmiFacilityName?: string;
-  nmiFacilityAddress?: string;
-  showPrintOrCopy?: boolean;
+  quotationIdNum?: string | undefined;
+  nmiTestOfficerName?: string | undefined;
+  nmiFacilityName?: string | undefined;
+  nmiFacilityAddress?: string | undefined;
+  showPrintOrCopy?: boolean | undefined;
 }
 
 /**

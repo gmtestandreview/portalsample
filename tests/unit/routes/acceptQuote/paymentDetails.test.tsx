@@ -33,8 +33,8 @@ vi.mock('@/api/web-api-client', async (importOriginal) => {
   return {
     ...actual,
     AcceptQuoteClient: vi.fn(function (this: Record<string, unknown>) {
-      this.setAuthToken = vi.fn();
-      this.getPaymentDetails = mockGetPaymentDetails;
+      this['setAuthToken'] = vi.fn();
+      this['getPaymentDetails'] = mockGetPaymentDetails;
     }),
   };
 });

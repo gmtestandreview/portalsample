@@ -25,7 +25,6 @@ export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
 );
 
 Example.args = {
-  onAction: undefined,
   selectionMode: 'single',
 };
 

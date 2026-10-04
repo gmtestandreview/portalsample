@@ -4,6 +4,7 @@ import { Form, Formik } from 'formik';
 import type { FormikConfig, FormikValues } from 'formik';
 import { describe, expect, it, vi } from 'vitest';
 import CheckboxGroup from '@/components/Inputs/CheckboxGroup';
+import { defined } from '../../helpers/defined';
 
 interface FormikHarnessProps<TValues extends FormikValues> {
   readonly initialValues: TValues;
@@ -21,8 +22,8 @@ function FormikHarness<TValues extends FormikValues>({
   return (
     <Formik
       initialValues={initialValues}
-      initialTouched={initialTouched}
-      initialErrors={initialErrors}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
+      {...(initialErrors === undefined ? {} : { initialErrors })}
       onSubmit={async () => {}}
     >
       <Form>{children}</Form>
@@ -106,7 +107,12 @@ describe('CheckboxGroup', () => {
     expect(row).not.toBeNull();
     expect(within(row as HTMLElement).getAllByRole('checkbox')).toHaveLength(2);
 
-    await user.click(within(row as HTMLElement).getAllByRole('checkbox')[0]);
+    await user.click(
+      defined(
+        within(row as HTMLElement).getAllByRole('checkbox')[0],
+        'first checkbox'
+      )
+    );
 
     expect(onChange).toHaveBeenCalledTimes(1);
   });

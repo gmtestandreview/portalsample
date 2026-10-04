@@ -8,7 +8,7 @@ import type {
   DeliveryAndReturnStep,
   FormStepStatusDto,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { ErrorType } from '../../components/forms/WizardForm/types';
 import type {
   WizardFormStepValues,
@@ -30,10 +30,9 @@ const loadDeliveryAndReturn =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const deliveryAndReturn = await client.getDeliveryAndReturn(
         id,
@@ -58,16 +57,15 @@ const saveStep =
   ) =>
   async (
     values: DeliveryAndReturnStep,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<DeliveryAndReturnStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.saveDeliveryAndReturn(
         id,

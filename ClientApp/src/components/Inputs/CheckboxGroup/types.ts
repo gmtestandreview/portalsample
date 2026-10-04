@@ -12,7 +12,7 @@ export interface CheckboxGroupProps<T> {
   legend: string;
   id?: string;
   options: CheckboxOption<T>[];
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   displayHorizontally?: boolean;
   inlineHelp?: string;
   inlineHelpTitle?: string;

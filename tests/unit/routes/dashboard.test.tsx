@@ -4,6 +4,7 @@ import '@testing-library/jest-dom/vitest';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import type { AccountDetails } from '../../../ClientApp/src/authentication/accountContext';
+import { defined } from '../helpers/defined';
 
 // ── Hoisted mock functions (available inside vi.mock factories) ────────────────
 
@@ -426,7 +427,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
-    expect(mockGetDrafts.mock.calls[0][4]).toBe('Fluke');
+    expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
 
   // ── Test 3: Sets auth token before API call ────────────────────────────────
@@ -443,7 +444,7 @@ describe('Dashboard', () => {
     expect(mockGetDrafts).toHaveBeenCalled();
     const setTokenOrder = mockSetAuthToken.mock.invocationCallOrder[0];
     const getDraftsOrder = mockGetDrafts.mock.invocationCallOrder[0];
-    expect(setTokenOrder).toBeLessThan(getDraftsOrder);
+    expect(setTokenOrder).toBeLessThan(defined(getDraftsOrder));
   });
 
   // ── Test 4: NoRequests when API returns empty items ────────────────────────
@@ -542,7 +543,7 @@ describe('Dashboard', () => {
       expect(mockGetDrafts).toHaveBeenCalled();
     });
 
-    fireEvent.click(screen.getAllByTestId('pagination')[0]);
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
     await waitFor(() => {
       expect(mockSetUserProfile).toHaveBeenCalledWith({
@@ -696,7 +697,7 @@ describe('Dashboard', () => {
 
     fireEvent.click(screen.getByRole('tab', { name: 'Instrument/artefacts' }));
     await waitFor(() => expect(mockGetArtefacts).toHaveBeenCalled());
-    fireEvent.click(screen.getAllByTestId('pagination')[2]);
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[2]));
 
     expect(mockTrackGAEvent).toHaveBeenCalledWith('Instrument/pagechange');
     expect(scrollIntoView).toHaveBeenCalled();
@@ -813,14 +814,15 @@ describe('Dashboard', () => {
   });
 
   it('passes custom year and status filters and applies missing paging defaults', async () => {
+    const { filterCurrentPage: _filterCurrentPage, ...profileWithoutPaging } =
+      BASE_USER_PROFILE;
     mockAccountDetails = {
       ...BASE,
       userProfile: {
         testingCalibrationDashboard: {
-          ...BASE_USER_PROFILE,
+          ...profileWithoutPaging,
           filterYearType: '2025',
           filterStatusType: 'Open' as any,
-          filterCurrentPage: undefined,
         },
       },
     };
@@ -943,7 +945,7 @@ describe('Dashboard', () => {
     renderDashboard(Dashboard);
 
     fireEvent.click(await screen.findByRole('tab', { name: 'Requests' }));
-    fireEvent.click(screen.getAllByTestId('pagination')[0]);
+    fireEvent.click(defined(screen.getAllByTestId('pagination')[0]));
 
     expect(mockSetUserProfile).not.toHaveBeenCalled();
   });
@@ -1010,7 +1012,7 @@ describe('Dashboard', () => {
     );
 
     await waitFor(() => expect(mockGetDrafts).toHaveBeenCalled());
-    expect(mockGetDrafts.mock.calls[0][4]).toBe('Fluke');
+    expect(defined(mockGetDrafts.mock.calls[0])[4]).toBe('Fluke');
   });
 
   it('writes the branch reset once even when the saved profile identity changes', async () => {

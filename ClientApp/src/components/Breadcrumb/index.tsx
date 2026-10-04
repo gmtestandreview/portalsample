@@ -4,6 +4,7 @@ import {
   Breadcrumbs as AriaBreadcrumbs,
 } from 'react-aria-components/Breadcrumbs';
 import { Link as AriaLink } from 'react-aria-components/Link';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 /**
  * CustomBreadcrumb Component
@@ -65,9 +66,9 @@ const CustomBreadcrumb = ({
                 <span aria-current='page'>{breadcrumbItem.text}</span>
               ) : (
                 <AriaLink
-                  href={breadcrumbItem.to}
+                  {...omitUndefined({ href: breadcrumbItem.to })}
                   render={(props) => {
-                    if (!('href' in props)) {
+                    if (!('href' in props) || props.href === undefined) {
                       return <span {...props} />;
                     }
 

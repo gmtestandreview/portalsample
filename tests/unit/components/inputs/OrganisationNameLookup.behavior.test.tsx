@@ -43,7 +43,7 @@ const renderLookup = (
 describe('OrganisationNameLookup', () => {
   it('clears suggestions and hides the dropdown when optionsFieldName is undefined and input has 2+ characters', async () => {
     vi.useFakeTimers();
-    renderLookup({ optionsFieldName: undefined });
+    renderLookup();
 
     fireEvent.change(screen.getByRole('combobox'), { target: { value: 'ac' } });
 

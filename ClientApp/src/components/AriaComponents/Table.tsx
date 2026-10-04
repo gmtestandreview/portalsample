@@ -26,6 +26,7 @@ import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { Checkbox } from '../Inputs/AriaCheckbox/Checkbox';
 import { ProgressCircle } from './ProgressCircle';
 import { ChevronUp, ChevronDown, GripVertical, ChevronRight } from './NmiIcon';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './Table.css';
 
 export function Table(props: Readonly<TableProps>) {
@@ -93,7 +94,7 @@ export function TableHeader<T>({
           {selectionMode === 'multiple' && <Checkbox slot='selection' />}
         </AriaColumn>
       )}
-      <Collection items={columns}>{children}</Collection>
+      <Collection {...omitUndefined({ items: columns })}>{children}</Collection>
     </AriaTableHeader>
   );
 }
@@ -107,7 +108,7 @@ export function Row<T>({
   const { selectionBehavior, allowsDragging } = useTableOptions();
 
   return (
-    <AriaRow id={id} {...otherProps}>
+    <AriaRow {...omitUndefined({ id })} {...otherProps}>
       {allowsDragging && (
         <Cell>
           <Button slot='drag' className='drag-button'>
@@ -120,7 +121,7 @@ export function Row<T>({
           <Checkbox slot='selection' />
         </Cell>
       )}
-      <Collection items={columns}>{children}</Collection>
+      <Collection {...omitUndefined({ items: columns })}>{children}</Collection>
     </AriaRow>
   );
 }

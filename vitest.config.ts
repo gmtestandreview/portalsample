@@ -22,7 +22,8 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 // Handing the addon the Storybook project directly removes that overhead. No
 // other entry point sets VITEST_STORYBOOK, so `vitest`, `test:all`, `test:unit`
 // and `test:storybook` keep the aggregated workspace unchanged.
-const isStorybookAddonChild = process.env.VITEST_STORYBOOK === 'true';
+
+const isStorybookAddonChild = process.env['VITEST_STORYBOOK'] === 'true';
 
 const workspaceConfig = defineConfig({
   resolve: {

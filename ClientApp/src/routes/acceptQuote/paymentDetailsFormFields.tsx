@@ -279,7 +279,7 @@ const RhfInvoiceContact = () => {
 };
 
 interface PaymentDetailsFormFieldsProps {
-  quotationId?: string;
+  quotationId?: string | undefined;
 }
 
 const PaymentDetailsFormFields = ({

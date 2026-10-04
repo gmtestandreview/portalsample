@@ -8,7 +8,7 @@ import type {
   ContactFormStep,
   ValidationProblemDetails,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { HttpStatusCode } from '../../types';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
@@ -18,10 +18,9 @@ const getAccessToken = async (
   accounts: AccountInfo[],
   instance: IPublicClientApplication
 ) => {
-  const tokenResult = await instance.acquireTokenSilent({
-    ...tokenRequest,
-    account: accounts[0],
-  });
+  const tokenResult = await instance.acquireTokenSilent(
+    silentRequestFor(accounts[0])
+  );
 
   return tokenResult.accessToken;
 };

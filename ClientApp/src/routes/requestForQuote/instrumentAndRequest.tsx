@@ -16,7 +16,7 @@ import HidableField from '../../components/forms/HidableField';
 import SelectInput from '../../components/Inputs/SelectInput';
 import type { SelectInputOption } from '../../components/Inputs/SelectInput/types';
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import { prefixedPropertyOf } from '../../utils';
 import NumberInput from '../../components/Inputs/NumberInput';
@@ -94,10 +94,9 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
       try {
         if (measurementCategories === undefined && accounts.length > 0) {
           const client = new LookupClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const [result, artefactTypeResult] = await Promise.all([
             client.getLookup(CRMLookupTypes.TCPortalMeasurementCategory),
@@ -136,7 +135,7 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
       }
     };
     if (!isLoadingMeasurementCategories.current) {
-      loadMeasurementCategories();
+      void loadMeasurementCategories();
     }
     return () => {
       isLoadingMeasurementCategories.current = true;
@@ -165,14 +164,14 @@ const InstrumentAndRequest = (props: Readonly<InstrumentAndRequestProps>) => {
     event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setIsInstrumentOrArtefactTypeDisabled(false);
-    context.setFieldValue('instrumentOrArtefactType', '');
-    context.setFieldTouched('instrumentOrArtefactType', false);
+    void context.setFieldValue('instrumentOrArtefactType', '');
+    void context.setFieldTouched('instrumentOrArtefactType', false);
     if (event.target.value !== null && artefactTypes !== undefined) {
       setArtefactTypesSelected(
         getArtefactTypes(artefactTypes, event.target.value)
       );
       if (event.target.value === noMeasurementId.current) {
-        context.setFieldValue(
+        void context.setFieldValue(
           'instrumentOrArtefactType',
           noInstrumentId.current
         );

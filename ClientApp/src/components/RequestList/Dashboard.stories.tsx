@@ -8,6 +8,7 @@ import type { AccountContextState } from '../../authentication/accountContext';
 import RequestItem from './requestItem';
 import { DashboardItemStatus } from '../../routes/common/enums';
 import type { DashboardItemDto } from '../../api/web-api-client';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const noop = () => {};
 
@@ -150,7 +151,7 @@ const reportIssuedRequest: DashboardItemDto = {
 };
 
 const mockStateValue = {
-  isLoading: mockAccountContext.isLoading,
+  ...omitUndefined({ isLoading: mockAccountContext.isLoading }),
   details: mockAccountContext.details,
 };
 const mockDispatchValue = {
