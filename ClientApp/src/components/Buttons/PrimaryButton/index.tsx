@@ -1,6 +1,7 @@
 import { Button as AriaButton } from 'react-aria-components/Button';
 import type { ButtonHTMLAttributes, ComponentProps } from 'react';
 import { getButtonClassName } from '../buttonClassName';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 export type PrimaryButtonProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,
@@ -32,7 +33,7 @@ const PrimaryButton = ({
   return (
     <AriaButton
       {...buttonProps}
-      isDisabled={disabled}
+      {...omitUndefined({ isDisabled: disabled })}
       className={getButtonClassName(
         mode === 'dark' ? 'primary-dark' : 'primary',
         className

@@ -4,6 +4,7 @@ import { Col, Row, Container, Tab, Nav } from 'react-bootstrap';
 import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { PatternFormat } from 'react-number-format';
+import { omitUndefined } from '../../utils/omitUndefined';
 import Welcome from '../../components/Welcome';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
@@ -33,7 +34,7 @@ import type {
   ProblemDetails,
   StatusEnumDto,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import getUnexpectedErrorRoute from '../common/errorRoutes';
 import { HttpStatusCode } from '../../types';
@@ -110,11 +111,11 @@ interface FetchRequestsParams {
   sortOrder: string;
   currentPage: number;
   pageSize: number;
-  accountDetailsCrmGuid?: string;
-  filterSearchText?: string;
-  actualYear?: string;
-  actualStatus?: StatusEnumDto;
-  signal?: AbortSignal;
+  accountDetailsCrmGuid?: string | undefined;
+  filterSearchText?: string | undefined;
+  actualYear?: string | undefined;
+  actualStatus?: StatusEnumDto | undefined;
+  signal?: AbortSignal | undefined;
 }
 
 const fetchRequestsByTab = async ({
@@ -191,8 +192,7 @@ const checkAcceptedQuoteStatus = (
       const index = items.findIndex(
         (x) => x.referenceId === newlyAcceptedQuoteId
       );
-      const [updatedItem] = items.splice(index, 1);
-      items.unshift(updatedItem);
+      items.unshift(...items.splice(index, 1));
 
       // Non-null assertion required: property is typed nullable but guaranteed non-null here
       SessionStorageCache().setItem(
@@ -339,8 +339,8 @@ const Dashboard = () => {
   }, []);
 
   const saveUserProfile = (userProfile: UserProfile) => {
-    accountDispatch?.setUserProfile({
-      testingCalibrationDashboard: userProfile,
+    void accountDispatch?.setUserProfile({
+      testingCalibrationDashboard: omitUndefined(userProfile),
     });
   };
 
@@ -421,7 +421,9 @@ const Dashboard = () => {
       // profile.filterCurrentPage is assigned defaultFilter.filterCurrentPage a few lines
       // above, so it can never be nullish and the fallback here was unreachable.
       setCurrentPage(profile.filterCurrentPage);
-      accountDispatch?.setUserProfile({ testingCalibrationDashboard: profile });
+      void accountDispatch?.setUserProfile({
+        testingCalibrationDashboard: omitUndefined(profile),
+      });
       setInitialFilters(profile);
     }
   }, [
@@ -483,10 +485,9 @@ const Dashboard = () => {
           homeAccountId: accountHomeAccountId,
         });
         const client = new DashboardClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
         setIsModalOpen(
@@ -530,7 +531,7 @@ const Dashboard = () => {
         setReload(false);
       }
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
 
     return () => controller.abort();
   }, [
@@ -713,7 +714,11 @@ const Dashboard = () => {
         <Tab.Container
           id='dashboard-type'
           activeKey={activeTab}
-          onSelect={(key) => changeTab(key as DashboardTab)}
+          onSelect={(key) => {
+            const tab = key as DashboardTab;
+            changeTab(tab);
+            trackGAEvent(tab);
+          }}
         >
           <Nav
             as='ul'
@@ -727,10 +732,6 @@ const Dashboard = () => {
                   id={DashboardTab.Drafts}
                   eventKey={DashboardTab.Drafts}
                   className='px-3'
-                  onClick={() => {
-                    changeTab(DashboardTab.Drafts);
-                    trackGAEvent(DashboardTab.Drafts);
-                  }}
                 >
                   Drafts
                 </Nav.Link>
@@ -740,10 +741,6 @@ const Dashboard = () => {
                   id={DashboardTab.Requests}
                   eventKey={DashboardTab.Requests}
                   className='px-3'
-                  onClick={() => {
-                    changeTab(DashboardTab.Requests);
-                    trackGAEvent(DashboardTab.Requests);
-                  }}
                 >
                   Requests
                 </Nav.Link>
@@ -753,10 +750,6 @@ const Dashboard = () => {
                   id={DashboardTab.Instruments}
                   eventKey={DashboardTab.Instruments}
                   className='px-3'
-                  onClick={() => {
-                    changeTab(DashboardTab.Instruments);
-                    trackGAEvent(DashboardTab.Instruments);
-                  }}
                 >
                   Instrument/artefacts
                 </Nav.Link>

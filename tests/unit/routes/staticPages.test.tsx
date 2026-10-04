@@ -12,6 +12,7 @@ import SignIn from '../../../ClientApp/src/routes/sign-in';
 import Signout from '../../../ClientApp/src/routes/sign-out';
 import SignoutHelper from '../../../ClientApp/src/routes/sign-out-helper';
 import { clearTargetOrganisation } from '../../../ClientApp/src/storage/targetOrganisation';
+import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   useIsAuthenticated: vi.fn(),
@@ -196,7 +197,10 @@ describe('static route pages', () => {
       onRedirectNavigate: expect.any(Function),
     });
 
-    const options = mocks.logoutRedirect.mock.calls[0][0];
+    const options = defined(
+      mocks.logoutRedirect.mock.calls[0],
+      'logoutRedirect call'
+    )[0];
     expect(options.onRedirectNavigate()).toBe(true);
     expect(BrowserUtils.isInIframe).toHaveBeenCalled();
   });

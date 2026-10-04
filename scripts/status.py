@@ -8,8 +8,8 @@ Usage: python status.py
 Called from: Claude Code statusLine.command, platform SessionStart hooks.
 """
 import json
-import os
 import sys
+from contextlib import suppress
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -81,16 +81,15 @@ def is_watcher_running(base_dir: Path) -> bool:
         return False
 
 
-def main(base_dir: Path = None) -> None:
+def main(base_dir: Path | None = None) -> None:
     """Print a single status line. Always exits 0."""
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
         # Ensure UTF-8 output on Windows terminals
-        if hasattr(sys.stdout, "reconfigure"):
-            try:
-                sys.stdout.reconfigure(encoding="utf-8")
-            except Exception:
-                pass
+        reconfigure = getattr(sys.stdout, "reconfigure", None)
+        if callable(reconfigure):
+            with suppress(Exception):
+                reconfigure(encoding="utf-8")
 
     team_file = base_dir / "TEAM.md"
     init_md = base_dir.parent / "INIT.md"

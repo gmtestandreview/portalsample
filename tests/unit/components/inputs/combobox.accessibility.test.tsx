@@ -40,8 +40,12 @@ const renderWithFormik = (
   render(
     <Formik
       initialValues={initialValues}
-      initialErrors={fieldState.initialErrors}
-      initialTouched={fieldState.initialTouched}
+      {...(fieldState.initialErrors === undefined
+        ? {}
+        : { initialErrors: fieldState.initialErrors })}
+      {...(fieldState.initialTouched === undefined
+        ? {}
+        : { initialTouched: fieldState.initialTouched })}
       onSubmit={vi.fn()}
     >
       {children}

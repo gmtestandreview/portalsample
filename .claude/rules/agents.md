@@ -57,9 +57,4 @@ For complex decisions, use split role sub-agents in parallel:
 
 ## Context Window Management
 
-Avoid the last 20% of context window for:
-- Large-scale refactoring
-- Multi-file feature implementation
-- Complex debugging sessions
-
-Prefer fresh sub-agents for isolated tasks to preserve coordinator context.
+Keep coordinator context focused; prefer fresh sub-agents for isolated tasks.

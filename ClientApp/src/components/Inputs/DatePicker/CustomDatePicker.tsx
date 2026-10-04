@@ -5,6 +5,7 @@ import ReactDatePicker from 'react-datepicker';
 import SecondaryButton from '../../Buttons/SecondaryButton';
 import CustomDateInput from './CustomDateInput';
 import type { CustomDatePickerProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const DATE_INPUT_FORMAT = 'dd/MM/yyyy';
 
@@ -74,7 +75,7 @@ const CustomDatePicker = (
   };
 
   const handleOnChange = (date: Date | null) => {
-    dateOnChange(date);
+    void dateOnChange(date);
     setSelectedDate(date);
     handleCloseCalendar();
 
@@ -151,15 +152,17 @@ const CustomDatePicker = (
     <CustomDateInput
       calendarButtonTitle={calendarButtonTitle ?? ''}
       calendarOnKeyDown={handleCalendarButtonKeyDown}
-      containerClassName={containerClassName}
-      errorMessage={errorMessage}
-      inlineHelp={inlineHelp}
-      label={label}
+      {...omitUndefined({
+        containerClassName,
+        errorMessage,
+        inlineHelp,
+        label,
+        hasError,
+      })}
       name={name}
       handleCloseCalendar={handleCloseCalendar}
       handleEnsureCalendarClosed={handleEnsureCalendarClosed}
       handleOpenCalendar={handleOpenCalendar}
-      hasError={hasError}
       forwardedControlRef={customInputControlRef}
       forwardedInlineHelpRef={customInputInlineHelpRef}
       forwardedFeedbackRef={customInputFeedbackRef}
@@ -174,13 +177,17 @@ const CustomDatePicker = (
         calendarClassName={`custom-date-picker-calendar ${showCalendarInvalid ? 'custom-calendar-focus' : ''}`}
         customInput={CustomInput}
         dateFormat={DATE_INPUT_FORMAT}
-        disabled={disabled}
+        {...omitUndefined({
+          disabled,
+          maxDate,
+          minDate,
+          readOnly,
+          startDate,
+        })}
         // eslint-disable-next-line @eslint-react/purity -- "today" semantics; owned by Child Plan B
         highlightDates={[new Date()]}
         locale={enAU}
         name={name}
-        maxDate={maxDate}
-        minDate={minDate}
         onBlur={handleOnBlur}
         onChange={handleOnChange}
         onClickOutside={handleCloseCalendar}
@@ -191,10 +198,8 @@ const CustomDatePicker = (
         placeholderText={placeholder ?? ''}
         popperModifiers={[offSetModifier as never]}
         preventOpenOnFocus
-        readOnly={readOnly}
         ref={datePickerRef as any}
         selected={selectedDate}
-        startDate={startDate}
         strictParsing
         showPopperArrow={false}
       >

@@ -33,6 +33,7 @@ import {
 } from '../../../authentication/hooks';
 import { env } from '../../../env';
 import AppLogger from '../../../instrumentation/AppLogger';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 interface StepState<T extends FormikValues> {
   values: InitialValue<T>;
@@ -124,12 +125,12 @@ const WizardRoutedStep = (
   }, [loadStepValues]);
 
   useEffect(() => {
-    loadData();
+    void loadData();
   }, [loadData]);
 
   useEffect(() => {
     if (errorState.kind === 'concurrency') {
-      loadData();
+      void loadData();
     }
   }, [errorState.kind, loadData]);
 
@@ -199,12 +200,11 @@ const WizardRoutedStep = (
           status: FormStepStatus.Completed,
         };
         if (nextStep) {
-          goToStep(nextStep, result?.baseUrl);
+          void goToStep(nextStep, result?.baseUrl);
         } else {
-          navigate(locationOnCompletion);
+          void navigate(locationOnCompletion);
         }
       } catch (error) {
-        const _err = error as Error;
         AppLogger.error('Could not submit form step.', error as Error, {
           stepIndex: currentStepIndex,
         });
@@ -242,7 +242,7 @@ const WizardRoutedStep = (
           formikHelpers,
           controllerRef.current?.signal
         );
-        navigate(locationAfterExit || '/');
+        void navigate(locationAfterExit || '/');
       } catch (error) {
         const err = error as Error;
         AppLogger.error('Could not save form step.', err, {
@@ -265,7 +265,7 @@ const WizardRoutedStep = (
         );
       }
     } else {
-      navigate(locationAfterExit || '/');
+      void navigate(locationAfterExit || '/');
     }
   };
 
@@ -282,7 +282,7 @@ const WizardRoutedStep = (
       globalThis.location.replace(env.EXTERNAL_REDIRECT_URL);
       return;
     }
-    navigate(discard?.locationOnCancel || discardLocation || '/');
+    void navigate(discard?.locationOnCancel || discardLocation || '/');
   };
 
   if (errorState.kind === 'redirect') {
@@ -315,7 +315,7 @@ const WizardRoutedStep = (
     ) {
       return (
         <Navigate
-          to={`${url}${allSteps[firstIncompleteStepIndex].props.location}`}
+          to={`${url}${allSteps[firstIncompleteStepIndex]?.props.location}`}
         />
       );
     }
@@ -325,20 +325,22 @@ const WizardRoutedStep = (
     <FormikForm<FormikValues>
       initialValues={stepState.values}
       onSubmit={onSubmitStep}
-      validateHard={validateHard}
-      validateSoft={validateSoft}
       isLoading={isLoading}
       promptPath={`${url}${location}`}
-      hidingFields={hidingFields}
       onSaveAndExit={onSaveAndExitStep}
-      bannerTitle={bannerTitle}
-      bannerRefTitle={bannerRefTitle}
-      bannerSubTitle={bannerSubTitle}
-      canSaveDraft={canSaveDraft}
-      showGoToDashboardButton={showGoToDashboardButton}
       showBanner={showBanner || showBanner === undefined}
-      discard={discard}
-      isSummaryPage={isSummaryPage}
+      {...omitUndefined({
+        validateHard,
+        validateSoft,
+        hidingFields,
+        bannerTitle,
+        bannerRefTitle,
+        bannerSubTitle,
+        canSaveDraft,
+        showGoToDashboardButton,
+        discard,
+        isSummaryPage,
+      })}
     >
       {(formik) => (
         <Container fluid id='main' role='main' className='px-0' tabIndex={-1}>
@@ -350,7 +352,7 @@ const WizardRoutedStep = (
                   activeStep={currentStepIndex}
                   steps={allSteps.map((s, i) => ({
                     completed:
-                      stepStatuses[i].status === FormStepStatus.Completed,
+                      stepStatuses[i]?.status === FormStepStatus.Completed,
                     path: `${url}${s.props.location}`,
                     title: s.props.title,
                   }))}
@@ -377,15 +379,16 @@ const WizardRoutedStep = (
                   </p>
                 )}
                 <ErrorSummary
-                  serverErrors={
-                    errorState.kind === 'serverError' ||
-                    errorState.kind === 'wafViolation' ||
-                    errorState.kind === 'concurrency'
-                      ? errorState.details
-                      : undefined
-                  }
+                  {...omitUndefined({
+                    serverErrors:
+                      errorState.kind === 'serverError' ||
+                      errorState.kind === 'wafViolation' ||
+                      errorState.kind === 'concurrency'
+                        ? errorState.details
+                        : undefined,
+                    disableLinkedError: isSummaryPage,
+                  })}
                   prefixToRemove='formStep.'
-                  disableLinkedError={isSummaryPage}
                   isWafViolation={errorState.kind === 'wafViolation'}
                 />
                 <Form
@@ -398,7 +401,7 @@ const WizardRoutedStep = (
                     <PreviousStepButton
                       currentStepIndex={currentStepIndex}
                       steps={allSteps.slice()}
-                      title={previousButtonTitle}
+                      {...omitUndefined({ title: previousButtonTitle })}
                       url={url}
                       className='me-md-auto order-2 order-md-0'
                     />
@@ -417,9 +420,11 @@ const WizardRoutedStep = (
                       <NextStepButton
                         currentStepIndex={currentStepIndex}
                         steps={allSteps.slice()}
-                        title={nextButtonTitle}
-                        finalStepTitle={lastStepNextButtonTitle}
-                        finalStepConfirmation={confirmationOnSubmission}
+                        {...omitUndefined({
+                          title: nextButtonTitle,
+                          finalStepTitle: lastStepNextButtonTitle,
+                          finalStepConfirmation: confirmationOnSubmission,
+                        })}
                         className='ms-md-auto'
                       />
                     )}

@@ -13,7 +13,7 @@ import type { CustomBreadcrumbItem } from '../../components/Breadcrumb';
 import HeaderIntroText from '../../components/HeaderIntroText';
 import { DashboardClient } from '../../api/web-api-client';
 import type { PagedListOfInstrumentArtefactDto } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { handleReportFileError } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 import ReportList from './reportList';
@@ -25,7 +25,6 @@ const InstrMeasurementReport = () => {
   const [reload, setReload] = useState(false);
   const [measurementReportData, setMeasurementReportData] =
     useState<PagedListOfInstrumentArtefactDto>();
-  const [_fileError, setFileError] = useState(false);
   const accountContext = useAccountState();
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,10 +42,9 @@ const InstrMeasurementReport = () => {
       try {
         AppLogger.verbose('MeasurementReport.getReportList', { Id: id });
         const client = new DashboardClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         const details =
@@ -59,7 +57,6 @@ const InstrMeasurementReport = () => {
         setMeasurementReportData(details);
       } catch (e) {
         handleReportFileError();
-        setFileError(true);
         setIsLoading(false);
         AppLogger.error('Failed to get Measurement report data', e as Error, {
           Id: id,
@@ -76,7 +73,7 @@ const InstrMeasurementReport = () => {
         }
       }
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
   }, [
     accountContext,
     crmGuid,

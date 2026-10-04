@@ -13,12 +13,16 @@ import TextInput from '../../components/Inputs/TextInput';
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
 import HidableField from '../../components/forms/HidableField';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
 import PaymentDetailsFormikBridge from './paymentDetailsFormikBridge';
 
 const getName = prefixedPropertyOf<PaymentDetailsStep>('paymentDetails');
+
+function getNameForUse(name: keyof PaymentDetailsStep): string {
+  return getName(name);
+}
 
 const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
   const { isSummary, id } = props;
@@ -28,18 +32,13 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
     AcceptQuotePreInfoDto | undefined
   >();
 
-  function getNameForUse(name: keyof PaymentDetailsStep): string {
-    return getName(name);
-  }
-
   const getAcceptQuotePreInfo = async () => {
     try {
       AppLogger.verbose('PaymentDetails.getAcceptQuotePreInfo', { Id: id });
       const acceptQuoteClient = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
       const paymentDetails = await acceptQuoteClient.getPaymentDetails(id!);
@@ -55,7 +54,7 @@ const PaymentDetails = (props: Readonly<PaymentDetailsProps>) => {
       await getAcceptQuotePreInfo();
       setIsLoading(false);
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

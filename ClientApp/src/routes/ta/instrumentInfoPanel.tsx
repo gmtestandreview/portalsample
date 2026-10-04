@@ -3,7 +3,7 @@ import { Alert } from 'react-bootstrap';
 import { useMsal } from '@azure/msal-react';
 import InTextLink from '../../components/InTextLink';
 import { LookupClient } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { isEmptyGuid, isValidGUID } from '../common/helperFunctions';
 import BlockUISpinner from '../../components/BlockUISpinner';
 
@@ -47,17 +47,16 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
     const setAuthTokenAsync = async () => {
       setIsDataLoading(true);
       const client = new LookupClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const infoPanelContent = await client.getInfoPanelContent(
         selectedInstrumentTypeId,
         selectedInstrumentCategoryId
       );
-      setResourceLinks(infoPanelContent[0].requirementsLink);
-      setResourceText(infoPanelContent[0].requirements);
+      setResourceLinks(infoPanelContent[0]?.requirementsLink);
+      setResourceText(infoPanelContent[0]?.requirements);
       setIsDataLoading(false);
     };
 
@@ -67,7 +66,7 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
       !isEmptyGuid(selectedInstrumentCategoryId) &&
       !isEmptyGuid(selectedInstrumentTypeId)
     ) {
-      setAuthTokenAsync();
+      void setAuthTokenAsync();
     }
   }, [
     accounts,
@@ -95,8 +94,8 @@ const InstrumentInfoPanel: React.FC<InstrumentInfoPanelProps> = ({
           target='_blank'
           download
         >
-          Download credit check application form
-          <span className='visually-hidden'> Opens in a new tab</span>
+          Download credit check application form{' '}
+          <span className='visually-hidden'>Opens in a new tab</span>
         </InTextLink>
         <br />
         162KB PDF

@@ -8,6 +8,7 @@ import {
   type UserProfile,
 } from '@/components/SearchFilter/types';
 import { StatusEnumDto } from '@/api/web-api-client';
+import { defined } from '../helpers/defined';
 
 const accountDispatchMock = vi.hoisted(() => ({
   setUserProfile: vi.fn(),
@@ -283,7 +284,7 @@ describe('SearchFilter behavior', () => {
     expect(setCurrentPage).toHaveBeenCalledWith(1);
     expect(setInitialFilters).toHaveBeenCalledWith(expect.any(Function));
     expect(
-      setInitialFilters.mock.calls[0][0]({
+      defined(setInitialFilters.mock.calls[0], 'setInitialFilters call')[0]({
         ...defaultFilters,
         filterCurrentPage: 4,
       })

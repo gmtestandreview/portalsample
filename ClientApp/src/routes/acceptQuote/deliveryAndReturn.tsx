@@ -18,7 +18,7 @@ import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetai
 import AddressLookup from '../../components/Inputs/AddressLookup';
 import NumberInput from '../../components/Inputs/NumberInput';
 import BlockUISpinner from '../../components/BlockUISpinner';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { useAccountState } from '../../authentication/hooks';
 import MailingLabel from '../../components/Utilities/mailingLabel';
 import AppLogger from '../../instrumentation/AppLogger';
@@ -96,10 +96,9 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
         });
         const acceptQuoteClient = new AcceptQuoteClient();
         const accountsClient = new AccountsClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
         accountsClient.setAuthToken(tokenResult.accessToken);
 
@@ -126,7 +125,7 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
       await getAcceptQuotePreInfo();
       setIsLoading(false);
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
   }, [homeAccountId, accounts, id, instance]);
 
   return (

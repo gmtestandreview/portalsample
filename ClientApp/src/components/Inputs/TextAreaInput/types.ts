@@ -11,5 +11,5 @@ export interface TextAreaInputProps {
   maxCharacters?: number;
   containerClassName?: string;
   className?: string;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
 }

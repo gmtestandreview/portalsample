@@ -126,19 +126,16 @@ export const emailSchema = (label: string, required = true) =>
 const abnWeights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
 
 export const isValidAbn = (value: string) => {
-  let sum = 0;
-
   if (value.length !== 11 || containsWhitespace(value)) {
     return false;
   }
 
-  for (let index = 0; index < abnWeights.length; index++) {
-    const weight = abnWeights[index];
+  const sum = abnWeights.reduce((total, weight, index) => {
     const digit =
       Number.parseInt(value.substring(index, index + 1), 10) -
       (index === 0 ? 1 : 0);
-    sum += weight * digit;
-  }
+    return total + weight * digit;
+  }, 0);
 
   return sum % 89 === 0;
 };

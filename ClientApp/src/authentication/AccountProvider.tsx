@@ -11,7 +11,7 @@ import setTargetOrganisation, {
 } from '../storage/targetOrganisation';
 import { AccountStateCtx, AccountDispatchCtx } from './accountContext';
 import type { AccountDetails } from './accountContext';
-import { tokenRequest } from './authConfig';
+import { silentRequestFor } from './silentRequest';
 import termsData from '../terms-config.json';
 import AppLogger from '../instrumentation/AppLogger';
 
@@ -82,7 +82,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   }, []);
 
   const setUserProfile = useCallback(
-    async (profile: UserProfileDto): Promise<boolean> => {
+    (profile: UserProfileDto): Promise<boolean> => {
       if (profile !== undefined) {
         setUserProfileDetails((prev) => ({ ...prev, ...profile }));
         setAccountDetails((prev) => {
@@ -90,7 +90,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
           return { ...prev, userProfile: { ...prev.userProfile, ...profile } };
         });
       }
-      return true;
+      return Promise.resolve(true);
     },
     []
   );
@@ -117,7 +117,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
     []
   );
 
-  const setOrganisation = useCallback(async (abn: string, name: string) => {
+  const setOrganisation = useCallback((abn: string, name: string) => {
     setTargetOrganisation({
       targetOrganisationAbn: abn,
       targetOrganisationName: name,
@@ -166,11 +166,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
   );
 
   const setOrganisationAndBranch = useCallback(
-    async (
-      organisationName: string,
-      tradingName: string,
-      branchName: string
-    ) => {
+    (organisationName: string, tradingName: string, branchName: string) => {
       setAccountDetails((prev) => {
         if (!prev) return prev;
         return {
@@ -189,10 +185,9 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
       if (accounts.length > 0 && userProfileDetails) {
         try {
           const client = new UsersClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           await client.setUserProfile(
             userProfileDetails?.firstName,
@@ -219,19 +214,17 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         }
       }
     };
-    saveUserProfile();
+    void saveUserProfile();
   }, [accounts, instance, userProfileDetails]);
 
   useEffect(() => {
-    const loadAccountDetails = async () => {
+    const loadAccountDetails = async (account: AccountInfo) => {
       setIsLoading(true);
-      const account = accounts[0];
       try {
         const client = new UsersClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(account)
+        );
         client.setAuthToken(tokenResult.accessToken);
         AppLogger.verbose('AccountProvider.loadAccountDetails', {
           homeAccountId: account.homeAccountId,
@@ -267,15 +260,15 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
         setIsLoading(false);
       }
     };
+    const [firstAccount] = accounts;
     if (inProgress === InteractionStatus.Logout) {
       setAccountDetails(null);
     } else if (
       inProgress === InteractionStatus.None &&
-      accounts.length > 0 &&
-      accounts[0]?.homeAccountId &&
-      accountDetails?.homeAccountId !== accounts[0]?.homeAccountId
+      firstAccount?.homeAccountId &&
+      accountDetails?.homeAccountId !== firstAccount.homeAccountId
     ) {
-      loadAccountDetails();
+      void loadAccountDetails(firstAccount);
     }
   }, [
     inProgress,

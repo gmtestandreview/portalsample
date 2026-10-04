@@ -1,13 +1,15 @@
 import process from 'node:process';
 import { defineConfig } from '@playwright/test';
 
+const isCi = Boolean(process.env['CI']);
+
 export default defineConfig({
   testDir: 'tests/api-contract',
   outputDir: 'reports/test-results/api-contract',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCi,
+  retries: isCi ? 2 : 0,
+  ...(isCi ? { workers: 1 } : {}),
   reporter: [
     [
       'html',

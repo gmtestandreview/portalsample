@@ -30,7 +30,10 @@ export const Example: Story = {
     result.source,
     /play: async \(\{ canvas \}: Readonly<Parameters<NonNullable<Story\['play'\]>>\[0\]>\) =>/u
   );
-  assert.equal(transformStory(result.source, 'Widget.stories.tsx').changes.length, 0);
+  assert.equal(
+    transformStory(result.source, 'Widget.stories.tsx').changes.length,
+    0
+  );
 });
 
 it('annotates a CSF2 (StoryFn) story function directly', () => {

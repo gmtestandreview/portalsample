@@ -53,12 +53,15 @@ export const auditLog = (log: string): LogAudit => {
     count: log.split(target).length - 1,
   })).filter(({ count }) => count > 0);
 
-  const verdict =
-    hits.length > 0
-      ? 'dirty'
-      : completed && truncatedBy.length === 0
-        ? 'clean'
-        : 'invalid';
+  let verdict: LogAudit['verdict'];
+
+  if (hits.length > 0) {
+    verdict = 'dirty';
+  } else if (completed && truncatedBy.length === 0) {
+    verdict = 'clean';
+  } else {
+    verdict = 'invalid';
+  }
 
   return { completed, truncatedBy, hits, verdict };
 };
@@ -68,8 +71,7 @@ export const formatReport = (audit: LogAudit, source: string): string => {
 
   if (!audit.completed) {
     lines.push(
-      '  no `Test Files` summary: the run did not reach its end-of-run phases,'
-    , 
+      '  no `Test Files` summary: the run did not reach its end-of-run phases,',
       '  so a zero-hit scan is not evidence that the diagnostics are gone.'
     );
   }

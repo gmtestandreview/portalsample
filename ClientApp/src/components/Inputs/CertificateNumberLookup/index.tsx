@@ -8,6 +8,7 @@ import type {
   LookupResponse,
 } from '../../../api/web-api-client';
 import SummaryDisplay from '../../SummaryDisplay';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 export interface CertificateNumberLookupProps {
   id?: string;
@@ -22,7 +23,7 @@ export interface CertificateNumberLookupProps {
   parentOptionsName?: string;
   matchType?: 'startsWith' | 'includes' | 'endsWith';
   maxResults?: number;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
 }
 
 const CertificateNumberLookup = (
@@ -160,10 +161,10 @@ const CertificateNumberLookup = (
     valueId: string,
     callback?: () => void
   ) => {
-    _fieldHelper.setValue(value);
-    _fieldHelper.setTouched(true);
-    _idFieldHelper.setValue(valueId);
-    _idFieldHelper.setTouched(true);
+    void _fieldHelper.setValue(value);
+    void _fieldHelper.setTouched(true);
+    void _idFieldHelper.setValue(valueId);
+    void _idFieldHelper.setTouched(true);
     setShowSuggestions(false);
     if (typeof callback === 'function') {
       callback();
@@ -183,11 +184,9 @@ const CertificateNumberLookup = (
       );
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (activeIndex >= 0 && activeIndex < filteredSuggestions.length) {
-        handleSelect(
-          filteredSuggestions[activeIndex].lookupName!,
-          filteredSuggestions[activeIndex].id!
-        );
+      const activeSuggestion = filteredSuggestions[activeIndex];
+      if (activeIndex >= 0 && activeSuggestion) {
+        handleSelect(activeSuggestion.lookupName!, activeSuggestion.id!);
       } else {
         handleSelect(inputValue, inputValue);
       }
@@ -224,7 +223,7 @@ const CertificateNumberLookup = (
             : ''}
         </div>
         <Form.Group
-          controlId={id}
+          {...omitUndefined({ controlId: id })}
           role='combobox'
           tabIndex={-1}
           aria-expanded={showSuggestions ? 'true' : 'false'}
@@ -246,14 +245,15 @@ const CertificateNumberLookup = (
             // onFocus={() => setShowSuggestions(true)}
             containerClassName='mb-0'
             className='search-box form-field'
-            aria-labelledby={
-              showSuggestions ? `${name}-autosuggest-options` : undefined
-            }
-            aria-describedby={
-              _meta.touched && _meta.error
-                ? `${id || name}-validation-msg`
-                : helpId || undefined
-            }
+            {...omitUndefined({
+              'aria-labelledby': showSuggestions
+                ? `${name}-autosuggest-options`
+                : undefined,
+              'aria-describedby':
+                _meta.touched && _meta.error
+                  ? `${id || name}-validation-msg`
+                  : helpId || undefined,
+            })}
           />
 
           {showSuggestions && filteredSuggestions.length > 0 && (

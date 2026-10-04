@@ -12,10 +12,7 @@ import {
   resetMsalMock,
   DEFAULT_ACCESS_TOKEN,
 } from '../../helpers/mockMsal';
-import type {
-  ClientMock,
-  ClientMethodMocks,
-} from '../../helpers/mockApiClient';
+import type { ClientMockOf } from '../../helpers/mockApiClient';
 import {
   NOT_FOUND_TEST_ID,
   renderWithRouter,
@@ -27,8 +24,15 @@ const mocks = vi.hoisted(() => ({
 }));
 
 const clients = vi.hoisted(() => ({
-  patternApproval: undefined as unknown as ClientMock<ClientMethodMocks>,
-  progress: undefined as unknown as ClientMock<ClientMethodMocks>,
+  patternApproval: undefined as unknown as ClientMockOf<
+    'getStepStatuses' | 'addDocuments'
+  >,
+  progress: undefined as unknown as ClientMockOf<
+    | 'getProgressUploadId'
+    | 'getProgress'
+    | 'deleteProgressStatistics'
+    | 'cancelFile'
+  >,
 }));
 
 /** Captures the props the wizard hands to the documents step, so its callbacks can be driven. */

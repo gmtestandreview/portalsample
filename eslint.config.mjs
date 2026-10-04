@@ -49,14 +49,19 @@ export default defineConfig(
   {
     name: 'nmi/typescript-parser',
     files: ['**/*.{ts,tsx}'],
-    extends: [tseslint.configs.base, tseslint.configs.eslintRecommended],
+    extends: [tseslint.configs.recommended],
     languageOptions: {
+      parser: tseslint.parser,
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: [
+            '.claude/skills/typescript-expert/scripts/tests/utility-types.test.ts',
+          ],
+        },
+        tsconfigRootDir: import.meta.dirname,
       },
     },
   },
-
   {
     name: 'nmi/react',
     files: ['**/*.{ts,tsx}'],
@@ -165,6 +170,15 @@ export default defineConfig(
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
+  {
+    // This standalone script uses native ESM syntax while the rest of the
+    // repository's .js surface remains CommonJS-compatible by default.
+    name: 'nmi/esm-script',
+    files: ['skills/writing-skills/scripts/render-graphs.js'],
+    languageOptions: {
+      sourceType: 'module',
     },
   },
 

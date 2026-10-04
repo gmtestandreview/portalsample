@@ -17,7 +17,7 @@ const waitForAppReady = async (page: Page) => {
 };
 
 Given(
-  'the user is on the pattern\\/type approval dashboard',
+  String.raw`the user is on the pattern\/type approval dashboard`,
   async ({ page }) => {
     await page.goto('/dashboard-ta');
     await waitForAppReady(page);
@@ -29,7 +29,7 @@ Given(
 );
 
 When(
-  'the applicant starts a new pattern\\/type approval application',
+  String.raw`the applicant starts a new pattern\/type approval application`,
   async ({ page }) => {
     await page
       .getByRole('link', { name: 'New application', exact: true })
@@ -38,7 +38,7 @@ When(
 );
 
 Then(
-  'the pattern\\/type approval pre-application guidance is displayed',
+  String.raw`the pattern\/type approval pre-application guidance is displayed`,
   async ({ page }) => {
     await expect(page).toHaveURL(/\/ta\/type-approval-create-pre$/);
     await expect(
@@ -82,6 +82,22 @@ When(
   'the applicant provides new-certificate application details:',
   async ({ page }, dataTable: DataTable) => {
     const values = dataTable.rowsHash();
+    const instrumentCategory = values['Instrument category'];
+    const instrumentType = values['Instrument type'];
+    const instrumentMake = values['Instrument make'];
+    const model = values['Model'];
+    const summary = values['Summary'];
+
+    if (
+      instrumentCategory === undefined ||
+      instrumentType === undefined ||
+      instrumentMake === undefined ||
+      model === undefined ||
+      summary === undefined
+    ) {
+      throw new Error('The type-approval details table is incomplete');
+    }
+
     await page
       .getByLabel('New Certificate of Approval (CoA)', { exact: true })
       .check();
@@ -89,16 +105,14 @@ When(
     await page
       .getByLabel('Select the category of your instrument')
       .selectOption({
-        label: values['Instrument category'],
+        label: instrumentCategory,
       });
     await page.getByLabel('Select the type of your instrument').selectOption({
-      label: values['Instrument type'],
+      label: instrumentType,
     });
-    await page
-      .getByLabel('Instrument make (optional)')
-      .fill(values['Instrument make']);
-    await page.getByLabel('Model (optional)').fill(values.Model);
-    await page.getByLabel('Summary of application').fill(values.Summary);
+    await page.getByLabel('Instrument make (optional)').fill(instrumentMake);
+    await page.getByLabel('Model (optional)').fill(model);
+    await page.getByLabel('Summary of application').fill(summary);
     await page.getByTestId('save-and-next-button').click();
   }
 );
@@ -144,7 +158,7 @@ Then(
 );
 
 When(
-  'the applicant returns to the pattern\\/type approval dashboard',
+  String.raw`the applicant returns to the pattern\/type approval dashboard`,
   async ({ page }) => {
     await page
       .getByRole('button', { name: 'Go to dashboard', exact: true })

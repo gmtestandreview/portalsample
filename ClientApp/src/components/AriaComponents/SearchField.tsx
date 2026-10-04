@@ -8,6 +8,7 @@ import {
 } from 'react-aria-components/SearchField';
 import { Label, FieldError, Description } from '../forms/AriaForm/Form';
 import { Search, X } from './NmiIcon';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './SearchField.css';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
@@ -28,7 +29,10 @@ export function SearchField({
     <AriaSearchField {...props}>
       {label && <Label>{label}</Label>}
       <Search size={18} />
-      <Input placeholder={placeholder} className='react-aria-Input inset' />
+      <Input
+        {...omitUndefined({ placeholder })}
+        className='react-aria-Input inset'
+      />
       <Button className='clear-button'>
         <X size={14} />
       </Button>

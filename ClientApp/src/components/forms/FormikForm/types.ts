@@ -43,7 +43,7 @@ export interface FormikFormProps<T extends FormikValues> {
   children?: ReactNode | ((bag: FormikProps<T>) => ReactNode);
   banner?: ReactNode;
   discard?: DiscardProps;
-  hidingFields?: Hideable<Partial<T>, Partial<T>>;
+  hidingFields?: Hideable<Partial<T>, Partial<T>> | undefined;
   onSaveAndExit?: (
     values: T,
     formikHelpers: FormikHelpers<T>
