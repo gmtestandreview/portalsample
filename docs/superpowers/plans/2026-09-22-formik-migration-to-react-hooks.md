@@ -14,6 +14,107 @@ the NMI (portal.measurement.gov.au) customer portal, a government
 metrology/accreditation service with no checkout/e-commerce feature. This
 section is the repo-grounded status for the migration actually undertaken.
 
+## Progress since 2026-09-29 (updated 2026-10-04)
+
+Branch `refactor/formik-removal-steps-1-2`. Not yet merged to `main`.
+
+<!-- markdownlint-disable MD013 -->
+
+| Item                                                          | Status               | Commit     |
+| ------------------------------------------------------------- | -------------------- | ---------- |
+| Outstanding action 1: `reportRecipient` behavior suite        | Done                 | `3004131b` |
+| Outstanding action 2: contracts, path helpers, resolver moved | Done                 | `3004131b` |
+| Outstanding action 2: `FormikHelpers` removed from callbacks  | Done                 | `b14e037f` |
+| Wave 1: standalone search filters (`filterMenu`, `paFilter`)  | Done                 | `5ac231da` |
+| Wave 1: Storybook/test harnesses                              | Deferred (see below) | —          |
+| Waves 2-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
+
+<!-- markdownlint-enable MD013 -->
+
+What landed:
+
+- Library-neutral form types live in `components/forms/types.ts`, path helpers
+  in `components/forms/formPath.ts`, and `saveAwareYupResolver.ts` sits in
+  `components/forms/`. `getIn`/`setIn`/`FormikErrors` imports are gone from the
+  shared utilities.
+- `FormikHelpers` was an unused `_` placeholder in all 16 route props files. It
+  was removed from `WizardStepProps` and `WizardRoutedStep`, so `abortSignal` is
+  now the third callback argument. The only remaining `FormikHelpers` references
+  are the `FormikForm` shell and `tests/unit/helpers/formik.tsx`, both replaced
+  in action 4.
+- `components/Inputs/RhfRadioButtonGroup` is the first RHF-native shared input,
+  built beside the legacy `RadioButtonGroup`. The legacy one stays until its
+  last Formik consumer moves.
+- `filterMenu.tsx` and `paFilterMenu.tsx` use `useForm` + `FormProvider`. The
+  `values` option replaces `enableReinitialize`;
+  `reset(initialFilters ?? defaultFilter)` replaces `resetForm`.
+- `storybookHarness.tsx` gained an additive `portal.rhf` parameter; the Formik
+  path is unchanged.
+
+Gates at the last full run (before the Wave 1 review fixes): `type-check` and
+`lint` clean; `test:unit:coverage` 190 files, 2,146 tests, 100% statements,
+branches, functions and lines. The Wave 1 files were re-run after the review
+fixes (35 tests, 100% coverage). Storybook interaction tests for the filter
+stories and `RhfRadioButtonGroup` passed (14). E2E was not run on this branch.
+The Storybook MCP server was unreachable (`ECONNREFUSED`), so only documented
+props of in-repo components were used.
+
+### Next
+
+Wave 2 (`appDocuments`, `appDetails`) needs RHF-native text, select, and
+attachment inputs first. Build each as `Rhf*` beside its legacy twin, with its
+own behavior tests and a story using `portal.rhf`.
+
+### Lessons learned
+
+From the earlier accept-quote work:
+
+- **Verify the "zero consumer changes" premise before building an adapter.**
+  Three inventory rounds showed ~30 files import `formik` directly, so a shim at
+  `FormikForm` is unreachable and the blast radius includes unrelated features
+  (the dashboard filter menus). Forking locally was the correct pivot.
+- **A wiring change and its consumer import swap are atomic.** They cannot be
+  merged separately, so verify against the full test baseline before committing.
+- **Tests that stub every Formik-bound child give no real assurance.** Write
+  behavior tests (real interaction, payload, reinitialization) before moving a
+  step. `reportRecipient` needed this first.
+- **Do not leave a second Formik-shaped API behind.** The `rhfCompat.tsx`
+  adapter was deleted; Formik and RHF components stay explicitly separate.
+
+From Waves 1-2 prep (this branch):
+
+- **Check whether a parameter is used before designing its replacement.**
+  `FormikHelpers` was never invoked, so removal beat a project-owned contract.
+- **Existing behavior tests are the safety net.** The filter-menu tests had no
+  Formik references, so they passed unchanged across the migration. Run them
+  green before editing and after.
+- **Harnesses follow their hosts.** Story and test harnesses wrapping
+  Formik-bound inputs or wizard shells can only move with those components. Add
+  an RHF option beside the Formik one when a new RHF story needs it.
+- **RHF differences to design for:**
+  - `fieldState.isTouched` is false after a submit attempt, so show errors on
+    `isTouched || formState.isSubmitted`.
+  - `values` deep-compares like `enableReinitialize`, so unsaved selections are
+    discarded if the saved value changes while open.
+  - Store the option's typed value (`field.onChange(option.value)`), not the
+    event string, so boolean and numeric options work.
+  - Attach `field.ref` to the first radio only, so error focus lands there.
+  - Type options explicitly rather than reusing the legacy index-signature type,
+    which silently accepted unsupported props such as option-level `onChange`.
+- **Test mechanics:** use `userEvent.tab()` to blur, not `element.focus()` /
+  `.blur()` (causes `act()` warnings); put the control that moves focus before
+  the field in the DOM. The repo holds 100% coverage, so add tests for
+  `descriptor`, `subFormField`, horizontal layout, and nullish branches.
+- **Tooling:**
+  - Keep line endings when scripting edits (`newline=''`), then run Prettier on
+    changed files.
+  - A Prettier pass over the docs reformatted an unrelated MDX file; revert
+    unrelated formatting before committing.
+  - This plan's filename once carried a hidden U+200E suffix, which broke path
+    lookups; it is renamed in the commit that records this status.
+  - Run the focused tests with `--reporter=default`, or piped output hides
+    warnings.
+
 ## Resolved target
 
 `ClientApp/src/routes/acceptQuote/paymentDetails.tsx` — the simplest of a
