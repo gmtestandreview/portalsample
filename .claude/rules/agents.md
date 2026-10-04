@@ -57,6 +57,4 @@ For complex decisions, use split role sub-agents in parallel:
 
 ## Context Window Management
 
-Follow the [context window guidance](performance.md#context-window-management).
-
-Prefer fresh sub-agents for isolated tasks to preserve coordinator context.
+Keep coordinator context focused; prefer fresh sub-agents for isolated tasks.
