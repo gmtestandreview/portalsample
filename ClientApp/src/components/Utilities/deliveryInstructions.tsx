@@ -1,7 +1,7 @@
 import { Col, Row } from 'react-bootstrap';
 
 interface Props {
-  deliveryInstructions?: string;
+  deliveryInstructions?: string | undefined;
 }
 
 const DeliveryInstructions = ({ deliveryInstructions }: Readonly<Props>) => (

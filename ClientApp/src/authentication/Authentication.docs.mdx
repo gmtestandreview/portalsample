@@ -11,6 +11,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | File | Responsibility |
 | --- | --- |
 | `authConfig.ts` | MSAL configuration, scopes, and token request setup |
+| `silentRequest.ts` | Builds the silent token request for an account, omitting `account` when none is signed in |
 | `accountContext.tsx` | Account state and dispatch contracts |
 | `AccountProvider.tsx` | Provider that loads and mutates authenticated user state |
 | `AuthenticatedElement.tsx` | Route guard wrapping `PreConditions`, MSAL auth template, and `ErrorBoundary` |

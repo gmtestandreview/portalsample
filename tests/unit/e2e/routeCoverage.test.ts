@@ -12,7 +12,7 @@ const appSource = fs.readFileSync(
 const declaredPaths = Array.from(
   appSource.matchAll(/<Route\s+path='([^']+)'/g),
   (match) => match[1]
-);
+).filter((routePath): routePath is string => routePath !== undefined);
 
 describe('Playwright-BDD route coverage manifest', () => {
   it('registers every route declared in App.tsx exactly once', () => {

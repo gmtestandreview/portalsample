@@ -22,7 +22,7 @@ import type { RequestForQuoteDetails } from '../../api/web-api-client';
 import ReportDetails from './reportDetails';
 import NMIContactDetails from './nMIContactDetails';
 import ViewMeasurementReport from '../../components/Utilities/ViewMeasurementReport';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { handleReportFileError } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -89,10 +89,9 @@ const MeasurementReport = () => {
       try {
         AppLogger.verbose('MeasurementReport.getReportDetails', { Id: id });
         const client = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const details = await client.getQuoteRequestDetailsByRefId(
           ApplicationType.QuoteAccept,
@@ -106,7 +105,7 @@ const MeasurementReport = () => {
         AppLogger.error('Failed to get Measurement report data', e as Error, {
           Id: id,
         });
-        navigate('/not-found');
+        void navigate('/not-found');
       }
     };
     const loadDataForDisplay = async () => {
@@ -119,7 +118,7 @@ const MeasurementReport = () => {
         }
       }
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
   }, [
     accountState,
     targetOrganisationAbn,

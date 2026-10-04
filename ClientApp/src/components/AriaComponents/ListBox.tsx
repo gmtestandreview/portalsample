@@ -13,6 +13,7 @@ import { composeRenderProps } from 'react-aria-components/composeRenderProps';
 import { Check } from './NmiIcon';
 import { Text } from './Content';
 import { ProgressCircle } from './ProgressCircle';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './ListBox.css';
 
 export function ListBox<T>({ children, ...props }: Readonly<ListBoxProps<T>>) {
@@ -24,7 +25,7 @@ export function ListBoxItem(props: Readonly<ListBoxItemProps>) {
     props.textValue ||
     (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <AriaListBoxItem {...props} textValue={textValue}>
+    <AriaListBoxItem {...props} {...omitUndefined({ textValue })}>
       {composeRenderProps(props.children, (children) =>
         typeof children === 'string' ? (
           <Text slot='label'>{children}</Text>
@@ -57,7 +58,11 @@ export function DropdownItem(props: Readonly<ListBoxItemProps>) {
     props.textValue ||
     (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <ListBoxItem {...props} textValue={textValue} className='dropdown-item'>
+    <ListBoxItem
+      {...props}
+      {...omitUndefined({ textValue })}
+      className='dropdown-item'
+    >
       {composeRenderProps(props.children, (children, { isSelected }) => (
         <>
           {isSelected && <Check />}

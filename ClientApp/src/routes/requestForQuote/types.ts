@@ -1,7 +1,7 @@
 export interface RequestForQuoteStepProps {
   id?: string;
   name?: string;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   [key: string]: unknown;
 }
 

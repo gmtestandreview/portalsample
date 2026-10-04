@@ -6,7 +6,7 @@ import {
   ApplicationType,
   QuoteClient,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import AppLogger from '../../../instrumentation/AppLogger';
 
@@ -22,10 +22,9 @@ const CreateAcceptQuote = () => {
         AppLogger.verbose('CreateAcceptQuote.createApplication', { Id: id });
         const client = new ApplicationClient();
         const quoteClient = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         quoteClient.setAuthToken(tokenResult.accessToken);
         const quoteData = await quoteClient.getQuoteRequestDetailsByRefId(
@@ -45,7 +44,7 @@ const CreateAcceptQuote = () => {
       }
     };
     if (!isSaving.current) {
-      createApplication();
+      void createApplication();
     }
     return () => {
       isSaving.current = true;

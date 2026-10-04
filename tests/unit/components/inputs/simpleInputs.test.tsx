@@ -29,8 +29,8 @@ function FormikHarness<TValues extends FormikValues>({
     <Formik
       enableReinitialize
       initialValues={initialValues}
-      initialTouched={initialTouched}
-      initialErrors={initialErrors}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
+      {...(initialErrors === undefined ? {} : { initialErrors })}
       onSubmit={onSubmit}
     >
       <Form>{children}</Form>
@@ -503,7 +503,6 @@ describe('simple Formik input components', () => {
           label='State'
           displayHorizontally
           addBlank
-          options={undefined}
         />
       </FormikHarness>
     );

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Extract a single version's section from CHANGELOG.md and print to stdout.
 Used by the release workflow to populate GitHub Release body.

@@ -16,7 +16,7 @@ import { useAccountState } from '../../authentication/hooks';
 import { getFormattedAddress } from '../common/helperFunctions';
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
 import AppLogger from '../../instrumentation/AppLogger';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 
 const getName = prefixedPropertyOf<ReportRecipientStep>('reportRecipient');
@@ -50,10 +50,9 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
           homeAccountId: account?.details?.homeAccountId,
         });
         const acceptQuoteClient = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
         const reportRecipient = await acceptQuoteClient.getReportRecipient(id!);
@@ -79,7 +78,7 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
       await getAcceptQuotePreInfo();
       setIsLoading(false);
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

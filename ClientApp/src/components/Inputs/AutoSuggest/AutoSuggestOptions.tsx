@@ -1,6 +1,7 @@
 import { ListBox } from 'react-aria-components/ComboBox';
 import AutoSuggestOption from './AutoSuggestOption';
 import type { AutoSuggestOptionsProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 function AutoSuggestOptions<T>(props: Readonly<AutoSuggestOptionsProps<T>>) {
   const { id, options, selectedOptionId } = props;
@@ -11,15 +12,14 @@ function AutoSuggestOptions<T>(props: Readonly<AutoSuggestOptionsProps<T>>) {
   // element to preserve it - announcing both, one after the other.
   return (
     <ListBox
-      id={id}
+      {...omitUndefined({ id, 'aria-label': props['aria-label'] })}
       className='suggestion-options'
-      aria-label={props['aria-label']}
     >
       {options?.map((opt, index) => (
         <AutoSuggestOption
           key={opt.id}
           id={opt.id}
-          selected={selectedOptionId}
+          {...omitUndefined({ selected: selectedOptionId })}
           value={opt.value}
           displayText={opt.displayText}
           ariaLabel={`${opt.displayText} (${index + 1} of ${options.length})`}

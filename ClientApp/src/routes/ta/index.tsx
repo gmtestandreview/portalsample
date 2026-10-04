@@ -14,7 +14,7 @@ import {
   RequestForPatternApprovalClient,
   type UploadProgress,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import type { AccountDetails } from '../../authentication/accountContext';
 import AppLogger from '../../instrumentation/AppLogger';
@@ -26,14 +26,9 @@ import SupportingDocuments from './supportingDocuments';
 import supportingDocumentsProps from './supportingDocumentsProps';
 import organisationAndContactProps from './organisationAndContactProps';
 import OrganisationAndContact from './organisationAndContact';
+import { pollUploadProgress } from './pollUploadProgress';
 
 const bannerTitle = 'Pattern/type approval - Application';
-
-/**
- * Backoff between failed progress polls. Without it a persistently failing endpoint turns the
- * retry path into a tight loop that pegs a core and hammers the failing service.
- */
-const PROGRESS_RETRY_DELAY_MS = 2000;
 
 const ApplicationForTypeApproval = () => {
   const { accounts, instance } = useMsal();
@@ -73,10 +68,9 @@ const ApplicationForTypeApproval = () => {
     const loadApplicationSteps = async () => {
       if (!statuses && accounts.length > 0) {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         try {
           const result = await client.getStepStatuses(id!);
@@ -85,12 +79,12 @@ const ApplicationForTypeApproval = () => {
           AppLogger.error('Failed to load application steps', error as Error, {
             Id: id,
           });
-          navigate('/not-found');
+          void navigate('/not-found');
         }
       }
     };
     if (!isLoading.current) {
-      loadApplicationSteps();
+      void loadApplicationSteps();
     }
     return () => {
       isLoading.current = true;
@@ -110,45 +104,18 @@ const ApplicationForTypeApproval = () => {
     async (uploadId: string) => {
       const controller = new AbortController();
       abortRef.current = controller;
-      let lastPercent = -1;
       const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
+      client.setAuthToken(tokenResult.accessToken);
+      await pollUploadProgress({
+        client,
+        uploadId,
+        signal: controller.signal,
+        onProgress: setProgress,
+        onFinished: () => setUploading(false),
       });
-      while (!controller.signal.aborted) {
-        try {
-          client.setAuthToken(tokenResult.accessToken);
-
-          const data = await client.getProgress(
-            uploadId,
-            lastPercent,
-            controller.signal
-          );
-          setProgress(data);
-          lastPercent = data.percent!;
-
-          if (
-            data.status === 'Completed' ||
-            data.status === 'CompletedWithErrors'
-          ) {
-            setUploading(false);
-            client.deleteProgressStatistics(uploadId).catch((error) => {
-              AppLogger.error(
-                'Failed to delete progress statistics',
-                error as Error,
-                { uploadId }
-              );
-            });
-            break;
-          }
-        } catch {
-          if (controller.signal.aborted) break;
-          await new Promise((resolve) => {
-            setTimeout(resolve, PROGRESS_RETRY_DELAY_MS);
-          });
-        }
-      }
     },
     [accounts, instance]
   );
@@ -157,10 +124,9 @@ const ApplicationForTypeApproval = () => {
     if (!uploadIdRef.current) return;
     try {
       const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.cancelFile(uploadIdRef.current, fileName);
     } catch {
@@ -179,7 +145,7 @@ const ApplicationForTypeApproval = () => {
       const uploadId = await clientProgress.getProgressUploadId();
       uploadIdRef.current = uploadId;
       if (uploadIdRef.current) {
-        startLongPolling(uploadIdRef.current);
+        void startLongPolling(uploadIdRef.current);
       }
       const clientPA = new RequestForPatternApprovalClient();
       clientPA.setAuthToken(token);

@@ -26,7 +26,7 @@ import Checkbox from '../../components/Inputs/Checkbox';
 import InTextLink from '../../components/InTextLink';
 import { useAccountState } from '../../authentication/hooks';
 import QuotationSummary from './quotationSummary';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import {
   getDashboardNotification,
@@ -91,10 +91,9 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
       });
       setIsLoading(true);
       const client = new DashboardClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const fileResponse = await client.getQuoteOfferPDFByQuoteID(
         acceptQuotePreInfo?.crmQuoteId,
@@ -125,10 +124,9 @@ const SummaryAndAccept = (props: Readonly<SummaryAndAcceptProps>) => {
       try {
         AppLogger.verbose('SummaryAndAccept.getAcceptQuotePreInfo', { Id: id });
         const acceptQuoteClient = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
         const summaryAndAccept =

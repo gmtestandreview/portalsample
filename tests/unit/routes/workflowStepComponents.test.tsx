@@ -640,7 +640,7 @@ describe('workflow step components', () => {
   });
 
   it('initially disables instrument type for the no-measurement category', async () => {
-    mocks.formikValues.measurementCategory = 'no-measurement';
+    mocks.formikValues['measurementCategory'] = 'no-measurement';
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
     ).default;
@@ -659,7 +659,7 @@ describe('workflow step components', () => {
   });
 
   it('uses an empty artefact option list when the initial measurement category is unavailable', async () => {
-    mocks.formikValues.measurementCategory = undefined;
+    mocks.formikValues['measurementCategory'] = undefined;
     const InstrumentAndRequest = (
       await import('../../../ClientApp/src/routes/requestForQuote/instrumentAndRequest')
     ).default;
@@ -1222,7 +1222,9 @@ describe('workflow step components', () => {
     expect(screen.getByText('Alex Tester')).toBeInTheDocument();
     expect(screen.getByText('Request Owner')).toBeInTheDocument();
 
-    fireEvent.click(screen.getAllByRole('button', { name: /Terms/i })[0]);
+    const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
+    if (!termsButton) throw new Error('expected a Terms button to be rendered');
+    fireEvent.click(termsButton);
 
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalledWith(
@@ -1261,7 +1263,9 @@ describe('workflow step components', () => {
         '/submitted-success/AQ-2'
       )
     );
-    fireEvent.click(screen.getAllByRole('button', { name: /Terms/i })[0]);
+    const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
+    if (!termsButton) throw new Error('expected a Terms button to be rendered');
+    fireEvent.click(termsButton);
 
     await waitFor(() =>
       expect(mocks.setDashboardNotification).toHaveBeenCalledWith(
@@ -1285,7 +1289,13 @@ describe('workflow step components', () => {
     await waitFor(() =>
       expect(screen.getAllByRole('button', { name: /terms/i })).toHaveLength(2)
     );
-    fireEvent.click(screen.getAllByRole('button', { name: /terms/i })[1]);
+    const secondTermsButton = screen.getAllByRole('button', {
+      name: /terms/i,
+    })[1];
+    if (!secondTermsButton) {
+      throw new Error('expected a second Terms button to be rendered');
+    }
+    fireEvent.click(secondTermsButton);
 
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalled()
@@ -1328,7 +1338,9 @@ describe('workflow step components', () => {
     );
     expect(screen.getByText('Level 2')).toBeInTheDocument();
     expect(screen.getByText('Building A')).toBeInTheDocument();
-    fireEvent.click(screen.getAllByRole('button', { name: /Terms/i })[0]);
+    const [termsButton] = screen.getAllByRole('button', { name: /Terms/i });
+    if (!termsButton) throw new Error('expected a Terms button to be rendered');
+    fireEvent.click(termsButton);
     await waitFor(() =>
       expect(mocks.getQuoteOfferPDFByQuoteID).toHaveBeenCalled()
     );

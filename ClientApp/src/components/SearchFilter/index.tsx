@@ -3,6 +3,7 @@ import FilterMenu from './filterMenu';
 import SearchBox from './searchBox';
 import type { SearchFilterProps } from './types';
 import { useAccountDispatch } from '../../authentication/hooks';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const SearchFilter = (props: Readonly<SearchFilterProps>) => {
   const {
@@ -31,7 +32,9 @@ const SearchFilter = (props: Readonly<SearchFilterProps>) => {
       filterActiveTab: initialFilters?.filterActiveTab,
       filterSearchText: searchValue,
     };
-    accountContext?.setUserProfile({ testingCalibrationDashboard: profile });
+    void accountContext?.setUserProfile({
+      testingCalibrationDashboard: profile,
+    });
   };
 
   return (
@@ -41,7 +44,9 @@ const SearchFilter = (props: Readonly<SearchFilterProps>) => {
           <SearchBox
             containerClassName='d-block me-3 mb-0 col col-lg-7'
             onSearchSubmit={handleSearchSubmit}
-            initialSearchValue={initialFilters?.filterSearchText}
+            {...omitUndefined({
+              initialSearchValue: initialFilters?.filterSearchText,
+            })}
             placeholder={placeholder}
           />
           <span className='text-end'>

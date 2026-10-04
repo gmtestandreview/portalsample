@@ -7,6 +7,7 @@ import type { FormikFormProps } from './types';
 import UnsavedFormPrompt from '../UnsavedFormPrompt';
 import { removeHidden, validateForm } from '../utils';
 import { removeEmptyKeys } from '../../../utils';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const FormikForm = <Values extends FormikValues>(
   props: Readonly<FormikFormProps<Values>>
@@ -33,7 +34,7 @@ const FormikForm = <Values extends FormikValues>(
   const hiddenFields = hidingFields ?? {};
 
   const validate = async (values: Values) => {
-    if (values.saveAndExit === true) {
+    if (values['saveAndExit'] === true) {
       if (validateSoft) {
         if (isFunction(validateSoft)) {
           return validateSoft(values);
@@ -71,7 +72,7 @@ const FormikForm = <Values extends FormikValues>(
       }
     });
 
-    if (values.saveAndExit === true && onSaveAndExit) {
+    if (values['saveAndExit'] === true && onSaveAndExit) {
       await onSaveAndExit(normalizedValues, formikHelpers);
     } else {
       await onSubmit(normalizedValues, formikHelpers);
@@ -83,12 +84,14 @@ const FormikForm = <Values extends FormikValues>(
       if (showBanner) {
         return (
           <FormBanner
-            title={bannerTitle}
-            refTitle={bannerRefTitle}
-            subTitle={bannerSubTitle}
+            {...omitUndefined({
+              title: bannerTitle,
+              refTitle: bannerRefTitle,
+              subTitle: bannerSubTitle,
+              showGoToDashboardButton,
+              discard,
+            })}
             showSaveAndExitButton={canSaveDraft ?? true}
-            showGoToDashboardButton={showGoToDashboardButton}
-            discard={discard}
           />
         );
       }
@@ -132,7 +135,7 @@ const FormikForm = <Values extends FormikValues>(
               <p>Loading...</p>
             </BlockUISpinner>
           )}
-          <UnsavedFormPrompt path={promptPath} />
+          <UnsavedFormPrompt {...omitUndefined({ path: promptPath })} />
           {renderChildren(formik)}
         </>
       )}

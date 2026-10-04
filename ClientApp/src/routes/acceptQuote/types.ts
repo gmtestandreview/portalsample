@@ -1,8 +1,8 @@
 export interface AcceptQuoteStepProps {
-  id?: string;
-  name?: string;
-  isSummary?: boolean;
-  cRMQuoteRequestId?: string;
+  id?: string | undefined;
+  name?: string | undefined;
+  isSummary?: boolean | undefined;
+  cRMQuoteRequestId?: string | undefined;
   isSubmitted?: boolean;
   [key: string]: unknown;
 }

@@ -1,4 +1,5 @@
 import { useField } from 'formik';
+import { omit } from 'lodash';
 import type { FieldHookConfig } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import Button from 'react-bootstrap/Button';
@@ -14,11 +15,12 @@ import AutoSuggest from '../AutoSuggest';
 import type { AutoSuggestOption } from '../AutoSuggest/types';
 import ManualAddressInput from './ManualAddressInput';
 import type { AddressLookupProps } from './types';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import { HttpStatusCode } from '../../../types';
 import SummaryDisplay from '../../SummaryDisplay';
 import AppLogger from '../../../instrumentation/AppLogger';
 import { getFormattedAddress } from '../../../routes/common/helperFunctions';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const noAddressFoundOption = {
   displayText: 'No matches found',
@@ -78,7 +80,10 @@ const AddressLookup = (
   useEffect(() => {
     const { value, setValue: setVal } = fieldSyncRef.current;
     if (manual !== value?.isManuallyEntered) {
-      setVal({ ...value, isManuallyEntered: manual });
+      void setVal({
+        ...omit(value, 'isManuallyEntered'),
+        ...omitUndefined({ isManuallyEntered: manual }),
+      });
     }
   }, [manual]);
 
@@ -96,10 +101,7 @@ const AddressLookup = (
   ): Promise<AutoSuggestOption<MatchedAddress>[]> => {
     if (inProgress !== 'none' || accounts.length === 0 || !account) return [];
 
-    const result = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account,
-    });
+    const result = await instance.acquireTokenSilent(silentRequestFor(account));
     const addressClient = new AddressClient('');
     addressClient.setAuthToken(result.accessToken);
 
@@ -157,54 +159,56 @@ const AddressLookup = (
     return options;
   };
 
-  const onSelectedOption = async (
-    option?: AutoSuggestOption<MatchedAddress>
-  ) => {
+  const onSelectedOption = (option?: AutoSuggestOption<MatchedAddress>) => {
     if (option) {
       if (option.id === noAddressFoundOption.id) {
         setText('');
-        setValue({
-          id: _field.value.id,
-          type: _field.value.type,
-          timeStamp: _field.value.timeStamp,
+        void setValue({
+          ...omitUndefined({
+            id: _field.value.id,
+            type: _field.value.type,
+            timeStamp: _field.value.timeStamp,
+          }),
           line1: '',
           line2: '',
           line3: '',
           suburb: '',
           postcode: '',
-          state: undefined,
           isManuallyEntered: true,
           searchText: '',
         });
         setManual(true);
       } else {
         setText(option.displayText);
-        setValue({
-          id: _field.value.id,
-          type: _field.value.type,
-          timeStamp: _field.value.timeStamp,
+        void setValue({
+          ...omitUndefined({
+            id: _field.value.id,
+            type: _field.value.type,
+            timeStamp: _field.value.timeStamp,
+            state: option.value.state,
+          }),
           line1: option.value.addressLine1 || '',
           line2: option.value.addressLine2 || '',
           line3: option.value.addressLine3 || '',
           suburb: option.value.suburb || '',
           postcode: option.value.postCode || '',
-          state: option.value.state,
           isManuallyEntered: false,
           searchText: option.displayText,
         });
       }
     } else {
       setText('');
-      setValue({
-        id: _field.value.id,
-        type: _field.value.type,
-        timeStamp: _field.value.timeStamp,
+      void setValue({
+        ...omitUndefined({
+          id: _field.value.id,
+          type: _field.value.type,
+          timeStamp: _field.value.timeStamp,
+        }),
         line1: '',
         line2: '',
         line3: '',
         suburb: '',
         postcode: '',
-        state: undefined,
         isManuallyEntered: false,
         searchText: '',
       });
@@ -214,7 +218,7 @@ const AddressLookup = (
   const onSearchAgain = () => setManual(false);
 
   const onEnterManually = () => {
-    setTouched(false);
+    void setTouched(false);
     setManual(true);
   };
 
@@ -243,15 +247,14 @@ const AddressLookup = (
             <Form.Text className='contextual-help'>
               <Button variant='tertiary' size='sm' onClick={onSearchAgain}>
                 <i className='icon-search me-1' aria-hidden='true' />
-                Find an address
+                {' Find an address'}
               </Button>
               {' or enter an address below'}
               <span className='visually-hidden'>.</span>
             </Form.Text>
             <ManualAddressInput
               name={name}
-              disabled={disabled}
-              inlineHelp={inlineHelp}
+              {...omitUndefined({ disabled, inlineHelp })}
             />
           </Form.Group>
         </fieldset>
@@ -264,15 +267,14 @@ const AddressLookup = (
               label={label ?? 'Address'}
               name={`${name}.searchText`}
               onSelectedOption={onSelectedOption}
-              selectedOption={text}
               inlineHelp='Start typing and then select your address from the drop-down list'
-              placeholder={placeholder}
+              {...omitUndefined({ selectedOption: text, placeholder })}
             />
             <Form.Text as='p' className='contextual-help'>
               {'Or you can: '}
               <Button variant='tertiary' size='sm' onClick={onEnterManually}>
                 <i className='icon-enter me-1' aria-hidden='true' />
-                Enter it manually
+                {' Enter it manually'}
               </Button>
               <span className='visually-hidden'>.</span>
             </Form.Text>

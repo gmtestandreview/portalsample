@@ -12,7 +12,7 @@ export interface CheckboxProps<T = unknown> {
   containerClassName?: string;
   className?: string;
   subFormField?: ReactNode;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   onChange?: ChangeEventHandler<HTMLInputElement>;
   validationClassName?: string;
 }
