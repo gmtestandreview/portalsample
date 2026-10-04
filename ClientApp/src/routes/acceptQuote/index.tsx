@@ -8,7 +8,7 @@ import useBodyClass from '../../components/Utilities/useBodyClass';
 import { useAccountState } from '../../authentication/hooks';
 import { AcceptQuoteClient, QuoteClient } from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import type { AccountDetails } from '../../authentication/accountContext';
 import ReportRecipient from './reportRecipient';
@@ -57,32 +57,34 @@ const AcceptQuote = () => {
         AppLogger.verbose('AcceptQuote.loadApplicationSteps', { Id: id });
         const client = new AcceptQuoteClient();
         const quoteClient = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         quoteClient.setAuthToken(tokenResult.accessToken);
         try {
           const result = await client.getStepStatuses(id!);
-          const quoteData = await quoteClient.getQuoteRequestDetails(
-            result[0].crmQuoteRequestId!
-          );
+          const crmQuoteRequestId = result[0]?.crmQuoteRequestId;
+          if (!crmQuoteRequestId) {
+            throw new Error('Quote request has no step statuses');
+          }
+          const quoteData =
+            await quoteClient.getQuoteRequestDetails(crmQuoteRequestId);
           setReferenceId(quoteData.quoteRequestIdNum!);
           setStatuses(result);
-          setCrmQuoteRequestId(result[0].crmQuoteRequestId!);
+          setCrmQuoteRequestId(crmQuoteRequestId);
         } catch (error) {
           AppLogger.error(
             'Failed to load quote request details',
             error as Error,
             { Id: id }
           );
-          navigate('/not-found');
+          void navigate('/not-found');
         }
       }
     };
     if (!isLoading.current) {
-      loadApplicationSteps();
+      void loadApplicationSteps();
     }
     return () => {
       isLoading.current = true;

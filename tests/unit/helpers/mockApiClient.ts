@@ -50,6 +50,11 @@ export const createClientMock = <TMethods extends ClientMethodMocks>(
   return { constructor: clientConstructor, instance, setAuthToken, methods };
 };
 
+/** The mock `createClientMockFor` returns for the given method names, for typing hoisted slots. */
+export type ClientMockOf<TName extends string> = ClientMock<
+  Record<TName, Mock>
+>;
+
 /** Convenience for the common case: name the methods, get mocks for them. */
 export const createClientMockFor = <TName extends string>(
   ...methodNames: readonly TName[]

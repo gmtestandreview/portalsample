@@ -3,6 +3,7 @@ import SelectInput from '../SelectInput';
 import TextInput from '../TextInput';
 import states from './constants';
 import type { ManualAddressInputProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const ManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
   const { name, disabled, ...rest } = props;
@@ -12,28 +13,28 @@ const ManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
         key={`${name}.line1`}
         name={`${name}.line1`}
         label='Address line 1'
-        disabled={disabled}
+        {...omitUndefined({ disabled })}
         {...rest}
       />
       <TextInput
         key={`${name}.line2`}
         name={`${name}.line2`}
         label='Address line 2'
-        disabled={disabled}
+        {...omitUndefined({ disabled })}
         {...rest}
       />
       <TextInput
         key={`${name}.line3`}
         name={`${name}.line3`}
         label='Address line 3'
-        disabled={disabled}
+        {...omitUndefined({ disabled })}
         {...rest}
       />
       <TextInput
         key={`${name}.suburb`}
         name={`${name}.suburb`}
         label='Suburb'
-        disabled={disabled}
+        {...omitUndefined({ disabled })}
         {...rest}
       />
       <Row>
@@ -42,7 +43,7 @@ const ManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
             key={`${name}.postcode`}
             name={`${name}.postcode`}
             label='Postcode'
-            disabled={disabled}
+            {...omitUndefined({ disabled })}
             {...rest}
           />
         </Col>
@@ -53,7 +54,7 @@ const ManualAddressInput = (props: Readonly<ManualAddressInputProps>) => {
             label='State'
             options={states}
             addBlank
-            disabled={disabled}
+            {...omitUndefined({ disabled })}
             {...rest}
           />
         </Col>

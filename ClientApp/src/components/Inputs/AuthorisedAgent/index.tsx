@@ -6,7 +6,7 @@ import NumberInput from '../NumberInput';
 
 interface AuthorisedAgentProps {
   name?: string;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
 }
 
 const AuthorisedAgent: React.FC<AuthorisedAgentProps> = ({

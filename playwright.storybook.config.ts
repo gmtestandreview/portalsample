@@ -2,6 +2,8 @@ import process from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
+const isCi = Boolean(process.env['CI']);
+
 const testDir = defineBddConfig({
   aiFix: {
     promptAttachment: true,
@@ -15,9 +17,9 @@ export default defineConfig({
   testDir,
   outputDir: 'reports/test-results/storybook',
   fullyParallel: true,
-  forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  forbidOnly: isCi,
+  retries: isCi ? 2 : 0,
+  ...(isCi ? { workers: 1 } : {}),
   reporter: [
     ['html', { open: 'never', outputFolder: 'reports/playwright/storybook' }],
     ['list'],
@@ -36,7 +38,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run storybook',
     url: 'http://localhost:6006',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !isCi,
     timeout: 120_000,
   },
 });

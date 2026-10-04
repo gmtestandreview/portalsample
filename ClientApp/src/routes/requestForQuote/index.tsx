@@ -11,7 +11,7 @@ import InstrumentAndRequest from './instrumentAndRequest';
 import instrumentAndRequestProps from './instrumentAndRequestProps';
 import { RequestForQuoteClient } from '../../api/web-api-client';
 import type { FormStepStatusDto } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import RequestForQuoteSummary from './requestForQuoteSummary';
 import requestForQuoteSummaryProps from './requestForQuoteSummaryProps';
@@ -78,10 +78,9 @@ const RequestForQuote = () => {
         isLoading.current = true;
         try {
           const client = new RequestForQuoteClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const result = await client.getStepStatuses(applicationId);
           if (isUnmounted.current) {
@@ -95,13 +94,13 @@ const RequestForQuote = () => {
           AppLogger.error('Failed to load application steps', error as Error, {
             Id: applicationId,
           });
-          navigate('/not-found');
+          void navigate('/not-found');
         } finally {
           isLoading.current = false;
         }
       }
     };
-    loadApplicationSteps();
+    void loadApplicationSteps();
   }, [
     accounts,
     applicationId,

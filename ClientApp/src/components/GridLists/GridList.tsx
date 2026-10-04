@@ -11,6 +11,7 @@ import {
 import { Checkbox } from '../Inputs/AriaCheckbox/Checkbox';
 import { GripVertical } from '../AriaComponents/NmiIcon';
 import { ProgressCircle } from '../AriaComponents/ProgressCircle';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './GridList.css';
 
 export function GridList<T>({
@@ -35,7 +36,7 @@ export function GridListItem({
 >) {
   const textValue = typeof children === 'string' ? children : undefined;
   return (
-    <AriaGridListItem textValue={textValue} {...props}>
+    <AriaGridListItem {...omitUndefined({ textValue })} {...props}>
       {({ selectionMode, selectionBehavior, allowsDragging }) => (
         <>
           {/* Add elements for drag and drop and selection. */}

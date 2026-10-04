@@ -12,6 +12,16 @@ type InstrumentTypeContent = NonNullable<
   ApplicationAndInstrumentStepDto['instrumentTypeContent']
 >[number];
 
+type DtoOverrides = Omit<
+  Partial<ApplicationAndInstrumentStepDto>,
+  'newSubOptions' | 'instrumentTypeContent'
+> & {
+  readonly newSubOptions?:
+    ApplicationAndInstrumentStepDto['newSubOptions'] | undefined;
+  readonly instrumentTypeContent?:
+    ApplicationAndInstrumentStepDto['instrumentTypeContent'] | undefined;
+};
+
 const content = (
   overrides: Partial<InstrumentTypeContent> = {}
 ): InstrumentTypeContent =>
@@ -23,14 +33,31 @@ const content = (
   }) as InstrumentTypeContent;
 
 const dto = (
-  overrides: Partial<ApplicationAndInstrumentStepDto> = {}
-): Partial<ApplicationAndInstrumentStepDto> => ({
-  instrumentCategory: 'category-1',
-  instrumentType: 'type-1',
-  newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
-  instrumentTypeContent: [content()],
-  ...overrides,
-});
+  overrides: DtoOverrides = {}
+): Partial<ApplicationAndInstrumentStepDto> => {
+  const { newSubOptions, instrumentTypeContent, ...otherOverrides } = overrides;
+  const result: Partial<ApplicationAndInstrumentStepDto> = {
+    instrumentCategory: 'category-1',
+    instrumentType: 'type-1',
+    newSubOptions: [PatternApprovalRequiredValueOptions.OIMLCertificate],
+    instrumentTypeContent: [content()],
+    ...otherOverrides,
+    ...(newSubOptions === undefined ? {} : { newSubOptions }),
+    ...(instrumentTypeContent === undefined ? {} : { instrumentTypeContent }),
+  };
+
+  if ('newSubOptions' in overrides && overrides.newSubOptions === undefined) {
+    delete result.newSubOptions;
+  }
+  if (
+    'instrumentTypeContent' in overrides &&
+    overrides.instrumentTypeContent === undefined
+  ) {
+    delete result.instrumentTypeContent;
+  }
+
+  return result;
+};
 
 const step = (
   patternApprovalType?: PatternApprovalRequiredValues
@@ -116,9 +143,9 @@ describe('DisplayRules.isOIMLHidden', () => {
   });
 
   it('hides the option when no sub-options have been chosen', () => {
-    const result = DisplayRules.isOIMLHidden({
-      newSubOptions: undefined,
-    } as ApplicationAndInstrumentStep);
+    const result = DisplayRules.isOIMLHidden(
+      {} as ApplicationAndInstrumentStep
+    );
 
     expect(result).toBe(true);
   });

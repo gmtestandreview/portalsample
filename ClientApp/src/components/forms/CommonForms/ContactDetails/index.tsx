@@ -13,7 +13,7 @@ import NumberInput from '../../../Inputs/NumberInput';
 export interface ContactDetailsProps {
   name: string;
   // containerClassName?: string;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   titleLabel?: string;
   firstNameLabel?: string;
   lastNameLabel?: string;

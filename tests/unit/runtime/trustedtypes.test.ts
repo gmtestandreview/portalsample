@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   sanitize: vi.fn((value: string) => `sanitized:${value}`),
@@ -32,7 +33,7 @@ describe('TrustedTypes', () => {
       createScript: expect.any(Function),
     });
 
-    const [, policy] = createPolicy.mock.calls[0];
+    const [, policy] = defined(createPolicy.mock.calls[0], 'createPolicy call');
     expect(policy.createScriptURL('https://example.test/script.js')).toBe(
       'sanitized:https://example.test/script.js'
     );

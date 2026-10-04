@@ -33,7 +33,12 @@ function expandBraces(pattern: string): string[] {
     return [pattern];
   }
 
-  return match[1]
+  const alternatives = match[1];
+  if (alternatives === undefined) {
+    throw new Error(`Expected brace alternatives in ${pattern}`);
+  }
+
+  return alternatives
     .split(',')
     .flatMap((alternative) =>
       expandBraces(

@@ -16,11 +16,11 @@ export interface WafErrorShape {
 export function isWafError(error: unknown): error is WafErrorShape {
   if (error === null || typeof error !== 'object') return false;
   const candidate = error as Record<string, unknown>;
-  if (candidate.headers === null || typeof candidate.headers !== 'object')
+  if (candidate['headers'] === null || typeof candidate['headers'] !== 'object')
     return false;
-  const headers = candidate.headers as Record<string, unknown>;
+  const headers = candidate['headers'] as Record<string, unknown>;
   return (
-    typeof headers.server === 'string' &&
-    headers.server.startsWith(AZURE_WAF_SERVER_PREFIX)
+    typeof headers['server'] === 'string' &&
+    headers['server'].startsWith(AZURE_WAF_SERVER_PREFIX)
   );
 }

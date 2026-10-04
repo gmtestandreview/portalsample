@@ -18,6 +18,7 @@ import {
 import { DropdownItem, DropdownListBox } from '../AriaComponents/ListBox';
 import { Popover } from '../AriaComponents/Popover';
 import { ChevronDown } from '../AriaComponents/NmiIcon';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './ComboBox.css';
 
 export interface ComboBoxProps<T, M extends 'single' | 'multiple'> extends Omit<
@@ -52,7 +53,10 @@ export function ComboBox<T, M extends 'single' | 'multiple' = 'single'>({
         group and no post-mount state update happens.
       */}
       <Group className='combobox-field'>
-        <Input className='react-aria-Input inset' placeholder={placeholder} />
+        <Input
+          className='react-aria-Input inset'
+          {...omitUndefined({ placeholder })}
+        />
         <FieldButton>
           <ChevronDown />
         </FieldButton>

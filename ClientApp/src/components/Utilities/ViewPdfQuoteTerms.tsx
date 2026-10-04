@@ -9,7 +9,7 @@ import {
   openPdfPageInNewTab,
 } from '../../routes/common/helperFunctions';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 
@@ -38,10 +38,9 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
         crmQuoteRequestId: quotationData?.crmQuoteRequestId,
       });
       setIsLoading(true);
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       const fileResponse = await getQuotationFileDetails(
         tokenResult.accessToken,
         quotationData as RequestForQuoteDetails,
@@ -73,7 +72,7 @@ const ViewPdfQuoteTerms = (props: Readonly<ViewPdfQuoteTermsProps>) => {
       {prefixText}
       <InTextLink
         onClick={(_e) => {
-          viewQuoteTermsPagePdf();
+          void viewQuoteTermsPagePdf();
           trackGAEvent('Terms', 'download');
         }}
       >

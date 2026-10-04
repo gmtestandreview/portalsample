@@ -192,7 +192,7 @@ describe('Playwright files stay out of both Vitest leaves', () => {
   it.each(foreignTestPaths)('does not discover %s', (foreignPath) => {
     for (const pattern of unit.include ?? []) {
       expect(
-        foreignPath.startsWith(pattern.split('*')[0]),
+        foreignPath.startsWith(pattern.split('*', 1)[0] ?? pattern),
         `unit include "${pattern}" must not reach ${foreignPath}`
       ).toBe(false);
     }

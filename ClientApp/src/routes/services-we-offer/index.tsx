@@ -14,7 +14,7 @@ import {
   type ServiceDto,
   ServiceType,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import useAccountContext, {
@@ -86,10 +86,9 @@ const ServicesWeOffer = () => {
           setIsLoading(true);
           setIsDataLoading(true);
           const client = new LookupClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const serviceDtos = await client.getServices();
           setServices(serviceDtos);
@@ -121,7 +120,7 @@ const ServicesWeOffer = () => {
         setIsDataLoading(false);
       }
     };
-    loadServices();
+    void loadServices();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts, instance, accountDetails, accountDetails?.userProfile]);
 
@@ -129,13 +128,13 @@ const ServicesWeOffer = () => {
     if (shouldRedirect) {
       switch (serviceSelected.service) {
         case ServiceType.TestingCalibration:
-          navigate('/dashboard');
+          void navigate('/dashboard');
           break;
         case ServiceType.PatternApproval:
-          navigate('/dashboard-ta');
+          void navigate('/dashboard-ta');
           break;
         default:
-          navigate('/services-we-offer');
+          void navigate('/services-we-offer');
           break;
       }
     }
@@ -159,10 +158,10 @@ const ServicesWeOffer = () => {
   function routeToDashboard(serviceTypeToUse?: ServiceType) {
     switch (serviceTypeToUse) {
       case ServiceType.TestingCalibration:
-        navigate('/dashboard');
+        void navigate('/dashboard');
         break;
       case ServiceType.PatternApproval:
-        navigate('/dashboard-ta');
+        void navigate('/dashboard-ta');
         break;
       default:
         break;
@@ -361,17 +360,16 @@ const ServicesWeOffer = () => {
                             setDefaultServiceFn(service.serviceType)
                           }
                           className='form-field me-2'
-                          // aria-label={service.title}
                         />
                         <label
                           htmlFor={`radio-${service.serviceType}`}
                           className='border-0'
+                          aria-label={service.title}
                         >
                           <span className='ms-5 pt-1'>
                             <i
                               className={`${service.icon || 'icon-file'} me-3 p-2 fs-2 text-placeholder`}
                               aria-hidden='true'
-                              role='presentation'
                             />
                           </span>
                           <span className='d-flex flex-column mb-2 pt-1'>
@@ -402,11 +400,7 @@ const ServicesWeOffer = () => {
                           className='me-2'
                         />
                         <label htmlFor={`checkbox-${service.serviceType}`}>
-                          <i
-                            className='icon-tick me-1'
-                            aria-hidden='true'
-                            role='presentation'
-                          />
+                          <i className='icon-tick me-1' aria-hidden='true' />
                           <span className='text-nowrap'>
                             {'Add '}
                             <span className='d-none d-md-inline-block'>
@@ -431,7 +425,7 @@ const ServicesWeOffer = () => {
                   onClick={() => routeToDefaultDashboard()}
                 >
                   <i className='icon-close me-1' aria-hidden='true' />
-                  Cancel
+                  {'Cancel'}
                 </Button>
                 <PrimaryButton
                   data-testid='save-button'

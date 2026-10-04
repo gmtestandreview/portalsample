@@ -6,6 +6,7 @@ import {
   type ValidationResult,
 } from 'react-aria-components/ColorField';
 import { Label, FieldError, Description } from '../forms/AriaForm/Form';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './ColorField.css';
 
 export interface ColorFieldProps extends AriaColorFieldProps {
@@ -25,7 +26,10 @@ export function ColorField({
   return (
     <AriaColorField {...props}>
       {label && <Label>{label}</Label>}
-      <Input className='react-aria-Input inset' placeholder={placeholder} />
+      <Input
+        className='react-aria-Input inset'
+        {...omitUndefined({ placeholder })}
+      />
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaColorField>

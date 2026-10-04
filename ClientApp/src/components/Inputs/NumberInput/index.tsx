@@ -7,6 +7,7 @@ import SummaryDisplay from '../../SummaryDisplay';
 import { getPhoneNumberFormat } from './phoneFormat';
 import { NumericFormatFixed, PatternFormatFixed } from './types';
 import type { NumberInputProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const NumberInput = ({
   label,
@@ -64,7 +65,7 @@ const NumberInput = ({
       lastAppliedDefaultValue.current !== defaultValue
     ) {
       lastAppliedDefaultValue.current = defaultValue;
-      setValue(defaultValue);
+      void setValue(defaultValue);
     }
   }, [defaultValue, field.value, setValue]);
 
@@ -79,34 +80,31 @@ const NumberInput = ({
       className={`form-field form-text-input mb-0 ${className}`}
       {...field}
       isInvalid={!!(meta.touched && meta.error)}
-      disabled={disabled}
-      readOnly={readonly}
-      aria-describedby={
-        meta.touched && meta.error
-          ? `${id || name}-validation-msg`
-          : helpId || undefined
-      }
+      {...omitUndefined({
+        disabled,
+        readOnly: readonly,
+        'aria-describedby':
+          meta.touched && meta.error
+            ? `${id || name}-validation-msg`
+            : helpId || undefined,
+        autoComplete,
+        placeholder,
+        format:
+          format === 'checkPhoneFormat'
+            ? getPhoneNumberFormat(formattedValue)
+            : format,
+        mask,
+        minLength,
+        maxLength,
+        prefix,
+        suffix,
+        valueIsNumericString,
+        allowemptyformatting,
+        renderText,
+      })}
       value={formattedValue || ''}
-      autoComplete={autoComplete}
-      placeholder={placeholder}
       displayType={displayType}
-      format={
-        format === 'checkPhoneFormat'
-          ? getPhoneNumberFormat(formattedValue)
-          : format
-      }
-      mask={mask}
-      minLength={minLength}
-      maxLength={maxLength}
-      prefix={prefix}
-      suffix={suffix}
-      valueIsNumericString={valueIsNumericString}
-      allowemptyformatting={allowemptyformatting}
-      renderText={renderText}
-      role={undefined}
-    >
-      {undefined}
-    </PatternFormatFixed>
+    />
   );
 
   const renderNumericFormat = () => (
@@ -116,35 +114,33 @@ const NumberInput = ({
       className={`form-field form-text-input mb-0 ${className}`}
       {...field}
       isInvalid={!!(meta.touched && meta.error)}
-      disabled={disabled}
-      readOnly={readonly}
-      aria-describedby={
-        meta.touched && meta.error
-          ? `${id || name}-validation-msg`
-          : helpId || undefined
-      }
+      {...omitUndefined({
+        disabled,
+        readOnly: readonly,
+        'aria-describedby':
+          meta.touched && meta.error
+            ? `${id || name}-validation-msg`
+            : helpId || undefined,
+        autoComplete,
+        placeholder,
+        mask,
+        minLength,
+        maxLength,
+        prefix,
+        suffix,
+        thousandSeparator,
+        fixedDecimalScale,
+        valueIsNumericString,
+        allowNegative,
+        allowemptyformatting,
+        renderText,
+        allowedDecimalSeparators,
+        decimalScale,
+      })}
       value={formattedValue || ''}
-      autoComplete={autoComplete}
-      placeholder={placeholder}
       displayType={displayType}
-      mask={mask}
-      minLength={minLength}
-      maxLength={maxLength}
-      prefix={prefix}
-      suffix={suffix}
-      thousandSeparator={thousandSeparator}
-      fixedDecimalScale={fixedDecimalScale}
-      valueIsNumericString={valueIsNumericString}
-      allowNegative={allowNegative}
-      allowemptyformatting={allowemptyformatting}
       allowLeadingZeros={allowLeadingZeros}
-      renderText={renderText}
-      allowedDecimalSeparators={allowedDecimalSeparators}
-      decimalScale={decimalScale}
-      role={undefined}
-    >
-      {undefined}
-    </NumericFormatFixed>
+    />
   );
 
   if (isSummary) {

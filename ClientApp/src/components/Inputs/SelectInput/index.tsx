@@ -5,6 +5,7 @@ import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 import TextReadOnly from '../TextReadOnly';
 import type { SelectInputOption, SelectInputProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const hasSelectedValue = (value: unknown) =>
   value !== undefined && value !== null && value !== '';
@@ -25,7 +26,11 @@ const renderInlineHelp = (
 
   if (inlineHelpTitle) {
     return (
-      <Details id={helpId} title={inlineHelpTitle} inlineHelp={inlineHelp} />
+      <Details
+        {...omitUndefined({ id: helpId })}
+        title={inlineHelpTitle}
+        inlineHelp={inlineHelp}
+      />
     );
   }
 
@@ -87,8 +92,7 @@ const SelectInput = <T extends string | number>(
       <TextReadOnly
         label={label}
         name={name}
-        inlineHelp={inlineHelp}
-        inlineHelpTitle={inlineHelpTitle}
+        {...omitUndefined({ inlineHelp, inlineHelpTitle })}
         value={selectedDisplayText}
       />
     );
@@ -108,7 +112,7 @@ const SelectInput = <T extends string | number>(
       <Form.Control
         key={name}
         as='select'
-        disabled={disabled}
+        {...omitUndefined({ disabled, 'aria-describedby': describedBy })}
         className={`form-field form-select ${className}`}
         {...field}
         onChange={(event) =>
@@ -117,7 +121,6 @@ const SelectInput = <T extends string | number>(
           )
         }
         isInvalid={!!(meta.touched && meta.error)}
-        aria-describedby={describedBy}
       >
         {addBlank && defaultUIOption}
         {options?.map((option) => (

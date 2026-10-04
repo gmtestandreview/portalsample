@@ -60,7 +60,7 @@ try {
 
 const problems = payload.results.filter((result) => result.status !== 'OK');
 for (const problem of problems) {
-  console.log(formatProblem(problem));
+  process.stdout.write(`${formatProblem(problem)}\n`);
 }
 
 if (run.stderr.trim()) {

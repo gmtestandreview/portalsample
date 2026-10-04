@@ -12,19 +12,24 @@ import {
   signOut,
   DEFAULT_ACCESS_TOKEN,
 } from '../../helpers/mockMsal';
-import type {
-  ClientMock,
-  ClientMethodMocks,
-} from '../../helpers/mockApiClient';
+import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
+import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   appLoggerError: vi.fn(),
 }));
 
 const clients = vi.hoisted(() => ({
-  patternApproval: undefined as unknown as ClientMock<ClientMethodMocks>,
-  progress: undefined as unknown as ClientMock<ClientMethodMocks>,
+  patternApproval: undefined as unknown as ClientMockOf<
+    'getAppDocuments' | 'addDocuments' | 'commitAppDocuments'
+  >,
+  progress: undefined as unknown as ClientMockOf<
+    | 'getProgressUploadId'
+    | 'getProgress'
+    | 'deleteProgressStatistics'
+    | 'cancelFile'
+  >,
 }));
 
 /** Captures the documents step's props so its callbacks can be driven directly. */
@@ -570,8 +575,9 @@ describe('application documents', () => {
           clients.patternApproval.methods.commitAppDocuments
         ).toHaveBeenCalled()
       );
-      const [applicationId, values] =
-        clients.patternApproval.methods.commitAppDocuments.mock.calls[0];
+      const [applicationId, values] = defined(
+        clients.patternApproval.methods.commitAppDocuments.mock.calls[0]
+      );
       expect(applicationId).toBe('APP-1');
       // Bytes are cleared so the commit payload stays small.
       expect(values.form.documents[0].documentBytes).toBeUndefined();

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import AutoSuggestContainer from './AutoSuggestContainer';
 import type { AutoSuggestProps, AutoSuggestOption } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const AutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
   const {
@@ -98,8 +99,7 @@ const AutoSuggest = <T,>(props: Readonly<AutoSuggestProps<T>>) => {
       onCancel={onCancel}
       onSearchTermChange={onSearchTermChanged}
       onSelectedOption={onSelectionMade}
-      inlineHelp={inlineHelp}
-      placeholder={placeholder}
+      {...omitUndefined({ inlineHelp, placeholder })}
     />
   );
 };
