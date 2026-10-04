@@ -17,7 +17,7 @@ import type {
   WizardFormStepValues,
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
 import { NotificationSeverity } from '../../../storage/types';
 import { setBranchModalNotification } from '../../../storage/notification';

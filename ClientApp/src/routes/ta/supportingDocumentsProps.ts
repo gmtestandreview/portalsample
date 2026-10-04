@@ -21,7 +21,7 @@ import {
   supportingDocsSaveValidation,
   supportingDocsSubmitValidation,
 } from './validation';
-import type { DiscardProps } from '../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../components/forms/types';
 
 const loadSummary =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>

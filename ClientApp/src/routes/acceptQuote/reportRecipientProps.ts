@@ -22,7 +22,7 @@ import {
   reportRecipientSubmitValidation,
 } from './validation';
 import type { AccountDetails } from '../../authentication/accountContext';
-import type { DiscardProps } from '../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../components/forms/types';
 import { formatBannerTitle } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 

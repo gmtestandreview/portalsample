@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
 import type { FormikHelpers, FormikValues } from 'formik';
 import type { InitialValue } from '../../../types';
-import type { DiscardProps, ModalProps } from '../FormikForm/types';
+import type { DiscardProps, ModalProps } from '../types';
 import type {
   FormStepStatusDto,
   ProblemDetails,

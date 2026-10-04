@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFormikContext } from 'formik';
 import { FormProvider, useForm } from 'react-hook-form';
-import { createSaveAwareYupResolver } from '../../components/forms/FormikForm/saveAwareYupResolver';
+import { createSaveAwareYupResolver } from '../../components/forms/saveAwareYupResolver';
 import {
   paymentDetailsSaveValidation,
   paymentDetailsSubmitValidation,

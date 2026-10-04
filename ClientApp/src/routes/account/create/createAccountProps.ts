@@ -16,7 +16,7 @@ import type {
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
 import accountSubmitValidation from '../validation';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
 
 const loadAccountDetails =
