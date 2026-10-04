@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Consistency checker for A Team.
 
@@ -22,15 +21,68 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import TypedDict, cast
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 REPO_ROOT = Path(__file__).parent.parent
 
 NUMBER_WORDS = {
-    1: "one", 2: "two", 3: "three", 4: "four", 5: "five",
-    6: "six", 7: "seven", 8: "eight", 9: "nine", 10: "ten",
+    1: "one",
+    2: "two",
+    3: "three",
+    4: "four",
+    5: "five",
+    6: "six",
+    7: "seven",
+    8: "eight",
+    9: "nine",
+    10: "ten",
 }
+
+README = "README.md"
+CLAUDE = "CLAUDE.md"
+INDEX = "docs/index.html"
+OVERVIEW = "docs/overview.md"
+CLAUDE_PLUGIN = ".claude-plugin/plugin.json"
+MARKETPLACE = ".claude-plugin/marketplace.json"
+CODEX_PLUGIN = ".codex-plugin/plugin.json"
+CURSOR_PLUGIN = ".cursor-plugin/plugin.json"
+COPILOT_PLUGIN = ".copilot-plugin/plugin.json"
+CITATION = "CITATION.cff"
+
+ENFORCED_WORKFLOW_SKILLS = r"(\d+) enforced workflow skills"
+SPECIALIST_AGENTS = r"(\d+) specialist agents"
+PRECONFIGURED_SPECIALISTS = r"(\d+) pre-configured specialists"
+TEAM_VERSION = r"# A Team[^\n]*v(\d+\.\d+\.\d+)"
+PLUGIN_VERSION = r'"version":\s*"(\d+\.\d+\.\d+)"'
+
+Check = tuple[str, str, str]
+
+
+class Pack(TypedDict):
+    name: str
+    repo: str
+    version: str
+    skills: int
+    agents: int
+    pages: str
+
+
+class PacksData(TypedDict):
+    packs: list[Pack]
+
+
+class MarketplaceEntry(TypedDict):
+    name: str
+    version: str
+    repository: str
+    description: str
+
+
+class MarketplaceData(TypedDict):
+    description: str
+    plugins: list[MarketplaceEntry]
 
 
 def count_skills() -> int:
@@ -49,77 +101,81 @@ def changelog_version() -> str:
     return m.group(1)
 
 
-def load_packs() -> list[dict]:
-    return json.loads((REPO_ROOT / "packs.json").read_text(encoding="utf-8"))["packs"]
+def load_packs() -> list[Pack]:
+    data = cast(
+        PacksData,
+        json.loads((REPO_ROOT / "packs.json").read_text(encoding="utf-8")),
+    )
+    return data["packs"]
 
 
 # (relative_path, regex_with_one_capture_group, human_label)
 SKILL_COUNT_CHECKS = [
-    ("README.md", r"\*\*(\d+) workflow skills\*\* that gate", "README bullet list"),
-    ("README.md", r"← (\d+) workflow skill modules", "README directory tree"),
-    ("README.md", r"## Skill Library \((\d+)\)", "README section heading"),
-    ("CLAUDE.md", r"← (\d+) workflow skill modules", "CLAUDE.md directory tree"),
-    ("CLAUDE.md", r"## Skill Library \((\d+)\)", "CLAUDE.md section heading"),
-    ("docs/index.html", r"(\d+) enforced workflows", "index.html hero paragraph"),
-    ("docs/index.html", r'hero-stat-n n-purple">(\d+)<', "index.html hero stat skill count"),
-    ("docs/index.html", r"(\d+) enforced workflow skills", "index.html FAQ answer"),
-    ("docs/index.html", r"· (\d+) skills ·", "index.html footer"),
-    (".claude-plugin/plugin.json", r"(\d+) enforced workflow skills", "claude plugin.json description"),
-    (".claude-plugin/marketplace.json", r"(\d+) enforced workflow skills", "marketplace.json a-team description"),
-    (".codex-plugin/plugin.json", r"(\d+) enforced workflow skills", "codex plugin.json description"),
-    (".cursor-plugin/plugin.json", r"(\d+) enforced workflow skills", "cursor plugin.json description"),
-    (".copilot-plugin/plugin.json", r"(\d+) enforced workflow skills", "copilot plugin.json description"),
-    ("CITATION.cff", r"(\d+) enforced workflow skills", "CITATION.cff summary"),
-    ("docs/overview.md", r"SKILL LAYER — (\d+) skills", "overview.md diagram label"),
+    (README, r"\*\*(\d+) workflow skills\*\* that gate", "README bullet list"),
+    (README, r"← (\d+) workflow skill modules", "README directory tree"),
+    (README, r"## Skill Library \((\d+)\)", "README section heading"),
+    (CLAUDE, r"← (\d+) workflow skill modules", "CLAUDE.md directory tree"),
+    (CLAUDE, r"## Skill Library \((\d+)\)", "CLAUDE.md section heading"),
+    (INDEX, r"(\d+) enforced workflows", "index.html hero paragraph"),
+    (INDEX, r'hero-stat-n n-purple">(\d+)<', "index.html hero stat skill count"),
+    (INDEX, ENFORCED_WORKFLOW_SKILLS, "index.html FAQ answer"),
+    (INDEX, r"· (\d+) skills ·", "index.html footer"),
+    (CLAUDE_PLUGIN, ENFORCED_WORKFLOW_SKILLS, "claude plugin.json description"),
+    (MARKETPLACE, ENFORCED_WORKFLOW_SKILLS, "marketplace.json a-team description"),
+    (CODEX_PLUGIN, ENFORCED_WORKFLOW_SKILLS, "codex plugin.json description"),
+    (CURSOR_PLUGIN, ENFORCED_WORKFLOW_SKILLS, "cursor plugin.json description"),
+    (COPILOT_PLUGIN, ENFORCED_WORKFLOW_SKILLS, "copilot plugin.json description"),
+    (CITATION, ENFORCED_WORKFLOW_SKILLS, "CITATION.cff summary"),
+    (OVERVIEW, r"SKILL LAYER — (\d+) skills", "overview.md diagram label"),
 ]
 
 AGENT_COUNT_CHECKS = [
-    ("README.md", r"team of (\d+) specialists", "README intro paragraph"),
-    ("README.md", r"\*\*(\d+) specialist agents\*\*", "README bullet list"),
-    ("README.md", r"← (\d+) agent profiles", "README directory tree"),
-    ("README.md", r"## Agent Roster \((\d+)\)", "README section heading"),
-    ("CLAUDE.md", r"team of (\d+) specialists", "CLAUDE.md intro paragraph"),
-    ("CLAUDE.md", r"← (\d+) agent profiles", "CLAUDE.md directory tree"),
-    ("CLAUDE.md", r"## Agent Roster \((\d+)\)", "CLAUDE.md section heading"),
-    ("docs/index.html", r"(\d+) specialists, a lead orchestrator", "index.html hero paragraph"),
-    ("docs/index.html", r'hero-stat-n n-blue">(\d+)<', "index.html hero stat agent count"),
-    ("docs/index.html", r"(\d+) specialists — each with one clear", "index.html comparison row"),
-    ("docs/index.html", r"(\d+) specialists\. One team\.", "index.html agents heading"),
-    ("docs/index.html", r"installs (\d+) specialist AI agents", "index.html FAQ answer"),
-    ("docs/index.html", r"all (\d+) agents\?", "index.html FAQ summary"),
-    ("docs/index.html", r"· (\d+) agents ·", "index.html footer"),
-    ("docs/overview.md", r"(\d+) specialist agents", "overview.md comparison label"),
-    ("docs/overview.md", r"SPECIALIST AGENTS — (\d+) total", "overview.md diagram label"),
-    ("docs/overview.md", r"## The (\d+) Agents at a Glance", "overview.md section heading"),
-    (".claude-plugin/plugin.json", r"(\d+) specialist agents", "claude plugin.json description"),
-    (".claude-plugin/marketplace.json", r"(\d+) specialist agents", "marketplace.json a-team description"),
-    (".codex-plugin/plugin.json", r"(\d+) pre-configured specialists", "codex plugin.json description"),
-    (".cursor-plugin/plugin.json", r"(\d+) pre-configured specialists", "cursor plugin.json description"),
-    (".copilot-plugin/plugin.json", r"(\d+) pre-configured specialists", "copilot plugin.json description"),
-    ("CITATION.cff", r"provides (\d+) specialist agents", "CITATION.cff summary"),
+    (README, r"team of (\d+) specialists", "README intro paragraph"),
+    (README, r"\*\*(\d+) specialist agents\*\*", "README bullet list"),
+    (README, r"← (\d+) agent profiles", "README directory tree"),
+    (README, r"## Agent Roster \((\d+)\)", "README section heading"),
+    (CLAUDE, r"team of (\d+) specialists", "CLAUDE.md intro paragraph"),
+    (CLAUDE, r"← (\d+) agent profiles", "CLAUDE.md directory tree"),
+    (CLAUDE, r"## Agent Roster \((\d+)\)", "CLAUDE.md section heading"),
+    (INDEX, r"(\d+) specialists, a lead orchestrator", "index.html hero paragraph"),
+    (INDEX, r'hero-stat-n n-blue">(\d+)<', "index.html hero stat agent count"),
+    (INDEX, r"(\d+) specialists — each with one clear", "index.html comparison row"),
+    (INDEX, r"(\d+) specialists\. One team\.", "index.html agents heading"),
+    (INDEX, r"installs (\d+) specialist AI agents", "index.html FAQ answer"),
+    (INDEX, r"all (\d+) agents\?", "index.html FAQ summary"),
+    (INDEX, r"· (\d+) agents ·", "index.html footer"),
+    (OVERVIEW, SPECIALIST_AGENTS, "overview.md comparison label"),
+    (OVERVIEW, r"SPECIALIST AGENTS — (\d+) total", "overview.md diagram label"),
+    (OVERVIEW, r"## The (\d+) Agents at a Glance", "overview.md section heading"),
+    (CLAUDE_PLUGIN, SPECIALIST_AGENTS, "claude plugin.json description"),
+    (MARKETPLACE, SPECIALIST_AGENTS, "marketplace.json a-team description"),
+    (CODEX_PLUGIN, PRECONFIGURED_SPECIALISTS, "codex plugin.json description"),
+    (CURSOR_PLUGIN, PRECONFIGURED_SPECIALISTS, "cursor plugin.json description"),
+    (COPILOT_PLUGIN, PRECONFIGURED_SPECIALISTS, "copilot plugin.json description"),
+    (CITATION, r"provides (\d+) specialist agents", "CITATION.cff summary"),
 ]
 
 VERSION_CHECKS = [
-    ("README.md", r"# A Team[^\n]*v(\d+\.\d+\.\d+)", "README title heading"),
-    ("AGENTS.md", r"# A Team[^\n]*v(\d+\.\d+\.\d+)", "AGENTS.md title heading"),
-    ("CLAUDE.md", r"# A Team[^\n]*v(\d+\.\d+\.\d+)", "CLAUDE.md title heading"),
-    ("docs/index.html", r'nav-logo-badge">v(\d+\.\d+\.\d+)<', "index.html nav badge"),
-    ("docs/index.html", r"A Team v(\d+\.\d+\.\d+) —", "index.html footer span"),
-    ("docs/index.html", r"MIT License · v(\d+\.\d+\.\d+) ·", "index.html footer MIT line"),
-    (".codex-plugin/plugin.json", r'"version":\s*"(\d+\.\d+\.\d+)"', "codex plugin.json version field"),
-    (".cursor-plugin/plugin.json", r'"version":\s*"(\d+\.\d+\.\d+)"', "cursor plugin.json version field"),
-    (".copilot-plugin/plugin.json", r'"version":\s*"(\d+\.\d+\.\d+)"', "copilot plugin.json version field"),
-    ("CITATION.cff", r'^version:\s*"(\d+\.\d+\.\d+)"', "CITATION.cff version field"),
+    (README, TEAM_VERSION, "README title heading"),
+    ("AGENTS.md", TEAM_VERSION, "AGENTS.md title heading"),
+    (CLAUDE, TEAM_VERSION, "CLAUDE.md title heading"),
+    (INDEX, r'nav-logo-badge">v(\d+\.\d+\.\d+)<', "index.html nav badge"),
+    (INDEX, r"A Team v(\d+\.\d+\.\d+) —", "index.html footer span"),
+    (INDEX, r"MIT License · v(\d+\.\d+\.\d+) ·", "index.html footer MIT line"),
+    (CODEX_PLUGIN, PLUGIN_VERSION, "codex plugin.json version field"),
+    (CURSOR_PLUGIN, PLUGIN_VERSION, "cursor plugin.json version field"),
+    (COPILOT_PLUGIN, PLUGIN_VERSION, "copilot plugin.json version field"),
+    (CITATION, r'^version:\s*"(\d+\.\d+\.\d+)"', "CITATION.cff version field"),
 ]
 
 PLATFORM_COUNT_CHECKS = [
-    ("docs/index.html", r'hero-stat-n n-cyan">(\d+)<', "index.html hero platform count"),
-    ("docs/index.html", r"· (\d+) platforms", "index.html footer platform count"),
+    (INDEX, r'hero-stat-n n-cyan">(\d+)<', "index.html hero platform count"),
+    (INDEX, r"· (\d+) platforms", "index.html footer platform count"),
 ]
 
 
-def run_checks(checks: list, expected: str) -> list[str]:
-    errors = []
+def run_checks(checks: list[Check], expected: str) -> list[str]:
+    errors: list[str] = []
     for filepath, pattern, desc in checks:
         path = REPO_ROOT / filepath
         if not path.exists():
@@ -139,89 +195,123 @@ def run_checks(checks: list, expected: str) -> list[str]:
     return errors
 
 
-def check_packs() -> tuple[list[str], int]:
-    """Enforce packs.json against README.md, docs/index.html, and marketplace.json.
-
-    Returns (errors, number_of_checks_performed).
-    """
-    errors = []
-    checks = 0
-    packs = load_packs()
-    names = {p["name"] for p in packs}
-
-    readme = (REPO_ROOT / "README.md").read_text(encoding="utf-8")
-    index = (REPO_ROOT / "docs/index.html").read_text(encoding="utf-8")
-    market = json.loads(
-        (REPO_ROOT / ".claude-plugin/marketplace.json").read_text(encoding="utf-8")
-    )
-
-    # ── marketplace.json: exact roster, version, and counts per pack ──
-    entries = {p["name"]: p for p in market["plugins"] if p["name"] != "a-team"}
-    checks += 1
+def check_marketplace_entries(packs: list[Pack], market: MarketplaceData) -> tuple[list[str], int]:
+    """Check the marketplace roster, versions, repositories, and counts."""
+    errors: list[str] = []
+    names = {pack["name"] for pack in packs}
+    entries = {entry["name"]: entry for entry in market["plugins"] if entry["name"] != "a-team"}
+    checks = 1
     if set(entries) != names:
         errors.append(
             f"ROSTER   marketplace.json: packs {sorted(set(entries))} != packs.json {sorted(names)}"
         )
-    for p in packs:
-        e = entries.get(p["name"])
-        if e is None:
+    for pack in packs:
+        entry = entries.get(pack["name"])
+        if entry is None:
             continue
-        counts = f'{p["skills"]} skills and {p["agents"]} agents'
+        counts = f"{pack['skills']} skills and {pack['agents']} agents"
         checks += 3
-        if e.get("version") != p["version"]:
+        if entry.get("version") != pack["version"]:
             errors.append(
-                f"MISMATCH marketplace.json ({p['name']} version): "
-                f"found {e.get('version')!r}, expected {p['version']!r}"
+                f"MISMATCH marketplace.json ({pack['name']} version): "
+                f"found {entry.get('version')!r}, expected {pack['version']!r}"
             )
-        if e.get("repository") != p["repo"]:
+        if entry.get("repository") != pack["repo"]:
             errors.append(
-                f"MISMATCH marketplace.json ({p['name']} repository): "
-                f"found {e.get('repository')!r}, expected {p['repo']!r}"
+                f"MISMATCH marketplace.json ({pack['name']} repository): "
+                f"found {entry.get('repository')!r}, expected {pack['repo']!r}"
             )
-        if counts not in e.get("description", ""):
+        if counts not in entry.get("description", ""):
             errors.append(
-                f"MISMATCH marketplace.json ({p['name']} description): "
+                f"MISMATCH marketplace.json ({pack['name']} description): "
                 f"expected it to contain {counts!r}"
             )
+    return errors, checks
 
-    # ── marketplace registry description: pack count as a word ──
+
+def check_marketplace_description(
+    packs: list[Pack], market: MarketplaceData
+) -> tuple[list[str], int]:
+    """Check the registry description's pack count."""
+    errors: list[str] = []
     word = NUMBER_WORDS.get(len(packs))
-    checks += 1
+    checks = 1
     if word and f"{word} domain builder packs" not in market.get("description", ""):
         errors.append(
             f"MISMATCH marketplace.json (registry description): "
             f"expected {word!r} domain builder packs for {len(packs)} packs"
         )
+    return errors, checks
 
-    # ── README: one linked bullet per pack, no stale packs ──
-    readme_names = set(
-        re.findall(r"\*\*\[(builder-[a-z-]+)\]\(https://github\.com/RBraga01/", readme)
+
+def check_readme_packs(packs: list[Pack], readme: str) -> tuple[list[str], int]:
+    """Check the README's linked domain pack roster."""
+    errors: list[str] = []
+    names = {pack["name"] for pack in packs}
+    readme_names: set[str] = set(
+        re.findall(
+            r"\*\*\[(builder-[a-z-]+)\]\(https://github\.com/RBraga01/",
+            readme,
+        )
     )
-    checks += 1
+    checks = 1
     if readme_names != names:
         errors.append(
             f"ROSTER   README.md domain packs: {sorted(readme_names)} != packs.json {sorted(names)}"
         )
+    return errors, checks
 
-    # ── index.html: one ecosystem card per pack with pages link and counts ──
-    card_names = set(re.findall(r'class="ack-name">(builder-[a-z-]+)<', index))
-    checks += 1
+
+def check_index_packs(packs: list[Pack], index: str) -> tuple[list[str], int]:
+    """Check the index page's ecosystem cards."""
+    errors: list[str] = []
+    names = {pack["name"] for pack in packs}
+    card_names: set[str] = set(re.findall(r'class="ack-name">(builder-[a-z-]+)<', index))
+    checks = 1
     if card_names != names:
         errors.append(
-            f"ROSTER   docs/index.html ecosystem cards: {sorted(card_names)} != packs.json {sorted(names)}"
+            f"ROSTER   docs/index.html ecosystem cards: {sorted(card_names)} != "
+            f"packs.json {sorted(names)}"
         )
-    for p in packs:
-        counts = f'{p["skills"]} skills and {p["agents"]} agents'
+    for pack in packs:
+        counts = f"{pack['skills']} skills and {pack['agents']} agents"
         checks += 2
-        if p["pages"] not in index:
+        if pack["pages"] not in index:
             errors.append(
-                f"MISSING  docs/index.html ({p['name']} card): pages link {p['pages']} not found"
+                f"MISSING  docs/index.html ({pack['name']} card): "
+                f"pages link {pack['pages']} not found"
             )
         if counts not in index:
             errors.append(
-                f"MISMATCH docs/index.html ({p['name']} card): expected {counts!r} somewhere on the page"
+                f"MISMATCH docs/index.html ({pack['name']} card): "
+                f"expected {counts!r} somewhere on the page"
             )
+    return errors, checks
 
+
+def check_packs() -> tuple[list[str], int]:
+    """Enforce packs.json against README.md, docs/index.html, and marketplace.json.
+
+    Returns (errors, number_of_checks_performed).
+    """
+    packs = load_packs()
+    readme = (REPO_ROOT / README).read_text(encoding="utf-8")
+    index = (REPO_ROOT / INDEX).read_text(encoding="utf-8")
+    market = cast(
+        MarketplaceData,
+        json.loads((REPO_ROOT / MARKETPLACE).read_text(encoding="utf-8")),
+    )
+
+    errors: list[str] = []
+    checks = 0
+    for check_errors, check_count in (
+        check_marketplace_entries(packs, market),
+        check_marketplace_description(packs, market),
+        check_readme_packs(packs, readme),
+        check_index_packs(packs, index),
+    ):
+        errors.extend(check_errors)
+        checks += check_count
     return errors, checks
 
 

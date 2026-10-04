@@ -33,8 +33,8 @@ const occurrences = (needle: string, haystack: string = workflow): number =>
   haystack.split(needle).length - 1;
 
 const nodeVersions = (contents: string): string[] =>
-  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].map(
-    (match) => match[1]
+  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].flatMap(
+    (match) => (match[1] === undefined ? [] : [match[1]])
   );
 
 /**
@@ -61,7 +61,7 @@ const jobBlock = (contents: string, jobId: string): string => {
 const stepBlocks = (contents: string): string[] => {
   const lines = contents.split('\n');
   const stepIndent = lines
-    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1].length)
+    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1]?.length)
     .find((indent) => indent !== undefined);
 
   if (stepIndent === undefined) return [];
@@ -280,7 +280,7 @@ describe('workflows pin every action to an immutable commit', () => {
     (_name, contents) => {
       const actionRefs = [
         ...contents.matchAll(/uses:\s*[^\s#]+@([^\s#]+)/g),
-      ].map((match) => match[1]);
+      ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
       expect(actionRefs.length).toBeGreaterThan(0);
       expect(
@@ -487,7 +487,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
       ...block.matchAll(
         /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm
       ),
-    ].map((match) => match[1]);
+    ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toEqual([

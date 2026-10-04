@@ -1,5 +1,6 @@
 import { ListBoxItem } from 'react-aria-components/ListBox';
 import type { AutoSuggestOptionProps } from './types';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 function AutoSuggestOption<T>(props: Readonly<AutoSuggestOptionProps<T>>) {
   const { id, displayText, selected, ariaLabel } = props;
@@ -8,7 +9,7 @@ function AutoSuggestOption<T>(props: Readonly<AutoSuggestOptionProps<T>>) {
     <ListBoxItem
       id={id}
       textValue={displayText}
-      aria-label={ariaLabel}
+      {...omitUndefined({ 'aria-label': ariaLabel })}
       className={({ isFocused }) =>
         [
           'suggestion-option',

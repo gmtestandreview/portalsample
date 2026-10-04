@@ -1,6 +1,7 @@
 import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import type { AlertProps, BaseAlertProps } from './types';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 /**
  * Internal AlertMessage Component
@@ -44,14 +45,16 @@ const AlertMessage = (props: Readonly<BaseAlertProps>) => {
 
   return (
     <Alert
-      id={id}
-      data-testid={testId}
-      role={role}
+      {...omitUndefined({
+        id,
+        'data-testid': testId,
+        role,
+        dismissible: canClose,
+        variant,
+      })}
       className={`d-flex ${className}`}
-      dismissible={canClose}
       onClose={closeAlert}
       show={show}
-      variant={variant}
       aria-live={ariaLive || 'polite'}
       tabIndex={-1}
     >

@@ -23,12 +23,12 @@ export interface TASummaryProps {
 }
 
 export interface TAOrganisationAndContactProps {
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   name: string;
 }
 
 export interface TAApplicationAndInstrumentProps {
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   name: string;
 }
 
@@ -40,13 +40,13 @@ export interface TASupportingDocumentsProps {
     token: string,
     fileData: FileParameter[]
   ) => Promise<AttachmentDto[]>;
-  progress?: UploadProgress;
+  progress?: UploadProgress | undefined;
   setProgress?: React.Dispatch<
     React.SetStateAction<UploadProgress | undefined>
   >;
   uploading?: boolean;
   handleCancelFile?: (fileName: string) => Promise<void>;
-  disableUpload?: boolean;
+  disableUpload?: boolean | undefined;
   suppressDocChanges?: boolean;
   externalErrors?: string[];
   setExternalErrors?: React.Dispatch<React.SetStateAction<string[]>>;

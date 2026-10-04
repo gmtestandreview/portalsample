@@ -9,7 +9,7 @@ import type {
   GetAccountValuesDto,
   FormStepStatusDto,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -24,10 +24,9 @@ const loadAccountDetails =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
       const businessDetailsStep =
@@ -53,16 +52,15 @@ const completeAccountDetails =
   ) =>
   async (
     values: AccountDto,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<AccountDto>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.completeAccountDetails(
         {

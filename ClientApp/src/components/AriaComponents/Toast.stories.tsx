@@ -2,6 +2,7 @@ import { withReactAriaEvaluation } from '../../storybook/withReactAriaEvaluation
 import { MyToastRegion } from './Toast';
 import { queue } from './ToastQueue';
 import { Button } from '../Buttons/AriaButton/Button';
+import { omitUndefined } from '../../utils/omitUndefined';
 import { expect, waitFor, within } from 'storybook/test';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
@@ -54,7 +55,10 @@ export const Example: Story = {
       <Button
         onPress={() =>
           queue.add(
-            { title: args.title, description: args.description },
+            {
+              title: args.title,
+              ...omitUndefined({ description: args.description }),
+            },
             args.timeout ? { timeout: args.timeout } : undefined
           )
         }
@@ -128,8 +132,8 @@ function MyToastRegion() {
 
     await userEvent.click(page.getByRole('button', { name: 'Close' }));
 
-    await waitFor(() => {
-      expect(page.queryByText(args.title)).not.toBeInTheDocument();
+    await waitFor(async () => {
+      await expect(page.queryByText(args.title)).not.toBeInTheDocument();
     });
   },
 };

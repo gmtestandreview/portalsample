@@ -8,7 +8,7 @@ import type {
   InstrumentAndRequestStep,
   FormStepStatusDto,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   WizardFormStepValues,
   WizardStepProps,
@@ -27,10 +27,9 @@ const loadInstrumentAndRequest =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const instrumentAndRequest = await client.getInstrumentAndRequest(
         id,
@@ -54,16 +53,15 @@ const saveStep =
   ) =>
   async (
     values: InstrumentAndRequestStep,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<InstrumentAndRequestStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
       let formStepValues: InstrumentAndRequestStep | undefined;

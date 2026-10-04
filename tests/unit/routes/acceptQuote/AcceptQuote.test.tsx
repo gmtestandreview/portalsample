@@ -228,6 +228,23 @@ describe('AcceptQuote container', () => {
     );
   });
 
+  it('navigates to /not-found and skips quote details when no step statuses are returned', async () => {
+    mocks.getStepStatuses.mockResolvedValue([]);
+    await renderAcceptQuote();
+
+    await waitFor(() =>
+      expect(mocks.navigate).toHaveBeenCalledWith('/not-found')
+    );
+    expect(mocks.getQuoteRequestDetails).not.toHaveBeenCalled();
+    expect(mocks.appLoggerError).toHaveBeenCalledWith(
+      'Failed to load quote request details',
+      expect.objectContaining({
+        message: 'Quote request has no step statuses',
+      }),
+      { Id: 'Q-42' }
+    );
+  });
+
   it('navigates to /not-found and logs when getQuoteRequestDetails rejects', async () => {
     mocks.getQuoteRequestDetails.mockRejectedValue(
       new Error('quote details error')

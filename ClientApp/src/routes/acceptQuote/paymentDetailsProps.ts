@@ -8,7 +8,7 @@ import type {
   FormStepStatusDto,
   PaymentDetailsStep,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { ErrorType } from '../../components/forms/WizardForm/types';
 import type {
   WizardFormStepValues,
@@ -32,10 +32,9 @@ const loadPaymentDetails =
     try {
       if (accounts.length > 0) {
         const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const paymentDetails = await client.getPaymentDetails(id, abortSignal);
         const wizardStepValues: WizardFormStepValues<PaymentDetailsStep> = {
@@ -60,17 +59,16 @@ const saveStep =
   ) =>
   async (
     values: PaymentDetailsStep,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<PaymentDetailsStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.savePaymentDetails(
           id,

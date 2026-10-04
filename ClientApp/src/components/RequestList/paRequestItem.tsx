@@ -14,7 +14,7 @@ import Actions, { type DropdownActionItem } from '../Actions';
 import { trackGAEvent } from '../../analytics/GoogleAnalytics';
 import { DashboardTab } from '../SearchFilter/types';
 import ConfirmationModal from '../modals/ConfirmationModal';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import { setDashboardNotification } from '../../storage/notification';
 import { NotificationSeverity } from '../../storage/types';
@@ -28,10 +28,21 @@ const formattedDate = (dateToFormat: Date | string | undefined) =>
       })
     : '';
 
+const isNonEmptyReferenceId = (
+  referenceId: string | undefined
+): referenceId is string =>
+  typeof referenceId === 'string' && referenceId.trim().length > 0;
+
 interface PaRequestItemProps {
   request: PatternApprovalDashboardDetailsDto;
   tab: DashboardTab;
   setDeleteSuccess: (success: boolean) => void;
+}
+
+enum PaRequestAction {
+  Delete = 'Delete',
+  Edit = 'Edit',
+  Messages = 'Messages',
 }
 
 const PaRequestItem = ({
@@ -52,7 +63,7 @@ const PaRequestItem = ({
   } = request;
 
   const heading = title;
-  const [deleteId, setDeleteId] = useState<string>(); // TODO: Change dto to int
+  const [deleteId, setDeleteId] = useState<string>();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const { accounts, instance } = useMsal();
   const viewApplicationVisibleStatuses = [
@@ -70,22 +81,30 @@ const PaRequestItem = ({
 
   const onDelete = () => (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     e.preventDefault();
-    setDeleteDialogOpen(true);
+    if (!isNonEmptyReferenceId(portalReferenceId)) {
+      return;
+    }
+
     setDeleteId(portalReferenceId);
+    setDeleteDialogOpen(true);
   };
 
   const closeModal = () => setDeleteDialogOpen(false);
 
   const onRemoveItem = async () => {
+    if (!isNonEmptyReferenceId(deleteId)) {
+      closeModal();
+      return;
+    }
+
     try {
       const client = new ApplicationClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
-      await client.deleteApplication(deleteId!, {
+      await client.deleteApplication(deleteId, {
         applicationType: ApplicationType.PatternApproval,
       });
       setDashboardNotification({
@@ -110,25 +129,24 @@ const PaRequestItem = ({
     tab === DashboardTab.Drafts ? editApplicationRoute : appDetailsRoute;
 
   function routeToMessages() {
-    navigate(messagesRoute);
+    void navigate(messagesRoute);
     trackGAEvent('Application item/view messages');
   }
 
   const getActions = (): DropdownActionItem[] => {
     const actions: DropdownActionItem[] = [];
 
-    // TODO: Move this to an enum? refactor this...
     switch (status) {
       case PaDashboardItemStatus.PaDraft:
         actions.push(
           {
-            action: 'Edit',
+            action: PaRequestAction.Edit,
             text: 'Resume application',
             route: editRoute,
             onClick: () => trackGAEvent('Editapplication'),
           },
           {
-            action: 'Delete',
+            action: PaRequestAction.Delete,
             text: 'Delete application',
             onClick: (e) => {
               onDelete()(e);
@@ -143,13 +161,13 @@ const PaRequestItem = ({
       case PaDashboardItemStatus.PaCompleted:
         actions.push(
           {
-            action: 'Edit',
+            action: PaRequestAction.Edit,
             text: 'View application details',
             route: editRoute,
             onClick: () => trackGAEvent('Viewapplicationdetails'),
           },
           {
-            action: 'Messages',
+            action: PaRequestAction.Messages,
             text: 'View messages',
             onClick: routeToMessages,
           }
@@ -255,7 +273,7 @@ const PaRequestItem = ({
                   className='ms-md-auto'
                   onClick={() => {
                     trackGAEvent('Application item/view details');
-                    navigate(appDetailsRoute);
+                    void navigate(appDetailsRoute);
                   }}
                 >
                   View application details
@@ -267,7 +285,7 @@ const PaRequestItem = ({
                   className='ms-md-auto'
                   onClick={() => {
                     trackGAEvent('Application item/resume application');
-                    navigate(editRoute);
+                    void navigate(editRoute);
                   }}
                 >
                   Resume application
@@ -287,13 +305,12 @@ const PaRequestItem = ({
                     {messageCount > 0 && (
                       <>
                         <span className='-me-md-2'>
-                          <span
+                          <output
                             className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
                             style={{ fontFamily: 'monospace', top: '-10px' }}
-                            role='status'
                           >
                             {messageCount}
-                          </span>
+                          </output>
                         </span>
                         <span className='visually-hidden'>{' unread'}</span>
                       </>

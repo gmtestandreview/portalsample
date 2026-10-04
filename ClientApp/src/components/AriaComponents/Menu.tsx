@@ -15,6 +15,7 @@ import {
 import { Popover } from './Popover';
 import { Text } from './Content';
 import React from 'react';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './Menu.css';
 
 export function MenuTrigger(props: Readonly<MenuTriggerProps>) {
@@ -43,7 +44,7 @@ export function MenuItem(
     props.textValue ||
     (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <AriaMenuItem {...props} textValue={textValue}>
+    <AriaMenuItem {...props} {...omitUndefined({ textValue })}>
       {({ hasSubmenu, isSelected, selectionMode }) => (
         <>
           {isSelected && selectionMode === 'multiple' ? <Check /> : null}

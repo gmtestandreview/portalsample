@@ -83,6 +83,7 @@ if (!Element.prototype.getAnimations) {
 class TestIntersectionObserver implements IntersectionObserver {
   readonly root = null;
   readonly rootMargin = '';
+  readonly scrollMargin = '';
   readonly thresholds = [];
 
   disconnect() {}

@@ -25,6 +25,7 @@ interface FormikHarnessProps<TValues extends FormikValues> {
 interface AttachmentHarnessProps {
   readonly initialAttachmentValue: AttachmentDto[] | AttachmentDto | null;
   readonly props?: Partial<React.ComponentProps<typeof AttachmentNew>>;
+  readonly useComponentDefaults?: boolean;
 }
 
 const uploadedAttachment = {
@@ -47,8 +48,8 @@ function FormikHarness<TValues extends FormikValues>({
     <Formik
       enableReinitialize
       initialValues={initialValues}
-      initialErrors={initialErrors}
-      initialTouched={initialTouched}
+      {...(initialErrors === undefined ? {} : { initialErrors })}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
       onSubmit={onSubmit}
     >
       <Form>{children}</Form>
@@ -74,6 +75,7 @@ function ErrorProbe({ errors }: { readonly errors: string[] }) {
 function AttachmentHarness({
   initialAttachmentValue,
   props = {},
+  useComponentDefaults = false,
 }: AttachmentHarnessProps) {
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -81,10 +83,10 @@ function AttachmentHarness({
     <FormikHarness initialValues={{ attachments: initialAttachmentValue }}>
       <AttachmentNew
         name='attachments'
-        id='supporting-documents'
+        {...(useComponentDefaults ? {} : { id: 'supporting-documents' })}
         label='Supporting documents'
         ariaLabel='Upload supporting documents'
-        buttonTitle='Browse files'
+        {...(useComponentDefaults ? {} : { buttonTitle: 'Browse files' })}
         inlineHelp='Upload files for assessment'
         allowMultiple
         maxFiles={3}
@@ -114,12 +116,14 @@ const changeFileInput = (files: File[]) => {
 
 const renderAttachment = (
   initialAttachmentValue: AttachmentHarnessProps['initialAttachmentValue'],
-  props?: AttachmentHarnessProps['props']
+  props?: AttachmentHarnessProps['props'],
+  useComponentDefaults = false
 ) =>
   render(
     <AttachmentHarness
       initialAttachmentValue={initialAttachmentValue}
-      props={props}
+      {...(props === undefined ? {} : { props })}
+      useComponentDefaults={useComponentDefaults}
     />
   );
 
@@ -154,10 +158,7 @@ describe('AttachmentNew', () => {
   it('uses default upload button labels and forwards browse clicks to the file input', async () => {
     const user = userEvent.setup();
     const inputClick = vi.spyOn(HTMLInputElement.prototype, 'click');
-    renderAttachment([], {
-      buttonTitle: undefined,
-      id: undefined,
-    });
+    renderAttachment([], undefined, true);
 
     expect(screen.getByTestId('drag-upload-attachments')).toHaveAttribute(
       'title',

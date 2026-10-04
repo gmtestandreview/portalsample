@@ -5,7 +5,7 @@ export interface AddressLookupProps {
   label?: string;
   maxResults?: number;
   placeholder?: string;
-  isSummary?: boolean;
+  isSummary?: boolean | undefined;
   disabled?: boolean;
   inlineHelp?: ReactNode;
 }

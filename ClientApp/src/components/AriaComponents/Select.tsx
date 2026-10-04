@@ -12,6 +12,7 @@ import { DropdownItem, DropdownListBox } from './ListBox';
 import { ChevronDown } from './NmiIcon';
 import { Popover } from './Popover';
 import { Label, FieldError, Description } from '../forms/AriaForm/Form';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './Select.css';
 
 export interface SelectProps<T, M extends 'single' | 'multiple'> extends Omit<
@@ -36,7 +37,7 @@ export function Select<T, M extends 'single' | 'multiple' = 'single'>({
   ...props
 }: Readonly<SelectProps<T, M>>) {
   return (
-    <AriaSelect {...props} placeholder={placeholder}>
+    <AriaSelect {...props} {...omitUndefined({ placeholder })}>
       {label && <Label>{label}</Label>}
       <Button>
         <SelectValue />
@@ -45,7 +46,7 @@ export function Select<T, M extends 'single' | 'multiple' = 'single'>({
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover hideArrow className='select-popover'>
-        <SelectListBox items={items}>{children}</SelectListBox>
+        <SelectListBox {...omitUndefined({ items })}>{children}</SelectListBox>
       </Popover>
     </AriaSelect>
   );

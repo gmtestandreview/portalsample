@@ -30,7 +30,7 @@ const isBridgedFieldName = (name: string) =>
   name.startsWith('contact.');
 
 interface PaymentDetailsFormikBridgeProps {
-  quotationId?: string;
+  quotationId?: string | undefined;
 }
 
 /**

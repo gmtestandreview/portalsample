@@ -4,17 +4,19 @@ Shared metrics module for A Team.
 Append-only log: .agent-sync/metrics/YYYY-MM-DD.log
 One event per line: ISO-timestamp EVENT_TYPE [args...]
 """
+
 import sys
+import threading as _threading
 from datetime import date, datetime, timedelta
 from pathlib import Path
-
-import threading as _threading
+from typing import Any
 
 try:
-    import fcntl as _fcntl
-    _HAS_FCNTL = True
+    import importlib
+
+    _fcntl: Any = importlib.import_module("fcntl")
 except ImportError:
-    _HAS_FCNTL = False
+    _fcntl = None
 
 # Per-process in-process lock: prevents data loss when multiple threads call
 # append_metric() concurrently in the same process (the common case on Windows
@@ -23,7 +25,7 @@ _write_lock = _threading.Lock()
 DEFAULT_BASE_DIR = Path(__file__).parent.parent / ".agent-sync"
 
 
-def append_metric(event: str, base_dir: Path = None) -> None:
+def append_metric(event: str, base_dir: Path | None = None) -> None:
     """Append a metric event to today's log file."""
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
@@ -31,17 +33,16 @@ def append_metric(event: str, base_dir: Path = None) -> None:
     metrics_dir.mkdir(parents=True, exist_ok=True)
     log_file = metrics_dir / f"{date.today()}.log"
     line = f"{datetime.now().isoformat(timespec='seconds')} {event}\n"
-    with _write_lock:
-        with open(log_file, "a", encoding="utf-8") as f:
-            if _HAS_FCNTL:
-                _fcntl.flock(f, _fcntl.LOCK_EX)
-                f.write(line)
-                _fcntl.flock(f, _fcntl.LOCK_UN)
-            else:
-                f.write(line)
+    with _write_lock, open(log_file, "a", encoding="utf-8") as f:
+        if _fcntl is not None:
+            _fcntl.flock(f, _fcntl.LOCK_EX)
+            f.write(line)
+            _fcntl.flock(f, _fcntl.LOCK_UN)
+        else:
+            f.write(line)
 
 
-def read_events(days: int, base_dir: Path = None) -> list[str]:
+def read_events(days: int, base_dir: Path | None = None) -> list[str]:
     """Read events from today and the N-1 days before it.
 
     ``days=1`` returns today only; ``days=7`` returns today plus the 6 prior
@@ -53,7 +54,7 @@ def read_events(days: int, base_dir: Path = None) -> list[str]:
     if base_dir is None:
         base_dir = DEFAULT_BASE_DIR
     metrics_dir = base_dir / "metrics"
-    events = []
+    events: list[str] = []
     for i in range(days):
         d = date.today() - timedelta(days=i)
         log_file = metrics_dir / f"{d}.log"

@@ -30,7 +30,7 @@ function FormikHarness<TValues extends FormikValues>({
   return (
     <Formik
       initialValues={initialValues}
-      initialTouched={initialTouched}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
       onSubmit={onSubmit}
     >
       <Form>{children}</Form>
@@ -53,7 +53,8 @@ const renderItem = (
   initialTouched?: FormikConfig<{
     attachments: AttachmentDto[];
   }>['initialTouched'],
-  initialAttachment: AttachmentDto = attachment
+  initialAttachment: AttachmentDto = attachment,
+  includeDocumentId = true
 ) =>
   render(
     <FormikHarness
@@ -66,7 +67,7 @@ const renderItem = (
         canRemove
         cancelButtonId='cancel-button-doc-1'
         isSummary={false}
-        id='doc-1'
+        {...(includeDocumentId ? { id: 'doc-1' } : {})}
         fileBytes={initialAttachment.documentBytes}
         {...props}
       />
@@ -119,10 +120,15 @@ describe('AttachmentItemNew', () => {
   it('updates the category locally when no persisted document id is available', async () => {
     const user = userEvent.setup();
     const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
-    renderItem({ id: undefined, onCategoryUpdate }, undefined, {
-      ...attachment,
-      attachmentSize: undefined,
-    });
+    renderItem(
+      { onCategoryUpdate },
+      undefined,
+      {
+        ...attachment,
+        attachmentSize: undefined,
+      },
+      false
+    );
 
     await user.selectOptions(
       screen.getByRole('combobox', { name: 'Category' }),

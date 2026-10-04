@@ -5,6 +5,7 @@ import { Form, ListGroup } from 'react-bootstrap';
 import TextInput from '../TextInput';
 import type { GetAccountValuesDto } from '../../../api/web-api-client';
 import { getFilteredSuggestions } from './suggestionUtils';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 export interface OrganisationNameLookupProps {
   id?: string;
@@ -136,8 +137,8 @@ const OrganisationNameLookup = (
   }, []);
 
   const handleSelect = (value: string, callback?: () => void) => {
-    _fieldHelper.setValue(value);
-    _fieldHelper.setTouched(true);
+    void _fieldHelper.setValue(value);
+    void _fieldHelper.setTouched(true);
     setShowSuggestions(false);
     if (typeof callback === 'function') {
       callback();
@@ -184,7 +185,7 @@ const OrganisationNameLookup = (
             : ''}
         </div>
         <Form.Group
-          controlId={id}
+          {...omitUndefined({ controlId: id })}
           className='form-field-container combobox mb-2'
         >
           <TextInput
@@ -201,17 +202,17 @@ const OrganisationNameLookup = (
             aria-expanded={showSuggestions ? 'true' : 'false'}
             aria-haspopup='listbox'
             aria-controls={`${name}-options`}
-            aria-activedescendant={
-              activeIndex >= 0 ? `${name}-option-${activeIndex}` : undefined
-            }
+            {...omitUndefined({
+              'aria-activedescendant':
+                activeIndex >= 0 ? `${name}-option-${activeIndex}` : undefined,
+              'aria-describedby':
+                _meta.touched && _meta.error
+                  ? `${id || name}-validation-msg`
+                  : helpId || undefined,
+            })}
             aria-autocomplete='both'
             containerClassName='mb-0'
             className='search-box form-field'
-            aria-describedby={
-              _meta.touched && _meta.error
-                ? `${id || name}-validation-msg`
-                : helpId || undefined
-            }
           />
 
           {showSuggestions && filteredSuggestions.length > 0 && (

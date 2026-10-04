@@ -8,6 +8,7 @@ import {
   SliderFill,
 } from 'react-aria-components/Slider';
 import { Label } from '../forms/AriaForm/Form';
+import { omitUndefined } from '../../utils/omitUndefined';
 import './Slider.css';
 
 export interface SliderProps<T> extends AriaSliderProps<T> {
@@ -40,7 +41,7 @@ export function Slider<T extends number | number[]>({
               className='track inset'
               data-disabled={isDisabled || undefined}
             >
-              <SliderFill offset={fillOffset} />
+              <SliderFill {...omitUndefined({ offset: fillOffset })} />
             </div>
             {state.values
               .map((_, index) => ({
@@ -51,7 +52,9 @@ export function Slider<T extends number | number[]>({
                 <SliderThumb
                   key={thumb.id}
                   index={thumb.index}
-                  aria-label={thumbLabels?.[thumb.index]}
+                  {...omitUndefined({
+                    'aria-label': thumbLabels?.[thumb.index],
+                  })}
                   className='react-aria-SliderThumb indicator'
                 />
               ))}

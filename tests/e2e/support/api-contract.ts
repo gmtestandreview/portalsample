@@ -41,9 +41,9 @@ const validatorForSchema = (schema: AnySchema) => {
 const formatError = (error: ErrorObject) => {
   const path = error.instancePath || '/';
   const detail =
-    error.params.missingProperty === undefined
+    error.params['missingProperty'] === undefined
       ? error.message
-      : `${error.message}: ${error.params.missingProperty}`;
+      : `${error.message}: ${error.params['missingProperty']}`;
 
   return `${path} ${detail ?? 'failed schema validation'}`;
 };

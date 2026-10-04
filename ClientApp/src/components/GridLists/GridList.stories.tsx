@@ -129,7 +129,6 @@ export const Example: Story = (args: Readonly<Parameters<Story>[0]>) => (
 );
 
 Example.args = {
-  onAction: undefined,
   selectionMode: 'multiple',
   layout: 'grid',
 };
@@ -210,7 +209,6 @@ export const Sections: Story = (args: Readonly<Parameters<Story>[0]>) => (
 );
 
 Sections.args = {
-  onAction: undefined,
   selectionMode: 'multiple',
   layout: 'grid',
 };

@@ -4,16 +4,20 @@ enabled = true
 
 [mcp_servers.react-aria]
 command = "npx"
-args = ["@react-aria/mcp@latest"]
+args = [ "@react-aria/mcp@latest" ]
 enabled = true
 startup_timeout_sec = 120
 
 [mcp_servers.github]
 command = "cmd"
-args = ["/c", "scripts\\github-mcp-server.cmd"]
+args = [ "/c", "scripts\\github-mcp-server.cmd" ]
 enabled = true
 
 [mcp_servers.tokensave]
 command = "C:/Users/gregm/.local/bin/tokensave.exe"
-args = ["serve"]
+args = [ "serve" ]
 enabled = true
+
+[mcp_servers.sonarqube]
+command = "sonar"
+args = [ "run", "mcp", "--project", "gmtestandreview_portalsample" ]

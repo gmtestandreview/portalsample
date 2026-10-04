@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import { trim } from 'lodash';
 import type { TextAreaInputProps } from './types';
 import SummaryDisplay from '../../SummaryDisplay';
+import { omitUndefined } from '../../../utils/omitUndefined';
 
 const TextAreaInput = ({
   label,
@@ -39,13 +40,13 @@ const TextAreaInput = ({
       /[\u{10000}-\u{10FFFF}]/gu,
       ''
     );
-    _fieldHelper.setValue(sanitised);
+    void _fieldHelper.setValue(sanitised);
   };
 
   const handleOnBlur = () => {
     const newValue = trim(_meta.value as string);
-    _fieldHelper.setTouched(true);
-    _fieldHelper.setValue(newValue);
+    void _fieldHelper.setTouched(true);
+    void _fieldHelper.setValue(newValue);
   };
 
   let hasExceededMaximum = false;
@@ -75,13 +76,16 @@ const TextAreaInput = ({
         {..._field}
         value={_field.value ?? ''}
         isInvalid={!!(_meta.touched && _meta.error)}
-        disabled={disabled}
-        aria-describedby={
-          _meta.touched && _meta.error ? `${id || name}-validation-msg` : helpId
-        }
+        {...omitUndefined({
+          disabled,
+          'aria-describedby':
+            _meta.touched && _meta.error
+              ? `${id || name}-validation-msg`
+              : helpId,
+          placeholder,
+        })}
         onChange={handleChange}
         onBlur={handleOnBlur}
-        placeholder={placeholder}
       />
       {maxCharacters && (
         <div

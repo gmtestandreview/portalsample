@@ -8,7 +8,7 @@ import type {
   FormStepStatusDto,
   ReportRecipientStep,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { ErrorType } from '../../components/forms/WizardForm/types';
 import type {
   WizardFormStepValues,
@@ -31,10 +31,9 @@ const loadReportRecipient =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AcceptQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const reportRecipient = await client.getReportRecipient(id, abortSignal);
       const wizardStepValues: WizardFormStepValues<ReportRecipientStep> = {
@@ -56,17 +55,16 @@ const saveStep =
   ) =>
   async (
     values: ReportRecipientStep,
-    isDirty: boolean,
+    _isDirty: boolean,
     _: FormikHelpers<ReportRecipientStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.saveReportRecipient(
           id,

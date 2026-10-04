@@ -11,7 +11,7 @@ import type {
   ValidationProblemDetails,
   UserDto,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -29,10 +29,9 @@ const loadAccountDetails =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
       const businessDetailsStep = await client.getBranchDetails(abortSignal);
@@ -48,7 +47,7 @@ const loadAccountDetails =
     );
   };
 
-const handleOrganisationUpdate = async (
+const handleOrganisationUpdate = (
   values: AccountDto,
   accountContext: AccountContextState | null,
   user: UserDto
@@ -106,10 +105,9 @@ const completeAccountDetails =
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.completeBranchAdd(
           {
@@ -128,7 +126,7 @@ const completeAccountDetails =
         userClient.setAuthToken(tokenResult.accessToken);
         const user = await userClient.signIn({});
 
-        await handleOrganisationUpdate(values, accountContext, user);
+        handleOrganisationUpdate(values, accountContext, user);
 
         setBranchModalNotification({
           message: 'Your branch/location details have been successfully saved.',

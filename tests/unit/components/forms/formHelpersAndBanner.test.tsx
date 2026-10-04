@@ -57,10 +57,10 @@ function FormikHarness<TValues extends FormikValues>({
     <Formik
       enableReinitialize
       initialValues={initialValues}
-      initialStatus={initialStatus}
-      initialErrors={initialErrors}
-      initialTouched={initialTouched}
-      validate={validate}
+      {...(initialStatus === undefined ? {} : { initialStatus })}
+      {...(initialErrors === undefined ? {} : { initialErrors })}
+      {...(initialTouched === undefined ? {} : { initialTouched })}
+      {...(validate === undefined ? {} : { validate })}
       onSubmit={onSubmit}
     >
       <Form>{children}</Form>
