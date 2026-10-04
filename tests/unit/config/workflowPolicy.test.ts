@@ -96,7 +96,7 @@ const DOWNLOAD_ARTIFACT_PIN =
 const CHROMATIC_ACTION_PIN =
   'chromaui/action@6b3c2820222d23bad770d57a4ad5e2d1c91f92e9';
 const CODEQL_ACTION_PIN =
-  'github/codeql-action/(?:init|analyze)@7999b86c43a865dc79d8923397f35af22de63401';
+  'github/codeql-action/(?:init|analyze)@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
 
 const testCommands = [
   { name: 'unit', command: 'npm run test:ci:unit' },
@@ -290,9 +290,11 @@ describe('workflows pin every action to an immutable commit', () => {
   );
 
   it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
-    expect(codeqlWorkflow).toMatch(
-      new RegExp(`uses: ${CODEQL_ACTION_PIN} # v4`)
-    );
+    expect([
+      ...codeqlWorkflow.matchAll(
+        new RegExp(`uses: ${CODEQL_ACTION_PIN} # v4`, 'g')
+      ),
+    ]).toHaveLength(2);
     expect(occurrences('github/codeql-action/', codeqlWorkflow)).toBe(2);
   });
 
