@@ -6,7 +6,7 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!!**/dist"]
+		"includes": ["**", "!!**/dist", "!!ClientApp/src/api/web-api-client.ts"]
 	},
 	"formatter": {
 		"enabled": true,
