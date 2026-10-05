@@ -10,13 +10,18 @@ const isPlainObject = (value: object): boolean => {
 /**
  * Drops own enumerable properties whose value is `undefined` from a plain object.
  *
- * With `exactOptionalPropertyTypes`, an optional property means "absent", not "present and
- * undefined". View-model shapes that read from optional chains carry explicit `undefined`s, and
- * this is where they are converted to the absent-key shape the generated DTOs require.
+ * With `exactOptionalPropertyTypes`, optional props and DTO fields that exclude `undefined`
+ * require an absent key when no value is available. This adapter converts explicit `undefined`
+ * values from optional chains into that absent-key shape.
  *
- * The operation is shallow, preserves falsy values and enumerable symbol keys, and never mutates
- * the input. Arrays and class instances are rejected because the result is a plain object rather
- * than a value with the input's prototype or array semantics.
+ * Always returns a new plain object, preserving falsy values, enumerable symbol keys and nested
+ * references. Filtering is shallow and never mutates the input. The return type conservatively
+ * makes every property optional.
+ *
+ * Accepts only objects whose prototype is this realm's `Object.prototype` or `null`. The generic
+ * `object` constraint cannot express this runtime requirement.
+ *
+ * @throws {TypeError} For arrays, class instances and ordinary objects from other realms.
  */
 export const omitUndefined = <T extends object>(
   value: T
