@@ -29,8 +29,8 @@ This is a local adaptation of the
 reviewed on 2026-10-04. JSON/code examples and numbers illustrate a record
 format, not observed runs. Recheck provider APIs when the client changes. This
 guide's `evals/evals.json` format is illustrative; this package's seeded cases
-use [the local schema](../scripts/evals/evaluation-schema.md) under
-`scripts/evals/`.
+use [the local schema](../evals/evaluation-schema.md) under
+`evals/`.
 
 Navigation: [cases](#designing-test-cases), [runs](#running-evals),
 [assertions](#writing-assertions), [grading](#grading-outputs),
@@ -260,10 +260,10 @@ script - scripts are more reliable than LLM judgment for mechanical checks and
 reusable across iterations.
 
 The illustrative Boolean `passed` field below is suitable only for verified
-PASS/FAIL assertions. For missing evidence, store `result: "NHR"`, `passed: null`,
-the missing evidence, and required follow-up; use an adapter or the local schema
-if the target grader rejects nullable values. Exclude missing grades from any
-claimed verified pass count and report their count separately.
+PASS/FAIL assertions. For missing evidence, store `result: "NHR"`,
+`passed: null`, the missing evidence, and required follow-up; use an adapter or
+the local schema if the target grader rejects nullable values. Exclude missing
+grades from any claimed verified pass count and report their count separately.
 
 ```json grading.json
 {

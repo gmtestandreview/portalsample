@@ -1,0 +1,36 @@
+{
+  "loaded_resources": [
+    {"path": "request.txt", "scope": "entire request"},
+    {"path": "input.json", "scope": "nine independent requests"},
+    {"path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/candidate/python-code-review/SKILL.md", "scope": "entire skill"},
+    {"path": "references/python-remediation-method.md", "scope": "heading inventory; artifact provenance and baseline, root causes, external data and sink tracing, numeric/metadata correctness, async/threads/subprocesses, differential remediation"},
+    {"path": "references/ruff-pyright-verification.md", "scope": "heading inventory; diagnostic provenance, analyzer evidence record, evidence rules, Pyright/Pylance/mypy, fresh verification"},
+    {"path": "references/review-reporting.md", "scope": "heading inventory; completion contract, pressure status and final assessment"}
+  ],
+  "decisions_actions": [
+    "Classified each request independently; six scope matches and three near misses.",
+    "Associated only relevant reference subsets with each request; narrow async review did not require the general review reference or full reporting rubric.",
+    "Recognized supplied unresolved fabricated-result defect as RED regardless of passing-test count.",
+    "Declined to assert final-artifact pass from pre-edit evidence.",
+    "Recognized explicit breaking-change authorization within the compatibility request while obeying the evaluator's prohibition on executing breaking changes.",
+    "Recorded concrete next actions without fabricating source findings, diagnostics or executed outcomes.",
+    "Created responses.json, final.md and observations.json only in the assigned directory."
+  ],
+  "limitations": [
+    "No existing Python module/function/class or schema was supplied.",
+    "No exact diagnostic output, analyzer version/configuration/environment, artifact revision, consumers or test-run provenance was supplied.",
+    "Reported test counts and defects were treated as supplied assertions rather than independently executed evidence.",
+    "No remediation, compatibility differential, pressure campaign or runtime verification could be executed from the supplied evidence."
+  ],
+  "checks_actually_run": {
+    "tests": [],
+    "analyzers": [],
+    "compile": [],
+    "runtime": [],
+    "compatibility": [],
+    "pressure": []
+  },
+  "output_verification": "PowerShell parsed responses.json and observations.json successfully, counted nine responses and confirmed final.md exists; this is output-file validation only, not Python or analyzer verification.",
+  "source_mutations": [],
+  "output_files": ["responses.json", "final.md", "observations.json"]
+}

@@ -1,172 +1,172 @@
 #!/usr/bin/env python3
+"""Verify maintained and distributed watcher probes without killing targets.
+
+Run: python tests/hooks/test_watcher_pid.py
 """
-Guards the watcher's process-liveness check.
 
-On Windows `os.kill(pid, sig)` has no signal-0 semantics: any signal value
-opens the target process and calls TerminateProcess. So the POSIX idiom
-`os.kill(pid, 0)` — "does this process exist?" — actually KILLS the process it
-is probing, then reports it as alive because no exception was raised.
-
-`scripts/watcher.py` was fixed to use `pid_is_running()`. The copy in
-`templates/` was not, and templates/ ships to downstream projects. These tests
-exist so the two cannot drift apart again.
-
-Run:  python tests/hooks/test_watcher_pid.py
-"""
 import ast
-import gc
-import os
 import subprocess
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPTS_WATCHER = ROOT / "scripts" / "watcher.py"
 TEMPLATE_WATCHER = ROOT / "templates" / "watcher.py"
 PROCESS_UTILS = ROOT / "scripts" / "process_utils.py"
-
-# `os.kill(pid, 0)` is not banned outright — it is the CORRECT liveness probe on
-# POSIX, and pid_is_running() uses it in its POSIX branch. What must never happen
-# is the probe appearing outside that one guarded helper, where no os.name check
-# protects it. So locate every such call and assert which function it sits in.
-_ALLOWED_PROBE_HOST = "pid_is_running"
-
-failures = []
+WATCHERS = [SCRIPTS_WATCHER, TEMPLATE_WATCHER]
+HELPERS = [PROCESS_UTILS, TEMPLATE_WATCHER]
 
 
-def _os_kill_probe_sites(source: str):
-    """Return [(enclosing function, lineno)] for every os.kill(x, 0) call."""
-    sites = []
-    for func in ast.walk(ast.parse(source)):
-        if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            continue
-        for node in ast.walk(func):
-            if (
-                isinstance(node, ast.Call)
-                and isinstance(node.func, ast.Attribute)
-                and node.func.attr == "kill"
-                and isinstance(node.func.value, ast.Name)
-                and node.func.value.id == "os"
-                and len(node.args) == 2
-                and isinstance(node.args[1], ast.Constant)
-                and node.args[1].value == 0
-            ):
-                sites.append((func.name, node.lineno))
+def _os_kill_probe_sites(source: str) -> list[tuple[str, int]]:
+    """Find module and nested probes, attributing each to its actual scope."""
+    sites: list[tuple[str, int]] = []
+
+    def visit(node: ast.AST, owner: str) -> None:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            owner = node.name
+        elif isinstance(node, ast.ClassDef):
+            owner = f"class {node.name}"
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr == "kill"
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "os"
+            and len(node.args) == 2
+            and isinstance(node.args[1], ast.Constant)
+            and node.args[1].value == 0
+        ):
+            sites.append((owner, node.lineno))
+        for child in ast.iter_child_nodes(node):
+            visit(child, owner)
+
+    visit(ast.parse(source), "<module>")
     return sites
 
 
-def check(label: str, condition: bool, detail: str = "") -> None:
-    if condition:
-        print(f"  [pass] {label}")
-        return
-    print(f"  [FAIL] {label}{(' — ' + detail) if detail else ''}")
-    failures.append(label)
+@pytest.mark.parametrize(
+    ("source", "expected"),
+    [
+        ("os.kill(pid, 0)", [("<module>", 1)]),
+        ("def outer():\n    def inner():\n        os.kill(pid, 0)", [("inner", 3)]),
+        ("class Outer:\n    os.kill(pid, 0)", [("class Outer", 2)]),
+        ("def ordinary():\n    os.kill(pid, 15)", []),
+    ],
+)
+def test_probe_scan_identifies_actual_scope(source: str, expected: list[tuple[str, int]]) -> None:
+    assert _os_kill_probe_sites(source) == expected
 
 
-def test_no_unguarded_os_kill_probe() -> None:
-    """os.kill(pid, 0) may appear only inside pid_is_running()'s POSIX branch."""
-    for path in (SCRIPTS_WATCHER, TEMPLATE_WATCHER, PROCESS_UTILS):
-        source = path.read_text(encoding="utf-8")
-        stray = [
-            (fn, line)
-            for fn, line in _os_kill_probe_sites(source)
-            if fn != _ALLOWED_PROBE_HOST
-        ]
-        check(
-            f"{path.relative_to(ROOT).as_posix()}: no unguarded os.kill(pid, 0) probe",
-            not stray,
-            "; ".join(f"in {fn}() at line {line}" for fn, line in stray),
-        )
+@pytest.mark.parametrize("path", [*WATCHERS, PROCESS_UTILS])
+def test_no_unguarded_os_kill_probe(path: Path) -> None:
+    """Real subprocess checks below supplement this name-based static guard."""
+    stray = [
+        (owner, line)
+        for owner, line in _os_kill_probe_sites(path.read_text(encoding="utf-8"))
+        if owner != "pid_is_running"
+    ]
+    assert not stray, f"{path}: unguarded probes {stray}"
 
 
-def test_both_watchers_define_a_liveness_helper() -> None:
-    """Each watcher must reach pid_is_running — imported or inlined."""
-    for path in (SCRIPTS_WATCHER, TEMPLATE_WATCHER):
-        source = path.read_text(encoding="utf-8")
-        has_helper = (
-            "from process_utils import pid_is_running" in source
-            or "def pid_is_running" in source
-        )
-        check(
-            f"{path.relative_to(ROOT).as_posix()}: reaches pid_is_running",
-            has_helper,
-            "neither imports nor defines it",
-        )
+@pytest.mark.parametrize("path", WATCHERS)
+def test_both_watchers_define_a_liveness_helper(path: Path) -> None:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    definitions = [node.name for node in tree.body if isinstance(node, ast.FunctionDef)]
+    imports = [
+        name.name
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom) and node.module == "process_utils"
+        for name in node.names
+    ]
+    assert "pid_is_running" in definitions or "pid_is_running" in imports
 
 
-def test_watchers_use_the_helper_in_is_already_running() -> None:
-    """The helper must actually be called by the liveness check."""
-    for path in (SCRIPTS_WATCHER, TEMPLATE_WATCHER):
-        source = path.read_text(encoding="utf-8")
-        body = source.split("def is_already_running", 1)
-        check(
-            f"{path.relative_to(ROOT).as_posix()}: is_already_running() calls pid_is_running()",
-            len(body) == 2 and "pid_is_running(" in body[1].split("\ndef ", 1)[0],
-            "helper defined but not called",
-        )
+@pytest.mark.parametrize("path", WATCHERS)
+def test_watchers_use_the_helper_in_is_already_running(path: Path) -> None:
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    functions = [
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "is_already_running"
+    ]
+    assert len(functions) == 1, f"{path}: missing or duplicate liveness entry point"
+    assert any(
+        isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "pid_is_running"
+        for node in ast.walk(functions[0])
+    ), f"{path}: liveness entry point does not call the helper"
 
 
-def test_pid_is_running_is_correct_for_live_and_dead_pids() -> None:
-    """Behavioural check of the real helper, on this platform."""
-    sys.path.insert(0, str(PROCESS_UTILS.parent))
-    from process_utils import pid_is_running  # noqa: E402
-
-    check("pid_is_running(own pid) is True", pid_is_running(os.getpid()) is True)
-
-    # A process that has certainly exited. On Windows a process object survives
-    # while any handle to it is open, and Popen holds one — so the handle must
-    # be released before probing, or the exited pid still reports as alive.
-    proc = subprocess.Popen([sys.executable, "-c", "pass"])
-    dead_pid = proc.pid
-    proc.wait(timeout=15)
-    del proc
-    gc.collect()
-
-    check(
-        f"pid_is_running(exited pid {dead_pid}) is False",
-        pid_is_running(dead_pid) is False,
-        "a reaped pid was reported alive",
+def test_pid_is_running_reports_own_pid() -> None:
+    result = subprocess.run(
+        [sys.executable, "-c", _HELPER_CHECK, str(PROCESS_UTILS), "own"],
+        capture_output=True,
+        text=True,
+        timeout=20,
     )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "OWN_PID_PROBE_COMPLETED", "probe exited before completing"
 
 
-def test_probing_does_not_kill_the_target() -> None:
-    """The regression itself: probing a live process must leave it running."""
-    sys.path.insert(0, str(PROCESS_UTILS.parent))
-    from process_utils import pid_is_running  # noqa: E402
+# Load both real helpers in separate interpreters, avoiding watcher-loop and
+# import-path side effects in the test runner. Every child is reaped in finally.
+_HELPER_CHECK = """
+import gc
+import importlib.util
+import os
+import subprocess
+import sys
 
-    # A child that sleeps long enough to be probed twice.
-    child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
-    try:
-        first = pid_is_running(child.pid)
-        second = pid_is_running(child.pid)
-        still_alive = child.poll() is None
-        check("probing a live process reports it alive", first and second)
-        check(
-            "probing a live process does NOT terminate it",
-            still_alive,
-            "the probe killed the target — this is the Windows os.kill bug",
-        )
-    finally:
-        child.kill()
+spec = importlib.util.spec_from_file_location('candidate', sys.argv[1])
+assert spec is not None and spec.loader is not None
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+mode = sys.argv[2]
+if mode == 'own':
+    assert module.pid_is_running(os.getpid()) is True, 'own process reported dead'
+    print('OWN_PID_PROBE_COMPLETED')
+    sys.exit(0)
+child = subprocess.Popen([sys.executable, '-c',
+    'import time; time.sleep(30)' if mode == 'live' else 'pass'])
+try:
+    if mode != 'live':
         child.wait(timeout=10)
+        if mode == 'exited':
+            assert module.pid_is_running(child.pid) is False, 'exited process reported running'
+    else:
+        assert module.pid_is_running(child.pid) is True, 'live process reported dead'
+        assert module.pid_is_running(child.pid) is True, 'second probe reported dead'
+        assert child.poll() is None, 'liveness probe terminated the child'
+finally:
+    if child.poll() is None:
+        child.kill()
+    child.wait(timeout=5)
+if mode == 'released':
+    dead_pid = child.pid
+    del child
+    gc.collect()
+    assert module.pid_is_running(dead_pid) is False, 'released process reported running'
+"""
 
 
-def main() -> None:
-    print(f"platform: {os.name} ({sys.platform})\n")
-    test_no_unguarded_os_kill_probe()
-    test_both_watchers_define_a_liveness_helper()
-    test_watchers_use_the_helper_in_is_already_running()
-    test_pid_is_running_is_correct_for_live_and_dead_pids()
-    test_probing_does_not_kill_the_target()
+@pytest.mark.parametrize("helper", HELPERS, ids=["maintained", "template"])
+@pytest.mark.parametrize("mode", ["live", "released", "exited"])
+def test_each_real_helper_preserves_process_liveness(helper: Path, mode: str) -> None:
+    result = subprocess.run(
+        [sys.executable, "-c", _HELPER_CHECK, str(helper), mode],
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    assert result.returncode == 0, result.stderr
 
-    print()
-    if failures:
-        print(f"{len(failures)} FAILING:")
-        for f in failures:
-            print(f"  - {f}")
-        sys.exit(1)
-    print("watcher pid handling holds")
+
+def main() -> int:
+    return pytest.main([str(Path(__file__).resolve()), "-q"])
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

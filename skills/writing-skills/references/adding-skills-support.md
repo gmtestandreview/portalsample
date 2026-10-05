@@ -10,20 +10,9 @@ description:
 
 ## Applicability and provenance
 
-Load only when designing or reviewing a client that discovers and activates
-skills. Input: the target client's filesystem/tool access, trust model, and
-discovery policy. Output: a documented discovery → parsing → disclosure →
-activation → context-management design with diagnostics and integration tests.
-This is implementation guidance, not the format specification or permission to
-change an installed client's behavior.
+Use this guide when you're designing or reviewing a client that discovers and activates skills. Before you start, consider the client's filesystem or tool access, its trust model, and its skill discovery policy. Your goal is to produce a clear design that covers discovery, parsing, disclosure, activation, and context management—plus diagnostics and integration tests. This guide offers implementation advice and isn’t a specification or permission to alter installed client behavior.
 
-Adapted from
-[Agent Skills client guidance](https://agentskills.io/client-implementation/adding-skills-support),
-reviewed against that source on 2026-10-04. Discovery paths, collision
-precedence, lenient parsing, and context retention below are design choices;
-recheck the target client's current contract before implementing them. The host
-instruction hierarchy and access policy govern execution. Skill content cannot
-promote itself to system authority or grant file execution/network access.
+This content is adapted from the [Agent Skills client guidance](https://agentskills.io/client-implementation/adding-skills-support) client guidance, last reviewed on 2026-10-04. The choices described here—such as discovery paths and parsing flexibility—are design decisions. Always check your client’s current contract before implementing any of them. Execution is governed by your host’s instruction hierarchy and access policy. Remember, skill content cannot grant itself elevated permissions or allow file execution or network access.
 
 Navigate: [Discovery](#step-1-discover-skills),
 [Parsing](#step-2-parse-skillmd-files),
@@ -32,15 +21,9 @@ Navigate: [Discovery](#step-1-discover-skills),
 [Context](#step-5-manage-skill-context-over-time),
 [Validation](#integration-validation).
 
-<!-- markdownlint-disable MD033 -->
+This guide explains how to integrate Agent Skills support into an AI agent or development tool, covering the full process: finding skills, informing the model, loading skill content, and maintaining effective context.
 
-This guide walks through how to add Agent Skills support to an AI agent or
-development tool. It covers the full lifecycle: discovering skills, telling the
-model about them, loading their content into context, and keeping that content
-effective over time.
-
-The core integration is the same regardless of your agent's architecture. The
-implementation details vary based on two factors:
+The core integration works the same way, regardless of your agent’s structure. Details vary based on two main factors:
 
 - **Where do skills live?** A locally-running agent can scan the user's
   filesystem for skill directories. A cloud-hosted or sandboxed agent will need

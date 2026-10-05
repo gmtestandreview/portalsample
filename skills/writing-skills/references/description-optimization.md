@@ -370,6 +370,15 @@ failures merely to make the candidate pass.
 Record the observed trigger behavior rather than assuming a description is
 deterministic.
 
+Record a `measurement_target` for each campaign: `selection` (the skill was
+chosen), `runtime_activation` (its instructions were observably loaded), or
+`behavioral_application` (the loaded guidance affected task behavior). Keep the
+target fixed when comparing rates. This procedure normally measures
+`runtime_activation`; selection-only logs cannot prove loading, and a good final
+answer cannot prove either. Per-run evidence includes query label, candidate
+revision, client/model/settings, target, observed trace, and outcome;
+unavailable required observations remain `NHR`.
+
 ---
 
 ## Train and validation split
@@ -404,7 +413,7 @@ holdout below separate, and do not claim validation is untouched test evidence.
 3. Use **train-set** failures to identify general categories of missing or
    over-broad intent.
 4. Revise the description.
-5. Keep the description below `1024` characters.
+5. Keep the description at or below `1024` characters.
 6. Re-run train and validation tests.
 7. Repeat within the entrypoint's authorized iteration limit (at most three
    remediation iterations for this package) until:
@@ -516,7 +525,7 @@ description: >-
 Before accepting a description:
 
 - [ ] Valid YAML scalar.
-- [ ] Under `1024` characters.
+- [ ] At or below `1024` characters.
 - [ ] Uses the declared local or target-provider activation style.
 - [ ] Names the relevant artifact, domain, or responsibility.
 - [ ] Includes likely user verbs and meaningful synonyms.

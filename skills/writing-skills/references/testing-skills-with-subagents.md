@@ -43,10 +43,10 @@ Navigation: [evidence layout](#behavioral-eval-evidence-layout),
 [passing](#8-what-counts-as-passing).
 
 **Behavioral eval examples:** See
-[campaign guidance](../scripts/evals/README.md) for campaign execution guidance
-and the seeded cases under `scripts/evals/activation/`,
-`scripts/evals/red-green/`, `scripts/evals/pressure/`,
-`scripts/evals/reference/`, and `scripts/evals/regression/`.
+[campaign guidance](../evals/README.md) for campaign execution guidance
+and the seeded cases under `evals/activation/`,
+`evals/red-green/`, `evals/pressure/`,
+`evals/reference/`, and `evals/regression/`.
 
 ## Behavioral Eval Evidence Layout
 
@@ -55,7 +55,7 @@ validator, prompt, and CLI tests. Use this package-local layout (not a universal
 specification requirement):
 
 ```text
-scripts/evals/
+evals/
   activation/
   red-green/
   pressure/
@@ -67,11 +67,11 @@ Map evidence by purpose:
 
 | Behavior                                                                                  | Evidence location           |
 | ----------------------------------------------------------------------------------------- | --------------------------- |
-| Trigger positives, indirect requests, and near-misses                                     | `scripts/evals/activation/` |
-| Without-skill baseline vs with-skill comparison                                           | `scripts/evals/red-green/`  |
-| Pressure, edge, counterexample, ambiguity, and safety cases                               | `scripts/evals/pressure/`   |
-| Retrieval, application, resource discovery, missing coverage, and unsupported-query cases | `scripts/evals/reference/`  |
-| Post-fix reruns, prior failures, positives, and near-miss regressions                     | `scripts/evals/regression/` |
+| Trigger positives, indirect requests, and near-misses                                     | `evals/activation/` |
+| Without-skill baseline vs with-skill comparison                                           | `evals/red-green/`  |
+| Pressure, edge, counterexample, ambiguity, and safety cases                               | `evals/pressure/`   |
+| Retrieval, application, resource discovery, missing coverage, and unsupported-query cases | `evals/reference/`  |
+| Post-fix reruns, prior failures, positives, and near-miss regressions                     | `evals/regression/` |
 
 ### Lifecycle vs result state
 

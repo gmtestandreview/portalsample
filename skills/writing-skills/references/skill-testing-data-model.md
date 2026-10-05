@@ -376,9 +376,8 @@ moving or overwriting a prior campaign's definition.
 | `comparison_case_id`  | FK → EvaluationCase     |       no |
 
 Add required `measurement_target` (`selection`, `behavioral_application`, or
-`runtime_activation`) and preserve
-the applicable contract from the
-[evaluation schema](../scripts/evals/evaluation-schema.md). Do not interpret
+`runtime_activation`) and preserve the applicable contract from the
+[evaluation schema](../evals/evaluation-schema.md). Do not interpret
 application or selector proxies as observed runtime activation.
 
 ### Phase enum
@@ -1038,9 +1037,9 @@ skills/<skill-id>/
         deployment-decision.yaml
 ```
 
-The existing `scripts/evals/activation`, `scripts/evals/red-green`,
-`scripts/evals/pressure`, `scripts/evals/reference`, and
-`scripts/evals/regression` folders can remain the **case-definition library**;
+The existing `evals/activation`, `evals/red-green`,
+`evals/pressure`, `evals/reference`, and
+`evals/regression` folders can remain the **case-definition library**;
 executed campaign evidence should be stored separately so reusable scenarios are
 not overwritten by run results.
 
@@ -1055,7 +1054,7 @@ not overwritten by run results.
 | `best-practices-evaluations.md`                               | Requirement / BP criteria                                                             |
 | `SKILL-testing-checklist.md`                                  | RequirementAssessment, DeploymentDecision, DeploymentBlocker                          |
 | `testing-skills-with-subagents.md`                            | EvaluationCampaign, EvaluationCase, EvaluationRun, RedGreenComparison, RegressionLink |
-| [evaluation-schema.md](../scripts/evals/evaluation-schema.md) | Behavioral fields, outcomes, requiredness, evidence rules                             |
+| [evaluation-schema.md](../evals/evaluation-schema.md) | Behavioral fields, outcomes, requiredness, evidence rules                             |
 | `audit-scoring.md`                                            | Audit, RubricCriterion, AuditCriterionScore, Finding, QAQRMIResult                    |
 | deterministic Python tests                                    | DeterministicTestCase, DeterministicSuiteRun, DeterministicTestResult                 |
 

@@ -156,9 +156,9 @@ Deciding what a skill should cover is like deciding what a function should do:
 Overly comprehensive skills can hurt more than they help - the agent struggles
 to extract what's relevant and may pursue unproductive paths triggered by
 instructions that don't apply to the current task. Compare concise, stepwise
-guidance with a working example against broader documentation on actual tasks. When you
-find yourself covering every edge case, consider whether most are better handled
-by the agent's own judgment.
+guidance with a working example against broader documentation on actual tasks.
+When you find yourself covering every edge case, consider whether most are
+better handled by the agent's own judgment.
 
 ### Structure large skills with progressive disclosure
 
@@ -185,8 +185,8 @@ specificity of your instructions to the fragility of the task.
 **Give the agent freedom** when multiple approaches are valid and the task
 tolerates variation. For flexible instructions, explaining _why_ may help;
 compare context-dependent decisions rather than assuming an explanation improves
-them. A code review skill can
-describe what to look for without prescribing exact steps:
+them. A code review skill can describe what to look for without prescribing
+exact steps:
 
 ```markdown
 ## Code review process

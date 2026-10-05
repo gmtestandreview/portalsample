@@ -36,15 +36,15 @@ state their working directory; do not assume the index directory is a shell cwd.
 | Class selection and appropriate test emphasis                                      | [Classification](skill-classification.md)                                                | Selected testing reference for the resulting class                                                           |
 | Trigger/description revision, near-misses, repeated trigger tests                  | [Description optimization](description-optimization.md)                                  | Target runtime discovery/registration evidence before blaming wording                                        |
 | Output-shaping failure, exception, limit, or wording experiment                    | [Instruction form](instruction-form.md)                                                  | Behavioral comparison when claiming improvement; historical experiments require retained evidence            |
-| Output-quality eval design, assertions, grading, workspaces                        | [Evaluating skill output](evaluating-skill-output.md)                                    | [Seeded eval library](../scripts/evals/README.md) after selecting the method                                 |
+| Output-quality eval design, assertions, grading, workspaces                        | [Evaluating skill output](evaluating-skill-output.md)                                    | [Seeded eval library](../evals/README.md) after selecting the method                                 |
 | Class-specific RED/GREEN/REFACTOR, pressure/edge, retrieval, discovery, regression | [Testing with subagents](testing-skills-with-subagents.md)                               | [Persuasion](persuasion-principles.md) only after a concrete adherence failure                               |
-| Persistent revisions, requirements, case results, deployment decisions             | [Evidence data model](skill-testing-data-model.md)                                       | [Case record schema](../scripts/evals/evaluation-schema.md) for this seeded library                          |
+| Persistent revisions, requirements, case results, deployment decisions             | [Evidence data model](skill-testing-data-model.md)                                       | [Case record schema](../evals/evaluation-schema.md) for this seeded library                          |
 | Commands or executable resources in a skill                                        | [Using scripts](using-scripts-in-skills.md)                                              | [Local harness README](../scripts/README.md) to execute this package's tools                                 |
 | Codex listing, GitHub/curated installation, discovery                              | [Codex installation](codex-skill-installation.md)                                        | Prefer an active dedicated installer; report absent capability                                               |
 | Runtime/client discovery, parsing, loading, prompt construction                    | [Adding skills support](adding-skills-support.md)                                        | Specification for compliance; actual client policy for integration                                           |
 | Claude/Anthropic authoring decisions                                               | [Anthropic guidance](anthropic-best-practices.md)                                        | Generic specification still governs universal claims                                                         |
-| Quick merge plan, overlap/preservation inventory                                   | [Quick merge workflow](prompt-1-quick-merge-plan.md)                                     | Classification/quality criteria when they affect the recommendation                                          |
-| Full audit and conditional merge                                                   | [Full audit/merge workflow](prompt-2-full-audit+conditional-merge.md)                    | Specification for resulting skill; checklist before readiness                                                |
+| Quick merge plan, overlap/preservation inventory                                   | [Quick merge workflow](../assets/prompt-1-quick-merge-plan.md)                                     | Classification/quality criteria when they affect the recommendation                                          |
+| Full audit and conditional merge                                                   | [Full audit/merge workflow](../assets/prompt-2-full-audit+conditional-merge.md)                    | Specification for resulting skill; checklist before readiness                                                |
 | SWOT materially helps a keep/merge/split/deprecate decision                        | [SWOT template](../templates/SWOT%20Analysis.md)                                         | Quality criteria; scoring only if requested                                                                  |
 | Final validation or deployment decision                                            | [Checklist](SKILL-testing-checklist.md)                                                  | Specification and specialist methods for unresolved gates                                                    |
 | Add/edit a skill flowchart                                                         | [Graphviz conventions](../scripts/graphviz-conventions.dot)                              | [Renderer](../scripts/render-graphs.js) and [harness README](../scripts/README.md) for commands/dependencies |
@@ -52,27 +52,27 @@ state their working directory; do not assume the index directory is a shell cwd.
 
 ## Case libraries and historical evidence
 
-[The eval README](../scripts/evals/README.md) selects cases and defines campaign
-order; [the schema](../scripts/evals/evaluation-schema.md) defines records and
+[The eval README](../evals/README.md) selects cases and defines campaign
+order; [the schema](../evals/evaluation-schema.md) defines records and
 outcome semantics. Choose from:
 
-- [Activation/boundaries](../scripts/evals/activation/activation-evals.md):
+- [Activation/boundaries](../evals/activation/activation-evals.md):
   direct, indirect, embedded, near-miss, and ambiguous requests. Declare whether
   measuring selection, application, or actual runtime activation.
-- [RED/GREEN](../scripts/evals/red-green/red-green-evals.md): baseline
+- [RED/GREEN](../evals/red-green/red-green-evals.md): baseline
   comparison, equivalent-task guard, pure Reference baseline, and genuine
   unavailability.
-- [Pressure/edges](../scripts/evals/pressure/pressure-evals.md): choose the
+- [Pressure/edges](../evals/pressure/pressure-evals.md): choose the
   adversarial condition matching the class and evidenced failure.
-- [Reference](../scripts/evals/reference/reference-evals.md): retrieval,
+- [Reference](../evals/reference/reference-evals.md): retrieval,
   application, unsupported queries, conflicts, and unprompted discovery.
-- [Regression](../scripts/evals/regression/regression-evals.md): failed-case
+- [Regression](../evals/regression/regression-evals.md): failed-case
   replay, positive/near-miss boundaries, prior fixes, and resource behavior.
 
 Load campaign records only to review prior evidence and freshness:
-[September campaign](../scripts/evals/campaigns/behavioral-evidence-2026-09-13.md)
+[September campaign](../evals/campaigns/behavioral-evidence-2026-09-13.md)
 and
-[entrypoint authoring assessment](../scripts/evals/campaigns/authoring-review-2026-10-04.md).
+[entrypoint authoring assessment](../evals/campaigns/authoring-review-2026-10-04.md).
 Their scores and outcomes belong to their recorded revisions. A historical PASS
 or deployment decision does not validate the current package.
 

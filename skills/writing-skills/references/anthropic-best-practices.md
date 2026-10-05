@@ -1077,12 +1077,10 @@ will Claude determine it?
 **Good example: Self-documenting**:
 
 ```python
-# HTTP requests typically complete within 30 seconds
-# Longer timeout accounts for slow connections
+# Example service response budget; measure/adapt for the actual service
 REQUEST_TIMEOUT = 30
 
-# Three retries balances reliability vs speed
-# Most intermittent failures resolve by the second retry
+# Example retry budget; justify against observed failures and side effects
 MAX_RETRIES = 3
 ```
 
