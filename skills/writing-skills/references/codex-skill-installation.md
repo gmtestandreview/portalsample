@@ -7,16 +7,6 @@ path, or inspect where Codex user skills are installed.
 This reference preserves Codex-specific installation behavior. It does not
 define the universal Agent Skills specification.
 
-Inputs: listing versus installation intent, source/path/ref, and the active
-installer's documented destination and overwrite behavior. Output: a sourced
-listing or verified installation report; never infer agent activation from
-filesystem presence. Compared with the installed Codex `skill-installer`
-`SKILL.md` on 2026-10-04. That active installer governs its supported interface;
-[OpenAI's installer source](https://github.com/openai/skills/tree/main/skills/.system/skill-installer)
-is provenance, not a promise that every client ships the same scripts. Recheck
-when the installer/client version changes. This reference's controls cannot
-override the host permission policy or already-established task authorization.
-
 ## Scope
 
 Support these tasks:
@@ -120,8 +110,7 @@ active installer guidance when available; if it is not available, the
 conservative message is:
 
 ```text
-Start a new turn to pick up newly installed skills, or follow the active
-client's reload/restart guidance if its discovery behavior differs.
+Restart Codex or start a new turn to pick up newly installed skills.
 ```
 
 ## Failure Handling
@@ -153,13 +142,5 @@ After installation, verify what the environment makes observable:
 5. the user-facing activation message does not promise immediate availability
    unless the active Codex environment supports it.
 
-Use [the testing checklist](SKILL-testing-checklist.md) and
-[the specification](specification.md) for validation claims about the installed
-skill package.
-
-Report the exact source/ref/destination, installer result, and observed checks.
-A missing listing endpoint, credentials, or script produces an unavailable
-result with the checked path/error. A verified directory is installation
-evidence; a required loading or task-behavior check that was not run remains
-`NHR`. Do not label the installed skill deployment-ready from a successful
-download alone.
+Use `SKILL-testing-checklist.md` and `specification.md` for validation claims
+about the installed skill package.

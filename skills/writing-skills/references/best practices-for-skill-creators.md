@@ -12,24 +12,6 @@ description:
 
 > How to write skills that are well-scoped and calibrated to the task.
 
-Load when drafting or restructuring a skill from reusable domain knowledge.
-Inputs: intended requests, domain artifacts, execution constraints, and any
-observed failures. Output: a bounded draft with load conditions and an
-evaluation plan; this guide alone cannot establish deployment readiness.
-
-This is a local adaptation of the
-[Agent Skills authoring guide](https://agentskills.io/skill-creation/best-practices),
-reviewed on 2026-10-04. Examples are illustrative, not bundled runnable
-utilities or permission to mutate external systems. Check the
-[specification](specification.md) for compliance and follow the host instruction
-hierarchy for execution. Recheck source-dependent claims when the specification
-or target client changes.
-
-Navigation: [expertise](#start-from-real-expertise),
-[execution feedback](#refine-with-real-execution),
-[context](#spending-context-wisely), [control](#calibrating-control),
-[instruction patterns](#patterns-for-effective-instructions).
-
 ## Start from real expertise
 
 A common pitfall in skill creation is asking an LLM to generate a skill without
@@ -59,10 +41,10 @@ into a skill. Pay attention to:
 
 When you have a body of existing knowledge, you can feed it into an LLM and ask
 it to synthesize a skill. A data-pipeline skill synthesized from your team's
-actual incident reports and runbooks can be more useful than one synthesized
-from a generic "data engineering best practices" article, because it captures
-_your_ schemas, failure modes, and recovery procedures. The key is
-project-specific material, not generic references.
+actual incident reports and runbooks will outperform one synthesized from a
+generic "data engineering best practices" article, because it captures _your_
+schemas, failure modes, and recovery procedures. The key is project-specific
+material, not generic references.
 
 Good source material includes:
 
@@ -81,14 +63,16 @@ tasks, then feed the results - all of them, not just failures - back into the
 creation process. Ask: what triggered false positives? What was missed? What
 could be cut?
 
-An execute-then-revise pass can reveal useful defects; measure improvements
-against representative tasks rather than assuming any revision helps.
+Even a single pass of execute-then-revise noticeably improves quality, and
+complex domains often benefit from several.
 
-**Trace review:** Read agent execution traces, not just final outputs. If the
-agent wastes time on unproductive steps, common causes include instructions that
-are too vague (the agent tries several approaches before finding one that
-works), instructions that don't apply to the current task (the agent follows
-them anyway) or too many options presented without a clear default.
+<Tip>
+Read agent execution traces, not just final outputs. If the agent wastes time
+on unproductive steps, common causes include instructions that are too vague
+(the agent tries several approaches before finding one that works),
+instructions that don't apply to the current task (the agent follows them anyway)
+or too many options presented without a clear default.
+</Tip>
 
 For a more structured approach to iteration, including test cases, assertions,
 and grading, see [Evaluating skill output quality](evaluating-skill-output.md).
@@ -131,12 +115,12 @@ with pdfplumber.open("file.pdf") as pdf:
 ```
 ````
 
-Ask yourself about each piece of content: "Would the agent get this wrong
-without this instruction?" If the answer is no, cut it. If you're unsure, test
-it. And if the agent already handles the entire task well without the skill, the
-skill may not be adding value. See
-[Evaluating skill output quality](evaluating-skill-output.md) for how to test
-this systematically.
+Ask yourself about each piece of content: "Would the agent get this wron without
+this instruction?" If the answer is no, cut it. If you're unsure, test it. And
+if the agent already handles the entire task well without the skill, the skill
+may not be adding value. See
+[Evaluating skill output quality](evaluating-skill-output.md) for how to test this
+systematically.
 
 ### Design coherent units
 
@@ -155,10 +139,10 @@ Deciding what a skill should cover is like deciding what a function should do:
 
 Overly comprehensive skills can hurt more than they help - the agent struggles
 to extract what's relevant and may pursue unproductive paths triggered by
-instructions that don't apply to the current task. Compare concise, stepwise
-guidance with a working example against broader documentation on actual tasks.
-When you find yourself covering every edge case, consider whether most are
-better handled by the agent's own judgment.
+instructions that don't apply to the current task. Concise, stepwise guidance
+with a working example tends to outperform exhaustive documentation. When you
+find yourself covering every edge case, consider whether most are better handled
+by the agent's own judgment.
 
 ### Structure large skills with progressive disclosure
 
@@ -183,10 +167,10 @@ specificity of your instructions to the fragility of the task.
 ### Match specificity to fragility
 
 **Give the agent freedom** when multiple approaches are valid and the task
-tolerates variation. For flexible instructions, explaining _why_ may help;
-compare context-dependent decisions rather than assuming an explanation improves
-them. A code review skill can describe what to look for without prescribing
-exact steps:
+tolerates variation. For flexible instructions, explaining _why_ can be more
+effective than rigid directives - an agent that understands the purpose behind
+an instruction makes better context-dependent decisions. A code review skill can
+describe what to look for without prescribing exact steps:
 
 ```markdown
 ## Code review process
@@ -249,8 +233,7 @@ Join the `orders` table to `customers` on `customer_id`, filter where
 <!-- Reusable method - works for any analytical query -->
 
 1. Read the schema from `references/schema.yaml` to find relevant tables
-2. Join tables using relationships documented in that schema; do not infer keys
-   from names alone
+2. Join tables using the `_id` foreign key convention
 3. Apply any filters from the user's request as WHERE clauses
 4. Aggregate numeric columns as needed and format as a markdown table
 ```
@@ -288,19 +271,21 @@ Keep gotchas in `SKILL.md` where the agent reads them before encountering the
 situation. A separate reference file works if you tell the agent when to load
 it, but for non-obvious issues, the agent may not recognize the trigger.
 
-**Learning from corrections:** When an agent makes a mistake you have to
-correct, add the reusable correction to the gotchas section when evidence
-supports it. This is one of the most direct ways to improve a skill iteratively
+<Tip>
+When an agent makes a mistake you have to correct,
+add the correction to the gotchas section.
+This is one of the most direct ways to improve a skill iteratively
 (see [Refine with real execution](#refine-with-real-execution)).
+</Tip>
 
 ### Templates for output format
 
 When you need the agent to produce output in a specific format, provide a
-template. Compare it with prose-only guidance on representative outputs rather
-than assuming greater reliability. Short templates can live inline in
-`SKILL.md`; for longer templates, or templates only needed in certain cases,
-store them in `assets/` and reference them from `SKILL.md` so they only load
-when needed.
+template. This is more reliable than describing the format in prose, because
+agents pattern-match well against concrete structures. Short templates can live
+inline in `SKILL.md`; for longer templates, or templates only needed in certain
+cases, store them in `assets/` and reference them from `SKILL.md` so they only
+load when needed.
 
 ````markdown
 ## Report structure
@@ -347,9 +332,7 @@ Progress:
 
 Instruct the agent to validate its own work before moving on. The pattern is: do
 the work, run a validator (a script, a reference checklist, or a self-check),
-fix issues within the authorized scope, and revalidate. Stop and report the
-failed requirement when dependencies, permissions, inputs, or meaningful
-improvement are unavailable; do not remove the gate to make it pass.
+fix any issues, and repeat until validation passes.
 
 ```markdown
 ## Editing workflow
@@ -375,12 +358,11 @@ execute.
 ```markdown
 ## PDF form filling
 
-1. Extract form fields:
-   `python scripts/analyze_form.py input.pdf > form_fields.json` (lists every
-   field name, type, and whether it's required)
+1. Extract form fields: `python scripts/analyze_form.py input.pdf` >
+   `form_fields.json` (lists every field name, type, and whether it's required)
 2. Create `field_values.json` mapping each field name to its intended value
 3. Validate:
-   `python scripts/validate_fields.py form_fields.json field_values.json`
+   `python scripts/val)idate_fields.py form_fields.json field_values.json`
    (checks that every field name exists in the form, types are compatible, and
    required fields aren't missing)
 4. If validation fails, revise `field_values.json` and re-validate
@@ -409,15 +391,7 @@ For more on designing and bundling scripts, see
 
 Once you have a working skill, two guides can help you refine it further:
 
-- **[Evaluating skill output quality](evaluating-skill-output.md)** - Set up
-  test cases, grade results, and iterate systematically.
+- **[Evaluating skill output quality](evaluating-skill-output.md)** - Set up test
+  cases, grade results, and iterate systematically.
 - **[Optimizing skill descriptions](description-optimization.md)** - Test and
   improve your skill's `description` field so it triggers on the right prompts.
-
-Before running any illustrated command, supply the referenced scripts/input
-files and confirm their dependencies and actual interface. PDF extraction needs
-the chosen library and a readable input; OCR also needs its conversion/OCR
-dependencies. Migration/form examples require project-owned utilities. If any
-are absent, report the prerequisite or use a supported method; never report an
-example as executed. Use the [final checklist](SKILL-testing-checklist.md) for
-an evidence-backed recommendation.

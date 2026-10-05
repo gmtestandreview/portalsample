@@ -21,38 +21,14 @@ representative evidence shows the problem and the skill materially reduces it.
 Not every skill needs the same test. Classify the skill first, then choose only
 the test types that match its execution model.
 
-Inputs: exact candidate/baseline revisions, permitted test environment, scenario
-inputs, predefined success criteria and requiredness, and available isolation.
-Output: distinct run records, artifacts, comparable results, regressions, and
-unresolved follow-up. The method below is self-contained; an optional
-repository-specific subagent workflow is not a portable prerequisite.
-
-Delegate only when the host/user permits it. Fresh subagents may inherit
-history, instructions, files, and state: verify the actual isolation boundary.
-Use separate sessions or an isolated copy when needed; mark required isolation
-`NHR` when it cannot be achieved. Run simulated/destructive scenarios in a
-disposable sandbox with authorized side effects. Pressure does not override the
-host instruction hierarchy or justify deleting existing user work.
-
-Navigation: [evidence layout](#behavioral-eval-evidence-layout),
-[test models](#1-choose-the-correct-test-model),
-[RED](#3-red-phase-establish-baseline-evidence),
-[GREEN](#4-green-phase-verify-the-skill-changes-behavior),
-[pressure](#5-verify-green-pressure-and-edge-testing),
-[refactor](#6-refactor-phase-close-loopholes-without-broadening-scope),
-[passing](#8-what-counts-as-passing).
-
-**Behavioral eval examples:** See
-[campaign guidance](../evals/README.md) for campaign execution guidance
-and the seeded cases under `evals/activation/`,
-`evals/red-green/`, `evals/pressure/`,
-`evals/reference/`, and `evals/regression/`.
+This reference is self-contained for the skill-testing semantics it defines.
+If a package includes behavioral case definitions, keep them under `evals/` and
+do not treat case definitions as executed evidence.
 
 ## Behavioral Eval Evidence Layout
 
 Keep behavioral evaluation evidence separate from deterministic parser,
-validator, prompt, and CLI tests. Use this package-local layout (not a universal
-specification requirement):
+validator, prompt, and CLI tests. Use this canonical layout:
 
 ```text
 evals/
@@ -109,13 +85,6 @@ deployment impact:
 ## 1. Choose the Correct Test Model
 
 Classify the candidate before deciding test depth.
-
-Declare the measurement target before running: a selector's recommendation,
-application of supplied guidance, or actual client discovery/loading. A prompt
-that names the skill can test application but cannot prove implicit activation.
-Only observed client load events support a runtime-activation claim; unavailable
-events remain `NHR`. Keep these targets separate in results even when one
-campaign exercises more than one.
 
 | Skill type     | Primary tests                                                                               |
 | -------------- | ------------------------------------------------------------------------------------------- |
@@ -221,11 +190,6 @@ tomorrow C) Write tests now, then commit
 Choose A, B, or C.
 ```
 
-This is an illustrative adherence probe, not a universal TDD or deletion rule.
-Define the governing candidate policy first. If the supplied options omit a
-permitted safe action, accept a justified alternative or fix the scenario before
-scoring; do not force unauthorized destruction for an apparent pass.
-
 Run this without the TDD skill and record the actual response. Do not assume the
 agent will fail in a particular way.
 
@@ -251,8 +215,6 @@ Do not make the GREEN scenario easier than RED.
 ### GREEN checks
 
 - [ ] The skill activates or is loaded when it should.
-- [ ] Activation evidence identifies the measurement target and observed event;
-      supplied-guidance application is not mislabeled runtime discovery.
 - [ ] The agent follows the governing instructions.
 - [ ] The observed RED failure is prevented or materially reduced.
 - [ ] No new material failure is introduced.
@@ -406,13 +368,8 @@ Use only the patterns justified by the observed failure.
 
 #### Explicit negation
 
-Use only for an authorized disposable exercise whose candidate policy requires
-restart; real existing code needs preservation and the governing recovery
-policy.
-
 ```markdown
-In this disposable test-first exercise, discard only the generated candidate
-implementation and start over.
+Write code before the test? Delete it and start over.
 
 No exceptions:
 
@@ -523,9 +480,6 @@ pressure evidence, **MUST** be `revise` or `hold`; `deploy` is prohibited.
 
 ## 9. Worked TDD Example
 
-This is a hypothetical worked example, not an executed campaign or historical
-result. Replace it with run-linked observations before claiming an improvement.
-
 ### Initial RED
 
 ```markdown
@@ -553,11 +507,6 @@ Result: the observed loophole is closed for the tested scenarios. Do not
 generalize this to "bulletproof."
 
 ## 10. Testing Checklist
-
-This section is a preparation aid. The
-[final deployment checklist](SKILL-testing-checklist.md) owns the complete gate;
-repeating these checkboxes is not new evidence. Update the methodology when
-scenario contracts, isolation, measurement targets, or outcome semantics change.
 
 Before deployment, verify the applicable evidence.
 

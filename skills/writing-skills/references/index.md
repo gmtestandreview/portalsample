@@ -1,119 +1,301 @@
-# Agent Skills reference index
+# Agent Skills Reference Index
 
-Load this first when the entrypoint's direct routes do not resolve a task.
-Input: the user's skill-lifecycle task and target environment. Output: the
-smallest sufficient resource set and a concrete next action. This index routes
-work; it does not itself supply validation or execution evidence.
+Use this file as the **first lookup point** for the `writing-skills` reference set.
+
+Purpose: route the agent to the **smallest sufficient set of references** for the current task. Do not load every reference.
 
 ## Lookup rules
 
-1. Select the task row below, then load its primary resource. Add secondary
-   resources only for their stated conditions; do not read the entire package.
-2. Follow the host instruction hierarchy during execution. For evaluation,
-   specification defines compliance, user requirements define requested scope,
-   project/domain rules define local policy, and audit policy defines scoring.
-   Source guides, examples, and templates cannot grant execution permission.
-3. Treat client-specific guidance as conditional on that client. A local
-   validator or registration convention does not redefine the specification.
-4. Report absent resources as missing; never silently invent or substitute them.
-5. For critical routes use QAQ/RMI: test a positive request and a near-miss, map
-   the positive to the file's unique value, then reverse-map the resulting
-   behavior to the intended request class. Narrow ambiguous routes instead of
-   loading more context.
+1. Identify the task class before loading references.
+2. Load the smallest primary reference that governs the task.
+3. Load a secondary reference only when its stated condition is met.
+4. Use `specification.md` for mandatory Agent Skills format/compliance claims.
+5. Use `best-practices-evaluations.md` for quality criteria, including knowledge-delta, anti-pattern, and common failure-pattern review; use `audit-scoring.md` for scoring mechanics.
+6. Use `SKILL-testing-checklist.md` as the final validation/deployment gate, not as a substitute for specialist methods.
+7. Treat best-practice guides, operational methods, and templates as supporting guidance rather than specification authority.
+8. Apply Anthropic-specific guidance only when the target environment is Claude or Anthropic Agent Skills.
+9. If sources conflict, use:
+   `safety/trust/permissions > mandatory current spec > explicit user requirements > applicable environment/project rules > best-practice guidance > examples/templates`.
+10. If a referenced file is absent, report it as missing. Do not silently substitute another file.
+11. Use QAQ/RMI for critical trigger, branch, and load-condition decisions.
+12. Do not load templates, merge prompt workflows, or persuasion guidance unless the task actually needs them.
 
-## Task routes
+## Fast routing table
 
-Paths below are clickable relative to this index. Commands in linked resources
-state their working directory; do not assume the index directory is a shell cwd.
+| Task | Primary reference | Add only when needed |
+| --- | --- | --- |
+| Mandatory `SKILL.md` format, frontmatter, directory/resource rules | `specification.md` | `SKILL-testing-checklist.md` at final validation |
+| General skill authoring and information architecture | `best practices-for-skill-creators.md` | `anthropic-best-practices.md` only for Claude/Anthropic targets |
+| Static quality audit or optimization | `best-practices-evaluations.md` | `audit-scoring.md` for scoring; `../assets/templates/skill-audit.md` only for report shape |
+| Full scored audit | `best-practices-evaluations.md` | `audit-scoring.md`; `SKILL-testing-checklist.md` for final validation |
+| Classify as Discipline, Technique, Pattern, Reference, or Hybrid | `skill-classification.md` | Testing reference selected from the resulting class |
+| Fix activation or description wording | `description-optimization.md` | Use for rigorous description evaluation testing. |
+| Fix instruction form after an observed shaping/adherence failure | `instruction-form.md` | Load only after a concrete failure identifies instruction form as causal |
+| Behavioral/output-quality evals | `evaluating-skill-output.md` | `testing-skills-with-subagents.md` when classification-specific RED/GREEN/REFACTOR, pressure/edge, Reference retrieval/application, resource-discovery, or regression evidence is needed |
+| RED/GREEN/REFACTOR pressure testing | `testing-skills-with-subagents.md` | `persuasion-principles.md` only after a concrete adherence/rationalization failure |
+| Script-bearing skills or bundled commands | `using-scripts-in-skills.md` | Specification for structural compliance; checklist for final validation |
+| Persistent evidence model, audit records, or evaluation storage design | `skill-testing-data-model.md` | no secondary file unless a schema is explicitly supplied or requested |
+| Agent Skills runtime/client support | `adding-skills-support.md` | `specification.md` for format rules; local client policy only when target environment requires it |
+| Compare two skills for merge viability | `best-practices-evaluations.md` | `skill-classification.md` if scope/type differs; `../assets/templates/swot-analysis.md` only when SWOT output helps |
+| Quick merge plan for supplied skills | `prompt-1-quick-merge-plan.md` | `best-practices-evaluations.md` only when quality criteria must be applied; `skill-classification.md` only when type affects the recommendation |
+| Full audit and conditional merge of supplied skills | `prompt-2-full-audit+conditional-merge.md` | `specification.md` for mandatory format; `SKILL-testing-checklist.md` before deployment/readiness claims |
+| Final validation before deployment | `SKILL-testing-checklist.md` | Specification plus any specialist reference needed to execute unresolved checks |
+| Claude/Anthropic-specific authoring decisions | `anthropic-best-practices.md` | Generic specification still controls universal compliance claims |
+| A Team repository registration policy | `a-team-local-policy.md` | Only when the target is explicitly an A Team repository |
 
-| Task / load condition                                                              | Primary resource                                                                         | Add only when needed                                                                                         |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Mandatory skill format or frontmatter                                              | [Specification](specification.md)                                                        | [Checklist](SKILL-testing-checklist.md) for final validation                                                 |
-| Authoring, domain value, context budget, degrees of freedom                        | [Creator best practices](best%20practices-for-skill-creators.md)                         | [Anthropic guidance](anthropic-best-practices.md) only for Claude targets                                    |
-| Quality audit without a score                                                      | [Quality criteria](best-practices-evaluations.md)                                        | [Classification](skill-classification.md) if type affects review                                             |
-| Whole-skill score or formal verdict                                                | [Audit scoring](audit-scoring.md) plus [quality criteria](best-practices-evaluations.md) | [Audit template](../templates/skill-audit.md) for requested report shape                                     |
-| Individual score for every package file                                            | [File review rubric](file-review-rubric.md)                                              | Whole-skill scoring separately if requested; never substitute a package average                              |
-| Class selection and appropriate test emphasis                                      | [Classification](skill-classification.md)                                                | Selected testing reference for the resulting class                                                           |
-| Trigger/description revision, near-misses, repeated trigger tests                  | [Description optimization](description-optimization.md)                                  | Target runtime discovery/registration evidence before blaming wording                                        |
-| Output-shaping failure, exception, limit, or wording experiment                    | [Instruction form](instruction-form.md)                                                  | Behavioral comparison when claiming improvement; historical experiments require retained evidence            |
-| Output-quality eval design, assertions, grading, workspaces                        | [Evaluating skill output](evaluating-skill-output.md)                                    | [Seeded eval library](../evals/README.md) after selecting the method                                 |
-| Class-specific RED/GREEN/REFACTOR, pressure/edge, retrieval, discovery, regression | [Testing with subagents](testing-skills-with-subagents.md)                               | [Persuasion](persuasion-principles.md) only after a concrete adherence failure                               |
-| Persistent revisions, requirements, case results, deployment decisions             | [Evidence data model](skill-testing-data-model.md)                                       | [Case record schema](../evals/evaluation-schema.md) for this seeded library                          |
-| Commands or executable resources in a skill                                        | [Using scripts](using-scripts-in-skills.md)                                              | [Local harness README](../scripts/README.md) to execute this package's tools                                 |
-| Codex listing, GitHub/curated installation, discovery                              | [Codex installation](codex-skill-installation.md)                                        | Prefer an active dedicated installer; report absent capability                                               |
-| Runtime/client discovery, parsing, loading, prompt construction                    | [Adding skills support](adding-skills-support.md)                                        | Specification for compliance; actual client policy for integration                                           |
-| Claude/Anthropic authoring decisions                                               | [Anthropic guidance](anthropic-best-practices.md)                                        | Generic specification still governs universal claims                                                         |
-| Quick merge plan, overlap/preservation inventory                                   | [Quick merge workflow](../assets/prompt-1-quick-merge-plan.md)                                     | Classification/quality criteria when they affect the recommendation                                          |
-| Full audit and conditional merge                                                   | [Full audit/merge workflow](../assets/prompt-2-full-audit+conditional-merge.md)                    | Specification for resulting skill; checklist before readiness                                                |
-| SWOT materially helps a keep/merge/split/deprecate decision                        | [SWOT template](../templates/SWOT%20Analysis.md)                                         | Quality criteria; scoring only if requested                                                                  |
-| Final validation or deployment decision                                            | [Checklist](SKILL-testing-checklist.md)                                                  | Specification and specialist methods for unresolved gates                                                    |
-| Add/edit a skill flowchart                                                         | [Graphviz conventions](../scripts/graphviz-conventions.dot)                              | [Renderer](../scripts/render-graphs.js) and [harness README](../scripts/README.md) for commands/dependencies |
-| Understand a custom-GPT instruction example                                        | [GPT example](../examples/ChaGPT%20GPT%20SKILL.md)                                       | Treat as an example, not a discovered skill or execution authority                                           |
+## Authority and role model
 
-## Case libraries and historical evidence
+### Tier 1 - Mandatory specification
 
-[The eval README](../evals/README.md) selects cases and defines campaign
-order; [the schema](../evals/evaluation-schema.md) defines records and
-outcome semantics. Choose from:
+#### `specification.md`
 
-- [Activation/boundaries](../evals/activation/activation-evals.md):
-  direct, indirect, embedded, near-miss, and ambiguous requests. Declare whether
-  measuring selection, application, or actual runtime activation.
-- [RED/GREEN](../evals/red-green/red-green-evals.md): baseline
-  comparison, equivalent-task guard, pure Reference baseline, and genuine
-  unavailability.
-- [Pressure/edges](../evals/pressure/pressure-evals.md): choose the
-  adversarial condition matching the class and evidenced failure.
-- [Reference](../evals/reference/reference-evals.md): retrieval,
-  application, unsupported queries, conflicts, and unprompted discovery.
-- [Regression](../evals/regression/regression-evals.md): failed-case
-  replay, positive/near-miss boundaries, prior fixes, and resource behavior.
+Use for claims about what a valid Agent Skill **must** contain or obey, including:
 
-Load campaign records only to review prior evidence and freshness:
-[September campaign](../evals/campaigns/behavioral-evidence-2026-09-13.md)
-and
-[entrypoint authoring assessment](../evals/campaigns/authoring-review-2026-10-04.md).
-Their scores and outcomes belong to their recorded revisions. A historical PASS
-or deployment decision does not validate the current package.
+- skill-directory and `SKILL.md` structure;
+- YAML frontmatter;
+- `name` and `description`;
+- supported optional fields;
+- specification-defined resource and progressive-disclosure rules.
 
-## Deterministic tooling routes
+Do not let local checks, templates, or provider-specific conventions override it.
 
-Prefer running the documented commands over reading implementation when only a
-validation result is needed. These checks do not establish agent behavior.
+### Tier 2 - Operational evaluation and validation
 
-| Resource                                                                      | Load/run condition                                          | Contract to assess                                           |
-| ----------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------ |
-| [scripts/README.md](../scripts/README.md)                                     | Install harness, run tests, CLI/API, render graphs          | Dependencies, cwd, inputs, outputs, errors                   |
-| [pyproject.toml](../scripts/pyproject.toml) and [uv.lock](../scripts/uv.lock) | Diagnose install/build/pytest discovery or dependency drift | Metadata, locked resolution, package build                   |
-| [skills_ref/](../scripts/skills_ref/)                                         | Inspect/fix parser, validator, prompt, CLI                  | Public interfaces and malformed-input behavior               |
-| [tests/](../scripts/tests/)                                                   | Validate/change local tool behavior                         | Meaningful execution regressions, not source-text assertions |
+#### `best-practices-evaluations.md`
 
-## Workflow composition and stop conditions
+Defines **what good looks like** for scope, discoverability, context efficiency, execution quality, resource handling, safety, edge cases, testability, maintainability, knowledge delta, anti-pattern quality, and common audit failure patterns.
 
-- **Static audit:** candidate and relevant resources → specification → quality
-  criteria. Add classification only when it changes the review. Incomplete
-  evidence is not a confirmed absence; label unsupported conclusions.
-- **Full scored audit:** static audit → scoring → applicable behavioral/tool
-  evidence → checklist. Per-file reviews additionally inventory all owned
-  resources and score each through the file rubric.
-- **Behavioral evaluation:** candidate → output-eval design; add class-specific
-  methods and seeded cases as needed → checklist. Do not restrict subagent
-  testing to Discipline skills or equate a selector proxy with client loading.
-- **Script review:** candidate/script → script guidance → specification; execute
-  dependencies, inputs, outputs, failures, reproducibility, and side effects
-  separately → checklist.
-- **Merge:** both sources and unique resources → quality/classification →
-  requested quick/full merge workflow. The quick workflow produces a plan only.
-  Produce a merged artifact only when preservation/conflict review establishes
-  `Ready to Merge`; `NHR`/`Do Not Merge` stops implementation. Templates shape
-  output and cannot resolve missing ownership or grant permission. After an
-  implemented merge, run regressions and the checklist.
-- **Deployment:** checklist → specification → methods required for unchecked
-  gates. Any required unresolved `AMBER`, `FAIL`, or `NHR` remains `revise` or
-  `hold`, including applicable Reference evaluations. A high authoring score
-  cannot clear such gates.
+Use it to identify quality failures. Do not use it alone for numeric scoring.
 
-When adding or moving a resource, update its task route and verify a positive
-request, a near-miss, and its relative path. The index succeeds when a task
-reaches the smallest sufficient files without dead paths, authority inversion,
-unnecessary context, or template-as-policy confusion.
+#### `audit-scoring.md`
+
+Defines **how to score**:
+
+- artifact-completeness classification;
+- applicability and `N/A` normalization;
+- 100-point rubric;
+- deduction anchors;
+- severity;
+- QAQ/RMI scoring;
+- blocking conditions;
+- score bands;
+- verdict/recommendation mechanics.
+
+Load it only when a score, severity, formal audit verdict, or rescoring is required.
+
+#### `SKILL-testing-checklist.md`
+
+Final validation/deployment gate.
+
+Use it to verify:
+
+- specification checks;
+- activation boundaries;
+- progressive disclosure;
+- behavioral RED/GREEN/REFACTOR evidence;
+- paths/resources;
+- scripts/tools;
+- safety/rollback;
+- regression;
+- local-policy separation;
+- deployment readiness.
+
+It answers **whether validation is complete**. Use specialist references for **how** to perform complex checks.
+
+#### `skill-classification.md`
+
+Classifies a candidate as Discipline, Technique, Pattern, Reference, or justified Hybrid and selects the appropriate testing emphasis.
+
+#### `description-optimization.md`
+
+Operational procedure for improving a `description` and its activation boundary. Use for rigorous description-trigger evaluation, near-miss design, repeated trigger runs, trigger rates, and generalization-style testing.
+
+#### `instruction-form.md`
+
+Conditional remediation guidance for choosing the smallest instruction form
+after an observed shaping/adherence failure. Do not load it preemptively.
+
+#### `testing-skills-with-subagents.md`
+
+Behavioral testing methodology across Discipline, Technique, Pattern, Reference, and Hybrid skills. Use for RED/GREEN/REFACTOR evidence, activation boundaries, class-appropriate pressure/edge testing, Reference retrieval/application/resource discovery, and regression.
+
+#### `skill-testing-data-model.md`
+
+Use when designing, auditing, or mapping persistent evidence records for skill revisions, requirements, behavioral eval campaigns, deterministic test runs, audit findings, and deployment decisions.
+
+#### `persuasion-principles.md`
+
+Optional adherence-wording support.
+
+Load only after testing identifies a concrete rationalization or compliance failure. Do not use persuasion language as a substitute for evidence, clear instructions, or specification requirements.
+
+### Tier 3 - Source-level guidance
+
+#### `best practices-for-skill-creators.md`
+
+Use for source-level authoring guidance, domain value, context efficiency, degrees of freedom, workflow design, and iterative refinement.
+
+#### `evaluating-skill-output.md`
+
+Use for behavioral eval design, with-skill/without-skill comparisons, assertions, grading, workspaces, and iterative evaluation.
+
+#### `using-scripts-in-skills.md`
+
+Use when a skill contains or proposes commands or bundled executable scripts.
+
+#### `adding-skills-support.md`
+
+Use when adding Agent Skills support to a runtime, client, loader, or integration. It covers discovery, parsing, validation, activation prompt construction, execution access, and security boundaries for clients that consume skills.
+
+#### `anthropic-best-practices.md`
+
+Use only for Claude/Anthropic-specific authoring guidance. Do not promote Anthropic-only conventions into universal Agent Skills requirements.
+
+### Tier 4 - Task-specific merge workflows
+
+These files are executable workflow prompts for skill consolidation tasks. They are references only for merge-planning or merge-execution requests and should not be loaded for ordinary audits, description tuning, or validation.
+
+#### `prompt-1-quick-merge-plan.md`
+
+Use when the user asks for an early merge plan, overlap analysis, preservation inventory, conflict list, or recommendation before deciding whether to run a full merge audit.
+
+It produces a concise plan and recommendation only. It must not produce a final merged `SKILL.md`.
+
+#### `prompt-2-full-audit+conditional-merge.md`
+
+Use when the user asks for a full audit and conditional merge of supplied `SKILL.md` files and supporting resources.
+
+It may produce a final merged `SKILL.md` only when preservation and conflict review establish **Ready to Merge**. If readiness is **Needs Human Review** or **Do Not Merge**, it stops at the audit and decision.
+
+## Templates
+
+Templates are **not references** and do not define policy, scoring, or requirements.
+
+### `../assets/templates/skill-audit.md`
+
+Optional output template for a formal skill-audit report.
+
+Use `best-practices-evaluations.md` for audit criteria and `audit-scoring.md` for scoring mechanics.
+
+### `../assets/templates/swot-analysis.md`
+
+Optional output template for comparing two skills.
+
+Load only when SWOT framing materially helps a merge/keep/split/deprecate decision or the user explicitly requests SWOT.
+
+## Common recipes
+
+### Static audit without scoring
+
+Load:
+
+1. candidate `SKILL.md` and directly relevant supporting resources;
+2. `specification.md`;
+3. `best-practices-evaluations.md`;
+4. `skill-classification.md` only if classification affects the review.
+
+Load `../assets/templates/skill-audit.md` only if the requested output should use that format.
+
+### Full scored audit
+
+Load:
+
+1. candidate skill and relevant supporting resources;
+2. `specification.md`;
+3. `best-practices-evaluations.md`;
+4. `audit-scoring.md`;
+5. `skill-classification.md` when test emphasis or scope depends on type;
+6. `SKILL-testing-checklist.md` before a final deployment/readiness claim.
+
+Do not assign definitive scores to unknown/incomplete artifacts as though missing evidence were confirmed failure.
+
+### Description remediation
+
+Load:
+
+1. candidate `SKILL.md`;
+2. `description-optimization.md`.
+
+### Behavioral evaluation
+
+Load:
+
+1. candidate skill;
+2. `evaluating-skill-output.md`.
+
+Also load `testing-skills-with-subagents.md` when the evaluation needs classification-specific RED/GREEN/REFACTOR evidence, activation-boundary testing, pressure/edge cases, Reference retrieval/application/resource discovery, or behavioral regression. Do not restrict this reference to Discipline skills.
+
+Load `persuasion-principles.md` only after a specific pressure/adherence failure is observed.
+
+Use `SKILL-testing-checklist.md` to determine whether the resulting evidence is sufficient for final validation.
+
+### Script-bearing skill review
+
+Load:
+
+1. candidate skill and relevant script;
+2. `using-scripts-in-skills.md`;
+3. `specification.md`.
+
+Validate dependencies, inputs, outputs, error handling, path assumptions, reproducibility, and safety separately.
+
+Use `SKILL-testing-checklist.md` before deployment.
+
+### Merge evaluation
+
+Load:
+
+1. both source skills and their unique supporting resources;
+2. `best-practices-evaluations.md`;
+3. `skill-classification.md` when scope/type affects merge viability;
+4. `audit-scoring.md` only when a scored comparison or rescore is required.
+
+Load `../assets/templates/swot-analysis.md` only when SWOT comparison is requested or materially clarifies the decision.
+
+After a merge is implemented, use `SKILL-testing-checklist.md` for regression and final validation.
+
+### Quick merge plan
+
+Load:
+
+1. supplied skill files and directly relevant supporting resources;
+2. `prompt-1-quick-merge-plan.md`.
+
+Add `best-practices-evaluations.md` only when the plan needs explicit quality criteria. Add `skill-classification.md` only when the source skills' type affects merge viability or testing emphasis.
+
+Do not produce the final merged `SKILL.md` from the quick-plan workflow.
+
+### Full audit and conditional merge
+
+Load:
+
+1. supplied skill files and directly relevant supporting resources;
+2. `prompt-2-full-audit+conditional-merge.md`;
+3. `specification.md` when a final `SKILL.md` may be produced;
+4. `SKILL-testing-checklist.md` before deployment/readiness claims.
+
+Produce a final merged `SKILL.md` only when the workflow's readiness decision is **Ready to Merge**. If preservation, conflicts, ownership, purpose, or supporting-resource treatment is unresolved, stop at **Needs Human Review** or **Do Not Merge**.
+
+## Final deployment validation
+
+Load:
+
+1. `SKILL-testing-checklist.md`;
+2. `specification.md`.
+
+Then load only the specialist references needed to resolve unchecked or failed gates.
+
+A behavior-critical skill with any required `AMBER`, `FAIL`, or `NHR` outcome, or otherwise unresolved required behavioral evidence, must remain `revise` or `hold`, not `deploy`. This includes applicable pure Reference evaluations.
+
+## Load-boundary QAQ/RMI
+
+For every optional reference or template:
+
+1. Define a positive request that requires it.
+2. Define a near-miss that should not load it.
+3. Map the positive request to the file's unique value.
+4. Verify the near-miss can be handled by the primary reference or base skill.
+5. Reverse-map the resulting behavior to the intended request class.
+6. If the mapping is ambiguous, narrow the route instead of loading more context.
+
+The index succeeds when a task reaches the smallest sufficient file set without dead paths, unnecessary context, authority inversion, or template-as-policy confusion.

@@ -13,19 +13,11 @@ Do not let a numeric score override a mandatory specification failure,
 unresolved high-impact safety issue, missing authorization, or required human
 review.
 
-For a review requiring an individual score for every package file, use the
-[file review rubric](file-review-rubric.md) as a separate role-aware scorecard.
-The whole-skill rubric below still evaluates the integrated skill; do not add
-the two rubrics together or average file scores to conceal a deficient file. The
-requested acceptance threshold governs: “over 96” means at least 97.
-
 ## 1. Authority and evidence
 
-Follow the host instruction hierarchy during execution. For evaluation claims,
-specification requirements govern compliance, user requirements govern requested
-scope, project/domain rules govern local policy, and audit policy governs
-scoring. Best-practice defaults and examples cannot override those sources or
-grant execution permissions.
+Apply this precedence when sources conflict:
+
+`safety/trust/permissions > mandatory current spec > explicit user requirements>  applicable skill/project/domain requirements > current audit policy >  best-practice defaults > examples/legacy material`
 
 Treat legacy Doctor rubrics or score bands as historical evidence only when they
 conflict with the current rubric below.
@@ -113,7 +105,7 @@ These scans are diagnostic aids, not a separate scoring system.
 
 Score bands:
 
-- **96-100** - high authoring quality; deployment gates remain separate
+- **96-100** - production-ready
 - **85-95** - targeted fixes
 - **70-84** - gaps
 - **50-69** - major revisions
@@ -500,7 +492,7 @@ Example:
 
 ```text
 Score: 97/100
-Band: high authoring quality
+Band: production-ready by score
 Deployment status: BLOCKED
 Reason: required script path is unverified after the final edit.
 Recommendation: hold

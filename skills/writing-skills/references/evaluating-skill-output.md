@@ -17,25 +17,6 @@ reliably - across varied prompts, in edge cases, better than no skill at all?
 Running structured evaluations (evals) answers these questions and gives you a
 feedback loop for improving the skill systematically.
 
-Load when designing or reviewing output-quality comparisons. Inputs: exact
-candidate/baseline revisions, permitted environment, representative prompts and
-fixtures, and success criteria. Output: run artifacts, evidence-backed grades,
-comparable summaries, and bounded revision decisions. Missing inputs, isolation,
-or required runtime evidence must remain `NHR`; a quality comparison is not a
-deployment verdict. Use the [final checklist](SKILL-testing-checklist.md).
-
-This is a local adaptation of the
-[Agent Skills evaluation guide](https://agentskills.io/skill-creation/evaluating-skills),
-reviewed on 2026-10-04. JSON/code examples and numbers illustrate a record
-format, not observed runs. Recheck provider APIs when the client changes. This
-guide's `evals/evals.json` format is illustrative; this package's seeded cases
-use [the local schema](../evals/evaluation-schema.md) under
-`evals/`.
-
-Navigation: [cases](#designing-test-cases), [runs](#running-evals),
-[assertions](#writing-assertions), [grading](#grading-outputs),
-[aggregation](#aggregating-results), [iteration](#iterating-on-the-skill).
-
 ## Designing test cases
 
 A test case has three parts:
@@ -53,14 +34,19 @@ Store test cases in `evals/evals.json` inside your skill directory:
   "evals": [
     {
       "id": 1,
-      "prompt": "Use evals/files/sales_2025.csv to find the top 3 months by revenue and make a bar chart.",
-      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv.
+      Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue,
+      with labeled axes and values.",
       "files": ["evals/files/sales_2025.csv"]
     },
     {
       "id": 2,
-      "prompt": "Use evals/files/customers.csv. Keep every row, replace missing emails with an empty string, and tell me how many were missing.",
-      "expected_output": "A cleaned CSV preserving all rows and replacing missing emails with empty strings, plus a count of affected rows.",
+      "prompt": "there's a csv in my downloads called customers.csv,
+      some rows have missing emails - can you clean it up and tell me how many
+      were missing?",
+      "expected_output": "A cleaned CSV with missing emails handled, plus a
+      count of how many were missing.",
       "files": ["evals/files/customers.csv"]
     }
   ]
@@ -82,10 +68,9 @@ Store test cases in `evals/evals.json` inside your skill directory:
   personal context. Prompts like "process this data" are too vague to test
   anything useful.
 
-Define mandatory success criteria and case requiredness before a scored run.
-Exploratory runs may reveal additional assertions; label those exploratory,
-freeze the revised checks, and rerun both configurations. Do not change criteria
-after seeing results and present the old run as an unbiased comparison.
+Don't worry about defining specific pass/fail checks yet - just the prompts and
+expected outputs. You'll add detailed checks (called assertions) after you see
+what the first run produces.
 
 ## Running evals
 
@@ -135,12 +120,10 @@ process - by the agent, by scripts, or by you.
 ### Spawning runs
 
 Each eval run should start with a clean context - no leftover state from
-previous runs or from the skill development process. This ensures the agent is
-not contaminated by candidate-specific guidance or prior outputs. Host
-instructions still apply. Subagents can inherit history and share filesystem
-state; verify their isolation settings instead of assuming a fresh child is
-independent. Delegate only when authorized. Without usable isolation, use a
-separate session or mark required evidence `NHR`.
+previous runs or from the skill development process. This ensures the agent
+follows only what the `SKILL.md` tells it. In environments that support
+subagents (Claude Code, for example), this isolation comes naturally: each child
+task starts fresh. Without subagents, use a separate session for each run.
 
 For each run, provide:
 
@@ -148,17 +131,6 @@ For each run, provide:
 - The test prompt
 - Any input files
 - The output directory
-
-Stage fixtures at the paths actually named in the prompt and prevent one run's
-outputs from entering another's input. Bound side effects to authorized
-temporary artifacts; do not run live destructive tasks merely to test
-discipline.
-
-Record a measurement target: selector recommendation, supplied-guidance
-application, or actual client discovery/loading. Naming the skill tests
-application, not implicit activation. Only observed client load events support
-runtime-activation claims; otherwise that result is `NHR`. These are separate
-from output-quality grades.
 
 Here's an example of the instructions you'd give the agent for a single
 with-skill run:
@@ -194,16 +166,18 @@ When each run completes, record the token count and duration:
 }
 ```
 
-Use the target client's documented metrics when exposed. Save observed timing
-and token data with their source; record unavailable metrics as `null`/`NHR`,
-not invented values or zero. Client-specific notification fields and persistence
-are not portable assumptions.
+<Tip>
+In Claude Code, when a subagent task finishes,
+the [task completion notification](https://platform.claude.com/docs/en/agent-sdk/typescript#sdk-task-notification-message)
+includes `total_tokens` and `duration_ms`.
+Save these values immediately - they aren't persisted anywhere else.
+</Tip>
 
 ## Writing assertions
 
 Assertions are verifiable statements about what the output should contain or
-achieve. Freeze the checks before scored runs; exploratory outputs may inform
-the next iteration's checks without retroactively changing the current verdict.
+achieve. Add them after you see your first round of outputs - you often don't
+know what "good" looks like until the skill has run.
 
 Good assertions:
 
@@ -231,11 +205,12 @@ Add assertions to each test case in `evals/evals.json`:
   "evals": [
     {
       "id": 1,
-      "prompt": "Use evals/files/sales_2025.csv to find the top 3 months by revenue and make a bar chart.",
-      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv.
+      Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue,
+      with labeled axes and values.",
       "files": ["evals/files/sales_2025.csv"],
       "assertions": [
-        "The 3 months and their values match totals computed from the supplied CSV, with a recorded tie policy",
         "The output includes a bar chart image file",
         "The chart shows exactly 3 months",
         "Both axes are labeled",
@@ -249,9 +224,8 @@ Add assertions to each test case in `evals/evals.json`:
 ## Grading outputs
 
 Grading means evaluating each assertion against the actual outputs and recording
-**PASS** or **FAIL** with specific evidence when verifiable; mark unavailable
-evidence `NHR`, not false success or observed failure. The evidence should quote
-or reference the output, not just state an opinion.
+**PASS** or **FAIL** with specific evidence. The evidence should quote or
+reference the output, not just state an opinion.
 
 The simplest approach is to give the outputs and assertions to an LLM and ask it
 to evaluate each one. For assertions that can be checked by code (valid JSON,
@@ -259,20 +233,9 @@ correct row count, file exists with expected dimensions), use a verification
 script - scripts are more reliable than LLM judgment for mechanical checks and
 reusable across iterations.
 
-The illustrative Boolean `passed` field below is suitable only for verified
-PASS/FAIL assertions. For missing evidence, store `result: "NHR"`,
-`passed: null`, the missing evidence, and required follow-up; use an adapter or
-the local schema if the target grader rejects nullable values. Exclude missing
-grades from any claimed verified pass count and report their count separately.
-
 ```json grading.json
 {
   "assertion_results": [
-    {
-      "text": "The 3 months and their values match totals computed from the supplied CSV, with a recorded tie policy",
-      "passed": true,
-      "evidence": "Example totals comparison artifact matches March, July, and November; no ties occurred"
-    },
     {
       "text": "The output includes a bar chart image file",
       "passed": true,
@@ -295,10 +258,10 @@ grades from any claimed verified pass count and report their count separately.
     }
   ],
   "summary": {
-    "passed": 4,
+    "passed": 3,
     "failed": 1,
-    "total": 5,
-    "pass_rate": 0.8
+    "total": 4,
+    "pass_rate": 0.75
   }
 }
 ```
@@ -314,13 +277,14 @@ grades from any claimed verified pass count and report their count separately.
   too hard (always fail even when the output is good), or unverifiable (can't be
   checked from the output alone). Fix these for the next iteration.
 
-**Blind comparison:** For comparing two skill versions, try **blind
-comparison**: present both outputs to an LLM judge without revealing which came
-from which version. The judge scores holistic qualities - organization,
-formatting, usability, polish - on a predefined rubric, reducing bias about
-which version "should" be better. This complements assertion grading: two
-outputs might both pass all assertions but differ significantly in overall
-quality.
+<Tip>
+For comparing two skill versions, try **blind comparison**: present both outputs
+to an LLM judge without revealing which came from which version.
+The judge scores holistic qualities - organization, formatting, usability,
+polish - on its own rubric, free from bias about which version "should" be better.
+This complements assertion grading: two outputs might both pass all assertions
+but differ significantly in overall quality.
+</Tip>
 
 ## Aggregating results
 
@@ -355,31 +319,29 @@ buys (higher pass rate). A skill that adds 13 seconds but improves pass rate by
 50 percentage points is probably worth it. A skill that doubles token usage for
 a 2-point improvement might not be.
 
-**Small-sample limits:** Standard deviation across cases describes case
-variation; repeated runs per case are needed to inspect that case's consistency.
-In early iterations with 2–3 cases and single runs, emphasize raw counts and
-comparable deltas, without claiming stability or significance. Report sample
-counts, missing grades, the aggregation denominator, and whether variation is
-across different cases or repeated runs of one case. Do not infer reliability or
-statistical significance from a small illustrative summary.
+<Note>
+Standard deviation (`stddev`) is only meaningful with multiple runs per eval.
+In early iterations with just 2-3 test cases and single runs, focus on the raw
+pass counts and the delta - the statistical measures become useful as you expand
+the test set and run each eval multiple times.
+</Note>
 
 ## Analyzing patterns
 
 Aggregate statistics can hide important patterns. After computing the
 benchmarks:
 
-- **Separate invariants from improvement-sensitive assertions.** Always-passing
-  validity, safety, and required output checks remain regression gates. Optional
-  nondiscriminating checks may move out of the comparison metric with an
-  explicit rationale; never remove required checks to inflate the skill's
-  improvement.
+- **Remove or replace assertions that always pass in both configurations.**
+  These don't tell you anything useful - the model handles them fine without the
+  skill. They inflate the with-skill pass rate without reflecting actual skill
+  value.
 - **Investigate assertions that always fail in both configurations.** Either the
   assertion is broken (asking for something the model can't do), the test case
   is too hard, or the assertion is checking for the wrong thing. Fix these
   before the next iteration.
-- **Study assertions that pass with the skill but fail without.** These suggest
-  added value when conditions are comparable. Investigate _why_ - which
-  instructions or scripts made the difference?
+- **Study assertions that pass with the skill but fail without.** This is where
+  the skill is clearly adding value. Understand _why_ - which instructions or
+  scripts made the difference?
 - **Tighten instructions when results are inconsistent across runs.** If the
   same eval passes sometimes and fails others (reflected as high `stddev` in the
   benchmark), the eval may be flaky (sensitive to model randomness), or the
@@ -404,26 +366,16 @@ as a `feedback.json` alongside the eval directories):
 
 ```json feedback.json
 {
-  "eval-top-months-chart": {
-    "reviewed": true,
-    "reviewer": "example-reviewer",
-    "outcome": "FAIL",
-    "feedback": "The chart is missing an axis label."
-  },
-  "eval-clean-missing-emails": {
-    "reviewed": false,
-    "reviewer": null,
-    "outcome": "NHR",
-    "feedback": "Human review not yet performed."
-  }
+  "eval-top-months-chart": "The chart is missing axis labels and the months are
+   in alphabetical order instead of chronological.",
+  "eval-clean-missing-emails": ""
 }
 ```
 
 "The chart is missing axis labels" is actionable; "looks bad" is not. Empty
-feedback is ambiguous; record explicit `reviewed`, reviewer identity, outcome,
-and evidence. Unreviewed output is not a human-review pass. During the
-[iteration step](#iterating-on-the-skill), focus your improvements on the test
-cases where you had specific complaints.
+feedback means the output looked fine - that test case passed your review.
+During the [iteration step](#iterating-on-the-skill), focus your improvements on
+the test cases where you had specific complaints.
 
 ## Iterating on the skill
 
@@ -452,9 +404,9 @@ When prompting the LLM, include these guidelines:
   unneeded intermediate outputs), remove those instructions. If pass rates
   plateau despite adding more rules, the skill may be over-constrained - try
   removing instructions and see if results hold or improve.
-- **Match wording to the failure.** Compare explanation, explicit rules,
-  structural slots, and conditional recipes as appropriate; no form is
-  universally more reliable. See [instruction form](instruction-form.md).
+- **Explain the why.** Reasoning-based instructions ("Do X because Y tends to
+  cause Z") work better than rigid directives ("ALWAYS do X, NEVER do Y").
+  Models follow instructions more reliably when they understand the purpose.
 - **Bundle repeated work.** If every test run independently wrote a similar
   helper script (a chart builder, a data parser), that's a signal to bundle the
   script into the skill's `scripts/` directory. See
@@ -469,14 +421,11 @@ When prompting the LLM, include these guidelines:
 4. Grade and aggregate the new results.
 5. Review with a human. Repeat.
 
-Stop at predefined acceptance criteria or when there is no meaningful
-improvement, unavailable evidence, or an authorization/scope barrier. Report
-unresolved required outcomes; do not equate satisfaction or empty feedback with
-readiness. The final checklist owns the deployment gate.
+Stop when you're satisfied with the results, feedback is consistently empty, or
+you're no longer seeing meaningful improvement between iterations.
 
-**Optional automation:** The
-[`skill-creator`](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+<Tip>
+The [`skill-creator`](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
 Skill automates much of this workflow - running evals, grading assertions,
-aggregating benchmarks, and presenting results for human review. Check the
-automation's actual interface and availability before use. Its output does not
-replace inspection of artifacts or unresolved required gates.
+aggregating benchmarks, and presenting results for human review.
+</Tip>

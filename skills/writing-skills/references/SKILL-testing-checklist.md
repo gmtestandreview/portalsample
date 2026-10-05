@@ -6,27 +6,6 @@ This is a **deployment gate**, not a substitute for the specialist testing
 references. Apply only the checks relevant to the candidate and target
 environment, and record evidence for each result.
 
-Inputs: exact candidate revision, target environment, applicable specification
-and local policies, preserved baseline, and fresh run/artifact evidence. Output:
-the result summary below, criterion states, unresolved blockers, and one bounded
-recommendation. A checked box is not evidence; link the source or run that
-proves it. Missing required evidence is `NHR` and blocks readiness, not a waived
-check.
-
-Follow the host instruction hierarchy during execution. Specification claims use
-[the current specification](specification.md); examples/local gate policy confer
-no extra permissions. Recheck source requirements when the specification or
-target client changes and rerun evidence after the last relevant candidate
-change.
-
-Navigation: [applicability](#0-evidence-and-applicability),
-[structure](#1-skillmd-structure-and-frontmatter),
-[activation](#3-activation-description-and-trigger-boundaries),
-[tests](#6-select-the-correct-behavioral-tests),
-[resources](#10-supporting-files-links-and-paths),
-[tooling](#11a-deterministic-validator-and-harness-conformance),
-[final gate](#15-final-deployment-gate), [report](#result-summary-template).
-
 ## Check labels
 
 - **[SPEC]** Mandatory Agent Skills specification requirement.
@@ -76,8 +55,6 @@ Before checking the skill:
       matters.
 - [ ] Read the candidate `SKILL.md` and every supporting file needed for the
       checks being performed.
-- [ ] Freeze applicable required gates and evaluation success criteria before
-      scored runs. Changes retain rationale and require comparable reruns.
 - [ ] Preserve a baseline for meaningful revisions or merges.
 - [ ] Mark unavailable evidence or unsupported execution as **[NHR]** rather
       than guessing.
@@ -96,13 +73,9 @@ Pass condition: the review scope and evidence limits are explicit.
 - [ ] **[SPEC]** `SKILL.md` contains YAML frontmatter followed by Markdown
       content.
 - [ ] **[SPEC]** YAML frontmatter parses without errors.
-- [ ] **[SPEC]** Parsed frontmatter is a mapping and required textual fields are
-      strings, not YAML numeric/boolean/null values.
 - [ ] **[SPEC]** `name` exists.
 - [ ] **[SPEC]** `name` is 1-64 characters.
-- [ ] **[SPEC]** `name` follows the current specification's Unicode lowercase
-      alphanumeric/hyphen contract; ASCII-only acceptance is a separate local
-      compatibility choice, not universal conformance.
+- [ ] **[SPEC]** `name` contains only lowercase letters, numbers, and hyphens.
 - [ ] **[SPEC]** `name` does not start or end with a hyphen.
 - [ ] **[SPEC]** `name` does not contain consecutive hyphens.
 - [ ] **[SPEC]** `name` matches the parent skill-directory name.
@@ -114,12 +87,8 @@ Pass condition: the review scope and evidence limits are explicit.
       `allowed-tools`.
 - [ ] **[SPEC]** `compatibility`, if present, is within the specification limit
       and describes actual environment requirements.
-- [ ] **[SPEC]** Optional textual fields use strings; `metadata`, if present, is
-      a mapping from string keys to string values.
 - [ ] **[SPEC]** `allowed-tools`, if present, uses the format required by the
       current specification.
-- [ ] **[COND]** Experimental `allowed-tools` client support is checked when
-      execution depends on it; metadata never overrides host permissions.
 
 ### Non-spec naming or metadata rules
 
@@ -199,13 +168,6 @@ For every critical trigger, branch, or load condition:
 
 Pass condition: intended requests map directly to the skill and near-misses
 remain outside its activation boundary.
-
-Declare whether evidence measures selector recommendations, supplied-guidance
-application, or actual client discovery/loading. Naming the skill or reference
-can test application but cannot demonstrate implicit activation. Runtime claims
-require observed client events; absent observation is `NHR` for that gate. A
-useful selection/application proxy may pass its own declared contract without
-satisfying a required runtime-activation gate.
 
 ---
 
@@ -381,9 +343,8 @@ adding unnecessary context.
 - [ ] **[COND]** Renamed or relocated files have no stale references.
 - [ ] **[COND]** Templates/assets required for successful execution are present.
 - [ ] **[COND]** Missing optional resources degrade gracefully rather than
-      causing false success claims.
-
-Pass condition: all required resources can be resolved from the packaged skill.
+      causing false success claims. Pass condition: all required resources can
+      be resolved from the packaged skill.
 
 ---
 
@@ -584,8 +545,7 @@ or `hold`; `deploy` is prohibited.
 ```markdown
 # Skill Validation Summary
 
-Artifact: Classification: Target environment: Candidate revision/hash: Review
-date: Applicable source versions:
+Artifact: Classification: Target environment:
 
 ## Specification
 
@@ -601,13 +561,11 @@ date: Applicable source versions:
 ## Behavioral evidence
 
 - Overall outcome: PASS | AMBER | FAIL | NHR | N/A
-- Measurement target(s) and observed events:
 - RED:
 - GREEN:
 - Pressure/edge:
 - Regression:
 - Unresolved AMBER/FAIL/NHR:
-- Required missing/unexecuted cases:
 
 ## Resources and execution
 
@@ -636,16 +594,12 @@ deploy | revise | split | merge | deprecate | hold
 This checklist answers **whether final validation is complete**. Use specialist
 references for **how** to perform complex checks:
 
-- [current specification](specification.md) → mandatory format/compliance;
-- [description/trigger methodology](description-optimization.md) → activation
-  measurement and near-miss design;
-- [behavioral eval methodology](evaluating-skill-output.md) →
-  with-skill/without-skill runs, assertions, grading, and iteration;
-- [pressure-testing methodology](testing-skills-with-subagents.md) →
-  RED/GREEN/REFACTOR adherence tests;
-- [scripts guidance](using-scripts-in-skills.md) → executable resources and
-  reproducibility;
-- [classification guidance](skill-classification.md) → choose the correct
-  testing emphasis.
+- current specification → mandatory format/compliance;
+- description/trigger methodology → activation measurement and near-miss design;
+- behavioral eval methodology → with-skill/without-skill runs, assertions,
+  grading, and iteration;
+- pressure-testing methodology → RED/GREEN/REFACTOR adherence tests;
+- scripts guidance → executable resources and reproducibility;
+- classification guidance → choose the correct testing emphasis.
 
 Do not duplicate those full methodologies here.

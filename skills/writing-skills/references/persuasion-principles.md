@@ -4,31 +4,13 @@
 
 ## Overview
 
-Load only after observing a concrete adherence or rationalization failure; use
-[instruction-form.md](instruction-form.md) for other output-shaping failures.
-Inputs: governing requirement, representative failure, candidate wording, and
-permitted evaluation environment. Output: a scoped wording hypothesis and a
-comparative test, not a guarantee of compliance.
+LLMs respond to the same persuasion principles as humans. Understanding this
+psychology helps you design more effective skills - not to manipulate, but to
+ensure critical practices are followed even under pressure.
 
-**Evidence boundary:** Meincke et al.'s 2025 study reported 28,000 conversations
-with GPT-4o mini and two objectionable-request tasks, with average compliance of
-33.3% for controls and 72.0% for persuasion prompts. This is evidence about that
-study, not measured skill quality, general model psychology, or reliability on
-current clients. The
-[authors' abstract](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5357179)
-was checked on 2026-10-04 and links a later published version. The full study
-and per-principle effects were not re-evaluated here; transferring effects to
-this package remains `NHR` until tested.
-
-The seven categories below are design hypotheses derived from a human influence
-framework. They do not override the host instruction hierarchy, permissions, or
-user scope. Use truthful requirements and proportional controls; do not invent
-authority, urgency, consensus, or guarantees.
-
-Navigation: [principles](#the-seven-principles),
-[type fit](#principle-combinations-by-skill-type),
-[mechanism hypotheses](#mechanism-hypotheses-to-test), [ethics](#ethical-use),
-[sources](#research-citations), [test sequence](#quick-reference).
+**Research foundation:** Meincke et al. (2025) tested 7 persuasion principles
+with N=28,000 AI conversations. Persuasion techniques more than doubled
+compliance rates (33% → 72%, p < .001).
 
 ## The Seven Principles
 
@@ -39,22 +21,20 @@ Navigation: [principles](#the-seven-principles),
 **How it works in skills:**
 
 - Imperative language: "YOU MUST", "Never", "Always"
-- Explicit framing of actual mandatory requirements and their source
-- May reduce ambiguity; compare adherence rather than asserting an effect
+- Non-negotiable framing: "No exceptions"
+- Eliminates decision fatigue and rationalization
 
 **When to use:**
 
 - Discipline-enforcing skills (TDD, verification requirements)
 - Safety-critical practices
-- Documented governing rules; best-practice preferences remain preferences
+- Established best practices
 
 **Example:**
 
 ```markdown
-Candidate: In this authorized disposable test-first exercise, discard only the
-generated candidate implementation if test-first order was violated. Preserve
-existing user work and follow the governing recovery policy outside the
-exercise.
+✅ Write code before test? Delete it. Start over. No exceptions. ❌ Consider
+writing tests first when feasible.
 ```
 
 ### 2. Commitment
@@ -65,8 +45,8 @@ declarations.
 **How it works in skills:**
 
 - Require announcements: "Announce skill usage"
-- Record explicit choices when they affect the governing requirement
-- Use a checklist or the target client's available tracking tool when useful
+- Force explicit choices: "Choose A, B, or C"
+- Use tracking: TodoWrite for checklists
 
 **When to use:**
 
@@ -77,8 +57,8 @@ declarations.
 **Example:**
 
 ```markdown
-Candidate, only where announcement is required: State the skill and its purpose
-when first applying it. An announcement is not evidence that the workflow ran.
+✅ When you find a skill, you MUST announce: "I'm using [Skill Name]" ❌
+Consider letting your partner know which skill you're using.
 ```
 
 ### 3. Scarcity
@@ -89,7 +69,7 @@ when first applying it. An announcement is not evidence that the workflow ran.
 
 - Time-bound requirements: "Before proceeding"
 - Sequential dependencies: "Immediately after X"
-- Makes a real dependency visible; it must not fabricate urgency
+- Prevents procrastination
 
 **When to use:**
 
@@ -100,9 +80,8 @@ when first applying it. An announcement is not evidence that the workflow ran.
 **Example:**
 
 ```markdown
-Candidate: When the governing workflow requires review before release, obtain
-that review before the release step. External messages still require
-authorization.
+✅ After completing a task, IMMEDIATELY request code review before proceeding.
+❌ You can review code when convenient.
 ```
 
 ### 4. Social Proof
@@ -111,20 +90,21 @@ authorization.
 
 **How it works in skills:**
 
-- Cite actual documented team norms or relevant failure evidence
-- Avoid claims of universal failure or consensus without support
+- Universal patterns: "Every time", "Always"
+- Failure modes: "X without Y = failure"
+- Establishes norms
 
 **When to use:**
 
-- Documenting established local practices with clear applicability
+- Documenting universal practices
 - Warning about common failures
 - Reinforcing standards
 
 **Example:**
 
 ```markdown
-Candidate: This team's release checklist records each required gate and its
-evidence. Use the documented tracking mechanism when this workflow applies.
+✅ Checklists without TodoWrite tracking = steps get skipped. Every time. ❌
+Some people find TodoWrite helpful for checklists.
 ```
 
 ### 5. Unity
@@ -160,7 +140,7 @@ You should probably tell me if I'm wrong.
 
 **When to avoid:**
 
-- Compliance where obligation or guilt would replace task-relevant reasons
+- Almost always (other principles more effective)
 
 ### 7. Liking
 
@@ -170,16 +150,13 @@ You should probably tell me if I'm wrong.
 
 - **DON'T USE for compliance**
 - Conflicts with honest feedback culture
-- May encourage agreement instead of evidence-based judgment
+- Creates sycophancy
 
 **When to avoid:**
 
 - Always for discipline enforcement
 
 ## Principle Combinations by Skill Type
-
-These are starting hypotheses, not empirically validated combinations. Use the
-narrowest wording supported by the observed failure.
 
 | Skill Type           | Use                                   | Avoid               |
 | -------------------- | ------------------------------------- | ------------------- |
@@ -188,24 +165,26 @@ narrowest wording supported by the observed failure.
 | Collaborative        | Unity + Commitment                    | Authority, Liking   |
 | Reference            | Clarity only                          | All persuasion      |
 
-## Mechanism hypotheses to test
+## Why This Works: The Psychology
 
-**Explicit rules may reduce rationalization:**
+**Bright-line rules reduce rationalization:**
 
-- Explicit mandatory language may make a real rule easier to identify
-- Observable conditions can distinguish valid exceptions from invented ones
-- Rationalization counters should address failures actually observed
+- "YOU MUST" removes decision fatigue
+- Absolute language eliminates "is this an exception?" questions
+- Explicit anti-rationalization counters close specific loopholes
 
-**Conditional instructions may help selection:**
+**Implementation intentions create automatic behavior:**
 
-- Compare "when X, do Y" with general guidance on both branches
-- Check whether the trigger is observable and within the skill boundary
-- Evaluate omission, over-application, and task quality as well as adherence
+- Clear triggers + required actions = automatic execution
+- "When X, do Y" more effective than "generally do Y"
+- Reduces cognitive load on compliance
 
-**Human-language analogies are not causal proof:**
+**LLMs are parahuman:**
 
-- Training on human text motivates comparing these forms
-- It does not prove human motives, automatic execution, or general compliance
+- Trained on human text containing these patterns
+- Authority language precedes compliance in training data
+- Commitment sequences (statement → action) frequently modeled
+- Social proof patterns (everyone does X) establish norms
 
 ## Ethical Use
 
@@ -230,27 +209,23 @@ fully understood it?
 Expanded)._ Harper Business.
 
 - Seven principles of persuasion
-- Human influence framework; not a skill-performance evaluation
+- Empirical foundation for influence research
 
 **Meincke, L., Shapiro, D., Duckworth, A. L., Mollick, E., Mollick, L.,** &
-**Cialdini, R. (2025).**
-[Call Me A Jerk: Persuading AI to Comply with Objectionable Requests](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5357179).
-Wharton School working paper; the abstract links its later published version.
+**Cialdini, R. (2025).** Call Me A Jerk: Persuading AI to Comply with
+Objectionable Requests. University of Pennsylvania.
 
 - Tested 7 principles with N=28,000 LLM conversations
 - Compliance increased 33% → 72% with persuasion techniques
-- No universal ranking or cross-model guarantee is established by this guide
+- Authority, commitment, scarcity most effective
+- Validates parahuman model of LLM behavior
 
 ## Quick Reference
 
 When designing a skill, ask:
 
-1. Classify the actual failure and confirm a governing requirement.
-2. Select one plausible correction; keep unrelated task conditions constant.
-3. Use [behavioral tests](testing-skills-with-subagents.md) to compare baseline
-   and candidate, including near-misses and pressure appropriate to the class.
-4. Reject a correction that improves compliance by harming scope, safety, or
-   output correctness. Record partial evidence `AMBER` and missing evidence
-   `NHR`.
-5. Retain only supported improvements; report model, revision, sample, and
-   limitations. Re-evaluate after relevant client/model/policy changes.
+1. **What type is it?** (skill-classification.md)
+2. **What behavior am I trying to change?**
+3. **Which principle(s) apply?** (Usually authority + commitment for discipline)
+4. **Am I combining too many?** (Don't use all seven)
+5. **Is this ethical?** (Serves user's genuine interests?)

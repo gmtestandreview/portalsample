@@ -8,22 +8,15 @@ description:
 
 # Adding skills support
 
-## Applicability and provenance
+<!-- markdownlint-disable MD033 -->
 
-Use this guide when you're designing or reviewing a client that discovers and activates skills. Before you start, consider the client's filesystem or tool access, its trust model, and its skill discovery policy. Your goal is to produce a clear design that covers discovery, parsing, disclosure, activation, and context management—plus diagnostics and integration tests. This guide offers implementation advice and isn’t a specification or permission to alter installed client behavior.
+This guide walks through how to add Agent Skills support to an AI agent or
+development tool. It covers the full lifecycle: discovering skills, telling the
+model about them, loading their content into context, and keeping that content
+effective over time.
 
-This content is adapted from the [Agent Skills client guidance](https://agentskills.io/client-implementation/adding-skills-support) client guidance, last reviewed on 2026-10-04. The choices described here—such as discovery paths and parsing flexibility—are design decisions. Always check your client’s current contract before implementing any of them. Execution is governed by your host’s instruction hierarchy and access policy. Remember, skill content cannot grant itself elevated permissions or allow file execution or network access.
-
-Navigate: [Discovery](#step-1-discover-skills),
-[Parsing](#step-2-parse-skillmd-files),
-[Disclosure](#step-3-disclose-available-skills-to-the-model),
-[Activation](#step-4-activate-skills),
-[Context](#step-5-manage-skill-context-over-time),
-[Validation](#integration-validation).
-
-This guide explains how to integrate Agent Skills support into an AI agent or development tool, covering the full process: finding skills, informing the model, loading skill content, and maintaining effective context.
-
-The core integration works the same way, regardless of your agent’s structure. Details vary based on two main factors:
+The core integration is the same regardless of your agent's architecture. The
+implementation details vary based on two factors:
 
 - **Where do skills live?** A locally-running agent can scan the user's
   filesystem for skill directories. A cloud-hosted or sandboxed agent will need
@@ -37,12 +30,12 @@ The guide notes where these differences matter. You don't need to support every
 scenario - follow the path that fits your agent.
 
 **Prerequisites**: Familiarity with the
-[Agent Skills specification](specification.md), which defines the `SKILL.md`
-file format, frontmatter fields, and directory conventions.
+[Agent Skills specification](specification.md), which defines the `SKILL.md` file
+format, frontmatter fields, and directory conventions.
 
 ## The core principle: progressive disclosure
 
-The recommended integration uses this three-tier loading strategy:
+Every skills-compatible agent follows the same three-tier loading strategy:
 
 | Tier            | What's loaded               | When                                 | Token cost                    |
 | --------------- | --------------------------- | ------------------------------------ | ----------------------------- |
@@ -94,12 +87,14 @@ mandate where skill directories live (it only defines what goes inside them),
 scanning `.agents/skills/` means skills installed by other compliant clients are
 automatically visible to yours, and vice versa.
 
+<Note>
 Some implementations also scan `.claude/skills/` (both project-level and
 user-level) for pragmatic compatibility, since many existing skills are
 installed there. Other additional locations include ancestor directories up to
 the git root (useful for monorepos),
 [XDG](https://specifications.freedesktop.org/basedir-spec/latest/) config
 directories, and user-configured paths.
+</Note>
 
 ### What to scan for
 
@@ -129,8 +124,8 @@ Practical scanning rules:
 
 When two skills share the same `name`, apply a deterministic precedence rule.
 
-A common design is **project-level skills override user-level skills**. This is
-not a universal format requirement; document and test your client's actual rule.
+The universal convention across existing implementations: **project-level skills
+override user-level skills.**
 
 Within the same scope (e.g., two skills named `code-review` found under both
 `<project>/.agents/skills/` and `<project>/.<your-client>/skills/`), either
@@ -194,14 +189,13 @@ containing colons:
 description: Use this skill when: the user asks about PDFs
 ```
 
-Prefer a diagnostic and source correction. An optional compatibility mode may
-retry a narrowly specified repair, but retain the original bytes, label the
-repair, reject ambiguous input and duplicate keys, and never report repaired or
-nonconforming input as specification compliant.
+Consider a fallback that wraps such values in quotes or converts them to YAML
+block scalars before retrying. This improves cross-client compatibility at
+minimal cost.
 
 ### Lenient validation
 
-Optional compatibility mode may warn and load nonconforming input:
+Warn on issues but still load the skill when possible:
 
 - Name doesn't match the parent directory name → warn, load anyway
 - Name exceeds 64 characters → warn, load anyway
@@ -212,10 +206,12 @@ Optional compatibility mode may warn and load nonconforming input:
 Record diagnostics so they can be surfaced to the user (in a debug command, log
 file, or UI), but don't block skill loading on cosmetic issues.
 
+<Note>
 The [specification](specification.md) defines strict constraints on the `name`
 field (matching the parent directory, character set, max length). The lenient
 approach above deliberately relaxes these to improve compatibility with skills
 authored for other clients.
+</Note>
 
 ### What to store
 
@@ -372,10 +368,12 @@ Advantages over raw file reads:
 - Enforce permissions or prompt for user consent
 - Track activation for analytics
 
+<Tip>
 If you use a dedicated activation tool, constrain the `name` parameter to the
 set of valid skill names (e.g., as an enum in the tool schema). This prevents
 the model from hallucinating nonexistent skill names. If no skills are available
 don't register the tool at all.
+</Tip>
 
 ### User-explicit activation
 
@@ -454,10 +452,11 @@ be incomplete.
 
 ### Permission allowlisting
 
-For trusted skills, a client may allow read access to approved resource
-directories within its existing permission policy. Canonicalize paths, bound
-symlinks/traversal, and keep execution/write/network permissions separate.
-Discovery alone must not authorize those capabilities or disable host approvals.
+If your agent has a permission system that gates file access, **allowlist skill
+directories** so the model can read bundled resources without triggering user
+confirmation prompts. Without this, every reference to a bundled script or
+reference file results in a permission dialog, breaking the flow for skills that
+include resources beyond the `SKILL.md` itself.
 
 ## Step 5: Manage skill context over time
 
@@ -466,10 +465,11 @@ the duration of the session.
 
 ### Protect skill content from context compaction
 
-If your agent compacts context, preserve active skill constraints or a versioned
-reference that reliably restores them. Bound the retained set; revalidate
-changed or revoked skills before reload. Protecting every past activation
-forever can exhaust context and preserve obsolete instructions.
+If your agent truncates or summarizes older messages when the context window
+fills up, **exempt skill content from pruning**. Skill instructions are durable
+behavioral guidance - losing them mid-conversation silently degrades the agent's
+performance without any visible error. The model continues operating but without
+the specialized instructions the skill provided.
 
 Common approaches:
 
@@ -493,16 +493,3 @@ task, and returns a summary of its work to the main conversation.
 
 This pattern is useful when a skill's workflow is complex enough to benefit from
 a dedicated, focused session.
-
-## Integration validation
-
-Test a valid fixture and malformed YAML, absent description, duplicate name,
-untrusted project, denied resource/traversal, empty catalog, and compaction
-cases. Record input, expected result, observed diagnostics/content, client
-revision, and `PASS | FAIL | NHR`. Also verify catalog XML/JSON escapes metadata
-as data, an explicit activation resolves the intended skill, and unavailable
-resources lead to a useful error rather than invented content. A static design
-review can support the design contract; activation and retention claims require
-client runs. Do not claim deployment readiness for unrun required cases. Recheck
-this guide when the upstream guidance or the target client's permission/loading
-contract changes.

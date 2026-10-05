@@ -1,7 +1,6 @@
 # Skill Classification
 
-Load when a candidate skill's primary reusable value determines its scope or
-testing emphasis, before selecting behavioral tests.
+Use this reference during **Step 2: Qualify** of the SKILLS.md Doctor workflow.
 
 Its purpose is to classify a candidate Agent Skill as a **Discipline**,
 **Technique**, **Pattern**, **Reference**, or justified **Hybrid**, then select
@@ -9,22 +8,6 @@ the appropriate testing emphasis.
 
 Do not classify from the skill name alone. Classify from its **primary reusable
 value, execution model, scope, and expected agent behavior**.
-
-Inputs: the candidate revision, intended requests, relevant resources, and
-observable expected behavior. Output: the classification record below and a
-class-appropriate test plan, or `Needs Human Review` with the missing evidence
-and next action. Classification does not prove activation or deployment
-readiness.
-
-These categories are local authoring/test heuristics, not Agent Skills
-specification fields or separate runtime activation rules. Follow the
-candidate's documented task boundary and host instruction hierarchy. Review
-classifications after changes to scope, primary value, or execution model.
-
-Navigation: [procedure](#classification-procedure), [classes](#1-discipline),
-[decision guide](#decision-guide),
-[boundary check](#qaqrmi-classification-check),
-[output](#classification-output).
 
 ---
 
@@ -92,9 +75,8 @@ Expected: activates a lifecycle/audit Discipline skill.
 
 > "Rewrite this one description so it is shorter."
 
-Expected: a narrow editing method is sufficient. A lifecycle skill that
-explicitly includes description editing may still activate; classification does
-not require its full audit branch to run for that request.
+Expected: a narrow editing technique is sufficient; the full Discipline workflow
+should not activate unless broader review is requested.
 
 ### Test emphasis
 
@@ -342,9 +324,7 @@ Run the tests for each load-bearing classification plus:
 
 ## Decision Guide
 
-Use the statement that best describes the skill's **primary value**. Check the
-Hybrid threshold when two categories appear inseparable; list order is not
-classification precedence:
+Use the first statement that best describes the skill's **primary value**:
 
 1. **"It governs a broad professional workflow with multiple decisions and
    quality gates."** → **Discipline**
@@ -390,7 +370,7 @@ Report:
 ```markdown
 ### Skill Classification
 
-**Classification:** Discipline | Technique | Pattern | Reference | Hybrid | NHR
+**Classification:** Discipline | Technique | Pattern | Reference | Hybrid
 **Confidence:** High | Medium | Low
 
 **Primary purpose:** <one sentence>
@@ -410,8 +390,7 @@ Report:
 
 - <applicable tests>
 
-**Human review:** None | <unresolved classification issue> **Missing evidence /
-next action:** None | <what to obtain before classifying>
+**Human review:** None | <unresolved classification issue>
 ```
 
 ---
