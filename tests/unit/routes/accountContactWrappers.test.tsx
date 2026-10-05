@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router';
+import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   useAccountState: vi.fn(),
@@ -176,8 +177,10 @@ describe('account and contact route wrappers', () => {
 
     renderAt('/account-add-branch', <AddBranch />, '/account-add-branch');
     expect(screen.getByText('Organisation details fields')).toBeInTheDocument();
-    const onShowBranchSelector = mocks.addBranchProps.mock
-      .calls[0][4] as () => void;
+    const onShowBranchSelector = defined(
+      mocks.addBranchProps.mock.calls[0],
+      'addBranchProps call'
+    )[4] as () => void;
     onShowBranchSelector();
     expect(mocks.setShowBranchSelector).toHaveBeenCalledWith(true);
   });

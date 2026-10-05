@@ -31,7 +31,7 @@ import {
   type ProblemDetails,
   type ServicesOffered,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import AppLogger from '../../instrumentation/AppLogger';
 import getUnexpectedErrorRoute from '../common/errorRoutes';
 import { HttpStatusCode } from '../../types';
@@ -93,18 +93,31 @@ const handlePaginationScroll = () => {
   titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
-const fetchRequestsByTab = async (
-  tab: DashboardTab,
-  client: PatternApprovalClient,
-  sortOrder: string,
-  currentPage: number,
-  pageSize: number,
-  accountDetailsCrmGuid?: string,
-  filterSearchText?: string,
-  actualYear?: string,
-  actualStatus?: PatternApprovalStatusEnumDto,
-  signal?: AbortSignal
-): Promise<PagedListOfPatternApprovalDashboardDetailsDto> => {
+interface FetchRequestsParams {
+  tab: DashboardTab;
+  client: PatternApprovalClient;
+  sortOrder: string;
+  currentPage: number;
+  pageSize: number;
+  accountDetailsCrmGuid?: string | undefined;
+  filterSearchText?: string | undefined;
+  actualYear?: string | undefined;
+  actualStatus?: PatternApprovalStatusEnumDto | undefined;
+  signal?: AbortSignal | undefined;
+}
+
+const fetchRequestsByTab = async ({
+  tab,
+  client,
+  sortOrder,
+  currentPage,
+  pageSize,
+  accountDetailsCrmGuid,
+  filterSearchText,
+  actualYear,
+  actualStatus,
+  signal,
+}: FetchRequestsParams): Promise<PagedListOfPatternApprovalDashboardDetailsDto> => {
   switch (tab) {
     case DashboardTab.Drafts:
       return client.getPatternApprovalApplicationDrafts(
@@ -131,6 +144,30 @@ const fetchRequestsByTab = async (
     default:
       throw new Error(`Unsupported tab: ${tab}`);
   }
+};
+
+const resolveFilterParams = (
+  filterYearType: string | undefined,
+  filterStatusType: string | undefined
+) => ({
+  actualYear:
+    filterYearType === defaultFilter.filterYearType
+      ? undefined
+      : filterYearType,
+  actualStatus:
+    filterStatusType === defaultFilter.filterStatusType
+      ? undefined
+      : (filterStatusType as PatternApprovalStatusEnumDto | undefined),
+});
+
+const classifyLoadError = (error: ProblemDetails) => {
+  const status = (error.status ?? 0) > 0 ? { status: error.status! } : {};
+  if (error.status !== HttpStatusCode.Forbidden) {
+    return { ...status, hasError: true };
+  }
+  return error.title?.includes('No third-party access')
+    ? { ...status, noThirdPartyAccess: true }
+    : { ...status, forbidden: true };
 };
 
 const DashboardTA = () => {
@@ -337,97 +374,73 @@ const DashboardTA = () => {
         service.service === ServiceType.PatternApproval && service.isActive
     );
     if (userProfileLoaded && !patternApprovalIsActive) {
-      navigate('/services-we-offer');
+      void navigate('/services-we-offer');
       return;
     }
     setIsDataLoading(true); // Dashboard data
     const loadDataForDisplay = async () => {
       if (
-        accountContext &&
-        accountDetails?.organisationCRMGuid &&
-        initialFilters
+        !accountContext ||
+        !accountDetails?.organisationCRMGuid ||
+        !initialFilters
       ) {
-        if (inProgress === InteractionStatus.None && accounts.length > 0) {
-          try {
-            AppLogger.verbose(
-              'Dashboard.loadDataForDisplay',
-              accountContext.details
-            );
-            const client = new PatternApprovalClient();
-            const tokenResult = await instance.acquireTokenSilent({
-              ...tokenRequest,
-              account: accounts[0],
-            });
-            client.setAuthToken(tokenResult.accessToken);
-            setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
-            setIsModalOpen(
-              // List and check all Actionable modals across portal app
-              !!accountDetails?.showBranchSelector ||
-                !accountDetails?.userAcceptedTermsOfUse
-            );
-            setIsDataLoading(true);
-            const intialTab = initialFilters.filterActiveTab as DashboardTab;
-            const actualYear =
-              initialFilters.filterYearType === defaultFilter.filterYearType ||
-              initialFilters.filterYearType === undefined
-                ? undefined
-                : initialFilters.filterYearType!;
-            const actualStatus =
-              initialFilters.filterStatusType ===
-                defaultFilter.filterStatusType ||
-              initialFilters.filterStatusType === undefined
-                ? undefined
-                : (initialFilters.filterStatusType as PatternApprovalStatusEnumDto);
-            const requestsResponse = await fetchRequestsByTab(
-              intialTab,
-              client,
-              'descending', // TS whats up here are we changing this?
-              initialFilters.filterCurrentPage!,
-              DEFAULT_DASHBOARD_PAGESIZE, // TS should we add a pagesize dropdown in the future?
-              accountDetails?.organisationCRMGuid,
-              initialFilters.filterSearchText,
-              actualYear,
-              actualStatus
-            );
-            setRequests(requestsResponse.items!);
-            setCurrentPage(requestsResponse.currentPage!);
-            setTotalPages(requestsResponse.totalPages!);
-            setTotalCount(requestsResponse.totalCount!);
-            // trackGAPii(); // Keep this here for later when we track pii-data
-          } catch (error) {
-            AppLogger.error('Failed to load dashboard.', error as Error);
-            const problemDetails = error as ProblemDetails;
-            if (problemDetails.status! > 0)
-              setErrorStatus((prevState) => ({
-                ...prevState,
-                status: problemDetails.status!,
-              }));
-            if (
-              problemDetails.status === HttpStatusCode.Forbidden &&
-              problemDetails.title?.includes('No third-party access')
-            ) {
-              setErrorStatus((prevState) => ({
-                ...prevState,
-                noThirdPartyAccess: true,
-              }));
-            } else if (problemDetails.status === HttpStatusCode.Forbidden) {
-              setErrorStatus((prevState) => ({
-                ...prevState,
-                forbidden: true,
-              }));
-            } else {
-              setErrorStatus((prevState) => ({ ...prevState, hasError: true }));
-            }
-            AppLogger.info('Dashboard load error values', errorStatus);
-          } finally {
-            setIsDataLoading(false);
-            setReload(false);
-          }
-        }
+        return;
+      }
+      if (inProgress !== InteractionStatus.None || accounts.length === 0) {
+        return;
+      }
+      try {
+        AppLogger.verbose(
+          'Dashboard.loadDataForDisplay',
+          accountContext.details
+        );
+        const client = new PatternApprovalClient();
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
+        client.setAuthToken(tokenResult.accessToken);
+        setErrorStatus((prevState) => ({ ...prevState, hasError: false }));
+        setIsModalOpen(
+          // List and check all Actionable modals across portal app
+          !!accountDetails?.showBranchSelector ||
+            !accountDetails?.userAcceptedTermsOfUse
+        );
+        setIsDataLoading(true);
+        const { actualYear, actualStatus } = resolveFilterParams(
+          initialFilters.filterYearType,
+          initialFilters.filterStatusType
+        );
+        const requestsResponse = await fetchRequestsByTab({
+          tab: initialFilters.filterActiveTab as DashboardTab,
+          client,
+          sortOrder: 'descending', // TS whats up here are we changing this?
+          currentPage: initialFilters.filterCurrentPage!,
+          pageSize: DEFAULT_DASHBOARD_PAGESIZE, // TS should we add a pagesize dropdown in the future?
+          accountDetailsCrmGuid: accountDetails?.organisationCRMGuid,
+          filterSearchText: initialFilters.filterSearchText,
+          actualYear,
+          actualStatus,
+        });
+        setRequests(requestsResponse.items!);
+        setCurrentPage(requestsResponse.currentPage!);
+        setTotalPages(requestsResponse.totalPages!);
+        setTotalCount(requestsResponse.totalCount!);
+        // trackGAPii(); // Keep this here for later when we track pii-data
+      } catch (error) {
+        AppLogger.error('Failed to load dashboard.', error as Error);
+        const problemDetails = error as ProblemDetails;
+        setErrorStatus((prevState) => ({
+          ...prevState,
+          ...classifyLoadError(problemDetails),
+        }));
+        AppLogger.info('Dashboard load error values', problemDetails);
+      } finally {
+        setIsDataLoading(false);
+        setReload(false);
       }
     };
     setDeleteSuccess(false);
-    loadDataForDisplay();
+    void loadDataForDisplay();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -468,11 +481,7 @@ const DashboardTA = () => {
               className='btn btn-primary text-nowrap'
               onClick={() => trackGAEvent('New TA application')}
             >
-              <i
-                className='icon-plus me-md-2'
-                aria-hidden='true'
-                role='presentation'
-              />
+              <i className='icon-plus me-md-2' aria-hidden='true' />
               <span className='d-none d-md-inline-block'>New application</span>
             </Link>
           </span>

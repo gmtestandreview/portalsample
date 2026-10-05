@@ -1,11 +1,9 @@
 ---
-agent: 'agent'
-description: 'Use this prompt to perform a security-focused code review of specific files, diffs, features, routes, dependencies, workflows, prompts, agents, or configurations. Follow repository policy and OWASP-style categories to identify and explain security risks, provide evidence-based findings, and recommend practical fixes and validation steps.'
+name: security-code-review
+description: Use this prompt to perform a security-focused code review of specific files, diffs, features, routes, dependencies, workflows, prompts, agents, or configurations. Follow repository policy and OWASP-style categories to identify and explain security risks, provide evidence-based findings, and recommend practical fixes and validation steps.
+disable-model-invocation: true
 argument-hint: 'Security issue, file, diff, feature, route, dependency, workflow, prompt, agent, or config to review'
-model: Claude Sonnet 4.5
-tools: [execute, read, edit, search, web, agent, todo]
 ---
-
 # Security Code Review
 
 Use this prompt only when the user explicitly requests security review, OWASP analysis, threat modeling, secrets review, dependency-risk review, AI/LLM security review, or security hardening.

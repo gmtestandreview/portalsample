@@ -1,24 +1,9 @@
 ---
-agent: 'agent'
-description: 'Use this prompt to perform a SonarQube MCP-supported code quality review or issue remediation for specific files, issues, branches, pull requests, or quality concerns. Follow repository policy and SonarQube best practices to identify and explain code-quality issues, provide evidence-based findings, recommend practical fixes, and validate results with available MCP tools and repo commands.'
-model: 'Claude Sonnet 4.5'
-tools:
-  [
-    execute,
-    read,
-    agent,
-    edit,
-    search,
-    web,
-    sonarsource.sonarlint-vscode/sonarqube_getPotentialSecurityIssues,
-    sonarsource.sonarlint-vscode/sonarqube_excludeFiles,
-    sonarsource.sonarlint-vscode/sonarqube_setUpConnectedMode,
-    sonarsource.sonarlint-vscode/sonarqube_analyzeFile,
-    todo,
-  ]
+name: sonarqube-code-quality
+description: Use this prompt to perform a SonarQube MCP-supported code quality review or issue remediation for specific files, issues, branches, pull requests, or quality concerns. Follow repository policy and SonarQube best practices to identify and explain code-quality issues, provide evidence-based findings, recommend practical fixes, and validate results with available MCP tools and repo commands.
+disable-model-invocation: true
 argument-hint: 'SonarQube issue, file, branch, pull request, or quality concern to review or remediate'
 ---
-
 # SonarQube MCP Code Quality Review
 
 Use this prompt only when the user explicitly asks for SonarQube, SonarCloud, SonarQube MCP, code-quality issue review, or Sonar issue remediation.

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent } from 'storybook/test';
+import { expect } from 'storybook/test';
 import { http, HttpResponse } from 'msw';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import ApplicationMessages from './appMessages';
@@ -43,6 +43,7 @@ type Story = StoryObj<typeof meta>;
 export const MessagesTab: Story = {
   play: async ({
     canvas,
+    userEvent,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     await expect(
       await canvas.findByText('No messages to display')
@@ -50,12 +51,10 @@ export const MessagesTab: Story = {
     await expect(
       canvas.getByRole('combobox', { name: 'Select your view' })
     ).toBeEnabled();
-    await userEvent.type(
-      canvas.getByRole('textbox', { name: 'Message NMI' }),
-      'Hi'
-    );
-    // The counter re-renders from Slate's onChange a tick after type() resolves;
-    // await the settled value rather than querying synchronously (see line above).
+    const editor = canvas.getByRole('textbox', { name: 'Message NMI' });
+    await userEvent.type(editor, 'Hi');
+    await expect(editor).toHaveTextContent('Hi');
+    // Await the counter after Slate applies the entered text.
     await expect(await canvas.findByText(/^9\s*\//)).toBeVisible();
   },
 };

@@ -10,7 +10,7 @@ import {
   RequestForPatternApprovalClient,
   YesNo,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import { DisplayRules } from '../displayRules';
 
 const loadAppDetails =
@@ -19,10 +19,9 @@ const loadAppDetails =
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const instrumentAndRequest = await client.getAppDetails(
           id as string,

@@ -1,12 +1,10 @@
 ---
-agent: agent
-description: 'Use this prompt to explore a website, route, page, or Storybook surface with the Playwright MCP for the purpose of planning or generating Playwright tests. Follow repository Playwright rules and best practices while keeping changes minimal and focused on the exploration task.'
+name: playwright-explore-website-2
+description: Use this prompt to explore a website, route, page, or Storybook surface with the Playwright MCP for the purpose of planning or generating Playwright tests. Follow repository Playwright rules and best practices while keeping changes minimal and focused on the exploration task.
+disable-model-invocation: true
 argument-hint: 'URL or local route to explore, plus optional target flows, app/storybook project, and whether to generate test files.'
-model: Claude Sonnet 4
-tools: [execute, read, edit, search, web, agent, todo]
 ---
-
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see [.github/docs/COMMAND_CANON.md](../../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
 
 # Website Exploration for Playwright Testing
 

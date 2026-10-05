@@ -1,9 +1,9 @@
 ---
-agent: 'agent'
-description: 'Reusable checklist for reviewing instruction, prompt, and agent guidance files with repo-alignment, applicability, glob-quality, and command-style discipline.'
+name: instruction-review-checklist
+description: Reusable checklist for reviewing instruction, prompt, and agent guidance files with repo-alignment, applicability, glob-quality, and command-style discipline.
+disable-model-invocation: true
 ---
-
-Canonical command reference: see [.github/docs/COMMAND_CANON.md](../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
+Canonical command reference: see [.github/docs/COMMAND_CANON.md](../../docs/COMMAND_CANON.md) for repo-standard validation, build, lint, and test commands.
 
 # Instruction Review Checklist
 

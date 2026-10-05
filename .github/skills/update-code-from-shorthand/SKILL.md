@@ -1,11 +1,9 @@
 ---
-agent: 'agent'
-model: 'Claude Sonnet 4.5'
-tools: [execute, read, agent, edit, search, web, todo]
+name: update-code-from-shorthand
+description: Use this prompt to convert user-provided shorthand, pseudocode, or natural-language instructions into valid code or data within explicitly marked regions of a target file. Follow repository policy and the detailed rules in this instruction to ensure safe, accurate, and maintainable updates that preserve user intent and existing behavior.
+disable-model-invocation: true
 argument-hint: 'Target file and shorthand edit markers, or a request beginning with UPDATE CODE FROM SHORTHAND'
-description: 'Use this prompt to convert user-provided shorthand, pseudocode, or natural-language instructions into valid code or data within explicitly marked regions of a target file. Follow repository policy and the detailed rules in this instruction to ensure safe, accurate, and maintainable updates that preserve user intent and existing behavior.'
 ---
-
 # Update Code from Shorthand
 
 Use this prompt only when the user explicitly asks to update code from

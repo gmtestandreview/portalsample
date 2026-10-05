@@ -33,8 +33,8 @@ const occurrences = (needle: string, haystack: string = workflow): number =>
   haystack.split(needle).length - 1;
 
 const nodeVersions = (contents: string): string[] =>
-  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].map(
-    (match) => match[1]
+  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].flatMap(
+    (match) => (match[1] === undefined ? [] : [match[1]])
   );
 
 /**
@@ -61,7 +61,7 @@ const jobBlock = (contents: string, jobId: string): string => {
 const stepBlocks = (contents: string): string[] => {
   const lines = contents.split('\n');
   const stepIndent = lines
-    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1].length)
+    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1]?.length)
     .find((indent) => indent !== undefined);
 
   if (stepIndent === undefined) return [];
@@ -96,7 +96,7 @@ const DOWNLOAD_ARTIFACT_PIN =
 const CHROMATIC_ACTION_PIN =
   'chromaui/action@6b3c2820222d23bad770d57a4ad5e2d1c91f92e9';
 const CODEQL_ACTION_PIN =
-  'github/codeql-action/(?:init|analyze)@7999b86c43a865dc79d8923397f35af22de63401';
+  'github/codeql-action/(?:init|analyze)@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
 
 const testCommands = [
   { name: 'unit', command: 'npm run test:ci:unit' },
@@ -280,7 +280,7 @@ describe('workflows pin every action to an immutable commit', () => {
     (_name, contents) => {
       const actionRefs = [
         ...contents.matchAll(/uses:\s*[^\s#]+@([^\s#]+)/g),
-      ].map((match) => match[1]);
+      ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
       expect(actionRefs.length).toBeGreaterThan(0);
       expect(
@@ -290,9 +290,11 @@ describe('workflows pin every action to an immutable commit', () => {
   );
 
   it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
-    expect(codeqlWorkflow).toMatch(
-      new RegExp(`uses: ${CODEQL_ACTION_PIN} # v4`)
-    );
+    expect([
+      ...codeqlWorkflow.matchAll(
+        new RegExp(`uses: ${CODEQL_ACTION_PIN} # v4`, 'g')
+      ),
+    ]).toHaveLength(2);
     expect(occurrences('github/codeql-action/', codeqlWorkflow)).toBe(2);
   });
 
@@ -487,11 +489,11 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
       ...block.matchAll(
         /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm
       ),
-    ].map((match) => match[1]);
+    ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toEqual([
-      '22918119ff8e1ca75a623e15c8296b6ea4fbe28f',
+      'ba9859eae8dd6bd29e412f25ddbbef3d032000f4',
     ]);
     expect(
       scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))
@@ -641,6 +643,10 @@ describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () 
     expect(codeqlWorkflow).toContain('language: javascript-typescript');
     expect(codeqlWorkflow).toContain('language: python');
     expect(codeqlWorkflow).toContain('build-mode: none');
+  });
+
+  it('does not enable dependency caching for the configured CodeQL matrix', () => {
+    expect(codeqlWorkflow).not.toContain('dependency-caching');
   });
 
   it('grants CodeQL only the permissions required to upload code scanning results', () => {

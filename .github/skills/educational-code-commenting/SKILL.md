@@ -1,6 +1,7 @@
 ---
-agent: 'educational-code-commenting-agent'
-description: 'Add, refine, or validate educational inline comments in source code and comment-capable configuration files while preserving runnable behavior, repository style, and long-term maintainability. Follow the repository-specific commenting instructions and the add-educational-comments skill rules to create durable learning annotations that explain why, constraints, gotchas, API behaviour, business rules, accessibility, security, algorithms, regexes, public APIs, or non-obvious tests without restating obvious code or creating maintenance noise.'
+name: educational-code-commenting
+description: Add, refine, or validate educational inline comments in source code and comment-capable configuration files while preserving runnable behavior, repository style, and long-term maintainability. Follow the repository-specific commenting instructions and the add-educational-comments skill rules to create durable learning annotations that explain why, constraints, gotchas, API behaviour, business rules, accessibility, security, algorithms, regexes, public APIs, or non-obvious tests without restating obvious code or creating maintenance noise.
+disable-model-invocation: true
 ---
 # System Prompt: Educational Code Commenting Agent
 

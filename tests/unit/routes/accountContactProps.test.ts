@@ -314,12 +314,14 @@ describe('account and contact wizard prop factories', () => {
       )
     ).toBeUndefined();
 
-    await props.onSaveAndNext?.(
+    const saveResult = props.onSaveAndNext?.(
       values,
       true,
       formikHelpers<GetAccountValuesDto>(),
       abortSignal
     );
+    expect(saveResult).toBeInstanceOf(Promise);
+    await saveResult;
 
     expect(mocks.completeBranchAdd).toHaveBeenCalledWith(
       { formStep: values },

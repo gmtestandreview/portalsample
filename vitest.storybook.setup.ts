@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { afterAll, afterEach, vi } from 'vitest';
+import { afterAll, vi } from 'vitest';
 
 // ---------------------------------------------------------------------------
 // Runtime environment variables (same as vitest.setup.ts and preview.ts)
@@ -95,10 +94,13 @@ const originalConsoleError = console.error;
 // occurred in…" prefix). Matching with `startsWith` instead of `includes` keeps
 // every intended suppression while refusing to swallow a genuine application
 // error that merely contains one of these substrings mid-message.
-const isExpectedErrorBoundaryStoryError = (message: string) =>
-  expectedErrorBoundaryStoryMessages.some((expected) =>
-    message.startsWith(expected)
+const isExpectedErrorBoundaryStoryError = (message: string) => {
+  // The browser test runner re-reports a render error as "Uncaught Error: <message>".
+  const unwrapped = message.replace(/^Uncaught (?:Error: )?/, '');
+  return expectedErrorBoundaryStoryMessages.some((expected) =>
+    unwrapped.startsWith(expected)
   );
+};
 
 const consoleErrorSpy = vi
   .spyOn(console, 'error')
@@ -123,10 +125,6 @@ const handleExpectedErrorBoundaryStoryError = (event: ErrorEvent) => {
 };
 
 globalThis.addEventListener('error', handleExpectedErrorBoundaryStoryError);
-
-// Storybook's browser preview owns MSW through mswLoader and the service worker.
-// This setup file must remain browser-safe and must not import `msw/node`.
-afterEach(() => cleanup());
 
 // Restore the global interception installed above so the spy and listener do not
 // leak past this setup's test file.

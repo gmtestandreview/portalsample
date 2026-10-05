@@ -17,7 +17,7 @@ import {
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
 import { HttpStatusCode } from '../../types';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import useAccountContext, {
   useAccountDispatch,
 } from '../../authentication/hooks';
@@ -34,6 +34,36 @@ const handleAlertScroll = () => {
     summaryRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     summaryRef?.focus();
   }, 100);
+};
+
+const isString = (e: unknown): e is string => typeof e === 'string';
+
+/** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
+const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
+  if (!fieldError) return [];
+  if (typeof fieldError === 'string') return [fieldError];
+  if (Array.isArray(fieldError))
+    return (fieldError as unknown[]).filter(isString);
+  if (typeof fieldError !== 'object') return [];
+  return [(fieldError as Record<string, unknown>)[errorName] || ''].filter(
+    isString
+  );
+};
+
+/** Messages for files that failed or were cancelled once the upload has finished. */
+const getFailedFileErrors = (
+  progress: TASupportingDocumentsProps['progress']
+) => {
+  if (progress?.percent !== 100 || !Array.isArray(progress.files)) return [];
+  return progress.files
+    .filter(
+      (f) => f.status === FileStatus.Failed || f.status === FileStatus.Cancelled
+    )
+    .map((f) =>
+      f.status === FileStatus.Cancelled
+        ? `Upload cancelled for ${f.fileName}`
+        : `Error uploading ${f.fileName}`
+    );
 };
 
 const SupportingDocuments = (
@@ -78,41 +108,16 @@ const SupportingDocuments = (
       err !== ValidationMessages.RequiredTag
   );
 
-  const errorNames = name.split('.'); // e.g. 'supportingDocuments.form.documents' => ['supportingDocuments', 'form', 'documents']
-  const errorName = errorNames.at(-1) ?? name; // e.g. 'documents'
-  const rootErrorName = errorNames[0] ?? name;
+  // e.g. 'supportingDocuments.form.documents' => 'documents'
+  const errorName = name.slice(name.lastIndexOf('.') + 1);
+  // e.g. 'supportingDocuments.form.documents' => 'supportingDocuments'
+  const rootErrorName = name.replace(/\..*$/s, '');
   // Get Formik field errors for this field
-  let formikFieldErrors: string[] = [];
-  if (formikErrors?.[rootErrorName]) {
-    const fieldError = formikErrors[rootErrorName];
-    if (typeof fieldError === 'string') {
-      formikFieldErrors = [fieldError];
-    } else if (Array.isArray(fieldError)) {
-      formikFieldErrors = (fieldError as unknown[]).filter(
-        (e): e is string => typeof e === 'string'
-      );
-    } else if (typeof fieldError === 'object' && fieldError !== null) {
-      formikFieldErrors = [fieldError[errorName] || ''].filter(
-        (e): e is string => typeof e === 'string'
-      );
-    }
-  }
-
-  const fileErrors: string[] = [];
-  if (progress?.percent === 100 && Array.isArray(progress.files)) {
-    const failedFileErrors = progress.files
-      .filter(
-        (f) =>
-          f.status === FileStatus.Failed || f.status === FileStatus.Cancelled
-      )
-      .map((f) => {
-        if (f.status === FileStatus.Cancelled) {
-          return `Upload cancelled for ${f.fileName}`;
-        }
-        return `Error uploading ${f.fileName}`;
-      });
-    fileErrors.push(...failedFileErrors);
-  }
+  const formikFieldErrors = getFormikFieldErrors(
+    formikErrors?.[rootErrorName],
+    errorName
+  );
+  const fileErrors = getFailedFileErrors(progress);
   // Combine errors, deduplicated
   const errors = Array.from(
     new Set([
@@ -159,10 +164,9 @@ const SupportingDocuments = (
     setFormikErrors({});
     setExternalErrors?.([]);
 
-    const tokenResult = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account: accounts[0],
-    });
+    const tokenResult = await instance.acquireTokenSilent(
+      silentRequestFor(accounts[0])
+    );
 
     // Build the FileParameter array
     const fileDataArray: FileParameter[] = files.map((file) => ({
@@ -214,10 +218,9 @@ const SupportingDocuments = (
 
   const onDeleteAttachment = async (docId: string) => {
     const client = new RequestForPatternApprovalClient();
-    const tokenResult = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account: accounts[0],
-    });
+    const tokenResult = await instance.acquireTokenSilent(
+      silentRequestFor(accounts[0])
+    );
 
     client.setAuthToken(tokenResult.accessToken);
     await client.deleteDocument(id, docId);
@@ -227,10 +230,9 @@ const SupportingDocuments = (
   const onCategoryUpdate = async (docId: string, category: string) => {
     if (!id || !category) return;
     const client = new RequestForPatternApprovalClient();
-    const tokenResult = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account: accounts[0],
-    });
+    const tokenResult = await instance.acquireTokenSilent(
+      silentRequestFor(accounts[0])
+    );
     client.setAuthToken(tokenResult.accessToken);
     await client.updateCategory(id, docId, category);
   };

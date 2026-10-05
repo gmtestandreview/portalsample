@@ -1,15 +1,13 @@
 ---
-description: "Scaffold a new multi-step route module for the NMI portal following the requestForQuote pattern. Creates the folder, index component, step component(s), props file(s), validation schema, and registers the route in App.tsx with an AuthenticatedElement wrapper."
-name: "RFQ Feature Scaffold"
+name: rfq-feature-scaffold
+description: Scaffold a new multi-step route module for the NMI portal following the requestForQuote pattern. Creates the folder, index component, step component(s), props file(s), validation schema, and registers the route in App.tsx with an AuthenticatedElement wrapper.
+disable-model-invocation: true
 argument-hint: "Feature name (PascalCase), URL path, API client class name, and whether it uses a wizard form or a single page"
-agent: "agent"
-tools: [read, search, edit]
 ---
-
 # Scaffold a New Route Module
 
 You are scaffolding a new route module for the NMI Customer Portal source-map snapshot.
-Follow the exact file and code patterns from [static/js/routes/requestForQuote/](../static/js/routes/requestForQuote/) — do not invent new patterns.
+Follow the exact file and code patterns from [static/js/routes/requestForQuote/](../../../static/js/routes/requestForQuote/) — do not invent new patterns.
 
 ## Inputs
 

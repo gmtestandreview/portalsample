@@ -7,7 +7,7 @@ import FormBanner from '../../components/forms/FormBanner';
 import { useAccountState } from '../../authentication/hooks';
 import { AcceptQuoteClient } from '../../api/web-api-client';
 import type { AcceptQuotePreInfoDto } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import BlockUISpinner from '../../components/BlockUISpinner';
 import AppLogger from '../../instrumentation/AppLogger';
 import { formatBannerTitle } from '../common/helperFunctions';
@@ -28,10 +28,9 @@ const SubmittedSuccess = () => {
       try {
         AppLogger.verbose('SubmittedSuccess.getAcceptQuotePreInfo', { Id: id });
         const acceptQuoteClient = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         acceptQuoteClient.setAuthToken(tokenResult.accessToken);
 
         const paymentDetails = await acceptQuoteClient.getPaymentDetails(id!);
@@ -48,7 +47,7 @@ const SubmittedSuccess = () => {
       await getAcceptQuotePreInfo();
       setIsLoading(false);
     };
-    loadDataForDisplay();
+    void loadDataForDisplay();
   }, [accounts, id, instance]);
 
   const isPrepaid = acceptQuotePreInfo?.paymentTerms === 'Prepaid';

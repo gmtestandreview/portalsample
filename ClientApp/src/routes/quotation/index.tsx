@@ -22,7 +22,7 @@ import HeaderIntroText from '../../components/HeaderIntroText';
 import type { QuotationtProps } from './types';
 import { ApplicationType, QuoteClient } from '../../api/web-api-client';
 import type { RequestForQuoteDetails } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import QuoteDetails from './quoteDetails';
 import NMIContactDetails from './nMIContactDetails';
 import ConfirmationModal from '../../components/modals/ConfirmationModal';
@@ -119,10 +119,9 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
     setIsLoading(true);
     try {
       const client = new QuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
 
       client.setAuthToken(tokenResult.accessToken);
       if (quotationData?.crmQuoteRequestId) {
@@ -131,7 +130,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
           accountState?.details?.givenName,
           accountState?.details?.familyName
         );
-        navigate('/');
+        void navigate('/');
       }
     } catch (e) {
       setFileError(true);
@@ -171,10 +170,9 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         setIsLoading(true);
         setFileError(false);
         const quoteclient = new QuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         quoteclient.setAuthToken(tokenResult.accessToken);
 
         const quoteData = await quoteclient.getQuoteRequestDetailsByRefId(
@@ -205,7 +203,7 @@ const Quotation = (props: Readonly<QuotationtProps>) => {
         AppLogger.error('Failed to load quotation details', e as Error, {
           Id: id,
         });
-        navigate('/not-found');
+        void navigate('/not-found');
       } finally {
         if (isActive) {
           setIsLoading(false);
