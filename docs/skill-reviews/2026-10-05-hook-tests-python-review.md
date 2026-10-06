@@ -2,19 +2,27 @@
 
 ## Assessment
 
-All four files scored below 95 before remediation and were refactored. Final
-assessment: **93.5/100 aggregate; RED integration status**. The harness now
-reports defects honestly, but the hook system has 16 failing behavioral cases. A
-numeric score is not evidence of readiness. The pre-tool and watcher reviews
-remain below the requested threshold because upstream behavior and contract
-questions remain unresolved; more test restructuring cannot correct those
-implementations.
+Plan execution verified on **6 October 2026**. Independent Python/code review
+approves the harness after the remaining early-exit, timeout-cleanup and
+malformed-input isolation repairs. Final suite: **117 passed, 16 failed, zero
+skips**, 133 collected cases with Git Bash available. The failures remain in the
+upstream guard and Windows process helpers; their implementations and local hook
+registration were not changed.
+
+The prior review scored all four files below 95 before remediation and recorded
+**93.5/100 aggregate; RED integration status** afterward. Those rubric judgments
+are retained as historical assessments, not newly calculated scores. The harness
+now reports defects honestly, but the hook system has 16 failing behavioral
+cases. A numeric score is not evidence of readiness. The pre-tool and watcher
+reviews remain below the requested threshold because upstream behavior and
+contract questions remain unresolved; more test restructuring cannot correct
+those implementations.
 
 | File                                | Before | After | Expected outcome and observed evidence                                                                                                                         |
 | ----------------------------------- | -----: | ----: | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `tests/hooks/test_post_tool_use.py` |     88 |    98 | Successful file operations emit the exact review reminder; malformed/unrelated/failed events remain silent. All 27 cases pass.                                 |
+| `tests/hooks/test_post_tool_use.py` |     88 |    98 | Successful file operations emit the exact review reminder; malformed/unrelated/failed events remain silent. All 40 cases pass.                                 |
 | `tests/hooks/test_pre_tool_use.py`  |     48 |    89 | Guard decisions preserve legitimate work, block sensitive/destructive actions, and keep private content out of logs. 49 pass, 14 fail.                         |
-| `tests/hooks/test_watcher_pid.py`   |     42 |    91 | Maintained and distributed watchers detect liveness without terminating targets, and assertions fail on regressions. 16 pass, 2 fail.                          |
+| `tests/hooks/test_watcher_pid.py`   |     42 |    91 | Maintained and distributed watchers detect liveness without terminating targets, and assertions fail on regressions. 23 pass, 2 fail.                          |
 | `tests/hooks/test_wrapper.py`       |     46 |    96 | Local wrapper forwards decisions, warns on a missing guard, and blocks crashes under the existing configured policy. All 5 cases pass with Git Bash available. |
 
 Scores are reviewer judgments against the frozen rubric below, not automated
@@ -23,7 +31,7 @@ Windows environment; this is not a repository-wide production-readiness claim.
 
 ## Artifact and diagnostic provenance
 
-Reviewed the user's current working files against HEAD
+The original review compared the user's working files against HEAD
 `ef53dd8f9700bfd6064b956a098a345ae1d8154c`. Existing pre/post test edits and the
 untracked wrapper file were included in the baseline and preserved. Work
 happened in `.worktrees/hooks-python-review-20261005`; baseline copies are in
@@ -31,27 +39,57 @@ its `hook-review-baseline` directory. Before integrating, each original file's
 hash was checked against the baseline. Only the four requested test files were
 copied back.
 
-The three pasted exports contain 54 Pylance diagnostics: wrapper 25, watcher 18,
-pre-tool 11. They identify model version 1, but supply no Pylance version, scan
-time, or complete effective editor configuration. Therefore exact extension
-equivalence is unavailable. Fresh strict Pyright 1.1.414 reproduced 41 baseline
-errors across those three files and reports zero errors on the final four files.
-Pyright and Pylance are distinct executed/evidence sources; this report does not
-claim a fresh Pylance run.
+This execution started from clean root HEAD
+`0bfceaacc46c8650bf019bf60639122d359863ca`, branch
+`refactor/formik-removal-steps-1-2`. All four test files already matched the
+partially completed isolated worktree byte for byte. The original four
+`hook-review-baseline` copies were preserved. New work was performed in that
+existing detached worktree at `ef53dd8f`, then all four root hashes were checked
+against the start-of-execution hashes before copying reviewed files back. Only
+watcher and post-tool tests needed further edits; pre-tool and wrapper files
+remain byte-identical to the execution baseline. This report is the only other
+changed tracked file.
+
+The prior report records three pasted exports containing 54 Pylance diagnostics:
+wrapper 25, watcher 18, pre-tool 11. They identify model version 1, but supply
+no Pylance version, scan time, or complete effective editor configuration.
+Therefore exact extension equivalence is unavailable. Fresh strict Pyright
+1.1.414 reproduced 41 baseline errors across those three files and reports zero
+errors on the final four files. Pyright and Pylance are distinct
+executed/evidence sources; this report does not claim a fresh Pylance run.
+
+The diagnostic exports were not attached to this execution, so their counts and
+provenance above are historical report evidence. Fresh reproduction on the
+preserved originals again checked four files and produced 41 strict Pyright
+errors. Final integrated files again checked four files with zero diagnostics.
 
 `ruff.toml` specifies Python 3.10 and E/F/I/UP/B/SIM rules at 100 columns.
 Runtime verification used Python 3.14.7 on Windows, pytest 9.0.2, Ruff 0.16.7
 and Pyright 1.1.414. Strict Pyright ran through an external temporary config
 limited to these files with `typeCheckingMode: strict`, `pythonVersion: 3.10`,
 and the workspace in `extraPaths`; no repository configuration was changed. The
-initial temporary config using absolute `include` paths was ignored by Pyright
-and was discarded as invalid evidence. The corrected relative-path config
-actually checked both baseline and final artifacts.
+original review's initial temporary config using absolute `include` paths was
+ignored by Pyright and was discarded as invalid evidence. The corrected
+relative-path config actually checked both baseline and final artifacts.
 
-The tokensave index was rebuilding during exploration; source inspection
-confirmed dependency findings. Source and policy files were scanned with
-`sonar analyze secrets` before reading. Those checks are secrets scans, not a
-fresh full SonarQube Python analysis.
+The 6 October analyzer runs used an external temporary `pyrightconfig.json`,
+four explicit relative `include` paths, empty `exclude` and `ignore`, strict
+mode, Python 3.10 language target, `pythonPlatform: Windows`, the respective
+mirror/worktree/root in `extraPaths`, and
+`--pythonpath C:\Python314\python.exe`. The dependency environment was the
+installed pytest 9.0.2 package and Pyright's bundled type information; no
+replacement stubs or repository policy changes were used. Execution roots were
+the task-owned baseline mirror, isolated worktree, and final root workspace. The
+final root JSON summary reports `filesAnalyzed: 4`, `errorCount: 0`,
+`warningCount: 0`, `informationCount: 0`. The final hashes below identify the
+analyzed artifacts. Python 3.10 is an analyzer target, not an executed runtime;
+exact Pylance/editor-profile equivalence remains unverified.
+
+The prior report noted a rebuilding tokensave index. This execution queried
+`tokensave_status` and `tokensave_context`; the index last synced on 5 October
+2026 and source inspection established current artifact freshness. Source and
+policy files were scanned with `sonar analyze secrets` before reading. Those
+checks are secrets scans, not a fresh full SonarQube Python analysis.
 
 ## Purpose, goal and architecture
 
@@ -118,13 +156,26 @@ matrices contributed zero cases. Injecting an always-false PID helper produced a
 printed failure followed by pytest success. The AST scan also missed
 module-level probes and attributed nested calls twice.
 
+Fresh baseline verification in a temporary mirror reproduced 11 passing pytest
+cases, 13 direct guard failures and two stale wrapper expectations. Compilation
+and Ruff check passed; formatting required three files to be reformatted; strict
+Pyright reported 41 errors in four analyzed files. An explicit
+`check('injected failure', False)` returned normally while recording a failure.
+The original scanner returned no module-level probe and attributed the same
+nested probe to both outer and inner functions. The baseline mirror, import-time
+directories and audit logs were removed with their owning temporary directory.
+
 Upstream cause: mixed execution models and global failure accumulation.
 Downstream impact: false-green gates could ship unsafe guard/watchers, including
 the copied watcher template. Repair: collected parameterized cases, real
 assertions, scope-aware probe scanning and both actual helpers exercised in
 separate interpreters. The AST scan is intentionally limited to direct
 `os.kill(..., 0)` syntax; it is supplemented by runtime tests and is not a
-general Python static security proof.
+general Python static security proof. Two new regression fixtures also ensure
+default-argument and decorator probes belong to the enclosing scope rather than
+being incorrectly allowed as function-body probes. Both failed before the
+visitor repair and passed afterward; module, nested-function, class-body and
+ordinary non-probe cases continue to pass.
 
 ### H2: uncertain types originated in fixture and import boundaries
 
@@ -216,60 +267,89 @@ directories were removed. Optional settings and shell availability are explicit
 skips, not import-time collection errors. Own-PID probes now run in a separate
 interpreter so an unsafe probe regression cannot terminate pytest.
 
+### H8: a clean probe exit did not prove completion; probe-owned children escaped timeout cleanup
+
+**P1, verified false-green and cleanup gaps, repaired in the harness.**
+Independent review reproduced a helper raising `SystemExit(0)` that passed the
+old released-process test. The new regression initially failed because no
+assertion was raised. Every helper mode now requires a marker emitted after all
+probe assertions; four early-exit regression modes pass, and both actual helpers
+also exercise own-PID checks.
+
+The old isolated interpreter owned a nested target child. Terminating that
+interpreter on timeout could bypass its `finally` cleanup. The pytest parent now
+owns the target and kills/reaps it in bounded cleanup, while the isolated
+interpreter only imports the helper and probes the supplied PID. A real stalled
+helper with a forced 0.25-second timeout confirmed both processes were reaped.
+Watcher subprocess cwd and malformed post-tool cwd are now temporary
+directories. Post-tool coverage adds malformed JSON, wrong tool-field types and
+error flags across all result aliases, retaining the six original test functions
+and exact successful output assertions. No hook/runtime policy was changed.
+
 ## Fresh verification of the integrated files
 
-| Check                                                             | Result                                                                      |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `python -m compileall -q tests/hooks`                             | Pass                                                                        |
-| `ruff check tests/hooks`                                          | Pass                                                                        |
-| `ruff format --check tests/hooks`                                 | Pass, four formatted files                                                  |
-| Strict Pyright, Python 3.10 target                                | Pass: zero errors/warnings; baseline 41 errors                              |
-| `python -m pytest -q tests/hooks --tb=no`, Git Bash added to PATH | **97 passed, 16 failed**, 113 collected, zero skips                         |
-| Post-tool and wrapper subset                                      | 32 passed                                                                   |
-| Watcher subset excluding the two known exited-process failures    | 16 passed, two explicitly deselected                                        |
-| Guard matrix differential                                         | 60 unchanged fixtures, zero decision differences                            |
-| Own/dead/live process pressure                                    | Live/released pass; exited/open-handle fails for both real helpers          |
-| Local settings missing                                            | Explicit integration skips; collection remains usable                       |
-| Synthetic content/credential logging                              | Both persistence defects verified                                           |
-| Temporary fixture cleanup                                         | Three of three tracked directories removed                                  |
-| Direct test CLIs                                                  | Wrapper exits 0; guard and watcher exit 1 for their actual detected defects |
-| Deterministic secrets scans                                       | No findings in the four final test files                                    |
-| Scoped `git diff --check`                                         | No whitespace errors; Git notes existing CRLF-to-LF normalization           |
-| Independent Python/code review                                    | No blocking harness findings; both low suggestions addressed                |
+| Check                                                                                 | Result                                                                      |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `python -m compileall -q tests/hooks`                                                 | Pass                                                                        |
+| `ruff check tests/hooks`                                                              | Pass                                                                        |
+| `ruff format --check tests/hooks`                                                     | Pass, four formatted files                                                  |
+| Strict Pyright, Python 3.10 target                                                    | Pass: zero errors/warnings; baseline 41 errors                              |
+| `python -m pytest -q tests/hooks --tb=no -p no:cacheprovider`, Git Bash added to PATH | **117 passed, 16 failed**, 133 collected, zero skips                        |
+| Post-tool and wrapper subset, isolated worktree                                       | 45 passed                                                                   |
+| Watcher subset excluding the two known exited-process failures, isolated worktree     | 23 passed, two explicitly deselected                                        |
+| Guard matrix differential                                                             | 60 unchanged fixtures, zero decision differences                            |
+| Own/dead/live process pressure                                                        | Live/released pass; exited/open-handle fails for both real helpers          |
+| Local settings missing                                                                | Explicit integration skips; collection remains usable                       |
+| Synthetic content/credential logging                                                  | Both persistence defects verified                                           |
+| Temporary fixture cleanup                                                             | Three of three tracked directories removed                                  |
+| Early-exit completion regressions                                                     | All four modes pass; released mode was demonstrated RED before repair       |
+| Default/decorator AST regressions                                                     | Two demonstrated RED cases repaired; six scope fixtures pass                |
+| Forced probe timeout                                                                  | Real timeout; both interpreter and target killed/reaped by their owners     |
+| Direct test CLIs                                                                      | Wrapper exits 0; guard and watcher exit 1 for their actual detected defects |
+| Deterministic secrets scans                                                           | No findings in the four final test files                                    |
+| Scoped `git diff --check`                                                             | No whitespace errors; Git notes existing CRLF-to-LF normalization           |
+| Independent Python/code review                                                        | APPROVE; all identified harness findings resolved                           |
 
 The final test result intentionally differs from the original false-green
 result. The CLI test runners now use pytest and its exit conventions;
 human-readable output changes, and standalone execution requires pytest. The
 hook programs' JSON, decisions, commands, and runtime policy are unchanged.
 
-Final review also identified a premature-exit edge in the isolated own-PID test:
-exit code 0 alone could falsely pass if the probe terminated its own
+The original review identified a premature-exit edge in the isolated own-PID
+test: exit code 0 alone could falsely pass if the probe terminated its own
 interpreter. The repaired test requires a success marker printed only after the
 probe returns. A temporary helper invoking `os._exit(0)` reproduced the edge,
-and the marker check detects it. Final compile, Ruff, formatting, strict Pyright
-and the full 97-pass/16-fail suite were rerun after the repair.
+and the marker check detects it. The current execution extended that protection
+to every mode and moved child ownership to the parent (H8). Final compile, Ruff,
+formatting, strict Pyright and the full 117-pass/16-fail suite were rerun in the
+root workspace after integration. Direct root CLIs report pre-tool 49 passes/14
+failures (exit 1), wrapper five passes (exit 0), and watcher 23 passes/two
+failures (exit 1). These nonzero exits accurately expose the retained upstream
+failures.
 
 Final file SHA-256 hashes:
 
 ```text
-test_post_tool_use.py 2B22DD6F64DD17D0490485F50466E06F8874BBE41F4351677EBF6D8D6E9D9AAF
+test_post_tool_use.py 4BB6266966E6DB3C58F7C104D8CF0BA825E62160AA33AA0FE890C310E6351F03
 test_pre_tool_use.py  2B90396320AF138311FBBD217A9C29A21F98026480B688C7A2D934FF5CC62EF9
-test_watcher_pid.py   FC202BAE16F2482247AD04F6B5501B8E81081BA52524AB3AC42E1C54E5BF51FB
+test_watcher_pid.py   D5C5F2509247E6FCD71FF504788D31207D19691474E3E430082ED421F8798FD2
 test_wrapper.py       4FC2660F6900B9C723B4767FDC14A6365DAB39DF6897449EE37C2EDD027C0420
 ```
 
 ## Limits and remaining work
 
-Follow-up: the user supplied SonarLint `python:S9073` for the composite
-assertion in `test_wrapper.py`. Split the string-type assertion and nonempty
-assertion, preserving type narrowing and accepted values with separate failure
-messages. Fresh focused verification: five wrapper cases pass, Ruff and
+Historical follow-up: the user supplied SonarLint `python:S9073` for the
+composite assertion in `test_wrapper.py`. Split the string-type assertion and
+nonempty assertion, preserving type narrowing and accepted values with separate
+failure messages. Fresh focused verification: five wrapper cases pass, Ruff and
 formatting pass, Pyright reports zero diagnostics, and independent review
 approves. `sonar analyze --file tests/hooks/test_wrapper.py --depth STANDARD`
 reports no issues; it also reports Vortex unavailable on this connection, so
 this is not evidence of a Vortex run or the exact editor profile being rerun.
-The wrapper hash above reflects this follow-up; the full-suite count remains
-evidence from before this assertion-only change.
+The wrapper hash above includes that historical follow-up. The current full
+suite and CLI verification were executed after that change. The earlier Sonar
+result is historical evidence; this execution did not rerun its editor profile
+or a full SonarQube Python analyzer.
 
 Python 3.10 runtime, POSIX process behavior, exact Pylance extension analysis,
 and a full SonarQube quality scan were not executed. Node/React checks were not
@@ -282,7 +362,26 @@ Resolve H3–H5 in their upstream implementations before claiming GREEN. The
 cleanup allowlist requires a policy decision; the remaining guard
 parsing/redaction and Windows running-state defects require runtime fixes plus
 these regressions. No commit, push, merge or security-policy change was
-performed. Baseline standalone guard execution appended to the pre-existing
-ignored workspace audit history; that history was preserved rather than deleting
-unrelated prior records. Subsequent executions were isolated, and task-owned
-temporary logs were removed by their contexts.
+performed. The original review's baseline standalone guard execution appended to
+the pre-existing ignored workspace audit history; that history was preserved
+rather than deleting unrelated prior records. Subsequent executions were
+isolated, and task-owned temporary logs were removed by their contexts.
+
+## Fixture disposition
+
+- Removed: task-owned `%TEMP%/hook-review-original-jrzb0jjt`, containing the
+  baseline mirror, import-time directories, analyzer config and audit logs.
+- Removed: `%TEMP%/hook-review-pressure-x1sg2jpq`, containing differential audit
+  logs, the stalled helper and three tracked pre/post/wrapper fixture
+  directories. Its target and probe interpreter were both reaped before
+  directory removal.
+- Removed: each external `%TEMP%/hook-review-pyright-*` configuration after its
+  analyzer run, and the task-owned isolated-worktree execution script
+  `hook-review-execution-20261006.py` after verification.
+- Removed: `watcher-early-exit-*`, `watcher-child-*`, `watcher-own-pid-*`,
+  `pretooluse-*`, `posttooluse-*` and `wrapper-*` fixtures created by this
+  execution, through their owning temporary-directory contexts.
+- Retained: `.worktrees/hooks-python-review-20261005/hook-review-baseline` as
+  the pre-existing recovery checkpoint; keep it through review/acceptance. The
+  pre-existing worktree is retained with the reviewed copies. This report is
+  durable evidence. Unrelated audit history and caches were preserved.

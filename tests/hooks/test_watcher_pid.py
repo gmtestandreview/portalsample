@@ -5,9 +5,12 @@ Run: python tests/hooks/test_watcher_pid.py
 """
 
 import ast
+import gc
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
+from typing import Literal
 
 import pytest
 
@@ -17,6 +20,7 @@ TEMPLATE_WATCHER = ROOT / "templates" / "watcher.py"
 PROCESS_UTILS = ROOT / "scripts" / "process_utils.py"
 WATCHERS = [SCRIPTS_WATCHER, TEMPLATE_WATCHER]
 HELPERS = [PROCESS_UTILS, TEMPLATE_WATCHER]
+ChildMode = Literal["live", "released", "exited"]
 
 
 def _os_kill_probe_sites(source: str) -> list[tuple[str, int]]:
@@ -25,9 +29,13 @@ def _os_kill_probe_sites(source: str) -> list[tuple[str, int]]:
 
     def visit(node: ast.AST, owner: str) -> None:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            owner = node.name
+            for child in ast.iter_child_nodes(node):
+                visit(child, node.name if child in node.body else owner)
+            return
         elif isinstance(node, ast.ClassDef):
-            owner = f"class {node.name}"
+            for child in ast.iter_child_nodes(node):
+                visit(child, f"class {node.name}" if child in node.body else owner)
+            return
         if (
             isinstance(node, ast.Call)
             and isinstance(node.func, ast.Attribute)
@@ -52,6 +60,8 @@ def _os_kill_probe_sites(source: str) -> list[tuple[str, int]]:
         ("os.kill(pid, 0)", [("<module>", 1)]),
         ("def outer():\n    def inner():\n        os.kill(pid, 0)", [("inner", 3)]),
         ("class Outer:\n    os.kill(pid, 0)", [("class Outer", 2)]),
+        ("def pid_is_running(pid=os.kill(123, 0)):\n    pass", [("<module>", 1)]),
+        ("@decorate(os.kill(pid, 0))\ndef pid_is_running(pid):\n    pass", [("<module>", 1)]),
         ("def ordinary():\n    os.kill(pid, 15)", []),
     ],
 )
@@ -100,24 +110,18 @@ def test_watchers_use_the_helper_in_is_already_running(path: Path) -> None:
     ), f"{path}: liveness entry point does not call the helper"
 
 
-def test_pid_is_running_reports_own_pid() -> None:
-    result = subprocess.run(
-        [sys.executable, "-c", _HELPER_CHECK, str(PROCESS_UTILS), "own"],
-        capture_output=True,
-        text=True,
-        timeout=20,
-    )
-    assert result.returncode == 0, result.stderr
-    assert result.stdout.strip() == "OWN_PID_PROBE_COMPLETED", "probe exited before completing"
+@pytest.mark.parametrize("helper", HELPERS, ids=["maintained", "template"])
+def test_pid_is_running_reports_own_pid(helper: Path) -> None:
+    with tempfile.TemporaryDirectory(prefix="watcher-own-pid-") as directory:
+        _run_helper_check(helper, "own", Path(directory))
 
 
 # Load both real helpers in separate interpreters, avoiding watcher-loop and
-# import-path side effects in the test runner. Every child is reaped in finally.
+# import-path side effects in the test runner. The parent test owns every child,
+# so a probe crash or timeout cannot bypass child cleanup.
 _HELPER_CHECK = """
-import gc
 import importlib.util
 import os
-import subprocess
 import sys
 
 spec = importlib.util.spec_from_file_location('candidate', sys.argv[1])
@@ -127,41 +131,68 @@ spec.loader.exec_module(module)
 mode = sys.argv[2]
 if mode == 'own':
     assert module.pid_is_running(os.getpid()) is True, 'own process reported dead'
-    print('OWN_PID_PROBE_COMPLETED')
-    sys.exit(0)
-child = subprocess.Popen([sys.executable, '-c',
-    'import time; time.sleep(30)' if mode == 'live' else 'pass'])
-try:
-    if mode != 'live':
-        child.wait(timeout=10)
-        if mode == 'exited':
-            assert module.pid_is_running(child.pid) is False, 'exited process reported running'
+else:
+    pid = int(sys.argv[3])
+    if mode == 'live':
+        assert module.pid_is_running(pid) is True, 'live process reported dead'
+        assert module.pid_is_running(pid) is True, 'second probe reported dead'
     else:
-        assert module.pid_is_running(child.pid) is True, 'live process reported dead'
-        assert module.pid_is_running(child.pid) is True, 'second probe reported dead'
-        assert child.poll() is None, 'liveness probe terminated the child'
-finally:
-    if child.poll() is None:
-        child.kill()
-    child.wait(timeout=5)
-if mode == 'released':
-    dead_pid = child.pid
-    del child
-    gc.collect()
-    assert module.pid_is_running(dead_pid) is False, 'released process reported running'
+        assert module.pid_is_running(pid) is False, mode + ' process reported running'
+print('PID_PROBE_COMPLETED')
 """
+
+
+def _run_helper_check(helper: Path, mode: str, cwd: Path, pid: int | None = None) -> None:
+    result = subprocess.run(
+        [sys.executable, "-c", _HELPER_CHECK, str(helper), mode, str(pid)],
+        capture_output=True,
+        text=True,
+        timeout=20,
+        cwd=cwd,
+    )
+    assert result.returncode == 0, result.stderr
+    assert result.stdout.strip() == "PID_PROBE_COMPLETED", "probe exited before completing"
 
 
 @pytest.mark.parametrize("helper", HELPERS, ids=["maintained", "template"])
 @pytest.mark.parametrize("mode", ["live", "released", "exited"])
-def test_each_real_helper_preserves_process_liveness(helper: Path, mode: str) -> None:
-    result = subprocess.run(
-        [sys.executable, "-c", _HELPER_CHECK, str(helper), mode],
-        capture_output=True,
-        text=True,
-        timeout=20,
-    )
-    assert result.returncode == 0, result.stderr
+def test_each_real_helper_preserves_process_liveness(helper: Path, mode: ChildMode) -> None:
+    with tempfile.TemporaryDirectory(prefix="watcher-child-") as directory:
+        cwd = Path(directory)
+        child: subprocess.Popen[bytes] | None = subprocess.Popen(
+            [sys.executable, "-c", "import time; time.sleep(30)" if mode == "live" else "pass"],
+            cwd=cwd,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+        try:
+            pid = child.pid
+            if mode != "live":
+                child.wait(timeout=10)
+                if mode == "released":
+                    child = None
+                    gc.collect()
+            _run_helper_check(helper, mode, cwd, pid)
+            if mode == "live":
+                assert child is not None
+                assert child.poll() is None, "liveness probe terminated the child"
+        finally:
+            if child is not None:
+                if child.poll() is None:
+                    child.kill()
+                child.wait(timeout=5)
+
+
+@pytest.mark.parametrize("mode", ["own", "live", "released", "exited"])
+def test_helper_early_exit_is_rejected(mode: Literal["own", "live", "released", "exited"]) -> None:
+    with tempfile.TemporaryDirectory(prefix="watcher-early-exit-") as directory:
+        helper = Path(directory) / "early_exit.py"
+        helper.write_text("def pid_is_running(pid):\n    raise SystemExit(0)\n", encoding="utf-8")
+        with pytest.raises(AssertionError, match="probe exited before completing"):
+            if mode == "own":
+                test_pid_is_running_reports_own_pid(helper)
+            else:
+                test_each_real_helper_preserves_process_liveness(helper, mode)
 
 
 def main() -> int:
