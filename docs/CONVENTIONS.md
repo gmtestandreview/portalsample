@@ -136,9 +136,18 @@
 
 ## 10) Dependency Override Ownership
 
-- `package.json` `overrides.unified-engine.glob`, `overrides["@npmcli/map-workspaces"].glob`, and `overrides["@npmcli/package-json"].glob` pin those three `remark-cli` / `unified-engine` transitive owners to `glob@13.0.6`, replacing the deprecated `glob@10.5.0` copies each previously resolved (Task D2; see `reports/deprecations/glob-override.md` for the full blast-radius record).
-- The Dependency DRI reviews this override quarterly and whenever Dependabot proposes an update to `remark-cli`, `unified-engine`, `@npmcli/map-workspaces`, `@npmcli/package-json`, or `glob`.
-- **Removal trigger**: once all three owning packages resolve a maintained, non-deprecated `glob` release on their own (without the override), remove the corresponding `overrides` entries. `tests/unit/config/dependencySecurity.test.ts`'s `"publisher deprecations"` test rejects any lockfile package with a non-empty `deprecated` field, so a now-unnecessary override left in place will not itself fail CI — but the override should still be removed at that point to keep `package.json` minimal.
+Dependency overrides are intentionally minimal. Retained overrides are policy exceptions with removal criteria:
+
+- **`glob` (owner-scoped, `13.0.6`)** for `@mizchi/lsmcp`, `@npmcli/map-workspaces`, `@npmcli/package-json`, and `unified-engine`: replaces the deprecated `glob@10.5.0` copies each previously resolved (Task D2; see `reports/deprecations/glob-override.md` for the blast-radius record). Remove each entry once its owner resolves a maintained, non-deprecated `glob` on its own.
+- **`uuid` (`^11.1.1`)**: prevents `uuid@8.3.2` via `sockjs@0.3.24`. Remove when `sockjs` / `webpack-dev-server` resolves `uuid >=11.1.1` or drops it.
+- **`valibot` (`1.4.2`)**: prevents the vulnerable `valibot@1.2.0` via Storybook MCP. Remove when it resolves `valibot >1.4.1` on its own.
+- **`brace-expansion@5` (`5.0.12`)**: `minimatch@10.2.6` declares `^5.0.8` but the lockfile kept the vulnerable `5.0.9`. Remove when a fresh resolve without the override yields `>=5.0.12`.
+- **`undici` (`7.30.0`)**: `jsdom@29.1.1` declares `^7.25.0` but the lockfile kept the vulnerable `7.29.0`. Remove when a fresh resolve yields `>=7.29.1`.
+
+Overrides must never pin a version inside an advisory range; `tests/unit/config/dependencySecurity.test.ts` enforces patched floors. The `"publisher deprecations"` test in that file rejects any lockfile package with a non-empty `deprecated` field, so a now-unnecessary override will not itself fail CI, but it should still be removed to keep `package.json` minimal.
+
+The Dependency DRI reviews these overrides quarterly and whenever Dependabot proposes an update to an owning package or to a pinned package.
+
 - After any Storybook feature-step updates, always regenerate specs with `npx bddgen` before running Playwright.
 
 ## 11) Node and GitHub Actions Runtime Contracts
