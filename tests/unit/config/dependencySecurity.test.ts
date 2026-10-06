@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { gte, prerelease, valid } from 'semver';
+import { gte, major, prerelease, valid } from 'semver';
 import { describe, expect, it } from 'vitest';
 
 type LockPackage = {
@@ -110,11 +110,16 @@ describe('transitive security dependency floors', () => {
   const minimumVersions = new Map([
     ['nanoid', '3.3.18'],
     ['postcss', '8.5.23'],
-    ['fast-uri', '3.1.5'],
-    ['js-yaml', '4.3.1'],
+    ['fast-uri', '3.1.8'],
+    ['js-yaml', '4.3.2'],
     ['valibot', '1.4.2'],
-    ['undici', '7.29.0'],
+    ['undici', '7.29.1'],
     ['body-parser', '1.20.6'],
+    ['proxy-addr', '2.0.8'],
+    ['shell-quote', '1.12.0'],
+    ['compression', '1.8.2'],
+    ['source-map-js', '1.2.2'],
+    ['postcss-selector-parser', '7.1.6'],
   ]);
 
   it.each([...minimumVersions])(
@@ -128,6 +133,29 @@ describe('transitive security dependency floors', () => {
       }
     }
   );
+
+  it('brace-expansion resolves only patched versions per major', () => {
+    const floors = new Map([
+      [1, '1.1.21'],
+      [2, '2.1.7'],
+      [5, '5.0.12'],
+    ]);
+    const versions = installedVersions('brace-expansion');
+
+    expect(versions).not.toHaveLength(0);
+    for (const version of versions) {
+      const floor = floors.get(major(version));
+
+      expect(
+        floor,
+        `unexpected brace-expansion major in ${version}`
+      ).toBeDefined();
+      expect(
+        gte(version, floor as string),
+        `brace-expansion@${version} must be at least ${floor}`
+      ).toBe(true);
+    }
+  });
 
   it('keeps every glob major off deprecated releases and pins the three scoped owners to glob 13.0.6', () => {
     // Glob 7 arrives only through the deprecated ESLint 8 / rimraf 3 chain.
