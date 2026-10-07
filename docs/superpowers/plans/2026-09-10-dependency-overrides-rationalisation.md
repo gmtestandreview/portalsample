@@ -182,7 +182,7 @@ npm -v
 Expected: `11.19.1`. If corepack is unavailable, record the version mismatch in
 the PR description and expect lockfile churn.
 
-Executed: `corepack enable` failed (EPERM writing the `C:\Program Files odejs`
+Executed: `corepack enable` failed (EPERM writing the `C:\Program Files\nodejs`
 shims) and PATH npm stayed 11.17.0, so every lockfile-affecting command ran via
 `npx --yes npm@11.19.1` (also `corepack npm`).
 
@@ -312,7 +312,7 @@ Set `overrides` to exactly:
   "@npmcli/package-json": {
     "glob": "13.0.6"
   },
-  "qs": "6.16.0",
+  "qs": "6.16.0", // NOT applied: qs override removed during execution (see Execution Notes)
   "unified-engine": {
     "glob": "13.0.6"
   },
@@ -595,7 +595,7 @@ the Formik branch.
 ### npm version
 
 PATH npm was 11.17.0. `corepack enable` failed (EPERM writing the
-`C:\Program Files odejs` shims), so all lockfile-affecting commands used
+`C:\Program Files\nodejs` shims), so all lockfile-affecting commands used
 `npx --yes npm@11.19.1` (also `corepack npm`). A real `npm ci` run has not yet
 been done.
 
