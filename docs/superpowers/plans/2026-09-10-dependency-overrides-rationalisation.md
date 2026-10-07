@@ -471,7 +471,7 @@ npm run lint:mdx
 Expected: PASS each. `lint:mdx` exercises `remark-cli`/`unified-engine` under
 `glob@13.0.6` and the refreshed `minimatch`/`brace-expansion`.
 
-- [ ] **Step 5: Runtime gates**
+- [x] **Step 5: Runtime gates**
 
 ```powershell
 npm run test:ci
@@ -557,19 +557,19 @@ dev-tooling only.
 
 ## Success Criteria
 
-- [ ] `package.json` overrides contain only evidence-backed entries; none pins a
+- [x] `package.json` overrides contain only evidence-backed entries; none pins a
       version inside an advisory range.
-- [ ] `brace-expansion`, `fast-uri`, `undici`, `js-yaml` resolve to patched
+- [x] `brace-expansion`, `fast-uri`, `undici`, `js-yaml` resolve to patched
       versions with their overrides removed (or a single documented fallback
       each).
-- [ ] `npm audit` shows 0 critical and no override-regression findings;
+- [x] `npm audit` shows 0 critical and no override-regression findings;
       remaining findings match the accepted set.
-- [ ] No `glob@10.x` copy remains; `lsmcp --help`, `--list`, `doctor` pass.
-- [ ] `npm run test:unit -- tests/unit/config/dependencySecurity.test.ts` passes
+- [x] No `glob@10.x` copy remains; `lsmcp --help`, `--list`, `doctor` pass.
+- [x] `npm run test:unit -- tests/unit/config/dependencySecurity.test.ts` passes
       with the new floors.
-- [ ] `type-check`, `lint`, `lint:mdx`, `test:ci`, `build`,
+- [x] `type-check`, `lint`, `lint:mdx`, `test:ci`, `build`,
       `test:e2e:storybook`, `test:e2e:app` pass after lockfile regeneration.
-- [ ] Lockfile was regenerated with npm 11.19.1 and `npm ci` succeeds.
+- [x] Lockfile was regenerated with npm 11.19.1 and `npm ci` succeeds.
 
 ## Rollback
 
@@ -596,8 +596,8 @@ the Formik branch.
 
 PATH npm was 11.17.0. `corepack enable` failed (EPERM writing the
 `C:\Program Files\nodejs` shims), so all lockfile-affecting commands used
-`npx --yes npm@11.19.1` (also `corepack npm`). A real `npm ci` run has not yet
-been done.
+`npx --yes npm@11.19.1` (also `corepack npm`). `npm ci` succeeded (exit 0) with
+npm 11.19.1 in clean worktrees of this branch.
 
 ### Audit counts
 
@@ -641,8 +641,14 @@ overrides were needed.
 - `test:storybook` was first blocked by Windows reserved port 61005 (EACCES);
   fixed in commit `7f05b157` (port 47005). It then passed (135 files, 301
   tests).
-- `test:e2e:app`: 31 scenarios timed out at `page.goto` in the first run
-  (suspected environmental). Rerun result: pending rerun.
+- `test:e2e:app`: 31 scenarios timed out at `page.goto` in the first run in the
+  main checkout, and the dev server wedged (bundle requests hung) even with
+  `compression` 1.8.1 and on `main`-based lockfile mixes. Rerun from a clean
+  detached worktree of the branch (HEAD `93f3f06c`, `npm ci` with 11.19.1): **31
+  passed, 0 failed (59.5s)**. Cause is the main checkout environment (about 407k
+  files under `.worktrees`, plus `.venv`, `.npm-cache`, `dist`, `coverage`;
+  `webpack.config.js` has no `watchOptions.ignored`), not dependencies.
+  Unconfirmed suggestion: add `watchOptions.ignored` for those directories.
 
 ### Tasks 6 and 7
 
