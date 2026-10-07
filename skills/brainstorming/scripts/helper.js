@@ -30,14 +30,16 @@
   function sessionKey() {
     try {
       return window.sessionStorage?.getItem('brainstorm-session-key');
-    } catch (e) {}
+    } catch {
+      // Storage blocked (privacy mode / sandbox): behave as if no key is stored.
+    }
     return null;
   }
 
   function websocketUrl() {
     const key = sessionKey();
     return (
-      'wss://' +
+      'ws://' +
       window.location.host +
       (key ? '/?key=' + encodeURIComponent(key) : '')
     );
@@ -112,8 +114,8 @@
       let data;
       try {
         data = JSON.parse(msg.data);
-      } catch (e) {
-        return;
+      } catch {
+        return; // Ignore non-JSON frames.
       }
       if (data.type === 'reload') window.location.reload();
     };
@@ -135,7 +137,9 @@
     ws.onerror = () => {
       try {
         ws.close();
-      } catch (e) {}
+      } catch {
+        // Socket already closed; onclose still drives the reconnect.
+      }
     };
   }
 
