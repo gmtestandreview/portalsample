@@ -93,7 +93,6 @@
     "@qdrant/js-client-rest": "^1.19.0",
     "@react-aria/mcp": "1.2.1",
     "@react-aria/test-utils": "^1.0.0-rc.1",
-    "@sonar/scan": "5.0.1",
     "@storybook/addon-a11y": "10.6.0",
     "@storybook/addon-docs": "^10.6.0",
     "@storybook/addon-links": "^10.6.0",

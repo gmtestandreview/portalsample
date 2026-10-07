@@ -279,7 +279,7 @@ Versions are **as installed**. "Used by" is the count of files under `ClientApp/
 | syncpack | 15.3.2 | Dependency-range consistency — **see constraint 9 in §9** |
 | patch-package | 8.0.0 | Applies `patches/` on `postinstall` |
 | mockdate | 3.0.5 | Deterministic clock in tests |
-| SonarCloud scanner | `@sonar/scan@5.0.1` (pinned) | Static analysis |
+| SonarCloud scanner | `SonarSource/sonarqube-scan-action` (CI only; no npm package — `@sonar/scan` removed) | Static analysis |
 
 **Storybook config highlights** (`.storybook/main.ts`): `changeDetection`, `componentsManifest`, and `experimentalReview` features enabled; `react-docgen-typescript` with `shouldExtractLiteralValuesFromEnum`; `remark-gfm` for MDX.
 
