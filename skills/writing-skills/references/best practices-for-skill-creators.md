@@ -75,7 +75,7 @@ or too many options presented without a clear default.
 </Tip>
 
 For a more structured approach to iteration, including test cases, assertions,
-and grading, see [Evaluating skill output quality](evaluating-skill-output.md).
+and grading, see [Evaluating skill output quality](evaluating-skills.mdx).
 
 ## Spending context wisely
 
@@ -119,7 +119,7 @@ Ask yourself about each piece of content: "Would the agent get this wron without
 this instruction?" If the answer is no, cut it. If you're unsure, test it. And
 if the agent already handles the entire task well without the skill, the skill
 may not be adding value. See
-[Evaluating skill output quality](evaluating-skill-output.md) for how to test this
+[Evaluating skill output quality](evaluating-skills.mdx) for how to test this
 systematically.
 
 ### Design coherent units
@@ -146,7 +146,7 @@ by the agent's own judgment.
 
 ### Structure large skills with progressive disclosure
 
-The [specification](specification.md#progressive-disclosure) recommends keeping
+The [specification](/specification#progressive-disclosure) recommends keeping
 `SKILL.md` under 500 lines and 5,000 tokens - just the core instructions the
 agent needs on every run. When a skill legitimately needs more content, move
 detailed reference material to separate files in `references/` or similar
@@ -156,7 +156,7 @@ The key is telling the agent _when_ to load each file. "Read
 `references/api-errors.md` if the API returns a non-200 status code" is more
 useful than a generic "see references/ for details." This lets the agent load
 context on demand rather than up front, which is how
-[progressive disclosure](specification.md#progressive-disclosure) is designed to
+[progressive disclosure](/specification#progressive-disclosure) is designed to
 work.
 
 ## Calibrating control
@@ -378,20 +378,20 @@ self-correct.
 
 ### Bundling reusable scripts
 
-When [iterating on a skill](evaluating-skill-output.md), compare the agent's
+When [iterating on a skill](evaluating-skills.mdx), compare the agent's
 execution traces across test cases. If you notice the agent independently
 reinventing the same logic each run - building charts, parsing a specific
 format, validating output - that's a signal to write a tested script once and
 bundle it in `scripts/`.
 
 For more on designing and bundling scripts, see
-[Using scripts in skills](using-scripts-in-skills.md).
+[Using scripts in skills](using-scripts).
 
 ## Next steps
 
 Once you have a working skill, two guides can help you refine it further:
 
-- **[Evaluating skill output quality](evaluating-skill-output.md)** - Set up test
+- **[Evaluating skill output quality](evaluating-skills.md)** - Set up test
   cases, grade results, and iterate systematically.
-- **[Optimizing skill descriptions](description-optimization.md)** - Test and
+- **[Optimizing skill descriptions](optimizing-descriptions.md)** - Test and
   improve your skill's `description` field so it triggers on the right prompts.

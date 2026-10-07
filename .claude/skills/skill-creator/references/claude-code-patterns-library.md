@@ -152,11 +152,18 @@ useState|useEffect              # React hooks
 {
   "my-skill": {
     "promptTriggers": {
-      "intentPatterns": ["(create|add|build).*?(component|UI|page)"]
+      "intentPatterns": [
+        "(create|add|build).*?(component|UI|page)"
+      ]
     },
     "fileTriggers": {
-      "pathPatterns": ["frontend/src/**/*.tsx"],
-      "contentPatterns": ["export.*React\\.FC", "useState|useEffect"]
+      "pathPatterns": [
+        "frontend/src/**/*.tsx"
+      ],
+      "contentPatterns": [
+        "export.*React\\.FC",
+        "useState|useEffect"
+      ]
     }
   }
 }
@@ -166,7 +173,6 @@ useState|useEffect              # React hooks
 
 **Related Files:**
 
-- [Main skill guide](../SKILL.md) - Main skill guide
-- [trigger types](claude-code-trigger-types.md) - Detailed trigger documentation
-- [skill rules reference](claude-code-skill-rules-reference.md) - Complete
-  schema
+- [SKILL.md](SKILL.md) - Main skill guide
+- [TRIGGER_TYPES.md](TRIGGER_TYPES.md) - Detailed trigger documentation
+- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Complete schema

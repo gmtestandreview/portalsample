@@ -150,8 +150,7 @@ Expected: Your skill should appear in the output.
 ```
 
 - Editing: `frontend/src/components/Dashboard.tsx` → ✅ Matches
-- Editing: `frontend/src/components/Dashboard.test.tsx` → ✅ Matches (add
-  exclusion!)
+- Editing: `frontend/tests/Dashboard.test.tsx` → ✅ Matches (add exclusion!)
 - Editing: `backend/src/app.ts` → ❌ Doesn't match
 
 **Fix:** Adjust glob patterns or add the missing path
@@ -225,8 +224,7 @@ cat .claude/hooks/state/skills-used-{session-id}.json
 
 If the skill is in `skills_used`, it won't block again in this session.
 
-**Fix:** Reset only the affected session state, preserving a rollback copy
-first:
+**Fix:** Reset only the affected session state, preserving a rollback copy first:
 
 ```bash
 cp .claude/hooks/state/skills-used-{session-id}.json \
@@ -389,7 +387,7 @@ Expected:
 
 ```json
 {
-  "enforcement": "block" // Change to "suggest"
+  "enforcement": "block"  // Change to "suggest"
 }
 ```
 
@@ -577,7 +575,6 @@ EOF
 
 **Related Files:**
 
-- [Main skill guide](../SKILL.md) - Main skill guide
-- [hook mechanisms](claude-code-hook-mechanisms.md) - How hooks work
-- [skill rules reference](claude-code-skill-rules-reference.md) - Configuration
-  reference
+- [SKILL.md](SKILL.md) - Main skill guide
+- [HOOK_MECHANISMS.md](HOOK_MECHANISMS.md) - How hooks work
+- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Configuration reference

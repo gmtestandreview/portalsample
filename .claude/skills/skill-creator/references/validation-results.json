@@ -1,90 +1,4 @@
 {
-  "scope": "JSON parsing and schema-definition validity only; no activation, grading-truth or production-readiness claim",
-  "verification_date": "2026-10-05",
-  "date_timezone": "Australia/Sydney; client-provided assessment date",
-  "command": [
-    "python",
-    "-B",
-    "-c",
-    "import hashlib, json\nfrom pathlib import Path\nfrom jsonschema.validators import validator_for\nobservations = []\nfor path in sorted(Path(\"references/schemas\").glob(\"*.schema.json\")):\n    raw = path.read_bytes()\n    schema = json.loads(raw)\n    validator_for(schema).check_schema(schema)\n    observations.append({\"path\": path.as_posix(), \"sha256\": hashlib.sha256(raw).hexdigest(), \"json_parse\": \"PASS\", \"schema_definition\": \"PASS\"})\nif len(observations) != 11:\n    raise SystemExit(\"Expected the reviewed eleven-schema inventory\")\nprint(json.dumps(observations))\n"
-  ],
-  "actual_executable": "C:\\Python314\\python.exe",
-  "working_directory": ".claude/skills/skill-creator",
-  "checker_source_sha256": "b320b445a852044f141daf23d48535b361ee437ca8d4d03b78186176a1854944",
-  "dependencies": {
-    "python": "3.14.7",
-    "jsonschema": "4.26.0"
-  },
-  "exit_code": 0,
-  "stderr": "",
-  "observations": [
-    {
-      "path": "references/schemas/analysis.schema.json",
-      "sha256": "8af3e76dcd0286278be3976b43ff2e4e578cb4e987c5ae4ae9c9b089af504f1c",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/benchmark.schema.json",
-      "sha256": "a0468ec082a6b573fe16a1c0718f334ed2993c8eb50d5c5a057a052b95e3fd6d",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/common.schema.json",
-      "sha256": "f500880056f46c9a57914c7a31466965586a86c50750a51ddc1e76d989a7c2b4",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/comparison.schema.json",
-      "sha256": "d55ccf0216589181b1473f8e0421cca88d7b7e49d093c3ea5becdb940dd6aca5",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/eval-metadata.schema.json",
-      "sha256": "d2b32ec07a9fa0baaff94c04284f003e2ce2685701de8c8aeaab9165a8c6d75c",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/evals.schema.json",
-      "sha256": "b7a0834a70735511ee2d1943a256ea03c6e5658faf6e4cdf6eaf67671838fe0a",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/feedback.schema.json",
-      "sha256": "46a18e26a5317166b83974bc0bf97ddb8b37c8f6ec418201b2e3e521d6223b30",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/grading.schema.json",
-      "sha256": "4ff6ade8549ed0fc978b2a101d591408dff7815ba44b8946012e996a681854b5",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/history.schema.json",
-      "sha256": "8b5e828050b7a33094d57bfa1e9135003ad9753a2af0dbcd7215c82db9a091c7",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/metrics.schema.json",
-      "sha256": "3f738a4c838ce3d79b5eaa172f13af574fc3c28fe01aae5039c1214562ac731b",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    },
-    {
-      "path": "references/schemas/timing.schema.json",
-      "sha256": "3b02c7d5539ad3820553297b36662d8372204cac3daee76fccd58eaea8458d5c",
-      "json_parse": "PASS",
-      "schema_definition": "PASS"
-    }
-  ],
   "json_parse": {
     "analysis.schema.json": "PASS",
     "benchmark.schema.json": "PASS",
@@ -110,7 +24,5 @@
     "history.schema.json": "PASS",
     "metrics.schema.json": "PASS",
     "timing.schema.json": "PASS"
-  },
-  "applicability": "Only exact recorded schema hashes; rerun after schema or verifier dependency changes",
-  "historical_original": "Preserved byte-for-byte in development checkout evals/runs/2026-10-05-contract-corrections/inherited-validation-results.json; not distributed; original revision/date unknown"
+  }
 }

@@ -5,15 +5,13 @@ Create a structured implementation plan for a feature or refactor.
 **Invokes:** `planner` agent
 
 **Usage:**
-
-```text
+```
 /plan Add Stripe subscription billing with free/pro/enterprise tiers
 /plan Refactor the auth middleware to meet new compliance requirements
 /plan Break the UserService (1200 lines) into focused modules
 ```
 
 **Output format:**
-
 - Overview (2-3 sentences)
 - Requirements list
 - Architecture changes with file paths

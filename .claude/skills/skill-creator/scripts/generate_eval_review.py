@@ -83,20 +83,17 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    try:
-        raw_eval_set: object = json.loads(args.eval_set.read_text(encoding="utf-8"))
-        if not isinstance(raw_eval_set, list):
-            raise ValueError("eval set must be a JSON array")
-        eval_set = cast(list[object], raw_eval_set)
+    raw_eval_set: object = json.loads(args.eval_set.read_text(encoding="utf-8"))
+    if not isinstance(raw_eval_set, list):
+        raise SystemExit("eval set must be a JSON array")
+    eval_set = cast(list[object], raw_eval_set)
 
-        template = args.template or (
-            Path(__file__).resolve().parents[1] / "assets" / "eval_review.html"
-        )
-        html = generate_review(eval_set, args.skill_path, template)
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(html, encoding="utf-8")
-    except (OSError, ValueError, TypeError) as exc:
-        raise SystemExit(f"Error: {exc}") from None
+    template = args.template or (
+        Path(__file__).resolve().parents[1] / "assets" / "eval_review.html"
+    )
+    html = generate_review(eval_set, args.skill_path, template)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(html, encoding="utf-8")
     print(f"Review written to: {args.output}")
 
 

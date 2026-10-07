@@ -21,9 +21,16 @@ representative evidence shows the problem and the skill materially reduces it.
 Not every skill needs the same test. Classify the skill first, then choose only
 the test types that match its execution model.
 
-This reference is self-contained for the skill-testing semantics it defines.
-If a package includes behavioral case definitions, keep them under `evals/` and
-do not treat case definitions as executed evidence.
+**REQUIRED BACKGROUND:** Understand the A-Team
+`skills\subagent-driven-development\SKILL.md` before using this reference. That
+skill defines the RED-GREEN-REFACTOR discipline; this reference adapts it to
+skill activation, behavior, pressure, rationalization, retrieval, and regression
+testing.
+
+**Behavioral eval examples:** See `scripts/evals/README.md` for campaign
+execution guidance and the seeded cases under `scripts/evals/activation/`,
+`scripts/evals/red-green/`, `scripts/evals/pressure/`,
+`scripts/evals/reference/`, and `scripts/evals/regression/`.
 
 ## Behavioral Eval Evidence Layout
 
@@ -31,7 +38,7 @@ Keep behavioral evaluation evidence separate from deterministic parser,
 validator, prompt, and CLI tests. Use this canonical layout:
 
 ```text
-evals/
+scripts/evals/
   activation/
   red-green/
   pressure/
@@ -43,11 +50,11 @@ Map evidence by purpose:
 
 | Behavior                                                                                  | Evidence location           |
 | ----------------------------------------------------------------------------------------- | --------------------------- |
-| Trigger positives, indirect requests, and near-misses                                     | `evals/activation/` |
-| Without-skill baseline vs with-skill comparison                                           | `evals/red-green/`  |
-| Pressure, edge, counterexample, ambiguity, and safety cases                               | `evals/pressure/`   |
-| Retrieval, application, resource discovery, missing coverage, and unsupported-query cases | `evals/reference/`  |
-| Post-fix reruns, prior failures, positives, and near-miss regressions                     | `evals/regression/` |
+| Trigger positives, indirect requests, and near-misses                                     | `scripts/evals/activation/` |
+| Without-skill baseline vs with-skill comparison                                           | `scripts/evals/red-green/`  |
+| Pressure, edge, counterexample, ambiguity, and safety cases                               | `scripts/evals/pressure/`   |
+| Retrieval, application, resource discovery, missing coverage, and unsupported-query cases | `scripts/evals/reference/`  |
+| Post-fix reruns, prior failures, positives, and near-miss regressions                     | `scripts/evals/regression/` |
 
 ### Lifecycle vs result state
 

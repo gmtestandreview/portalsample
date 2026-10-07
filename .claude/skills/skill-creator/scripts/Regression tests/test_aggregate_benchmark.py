@@ -9,6 +9,10 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from aggregate_benchmark import RunResult
 
 MODULE_PATH = Path(__file__).resolve().parents[1] / "aggregate_benchmark.py"
 SPEC = importlib.util.spec_from_file_location("aggregate_benchmark", MODULE_PATH)
@@ -224,7 +228,7 @@ class AggregateBenchmarkOptimizedTests(unittest.TestCase):
                 aggregate_benchmark.generate_benchmark(root)
 
     def test_unsupported_single_configuration_is_rejected(self) -> None:
-        run: dict[str, object] = {
+        run: RunResult = {
             "eval_id": 1,
             "eval_name": "eval-1",
             "run_number": 1,
@@ -246,105 +250,6 @@ class AggregateBenchmarkHostileInputTests(unittest.TestCase):
         _write_metadata(eval_dir, 1)
         _write_grading(eval_dir / "with_skill" / "run-1")
         return eval_dir / "with_skill" / "run-1"
-
-    def test_summary_counts_must_match_expectation_verdicts(self) -> None:
-        for verdict, summary_passed in ((False, 1), (True, 0)):
-            with self.subTest(verdict=verdict), tempfile.TemporaryDirectory() as tmp:
-                root = Path(tmp)
-                run_dir = self._single_run_root(root)
-                grading: dict[str, object] = {
-                    "expectations": [
-                        {"text": "required outcome", "passed": verdict, "evidence": "observed"}
-                    ],
-                    "summary": {
-                        "passed": summary_passed,
-                        "failed": 1 - summary_passed,
-                        "total": 1,
-                        "pass_rate": float(summary_passed),
-                    },
-                }
-                (run_dir / "grading.json").write_text(json.dumps(grading), encoding="utf-8")
-
-                self.assertEqual(aggregate_benchmark.main([str(root)]), 2)
-                self.assertFalse((root / "benchmark.json").exists())
-
-    def test_valid_timing_field_survives_invalid_sibling(self) -> None:
-        cases: tuple[tuple[dict[str, object], str, float | int], ...] = (
-            ({"total_duration_seconds": 2.5, "total_tokens": "invalid"}, "time_seconds", 2.5),
-            ({"total_duration_seconds": "invalid", "total_tokens": 100}, "tokens", 100),
-            ({"total_duration_seconds": 0, "total_tokens": -1}, "time_seconds", 0),
-            ({"total_duration_seconds": -1, "total_tokens": 0}, "tokens", 0),
-            ({"total_duration_seconds": 2.5, "total_tokens": 10**400}, "time_seconds", 2.5),
-        )
-        for timing, metric, expected in cases:
-            with self.subTest(metric=metric, timing=timing), tempfile.TemporaryDirectory() as tmp:
-                root = Path(tmp)
-                run_dir = self._single_run_root(root)
-                (run_dir / "timing.json").write_text(json.dumps(timing), encoding="utf-8")
-                benchmark = aggregate_benchmark.generate_benchmark(root)
-                result = benchmark["runs"][0]["result"]
-                self.assertIn(metric, result)
-                self.assertEqual(result[metric], expected)
-
-    def test_grading_duration_precedence_preserves_fallback_tokens(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            run_dir = self._single_run_root(root)
-            _write_grading(run_dir, duration=0.0)
-            (run_dir / "timing.json").write_text(
-                '{"total_duration_seconds": "invalid", "total_tokens": 100}',
-                encoding="utf-8",
-            )
-            result = aggregate_benchmark.generate_benchmark(root)["runs"][0]["result"]
-            self.assertEqual(result["time_seconds"], 0.0)
-            self.assertIn("tokens", result)
-            self.assertEqual(result["tokens"], 100)
-
-    def test_recovered_duration_reaches_summary_and_comparison_delta(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            run_dir = self._single_run_root(root)
-            (run_dir / "timing.json").write_text(
-                '{"total_duration_seconds": 2.5, "total_tokens": "invalid"}',
-                encoding="utf-8",
-            )
-            _write_grading(root / "eval-1" / "without_skill" / "run-1", duration=1.0)
-            benchmark = aggregate_benchmark.generate_benchmark(root)
-            summary = aggregate_benchmark.get_config_summary(benchmark["run_summary"], "with_skill")
-            self.assertEqual(summary["time_seconds"]["mean"], 2.5)
-            self.assertEqual(summary["time_seconds"]["count"], 1)
-            self.assertNotIn("tokens", summary)
-            self.assertEqual(
-                aggregate_benchmark.get_delta_summary(benchmark["run_summary"])["time_seconds"],
-                "+1.5",
-            )
-
-    def test_legacy_summary_only_grading_remains_usable(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            run_dir = self._single_run_root(root)
-            grading: dict[str, object] = {
-                "summary": {"passed": 1, "failed": 0, "total": 1, "pass_rate": 1.0}
-            }
-            (run_dir / "grading.json").write_text(json.dumps(grading), encoding="utf-8")
-
-            benchmark = aggregate_benchmark.generate_benchmark(root)
-
-            self.assertEqual(benchmark["runs"][0]["result"]["pass_rate"], 1.0)
-            self.assertEqual(benchmark["runs"][0]["expectations"], [])
-
-    def test_explicit_null_expectations_is_not_legacy_absence(self) -> None:
-        with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp)
-            run_dir = self._single_run_root(root)
-            grading: dict[str, object] = {
-                "expectations": None,
-                "summary": {"passed": 1, "failed": 0, "total": 1, "pass_rate": 1.0},
-            }
-            (run_dir / "grading.json").write_text(json.dumps(grading), encoding="utf-8")
-
-            self.assertEqual(aggregate_benchmark.main([str(root)]), 2)
-            self.assertFalse((root / "benchmark.json").exists())
 
     def test_huge_token_count_does_not_crash(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

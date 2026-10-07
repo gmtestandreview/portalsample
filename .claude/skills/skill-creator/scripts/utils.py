@@ -1,25 +1,8 @@
 """Shared utilities for skill-creator scripts."""
 
 from pathlib import Path
-from typing import Protocol, cast
 
-import yaml
-
-
-class _DisposableLoader(Protocol):
-    """The cleanup contract omitted by some PyYAML type stubs."""
-
-    def dispose(self) -> None: ...
-
-
-class _FrontmatterLoader(yaml.SafeLoader):
-    """Retain the root node used to construct the metadata document."""
-
-    frontmatter_node: yaml.Node | None = None
-
-    def get_single_node(self) -> yaml.Node | None:
-        self.frontmatter_node = super().get_single_node()
-        return self.frontmatter_node
+_BLOCK_SCALAR_MARKERS = frozenset({">", "|", ">-", "|-"})
 
 
 def _is_frontmatter_delimiter(line: str) -> bool:
@@ -27,87 +10,98 @@ def _is_frontmatter_delimiter(line: str) -> bool:
     return line == line.lstrip() and line.rstrip() == "---"
 
 
-def _frontmatter_text(content: str) -> str:
-    """Extract frontmatter without mistaking indented scalar data for its end."""
-    lines = content.split("\n")
+def _strip_block_indentation(lines: list[str]) -> list[str]:
+    """Remove the common YAML block-scalar indentation from non-blank lines."""
+    non_blank = [line for line in lines if line.strip()]
+    if not non_blank:
+        return [""] * len(lines)
 
-    if lines[0].strip() != "---":
-        raise ValueError("SKILL.md missing frontmatter (no opening ---)")
-
-    for index, line in enumerate(lines[1:], start=1):
-        if _is_frontmatter_delimiter(line):
-            return "\n".join(lines[1:index])
-
-    raise ValueError("SKILL.md missing frontmatter (no closing ---)")
+    indentation = min(len(line) - len(line.lstrip(" \t")) for line in non_blank)
+    return [line[indentation:] if line.strip() else "" for line in lines]
 
 
-def _load_frontmatter(text: str) -> tuple[dict[object, object], yaml.Node | None]:
-    """Construct one safe document and retain its resolved scalar styles."""
-    try:
-        loader = _FrontmatterLoader(text)
-        try:
-            loaded: object = loader.get_single_data()
-            node = loader.frontmatter_node
-        finally:
-            # PyYAML cleanup returns None; older stubs leave it unknown.
-            cast(_DisposableLoader, loader).dispose()
-    except (
-        yaml.YAMLError,
-        ValueError,
-        RecursionError,
-        KeyError,
-        AttributeError,
-        IndexError,
-    ) as exc:
-        # PyYAML exception strings include source snippets. Expose only a
-        # bounded diagnostic and numeric source location to callers.
-        # Explicit malformed standard tags can also raise builtin errors.
-        location = ""
-        if isinstance(exc, yaml.MarkedYAMLError) and exc.problem_mark is not None:
-            mark = exc.problem_mark
-            location = f" at line {mark.line + 2}, column {mark.column + 1}"
-        raise ValueError(f"Invalid YAML frontmatter{location}") from None
+def _fold_block_scalar(lines: list[str]) -> str:
+    """Fold a basic YAML ``>`` scalar while preserving paragraph breaks."""
+    if not lines:
+        return ""
 
-    # Preserve the reader's existing empty/missing-field defaults. Validation
-    # of required metadata remains the responsibility of quick_validate.
-    if loaded is None:
-        return {}, node
-    if not isinstance(loaded, dict):
-        raise ValueError("SKILL.md frontmatter must be a YAML mapping")
+    parts: list[str] = []
+    previous_blank = False
+    for line in lines:
+        if not line:
+            if parts and not previous_blank:
+                parts.append("\n")
+            previous_blank = True
+            continue
 
-    # Only the container is known here: arbitrary YAML keys/values remain
-    # objects until the requested metadata fields pass their string checks.
-    return cast(dict[object, object], loaded), node
+        if parts and not previous_blank and not parts[-1].endswith("\n"):
+            parts.append(" ")
+        parts.append(line)
+        previous_blank = False
+
+    return "".join(parts).rstrip("\n")
 
 
-def _description_is_block(node: yaml.Node | None) -> bool:
-    """Inspect the effective description after SafeLoader flattens merges."""
-    if not isinstance(node, yaml.MappingNode):
-        return False
+def _parse_block_scalar(
+    frontmatter_lines: list[str],
+    start_index: int,
+    marker: str,
+) -> tuple[str, int]:
+    """Parse a supported YAML block scalar and return its value and next index."""
+    continuation_lines: list[str] = []
+    index = start_index
 
-    # PyYAML MappingNode values are node pairs; its stubs leave this
-    # representation incomplete. Narrow only this library-owned structure.
-    entries = cast(list[tuple[yaml.Node, yaml.Node]], node.value)
-    for key_node, value_node in reversed(entries):
-        if key_node.value == "description":
-            return isinstance(value_node, yaml.ScalarNode) and value_node.style in ("|", ">")
-    return False
+    while index < len(frontmatter_lines):
+        line = frontmatter_lines[index]
+        if line and not line[0].isspace():
+            break
+        continuation_lines.append(line)
+        index += 1
+
+    normalized = _strip_block_indentation(continuation_lines)
+    value = "\n".join(normalized) if marker.startswith("|") else _fold_block_scalar(normalized)
+
+    # ``parse_skill_md`` historically returned descriptions without the
+    # block scalar's final YAML line break. Keep that compatibility while
+    # preserving meaningful internal newlines.
+    return value.rstrip("\n"), index
 
 
 def parse_skill_md(skill_path: Path) -> tuple[str, str, str]:
-    """Read metadata, returning (name, description, full_content).
-
-    Missing fields default to empty strings; explicit nonstrings fail.
-    Preserve YAML duplicate/merge precedence and quoted newline data,
-    trimming trailing newlines only from block descriptions.
-    """
+    """Parse a SKILL.md file, returning (name, description, full_content)."""
     content = (skill_path / "SKILL.md").read_text(encoding="utf-8")
-    frontmatter, node = _load_frontmatter(_frontmatter_text(content))
-    name = frontmatter.get("name", "")
-    description = frontmatter.get("description", "")
-    if not isinstance(name, str) or not isinstance(description, str):
-        raise ValueError("SKILL.md name and description must be strings")
+    lines = content.split("\n")
 
-    if _description_is_block(node):
-        description = description.rstrip("\n")
+    if not lines or lines[0].strip() != "---":
+        raise ValueError("SKILL.md missing frontmatter (no opening ---)")
+
+    end_idx: int | None = None
+    for index, line in enumerate(lines[1:], start=1):
+        if _is_frontmatter_delimiter(line):
+            end_idx = index
+            break
+
+    if end_idx is None:
+        raise ValueError("SKILL.md missing frontmatter (no closing ---)")
+
+    name = ""
+    description = ""
+    frontmatter_lines = lines[1:end_idx]
+    index = 0
+    while index < len(frontmatter_lines):
+        line = frontmatter_lines[index]
+        if line.startswith("name:"):
+            name = line[len("name:") :].strip().strip('"').strip("'")
+        elif line.startswith("description:"):
+            value = line[len("description:") :].strip()
+            if value in _BLOCK_SCALAR_MARKERS:
+                description, index = _parse_block_scalar(
+                    frontmatter_lines,
+                    index + 1,
+                    value,
+                )
+                continue
+            description = value.strip('"').strip("'")
+        index += 1
+
     return name, description, content

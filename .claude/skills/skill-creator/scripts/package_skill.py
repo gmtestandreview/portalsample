@@ -12,7 +12,6 @@ Example:
 
 import argparse
 import fnmatch
-import os
 import shutil
 import uuid
 import zipfile
@@ -37,10 +36,6 @@ EXCLUDE_DIRS = {
     ".mypy_cache",
     ".pytest_cache",
     ".ruff_cache",
-    ".venv",
-    "venv",
-    ".git",
-    ".tokensave",
 }
 EXCLUDE_GLOBS = {"*.pyc"}
 EXCLUDE_FILES = {".DS_Store"}
@@ -55,7 +50,7 @@ PLAIN_FILE_MODE = 0o644
 
 def should_exclude(rel_path: Path) -> bool:
     """Return whether a relative archive path should be excluded."""
-    parts = tuple(os.path.normcase(part) for part in rel_path.parts)
+    parts = rel_path.parts
     # rel_path is relative to skill_path.parent, so parts[0] is the skill
     # folder name (never an exclusion candidate) and parts[1] (if present) is
     # the first subdirectory.
@@ -63,8 +58,8 @@ def should_exclude(rel_path: Path) -> bool:
         return True
     if len(parts) > 1 and parts[1] in ROOT_EXCLUDE_DIRS:
         return True
-    name = os.path.normcase(rel_path.name)
-    if name in {os.path.normcase(filename) for filename in EXCLUDE_FILES}:
+    name = rel_path.name
+    if name in EXCLUDE_FILES:
         return True
     return any(fnmatch.fnmatch(name, pattern) for pattern in EXCLUDE_GLOBS)
 
@@ -100,12 +95,8 @@ def _validate_skill_directory(skill_path: Path) -> bool:
         return False
 
     skill_md = skill_path / "SKILL.md"
-    resolved_skill_md = _resolve_packaged_file(skill_md, skill_path)
-    if resolved_skill_md is None:
+    if _resolve_packaged_file(skill_md, skill_path) is None:
         print(f"❌ Error: SKILL.md must be a file contained in {skill_path}")
-        return False
-    if should_exclude(resolved_skill_md.relative_to(skill_path.parent)):
-        print("❌ Error: required SKILL.md source is excluded from the archive")
         return False
 
     return True
@@ -160,10 +151,6 @@ def _collect_archive_members(
         if resolved_file is None:
             print(f"❌ Error: packaged file escapes or is invalid: {file_path}")
             return None
-
-        if should_exclude(resolved_file.relative_to(skill_path.parent)):
-            print(f"  Skipped: {arcname} (source is excluded)")
-            continue
 
         members.append((resolved_file, arcname))
 

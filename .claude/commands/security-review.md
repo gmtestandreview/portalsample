@@ -12,7 +12,6 @@ Injection, Broken Auth, Sensitive Data, Broken Access Control, XSS,
 Insecure Deserialization, Known Vulnerabilities, Insufficient Logging.
 
 **If CRITICAL found:**
-
 1. STOP all other work
 2. Document full report
 3. Alert project owner
