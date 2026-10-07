@@ -257,7 +257,8 @@ skills), `.tours/` (code tours).
 | `react-aria`              | `npx @react-aria/mcp@latest` | React Aria Components guidance                                                                                                                                                                         |
 
 > **Known environment traps** (both have cost real time here): two `sonar` CLIs
-> can collide on `PATH` (`sonarqube-cli` vs npm `@sonar/scan`), and hooks
+> can collide on `PATH` (`sonarqube-cli` vs the `sonar` binary a global or `npx`
+> `@sonar/scan` can provide; it is no longer a project dependency), and hooks
 > calling bare `sonar` fail open to the wrong binary until VS Code is _fully_
 > relaunched. And `claudeCode.environmentVariables` in VS Code `settings.json`
 > holds a frozen `PATH` snapshot that overrides the registry — check it first
