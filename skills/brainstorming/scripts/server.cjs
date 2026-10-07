@@ -3,6 +3,13 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 
+// stdout is the server's machine-readable protocol channel: start-server.sh
+// greps it for "server-started" and the agent reads user-event lines from the
+// log. One JSON object per line, written verbatim (console.log is lint-banned).
+function emit(record) {
+  process.stdout.write(JSON.stringify(record) + '\n');
+}
+
 // ========== WebSocket Protocol (RFC 6455) ==========
 
 const OPCODES = { TEXT: 0x01, CLOSE: 0x08, PING: 0x09, PONG: 0x0a };
@@ -10,10 +17,10 @@ const WS_MAGIC = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 const MAX_FRAME_PAYLOAD_BYTES = 10 * 1024 * 1024;
 
 function computeAcceptKey(clientKey) {
-  return crypto
-    .createHash('sha1')
-    .update(clientKey + WS_MAGIC)
-    .digest('base64');
+  // RFC 6455 section 4.2.2 mandates SHA-1 for Sec-WebSocket-Accept. It is a
+  // protocol handshake checksum, not a security control (auth is the session key).
+  const hash = crypto.createHash('sha1'); // NOSONAR
+  return hash.update(clientKey + WS_MAGIC).digest('base64');
 }
 
 function encodeFrame(opcode, payload) {
@@ -74,7 +81,7 @@ function decodeFrame(buffer) {
   const totalLen = dataOffset + payloadLen;
   if (buffer.length < totalLen) return null;
 
-  const mask = buffer.slice(maskOffset, dataOffset);
+  const mask = buffer.subarray(maskOffset, dataOffset);
   const data = Buffer.alloc(payloadLen);
   for (let i = 0; i < payloadLen; i++) {
     data[i] = buffer[dataOffset + i] ^ mask[i % 4];
@@ -86,7 +93,7 @@ function decodeFrame(buffer) {
 // ========== Configuration ==========
 
 const PORT_FILE = process.env.BRAINSTORM_PORT_FILE || null;
-const randomPort = () => 49152 + Math.floor(Math.random() * 16383);
+const randomPort = () => crypto.randomInt(49152, 65535);
 // Prefer an explicit port, else the port this session last bound (so a restart
 // reuses it and an already-open browser tab reconnects), else a random high port.
 function preferredPort() {
@@ -106,7 +113,11 @@ const HOST = process.env.BRAINSTORM_HOST || '127.0.0.1';
 const URL_HOST =
   process.env.BRAINSTORM_URL_HOST ||
   (HOST === '127.0.0.1' ? 'localhost' : HOST);
-const SESSION_DIR = process.env.BRAINSTORM_DIR || '/tmp/brainstorm';
+// start-server.sh always sets BRAINSTORM_DIR (owner-only, per session). There is
+// deliberately no default: a fixed path in a shared temp dir can be pre-created
+// by another user, and a home-dir default would leave the session key at rest.
+// startServer() refuses to run without it; requiring this module stays safe.
+const SESSION_DIR = process.env.BRAINSTORM_DIR || '';
 const CONTENT_DIR = path.join(SESSION_DIR, 'content');
 const STATE_DIR = path.join(SESSION_DIR, 'state');
 const SUPERPOWERS_VERSION = readSuperpowersVersion();
@@ -331,7 +342,7 @@ function urlHostForHttp(host) {
 }
 
 function companionUrl() {
-  return 'https://' + urlHostForHttp(URL_HOST) + ':' + PORT + '/?key=' + TOKEN;
+  return 'http://' + urlHostForHttp(URL_HOST) + ':' + PORT + '/?key=' + TOKEN;
 }
 
 function browserLauncherForPlatform(
@@ -361,7 +372,8 @@ function isRegularFileInsideContentDir(filePath) {
     if (stat.nlink !== 1) return false;
     realContentDir = fs.realpathSync(CONTENT_DIR);
     realFilePath = fs.realpathSync(filePath);
-  } catch (e) {
+  } catch {
+    // Missing, unreadable, or racing path: treat as not a servable file.
     return false;
   }
   return realFilePath.startsWith(realContentDir + path.sep);
@@ -399,8 +411,7 @@ function isAuthorized(req) {
     }
   }
   const cookie = parseCookies(req.headers['cookie'])[COOKIE_NAME];
-  if (cookie && timingSafeEqualStr(cookie, TOKEN)) return true;
-  return false;
+  return Boolean(cookie) && timingSafeEqualStr(cookie, TOKEN);
 }
 
 function pathnameOf(url) {
@@ -430,7 +441,7 @@ function isAllowedWebSocketOrigin(req) {
   if (!origin) return true;
   const host = req.headers.host;
   if (!host) return false;
-  return origin === 'https://' + host;
+  return origin === 'http://' + host;
 }
 
 // ========== HTTP Request Handler ==========
@@ -466,7 +477,9 @@ function handleRequest(req, res) {
       200,
       securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
     );
-    res.end(bootstrapPage(keyFromQuery));
+    // Render the server-owned TOKEN, never the request value. The guard above
+    // proves they are equal, so output is unchanged but no request data is reflected.
+    res.end(bootstrapPage(TOKEN));
   } else if (req.method === 'GET' && pathname === '/') {
     const screenFile = getNewestScreen();
     let html = screenFile
@@ -551,7 +564,7 @@ function handleUpgrade(req, socket) {
         return;
       }
       if (!result) break;
-      buffer = buffer.slice(result.bytesConsumed);
+      buffer = buffer.subarray(result.bytesConsumed);
 
       switch (result.opcode) {
         case OPCODES.TEXT:
@@ -590,7 +603,7 @@ function handleMessage(text) {
     return;
   }
   touchActivity();
-  console.log(JSON.stringify({ source: 'user-event', ...event }));
+  emit({ source: 'user-event', ...event });
   if (event?.choice) {
     const eventsFile = path.join(STATE_DIR, 'events');
     fs.appendFileSync(eventsFile, JSON.stringify(event) + '\n');
@@ -670,6 +683,12 @@ const debounceTimers = new Map();
 // ========== Server Startup ==========
 
 function startServer() {
+  if (!SESSION_DIR) {
+    console.error(
+      'BRAINSTORM_DIR is required; start the server with start-server.sh'
+    );
+    process.exit(1);
+  }
   if (!fs.existsSync(CONTENT_DIR))
     fs.mkdirSync(CONTENT_DIR, { recursive: true });
   if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true });
@@ -686,7 +705,7 @@ function startServer() {
   const server = http.createServer(handleRequest);
   server.on('upgrade', handleUpgrade);
 
-  const watcher = fs.watch(CONTENT_DIR, (eventType, filename) => {
+  const watcher = fs.watch(CONTENT_DIR, (_eventType, filename) => {
     if (!filename || filename.startsWith('.') || !filename.endsWith('.html'))
       return;
 
@@ -705,12 +724,10 @@ function startServer() {
           knownFiles.add(filename);
           const eventsFile = path.join(STATE_DIR, 'events');
           if (fs.existsSync(eventsFile)) fs.unlinkSync(eventsFile);
-          console.log(JSON.stringify({ type: 'screen-added', file: filePath }));
+          emit({ type: 'screen-added', file: filePath });
           maybeOpenBrowser();
         } else {
-          console.log(
-            JSON.stringify({ type: 'screen-updated', file: filePath })
-          );
+          emit({ type: 'screen-updated', file: filePath });
         }
 
         broadcast({ type: 'reload' });
@@ -720,7 +737,7 @@ function startServer() {
   watcher.on('error', (err) => console.error('fs.watch error:', err.message));
 
   function shutdown(reason) {
-    console.log(JSON.stringify({ type: 'server-stopped', reason }));
+    emit({ type: 'server-stopped', reason });
     const infoFile = path.join(STATE_DIR, 'server-info');
     if (fs.existsSync(infoFile)) fs.unlinkSync(infoFile);
     fs.writeFileSync(
@@ -767,13 +784,11 @@ function startServer() {
       process.kill(ownerPid, 0);
     } catch (e) {
       if (e.code !== 'EPERM') {
-        console.log(
-          JSON.stringify({
-            type: 'owner-pid-invalid',
-            pid: ownerPid,
-            reason: 'dead at startup',
-          })
-        );
+        emit({
+          type: 'owner-pid-invalid',
+          pid: ownerPid,
+          reason: 'dead at startup',
+        });
         ownerPid = null;
       }
     }
@@ -807,7 +822,7 @@ function startServer() {
         }
       }
     }
-    const info = JSON.stringify({
+    const info = {
       type: 'server-started',
       port: Number(PORT),
       host: HOST,
@@ -816,12 +831,14 @@ function startServer() {
       screen_dir: CONTENT_DIR,
       state_dir: STATE_DIR,
       idle_timeout_ms: IDLE_TIMEOUT_MS,
-    });
-    console.log(info);
+    };
+    emit(info);
     // server-info embeds the key — keep it owner-only.
-    fs.writeFileSync(path.join(STATE_DIR, 'server-info'), info + '\n', {
-      mode: 0o600,
-    });
+    fs.writeFileSync(
+      path.join(STATE_DIR, 'server-info'),
+      JSON.stringify(info) + '\n',
+      { mode: 0o600 }
+    );
   }
 
   server.on('error', (err) => {
