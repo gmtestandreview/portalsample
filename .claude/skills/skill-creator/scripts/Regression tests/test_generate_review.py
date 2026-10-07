@@ -4,6 +4,7 @@ import http.client
 import importlib.util
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import threading
@@ -28,6 +29,73 @@ def write_metadata(eval_dir: Path, *, eval_id: object = 1, prompt: object = "pro
     if prompt is not None:
         data["prompt"] = prompt
     (eval_dir / "eval_metadata.json").write_text(json.dumps(data), encoding="utf-8")
+
+
+class TriggerReviewCliTests(unittest.TestCase):
+    def test_invalid_input_has_concise_error_and_preserves_existing_output(self) -> None:
+        script = Path(__file__).resolve().parent.parent / "generate_eval_review.py"
+        invalid_inputs = (
+            ('[{"query":"q","should_trigger":"yes"}]', "should_trigger"),
+            ('[{"query":"","should_trigger":true}]', "query"),
+            ('{broken', "Error"),
+            (None, "Error"),
+            ('{"query":"q"}', "array"),
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            skill = root / "skill"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "---\nname: demo\ndescription: test skill\n---\n", encoding="utf-8"
+            )
+            source = root / "evals.json"
+            output = root / "review.html"
+            for raw, expected in invalid_inputs:
+                for existing in (False, True):
+                    with self.subTest(raw=raw, existing=existing):
+                        source.unlink(missing_ok=True)
+                        output.unlink(missing_ok=True)
+                        if raw is not None:
+                            source.write_text(raw, encoding="utf-8")
+                        if existing:
+                            output.write_bytes(b"previous valid review")
+                        result = subprocess.run(
+                            [sys.executable, str(script), "--eval-set", str(source),
+                             "--skill-path", str(skill), "--output", str(output)],
+                            capture_output=True, text=True, check=False,
+                        )
+                        self.assertNotEqual(result.returncode, 0)
+                        self.assertNotIn("Traceback", result.stderr)
+                        self.assertIn(expected, result.stderr)
+                        self.assertLessEqual(len(result.stderr.splitlines()), 2)
+                        if existing:
+                            self.assertEqual(output.read_bytes(), b"previous valid review")
+                        else:
+                            self.assertFalse(output.exists())
+
+    def test_output_io_error_has_concise_cli_error(self) -> None:
+        script = Path(__file__).resolve().parent.parent / "generate_eval_review.py"
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            skill = root / "skill"
+            skill.mkdir()
+            (skill / "SKILL.md").write_text(
+                "---\nname: demo\ndescription: test skill\n---\n", encoding="utf-8"
+            )
+            source = root / "evals.json"
+            source.write_text('[{"query":"q","should_trigger":true}]', encoding="utf-8")
+            output = root / "existing-directory"
+            output.mkdir()
+            result = subprocess.run(
+                [sys.executable, str(script), "--eval-set", str(source),
+                 "--skill-path", str(skill), "--output", str(output)],
+                capture_output=True, text=True, check=False,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertNotIn("Traceback", result.stderr)
+            self.assertIn("Error", result.stderr)
+            self.assertLessEqual(len(result.stderr.splitlines()), 2)
+            self.assertEqual(list(output.iterdir()), [])
 
 
 class GenerateReviewOptimizedTests(unittest.TestCase):
