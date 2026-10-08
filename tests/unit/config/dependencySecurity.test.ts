@@ -197,11 +197,11 @@ describe('lint cohort', () => {
   const cohort = new Map([
     ['eslint', '10.11.0'],
     ['@eslint/js', '10.0.1'],
-    ['typescript-eslint', '8.70.1'],
-    ['@eslint-react/eslint-plugin', '5.20.8'],
+    ['typescript-eslint', '8.71.0'],
+    ['@eslint-react/eslint-plugin', '5.23.3'],
     ['eslint-plugin-react-hooks', '7.1.1'],
     ['@stylistic/eslint-plugin', '5.10.0'],
-    ['globals', '17.12.0'],
+    ['globals', '17.13.0'],
   ]);
 
   it.each([...cohort])(
