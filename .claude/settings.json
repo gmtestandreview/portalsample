@@ -218,7 +218,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "G=\"${CLAUDE_PROJECT_DIR:-.}/scripts/pre_tool_use.py\"; if ! test -f \"$G\"; then echo '[A Team] WARNING: security gate inactive (guard script missing)' >&2; exit 0; fi; PY=; for c in python python3 py; do if command -v \"$c\" >/dev/null 2>&1; then PY=$c; break; fi; done; if test -z \"$PY\"; then echo '[A Team] WARNING: no Python interpreter; security gate skipped' >&2; exit 0; fi; \"$PY\" -I -S \"$G\"; rc=$?; if test $rc -ne 0 && test $rc -ne 2; then echo \"[A Team] WARNING: security gate crashed (exit $rc); allowing call\" >&2; exit 0; fi; exit $rc"
+            "command": "G=\"${CLAUDE_PROJECT_DIR:-.}/scripts/pre_tool_use.py\"; if ! test -f \"$G\"; then echo '[A Team] WARNING: security gate inactive (guard script missing)' >&2; exit 0; fi; PY=; for c in python python3 py; do if command -v \"$c\" >/dev/null 2>&1; then PY=$c; break; fi; done; if test -z \"$PY\"; then echo '[A Team] BLOCKED: no Python interpreter found; security gate cannot run.' >&2; exit 2; fi; \"$PY\" -I -S \"$G\"; rc=$?; if test $rc -ne 0 && test $rc -ne 2; then echo \"[A Team] BLOCKED: security gate failed to execute (exit $rc)\" >&2; exit 2; fi; exit $rc"
           }
         ]
       },

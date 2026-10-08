@@ -54,6 +54,7 @@ _WRAPPER_VALUES = {
 }
 _SHELLS = {"bash", "sh", "zsh", "dash", "ksh"}
 _PS_SHELLS = {"pwsh", "powershell"}
+_EVAL_VERBS = {"eval", "iex", "invoke-expression"}
 _MAX_DEPTH = 8
 _PARSER_LIMIT = "__parser_limit__"
 _HEREDOC = re.compile(r"<<(-?)\s*(['\"]?)([\w-]+)\2")
@@ -279,6 +280,9 @@ def commands(text: str, depth: int = 0, shell: str = "") -> list[tuple[str, list
                 "PowerShell" if verb in _PS_SHELLS else "Bash" if verb in _SHELLS else "CMD"
             )
             found.extend(commands(payload, depth + 1, nested_shell))
+        elif verb in _EVAL_VERBS and args:
+            # eval/iex execute their joined arguments as a command line.
+            found.extend(commands(" ".join(args), depth + 1, shell))
     return found
 
 
@@ -455,7 +459,7 @@ def _as_json_object(value: object) -> JsonObject | None:
     return cast(JsonObject, value)
 
 
-_ENV_NAME = re.compile(r"^\*{0,2}\.env(?:[.*?\[{].*)?$", re.IGNORECASE)
+_ENV_NAME = re.compile(r"^(?:\*{0,2}\.env(?:[.*?\[{].*)?|.+\.env|\.envrc)$", re.IGNORECASE)
 _ENV_EXEMPT_VERBS = {
     "echo",
     "printf",
@@ -472,8 +476,12 @@ _ENV_EXEMPT_VERBS = {
 
 
 def _is_env_file(path: str) -> bool:
-    base = path.replace("\\", "/").rsplit("/", 1)[-1].lower()
-    return bool(_ENV_NAME.fullmatch(base)) and base not in _ENV_SAFE_SUFFIXES
+    # Every segment counts: files below a `.env/` directory are secrets too.
+    segments = path.replace("\\", "/").lower().split("/")
+    return any(
+        _ENV_NAME.fullmatch(segment) and segment not in _ENV_SAFE_SUFFIXES
+        for segment in segments
+    )
 
 
 def _env_args(verb: str, args: list[str]) -> list[str]:

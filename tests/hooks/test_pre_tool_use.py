@@ -252,6 +252,9 @@ def test_guard_behaviour(label: str, expected: int, tool: str, payload: dict[str
 
 DELETE_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", f"bash -ce '{_RM_RF} /'", BLOCK),
+    ("Bash", f'eval "{_RM_RF} /"', BLOCK),
+    ("PowerShell", f'iex "Remove-Item {_RECURSE_FORCE} ."', BLOCK),
+    ("PowerShell", "Invoke-Expression 'rd /s C:\\'", BLOCK),
     ("Bash", f"echo \\<<EOF\n{_RM_RF} /\nEOF", BLOCK),
     ("Bash", f"cat <<EOF\n'$({_RM_RF} /)'\nEOF", BLOCK),
     ("Bash", "cmd /c \"echo 'data & rd /s C:\\ '\"", BLOCK),
@@ -301,6 +304,12 @@ ENV_BOUNDARIES: list[tuple[str, str, int]] = [
     ("Bash", "c\\at .env", BLOCK),
     ("Bash", "grep '.env' src/a.ts", ALLOW),
     ("Bash", "cat .env.private.env.sample", BLOCK),
+    ("Bash", "cat config/prod.env", BLOCK),
+    ("Bash", "cat .envrc", BLOCK),
+    ("Bash", "cat secrets/.env/key", BLOCK),
+    ("Bash", "cat docs/environment.md", ALLOW),
+    ("Bash", 'eval "cat .env"', BLOCK),
+    ("PowerShell", 'iex "Get-Content .env"', BLOCK),
 ]
 
 

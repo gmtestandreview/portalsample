@@ -3,8 +3,8 @@
 Behaviour of the PreToolUse shell wrapper in .claude/settings.json.
 
 The wrapper resolves scripts/pre_tool_use.py from CLAUDE_PROJECT_DIR, passes
-exit codes through (0 allow, 2 block), and warns/allows when the guard is missing
-or crashes, matching the configured fail-open policy.
+exit codes through (0 allow, 2 block), blocks when the guard crashes or no Python
+is available, and warns/allows only when the guard file itself is absent.
 
 Needs `sh` and a Python interpreter on PATH (Git Bash on Windows).
 Run:  python tests/hooks/test_wrapper.py
@@ -70,7 +70,7 @@ def run(folder: Path, payload: ToolCall, *, cwd: Path | None = None) -> tuple[in
 
 # (label, guard source or None for a missing guard, payload, expected exit, stderr must contain)
 CASES: list[tuple[str, str | None, ToolCall, int, str]] = [
-    ("guard crash fails open", "import sys\nsys.exit(1)\n", READ_OK, 0, "crashed"),
+    ("guard crash fails closed", "import sys\nsys.exit(1)\n", READ_OK, 2, "BLOCKED"),
     ("missing guard fails open", None, READ_OK, 0, "inactive"),
     ("guard exit code 2 passes through", "import sys\nsys.exit(2)\n", READ_OK, 2, ""),
 ]
