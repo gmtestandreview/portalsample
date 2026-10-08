@@ -21,6 +21,7 @@
       "mode": "location"
     }
   ],
+  "codeQL.cli.downloadTimeout": 300,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
