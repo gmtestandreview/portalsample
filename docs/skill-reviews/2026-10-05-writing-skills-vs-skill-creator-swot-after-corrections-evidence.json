@@ -1,0 +1,376 @@
+{
+  "review_id": "2026-10-05-writing-skills-vs-skill-creator-swot-after-corrections",
+  "date": "2026-10-05",
+  "timezone": "Australia/Sydney",
+  "package_files": 188,
+  "source_changes_this_assessment": [],
+  "current_revision_checks": {
+    "writing-skills": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    },
+    "skill-creator": {
+      "changed": [],
+      "added": [],
+      "removed": []
+    }
+  },
+  "fresh_local_checks": [
+    {
+      "package": "writing-skills",
+      "cwd": "skills/writing-skills/scripts",
+      "command": "python -B -m pytest -q -p no:cacheprovider --basetemp C:/Users/gregm/AppData/Local/Temp/skill-swot-rerun-20261005-writing-pytest",
+      "exit_code": 0,
+      "passed": 141,
+      "seconds": 13.69
+    },
+    {
+      "package": "skill-creator",
+      "cwd": ".claude/skills/skill-creator",
+      "command": "python -B -m pytest \"scripts/Regression tests\" -q -p no:cacheprovider --basetemp C:/Users/gregm/AppData/Local/Temp/skill-swot-rerun-20261005-creator-pytest",
+      "exit_code": 0,
+      "passed": 169,
+      "subtests_passed": 253,
+      "skipped": 1,
+      "seconds": 5.93,
+      "skip": "Existing POSIX permission-bit test skipped on Windows"
+    },
+    {
+      "package": "skill-creator",
+      "cwd": ".claude/skills/skill-creator",
+      "command": "python -B -m unittest scripts.test_regressions",
+      "exit_code": 0,
+      "passed": 15,
+      "seconds": 1.081,
+      "warnings": "Expected legacy-missing-expectations and malformed-run-directory warnings exercised"
+    },
+    {
+      "package": "skill-creator",
+      "cwd": ".claude/skills/skill-creator",
+      "command": "python -B -m scripts.quick_validate .",
+      "exit_code": 0,
+      "result": "Skill is valid"
+    },
+    {
+      "package": "both",
+      "cwd": "skills/writing-skills/scripts",
+      "interface": "skills_ref.validate(Path(...).resolve())",
+      "exit_code": 0,
+      "results": {
+        "writing-skills": [],
+        "skill-creator": []
+      }
+    }
+  ],
+  "schema_reproduction": {
+    "recorded_command": [
+      "python",
+      "-B",
+      "-c",
+      "import hashlib, json\nfrom pathlib import Path\nfrom jsonschema.validators import validator_for\nobservations = []\nfor path in sorted(Path(\"references/schemas\").glob(\"*.schema.json\")):\n    raw = path.read_bytes()\n    schema = json.loads(raw)\n    validator_for(schema).check_schema(schema)\n    observations.append({\"path\": path.as_posix(), \"sha256\": hashlib.sha256(raw).hexdigest(), \"json_parse\": \"PASS\", \"schema_definition\": \"PASS\"})\nif len(observations) != 11:\n    raise SystemExit(\"Expected the reviewed eleven-schema inventory\")\nprint(json.dumps(observations))\n"
+    ],
+    "exit_code": 0,
+    "schema_count": 11,
+    "observations_match": true,
+    "source_checker_hash": "b320b445a852044f141daf23d48535b361ee437ca8d4d03b78186176a1854944",
+    "scope": "Schema definition validity only, not activation or grading-truth"
+  },
+  "owned_document_verification": {
+    "runtime_instructional_markdown_files_checked": 16,
+    "development_index_checked": true,
+    "local_links_and_anchors_checked": 156,
+    "broken": [],
+    "name_description_unchanged": true,
+    "expectations_metadata_execution_order": "PASS",
+    "illustrative_positive_and_near_miss_matches": "PASS; literal doc fixtures, not project hook or natural activation",
+    "existing_historical_files_preserved": 73,
+    "inherited_validation_map_preserved": true,
+    "schema_checker_reexecuted": "11 schemas; recorded observations match exact hashes",
+    "record_dependencies": {
+      "python": "3.14.7",
+      "jsonschema": "4.26.0"
+    },
+    "runtime_behavior": "NHR; no provider campaign"
+  },
+  "independent_comparison_critique": {
+    "reviewer": "/root/tooling_resource_review",
+    "date": "2026-10-05",
+    "mode": "independent focused read-only SWOT critic; no provider campaign or expanded code audit",
+    "sources": [
+      "skills/writing-skills/SKILL.md",
+      ".claude/skills/skill-creator/SKILL.md",
+      "skills/skill-duplication-audit/SKILL.md",
+      "skills/writing-skills/templates/SWOT Analysis.md",
+      "skills/writing-skills/references/file-review-rubric.md",
+      "docs/skill-reviews/2026-10-05-writing-skills-vs-skill-creator-swot.md",
+      "docs/skill-reviews/2026-10-05-writing-skills-vs-skill-creator-scores.json",
+      "docs/skill-reviews/2026-10-05-writing-skills-vs-skill-creator-manifest.json",
+      "docs/skill-reviews/2026-10-05-skill-creator-contract-corrections.md",
+      "docs/skill-reviews/2026-10-05-skill-creator-contract-corrections-scores.json",
+      "docs/skill-reviews/2026-10-05-skill-creator-contract-corrections-manifest.json"
+    ],
+    "hash_verification": {
+      "writing": {
+        "matched_files": 54,
+        "mismatches": [],
+        "inventory_sha256": "a96784477cda350f9769d8839b24190db316a9914f4e692d34421ab572f707b6",
+        "entry_sha256": "6c88261f730b88e71f157b312b1813d6ba4121ebf56d2acf8d6850093f32fe3e",
+        "reference": "original SWOT inventory"
+      },
+      "creator": {
+        "matched_files": 134,
+        "mismatches": [],
+        "inventory_sha256": "4cf5a326061a762021b1fc5a24862942874d2d475e6c07c3aa9c07eb0c7abdf3",
+        "entry_sha256": "65b2564fad05e54664671fc5f18e09944dc2cc12fe0e379ecbb3da594ce247b6",
+        "reference": "frozen correction inventory"
+      },
+      "method": "Both entire package paths passed secrets scanner; each listed file SHA-256 independently recomputed in current workspace. Parent separately confirms no added/removed drift."
+    },
+    "rubric": {
+      "unit": "integrated package under same comparative adaptation; not per-file certification",
+      "weights": {
+        "P": 10,
+        "K": 10,
+        "C": 15,
+        "A": 15,
+        "U": 10,
+        "R": 10,
+        "V": 15,
+        "I": 5,
+        "M": 5,
+        "F": 5
+      },
+      "all_apply": true,
+      "normalization": false
+    },
+    "recommended_scores": {
+      "writing": {
+        "points": {
+          "P": 10,
+          "K": 9,
+          "C": 15,
+          "A": 15,
+          "U": 10,
+          "R": 10,
+          "V": 11,
+          "I": 5,
+          "M": 5,
+          "F": 5
+        },
+        "total": 95
+      },
+      "creator": {
+        "points": {
+          "P": 10,
+          "K": 10,
+          "C": 15,
+          "A": 15,
+          "U": 10,
+          "R": 10,
+          "V": 11,
+          "I": 5,
+          "M": 5,
+          "F": 5
+        },
+        "total": 96
+      }
+    },
+    "deductions": [
+      {
+        "id": "W2-retained",
+        "package": "writing",
+        "criterion": "K",
+        "points_lost": 1,
+        "evidence": "Original W2 retained hash-identical resources: repeated PDF illustrations in creator best practices and final quality recap. Conditional loading bounds the local context cost.",
+        "limit": "No measured token/context-saving claim; no arbitrary deletion recommended."
+      },
+      {
+        "id": "CURRENT-V-GAP",
+        "package": "both",
+        "criterion": "V",
+        "points_lost_each": 4,
+        "evidence": "Both integrated packages require current-revision activation/near-miss and independent without-skill/with-skill behavioral evidence; neither has a completed current applicable campaign. Local suites verify helpers, not agent behavior.",
+        "anchor": "Material required evidence gap retains at most74% of15 =>11 integer points.",
+        "state": "Verified locally / NHR runtime",
+        "non_double_counting": "Writing historical W3 reconstructability limitation remains in the joint V evidence-completeness assessment; do not stack a second penalty for the same inability to support current integrated behavioral acceptance."
+      }
+    ],
+    "fairness": {
+      "P_full_credit_both": "C0 closes the coupled-interface ownership ambiguity. Creator now explicitly gives writing authoring/review requirements and owns selected mechanisms, with one baseline, change owner and final verdict. The P contract may be established by a documented consumer/interface. No reciprocal A byte edit is needed to improve the assessed pair interface. Full credit is Supported, not evidence of measured invocation efficiency.",
+      "C5_vs_new_V": "Original C5 was a provenance/applicability defect: an unbound mechanical PASS and older-description history could be mistaken for current validation. The correction closes it with reproduced hash-bound schema checks and truthful historical applicability. New V deduction is a different required-current-campaign absence. It must be identified as a methodology reassessment and applied equally, not relabelled as the old unclosed defect.",
+      "published_historical": {
+        "writing": 97,
+        "creator": 79,
+        "unchanged": true
+      },
+      "common_basis_historical_rebase": {
+        "writing": 94,
+        "creator": 79,
+        "analytical_only": true,
+        "reason": "Writing originally P9 K9 V14. Apply common current-campaign cap V11 =>94. Creator already V11; provenance and campaign gaps jointly cap that criterion rather than stack."
+      },
+      "current_common_basis": {
+        "writing": 95,
+        "creator": 96,
+        "delta_from_rebased_baseline": {
+          "writing": 1,
+          "creator": 17
+        },
+        "delta_from_published_historical": {
+          "writing": -2,
+          "creator": 17
+        }
+      },
+      "writing_change_explanation": "A bytes are unchanged. +1 P comes from corrected shared interface; V14->11 applies the disclosed common evidence requirement. A95 is not an alleged source regression.",
+      "alternative_not_selected": "An integrity-focused V score with runtime NHR only as separate readiness gate could also be coherent, but must apply equally. Do not retain A V14 and B V11 solely because B was most recently reviewed."
+    },
+    "classification": {
+      "skills": 2,
+      "pairs": 1,
+      "value": "Partial overlap",
+      "boundary_type": "intentional composition",
+      "true_duplicates": 0,
+      "partial_overlaps": 1,
+      "complementary_pairs": 0,
+      "false_positives": 0,
+      "needs_human_review_classifications": 0,
+      "evidence": "Same realistic Agent Skill create/revise/evaluate requests match both unchanged descriptions, while authoring discipline and executable/runtime mechanisms materially differ. Corrected ownership reduces duplication without making triggers mutually exclusive.",
+      "recommendation": "Keep distinct; compose deliberately under corrected interface. No merge, retirement or split supported by observed defects now closed."
+    },
+    "positive_mapping": [
+      {
+        "request": "Assess Agent Skill boundaries, domain value, class-specific pressure cases and ten-stage scores.",
+        "owner": "writing owns requirements and verdict; creator contributes only a selected mechanism if needed.",
+        "limit": "Primary responsibility mapping, not an exclusive activation claim."
+      },
+      {
+        "request": "Build benchmark/review JSON, a static human review and .skill artifact from frozen runs and validated content.",
+        "owner": "creator owns implementation/output contracts; writing supplies applicable acceptance requirements.",
+        "limit": "Neither changes frozen evidence or equates authoring points with empirical pass rates."
+      },
+      {
+        "request": "Create and evaluate a reusable Agent Skill.",
+        "owner": "Both intentionally apply: one shared baseline/change owner/verdict, writing authoring contract, creator selected eval/package mechanisms.",
+        "limit": "No automatic evidence adapter exists; agree artifact/revision/missingness mapping before handoff."
+      },
+      {
+        "request": "Diagnose registered Claude Code skill PreToolUse enforcement.",
+        "owner": "creator local runtime branch after real configuration inspection; writing checks portable content boundaries if they change.",
+        "limit": "No universal host protocol or actual enforcement success inferred."
+      }
+    ],
+    "near_miss_mapping": [
+      {
+        "request": "Proofread an ordinary README.",
+        "expected": "neither on that fact alone"
+      },
+      {
+        "request": "Package a generic ZIP application unrelated to Agent Skills.",
+        "expected": "neither"
+      },
+      {
+        "request": "Fix browser-extension activation or a CI webhook trigger unrelated to Agent Skills.",
+        "expected": "neither"
+      },
+      {
+        "request": "Compare agent role definitions rather than Agent Skills.",
+        "expected": "not these skill-lifecycle branches; duplication audit itself excludes agents"
+      }
+    ],
+    "boundary_validation_state": "Supported bidirectional/composition source mapping, not fresh natural-activation execution. Broad overlap persists intentionally; source evidence suffices for classification, current empirical acceptance remains NHR.",
+    "swot": {
+      "writing": {
+        "strengths": [
+          "Coherent ten-stage discipline, QAQ/RMI, class-specific pressure/retrieval/edge tests, authority and NHR gates.",
+          "Role-specific package review and bounded authorized remediation."
+        ],
+        "weaknesses": [
+          "Localized conditional repetition (W2).",
+          "Historical campaign not wholly reconstructable (W3); no completed current integrated campaign."
+        ],
+        "opportunities": [
+          "Hypothesis: reuse its authoring contract with creator mechanisms under the now explicit interface; do not claim measured efficiency."
+        ],
+        "threats": [
+          "Host/specification/discovery changes require fresh validation; orchestration can still ignore ownership despite documented guidance."
+        ]
+      },
+      "creator": {
+        "strengths": [
+          "Preserved executable evaluation, benchmark/schema, blinded protocols, real browser review and bounded archive mechanisms.",
+          "C0-C12 and IR1-6 corrected and independently approved at hash-matched current bytes; provenance refresh is reproducible."
+        ],
+        "weaknesses": [
+          "No completed applicable current activation/paired behavior campaign.",
+          "Evidence-model adapter remains an explicit handoff agreement rather than shipped automatic conversion."
+        ],
+        "opportunities": [
+          "Hypothesis: complete a frozen current-runtime campaign and define task-specific artifact mappings for deliberate composition."
+        ],
+        "threats": [
+          "Claude CLI/client protocol changes and provider interruptions can invalidate availability or evidence; historical429 is not current provider-status evidence."
+        ]
+      }
+    },
+    "preservation_and_conflicts": {
+      "preserve": [
+        "writing discipline, scoring/class-specific tests and instruction-form knowledge",
+        "creator machinery, agent protocols/schemas and conditional runtime references",
+        "both truthful histories and missingness/revision semantics"
+      ],
+      "closed_conflicts": "Original workflow/schema/YAML/benchmark truth, local reference/protocol and archive/UI/CLI defects closed by prior independent review and hash match.",
+      "remaining_conflict": "No new source contradiction observed; different evidence formats require explicit mapping, not silent conversion."
+    },
+    "decision_gates": {
+      "purpose_scope": "PASS for separate intentional composition",
+      "unique_preservation": "N/A for merge/retirement; neither requested",
+      "material_contract_defects": "Original demonstrated defects closed; no merge validation implied",
+      "current_integrated_runtime_readiness": "NHR / HOLD both"
+    },
+    "fresh_validation": {
+      "parent_reported_not_independently_reexecuted_here": {
+        "writing_suite": "141 passed,13.69s",
+        "creator_suite": "169 passed,253 subtests,5.93s; one known Windows POSIX skip",
+        "creator_smoke": "15 passed,1.081s",
+        "creator_quick_validate": "exit0",
+        "public_writing_validate": "[] for both",
+        "source_preservation": "188 total inventory files match originals/frozen correction; no added/removed drift"
+      },
+      "independent_this_task": [
+        "Secrets scans before inspected docs/packages",
+        "Current entrypoint and review/template/duplication-contract source assessment",
+        "188 manifest-listed SHA-256 matches"
+      ],
+      "previous_independent_code_gate": "84 focused tests+54subtests, Ruff all10, retained RED/GREEN fixes verified during completed correction review; reused only after current hash equality."
+    },
+    "limits": [
+      "No new provider campaign, source probes, broad code review or source edits.",
+      "Score difference1 is a supported local context-cost difference, not measured behavioral superiority.",
+      "Neither high score establishes activation, current effectiveness, merger safety or deployment readiness."
+    ],
+    "recommendation": "Keep both with corrected intentional composition; current readiness HOLD for both. Publish current A95/B96 and disclose analytical scoring rebase, while preserving historical A97/B79."
+  },
+  "retained_prior_evidence": {
+    "comparison": "2026-10-05-writing-skills-vs-skill-creator-evidence.json",
+    "corrections": "2026-10-05-skill-creator-contract-corrections-evidence.json",
+    "scope": "Immutable prior RED/GREEN, source reviews and pressure observations; no newly executed host activation or full historical transcript regrading"
+  },
+  "official_sources_checked": [
+    "https://agentskills.io/specification",
+    "https://code.claude.com/docs/en/hooks",
+    "https://code.claude.com/docs/en/skills"
+  ],
+  "tokensave": {
+    "status_checked": true,
+    "index_basis": "Predates current corrections; current file inspection/hash evidence used",
+    "saved_tokens": 778,
+    "sync_performed": false
+  },
+  "limitations": [
+    "Current integrated target-client activation/application and paired acceptance remain NHR for both",
+    "Local tests do not establish cross-client behavior or model reliability",
+    "One known Windows POSIX-permission skip",
+    "No new provider campaign, optimization, deployment, commit or PR"
+  ]
+}

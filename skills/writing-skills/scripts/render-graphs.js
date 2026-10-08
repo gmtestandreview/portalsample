@@ -1,20 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Render graphviz diagrams from a skill's SKILL.md to SVG files.
- *
- * Usage:
- *   ./render-graphs.js <skill-directory>           # Render each diagram separately
- *   ./render-graphs.js <skill-directory> --combine # Combine all into one diagram
- *
- * Extracts all ```dot blocks from SKILL.md and renders to SVG.
- * Useful for helping the user visualize the process flows.
- *
- * Requires: graphviz (dot) in a standard location, or set GRAPHVIZ_DOT to
- * its absolute path.
+ * Render fenced DOT diagrams in <skill-directory>/SKILL.md.
+ * Usage: node render-graphs.js <skill-directory> [--combine]
+ * Requires Graphviz dot in a standard location, or absolute GRAPHVIZ_DOT.
+ * Combined SVG embeds independently rendered graphs, preserving their labels
+ * and namespaces. Its .dot companion holds the original multi-graph inputs.
  */
 
-import { execFileSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 
@@ -33,206 +28,379 @@ const defaultDotPaths = {
   linux: ['/usr/bin/dot', '/usr/local/bin/dot', '/snap/bin/dot'],
 };
 
-function writeLine(message) {
-  process.stdout.write(`${message}\n`);
+function readFence(line) {
+  const indent = /^ {0,3}/.exec(line)[0].length;
+  const marker = line[indent];
+  if (marker !== '`' && marker !== '~') return null;
+  let end = indent;
+  while (line[end] === marker) end++;
+  if (end - indent < 3) return null;
+  return { marker: line.slice(indent, end), info: line.slice(end) };
 }
 
-function resolveExistingPath(candidate) {
-  try {
-    return fs.realpathSync(candidate);
-  } catch {
-    return null;
-  }
+function isClosingFence(line, fence) {
+  const closing = readFence(line);
+  return (
+    closing?.marker.startsWith(fence.marker) && /^[ \t]*$/.test(closing.info)
+  );
+}
+
+function dotBlock(body, index) {
+  const content = body.join('\n').trim();
+  // The name affects only a portable filename; Graphviz parses DOT.
+  const header = /\bdigraph(?:\s+(?:"((?:\\.|[^"\\])*)"|([^\s{]+)))?\s*\{/.exec(
+    content,
+  );
+  const name = header?.[1] ?? header?.[2] ?? `graph_${index + 1}`;
+  return { name, content };
 }
 
 function extractDotBlocks(markdown) {
   const blocks = [];
-  const regex = /```dot\n([\s\S]*?)```/g;
-  let match;
-
-  while ((match = regex.exec(markdown)) !== null) {
-    const content = match[1].trim();
-
-    // Extract digraph name
-    const nameMatch = /digraph\s+(\w+)/.exec(content);
-    const name = nameMatch ? nameMatch[1] : `graph_${blocks.length + 1}`;
-
-    blocks.push({ name, content });
+  let fence = null;
+  let body = [];
+  for (const line of markdown.split(/\r?\n/)) {
+    if (!fence) {
+      const opening = readFence(line);
+      if (opening)
+        fence = { marker: opening.marker, dot: opening.info.trim() === 'dot' };
+      continue;
+    }
+    if (isClosingFence(line, fence)) {
+      if (fence.dot) blocks.push(dotBlock(body, blocks.length));
+      fence = null;
+      body = [];
+      continue;
+    }
+    if (fence.dot) body.push(line);
   }
-
+  if (fence?.dot) throw new Error('Unclosed DOT code fence in SKILL.md.');
   return blocks;
 }
 
-function extractGraphBody(dotContent) {
-  // Extract just the body (nodes and edges) from a digraph
-  const headerMatch = /digraph\s+\w+\s*\{/.exec(dotContent);
-  if (!headerMatch) return '';
-
-  const bodyStart = headerMatch.index + headerMatch[0].length;
-  const bodyEnd = dotContent.lastIndexOf('}');
-  if (bodyEnd < bodyStart) return '';
-
-  let body = dotContent.slice(bodyStart, bodyEnd);
-
-  // Remove rankdir (we'll set it once at the top level). Testing trimmed lines
-  // avoids the overlapping \s* quantifiers that backtrack super-linearly.
-  const rankdirLine = /^rankdir\s*=\s*\w+\s*;?$/;
-  body = body
-    .split('\n')
-    .filter((line) => !rankdirLine.test(line.trim()))
-    .join('\n');
-
-  return body.trim();
+function unclosedGraph() {
+  return new Error(
+    'Each DOT block must contain one graph with closed strings, comments and braces.',
+  );
 }
 
-function combineGraphs(blocks, skillName) {
-  const bodies = blocks.map((block, i) => {
-    const body = extractGraphBody(block.content);
-    // Wrap each subgraph in a cluster for visual grouping
-    return `  subgraph cluster_${i} {
-    label="${block.name}";
-    ${body
-      .split('\n')
-      .map((line) => '  ' + line)
-      .join('\n')}
-  }`;
+function skipDelimited(content, start, opening, closing, error) {
+  const end = content.indexOf(closing, start + opening.length);
+  if (end === -1) throw error;
+  return end + closing.length;
+}
+
+function skipQuotedString(content, start) {
+  let cursor = start + 1;
+  while (cursor < content.length) {
+    if (content[cursor] === '"') return cursor + 1;
+    cursor += content[cursor] === '\\' ? 2 : 1;
+  }
+  throw unclosedGraph();
+}
+
+function skipHtmlSpecial(content, cursor, inTag) {
+  if (content.startsWith('<!--', cursor)) {
+    return skipDelimited(
+      content,
+      cursor,
+      '<!--',
+      '-->',
+      new Error('Unclosed HTML comment in DOT.'),
+    );
+  }
+  const char = content[cursor];
+  if (inTag && (char === '"' || char === "'")) {
+    return skipDelimited(content, cursor, char, char, unclosedGraph());
+  }
+  return cursor;
+}
+
+function skipHtmlString(content, start) {
+  let cursor = start + 1;
+  let depth = 1;
+  let inTag = false;
+  while (cursor < content.length) {
+    const next = skipHtmlSpecial(content, cursor, inTag);
+    if (next !== cursor) {
+      cursor = next;
+      continue;
+    }
+    const char = content[cursor];
+    if (char === '<') {
+      depth++;
+      inTag = true;
+    } else if (char === '>') {
+      depth--;
+      inTag = false;
+      if (depth === 0) return cursor + 1;
+    }
+    cursor++;
+  }
+  throw unclosedGraph();
+}
+
+function skipDotTrivia(content, cursor) {
+  if (content[cursor] === '#' || content.startsWith('//', cursor)) {
+    const end = content.indexOf('\n', cursor);
+    return end === -1 ? content.length : end + 1;
+  }
+  if (content.startsWith('/*', cursor)) {
+    return skipDelimited(content, cursor, '/*', '*/', unclosedGraph());
+  }
+  return /\s/.test(content[cursor]) ? cursor + 1 : cursor;
+}
+
+function skipDotString(content, cursor) {
+  if (content[cursor] === '"') return skipQuotedString(content, cursor);
+  if (content[cursor] === '<') return skipHtmlString(content, cursor);
+  return cursor + 1;
+}
+
+function assertOneGraph(content) {
+  // This is a lexical boundary check, not a DOT grammar parser. Keep comments
+  // and strings opaque; Graphviz owns attributes, identifiers and layout.
+  let depth = 0;
+  let complete = false;
+  let cursor = 0;
+  while (cursor < content.length) {
+    const next = skipDotTrivia(content, cursor);
+    if (next !== cursor) {
+      cursor = next;
+      continue;
+    }
+    if (complete)
+      throw new Error('Each DOT block must contain exactly one graph.');
+    const char = content[cursor];
+    if (char === '{') depth++;
+    else if (char === '}') {
+      depth--;
+      if (depth < 0) throw new Error('Unmatched closing brace in DOT.');
+      complete = depth === 0;
+    }
+    cursor = skipDotString(content, cursor);
+  }
+  if (!complete) throw unclosedGraph();
+}
+
+function runDot(executable, content) {
+  assertOneGraph(content);
+  const result = spawnSync(executable, ['-Tsvg'], {
+    input: content,
+    encoding: 'utf-8',
+    maxBuffer: 10 * 1024 * 1024,
+    timeout: 30000,
+    stdio: ['pipe', 'pipe', 'pipe'],
   });
-
-  return `digraph ${skillName}_combined {
-  rankdir=TB;
-  compound=true;
-  newrank=true;
-
-${bodies.join('\n\n')}
-}`;
+  if (result.error) throw result.error;
+  // Graphviz may exit0 after dropping an unavailable image or approximating
+  // unsupported input. Preserve its diagnostics and fail instead of implying
+  // that the requested visual survived intact.
+  const diagnostic = (result.stderr ?? '').trim();
+  if (result.status !== 0 || diagnostic) {
+    throw new Error(
+      diagnostic || `Graphviz failed with status ${result.status}.`,
+    );
+  }
+  const svg = result.stdout;
+  if ([...svg.matchAll(/<svg\b/g)].length !== 1) {
+    throw new Error('Each DOT block must contain exactly one graph.');
+  }
+  return svg;
 }
 
 function resolveDotExecutable() {
-  const configuredDot = process.env.GRAPHVIZ_DOT;
-  const platformPaths =
-    defaultDotPaths[process.platform] ?? defaultDotPaths.linux;
-  const configuredCandidate = path.isAbsolute(configuredDot ?? '')
-    ? resolveExistingPath(configuredDot)
-    : null;
-  const trustedDefaults = platformPaths
-    .map(resolveExistingPath)
-    .filter((candidate) => candidate !== null);
-  const candidates = [configuredCandidate, ...trustedDefaults].filter(
-    (candidate) => candidate !== null
-  );
-
-  return [...new Set(candidates)].find((candidate) => {
+  const configured = process.env.GRAPHVIZ_DOT;
+  const candidates = [
+    ...(configured && path.isAbsolute(configured) ? [configured] : []),
+    ...(defaultDotPaths[process.platform] ?? defaultDotPaths.linux),
+  ];
+  for (const candidate of candidates) {
     try {
-      const output = execFileSync(candidate, ['-Tsvg'], {
-        input: 'digraph probe {}',
-        encoding: 'utf-8',
-        maxBuffer: 1024 * 1024,
-        stdio: ['pipe', 'pipe', 'ignore'],
-      });
-      return output.includes('<svg');
+      const executable = fs.realpathSync(candidate);
+      if (runDot(executable, 'digraph probe {}').includes('<svg'))
+        return executable;
     } catch {
-      return false;
+      // Try the next configured/standard Graphviz location.
     }
+  }
+  throw new Error(
+    'Graphviz dot not found; set GRAPHVIZ_DOT to its absolute path.',
+  );
+}
+
+function trimBoundaryDots(stem) {
+  let start = 0;
+  let end = stem.length;
+  while (stem[start] === '.') start++;
+  while (end > start && stem[end - 1] === '.') end--;
+  return stem.slice(start, end);
+}
+
+function portableStem(name) {
+  let stem = name
+    .replaceAll('-', '_')
+    .replace(/[^a-zA-Z0-9_.]/g, '_')
+    .slice(0, 80);
+  stem = trimBoundaryDots(stem);
+  if (!stem) stem = 'graph';
+  if (/^(?:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\.|$)/i.test(stem))
+    stem = `_${stem}`;
+  return stem;
+}
+
+function uniqueStems(blocks) {
+  const used = new Set();
+  return blocks.map((block) => {
+    const base = portableStem(block.name);
+    let candidate = base;
+    let suffix = 2;
+    while (used.has(candidate.toLowerCase())) candidate = `${base}_${suffix++}`;
+    used.add(candidate.toLowerCase());
+    return candidate;
   });
 }
 
-function renderToSvg(dotExecutable, dotContent) {
-  try {
-    return execFileSync(dotExecutable, ['-Tsvg'], {
-      input: dotContent,
-      encoding: 'utf-8',
-      maxBuffer: 10 * 1024 * 1024,
-    });
-  } catch (err) {
-    console.error('Error running dot:', err.message);
-    if (err.stderr) console.error(err.stderr.toString());
-    return null;
+function prepareOutputDirectory(skillDir) {
+  const directory = path.join(skillDir, 'diagrams');
+  const stat = fs.lstatSync(directory, { throwIfNoEntry: false });
+  if (stat) {
+    if (stat.isSymbolicLink() || !stat.isDirectory()) {
+      throw new Error(
+        'The diagrams output directory must be a real directory inside the skill.',
+      );
+    }
   }
+  fs.mkdirSync(directory, { recursive: true });
+  if (fs.realpathSync(directory) !== directory) {
+    throw new Error(
+      'The diagrams output directory resolves outside its expected location.',
+    );
+  }
+  return directory;
+}
+
+function writeArtifact(directory, filename, content) {
+  const target = path.join(directory, filename);
+  const stat = fs.lstatSync(target, { throwIfNoEntry: false });
+  if (stat) {
+    if (stat.isSymbolicLink() || !stat.isFile()) {
+      throw new Error(
+        `Refusing to replace a linked or non-file output: ${filename}`,
+      );
+    }
+  }
+  // Rename a new local file instead of following an existing file symlink.
+  const temporary = path.join(directory, `.render-${randomUUID()}.tmp`);
+  try {
+    fs.writeFileSync(temporary, content, { flag: 'wx' });
+    fs.renameSync(temporary, target);
+  } finally {
+    if (fs.existsSync(temporary)) fs.unlinkSync(temporary);
+  }
+  process.stdout.write(`  Rendered: ${filename}\n`);
+}
+
+function combineSvgs(svgs) {
+  let y = 0;
+  let width = 0;
+  const images = svgs.map((svg) => {
+    for (const image of svg.matchAll(
+      /<image\b[^>]*\b(?:xlink:)?href="([^"]+)"/g,
+    )) {
+      if (!image[1].startsWith('data:')) {
+        throw new Error(
+          'Combined SVG cannot contain external image references.',
+        );
+      }
+    }
+    const opening = /<svg\b[^>]*>/.exec(svg)?.[0] ?? '';
+    const graphWidth = Number(/\bwidth="([\d.]+)pt"/.exec(opening)?.[1]);
+    const graphHeight = Number(/\bheight="([\d.]+)pt"/.exec(opening)?.[1]);
+    if (!(
+      graphWidth > 0
+      && graphHeight > 0
+      && Number.isFinite(graphWidth)
+      && Number.isFinite(graphHeight)
+    )) {
+      throw new Error(
+        'Graphviz returned SVG without supported finite dimensions.',
+      );
+    }
+    const image = `  <image x="0" y="${y}" width="${graphWidth}" height="${graphHeight}" href="data:image/svg+xml;base64,${Buffer.from(svg, 'utf-8').toString('base64')}"/>`;
+    width = Math.max(width, graphWidth);
+    y += graphHeight + 24;
+    return image;
+  });
+  const height = y - 24;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${width}pt" height="${height}pt" viewBox="0 0 ${width} ${height}">\n${images.join('\n')}\n</svg>\n`;
 }
 
 function main() {
   const args = process.argv.slice(2);
-  const combine = args.includes('--combine');
-  const skillDirArg = args.find((a) => !a.startsWith('--'));
-
-  if (!skillDirArg) {
-    console.error('Usage: render-graphs.js <skill-directory> [--combine]');
-    console.error('');
-    console.error('Options:');
-    console.error('  --combine    Combine all diagrams into one SVG');
-    console.error('');
-    console.error('Example:');
-    console.error('  ./render-graphs.js ../subagent-driven-development');
-    console.error(
-      '  ./render-graphs.js ../subagent-driven-development --combine'
+  if (args.length === 1 && args[0] === '--help') {
+    process.stdout.write(
+      'Usage: render-graphs.js <skill-directory> [--combine]\n',
     );
-    process.exit(1);
+    return;
   }
-
-  const skillDir = path.resolve(skillDirArg);
+  const positional = args.filter((argument) => !argument.startsWith('--'));
+  if (
+    positional.length !== 1
+    || args.filter((argument) => argument === '--combine').length > 1
+    || args.some(
+      (argument) => argument.startsWith('--') && argument !== '--combine',
+    )
+  ) {
+    throw new Error('Usage: render-graphs.js <skill-directory> [--combine]');
+  }
+  const combine = args.includes('--combine');
+  const skillDir = fs.realpathSync(path.resolve(positional[0]));
   const skillFile = path.join(skillDir, 'SKILL.md');
-  const skillName = path.basename(skillDir).replaceAll('-', '_');
-
-  if (!fs.existsSync(skillFile)) {
-    console.error(`Error: ${skillFile} not found`);
-    process.exit(1);
-  }
-
-  const dotExecutable = resolveDotExecutable();
-  if (!dotExecutable) {
-    console.error('Error: graphviz (dot) not found in a standard location.');
-    console.error('Set GRAPHVIZ_DOT to its absolute path or install with:');
-    console.error('  brew install graphviz    # macOS');
-    console.error('  apt install graphviz     # Linux');
-    process.exit(1);
-  }
-
-  const markdown = fs.readFileSync(skillFile, 'utf-8');
-  const blocks = extractDotBlocks(markdown);
-
+  const blocks = extractDotBlocks(fs.readFileSync(skillFile, 'utf-8'));
   if (blocks.length === 0) {
-    writeLine(`No \`\`\`dot blocks found in ${skillFile}`);
-    process.exit(0);
+    process.stdout.write(`No dot blocks found in ${skillFile}\n`);
+    return;
   }
-
-  writeLine(
-    `Found ${blocks.length} diagram(s) in ${path.basename(skillDir)}/SKILL.md`
+  const dot = resolveDotExecutable();
+  process.stdout.write(
+    `Found ${blocks.length} diagram(s) in ${path.basename(skillDir)}/SKILL.md\n`,
   );
-
-  const outputDir = path.join(skillDir, 'diagrams');
-  fs.mkdirSync(outputDir, { recursive: true });
-
+  const outputDir = prepareOutputDirectory(skillDir);
   if (combine) {
-    // Combine all graphs into one
-    const combined = combineGraphs(blocks, skillName);
-    const svg = renderToSvg(dotExecutable, combined);
-    if (svg) {
-      const outputPath = path.join(outputDir, `${skillName}_combined.svg`);
-      fs.writeFileSync(outputPath, svg);
-      writeLine(`  Rendered: ${skillName}_combined.svg`);
-
-      // Also write the dot source for debugging
-      const dotPath = path.join(outputDir, `${skillName}_combined.dot`);
-      fs.writeFileSync(dotPath, combined);
-      writeLine(`  Source: ${skillName}_combined.dot`);
-    } else {
-      console.error('  Failed to render combined diagram');
-    }
+    // Render each graph before writing composed output. Graphviz owns parsing
+    // and layout, and embedded SVGs keep independent IDs and label semantics.
+    const svg = combineSvgs(blocks.map((block) => runDot(dot, block.content)));
+    const name = `${portableStem(path.basename(skillDir))}_combined`;
+    writeArtifact(outputDir, `${name}.svg`, svg);
+    writeArtifact(
+      outputDir,
+      `${name}.dot`,
+      blocks.map((block) => block.content).join('\n\n'),
+    );
   } else {
-    // Render each separately
-    for (const block of blocks) {
-      const svg = renderToSvg(dotExecutable, block.content);
-      if (svg) {
-        const outputPath = path.join(outputDir, `${block.name}.svg`);
-        fs.writeFileSync(outputPath, svg);
-        writeLine(`  Rendered: ${block.name}.svg`);
-      } else {
-        console.error(`  Failed: ${block.name}`);
+    const stems = uniqueStems(blocks);
+    let failed = false;
+    for (const [index, block] of blocks.entries()) {
+      try {
+        writeArtifact(
+          outputDir,
+          `${stems[index]}.svg`,
+          runDot(dot, block.content),
+        );
+      } catch (error) {
+        failed = true;
+        process.stderr.write(`Failed diagram ${index + 1}: ${error.message}\n`);
       }
     }
+    if (failed) process.exitCode = 1;
   }
-
-  writeLine(`\nOutput: ${outputDir}/`);
+  process.stdout.write(`Output: ${outputDir}\n`);
 }
 
-main();
+try {
+  main();
+} catch (error) {
+  process.stderr.write(`Error: ${error.message}\n`);
+  process.exitCode = 1;
+}

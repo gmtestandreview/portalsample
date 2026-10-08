@@ -106,8 +106,6 @@
     "@testing-library/user-event": "^14.6.7",
     "@types/lodash": "^4.17.25",
     "@types/luxon": "^3.7.6",
-    "@types/node": "^24.13.3",
-    "@types/luxon": "^3.7.5",
     "@types/node": "^24.19.1",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
@@ -157,9 +155,7 @@
     "webpack-dev-server": "^5.2.6"
   },
   "msw": {
-    "workerDirectory": [
-      "ClientApp/public"
-    ]
+    "workerDirectory": ["ClientApp/public"]
   },
   "overrides": {
     "@mizchi/lsmcp": {
@@ -171,17 +167,8 @@
     "@npmcli/package-json": {
       "glob": "13.0.6"
     },
-    "body-parser": "1.20.6",
-    "brace-expansion@1": "1.1.18",
-    "brace-expansion@2": "2.1.4",
-    "brace-expansion@5": "5.0.9",
-    "browserslist": "4.28.8",
-    "fast-uri": "3.1.7",
-    "js-yaml": "4.3.2",
-    "nanoid": "3.3.18",
-    "postcss": "8.5.28",
-    "qs": "6.16.0",
-    "undici": "7.29.0",
+    "brace-expansion@5": "5.0.12",
+    "undici": "7.30.0",
     "unified-engine": {
       "glob": "13.0.6"
     },

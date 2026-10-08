@@ -1,4 +1,5 @@
-import { isFunction, isString, useField, useFormikContext } from 'formik';
+import { isFunction, isString } from 'lodash';
+import { useField, useFormikContext } from 'formik';
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import PrimaryButton from '../../Buttons/PrimaryButton';

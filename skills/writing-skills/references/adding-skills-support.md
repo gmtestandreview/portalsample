@@ -30,7 +30,7 @@ The guide notes where these differences matter. You don't need to support every
 scenario - follow the path that fits your agent.
 
 **Prerequisites**: Familiarity with the
-[Agent Skills specification](/specification), which defines the `SKILL.md` file
+[Agent Skills specification](specification.md), which defines the `SKILL.md` file
 format, frontmatter fields, and directory conventions.
 
 ## The core principle: progressive disclosure
@@ -175,7 +175,7 @@ a markdown body after the closing delimiter. To parse:
    (required), plus any optional fields.
 3. Everything after the closing `---`, trimmed, is the skill's body content.
 
-See the [specification](/specification) for the full set of frontmatter fields
+See the [specification](specification.md) for the full set of frontmatter fields
 and their constraints.
 
 ### Handling malformed YAML
@@ -207,7 +207,7 @@ Record diagnostics so they can be surfaced to the user (in a debug command, log
 file, or UI), but don't block skill loading on cosmetic issues.
 
 <Note>
-The [specification](/specification) defines strict constraints on the `name`
+The [specification](specification.md) defines strict constraints on the `name`
 field (matching the parent directory, character set, max length). The lenient
 approach above deliberately relaxes these to improve compatibility with skills
 authored for other clients.
@@ -396,7 +396,7 @@ options for what exactly that content looks like:
 This is the natural outcome with file-read activation, where the model reads the
 raw file. It's also a valid choice for dedicated tools. The frontmatter may
 contain fields useful at activation time - for example,
-[`compatibility`](/specification#compatibility-field) notes environment
+[`compatibility`](specification.md#compatibility-field) notes environment
 requirements that could inform how the model executes the skill's instructions.
 
 **Body only (frontmatter stripped)**: The harness parses and removes the YAML

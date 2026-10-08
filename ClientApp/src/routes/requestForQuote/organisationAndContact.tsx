@@ -1,7 +1,8 @@
 import Row from 'react-bootstrap/Row';
 import { useLocation, useParams } from 'react-router';
 import { Alert, Button } from 'react-bootstrap';
-import { useField, useFormikContext, getIn } from 'formik';
+import { useField, useFormikContext } from 'formik';
+import { getIn } from '../../components/forms/formPath';
 import { PatternFormat } from 'react-number-format';
 import type { OrganisationAndContactProps } from './types';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';

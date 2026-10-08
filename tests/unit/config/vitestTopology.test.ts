@@ -114,11 +114,11 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
     expect(storybook.setupFiles).toEqual(['./vitest.storybook.setup.ts']);
   });
 
-  it("pins Browser Mode API binding away from Vitest's Windows-reserved default port", () => {
+  it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {
     expect(storybook.api).toBeUndefined();
     expect(storybook.browser?.api).toMatchObject({
       host: '127.0.0.1',
-      port: 61005,
+      port: 47005,
     });
   });
 

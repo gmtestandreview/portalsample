@@ -7,9 +7,11 @@ import { storybookCoverageConfig } from './vitest.storybook.coverage';
 import { storybookVitestRuntimePlugin } from './vitest.storybook.runtime';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
+// Fixed port below the Windows dynamic range (49152+); the excluded TCP ranges
+// (netsh int ipv4 show excludedportrange) shift between boots and cover 50xxx-62xxx.
 const storybookBrowserApi = {
   host: '127.0.0.1',
-  port: 61005,
+  port: 47005,
 } as const;
 
 /**

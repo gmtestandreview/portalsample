@@ -1,7 +1,7 @@
 import type { ReactElement, ReactNode } from 'react';
-import type { FormikHelpers, FormikValues } from 'formik';
+import type { FormikValues } from 'formik';
 import type { InitialValue } from '../../../types';
-import type { DiscardProps, ModalProps } from '../FormikForm/types';
+import type { DiscardProps, ModalProps } from '../types';
 import type {
   FormStepStatusDto,
   ProblemDetails,
@@ -68,7 +68,7 @@ export type WizardStepError =
  * @property discard        - Configuration for the Cancel button: visibility, labels,
  *                            callbacks, and the post-discard navigation target.
  * @property onSaveAndExit  - Called when the user saves a draft and exits. Receives
- *                            form values, isDirty flag, Formik helpers, and an optional
+ *                            form values, isDirty flag, and an optional
  *                            AbortSignal.
  * @property onSaveAndNext  - Called when the user submits the step. Same signature as
  *                            onSaveAndExit. May return { baseUrl } to override the
@@ -107,13 +107,11 @@ export interface WizardStepProps<T extends FormikValues> {
   onSaveAndExit?: (
     values: T,
     isDirty: boolean,
-    formikHelpers: FormikHelpers<T>,
     abortSignal?: AbortSignal
   ) => void | Promise<any>;
   onSaveAndNext?: (
     values: T,
     isDirty: boolean,
-    formikHelpers: FormikHelpers<T>,
     abortSignal?: AbortSignal
   ) => void | Promise<any>;
   stepStatuses: FormStepStatusDto[];

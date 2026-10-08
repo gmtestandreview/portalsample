@@ -1,0 +1,409 @@
+{
+  "artifact": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\new_skill\\analyzer\\project",
+  "scope": "Controlled fixture review; direct edits inside assigned task only; no installations or source-repository changes.",
+  "resources_loaded": [
+    "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\candidate\\python-code-review\\SKILL.md",
+    "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\candidate\\python-code-review\\references\\ruff-pyright-verification.md",
+    "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\candidate\\python-code-review\\references\\review-reporting.md",
+    "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\candidate\\python-code-review\\references\\python-general-review.md",
+    "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\candidate\\python-code-review\\references\\python-remediation-method.md"
+  ],
+  "inputs_loaded": [
+    "request.txt",
+    "input.json",
+    "project/cast_target.py",
+    "project/import_target.py",
+    "project/pyrightconfig.json",
+    "project/test_assertion.py",
+    "project/yaml_target.py",
+    "project/vendor\\report_backend.py",
+    "project/stubs_incomplete\\yaml\\__init__.pyi",
+    "project/stubs_complete\\yaml\\__init__.pyi"
+  ],
+  "environment": {
+    "python_floor": "3.10 (supplied config)",
+    "runtime": "3.14.7",
+    "interpreter": "C:\\Python314\\python.exe",
+    "pyright": "1.1.414",
+    "ruff": "0.16.7",
+    "pytest": "9.0.2",
+    "PyYAML": "6.0.3",
+    "execution_root": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\new_skill\\analyzer\\project"
+  },
+  "diagnostic_provenance": {
+    "source": "input.json, controlled reproduction fixtures; not actual editor exports",
+    "Pylance_version": "unknown",
+    "SonarLint_version_and_profile": "unknown",
+    "editor_freshness": "timestamp/revision unknown; source correspondence confirmed",
+    "baseline_hash_file": "baseline-hashes.json"
+  },
+  "analyzer_configurations": {
+    "project": {
+      "path": "project/pyrightconfig.json",
+      "mode": "basic",
+      "include": [
+        "not_present/*.py"
+      ],
+      "filesAnalyzed": 0,
+      "policy_unchanged_sha256": "e540a91ca4c3bdc84e4b2ad6085268eeca424ba348a00e8f92b2ff419e9042a7",
+      "interpretation": "zero-file pass does not support clean target status"
+    },
+    "reproductions": {
+      "paths": [
+        "scratch/strict-incomplete.json",
+        "scratch/strict-complete.json"
+      ],
+      "mode": "strict",
+      "pythonVersion": "3.10",
+      "reportUnnecessaryCast": "error",
+      "include": [
+        "../project/cast_target.py",
+        "../project/yaml_target.py",
+        "../project/import_target.py",
+        "../project/test_assertion.py"
+      ],
+      "root": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\new_skill\\analyzer\\project",
+      "stub_paths": [
+        "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\new_skill\\analyzer\\project\\stubs_incomplete",
+        "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\new_skill\\analyzer\\project\\stubs_complete"
+      ],
+      "coverage_each": 4,
+      "equivalence": "Pyright CLI approximates supplied Pylance environments; editor itself unexecuted; strict mode applies only to scratch checks",
+      "explicit_interpreter": "C:/Python314/python.exe (fresh final commands)"
+    },
+    "ruff": {
+      "policy": "Installed Ruff 0.16.7 default settings: verbose says Using Ruff default settings; normal and --isolated --show-settings enabled rule sets are identical. No inherited configuration changes the rule selection.",
+      "coverage": [
+        "cast_target.py",
+        "yaml_target.py",
+        "import_target.py",
+        "test_assertion.py"
+      ],
+      "format_target": "3.10",
+      "enabled_rule_count": 413,
+      "effective_settings_record": "scratch/ruff-effective-settings.json",
+      "isolated_comparison": {
+        "same_rules": true,
+        "normal_count": 413,
+        "isolated_count": 413
+      }
+    }
+  },
+  "checks": [
+    {
+      "stage": "baseline",
+      "command": "pyright --outputjson",
+      "exit_code": 0,
+      "filesAnalyzed": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0,
+      "rules": [],
+      "tool_version": "1.1.414"
+    },
+    {
+      "stage": "baseline",
+      "command": "pyright --project ../scratch/strict-incomplete.json --outputjson",
+      "exit_code": 1,
+      "filesAnalyzed": 4,
+      "errorCount": 5,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.268,
+      "rules": [
+        "reportMissingImports",
+        "reportUnknownMemberType",
+        "reportUnknownVariableType",
+        "reportUnnecessaryCast"
+      ],
+      "tool_version": "1.1.414"
+    },
+    {
+      "stage": "baseline",
+      "command": "pyright --project ../scratch/strict-complete.json --outputjson",
+      "exit_code": 1,
+      "filesAnalyzed": 4,
+      "errorCount": 4,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.268,
+      "rules": [
+        "reportMissingImports",
+        "reportUnknownMemberType",
+        "reportUnknownVariableType",
+        "reportUnnecessaryCast"
+      ],
+      "tool_version": "1.1.414"
+    },
+    {
+      "stage": "baseline",
+      "command": "ruff check cast_target.py yaml_target.py import_target.py test_assertion.py --output-format json",
+      "exit_code": 1,
+      "diagnostic_count": 4,
+      "files": [
+        "cast_target.py",
+        "yaml_target.py",
+        "import_target.py",
+        "test_assertion.py"
+      ],
+      "rules": [
+        "I001"
+      ]
+    },
+    {
+      "stage": "baseline",
+      "command": "ruff format --check cast_target.py yaml_target.py import_target.py test_assertion.py",
+      "exit_code": 1,
+      "result": "3 need formatting, 1 formatted"
+    },
+    {
+      "stage": "final",
+      "command": "pyright --outputjson",
+      "exit_code": 0,
+      "filesAnalyzed": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0,
+      "rules": [],
+      "tool_version": "1.1.414"
+    },
+    {
+      "stage": "final",
+      "command": "pyright --project ../scratch/strict-incomplete.json --outputjson",
+      "exit_code": 0,
+      "filesAnalyzed": 4,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.343,
+      "rules": [],
+      "tool_version": "1.1.414"
+    },
+    {
+      "stage": "final",
+      "command": "pyright --project ../scratch/strict-complete.json --outputjson",
+      "exit_code": 0,
+      "filesAnalyzed": 4,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.412,
+      "rules": [],
+      "tool_version": "1.1.414"
+    },
+    {
+      "stage": "final",
+      "command": "ruff check cast_target.py yaml_target.py import_target.py test_assertion.py --output-format json",
+      "exit_code": 0,
+      "diagnostic_count": 0,
+      "files": [
+        "cast_target.py",
+        "yaml_target.py",
+        "import_target.py",
+        "test_assertion.py"
+      ],
+      "rules": []
+    },
+    {
+      "stage": "final",
+      "command": "ruff format --check cast_target.py yaml_target.py import_target.py test_assertion.py",
+      "exit_code": 0,
+      "result": "4 formatted"
+    },
+    {
+      "stage": "final",
+      "command": "python -m compileall -q . ../scratch/test_review.py",
+      "exit_code": 0,
+      "result": "pass"
+    },
+    {
+      "stage": "final",
+      "command": "pytest -q -p no:cacheprovider test_assertion.py ../scratch/test_review.py",
+      "exit_code": 1,
+      "result": "superseded harness failure",
+      "passed": 25,
+      "failed": 1,
+      "cause": "test compared Windows and POSIX separators; product behavior matched"
+    },
+    {
+      "stage": "final-confirmation",
+      "command": "pytest -q -p no:cacheprovider test_assertion.py ../scratch/test_review.py",
+      "exit_code": 0,
+      "result": "..........................                                               [100%]\n26 passed in 0.14s",
+      "passed": 26
+    },
+    {
+      "stage": "final-confirmation",
+      "command": "python -m compileall -q . ../scratch/test_review.py",
+      "exit_code": 0,
+      "result": "pass",
+      "passed": null
+    },
+    {
+      "stage": "final-interpreter-explicit",
+      "command": "pyright --pythonpath C:/Python314/python.exe --project ../scratch/strict-incomplete.json --outputjson",
+      "exit_code": 0,
+      "filesAnalyzed": 4,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.24
+    },
+    {
+      "stage": "final-interpreter-explicit",
+      "command": "pyright --pythonpath C:/Python314/python.exe --project ../scratch/strict-complete.json --outputjson",
+      "exit_code": 0,
+      "filesAnalyzed": 4,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.247
+    }
+  ],
+  "additional_executed_checks": [
+    {
+      "command": "ruff check --verbose cast_target.py yaml_target.py import_target.py test_assertion.py",
+      "result": "4 files; 0 diagnostics; default settings"
+    },
+    {
+      "command": "ruff check cast_target.py yaml_target.py import_target.py test_assertion.py --fix",
+      "result": "2 safe import/spacing diagnostics fixed"
+    },
+    {
+      "command": "ruff format cast_target.py yaml_target.py import_target.py test_assertion.py",
+      "result": "1 reformatted, 3 unchanged"
+    },
+    {
+      "command": "pytest -q -p no:cacheprovider ../scratch/test_review.py::test_import_from_unrelated_cwd_and_side_effect_differential",
+      "result": "final targeted run: 1 passed"
+    },
+    {
+      "command": "ast.parse(..., feature_version=(3, 10)) over all project Python files",
+      "result": "all 5 parse with Python 3.10 grammar; not Python 3.10 runtime evidence"
+    },
+    {
+      "command": "SHA256 equality of project/pyrightconfig.json before/after",
+      "result": "unchanged"
+    },
+    {
+      "command": "ruff check --show-settings cast_target.py",
+      "enabled_rule_count": 413,
+      "exit_code": 0
+    },
+    {
+      "command": "ruff check --isolated --show-settings cast_target.py",
+      "enabled_rule_count": 413,
+      "exit_code": 0
+    }
+  ],
+  "modifications": [
+    "cast_target.py",
+    "import_target.py",
+    "test_assertion.py",
+    "yaml_target.py",
+    "stubs_incomplete\\yaml\\__init__.pyi"
+  ],
+  "repairs": [
+    {
+      "artifact": "project/cast_target.py",
+      "classification": "Conditional analyzer finding reproduced by strict Pyright",
+      "change": "Removed redundant object cast; identity preserved"
+    },
+    {
+      "artifact": "project/import_target.py",
+      "classification": "Conditional analyzer finding reproduced by strict Pyright",
+      "change": "TYPE_CHECKING uses vendor.report_backend; original runtime import and sys.path insertion preserved"
+    },
+    {
+      "artifact": "project/stubs_incomplete/yaml/__init__.pyi",
+      "classification": "Conditional analyzer finding reproduced only with incomplete stub",
+      "change": "Annotated dispose return as None; runtime observation confirms return; YAML loader finally/disposal remains intact"
+    },
+    {
+      "artifact": "project/test_assertion.py",
+      "classification": "Supplied SonarLint conditional finding; structural repair inspected",
+      "change": "Split composite assertion into two; no claim of SonarLint clean"
+    },
+    {
+      "artifact": "project/yaml_target.py",
+      "classification": "Formatting only",
+      "change": "Blank-line formatting; parsing and cleanup unchanged"
+    }
+  ],
+  "compatibility_and_pressure": {
+    "result": "26 final tests passed including existing test and 25 task tests",
+    "cases": [
+      "object identity for None/zero/False/empty/string/collections/object",
+      "8 valid YAML cases preserve type and values",
+      "malformed/multiple-document/unsafe Python-tag rejection",
+      "YAML disposal exactly once on success/error for baseline and candidate",
+      "actual PyYAML dispose returns None",
+      "backend return, import source and sys.path insertion from unrelated cwd",
+      "original and split test behavior"
+    ],
+    "schema_api_cli_changes": "none; runtime import side effects preserved; no CLI exists",
+    "semantic_defects_reproduced": "none; initial test failures were task harness issues, not product RED"
+  },
+  "harness_corrections": [
+    "Initial scratch Pyright configs used absolute includes: rejected and analyzed baseline instead. Corrected to relative includes and reran against exact 4 targets; superseded results excluded from clean claims.",
+    "Initial differential path comparison mixed slash forms. First repair had nested-string escape error. Replaced with pathlib normalization; targeted test and 26-test suite passed."
+  ],
+  "limitations": [
+    "Pylance not executed; supplied extension version/editor export unavailable.",
+    "SonarLint python:S9073 exact analyzer/profile unavailable; splitting verified structurally, rule pass unverified.",
+    "Python 3.10 runtime unavailable/not run; grammar and type-check target verified on Python 3.14.7.",
+    "Unchanged local Pyright policy continues covering zero target files; explicit scratch reproduction covers four."
+  ],
+  "status": "AMBER: no known material behavioral RED; editor/Sonar equivalence unavailable",
+  "final_hashes": {
+    "cast_target.py": "34cf7e5de1708805de5ac248885ffb445ed9e203f4750b0fdcf7e9b49f3aec35",
+    "import_target.py": "e77827425706ad58ca9ee60a9f8470996782beb8c200c77d39b4a0ec0e0f854d",
+    "pyrightconfig.json": "e540a91ca4c3bdc84e4b2ad6085268eeca424ba348a00e8f92b2ff419e9042a7",
+    "test_assertion.py": "e7f9e9fffefff4a8e777e6981c69f8a5296914edb55467d65f4247fc4a40876c",
+    "yaml_target.py": "bf317675cd711e33187e9bd7e28ae77ae2ce645b6a11e5af509fc01f6b9286c4",
+    "vendor\\report_backend.py": "c6ffac09bef62fdcea2b2f99f30ff7eed8351b4e9e0d263d925a3327e552dd89",
+    "stubs_incomplete\\yaml\\__init__.pyi": "5ed506d68de1dbade884efc1f5a55858d445f17ab918de8291038fa15669aae0",
+    "stubs_complete\\yaml\\__init__.pyi": "5ed506d68de1dbade884efc1f5a55858d445f17ab918de8291038fa15669aae0"
+  },
+  "scratch_disposition": {
+    "owner": "this assigned fixture review",
+    "removed": [
+      "project\\vendor\\__pycache__",
+      "project\\.ruff_cache",
+      "project\\__pycache__",
+      "scratch\\baseline\\vendor\\__pycache__",
+      "scratch\\baseline\\__pycache__",
+      "scratch\\__pycache__",
+      "scratch/checks-for-summary.json"
+    ],
+    "retained": [
+      {
+        "path": "scratch/baseline/",
+        "purpose": "original fixture checkpoint and runnable compatibility comparison"
+      },
+      {
+        "path": "scratch/strict-incomplete.json",
+        "purpose": "reproducible full-target strict checker configuration using repaired formerly incomplete stub"
+      },
+      {
+        "path": "scratch/strict-complete.json",
+        "purpose": "complete-stub checker control"
+      },
+      {
+        "path": "scratch/test_review.py",
+        "purpose": "25 durable differential/pressure tests"
+      },
+      {
+        "path": "baseline-hashes.json",
+        "purpose": "source and unchanged-policy provenance"
+      },
+      {
+        "path": "scratch/ruff-effective-settings.json",
+        "purpose": "normalized effective Ruff rule selection; no raw logs"
+      }
+    ],
+    "retention": "Retain with this review evidence until the task owner retires the fixture review; no unrelated artifacts removed."
+  }
+}

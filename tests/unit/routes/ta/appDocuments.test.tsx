@@ -88,7 +88,7 @@ vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: mocks.appLoggerError, info: vi.fn(), verbose: vi.fn() },
 }));
 
-vi.mock('../../../../ClientApp/src/routes/ta/supportingDocuments', () => ({
+vi.mock('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments', () => ({
   default: (props: typeof documentsStep.props) => {
     documentsStep.props = props;
 

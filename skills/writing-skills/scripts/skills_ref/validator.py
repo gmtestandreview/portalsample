@@ -35,13 +35,16 @@ def _validate_name(name: object, skill_dir: Path | None) -> list[str]:
         errors.append("Field 'name' must be a non-empty string")
         return errors
 
-    name = unicodedata.normalize("NFKC", name.strip())
-
     if len(name) > MAX_SKILL_NAME_LENGTH:
         errors.append(
             f"Skill name '{name}' exceeds {MAX_SKILL_NAME_LENGTH} character limit "
             f"({len(name)} chars)"
         )
+
+    if name != name.strip():
+        errors.append("Skill name cannot have leading or trailing whitespace")
+
+    name = unicodedata.normalize("NFKC", name)
 
     if name != name.lower():
         errors.append(f"Skill name '{name}' must be lowercase")
@@ -61,9 +64,7 @@ def _validate_name(name: object, skill_dir: Path | None) -> list[str]:
     if skill_dir:
         dir_name = unicodedata.normalize("NFKC", skill_dir.name)
         if dir_name != name:
-            errors.append(
-                f"Directory name '{skill_dir.name}' must match skill name '{name}'"
-            )
+            errors.append(f"Directory name '{skill_dir.name}' must match skill name '{name}'")
 
     return errors
 
@@ -92,6 +93,9 @@ def _validate_compatibility(compatibility: object) -> list[str]:
     if not isinstance(compatibility, str):
         errors.append("Field 'compatibility' must be a string")
         return errors
+
+    if not compatibility.strip():
+        errors.append("Field 'compatibility' must be a non-empty string")
 
     if len(compatibility) > MAX_COMPATIBILITY_LENGTH:
         errors.append(
@@ -148,9 +152,7 @@ def _validate_metadata_fields(metadata: Mapping[str, object]) -> list[str]:
     return errors
 
 
-def validate_metadata(
-    metadata: Mapping[str, object], skill_dir: Path | None = None
-) -> list[str]:
+def validate_metadata(metadata: Mapping[str, object], skill_dir: Path | None = None) -> list[str]:
     """Validate parsed skill metadata.
 
     This is the core validation function that works on already-parsed metadata,
@@ -210,11 +212,10 @@ def validate(skill_dir: Path) -> list[str]:
 
     skill_dir = skill_dir.resolve()
 
-    skill_md = find_skill_md(skill_dir)
-    if skill_md is None:
-        return ["Missing required file: SKILL.md"]
-
     try:
+        skill_md = find_skill_md(skill_dir)
+        if skill_md is None:
+            return ["Missing required file: SKILL.md"]
         metadata, body = parse_frontmatter(read_skill_text(skill_md))
     except ParseError as e:
         return [str(e)]
