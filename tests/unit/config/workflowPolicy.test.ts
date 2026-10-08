@@ -493,7 +493,7 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toEqual([
-      'ba9859eae8dd6bd29e412f25ddbbef3d032000f4',
+      'd209202bc7d53ff1cc128f7f907dac145c9d6ae9',
     ]);
     expect(
       scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))
