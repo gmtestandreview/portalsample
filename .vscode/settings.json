@@ -21,6 +21,7 @@
       "mode": "location"
     }
   ],
+  "codeQL.cli.downloadTimeout": 300,
   "eslint.validate": [
     "javascript",
     "javascriptreact",
@@ -35,7 +36,7 @@
     "connectionId": "gmtestandreview",
     "projectKey": "gmtestandreview_portalsample"
   },
-  "vitest.configSearchPatternExclude": "{**/node_modules/**,**/vendor/**,**/.*/**,**/*.d.ts,**/quality/_phase5_lab/**,**/quality/_phase5_seed/**}",
+  "vitest.configSearchPatternExclude": "{**/node_modules/**,**/vendor/**,**/.*/**,**/*.d.ts,**/quality/_phase5_lab/**,**/quality/_phase5_seed/**,**/vitest.storybook.config.ts,**/vitest.config.ts}",
   "ruff.nativeServer": "on",
   "ruff.lineLength": 100,
   "[typescript]": {

@@ -8,6 +8,7 @@ import { ModalDispatchCtx } from '@/components/modals/ModalContext';
 import type { DashboardItemDto } from '@/api/web-api-client';
 import { DashboardItemStatus, ReportStatus } from '@/routes/common/enums';
 import { trackGAEvent } from '@/analytics/GoogleAnalytics';
+import { defined } from '../helpers/defined';
 
 vi.mock('@/analytics/GoogleAnalytics', () => ({
   trackGAEvent: vi.fn(),
@@ -160,7 +161,7 @@ describe('RequestList behavior', () => {
       name: 'Request recalibration',
     })[0];
     await user.click(viewRequest);
-    await user.click(recalibration);
+    await user.click(defined(recalibration, 'recalibration link'));
 
     expect(trackGAEvent).toHaveBeenCalledWith('Requestitem/requesttab');
     expect(trackGAEvent).toHaveBeenCalledWith('Requestitem/quotationtab');
@@ -265,7 +266,10 @@ describe('RequestList behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(await screen.findByRole('link', { name: 'View request' }));
     await user.click(
-      screen.getAllByRole('link', { name: 'Request recalibration' })[0]
+      defined(
+        screen.getAllByRole('link', { name: 'Request recalibration' })[0],
+        'recalibration link'
+      )
     );
     await user.click(screen.getByRole('link', { name: 'View quotation' }));
 
@@ -474,8 +478,8 @@ describe('RequestList behavior', () => {
     const recalibration = screen.getAllByRole('link', {
       name: 'Request recalibration',
     })[0];
-    await user.click(latestReport);
-    await user.click(recalibration);
+    await user.click(defined(latestReport, 'latest report link'));
+    await user.click(defined(recalibration, 'recalibration link'));
 
     expect(trackGAEvent).toHaveBeenCalledWith('View latest report');
     expect(trackGAEvent).toHaveBeenCalledWith('Request recalibration');
@@ -619,7 +623,10 @@ describe('RequestList behavior', () => {
     ).toHaveAttribute('href', '/report/Q-2023-007777');
     await user.click(screen.getByRole('button', { name: 'Actions' }));
     await user.click(
-      screen.getAllByRole('link', { name: 'Request recalibration' })[0]
+      defined(
+        screen.getAllByRole('link', { name: 'Request recalibration' })[0],
+        'recalibration link'
+      )
     );
     expect(trackGAEvent).toHaveBeenCalledWith('Request recalibration');
   });

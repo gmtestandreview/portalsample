@@ -18,7 +18,7 @@ const prepareDraft = (scenarioState: ScenarioState, id: string) => {
 
 Given(
   'submitted RFQ {string} is available',
-  async ({ scenarioState }, id: string) => {
+  ({ scenarioState }, id: string) => {
     scenarioState.activeReferenceId = id;
     scenarioState.rfqSummaries.set(id, buildRfqSummary());
   }
@@ -52,12 +52,9 @@ Then(
   }
 );
 
-Given(
-  'draft RFQ {string} is available',
-  async ({ scenarioState }, id: string) => {
-    prepareDraft(scenarioState, id);
-  }
-);
+Given('draft RFQ {string} is available', ({ scenarioState }, id: string) => {
+  prepareDraft(scenarioState, id);
+});
 
 Given(
   'draft RFQ {string} is available at the instrument step',
@@ -113,8 +110,10 @@ When('the user clears the manufacturer', async ({ page }) => {
 
 Then(
   'draft RFQ {string} retains manufacturer {string}',
-  async ({ scenarioState }, id: string, value: string) => {
-    expect(scenarioState.instrumentDrafts.get(id)?.manufacturer).toBe(value);
+  ({ scenarioState }, id: string, value: string) => {
+    expect(scenarioState.instrumentDrafts.get(id)?.['manufacturer']).toBe(
+      value
+    );
   }
 );
 

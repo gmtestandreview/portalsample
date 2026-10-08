@@ -2,10 +2,10 @@ import { Col, Row } from 'react-bootstrap';
 
 export interface ContactDetailsProps {
   label: string;
-  name?: string;
-  businessPhone?: string;
-  mobilePhone?: string;
-  email?: string;
+  name?: string | undefined;
+  businessPhone?: string | undefined;
+  mobilePhone?: string | undefined;
+  email?: string | undefined;
 }
 
 const contactDetails = (props: ContactDetailsProps) => {

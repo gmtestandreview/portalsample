@@ -32,14 +32,15 @@ const TokenProbe = () => {
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    if (accounts.length === 0) {
+    const [account] = accounts;
+    if (!account) {
       return undefined;
     }
 
     let isMounted = true;
 
     instance
-      .acquireTokenSilent({ scopes: ['scope'], account: accounts[0] })
+      .acquireTokenSilent({ scopes: ['scope'], account })
       .then((result) => {
         if (isMounted) {
           setToken(result.accessToken);

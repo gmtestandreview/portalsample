@@ -29,64 +29,12 @@ defaults:
     shell: bash
 
 jobs:
-  static-quality-node24:
-    name: static-quality-node24
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Activate the packageManager-pinned npm
-        run: corepack enable
-
-      - name: Prepare evidence directory
-        run: mkdir -p reports/ci/static-quality
-
-      - name: Install dependencies with declared npm
-        run: npm ci 2>&1 | tee reports/ci/static-quality/install.log
-
-      - name:
-          Verify optional native bindings installed (npm/cli#4828 workaround)
-        uses: ./.github/actions/verify-rolldown-binding
-
-      - name: Type-check
-        run:
-          npm run type-check 2>&1 | tee reports/ci/static-quality/type-check.log
-
-      - name: Lint
-        run: npm run lint 2>&1 | tee reports/ci/static-quality/lint.log
-
-      - name: Lint MDX
-        run: npm run lint:mdx 2>&1 | tee reports/ci/static-quality/lint-mdx.log
-
-      # Guards analysis/BUSINESS_RULES.md against citation rot. A 2026-09-02 audit (CRD-044) found
-      # 18 of 21 examined citations pointing at the wrong line, three past end of file, because line
-      # numbers decay on every edit above them. Fails only on citations that are provably wrong or
-      # unreachable; weakly-anchored ones are reported without failing the build.
-      - name: Verify business rule citations
-        run:
-          npm run lint:rules 2>&1 | tee reports/ci/static-quality/lint-rules.log
-
-      - name: Upload static quality logs
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: static-quality-node24-${{ github.run_attempt }}
-          path: reports/ci/static-quality/**
-          if-no-files-found: error
-          retention-days: 14
-
-  # Path gate for the narrowly-scoped jobs below (agent-tooling, date-timezone).
-  # A whole-workflow `paths:` filter would gate every job; this classifies the
-  # PR's changed files once and lets each downstream job opt in.
+  # Path gate for the narrowly-scoped checks below. A whole-workflow `paths:`
+  # filter would gate every job; this classifies the PR's changed files once and
+  # lets quality-node24 / lower-bound-node24 opt in.
   detect-changes:
     name: detect-changes
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 5
     outputs:
       agent-tooling: ${{ steps.scope.outputs.agent-tooling }}
@@ -108,7 +56,7 @@ jobs:
             echo "agent-tooling=true" >> "$GITHUB_OUTPUT"
           else
             echo "agent-tooling=false" >> "$GITHUB_OUTPUT"
-            echo "No scripts/, templates/, or tests/hooks/ changes - agent-tooling will be skipped."
+            echo "No scripts/, templates/, or tests/hooks/ changes - agent-tooling steps will be skipped."
           fi
 
           # dateOnly.ts local-vs-UTC split and its consumers / tests.
@@ -116,7 +64,7 @@ jobs:
             echo "date-logic=true" >> "$GITHUB_OUTPUT"
           else
             echo "date-logic=false" >> "$GITHUB_OUTPUT"
-            echo "No dateOnly / DatePicker / requestForQuote changes - date-timezone will be skipped."
+            echo "No dateOnly / DatePicker / requestForQuote changes - Sydney date steps will be skipped."
           fi
 
           # The dependency tree and the CI install path. lower-bound-node24 only
@@ -128,50 +76,142 @@ jobs:
             echo "No dependency or workflow changes - lower-bound-node24 will be skipped."
           fi
 
-  # The agent-orchestration tooling under scripts/, templates/, and tests/hooks/
-  # gates real behaviour - a PreToolUse security hook, a background watcher that
-  # shells out and writes files, the statusline command - but is disjoint from
-  # the React app. It rode along in static-quality-node24 and ran on every PR;
-  # it now runs only when one of those trees changes. This workflow has no
-  # required status checks, so a skipped run blocks nothing.
-  agent-tooling:
-    name: agent-tooling
+  quality-node24:
+    name: quality-node24
     needs: detect-changes
-    if: needs.detect-changes.outputs.agent-tooling == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-26.04
+    timeout-minutes: 35
+    env:
+      VITE_APP_ENVIRONMENT: local
+      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
+      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
+      VITE_API_BASE_URL: http://localhost:5085
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-      - name: Prepare evidence directory
-        run: mkdir -p reports/ci/agent-tooling
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: '24'
+          cache: 'npm'
 
-      # compileall is the cheap syntax floor; the two suites below cover behaviour.
+      - name: Activate the packageManager-pinned npm
+        run: corepack enable
+
+      - name: Prepare evidence directories
+        run: mkdir -p reports/ci/quality reports/ci/agent-tooling
+
+      - name: Install dependencies with declared npm
+        id: install
+        run: npm ci 2>&1 | tee reports/ci/quality/install.log
+
+      - name:
+          Verify optional native bindings installed (npm/cli#4828 workaround)
+        id: binding
+        uses: ./.github/actions/verify-rolldown-binding
+
+      - name: Type-check
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run: npm run type-check 2>&1 | tee reports/ci/quality/type-check.log
+
+      - name: Lint
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run: npm run lint 2>&1 | tee reports/ci/quality/lint.log
+
+      - name: Lint MDX
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run: npm run lint:mdx 2>&1 | tee reports/ci/quality/lint-mdx.log
+
+      # Guards analysis/BUSINESS_RULES.md against citation rot. A 2026-09-02 audit (CRD-044) found
+      # 18 of 21 examined citations pointing at the wrong line, three past end of file, because line
+      # numbers decay on every edit above them. Fails only on citations that are provably wrong or
+      # unreachable; weakly-anchored ones are reported without failing the build.
+      - name: Verify business rule citations
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run: npm run lint:rules 2>&1 | tee reports/ci/quality/lint-rules.log
+
+      - name: Run quality tests
+        id: quality_tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run: npm run test:ci:quality
+
+      - name: Build app
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run: npm run build 2>&1 | tee reports/ci/quality/app-build.log
+
+      - name: Verify Storybook documentation
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' }}
+        run:
+          npm run storybook:verify:docs 2>&1 | tee
+          reports/ci/quality/storybook-build.log
+
+      # The agent-orchestration tooling under scripts/, templates/, and
+      # tests/hooks/ gates real behaviour - a PreToolUse security hook and a
+      # watcher that shells out and writes files - but is disjoint from the React
+      # app. It now runs as scoped quality evidence instead of creating an
+      # always-skipped PR status.
+      # tests/hooks imports pytest; the runner's system Python does not ship
+      # it. --break-system-packages is safe here: the runner is ephemeral.
+      - name: Install Python test dependencies
+        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
+        run:
+          python3 -m pip install --disable-pip-version-check
+          --break-system-packages pytest==9.1.1
+
       - name: Python tooling syntax
+        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
         run:
           python3 -m compileall -q scripts templates tests/hooks 2>&1 | tee
           reports/ci/agent-tooling/python-compile.log
 
-      # Exercises scripts/pre_tool_use.py the way Claude Code invokes it - a JSON
-      # tool call on stdin, an exit code out - across both what must be blocked
-      # and the ordinary commands that must still be allowed. A guard that blocks
-      # real work gets switched off, so the false-positive half is load-bearing.
       - name: Hook guard behaviour
+        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
         run:
           python3 tests/hooks/test_pre_tool_use.py 2>&1 | tee
           reports/ci/agent-tooling/hook-guard.log
 
-      # os.kill(pid, 0) is the POSIX liveness idiom and is destructive on Windows,
-      # where it terminates the process it is probing. scripts/watcher.py was
-      # fixed; the templates/ copy that ships downstream was not. This keeps the
-      # two from drifting apart again.
       - name: Watcher pid handling
+        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
         run:
           python3 tests/hooks/test_watcher_pid.py 2>&1 | tee
           reports/ci/agent-tooling/watcher-pid.log
 
-      - name: Upload agent-tooling logs
+      # Regression cover for the deliberate local-vs-UTC split in dateOnly.ts:
+      # vitest-unit exercises these files in the runner's default zone; this
+      # scoped step re-runs them under Australia/Sydney, the NMI user base and
+      # the "east of UTC, date already rolled over" edge.
+      - name: Run focused date suite under Australia/Sydney
+        id: date_tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.binding.outcome == 'success' && needs.detect-changes.outputs.date-logic == 'true' }}
+        env:
+          TZ: Australia/Sydney
+        run: >-
+          npm run test:unit --
+          tests/unit/components/inputs/datePickerWrapper.test.tsx
+          tests/unit/routes/requestForQuote/props.test.ts
+          tests/unit/routes/requestForQuote/validation.test.ts
+          tests/unit/utils/dateOnly.test.ts --reporter=default --reporter=junit
+          --outputFile.junit=reports/vitest/date-sydney-junit.xml
+
+      - name: Upload quality logs
         if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: quality-node24-${{ github.run_attempt }}
+          path: reports/ci/quality/**
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload quality JUnit report
+        if: always() && steps.quality_tests.outcome != 'skipped'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: vitest-quality-${{ github.run_attempt }}
+          path: reports/vitest/quality-junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload agent-tooling logs
+        if: always() && needs.detect-changes.outputs.agent-tooling == 'true'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: agent-tooling-${{ github.run_attempt }}
@@ -179,11 +219,21 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  # Each test environment is its own required status. `fail-fast: false` keeps a
-  # failing partition from cancelling the others, so every surface reports.
+      - name: Upload Australia/Sydney JUnit report
+        if: always() && steps.date_tests.outcome != 'skipped'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: date-sydney-${{ github.run_attempt }}
+          path: reports/vitest/date-sydney-junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+  # Each long-running test environment remains its own required status. Keeping
+  # unit, Storybook Browser Mode, and Playwright separate preserves attribution
+  # and avoids serializing the slowest parts of the PR gate.
   vitest:
     name: vitest-${{ matrix.partition.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 25
     strategy:
       fail-fast: false
@@ -197,10 +247,6 @@ jobs:
             command: npm run test:ci:storybook
             report: reports/vitest/storybook-junit.xml
             install-browser: true
-          - name: quality
-            command: npm run test:ci:quality
-            report: reports/vitest/quality-junit.xml
-            install-browser: false
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
@@ -246,107 +292,9 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-  build-node24:
-    name: build-node24
-    runs-on: ubuntu-latest
-    timeout-minutes: 25
-    env:
-      VITE_APP_ENVIRONMENT: local
-      VITE_ENTRA_CLIENT_ID: 12345678-1234-4321-a432-123456789abc
-      VITE_ENTRA_TENANT_ID: 87654321-4321-4321-b432-cba987654321
-      VITE_API_BASE_URL: http://localhost:5085
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Activate the packageManager-pinned npm
-        run: corepack enable
-
-      - name: Prepare evidence directory
-        run: mkdir -p reports/ci/build
-
-      - name: Install dependencies with declared npm
-        run: npm ci 2>&1 | tee reports/ci/build/install.log
-
-      - name:
-          Verify optional native bindings installed (npm/cli#4828 workaround)
-        uses: ./.github/actions/verify-rolldown-binding
-
-      - name: Build app
-        run: npm run build 2>&1 | tee reports/ci/build/app-build.log
-
-      - name: Verify Storybook documentation
-        run:
-          npm run storybook:verify:docs 2>&1 | tee
-          reports/ci/build/storybook-build.log
-
-      - name: Upload build logs
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: build-node24-${{ github.run_attempt }}
-          path: reports/ci/build/**
-          if-no-files-found: error
-          retention-days: 14
-
-  # Regression cover for the deliberate local-vs-UTC split in dateOnly.ts: picker
-  # Dates are built at local noon and read back with local getters, API Dates at
-  # UTC midnight and read back with UTC getters. The vitest-unit partition only
-  # exercises these files in the runner's default zone (UTC); this leg re-runs
-  # them under Australia/Sydney - the NMI user base, and the "east of UTC, date
-  # already rolled over" edge - so a getDate()/getUTCDate() slip cannot pass CI
-  # unseen. Path-gated by detect-changes; this workflow has no required checks.
-  date-timezone:
-    name: date-timezone
-    needs: detect-changes
-    if: needs.detect-changes.outputs.date-logic == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      TZ: Australia/Sydney
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: '24'
-          cache: 'npm'
-
-      - name: Activate the packageManager-pinned npm
-        run: corepack enable
-
-      - name: Install dependencies with declared npm
-        run: npm ci
-
-      - name:
-          Verify optional native bindings installed (npm/cli#4828 workaround)
-        uses: ./.github/actions/verify-rolldown-binding
-
-      - name: Run focused date suite under Australia/Sydney
-        run: >-
-          npm run test:unit --
-          tests/unit/components/inputs/datePickerWrapper.test.tsx
-          tests/unit/routes/requestForQuote/props.test.ts
-          tests/unit/routes/requestForQuote/validation.test.ts
-          tests/unit/utils/dateOnly.test.ts --reporter=default --reporter=junit
-          --outputFile.junit=reports/vitest/date-sydney-junit.xml
-
-      - name: Upload Australia/Sydney JUnit report
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: date-sydney-${{ github.run_attempt }}
-          path: reports/vitest/date-sydney-junit.xml
-          if-no-files-found: error
-          retention-days: 14
-
   e2e-node24:
     name: e2e-node24
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 45
     env:
       VITE_APP_ENVIRONMENT: local
@@ -399,7 +347,7 @@ jobs:
     name: lower-bound-node24
     needs: detect-changes
     if: needs.detect-changes.outputs.deps == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     env:
       VITE_APP_ENVIRONMENT: local

@@ -1,6 +1,6 @@
 import { useField } from 'formik';
 import type { FieldHookConfig } from 'formik';
-import { isArray, map } from 'lodash';
+import { map } from 'lodash';
 import { useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Col, Form, Row } from 'react-bootstrap';
@@ -14,6 +14,33 @@ import type { AttachmentProps } from './types';
 import AttachmentItemNew from './AttachmentItem-new';
 import ProgressBar from '../../Progress/ProgressBar';
 import ProgressFileList from '../../Progress/ProgressFileList';
+import { omitUndefined } from '../../../utils/omitUndefined';
+
+const isAllowedFile = (file: File, allowedTypes: string[]) =>
+  file.name.includes('.') &&
+  allowedTypes.includes(`.${file.name.split('.').pop()!}`);
+
+/** Returns one message per disallowed file, plus one if too many files were chosen. */
+const getUploadValidationErrors = (
+  files: File[],
+  allowedTypes: string[],
+  maxFiles: number
+): string[] => {
+  const typeError =
+    `${files.length > 1 ? 'Files' : 'File'} must be` +
+    ` ${allowedTypes.length > 1 ? 'one of the following types' : 'of the following type'}:` +
+    ` ${allowedTypes.join(', ')}`;
+  const errors = files
+    .filter((file) => !isAllowedFile(file, allowedTypes))
+    .map(() => typeError);
+
+  if (files.length > maxFiles) {
+    errors.push(
+      `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`
+    );
+  }
+  return errors;
+};
 
 const AttachmentNew = (
   props: Readonly<AttachmentProps & FieldHookConfig<AttachmentDto[]>>
@@ -50,7 +77,7 @@ const AttachmentNew = (
   // in that case broke AttachmentItemNew, which addresses its field as `name[index]` and so
   // read undefined. Normalised once here so every reader below sees the same shape - the field
   // is typed to admit a bare object or null, so a form can still hand us one.
-  const attachments: AttachmentDto[] = isArray(value) ? value : [];
+  const attachments: AttachmentDto[] = Array.isArray(value) ? value : [];
   const [isUploading, setIsUploading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const unidentifiedAttachmentKeys = useRef(
@@ -61,91 +88,68 @@ const AttachmentNew = (
   // console.log('SD: ', value);
   const maxSizeInKb = maxSizeInMB * 1024 * 1024;
 
+  const addErrors = (messages: string[]) =>
+    setErrors((newErrors) => [...newErrors, ...messages]);
+
+  const clearFileInput = () => {
+    if (inputRef.current && inputRef.current.value !== null) {
+      inputRef.current.value = null;
+      inputRef.current.files = null;
+    }
+  };
+
+  const uploadFiles = async (files: File[]) => {
+    const result = await onUploadFiles(files);
+    await setValue([...(result as AttachmentDto[])]);
+  };
+
+  const uploadSelectedFiles = async (files: File[]) => {
+    const oversizeFiles = files.filter((file) => file.size > maxSizeInKb);
+    addErrors(
+      oversizeFiles.map(
+        (file) =>
+          `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`
+      )
+    );
+
+    if (files.length === 1) {
+      if (oversizeFiles.length === 0) {
+        await uploadFiles(files);
+        clearFileInput();
+      }
+      return;
+    }
+
+    await uploadFiles(files.filter((file) => file.size <= maxSizeInKb));
+  };
+
   const onInputFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.value === null) {
       return;
     }
 
     setErrors([]);
-    let hasError = false;
     setIsUploading(true);
     if (event.currentTarget.files !== null) {
-      const currentFileCount = event.currentTarget.files.length;
-      const hasMultipleFiles = currentFileCount > 1;
-      const fileUploadAllowedTypes = allowedTypes
+      const files = Array.from(event.currentTarget.files);
+      const allowedTypeList = allowedTypes
         .split(',')
         .map((type) => type.trim());
-      const hasMultipleAllowedTypes = fileUploadAllowedTypes.length > 1;
+      const validationErrors = getUploadValidationErrors(
+        files,
+        allowedTypeList,
+        maxFiles
+      );
 
-      for (let i = 0; i < currentFileCount; i++) {
-        const file = event.currentTarget.files[i];
-        const fileHasExtension = file.name.includes('.');
-        const currentFileExtension = `.${file.name.split('.').pop()!.toString()}`;
-
-        if (
-          !fileHasExtension ||
-          !fileUploadAllowedTypes.includes(currentFileExtension)
-        ) {
-          const errorMessage =
-            `${hasMultipleFiles ? 'Files' : 'File'} must be` +
-            ` ${hasMultipleAllowedTypes ? 'one of the following types' : 'of the following type'}:` +
-            ` ${fileUploadAllowedTypes.join(', ')}`;
-          setErrors((newErrors) => [...newErrors, errorMessage]);
-          hasError = true;
-        }
-      }
-
-      if (currentFileCount > maxFiles) {
-        setErrors((newErrors) => [
-          ...newErrors,
-          `The files selected have not been uploaded as you have selected more files than the maximum number allowed - (${maxFiles}).`,
-        ]);
-        hasError = true;
-      }
-
-      if (!hasError) {
+      if (validationErrors.length > 0) {
+        addErrors(validationErrors);
+      } else {
         try {
-          if (currentFileCount === 1) {
-            const file = event.currentTarget.files[0];
-            if (file.size > maxSizeInKb) {
-              setErrors((newErrors) => [
-                ...newErrors,
-                `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`,
-              ]);
-              hasError = true;
-            } else {
-              const result = await onUploadFiles([file]);
-              setValue([...(result as AttachmentDto[])]);
-              if (inputRef.current && inputRef.current.value !== null) {
-                inputRef.current.value = null;
-                inputRef.current.files = null;
-              }
-            }
-          } else {
-            const files: File[] = [];
-            for (let i = 0; i < currentFileCount; i++) {
-              const file = event.currentTarget.files[i];
-              if (file.size > maxSizeInKb) {
-                setErrors((newErrors) => [
-                  ...newErrors,
-                  `Upload failed: ${file.name} exceeds the ${formatBytes(maxSizeInKb)} limit.`,
-                ]);
-                hasError = true;
-              } else {
-                files.push(file);
-              }
-            }
-
-            const result = await onUploadFiles(files);
-
-            setValue([...(result as AttachmentDto[])]);
-          }
-        } catch (errorMessage) {
-          const serverErrors = map(
-            (errorMessage as ProblemDetails).errors,
-            (error) => error
+          await uploadSelectedFiles(files);
+        } catch (error_) {
+          addErrors(
+            map((error_ as ProblemDetails)['errors'], (error) => error)
           );
-          setErrors((newErrors) => [...newErrors, ...serverErrors]);
         }
       }
     }
@@ -158,7 +162,7 @@ const AttachmentNew = (
     try {
       if (attachment.id) {
         await onDeleteFile(attachment.id);
-        setValue(
+        await setValue(
           attachments.filter((item: AttachmentDto) => item.id !== attachment.id)
         );
         if (inputRef.current && inputRef.current.value !== null) {
@@ -166,8 +170,8 @@ const AttachmentNew = (
           inputRef.current.files = null;
         }
       }
-    } catch (errorMessage) {
-      setErrors((newErrors) => [...newErrors, `${errorMessage}`]);
+    } catch (error_) {
+      setErrors((newErrors) => [...newErrors, `${error_}`]);
     }
     setIsDeleting(false);
   };
@@ -182,16 +186,18 @@ const AttachmentNew = (
       }
       return (
         <AttachmentItemNew
-          id={attachment.id}
+          key={attachmentKey}
+          {...omitUndefined({
+            id: attachment.id,
+            fileBytes: attachment.documentBytes,
+            onCategoryUpdate,
+          })}
           name={name}
           index={i}
           canRemove={!isSummary && !attachment.documentLocked!}
           cancelButtonId={`cancel-button-${attachment.id}`}
           onRemoveItem={onConfirmDeleteFile}
-          key={attachmentKey}
-          fileBytes={attachment.documentBytes}
           isSummary={isSummary || attachment.documentLocked!}
-          onCategoryUpdate={onCategoryUpdate}
         />
       );
     });
@@ -201,7 +207,7 @@ const AttachmentNew = (
   if (isSummary) {
     return (
       <>
-        {isArray(value) && value.length > 0 ? (
+        {Array.isArray(value) && value.length > 0 ? (
           <div className='attachments-summary'>{renderAttachments()}</div>
         ) : (
           <span>No details added</span>
@@ -344,11 +350,11 @@ const AttachmentNew = (
           </p>
           <ProgressFileList
             files={progress.files!}
-            onCancelFile={handleCancelFile}
+            {...omitUndefined({ onCancelFile: handleCancelFile })}
           />
         </Col>
       ) : (
-        isArray(value) &&
+        Array.isArray(value) &&
         value.length > 0 && (
           <Row className='mb-4'>
             <h3 className='h4 mb-1'>

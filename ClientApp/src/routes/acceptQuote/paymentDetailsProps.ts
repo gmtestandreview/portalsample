@@ -1,17 +1,13 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
 } from '@azure/msal-browser';
-import {
-  AcceptQuoteClient,
-  InvoiceSentToValues,
-} from '../../api/web-api-client';
+import { AcceptQuoteClient } from '../../api/web-api-client';
 import type {
   FormStepStatusDto,
   PaymentDetailsStep,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import { ErrorType } from '../../components/forms/WizardForm/types';
 import type {
   WizardFormStepValues,
@@ -35,10 +31,9 @@ const loadPaymentDetails =
     try {
       if (accounts.length > 0) {
         const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const paymentDetails = await client.getPaymentDetails(id, abortSignal);
         const wizardStepValues: WizardFormStepValues<PaymentDetailsStep> = {
@@ -63,17 +58,15 @@ const saveStep =
   ) =>
   async (
     values: PaymentDetailsStep,
-    isDirty: boolean,
-    _: FormikHelpers<PaymentDetailsStep>,
+    _isDirty: boolean,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new AcceptQuoteClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.savePaymentDetails(
           id,
@@ -132,11 +125,8 @@ const paymentDetailsProps = (
   location: '/payment-details',
   title: 'Payment details',
   hidingFields: {
-    contactHide: (x: PaymentDetailsStep) =>
-      x.invoiceSentTo !== InvoiceSentToValues.DifferentPerson,
+    contactHide: (x: PaymentDetailsStep) => x.invoiceSentTo === 'SamePerson',
     contact: {
-      this: (x: PaymentDetailsStep) =>
-        x.invoiceSentTo !== InvoiceSentToValues.DifferentPerson,
       titleOther: (x: PaymentDetailsStep) => x.contact?.title !== 'Other',
     },
   },

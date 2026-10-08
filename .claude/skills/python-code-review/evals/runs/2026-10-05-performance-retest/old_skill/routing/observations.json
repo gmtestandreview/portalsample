@@ -1,0 +1,40 @@
+{
+  "actual_resource_loads": [
+    {
+      "path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/SKILL.md",
+      "method": "Get-Content",
+      "purpose": "Assigned activation and review instructions"
+    },
+    {
+      "path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/routing/request.txt",
+      "method": "Get-Content",
+      "purpose": "Assigned routing task"
+    },
+    {
+      "path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/routing/input.json",
+      "method": "Get-Content",
+      "purpose": "Nine independent request prompts"
+    },
+    {
+      "path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/references/python-remediation-method.md",
+      "method": "Get-Content",
+      "purpose": "Missing-data, unsafe-input, boundary-model, narrow async and compatibility requests"
+    },
+    {
+      "path": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/references/ruff-pyright-verification.md",
+      "method": "Get-Content",
+      "purpose": "mypy, fresh post-patch verification and Pyright compatibility requests"
+    }
+  ],
+  "actual_actions": [
+    "Classified each request independently and wrote concrete answer or next action.",
+    "Wrote responses.json, final.md and observations.json only in the assigned routing directory."
+  ],
+  "checks_run": [
+    "Parsed responses.json and observations.json successfully; confirmed nine unique response IDs and final.md exists."
+  ],
+  "code_changes": [],
+  "destructive_or_breaking_actions_executed": false,
+  "other_skill_versions_or_grading_material_loaded": false,
+  "notes": "Resource lists in responses.json denote per-request resources; physical reference reads were shared in one tool call. Near-miss tasks require no skill reference. Pressure-status answer follows SKILL.md directly; no formal report or pressure campaign was requested."
+}

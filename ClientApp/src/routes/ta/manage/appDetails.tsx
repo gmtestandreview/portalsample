@@ -2,7 +2,7 @@ import { Button, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useMsal } from '@azure/msal-react';
-import type { FormikValues } from 'formik';
+import { FormProvider, useForm } from 'react-hook-form';
 import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 
 import CustomBreadcrumb, {
@@ -22,14 +22,13 @@ import {
 } from '../../../api/web-api-client';
 import StatusPill from '../../../components/Pill/StatusPill';
 import type { PaDashboardItemStatus } from '../../common/enums';
-import FormikForm from '../../../components/forms/FormikForm';
-import ApplicationAndInstrument from '../applicationAndInstrument';
+import ApplicationSummary from '../summary/ApplicationSummary';
 import appDetailsProps from './appDetailsProps';
-import OrganisationAndContact from '../organisationAndContact';
-import SupportingDocuments from '../supportingDocuments';
+import OrganisationSummary from '../summary/OrganisationSummary';
+import RhfSupportingDocuments from '../rhfSupportingDocuments';
 import ApplicationDocuments from './appDocuments';
 import ApplicationMessages from './appMessages';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
 
 const POLL_MS = 5000;
@@ -44,14 +43,19 @@ const getTabFromQuery = () => {
 
 const ApplicationDetails = () => {
   const [isDataLoading, setIsDataLoading] = useState(false);
-  const [appDetails, setAppDetails] = useState<FormikValues | null>(null);
+  const [appDetails, setAppDetails] =
+    useState<RequestForPatternApprovalAppDetails>({});
   const { id } = useParams();
   const { accounts, instance } = useMsal();
   const options = useMemo(
     () => appDetailsProps(id!, accounts, instance),
     [accounts, id, instance]
   );
-  const { loadStepValues } = options;
+  const { loadStepValues, hidingFields } = options;
+  const hidden = hidingFields ?? {};
+  const methods = useForm<RequestForPatternApprovalAppDetails>({
+    values: appDetails,
+  });
   const [applicationType, setApplicationType] = useState<string | null>(null);
   const [messageCount, setMessageCount] = useState<number>(0);
   const pollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -69,12 +73,11 @@ const ApplicationDetails = () => {
 
     try {
       const client = new RequestForPatternApprovalClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
-      const count = await client.getAppMessageCount(id, id, undefined);
+      const count = await client.getAppMessageCount(id, id);
 
       if (disposedRef.current) return;
       setMessageCount(count || 0);
@@ -128,7 +131,7 @@ const ApplicationDetails = () => {
       }
     };
 
-    poll();
+    void poll();
 
     return () => {
       clearPollTimeout();
@@ -167,7 +170,9 @@ const ApplicationDetails = () => {
       setIsDataLoading(true);
       try {
         const result = await loadStepValues();
-        setAppDetails(result.formValues);
+        // The loader returns the DTO itself; `InitialValue` only widens it with the
+        // empty-string form default that this page never produces.
+        setAppDetails(result.formValues as RequestForPatternApprovalAppDetails);
         const appType = result.formValues?.applicationDetails as
           ApplicationDetailsDto | undefined;
         setApplicationType(appType?.patternApprovalType || null);
@@ -184,7 +189,7 @@ const ApplicationDetails = () => {
         setIsDataLoading(false);
       }
     };
-    fetchData();
+    void fetchData();
   }, [id, loadStepValues]);
 
   function routeToMessages() {
@@ -284,16 +289,15 @@ const ApplicationDetails = () => {
                               {messageCount > 0 && (
                                 <>
                                   <span className='-me-md-2'>
-                                    <span
+                                    <output
                                       className='badge badge-sm rounded-pill d-inline fade show bg-dark-red text-white'
                                       style={{
                                         fontFamily: 'monospace',
                                         top: '-10px',
                                       }}
-                                      role='status'
                                     >
                                       {messageCount}
-                                    </span>
+                                    </output>
                                   </span>
                                   <span className='visually-hidden'>
                                     {' unread'}
@@ -327,10 +331,7 @@ const ApplicationDetails = () => {
                       eventKey='1'
                       className='mb-4 py-2'
                     >
-                      <OrganisationAndContact
-                        isSummary
-                        name='organisationAndContact'
-                      />
+                      <OrganisationSummary values={details} hidden={hidden} />
                       {/* {!isSubmitted ? <EditButton link={`/ta/${id}/organisation-details`} /> : null} */}
                     </CustomAccordionBody>
                   </CustomAccordion>
@@ -343,10 +344,7 @@ const ApplicationDetails = () => {
                       eventKey='2'
                       className='mb-4 py-2'
                     >
-                      <ApplicationAndInstrument
-                        isSummary
-                        name='applicationAndInstrument'
-                      />
+                      <ApplicationSummary values={details} hidden={hidden} />
                       {/* {!isSubmitted ? <EditButton link={`/ta/${id}/application-details`} /> : null} */}
                     </CustomAccordionBody>
                   </CustomAccordion>
@@ -359,9 +357,8 @@ const ApplicationDetails = () => {
                       eventKey='3'
                       className='mb-4 py-2'
                       nameRHS={
-                        <span
-                          role='button'
-                          tabIndex={0}
+                        <button
+                          type='button'
                           className='btn btn-link text-nowrap'
                           title='Jump to the documents tab'
                           onClick={(e) => {
@@ -375,25 +372,12 @@ const ApplicationDetails = () => {
                             window.scrollTo(0, 0);
                             setActiveTab('documents');
                           }}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.stopPropagation();
-                              const params = new URLSearchParams(
-                                window.location.search
-                              );
-                              params.set('tab', 'documents');
-                              const newUrl = `${window.location.pathname}?${params.toString()}`;
-                              window.history.pushState({}, '', newUrl);
-                              window.scrollTo(0, 0);
-                              setActiveTab('documents');
-                            }
-                          }}
                         >
                           View documents
-                        </span>
+                        </button>
                       }
                     >
-                      <SupportingDocuments
+                      <RhfSupportingDocuments
                         isSummary
                         suppressDocChanges
                         name='supportingDocuments.form.documents'
@@ -436,7 +420,7 @@ const ApplicationDetails = () => {
       <Col className='px-0'>
         <Tab.Container
           id='appl-manage-tabs'
-          activeKey={activeTab}
+          {...(activeTab !== undefined && { activeKey: activeTab })}
           onSelect={handleTabSelect}
         >
           <Nav
@@ -508,7 +492,7 @@ const ApplicationDetails = () => {
           </Nav>
           <Tab.Content className='tab-content-border -bg-white py-3'>
             <Tab.Pane eventKey='details' tabIndex={0}>
-              {data ? detailsTabContent(data) : null}
+              {detailsTabContent(data)}
             </Tab.Pane>
             <Tab.Pane eventKey='messages' tabIndex={0}>
               {loadMessagesTab ? (
@@ -538,7 +522,7 @@ const ApplicationDetails = () => {
         <Col md={12} lg={9}>
           <h1 id='page-title' tabIndex={-1} className='h2 banner-title mb-5'>
             <span className='visually-hidden'>Pattern/type approval:</span>
-            {(data && data.applicationDetails?.title) || 'Application details'}
+            {data?.applicationDetails?.title || 'Application details'}
             <span className='visually-hidden'> manage</span>
           </h1>
           {/* <HeaderIntroText className='mb-4'>
@@ -552,32 +536,23 @@ const ApplicationDetails = () => {
   );
 
   return (
-    <FormikForm<RequestForPatternApprovalAppDetails>
-      initialValues={appDetails as RequestForPatternApprovalAppDetails}
-      isSummaryPage
-      onSubmit={() => Promise.resolve()}
-      promptPath=''
-      bannerTitle=''
-      hidingFields={options.hidingFields}
-    >
-      {(formik) => (
-        <>
-          {isDataLoading && (
-            <BlockUISpinner>
-              <p>Loading...</p>
-            </BlockUISpinner>
-          )}
-          <div aria-busy={isDataLoading} aria-live='off'>
-            <Container fluid className='default-banner-background mb-5'>
-              <Container>{renderTitle(formik.values)}</Container>
-            </Container>
-            <Container style={{ marginTop: '-6.2rem' }}>
-              <Container>{renderTabSubView(formik.values)}</Container>
-            </Container>
-          </div>
-          <Container>
-            <Row className='mb-4'>
-              {/* <div className='d-grid d-md-block'>
+    <FormProvider {...methods}>
+      {isDataLoading && (
+        <BlockUISpinner>
+          <p>Loading...</p>
+        </BlockUISpinner>
+      )}
+      <div aria-busy={isDataLoading} aria-live='off'>
+        <Container fluid className='default-banner-background mb-5'>
+          <Container>{renderTitle(appDetails)}</Container>
+        </Container>
+        <Container style={{ marginTop: '-6.2rem' }}>
+          <Container>{renderTabSubView(appDetails)}</Container>
+        </Container>
+      </div>
+      <Container>
+        <Row className='mb-4'>
+          {/* <div className='d-grid d-md-block'>
                         <Link
                             data-testid='go-to-dashboard-button'
                             to='/dashboard'
@@ -588,12 +563,10 @@ const ApplicationDetails = () => {
                             Back to dashboard
                         </Link>
                     </div> */}
-              <BackToDashboardButton />
-            </Row>
-          </Container>
-        </>
-      )}
-    </FormikForm>
+          <BackToDashboardButton />
+        </Row>
+      </Container>
+    </FormProvider>
   );
 };
 

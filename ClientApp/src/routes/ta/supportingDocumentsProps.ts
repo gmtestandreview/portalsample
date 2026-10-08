@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -8,7 +7,7 @@ import {
   RequestForPatternApprovalClient,
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -21,7 +20,7 @@ import {
   supportingDocsSaveValidation,
   supportingDocsSubmitValidation,
 } from './validation';
-import type { DiscardProps } from '../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../components/forms/types';
 
 const loadSummary =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -29,10 +28,9 @@ const loadSummary =
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const summaryStep = await client.getSupportingDocuments(
           id,
@@ -74,17 +72,15 @@ const saveStep =
   ) =>
   async (
     values: SupportingDocumentsStep,
-    isDirty: boolean,
-    _: FormikHelpers<SupportingDocumentsStep>,
+    _isDirty: boolean,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         // Save for later

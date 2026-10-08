@@ -18,7 +18,7 @@ import type {
   ReportRecipientStep,
   SummaryAndAcceptStep,
 } from '../../api/web-api-client';
-import type { Validation } from '../../components/forms/FormikForm/types';
+import type { Validation } from '../../components/forms/types';
 import addressSchema from '../../validationSchemas/addressValidation';
 
 export const reportRecipientSubmitValidation = yup.object<
@@ -52,7 +52,7 @@ export const deliveryAndReturnSubmitValidation = yup.object<
   }),
   returnAddress: yup.mixed().when(['returnMethod', 'returnAddressType'], {
     is: (
-      returnMethod: ReturnMethodValues | undefined,
+      _returnMethod: ReturnMethodValues | undefined,
       returnAddressType: ReturnAddressTypeValues | undefined
     ) => returnAddressType === ReturnAddressTypeValues.Other,
     then: () => addressSchema('Return address'),

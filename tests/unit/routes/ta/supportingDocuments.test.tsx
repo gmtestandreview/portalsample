@@ -19,6 +19,7 @@ import type {
 } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
 import { FormikWrapper } from '../../helpers/formik';
+import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   accountContext: vi.fn(),
@@ -497,9 +498,12 @@ describe('supporting documents', () => {
       await waitFor(() =>
         expect(mocks.setDashboardNotification).toHaveBeenCalled()
       );
-      expect(mocks.setDashboardNotification.mock.calls[0][0].message).toContain(
-        'Client Org'
-      );
+      expect(
+        defined(
+          mocks.setDashboardNotification.mock.calls[0],
+          'dashboard notification call'
+        )[0].message
+      ).toContain('Client Org');
       expect(mocks.setTargetOrganisation).toHaveBeenCalledWith(
         '11111111111',
         'Test Org'
@@ -556,7 +560,7 @@ describe('supporting documents', () => {
         DEFAULT_ACCESS_TOKEN
       );
       expect(
-        clients.patternApproval.methods.deleteDocument
+        clients.patternApproval.methods['deleteDocument']
       ).toHaveBeenCalledWith('APP-1', 'doc-9');
       expect(onDeleteSuccess).toHaveBeenCalledWith(true);
     });
@@ -569,7 +573,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        clients.patternApproval.methods.deleteDocument
+        clients.patternApproval.methods['deleteDocument']
       ).toHaveBeenCalledWith('APP-1', 'doc-9');
     });
 
@@ -584,7 +588,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        clients.patternApproval.methods.updateCategory
+        clients.patternApproval.methods['updateCategory']
       ).toHaveBeenCalledWith('APP-1', 'doc-9', 'Specification');
     });
 
@@ -596,7 +600,7 @@ describe('supporting documents', () => {
       });
 
       expect(
-        clients.patternApproval.methods.updateCategory
+        clients.patternApproval.methods['updateCategory']
       ).not.toHaveBeenCalled();
     });
   });

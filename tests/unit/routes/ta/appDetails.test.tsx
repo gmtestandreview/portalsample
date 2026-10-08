@@ -10,11 +10,9 @@ import {
   signOut,
   DEFAULT_ACCESS_TOKEN,
 } from '../../helpers/mockMsal';
-import type {
-  ClientMock,
-  ClientMethodMocks,
-} from '../../helpers/mockApiClient';
+import type { ClientMockOf } from '../../helpers/mockApiClient';
 import { renderWithRouter } from '../../helpers/renderWithRouter';
+import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   loadStepValues: vi.fn(),
@@ -23,12 +21,11 @@ const mocks = vi.hoisted(() => ({
 }));
 
 const clients = vi.hoisted(() => ({
-  patternApproval: undefined as unknown as ClientMock<ClientMethodMocks>,
+  patternApproval: undefined as unknown as ClientMockOf<'getAppMessageCount'>,
 }));
 
 /** Captures the inert callbacks the page hands its children, so they can be proven inert. */
 const captured = vi.hoisted(() => ({
-  formSubmit: undefined as unknown as () => Promise<unknown>,
   docsProps: undefined as unknown as {
     onUploadAttachment: () => Promise<unknown>;
     attachment: { onUploadFiles: () => Promise<unknown> };
@@ -70,27 +67,6 @@ vi.mock('../../../../ClientApp/src/routes/ta/manage/appDetailsProps', () => ({
     loadStepValues: mocks.loadStepValues,
     hidingFields: mocks.hidingFields,
   }),
-}));
-
-/** FormikForm hands its children a formik bag; only `values` is read here. */
-vi.mock('../../../../ClientApp/src/components/forms/FormikForm', () => ({
-  default: ({
-    initialValues,
-    onSubmit,
-    children,
-  }: {
-    initialValues: unknown;
-    onSubmit: () => Promise<unknown>;
-    children: (formik: { values: unknown }) => ReactNode;
-  }) => {
-    captured.formSubmit = onSubmit;
-
-    // Passed through unchanged rather than defaulted to {}: appDetails is null until the load
-    // resolves, and the page's own null guards exist for exactly that first render.
-    return (
-      <div data-testid='formik-form'>{children({ values: initialValues })}</div>
-    );
-  },
 }));
 
 vi.mock('../../../../ClientApp/src/components/Accordion', () => ({
@@ -135,15 +111,21 @@ vi.mock(
   })
 );
 
-vi.mock('../../../../ClientApp/src/routes/ta/organisationAndContact', () => ({
-  default: () => <div data-testid='organisation-and-contact' />,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/ta/summary/OrganisationSummary',
+  () => ({
+    default: () => <div data-testid='organisation-and-contact' />,
+  })
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/applicationAndInstrument', () => ({
-  default: () => <div data-testid='application-and-instrument' />,
-}));
+vi.mock(
+  '../../../../ClientApp/src/routes/ta/summary/ApplicationSummary',
+  () => ({
+    default: () => <div data-testid='application-and-instrument' />,
+  })
+);
 
-vi.mock('../../../../ClientApp/src/routes/ta/supportingDocuments', () => ({
+vi.mock('../../../../ClientApp/src/routes/ta/rhfSupportingDocuments', () => ({
   default: (props: typeof captured.docsProps) => {
     captured.docsProps = props;
 
@@ -332,7 +314,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(
           clients.patternApproval.methods.getAppMessageCount
-        ).toHaveBeenCalledWith('APP-1', 'APP-1', undefined)
+        ).toHaveBeenCalledWith('APP-1', 'APP-1')
       );
       expect(clients.patternApproval.setAuthToken).toHaveBeenCalledWith(
         DEFAULT_ACCESS_TOKEN
@@ -379,7 +361,7 @@ describe('application details', () => {
       await waitFor(() =>
         expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
       );
-      expect(screen.getByTestId('formik-form')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     });
 
     it('does not poll without a signed-in account', async () => {
@@ -388,7 +370,7 @@ describe('application details', () => {
       await renderDetails();
 
       await waitFor(() =>
-        expect(screen.getByTestId('formik-form')).toBeInTheDocument()
+        expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
       );
       expect(
         clients.patternApproval.methods.getAppMessageCount
@@ -609,7 +591,7 @@ describe('application details', () => {
           'null (APP-1)'
         )
       );
-      expect(screen.getByTestId('formik-form')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     });
 
     it('shows the details spinner while switching to another application', async () => {
@@ -744,16 +726,26 @@ describe('application details', () => {
         captured.docsProps.attachment.onUploadFiles()
       ).resolves.toEqual([]);
     });
-
-    it('has nothing to submit', async () => {
-      // A summary page: the form exists to display values, not to save them.
-      await renderDetails();
-
-      await expect(captured.formSubmit()).resolves.toBeUndefined();
-    });
   });
 
   describe('the summary accordions', () => {
+    it('still renders the summaries when the page props carry no hiding rules', async () => {
+      const original = mocks.hidingFields;
+      Object.assign(mocks, { hidingFields: undefined });
+
+      try {
+        await renderDetails();
+
+        await waitFor(() =>
+          expect(
+            screen.getByTestId('organisation-and-contact')
+          ).toBeInTheDocument()
+        );
+      } finally {
+        Object.assign(mocks, { hidingFields: original });
+      }
+    });
+
     it('embeds the organisation, application and document summaries', async () => {
       await renderDetails();
 
@@ -775,7 +767,9 @@ describe('application details', () => {
         expect(screen.getAllByTestId('status-pill').length).toBeGreaterThan(0)
       );
       expect(
-        within(screen.getAllByTestId('status-pill')[0]).getByText('InProgress')
+        within(defined(screen.getAllByTestId('status-pill')[0])).getByText(
+          'InProgress'
+        )
       ).toBeInTheDocument();
     });
   });

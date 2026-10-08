@@ -5,7 +5,7 @@ import {
   ApplicationClient,
   ApplicationType,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 import AppLogger from '../../../instrumentation/AppLogger';
 
@@ -20,10 +20,9 @@ const CreateRequestForTypeApproval = () => {
         // No applicationId check: the isSaving ref below already limits this to one run,
         // and on that run the id has not been set yet, so the guard could not fail.
         const client = new ApplicationClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         const application = await client.createApplication({
           applicationType: ApplicationType.PatternApproval,
@@ -34,7 +33,7 @@ const CreateRequestForTypeApproval = () => {
       }
     };
     if (!isSaving.current) {
-      createApplication();
+      void createApplication();
     }
     return () => {
       isSaving.current = true;

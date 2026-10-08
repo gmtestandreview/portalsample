@@ -2,7 +2,7 @@ import { get } from 'lodash';
 import { useEffect, useMemo, useRef } from 'react';
 import { useFormikContext } from 'formik';
 import { FormProvider, useForm } from 'react-hook-form';
-import { createSaveAwareYupResolver } from '../../components/forms/FormikForm/saveAwareYupResolver';
+import { createSaveAwareYupResolver } from '../../components/forms/saveAwareYupResolver';
 import {
   paymentDetailsSaveValidation,
   paymentDetailsSubmitValidation,
@@ -30,7 +30,7 @@ const isBridgedFieldName = (name: string) =>
   name.startsWith('contact.');
 
 interface PaymentDetailsFormikBridgeProps {
-  quotationId?: string;
+  quotationId?: string | undefined;
 }
 
 /**
@@ -83,6 +83,7 @@ const PaymentDetailsFormikBridge = ({
 
   useEffect(() => {
     if (submitCount <= previousSubmitCount.current) {
+      previousSubmitCount.current = submitCount;
       return;
     }
 

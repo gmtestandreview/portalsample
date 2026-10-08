@@ -9,21 +9,17 @@ import applicationAndInstrumentProps from '../../../../ClientApp/src/routes/ta/a
 import organisationAndContactProps from '../../../../ClientApp/src/routes/ta/organisationAndContactProps';
 import supportingDocumentsProps from '../../../../ClientApp/src/routes/ta/supportingDocumentsProps';
 import summaryAndSubmitProps from '../../../../ClientApp/src/routes/ta/summaryAndSubmitProps';
-import type {
-  ApplicationAndInstrumentStepDto,
-  RequestForPatternApprovalSummaryDto,
-} from '../../../../ClientApp/src/routes/ta/types';
+import type { RequestForPatternApprovalSummaryDto } from '../../../../ClientApp/src/routes/ta/types';
 import type * as WebApiClientModule from '../../../../ClientApp/src/api/web-api-client';
 import {
   CRMLookupTypes,
   PatternApprovalRequiredValueOptions,
   PatternApprovalRequiredValues,
-  type PatternApprovalOrgAndContact,
   type RequestForPatternApprovalSummary,
   type SupportingDocumentsStep,
   YesNo,
 } from '../../../../ClientApp/src/api/web-api-client';
-import { formikHelpers, stepStatuses } from '../testFixtures';
+import { stepStatuses } from '../testFixtures';
 
 const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn(),
@@ -208,7 +204,6 @@ describe('pattern approval wizard prop factories', () => {
         certNameOptions: [{ id: 'cert-1', label: 'Certificate 1' }],
       },
       true,
-      formikHelpers<ApplicationAndInstrumentStepDto>(),
       abortSignal
     );
     expect(mocks.saveApplicationAndInstrument).toHaveBeenCalledWith(
@@ -230,7 +225,6 @@ describe('pattern approval wizard prop factories', () => {
     await props.onSaveAndExit?.(
       { patternApprovalType: PatternApprovalRequiredValues.Variation },
       false,
-      formikHelpers<ApplicationAndInstrumentStepDto>(),
       abortSignal
     );
     expect(mocks.saveApplicationAndInstrument).toHaveBeenLastCalledWith(
@@ -331,7 +325,6 @@ describe('pattern approval wizard prop factories', () => {
     await props.onSaveAndExit?.(
       { isManufacturer: YesNo.No },
       false,
-      formikHelpers<PatternApprovalOrgAndContact>(),
       abortSignal
     );
     expect(mocks.saveOrganisationAndContact).toHaveBeenCalledWith(
@@ -346,7 +339,6 @@ describe('pattern approval wizard prop factories', () => {
     await props.onSaveAndNext?.(
       { isManufacturer: YesNo.Yes },
       true,
-      formikHelpers<PatternApprovalOrgAndContact>(),
       abortSignal
     );
     expect(mocks.saveOrganisationAndContact).toHaveBeenLastCalledWith(
@@ -386,8 +378,8 @@ describe('pattern approval wizard prop factories', () => {
       '/not-found'
     );
     expect(props.isSummaryPage).toBe(true);
-    expect(props.suppressErrorSummary).toBe(true);
-    expect(props.suppressErrorSummaryPath).toBe(true);
+    expect(props['suppressErrorSummary']).toBe(true);
+    expect(props['suppressErrorSummaryPath']).toBe(true);
 
     const documents: SupportingDocumentsStep = {
       form: {
@@ -396,12 +388,7 @@ describe('pattern approval wizard prop factories', () => {
         ],
       },
     };
-    await props.onSaveAndNext?.(
-      documents,
-      true,
-      formikHelpers<SupportingDocumentsStep>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(documents, true, abortSignal);
     expect(mocks.saveSupportingDocuments).toHaveBeenCalledWith(
       'PA-3',
       {
@@ -413,12 +400,7 @@ describe('pattern approval wizard prop factories', () => {
     );
 
     const withoutDocuments: SupportingDocumentsStep = { form: {} };
-    await props.onSaveAndExit?.(
-      withoutDocuments,
-      false,
-      formikHelpers<SupportingDocumentsStep>(),
-      abortSignal
-    );
+    await props.onSaveAndExit?.(withoutDocuments, false, abortSignal);
     expect(mocks.saveSupportingDocuments).toHaveBeenLastCalledWith(
       'PA-3',
       {
@@ -580,8 +562,8 @@ describe('pattern approval wizard prop factories', () => {
     expect(props.getRedirectionLocationOnError?.(404, {} as ErrorType)).toBe(
       '/not-found'
     );
-    expect(props.disableLinkedError).toBe(false);
-    expect(props.suppressErrorSummaryPath).toBe(true);
+    expect(props['disableLinkedError']).toBe(false);
+    expect(props['suppressErrorSummaryPath']).toBe(true);
 
     const summary: RequestForPatternApprovalSummaryDto = {
       referenceId: 'PA-4',
@@ -589,12 +571,7 @@ describe('pattern approval wizard prop factories', () => {
       acceptTermsAndConditions: true,
       acceptDeclaration: true,
     };
-    await props.onSaveAndNext?.(
-      summary,
-      true,
-      formikHelpers<RequestForPatternApprovalSummaryDto>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(summary, true, abortSignal);
     expect(mocks.submit).toHaveBeenCalledWith(
       'PA-4',
       {
@@ -640,12 +617,7 @@ describe('pattern approval wizard prop factories', () => {
         accountDetails,
         stepStatuses,
         'Type approval'
-      ).onSaveAndNext?.(
-        {},
-        true,
-        formikHelpers<ApplicationAndInstrumentStepDto>(),
-        abortSignal
-      )
+      ).onSaveAndNext?.({}, true, abortSignal)
     ).rejects.toThrow(
       'Failed to save PA application and instrument details. Id: PA-6'
     );
@@ -685,12 +657,7 @@ describe('pattern approval wizard prop factories', () => {
         accountDetails,
         stepStatuses,
         'Type approval'
-      ).onSaveAndNext?.(
-        {},
-        true,
-        formikHelpers<PatternApprovalOrgAndContact>(),
-        abortSignal
-      )
+      ).onSaveAndNext?.({}, true, abortSignal)
     ).rejects.toThrow('Failed to save PA org and contact details. Id: PA-8');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save PA org and contact details',
@@ -728,12 +695,7 @@ describe('pattern approval wizard prop factories', () => {
         accountDetails,
         stepStatuses,
         'Type approval'
-      ).onSaveAndNext?.(
-        { form: {} },
-        true,
-        formikHelpers<SupportingDocumentsStep>(),
-        abortSignal
-      )
+      ).onSaveAndNext?.({ form: {} }, true, abortSignal)
     ).rejects.toThrow('Failed to save PA supporting documents. Id: PA-10');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save PA supporting documents',
@@ -767,12 +729,7 @@ describe('pattern approval wizard prop factories', () => {
         accountDetails,
         stepStatuses,
         'Type approval'
-      ).onSaveAndNext?.(
-        {},
-        true,
-        formikHelpers<RequestForPatternApprovalSummaryDto>(),
-        abortSignal
-      )
+      ).onSaveAndNext?.({}, true, abortSignal)
     ).rejects.toThrow('Failed to submit PA summary. Id: PA-12');
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to submit PA summary',
@@ -818,49 +775,27 @@ describe('pattern approval wizard prop factories', () => {
     await expect(appProps.loadStepValues?.()).rejects.toThrow(
       'There are no accounts available to load PA application and instrument details. Id: PA-13'
     );
-    await expect(
-      appProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<ApplicationAndInstrumentStepDto>()
-      )
-    ).rejects.toThrow(
+    await expect(appProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'There are no accounts available to save PA application and instrument details. Id: PA-13'
     );
     await expect(orgProps.loadStepValues?.()).rejects.toThrow(
       'There are no accounts available to load PA organisation and contact details. Id: PA-13'
     );
-    await expect(
-      orgProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<PatternApprovalOrgAndContact>()
-      )
-    ).rejects.toThrow(
+    await expect(orgProps.onSaveAndExit?.({}, false)).rejects.toThrow(
       'There are no accounts available to save PA organisation and contact details. Id: PA-13'
     );
     await expect(docsProps.loadStepValues?.()).rejects.toThrow(
       'There are no accounts available to load PA supporting documents. Id: PA-13'
     );
     await expect(
-      docsProps.onSaveAndExit?.(
-        { form: {} },
-        false,
-        formikHelpers<SupportingDocumentsStep>()
-      )
+      docsProps.onSaveAndExit?.({ form: {} }, false)
     ).rejects.toThrow(
       'There are no accounts available to save PA supporting documents. Id: PA-13'
     );
     await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
       'There are no accounts available to load PA summary. Id: PA-13'
     );
-    await expect(
-      summaryProps.onSaveAndNext?.(
-        {},
-        false,
-        formikHelpers<RequestForPatternApprovalSummaryDto>()
-      )
-    ).rejects.toThrow(
+    await expect(summaryProps.onSaveAndNext?.({}, false)).rejects.toThrow(
       'There are no accounts available to submit PA summary. Id: PA-13'
     );
     expect(mocks.appLoggerVerbose).toHaveBeenCalledTimes(8);

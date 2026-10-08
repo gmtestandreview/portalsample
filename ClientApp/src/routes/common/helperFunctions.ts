@@ -385,7 +385,7 @@ export const contentLoaded = (sendPageView: boolean) => {
   const redactedData: Record<string, string> = {};
 
   piiFields.forEach((field) => {
-    const key = field.dataset.pii as string;
+    const key = field.dataset['pii'] as string;
     redactedData[key] = '[REDACTED]';
 
     // Send redacted data to GA
@@ -434,8 +434,9 @@ export function sortList<T>(
   const sortedList = [...list].sort((a, b) =>
     (a[displayFieldName] as string).localeCompare(b[displayFieldName] as string)
   );
-  if (removedItems) {
-    sortedList.push(removedItems[0]);
+  const [removedItem] = removedItems ?? [];
+  if (removedItem !== undefined) {
+    sortedList.push(removedItem);
   }
   return [sortedList, lastId];
 }

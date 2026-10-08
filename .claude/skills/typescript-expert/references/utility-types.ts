@@ -1,8 +1,14 @@
 /**
- * TypeScript Utility Types Library
- * 
- * A collection of commonly used utility types for TypeScript projects.
- * Copy and use as needed in your projects.
+ * TypeScript utility-type pattern catalog.
+ *
+ * Copy only the pattern needed and adapt it to the project's contracts.
+ * These examples provide static shapes, not runtime validation. In particular,
+ * branded Email/UUID/PositiveNumber/Timestamp aliases do not prove that a
+ * runtime value is valid; validate first and brand at a trusted boundary.
+ *
+ * Recursive utilities can increase compiler instantiation cost on large or
+ * recursive models. Prefer built-ins or shallower project-specific types when
+ * they are sufficient.
  */
 
 // =============================================================================
@@ -68,7 +74,7 @@ export const none: None = { type: 'none' }
 /**
  * Make all properties deeply readonly.
  */
-export type DeepReadonly<T> = T extends (...args: any[]) => any
+export type DeepReadonly<T> = T extends (...args: never[]) => unknown
     ? T
     : T extends object
     ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
@@ -143,20 +149,38 @@ export type Merge<T, U> = Omit<T, keyof U> & U
 /**
  * Get element type from array.
  */
-export type ElementOf<T> = T extends (infer E)[] ? E : never
+export type ElementOf<T> = T extends readonly (infer E)[] ? E : never
 
 /**
- * Tuple of specific length.
+ * Tuple of a bounded non-negative integer length.
+ *
+ * Broad `number` falls back to `T[]`. Negative/fractional literals and literal
+ * sizes above 64 resolve to `never` instead of recursing indefinitely. Raise
+ * the bound only with project-specific type-performance evidence.
  */
-export type Tuple<T, N extends number> = N extends N
-    ? number extends N
+export type Tuple<T, N extends number> = number extends N
     ? T[]
-    : _TupleOf<T, N, []>
+    : _IsNonNegativeInteger<N> extends true
+    ? _TupleOf<T, N, []>
     : never
 
-type _TupleOf<T, N extends number, R extends unknown[]> = R['length'] extends N
+type _IsNonNegativeInteger<N extends number> =
+    `${N}` extends `-${string}`
+    ? false
+    : `${N}` extends `${bigint}`
+    ? true
+    : false
+
+type _TupleOf<
+    T,
+    N extends number,
+    R extends T[],
+    Depth extends unknown[] = []
+> = R['length'] extends N
     ? R
-    : _TupleOf<T, N, [T, ...R]>
+    : Depth['length'] extends 64
+    ? never
+    : _TupleOf<T, N, [T, ...R], [unknown, ...Depth]>
 
 /**
  * Non-empty array.
@@ -164,9 +188,13 @@ type _TupleOf<T, N extends number, R extends unknown[]> = R['length'] extends N
 export type NonEmptyArray<T> = [T, ...T[]]
 
 /**
- * At least N elements.
+ * At least N elements, using the same bounded-count rules as `Tuple`.
  */
-export type AtLeast<T, N extends number> = [...Tuple<T, N>, ...T[]]
+export type AtLeast<T, N extends number> = Tuple<T, N> extends infer Prefix
+    ? Prefix extends T[]
+    ? [...Prefix, ...T[]]
+    : never
+    : never
 
 // =============================================================================
 // FUNCTION UTILITIES
@@ -175,19 +203,21 @@ export type AtLeast<T, N extends number> = [...Tuple<T, N>, ...T[]]
 /**
  * Get function arguments as tuple.
  */
-export type Arguments<T> = T extends (...args: infer A) => any ? A : never
+export type Arguments<T> = T extends (...args: infer A) => unknown ? A : never
 
 /**
  * Get first argument of function.
  */
-export type FirstArgument<T> = T extends (first: infer F, ...args: any[]) => any
-    ? F
+export type FirstArgument<T> = T extends (...args: infer A) => unknown
+    ? A extends [infer F, ...unknown[]]
+        ? F
+        : never
     : never
 
 /**
  * Async version of function.
  */
-export type AsyncFunction<T extends (...args: any[]) => any> = (
+export type AsyncFunction<T extends (...args: never[]) => unknown> = (
     ...args: Parameters<T>
 ) => Promise<Awaited<ReturnType<T>>>
 
@@ -224,6 +254,10 @@ export type Join<T extends string[], D extends string> =
 
 /**
  * Path to nested object.
+ *
+ * Intended for bounded record-like shapes. Arrays, functions, index signatures,
+ * and recursive schemas may need a project-specific variant to avoid surprising
+ * keys or excessive type instantiation.
  */
 export type PathOf<T, K extends keyof T = keyof T> = K extends string
     ? T[K] extends object
@@ -239,7 +273,7 @@ export type PathOf<T, K extends keyof T = keyof T> = K extends string
  * Last element of union.
  */
 export type UnionLast<T> = UnionToIntersection<
-    T extends any ? () => T : never
+    T extends unknown ? () => T : never
 > extends () => infer R
     ? R
     : never
@@ -248,13 +282,17 @@ export type UnionLast<T> = UnionToIntersection<
  * Union to intersection.
  */
 export type UnionToIntersection<U> = (
-    U extends any ? (k: U) => void : never
+    U extends unknown ? (k: U) => void : never
 ) extends (k: infer I) => void
     ? I
     : never
 
 /**
  * Union to tuple.
+ *
+ * Do not rely on the resulting element order: union ordering is not a stable
+ * semantic contract. Keep unions small; this recursive transform can become
+ * expensive and is unsuitable as an ordering mechanism.
  */
 export type UnionToTuple<T, L = UnionLast<T>> = [T] extends [never]
     ? []
@@ -308,7 +346,7 @@ export type JsonValue = JsonPrimitive | JsonArray | JsonObject
  */
 export type Jsonify<T> = T extends JsonPrimitive
     ? T
-    : T extends undefined | ((...args: any[]) => any) | symbol
+    : T extends undefined | ((...args: never[]) => unknown) | symbol
     ? never
     : T extends { toJSON(): infer R }
     ? R

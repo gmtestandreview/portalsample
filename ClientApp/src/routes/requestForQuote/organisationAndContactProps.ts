@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -8,7 +7,7 @@ import type {
   FormStepStatusDto,
   OrganisationAndContact,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
@@ -27,10 +26,9 @@ const loadOrganisationAndContact =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       const organisationAndContact = await client.getOrganisationAndContact(
         id,
@@ -55,16 +53,14 @@ const saveStep =
   ) =>
   async (
     values: OrganisationAndContact,
-    isDirty: boolean,
-    _: FormikHelpers<OrganisationAndContact>,
+    _isDirty: boolean,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       const client = new RequestForQuoteClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.saveOrganisationAndContact(
         id,

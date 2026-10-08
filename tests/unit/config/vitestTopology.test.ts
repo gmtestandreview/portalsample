@@ -114,11 +114,11 @@ describe('Storybook leaf is a directly runnable Browser Mode project', () => {
     expect(storybook.setupFiles).toEqual(['./vitest.storybook.setup.ts']);
   });
 
-  it("pins Browser Mode API binding away from Vitest's Windows-reserved default port", () => {
+  it("pins Browser Mode API binding out of Windows' reserved TCP ranges (below the 49152 dynamic range)", () => {
     expect(storybook.api).toBeUndefined();
     expect(storybook.browser?.api).toMatchObject({
       host: '127.0.0.1',
-      port: 61005,
+      port: 47005,
     });
   });
 
@@ -192,7 +192,7 @@ describe('Playwright files stay out of both Vitest leaves', () => {
   it.each(foreignTestPaths)('does not discover %s', (foreignPath) => {
     for (const pattern of unit.include ?? []) {
       expect(
-        foreignPath.startsWith(pattern.split('*')[0]),
+        foreignPath.startsWith(pattern.split('*', 1)[0] ?? pattern),
         `unit include "${pattern}" must not reach ${foreignPath}`
       ).toBe(false);
     }

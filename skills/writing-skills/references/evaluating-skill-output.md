@@ -6,7 +6,8 @@ description:
   iteration.'
 ---
 
-<!-- markdownlint-disable-next-line MD025 -->
+<!-- markdownlint-disable MD013 MD025 -->
+
 # Evaluating skill output quality
 
 <!-- markdownlint-disable MD033 -->
@@ -33,14 +34,19 @@ Store test cases in `evals/evals.json` inside your skill directory:
   "evals": [
     {
       "id": 1,
-      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv. Can you find the top 3 months by revenue and make a bar chart?",
-      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv.
+      Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue,
+      with labeled axes and values.",
       "files": ["evals/files/sales_2025.csv"]
     },
     {
       "id": 2,
-      "prompt": "there's a csv in my downloads called customers.csv, some rows have missing emails - can you clean it up and tell me how many were missing?",
-      "expected_output": "A cleaned CSV with missing emails handled, plus a count of how many were missing.",
+      "prompt": "there's a csv in my downloads called customers.csv,
+      some rows have missing emails - can you clean it up and tell me how many
+      were missing?",
+      "expected_output": "A cleaned CSV with missing emails handled, plus a
+      count of how many were missing.",
       "files": ["evals/files/customers.csv"]
     }
   ]
@@ -161,7 +167,10 @@ When each run completes, record the token count and duration:
 ```
 
 <Tip>
-In Claude Code, when a subagent task finishes, the [task completion notification](https://platform.claude.com/docs/en/agent-sdk/typescript#sdk-task-notification-message) includes `total_tokens` and `duration_ms`. Save these values immediately - they aren't persisted anywhere else.
+In Claude Code, when a subagent task finishes,
+the [task completion notification](https://platform.claude.com/docs/en/agent-sdk/typescript#sdk-task-notification-message)
+includes `total_tokens` and `duration_ms`.
+Save these values immediately - they aren't persisted anywhere else.
 </Tip>
 
 ## Writing assertions
@@ -196,8 +205,10 @@ Add assertions to each test case in `evals/evals.json`:
   "evals": [
     {
       "id": 1,
-      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv. Can you find the top 3 months by revenue and make a bar chart?",
-      "expected_output": "A bar chart image showing the top 3 months by revenue, with labeled axes and values.",
+      "prompt": "I have a CSV of monthly sales data in data/sales_2025.csv.
+      Can you find the top 3 months by revenue and make a bar chart?",
+      "expected_output": "A bar chart image showing the top 3 months by revenue,
+      with labeled axes and values.",
       "files": ["evals/files/sales_2025.csv"],
       "assertions": [
         "The output includes a bar chart image file",
@@ -267,7 +278,12 @@ reusable across iterations.
   checked from the output alone). Fix these for the next iteration.
 
 <Tip>
-For comparing two skill versions, try **blind comparison**: present both outputs to an LLM judge without revealing which came from which version. The judge scores holistic qualities - organization, formatting, usability, polish - on its own rubric, free from bias about which version "should" be better. This complements assertion grading: two outputs might both pass all assertions but differ significantly in overall quality.
+For comparing two skill versions, try **blind comparison**: present both outputs
+to an LLM judge without revealing which came from which version.
+The judge scores holistic qualities - organization, formatting, usability,
+polish - on its own rubric, free from bias about which version "should" be better.
+This complements assertion grading: two outputs might both pass all assertions
+but differ significantly in overall quality.
 </Tip>
 
 ## Aggregating results
@@ -304,7 +320,10 @@ buys (higher pass rate). A skill that adds 13 seconds but improves pass rate by
 a 2-point improvement might not be.
 
 <Note>
-Standard deviation (`stddev`) is only meaningful with multiple runs per eval. In early iterations with just 2-3 test cases and single runs, focus on the raw pass counts and the delta - the statistical measures become useful as you expand the test set and run each eval multiple times.
+Standard deviation (`stddev`) is only meaningful with multiple runs per eval.
+In early iterations with just 2-3 test cases and single runs, focus on the raw
+pass counts and the delta - the statistical measures become useful as you expand
+the test set and run each eval multiple times.
 </Note>
 
 ## Analyzing patterns
@@ -347,7 +366,8 @@ as a `feedback.json` alongside the eval directories):
 
 ```json feedback.json
 {
-  "eval-top-months-chart": "The chart is missing axis labels and the months are in alphabetical order instead of chronological.",
+  "eval-top-months-chart": "The chart is missing axis labels and the months are
+   in alphabetical order instead of chronological.",
   "eval-clean-missing-emails": ""
 }
 ```
@@ -390,7 +410,7 @@ When prompting the LLM, include these guidelines:
 - **Bundle repeated work.** If every test run independently wrote a similar
   helper script (a chart builder, a data parser), that's a signal to bundle the
   script into the skill's `scripts/` directory. See
-  [Using scripts](/skill-creation/using-scripts) for how to do this.
+  [Using scripts](using-scripts-in-skills.md) for how to do this.
 
 ### The loop
 
@@ -405,5 +425,7 @@ Stop when you're satisfied with the results, feedback is consistently empty, or
 you're no longer seeing meaningful improvement between iterations.
 
 <Tip>
-The [`skill-creator`](https://github.com/anthropics/skills/tree/main/skills/skill-creator) Skill automates much of this workflow - running evals, grading assertions, aggregating benchmarks, and presenting results for human review.
+The [`skill-creator`](https://github.com/anthropics/skills/tree/main/skills/skill-creator)
+Skill automates much of this workflow - running evals, grading assertions,
+aggregating benchmarks, and presenting results for human review.
 </Tip>

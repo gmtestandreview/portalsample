@@ -87,9 +87,7 @@ def to_prompt_cmd(skill_paths: tuple[Path, ...]) -> None:
         1: Error
     """
     try:
-        resolved_paths: list[Path] = [
-            _skill_directory(skill_path) for skill_path in skill_paths
-        ]
+        resolved_paths: list[Path] = [_skill_directory(skill_path) for skill_path in skill_paths]
         output = to_prompt(resolved_paths)
         click.echo(output)
     except SkillError as e:

@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -10,7 +9,7 @@ import {
   CRMLookupTypes,
   LookupClient,
 } from '../../api/web-api-client';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import type {
   WizardFormStepValues,
   WizardStepProps,
@@ -32,10 +31,9 @@ const loadApplicationAndInstrument =
       try {
         const client = new RequestForPatternApprovalClient();
         const lookupClient = new LookupClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         lookupClient.setAuthToken(tokenResult.accessToken);
 
@@ -99,25 +97,23 @@ const saveStep =
   ) =>
   async (
     values: ApplicationAndInstrumentStepDto,
-    isDirty: boolean,
-    _: FormikHelpers<ApplicationAndInstrumentStepDto>,
+    _isDirty: boolean,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
       try {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
 
         const valuesToSave = { ...values };
 
-        valuesToSave.certNameOptions = undefined;
-        valuesToSave.instrumentCategoryLookup = undefined;
-        valuesToSave.instrumentTypeLookup = undefined;
-        valuesToSave.instrumentTypeContent = undefined;
+        delete valuesToSave.certNameOptions;
+        delete valuesToSave.instrumentCategoryLookup;
+        delete valuesToSave.instrumentTypeLookup;
+        delete valuesToSave.instrumentTypeContent;
 
         await client.saveApplicationAndInstrument(
           id,

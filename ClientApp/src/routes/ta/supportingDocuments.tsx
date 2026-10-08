@@ -3,11 +3,11 @@ import { useEffect, useState, useRef } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
 import { useFormikContext } from 'formik';
+import { type TASupportingDocumentsProps, ValidationMessages } from './types';
 import {
-  FileStatus,
-  type TASupportingDocumentsProps,
-  ValidationMessages,
-} from './types';
+  getFailedFileErrors,
+  handleAlertScroll,
+} from './supportingDocumentsHelpers';
 import {
   type AttachmentDto,
   type FileParameter,
@@ -17,7 +17,7 @@ import {
   type SupportingDocumentsStep,
 } from '../../api/web-api-client';
 import { HttpStatusCode } from '../../types';
-import { tokenRequest } from '../../authentication/authConfig';
+import { silentRequestFor } from '../../authentication/silentRequest';
 import useAccountContext, {
   useAccountDispatch,
 } from '../../authentication/hooks';
@@ -26,14 +26,18 @@ import { NotificationSeverity } from '../../storage/types';
 import AttachmentNew from '../../components/Inputs/Attachment/index-new';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 
-const handleAlertScroll = () => {
-  setTimeout(() => {
-    const summaryRef: HTMLElement = document.querySelector(
-      '#form-error-summary-custom'
-    ) as HTMLElement;
-    summaryRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    summaryRef?.focus();
-  }, 100);
+const isString = (e: unknown): e is string => typeof e === 'string';
+
+/** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
+const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
+  if (!fieldError) return [];
+  if (typeof fieldError === 'string') return [fieldError];
+  if (Array.isArray(fieldError))
+    return (fieldError as unknown[]).filter(isString);
+  if (typeof fieldError !== 'object') return [];
+  return [(fieldError as Record<string, unknown>)[errorName] || ''].filter(
+    isString
+  );
 };
 
 const SupportingDocuments = (
@@ -78,40 +82,16 @@ const SupportingDocuments = (
       err !== ValidationMessages.RequiredTag
   );
 
-  const errorNames = name.split('.'); // e.g. 'supportingDocuments.form.documents' => ['supportingDocuments', 'form', 'documents']
-  const errorName = errorNames[errorNames.length - 1]; // e.g. 'documents'
+  // e.g. 'supportingDocuments.form.documents' => 'documents'
+  const errorName = name.slice(name.lastIndexOf('.') + 1);
+  // e.g. 'supportingDocuments.form.documents' => 'supportingDocuments'
+  const rootErrorName = name.replace(/\..*$/s, '');
   // Get Formik field errors for this field
-  let formikFieldErrors: string[] = [];
-  if (formikErrors && formikErrors[errorNames[0]]) {
-    const fieldError = formikErrors[errorNames[0]];
-    if (typeof fieldError === 'string') {
-      formikFieldErrors = [fieldError];
-    } else if (Array.isArray(fieldError)) {
-      formikFieldErrors = (fieldError as unknown[]).filter(
-        (e): e is string => typeof e === 'string'
-      );
-    } else if (typeof fieldError === 'object' && fieldError !== null) {
-      formikFieldErrors = [fieldError[errorName] || ''].filter(
-        (e): e is string => typeof e === 'string'
-      );
-    }
-  }
-
-  const fileErrors: string[] = [];
-  if (progress && progress.percent === 100 && Array.isArray(progress.files)) {
-    const failedFileErrors = progress.files
-      .filter(
-        (f) =>
-          f.status === FileStatus.Failed || f.status === FileStatus.Cancelled
-      )
-      .map((f) => {
-        if (f.status === FileStatus.Cancelled) {
-          return `Upload cancelled for ${f.fileName}`;
-        }
-        return `Error uploading ${f.fileName}`;
-      });
-    fileErrors.push(...failedFileErrors);
-  }
+  const formikFieldErrors = getFormikFieldErrors(
+    formikErrors?.[rootErrorName],
+    errorName
+  );
+  const fileErrors = getFailedFileErrors(progress);
   // Combine errors, deduplicated
   const errors = Array.from(
     new Set([
@@ -158,10 +138,9 @@ const SupportingDocuments = (
     setFormikErrors({});
     setExternalErrors?.([]);
 
-    const tokenResult = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account: accounts[0],
-    });
+    const tokenResult = await instance.acquireTokenSilent(
+      silentRequestFor(accounts[0])
+    );
 
     // Build the FileParameter array
     const fileDataArray: FileParameter[] = files.map((file) => ({
@@ -178,13 +157,12 @@ const SupportingDocuments = (
       const uploadServerError = error as ProblemDetails;
       if (
         uploadServerError.status === HttpStatusCode.Forbidden &&
-        uploadServerError.title &&
-        uploadServerError.title.includes('No third-party access')
+        uploadServerError.title?.includes('No third-party access')
       ) {
         setNoThirdPartyAccess(true);
-      } else if (uploadServerError.errors) {
+      } else if (uploadServerError['errors']) {
         // If server returns error messages, set as upload errors (strings only)
-        const flatErrors = Object.values(uploadServerError.errors).flat();
+        const flatErrors = Object.values(uploadServerError['errors']).flat();
         setUploadErrors(
           flatErrors.filter((e): e is string => typeof e === 'string')
         );
@@ -214,27 +192,23 @@ const SupportingDocuments = (
 
   const onDeleteAttachment = async (docId: string) => {
     const client = new RequestForPatternApprovalClient();
-    const tokenResult = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account: accounts[0],
-    });
+    const tokenResult = await instance.acquireTokenSilent(
+      silentRequestFor(accounts[0])
+    );
 
     client.setAuthToken(tokenResult.accessToken);
     await client.deleteDocument(id, docId);
     if (onDeleteSuccess) onDeleteSuccess(true);
-    return Promise.resolve();
   };
 
   const onCategoryUpdate = async (docId: string, category: string) => {
-    if (!id || !category) return Promise.resolve();
+    if (!id || !category) return;
     const client = new RequestForPatternApprovalClient();
-    const tokenResult = await instance.acquireTokenSilent({
-      ...tokenRequest,
-      account: accounts[0],
-    });
+    const tokenResult = await instance.acquireTokenSilent(
+      silentRequestFor(accounts[0])
+    );
     client.setAuthToken(tokenResult.accessToken);
     await client.updateCategory(id, docId, category);
-    return Promise.resolve();
   };
 
   const renderInstrumentInfoPanel = () => {

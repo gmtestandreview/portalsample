@@ -3,7 +3,13 @@
 import html
 from pathlib import Path
 
-from .parser import find_skill_md, read_properties
+from .parser import ensure_safe_unicode, find_skill_md, read_properties
+
+
+def _escape_xml(text: str) -> str:
+    # XML normalizes literal CR/CRLF to LF. Character references preserve the
+    # original parsed YAML text when the prompt is read by an XML consumer.
+    return html.escape(text).replace("\r", "&#13;")
 
 
 def to_prompt(skill_dirs: list[Path]) -> str:
@@ -37,21 +43,24 @@ def to_prompt(skill_dirs: list[Path]) -> str:
     for skill_dir in skill_dirs:
         skill_dir = Path(skill_dir).resolve()
         props = read_properties(skill_dir)
-
-        lines.append("<skill>")
-        lines.append("<name>")
-        lines.append(html.escape(props.name))
-        lines.append("</name>")
-        lines.append("<description>")
-        lines.append(html.escape(props.description))
-        lines.append("</description>")
-
         skill_md_path = find_skill_md(skill_dir)
-        lines.append("<location>")
-        lines.append(html.escape(str(skill_md_path)))
-        lines.append("</location>")
+        ensure_safe_unicode([props.name, props.description, str(skill_md_path)])
 
-        lines.append("</skill>")
+        lines.extend(
+            [
+                "<skill>",
+                "<name>",
+                _escape_xml(props.name),
+                "</name>",
+                "<description>",
+                _escape_xml(props.description),
+                "</description>",
+                "<location>",
+                _escape_xml(str(skill_md_path)),
+                "</location>",
+                "</skill>",
+            ]
+        )
 
     lines.append("</available_skills>")
 

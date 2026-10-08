@@ -19,7 +19,7 @@ defaults:
 jobs:
   quality-gate:
     name: Quality gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 60
     env:
       VITE_APP_ENVIRONMENT: production
@@ -107,7 +107,7 @@ jobs:
   # fork-originated). See sonar-project.properties for scan config.
   sonarcloud:
     name: sonarcloud
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     needs: quality-gate
     timeout-minutes: 25
     steps:
@@ -150,14 +150,14 @@ jobs:
       # prebuilt Scanner CLI and verifies its GPG signature (skipSignatureVerification defaults to
       # false), so nothing from npm executes during scanner setup.
       #
-      # Pinned by commit SHA, which is refs/tags/v8.2.1. scannerVersion is deliberately left at the
+      # Pinned by commit SHA, which is refs/tags/v8.2.2. scannerVersion is deliberately left at the
       # action's own default (8.1.0.6389) so the CLI moves only when this SHA moves - the same
       # reason npm is pinned above, an unpinned scanner can shift analysis results between runs
       # with no commit to explain it.
       #
       # sonar.qualitygate.wait makes a red gate fail this job.
       - name: SonarQube scan
-        uses: SonarSource/sonarqube-scan-action@22918119ff8e1ca75a623e15c8296b6ea4fbe28f # v8.2.1
+        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:

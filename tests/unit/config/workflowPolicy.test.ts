@@ -17,6 +17,7 @@ import { describe, expect, it } from 'vitest';
 const workflow = readFileSync('.github/workflows/pr.yml', 'utf8');
 const releaseWorkflow = readFileSync('.github/workflows/release.yml', 'utf8');
 const claudeWorkflow = readFileSync('.github/workflows/claude.yml', 'utf8');
+const codeqlWorkflow = readFileSync('.github/workflows/codeql.yml', 'utf8');
 const dependabot = readFileSync('.github/dependabot.yml', 'utf8');
 const chromaticWorkflowPath = '.github/workflows/chromatic.yml';
 const chromaticWorkflow = existsSync(chromaticWorkflowPath)
@@ -32,8 +33,8 @@ const occurrences = (needle: string, haystack: string = workflow): number =>
   haystack.split(needle).length - 1;
 
 const nodeVersions = (contents: string): string[] =>
-  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].map(
-    (match) => match[1]
+  [...contents.matchAll(/node-version:\s*["']?([^"'\s]+)["']?/g)].flatMap(
+    (match) => (match[1] === undefined ? [] : [match[1]])
   );
 
 /**
@@ -60,7 +61,7 @@ const jobBlock = (contents: string, jobId: string): string => {
 const stepBlocks = (contents: string): string[] => {
   const lines = contents.split('\n');
   const stepIndent = lines
-    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1].length)
+    .map((line) => /^(\s+)-\s+(?:name|uses|run):/.exec(line)?.[1]?.length)
     .find((indent) => indent !== undefined);
 
   if (stepIndent === undefined) return [];
@@ -93,48 +94,49 @@ const UPLOAD_ARTIFACT_PIN =
 const DOWNLOAD_ARTIFACT_PIN =
   'actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c';
 const CHROMATIC_ACTION_PIN =
-  'chromaui/action@259eda5f0e44c0c1eab38b672f1c4c967cc969b7';
+  'chromaui/action@a18e9f57b71eb05f941848c0b927aab2ee644e3e';
+const CODEQL_ACTION_PIN =
+  'github/codeql-action/(?:init|analyze)@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2';
 
-const partitions = [
+const testCommands = [
   { name: 'unit', command: 'npm run test:ci:unit' },
   { name: 'storybook', command: 'npm run test:ci:storybook' },
   { name: 'quality', command: 'npm run test:ci:quality' },
 ];
 
 /**
- * The PR workflow's job identifiers. `vitest` fans out through A1's retained
- * matrix into the three `vitest-*` statuses, so six job keys expose the eight
- * required statuses.
+ * The PR workflow's job identifiers. `vitest` fans out through the retained
+ * matrix into the long-running `vitest-*` statuses, while quality-node24 owns
+ * the static, fast regression, build, docs, and scoped helper evidence.
  */
 const declaredJobs = [
-  'static-quality-node24',
+  'detect-changes',
+  'quality-node24',
   'vitest',
-  'build-node24',
-  'date-timezone',
   'e2e-node24',
   'lower-bound-node24',
 ];
 
-/**
- * Helper jobs that gate the narrowly-scoped checks (agent-tooling, date-timezone)
- * on what the PR actually changed. They carry no required status, but must still
- * be bounded, and a broken gate silently switches its downstream guard off.
- */
-const pathGatedJobs = ['detect-changes', 'agent-tooling'];
+const evidenceJobs = [
+  'quality-node24',
+  'vitest',
+  'e2e-node24',
+  'lower-bound-node24',
+];
 
 describe('PR workflow runs each test environment as its own partition', () => {
   it('declares the partition matrix without fail-fast', () => {
     expect(occurrences('fail-fast: false')).toBeGreaterThanOrEqual(1);
   });
 
-  it.each(partitions)(
-    'invokes $command exactly once through the matrix',
+  it.each(testCommands)(
+    'invokes $command exactly once through the PR gate',
     ({ command }) => {
       expect(occurrences(command)).toBe(1);
     }
   );
 
-  it.each(partitions)(
+  it.each(testCommands)(
     'writes the $name JUnit report to its own path exactly once',
     ({ name }) => {
       expect(occurrences(`reports/vitest/${name}-junit.xml`)).toBe(1);
@@ -157,18 +159,25 @@ describe('PR workflow runs each test environment as its own partition', () => {
   });
 });
 
-describe('the PR workflow exposes eight independently named statuses', () => {
+describe('the PR workflow keeps slow surfaces independently named', () => {
   it.each(declaredJobs)('declares the %s job', (jobId) => {
     expect(workflow).toContain(`\n  ${jobId}:\n`);
   });
 
-  it('renders the three vitest statuses from the retained A1 matrix', () => {
+  it('renders the long-running vitest statuses from the retained matrix', () => {
     expect(jobBlock(workflow, 'vitest')).toContain(
       'name: vitest-${{ matrix.partition.name }}'
+    );
+    expect(jobBlock(workflow, 'vitest')).not.toContain(
+      'npm run test:ci:quality'
     );
   });
 
   it.each([
+    'static-quality-node24',
+    'build-node24',
+    'agent-tooling',
+    'date-timezone',
     'static-quality',
     'test-partition',
     'build',
@@ -180,9 +189,7 @@ describe('the PR workflow exposes eight independently named statuses', () => {
   });
 
   it('gives every job an explicit timeout', () => {
-    expect(occurrences('timeout-minutes:')).toBe(
-      declaredJobs.length + pathGatedJobs.length
-    );
+    expect(occurrences('timeout-minutes:')).toBe(declaredJobs.length);
   });
 
   it('pipes step output through a shell that fails on a broken pipe', () => {
@@ -203,7 +210,7 @@ describe('a new push supersedes the in-flight PR run', () => {
 
 describe('path-gated jobs stay off the critical path until their tree changes', () => {
   const detect = jobBlock(workflow, 'detect-changes');
-  const agentTooling = jobBlock(workflow, 'agent-tooling');
+  const quality = jobBlock(workflow, 'quality-node24');
 
   it("classifies the PR's changed files against the merge base", () => {
     expect(detect).toContain('fetch-depth: 0');
@@ -223,23 +230,22 @@ describe('path-gated jobs stay off the critical path until their tree changes', 
   });
 
   it('runs the agent-orchestration checks only when their trees change', () => {
-    expect(agentTooling).toContain('needs: detect-changes');
-    expect(agentTooling).toContain(
-      "if: needs.detect-changes.outputs.agent-tooling == 'true'"
+    expect(quality).toContain('needs: detect-changes');
+    expect(quality).toContain(
+      "needs.detect-changes.outputs.agent-tooling == 'true'"
     );
-    expect(agentTooling).toContain('python3 tests/hooks/test_pre_tool_use.py');
-    expect(agentTooling).toContain('python3 tests/hooks/test_watcher_pid.py');
+    expect(quality).toContain('python3 tests/hooks/test_pre_tool_use.py');
+    expect(quality).toContain('python3 tests/hooks/test_watcher_pid.py');
   });
 
-  it('moves the Python tooling out of static-quality-node24', () => {
-    expect(jobBlock(workflow, 'static-quality-node24')).not.toContain(
-      'python3'
-    );
+  it('does not create skipped helper statuses for scoped checks', () => {
+    expect(workflow).not.toContain('\n  agent-tooling:\n');
+    expect(workflow).not.toContain('\n  date-timezone:\n');
   });
 
-  it('bounds both helper jobs with an explicit timeout', () => {
+  it('keeps the classifier and consolidated quality job bounded', () => {
     expect(detect).toContain('timeout-minutes:');
-    expect(agentTooling).toContain('timeout-minutes:');
+    expect(quality).toContain('timeout-minutes:');
   });
 });
 
@@ -250,8 +256,12 @@ describe('workflows pin every action to an immutable commit', () => {
     ['Chromatic', chromaticWorkflow],
   ] as const;
   const allWorkflows = [...nodeWorkflows, ['Claude', claudeWorkflow]] as const;
+  const pinnedActionWorkflows = [
+    ...allWorkflows,
+    ['CodeQL', codeqlWorkflow],
+  ] as const;
 
-  it.each(allWorkflows)(
+  it.each(pinnedActionWorkflows)(
     'pins checkout in the %s workflow',
     (_name, contents) => {
       expect(contents).toContain(`uses: ${CHECKOUT_PIN} # v7`);
@@ -265,12 +275,12 @@ describe('workflows pin every action to an immutable commit', () => {
     }
   );
 
-  it.each(allWorkflows)(
+  it.each(pinnedActionWorkflows)(
     'pins every remote action in the %s workflow to a full commit SHA',
     (_name, contents) => {
       const actionRefs = [
         ...contents.matchAll(/uses:\s*[^\s#]+@([^\s#]+)/g),
-      ].map((match) => match[1]);
+      ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
       expect(actionRefs.length).toBeGreaterThan(0);
       expect(
@@ -278,6 +288,15 @@ describe('workflows pin every action to an immutable commit', () => {
       ).toBe(true);
     }
   );
+
+  it('pins both CodeQL action entrypoints to the same immutable release SHA', () => {
+    expect([
+      ...codeqlWorkflow.matchAll(
+        new RegExp(`uses: ${CODEQL_ACTION_PIN} # v4`, 'g')
+      ),
+    ]).toHaveLength(2);
+    expect(occurrences('github/codeql-action/', codeqlWorkflow)).toBe(2);
+  });
 
   it('keeps explicit npm cache ownership on every setup-node', () => {
     // setup-node v7 auto-detects a package manager; the explicit input keeps
@@ -330,15 +349,15 @@ describe('every partition reports its evidence unconditionally', () => {
     expect(workflow).toContain('reports/coverage/unit');
   });
 
-  it.each(declaredJobs)('uploads evidence from the %s job', (jobId) => {
+  it.each(evidenceJobs)('uploads evidence from the %s job', (jobId) => {
     expect(jobBlock(workflow, jobId)).toContain(`uses: ${UPLOAD_ARTIFACT_PIN}`);
   });
 });
 
-describe('the date-timezone job re-runs the focused date suite off UTC', () => {
-  const block = jobBlock(workflow, 'date-timezone');
+describe('the scoped date-timezone step re-runs the focused date suite off UTC', () => {
+  const block = jobBlock(workflow, 'quality-node24');
 
-  it('runs under Australia/Sydney, set through job env', () => {
+  it('runs under Australia/Sydney, set through step env', () => {
     // vitest-unit already exercises these files in the runner's default zone
     // (UTC). This leg adds the "east of UTC, date already rolled over" edge for
     // dateOnly.ts's deliberate local/UTC split - one zone, not a matrix, and set
@@ -351,7 +370,7 @@ describe('the date-timezone job re-runs the focused date suite off UTC', () => {
   it('is path-gated, not run on every PR', () => {
     expect(block).toContain('needs: detect-changes');
     expect(block).toContain(
-      "if: needs.detect-changes.outputs.date-logic == 'true'"
+      "needs.detect-changes.outputs.date-logic == 'true'"
     );
   });
 
@@ -470,11 +489,11 @@ describe('the sonarcloud job analyses what SonarCloud actually needs', () => {
       ...block.matchAll(
         /^\s*uses:\s*SonarSource\/sonarqube-scan-action@([^\s#]+)/gm
       ),
-    ].map((match) => match[1]);
+    ].flatMap((match) => (match[1] === undefined ? [] : [match[1]]));
 
     expect(scannerReferences.length).toBeGreaterThan(0);
     expect(scannerReferences).toEqual([
-      '22918119ff8e1ca75a623e15c8296b6ea4fbe28f',
+      'd209202bc7d53ff1cc128f7f907dac145c9d6ae9',
     ]);
     expect(
       scannerReferences.every((reference) => /^[0-9a-f]{40}$/.test(reference))
@@ -523,9 +542,8 @@ describe('no partition may mask a failure', () => {
       expect(contents).toContain('run: corepack enable');
       expect(contents).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
     }
-    // One corepack activation per job that installs dependencies. The
-    // sonarcloud job's activation now lives in release.yml, not here.
-    expect(occurrences('run: corepack enable')).toBe(6);
+    // One corepack activation per PR job that installs dependencies.
+    expect(occurrences('run: corepack enable')).toBe(4);
   });
 
   it('invokes the installed Playwright binary directly, not via npx', () => {
@@ -606,6 +624,39 @@ describe("CI uses the repository's enforced Node runtime", () => {
   );
 });
 
+describe('CI is explicitly migrated ahead of the Ubuntu 26 latest rollover', () => {
+  const workflows = [
+    ['pull request', workflow],
+    ['release', releaseWorkflow],
+    ['Chromatic', chromaticWorkflow],
+    ['Claude', claudeWorkflow],
+    ['CodeQL', codeqlWorkflow],
+  ] as const;
+
+  it.each(workflows)('pins %s jobs to Ubuntu 26.04', (_name, contents) => {
+    expect(contents).toContain('runs-on: ubuntu-26.04');
+    expect(contents).not.toContain('runs-on: ubuntu-latest');
+  });
+
+  it('runs CodeQL only for the configured repository languages', () => {
+    expect(codeqlWorkflow).toContain('language: actions');
+    expect(codeqlWorkflow).toContain('language: javascript-typescript');
+    expect(codeqlWorkflow).toContain('language: python');
+    expect(codeqlWorkflow).toContain('build-mode: none');
+  });
+
+  it('does not enable dependency caching for the configured CodeQL matrix', () => {
+    expect(codeqlWorkflow).not.toContain('dependency-caching');
+  });
+
+  it('grants CodeQL only the permissions required to upload code scanning results', () => {
+    expect(codeqlWorkflow).toContain('contents: read');
+    expect(codeqlWorkflow).toContain('actions: read');
+    expect(codeqlWorkflow).toContain('security-events: write');
+    expect(codeqlWorkflow).not.toContain('contents: write');
+  });
+});
+
 describe('Dependabot owns the lint cohort as one reviewable group', () => {
   it('keeps the weekly GitHub Actions ecosystem entry', () => {
     expect(dependabot).toContain('package-ecosystem: github-actions');
@@ -639,6 +690,15 @@ describe('Chromatic publishing reports asynchronously through GitHub', () => {
 
   it("uses the repository's enforced Node 24 runtime", () => {
     expect(nodeVersions(chromaticWorkflow)).toEqual(['24.20.0']);
+  });
+
+  it('provisions npm through corepack before installing dependencies', () => {
+    const corepack = chromaticWorkflow.indexOf('run: corepack enable');
+    const install = chromaticWorkflow.indexOf('run: npm ci');
+
+    expect(chromaticWorkflow).toContain("COREPACK_ENABLE_DOWNLOAD_PROMPT: '0'");
+    expect(corepack).toBeGreaterThan(-1);
+    expect(install).toBeGreaterThan(corepack);
   });
 
   it('pins the Chromatic action and reads its protected repository secret', () => {

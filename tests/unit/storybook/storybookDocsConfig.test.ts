@@ -146,10 +146,10 @@ describe('Storybook documentation architecture', () => {
     ];
 
     for (const packageName of storybookPackages) {
-      expect(declaredVersion(packageName), packageName).toBe('10.6.0');
+      expect(declaredVersion(packageName), packageName).toBe('10.6.1');
     }
 
-    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.0');
+    expect(declaredVersion('@storybook/addon-mcp')).toBe('10.6.1');
     expect(declaredVersion('@chromatic-com/storybook')).toBe('5.3.1');
     expect(declaredVersion('msw-storybook-addon')).toBe('3.0.3');
   });
@@ -187,7 +187,9 @@ describe('Storybook documentation architecture', () => {
     // ./rollupOnLog — its behaviour (vendor noise dropped, everything else
     // forwarded) is verified in rollupOnLog.test.ts, not textually here. main.ts
     // must only wire it in, not re-inline a filter.
-    expect(main).toMatch(/import \{ onLog \} from ['"]\.\/rollupOnLog['"]/);
+    expect(main).toMatch(
+      /import \{ onLog \} from ['"]\.\/rollupOnLog(?:\.ts)?['"]/u
+    );
     expect(main).toMatch(/rollupOptions:\s*\{\s*onLog\s*\}/);
     expect(main).not.toMatch(/onLog\s*\(/); // no inline filter body
 

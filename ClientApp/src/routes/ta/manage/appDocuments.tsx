@@ -2,7 +2,7 @@ import { useMsal } from '@azure/msal-react';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router';
 import { Button, Col, Row } from 'react-bootstrap';
-import { Formik } from 'formik';
+import { FormProvider, useForm } from 'react-hook-form';
 import {
   type UploadProgress,
   type AttachmentDto,
@@ -17,16 +17,20 @@ import useHtmlTitle from '../../../components/Utilities/useHtmlTitle';
 import useBodyClass from '../../../components/Utilities/useBodyClass';
 import BlockUISpinner from '../../../components/BlockUISpinner';
 
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import AppLogger from '../../../instrumentation/AppLogger';
-import SupportingDocuments from '../supportingDocuments';
+import RhfSupportingDocuments from '../rhfSupportingDocuments';
+import { createSaveAwareYupResolver } from '../../../components/forms/saveAwareYupResolver';
 import { supportingDocsSubmitValidation } from '../validation';
+import { pollUploadProgress } from '../pollUploadProgress';
 
-/**
- * Backoff between failed progress polls. Without it a persistently failing endpoint turns the
- * retry path into a tight loop that pegs a core and hammers the failing service.
- */
-const PROGRESS_RETRY_DELAY_MS = 2000;
+interface AppDocumentsFormValues {
+  form: {
+    documents: AttachmentDto[];
+    instrumentCategory?: string | undefined;
+    instrumentType?: string | undefined;
+  };
+}
 
 const ApplicationDocuments = () => {
   const { accounts, instance } = useMsal();
@@ -44,7 +48,7 @@ const ApplicationDocuments = () => {
   const abortRef = useRef<AbortController | null>(null);
   const uploadIdRef = useRef<string | null>(null);
 
-  // State for Formik initialValues (existing docs)
+  // Saved documents, used as the form's values
   const [filesUploaded, setFilesUploaded] =
     useState<SupportingDocumentsStep | null>(null);
   const [filesToCommit, setFilesToCommit] = useState<boolean>(false);
@@ -57,10 +61,9 @@ const ApplicationDocuments = () => {
       try {
         if (accounts.length > 0 && id) {
           const client = new RequestForPatternApprovalClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppDocuments(id);
           setFilesUploaded(response);
@@ -78,12 +81,11 @@ const ApplicationDocuments = () => {
         setCommitSuccess(false);
       }
     };
-    fetchDocs();
+    void fetchDocs();
   }, [accounts, id, instance, commitSuccess]);
 
-  // Without this the controller stored below is never aborted, so the progress loop's
-  // `while (!controller.signal.aborted)` can never exit and its `if (aborted) break` never fires.
-  // The poll then outlives the component, and against a failing endpoint spins with no delay.
+  // Without this the controller stored below is never aborted, so the progress poll never sees
+  // `signal.aborted`, outlives the component, and against a failing endpoint keeps retrying.
   useEffect(
     () => () => {
       if (abortRef.current) {
@@ -97,44 +99,18 @@ const ApplicationDocuments = () => {
     async (uploadId: string) => {
       const controller = new AbortController();
       abortRef.current = controller;
-      let lastPercent = -1;
       const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
+      client.setAuthToken(tokenResult.accessToken);
+      await pollUploadProgress({
+        client,
+        uploadId,
+        signal: controller.signal,
+        onProgress: setProgress,
+        onFinished: () => setUploading(false),
       });
-      while (!controller.signal.aborted) {
-        try {
-          client.setAuthToken(tokenResult.accessToken);
-          const data = await client.getProgress(
-            uploadId,
-            lastPercent,
-            controller.signal
-          );
-          setProgress(data);
-          lastPercent = data.percent!;
-
-          if (
-            data.status === 'Completed' ||
-            data.status === 'CompletedWithErrors'
-          ) {
-            setUploading(false);
-            client.deleteProgressStatistics(uploadId).catch((error) => {
-              AppLogger.error(
-                'Failed to delete progress statistics',
-                error as Error,
-                { uploadId }
-              );
-            });
-            break;
-          }
-        } catch {
-          if (controller.signal.aborted) break;
-          await new Promise((resolve) => {
-            setTimeout(resolve, PROGRESS_RETRY_DELAY_MS);
-          });
-        }
-      }
     },
     [accounts, instance]
   );
@@ -143,10 +119,9 @@ const ApplicationDocuments = () => {
     if (!uploadIdRef.current) return;
     try {
       const client = new ProgressClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.cancelFile(uploadIdRef.current, fileName);
     } catch {
@@ -165,7 +140,7 @@ const ApplicationDocuments = () => {
       const uploadId = await clientProgress.getProgressUploadId();
       uploadIdRef.current = uploadId;
       if (uploadIdRef.current) {
-        startLongPolling(uploadIdRef.current);
+        void startLongPolling(uploadIdRef.current);
       }
       const clientPA = new RequestForPatternApprovalClient();
       clientPA.setAuthToken(token);
@@ -206,6 +181,66 @@ const ApplicationDocuments = () => {
     return attachments;
   };
 
+  const onSubmit = async (values: AppDocumentsFormValues) => {
+    try {
+      setIsDataLoading(true);
+      const client = new RequestForPatternApprovalClient();
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
+      client.setAuthToken(tokenResult.accessToken);
+      // Clear out bytes to avoid unnecessarily large payloads
+      const payload: SupportingDocumentsStep = {
+        ...values,
+        form: {
+          ...values.form,
+          documents: values.form.documents.map((doc) => ({
+            ...doc,
+            documentBytes: undefined,
+          })),
+        },
+      };
+      await client.commitAppDocuments(id!, payload);
+      setCommitSuccess(true);
+    } catch (e: unknown) {
+      const status = (e as { status?: number } | undefined)?.status;
+
+      if (status === 403) {
+        setSubmitErrors([
+          'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
+        ]);
+      } else if (status && status >= 500) {
+        setSubmitErrors(['A server error occurred. Please try again.']);
+      } else {
+        setSubmitErrors(['Failed to commit documents.']);
+      }
+
+      AppLogger.error('Failed to load application documents', e as Error, {
+        Id: id,
+        Status: status,
+      });
+    } finally {
+      setIsDataLoading(false);
+    }
+  };
+
+  // `values` re-syncs the form when the saved documents change, like Formik's
+  // `enableReinitialize`.
+  const methods = useForm<AppDocumentsFormValues>({
+    values: {
+      form: {
+        documents: filesUploaded?.form?.documents || [],
+        instrumentCategory:
+          filesUploaded?.form?.instrumentCategory || undefined,
+        instrumentType: filesUploaded?.form?.instrumentType || undefined,
+      },
+    },
+    resolver: createSaveAwareYupResolver<AppDocumentsFormValues>(
+      undefined,
+      supportingDocsSubmitValidation
+    ),
+  });
+
   return (
     <Row className='mb-4' id='application-documents'>
       <Col aria-busy={isDataLoading} aria-live='polite'>
@@ -216,96 +251,42 @@ const ApplicationDocuments = () => {
         ) : (
           <div className='appl-items mb-5'>
             <h2 className='visually-hidden'>Documents</h2>
-            <Formik
-              enableReinitialize
-              initialValues={{
-                form: {
-                  documents: filesUploaded?.form?.documents || [],
-                  instrumentCategory:
-                    filesUploaded?.form?.instrumentCategory || undefined,
-                  instrumentType:
-                    filesUploaded?.form?.instrumentType || undefined,
-                },
-              }}
-              validationSchema={supportingDocsSubmitValidation}
-              onSubmit={async (values) => {
-                try {
-                  setIsDataLoading(true);
-                  const client = new RequestForPatternApprovalClient();
-                  const tokenResult = await instance.acquireTokenSilent({
-                    ...tokenRequest,
-                    account: accounts[0],
-                  });
-                  client.setAuthToken(tokenResult.accessToken);
-                  values.form.documents.forEach((doc) => {
-                    doc.documentBytes = undefined; // Clear out bytes to avoid unnecessarily large payloads
-                  });
-                  await client.commitAppDocuments(id!, values);
-                  setCommitSuccess(true);
-                } catch (e: any) {
-                  const status = (e as any)?.status as number | undefined;
-
-                  if (status === 403) {
-                    setSubmitErrors([
-                      'Upload blocked for security reasons. Please rename the file and try again. If the issue continues, contact support.',
-                    ]);
-                  } else if (status && status >= 500) {
-                    setSubmitErrors([
-                      'A server error occurred. Please try again.',
-                    ]);
-                  } else {
-                    setSubmitErrors(['Failed to commit documents.']);
-                  }
-
-                  AppLogger.error(
-                    'Failed to load application documents',
-                    e as Error,
-                    { Id: id, Status: status }
-                  );
-                } finally {
-                  setIsDataLoading(false);
+            <FormProvider {...methods}>
+              <RhfSupportingDocuments
+                isSummary={false}
+                suppressDocChanges
+                name='form.documents'
+                onUploadAttachment={onUploadAttachments}
+                attachment={{
+                  onUploadFiles: () => Promise.resolve([]), // Not used
+                }}
+                progress={progress}
+                setProgress={setProgress}
+                uploading={uploading}
+                handleCancelFile={handleCancelFile}
+                disableUpload={
+                  filesUploaded?.form?.applicationStatus === 'Completed' ||
+                  false
                 }
-              }}
-            >
-              {({ submitForm }) => (
-                <>
-                  <SupportingDocuments
-                    isSummary={false}
-                    suppressDocChanges
-                    name='form.documents'
-                    onUploadAttachment={onUploadAttachments}
-                    attachment={{
-                      onUploadFiles: () => Promise.resolve([]), // Not used
-                    }}
-                    progress={progress}
-                    setProgress={setProgress}
-                    uploading={uploading}
-                    handleCancelFile={handleCancelFile}
-                    disableUpload={
-                      filesUploaded?.form?.applicationStatus === 'Completed' ||
-                      false
-                    }
-                    externalErrors={submitErrors}
-                    setExternalErrors={setSubmitErrors}
-                  />
-                  <Row>
-                    <Col md={12} className='text-end'>
-                      {!isDataLoading && filesToCommit && (
-                        <Button
-                          variant='primary'
-                          onClick={(e) => {
-                            e.preventDefault();
-                            submitForm();
-                          }}
-                        >
-                          Commit
-                        </Button>
-                      )}
-                    </Col>
-                  </Row>
-                </>
-              )}
-            </Formik>
+                externalErrors={submitErrors}
+                setExternalErrors={setSubmitErrors}
+              />
+              <Row>
+                <Col md={12} className='text-end'>
+                  {!isDataLoading && filesToCommit && (
+                    <Button
+                      variant='primary'
+                      onClick={(e) => {
+                        e.preventDefault();
+                        void methods.handleSubmit(onSubmit)();
+                      }}
+                    >
+                      Commit
+                    </Button>
+                  )}
+                </Col>
+              </Row>
+            </FormProvider>
           </div>
         )}
       </Col>

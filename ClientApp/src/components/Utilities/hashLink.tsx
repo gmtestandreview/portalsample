@@ -1,4 +1,5 @@
 import type { PropsWithChildren } from 'react';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 const handleHashLinkClick = (
   e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -30,7 +31,10 @@ const handleHashLinkClick = (
   }
 
   setTimeout(() => {
-    linkedElement?.scrollIntoView({ behavior: 'smooth', block: scrollToBlock });
+    linkedElement?.scrollIntoView({
+      behavior: 'smooth',
+      ...omitUndefined({ block: scrollToBlock }),
+    });
     linkedElement?.focus();
   }, waitForAccordionInMs);
 };

@@ -1,16 +1,26 @@
-const crypto = require('crypto');
-const http = require('http');
-const fs = require('fs');
-const path = require('path');
+const crypto = require('node:crypto');
+const http = require('node:http');
+const fs = require('node:fs');
+const path = require('node:path');
+
+// stdout is the server's machine-readable protocol channel: start-server.sh
+// greps it for "server-started" and the agent reads user-event lines from the
+// log. One JSON object per line, written verbatim (console.log is lint-banned).
+function emit(record) {
+  process.stdout.write(JSON.stringify(record) + '\n');
+}
 
 // ========== WebSocket Protocol (RFC 6455) ==========
 
-const OPCODES = { TEXT: 0x01, CLOSE: 0x08, PING: 0x09, PONG: 0x0A };
+const OPCODES = { TEXT: 0x01, CLOSE: 0x08, PING: 0x09, PONG: 0x0a };
 const WS_MAGIC = '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
 const MAX_FRAME_PAYLOAD_BYTES = 10 * 1024 * 1024;
 
 function computeAcceptKey(clientKey) {
-  return crypto.createHash('sha1').update(clientKey + WS_MAGIC).digest('base64');
+  // RFC 6455 section 4.2.2 mandates SHA-1 for Sec-WebSocket-Accept. It is a
+  // protocol handshake checksum, not a security control (auth is the session key).
+  const hash = crypto.createHash('sha1'); // NOSONAR
+  return hash.update(clientKey + WS_MAGIC).digest('base64');
 }
 
 function encodeFrame(opcode, payload) {
@@ -41,9 +51,9 @@ function decodeFrame(buffer) {
   if (buffer.length < 2) return null;
 
   const secondByte = buffer[1];
-  const opcode = buffer[0] & 0x0F;
+  const opcode = buffer[0] & 0x0f;
   const masked = (secondByte & 0x80) !== 0;
-  let payloadLen = secondByte & 0x7F;
+  let payloadLen = secondByte & 0x7f;
   let offset = 2;
 
   if (!masked) throw new Error('Client frames must be masked');
@@ -71,7 +81,7 @@ function decodeFrame(buffer) {
   const totalLen = dataOffset + payloadLen;
   if (buffer.length < totalLen) return null;
 
-  const mask = buffer.slice(maskOffset, dataOffset);
+  const mask = buffer.subarray(maskOffset, dataOffset);
   const data = Buffer.alloc(payloadLen);
   for (let i = 0; i < payloadLen; i++) {
     data[i] = buffer[dataOffset + i] ^ mask[i % 4];
@@ -83,7 +93,7 @@ function decodeFrame(buffer) {
 // ========== Configuration ==========
 
 const PORT_FILE = process.env.BRAINSTORM_PORT_FILE || null;
-const randomPort = () => 49152 + Math.floor(Math.random() * 16383);
+const randomPort = () => crypto.randomInt(49152, 65535);
 // Prefer an explicit port, else the port this session last bound (so a restart
 // reuses it and an already-open browser tab reconnects), else a random high port.
 function preferredPort() {
@@ -92,25 +102,38 @@ function preferredPort() {
     try {
       const p = Number(fs.readFileSync(PORT_FILE, 'utf-8').trim());
       if (Number.isInteger(p) && p > 1023 && p < 65536) return p;
-    } catch (e) { /* no prior port recorded */ }
+    } catch (e) {
+      /* no prior port recorded */
+    }
   }
   return randomPort();
 }
 let PORT = preferredPort();
 const HOST = process.env.BRAINSTORM_HOST || '127.0.0.1';
-const URL_HOST = process.env.BRAINSTORM_URL_HOST || (HOST === '127.0.0.1' ? 'localhost' : HOST);
-const SESSION_DIR = process.env.BRAINSTORM_DIR || '/tmp/brainstorm';
+const URL_HOST =
+  process.env.BRAINSTORM_URL_HOST ||
+  (HOST === '127.0.0.1' ? 'localhost' : HOST);
+// start-server.sh always sets BRAINSTORM_DIR (owner-only, per session). There is
+// deliberately no default: a fixed path in a shared temp dir can be pre-created
+// by another user, and a home-dir default would leave the session key at rest.
+// startServer() refuses to run without it; requiring this module stays safe.
+const SESSION_DIR = process.env.BRAINSTORM_DIR || '';
 const CONTENT_DIR = path.join(SESSION_DIR, 'content');
 const STATE_DIR = path.join(SESSION_DIR, 'state');
 const SUPERPOWERS_VERSION = readSuperpowersVersion();
-const SUPERPOWERS_BRAND_IMAGE_URL = 'https://primeradiant.com/brand/superpowers-visual-brainstorming-logo.png';
+const SUPERPOWERS_BRAND_IMAGE_URL =
+  'https://primeradiant.com/brand/superpowers-visual-brainstorming-logo.png';
 const TELEMETRY_DISABLE_ENV_VARS = [
   'SUPERPOWERS_DISABLE_TELEMETRY',
   'DISABLE_TELEMETRY',
-  'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC'
+  'CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC',
 ];
-const SUPERPOWERS_TELEMETRY_DISABLED = TELEMETRY_DISABLE_ENV_VARS.some(name => isTruthyEnv(process.env[name]));
-let ownerPid = process.env.BRAINSTORM_OWNER_PID ? Number(process.env.BRAINSTORM_OWNER_PID) : null;
+const SUPERPOWERS_TELEMETRY_DISABLED = TELEMETRY_DISABLE_ENV_VARS.some((name) =>
+  isTruthyEnv(process.env[name])
+);
+let ownerPid = process.env.BRAINSTORM_OWNER_PID
+  ? Number(process.env.BRAINSTORM_OWNER_PID)
+  : null;
 
 // Per-session secret key. The companion is reachable by any local browser tab
 // and, when bound to a non-loopback host, by any host that can route to it.
@@ -126,7 +149,11 @@ function generateToken() {
 }
 
 function chmodOwnerOnly(file) {
-  try { fs.chmodSync(file, 0o600); } catch (e) { /* best effort */ }
+  try {
+    fs.chmodSync(file, 0o600);
+  } catch (e) {
+    /* best effort */
+  }
 }
 
 function initialToken() {
@@ -140,7 +167,9 @@ function initialToken() {
         chmodOwnerOnly(TOKEN_FILE);
         return { value: t, source: 'file' };
       }
-    } catch (e) { /* no prior token recorded */ }
+    } catch (e) {
+      /* no prior token recorded */
+    }
   }
   return { value: generateToken(), source: 'generated' };
 }
@@ -151,9 +180,15 @@ let tokenSource = tokenInfo.source;
 let COOKIE_NAME = 'brainstorm-key-' + PORT; // refined to the actual bound port in onListen
 
 const MIME_TYPES = {
-  '.html': 'text/html', '.css': 'text/css', '.js': 'application/javascript',
-  '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg', '.gif': 'image/gif', '.svg': 'image/svg+xml'
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  '.json': 'application/json',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
 };
 
 // ========== Templates and Constants ==========
@@ -190,9 +225,9 @@ function bootstrapPage(key) {
   // <script> block (e.g. a key containing "</script>") even though callers
   // only reach here after the value has matched TOKEN.
   const jsonKey = JSON.stringify(String(key))
-    .replace(/</g, '\\u003c')
-    .replace(/>/g, '\\u003e')
-    .replace(/&/g, '\\u0026');
+    .replaceAll('<', String.raw`\u003c`)
+    .replaceAll('>', String.raw`\u003e`)
+    .replaceAll('&', String.raw`\u0026`);
   return `<!DOCTYPE html>
 <html>
 <head><meta charset="utf-8"><title>Opening Brainstorm Companion</title></head>
@@ -205,8 +240,14 @@ location.replace('/');
 </html>`;
 }
 
-const frameTemplate = fs.readFileSync(path.join(__dirname, 'frame-template.html'), 'utf-8');
-const helperScript = fs.readFileSync(path.join(__dirname, 'helper.js'), 'utf-8');
+const frameTemplate = fs.readFileSync(
+  path.join(__dirname, 'frame-template.html'),
+  'utf-8'
+);
+const helperScript = fs.readFileSync(
+  path.join(__dirname, 'helper.js'),
+  'utf-8'
+);
 const helperInjection = '<script>\n' + helperScript + '\n</script>';
 
 // ========== Helper Functions ==========
@@ -215,7 +256,7 @@ function readSuperpowersVersion() {
   const root = path.join(__dirname, '../../..');
   const manifests = [
     path.join(root, 'package.json'),
-    path.join(root, '.codex-plugin/plugin.json')
+    path.join(root, '.codex-plugin/plugin.json'),
   ];
 
   for (const manifest of manifests) {
@@ -239,10 +280,10 @@ function isTruthyEnv(value) {
 
 function escapeHtmlText(value) {
   return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
 }
 
 function brandMarkup() {
@@ -252,9 +293,19 @@ function brandMarkup() {
     : 'Superpowers v' + version;
   const logo = SUPERPOWERS_TELEMETRY_DISABLED
     ? ''
-    : '<img class="brand-logo" src="' + SUPERPOWERS_BRAND_IMAGE_URL + '?v=' + encodeURIComponent(SUPERPOWERS_VERSION) + '" alt="Prime Radiant" referrerpolicy="no-referrer" decoding="async">';
+    : '<img class="brand-logo" src="' +
+      SUPERPOWERS_BRAND_IMAGE_URL +
+      '?v=' +
+      encodeURIComponent(SUPERPOWERS_VERSION) +
+      '" alt="Prime Radiant" referrerpolicy="no-referrer" decoding="async">';
 
-  return '<div class="brand"><a href="https://github.com/obra/superpowers">' + logo + '<span class="brand-copy">' + text + '</span></a></div>';
+  return (
+    '<div class="brand"><a href="https://github.com/obra/superpowers">' +
+    logo +
+    '<span class="brand-copy">' +
+    text +
+    '</span></a></div>'
+  );
 }
 
 function renderBranding(html) {
@@ -271,9 +322,10 @@ function wrapInFrame(content) {
 }
 
 function getNewestScreen() {
-  const files = fs.readdirSync(CONTENT_DIR)
-    .filter(f => !f.startsWith('.') && f.endsWith('.html'))
-    .map(f => {
+  const files = fs
+    .readdirSync(CONTENT_DIR)
+    .filter((f) => !f.startsWith('.') && f.endsWith('.html'))
+    .map((f) => {
       const fp = path.join(CONTENT_DIR, f);
       if (!isRegularFileInsideContentDir(fp)) return null;
       return { path: fp, mtime: fs.statSync(fp).mtime.getTime() };
@@ -293,17 +345,21 @@ function companionUrl() {
   return 'http://' + urlHostForHttp(URL_HOST) + ':' + PORT + '/?key=' + TOKEN;
 }
 
-function browserLauncherForPlatform(url, {
-  platform = process.platform,
-  osRelease = require('os').release(),
-  env = process.env
-} = {}) {
+function browserLauncherForPlatform(
+  url,
+  {
+    platform = process.platform,
+    osRelease = require('node:os').release(),
+    env = process.env,
+  } = {}
+) {
   const isWSL = platform === 'linux' && /microsoft/i.test(osRelease);
   if (platform === 'darwin') return { bin: 'open', args: [url] };
   if (platform === 'win32' || isWSL) {
     return { bin: 'rundll32.exe', args: ['url.dll,FileProtocolHandler', url] };
   }
-  if (env.DISPLAY || env.WAYLAND_DISPLAY) return { bin: 'xdg-open', args: [url] };
+  if (env.DISPLAY || env.WAYLAND_DISPLAY)
+    return { bin: 'xdg-open', args: [url] };
   return null;
 }
 
@@ -316,7 +372,8 @@ function isRegularFileInsideContentDir(filePath) {
     if (stat.nlink !== 1) return false;
     realContentDir = fs.realpathSync(CONTENT_DIR);
     realFilePath = fs.realpathSync(filePath);
-  } catch (e) {
+  } catch {
+    // Missing, unreadable, or racing path: treat as not a servable file.
     return false;
   }
   return realFilePath.startsWith(realContentDir + path.sep);
@@ -354,8 +411,7 @@ function isAuthorized(req) {
     }
   }
   const cookie = parseCookies(req.headers['cookie'])[COOKIE_NAME];
-  if (cookie && timingSafeEqualStr(cookie, TOKEN)) return true;
-  return false;
+  return Boolean(cookie) && timingSafeEqualStr(cookie, TOKEN);
 }
 
 function pathnameOf(url) {
@@ -376,7 +432,7 @@ function securityHeaders(headers = {}) {
     'X-Frame-Options': 'DENY',
     'Content-Security-Policy': "frame-ancestors 'none'",
     'Cross-Origin-Resource-Policy': 'same-origin',
-    ...headers
+    ...headers,
   };
 }
 
@@ -392,7 +448,10 @@ function isAllowedWebSocketOrigin(req) {
 
 function handleRequest(req, res) {
   if (!isAuthorized(req)) {
-    res.writeHead(403, securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' }));
+    res.writeHead(
+      403,
+      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+    );
     res.end(FORBIDDEN_PAGE);
     return;
   }
@@ -401,18 +460,32 @@ function handleRequest(req, res) {
   // Mirror the key into a cookie so same-origin subresources (/files/*) can
   // authenticate after bootstrap. HttpOnly keeps it away from page scripts; the
   // WebSocket Origin check below is what blocks cross-origin localhost injection.
-  res.setHeader('Set-Cookie',
-    COOKIE_NAME + '=' + TOKEN + '; HttpOnly; SameSite=Strict; Path=/');
+  res.setHeader(
+    'Set-Cookie',
+    COOKIE_NAME + '=' + TOKEN + '; HttpOnly; SameSite=Strict; Path=/'
+  );
 
   const pathname = pathnameOf(req.url);
   const keyFromQuery = queryKey(req.url);
-  if (req.method === 'GET' && pathname === '/' && keyFromQuery && timingSafeEqualStr(keyFromQuery, TOKEN)) {
-    res.writeHead(200, securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' }));
-    res.end(bootstrapPage(keyFromQuery));
+  if (
+    req.method === 'GET' &&
+    pathname === '/' &&
+    keyFromQuery &&
+    timingSafeEqualStr(keyFromQuery, TOKEN)
+  ) {
+    res.writeHead(
+      200,
+      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+    );
+    // Render the server-owned TOKEN, never the request value. The guard above
+    // proves they are equal, so output is unchanged but no request data is reflected.
+    res.end(bootstrapPage(TOKEN));
   } else if (req.method === 'GET' && pathname === '/') {
     const screenFile = getNewestScreen();
     let html = screenFile
-      ? (raw => isFullDocument(raw) ? raw : wrapInFrame(raw))(fs.readFileSync(screenFile, 'utf-8'))
+      ? ((raw) => {
+          return isFullDocument(raw) ? raw : wrapInFrame(raw);
+        })(fs.readFileSync(screenFile, 'utf-8'))
       : waitingPage();
 
     if (html.includes('</body>')) {
@@ -421,14 +494,21 @@ function handleRequest(req, res) {
       html += helperInjection;
     }
 
-    res.writeHead(200, securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' }));
+    res.writeHead(
+      200,
+      securityHeaders({ 'Content-Type': 'text/html; charset=utf-8' })
+    );
     res.end(html);
   } else if (req.method === 'GET' && pathname.startsWith('/files/')) {
     const fileName = path.basename(pathname.slice(7));
     const filePath = path.join(CONTENT_DIR, fileName);
     // Reject empty/dotfile names and anything that isn't a regular file —
     // `/files/` would otherwise resolve to CONTENT_DIR and crash readFileSync (EISDIR).
-    if (!fileName || fileName.startsWith('.') || !isRegularFileInsideContentDir(filePath)) {
+    if (
+      !fileName ||
+      fileName.startsWith('.') ||
+      !isRegularFileInsideContentDir(filePath)
+    ) {
       res.writeHead(404, securityHeaders());
       res.end('Not found');
       return;
@@ -448,17 +528,25 @@ function handleRequest(req, res) {
 const clients = new Set();
 
 function handleUpgrade(req, socket) {
-  if (!isAuthorized(req) || !isAllowedWebSocketOrigin(req)) { socket.destroy(); return; }
+  if (!isAuthorized(req) || !isAllowedWebSocketOrigin(req)) {
+    socket.destroy();
+    return;
+  }
 
   const key = req.headers['sec-websocket-key'];
-  if (!key) { socket.destroy(); return; }
+  if (!key) {
+    socket.destroy();
+    return;
+  }
 
   const accept = computeAcceptKey(key);
   socket.write(
     'HTTP/1.1 101 Switching Protocols\r\n' +
-    'Upgrade: websocket\r\n' +
-    'Connection: Upgrade\r\n' +
-    'Sec-WebSocket-Accept: ' + accept + '\r\n\r\n'
+      'Upgrade: websocket\r\n' +
+      'Connection: Upgrade\r\n' +
+      'Sec-WebSocket-Accept: ' +
+      accept +
+      '\r\n\r\n'
   );
 
   let buffer = Buffer.alloc(0);
@@ -476,7 +564,7 @@ function handleUpgrade(req, socket) {
         return;
       }
       if (!result) break;
-      buffer = buffer.slice(result.bytesConsumed);
+      buffer = buffer.subarray(result.bytesConsumed);
 
       switch (result.opcode) {
         case OPCODES.TEXT:
@@ -515,8 +603,8 @@ function handleMessage(text) {
     return;
   }
   touchActivity();
-  console.log(JSON.stringify({ source: 'user-event', ...event }));
-  if (event && event.choice) {
+  emit({ source: 'user-event', ...event });
+  if (event?.choice) {
     const eventsFile = path.join(STATE_DIR, 'events');
     fs.appendFileSync(eventsFile, JSON.stringify(event) + '\n');
   }
@@ -525,7 +613,11 @@ function handleMessage(text) {
 function broadcast(msg) {
   const frame = encodeFrame(OPCODES.TEXT, Buffer.from(JSON.stringify(msg)));
   for (const socket of clients) {
-    try { socket.write(frame); } catch (e) { clients.delete(socket); }
+    try {
+      socket.write(frame);
+    } catch (e) {
+      clients.delete(socket);
+    }
   }
 }
 
@@ -540,17 +632,28 @@ function maybeOpenBrowser() {
   if (HOST !== '127.0.0.1' && HOST !== 'localhost') return;
   if (clients.size > 0) return; // the user already opened it
   const url = companionUrl(); // must carry the key or the gate 403s it
-  const cp = require('child_process');
+  const cp = require('node:child_process');
   // Operator-provided launcher: run as given (this env var is trusted operator input).
   if (process.env.BRAINSTORM_OPEN_CMD) {
-    try { cp.exec(process.env.BRAINSTORM_OPEN_CMD + ' ' + JSON.stringify(url), () => {}); } catch (e) { /* best effort */ }
+    try {
+      cp.exec(
+        process.env.BRAINSTORM_OPEN_CMD + ' ' + JSON.stringify(url),
+        () => {}
+      );
+    } catch (e) {
+      /* best effort */
+    }
     return;
   }
   // Platform launchers: pass the URL as an argv element via execFile (no shell),
   // so a url-host containing shell metacharacters can't inject a command.
   const launcher = browserLauncherForPlatform(url);
   if (!launcher) return; // headless: nothing to open
-  try { cp.execFile(launcher.bin, launcher.args, () => {}); } catch (e) { /* best effort */ }
+  try {
+    cp.execFile(launcher.bin, launcher.args, () => {});
+  } catch (e) {
+    /* best effort */
+  }
 }
 
 // ========== Activity Tracking ==========
@@ -580,47 +683,61 @@ const debounceTimers = new Map();
 // ========== Server Startup ==========
 
 function startServer() {
-  if (!fs.existsSync(CONTENT_DIR)) fs.mkdirSync(CONTENT_DIR, { recursive: true });
+  if (!SESSION_DIR) {
+    console.error(
+      'BRAINSTORM_DIR is required; start the server with start-server.sh'
+    );
+    process.exit(1);
+  }
+  if (!fs.existsSync(CONTENT_DIR))
+    fs.mkdirSync(CONTENT_DIR, { recursive: true });
   if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true });
 
   // Track known files to distinguish new screens from updates.
   // macOS fs.watch reports 'rename' for both new files and overwrites,
   // so we can't rely on eventType alone.
   const knownFiles = new Set(
-    fs.readdirSync(CONTENT_DIR).filter(f => !f.startsWith('.') && f.endsWith('.html'))
+    fs
+      .readdirSync(CONTENT_DIR)
+      .filter((f) => !f.startsWith('.') && f.endsWith('.html'))
   );
 
   const server = http.createServer(handleRequest);
   server.on('upgrade', handleUpgrade);
 
-  const watcher = fs.watch(CONTENT_DIR, (eventType, filename) => {
-    if (!filename || filename.startsWith('.') || !filename.endsWith('.html')) return;
+  const watcher = fs.watch(CONTENT_DIR, (_eventType, filename) => {
+    if (!filename || filename.startsWith('.') || !filename.endsWith('.html'))
+      return;
 
-    if (debounceTimers.has(filename)) clearTimeout(debounceTimers.get(filename));
-    debounceTimers.set(filename, setTimeout(() => {
-      debounceTimers.delete(filename);
-      const filePath = path.join(CONTENT_DIR, filename);
+    if (debounceTimers.has(filename))
+      clearTimeout(debounceTimers.get(filename));
+    debounceTimers.set(
+      filename,
+      setTimeout(() => {
+        debounceTimers.delete(filename);
+        const filePath = path.join(CONTENT_DIR, filename);
 
-      if (!fs.existsSync(filePath)) return; // file was deleted
-      touchActivity();
+        if (!fs.existsSync(filePath)) return; // file was deleted
+        touchActivity();
 
-      if (!knownFiles.has(filename)) {
-        knownFiles.add(filename);
-        const eventsFile = path.join(STATE_DIR, 'events');
-        if (fs.existsSync(eventsFile)) fs.unlinkSync(eventsFile);
-        console.log(JSON.stringify({ type: 'screen-added', file: filePath }));
-        maybeOpenBrowser();
-      } else {
-        console.log(JSON.stringify({ type: 'screen-updated', file: filePath }));
-      }
+        if (!knownFiles.has(filename)) {
+          knownFiles.add(filename);
+          const eventsFile = path.join(STATE_DIR, 'events');
+          if (fs.existsSync(eventsFile)) fs.unlinkSync(eventsFile);
+          emit({ type: 'screen-added', file: filePath });
+          maybeOpenBrowser();
+        } else {
+          emit({ type: 'screen-updated', file: filePath });
+        }
 
-      broadcast({ type: 'reload' });
-    }, 100));
+        broadcast({ type: 'reload' });
+      }, 100)
+    );
   });
   watcher.on('error', (err) => console.error('fs.watch error:', err.message));
 
   function shutdown(reason) {
-    console.log(JSON.stringify({ type: 'server-stopped', reason }));
+    emit({ type: 'server-stopped', reason });
     const infoFile = path.join(STATE_DIR, 'server-info');
     if (fs.existsSync(infoFile)) fs.unlinkSync(infoFile);
     fs.writeFileSync(
@@ -632,20 +749,30 @@ function startServer() {
     // Close any upgraded WebSocket sockets so server.close() can complete and
     // the process actually exits instead of lingering on an open connection.
     for (const socket of clients) {
-      try { socket.destroy(); } catch (e) { /* already gone */ }
+      try {
+        socket.destroy();
+      } catch (e) {
+        /* already gone */
+      }
     }
     server.close(() => process.exit(0));
   }
 
   function ownerAlive() {
     if (!ownerPid) return true;
-    try { process.kill(ownerPid, 0); return true; } catch (e) { return e.code === 'EPERM'; }
+    try {
+      process.kill(ownerPid, 0);
+      return true;
+    } catch (e) {
+      return e.code === 'EPERM';
+    }
   }
 
   // Periodically exit if the owner process died or we've been idle too long.
   const lifecycleCheck = setInterval(() => {
     if (!ownerAlive()) shutdown('owner process exited');
-    else if (Date.now() - lastActivity > IDLE_TIMEOUT_MS) shutdown('idle timeout');
+    else if (Date.now() - lastActivity > IDLE_TIMEOUT_MS)
+      shutdown('idle timeout');
   }, LIFECYCLE_CHECK_MS);
   lifecycleCheck.unref();
 
@@ -653,10 +780,15 @@ function startServer() {
   // was wrong (common on WSL, Tailscale SSH, and cross-user scenarios).
   // Disable monitoring and rely on the idle timeout instead.
   if (ownerPid) {
-    try { process.kill(ownerPid, 0); }
-    catch (e) {
+    try {
+      process.kill(ownerPid, 0);
+    } catch (e) {
       if (e.code !== 'EPERM') {
-        console.log(JSON.stringify({ type: 'owner-pid-invalid', pid: ownerPid, reason: 'dead at startup' }));
+        emit({
+          type: 'owner-pid-invalid',
+          pid: ownerPid,
+          reason: 'dead at startup',
+        });
         ownerPid = null;
       }
     }
@@ -676,28 +808,45 @@ function startServer() {
     // *different* port because someone else holds the preferred one; persisting
     // would overwrite the shared files and strand that other session's open tab.
     if (PORT_FILE && !triedFallback) {
-      try { fs.writeFileSync(PORT_FILE, String(PORT)); } catch (e) { /* best effort */ }
+      try {
+        fs.writeFileSync(PORT_FILE, String(PORT));
+      } catch (e) {
+        /* best effort */
+      }
       if (TOKEN_FILE) {
         try {
           fs.writeFileSync(TOKEN_FILE, TOKEN, { mode: 0o600 });
           chmodOwnerOnly(TOKEN_FILE);
-        } catch (e) { /* best effort */ }
+        } catch (e) {
+          /* best effort */
+        }
       }
     }
-    const info = JSON.stringify({
-      type: 'server-started', port: Number(PORT), host: HOST,
-      url_host: URL_HOST, url: companionUrl(),
-      screen_dir: CONTENT_DIR, state_dir: STATE_DIR, idle_timeout_ms: IDLE_TIMEOUT_MS
-    });
-    console.log(info);
+    const info = {
+      type: 'server-started',
+      port: Number(PORT),
+      host: HOST,
+      url_host: URL_HOST,
+      url: companionUrl(),
+      screen_dir: CONTENT_DIR,
+      state_dir: STATE_DIR,
+      idle_timeout_ms: IDLE_TIMEOUT_MS,
+    };
+    emit(info);
     // server-info embeds the key — keep it owner-only.
-    fs.writeFileSync(path.join(STATE_DIR, 'server-info'), info + '\n', { mode: 0o600 });
+    fs.writeFileSync(
+      path.join(STATE_DIR, 'server-info'),
+      JSON.stringify(info) + '\n',
+      { mode: 0o600 }
+    );
   }
 
   server.on('error', (err) => {
     if (err.code === 'EADDRINUSE' && !triedFallback) {
       if (tokenSource === 'env') {
-        console.error('Server failed to bind: preferred port is in use and BRAINSTORM_TOKEN is set; refusing fallback with explicit token');
+        console.error(
+          'Server failed to bind: preferred port is in use and BRAINSTORM_TOKEN is set; refusing fallback with explicit token'
+        );
         process.exit(1);
       }
       triedFallback = true;
@@ -725,5 +874,5 @@ module.exports = {
   decodeFrame,
   browserLauncherForPlatform,
   OPCODES,
-  MAX_FRAME_PAYLOAD_BYTES
+  MAX_FRAME_PAYLOAD_BYTES,
 };

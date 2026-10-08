@@ -4,7 +4,8 @@ description:
   'A guide for adding Agent Skills support to an AI agent or development tool.'
 ---
 
-<!-- markdownlint-disable-next-line MD025 -->
+<!-- markdownlint-disable MD013 MD025 -->
+
 # Adding skills support
 
 <!-- markdownlint-disable MD033 -->
@@ -29,7 +30,7 @@ The guide notes where these differences matter. You don't need to support every
 scenario - follow the path that fits your agent.
 
 **Prerequisites**: Familiarity with the
-[Agent Skills specification](/specification), which defines the `SKILL.md` file
+[Agent Skills specification](specification.md), which defines the `SKILL.md` file
 format, frontmatter fields, and directory conventions.
 
 ## The core principle: progressive disclosure
@@ -87,7 +88,12 @@ scanning `.agents/skills/` means skills installed by other compliant clients are
 automatically visible to yours, and vice versa.
 
 <Note>
-Some implementations also scan `.claude/skills/` (both project-level and user-level) for pragmatic compatibility, since many existing skills are installed there. Other additional locations include ancestor directories up to the git root (useful for monorepos), [XDG](https://specifications.freedesktop.org/basedir-spec/latest/) config directories, and user-configured paths.
+Some implementations also scan `.claude/skills/` (both project-level and
+user-level) for pragmatic compatibility, since many existing skills are
+installed there. Other additional locations include ancestor directories up to
+the git root (useful for monorepos),
+[XDG](https://specifications.freedesktop.org/basedir-spec/latest/) config
+directories, and user-configured paths.
 </Note>
 
 ### What to scan for
@@ -169,7 +175,7 @@ a markdown body after the closing delimiter. To parse:
    (required), plus any optional fields.
 3. Everything after the closing `---`, trimmed, is the skill's body content.
 
-See the [specification](/specification) for the full set of frontmatter fields
+See the [specification](specification.md) for the full set of frontmatter fields
 and their constraints.
 
 ### Handling malformed YAML
@@ -201,7 +207,10 @@ Record diagnostics so they can be surfaced to the user (in a debug command, log
 file, or UI), but don't block skill loading on cosmetic issues.
 
 <Note>
-The [specification](/specification) defines strict constraints on the `name` field (matching the parent directory, character set, max length). The lenient approach above deliberately relaxes these to improve compatibility with skills authored for other clients.
+The [specification](specification.md) defines strict constraints on the `name`
+field (matching the parent directory, character set, max length). The lenient
+approach above deliberately relaxes these to improve compatibility with skills
+authored for other clients.
 </Note>
 
 ### What to store
@@ -360,7 +369,10 @@ Advantages over raw file reads:
 - Track activation for analytics
 
 <Tip>
-If you use a dedicated activation tool, constrain the `name` parameter to the set of valid skill names (e.g., as an enum in the tool schema). This prevents the model from hallucinating nonexistent skill names. If no skills are available, don't register the tool at all.
+If you use a dedicated activation tool, constrain the `name` parameter to the
+set of valid skill names (e.g., as an enum in the tool schema). This prevents
+the model from hallucinating nonexistent skill names. If no skills are available
+don't register the tool at all.
 </Tip>
 
 ### User-explicit activation
@@ -384,7 +396,7 @@ options for what exactly that content looks like:
 This is the natural outcome with file-read activation, where the model reads the
 raw file. It's also a valid choice for dedicated tools. The frontmatter may
 contain fields useful at activation time - for example,
-[`compatibility`](/specification#compatibility-field) notes environment
+[`compatibility`](specification.md#compatibility-field) notes environment
 requirements that could inform how the model executes the skill's instructions.
 
 **Body only (frontmatter stripped)**: The harness parses and removes the YAML

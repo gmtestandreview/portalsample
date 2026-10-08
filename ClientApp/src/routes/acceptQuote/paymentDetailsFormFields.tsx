@@ -87,15 +87,13 @@ const invoiceOptions = [
 
 const RhfInvoiceContactChoice = () => {
   const { control } = useFormContext<PaymentDetailsFormValues>();
-  const { field, fieldState } = useController({
+  const { field } = useController({
     control,
     name: 'invoiceSentTo',
   });
-  const validationMessageId = 'q-invoiceSentTo-validation-msg';
-  const showError = fieldState.isTouched && fieldState.error?.message;
 
   return (
-    <fieldset aria-describedby={showError ? validationMessageId : undefined}>
+    <fieldset>
       <legend id='q-invoiceSentTo'>
         The invoice will be sent to the following contact
       </legend>
@@ -125,15 +123,6 @@ const RhfInvoiceContactChoice = () => {
             </label>
           </div>
         ))}
-        {showError && (
-          <Form.Control.Feedback
-            type='invalid'
-            id={validationMessageId}
-            className='form-validation-message'
-          >
-            {fieldState.error?.message}
-          </Form.Control.Feedback>
-        )}
       </Form.Group>
     </fieldset>
   );
@@ -195,12 +184,14 @@ const RhfPhoneField = ({ name, label, format }: Readonly<PhoneFieldProps>) => {
   const showError = fieldState.isTouched && fieldState.error?.message;
   const resolvedFormat =
     typeof format === 'function' ? format(field.value) : format;
+  const { ref, ...fieldProps } = field;
 
   return (
     <Form.Group className='form-field-container' controlId={name}>
       <Form.Label>{label}</Form.Label>
       <PatternFormatFixed
-        {...field}
+        {...fieldProps}
+        getInputRef={ref}
         customInput={Form.Control}
         type='text'
         className='form-field form-text-input mb-0'
@@ -288,7 +279,7 @@ const RhfInvoiceContact = () => {
 };
 
 interface PaymentDetailsFormFieldsProps {
-  quotationId?: string;
+  quotationId?: string | undefined;
 }
 
 const PaymentDetailsFormFields = ({
@@ -315,7 +306,7 @@ const PaymentDetailsFormFields = ({
         />
         <RhfInvoiceContactChoice />
       </Row>
-      {invoiceSentTo === InvoiceSentToValues.DifferentPerson && (
+      {invoiceSentTo !== InvoiceSentToValues.SamePerson && (
         <Row className='mb-4'>
           <h2>Invoice contact person</h2>
           <RhfInvoiceContact />

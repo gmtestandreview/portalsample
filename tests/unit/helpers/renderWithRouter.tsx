@@ -64,7 +64,12 @@ export const renderWithRouter = (
   }: RenderWithRouterOptions = {}
 ): RenderWithRouterResult => {
   const routes: RouteObject[] = [
-    { path: path ?? initialPath, element, loader, HydrateFallback },
+    {
+      path: path ?? initialPath,
+      element,
+      ...(loader === undefined ? {} : { loader }),
+      HydrateFallback,
+    },
     ...extraRoutes,
     // Redirect sinks. Without these a redirect falls through to the splat route and the test
     // cannot tell "navigated to /not-found" from "matched nothing".

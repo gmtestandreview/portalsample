@@ -293,6 +293,7 @@ Body
     errors = validate(skill_dir)
     assert errors == [], f"Expected no errors, got: {errors}"
 
+
 def test_name_trailing_hyphen(tmp_path: Path):
     skill_dir = tmp_path / "my-skill-"
     skill_dir.mkdir()
@@ -513,3 +514,41 @@ Body
 """)
     errors = validate(skill_dir)
     assert any("metadata[tags]" in e and "must be a string" in e for e in errors)
+
+
+@pytest.mark.parametrize(
+    "value,valid", [("", False), (" ", False), ("x", True), ("x" * 500, True), ("x" * 501, False)]
+)
+def test_compatibility_exact_bounds(value: str, valid: bool):
+    errors = validate_metadata({"name": "my-skill", "description": "Test", "compatibility": value})
+    assert (errors == []) is valid
+
+
+@pytest.mark.parametrize("name", [" my-skill", "my-skill ", "a" * 63 + "e\u0301"])
+def test_raw_name_constraints_cannot_be_hidden_by_normalization(name: str):
+    assert validate_metadata({"name": name, "description": "Test"})
+
+
+def test_directory_read_failure_is_reported_as_validation_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    def denied(_path: Path):
+        raise PermissionError("directory access denied")
+
+    monkeypatch.setattr(Path, "iterdir", denied)
+    errors = validate(tmp_path)
+    assert len(errors) == 1
+    assert "directory access denied" in errors[0]
+
+
+@pytest.mark.parametrize("escape", [r"\U00110000", r"\UFFFFFFFF"])
+def test_out_of_range_yaml_unicode_is_a_validation_error(tmp_path: Path, escape: str):
+    skill_dir = tmp_path / "my-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text(
+        f'---\nname: my-skill\ndescription: "{escape}"\n---\nBody',
+        encoding="utf-8",
+    )
+    errors = validate(skill_dir)
+    assert len(errors) == 1
+    assert "Invalid YAML" in errors[0]

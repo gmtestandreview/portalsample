@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -9,14 +8,14 @@ import type {
   GetAccountValuesDto,
   FormStepStatusDto,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
 import accountSubmitValidation from '../validation';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
 
 const loadAccountDetails =
@@ -24,10 +23,9 @@ const loadAccountDetails =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
       const businessDetailsStep =
@@ -51,18 +49,12 @@ const completeAccountDetails =
     instance: IPublicClientApplication,
     accountContext: AccountContextState | null
   ) =>
-  async (
-    values: AccountDto,
-    isDirty: boolean,
-    _: FormikHelpers<AccountDto>,
-    abortSignal?: AbortSignal
-  ) => {
+  async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
       await client.completeAccountDetails(
         {

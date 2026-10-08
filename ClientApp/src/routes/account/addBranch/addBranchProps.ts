@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -11,13 +10,13 @@ import type {
   ValidationProblemDetails,
   UserDto,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import type {
   ErrorType,
   WizardFormStepValues,
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
 import { NotificationSeverity } from '../../../storage/types';
 import { setBranchModalNotification } from '../../../storage/notification';
@@ -29,10 +28,9 @@ const loadAccountDetails =
   async (abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
-      const tokenResult = await instance.acquireTokenSilent({
-        ...tokenRequest,
-        account: accounts[0],
-      });
+      const tokenResult = await instance.acquireTokenSilent(
+        silentRequestFor(accounts[0])
+      );
       client.setAuthToken(tokenResult.accessToken);
 
       const businessDetailsStep = await client.getBranchDetails(abortSignal);
@@ -48,7 +46,7 @@ const loadAccountDetails =
     );
   };
 
-const handleOrganisationUpdate = async (
+const handleOrganisationUpdate = (
   values: AccountDto,
   accountContext: AccountContextState | null,
   user: UserDto
@@ -97,19 +95,13 @@ const completeAccountDetails =
     accountContext: AccountContextState | null,
     onShowBranchSelector: () => void
   ) =>
-  async (
-    values: AccountDto,
-    _isDirty: boolean,
-    _: FormikHelpers<AccountDto>,
-    abortSignal?: AbortSignal
-  ) => {
+  async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.completeBranchAdd(
           {
@@ -128,7 +120,7 @@ const completeAccountDetails =
         userClient.setAuthToken(tokenResult.accessToken);
         const user = await userClient.signIn({});
 
-        await handleOrganisationUpdate(values, accountContext, user);
+        handleOrganisationUpdate(values, accountContext, user);
 
         setBranchModalNotification({
           message: 'Your branch/location details have been successfully saved.',

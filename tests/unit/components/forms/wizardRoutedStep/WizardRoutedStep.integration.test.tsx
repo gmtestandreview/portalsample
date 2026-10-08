@@ -15,6 +15,7 @@ import WizardRoutedStep from '../../../../../ClientApp/src/components/forms/Wiza
 import WizardStep from '../../../../../ClientApp/src/components/forms/WizardForm/WizardStep';
 import type { WizardRoutedStepProps } from '../../../../../ClientApp/src/components/forms/WizardForm/types';
 import { type FormikValues } from 'formik';
+import { defined } from '../../../helpers/defined';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -384,7 +385,9 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     // The array element at index 0 is now a different object
     expect(stepStatuses[0]).not.toBe(originalDto);
     // And it has the updated status
-    expect(stepStatuses[0].status).toBe(FormStepStatus.Completed);
+    expect(defined(stepStatuses[0], 'first step status').status).toBe(
+      FormStepStatus.Completed
+    );
   });
 
   it('navigates to the next step using a returned base URL and reports dirty values', async () => {
@@ -418,7 +421,6 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     expect(onSaveAndNext).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
-      expect.any(Object),
       expect.any(AbortSignal)
     );
   });
@@ -449,7 +451,6 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     expect(onSaveAndExit).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
-      expect.any(Object),
       expect.any(AbortSignal)
     );
   });
@@ -459,7 +460,6 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     const router = makeRouter(
       {
         canSaveDraft: true,
-        locationAfterExit: undefined,
       },
       [{ path: '/', element: <div>Root Page</div> }]
     );
@@ -520,7 +520,7 @@ describe('WizardRoutedStep — prop mutation fix', () => {
 
   it('does nothing on submit when no save-and-next callback is configured', async () => {
     const user = userEvent.setup();
-    const router = makeRouter({ onSaveAndNext: undefined });
+    const router = makeRouter({});
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>
@@ -534,10 +534,9 @@ describe('WizardRoutedStep — prop mutation fix', () => {
   it('falls back to root after save and exit without a configured destination', async () => {
     const user = userEvent.setup();
     const onSaveAndExit = vi.fn().mockResolvedValue(undefined);
-    const router = makeRouter(
-      { onSaveAndExit, canSaveDraft: true, locationAfterExit: undefined },
-      [{ path: '/', element: <div>Root Page</div> }]
-    );
+    const router = makeRouter({ onSaveAndExit, canSaveDraft: true }, [
+      { path: '/', element: <div>Root Page</div> },
+    ]);
     render(<RouterProvider router={router} />);
 
     await waitFor(() =>

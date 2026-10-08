@@ -18,7 +18,7 @@ import {
   type RequestForPatternApprovalApplicationMessage,
   RequestForPatternApprovalClient,
 } from '../../../api/web-api-client';
-import { tokenRequest } from '../../../authentication/authConfig';
+import { silentRequestFor } from '../../../authentication/silentRequest';
 import { formatDateTimeToString } from '../../../utils';
 import CustomPagination from '../../../components/Pagination';
 import BlockUISpinner from '../../../components/BlockUISpinner';
@@ -61,10 +61,9 @@ const ApplicationMessages = () => {
         // Try do something useful here like fetch messages for the application and display them
         if (accounts.length > 0 && id) {
           const client = new RequestForPatternApprovalClient();
-          const tokenResult = await instance.acquireTokenSilent({
-            ...tokenRequest,
-            account: accounts[0],
-          });
+          const tokenResult = await instance.acquireTokenSilent(
+            silentRequestFor(accounts[0])
+          );
           client.setAuthToken(tokenResult.accessToken);
           const response = await client.getAppMessages(
             id,
@@ -98,7 +97,7 @@ const ApplicationMessages = () => {
         setIsDataLoading(false);
       }
     };
-    fetchMessages();
+    void fetchMessages();
   }, [accounts, id, instance, currentPage, refreshTick, messageView]);
 
   const changePage = (page: number) => {
@@ -114,10 +113,9 @@ const ApplicationMessages = () => {
       // Try do something useful here like fetch messages for the application and display them
       if (accounts.length > 0 && id) {
         const client = new RequestForPatternApprovalClient();
-        const tokenResult = await instance.acquireTokenSilent({
-          ...tokenRequest,
-          account: accounts[0],
-        });
+        const tokenResult = await instance.acquireTokenSilent(
+          silentRequestFor(accounts[0])
+        );
         client.setAuthToken(tokenResult.accessToken);
         await client.addAppMessage(id, sanitizedHtmlContent);
         setValue(initialValue);
@@ -139,7 +137,7 @@ const ApplicationMessages = () => {
       key={editorResetKey}
       value={value}
       onSubmit={() => {
-        handleEditorSubmit(value);
+        void handleEditorSubmit(value);
       }}
       setValue={setValue}
       placeholder='Message NMI'
@@ -147,9 +145,7 @@ const ApplicationMessages = () => {
   );
 
   const messageCount =
-    message &&
-    message.requestForPatternApprovalMessageDetails &&
-    message!.requestForPatternApprovalMessageDetails!.items!.length;
+    message?.requestForPatternApprovalMessageDetails?.items!.length;
 
   const renderToolbar = () => (
     <>
@@ -205,8 +201,8 @@ const ApplicationMessages = () => {
   );
 
   const handlePaginationScroll = () => {
-    const titleElement = document.getElementById('dash-type-title'); // TODO: change this to the title of the messages section when it is available
-    titleElement?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const messagesSection = document.getElementById('application-messages');
+    messagesSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const renderHtmlBody = (html: string) => {

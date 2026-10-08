@@ -3,7 +3,7 @@ export type KeyValue = [key: string, value: unknown];
 export type FilterKeys = (keyValue: KeyValue) => boolean;
 
 export type InitialValue<TValues> = {
-  [K in keyof TValues]: TValues[K] | '' | InitialValue<TValues[K]>;
+  [K in keyof TValues]: TValues[K] | '' | undefined | InitialValue<TValues[K]>;
 };
 
 export enum HttpStatusCode {

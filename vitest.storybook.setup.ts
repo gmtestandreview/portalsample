@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
-import { vi } from 'vitest';
+import { afterAll, vi } from 'vitest';
 
 // ---------------------------------------------------------------------------
 // Runtime environment variables (same as vitest.setup.ts and preview.ts)
@@ -90,31 +89,49 @@ const expectedErrorBoundaryStoryMessages = [
   'The above error occurred in the <ThrowingComponent> component',
 ];
 const originalConsoleError = console.error;
-const isExpectedErrorBoundaryStoryError = (message: string) =>
-  expectedErrorBoundaryStoryMessages.some((expected) =>
-    message.includes(expected)
+// Anchor to the start of the message: each expected string is the leading text
+// of its emitted error (a thrown Error.message, or React's "The above error
+// occurred in…" prefix). Matching with `startsWith` instead of `includes` keeps
+// every intended suppression while refusing to swallow a genuine application
+// error that merely contains one of these substrings mid-message.
+const isExpectedErrorBoundaryStoryError = (message: string) => {
+  // The browser test runner re-reports a render error as "Uncaught Error: <message>".
+  const unwrapped = message.replace(/^Uncaught (?:Error: )?/, '');
+  return expectedErrorBoundaryStoryMessages.some((expected) =>
+    unwrapped.startsWith(expected)
   );
+};
 
-vi.spyOn(console, 'error').mockImplementation((...args) => {
-  const message = args
-    .map((arg) => (arg instanceof Error ? arg.message : String(arg)))
-    .join('\n');
+const consoleErrorSpy = vi
+  .spyOn(console, 'error')
+  .mockImplementation((...args) => {
+    const message = args
+      .map((arg) => (arg instanceof Error ? arg.message : String(arg)))
+      .join('\n');
 
-  if (isExpectedErrorBoundaryStoryError(message)) {
-    return;
-  }
+    if (isExpectedErrorBoundaryStoryError(message)) {
+      return;
+    }
 
-  originalConsoleError(...args);
-});
+    originalConsoleError(...args);
+  });
 
-globalThis.addEventListener('error', (event) => {
+const handleExpectedErrorBoundaryStoryError = (event: ErrorEvent) => {
   if (
     isExpectedErrorBoundaryStoryError(event.error?.message ?? event.message)
   ) {
     event.preventDefault();
   }
-});
+};
 
-// Storybook's browser preview owns MSW through mswLoader and the service worker.
-// This setup file must remain browser-safe and must not import `msw/node`.
-afterEach(() => cleanup());
+globalThis.addEventListener('error', handleExpectedErrorBoundaryStoryError);
+
+// Restore the global interception installed above so the spy and listener do not
+// leak past this setup's test file.
+afterAll(() => {
+  consoleErrorSpy.mockRestore();
+  globalThis.removeEventListener(
+    'error',
+    handleExpectedErrorBoundaryStoryError
+  );
+});
