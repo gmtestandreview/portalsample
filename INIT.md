@@ -387,7 +387,7 @@ Derived from the answers above. Apply at `/orchestrate init`.
 
 **Known environment traps** (all have cost real time here):
 
-- Two `sonar` CLIs can collide on `PATH` (`sonarqube-cli` vs npm `@sonar/scan`); hooks calling bare
+- Two `sonar` CLIs can collide on `PATH` (`sonarqube-cli` vs the `sonar` binary a global or `npx` `@sonar/scan` can provide; no longer a project dependency); hooks calling bare
   `sonar` fail open to the wrong binary until VS Code is *fully* relaunched.
 - `claudeCode.environmentVariables` in VS Code `settings.json` holds a frozen `PATH` snapshot that
   overrides the registry — check it first when a `PATH` change refuses to stick.

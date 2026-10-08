@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -16,7 +15,7 @@ import type {
   WizardFormStepValues,
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import { setDashboardNotification } from '../../../storage/notification';
 import { NotificationSeverity } from '../../../storage/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
@@ -58,12 +57,7 @@ const completeAccountDetails =
     instance: IPublicClientApplication,
     accountContext: AccountContextState | null
   ) =>
-  async (
-    values: AccountDto,
-    _isDirty: boolean,
-    _: FormikHelpers<AccountDto>,
-    abortSignal?: AbortSignal
-  ) => {
+  async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();

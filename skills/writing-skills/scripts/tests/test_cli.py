@@ -3,6 +3,7 @@
 import json
 from pathlib import Path
 
+import pytest
 from click.testing import CliRunner
 
 from skills_ref.cli import main
@@ -93,3 +94,60 @@ def test_to_prompt_error_path(tmp_path: Path) -> None:
     result = CliRunner().invoke(main, ["to-prompt", str(skill_dir)])
     assert result.exit_code == 1
     assert "SKILL.md not found" in result.output
+
+
+@pytest.mark.parametrize("command", ["validate", "read-properties", "to-prompt"])
+def test_raw_control_error_is_reported_without_traceback(tmp_path: Path, command: str):
+    skill_dir = tmp_path / "my-skill"
+    _write_skill(skill_dir, description="bad\x01text")
+    result = CliRunner().invoke(main, [command, str(skill_dir)])
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Invalid YAML" in result.output
+
+
+def test_read_properties_reports_malformed_optional_metadata(tmp_path: Path):
+    skill_dir = tmp_path / "my-skill"
+    skill_dir.mkdir()
+    (skill_dir / "SKILL.md").write_text(
+        "---\nname: my-skill\ndescription: Test\nmetadata: invalid\n---\nBody",
+        encoding="utf-8",
+    )
+    result = CliRunner().invoke(main, ["read-properties", str(skill_dir)])
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Error:" in result.output
+    assert "metadata" in result.output
+
+
+@pytest.mark.parametrize("command", ["validate", "read-properties", "to-prompt"])
+@pytest.mark.parametrize("escape", [r"\U00110000", r"\UFFFFFFFF"])
+def test_out_of_range_unicode_error_is_a_controlled_cli_error(
+    tmp_path: Path, command: str, escape: str
+):
+    skill_dir = tmp_path / "my-skill"
+    _write_skill(skill_dir, description=f'"{escape}"')
+    result = CliRunner().invoke(main, [command, str(skill_dir)])
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Invalid YAML" in result.output
+
+
+@pytest.mark.parametrize("command", ["validate", "read-properties", "to-prompt"])
+def test_deep_yaml_is_reported_as_a_controlled_cli_error(tmp_path: Path, command: str) -> None:
+    skill_dir = tmp_path / "my-skill"
+    skill_dir.mkdir()
+    depth = 300
+    nested = "".join("  " * (level + 1) + "key:\n" for level in range(depth))
+    (skill_dir / "SKILL.md").write_text(
+        "---\nname: my-skill\ndescription: Test\nmetadata:\n"
+        + nested
+        + "  " * (depth + 1)
+        + "leaf: value\n---\nBody",
+        encoding="utf-8",
+    )
+    result = CliRunner().invoke(main, [command, str(skill_dir)])
+    assert result.exit_code == 1
+    assert isinstance(result.exception, SystemExit)
+    assert "Invalid YAML" in result.stderr
+    assert result.stdout == ""

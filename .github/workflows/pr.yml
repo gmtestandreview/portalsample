@@ -149,6 +149,14 @@ jobs:
       # watcher that shells out and writes files - but is disjoint from the React
       # app. It now runs as scoped quality evidence instead of creating an
       # always-skipped PR status.
+      # tests/hooks imports pytest; the runner's system Python does not ship
+      # it. --break-system-packages is safe here: the runner is ephemeral.
+      - name: Install Python test dependencies
+        if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
+        run:
+          python3 -m pip install --disable-pip-version-check
+          --break-system-packages pytest==9.1.1
+
       - name: Python tooling syntax
         if: ${{ !cancelled() && needs.detect-changes.outputs.agent-tooling == 'true' }}
         run:

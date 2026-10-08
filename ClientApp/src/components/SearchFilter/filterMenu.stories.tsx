@@ -8,7 +8,7 @@ import FilterMenu from './filterMenu';
 
 /**
  * `FilterMenu` is the testing/calibration dashboard filter dropdown. Its toggle shows
- * a count badge when non-default filters are applied; opening it reveals a Formik form
+ * a count badge when non-default filters are applied; opening it reveals a form
  * with status/year radio groups and Reset/Cancel/Show-results actions. It reads the
  * account dispatch context to persist the chosen filters to the user profile.
  */

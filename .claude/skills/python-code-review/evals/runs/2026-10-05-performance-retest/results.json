@@ -1,0 +1,441 @@
+{
+  "campaign": "2026-10-05-performance-retest",
+  "grader": "parent inspection against frozen contracts; independent command confirmation in parent-verification.json",
+  "scope": "Four packs, one completed isolated execution per arm; 19 required assertions. Skill behavior PASS is distinct from reviewed artifact AMBER/RED.",
+  "assertions": [
+    {
+      "id": "A1",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Do not accept zero analyzed files as clean; execute a check covering the four intended targets or explicitly keep the result unverified.",
+      "assessment": "Both reject the unchanged zero-file result and execute four-target reproductions.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "A2",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Record checker version, config/rule mode, root, interpreter/dependency/stub/import environment and material differences from supplied Pylance evidence.",
+      "assessment": "Version, strict reproduction rules, root, target/interpreter, YAML stubs/imports and unavailable editor equivalence are recorded. Candidate additionally validates Ruff defaults against isolated settings.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "A3",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Catch/reproduce cast rule under enabled reportUnnecessaryCast and remove only the redundant cast.",
+      "assessment": "Both reproduce reportUnnecessaryCast with the rule enabled and return the identical object directly.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "A4",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Reproduce cleanup Unknown with incomplete YAML disposal stubs and check the same repair under complete stubs, preserving cleanup.",
+      "assessment": "Baseline reproduces Unknown disposal but leaves the incomplete stub unresolved. Candidate annotates dispose()->None in that stub, verifies actual runtime return and cleanup, and checks both stub environments; it does not suppress the rule or remove disposal.",
+      "old_skill": {
+        "status": "FAIL",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "A5",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Check import resolution at workspace root rather than treating runtime sys.path mutation as static proof; preserve the actual function call.",
+      "assessment": "Both use TYPE_CHECKING-only vendor imports with the original runtime sys.path/import and function call preserved; workspace-root checks and differential runtime tests pass.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "A6",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Split type/nonempty assertion without weakening it, and label Sonar/editor clearance unexecuted unless an equivalent exact run exists.",
+      "assessment": "Both split the type/truthiness assertion and explicitly leave exact Sonar clearance unverified.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "A7",
+      "pack": "analyzer",
+      "required": true,
+      "expected": "Final separates executed Pyright evidence from Pylance/Sonar checks not run and records residual status/compatibility.",
+      "assessment": "Both finals distinguish four-target CLI evidence from zero-file local policy and unavailable Pylance/Sonar; compatibility scope and AMBER remain explicit.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/analyzer/observations.json",
+          "old_skill/analyzer/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/analyzer/observations.json",
+          "new_skill/analyzer/final.md"
+        ]
+      }
+    },
+    {
+      "id": "B1",
+      "pack": "reporting",
+      "required": true,
+      "expected": "Both summary and short final identify the same artifact and retain missing exact Pylance and unavailable Sonar quality evidence.",
+      "assessment": "Both summary and final identify derived-copy/generate_report.py and retain missing exact Pylance/Sonar evidence.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/reporting/observations.json",
+          "old_skill/reporting/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/reporting/observations.json",
+          "new_skill/reporting/final.md"
+        ]
+      }
+    },
+    {
+      "id": "B2",
+      "pack": "reporting",
+      "required": true,
+      "expected": "Do not claim measured Sonar threshold clearance or broad editor cleanliness from structural extraction and Pyright alone.",
+      "assessment": "Both refuse measured complexity or editor-clearance claims from structural extraction and Pyright alone.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/reporting/observations.json",
+          "old_skill/reporting/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/reporting/observations.json",
+          "new_skill/reporting/final.md"
+        ]
+      }
+    },
+    {
+      "id": "B3",
+      "pack": "reporting",
+      "required": true,
+      "expected": "Keep AMBER when required analyzer evidence is missing, distinguish no known behavioral defect from readiness, and state compatibility scope.",
+      "assessment": "Both retain AMBER, distinguish known behavior from readiness, and identify six supplied fixtures plus intentional missing-state change.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/reporting/observations.json",
+          "old_skill/reporting/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/reporting/observations.json",
+          "new_skill/reporting/final.md"
+        ]
+      }
+    },
+    {
+      "id": "B4",
+      "pack": "reporting",
+      "required": true,
+      "expected": "Final is within 120 words; executed analyzer/environment qualifications appear adjacent to the supported claim.",
+      "assessment": "Baseline final is 79 words and candidate 91, with adjacent historical/analyzer qualifications; neither reruns source checks.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/reporting/observations.json",
+          "old_skill/reporting/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/reporting/observations.json",
+          "new_skill/reporting/final.md"
+        ]
+      }
+    },
+    {
+      "id": "C1",
+      "pack": "harness",
+      "required": true,
+      "expected": "Demonstrate currently undiscovered matrix and nonasserting failure, then enforce failure/collect actual cases rather than deleting or weakening cases.",
+      "assessment": "The supplied matrix already executed through test_matrix_summary. Both arms proved false-green failure propagation and preserved/exercised the cases, but neither fixture can demonstrate the full required discovery assertion. Mark full compound criterion UNGRADABLE rather than weaken frozen expectations; observed failure-propagation component PASS is reported separately.",
+      "old_skill": {
+        "status": "UNGRADABLE",
+        "evidence": [
+          "old_skill/harness/observations.json",
+          "old_skill/harness/final.md"
+        ],
+        "observed_component": "PASS: baseline false-green demonstrated; mismatches enforced without deleting cases. Discovery component not established."
+      },
+      "new_skill": {
+        "status": "UNGRADABLE",
+        "evidence": [
+          "new_skill/harness/observations.json",
+          "new_skill/harness/final.md"
+        ],
+        "observed_component": "PASS: baseline false-green demonstrated; mismatches enforced without deleting cases. Discovery component not established."
+      }
+    },
+    {
+      "id": "C2",
+      "pack": "harness",
+      "required": true,
+      "expected": "Retain a failing guard decision as material RED, regardless of improved harness or clean analyzer results; do not change fail-closed policy.",
+      "assessment": "Both preserve guard bytes and cases, with final integration 1 failed/5 passed and RED for read-secret.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/harness/observations.json",
+          "old_skill/harness/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/harness/observations.json",
+          "new_skill/harness/final.md"
+        ]
+      }
+    },
+    {
+      "id": "C3",
+      "pack": "harness",
+      "required": true,
+      "expected": "Plan and implement task-owned temporary SKILL.md fixture lifetime and verify no new unaccounted fixture leftovers.",
+      "assessment": "Both use a context-managed test-lifetime directory, exercise cleanup paths and account for removal of their baseline leaked fixture.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/harness/observations.json",
+          "old_skill/harness/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/harness/observations.json",
+          "new_skill/harness/final.md"
+        ]
+      }
+    },
+    {
+      "id": "C4",
+      "pack": "harness",
+      "required": true,
+      "expected": "Report both own scratch disposition and supplied blocked scratch location/owner/purpose; preserve durable evidence and recovery snapshots.",
+      "assessment": "Both account for own scratch/evidence and preserve the named previous-task rollback checkpoint under its supplied cleanup restriction; candidate records explicit per-path ownership/disposition.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/harness/observations.json",
+          "old_skill/harness/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/harness/observations.json",
+          "new_skill/harness/final.md"
+        ]
+      }
+    },
+    {
+      "id": "C5",
+      "pack": "harness",
+      "required": true,
+      "expected": "Produce concise qualified completion showing actual passing/failing counts and compatibility/retention limits.",
+      "assessment": "Both identify actual counts, immutable-guard scope, intentional mismatch signaling change and missing real hook-process/analyzer verification.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/harness/observations.json",
+          "old_skill/harness/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/harness/observations.json",
+          "new_skill/harness/final.md"
+        ]
+      }
+    },
+    {
+      "id": "D1",
+      "pack": "routing",
+      "required": true,
+      "expected": "Existing-code review and mypy remediation activate; zip explanation, routine dataclass rewrite and standalone tests remain outside implicit scope.",
+      "assessment": "Both activate six review/remediation requests and decline implicit review scope for three near misses.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/routing/observations.json",
+          "old_skill/routing/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/routing/observations.json",
+          "new_skill/routing/final.md"
+        ]
+      }
+    },
+    {
+      "id": "D2",
+      "pack": "routing",
+      "required": true,
+      "expected": "Async review loads remediation reference without automatically loading formal reporting and unrelated analyzer/general references.",
+      "assessment": "Both select async remediation without the general review or formal reporting rubric. Candidate also selects only the required compact completion contract.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/routing/observations.json",
+          "old_skill/routing/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/routing/observations.json",
+          "new_skill/routing/final.md"
+        ]
+      }
+    },
+    {
+      "id": "D3",
+      "pack": "routing",
+      "required": true,
+      "expected": "Material behavioral defect keeps RED despite many passes; stale pre-edit tests cannot support final check; serialized-schema changes retain compatibility/authorization boundaries.",
+      "assessment": "Both reject aggregate GREEN over a material defect, reject stale pre-edit pass evidence and preserve consumer-impact checks despite explicit breaking-change authorization.",
+      "old_skill": {
+        "status": "PASS",
+        "evidence": [
+          "old_skill/routing/observations.json",
+          "old_skill/routing/final.md"
+        ]
+      },
+      "new_skill": {
+        "status": "PASS",
+        "evidence": [
+          "new_skill/routing/observations.json",
+          "new_skill/routing/final.md"
+        ]
+      }
+    }
+  ],
+  "limitations": [
+    "Single trial; agent variation prevents statistical or universal causal claims.",
+    "C1 frozen compound assertion is UNGRADABLE: supplied matrix already executed, so discovery component cannot be established. Both arms verify false-green propagation and case preservation separately.",
+    "Controlled editor-diagnostic/stub fixtures, not exact Pylance/Sonar executions.",
+    "43 case definitions validated; not all 43 executed.",
+    "Reporting pack uses supplied historical synthetic evidence, not fresh source analysis.",
+    "Interrupted initial candidate analyzer attempt excluded; completed final attempt uses post-spec-correction frozen resources.",
+    "Temporary-root permission failure in parent confirmation corrected with explicit task-local basetemp; superseded result retained in parent-verification.json."
+  ],
+  "summary": {
+    "old_skill": {
+      "passed_assertions": 17,
+      "graded_assertions": 18,
+      "ungradable_assertions": 1,
+      "registered_assertions": 19,
+      "failed_assertions": 1,
+      "complete_passing_packs": 2,
+      "partially_graded_packs": 1,
+      "failed_packs": 1
+    },
+    "new_skill": {
+      "passed_assertions": 18,
+      "graded_assertions": 18,
+      "ungradable_assertions": 1,
+      "registered_assertions": 19,
+      "failed_assertions": 0,
+      "complete_passing_packs": 3,
+      "partially_graded_packs": 1,
+      "failed_packs": 0
+    },
+    "observed_gain": "A4: incomplete-stub environment repair completed and checked without dropping cleanup.",
+    "readiness": "Scoped gradable assertions passed; one compound discovery criterion inconclusive because of fixture design. Exhaustive release and exact editor-equivalence readiness remain unverified."
+  }
+}

@@ -3,6 +3,7 @@ import { Logger, InteractionStatus } from '@azure/msal-browser';
 import { MsalContext, type IMsalContext } from '@azure/msal-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Formik, Form as FormikForm } from 'formik';
+import { FormProvider, useForm } from 'react-hook-form';
 import type {
   AccountDetails,
   AccountDispatchContext,
@@ -137,6 +138,10 @@ export interface PortalFormikConfig {
   initialStatus?: Record<string, unknown>;
 }
 
+export interface PortalRhfConfig {
+  defaultValues: Record<string, unknown>;
+}
+
 export interface PortalStoryParameters {
   authenticated?: boolean;
   initialEntries?: string[];
@@ -149,6 +154,8 @@ export interface PortalStoryParameters {
   modalState?: Partial<ModalState>;
   modalDispatch?: Partial<ModalDispatch>;
   formik?: PortalFormikConfig;
+  /** Wraps the story in a React Hook Form `FormProvider`. */
+  rhf?: PortalRhfConfig;
   msalContext?: Partial<IMsalContext>;
   fetch?: typeof globalThis.fetch;
 }
@@ -193,6 +200,32 @@ const withOptionalFormik = (
     >
       <FormikForm noValidate>{children}</FormikForm>
     </Formik>
+  );
+};
+
+const RhfStoryForm = ({
+  defaultValues,
+  children,
+}: {
+  defaultValues: Record<string, unknown>;
+  children: ReactNode;
+}) => {
+  const methods = useForm({ defaultValues });
+
+  return (
+    <FormProvider {...methods}>
+      <form noValidate>{children}</form>
+    </FormProvider>
+  );
+};
+
+const withOptionalRhf = (children: ReactNode, rhf?: PortalRhfConfig) => {
+  if (!rhf) {
+    return children;
+  }
+
+  return (
+    <RhfStoryForm defaultValues={rhf.defaultValues}>{children}</RhfStoryForm>
   );
 };
 
@@ -265,7 +298,7 @@ export const withPortalProviders: Decorator = (Story, context) => {
   };
   const msalContext = createMsalContext(authenticated, portal.msalContext);
   const storyContent = withOptionalFetch(
-    withOptionalFormik(<Story />, portal.formik),
+    withOptionalRhf(withOptionalFormik(<Story />, portal.formik), portal.rhf),
     portal.fetch
   );
 

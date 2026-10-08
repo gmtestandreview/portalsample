@@ -421,7 +421,6 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     expect(onSaveAndNext).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
-      expect.any(Object),
       expect.any(AbortSignal)
     );
   });
@@ -452,7 +451,6 @@ describe('WizardRoutedStep — prop mutation fix', () => {
     expect(onSaveAndExit).toHaveBeenCalledWith(
       { name: 'loaded' },
       false,
-      expect.any(Object),
       expect.any(AbortSignal)
     );
   });
