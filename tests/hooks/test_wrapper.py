@@ -2,9 +2,9 @@
 """
 Behaviour of the PreToolUse shell wrapper in .claude/settings.json.
 
-The wrapper must run scripts/pre_tool_use.py from the project working directory, pass its
-exit code through (0 allow, 2 block), warn when the guard is missing, and
-block when the guard crashes, matching the configured security policy.
+The wrapper resolves scripts/pre_tool_use.py from CLAUDE_PROJECT_DIR, passes
+exit codes through (0 allow, 2 block), blocks when the guard crashes or no Python
+is available, and warns/allows only when the guard file itself is absent.
 
 Needs `sh` and a Python interpreter on PATH (Git Bash on Windows).
 Run:  python tests/hooks/test_wrapper.py
@@ -52,7 +52,7 @@ def project(folder: Path, guard_source: str | None) -> None:
         (folder / "scripts" / "pre_tool_use.py").write_text(guard_source, encoding="utf-8")
 
 
-def run(folder: Path, payload: ToolCall) -> tuple[int, str]:
+def run(folder: Path, payload: ToolCall, *, cwd: Path | None = None) -> tuple[int, str]:
     shell = shutil.which("sh")
     if shell is None:
         pytest.skip("wrapper integration requires sh on PATH (for example Git Bash)")
@@ -62,7 +62,7 @@ def run(folder: Path, payload: ToolCall) -> tuple[int, str]:
         capture_output=True,
         text=True,
         timeout=30,
-        cwd=folder,
+        cwd=folder if cwd is None else cwd,
         env={**os.environ, "CLAUDE_PROJECT_DIR": str(folder)},
     )
     return proc.returncode, proc.stderr
@@ -70,7 +70,7 @@ def run(folder: Path, payload: ToolCall) -> tuple[int, str]:
 
 # (label, guard source or None for a missing guard, payload, expected exit, stderr must contain)
 CASES: list[tuple[str, str | None, ToolCall, int, str]] = [
-    ("guard crash blocks", "import sys\nsys.exit(1)\n", READ_OK, 2, "failed to execute"),
+    ("guard crash fails closed", "import sys\nsys.exit(1)\n", READ_OK, 2, "BLOCKED"),
     ("missing guard fails open", None, READ_OK, 0, "inactive"),
     ("guard exit code 2 passes through", "import sys\nsys.exit(2)\n", READ_OK, 2, ""),
 ]
@@ -98,10 +98,22 @@ def test_wrapper_exit_contract(
 
 @pytest.mark.parametrize(
     ("payload", "want_code", "want_text"),
-    [(READ_OK, 0, ""), (READ_SECRET, 2, "")],
+    [(READ_OK, 0, ""), (READ_SECRET, 2, "secret-file-access")],
 )
 def test_wrapper_runs_real_guard(payload: ToolCall, want_code: int, want_text: str) -> None:
     assert_case(GUARD.read_text(encoding="utf-8"), payload, want_code, want_text)
+
+
+def test_wrapper_resolves_project_path_and_uses_isolated_python() -> None:
+    with tempfile.TemporaryDirectory(prefix="wrapper-project-") as directory:
+        folder = Path(directory)
+        root = folder / "project with spaces"
+        root.mkdir()
+        unrelated = folder / "other-cwd"
+        unrelated.mkdir()
+        project(root, "import sys\nassert sys.flags.isolated and sys.flags.no_site\nsys.exit(2)\n")
+        code, _ = run(root, READ_OK, cwd=unrelated)
+        assert code == 2, "guard was skipped or Python isolation flags were absent"
 
 
 def main() -> int:
