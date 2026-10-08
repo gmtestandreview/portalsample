@@ -128,7 +128,9 @@ describe('application details summary', () => {
     const documents = screen.getByRole('region', {
       name: 'Supporting documents',
     });
-    expect(within(documents).getByText('spec.pdf')).toBeInTheDocument();
+    // Documents come from the form state, which useForm({ values }) fills one
+    // render after the props-driven regions above, so await them.
+    expect(await within(documents).findByText('spec.pdf')).toBeInTheDocument();
     // Read-only here: the category is text, not a select.
     expect(within(documents).getByText('Manuals')).toBeInTheDocument();
     expect(within(documents).queryByRole('combobox')).not.toBeInTheDocument();
