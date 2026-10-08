@@ -209,7 +209,7 @@ script with the token inline — use a gitignored env file or a Docker secret.
 
 **Environment traps that have cost real time here:**
 
-- Two `sonar` CLIs can collide on `PATH` (`sonarqube-cli` vs npm `@sonar/scan`). Hooks calling bare
+- Two `sonar` CLIs can collide on `PATH` (`sonarqube-cli` vs npm `@sonar/scan`, no longer a project dependency). Hooks calling bare
   `sonar` fail open to the wrong binary until VS Code is **fully** relaunched.
 - `claudeCode.environmentVariables` in VS Code `settings.json` holds a frozen `PATH` snapshot that
   overrides the registry. Check it **first** when a `PATH` change refuses to stick.
