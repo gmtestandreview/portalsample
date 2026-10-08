@@ -1,0 +1,1121 @@
+{
+  "review_date": "2026-10-05",
+  "workspace_head": "ef53dd8f9700bfd6064b956a098a345ae1d8154c",
+  "revision_basis": "Exact working-tree SHA-256 inventory, not HEAD alone; existing dirty files retained",
+  "packages": {
+    "writing-skills": {
+      "root": "skills/writing-skills",
+      "inventory_basis": "rg --files --hidden; honors ignore rules; excludes caches/environments",
+      "file_count": 54,
+      "inventory_sha256": "a96784477cda350f9769d8839b24190db316a9914f4e692d34421ab572f707b6",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 10757,
+          "sha256": "6c88261f730b88e71f157b312b1813d6ba4121ebf56d2acf8d6850093f32fe3e",
+          "area": "package-resource"
+        },
+        {
+          "path": "examples/ChaGPT GPT SKILL.md",
+          "bytes": 9525,
+          "sha256": "3f8c989c011a7e31b72a80f1f690f90bcf0d02451c02ccd5d8313ee17a7ed40d",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/SKILL-testing-checklist.md",
+          "bytes": 27564,
+          "sha256": "7159473346bfda70794c68588b0f612ca561e5c9486f5353d750ebe02a0c751d",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/adding-skills-support.md",
+          "bytes": 22815,
+          "sha256": "6e81e2c9e061d0720296340681892a42fcde2eaed77c9277660725b499d38b49",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/anthropic-best-practices.md",
+          "bytes": 43343,
+          "sha256": "b7371faf34600f4a65307cb9ac2febfb9e3a1a8a2c2469b9440038d6586e5d63",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/audit-scoring.md",
+          "bytes": 21470,
+          "sha256": "b6e6929a2bc8f60e8e757e79e099534e9e35e41f04d529e6bf4716a6304bfc7f",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/best practices-for-skill-creators.md",
+          "bytes": 16446,
+          "sha256": "b150e3bf4c3cddc89b584e399fb65159509184af7263a079eed02f4283ef4d76",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/best-practices-evaluations.md",
+          "bytes": 24561,
+          "sha256": "7f44a3ed820850ed9adb5792919e163f398e0b9813db91c88390d6f75b1ac71d",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/codex-skill-installation.md",
+          "bytes": 6522,
+          "sha256": "4208b9ca47ff584324bb873ebd57483df87e12a53b555ee51fd723000f7c41f2",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/description-optimization.md",
+          "bytes": 19716,
+          "sha256": "01b35a00bfd1866cca44ea1bc398f9c6e9de883ab934f39420adc58fd144ad73",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/evaluating-skill-output.md",
+          "bytes": 20474,
+          "sha256": "bb4473e272ed40ea4bbb56cbcaf576f6efba30bf6b0f5dfa15a2422371b7e736",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/file-review-rubric.md",
+          "bytes": 9878,
+          "sha256": "01fd745e2648b6a5c4ddd7921659a7984d8d1bf3daf71fa89bb9339d357dadf4",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/index.md",
+          "bytes": 12923,
+          "sha256": "b1aa2bc90397a708f633d43a94eb2c3fcef80b5960021d89d0d7005f5fd9b7bb",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/instruction-form.md",
+          "bytes": 4499,
+          "sha256": "d7b2ba5c4c02f54cf51f1a775cdf62527f3b0fe14924d14bf0684853ea862d1b",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/persuasion-principles.md",
+          "bytes": 8408,
+          "sha256": "0326502b9a0718f729b294767f4f864825c0069d503dee81b296cf0c564ec0c4",
+          "area": "package-resource"
+        },
+        {
+          "path": "assets/prompt-1-quick-merge-plan.md",
+          "bytes": 7580,
+          "sha256": "a7523c75c3b27ca5c12754d7e3f6b28c6c94190a52c4dfc7c25274226ef5465d",
+          "area": "package-resource"
+        },
+        {
+          "path": "assets/prompt-2-full-audit+conditional-merge.md",
+          "bytes": 14171,
+          "sha256": "87f850adbe63440d2972d22839293a520ea2b739732b44388d961485b2220d8a",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/skill-classification.md",
+          "bytes": 12364,
+          "sha256": "36e65e3992430ea4f71fbed482089ec49ba22e8735ce82ea43e1d815a9fb9890",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/skill-testing-data-model.md",
+          "bytes": 42576,
+          "sha256": "4b860d8b25392f04fab55374cfac3633db107033deda74f8bff8c22034812489",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/specification.md",
+          "bytes": 9413,
+          "sha256": "ecbff659226c4968a1d1e819ae7217f8c1f2390ff9ac41e2d8edcec8177861bf",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/testing-skills-with-subagents.md",
+          "bytes": 28672,
+          "sha256": "038050db9ace1f4f981607519f7e47308c9707bd1c821fb2750b83d494246b96",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/using-scripts-in-skills.md",
+          "bytes": 13304,
+          "sha256": "7979a4917b6d485f3862353b29ee4d5248f101e29f5c27bc98a6612ec500c01b",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/README.md",
+          "bytes": 6454,
+          "sha256": "a0b9c1e77357551125f63895fb50f63023bb18de104e33961cbbe2fc3387098e",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/README.md",
+          "bytes": 9169,
+          "sha256": "0804e820fddefb721f48a28214c1249c83248d57252a294be251f43434158240",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/activation/activation-evals.md",
+          "bytes": 7225,
+          "sha256": "e5943838229f0e591ec63499fae15b44f45707b740cb0241048ea78b75118c99",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/campaigns/authoring-review-2026-10-04.md",
+          "bytes": 30274,
+          "sha256": "a5d35c60b548d186410e22f62ef9d1d9d403d689f14d3a96eaeea6f9916cfa8d",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/campaigns/behavioral-evidence-2026-09-13.md",
+          "bytes": 9232,
+          "sha256": "e067ddc09b09f1038b29a0d204cc1d6582a63eae566949647fab267c6774a3a2",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/evaluation-schema.md",
+          "bytes": 8621,
+          "sha256": "b1f7047ff9cc04ff2b53643bc7dda80cc9a64a9d5130693b71b0c0320ae8f0a3",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/pressure/pressure-evals.md",
+          "bytes": 4340,
+          "sha256": "2b1ffcc0c49f43b4bc49f7d20d77f752fc2bab8f799b11237afc0b0f787ac3de",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/red-green/red-green-evals.md",
+          "bytes": 6048,
+          "sha256": "b835b2869a45ce105514e0387db91e4fb00efa910bea4ed9dfdfe75880561a4a",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/reference/reference-evals.md",
+          "bytes": 5514,
+          "sha256": "be03735a5643b4a5200978897b8e9b39d8d52fea7f6a3b4514c9f59d99de4354",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/regression/regression-evals.md",
+          "bytes": 3551,
+          "sha256": "7a03f10c51553d27d94e904402f6de9d1fcceea2588acb950b24729f16f26729",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/graphviz-conventions.dot",
+          "bytes": 5970,
+          "sha256": "e2890a593c91370e384b42f2f67b1a6232c9e69dddea7891a0c1c46d7b20b694",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/pyproject.toml",
+          "bytes": 716,
+          "sha256": "2c67fa6a1da9058823211ef7dcd7e11088ac53281b25edc4bada0e259ac978e9",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/render-graphs.js",
+          "bytes": 11362,
+          "sha256": "181e123dbe387136645ce3a9153348b1b8166f8771d2776f2514e97325c1777b",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/__init__.py",
+          "bytes": 204,
+          "sha256": "7f57c9343dddef8feebe58589c35cf3906565aa015aeba073100e683f00256e4",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/cli.py",
+          "bytes": 2666,
+          "sha256": "2e0461e31e986e1a459c7eb254ab6217df9abdb68b86146517688b322ad29d3c",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/errors.py",
+          "bytes": 558,
+          "sha256": "052a8d151ccb58dd19a1e5f557d15baf469822dbfdf7bd5d459b0186e858cabc",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/models.py",
+          "bytes": 1632,
+          "sha256": "180e07360b08b41eb58d1a7145c1f1b13745c004f4babd36834f32bbbec3d463",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/parser.py",
+          "bytes": 6120,
+          "sha256": "1ded057d78a5013e3fd24c6fb7d2bb93450cc98844de3174b3e3655a36fc0118",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/prompt.py",
+          "bytes": 2085,
+          "sha256": "51d2c126bc9155d7aa9c3a9a4969e793bcc4825ca3f3001f7e308bbcf14266a6",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/py.typed",
+          "bytes": 1,
+          "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/skills_ref/validator.py",
+          "bytes": 7106,
+          "sha256": "e75284dd9efa654422ae2c8a4f31bbe422270d9fd1e3ffc553fed9df76712019",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_cli.py",
+          "bytes": 4638,
+          "sha256": "6b0477e40cb0d91de91709ab877fd52731f16be3c10c930a32ebfa48c579836a",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_models.py",
+          "bytes": 461,
+          "sha256": "2fd200ce4435ce6f29007117be54822f287f3f801432937d22300c801abd2a5b",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_package.py",
+          "bytes": 254,
+          "sha256": "0641f8d16fa2db7b0cd07434dd0dbfd0d43c3fe44a392696484242fa4e4254ee",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_parser.py",
+          "bytes": 8000,
+          "sha256": "76bb15ff61e09b596113f741633587cb121df4427cf4cd5170555ccdd22f698a",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_prompt.py",
+          "bytes": 4457,
+          "sha256": "3aba77688d30b016817fde42977ba0646bf975bf1c2082b955b5219f7c334f57",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_render_graphs.py",
+          "bytes": 7835,
+          "sha256": "dad48e1799e912ab81d682fcbdce492e8021a6f923109333f0959253c8bb6beb",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_validator.py",
+          "bytes": 14165,
+          "sha256": "d453f09206b8be000cdb0720084611557e9512e90552309e2ef0c50198c200e5",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/tests/test_writing_skills_metadata.py",
+          "bytes": 552,
+          "sha256": "354cb3e869a0bcc25fb52857e693ab09ece3eb317480dd5b81f7d2611cb9f155",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/uv.lock",
+          "bytes": 13838,
+          "sha256": "2eb66bbe815cf4d9d53034b98126419398ddd64b4610052e3e6bdc53680693f8",
+          "area": "package-resource"
+        },
+        {
+          "path": "templates/SWOT Analysis.md",
+          "bytes": 4107,
+          "sha256": "c712e754c1d086b7b392111553c6531ad36055747f95b42a4763dc2dcf5c41b8",
+          "area": "package-resource"
+        },
+        {
+          "path": "templates/skill-audit.md",
+          "bytes": 4730,
+          "sha256": "ee382830eff9192889aeffa762c4df99dc315918a2ebc7980395e34e4715fcae",
+          "area": "package-resource"
+        }
+      ]
+    },
+    "skill-creator": {
+      "root": ".claude/skills/skill-creator",
+      "inventory_basis": "rg --files --hidden; honors ignore rules; excludes caches/environments",
+      "file_count": 129,
+      "inventory_sha256": "3d5996a417d57c368d3883dcef074763faf4a57ae29c8f7aa1c0cdd9d53f0fb2",
+      "files": [
+        {
+          "path": "LICENSE.txt",
+          "bytes": 11345,
+          "sha256": "bc6b3af2f331cbc7fb0da1344efb2cbe5877a31498b4d70dbc7000f3405a1362",
+          "area": "package-resource"
+        },
+        {
+          "path": "SKILL.md",
+          "bytes": 14404,
+          "sha256": "2e6f77aae770071e10c011b45afd250eb5b99d91c57ddce12cf0a73cf945b80b",
+          "area": "package-resource"
+        },
+        {
+          "path": "agents/analyzer.md",
+          "bytes": 16694,
+          "sha256": "69b4035995d234928669f55f6ae0b5f7b1731c81e58bb61b451e6327958c0196",
+          "area": "package-resource"
+        },
+        {
+          "path": "agents/comparator.md",
+          "bytes": 16993,
+          "sha256": "1d27801acabad263fe19de0327543f8d88329d9ef6a74ecc7e7bd298e1d292db",
+          "area": "package-resource"
+        },
+        {
+          "path": "agents/grader.md",
+          "bytes": 14296,
+          "sha256": "519679a3601c4afba34b734d3969d74d57ba22c779bf17144ea85f1716d0afc1",
+          "area": "package-resource"
+        },
+        {
+          "path": "assets/eval_review.html",
+          "bytes": 7255,
+          "sha256": "02109029c0e28abba7ea50308df9f48555dae8203dca119dafff9361d6e19f3a",
+          "area": "package-resource"
+        },
+        {
+          "path": "eval-viewer/generate_review.py",
+          "bytes": 41342,
+          "sha256": "e911a6ac3db72e38ca071bae6c8c40aee1fdc0f97ff4e5cb5646881d764d732e",
+          "area": "package-resource"
+        },
+        {
+          "path": "eval-viewer/viewer.html",
+          "bytes": 81380,
+          "sha256": "7117750e9efc1dd1a2ec7c7d9e7ecc46c7a60b1d15ba94e43459ccada16febf2",
+          "area": "package-resource"
+        },
+        {
+          "path": "evals/activation-eval.json",
+          "bytes": 2966,
+          "sha256": "605094cd261576bf2fe4afb901f9e406537ebfbf81b4d74c663ff6582cc88414",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/activation-holdout.json",
+          "bytes": 1153,
+          "sha256": "4d3a712530d63dd68de75b33e4ee1e3399210bb649a6174610f14fa6a9550f26",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/activation-near-miss-vocab.json",
+          "bytes": 648,
+          "sha256": "ada288e087e4ccf3dab14b3c7521f481b853c9de34a0f9c4ff37cc5085902a0a",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/activation-review.html",
+          "bytes": 14798,
+          "sha256": "65244f57e9b9266b2a1e6c8443ccae986d92d9004a93e9d240582dd4636a951f",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/behavioral-plan.md",
+          "bytes": 8847,
+          "sha256": "2ff527ae8f9a80ab086be8040b547cb5678ebce77357075b3a0216f9fe00805c",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/red-green-representative-report.md",
+          "bytes": 7470,
+          "sha256": "03188858a158ffe1387888ded0976b61abd63d76ed5eec1f3db85076b773c231",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-13/activation-eval-results.json",
+          "bytes": 9256,
+          "sha256": "e13a242651494373828cfa7ccd6f02bbd5ac4acc48d8b70781ff583937df889c",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-13/activation-eval-serial-results.json",
+          "bytes": 6538,
+          "sha256": "93366584ec1cd8cd0ab641c12d4bec921679ffe66b69f7117b937b53d90b5b07",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-13/activation-holdout-results.json",
+          "bytes": 2916,
+          "sha256": "c66e6cb3f2d2579c51ec7e235e1e617111e719ee6a6eef756e693c49d5438e36",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-13/closeout-summary.md",
+          "bytes": 4116,
+          "sha256": "b546289a6d2edd49dee541ca5436a1fb466d94d3b18a35f1e3f7561ffe42a911",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-eval-serial-after-description-results.json",
+          "bytes": 7490,
+          "sha256": "fcdfc38798c40f1c3f54433ac099ecb89b3d1667c742d62db7d83f7a495e8cf8",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-eval-serial-post-description-after-reset-results.json",
+          "bytes": 6683,
+          "sha256": "3b20610d622cc465dc1ca13019a2d8f8189fa775f49f60e67ab37650dd07de2c",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-eval-serial-post-description-rerun-results.json",
+          "bytes": 8720,
+          "sha256": "d754926e88c1cc316b92f3c6b9599824ad46ea75a4edd0e58663f1014d930f63",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-eval-serial-post-message-stop-fix-results.json",
+          "bytes": 6694,
+          "sha256": "c991d30faa5ac274629d051aacb39baf345bc229d301e2f0153f3e79dcff657a",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-eval-serial-post-readiness-guard-results.json",
+          "bytes": 8543,
+          "sha256": "e15449368a4acb05bf3da9471ef7de72aac45fa810ce5ea1af7ab7bac6a81fd0",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-eval-serial-results.json",
+          "bytes": 6528,
+          "sha256": "3ee039db5cb43cc5d5f43a9e85ff732ccf30db90b740b6809bee32e968eae4ab",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-failed-positives-after-literal-description-results.txt",
+          "bytes": 358,
+          "sha256": "80fd1ddb007ec0d2c4d29171a5aaf4525fc93b5eb358bd5839dd395ac202988d",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-failed-positives-after-message-stop-fix-results.txt",
+          "bytes": 356,
+          "sha256": "69e019ceaea4f1a06913d5f5eb193fc8fde9ecef092c77617ccd1f4741355398",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-failed-positives-after-second-description-results.txt",
+          "bytes": 360,
+          "sha256": "60324c4c4fa14be36c66357575673774905a97affe25640c48a054e74773d7af",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-failed-positives-after-stream-fix-results.txt",
+          "bytes": 359,
+          "sha256": "21c93049e78985485f60dff2f6efc3d4ab53a2b287d82f0cb4cf64f8086ba985",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-holdout-serial-post-description-after-reset-results.json",
+          "bytes": 3066,
+          "sha256": "e0e93d78ce80d312e93ce5b6eea4249fd27a626b1135a23ba088bc3f413f924d",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-holdout-serial-post-description-rerun-results.json",
+          "bytes": 3881,
+          "sha256": "d8b51adbebbb6ce0b8ff74e851f83ff61edd29590d8c168f2d857b0f4b11f514",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-holdout-serial-post-message-stop-fix-results.json",
+          "bytes": 3079,
+          "sha256": "7cfd06da632eed7420a6318d96f08d3f199a4f64fdf8b505a7dad372d4f3dac4",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-holdout-serial-post-readiness-guard-results.json",
+          "bytes": 3938,
+          "sha256": "10e55f116a07919a07469a181b13ecbe98d4a8bc44c4dd2ec60b7c46b2509507",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/activation-holdout-serial-results.json",
+          "bytes": 2914,
+          "sha256": "ad995545872e6e602e5c055be434cfe601c010e29afccb89626ab877190f7d71",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/closeout-summary.md",
+          "bytes": 6796,
+          "sha256": "e11cba41952f8f59e2e7b00a56183c46c232fc064c98a5e76048f268eaa89cbb",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/green/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/green/target-skill-final/SKILL.md",
+          "bytes": 991,
+          "sha256": "d686b089cd8ee8cecd3a07dd01ca301c7bfb98cc63f3a148e31f3470f4de5ac7",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/green/target-skill-final/references/evaluation.md",
+          "bytes": 286,
+          "sha256": "4ab2c20b8538d446e78807d7a0b64bf4c4eba70e1f61c5de8170df9fc670fb60",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/green/target-skill-final/release-review.md",
+          "bytes": 2339,
+          "sha256": "e35e02f69fd5efbaa78914a33a0847a3258c64dffc728f2494fa39923d4f1e8b",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/green/target-skill-final/scripts/package_skill.py",
+          "bytes": 425,
+          "sha256": "510ec83e7bea2155e0a71ca5e98ec835eabdea3d4e687d1507521aa0af359fd1",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/green/transcript.jsonl",
+          "bytes": 269508,
+          "sha256": "114829b1d5ec26a8584ef2ccac76d4170ccf7c58f2385b6842505f4bcb65f31a",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/independent-red-green-readiness-pressure-report.md",
+          "bytes": 5659,
+          "sha256": "f66cde72f666edbba8530b863916839c83f9a4625eb440f61dc93aa3779841b5",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/red/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/red/target-skill-final/SKILL.md",
+          "bytes": 991,
+          "sha256": "d686b089cd8ee8cecd3a07dd01ca301c7bfb98cc63f3a148e31f3470f4de5ac7",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/red/target-skill-final/references/evaluation.md",
+          "bytes": 286,
+          "sha256": "4ab2c20b8538d446e78807d7a0b64bf4c4eba70e1f61c5de8170df9fc670fb60",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/red/target-skill-final/release-review.md",
+          "bytes": 863,
+          "sha256": "c5e7f71a02f91a5901c4e38e5eb6c4dc5d27f1d460d1c39300ad98e52eca61fc",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/red/target-skill-final/scripts/package_skill.py",
+          "bytes": 425,
+          "sha256": "510ec83e7bea2155e0a71ca5e98ec835eabdea3d4e687d1507521aa0af359fd1",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/red/transcript.jsonl",
+          "bytes": 115807,
+          "sha256": "740d7279402855ca5f222f7349e201388e20b2c133ee6ead2fc8ae1458b4d742",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green-readiness-pressure/summary.json",
+          "bytes": 5404,
+          "sha256": "4045bdbc6962834e49a4bde35b25eaaab8681230dd6ab25ad0f66b728dba6070",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/target-skill-final/SKILL.md",
+          "bytes": 1091,
+          "sha256": "4aa7e326a62bcbe481e0a649b39af9c51341f6271c56a5041e4ea84b02743cd5",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/target-skill-final/references/evaluation.md",
+          "bytes": 393,
+          "sha256": "97b6227a233ebfe2ca1ac890cfc5569266d9e0d7c693cd1d7de3ee1fa1337f89",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/target-skill-final/references/examples.md",
+          "bytes": 731,
+          "sha256": "809b92099ebe78fd49d74a91ce1081bcdfe592f67278cf46f9ba195f7272d404",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/target-skill-final/references/schema.md",
+          "bytes": 534,
+          "sha256": "456d3408466a58f92129e44f659548a105a42d934b685d20eed585a8864ff053",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/target-skill-final/scripts/package_skill.py",
+          "bytes": 444,
+          "sha256": "e26fb23f597c1f03e5c65fd19f4f6b587aafb4737f636dfbb77477feee7ec98d",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/green/transcript.jsonl",
+          "bytes": 497848,
+          "sha256": "9477f6e2ccf0ed9e5ee90824c76cffaf436be443be3f25af204a811cc317f3f6",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/independent-red-green-report.md",
+          "bytes": 5073,
+          "sha256": "779e2cf67b48eacf1d17f7ae044f1b6bf38e935bd4bdf0a7fb124ab59e1b5f56",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/target-skill-final/SKILL.md",
+          "bytes": 1127,
+          "sha256": "229e5c35e5a34759541950b4de3ea9779d79015cb7270f9f9dafc8df530241e2",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/target-skill-final/references/evaluation.md",
+          "bytes": 304,
+          "sha256": "f18b89a53c0de95f7d62aa8d199289a04120d4daa3382839076b25c71ed41909",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/target-skill-final/references/examples.md",
+          "bytes": 541,
+          "sha256": "ee00d836522c8be41fad43a17ad5a1e7e8ee43cc456488ea38b6806a47e1a3a1",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/target-skill-final/references/schema.json",
+          "bytes": 317,
+          "sha256": "9a47c63768656a23eb0a888927004155cf48d5bb0c4b97c0cc4c6a8a75d6005c",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/target-skill-final/scripts/package_skill.py",
+          "bytes": 444,
+          "sha256": "e26fb23f597c1f03e5c65fd19f4f6b587aafb4737f636dfbb77477feee7ec98d",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/red/transcript.jsonl",
+          "bytes": 229336,
+          "sha256": "4808b7e1d191ce33d1513c27ee8b595ad9b9981a1d7af0c0517e17a5c1d9584c",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-14/independent-red-green/summary.json",
+          "bytes": 4984,
+          "sha256": "58f8e9579916172948e3ed486b0864b23e39bf2b57cac84284ef72637e6f264d",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-eval-after-exclusion-results.json",
+          "bytes": 9455,
+          "sha256": "64c80c3f2d5285f2a1cd4da39edfee483ea8ab8ec1a949b53d403b3ccadd75da",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-eval-after-exclusion-stderr.txt",
+          "bytes": 2610,
+          "sha256": "1d10d3da715bceba96c37f7985aaea3a55c6bf8a973ccc77e10ba5143857f27f",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-eval-serial-final-results.json",
+          "bytes": 7352,
+          "sha256": "c72b7c22297f44b8e780aecb1e3b2f17e824c9f95aaa38903bdcb5fa92391fd4",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-eval-stderr.txt",
+          "bytes": 83,
+          "sha256": "5ee468bc1cec9473872fdf1b85411e4feeedac26db97fc6f623afb6267aad1df",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-holdout-after-exclusion-results.json",
+          "bytes": 5040,
+          "sha256": "6b4b34e29bc970b251c42dfb2d9fc4b617b473a64d622ac3ee6cd221a00059a1",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-holdout-after-exclusion-stderr.txt",
+          "bytes": 2080,
+          "sha256": "5400769e652c7af9ea977006c4f00d8a68e14996f36d141ed78722a090869fbf",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-holdout-serial-final-results.json",
+          "bytes": 3363,
+          "sha256": "9464a48605da366d21c29f4fde04ef846667fb6d02d6f34dfcd16e966531a536",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-holdout-stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-nearmiss-rerun-results.json",
+          "bytes": 1119,
+          "sha256": "68885e16eb05473ea735bcabfa83b43c5b72914801d7c3356430f3c36fcc5ad1",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/activation-positive-rerun-results.json",
+          "bytes": 1159,
+          "sha256": "6b215de06e05e59565b8d5a9e137852d59911110309ea820db2439ac4ee3c6ba",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/closeout-summary.md",
+          "bytes": 1769,
+          "sha256": "9ba0a5c58ee7b05111c46d830d6a34c6b0f64d25c900db2459f5c9776843b391",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/near-miss-vocab-after-results.json",
+          "bytes": 4324,
+          "sha256": "b12a05cb20f89617b47b80601ae72c273a17911d04dcd363d125422bbc1a482c",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/near-miss-vocab-after-stderr.txt",
+          "bytes": 2470,
+          "sha256": "31d21bb2fb7e1625744f7bbcee0ed5a5195a8cf833cd47b3965b2a40acf0bd19",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/near-miss-vocab-baseline-results.json",
+          "bytes": 2387,
+          "sha256": "53333d93b8dedd70b34e2181741d570132ec793fdc9bfc454479eead6240f080",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/near-miss-vocab-baseline-stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/nearmiss-rerun-stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "evals/runs/2026-09-21/positive-rerun-stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "development-evidence"
+        },
+        {
+          "path": "references/authoring-craft.md",
+          "bytes": 6485,
+          "sha256": "9473951a3fa2fa4646a4a97cf774a6bb1b51ae71d0816dec4a0cb8b17e7ad54a",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/claude-code-advanced.md",
+          "bytes": 4885,
+          "sha256": "2ae4e82539f7919ed429bc3be36e1effcd3e11bd3ac8ff83e4eb403232ffce69",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/claude-code-hook-mechanisms.md",
+          "bytes": 8236,
+          "sha256": "fa998543eabf6b8487907a09c62a35f940e0a635ebbdb828998a3905c16bed75",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/claude-code-patterns-library.md",
+          "bytes": 3743,
+          "sha256": "c7f897e2897709daabb09410a48bfd980aa4a837f4fe6b2f5d704b12c3ec0ed1",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/claude-code-skill-rules-reference.md",
+          "bytes": 9236,
+          "sha256": "ba5d37f4df71d815636d5bf9d2000e509a05d63c55bbb1c5e9363f57da71785f",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/claude-code-trigger-types.md",
+          "bytes": 8045,
+          "sha256": "97da0b13ac150aaa8452c0a829a4b74355599bacaaf7c9b4ce91092337227ce6",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/claude-code-troubleshooting.md",
+          "bytes": 10512,
+          "sha256": "b05c5613fa745a6d0753393f38fefc28ad7f8181330153f3ee73767765491221",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/description-optimization.md",
+          "bytes": 5200,
+          "sha256": "3140f83ebcc4a80f773a13038bea79b3b51f7728d34b0ffc0e26e05bda92ab6a",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/evaluation-workflow.md",
+          "bytes": 34176,
+          "sha256": "3fa620870ac5c84fa90d4d6cf58e386b05a72570861c92d691db9e0ba1acc673",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/output-patterns.md",
+          "bytes": 1826,
+          "sha256": "839c426f63c462db253e7ba08b3f305823f261cf10f35bdc72295ac7bad16bee",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schema-manifest.json",
+          "bytes": 678,
+          "sha256": "2afe68efe885f582c58f2e946b69fd042145bcde1ccf96f30904f2db1173e5dc",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas.md",
+          "bytes": 13631,
+          "sha256": "d518687a17a60b02fe306e3ced7ae616c3ee9b2380b64ab7fa31dba0e3bdd52a",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/analysis.schema.json",
+          "bytes": 3155,
+          "sha256": "8af3e76dcd0286278be3976b43ff2e4e578cb4e987c5ae4ae9c9b089af504f1c",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/benchmark.schema.json",
+          "bytes": 5730,
+          "sha256": "a0468ec082a6b573fe16a1c0718f334ed2993c8eb50d5c5a057a052b95e3fd6d",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/common.schema.json",
+          "bytes": 2276,
+          "sha256": "f500880056f46c9a57914c7a31466965586a86c50750a51ddc1e76d989a7c2b4",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/comparison.schema.json",
+          "bytes": 3803,
+          "sha256": "0a6a7bee10d779b48d42d4cc68aaccded01831c83273cb16788886cdb3e976d4",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/eval-metadata.schema.json",
+          "bytes": 643,
+          "sha256": "d2b32ec07a9fa0baaff94c04284f003e2ce2685701de8c8aeaab9165a8c6d75c",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/evals.schema.json",
+          "bytes": 1254,
+          "sha256": "b7a0834a70735511ee2d1943a256ea03c6e5658faf6e4cdf6eaf67671838fe0a",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/feedback.schema.json",
+          "bytes": 905,
+          "sha256": "46a18e26a5317166b83974bc0bf97ddb8b37c8f6ec418201b2e3e521d6223b30",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/grading.schema.json",
+          "bytes": 3421,
+          "sha256": "4ff6ade8549ed0fc978b2a101d591408dff7815ba44b8946012e996a681854b5",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/history.schema.json",
+          "bytes": 1681,
+          "sha256": "8b5e828050b7a33094d57bfa1e9135003ad9753a2af0dbcd7215c82db9a091c7",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/metrics.schema.json",
+          "bytes": 882,
+          "sha256": "3f738a4c838ce3d79b5eaa172f13af574fc3c28fe01aae5039c1214562ac731b",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/schemas/timing.schema.json",
+          "bytes": 945,
+          "sha256": "3b02c7d5539ad3820553297b36662d8372204cac3daee76fccd58eaea8458d5c",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/validation-results.json",
+          "bytes": 841,
+          "sha256": "02158ae6b41547e539bc3542d67e96536dbf8027e832d0ea442e03dea2419109",
+          "area": "package-resource"
+        },
+        {
+          "path": "references/workflows.md",
+          "bytes": 819,
+          "sha256": "8f6f2cfe34c093d834eab1470347e0febc3d19f0fa4b3e229c14d11f123c3dc0",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_aggregate_benchmark.py",
+          "bytes": 12958,
+          "sha256": "751f32eb419466350b38add8dd9b8420cfe482ebcc6180b44794160d8630bf11",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_generate_review.py",
+          "bytes": 15208,
+          "sha256": "0325de3234a43ba81f8c19b48452fe7e4751da6f2ec0bbc7beb726bf0b03e77d",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_init_skill.py",
+          "bytes": 11107,
+          "sha256": "2fabd9baf2d0b3630a2180025f27eedeef8b8f3bee35fa443354adc0b640e3ce",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_package_skill.py",
+          "bytes": 13780,
+          "sha256": "cd5fec24323370e3a6fdfff9a759c8da22dc135c75bc9ca9bd98fb6bc65533f5",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_quick_validate.py",
+          "bytes": 4769,
+          "sha256": "3a538a941e75e920166cd94522750b800baadbecf8de6bbbef12854c9f76e171",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_run_eval.py",
+          "bytes": 14016,
+          "sha256": "2a0a620f2eb4458617da87288fd8d0266d1ba761b6a8a813190437825493c264",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_run_readiness_pressure_eval.py",
+          "bytes": 32271,
+          "sha256": "bbb40ab4012009a348cb43bb1c225ba36bd68868f5f3f19448e1d793921f8266",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_utils.py",
+          "bytes": 2057,
+          "sha256": "5ed2d93bf9e6f6d7c6aa871a7e4a3b3cd51531162d949411c68e5d539fbd4936",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/Regression tests/test_viewer.py",
+          "bytes": 2817,
+          "sha256": "26bf84e4c4c00c709af493014df5cf4fe1d976592b4145c1c1fca83b7f8be53a",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/__init__.py",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/aggregate_benchmark.py",
+          "bytes": 42404,
+          "sha256": "aee1d1b1cc07ee056db6d982c0aa1030cadab7fb8897de06c90892187adfbafa",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/generate_eval_review.py",
+          "bytes": 3298,
+          "sha256": "0cba71f20886ee209d592645b9ea9d516a7aa191b9bb8273e9e81fbddbb5b17b",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/generate_report.py",
+          "bytes": 20338,
+          "sha256": "648a1cdffa3e77913c018909cf2a1d90f0435fcc5b791602b9004a9a862eb6fe",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/improve_description.py",
+          "bytes": 24168,
+          "sha256": "df3ce9064be94a678efb6b7d9268283f8935beb0621c00bc9135302819ac772c",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/init_skill.py",
+          "bytes": 4953,
+          "sha256": "5333a9486375c9b9f4c55ececd3f5c9ddfef40ffb04ddb9ca85170dcef24dcc7",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/package_skill.py",
+          "bytes": 9252,
+          "sha256": "7b9d30fe4292de353f670acc74096685641fef4dd7d5dfe1d6b40ae3eae1dd73",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/quick_validate.py",
+          "bytes": 6451,
+          "sha256": "a429c685285668481490031926bf120f673fc8fc8e26a04bcfbed1c4733b327e",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/run_eval.py",
+          "bytes": 39582,
+          "sha256": "2dfc48e55ddcdf3e9565d12df9bd4f89213f109fc544a419e465e44ceb8727ab",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/run_loop.py",
+          "bytes": 28504,
+          "sha256": "98ba3883c514c2a8b5c7cac9037869c204e751cb83e24a5079d041448b997e94",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/run_readiness_pressure_eval.py",
+          "bytes": 23974,
+          "sha256": "eaa5c9c9e0a09908ad86abaee6055b4c23f2f8a195dfd77b15c48a3fe46643ad",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/run_red_green_eval.py",
+          "bytes": 16649,
+          "sha256": "4f1581e5f02829776b4fc5e496758787c3eb59464a0ee5dfdd26aec5cc06edc4",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/test_regressions.py",
+          "bytes": 18611,
+          "sha256": "821db5aa7a480e55969cf737edbe6b3334fb75ec3975b3a6b338badfe3ea643c",
+          "area": "package-resource"
+        },
+        {
+          "path": "scripts/utils.py",
+          "bytes": 3573,
+          "sha256": "67a5636abbfed74e2b8bdffd1d9fe00997859c9a31deb63578158e6b44241d6e",
+          "area": "package-resource"
+        }
+      ]
+    }
+  }
+}

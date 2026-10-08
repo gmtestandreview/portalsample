@@ -1,0 +1,107 @@
+[
+  {
+    "name": "zero-coverage",
+    "argv": [
+      "pyright",
+      "--project",
+      "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\analyzer\\pyrightconfig.json",
+      "--outputjson"
+    ],
+    "exit_code": 0,
+    "checker": "1.1.414",
+    "summary": {
+      "filesAnalyzed": 0,
+      "errorCount": 0,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0
+    },
+    "rules": [],
+    "stderr": "File or directory \"c:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\analyzer\\not_present\" does not exist."
+  },
+  {
+    "name": "complete-stubs",
+    "argv": [
+      "pyright",
+      "--project",
+      "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\analyzer\\complete-stubs.json",
+      "--outputjson"
+    ],
+    "exit_code": 1,
+    "checker": "1.1.414",
+    "summary": {
+      "filesAnalyzed": 4,
+      "errorCount": 1,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.223
+    },
+    "rules": [
+      "reportUnnecessaryCast"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "incomplete-stubs",
+    "argv": [
+      "pyright",
+      "--project",
+      "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\analyzer\\incomplete-stubs.json",
+      "--outputjson"
+    ],
+    "exit_code": 1,
+    "checker": "1.1.414",
+    "summary": {
+      "filesAnalyzed": 4,
+      "errorCount": 2,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.233
+    },
+    "rules": [
+      "reportUnnecessaryCast",
+      "reportUnknownMemberType"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "workspace-imports",
+    "argv": [
+      "pyright",
+      "--project",
+      "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\analyzer\\workspace-imports.json",
+      "--outputjson"
+    ],
+    "exit_code": 1,
+    "checker": "1.1.414",
+    "summary": {
+      "filesAnalyzed": 4,
+      "errorCount": 4,
+      "warningCount": 0,
+      "informationCount": 0,
+      "timeInSec": 0.234
+    },
+    "rules": [
+      "reportUnnecessaryCast",
+      "reportMissingImports",
+      "reportUnknownMemberType",
+      "reportUnknownVariableType"
+    ],
+    "stderr": ""
+  },
+  {
+    "name": "false-green-harness",
+    "argv": [
+      "python",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider"
+    ],
+    "cwd": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\harness",
+    "exit_code": 0,
+    "result": "2 passed although read-secret decision violates expected exit2"
+  }
+]

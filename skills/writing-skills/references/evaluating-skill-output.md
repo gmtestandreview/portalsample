@@ -410,7 +410,7 @@ When prompting the LLM, include these guidelines:
 - **Bundle repeated work.** If every test run independently wrote a similar
   helper script (a chart builder, a data parser), that's a signal to bundle the
   script into the skill's `scripts/` directory. See
-  [Using scripts](/skill-creation/using-scripts) for how to do this.
+  [Using scripts](using-scripts-in-skills.md) for how to do this.
 
 ### The loop
 

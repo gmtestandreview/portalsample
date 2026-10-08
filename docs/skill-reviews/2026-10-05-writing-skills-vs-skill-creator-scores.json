@@ -1,0 +1,117 @@
+{
+  "review_id": "2026-10-05-writing-skills-vs-skill-creator",
+  "date": "2026-10-05",
+  "rubric": "skills/writing-skills/references/file-review-rubric.md",
+  "rubric_weights": {
+    "P": 10,
+    "K": 10,
+    "C": 15,
+    "A": 15,
+    "U": 10,
+    "R": 10,
+    "V": 15,
+    "I": 5,
+    "M": 5,
+    "F": 5
+  },
+  "analysis_unit": "Integrated package comparative quality; explicitly adapted from file-role rubric. Not average of per-file scores or separate 14-criterion lifecycle rubric.",
+  "all_criteria_applicable": true,
+  "applicable_maximum": 100,
+  "deduction_policy": "Minor localized defects lose 1; material criteria retain at most 74%. Multiple findings in a capped criterion are jointly considered, not double-counted across criteria.",
+  "report_finding_mapping": {
+    "CT-01": ".claude/skills/skill-creator/scripts/aggregate_benchmark.py:500-533,990-1008",
+    "CT-02": ".claude/skills/skill-creator/scripts/run_eval.py:1000-1106,1224-1258",
+    "CT-03": ".claude/skills/skill-creator/scripts/utils.py:70-114 versus quick_validate.py:55-75",
+    "CT-04": ".claude/skills/skill-creator/scripts/package_skill.py:31-44,138-165",
+    "CT-05": ".claude/skills/skill-creator/scripts/generate_eval_review.py:86-98",
+    "CT-06": ".claude/skills/skill-creator/agents/comparator.md:325-350; references/schemas/comparison.schema.json:8-14,168-226"
+  },
+  "packages": {
+    "writing-skills": {
+      "points": {
+        "P": 9,
+        "K": 9,
+        "C": 15,
+        "A": 15,
+        "U": 10,
+        "R": 10,
+        "V": 14,
+        "I": 5,
+        "M": 5,
+        "F": 5
+      },
+      "total": 97,
+      "evidence_states": {
+        "P": "Supported",
+        "K": "Supported",
+        "C": "Supported",
+        "A": "Supported",
+        "U": "Supported; retained hash-matched routing checks Verified",
+        "R": "Verified deterministic tools; Supported proportional document controls",
+        "V": "Verified current deterministic tests; Supported evidence limits; NHR current natural activation",
+        "I": "Supported; retained hash-matched resource checks Verified",
+        "M": "Supported",
+        "F": "Verified retained hash-matched mechanical checks and current deterministic tests"
+      },
+      "deductions": {
+        "P": ["W1"],
+        "K": ["W2"],
+        "V": ["W3"]
+      },
+      "revision_inventory_sha256": "a96784477cda350f9769d8839b24190db316a9914f4e692d34421ab572f707b6",
+      "readiness": "HOLD/NHR for current target-client behavioral readiness; creator additionally has reproduced unresolved contract defects"
+    },
+    "skill-creator": {
+      "points": {
+        "P": 9,
+        "K": 10,
+        "C": 11,
+        "A": 11,
+        "U": 8,
+        "R": 8,
+        "V": 11,
+        "I": 3,
+        "M": 4,
+        "F": 4
+      },
+      "total": 79,
+      "evidence_states": {
+        "P": "Supported",
+        "K": "Supported; Verified selected tooling",
+        "C": "Failed targeted workflow dependency ordering; other contracts Supported",
+        "A": "Failed reproduced aggregation truth invariant and current hook claims",
+        "U": "Failed static targeted label/focus/navigation requirements; UI execution NHR",
+        "R": "Failed targeted hygiene/error presentation; rejection guards Verified",
+        "V": "Failed targeted provenance applicability; local suites Verified; current activation NHR",
+        "I": "Failed schema/prose and YAML decoding consistency",
+        "M": "Supported with localized provider applicability gap",
+        "F": "Failed 18 targeted links; validator/schema/tests Verified"
+      },
+      "deductions": {
+        "P": ["C0"],
+        "C": ["C2"],
+        "A": ["C1", "C3"],
+        "U": ["C7", "C8"],
+        "R": ["C6", "C9"],
+        "V": ["C5"],
+        "I": ["C4", "C10"],
+        "M": ["C11"],
+        "F": ["C12"]
+      },
+      "revision_inventory_sha256": "3d5996a417d57c368d3883dcef074763faf4a57ae29c8f7aa1c0cdd9d53f0fb2",
+      "readiness": "HOLD/NHR for current target-client behavioral readiness; creator additionally has reproduced unresolved contract defects"
+    }
+  },
+  "per_file_threshold_scope": "Prior 54-file writing-skills updated-package assessment remains separate. No new creator per-file >96 certification or remediation claimed.",
+  "classification": {
+    "skills": 2,
+    "pairs": 1,
+    "true_duplicates": 0,
+    "partial_overlap": 1,
+    "pure_complementary": 0,
+    "false_positives": 0,
+    "nhr_classification": 0,
+    "boundary_clarifications_recommended": 1
+  },
+  "recommendation": "Keep separate; intentionally compose when both specializations are required. Hold merger and unsupported readiness claims."
+}

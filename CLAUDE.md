@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-<!-- markdownlint-configure-file { "MD013": { "tables": false } } -->
-
 This file provides guidance to Claude Code (claude.ai/code) when working with
 code in this repository.
 
@@ -67,6 +65,19 @@ with `npm run test:e2e:app` or `npm run test:e2e:storybook`, then open the
 corresponding HTML report in `reports/playwright/app` or
 `reports/playwright/storybook` and copy the AI prompt attachment into Claude,
 Codex, Copilot, or another coding assistant.
+
+## Markdown line length
+
+`MD013/line-length` is disabled. Do not spend effort wrapping Markdown to meet
+an 80-character limit. Wrap text only when it improves readability or when
+Prettier formats it automatically.
+
+## Markdown headings
+
+Respect `MD036/no-emphasis-as-heading`: use Markdown headings (`#`, `##`,
+etc.) for section titles. Do not use standalone bold or italic text as a
+heading. Keep heading levels logical, and do not disable or weaken MD036
+to avoid fixing a heading.
 
 ## Technology stack
 

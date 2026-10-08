@@ -11,18 +11,19 @@ Distinguishes between train and test queries.
 import argparse
 import html
 import json
+import math
 import sys
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Union, cast
+from typing import cast
 
 
 class Arguments(argparse.Namespace):
     """Typed command-line namespace populated by argparse."""
 
     input: str
-    output: Optional[str]
+    output: str | None
     skill_name: str
 
 
@@ -41,7 +42,7 @@ class QueryResult:
 class IterationRecord:
     """Validated optimization iteration."""
 
-    iteration: Union[int, str] = "?"
+    iteration: int | str = "?"
     description: str = ""
     train_results: tuple[QueryResult, ...] = ()
     test_results: tuple[QueryResult, ...] = ()
@@ -58,11 +59,11 @@ class ReportData:
     history: tuple[IterationRecord, ...] = ()
     original_description: str = "N/A"
     best_description: str = "N/A"
-    best_score: object = "N/A"
+    best_score: str | int | float = "N/A"
     has_best_test_score: bool = False
-    iterations_run: object = 0
-    train_size: object = "?"
-    test_size: object = "?"
+    iterations_run: int = 0
+    train_size: int | str = "?"
+    test_size: int | str = "?"
 
 
 def _mapping(value: object, *, context: str) -> dict[str, object]:
@@ -101,6 +102,19 @@ def _optional_nonnegative_int(data: Mapping[str, object], key: str, default: int
     value = data.get(key, default)
     if isinstance(value, bool) or not isinstance(value, int) or value < 0:
         raise ValueError(f"{key} must be a non-negative integer")
+    return value
+
+
+def _optional_size(data: Mapping[str, object], key: str) -> int | str:
+    return _optional_nonnegative_int(data, key, 0) if key in data else "?"
+
+
+def _display_score(data: Mapping[str, object], key: str) -> str | int | float:
+    value = data.get(key, "N/A")
+    if isinstance(value, bool) or not isinstance(value, (str, int, float)):
+        raise ValueError(f"{key} must be a string or finite number")
+    if isinstance(value, float) and not math.isfinite(value):
+        raise ValueError(f"{key} must be a string or finite number")
     return value
 
 
@@ -146,6 +160,9 @@ def _parse_iteration(value: object, *, index: int) -> IterationRecord:
 
     train_source = item.get("train_results", item.get("results", ()))
     test_source = item.get("test_results", ())
+    # The producer keeps holdout evidence null until training selection freezes.
+    if test_source is None:
+        test_source = ()
     return IterationRecord(
         iteration=iteration_value,
         description=_optional_str(item, "description", ""),
@@ -160,15 +177,18 @@ def _parse_report_data(data: Mapping[str, object]) -> ReportData:
         _parse_iteration(item, index=index)
         for index, item in enumerate(_sequence(history_value, context="history"))
     )
+    has_best_test_score = data.get("best_test_score") is not None
+    if has_best_test_score:
+        _display_score(data, "best_test_score")
     return ReportData(
         history=history,
         original_description=_optional_str(data, "original_description", "N/A"),
         best_description=_optional_str(data, "best_description", "N/A"),
-        best_score=data.get("best_score", "N/A"),
-        has_best_test_score=data.get("best_test_score") is not None,
-        iterations_run=data.get("iterations_run", 0),
-        train_size=data.get("train_size", "?"),
-        test_size=data.get("test_size", "?"),
+        best_score=_display_score(data, "best_score"),
+        has_best_test_score=has_best_test_score,
+        iterations_run=_optional_nonnegative_int(data, "iterations_run", 0),
+        train_size=_optional_size(data, "train_size"),
+        test_size=_optional_size(data, "test_size"),
     )
 
 
@@ -181,11 +201,7 @@ def _aggregate_runs(results: Sequence[QueryResult]) -> tuple[int, int]:
     total = 0
     for result in results:
         total += result.runs
-        correct += (
-            result.triggers
-            if result.should_trigger
-            else result.runs - result.triggers
-        )
+        correct += result.triggers if result.should_trigger else result.runs - result.triggers
     return correct, total
 
 
@@ -227,17 +243,16 @@ def _passed_count(results: Sequence[QueryResult]) -> int:
 
 
 def _best_history_index(
-    history: Sequence[IterationRecord], *, use_test_results: bool
-) -> Optional[int]:
-    """Return the stable row index with the highest canonical pass count."""
+    history: Sequence[IterationRecord],
+) -> int | None:
+    """Match the producer's training-only selection and first-seen tie handling."""
     if not history:
         return None
 
-    def pass_count(item: IterationRecord) -> int:
-        results = item.test_results if use_test_results else item.train_results
-        return _passed_count(results)
-
-    return max(range(len(history)), key=lambda index: pass_count(history[index]))
+    return max(
+        range(len(history)),
+        key=lambda index: _passed_count(history[index].train_results),
+    )
 
 
 def _render_page_start(*, title_prefix: str, refresh_tag: str) -> str:
@@ -409,7 +424,8 @@ def _render_table_header(
     test_queries: Sequence[QueryResult],
 ) -> str:
     """Render the table opening and all stable query columns."""
-    parts = ["""
+    parts = [
+        """
     <div class="table-container">
     <table>
         <thead>
@@ -418,7 +434,8 @@ def _render_table_header(
                 <th>Train</th>
                 <th>Test</th>
                 <th class="query-col">Description</th>
-"""]
+"""
+    ]
     parts.extend(_render_query_header(query, is_test=False) for query in train_queries)
     parts.extend(_render_query_header(query, is_test=True) for query in test_queries)
     parts.append("""            </tr>
@@ -428,23 +445,27 @@ def _render_table_header(
     return "".join(parts)
 
 
-def _render_result_cell(result: Optional[QueryResult], *, is_test: bool) -> str:
-    if result is None:
-        did_pass = False
-        triggers = 0
-        runs = 0
-    else:
-        did_pass = result.passed
-        triggers = result.triggers
-        runs = result.runs
-
-    icon = "✓" if did_pass else "✗"
-    css_class = "pass" if did_pass else "fail"
+def _render_result_cell(result: QueryResult | None, *, is_test: bool) -> str:
     test_class = " test-result" if is_test else ""
+    if result is None or result.runs == 0:
+        return (
+            f'                <td class="result{test_class}">'
+            '—<span class="rate">Not evaluated</span></td>\n'
+        )
+
+    icon = "✓" if result.passed else "✗"
+    css_class = "pass" if result.passed else "fail"
     return (
         f'                <td class="result{test_class} {css_class}">'
-        f'{icon}<span class="rate">{triggers}/{runs}</span></td>\n'
+        f'{icon}<span class="rate">{result.triggers}/{result.runs}</span></td>\n'
     )
+
+
+def _render_score(results: Sequence[QueryResult]) -> str:
+    correct, total = _aggregate_runs(results)
+    if total == 0:
+        return '<span class="score">Not evaluated</span>'
+    return f'<span class="score {_score_class(correct, total)}">{correct}/{total}</span>'
 
 
 def _render_result_cells(
@@ -455,8 +476,7 @@ def _render_result_cells(
 ) -> str:
     by_query = {result.query: result for result in results}
     return "".join(
-        _render_result_cell(by_query.get(query.query), is_test=is_test)
-        for query in queries
+        _render_result_cell(by_query.get(query.query), is_test=is_test) for query in queries
     )
 
 
@@ -464,21 +484,19 @@ def _render_iteration_row(
     item: IterationRecord,
     *,
     row_index: int,
-    best_index: Optional[int],
+    best_index: int | None,
     train_queries: Sequence[QueryResult],
     test_queries: Sequence[QueryResult],
 ) -> str:
     """Render one history row; row position is identity, iteration is display-only."""
-    train_correct, train_runs = _aggregate_runs(item.train_results)
-    test_correct, test_runs = _aggregate_runs(item.test_results)
     row_class = "best-row" if row_index == best_index else ""
 
     return "".join(
         (
             f"""            <tr class="{row_class}">
                 <td>{_escape_display(item.iteration)}</td>
-                <td><span class="score {_score_class(train_correct, train_runs)}">{train_correct}/{train_runs}</span></td>
-                <td><span class="score {_score_class(test_correct, test_runs)}">{test_correct}/{test_runs}</span></td>
+                <td>{_render_score(item.train_results)}</td>
+                <td>{_render_score(item.test_results)}</td>
                 <td class="description">{html.escape(item.description, quote=True)}</td>
 """,
             _render_result_cells(
@@ -502,10 +520,7 @@ def _render_table(
     test_queries: Sequence[QueryResult],
 ) -> str:
     """Render the query matrix and select the best row from canonical result data."""
-    best_index = _best_history_index(
-        history,
-        use_test_results=bool(test_queries),
-    )
+    best_index = _best_history_index(history)
     rows = "".join(
         _render_iteration_row(
             item,

@@ -1,0 +1,3 @@
+# Owner reports
+
+For `derived-copy/generate_report.py`, the owner reports corrected missing-state behavior and no known material behavior defect. Supplied historical evidence reports 79 pytest passes on Python 3.14.7, Ruff 0.16.7 check/format passes, and Pyright 1.1.414 strict with target 3.10, five files, zero diagnostics; Pylance was not executed, so editor clearance remains unverified. Structural extraction is owner-reported; Sonar S3776 threshold compliance is unmeasured because quality analysis returned 403. No checks were rerun here; runtime-floor execution and pressure evidence are missing. **AMBER:** production readiness is unproven. Six reported fixtures were byte-identical; missing-state behavior intentionally changed. See [summary.md](summary.md).
