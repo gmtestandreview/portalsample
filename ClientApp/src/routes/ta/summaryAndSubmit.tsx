@@ -1,5 +1,6 @@
 import { Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router';
+import { useFormikContext } from 'formik';
 import {
   CustomAccordion,
   CustomAccordionBody,
@@ -7,8 +8,9 @@ import {
 import EditButton from '../../components/Buttons/EditButton';
 import HeaderIntroText from '../../components/HeaderIntroText';
 import type { TASummaryProps } from './types';
-import OrganisationAndContact from './organisationAndContact';
-import ApplicationAndInstrument from './applicationAndInstrument';
+import OrganisationSummary from './summary/OrganisationSummary';
+import ApplicationSummary from './summary/ApplicationSummary';
+import type { TaSummarySectionProps } from './summary/types';
 import SupportingDocuments from './supportingDocuments';
 import useBodyClass from '../../components/Utilities/useBodyClass';
 import Checkbox from '../../components/Inputs/Checkbox';
@@ -17,6 +19,12 @@ import InTextLink from '../../components/InTextLink';
 const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const { isSubmitted } = props;
+  const { values, status } =
+    useFormikContext<TaSummarySectionProps['values']>();
+  // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
+  const hidden: TaSummarySectionProps['hidden'] =
+    (status as { hidden?: TaSummarySectionProps['hidden'] } | undefined)
+      ?.hidden ?? {};
 
   useBodyClass('summary');
   return (
@@ -37,7 +45,7 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
             eventKey='0'
             className='mb-4 py-2'
           >
-            <OrganisationAndContact isSummary name='organisationAndContact' />
+            <OrganisationSummary values={values} hidden={hidden} />
             {!isSubmitted ? (
               <EditButton link={`/ta/${id}/organisation-details`} />
             ) : null}
@@ -49,10 +57,7 @@ const SummaryAndSubmit = (props: Readonly<TASummaryProps>) => {
             eventKey='2'
             className='mb-4 py-2'
           >
-            <ApplicationAndInstrument
-              isSummary
-              name='applicationAndInstrument'
-            />
+            <ApplicationSummary values={values} hidden={hidden} />
             {!isSubmitted ? (
               <EditButton link={`/ta/${id}/application-details`} />
             ) : null}

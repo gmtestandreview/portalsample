@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -69,7 +68,6 @@ export const completeContactDetails =
   async (
     values: ContactFormStep,
     _isDirty: boolean,
-    _: FormikHelpers<ContactFormStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length === 0) {

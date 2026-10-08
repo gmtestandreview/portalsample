@@ -1,0 +1,108 @@
+{
+  "scope": "Parent and baseline disposable artifacts; distinct from deliberately retained rollback snapshots and durable evidence. Revised evaluators already reported their successful narrow cleanup.",
+  "attempts": [
+    {
+      "action": "Contained PowerShell enumeration and nonrecursive removal of owned entries",
+      "result": "Automatic approval review rejected before execution",
+      "reason": "blocked by policy"
+    },
+    {
+      "action": "Explicit literal-path removal of two controller SKILL.md files and their directories",
+      "result": "Automatic approval review rejected before execution",
+      "reason": "blocked by policy"
+    }
+  ],
+  "retained_disposable_artifacts": [
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\project\\.pytest_cache",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\project\\.ruff_cache",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\project\\__pycache__",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\project\\vendor\\__pycache__",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\__pycache__",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\baseline\\.pytest_cache",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\baseline\\.ruff_cache",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\baseline\\__pycache__",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\baseline\\vendor\\__pycache__",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Generated checker/test cache; disposable after bounded evidence capture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\synthetic-fixture",
+      "owner": "parent comparison controller",
+      "purpose": "Controller baseline-execution synthetic fixture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\fixture-controls\\harness\\synthetic-fixture",
+      "owner": "parent comparison controller",
+      "purpose": "Independent false-green control synthetic fixture",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\new_skill\\harness\\scratch",
+      "owner": "parent comparison controller",
+      "purpose": "Parent verification pytest temporary root",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\configure_roots.py",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Transient baseline checker config generator",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\provenance.py",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Transient baseline provenance generator",
+      "disposition": "blocked cleanup; retained"
+    },
+    {
+      "path": "C:\\Users\\gregm\\.codex\\tmp\\python-review-retest-20261005\\old_skill\\analyzer\\scratch\\remove_extra_path.py",
+      "owner": "baseline fixture evaluator",
+      "purpose": "Transient baseline checker config generator",
+      "disposition": "blocked cleanup; retained"
+    }
+  ],
+  "owner_action": "Resolve cleanup restriction and remove only listed disposable artifacts when allowed. Preserve original skill checkpoint, baseline/candidate snapshots, durable test/evidence files and prior-task rollback fixture."
+}

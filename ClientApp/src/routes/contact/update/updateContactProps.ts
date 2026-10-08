@@ -6,7 +6,7 @@ import type {
   ContactFormStep,
   FormStepStatusDto,
 } from '../../../api/web-api-client';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type {
   ErrorType,
   WizardStepProps,

@@ -3,20 +3,11 @@
   "$id": "comparison.schema.json",
   "title": "Skill Creator Blind Comparison",
   "type": "object",
-  "required": [
-    "winner",
-    "reasoning",
-    "rubric",
-    "output_quality",
-    "expectation_results"
-  ],
+  "required": ["winner", "reasoning", "rubric", "output_quality"],
   "properties": {
     "winner": {
       "type": "string",
-      "enum": [
-        "A",
-        "B"
-      ]
+      "enum": ["A", "B"]
     },
     "reasoning": {
       "type": "string",
@@ -24,10 +15,7 @@
     },
     "rubric": {
       "type": "object",
-      "required": [
-        "A",
-        "B"
-      ],
+      "required": ["A", "B"],
       "properties": {
         "A": {
           "$ref": "#/$defs/rubricSide"
@@ -40,10 +28,7 @@
     },
     "output_quality": {
       "type": "object",
-      "required": [
-        "A",
-        "B"
-      ],
+      "required": ["A", "B"],
       "properties": {
         "A": {
           "$ref": "#/$defs/qualitySide"
@@ -56,10 +41,7 @@
     },
     "expectation_results": {
       "type": "object",
-      "required": [
-        "A",
-        "B"
-      ],
+      "required": ["A", "B"],
       "properties": {
         "A": {
           "$ref": "#/$defs/expectationSide"
@@ -113,11 +95,7 @@
     },
     "qualitySide": {
       "type": "object",
-      "required": [
-        "score",
-        "strengths",
-        "weaknesses"
-      ],
+      "required": ["score", "strengths", "weaknesses"],
       "properties": {
         "score": {
           "type": "number",
@@ -141,12 +119,7 @@
     },
     "expectationSide": {
       "type": "object",
-      "required": [
-        "passed",
-        "total",
-        "pass_rate",
-        "details"
-      ],
+      "required": ["passed", "total", "pass_rate", "details"],
       "properties": {
         "passed": {
           "type": "integer",
@@ -165,10 +138,7 @@
           "type": "array",
           "items": {
             "type": "object",
-            "required": [
-              "text",
-              "passed"
-            ],
+            "required": ["text", "passed"],
             "properties": {
               "text": {
                 "type": "string",

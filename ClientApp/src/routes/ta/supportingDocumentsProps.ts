@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -21,7 +20,7 @@ import {
   supportingDocsSaveValidation,
   supportingDocsSubmitValidation,
 } from './validation';
-import type { DiscardProps } from '../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../components/forms/types';
 
 const loadSummary =
   (id: string, accounts: AccountInfo[], instance: IPublicClientApplication) =>
@@ -74,7 +73,6 @@ const saveStep =
   async (
     values: SupportingDocumentsStep,
     _isDirty: boolean,
-    _: FormikHelpers<SupportingDocumentsStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {

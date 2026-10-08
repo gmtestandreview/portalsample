@@ -18,7 +18,7 @@ import {
   type RequestForPatternApprovalSummary,
   YesNo,
 } from '../../api/web-api-client';
-import type { Validation } from '../../components/forms/FormikForm/types';
+import type { Validation } from '../../components/forms/types';
 import { ValidationMessages } from './types';
 
 export const organisationAndContactSubmitValidation = yup.object<

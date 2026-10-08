@@ -10,7 +10,7 @@ provides practical authoring decisions to help you write Skills that Claude can
 discover and use effectively.
 
 For conceptual background on how Skills work, see the
-[Skills overview](/en/docs/agents-and-tools/agent-skills/overview).
+Skills overview.
 
 ## Core principles
 
@@ -172,7 +172,7 @@ all of them.
   (1024 characters maximum)
 
   For complete Skill structure details, see the
-  [Skills overview](/en/docs/agents-and-tools/agent-skills/overview#skill-structure).
+  Skills overview.
   </Note>
 
 ### Naming conventions
@@ -276,7 +276,7 @@ description: Does stuff with files
 SKILL.md serves as an overview that points Claude to detailed materials as
 needed, like a table of contents in an onboarding guide. For an explanation of
 how progressive disclosure works, see
-[How Skills work](/en/docs/agents-and-tools/agent-skills/overview#how-skills-work)
+How Skills work
 in the overview.
 
 **Practical guidance:**
@@ -445,7 +445,7 @@ when previewing with partial reads.
 
 **Example**:
 
-```markdown theme={null}
+````markdown theme={null}
 # API Reference
 
 ## Contents
@@ -463,7 +463,7 @@ when previewing with partial reads.
 ## Core methods
 
 ...
-```
+````
 
 Claude can then read the complete file or jump to specific sections as needed.
 
@@ -1185,14 +1185,14 @@ Skills run in the code execution environment with platform-specific limitations:
 - **Anthropic API**: Has no network access and no runtime package installation
 
 List required packages in your SKILL.md and verify they're available in the
-[code execution tool documentation](/en/docs/agents-and-tools/tool-use/code-execution-tool).
+code execution tool documentation.
 
 ### Runtime environment
 
 Skills run in a code execution environment with filesystem access, bash
 commands, and code execution capabilities. For the conceptual explanation of
 this architecture, see
-[The Skills architecture](/en/docs/agents-and-tools/agent-skills/overview#the-skills-architecture)
+The Skills architecture
 in the overview.
 
 **How this affects your authoring:**
@@ -1245,7 +1245,7 @@ disclosure. Claude can navigate and selectively load exactly what each task
 requires.
 
 For complete details on the technical architecture, see
-[How Skills work](/en/docs/agents-and-tools/agent-skills/overview#how-skills-work)
+How Skills work
 in the Skills overview.
 
 ### MCP tool references
@@ -1274,7 +1274,7 @@ multiple MCP servers are available.
 
 Don't assume packages are available:
 
-`````markdown theme={null}
+````markdown theme={null}
 **Bad example: Assumes installation**: "Use the pdf library to process the
 file."
 
@@ -1283,14 +1283,11 @@ file."
 
 Then use it:
 
-````python
+```python
 from pypdf import PdfReader
 reader = PdfReader("file.pdf")
-```"
+```
 ````
-`````
-
-```text
 
 ## Technical notes
 
@@ -1298,14 +1295,14 @@ reader = PdfReader("file.pdf")
 
 The SKILL.md frontmatter includes only `name` (64 characters max) and
 `description` (1024 characters max) fields. See the
-[Skills overview](/en/docs/agents-and-tools/agent-skills/overview#skill-structure)
+Skills overview
 for complete structure details.
 
 ### Token budgets
 
 Keep SKILL.md body under 500 lines for optimal performance. If your content
 exceeds this, split it into separate files using the progressive disclosure
-patterns described earlier. For architectural details, see the [Skills overview](/en/docs/agents-and-tools/agent-skills/overview#how-skills-work).
+patterns described earlier. For architectural details, see the Skills overview.
 
 ## Checklist for effective Skills
 
@@ -1357,4 +1354,3 @@ Before sharing a Skill, verify:
     Upload and use Skills programmatically
   </Card>
 </CardGroup>
-```
