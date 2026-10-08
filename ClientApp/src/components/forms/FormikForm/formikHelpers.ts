@@ -1,7 +1,6 @@
-import { isObject } from 'formik';
-import type { FormikErrors } from 'formik';
+import { isObject } from '../formPath';
 
-const countOfErrors = <T>(value: FormikErrors<T>): number => {
+const countOfErrors = (value: unknown): number => {
   let count = 0;
   if (isObject(value)) {
     const keys = Object.keys(value);

@@ -162,7 +162,7 @@ patched.
 - Create: `reports/security/overrides-audit.before.json`,
   `reports/security/overrides-tree.before.txt` (ignored report output)
 
-- [ ] **Step 1: Isolate the work**
+- [x] **Step 1: Isolate the work**
 
 ```powershell
 git status --short
@@ -171,7 +171,7 @@ git switch -c chore/deps-overrides-rationalisation
 
 Expected: `git status --short` prints nothing; branch created.
 
-- [ ] **Step 2: Match the pinned npm version**
+- [x] **Step 2: Match the pinned npm version**
 
 ```powershell
 corepack enable
@@ -182,7 +182,11 @@ npm -v
 Expected: `11.19.1`. If corepack is unavailable, record the version mismatch in
 the PR description and expect lockfile churn.
 
-- [ ] **Step 3: Record audit and tree**
+Executed: `corepack enable` failed (EPERM writing the `C:\Program Files\nodejs`
+shims) and PATH npm stayed 11.17.0, so every lockfile-affecting command ran via
+`npx --yes npm@11.19.1` (also `corepack npm`).
+
+- [x] **Step 3: Record audit and tree**
 
 ```powershell
 New-Item -ItemType Directory -Force reports/security | Out-Null
@@ -192,6 +196,9 @@ npm ls glob body-parser brace-expansion browserslist fast-uri js-yaml nanoid pos
 
 Expected: audit exits non-zero with 25 findings (2 critical, 16 high, 7
 moderate); `npm ls` exits 0.
+
+Executed: the baseline was actually 26 findings (2 critical, 16 high, 8
+moderate).
 
 ### Task 2: Update Security Floors First (RED)
 
@@ -203,13 +210,13 @@ moderate); `npm ls` exits 0.
 **Interfaces:** Consumes the Audit Triage table; produces tests that fail on
 today's tree.
 
-- [ ] **Step 1: Read the surrounding test pattern**
+- [x] **Step 1: Read the surrounding test pattern**
 
 Read `tests/unit/config/dependencySecurity.test.ts` lines 1-130 to reuse the
 existing `installedVersions()` helper, imports, and the
 `it.each([...minimumVersions])` pattern. Do not invent helpers.
 
-- [ ] **Step 2: Raise and add single-line floors**
+- [x] **Step 2: Raise and add single-line floors**
 
 Replace the map body with (keeping the file's quote style):
 
@@ -230,7 +237,7 @@ const minimumVersions = new Map([
 ]);
 ```
 
-- [ ] **Step 3: Add a per-major `brace-expansion` floor test**
+- [x] **Step 3: Add a per-major `brace-expansion` floor test**
 
 `brace-expansion` has three majors installed, so one minimum cannot express it.
 Add after the `it.each` block, inside the same `describe`, using the existing
@@ -251,17 +258,17 @@ it('brace-expansion resolves only patched versions per major', () => {
     const floor = floors.get(semver.major(version));
     expect(
       floor,
-      `unexpected brace-expansion major in ${version}`,
+      `unexpected brace-expansion major in ${version}`
     ).toBeDefined();
     expect(
       semver.gte(version, floor as string),
-      `brace-expansion@${version} must be at least ${floor}`,
+      `brace-expansion@${version} must be at least ${floor}`
     ).toBe(true);
   }
 });
 ```
 
-- [ ] **Step 4: Confirm RED**
+- [x] **Step 4: Confirm RED**
 
 ```powershell
 npm run test:unit -- tests/unit/config/dependencySecurity.test.ts
@@ -272,7 +279,7 @@ Expected: FAIL for `fast-uri` (3.1.7), `undici` (7.29.0), `brace-expansion`
 (1.8.1), and likely `source-map-js` / `postcss-selector-parser`. `js-yaml`
 passes (already 4.3.2).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add tests/unit/config/dependencySecurity.test.ts
@@ -286,9 +293,13 @@ git commit -m "test: raise transitive security floors to current advisories"
 - Modify: `package.json` (`overrides` only)
 - Modify: `package-lock.json` (npm-generated)
 
-- [ ] **Step 1: Replace the overrides object**
+- [x] **Step 1: Replace the overrides object**
 
 Set `overrides` to exactly:
+
+> Executed overrides differ from this block: two fallbacks were added
+> (`brace-expansion@5 5.0.12`, `undici 7.30.0`) and `qs` was removed. See
+> Execution Notes.
 
 ```json
 "overrides": {
@@ -301,7 +312,7 @@ Set `overrides` to exactly:
   "@npmcli/package-json": {
     "glob": "13.0.6"
   },
-  "qs": "6.16.0",
+  "qs": "6.16.0", // NOT applied: qs override removed during execution (see Execution Notes)
   "unified-engine": {
     "glob": "13.0.6"
   },
@@ -310,7 +321,7 @@ Set `overrides` to exactly:
 }
 ```
 
-- [ ] **Step 2: Regenerate the lockfile so removed pins re-resolve**
+- [x] **Step 2: Regenerate the lockfile so removed pins re-resolve**
 
 ```powershell
 npm install --package-lock-only
@@ -324,7 +335,7 @@ just those packages:
 npm update brace-expansion fast-uri undici body-parser browserslist nanoid postcss js-yaml --package-lock-only
 ```
 
-- [ ] **Step 3: Check natural resolution and apply fallbacks**
+- [x] **Step 3: Check natural resolution and apply fallbacks**
 
 ```powershell
 npm ls brace-expansion fast-uri undici body-parser js-yaml --all
@@ -337,14 +348,14 @@ that row's **Fallback** from the Override Decisions table (add only that single
 override), then rerun Step 2. Record each fallback used under "Execution Notes"
 at the end of this plan.
 
-- [ ] **Step 4: Test whether `qs` and `uuid` overrides are still needed**
+- [x] **Step 4: Test whether `qs` and `uuid` overrides are still needed**
 
 Temporarily remove `qs`, run `npm install --package-lock-only` and
 `npm ls qs --all`; then do the same for `uuid`. If `qs` resolves `>=6.16.0` (or
 `uuid` `>=11.1.1`) everywhere without the override, leave it removed and delete
 its row from Retained Override Removal Criteria; otherwise restore it.
 
-- [ ] **Step 5: Install and run the floor test (GREEN)**
+- [x] **Step 5: Install and run the floor test (GREEN)**
 
 ```powershell
 npm install
@@ -354,7 +365,7 @@ npm run test:unit -- tests/unit/config/dependencySecurity.test.ts
 Expected: install succeeds (the existing `html-react-parser` patch-package
 warning may remain); floor test passes except floors addressed in Task 4.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add package.json package-lock.json
@@ -367,7 +378,7 @@ git commit -m "chore(deps): remove stale overrides and re-resolve patched transi
 
 - Modify: `package-lock.json` only
 
-- [ ] **Step 1: Update the fixable transitives**
+- [x] **Step 1: Update the fixable transitives**
 
 ```powershell
 npm update proxy-addr shell-quote compression source-map-js postcss-selector-parser minimatch --package-lock-only
@@ -380,7 +391,7 @@ move because a parent range excludes it, run `npm explain <pkg>` and add that
 single owner-scoped override with a removal criterion. Do not use
 `npm audit fix --force`.
 
-- [ ] **Step 2: Confirm the full floor suite passes**
+- [x] **Step 2: Confirm the full floor suite passes**
 
 ```powershell
 npm run test:unit -- tests/unit/config/dependencySecurity.test.ts
@@ -388,7 +399,7 @@ npm run test:unit -- tests/unit/config/dependencySecurity.test.ts
 
 Expected: PASS.
 
-- [ ] **Step 3: Re-audit**
+- [x] **Step 3: Re-audit**
 
 ```powershell
 npm audit --json > reports/security/overrides-audit.after.json
@@ -401,7 +412,7 @@ findings. Remaining findings are limited to the accepted set in Audit Triage
 (`braces` chain, `node-forge`). Anything else is a regression: stop and
 diagnose.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```powershell
 git add package-lock.json
@@ -416,7 +427,7 @@ git commit -m "chore(deps): refresh lockfile for critical and high transitive ad
   `.storybook/main.ts`
 - Create: `reports/security/overrides-tree.after.txt` (ignored report output)
 
-- [ ] **Step 1: Confirm final override shape**
+- [x] **Step 1: Confirm final override shape**
 
 ```powershell
 node -e "const p=require('./package.json'); console.log(Object.keys(p.overrides).sort().join('\n'))"
@@ -426,7 +437,7 @@ Expected: the four glob owners (`@mizchi/lsmcp`, `@npmcli/map-workspaces`,
 `@npmcli/package-json`, `unified-engine`), `uuid`, `valibot`, plus `qs` and any
 fallback overrides recorded in Execution Notes.
 
-- [ ] **Step 2: Record resolved versions**
+- [x] **Step 2: Record resolved versions**
 
 ```powershell
 npm ls glob body-parser brace-expansion browserslist fast-uri js-yaml nanoid postcss qs undici uuid valibot --all > reports/security/overrides-tree.after.txt
@@ -436,7 +447,7 @@ Expected: no `glob@10.x`; `brace-expansion` 1.1.21+/2.1.7+/5.0.12+; `fast-uri`
 3.1.8+; `undici` 7.29.1+; `js-yaml` 4.3.2; `qs` 6.16.0+; `uuid` 11.1.1+;
 `valibot` 1.4.2+.
 
-- [ ] **Step 3: Validate `@mizchi/lsmcp` under `glob@13.0.6`**
+- [x] **Step 3: Validate `@mizchi/lsmcp` under `glob@13.0.6`**
 
 ```powershell
 ./node_modules/.bin/lsmcp --help
@@ -449,7 +460,7 @@ Expected: each exits 0. A failure caused by glob resolution means the
 time-boxed `glob@10.5.0` exception in `dependencySecurity.test.ts` instead of
 silently weakening the policy.
 
-- [ ] **Step 4: Static gates**
+- [x] **Step 4: Static gates**
 
 ```powershell
 npm run type-check
@@ -460,7 +471,7 @@ npm run lint:mdx
 Expected: PASS each. `lint:mdx` exercises `remark-cli`/`unified-engine` under
 `glob@13.0.6` and the refreshed `minimatch`/`brace-expansion`.
 
-- [ ] **Step 5: Runtime gates**
+- [x] **Step 5: Runtime gates**
 
 ```powershell
 npm run test:ci
@@ -483,7 +494,7 @@ path; `test:e2e:app` covers the Webpack dev-server
   `docs/TESTING.md`, `docs/change-record/OPEN-ITEMS-BACKLOG.md`,
   `docs/change-record/MASTER-CHANGE-RECORD.md`
 
-- [ ] **Step 1: Find stale references**
+- [x] **Step 1: Find stale references**
 
 ```powershell
 Select-String -Path INIT.md,docs\*.md,docs\change-record\*.md -Pattern "overrides|@sonar/scan|adm-zip|glob@10|js-yaml|valibot|uuid|body-parser|brace-expansion|undici|fast-uri"
@@ -491,7 +502,7 @@ Select-String -Path INIT.md,docs\*.md,docs\change-record\*.md -Pattern "override
 
 Expected: every doc line needing an update is listed.
 
-- [ ] **Step 2: Update onboarding text**
+- [x] **Step 2: Update onboarding text**
 
 State, using the final override set from Task 5:
 
@@ -503,7 +514,7 @@ Dependency overrides are intentionally minimal. Retained overrides are policy ex
 Overrides must never pin a version inside an advisory range; dependencySecurity.test.ts enforces patched floors.
 ```
 
-- [ ] **Step 3: Validate docs**
+- [x] **Step 3: Validate docs**
 
 ```powershell
 npm run lint:mdx
@@ -520,7 +531,7 @@ Expected: PASS.
 - Optional modify: `package.json`, `package-lock.json`, docs describing the
   local npm `@sonar/scan`
 
-- [ ] **Step 1: Confirm scanner usage**
+- [x] **Step 1: Confirm scanner usage**
 
 ```powershell
 Select-String -Path package.json,.github\workflows\*.yml,tests\unit\config\*.ts,INIT.md,docs\*.md -Pattern "@sonar/scan|sonar-scanner-npm|sonarqube-scan-action"
@@ -529,14 +540,14 @@ Select-String -Path package.json,.github\workflows\*.yml,tests\unit\config\*.ts,
 Expected: CI uses the pinned `SonarSource/sonarqube-scan-action`, not npm
 `@sonar/scan`.
 
-- [ ] **Step 2: Decide removal or accepted risk**
+- [x] **Step 2: Decide removal or accepted risk**
 
 If the local npm scanner is not required, run `npm uninstall @sonar/scan`
 (removes the `node-forge` high finding). If it is required, document the
 accepted dev-only risk: `@sonar/scan@5.0.1` pins `node-forge@1.4.0`, and no
 patched `node-forge` exists (latest is 1.4.0).
 
-- [ ] **Step 3: Record accepted risks**
+- [x] **Step 3: Record accepted risks**
 
 Record in `docs/change-record/OPEN-ITEMS-BACKLOG.md`: the
 `braces`/`micromatch`/`chokidar`/`http-proxy-middleware` chain (needs
@@ -546,19 +557,19 @@ dev-tooling only.
 
 ## Success Criteria
 
-- [ ] `package.json` overrides contain only evidence-backed entries; none pins a
+- [x] `package.json` overrides contain only evidence-backed entries; none pins a
       version inside an advisory range.
-- [ ] `brace-expansion`, `fast-uri`, `undici`, `js-yaml` resolve to patched
+- [x] `brace-expansion`, `fast-uri`, `undici`, `js-yaml` resolve to patched
       versions with their overrides removed (or a single documented fallback
       each).
-- [ ] `npm audit` shows 0 critical and no override-regression findings;
+- [x] `npm audit` shows 0 critical and no override-regression findings;
       remaining findings match the accepted set.
-- [ ] No `glob@10.x` copy remains; `lsmcp --help`, `--list`, `doctor` pass.
-- [ ] `npm run test:unit -- tests/unit/config/dependencySecurity.test.ts` passes
+- [x] No `glob@10.x` copy remains; `lsmcp --help`, `--list`, `doctor` pass.
+- [x] `npm run test:unit -- tests/unit/config/dependencySecurity.test.ts` passes
       with the new floors.
-- [ ] `type-check`, `lint`, `lint:mdx`, `test:ci`, `build`,
+- [x] `type-check`, `lint`, `lint:mdx`, `test:ci`, `build`,
       `test:e2e:storybook`, `test:e2e:app` pass after lockfile regeneration.
-- [ ] Lockfile was regenerated with npm 11.19.1 and `npm ci` succeeds.
+- [x] Lockfile was regenerated with npm 11.19.1 and `npm ci` succeeds.
 
 ## Rollback
 
@@ -577,5 +588,72 @@ vulnerable.
 
 ## Execution Notes
 
-Record here during execution: fallback overrides added, `qs`/`uuid`
-re-verification outcomes, npm version used, and any gate failures.
+Executed 2026-10-07 on branch `chore/deps-overrides-rationalisation`, created
+from `main` (not the Formik branch). `node_modules` was initially installed from
+the Formik branch.
+
+### npm version
+
+PATH npm was 11.17.0. `corepack enable` failed (EPERM writing the
+`C:\Program Files\nodejs` shims), so all lockfile-affecting commands used
+`npx --yes npm@11.19.1` (also `corepack npm`). `npm ci` succeeded (exit 0) with
+npm 11.19.1 in clean worktrees of this branch.
+
+### Audit counts
+
+- Baseline: 26 findings (2 critical, 16 high, 8 moderate), not 25.
+- After Task 4: 0 critical, 11 high, 0 moderate.
+- After the Task 7 `@sonar/scan` uninstall: 10 high.
+
+### Task 2
+
+Commit `c6556393`: floors raised and a per-major `brace-expansion` test added.
+The older superseded `brace-expansion` test was removed in `665fd004`.
+
+### Task 3
+
+Commit `6ad052eb`. Fallbacks used:
+
+- `brace-expansion@5 5.0.12`: the lockfile kept 5.0.9 even after `npm update`;
+  owner is `minimatch@10.2.6` (`^5.0.8`).
+- `undici 7.30.0`: the lockfile kept 7.29.0; sole owner is `jsdom@29.1.1`
+  (`^7.25.0`), so the override is unscoped.
+
+`brace-expansion` 1.x/2.x, `fast-uri` 3.1.8, and `js-yaml` 4.3.2 resolved
+naturally. The `qs` override was removed (all parents resolve 6.16.0). The
+`uuid` override was kept (`sockjs@0.3.24` otherwise brings `uuid@8.3.2`).
+
+Final overrides: the four glob owners, `uuid`, `valibot`, `brace-expansion@5`,
+`undici`.
+
+### Task 4
+
+Commit `eccb8d0f`: `proxy-addr` 2.0.8, `shell-quote` 1.12.0, `compression`
+1.8.2, `source-map-js` 1.2.2, `postcss-selector-parser` 7.1.6, and `ip-address`
+10.7.3 (an extra moderate advisory outside the plan, fixed lock-only). No
+overrides were needed.
+
+### Task 5
+
+- PASS: override shape, `npm ls`, `lsmcp` (`--help`, `--list`, `doctor`),
+  `type-check`, `lint`, `lint:mdx`, `build`.
+- PASS: `test:ci` unit (2121 tests) and `test:e2e:storybook` (135/135).
+- `test:storybook` was first blocked by Windows reserved port 61005 (EACCES);
+  fixed in commit `7f05b157` (port 47005). It then passed (135 files, 301
+  tests).
+- `test:e2e:app`: 31 scenarios timed out at `page.goto` in the first run in the
+  main checkout, and the dev server wedged (bundle requests hung) even with
+  `compression` 1.8.1 and on `main`-based lockfile mixes. Rerun from a clean
+  detached worktree of the branch (HEAD `93f3f06c`, `npm ci` with 11.19.1): **31
+  passed, 0 failed (59.5s)**. Cause is the main checkout environment (about 407k
+  files under `.worktrees`, plus `.venv`, `.npm-cache`, `dist`, `coverage`;
+  `webpack.config.js` has no `watchOptions.ignored`), not dependencies.
+  Unconfirmed suggestion: add `watchOptions.ignored` for those directories.
+
+### Tasks 6 and 7
+
+- Docs commit `72c3b40a`: `docs/CONVENTIONS.md` section 10, `docs/STACK.md`, and
+  backlog rows `DEP-ADVISORY-DEVTOOLS-001`, `DEP-ADVISORY-NODE-FORGE-001`,
+  `DEP-OVERRIDE-REMOVAL-001`.
+- `@sonar/scan` uninstalled in `81a1f1aa` (removes `node-forge`).
+- Prettier fix in `13675eb1`.

@@ -1,16 +1,22 @@
-import type React from 'react';
 import { useRef, useState } from 'react';
 import { Row, Col, Button, Form, Dropdown, Container } from 'react-bootstrap';
-import { Formik } from 'formik';
-import RadioButtonGroup from '../../Inputs/RadioButtonGroup';
-import { PatternApprovalStatusEnumDto } from '../../../api/web-api-client';
+import { FormProvider, useForm } from 'react-hook-form';
+import RhfRadioButtonGroup from '../../Inputs/RhfRadioButtonGroup';
+import {
+  PatternApprovalStatusEnumDto,
+  type PatternApprovalDashboardDto,
+} from '../../../api/web-api-client';
 import type { RadioButtonProps } from '../../Inputs/RadioButton/types';
 import { DashboardTab } from '../types';
 import { useAccountDispatch } from '../../../authentication/hooks';
 import { defaultFilter } from '../../../routes/common/constants';
 import { trackGAEvent } from '../../../analytics/GoogleAnalytics';
 import type { PaFilterMenuProps } from './paFilterMenuProps';
-import { omitUndefined } from '../../../utils/omitUndefined';
+
+type FilterFormValues = Pick<
+  PatternApprovalDashboardDto,
+  'filterYearType' | 'filterStatusType' | 'filterSortOrder' | 'filtersChanged'
+>;
 
 const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
   const {
@@ -64,6 +70,34 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
 
   const [show, setShow] = useState(false);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const formValues = initialFilters ?? defaultFilter;
+  // `values` re-syncs the form whenever the saved filters change.
+  const methods = useForm<FilterFormValues>({ values: formValues });
+  const { handleSubmit, reset } = methods;
+
+  async function onSubmit(values: FilterFormValues): Promise<void> {
+    const { filterYearType, filterStatusType, filterSortOrder } = values;
+    const filtersChanged =
+      filterStatusType !== defaultFilter.filterStatusType ||
+      filterYearType !== defaultFilter.filterYearType;
+    // reset page to 1 this is common practice when changing filters
+    setCurrentPage(1);
+    // setInitialfilters will trigger useEffect and an API call
+    const filters = {
+      filterYearType,
+      filterStatusType,
+      filtersChanged,
+      filterSortOrder,
+      filterCurrentPage: 1,
+      filterActiveTab: initialFilters?.filterActiveTab,
+      filterSearchText: initialFilters?.filterSearchText,
+    };
+    setInitialFilters(filters);
+    // save user profile
+    await accountDispatch?.setUserProfile({
+      patternApprovalDashboard: filters,
+    });
+  }
 
   function handleClose(): void {
     setShow(false);
@@ -171,156 +205,111 @@ const PaFilterMenu = (props: Readonly<PaFilterMenuProps>) => {
         className={`filter-menu ${containerClassName} shadow`}
         aria-label='Filter Menu'
       >
-        <Formik
-          enableReinitialize
-          initialValues={initialFilters ?? defaultFilter}
-          onSubmit={async (values, { setSubmitting, setValues }) => {
-            const { filterYearType, filterStatusType, filterSortOrder } =
-              values;
-            const filtersChanged =
-              filterStatusType !== defaultFilter.filterStatusType ||
-              filterYearType !== defaultFilter.filterYearType;
-            // reset page to 1 this is common practice when changing filters
-            setCurrentPage(1);
-            // setInitialfilters will trigger useEffect and an API call
-            const filters = {
-              filterYearType,
-              filterStatusType,
-              filtersChanged,
-              filterSortOrder,
-              filterCurrentPage: 1,
-              filterActiveTab: initialFilters?.filterActiveTab,
-              filterSearchText: initialFilters?.filterSearchText,
-            };
-            setInitialFilters(filters);
-            // setValues will set the initialValues to the current search values
-            await setValues({
-              filterYearType,
-              filterStatusType,
-              filtersChanged,
-              filterSortOrder,
-            });
-            // save user profile
-            await accountDispatch?.setUserProfile({
-              patternApprovalDashboard: filters,
-            });
-            setSubmitting(false);
-          }}
-          validateOnChange={false}
-          validateOnBlur={false}
-        >
-          {({ submitForm, handleChange, resetForm }) => (
-            <Form>
-              <Container>
-                <Row className='mb-3 g-0'>
-                  <Col xs={10} md={11}>
-                    <Row>
-                      <h3 className='visually-hidden'>
-                        Select your dashboard filter options
-                      </h3>
-                      <Col xs={12} sm={6} className='pt-2'>
-                        <RadioButtonGroup
-                          legend='Status'
-                          name='filterStatusType'
-                          isSummary={false}
-                          id='q-filterStatusType'
-                          options={filterStatus}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            trackGAEvent('FilterStatusType');
-                            handleChange(e);
-                          }}
-                          disabled={
-                            initialFilters?.filterActiveTab ===
-                            DashboardTab.Drafts
-                          }
-                        />
-                      </Col>
-                      <Col xs={12} sm={6} className='pt-2'>
-                        <RadioButtonGroup
-                          legend='Year'
-                          name='filterYearType'
-                          id='q-filterYearType'
-                          isSummary={false}
-                          // className='my-2'
-                          options={filterYear}
-                          onChange={(
-                            e: React.ChangeEvent<HTMLInputElement>
-                          ) => {
-                            trackGAEvent('Filteryeartype');
-                            handleChange(e);
-                          }}
-                        />
-                      </Col>
-                    </Row>
-                  </Col>
-                  <Col xs={2} md={1} className='text-end'>
+        <FormProvider {...methods}>
+          <Form>
+            <Container>
+              <Row className='mb-3 g-0'>
+                <Col xs={10} md={11}>
+                  <Row>
+                    <h3 className='visually-hidden'>
+                      Select your dashboard filter options
+                    </h3>
+                    <Col xs={12} sm={6} className='pt-2'>
+                      <RhfRadioButtonGroup
+                        legend='Status'
+                        name='filterStatusType'
+                        isSummary={false}
+                        id='q-filterStatusType'
+                        options={filterStatus}
+                        onChange={() => {
+                          trackGAEvent('FilterStatusType');
+                        }}
+                        disabled={
+                          initialFilters?.filterActiveTab ===
+                          DashboardTab.Drafts
+                        }
+                      />
+                    </Col>
+                    <Col xs={12} sm={6} className='pt-2'>
+                      <RhfRadioButtonGroup
+                        legend='Year'
+                        name='filterYearType'
+                        id='q-filterYearType'
+                        isSummary={false}
+                        // className='my-2'
+                        options={filterYear}
+                        onChange={() => {
+                          trackGAEvent('Filteryeartype');
+                        }}
+                      />
+                    </Col>
+                  </Row>
+                </Col>
+                <Col xs={2} md={1} className='text-end'>
+                  <Button
+                    ref={closeBtnRef}
+                    data-testid='close-filter-button'
+                    onClick={() => {
+                      trackGAEvent('CloseFilter');
+                      handleClose();
+                      reset(formValues);
+                    }}
+                    variant='tertiary'
+                    className='ms-md-auto'
+                  >
+                    <i className='icon-close me-1' aria-hidden='true' />
+                    <span className='visually-hidden'>Close filter menu</span>
+                  </Button>
+                </Col>
+              </Row>
+              <Row className='mb-3'>
+                <Col>
+                  <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
                     <Button
-                      ref={closeBtnRef}
-                      data-testid='close-filter-button'
+                      data-testid='cancel-filter-button'
                       onClick={() => {
-                        trackGAEvent('CloseFilter');
+                        trackGAEvent('CancelFilter');
                         handleClose();
-                        resetForm(omitUndefined({ values: initialFilters }));
+                        reset(formValues);
                       }}
                       variant='tertiary'
-                      className='ms-md-auto'
+                      className='me-md-auto -mb-4 order-2 order-md-0'
                     >
                       <i className='icon-close me-1' aria-hidden='true' />
-                      <span className='visually-hidden'>Close filter menu</span>
+                      {' Cancel'}
                     </Button>
-                  </Col>
-                </Row>
-                <Row className='mb-3'>
-                  <Col>
-                    <div className='d-grid w-100 gap-3 d-md-flex justify-content-md-between'>
+                    <div className='d-grid gap-4 d-md-flex'>
                       <Button
-                        data-testid='cancel-filter-button'
+                        data-testid='reset-filter-button'
                         onClick={() => {
-                          trackGAEvent('CancelFilter');
-                          handleClose();
-                          resetForm(omitUndefined({ values: initialFilters }));
+                          trackGAEvent('ResetFilter');
+                          handleResetFilters();
+                          reset(defaultFilter);
                         }}
-                        variant='tertiary'
-                        className='me-md-auto -mb-4 order-2 order-md-0'
+                        variant='secondary'
+                        className='me-md-auto order-2 order-md-0'
                       >
-                        <i className='icon-close me-1' aria-hidden='true' />
-                        {' Cancel'}
+                        Reset
                       </Button>
-                      <div className='d-grid gap-4 d-md-flex'>
-                        <Button
-                          data-testid='reset-filter-button'
-                          onClick={() => {
-                            trackGAEvent('ResetFilter');
-                            handleResetFilters();
-                            resetForm({ values: defaultFilter });
-                          }}
-                          variant='secondary'
-                          className='me-md-auto order-2 order-md-0'
-                        >
-                          Reset
-                        </Button>
-                        <Button
-                          data-testid='apply-filter-button'
-                          onClick={() => {
-                            trackGAEvent('ApplyFilter');
-                            void submitForm();
-                            handleClose();
-                          }}
-                          variant='primary'
-                          className='ms-md-auto'
-                        >
-                          Show results
-                        </Button>
-                      </div>
+                      <Button
+                        data-testid='apply-filter-button'
+                        onClick={() => {
+                          trackGAEvent('ApplyFilter');
+                          void handleSubmit(onSubmit)();
+                          handleClose();
+                        }}
+                        variant='primary'
+                        className='ms-md-auto'
+                      >
+                        Show results
+                      </Button>
                     </div>
-                  </Col>
-                </Row>
-              </Container>
-            </Form>
-          )}
-        </Formik>
+                  </div>
+                </Col>
+              </Row>
+            </Container>
+          </Form>
+        </FormProvider>
       </Dropdown.Menu>
     </Dropdown>
   );

@@ -15,7 +15,7 @@ import type {
   InstrumentAndRequestStep,
   OrganisationAndContact,
 } from '../../api/web-api-client';
-import type { Validation } from '../../components/forms/FormikForm/types';
+import type { Validation } from '../../components/forms/types';
 import {
   parseApiDateOnlyInput,
   parseDateOnlyInput,

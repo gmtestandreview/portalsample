@@ -1,4 +1,5 @@
-import { isFunction, useField, useFormikContext } from 'formik';
+import { isFunction } from 'lodash';
+import { useField, useFormikContext } from 'formik';
 import { isString } from 'lodash';
 import type React from 'react';
 import { useEffect } from 'react';

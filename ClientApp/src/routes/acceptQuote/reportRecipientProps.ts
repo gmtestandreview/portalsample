@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -22,7 +21,7 @@ import {
   reportRecipientSubmitValidation,
 } from './validation';
 import type { AccountDetails } from '../../authentication/accountContext';
-import type { DiscardProps } from '../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../components/forms/types';
 import { formatBannerTitle } from '../common/helperFunctions';
 import AppLogger from '../../instrumentation/AppLogger';
 
@@ -56,7 +55,6 @@ const saveStep =
   async (
     values: ReportRecipientStep,
     _isDirty: boolean,
-    _: FormikHelpers<ReportRecipientStep>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {
