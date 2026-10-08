@@ -1,5 +1,4 @@
-import { getIn, isObject, setIn } from 'formik';
-import type { FormikErrors, FormikValues } from 'formik';
+import { getIn, isObject, setIn } from './formPath';
 import {
   entriesIn,
   fromPairs,
@@ -9,8 +8,12 @@ import {
   toPath,
 } from 'lodash';
 import type { ValidationError } from 'yup';
-import type { Hideable } from './types';
-import type { ValidationSchema } from './FormikForm/types';
+import type {
+  FormErrors,
+  FormValues,
+  Hideable,
+  ValidationSchema,
+} from './types';
 export const isFieldPathHidden = <TValues>(hidden: any, values: TValues) =>
   hidden !== undefined &&
   ((isBoolean(hidden) && hidden === true) ||
@@ -40,7 +43,7 @@ export const isHidden = <T, TValues>(
   return isHidden(path, hidden, values);
 };
 
-export const removeHidden = <T extends FormikValues>(
+export const removeHidden = <T extends FormValues>(
   fieldValue: any,
   values: T,
   hide: Hideable<Partial<T>, Partial<T>>,
@@ -76,8 +79,8 @@ const toFormErrors = <T, TValues>(
   yupError: ValidationError,
   hidden: Hideable<Partial<T>, Partial<TValues>>,
   values: TValues
-): FormikErrors<TValues> => {
-  let errors: FormikErrors<TValues> = {};
+): FormErrors<TValues> => {
+  let errors: FormErrors<TValues> = {};
   if (yupError.inner) {
     if (
       yupError.inner.length === 0 &&
@@ -106,7 +109,7 @@ export const validateForm =
     hidden: Hideable<Partial<T>, Partial<TValues>>
   ) =>
   async (values: TValues) => {
-    let errors: FormikErrors<TValues> = {};
+    let errors: FormErrors<TValues> = {};
     if (schema !== undefined) {
       try {
         await schema.validate(values, {

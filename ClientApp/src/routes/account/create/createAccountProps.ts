@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -16,7 +15,7 @@ import type {
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
 import accountSubmitValidation from '../validation';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
 
 const loadAccountDetails =
@@ -50,12 +49,7 @@ const completeAccountDetails =
     instance: IPublicClientApplication,
     accountContext: AccountContextState | null
   ) =>
-  async (
-    values: AccountDto,
-    _isDirty: boolean,
-    _: FormikHelpers<AccountDto>,
-    abortSignal?: AbortSignal
-  ) => {
+  async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       const client = new AccountsClient();
       const tokenResult = await instance.acquireTokenSilent(

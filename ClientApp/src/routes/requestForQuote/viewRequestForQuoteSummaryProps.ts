@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -50,7 +49,6 @@ const submitForm =
   async (
     values: RequestForQuoteSummary,
     _isDirty: boolean,
-    _: FormikHelpers<RequestForQuoteSummary>,
     abortSignal?: AbortSignal
   ) => {
     if (accounts.length > 0) {

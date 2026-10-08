@@ -1,6 +1,6 @@
 import { ReturnMethodValues } from '@/api/web-api-client';
-import { createSaveAwareYupResolver } from '@/components/forms/FormikForm/saveAwareYupResolver';
-import type { ValidationSchema } from '@/components/forms/FormikForm/types';
+import { createSaveAwareYupResolver } from '@/components/forms/saveAwareYupResolver';
+import type { ValidationSchema } from '@/components/forms/types';
 import {
   deliveryAndReturnSaveValidation,
   deliveryAndReturnSubmitValidation,
