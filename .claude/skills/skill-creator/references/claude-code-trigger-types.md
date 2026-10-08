@@ -80,8 +80,8 @@ the specific topic.
 
 **Component Creation:**
 
-- User prompt: "create a dashboard widget"
-- Matches: `(create).*?(component)` (if component in pattern)
+- User prompt: "create a dashboard component"
+- Matches: `(create).*?(component)` with case-insensitive matching
 - Activates: `frontend-dev-guidelines`
 
 ### Intent Best Practices
@@ -196,7 +196,8 @@ form/src/workflow-definitions/**/*.json # Workflow definitions
 
 ### Content Matching
 
-Regex pattern matching against the file's actual content (what's inside the file).
+Regex pattern matching against the file's actual content (what's inside the
+file).
 
 ### Content Use Cases
 
@@ -272,22 +273,17 @@ useState|useEffect              # React hooks
 
 ### DO
 
-✅ Use specific, unambiguous keywords
-✅ Test all patterns with real examples
-✅ Include common variations
-✅ Use non-greedy regex: `.*?`
-✅ Escape special characters in content patterns
-✅ Add exclusions for test files
-✅ Make file path patterns narrow and specific
+✅ Use specific, unambiguous keywords ✅ Test all patterns with real examples ✅
+Include common variations ✅ Use non-greedy regex: `.*?` ✅ Escape special
+characters in content patterns ✅ Add exclusions for test files ✅ Make file
+path patterns narrow and specific
 
 ### DON'T
 
-❌ Use overly generic keywords ("system", "work")
-❌ Make intent patterns too broad (false positives)
-❌ Make patterns too specific (false negatives)
-❌ Forget to test with regex tester (<https://regex101.com/>)
-❌ Use greedy regex: `.*` instead of `.*?`
-❌ Match too broadly in file paths
+❌ Use overly generic keywords ("system", "work") ❌ Make intent patterns too
+broad (false positives) ❌ Make patterns too specific (false negatives) ❌
+Forget to test with regex tester (<https://regex101.com/>) ❌ Use greedy regex:
+`.*` instead of `.*?` ❌ Match too broadly in file paths
 
 ### Testing Your Triggers
 
@@ -314,7 +310,8 @@ EOF
 
 **Related Files:**
 
-- [SKILL.md](SKILL.md) - Main skill guide
-- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Complete
+- [Main skill guide](../SKILL.md) - Main skill guide
+- [skill rules reference](claude-code-skill-rules-reference.md) - Complete
   skill-rules.json schema
-- [PATTERNS_LIBRARY.md](PATTERNS_LIBRARY.md) - Ready-to-use pattern library
+- [patterns library](claude-code-patterns-library.md) - Ready-to-use pattern
+  library

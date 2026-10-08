@@ -3,11 +3,11 @@ import { useEffect, useState, useRef } from 'react';
 import { useMsal } from '@azure/msal-react';
 import { useParams } from 'react-router';
 import { useFormikContext } from 'formik';
+import { type TASupportingDocumentsProps, ValidationMessages } from './types';
 import {
-  FileStatus,
-  type TASupportingDocumentsProps,
-  ValidationMessages,
-} from './types';
+  getFailedFileErrors,
+  handleAlertScroll,
+} from './supportingDocumentsHelpers';
 import {
   type AttachmentDto,
   type FileParameter,
@@ -26,16 +26,6 @@ import { NotificationSeverity } from '../../storage/types';
 import AttachmentNew from '../../components/Inputs/Attachment/index-new';
 import InstrumentInfoPanel from './instrumentInfoPanel';
 
-const handleAlertScroll = () => {
-  setTimeout(() => {
-    const summaryRef: HTMLElement = document.querySelector(
-      '#form-error-summary-custom'
-    ) as HTMLElement;
-    summaryRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    summaryRef?.focus();
-  }, 100);
-};
-
 const isString = (e: unknown): e is string => typeof e === 'string';
 
 /** Normalises Formik's string | string[] | nested-object error for one field to string[]. */
@@ -48,22 +38,6 @@ const getFormikFieldErrors = (fieldError: unknown, errorName: string) => {
   return [(fieldError as Record<string, unknown>)[errorName] || ''].filter(
     isString
   );
-};
-
-/** Messages for files that failed or were cancelled once the upload has finished. */
-const getFailedFileErrors = (
-  progress: TASupportingDocumentsProps['progress']
-) => {
-  if (progress?.percent !== 100 || !Array.isArray(progress.files)) return [];
-  return progress.files
-    .filter(
-      (f) => f.status === FileStatus.Failed || f.status === FileStatus.Cancelled
-    )
-    .map((f) =>
-      f.status === FileStatus.Cancelled
-        ? `Upload cancelled for ${f.fileName}`
-        : `Error uploading ${f.fileName}`
-    );
 };
 
 const SupportingDocuments = (

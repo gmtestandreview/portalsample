@@ -176,19 +176,26 @@ retrying the edit.
 
 ### Exit Code Reference Table
 
-| Exit Code | stdout | stderr | Tool Execution | Claude Sees |
-| ----------- | -------- | -------- | ---------------- | ------------- |
-| 0 (UserPromptSubmit) | → Context | → User only | N/A | stdout content |
-| 0 (PreToolUse) | → User only | → User only | **Proceeds** | Nothing |
-| 2 (PreToolUse) | → User only | → **CLAUDE** | **BLOCKED** | stderr content |
-| Other | → User only | → User only | Blocked | Nothing |
+| Event / output                         | Effect                                  |
+| -------------------------------------- | --------------------------------------- |
+| UserPromptSubmit, exit 0, plain stdout | Context added; no blocking decision     |
+| PreToolUse, exit 0, no decision        | Normal permission flow                  |
+| PreToolUse, exit 2                     | Blocks; stderr explains rejection       |
+| Valid JSON decision/context            | Event-supported fields control behavior |
+| Other exit codes                       | Generally do not block independently    |
+
+Reviewed 2026-10-05 against the
+[official hook output contract](https://code.claude.com/docs/en/hooks#exit-code-output).
+JSON can provide decisions and `additionalContext`, including on exit 0. Follow
+the event's output rules and failure exceptions; an exit code alone does not
+describe every outcome. Verify the target client and registered local hook.
 
 ### Why Exit Code 2 Matters
 
 This is THE critical mechanism for enforcement:
 
-1. **Only way** to send message to Claude from PreToolUse
-2. stderr content is "fed back to Claude automatically"
+1. A simple blocking path for this local PreToolUse implementation
+2. stderr explains the rejection; structured JSON is another supported path
 3. Claude sees the block message and understands what to do
 4. Tool execution is prevented
 5. Critical for enforcement of guardrails
@@ -228,10 +235,7 @@ block again.
 
 ```json
 {
-  "skills_used": [
-    "database-verification",
-    "error-tracking"
-  ],
+  "skills_used": ["database-verification", "error-tracking"],
   "files_verified": []
 }
 ```
@@ -255,8 +259,8 @@ block again.
 
 ### Limitation
 
-The hook cannot detect when the skill is *actually* invoked. It just blocks
-once per session per skill. This means:
+The hook cannot detect when the skill is _actually_ invoked. It just blocks once
+per session per skill. This means:
 
 - If Claude doesn't use the skill but makes a different edit, it won't block
   again
@@ -313,6 +317,7 @@ once per session per skill. This means:
 
 **Related Files:**
 
-- [SKILL.md](SKILL.md) - Main skill guide
-- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Debug hook issues
-- [SKILL_RULES_REFERENCE.md](SKILL_RULES_REFERENCE.md) - Configuration reference
+- [Main skill guide](../SKILL.md) - Main skill guide
+- [troubleshooting](claude-code-troubleshooting.md) - Debug hook issues
+- [skill rules reference](claude-code-skill-rules-reference.md) - Configuration
+  reference

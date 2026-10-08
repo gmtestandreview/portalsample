@@ -1,0 +1,38 @@
+{
+  "task": "Historical execution-evidence reporting",
+  "assigned_directory": "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/reporting",
+  "resources_loaded": [
+    "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/SKILL.md",
+    "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/reporting/request.txt",
+    "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/reporting/input.json",
+    "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/references/review-reporting.md",
+    "C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/references/ruff-pyright-verification.md"
+  ],
+  "actions": [
+    "Read assigned skill, task request, and execution evidence.",
+    "Loaded reporting and analyzer-provenance references only.",
+    "Separated supplied historical execution results from newly executed checks.",
+    "Assessed AMBER status because exact Pylance, Sonar quality/S3776, and runtime-floor verification remain unavailable.",
+    "Wrote summary.md, final.md, and observations.json using apply_patch.",
+    "Verified output presence, observations JSON parsing, and the final note word limit using PowerShell."
+  ],
+  "limitations": [
+    "No reviewed Python source or verifiable immutable artifact identity supplied; the SHA-256 field contains a synthetic label.",
+    "No test, runtime, compile, Ruff, Pyright, Pylance, or Sonar command was rerun.",
+    "Exact Pylance version/profile unavailable and Pylance not executed in supplied evidence.",
+    "Sonar quality analysis unavailable with 403; final S3776 complexity not measured.",
+    "Python 3.10 runtime floor untested.",
+    "Compile, CLI/end-to-end, adversarial pressure, and defect-specific regression evidence not supplied.",
+    "Compatibility preservation limited to six observed output fixtures; missing-state behavior intentionally changed."
+  ],
+  "commands_actually_run": [
+    "Get-Content -LiteralPath 'C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/SKILL.md'",
+    "Get-Content -LiteralPath 'C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/reporting/request.txt'; Get-Content -LiteralPath 'C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/reporting/input.json'",
+    "Get-Content -LiteralPath 'C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/references/review-reporting.md'",
+    "Get-Content -LiteralPath 'C:/Users/gregm/.codex/tmp/python-review-retest-20261005/baseline/python-code-review/references/ruff-pyright-verification.md'",
+    "$reportDir = 'C:/Users/gregm/.codex/tmp/python-review-retest-20261005/old_skill/reporting'\nGet-Item -LiteralPath \"$reportDir/summary.md\", \"$reportDir/final.md\", \"$reportDir/observations.json\" | Select-Object Name, Length\n$observationData = Get-Content -Raw -LiteralPath \"$reportDir/observations.json\" | ConvertFrom-Json\n$finalText = Get-Content -Raw -LiteralPath \"$reportDir/final.md\"\n$wordCount = ($finalText.Trim() -split '\\s+').Count\nif ($wordCount -gt 120) { throw \"Final exceeds 120 words: $wordCount\" }\nWrite-Output \"Final word count: $wordCount; observations JSON valid\""
+  ],
+  "code_or_environment_changes": "None; only requested report artifacts were created in the assigned directory.",
+  "pressure_status": "AMBER",
+  "provenance": "Supplied historical execution evidence in input.json; no independent confirmation or fresh execution."
+}

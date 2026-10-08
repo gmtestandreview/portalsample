@@ -1,4 +1,4 @@
-import type { DiscardProps } from '../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../components/forms/types';
 
 export const discardChanges: DiscardProps = {
   discardButtonTitle: 'Discard changes',

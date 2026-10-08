@@ -20,12 +20,11 @@ import {
   ReturnMethodValues,
   Title,
   YesNo,
-  type DeliveryAndReturnStep,
   type PaymentDetailsStep,
   type ReportRecipientStep,
   type SummaryAndAcceptStep,
 } from '../../../../ClientApp/src/api/web-api-client';
-import { formikHelpers, stepStatuses } from '../testFixtures';
+import { stepStatuses } from '../testFixtures';
 
 const mocks = vi.hoisted(() => ({
   setAuthToken: vi.fn(),
@@ -155,7 +154,6 @@ describe('accept quote wizard prop factories', () => {
     await props.onSaveAndNext?.(
       { returnContactType: ReturnContactTypeValues.SamePerson },
       true,
-      formikHelpers<DeliveryAndReturnStep>(),
       abortSignal
     );
     expect(mocks.saveDeliveryAndReturn).toHaveBeenCalledWith(
@@ -246,12 +244,7 @@ describe('accept quote wizard prop factories', () => {
     const paymentValues: PaymentDetailsStep = {
       invoiceSentTo: InvoiceSentToValues.DifferentPerson,
     };
-    await props.onSaveAndExit?.(
-      paymentValues,
-      false,
-      formikHelpers<PaymentDetailsStep>(),
-      abortSignal
-    );
+    await props.onSaveAndExit?.(paymentValues, false, abortSignal);
     expect(mocks.savePaymentDetails).toHaveBeenCalledWith(
       'Q-2',
       {
@@ -264,12 +257,7 @@ describe('accept quote wizard prop factories', () => {
 
     mocks.savePaymentDetails.mockRejectedValueOnce(new Error('save failed'));
     await expect(
-      props.onSaveAndNext?.(
-        paymentValues,
-        true,
-        formikHelpers<PaymentDetailsStep>(),
-        abortSignal
-      )
+      props.onSaveAndNext?.(paymentValues, true, abortSignal)
     ).resolves.toBeUndefined();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save payment details:',
@@ -341,12 +329,7 @@ describe('accept quote wizard prop factories', () => {
     const recipientValues: ReportRecipientStep = {
       reportAddressType: ReportAddressTypeValues.Other,
     };
-    await props.onSaveAndNext?.(
-      recipientValues,
-      true,
-      formikHelpers<ReportRecipientStep>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(recipientValues, true, abortSignal);
     expect(mocks.saveReportRecipient).toHaveBeenCalledWith(
       'Q-3',
       {
@@ -359,12 +342,7 @@ describe('accept quote wizard prop factories', () => {
 
     mocks.saveReportRecipient.mockRejectedValueOnce(new Error('save failed'));
     await expect(
-      props.onSaveAndExit?.(
-        recipientValues,
-        false,
-        formikHelpers<ReportRecipientStep>(),
-        abortSignal
-      )
+      props.onSaveAndExit?.(recipientValues, false, abortSignal)
     ).resolves.toBeUndefined();
     expect(mocks.appLoggerError).toHaveBeenCalledWith(
       'Failed to save payment report recipient',
@@ -438,20 +416,10 @@ describe('accept quote wizard prop factories', () => {
       props.hidingFields?.requestForQuote?.contact?.titleOther?.(summary)
     ).toBe(true);
 
-    await props.onSaveAndExit?.(
-      summary,
-      false,
-      formikHelpers<SummaryAndAcceptStep>(),
-      abortSignal
-    );
+    await props.onSaveAndExit?.(summary, false, abortSignal);
     expect(mocks.sessionSetItem).not.toHaveBeenCalled();
 
-    await props.onSaveAndNext?.(
-      summary,
-      true,
-      formikHelpers<SummaryAndAcceptStep>(),
-      abortSignal
-    );
+    await props.onSaveAndNext?.(summary, true, abortSignal);
     expect(mocks.saveSummaryAndAccept).toHaveBeenLastCalledWith(
       'Q-4',
       {
@@ -528,42 +496,26 @@ describe('accept quote wizard prop factories', () => {
     await expect(deliveryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      deliveryProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<DeliveryAndReturnStep>()
-      )
-    ).rejects.toThrow('No authenticated account available to save form.');
+    await expect(deliveryProps.onSaveAndExit?.({}, false)).rejects.toThrow(
+      'No authenticated account available to save form.'
+    );
     await expect(paymentProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      paymentProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<PaymentDetailsStep>()
-      )
-    ).rejects.toThrow('No authenticated account available to save form.');
+    await expect(paymentProps.onSaveAndExit?.({}, false)).rejects.toThrow(
+      'No authenticated account available to save form.'
+    );
     await expect(recipientProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      recipientProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<ReportRecipientStep>()
-      )
-    ).rejects.toThrow('No authenticated account available to save form.');
+    await expect(recipientProps.onSaveAndExit?.({}, false)).rejects.toThrow(
+      'No authenticated account available to save form.'
+    );
     await expect(summaryProps.loadStepValues?.()).rejects.toThrow(
       'There was an error retrieving your details.'
     );
-    await expect(
-      summaryProps.onSaveAndExit?.(
-        {},
-        false,
-        formikHelpers<SummaryAndAcceptStep>()
-      )
-    ).rejects.toThrow('No authenticated account available to save form.');
+    await expect(summaryProps.onSaveAndExit?.({}, false)).rejects.toThrow(
+      'No authenticated account available to save form.'
+    );
   });
 });

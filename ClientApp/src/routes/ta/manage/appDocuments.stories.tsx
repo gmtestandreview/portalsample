@@ -5,7 +5,7 @@ import ApplicationDocuments from './appDocuments';
 
 /**
  * `ApplicationDocuments` is the "Documents" tab of the type-approval management surface.
- * It loads the application's supporting documents into a Formik form and lets the
+ * It loads the application's supporting documents into a React Hook Form form and lets the
  * applicant add/commit additional certificates. The story renders the tab shell; the
  * document list is loaded from an API not served in Storybook.
  */

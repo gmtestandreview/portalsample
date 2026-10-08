@@ -18,7 +18,7 @@ import type {
   ReportRecipientStep,
   SummaryAndAcceptStep,
 } from '../../api/web-api-client';
-import type { Validation } from '../../components/forms/FormikForm/types';
+import type { Validation } from '../../components/forms/types';
 import addressSchema from '../../validationSchemas/addressValidation';
 
 export const reportRecipientSubmitValidation = yup.object<

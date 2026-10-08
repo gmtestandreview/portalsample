@@ -452,14 +452,18 @@ def load_timing_file(run_dir: Path) -> tuple[float | None, int | None]:
         warn(f"unable to load {timing_file}: {exc}")
         return None, None
 
-    duration: float | None
-    tokens: int | None
+    duration: float | None = None
+    tokens: int | None = None
     try:
         duration = optional_number(
             timing.get("total_duration_seconds"),
             field=f"{timing_file}: total_duration_seconds",
             minimum=0,
         )
+    except ValueError as exc:
+        warn(str(exc))
+
+    try:
         tokens = optional_int(
             timing.get("total_tokens"),
             field=f"{timing_file}: total_tokens",
@@ -469,7 +473,7 @@ def load_timing_file(run_dir: Path) -> tuple[float | None, int | None]:
             require_number(tokens, field=f"{timing_file}: total_tokens")
     except ValueError as exc:
         warn(str(exc))
-        return None, None
+        tokens = None
     return duration, tokens
 
 
@@ -523,6 +527,15 @@ def validate_summary(
             f"{grading_file}: summary.total ({total}) does not match "
             f"expectations length ({len(expectations)})"
         )
+    if expectations_present:
+        observed_passed = sum(
+            cast(JsonObject, expectation)["passed"] is True for expectation in expectations
+        )
+        if passed != observed_passed:
+            raise ValueError(
+                f"{grading_file}: summary.passed ({passed}) does not match "
+                f"passed expectation verdicts ({observed_passed})"
+            )
     expected_rate = passed / total
     if not math.isclose(pass_rate, expected_rate, rel_tol=0.0, abs_tol=PASS_RATE_TOLERANCE):
         raise ValueError(
@@ -572,6 +585,8 @@ def build_run_result(
     run_number: int,
 ) -> RunResult:
     """Build one validated run result without synthetic metric defaults."""
+    if "expectations" in grading and grading["expectations"] is None:
+        raise ValueError(f"expectations in {grading_file} must be an array")
     expectations, expectations_present = validate_expectations(
         grading_file,
         grading.get("expectations"),

@@ -1,4 +1,3 @@
-import type { FormikHelpers } from 'formik';
 import type {
   AccountInfo,
   IPublicClientApplication,
@@ -17,7 +16,7 @@ import type {
   WizardFormStepValues,
   WizardStepProps,
 } from '../../../components/forms/WizardForm/types';
-import type { DiscardProps } from '../../../components/forms/FormikForm/types';
+import type { DiscardProps } from '../../../components/forms/types';
 import type { AccountContextState } from '../../../authentication/accountContext';
 import { NotificationSeverity } from '../../../storage/types';
 import { setBranchModalNotification } from '../../../storage/notification';
@@ -96,12 +95,7 @@ const completeAccountDetails =
     accountContext: AccountContextState | null,
     onShowBranchSelector: () => void
   ) =>
-  async (
-    values: AccountDto,
-    _isDirty: boolean,
-    _: FormikHelpers<AccountDto>,
-    abortSignal?: AbortSignal
-  ) => {
+  async (values: AccountDto, _isDirty: boolean, abortSignal?: AbortSignal) => {
     if (accounts.length > 0) {
       try {
         const client = new AccountsClient();

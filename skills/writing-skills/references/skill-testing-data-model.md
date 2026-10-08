@@ -946,9 +946,9 @@ skills/<skill-id>/
         deployment-decision.yaml
 ```
 
-The existing `scripts/evals/activation`, `scripts/evals/red-green`,
-`scripts/evals/pressure`, `scripts/evals/reference`, and
-`scripts/evals/regression` folders can remain the **case-definition library**;
+The existing `evals/activation`, `evals/red-green`,
+`evals/pressure`, `evals/reference`, and
+`evals/regression` folders can remain the **case-definition library**;
 executed campaign evidence should be stored separately so reusable scenarios are
 not overwritten by run results.
 
@@ -963,7 +963,6 @@ not overwritten by run results.
 | `best-practices-evaluations.md`    | Requirement / BP criteria                                                             |
 | `SKILL-testing-checklist.md`       | RequirementAssessment, DeploymentDecision, DeploymentBlocker                          |
 | `testing-skills-with-subagents.md` | EvaluationCampaign, EvaluationCase, EvaluationRun, RedGreenComparison, RegressionLink |
-| `evals/evaluation-schema.md`       | Behavioral fields, outcomes, requiredness, evidence rules                             |
 | `audit-scoring.md`                 | Audit, RubricCriterion, AuditCriterionScore, Finding, QAQRMIResult                    |
 | deterministic Python tests         | DeterministicTestCase, DeterministicSuiteRun, DeterministicTestResult                 |
 
