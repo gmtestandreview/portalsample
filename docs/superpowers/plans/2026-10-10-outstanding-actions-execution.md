@@ -6,12 +6,12 @@ Baseline: `655f90af166b98c62f567874474f310f7608e914`, based on `main`. Codex
 owns the local investigations and repairs authorized by the request to execute
 the [reviewed backlog](2026-09-25-TODO-outstanding-actions.md).
 
-**Status refresh 2026-10-10 (Australia/Sydney), latest continuation:** A8's
+**Status refresh 2026-10-11 (Australia/Sydney), latest continuation:** A8's
 actual VS Code memory-context flow is verified, and A9's original record is
 recovered and corrected. MD-T1 through MD-T5 remain complete. PAT rotation is
-still pending in task #74; the owner confirmed A3 lacks backend authority; A4
-remains on hold pending the provider reset reported for 2026-10-11 03:20
-(Australia/Sydney); D1 remains deferred.
+still pending in task #74; A3 is closed for this sandbox by owner direction and
+deferred until mainline reintegration; A4 remains on hold pending the provider
+reset reported for 2026-10-11 03:20 (Australia/Sydney); D1 remains deferred.
 
 ## Results
 
@@ -25,7 +25,7 @@ remains on hold pending the provider reset reported for 2026-10-11 03:20
 | A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass           | No broader deployment-readiness claim                                     |
 | A7     | MD-T1 through MD-T5 complete; 1,063 findings corrected; 153 maintained documents lint clean         | Retain focused Markdown checks for future edits                           |
 | A8     | Worker health and actual affected VS Code memory-context receipt verified                           | Retain integration checks; final model response was not observed          |
-| A9     | Original deferred pair recovered: DatePicker and modal timing; incorrect extra-bug inference closed | A3 remains deferred; broader modal C6 acceptance stays separately tracked |
+| A9     | Original deferred pair recovered: DatePicker and modal timing; incorrect extra-bug inference closed | Reopen A3 after reintegration; broader modal C6 acceptance stays separately tracked |
 | D1     | Owner explicitly kept relocation deferred                                                           | No relocation work authorized for this execution                          |
 
 ## A1 — Credential-file exposure repaired
@@ -86,7 +86,7 @@ created and independently retrieved to verify its open state, assignment to
 checklist. This records the reminder in the chosen task system; no scheduled
 GitHub notification or calendar import is implied.
 
-## A3 — Date behavior verified; contract gate unresolved
+## A3 — Date behavior verified; sandbox task closed
 
 The implementation already includes `ClientApp/src/utils/dateOnly.ts` and
 normalization before RFQ submission. The original date changes began in
@@ -128,7 +128,8 @@ B0/B1 externally deferred. The approval gate remains unresolved.
 
 During the next continuation on 2026-10-10, the owner explicitly confirmed there
 is no authoritative backend/OpenAPI source or named backend approver for the
-field. A3 remains externally deferred on that dependency.
+field. Technical remediation remained externally deferred on that dependency;
+the sandbox task was subsequently closed by owner direction.
 
 On 2026-10-11, the Australian Government API Design Standard's
 [date guidance](https://api.gov.au/sections/naming-conventions.html) was reviewed.
@@ -137,12 +138,12 @@ timezone for date-times, and reserves a `Date` suffix for date-only fields. This
 supports `DATE_ONLY` as the proposed classification for the field, but is a
 general design standard rather than evidence of this backend's implemented wire
 shape. A field-specific schema or signed backend decision and representative
- payloads were still required for technical remediation, but the owner closed
- this sandbox task on 2026-10-11 because remediation will resume only after the
- implementation is moved back into the main project code line. This is an
- administrative closure, not a claim that the date defect is fixed or that the
- backend contract is approved. Reopen A3 after reintegration and resume the
- contract, runtime, DST, and round-trip acceptance work.
+payloads were still required for technical remediation, but the owner closed
+this sandbox task on 2026-10-11 because remediation will resume only after the
+implementation is moved back into the main project code line. This is an
+administrative closure, not a claim that the date defect is fixed or that the
+backend contract is approved. Reopen A3 after reintegration and resume the
+contract, runtime, DST, and round-trip acceptance work.
 
 ## A4 — Activation campaign
 

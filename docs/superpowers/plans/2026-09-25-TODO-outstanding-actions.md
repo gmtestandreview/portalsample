@@ -15,12 +15,13 @@ are recorded in the
 and acceptance details below retain the reviewed scope; completed items have
 their execution result recorded alongside them.
 
-**Status refreshed 2026-10-10 (Australia/Sydney), latest continuation:** A8 is
+**Status refreshed 2026-10-11 (Australia/Sydney), latest continuation:** A8 is
 verified through actual VS Code memory-context delivery. A9 is closed after
 recovering the original record and correcting the inferred bug count. A7
-remediation remains complete. The remaining dependencies are A2's owner PAT
-rotation, A3's unavailable backend authority, A4's provider quota, and D1's
-explicit owner deferral.
+remediation remains complete. A3 is closed for this sandbox by owner direction;
+its technical remediation is deferred until mainline reintegration. The
+remaining active dependencies are A2's owner PAT rotation, A4's provider quota,
+and D1's explicit owner deferral.
 
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
@@ -41,9 +42,9 @@ implementation.
 1. **P0 — A2:** complete rotation, revocation, and workflow verification by
    **2026-12-01**, tracked in
    [GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74).
-2. **Deferred P1 — A3:** await an authoritative backend source and named
-   approver, which the owner confirmed are unavailable. Once supplied, reproduce
-   the date shift and add explicit DST-transition evidence.
+2. **Closed for this sandbox — A3:** reopen after the implementation returns to
+   the main project code line, then obtain the field-specific contract, reproduce
+   the date shift, and add explicit DST-transition evidence.
 3. **P1 — A4:** after the provider reset, rerun the untouched holdout with the
    identified candidate, evaluator, and parameters; keep the release on hold
    until the existing acceptance gate is satisfied.
@@ -257,15 +258,17 @@ an item only with dated evidence; otherwise record the blocker and next action.
   fade-transition timing. DatePicker was included in that count, rather than
   accompanied by two further unnamed bugs. Four infrastructure fixes, including
   workspace nesting and the root worker cap, had already landed.
-- **Disposition:** DatePicker remains explicitly deferred under A3. Modal
+- **Disposition:** DatePicker is closed for this sandbox under A3 and remains
+  deferred until mainline reintegration. Modal
   transition assertions were repaired in
   [commit 0e368fe9](https://github.com/gmtestandreview/portalsample/commit/0e368fe9cf8892a74fdb4ec1bfb78518510fb40d),
   which is an ancestor of this branch. Historical passing-run evidence is
   recorded in the execution report; the broader C6 repeated-run acceptance is
   still separately tracked in the
   [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md).
-- **Next action:** no further unnamed-bug recovery. Follow A3 and the existing
-  C6 acceptance work without creating duplicate infrastructure defects.
+- **Next action:** no further unnamed-bug recovery. Reopen A3 after mainline
+  reintegration and follow the existing C6 acceptance work without creating
+  duplicate infrastructure defects.
 - **Done when:** each bug has a concrete description and either linked
   completion evidence or its own actionable backlog entry. If the records cannot
   be recovered, explicitly retain “identity unknown” rather than infer a defect.
