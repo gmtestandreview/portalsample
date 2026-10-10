@@ -15,6 +15,11 @@ are recorded in the
 and acceptance details below retain the reviewed scope; completed items have
 their execution result recorded alongside them.
 
+**Status refreshed 2026-10-10 23:32 (Australia/Sydney):** the execution branch
+is clean after commit `3879404d`. No external state changed after the recorded
+execution evidence. A4 remains on hold until the provider quota reset; A2, A3,
+A8, A9, and D1 retain their documented pending or deferred status.
+
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
   not been established. An unchecked item is not proof of a present defect.

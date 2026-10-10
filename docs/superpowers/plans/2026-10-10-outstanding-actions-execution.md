@@ -6,6 +6,12 @@ Baseline: `655f90af166b98c62f567874474f310f7608e914`, based on `main`. Codex
 owns the local investigations and repairs authorized by the request to execute
 the [reviewed backlog](2026-09-25-TODO-outstanding-actions.md).
 
+**Status refresh 2026-10-10 23:32 (Australia/Sydney):** since execution commit
+`3879404d`, the worktree remains clean and no new provider run, PAT rotation,
+backend contract evidence, VS Code consumer evidence, or relocation decision has
+been recorded. A4 remains on hold pending the provider reset reported for
+2026-10-11 03:20 (Australia/Sydney); A2, A3, A8, A9, and D1 are unchanged.
+
 ## Results
 
 | Action | Result                                                                                          | Remaining work                                                     |
