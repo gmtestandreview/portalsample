@@ -96,23 +96,23 @@ stream-JSON protocol.
 
 ## Requirement Traceability
 
-| Requirement                               | Task(s)    | Notes                                                                        |
-| ----------------------------------------- | ---------- | ---------------------------------------------------------------------------- |
-| `check` makes no Claude calls             | 1, 5, 7    | Enforced by a subprocess-spy regression test.                                |
-| `smoke` is small and bounded              | 5, 6       | Four fixed probes; default budget six.                                       |
-| `release` preserves meaningful evidence   | 5, 6       | 34-call base plus at most six targeted confirmation calls.                   |
-| Hard call budget                          | 1, 2, 3, 4 | One shared permit counter covers every Claude invocation.                    |
-| Resume completed work                     | 1, 2, 4, 6 | Successful attempts are keyed and stored in JSONL.                           |
-| Stop on Claude `429`                      | 1, 2, 4    | Typed error opens the circuit and prevents new submissions.                  |
-| Avoid a large queued blast radius         | 2          | Keep at most `num_workers` futures in flight; default two.                   |
-| Do not misclassify errors as non-triggers | 2, 4       | Partial/unavailable results remain explicit failures.                        |
-| Bound the optimizer too                   | 3          | Trigger probes and rewrite calls share one budget.                           |
-| Stop optimizer plateaus                   | 3          | Detect unchanged/seen descriptions and configurable no-improvement patience. |
-| Explain modes and evidence limits         | 5, 6       | Update skill and evaluation references.                                      |
-| Preserve compatibility and rollback       | 2, 3, 4, 7 | Keep existing entrypoints and additive output fields.                        |
-| Separate execution, evidence, and verdict | 5, 6, 7    | No single PASS can hide a partial run or incomplete artifacts.               |
+| Requirement                               | Task(s)    | Notes                                                                           |
+| ----------------------------------------- | ---------- | ------------------------------------------------------------------------------- |
+| `check` makes no Claude calls             | 1, 5, 7    | Enforced by a subprocess-spy regression test.                                   |
+| `smoke` is small and bounded              | 5, 6       | Four fixed probes; default budget six.                                          |
+| `release` preserves meaningful evidence   | 5, 6       | 34-call base plus at most six targeted confirmation calls.                      |
+| Hard call budget                          | 1, 2, 3, 4 | One shared permit counter covers every Claude invocation.                       |
+| Resume completed work                     | 1, 2, 4, 6 | Successful attempts are keyed and stored in JSONL.                              |
+| Stop on Claude `429`                      | 1, 2, 4    | Typed error opens the circuit and prevents new submissions.                     |
+| Avoid a large queued blast radius         | 2          | Keep at most `num_workers` futures in flight; default two.                      |
+| Do not misclassify errors as non-triggers | 2, 4       | Partial/unavailable results remain explicit failures.                           |
+| Bound the optimizer too                   | 3          | Trigger probes and rewrite calls share one budget.                              |
+| Stop optimizer plateaus                   | 3          | Detect unchanged/seen descriptions and configurable no-improvement patience.    |
+| Explain modes and evidence limits         | 5, 6       | Update skill and evaluation references.                                         |
+| Preserve compatibility and rollback       | 2, 3, 4, 7 | Keep existing entrypoints and additive output fields.                           |
+| Separate execution, evidence, and verdict | 5, 6, 7    | No single PASS can hide a partial run or incomplete artifacts.                  |
 | Make release evidence reconstructable     | 4, 5, 7    | Exact inputs, cases, tool identity, artifact paths, and digests remain visible. |
-| Audit the complete case matrix            | 5, 7       | Every expected case is present; unexecuted entries are `not_run`/`NHR`.       |
+| Audit the complete case matrix            | 5, 7       | Every expected case is present; unexecuted entries are `not_run`/`NHR`.         |
 
 ## Framework Fit
 
@@ -131,36 +131,36 @@ stream-JSON protocol.
 
 ## Files and Responsibilities
 
-| Path                                                                                        | Action | Responsibility                                                                                                        |
-| ------------------------------------------------------------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------- |
-| `.claude/skills/skill-creator/scripts/eval_control.py`                                      | Create | Call permits, deadline, circuit breaker, typed Claude errors, fingerprints, and JSONL checkpoint storage.             |
-| `.claude/skills/skill-creator/scripts/run_pipeline.py`                                      | Create | Three-mode CLI, shared controller, exact evidence manifest, reference validator, readiness gates, and exit codes.     |
-| `.claude/skills/skill-creator/evals/activation-smoke.json`                                  | Create | Two representative positive and two hard-negative activation probes.                                                  |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_eval_control.py`                | Create | Unit coverage for budgets, fingerprints, checkpoints, deadlines, and rate-limit circuit behavior.                     |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_run_pipeline.py`                | Create | Mode selection, zero-call `check`, evidence completeness, adversarial manifests, readiness, and exit-code coverage.   |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_run_loop.py`                    | Create | Optimizer budget propagation and plateau-stop coverage.                                                               |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_improve_description.py`         | Create | Standalone optimizer CLI budget, checkpoint, and shortening-call coverage.                                            |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_run_red_green_eval.py`          | Create | Direct RED/GREEN parser, permit, usage, checkpoint, artifact, and CLI coverage.                                       |
-| `.claude/skills/skill-creator/scripts/run_eval.py`                                          | Modify | Typed CLI errors, bounded scheduling, checkpoint reuse, execution metadata, safe defaults, and live CLI flags.        |
-| `.claude/skills/skill-creator/scripts/run_loop.py`                                          | Modify | Shared call controller, preflight totals, bounded defaults, and plateau detection.                                    |
-| `.claude/skills/skill-creator/scripts/improve_description.py`                               | Modify | Consume a call permit for every rewrite, including over-limit shortening, and checkpoint successful responses.        |
-| `.claude/skills/skill-creator/scripts/run_early_exit_eval.py`                               | Modify | Shared budget/checkpoint support and explicit CLI-error detection.                                                    |
-| `.claude/skills/skill-creator/scripts/run_red_green_eval.py`                                | Modify | Shared typed error parsing and budget-aware RED/GREEN invocation.                                                     |
-| `.claude/skills/skill-creator/scripts/run_readiness_pressure_eval.py`                       | Modify | Extract a callable orchestration function for the release pipeline and preserve partial evidence safely.              |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_run_eval.py`                    | Modify | Bounded scheduler, `429`, checkpoint resume, skipped-run, and worker-default coverage.                                |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_run_early_exit_eval.py`         | Modify | Ensure a result-event error cannot pass as an early exit and cached successes are reused.                             |
-| `.claude/skills/skill-creator/scripts/Regression tests/test_run_readiness_pressure_eval.py` | Modify | Budget/circuit propagation and resumable RED/GREEN evidence coverage.                                                 |
-| `.claude/skills/skill-creator/scripts/test_regressions.py`                                  | Modify | Add new CLI entrypoints to the `--help` smoke list and retain Windows invocation checks.                              |
-| `.claude/skills/skill-creator/references/schemas.md`                                        | Modify | Document checkpoint ownership, reuse rules, and partial-run semantics.                                                |
-| `.claude/skills/skill-creator/references/description-optimization.md`                       | Modify | Make optimization explicitly live, budgeted, resumable, and separate from testing.                                    |
-| `.claude/skills/skill-creator/references/evaluation-workflow.md`                            | Modify | Define the three modes, call accounting, circuit-breaker behavior, and evidence semantics.                            |
-| `.claude/skills/skill-creator/SKILL.md`                                                     | Modify | Route ordinary testing to `check`; document explicit `smoke` and `release` escalation.                                |
+| Path                                                                                        | Action | Responsibility                                                                                                      |
+| ------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/skill-creator/scripts/eval_control.py`                                      | Create | Call permits, deadline, circuit breaker, typed Claude errors, fingerprints, and JSONL checkpoint storage.           |
+| `.claude/skills/skill-creator/scripts/run_pipeline.py`                                      | Create | Three-mode CLI, shared controller, exact evidence manifest, reference validator, readiness gates, and exit codes.   |
+| `.claude/skills/skill-creator/evals/activation-smoke.json`                                  | Create | Two representative positive and two hard-negative activation probes.                                                |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_eval_control.py`                | Create | Unit coverage for budgets, fingerprints, checkpoints, deadlines, and rate-limit circuit behavior.                   |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_run_pipeline.py`                | Create | Mode selection, zero-call `check`, evidence completeness, adversarial manifests, readiness, and exit-code coverage. |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_run_loop.py`                    | Create | Optimizer budget propagation and plateau-stop coverage.                                                             |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_improve_description.py`         | Create | Standalone optimizer CLI budget, checkpoint, and shortening-call coverage.                                          |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_run_red_green_eval.py`          | Create | Direct RED/GREEN parser, permit, usage, checkpoint, artifact, and CLI coverage.                                     |
+| `.claude/skills/skill-creator/scripts/run_eval.py`                                          | Modify | Typed CLI errors, bounded scheduling, checkpoint reuse, execution metadata, safe defaults, and live CLI flags.      |
+| `.claude/skills/skill-creator/scripts/run_loop.py`                                          | Modify | Shared call controller, preflight totals, bounded defaults, and plateau detection.                                  |
+| `.claude/skills/skill-creator/scripts/improve_description.py`                               | Modify | Consume a call permit for every rewrite, including over-limit shortening, and checkpoint successful responses.      |
+| `.claude/skills/skill-creator/scripts/run_early_exit_eval.py`                               | Modify | Shared budget/checkpoint support and explicit CLI-error detection.                                                  |
+| `.claude/skills/skill-creator/scripts/run_red_green_eval.py`                                | Modify | Shared typed error parsing and budget-aware RED/GREEN invocation.                                                   |
+| `.claude/skills/skill-creator/scripts/run_readiness_pressure_eval.py`                       | Modify | Extract a callable orchestration function for the release pipeline and preserve partial evidence safely.            |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_run_eval.py`                    | Modify | Bounded scheduler, `429`, checkpoint resume, skipped-run, and worker-default coverage.                              |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_run_early_exit_eval.py`         | Modify | Ensure a result-event error cannot pass as an early exit and cached successes are reused.                           |
+| `.claude/skills/skill-creator/scripts/Regression tests/test_run_readiness_pressure_eval.py` | Modify | Budget/circuit propagation and resumable RED/GREEN evidence coverage.                                               |
+| `.claude/skills/skill-creator/scripts/test_regressions.py`                                  | Modify | Add new CLI entrypoints to the `--help` smoke list and retain Windows invocation checks.                            |
+| `.claude/skills/skill-creator/references/schemas.md`                                        | Modify | Document checkpoint ownership, reuse rules, and partial-run semantics.                                              |
+| `.claude/skills/skill-creator/references/description-optimization.md`                       | Modify | Make optimization explicitly live, budgeted, resumable, and separate from testing.                                  |
+| `.claude/skills/skill-creator/references/evaluation-workflow.md`                            | Modify | Define the three modes, call accounting, circuit-breaker behavior, and evidence semantics.                          |
+| `.claude/skills/skill-creator/SKILL.md`                                                     | Modify | Route ordinary testing to `check`; document explicit `smoke` and `release` escalation.                              |
 
 ## Tasks
 
 ### Task 1: Define call-control and checkpoint contracts
 
-**Files**
+#### Files
 
 - Create: `.claude/skills/skill-creator/scripts/eval_control.py`
 - Create:
@@ -350,7 +350,7 @@ git commit -m "feat(skill-creator): add bounded eval control contract"
 
 ### Task 2: Make activation evaluation bounded, resumable, and rate-limit safe
 
-**Files**
+#### Files
 
 - Modify: `.claude/skills/skill-creator/scripts/run_eval.py`
 - Modify: `.claude/skills/skill-creator/scripts/run_loop.py`
@@ -400,17 +400,17 @@ Extend `test_run_eval.py` with tests proving:
 2. The CLI defaults to two workers and requires a positive `--max-model-calls`
    and an explicit full `--model` ID for a live run.
 3. A legacy programmatic caller that omits `control` receives an implicit
-    controller capped at `min(6, planned_calls)`, with no checkpoint or
-    deadline; the result marks `implicit_safe_default: true`.
+   controller capped at `min(6, planned_calls)`, with no checkpoint or deadline;
+   the result marks `implicit_safe_default: true`.
 4. `_evaluate_cases()` in `run_loop.py` treats any partial activation result as
-    unavailable and stops before rewrite or holdout work.
+   unavailable and stops before rewrite or holdout work.
 5. `pickle.loads(pickle.dumps(ClaudeCliError(429, ...)))` preserves status and
-    message, and one minimal real `ProcessPoolExecutor` invocation of
-    `_result_event_decision()` transports a stubbed `429` result event back to
-    the parent without launching Claude.
+   message, and one minimal real `ProcessPoolExecutor` invocation of
+   `_result_event_decision()` transports a stubbed `429` result event back to
+   the parent without launching Claude.
 6. With a controller planned for the 34-call release base, the first 20-call
-    activation adapter reports a locally complete stage while the global
-    controller remains in progress.
+   activation adapter reports a locally complete stage while the global
+   controller remains in progress.
 
 - [ ] **Step 2: Verify the new tests fail**
 
@@ -493,7 +493,7 @@ git commit -m "fix(skill-creator): bound and resume activation probes"
 
 ### Task 3: Bound description optimization and stop plateaus
 
-**Files**
+#### Files
 
 - Modify: `.claude/skills/skill-creator/scripts/run_loop.py`
 - Modify: `.claude/skills/skill-creator/scripts/improve_description.py`
@@ -587,7 +587,7 @@ git commit -m "fix(skill-creator): cap description optimization loops"
 
 ### Task 4: Apply the controller to behavioral evaluators
 
-**Files**
+#### Files
 
 - Modify: `.claude/skills/skill-creator/scripts/run_early_exit_eval.py`
 - Modify: `.claude/skills/skill-creator/scripts/run_red_green_eval.py`
@@ -678,7 +678,7 @@ git commit -m "fix(skill-creator): protect behavioral eval calls"
 
 ### Task 5: Add fixed smoke coverage and the three-mode pipeline CLI
 
-**Files**
+#### Files
 
 - Create: `.claude/skills/skill-creator/evals/activation-smoke.json`
 - Create: `.claude/skills/skill-creator/scripts/run_pipeline.py`
@@ -728,9 +728,9 @@ then assert:
     adapters; it marks exactly their fixed base attempts skipped and writes a
     partial summary with valid global accounting.
 13. The user-visible summary reports independent `execution_status`,
-    `evidence_status`, `verdict`, `mode_ready`, and `release_ready` gates. A safe
-    or complete execution cannot conceal incomplete evidence, and smoke can be
-    `mode_ready` without ever being `release_ready`.
+    `evidence_status`, `verdict`, `mode_ready`, and `release_ready` gates. A
+    safe or complete execution cannot conceal incomplete evidence, and smoke can
+    be `mode_ready` without ever being `release_ready`.
 14. Every fixture case appears exactly once in the applicable stage matrix with
     its complete ID, expected result, attempt records, and `pass`, `fail`,
     `error`, or `not_run` status. Every `not_run` entry carries
@@ -743,8 +743,8 @@ then assert:
     with zero findings is still `evidence_status: "incomplete"` and cannot make
     either readiness flag true.
 17. A fully passing checkpoint with a missing user-visible result artifact does
-    not support readiness; internal/cache success cannot substitute for
-    retained evidence.
+    not support readiness; internal/cache success cannot substitute for retained
+    evidence.
 18. The complete summary and retained artifacts allow a fresh process to rerun
     `validate_pipeline_summary()` without evaluator memory and reproduce the
     same readiness gates.
@@ -764,11 +764,11 @@ Expected: collection fails because `run_pipeline.py` does not exist.
 Create immutable `EvidenceFinding(code, category, severity, message)`, plus
 `build_execution_plan(mode)`, `run_check(skill_root)`,
 `run_smoke(skill_root, workspace, control)`,
-`run_release(skill_root, workspace, control)`,
-`build_pipeline_summary(...)`, `validate_pipeline_summary(summary, workspace)`,
-`write_pipeline_summary(...)`, and `main(argv=None)`. Runner and builder
-functions return `dict[str, object]`; the validator returns
-`list[EvidenceFinding]`; `main` returns the documented process exit code.
+`run_release(skill_root, workspace, control)`, `build_pipeline_summary(...)`,
+`validate_pipeline_summary(summary, workspace)`, `write_pipeline_summary(...)`,
+and `main(argv=None)`. Runner and builder functions return `dict[str, object]`;
+the validator returns `list[EvidenceFinding]`; `main` returns the documented
+process exit code.
 
 `run_check()` invokes, in order and with `cwd=skill_root`,
 `[sys.executable, "-m", "scripts.quick_validate", "."]`,
@@ -832,17 +832,17 @@ Report `base_calls: 34` and `maximum_calls: 40` separately.
 
 Before live execution, print the mode, each stage's planned calls, the total,
 the hard cap, checkpoint path, workspace, model source, and concurrency. Each
-adapter writes its complete result under `workspace / "evidence" / <stage>`;
-the summary references every retained file with its workspace-relative path,
-byte size, and SHA-256 digest.
+adapter writes its complete result under `workspace / "evidence" / <stage>`; the
+summary references every retained file with its workspace-relative path, byte
+size, and SHA-256 digest.
 
 The authoritative `pipeline-summary.json` contains:
 
 - `schema_version`, mode, timestamps, exact CLI arguments, workspace-relative
   checkpoint path/digest, and global controller counters;
 - `harness` identity: harness version, complete Python and Claude CLI versions,
-  full model ID, and the path/digest of `run_pipeline.py`, `eval_control.py`, and
-  each invoked evaluator script;
+  full model ID, and the path/digest of `run_pipeline.py`, `eval_control.py`,
+  and each invoked evaluator script;
 - an `inputs` manifest with the complete source path and SHA-256 for the target
   `SKILL.md`, applicable eval fixtures, and every behavior-affecting input
   already represented in `AttemptSpec`;
@@ -865,15 +865,15 @@ field, then attach the validator identity, execution status, and findings. A
 fresh-process revalidation ignores the recorded findings, recomputes them, and
 compares the derived gates. If the validator itself raises, catch it at the CLI
 boundary and record `status: "error"`, the exception class/message, incomplete
-evidence, and false readiness. `release_ready` is true only for a release with complete
-execution, complete validated evidence, and a passing verdict. `mode_ready` may
-be true for a passing `check` or `smoke`, but `release_ready` remains false.
-Write through a temporary sibling plus `os.replace()` only after validation;
-on blocking findings, still write the exact summary with
+evidence, and false readiness. `release_ready` is true only for a release with
+complete execution, complete validated evidence, and a passing verdict.
+`mode_ready` may be true for a passing `check` or `smoke`, but `release_ready`
+remains false. Write through a temporary sibling plus `os.replace()` only after
+validation; on blocking findings, still write the exact summary with
 `evidence_status: "incomplete"`, readiness false, and all findings visible.
 
-Exit codes are projections of the separate gates, not replacements for them:
-`0` for dry-run or a ready selected mode; `1` for conclusive complete or
+Exit codes are projections of the separate gates, not replacements for them: `0`
+for dry-run or a ready selected mode; `1` for conclusive complete or
 short-circuited failure; `2` for invalid input, unavailable execution, validator
 failure, or incomplete evidence.
 
@@ -904,7 +904,7 @@ git commit -m "feat(skill-creator): add check smoke release pipeline"
 
 ### Task 6: Update skill routing and evaluation documentation
 
-**Files**
+#### Files
 
 - Modify: `.claude/skills/skill-creator/SKILL.md`
 - Modify: `.claude/skills/skill-creator/references/description-optimization.md`
@@ -957,8 +957,8 @@ skill text.
   update execution/retry sections to use checkpoints and circuit-breaker
   semantics. Explain the 34-call release base, six-call targeted confirmation
   reserve, case priority, majority threshold, separate readiness gates, and
-  authoritative evidence artifact. Do not duplicate other implementation
-  details already documented in the CLI help.
+  authoritative evidence artifact. Do not duplicate other implementation details
+  already documented in the CLI help.
 - In `schemas.md`, document the checkpoint record as append-only execution
   evidence, specify that only active successful outcomes are reusable, and
   distinguish planned, attempted, completed, error, resumed, and skipped calls.
@@ -988,7 +988,7 @@ git commit -m "docs(skill-creator): document bounded evaluation modes"
 
 ### Task 7: Run the deterministic final gate
 
-**Files**
+#### Files
 
 - Test: `.claude/skills/skill-creator/scripts/*.py`
 - Test: `.claude/skills/skill-creator/scripts/Regression tests/*.py`
@@ -1030,8 +1030,8 @@ python -m scripts.run_pipeline release --dry-run
 
 Expected: smoke reports four base calls under cap six; release reports 34 base
 calls and a 40-call maximum; both report zero attempted calls, enumerate all
-planned cases as `not_run`/`NHR`, set readiness false, and create no workspace or
-checkpoint.
+planned cases as `not_run`/`NHR`, set readiness false, and create no workspace
+or checkpoint.
 
 - [ ] **Step 4: Defer real live evidence to an explicit authorized run**
 
@@ -1046,9 +1046,9 @@ python -m scripts.run_pipeline smoke --workspace ../../../skill-creator-workspac
 Expected: at most six calls, an append-only checkpoint at
 `../../../skill-creator-workspace/checkpoints/smoke.jsonl`, and exit code `0`,
 `1`, or `2` according to the documented complete-pass, complete-fail, or
-partial/unavailable contract. Independently rerun
-`validate_pipeline_summary()` against `pipeline-summary.json`; do not infer the
-smoke verdict or evidence status from the checkpoint alone.
+partial/unavailable contract. Independently rerun `validate_pipeline_summary()`
+against `pipeline-summary.json`; do not infer the smoke verdict or evidence
+status from the checkpoint alone.
 
 ## Safety, Rollback, and Verification
 
@@ -1104,8 +1104,7 @@ smoke verdict or evidence status from the checkpoint alone.
 This section scores the implementation plan's static executability only. It is
 not an observed reliability score for the future pipeline. Behavioral readiness
 remains unverified until the implemented deterministic tests pass and an
-explicit live release run produces complete, independently revalidated
-evidence.
+explicit live release run produces complete, independently revalidated evidence.
 
 - Requirement coverage: PASS
 - Exact paths: PASS
@@ -1129,4 +1128,3 @@ evidence.
 - Planned tests versus tests already run: every command in this plan is planned;
   no implementation or pipeline test has been run as part of writing the plan,
   so the plan-review score must not be presented as behavioral evidence.
-  

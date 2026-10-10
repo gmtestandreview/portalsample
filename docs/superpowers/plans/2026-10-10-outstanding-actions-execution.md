@@ -6,25 +6,25 @@ Baseline: `655f90af166b98c62f567874474f310f7608e914`, based on `main`. Codex
 owns the local investigations and repairs authorized by the request to execute
 the [reviewed backlog](2026-09-25-TODO-outstanding-actions.md).
 
-**Status refresh 2026-10-10 23:36 (Australia/Sydney):** the review confirmed
-that A1, A5, and A6 have their current regression checks in place, and A4's
-candidate/revision/evaluator/artifact identification is complete. No new
-provider run, PAT rotation, backend contract evidence, VS Code consumer
-evidence, or relocation decision has been recorded. A4's holdout remains on hold
-pending the provider reset reported for 2026-10-11 03:20 (Australia/Sydney); A2,
-A3, A7, A8, A9, and D1 remain open or deferred.
+**Status refresh 2026-10-10 23:45 (Australia/Sydney):** MD-T1 through MD-T5 are
+complete, with zero Markdown errors across 153 maintained files. A2 now has an
+assigned GitHub task with the December 1 deadline; rotation is still pending.
+A3's backend approval and A8's VS Code consumer check remain unresolved. A4's
+holdout remains on hold pending the provider reset reported for 2026-10-11 03:20
+(Australia/Sydney). A9's original identity correlation and D1's deferral are
+unchanged.
 
 ## Results
 
 | Action | Result                                                                                          | Remaining work                                                     |
 | ------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | A1     | Reproduced and fixed temporary credential-file exposure; 10 launcher tests pass                 | None for the tested launcher behavior                              |
-| A2     | Owner confirmed rotation is pending; December 1 deadline retained; calendar file prepared       | Owner rotates/revokes PAT, verifies workflow, and imports reminder |
+| A2     | Owner confirmed rotation is pending; December 1 deadline retained; GitHub task #74 assigned     | Owner rotates/revokes PAT and verifies workflow                    |
 | A3     | Existing date implementation passes 30 tests in each of three timezones                         | Backend approval evidence and explicit DST-transition acceptance   |
 | A4     | Training passes 20/20; holdout interrupted by 14 provider-quota errors                          | Rerun untouched holdout after quota reset; release remains on hold |
 | A5     | Recovered hidden test; 19 tests and 42 subtests pass within the original timeout                | None for current suite execution; historical hang cause unproven   |
 | A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass       | No broader deployment-readiness claim                              |
-| A7     | Baseline and scoped remediation tasks established                                               | Carry out the separately scoped Markdown batches                   |
+| A7     | MD-T1 through MD-T5 complete; 1,063 findings corrected; 153 maintained documents lint clean     | Retain focused Markdown checks for future edits                    |
 | A8     | Worker health, readiness, recent-context retrieval, and context injection respond successfully  | Verify the affected VS Code consumer                               |
 | A9     | Recovered two documented candidate infrastructure bugs, their fixes, and passing topology tests | Original observation needed for definitive identity correlation    |
 | D1     | Owner explicitly kept relocation deferred                                                       | No relocation work authorized for this execution                   |
@@ -79,6 +79,14 @@ It is an importable artifact, not an event already installed in a calendar.
 Rotation, old-token revocation, and successful use of the replacement remain
 pending with @gregm. No token value is stored in this evidence or reminder.
 
+During resumed execution the owner selected `gmtestandreview` for task tracking.
+A duplicate search found no existing PAT/deadline issue.
+[GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74) was
+created and independently retrieved to verify its open state, assignment to
+`gmtestandreview`, December 1 deadline, and rotation/revocation/workflow
+checklist. This records the reminder in the chosen task system; no scheduled
+GitHub notification or calendar import is implied.
+
 ## A3 — Date behavior verified; contract gate unresolved
 
 The implementation already includes `ClientApp/src/utils/dateOnly.ts` and
@@ -113,6 +121,11 @@ Next: reconcile the shipped adapter with the approval records, obtain the field
 type/format, nullability, accepted payloads, offset/time-of-day semantics, and
 runtime-deserialization evidence; then verify explicit DST transitions. No
 backend contract was guessed and no UI source was changed.
+
+Resumed execution on 2026-10-10 rechecked both worktrees and all local Git refs:
+`reports/stabilisation/date-contract.md` is still absent. The main checkout's
+owner and delivery records still leave the API Contract Approver unassigned and
+B0/B1 externally deferred. The approval gate remains unresolved.
 
 ## A4 — Activation campaign
 
@@ -267,9 +280,39 @@ scope; this does not authorize changing policy.
 Additional table-specific issues are MD056 in
 `docs/change-record/OPEN-ITEMS-BACKLOG.md` and MD058 in
 `docs/superpowers/plans/2026-05-30-sonar-lint-cleanup.md`. Remediation batches
-need their own owners and focused validation. This action establishes the
-baseline and follow-up tasks; it does not claim all existing documents lint
-clean.
+were included in the resumed remediation below. The table above preserves the
+original measured baseline.
+
+### MD-T1 through MD-T5 — Completed in resumed execution
+
+Codex assigned the batches to three agents with disjoint file ownership:
+analysis (347 original findings), historical plans (506), and other documents
+(210). The complete batch corrected 1,063 findings in 46 documents. All five
+follow-ups are complete:
+
+- [x] MD-T1: tables — aligned tables, repaired escaped regex alternation pipes
+      in the backlog, and preserved intended column contents.
+- [x] MD-T2: headings — corrected hierarchy, real subsection headings, duplicate
+      headings, and trailing heading punctuation.
+- [x] MD-T3: lists — corrected marker formatting and numbering while retaining
+      the historical ruling identifiers.
+- [x] MD-T4: fences — supplied languages and spacing and repaired nested
+      Markdown examples with longer outer fences.
+- [x] MD-T5: remaining findings — corrected prose HTML examples, blank lines,
+      and the two security-request anchor links.
+
+Using the same scope enumeration and pinned runner shown above, the current 153
+maintained tracked documents report **0 errors**, exit 0. The additional file
+relative to the 152-file baseline is this execution report. Repository default
+Prettier governs the formatting; no lint rules, ignores, policy files, or
+quality gates were changed. The original failing baseline remains above.
+
+Final integrated verification after the status updates: pinned Markdown lint
+passed on all **153** maintained documents; default Prettier passed on all
+**48** changed Markdown files (46 remediation files plus the backlog and this
+report); secrets scans of `docs` and `analysis` were clean; and
+`git diff --check` passed. Application code was unchanged in this resumed batch,
+so application tests and builds were not repeated.
 
 ## A8 — Memory service responds; VS Code check remains
 
@@ -289,6 +332,11 @@ worker-health failure and establish service-side context retrieval. The current
 tools do not control the affected VS Code consumer, so end-to-end completion
 verification remains pending. No service restart or global configuration change
 was performed.
+
+Resumed execution on 2026-10-10 repeated all four requests: HTTP 200 for each,
+`status: ok` / `mcpReady: true` for health, `status: ready` for readiness, and
+the same 3,893-byte recent-context and 8,255-byte injection responses. The
+affected VS Code completion flow remains unverified.
 
 ## A9 — Documented infrastructure candidates recovered
 
@@ -317,6 +365,11 @@ observation was not recovered, so these are the documented candidate pair, not a
 definitive identity match to that observation. Do not reopen the already fixed
 candidates merely because the old TODO omitted their names.
 
+Resumed execution on 2026-10-10 retrieved PR #1 and its discussion again. The PR
+body explicitly references the workspace-nesting fix at `0d16927`; the sole
+discussion comment reports a Sonar quality gate. Neither supplies the original
+unnamed observation, so definitive identity correlation remains open.
+
 ## D1 — Relocation remains deferred
 
 The owner explicitly selected “Keep relocation deferred” during execution. No
@@ -330,6 +383,7 @@ the writing-skills alias description. Existing date and topology suites were run
 to establish backlog status; their production code was not changed. No
 application build, full CI suite, production deployment, secret rotation,
 calendar import, or VS Code consumer verification is implied by these results.
-The Markdown baseline intentionally reports existing failures rather than
-weakening rules. Current execution artifacts and edited documents receive
-focused format, secrets, link, and diff checks before handoff.
+Resumed execution additionally remediated the maintained-document Markdown
+findings and created the authorized PAT tracking task. The historical failing
+baseline is retained alongside the clean current result. Edited documents
+receive focused format, secrets, link, and diff checks before handoff.

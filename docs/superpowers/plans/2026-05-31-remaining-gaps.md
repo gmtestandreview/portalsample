@@ -277,7 +277,7 @@ Content must document:
   Create `docs/architecture/org-switching-lifecycle.md` with the following
   content:
 
-  ```markdown
+  ````markdown
   # Organisation Switching Lifecycle
 
   ## Overview
@@ -288,7 +288,8 @@ Content must document:
   `sessionStorage`, and is read by every API client at request time.
 
   ## Data flow
-  ```
+
+  ```text
 
   User selects org in BranchSelectorModal ↓
   accountDispatch.setTargetOrganisation(abn, name) ↓ AccountContext updates
@@ -301,7 +302,7 @@ Content must document:
   transformOptions() injects header on every request:
   headers.TargetOrganisationAbn = targetOrganisationJson.targetOrganisationAbn
 
-  ````text
+  ```
 
   ## Why the construction-time read is safe in the current codebase
 
@@ -312,7 +313,7 @@ Content must document:
   const client = new DashboardClient();  // reads sessionStorage NOW
   client.setAuthToken(token);
   await client.getDashboardDraftsByPortalID(...);
-  ````
+  ```
 
   Because the client is created fresh on each effect execution, it captures the
   current `sessionStorage` value at call time. When the user switches org, the
@@ -362,10 +363,7 @@ Content must document:
   | `ClientApp/src/authentication/accountContext.tsx` | `setTargetOrganisation` dispatch — writes to both state and sessionStorage |
   | `ClientApp/src/storage/sessionStorageCache.ts`    | Low-level sessionStorage wrapper                                           |
   | All `*Client` classes in `web-api-client.ts`      | Extend `AuthorizedApiBase` (DashboardClient, QuoteClient, etc.)            |
-
-  ```text
-
-  ```
+  ````
 
 - [ ] **Step 3: Verify file was created**
 
@@ -390,7 +388,7 @@ Content must document:
 
   Create `docs/architecture/nswag-regeneration.md`:
 
-  ```markdown
+  ````markdown
   # NSwag Client Regeneration
 
   ## What it is
@@ -431,14 +429,17 @@ Content must document:
   ### Steps
 
   1. **Obtain the OpenAPI spec** — either run the backend locally and fetch:
-  ```
+
+  ```bash
 
   curl <http://localhost:5000/swagger/v1/swagger.json> -o api-spec.json
 
-  ````text
+  ```
+
   or use the published spec URL from the NMI portal backend.
 
   2. **Run NSwag generation:**
+
   ```bash
   nswag openapi2tsclient \
     /input:api-spec.json \
@@ -449,7 +450,7 @@ Content must document:
     /generateOptionalParameters:true \
     /nullValue:Undefined \
     /generateClientInterfaces:false
-  ````
+  ```
 
   Adjust flags to match the existing file's style. Check the NSwag config file
   (`.nswag` or `nswag.json`) at the project root — if one exists, run:
@@ -459,6 +460,7 @@ Content must document:
   ```
 
   <!-- markdownlint-disable MD029 -- continues Steps numbering above -->
+
   3. **Verify `AuthorizedApiBase` is preserved** — confirm lines 10–35 of the
      regenerated file contain the `AuthorizedApiBase` class with `authToken`,
      `targetOrganisation`, `setAuthToken()`, and `transformOptions()`. If NSwag
@@ -493,10 +495,7 @@ Content must document:
   | `ClientApp/src/api/web-api-client.ts` | Generated output — do not edit manually                         |
   | `AuthorizedApiBase` (lines 10–35)     | Hand-authored base class — must be preserved after regeneration |
   | `.storybook/msw-handlers.ts`          | Must be updated when new endpoints are added                    |
-
-  ```text
-
-  ```
+  ````
 
 - [ ] **Step 3: Verify file was created**
 

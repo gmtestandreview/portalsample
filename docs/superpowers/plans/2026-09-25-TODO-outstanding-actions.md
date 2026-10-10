@@ -15,11 +15,11 @@ are recorded in the
 and acceptance details below retain the reviewed scope; completed items have
 their execution result recorded alongside them.
 
-**Status refreshed 2026-10-10 23:36 (Australia/Sydney):** no new external
-evidence changed the execution results. A1, A5, and A6 have their current
-regression checks in place; A4's revision/evaluator/artifact identification is
-complete, but its holdout remains blocked by provider quota. A2, A3, A7, A8, A9,
-and D1 remain open or deferred as described below.
+**Status refreshed 2026-10-10 23:45 (Australia/Sydney):** A7 remediation is
+complete: MD-T1 through MD-T5 now pass across all 153 maintained documents. A2
+is tracked in GitHub task #74 with the retained December 1 deadline; rotation
+remains pending. A1, A5, and A6 retain their regression checks. A3, A4, A8, A9,
+and D1 retain the blockers or deferral documented below.
 
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
@@ -37,21 +37,20 @@ implementation.
 
 ## Current priority queue
 
-1. **P0 — A2:** confirm the PAT rotation. If it is still pending, import the
-   prepared reminder into the owner's chosen calendar or task system and
-   complete rotation, revocation, and workflow verification by **2026-12-01**.
+1. **P0 — A2:** complete rotation, revocation, and workflow verification by
+   **2026-12-01**, tracked in
+   [GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74).
 2. **P1 — A3:** obtain the latest backend contract decision, then reproduce the
    reported date shift and add explicit DST-transition evidence before changing
    production behavior.
 3. **P1 — A4:** after the provider reset, rerun the untouched holdout with the
    identified candidate, evaluator, and parameters; keep the release on hold
    until the existing acceptance gate is satisfied.
-4. **P1 — A7:** assign and execute MD-T1 through MD-T5, preserving the current
-   baseline and rerunning each touched scope after edits.
-5. **P2 — A8/A9:** verify the affected VS Code memory consumer and correlate the
+4. **P2 — A8/A9:** verify the affected VS Code memory consumer and correlate the
    recovered infrastructure candidates with the original observations.
-6. **Maintenance — A1/A5/A6:** retain the focused launcher, bounded review,
-   metadata, and representative activation checks with future changes.
+5. **Maintenance — A1/A5/A6/A7:** retain the focused launcher, bounded review,
+   metadata, representative activation, and maintained-document lint checks with
+   future changes.
 
 Revisit relocation (D1) only if the repository owner chooses to resume it.
 
@@ -89,10 +88,14 @@ an item only with dated evidence; otherwise record the blocker and next action.
   workflow verification remain open. The deadline and owner come from historical
   observation `#59`, 2026-09-10; rotation has not been independently confirmed.
   The commitment is not overdue as of this review.
-- **Open P0 action:** confirm whether rotation already occurred. If still
-  pending, retain **2026-12-01** as the deadline and import the prepared
-  reminder through the owner's chosen calendar or task system. The reminder
-  artifact exists, but no calendar event has been confirmed.
+- **Reminder/task completed (2026-10-10):** the owner selected
+  `gmtestandreview`;
+  [GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74)
+  is open and assigned to that account with the December 1 deadline. The task
+  records the commitment; no scheduled GitHub notification or calendar import is
+  claimed.
+- **Open P0 action:** rotate and revoke the PAT and verify the consuming
+  workflow by **2026-12-01**, then record completion in task #74.
 - **Done when:** the replacement is installed at its source of truth, the old
   PAT is revoked, and the consuming workflow succeeds. Record the rotation date
   and workflow-run reference without recording either token value.
@@ -140,8 +143,10 @@ an item only with dated evidence; otherwise record the blocker and next action.
   candidate description and evaluator revisions, runtime, and available
   evaluation artifacts. The manifest and result files are preserved under the
   execution report's run directory.
-- **Open P1 action:** after the provider reset, rerun the same positive,
-  negative, near-miss, and holdout cases against that identified candidate.
+- **Open P1 action:** after the provider reset, rerun the complete untouched
+  holdout with the recorded candidate and parameters, then the outstanding
+  vocabulary near-miss campaign required by the existing release protocol.
+  Preserve the completed training run and the quota-interrupted holdout.
 - **Done when:** a dated result identifies the tested revision, completes the
   holdout without timeout, and meets the evaluator's existing acceptance
   criteria. Treat this as a release blocker only if the failing result is still
@@ -181,10 +186,10 @@ an item only with dated evidence; otherwise record the blocker and next action.
   change explains why they were replaced. Preserve the failure details if they
   still reproduce.
 
-### A7 — Replace historical Markdown counts with a current baseline
+### A7 — Establish the Markdown baseline and complete remediation
 
-- [x] **Priority: P1 follow-up. Status: baseline and scoped follow-ups
-      established. Owner: Codex.**
+- [x] **Priority: maintenance. Status: MD-T1 through MD-T5 complete and
+      verified. Owner: Codex.**
 - **Execution result (2026-10-10):** Pinned markdownlint-cli2 0.20.0 measured
   1,063 diagnostics across 46 of 152 maintained documents at baseline 655f90af.
   MD060 remains: 544 diagnostics across 111 line locations in 21 files. MD013
@@ -192,9 +197,13 @@ an item only with dated evidence; otherwise record the blocker and next action.
   exact exclusions; the baseline is not a clean-lint claim. The original review
   reported roughly 987 violations and an uncertain 104 MD060 table-format
   findings. Those counts predate the current configuration.
-- **Open P1 action:** assign and execute the separately scoped MD-T1 through
-  MD-T5 remediation batches. Preserve the current baseline and rerun each
-  touched scope after edits.
+- **Resumed execution (2026-10-10):** assigned MD-T1 through MD-T5 across
+  independent analysis, historical-plan, and other-document scopes. Corrected
+  the 1,063 findings in 46 documents; the full current scope of 153 maintained
+  documents now reports zero errors with the same pinned runner and rules. The
+  original baseline remains preserved in the execution report.
+- **Maintenance follow-up:** rerun the maintained-document scope after future
+  edits. No Markdown rules, exclusions, policy files, or lint gates changed.
 - **Done when:** remaining enabled-rule findings have an accurate baseline and
   scoped remediation tasks, or the checked scope passes. Do not revive MD013
   cleanup or disable rules to make the check pass. Prettier owns formatting.
@@ -209,10 +218,10 @@ an item only with dated evidence; otherwise record the blocker and next action.
   Code consumer; its end-to-end completion check remains open.
   `worker-service.cjs` reportedly failed its health check and blocked VS Code
   memory completions (`#93`, 2026-09-20).
-- **Next action:** locate the installed service's supported health check and
-  test a memory-completion request in the affected VS Code environment. The
-  original review's statement that it was “clearly working now” is not retained
-  as proof.
+- **Next action:** test a memory-completion request in the affected VS Code
+  environment; service health and retrieval were reverified during resumed
+  execution. The original review's statement that it was “clearly working now”
+  is not retained as proof.
 - **Done when:** the health check and affected completion flow succeed with
   dated evidence, or the owner confirms the integration has been retired.
 
@@ -228,10 +237,13 @@ an item only with dated evidence; otherwise record the blocker and next action.
   original observation remains unverified. Two infrastructure bugs were
   reportedly deferred alongside the date defect on 2026-08-23; their identities
   were absent from the original log.
-- **Next action:** correlate the original observations with
-  [PR #1](https://github.com/gmtestandreview/portalsample/pull/1) and the
-  [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md). PR
-  #1 is merged, but merge status alone does not identify or close these bugs.
+- **Next action:** recover the original unnamed observations for definitive
+  identity correlation. Resumed execution rechecked
+  [PR #1](https://github.com/gmtestandreview/portalsample/pull/1), its
+  discussion, and the
+  [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md).
+  The records support the known fixes but do not identify the original unnamed
+  pair; their identity remains unknown.
 - **Done when:** each bug has a concrete description and either linked
   completion evidence or its own actionable backlog entry. If the records cannot
   be recovered, explicitly retain “identity unknown” rather than infer a defect.
