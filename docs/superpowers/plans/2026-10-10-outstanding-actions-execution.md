@@ -19,7 +19,7 @@ remains on hold pending the provider reset reported for 2026-10-11 03:20
 | ------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | A1     | Reproduced and fixed temporary credential-file exposure; 10 launcher tests pass                     | None for the tested launcher behavior                                     |
 | A2     | Owner confirmed rotation is pending; December 1 deadline retained; GitHub task #74 assigned         | Owner rotates/revokes PAT and verifies workflow                           |
-| A3     | Existing date implementation passes 30 tests in each of three timezones                             | Backend approval evidence and explicit DST-transition acceptance          |
+| A3     | Owner closed the sandbox task; remediation deferred until mainline reintegration                    | Reopen after reintegration for contract and DST acceptance                |
 | A4     | Training passes 20/20; holdout interrupted by 14 provider-quota errors                              | Rerun untouched holdout after quota reset; release remains on hold        |
 | A5     | Recovered hidden test; 19 tests and 42 subtests pass within the original timeout                    | None for current suite execution; historical hang cause unproven          |
 | A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass           | No broader deployment-readiness claim                                     |
@@ -137,7 +137,12 @@ timezone for date-times, and reserves a `Date` suffix for date-only fields. This
 supports `DATE_ONLY` as the proposed classification for the field, but is a
 general design standard rather than evidence of this backend's implemented wire
 shape. A field-specific schema or signed backend decision and representative
-payloads are still required before A3 can close.
+ payloads were still required for technical remediation, but the owner closed
+ this sandbox task on 2026-10-11 because remediation will resume only after the
+ implementation is moved back into the main project code line. This is an
+ administrative closure, not a claim that the date defect is fixed or that the
+ backend contract is approved. Reopen A3 after reintegration and resume the
+ contract, runtime, DST, and round-trip acceptance work.
 
 ## A4 — Activation campaign
 

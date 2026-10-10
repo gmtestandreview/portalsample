@@ -103,9 +103,9 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A3 — Establish the RFQ date/timezone defect's current status
 
-- [ ] **Priority: customer-facing correctness. Status: existing tests pass;
-      contract/DST acceptance deferred. Owner: Codex for investigation; backend
-      approver unassigned.**
+- [x] **Priority: customer-facing correctness. Status: closed for this sandbox;
+      remediation deferred until the implementation returns to the main project
+      code line. Owner: @gregm.**
 - **Execution result (2026-10-10):** 30 existing date tests pass in each of UTC,
   Australia/Sydney, and America/Los_Angeles. The date-only adapter already
   exists. Authoritative backend approval evidence and explicit DST-transition
@@ -135,6 +135,11 @@ an item only with dated evidence; otherwise record the blocker and next action.
   or named backend approver is available. A3 is explicitly deferred until the
   owner supplies that authority; do not infer the contract from the current
   adapter or passing tests.
+- **Closure disposition (2026-10-11):** the owner closed this sandbox task. This
+  records no production remediation and no contract approval. Reopen A3 after
+  the sandbox implementation is moved back into the main project code line;
+  then obtain the field-specific contract and run the DST and form/API
+  round-trip acceptance evidence.
 - **Done when:** the contract gate is satisfied and regression evidence shows
   the intended date survives form/API round trips across UTC, Australia/Sydney
   including daylight-saving transitions, and a negative UTC offset. Record the
