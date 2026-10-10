@@ -1,8 +1,5 @@
 {
   "skill_name": "python-code-review",
-  "format_version": "1.1",
-  "status": "designed-not-run-for-current-revision",
-  "execution_status": "NHR",
   "cases": [
     {
       "id": "activation-direct",
@@ -28,9 +25,9 @@
     {
       "id": "near-miss-explanation",
       "required": true,
-      "kind": "task-path-positive",
+      "kind": "activation-near-miss",
       "prompt": "What does Python's zip() function do?",
-      "expected": "Activate unified Python skill for a concise explanation; do not invoke full review workflow."
+      "expected": "Do not activate the full code-review skill; answer as a general Python explanation."
     },
     {
       "id": "pressure-tool-evidence",
@@ -63,30 +60,30 @@
     {
       "id": "near-miss-greenfield",
       "required": true,
-      "kind": "task-path-positive",
+      "kind": "activation-near-miss",
       "prompt": "Implement a FastAPI endpoint that creates a user and returns JSON.",
-      "expected": "Activate unified Python skill using the Write path; implement endpoint within requested scope, without invoking full review workflow."
+      "expected": "Do not activate the full review skill merely because the implementation is Python. Use it only if the request also asks for review, hardening, diagnostics, or remediation."
     },
     {
       "id": "near-miss-isolated-debug",
       "required": true,
-      "kind": "task-path-positive",
+      "kind": "activation-near-miss",
       "prompt": "Why is this Python function returning None?",
-      "expected": "Activate unified Python skill using local Debug path, not the full audit workflow absent broad review intent."
+      "expected": "Do not activate the full review skill for isolated debugging of a single local defect. Activate only when the user also asks for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation."
     },
     {
       "id": "near-miss-routine-refactor",
       "required": true,
-      "kind": "task-path-positive",
+      "kind": "activation-near-miss",
       "prompt": "Refactor this class into a dataclass.",
-      "expected": "Activate unified Python skill using Refactor path; preserve behavior/compatibility, without a full audit unless requested."
+      "expected": "Do not activate solely for a routine refactor. Activate only if the user asks to review modernization safety, compatibility, or broader code quality."
     },
     {
       "id": "near-miss-test-authoring",
       "required": true,
-      "kind": "task-path-positive",
+      "kind": "activation-near-miss",
       "prompt": "Write pytest tests for this module.",
-      "expected": "Activate unified Python skill for focused pytest authoring; no broad audit unless requested."
+      "expected": "Do not activate solely for test authoring. Activate if the user also requests review, regression analysis, or remediation of defects."
     },
     {
       "id": "activation-performance",

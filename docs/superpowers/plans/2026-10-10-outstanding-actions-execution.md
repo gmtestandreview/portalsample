@@ -13,20 +13,24 @@ still pending in task #74; A3 is closed for this sandbox by owner direction and
 deferred until mainline reintegration; A4 remains on hold pending the provider
 reset reported for 2026-10-11 03:20 (Australia/Sydney); D1 remains deferred.
 
+The 2026-10-11 00:16 (Australia/Sydney) continuation rechecked A4's retained
+candidate and evidence and A2's tracking task. Neither dependency is cleared;
+the detailed preflight below records the verified scope.
+
 ## Results
 
-| Action | Result                                                                                              | Remaining work                                                            |
-| ------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| A1     | Reproduced and fixed temporary credential-file exposure; 10 launcher tests pass                     | None for the tested launcher behavior                                     |
-| A2     | Owner confirmed rotation is pending; December 1 deadline retained; GitHub task #74 assigned         | Owner rotates/revokes PAT and verifies workflow                           |
-| A3     | Owner closed the sandbox task; remediation deferred until mainline reintegration                    | Reopen after reintegration for contract and DST acceptance                |
-| A4     | Training passes 20/20; holdout interrupted by 14 provider-quota errors                              | Rerun untouched holdout after quota reset; release remains on hold        |
-| A5     | Recovered hidden test; 19 tests and 42 subtests pass within the original timeout                    | None for current suite execution; historical hang cause unproven          |
-| A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass           | No broader deployment-readiness claim                                     |
-| A7     | MD-T1 through MD-T5 complete; 1,063 findings corrected; 153 maintained documents lint clean         | Retain focused Markdown checks for future edits                           |
-| A8     | Worker health and actual affected VS Code memory-context receipt verified                           | Retain integration checks; final model response was not observed          |
+| Action | Result                                                                                              | Remaining work                                                                      |
+| ------ | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| A1     | Reproduced and fixed temporary credential-file exposure; 10 launcher tests pass                     | None for the tested launcher behavior                                               |
+| A2     | Owner confirmed rotation is pending; December 1 deadline retained; GitHub task #74 assigned         | Owner rotates/revokes PAT and verifies workflow                                     |
+| A3     | Owner closed the sandbox task; remediation deferred until mainline reintegration                    | Reopen after reintegration for contract and DST acceptance                          |
+| A4     | Training passes 20/20; holdout interrupted by 14 provider-quota errors                              | Rerun untouched holdout after quota reset; release remains on hold                  |
+| A5     | Recovered hidden test; 19 tests and 42 subtests pass within the original timeout                    | None for current suite execution; historical hang cause unproven                    |
+| A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass           | No broader deployment-readiness claim                                               |
+| A7     | MD-T1 through MD-T5 complete; 1,063 findings corrected; 153 maintained documents lint clean         | Retain focused Markdown checks for future edits                                     |
+| A8     | Worker health and actual affected VS Code memory-context receipt verified                           | Retain integration checks; final model response was not observed                    |
 | A9     | Original deferred pair recovered: DatePicker and modal timing; incorrect extra-bug inference closed | Reopen A3 after reintegration; broader modal C6 acceptance stays separately tracked |
-| D1     | Owner explicitly kept relocation deferred                                                           | No relocation work authorized for this execution                          |
+| D1     | Owner explicitly kept relocation deferred                                                           | No relocation work authorized for this execution                                    |
 
 ## A1 — Credential-file exposure repaired
 
@@ -132,18 +136,18 @@ field. Technical remediation remained externally deferred on that dependency;
 the sandbox task was subsequently closed by owner direction.
 
 On 2026-10-11, the Australian Government API Design Standard's
-[date guidance](https://api.gov.au/sections/naming-conventions.html) was reviewed.
-It specifies ISO 8601, uses `YYYY-MM-DD` for date-only values, recommends a
-timezone for date-times, and reserves a `Date` suffix for date-only fields. This
-supports `DATE_ONLY` as the proposed classification for the field, but is a
-general design standard rather than evidence of this backend's implemented wire
-shape. A field-specific schema or signed backend decision and representative
-payloads were still required for technical remediation, but the owner closed
-this sandbox task on 2026-10-11 because remediation will resume only after the
-implementation is moved back into the main project code line. This is an
-administrative closure, not a claim that the date defect is fixed or that the
-backend contract is approved. Reopen A3 after reintegration and resume the
-contract, runtime, DST, and round-trip acceptance work.
+[date guidance](https://api.gov.au/sections/naming-conventions.html) was
+reviewed. It specifies ISO 8601, uses `YYYY-MM-DD` for date-only values,
+recommends a timezone for date-times, and reserves a `Date` suffix for date-only
+fields. This supports `DATE_ONLY` as the proposed classification for the field,
+but is a general design standard rather than evidence of this backend's
+implemented wire shape. A field-specific schema or signed backend decision and
+representative payloads were still required for technical remediation, but the
+owner closed this sandbox task on 2026-10-11 because remediation will resume
+only after the implementation is moved back into the main project code line.
+This is an administrative closure, not a claim that the date defect is fixed or
+that the backend contract is approved. Reopen A3 after reintegration and resume
+the contract, runtime, DST, and round-trip acceptance work.
 
 ## A4 — Activation campaign
 
@@ -202,6 +206,38 @@ Continuation preflight on 2026-10-10 verified that all six source/corpus hashes
 and both saved result hashes still match the campaign manifest. The evaluated
 candidate and evidence have not drifted. The reported reset is still in the
 future, so no quota-blocked evaluation was repeated.
+
+### 2026-10-11 continuation preflight
+
+Owner: Codex. Branch: `docs/review-outstanding-actions`; starting commit:
+`9884f4b56c707599d77e996c727bd92034ee848b`. At 00:16 Australia/Sydney, the
+recorded 03:20 reset was still in the future. No new provider request was made;
+current provider availability has not been independently tested.
+
+`Get-FileHash -Algorithm SHA256` comparisons against the preserved manifest
+matched all six source/corpus files and both saved result files. The existing
+`scripts.utils.parse_skill_md` parser and Python `hashlib.sha256` also confirmed
+the decoded description hash matches. Python remains 3.14.7 and
+`claude --version` reports 2.1.286, matching the recorded campaign runtime.
+Candidate, corpora, evaluator, thresholds, and prior results remain unchanged.
+
+A read-only GitHub `issue_read` retrieval of task #74 confirmed it remains open,
+assigned to `gmtestandreview`, with all four checklist items unchecked and the
+2026-12-01 deadline retained. This verifies tracking status, not credential
+rotation or workflow success. A3's sandbox closure and D1's owner deferral were
+preserved. Unrelated Python-review skill edits were left untouched.
+
+TokenSave status reported that this branch is untracked and queries fall back to
+`main`; graph results were not used as worktree evidence. Direct scanned-file
+checks established the hashes above. The next executable A4 step remains the
+complete untouched holdout after the recorded reset, followed by the vocabulary
+near-miss campaign under the existing release protocol. Release remains HOLD.
+
+Continuation validation used the same maintained-document enumeration and pinned
+Markdown runner recorded under A7: **153 files, zero lint errors**. Secrets
+scans passed for all 153 files. Prettier 3.9.9 checked both updated plans, and
+`git diff --check` passed. No application or evaluator code changed, so no
+application tests, builds, or new activation results are claimed.
 
 ## A5 — Review-generator suite recovered and passing
 

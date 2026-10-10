@@ -1,0 +1,39 @@
+{
+  "artifact": "python-code-review derived revision",
+  "date": "2026-10-11",
+  "evidence_family": "deterministic-static",
+  "candidate_sha256": "5fb9fe7c4b1a070e9eec8790184da411e4358fa1083cb65efe38ad72738b80db",
+  "checks": [
+    {
+      "id": "frontmatter",
+      "status": "PASS",
+      "evidence": "name=python-code-review; description_length=534"
+    },
+    {
+      "id": "body-length",
+      "status": "PASS",
+      "evidence": "150 lines"
+    },
+    {
+      "id": "json-syntax",
+      "status": "PASS",
+      "evidence": "11 JSON files parsed (including previous validation record)"
+    },
+    {
+      "id": "markdown-relative-links",
+      "status": "FAIL",
+      "evidence": "19 links, 1 missing"
+    },
+    {
+      "id": "evidence-record-validator",
+      "status": "PASS",
+      "evidence": "43 cases with validated shape and revision hash; no behavioral conclusions"
+    },
+    {
+      "id": "current-behavioral-evaluation",
+      "status": "NHR",
+      "evidence": "No isolated agent-runner available; 43 required cases not executed"
+    }
+  ],
+  "historical_prior_validation": "evals/static-validation-prior-revision.json"
+}

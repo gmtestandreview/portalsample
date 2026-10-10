@@ -23,6 +23,14 @@ its technical remediation is deferred until mainline reintegration. The
 remaining active dependencies are A2's owner PAT rotation, A4's provider quota,
 and D1's explicit owner deferral.
 
+**Execution preflight at 00:16 on 2026-10-11 (Australia/Sydney):** all six A4
+source/corpus hashes, the decoded description hash, and both retained result
+hashes still match the campaign manifest. The recorded 03:20 quota reset has not
+occurred, so the holdout and vocabulary campaign were not retried.
+[GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74)
+remains open, assigned to `gmtestandreview`, with its rotation checklist
+unchecked. No additional action can be closed from this preflight.
+
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
   not been established. An unchecked item is not proof of a present defect.
@@ -43,8 +51,8 @@ implementation.
    **2026-12-01**, tracked in
    [GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74).
 2. **Closed for this sandbox — A3:** reopen after the implementation returns to
-   the main project code line, then obtain the field-specific contract, reproduce
-   the date shift, and add explicit DST-transition evidence.
+   the main project code line, then obtain the field-specific contract,
+   reproduce the date shift, and add explicit DST-transition evidence.
 3. **P1 — A4:** after the provider reset, rerun the untouched holdout with the
    identified candidate, evaluator, and parameters; keep the release on hold
    until the existing acceptance gate is satisfied.
@@ -112,12 +120,12 @@ an item only with dated evidence; otherwise record the blocker and next action.
   exists. Authoritative backend approval evidence and explicit DST-transition
   coverage are still missing; no production edits were made. The original review
   recorded a deferred `datePickerWrapper` timezone defect on 2026-08-23.
-- **Standards evidence (2026-10-11):** the [Australian Government API Design
-  Standard's date guidance](https://api.gov.au/sections/naming-conventions.html)
-  requires ISO 8601 dates, documents `YYYY-MM-DD` for date-only values, recommends
-  timezone information for date-times, and uses a `Date` suffix for date-only
-  fields. This supports `DATE_ONLY` as the proposed classification for this
-  field, but it does not prove the existing backend wire shape or replace a
+- **Standards evidence (2026-10-11):** the
+  [Australian Government API Design Standard's date guidance](https://api.gov.au/sections/naming-conventions.html)
+  requires ISO 8601 dates, documents `YYYY-MM-DD` for date-only values,
+  recommends timezone information for date-times, and uses a `Date` suffix for
+  date-only fields. This supports `DATE_ONLY` as the proposed classification for
+  this field, but it does not prove the existing backend wire shape or replace a
   field-specific approval.
 - **Dependency:** the
   [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md)
@@ -138,9 +146,9 @@ an item only with dated evidence; otherwise record the blocker and next action.
   adapter or passing tests.
 - **Closure disposition (2026-10-11):** the owner closed this sandbox task. This
   records no production remediation and no contract approval. Reopen A3 after
-  the sandbox implementation is moved back into the main project code line;
-  then obtain the field-specific contract and run the DST and form/API
-  round-trip acceptance evidence.
+  the sandbox implementation is moved back into the main project code line; then
+  obtain the field-specific contract and run the DST and form/API round-trip
+  acceptance evidence.
 - **Done when:** the contract gate is satisfied and regression evidence shows
   the intended date survives form/API round trips across UTC, Australia/Sydney
   including daylight-saving transitions, and a negative UTC offset. Record the
@@ -259,8 +267,8 @@ an item only with dated evidence; otherwise record the blocker and next action.
   accompanied by two further unnamed bugs. Four infrastructure fixes, including
   workspace nesting and the root worker cap, had already landed.
 - **Disposition:** DatePicker is closed for this sandbox under A3 and remains
-  deferred until mainline reintegration. Modal
-  transition assertions were repaired in
+  deferred until mainline reintegration. Modal transition assertions were
+  repaired in
   [commit 0e368fe9](https://github.com/gmtestandreview/portalsample/commit/0e368fe9cf8892a74fdb4ec1bfb78518510fb40d),
   which is an ancestor of this branch. Historical passing-run evidence is
   recorded in the execution report; the broader C6 repeated-run acceptance is
