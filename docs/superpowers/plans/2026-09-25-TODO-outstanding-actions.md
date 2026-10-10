@@ -15,10 +15,11 @@ are recorded in the
 and acceptance details below retain the reviewed scope; completed items have
 their execution result recorded alongside them.
 
-**Status refreshed 2026-10-10 23:32 (Australia/Sydney):** the execution branch
-is clean after commit `3879404d`. No external state changed after the recorded
-execution evidence. A4 remains on hold until the provider quota reset; A2, A3,
-A8, A9, and D1 retain their documented pending or deferred status.
+**Status refreshed 2026-10-10 23:36 (Australia/Sydney):** no new external
+evidence changed the execution results. A1, A5, and A6 have their current
+regression checks in place; A4's revision/evaluator/artifact identification is
+complete, but its holdout remains blocked by provider quota. A2, A3, A7, A8, A9,
+and D1 remain open or deferred as described below.
 
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
@@ -34,15 +35,25 @@ counts and test results are not current baselines. Owners remain **unassigned**
 unless explicitly recorded; proposed ownership must be accepted before
 implementation.
 
-## Recommended execution order
+## Current priority queue
 
-1. Triage possible temporary-credential exposure (A1), and retain the dated PAT
-   rotation commitment (A2).
-2. Establish current reproducers and dependencies for the date defect (A3) and
-   skill regressions (A4–A6).
-3. Measure the remaining Markdown findings (A7), verify memory-service health
-   (A8), and recover the unnamed infrastructure items (A9).
-4. Revisit relocation (D1) only if the repository owner chooses to resume it.
+1. **P0 — A2:** confirm the PAT rotation. If it is still pending, import the
+   prepared reminder into the owner's chosen calendar or task system and
+   complete rotation, revocation, and workflow verification by **2026-12-01**.
+2. **P1 — A3:** obtain the latest backend contract decision, then reproduce the
+   reported date shift and add explicit DST-transition evidence before changing
+   production behavior.
+3. **P1 — A4:** after the provider reset, rerun the untouched holdout with the
+   identified candidate, evaluator, and parameters; keep the release on hold
+   until the existing acceptance gate is satisfied.
+4. **P1 — A7:** assign and execute MD-T1 through MD-T5, preserving the current
+   baseline and rerunning each touched scope after edits.
+5. **P2 — A8/A9:** verify the affected VS Code memory consumer and correlate the
+   recovered infrastructure candidates with the original observations.
+6. **Maintenance — A1/A5/A6:** retain the focused launcher, bounded review,
+   metadata, and representative activation checks with future changes.
+
+Revisit relocation (D1) only if the repository owner chooses to resume it.
 
 These are separate work items. Before each implementation, record its owner,
 branch/commit, reproduction or baseline, and focused validation command. Close
@@ -59,8 +70,9 @@ an item only with dated evidence; otherwise record the blocker and next action.
   RED/GREEN evidence. History reported that temporary token files created by
   `.cmd` scripts survived interruption (`#53`, 2026-09-10; originally assessed
   as medium severity).
-- **Next action:** retain the focused regression test with future launcher
-  changes. No further investigation is required for the tested launcher path.
+- **Maintenance follow-up (in place):** retain the focused regression test with
+  future launcher changes. No further investigation is required for the tested
+  launcher path.
 - **Done when:** the responsible path is identified and supported exit paths
   leave no credential file. If forced termination cannot guarantee cleanup,
   document that limitation and choose a credential-handling approach that avoids
@@ -77,10 +89,10 @@ an item only with dated evidence; otherwise record the blocker and next action.
   workflow verification remain open. The deadline and owner come from historical
   observation `#59`, 2026-09-10; rotation has not been independently confirmed.
   The commitment is not overdue as of this review.
-- **Next action:** confirm whether rotation already occurred. If still pending,
-  retain **2026-12-01** as the deadline and arrange a reminder through the
-  owner's chosen calendar or task system. No reminder was created during this
-  review.
+- **Open P0 action:** confirm whether rotation already occurred. If still
+  pending, retain **2026-12-01** as the deadline and import the prepared
+  reminder through the owner's chosen calendar or task system. The reminder
+  artifact exists, but no calendar event has been confirmed.
 - **Done when:** the replacement is installed at its source of truth, the old
   PAT is revoked, and the consuming workflow succeeds. Record the rotation date
   and workflow-run reference without recording either token value.
@@ -102,7 +114,7 @@ an item only with dated evidence; otherwise record the blocker and next action.
   `preferredInstrumentOrArtefactAvailabilityDate`. Confirm that gate's current
   status before production edits; the historical defect alone does not authorize
   guessing the date contract.
-- **Next action:** locate the latest contract decision and reproduce the
+- **Open P1 action:** locate the latest contract decision and reproduce the
   reported date shift. An existing unit-test file is
   `tests/unit/components/inputs/datePickerWrapper.test.tsx`; its presence does
   not prove the timezone defect is covered or fixed.
@@ -124,11 +136,12 @@ an item only with dated evidence; otherwise record the blocker and next action.
   “optimize activation conditions for browser extension,” and a holdout timeout
   (`#137`, 2026-09-21). No iteration-3 result was present in the original
   review.
-- **Next action:** establish which skill, revision, evaluator, and release the
-  observations concern. Locate later evaluation artifacts before rerunning the
-  same positive, negative, near-miss, and holdout cases. Evaluation material
-  exists under `skills/writing-skills/evals/`; that does not establish the
-  original evaluated revision or a current failure.
+- **Preparation completed (2026-10-10):** identified the evaluated skill,
+  candidate description and evaluator revisions, runtime, and available
+  evaluation artifacts. The manifest and result files are preserved under the
+  execution report's run directory.
+- **Open P1 action:** after the provider reset, rerun the same positive,
+  negative, near-miss, and holdout cases against that identified candidate.
 - **Done when:** a dated result identifies the tested revision, completes the
   holdout without timeout, and meets the evaluator's existing acceptance
   criteria. Treat this as a release blocker only if the failing result is still
@@ -144,8 +157,9 @@ an item only with dated evidence; otherwise record the blocker and next action.
   The historical hang was not reproduced; no timeout or code change was needed.
   `test_generate_review.py` reportedly ran beyond 180 seconds without output
   (`#111`, 2026-09-20).
-- **Next action:** retain the bounded regression command for future changes. The
-  original hang cause remains unknown, but the current suite is green.
+- **Maintenance follow-up (in place):** retain the bounded regression command
+  for future changes. The original hang cause remains unknown, but the current
+  suite is green.
 - **Done when:** the original suite completes under its existing timeout, or
   evidence establishes that the referenced test was superseded. Raising the
   timeout alone is not completion evidence.
@@ -160,15 +174,16 @@ an item only with dated evidence; otherwise record the blocker and next action.
   global installation was changed. Two failures around
   `called_writing_skills_alias` were reported in
   `test_writing_skills_metadata.py` (`#91`, 2026-09-20).
-- **Next action:** retain the focused metadata and representative activation
-  checks for future description changes. No global installation was changed.
+- **Maintenance follow-up (in place):** retain the focused metadata and
+  representative activation checks for future description changes. No global
+  installation was changed.
 - **Done when:** the relevant cases pass on the recorded revision, or a linked
   change explains why they were replaced. Preserve the failure details if they
   still reproduce.
 
 ### A7 — Replace historical Markdown counts with a current baseline
 
-- [x] **Priority: maintenance. Status: baseline and scoped follow-ups
+- [x] **Priority: P1 follow-up. Status: baseline and scoped follow-ups
       established. Owner: Codex.**
 - **Execution result (2026-10-10):** Pinned markdownlint-cli2 0.20.0 measured
   1,063 diagnostics across 46 of 152 maintained documents at baseline 655f90af.
@@ -177,9 +192,9 @@ an item only with dated evidence; otherwise record the blocker and next action.
   exact exclusions; the baseline is not a clean-lint claim. The original review
   reported roughly 987 violations and an uncertain 104 MD060 table-format
   findings. Those counts predate the current configuration.
-- **Next action:** assign and execute the separately scoped MD-T1 through MD-T5
-  remediation batches. Preserve the current baseline and rerun each touched
-  scope after edits.
+- **Open P1 action:** assign and execute the separately scoped MD-T1 through
+  MD-T5 remediation batches. Preserve the current baseline and rerun each
+  touched scope after edits.
 - **Done when:** remaining enabled-rule findings have an accurate baseline and
   scoped remediation tasks, or the checked scope passes. Do not revive MD013
   cleanup or disable rules to make the check pass. Prettier owns formatting.
