@@ -218,6 +218,57 @@ describe('RhfCheckbox', () => {
     );
   });
 
+  it('marks the checkbox invalid and describes it by help and error', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfCheckbox name='accepted' label='I accept' inlineHelp='Required' />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    const box = screen.getByRole('checkbox');
+    expect(box).toHaveAttribute('aria-invalid', 'true');
+    expect(box).toHaveClass('is-invalid');
+    expect(box).toHaveAttribute(
+      'aria-describedby',
+      'help-accepted accepted-validation-msg'
+    );
+  });
+
+  it('is not marked invalid while the error is hidden', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfCheckbox name='accepted' label='I accept' />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.trigger();
+    });
+
+    const box = screen.getByRole('checkbox');
+    expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
+    expect(box).not.toHaveAttribute('aria-invalid');
+    expect(box).not.toHaveClass('is-invalid');
+  });
+
+  it('focuses the invalid checkbox when a submit attempt fails', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfCheckbox name='accepted' label='I accept' />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(screen.getByRole('checkbox')).toHaveFocus();
+  });
+
   it('renders Yes or No in summary mode', () => {
     const { unmount } = render(
       <Harness defaultValue>

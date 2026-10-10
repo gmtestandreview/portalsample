@@ -251,6 +251,108 @@ describe('RhfTextInput', () => {
     expect(screen.getByText('Enter a name')).toBeInTheDocument();
   });
 
+  it('describes the input by both the help and the validation message', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfTextInput
+          name='organisationName'
+          label='Organisation'
+          inlineHelp='Legal name'
+        />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute(
+      'aria-describedby',
+      'help-organisationName organisationName-validation-msg'
+    );
+    expect(input).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('describes the input by the titled details id and the validation message', async () => {
+    const { container } = render(
+      <Harness resolver={failingResolver}>
+        <RhfTextInput
+          name='organisationName'
+          label='Organisation'
+          inlineHelp='Legal name'
+          inlineHelpTitle='What is this?'
+        />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(container.querySelector('details')).toHaveAttribute(
+      'id',
+      'help-organisationName'
+    );
+    expect(screen.getByRole('textbox')).toHaveAttribute(
+      'aria-describedby',
+      'help-organisationName organisationName-validation-msg'
+    );
+  });
+
+  it('is not marked invalid while the error is hidden', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfTextInput name='organisationName' label='Organisation' />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.trigger();
+    });
+
+    expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox')).not.toHaveAttribute('aria-invalid');
+    expect(screen.getByRole('textbox')).not.toHaveClass('is-invalid');
+  });
+
+  it('focuses the invalid input when a submit attempt fails', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfTextInput name='organisationName' label='Organisation' />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(screen.getByRole('textbox')).toHaveFocus();
+  });
+
+  it('suppresses field level messages when asked', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfTextInput
+          name='organisationName'
+          label='Organisation'
+          inlineHelp='Legal name'
+          supressFieldLevelMessages
+        />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    const input = screen.getByRole('textbox');
+    expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
+    expect(input).not.toHaveClass('is-invalid');
+    expect(input).not.toHaveAttribute('aria-invalid');
+    expect(input).toHaveAttribute('aria-describedby', 'help-organisationName');
+  });
+
   it('renders a summary line instead of an input', () => {
     render(
       <Harness defaultValue='Acme'>

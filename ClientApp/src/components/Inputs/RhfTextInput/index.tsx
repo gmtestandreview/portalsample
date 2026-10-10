@@ -28,6 +28,7 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
     isSummary,
     onChange,
     onBlur,
+    supressFieldLevelMessages,
   } = props;
 
   const { field, fieldState, formState } = useController({ name });
@@ -35,9 +36,15 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const validationMessageId = `${controlId}-validation-msg`;
   const errorMessage =
-    fieldState.isTouched || formState.isSubmitted
+    !supressFieldLevelMessages &&
+    (fieldState.isTouched || formState.isSubmitted)
       ? fieldState.error?.message
       : undefined;
+
+  const describedBy =
+    [helpId, errorMessage ? validationMessageId : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   if (isSummary) {
     return (
@@ -83,7 +90,8 @@ const RhfTextInput = (props: Readonly<RhfTextInputProps>) => {
         {...omitUndefined({
           disabled,
           readOnly: readonly,
-          'aria-describedby': errorMessage ? validationMessageId : helpId,
+          'aria-describedby': describedBy,
+          'aria-invalid': errorMessage ? true : undefined,
           autoComplete,
           placeholder,
         })}

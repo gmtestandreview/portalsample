@@ -17,6 +17,7 @@ export interface RhfTextInputProps {
   placeholder?: string | undefined;
   containerClassName?: string | undefined;
   className?: string | undefined;
+  supressFieldLevelMessages?: boolean | undefined;
   isSummary?: boolean | undefined;
   /** Side effect run after the field value has been updated. */
   onChange?: ((value: string) => void) | undefined;

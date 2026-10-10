@@ -34,6 +34,11 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
       ? fieldState.error?.message
       : undefined;
 
+  const describedBy =
+    [helpId, errorMessage ? validationMessageId : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
+
   if (isSummary) {
     return (
       <SummaryDisplay
@@ -60,7 +65,9 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
             onChange?.(event.target.checked);
           }}
           onBlur={field.onBlur}
-          aria-describedby={errorMessage ? validationMessageId : helpId}
+          className={errorMessage ? 'is-invalid' : undefined}
+          aria-invalid={errorMessage ? true : undefined}
+          aria-describedby={describedBy}
         />
         {inlineHelp && (
           <Form.Text id={helpId} className='contextual-help'>
