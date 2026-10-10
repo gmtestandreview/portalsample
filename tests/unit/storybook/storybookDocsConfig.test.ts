@@ -1,7 +1,10 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import ts from 'typescript';
+import type { UserConfig } from 'vite';
 import { describe, expect, it } from 'vitest';
+import storybookConfig from '../../../.storybook/main';
+import { onLog } from '../../../.storybook/rollupOnLog';
 
 const repoRoot = process.cwd();
 
@@ -169,35 +172,27 @@ describe('Storybook documentation architecture', () => {
     expect(main).toMatch(/features:\s*\{[\s\S]*changeDetection:\s*true/);
   });
 
-  it('keeps Vite customization limited to Sass compatibility and audited vendor build-noise suppression', () => {
-    expect(main).toContain('quietDeps: true');
-    expect(main).toContain('silenceDeprecations:');
-    expect(main).toContain("'import'");
-    expect(main).toContain("'global-builtin'");
-    expect(main).toContain("'color-functions'");
-    expect(main).toContain("'if-function'");
+  it('preserves Sass compatibility and the size budget while splitting the preview runtime', async () => {
+    const viteConfig: UserConfig = await storybookConfig.viteFinal({});
 
-    // The chunk-size ceiling may be raised, but only to the one audited value:
-    // clear of Storybook's own framework bundles, still close enough that a
-    // runaway first-party story chunk keeps warning.
-    expect(main).toMatch(/chunkSizeWarningLimit:\s*1024\b/);
-    expect(main.match(/chunkSizeWarningLimit/g)).toHaveLength(1);
-
-    // The Rollup/Rolldown log filter is the extracted `onLog` from
-    // ./rollupOnLog — its behaviour (vendor noise dropped, everything else
-    // forwarded) is verified in rollupOnLog.test.ts, not textually here. main.ts
-    // must only wire it in, not re-inline a filter.
-    expect(main).toMatch(
-      /import \{ onLog \} from ['"]\.\/rollupOnLog(?:\.ts)?['"]/u
-    );
-    expect(main).toMatch(/rollupOptions:\s*\{\s*onLog\s*\}/);
-    expect(main).not.toMatch(/onLog\s*\(/); // no inline filter body
-
-    // Still no hand-rolled code splitting or unaudited bundler-option surface.
-    expect(main).not.toContain('rolldownOptions');
-    expect(main).not.toContain('manualChunks');
-    expect(main).not.toContain('getNodeModulesPackageName');
-    expect(main).not.toContain('getPackageSubArea');
+    expect(viteConfig.css?.preprocessorOptions?.scss).toMatchObject({
+      quietDeps: true,
+      silenceDeprecations: [
+        'import',
+        'global-builtin',
+        'color-functions',
+        'if-function',
+      ],
+    });
+    expect(viteConfig.build?.chunkSizeWarningLimit).toBe(1024);
+    expect(viteConfig.build?.rolldownOptions?.onLog).toBe(onLog);
+    expect(viteConfig.build?.rolldownOptions?.output).toMatchObject({
+      banner: '"use client";',
+      strictExecutionOrder: true,
+      codeSplitting: {
+        groups: [{ name: 'storybook-runtime', test: expect.any(RegExp) }],
+      },
+    });
   });
 
   it('uses non-overlapping canonical story and MDX globs', () => {

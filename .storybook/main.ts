@@ -1,5 +1,6 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import remarkGfm from 'remark-gfm';
+import { clientDirectives } from './clientDirectives.ts';
 import { onLog } from './rollupOnLog.ts';
 
 const sassDeprecationsToSilence = [
@@ -9,7 +10,7 @@ const sassDeprecationsToSilence = [
   'if-function',
 ];
 
-const config: StorybookConfig = {
+const config = {
   framework: '@storybook/react-vite',
 
   stories: [
@@ -73,10 +74,10 @@ const config: StorybookConfig = {
 
     // Bootstrap 5 still uses Sass APIs that emit deprecation warnings. Keep
     // this compatibility layer until Bootstrap 6 enables a complete @use
-    // migration. Vite still owns code-splitting; the `build` block below only
-    // raises the chunk-size *warning* threshold and silences vendor bundler
-    // log noise — it does not change chunking or output.
+    // migration. The build settings below isolate the preview runtime and
+    // preserve Storybook's client directive on each output chunk.
     return mergeConfig(viteConfig, {
+      plugins: [clientDirectives()],
       css: {
         preprocessorOptions: {
           scss: {
@@ -86,22 +87,35 @@ const config: StorybookConfig = {
         },
       },
       build: {
-        // Storybook's own runtime dominates this bundle — iframe.js is
-        // ~1.9 MB, plus axe-core and the Storybook UI. Our largest story
-        // chunk is ~224 kB, so the 500 kB default only ever fires on
-        // framework code we don't control. Lift the ceiling clear of the
-        // framework bundles but keep it close enough to flag a runaway
-        // story chunk. This governs only the (non-deployed) Storybook
-        // build; the production portal bundles via webpack.config.js and
-        // is unaffected.
+        // Keep the existing size budget while splitting the preview runtime
+        // away from the renderer, router, and story registry below.
         chunkSizeWarningLimit: 1024,
         // `onLog` drops vendor `INVALID_ANNOTATION` / `PLUGIN_TIMINGS`
         // noise and forwards everything else untouched. Extracted to
         // ./rollupOnLog so the pass-through guarantee is unit-tested.
-        rollupOptions: { onLog },
+        rolldownOptions: {
+          onLog,
+          // Preserve the client boundary on every browser-only Storybook chunk.
+          // Module markers are hoisted by clientDirectives, not log-filtered.
+          output: {
+            banner: '"use client";',
+            // Keep initialization order when moving the prebuilt runtime into
+            // its own chunk. All other modules retain automatic splitting.
+            // https://rolldown.rs/reference/OutputOptions.codeSplitting
+            strictExecutionOrder: true,
+            codeSplitting: {
+              groups: [
+                {
+                  name: 'storybook-runtime',
+                  test: /[\\/]node_modules[\\/]storybook[\\/]dist[\\/]preview[\\/]runtime\.js$/,
+                },
+              ],
+            },
+          },
+        },
       },
     });
   },
-};
+} satisfies StorybookConfig;
 
 export default config;
