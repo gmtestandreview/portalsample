@@ -111,6 +111,13 @@ an item only with dated evidence; otherwise record the blocker and next action.
   exists. Authoritative backend approval evidence and explicit DST-transition
   coverage are still missing; no production edits were made. The original review
   recorded a deferred `datePickerWrapper` timezone defect on 2026-08-23.
+- **Standards evidence (2026-10-11):** the [Australian Government API Design
+  Standard's date guidance](https://api.gov.au/sections/naming-conventions.html)
+  requires ISO 8601 dates, documents `YYYY-MM-DD` for date-only values, recommends
+  timezone information for date-times, and uses a `Date` suffix for date-only
+  fields. This supports `DATE_ONLY` as the proposed classification for this
+  field, but it does not prove the existing backend wire shape or replace a
+  field-specific approval.
 - **Dependency:** the
   [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md)
   identifies Child Plan B as externally deferred until authoritative backend
@@ -118,10 +125,12 @@ an item only with dated evidence; otherwise record the blocker and next action.
   `preferredInstrumentOrArtefactAvailabilityDate`. Confirm that gate's current
   status before production edits; the historical defect alone does not authorize
   guessing the date contract.
-- **Deferred P1 action:** await the authoritative source and approver; then
-  record the contract decision and reproduce the reported date shift. The
-  existing `tests/unit/components/inputs/datePickerWrapper.test.tsx` does not
-  prove the full timezone acceptance gate is satisfied.
+- **Deferred P1 action:** use the Australian Government guidance as the proposed
+  `DATE_ONLY` basis, then obtain field-specific schema or a signed backend
+  decision and representative payloads. Record the contract decision and
+  reproduce the reported date shift. The existing
+  `tests/unit/components/inputs/datePickerWrapper.test.tsx` does not prove the
+  full timezone acceptance gate is satisfied.
 - **Owner confirmation (2026-10-10):** no authoritative backend/OpenAPI source
   or named backend approver is available. A3 is explicitly deferred until the
   owner supplies that authority; do not infer the contract from the current

@@ -130,6 +130,15 @@ During the next continuation on 2026-10-10, the owner explicitly confirmed there
 is no authoritative backend/OpenAPI source or named backend approver for the
 field. A3 remains externally deferred on that dependency.
 
+On 2026-10-11, the Australian Government API Design Standard's
+[date guidance](https://api.gov.au/sections/naming-conventions.html) was reviewed.
+It specifies ISO 8601, uses `YYYY-MM-DD` for date-only values, recommends a
+timezone for date-times, and reserves a `Date` suffix for date-only fields. This
+supports `DATE_ONLY` as the proposed classification for the field, but is a
+general design standard rather than evidence of this backend's implemented wire
+shape. A field-specific schema or signed backend decision and representative
+payloads are still required before A3 can close.
+
 ## A4 — Activation campaign
 
 The evaluated package is `.claude/skills/skill-creator`. Its current decoded
