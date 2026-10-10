@@ -1,0 +1,19 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//portalsample//Maintenance reminders//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:pat-rotation-20261201-portalsample@local.invalid
+DTSTAMP:20261010T122228Z
+DTSTART:20261130T220000Z
+DTEND:20261130T221500Z
+SUMMARY:Rotate claude.yml fine-grained PAT by December 1
+DESCRIPTION:Owner: gregm. Replace the repository-scoped PAT\, revoke the ol
+ d one\, and verify the consuming workflow. Do not store token values.
+BEGIN:VALARM
+TRIGGER:-P7D
+ACTION:DISPLAY
+DESCRIPTION:PAT rotation due December 1 at 09:00 Australia/Sydney.
+END:VALARM
+END:VEVENT
+END:VCALENDAR

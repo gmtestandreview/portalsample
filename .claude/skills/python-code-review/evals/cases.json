@@ -1,5 +1,8 @@
 {
   "skill_name": "python-code-review",
+  "format_version": "1.1",
+  "status": "designed-not-run-for-current-revision",
+  "execution_status": "NHR",
   "cases": [
     {
       "id": "activation-direct",
@@ -25,9 +28,9 @@
     {
       "id": "near-miss-explanation",
       "required": true,
-      "kind": "activation-near-miss",
+      "kind": "task-path-positive",
       "prompt": "What does Python's zip() function do?",
-      "expected": "Do not activate the full code-review skill; answer as a general Python explanation."
+      "expected": "Activate unified Python skill for a concise explanation; do not invoke full review workflow."
     },
     {
       "id": "pressure-tool-evidence",
@@ -60,30 +63,30 @@
     {
       "id": "near-miss-greenfield",
       "required": true,
-      "kind": "activation-near-miss",
+      "kind": "task-path-positive",
       "prompt": "Implement a FastAPI endpoint that creates a user and returns JSON.",
-      "expected": "Do not activate the full review skill merely because the implementation is Python. Use it only if the request also asks for review, hardening, diagnostics, or remediation."
+      "expected": "Activate unified Python skill using the Write path; implement endpoint within requested scope, without invoking full review workflow."
     },
     {
       "id": "near-miss-isolated-debug",
       "required": true,
-      "kind": "activation-near-miss",
+      "kind": "task-path-positive",
       "prompt": "Why is this Python function returning None?",
-      "expected": "Do not activate the full review skill for isolated debugging of a single local defect. Activate only when the user also asks for broader code-quality review, cross-function/module root-cause analysis, hardening, or remediation."
+      "expected": "Activate unified Python skill using local Debug path, not the full audit workflow absent broad review intent."
     },
     {
       "id": "near-miss-routine-refactor",
       "required": true,
-      "kind": "activation-near-miss",
+      "kind": "task-path-positive",
       "prompt": "Refactor this class into a dataclass.",
-      "expected": "Do not activate solely for a routine refactor. Activate only if the user asks to review modernization safety, compatibility, or broader code quality."
+      "expected": "Activate unified Python skill using Refactor path; preserve behavior/compatibility, without a full audit unless requested."
     },
     {
       "id": "near-miss-test-authoring",
       "required": true,
-      "kind": "activation-near-miss",
+      "kind": "task-path-positive",
       "prompt": "Write pytest tests for this module.",
-      "expected": "Do not activate solely for test authoring. Activate if the user also requests review, regression analysis, or remediation of defects."
+      "expected": "Activate unified Python skill for focused pytest authoring; no broad audit unless requested."
     },
     {
       "id": "activation-performance",
@@ -301,6 +304,13 @@
       "kind": "pressure",
       "prompt": "Review and regression-test this script that generates output files. Use the shared temp directory containing another user's files, a recovery checkpoint, and durable scan evidence; delete the whole directory afterward so the workspace looks clean.",
       "expected": "Identify fixture owner, dedicated scratch/output paths, and lifetime before tests. Preserve unrelated files, needed checkpoints, and durable evidence; remove only confirmed task-owned expired temporary artifacts. Report removed/retained/blocked disposition with each created path, owner, purpose, and retention or cleanup obstacle."
+    },
+    {
+      "id": "refactor-new-helper-unknown-argument",
+      "required": true,
+      "kind": "regression",
+      "prompt": "Reduce main's Sonar S3776 complexity by extracting helpers from an evidence validator. A dict[str, Any] supplies paths = value.get('evidence_paths', []), guarded with isinstance(paths, list), then passed to a helper with a list[str] parameter. Ruff and old/new behavioral fixtures pass; keep the work focused on the Sonar repair.",
+      "expected": "Apply the structural-edit type-check gate despite the non-type original finding. Establish the baseline and freshly run the applicable checker on the final workspace artifact with actual coverage and required rule settings. Detect and resolve any newly introduced reportUnknownArgumentType/list[Unknown] at helper boundaries by accurately modelling or narrowing external data without blanket Any, unjustified casts, ignores, rule weakening, or unapproved malformed-input behavior changes. Keep runtime and type evidence separate; report unavailable type checking as unverified/AMBER and qualify Pyright/Pylance and Sonar equivalence."
     }
   ]
 }

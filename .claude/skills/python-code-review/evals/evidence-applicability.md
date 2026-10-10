@@ -1,34 +1,39 @@
 # Evidence applicability
 
-Date: 2026-10-05
+Date reviewed: 2026-10-11
 
 ## Historical conformance
 
-The
-[2026-09-15 pressure/conformance report](python-code-review-pressure-test-report.md)
-is preserved unchanged. Its 17 GREEN probes, 1 RED finding, and NHR RED baseline
-describe that historical current-context assessment. Its GREEN labels concern
-instruction clarity/adherence in an already exposed conversation; they are not
-isolated behavioral PASS, deployment approval, or proof of current skill
-performance. Its RED finding remains part of the historical record even if later
-instructions address the boundary.
+The [2026-09-15 pressure/conformance report](python-code-review-pressure-test-report.md)
+is preserved unchanged. Its GREEN/RED labels are current-context conformance
+observations, not isolated behavioral deployment evidence. Its RED baseline is
+NHR and remains historical context rather than proof about the current revision.
 
-## Current and future execution evidence
+## 2026-10-05 isolated performance retest
 
-The
-[2026-10-05 performance retest campaign](runs/2026-10-05-performance-retest/) is
-a separate evidence location. Its `manifest.json` and `results.json` will be
-produced from completed runs there. Directory existence establishes availability
-of a campaign location only. This applicability note does not assert that its
-runs completed, passed, or used the final candidate.
+The supplied campaign is available under
+`../runs/2026-10-05-performance-retest/`, including `manifest.json`,
+`contracts.json`, `results.json`, and `parent-verification.json`.
 
-Current/future conclusions require actual run artifacts identifying the
-candidate revision/hash, prompt/input scope, executed checks and environments,
-and observed/grading outcomes. Link those artifacts when available; do not carry
-historical GREEN counts or a prior analyzer result forward after changes.
+The campaign manifest binds its evidence to exact baseline resource hashes,
+environment/tool versions, inputs, and frozen contracts. `results.json` records
+18 PASS assertions for the `new_skill` arm and one UNGRADABLE compound
+assertion (`C1`); `parent-verification.json` independently records material
+executed Pyright/pytest command results. Treat these as execution evidence only
+for the revisions/fixtures identified by that campaign.
 
-The seven new regression cases in [cases.json](cases.json) and their static
-[QAQ/RMI mappings](qaq-rmi.md) are test definitions, not observed behavior.
-Their status is NHR until representative runs establish evidence for the current
-candidate. Missing execution or environment equivalence remains explicit rather
-than being converted to PASS.
+The UNGRADABLE `C1` discovery-plus-propagation criterion is unresolved evidence,
+not a PASS. The campaign also does not establish behavior for later edits to
+`SKILL.md`, references, or eval contracts.
+
+## Current revision
+
+`evals/cases.json` and `evals/qaq-rmi.md` define current test and static mapping
+expectations. After any edit, representative activation/task-path/load-boundary
+and pressure runs must be rerun against the new revision before required
+behavior-critical NHR can become PASS. Do not inherit historical GREEN/PASS
+labels across a changed content hash.
+
+## Current deterministic validation
+
+See [`static-validation.json`](static-validation.json) for executed structural checks and current authored-resource hashes. These checks do not substitute for behavioral activation/pressure runs.
