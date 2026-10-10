@@ -4,7 +4,8 @@ Date reviewed: 2026-10-11
 
 ## Historical conformance
 
-The [2026-09-15 pressure/conformance report](python-code-review-pressure-test-report.md)
+The
+[2026-09-15 pressure/conformance report](python-code-review-pressure-test-report.md)
 is preserved unchanged. Its GREEN/RED labels are current-context conformance
 observations, not isolated behavioral deployment evidence. Its RED baseline is
 NHR and remains historical context rather than proof about the current revision.
@@ -17,10 +18,10 @@ The supplied campaign is available under
 
 The campaign manifest binds its evidence to exact baseline resource hashes,
 environment/tool versions, inputs, and frozen contracts. `results.json` records
-18 PASS assertions for the `new_skill` arm and one UNGRADABLE compound
-assertion (`C1`); `parent-verification.json` independently records material
-executed Pyright/pytest command results. Treat these as execution evidence only
-for the revisions/fixtures identified by that campaign.
+18 PASS assertions for the `new_skill` arm and one UNGRADABLE compound assertion
+(`C1`); `parent-verification.json` independently records material executed
+Pyright/pytest command results. Treat these as execution evidence only for the
+revisions/fixtures identified by that campaign.
 
 The UNGRADABLE `C1` discovery-plus-propagation criterion is unresolved evidence,
 not a PASS. The campaign also does not establish behavior for later edits to
@@ -36,4 +37,14 @@ labels across a changed content hash.
 
 ## Current deterministic validation
 
-See [`static-validation.json`](static-validation.json) for executed structural checks and current authored-resource hashes. These checks do not substitute for behavioral activation/pressure runs.
+See [`static-validation.json`](static-validation.json) for the fresh
+evidence-record validation and current candidate hash. This check validates the
+44-case plan's schema, trace pointers, frozen expectations, and hash binding;
+all required behavioral cases remain NHR. It does not revalidate other authored
+resources or establish deployment readiness.
+
+The
+[validation before the structural-edit gate](static-validation-before-structural-gate.json)
+and [prior-revision pressure plan](prior-revision-pressure/run-record.json)
+retain their original candidate hash and 43-case contract. Their recorded checks
+and outcomes are historical and are not inherited by the current revision.

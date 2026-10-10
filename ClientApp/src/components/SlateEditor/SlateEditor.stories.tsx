@@ -83,14 +83,20 @@ export const Empty: Story = {
     canvasElement,
   }: Readonly<Parameters<NonNullable<Story['play']>>[0]>) => {
     const canvas = within(canvasElement);
-    // Live counter starts at zero out of the budget.
-    await expect(canvas.getByText(/0/)).toBeVisible();
-    await expect(canvas.getByText(/500/)).toBeVisible();
-    // Do not add a userEvent.click() before this line. user-event defaults to
-    // skipClick: false, so type() already clicks and focuses the target; a
-    // preceding click is a duplicate that settles nothing. See
-    // docs/change-record/2026-08-30-storybook-remediation-audit.md.
-    await userEvent.type(canvas.getByRole('textbox'), 'Hi');
-    await expect(canvas.getByText(/9\s*\/\s*500/)).toBeVisible();
+    await expect(canvas.getByText(/0\s*\/\s*500/)).toBeVisible();
+    await canvas.findByText('Type your message…');
+    const textbox = canvas.getByRole('textbox');
+    // Cover an already-focused empty editor. type()'s default synthetic click
+    // can put its caret in Slate's noneditable placeholder; offset 0 targets
+    // the editable text instead.
+    textbox.focus();
+    await userEvent.pointer({
+      target: textbox,
+      offset: 0,
+      keys: '[MouseLeft]',
+    });
+    await userEvent.keyboard('Hi');
+    await expect(canvas.getByText('Hi')).toBeVisible();
+    await expect(canvas.findByText(/9\s*\/\s*500/)).resolves.toBeVisible();
   },
 };
