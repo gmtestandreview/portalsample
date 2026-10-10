@@ -2,13 +2,46 @@ import { act } from '@testing-library/react';
 import { useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import type { FieldValues, Resolver, UseFormReturn } from 'react-hook-form';
+import type {
+  DefaultValues,
+  FieldValues,
+  Resolver,
+  UseFormReturn,
+} from 'react-hook-form';
+
+/**
+ * Per-test handle onto the form a `FieldHarness` renders. Create one inside a
+ * test with `createFormHandle`, pass it as `form`, then drive validation
+ * through `submit` and `trigger`.
+ */
+export interface FormHandle<T extends FieldValues> {
+  capture: (methods: UseFormReturn<T>) => void;
+  submit: () => Promise<void>;
+  trigger: () => Promise<void>;
+}
+
+export const createFormHandle = <T extends FieldValues>(): FormHandle<T> => {
+  let current: UseFormReturn<T> | undefined;
+  return {
+    capture: (methods) => {
+      current = methods;
+    },
+    submit: () =>
+      act(async () => {
+        await current?.handleSubmit(() => undefined)();
+      }),
+    trigger: () =>
+      act(async () => {
+        await current?.trigger();
+      }),
+  };
+};
 
 interface FieldHarnessProps<T extends FieldValues> {
   field: keyof T & string;
   defaultValue: unknown;
   resolver?: Resolver<T> | undefined;
-  onMethods: (methods: UseFormReturn<T>) => void;
+  form?: FormHandle<T> | undefined;
   children: ReactNode;
 }
 
@@ -22,15 +55,15 @@ export const FieldHarness = <T extends FieldValues>({
   field,
   defaultValue,
   resolver,
-  onMethods,
+  form,
   children,
 }: Readonly<FieldHarnessProps<T>>) => {
   const methods = useForm<T>({
-    defaultValues: { [field]: defaultValue } as never,
+    defaultValues: { [field]: defaultValue } as unknown as DefaultValues<T>,
     ...(resolver === undefined ? {} : { resolver }),
   });
   useEffect(() => {
-    onMethods(methods);
+    form?.capture(methods);
   });
   return (
     <FormProvider {...methods}>
@@ -39,10 +72,3 @@ export const FieldHarness = <T extends FieldValues>({
     </FormProvider>
   );
 };
-
-export const submitForm = (
-  methods: Pick<UseFormReturn<FieldValues>, 'handleSubmit'> | undefined
-) =>
-  act(async () => {
-    await methods?.handleSubmit(() => undefined)();
-  });

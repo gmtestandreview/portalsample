@@ -1,33 +1,32 @@
 import userEvent from '@testing-library/user-event';
-import { act, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import type { Resolver, UseFormReturn } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { describe, expect, it } from 'vitest';
 import RhfNumberInput from '@/components/Inputs/RhfNumberInput';
-import { FieldHarness, submitForm } from './rhfTestHarness';
+import { FieldHarness, createFormHandle } from './rhfTestHarness';
+import type { FormHandle } from './rhfTestHarness';
 
 interface Values {
-  phone: string | null | undefined;
+  amount: string | null | undefined;
 }
-
-let formMethods: UseFormReturn<Values> | undefined;
 
 const Harness = ({
   defaultValue = '',
   resolver,
+  form,
   children,
 }: Readonly<{
   defaultValue?: string | null | undefined;
   resolver?: Resolver<Values>;
+  form?: FormHandle<Values>;
   children: ReactNode;
 }>) => (
   <FieldHarness<Values>
-    field='phone'
+    field='amount'
     defaultValue={defaultValue}
     resolver={resolver}
-    onMethods={(methods) => {
-      formMethods = methods;
-    }}
+    form={form}
   >
     {children}
   </FieldHarness>
@@ -35,28 +34,26 @@ const Harness = ({
 
 const failingResolver: Resolver<Values> = async () => ({
   values: {},
-  errors: { phone: { type: 'validation', message: 'Enter a phone' } },
+  errors: { amount: { type: 'validation', message: 'Enter an amount' } },
 });
-
-const submit = () => submitForm(formMethods as never);
 
 describe('RhfNumberInput', () => {
   it('renders a labelled text box showing the form value', () => {
     render(
       <Harness defaultValue='123'>
-        <RhfNumberInput name='phone' label='Phone' />
+        <RhfNumberInput name='amount' label='Amount' />
       </Harness>
     );
-    const input = screen.getByRole('textbox', { name: 'Phone' });
+    const input = screen.getByRole('textbox', { name: 'Amount' });
     expect(input).toHaveValue('123');
-    expect(input).toHaveAttribute('id', 'phone');
+    expect(input).toHaveAttribute('id', 'amount');
     expect(input).toHaveClass('form-field', 'form-text-input');
   });
 
   it('shows an empty box for nullish values and renders without a label', () => {
     render(
       <Harness defaultValue={null}>
-        <RhfNumberInput name='phone' />
+        <RhfNumberInput name='amount' />
       </Harness>
     );
     expect(screen.getByRole('textbox')).toHaveValue('');
@@ -66,8 +63,8 @@ describe('RhfNumberInput', () => {
     render(
       <Harness>
         <RhfNumberInput
-          name='phone'
-          label='Phone'
+          name='amount'
+          label='Amount'
           id='p'
           className='extra'
           containerClassName='wrap'
@@ -91,7 +88,7 @@ describe('RhfNumberInput', () => {
   it('stores the fixed-pattern formatted text as typed', async () => {
     render(
       <Harness>
-        <RhfNumberInput name='phone' label='Mobile' format='#### ### ###' />
+        <RhfNumberInput name='amount' label='Mobile' format='#### ### ###' />
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '0412345678');
@@ -102,7 +99,7 @@ describe('RhfNumberInput', () => {
   it('picks the phone pattern from the typed digits with checkPhoneFormat', async () => {
     render(
       <Harness>
-        <RhfNumberInput name='phone' label='Phone' format='checkPhoneFormat' />
+        <RhfNumberInput name='amount' label='Phone' format='checkPhoneFormat' />
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '0291234567');
@@ -113,7 +110,7 @@ describe('RhfNumberInput', () => {
     render(
       <Harness>
         <RhfNumberInput
-          name='phone'
+          name='amount'
           label='Value'
           prepend='AUD$'
           thousandSeparator
@@ -126,7 +123,7 @@ describe('RhfNumberInput', () => {
     );
     expect(screen.getByText('AUD$')).toHaveAttribute(
       'id',
-      'input-prepend-phone'
+      'input-prepend-amount'
     );
     await userEvent.type(screen.getByRole('textbox'), '1234.5');
     expect(screen.getByRole('textbox')).toHaveValue('1,234.50');
@@ -136,7 +133,7 @@ describe('RhfNumberInput', () => {
   it('blocks a negative sign when negatives are not allowed', async () => {
     render(
       <Harness>
-        <RhfNumberInput name='phone' label='Value' allowNegative={false} />
+        <RhfNumberInput name='amount' label='Value' allowNegative={false} />
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '-5');
@@ -146,76 +143,92 @@ describe('RhfNumberInput', () => {
   it('does not reformat the stored value on blur', async () => {
     render(
       <Harness>
-        <RhfNumberInput name='phone' label='Phone' format='#### ### ###' />
+        <RhfNumberInput name='amount' label='Amount' format='#### ### ###' />
       </Harness>
     );
     await userEvent.type(screen.getByRole('textbox'), '04');
+    // The pattern input pads the unfilled slots with its default space mask.
+    const padded = JSON.stringify('04'.padEnd('#### ### ###'.length));
+    expect(screen.getByTestId('value').textContent).toBe(padded);
     await userEvent.tab();
-    expect(screen.getByTestId('value')).toHaveTextContent('"04');
+    expect(screen.getByTestId('value').textContent).toBe(padded);
   });
 
   it('shows the inline help and links it to the input', () => {
     render(
       <Harness>
-        <RhfNumberInput name='phone' label='Phone' inlineHelp='Include area' />
+        <RhfNumberInput
+          name='amount'
+          label='Amount'
+          inlineHelp='Include area'
+        />
       </Harness>
     );
     expect(screen.getByText('Include area')).toHaveAttribute(
       'id',
-      'help-phone'
+      'help-amount'
     );
     expect(screen.getByRole('textbox')).toHaveAttribute(
       'aria-describedby',
-      'help-phone'
+      'help-amount'
     );
   });
 
   it('hides the error until submit, then wires it up and focuses the input', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
-        <RhfNumberInput name='phone' label='Phone' inlineHelp='Include area' />
+      <Harness form={form} resolver={failingResolver}>
+        <RhfNumberInput
+          name='amount'
+          label='Amount'
+          inlineHelp='Include area'
+        />
       </Harness>
     );
     const input = screen.getByRole('textbox');
-    expect(screen.queryByText('Enter a phone')).not.toBeInTheDocument();
+    expect(screen.queryByText('Enter an amount')).not.toBeInTheDocument();
     expect(input).not.toHaveAttribute('aria-invalid');
     expect(input).not.toHaveClass('is-invalid');
-    await submit();
-    expect(screen.getByText('Enter a phone')).toHaveAttribute(
+    await form.submit();
+    expect(screen.getByText('Enter an amount')).toHaveAttribute(
       'id',
-      'phone-validation-msg'
+      'amount-validation-msg'
     );
     expect(input).toHaveClass('is-invalid');
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAttribute(
       'aria-describedby',
-      'help-phone phone-validation-msg'
+      'help-amount amount-validation-msg'
     );
     expect(input).toHaveFocus();
   });
 
   it('shows the error once touched', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
-        <RhfNumberInput name='phone' label='Phone' prepend='+61' />
+      <Harness form={form} resolver={failingResolver}>
+        <RhfNumberInput name='amount' label='Amount' prepend='+61' />
       </Harness>
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
-    await act(async () => {
-      await formMethods?.trigger();
-    });
-    expect(screen.getByText('Enter a phone')).toBeInTheDocument();
+    await form.trigger();
+    expect(screen.getByText('Enter an amount')).toBeInTheDocument();
   });
 
   it('suppresses field level messages when asked', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
-        <RhfNumberInput name='phone' label='Phone' supressFieldLevelMessages />
+      <Harness form={form} resolver={failingResolver}>
+        <RhfNumberInput
+          name='amount'
+          label='Amount'
+          supressFieldLevelMessages
+        />
       </Harness>
     );
-    await submit();
-    expect(screen.queryByText('Enter a phone')).not.toBeInTheDocument();
+    await form.submit();
+    expect(screen.queryByText('Enter an amount')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox')).not.toHaveClass('is-invalid');
   });
 
@@ -223,7 +236,7 @@ describe('RhfNumberInput', () => {
     render(
       <Harness defaultValue='0412345678'>
         <RhfNumberInput
-          name='phone'
+          name='amount'
           label='Mobile'
           format='#### ### ###'
           isSummary
@@ -231,16 +244,32 @@ describe('RhfNumberInput', () => {
       </Harness>
     );
     expect(screen.getByText('Mobile')).toBeInTheDocument();
-    expect(screen.getAllByText(/0412 345 678/).length).toBeGreaterThan(0);
+    expect(screen.getByText('0412 345 678')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });
 
   it('renders a plain summary for a number without a format', () => {
     render(
       <Harness defaultValue='1,234.50'>
-        <RhfNumberInput name='phone' label='Value' prepend='AUD$' isSummary />
+        <RhfNumberInput name='amount' label='Value' prepend='AUD$' isSummary />
       </Harness>
     );
-    expect(screen.getAllByText(/1,234\.50/).length).toBeGreaterThan(0);
+    expect(screen.getByText('1,234.50')).toBeInTheDocument();
+  });
+
+  it('with format and valueIsNumericString still stores the formatted text (legacy parity)', async () => {
+    render(
+      <Harness>
+        <RhfNumberInput
+          name='amount'
+          label='Mobile'
+          format='#### ### ###'
+          valueIsNumericString
+        />
+      </Harness>
+    );
+    await userEvent.type(screen.getByRole('textbox'), '0412345678');
+    expect(screen.getByRole('textbox')).toHaveValue('0412 345 678');
+    expect(screen.getByTestId('value')).toHaveTextContent('"0412 345 678"');
   });
 });

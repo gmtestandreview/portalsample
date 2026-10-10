@@ -1,33 +1,32 @@
 import userEvent from '@testing-library/user-event';
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import type { Resolver, UseFormReturn } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { describe, expect, it } from 'vitest';
 import RhfTextAreaInput from '@/components/Inputs/RhfTextAreaInput';
-import { FieldHarness, submitForm } from './rhfTestHarness';
+import { FieldHarness, createFormHandle } from './rhfTestHarness';
+import type { FormHandle } from './rhfTestHarness';
 
 interface Values {
   notes: string | null | undefined;
 }
 
-let formMethods: UseFormReturn<Values> | undefined;
-
 const Harness = ({
   defaultValue = '',
   resolver,
+  form,
   children,
 }: Readonly<{
   defaultValue?: string | null | undefined;
   resolver?: Resolver<Values>;
+  form?: FormHandle<Values>;
   children: ReactNode;
 }>) => (
   <FieldHarness<Values>
     field='notes'
     defaultValue={defaultValue}
     resolver={resolver}
-    onMethods={(methods) => {
-      formMethods = methods;
-    }}
+    form={form}
   >
     {children}
   </FieldHarness>
@@ -37,8 +36,6 @@ const failingResolver: Resolver<Values> = async () => ({
   values: {},
   errors: { notes: { type: 'validation', message: 'Enter notes' } },
 });
-
-const submit = () => submitForm(formMethods as never);
 
 describe('RhfTextAreaInput', () => {
   it('renders a labelled textarea with defaults', () => {
@@ -143,8 +140,9 @@ describe('RhfTextAreaInput', () => {
   });
 
   it('shows a character counter that flags overflow', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' maxCharacters={3} />
       </Harness>
     );
@@ -152,7 +150,7 @@ describe('RhfTextAreaInput', () => {
     await userEvent.type(screen.getByRole('textbox'), 'abcd');
     const counter = screen.getByText('4 of 3 characters used');
     expect(counter.parentElement).toHaveClass('counterLabelExceedsMax');
-    await submit();
+    await form.submit();
     expect(screen.getByText(', 4 of 3 characters used')).toHaveClass(
       'visually-hidden'
     );
@@ -202,15 +200,16 @@ describe('RhfTextAreaInput', () => {
   });
 
   it('hides the error until submit, then shows it with accessibility wiring', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' inlineHelp='Be brief' />
       </Harness>
     );
     const input = screen.getByRole('textbox');
     expect(screen.queryByText('Enter notes')).not.toBeInTheDocument();
     expect(input).not.toHaveAttribute('aria-invalid');
-    await submit();
+    await form.submit();
     expect(screen.getByText('Enter notes')).toHaveAttribute(
       'id',
       'notes-validation-msg'
@@ -225,22 +224,22 @@ describe('RhfTextAreaInput', () => {
   });
 
   it('shows the error once touched', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput name='notes' label='Notes' />
       </Harness>
     );
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
-    await act(async () => {
-      await formMethods?.trigger();
-    });
+    await form.trigger();
     expect(screen.getByText('Enter notes')).toBeInTheDocument();
   });
 
   it('suppresses field level messages when asked', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextAreaInput
           name='notes'
           label='Notes'
@@ -248,7 +247,7 @@ describe('RhfTextAreaInput', () => {
         />
       </Harness>
     );
-    await submit();
+    await form.submit();
     expect(screen.queryByText('Enter notes')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox')).not.toHaveClass('is-invalid');
   });
@@ -261,5 +260,14 @@ describe('RhfTextAreaInput', () => {
     );
     expect(screen.getByText('Line')).toBeInTheDocument();
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  });
+
+  it('renders no label element for an empty label', () => {
+    const { container } = render(
+      <Harness>
+        <RhfTextAreaInput name='notes' label='' />
+      </Harness>
+    );
+    expect(container.querySelector('label')).toBeNull();
   });
 });

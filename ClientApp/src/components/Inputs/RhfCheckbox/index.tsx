@@ -1,6 +1,6 @@
 import Form from 'react-bootstrap/Form';
-import { useController } from 'react-hook-form';
 import SummaryDisplay from '../../SummaryDisplay';
+import { useRhfFieldA11y } from '../useRhfFieldA11y';
 import type { RhfCheckboxProps } from './types';
 
 /**
@@ -24,20 +24,14 @@ const RhfCheckbox = (props: Readonly<RhfCheckboxProps>) => {
     onChange,
   } = props;
 
-  const { field, fieldState, formState } = useController({ name });
-  const controlId = id || name;
-  const helpId = inlineHelp ? `help-${controlId}` : undefined;
-  const validationMessageId = `${controlId}-validation-msg`;
-  const errorMessage =
-    !supressFieldLevelMessages &&
-    (fieldState.isTouched || formState.isSubmitted)
-      ? fieldState.error?.message
-      : undefined;
-
-  const describedBy =
-    [helpId, errorMessage ? validationMessageId : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const {
+    field,
+    controlId,
+    helpId,
+    validationMessageId,
+    errorMessage,
+    describedBy,
+  } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
   if (isSummary) {
     return (

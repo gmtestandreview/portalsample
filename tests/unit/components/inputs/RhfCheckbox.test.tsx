@@ -1,48 +1,36 @@
 import userEvent from '@testing-library/user-event';
-import { act, render, screen } from '@testing-library/react';
-import { useEffect } from 'react';
+import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import type { Resolver, UseFormReturn } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import RhfCheckbox from '@/components/Inputs/RhfCheckbox';
+import { FieldHarness, createFormHandle } from './rhfTestHarness';
+import type { FormHandle } from './rhfTestHarness';
 
 interface Values {
   accepted: boolean | null | undefined;
 }
 
-let formMethods: UseFormReturn<Values> | undefined;
-
-const ValueProbe = () => {
-  const { watch } = useFormContext<Values>();
-  return (
-    <output data-testid='value'>{JSON.stringify(watch('accepted'))}</output>
-  );
-};
-
 const Harness = ({
   defaultValue = false,
   resolver,
+  form,
   children,
 }: Readonly<{
   defaultValue?: boolean | null | undefined;
   resolver?: Resolver<Values>;
+  form?: FormHandle<Values>;
   children: ReactNode;
-}>) => {
-  const methods = useForm<Values>({
-    defaultValues: { accepted: defaultValue },
-    ...(resolver === undefined ? {} : { resolver }),
-  });
-  useEffect(() => {
-    formMethods = methods;
-  });
-  return (
-    <FormProvider {...methods}>
-      <form>{children}</form>
-      <ValueProbe />
-    </FormProvider>
-  );
-};
+}>) => (
+  <FieldHarness<Values>
+    field='accepted'
+    defaultValue={defaultValue}
+    resolver={resolver}
+    form={form}
+  >
+    {children}
+  </FieldHarness>
+);
 
 const failingResolver: Resolver<Values> = async () => ({
   values: {},
@@ -162,17 +150,16 @@ describe('RhfCheckbox', () => {
   });
 
   it('shows the validation message only after a submit attempt', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
       </Harness>
     );
     const box = screen.getByRole('checkbox');
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     expect(screen.getByText('You must accept')).toHaveAttribute(
       'id',
@@ -182,24 +169,24 @@ describe('RhfCheckbox', () => {
   });
 
   it('shows the validation message once the field has been touched', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
       </Harness>
     );
 
     await userEvent.click(screen.getByRole('checkbox'));
     await userEvent.tab();
-    await act(async () => {
-      await formMethods?.trigger();
-    });
+    await form.trigger();
 
     expect(screen.getByText('You must accept')).toBeInTheDocument();
   });
 
   it('suppresses field level messages when asked', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox
           name='accepted'
           label='I accept'
@@ -208,9 +195,7 @@ describe('RhfCheckbox', () => {
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
     expect(screen.getByRole('checkbox')).not.toHaveAttribute(
@@ -219,15 +204,14 @@ describe('RhfCheckbox', () => {
   });
 
   it('marks the checkbox invalid and describes it by help and error', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' inlineHelp='Required' />
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     const box = screen.getByRole('checkbox');
     expect(box).toHaveAttribute('aria-invalid', 'true');
@@ -239,15 +223,14 @@ describe('RhfCheckbox', () => {
   });
 
   it('is not marked invalid while the error is hidden', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.trigger();
-    });
+    await form.trigger();
 
     const box = screen.getByRole('checkbox');
     expect(screen.queryByText('You must accept')).not.toBeInTheDocument();
@@ -256,15 +239,14 @@ describe('RhfCheckbox', () => {
   });
 
   it('focuses the invalid checkbox when a submit attempt fails', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfCheckbox name='accepted' label='I accept' />
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     expect(screen.getByRole('checkbox')).toHaveFocus();
   });

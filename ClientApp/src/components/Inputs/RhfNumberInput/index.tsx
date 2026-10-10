@@ -1,10 +1,10 @@
 import Form from 'react-bootstrap/Form';
 import { InputGroup } from 'react-bootstrap';
-import { useController } from 'react-hook-form';
 import SummaryDisplay from '../../SummaryDisplay';
 import { getPhoneNumberFormat } from '../NumberInput/phoneFormat';
 import { NumericFormatFixed, PatternFormatFixed } from '../NumberInput/types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { useRhfFieldA11y } from '../useRhfFieldA11y';
 import type { RhfNumberInputProps } from './types';
 
 const PHONE_FORMAT_KEYWORD = 'checkPhoneFormat';
@@ -41,20 +41,14 @@ const RhfNumberInput = (props: Readonly<RhfNumberInputProps>) => {
     isSummary,
   } = props;
 
-  const { field, fieldState, formState } = useController({ name });
-  const controlId = id || name;
-  const helpId = inlineHelp ? `help-${controlId}` : undefined;
-  const validationMessageId = `${controlId}-validation-msg`;
-  const errorMessage =
-    !supressFieldLevelMessages &&
-    (fieldState.isTouched || formState.isSubmitted)
-      ? fieldState.error?.message
-      : undefined;
-
-  const describedBy =
-    [helpId, errorMessage ? validationMessageId : undefined]
-      .filter(Boolean)
-      .join(' ') || undefined;
+  const {
+    field,
+    controlId,
+    helpId,
+    validationMessageId,
+    errorMessage,
+    describedBy,
+  } = useRhfFieldA11y({ name, id, inlineHelp, supressFieldLevelMessages });
 
   const resolvedFormat =
     format === PHONE_FORMAT_KEYWORD

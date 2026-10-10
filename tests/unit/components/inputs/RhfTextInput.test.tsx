@@ -1,50 +1,36 @@
 import userEvent from '@testing-library/user-event';
-import { act, render, screen } from '@testing-library/react';
-import { useEffect } from 'react';
+import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import type { Resolver, UseFormReturn } from 'react-hook-form';
+import type { Resolver } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import RhfTextInput from '@/components/Inputs/RhfTextInput';
+import { FieldHarness, createFormHandle } from './rhfTestHarness';
+import type { FormHandle } from './rhfTestHarness';
 
 interface Values {
   organisationName: string | null | undefined;
 }
 
-let formMethods: UseFormReturn<Values> | undefined;
-
-const ValueProbe = () => {
-  const { watch } = useFormContext<Values>();
-  return (
-    <output data-testid='value'>
-      {JSON.stringify(watch('organisationName'))}
-    </output>
-  );
-};
-
 const Harness = ({
   defaultValue = '',
   resolver,
+  form,
   children,
 }: Readonly<{
   defaultValue?: string | null | undefined;
   resolver?: Resolver<Values>;
+  form?: FormHandle<Values>;
   children: ReactNode;
-}>) => {
-  const methods = useForm<Values>({
-    defaultValues: { organisationName: defaultValue },
-    ...(resolver === undefined ? {} : { resolver }),
-  });
-  useEffect(() => {
-    formMethods = methods;
-  });
-  return (
-    <FormProvider {...methods}>
-      <form>{children}</form>
-      <ValueProbe />
-    </FormProvider>
-  );
-};
+}>) => (
+  <FieldHarness<Values>
+    field='organisationName'
+    defaultValue={defaultValue}
+    resolver={resolver}
+    form={form}
+  >
+    {children}
+  </FieldHarness>
+);
 
 const failingResolver: Resolver<Values> = async () => ({
   values: {},
@@ -212,17 +198,16 @@ describe('RhfTextInput', () => {
   });
 
   it('shows the validation message only after a submit attempt', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
       </Harness>
     );
     const input = screen.getByRole('textbox', { name: 'Organisation' });
     expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     expect(screen.getByText('Enter a name')).toHaveAttribute(
       'id',
@@ -236,24 +221,24 @@ describe('RhfTextInput', () => {
   });
 
   it('shows the validation message once the field has been touched', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
       </Harness>
     );
 
     await userEvent.click(screen.getByRole('textbox'));
     await userEvent.tab();
-    await act(async () => {
-      await formMethods?.trigger();
-    });
+    await form.trigger();
 
     expect(screen.getByText('Enter a name')).toBeInTheDocument();
   });
 
   it('describes the input by both the help and the validation message', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput
           name='organisationName'
           label='Organisation'
@@ -262,9 +247,7 @@ describe('RhfTextInput', () => {
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     const input = screen.getByRole('textbox');
     expect(input).toHaveAttribute(
@@ -275,8 +258,9 @@ describe('RhfTextInput', () => {
   });
 
   it('describes the input by the titled details id and the validation message', async () => {
+    const form = createFormHandle<Values>();
     const { container } = render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput
           name='organisationName'
           label='Organisation'
@@ -286,9 +270,7 @@ describe('RhfTextInput', () => {
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     expect(container.querySelector('details')).toHaveAttribute(
       'id',
@@ -301,15 +283,14 @@ describe('RhfTextInput', () => {
   });
 
   it('is not marked invalid while the error is hidden', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.trigger();
-    });
+    await form.trigger();
 
     expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox')).not.toHaveAttribute('aria-invalid');
@@ -317,22 +298,22 @@ describe('RhfTextInput', () => {
   });
 
   it('focuses the invalid input when a submit attempt fails', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput name='organisationName' label='Organisation' />
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     expect(screen.getByRole('textbox')).toHaveFocus();
   });
 
   it('suppresses field level messages when asked', async () => {
+    const form = createFormHandle<Values>();
     render(
-      <Harness resolver={failingResolver}>
+      <Harness form={form} resolver={failingResolver}>
         <RhfTextInput
           name='organisationName'
           label='Organisation'
@@ -342,9 +323,7 @@ describe('RhfTextInput', () => {
       </Harness>
     );
 
-    await act(async () => {
-      await formMethods?.handleSubmit(() => undefined)();
-    });
+    await form.submit();
 
     const input = screen.getByRole('textbox');
     expect(screen.queryByText('Enter a name')).not.toBeInTheDocument();
