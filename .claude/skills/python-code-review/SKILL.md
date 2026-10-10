@@ -53,6 +53,21 @@ Never claim analyzer, test, build, runtime, or regression success unless it was
 freshly executed against the reported artifact. Supplied diagnostics prove only
 their identified run, not final cleanliness.
 
+## Type-check gate for structural edits
+
+When a refactor adds or changes typed helpers, annotations, return types, or
+container narrowing, load
+[analyzer verification](references/ruff-pyright-verification.md) and run the
+applicable type checker before editing and after the final change. This gate
+also applies to narrow Sonar/Ruff fixes and behavior-preserving extractions,
+even when the original diagnostic is not a type error.
+
+Resolve newly introduced type diagnostics before reporting the repair complete.
+Ruff, compilation, behavioral tests, and code review do not replace this check.
+Record the checker/version, mode/rules, target paths, actual file count, and
+result. If execution is unavailable, report the type check as unverified and the
+remediation as AMBER; do not silently omit the gate or weaken project rules.
+
 ## Required review order
 
 For review, hardening, or broad remediation, skip a step only when genuinely
