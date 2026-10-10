@@ -15,11 +15,12 @@ are recorded in the
 and acceptance details below retain the reviewed scope; completed items have
 their execution result recorded alongside them.
 
-**Status refreshed 2026-10-10 23:45 (Australia/Sydney):** A7 remediation is
-complete: MD-T1 through MD-T5 now pass across all 153 maintained documents. A2
-is tracked in GitHub task #74 with the retained December 1 deadline; rotation
-remains pending. A1, A5, and A6 retain their regression checks. A3, A4, A8, A9,
-and D1 retain the blockers or deferral documented below.
+**Status refreshed 2026-10-10 (Australia/Sydney), latest continuation:** A8 is
+verified through actual VS Code memory-context delivery. A9 is closed after
+recovering the original record and correcting the inferred bug count. A7
+remediation remains complete. The remaining dependencies are A2's owner PAT
+rotation, A3's unavailable backend authority, A4's provider quota, and D1's
+explicit owner deferral.
 
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
@@ -40,17 +41,17 @@ implementation.
 1. **P0 — A2:** complete rotation, revocation, and workflow verification by
    **2026-12-01**, tracked in
    [GitHub task #74](https://github.com/gmtestandreview/portalsample/issues/74).
-2. **P1 — A3:** obtain the latest backend contract decision, then reproduce the
-   reported date shift and add explicit DST-transition evidence before changing
-   production behavior.
+2. **Deferred P1 — A3:** await an authoritative backend source and named
+   approver, which the owner confirmed are unavailable. Once supplied, reproduce
+   the date shift and add explicit DST-transition evidence.
 3. **P1 — A4:** after the provider reset, rerun the untouched holdout with the
    identified candidate, evaluator, and parameters; keep the release on hold
    until the existing acceptance gate is satisfied.
-4. **P2 — A8/A9:** verify the affected VS Code memory consumer and correlate the
-   recovered infrastructure candidates with the original observations.
-5. **Maintenance — A1/A5/A6/A7:** retain the focused launcher, bounded review,
-   metadata, representative activation, and maintained-document lint checks with
-   future changes.
+4. **Maintenance — A1/A5/A6/A7/A8:** retain the focused launcher, bounded
+   review, metadata, representative activation, maintained-document lint, and
+   memory-context delivery checks with future changes. A9 identity recovery is
+   complete; the separately tracked modal acceptance remains in the umbrella
+   plan's C6 work.
 
 Revisit relocation (D1) only if the repository owner chooses to resume it.
 
@@ -117,10 +118,14 @@ an item only with dated evidence; otherwise record the blocker and next action.
   `preferredInstrumentOrArtefactAvailabilityDate`. Confirm that gate's current
   status before production edits; the historical defect alone does not authorize
   guessing the date contract.
-- **Open P1 action:** locate the latest contract decision and reproduce the
-  reported date shift. An existing unit-test file is
-  `tests/unit/components/inputs/datePickerWrapper.test.tsx`; its presence does
-  not prove the timezone defect is covered or fixed.
+- **Deferred P1 action:** await the authoritative source and approver; then
+  record the contract decision and reproduce the reported date shift. The
+  existing `tests/unit/components/inputs/datePickerWrapper.test.tsx` does not
+  prove the full timezone acceptance gate is satisfied.
+- **Owner confirmation (2026-10-10):** no authoritative backend/OpenAPI source
+  or named backend approver is available. A3 is explicitly deferred until the
+  owner supplies that authority; do not infer the contract from the current
+  adapter or passing tests.
 - **Done when:** the contract gate is satisfied and regression evidence shows
   the intended date survives form/API round trips across UTC, Australia/Sydney
   including daylight-saving transitions, and a negative UTC offset. Record the
@@ -210,40 +215,43 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A8 — Verify claude-mem worker health
 
-- [ ] **Priority: developer tooling. Status: service verified; VS Code consumer
-      unverified. Owner: Codex for service checks.**
+- [x] **Priority: developer tooling. Status: service and affected VS Code
+      memory-context delivery verified. Owner: Codex.**
 - **Execution result (2026-10-10):** claude-mem 13.27.1 health/readiness
   endpoints return HTTP 200, and recent-context retrieval/context injection
-  return nonempty responses. The current tools cannot control the affected VS
-  Code consumer; its end-to-end completion check remains open.
+  return nonempty responses. Current VS Code consumer logs independently show
+  the exact execution worktree loading the plugin, connecting its MCP service,
+  and receiving 8,151 characters of validated context after a successful hook.
   `worker-service.cjs` reportedly failed its health check and blocked VS Code
   memory completions (`#93`, 2026-09-20).
-- **Next action:** test a memory-completion request in the affected VS Code
-  environment; service health and retrieval were reverified during resumed
-  execution. The original review's statement that it was “clearly working now”
-  is not retained as proof.
+- **Evidence scope:** VS Code 1.141.0 with `anthropic.claude-code@2.1.296`
+  successfully received project memory context at 23:48:34 Australia/Sydney. A
+  final model-response event was not observed; the verified flow is memory
+  retrieval and context delivery to the affected consumer.
+- **Maintenance follow-up:** retain the service and consumer-context checks
+  after integration upgrades. Exact sanitized log references are in the
+  execution report.
 - **Done when:** the health check and affected completion flow succeed with
   dated evidence, or the owner confirms the integration has been retired.
 
-### A9 — Identify the two unnamed deferred infrastructure bugs
+### A9 — Resolve the inferred deferred infrastructure count
 
-- [ ] **Priority: evidence recovery. Status: documented candidate pair
-      recovered; original identity correlation unverified. Owner: Codex for
-      investigation.**
-- **Execution result (2026-10-10):** Predecessor Bug A is nested Vitest
-  workspace/duplicate Node discovery; Bug B is the root worker cap corrupting
-  mixed-pool coverage execution. Both have historical fix evidence in commit
-  0d169278 and 22 current topology tests pass. Their exact match to the unnamed
-  original observation remains unverified. Two infrastructure bugs were
-  reportedly deferred alongside the date defect on 2026-08-23; their identities
-  were absent from the original log.
-- **Next action:** recover the original unnamed observations for definitive
-  identity correlation. Resumed execution rechecked
-  [PR #1](https://github.com/gmtestandreview/portalsample/pull/1), its
-  discussion, and the
+- [x] **Priority: evidence recovery. Status: original record recovered;
+      incorrect inference superseded. Owner: Codex.**
+- **Execution result (2026-10-10):** the original August 23 closeout names the
+  two deferred issues as DatePicker timezone assumptions and Storybook modal
+  fade-transition timing. DatePicker was included in that count, rather than
+  accompanied by two further unnamed bugs. Four infrastructure fixes, including
+  workspace nesting and the root worker cap, had already landed.
+- **Disposition:** DatePicker remains explicitly deferred under A3. Modal
+  transition assertions were repaired in
+  [commit 0e368fe9](https://github.com/gmtestandreview/portalsample/commit/0e368fe9cf8892a74fdb4ec1bfb78518510fb40d),
+  which is an ancestor of this branch. Historical passing-run evidence is
+  recorded in the execution report; the broader C6 repeated-run acceptance is
+  still separately tracked in the
   [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md).
-  The records support the known fixes but do not identify the original unnamed
-  pair; their identity remains unknown.
+- **Next action:** no further unnamed-bug recovery. Follow A3 and the existing
+  C6 acceptance work without creating duplicate infrastructure defects.
 - **Done when:** each bug has a concrete description and either linked
   completion evidence or its own actionable backlog entry. If the records cannot
   be recovered, explicitly retain “identity unknown” rather than infer a defect.

@@ -6,28 +6,27 @@ Baseline: `655f90af166b98c62f567874474f310f7608e914`, based on `main`. Codex
 owns the local investigations and repairs authorized by the request to execute
 the [reviewed backlog](2026-09-25-TODO-outstanding-actions.md).
 
-**Status refresh 2026-10-10 23:45 (Australia/Sydney):** MD-T1 through MD-T5 are
-complete, with zero Markdown errors across 153 maintained files. A2 now has an
-assigned GitHub task with the December 1 deadline; rotation is still pending.
-A3's backend approval and A8's VS Code consumer check remain unresolved. A4's
-holdout remains on hold pending the provider reset reported for 2026-10-11 03:20
-(Australia/Sydney). A9's original identity correlation and D1's deferral are
-unchanged.
+**Status refresh 2026-10-10 (Australia/Sydney), latest continuation:** A8's
+actual VS Code memory-context flow is verified, and A9's original record is
+recovered and corrected. MD-T1 through MD-T5 remain complete. PAT rotation is
+still pending in task #74; the owner confirmed A3 lacks backend authority; A4
+remains on hold pending the provider reset reported for 2026-10-11 03:20
+(Australia/Sydney); D1 remains deferred.
 
 ## Results
 
-| Action | Result                                                                                          | Remaining work                                                     |
-| ------ | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| A1     | Reproduced and fixed temporary credential-file exposure; 10 launcher tests pass                 | None for the tested launcher behavior                              |
-| A2     | Owner confirmed rotation is pending; December 1 deadline retained; GitHub task #74 assigned     | Owner rotates/revokes PAT and verifies workflow                    |
-| A3     | Existing date implementation passes 30 tests in each of three timezones                         | Backend approval evidence and explicit DST-transition acceptance   |
-| A4     | Training passes 20/20; holdout interrupted by 14 provider-quota errors                          | Rerun untouched holdout after quota reset; release remains on hold |
-| A5     | Recovered hidden test; 19 tests and 42 subtests pass within the original timeout                | None for current suite execution; historical hang cause unproven   |
-| A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass       | No broader deployment-readiness claim                              |
-| A7     | MD-T1 through MD-T5 complete; 1,063 findings corrected; 153 maintained documents lint clean     | Retain focused Markdown checks for future edits                    |
-| A8     | Worker health, readiness, recent-context retrieval, and context injection respond successfully  | Verify the affected VS Code consumer                               |
-| A9     | Recovered two documented candidate infrastructure bugs, their fixes, and passing topology tests | Original observation needed for definitive identity correlation    |
-| D1     | Owner explicitly kept relocation deferred                                                       | No relocation work authorized for this execution                   |
+| Action | Result                                                                                              | Remaining work                                                            |
+| ------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| A1     | Reproduced and fixed temporary credential-file exposure; 10 launcher tests pass                     | None for the tested launcher behavior                                     |
+| A2     | Owner confirmed rotation is pending; December 1 deadline retained; GitHub task #74 assigned         | Owner rotates/revokes PAT and verifies workflow                           |
+| A3     | Existing date implementation passes 30 tests in each of three timezones                             | Backend approval evidence and explicit DST-transition acceptance          |
+| A4     | Training passes 20/20; holdout interrupted by 14 provider-quota errors                              | Rerun untouched holdout after quota reset; release remains on hold        |
+| A5     | Recovered hidden test; 19 tests and 42 subtests pass within the original timeout                    | None for current suite execution; historical hang cause unproven          |
+| A6     | Restored mandatory aliases; 16 regression tests and representative activation probes pass           | No broader deployment-readiness claim                                     |
+| A7     | MD-T1 through MD-T5 complete; 1,063 findings corrected; 153 maintained documents lint clean         | Retain focused Markdown checks for future edits                           |
+| A8     | Worker health and actual affected VS Code memory-context receipt verified                           | Retain integration checks; final model response was not observed          |
+| A9     | Original deferred pair recovered: DatePicker and modal timing; incorrect extra-bug inference closed | A3 remains deferred; broader modal C6 acceptance stays separately tracked |
+| D1     | Owner explicitly kept relocation deferred                                                           | No relocation work authorized for this execution                          |
 
 ## A1 — Credential-file exposure repaired
 
@@ -127,6 +126,10 @@ Resumed execution on 2026-10-10 rechecked both worktrees and all local Git refs:
 owner and delivery records still leave the API Contract Approver unassigned and
 B0/B1 externally deferred. The approval gate remains unresolved.
 
+During the next continuation on 2026-10-10, the owner explicitly confirmed there
+is no authoritative backend/OpenAPI source or named backend approver for the
+field. A3 remains externally deferred on that dependency.
+
 ## A4 — Activation campaign
 
 The evaluated package is `.claude/skills/skill-creator`. Its current decoded
@@ -179,6 +182,11 @@ holdout with the same candidate and parameters, followed by the outstanding
 vocabulary near-miss campaign if required by the package's existing release
 protocol. Keep this incomplete attempt. Changing the model, threshold, or corpus
 to evade the quota would not satisfy the same gate.
+
+Continuation preflight on 2026-10-10 verified that all six source/corpus hashes
+and both saved result hashes still match the campaign manifest. The evaluated
+candidate and evidence have not drifted. The reported reset is still in the
+future, so no quota-blocked evaluation was repeated.
 
 ## A5 — Review-generator suite recovered and passing
 
@@ -314,7 +322,7 @@ report); secrets scans of `docs` and `analysis` were clean; and
 `git diff --check` passed. Application code was unchanged in this resumed batch,
 so application tests and builds were not repeated.
 
-## A8 — Memory service responds; VS Code check remains
+## A8 — Memory service and affected VS Code context flow verified
 
 The installed worker is claude-mem 13.27.1. Read-only localhost requests at port
 37777 returned:
@@ -328,17 +336,37 @@ The installed worker is claude-mem 13.27.1. Read-only localhost requests at port
 
 Only structural metadata was printed; memory content and settings were not
 included in chat or evidence. These results do not reproduce the historical
-worker-health failure and establish service-side context retrieval. The current
-tools do not control the affected VS Code consumer, so end-to-end completion
-verification remains pending. No service restart or global configuration change
-was performed.
+worker-health failure and establish service-side context retrieval. At that
+stage, the VS Code consumer flow was unverified. No service restart or global
+configuration change was performed.
 
 Resumed execution on 2026-10-10 repeated all four requests: HTTP 200 for each,
 `status: ok` / `mcpReady: true` for health, `status: ready` for readiness, and
 the same 3,893-byte recent-context and 8,255-byte injection responses. The
-affected VS Code completion flow remains unverified.
+affected VS Code completion flow was still unverified at that point.
 
-## A9 — Documented infrastructure candidates recovered
+The next continuation independently verified the actual consumer's current log
+at
+`%APPDATA%/Code/logs/20261010T223624/window1/exthost/Anthropic.claude-code/Claude VSCode.log`.
+VS Code 1.141.0 was running `anthropic.claude-code@2.1.296` with enabled
+claude-mem 13.27.1 hooks. Sanitized evidence for 2026-10-10 Australia/Sydney:
+
+| Log line    | Time             | Observed event                                                          |
+| ----------- | ---------------- | ----------------------------------------------------------------------- |
+| 12826       | 23:48:29.294     | Claude SDK query starts in the exact execution worktree                 |
+| 12908       | 23:48:29.993     | Enabled claude-mem hooks are loaded                                     |
+| 13416       | 23:48:31.483     | claude-mem MCP search connects successfully                             |
+| 13627       | 23:48:34.492     | Context hook exits with status 0 after 3,266 ms                         |
+| 13629–13633 | 23:48:34.492–495 | Hook JSON validates and delivers 8,151 characters of additional context |
+
+Independent verification checked all six structural conditions without printing
+the memory contents; every condition was true. This closes A8 for service health
+and project memory-context retrieval/delivery to the affected VS Code consumer.
+No final model-response event was observed through 23:49:34.509; the verified
+claim concerns the memory integration's context flow. No new model request,
+service restart, or settings mutation was required.
+
+## A9 — Original record recovered; inferred extra bugs superseded
 
 The
 [dependency remediation predecessor plan](2026-08-23-dependency-vulnerability-remediation.md)
@@ -359,16 +387,41 @@ investigation:
 node --max-old-space-size=8192 ../../node_modules/vitest/vitest.mjs run --configLoader runner --config vitest.unit.config.ts tests/unit/config/vitestTopology.test.ts
 ```
 
-Observed: **22 tests passed**, exit 0, 1.18s. These tests protect the flat
-Storybook leaf and absence of the root worker cap. The original unnamed chat
-observation was not recovered, so these are the documented candidate pair, not a
-definitive identity match to that observation. Do not reopen the already fixed
-candidates merely because the old TODO omitted their names.
+Observed during the initial investigation: **22 tests passed**, exit 0, 1.18s.
+These tests protect the flat Storybook leaf and absence of the root worker cap.
+This was an initial candidate hypothesis while the original observation remained
+unavailable; the recovery below supersedes that hypothesis about the deferred
+pair.
 
 Resumed execution on 2026-10-10 retrieved PR #1 and its discussion again. The PR
 body explicitly references the workspace-nesting fix at `0d16927`; the sole
-discussion comment reports a Sonar quality gate. Neither supplies the original
-unnamed observation, so definitive identity correlation remains open.
+discussion comment reports a Sonar quality gate. Neither supplied the original
+observation. A further local-history search recovered it:
+
+- Main checkout `.remember/today-2026-08-23.done.md`, lines 1–6, compresses the
+  closeout to four infrastructure bugs fixed and two issues deferred, followed
+  by a DatePicker deferral reference.
+- The original user-pasted closeout is preserved in
+  `%USERPROFILE%/.codex/sessions/2026/08/23/rollout-2026-08-23T23-23-41-01a02eca-8c0d-72b2-bb34-270e7bcffb9f.jsonl`,
+  line 1023, timestamp `2026-08-23T14:38:16.718Z`. It explicitly lists the two
+  deferred issues as DatePicker AEST timezone assumptions and Storybook
+  modal-visibility fade-transition timing flakiness.
+
+Both sources passed secrets scanning and independent verification confirmed the
+relevant text. The earlier interpretation of two additional unnamed
+infrastructure defects was incorrect. DatePicker stays under A3; there is no
+extra unnamed pair to recover.
+
+The modal assertion fix is
+[commit 0e368fe9cf8892a74fdb4ec1bfb78518510fb40d](https://github.com/gmtestandreview/portalsample/commit/0e368fe9cf8892a74fdb4ec1bfb78518510fb40d),
+which awaits visibility in the four owning stories. Git ancestry verification
+confirmed this commit is an ancestor of the execution branch. Historical
+`reports/stabilisation/c1-modal-repetitions.log`, lines 1–19 in the main
+checkout, records three focused runs with seven passing tests each; the umbrella
+plan records 218 passing Storybook tests and states that the old modal failures
+no longer reproduce. These are historical results, not a fresh Storybook run.
+Broader C6 ten-repeat acceptance remains separately tracked in the umbrella
+plan. A9's evidence-recovery action is complete.
 
 ## D1 — Relocation remains deferred
 
@@ -382,8 +435,10 @@ Code changes are limited to the GitHub MCP launcher, its regression tests, and
 the writing-skills alias description. Existing date and topology suites were run
 to establish backlog status; their production code was not changed. No
 application build, full CI suite, production deployment, secret rotation,
-calendar import, or VS Code consumer verification is implied by these results.
+calendar import, or final model-answer verification is implied by these results.
 Resumed execution additionally remediated the maintained-document Markdown
-findings and created the authorized PAT tracking task. The historical failing
-baseline is retained alongside the clean current result. Edited documents
-receive focused format, secrets, link, and diff checks before handoff.
+findings, created the authorized PAT tracking task, verified the actual VS Code
+memory-context flow, and corrected A9 from recovered original records. The
+historical failing baseline is retained alongside the clean current result.
+Edited documents receive focused format, secrets, link, and diff checks before
+handoff.
