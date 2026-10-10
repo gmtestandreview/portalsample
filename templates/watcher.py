@@ -87,18 +87,12 @@ def pid_is_running(pid):
         kernel32.OpenProcess.restype = wintypes.HANDLE
         kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
         kernel32.CloseHandle.restype = wintypes.BOOL
-        kernel32.GetExitCodeProcess.argtypes = [wintypes.HANDLE, ctypes.POINTER(wintypes.DWORD)]
-        kernel32.GetExitCodeProcess.restype = wintypes.BOOL
 
         process_query_limited_information = 0x1000
-        still_active = 259
         handle = kernel32.OpenProcess(process_query_limited_information, False, pid)
         if handle:
-            # An exited process stays openable while any handle to it is held.
-            exit_code = wintypes.DWORD()
-            queried = kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
             kernel32.CloseHandle(handle)
-            return not queried or exit_code.value == still_active
+            return True
         return ctypes.get_last_error() == 5  # Access denied means it exists.
 
     try:
