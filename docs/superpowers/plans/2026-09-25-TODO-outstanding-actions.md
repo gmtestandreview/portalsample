@@ -8,8 +8,12 @@ Originally generated from chat history on 2026-09-25, covering 2026-07-01 to
 ## Purpose and status rules
 
 This plan turns historical observations into verifiable next actions. The
-2026-10-10 review updates the backlog only; it does not implement the remaining
-fixes, rotate credentials, move the repository, or rerun application suites.
+2026-10-10 review was followed by authorized execution in
+`.worktrees/outstanding-actions-plan`. Current results and verification evidence
+are recorded in the
+[execution report](2026-10-10-outstanding-actions-execution.md). The next-action
+and acceptance details below retain the reviewed scope; completed items have
+their execution result recorded alongside them.
 
 - **Verified:** supported by a current repository or GitHub check.
 - **Needs verification:** reported in history; current failure or completion has
@@ -43,14 +47,15 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A1 — Verify temporary-token cleanup
 
-- [ ] **Priority: high triage. Status: needs verification. Owner: unassigned.**
-      History reported that temporary token files created by `.cmd` scripts
-      survived interruption (`#53`, 2026-09-10; originally assessed as medium
-      severity).
-- **Next action:** locate the responsible script and reproduce normal exit,
-  error exit, and Ctrl+C with a dummy credential. Repository `.cmd` candidates
-  exist under `scripts/`, but the responsible file has not been established.
-  Scan files for secrets before reading them, as required by `AGENTS.md`.
+- [x] **Priority: high triage. Status: fixed and verified. Owner: Codex.**
+- **Execution result (2026-10-10):** Identified `scripts/github-mcp-server.cmd`,
+  removed the temporary-token disk write, and verified 10 Windows launcher tests
+  including real Ctrl+C and forced termination. See the execution report for
+  RED/GREEN evidence. History reported that temporary token files created by
+  `.cmd` scripts survived interruption (`#53`, 2026-09-10; originally assessed
+  as medium severity).
+- **Next action:** retain the focused regression test with future launcher
+  changes. No further investigation is required for the tested launcher path.
 - **Done when:** the responsible path is identified and supported exit paths
   leave no credential file. If forced termination cannot guarantee cleanup,
   document that limitation and choose a credential-handling approach that avoids
@@ -59,10 +64,14 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A2 — Rotate the `claude.yml` fine-grained PAT by 2026-12-01
 
-- [ ] **Priority: dated commitment. Status: needs verification. Owner: @gregm.**
-      The deadline and owner come from historical observation `#59`, 2026-09-10;
-      rotation has not been independently confirmed. The commitment is not
-      overdue as of this review.
+- [ ] **Priority: dated commitment. Status: pending owner rotation. Owner:
+      @gregm.**
+- **Execution result (2026-10-10):** Owner confirmed rotation is pending and
+  retained 2026-12-01. An [importable reminder](2026-12-01-pat-rotation.ics) is
+  prepared; it has not been installed in a calendar. Rotation, revocation, and
+  workflow verification remain open. The deadline and owner come from historical
+  observation `#59`, 2026-09-10; rotation has not been independently confirmed.
+  The commitment is not overdue as of this review.
 - **Next action:** confirm whether rotation already occurred. If still pending,
   retain **2026-12-01** as the deadline and arrange a reminder through the
   owner's chosen calendar or task system. No reminder was created during this
@@ -73,10 +82,14 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A3 — Establish the RFQ date/timezone defect's current status
 
-- [ ] **Priority: customer-facing correctness. Status: deferred pending contract
-      evidence; current reproduction unverified. Owner: unassigned.** The
-      original review recorded a deferred `datePickerWrapper` timezone defect on
-      2026-08-23.
+- [ ] **Priority: customer-facing correctness. Status: existing tests pass;
+      contract/DST acceptance deferred. Owner: Codex for investigation; backend
+      approver unassigned.**
+- **Execution result (2026-10-10):** 30 existing date tests pass in each of UTC,
+  Australia/Sydney, and America/Los_Angeles. The date-only adapter already
+  exists. Authoritative backend approval evidence and explicit DST-transition
+  coverage are still missing; no production edits were made. The original review
+  recorded a deferred `datePickerWrapper` timezone defect on 2026-08-23.
 - **Dependency:** the
   [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md)
   identifies Child Plan B as externally deferred until authoritative backend
@@ -96,11 +109,16 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A4 — Recover and rerun skill activation evaluation
 
-- [ ] **Priority: release verification. Status: needs verification. Owner:
-      unassigned.** Iteration 2 reportedly had near-miss false positives,
-      including “optimize activation conditions for browser extension,” and a
-      holdout timeout (`#137`, 2026-09-21). No iteration-3 result was present in
-      the original review.
+- [ ] **Priority: release verification. Status: blocked by provider session
+      quota. Owner: Codex for evaluation.**
+- **Execution result (2026-10-10):** Current-candidate training passes 20/20
+  with no errors. Holdout completed 2/16 attempts, with 14 provider quota
+  errors; release remains HOLD. Provider reports reset at 2026-10-11 03:20
+  Australia/Sydney. Preserve the run and rerun the complete untouched holdout
+  after reset. Iteration 2 reportedly had near-miss false positives, including
+  “optimize activation conditions for browser extension,” and a holdout timeout
+  (`#137`, 2026-09-21). No iteration-3 result was present in the original
+  review.
 - **Next action:** establish which skill, revision, evaluator, and release the
   observations concern. Locate later evaluation artifacts before rerunning the
   same positive, negative, near-miss, and holdout cases. Evaluation material
@@ -113,51 +131,64 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A5 — Locate and reproduce the review-generator test hang
 
-- [ ] **Priority: test reliability. Status: needs verification. Owner:
-      unassigned.** `test_generate_review.py` reportedly ran beyond 180 seconds
-      without output (`#111`, 2026-09-20).
-- **Next action:** recover the original test path, command, revision, and
-  runtime. Filename discovery in this checkout did not locate that test; do not
-  assume it belongs to this repository or invent a runner. Check later artifacts
-  before a bounded rerun with captured progress and subprocess state.
+- [x] **Priority: test reliability. Status: current suite verified passing.
+      Owner: Codex.**
+- **Execution result (2026-10-10):** Recovered the hidden
+  `.claude/skills/skill-creator/scripts/Regression tests/test_generate_review.py`;
+  19 tests and 42 subtests pass in 3.25s under the original 180-second bound.
+  The historical hang was not reproduced; no timeout or code change was needed.
+  `test_generate_review.py` reportedly ran beyond 180 seconds without output
+  (`#111`, 2026-09-20).
+- **Next action:** retain the bounded regression command for future changes. The
+  original hang cause remains unknown, but the current suite is green.
 - **Done when:** the original suite completes under its existing timeout, or
   evidence establishes that the referenced test was superseded. Raising the
   timeout alone is not completion evidence.
 
 ### A6 — Verify writing-skills metadata regressions
 
-- [ ] **Priority: test reliability. Status: needs verification. Owner:
-      unassigned.** Two failures around `called_writing_skills_alias` were
-      reported in `test_writing_skills_metadata.py` (`#91`, 2026-09-20).
-- **Next action:** use the skill's documented test runner for
-  `skills/writing-skills/scripts/tests/test_writing_skills_metadata.py` and
-  compare the result with the original failing cases. The file exists; it was
-  not run during this document review.
+- [x] **Priority: test reliability. Status: aliases restored and verified.
+      Owner: Codex.**
+- **Execution result (2026-10-10):** Reproduced both alias failures, restored
+  the policy-required aliases in the repository skill description, and verified
+  16 focused tests plus representative positive/negative activation probes. No
+  global installation was changed. Two failures around
+  `called_writing_skills_alias` were reported in
+  `test_writing_skills_metadata.py` (`#91`, 2026-09-20).
+- **Next action:** retain the focused metadata and representative activation
+  checks for future description changes. No global installation was changed.
 - **Done when:** the relevant cases pass on the recorded revision, or a linked
   change explains why they were replaced. Preserve the failure details if they
   still reproduce.
 
 ### A7 — Replace historical Markdown counts with a current baseline
 
-- [ ] **Priority: maintenance. Status: needs verification. Owner: unassigned.**
-      The original review reported roughly 987 violations and an uncertain 104
-      MD060 table-format findings. Those counts predate the current
-      configuration.
-- **Next action:** run a read-only Markdown check over the maintained scope
-  using the current rules and record command, scope, rule counts, and baseline
-  commit. Determine whether MD060 remains after the reported “Batch A”
-  remediation. Neither `markdownlint` nor `markdownlint-cli2` was available
-  locally during this review; establish the supported runner before batching
-  fixes.
+- [x] **Priority: maintenance. Status: baseline and scoped follow-ups
+      established. Owner: Codex.**
+- **Execution result (2026-10-10):** Pinned markdownlint-cli2 0.20.0 measured
+  1,063 diagnostics across 46 of 152 maintained documents at baseline 655f90af.
+  MD060 remains: 544 diagnostics across 111 line locations in 21 files. MD013
+  produced zero. The execution report defines tasks MD-T1 through MD-T5 and
+  exact exclusions; the baseline is not a clean-lint claim. The original review
+  reported roughly 987 violations and an uncertain 104 MD060 table-format
+  findings. Those counts predate the current configuration.
+- **Next action:** assign and execute the separately scoped MD-T1 through MD-T5
+  remediation batches. Preserve the current baseline and rerun each touched
+  scope after edits.
 - **Done when:** remaining enabled-rule findings have an accurate baseline and
   scoped remediation tasks, or the checked scope passes. Do not revive MD013
   cleanup or disable rules to make the check pass. Prettier owns formatting.
 
 ### A8 — Verify claude-mem worker health
 
-- [ ] **Priority: developer tooling. Status: needs verification. Owner:
-      unassigned.** `worker-service.cjs` reportedly failed its health check and
-      blocked VS Code memory completions (`#93`, 2026-09-20).
+- [ ] **Priority: developer tooling. Status: service verified; VS Code consumer
+      unverified. Owner: Codex for service checks.**
+- **Execution result (2026-10-10):** claude-mem 13.27.1 health/readiness
+  endpoints return HTTP 200, and recent-context retrieval/context injection
+  return nonempty responses. The current tools cannot control the affected VS
+  Code consumer; its end-to-end completion check remains open.
+  `worker-service.cjs` reportedly failed its health check and blocked VS Code
+  memory completions (`#93`, 2026-09-20).
 - **Next action:** locate the installed service's supported health check and
   test a memory-completion request in the affected VS Code environment. The
   original review's statement that it was “clearly working now” is not retained
@@ -167,10 +198,16 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### A9 — Identify the two unnamed deferred infrastructure bugs
 
-- [ ] **Priority: evidence recovery. Status: needs verification. Owner:
-      unassigned.** Two infrastructure bugs were reportedly deferred alongside
-      the date defect on 2026-08-23; their identities were absent from the
-      original log.
+- [ ] **Priority: evidence recovery. Status: documented candidate pair
+      recovered; original identity correlation unverified. Owner: Codex for
+      investigation.**
+- **Execution result (2026-10-10):** Predecessor Bug A is nested Vitest
+  workspace/duplicate Node discovery; Bug B is the root worker cap corrupting
+  mixed-pool coverage execution. Both have historical fix evidence in commit
+  0d169278 and 22 current topology tests pass. Their exact match to the unnamed
+  original observation remains unverified. Two infrastructure bugs were
+  reportedly deferred alongside the date defect on 2026-08-23; their identities
+  were absent from the original log.
 - **Next action:** correlate the original observations with
   [PR #1](https://github.com/gmtestandreview/portalsample/pull/1) and the
   [npm remediation umbrella plan](2026-08-23-npm-deprecation-remediation.md). PR
@@ -183,16 +220,20 @@ an item only with dated evidence; otherwise record the blocker and next action.
 
 ### D1 — Decide whether repository relocation is still wanted
 
-- [ ] **Status: awaiting owner scope decision. Owner: @gregm for the decision;
-      implementation owner unassigned.** The current checkout remains under
-      `source-map-capture`; relocation of this checkout has not occurred.
+- [ ] **Status: explicitly deferred by owner on 2026-10-10. Owner: @gregm for
+      future scope decision.**
+- **Execution result (2026-10-10):** Execution: the owner selected “Keep
+  relocation deferred.” No relocation, path rewrites, or environment migration
+  were performed. The current checkout remains under `source-map-capture`;
+  relocation of this checkout has not occurred.
 - **Next action if resumed:** refresh the preflight in the
   [relocation plan](../../plans/2026-09-20-relocate-repo-to-portal-example.md).
   Re-inventory absolute paths in `.claude/settings.local.json`, symlinks,
   environment state, and tooling indexes. Historical counts of “10+ paths” are
   unverified. The old `.worktrees/vscode-problems-remediation` repair
-  instructions are conditional: the current `git worktree list` contains only
-  the main checkout. Establish whether `.venv` and claude-mem state need
+  instructions are conditional: the review's one-worktree inventory predates
+  creation of `.worktrees/outstanding-actions-plan`. Re-inventory all linked
+  worktrees before any move. Establish whether `.venv` and claude-mem state need
   recreation or migration in the actual environment.
 - **Done when:** the owner records that relocation is no longer wanted, or a
   refreshed relocation plan is implemented and verified at the destination. This
@@ -258,9 +299,10 @@ every gate in the subsequently revised umbrella plan has passed.
 The 2026-10-10 review used `git status`, branch/ref and worktree listings,
 `git ls-files`, GitHub PR metadata, TokenSave MCP status, and direct checks of
 configuration files after secret scans. Current `.markdownlint.json` JSON
-parsing was checked separately from the historical config incident. No current
-failure was established for A1–A9, and no runtime test result is implied by this
-review.
+parsing was checked separately from the historical config incident. That review
+did not establish current runtime failures. Subsequent execution reproduced A1
+and A6, repaired them, and recorded focused test results and remaining blockers
+in the execution report.
 
 For subsequent updates, record the action ID, date, owner, commit or external
 revision, exact verification command, observed result, and evidence reference.
