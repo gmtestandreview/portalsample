@@ -1,5 +1,5 @@
 ---
-name: vitest-performance-profiling
+name: vitest-performance-profiling-revised
 description: Use when diagnosing or improving slow Vitest 4 test runs, startup, imports, transforms, setup, environments, memory, coverage, discovery, worker usage, repeated runs, or CI scaling; profile first, then test one targeted optimization at a time.
 compatibility: Designed for Vitest 4 projects using Node.js; some diagnostics and optimizations are version-sensitive or experimental.
 ---
@@ -10,10 +10,12 @@ Diagnose why Vitest is slow before optimizing it. Treat phase timings, profiler 
 
 Do not enable every optimization together. A faster run is not an improvement if tests are omitted, contaminated, unstable, or incompatible.
 
+Use the repository's installed Vitest and package manager for every comparison. In examples, replace `pnpm exec vitest` with the equivalent local command for the project, such as `npm exec -- vitest` or `yarn vitest`; do not mix package managers or download a different Vitest version during a benchmark.
+
 ## Workflow
 
-1. Confirm the installed Vitest major version is 4 before using version-sensitive or experimental options; otherwise use the matching version documentation.
-2. Capture a reproducible baseline with coverage disabled unless coverage is the target.
+1. Confirm the installed Vitest major version is 4 before using version-sensitive or experimental options; if it is not 4, stop using these examples and switch to the matching version documentation.
+2. Capture a reproducible baseline with coverage disabled unless coverage is the target. Record the exact command, package-manager/Vitest/Node versions, test selection, coverage state, and worker, pool, and isolation settings.
 3. Record total duration, discovered test files/tests, pass/fail state, and Vitest phase timings: `transform`, `setup`, `import`, `tests`, `environment`.
 4. Identify the dominant phase, resource symptom, discovery overhead, rerun cost, or CI scaling problem.
 5. Run the narrowest matching diagnostic.
@@ -25,6 +27,8 @@ Do not enable every optimization together. A faster run is not an improvement if
 11. Remove temporary profiling flags and generated profile artifacts.
 
 Phase timings can overlap when files run concurrently, so they do not need to sum to wall-clock duration.
+
+If a diagnostic flag or configuration option is unsupported, record the installed version and the error, then use version-matched documentation or mark that diagnostic `Needs Human Review`; do not substitute an unverified flag or treat partial output as evidence.
 
 ## Choose the diagnostic
 
@@ -169,3 +173,7 @@ Revert changes that compromise correctness, omit tests, or deliver no repeatable
 - Do not combine multiple tuning changes in one benchmark.
 - Do not disable isolation, change worker pools, narrow discovery, enable persistent caching, or shard solely to produce better numbers.
 - Treat documentation examples, worker counts, percentages, and timing improvements as illustrations rather than project predictions.
+
+## Report the result
+
+End with the baseline and exact command, the dominant evidence, the single experiment, repeated before/after results, correctness and resource checks, the keep/revert decision, and whether temporary profiling settings and artifacts were removed.
