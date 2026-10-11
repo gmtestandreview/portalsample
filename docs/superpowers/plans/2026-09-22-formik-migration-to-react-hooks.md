@@ -8,15 +8,17 @@ The selected `acceptQuote/paymentDetails` migration is complete and shipped to
 records the delivered outcome and the remaining dependency-ordered work required
 before the `formik` package can be removed.
 
-The generic template below names `src/features/checkout/CheckoutForm.tsx` as
-the migration target. That file does not exist in this repository — this is
-the NMI (portal.measurement.gov.au) customer portal, a government
+The generic template below names `src/features/checkout/CheckoutForm.tsx` as the
+migration target. That file does not exist in this repository — this is the NMI
+(portal.measurement.gov.au) customer portal, a government
 metrology/accreditation service with no checkout/e-commerce feature. This
 section is the repo-grounded status for the migration actually undertaken.
 
-## Progress since 2026-09-29 (updated 2026-10-04)
+## Progress since 2026-09-29 (updated 2026-10-11)
 
-Branch `refactor/formik-removal-steps-1-2`. Not yet merged to `main`.
+Waves 1-2 and outstanding actions 1-2 are merged to `main` (`8d88c0e9`, #50).
+Wave 3 is in progress on `feat/formik-to-react-hooks-migration`: the shared
+inputs below are pushed to `origin` but not yet merged to `main`.
 
 <!-- markdownlint-disable MD013 -->
 
@@ -31,7 +33,13 @@ Branch `refactor/formik-removal-steps-1-2`. Not yet merged to `main`.
 | Wave 2: `appDetails` (form-free summary)                      | Done                 | `c5714509` |
 | Wave 2: `summaryAndSubmit` org/application summaries          | Done                 | `c5714509` |
 | Wave 2: wizard documents summary (still Formik)               | Deferred to Wave 5   | —          |
-| Waves 3-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
+| Wave 3 inputs: `RhfTextInput`, `RhfCheckbox`                  | Done                 | `c38a89ca` |
+| Wave 3 inputs: a11y fixes (describedby, invalid, suppress)    | Done                 | `3616d136` |
+| Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`           | Done                 | `1a65bcf3` |
+| Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup | Done                 | `e5702e7f` |
+| Wave 3: `AddressLookup`, `HidableField`, `ContactDetails`     | Not started          | —          |
+| Wave 3: step migrations (each behind a behavior suite)        | Not started          | —          |
+| Waves 4-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -54,12 +62,13 @@ What landed:
   `reset(initialFilters ?? defaultFilter)` replaces `resetForm`.
 - `storybookHarness.tsx` gained an additive `portal.rhf` parameter; the Formik
   path is unchanged.
-- Wave 2 inputs, each beside its Formik twin with behavior tests (and `portal.rhf`
-  stories for the inputs): `RhfSelectInput`, `RhfAttachment` with
-  `RhfAttachmentItem`, and the route fork `routes/ta/rhfSupportingDocuments.tsx`.
-  Shared pure helpers moved to `supportingDocumentsHelpers.ts`.
-- `appDocuments` uses `useForm({ values })` with `createSaveAwareYupResolver`. It
-  no longer mutates form state when it strips `documentBytes` from the commit
+- Wave 2 inputs, each beside its Formik twin with behavior tests (and
+  `portal.rhf` stories for the inputs): `RhfSelectInput`, `RhfAttachment` with
+  `RhfAttachmentItem`, and the route fork
+  `routes/ta/rhfSupportingDocuments.tsx`. Shared pure helpers moved to
+  `supportingDocumentsHelpers.ts`.
+- `appDocuments` uses `useForm({ values })` with `createSaveAwareYupResolver`.
+  It no longer mutates form state when it strips `documentBytes` from the commit
   payload.
 - Form-free TA summaries in `routes/ta/summary/` (`OrganisationSummary`,
   `ApplicationSummary`, `ContactSummary`), built from `SummaryDisplay` and the
@@ -72,7 +81,26 @@ What landed:
   summary printed an empty "Applying for" value (a `ul` that `SummaryDisplay`
   never draws); the new view shows the chosen sub-options. The contact block no
   longer has a "No details added" branch (only reachable with `''`).
-- `RhfTextInput` was not needed and was not built.
+- `RhfTextInput` was not needed for Wave 2. It was built in Wave 3 (below).
+
+Wave 3 shared inputs (each beside its Formik twin, with behavior tests and
+`portal.rhf` stories; new files at 100% coverage):
+
+- `RhfTextInput` and `RhfCheckbox` (`c38a89ca`), then a11y fixes (`3616d136`):
+  the error id is added to `aria-describedby` alongside the help-text id rather
+  than replacing it, `RhfCheckbox` sets `aria-invalid` and the invalid class,
+  and `RhfTextInput` gained `supressFieldLevelMessages` (existing spelling
+  kept).
+- `RhfTextAreaInput` and `RhfNumberInput`, including pattern/numeric formats and
+  phone formatting (`1a65bcf3`).
+- `components/Inputs/useRhfFieldA11y.ts` holds the shared id and `aria-*` wiring
+  for the four inputs above, and
+  `tests/unit/components/inputs/rhfTestHarness.tsx` is the shared test harness
+  (`e5702e7f`). The harness uses a `FormHandle` instead of module-level mutable
+  state and type casts.
+- Open: `RhfRadioButtonGroup` and `RhfSelectInput` do not use `useRhfFieldA11y`.
+  Check whether their error `aria-describedby` also drops the help-text id, and
+  fix it with tests (help only, error only, both).
 
 Gates at the last full run (Wave 2 complete): `tsc --noEmit`, ESLint and
 Prettier clean; `test:unit:coverage` 198 files, 2,260 tests, 100% statements,
@@ -97,16 +125,21 @@ of in-repo components were used.
    - Open the PR for this branch.
    - Review follow-ups, not blocking: a failed upload replaces the whole list
      with `[]` (same as the Formik twin); `onCategoryUpdate` rejections are
-     unhandled; each row's select is labelled only "Category"; the document
-     link hardcodes `application/pdf`; the per-row error state is index-keyed,
-     so after a delete the row that moves up inherits it (consider
+     unhandled; each row's select is labelled only "Category"; the document link
+     hardcodes `application/pdf`; the per-row error state is index-keyed, so
+     after a delete the row that moves up inherits it (consider
      `useFieldArray`); the details tab renders empty summaries for one frame
      before the load.
-2. **Wave 3: remaining accept-quote steps, then delete the payment-details
-   bridge.** Build only the shared pieces those steps need, each beside its
-   Formik twin: `RhfTextInput` (first real consumer), `RhfCheckbox`, an RHF
-   `HidableField`, and RHF `ContactDetails`. Write a behavior suite for each
-   step before moving it, as `reportRecipient` did.
+2. **Wave 3: remaining accept-quote steps.** `RhfTextInput`, `RhfCheckbox`,
+   `RhfTextAreaInput` and `RhfNumberInput` exist (see above). Build only the
+   remaining shared pieces the next step needs, each beside its Formik twin: RHF
+   `AddressLookup`, `HidableField` and `ContactDetails`. Write a behavior suite
+   for each step before moving it, as `reportRecipient` did. Keep the legacy
+   Formik components until a repository search shows their last consumer moved.
+   **Do not delete the payment-details bridge at the end of Wave 3.**
+   `WizardRoutedStep` still wraps every step in Formik, so the bridge stays
+   until the wizard shell moves to RHF (item 6). Other migrated steps may need
+   the same temporary bridge.
 3. **Apply the form-free summary approach to request-for-quote.**
    `requestForQuoteSummary.tsx` has its own `OrganisationAndContact` and
    `InstrumentAndRequest` summary branches. Capture a parity baseline first,
@@ -121,8 +154,9 @@ of in-repo components were used.
    `RhfSupportingDocuments`. Their `isSummary` branches are already unused by
    the TA summary pages.
 6. **Actions 4 and 6.** Replace `FormikForm`, `WizardForm`, `WizardRoutedStep`
-   and the test/story harnesses with the RHF shell, then remove Formik after
-   the final repository-wide search is empty.
+   and the test/story harnesses with the RHF shell, delete the payment-details
+   bridge and any similar step bridges, then remove Formik after the final
+   repository-wide search is empty.
 
 Open decisions: whether `RhfSelectInput` should gain `readOnly`,
 `displayHorizontally` and `inlineHelp` now or with their first consumer (it
@@ -173,8 +207,8 @@ From Waves 1-2 prep (this branch):
   text, select and attachment inputs; `appDetails` actually shared its summary
   sections with the Formik wizard. Reading the consumers first changed the
   approach from forking ~880 lines to a form-free summary.
-- **Baseline before swapping a read-only view.** A markup-parity test against the
-  old output found a hidden defect (the empty "Applying for" value) and kept
+- **Baseline before swapping a read-only view.** A markup-parity test against
+  the old output found a hidden defect (the empty "Applying for" value) and kept
   every other difference visible.
 - **Summary views need no form.** Read-only pages should take plain values and
   rules, not a form context.
@@ -182,8 +216,8 @@ From Waves 1-2 prep (this branch):
   `values` in harnesses that rerender; `handleSubmit` clears manual `setError`
   errors on fields without rules, so use a resolver to test error display.
 - **Hooks can litter.** A Sonar hook created an empty `.sonar` folder in the
-  shell's working directory and broke the coverage-drift test; keep the shell
-  at the repository root.
+  shell's working directory and broke the coverage-drift test; keep the shell at
+  the repository root.
 - **Tooling:**
   - Keep line endings when scripting edits (`newline=''`), then run Prettier on
     changed files.
@@ -196,49 +230,48 @@ From Waves 1-2 prep (this branch):
 
 ## Resolved target
 
-`ClientApp/src/routes/acceptQuote/paymentDetails.tsx` — the simplest of a
-4-step wizard flow (`reportRecipient` → `paymentDetails` → `deliveryAndReturn`
-→ `summaryAndAccept`), chosen as the smallest safe migration target: 2 fields
-plus one conditional `contact` sub-block, one `.when()` validation branch, no
-address lookups, no array fields, no async validation, no file inputs.
+`ClientApp/src/routes/acceptQuote/paymentDetails.tsx` — the simplest of a 4-step
+wizard flow (`reportRecipient` → `paymentDetails` → `deliveryAndReturn` →
+`summaryAndAccept`), chosen as the smallest safe migration target: 2 fields plus
+one conditional `contact` sub-block, one `.when()` validation branch, no address
+lookups, no array fields, no async validation, no file inputs.
 
 ## Phase 1 — Inventory (complete)
 
-None of the 4 acceptQuote step files import Formik directly. All Formik
-wiring lives in shared components: `FormikForm` (the `<Formik>` boundary,
+None of the 4 acceptQuote step files import Formik directly. All Formik wiring
+lives in shared components: `FormikForm` (the `<Formik>` boundary,
 `enableReinitialize`, a synthetic `values.saveAndExit` flag switching between
 soft/hard Yup validation), `WizardForm`/`WizardRoutedStep` (routing, step
-orchestration), `HidableField` (conditional visibility via
-`useFormikContext`), `ContactDetailsInput`, `UnsavedFormPrompt`, and every
-`Inputs/*` primitive (`TextInput`, `SelectInput`, `RadioButtonGroup`,
-`Checkbox`, `AddressLookup`, etc. — all `useField`-based).
+orchestration), `HidableField` (conditional visibility via `useFormikContext`),
+`ContactDetailsInput`, `UnsavedFormPrompt`, and every `Inputs/*` primitive
+(`TextInput`, `SelectInput`, `RadioButtonGroup`, `Checkbox`, `AddressLookup`,
+etc. — all `useField`-based).
 
-`FormikHelpers` is typed but never actually invoked in acceptQuote's
-`*Props.ts` files, de-risking imperative-API concerns. Test coverage is
-uneven: `paymentDetails.test.tsx` stubs out all Formik-bound children as dumb
-divs (weak real assurance); `reportRecipient.tsx` has no dedicated test at
-all.
+`FormikHelpers` is typed but never actually invoked in acceptQuote's `*Props.ts`
+files, de-risking imperative-API concerns. Test coverage is uneven:
+`paymentDetails.test.tsx` stubs out all Formik-bound children as dumb divs (weak
+real assurance); `reportRecipient.tsx` has no dedicated test at all.
 
 ## Phase 2 — Migration plan (complete, later superseded — see below)
 
-Original plan: build a transitional RHF-compatibility **adapter** at the
-shared `FormikForm`/`Inputs` boundary — swap `FormikForm`'s internal
-`<Formik>` for `useForm()` + a custom save-aware Yup resolver, with a
+Original plan: build a transitional RHF-compatibility **adapter** at the shared
+`FormikForm`/`Inputs` boundary — swap `FormikForm`'s internal `<Formik>` for
+`useForm()` + a custom save-aware Yup resolver, with a
 `useField`/`useFormikContext`/`Field` compatibility shim so all 9 routes
 consuming these shared components (`acceptQuote`, `ta`, `requestForQuote`,
 `contact` create/update, `account` create/update/addBranch) would need zero
 changes.
 
-Pre-migration regression baseline captured: **182 test files / 2064 tests,
-all passing** (`npm run test:unit`).
+Pre-migration regression baseline captured: **182 test files / 2064 tests, all
+passing** (`npm run test:unit`).
 
 ## Phase 3 — Implementation: three rounds of scope correction
 
-The adapter premise ("consumers need zero changes") turned out to be false,
-in three escalating discoveries:
+The adapter premise ("consumers need zero changes") turned out to be false, in
+three escalating discoveries:
 
-1. **Shared consumers import `formik` directly, not through any
-   indirection.** ~30 files (`Inputs/*`, `HidableField`, `ContactDetailsInput`,
+1. **Shared consumers import `formik` directly, not through any indirection.**
+   ~30 files (`Inputs/*`, `HidableField`, `ContactDetailsInput`,
    `UnsavedFormPrompt`, `SubmitFormButton`, `SaveAndExitButton`, and several
    route files) call `useField`/`useFormikContext`/`<Field>` imported straight
    from the `formik` package. A shim exposed only by `FormikForm` internals is
@@ -250,45 +283,44 @@ in three escalating discoveries:
      usage byte-identical.
 
 2. **`FormikForm` itself unconditionally renders `UnsavedFormPrompt`**, which
-   also calls the real `formik` package's `useFormikContext()` directly (as
-   does `RouteLeavingGuard`, which it renders). So `FormikForm`'s internals
-   cannot be swapped in isolation, even temporarily — the wiring change and
-   the consumer import-swap are atomic, not independently mergeable. The full,
-   precise inventory (multiline-aware) came to **30 files** needing the
-   runtime-context import swapped, including 4 route-level files inside the
-   "untouched" routes (`ta/supportingDocuments.tsx`,
-   `ta/applicationAndInstrument.tsx`,
+   also calls the real `formik` package's `useFormikContext()` directly (as does
+   `RouteLeavingGuard`, which it renders). So `FormikForm`'s internals cannot be
+   swapped in isolation, even temporarily — the wiring change and the consumer
+   import-swap are atomic, not independently mergeable. The full, precise
+   inventory (multiline-aware) came to **30 files** needing the runtime-context
+   import swapped, including 4 route-level files inside the "untouched" routes
+   (`ta/supportingDocuments.tsx`, `ta/applicationAndInstrument.tsx`,
    `requestForQuote/instrumentAndRequest.tsx`,
    `requestForQuote/organisationAndContact.tsx`).
-   - **Decision:** proceed atomically — wire `FormikForm` and swap all
-     affected imports together, verified against the 2064-test baseline
-     before committing.
+   - **Decision:** proceed atomically — wire `FormikForm` and swap all affected
+     imports together, verified against the 2064-test baseline before
+     committing.
 
 3. **The blast radius isn't bounded by "9 routes" at all.**
    `ClientApp/src/components/SearchFilter/filterMenu.tsx` — an unrelated
-   dashboard filter-menu feature — renders `Inputs/RadioButtonGroup` inside
-   its own standalone `<Formik>` instance, entirely outside
-   `FormikForm`/`WizardForm`. The same likely applies to `paFilterMenu.tsx`
-   and three Storybook story/harness files that also instantiate `<Formik>`
+   dashboard filter-menu feature — renders `Inputs/RadioButtonGroup` inside its
+   own standalone `<Formik>` instance, entirely outside
+   `FormikForm`/`WizardForm`. The same likely applies to `paFilterMenu.tsx` and
+   three Storybook story/harness files that also instantiate `<Formik>`
    directly. Once the shared `Inputs/*` primitives switch their
-   `useField`/`useFormikContext` source, **every** consumer breaks, not just
-   the wizard-form routes — there is no clean shared-component boundary in
-   this codebase.
-   - **Decision:** abandon the shared-boundary adapter. Switch to **forking
-     the specific inputs `paymentDetails.tsx` needs** into local, RHF-native
+   `useField`/`useFormikContext` source, **every** consumer breaks, not just the
+   wizard-form routes — there is no clean shared-component boundary in this
+   codebase.
+   - **Decision:** abandon the shared-boundary adapter. Switch to **forking the
+     specific inputs `paymentDetails.tsx` needs** into local, RHF-native
      variants used only by this one step, touching zero shared files.
 
 ## A further wrinkle for the fork-locally approach
 
 `WizardRoutedStep.tsx` unconditionally wraps every step in a real `<Formik>`
-(via `<FormikForm>`), rendering the step component deep inside that tree via
-a render-prop, with the surrounding `<Form onSubmit={formik.handleSubmit}>`
-HTML element wired to Formik's own submit handler — not something
+(via `<FormikForm>`), rendering the step component deep inside that tree via a
+render-prop, with the surrounding `<Form onSubmit={formik.handleSubmit}>` HTML
+element wired to Formik's own submit handler — not something
 `paymentDetails.tsx` controls. This means a true zero-shared-file fork cannot
 just stop importing Formik: `paymentDetails.tsx` must run its own `useForm()`
 internally for its actual fields (using the already-built save-aware Yup
-resolver — see below) and **sync its values into the outer Formik instance
-via `setFieldValue`** before/on submit, so the existing
+resolver — see below) and **sync its values into the outer Formik instance via
+`setFieldValue`** before/on submit, so the existing
 `WizardRoutedStep`/`FormikForm` submit pipeline (`removeHidden` →
 `removeEmptyKeys` → `onSaveAndExit`/`onSubmit`) keeps working completely
 unchanged. This keeps the change scoped to `paymentDetails.tsx` alone, at the
@@ -420,7 +452,8 @@ Suggested waves, with focused behavior tests and Storybook checks in each:
 
 1. Standalone search filters and Storybook/test harnesses.
 2. Single-page TA management forms such as `appDocuments` and `appDetails`.
-3. The remaining accept-quote steps, then remove the payment-details bridge.
+3. The remaining accept-quote steps. Keep the payment-details bridge until the
+   wizard shell moves to RHF (wave 5 / action 4).
 4. Account and contact create/update flows.
 5. Request-for-quote and the remaining TA wizard flows, including lookup,
    conditional, attachment, and nested-object fields.
