@@ -45,7 +45,7 @@ inputs below are pushed to `origin` but not yet merged to `main`.
 | Wave 3: `RhfAutoSuggest`, `RhfAutoSuggestContainer`            | Done                  | `375a3baf`, `5b52f77c`, `f15d41a9` |
 | Wave 3: `RhfManualAddressInput`, `RhfSelectInput` `inlineHelp` | Done                  | `d2c0a12a`                         |
 | Wave 3: `RhfAddressLookup` (no typed text in telemetry)        | Done, awaiting review | `6f393acf`, `fd35c0c9`             |
-| Wave 3: `ContactDetails`                                       | Not started           | —                                  |
+| Wave 3: `RhfContactDetails`                                    | Done                  | `37c1b806`, `214e8e6e`             |
 | Wave 3: step migrations (each behind a behavior suite)         | Not started           | —                                  |
 | Waves 4-5, shells (action 4), Formik removal (action 6)        | Not started           | —                                  |
 
@@ -137,6 +137,14 @@ reviews pending for the address commits):
 - Telemetry fix (`fd35c0c9`): the failed-search log no longer includes the typed
   address. The Formik `AddressLookup` still logs it (left byte-identical); fix
   separately if wanted.
+- `RhfContactDetails` (`37c1b806`, review fixes `214e8e6e`) under
+  `components/forms/CommonForms/RhfContactDetails`; spec and code-quality
+  reviewed. It drops the `type='Phone'|'Mobile'` prop (no effect outside
+  `'date'`). Deliberate difference from the Formik twin: the empty-title summary
+  fallback watches `<name>.title`, not the hardcoded
+  `organisationAndContact.contact.title`. It still imports `ContactDetailsProps`
+  from the Formik file; move that type to a shared file before the Formik twin is
+  deleted. 11 tests, 100% coverage.
 - Focused runs: `tests/unit/components/inputs` and `tests/unit/config` passed
   (45 files, 574 tests); the new address files and `RhfSelectInput` are at 100%
   coverage; type-check, ESLint and Prettier clean. No full gate, Storybook or
