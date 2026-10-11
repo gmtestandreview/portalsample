@@ -71,6 +71,7 @@ const coverageConfig: CoverageOptions = {
     'ClientApp/src/components/AriaComponents/Switch/Switch.tsx',
     'ClientApp/src/components/AriaComponents/Breadcrumb/Breadcrumbs.tsx',
     'ClientApp/src/components/AriaComponents/Button/Button.tsx',
+    'ClientApp/src/components/AriaComponents/AriaButton/Button.tsx',
     'ClientApp/src/components/AriaComponents/Calendar/Calendar.tsx',
     'ClientApp/src/components/AriaComponents/ColorArea/ColorArea.tsx',
     'ClientApp/src/components/AriaComponents/ColorField/ColorField.tsx',
