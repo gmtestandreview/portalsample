@@ -46,6 +46,7 @@ class ScriptEntrypointTests(unittest.TestCase):
             "run_loop.py",
             "improve_description.py",
             "run_readiness_pressure_eval.py",
+            "run_pipeline.py",
             "test_regressions.py",
         ]
 
@@ -415,6 +416,10 @@ class RedGreenEvalTests(unittest.TestCase):
                     str(candidate),
                     "--output-dir",
                     str(output_dir),
+                    "--model",
+                    "claude-sonnet-4-6",
+                    "--max-model-calls",
+                    "2",
                 ]),
                 patch.object(run_red_green_eval, "run_claude", return_value=failed_run),
                 patch("builtins.print"),
