@@ -38,6 +38,9 @@ inputs below are pushed to `origin` but not yet merged to `main`.
 | Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`           | Done                 | `1a65bcf3` |
 | Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup | Done                 | `e5702e7f` |
 | Wave 3 inputs: radio/select describedby and `aria-invalid`    | Done                 | `569e0332` |
+| Wave 3 inputs: shared `RhfRules`, per-radio `aria-invalid`    | Done                 | `0c4a3bb3` |
+| Wave 3 inputs: `radiogroup` fieldset carries `aria-invalid`   | Done                 | `f7ac5fba` |
+| Playwright BDD: dev-server warm-up, `domcontentloaded` waits  | Done, e2e app passes | `59512ae4` |
 | Wave 3: `AddressLookup`, `HidableField`, `ContactDetails`     | Not started          | —          |
 | Wave 3: step migrations (each behind a behavior suite)        | Not started          | —          |
 | Waves 4-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
@@ -109,14 +112,38 @@ Wave 3 shared inputs (each beside its Formik twin, with behavior tests and
   supports `aria-invalid` on `radiogroup`, not on `radio`), and removed it from
   the individual radios.
 
+Playwright BDD (app suite) cold-start fixes (`59512ae4`):
+
+- `playwright.config.ts` registers `tests/e2e/support/warm-dev-server.ts` as
+  `globalSetup`. It fetches `/dashboard` and every script it references, so the
+  webpack dev server builds its bundles once before the first test instead of
+  inside each worker's 30s navigation timeout.
+- Local `workers` is fixed at 4 (CI stays at 1); the default of half the cores
+  starved the single dev server.
+- The `/dashboard` and `/create-account` `Given` steps in `common.steps.ts` and
+  `account.steps.ts` use `page.goto(..., { waitUntil: 'domcontentloaded' })` and
+  then `waitForAppReady`, rather than waiting for the `load` event.
+- Verified (2026-10-11, run by the user locally): `npm run test:e2e:app` passed
+  all 31 tests in 1.2m on 4 workers, including the accept-quote, RFQ,
+  type-approval, account and sign-in features. This replaces the earlier
+  cold-start failure, where every test failed on the first run.
+
 Gates at the last full run (Wave 2 complete): `tsc --noEmit`, ESLint and
 Prettier clean; `test:unit:coverage` 198 files, 2,260 tests, 100% statements,
 branches, functions and lines. Storybook interaction tests passed for
 `RhfSelectInput`, `RhfAttachment`, `appDocuments`, `appDetails`,
 `summaryAndSubmit`, and the `OrganisationAndContact` and
-`ApplicationAndInstrument` step stories. E2E was not run on this branch. The
-Storybook MCP server was unreachable (`ECONNREFUSED`), so only documented props
-of in-repo components were used.
+`ApplicationAndInstrument` step stories. The Storybook MCP server was
+unreachable (`ECONNREFUSED`), so only documented props of in-repo components
+were used.
+
+Since then (Wave 3, focused runs only, no full gate): the
+`tests/unit/components/inputs` folder passed (26 files, 289 tests) and
+`tests/unit/components` passed (84 files, 750 tests, including the filter-menu
+consumers); type-check, ESLint and Prettier were clean on the changed files; the
+touched Wave 3 sources are at 100% coverage. `npm run test:e2e:app` passed 31 of
+31 after the `radiogroup` change (user-run, above). The `RhfRadioButtonGroup`
+Storybook interaction test and `npm run test:e2e:storybook` were not run.
 
 ### Next
 
@@ -125,8 +152,9 @@ of in-repo components were used.
    the reviews: object URLs are created once per document and revoked, the
    missing-category message shows after a failed submit, and each delete button
    names its file. Still to do:
-   - Run `npm run test:e2e:app` and `npm run test:e2e:storybook` on an idle
-     machine; the first app run failed every test on dev-server cold start.
+   - Run `npm run test:e2e:storybook` on an idle machine. The app suite is done:
+     the first run failed every test on dev-server cold start, and with the
+     warm-up and `domcontentloaded` fixes (`59512ae4`) it now passes 31 of 31.
    - Check `appDetails` and the wizard's last step on a real application: the
      "Applying for" sub-options now show.
    - Open the PR for this branch.
