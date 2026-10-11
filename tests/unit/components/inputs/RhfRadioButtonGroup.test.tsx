@@ -287,6 +287,41 @@ describe('RhfRadioButtonGroup', () => {
     expect(screen.getByLabelText('Open')).not.toBeChecked();
   });
 
+  it('keeps the help text id in aria-describedby alongside the validation message id', async () => {
+    const Submittable = () => {
+      const methods = useForm<Values>({ defaultValues: { status: '' } });
+      return (
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(() => undefined)}>
+            <RhfRadioButtonGroup
+              name='status'
+              id='q-status'
+              legend='Status'
+              inlineHelp='Pick one'
+              options={options}
+              rules={{ required: 'Choose a status' }}
+            />
+            <button type='submit'>submit</button>
+          </form>
+        </FormProvider>
+      );
+    };
+    render(<Submittable />);
+    const fieldset = screen.getByTestId('fs-q-status');
+    expect(fieldset).toHaveAttribute('aria-describedby', 'help-q-status');
+
+    await userEvent.click(screen.getByText('submit'));
+
+    expect(await screen.findByText('Choose a status')).toBeInTheDocument();
+    expect(fieldset).toHaveAttribute(
+      'aria-describedby',
+      'help-q-status q-status-validation-msg'
+    );
+    expect(screen.getByLabelText('All')).not.toHaveAttribute(
+      'aria-describedby'
+    );
+  });
+
   it('shows the validation message after a submit attempt without touching the group', async () => {
     const Submittable = () => {
       const methods = useForm<Values>({ defaultValues: { status: '' } });

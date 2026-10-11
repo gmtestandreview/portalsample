@@ -242,6 +242,19 @@ describe('RhfSelectInput', () => {
       'aria-describedby',
       'category-validation-msg'
     );
+    expect(select).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('has no aria-describedby or aria-invalid while the field is valid', () => {
+    render(
+      <Harness>
+        <RhfSelectInput name='category' label='Category' options={options} />
+      </Harness>
+    );
+
+    const select = screen.getByRole('combobox', { name: 'Category' });
+    expect(select).not.toHaveAttribute('aria-describedby');
+    expect(select).not.toHaveAttribute('aria-invalid');
   });
 
   it('shows the validation message once the field has been touched', async () => {

@@ -1,8 +1,8 @@
-import { useController } from 'react-hook-form';
 import { Form } from 'react-bootstrap';
 import SummaryDisplay from '../../SummaryDisplay';
 import type { RhfSelectInputProps } from './types';
 import { omitUndefined } from '../../../utils/omitUndefined';
+import { useRhfFieldA11y } from '../useRhfFieldA11y';
 
 /**
  * React Hook Form counterpart of `SelectInput`. It reads the form through
@@ -28,13 +28,8 @@ const RhfSelectInput = <T extends string | number = string>(
     addBlank,
   } = props;
 
-  const { field, fieldState, formState } = useController({ name });
-  const controlId = id || name;
-  const validationMessageId = `${controlId}-validation-msg`;
-  const errorMessage =
-    fieldState.isTouched || formState.isSubmitted
-      ? fieldState.error?.message
-      : undefined;
+  const { field, controlId, validationMessageId, errorMessage, describedBy } =
+    useRhfFieldA11y({ name, id });
 
   if (isSummary) {
     if (field.value === undefined || field.value === null || field.value === '')
@@ -67,7 +62,8 @@ const RhfSelectInput = <T extends string | number = string>(
           as='select'
           {...omitUndefined({
             disabled,
-            'aria-describedby': errorMessage ? validationMessageId : undefined,
+            'aria-describedby': describedBy,
+            'aria-invalid': errorMessage ? true : undefined,
           })}
           className={`form-field form-select ${className}`}
           name={field.name}

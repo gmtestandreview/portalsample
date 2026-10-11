@@ -1,11 +1,14 @@
 import { useController } from 'react-hook-form';
+import type { FieldValues, UseControllerProps } from 'react-hook-form';
 import type { ReactNode } from 'react';
+import { omitUndefined } from '../../utils/omitUndefined';
 
 interface UseRhfFieldA11yOptions {
   name: string;
   id?: string | undefined;
   inlineHelp?: ReactNode;
   supressFieldLevelMessages?: boolean | undefined;
+  rules?: UseControllerProps<FieldValues>['rules'];
 }
 
 /**
@@ -19,8 +22,12 @@ export const useRhfFieldA11y = ({
   id,
   inlineHelp,
   supressFieldLevelMessages,
+  rules,
 }: UseRhfFieldA11yOptions) => {
-  const { field, fieldState, formState } = useController({ name });
+  const { field, fieldState, formState } = useController({
+    name,
+    ...omitUndefined({ rules }),
+  });
   const controlId = id || name;
   const helpId = inlineHelp ? `help-${controlId}` : undefined;
   const validationMessageId = `${controlId}-validation-msg`;
