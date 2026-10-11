@@ -5,6 +5,7 @@ description:
   installing, or deploying Agent Skills/SKILL.md packages, especially activation
   boundaries, frontmatter, scope, progressive disclosure, supporting resources,
   evals, SKILL-specific validators, Codex installation, or deployment readiness.
+  Use also when explicitly asked to call "writing skills" or "called writing skills".
 compatibility: Codex, Claude, A Team, Claude Code, GitHub Copilot
 metadata:
   version: '2026-10-06-auto-opt-3'

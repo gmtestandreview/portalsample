@@ -1,0 +1,70 @@
+{
+  "artifact": "python-code-review optimized derived revision",
+  "date": "2026-10-11",
+  "evidence_family": "deterministic-static",
+  "behavioral_evidence": "NHR",
+  "checks": [
+    {
+      "id": "frontmatter-parse",
+      "status": "PASS",
+      "detail": "YAML frontmatter parsed successfully."
+    },
+    {
+      "id": "required-fields",
+      "status": "PASS",
+      "detail": "Required fields name and description are present."
+    },
+    {
+      "id": "frontmatter-constraints",
+      "status": "PASS",
+      "detail": "name length=18; description length=534."
+    },
+    {
+      "id": "body-size",
+      "status": "PASS",
+      "detail": "149 body lines; optimization target <200."
+    },
+    {
+      "id": "json-parse",
+      "status": "PASS",
+      "detail": "9 JSON resources parsed; errors=[]."
+    },
+    {
+      "id": "relative-links",
+      "status": "PASS",
+      "detail": "Broken relative links: []."
+    },
+    {
+      "id": "markdown-anchors",
+      "status": "PASS",
+      "detail": "Broken local anchors: []."
+    },
+    {
+      "id": "eval-definition-evidence-boundary",
+      "status": "PASS",
+      "detail": "Current case file explicitly distinguishes design from execution evidence."
+    },
+    {
+      "id": "historical-integrity",
+      "status": "PASS",
+      "detail": "10 historical/run artifacts hash-match supplied originals."
+    },
+    {
+      "id": "current-behavioral-runs",
+      "status": "NHR",
+      "detail": "No representative behavioral run was executed against this edited revision; this remains a deployment blocker."
+    }
+  ],
+  "hashes": {
+    "SKILL.md": "db953df000e7b8e046748c3f18c768a1c08ebf3e3b307427b8a26be63d95ee1f",
+    "SOURCE-ATTRIBUTION.md": "19456ecdf04d0470064ff4919ad62988cd19147c01e42d2d8e7dceb57947a5ac",
+    "references/python-general-review.md": "056a8495a403ab346d45d6a89218d8d454d472057e9047e38815c9c07f6a3c37",
+    "references/python-guidelines.md": "528c88e618dec42d6b82a6bdf5569add550f35f6b87fa6d7ce8c561da5c28895",
+    "references/python-remediation-method.md": "b8faa9adef98ca8ba89e8c7d43bfd57da6b27d23f9ae379d7985622c35e63acd",
+    "references/review-reporting.md": "0f26eacccb157a0ba12b1c0096906568605e70d3e1255bffddf6e8e28dc4c7cc",
+    "references/ruff-pyright-verification.md": "79f200474ee18c42fb5e00ebb3d33ea7990ba2c63f64b4b12948dbfa79498258",
+    "evals/cases.json": "b244eb6e6e88b5fdbeedcb6006379f60a29d5742a9cef78af11e6ac711b4e498",
+    "evals/evidence-applicability.md": "f1278ede0236912c9ed26721a2c164edfa02a75d10eea5edfa7f513a035395cd",
+    "evals/qaq-rmi.md": "bf07b247f2c8ea699df03ff1f6cb4eff3717ac10b1d432e1120d260ad5dbbb7a"
+  }
+}

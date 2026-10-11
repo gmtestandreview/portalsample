@@ -3,7 +3,7 @@ export type RollupLogHandler = (level: string, log: RollupLog) => void;
 
 /**
  * Rollup/Rolldown log filter for the Storybook build (`viteFinal` →
- * `build.rollupOptions.onLog`). It drops two classes of noise we cannot act on
+ * `build.rolldownOptions.onLog`). It drops two classes of noise we cannot act on
  * and that have no functional effect, and forwards everything else untouched so
  * no first-party warning or error can be swallowed:
  *

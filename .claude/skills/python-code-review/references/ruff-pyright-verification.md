@@ -124,6 +124,29 @@ constant extraction can change type-checker precision; preserve
 literal-key/value information with `Literal`, `Final`, typed constants, or
 another project-compatible form when needed.
 
+## Typed-helper extraction regression
+
+Apply this gate even when the requested repair concerns only Sonar complexity.
+Establish the type-check baseline before extraction and rerun against the final
+workspace files; confirm the intended files were actually checked. Use the
+project/editor mode and required rule overrides. If no checker configuration is
+available, use a scoped Pyright probe with `reportUnknownArgumentType` enabled,
+record its settings, and identify editor equivalence as unknown. A strict probe
+is a reproduction aid, not permission to change repository policy.
+
+Check every new caller/callee boundary for types inferred from JSON, `Any`,
+empty defaults, and container guards. In particular, `isinstance(paths, list)`
+establishes a list container but can leave its elements as `Unknown`; passing it
+to a `list[str]` parameter can introduce `reportUnknownArgumentType` while Ruff
+and all behavioral fixtures pass. Model the boundary accurately and preserve
+malformed-input behavior. The list guard alone does not validate string
+elements. Do not erase the diagnostic with a blanket `Any` parameter, an
+unjustified cast, an ignore, or disabled rules.
+
+Final evidence must include the fresh type-check result or its explicit
+unavailability alongside the original analyzer result. An unavailable Sonar run
+does not excuse skipping an available type checker.
+
 ## Sonar / SonarLint
 
 When version-specific behavior matters, use the exact rule
