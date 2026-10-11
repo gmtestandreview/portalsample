@@ -21,16 +21,12 @@ import AppLogger from '../../instrumentation/AppLogger';
 import DeliveryInstructions from '../../components/Utilities/deliveryInstructions';
 import { getFormattedAddress } from '../common/helperFunctions';
 import DeliveryAndReturnFormikBridge from './deliveryAndReturnFormikBridge';
+import {
+  RETURN_CONTACT_TYPE_OPTIONS,
+  RETURN_METHOD_OPTIONS,
+} from './deliveryAndReturnOptions';
 
 const getName = prefixedPropertyOf<DeliveryAndReturnStep>('deliveryAndReturn');
-
-function getNameForUse2(
-  name: keyof DeliveryAndReturnStep,
-  isSummary: boolean | undefined
-) {
-  const fullname = isSummary ? getName(name) : name;
-  return fullname;
-}
 
 const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   const { isSummary, id } = props;
@@ -50,10 +46,6 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
   >();
   const account = useAccountState();
   const homeAccountId = account?.details?.homeAccountId;
-
-  function getNameForUse(name: keyof DeliveryAndReturnStep): string {
-    return getNameForUse2(name, isSummary);
-  }
 
   const renderNoDeliveryInfoMsg = () => (
     <p className='mb-0'>
@@ -194,24 +186,13 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
                 <h3 className='h4 my-3'>Return contact person</h3>
                 <RadioButtonGroup
                   legend='Please select your contact person for the returned instrument/artefact when the job has completed'
-                  name={getNameForUse('returnContactType')}
+                  name={getName('returnContactType')}
                   id='q-returnContactType'
                   isSummary={isSummary}
-                  options={[
-                    {
-                      label: 'The main contact person for this request',
-                      value: 'SamePerson',
-                      id: 'returnContactType-SamePerson',
-                    },
-                    {
-                      label: 'A different return contact person',
-                      value: 'DifferentPerson',
-                      id: 'returnContactType-DifferentPerson',
-                    },
-                  ]}
+                  options={RETURN_CONTACT_TYPE_OPTIONS}
                 />
               </Row>
-              <HidableField name={getNameForUse('rfqHide')}>
+              <HidableField name={getName('rfqHide')}>
                 <Row className='mb-4'>
                   <h4 className='h5 my-3'>Return contact person details</h4>
                   <ContactDetailsInput
@@ -221,12 +202,12 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
                   />
                 </Row>
               </HidableField>
-              <HidableField name={getNameForUse('contactHide')}>
+              <HidableField name={getName('contactHide')}>
                 <Row className='mb-4'>
                   <h4 className='h5 my-3'>Return contact person details</h4>
                   <ContactDetailsInput
                     key='contact'
-                    name={getNameForUse('contact')}
+                    name={getName('contact')}
                     isSummary={isSummary}
                   />
                 </Row>
@@ -286,26 +267,10 @@ const DeliveryAndReturn = (props: Readonly<DeliveryAndReturnProps>) => {
                 <h3 className='h4 my-3'>Return method</h3>
                 <RadioButtonGroup
                   legend='Choose your return method for the instrument/artefact'
-                  name={getNameForUse('returnMethod')}
+                  name={getName('returnMethod')}
                   id='q-returnMethod'
                   isSummary={isSummary}
-                  options={[
-                    {
-                      label: 'Client to arrange when completed',
-                      value: 'ClientToArrange',
-                      id: 'returnMethod-ClientToArrange',
-                    },
-                    {
-                      label: 'Client will collect/pickup when completed',
-                      value: 'ClientWillCollect',
-                      id: 'returnMethod-ClientWillCollect',
-                    },
-                    {
-                      label: 'Client will provide carrier details below',
-                      value: 'ClientWillProvide',
-                      id: 'returnMethod-ClientWillProvide',
-                    },
-                  ]}
+                  options={RETURN_METHOD_OPTIONS}
                 />
               </Row>
             </>

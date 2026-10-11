@@ -12,6 +12,10 @@ import RhfContactDetails from '../../components/forms/CommonForms/RhfContactDeta
 import RhfHidableField from '../../components/forms/RhfHidableField';
 import type { BridgedValues } from '../../components/forms/useFormikRhfBridge';
 import { getFormattedAddress } from '../common/helperFunctions';
+import {
+  RETURN_CONTACT_TYPE_OPTIONS,
+  RETURN_METHOD_OPTIONS,
+} from './deliveryAndReturnOptions';
 
 export type DeliveryAndReturnFormValues = DeliveryAndReturnStep & BridgedValues;
 
@@ -41,24 +45,6 @@ const SHIPMENT_PRIORITY_OPTIONS = [
   { label: 'Priority', value: 'Priority' },
 ].map((option) => ({ ...option, id: `shipmentPriority-${option.value}` }));
 
-const RETURN_METHOD_OPTIONS = [
-  {
-    label: 'Client to arrange when completed',
-    value: 'ClientToArrange',
-    id: 'returnMethod-ClientToArrange',
-  },
-  {
-    label: 'Client will collect/pickup when completed',
-    value: 'ClientWillCollect',
-    id: 'returnMethod-ClientWillCollect',
-  },
-  {
-    label: 'Client will provide carrier details below',
-    value: 'ClientWillProvide',
-    id: 'returnMethod-ClientWillProvide',
-  },
-];
-
 const ReturnContactFields = () => (
   <>
     <Row className='mb-4'>
@@ -68,18 +54,7 @@ const ReturnContactFields = () => (
         legend='Please select your contact person for the returned instrument/artefact when the job has completed'
         name='returnContactType'
         id='q-returnContactType'
-        options={[
-          {
-            label: 'The main contact person for this request',
-            value: 'SamePerson',
-            id: 'returnContactType-SamePerson',
-          },
-          {
-            label: 'A different return contact person',
-            value: 'DifferentPerson',
-            id: 'returnContactType-DifferentPerson',
-          },
-        ]}
+        options={RETURN_CONTACT_TYPE_OPTIONS}
       />
     </Row>
     <RhfHidableField name='contactHide'>

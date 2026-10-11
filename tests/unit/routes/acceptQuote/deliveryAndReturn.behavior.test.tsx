@@ -320,6 +320,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
       packagingNotes: 'Bubble wrap',
       insuranceNotes: 'Insured',
       specialInstructions: 'Fragile',
+      // Pins legacy behavior: NumberInput stores the displayed text, although
+      // the DTO types customsValue as a number. Not an endorsement.
       customsValue: '1,234.00',
       shipmentMode: 'Air',
       shipmentPriority: 'Express',

@@ -103,6 +103,17 @@ const getRedirectionLocationOnError =
     return undefined;
   };
 
+export const deliveryAndReturnHidingFields = {
+  contactHide: (x: DeliveryAndReturnStep) =>
+    x.returnContactType === 'SamePerson',
+  contact: {
+    titleOther: (x: DeliveryAndReturnStep) => x.contact?.title !== 'Other',
+  },
+  returnAddress: (x: DeliveryAndReturnStep) => x.returnAddressType !== 'Other',
+  carrierHide: (x: DeliveryAndReturnStep) =>
+    x.returnMethod !== 'ClientWillProvide',
+};
+
 const deliveryAndReturnProps = (
   id: string,
   accounts: AccountInfo[],
@@ -118,17 +129,7 @@ const deliveryAndReturnProps = (
   loadStepValues: loadDeliveryAndReturn(id, accounts, instance),
   location: '/delivery-and-return',
   title: 'Instrument/artefact delivery and return',
-  hidingFields: {
-    contactHide: (x: DeliveryAndReturnStep) =>
-      x.returnContactType === 'SamePerson',
-    contact: {
-      titleOther: (x: DeliveryAndReturnStep) => x.contact?.title !== 'Other',
-    },
-    returnAddress: (x: DeliveryAndReturnStep) =>
-      x.returnAddressType !== 'Other',
-    carrierHide: (x: DeliveryAndReturnStep) =>
-      x.returnMethod !== 'ClientWillProvide',
-  },
+  hidingFields: deliveryAndReturnHidingFields,
   validateHard: deliveryAndReturnSubmitValidation,
   validateSoft: deliveryAndReturnSaveValidation,
   onSaveAndExit: saveStep(id, accounts, instance, false),

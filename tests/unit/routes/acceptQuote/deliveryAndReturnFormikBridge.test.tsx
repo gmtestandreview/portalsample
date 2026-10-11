@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Form, Formik, useFormikContext } from 'formik';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -9,6 +9,9 @@ import {
   ReturnMethodValues,
   type DeliveryAndReturnStep,
 } from '@/api/web-api-client';
+import { deliveryAndReturnHidingFields } from '@/routes/acceptQuote/deliveryAndReturnProps';
+import ErrorSummary from '@/components/forms/ErrorSummary';
+import { MemoryRouter } from 'react-router';
 import DeliveryAndReturnFormikBridge from '@/routes/acceptQuote/deliveryAndReturnFormikBridge';
 import {
   deliveryAndReturnSaveValidation,
@@ -47,22 +50,14 @@ vi.mock('@/instrumentation/AppLogger', () => ({
   default: { verbose: vi.fn(), error: vi.fn() },
 }));
 
-const hidingFields = {
-  contactHide: (x: DeliveryAndReturnStep) =>
-    x.returnContactType === 'SamePerson',
-  contact: {
-    titleOther: (x: DeliveryAndReturnStep) => x.contact?.title !== 'Other',
-  },
-  returnAddress: (x: DeliveryAndReturnStep) => x.returnAddressType !== 'Other',
-  carrierHide: (x: DeliveryAndReturnStep) =>
-    x.returnMethod !== 'ClientWillProvide',
-};
+const hidingFields = deliveryAndReturnHidingFields;
 
 type Values = DeliveryAndReturnStep & { saveAndExit?: boolean };
 
 interface HarnessProps {
   values?: Values;
   withHiddenRules?: boolean;
+  withErrorSummary?: boolean;
   onSubmit?: (values: DeliveryAndReturnStep) => void;
 }
 
@@ -78,30 +73,36 @@ function Probe() {
 function Harness({
   values = {},
   withHiddenRules = true,
+  withErrorSummary = false,
   onSubmit = vi.fn(),
 }: Readonly<HarnessProps>) {
   return (
-    <Formik<Values>
-      initialValues={values}
-      {...(withHiddenRules ? { initialStatus: { hidden: hidingFields } } : {})}
-      validate={(formValues) =>
-        validateForm(
-          formValues.saveAndExit
-            ? deliveryAndReturnSaveValidation
-            : deliveryAndReturnSubmitValidation,
-          hidingFields
-        )(formValues)
-      }
-      onSubmit={(submitted) =>
-        onSubmit(removeHidden(submitted, submitted, hidingFields))
-      }
-    >
-      <Form noValidate>
-        <DeliveryAndReturnFormikBridge />
-        <Probe />
-        <button type='submit'>Continue</button>
-      </Form>
-    </Formik>
+    <MemoryRouter>
+      <Formik<Values>
+        initialValues={values}
+        {...(withHiddenRules
+          ? { initialStatus: { hidden: hidingFields } }
+          : {})}
+        validate={(formValues) =>
+          validateForm(
+            formValues.saveAndExit
+              ? deliveryAndReturnSaveValidation
+              : deliveryAndReturnSubmitValidation,
+            hidingFields
+          )(formValues)
+        }
+        onSubmit={(submitted) =>
+          onSubmit(removeHidden(submitted, submitted, hidingFields))
+        }
+      >
+        <Form noValidate>
+          {withErrorSummary && <ErrorSummary />}
+          <DeliveryAndReturnFormikBridge />
+          <Probe />
+          <button type='submit'>Continue</button>
+        </Form>
+      </Formik>
+    </MemoryRouter>
   );
 }
 
@@ -289,5 +290,33 @@ describe('DeliveryAndReturnFormikBridge', () => {
     expect(
       screen.getByRole('combobox', { name: /Return address/ })
     ).toBeInTheDocument();
+  });
+
+  it('renders a field for every error summary link after a failed submit', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        withErrorSummary
+        values={{
+          returnContactType: ReturnContactTypeValues.DifferentPerson,
+          returnAddressType: ReturnAddressTypeValues.Other,
+          returnMethod: ReturnMethodValues.ClientWillProvide,
+        }}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    const summary = await screen.findByTestId('form-error-summary');
+    const keys = within(summary)
+      .getAllByRole('link')
+      .map((link) => link.getAttribute('href')?.replace(/^#/, '') ?? '');
+    expect(keys).toEqual(
+      expect.arrayContaining(['carrierName', 'contact.firstName'])
+    );
+    expect(keys.some((key) => key.startsWith('returnAddress'))).toBe(true);
+    keys.forEach((key) =>
+      expect(document.getElementById(key), key).not.toBeNull()
+    );
   });
 });
