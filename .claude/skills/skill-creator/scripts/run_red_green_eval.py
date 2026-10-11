@@ -5,16 +5,39 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import json
 import os
 import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, NoReturn, TypedDict, cast
+
+try:
+    from scripts.eval_control import (
+        AttemptSpec,
+        CachedResult,
+        CheckpointStore,
+        ClaudeCliError,
+        EvaluationControl,
+        validate_model_id,
+    )
+except ModuleNotFoundError:
+    if str(Path(__file__).resolve().parent) not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from eval_control import (
+        AttemptSpec,
+        CachedResult,
+        CheckpointStore,
+        ClaudeCliError,
+        EvaluationControl,
+        validate_model_id,
+    )
 
 CLAUDE_DIR = ".claude"
 CLAUDE_TIMEOUT_SECONDS = 360
@@ -41,6 +64,7 @@ class RunData(TypedDict):
     duration_seconds: float
     events: list[Event]
     stderr: str
+    usage: dict[str, object]
 
 
 class CaseSummary(TypedDict):
@@ -207,7 +231,16 @@ def run_claude(
     transcript_path: Path,
     result_path: Path,
     prompt_text: str = TASK_PROMPT,
+    *,
+    control: EvaluationControl | None = None,
+    spec: AttemptSpec | None = None,
 ) -> RunData:
+    if control is not None and spec is None:
+        raise ValueError("a controller requires an attempt specification")
+    if control is not None and spec is not None:
+        if not control.reserve_call(spec):
+            raise RuntimeError(f"behavioral call unavailable: {control.stop_reason}")
+
     prompt = " ".join(prompt_text.split())
     cmd = [
         "claude",
@@ -257,9 +290,12 @@ def run_claude(
             stdout, stderr = process.communicate()
             transcript.write(stdout or "")
             result_path.write_text(stderr or "", encoding="utf-8")
-            raise TimeoutError(
+            error = TimeoutError(
                 f"claude run exceeded {CLAUDE_TIMEOUT_SECONDS}s"
-            ) from exc
+            )
+            if control is not None and spec is not None:
+                control.record_error(spec, error)
+            raise error from exc
         transcript.write(stdout or "")
 
     result_path.write_text(stderr or "", encoding="utf-8")
@@ -277,18 +313,102 @@ def run_claude(
             continue
         if not isinstance(parsed, dict):
             continue
+        try:
+            _result_event_decision(parsed)
+        except ClaudeCliError as exc:
+            if control is not None and spec is not None:
+                control.record_error(spec, exc)
+            raise
         events.append(parsed)
 
     exit_code = process.returncode
     if exit_code is None:
         raise RuntimeError("claude process did not exit after communicate()")
 
-    return {
+    run_data = {
         "exit_code": exit_code,
         "duration_seconds": round(time.monotonic() - started, 2),
         "events": events,
         "stderr": stderr,
+        "usage": _extract_usage(events),
     }
+    if control is not None and spec is not None:
+        if exit_code != 0:
+            error = RuntimeError(f"claude exited with status {exit_code}")
+            control.record_error(spec, error)
+        else:
+            control.record_success(
+                spec,
+                CachedResult(
+                    outcome="engaged",
+                    payload={"run_data": run_data},
+                ),
+            )
+    return run_data
+
+
+def _result_event_decision(event: Event) -> str | None:
+    """Classify terminal events without turning API errors into valid negatives."""
+    if event.get("type") != "result":
+        return None
+    if event.get("is_error") is True:
+        status = event.get("api_error_status")
+        numeric_status = status if isinstance(status, int) and not isinstance(status, bool) else None
+        message = event.get("result") or event.get("error") or "Claude returned an error"
+        raise ClaudeCliError(numeric_status, str(message))
+    return "success"
+
+
+def _extract_usage(events: list[Event]) -> dict[str, object]:
+    for event in reversed(events):
+        usage = event.get("usage")
+        if isinstance(usage, dict):
+            return dict(usage)
+        result = event.get("result")
+        if isinstance(result, dict) and isinstance(result.get("usage"), dict):
+            return dict(cast(dict[object, object], result["usage"]))
+    return {}
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def artifact_manifest(root: Path) -> list[dict[str, str]]:
+    """Return complete, sorted workspace-relative evidence digests."""
+    root = root.resolve()
+    entries: list[dict[str, str]] = []
+    for path in sorted(path for path in root.rglob("*") if path.is_file()):
+        entries.append({
+            "relative_path": path.relative_to(root).as_posix(),
+            "sha256": _sha256_file(path),
+        })
+    return entries
+
+
+def validate_artifact_manifest(root: Path, artifacts: object) -> str | None:
+    if not isinstance(artifacts, list):
+        return "artifact manifest is not a list"
+    root = root.resolve()
+    for raw in artifacts:
+        if not isinstance(raw, dict):
+            return "artifact evidence is not an object"
+        relative = raw.get("relative_path")
+        expected = raw.get("sha256")
+        if not isinstance(relative, str) or not isinstance(expected, str):
+            return "artifact evidence has invalid fields"
+        path = (root / relative).resolve()
+        if root != path and root not in path.parents:
+            return "artifact path escapes workspace"
+        if not path.is_file():
+            return f"artifact is missing: {relative}"
+        if _sha256_file(path) != expected:
+            return f"artifact digest mismatch: {relative}"
+    return None
 
 
 def cleanup_tree(path: Path) -> None:
@@ -473,19 +593,34 @@ Overall: {overall}
     (output_dir / "independent-red-green-report.md").write_text(report, encoding="utf-8")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--candidate-skill", default=".", help="Path to candidate skill directory")
-    parser.add_argument("--output-dir", required=True, help="Directory for evidence artifacts")
-    args = parser.parse_args()
+def _skill_content_digest(candidate: Path) -> str:
+    return hashlib.sha256((candidate / "SKILL.md").read_bytes()).hexdigest()
 
-    candidate = Path(args.candidate_skill).resolve()
-    output_dir = Path(args.output_dir).resolve()
+
+def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:
+    snapshot = control.snapshot()
+    return {
+        "planned_calls": snapshot.planned_calls,
+        "attempted_calls": snapshot.attempted_calls,
+        "resumed_calls": snapshot.resumed_calls,
+        "successful_calls": snapshot.successful_calls,
+        "error_calls": snapshot.error_calls,
+        "skipped_calls": snapshot.skipped_calls,
+    }
+
+
+def run_red_green_evaluation(
+    candidate: Path,
+    output_dir: Path,
+    control: EvaluationControl,
+    model: str,
+) -> dict[str, object]:
+    """Run RED and GREEN under one parent-owned controller."""
     output_dir.mkdir(parents=True, exist_ok=True)
-
-    summaries: dict[str, CaseSummary] = {}
     red_root = Path(tempfile.mkdtemp(prefix="skill-red-green-"))
     green_root = Path(tempfile.mkdtemp(prefix="skill-red-green-"))
+    summaries: dict[str, CaseSummary] = {}
+    digest = _skill_content_digest(candidate)
     try:
         (red_root / CLAUDE_DIR).mkdir()
         (green_root / CLAUDE_DIR / "skills").mkdir(parents=True)
@@ -493,21 +628,84 @@ def main() -> int:
         create_fixture(green_root)
         copy_candidate_skill(candidate, green_root)
 
-        for label, root in (("red", red_root), ("green", green_root)):
+        for label, root, kind in (
+            ("red", red_root, "readiness:red"),
+            ("green", green_root, "readiness:green"),
+        ):
             case_dir = output_dir / label
             case_dir.mkdir(parents=True, exist_ok=True)
-            run_data = run_claude(root, case_dir / "transcript.jsonl", case_dir / "stderr.txt")
-            summaries[label] = summarize_case(label, root, run_data)
+            spec = AttemptSpec(
+                kind=kind,
+                query=TASK_PROMPT,
+                run_index=0,
+                skill_name=candidate.name,
+                skill_content_sha256=digest,
+                model=model,
+                claude_version="unknown",
+                distractor_sha256="",
+            )
+            try:
+                run_data = run_claude(
+                    root,
+                    case_dir / "transcript.jsonl",
+                    case_dir / "stderr.txt",
+                    prompt_text=TASK_PROMPT,
+                    control=control,
+                    spec=spec,
+                )
+            except (ClaudeCliError, RuntimeError):
+                if control.stop_reason is not None:
+                    break
+                continue
             save_case_files(root, case_dir)
+            summaries[label] = summarize_case(label, root, run_data)
 
-        summary_path = output_dir / "summary.json"
-        summary_path.write_text(json.dumps(summaries, indent=2), encoding="utf-8")
-        write_report(output_dir, summaries["red"], summaries["green"])
-        print(json.dumps(summaries, indent=2))
-        return 0 if eval_passed(summaries["red"], summaries["green"]) else 1
+        if "red" in summaries and "green" in summaries:
+            write_report(output_dir, summaries["red"], summaries["green"])
+        return {
+            "status": "complete" if len(summaries) == 2 else "partial",
+            "summaries": summaries,
+            "execution": _snapshot_dict(control),
+        }
     finally:
         cleanup_tree(red_root)
         cleanup_tree(green_root)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--candidate-skill", default=".", help="Path to candidate skill directory")
+    parser.add_argument("--output-dir", required=True, help="Directory for evidence artifacts")
+    parser.add_argument("--model", required=True, help="Explicit versioned Claude model ID")
+    parser.add_argument("--max-model-calls", type=int, required=True, help="Maximum live model calls")
+    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
+    parser.add_argument("--deadline-seconds", type=float, default=None, help="Stop after this many seconds")
+    args = parser.parse_args()
+
+    candidate = Path(args.candidate_skill).resolve()
+    output_dir = Path(args.output_dir).resolve()
+    if args.max_model_calls <= 0:
+        parser.error("max-model-calls must be positive")
+    if args.deadline_seconds is not None and args.deadline_seconds <= 0:
+        parser.error("deadline-seconds must be positive")
+    try:
+        model = validate_model_id(args.model)
+    except ValueError as exc:
+        parser.error(str(exc))
+    checkpoint = CheckpointStore(Path(args.checkpoint)) if args.checkpoint else None
+    control = EvaluationControl(
+        max_calls=args.max_model_calls,
+        planned_calls=2,
+        checkpoint=checkpoint,
+        deadline_seconds=args.deadline_seconds,
+    )
+    result = run_red_green_evaluation(candidate, output_dir, control, model)
+    summaries = cast(dict[str, CaseSummary], result["summaries"])
+    (output_dir / "summary.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(json.dumps(result, indent=2))
+    if result["status"] != "complete":
+        return 2
+    return 0 if eval_passed(summaries["red"], summaries["green"]) else 1
 
 
 if __name__ == "__main__":

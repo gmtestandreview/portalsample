@@ -4,10 +4,12 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import re
 import shutil
+import sys
 import tempfile
 from collections.abc import Callable
 from datetime import datetime, timezone
@@ -15,6 +17,13 @@ from importlib import import_module
 from pathlib import Path
 from types import ModuleType
 from typing import Protocol, TypedDict, cast, runtime_checkable
+
+try:
+    from scripts.eval_control import AttemptSpec, CheckpointStore, EvaluationControl, validate_model_id
+except ModuleNotFoundError:
+    if str(Path(__file__).resolve().parent) not in sys.path:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from eval_control import AttemptSpec, CheckpointStore, EvaluationControl, validate_model_id
 
 RunEvent = dict[str, object]
 
@@ -59,6 +68,9 @@ class _EvalHelpers(Protocol):
         transcript_path: Path,
         result_path: Path,
         prompt_text: str,
+        *,
+        control: EvaluationControl | None = None,
+        spec: AttemptSpec | None = None,
     ) -> object: ...
 
 
@@ -92,7 +104,7 @@ class _EvalHelpersAdapter:
             module.final_result,
         )
         self._run_claude = cast(
-            Callable[[Path, Path, Path, str], object],
+            Callable[..., object],
             module.run_claude,
         )
 
@@ -114,12 +126,24 @@ class _EvalHelpersAdapter:
         transcript_path: Path,
         result_path: Path,
         prompt_text: str,
+        *,
+        control: EvaluationControl | None = None,
+        spec: AttemptSpec | None = None,
     ) -> object:
+        if control is None and spec is None:
+            return self._run_claude(
+                project_root,
+                transcript_path,
+                result_path,
+                prompt_text,
+            )
         return self._run_claude(
             project_root,
             transcript_path,
             result_path,
             prompt_text,
+            control=control,
+            spec=spec,
         )
 
 
@@ -661,21 +685,30 @@ def _resolve_cli_paths(candidate_arg: str, output_arg: str) -> tuple[Path, Path]
     return candidate, output_dir
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--candidate-skill", default=".", help="Path to candidate skill directory")
-    parser.add_argument("--output-dir", required=True, help="Directory for evidence artifacts")
-    args = parser.parse_args()
+def _snapshot_dict(control: EvaluationControl) -> dict[str, object]:
+    snapshot = control.snapshot()
+    return {
+        "planned_calls": snapshot.planned_calls,
+        "attempted_calls": snapshot.attempted_calls,
+        "resumed_calls": snapshot.resumed_calls,
+        "successful_calls": snapshot.successful_calls,
+        "error_calls": snapshot.error_calls,
+        "skipped_calls": snapshot.skipped_calls,
+    }
 
-    try:
-        candidate, output_dir = _resolve_cli_paths(args.candidate_skill, args.output_dir)
-    except (FileNotFoundError, NotADirectoryError) as exc:
-        parser.error(str(exc))
+
+def run_readiness_evaluation(
+    candidate: Path,
+    output_dir: Path,
+    control: EvaluationControl,
+    model: str,
+) -> dict[str, object]:
+    """Run the RED/GREEN readiness pair through the shared controller."""
     output_dir.mkdir(parents=True, exist_ok=True)
-
     red_root = Path(tempfile.mkdtemp(prefix="skill-readiness-red-"))
     green_root: Path | None = None
     summaries: dict[str, CaseSummary] = {}
+    digest = hashlib.sha256((candidate / "SKILL.md").read_bytes()).hexdigest()
     try:
         green_root = Path(tempfile.mkdtemp(prefix="skill-readiness-green-"))
         (red_root / ".claude").mkdir()
@@ -684,32 +717,82 @@ def main() -> None:
         create_fixture(green_root)
         copy_candidate_skill(candidate, green_root)
 
-        for label, root in (("red", red_root), ("green", green_root)):
+        for label, root, kind in (
+            ("red", red_root, "readiness:red"),
+            ("green", green_root, "readiness:green"),
+        ):
             case_dir = output_dir / label
             case_dir.mkdir(parents=True, exist_ok=True)
-            raw_run_data = run_claude(
-                root,
-                case_dir / "transcript.jsonl",
-                case_dir / "stderr.txt",
-                prompt_text=TASK_PROMPT,
+            spec = AttemptSpec(
+                kind=kind,
+                query=TASK_PROMPT,
+                run_index=0,
+                skill_name=candidate.name,
+                skill_content_sha256=digest,
+                model=model,
+                claude_version="unknown",
+                distractor_sha256="",
             )
+            try:
+                raw_run_data = run_claude(
+                    root,
+                    case_dir / "transcript.jsonl",
+                    case_dir / "stderr.txt",
+                    prompt_text=TASK_PROMPT,
+                    control=control,
+                    spec=spec,
+                )
+            except (RuntimeError, ValueError):
+                break
             run_data = _normalize_run_data(raw_run_data)
-            # Snapshot first so evidence survives even if summarizing fails closed.
             save_case_files(root, case_dir)
             summaries[label] = summarize_case(label, root, run_data)
 
-        (output_dir / "summary.json").write_text(
-            json.dumps(summaries, indent=2),
-            encoding="utf-8",
-        )
-        write_report(output_dir, summaries["red"], summaries["green"])
-        print(json.dumps(summaries, indent=2))
+        if "red" in summaries and "green" in summaries:
+            write_report(output_dir, summaries["red"], summaries["green"])
+        return {
+            "status": "complete" if len(summaries) == 2 else "partial",
+            "summaries": summaries,
+            "execution": _snapshot_dict(control),
+        }
     finally:
-        try:
-            cleanup_tree(red_root)
-        finally:
-            if green_root is not None:
-                cleanup_tree(green_root)
+        cleanup_tree(red_root)
+        if green_root is not None:
+            cleanup_tree(green_root)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--candidate-skill", default=".", help="Path to candidate skill directory")
+    parser.add_argument("--output-dir", required=True, help="Directory for evidence artifacts")
+    parser.add_argument("--model", required=True, help="Explicit versioned Claude model ID")
+    parser.add_argument("--max-model-calls", type=int, required=True, help="Maximum live model calls")
+    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
+    parser.add_argument("--deadline-seconds", type=float, default=None, help="Stop after this many seconds")
+    args = parser.parse_args()
+
+    try:
+        candidate, output_dir = _resolve_cli_paths(args.candidate_skill, args.output_dir)
+    except (FileNotFoundError, NotADirectoryError) as exc:
+        parser.error(str(exc))
+    if args.max_model_calls <= 0:
+        parser.error("max-model-calls must be positive")
+    if args.deadline_seconds is not None and args.deadline_seconds <= 0:
+        parser.error("deadline-seconds must be positive")
+    try:
+        model = validate_model_id(args.model)
+    except ValueError as exc:
+        parser.error(str(exc))
+    checkpoint = CheckpointStore(Path(args.checkpoint)) if args.checkpoint else None
+    control = EvaluationControl(
+        max_calls=args.max_model_calls,
+        planned_calls=2,
+        checkpoint=checkpoint,
+        deadline_seconds=args.deadline_seconds,
+    )
+    result = run_readiness_evaluation(candidate, output_dir, control, model)
+    (output_dir / "summary.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    print(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":
