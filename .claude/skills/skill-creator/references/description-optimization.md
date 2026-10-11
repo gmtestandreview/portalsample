@@ -2,6 +2,19 @@
 
 Use this reference when improving the `description` field so the skill activates for relevant requests without over-triggering on adjacent work.
 
+`run_loop.py` is a separate live, quota-consuming tuning workflow; it is not
+part of the deterministic `check`, `smoke`, or `release` pipeline. Live use must
+provide an explicit full model ID and positive `--max-model-calls`, and may also
+provide `--checkpoint` and `--deadline-seconds`. The preflight call plan counts
+the maximum trigger probes plus up to two rewrite/shorten calls per non-final
+iteration. A lower cap is allowed but may produce partial evidence.
+
+Successful checkpointed rewrites can resume without a Claude call. Empty,
+malformed, or over-limit cached descriptions are rejected and regenerated under
+a fresh permit. Duplicate descriptions and patience-limited plateaus stop before
+another trigger batch. Rate limits, exhausted budgets, and deadlines are
+partial/unavailable outcomes, never passes, and holdout evaluation is skipped.
+
 ## 1. Define the activation boundary
 
 Before editing, classify realistic requests into:
