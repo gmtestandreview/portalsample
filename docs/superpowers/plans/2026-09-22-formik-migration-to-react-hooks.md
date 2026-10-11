@@ -143,8 +143,8 @@ reviews pending for the address commits):
   `'date'`). Deliberate difference from the Formik twin: the empty-title summary
   fallback watches `<name>.title`, not the hardcoded
   `organisationAndContact.contact.title`. It still imports `ContactDetailsProps`
-  from the Formik file; move that type to a shared file before the Formik twin is
-  deleted. 11 tests, 100% coverage.
+  from the Formik file; move that type to a shared file before the Formik twin
+  is deleted. 11 tests, 100% coverage.
 - Focused runs: `tests/unit/components/inputs` and `tests/unit/config` passed
   (45 files, 574 tests); the new address files and `RhfSelectInput` are at 100%
   coverage; type-check, ESLint and Prettier clean. No full gate, Storybook or
