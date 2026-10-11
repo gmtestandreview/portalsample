@@ -47,6 +47,17 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("COUNTER_INVARIANT", codes)
         self.assertIn("PARTIAL_RELEASE", codes)
 
+    def test_documentation_names_modes_and_independent_readiness_gates(self) -> None:
+        skill = (SCRIPTS_DIR.parent / "SKILL.md").read_text(encoding="utf-8")
+        workflow = (SCRIPTS_DIR.parent / "references" / "evaluation-workflow.md").read_text(encoding="utf-8")
+        schemas = (SCRIPTS_DIR.parent / "references" / "schemas.md").read_text(encoding="utf-8")
+        for phrase in ("check", "smoke", "release", "zero Claude calls", "release_ready", "NHR"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, skill)
+        self.assertIn("34 base", workflow)
+        self.assertIn("planned_calls", schemas)
+        self.assertIn("checkpoint completion is not evidence", skill.lower())
+
 
 if __name__ == "__main__":
     unittest.main()
