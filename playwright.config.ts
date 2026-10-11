@@ -29,10 +29,12 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   outputDir: 'reports/test-results/app',
+  globalSetup: './tests/e2e/support/warm-dev-server.ts',
   fullyParallel: true,
   forbidOnly: isCi,
   retries: isCi ? 2 : 0,
-  ...(isCi ? { workers: 1 } : {}),
+  // Default (half the cores) starves the single webpack dev server locally.
+  workers: isCi ? 1 : 4,
   reporter: [
     ['html', { open: 'never', outputFolder: 'reports/playwright/app' }],
     ['list'],
