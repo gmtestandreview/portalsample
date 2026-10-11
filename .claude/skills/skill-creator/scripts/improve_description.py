@@ -9,17 +9,32 @@ uses the session's Claude Code auth, no separate ANTHROPIC_API_KEY needed).
 # ruff: noqa: E501
 
 import argparse
+import hashlib
 import json
 import os
 import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import TypedDict, cast
+from typing import Callable, TypedDict, cast
 
 try:
+    from scripts.eval_control import (
+        AttemptSpec,
+        CachedResult,
+        CheckpointStore,
+        EvaluationControl,
+        validate_model_id,
+    )
     from scripts.utils import parse_skill_md
 except ModuleNotFoundError:
+    from eval_control import (
+        AttemptSpec,
+        CachedResult,
+        CheckpointStore,
+        EvaluationControl,
+        validate_model_id,
+    )
     from utils import parse_skill_md
 
 
@@ -344,8 +359,40 @@ def _load_json(path: Path) -> object:
         ) from exc
 
 
-def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
+def _call_claude(
+    prompt: str,
+    model: str | None,
+    timeout: int = 300,
+    *,
+    control: EvaluationControl | None = None,
+    spec: AttemptSpec | None = None,
+    result_parser: Callable[[str], str] | None = None,
+) -> str:
     """Run `claude -p` with the prompt on stdin and return the text response."""
+    if control is not None and spec is None:
+        raise ValueError("a controller requires an attempt specification")
+
+    def validate_cached(result: CachedResult) -> str | None:
+        if result.outcome != "description" or not result.value:
+            return "cached description is empty or has the wrong outcome"
+        if len(result.value) > _MAX_DESCRIPTION_CHARS:
+            return "cached description exceeds the hard length limit"
+        if result_parser is not None:
+            try:
+                result_parser(f"<new_description>{result.value}</new_description>")
+            except Exception as exc:
+                return f"cached description is malformed: {exc}"
+        return None
+
+    if control is not None and spec is not None:
+        cached = control.consume_cached(spec, validate_cached)
+        if cached is not None and cached.value is not None:
+            return f"<new_description>{cached.value}</new_description>"
+        if not control.reserve_call(spec):
+            raise RuntimeError(
+                f"description call unavailable: {control.stop_reason or 'permit rejected'}"
+            )
+
     cmd = ["claude", "-p", "--output-format", "text"]
     if model:
         if os.name == "nt" and not _MODEL_NAME_RE.fullmatch(model):
@@ -371,13 +418,31 @@ def _call_claude(prompt: str, model: str | None, timeout: int = 300) -> str:
             shell=(os.name == "nt"),
         )
     except subprocess.TimeoutExpired as exc:
-        raise RuntimeError(f"claude -p timed out after {timeout} seconds") from exc
+        error = RuntimeError(f"claude -p timed out after {timeout} seconds")
+        if control is not None and spec is not None:
+            control.record_error(spec, error)
+        raise error from exc
     except OSError as exc:
-        raise RuntimeError(
+        error = RuntimeError(
             "claude CLI not found on PATH; description improvement is unavailable in this runtime"
-        ) from exc
+        )
+        if control is not None and spec is not None:
+            control.record_error(spec, error)
+        raise error from exc
     if result.returncode != 0:
-        raise RuntimeError(f"claude -p exited {result.returncode}\nstderr: {result.stderr}")
+        error = RuntimeError(f"claude -p exited {result.returncode}\nstderr: {result.stderr}")
+        if control is not None and spec is not None:
+            control.record_error(spec, error)
+        raise error
+    if control is not None and spec is not None:
+        try:
+            value = result_parser(result.stdout) if result_parser is not None else result.stdout.strip()
+            if not isinstance(value, str) or not value:
+                raise ValueError("description result is empty")
+        except Exception as exc:
+            control.record_error(spec, exc)
+            raise
+        control.record_success(spec, CachedResult(outcome="description", value=value))
     return result.stdout
 
 
@@ -546,6 +611,7 @@ def improve_description(
     test_results: SummaryResults | None = None,
     log_dir: Path | None = None,
     iteration: int | None = None,
+    control: EvaluationControl | None = None,
 ) -> str:
     """Call Claude to improve the description based on eval results."""
     prompt = _build_prompt(
@@ -556,7 +622,26 @@ def improve_description(
         history,
         test_results,
     )
-    text = _call_claude(prompt, model)
+    content_digest = hashlib.sha256(skill_content.encode("utf-8")).hexdigest()
+    model_identity = model or "claude-configured"
+    run_index = iteration if iteration is not None else 0
+    rewrite_spec = AttemptSpec(
+        kind="description:rewrite",
+        query=prompt,
+        run_index=run_index,
+        skill_name=skill_name,
+        skill_content_sha256=content_digest,
+        model=model_identity,
+        claude_version="unknown",
+        distractor_sha256="",
+    )
+    text = _call_claude(
+        prompt,
+        model,
+        control=control,
+        spec=rewrite_spec,
+        result_parser=_extract_description,
+    )
     description = _extract_description(text)
 
     transcript = Transcript(
@@ -578,7 +663,23 @@ def improve_description(
             f"important trigger words and intent coverage. Respond with only "
             f"the new description in <new_description> tags."
         )
-        shorten_text = _call_claude(shorten_prompt, model)
+        shorten_spec = AttemptSpec(
+            kind="description:shorten",
+            query=shorten_prompt,
+            run_index=run_index,
+            skill_name=skill_name,
+            skill_content_sha256=content_digest,
+            model=model_identity,
+            claude_version="unknown",
+            distractor_sha256="",
+        )
+        shorten_text = _call_claude(
+            shorten_prompt,
+            model,
+            control=control,
+            spec=shorten_spec,
+            result_parser=_extract_description,
+        )
         shortened = _extract_description(shorten_text)
         transcript["rewrite_prompt"] = shorten_prompt
         transcript["rewrite_response"] = shorten_text
@@ -615,11 +716,26 @@ def main() -> None:
     parser.add_argument("--history", default=None, help="Path to history JSON (previous attempts)")
     parser.add_argument(
         "--model",
-        default=None,
-        help="Model override (default: configured claude CLI model)",
+        required=True,
+        help="Explicit versioned Claude model ID",
     )
+    parser.add_argument("--max-model-calls", type=int, required=True, help="Maximum live model calls")
+    parser.add_argument("--checkpoint", default=None, help="Append-only JSONL checkpoint path")
+    parser.add_argument("--deadline-seconds", type=float, default=None, help="Stop after this many seconds")
     parser.add_argument("--verbose", action="store_true", help="Print thinking to stderr")
     args = parser.parse_args()
+
+    if args.max_model_calls <= 0:
+        print("Error: max_model_calls must be positive", file=sys.stderr)
+        raise SystemExit(2)
+    if args.deadline_seconds is not None and args.deadline_seconds <= 0:
+        print("Error: deadline_seconds must be positive", file=sys.stderr)
+        raise SystemExit(2)
+    try:
+        model = validate_model_id(cast(str, args.model))
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        raise SystemExit(2) from exc
 
     skill_path = Path(cast(str, args.skill_path))
     skill_file = skill_path / "SKILL.md"
@@ -642,7 +758,13 @@ def main() -> None:
     name, _, content = parse_skill_md(skill_path)
     current_description = eval_results["description"]
     verbose = cast(bool, args.verbose)
-    model = cast(str | None, args.model)
+    checkpoint = CheckpointStore(Path(args.checkpoint)) if args.checkpoint else None
+    control = EvaluationControl(
+        max_calls=args.max_model_calls,
+        planned_calls=2,
+        checkpoint=checkpoint,
+        deadline_seconds=args.deadline_seconds,
+    )
 
     if verbose:
         summary = eval_results["summary"]
@@ -656,6 +778,7 @@ def main() -> None:
         eval_results=eval_results,
         history=history,
         model=model,
+        control=control,
     )
 
     if verbose:
