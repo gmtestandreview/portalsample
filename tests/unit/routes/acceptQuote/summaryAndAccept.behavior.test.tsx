@@ -10,6 +10,7 @@ import {
   summaryAndAcceptSaveValidation,
   summaryAndAcceptSubmitValidation,
 } from '@/routes/acceptQuote/validation';
+import { summaryAndAcceptOwnHidingFields } from '@/routes/acceptQuote/summaryAndAcceptProps';
 import { removeHidden, validateForm } from '@/components/forms/utils';
 import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
@@ -76,11 +77,6 @@ vi.mock('@/routes/acceptQuote/quotationSummary', () => ({
   default: () => <div>Quotation summary marker</div>,
 }));
 
-// Mirrors the associatedDispute rule in summaryAndAcceptProps.hidingFields.
-const hidingFields = {
-  associatedDispute: (x: SummaryAndAcceptStep) => x.associatedDisputes === 'No',
-};
-
 type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 
 interface StepHarnessProps {
@@ -101,18 +97,24 @@ function StepHarness({
           element={
             <Formik<Values>
               initialValues={values}
-              initialStatus={{ hidden: hidingFields }}
+              initialStatus={{ hidden: summaryAndAcceptOwnHidingFields }}
               enableReinitialize
               validate={(formValues) =>
                 validateForm(
                   formValues.saveAndExit
                     ? summaryAndAcceptSaveValidation
                     : summaryAndAcceptSubmitValidation,
-                  hidingFields
+                  summaryAndAcceptOwnHidingFields
                 )(formValues)
               }
               onSubmit={(submitted) =>
-                onSubmit(removeHidden(submitted, submitted, hidingFields))
+                onSubmit(
+                  removeHidden(
+                    submitted,
+                    submitted,
+                    summaryAndAcceptOwnHidingFields
+                  )
+                )
               }
             >
               <Form noValidate>

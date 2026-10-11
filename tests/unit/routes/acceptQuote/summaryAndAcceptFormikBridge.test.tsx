@@ -12,13 +12,9 @@ import {
   summaryAndAcceptSaveValidation,
   summaryAndAcceptSubmitValidation,
 } from '@/routes/acceptQuote/validation';
+import { summaryAndAcceptOwnHidingFields } from '@/routes/acceptQuote/summaryAndAcceptProps';
 import { removeHidden, validateForm } from '@/components/forms/utils';
 import { defined } from '../../helpers/defined';
-
-// Mirrors the associatedDispute rule in summaryAndAcceptProps.hidingFields.
-const hidingFields = {
-  associatedDispute: (x: SummaryAndAcceptStep) => x.associatedDisputes === 'No',
-};
 
 type Values = SummaryAndAcceptStep & { saveAndExit?: boolean };
 
@@ -45,17 +41,21 @@ function Harness({
   return (
     <Formik<Values>
       initialValues={values}
-      {...(withHiddenRules ? { initialStatus: { hidden: hidingFields } } : {})}
+      {...(withHiddenRules
+        ? { initialStatus: { hidden: summaryAndAcceptOwnHidingFields } }
+        : {})}
       validate={(formValues) =>
         validateForm(
           formValues.saveAndExit
             ? summaryAndAcceptSaveValidation
             : summaryAndAcceptSubmitValidation,
-          hidingFields
+          summaryAndAcceptOwnHidingFields
         )(formValues)
       }
       onSubmit={(submitted) =>
-        onSubmit(removeHidden(submitted, submitted, hidingFields))
+        onSubmit(
+          removeHidden(submitted, submitted, summaryAndAcceptOwnHidingFields)
+        )
       }
     >
       <Form noValidate>
