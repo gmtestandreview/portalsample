@@ -3,12 +3,16 @@ import type { FieldValues, UseControllerProps } from 'react-hook-form';
 import type { ReactNode } from 'react';
 import { omitUndefined } from '../../utils/omitUndefined';
 
+// Deliberately non-generic: narrowing `validate` values to `unknown` would break
+// consumers' typed callbacks, and making the hook generic touches every input.
+export type RhfRules = UseControllerProps<FieldValues>['rules'];
+
 interface UseRhfFieldA11yOptions {
   name: string;
   id?: string | undefined;
   inlineHelp?: ReactNode;
   supressFieldLevelMessages?: boolean | undefined;
-  rules?: UseControllerProps<FieldValues>['rules'];
+  rules?: RhfRules;
 }
 
 /**

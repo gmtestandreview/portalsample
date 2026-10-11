@@ -1,4 +1,3 @@
-import type { FieldValues, UseControllerProps } from 'react-hook-form';
 import Row from 'react-bootstrap/Row';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -7,8 +6,7 @@ import Details from '../../forms/Details';
 import SummaryDisplay from '../../SummaryDisplay';
 import { omitUndefined } from '../../../utils/omitUndefined';
 import { useRhfFieldA11y } from '../useRhfFieldA11y';
-
-type Rules = UseControllerProps<FieldValues>['rules'];
+import type { RhfRules } from '../useRhfFieldA11y';
 
 /**
  * React Hook Form counterpart of `RadioButtonGroup`. It reads the form through
@@ -17,7 +15,7 @@ type Rules = UseControllerProps<FieldValues>['rules'];
  * updated by the group itself, with the option's typed value.
  */
 const RhfRadioButtonGroup = <T,>(
-  props: Readonly<RhfRadioButtonGroupProps<T> & { rules?: Rules }>
+  props: Readonly<RhfRadioButtonGroupProps<T> & { rules?: RhfRules }>
 ) => {
   const {
     displayHorizontally,
@@ -80,6 +78,7 @@ const RhfRadioButtonGroup = <T,>(
           }}
           onBlur={field.onBlur}
           aria-controls={subFormField ? subFieldId : undefined}
+          aria-invalid={errorMessage ? true : undefined}
         />
         <label
           htmlFor={option.id}
