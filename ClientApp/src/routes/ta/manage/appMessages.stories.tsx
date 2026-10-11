@@ -52,6 +52,7 @@ export const MessagesTab: Story = {
       canvas.getByRole('combobox', { name: 'Select your view' })
     ).toBeEnabled();
     const editor = canvas.getByRole('textbox', { name: 'Message NMI' });
+    await userEvent.click(editor);
     await userEvent.type(editor, 'Hi');
     // Slate commits typed text through a deferred React render, so the
     // placeholder can still be in the DOM when type() resolves under load.
