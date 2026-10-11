@@ -226,6 +226,20 @@ describe('DeliveryAndReturn', () => {
       await act(async () => {});
     });
 
+    it('renders no return address block when the address type is unset', async () => {
+      mocks.getDeliveryAndReturn.mockResolvedValue(baseApiResponse);
+      renderComponent({ isSummary: true });
+      await waitFor(() =>
+        expect(mocks.getDeliveryAndReturn).toHaveBeenCalled()
+      );
+      await act(async () => {});
+      expect(
+        screen.queryByRole('heading', {
+          name: /Instrument\/artefact return address/i,
+        })
+      ).not.toBeInTheDocument();
+    });
+
     it('Other renders the custom returnAddress', async () => {
       mocks.getDeliveryAndReturn.mockResolvedValue({
         ...baseApiResponse,

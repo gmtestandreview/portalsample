@@ -4,7 +4,12 @@ import { Form, Formik } from 'formik';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
-import type { DeliveryAndReturnStep } from '@/api/web-api-client';
+import {
+  ReturnAddressTypeValues,
+  ReturnContactTypeValues,
+  ReturnMethodValues,
+  type DeliveryAndReturnStep,
+} from '@/api/web-api-client';
 import DeliveryAndReturn from '@/routes/acceptQuote/deliveryAndReturn';
 import {
   deliveryAndReturnSaveValidation,
@@ -189,7 +194,9 @@ describe('DeliveryAndReturn behavior: visibility', () => {
 
   it('shows the return contact details only for a different person', async () => {
     const user = userEvent.setup();
-    renderStep({ values: { returnContactType: 'SamePerson' } });
+    renderStep({
+      values: { returnContactType: ReturnContactTypeValues.SamePerson },
+    });
     await waitForLoad();
 
     expect(screen.queryByLabelText('First name')).not.toBeInTheDocument();
@@ -268,9 +275,9 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnContactType: 'SamePerson',
-        returnAddressType: 'BusinessAddress',
-        returnMethod: 'ClientWillProvide',
+        returnContactType: ReturnContactTypeValues.SamePerson,
+        returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+        returnMethod: ReturnMethodValues.ClientWillProvide,
       },
       onSubmit,
     });
@@ -325,9 +332,9 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnContactType: 'SamePerson',
-        returnAddressType: 'BusinessAddress',
-        returnMethod: 'ClientToArrange',
+        returnContactType: ReturnContactTypeValues.SamePerson,
+        returnAddressType: ReturnAddressTypeValues.BusinessAddress,
+        returnMethod: ReturnMethodValues.ClientToArrange,
         carrierName: 'stale',
         packagingNotes: 'stale',
         contact: { firstName: 'stale' },
@@ -355,8 +362,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnContactType: 'DifferentPerson',
-        returnMethod: 'ClientToArrange',
+        returnContactType: ReturnContactTypeValues.DifferentPerson,
+        returnMethod: ReturnMethodValues.ClientToArrange,
       },
       onSubmit,
     });
@@ -383,8 +390,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnContactType: 'DifferentPerson',
-        returnMethod: 'ClientWillProvide',
+        returnContactType: ReturnContactTypeValues.DifferentPerson,
+        returnMethod: ReturnMethodValues.ClientWillProvide,
         carrierName: '',
         carrierAccountNumber: '',
         contact: { firstName: '' },
@@ -413,7 +420,7 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnMethod: 'ClientWillProvide',
+        returnMethod: ReturnMethodValues.ClientWillProvide,
         carrierName: 'Acme',
         carrierAccountNumber: 'ACC-1',
         [field]: 'x'.repeat(301),
@@ -435,7 +442,7 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnMethod: 'ClientWillProvide',
+        returnMethod: ReturnMethodValues.ClientWillProvide,
         carrierName: 'Acme',
         carrierAccountNumber: 'ACC-1',
         carrierContactPhone: '12345',
@@ -457,8 +464,8 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnMethod: 'ClientWillProvide',
-        returnContactType: 'DifferentPerson',
+        returnMethod: ReturnMethodValues.ClientWillProvide,
+        returnContactType: ReturnContactTypeValues.DifferentPerson,
         insuranceNotes: 'x'.repeat(301),
       },
       onSubmit,
@@ -476,7 +483,7 @@ describe('DeliveryAndReturn behavior: submit, validation and reload', () => {
     const onSubmit = vi.fn();
     renderStep({
       values: {
-        returnMethod: 'ClientWillProvide',
+        returnMethod: ReturnMethodValues.ClientWillProvide,
         packagingNotes: 'x'.repeat(301),
       },
       onSubmit,
