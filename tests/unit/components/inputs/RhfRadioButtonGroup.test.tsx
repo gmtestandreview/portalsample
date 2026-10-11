@@ -300,51 +300,59 @@ describe('RhfRadioButtonGroup', () => {
       case: 'help only',
       inlineHelp: 'Pick one',
       required: false,
-      before: 'help-q-status',
-      after: 'help-q-status',
+      describedByBefore: 'help-q-status',
+      describedByAfter: 'help-q-status',
+      invalidAfter: null,
     },
     {
       case: 'error only',
       inlineHelp: undefined,
       required: true,
-      before: undefined,
-      after: 'q-status-validation-msg',
+      describedByBefore: null,
+      describedByAfter: 'q-status-validation-msg',
+      invalidAfter: 'true',
     },
     {
       case: 'help and error',
       inlineHelp: 'Pick one',
       required: true,
-      before: 'help-q-status',
-      after: 'help-q-status q-status-validation-msg',
+      describedByBefore: 'help-q-status',
+      describedByAfter: 'help-q-status q-status-validation-msg',
+      invalidAfter: 'true',
     },
   ])(
-    'describes the fieldset by $case ids and flags the radios invalid only on error',
-    async ({ inlineHelp, required, before, after }) => {
+    'describes the radiogroup by $case ids and flags the group (not the radios) invalid only on error',
+    async ({
+      inlineHelp,
+      required,
+      describedByBefore,
+      describedByAfter,
+      invalidAfter,
+    }) => {
       render(<Submittable inlineHelp={inlineHelp} required={required} />);
-      const fieldset = screen.getByTestId('fs-q-status');
+      const group = screen.getByRole('radiogroup', { name: 'Status' });
       const radios = screen.getAllByRole('radio');
-      if (before) expect(fieldset).toHaveAttribute('aria-describedby', before);
-      else expect(fieldset).not.toHaveAttribute('aria-describedby');
+      expect(group).toBe(screen.getByTestId('fs-q-status'));
+      expect(group.tagName).toBe('FIELDSET');
+      expect(group.getAttribute('aria-describedby')).toBe(describedByBefore);
+      expect(group.getAttribute('aria-invalid')).toBeNull();
       if (inlineHelp) {
         expect(screen.getByText(inlineHelp)).toHaveAttribute(
           'id',
           'help-q-status'
         );
       }
-      radios.forEach((radio) => {
-        expect(radio).not.toHaveAttribute('aria-invalid');
-      });
 
       await userEvent.click(screen.getByText('submit'));
 
       if (required) {
         expect(await screen.findByText('Choose a status')).toBeInTheDocument();
       }
-      expect(fieldset).toHaveAttribute('aria-describedby', after);
+      expect(group.getAttribute('aria-describedby')).toBe(describedByAfter);
+      expect(group.getAttribute('aria-invalid')).toBe(invalidAfter);
       radios.forEach((radio) => {
         expect(radio).not.toHaveAttribute('aria-describedby');
-        if (required) expect(radio).toHaveAttribute('aria-invalid', 'true');
-        else expect(radio).not.toHaveAttribute('aria-invalid');
+        expect(radio).not.toHaveAttribute('aria-invalid');
       });
     }
   );

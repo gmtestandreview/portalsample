@@ -3,8 +3,10 @@ import type { FieldValues, UseControllerProps } from 'react-hook-form';
 import type { ReactNode } from 'react';
 import { omitUndefined } from '../../utils/omitUndefined';
 
-// Deliberately non-generic: narrowing `validate` values to `unknown` would break
-// consumers' typed callbacks, and making the hook generic touches every input.
+// Deliberately non-generic: `FieldValues` is `Record<string, any>`, so `validate`
+// callbacks receive `any`. Tightening that to `unknown` breaks typed consumer
+// callbacks under strictFunctionTypes, and making the hook generic touches
+// every input.
 export type RhfRules = UseControllerProps<FieldValues>['rules'];
 
 interface UseRhfFieldA11yOptions {

@@ -78,7 +78,6 @@ const RhfRadioButtonGroup = <T,>(
           }}
           onBlur={field.onBlur}
           aria-controls={subFormField ? subFieldId : undefined}
-          aria-invalid={errorMessage ? true : undefined}
         />
         <label
           htmlFor={option.id}
@@ -106,7 +105,12 @@ const RhfRadioButtonGroup = <T,>(
   };
 
   return (
-    <fieldset data-testid={`fs-${baseId}`} aria-describedby={describedBy}>
+    <fieldset
+      data-testid={`fs-${baseId}`}
+      role='radiogroup'
+      aria-describedby={describedBy}
+      aria-invalid={errorMessage ? true : undefined}
+    >
       <legend id={baseId}>{legend}</legend>
       <Form.Group
         id={name}
