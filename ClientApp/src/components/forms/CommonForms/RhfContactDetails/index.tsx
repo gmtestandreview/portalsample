@@ -1,4 +1,4 @@
-import { forEach, keys } from 'lodash';
+import { keys } from 'lodash';
 import { Col, Form, Row } from 'react-bootstrap';
 import { useWatch } from 'react-hook-form';
 import { Title } from '../../../../api/web-api-client';
@@ -13,19 +13,11 @@ import type { ContactDetailsProps } from '../ContactDetails';
 
 const PHONE_FORMAT = 'checkPhoneFormat';
 const MOBILE_FORMAT = '#### ### ###';
-// Mirrors the Formik twin, which reads the title from this fixed path.
-const TITLE_PATH = 'organisationAndContact.contact.title';
 
-const getTitles = () => {
-  const options: SelectInputOption<string>[] = [];
-  forEach(keys(Title), (key) => {
-    options.push({
-      displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
-      value: key,
-    });
-  });
-  return options;
-};
+const TITLE_OPTIONS: SelectInputOption<string>[] = keys(Title).map((key) => ({
+  displayText: Title[key as Title].replace(/([A-Z])/g, ' $1').trim(),
+  value: key,
+}));
 
 type FieldProps = Readonly<Required<Omit<ContactDetailsProps, 'isSummary'>>>;
 
@@ -40,14 +32,14 @@ const ContactDetailsSummary = ({
   emailAddressLabel,
 }: FieldProps) => {
   const getName = prefixedPropertyOf<ContactDto>(name);
-  const title = useWatch({ name: TITLE_PATH });
+  const title = useWatch({ name: getName('title') });
 
   return (
     <>
       <RhfSelectInput<string>
         name={getName('title')}
         label={titleLabel}
-        options={getTitles()}
+        options={TITLE_OPTIONS}
         isSummary
         addBlank
       />
@@ -93,6 +85,15 @@ const ContactDetailsSummary = ({
   );
 };
 
+const ContactDetailsSummaryGate = (props: FieldProps) => {
+  const contact = useWatch({ name: props.name });
+  return contact === '' ? (
+    <span>No details added</span>
+  ) : (
+    <ContactDetailsSummary {...props} />
+  );
+};
+
 const ContactDetailsEdit = ({
   name,
   titleLabel,
@@ -112,7 +113,7 @@ const ContactDetailsEdit = ({
           <RhfSelectInput<string>
             name={getName('title')}
             label={titleLabel}
-            options={getTitles()}
+            options={TITLE_OPTIONS}
             addBlank
           />
         </Col>
@@ -184,7 +185,6 @@ const RhfContactDetails = ({
   mobilePhoneLabel = 'Mobile phone',
   emailAddressLabel = 'Email address',
 }: Readonly<ContactDetailsProps>) => {
-  const contact = useWatch({ name });
   const fieldProps: FieldProps = {
     name,
     titleLabel,
@@ -196,9 +196,11 @@ const RhfContactDetails = ({
     emailAddressLabel,
   };
 
-  if (!isSummary) return <ContactDetailsEdit {...fieldProps} />;
-  if (contact === '') return <span>No details added</span>;
-  return <ContactDetailsSummary {...fieldProps} />;
+  return isSummary ? (
+    <ContactDetailsSummaryGate {...fieldProps} />
+  ) : (
+    <ContactDetailsEdit {...fieldProps} />
+  );
 };
 
 export default RhfContactDetails;

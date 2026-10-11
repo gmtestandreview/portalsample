@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
-import type { ReactNode } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
+import { Title } from '@/api/web-api-client';
 import RhfContactDetails from '@/components/forms/CommonForms/RhfContactDetails';
 import { RhfHiddenRulesProvider } from '@/components/forms/RhfHidableField';
 import type { Hideable } from '@/components/forms/types';
@@ -86,12 +87,12 @@ const Harness = ({ contact, children, rules = {} }: HarnessProps) => {
 };
 
 const contactValue = (): ContactValues =>
-  (JSON.parse(screen.getByTestId('values').textContent) as FormValues)
+  (JSON.parse(screen.getByTestId('values').textContent ?? '') as FormValues)
     .organisationAndContact.contact;
 
 const renderDetails = (
   contact: ContactValues | '',
-  props: Record<string, unknown> = {},
+  props: Partial<ComponentProps<typeof RhfContactDetails>> = {},
   rules?: Hideable
 ) =>
   render(
@@ -141,7 +142,7 @@ describe('RhfContactDetails edit mode', () => {
       'AssociateProfessor',
     ]);
     expect(options).toContainEqual(['Other', 'Other']);
-    expect(options).toHaveLength(16);
+    expect(options).toHaveLength(Object.keys(Title).length + 1);
   });
 
   it('writes typed and chosen values into the form', async () => {
@@ -229,12 +230,38 @@ describe('RhfContactDetails summary mode', () => {
   it('falls back to a title row when the title is empty', () => {
     renderDetails({ ...FILLED_CONTACT, title: '' }, { isSummary: true });
 
-    expect(screen.getByText('Title (optional)')).toBeInTheDocument();
+    // An empty title hides the select row, so the fallback is the only
+    // "Title (optional)" row; its empty-value marker joins the empty
+    // "Title, if Other" one.
+    expect(screen.getAllByText('Title (optional)')).toHaveLength(1);
+    expect(screen.getAllByText('No details added')).toHaveLength(2);
+  });
+
+  it('keys the title fallback off the supplied name', () => {
+    const Other = () => {
+      const methods = useForm({
+        defaultValues: { applicant: { ...FILLED_CONTACT, title: '' } },
+      });
+      return (
+        <FormProvider {...methods}>
+          <RhfContactDetails name='applicant' isSummary />
+        </FormProvider>
+      );
+    };
+    render(<Other />);
+
+    // An empty title hides the select row, so the fallback is the only
+    // "Title (optional)" row; its empty-value marker joins the empty
+    // "Title, if Other" one.
+    expect(screen.getAllByText('Title (optional)')).toHaveLength(1);
+    expect(screen.getAllByText('No details added')).toHaveLength(2);
   });
 
   it('omits the title fallback row when a title is set', () => {
     renderDetails(FILLED_CONTACT, { isSummary: true });
 
     expect(screen.getAllByText('Title (optional)')).toHaveLength(1);
+    // Only the empty "Title, if Other" row shows the marker.
+    expect(screen.getAllByText('No details added')).toHaveLength(1);
   });
 });
