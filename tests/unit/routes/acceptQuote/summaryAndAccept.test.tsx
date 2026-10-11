@@ -114,28 +114,6 @@ vi.mock('../../../../ClientApp/src/routes/acceptQuote/paymentDetails', () => ({
   default: () => <div>Payment details</div>,
 }));
 
-vi.mock('../../../../ClientApp/src/components/Inputs/RadioButtonGroup', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid='radio-group' data-name={name} />
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/TextAreaInput', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid='text-area' data-name={name} />
-  ),
-}));
-
-vi.mock('../../../../ClientApp/src/components/forms/HidableField', () => ({
-  default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
-
-vi.mock('../../../../ClientApp/src/components/Inputs/Checkbox', () => ({
-  default: ({ name }: { name: string }) => (
-    <div data-testid='checkbox' data-name={name} />
-  ),
-}));
-
 vi.mock('../../../../ClientApp/src/components/InTextLink', () => ({
   default: ({
     children,
