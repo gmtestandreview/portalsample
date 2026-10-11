@@ -213,12 +213,16 @@ of 135 on 2026-10-11 (user-run, after the Wave 3 address commits).
      "Applying for" sub-options now show.
    - Open the PR for this branch.
    - Review follow-ups, not blocking: a failed upload replaces the whole list
-     with `[]` (same as the Formik twin); `onCategoryUpdate` rejections are
-     unhandled; each row's select is labelled only "Category"; the document link
-     hardcodes `application/pdf`; the per-row error state is index-keyed, so
-     after a delete the row that moves up inherits it (consider
-     `useFieldArray`); the details tab renders empty summaries for one frame
-     before the load.
+     with `[]` (same as the Formik twin); each row's select is labelled only
+     "Category"; the document link hardcodes `application/pdf`; the details tab
+     renders empty summaries for one frame before the load.
+   - Done: `onCategoryUpdate` rejections are now caught, reported and reverted
+     (`c9b9b0a8`). The per-row category error is tracked per document in local
+     state, not by RHF's index-keyed touched state, so a deleted row's error no
+     longer moves to the row below (`511e6324`); `useFieldArray` was not needed.
+     Tests cover delete, submit and re-upload replacement. One case is untested:
+     a re-upload that returns the same document id keeps that row's touched
+     flag.
 2. **Wave 3: remaining accept-quote steps.** `RhfTextInput`, `RhfCheckbox`,
    `RhfTextAreaInput`, `RhfNumberInput`, `RhfHidableField` and
    `RhfAddressLookup` exist (see above; address commits await review). Build

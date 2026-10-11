@@ -782,6 +782,30 @@ describe('RhfAttachment', () => {
       expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
     });
 
+    it('shows no stale error on a different document that replaces a touched one on re-upload', async () => {
+      const user = userEvent.setup();
+      const onUploadFiles = vi
+        .fn()
+        .mockResolvedValue([uncategorised('doc-2', 'second.pdf')]);
+      renderAttachment([uncategorised('doc-1', 'first.pdf')], {
+        onUploadFiles,
+      });
+
+      await touchCategory(user, 'first.pdf');
+      expect(screen.getByText(CATEGORY_ERROR)).toBeInTheDocument();
+
+      await user.upload(
+        screen.getByTestId('drag-upload-supporting-documents'),
+        file('second.pdf', 10)
+      );
+
+      await waitFor(() =>
+        expect(screen.getByText('second.pdf')).toBeInTheDocument()
+      );
+      expect(screen.queryByText('first.pdf')).not.toBeInTheDocument();
+      expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
+    });
+
     it('keeps the error on a touched row that moves up, and not on the row behind it', async () => {
       const user = userEvent.setup();
       renderAttachment([
