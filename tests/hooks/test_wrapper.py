@@ -6,7 +6,7 @@ The wrapper resolves scripts/pre_tool_use.py from CLAUDE_PROJECT_DIR, passes
 exit codes through (0 allow, 2 block), blocks when the guard crashes or no Python
 is available, and warns/allows only when the guard file itself is absent.
 
-Needs `sh` and a Python interpreter on PATH (Git Bash on Windows).
+Needs Node.js, `sh`, and a Python interpreter on PATH (Git Bash on Windows).
 Run:  python tests/hooks/test_wrapper.py
 """
 

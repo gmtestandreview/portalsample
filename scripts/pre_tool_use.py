@@ -615,7 +615,7 @@ def _log(
         if any(os.path.islink(name) for name in (path, path + ".1", path + ".lock")):
             raise OSError("audit file must not be a symbolic link")
         known_tool = tool_name if tool_name in {*_COMMAND_TOOLS, *_ENV_PATH_FIELDS} else "Other"
-        record = {
+        record: JsonObject = {
             "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "tool": known_tool,
             "decision": decision,
