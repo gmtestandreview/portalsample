@@ -20,10 +20,6 @@ import BlockUISpinner from '../../components/BlockUISpinner';
 
 const getName = prefixedPropertyOf<ReportRecipientStep>('reportRecipient');
 
-function getNameForUse(name: keyof ReportRecipientStep): string {
-  return getName(name);
-}
-
 const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
   const { isSummary, id } = props;
   const { accounts, instance } = useMsal();
@@ -124,12 +120,12 @@ const ReportRecipient = (props: Readonly<ReportRecipientProps>) => {
           <h2 className='h3 my-3'>Report recipient organisation</h2>
           <TextInput
             label='Organisation name for report'
-            name={getNameForUse('organisationName')}
+            name={getName('organisationName')}
             isSummary={isSummary}
           />
           {reportRecipientStep?.reportAddressType === 'Other' && (
             <AddressLookup
-              name={getNameForUse('businessStreetAddress')}
+              name={getName('businessStreetAddress')}
               label='Organisation address for report'
               maxResults={10}
               key='businessStreetAddress'

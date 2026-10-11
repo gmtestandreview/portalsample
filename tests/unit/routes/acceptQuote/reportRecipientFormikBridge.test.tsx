@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Form, Formik } from 'formik';
+import { Form, Formik, useFormikContext } from 'formik';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as WebApiClientModule from '@/api/web-api-client';
 import {
@@ -53,6 +53,15 @@ interface HarnessProps {
   onSubmit?: (values: ReportRecipientStep) => void;
 }
 
+function Probe() {
+  const { values, dirty } = useFormikContext<ReportRecipientStep>();
+  return (
+    <output data-testid='probe'>
+      {JSON.stringify({ address: values.businessStreetAddress, dirty })}
+    </output>
+  );
+}
+
 function Harness({
   values = {},
   withHiddenRules = true,
@@ -69,6 +78,7 @@ function Harness({
     >
       <Form noValidate>
         <ReportRecipientFormikBridge />
+        <Probe />
         <button type='submit'>Continue</button>
       </Form>
     </Formik>
@@ -170,6 +180,39 @@ describe('ReportRecipientFormikBridge', () => {
       await screen.findByText(/Address line 1 is required/i)
     ).toBeInTheDocument();
     expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it('does not dirty the outer form when a failed submit touches an empty address', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness
+        values={{
+          reportAddressType: ReportAddressTypeValues.Other,
+          businessStreetAddress: {},
+        }}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText(/is required/i);
+
+    expect(JSON.parse(screen.getByTestId('probe').textContent ?? '')).toEqual({
+      address: {},
+      dirty: false,
+    });
+  });
+
+  it('describes the failed address search field by its message', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(await screen.findByRole('combobox')).toHaveAccessibleDescription(
+      /is required/i
+    );
   });
 
   it('shows the address without hide rules when the form has no status', () => {

@@ -237,6 +237,9 @@ describe('ReportRecipient behavior', () => {
 
     expect(await screen.findByText(/400/)).toBeInTheDocument();
     expect(screen.getByLabelText('Organisation name for report')).toBeInvalid();
+    expect(
+      screen.getByLabelText('Organisation name for report')
+    ).toHaveAccessibleDescription(/400/);
   });
 
   it('hides the address lookup again for the postal address option', async () => {
