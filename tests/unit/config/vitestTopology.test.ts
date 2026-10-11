@@ -176,7 +176,7 @@ describe('unit leaf owns jsdom, unit discovery and unit coverage', () => {
   });
 
   it('owns the worker cap rather than inheriting one from the root', () => {
-    expect(unit.maxWorkers).toBe(1);
+    expect(unit.maxWorkers).toBe(2);
   });
 
   it('owns unit coverage reporting', () => {

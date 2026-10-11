@@ -153,7 +153,7 @@ export default defineConfig({
     environment: 'jsdom',
     pool: 'forks',
     execArgv: ['--max-old-space-size=8192'],
-    maxWorkers: 1,
+    maxWorkers: 2,
     globals: true,
     setupFiles: ['./vitest.setup.ts'],
     include: ['tests/unit/**/*.test.{ts,tsx}'],
