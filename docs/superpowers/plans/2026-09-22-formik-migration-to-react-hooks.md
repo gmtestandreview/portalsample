@@ -195,7 +195,8 @@ Since then (Wave 3, focused runs only, no full gate): the
 consumers); type-check, ESLint and Prettier were clean on the changed files; the
 touched Wave 3 sources are at 100% coverage. `npm run test:e2e:app` passed 31 of
 31 after the `radiogroup` change (user-run, above). The `RhfRadioButtonGroup`
-Storybook interaction test and `npm run test:e2e:storybook` were not run.
+Storybook interaction test was not run. `npm run test:e2e:storybook` passed 135
+of 135 on 2026-10-11 (user-run, after the Wave 3 address commits).
 
 ### Next
 
@@ -204,9 +205,10 @@ Storybook interaction test and `npm run test:e2e:storybook` were not run.
    the reviews: object URLs are created once per document and revoked, the
    missing-category message shows after a failed submit, and each delete button
    names its file. Still to do:
-   - Run `npm run test:e2e:storybook` on an idle machine. The app suite is done:
-     the first run failed every test on dev-server cold start, and with the
-     warm-up and `domcontentloaded` fixes (`59512ae4`) it now passes 31 of 31.
+   - `npm run test:e2e:storybook` is done (135 of 135 passed, 2026-10-11). The
+     app suite is done too: the first run failed every test on dev-server cold
+     start, and with the warm-up and `domcontentloaded` fixes (`59512ae4`) it
+     now passes 31 of 31.
    - Check `appDetails` and the wizard's last step on a real application: the
      "Applying for" sub-options now show.
    - Open the PR for this branch.
