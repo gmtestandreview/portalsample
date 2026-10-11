@@ -202,6 +202,20 @@ describe('ReportRecipientFormikBridge', () => {
     });
   });
 
+  it('leaves an undefined address undefined and the outer form clean after a failed submit', async () => {
+    const user = userEvent.setup();
+    render(
+      <Harness values={{ reportAddressType: ReportAddressTypeValues.Other }} />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await screen.findByText(/is required/i);
+
+    const probe = JSON.parse(screen.getByTestId('probe').textContent ?? '');
+    expect(probe.dirty).toBe(false);
+    expect(probe.address).toBeUndefined();
+  });
+
   it('describes the failed address search field by its message', async () => {
     const user = userEvent.setup();
     render(
