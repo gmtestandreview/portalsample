@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 import { http, HttpResponse } from 'msw';
 import { withPortalProviders } from '../../../storybook/storybookHarness';
 import ApplicationMessages from './appMessages';
@@ -53,8 +53,9 @@ export const MessagesTab: Story = {
     ).toBeEnabled();
     const editor = canvas.getByRole('textbox', { name: 'Message NMI' });
     await userEvent.type(editor, 'Hi');
-    await expect(editor).toHaveTextContent('Hi');
-    // Await the counter after Slate applies the entered text.
+    // Slate commits typed text through a deferred React render, so the
+    // placeholder can still be in the DOM when type() resolves under load.
+    await waitFor(() => expect(editor).toHaveTextContent('Hi'));
     await expect(await canvas.findByText(/^9\s*\//)).toBeVisible();
   },
 };
