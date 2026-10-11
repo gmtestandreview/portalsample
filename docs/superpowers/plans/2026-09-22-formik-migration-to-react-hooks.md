@@ -22,28 +22,32 @@ inputs below are pushed to `origin` but not yet merged to `main`.
 
 <!-- markdownlint-disable MD013 -->
 
-| Item                                                          | Status               | Commit     |
-| ------------------------------------------------------------- | -------------------- | ---------- |
-| Outstanding action 1: `reportRecipient` behavior suite        | Done                 | `3004131b` |
-| Outstanding action 2: contracts, path helpers, resolver moved | Done                 | `3004131b` |
-| Outstanding action 2: `FormikHelpers` removed from callbacks  | Done                 | `b14e037f` |
-| Wave 1: standalone search filters (`filterMenu`, `paFilter`)  | Done                 | `5ac231da` |
-| Wave 1: Storybook/test harnesses                              | Deferred (see below) | —          |
-| Wave 2: `appDocuments`                                        | Done                 | `c5714509` |
-| Wave 2: `appDetails` (form-free summary)                      | Done                 | `c5714509` |
-| Wave 2: `summaryAndSubmit` org/application summaries          | Done                 | `c5714509` |
-| Wave 2: wizard documents summary (still Formik)               | Deferred to Wave 5   | —          |
-| Wave 3 inputs: `RhfTextInput`, `RhfCheckbox`                  | Done                 | `c38a89ca` |
-| Wave 3 inputs: a11y fixes (describedby, invalid, suppress)    | Done                 | `3616d136` |
-| Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`           | Done                 | `1a65bcf3` |
-| Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup | Done                 | `e5702e7f` |
-| Wave 3 inputs: radio/select describedby and `aria-invalid`    | Done                 | `569e0332` |
-| Wave 3 inputs: shared `RhfRules`, per-radio `aria-invalid`    | Done                 | `0c4a3bb3` |
-| Wave 3 inputs: `radiogroup` fieldset carries `aria-invalid`   | Done                 | `f7ac5fba` |
-| Playwright BDD: dev-server warm-up, `domcontentloaded` waits  | Done, e2e app passes | `59512ae4` |
-| Wave 3: `AddressLookup`, `HidableField`, `ContactDetails`     | Not started          | —          |
-| Wave 3: step migrations (each behind a behavior suite)        | Not started          | —          |
-| Waves 4-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
+| Item                                                           | Status                | Commit                             |
+| -------------------------------------------------------------- | --------------------- | ---------------------------------- |
+| Outstanding action 1: `reportRecipient` behavior suite         | Done                  | `3004131b`                         |
+| Outstanding action 2: contracts, path helpers, resolver moved  | Done                  | `3004131b`                         |
+| Outstanding action 2: `FormikHelpers` removed from callbacks   | Done                  | `b14e037f`                         |
+| Wave 1: standalone search filters (`filterMenu`, `paFilter`)   | Done                  | `5ac231da`                         |
+| Wave 1: Storybook/test harnesses                               | Deferred (see below)  | —                                  |
+| Wave 2: `appDocuments`                                         | Done                  | `c5714509`                         |
+| Wave 2: `appDetails` (form-free summary)                       | Done                  | `c5714509`                         |
+| Wave 2: `summaryAndSubmit` org/application summaries           | Done                  | `c5714509`                         |
+| Wave 2: wizard documents summary (still Formik)                | Deferred to Wave 5    | —                                  |
+| Wave 3 inputs: `RhfTextInput`, `RhfCheckbox`                   | Done                  | `c38a89ca`                         |
+| Wave 3 inputs: a11y fixes (describedby, invalid, suppress)     | Done                  | `3616d136`                         |
+| Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`            | Done                  | `1a65bcf3`                         |
+| Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup  | Done                  | `e5702e7f`                         |
+| Wave 3 inputs: radio/select describedby and `aria-invalid`     | Done                  | `569e0332`                         |
+| Wave 3 inputs: shared `RhfRules`, per-radio `aria-invalid`     | Done                  | `0c4a3bb3`                         |
+| Wave 3 inputs: `radiogroup` fieldset carries `aria-invalid`    | Done                  | `f7ac5fba`                         |
+| Playwright BDD: dev-server warm-up, `domcontentloaded` waits   | Done, e2e app passes  | `59512ae4`                         |
+| Wave 3: `RhfHidableField` and hidden-rules context             | Done                  | `9f3ad8ab`, `997fdc49`             |
+| Wave 3: `RhfAutoSuggest`, `RhfAutoSuggestContainer`            | Done                  | `375a3baf`, `5b52f77c`, `f15d41a9` |
+| Wave 3: `RhfManualAddressInput`, `RhfSelectInput` `inlineHelp` | Done                  | `d2c0a12a`                         |
+| Wave 3: `RhfAddressLookup` (no typed text in telemetry)        | Done, awaiting review | `6f393acf`, `fd35c0c9`             |
+| Wave 3: `ContactDetails`                                       | Not started           | —                                  |
+| Wave 3: step migrations (each behind a behavior suite)         | Not started           | —                                  |
+| Waves 4-5, shells (action 4), Formik removal (action 6)        | Not started           | —                                  |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -112,6 +116,35 @@ Wave 3 shared inputs (each beside its Formik twin, with behavior tests and
   supports `aria-invalid` on `radiogroup`, not on `radio`), and removed it from
   the individual radios.
 
+Wave 3 address pieces (committed locally, not pushed; spec and code-quality
+reviews pending for the address commits):
+
+- `RhfHidableField` with a hidden-rules context (`9f3ad8ab`, `997fdc49`).
+- `RhfAutoSuggest` and `RhfAutoSuggestContainer` under
+  `components/Inputs/RhfAutoSuggest` (`375a3baf`; `errorMessage` renamed
+  `searchErrorMessage` in `5b52f77c`; tests in `f15d41a9`).
+- `RhfManualAddressInput` (`d2c0a12a`) under
+  `components/Inputs/RhfAddressLookup`. `RhfSelectInput` gained `inlineHelp` in
+  the same commit, because the State select needs it for parity with the Formik
+  `SelectInput`. This settles the open decision below for `inlineHelp` only;
+  `readOnly`, `displayHorizontally` and `inlineHelpTitle` are still deferred.
+- `RhfAddressLookup` (`6f393acf`) keeps the Formik behaviour (search, select,
+  no-match and 503 fallbacks, abort on new search, `isSummary`). It reads
+  `isManuallyEntered` from the form value instead of mirroring it into state.
+  Entering manual mode clears the search box's touched flag with
+  `resetField(..., { defaultValue: current, keepDirty, keepError })`, which also
+  sets that one field's default value; check its effect on form-level `isDirty`.
+- Telemetry fix (`fd35c0c9`): the failed-search log no longer includes the typed
+  address. The Formik `AddressLookup` still logs it (left byte-identical); fix
+  separately if wanted.
+- Focused runs: `tests/unit/components/inputs` and `tests/unit/config` passed
+  (45 files, 574 tests); the new address files and `RhfSelectInput` are at 100%
+  coverage; type-check, ESLint and Prettier clean. No full gate, Storybook or
+  e2e run for these commits.
+- CI follow-ups: the `MessagesTab` story (`d269796f`) and the `SlateEditor`
+  `Empty` story (`be8c031a`) now retry the typed-text assertion, because Slate
+  renders typed text on a deferred render. The `Empty` fix is unconfirmed on CI.
+
 Playwright BDD (app suite) cold-start fixes (`59512ae4`):
 
 - `playwright.config.ts` registers `tests/e2e/support/warm-dev-server.ts` as
@@ -166,15 +199,15 @@ Storybook interaction test and `npm run test:e2e:storybook` were not run.
      `useFieldArray`); the details tab renders empty summaries for one frame
      before the load.
 2. **Wave 3: remaining accept-quote steps.** `RhfTextInput`, `RhfCheckbox`,
-   `RhfTextAreaInput` and `RhfNumberInput` exist (see above). Build only the
-   remaining shared pieces the next step needs, each beside its Formik twin: RHF
-   `AddressLookup`, `HidableField` and `ContactDetails`. Write a behavior suite
-   for each step before moving it, as `reportRecipient` did. Keep the legacy
-   Formik components until a repository search shows their last consumer moved.
-   **Do not delete the payment-details bridge at the end of Wave 3.**
-   `WizardRoutedStep` still wraps every step in Formik, so the bridge stays
-   until the wizard shell moves to RHF (item 6). Other migrated steps may need
-   the same temporary bridge.
+   `RhfTextAreaInput`, `RhfNumberInput`, `RhfHidableField` and
+   `RhfAddressLookup` exist (see above; address commits await review). Build
+   only the remaining shared piece the next step needs, beside its Formik twin:
+   RHF `ContactDetails`. Write a behavior suite for each step before moving it,
+   as `reportRecipient` did. Keep the legacy Formik components until a
+   repository search shows their last consumer moved. **Do not delete the
+   payment-details bridge at the end of Wave 3.** `WizardRoutedStep` still wraps
+   every step in Formik, so the bridge stays until the wizard shell moves to RHF
+   (item 6). Other migrated steps may need the same temporary bridge.
 3. **Apply the form-free summary approach to request-for-quote.**
    `requestForQuoteSummary.tsx` has its own `OrganisationAndContact` and
    `InstrumentAndRequest` summary branches. Capture a parity baseline first,
