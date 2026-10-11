@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { useController } from 'react-hook-form';
+import { useController, useFormContext } from 'react-hook-form';
 import type { AttachmentDto } from '../../../api/web-api-client';
 import { formatBytes } from '../../../utils';
 import ConfirmationModal from '../../modals/ConfirmationModal';
@@ -50,6 +50,22 @@ const RhfAttachmentItem = ({
   // RHF keys touched state by field path, so it would stay with the row index
   // when an earlier row is deleted. Local state stays with this row's key.
   const [categoryTouched, setCategoryTouched] = useState<boolean>(false);
+  const { getValues, setValue } = useFormContext();
+  const initialCategory: unknown = field.value;
+  // What the server holds, and which save is newest, so a failed save only
+  // undoes itself and only while it is still the latest one.
+  const lastSavedCategory = useRef<string | undefined>(
+    typeof initialCategory === 'string' ? initialCategory : undefined
+  );
+  const latestSaveToken = useRef(0);
+  const lastSavedToken = useRef(0);
+  const isMounted = useRef(true);
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   const closeModal = () => setDeleteDialogOpen(false);
   const showModal = () => setDeleteDialogOpen(true);
   const { documentBytes } = attachment;
@@ -68,19 +84,39 @@ const RhfAttachmentItem = ({
   const showCategoryError =
     !field.value && (categoryTouched || formState.isSubmitted);
 
+  // The index can change while a save is in flight (an earlier row deleted),
+  // so find this document again instead of trusting the captured path.
+  const revertCategory = (token: number) => {
+    if (!isMounted.current || token !== latestSaveToken.current) return;
+    const list: unknown = getValues(name);
+    if (!Array.isArray(list)) return;
+    const currentIndex = (list as AttachmentDto[]).findIndex(
+      (item) => item.id === attachment.id
+    );
+    if (currentIndex < 0) return;
+    setValue(
+      `${name}.${currentIndex}.attachmentCategory`,
+      lastSavedCategory.current,
+      { shouldDirty: true }
+    );
+  };
+
   const saveCategory = async (
     update: NonNullable<typeof onCategoryUpdate>,
     docId: string,
     category: string
   ) => {
-    // The select has already moved to `category`, but this closure was made
-    // before that, so `field.value` is still the last value the server holds.
-    const previousCategory: unknown = field.value;
+    latestSaveToken.current += 1;
+    const token = latestSaveToken.current;
     try {
       await update(docId, category);
+      if (token > lastSavedToken.current) {
+        lastSavedToken.current = token;
+        lastSavedCategory.current = category;
+      }
     } catch {
       // The error is left out of the message: it can carry tokens or PII.
-      field.onChange(previousCategory);
+      revertCategory(token);
       onCategoryError?.(
         `Could not save the category for ${attachment.attachmentName}.`
       );
@@ -88,8 +124,6 @@ const RhfAttachmentItem = ({
   };
 
   const onCategoryChange = (category: string) => {
-    field.onBlur();
-    setCategoryTouched(true);
     if (onCategoryUpdate && attachment.id) {
       void saveCategory(onCategoryUpdate, attachment.id, category);
     }

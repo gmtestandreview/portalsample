@@ -87,7 +87,11 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const addErrors = (messages: string[]) =>
     setErrors((newErrors) => [...newErrors, ...messages]);
 
-  const onCategoryError = (message: string) => addErrors([message]);
+  // Repeated failures for one document would otherwise list the same line twice.
+  const onCategoryError = (message: string) =>
+    setErrors((current) =>
+      current.includes(message) ? current : [...current, message]
+    );
 
   const clearFileInput = () => {
     if (inputRef.current) {
