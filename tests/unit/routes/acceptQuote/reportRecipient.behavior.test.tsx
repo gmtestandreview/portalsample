@@ -6,8 +6,12 @@ import type * as WebApiClientModule from '@/api/web-api-client';
 import { ReportAddressTypeValues } from '@/api/web-api-client';
 import type { ReportRecipientStep } from '@/api/web-api-client';
 import ReportRecipient from '@/routes/acceptQuote/reportRecipient';
-import { reportRecipientSubmitValidation } from '@/routes/acceptQuote/validation';
-import { removeHidden } from '@/components/forms/utils';
+import {
+  reportRecipientSaveValidation,
+  reportRecipientSubmitValidation,
+} from '@/routes/acceptQuote/validation';
+import { removeHidden, validateForm } from '@/components/forms/utils';
+import SaveAndExitButton from '@/components/forms/SaveAndExitButton';
 import { defined } from '../../helpers/defined';
 
 const mocks = vi.hoisted(() => {
@@ -56,7 +60,13 @@ vi.mock('@/instrumentation/AppLogger', () => ({
 
 // The lookup talks to the address service; this suite only cares whether
 // ReportRecipient renders it, so stand in a marker element.
+// The edit form renders the RHF twin; the summary branch keeps the Formik one.
 vi.mock('@/components/Inputs/AddressLookup', () => ({
+  default: ({ label }: { label: string }) => (
+    <div data-testid='address-lookup'>{label}</div>
+  ),
+}));
+vi.mock('@/components/Inputs/RhfAddressLookup', () => ({
   default: ({ label }: { label: string }) => (
     <div data-testid='address-lookup'>{label}</div>
   ),
@@ -80,17 +90,31 @@ const postalAddress = {
   postcode: '2000',
 };
 
-function renderStep(options: {
+interface StepHarnessProps {
   values?: ReportRecipientStep;
   isSummary?: boolean;
   onSubmit?: (values: ReportRecipientStep) => void;
-}) {
-  const { values = {}, isSummary, onSubmit = vi.fn() } = options;
-  return render(
-    <Formik<ReportRecipientStep>
+}
+
+// Like FormikForm, the schema follows saveAndExit: soft for a save, else hard.
+function StepHarness({
+  values = {},
+  isSummary,
+  onSubmit = vi.fn(),
+}: Readonly<StepHarnessProps>) {
+  return (
+    <Formik<ReportRecipientStep & { saveAndExit?: boolean }>
       initialValues={values}
       initialStatus={{ hidden: hidingFields }}
-      validationSchema={reportRecipientSubmitValidation}
+      enableReinitialize
+      validate={(formValues) =>
+        validateForm(
+          formValues.saveAndExit
+            ? reportRecipientSaveValidation
+            : reportRecipientSubmitValidation,
+          hidingFields
+        )(formValues)
+      }
       onSubmit={(submitted) =>
         onSubmit(removeHidden(submitted, submitted, hidingFields))
       }
@@ -98,9 +122,14 @@ function renderStep(options: {
       <Form noValidate>
         <ReportRecipient id='RFQ-1' isSummary={isSummary} />
         <button type='submit'>Continue</button>
+        <SaveAndExitButton />
       </Form>
     </Formik>
   );
+}
+
+function renderStep(options: StepHarnessProps) {
+  return render(<StepHarness {...options} />);
 }
 
 describe('ReportRecipient behavior', () => {
@@ -197,6 +226,97 @@ describe('ReportRecipient behavior', () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it('holds back the validation message until the form is submitted', async () => {
+    const user = userEvent.setup();
+    renderStep({ values: { organisationName: 'x'.repeat(401) } });
+    await screen.findByText(/1 Street Road/);
+
+    expect(screen.queryByText(/400/)).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    expect(await screen.findByText(/400/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Organisation name for report')).toBeInvalid();
+  });
+
+  it('hides the address lookup again for the postal address option', async () => {
+    const user = userEvent.setup();
+    renderStep({
+      values: { reportAddressType: ReportAddressTypeValues.Other },
+    });
+    await screen.findByText(/1 Street Road/);
+
+    expect(screen.getByTestId('address-lookup')).toBeInTheDocument();
+
+    await user.click(
+      screen.getByRole('radio', { name: /Business postal address/ })
+    );
+    expect(screen.queryByTestId('address-lookup')).not.toBeInTheDocument();
+  });
+
+  it('submits the chosen address type to the outer form', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    renderStep({ onSubmit });
+    await screen.findByText(/1 Street Road/);
+
+    await user.click(
+      screen.getByRole('radio', { name: /Business postal address/ })
+    );
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(defined(onSubmit.mock.calls[0], 'submit call')[0]).toEqual({
+      reportAddressType: ReportAddressTypeValues.PostalAddress,
+    });
+  });
+
+  it('applies the soft schema to save and exit', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    renderStep({
+      values: { organisationName: 'x'.repeat(401) },
+      onSubmit,
+    });
+    await screen.findByText(/1 Street Road/);
+
+    await user.click(screen.getByRole('button', { name: 'Save and exit' }));
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
+    expect(screen.queryByText(/400/)).not.toBeInTheDocument();
+  });
+
+  it('reinitializes the fields when the wizard loads new step data', async () => {
+    const { rerender } = renderStep({ values: { organisationName: 'Old' } });
+    await screen.findByText(/1 Street Road/);
+
+    rerender(<StepHarness values={{ organisationName: 'Loaded' }} />);
+
+    await waitFor(() =>
+      expect(screen.getByLabelText('Organisation name for report')).toHaveValue(
+        'Loaded'
+      )
+    );
+  });
+
+  it('shows validation again after reinitializing following an invalid submit', async () => {
+    const user = userEvent.setup();
+    const { rerender } = renderStep({
+      values: { organisationName: 'x'.repeat(401) },
+    });
+    await screen.findByText(/1 Street Road/);
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(await screen.findByText(/400/)).toBeInTheDocument();
+
+    rerender(<StepHarness values={{ organisationName: 'y'.repeat(402) }} />);
+    await waitFor(() =>
+      expect(screen.queryByText(/400/)).not.toBeInTheDocument()
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(await screen.findByText(/400/)).toBeInTheDocument();
+  });
+
   it('keeps rendering the form and logs when the recipient fails to load', async () => {
     mocks.getReportRecipient.mockRejectedValue(new Error('boom'));
     renderStep({});
@@ -205,6 +325,26 @@ describe('ReportRecipient behavior', () => {
     expect(
       screen.getByLabelText('Organisation name for report')
     ).toBeInTheDocument();
+  });
+
+  it('shows the formatted postal address read-only in summary mode', async () => {
+    mocks.getReportRecipient.mockResolvedValue({
+      reportAddressType: ReportAddressTypeValues.PostalAddress,
+      rfqOrganisation: { streetAddress, postalAddress },
+    });
+    renderStep({ isSummary: true });
+
+    expect(await screen.findByText(/PO Box 9/)).toBeInTheDocument();
+  });
+
+  it('shows the entered address in summary mode for the Other address type', async () => {
+    mocks.getReportRecipient.mockResolvedValue({
+      reportAddressType: ReportAddressTypeValues.Other,
+      rfqOrganisation: { streetAddress, postalAddress },
+    });
+    renderStep({ isSummary: true });
+
+    expect(await screen.findByTestId('address-lookup')).toBeInTheDocument();
   });
 
   it('shows the formatted business address read-only in summary mode', async () => {
