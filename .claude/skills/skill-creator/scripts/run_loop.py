@@ -16,6 +16,11 @@ import webbrowser
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, cast
 
+try:
+    from scripts.eval_control import EvaluationControl
+except ModuleNotFoundError:
+    from eval_control import EvaluationControl
+
 
 class EvalCase(TypedDict):
     """Fields consumed by this orchestration module."""
@@ -57,6 +62,7 @@ if TYPE_CHECKING:
         runs_per_query: int,
         trigger_threshold: float,
         model: str | None,
+        control: EvaluationControl | None = None,
     ) -> object: ...
 
     def parse_skill_md(skill_path: Path) -> tuple[str, str, str]: ...
@@ -337,6 +343,7 @@ def _evaluate_cases(
     runs_per_query: int,
     trigger_threshold: float,
     model: str | None,
+    control: EvaluationControl | None = None,
 ) -> tuple[list[dict[str, object]], EvalSummary, dict[str, object], float]:
     """Evaluate one fixed set and validate one-to-one result coverage."""
     start = time.perf_counter()
@@ -350,6 +357,7 @@ def _evaluate_cases(
         runs_per_query=runs_per_query,
         trigger_threshold=trigger_threshold,
         model=model,
+        control=control,
     )
     elapsed = time.perf_counter() - start
 
@@ -360,6 +368,8 @@ def _evaluate_cases(
         "results": result_list,
         "summary": summary,
     }
+    if isinstance(raw_output, dict) and "execution" in raw_output:
+        results["execution"] = raw_output["execution"]
     return result_list, summary, results, elapsed
 
 
