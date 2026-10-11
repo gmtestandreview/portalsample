@@ -60,49 +60,174 @@ _PARSER_LIMIT = "__parser_limit__"
 _HEREDOC = re.compile(r"<<(-?)\s*(['\"]?)([\w-]+)\2")
 
 
+def _escape_character(shell: str) -> str:
+    if shell == "PowerShell":
+        return "`"
+    if shell == "CMD":
+        return "^"
+    return "\\"
+
+
+def _skip_nested_substitution_escape(
+    text: str, index: int, quote: str | None, shell: str
+) -> int | None:
+    if text[index] == "\\" and quote != "'" and shell != "PowerShell":
+        return index + 2
+    return None
+
+
+def _skip_substitution_escape(text: str, index: int, quote: str | None, shell: str) -> int | None:
+    if _skip_nested_substitution_escape(text, index, quote, shell) is not None:
+        return index + 2
+    if text[index] == "`" and shell == "PowerShell" and quote != "'":
+        return index + 2
+    return None
+
+
+def _scan_dollar_substitution(text: str, start: int, shell: str) -> tuple[str, int]:
+    index, balance, quote = start, 1, None
+    while index < len(text) and balance:
+        index, quote, balance = _scan_dollar_character(text, index, quote, balance, shell)
+    payload = text[start : index - 1] if not balance else _PARSER_LIMIT
+    return payload, index
+
+
+def _scan_dollar_character(
+    text: str,
+    index: int,
+    quote: str | None,
+    balance: int,
+    shell: str,
+) -> tuple[int, str | None, int]:
+    skipped = _skip_nested_substitution_escape(text, index, quote, shell)
+    if skipped is not None:
+        return skipped, quote, balance
+    char = text[index]
+    if char in "'\"" and (quote is None or quote == char):
+        return index + 1, None if quote else char, balance
+    if quote is not None:
+        return index + 1, quote, balance
+    if char == "(":
+        balance += 1
+    elif char == ")":
+        balance -= 1
+    return index + 1, quote, balance
+
+
+def _toggle_substitution_quote(
+    char: str, quote: str | None, literal_body: bool
+) -> tuple[bool, str | None]:
+    if literal_body or char not in "'\"" or (quote is not None and quote != char):
+        return False, quote
+    return True, None if quote else char
+
+
+def _backtick_substitution(text: str, index: int, quote: str | None) -> tuple[str, int] | None:
+    if text[index] != "`" or quote == "'":
+        return None
+    end = text.find("`", index + 1)
+    payload = text[index + 1 : end] if end >= 0 else _PARSER_LIMIT
+    next_index = end + 1 if end >= 0 else len(text)
+    return payload, next_index
+
+
 def _substitutions(text: str, shell: str = "", *, literal_body: bool = False) -> list[str]:
     """Extract executable substitutions, respecting literal quotes and escapes."""
     found: list[str] = []
     quote: str | None = None
-    i = 0
-    while i < len(text):
-        char = text[i]
-        if char == "\\" and quote != "'" and shell != "PowerShell":
-            i += 2
+    index = 0
+    while index < len(text):
+        char = text[index]
+        skipped = _skip_substitution_escape(text, index, quote, shell)
+        if skipped is not None:
+            index = skipped
             continue
-        if char == "`" and shell == "PowerShell" and quote != "'":
-            i += 2
+        quote_handled, quote = _toggle_substitution_quote(char, quote, literal_body)
+        if quote_handled:
+            index += 1
             continue
-        if not literal_body and char in "'\"" and (quote is None or quote == char):
-            quote = None if quote else char
-            i += 1
+        if quote != "'" and text.startswith("$(", index):
+            payload, index = _scan_dollar_substitution(text, index + 2, shell)
+            found.append(payload)
             continue
-        if quote != "'" and text.startswith("$(", i):
-            start = i + 2
-            j, balance, inner_quote = start, 1, None
-            while j < len(text) and balance:
-                current = text[j]
-                if current == "\\" and inner_quote != "'" and shell != "PowerShell":
-                    j += 2
-                    continue
-                if current in "'\"" and (inner_quote is None or inner_quote == current):
-                    inner_quote = None if inner_quote else current
-                elif inner_quote is None:
-                    if current == "(":
-                        balance += 1
-                    elif current == ")":
-                        balance -= 1
-                j += 1
-            found.append(text[start : j - 1] if not balance else _PARSER_LIMIT)
-            i = j
+        backtick = _backtick_substitution(text, index, quote)
+        if backtick is not None:
+            payload, index = backtick
+            found.append(payload)
             continue
-        if char == "`" and quote != "'":
-            end = text.find("`", i + 1)
-            found.append(text[i + 1 : end] if end >= 0 else _PARSER_LIMIT)
-            i = end + 1 if end >= 0 else len(text)
-            continue
-        i += 1
+        index += 1
     return found
+
+
+def _consume_block_line(
+    line: str,
+    closers: list[tuple[str, bool, bool]],
+    shell: str,
+    substitutions: list[str],
+) -> bool:
+    if not closers:
+        return False
+    closer, expands, tabs = closers[0]
+    if (line.lstrip("\t") if tabs else line) == closer:
+        closers.pop(0)
+    elif expands:
+        # Bodies are data, but unquoted heredocs still execute expansions.
+        substitutions.extend(_substitutions(line, shell, literal_body=True))
+    return True
+
+
+def _update_line_quote(
+    line: str,
+    index: int,
+    char: str,
+    quote: str | None,
+    quotes: str,
+    kept: list[str],
+    closers: list[tuple[str, bool, bool]],
+) -> tuple[str | None, bool]:
+    if char not in quotes or (quote is not None and quote != char):
+        return quote, False
+    if quote is None and index and line[index - 1] == "@" and not line[index + 1 :].strip():
+        kept.pop()
+        closers.append((char + "@", char == '"', False))
+        return quote, True
+    return (None if quote else char), False
+
+
+def _strip_line(
+    line: str,
+    shell: str,
+    closers: list[tuple[str, bool, bool]],
+) -> str:
+    quote: str | None = None
+    index = 0
+    kept: list[str] = []
+    quotes = '"' if shell == "CMD" else "'\""
+    escape = _escape_character(shell)
+    while index < len(line):
+        char = line[index]
+        if char == escape and quote != "'" and index + 1 < len(line):
+            kept.extend(line[index : index + 2])
+            index += 2
+            continue
+        if (
+            char == "#"
+            and quote is None
+            and shell != "CMD"
+            and (index == 0 or line[index - 1].isspace() or line[index - 1] in ";|&")
+        ):
+            break
+        quote, block_started = _update_line_quote(line, index, char, quote, quotes, kept, closers)
+        if block_started:
+            break
+        match = _HEREDOC.match(line, index) if quote is None else None
+        if match is not None:
+            closers.append((match[3], not match[2], bool(match[1])))
+            index = match.end()
+            continue
+        kept.append(char)
+        index += 1
+    return "".join(kept)
 
 
 def _strip_blocks(text: str, shell: str = "") -> tuple[str, list[str]]:
@@ -110,47 +235,63 @@ def _strip_blocks(text: str, shell: str = "") -> tuple[str, list[str]]:
     substitutions: list[str] = []
     closers: list[tuple[str, bool, bool]] = []
     for line in text.split("\n"):
-        if closers:
-            closer, expands, tabs = closers[0]
-            if (line.lstrip("\t") if tabs else line) == closer:
-                closers.pop(0)
-            elif expands:
-                # Bodies are data, but unquoted heredocs still execute expansions.
-                substitutions.extend(_substitutions(line, shell, literal_body=True))
+        if _consume_block_line(line, closers, shell, substitutions):
             continue
-        quote: str | None = None
-        i = 0
-        kept: list[str] = []
-        while i < len(line):
-            char = line[i]
-            escape = "`" if shell == "PowerShell" else "^" if shell == "CMD" else "\\"
-            if char == escape and quote != "'" and i + 1 < len(line):
-                kept.extend(line[i : i + 2])
-                i += 2
-                continue
-            if (
-                char == "#"
-                and quote is None
-                and shell != "CMD"
-                and (i == 0 or line[i - 1].isspace() or line[i - 1] in ";|&")
-            ):
-                break
-            quotes = '"' if shell == "CMD" else "'\""
-            if char in quotes and (quote is None or quote == char):
-                if quote is None and i and line[i - 1] == "@" and not line[i + 1 :].strip():
-                    kept.pop()
-                    closers.append((char + "@", char == '"', False))
-                    break
-                quote = None if quote else char
-            match = _HEREDOC.match(line, i) if quote is None else None
-            if match is not None:
-                closers.append((match[3], not match[2], bool(match[1])))
-                i = match.end()
-                continue
-            kept.append(char)
-            i += 1
-        out.append("".join(kept))
+        out.append(_strip_line(line, shell, closers))
     return "\n".join(out), substitutions
+
+
+def _split_escape_end(text: str, index: int, shell: str, quote: str | None) -> int | None:
+    if index + 1 >= len(text) or text[index] != _escape_character(shell) or quote == "'":
+        return None
+    following = text[index + 1]
+    if (
+        shell in ("PowerShell", "CMD")
+        or (shell == "Bash" and (quote != '"' or following in '$`"\\\n'))
+        or (not shell and following in "'\";|& \t\n$`")
+    ):
+        return index + 2
+    return None
+
+
+def _flush_token(tokens: list[str], current: list[str]) -> None:
+    if current:
+        tokens.append("".join(current))
+        current.clear()
+
+
+def _end_segment(segments: list[list[str]], tokens: list[str], current: list[str]) -> None:
+    _flush_token(tokens, current)
+    if tokens:
+        segments.append(list(tokens))
+        tokens.clear()
+
+
+def _split_character(
+    char: str,
+    shell: str,
+    quote: str | None,
+    segments: list[list[str]],
+    tokens: list[str],
+    current: list[str],
+) -> str | None:
+    if quote:
+        if char == quote:
+            return None
+        current.append(char)
+        return quote
+    if char in ('"' if shell == "CMD" else "'\""):
+        return char
+    if char in ";|&\n":
+        _end_segment(segments, tokens, current)
+    elif char in "<>":
+        _flush_token(tokens, current)
+        tokens.append(char)
+    elif char in " \t":
+        _flush_token(tokens, current)
+    else:
+        current.append(char)
+    return None
 
 
 def _split(text: str, shell: str = "") -> list[list[str]]:
@@ -158,51 +299,18 @@ def _split(text: str, shell: str = "") -> list[list[str]]:
     tokens: list[str] = []
     current: list[str] = []
     quote: str | None = None
-
-    def flush() -> None:
-        if current:
-            tokens.append("".join(current))
-            current.clear()
-
-    def end() -> None:
-        flush()
-        if tokens:
-            segments.append(list(tokens))
-            tokens.clear()
-
-    i = 0
-    while i < len(text):
-        char = text[i]
-        escape = "`" if shell == "PowerShell" else "^" if shell == "CMD" else "\\"
-        if char == escape and quote != "'" and i + 1 < len(text):
-            following = text[i + 1]
-            if (
-                shell in ("PowerShell", "CMD")
-                or (shell == "Bash" and (quote != '"' or following in '$`"\\\n'))
-                or (not shell and following in "'\";|& \t\n$`")
-            ):
-                if following != "\n":
-                    current.append(following)
-                i += 2
-                continue
-        if quote:
-            if char == quote:
-                quote = None
-            else:
-                current.append(char)
-        elif char in ('"' if shell == "CMD" else "'\""):
-            quote = char
-        elif char in ";|&\n":
-            end()
-        elif char in "<>":
-            flush()
-            tokens.append(char)
-        elif char in " \t":
-            flush()
-        else:
-            current.append(char)
-        i += 1
-    end()
+    index = 0
+    while index < len(text):
+        char = text[index]
+        escape_end = _split_escape_end(text, index, shell, quote)
+        if escape_end is not None:
+            if text[index + 1] != "\n":
+                current.append(text[index + 1])
+            index = escape_end
+            continue
+        quote = _split_character(char, shell, quote, segments, tokens, current)
+        index += 1
+    _end_segment(segments, tokens, current)
     return segments
 
 
@@ -214,27 +322,30 @@ def _verb_name(token: str) -> str:
     return name
 
 
+_CONTROL_TOKENS = {"(", "{", "}", ")", "then", "do", "else", "if", "while", "until", "!"}
+
+
+def _skip_wrapper_options(tokens: list[str], index: int, wrapper: str) -> int:
+    while index < len(tokens) and tokens[index].startswith("-"):
+        option = tokens[index]
+        if wrapper == "env" and option in {"-S", "--split-string"}:
+            return index  # unsupported expanding wrapper is blocked by commands()
+        takes_value = option in _WRAPPER_VALUES.get(wrapper, set())
+        index += 2 if takes_value else 1
+    return index
+
+
 def _verb_index(tokens: list[str]) -> int | None:
-    i = 0
-    while i < len(tokens):
-        token = tokens[i]
-        if token in {"(", "{", "}", ")", "then", "do", "else", "if", "while", "until", "!"}:
-            i += 1
-            continue
-        if re.match(r"^[A-Za-z_][\w]*=", token):
-            i += 1
+    index = 0
+    while index < len(tokens):
+        token = tokens[index]
+        if token in _CONTROL_TOKENS or re.match(r"^[A-Za-z_][\w]*=", token):
+            index += 1
             continue
         wrapper = _verb_name(token)
-        if wrapper in _WRAPPERS:
-            i += 1
-            while i < len(tokens) and tokens[i].startswith("-"):
-                option = tokens[i]
-                if wrapper == "env" and option in {"-S", "--split-string"}:
-                    return i  # unsupported expanding wrapper is blocked by commands()
-                takes_value = option in _WRAPPER_VALUES.get(wrapper, set())
-                i += 2 if takes_value else 1
-            continue
-        return i
+        if wrapper not in _WRAPPERS:
+            return index
+        index = _skip_wrapper_options(tokens, index + 1, wrapper)
     return None
 
 
@@ -258,31 +369,46 @@ def _nested_payload(verb: str, args: list[str]) -> str | None:
     return None
 
 
+def _nested_shell(verb: str) -> str:
+    if verb in _PS_SHELLS:
+        return "PowerShell"
+    if verb in _SHELLS:
+        return "Bash"
+    return "CMD"
+
+
+def _recursive_commands(payloads: list[str], depth: int, shell: str) -> list[tuple[str, list[str]]]:
+    found: list[tuple[str, list[str]]] = []
+    for payload in payloads:
+        found.extend(commands(payload, depth + 1, shell))
+    return found
+
+
+def _command_segment(tokens: list[str], depth: int, shell: str) -> list[tuple[str, list[str]]]:
+    index = _verb_index(tokens)
+    if index is None:
+        return []
+    verb, args = _verb_name(tokens[index]), tokens[index + 1 :]
+    if tokens[index] in {"-S", "--split-string"}:
+        verb = _PARSER_LIMIT
+    found = [(verb, args)]
+    payload = _nested_payload(verb, args)
+    if payload is not None:
+        found.extend(commands(payload, depth + 1, _nested_shell(verb)))
+    elif verb in _EVAL_VERBS and args:
+        # eval/iex execute their joined arguments as a command line.
+        found.extend(commands(" ".join(args), depth + 1, shell))
+    return found
+
+
 def commands(text: str, depth: int = 0, shell: str = "") -> list[tuple[str, list[str]]]:
     """Parse bounded literal commands; substitutions precede their parent segments."""
     if depth > _MAX_DEPTH or len(text) > 32768:
         return [(_PARSER_LIMIT, [])]
-    found: list[tuple[str, list[str]]] = []
     body, expansions = _strip_blocks(text, shell)
-    for payload in [*expansions, *_substitutions(body, shell)]:
-        found.extend(commands(payload, depth + 1, shell))
+    found = _recursive_commands([*expansions, *_substitutions(body, shell)], depth, shell)
     for tokens in _split(body, shell):
-        index = _verb_index(tokens)
-        if index is None:
-            continue
-        verb, args = _verb_name(tokens[index]), tokens[index + 1 :]
-        if tokens[index] in {"-S", "--split-string"}:
-            verb = _PARSER_LIMIT
-        found.append((verb, args))
-        payload = _nested_payload(verb, args)
-        if payload is not None:
-            nested_shell = (
-                "PowerShell" if verb in _PS_SHELLS else "Bash" if verb in _SHELLS else "CMD"
-            )
-            found.extend(commands(payload, depth + 1, nested_shell))
-        elif verb in _EVAL_VERBS and args:
-            # eval/iex execute their joined arguments as a command line.
-            found.extend(commands(" ".join(args), depth + 1, shell))
+        found.extend(_command_segment(tokens, depth, shell))
     return found
 
 
@@ -351,82 +477,139 @@ def _is_dangerous_target(target: str) -> bool:
     )
 
 
+def _remove_option(
+    arg: str, low: str, next_arg: str | None
+) -> tuple[int, bool, bool, list[str]] | None:
+    if low in ("-path", "-literalpath", "-lp"):
+        targets = next_arg.split(",") if next_arg is not None else []
+        return (2 if next_arg is not None else 1, False, False, targets)
+    if re.fullmatch(r"(?:/[sfq])+", low):
+        return 1, "/s" in low, "/f" in low or "/q" in low, []
+    if low.startswith("--"):
+        return 1, low == "--recursive", low == "--force", []
+    if not arg.startswith("-") or len(arg) <= 1:
+        return None
+    name = low[1:].split(":")[0]
+    if name and "recurse".startswith(name):
+        return 1, True, False, []
+    if name and "force".startswith(name):
+        return 1, False, True, []
+    if set(name) <= set("rfvid"):
+        return 1, "r" in name, "f" in name, []
+    return 1, False, False, []
+
+
+def _remove_flag_step(
+    args: list[str],
+    index: int,
+    options: bool,
+    recursive: bool,
+    force: bool,
+    targets: list[str],
+) -> tuple[int, bool, bool, bool]:
+    arg, low = args[index], args[index].lower()
+    if arg in ("<", ">"):
+        return index + 2, options, recursive, force
+    if options and arg == "--":
+        return index + 1, False, recursive, force
+    if options:
+        option = _remove_option(arg, low, args[index + 1] if index + 1 < len(args) else None)
+        if option is not None:
+            consumed, has_recursive, has_force, option_targets = option
+            targets.extend(option_targets)
+            return (
+                index + consumed,
+                options,
+                recursive or has_recursive,
+                force or has_force,
+            )
+    targets.extend(arg.split(","))
+    return index + 1, options, recursive, force
+
+
 def _remove_flags(args: list[str]) -> tuple[bool, bool, list[str]]:
     recursive = force = False
     targets: list[str] = []
     options = True
     index = 0
     while index < len(args):
-        arg, low = args[index], args[index].lower()
-        if arg in ("<", ">"):
-            index += 2
-            continue
-        if options and arg == "--":
-            options = False
-        elif options and low in ("-path", "-literalpath", "-lp") and index + 1 < len(args):
-            targets.extend(args[index + 1].split(","))
-            index += 2
-            continue
-        elif options and re.fullmatch(r"(?:/[sfq])+", low):
-            recursive = recursive or "/s" in low
-            force = force or "/f" in low or "/q" in low
-        elif options and low.startswith("--"):
-            recursive = recursive or low == "--recursive"
-            force = force or low == "--force"
-        elif options and arg.startswith("-") and len(arg) > 1:
-            name = low[1:].split(":")[0]
-            if name and "recurse".startswith(name):
-                recursive = True
-            elif name and "force".startswith(name):
-                force = True
-            elif set(name) <= set("rfvid"):
-                recursive = recursive or "r" in name
-                force = force or "f" in name
-        else:
-            targets.extend(arg.split(","))
-        index += 1
+        index, options, recursive, force = _remove_flag_step(
+            args, index, options, recursive, force, targets
+        )
     return recursive, force, targets
 
 
-def _is_destructive(command: str, shell: str = "") -> str | None:
-    cleanup_allowed = os.path.normcase(os.path.realpath(os.getcwd())) == os.path.normcase(
+def _cleanup_allowed() -> bool:
+    return os.path.normcase(os.path.realpath(os.getcwd())) == os.path.normcase(
         os.path.realpath(_project_root())
     )
+
+
+def _unsafe_cmd_delete(
+    verb: str,
+    recursive: bool,
+    force: bool,
+    targets: list[str],
+    cleanup_allowed: bool,
+    args: list[str],
+) -> bool:
+    cmd_delete = any(re.fullmatch(r"(?:/[sfq])+", arg.lower()) for arg in args)
+    return (
+        cmd_delete
+        and (recursive or (force and verb in {"del", "erase"}))
+        and (
+            not cleanup_allowed
+            or not targets
+            or not all(_is_safe_target(target) for target in targets)
+        )
+    )
+
+
+def _unsafe_recursive_delete(
+    recursive: bool,
+    force: bool,
+    targets: list[str],
+    cleanup_allowed: bool,
+) -> bool:
+    if not recursive:
+        return False
+    dangerous_target = any(_is_dangerous_target(target) for target in targets)
+    unsafe_forced_delete = force and not (
+        cleanup_allowed and targets and all(_is_safe_target(target) for target in targets)
+    )
+    return dangerous_target or unsafe_forced_delete
+
+
+def _remover_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | None:
+    recursive, force, targets = _remove_flags(args)
+    # Preserve the old CMD force/recursive protection, including /s/q.
+    if _unsafe_cmd_delete(verb, recursive, force, targets, cleanup_allowed, args):
+        return "recursive-delete"
+    if _unsafe_recursive_delete(recursive, force, targets, cleanup_allowed):
+        return "recursive-delete"
+    return None
+
+
+def _command_rule(verb: str, args: list[str], cleanup_allowed: bool) -> str | None:
+    if verb == _PARSER_LIMIT:
+        return "command-parser-limit"
+    if verb in _ALWAYS_BAD:
+        return "destructive-verb"
+    if verb == "format" and any(re.fullmatch(r"[A-Za-z]:", arg) for arg in args):
+        return "format-drive"
+    if verb in _REMOVERS:
+        return _remover_rule(verb, args, cleanup_allowed)
+    return None
+
+
+def _is_destructive(command: str, shell: str = "") -> str | None:
+    cleanup_allowed = _cleanup_allowed()
     for verb, args in commands(command, shell=shell):
         if verb in {"cd", "chdir", "pushd", "popd", "set-location", "sl"}:
             cleanup_allowed = False
-        if verb == _PARSER_LIMIT:
-            return "command-parser-limit"
-        if verb in _ALWAYS_BAD:
-            return "destructive-verb"
-        if verb == "format" and any(re.fullmatch(r"[A-Za-z]:", arg) for arg in args):
-            return "format-drive"
-        if verb in _REMOVERS:
-            recursive, force, targets = _remove_flags(args)
-            # Preserve the old CMD force/recursive protection, including /s/q.
-            cmd_delete = any(re.fullmatch(r"(?:/[sfq])+", arg.lower()) for arg in args)
-            if (
-                cmd_delete
-                and (recursive or (force and verb in {"del", "erase"}))
-                and (
-                    not cleanup_allowed
-                    or not targets
-                    or not all(_is_safe_target(target) for target in targets)
-                )
-            ):
-                return "recursive-delete"
-            if recursive and (
-                any(_is_dangerous_target(target) for target in targets)
-                or (
-                    force
-                    and not (
-                        cleanup_allowed
-                        and targets
-                        and all(_is_safe_target(target) for target in targets)
-                    )
-                )
-            ):
-                return "recursive-delete"
+        rule = _command_rule(verb, args, cleanup_allowed)
+        if rule:
+            return rule
     return None
 
 
@@ -479,9 +662,68 @@ def _is_env_file(path: str) -> bool:
     # Every segment counts: files below a `.env/` directory are secrets too.
     segments = path.replace("\\", "/").lower().split("/")
     return any(
-        _ENV_NAME.fullmatch(segment) and segment not in _ENV_SAFE_SUFFIXES
-        for segment in segments
+        _ENV_NAME.fullmatch(segment) and segment not in _ENV_SAFE_SUFFIXES for segment in segments
     )
+
+
+def _search_arg(args: list[str], index: int, low: str) -> tuple[int, list[str]] | None:
+    if low.startswith(("--regexp=", "-pattern:")):
+        return 1, []
+    if low in {"-f", "--file"} and index + 1 < len(args):
+        return 2, [args[index + 1]]
+    if low.startswith("--file="):
+        return 1, [args[index].split("=", 1)[1]]
+    if low in {"-pattern", "-e", "--regexp"}:
+        return 2, []
+    return None
+
+
+def _path_arg(args: list[str], index: int, low: str) -> tuple[int, list[str]] | None:
+    if low in {"-path", "-literalpath", "-lp"} and index + 1 < len(args):
+        return 2, args[index + 1].split(",")
+    return None
+
+
+def _git_message_arg(low: str) -> int | None:
+    if low in {"-m", "--message"}:
+        return 2
+    if low.startswith("--message="):
+        return 1
+    return None
+
+
+def _env_arg_step(
+    verb: str,
+    args: list[str],
+    index: int,
+    pattern_pending: bool,
+    candidates: list[str],
+) -> tuple[int, bool]:
+    arg, low = args[index], args[index].lower()
+    if verb in {"select-string", "sls", "grep", "rg"}:
+        search_arg = _search_arg(args, index, low)
+        if search_arg is not None:
+            consumed, values = search_arg
+            candidates.extend(values)
+            return index + consumed, False
+    path_arg = _path_arg(args, index, low)
+    if path_arg is not None:
+        consumed, values = path_arg
+        candidates.extend(values)
+        return index + consumed, pattern_pending
+    if verb == "git":
+        message_arg = _git_message_arg(low)
+        if message_arg is not None:
+            return index + message_arg, pattern_pending
+    if not arg.startswith("-"):
+        if pattern_pending:
+            return index + 1, False
+        candidates.extend(arg.split(","))
+    elif "=" in arg:
+        candidates.append(arg.split("=", 1)[1])
+    elif low.startswith(("-path:", "-literalpath:")):
+        candidates.extend(arg.split(":", 1)[1].split(","))
+    return index + 1, pattern_pending
 
 
 def _env_args(verb: str, args: list[str]) -> list[str]:
@@ -490,45 +732,7 @@ def _env_args(verb: str, args: list[str]) -> list[str]:
     pattern_pending = search
     index = 0
     while index < len(args):
-        arg, low = args[index], args[index].lower()
-        if search and low.startswith(("--regexp=", "-pattern:")):
-            pattern_pending = False
-            index += 1
-            continue
-        if search and low in {"-f", "--file"} and index + 1 < len(args):
-            candidates.append(args[index + 1])
-            pattern_pending = False
-            index += 2
-            continue
-        if search and low.startswith("--file="):
-            candidates.append(arg.split("=", 1)[1])
-            pattern_pending = False
-            index += 1
-            continue
-        if search and low in {"-pattern", "-e", "--regexp"}:
-            pattern_pending = False
-            index += 2
-            continue
-        if low in {"-path", "-literalpath", "-lp"} and index + 1 < len(args):
-            candidates.extend(args[index + 1].split(","))
-            index += 2
-            continue
-        if verb == "git" and low in {"-m", "--message"}:
-            index += 2
-            continue
-        if verb == "git" and low.startswith("--message="):
-            index += 1
-            continue
-        if not arg.startswith("-"):
-            if pattern_pending:
-                pattern_pending = False
-            else:
-                candidates.extend(arg.split(","))
-        elif "=" in arg:
-            candidates.append(arg.split("=", 1)[1])
-        elif low.startswith(("-path:", "-literalpath:")):
-            candidates.extend(arg.split(":", 1)[1].split(","))
-        index += 1
+        index, pattern_pending = _env_arg_step(verb, args, index, pattern_pending, candidates)
     if verb == "git":
         # Git object selectors can name a file without a filesystem path.
         candidates = [arg.rsplit(":", 1)[-1] for arg in candidates]
@@ -582,20 +786,26 @@ def _summary(tool_input: dict[str, object]) -> str:
     ]
 
 
+def _lock_descriptor(descriptor: int, release: bool) -> None:
+    if os.name == "nt":
+        import msvcrt
+
+        os.lseek(descriptor, 0, os.SEEK_SET)
+        mode = msvcrt.LK_UNLCK if release else msvcrt.LK_NBLCK
+        msvcrt.locking(descriptor, mode, 1)
+        return
+    import fcntl
+
+    mode = fcntl.LOCK_UN if release else fcntl.LOCK_EX | fcntl.LOCK_NB
+    fcntl.flock(descriptor, mode)
+
+
 def _audit_lock(descriptor: int, *, release: bool = False) -> None:
     """Use OS locks so a crashed writer cannot leave a stale lock behind."""
     deadline = time.monotonic() + 1
     while True:
         try:
-            if os.name == "nt":
-                import msvcrt
-
-                os.lseek(descriptor, 0, os.SEEK_SET)
-                msvcrt.locking(descriptor, msvcrt.LK_UNLCK if release else msvcrt.LK_NBLCK, 1)
-            else:
-                import fcntl
-
-                fcntl.flock(descriptor, fcntl.LOCK_UN if release else fcntl.LOCK_EX | fcntl.LOCK_NB)
+            _lock_descriptor(descriptor, release)
             return
         except OSError:
             if release or time.monotonic() >= deadline:
