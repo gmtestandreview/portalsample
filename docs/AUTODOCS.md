@@ -139,7 +139,7 @@ in `.storybook/*.mdx`.
 
 | Check | Command |
 | --- | --- |
-| Configuration governance | `npx vitest run --config vitest.unit.config.ts tests/unit/storybook/storybookDocsConfig.test.ts` |
+| Configuration governance | `npx vitest run --configLoader runner --config vitest.unit.config.ts tests/unit/storybook/storybookDocsConfig.test.ts` |
 | Story interactions | `npm run test:storybook` |
 | Docs build and structure | `npm run storybook:verify:docs` |
 | Documentation runtime behaviour | `npm run test:e2e:storybook` |

@@ -43,20 +43,20 @@ node --max-old-space-size=8192 \
 
 The `--configLoader runner` flag matters — `native` emits a child-process
 warning here. For memory-heavy suites prefer the watch form, which carries the 8
-GB heap bump; `npx vitest` works for quick ad-hoc runs but does not.
+GB heap bump; ad-hoc `npx vitest` runs must include the same flag.
 
 ```bash
 # Run one unit test file
-npx vitest run --config vitest.unit.config.ts ClientApp/src/path/to/File.test.tsx
+npx vitest run --configLoader runner --config vitest.unit.config.ts ClientApp/src/path/to/File.test.tsx
 
 # Run tests matching a name
-npx vitest run --config vitest.unit.config.ts -t "renders the submit button"
+npx vitest run --configLoader runner --config vitest.unit.config.ts -t "renders the submit button"
 
 # Watch a single file while developing (keeps the 8 GB heap bump)
 npm run test:unit:watch -- ClientApp/src/path/to/File.test.tsx
 
 # One Storybook interaction test
-npx vitest run --config vitest.storybook.config.ts -t "Primary"
+npx vitest run --configLoader runner --config vitest.storybook.config.ts -t "Primary"
 ```
 
 **Playwright-BDD Fix with AI:** both BDD configs enable

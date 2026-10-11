@@ -139,7 +139,7 @@ tables work in MDX — `remark-gfm` is configured in `.storybook/main.ts`.
 
 | Check | Command |
 | --- | --- |
-| Configuration governance | `npx vitest run --config vitest.unit.config.ts tests/unit/storybook/storybookDocsConfig.test.ts` |
+| Configuration governance | `npx vitest run --configLoader runner --config vitest.unit.config.ts tests/unit/storybook/storybookDocsConfig.test.ts` |
 | Type check | `npm run type-check` |
 | Lint (including MDX) | `npm run lint` and `npm run lint:mdx` |
 | Story interactions | `npm run test:storybook` |

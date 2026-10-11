@@ -397,7 +397,7 @@ The `quality/` directory contains two additional test files produced by the Qual
 Verify that each requirement scenario passes against the current source:
 
 ```sh
-npx vitest run --config quality/vitest.functional.config.ts
+npx vitest run --configLoader runner --config quality/vitest.functional.config.ts
 ```
 
 File: `quality/test_functional.ts`
@@ -418,7 +418,7 @@ Covers:
 Confirm that all eight previously confirmed bugs remain fixed:
 
 ```sh
-npx vitest run --config quality/vitest.regression.config.ts
+npx vitest run --configLoader runner --config quality/vitest.regression.config.ts
 ```
 
 File: `quality/test_regression.ts`

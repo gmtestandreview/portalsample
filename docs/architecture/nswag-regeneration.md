@@ -85,7 +85,7 @@ node --version         # must be >= 18
 4. **Run the unit test suite:**
 
    ```bash
-   npx vitest run tests/unit/
+   npx vitest run --configLoader runner tests/unit/
    ```
 
    All tests must pass. Any failures indicate the API contract changed in a way
