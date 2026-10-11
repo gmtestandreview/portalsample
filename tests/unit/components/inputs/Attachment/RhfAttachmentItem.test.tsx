@@ -103,6 +103,71 @@ describe('RhfAttachmentItem', () => {
     );
   });
 
+  it('reports a failed category save and puts the previous category back', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi
+      .fn()
+      .mockRejectedValue(new Error('token abc123 expired'));
+    const onCategoryError = vi.fn();
+    renderItem(
+      { onCategoryUpdate, onCategoryError },
+      { ...attachment, attachmentCategory: 'Manuals' }
+    );
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate'
+    );
+
+    await waitFor(() =>
+      expect(onCategoryError).toHaveBeenCalledWith(
+        'Could not save the category for manual.pdf.'
+      )
+    );
+    expect(onCategoryError).toHaveBeenCalledTimes(1);
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+        'Manuals'
+      )
+    );
+    expect(screen.getByTestId('values')).toHaveTextContent(
+      '"attachmentCategory":"Manuals"'
+    );
+  });
+
+  it('survives a failed category save when no error handler is given', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('boom'));
+    renderItem({ onCategoryUpdate });
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate'
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue('')
+    );
+  });
+
+  it('does not report an error when the category saves', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);
+    const onCategoryError = vi.fn();
+    renderItem({ onCategoryUpdate, onCategoryError });
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate'
+    );
+
+    await waitFor(() => expect(onCategoryUpdate).toHaveBeenCalled());
+    expect(onCategoryError).not.toHaveBeenCalled();
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+      'Certificate'
+    );
+  });
+
   it('updates the category locally when no persisted document id is available', async () => {
     const user = userEvent.setup();
     const onCategoryUpdate = vi.fn().mockResolvedValue(undefined);

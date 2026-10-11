@@ -87,6 +87,8 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
   const addErrors = (messages: string[]) =>
     setErrors((newErrors) => [...newErrors, ...messages]);
 
+  const onCategoryError = (message: string) => addErrors([message]);
+
   const clearFileInput = () => {
     if (inputRef.current) {
       inputRef.current.value = '';
@@ -177,6 +179,7 @@ const RhfAttachment = (props: Readonly<AttachmentProps>) => {
           key={attachmentKey}
           attachment={attachment}
           {...omitUndefined({ onCategoryUpdate })}
+          onCategoryError={onCategoryError}
           name={name}
           index={i}
           canRemove={!isSummary && !attachment.documentLocked}

@@ -18,6 +18,8 @@ interface RhfAttachmentItemProps {
   isSummary: boolean;
   onRemoveItem?: (attachment: AttachmentDto) => Promise<void>;
   onCategoryUpdate?: (docId: string, category: string) => Promise<void>;
+  /** Called with a user-facing message when saving a category fails. */
+  onCategoryError?: (message: string) => void;
 }
 
 const CATEGORY_OPTIONS: SelectInputOption<string>[] = [
@@ -38,6 +40,7 @@ const RhfAttachmentItem = ({
   name,
   index,
   onCategoryUpdate,
+  onCategoryError,
 }: Readonly<RhfAttachmentItemProps>) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const categoryName = `${name}.${index}.attachmentCategory`;
@@ -62,10 +65,29 @@ const RhfAttachmentItem = ({
   const showCategoryError =
     !field.value && (fieldState.isTouched || formState.isSubmitted);
 
+  const saveCategory = async (
+    update: NonNullable<typeof onCategoryUpdate>,
+    docId: string,
+    category: string
+  ) => {
+    // The select has already moved to `category`, but this closure was made
+    // before that, so `field.value` is still the last value the server holds.
+    const previousCategory: unknown = field.value;
+    try {
+      await update(docId, category);
+    } catch {
+      // The error is left out of the message: it can carry tokens or PII.
+      field.onChange(previousCategory);
+      onCategoryError?.(
+        `Could not save the category for ${attachment.attachmentName}.`
+      );
+    }
+  };
+
   const onCategoryChange = (category: string) => {
     field.onBlur();
     if (onCategoryUpdate && attachment.id) {
-      void onCategoryUpdate(attachment.id, category);
+      void saveCategory(onCategoryUpdate, attachment.id, category);
     }
   };
 

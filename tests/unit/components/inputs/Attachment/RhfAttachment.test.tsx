@@ -688,6 +688,26 @@ describe('RhfAttachment', () => {
     expect(onDeleteFile).toHaveBeenCalledTimes(1);
   });
 
+  it('shows an error and keeps the saved category when a category update fails', async () => {
+    const user = userEvent.setup();
+    const onCategoryUpdate = vi.fn().mockRejectedValue(new Error('offline'));
+    renderAttachment([uploadedAttachment], { onCategoryUpdate });
+
+    await user.selectOptions(
+      screen.getByRole('combobox', { name: 'Category' }),
+      'Certificate'
+    );
+
+    expect(
+      await within(
+        screen.getByRole('list', { name: 'upload errors' })
+      ).findByText('Could not save the category for manual.pdf.')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveValue(
+      'Manuals'
+    );
+  });
+
   it('keeps the remaining category when an earlier attachment is deleted', async () => {
     const user = userEvent.setup();
     const second = {
