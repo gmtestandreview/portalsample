@@ -728,4 +728,93 @@ describe('RhfAttachment', () => {
       'Certificate'
     );
   });
+
+  describe('category errors follow the document, not the row position', () => {
+    const CATEGORY_ERROR =
+      'Select a category that best describes this document.';
+    const uncategorised = (id: string, attachmentName: string) =>
+      ({
+        ...uploadedAttachment,
+        id,
+        attachmentName,
+        attachmentCategory: '',
+      }) satisfies AttachmentDto;
+    const rowOf = (fileName: string) =>
+      screen.getByText(fileName).closest('.attachment') as HTMLElement;
+    const touchCategory = async (
+      user: ReturnType<typeof userEvent.setup>,
+      fileName: string
+    ) => {
+      await user.click(
+        within(rowOf(fileName)).getByRole('combobox', { name: 'Category' })
+      );
+      await user.tab();
+    };
+    const deleteDocument = async (
+      user: ReturnType<typeof userEvent.setup>,
+      id: string,
+      fileName: string
+    ) => {
+      await user.click(screen.getByTestId(`cancel-button-${id}`));
+      await user.click(screen.getByRole('button', { name: 'Yes, delete' }));
+      await waitFor(() =>
+        expect(screen.queryByText(fileName)).not.toBeInTheDocument()
+      );
+    };
+
+    it('shows no error on an untouched row that moves up after a touched row is deleted', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+      ]);
+
+      await touchCategory(user, 'first.pdf');
+      expect(
+        within(rowOf('first.pdf')).getByText(CATEGORY_ERROR)
+      ).toBeInTheDocument();
+      expect(
+        within(rowOf('second.pdf')).queryByText(CATEGORY_ERROR)
+      ).not.toBeInTheDocument();
+
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      expect(screen.queryByText(CATEGORY_ERROR)).not.toBeInTheDocument();
+    });
+
+    it('keeps the error on a touched row that moves up, and not on the row behind it', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+        uncategorised('doc-3', 'third.pdf'),
+      ]);
+
+      await touchCategory(user, 'second.pdf');
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      expect(
+        within(rowOf('second.pdf')).getByText(CATEGORY_ERROR)
+      ).toBeInTheDocument();
+      expect(
+        within(rowOf('third.pdf')).queryByText(CATEGORY_ERROR)
+      ).not.toBeInTheDocument();
+    });
+
+    it('still shows the error on every category-less row after a submit attempt', async () => {
+      const user = userEvent.setup();
+      renderAttachment([
+        uncategorised('doc-1', 'first.pdf'),
+        uncategorised('doc-2', 'second.pdf'),
+        uncategorised('doc-3', 'third.pdf'),
+      ]);
+      await deleteDocument(user, 'doc-1', 'first.pdf');
+
+      await act(async () => {
+        await formMethods?.handleSubmit(() => undefined)();
+      });
+
+      expect(screen.getAllByText(CATEGORY_ERROR)).toHaveLength(2);
+    });
+  });
 });

@@ -44,9 +44,12 @@ const RhfAttachmentItem = ({
 }: Readonly<RhfAttachmentItemProps>) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   const categoryName = `${name}.${index}.attachmentCategory`;
-  const { field, fieldState, formState } = useController({
+  const { field, formState } = useController({
     name: categoryName,
   });
+  // RHF keys touched state by field path, so it would stay with the row index
+  // when an earlier row is deleted. Local state stays with this row's key.
+  const [categoryTouched, setCategoryTouched] = useState<boolean>(false);
   const closeModal = () => setDeleteDialogOpen(false);
   const showModal = () => setDeleteDialogOpen(true);
   const { documentBytes } = attachment;
@@ -63,7 +66,7 @@ const RhfAttachmentItem = ({
   );
   // A submit attempt does not touch fields in RHF, so it counts as touched here.
   const showCategoryError =
-    !field.value && (fieldState.isTouched || formState.isSubmitted);
+    !field.value && (categoryTouched || formState.isSubmitted);
 
   const saveCategory = async (
     update: NonNullable<typeof onCategoryUpdate>,
@@ -86,6 +89,7 @@ const RhfAttachmentItem = ({
 
   const onCategoryChange = (category: string) => {
     field.onBlur();
+    setCategoryTouched(true);
     if (onCategoryUpdate && attachment.id) {
       void saveCategory(onCategoryUpdate, attachment.id, category);
     }
@@ -114,7 +118,12 @@ const RhfAttachmentItem = ({
             </span>
           </div>
         </div>
-        <div className='ms-3' style={{ width: '260px' }}>
+        {/* Blur bubbles from the select, so tabbing past it also counts as touched. */}
+        <div
+          className='ms-3'
+          style={{ width: '260px' }}
+          onBlur={() => setCategoryTouched(true)}
+        >
           <RhfSelectInput<string>
             id={categoryName}
             key={categoryName}
