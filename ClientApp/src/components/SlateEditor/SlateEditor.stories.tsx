@@ -96,7 +96,9 @@ export const Empty: Story = {
       keys: '[MouseLeft]',
     });
     await userEvent.keyboard('Hi');
-    await expect(canvas.getByText('Hi')).toBeVisible();
+    // Slate commits typed text through a deferred render, so a one-shot getByText
+    // can run first under CI load; findByText retries until it lands.
+    await expect(canvas.findByText('Hi')).resolves.toBeVisible();
     await expect(canvas.findByText(/9\s*\/\s*500/)).resolves.toBeVisible();
   },
 };
