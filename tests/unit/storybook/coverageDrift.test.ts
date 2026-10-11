@@ -13,7 +13,7 @@ const coverageMatrixPath = path.join(
 const readDirs = (dir: string) =>
   fs
     .readdirSync(dir, { withFileTypes: true })
-    .filter((e) => e.isDirectory())
+    .filter((e) => e.isDirectory() && !e.name.startsWith('.'))
     .map((e) => e.name);
 
 describe('Storybook coverage drift', () => {
