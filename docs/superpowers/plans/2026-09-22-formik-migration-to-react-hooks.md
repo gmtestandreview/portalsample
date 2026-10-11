@@ -141,9 +141,20 @@ reviews pending for the address commits):
   (45 files, 574 tests); the new address files and `RhfSelectInput` are at 100%
   coverage; type-check, ESLint and Prettier clean. No full gate, Storybook or
   e2e run for these commits.
-- CI follow-ups: the `MessagesTab` story (`d269796f`) and the `SlateEditor`
-  `Empty` story (`be8c031a`) now retry the typed-text assertion, because Slate
-  renders typed text on a deferred render. The `Empty` fix is unconfirmed on CI.
+- Storybook follow-ups: the `SlateEditor` `Empty` story (`be8c031a`) now retries
+  the typed-text assertion, because Slate renders typed text on a deferred
+  render; this is unconfirmed on CI. The `MessagesTab` story first got a
+  `waitFor` (`d269796f`), which was not enough: the keystrokes were being
+  dropped before the caret was inside the editable text. `eff2ad1a` retries the
+  focus until the selection is inside the editor, then types, and passed 8 of 8
+  local runs. `Empty` uses the same pointer-and-type pattern without the retry;
+  give it the same treatment if it flakes. The full local Storybook run passed
+  (142 files, 324 tests). Three suites (`ColorWheel`, `Disclosure`,
+  `RadioGroup`) once failed with "Failed to fetch dynamically imported module",
+  a dev-server compile timeout that passed on re-run; no code change. The
+  Storybook Test panel still hits the addon's hard 30s start limit (cold boot is
+  longer), so run stories from the CLI:
+  `npx vitest run --config vitest.storybook.config.ts`.
 
 Playwright BDD (app suite) cold-start fixes (`59512ae4`):
 
