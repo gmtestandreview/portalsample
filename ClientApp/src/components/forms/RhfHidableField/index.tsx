@@ -2,7 +2,7 @@ import { useWatch } from 'react-hook-form';
 import type { PropsWithChildren } from 'react';
 import { isHidden } from '../utils';
 import type { HidableFieldProps } from '../HidableField/types';
-import { useHiddenRules } from './hiddenRulesContext';
+import { RhfHiddenRulesProvider, useHiddenRules } from './hiddenRulesContext';
 
 /**
  * React Hook Form counterpart of `HidableField`. It reads the form values
@@ -19,4 +19,5 @@ const RhfHidableField = (
   return isHidden(name, hidden, values) ? null : <>{children}</>;
 };
 
+export { RhfHiddenRulesProvider, useHiddenRules };
 export default RhfHidableField;

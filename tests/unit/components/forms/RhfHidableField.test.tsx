@@ -2,11 +2,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import type { ReactNode } from 'react';
-import RhfHidableField from '@/components/forms/RhfHidableField';
-import {
+import RhfHidableField, {
   RhfHiddenRulesProvider,
   useHiddenRules,
-} from '@/components/forms/RhfHidableField/hiddenRulesContext';
+} from '@/components/forms/RhfHidableField';
 import type { Hideable } from '@/components/forms/types';
 
 interface AccountValues {
@@ -154,14 +153,16 @@ describe('RhfHidableField', () => {
     expect(screen.getByText('ABN field')).toBeInTheDocument();
   });
 
-  it('renders nothing visible when children are undefined', () => {
-    const { container } = render(
+  it('renders an empty wrapper when a visible field has no children', () => {
+    render(
       <Harness values={BUSINESS_VALUES} rules={hideAbnUnlessBusiness}>
-        <RhfHidableField name='account.abn' />
+        <div data-testid='wrapper'>
+          <RhfHidableField name='account.abn' />
+        </div>
       </Harness>
     );
 
-    expect(container.querySelector('p')).toBeNull();
+    expect(screen.getByTestId('wrapper')).toBeEmptyDOMElement();
   });
 });
 
