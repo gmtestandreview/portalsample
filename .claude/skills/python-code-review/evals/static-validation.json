@@ -1,0 +1,22 @@
+{
+  "artifact": "python-code-review structural-edit gate revision",
+  "date": "2026-10-11",
+  "evidence_family": "deterministic-static",
+  "candidate_sha256": "9d805d5e20ad591a2a1d2b93b245b2c99c4e1bbb68be995238fe3c8bb00fd865",
+  "validation_scope": "Evidence-record schema, frozen cases, trace pointers, and candidate binding only; other structural checks were not rerun.",
+  "checks": [
+    {
+      "id": "evidence-record-validator",
+      "status": "PASS",
+      "command": "python .claude/skills/python-code-review/scripts/validate_evidence.py",
+      "evidence": "VALID schema/trace pointers: 44 cases; SKILL hash 9d805d5e20ad591a2a1d2b93b245b2c99c4e1bbb68be995238fe3c8bb00fd865\nRequired cases without behavioral PASS: 44\nBehavioral assessment and deployment approval: NOT established by this validator"
+    },
+    {
+      "id": "current-behavioral-evaluation",
+      "status": "NHR",
+      "evidence": "No isolated agent evaluation was executed for this candidate; all 44 required cases remain NHR in both arms."
+    }
+  ],
+  "historical_prior_validation": "evals/static-validation-before-structural-gate.json",
+  "recommendation": "hold"
+}

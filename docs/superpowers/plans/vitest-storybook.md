@@ -1,24 +1,35 @@
-You are working in this repository as a senior Storybook, Vitest, Vite, TypeScript, Node.js, browser-testing, and Windows build engineer.
+# Storybook Vitest Addon Startup Experiment
 
-# Objective
+You are working in this repository as a senior Storybook, Vitest, Vite,
+TypeScript, Node.js, browser-testing, and Windows build engineer.
 
-Perform the single highest-value remaining experiment for the `@storybook/addon-vitest` startup failure:
+## Objective
 
-> Determine whether the real addon-managed child can reuse a stable, compatible Vitest Browser Mode / Vite dependency-optimization state and emit `{ type: "ready" }` within Storybook addon-vitest's 30-second startup deadline.
+Perform the single highest-value remaining experiment for the
+`@storybook/addon-vitest` startup failure:
+
+> Determine whether the real addon-managed child can reuse a stable, compatible
+> Vitest Browser Mode / Vite dependency-optimization state and emit
+> `{ type: "ready" }` within Storybook addon-vitest's 30-second startup
+> deadline.
 
 The investigation is no longer broad troubleshooting.
 
-Do not revisit already disproven causes unless new evidence directly contradicts them.
+Do not revisit already disproven causes unless new evidence directly contradicts
+them.
 
-Do not modify production configuration unless this experiment demonstrates a repository-owned cause that is both necessary and safely correctable.
+Do not modify production configuration unless this experiment demonstrates a
+repository-owned cause that is both necessary and safely correctable.
 
-# Current demonstrated state
+## Current demonstrated state
 
-Treat the following as established live evidence unless current repository or runtime evidence directly contradicts it.
+Treat the following as established live evidence unless current repository or
+runtime evidence directly contradicts it.
 
-## Reproduction
+### Reproduction
 
-Three real addon-managed Vitest child runs launched by live Storybook all failed at the addon startup deadline:
+Three real addon-managed Vitest child runs launched by live Storybook all failed
+at the addon startup deadline:
 
 ```text
 Run 1: ~30.68 s → SIGTERM
@@ -34,7 +45,7 @@ ready IPC was never emitted before termination
 
 This is the actual addon path, not a standalone reconstruction.
 
-## Config path
+### Config path
 
 The live addon child was confirmed to load with:
 
@@ -50,9 +61,10 @@ Therefore:
 the previous ~48–55 s workspace/project-indirection bottleneck is already fixed
 ```
 
-Do not spend further time profiling the normal two-project workspace unless new evidence shows the addon child is loading it.
+Do not spend further time profiling the normal two-project workspace unless new
+evidence shows the addon child is loading it.
 
-## createVitest
+### createVitest
 
 Live measurements placed config load / `configureVitest` at approximately:
 
@@ -65,7 +77,7 @@ Therefore `createVitest()` is not the remaining startup bottleneck.
 
 Do not reclassify it as causal without contrary live measurement.
 
-## Coverage
+### Coverage
 
 Runtime instrumentation confirmed:
 
@@ -75,13 +87,16 @@ coverageEnabled=false
 
 during addon startup.
 
-The presence of V8 coverage configuration in source does not make coverage part of the live startup cause.
+The presence of V8 coverage configuration in source does not make coverage part
+of the live startup cause.
 
-Remove coverage from the active hypothesis unless new runtime evidence contradicts this.
+Remove coverage from the active hypothesis unless new runtime evidence
+contradicts this.
 
-## Runtime bridge
+### Runtime bridge
 
-Installed Vitest 4.1.11 source shows `init()` delegates directly to `standalone()` apart from a deprecation log.
+Installed Vitest 4.1.11 source shows `init()` delegates directly to
+`standalone()` apart from a deprecation log.
 
 The repository bridge:
 
@@ -89,11 +104,13 @@ The repository bridge:
 vitest.init = vitest.standalone.bind(vitest);
 ```
 
-is therefore behaviorally redundant for startup sequencing and timing, apart from suppressing that warning.
+is therefore behaviorally redundant for startup sequencing and timing, apart
+from suppressing that warning.
 
-Do not remove or A/B this bridge again unless installed source or live behavior changes.
+Do not remove or A/B this bridge again unless installed source or live behavior
+changes.
 
-## Browser API observations
+### Browser API observations
 
 `127.0.0.1:61005` was observed free at rest.
 
@@ -115,7 +132,8 @@ pristine run
 ready never arrived
 ```
 
-These observations establish that port `61005` itself is not presently demonstrated causal.
+These observations establish that port `61005` itself is not presently
+demonstrated causal.
 
 However, do not equate:
 
@@ -131,17 +149,20 @@ no Vitest Browser API listener existed anywhere
 
 without process/socket evidence.
 
-For all further measurements, correlate Browser API startup with the actual addon-child PID and its descendant processes.
+For all further measurements, correlate Browser API startup with the actual
+addon-child PID and its descendant processes.
 
-## Vite dependency optimization
+### Vite dependency optimization
 
-Across the live runs, Vite repeatedly reported dependency re-optimization, including messages such as:
+Across the live runs, Vite repeatedly reported dependency re-optimization,
+including messages such as:
 
 ```text
 Re-optimizing dependencies because vite config has changed
 ```
 
-The pristine run reproduced the same behavior after temporary instrumentation had been removed.
+The pristine run reproduced the same behavior after temporary instrumentation
+had been removed.
 
 Therefore:
 
@@ -175,7 +196,8 @@ addon parent sends SIGTERM
 
 Important evidentiary correction:
 
-Do not treat the presence or absence of a specific Vite log line as definitive proof that an optimized-dependency cache was or was not finalized.
+Do not treat the presence or absence of a specific Vite log line as definitive
+proof that an optimized-dependency cache was or was not finalized.
 
 For example:
 
@@ -193,7 +215,8 @@ But:
 
 is not, by itself, proof that no usable cache state was written.
 
-Cache completion/reuse must be established using the strongest available combination of:
+Cache completion/reuse must be established using the strongest available
+combination of:
 
 ```text
 cache-directory contents
@@ -207,11 +230,12 @@ runtime timings
 
 Use log messages as evidence, not as cache-commit primitives.
 
-## Story count
+### Story count
 
 Do not state that story count is the root cause.
 
-No live evidence has shown that all configured stories are transformed before ready.
+No live evidence has shown that all configured stories are transformed before
+ready.
 
 Continue to distinguish:
 
@@ -223,9 +247,10 @@ Vite-transformed modules
 modules required before provider/session readiness
 ```
 
-No story-count conclusion is allowed without measured request/transform evidence.
+No story-count conclusion is allowed without measured request/transform
+evidence.
 
-## Warnings
+### Warnings
 
 These remain non-causal unless directly measured otherwise:
 
@@ -238,7 +263,7 @@ PLUGIN_TIMINGS
 
 Do not modify configuration solely to eliminate these warnings.
 
-# Config-loader evidence rule
+## Config-loader evidence rule
 
 Do not infer the active loader from absence of an environment/config value.
 
@@ -282,11 +307,13 @@ runtime evidence of the loader actually exercised
 
 Do not collapse them into one claim.
 
-# Single remaining experiment
+## Single remaining experiment
 
 The remaining discriminating question is:
 
-> Can the addon child reuse a genuinely compatible dependency-optimization state, and is its optimizer/cache fingerprint stable across otherwise identical addon launches?
+> Can the addon child reuse a genuinely compatible dependency-optimization
+> state, and is its optimizer/cache fingerprint stable across otherwise
+> identical addon launches?
 
 Perform the narrowest safe experiment that answers this.
 
@@ -336,13 +363,16 @@ The repeated addon comparison is important.
 
 A prior successful standalone run does not prove the addon cache is warm.
 
-Likewise, a failed attempt to reuse the standalone cache does not by itself prove caches are inherently incompatible.
+Likewise, a failed attempt to reuse the standalone cache does not by itself
+prove caches are inherently incompatible.
 
-Determine whether two otherwise identical addon launches themselves produce a stable or changing optimizer fingerprint.
+Determine whether two otherwise identical addon launches themselves produce a
+stable or changing optimizer fingerprint.
 
-# Cache/fingerprint questions to answer
+## Cache/fingerprint questions to answer
 
-Where observable, identify the data Vite uses or persists for dependency optimization, including relevant:
+Where observable, identify the data Vite uses or persists for dependency
+optimization, including relevant:
 
 ```text
 cache directory
@@ -354,7 +384,8 @@ project/root identity
 resolved optimizeDeps inputs
 ```
 
-Do not assume exact internal field names unless supported by the installed Vite version.
+Do not assume exact internal field names unless supported by the installed Vite
+version.
 
 Compare:
 
@@ -376,13 +407,17 @@ insufficient evidence to determine fingerprint compatibility
 
 The distinction matters.
 
-If addon Run A and addon Run B themselves produce different optimization fingerprints with no source/config changes, that is stronger evidence of an unstable addon/runtime configuration identity than merely observing repeated `"Re-optimizing dependencies"` output.
+If addon Run A and addon Run B themselves produce different optimization
+fingerprints with no source/config changes, that is stronger evidence of an
+unstable addon/runtime configuration identity than merely observing repeated
+`"Re-optimizing dependencies"` output.
 
-# Browser API / socket measurement correction
+## Browser API / socket measurement correction
 
 Do not use port `61005` as the sole Browser API readiness signal.
 
-For the decisive addon run, identify the addon child PID and, where practical, its descendant process tree.
+For the decisive addon run, identify the addon child PID and, where practical,
+its descendant process tree.
 
 Monitor listening/connected sockets owned by those processes.
 
@@ -412,13 +447,15 @@ rather than:
 Browser API definitely never started
 ```
 
-unless installed implementation/runtime evidence makes that stronger conclusion valid.
+unless installed implementation/runtime evidence makes that stronger conclusion
+valid.
 
-If the configured port is free and the child still binds another port, investigate why.
+If the configured port is free and the child still binds another port,
+investigate why.
 
 Do not classify port fallback itself as causal without timing evidence.
 
-# What counts as a warm-cache result
+## What counts as a warm-cache result
 
 Do not call the cache warm merely because:
 
@@ -426,7 +463,8 @@ Do not call the cache warm merely because:
 npm run test:storybook completed previously
 ```
 
-A useful warm-cache result requires evidence that the subsequent addon path either:
+A useful warm-cache result requires evidence that the subsequent addon path
+either:
 
 ```text
 reuses compatible optimizer metadata/state
@@ -450,7 +488,7 @@ absence of rebundling with corroborating cache evidence
 
 Do not rely on one log line alone.
 
-# Required measurements
+## Required measurements
 
 For the decisive addon run, capture the nearest reliable timestamps for:
 
@@ -502,11 +540,12 @@ not established
 
 where necessary.
 
-# Decision rules
+## Decision rules
 
-## Outcome A — compatible state is reused and ready < 30 s
+### Outcome A — compatible state is reused and ready < 30 s
 
-If the addon child demonstrably reuses compatible dependency-optimization state and emits ready under 30 seconds, classify the issue as:
+If the addon child demonstrably reuses compatible dependency-optimization state
+and emits ready under 30 seconds, classify the issue as:
 
 ```text
 cold-start / cache-invalidation startup robustness
@@ -525,11 +564,12 @@ whether optimizer work was skipped or materially reduced
 
 Do not call this a permanent architectural floor.
 
-Then determine whether there is a supported repository-owned way to preserve or pre-warm the required state without introducing brittle workflow requirements.
+Then determine whether there is a supported repository-owned way to preserve or
+pre-warm the required state without introducing brittle workflow requirements.
 
 Do not implement such a workaround unless measured benefit justifies it.
 
-## Outcome B — standalone state exists but addon uses a different stable fingerprint
+### Outcome B — standalone state exists but addon uses a different stable fingerprint
 
 If:
 
@@ -544,19 +584,22 @@ addon Run A
 addon Run B
 ```
 
-both use the same addon-specific fingerprint that differs from standalone, classify this as:
+both use the same addon-specific fingerprint that differs from standalone,
+classify this as:
 
 ```text
 stable standalone/addon cache incompatibility
 ```
 
-Then identify which resolved configuration difference accounts for that incompatibility, as far as evidence allows.
+Then identify which resolved configuration difference accounts for that
+incompatibility, as far as evidence allows.
 
 Do not modify unrelated config to force the hashes to match.
 
-## Outcome C — identical addon runs produce different optimizer fingerprints
+### Outcome C — identical addon runs produce different optimizer fingerprints
 
-If two addon launches with no source/config changes produce different optimize-deps identities, classify this as:
+If two addon launches with no source/config changes produce different
+optimize-deps identities, classify this as:
 
 ```text
 unstable addon/runtime optimization configuration
@@ -579,9 +622,11 @@ Storybook-generated runtime configuration
 
 Do not speculate beyond measured differences.
 
-## Outcome D — cache appears reused but ready still > 30 s
+### Outcome D — cache appears reused but ready still > 30 s
 
-If the addon child demonstrably reuses optimized dependency state but still fails to emit ready within 30 seconds, dependency optimization is not sufficient to explain the deadline.
+If the addon child demonstrably reuses optimized dependency state but still
+fails to emit ready within 30 seconds, dependency optimization is not sufficient
+to explain the deadline.
 
 Measure the next live boundary:
 
@@ -605,9 +650,11 @@ ready IPC
 
 Only then revive `_openBrowserPage` as the active bottleneck hypothesis.
 
-## Outcome E — every addon run rebuilds and no reusable state can be established
+### Outcome E — every addon run rebuilds and no reusable state can be established
 
-If every real addon child begins substantial dependency re-optimization and is killed before usable state can be demonstrated, document the observed cycle conservatively:
+If every real addon child begins substantial dependency re-optimization and is
+killed before usable state can be demonstrated, document the observed cycle
+conservatively:
 
 ```text
 no reusable compatible optimizer state demonstrated
@@ -629,7 +676,8 @@ the cache definitely cannot be persisted
 
 unless cache metadata/file evidence proves it.
 
-If no safe repository-owned change is demonstrated to break the cycle, classify the limitation as the interaction of:
+If no safe repository-owned change is demonstrated to break the cycle, classify
+the limitation as the interaction of:
 
 ```text
 @storybook/addon-vitest hard 30 s boot deadline
@@ -637,9 +685,10 @@ If no safe repository-owned change is demonstrated to break the cycle, classify 
 observed Vitest Browser Mode / Vite startup cost for this repository
 ```
 
-Do not describe this as a generic Vitest defect unless Vitest has been isolated independently from Storybook's timeout.
+Do not describe this as a generic Vitest defect unless Vitest has been isolated
+independently from Storybook's timeout.
 
-# Prohibited actions
+## Prohibited actions
 
 Do not:
 
@@ -660,10 +709,12 @@ Do not:
 - infer story-count causality from globs;
 - infer browser-launch cost from total Browser Mode startup;
 - call port 61005 causal without collision or fallback evidence;
-- call `_openBrowserPage` causal unless the live child reaches it and measurement supports it;
-- call the issue fixed unless the actual addon child emits ready in under 30 seconds.
+- call `_openBrowserPage` causal unless the live child reaches it and
+  measurement supports it;
+- call the issue fixed unless the actual addon child emits ready in under 30
+  seconds.
 
-# Repository-change discipline
+## Repository-change discipline
 
 Prefer observation to modification.
 
@@ -683,11 +734,11 @@ Remove all temporary diagnostics before finishing.
 
 Do not overwrite unrelated user changes.
 
-# Final response
+## Final response
 
 Return exactly these sections.
 
-## Root cause
+### Root cause
 
 State only the earliest mechanism demonstrated by live evidence.
 
@@ -703,7 +754,7 @@ upstream 30 s deadline
 
 Do not overstate cache persistence or Browser API state beyond the evidence.
 
-## Warm-cache experiment
+### Warm-cache experiment
 
 Report:
 
@@ -714,7 +765,7 @@ whether the addon reused compatible state
 whether substantial re-optimization recurred
 ```
 
-## Optimizer/cache fingerprint comparison
+### Optimizer/cache fingerprint comparison
 
 Provide:
 
@@ -742,13 +793,13 @@ unstable across addon runs
 not established
 ```
 
-## Live-child timeline
+### Live-child timeline
 
 Provide measured child-relative timings.
 
 Mark unobservable boundaries explicitly.
 
-## Cold vs warm comparison
+### Cold vs warm comparison
 
 Use a table:
 
@@ -766,7 +817,7 @@ Dominant measured stage
 
 Include the prior three live runs plus the new experiment.
 
-## Browser API/socket findings
+### Browser API/socket findings
 
 State:
 
@@ -780,9 +831,10 @@ first browser connection
 collision/retry evidence
 ```
 
-Do not equate “61005 not observed” with “no Browser API existed” unless independently proven.
+Do not equate “61005 not observed” with “no Browser API existed” unless
+independently proven.
 
-## Config-path and loader findings
+### Config-path and loader findings
 
 Report separately:
 
@@ -798,15 +850,15 @@ If these differ, explain the discrepancy.
 
 Never infer native solely from `undefined`.
 
-## Coverage findings
+### Coverage findings
 
 State whether coverage was enabled at runtime.
 
-## Runtime bridge findings
+### Runtime bridge findings
 
 State the installed-source relationship between `init()` and `standalone()`.
 
-## Request/transform findings
+### Request/transform findings
 
 Separate:
 
@@ -820,9 +872,10 @@ readiness-critical modules
 
 Do not merge these categories without evidence.
 
-## Cache/fingerprint findings
+### Cache/fingerprint findings
 
-State whether standalone and addon paths share a compatible dependency-optimization state.
+State whether standalone and addon paths share a compatible
+dependency-optimization state.
 
 Also state whether:
 
@@ -835,7 +888,7 @@ produce stable optimizer identities.
 
 If not, identify the changing input as specifically as evidence permits.
 
-## Upstream vs repository-owned responsibility
+### Upstream vs repository-owned responsibility
 
 Separate:
 
@@ -850,7 +903,7 @@ hard 30 s deadline effect
 
 Do not call something upstream merely because no easy fix was found.
 
-## Changes made
+### Changes made
 
 List:
 
@@ -861,7 +914,7 @@ reverted changes
 unrelated pre-existing working-tree changes left untouched
 ```
 
-## Validation
+### Validation
 
 List only commands actually executed and their results.
 
@@ -874,11 +927,15 @@ compatible optimizer state reused: yes/no/unproven
 addon optimizer identity stable across repeated runs: yes/no/unproven
 ```
 
-## Remaining uncertainty
+### Remaining uncertainty
 
 List only unresolved questions that materially affect root-cause classification.
 
-If the final experiment shows that the addon cannot reuse completed optimization state, or that identical addon starts produce an unstable optimizer fingerprint, and the real child still dies at ~30 seconds with no safe repository-owned correction demonstrated, the single highest-value next action is to prepare a minimal upstream reproduction or issue demonstrating:
+If the final experiment shows that the addon cannot reuse completed optimization
+state, or that identical addon starts produce an unstable optimizer fingerprint,
+and the real child still dies at ~30 seconds with no safe repository-owned
+correction demonstrated, the single highest-value next action is to prepare a
+minimal upstream reproduction or issue demonstrating:
 
 ```text
 real addon-managed child
@@ -888,4 +945,5 @@ hard 30 s boot deadline
 ready not emitted
 ```
 
-Do not add a speculative repository workaround merely to hide the upstream limitation.
+Do not add a speculative repository workaround merely to hide the upstream
+limitation.
