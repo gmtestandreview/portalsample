@@ -274,6 +274,48 @@ describe('RhfSelectInput', () => {
     expect(screen.getByText('Select a category')).toBeInTheDocument();
   });
 
+  it('renders inline help and links it to the select', () => {
+    render(
+      <Harness>
+        <RhfSelectInput
+          name='category'
+          label='Category'
+          options={options}
+          inlineHelp='Pick the closest match'
+        />
+      </Harness>
+    );
+
+    const help = screen.getByText('Pick the closest match');
+    expect(help).toHaveAttribute('id', 'help-category');
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
+      'aria-describedby',
+      'help-category'
+    );
+  });
+
+  it('describes the select by both the help and the validation message', async () => {
+    render(
+      <Harness resolver={failingResolver}>
+        <RhfSelectInput
+          name='category'
+          label='Category'
+          options={options}
+          inlineHelp='Pick the closest match'
+        />
+      </Harness>
+    );
+
+    await act(async () => {
+      await formMethods?.handleSubmit(() => undefined)();
+    });
+
+    expect(screen.getByRole('combobox', { name: 'Category' })).toHaveAttribute(
+      'aria-describedby',
+      'help-category category-validation-msg'
+    );
+  });
+
   it('renders a summary line for the selected option', () => {
     render(
       <Harness defaultValue='cert'>

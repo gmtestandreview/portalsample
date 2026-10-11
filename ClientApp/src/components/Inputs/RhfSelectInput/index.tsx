@@ -15,6 +15,7 @@ const RhfSelectInput = <T extends string | number = string>(
 ) => {
   const {
     label,
+    inlineHelp,
     options,
     defaultValue = '', // default props
     defaultDisplayText,
@@ -28,8 +29,14 @@ const RhfSelectInput = <T extends string | number = string>(
     addBlank,
   } = props;
 
-  const { field, controlId, validationMessageId, errorMessage, describedBy } =
-    useRhfFieldA11y({ name, id });
+  const {
+    field,
+    controlId,
+    helpId,
+    validationMessageId,
+    errorMessage,
+    describedBy,
+  } = useRhfFieldA11y({ name, id, inlineHelp });
 
   if (isSummary) {
     if (field.value === undefined || field.value === null || field.value === '')
@@ -57,6 +64,11 @@ const RhfSelectInput = <T extends string | number = string>(
   return (
     <Form.Group controlId={controlId} className='form-field-container'>
       <Form.Label>{label}</Form.Label>
+      {inlineHelp && (
+        <Form.Text as='p' id={helpId} className='contextual-help text-muted'>
+          {inlineHelp}
+        </Form.Text>
+      )}
       <div className={`d-grid gap-2 ${containerClassName}`}>
         <Form.Control
           as='select'
