@@ -37,6 +37,7 @@ inputs below are pushed to `origin` but not yet merged to `main`.
 | Wave 3 inputs: a11y fixes (describedby, invalid, suppress)    | Done                 | `3616d136` |
 | Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`           | Done                 | `1a65bcf3` |
 | Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup | Done                 | `e5702e7f` |
+| Wave 3 inputs: radio/select describedby and `aria-invalid`    | Done                 | `569e0332` |
 | Wave 3: `AddressLookup`, `HidableField`, `ContactDetails`     | Not started          | —          |
 | Wave 3: step migrations (each behind a behavior suite)        | Not started          | —          |
 | Waves 4-5, shells (action 4), Formik removal (action 6)       | Not started          | —          |
@@ -98,9 +99,15 @@ Wave 3 shared inputs (each beside its Formik twin, with behavior tests and
   `tests/unit/components/inputs/rhfTestHarness.tsx` is the shared test harness
   (`e5702e7f`). The harness uses a `FormHandle` instead of module-level mutable
   state and type casts.
-- Open: `RhfRadioButtonGroup` and `RhfSelectInput` do not use `useRhfFieldA11y`.
-  Check whether their error `aria-describedby` also drops the help-text id, and
-  fix it with tests (help only, error only, both).
+- `RhfRadioButtonGroup` and `RhfSelectInput` now use `useRhfFieldA11y`
+  (`569e0332`). The radio fieldset dropped the help-text id from
+  `aria-describedby` on error; fixed with a help-plus-error test. The select had
+  no help text but lacked `aria-invalid`; added. The hook gained an optional
+  `rules` argument. The follow-up commit `0c4a3bb3` added a shared `RhfRules`
+  type and per-radio `aria-invalid`. The final change (`f7ac5fba`) moved
+  `aria-invalid` onto the fieldset, which now has `role="radiogroup"` (ARIA 1.2
+  supports `aria-invalid` on `radiogroup`, not on `radio`), and removed it from
+  the individual radios.
 
 Gates at the last full run (Wave 2 complete): `tsc --noEmit`, ESLint and
 Prettier clean; `test:unit:coverage` 198 files, 2,260 tests, 100% statements,
