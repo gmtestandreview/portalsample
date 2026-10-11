@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ResizableTableContainer } from 'react-aria-components/Table';
 import { DialogTrigger } from '@/components/AriaComponents/Dialog/Dialog';
-import { Button } from '@/components/Buttons/AriaButton/Button';
+import { Button } from '@/components/AriaComponents/Button/Button';
 import { Heading, Text } from '@/components/AriaComponents/Content/Content';
 import { Link } from '@/components/AriaComponents/Link/Link';
 import {
@@ -14,19 +14,19 @@ import {
   ListBoxItem,
   ListBoxLoadMoreItem,
   ListBoxSection,
-} from '@/components/AriaComponents/ListBox';
+} from '@/components/AriaComponents/ListBox/ListBox';
 import {
   Menu,
   MenuItem,
   MenuTrigger,
   SubmenuTrigger,
 } from '@/components/AriaComponents/Menu/Menu';
-import { Meter } from '@/components/AriaComponents/Meter';
+import { Meter } from '@/components/AriaComponents/Meter/Meter';
 import { Modal } from '@/components/AriaComponents/modal/Modal';
 import { Check, ChevronDown } from '@/components/AriaComponents/NmiIcon';
-import { NumberField } from '@/components/AriaComponents/NumberField';
+import { NumberField } from '@/components/AriaComponents/numberfield/NumberField';
 import { Popover } from '@/components/AriaComponents/Popover/Popover';
-import { ProgressBar } from '@/components/AriaComponents/ProgressBar';
+import { ProgressBar } from '@/components/AriaComponents/ProgressBar/ProgressBar';
 import { ProgressCircle } from '@/components/AriaComponents/ProgressCircle/ProgressCircle';
 import {
   Radio,
@@ -34,7 +34,7 @@ import {
 } from '@/components/AriaComponents/RadioGroup/RadioGroup';
 import { RangeCalendar } from '@/components/AriaComponents/RangeCalander/RangeCalendar';
 import { SearchField } from '@/components/AriaComponents/SearchField/SearchField';
-import { Select, SelectItem } from '@/components/AriaComponents/Select';
+import { Select, SelectItem } from '@/components/AriaComponents/Select/Select';
 import {
   SegmentedControl,
   SegmentedControlItem,
@@ -45,14 +45,14 @@ import {
   Heading as SheetHeading,
 } from '@/components/AriaComponents/Sheet/Sheet';
 import { Slider } from '@/components/AriaComponents/Slider/Slider';
-import { Switch } from '@/components/AriaComponents/Switch';
+import { Switch } from '@/components/AriaComponents/Switch/Switch';
 import {
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-} from '@/components/AriaComponents/Tabs';
+} from '@/components/AriaComponents/Tabs/Tabs';
 import {
   Cell,
   Column,
@@ -62,8 +62,11 @@ import {
   TableHeader,
   TableLoadMoreItem,
 } from '@/components/AriaComponents/Table/Table';
-import { Tag, TagGroup } from '@/components/AriaComponents/TagGroup';
-import { TextArea, TextField } from '@/components/AriaComponents/TextField';
+import { Tag, TagGroup } from '@/components/AriaComponents/TagGroups/TagGroup';
+import {
+  TextArea,
+  TextField,
+} from '@/components/AriaComponents/TextField/TextField';
 import { TimeField } from '@/components/AriaComponents/TimeField/TimeField';
 import { MyToastRegion } from '@/components/AriaComponents/Toast/Toast';
 import { queue } from '@/components/AriaComponents/Toast/ToastQueue';

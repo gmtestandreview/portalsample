@@ -4,32 +4,9 @@ import path from 'node:path';
 const repositoryRoot = path.resolve(__dirname, '../../..');
 const componentsRoot = path.join(repositoryRoot, 'ClientApp/src/components');
 
-const evaluationDirectories = [
-  'AriaComponents',
-  'Breadcrumb/AriaBreadcrumb',
-  'Buttons/AriaButton',
-  'Calendar',
-  'ColorArea',
-  'ColorField',
-  'ColorPicker',
-  'ColorSlider',
-  'ColorSwatch',
-  'ColorThumb',
-  'ColorWheel',
-  'ComboBox',
-  'CommandPalette',
-  'Dialog',
-  'Disclosure',
-  'DisclosureGroup',
-  'DropZone',
-  'GridLists',
-  'Inputs/AriaCheckbox',
-  'Inputs/AriaDateField',
-  'Inputs/AriaDatePicker',
-  'Inputs/AriaDateRangePicker',
-  'Inputs/AriaInputGroup',
-  'forms/AriaForm',
-].map((directory) => path.join(componentsRoot, directory));
+const evaluationDirectories = ['AriaComponents'].map((directory) =>
+  path.join(componentsRoot, directory)
+);
 
 function collectFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
