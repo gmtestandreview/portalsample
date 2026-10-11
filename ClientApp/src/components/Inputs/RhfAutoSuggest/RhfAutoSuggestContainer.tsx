@@ -54,7 +54,7 @@ const RhfAutoSuggestContainer = <T,>(
     noResult,
     noResultMessage,
     error,
-    errorMessage,
+    errorMessage: searchErrorMessage,
     loading,
     loadingMessage,
     searchTerm,
@@ -191,7 +191,7 @@ const RhfAutoSuggestContainer = <T,>(
         </ComboBox>
       </div>
       {!loading && noResult && <p>{noResultMessage || 'No matches found'}</p>}
-      {error && <p>{errorMessage || 'Results could not be fetched'}</p>}
+      {error && <p>{searchErrorMessage || 'Results could not be fetched'}</p>}
     </>
   );
 };
