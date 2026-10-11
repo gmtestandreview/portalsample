@@ -118,10 +118,8 @@ const RhfAddressLookup = (props: Readonly<AddressLookupProps>) => {
       if (lookupServerError.status === HttpStatusCode.ServiceUnavailable) {
         lookupFailed = true;
       }
-      AppLogger.error(
-        `Failed to execute address search: ${term}`,
-        error as Error
-      );
+      // The typed term is a (partial) address, so it must not reach telemetry.
+      AppLogger.error('Failed to execute address search', error as Error);
     }
 
     if (lookupFailed) {

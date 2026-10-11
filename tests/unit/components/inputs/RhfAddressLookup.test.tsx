@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
 import RhfAddressLookup from '@/components/Inputs/RhfAddressLookup';
 import type * as WebApiClientModule from '@/api/web-api-client';
+import AppLogger from '@/instrumentation/AppLogger';
 import { FieldHarness } from './rhfTestHarness';
 
 function AddressClient() {
@@ -208,6 +209,22 @@ describe('RhfAddressLookup results', () => {
     expect(
       await screen.findByRole('option', { name: /No matches found/ })
     ).toBeInTheDocument();
+  });
+
+  it('does not log the typed address when a search fails', async () => {
+    resetMocks();
+    const failure = { status: 500 };
+    mocks.addressSearch.mockRejectedValue(failure);
+    const logError = vi.spyOn(AppLogger, 'error').mockImplementation(() => {});
+    renderLookup();
+
+    await search('12 Secret Street');
+
+    await waitFor(() => expect(logError).toHaveBeenCalled());
+    logError.mock.calls.forEach(([message]) =>
+      expect(String(message)).not.toContain('Secret')
+    );
+    logError.mockRestore();
   });
 
   it('offers manual entry when the address service is unavailable', async () => {
