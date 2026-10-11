@@ -128,6 +128,28 @@ describe('residual input branches', () => {
     );
   });
 
+  it('prefers an explicit id for RadioButtonGroup validation ids', () => {
+    render(
+      <Harness
+        initialValues={{ delivery: '' }}
+        initialErrors={{ delivery: 'Choose delivery' }}
+        initialTouched={{ delivery: true }}
+      >
+        <RadioButtonGroup
+          name='delivery'
+          id='q-delivery'
+          legend='Delivery'
+          options={[{ id: 'post', label: 'Post', value: 'post' }]}
+        />
+      </Harness>
+    );
+
+    expect(screen.getByRole('group', { name: 'Delivery' })).toHaveAttribute(
+      'aria-describedby',
+      'q-delivery-validation-msg'
+    );
+  });
+
   it('uses the NumberInput field name for pattern validation feedback', () => {
     render(
       <Harness

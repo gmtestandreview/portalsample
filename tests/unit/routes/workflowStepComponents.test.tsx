@@ -249,6 +249,14 @@ vi.mock('../../../ClientApp/src/components/Inputs/AddressLookup', () => ({
   ),
 }));
 
+vi.mock('../../../ClientApp/src/components/Inputs/RhfAddressLookup', () => ({
+  default: ({ label, name }: { label: string; name: string }) => (
+    <div data-testid='address-lookup' data-name={name}>
+      {label}
+    </div>
+  ),
+}));
+
 vi.mock('../../../ClientApp/src/components/Inputs/Checkbox', () => ({
   default: ({ label, name }: { label: string; name: string }) => (
     <div data-testid='checkbox' data-name={name}>
