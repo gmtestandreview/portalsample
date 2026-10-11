@@ -22,34 +22,78 @@ inputs below are pushed to `origin` but not yet merged to `main`.
 
 <!-- markdownlint-disable MD013 -->
 
-| Item                                                           | Status                | Commit                             |
-| -------------------------------------------------------------- | --------------------- | ---------------------------------- |
-| Outstanding action 1: `reportRecipient` behavior suite         | Done                  | `3004131b`                         |
-| Outstanding action 2: contracts, path helpers, resolver moved  | Done                  | `3004131b`                         |
-| Outstanding action 2: `FormikHelpers` removed from callbacks   | Done                  | `b14e037f`                         |
-| Wave 1: standalone search filters (`filterMenu`, `paFilter`)   | Done                  | `5ac231da`                         |
-| Wave 1: Storybook/test harnesses                               | Deferred (see below)  | —                                  |
-| Wave 2: `appDocuments`                                         | Done                  | `c5714509`                         |
-| Wave 2: `appDetails` (form-free summary)                       | Done                  | `c5714509`                         |
-| Wave 2: `summaryAndSubmit` org/application summaries           | Done                  | `c5714509`                         |
-| Wave 2: wizard documents summary (still Formik)                | Deferred to Wave 5    | —                                  |
-| Wave 3 inputs: `RhfTextInput`, `RhfCheckbox`                   | Done                  | `c38a89ca`                         |
-| Wave 3 inputs: a11y fixes (describedby, invalid, suppress)     | Done                  | `3616d136`                         |
-| Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`            | Done                  | `1a65bcf3`                         |
-| Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup  | Done                  | `e5702e7f`                         |
-| Wave 3 inputs: radio/select describedby and `aria-invalid`     | Done                  | `569e0332`                         |
-| Wave 3 inputs: shared `RhfRules`, per-radio `aria-invalid`     | Done                  | `0c4a3bb3`                         |
-| Wave 3 inputs: `radiogroup` fieldset carries `aria-invalid`    | Done                  | `f7ac5fba`                         |
-| Playwright BDD: dev-server warm-up, `domcontentloaded` waits   | Done, e2e app passes  | `59512ae4`                         |
-| Wave 3: `RhfHidableField` and hidden-rules context             | Done                  | `9f3ad8ab`, `997fdc49`             |
-| Wave 3: `RhfAutoSuggest`, `RhfAutoSuggestContainer`            | Done                  | `375a3baf`, `5b52f77c`, `f15d41a9` |
-| Wave 3: `RhfManualAddressInput`, `RhfSelectInput` `inlineHelp` | Done                  | `d2c0a12a`                         |
-| Wave 3: `RhfAddressLookup` (no typed text in telemetry)        | Done, awaiting review | `6f393acf`, `fd35c0c9`             |
-| Wave 3: `RhfContactDetails`                                    | Done                  | `37c1b806`, `214e8e6e`             |
-| Wave 3: step migrations (each behind a behavior suite)         | Not started           | —                                  |
-| Waves 4-5, shells (action 4), Formik removal (action 6)        | Not started           | —                                  |
+| Item                                                           | Status                | Commit                                         |
+| -------------------------------------------------------------- | --------------------- | ---------------------------------------------- |
+| Outstanding action 1: `reportRecipient` behavior suite         | Done                  | `3004131b`                                     |
+| Outstanding action 2: contracts, path helpers, resolver moved  | Done                  | `3004131b`                                     |
+| Outstanding action 2: `FormikHelpers` removed from callbacks   | Done                  | `b14e037f`                                     |
+| Wave 1: standalone search filters (`filterMenu`, `paFilter`)   | Done                  | `5ac231da`                                     |
+| Wave 1: Storybook/test harnesses                               | Deferred (see below)  | —                                              |
+| Wave 2: `appDocuments`                                         | Done                  | `c5714509`                                     |
+| Wave 2: `appDetails` (form-free summary)                       | Done                  | `c5714509`                                     |
+| Wave 2: `summaryAndSubmit` org/application summaries           | Done                  | `c5714509`                                     |
+| Wave 2: wizard documents summary (still Formik)                | Deferred to Wave 5    | —                                              |
+| Wave 3 inputs: `RhfTextInput`, `RhfCheckbox`                   | Done                  | `c38a89ca`                                     |
+| Wave 3 inputs: a11y fixes (describedby, invalid, suppress)     | Done                  | `3616d136`                                     |
+| Wave 3 inputs: `RhfTextAreaInput`, `RhfNumberInput`            | Done                  | `1a65bcf3`                                     |
+| Wave 3 inputs: shared `useRhfFieldA11y`, test harness cleanup  | Done                  | `e5702e7f`                                     |
+| Wave 3 inputs: radio/select describedby and `aria-invalid`     | Done                  | `569e0332`                                     |
+| Wave 3 inputs: shared `RhfRules`, per-radio `aria-invalid`     | Done                  | `0c4a3bb3`                                     |
+| Wave 3 inputs: `radiogroup` fieldset carries `aria-invalid`    | Done                  | `f7ac5fba`                                     |
+| Playwright BDD: dev-server warm-up, `domcontentloaded` waits   | Done, e2e app passes  | `59512ae4`                                     |
+| Wave 3: `RhfHidableField` and hidden-rules context             | Done                  | `9f3ad8ab`, `997fdc49`                         |
+| Wave 3: `RhfAutoSuggest`, `RhfAutoSuggestContainer`            | Done                  | `375a3baf`, `5b52f77c`, `f15d41a9`             |
+| Wave 3: `RhfManualAddressInput`, `RhfSelectInput` `inlineHelp` | Done                  | `d2c0a12a`                                     |
+| Wave 3: `RhfAddressLookup` (no typed text in telemetry)        | Done, awaiting review | `6f393acf`, `fd35c0c9`                         |
+| Wave 3: `RhfContactDetails`                                    | Done                  | `37c1b806`, `214e8e6e`                         |
+| Wave 3 step: `reportRecipient`                                 | Done, reviewed        | `f4cb16f5`, `74d77050`                         |
+| Wave 3 step: `deliveryAndReturn`                               | Done, reviewed        | `b2af4679`, `5dcc8955`, `c8af1a10`, `2a934453` |
+| Wave 3 step: `summaryAndAccept`                                | Done, reviewed        | `2a673225`, `66b31ded`, `b9713c93`             |
+| Waves 4-5, shells (action 4), Formik removal (action 6)        | Not started           | —                                              |
 
 <!-- markdownlint-enable MD013 -->
+
+## Wave 3 step migrations: verification (2026-10-12)
+
+Local commits only, not pushed. `summaryAndAccept` migrates the
+`associatedDisputes` radio, the `associatedDispute` textarea (hidden only on
+`No`) and the `acceptanceOfQuote` checkbox. Read-only summaries, party blocks
+and PDF download are unchanged (`git show -w 66b31ded` confirms).
+
+Checks run on 2026-10-12 after the last commit:
+
+- Unit: `tests/unit/routes/acceptQuote`, `components/forms`, `components/inputs`
+  — 57 files, 595 tests passed. After `b9713c93`,
+  `tests/unit/routes/acceptQuote` — 13 files, 126 tests passed.
+- `npm run type-check`, ESLint and Prettier clean on the touched files.
+- Storybook (`vitest.storybook.config.ts`, `routes/acceptQuote`): 2 files, 9
+  tests passed.
+- App e2e (`playwright --project=app-bdd -g accept`): 6 passed, including "User
+  accepts an available quote through every step".
+- Coverage: `summaryAndAcceptFormFields.tsx` and
+  `summaryAndAcceptFormikBridge.tsx` at 100% (the text report hides full files;
+  totals reconcile). `summaryAndAccept.tsx` is 66.66% statements because of
+  unchanged party and PDF code.
+
+Reviews: `summaryAndAccept` spec compliance PASS (subagent, read-only); code
+quality self-reviewed against the checklist, with the copied hide rule replaced
+by an import of `summaryAndAcceptOwnHidingFields` (`b9713c93`).
+
+Known unresolved, not fixed here:
+
+- **Pre-existing, not fixed:** `acceptanceOfQuote` validation rejects only an
+  explicit `false`; an untouched checkbox stays `undefined` and can submit. The
+  schemas are shared with the server, so changing this needs its own decision.
+- **Pre-existing, not fixed:** the dispute textarea shows while the Yes/No
+  question is unanswered and hides only on `No`.
+- Bridge cleanup remains open: the hand-written touched-path and mirrored-name
+  lists are repeated in each step bridge and should be shared.
+- Splitting the large summary function in `deliveryAndReturn.tsx` remains open.
+- `deliveryAndReturn.behavior.test.tsx` still copies its hide rule locally.
+- Test gaps (optional): no assertion pins the error-summary target ids
+  `associatedDispute` and `acceptanceOfQuote`; no test types text, switches to
+  `No` and submits.
+- Full `npm run test:ci` and the Storybook BDD e2e suite were not run.
 
 What landed:
 
