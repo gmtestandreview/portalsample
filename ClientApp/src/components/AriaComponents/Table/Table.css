@@ -1,5 +1,5 @@
-@import './theme.css';
-@import './utilities.css';
+@import '../theme.css';
+@import '../utilities.css';
 
 .react-aria-Table {
   border: 0.5px solid var(--border-color);

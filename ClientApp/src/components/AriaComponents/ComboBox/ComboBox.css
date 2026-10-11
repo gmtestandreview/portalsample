@@ -1,5 +1,5 @@
-@import '../AriaComponents/theme.css';
-@import '../AriaComponents/TextField.css';
+@import '../theme.css';
+@import '../TextField/TextField.css';
 
 .react-aria-ComboBox {
   display: flex;

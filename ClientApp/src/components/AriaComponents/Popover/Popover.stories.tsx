@@ -4,7 +4,7 @@ import { Button } from '../Button/Button';
 import { DialogTrigger } from '../Dialog/Dialog';
 import { Heading } from '../Content/Content';
 import { HelpCircle } from '../NmiIcon';
-import './styles.css';
+import '../styles.css';
 import type { Meta, StoryFn } from '@storybook/react-vite';
 
 const meta = {

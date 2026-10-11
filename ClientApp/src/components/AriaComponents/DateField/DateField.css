@@ -1,5 +1,5 @@
-@import '../../AriaComponents/theme.css';
-@import '../../AriaComponents/utilities.css';
+@import '../theme.css';
+@import '../utilities.css';
 
 .react-aria-DateField {
   display: flex;
