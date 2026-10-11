@@ -1,0 +1,199 @@
+import { useContext, useEffect, useRef, useState } from 'react';
+import type { KeyboardEvent } from 'react';
+import {
+  ComboBox,
+  ComboBoxStateContext,
+  Input,
+  Label,
+  Popover,
+} from 'react-aria-components/ComboBox';
+import { Group } from 'react-aria-components/Group';
+import AutoSuggestOptions from '../AutoSuggest/AutoSuggestOptions';
+import type {
+  AutoSuggestOption,
+  AutoSuggestContainerProps,
+} from '../AutoSuggest/types';
+import { omitUndefined } from '../../../utils/omitUndefined';
+import { useRhfFieldA11y } from '../useRhfFieldA11y';
+
+const keys = {
+  ESC: 'Escape',
+};
+
+const AutoSuggestMenuState = ({ hasOptions }: { hasOptions: boolean }) => {
+  const state = useContext(ComboBoxStateContext);
+  const previousHasOptions = useRef(false);
+
+  useEffect(() => {
+    if (hasOptions && state?.isFocused && !previousHasOptions.current) {
+      state?.open(null, 'input');
+    } else if (!hasOptions && previousHasOptions.current) {
+      state?.close();
+    }
+    previousHasOptions.current = hasOptions;
+  }, [hasOptions, state]);
+
+  return null;
+};
+
+/**
+ * React Hook Form counterpart of `AutoSuggestContainer`. It reads the field
+ * through `useController`, so it must render inside a `FormProvider`. The field
+ * is marked touched as soon as the user types, and its validation message shows
+ * once it is touched or the form has been submitted.
+ */
+const RhfAutoSuggestContainer = <T,>(
+  props: Readonly<AutoSuggestContainerProps<T>>
+) => {
+  const {
+    id,
+    name,
+    label,
+    inlineHelp,
+    options,
+    noResult,
+    noResultMessage,
+    error,
+    errorMessage,
+    loading,
+    loadingMessage,
+    searchTerm,
+    onSearchTermChange,
+    onSelectedOption,
+    onCancel,
+    placeholder,
+  } = props;
+
+  const {
+    field,
+    controlId,
+    helpId,
+    validationMessageId,
+    errorMessage,
+    describedBy,
+  } = useRhfFieldA11y({ name, id, inlineHelp });
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onSelectOption = async (value: AutoSuggestOption<T>) => {
+    setIsOpen(false);
+    await onSelectedOption(value);
+  };
+
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === keys.ESC) {
+      onCancel();
+    }
+  };
+  return (
+    <>
+      <div
+        id={`${name}-announcement`}
+        className='visually-hidden'
+        aria-live='polite'
+      >
+        {isOpen
+          ? `${options.length} suggestions displayed. To navigate, use up and down arrow keys.`
+          : ''}
+      </div>
+      <div className='form-field-container combobox mb-2'>
+        <ComboBox<AutoSuggestOption<T>>
+          items={options}
+          inputValue={searchTerm ?? ''}
+          onInputChange={(value) => {
+            field.onBlur();
+            void onSearchTermChange(value);
+          }}
+          onChange={(key) => {
+            if (key == null) {
+              return;
+            }
+
+            // `items={options}` builds the collection this key came from, and a
+            // custom value arrives as null and returns above, so the lookup resolves
+            // for every key React Aria can emit: a key it no longer holds cannot
+            // reach here, because commitSelection suppresses the callback once
+            // collection.getItem misses. Expressed as a filter rather than
+            // find-then-guard so there is no arm here that no input can take; the
+            // behaviour for a missing option is unchanged.
+            options
+              .filter((item) => item.id === String(key))
+              .forEach((option) => {
+                void onSelectOption(option);
+              });
+          }}
+          allowsCustomValue
+          menuTrigger='input'
+          onOpenChange={setIsOpen}
+        >
+          <AutoSuggestMenuState hasOptions={options.length > 0} />
+          {/*
+           * React Aria's `Label`, not a raw `<label>`: `ComboBox`
+           * detects its label through `LabelContext`, and without a
+           * registered `Label` it treats the widget as unnamed -
+           * emitting the missing-visible-label warning and omitting
+           * `aria-labelledby` from the input. `htmlFor` is kept so
+           * the existing control id association is unchanged.
+           */}
+          <Label
+            htmlFor={controlId}
+            className={`${name.toLowerCase()}-auto-suggest-label form-label`}
+          >
+            {label}
+          </Label>
+          {inlineHelp && (
+            <p id={helpId} className='contextual-help'>
+              {inlineHelp}
+            </p>
+          )}
+          {/*
+           * React Aria's `Group`, not a bare wrapper: `ComboBox`
+           * exposes its group ref through `GroupContext`, and once a
+           * `Group` claims it the widget stops running the
+           * ResizeObserver `setMenuWidth` fallback it otherwise uses
+           * to size the menu off the lone input. That fallback
+           * commits state after mount - outside a Storybook play's
+           * act() scope - which is the "update to ComboBoxInner was
+           * not wrapped in act(...)" warning. The popover then sizes
+           * off the group instead, which is the shape React Aria's
+           * own ComboBox docs use.
+           */}
+          <Group>
+            <Input
+              id={controlId}
+              name={field.name}
+              ref={field.ref}
+              autoComplete='off'
+              spellCheck={false}
+              onKeyDown={onKeyDown}
+              className='search-box form-field'
+              {...omitUndefined({ placeholder })}
+              aria-describedby={describedBy}
+              aria-invalid={errorMessage ? 'true' : undefined}
+            />
+          </Group>
+          {options.length > 0 && (
+            <Popover
+              className='suggestions-container'
+              aria-busy={loading}
+              isNonModal
+              offset={0}
+            >
+              <AutoSuggestOptions<T> id={`${name}-options`} options={options} />
+            </Popover>
+          )}
+          {loading && <p>{loadingMessage || 'Loading options'}</p>}
+          {errorMessage ? (
+            <div className='invalid-feedback' id={validationMessageId}>
+              {errorMessage}
+            </div>
+          ) : null}
+        </ComboBox>
+      </div>
+      {!loading && noResult && <p>{noResultMessage || 'No matches found'}</p>}
+      {error && <p>{errorMessage || 'Results could not be fetched'}</p>}
+    </>
+  );
+};
+
+export default RhfAutoSuggestContainer;

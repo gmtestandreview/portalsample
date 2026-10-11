@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Heading, Text } from '../AriaComponents/Content';
+import { Heading, Text } from '../AriaComponents/Content/Content';
 
 interface AlertMessageProps {
   readonly title: string;
