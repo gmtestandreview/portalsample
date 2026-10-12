@@ -49,17 +49,35 @@ interface AllowedDifference {
   readonly to: string;
 }
 
+const EMPTY_SERIAL_ROW =
+  /<div class="mb-4 "><div class="form-label mb-0">Serial number<\/div><span class="">- <span class="visually-hidden">No details added<\/span><\/span><\/div>/;
+const STALE_SERIAL_ROW =
+  /<div class="mb-4 "><div class="form-label mb-0">Serial number<\/div><p class="mb-0 text-break ">SN-STALE<\/p><\/div>/;
+const SERIAL_NUMBER_REASON =
+  'The Formik summary has no serialNumber hiding rule, so the serial number row still shows when ' +
+  'the answer is not Yes. The twin hides the whole row using the step rule.';
+
 /**
- * Differences between the Formik branch and the twin that are accepted. Each is scoped to the one
- * fixture that shows it; every other fixture must match exactly.
+ * Differences between the Formik branch and the twin that are accepted. Each is scoped to the
+ * fixtures that show it; every other fixture must match exactly.
  */
 const ALLOWED_DIFFERENCES: readonly AllowedDifference[] = [
   {
+    fixture: 'no serial number',
+    reason: SERIAL_NUMBER_REASON,
+    from: EMPTY_SERIAL_ROW,
+    to: '',
+  },
+  {
     fixture: 'no serial number but a stale serial number value',
-    reason:
-      'The Formik summary has no serialNumber hiding rule, so a serial number left over from before ' +
-      'the answer became "No" still shows. The twin hides it using the step rule.',
-    from: /<div class="mb-4 "><div class="form-label mb-0">Serial number<\/div><p class="mb-0 text-break ">SN-STALE<\/p><\/div>/,
+    reason: SERIAL_NUMBER_REASON,
+    from: STALE_SERIAL_ROW,
+    to: '',
+  },
+  {
+    fixture: 'empty answers',
+    reason: SERIAL_NUMBER_REASON,
+    from: EMPTY_SERIAL_ROW,
     to: '',
   },
 ];
@@ -94,20 +112,22 @@ describe('form-free RFQ instrument summary parity with the Formik summary', () =
     }
   );
 
-  it('only needs the allowed difference because the Formik summary shows the stale serial number', async () => {
-    const stale = summaryFixtures.find(
-      (f) => f.name === ALLOWED_DIFFERENCES[0]?.fixture
-    );
-    if (!stale) throw new Error('Missing stale serial number fixture');
+  it.each(ALLOWED_DIFFERENCES.map((d) => [d.fixture] as const))(
+    'only needs the allowed difference for %s because the Formik summary shows the serial number row',
+    async (name) => {
+      const fixture = summaryFixtures.find((f) => f.name === name);
+      if (!fixture) throw new Error(`Missing fixture ${name}`);
 
-    const legacy = (await renderFormikInstrument(stale)).container.innerHTML;
-    cleanup();
-    const twinRender = render(
-      <RfqInstrumentSummary values={stale.values} hidden={summaryHidden} />
-    );
-    await twinRender.findByText('Request details');
+      const legacy = (await renderFormikInstrument(fixture)).container
+        .innerHTML;
+      cleanup();
+      const twinRender = render(
+        <RfqInstrumentSummary values={fixture.values} hidden={summaryHidden} />
+      );
+      await twinRender.findByText('Request details');
 
-    expect(legacy).toContain('SN-STALE');
-    expect(twinRender.container.innerHTML).not.toContain('SN-STALE');
-  });
+      expect(legacy).toContain('Serial number');
+      expect(twinRender.container.innerHTML).not.toContain('Serial number');
+    }
+  );
 });

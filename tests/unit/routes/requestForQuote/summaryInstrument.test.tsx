@@ -171,12 +171,23 @@ describe('RfqInstrumentSummary', () => {
     expect(shown).toHaveTextContent('SN-0042');
   });
 
-  it('still shows the empty serial number row when the answer is No and none was entered', async () => {
-    const container = await renderLoaded(
+  it('hides the serial number row when the answer is No or unanswered, even with no value', async () => {
+    const no = await renderLoaded(
       instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: undefined })
+    );
+    expect(no).not.toHaveTextContent('Serial number');
+
+    const unanswered = await renderLoaded({ instrumentAndRequest: {} });
+    expect(unanswered).not.toHaveTextContent('Serial number');
+  });
+
+  it('shows the serial number row when the answer is Yes, with a placeholder when empty', async () => {
+    const container = await renderLoaded(
+      instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: undefined })
     );
 
     expect(container).toHaveTextContent('Serial number');
+    expect(container).toHaveTextContent('No details added');
   });
 
   it('shows a dash for an id that matches no lookup', async () => {

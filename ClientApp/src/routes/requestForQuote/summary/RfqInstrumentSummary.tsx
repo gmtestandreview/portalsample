@@ -104,13 +104,6 @@ const formatAvailabilityDate = (
   return typeof raw === 'string' ? raw : undefined;
 };
 
-/**
- * A serial number left over from before the answer became "No" is not shown.
- * An unanswered row still shows its placeholder, as it always has.
- */
-const isStaleSerialNumber = (step: InstrumentAndRequestStep | undefined) =>
-  step !== undefined && isSerialNumberHidden(step) && !!step.serialNumber;
-
 interface SectionProps {
   step: InstrumentAndRequestStep | undefined;
 }
@@ -128,7 +121,7 @@ const InstrumentDetails = ({ step, lookups }: InstrumentDetailsProps) => (
       value={step?.hasSerialNumber}
       options={SERIAL_NUMBER_OPTIONS}
     />
-    {isStaleSerialNumber(step) ? null : (
+    {isSerialNumberHidden(step ?? {}) ? null : (
       <TextField
         label='Serial number'
         field='serialNumber'
