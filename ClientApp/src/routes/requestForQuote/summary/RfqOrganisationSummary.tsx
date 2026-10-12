@@ -3,8 +3,14 @@ import { PatternFormat } from 'react-number-format';
 import SummaryDisplay from '../../../components/SummaryDisplay';
 import ContactSummary from '../../ta/summary/ContactSummary';
 import { formatTradingBranchFromStrings } from '../../common/helperFunctions';
+import { YesNo } from '../../../api/web-api-client';
 import { isSummaryFieldHidden } from './types';
-import type { RfqSummarySectionProps } from './types';
+import type { RfqCurrentContact, RfqSummarySectionProps } from './types';
+
+interface RfqOrganisationSummaryProps extends RfqSummarySectionProps {
+  /** Omit to leave the account holder out, as the editable summary always did. */
+  currentContact?: RfqCurrentContact;
+}
 
 const ROOT = 'organisationAndContact';
 const ABN_FORMAT = '## ### ### ###';
@@ -18,7 +24,10 @@ const PRINCIPAL_CONTACT_OPTIONS = [
  * Read-only organisation and contact section. Form-free twin of
  * `OrganisationAndContact` in summary mode.
  */
-const RfqOrganisationSummary = (props: Readonly<RfqSummarySectionProps>) => {
+const RfqOrganisationSummary = (
+  props: Readonly<RfqOrganisationSummaryProps>
+) => {
+  const { currentContact } = props;
   const org = props.values.organisationAndContact;
   const abn = org?.abn;
   const principal = org?.isPrincipalContact;
@@ -66,6 +75,13 @@ const RfqOrganisationSummary = (props: Readonly<RfqSummarySectionProps>) => {
                 ?.label ?? 'No details added'
             }
           />
+        ) : null}
+        {principal === YesNo.Yes && currentContact ? (
+          <p id='q-currentContact' className='mb-4 text-break'>
+            {currentContact.name}
+            <br />
+            {currentContact.email}
+          </p>
         ) : null}
         {!isSummaryFieldHidden(props, `${ROOT}.principalContactHide`) && (
           <ContactSummary name={`${ROOT}.contact`} contact={org?.contact} />

@@ -11,7 +11,11 @@ import useBodyClass from '../../components/Utilities/useBodyClass';
 import type { SummaryProps } from './types';
 import RfqOrganisationSummary from './summary/RfqOrganisationSummary';
 import RfqInstrumentSummary from './summary/RfqInstrumentSummary';
-import type { RfqSummarySectionProps } from './summary/types';
+import type {
+  RfqCurrentContact,
+  RfqSummarySectionProps,
+} from './summary/types';
+import { useAccountState } from '../../authentication/hooks';
 
 const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
@@ -22,6 +26,14 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const hidden: RfqSummarySectionProps['hidden'] =
     (status as { hidden?: RfqSummarySectionProps['hidden'] } | undefined)
       ?.hidden ?? {};
+  const details = useAccountState()?.details;
+  const accountName = [details?.givenName, details?.familyName]
+    .filter(Boolean)
+    .join(' ');
+  const currentContact: RfqCurrentContact | undefined =
+    accountName && details?.email
+      ? { name: accountName, email: details.email }
+      : undefined;
   useBodyClass('summary');
   return (
     <>
@@ -41,7 +53,11 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             eventKey='0'
             className='mb-4 py-2'
           >
-            <RfqOrganisationSummary values={values} hidden={hidden} />
+            <RfqOrganisationSummary
+              values={values}
+              hidden={hidden}
+              {...(currentContact && { currentContact })}
+            />
             {isEditable ? (
               <EditButton
                 link={`/request-for-quote/${id}/organisation-and-contact`}

@@ -17,6 +17,12 @@ export interface RfqSummarySectionProps {
   hidden: Hideable<Partial<RfqSummaryValues>, Partial<RfqSummaryValues>>;
 }
 
+/** The signed-in account holder, described under "Use my contact details". */
+export interface RfqCurrentContact {
+  name: string;
+  email: string;
+}
+
 /** Resolves a hide rule path such as `organisationAndContact.principalContactHide`. */
 export const isSummaryFieldHidden = (
   { hidden, values }: Readonly<RfqSummarySectionProps>,

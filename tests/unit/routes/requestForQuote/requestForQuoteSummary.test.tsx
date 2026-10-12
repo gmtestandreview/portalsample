@@ -11,6 +11,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
 import type { RequestForQuoteSummary as RequestForQuoteSummaryValues } from '../../../../ClientApp/src/api/web-api-client';
+import type { AccountDetails } from '../../../../ClientApp/src/authentication/accountContext';
+import { AccountStateCtx } from '../../../../ClientApp/src/authentication/accountContext';
 import RequestForQuoteSummary from '../../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary';
 import { resetMsalMock } from '../../helpers/mockMsal';
 import type { ClientMockOf } from '../../helpers/mockApiClient';
@@ -61,6 +63,8 @@ const fixtureValues = (name: string): RequestForQuoteSummaryValues => {
 interface RenderOptions {
   readonly isSubmitted?: boolean;
   readonly status?: unknown;
+  /** The signed-in account; omitted means no account provider at all. */
+  readonly account?: Partial<AccountDetails>;
 }
 
 /** Renders the page inside the Formik context the wizard provides, once the lookups settle. */
@@ -69,21 +73,33 @@ const renderPage = async (
   {
     isSubmitted = false,
     status = { hidden: summaryHidden },
+    account,
   }: RenderOptions = {}
 ) => {
+  const page = (
+    <Formik
+      initialValues={values}
+      initialStatus={status}
+      onSubmit={() => undefined}
+    >
+      <RequestForQuoteSummary name='' isSubmitted={isSubmitted} />
+    </Formik>
+  );
   const result = render(
     <MemoryRouter initialEntries={[`/request-for-quote/${REQUEST_ID}/summary`]}>
       <Routes>
         <Route
           path='/request-for-quote/:id/summary'
           element={
-            <Formik
-              initialValues={values}
-              initialStatus={status}
-              onSubmit={() => undefined}
-            >
-              <RequestForQuoteSummary name='' isSubmitted={isSubmitted} />
-            </Formik>
+            account ? (
+              <AccountStateCtx.Provider
+                value={{ details: account as AccountDetails }}
+              >
+                {page}
+              </AccountStateCtx.Provider>
+            ) : (
+              page
+            )
           }
         />
         <Route
@@ -148,6 +164,32 @@ describe('RequestForQuoteSummary', () => {
     );
 
     expect(screen.getByText('Lovelace', { exact: false })).toBeInTheDocument();
+  });
+
+  it('describes the signed-in account holder under "Use my contact details"', async () => {
+    await renderPage(
+      fixtureValues('fully populated with the principal contact'),
+      {
+        account: {
+          givenName: 'Margaret',
+          familyName: 'Hamilton',
+          email: 'margaret@example.com',
+        },
+      }
+    );
+
+    const descriptor = document.querySelector('#q-currentContact');
+    expect(descriptor).toHaveTextContent('Margaret Hamilton');
+    expect(descriptor).toHaveTextContent('margaret@example.com');
+  });
+
+  it('leaves the account holder out when the account has no name or email', async () => {
+    await renderPage(
+      fixtureValues('fully populated with the principal contact'),
+      { account: { givenName: 'Margaret' } }
+    );
+
+    expect(document.querySelector('#q-currentContact')).toBeNull();
   });
 
   it('hides the serial number row when no serial number is available', async () => {
