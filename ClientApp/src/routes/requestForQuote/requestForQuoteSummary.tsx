@@ -1,5 +1,6 @@
 import { Row } from 'react-bootstrap';
 import { Link, useParams } from 'react-router';
+import { useFormikContext } from 'formik';
 import {
   CustomAccordion,
   CustomAccordionBody,
@@ -7,13 +8,20 @@ import {
 import EditButton from '../../components/Buttons/EditButton';
 import HeaderIntroText from '../../components/HeaderIntroText';
 import useBodyClass from '../../components/Utilities/useBodyClass';
-import InstrumentAndRequest from './instrumentAndRequest';
 import type { SummaryProps } from './types';
-import OrganisationAndContact from './organisationAndContact';
+import RfqOrganisationSummary from './summary/RfqOrganisationSummary';
+import RfqInstrumentSummary from './summary/RfqInstrumentSummary';
+import type { RfqSummarySectionProps } from './summary/types';
 
 const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
   const { id } = useParams<{ id?: string }>();
   const isEditable = !isSubmitted;
+  const { values, status } =
+    useFormikContext<RfqSummarySectionProps['values']>();
+  // The wizard keeps its hiding rules in Formik's status (see `FormikForm`).
+  const hidden: RfqSummarySectionProps['hidden'] =
+    (status as { hidden?: RfqSummarySectionProps['hidden'] } | undefined)
+      ?.hidden ?? {};
   useBodyClass('summary');
   return (
     <>
@@ -33,7 +41,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             eventKey='0'
             className='mb-4 py-2'
           >
-            <OrganisationAndContact isSummary name='organisationAndContact' />
+            <RfqOrganisationSummary values={values} hidden={hidden} />
             {isEditable ? (
               <EditButton
                 link={`/request-for-quote/${id}/organisation-and-contact`}
@@ -47,7 +55,7 @@ const RequestForQuoteSummary = ({ isSubmitted }: Readonly<SummaryProps>) => {
             eventKey='1'
             className='mb-4 py-2'
           >
-            <InstrumentAndRequest isSummary name='instrumentAndRequest' />
+            <RfqInstrumentSummary values={values} />
             {isEditable ? (
               <EditButton
                 link={`/request-for-quote/${id}/instrument-and-request`}

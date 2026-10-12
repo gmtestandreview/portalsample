@@ -852,9 +852,7 @@ describe('workflow step components', () => {
 
     expect(screen.getByTestId('header-intro')).toBeInTheDocument();
     expect(screen.getAllByTestId('edit-button')).toHaveLength(2);
-    await screen.findByTestId(
-      'select-instrumentAndRequest.instrumentOrArtefactType'
-    );
+    await screen.findByText('Request details');
     unmount();
 
     renderRoute(
@@ -868,9 +866,7 @@ describe('workflow step components', () => {
       'href',
       '/dashboard'
     );
-    await screen.findByTestId(
-      'select-instrumentAndRequest.instrumentOrArtefactType'
-    );
+    await screen.findByText('Request details');
   });
 
   it('renders report recipient edit and summary address branches', async () => {
