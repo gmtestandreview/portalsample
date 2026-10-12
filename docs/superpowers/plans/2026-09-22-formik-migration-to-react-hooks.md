@@ -82,8 +82,19 @@ by an import of `summaryAndAcceptOwnHidingFields` (`b9713c93`).
 Known unresolved, not fixed here:
 
 - **Pre-existing, not fixed:** `acceptanceOfQuote` validation rejects only an
-  explicit `false`; an untouched checkbox stays `undefined` and can submit. The
-  schemas are shared with the server, so changing this needs its own decision.
+  explicit `false`; an untouched checkbox stays `undefined` and can submit.
+  `validation.ts:178-180` is `yup.boolean().oneOf([true], …)` with no
+  `.required()`. **Proposed change (not made, needs approval):** add
+  `.required()` to `summaryAndAcceptSubmitValidation` only, in its own commit,
+  with a test that an untouched box blocks submit, an update to the pinned
+  "submits an untouched acceptance" test, and a RULE-040 spec update in
+  `analysis/BUSINESS_RULES.md` (it only states the `=== false` case). Checked
+  2026-10-12: `summaryAndAcceptSaveValidation` is a separate schema with no
+  `acceptanceOfQuote` rule, so save-and-exit drafts are unaffected. **Open
+  risk:** no server code is in this workspace, and the generated client types
+  the field as optional (`web-api-client.ts:5102`). Before shipping, the .NET
+  owner must confirm the accept-quote handler's behavior for a missing value, or
+  a staging submit must confirm it.
 - **Pre-existing, not fixed:** the dispute textarea shows while the Yes/No
   question is unanswered and hides only on `No`.
 - Bridge cleanup remains open: the hand-written touched-path and mirrored-name
