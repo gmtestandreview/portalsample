@@ -8,7 +8,13 @@ import { summaryFixtures, summaryHidden } from './summaryFixtures';
 type Values = RfqSummarySectionProps['values'];
 type Hidden = RfqSummarySectionProps['hidden'];
 
-const populated = summaryFixtures[0]!.values;
+const populated = (() => {
+  const found = summaryFixtures.find(
+    (f) => f.name === 'fully populated with the principal contact'
+  );
+  if (!found) throw new Error('Missing populated fixture');
+  return found.values;
+})();
 
 const renderOrganisation = (values: Values, hidden: Hidden = summaryHidden) =>
   render(<RfqOrganisationSummary values={values} hidden={hidden} />).container;

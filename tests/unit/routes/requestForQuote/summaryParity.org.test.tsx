@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import RfqOrganisationSummary from '../../../../ClientApp/src/routes/requestForQuote/summary/RfqOrganisationSummary';
 import { resetMsalMock } from '../../helpers/mockMsal';
@@ -42,7 +42,7 @@ describe('form-free RFQ organisation summary parity with the Formik summary', ()
     'renders the same markup for %s',
     (_name, fixture) => {
       const legacy = renderFormikOrganisation(fixture).container.innerHTML;
-      document.body.innerHTML = '';
+      cleanup();
       const twin = render(
         <RfqOrganisationSummary
           values={fixture.values}

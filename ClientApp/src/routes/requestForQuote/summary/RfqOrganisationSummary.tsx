@@ -42,6 +42,7 @@ const RfqOrganisationSummary = (props: Readonly<RfqSummarySectionProps>) => {
           <span id='orgABN' className='d-inline-block me-3 fs-5 fw-normal'>
             {'ABN: '}
             <PatternFormat
+              // exactOptionalPropertyTypes rejects undefined; PatternFormat accepts null.
               value={abn ?? null}
               displayType='text'
               format={ABN_FORMAT}
