@@ -9,17 +9,26 @@ export const isStorybookMswDebugEnabled = (search: string): boolean =>
  * A missing same-origin API fixture is a story-owner failure. Static assets and
  * intentionally external requests keep the browser's normal bypass behavior.
  */
-export const onUnhandledStorybookRequest: UnhandledRequestCallback = (
-  request,
-  print
-) => {
-  const requestUrl = new URL(request.url);
+export const onUnhandledStorybookRequest: UnhandledFrameCallback = ({
+  frame,
+  defaults,
+}) => {
+  if (frame.protocol !== 'http') {
+    return;
+  }
+
+  const requestUrl = new URL((frame.data as { request: Request }).request.url);
 
   if (
     requestUrl.origin === globalThis.location.origin &&
     requestUrl.pathname.startsWith('/api/')
   ) {
-    print.error();
+    defaults.error();
   }
 };
-import type { UnhandledRequestCallback } from 'msw';
+import type { UnhandledFrameHandle } from 'msw';
+
+type UnhandledFrameCallback = Extract<
+  UnhandledFrameHandle,
+  (...args: never[]) => unknown
+>;

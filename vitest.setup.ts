@@ -41,19 +41,20 @@ if (!HTMLElement.prototype.scrollIntoView) {
   HTMLElement.prototype.scrollIntoView = vi.fn();
 }
 
-if (!globalThis.URL.createObjectURL) {
-  Object.defineProperty(globalThis.URL, 'createObjectURL', {
-    writable: true,
-    value: vi.fn(() => 'blob:unit-test'),
-  });
-}
+// Node 24 and jsdom 30 both expose URL.createObjectURL, but Vitest's Node
+// compatibility wrapper cannot consume a jsdom Blob through that implementation.
+// Keep object URLs deterministic and browser-independent in unit tests.
+Object.defineProperty(globalThis.URL, 'createObjectURL', {
+  configurable: true,
+  writable: true,
+  value: vi.fn(() => 'blob:unit-test'),
+});
 
-if (!globalThis.URL.revokeObjectURL) {
-  Object.defineProperty(globalThis.URL, 'revokeObjectURL', {
-    writable: true,
-    value: vi.fn(),
-  });
-}
+Object.defineProperty(globalThis.URL, 'revokeObjectURL', {
+  configurable: true,
+  writable: true,
+  value: vi.fn(),
+});
 
 Object.defineProperty(globalThis, 'scrollTo', {
   writable: true,

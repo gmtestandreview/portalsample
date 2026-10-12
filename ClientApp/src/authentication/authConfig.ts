@@ -1,13 +1,17 @@
-import { LogLevel } from '@azure/msal-browser';
+import { BrowserUtils, LogLevel } from '@azure/msal-browser';
 import type { Configuration, RedirectRequest } from '@azure/msal-browser';
 import { env } from '../env';
+
+export const redirectUri = env.REACT_APP_B2C_REDIRECT_URL || '';
 
 export const configuration: Configuration = {
   auth: {
     clientId: env.REACT_APP_B2C_CLIENTID || '',
     authority: env.REACT_APP_B2C_AUTHORITY,
     knownAuthorities: [env.REACT_APP_B2C_KNOWN_AUTHORITIES || ''],
+    redirectUri,
     postLogoutRedirectUri: env.REACT_APP_B2C_POST_LOGOUT_REDIRECT_URL,
+    onRedirectNavigate: () => !BrowserUtils.isInIframe(),
   },
   system: {
     loggerOptions: {
@@ -25,10 +29,9 @@ export const configuration: Configuration = {
       },
       piiLoggingEnabled: false,
     },
-    windowHashTimeout: 60000,
-    iframeHashTimeout: 6000,
-    loadFrameTimeout: 6000,
-    asyncPopups: false,
+    popupBridgeTimeout: 60000,
+    iframeBridgeTimeout: 6000,
+    navigatePopups: true,
   },
 };
 
@@ -36,8 +39,6 @@ export const scopes: string[] = [
   env.REACT_APP_B2C_READ_SCOPE || '',
   env.REACT_APP_B2C_USER_IMPERSONATION_SCOPE || '',
 ];
-
-export const redirectUri = env.REACT_APP_B2C_REDIRECT_URL || '';
 
 export const authRequest: RedirectRequest = {
   redirectUri,

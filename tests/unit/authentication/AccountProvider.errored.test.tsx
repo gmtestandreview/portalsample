@@ -31,7 +31,6 @@ vi.mock('@azure/msal-react', () => ({
 
 vi.mock('@azure/msal-browser', () => ({
   InteractionStatus: { None: 'none', Startup: 'startup', Logout: 'logout' },
-  BrowserUtils: { isInIframe: vi.fn().mockReturnValue(false) },
 }));
 
 // signIn mock — created once and reused
@@ -131,5 +130,49 @@ describe('AccountProvider — errored state', () => {
 
     // Verify that logoutRedirect was called to handle the error
     expect(mockInstance.logoutRedirect).toHaveBeenCalled();
+  });
+
+  it('still requests logout when redirect response handling fails', async () => {
+    mockInstance.handleRedirectPromise.mockRejectedValueOnce(
+      new Error('redirect response failed')
+    );
+
+    render(
+      <AccountProvider>
+        <div data-testid='protected-content'>Protected content</div>
+      </AccountProvider>
+    );
+
+    await waitFor(() =>
+      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
+        account: null,
+      })
+    );
+    expect(
+      screen.getByText(/Unable to load account details/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
+  });
+
+  it('keeps the recoverable error state when logout redirect rejects', async () => {
+    mockInstance.logoutRedirect.mockRejectedValueOnce(
+      new Error('logout redirect failed')
+    );
+
+    render(
+      <AccountProvider>
+        <div data-testid='protected-content'>Protected content</div>
+      </AccountProvider>
+    );
+
+    await waitFor(() =>
+      expect(mockInstance.logoutRedirect).toHaveBeenCalledWith({
+        account: null,
+      })
+    );
+    expect(
+      screen.getByText(/Unable to load account details/i)
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('protected-content')).not.toBeInTheDocument();
   });
 });

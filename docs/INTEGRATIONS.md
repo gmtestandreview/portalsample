@@ -11,9 +11,14 @@ redirect (not popup)\
 
 ```ts
 // index.tsx — async init before React renders
-const pca = await PublicClientApplication.createPublicClientApplication(configuration);
+const pca = await createStandardPublicClientApplication(configuration);
 root.render(<MsalProvider instance={pca}>...</MsalProvider>);
 ```
+
+MSAL v5 authentication responses use the dedicated `redirect.html` bridge. The
+bridge is a separate Webpack entry and must be served without COOP, with
+`Cache-Control: no-store` and the bridge-only CSP. Its exact output can be
+checked with `node scripts/verify-auth-redirect-bridge.mjs --dist dist`.
 
 ### Per-request token acquisition
 

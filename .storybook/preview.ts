@@ -30,7 +30,7 @@ const preview = definePreview({
             const worker = setupWorker(...mswHandlers);
             await worker.start({
               quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
-              onUnhandledRequest: onUnhandledStorybookRequest,
+              onUnhandledFrame: onUnhandledStorybookRequest,
             });
             return worker;
           }),

@@ -1,9 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { BrowserUtils, InteractionStatus } from '@azure/msal-browser';
+import { InteractionStatus } from '@azure/msal-browser';
 import { useIsAuthenticated, useMsal } from '@azure/msal-react';
-import type * as MsalBrowserModule from '@azure/msal-browser';
 import FAQs from '../../../ClientApp/src/routes/help-guide/faqs';
 import HelpGuide from '../../../ClientApp/src/routes/help-guide';
 import HelpHowToSetupAccess from '../../../ClientApp/src/routes/help-guide/how-to-setup-access';
@@ -12,7 +11,6 @@ import SignIn from '../../../ClientApp/src/routes/sign-in';
 import Signout from '../../../ClientApp/src/routes/sign-out';
 import SignoutHelper from '../../../ClientApp/src/routes/sign-out-helper';
 import { clearTargetOrganisation } from '../../../ClientApp/src/storage/targetOrganisation';
-import { defined } from '../helpers/defined';
 
 const mocks = vi.hoisted(() => ({
   useIsAuthenticated: vi.fn(),
@@ -21,7 +19,6 @@ const mocks = vi.hoisted(() => ({
   logoutRedirect: vi.fn(),
   getActiveAccount: vi.fn(),
   clearTargetOrganisation: vi.fn(),
-  isInIframe: vi.fn(),
   useAccountContext: vi.fn(),
   useAccountDispatch: vi.fn(),
 }));
@@ -30,17 +27,6 @@ vi.mock('@azure/msal-react', () => ({
   useIsAuthenticated: mocks.useIsAuthenticated,
   useMsal: mocks.useMsal,
 }));
-
-vi.mock('@azure/msal-browser', async (importOriginal) => {
-  const actual = await importOriginal<typeof MsalBrowserModule>();
-  return {
-    ...actual,
-    BrowserUtils: {
-      ...actual.BrowserUtils,
-      isInIframe: mocks.isInIframe,
-    },
-  };
-});
 
 vi.mock('../../../ClientApp/src/storage/targetOrganisation', () => ({
   clearTargetOrganisation: mocks.clearTargetOrganisation,
@@ -82,7 +68,6 @@ describe('static route pages', () => {
     mocks.useAccountDispatch.mockReturnValue({
       setUserProfile: vi.fn(),
     });
-    mocks.isInIframe.mockReturnValue(false);
   });
 
   it('renders HelpGuide for unauthenticated users with home navigation', () => {
@@ -186,7 +171,7 @@ describe('static route pages', () => {
     );
   });
 
-  it('runs sign-out redirect when MSAL is idle and not inside an iframe', async () => {
+  it('runs sign-out redirect when MSAL is idle', async () => {
     render(<Signout />);
 
     expect(screen.getByText('Logging out...')).toBeInTheDocument();
@@ -194,15 +179,7 @@ describe('static route pages', () => {
     expect(clearTargetOrganisation).toHaveBeenCalled();
     expect(mocks.logoutRedirect).toHaveBeenCalledWith({
       account: { homeAccountId: 'account-1' },
-      onRedirectNavigate: expect.any(Function),
     });
-
-    const options = defined(
-      mocks.logoutRedirect.mock.calls[0],
-      'logoutRedirect call'
-    )[0];
-    expect(options.onRedirectNavigate()).toBe(true);
-    expect(BrowserUtils.isInIframe).toHaveBeenCalled();
   });
 
   it('skips sign-out redirect while an interaction is already running', async () => {
@@ -213,7 +190,7 @@ describe('static route pages', () => {
         logoutRedirect: mocks.logoutRedirect.mockResolvedValue(undefined),
         getActiveAccount: mocks.getActiveAccount,
       },
-      inProgress: InteractionStatus.Login,
+      inProgress: InteractionStatus.AcquireToken,
     } as unknown as ReturnType<typeof useMsal>);
 
     render(<Signout />);
@@ -235,7 +212,7 @@ describe('static route pages', () => {
         logoutRedirect: mocks.logoutRedirect,
         getActiveAccount: mocks.getActiveAccount,
       },
-      inProgress: InteractionStatus.Login,
+      inProgress: InteractionStatus.AcquireToken,
     } as unknown as ReturnType<typeof useMsal>);
     rerender(<Signout />);
 

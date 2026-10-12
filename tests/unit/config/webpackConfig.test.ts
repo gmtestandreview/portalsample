@@ -1,4 +1,5 @@
 import { createRequire } from 'node:module';
+import { vi } from 'vitest';
 
 interface SassImplementation {
   info: string;
@@ -32,7 +33,7 @@ interface ModuleRule {
 }
 
 interface WebpackConfig {
-  entry: string;
+  entry: Record<string, string>;
   output: {
     filename: string;
   };
@@ -41,11 +42,19 @@ interface WebpackConfig {
     splitChunks:
       | false
       | {
-          chunks: string;
+          chunks: string | ((chunk: { name?: string }) => boolean);
+          cacheGroups?: {
+            vendor?: {
+              chunks: string | ((chunk: { name?: string }) => boolean);
+            };
+          };
         };
   };
   module: {
     rules: ModuleRule[];
+  };
+  devServer: {
+    setupMiddlewares: (...args: unknown[]) => unknown;
   };
   plugins: Array<{
     constructor: {
@@ -79,13 +88,75 @@ describe('webpack config', () => {
   it('uses development bundle and source-map settings', () => {
     const config = webpackConfigFactory({}, { mode: 'development' });
 
-    expect(config.entry).toBe('./ClientApp/src/index.tsx');
-    expect(config.output.filename).toBe('js/bundle.js');
+    expect(config.entry).toEqual({
+      main: './ClientApp/src/index.tsx',
+      redirect: './ClientApp/src/authentication/redirectBridge.ts',
+    });
+    expect(config.output.filename).toBe('js/[name].js');
     expect(config.devtool).toBe('cheap-module-source-map');
     expect(config.optimization.splitChunks).toBe(false);
+    expect(config.devServer.setupMiddlewares).toEqual(expect.any(Function));
     expect(
       config.plugins.map((plugin) => plugin.constructor.name)
     ).not.toContain('MiniCssExtractPlugin');
+  });
+
+  it('adds bridge-only no-store and CSP headers in development', () => {
+    const config = webpackConfigFactory({}, { mode: 'development' });
+    expect(() => config.devServer.setupMiddlewares([], undefined)).toThrow(
+      'webpack-dev-server is required for bridge headers'
+    );
+    const middlewares = config.devServer.setupMiddlewares([], {});
+    const bridgePolicy = (
+      middlewares as Array<{
+        middleware: (
+          request: { url?: string },
+          response: {
+            setHeader: (name: string, value: string) => void;
+            removeHeader: (name: string) => void;
+          },
+          next: () => void
+        ) => void;
+      }>
+    )[0];
+    if (!bridgePolicy) {
+      throw new Error('bridge policy middleware was not registered');
+    }
+    const response = {
+      removeHeader: vi.fn(),
+      setHeader: vi.fn(),
+    };
+    const next = vi.fn();
+
+    bridgePolicy.middleware(
+      { url: '/redirect.html?code=redacted' },
+      response,
+      next
+    );
+
+    expect(response.setHeader).toHaveBeenNthCalledWith(
+      1,
+      'Cache-Control',
+      'no-store'
+    );
+    expect(response.setHeader).toHaveBeenNthCalledWith(
+      2,
+      'Content-Security-Policy',
+      "default-src 'none'; script-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; frame-ancestors 'self'"
+    );
+    expect(response.removeHeader).toHaveBeenCalledWith(
+      'Cross-Origin-Opener-Policy'
+    );
+    expect(next).toHaveBeenCalled();
+
+    response.setHeader.mockClear();
+    response.removeHeader.mockClear();
+    next.mockClear();
+    bridgePolicy.middleware({ url: '/index.html' }, response, next);
+
+    expect(response.setHeader).not.toHaveBeenCalled();
+    expect(response.removeHeader).not.toHaveBeenCalled();
+    expect(next).toHaveBeenCalledTimes(1);
   });
 
   it('uses hashed production assets, source maps, and vendor splitting', () => {
@@ -95,9 +166,24 @@ describe('webpack config', () => {
     expect(config.devtool).toBe('source-map');
     expect(config.optimization.splitChunks).toEqual(
       expect.objectContaining({
-        chunks: 'all',
+        chunks: expect.any(Function),
       })
     );
+    if (config.optimization.splitChunks === false) {
+      throw new Error('production splitChunks must be configured');
+    }
+    const chunkSelector = config.optimization.splitChunks.chunks;
+    if (typeof chunkSelector !== 'function') {
+      throw new Error('production splitChunks must select chunks by function');
+    }
+    expect(chunkSelector({ name: 'redirect' })).toBe(false);
+    expect(chunkSelector({ name: 'main' })).toBe(true);
+    const vendorSelector =
+      config.optimization.splitChunks.cacheGroups?.vendor?.chunks;
+    if (typeof vendorSelector !== 'function') {
+      throw new Error('vendor splitChunks must select chunks by function');
+    }
+    expect(vendorSelector({ name: 'redirect' })).toBe(false);
     expect(config.plugins.map((plugin) => plugin.constructor.name)).toContain(
       'MiniCssExtractPlugin'
     );
@@ -130,11 +216,15 @@ describe('webpack config', () => {
         configPath
       ) as unknown as WebpackConfigFactory;
       const config = configuredFactory({}, { mode: 'development' });
-      const htmlPlugin = config.plugins.find(
+      const htmlPlugins = config.plugins.filter(
         (plugin) => plugin.constructor.name === 'HtmlWebpackPlugin'
       );
 
-      expect(htmlPlugin?.userOptions?.templateParameters).toEqual(environment);
+      expect(htmlPlugins).toHaveLength(2);
+      expect(htmlPlugins[0]?.userOptions?.templateParameters).toEqual(
+        environment
+      );
+      expect(htmlPlugins[1]?.userOptions?.templateParameters).toEqual({});
     } finally {
       Object.entries(previous).forEach(([key, value]) => {
         if (value === undefined) {

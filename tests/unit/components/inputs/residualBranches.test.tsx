@@ -128,6 +128,22 @@ describe('residual input branches', () => {
     );
   });
 
+  it('leaves the radio group description unset without help or validation', () => {
+    render(
+      <Harness initialValues={{ delivery: '' }}>
+        <RadioButtonGroup
+          name='delivery'
+          legend='Delivery'
+          options={[{ id: 'post', label: 'Post', value: 'post' }]}
+        />
+      </Harness>
+    );
+
+    expect(screen.getByRole('group', { name: 'Delivery' })).not.toHaveAttribute(
+      'aria-describedby'
+    );
+  });
+
   it('uses the NumberInput field name for pattern validation feedback', () => {
     render(
       <Harness

@@ -1,4 +1,4 @@
-import { PublicClientApplication } from '@azure/msal-browser';
+import { createStandardPublicClientApplication } from '@azure/msal-browser';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
@@ -13,8 +13,7 @@ import type { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement!);
-const pca =
-  await PublicClientApplication.createPublicClientApplication(configuration);
+const pca = await createStandardPublicClientApplication(configuration);
 TrustedTypes.createTrustedTypePolicy();
 
 // StrictMode is outermost so its development-only checks cover the MSAL and

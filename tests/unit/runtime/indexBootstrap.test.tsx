@@ -4,7 +4,9 @@ import { describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   createRoot: vi.fn(),
   render: vi.fn(),
-  createPublicClientApplication: vi.fn().mockResolvedValue({ client: 'pca' }),
+  createStandardPublicClientApplication: vi
+    .fn()
+    .mockResolvedValue({ client: 'pca' }),
   createTrustedTypePolicy: vi.fn(),
 }));
 
@@ -13,9 +15,8 @@ vi.mock('react-dom/client', () => ({
 }));
 
 vi.mock('@azure/msal-browser', () => ({
-  PublicClientApplication: {
-    createPublicClientApplication: mocks.createPublicClientApplication,
-  },
+  createStandardPublicClientApplication:
+    mocks.createStandardPublicClientApplication,
 }));
 
 vi.mock('@azure/msal-react', () => ({
@@ -71,7 +72,7 @@ describe('application bootstrap', () => {
     expect(mocks.createRoot).toHaveBeenCalledWith(
       document.getElementById('root')
     );
-    expect(mocks.createPublicClientApplication).toHaveBeenCalledWith({
+    expect(mocks.createStandardPublicClientApplication).toHaveBeenCalledWith({
       auth: { clientId: 'client-id' },
     });
     expect(mocks.createTrustedTypePolicy).toHaveBeenCalled();

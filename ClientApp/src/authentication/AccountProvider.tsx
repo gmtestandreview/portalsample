@@ -1,7 +1,7 @@
-import { BrowserUtils, InteractionStatus } from '@azure/msal-browser';
+import { InteractionStatus } from '@azure/msal-browser';
 import type { AccountInfo } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { UsersClient } from '../api/web-api-client';
 import type { UserDto, UserProfileDto } from '../api/web-api-client';
@@ -72,6 +72,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
     useState<UserProfileDto>();
   const [errored, setErrored] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const accountLoadAttemptedForRef = useRef<string | null>(null);
   const { inProgress, accounts, instance } = useMsal();
 
   const setAgree = useCallback(() => {
@@ -250,11 +251,24 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
       } catch (error) {
         setErrored(true);
         setAccountDetails(null);
-        await instance.handleRedirectPromise();
-        await instance.logoutRedirect({
-          account: instance.getActiveAccount(),
-          onRedirectNavigate: () => !BrowserUtils.isInIframe(),
-        });
+        try {
+          await instance.handleRedirectPromise();
+        } catch (redirectError) {
+          AppLogger.error(
+            'Failed to handle auth redirect after account-load failure',
+            redirectError as Error
+          );
+        }
+        try {
+          await instance.logoutRedirect({
+            account: instance.getActiveAccount(),
+          });
+        } catch (logoutError) {
+          AppLogger.error(
+            'Failed to redirect after account-load failure',
+            logoutError as Error
+          );
+        }
         AppLogger.error('Failed to load loadAccountDetails', error as Error);
       } finally {
         setIsLoading(false);
@@ -262,12 +276,16 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
     };
     const [firstAccount] = accounts;
     if (inProgress === InteractionStatus.Logout) {
+      accountLoadAttemptedForRef.current = null;
       setAccountDetails(null);
     } else if (
+      !errored &&
       inProgress === InteractionStatus.None &&
       firstAccount?.homeAccountId &&
+      accountLoadAttemptedForRef.current !== firstAccount.homeAccountId &&
       accountDetails?.homeAccountId !== firstAccount.homeAccountId
     ) {
+      accountLoadAttemptedForRef.current = firstAccount.homeAccountId;
       void loadAccountDetails(firstAccount);
     }
   }, [
@@ -275,6 +293,7 @@ const AccountProvider = ({ children }: Readonly<AccountProviderProps>) => {
     accounts,
     accountDetails,
     accountDetails?.userProfile,
+    errored,
     instance,
   ]);
 
