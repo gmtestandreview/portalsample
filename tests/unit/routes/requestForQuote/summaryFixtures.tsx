@@ -249,3 +249,26 @@ export const renderFormikOrganisation = (
       </Formik>
     </MemoryRouter>
   );
+
+/**
+ * Render only the instrument and request summary branch in its Formik context and wait for its
+ * lookups to load. The caller registers the `LookupClient` and MSAL mocks, as for
+ * `renderFormikSummary`.
+ */
+export const renderFormikInstrument = async (
+  fixture: Pick<SummaryFixture, 'values'>
+) => {
+  const result = render(
+    <MemoryRouter>
+      <Formik
+        initialValues={fixture.values}
+        initialStatus={{ hidden: summaryHidden }}
+        onSubmit={() => undefined}
+      >
+        <InstrumentAndRequest isSummary name='instrumentAndRequest' />
+      </Formik>
+    </MemoryRouter>
+  );
+  await result.findByText('Request details');
+  return result;
+};
