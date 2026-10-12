@@ -7,6 +7,7 @@ import {
   formatDateOnlyForDisplay,
   parseApiDateOnlyInput,
 } from '../../../utils/dateOnly';
+import { isSerialNumberHidden } from '../instrumentAndRequestProps';
 import { useRfqInstrumentLookups } from './useRfqInstrumentLookups';
 import type { RfqInstrumentLookups } from './useRfqInstrumentLookups';
 import type { RfqSummarySectionProps } from './types';
@@ -103,6 +104,13 @@ const formatAvailabilityDate = (
   return typeof raw === 'string' ? raw : undefined;
 };
 
+/**
+ * A serial number left over from before the answer became "No" is not shown.
+ * An unanswered row still shows its placeholder, as it always has.
+ */
+const isStaleSerialNumber = (step: InstrumentAndRequestStep | undefined) =>
+  step !== undefined && isSerialNumberHidden(step) && !!step.serialNumber;
+
 interface SectionProps {
   step: InstrumentAndRequestStep | undefined;
 }
@@ -120,11 +128,13 @@ const InstrumentDetails = ({ step, lookups }: InstrumentDetailsProps) => (
       value={step?.hasSerialNumber}
       options={SERIAL_NUMBER_OPTIONS}
     />
-    <TextField
-      label='Serial number'
-      field='serialNumber'
-      value={step?.serialNumber}
-    />
+    {isStaleSerialNumber(step) ? null : (
+      <TextField
+        label='Serial number'
+        field='serialNumber'
+        value={step?.serialNumber}
+      />
+    )}
     <TextField
       label='Manufacturer'
       field='manufacturer'

@@ -1,7 +1,7 @@
 import { render, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
-import type { YesNo } from '../../../../ClientApp/src/api/web-api-client';
+import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
 import AppLogger from '../../../../ClientApp/src/instrumentation/AppLogger';
 import RfqInstrumentSummary from '../../../../ClientApp/src/routes/requestForQuote/summary/RfqInstrumentSummary';
 import { useRfqInstrumentLookups } from '../../../../ClientApp/src/routes/requestForQuote/summary/useRfqInstrumentLookups';
@@ -155,6 +155,28 @@ describe('RfqInstrumentSummary', () => {
     expect(container).toHaveTextContent(
       'Regulation 13 with measurement report'
     );
+  });
+
+  it('hides the serial number when the answer is No, and shows it when the answer is Yes', async () => {
+    const hidden = await renderLoaded(
+      instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: 'SN-STALE' })
+    );
+    expect(hidden).not.toHaveTextContent('SN-STALE');
+    expect(hidden).not.toHaveTextContent('Serial number');
+
+    const shown = await renderLoaded(
+      instrumentValues({ hasSerialNumber: YesNo.Yes, serialNumber: 'SN-0042' })
+    );
+    expect(shown).toHaveTextContent('Serial number');
+    expect(shown).toHaveTextContent('SN-0042');
+  });
+
+  it('still shows the empty serial number row when the answer is No and none was entered', async () => {
+    const container = await renderLoaded(
+      instrumentValues({ hasSerialNumber: YesNo.No, serialNumber: undefined })
+    );
+
+    expect(container).toHaveTextContent('Serial number');
   });
 
   it('shows a dash for an id that matches no lookup', async () => {
