@@ -1251,7 +1251,7 @@ Then   postalAddress: addressSchema applies (all required fields enforced)
 ### RULE-050: NMI ABN Hardcoded in Contract Display
 
 **Category:** Policy **Priority:** P0 **Source:**
-`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:435` _(corrected
+`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:397` _(corrected
 2026-09-02, CRD-044 - previously cited 382, which is a different element)_
 **Plain English:** NMI's Australian Business Number is hardcoded in the Accept
 Quote summary page as part of the legal contract display. **Specification:**
@@ -1266,7 +1266,7 @@ Any change to NMI's registered ABN or address requires a code deployment.
 ```
 
 **Parameters:** Both values are string literals in
-`summaryAndAccept.tsx:435-441` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
+`summaryAndAccept.tsx:397-401` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
 High
 
 ---
@@ -1274,7 +1274,7 @@ High
 ### RULE-051: NMI Registered Address Hardcoded in Contract Display
 
 **Category:** Policy **Priority:** P1 **Source:**
-`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:376-380` **Plain
+`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:399-401` **Plain
 English:** The National Measurement Institute's registered postal address is
 hardcoded as literal JSX in the quote acceptance summary, immediately below the
 ABN (RULE-050), and is presented to the customer as part of the contract they
