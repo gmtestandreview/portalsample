@@ -246,15 +246,19 @@ describe('SummaryAndAccept behavior', () => {
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     const summary = await screen.findByTestId('form-error-summary');
-    const targetOf = (name: RegExp) => {
-      const link = within(summary).getByRole('link', { name });
-      const hash = new URL(link.getAttribute('href') ?? '', 'http://x').hash;
-      return document.getElementById(hash.slice(1));
-    };
-    expect(targetOf(/Associated dispute/)).toBe(
+    const targetIdOf = (name: RegExp) =>
+      within(summary)
+        .getByRole('link', { name })
+        .getAttribute('href')
+        ?.replace(/^#/, '');
+    const disputeId = targetIdOf(/Associated dispute/);
+    const acceptanceId = targetIdOf(/Acceptance of quote/);
+    expect(disputeId).toBe('associatedDispute');
+    expect(acceptanceId).toBe('acceptanceOfQuote');
+    expect(document.getElementById(defined(disputeId, 'dispute id'))).toBe(
       screen.getByLabelText(DISPUTE_LABEL)
     );
-    expect(targetOf(/Acceptance of quote/)).toBe(
+    expect(document.getElementById(defined(acceptanceId, 'accept id'))).toBe(
       screen.getByLabelText(ACCEPT_LABEL)
     );
   });
@@ -267,12 +271,14 @@ describe('SummaryAndAccept behavior', () => {
 
     await user.type(screen.getByLabelText(DISPUTE_LABEL), 'Typed then dropped');
     await user.click(screen.getByRole('radio', { name: 'No' }));
+    // Precondition: the textarea hides on No, so the typed text is now stale.
     expect(screen.queryByLabelText(DISPUTE_LABEL)).not.toBeInTheDocument();
+
     await user.click(screen.getByLabelText(ACCEPT_LABEL));
     await user.click(screen.getByRole('button', { name: 'Continue' }));
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalledOnce());
-    expect(submittedValues(onSubmit)).toEqual({
+    expect(submittedValues(onSubmit)).toStrictEqual({
       associatedDisputes: 'No',
       acceptanceOfQuote: true,
     });
