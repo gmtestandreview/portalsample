@@ -230,3 +230,22 @@ export const renderFormikSummary = async (
   await result.findByText('Request details');
   return result;
 };
+
+/**
+ * Render only the organisation and contact summary branch in its Formik context. It needs no
+ * lookups, so there is nothing to wait for.
+ */
+export const renderFormikOrganisation = (
+  fixture: Pick<SummaryFixture, 'values'>
+) =>
+  render(
+    <MemoryRouter>
+      <Formik
+        initialValues={fixture.values}
+        initialStatus={{ hidden: summaryHidden }}
+        onSubmit={() => undefined}
+      >
+        <OrganisationAndContact isSummary name='organisationAndContact' />
+      </Formik>
+    </MemoryRouter>
+  );
