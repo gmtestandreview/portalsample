@@ -224,7 +224,8 @@ exports[`request-for-quote Formik summary baseline > renders stable markup for e
 </div>
 <div class="mb-4 row">
 <h2 class="h3 mb-0" aria-describedby="orgABN">
-<span class="d-block text-break">undefined - undefined</span>
+<span class="d-block text-break">
+</span>
 <span class="d-block text-break">
 </span>
 <span id="orgABN" class="d-inline-block me-3 fs-5 fw-normal">ABN: <span aria-hidden="true" role="presentation" inputmode="numeric">
@@ -428,7 +429,7 @@ exports[`request-for-quote Formik summary baseline > renders stable markup for n
 </div>
 <div class="mb-4 row">
 <h2 class="h3 mb-0" aria-describedby="orgABN">
-<span class="d-block text-break">Acme Trading - undefined</span>
+<span class="d-block text-break">Acme Trading</span>
 <span class="d-block text-break">Acme Pty Ltd</span>
 <span id="orgABN" class="d-inline-block me-3 fs-5 fw-normal">ABN: <span aria-hidden="true" role="presentation" inputmode="numeric">12 345 678 901</span>
 </span>

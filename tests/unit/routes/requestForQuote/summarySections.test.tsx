@@ -85,6 +85,14 @@ describe('RfqOrganisationSummary', () => {
     expect(container).not.toHaveTextContent('First name');
   });
 
+  it('shows an empty trading and branch heading when both names are missing', () => {
+    const container = renderOrganisation({ organisationAndContact: {} }, {});
+
+    expect(container.querySelector('h2.h3.mb-0')).not.toHaveTextContent(
+      'undefined'
+    );
+  });
+
   it('renders the headings without crashing when there are no values', () => {
     const container = renderOrganisation({}, {});
 

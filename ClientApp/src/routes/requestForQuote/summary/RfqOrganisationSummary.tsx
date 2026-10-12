@@ -17,10 +17,6 @@ const PRINCIPAL_CONTACT_OPTIONS = [
 /**
  * Read-only organisation and contact section. Form-free twin of
  * `OrganisationAndContact` in summary mode.
- *
- * The trading/branch heading passes the raw values to
- * `formatTradingBranchFromStrings`, exactly as the Formik branch does, so
- * unanswered names render as the Formik summary renders them.
  */
 const RfqOrganisationSummary = (props: Readonly<RfqSummarySectionProps>) => {
   const org = props.values.organisationAndContact;
@@ -38,8 +34,8 @@ const RfqOrganisationSummary = (props: Readonly<RfqSummarySectionProps>) => {
         <h2 className='h3 mb-0' aria-describedby='orgABN'>
           <span className='d-block text-break'>
             {formatTradingBranchFromStrings(
-              org?.businessOrTradingName as string,
-              org?.branchOrLocationName as string
+              org?.businessOrTradingName,
+              org?.branchOrLocationName
             )}
           </span>
           <span className='d-block text-break'>{org?.name}</span>
