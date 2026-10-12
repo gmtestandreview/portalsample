@@ -97,13 +97,20 @@ Known unresolved, not fixed here:
   a staging submit must confirm it.
 - **Pre-existing, not fixed:** the dispute textarea shows while the Yes/No
   question is unanswered and hides only on `No`.
-- Bridge cleanup remains open: the hand-written touched-path and mirrored-name
-  lists are repeated in each step bridge and should be shared.
-- Splitting the large summary function in `deliveryAndReturn.tsx` remains open.
-- `deliveryAndReturn.behavior.test.tsx` still copies its hide rule locally.
-- Test gaps (optional): no assertion pins the error-summary target ids
-  `associatedDispute` and `acceptanceOfQuote`; no test types text, switches to
-  `No` and submits.
+- **Agreed follow-up cleanup (approved 2026-10-12, not started).** Each item is
+  its own commit, none changes behavior, and each is verified by the existing
+  behavior suites plus the new tests below:
+  1. Share the hand-written touched-path and mirrored-name lists across the step
+     bridges (`paymentDetails`, `reportRecipient`, `deliveryAndReturn`,
+     `summaryAndAccept`) instead of repeating them in each bridge.
+  2. Split the large summary function in `deliveryAndReturn.tsx`.
+  3. Import the real hide rule in `deliveryAndReturn.behavior.test.tsx` instead
+     of copying it, as `summaryAndAccept` now does through
+     `summaryAndAcceptOwnHidingFields` (`b9713c93`).
+  4. Add two `summaryAndAccept` tests: one pinning the error-summary target ids
+     `associatedDispute` and `acceptanceOfQuote` to real DOM elements, and one
+     that types into the dispute textarea, switches to `No` and submits,
+     asserting the stale value is stripped from the payload.
 - Full `npm run test:ci` and the Storybook BDD e2e suite were not run.
 
 What landed:
