@@ -197,7 +197,9 @@ const RequestDetails = ({ step }: SectionProps) => (
  * Read-only instrument and request section. Form-free twin of
  * `InstrumentAndRequest` in summary mode.
  */
-const RfqInstrumentSummary = ({ values }: Readonly<RfqSummarySectionProps>) => {
+const RfqInstrumentSummary = ({
+  values,
+}: Readonly<Pick<RfqSummarySectionProps, 'values'>>) => {
   const lookups = useRfqInstrumentLookups();
   const step = values.instrumentAndRequest;
 

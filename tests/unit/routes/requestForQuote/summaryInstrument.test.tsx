@@ -1,5 +1,6 @@
-import { render, renderHook, waitFor } from '@testing-library/react';
+import { render, renderHook, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type * as React from 'react';
 import type * as WebApiClient from '../../../../ClientApp/src/api/web-api-client';
 import { YesNo } from '../../../../ClientApp/src/api/web-api-client';
 import AppLogger from '../../../../ClientApp/src/instrumentation/AppLogger';
@@ -13,7 +14,6 @@ import {
   measurementCategoryLookup,
   mockSummaryLookups,
   summaryFixtures,
-  summaryHidden,
 } from './summaryFixtures';
 
 const clients = vi.hoisted(() => ({
@@ -43,6 +43,37 @@ vi.mock('../../../../ClientApp/src/instrumentation/AppLogger', () => ({
   default: { error: vi.fn(), info: vi.fn(), verbose: vi.fn() },
 }));
 
+/**
+ * React 18 ignores a state update on an unmounted component without warning, so a missing guard is
+ * invisible. Recording the setter calls that carry lookups makes it observable.
+ */
+const stateSetterCalls = vi.hoisted(() => ({ calls: [] as unknown[] }));
+
+vi.mock('react', async (importOriginal) => {
+  const actual = await importOriginal<typeof React>();
+
+  return {
+    ...actual,
+    useState: (initial: unknown) => {
+      const [value, setValue] = actual.useState(initial);
+
+      return [
+        value,
+        (next: unknown) => {
+          stateSetterCalls.calls.push(next);
+          setValue(next);
+        },
+      ];
+    },
+  };
+});
+
+const setLookupsCalls = () =>
+  stateSetterCalls.calls.filter(
+    (next) =>
+      typeof next === 'object' && next !== null && 'artefactTypes' in next
+  );
+
 type Values = RfqSummarySectionProps['values'];
 
 const populated = (() => {
@@ -61,7 +92,7 @@ const instrumentValues = (
 });
 
 const renderInstrument = (values: Values) =>
-  render(<RfqInstrumentSummary values={values} hidden={summaryHidden} />);
+  render(<RfqInstrumentSummary values={values} />);
 
 const renderLoaded = async (values: Values) => {
   const result = renderInstrument(values);
@@ -73,6 +104,7 @@ describe('RfqInstrumentSummary', () => {
   beforeEach(() => {
     resetMsalMock();
     vi.mocked(AppLogger.error).mockClear();
+    stateSetterCalls.calls.length = 0;
     clients.lookup.methods.getLookup.mockReset();
     mockSummaryLookups(clients.lookup.methods.getLookup);
   });
@@ -108,6 +140,19 @@ describe('RfqInstrumentSummary', () => {
     expect(result.queryByText('Request details')).not.toBeInTheDocument();
   });
 
+  it('logs a non-Error rejection as an Error', async () => {
+    clients.lookup.methods.getLookup.mockRejectedValue('boom');
+
+    renderInstrument(populated);
+
+    await waitFor(() =>
+      expect(AppLogger.error).toHaveBeenCalledWith(
+        'Failed to retrieve look ups',
+        new Error('boom')
+      )
+    );
+  });
+
   it('keeps the spinner and does not load when nobody is signed in', () => {
     signOut();
 
@@ -117,10 +162,7 @@ describe('RfqInstrumentSummary', () => {
     expect(clients.lookup.methods.getLookup).not.toHaveBeenCalled();
   });
 
-  it('does not update state or warn when unmounted while the lookups load', async () => {
-    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {
-      // Only counting calls: any React warning would be reported through here.
-    });
+  it('does not set state when unmounted while the lookups load', async () => {
     let release: (value: unknown[]) => void = () => undefined;
     clients.lookup.methods.getLookup.mockReturnValue(
       new Promise((resolve) => {
@@ -128,16 +170,26 @@ describe('RfqInstrumentSummary', () => {
       })
     );
 
-    const { unmount } = renderInstrument(populated);
+    const { unmount } = renderHook(() => useRfqInstrumentLookups());
     await waitFor(() =>
       expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2)
     );
     unmount();
     release([]);
-    await Promise.resolve();
-    await Promise.resolve();
+    await vi.waitFor(() =>
+      expect(clients.lookup.methods.getLookup).toHaveBeenCalledTimes(2)
+    );
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
-    expect(consoleError).not.toHaveBeenCalled();
+    expect(setLookupsCalls()).toHaveLength(0);
+  });
+
+  it('sets state when the lookups arrive while still mounted', async () => {
+    const { result } = renderHook(() => useRfqInstrumentLookups());
+
+    await waitFor(() => expect(result.current).toBeDefined());
+
+    expect(setLookupsCalls()).toHaveLength(1);
   });
 
   it('shows labels and resolves the lookup ids to their names', async () => {
@@ -200,8 +252,13 @@ describe('RfqInstrumentSummary', () => {
 
     expect(container).not.toHaveTextContent('cat-unknown');
     expect(container).not.toHaveTextContent('type-unknown');
-    expect(container).toHaveTextContent('Measurement category');
-    expect(container).toHaveTextContent('Instrument/artefact type');
+    const view = within(container);
+    expect(
+      view.getByText('Measurement category').parentElement
+    ).toHaveTextContent('Measurement category- No details added');
+    expect(
+      view.getByText('Instrument/artefact type').parentElement
+    ).toHaveTextContent('Instrument/artefact type- No details added');
   });
 
   it('falls back to a placeholder for an unrecognised choice answer', async () => {

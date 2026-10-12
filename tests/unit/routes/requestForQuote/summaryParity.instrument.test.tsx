@@ -8,7 +8,6 @@ import {
   mockSummaryLookups,
   renderFormikInstrument,
   summaryFixtures,
-  summaryHidden,
 } from './summaryFixtures';
 
 const clients = vi.hoisted(() => ({
@@ -102,7 +101,7 @@ describe('form-free RFQ instrument summary parity with the Formik summary', () =
         .innerHTML;
       cleanup();
       const twinRender = render(
-        <RfqInstrumentSummary values={fixture.values} hidden={summaryHidden} />
+        <RfqInstrumentSummary values={fixture.values} />
       );
       await twinRender.findByText('Request details');
 
@@ -122,7 +121,7 @@ describe('form-free RFQ instrument summary parity with the Formik summary', () =
         .innerHTML;
       cleanup();
       const twinRender = render(
-        <RfqInstrumentSummary values={fixture.values} hidden={summaryHidden} />
+        <RfqInstrumentSummary values={fixture.values} />
       );
       await twinRender.findByText('Request details');
 

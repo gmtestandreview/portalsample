@@ -79,7 +79,10 @@ export const useRfqInstrumentLookups = (): RfqInstrumentLookups | undefined => {
         const loaded = await fetchLookups(token.accessToken);
         if (isActive) setLookups(loaded);
       } catch (e) {
-        AppLogger.error('Failed to retrieve look ups', e as Error);
+        AppLogger.error(
+          'Failed to retrieve look ups',
+          e instanceof Error ? e : new Error(String(e))
+        );
       }
     };
     void load();
