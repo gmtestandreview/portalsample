@@ -51,6 +51,11 @@ jobs:
           verbose: true
           output: results.sarif
           format: sarif
+          # GitHub code scanning consumes findings, not Codacy metrics or
+          # duplication reports. Keeping the SARIF input to issue results
+          # also avoids the legacy formatter path that crashed on conversion.
+          tool: issues
+          tool-timeout: 10minutes
           # Adjust severity of non-security issues
           gh-code-scanning-compat: true
           # Force 0 exit code to allow SARIF file generation
