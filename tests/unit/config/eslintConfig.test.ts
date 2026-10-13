@@ -20,8 +20,8 @@ import { describe, expect, it } from 'vitest';
  * runs it alongside 120 other files.
  */
 
-const CHILD_TIMEOUT_MS = 45_000;
-const TEST_TIMEOUT_MS = 60_000;
+const CHILD_TIMEOUT_MS = 120_000;
+const TEST_TIMEOUT_MS = 135_000;
 
 describe('ESLint editor integration', () => {
   it(

@@ -6,7 +6,6 @@ import {
   useAccountDispatch,
   useAccountState,
 } from '../../../ClientApp/src/authentication/hooks';
-import { defined } from '../helpers/defined';
 
 const providerMocks = vi.hoisted(() => ({
   acquireTokenSilent: vi.fn(),
@@ -25,7 +24,6 @@ const providerMocks = vi.hoisted(() => ({
   getStoredTargetOrganisation: vi.fn(),
   handleRedirectPromise: vi.fn(),
   inProgress: 'none',
-  isInIframe: vi.fn(),
   logoutRedirect: vi.fn(),
   setStoredTargetOrganisation: vi.fn(),
   setUserProfileApi: vi.fn(),
@@ -46,7 +44,6 @@ vi.mock('@azure/msal-react', () => ({
 }));
 
 vi.mock('@azure/msal-browser', () => ({
-  BrowserUtils: { isInIframe: providerMocks.isInIframe },
   InteractionStatus: { Logout: 'logout', None: 'none', Startup: 'startup' },
 }));
 
@@ -205,7 +202,6 @@ describe('AccountProvider dispatch callbacks', () => {
     });
     providerMocks.handleRedirectPromise.mockResolvedValue(null);
     providerMocks.inProgress = 'none';
-    providerMocks.isInIframe.mockReturnValue(false);
     providerMocks.logoutRedirect.mockResolvedValue(undefined);
     providerMocks.setUserProfileApi.mockResolvedValue(undefined);
     providerMocks.signIn.mockResolvedValue({
@@ -333,7 +329,7 @@ describe('AccountProvider dispatch callbacks', () => {
     expect(providerMocks.signIn).not.toHaveBeenCalled();
   });
 
-  it('uses the iframe check when deciding whether error logout can navigate', async () => {
+  it('uses the active account without request-level navigation callbacks', async () => {
     providerMocks.signIn.mockRejectedValue(new Error('load failed'));
 
     render(
@@ -345,15 +341,9 @@ describe('AccountProvider dispatch callbacks', () => {
     await waitFor(() =>
       expect(providerMocks.logoutRedirect).toHaveBeenCalled()
     );
-    const logoutOptions = defined(
-      providerMocks.logoutRedirect.mock.calls[0],
-      'logoutRedirect call'
-    )[0] as {
-      onRedirectNavigate: () => boolean;
-    };
-
-    expect(logoutOptions.onRedirectNavigate()).toBe(true);
-    expect(providerMocks.isInIframe).toHaveBeenCalled();
+    expect(providerMocks.logoutRedirect).toHaveBeenCalledWith({
+      account: { homeAccountId: 'active-id' },
+    });
   });
 
   it('shows error UI and logs out when account-load token acquisition fails', async () => {
@@ -370,6 +360,8 @@ describe('AccountProvider dispatch callbacks', () => {
     await waitFor(() =>
       expect(providerMocks.logoutRedirect).toHaveBeenCalled()
     );
+
+    expect(providerMocks.logoutRedirect).toHaveBeenCalledTimes(1);
 
     expect(
       screen.getByText(/Unable to load account details/i)

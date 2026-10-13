@@ -17,6 +17,29 @@ jobs:
       pull-requests: write
 
     steps:
+    # pull_request_target intentionally keeps the privileged runner on the
+    # trusted base workflow. Fetch only the label rules as data so the action
+    # never checks out or executes untrusted PR code.
+    - uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const response = await github.rest.repos.getContent({
+            owner: context.payload.pull_request.head.repo.owner.login,
+            repo: context.payload.pull_request.head.repo.name,
+            path: '.github/labeler.yml',
+            ref: context.payload.pull_request.head.sha,
+          });
+
+          if (Array.isArray(response.data) || response.data.type !== 'file') {
+            throw new Error('Expected .github/labeler.yml to be a file');
+          }
+
+          fs.writeFileSync(
+            '.github/labeler.yml',
+            Buffer.from(response.data.content, 'base64'),
+          );
+
     - uses: actions/labeler@v4
       with:
         repo-token: "${{ secrets.GITHUB_TOKEN }}"

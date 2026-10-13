@@ -1266,7 +1266,7 @@ Any change to NMI's registered ABN or address requires a code deployment.
 ```
 
 **Parameters:** Both values are string literals in
-`summaryAndAccept.tsx:397-401` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
+`summaryAndAccept.tsx:397-403` _(corrected 2026-09-02, CRD-044)_ **Confidence:**
 High
 
 ---
@@ -1274,7 +1274,7 @@ High
 ### RULE-051: NMI Registered Address Hardcoded in Contract Display
 
 **Category:** Policy **Priority:** P1 **Source:**
-`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:399-401` **Plain
+`ClientApp/src/routes/acceptQuote/summaryAndAccept.tsx:399-403` **Plain
 English:** The National Measurement Institute's registered postal address is
 hardcoded as literal JSX in the quote acceptance summary, immediately below the
 ABN (RULE-050), and is presented to the customer as part of the contract they

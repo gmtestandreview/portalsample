@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import AddressLookup from './index';
 import ManualAddressInput from './ManualAddressInput';
 import { withPortalProviders } from '../../../storybook/storybookHarness';

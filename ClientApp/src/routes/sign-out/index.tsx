@@ -1,4 +1,4 @@
-import { BrowserUtils, InteractionStatus } from '@azure/msal-browser';
+import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
 import { useEffect, useRef } from 'react';
 import BlockUISpinner from '../../components/BlockUISpinner';
@@ -16,7 +16,6 @@ const Signout = () => {
       ) {
         await instance.logoutRedirect({
           account: instance.getActiveAccount(),
-          onRedirectNavigate: () => !BrowserUtils.isInIframe(),
         });
       }
     }

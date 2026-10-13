@@ -11,24 +11,17 @@ import {
 } from 'vitest';
 
 import * as handlersModule from '../../../.storybook/msw-handlers';
-import * as policyModule from '../../../.storybook/msw-policy';
+import { onUnhandledStorybookRequest } from '../../../.storybook/msw-policy';
 
 const server = setupServer(...handlersModule.mswHandlers);
 const apiUrl = (path: string): URL => new URL(path, globalThis.location.origin);
 const handlerSource = readFileSync('.storybook/msw-handlers.ts', 'utf8');
 
-type UnhandledRequestCallback = (
-  request: Request,
-  print: { error: () => void; warning: () => void }
-) => void;
+type UnhandledFrameCallbackArgs = Parameters<
+  typeof onUnhandledStorybookRequest
+>[0];
 
-const onUnhandledStorybookRequest = (
-  policyModule as typeof policyModule & {
-    onUnhandledStorybookRequest?: UnhandledRequestCallback;
-  }
-).onUnhandledStorybookRequest;
-
-beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+beforeAll(() => server.listen({ onUnhandledFrame: 'bypass' }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
@@ -110,16 +103,20 @@ describe('Storybook dashboard API contracts', () => {
 
 describe('Storybook unhandled-request policy', () => {
   it('fails an unhandled same-origin API request at its owner', () => {
-    const print = { error: vi.fn(), warning: vi.fn() };
+    const defaults = { error: vi.fn(), warn: vi.fn() };
 
-    expect(onUnhandledStorybookRequest).toBeTypeOf('function');
-    onUnhandledStorybookRequest?.(
-      new Request(apiUrl('/api/unhandled-story-owner')),
-      print
-    );
+    onUnhandledStorybookRequest({
+      frame: {
+        protocol: 'http',
+        data: {
+          request: new Request(apiUrl('/api/unhandled-story-owner')),
+        },
+      } as UnhandledFrameCallbackArgs['frame'],
+      defaults,
+    });
 
-    expect(print.error).toHaveBeenCalledOnce();
-    expect(print.warning).not.toHaveBeenCalled();
+    expect(defaults.error).toHaveBeenCalledOnce();
+    expect(defaults.warn).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -127,13 +124,18 @@ describe('Storybook unhandled-request policy', () => {
     '/assets/logo.svg',
     'https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js',
   ])('bypasses non-API request %s', (requestUrl) => {
-    const print = { error: vi.fn(), warning: vi.fn() };
+    const defaults = { error: vi.fn(), warn: vi.fn() };
     const url = new URL(requestUrl, globalThis.location.origin);
 
-    expect(onUnhandledStorybookRequest).toBeTypeOf('function');
-    onUnhandledStorybookRequest?.(new Request(url), print);
+    onUnhandledStorybookRequest({
+      frame: {
+        protocol: 'http',
+        data: { request: new Request(url) },
+      } as UnhandledFrameCallbackArgs['frame'],
+      defaults,
+    });
 
-    expect(print.error).not.toHaveBeenCalled();
-    expect(print.warning).not.toHaveBeenCalled();
+    expect(defaults.error).not.toHaveBeenCalled();
+    expect(defaults.warn).not.toHaveBeenCalled();
   });
 });

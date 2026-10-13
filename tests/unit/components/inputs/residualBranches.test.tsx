@@ -150,7 +150,7 @@ describe('residual input branches', () => {
     );
   });
 
-  it('omits aria-describedby on a RadioButtonGroup with no help and no error', () => {
+  it('leaves the radio group description unset without help or validation', () => {
     render(
       <Harness initialValues={{ delivery: '' }}>
         <RadioButtonGroup

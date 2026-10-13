@@ -427,7 +427,7 @@ describe('the lower-bound job proves the declared Node floor', () => {
   });
 
   it('installs on the exact floor rather than the latest 24', () => {
-    expect(block).toContain("node-version: '24.0.0'");
+    expect(block).toContain("node-version: '24.21.0'");
   });
 
   it('refuses to silently resolve a conflicting peer', () => {
@@ -594,8 +594,8 @@ describe('Storybook documentation is a CI quality gate', () => {
 
 describe("CI uses the repository's enforced Node runtime", () => {
   it('keeps engines and devEngines on the same Node 24 floor', () => {
-    expect(packageJson.engines.node).toBe('>=24.0.0');
-    expect(packageJson.devEngines.runtime.version).toBe('>=24.0.0');
+    expect(packageJson.engines.node).toBe('>=24.21.0');
+    expect(packageJson.devEngines.runtime.version).toBe('>=24.21.0');
     expect(packageJson.devEngines.runtime.onFail).toBe('error');
   });
 
@@ -689,7 +689,7 @@ describe('Chromatic publishing reports asynchronously through GitHub', () => {
   });
 
   it("uses the repository's enforced Node 24 runtime", () => {
-    expect(nodeVersions(chromaticWorkflow)).toEqual(['24.20.0']);
+    expect(nodeVersions(chromaticWorkflow)).toEqual(['24.21.0']);
   });
 
   it('provisions npm through corepack before installing dependencies', () => {

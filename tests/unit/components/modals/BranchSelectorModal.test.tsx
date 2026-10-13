@@ -566,7 +566,7 @@ describe('BranchSelectorModal', () => {
   });
 
   it('does nothing when MSAL interaction is in progress (line 187 false branch)', async () => {
-    renderModal({ msalInProgress: InteractionStatus.Login });
+    renderModal({ msalInProgress: InteractionStatus.AcquireToken });
 
     await screen.findByRole('radio', { name: 'ACME Sydney Office' });
 

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse } from 'msw/http';
 import SubmittedSuccess from './submittedSuccess';
 import { withPortalProviders } from '../../storybook/storybookHarness';
 

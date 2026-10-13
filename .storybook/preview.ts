@@ -18,6 +18,21 @@ import {
 } from './msw-policy';
 import './preview-setup';
 
+let storybookWorkerPromise: Promise<ReturnType<typeof setupWorker>> | undefined;
+
+const getStorybookWorker = async () => {
+  storybookWorkerPromise ??= (async () => {
+    const worker = setupWorker(...mswHandlers);
+    await worker.start({
+      quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
+      onUnhandledFrame: onUnhandledStorybookRequest,
+    });
+    return worker;
+  })();
+
+  return storybookWorkerPromise;
+};
+
 const preview = definePreview({
   addons: [
     addonDocs(),
@@ -25,16 +40,7 @@ const preview = definePreview({
     addonTest(),
     ...(globalThis.navigator?.serviceWorker === undefined
       ? []
-      : [
-          addonMsw(async () => {
-            const worker = setupWorker(...mswHandlers);
-            await worker.start({
-              quiet: !isStorybookMswDebugEnabled(globalThis.location.search),
-              onUnhandledRequest: onUnhandledStorybookRequest,
-            });
-            return worker;
-          }),
-        ]),
+      : [addonMsw(getStorybookWorker)]),
   ],
 
   tags: ['autodocs'],

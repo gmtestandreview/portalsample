@@ -77,6 +77,7 @@ vi.mock('@azure/msal-react', () => ({
     accounts: mocks.msalAccounts,
     instance: mocks.instance,
   }),
+  useAccount: (account: { homeAccountId: string }) => account,
 }));
 
 vi.mock('../../../ClientApp/src/authentication/hooks', () => ({

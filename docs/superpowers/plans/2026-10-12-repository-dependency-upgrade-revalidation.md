@@ -1,9 +1,9 @@
 # Dependency upgrade review revalidation
 
-**Date:** 2026-10-12 (Australia/Sydney)  
+**Date:** 2026-10-12 (Australia/Sydney)
 **Repository baseline:** `aa05cdae`, branch
-`feat/formik-to-react-hooks-migration`  
-**Verdict:** Do not execute the September plan unchanged.  
+`feat/formik-to-react-hooks-migration`
+**Verdict:** Do not execute the September plan unchanged.
 **Status:** Review complete with concerns; replacement proposal requires the
 feasibility gates below.
 
