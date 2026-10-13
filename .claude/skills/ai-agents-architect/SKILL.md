@@ -75,7 +75,7 @@ Dynamic tool discovery and management
 ## ⚠️ Sharp Edges
 
 | Issue | Severity | Solution |
-|-------|----------|----------|
+| ------- | ---------- | ---------- |
 | Agent loops without iteration limits | critical | Always set limits: |
 | Vague or incomplete tool descriptions | high | Write complete tool specs: |
 | Tool errors not surfaced to agent | high | Explicit error handling: |

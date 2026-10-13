@@ -24,7 +24,7 @@
 ### 3) Test Scope Matrix
 
 | Scope | Covered? | Typical target | Notes |
-|-------|----------|----------------|-------|
+| ------- | ---------- | ---------------- | ------- |
 | Unit | [yes/no] | [modules/services] | [notes] |
 | Integration | [yes/no] | [API/data boundaries] | [notes] |
 | E2E | [yes/no] | [user flows] | [notes] |

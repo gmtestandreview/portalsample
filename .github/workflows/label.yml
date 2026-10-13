@@ -11,7 +11,7 @@ on: [pull_request_target]
 jobs:
   label:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       pull-requests: write
@@ -20,7 +20,7 @@ jobs:
     # pull_request_target intentionally keeps the privileged runner on the
     # trusted base workflow. Fetch only the label rules as data so the action
     # never checks out or executes untrusted PR code.
-    - uses: actions/github-script@v7
+    - uses: actions/github-script@v8
       with:
         script: |
           const fs = require('fs');
@@ -35,6 +35,7 @@ jobs:
             throw new Error('Expected .github/labeler.yml to be a file');
           }
 
+          fs.mkdirSync('.github', { recursive: true });
           fs.writeFileSync(
             '.github/labeler.yml',
             Buffer.from(response.data.content, 'base64'),

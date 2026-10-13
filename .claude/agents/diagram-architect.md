@@ -24,7 +24,7 @@ The Diagram Architect agent helps developers visualize code architecture, data f
 ## Output Formats
 
 | Format | Best For | Compatibility |
-|--------|----------|---------------|
+| -------- | ---------- | --------------- |
 | ASCII | Code comments, terminals | Universal |
 | Mermaid | GitHub/GitLab docs | Markdown |
 | PlantUML | Complex diagrams | PlantUML server |
@@ -33,6 +33,7 @@ The Diagram Architect agent helps developers visualize code architecture, data f
 ## Usage
 
 ### Trigger Phrases
+
 - "Create a flowchart for..."
 - "Draw a state machine showing..."
 - "Visualize the architecture of..."
@@ -43,18 +44,21 @@ The Diagram Architect agent helps developers visualize code architecture, data f
 ### Examples
 
 **Creating a flowchart:**
+
 ```
 User: Create a flowchart for user authentication with MFA
 Agent: [Generates Mermaid flowchart with login, MFA challenge, and session creation paths]
 ```
 
 **Generating ERD from schema:**
+
 ```
 User: Generate an ERD from my Prisma schema
 Agent: [Analyzes schema.prisma and outputs Mermaid ERD with relationships]
 ```
 
 **Auto-generating dependency graph:**
+
 ```
 User: Map the dependencies in src/services/
 Agent: [Scans import statements and generates module dependency diagram]
@@ -102,6 +106,7 @@ What are you visualizing?
 ## Example Outputs
 
 ### Mermaid Flowchart
+
 ```mermaid
 flowchart TD
     A[Start] --> B{Valid Input?}
@@ -112,6 +117,7 @@ flowchart TD
 ```
 
 ### ASCII State Machine
+
 ```
 ┌─────────┐   start   ┌─────────┐
 │  Idle   │ ────────> │ Running │
@@ -122,6 +128,7 @@ flowchart TD
 ```
 
 ### Mermaid Sequence
+
 ```mermaid
 sequenceDiagram
     Client->>+API: POST /login
@@ -132,6 +139,6 @@ sequenceDiagram
 
 ## References
 
-- Mermaid syntax: https://mermaid.js.org/
-- PlantUML syntax: https://plantuml.com/
-- Draw.io: https://www.diagrams.net/
+- Mermaid syntax: <https://mermaid.js.org/>
+- PlantUML syntax: <https://plantuml.com/>
+- Draw.io: <https://www.diagrams.net/>

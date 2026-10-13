@@ -26,7 +26,7 @@ node "$SKILL_SCRIPT" "<query>" "<role>"
 Extract the date range and role from the user's message. Examples:
 
 | User says | query | role |
-|---|---|---|
+| --- | --- | --- |
 | show my PRs | `last 7 days` | `Authored by me` |
 | show my PRs last 2 weeks | `last 2 weeks` | `Authored by me` |
 | PR dashboard this month reviews | `this month` | `Requested reviews` |
@@ -34,6 +34,7 @@ Extract the date range and role from the user's message. Examples:
 | show all PRs last 30 days | `last 30 days` | `All` |
 
 **Role keyword mapping:**
+
 - "my PRs", "authored", "I wrote" → `Authored by me`
 - "reviews", "review requested", "reviewing" → `Requested reviews`
 - "assigned" → `Assigned to me`
@@ -42,6 +43,7 @@ Extract the date range and role from the user's message. Examples:
 ## Supported date range formats
 
 The script understands natural language — pass it through as-is:
+
 - `last 7 days`, `last 2 weeks`, `last 30 days`
 - `this week`, `last week`, `this month`, `last month`
 - `march 2026`, `feb 2025`
@@ -51,4 +53,3 @@ The script understands natural language — pass it through as-is:
 ## After running
 
 Tell the user the dashboard is opening in their browser. The script outputs progress to stdout. If it exits with an error, show the error output and suggest they run `gh auth login` if it's an auth issue.
-

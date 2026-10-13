@@ -33,6 +33,7 @@ Examples: a cross-encoder, embedding similarity (for example, cosine similarity 
 The feedback model used during training and inference MUST be the same model. Formula weights during training are calibrated to that model's score distribution. If you switch feedback models, you must retrain.
 
 **What is a Good Feedback Model:**
+
 - If the model does not improve ranking quality when used as a reranker on retrieved documents,  the RF search will not have a meaningful signal to amplify.
 - RF search quality depends heavily on how well the feedback model scores partial matches. The training loss of RF formula relies on relative ordering, so poor score separation in the middle range (documents that are neither clearly relevant nor clearly irrelevant) weakens results.
 
@@ -43,6 +44,7 @@ Use when: setting up RF for a new use case — a new collection, feedback model,
 RF uses a weighted formula that combines the original query vector with feedback signals.
 
 For the currently available `naive` strategy, the learned weights control:
+
 - `a` — how much to trust the original ANN query-document similarity
 - `b` — how strongly differences in feedback scores matter
 - `c` — how strongly to follow the feedback direction (toward relevant documents and away from irrelevant ones)
@@ -87,6 +89,7 @@ Using a point ID in `example` causes the RF API to automatically exclude that do
 Use when: recall matters more than latency or cost (research, legal, medical, compliance), and relevant documents may exist outside the initial ANN retrieval pool.
 
 It performs two feedback model scoring rounds:
+
 1. on feedback seeds
 2. on newly surfaced RF results
 

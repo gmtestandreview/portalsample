@@ -24,4 +24,4 @@ information via [useLocale](useLocale.md).
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
 | `children` | `React.ReactNode` | — | Contents that should have the locale applied. |
-| `locale` | `string | undefined` | — | The locale to apply to the children. |
+| `locale` | `string \| undefined` | — | The locale to apply to the children. |

@@ -5,14 +5,17 @@ Comprehensive reference for HTML5, markup languages, and document structure.
 ## Core Concepts
 
 ### HTML (HyperText Markup Language)
+
 The standard markup language for creating web pages and web applications.
 
 **Related Terms**: HTML5, XHTML, Markup, Semantic HTML
 
 ### Elements
+
 Building blocks of HTML documents. Each element has opening/closing tags (except void elements).
 
 **Common Elements**:
+
 - `<div>` - Generic container
 - `<span>` - Inline container
 - `<article>` - Self-contained content
@@ -24,9 +27,11 @@ Building blocks of HTML documents. Each element has opening/closing tags (except
 - `<aside>` - Complementary content
 
 ### Attributes
+
 Properties that provide additional information about HTML elements.
 
 **Common Attributes**:
+
 - `id` - Unique identifier
 - `class` - CSS class name(s)
 - `src` - Source URL for images/scripts
@@ -37,6 +42,7 @@ Properties that provide additional information about HTML elements.
 - `aria-*` - Accessibility attributes
 
 ### Void Elements
+
 Elements that cannot have content and don't have closing tags.
 
 **Examples**: `<img>`, `<br>`, `<hr>`, `<input>`, `<meta>`, `<link>`
@@ -44,9 +50,11 @@ Elements that cannot have content and don't have closing tags.
 ## Semantic HTML
 
 ### What is Semantic HTML?
+
 HTML that clearly describes its meaning to both the browser and the developer.
 
 **Benefits**:
+
 - Improved accessibility
 - Better SEO
 - Easier maintenance
@@ -55,7 +63,7 @@ HTML that clearly describes its meaning to both the browser and the developer.
 ### Semantic Elements
 
 | Element | Purpose | When to Use |
-|---------|---------|-------------|
+| --------- | --------- | ------------- |
 | `<article>` | Self-contained composition | Blog posts, news articles |
 | `<section>` | Thematic grouping of content | Chapters, tabbed content |
 | `<nav>` | Navigation links | Main menu, breadcrumbs |
@@ -121,6 +129,7 @@ HTML that clearly describes its meaning to both the browser and the developer.
 ## Document Structure
 
 ### Doctype
+
 Declares the document type and HTML version.
 
 ```html
@@ -128,9 +137,11 @@ Declares the document type and HTML version.
 ```
 
 ### Head Section
+
 Contains metadata about the document.
 
 **Common Elements**:
+
 - `<meta>` - Metadata (charset, viewport, description)
 - `<title>` - Page title (shown in browser tab)
 - `<link>` - External resources (stylesheets, icons)
@@ -226,7 +237,7 @@ Contains metadata about the document.
 ### Input Types
 
 | Type | Purpose | Example |
-|------|---------|---------|
+| ------ | --------- | --------- |
 | `text` | Single-line text | `<input type="text">` |
 | `email` | Email address | `<input type="email">` |
 | `password` | Password field | `<input type="password">` |
@@ -245,18 +256,22 @@ Contains metadata about the document.
 ## Related Markup Languages
 
 ### XML (Extensible Markup Language)
+
 A markup language for encoding documents in a format that is both human-readable and machine-readable.
 
 **Key Differences from HTML**:
+
 - All tags must be properly closed
 - Tags are case-sensitive
 - Attributes must be quoted
 - Custom tag names allowed
 
 ### XHTML (Extensible HyperText Markup Language)
+
 HTML reformulated as XML. Stricter syntax rules than HTML.
 
 ### MathML (Mathematical Markup Language)
+
 Markup language for displaying mathematical notation on the web.
 
 ```html
@@ -273,6 +288,7 @@ Markup language for displaying mathematical notation on the web.
 ```
 
 ### SVG (Scalable Vector Graphics)
+
 XML-based markup language for describing two-dimensional vector graphics.
 
 ```html
@@ -284,6 +300,7 @@ XML-based markup language for describing two-dimensional vector graphics.
 ## Character Encoding and References
 
 ### Character Encoding
+
 Defines how characters are represented as bytes.
 
 **UTF-8**: Universal character encoding standard (recommended)
@@ -293,9 +310,11 @@ Defines how characters are represented as bytes.
 ```
 
 ### Character References
+
 Ways to represent special characters in HTML.
 
 **Named Entities**:
+
 - `&lt;` - Less than (<)
 - `&gt;` - Greater than (>)
 - `&amp;` - Ampersand (&)
@@ -305,6 +324,7 @@ Ways to represent special characters in HTML.
 - `&copy;` - Copyright (©)
 
 **Numeric Entities**:
+
 - `&#60;` - Less than (<)
 - `&#169;` - Copyright (©)
 - `&#8364;` - Euro (€)
@@ -312,11 +332,13 @@ Ways to represent special characters in HTML.
 ## Block vs Inline Content
 
 ### Block-Level Content
+
 Elements that create a "block" in the layout, starting on a new line.
 
 **Examples**: `<div>`, `<p>`, `<h1>`-`<h6>`, `<article>`, `<section>`, `<header>`, `<footer>`, `<nav>`, `<aside>`, `<ul>`, `<ol>`, `<li>`
 
 ### Inline-Level Content
+
 Elements that don't start on a new line and only take up as much width as necessary.
 
 **Examples**: `<span>`, `<a>`, `<strong>`, `<em>`, `<img>`, `<code>`, `<abbr>`, `<cite>`
@@ -324,6 +346,7 @@ Elements that don't start on a new line and only take up as much width as necess
 ## Best Practices
 
 ### Do's
+
 - ✅ Use semantic HTML elements
 - ✅ Include proper document structure (DOCTYPE, html, head, body)
 - ✅ Set character encoding to UTF-8
@@ -335,6 +358,7 @@ Elements that don't start on a new line and only take up as much width as necess
 - ✅ Include meta viewport for responsive design
 
 ### Don'ts
+
 - ❌ Use `<div>` when a semantic element exists
 - ❌ Skip heading levels (h1 → h3)
 - ❌ Use tables for layout
@@ -347,6 +371,7 @@ Elements that don't start on a new line and only take up as much width as necess
 ## Glossary Terms from MDN
 
 **Key Terms Covered**:
+
 - Abstraction
 - Accessibility tree
 - Accessible description

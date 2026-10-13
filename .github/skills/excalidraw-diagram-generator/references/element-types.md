@@ -5,7 +5,7 @@ Detailed specifications for each Excalidraw element type with visual examples an
 ## Element Type Overview
 
 | Type | Visual | Primary Use | Text Support |
-|------|--------|-------------|--------------|
+| ------ | -------- | ------------- | -------------- |
 | `rectangle` | □ | Boxes, containers, process steps | ✅ Yes |
 | `ellipse` | ○ | Emphasis, terminals, states | ✅ Yes |
 | `diamond` | ◇ | Decision points, choices | ✅ Yes |
@@ -35,7 +35,7 @@ Detailed specifications for each Excalidraw element type with visual examples an
 ### Use Cases
 
 | Scenario | Configuration |
-|----------|---------------|
+| ---------- | --------------- |
 | **Process step** | Green background (`#b2f2bb`), centered text |
 | **Entity/Object** | Blue background (`#a5d8ff`), medium size |
 | **System component** | Light color, descriptive text |
@@ -44,7 +44,7 @@ Detailed specifications for each Excalidraw element type with visual examples an
 ### Size Guidelines
 
 | Content | Width | Height |
-|---------|-------|--------|
+| --------- | ------- | -------- |
 | Single word | 120-150px | 60-80px |
 | Short phrase (2-4 words) | 180-220px | 80-100px |
 | Sentence | 250-300px | 100-120px |
@@ -88,7 +88,7 @@ Detailed specifications for each Excalidraw element type with visual examples an
 ### Use Cases
 
 | Scenario | Configuration |
-|----------|---------------|
+| ---------- | --------------- |
 | **Flow start** | Light green, "Start" text |
 | **Flow end** | Light red, "End" text |
 | **State** | Soft color, state name |
@@ -99,7 +99,7 @@ Detailed specifications for each Excalidraw element type with visual examples an
 For circular shapes, use `width === height`:
 
 | Content | Diameter |
-|---------|----------|
+| --------- | ---------- |
 | Icon/Symbol | 60-80px |
 | Short text | 100-120px |
 | Longer text | 150-180px |
@@ -142,7 +142,7 @@ For circular shapes, use `width === height`:
 ### Use Cases
 
 | Scenario | Text Example |
-|----------|--------------|
+| ---------- | -------------- |
 | **Yes/No decision** | "Is Valid?", "Exists?" |
 | **Multiple choice** | "Type?", "Status?" |
 | **Conditional** | "Score > 50?" |
@@ -152,7 +152,7 @@ For circular shapes, use `width === height`:
 Diamonds need more space than rectangles for the same text:
 
 | Content | Width | Height |
-|---------|-------|--------|
+| --------- | ------- | -------- |
 | Yes/No | 120-140px | 120-140px |
 | Short question | 160-180px | 160-180px |
 | Longer question | 200-220px | 200-220px |
@@ -233,7 +233,7 @@ Diamonds need more space than rectangles for the same text:
 ### Arrow Styles
 
 | Style | `strokeStyle` | `strokeWidth` | Use Case |
-|-------|---------------|---------------|----------|
+| ------- | --------------- | --------------- | ---------- |
 | **Normal flow** | `"solid"` | 2 | Standard connections |
 | **Optional/Weak** | `"dashed"` | 2 | Optional paths |
 | **Important** | `"solid"` | 3-4 | Emphasized flow |
@@ -281,7 +281,7 @@ Use separate text elements positioned near arrow midpoint:
 ### Use Cases
 
 | Scenario | Configuration |
-|----------|---------------|
+| ---------- | --------------- |
 | **Divider** | Horizontal, thin stroke |
 | **Border** | Closed path (polygon) |
 | **Connection** | Multi-point path |
@@ -324,7 +324,7 @@ Use separate text elements positioned near arrow midpoint:
 ### Font Sizes by Purpose
 
 | Purpose | Font Size |
-|---------|-----------|
+| --------- | ----------- |
 | **Main title** | 28-36 |
 | **Section header** | 24-28 |
 | **Element label** | 18-22 |
@@ -348,7 +348,7 @@ const height = fontSize * 1.2 * lines;
 ### Text Positioning
 
 | Position | textAlign | verticalAlign | Use Case |
-|----------|-----------|---------------|----------|
+| ---------- | ----------- | --------------- | ---------- |
 | **Top-left** | `"left"` | `"top"` | Default labels |
 | **Centered** | `"center"` | `"middle"` | Titles |
 | **Bottom-right** | `"right"` | `"bottom"` | Footnotes |
@@ -486,7 +486,7 @@ const height = fontSize * 1.2 * lines;
 ## Summary
 
 | When you need... | Use this element |
-|------------------|------------------|
+| ------------------ | ------------------ |
 | Process box | `rectangle` with text |
 | Decision point | `diamond` with question |
 | Flow direction | `arrow` |

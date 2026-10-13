@@ -7,7 +7,7 @@ Load this file when the tech stack is ambiguous — e.g., multiple manifest file
 ## Manifest File → Ecosystem
 
 | File | Ecosystem | Key fields to read |
-|------|-----------|--------------------|
+| ------ | ----------- | -------------------- |
 | `package.json` | Node.js / JavaScript / TypeScript | `dependencies`, `devDependencies`, `scripts`, `main`, `type`, `engines` |
 | `go.mod` | Go | Module path, Go version, `require` block |
 | `requirements.txt` | Python (pip) | Package list with pinned versions |
@@ -31,7 +31,7 @@ Load this file when the tech stack is ambiguous — e.g., multiple manifest file
 ## Language Runtime Version Detection
 
 | Language | Where to find the version |
-|----------|--------------------------|
+| ---------- | -------------------------- |
 | Node.js | `.nvmrc`, `.node-version`, `engines.node` in `package.json`, Docker `FROM node:X` |
 | Python | `.python-version`, `pyproject.toml [requires-python]`, Docker `FROM python:X` |
 | Go | First line of `go.mod` (`go 1.21`) |
@@ -45,7 +45,7 @@ Load this file when the tech stack is ambiguous — e.g., multiple manifest file
 ## Framework Detection (Node.js / TypeScript)
 
 | Dependency in `package.json` | Framework |
-|-----------------------------|-----------|
+| ----------------------------- | ----------- |
 | `express` | Express.js (minimal HTTP server) |
 | `fastify` | Fastify (high-performance HTTP server) |
 | `next` | Next.js (SSR/SSG React — check for `pages/` or `app/` directory) |
@@ -68,7 +68,7 @@ Load this file when the tech stack is ambiguous — e.g., multiple manifest file
 ## Framework Detection (Python)
 
 | Package | Framework |
-|---------|-----------|
+| --------- | ----------- |
 | `fastapi` | FastAPI (async REST, auto OpenAPI docs) |
 | `flask` | Flask (minimal WSGI web framework) |
 | `django` | Django (batteries-included, check `settings.py`) |
@@ -120,7 +120,7 @@ Imports like `import { foo } from '@/utils/bar'` resolve to `src/utils/bar`. Doc
 If no manifest file is present but a `Dockerfile` exists, the `FROM` line reveals the runtime:
 
 | FROM line pattern | Runtime |
-|------------------|---------|
+| ------------------ | --------- |
 | `FROM node:X` | Node.js X |
 | `FROM python:X` | Python X |
 | `FROM golang:X` | Go X |

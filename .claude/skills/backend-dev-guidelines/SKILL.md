@@ -12,6 +12,7 @@ Establish consistency and best practices across backend microservices (blog-api,
 ## When to Use This Skill
 
 Automatically activates when working on:
+
 - Creating or modifying routes, endpoints, APIs
 - Building controllers, services, repositories
 - Implementing middleware (auth, validation, error handling)
@@ -92,6 +93,7 @@ service/src/
 ```
 
 **Naming Conventions:**
+
 - Controllers: `PascalCase` - `UserController.ts`
 - Services: `camelCase` - `userService.ts`
 - Routes: `camelCase + Routes` - `userRoutes.ts`
@@ -207,7 +209,7 @@ import { asyncErrorWrapper } from './middleware/errorBoundary';
 ### HTTP Status Codes
 
 | Code | Use Case |
-|------|----------|
+| ------ | ---------- |
 | 200 | Success |
 | 201 | Created |
 | 400 | Bad Request |
@@ -237,7 +239,7 @@ import { asyncErrorWrapper } from './middleware/errorBoundary';
 ## Navigation Guide
 
 | Need to... | Read this |
-|------------|-----------|
+| ------------ | ----------- |
 | Understand architecture | [architecture-overview.md](architecture-overview.md) |
 | Create routes/controllers | [routing-and-controllers.md](routing-and-controllers.md) |
 | Organize business logic | [services-and-repositories.md](services-and-repositories.md) |
@@ -255,36 +257,47 @@ import { asyncErrorWrapper } from './middleware/errorBoundary';
 ## Resource Files
 
 ### [architecture-overview.md](architecture-overview.md)
+
 Layered architecture, request lifecycle, separation of concerns
 
 ### [routing-and-controllers.md](routing-and-controllers.md)
+
 Route definitions, BaseController, error handling, examples
 
 ### [services-and-repositories.md](services-and-repositories.md)
+
 Service patterns, DI, repository pattern, caching
 
 ### [validation-patterns.md](validation-patterns.md)
+
 Zod schemas, validation, DTO pattern
 
 ### [sentry-and-monitoring.md](sentry-and-monitoring.md)
+
 Sentry init, error capture, performance monitoring
 
 ### [middleware-guide.md](middleware-guide.md)
+
 Auth, audit, error boundaries, AsyncLocalStorage
 
 ### [database-patterns.md](database-patterns.md)
+
 PrismaService, repositories, transactions, optimization
 
 ### [configuration.md](configuration.md)
+
 UnifiedConfig, environment configs, secrets
 
 ### [async-and-errors.md](async-and-errors.md)
+
 Async patterns, custom errors, asyncErrorWrapper
 
 ### [testing-guide.md](testing-guide.md)
+
 Unit/integration tests, mocking, coverage
 
 ### [complete-examples.md](complete-examples.md)
+
 Full examples, refactoring guide
 
 ---

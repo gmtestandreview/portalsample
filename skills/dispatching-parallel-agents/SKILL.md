@@ -36,12 +36,14 @@ digraph when_to_use {
 ```
 
 Use when:
+
 - 3+ test files failing with different root causes
 - Multiple subsystems broken independently
 - Each problem can be understood without context from others
 - No shared state between investigations
 
 Do NOT use when:
+
 - Failures are related (fixing one might fix others)
 - Agents would edit the same files
 - You need full system context to understand any single problem
@@ -49,11 +51,13 @@ Do NOT use when:
 ## The Pattern
 
 ### 1. Identify Independent Domains
+
 Group problems by what's broken. Each domain must be fixable independently.
 
 ### 2. Create Focused Agent Tasks
 
 Each agent gets:
+
 - **Specific scope:** One test file or subsystem
 - **Clear goal:** Exactly what to achieve
 - **Constraints:** What NOT to change
@@ -77,6 +81,7 @@ Task("Fix user-profile.test.ts failures — stale closure in useEffect")
 ## Agent Prompt Structure
 
 Good prompts are:
+
 1. **Focused** — one clear problem domain
 2. **Self-contained** — all context to understand the problem included
 3. **Specific about output** — what should the agent return?

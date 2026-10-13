@@ -16,6 +16,7 @@ Before you open it, know how to close it.
 ## When to Use
 
 Use this skill before:
+
 - Any `ALTER TABLE` in production
 - Any column rename, type change, or removal
 - Any large `UPDATE` or `DELETE` (more than 1000 rows)
@@ -27,7 +28,7 @@ Use this skill before:
 ### Step 1: Classify the Migration
 
 | Type | Risk | Strategy |
-|------|------|---------|
+| ------ | ------ | --------- |
 | Additive (new table, new nullable column) | Low | Single deploy |
 | Non-breaking change (add index, add constraint) | Low–Medium | Verify impact first |
 | Column rename or type change | High | Multi-phase deploy |
@@ -84,6 +85,7 @@ ALTER TABLE orders DROP COLUMN IF EXISTS discount_amount;
 ### Step 3: Zero-Downtime Patterns
 
 **Column rename** — never rename directly; multi-phase:
+
 ```
 Phase 1: Add new column (old and new both exist)
 Phase 2: Deploy app that writes to BOTH columns, reads from old
@@ -95,6 +97,7 @@ Phase 5: Drop old column
 **Type change** — same multi-phase approach; never `ALTER COLUMN TYPE` on large tables in production directly.
 
 **Index creation on large table** — always `CREATE INDEX CONCURRENTLY`:
+
 ```sql
 -- [INVALID] — takes full table lock
 CREATE INDEX idx_orders_user ON orders(user_id);
@@ -104,6 +107,7 @@ CREATE INDEX CONCURRENTLY idx_orders_user ON orders(user_id);
 ```
 
 **Large backfill** — never in one transaction; batch it:
+
 ```sql
 -- Process in batches of 1000 rows until done
 DO $$

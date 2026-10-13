@@ -21,7 +21,7 @@ Enforces output quality, intellectual honesty, and continuous improvement across
 This skill provides 7 reusable capabilities. Agents apply all 7 unless their scope excludes a specific component.
 
 | Component | Reference File | Purpose |
-|-----------|---------------|---------|
+| ----------- | --------------- | --------- |
 | Clarification Protocol | [clarification-protocol.md](references/clarification-protocol.md) | Ask ≤2 targeted questions before analysis when scope is ambiguous |
 | Anti-Rationalization Guard | [anti-rationalization-guard.md](references/anti-rationalization-guard.md) | Table of prohibited rationalizations with mandatory responses |
 | Self-Critique Loop | [self-critique-loop.md](references/self-critique-loop.md) | Mandatory second-pass review after initial analysis |
@@ -44,6 +44,7 @@ This skill provides 7 reusable capabilities. Agents apply all 7 unless their sco
 Each agent customizes the **Self-Critique Loop** checklist and **Self-Reflection Quality Gate** categories to match its domain. The reference files provide the base templates; agents extend them with domain-specific items.
 
 ### Example extensions per agent type
+
 - **SAST/SCA agents**: Add taint trace completeness and manifest coverage checks
 - **SonarQube-style agents**: Add rating sanity check (A–E consistency with findings)
 - **Threat modeling agents**: Add STRIDE category completeness per trust boundary

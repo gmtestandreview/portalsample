@@ -43,6 +43,7 @@ The coding agent follows a straightforward workflow:
 The agent works in its own branch, in an isolated environment. It can't merge code or deploy—it always produces a PR that a human must review and approve.
 
 **Key characteristics**:
+
 - Runs in a secure, sandboxed cloud environment
 - Uses your repository's instructions, agents, and skills for context
 - Executes hooks (linting, formatting) automatically
@@ -79,6 +80,7 @@ Think of this file as bootstrapping instructions for a new developer joining the
 **Test command**: Run the test suite so the agent can validate its changes don't break existing functionality.
 
 **Example for a Python project**:
+
 ```yaml
 steps:
   - name: Set up Python
@@ -94,6 +96,7 @@ steps:
 ```
 
 **Example for a multi-language project**:
+
 ```yaml
 steps:
   - name: Install Node.js dependencies
@@ -122,11 +125,13 @@ There are several ways to trigger the coding agent:
 ### From a Comment
 
 On any issue, comment:
+
 ```
 @copilot work on this
 ```
 
 Or provide more specific direction:
+
 ```
 @copilot implement the user avatar upload feature described above.
 Use the existing FileUpload component and S3 service.
@@ -250,6 +255,7 @@ This means you can add skills to your repository and the coding agent will **aut
 Skills are stored in a `skills/` subdirectory, with each skill in its own folder:
 
 **Project skills** (specific to one repository):
+
 ```
 .github/
 └── skills/
@@ -266,6 +272,7 @@ Skills are stored in a `skills/` subdirectory, with each skill in its own folder
 ```
 
 **Personal skills** (shared across all your projects):
+
 ```
 ~/.agents/
 └── skills/
@@ -301,7 +308,7 @@ When creating database migrations, follow this process:
 ### Skills vs Instructions vs Agents
 
 | Feature | Instructions | Skills | Custom Agents |
-|---------|-------------|--------|---------------|
+| --------- | ------------- | -------- | --------------- |
 | When loaded | Always (matching file patterns) | Automatically when relevant | When explicitly selected |
 | Best for | Coding standards, style guides | Specialized task guidance | Role-based personas |
 | Can include scripts | No | Yes | No (but can reference skills) |
@@ -367,7 +374,7 @@ copilot --resume
 ### Why Use Remote Control?
 
 | Scenario | Benefit |
-|----------|---------|
+| ---------- | --------- |
 | Long-running tasks | Monitor progress without waiting for the final PR |
 | Mid-course corrections | Redirect the agent if it heads in the wrong direction |
 | Interactive refinement | Provide clarification and feedback as the agent works |
@@ -400,6 +407,7 @@ See [Automating with Hooks](../automating-with-hooks/) for configuration details
 ### Choosing the Right Tasks
 
 The coding agent excels at:
+
 - ✅ Well-defined feature implementations with clear acceptance criteria
 - ✅ Bug fixes with reproducible steps
 - ✅ Adding tests to existing code
@@ -407,6 +415,7 @@ The coding agent excels at:
 - ✅ Documentation updates based on code changes
 
 It's less suited for:
+
 - ❌ Ambiguous design decisions that need team discussion
 - ❌ Large architectural changes spanning many files
 - ❌ Tasks requiring access to external systems not in the dev environment

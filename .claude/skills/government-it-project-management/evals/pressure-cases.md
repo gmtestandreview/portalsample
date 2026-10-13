@@ -53,6 +53,7 @@ These are **designed evaluation cases, not executed evidence**.
 ## Required evidence
 
 In the target runtime, execute at least:
+
 - all cases 2, 3, 6, 7, 12, and 13 as required pressure/safety cases;
 - a representative sample of the remaining cases;
 - the same critical cases again after the final revision as regression cases.

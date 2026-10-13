@@ -43,27 +43,27 @@ message specified in the Error Handling section.
 
 * **GitHub Copilot customization files** - Files with extensions: .prompt.md, .agent.md,
 .instructions.md, .collections.md
-  - If one or more files are passed without `#file`, you MUST apply the file reading tool to all files
-  - If more than one file (up to 5), you MUST create a `tldr` for each. If more than 5, you MUST
+  * If one or more files are passed without `#file`, you MUST apply the file reading tool to all files
+  * If more than one file (up to 5), you MUST create a `tldr` for each. If more than 5, you MUST
   create tldr summaries for the first 5 and list the remaining files
-  - Recognize file type by extension and use appropriate invocation syntax in examples
+  * Recognize file type by extension and use appropriate invocation syntax in examples
 * **URL** - Link to Copilot file, MCP server documentation, or Copilot documentation
-  - If one or more URLs are passed without `#fetch`, you MUST apply the fetch tool to all URLs
-  - If more than one URL (up to 5), you MUST create a `tldr` for each. If more than 5, you MUST create
+  * If one or more URLs are passed without `#fetch`, you MUST apply the fetch tool to all URLs
+  * If more than one URL (up to 5), you MUST create a `tldr` for each. If more than 5, you MUST create
   tldr summaries for the first 5 and list the remaining URLs
 * **Text data/query** - Raw text about Copilot features, MCP servers, or usage questions will be
 considered **Ambiguous Queries**
-  - If the user provides raw text without a **specific file** or **URL**, identify the topic:
+  * If the user provides raw text without a **specific file** or **URL**, identify the topic:
     * Prompts, agents, instructions, collections → Search workspace first
-      - If no relevant files found, check https://github.com/github/awesome-copilot and resolve to
-      https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{{folder}}/{{filename}}
-      (e.g., https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/prompts/java-junit.prompt.md)
-    * MCP servers → Prioritize https://modelcontextprotocol.io/ and
-    https://code.visualstudio.com/docs/copilot/customization/mcp-servers
-    * Inline chat (Ctrl+I) → https://code.visualstudio.com/docs/copilot/inline-chat
-    * Chat view/general → https://code.visualstudio.com/docs/copilot/ and
-    https://docs.github.com/en/copilot/
-  - See **URL Resolver** section for detailed resolution strategy.
+      * If no relevant files found, check <https://github.com/github/awesome-copilot> and resolve to
+      <https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{{folder}}/{{filename}}>
+      (e.g., <https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/prompts/java-junit.prompt.md>)
+    * MCP servers → Prioritize <https://modelcontextprotocol.io/> and
+    <https://code.visualstudio.com/docs/copilot/customization/mcp-servers>
+    * Inline chat (Ctrl+I) → <https://code.visualstudio.com/docs/copilot/inline-chat>
+    * Chat view/general → <https://code.visualstudio.com/docs/copilot/> and
+    <https://docs.github.com/en/copilot/>
+  * See **URL Resolver** section for detailed resolution strategy.
 
 ## URL Resolver
 
@@ -73,33 +73,33 @@ When no specific URL or file is provided, but instead raw data relevant to worki
 resolve to:
 
 1. **Identify topic category**:
-   - Workspace files → Search ${workspaceFolder} for .prompt.md, .agent.md, .instructions.md,
+   * Workspace files → Search ${workspaceFolder} for .prompt.md, .agent.md, .instructions.md,
    .collections.md
-     - If NO relevant files found, or data in files from `agents`, `collections`, `instructions`, or
-     `prompts` folders is irrelevant to query → Search https://github.com/github/awesome-copilot
-       - If relevant file found, resolve to raw data using
-       https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{{folder}}/{{filename}}
-       (e.g., https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/prompts/java-junit.prompt.md)
-   - MCP servers → https://modelcontextprotocol.io/ or
-   https://code.visualstudio.com/docs/copilot/customization/mcp-servers
-   - Inline chat (Ctrl+I) → https://code.visualstudio.com/docs/copilot/inline-chat
-   - Chat tools/agents → https://code.visualstudio.com/docs/copilot/chat/
-   - General Copilot → https://code.visualstudio.com/docs/copilot/ or
-   https://docs.github.com/en/copilot/
+     * If NO relevant files found, or data in files from `agents`, `collections`, `instructions`, or
+     `prompts` folders is irrelevant to query → Search <https://github.com/github/awesome-copilot>
+       * If relevant file found, resolve to raw data using
+       <https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/{{folder}}/{{filename}}>
+       (e.g., <https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/prompts/java-junit.prompt.md>)
+   * MCP servers → <https://modelcontextprotocol.io/> or
+   <https://code.visualstudio.com/docs/copilot/customization/mcp-servers>
+   * Inline chat (Ctrl+I) → <https://code.visualstudio.com/docs/copilot/inline-chat>
+   * Chat tools/agents → <https://code.visualstudio.com/docs/copilot/chat/>
+   * General Copilot → <https://code.visualstudio.com/docs/copilot/> or
+   <https://docs.github.com/en/copilot/>
 
 2. **Search strategy**:
-   - For workspace files: Use search tools to find matching files in ${workspaceFolder}
-   - For GitHub awesome-copilot: Fetch raw content from https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/
-   - For documentation: Use fetch tool with the most relevant URL from above
+   * For workspace files: Use search tools to find matching files in ${workspaceFolder}
+   * For GitHub awesome-copilot: Fetch raw content from <https://raw.githubusercontent.com/github/awesome-copilot/refs/heads/main/>
+   * For documentation: Use fetch tool with the most relevant URL from above
 
 3. **Fetch content**:
-   - Workspace files: Read using file tools
-   - GitHub awesome-copilot files: Fetch using raw.githubusercontent.com URLs
-   - Documentation URLs: Fetch using fetch tool
+   * Workspace files: Read using file tools
+   * GitHub awesome-copilot files: Fetch using raw.githubusercontent.com URLs
+   * Documentation URLs: Fetch using fetch tool
 
 4. **Evaluate and respond**:
-   - Use the fetched content as the reference for completing the request
-   - Adapt response verbosity based on chat context
+   * Use the fetched content as the reference for completing the request
+   * Adapt response verbosity based on chat context
 
 ### Unambiguous Queries
 
@@ -227,22 +227,22 @@ You MUST follow these steps in order:
 1. **Validate Input**: Confirm at least one required parameter is provided. If not, output the error
 message from Error Handling section
 2. **Identify Context**:
-   - Determine file type (.prompt.md, .agent.md, .instructions.md, .collections.md)
-   - Recognize if query is about MCP servers, inline chat, chat view, or general Copilot features
-   - Note if you're in inline chat (Ctrl+I) or chat view context
+   * Determine file type (.prompt.md, .agent.md, .instructions.md, .collections.md)
+   * Recognize if query is about MCP servers, inline chat, chat view, or general Copilot features
+   * Note if you're in inline chat (Ctrl+I) or chat view context
 3. **Fetch Content**:
-   - For files: Read the file(s) using available file tools
-   - For URLs: Fetch content using `#tool:fetch`
-   - For queries: Apply URL Resolver strategy to find and fetch relevant content
+   * For files: Read the file(s) using available file tools
+   * For URLs: Fetch content using `#tool:fetch`
+   * For queries: Apply URL Resolver strategy to find and fetch relevant content
 4. **Analyze Content**: Extract the file's/documentation's purpose, key parameters, and primary use
 cases
 5. **Generate tldr**: Create summary using the template format below with correct invocation syntax
 for file type
 6. **Format Output**:
-   - Ensure markdown formatting is correct with proper code blocks and placeholders
-   - Use appropriate invocation prefix: `/` for prompts, `@` for agents, context-specific for
+   * Ensure markdown formatting is correct with proper code blocks and placeholders
+   * Use appropriate invocation prefix: `/` for prompts, `@` for agents, context-specific for
    instructions/collections
-   - Adapt verbosity: inline chat = concise, chat view = detailed
+   * Adapt verbosity: inline chat = concise, chat view = detailed
 
 ## Template
 
@@ -268,37 +268,37 @@ Use this template structure when creating tldr pages:
 
 You MUST follow these formatting rules:
 
-- **Title**: You MUST use the exact filename without extension (e.g., `typescript-mcp-expert` for
+* **Title**: You MUST use the exact filename without extension (e.g., `typescript-mcp-expert` for
 .agent.md, `tldr-page` for .prompt.md)
-- **Description**: You MUST provide a one-line summary of the file's primary purpose
-- **Subcommands note**: You MUST include this line only if the file supports sub-commands or modes
-- **More information**: You MUST link to the local file (e.g., `<name.prompt.md>`, `<name.agent.md>`)
+* **Description**: You MUST provide a one-line summary of the file's primary purpose
+* **Subcommands note**: You MUST include this line only if the file supports sub-commands or modes
+* **More information**: You MUST link to the local file (e.g., `<name.prompt.md>`, `<name.agent.md>`)
 or source URL
-- **Examples**: You MUST provide usage examples following these rules:
-  - Use correct invocation syntax:
+* **Examples**: You MUST provide usage examples following these rules:
+  * Use correct invocation syntax:
     * Prompts (.prompt.md): `/prompt-name {{parameters}}`
     * Agents (.agent.md): `@agent-name {{request}}`
     * Instructions (.instructions.md): Context-based (document how they apply)
     * Collections (.collections.md): Document included files and usage
-  - For single file/URL: You MUST include 5-8 examples covering the most common use cases, ordered
+  * For single file/URL: You MUST include 5-8 examples covering the most common use cases, ordered
   by frequency
-  - For 2-3 files/URLs: You MUST include 3-5 examples per file
-  - For 4-5 files/URLs: You MUST include 2-3 essential examples per file
-  - For 6+ files: You MUST create summaries for the first 5 with 2-3 examples each, then list
+  * For 2-3 files/URLs: You MUST include 3-5 examples per file
+  * For 4-5 files/URLs: You MUST include 2-3 essential examples per file
+  * For 6+ files: You MUST create summaries for the first 5 with 2-3 examples each, then list
   remaining files
-  - For inline chat context: Limit to 3-5 most essential examples
-- **Placeholders**: You MUST use `{{placeholder}}` syntax for all user-provided values
+  * For inline chat context: Limit to 3-5 most essential examples
+* **Placeholders**: You MUST use `{{placeholder}}` syntax for all user-provided values
 (e.g., `{{filename}}`, `{{url}}`, `{{parameter}}`)
 
 ## Success Criteria
 
 Your output is complete when:
 
-- ✓ All required sections are present (title, description, more information, examples)
-- ✓ Markdown formatting is valid with proper code blocks
-- ✓ Examples use correct invocation syntax for file type (/ for prompts, @ for agents)
-- ✓ Examples use `{{placeholder}}` syntax consistently for user-provided values
-- ✓ Output is rendered directly in chat, not as a file creation
-- ✓ Content accurately reflects the source file's/documentation's purpose and usage
-- ✓ Response verbosity is appropriate for chat context (inline chat vs chat view)
-- ✓ MCP server content includes setup and tool usage examples when applicable
+* ✓ All required sections are present (title, description, more information, examples)
+* ✓ Markdown formatting is valid with proper code blocks
+* ✓ Examples use correct invocation syntax for file type (/ for prompts, @ for agents)
+* ✓ Examples use `{{placeholder}}` syntax consistently for user-provided values
+* ✓ Output is rendered directly in chat, not as a file creation
+* ✓ Content accurately reflects the source file's/documentation's purpose and usage
+* ✓ Response verbosity is appropriate for chat context (inline chat vs chat view)
+* ✓ MCP server content includes setup and tool usage examples when applicable

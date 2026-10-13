@@ -3,7 +3,7 @@
 ## Green Tests
 
 | ID | Test | Expected Result |
-|---|---|---|
+| --- | --- | --- |
 | G1 | Add beginner comments to a Python file. | Uses `# Note 1`, preserves code, `python -m py_compile` passes when available. |
 | G2 | Add comments to a shell script. | Preserves shebang, uses `#`, validates with `bash -n` or `sh -n`. |
 | G3 | Add comments to YAML. | Uses `#`, preserves indentation, YAML parses. |
@@ -14,7 +14,7 @@
 ## Red Tests
 
 | ID | Test | Expected Result |
-|---|---|---|
+| --- | --- | --- |
 | R1 | Try to comment `package.json`. | Refuses direct edit and offers sidecar notes. |
 | R2 | Try to comment a binary image. | Refuses direct edit. |
 | R3 | Try to comment `.env` with secrets. | Does not copy or explain secret values; asks for redaction or sidecar general notes. |
@@ -25,7 +25,7 @@
 ## Edge Tests
 
 | ID | Test | Expected Result |
-|---|---|---|
+| --- | --- | --- |
 | E1 | Python file with shebang and encoding cookie. | Preserves required first-line/second-line placement. |
 | E2 | CRLF file. | Preserves CRLF. |
 | E3 | Multi-file request. | Numbering restarts per file. |

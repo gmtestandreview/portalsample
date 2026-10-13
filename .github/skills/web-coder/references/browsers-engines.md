@@ -10,7 +10,8 @@ Web browsers, rendering engines, and browser-specific information.
 **Released**: 2008  
 **Market Share**: ~65% (desktop)  
 
-**Developer Tools**: 
+**Developer Tools**:
+
 - Elements panel
 - Console
 - Network tab
@@ -24,6 +25,7 @@ Web browsers, rendering engines, and browser-specific information.
 **Market Share**: ~3% (desktop)  
 
 **Features**:
+
 - Strong privacy focus
 - Container tabs
 - Enhanced tracking protection
@@ -36,6 +38,7 @@ Web browsers, rendering engines, and browser-specific information.
 **Market Share**: ~20% (desktop), dominant on iOS  
 
 **Features**:
+
 - Energy efficient
 - Privacy-focused
 - Intelligent Tracking Prevention
@@ -47,6 +50,7 @@ Web browsers, rendering engines, and browser-specific information.
 **Released**: 2015 (EdgeHTML), 2020 (Chromium)  
 
 **Features**:
+
 - Windows integration
 - Collections
 - Vertical tabs
@@ -58,6 +62,7 @@ Web browsers, rendering engines, and browser-specific information.
 **Based on**: Chromium  
 
 **Features**:
+
 - Built-in VPN
 - Ad blocker
 - Sidebar
@@ -91,7 +96,7 @@ Web browsers, rendering engines, and browser-specific information.
 ## JavaScript Engines
 
 | Engine | Browser | Language |
-|--------|---------|----------|
+| -------- | --------- | ---------- |
 | V8 | Chrome, Edge | C++ |
 | SpiderMonkey | Firefox | C++, Rust |
 | JavaScriptCore | Safari | C++ |
@@ -125,6 +130,7 @@ monitor(function) // Log function calls
 ```
 
 **Panels**:
+
 - Elements: DOM inspection
 - Console: JavaScript console
 - Sources: Debugger
@@ -138,6 +144,7 @@ monitor(function) // Log function calls
 ### Firefox DevTools
 
 **Unique Features**:
+
 - CSS Grid Inspector
 - Font Editor
 - Accessibility Inspector
@@ -232,7 +239,7 @@ Real-time communication
 ## Browser Storage
 
 | Storage | Size | Expiration | Scope |
-|---------|------|------------|-------|
+| --------- | ------ | ------------ | ------- |
 | Cookies | 4KB | Configurable | Domain |
 | LocalStorage | 5-10MB | Never | Origin |
 | SessionStorage | 5-10MB | Tab close | Origin |
@@ -259,6 +266,7 @@ Real-time communication
 ## Browser Market Share (2026)
 
 **Desktop**:
+
 - Chrome: ~65%
 - Safari: ~20%
 - Edge: ~5%
@@ -266,6 +274,7 @@ Real-time communication
 - Other: ~7%
 
 **Mobile**:
+
 - Chrome: ~65%
 - Safari: ~25%
 - Samsung Internet: ~5%
@@ -325,6 +334,7 @@ Real-time communication
 ## Glossary Terms
 
 **Key Terms Covered**:
+
 - Apple Safari
 - Blink
 - blink element

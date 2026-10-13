@@ -62,9 +62,9 @@ For each skill, record:
 
 Determine the comparison set:
 
-- Always evaluate any pair the user explicitly asks to compare.
-- If the user requests exhaustive or all-pairs accounting, evaluate every possible pair.
-- Otherwise, when discovering candidate pairs from a larger skill list, exclude pairs with no plausible activation, task, workflow, or functional relationship.
+* Always evaluate any pair the user explicitly asks to compare.
+* If the user requests exhaustive or all-pairs accounting, evaluate every possible pair.
+* Otherwise, when discovering candidate pairs from a larger skill list, exclude pairs with no plausible activation, task, workflow, or functional relationship.
 
 An explicitly requested or exhaustively included pair with no material functional relationship is `False positive`.
 

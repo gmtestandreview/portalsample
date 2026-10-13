@@ -14,7 +14,7 @@ This is a repository-specific policy skill. Where it names concrete values (npm 
 ## Task map
 
 | Task | Start at these sections |
-|---|---|
+| --- | --- |
 | Review a workflow (report only, no edit) | **Workflow** steps 1–5, then **Security boundaries** and **Protect quality gates** |
 | A CI job is failing or flaky | **Diagnose before changing policy** |
 | Edit a workflow (triggers, steps, permissions, pinning) | **Workflow**, then **Security boundaries** + **Protect quality gates** |
@@ -178,7 +178,7 @@ Treat a new or materially changed deployment path as high impact. Before modifyi
 ## Rationalization table
 
 | Rationalization | Reality |
-|---|---|
+| --- | --- |
 | "The failing step is flaky, I'll add `continue-on-error`." | That removes the gate for everyone. Diagnose the flake, or quarantine the specific test with a tracking issue — the job must still fail on real breakage. |
 | "`npm install` fixes the install, `npm ci` is too strict." | `npm ci` enforces the lockfile. Switching hides a lockfile-drift bug. Fix the lockfile. |
 | "This dependency needs its postinstall — I'll add it to `allowScripts`." | Not until you have identified the script and shown CI needs it. An install error is not that evidence. |

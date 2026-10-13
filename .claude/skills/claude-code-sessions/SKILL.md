@@ -14,7 +14,7 @@ Claude Code records every session as a JSONL file — messages, tool calls, toke
 **11 skills** usable directly in Claude Code:
 
 | Skill | Purpose |
-|-------|---------|
+| ------- | --------- |
 | `/session-search "query"` | Full-text search across every session |
 | `/session-stats` | Token usage, model distribution, tool breakdown |
 | `/session-list` | List sessions sorted by recency, size, or duration |

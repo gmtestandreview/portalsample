@@ -207,7 +207,7 @@ After init: `.agent-sync/TEAM.md` lists what's active. Everything else is pruned
 ## Key Design Principles
 
 | Principle | How A Team implements it |
-|-----------|-------------------------|
+| ----------- | ------------------------- |
 | **Stateless** | Every agent reads from files; no memory between sessions |
 | **Prunable** | Orchestrator removes irrelevant agents at init; lean by default |
 | **Portable** | Works on Claude Code, Codex, Cursor, OpenCode — same files |

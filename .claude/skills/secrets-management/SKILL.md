@@ -43,6 +43,7 @@ Implement secure secrets management in CI/CD pipelines without hardcoding sensit
 ## Secrets Management Tools
 
 ### HashiCorp Vault
+
 - Centralized secrets management
 - Dynamic secrets generation
 - Secret rotation
@@ -50,18 +51,21 @@ Implement secure secrets management in CI/CD pipelines without hardcoding sensit
 - Fine-grained access control
 
 ### AWS Secrets Manager
+
 - AWS-native solution
 - Automatic rotation
 - Integration with RDS
 - CloudFormation support
 
 ### Azure Key Vault
+
 - Azure-native solution
 - HSM-backed keys
 - Certificate management
 - RBAC integration
 
 ### Google Secret Manager
+
 - GCP-native solution
 - Versioning
 - IAM integration
@@ -221,6 +225,7 @@ deploy:
 ```
 
 ### Protected and Masked Variables
+
 - Protected: Only available in protected branches
 - Masked: Hidden in job logs
 - File type: Stored as file

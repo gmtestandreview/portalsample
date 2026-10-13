@@ -4,7 +4,6 @@ Technical Debt Analyzer - Assess and prioritize technical debt across systems
 """
 
 import json
-from typing import Dict, List, Tuple
 from datetime import datetime
 import math
 
@@ -56,7 +55,7 @@ class TechDebtAnalyzer:
             'maintenance_cost': {'weight': 0.10, 'score': 0}
         }
     
-    def analyze_system(self, system_data: Dict) -> Dict:
+    def analyze_system(self, system_data: dict) -> dict:
         """Analyze a system for technical debt"""
         results = {
             'timestamp': datetime.now().isoformat(),
@@ -111,7 +110,7 @@ class TechDebtAnalyzer:
         
         return results
     
-    def _calculate_category_score(self, category_data: Dict, indicators: List) -> float:
+    def _calculate_category_score(self, category_data: dict, indicators: list) -> float:
         """Calculate score for a specific category"""
         if not category_data:
             return 50.0  # Default middle score if no data
@@ -140,7 +139,7 @@ class TechDebtAnalyzer:
         else:
             return 'Critical'
     
-    def _prioritize_actions(self, category_scores: Dict, business_context: Dict) -> List:
+    def _prioritize_actions(self, category_scores: dict, business_context: dict) -> list:
         """Prioritize technical debt reduction actions"""
         actions = []
         
@@ -164,7 +163,7 @@ class TechDebtAnalyzer:
         actions.sort(key=lambda x: x['priority'], reverse=True)
         return actions[:5]  # Top 5 priorities
     
-    def _calculate_priority(self, score: float, category: str, context: Dict) -> float:
+    def _calculate_priority(self, score: float, category: str, context: dict) -> float:
         """Calculate priority based on score and business context"""
         base_priority = score
         
@@ -180,7 +179,7 @@ class TechDebtAnalyzer:
         
         return min(100, base_priority)
     
-    def _get_action_items(self, category: str, level: str) -> List[str]:
+    def _get_action_items(self, category: str, level: str) -> list[str]:
         """Get specific action items based on category and level"""
         actions = {
             'architecture': {
@@ -258,7 +257,7 @@ class TechDebtAnalyzer:
         
         return actions.get(category, {}).get(level, ['Create action plan'])
     
-    def _estimate_effort(self, actions: List, team_size: int) -> Dict:
+    def _estimate_effort(self, actions: list, team_size: int) -> dict:
         """Estimate effort required for debt reduction"""
         total_story_points = 0
         effort_breakdown = {}
@@ -288,7 +287,7 @@ class TechDebtAnalyzer:
             'breakdown': effort_breakdown
         }
     
-    def _assess_risks(self, debt_score: float, criticality: str) -> Dict:
+    def _assess_risks(self, debt_score: float, criticality: str) -> dict:
         """Assess risks associated with technical debt"""
         risk_level = 'Low'
         
@@ -322,7 +321,7 @@ class TechDebtAnalyzer:
         
         return risks
     
-    def _generate_recommendations(self, results: Dict) -> List[str]:
+    def _generate_recommendations(self, results: dict) -> list[str]:
         """Generate strategic recommendations"""
         recommendations = []
         
@@ -357,7 +356,7 @@ class TechDebtAnalyzer:
         
         return recommendations
 
-def analyze_technical_debt(system_config: Dict) -> str:
+def analyze_technical_debt(system_config: dict) -> str:
     """Main function to analyze technical debt"""
     analyzer = TechDebtAnalyzer()
     results = analyzer.analyze_system(system_config)

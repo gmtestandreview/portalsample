@@ -71,6 +71,7 @@ LOOP until no tasks remain:
 ## Status Updates
 
 Completed task:
+
 ```markdown
 - [x] **Create User model** `priority:1` `phase:model` ✅
   - files: src/models/user.py
@@ -79,6 +80,7 @@ Completed task:
 ```
 
 Failed task:
+
 ```markdown
 - [x] **Create User model** `priority:1` `phase:model` ❌
   - files: src/models/user.py

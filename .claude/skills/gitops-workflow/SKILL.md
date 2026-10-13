@@ -186,6 +186,7 @@ spec:
 ### Auto-Sync Configuration
 
 **ArgoCD:**
+
 ```yaml
 syncPolicy:
   automated:
@@ -201,6 +202,7 @@ syncPolicy:
 ```
 
 **Flux:**
+
 ```yaml
 spec:
   interval: 1m
@@ -289,12 +291,14 @@ kubeseal --format yaml < secret.yaml > sealed-secret.yaml
 ## Troubleshooting
 
 **Sync failures:**
+
 ```bash
 argocd app get my-app
 argocd app sync my-app --prune
 ```
 
 **Out of sync status:**
+
 ```bash
 argocd app diff my-app
 argocd app sync my-app --force

@@ -14,7 +14,7 @@ Follow the exact file and code patterns from [static/js/routes/requestForQuote/]
 The user will provide (ask if any are missing):
 
 | Input | Example |
-|---|---|
+| --- | --- |
 | **Feature name** (PascalCase) | `AccreditationRequest` |
 | **URL path** (kebab-case) | `/accreditation-request/:id/*` |
 | **API client class** from `web-api-client.ts` | `AccreditationRequestClient` |
@@ -62,7 +62,7 @@ export const <stepName>SaveValidation = yup.object<Validation<<StepDto>>>({
 The DTO name provided in the **Steps** input directly controls every file name for that step:
 
 | DTO name | Component file | Props file |
-|---|---|---|
+| --- | --- | --- |
 | `OrganisationAndContact` | `organisationAndContact.tsx` | `organisationAndContactProps.ts` |
 | `InstrumentAndRequest` | `instrumentAndRequest.tsx` | `instrumentAndRequestProps.ts` |
 
@@ -71,6 +71,7 @@ Do **not** invent step names. If a DTO name cannot be found in `web-api-client.t
 ### `<DtoName>Props.ts` (one per step)
 
 Mirror the shape of `static/js/routes/requestForQuote/organisationAndContactProps.ts`:
+
 - Import `AccountInfo`, `IPublicClientApplication` from `@azure/msal-browser`
 - Import `tokenRequest` from `../../authentication/authConfig`
 - Import `WizardStepProps`, `WizardFormStepValues` from wizard types
@@ -79,6 +80,7 @@ Mirror the shape of `static/js/routes/requestForQuote/organisationAndContactProp
 ### `<DtoName>.tsx` (one per step, camelCase filename)
 
 Mirror `static/js/routes/requestForQuote/organisationAndContact.tsx`:
+
 - Props typed with `<DtoName>Props` interface (imported from the matching Props file)
 - Use `useFormikContext`, `useField`, `getIn` from formik
 - Use `useAccountContext` from `../../authentication/hooks` (never import `AccountContext` directly)
@@ -86,6 +88,7 @@ Mirror `static/js/routes/requestForQuote/organisationAndContact.tsx`:
 ### `index.tsx`
 
 **Wizard form style** — mirror `static/js/routes/requestForQuote/index.tsx`:
+
 - `useMsal`, `useNavigate`, `useParams` at the top
 - `useBodyClass('wizard')`
 - `WizardFormProps` with `locationOnCompletion` set to the **success path** (e.g. `` `/accreditation-request-success/${id}` ``), `lastStepNextButtonTitle`, `canSaveDraft`
@@ -94,6 +97,7 @@ Mirror `static/js/routes/requestForQuote/organisationAndContact.tsx`:
 - API error → `navigate('/not-found')` with `AppLogger.error`
 
 **Single page style** — use `<FormikForm>` instead of `<WizardForm>`:
+
 - Single submit/save validation pair
 - No step-status loading effect needed
 
