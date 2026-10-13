@@ -55,6 +55,7 @@ jobs:
           # duplication reports. Keeping the SARIF input to issue results
           # also avoids the legacy formatter path that crashed on conversion.
           tool: issues
+          parallel: 4
           tool-timeout: 10minutes
           # Adjust severity of non-security issues
           gh-code-scanning-compat: true
