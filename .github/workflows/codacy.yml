@@ -51,12 +51,12 @@ jobs:
           verbose: true
           output: results.sarif
           format: sarif
-          # GitHub code scanning consumes findings, not Codacy metrics or
-          # duplication reports. Keeping the SARIF input to issue results
-          # also avoids the legacy formatter path that crashed on conversion.
-          tool: issues
-          parallel: 4
-          tool-timeout: 10minutes
+          # CodeQL provides the repository-wide security analysis. Keep this
+          # Codacy PR gate focused on the project's JavaScript/TypeScript
+          # analysis so SARIF conversion stays fast enough for every commit.
+          tool: eslint
+          directory: ClientApp
+          tool-timeout: 5minutes
           # Adjust severity of non-security issues
           gh-code-scanning-compat: true
           # Force 0 exit code to allow SARIF file generation
