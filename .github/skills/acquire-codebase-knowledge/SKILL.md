@@ -53,12 +53,15 @@ If the user supplies a focus area (for example: "architecture only" or "testing 
 ### Phase 1: Scan and Read Intent
 
 1. Run the scan script from the target project root:
+
    ```bash
    python3 "$SKILL_ROOT/scripts/scan.py" --output docs/codebase/.codebase-scan.txt
    ```
+
    Where `$SKILL_ROOT` is the absolute path to the skill folder. Works on Windows, macOS, and Linux.
 
    **Quick start:** If you have the path inline:
+
    ```bash
    python3 /absolute/path/to/skills/acquire-codebase-knowledge/scripts/scan.py --output docs/codebase/.codebase-scan.txt
    ```
@@ -99,17 +102,20 @@ Security and redaction rules for env/config findings:
 Run this mandatory validation loop before finalizing:
 
 1. Run the lightweight output validator:
+
    ```bash
    python3 "$SKILL_ROOT/scripts/validate_codebase_docs.py" --project-root . --docs-dir docs/codebase
    ```
+
    Treat this as a fast structural and safety check, not a substitute for evidence review.
 2. Validate each doc against `references/inquiry-checkpoints.md`.
 3. For each non-trivial claim, confirm at least one evidence reference exists.
 4. If any required section is missing, unsupported, structurally invalid, or flagged by the validator:
-  - Fix the document.
-  - Re-run the validator.
-  - Re-run manual evidence checks for changed sections.
-5. Repeat until all seven docs pass.
+
+- Fix the document.
+- Re-run the validator.
+- Re-run manual evidence checks for changed sections.
+1. Repeat until all seven docs pass.
 
 Then present a summary of all seven documents, list every `[ASK USER]` item as a numbered question, and highlight any Intent vs. Reality divergences from Phase 1.
 
@@ -147,7 +153,7 @@ Validation pass criteria:
 ## Anti-Patterns
 
 | ❌ Don't | ✅ Do instead |
-|---------|--------------|
+| --------- | -------------- |
 | "Uses Clean Architecture with Domain/Data layers." (when no such directories exist) | State only what directory structure actually shows. |
 | "This is a Next.js project." (without checking `package.json`) | Check `dependencies` first. State what's actually there. |
 | Guess the database from a variable name like `dbUrl` | Check manifest for `pg`, `mysql2`, `mongoose`, `prisma`, etc. |
@@ -173,7 +179,7 @@ Use these sections during Phase 2 to inform investigation questions and identify
 ## Bundled Assets
 
 | Asset | When to load |
-|-------|-------------|
+| ------- | ------------- |
 | [`scripts/scan.py`](scripts/scan.py) | Phase 1 — run first, before reading any code (Python 3.8+ required) |
 | [`scripts/validate_codebase_docs.py`](scripts/validate_codebase_docs.py) | Phase 4 — run before finalizing to check required docs, headings, placeholders, allowed hidden artefacts, evidence sections, `[ASK USER]` formatting, and redaction safety |
 | [`references/inquiry-checkpoints.md`](references/inquiry-checkpoints.md) | Phase 2 — load for per-template investigation questions |

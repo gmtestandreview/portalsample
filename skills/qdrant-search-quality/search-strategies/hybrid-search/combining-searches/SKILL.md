@@ -14,11 +14,13 @@ The outer query fuses ranked candidate lists from all parallel prefetches into o
 Use when: searches produce scores on different scales, like BM25 and cosine on dense embeddings.
 
 ### RRF
+
 - **[RRF](https://skills.qdrant.tech/md/documentation/search/hybrid-queries/?s=reciprocal-rank-fusion-rrf)** (Reciprocal Rank Fusion) — rank-based, ignores scores magnitude, a decent default to start with.
 - Tune `k` to [control rank sensitivity in RRF fusion](https://skills.qdrant.tech/md/documentation/search/hybrid-queries/?s=setting-rrf-constant-k).
 - Add per-prefetch **weights** when one search should dominate, using [Weighted RRF](https://skills.qdrant.tech/md/documentation/search/hybrid-queries/?s=weighted-rrf). Weights should be customized per collection and retrievers' score distributions!
 
 ### DBSF
+
 - **[DBSF](https://skills.qdrant.tech/md/documentation/search/hybrid-queries/?s=distribution-based-score-fusion-dbsf)** (Distribution-Based Score Fusion) — normalizes score distributions per prefetch before fusing them, for that, instead of min-max, uses mean +- 3 deviations on prefetched list of scores. Avoid relying on resulting absolute scores, as scores in DBSF are normalized per prefetch (aka per a retrieved list of search results), and might be uncomparable across queries.
 
 ## Need Custom Fusion
@@ -28,11 +30,13 @@ Use when: recency, popularity or other payload values should affect the merged r
 **[With formula query](https://skills.qdrant.tech/md/documentation/search/search-relevance/?s=score-boosting)**, access `score` of each prefetch and, if desired, payload field values.
 
 If you want to implement custom fusion on `score` of each prefetch:
+
 - Use decay or any other available expressions for normalizing score distributions before fusing them.
 - Parameters of these expressions should be based on the collection & retriever score distributions (for example, adjusting these parameters on a subsample of real queries).
 - Formula query is unable to provide ranks for custom fusions
 
 When using `FormulaQuery` over multiple prefetches (e.g. per-representation weighting):
+
 - `$score[i]` indexes prefetches in declaration order. Reordering the `prefetch=` list silently shifts which weight applies to which retriever.
 - Provide `defaults` for every `$score[i]` so the formula still evaluates for candidates that surfaced from only a subset of prefetches.
 - Start with RRF when scores are on incomparable scales (e.g. BM25 + cosine). Reach for `FormulaQuery` only when explicit per-representation weighting or payload-driven boosts are required, and normalize each `$score[i]` (decay or min-max on a sampled distribution) before combining linearly.
@@ -45,6 +49,7 @@ More resource heavy than score/rank based fusions, but might be necessary due to
 You can use any type of vector as an outer query over the prefetches, to perform the fusion on the server-side in one QueryAPI request: sparse, dense, multivector. For that, same type of vector representations for documents need to be stored as named vectors per point.
 
 Instead of using client-side fusion through cross-encoders, a popular option is **Late interaction models-based fusion**, through reranking on multivectors (e.g. ColBERT for text, ColPali and ColQwen for images).
+
 - Most precise but highest compute/resource usage.
 - Configure multivectors used for fusion through reranking with HNSW disabled like in [Hybrid Search with Reranking tutorial](https://skills.qdrant.tech/md/documentation/tutorials-basics/reranking-hybrid-search/).
 

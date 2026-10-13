@@ -125,7 +125,8 @@ Brief description of what this PR does.
    ```
 ````
 
-2. **Line 78**: Consider error handling
+1. **Line 78**: Consider error handling
+
    ```javascript
    // Add try-catch or .catch()
    ```

@@ -17,14 +17,14 @@ Qdrant has the following officially supported client SDKs:
 - Rust — [rust-client](https://github.com/qdrant/rust-client) · Installation: `cargo add qdrant-client`
 - Go — [go-client](https://github.com/qdrant/go-client) · Installation: `go get github.com/qdrant/go-client`
 - .NET — [qdrant-dotnet](https://github.com/qdrant/qdrant-dotnet) · Installation: `dotnet add package Qdrant.Client`
-- Java — [java-client](https://github.com/qdrant/java-client) · Available on Maven Central: https://central.sonatype.com/artifact/io.qdrant/client
+- Java — [java-client](https://github.com/qdrant/java-client) · Available on Maven Central: <https://central.sonatype.com/artifact/io.qdrant/client>
 
 ## API Reference
 
 All interaction with Qdrant can happen through the REST API or gRPC API. We recommend using the REST API if you are using Qdrant for the first time or working on a prototype.
 
-* REST API - [OpenAPI Reference](https://skills.qdrant.tech/api-reference.md) - [GitHub](https://github.com/qdrant/qdrant/blob/master/docs/redoc/master/openapi.json)
-* gRPC API - [gRPC protobuf definitions](https://github.com/qdrant/qdrant/tree/master/lib/api/src/grpc/proto)
+- REST API - [OpenAPI Reference](https://skills.qdrant.tech/api-reference.md) - [GitHub](https://github.com/qdrant/qdrant/blob/master/docs/redoc/master/openapi.json)
+- gRPC API - [gRPC protobuf definitions](https://github.com/qdrant/qdrant/tree/master/lib/api/src/grpc/proto)
 
 ## Code examples
 

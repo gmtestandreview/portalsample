@@ -19,7 +19,7 @@
     scroll-padding: 50px;
   }
 
-  &[data-layout='grid']:not(:has(.react-aria-GridListSection)):not([data-empty]) {
+  &[data-layout='grid']:not(:has(.react-aria-GridListSection), [data-empty]) {
     display: grid;
     grid-auto-rows: min-content;
 

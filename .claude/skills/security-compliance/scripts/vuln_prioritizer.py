@@ -14,7 +14,6 @@ Usage:
 import argparse
 import csv
 from dataclasses import dataclass
-from typing import List, Dict
 from datetime import datetime, timedelta
 
 
@@ -57,7 +56,7 @@ class VulnerabilityPrioritizer:
     }
 
     def __init__(self):
-        self.vulnerabilities: List[Vulnerability] = []
+        self.vulnerabilities: list[Vulnerability] = []
 
     def calculate_priority_score(self, vuln: Vulnerability) -> float:
         """
@@ -150,7 +149,7 @@ class VulnerabilityPrioritizer:
         """Add vulnerability to assessment"""
         self.vulnerabilities.append(vuln)
 
-    def generate_report(self) -> List[Dict]:
+    def generate_report(self) -> list[dict]:
         """Generate prioritized vulnerability report"""
         report = []
 
@@ -184,7 +183,7 @@ class VulnerabilityPrioritizer:
 
         return report
 
-    def generate_summary(self) -> Dict:
+    def generate_summary(self) -> dict:
         """Generate summary statistics"""
         if not self.vulnerabilities:
             return {}
@@ -212,7 +211,7 @@ class VulnerabilityPrioritizer:
         }
 
 
-def load_vulnerabilities_from_csv(filename: str) -> List[Vulnerability]:
+def load_vulnerabilities_from_csv(filename: str) -> list[Vulnerability]:
     """Load vulnerabilities from CSV file"""
     vulnerabilities = []
 
@@ -237,7 +236,7 @@ def load_vulnerabilities_from_csv(filename: str) -> List[Vulnerability]:
     return vulnerabilities
 
 
-def save_report_to_csv(report: List[Dict], filename: str):
+def save_report_to_csv(report: list[dict], filename: str):
     """Save vulnerability report to CSV file"""
     if not report:
         print("No data to save")

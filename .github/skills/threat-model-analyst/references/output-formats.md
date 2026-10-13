@@ -12,6 +12,7 @@ This file defines the structure and content of every output file produced by the
 ## Output Folder
 
 Create a timestamped folder at the start of analysis:
+
 - Format: `threat-model-YYYYMMDD-HHmmss` (UTC time)
 - Example: `threat-model-20260130-073845`
 - Write ALL output files to this folder
@@ -21,12 +22,14 @@ Create a timestamped folder at the start of analysis:
 ## File Content Formatting — CRITICAL RULE
 
 **NEVER wrap `.md` file content in code fences.** When using `create_file` or `edit_file`:
+
 - The tool writes raw content to disk. If you include ` ```markdown ` at the start, it becomes literal text in the file.
 - **WRONG**: Content starts with ` ```markdown ` — the file will contain the fence as literal text
 - **CORRECT**: Content starts directly with `# Heading` on line 1
 - This applies to ALL `.md` files: `0.1-architecture.md`, `0-assessment.md`, `1-threatmodel.md`, `2-stride-analysis.md`, `3-findings.md`
 
 **NEVER wrap `.mmd` file content in code fences.** The `.mmd` file is raw Mermaid source:
+
 - **WRONG**: Content starts with ` ```plaintext ` or ` ```mermaid `
 - **CORRECT**: Content starts with `%%{init:` on line 1, followed by `flowchart` or `graph` on line 2
 
@@ -37,7 +40,7 @@ Create a timestamped folder at the start of analysis:
 ## File List
 
 | File | Description | Always? |
-|------|-------------|---------|
+| ------ | ------------- | --------- |
 | `0-assessment.md` | Executive summary, risk rating, action plan, metadata | Yes |
 | `0.1-architecture.md` | Architecture overview, components, scenarios, tech stack | Yes |
 | `1-threatmodel.md` | Threat model DFD diagram + element/flow/boundary tables | Yes |
@@ -130,6 +133,7 @@ Create a timestamped folder at the start of analysis:
 ### Generation Steps
 
 **Step 1:** Create `1.1-threatmodel.mmd` (source of truth)
+
 - Pure Mermaid code, no markdown wrapper
 - Use DFD shapes and styles from `diagram-conventions.md`
 
@@ -169,6 +173,7 @@ Create a timestamped folder at the start of analysis:
 ```
 
 **Key rules:**
+
 - Diagram in `.mmd` and `.md` must be IDENTICAL (copy, don't regenerate)
 - Use `DF01`, `DF02` for detailed flows; `SDF01`, `SDF02` for summary flows
 
@@ -186,7 +191,8 @@ Create a timestamped folder at the start of analysis:
 
 ### Anchor-Safe Headings (CRITICAL)
 
-Component `## ` headings become link targets from `3-findings.md`.
+Component `##` headings become link targets from `3-findings.md`.
+
 - Use **only** letters, numbers, spaces, and hyphens
 - **FORBIDDEN in headings:** `&`, `/`, `(`, `)`, `.`, `:`, `'`, `"`, `+`, `@`, `!`
 - Replace: `&` → `and`, `/` → `-`, parentheses → remove
@@ -224,6 +230,7 @@ Threats are classified into three exploitability tiers based on the prerequisite
 > The model frequently generates “Authorization” for the A column — this is WRONG. If you see “Authorization” anywhere as a STRIDE category label, replace it with “Abuse”. The Category column in threat rows MUST say “Abuse” (not “Authorization”). N/A entries must also say “Abuse — N/A” (not “Authorization — N/A”).
 
 ## Summary
+
 | Component | Link | S | T | R | I | D | E | A | Total | T1 | T2 | T3 | Risk |
 |-----------|------|---|---|---|---|---|---|---|-------|----|----|----|------|
 
@@ -241,14 +248,18 @@ Threats are classified into three exploitability tiers based on the prerequisite
 > **⛔ CATEGORY NAMING: The 7 STRIDE-A categories are: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service, Elevation of Privilege, Abuse. The "A" category is ALWAYS "Abuse" — NEVER "Authorization". Authorization issues belong under Elevation of Privilege (E). This applies to N/A justification labels, threat table Category columns, and all prose.**
 
 #### Tier 1 — Direct Exposure (No Prerequisites)
+
 | ID | Category | Threat | Prerequisites | Affected Flow | Mitigation | Status |
 |----|----------|--------|---------------|---------------|------------|--------|
 
 #### Tier 2 — Conditional Risk
+
 | ID | Category | Threat | Prerequisites | Affected Flow | Mitigation | Status |
 
 #### Tier 3 — Defense-in-Depth
+
 | ID | Category | Threat | Prerequisites | Affected Flow | Mitigation | Status |
+
 ```
 
 **⛔ STRIDE Status Column — Valid Values (must match Coverage table):**
@@ -441,12 +452,14 @@ Send an unauthenticated GET request to `/api/v1/resources` — should return 401
 ```
 
 Every threat from `2-stride-analysis.md` must appear in this table. Status is one of:
+
 - `✅ Covered (FIND-XX)` — finding documents a vulnerability that needs remediation
 - `✅ Mitigated (FIND-XX)` — finding documents an existing control the team built (gives credit for security work done)
 - `🔄 Mitigated by Platform` — external system handles it (only for genuinely external platforms)
 
 **⛔ THIS TABLE IS A FEEDBACK LOOP, NOT DOCUMENTATION:**
 The purpose of this table is to force you to check your work. After filling it out:
+
 1. If ANY threat has a `—` dash in the Finding ID column with status other than `🔄 Mitigated by Platform` → **you missed a finding. Go back and create one.**
 2. If Platform count > 20% of total threats → **you are overusing Platform as an escape hatch. Re-examine.**
 3. If any threat is listed as `⚠️ Accepted Risk` or `⚠️ Needs Review` → **VIOLATION. Create a finding or verify it's genuinely Platform.**
@@ -511,8 +524,9 @@ Include at end of Executive Summary:
 ### Action Summary Template
 
 > **⛔ FIXED PRIORITY MAPPING — The Priority column values are DETERMINISTIC, not judgment-based:**
+>
 > | Tier | Priority | Always |
-> |------|----------|--------|
+> | ------ | ---------- | -------- |
 > | Tier 1 | 🔴 Critical Risk | ALWAYS — regardless of threat/finding count |
 > | Tier 2 | 🟠 Elevated Risk | ALWAYS — regardless of threat/finding count |
 > | Tier 3 | 🟡 Moderate Risk | ALWAYS — regardless of threat/finding count |
@@ -544,6 +558,7 @@ Include at end of Executive Summary:
 ⚠️ **Quick Wins is a REQUIRED subsection.** The `### Quick Wins` heading and table MUST appear after the tier summary table inside Action Summary. If no low-effort findings exist, write: `### Quick Wins\n\nNo low-effort findings identified. All findings require Medium or High effort.`
 
 **Processing Rules for Action Summary:**
+
 1. Populate the tier table with actual counts from `3-findings.md` (findings per tier) and `2-stride-analysis.md` (threats per tier from T1/T2/T3 columns in summary table)
 2. Quick Wins lists only Tier 1 findings with `Remediation Effort: Low` — highest-impact, lowest-effort items
 3. If no Tier 1 Low-effort findings exist, show Tier 2 Low-effort findings instead, with a note: "No Tier 1 quick wins identified. These Tier 2 items offer the best effort-to-impact ratio:"
@@ -554,6 +569,7 @@ Include at end of Executive Summary:
 ### ⛔ PROHIBITED Content in Action Summary and All Output Files
 
 **NEVER generate ANY of the following:**
+
 - `### Priority Remediation by Phase` or any phase-based remediation roadmap
 - Sprint references (`Sprint 1-2`, `Sprint 3-4`, etc.)
 - Time-based phases (`Phase 1 — Immediate`, `Phase 2 — Short-term`, `Phase 3 — Medium-term`, `Phase 4 — Long-term`, `Backlog`)
@@ -584,8 +600,10 @@ Include at end of Executive Summary:
 **Every entry in "Discovered from Codebase" MUST include a relative link to the source file or document from which the information was inferred.** Example:
 
 ```
+
 | Deployment Model | Air-gapped, single-admin workstation ([daemon.json](src/Container/Moby/daemon.json), [InstallAzureEdgeDiagnosticTool.ps1](src/Setup/InstallArtifacts/InstallAzureEdgeDiagnosticTool.ps1)) | All findings — no Tier 1 |
 | Network Exposure | All services bind to localhost:80 only ([KustoContainerHelper.psm1](src/Container/Kusto/KustoContainerHelper.psm1)) | FIND-01, FIND-03 |
+
 ```
 
 ### Needs Verification
@@ -628,6 +646,7 @@ Include at end of Executive Summary:
 ```
 
 **Processing Rules:**
+
 1. Always include the Security Standards table — populate with actual standards consulted
 2. Every row MUST have a full URL (https://...) — never omit the URL column
 3. Populate Component Documentation with technologies actually consulted during analysis
@@ -656,6 +675,7 @@ Include at end of Executive Summary:
 ```
 
 **Gathering rules:**
+
 - START_TIME: Run `Get-Date -Format "yyyy-MM-dd HH:mm:ss" -AsUTC` at workflow Step 1
 - END_TIME: Run again before writing 0-assessment.md
 - Git fields: `git remote get-url origin`, `git branch --show-current`, `git rev-parse --short HEAD`
@@ -667,6 +687,7 @@ Include at end of Executive Summary:
 ### Coverage Counts Consistency
 
 Before writing 0-assessment.md:
+
 - Count elements from `1-threatmodel.md` Element Table
 - Count findings from `3-findings.md`
 - Count threats from `2-stride-analysis.md` summary table
@@ -851,6 +872,7 @@ This file enables automated comparison between two threat model runs.
 When generating `threat-inventory.json` for an **incremental analysis** (see `incremental-orchestrator.md`), add these fields:
 
 **Top-level fields:**
+
 - `"incremental": true` — marks this as an incremental report
 - `"baseline_report": "threat-model-20260309-174425"` — path to baseline report folder
 - `"baseline_commit": "2dd84ab"` — the commit SHA of the baseline report
@@ -858,6 +880,7 @@ When generating `threat-inventory.json` for an **incremental analysis** (see `in
 - `"schema_version": "1.1"` — incremental reports use schema version 1.1
 
 **Per-component:** `"change_status"` — one of:
+
 - `"unchanged"` — source files identical or cosmetic-only changes
 - `"modified"` — security-relevant source file changes
 - `"restructured"` — files moved/renamed, same logical component
@@ -867,6 +890,7 @@ When generating `threat-inventory.json` for an **incremental analysis** (see `in
 - `"split_into:{id1},{id2}"` — split into multiple components
 
 **Per-threat:** `"change_status"` — one of:
+
 - `"still_present"` — threat exists in current code, same as before
 - `"fixed"` — vulnerability was remediated (must cite code change)
 - `"mitigated"` — partial remediation applied
@@ -877,6 +901,7 @@ When generating `threat-inventory.json` for an **incremental analysis** (see `in
 - `"removed_with_component"` — component was removed
 
 **Per-finding:** `"change_status"` — same values as per-threat, plus:
+
 - `"partially_mitigated"` — code changed partially, vulnerability partially remains
 
 **metrics.status_summary** — counts per `change_status` for components, threats, and findings. See `incremental-orchestrator.md` §4f for the full schema.
@@ -884,17 +909,20 @@ When generating `threat-inventory.json` for an **incremental analysis** (see `in
 ### Canonical Naming Rules
 
 **Component IDs** — Derived from actual class/file names, PascalCase:
+
 - `SupportabilityAgent.cs` → `SupportabilityAgent`
 - `PowerShellCommandExecutor.cs` → `PowerShellCommandExecutor`
 - "Redis State Store" → `RedisStateStore`
 - "Ingress-NGINX" → `IngressNginx`
 
 **Flow IDs** — Deterministic from endpoints:
+
 - Format: `DF_{Source}_to_{Target}`
 - `DF_Operator_to_TerminalUI`
 - `DF_InferencingFlow_to_RedisStateStore`
 
 **Identity Keys** — Each threat and finding gets a canonical identity key:
+
 - Threats: `component_id` + `stride_category` + `attack_surface` + `data_flow_id`
 - Findings: `component_id` + `vulnerability` (CWE) + `attack_surface`
 - These keys are independent of LLM-generated prose — they anchor to code artifacts
@@ -904,58 +932,64 @@ When generating `threat-inventory.json` for an **incremental analysis** (see `in
 Use these rules so repeated runs on unchanged code produce comparable inventories.
 
 1. **Canonical ID vs display name**
-  - `id` is stable identity; `display` is presentation text
-  - Never derive identity from prose wording in findings or diagram labels
 
-2. **Alias capture**
-  - Every component and boundary must include an `aliases` array
-  - Include discovered synonyms from architecture/DFD/STRIDE/findings (deduplicated, sorted)
-  - Keep canonical `id` stable even if display wording changes across runs
+- `id` is stable identity; `display` is presentation text
+- Never derive identity from prose wording in findings or diagram labels
 
-3. **Boundary kind taxonomy (TMT-aligned)**
-  - Use `boundary_kind`/`kind` from this set — describes the NATURE of the trust transition, not what's inside:
-    - `MachineBoundary` — between different hosts/VMs (e.g., host ↔ guest, VM1 ↔ VM2)
-    - `NetworkBoundary` — between network zones (e.g., corporate LAN ↔ internet, DMZ ↔ internal)
-    - `ClusterBoundary` — between K8s/container cluster and outside (e.g., cluster ↔ external services)
-    - `ProcessBoundary` — between OS processes or containers on same host (e.g., sidecar ↔ main container)
-    - `PrivilegeBoundary` — between different privilege levels (e.g., user mode ↔ kernel, unprivileged ↔ admin)
-    - `SandboxBoundary` — between sandboxed and unsandboxed execution (e.g., browser sandbox, WASM)
-  - Each value answers: "what changes when you cross this line?" (different machine, network, cluster, process, privilege, sandbox)
-  - Do NOT use component-grouping labels (DataStorage, ApplicationCore, AgentExecution) as boundary kinds — those describe WHAT's inside, not the nature of the trust transition
+1. **Alias capture**
+
+- Every component and boundary must include an `aliases` array
+- Include discovered synonyms from architecture/DFD/STRIDE/findings (deduplicated, sorted)
+- Keep canonical `id` stable even if display wording changes across runs
+
+1. **Boundary kind taxonomy (TMT-aligned)**
+
+- Use `boundary_kind`/`kind` from this set — describes the NATURE of the trust transition, not what's inside:
+  - `MachineBoundary` — between different hosts/VMs (e.g., host ↔ guest, VM1 ↔ VM2)
+  - `NetworkBoundary` — between network zones (e.g., corporate LAN ↔ internet, DMZ ↔ internal)
+  - `ClusterBoundary` — between K8s/container cluster and outside (e.g., cluster ↔ external services)
+  - `ProcessBoundary` — between OS processes or containers on same host (e.g., sidecar ↔ main container)
+  - `PrivilegeBoundary` — between different privilege levels (e.g., user mode ↔ kernel, unprivileged ↔ admin)
+  - `SandboxBoundary` — between sandboxed and unsandboxed execution (e.g., browser sandbox, WASM)
+- Each value answers: "what changes when you cross this line?" (different machine, network, cluster, process, privilege, sandbox)
+- Do NOT use component-grouping labels (DataStorage, ApplicationCore, AgentExecution) as boundary kinds — those describe WHAT's inside, not the nature of the trust transition
 
 3b. **Boundary ID derivation** (MANDATORY — apply the same deterministic naming as components)
-  - Derive boundary IDs from deployment/infrastructure names, NOT abstract concepts:
-    - Docker host → `Docker` (never `DockerEnvironment` or `ContainerRuntime`)
-    - Kubernetes cluster → `K8sCluster` (never `KubernetesEnvironment`)
-    - Operator's machine → `OperatorWorkstation` (never `HostOS` or `LocalMachine`)
-    - External cloud services → `ExternalServices` (never `CloudBoundary`)
-    - Data storage grouped → `DataStorage` (never `DataLayer` or `PersistenceLayer`)
-    - Backend application services → `BackendServices` (never `AppBoundary` or `ApplicationCore`)
-    - ML/AI inference models → `MLModels` (never `InferenceModels` or `ModelBoundary`)
-    - DMZ/public zone → `PublicZone` (never `DMZBoundary` or `IngressZone`)
-    - Agent execution → `AgentExecution` (keep this exact ID)
-    - Tool execution → `ToolExecution` (keep this exact ID)
-  - Once a boundary ID is chosen in Step 1, use it EVERYWHERE (DFD, tables, JSON)
-  - Never restructure containment between runs on the same code (same component → same boundary)
 
-4. **Component fingerprint**
-  - `fingerprint` must be built from stable evidence:
-    - sorted `source_files` — full file paths to primary source files
-    - sorted `source_directories` — parent directory paths of source files (more stable than filenames across refactors)
-    - sorted `class_names` — primary class, struct, or interface names defined in the component's source files (e.g., `["HealthServer", "IHealthService"]`). For non-code components (datastores, external services), leave empty.
-    - `namespace` — the primary namespace/package (e.g., `"MCP.Core.Servers.Health"` for C#, `"ragapp.src.ingestflow"` for Python). Empty for non-code components.
-    - sorted `api_routes` — HTTP API endpoint patterns exposed by this component (e.g., `["/api/health", "/api/v1/chat"]`). Empty if not an HTTP service.
-    - sorted `config_keys` — environment variables and configuration keys consumed by this component (e.g., `["AZURE_OPENAI_ENDPOINT", "REDIS_HOST"]`). Extract from appsettings.json, .env files, Helm values, or code that reads env vars.
-    - sorted `dependencies` — external package/library dependencies specific to this component (e.g., `["Microsoft.SemanticKernel", "Azure.AI.OpenAI"]` for NuGet, `["pymilvus", "fastapi"]` for pip). Only include packages that are characteristic of this component, not framework-wide dependencies.
-    - sorted `inbound_from` and `outbound_to` component IDs
-    - sorted `protocols`
-    - `component_type` and `boundary_kind`
-  - Do not include mutable prose in the fingerprint
-  - **Deterministic matching priority:** `source_directories` > `class_names` > `namespace` > `api_routes` > `config_keys` are all highly stable signals that survive component renames. Two components sharing any of these are almost certainly the same real component.
+- Derive boundary IDs from deployment/infrastructure names, NOT abstract concepts:
+  - Docker host → `Docker` (never `DockerEnvironment` or `ContainerRuntime`)
+  - Kubernetes cluster → `K8sCluster` (never `KubernetesEnvironment`)
+  - Operator's machine → `OperatorWorkstation` (never `HostOS` or `LocalMachine`)
+  - External cloud services → `ExternalServices` (never `CloudBoundary`)
+  - Data storage grouped → `DataStorage` (never `DataLayer` or `PersistenceLayer`)
+  - Backend application services → `BackendServices` (never `AppBoundary` or `ApplicationCore`)
+  - ML/AI inference models → `MLModels` (never `InferenceModels` or `ModelBoundary`)
+  - DMZ/public zone → `PublicZone` (never `DMZBoundary` or `IngressZone`)
+  - Agent execution → `AgentExecution` (keep this exact ID)
+  - Tool execution → `ToolExecution` (keep this exact ID)
+- Once a boundary ID is chosen in Step 1, use it EVERYWHERE (DFD, tables, JSON)
+- Never restructure containment between runs on the same code (same component → same boundary)
+
+1. **Component fingerprint**
+
+- `fingerprint` must be built from stable evidence:
+  - sorted `source_files` — full file paths to primary source files
+  - sorted `source_directories` — parent directory paths of source files (more stable than filenames across refactors)
+  - sorted `class_names` — primary class, struct, or interface names defined in the component's source files (e.g., `["HealthServer", "IHealthService"]`). For non-code components (datastores, external services), leave empty.
+  - `namespace` — the primary namespace/package (e.g., `"MCP.Core.Servers.Health"` for C#, `"ragapp.src.ingestflow"` for Python). Empty for non-code components.
+  - sorted `api_routes` — HTTP API endpoint patterns exposed by this component (e.g., `["/api/health", "/api/v1/chat"]`). Empty if not an HTTP service.
+  - sorted `config_keys` — environment variables and configuration keys consumed by this component (e.g., `["AZURE_OPENAI_ENDPOINT", "REDIS_HOST"]`). Extract from appsettings.json, .env files, Helm values, or code that reads env vars.
+  - sorted `dependencies` — external package/library dependencies specific to this component (e.g., `["Microsoft.SemanticKernel", "Azure.AI.OpenAI"]` for NuGet, `["pymilvus", "fastapi"]` for pip). Only include packages that are characteristic of this component, not framework-wide dependencies.
+  - sorted `inbound_from` and `outbound_to` component IDs
+  - sorted `protocols`
+  - `component_type` and `boundary_kind`
+- Do not include mutable prose in the fingerprint
+- **Deterministic matching priority:** `source_directories` > `class_names` > `namespace` > `api_routes` > `config_keys` are all highly stable signals that survive component renames. Two components sharing any of these are almost certainly the same real component.
 
   **Fingerprint Field → Comparison Matching Signal Map:**
+
   | Fingerprint Field | Comparison Signal | Max Points | Stability |
-  |---|---|---|---|
+  | --- | --- | --- | --- |
   | `source_files` | Signal 2 — Source file/directory overlap | +30 | High (files rarely move) |
   | `source_directories` | Signal 2 — Source file/directory overlap | +25 | Very High (directories almost never change) |
   | `class_names` | Signal 3 — Class/Namespace match | +25 | Very High (classes rarely rename) |
@@ -969,13 +1003,15 @@ Use these rules so repeated runs on unchanged code produce comparable inventorie
 
   **Every field in this table MUST be populated during analysis (Step 8b).** Empty arrays `[]` are acceptable when the field genuinely doesn't apply (e.g., `api_routes` for a datastore). But `source_directories` and `class_names` must NEVER be empty for process-type components — these are the primary matching anchors.
 
-5. **Boundary containment fingerprint**
-  - `contains_fingerprint` = sorted `contains` joined with `|`
-  - Use this for boundary rename detection during comparison
+1. **Boundary containment fingerprint**
 
-6. **Deterministic ordering**
-  - Sort all arrays and nested list fields before writing JSON
-  - This makes diffs stable and prevents accidental churn
+- `contains_fingerprint` = sorted `contains` joined with `|`
+- Use this for boundary rename detection during comparison
+
+1. **Deterministic ordering**
+
+- Sort all arrays and nested list fields before writing JSON
+- This makes diffs stable and prevents accidental churn
 
 ### Processing Rules
 
@@ -1004,21 +1040,24 @@ Use these rules so repeated runs on unchanged code produce comparable inventorie
 
 ⛔ **MANDATORY:** After writing each file, verify these checks and report results. Fix any ❌ before proceeding.
 
-### After `2-stride-analysis.md`:
+### After `2-stride-analysis.md`
+
 - [ ] Summary table appears BEFORE individual component sections
 - [ ] 3 tier sub-sections per component (Tier 1, Tier 2, Tier 3)
 - [ ] Status column uses only: `Open`, `Mitigated`, `Platform` (no `Accepted Risk`, no `Needs Review`)
 - [ ] Platform ratio within limit (≤20% standalone, ≤35% K8s operator)
 - [ ] Every threat has single-letter STRIDE category (S/T/R/I/D/E/A)
 
-### After `3-findings.md`:
+### After `3-findings.md`
+
 - [ ] 3 tier headings: `## Tier 1`, `## Tier 2`, `## Tier 3` (all present)
 - [ ] Zero occurrences of "Accepted Risk" anywhere in the file
 - [ ] Every finding has CVSS 4.0 vector string
 - [ ] Action Summary: T1=Critical, T2=Elevated, T3=Moderate priorities
 - [ ] 4th column header is "Assignment Rule" (not "Example")
 
-### After `threat-inventory.json`:
+### After `threat-inventory.json`
+
 - [ ] `threats.length == metrics.total_threats` (zero tolerance)
 - [ ] `findings.length == metrics.total_findings` (zero tolerance)
 - [ ] If threats > 50, used sub-agent/Python/chunked — NOT single `create_file`
@@ -1026,7 +1065,8 @@ Use these rules so repeated runs on unchanged code produce comparable inventorie
 - [ ] Arrays sorted by canonical key
 - [ ] **Field names match schema exactly:** components use `display` (NOT `display_name`), threats use `stride_category` (NOT `category`), threat→component link is inside `identity_key.component_id` (NOT top-level `component_id`), threats have BOTH `title` (short name) AND `description` (longer prose) — NOT just `description` alone
 
-### After `0-assessment.md`:
+### After `0-assessment.md`
+
 - [ ] Exactly 7 sections: Report Files, Executive Summary, Action Summary, Analysis Context & Assumptions, References Consulted, Report Metadata, Classification Reference
 - [ ] `---` horizontal rule between every pair of `##` sections
 
@@ -1055,6 +1095,7 @@ All reports MUST use these exact values. Do NOT abbreviate, substitute, or inven
 **Finding Change Status (incremental):** `Still Present` | `Fixed` | `New` | `New (Code)` | `New (Previously Unidentified)` | `Removed`
 
 **OWASP Top 10:2025 suffix:** Always `:2025` (e.g., `A01:2025 – Broken Access Control`)
+
 - [ ] Quick Wins, Needs Verification, Finding Overrides subsections present
 - [ ] Deployment pattern documented (K8s operator vs standalone)
 - [ ] All metadata values in backticks

@@ -15,26 +15,31 @@ A comprehensive skill for QA engineers to create test plans, generate manual tes
 ## Quick Start
 
 **Create a test plan:**
+
 ```
 "Create a test plan for the user authentication feature"
 ```
 
 **Generate test cases:**
+
 ```
 "Generate manual test cases for the checkout flow"
 ```
 
 **Build regression suite:**
+
 ```
 "Build a regression test suite for the payment module"
 ```
 
 **Validate against Figma:**
+
 ```
 "Compare the login page against the Figma design at [URL]"
 ```
 
 **Create bug report:**
+
 ```
 "Create a bug report for the form validation issue"
 ```
@@ -44,7 +49,7 @@ A comprehensive skill for QA engineers to create test plans, generate manual tes
 ## Quick Reference
 
 | Task | What You Get | Time |
-|------|--------------|------|
+| ------ | -------------- | ------ |
 | Test Plan | Strategy, scope, schedule, risks | 10-15 min |
 | Test Cases | Step-by-step instructions, expected results | 5-10 min each |
 | Regression Suite | Smoke tests, critical paths, execution order | 15-20 min |
@@ -94,7 +99,7 @@ QA Deliverable Ready
 ### Natural Language
 
 | Request | Output |
-|---------|--------|
+| --------- | -------- |
 | "Create test plan for {feature}" | Complete test plan document |
 | "Generate {N} test cases for {feature}" | Numbered test cases with steps |
 | "Build smoke test suite" | Critical path tests |
@@ -106,6 +111,7 @@ QA Deliverable Ready
 ## Core Deliverables
 
 ### 1. Test Plans
+
 - Test scope and objectives
 - Testing approach and strategy
 - Environment requirements
@@ -114,6 +120,7 @@ QA Deliverable Ready
 - Timeline and milestones
 
 ### 2. Manual Test Cases
+
 - Step-by-step instructions
 - Expected vs actual results
 - Preconditions and setup
@@ -121,18 +128,21 @@ QA Deliverable Ready
 - Priority and severity
 
 ### 3. Regression Suites
+
 - Smoke tests (15-30 min)
 - Full regression (2-4 hours)
 - Targeted regression (30-60 min)
 - Execution order and dependencies
 
 ### 4. Figma Validation
+
 - Component-by-component comparison
 - Spacing and typography checks
 - Color and visual consistency
 - Interactive state validation
 
 ### 5. Bug Reports
+
 - Clear reproduction steps
 - Environment details
 - Evidence (screenshots, logs)
@@ -143,7 +153,7 @@ QA Deliverable Ready
 ## Anti-Patterns
 
 | Avoid | Why | Instead |
-|-------|-----|---------|
+| ------- | ----- | --------- |
 | Vague test steps | Can't reproduce | Specific actions + expected results |
 | Missing preconditions | Tests fail unexpectedly | Document all setup requirements |
 | No test data | Tester blocked | Provide sample data or generation |
@@ -155,18 +165,21 @@ QA Deliverable Ready
 ## Verification Checklist
 
 **Test Plan:**
+
 - [ ] Scope clearly defined (in/out)
 - [ ] Entry/exit criteria specified
 - [ ] Risks identified with mitigations
 - [ ] Timeline realistic
 
 **Test Cases:**
+
 - [ ] Each step has expected result
 - [ ] Preconditions documented
 - [ ] Test data available
 - [ ] Priority assigned
 
 **Bug Reports:**
+
 - [ ] Reproducible steps
 - [ ] Environment documented
 - [ ] Screenshots/evidence attached
@@ -231,7 +244,7 @@ QA Deliverable Ready
 ### Test Types
 
 | Type | Focus | Example |
-|------|-------|---------|
+| ------ | ------- | --------- |
 | Functional | Business logic | Login with valid credentials |
 | UI/Visual | Appearance, layout | Button matches Figma design |
 | Integration | Component interaction | API returns data to frontend |
@@ -373,7 +386,7 @@ QA Deliverable Ready
 ### Severity Definitions
 
 | Level | Criteria | Examples |
-|-------|----------|----------|
+| ------- | ---------- | ---------- |
 | **Critical (P0)** | System crash, data loss, security | Payment fails, login broken |
 | **High (P1)** | Major feature broken, no workaround | Search not working |
 | **Medium (P2)** | Feature partial, workaround exists | Filter missing one option |
@@ -387,6 +400,7 @@ QA Deliverable Ready
 ### Design Validation Workflow
 
 **Prerequisites:**
+
 - Figma MCP server configured
 - Access to Figma design files
 - Figma URLs for components/pages
@@ -394,6 +408,7 @@ QA Deliverable Ready
 **Process:**
 
 1. **Get Design Specs from Figma**
+
 ```
 "Get the button specifications from Figma file [URL]"
 
@@ -406,7 +421,8 @@ Response includes:
 - States (default, hover, active, disabled)
 ```
 
-2. **Compare Implementation**
+1. **Compare Implementation**
+
 ```
 TC: Primary Button Visual Validation
 1. Inspect primary button in browser dev tools
@@ -418,7 +434,8 @@ TC: Primary Button Visual Validation
 3. Document discrepancies
 ```
 
-3. **Create Bug if Mismatch**
+1. **Create Bug if Mismatch**
+
 ```
 BUG: Primary button color doesn't match design
 Severity: Medium
@@ -431,7 +448,7 @@ Figma link: [specific component]
 ### What to Validate
 
 | Element | What to Check | Tool |
-|---------|---------------|------|
+| --------- | --------------- | ------ |
 | Colors | Hex values exact | Browser color picker |
 | Spacing | Padding/margin px | DevTools computed styles |
 | Typography | Font, size, weight | DevTools font panel |
@@ -440,6 +457,7 @@ Figma link: [specific component]
 | Responsive | Breakpoint behavior | DevTools device mode |
 
 ### Example Queries
+
 ```
 "Get button specifications from Figma design [URL]"
 "Compare navigation menu implementation against Figma design"
@@ -455,7 +473,7 @@ Figma link: [specific component]
 ### Suite Structure
 
 | Suite Type | Duration | Frequency | Coverage |
-|------------|----------|-----------|----------|
+| ------------ | ---------- | ----------- | ---------- |
 | Smoke | 15-30 min | Daily | Critical paths only |
 | Targeted | 30-60 min | Per change | Affected areas |
 | Full | 2-4 hours | Weekly/Release | Comprehensive |
@@ -464,6 +482,7 @@ Figma link: [specific component]
 ### Building a Regression Suite
 
 **Step 1: Identify Critical Paths**
+
 - What can users NOT live without?
 - What generates revenue?
 - What handles sensitive data?
@@ -472,12 +491,13 @@ Figma link: [specific component]
 **Step 2: Prioritize Test Cases**
 
 | Priority | Description | Must Run |
-|----------|-------------|----------|
+| ---------- | ------------- | ---------- |
 | P0 | Business-critical, security | Always |
 | P1 | Major features, common flows | Weekly+ |
 | P2 | Minor features, edge cases | Releases |
 
 **Step 3: Execution Order**
+
 1. Smoke first - if fails, stop and fix build
 2. P0 tests next - must pass before proceeding
 3. P1 then P2 - track all failures
@@ -486,17 +506,20 @@ Figma link: [specific component]
 ### Pass/Fail Criteria
 
 **PASS:**
+
 - All P0 tests pass
 - 90%+ P1 tests pass
 - No critical bugs open
 
 **FAIL (Block Release):**
+
 - Any P0 test fails
 - Critical bug discovered
 - Security vulnerability
 - Data loss scenario
 
 **CONDITIONAL:**
+
 - P1 failures with workarounds
 - Known issues documented
 - Fix plan in place
@@ -570,6 +593,7 @@ Figma link: [specific component]
 <summary><strong>QA Process Workflow</strong></summary>
 
 ### Phase 1: Planning
+
 - [ ] Review requirements and designs
 - [ ] Create test plan
 - [ ] Identify test scenarios
@@ -577,6 +601,7 @@ Figma link: [specific component]
 - [ ] Set up test environment
 
 ### Phase 2: Test Design
+
 - [ ] Write test cases
 - [ ] Review test cases with team
 - [ ] Prepare test data
@@ -584,6 +609,7 @@ Figma link: [specific component]
 - [ ] Get Figma design access
 
 ### Phase 3: Execution
+
 - [ ] Execute test cases
 - [ ] Log bugs with clear steps
 - [ ] Validate against Figma (UI tests)
@@ -591,6 +617,7 @@ Figma link: [specific component]
 - [ ] Communicate blockers
 
 ### Phase 4: Reporting
+
 - [ ] Compile test results
 - [ ] Analyze coverage
 - [ ] Document risks
@@ -605,6 +632,7 @@ Figma link: [specific component]
 ### Test Case Writing
 
 **DO:**
+
 - Be specific and unambiguous
 - Include expected results for each step
 - Test one thing per test case
@@ -612,6 +640,7 @@ Figma link: [specific component]
 - Keep test cases maintainable
 
 **DON'T:**
+
 - Assume knowledge
 - Make test cases too long
 - Skip preconditions
@@ -621,6 +650,7 @@ Figma link: [specific component]
 ### Bug Reporting
 
 **DO:**
+
 - Provide clear reproduction steps
 - Include screenshots/videos
 - Specify exact environment details
@@ -628,6 +658,7 @@ Figma link: [specific component]
 - Link to Figma for UI bugs
 
 **DON'T:**
+
 - Report without reproduction steps
 - Use vague descriptions
 - Skip environment details
@@ -637,6 +668,7 @@ Figma link: [specific component]
 ### Regression Testing
 
 **DO:**
+
 - Automate repetitive tests when possible
 - Maintain regression suite regularly
 - Prioritize critical paths
@@ -644,6 +676,7 @@ Figma link: [specific component]
 - Update suite after each release
 
 **DON'T:**
+
 - Skip regression before releases
 - Let suite become outdated
 - Test everything every time

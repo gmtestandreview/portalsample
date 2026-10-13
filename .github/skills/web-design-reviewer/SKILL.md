@@ -59,7 +59,7 @@ If the URL is not provided, ask the user:
 When making fixes, gather the following information:
 
 | Item | Example Question |
-|------|------------------|
+| ------ | ------------------ |
 | Framework | Are you using React / Vue / Next.js, etc.? |
 | Styling Method | CSS / SCSS / Tailwind / CSS-in-JS, etc. |
 | Source Location | Where are style files and components located? |
@@ -83,7 +83,7 @@ Detection targets:
 ### 1.4 Identifying Styling Method
 
 | Method | Detection | Edit Target |
-|--------|-----------|-------------|
+| -------- | ----------- | ------------- |
 | Pure CSS | `*.css` files | Global CSS or component CSS |
 | SCSS/Sass | `*.scss`, `*.sass` | SCSS files |
 | CSS Modules | `*.module.css` | Module CSS files |
@@ -108,7 +108,7 @@ Detection targets:
 #### Layout Issues
 
 | Issue | Description | Severity |
-|-------|-------------|----------|
+| ------- | ------------- | ---------- |
 | Element Overflow | Content overflows from parent element or viewport | High |
 | Element Overlap | Unintended overlapping of elements | High |
 | Alignment Issues | Grid or flex alignment problems | Medium |
@@ -118,7 +118,7 @@ Detection targets:
 #### Responsive Issues
 
 | Issue | Description | Severity |
-|-------|-------------|----------|
+| ------- | ------------- | ---------- |
 | Non-mobile Friendly | Layout breaks on small screens | High |
 | Breakpoint Issues | Unnatural transitions when screen size changes | Medium |
 | Touch Targets | Buttons too small on mobile | Medium |
@@ -126,7 +126,7 @@ Detection targets:
 #### Accessibility Issues
 
 | Issue | Description | Severity |
-|-------|-------------|----------|
+| ------- | ------------- | ---------- |
 | Insufficient Contrast | Low contrast ratio between text and background | High |
 | No Focus State | Cannot determine state during keyboard navigation | High |
 | Missing alt Text | No alternative text for images | Medium |
@@ -134,7 +134,7 @@ Detection targets:
 #### Visual Consistency
 
 | Issue | Description | Severity |
-|-------|-------------|----------|
+| ------- | ------------- | ---------- |
 | Font Inconsistency | Mixed font families | Medium |
 | Color Inconsistency | Non-unified brand colors | Medium |
 | Spacing Inconsistency | Non-uniform spacing between similar elements | Low |
@@ -144,7 +144,7 @@ Detection targets:
 Test at the following viewports:
 
 | Name | Width | Representative Device |
-|------|-------|----------------------|
+| ------ | ------- | ---------------------- |
 | Mobile | 375px | iPhone SE/12 mini |
 | Tablet | 768px | iPad |
 | Desktop | 1280px | Standard PC |
@@ -179,6 +179,7 @@ Identify source files from problematic elements:
    - Explore related files with `semantic_search`
 
 3. **File Pattern Filtering**
+
    ```
    Style files: src/**/*.css, styles/**/*
    Components: src/components/**/*
@@ -274,7 +275,7 @@ flowchart TD
 ## Required Capabilities
 
 | Capability | Description | Required |
-|------------|-------------|----------|
+| ------------ | ------------- | ---------- |
 | Web Page Navigation | Access URLs, page transitions | ✅ |
 | Screenshot Capture | Page image capture | ✅ |
 | Image Analysis | Visual issue detection | ✅ |
@@ -291,7 +292,7 @@ flowchart TD
 [Playwright MCP](https://github.com/microsoft/playwright-mcp) is recommended as the reference implementation for this skill.
 
 | Capability | Playwright MCP Tool | Purpose |
-|------------|---------------------|---------|
+| ------------ | --------------------- | --------- |
 | Navigation | `browser_navigate` | Access URLs |
 | Snapshot | `browser_snapshot` | Retrieve DOM structure |
 | Screenshot | `browser_take_screenshot` | Images for visual inspection |
@@ -315,7 +316,7 @@ flowchart TD
 ### Other Compatible Browser Automation Tools
 
 | Tool | Features |
-|------|----------|
+| ------ | ---------- |
 | Selenium | Broad browser support, multi-language support |
 | Puppeteer | Chrome/Chromium focused, Node.js |
 | Cypress | Easy integration with E2E testing |

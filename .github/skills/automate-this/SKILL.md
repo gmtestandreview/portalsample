@@ -165,41 +165,48 @@ For each tier, provide:
 Use these strategies based on which applications appear in the recording:
 
 **Browser-based workflows:**
+
 - First choice: Check if the website has a public API. API calls are 10x more reliable than browser automation. Search for API documentation.
 - Second choice: `curl` or `wget` for simple HTTP requests with known endpoints.
 - Third choice: Playwright or Selenium for workflows that require clicking through UI. Prefer Playwright — it's faster and less flaky.
 - Look for patterns: if the user is downloading the same report from a dashboard repeatedly, it's almost certainly available via API or direct URL with query parameters.
 
 **Spreadsheet and data workflows:**
+
 - Python with pandas for data filtering, transformation, and aggregation.
 - If the user is doing simple column operations in Excel, a 5-line Python script replaces the entire manual process.
 - `csvkit` for quick command-line CSV manipulation without writing code.
 - If the output needs to stay in Excel format, use openpyxl.
 
 **Email workflows:**
+
 - macOS: `osascript` can control Mail.app to send emails with attachments.
 - Cross-platform: Python `smtplib` for sending, `imaplib` for reading.
 - If the email follows a template, generate the body from a template file with variable substitution.
 
 **File management workflows:**
+
 - Shell scripts for move/copy/rename patterns.
 - `find` + `xargs` for batch operations.
 - `fswatch` or `watchman` for triggered-on-change automation.
 - If the user is organizing files into folders by date or type, that's a 3-line shell script.
 
 **Terminal/CLI workflows:**
+
 - Shell aliases for frequently typed commands.
 - Shell functions for multi-step sequences.
 - Makefiles for project-specific task sets.
 - If the user ran the same command with different arguments, that's a loop.
 
 **macOS-specific workflows:**
+
 - AppleScript/JXA for controlling native apps (Mail, Calendar, Finder, Preview, etc.).
 - Shortcuts.app for simple multi-app workflows that don't need code.
 - `automator` for file-based workflows.
 - `launchd` plist files for scheduled tasks (prefer over cron on macOS).
 
 **Cross-application workflows (data moves between apps):**
+
 - Identify the data transfer points. Each transfer is an automation opportunity.
 - Clipboard-based transfers in the recording suggest the apps don't talk to each other — look for APIs, file-based handoffs, or direct integrations instead.
 - If the user copies from App A and pastes into App B, the automation should read from A's data source and write to B's input format directly.

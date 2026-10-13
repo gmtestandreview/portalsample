@@ -45,7 +45,7 @@ Run when the user invokes `/orchestrate init` or when `.agent-sync/TEAM.md` does
 3. **Evaluate each agent** against INIT.md using these rules:
 
    | Agent | Keep if INIT.md says... |
-   |-------|------------------------|
+   | ------- | ------------------------ |
    | go-reviewer | Go is in the language list |
    | python-reviewer | Python is in the language list |
    | rust-reviewer | Rust is in the language list |
@@ -66,7 +66,7 @@ Run when the user invokes `/orchestrate init` or when `.agent-sync/TEAM.md` does
 4. **Evaluate each skill** against INIT.md using these rules:
 
    | Skill | Keep if INIT.md says... |
-   |-------|------------------------|
+   | ------- | ------------------------ |
    | brainstorming | active-development or greenfield |
    | subagent-driven-development | Complex features expected |
    | executing-plans | active-development |
@@ -84,6 +84,7 @@ Run when the user invokes `/orchestrate init` or when `.agent-sync/TEAM.md` does
    - Log each deletion.
 
 6. **Write `.agent-sync/TEAM.md`** — permanent record:
+
    ```
    # Active Team — <project name>
    Generated: <ISO date>
@@ -123,6 +124,7 @@ Run for `morning`, `tick`, and `report` sub-commands.
 ### Statelessness Contract
 
 You have no memory between invocations. Every execution — without exception:
+
 1. `Read .agent-sync/DAILY.md` (create from template if missing)
 2. `Glob .agent-sync/results/*.json` — completed task receipts
 3. `Read TASKS.md` — project backlog
@@ -167,12 +169,14 @@ Never assume what happened in a prior session. DAILY.md is your only source of t
 3. **Ambiguity check** — for each selected task, ask: does this description have two or more valid implementations with meaningfully different architectural consequences? If yes:
    - Do NOT dispatch the task.
    - Add it to DAILY.md Section 3 (Veto Buffer) as `AMB-NNN`:
+
      ```
      - **AMB-001** (TASK-005)
        - **Ambiguity:** "Improve search performance" — could mean (a) add DB index, (b) add Redis cache, or (c) rewrite query logic. Different cost, complexity, and risk.
        - **Options:** [A — DB index] / [B — Redis cache] / [C — query rewrite]
        - **Waiting for:** human choice before dispatch
      ```
+
    - Mark the task as PENDING in the plan.
 4. Write DAILY.md Sections 1 + 2.
 5. **Present the plan. STOP. Wait for explicit human approval.** Ambiguities in Section 3 must be resolved here — the human picks the interpretation before you dispatch.
@@ -209,16 +213,19 @@ Before dispatching any agent that modifies source files:
 
 1. Read `.agent-sync/ROUTING.md` → `## File Claims` table.
 2. **Normalize all file paths** to repo-relative form before any comparison or write:
+
    ```bash
    REPO_ROOT=$(git worktree list --porcelain | awk 'NR==1 {print $2}')
    RELATIVE=$(realpath --relative-to="$REPO_ROOT" "$ABSOLUTE_PATH")
    ```
+
 3. For each normalized file path the task will touch: if a row with that path exists with `in-progress` from a **different** agent → do NOT dispatch. Add the task to PENDING with `depends_on` pointing to the blocking task. Log the reason in DAILY.md.
 4. If no conflict: add a row per file using the **normalized path** (`src/auth/login.ts`, not an absolute or worktree-local path) to the File Claims table, then dispatch.
 
 ### Post-Completion File Claim Release
 
 When a task result arrives with no `blockers`:
+
 - Remove that task's rows from the File Claims table (or change status to `done`).
 - Dispatch any PENDING tasks whose `depends_on` was blocking on the now-released files.
 

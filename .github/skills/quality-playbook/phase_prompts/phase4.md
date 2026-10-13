@@ -3,6 +3,7 @@
 You are a quality engineer continuing a phase-by-phase quality playbook run. Phases 1-3 are complete.
 
 Read these files to get context:
+
 1. quality/PROGRESS.md - run metadata, phase status, BUG tracker
 2. quality/REQUIREMENTS.md - derived requirements
 3. quality/BUGS.md - bugs found in Phase 3 (code review)
@@ -12,6 +13,7 @@ Execute Phase 4: Spec Audit + Triage + Layer-2 semantic citation check.
 
 Part A — spec audit:
 Run the spec audit per quality/RUN_SPEC_AUDIT.md. Produce:
+
 - Individual auditor reports at quality/spec_audits/YYYY-MM-DD-auditor-N.md (one per auditor)
 - Triage synthesis at quality/spec_audits/YYYY-MM-DD-triage.md
 - Executable triage probes at quality/spec_audits/triage_probes.sh

@@ -53,7 +53,7 @@ Follow these steps for every draw.io task:
 ### Semantic Color Palette — Use consistently across the project
 
 | Role | fillColor | strokeColor |
-|---|---|---|
+| --- | --- | --- |
 | Primary / Info (default) | `#dae8fc` | `#6c8ebf` |
 | Success / Start / Positive | `#d5e8d4` | `#82b366` |
 | Warning / Decision | `#fff2cc` | `#d6b656` |
@@ -80,7 +80,7 @@ edgeStyle=orthogonalEdgeStyle;html=1;
 ## Diagram-Type Quick Reference
 
 | Type | Container | Key shapes | Connector style |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Flowchart | None | `ellipse` (start/end), `rounded=1` (process), `rhombus` (decision) | `orthogonalEdgeStyle` |
 | Architecture | `swimlane` per tier | `rounded=1` services, cloud/DB shapes | `orthogonalEdgeStyle` with labels |
 | Sequence | None | `mxgraph.uml.actor`, dashed lifeline edges | `endArrow=block` (sync), `endArrow=open;dashed=1` (return) |
@@ -98,6 +98,7 @@ edgeStyle=orthogonalEdgeStyle;html=1;
 - Default canvas: A4 landscape `1169 × 827` px
 - Maximum **40 cells per page** — split into multiple pages for larger diagrams
 - Add a **title text cell** at top of every page:
+
   ```
   style="text;strokeColor=none;fillColor=none;fontSize=18;fontStyle=1;align=center;"
   ```
@@ -134,7 +135,7 @@ python .github/skills/draw-io/scripts/validate-drawio.py <file.drawio>
 ## Reference Files
 
 | File | Use For |
-|---|---|
+| --- | --- |
 | `.github/skills/draw-io/SKILL.md` | Full agent workflow, recipes, troubleshooting |
 | `.github/skills/draw-io/references/drawio-xml-schema.md` | Complete mxCell attribute reference |
 | `.github/skills/draw-io/references/style-reference.md` | All style keys, shape names, edge types |

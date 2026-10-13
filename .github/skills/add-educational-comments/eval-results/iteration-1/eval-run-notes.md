@@ -20,7 +20,7 @@ This was not a live autonomous-agent execution benchmark. No subagent was spawne
 ## Results
 
 | Eval | Previous | Revised |
-|---|---:|---:|
+| --- | ---: | ---: |
 | Static checks | 1/12 | 12/12 |
 | Trigger proxy | 6/12 | 12/12 |
 | Combined | 7/24 | 24/24 |

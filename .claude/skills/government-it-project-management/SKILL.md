@@ -90,6 +90,7 @@ Do not stack roles, ceremonies, artefacts, or approvals from multiple frameworks
 Use Australian English and plain, decision-oriented language. Lead with the decision/recommendation, then rationale, consequences, actions, and unresolved items.
 
 Choose visuals for the decision:
+
 - milestone/Gantt views for timing, dependencies, and critical sequencing;
 - Kanban/flow views for work state, bottlenecks, and WIP;
 - RAID/decision logs for traceability;
@@ -130,6 +131,7 @@ Unless the user requests another format:
 ## Completion check
 
 Before finalising, verify that:
+
 - jurisdiction/entity and policy applicability are not assumed;
 - the lifecycle rationale matches uncertainty, feedback, governance, dependencies, procurement, and release conditions;
 - decision rights, delegations, and approval boundaries are explicit where material;

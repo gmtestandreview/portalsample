@@ -83,7 +83,7 @@ Scan every document in this order. At each step, check **"does the document answ
 If you cannot read `references/checklist.md` (no file access, or the file is missing), say so in one line before the report rather than proceeding silently — a review run without the question bank drifts toward exactly the vague findings this skill exists to prevent. Then run the routine anyway, but hold yourself to the scenario rule below with extra force: no finding ships unless you can state it as a concrete "when the user does X during Y, Z is undefined."
 
 | # | Step | Representative question |
-|---|------|-------------------------|
+| --- | ------ | ------------------------- |
 | 1 | **Empty state** | Zero records? First-time user? Is the empty-state screen/copy defined? |
 | 2 | **Max / overload** | 10,000 items? 200-char input? Is there a truncation / paging / cap policy? |
 | 3 | **Failure / exception** | Offline? Server error? Timeout? Is the failure screen and recovery path defined? |
@@ -107,12 +107,13 @@ Sharpness comes from **concrete questions** like "when the app is killed, what h
 ## Ruling grades
 
 | Ruling | Criteria | Meaning |
-|--------|----------|---------|
+| -------- | ---------- | --------- |
 | ✅ Approve | 0 Blocker, 0 Major | Ready to start as-is |
 | ⚠️ Conditional | 0 Blocker, ≥1 Major | "Ready once the N items below are confirmed" — list the items |
 | ❌ Reject | ≥1 Blocker | A core flow is undefined; cannot start |
 
 **Severity definitions**
+
 - **Blocker**: the core flow cannot be built without this answer (e.g. no failure-state screen defined) — **or** a wrong guess writes data you cannot backfill your way out of. A guess you can undo with a redeploy is a Major; a guess that corrupts balances, ledgers, or anything users can spend is a Blocker even when the code is technically writable.
 - **Major**: buildable, but requires a guess, and a wrong guess means rework (e.g. no paging policy).
 - **Minor**: doesn't block the start but must be confirmed before QA/launch (e.g. copy max length).
@@ -128,7 +129,7 @@ The review routine and ruling are identical regardless of role — **only the fr
 **Read the signal from what the user says, not from what the document is.** The document is almost always a planner-authored spec, so "it's a 기획서, therefore the user is a planner" is a trap — engineers and designers bring in other people's specs constantly. Weigh these instead:
 
 | Signal | Likely role |
-|---|---|
+| --- | --- |
 | "내가 쓴", "공유하기 전에", "빠진 거 없나" — ownership of the doc | Planner (self-review) |
 | "받은 스펙", "구현해도 되나", "뭘 물어봐야 하나" — about to build it | Engineer |
 | "어떤 화면 그려야", "상태 뭐뭐 있나" — about to draw it | Designer |
@@ -137,7 +138,7 @@ The review routine and ruling are identical regardless of role — **only the fr
 When there's no signal, use the neutral framing (safeguard 2 below) rather than defaulting to a role. Priority: **confident role > neutral > wrong framing.**
 
 | User | Scenario | Recipient of "questions to forward" |
-|------|----------|-------------------------------------|
+| ------ | ---------- | ------------------------------------- |
 | Planner / PM | Self-review before sharing | Themselves (converted into a fill-in TODO list) |
 | Engineer | Validate a received spec | The planner (a polite question list) |
 | Designer | Confirm which screens to draw | The planner + themselves (list of states needing a mockup: empty/error/loading/max) |

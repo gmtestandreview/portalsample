@@ -9,7 +9,7 @@ Don't skim — grep the codebase methodically. The exact patterns depend on the 
 **Null/nil guards:**
 
 | Language | Grep pattern |
-|---|---|
+| --- | --- |
 | Python | `None`, `is None`, `is not None` |
 | Java | `null`, `Optional`, `Objects.requireNonNull` |
 | Scala | `Option`, `None`, `.getOrElse`, `.isEmpty` |
@@ -20,7 +20,7 @@ Don't skim — grep the codebase methodically. The exact patterns depend on the 
 **Exception/error handling:**
 
 | Language | Grep pattern |
-|---|---|
+| --- | --- |
 | Python | `except`, `try:`, `raise` |
 | Java | `catch`, `throws`, `try {` |
 | Scala | `Try`, `catch`, `recover`, `Failure` |
@@ -31,7 +31,7 @@ Don't skim — grep the codebase methodically. The exact patterns depend on the 
 **Internal/private helpers (often defensive):**
 
 | Language | Grep pattern |
-|---|---|
+| --- | --- |
 | Python | `def _`, `__` |
 | Java/Scala | `private`, `protected` |
 | TypeScript | `private`, `#` (private fields) |
@@ -140,7 +140,7 @@ State machines are a special category of defensive pattern. When you find status
 **How to find state machines:**
 
 | Language | Grep pattern |
-|---|---|
+| --- | --- |
 | Python | `status`, `state`, `phase`, `mode`, `== "running"`, `== "pending"` |
 | Java | `enum.*Status`, `enum.*State`, `.getStatus()`, `switch.*status` |
 | Scala | `sealed trait.*State`, `case object`, `status match` |
@@ -194,7 +194,7 @@ When a function uses `switch`/`case`, `match`, if-else chains, or any dispatch c
 Search for operations that commit the user to expensive, irreversible, or long-running work without adequate preview or confirmation:
 
 | Pattern | What to look for |
-|---|---|
+| --- | --- |
 | Pre-commit information gap | Operations that start batch jobs, fan-out expansions, or API calls without showing estimated cost, scope, or duration |
 | Silent expansion | Fan-out or multiplication steps where the final work count isn't known until runtime, with no warning shown |
 | No termination condition | Polling loops, watchers, or daemon processes that check for new work but never check whether all work is done |

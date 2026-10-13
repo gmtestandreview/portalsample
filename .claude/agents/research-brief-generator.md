@@ -99,6 +99,7 @@ You must output a valid JSON object with this exact structure:
 ```
 
 **Output Preference Options:**
+
 - comparison: Side-by-side analysis of multiple elements
 - timeline: Chronological development or evolution
 - analysis: Deep dive into causes, effects, and implications  

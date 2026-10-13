@@ -5,7 +5,6 @@ Creates consistent design system tokens for colors, typography, spacing, and mor
 """
 
 import json
-from typing import Dict, List, Tuple
 import colorsys
 
 class DesignTokenGenerator:
@@ -17,7 +16,7 @@ class DesignTokenGenerator:
         self.base_font_size = 16
         
     def generate_complete_system(self, brand_color: str = "#0066CC", 
-                                style: str = "modern") -> Dict:
+                                style: str = "modern") -> dict:
         """Generate complete design token system"""
         
         tokens = {
@@ -39,7 +38,7 @@ class DesignTokenGenerator:
         
         return tokens
     
-    def generate_color_palette(self, brand_color: str) -> Dict:
+    def generate_color_palette(self, brand_color: str) -> dict:
         """Generate comprehensive color palette from brand color"""
         
         # Convert hex to RGB
@@ -89,7 +88,7 @@ class DesignTokenGenerator:
         
         return palette
     
-    def _generate_color_scale(self, base_color: str, name: str) -> Dict:
+    def _generate_color_scale(self, base_color: str, name: str) -> dict:
         """Generate color scale from base color"""
         
         scale = {}
@@ -111,7 +110,7 @@ class DesignTokenGenerator:
         scale['DEFAULT'] = base_color
         return scale
     
-    def _generate_neutral_scale(self) -> Dict:
+    def _generate_neutral_scale(self) -> dict:
         """Generate neutral color scale"""
         
         return {
@@ -128,7 +127,7 @@ class DesignTokenGenerator:
             'DEFAULT': '#6B7280'
         }
     
-    def generate_typography_system(self, style: str) -> Dict:
+    def generate_typography_system(self, style: str) -> dict:
         """Generate typography system"""
         
         # Font families based on style
@@ -184,7 +183,7 @@ class DesignTokenGenerator:
         
         return typography
     
-    def _generate_type_scale(self) -> Dict:
+    def _generate_type_scale(self) -> dict:
         """Generate modular type scale"""
         
         scale = {}
@@ -202,7 +201,7 @@ class DesignTokenGenerator:
         
         return scale
     
-    def _generate_text_styles(self) -> Dict:
+    def _generate_text_styles(self) -> dict:
         """Generate pre-composed text styles"""
         
         return {
@@ -262,7 +261,7 @@ class DesignTokenGenerator:
             }
         }
     
-    def generate_spacing_system(self) -> Dict:
+    def generate_spacing_system(self) -> dict:
         """Generate spacing system based on 8pt grid"""
         
         spacing = {}
@@ -284,7 +283,7 @@ class DesignTokenGenerator:
         
         return spacing
     
-    def generate_sizing_tokens(self) -> Dict:
+    def generate_sizing_tokens(self) -> dict:
         """Generate sizing tokens for components"""
         
         return {
@@ -315,7 +314,7 @@ class DesignTokenGenerator:
             }
         }
     
-    def generate_border_tokens(self, style: str) -> Dict:
+    def generate_border_tokens(self, style: str) -> dict:
         """Generate border tokens"""
         
         radius_values = {
@@ -359,7 +358,7 @@ class DesignTokenGenerator:
             }
         }
     
-    def generate_shadow_tokens(self, style: str) -> Dict:
+    def generate_shadow_tokens(self, style: str) -> dict:
         """Generate shadow tokens"""
         
         shadow_styles = {
@@ -385,7 +384,7 @@ class DesignTokenGenerator:
         
         return shadow_styles.get(style, shadow_styles['modern'])
     
-    def generate_animation_tokens(self) -> Dict:
+    def generate_animation_tokens(self) -> dict:
         """Generate animation tokens"""
         
         return {
@@ -420,7 +419,7 @@ class DesignTokenGenerator:
             }
         }
     
-    def generate_breakpoints(self) -> Dict:
+    def generate_breakpoints(self) -> dict:
         """Generate responsive breakpoints"""
         
         return {
@@ -432,7 +431,7 @@ class DesignTokenGenerator:
             '2xl': '1536px'
         }
     
-    def generate_z_index_scale(self) -> Dict:
+    def generate_z_index_scale(self) -> dict:
         """Generate z-index scale"""
         
         return {
@@ -447,7 +446,7 @@ class DesignTokenGenerator:
             'notification': 1070
         }
     
-    def export_tokens(self, tokens: Dict, format: str = 'json') -> str:
+    def export_tokens(self, tokens: dict, format: str = 'json') -> str:
         """Export tokens in various formats"""
         
         if format == 'json':
@@ -459,7 +458,7 @@ class DesignTokenGenerator:
         else:
             return json.dumps(tokens, indent=2)
     
-    def _export_as_css(self, tokens: Dict) -> str:
+    def _export_as_css(self, tokens: dict) -> str:
         """Export as CSS variables"""
         
         css = [':root {']
@@ -476,12 +475,12 @@ class DesignTokenGenerator:
         
         return '\n'.join(css)
     
-    def _hex_to_rgb(self, hex_color: str) -> Tuple[int, int, int]:
+    def _hex_to_rgb(self, hex_color: str) -> tuple[int, int, int]:
         """Convert hex to RGB"""
         hex_color = hex_color.lstrip('#')
         return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
     
-    def _rgb_to_hex(self, rgb: List[int]) -> str:
+    def _rgb_to_hex(self, rgb: list[int]) -> str:
         """Convert RGB to hex"""
         return '#{:02x}{:02x}{:02x}'.format(*rgb)
     

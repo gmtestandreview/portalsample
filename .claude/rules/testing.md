@@ -3,6 +3,7 @@
 ## Minimum Test Coverage: 80%
 
 All three test types are required:
+
 1. **Unit Tests** — Individual functions, utilities, components in isolation
 2. **Integration Tests** — API endpoints, database operations, service interactions
 3. **E2E Tests** — Critical user flows (auth, payments, core CRUD)

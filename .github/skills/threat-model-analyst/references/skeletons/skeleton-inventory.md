@@ -132,6 +132,7 @@
 ```
 
 **MANDATORY field name compliance:**
+
 - `"display"` — NOT `"display_name"`, `"name"`
 - `"stride_category"` — NOT `"category"` — SINGLE LETTER (S/T/R/I/D/E/A)
 - `"title"` AND `"description"` — both required on every threat

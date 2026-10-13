@@ -76,6 +76,7 @@ interface RectangleElement extends BaseElement {
 ```
 
 **Example:**
+
 ```json
 {
   "id": "rect1",
@@ -133,6 +134,7 @@ interface ArrowElement extends BaseElement {
 ```
 
 **Example:**
+
 ```json
 {
   "id": "arrow1",
@@ -152,6 +154,7 @@ interface ArrowElement extends BaseElement {
 ```
 
 **Points explanation:**
+
 - First point `[0, 0]` is relative to `(x, y)`
 - Subsequent points are relative to the first point
 - For straight horizontal arrow: `[[0, 0], [width, 0]]`
@@ -184,6 +187,7 @@ interface TextElement extends BaseElement {
 ```
 
 **Example:**
+
 ```json
 {
   "id": "text1",
@@ -202,6 +206,7 @@ interface TextElement extends BaseElement {
 ```
 
 **Width/Height calculation:**
+
 - Width ≈ `text.length * fontSize * 0.6`
 - Height ≈ `fontSize * 1.2 * numberOfLines`
 
@@ -220,7 +225,7 @@ interface Binding {
 ## Common Colors
 
 | Color Name | Hex Code | Use Case |
-|------------|----------|----------|
+| ------------ | ---------- | ---------- |
 | Black | `#1e1e1e` | Default stroke |
 | Light Blue | `#a5d8ff` | Primary entities |
 | Light Green | `#b2f2bb` | Process steps |
@@ -270,7 +275,7 @@ const versionNonce = Math.floor(Math.random() * 2147483647);
 ## Recommended Spacing
 
 | Context | Spacing |
-|---------|---------|
+| --------- | --------- |
 | Horizontal gap between elements | 200-300px |
 | Vertical gap between rows | 100-150px |
 | Minimum margin from edge | 50px |
@@ -279,7 +284,7 @@ const versionNonce = Math.floor(Math.random() * 2147483647);
 ## Font Families
 
 | ID | Name | Description |
-|----|------|-------------|
+| ---- | ------ | ------------- |
 | 1 | Virgil | Hand-drawn style (default) |
 | 2 | Helvetica | Clean sans-serif |
 | 3 | Cascadia | Monospace |
@@ -287,12 +292,14 @@ const versionNonce = Math.floor(Math.random() * 2147483647);
 ## Validation Rules
 
 ✅ **Required:**
+
 - All IDs must be unique
 - `type` must match actual element type
 - `version` must be an integer ≥ 1
 - `opacity` must be 0-100
 
 ⚠️ **Recommended:**
+
 - Keep `roughness` at 1 for consistency
 - Use `strokeWidth` of 2 for clarity
 - Set `isDeleted` to `false`

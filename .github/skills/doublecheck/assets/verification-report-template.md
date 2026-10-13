@@ -7,7 +7,7 @@
 **Breakdown:**
 
 | Rating | Count |
-|--------|-------|
+| -------- | ------- |
 | VERIFIED | |
 | PLAUSIBLE | |
 | UNVERIFIED | |
@@ -39,6 +39,7 @@ Full results for every extracted claim, grouped by confidence rating.
 ### VERIFIED
 
 #### [C#] -- [Brief description]
+
 - **Claim:** [The assertion]
 - **Source:** [URL]
 - **Notes:** [Any relevant context about the source]
@@ -46,18 +47,21 @@ Full results for every extracted claim, grouped by confidence rating.
 ### PLAUSIBLE
 
 #### [C#] -- [Brief description]
+
 - **Claim:** [The assertion]
 - **Notes:** [Why this is rated plausible rather than verified]
 
 ### UNVERIFIED
 
 #### [C#] -- [Brief description]
+
 - **Claim:** [The assertion]
 - **Notes:** [What was searched, why nothing was found]
 
 ### DISPUTED
 
 #### [C#] -- [Brief description]
+
 - **Claim:** [The assertion]
 - **Contradicting source:** [URL]
 - **Details:** [What the source says vs. what the claim says]
@@ -65,6 +69,7 @@ Full results for every extracted claim, grouped by confidence rating.
 ### FABRICATION RISK
 
 #### [C#] -- [Brief description]
+
 - **Claim:** [The assertion]
 - **Pattern:** [Which hallucination pattern this matches]
 - **Details:** [Why this is flagged -- e.g., "citation not found in any legal database"]
