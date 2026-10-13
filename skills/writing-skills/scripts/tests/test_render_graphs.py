@@ -5,10 +5,10 @@ import locale
 import os
 import shutil
 import subprocess
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
+from defusedxml import ElementTree as ET
 
 RENDERER = Path(__file__).resolve().parents[1] / "render-graphs.js"
 

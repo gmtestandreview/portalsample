@@ -64,14 +64,15 @@ def log(msg):
 
 
 def pid_is_running(pid):
-    """Return whether a process exists, without sending it a signal on Windows.
+    """Return whether a process is running, without sending it a signal.
 
     The POSIX idiom for this is `os.kill(pid, 0)`, and it is WRONG on Windows:
     there is no signal-0 semantics there, so os.kill opens the target and calls
     TerminateProcess for any signal value. Used as a liveness probe it kills the
     very process it is asking about, then reports it alive because nothing was
     raised — so a second watcher would terminate the running one and then exit
-    itself, leaving none. Query an access-limited handle instead.
+    itself, leaving none. Query an access-limited handle's signaled state instead;
+    OpenProcess can succeed for a terminated process while its handle is open.
 
     Kept inline rather than imported: this file is copied to .agent-sync/ on its
     own (see SETUP above), so it must have no local imports. The maintained twin
@@ -87,12 +88,20 @@ def pid_is_running(pid):
         kernel32.OpenProcess.restype = wintypes.HANDLE
         kernel32.CloseHandle.argtypes = [wintypes.HANDLE]
         kernel32.CloseHandle.restype = wintypes.BOOL
+        kernel32.WaitForSingleObject.argtypes = [wintypes.HANDLE, wintypes.DWORD]
+        kernel32.WaitForSingleObject.restype = wintypes.DWORD
 
         process_query_limited_information = 0x1000
-        handle = kernel32.OpenProcess(process_query_limited_information, False, pid)
+        synchronize = 0x00100000
+        wait_object_0 = 0x00000000
+        handle = kernel32.OpenProcess(process_query_limited_information | synchronize, False, pid)
         if handle:
-            kernel32.CloseHandle(handle)
-            return True
+            try:
+                wait_result = kernel32.WaitForSingleObject(handle, 0)
+                # WAIT_TIMEOUT means running; preserve a conservative result for other failures.
+                return wait_result != wait_object_0
+            finally:
+                kernel32.CloseHandle(handle)
         return ctypes.get_last_error() == 5  # Access denied means it exists.
 
     try:

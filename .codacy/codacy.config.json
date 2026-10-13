@@ -6,8 +6,8 @@
     "organization": "gmtestandreview",
     "repositoryId": "913233",
     "repositoryName": "portalsample",
-    "createdAt": "2026-10-13T04:06:06.507Z",
-    "updatedAt": "2026-10-13T04:06:06.507Z",
+    "createdAt": "2026-10-13T07:55:09.690Z",
+    "updatedAt": "2026-10-13T07:55:09.690Z",
     "languages": [
       "CSS",
       "HTML",
@@ -6067,6 +6067,17 @@
     "ClientApp/src/external/raw.githubusercontent.com/nevware21/ts-utils/refs/tags/0.12.5/lib/src/symbol/symbol.ts",
     "ClientApp/src/external/raw.githubusercontent.com/nevware21/ts-utils/refs/tags/0.12.5/lib/src/symbol/well_known.ts",
     "ClientApp/src/external/raw.githubusercontent.com/nevware21/ts-utils/refs/tags/0.12.5/lib/src/timer/handler.ts",
-    "ClientApp/src/external/raw.githubusercontent.com/nevware21/ts-utils/refs/tags/0.12.5/lib/src/timer/timeout.ts"
+    "ClientApp/src/external/raw.githubusercontent.com/nevware21/ts-utils/refs/tags/0.12.5/lib/src/timer/timeout.ts",
+    "vendor/braces/index.d.ts",
+    "vendor/braces/index.js",
+    "vendor/braces/lib/compile.js",
+    "vendor/braces/lib/constants.js",
+    "vendor/braces/lib/expand.js",
+    "vendor/braces/lib/parse.js",
+    "vendor/braces/lib/stringify.js",
+    "vendor/braces/lib/utils.js",
+    "vendor/braces/NMI-OWNERSHIP.md",
+    "vendor/braces/package.json",
+    "vendor/braces/README.md"
   ]
 }

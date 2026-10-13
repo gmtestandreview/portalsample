@@ -243,7 +243,7 @@ def run_claude(
 
     prompt = " ".join(prompt_text.split())
     cmd = [
-        "claude",
+        shutil.which("claude") or "claude",
         "-p",
         prompt,
         "--output-format",
@@ -280,7 +280,7 @@ def run_claude(
             cwd=str(project_root),
             env=env,
             text=True,
-            shell=(os.name == "nt"),
+            shell=False,
             start_new_session=(os.name != "nt"),
         )
         try:

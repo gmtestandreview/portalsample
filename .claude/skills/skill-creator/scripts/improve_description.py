@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -393,7 +394,7 @@ def _call_claude(
                 f"description call unavailable: {control.stop_reason or 'permit rejected'}"
             )
 
-    cmd = ["claude", "-p", "--output-format", "text"]
+    cmd = [shutil.which("claude") or "claude", "-p", "--output-format", "text"]
     if model:
         if os.name == "nt" and not _MODEL_NAME_RE.fullmatch(model):
             raise ValueError("model contains unsupported characters on Windows")
@@ -415,7 +416,7 @@ def _call_claude(
             env=env,
             timeout=timeout,
             check=False,
-            shell=(os.name == "nt"),
+            shell=False,
         )
     except subprocess.TimeoutExpired as exc:
         error = RuntimeError(f"claude -p timed out after {timeout} seconds")

@@ -1,9 +1,9 @@
 """Tests for prompt module."""
 
-import xml.etree.ElementTree as ET
 from pathlib import Path
 
 import pytest
+from defusedxml import ElementTree as ET
 
 from skills_ref.errors import ParseError, SkillError
 from skills_ref.prompt import to_prompt
