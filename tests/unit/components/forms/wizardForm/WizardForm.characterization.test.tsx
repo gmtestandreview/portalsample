@@ -1,5 +1,6 @@
 import type React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import type { Mock } from 'vitest';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryRouter, RouterProvider } from 'react-router';
@@ -85,9 +86,11 @@ const requiredOther = Yup.object({
   other: Yup.string().required('Other is required'),
 });
 
+type SaveStep = Mock<(values: unknown, isDirty: boolean) => Promise<object>>;
+
 interface Saves {
-  step1: ReturnType<typeof vi.fn>;
-  step2: ReturnType<typeof vi.fn>;
+  step1: SaveStep;
+  step2: SaveStep;
 }
 
 const renderWizard = (saves: Saves, step1Validation = requiredName) => {
@@ -150,6 +153,21 @@ const renderWizard = (saves: Saves, step1Validation = requiredName) => {
   return router;
 };
 
+// Formik validates on every change; let the trailing async validation land
+// inside act before the test moves on.
+const settleValidation = () =>
+  act(async () => {
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  });
+
+// Navigates and lets the blocked-navigation modal, its focus shift and the
+// resulting input blur and revalidation all settle inside one act scope.
+const navigateAndSettle = (router: { navigate: (to: string) => unknown }) =>
+  act(async () => {
+    void router.navigate('/elsewhere');
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  });
+
 const NEXT = 'save-and-next-button';
 const MODAL = 'prompt-save-modal';
 
@@ -159,8 +177,8 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
   beforeEach(() => {
     vi.clearAllMocks();
     saves = {
-      step1: vi.fn().mockResolvedValue({}),
-      step2: vi.fn().mockResolvedValue({}),
+      step1: vi.fn(async () => ({})),
+      step2: vi.fn(async () => ({})),
     };
   });
 
@@ -218,20 +236,35 @@ describe('Formik wizard characterisation: steps, Enter key and unsaved prompt', 
     expect(screen.queryByTestId(MODAL)).toBeNull();
   });
 
-  it('blocks a dirty form, stays on Cancel and leaves on Discard', async () => {
+  it('blocks a dirty form and stays on the step when Cancel is chosen', async () => {
     const user = userEvent.setup();
     const router = renderWizard(saves);
     await user.type(await screen.findByLabelText('Name one'), 'abc');
+    // Blur the input first: otherwise the modal's focus shift blurs it later,
+    // outside any act scope, and Formik revalidates there.
+    await user.tab();
+    await settleValidation();
 
-    await act(() => router.navigate('/elsewhere'));
-    expect(await screen.findByTestId(MODAL)).toBeTruthy();
+    await navigateAndSettle(router);
+    expect(screen.getByTestId(MODAL)).toBeTruthy();
 
     await user.click(screen.getByTestId('prompt-cancel-button'));
     await waitFor(() => expect(screen.queryByTestId(MODAL)).toBeNull());
     expect(screen.getByLabelText('Name one')).toBeTruthy();
+  });
 
-    await act(() => router.navigate('/elsewhere'));
-    await user.click(await screen.findByTestId('prompt-leave-button'));
+  it('blocks a dirty form and leaves when Discard is chosen', async () => {
+    const user = userEvent.setup();
+    const router = renderWizard(saves);
+    await user.type(await screen.findByLabelText('Name one'), 'abc');
+    // Blur the input first: otherwise the modal's focus shift blurs it later,
+    // outside any act scope, and Formik revalidates there.
+    await user.tab();
+    await settleValidation();
+
+    await navigateAndSettle(router);
+    await user.click(screen.getByTestId('prompt-leave-button'));
+
     expect(await screen.findByText('Elsewhere Page')).toBeTruthy();
   });
 });
