@@ -150,7 +150,7 @@ const RequestForQuote = () => {
           bannerTitle
         )}
       >
-        <OrganisationAndContact name='' />
+        <OrganisationAndContact />
       </WizardStep>
       <WizardStep
         {...instrumentAndRequestProps(
@@ -162,7 +162,7 @@ const RequestForQuote = () => {
           bannerTitle
         )}
       >
-        <InstrumentAndRequest name='' />
+        <InstrumentAndRequest />
       </WizardStep>
       <WizardStep
         {...requestForQuoteSummaryProps(

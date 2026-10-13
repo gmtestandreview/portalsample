@@ -63,6 +63,19 @@ describe('RfqOrganisationSummary', () => {
     expect(container).not.toHaveTextContent('Sydney Branch');
   });
 
+  it('applies the branch hiding rule even when a branch value is present', () => {
+    const container = renderOrganisation(populated, {
+      ...summaryHidden,
+      organisationAndContact: {
+        ...summaryHidden.organisationAndContact,
+        branchOrLocationName: () => true,
+      },
+    });
+
+    expect(container).toHaveTextContent('Acme Trading');
+    expect(container).not.toHaveTextContent('Sydney Branch');
+  });
+
   it('shows the principal contact answer label but no account holder when none is passed', () => {
     const container = renderOrganisation(populated);
 
@@ -118,6 +131,37 @@ describe('RfqOrganisationSummary', () => {
     expect(container).toHaveTextContent('A different contact person');
     expect(container).toHaveTextContent('Title, if "Other"');
     expect(container).toHaveTextContent('Lord');
+  });
+
+  it('applies the contact title hiding rule for an Other title', () => {
+    const container = renderOrganisation(
+      {
+        ...populated,
+        organisationAndContact: {
+          ...populated.organisationAndContact,
+          isPrincipalContact: YesNo.No,
+          contact: {
+            ...populated.organisationAndContact?.contact,
+            title: Title.Other,
+            titleOther: 'Lord',
+          },
+        },
+      },
+      {
+        ...summaryHidden,
+        organisationAndContact: {
+          ...summaryHidden.organisationAndContact,
+          contact: {
+            ...summaryHidden.organisationAndContact?.contact,
+            titleOther: () => true,
+          },
+        },
+      }
+    );
+
+    expect(container).not.toHaveTextContent('Title, if "Other"');
+    expect(container).not.toHaveTextContent('Lord');
+    expect(container).toHaveTextContent('Lovelace');
   });
 
   it('falls back to a placeholder for an unrecognised principal contact answer', () => {

@@ -567,7 +567,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/organisation-and-contact',
-      <OrganisationAndContact name='' />,
+      <OrganisationAndContact />,
       '/request-for-quote/:id/*'
     );
 
@@ -592,7 +592,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/organisation-and-contact',
-      <OrganisationAndContact name='' />,
+      <OrganisationAndContact />,
       '/request-for-quote/:id/*'
     );
 
@@ -608,7 +608,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/organisation-and-contact',
-      <OrganisationAndContact name='' />,
+      <OrganisationAndContact />,
       '/organisation-and-contact'
     );
     fireEvent.click(screen.getByTestId('open-manage-branch-division-button'));
@@ -627,7 +627,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -665,6 +665,24 @@ describe('workflow step components', () => {
     ).toHaveAttribute('data-readonly', 'true');
   });
 
+  it('keeps request-for-quote summary edit links available for both editable sections', async () => {
+    const RequestForQuoteSummary = (
+      await import('../../../ClientApp/src/routes/requestForQuote/requestForQuoteSummary')
+    ).default;
+
+    renderRoute(
+      '/request-for-quote/RFQ-1/summary',
+      <RequestForQuoteSummary name='' />,
+      '/request-for-quote/:id/*'
+    );
+
+    const editLinks = screen.getAllByTestId('edit-button');
+    expect(editLinks.map((link) => link.getAttribute('href'))).toEqual([
+      '/request-for-quote/RFQ-1/organisation-and-contact',
+      '/request-for-quote/RFQ-1/instrument-and-request',
+    ]);
+  });
+
   it('initially disables instrument type for the no-measurement category', async () => {
     mocks.formikValues['measurementCategory'] = 'no-measurement';
     const InstrumentAndRequest = (
@@ -673,7 +691,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -692,7 +710,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -727,7 +745,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -758,7 +776,7 @@ describe('workflow step components', () => {
     ).default;
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -791,7 +809,7 @@ describe('workflow step components', () => {
 
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 
@@ -1027,7 +1045,7 @@ describe('workflow step components', () => {
     ).default;
     renderRoute(
       '/request-for-quote/RFQ-1/instrument-and-request',
-      <InstrumentAndRequest name='' />,
+      <InstrumentAndRequest />,
       '/request-for-quote/:id/*'
     );
 

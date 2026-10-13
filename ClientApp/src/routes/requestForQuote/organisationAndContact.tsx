@@ -4,7 +4,6 @@ import { Alert, Button } from 'react-bootstrap';
 import { useField, useFormikContext } from 'formik';
 import { getIn } from '../../components/forms/formPath';
 import { PatternFormat } from 'react-number-format';
-import type { OrganisationAndContactProps } from './types';
 import ContactDetailsInput from '../../components/forms/CommonForms/ContactDetails';
 import HidableField from '../../components/forms/HidableField';
 import RadioButtonGroup from '../../components/Inputs/RadioButtonGroup';
@@ -21,9 +20,7 @@ const GetFieldValueString = ({ fieldName }: { fieldName: string }) => {
   return _field.value;
 };
 
-const OrganisationAndContact = (
-  _props: Readonly<OrganisationAndContactProps>
-) => {
+const OrganisationAndContact = () => {
   const { values } = useFormikContext<any>();
   const [sourceReferenceField] = useField('sourceReferenceId');
   const modalDispatch = useModalDispatch();
