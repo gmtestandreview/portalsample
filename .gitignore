@@ -121,3 +121,7 @@ __pycache__/
 # .claude/docs/specs/2026-09-10-qdrant-semantic-memory-design.md — this entry is
 # load-bearing: nothing under here should ever be committed.
 .qdrant/
+
+
+#Ignore vscode AI rules
+.github\instructions\codacy.instructions.md
