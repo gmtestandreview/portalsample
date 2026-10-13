@@ -55,7 +55,7 @@ jobs:
           # Codacy PR gate focused on the project's JavaScript/TypeScript
           # analysis so SARIF conversion stays fast enough for every commit.
           tool: eslint
-          directory: ClientApp
+          directory: ${{ github.workspace }}/ClientApp
           tool-timeout: 5minutes
           # Adjust severity of non-security issues
           gh-code-scanning-compat: true
