@@ -55,7 +55,7 @@ export const verifyBridgeHtml = (html) => {
     fail('bridge page contains an inline event handler');
   }
 
-  const scriptTags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)];
+  const scriptTags = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\b[^>]*>/gi)];
   if (scriptTags.length !== 1) {
     fail('bridge page must contain exactly one script');
   }
