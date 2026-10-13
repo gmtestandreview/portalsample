@@ -234,3 +234,10 @@ Then('the message appears in the application thread', async ({ page }) => {
     'Please confirm that the certificate was received.'
   );
 });
+
+When(
+  'the applicant chooses the new-certificate application option',
+  async ({ page }) => {
+    await page.locator('label[for="q-appl-new-nmiapprcert"]').click();
+  }
+);
