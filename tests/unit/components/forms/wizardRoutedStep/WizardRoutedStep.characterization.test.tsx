@@ -125,7 +125,7 @@ describe('Formik wizard shell characterisation', () => {
     vi.clearAllMocks();
   });
 
-  it('keeps focus on the Next button and does not scroll the error summary after an invalid submit', async () => {
+  it('moves focus to the error summary and scrolls it into view after an invalid submit', async () => {
     const user = userEvent.setup();
     const scrollIntoView = vi.fn();
     HTMLElement.prototype.scrollIntoView = scrollIntoView;
@@ -134,11 +134,29 @@ describe('Formik wizard shell characterisation', () => {
 
     await user.click(await screen.findByTestId(NEXT));
 
-    expect(await screen.findByTestId('form-error-summary')).toBeTruthy();
-    // The summary schedules focus after 100 ms; wait past it.
-    await new Promise((resolve) => setTimeout(resolve, 400));
-    expect(document.activeElement).toBe(screen.getByTestId(NEXT));
-    expect(scrollIntoView).not.toHaveBeenCalled();
+    const summary = await screen.findByTestId('form-error-summary');
+    // Decision D-2: the summary takes focus (Formik left it on the button).
+    await waitFor(() => expect(document.activeElement).toBe(summary));
+    expect(scrollIntoView).toHaveBeenCalledTimes(1);
+  });
+
+  it('focuses the summary again on each further failed submit', async () => {
+    const user = userEvent.setup();
+    HTMLElement.prototype.scrollIntoView = vi.fn();
+    renderStep({ onSaveAndNext: vi.fn() });
+    await screen.findByLabelText('Name');
+
+    await user.click(await screen.findByTestId(NEXT));
+    const summary = await screen.findByTestId('form-error-summary');
+    await waitFor(() => expect(document.activeElement).toBe(summary));
+
+    await user.click(screen.getByTestId(NEXT));
+    await waitFor(() =>
+      expect(HTMLElement.prototype.scrollIntoView).toHaveBeenCalledTimes(2)
+    );
+    expect(document.activeElement).toBe(
+      screen.getByTestId('form-error-summary')
+    );
   });
 
   it('replaces dirty edits with server values after a 409 and keeps the conflict banner', async () => {

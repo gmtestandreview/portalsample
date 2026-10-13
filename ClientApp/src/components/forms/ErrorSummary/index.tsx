@@ -1,7 +1,7 @@
 import { useFormikContext } from 'formik';
 import type { FormikValues, FormikErrors } from 'formik';
 import { startCase, capitalize } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-bootstrap';
 import { Link } from 'react-router';
 import type {
@@ -177,6 +177,10 @@ const FormikErrorsSummary = ({
   const [errorSummary, setErrorSummary] = useState<FormikErrors<FormikValues>>(
     {}
   );
+  const focusedSubmitCount = useRef(0);
+  const focusTimeout = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
   const sanitizedErrorSummary = sanitizeErrorData(errorSummary);
   const hasErrors = Object.keys(sanitizedErrorSummary).length > 0;
 
@@ -184,12 +188,25 @@ const FormikErrorsSummary = ({
     if (submitCount > 0) {
       setErrorSummary(errors);
     }
-    if (isSubmitting && !isValidating && hasErrors) {
-      const timeoutId = handleAlertScroll();
-      return () => clearTimeout(timeoutId);
+  }, [errors, submitCount]);
+
+  // Move focus to the summary once per failed submit attempt, after validation
+  // has settled. The timer is only cleared on unmount: clearing it when the
+  // dependencies change would cancel the focus as soon as `isSubmitting` flips.
+  useEffect(() => {
+    if (
+      isSubmitting ||
+      isValidating ||
+      !hasErrors ||
+      submitCount === focusedSubmitCount.current
+    ) {
+      return;
     }
-    return undefined;
-  }, [errors, submitCount, isValidating, isSubmitting, hasErrors]);
+    focusedSubmitCount.current = submitCount;
+    focusTimeout.current = handleAlertScroll();
+  }, [hasErrors, isSubmitting, isValidating, submitCount]);
+
+  useEffect(() => () => clearTimeout(focusTimeout.current), []);
 
   if (!hasErrors) {
     return null;
