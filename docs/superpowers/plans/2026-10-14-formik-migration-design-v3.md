@@ -291,6 +291,11 @@ required at S3, S4, each flow cut-over, and Z; focused tests suffice between.
   invalid submit the error summary receives focus and scrolls into view, once
   per failed attempt. The RHF shell therefore sets `shouldFocusError: false` and
   reuses the same summary behaviour. Previously focus stayed on the Next button.
+- **D-4 (found by the new e2e save-failure scenario, applied: `f8b252e3`).**
+  `reportRecipientProps` and `paymentDetailsProps` swallowed save errors, so a
+  failed save let the wizard advance as if it had succeeded. They now rethrow
+  and the shell shows the error. Unit tests that pinned the swallowing were
+  updated. User-visible, treat as an improvement; tell the product owner.
 - **D-3 (Q1, approved earlier).** Submit mode lives outside form values; the
   sticky `saveAndExit` flag disappears.
 - **Applied before migration.** Both improvements land in the Formik shell
